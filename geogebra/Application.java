@@ -115,7 +115,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "2. October 2006";
+    public static final String buildDate = "19. October 2006";
 	
     public static final String versionString = "2.8 alpha";    
     public static final String XML_FILE_FORMAT = "2.7";    
