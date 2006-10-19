@@ -1,0 +1,68 @@
+GeoGebra - Dynamic Geometry, Algebra and Calculus
+  http://www.geogebra.at
+
+COPYRIGHT
+  * Markus Hohenwarter (since 2001)
+      project leader, idea and devolopment of GeoGebra
+      markus.hohenwarter@sbg.ac.at, University of Salzburg
+  * Yves Kreis (since 2006)
+      developer
+      yves.kreis@uni.lu, University of Luxembourg
+  
+LICENSE
+  This program is free software; you can redistribute it and/or modify it 
+  under the terms of the GNU General Public License as published by 
+  the Free Software Foundation; either version 2 of the License, or 
+  (at your option) any later version.
+  See http://www.gnu.org/licenses/gpl.txt
+
+FUNDED BY
+  * Austrian Federal Ministry for Education, Science and Culture 
+    from 2006 to 2007, http://www.bmbwk.gv.at
+  * Austrian Academy of Sciences, DOC scholarship
+    from 2004 to 2005, http://www.oeaw.ac.at
+
+SUPPORTED BY
+  * hosting the GeoGebra Website
+    Department of Mathematics, University of Salzburg
+  * providing the multi-platform software deployment solution 
+    Faculty LSHASE, University of Luxembourg
+
+TRANSLATORS
+  * Austrian: Markus Hohenwarter (Austria)
+  * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)
+  * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
+  * Catalan: Jaume Bartrolí, Roser Sebastián (Catalunya, Spain)
+  * Chinese: Fu-Kwun Hwang (Taiwan)
+  * Croatian: Sime Suljic and Ela Rac (Croatia)
+  * Czech: Marie Pokorna (Czech Republic)
+  * Danish: Steen Groðe (Denmark)
+  * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
+  * English: Markus Hohenwarter (Austria)
+  * French: Pierre Couillard (Canada), Vincent Douce, Nicolas Hainaux, 
+      David Tran, Noel Lambert, Philippe Pham-Ba-Nien (France)
+  * Galician: Jesús García (Spain)
+  * German: Markus Hohenwarter (Austria)
+  * Greek: Nicholas Mousoulides (Cyprus)
+  * Hungarian: Sulik Szabolcs (Hungary)
+  * Italian: Enrico Pontorno and Alessandra Tomasi (Italy)
+  * Norwegian: Sigbjørn Hals (Norway)
+  * Occitan: Monia Allaya (Beziers, Spain)
+  * Portuguese: Humberto Jose Bortolossi and Herminio Borges Neto (Brazil)
+  * Romanian: Bogdan Enescu (Romania)
+  * Russian: Dima Nikolenkov (Switzerland)
+  * Serbian: Dragoslav Herceg and Djordje Herceg (Serbia)
+  * Slovakian: Peter Csiba (Slovakia)
+  * Slovenian: Stanislav Senveter (Slovenia)
+  * Spanish: Liliana Saidon (Argentina)
+  
+SOFTWARE
+  * Java symbolic computation library (JSCL)
+      Rapael Jolly and Elefterios Stamatogiannakis 
+      http://jscl-meditor.sourceforge.net
+  * Java EPS Graphics2D package
+      Paul Mutton
+      http://www.jibble.org/epsgraphics/
+  * HotEqn - LaTeX equation viewer
+      Christian Schmid
+      http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html

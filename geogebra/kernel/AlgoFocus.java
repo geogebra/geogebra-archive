@@ -1,0 +1,125 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+/*
+ * AlgoFoci.java
+ *
+ * Created on 11. November 2001, 21:37
+ */
+
+package geogebra.kernel;
+
+
+
+/**
+ *
+ * @author  Markus
+ * @version 
+ */
+public class AlgoFocus extends AlgoElement {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GeoConic c;  // input
+    private GeoPoint [] focus;  // output     
+    
+    transient private double temp1, temp2;
+    GeoVec2D b;
+    GeoVec2D [] eigenvec;
+        
+    AlgoFocus(Construction cons, String label, GeoConic c) {
+        this(cons, c);
+        GeoElement.setLabels(label, focus); 
+    }
+    
+    AlgoFocus(Construction cons, String [] labels, GeoConic c) {
+        this(cons, c);
+        GeoElement.setLabels(labels, focus); 
+    }
+    
+    AlgoFocus(Construction cons, GeoConic c) {
+        super(cons);
+        this.c = c;     
+        focus = new GeoPoint[2];
+        focus[0] = new GeoPoint(cons);
+        focus[1] = new GeoPoint(cons);
+        setInputOutput(); // for AlgoElement
+        
+        b = c.b;
+        eigenvec = c.eigenvec;        
+                
+        compute();                                          
+    }   
+    
+    String getClassName() {
+        return "AlgoFocus";
+    }
+    
+    // for AlgoElement
+    void setInputOutput() {
+        input = new GeoElement[1];
+        input[0] = c;        
+        
+        output = focus;        
+        setDependencies(); // done by AlgoElement
+    }    
+    
+    GeoConic getConic() { return c; }
+    GeoPoint [] getFocus() { return focus; }    
+        
+    final void compute() {  
+        switch (c.type) {
+            case GeoConic.CONIC_CIRCLE:
+                focus[0].setCoords(b.x, b.y, 1.0);
+                focus[1].setCoords(b.x, b.y, 1.0); 
+                break;                
+                
+            case GeoConic.CONIC_ELLIPSE:
+            case GeoConic.CONIC_HYPERBOLA:
+                temp1 = c.excent * eigenvec[0].x;
+                temp2 = c.excent * eigenvec[0].y;
+                focus[0].setCoords( b.x - temp1, b.y - temp2, 1.0d);
+                focus[1].setCoords( b.x + temp1, b.y + temp2, 1.0d);
+                break;
+                
+            case GeoConic.CONIC_PARABOLA:
+                temp1 = c.p / 2;
+                focus[0].setCoords( b.x + temp1 * eigenvec[0].x,
+                                              b.y + temp1 * eigenvec[0].y,
+                                              1.0 ); 
+                // second focus undefined
+                focus[1].setUndefined();
+                break;
+                
+            default:
+                // both focus undefined
+                focus[0].setUndefined();
+                focus[1].setUndefined();
+        }
+    }
+    
+    public final String toString() {
+        StringBuffer sb = new StringBuffer();
+        if(!app.isReverseLanguage()){//FKH 20040906
+        sb.append(app.getPlain("FocusOf"));
+        sb.append(' ');
+        }
+        sb.append(c.getLabel());
+        if(app.isReverseLanguage()){//FKH 20040906
+        sb.append(' ');
+        sb.append(app.getPlain("FocusOf"));
+        }
+        return sb.toString();
+    }
+}

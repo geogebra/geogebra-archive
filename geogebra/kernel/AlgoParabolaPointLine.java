@@ -1,0 +1,96 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+/*
+ * AlgoParabolaPointLine.java
+ *
+ * Created on 15. November 2001, 21:37
+ */
+
+package geogebra.kernel;
+
+
+
+/**
+ *
+ * @author  Markus
+ * @version 
+ */
+public class AlgoParabolaPointLine extends AlgoElement {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GeoPoint F;  // input    
+    private GeoLine l;  // input    
+    private GeoConic parabola; // output             
+            
+    AlgoParabolaPointLine(Construction cons, String label, GeoPoint F, GeoLine l) {
+        super(cons);
+        this.F = F;
+        this.l = l;                
+        parabola = new GeoConic(cons); 
+        setInputOutput(); // for AlgoElement
+                
+        compute();      
+        parabola.setLabel(label);
+    }   
+    
+    String getClassName() {
+        return "AlgoParabolaPointLine";
+    }
+    
+    // for AlgoElement
+    void setInputOutput() {
+        input = new GeoElement[2];
+        input[0] = F;
+        input[1] = l;
+        
+        output = new GeoElement[1];        
+        output[0] = parabola;        
+        setDependencies(); // done by AlgoElement
+    }    
+    
+    GeoConic getParabola() { return parabola; }
+    GeoPoint getFocus() { return F; }
+    GeoLine getLine() { return l; }
+    
+    // compute parabola with focus F and line l
+    final void compute() {                           
+        parabola.setParabola(F, l);
+    }   
+    
+    final public String toString() {
+        StringBuffer sb = new StringBuffer();
+         if(!app.isReverseLanguage()){//FKH 20040906
+            sb.append(app.getPlain("Parabola"));
+            sb.append(' ');
+            sb.append(app.getPlain("with"));
+            sb.append(' ');
+         }
+        sb.append(app.getPlain("Focus"));
+        sb.append(' ');
+        sb.append(F.getLabel());
+        sb.append(' ');
+        sb.append(app.getPlain("and"));
+        sb.append(' ');
+        sb.append(app.getPlain("Directrix"));
+        sb.append(' ');
+        sb.append(l.getLabel());
+        if(app.isReverseLanguage()){//FKH 20040906
+            sb.append(' ');
+            sb.append(app.getPlain("Parabola"));
+        }
+        return sb.toString();
+    }
+}

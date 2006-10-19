@@ -1,0 +1,94 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+/*
+ * AlgoOrthoVectorVector.java
+ *
+ * Created on 30. August 2001, 21:37
+ */
+
+package geogebra.kernel;
+
+
+
+/**
+ *
+ * @author  Markus
+ * @version 
+ */
+public class AlgoOrthoVectorVector extends AlgoElement {
+    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GeoVector v; // input
+    private GeoVector  n;     // output       
+        
+    /** Creates new AlgoOrthoVectorVector */
+    AlgoOrthoVectorVector(Construction cons, String label, GeoVector v) {        
+        super(cons);
+        this.v = v;                
+        n = new GeoVector(cons); 
+        
+        GeoPoint possStartPoint = v.getStartPoint();
+        if (possStartPoint != null && possStartPoint.isLabelSet()) {
+	        try{
+	            n.setStartPoint(possStartPoint);
+	        } catch (CircularDefinitionException e) {}
+        }
+        
+        setInputOutput(); // for AlgoElement
+        
+        // compute line through P, Q
+        n.z = 0.0d;
+        compute();      
+        n.setLabel(label);
+    }   
+    
+    String getClassName() {
+        return "AlgoOrthoVectorVector";
+    }
+    
+    // for AlgoElement
+    void setInputOutput() {
+        input = new GeoElement[1];        
+        input[0] = v;
+        
+        output = new GeoElement[1];        
+        output[0] = n;        
+        setDependencies(); // done by AlgoElement
+    }    
+    
+    GeoVector getVector() { return n; }    
+    GeoVector getv() { return v; }
+    
+    // line through P normal to v
+    final void compute() {        
+        n.x = -v.y;
+        n.y = v.x;        
+    }   
+    
+    final public String toString() {
+        StringBuffer sb = new StringBuffer();
+        if(!app.isReverseLanguage()){//FKH 20040906
+             sb.append(app.getPlain("OrthogonalVectorOf"));
+             sb.append(' ');
+              }
+         sb.append(v.getLabel());
+         if(app.isReverseLanguage()){//FKH 20040906
+             sb.append(' ');
+             sb.append(app.getPlain("OrthogonalVectorOf"));
+         }
+        return sb.toString();
+    }
+}

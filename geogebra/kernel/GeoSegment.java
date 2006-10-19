@@ -1,0 +1,322 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+package geogebra.kernel;
+
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
+
+import java.util.HashSet;
+
+/**
+ * @author Markus Hohenwarter
+ */
+final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// GeoSegment is constructed by AlgoJoinPointsSegment 
+	private GeoPoint A, B;
+	private double length;
+	private boolean defined;
+	private boolean allowOutlyingIntersections = false;
+	private boolean keepTypeOnGeometricTransform = true; // for mirroring, rotation, ...
+	
+	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
+		super(c);
+		this.A = A;
+		this.B = B;
+		setStartPoint(A);
+		setEndPoint(B);
+	}
+	
+	String getClassName() {	
+		return "GeoSegment";
+ 	}
+	
+	 String getTypeString() {
+		return "Segment";
+	}
+
+	/**
+	 * the copy of a segment is a number (!) with
+	 *  its value set to the segments current length
+	 *
+	public GeoElement copy() {
+		return new GeoNumeric(cons, getLength());   		 
+	}   */     
+	 
+	public GeoElement copyInternal() {
+		GeoSegment seg = new GeoSegment(cons, A, B);
+		seg.setInternal(this);
+		return seg;
+	}
+	
+	public void setInternal(GeoElement geo) {
+		GeoSegment seg = (GeoSegment) geo;
+		
+		A = seg.A;
+		B = seg.B;
+		setStartPoint(A);
+		setEndPoint(B);
+		length = seg.length;
+		defined = seg.defined;
+		super.set(seg);
+	}
+	
+	/** 
+	 * Calculates this segment's length . This method should only be called by
+	 * its parent algorithm of type AlgoJoinPointsSegment
+	 */
+	public void calcLength() {
+		defined = A.isFinite() && B.isFinite();
+		if (defined) length = A.distance(B);
+		else length = Double.NaN;	
+	}
+	
+	public double getLength() {
+		return length;
+	}
+	
+	/*
+	 * overwrite GeoLine methods
+	 */
+	public boolean isDefined() {
+		return defined;
+	}	
+        
+   final boolean showInAlgebraView() {	   
+	   return defined;        
+   }
+   
+   boolean showInEuclidianView() {
+	   return defined;
+   }
+   
+   
+   /** 
+	* Yields true iff startpoint and endpoint of s are equal to
+	* startpoint and endpoint of this segment.
+	*/
+   final public boolean equals(GeoSegment s) {        
+	   return A.equals(s.A) && B.equals(s.B);             	                  
+   }
+	
+   final public String toString() {
+		sbToString.setLength(0);      
+		sbToString.append(label);
+		sbToString.append(" = ");
+		sbToString.append(kernel.format(length));
+	   return sbToString.toString();
+   }      
+   private StringBuffer sbToString = new StringBuffer(50);
+   
+   final public String toValueString() {
+	   return kernel.format(length);
+   }
+   
+	 /**
+     * interface NumberValue
+     */    
+    public MyDouble getNumber() {    	
+        return new MyDouble(kernel,  getLength() );
+    }     
+    
+    final public double getDouble() {
+        return getLength();
+    }
+        
+    final public boolean isConstant() {
+        return false;
+    }
+    
+    final public boolean isLeaf() {
+        return true;
+    }
+    
+    final public HashSet getVariables() {
+        HashSet varset = new HashSet();        
+        varset.add(this);        
+        return varset;          
+    }                   
+    
+    final public ExpressionValue evaluate() { return this; }    
+
+	public boolean isNumberValue() {
+		return true;
+	}
+
+	public boolean isVectorValue() {
+		return false;
+	}
+
+	public boolean isPolynomialInstance() {
+		return false;
+	}   
+	
+	public boolean allowOutlyingIntersections() {
+		return allowOutlyingIntersections;
+	}
+	
+	public void setAllowOutlyingIntersections(boolean flag) {
+		allowOutlyingIntersections = flag;		
+	}
+	
+	public boolean keepsTypeOnGeometricTransform() {		
+		return keepTypeOnGeometricTransform;
+	}
+
+	public void setKeepTypeOnGeometricTransform(boolean flag) {
+		keepTypeOnGeometricTransform = flag;
+	}
+	
+	final public boolean isLimitedPath() {
+		return true;
+	}
+	
+    public boolean isIntersectionPointIncident(GeoPoint p, double eps) {
+    	if (allowOutlyingIntersections)
+			return isOnFullLine(p, eps);
+		else
+			return isOnPath(p, eps);
+    }
+
+	
+    /** returns true if P lies on this segment */
+    public boolean isOnPath(GeoPoint P, double eps) {       	
+    	// check if P lies on line first
+    	if (!isOnFullLine(P, eps))
+    		return false;
+    	
+    	// idea: calculate path parameter and check
+		//       if it is in [0, 1]
+		
+		// remember the old values
+		double px = P.x, py = P.y, pz = P.z;
+		tempPP.set(P.pathParameter);
+
+		super.pointChanged(P);			
+		
+		boolean result = 	P.pathParameter.t >= -eps && 
+							P.pathParameter.t <= 1 + eps;
+	
+		// restore old values
+		P.x = px; P.y = py; P.z = pz;
+		P.pathParameter.set(tempPP);
+		
+		return result;
+    }
+    private PathParameter tempPP = new PathParameter();
+    
+
+	
+	/* 
+	 * Path interface
+	 */	 
+	public void pointChanged(GeoPoint P) {
+		super.pointChanged(P);
+			
+		// ensure that the point doesn't get outside the segment
+		// i.e. ensure 0 <= t <= 1 
+		if (P.pathParameter.t < 0.0) {
+			P.x = A.x;
+			P.y = A.y;
+			P.z = A.z; 
+			P.pathParameter.t = 0.0;
+		} else if  (P.pathParameter.t > 1.0) {
+			P.x = B.x;
+			P.y = B.y;
+			P.z = B.z; 
+			P.pathParameter.t = 1.0;
+		}
+	}
+
+	public void pathChanged(GeoPoint P) {
+		// calc point for given parameter
+		P.x = A.inhomX + P.pathParameter.t * y;
+		P.y = A.inhomY - P.pathParameter.t * x;
+		P.z = 1.0;		
+	}
+	
+	/**
+	 * Returns the smallest possible parameter value for this
+	 * path (may be Double.NEGATIVE_INFINITY)
+	 * @return
+	 */
+	public double getMinParameter() {
+		return 0;
+	}
+	
+	/**
+	 * Returns the largest possible parameter value for this
+	 * path (may be Double.POSITIVE_INFINITY)
+	 * @return
+	 */
+	public double getMaxParameter() {
+		return 1;
+	}
+	
+	public PathMover createPathMover() {
+		return new PathMoverGeneric(this);
+	}	
+	
+	/**
+     * returns all class-specific xml tags for saveXML
+     */
+    String getXMLtags() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(super.getXMLtags());
+		
+        // allowOutlyingIntersections
+        sb.append("\t<outlyingIntersections val=\"");
+        sb.append(allowOutlyingIntersections);
+        sb.append("\"/>\n");
+        
+        // keepTypeOnGeometricTransform
+        sb.append("\t<keepTypeOnTransform val=\"");
+        sb.append(keepTypeOnGeometricTransform);
+        sb.append("\"/>\n");
+        
+        return sb.toString();   
+    }
+
+	/**
+	 * creates new transformed segment
+	 */
+    public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
+			GeoLine l, GeoVector vec, NumberValue n) {	
+
+		if (keepTypeOnGeometricTransform) {			
+			// mirror endpoints
+			GeoPoint [] points = {getStartPoint(), getEndPoint()};
+			points = kernel.transformPoints(type, points, Q, l, vec, n);	
+			// create SEGMENT
+			GeoElement [] geos = {kernel.Segment(label, points[0], points[1]), points[0], points[1]};	
+			return geos;	
+		} 
+		else {
+			//	create LINE
+			GeoLine transformedLine = kernel.getTransformedLine(type, this, Q, l, vec, n);
+			transformedLine.setLabel(label);
+			GeoElement [] geos = {transformedLine};
+			return geos;
+		}							
+	}
+	
+	public boolean isGeoSegment() {
+		return true;
+	}
+	
+}

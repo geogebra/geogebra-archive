@@ -1,0 +1,10 @@
+package geogebra.kernel.roots;
+
+public interface RealRootDerivFunction extends RealRootFunction {
+
+	/**
+	 * returns array with function's value and derivative's value
+	 * @param x	 
+	 */
+	public double [] evaluateDerivFunc(double x);
+}

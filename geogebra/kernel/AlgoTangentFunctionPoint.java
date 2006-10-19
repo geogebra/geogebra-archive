@@ -1,0 +1,117 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+package geogebra.kernel;
+
+import geogebra.kernel.arithmetic.Function;
+
+public class AlgoTangentFunctionPoint extends AlgoElement {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GeoPoint P; // input
+    private GeoFunction f; // input
+    private GeoLine tangent; // output  
+
+    private GeoPoint T;
+
+    AlgoTangentFunctionPoint(
+        Construction cons,
+        String label,
+        GeoPoint P,
+        GeoFunction f) {
+        super(cons);
+        this.P = P;
+        this.f = f;
+
+        tangent = new GeoLine(cons);
+        T = new GeoPoint(cons);
+        tangent.setStartPoint(T);
+
+        setInputOutput(); // for AlgoElement                
+        compute();
+        tangent.setLabel(label);
+    }
+
+    String getClassName() {
+        return "AlgoTangentFunctionPoint";
+    }
+
+    // for AlgoElement
+    void setInputOutput() {
+        input = new GeoElement[2];
+        input[0] = P;
+        input[1] = f;
+
+        output = new GeoElement[1];
+        output[0] = tangent;
+        setDependencies(); // done by AlgoElement
+    }
+
+    GeoLine getTangent() {
+        return tangent;
+    }
+    GeoFunction getFunction() {
+        return f;
+    }
+    GeoPoint getPoint() {
+        return P;
+    }
+    GeoPoint getTangentPoint() {
+        return T;
+    }
+
+    // calc tangent at x=a
+    final void compute() {
+        if (!(f.isDefined() && P.isDefined())) {
+            tangent.setUndefined();
+            return;
+        }
+
+        // first derivative
+        Function df = f.getFunction().getDerivative(1);
+        if (df == null) {
+            tangent.setUndefined();
+            return;
+        }
+
+        // calc the tangent;
+        double a = P.inhomX;
+        double fa = f.evaluate(a);
+        double slope = df.evaluate(a);
+        tangent.setCoords(-slope, 1.0, a * slope - fa);
+        T.setCoords(a, fa, 1.0);
+    }
+
+    public final String toString() {
+        StringBuffer sb = new StringBuffer();
+        if (!app.isReverseLanguage()) { //FKH 20040906
+            sb.append(app.getPlain("TangentLine"));
+            sb.append(' ');
+        }
+        sb.append(app.getPlain("to"));
+        sb.append(' ');
+        sb.append(f.getLabel());
+        sb.append(' ');
+        sb.append(app.getPlain("in"));
+        sb.append(" x = x(");
+        sb.append(P.getLabel());
+        sb.append(')');
+        if (app.isReverseLanguage()) { //FKH 20040906
+            sb.append(' ');
+            sb.append(app.getPlain("TangentLine"));
+        }
+        return sb.toString();
+    }
+}

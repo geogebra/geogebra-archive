@@ -1,0 +1,89 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
+/*
+ * AlgoLengthVector.java
+ *
+ * Created on 30. August 2001, 21:37
+ */
+
+package geogebra.kernel;
+
+
+/**
+ * Length of a vector or point.
+ * @author  Markus
+ * @version 
+ */
+public class AlgoLengthVector extends AlgoElement {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GeoVec3D v; // input
+    private GeoNumeric num; // output 
+    
+    private double [] coords = new double[2];
+    
+    AlgoLengthVector(Construction cons, String label, GeoVec3D v) {
+        super(cons);
+        this.v = v;
+        num = new GeoNumeric(cons);
+        setInputOutput(); // for AlgoElement
+
+        // compute length
+        compute();
+        num.setLabel(label);
+    }
+
+    String getClassName() {
+        return "AlgoLengthVector";
+    }
+
+    // for AlgoElement
+    void setInputOutput() {
+        input = new GeoElement[1];
+        input[0] = v;
+
+        output = new GeoElement[1];
+        output[0] = num;
+        setDependencies(); // done by AlgoElement
+    }
+
+    GeoNumeric getLength() {
+        return num;
+    }
+    GeoVec3D getv() {
+        return v;
+    }
+
+    // calc length of vector v   
+    final void compute() {
+    	v.getInhomCoords(coords);
+        num.setValue(GeoVec2D.length(coords[0], coords[1]));
+    }
+
+    final public String toString() {
+        StringBuffer sb = new StringBuffer();
+        if (!app.isReverseLanguage()) { //FKH 20040906
+            sb.append(app.getPlain("LengthOf"));
+            sb.append(" ");
+        }
+        sb.append(v.getLabel());
+        if (app.isReverseLanguage()) { //FKH 20040906
+            sb.append(' ');
+            sb.append(app.getPlain("LengthOf"));
+        }
+        return sb.toString();
+    }
+}
