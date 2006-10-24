@@ -853,16 +853,15 @@ public class Kernel {
 	/** 
 	 * Sequence command:
  	 * Sequence[ <expression>, <number-var>, <from>, <to>, <step> ]  
+ 	 * @return array with GeoList object and its list items
 	 */
-	final public GeoList Sequence(String label, 
+	final public GeoElement [] Sequence(String [] labels, 
 			GeoElement expression, GeoNumeric localVar, 
 			NumberValue from, NumberValue to, NumberValue step) {
 		
-			AlgoSequence algo = new AlgoSequence(cons, label, expression, localVar, from, to, step);
-			return algo.getList();				
-	}
-
-	
+			AlgoSequence algo = new AlgoSequence(cons, labels, expression, localVar, from, to, step);
+			return algo.getOutput();				
+	}	
 	
 	/** Number dependent on arithmetic expression with variables,
 	 * represented by a tree. e.g. t = 6z - 2

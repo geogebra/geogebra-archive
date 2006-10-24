@@ -54,7 +54,7 @@ public class AlgoPolygon extends AlgoElement {
         // compute angle
         compute();          
         
-        setLabels(labels);
+        initLabels(labels);
     }   
         
     String getClassName() {
@@ -101,7 +101,7 @@ public class AlgoPolygon extends AlgoElement {
         }
     }
     
-    private void setLabels(String [] labels) {
+    private void initLabels(String [] labels) {
         // additional labels for the polygon's segments
         if (labels != null && labels.length == segments.length + 1) {
             for (int i=0; i < segments.length; i++) {

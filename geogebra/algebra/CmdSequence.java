@@ -31,16 +31,13 @@ final public  GeoElement[] process(Command c) throws MyError {
                	 && (ok[2] = arg[2].isNumberValue())
                	 && (ok[3] = arg[3].isNumberValue()))
                {
-                   GeoElement[] ret =
-                       {
-                            kernel.Sequence(
-                                c.getLabel(),
+                   return  kernel.Sequence(
+                                c.getLabels(),
                                 arg[0],
                                 (GeoNumeric) arg[1],
                                 (NumberValue) arg[2],
                                 (NumberValue) arg[3],
-                                null)};
-                   return ret;
+                                null);
                } else {          
                	for (int i=0; i < n; i++) {
                		if (!ok[i]) throw argErr(app, c.getName(), arg[i]);	
@@ -54,16 +51,13 @@ final public  GeoElement[] process(Command c) throws MyError {
             	 && (ok[3] = arg[3].isNumberValue())
             	 && (ok[4] = arg[4].isNumberValue()) )
             {
-                GeoElement[] ret =
-                    {
-                         kernel.Sequence(
-                             c.getLabel(),
+                return kernel.Sequence(
+                             c.getLabels(),
                              arg[0],
                              (GeoNumeric) arg[1],
                              (NumberValue) arg[2],
                              (NumberValue) arg[3],
-                             (NumberValue) arg[4])};
-                return ret;
+                             (NumberValue) arg[4]);
             } else {          
             	for (int i=0; i < n; i++) {
             		if (!ok[i]) throw argErr(app, c.getName(), arg[i]);	

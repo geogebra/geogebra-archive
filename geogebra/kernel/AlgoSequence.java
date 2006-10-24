@@ -37,16 +37,28 @@ public class AlgoSequence extends AlgoElement {
 	private NumberValue  var_from, var_to, var_step;
     private GeoList list; // output
     
+    private String [] labels;
     private AlgoElement algoExp; // parent algo of expression 
     private double last_from, last_to, last_step;    
     private boolean expIsGeoFunction, isEmpty;
     private Function last_function;
     private ArrayList copyGeos = new ArrayList(50); // reuse copied geos, so remember them in a list
 
-    AlgoSequence(Construction cons, String label, GeoElement expression, GeoNumeric var, 
+    /**
+     * Creates a new algorithm to create a sequence of objects that form a list.
+     * @param cons
+     * @param labels: labels[0] for the list and the rest for the list items
+     * @param expression
+     * @param var
+     * @param var_from
+     * @param var_to
+     * @param var_step
+     */
+    AlgoSequence(Construction cons, String [] labels, GeoElement expression, GeoNumeric var, 
     		NumberValue var_from, NumberValue var_to, NumberValue var_step) {
         super(cons);
                 
+        this.labels = labels;
         this.expression = expression;
         this.var = var;
         this.var_from = var_from;
@@ -58,10 +70,13 @@ public class AlgoSequence extends AlgoElement {
     	expIsGeoFunction = expression.isGeoFunction();    	
     	
         list = new GeoList(cons, expression.getClass());
+        
         setInputOutput(); // for AlgoElement
         
-        list.setLabel(label);
+        // we set the list's label first        
+        list.setLabel((labels != null) ? labels[0] : null);
         compute();                
+        list.update();
     }
 
     String getClassName() {
@@ -77,9 +92,13 @@ public class AlgoSequence extends AlgoElement {
         input[2] = var_from.toGeoElement();
         input[3] = var_to.toGeoElement();
         if (len == 5)
-        	input[4] = var_step.toGeoElement();                      
-
-        updateOutput();      
+        	input[4] = var_step.toGeoElement();  
+        
+        // note: output is not really set here as it's length my change,
+        // so updateOuputArray() is called in createNewList()
+        output = new GeoElement[1];
+    	output[0] = list;
+           
         setDependencies(); // done by AlgoElement
     }
     
@@ -88,7 +107,7 @@ public class AlgoSequence extends AlgoElement {
      * Whenever the number of these objects changes,
      * we have to call this method.    
      */    		
-    private void updateOutput() {
+    private void updateOutputArray() {
     	int size = list.size();
     	output = new GeoElement[size+1];
     	output[0] = list;
@@ -102,7 +121,7 @@ public class AlgoSequence extends AlgoElement {
 
     GeoList getList() {
         return list;
-    }
+    }      
     
     final void compute() {    	
     	// create sequence for expression(var) by changing var according to the given range
@@ -156,8 +175,8 @@ public class AlgoSequence extends AlgoElement {
 					copy = (GeoElement) copyGeos.get(i);
 				} else {
 					// create new object and add it to end of list
-					copy = expression.copyInternal();
-					copy.setParentAlgorithm(this);
+					copy = expression.copyInternal();	
+					// TODO: add description like exp for i=20
 					
 					// visual properties
 					copy.setVisualStyle(list);	
@@ -170,8 +189,14 @@ public class AlgoSequence extends AlgoElement {
 				// now we have to make sure that this copy
 				// is also part of our list
 				if (i >= listSize) {
-					// label object and add to list				
-					copy.setLabel(list.label);						
+					// label object: maybe we got loaded labels
+					if (labels != null && labels.length > i+1)
+						copy.setLabel(labels[i+1]);	
+					else 
+						// use list's label to get an indexed label
+						copy.setLabel(list.label);		
+					
+					// add to list	
 					list.add(copy);
 				}
 				
@@ -213,7 +238,7 @@ public class AlgoSequence extends AlgoElement {
     	}
     	
     	// update output array
-    	updateOutput();
+    	updateOutputArray();
     }        
     
     private void updateListItems(double from, double to, double step) {     	    
@@ -250,9 +275,7 @@ public class AlgoSequence extends AlgoElement {
 		} else {
 	    	// all other objects are copies that can be set directly
 			copy.set(orig);
-		}		
-		
-		copy.updateCascade();
+		}						
     }   
     
 
