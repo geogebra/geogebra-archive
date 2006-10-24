@@ -19,6 +19,7 @@ package geogebra;
  */
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GeoGebra;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;

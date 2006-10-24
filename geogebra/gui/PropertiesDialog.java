@@ -10,8 +10,13 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
+import geogebra.ConstructionProtocol;
+import geogebra.GeoElementSelectionListener;
+import geogebra.MySmallJButton;
+import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;

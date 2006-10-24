@@ -835,7 +835,11 @@ public abstract class GeoElement
 		cons.putLabel(this); // add new table entry    
 		setAlgebraDescription();
 		kernel.notifyRename(this); // tell views   
+		
+		//TODO: add updateCascade() for lists
 		update();
+		
+		
 	}
 
 	/**
@@ -952,7 +956,15 @@ public abstract class GeoElement
 				str = "loc" + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
-		} 
+		} else if (isGeoList()) {
+			int counter = 0;			
+			String str;
+			do {
+				counter++;
+				str = "L" + counter;
+			} while (!cons.isFreeLabel(str));
+			return str;
+		}
 		else {
 			chars = lowerCaseLabels;
 		}

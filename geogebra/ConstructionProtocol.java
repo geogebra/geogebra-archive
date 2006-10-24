@@ -16,6 +16,7 @@ import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.GraphicSizePanel;
 import geogebra.gui.PrintPreview;
+import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;

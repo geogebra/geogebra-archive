@@ -13,7 +13,7 @@
 package geogebra.export;
 
 import geogebra.Application;
-import geogebra.TitlePanel;
+import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.util.CopyURLToFile;

@@ -10,7 +10,9 @@
  * version.
  */
 
-package geogebra;
+package geogebra.gui;
+
+import geogebra.Application;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

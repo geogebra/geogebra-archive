@@ -10,8 +10,9 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
 import geogebra.algebra.AlgebraInput;
 import geogebra.algebra.AlgebraView;
 import geogebra.euclidian.EuclidianView;

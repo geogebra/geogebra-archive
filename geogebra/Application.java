@@ -25,8 +25,17 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.GraphicExportDialog;
 import geogebra.export.WorksheetExportDialog;
+import geogebra.gui.DrawingPadPopupMenu;
+import geogebra.gui.EuclidianPropDialog;
+import geogebra.gui.GUIController;
+import geogebra.gui.GeoGebra;
 import geogebra.gui.HelpBrowser;
+import geogebra.gui.ModeToggleButtonGroup;
+import geogebra.gui.ModeToggleMenu;
+import geogebra.gui.MyPopupMenu;
 import geogebra.gui.PrintPreview;
+import geogebra.gui.PropertiesDialog;
+import geogebra.gui.SliderDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -387,7 +396,7 @@ public class Application {
         isSaved = true;             
     }      
     
-    void initInBackground() {
+    public void initInBackground() {
     	// init file chooser and properties dialog
     	// in a background task
     	Thread runner = new Thread() {
@@ -3790,7 +3799,7 @@ public class Application {
     }
 
     // returns true for YES or NO and false for CANCEL
-    boolean saveCurrentFile() {    	
+    public boolean saveCurrentFile() {    	
     	if (propDialog != null && propDialog.isShowing()) 
     		propDialog.cancel();
     	euclidianView.reset();

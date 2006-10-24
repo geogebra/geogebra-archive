@@ -33,9 +33,11 @@ public class GeoList extends GeoElement {
 	private ArrayList geoList;	  
 	private boolean isDefined = true;
     
-    public GeoList(Construction c) { 
+    public GeoList(Construction c, Class listType) { 
     	super(c);     	
-    	geoList = new ArrayList();
+    	geoList = new ArrayList();    	
+    	
+    	setLabelVisible(false);
     }
              
     public GeoList(GeoList list) {
@@ -94,11 +96,15 @@ public class GeoList extends GeoElement {
     }
     
     public final void add(GeoElement geo) {
-    	geoList.add(geo);
+    	geoList.add(geo);    	    	
     }
     
     public final void remove(GeoElement geo) {
     	geoList.remove(geo);
+    }
+    
+    public final void remove(int index) {
+    	geoList.remove(index);
     }
     
     /**
@@ -106,7 +112,7 @@ public class GeoList extends GeoElement {
      */
     public GeoElement get(int index) {
     	return (GeoElement) geoList.get(index);
-    }
+    }       
     
     public final int size() {
     	return geoList.size();
@@ -131,15 +137,17 @@ public class GeoList extends GeoElement {
        
        // first (n-1) elements
        int lastIndex = geoList.size()-1;
-       for (int i=0; i < lastIndex; i++) {
-    	   GeoElement geo = (GeoElement) geoList.get(i);
-    	   sbBuildValueString.append(geo.getLabel());
-    	   sbBuildValueString.append(", ");
+       if (lastIndex > -1) {
+	       for (int i=0; i < lastIndex; i++) {
+	    	   GeoElement geo = (GeoElement) geoList.get(i);
+	    	   sbBuildValueString.append(geo.getLabel());
+	    	   sbBuildValueString.append(", ");
+	       }
+	       
+	       // last element
+	       GeoElement geo = (GeoElement) geoList.get(lastIndex);
+		   sbBuildValueString.append(geo.getLabel());
        }
-       
-       // last element
-       GeoElement geo = (GeoElement) geoList.get(lastIndex);
-	   sbBuildValueString.append(geo.getLabel());
 	   
        sbBuildValueString.append(STR_CLOSE);       
        return sbBuildValueString;   	

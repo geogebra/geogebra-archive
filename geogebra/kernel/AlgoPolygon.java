@@ -10,32 +10,41 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-/*
- * Polygon P[0], ..., P[n]
- *
- */
-
 package geogebra.kernel;
 
 
 /**
- *
- * @author  Markus
+ * Creates a Polygon from a given list of points or point array.
+ * 
+ * @author  Markus Hohenwarter
  * @version 
  */
 public class AlgoPolygon extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint [] points;  // input
+	private GeoList geoList;  // alternative input
     private GeoPolygon poly;     // output
     private GeoSegment [] segments;   
-        
-    AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {       
+    
+    AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
+    	this(cons, labels, null, geoList);
+    }
+    
+    AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {
+    	this(cons, labels, points, null);
+    }
+    	
+    private AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList) {
         super(cons);
         this.points = points;           
+        this.geoList = geoList;
+          
+        // TODO: implement polygon for lists
+        if (geoList != null) {
+        //	updatePointArray();
+        }
+                
         poly = new GeoPolygon(cons, points);                       
         createSegments();        
         poly.setSegments(segments);

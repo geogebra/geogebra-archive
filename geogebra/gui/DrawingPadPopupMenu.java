@@ -16,8 +16,9 @@ the Free Software Foundation; either version 2 of the License, or
  * Created on 24. J�nner 2002, 14:11
  */
 
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 

@@ -71,6 +71,8 @@ public abstract class Drawable {
 	}
 	
 	final void drawLabel(Graphics2D g2) {
+		if (labelDesc == null) return;
+		
 		// no index in label
 		if (oldLabelDesc == labelDesc && !labelHasIndex) {
 			g2.drawString(labelDesc, xLabel, yLabel);

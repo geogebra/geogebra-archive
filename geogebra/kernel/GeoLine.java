@@ -95,7 +95,8 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 	 * is not overwritten by subclasses like isIntersectionPointIncident()
 	 */
 	final boolean isOnFullLine(GeoPoint P, double eps) {		
-		return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps;
+		//return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps;
+		return Math.abs(x * P.x + y * P.y + z * P.z) < eps;
 	}
     
     /** returns true if this line and g are parallel */

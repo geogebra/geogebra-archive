@@ -16,8 +16,9 @@ the Free Software Foundation; either version 2 of the License, or
  * Created on 21. April 2002
  */
 
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
 import geogebra.algebra.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -70,7 +71,7 @@ public class MyPopupMenu extends JPopupMenu {
     }
 
     /** Creates new MyPopupMenu for GeoElement*/
-    MyPopupMenu(Application app, GeoElement geo, Point location) {
+    public MyPopupMenu(Application app, GeoElement geo, Point location) {
         this(app);
         this.geo = geo;
         //this.location = location;                               

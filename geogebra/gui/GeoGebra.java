@@ -15,13 +15,16 @@ the Free Software Foundation; either version 2 of the License, or
  *
  * @author Markus Hohenwarter
  */
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
@@ -38,10 +41,12 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static ArrayList instances = new ArrayList();
+	private static GeoGebra activeInstance;
 	private Application app;
 	
 	public GeoGebra() {	
-		instances.add(this);				
+		instances.add(this);	
+		activeInstance = this;
 	}
 	
 	public void dispose() {
@@ -66,6 +71,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	}
 	
 	public void windowGainedFocus(WindowEvent arg0) {
+		activeInstance = this;
 		app.updateMenusForInstances();
 		System.gc();
 	}
@@ -108,31 +114,22 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
         createNewWindow(args);
 
         
-//      TODO: Mac double-clicking: how to include MRJAdapter with separate jar file?
-        /*
         // check if we run on a Mac
         String lcOSName = System.getProperty("os.name").toLowerCase();
         boolean MAC_OS = lcOSName.startsWith("mac");
         
-        try {
-			// requires MRJAdapter.jar in classpath        	
-	        if (MAC_OS) {	
-	        	// handle MacOS X file opening
-				net.roydesign.app.Application.getInstance().addOpenDocumentListener(
-						new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;							
-						        // get filename and build args array
-						        File fileToOpen = mac_evt.getFile();
-						        GeoGebra lastFrame = getLastInstance();
-						        if (lastFrame != null)
-						        	lastFrame.getApplication().loadFile(fileToOpen);						    
-						     }
-					 });
-	        } 
-        } catch (Exception e) {
-        	System.err.println("MRJAdapter.jar not found");
-        }*/
+        if (MAC_OS) {	
+        	// handle MacOS X file opening when ggb file is double clicked
+			net.roydesign.app.Application.getInstance().addOpenDocumentListener(
+					new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;							
+					        // get filename and build args array
+					        File fileToOpen = mac_evt.getFile();						       
+					        activeInstance.getApplication().loadFile(fileToOpen);						    
+					     }
+				 });
+        }         
     }
     
     public static GeoGebra createNewWindow(String [] args) {
@@ -156,11 +153,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		return instances.size();
 	}
     
-    static ArrayList getInstances() {
+    public static ArrayList getInstances() {
     	return instances;
     }
     
-    static void updateAllTitles() {
+    static GeoGebra getInstance(int i) {
+    	return (GeoGebra) instances.get(i);
+    }
+    
+    public static void updateAllTitles() {
     	for (int i=0; i < instances.size(); i++) {
 			Application app = ((GeoGebra) instances.get(i)).app;
 			app.updateTitle();
@@ -173,7 +174,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
      * @param file
      * @return GeoGebra instance with file open or null
      */
-    static GeoGebra getInstanceWithFile(File file) {
+    public static GeoGebra getInstanceWithFile(File file) {
     	if (file == null) return null;    
     	
     	String absPath = file.getAbsolutePath();
