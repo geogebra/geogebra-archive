@@ -124,15 +124,15 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int AXES_LINE_TYPE_ARROW = 1;
 
 	public static final int POINT_STYLE_DOT = 0;
-
 	public static final int POINT_STYLE_CROSS = 1;
-
-	public static final int POINT_STYLE_CIRCLE = 2;
-
+	public static final int POINT_STYLE_CIRCLE = 2;	
+	
+	public static final int RIGHT_ANGLE_STYLE_DOT = 0;
+	public static final int RIGHT_ANGLE_STYLE_NONE = 1;
+	public static final int RIGHT_ANGLE_STYLE_SQUARE = 2;		
+		
 	public static final int DEFAULT_POINT_SIZE = 3;
-
 	public static final int DEFAULT_LINE_THICKNESS = 2;
-
 	public static final int DEFAULT_ANGLE_SIZE = 30;
 
 	public static final int DEFAULT_LINE_TYPE = LINE_TYPE_FULL;

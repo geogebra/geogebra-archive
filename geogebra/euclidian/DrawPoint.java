@@ -41,10 +41,8 @@ public final class DrawPoint extends Drawable {
     
 	private int diameter, selDiameter, pointSize;
     boolean isVisible, labelVisible;   
-	private Ellipse2D.Double circleSel = new Ellipse2D.Double(); // for selection
-	private Ellipse2D.Double circle = new Ellipse2D.Double(); // for dot
-	private Line2D.Double line1 = new Line2D.Double(); // for cross
-	private Line2D.Double line2 = new Line2D.Double();
+	private Ellipse2D.Double circle, circleSel; // for dot and selection
+	private Line2D.Double line1, line2;// for cross	
     private double [] coords = new double[2];
     
     private static BasicStroke borderStroke = EuclidianView.getDefaultStroke();
@@ -87,25 +85,41 @@ public final class DrawPoint extends Drawable {
 			SELECTION_OFFSET = pointSize / 2 + 1;
 			selDiameter =  diameter + 2 * SELECTION_OFFSET ;			
         }        
-         			
+         		
         double xUL = coords[0] - pointSize;
-        double yUL =  coords[1] - pointSize;        
-        circleSel.setFrame(xUL - SELECTION_OFFSET, 
-				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
-        circle.setFrame(xUL, yUL, diameter, diameter); 
+        double yUL = coords[1] - pointSize;   
         
-        if (view.pointStyle == EuclidianView.POINT_STYLE_CROSS) {    	
-     		double xL = coords[0] - pointSize;
-    	    double xR = coords[0] + pointSize;
-    		double yT = coords[1] - pointSize;
-    		double yB = coords[1] + pointSize;
-    		
-    		line1.setLine(xL, yT, xR, yB);
-    		line2.setLine(xL, yB, xR, yT);     		
-    	}
-        
-        if (crossStrokes[pointSize] == null)
-			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+        switch (view.pointStyle) {	       		        
+        	case EuclidianView.POINT_STYLE_CROSS:        		
+        	    double xR = coords[0] + pointSize;        		
+        		double yB = coords[1] + pointSize;
+        		
+        		if (line1 == null) {
+        			line1 = new Line2D.Double();
+        			line2 = new Line2D.Double();
+        		}        		
+        		line1.setLine(xUL, yUL, xR, yB);
+        		line2.setLine(xUL, yB, xR, yUL);
+        		
+        		if (crossStrokes[pointSize] == null)
+        			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+        		break;
+        		        	
+        	case EuclidianView.POINT_STYLE_CIRCLE:
+        		if (crossStrokes[pointSize] == null)
+        			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+        	
+        	// case EuclidianView.POINT_STYLE_DOT:
+        	default:			        
+		        if (circle == null) {
+		        	circle = new Ellipse2D.Double();
+		        	circleSel = new Ellipse2D.Double();
+		        }		        
+		        
+		        circle.setFrame(xUL, yUL, diameter, diameter); 
+		        circleSel.setFrame(xUL - SELECTION_OFFSET, 
+						yUL - SELECTION_OFFSET, selDiameter, selDiameter);
+        }                                 
 		
 		// draw trace
 		if (P.trace) {
@@ -154,6 +168,7 @@ public final class DrawPoint extends Drawable {
         			g2.draw(circle);  										                                                               		
            		break;
             	
+           		// case EuclidianView.POINT_STYLE_CIRCLE:
             	default:
             		// draw a dot
             		if (geo.doHighlighting()) {

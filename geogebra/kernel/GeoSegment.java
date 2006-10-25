@@ -34,6 +34,14 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true; // for mirroring, rotation, ...
 	
+	public static final int SEGMENT_DECORATION_NONE = 0;
+	public static final int SEGMENT_DECORATION_ONE_TICK = 1;
+	public static final int SEGMENT_DECORATION_TWO_TICKS = 2;
+	public static final int SEGMENT_DECORATION_THREE_TICKS = 3;
+	
+	private int decorationType;
+	
+	
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
 		super(c);
 		this.A = A;
@@ -317,6 +325,14 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	
 	public boolean isGeoSegment() {
 		return true;
+	}
+
+	public int getDecorationType() {
+		return decorationType;
+	}
+
+	public void setDecorationType(int decorationType) {
+		this.decorationType = decorationType;
 	}
 	
 }

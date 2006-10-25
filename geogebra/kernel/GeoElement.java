@@ -238,8 +238,22 @@ public abstract class GeoElement
 	// line thickness and line type: s	
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
 	public int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
-	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;
-
+	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;		
+	
+	// decoration types
+	public int decorationType;
+	
+	public static final int DECORATION_NONE = 0;
+	// segment decorations
+	public static final int DECORATION_SEGMENT_ONE_TICK = 1;
+	public static final int DECORATION_SEGMENT_TWO_TICKS = 2;
+	public static final int DECORATION_SEGMENT_THREE_TICKS = 3;
+	// angle decorations
+	public static final int DECORATION_ANGLE_TWO_ARCS = 1;
+	public static final int DECORATION_ANGLE_THREE_ARCS = 2;
+	public static final int DECORATION_ANGLE_TICK_TWO_ARCS = 4;
+	public static final int DECORATION_ANGLE_TICK_THREE_ARCS = 5;			
+	
 	// public int geoID;    
 	//  static private int geoCounter = 0;
 	private AlgoElement algoParent = null; // Parent Algorithm
@@ -408,7 +422,7 @@ public abstract class GeoElement
 	
 	public boolean isGeoList() {
 		return false;
-	}
+	}		
 
 	/**
 	 * Sets all visual values from given GeoElement. 
@@ -448,6 +462,7 @@ public abstract class GeoElement
 		// note: line thickness in Drawable is calculated as lineThickness / 2.0f
 		lineThickness = geo.lineThickness;
 		lineType = geo.lineType;	
+		decorationType = geo.decorationType;
 	}
 
 	/**
@@ -836,10 +851,7 @@ public abstract class GeoElement
 		setAlgebraDescription();
 		kernel.notifyRename(this); // tell views   
 		
-		//TODO: add updateCascade() for lists
-		update();
-		
-		
+		update();		
 	}
 
 	/**
