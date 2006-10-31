@@ -27,6 +27,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
+//added by Loïc
+import geogebra.kernel.GeoSegment;
+
 /**
  *
  * @author  Markus Hohenwarter
@@ -119,7 +122,63 @@ implements Previewable {
             }		                                                
         }
     }
-    
+   private void mark(Graphics2D g2){
+		geogebra.kernel.GeoSegment seg=(GeoSegment)s;
+		switch(seg.getDecorationType()){
+			case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+		 		double midX=(coordsA[0]+coordsB[0])/2;
+				double midY=(coordsA[1]+coordsB[1])/2;
+	 			double angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
+		 		double cos=Math.cos(angle);
+		 		double sin=Math.sin(angle);
+	 			int x1=(int)(midX-4.5*cos+0.5);
+		 		int x2=(int)(midX+4.5*cos+0.5);
+		 		int y1=(int)(midY-4.5*sin+0.5);
+		 		int y2=(int)(midY+4.5*sin+0.5);		 		
+		 		g2.drawLine(x1,y1,x2,y2);
+		 	break;
+		 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+		 		midX=(coordsA[0]+coordsB[0])/2;
+		 		midY=(coordsA[1]+coordsB[1])/2;
+		 		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
+		 		cos=Math.cos(angle);
+		 		sin=Math.sin(angle);
+		 		x1=(int)(midX-2*sin-4.5*cos+0.5);
+		 		x2=(int)(midX-2*sin+4.5*cos+0.5);
+		 		y1=(int)(midY+2*cos-4.5*sin+0.5);
+		 		y2=(int)(midY+2*cos+4.5*sin+0.5);
+		 		g2.drawLine(x1,y1,x2,y2);
+		 		x1=(int)(midX+2*sin-4.5*cos+0.5);
+		 		x2=(int)(midX+2*sin+4.5*cos+0.5);
+		 		y1=(int)(midY-2*cos-4.5*sin+0.5);
+		 		y2=(int)(midY-2*cos+4.5*sin+0.5);
+		 		g2.drawLine(x1,y1,x2,y2);
+		 	break;
+		 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+		 		midX=(coordsA[0]+coordsB[0])/2;
+		 		midY=(coordsA[1]+coordsB[1])/2;
+		 		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
+		 		cos=Math.cos(angle);
+		 		sin=Math.sin(angle);
+		 		x1=(int)(midX-4.5*cos+0.5);
+		 		x2=(int)(midX+4.5*cos+0.5);
+		 		y1=(int)(midY-4.5*sin+0.5);
+		 		y2=(int)(midY+4.5*sin+0.5);
+		 		g2.drawLine(x1,y1,x2,y2);
+		 		x1=(int)(midX-4*sin-4.5*cos+0.5);
+		 		x2=(int)(midX-4*sin+4.5*cos+0.5);
+		 		y1=(int)(midY+4*cos-4.5*sin+0.5);
+		 		y2=(int)(midY+4*cos+4.5*sin+0.5);
+		 		g2.drawLine(x1,y1,x2,y2);
+		 		x1=(int)(midX+4*sin-4.5*cos+0.5);
+		 		x2=(int)(midX+4*sin+4.5*cos+0.5);
+		 		y1=(int)(midY-4*cos-4.5*sin+0.5);
+		 		y2=(int)(midY-4*cos+4.5*sin+0.5);
+		 		g2.drawLine(x1,y1,x2,y2);
+		 		break;
+		 }
+	}
+	// Loïc>
 	final public void draw(Graphics2D g2) {
         if (isVisible) {		        	
             if (geo.doHighlighting()) {
@@ -130,9 +189,10 @@ implements Previewable {
             
             g2.setPaint(s.objColor);             
             g2.setStroke(objStroke);            
-			g2.draw(line);            
-                        
-            if (labelVisible) {
+			g2.draw(line);
+			//added by Loïc
+			mark(g2);
+	        if (labelVisible) {
 				g2.setPaint(s.labelColor);
 				g2.setFont(view.fontLine);
 				drawLabel(g2);

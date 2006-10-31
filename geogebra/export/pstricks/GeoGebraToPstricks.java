@@ -38,10 +38,9 @@ import java.util.Iterator;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Font;
-import java.awt.Toolkit;
+
 /**
  * @author Le Coq loïc
  */
@@ -855,8 +854,8 @@ public class GeoGebraToPstricks implements ActionListener {
 			x1="0";y1="0";
 		}
 		else {
-			x1=kernel.format(pointStart.getX());
-			y1=kernel.format(pointStart.getY());
+			x1=kernel.format(pointStart.getX()/pointStart.getZ());
+			y1=kernel.format(pointStart.getY()/pointStart.getZ());
 		}
 		double[] coord=new double[3];
 		geo.getCoords(coord);
@@ -1095,13 +1094,16 @@ public class GeoGebraToPstricks implements ActionListener {
 		}
 	}
 	private void drawGeoSegment(GeoSegment geo){
+		double[] A=new double[2];
+		double[] B=new double[2];
 		GeoPoint pointStart=geo.getStartPoint();
 		GeoPoint pointEnd=geo.getEndPoint();
-		String x1=kernel.format(pointStart.getX());
-		String y1=kernel.format(pointStart.getY());
-		String x2=kernel.format(pointEnd.getX());
-		String y2=kernel.format(pointEnd.getY());
-	
+		pointStart.getInhomCoords(A);
+		pointEnd.getInhomCoords(B);
+		String x1=kernel.format(A[0]);
+		String y1=kernel.format(A[1]);
+		String x2=kernel.format(B[0]);
+		String y2=kernel.format(B[1]);
 		code.append("\\psline");
 		code.append(LineOptionCode(geo));
 		code.append("(");
@@ -1113,13 +1115,83 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(",");
 		code.append(y2);
 		code.append(")\n");
+		int deco=geo.getDecorationType();
+		if (deco!=GeoElement.DECORATION_NONE) mark(A,B,deco,geo);
 	}
-	
+	private void drawLine(double x1,double y1,double x2,double y2,GeoElement geo){
+		String sx1=kernel.format(x1);
+		String sy1=kernel.format(y1);
+		String sx2=kernel.format(x2);
+		String sy2=kernel.format(y2);
+		code.append("\\psline");
+		code.append(LineOptionCode(geo));
+		code.append("(");
+		code.append(sx1);
+		code.append(",");
+		code.append(sy1);
+		code.append(")(");
+		code.append(sx2);
+		code.append(",");
+		code.append(sy2);
+		code.append(")\n");
+		
+	}
+	private void mark(double[] A, double[] B,int deco,GeoElement geo){
+ 		double midX=(A[0]+B[0])/2;
+		double midY=(A[1]+B[1])/2;
+		double angle=Math.PI/2-Math.atan2(B[1]-A[1],B[0]-A[0]);
+ 		double cos=Math.cos(angle);
+ 		double sin=Math.sin(angle);
+ 		double xlength=0.15/xunit;
+ 		double ylength=0.15/yunit;
+		switch(deco){
+		case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+	 		double x1=midX-xlength*cos;
+	 		double x2=midX+xlength*cos;
+	 		double y1=midY+ylength*sin;
+	 		double y2=midY-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+	 		x1=midX-xlength*sin/2.5-xlength*cos;
+	 		x2=midX-xlength*sin/2.5+xlength*cos;
+	 		y1=midY-ylength*cos/2.5+ylength*sin;
+	 		y2=midY-ylength*cos/2.5-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=midX+xlength*sin/2.5-xlength*cos;
+	 		x2=midX+xlength*sin/2.5+xlength*cos;
+	 		y1=midY+ylength*cos/2.5+ylength*sin;
+	 		y2=midY+ylength*cos/2.5-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+	 		x1=midX-xlength*cos;
+	 		x2=midX+xlength*cos;
+	 		y1=midY+ylength*sin;
+	 		y2=midY-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=midX-xlength*sin/1.25-xlength*cos;
+	 		x2=midX-xlength*sin/1.25+xlength*cos;
+	 		y1=midY-ylength*cos/1.25+ylength*sin;
+	 		y2=midY-ylength*cos/1.25-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=midX+xlength*sin/1.25-xlength*cos;
+	 		x2=midX+xlength*sin/1.25+xlength*cos;
+	 		y1=midY+ylength*cos/1.25+ylength*sin;
+	 		y2=midY+ylength*cos/1.25-ylength*sin;
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 }
+	}
 	private void drawGeoRay(GeoRay geo){
 		GeoPoint pointStart=geo.getStartPoint();
 		GeoPoint pointEnd=geo.getEndPoint();
+		
+		
 		double x1=pointStart.getX();
-		String y1=kernel.format(pointStart.getY());
+		double z1=pointStart.getZ();
+		x1=x1/z1;
+		String y1=kernel.format(pointStart.getY()/z1);
 		
 		double x=geo.getX();
 		double y=geo.getY();
@@ -1389,7 +1461,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		// bracket needed
 		bracket=true;
 		sb.append("[linewidth=");
-		sb.append(kernel.format(linethickness/2*0.8));
+		sb.append(kernel.format(linethickness/2.0*0.8));
 		sb.append("pt");
 	}
 	if (linestyle!=EuclidianView.DEFAULT_LINE_TYPE){
@@ -1535,7 +1607,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				else if (theoric_size<=14) st="\\Large{";
 				else if (theoric_size<=17) st="\\LARGE{";
 				else if (theoric_size<=20) st="\\huge{";
-				else  st="\\HUGE{";
+				else  st="\\Huge{";
 			break;
 			case 11:
 				if (theoric_size<=6) st="\\tiny{";
@@ -1547,7 +1619,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				else if (theoric_size<=14) st="\\Large{";
 				else if (theoric_size<=17) st="\\LARGE{";
 				else if (theoric_size<=20) st="\\huge{";
-				else  st="\\HUGE{";
+				else  st="\\Huge{";
 			break;
 			case 12:
 				if (theoric_size<=6) st="\\tiny{";
@@ -1559,7 +1631,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				else if (theoric_size<=17) st="\\Large{";
 				else if (theoric_size<=20) st="\\LARGE{";
 				else if (theoric_size<=25) st="\\huge{";
-				else  st="\\HUGE{";
+				else  st="\\Huge{";
 			break;
 		}
 		return st;

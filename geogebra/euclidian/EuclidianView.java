@@ -1,3 +1,4 @@
+
 /* 
  GeoGebra - Dynamic Geometry and Algebra
  Copyright Markus Hohenwarter, http://www.geogebra.at
@@ -124,15 +125,21 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int AXES_LINE_TYPE_ARROW = 1;
 
 	public static final int POINT_STYLE_DOT = 0;
+
 	public static final int POINT_STYLE_CROSS = 1;
-	public static final int POINT_STYLE_CIRCLE = 2;	
-	
+
+	public static final int POINT_STYLE_CIRCLE = 2;
+
 	public static final int RIGHT_ANGLE_STYLE_DOT = 0;
+
 	public static final int RIGHT_ANGLE_STYLE_NONE = 1;
-	public static final int RIGHT_ANGLE_STYLE_SQUARE = 2;		
-		
+
+	public static final int RIGHT_ANGLE_STYLE_SQUARE = 2;
+
 	public static final int DEFAULT_POINT_SIZE = 3;
+
 	public static final int DEFAULT_LINE_THICKNESS = 2;
+
 	public static final int DEFAULT_ANGLE_SIZE = 30;
 
 	public static final int DEFAULT_LINE_TYPE = LINE_TYPE_FULL;
@@ -353,8 +360,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			yscale, scaleRatio = 1.0; // ratio yscale / xscale
 
 	private double[] AxesTickInterval = { 1, 1 }; // for axes =
-													// axesNumberingDistances /
-													// 2
+
+	// axesNumberingDistances /
+	// 2
 
 	boolean showAxes = true;
 
@@ -365,7 +373,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	boolean showMouseCoords = false;
 
 	private int pointCapturingMode = POINT_CAPTURING_OFF; // round point to
-															// grid point
+
+	// grid point
 
 	int pointStyle = POINT_STYLE_DOT;
 
@@ -456,7 +465,6 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		kernel = ec.getKernel();
 		app = ec.getApplication();
 		resetImage = app.getInternalImage("geogebra22.gif");
-
 		this.showAxes = showAxes;
 		this.showGrid = showGrid;
 
@@ -1298,7 +1306,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * @param forEPS:
 	 *            states if export should be optimized for eps. Note: if this is
 	 *            set to true, no traces are drawn.
-	 * 
+	 *  
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
 		g2d.scale(scale, scale);
@@ -1985,36 +1993,38 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the drawable for the given GeoElement.
 	 */
 	final Drawable getDrawable(GeoElement geo) {
-		return (Drawable) DrawableMap.get(geo);		
+		return (Drawable) DrawableMap.get(geo);
 	}
 
 	/*
 	 * interface View implementation
 	 */
-	
+
 	/**
 	 * adds a GeoElement to this view
 	 */
 	final public void add(GeoElement geo) {
 		// check if there is already a drawable for geo
 		Drawable d = getDrawable(geo);
-		if (d != null) return;
-		
+		if (d != null)
+			return;
+
 		d = createDrawable(geo);
-		if (d != null) repaint();			
+		if (d != null)
+			repaint();
 	}
-	
+
 	/**
 	 * adds a GeoElement to this view
 	 */
-	final Drawable createDrawable(GeoElement geo) {	
+	final Drawable createDrawable(GeoElement geo) {
 		Drawable d = null;
-		
+
 		if (geo.isGeoPoint()) {
 			d = new DrawPoint(this, (GeoPoint) geo);
 			drawPointList.add(d);
@@ -2088,8 +2098,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		} else if (geo.isGeoLocus()) {
 			d = new DrawLocus(this, (GeoLocus) geo);
 			drawLocusList.add(d);
-		} 
-		
+		}
+
 		else if (geo.isGeoList()) {
 			// the geolist adds all its items in its update() method
 			d = new DrawList(this, (GeoList) geo);
@@ -2097,7 +2107,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		if (d != null) {
 			allDrawableList.add(d);
-			DrawableMap.put(geo, d);			
+			DrawableMap.put(geo, d);
 		}
 		return d;
 	}
@@ -2506,8 +2516,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			counter++;
 			long time = System.currentTimeMillis() - startTime;
 			if (counter == MyZoomer.STEPS || time > MyZoomer.MAX_TIME) { // end
-																			// of
-																			// animation
+				// of
+				// animation
 				stopAnimation();
 			} else {
 				factor = 1.0 + (counter * add) / oldScale;
@@ -2570,8 +2580,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			counter++;
 			long time = System.currentTimeMillis() - startTime;
 			if (counter == MyZoomer.STEPS || time > MyZoomer.MAX_TIME) { // end
-																			// of
-																			// animation
+				// of
+				// animation
 				stopAnimation();
 			} else {
 				double factor = 1.0 - counter * add;

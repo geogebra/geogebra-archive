@@ -39,6 +39,18 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	public static final int SEGMENT_DECORATION_TWO_TICKS = 2;
 	public static final int SEGMENT_DECORATION_THREE_TICKS = 3;
 	
+	// added by Loïc
+	public static final Integer[] getDecoTypes() {
+		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
+				new Integer(SEGMENT_DECORATION_ONE_TICK),
+				new Integer(SEGMENT_DECORATION_TWO_TICKS),
+				new Integer(SEGMENT_DECORATION_THREE_TICKS)
+				};
+		return ret;
+	}
+	//fin
+	
+	
 	private int decorationType;
 	
 	
