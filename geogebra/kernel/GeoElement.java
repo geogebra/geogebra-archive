@@ -68,35 +68,7 @@ public abstract class GeoElement
 			'V',
 			'W',
 			'Y',
-			'Z' };
-
-	private static final char[] polygonLabels =
-		{
-			'P',
-			'Q',
-			'R',
-			'S',
-			'T',
-			'U',
-			'V',
-			'W',
-			'Y',
-			'Z',
-			'A',
-			'B',
-			'C',
-			'D',
-			'E',
-			'F',
-			'G',
-			'H',
-			'I',
-			'J',
-			'K',
-			'L',
-			'M',
-			'N',
-			'O' };
+			'Z' };	
 	
 	private static final char[] functionLabels =
 	{		
@@ -940,11 +912,19 @@ public abstract class GeoElement
 			chars = conicLabels;
 		} else if (isGeoVector()) {
 			chars = vectorLabels;
-		} else if (isGeoPolygon()) {
-			chars = polygonLabels;
-		} else if (isGeoAngle()) {
+		}  else if (isGeoAngle()) {
 			chars = greekLowerCase;
-		} else if (isGeoText()) {
+		} 
+		else if (isGeoPolygon()) {
+			int counter = 0;
+			String str;
+			do {
+				counter++;
+				str = "poly" + counter;
+			} while (!cons.isFreeLabel(str));
+			return str;
+		}		
+		else if (isGeoText()) {
 			int counter = 0;
 			String str;
 			do {

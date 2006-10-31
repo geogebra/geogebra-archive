@@ -561,7 +561,7 @@ public class Application {
     	}
     	statusBar = new JPanel(new BorderLayout(5, 5));
         statusBar.add(statusLabelMode, BorderLayout.WEST);  
-        statusBar.add(statusLabelAxesRatio, BorderLayout.EAST);  
+        statusBar.add(statusLabelAxesRatio, BorderLayout.EAST);         
     }
     
     public JPanel getCenterPanel() {

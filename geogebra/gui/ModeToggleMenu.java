@@ -14,18 +14,23 @@ package geogebra.gui;
 
 import geogebra.Application;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -94,7 +99,7 @@ public class ModeToggleMenu extends JPanel {
 		tbutton.setIcon(mi.getIcon());
 		tbutton.setToolTipText(mi.getText());			
 		tbutton.setActionCommand(mi.getActionCommand());
-		tbutton.setSelected(true);
+		tbutton.setSelected(true);				
 		tbutton.requestFocus();		
 	}
 	
@@ -186,10 +191,14 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	private int iconWidth, iconHeight;
 	private GeneralPath gp;
 	private boolean showToolTipText = true;
-	private ModeToggleMenu menu;	
-	private Color arrowColor = new Color(0,0,0,130);
-	//private Color arrowColor = Color.darkGray;
+	private ModeToggleMenu menu;		
 	
+	private static final Color arrowColor = new Color(0,0,0,130);
+	//private static final Color selColor = new Color(166, 11, 30,150);
+	//private static final Color selColor = new Color(17, 26, 100, 200);
+	private static final Color selColor = new Color(0,0,153, 200);
+	private static final BasicStroke selStroke = new BasicStroke(3f);
+			
 	MyJToggleButton(ModeToggleMenu menu) {
 		super();
 		this.menu = menu;
@@ -215,29 +224,39 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	public void setIcon(Icon icon) {
 		super.setIcon(icon);  
 		iconWidth = icon.getIconWidth();
-		iconHeight = icon.getIconHeight();
+		iconHeight = icon.getIconHeight();					
 		Dimension dim = new Dimension(iconWidth + 2*BORDER,
 								iconHeight + 2*BORDER);
 		setPreferredSize(dim); 
 		setMinimumSize(dim);
-		setMaximumSize(dim);
+		setMaximumSize(dim);		
 	}
 	
 	
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		
-		super.paint(g2);
 			
+		super.paint(g2);	
+		
+		if (isSelected()) {
+			Stroke oldStroke = g2.getStroke();
+			
+			g2.setColor(selColor);
+			g2.setStroke(selStroke);
+			g2.drawRect(BORDER-1,BORDER-1, iconWidth, iconHeight);			
+
+			g2.setStroke(oldStroke);				
+		}				
+					
 		// draw little arrow (for popup menu)
 		if (menu.size > 1) {
 			if (gp == null) initPath();							
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 								RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			g2.setColor(Color.white);
+			g2.setColor(Color.white);						
 			g2.fill(gp);
-			g2.setColor(arrowColor);			
+			g2.setColor(arrowColor);
 			g2.draw(gp);
 		}
 	}
