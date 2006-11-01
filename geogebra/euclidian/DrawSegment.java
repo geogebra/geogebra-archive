@@ -178,7 +178,7 @@ implements Previewable {
 		 		break;
 		 }
 	}
-	// Loïc>
+   
 	final public void draw(Graphics2D g2) {
         if (isVisible) {		        	
             if (geo.doHighlighting()) {

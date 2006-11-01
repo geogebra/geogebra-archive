@@ -459,6 +459,8 @@ public class PropertiesDialog
 		private LineStylePanel lineStylePanel;
 		// added by Loïc
 		private DecoSegmentPanel decoSegmentPanel;
+		private DecoAnglePanel decoAnglePanel;
+		//end
 		
 		private FillingPanel fillingPanel;
 		private TracePanel tracePanel;
@@ -495,7 +497,8 @@ public class PropertiesDialog
 			lineStylePanel = new LineStylePanel();
 			// added by Loïc
 			decoSegmentPanel=new DecoSegmentPanel();
-			
+			decoAnglePanel=new DecoAnglePanel();
+			//end
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
 			fixPanel = new FixPanel();
@@ -563,7 +566,8 @@ public class PropertiesDialog
 				pVec.add(lineStylePanel.update(geos));
 				// added by Loïc
 				pVec.add(decoSegmentPanel.update(geos));
-				
+				pVec.add(decoAnglePanel.update(geos));
+				//end
 				pVec.add(fillingPanel.update(geos));
 				pVec.add(sliderPanel.update(geos));
 				
@@ -2944,7 +2948,7 @@ public class PropertiesDialog
 			decoCombo.setRenderer(renderer);
 			decoCombo.addActionListener(this);
 
-			JLabel decoLabel = new JLabel("Decoration: ");//app.getPlain("LineStyle") + ":");
+			JLabel decoLabel = new JLabel(app.getPlain("Decoration") + ":");
 			add(decoLabel);
 			add(decoCombo);
 		}
@@ -2976,18 +2980,76 @@ public class PropertiesDialog
 		
 		public void actionPerformed(ActionEvent e){
 			Object source = e.getSource();
-		if (source == decoCombo) {
-			GeoSegment geo;
-			int type = ((Integer) decoCombo.getSelectedItem()).intValue();
-			for (int i = 0; i < geos.length; i++) {
-				geo = (GeoSegment) geos[i];
-				geo.setDecorationType(type);
-				geo.updateRepaint();
+			if (source == decoCombo) {
+				GeoSegment geo;
+				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoSegment) geos[i];
+					geo.setDecorationType(type);
+					geo.updateRepaint();
+				}
 			}
 		}
 	}
+	
+	private class DecoAnglePanel extends JPanel implements ActionListener{
+		private JComboBox decoCombo;
+		private Object[] geos;
+		DecoAnglePanel(){
+			super(new FlowLayout(FlowLayout.LEFT));
+			// deco combobox 		
+			DecorationAngleListRenderer renderer = new DecorationAngleListRenderer();
+			renderer.setPreferredSize(new Dimension(80, 30));
+			decoCombo = new JComboBox(GeoAngle.getDecoTypes());
+			decoCombo.setRenderer(renderer);
+			decoCombo.addActionListener(this);
+			JLabel decoLabel = new JLabel("Decoration: ");//app.getPlain("Decoration") + ":");
+			add(decoLabel);
+			add(decoCombo);		
+		}
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+			this.geos = geos;
+			decoCombo.removeActionListener(this);
+
+			//	set slider value to first geo's thickness 
+			GeoAngle geo0 = (GeoAngle) geos[0];
+			decoCombo.setSelectedIndex(geo0.getDecorationType());
+			decoCombo.addActionListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof GeoAngle)) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+		
+		public void actionPerformed(ActionEvent e){
+			Object source = e.getSource();
+			if (source == decoCombo) {
+				GeoAngle geo;
+				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoAngle) geos[i];
+					geo.setDecorationType(type);
+					geo.updateRepaint();
+				}
+			}
+		}
 	}
-	// fin 
+	// end 
+
+	
+	
+	
 	/**
 	 * INNER CLASS
 	 * JList for displaying GeoElements

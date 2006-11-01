@@ -48,7 +48,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 				};
 		return ret;
 	}
-	//fin
+	//end
 	
 	
 	private int decorationType;

@@ -22,7 +22,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyDouble;
-
+import geogebra.kernel.GeoElement;
 /**
  *
  * @author  Markus
@@ -42,7 +42,20 @@ public final class GeoAngle extends GeoNumeric {
 	
     // shows whether the current value was changed to (2pi - value)
 	private boolean changedReflexAngle; 
-			
+	// added by Loïc
+	public static final Integer[] getDecoTypes() {
+		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
+				new Integer(GeoElement.DECORATION_ANGLE_TWO_ARCS),
+				new Integer(GeoElement.DECORATION_ANGLE_THREE_ARCS),
+				new Integer(GeoElement.DECORATION_ANGLE_ONE_TICK),
+				new Integer(GeoElement.DECORATION_ANGLE_TWO_TICKS),
+				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),	
+				};
+		return ret;
+	}
+	private int decorationType;
+	//end
+	
     /** Creates new GeoAngle */
     public GeoAngle(Construction c) {
     	super(c);
@@ -226,7 +239,14 @@ public final class GeoAngle extends GeoNumeric {
 		sb.append("\"/>\n");	
 		return sb.toString();
 	}
-	
-	
-	
+//	 added by Loïc
+	public int getDecorationType() {
+		return decorationType;
+	}
+
+	public void setDecorationType(int decorationType) {
+		this.decorationType = decorationType;
+	}
+//end
+
 }

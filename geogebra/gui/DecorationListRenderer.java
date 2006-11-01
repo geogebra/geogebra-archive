@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.BorderFactory;
@@ -21,7 +22,6 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
     	int id=0;
     	public DecorationListRenderer() {
     		setOpaque(true);
-//    		setPreferredSize(new Dimension(50,20));
     	}
 
     	public Component getListCellRendererComponent(

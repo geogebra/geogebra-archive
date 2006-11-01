@@ -291,7 +291,7 @@ public class GeoGebraToPstricks implements ActionListener {
         double[] x=algo.getLeftBorders();
         for (int i=0;i<n;i++){
         	codeFilledObject.append("\\psframe");
-        	codeFilledObject.append(LineOptionCode(geo));
+        	codeFilledObject.append(LineOptionCode(geo,true));
         	codeFilledObject.append("(");
         	codeFilledObject.append(kernel.format(x[i]));
         	codeFilledObject.append(",0)(");
@@ -312,7 +312,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	String value=f.toValueString();
     	value=killSpace(Util.toLaTeXString(value,true));
     	codeFilledObject.append("\\pscustom");
-    	codeFilledObject.append(LineOptionCode(geo));
+    	codeFilledObject.append(LineOptionCode(geo,true));
     	codeFilledObject.append("{\\psplot{");
     	codeFilledObject.append(a);
     	codeFilledObject.append("}{");
@@ -342,7 +342,7 @@ public class GeoGebraToPstricks implements ActionListener {
         float y = (float) coords[1];
         float xright=x+slopeTriangleSize;
     	codeFilledObject.append("\\pspolygon");
-    	codeFilledObject.append(LineOptionCode(geo));
+    	codeFilledObject.append(LineOptionCode(geo,true));
     	codeFilledObject.append("(");
 		codeFilledObject.append(kernel.format(x));
 		codeFilledObject.append(",");
@@ -442,6 +442,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			}			
 			firstVec[0] = 1;
 			firstVec[1] = 0;
+
 		}
 		double angSt = Math.atan2(firstVec[1], firstVec[0]);
         double angExt = geo.getValue();
@@ -453,7 +454,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	    // set arc in real world coords
 		double r = arcSize /euclidianView.getXscale();
 		code.append("\\pscustom");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		code.append("{\\parametricplot{");
 		code.append(angSt);
 		code.append("}{");
@@ -472,7 +473,81 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(",");
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
+    
+		int deco=geo.getDecorationType();
+		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
+    }
+    private void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
+		code.append("\\parametricplot");
+		code.append(LineOptionCode(geo,false));
+		code.append("{");
+		code.append(angSt);
+		code.append("}{");
+		code.append(angEnd);
+		code.append("}{");
+		code.append(kernel.format(r));
+		code.append("*cos(t)+");
+		code.append(kernel.format(vertex[0]));
+		code.append("|");
+		code.append(kernel.format(r));
+		code.append("*sin(t)+");
+		code.append(kernel.format(vertex[1]));
+		code.append("}\n");
 
+    }
+	private void drawTick(GeoAngle geo,double[] vertex,double angle){
+		double radius=geo.getArcSize()/euclidianView.getXscale();
+		int thick=geo.getLineThickness();
+		double diff=thick*2/euclidianView.getXscale();
+		if (thick<3) diff=3 /euclidianView.getXscale();
+		double x1=vertex[0]+(radius-diff)*Math.cos(angle);
+		double x2=vertex[0]+(radius+diff)*Math.cos(angle);
+		double y1=vertex[1]+(radius-diff)*Math.sin(angle);
+		double y2=vertex[1]+(radius+diff)*Math.sin(angle);
+		code.append("\\psline");
+		code.append(LineOptionCode(geo,false));
+		code.append("(");
+		code.append(kernel.format(x1));
+		code.append(",");
+		code.append(kernel.format(y1));
+		code.append(")(");
+		code.append(kernel.format(x2));
+		code.append(",");
+		code.append(kernel.format(y2));
+		code.append(")\n");
+
+		
+	}
+    private void markAngle(GeoAngle geo,double r, double[] vertex,double  angSt,double angEnd){
+    	switch(geo.getDecorationType()){
+    		case GeoElement.DECORATION_ANGLE_TWO_ARCS:
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			r+=5/euclidianView.getXscale();
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    		break;
+    		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			r+=5/euclidianView.getXscale();
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			r-=10/euclidianView.getXscale();
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    		break;
+    		case GeoElement.DECORATION_ANGLE_ONE_TICK:
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			drawTick(geo,vertex,(angSt+angEnd)/2);
+    		break;
+    		case GeoElement.DECORATION_ANGLE_TWO_TICKS:
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			drawTick(geo,vertex,(2*angSt+3*angEnd)/5);
+    			drawTick(geo,vertex,(3*angSt+2*angEnd)/5);
+    		break;
+    		case GeoElement.DECORATION_ANGLE_THREE_TICKS:
+    			drawArc(geo,vertex,angSt,angEnd,r);
+    			drawTick(geo,vertex,(angSt+angEnd)/2);
+    			drawTick(geo,vertex,(5*angSt+3*angEnd)/8);
+    			drawTick(geo,vertex,(3*angSt+5*angEnd)/8);
+    		break;
+    	}
     }
     private void drawSlider(GeoNumeric geo){
     	boolean horizontal=geo.isSliderHorizontal();
@@ -520,7 +595,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	
     	//draw Line dor Slider
     	code.append("\\psline");
-    	code.append(LineOptionCode(geo));
+    	code.append(LineOptionCode(geo,true));
     	code.append("(");
     	code.append(kernel.format(x));
     	code.append(",");
@@ -541,7 +616,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	if (alpha==0.0f) return;
     	Color polyColor=geo.getColor();
     	codeFilledObject.append("\\pspolygon");
-    	codeFilledObject.append(LineOptionCode(geo));
+    	codeFilledObject.append(LineOptionCode(geo,true));
     	GeoPoint [] points = geo.getPoints();	
     	for (int i=0;i<points.length;i++){
     		double x=points[i].getX();
@@ -681,7 +756,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
 				code.append("\\psarc");
 			}
-			code.append(LineOptionCode(geo));
+			code.append(LineOptionCode(geo,true));
 			code.append("(");
 			code.append(kernel.format(x));
 			code.append(",");
@@ -698,12 +773,12 @@ public class GeoGebraToPstricks implements ActionListener {
 //Sector command: \pscustom[options]{\parametricplot{startAngle}{endAngle}{x+r*cos(t),y+r*sin(t)}\lineto(x,y)\closepath}
 			if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
 				code.append("\\pscustom");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("{\\parametricplot{");
 			}
 			else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
 				code.append("\\parametricplot");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("{");
 			}
 			code.append(startAngle);
@@ -747,7 +822,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			xrangemax=maxDefinedValue(f,xrangemin,b);
 //			System.out.println("xrangemax "+xrangemax);
 			code.append("\\psplot");
-			code.append(LineOptionCode(geo));
+			code.append(LineOptionCode(geo,true));
 			int index=code.lastIndexOf("]");
 			if (index==code.length()-1){
 				code.deleteCharAt(index);
@@ -863,7 +938,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		String y2=kernel.format(coord[1]+Double.parseDouble(y1));
 	
 		code.append("\\psline");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		code.append("{->}(");
 		code.append(x1);
 		code.append(",");
@@ -882,7 +957,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			double y=geo.getTranslationVector().getY();
 			double r=geo.getHalfAxes()[0];
 			code.append("\\pscircle");
-			code.append(LineOptionCode(geo));
+			code.append(LineOptionCode(geo,true));
 			code.append("(");
 			code.append(kernel.format(x));
 			code.append(",");
@@ -901,7 +976,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			double r1=geo.getHalfAxes()[0];
 			double r2=geo.getHalfAxes()[1];
 			code.append("\\psellipse");
-			code.append(LineOptionCode(geo));
+			code.append(LineOptionCode(geo,true));
 			code.append("(");
 			code.append(kernel.format(x1));
 			code.append(",");
@@ -937,7 +1012,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				code.append(",");
 				code.append(kernel.format(y1));
 				code.append("){\\psellipse");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("(0,0)(");
 				code.append(kernel.format(r1));
 				code.append(",");
@@ -989,7 +1064,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				code.append(",");
 				code.append(kernel.format(y1));
 				code.append("){\\psplot");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("{");
 				code.append(kernel.format(-x0));
 				code.append("}{");
@@ -1016,7 +1091,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				code.append(",");
 				code.append(kernel.format(y1));
 				code.append("){\\parametricplot");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("{-0.99}{0.99}{");
 				code.append(kernel.format(r1));
 				code.append("*(1+t^2)/(1-t^2)|");
@@ -1031,7 +1106,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				code.append(",");
 				code.append(kernel.format(y1));
 				code.append("){\\parametricplot");
-				code.append(LineOptionCode(geo));
+				code.append(LineOptionCode(geo,true));
 				code.append("{-0.99}{0.99}{");
 				code.append(kernel.format(r1));
 				code.append("*(-1-t^2)/(1-t^2)|");
@@ -1064,7 +1139,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		double z=geo.getZ();
 		if (y!=0)code.append("\\psplot");
 		else code.append("\\psline");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		if (y!=0){	
 			code.append("{");
 			code.append(kernel.format(xmin));
@@ -1105,7 +1180,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		String x2=kernel.format(B[0]);
 		String y2=kernel.format(B[1]);
 		code.append("\\psline");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		code.append("(");
 		code.append(x1);
 		code.append(",");
@@ -1124,7 +1199,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		String sx2=kernel.format(x2);
 		String sy2=kernel.format(y2);
 		code.append("\\psline");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		code.append("(");
 		code.append(sx1);
 		code.append(",");
@@ -1199,7 +1274,7 @@ public class GeoGebraToPstricks implements ActionListener {
 
 		if (y!=0)code.append("\\psplot");
 		else code.append("\\psline");
-		code.append(LineOptionCode(geo));
+		code.append(LineOptionCode(geo,true));
 		double inf=xmin,sup=xmax;
 		if (y>0){
 			inf=x1;
@@ -1447,7 +1522,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	
 	
 	}
-	private String LineOptionCode(GeoElement geo){
+	private String LineOptionCode(GeoElement geo,boolean transparency){
 		StringBuffer sb=new StringBuffer(); 
 		Color linecolor=geo.getColor();
 		int linethickness=geo.getLineThickness();
@@ -1479,7 +1554,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		sb.append("linecolor=");
 		ColorCode(linecolor,sb);
 	}
-	if (geo.isFillable()&&geo.getAlphaValue()>0.0f){
+	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
 		defineTransparency();
 		if (coma) sb.append(",");
 		else coma=true;

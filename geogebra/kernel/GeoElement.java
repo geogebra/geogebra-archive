@@ -223,8 +223,9 @@ public abstract class GeoElement
 	// angle decorations
 	public static final int DECORATION_ANGLE_TWO_ARCS = 1;
 	public static final int DECORATION_ANGLE_THREE_ARCS = 2;
-	public static final int DECORATION_ANGLE_TICK_TWO_ARCS = 4;
-	public static final int DECORATION_ANGLE_TICK_THREE_ARCS = 5;			
+	public static final int DECORATION_ANGLE_ONE_TICK = 3;
+	public static final int DECORATION_ANGLE_TWO_TICKS = 4;
+	public static final int DECORATION_ANGLE_THREE_TICKS = 5;
 	
 	// public int geoID;    
 	//  static private int geoCounter = 0;
