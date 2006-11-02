@@ -41,7 +41,8 @@ public final class DrawPoint extends Drawable {
     
 	private int diameter, selDiameter, pointSize;
     boolean isVisible, labelVisible;   
-	private Ellipse2D.Double circle, circleSel; // for dot and selection
+    // for dot and selection
+	private Ellipse2D.Double circle, circleSel = new Ellipse2D.Double();
 	private Line2D.Double line1, line2;// for cross	
     private double [] coords = new double[2];
     
@@ -112,14 +113,15 @@ public final class DrawPoint extends Drawable {
         	// case EuclidianView.POINT_STYLE_DOT:
         	default:			        
 		        if (circle == null) {
-		        	circle = new Ellipse2D.Double();
-		        	circleSel = new Ellipse2D.Double();
+		        	circle = new Ellipse2D.Double();		        	
 		        }		        
 		        
-		        circle.setFrame(xUL, yUL, diameter, diameter); 
-		        circleSel.setFrame(xUL - SELECTION_OFFSET, 
-						yUL - SELECTION_OFFSET, selDiameter, selDiameter);
-        }                                 
+		        circle.setFrame(xUL, yUL, diameter, diameter); 		    
+        }    
+        
+        // selection area
+        circleSel.setFrame(xUL - SELECTION_OFFSET, 
+				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
 		// draw trace
 		if (P.trace) {

@@ -2985,7 +2985,7 @@ public class PropertiesDialog
 				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoSegment) geos[i];
-					geo.decorationType = type;
+					geo.decorationType = type;					
 					geo.updateRepaint();
 				}
 			}
