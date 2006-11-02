@@ -6,6 +6,8 @@ import geogebra.kernel.GeoSegment;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
@@ -51,6 +53,13 @@ public class DecorationAngleListRenderer extends JPanel implements ListCellRende
 	}
 	public void paint(Graphics g){
 		super.paint(g);
+		
+		// added by Markus Hohenwarter, BEGIN
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+							RenderingHints.VALUE_ANTIALIAS_ON);
+		// added by Markus Hohenwarter, END
+		
 		g.setColor(getBackground());
 		g.fillRect(0,0,getWidth(),getHeight());
 		g.setColor(Color.BLACK);

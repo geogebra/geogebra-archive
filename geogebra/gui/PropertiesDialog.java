@@ -3016,7 +3016,7 @@ public class PropertiesDialog
 
 			//	set slider value to first geo's thickness 
 			GeoAngle geo0 = (GeoAngle) geos[0];
-			decoCombo.setSelectedIndex(geo0.getDecorationType());
+			decoCombo.setSelectedIndex(geo0.decorationType);
 			decoCombo.addActionListener(this);
 			return this;
 		}
@@ -3039,7 +3039,7 @@ public class PropertiesDialog
 				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
-					geo.setDecorationType(type);
+					geo.decorationType = type;
 					geo.updateRepaint();
 				}
 			}

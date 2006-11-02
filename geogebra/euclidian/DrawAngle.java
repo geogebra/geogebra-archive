@@ -295,8 +295,8 @@ public class DrawAngle extends Drawable {
 
 	//added by loîc for decoration on GeoAngle Objects
 private void mark(Graphics2D g2){
-		int deco=angle.getDecorationType();
-		int radius=angle.getArcSize();
+		int deco=angle.decorationType;
+		int radius=angle.decorationType;
 		// calc start angle
 		double angSt = Math.atan2(firstVec[1], firstVec[0]);
 		if (Double.isNaN(angSt) || Double.isInfinite(angSt)) {

@@ -474,7 +474,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
     
-		int deco=geo.getDecorationType();
+		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
     }
     private void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
@@ -519,7 +519,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		
 	}
     private void markAngle(GeoAngle geo,double r, double[] vertex,double  angSt,double angEnd){
-    	switch(geo.getDecorationType()){
+    	switch(geo.decorationType){
     		case GeoElement.DECORATION_ANGLE_TWO_ARCS:
     			drawArc(geo,vertex,angSt,angEnd,r);
     			r+=5/euclidianView.getXscale();

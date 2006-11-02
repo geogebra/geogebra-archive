@@ -42,6 +42,10 @@ public final class GeoAngle extends GeoNumeric {
 	
     // shows whether the current value was changed to (2pi - value)
 	private boolean changedReflexAngle; 
+
+	// states whether a special right angle appearance should be used to draw this angle
+	private boolean emphasizeRightAngle = true;
+	
 	// added by Loïc
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
@@ -53,8 +57,7 @@ public final class GeoAngle extends GeoNumeric {
 				};
 		return ret;
 	}
-	private int decorationType;
-	//end
+	// end Loic
 	
     /** Creates new GeoAngle */
     public GeoAngle(Construction c) {
@@ -239,14 +242,13 @@ public final class GeoAngle extends GeoNumeric {
 		sb.append("\"/>\n");	
 		return sb.toString();
 	}
-//	 added by Loïc
-	public int getDecorationType() {
-		return decorationType;
+
+	public boolean isEmphasizeRightAngle() {
+		return emphasizeRightAngle;
 	}
 
-	public void setDecorationType(int decorationType) {
-		this.decorationType = decorationType;
+	public void setEmphasizeRightAngle(boolean emphasizeRightAngle) {
+		this.emphasizeRightAngle = emphasizeRightAngle;
 	}
-//end
 
 }

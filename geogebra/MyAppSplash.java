@@ -10,8 +10,11 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.gui;
+package geogebra;
  
+
+import geogebra.gui.GeoGebra;
+import geogebra.gui.SplashWindow;
 
 import java.awt.Frame;
 import java.awt.Toolkit;
