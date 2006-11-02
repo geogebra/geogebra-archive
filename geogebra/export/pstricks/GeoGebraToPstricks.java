@@ -1190,7 +1190,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(",");
 		code.append(y2);
 		code.append(")\n");
-		int deco=geo.getDecorationType();
+		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) mark(A,B,deco,geo);
 	}
 	private void drawLine(double x1,double y1,double x2,double y2,GeoElement geo){

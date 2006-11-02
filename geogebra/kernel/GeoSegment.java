@@ -48,11 +48,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 				};
 		return ret;
 	}
-	//end
-	
-	
-	private int decorationType;
-	
+	//end		
 	
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
 		super(c);
@@ -337,14 +333,6 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	
 	public boolean isGeoSegment() {
 		return true;
-	}
-
-	public int getDecorationType() {
-		return decorationType;
-	}
-
-	public void setDecorationType(int decorationType) {
-		this.decorationType = decorationType;
-	}
+	}	
 	
 }

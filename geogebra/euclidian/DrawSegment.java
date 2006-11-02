@@ -124,7 +124,7 @@ implements Previewable {
     }
    private void mark(Graphics2D g2){
 		geogebra.kernel.GeoSegment seg=(GeoSegment)s;
-		switch(seg.getDecorationType()){
+		switch(seg.decorationType){
 			case GeoElement.DECORATION_SEGMENT_ONE_TICK:
 		 		double midX=(coordsA[0]+coordsB[0])/2;
 				double midY=(coordsA[1]+coordsB[1])/2;
