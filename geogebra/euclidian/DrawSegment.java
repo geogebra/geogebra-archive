@@ -27,9 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
-//added by Loïc
-import geogebra.kernel.GeoSegment;
-
 /**
  *
  * @author  Markus Hohenwarter
@@ -49,7 +46,14 @@ implements Previewable {
     private double [] coordsA = new double[2];
 	private double [] coordsB = new double[2];
     
-    /** Creates new DrawSegment */
+	// For drawing ticks
+	private Line2D.Double tick1=new Line2D.Double();
+    private Line2D.Double tick2=new Line2D.Double();
+    private Line2D.Double tick3=new Line2D.Double();
+    private double midX,midY,cos,sin,angle;
+	
+    
+	/** Creates new DrawSegment */
     public DrawSegment(EuclidianView view, GeoLine s) {
     	this.view = view;
     	this.s = s;
@@ -87,8 +91,13 @@ implements Previewable {
     		if (!line.intersects(0,0, view.width, view.height)) {				
     			isVisible = false;
     			return;
-    		}			
-			
+    		}	
+    		// update decoration
+    		
+			//added by Loïc BEGIN
+    		if (geo.decorationType!=GeoElement.DECORATION_NONE) update_mark();
+    		//END
+    		
 			// draw trace
 			if (s.trace) {
 				isTracing = true;
@@ -100,7 +109,7 @@ implements Previewable {
 					view.updateBackground();
 				}
 			}					           
-                                   
+                            
             // label position
             // use unit perpendicular vector to move away from line
             if (labelVisible) {
@@ -122,59 +131,30 @@ implements Previewable {
             }		                                                
         }
     }
-   private void mark(Graphics2D g2){
-		geogebra.kernel.GeoSegment seg=(GeoSegment)s;
-		switch(seg.decorationType){
+	private void update_mark(){
+		midX=(coordsA[0]+coordsB[0])/2;
+		midY=(coordsA[1]+coordsB[1])/2;
+		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
+ 		cos=Math.cos(angle);
+ 		sin=Math.sin(angle);
+ 		switch(geo.decorationType){
 			case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-		 		double midX=(coordsA[0]+coordsB[0])/2;
-				double midY=(coordsA[1]+coordsB[1])/2;
-	 			double angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
-		 		double cos=Math.cos(angle);
-		 		double sin=Math.sin(angle);
-	 			int x1=(int)(midX-4.5*cos+0.5);
-		 		int x2=(int)(midX+4.5*cos+0.5);
-		 		int y1=(int)(midY-4.5*sin+0.5);
-		 		int y2=(int)(midY+4.5*sin+0.5);		 		
-		 		g2.drawLine(x1,y1,x2,y2);
+		 		tick1.setLine(midX-4.5*cos,midY-4.5*sin,
+		 				midX+4.5*cos, midY+4.5*sin);	
 		 	break;
 		 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-		 		midX=(coordsA[0]+coordsB[0])/2;
-		 		midY=(coordsA[1]+coordsB[1])/2;
-		 		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
-		 		cos=Math.cos(angle);
-		 		sin=Math.sin(angle);
-		 		x1=(int)(midX-2*sin-4.5*cos+0.5);
-		 		x2=(int)(midX-2*sin+4.5*cos+0.5);
-		 		y1=(int)(midY+2*cos-4.5*sin+0.5);
-		 		y2=(int)(midY+2*cos+4.5*sin+0.5);
-		 		g2.drawLine(x1,y1,x2,y2);
-		 		x1=(int)(midX+2*sin-4.5*cos+0.5);
-		 		x2=(int)(midX+2*sin+4.5*cos+0.5);
-		 		y1=(int)(midY-2*cos-4.5*sin+0.5);
-		 		y2=(int)(midY-2*cos+4.5*sin+0.5);
-		 		g2.drawLine(x1,y1,x2,y2);
+		 		tick1.setLine(midX-2*sin-4.5*cos, midY+2*cos-4.5*sin,
+		 				midX-2*sin+4.5*cos, midY+2*cos+4.5*sin);
+		 		tick2.setLine(midX+2*sin-4.5*cos,midY-2*cos-4.5*sin,
+		 				midX+2*sin+4.5*cos, midY-2*cos+4.5*sin);
 		 	break;
 		 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-		 		midX=(coordsA[0]+coordsB[0])/2;
-		 		midY=(coordsA[1]+coordsB[1])/2;
-		 		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
-		 		cos=Math.cos(angle);
-		 		sin=Math.sin(angle);
-		 		x1=(int)(midX-4.5*cos+0.5);
-		 		x2=(int)(midX+4.5*cos+0.5);
-		 		y1=(int)(midY-4.5*sin+0.5);
-		 		y2=(int)(midY+4.5*sin+0.5);
-		 		g2.drawLine(x1,y1,x2,y2);
-		 		x1=(int)(midX-4*sin-4.5*cos+0.5);
-		 		x2=(int)(midX-4*sin+4.5*cos+0.5);
-		 		y1=(int)(midY+4*cos-4.5*sin+0.5);
-		 		y2=(int)(midY+4*cos+4.5*sin+0.5);
-		 		g2.drawLine(x1,y1,x2,y2);
-		 		x1=(int)(midX+4*sin-4.5*cos+0.5);
-		 		x2=(int)(midX+4*sin+4.5*cos+0.5);
-		 		y1=(int)(midY-4*cos-4.5*sin+0.5);
-		 		y2=(int)(midY-4*cos+4.5*sin+0.5);
-		 		g2.drawLine(x1,y1,x2,y2);
+		 		tick1.setLine(midX-4.5*cos,midY-4.5*sin,
+		 				midX+4.5*cos,midY+4.5*sin);
+		 		tick2.setLine(midX-4*sin-4.5*cos,midY+4*cos-4.5*sin,
+		 				midX-4*sin+4.5*cos,midY+4*cos+4.5*sin);
+		 		tick3.setLine(midX+4*sin-4.5*cos,midY-4*cos-4.5*sin,
+		 				midX+4*sin+4.5*cos,midY-4*cos+4.5*sin);
 		 		break;
 		 }
 	}
@@ -190,9 +170,27 @@ implements Previewable {
             g2.setPaint(s.objColor);             
             g2.setStroke(objStroke);            
 			g2.draw(line);
-			//added by Loïc
-			mark(g2);
-	        if (labelVisible) {
+
+			//added by Loïc BEGIN
+			if (geo.decorationType!=GeoElement.DECORATION_NONE){
+				switch(geo.decorationType){
+					case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+						g2.draw(tick1);
+					break;
+					case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+						g2.draw(tick1);
+						g2.draw(tick2);
+					break;
+					case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+						g2.draw(tick1);
+						g2.draw(tick2);
+						g2.draw(tick3);
+					break;
+				}
+			}
+			//END
+
+			if (labelVisible) {
 				g2.setPaint(s.labelColor);
 				g2.setFont(view.fontLine);
 				drawLabel(g2);

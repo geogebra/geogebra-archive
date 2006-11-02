@@ -512,8 +512,12 @@ public class PropertiesDialog
 			bgImagePanel = new BackgroundImagePanel();
  			allowReflexAnglePanel = new AllowReflexAnglePanel();
  			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-		}			
-
+		}		
+		// added by Loïc BEGIN
+		public void setSliderMinValue(){
+			arcSizePanel.setMinValue();
+		}
+		//END
 		public void updateSelection(Object[] geos) {
 			removeAll();
 			repaint();
@@ -591,7 +595,7 @@ public class PropertiesDialog
 		}
 
 	} // PropertiesPanel
-
+	
 	/**
 	 * panel with show/hide object checkbox
 	 */
@@ -2619,7 +2623,12 @@ public class PropertiesDialog
 			*/		
 			add(slider);			
 		}
-
+		//added by Loïc BEGIN
+		public void setMinValue(){
+			slider.setValue(20);
+		}
+		// END
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
@@ -2662,7 +2671,19 @@ public class PropertiesDialog
 				GeoAngle angle;
 				for (int i = 0; i < geos.length; i++) {
 					angle = (GeoAngle) geos[i];
-					angle.setArcSize(size);
+					// addded by Loïc BEGIN
+					// check if decoration could be drawn
+					if (size<20&&(angle.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
+							|| angle.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
+						angle.setArcSize(20);
+						int selected=((GeoAngle)geos[0]).decorationType;
+						if (selected==GeoElement.DECORATION_ANGLE_THREE_ARCS
+							|| selected==GeoElement.DECORATION_ANGLE_TWO_ARCS){
+							slider.setValue(20);							
+							}
+						}
+					//END
+					else angle.setArcSize(size);
 					angle.updateRepaint();
 				}
 			}
@@ -3003,7 +3024,7 @@ public class PropertiesDialog
 			decoCombo = new JComboBox(GeoAngle.getDecoTypes());
 			decoCombo.setRenderer(renderer);
 			decoCombo.addActionListener(this);
-			JLabel decoLabel = new JLabel("Decoration: ");//app.getPlain("Decoration") + ":");
+			JLabel decoLabel = new JLabel(app.getPlain("Decoration") + ":");
 			add(decoLabel);
 			add(decoCombo);		
 		}
@@ -3014,7 +3035,7 @@ public class PropertiesDialog
 			this.geos = geos;
 			decoCombo.removeActionListener(this);
 
-			//	set slider value to first geo's thickness 
+			//	set slider value to first geo's decoration 
 			GeoAngle geo0 = (GeoAngle) geos[0];
 			decoCombo.setSelectedIndex(geo0.decorationType);
 			decoCombo.addActionListener(this);
@@ -3040,6 +3061,14 @@ public class PropertiesDialog
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
 					geo.decorationType = type;
+					// addded by Loïc BEGIN
+					// check if decoration could be drawn
+					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
+							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
+						geo.setArcSize(20);
+						propPanel.setSliderMinValue();
+						}
+					//END
 					geo.updateRepaint();
 				}
 			}
