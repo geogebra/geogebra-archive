@@ -31,6 +31,8 @@ import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.AffineTransform;
 /**
  * 
  * @author Markus Hohenwarter
@@ -84,6 +86,7 @@ public class DrawAngle extends Drawable {
 	private double[] angleTick=new double[2];
 	// maximum angle distance between two ticks.
 	private final double MAX_TICK_DISTANCE=Math.toRadians(15);
+	private GeneralPath square;
 	//END
 	
 
@@ -147,6 +150,7 @@ public class DrawAngle extends Drawable {
 		for(int i=0;i<tick.length;i++){
 			tick[i]=new Line2D.Double();
 		}
+		square=new GeneralPath();
 		//END
 		
 	}
@@ -236,40 +240,65 @@ public class DrawAngle extends Drawable {
 			angSt = angSt - angExt;
 		}
 
-		//  check for 90 degrees
-		is90degrees = kernel.isEqual(angExt, Kernel.PI_HALF);
-		
-		// set arc in real world coords
 		double as = Math.toDegrees(angSt);
 		double ae = Math.toDegrees(angExt);
 		double r = angle.arcSize * view.invXscale;
-		drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
 
-		// transform arc to screen coords
-		shape = view.coordTransform.createTransformedShape(drawArc);
+		//  check for 90 degrees
+		is90degrees = kernel.isEqual(angExt, Kernel.PI_HALF);
+		
+		//added by Loïc BEGIN
+		// if we have to draw the mark for right angle 
+		if (is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
+			coords[0]=m[0];
+			coords[1]=m[1];
+			view.toScreenCoords(coords);
+			square.reset();
+			square.moveTo((float)coords[0],(float)coords[1]);
+			square.lineTo((float)(coords[0]+angle.arcSize/2),(float)coords[1]);
+			square.lineTo((float)(coords[0]+angle.arcSize/2),(float)(coords[1]-angle.arcSize/2));
+			square.lineTo((float)coords[0],(float)(coords[1]-angle.arcSize/2));
+			square.lineTo((float)coords[0],(float)coords[1]);
+			square.transform(new AffineTransform(AffineTransform.getRotateInstance(-angSt,coords[0],coords[1])));
+			/*
+			square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(-angSt))
+					,(float)(coords[1]+angle.arcSize*Math.sin(-angSt)));
+			square.lineTo((float)(coords[0]+angle.arcSize*Math.sqrt(2)*Math.cos(-angSt-Kernel.PI_HALF)),
+					(float)(coords[1]+angle.arcSize*Math.sqrt(2)*Math.sin(-angSt-Kernel.PI_HALF)));
+			square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(-angSt-angExt))
+					,(float)(coords[1]+angle.arcSize*Math.sin(-angSt-angExt)));*/
+			shape=square;
+		}
+		else {
+			//END
+			// set arc in real world coords
+			drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
 
+			// transform arc to screen coords
+			shape = view.coordTransform.createTransformedShape(drawArc);
+		
+		}
 		// shape on screen?
 		if (!shape.intersects(0, 0, view.width, view.height)) {
 			isVisible = false;
 			return;
 		}
-		
 		// For Decoration
 		// Added By Loïc BEGIN
     	switch(geo.decorationType){	
     	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
     		r=(angle.arcSize-5)*view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
+			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 			// transform arc to screen coords
 			shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
 		break;
 		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
 			r = (angle.arcSize-5) * view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
+			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 			// transform arc to screen coords
 			shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
 			r = (angle.arcSize-10) * view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
+			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 			// transform arc to screen coords
 			shapeArc2 = view.coordTransform.createTransformedShape(decoArc);
 		break;
@@ -332,7 +361,6 @@ public class DrawAngle extends Drawable {
 
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
-
 			if (angle.alphaValue > 0.0f) {
 				g2.setPaint(angle.fillColor);
 				g2.fill(shape);
@@ -347,7 +375,9 @@ public class DrawAngle extends Drawable {
 			g2.setPaint(angle.objColor);
 			g2.setStroke(objStroke);
 			g2.draw(shape);
-			
+			if (is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT) {
+				g2.fill(dot90degree);
+			}
 			switch(geo.decorationType){
 				case GeoElement.DECORATION_ANGLE_TWO_ARCS:
 					g2.draw(shapeArc1);
@@ -369,11 +399,6 @@ public class DrawAngle extends Drawable {
 					g2.draw(tick[2]);
 				break;
 			}
-
-			if (is90degrees) {
-				g2.fill(dot90degree);
-			}
-
 			if (labelVisible) {
 				g2.setPaint(angle.labelColor);
 				g2.setFont(view.fontAngle);

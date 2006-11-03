@@ -313,7 +313,7 @@ public class Application {
                 cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
 				cbShowAlgebraInput, cbShowCmdList;
     private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
-			      menuPointStyle, menuCoordStyle, menuWindow, menuFile;
+			      menuPointStyle,menuRightAngleStyle, menuCoordStyle, menuWindow, menuFile;
     private JMenuItem miCloseAll;
 
     private JSplitPane sp;
@@ -2724,6 +2724,27 @@ public class Application {
         menu.add(menuPointStyle);
         updateMenuPointStyle();
         
+        
+        // added by Loïc BEGIN
+        // right angle style
+
+        menuRightAngleStyle = new JMenu(getMenu("RightAngleStyle"));
+        // dot, none, square
+        String[] strAngleStyle = { "DottedAngle", "None", "Square" };
+        String[] strAngleStyleAC = { String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT),
+        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
+        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE)};
+        ActionListener asal = new ActionListener() {
+        	public void actionPerformed(ActionEvent ae) {
+        		int style = Integer.parseInt(ae.getActionCommand());
+        		euclidianView.setRightAngleStyle(style);
+        	}
+        };
+        addRadioButtonMenuItems(menuRightAngleStyle, asal, strAngleStyle, strAngleStyleAC, 0);
+        menu.add(menuRightAngleStyle);
+        updateMenuRightAngleStyle();
+     //END
+        
         // coordinate style
         menuCoordStyle = new JMenu(getPlain("Coordinates"));
         // dot, circle, cross
@@ -2844,6 +2865,14 @@ public class Application {
                 pos)).setSelected(
             true);
     }
+    // added by Loïc BEGIN
+    private void updateMenuRightAngleStyle() {
+        int pos = euclidianView.getRightAngleStyle();        
+        ( (JRadioButtonMenuItem) menuRightAngleStyle.getMenuComponent(
+                pos)).setSelected(
+            true);
+    }
+    //END
     
     private void updateMenuCoordStyle() {
         int pos = kernel.getCoordStyle();        

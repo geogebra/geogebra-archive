@@ -123,6 +123,7 @@ public class PropertiesDialog
 	final private static int MIN_WIDTH = 200;
 	final private static int MIN_HEIGHT = 300;
 
+	
 	/**
 	 * Creates new PropertiesDialog.
 	 * @param app: parent frame
@@ -457,10 +458,11 @@ public class PropertiesDialog
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
-		// added by Loïc
+		// added by Loïc BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
-		//end
+		private RightAnglePanel rightAnglePanel;
+		//END
 		
 		private FillingPanel fillingPanel;
 		private TracePanel tracePanel;
@@ -495,10 +497,11 @@ public class PropertiesDialog
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
-			// added by Loïc
+			// added by Loïc BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
-			//end
+			rightAnglePanel=new RightAnglePanel();
+			//END
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
 			fixPanel = new FixPanel();
@@ -568,10 +571,11 @@ public class PropertiesDialog
 				pVec.add(startPointPanel.update(geos));
 				pVec.add(cornerPointsPanel.update(geos));
 				pVec.add(lineStylePanel.update(geos));
-				// added by Loïc
+				// added by Loïc BEGIN
 				pVec.add(decoSegmentPanel.update(geos));
 				pVec.add(decoAnglePanel.update(geos));
-				//end
+				pVec.add(rightAnglePanel.update(geos));
+				//END
 				pVec.add(fillingPanel.update(geos));
 				pVec.add(sliderPanel.update(geos));
 				
@@ -3074,7 +3078,62 @@ public class PropertiesDialog
 			}
 		}
 	}
-	// end 
+	
+	// added 3/11/06
+	private class RightAnglePanel extends JPanel implements ActionListener{
+		private JCheckBox emphasizeRightAngle;
+		private Object[] geos;
+		RightAnglePanel(){
+			super(new FlowLayout(FlowLayout.LEFT));
+			emphasizeRightAngle=new JCheckBox(app.getPlain("EmphasizeRightAngle"));
+			emphasizeRightAngle.addActionListener(this);
+			add(emphasizeRightAngle);
+		}
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+			this.geos = geos;
+			emphasizeRightAngle.removeActionListener(this);
+
+			//	set JcheckBox value to first geo's decoration 
+			GeoAngle geo0 = (GeoAngle) geos[0];
+			emphasizeRightAngle.setSelected(geo0.isEmphasizeRightAngle());
+			emphasizeRightAngle.addActionListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof GeoAngle)) {
+					geosOK = false;
+					break;
+				}
+				// If it isn't a right angle
+				else if (!kernel.isEqual(((GeoAngle)geos[i]).getValue(), Kernel.PI_HALF)){
+					geosOK=false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+		
+		public void actionPerformed(ActionEvent e){
+			Object source = e.getSource();
+			if (source == emphasizeRightAngle) {
+				GeoAngle geo;
+				boolean b=emphasizeRightAngle.isSelected();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoAngle) geos[i];
+					geo.setEmphasizeRightAngle(b);
+					geo.updateRepaint();
+				}
+			}
+		}
+		
+	}
+	// END 
 
 	
 	

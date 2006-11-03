@@ -373,9 +373,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	boolean showMouseCoords = false;
 
 	private int pointCapturingMode = POINT_CAPTURING_OFF; // round point to
-
-	// grid point
-
+	
+	// added by Loïc BEGIN
+	// right angle
+	int rightAngle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+	//END
+	
+	// grid point 
+	
 	int pointStyle = POINT_STYLE_DOT;
 
 	int mode = MODE_MOVE;
@@ -510,6 +515,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_ON;
 		pointStyle = POINT_STYLE_DOT;
+		
+		// added by Loïc BEGIN
+		rightAngle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+		//END
 
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
@@ -595,10 +604,22 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateAllDrawables(true);
 	}
 
+	
 	final public int getPointStyle() {
 		return pointStyle;
 	}
-
+	// added by Loïc BEGIN
+	/**
+	 * Sets the global style for rightAngle drawing.
+	 */
+	public void setRightAngleStyle(int style) {
+		rightAngle=style;
+		updateAllDrawables(true);
+	}
+	final public int getRightAngleStyle(){
+		return rightAngle;
+	}
+	//END
 	final void addBackgroundImage(DrawImage img) {
 		bgImageList.addUnique(img);
 		drawImageList.remove(img);
