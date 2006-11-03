@@ -242,6 +242,7 @@ public class DrawAngle extends Drawable {
 		coords[1]=m[1];
 		view.toScreenCoords(coords);
 		
+		boolean dotted_angle=false;
 		// SPECIAL case for 90 degree angle, by Loic and Markus
 		if (show90degrees) {	
 			addXLabelOffset = 0;
@@ -264,11 +265,17 @@ public class DrawAngle extends Drawable {
 					shape = square;
 					break;								
 					
-				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:						
-					//	set 90 degrees dot						
+				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
+					dotted_angle=true;
+					//	set 90 degrees dot			
 					if (dot90degree == null) 
 						dot90degree = new Ellipse2D.Double();
 					int diameter = 2 * geo.lineThickness;
+					double radius = r / 1.7;
+					double labelAngle = angSt + angExt / 2.0;
+					coords[0] = m[0] + radius * Math.cos(labelAngle);
+					coords[1] = m[1] + radius * Math.sin(labelAngle);
+					view.toScreenCoords(coords);
 					dot90degree.setFrame(coords[0] - geo.lineThickness, coords[1]
 							- geo.lineThickness, diameter, diameter);
 					addXLabelOffset = addLabelOffset() ?  0 : diameter;												
@@ -276,6 +283,11 @@ public class DrawAngle extends Drawable {
 					// set arc in real world coords and transform to screen coords
 					drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
 					shape = view.coordTransform.createTransformedShape(drawArc);
+					if (labelVisible) {
+						labelDesc = angle.getLabelDescription();
+						xLabel = (int) (coords[0] - 3) + addXLabelOffset;
+						yLabel = (int) (coords[1] + 5);			
+					}
 					break;
 			}																				
 		}
@@ -334,8 +346,8 @@ public class DrawAngle extends Drawable {
 	    	}
 			// END
 		}
-		
-		if (labelVisible) {
+	
+		if (labelVisible&& !dotted_angle) {
 			// calculate label position
 			double radius = r / 1.7;
 			double labelAngle = angSt + angExt / 2.0;
@@ -374,7 +386,7 @@ public class DrawAngle extends Drawable {
 			// special handling of 90 degree dot
 			if (show90degrees) {
 				switch (view.rightAngleStyle) {
-					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:							
+					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
 						g2.fill(dot90degree);
 						break;
 						
