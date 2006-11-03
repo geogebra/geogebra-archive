@@ -2067,6 +2067,10 @@ public abstract class GeoElement
 	public boolean isTextValue() {		
 		return false;
 	}
+	
+	public boolean isListValue() {
+		return false;
+	}
    	
 
 }

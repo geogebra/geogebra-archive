@@ -39,6 +39,7 @@ public class ExpressionNode extends ValidExpression
 implements ExpressionValue {   
     
 	// boolean
+	public static final int NOT = -9;
 	public static final int OR = -8;
     public static final int AND = -7;
     public static final int EQUAL_BOOLEAN = -6;
@@ -47,6 +48,7 @@ implements ExpressionValue {
     public static final int LESS_EQUAL = -3;
     public static final int GREATER_EQUAL = -2;
     
+    private static final String strNOT = "\u00ac";
     private static final String strAND = "\u2227";
     private static final String strOR = "\u2228";
     private static final String strLESS_EQUAL = "\u2264";
@@ -302,6 +304,19 @@ implements ExpressionValue {
         /*
          * BOOLEAN operations
          */    
+        case NOT:
+        	// NOT boolean
+        	if (lt.isBooleanValue()) {
+        		bool = ((BooleanValue) lt).getMyBoolean();
+        		bool.setValue(!bool.getBoolean());
+        		return bool;
+        	}
+        	else { 
+                String [] str = { "IllegalBoolean",  strNOT, lt.toString()};
+                throw new MyError(app, str);
+            }
+        	
+        
         case OR:
         	// boolean OR boolean
         	if (lt.isBooleanValue() && rt.isBooleanValue()) {
@@ -310,7 +325,7 @@ implements ExpressionValue {
         		return bool;
         	}
         	else { 
-                String [] str = { "IllegalBooleanOr", lt.toString(), strOR,  rt.toString() };
+                String [] str = { "IllegalBoolean", lt.toString(), strOR,  rt.toString() };
                 throw new MyError(app, str);
             }
         	
@@ -322,7 +337,7 @@ implements ExpressionValue {
         		return bool;
         	}
         	else { 
-                String [] str = { "IllegalBooleanAnd", lt.toString(), strAND,  rt.toString() };
+                String [] str = { "IllegalBoolean", lt.toString(), strAND,  rt.toString() };
                 throw new MyError(app, str);
             }  
         	
@@ -994,7 +1009,7 @@ implements ExpressionValue {
                        );                   
             }     
             else { 
-                 String [] str = { "IllegalArgument", "factorial", lt.toString() };
+                 String [] str = { "IllegalArgument", lt.toString(), " !" };
                 throw new MyError(app, str);
             }   
             
@@ -1535,7 +1550,13 @@ implements ExpressionValue {
     	ExpressionValue leftEval;
         StringBuffer sb = new StringBuffer();
         
-        switch (operation) {               	
+        switch (operation) {      
+        	case NOT:
+        		sb.append(strNOT);
+        		sb.append(leftStr);
+        		break;
+        
+        
         	case OR:
         		 sb.append(leftStr);
         		 sb.append(' ');
@@ -2033,6 +2054,10 @@ implements ExpressionValue {
     public boolean isBooleanValue() {
         return evaluate().isBooleanValue();
     }
+    
+    public boolean isListValue() {		
+		return evaluate().isListValue();
+	}
 
 
     public boolean isPolynomialInstance() {
@@ -2050,5 +2075,7 @@ implements ExpressionValue {
     
     final public boolean isExpressionNode() {
         return true;
-    }   
+    }
+    
+	
 }

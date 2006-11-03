@@ -468,6 +468,11 @@ public class Polynomial implements Serializable, ExpressionValue {
        return false;
     }
     
+    public boolean isListValue() {
+        return false;
+    }
+
+    
     final public boolean contains(ExpressionValue ev) {
         return ev == this;
     }    

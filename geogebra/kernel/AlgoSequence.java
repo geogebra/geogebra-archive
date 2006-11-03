@@ -69,7 +69,9 @@ public class AlgoSequence extends AlgoElement {
     	algoExp = expression.getParentAlgorithm();
     	expIsGeoFunction = expression.isGeoFunction();    	
     	
-        list = new GeoList(cons, expression.getClass());
+    	// TODO: think about list type
+        //list = new GeoList(cons, expression.getClass());
+    	list = new GeoList(cons);
         
         setInputOutput(); // for AlgoElement
         

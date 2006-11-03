@@ -896,6 +896,10 @@ implements ExpressionValue, RealRootFunction, Functional {
     public boolean isBooleanValue() {
         return false;
     }
+    
+    public boolean isListValue() {
+        return false;
+    }
 
     public boolean isPolynomialInstance() {
         return false;

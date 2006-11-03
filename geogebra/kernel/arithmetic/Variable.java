@@ -22,7 +22,6 @@ import geogebra.MyParseError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -124,6 +123,11 @@ public class Variable implements ExpressionValue {
 	final public boolean isGeoElement() {
 	   return false;
 	}
+	
+    public boolean isListValue() {
+        return false;
+    }
+
 	
 	final public boolean contains(ExpressionValue ev) {
 		return ev == this;

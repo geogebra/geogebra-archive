@@ -211,5 +211,9 @@ implements ExpressionValue {
     
     final public boolean contains(ExpressionValue ev) {
         return ev == this;
-    }    
+    }
+
+	public boolean isListValue() {		
+		return false;
+	}    
 }

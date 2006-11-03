@@ -18,7 +18,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -401,6 +400,11 @@ implements VectorValue {
 	 final public boolean isVariable() {
 		 return false;
 	 }   
+	 
+    public boolean isListValue() {
+        return false;
+    }
+
 	 
 	 final public boolean isGeoElement() {
 	 	return false;

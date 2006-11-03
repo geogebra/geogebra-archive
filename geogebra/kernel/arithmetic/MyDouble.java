@@ -274,7 +274,11 @@ implements NumberValue {
 	
 	 final public boolean isVariable() {
         return false;
-    }   
+    }
+	 
+	public boolean isListValue() {
+	    return false;
+	}	
      
     final public boolean isGeoElement() {
        return false;

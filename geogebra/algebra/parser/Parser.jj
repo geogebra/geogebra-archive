@@ -123,9 +123,10 @@ TOKEN : {
 }
 
 /* OPERATORS */
-TOKEN :  {
- < CARTESIAN_SPECIAL_SEPERATOR: "|" >
-  |   < OR:		("||" | "\u2228") >
+TOKEN :  {   
+    < CARTESIAN_SPECIAL_SEPERATOR: "|" >
+  | < NOT: "\u00ac" > 
+  | < OR:		("||" | "\u2228") >
   | < AND:		("&&" | "\u2227") >
   | < EQUAL_BOOLEAN: "==" >
   | < LESS:		"<" >
@@ -138,7 +139,7 @@ TOKEN :  {
   | < MULTIPLY: "*" >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
-  | < FACTORIAL: "!" >
+  | < FACTORIAL: "!" >  
   | < SQUARED:  "\u00b2" >
   | < CUBED:    "\u00b3" >
   | < POWER4:   "\u2074" >
@@ -609,7 +610,7 @@ ExpressionNode ANDterm():
 }
 
 /**
- * COMPAREterm =   plusminusterm ("==" | "<" | "<=" | ">" | ">=") plusminusterm 
+ * COMPAREterm =   plusminusnode ("==" | "<" | "<=" | ">" | ">=") plusminusnode 
  */
 ExpressionNode COMPAREterm():
 {
@@ -777,21 +778,43 @@ ExpressionNode enpower():
 }
 
 /**
- * factorial =  <element> |
- *               <element> !
+ * factorial =  <NOTterm> |
+ *              <NOTterm> !
  */
 ExpressionNode enfactorial():
 {   
     ExpressionNode en;   
 }
+{     
+	    en = NOTterm() 
+	    (LOOKAHEAD(<FACTORIAL>) <FACTORIAL> 
+	     {            
+	            en = new ExpressionNode(kernel, en, ExpressionNode.FACTORIAL, null);                    
+	     }      
+	     )?    
+	     { return en; }	    	
+}
+
+/**
+ * NOTterm =  <NOT> <enelement> |
+ *               	<enelement>
+ */
+ExpressionNode NOTterm():
 {   
-    en = enelement() 
-    (LOOKAHEAD(<FACTORIAL>) <FACTORIAL> 
-     {            
-            en = new ExpressionNode(kernel, en, ExpressionNode.FACTORIAL, null);                    
-     }      
-     )?    
-     { return en; }
+    ExpressionNode en;   
+}
+{     
+	(
+	    ( <NOT> | "!" ) en = enelement() 	    
+	     {            
+	            return new ExpressionNode(kernel, en, ExpressionNode.NOT, null);       
+	     }      
+	 ) 
+|
+	 (
+	  	en = enelement() 	
+	     { return en; }	    	
+	 )	    	     
 }
 
 /**
@@ -838,6 +861,20 @@ ExpressionNode enelement():
     LOOKAHEAD(2147483647)
     "("  en = expressionnode()  ")" 
         { return  en; }
+        
+|
+    // list
+    LOOKAHEAD(2147483647)
+    "{" (","  en = expressionnode())*  "}" 
+        { return  en; }
+    "{"  en = expressionnode() 
+        {   
+            labels = new Vector(); labels.add(t.image);  
+        }
+     ( "," t = <LABEL> { labels.add(t.image); } )*
+    "}"         
+        
+        
 |
     // cartesian vector  (x, y) or (x|y)
     LOOKAHEAD(2147483647)

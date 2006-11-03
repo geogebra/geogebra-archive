@@ -25,14 +25,18 @@ implements ActionListener{
 		"\u00b0", // degree		
 		"\u03c0", // pi				
 		"\u00b2",  // exponents ^2 until ^6
-		"^", 
-		"!", 
+		"^", 		
 		"exp(x)",
 		"log(x)",
 		"sin(x)",
 		"cos(x)",
 		"tan(x)",
-		"abs(x)"				
+		"abs(x)",
+		"\u00ac", // boolean NOT 
+		"\u2227", // boolean AND
+	    "\u2228", // boolean OR
+	    "\u2264", // boolean LESS EQUAL
+	    "\u2265" // boolean GREATER_EQUAL
 	};
 	
 	public final static String [] greekLowerCase = {

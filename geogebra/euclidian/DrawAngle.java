@@ -35,7 +35,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.AffineTransform;
 /**
  * 
- * @author Markus Hohenwarter
+ * @author Markus Hohenwarter, Loic De Coq
  * @version
  */
 public class DrawAngle extends Drawable {
@@ -48,7 +48,7 @@ public class DrawAngle extends Drawable {
 
 	private GeoVector vector;
 
-	boolean isVisible, labelVisible, is90degrees;
+	boolean isVisible, labelVisible, show90degrees;
 
 	final private static int DRAW_MODE_POINTS = 0;
 
@@ -64,30 +64,25 @@ public class DrawAngle extends Drawable {
 
 	//private Arc2D.Double fillArc = new Arc2D.Double();
 	private Arc2D.Double drawArc = new Arc2D.Double();
-
-	private Ellipse2D.Double dot90degree = new Ellipse2D.Double();
-
+	private Ellipse2D.Double dot90degree;
 	private Shape shape;
-
 	private double m[] = new double[2];
-
 	private double coords[] = new double[2];
-
 	private double[] firstVec = new double[2];
-
 	private GeoPoint tempPoint;
+	private int addXLabelOffset;
 
 	private Kernel kernel;
+	
 	// For decoration
 	// added by Loïc BEGIN
 	private Shape shapeArc1,shapeArc2;
 	private Arc2D.Double decoArc = new Arc2D.Double();
-	private Line2D.Double[] tick=new Line2D.Double[3];
+	private Line2D.Double[] tick;
 	private double[] angleTick=new double[2];
 	// maximum angle distance between two ticks.
-	private final double MAX_TICK_DISTANCE=Math.toRadians(15);
+	private static final double MAX_TICK_DISTANCE=Math.toRadians(15);
 	private GeneralPath square;
-	private boolean DotRightAngle;
 	//END
 	
 
@@ -146,15 +141,7 @@ public class DrawAngle extends Drawable {
 			angle.setDrawable(true);
 			update();
 		}
-		// added by Loïc BEGIN
-		// initialize tick for decoration
-		for(int i=0;i<tick.length;i++){
-			tick[i]=new Line2D.Double();
-		}
-		square=new GeneralPath();
-		DotRightAngle=false;
-		//END
-		
+			
 	}
 
 	final public void update() {
@@ -235,7 +222,6 @@ public class DrawAngle extends Drawable {
 		}
 		double angExt = angle.getValue();
 
-
 		// if this angle was not allowed to become a reflex angle
 		// (i.e. greater than pi) we got (2pi - angleValue) for angExt
 		if (angle.changedReflexAngle()) {
@@ -246,120 +232,126 @@ public class DrawAngle extends Drawable {
 		double ae = Math.toDegrees(angExt);
 		double r = angle.arcSize * view.invXscale;
 
-		//  check for 90 degrees
-		is90degrees = kernel.isEqual(angExt, Kernel.PI_HALF);
+		// check whether we need to take care for a special 90 degree angle appearance
+		show90degrees = view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_NONE &&
+						angle.isEmphasizeRightAngle() &&  
+						kernel.isEqual(angExt, Kernel.PI_HALF);
 		
-		//added by Loïc BEGIN
-		// if we have to draw the mark for right angle 
-		if (is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
-			coords[0]=m[0];
-			coords[1]=m[1];
-			view.toScreenCoords(coords);
-			square.reset();
-			square.moveTo((float)coords[0],(float)coords[1]);
-			square.lineTo((float)(coords[0]+angle.arcSize/2),(float)coords[1]);
-			square.lineTo((float)(coords[0]+angle.arcSize/2),(float)(coords[1]-angle.arcSize/2));
-			square.lineTo((float)coords[0],(float)(coords[1]-angle.arcSize/2));
-			square.lineTo((float)coords[0],(float)coords[1]);
-			square.transform(new AffineTransform(AffineTransform.getRotateInstance(-angSt,coords[0],coords[1])));
-			/*
-			square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(-angSt))
-					,(float)(coords[1]+angle.arcSize*Math.sin(-angSt)));
-			square.lineTo((float)(coords[0]+angle.arcSize*Math.sqrt(2)*Math.cos(-angSt-Kernel.PI_HALF)),
-					(float)(coords[1]+angle.arcSize*Math.sqrt(2)*Math.sin(-angSt-Kernel.PI_HALF)));
-			square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(-angSt-angExt))
-					,(float)(coords[1]+angle.arcSize*Math.sin(-angSt-angExt)));*/
-			shape=square;
+		// set coords to screen coords of vertex
+		coords[0]=m[0];
+		coords[1]=m[1];
+		view.toScreenCoords(coords);
+		
+		// SPECIAL case for 90 degree angle, by Loic and Markus
+		if (show90degrees) {	
+			addXLabelOffset = 0;
+			
+			switch (view.rightAngleStyle) {									
+				case EuclidianView.RIGHT_ANGLE_STYLE_SQUARE:
+					// set 90 degrees square									
+					if (square == null) 
+						square = new GeneralPath();
+					else					
+						square.reset();
+					
+					double length = angle.arcSize * 0.7071067811865;
+					square.moveTo((float)coords[0],(float)coords[1]);
+					square.lineTo((float)(coords[0]+length),(float)coords[1]);
+					square.lineTo((float)(coords[0]+length),(float)(coords[1]-length));
+					square.lineTo((float)coords[0],(float)(coords[1]-length));
+					square.lineTo((float)coords[0],(float)coords[1]);
+					square.transform(AffineTransform.getRotateInstance(-angSt,coords[0],coords[1]));
+					shape = square;
+					break;								
+					
+				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:						
+					//	set 90 degrees dot						
+					if (dot90degree == null) 
+						dot90degree = new Ellipse2D.Double();
+					int diameter = 2 * geo.lineThickness;
+					dot90degree.setFrame(coords[0] - geo.lineThickness, coords[1]
+							- geo.lineThickness, diameter, diameter);
+					addXLabelOffset = addLabelOffset() ?  0 : diameter;												
+				
+					// set arc in real world coords and transform to screen coords
+					drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
+					shape = view.coordTransform.createTransformedShape(drawArc);
+					break;
+			}																				
 		}
+		// STANDARE case: draw arc with possible decoration 
 		else {
-			//END
-			// set arc in real world coords
-			drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
-
-			// transform arc to screen coords
+			// set arc in real world coords and transform to screen coords
+			drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);			
 			shape = view.coordTransform.createTransformedShape(drawArc);
+			
+			// For Decoration
+			// Added By Loïc BEGIN
+	    	switch(geo.decorationType){	
+		    	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
+		    		r=(angle.arcSize-5)*view.invXscale;
+					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
+					// transform arc to screen coords
+					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
+				break;
+				case GeoElement.DECORATION_ANGLE_THREE_ARCS:
+					r = (angle.arcSize-5) * view.invXscale;
+					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
+					// transform arc to screen coords
+					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
+					r = (angle.arcSize-10) * view.invXscale;
+					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
+					// transform arc to screen coords
+					shapeArc2 = view.coordTransform.createTransformedShape(decoArc);
+				break;
+				case GeoElement.DECORATION_ANGLE_ONE_TICK:
+					angleTick[0]=-angSt-angExt/2;
+					updateTick(angleTick[0],angle.arcSize,0);
+				break;
+				case GeoElement.DECORATION_ANGLE_TWO_TICKS:
+					angleTick[0]=-angSt-2*angExt/5;
+					angleTick[1]=-angSt-3*angExt/5;
+					if (Math.abs(angleTick[1]-angleTick[0])>MAX_TICK_DISTANCE){
+						angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE/2;
+						angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE/2;
+					}
+					updateTick(angleTick[0],angle.arcSize,0);
+					updateTick(angleTick[1],angle.arcSize,1);
+				break;
+				case GeoElement.DECORATION_ANGLE_THREE_TICKS:
+					angleTick[0]=-angSt-3*angExt/8;
+					angleTick[1]=-angSt-5*angExt/8;
+					if (Math.abs(angleTick[1]-angleTick[0])>2*MAX_TICK_DISTANCE){
+						angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE;
+						angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE;
+					}
+					updateTick(angleTick[0],angle.arcSize,0);
+					updateTick(angleTick[1],angle.arcSize,1);
+					//middle tick
+					angleTick[0]=-angSt-angExt/2;
+					updateTick(angleTick[0],angle.arcSize,2);
+					break;
+	    	}
+			// END
+		}
 		
-		}
-		// shape on screen?
-		if (!shape.intersects(0, 0, view.width, view.height)) {
-			isVisible = false;
-			return;
-		}
-		DotRightAngle=is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT;
-		// For Decoration
-		// Added By Loïc BEGIN
-    	switch(geo.decorationType){	
-    	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
-    		r=(angle.arcSize-5)*view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
-			// transform arc to screen coords
-			shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
-		break;
-		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
-			r = (angle.arcSize-5) * view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
-			// transform arc to screen coords
-			shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
-			r = (angle.arcSize-10) * view.invXscale;
-			decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
-			// transform arc to screen coords
-			shapeArc2 = view.coordTransform.createTransformedShape(decoArc);
-		break;
-		case GeoElement.DECORATION_ANGLE_ONE_TICK:
-			angleTick[0]=-angSt-angExt/2;
-			updateTick(angleTick[0],angle.arcSize,0);
-		break;
-		case GeoElement.DECORATION_ANGLE_TWO_TICKS:
-			angleTick[0]=-angSt-2*angExt/5;
-			angleTick[1]=-angSt-3*angExt/5;
-			if (Math.abs(angleTick[1]-angleTick[0])>MAX_TICK_DISTANCE){
-				angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE/2;
-				angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE/2;
-			}
-			updateTick(angleTick[0],angle.arcSize,0);
-			updateTick(angleTick[1],angle.arcSize,1);
-		break;
-		case GeoElement.DECORATION_ANGLE_THREE_TICKS:
-			angleTick[0]=-angSt-3*angExt/8;
-			angleTick[1]=-angSt-5*angExt/8;
-			if (Math.abs(angleTick[1]-angleTick[0])>2*MAX_TICK_DISTANCE){
-				angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE;
-				angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE;
-			}
-			updateTick(angleTick[0],angle.arcSize,0);
-			updateTick(angleTick[1],angle.arcSize,1);
-			//middle tick
-			angleTick[0]=-angSt-angExt/2;
-			updateTick(angleTick[0],angle.arcSize,2);
-			break;
-    	}
-		// END
-
-	
-		if (labelVisible || is90degrees) {
-			// calculate label and 90° dot position
+		if (labelVisible) {
+			// calculate label position
 			double radius = r / 1.7;
 			double labelAngle = angSt + angExt / 2.0;
 			coords[0] = m[0] + radius * Math.cos(labelAngle);
 			coords[1] = m[1] + radius * Math.sin(labelAngle);
 			view.toScreenCoords(coords);
-		}
-
-		if (is90degrees) {
-			// set 90 degrees dot
-			int diameter = 2 * geo.lineThickness;
-			dot90degree.setFrame(coords[0] - geo.lineThickness, coords[1]
-					- geo.lineThickness, diameter, diameter);
-		}
-
-		if (labelVisible) {
+		
 			labelDesc = angle.getLabelDescription();
-			xLabel = (int) (coords[0] - 3);
-			yLabel = (int) (coords[1] + 5);
-			if (!addLabelOffset() && is90degrees) {
-				xLabel = (int) (coords[0] + 2 * geo.lineThickness);
-			}
+			xLabel = (int) (coords[0] - 3) + addXLabelOffset;
+			yLabel = (int) (coords[1] + 5);			
 		}
+		
+		// shape on screen?
+		if (!shape.intersects(0, 0, view.width, view.height)) {
+			isVisible = false;			
+		}						
 	}
 
 	final public void draw(Graphics2D g2) {
@@ -378,30 +370,45 @@ public class DrawAngle extends Drawable {
 			g2.setPaint(angle.objColor);
 			g2.setStroke(objStroke);
 			g2.draw(shape);
-			if (DotRightAngle) {
-				g2.fill(dot90degree);
+			
+			// special handling of 90 degree dot
+			if (show90degrees) {
+				switch (view.rightAngleStyle) {
+					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:							
+						g2.fill(dot90degree);
+						break;
+						
+					default:
+						// nothing to do as square for EuclidianView.RIGHT_ANGLE_STYLE_SQUARE
+						// was already drawn as shape						
+				}
+			} 			
+			else {
+				// if we don't have a special 90 degrees appearance we might nee to draw
+				// other decorations							
+				switch(geo.decorationType){
+					case GeoElement.DECORATION_ANGLE_TWO_ARCS:
+						g2.draw(shapeArc1);
+						break;
+					case GeoElement.DECORATION_ANGLE_THREE_ARCS:
+						g2.draw(shapeArc1);
+						g2.draw(shapeArc2);
+						break;
+					case GeoElement.DECORATION_ANGLE_ONE_TICK:
+						g2.draw(tick[0]);
+						break;
+					case GeoElement.DECORATION_ANGLE_TWO_TICKS:
+						g2.draw(tick[0]);
+						g2.draw(tick[1]);
+						break;
+					case GeoElement.DECORATION_ANGLE_THREE_TICKS:
+						g2.draw(tick[0]);
+						g2.draw(tick[1]);
+						g2.draw(tick[2]);
+						break;
+				}
 			}
-			switch(geo.decorationType){
-				case GeoElement.DECORATION_ANGLE_TWO_ARCS:
-					g2.draw(shapeArc1);
-				break;
-				case GeoElement.DECORATION_ANGLE_THREE_ARCS:
-					g2.draw(shapeArc1);
-					g2.draw(shapeArc2);
-				break;
-				case GeoElement.DECORATION_ANGLE_ONE_TICK:
-					g2.draw(tick[0]);
-				break;
-				case GeoElement.DECORATION_ANGLE_TWO_TICKS:
-					g2.draw(tick[0]);
-					g2.draw(tick[1]);
-				break;
-				case GeoElement.DECORATION_ANGLE_THREE_TICKS:
-					g2.draw(tick[0]);
-					g2.draw(tick[1]);
-					g2.draw(tick[2]);
-				break;
-			}
+			
 			if (labelVisible) {
 				g2.setPaint(angle.labelColor);
 				g2.setFont(view.fontAngle);
@@ -414,14 +421,21 @@ public class DrawAngle extends Drawable {
 	// tick is at distance radius and oriented towards angle
 	// id = 0,1, or 2 for tick[0],tick[1] or tick[2]
 	private void updateTick(double angle,int radius,int id){
-		coords[0]=m[0];
-		coords[1]=m[1];
-		view.toScreenCoords(coords);
-		tick[id].setLine(coords[0]+(radius-3)*Math.cos(angle),
-				coords[1]+(radius-3)*Math.sin(angle)*view.getScaleRatio(),
-				coords[0]+(radius+3)*Math.cos(angle),
-				coords[1]+(radius+3)*Math.sin(angle)*view.getScaleRatio());
-
+		// coords have to be set to screen coords of m before calling this method 	
+		if (tick == null) {
+			tick = new Line2D.Double[3];
+			for(int i=0; i < tick.length; i++){
+				tick[i] = new Line2D.Double();
+			}							
+		}			
+		
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		
+		tick[id].setLine(coords[0]+(radius-3)*cos, 
+				coords[1]+(radius-3)* sin * view.getScaleRatio(), 
+				coords[0]+(radius+3)* cos,
+				coords[1]+(radius+3)* sin *view.getScaleRatio());
 	}
 
 	final public boolean hit(int x, int y) {

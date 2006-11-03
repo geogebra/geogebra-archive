@@ -18,13 +18,20 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ListValue;
+import geogebra.kernel.arithmetic.MyList;
+
 import java.util.ArrayList;
 
 
 /**
  * List of GeoElements
  */
-public class GeoList extends GeoElement {
+public class GeoList extends GeoElement implements ListValue {
+	
+	public final static int LIST_TYPE_MIXED = 0;
+	public final static int LIST_TYPE_NUMBER_VALUE = 1;
+	public final static int LIST_TYPE_VECTOR_VALUE = 2;
 
 	private static final long serialVersionUID = 1L;
 	private static String STR_OPEN = "{";
@@ -33,7 +40,7 @@ public class GeoList extends GeoElement {
 	private ArrayList geoList;	  
 	private boolean isDefined = true;
     
-    public GeoList(Construction c, Class listType) { 
+    public GeoList(Construction c) { 
     	super(c);     	
     	geoList = new ArrayList();    	
     	
@@ -66,7 +73,19 @@ public class GeoList extends GeoElement {
         geoList.addAll(l.geoList);        	                
     }    
     
-    
+    /**
+     * Returns this GeoList as a MyList object.
+     */
+    public MyList getMyList() {        	
+    	int size = geoList.size();    	
+    	MyList myList = new MyList(kernel, size);
+    	
+    	for (int i=0; i < geoList.size(); i++) {
+    		myList.addListElement((GeoElement) geoList.get(i));	
+    	}
+    	
+    	return myList;
+    }        
         
     public boolean isDefined() {
     	//TODO: change
@@ -175,6 +194,10 @@ public class GeoList extends GeoElement {
     
 	
 	public boolean isGeoList() {
+		return true;
+	}
+	
+	public boolean isListValue() {
 		return true;
 	}
     		

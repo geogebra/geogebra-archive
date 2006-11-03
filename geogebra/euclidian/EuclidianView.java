@@ -376,10 +376,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	
 	// added by Loïc BEGIN
 	// right angle
-	int rightAngle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_DOT;
 	//END
-	
-	// grid point 
 	
 	int pointStyle = POINT_STYLE_DOT;
 
@@ -517,7 +515,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		pointStyle = POINT_STYLE_DOT;
 		
 		// added by Loïc BEGIN
-		rightAngle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+		rightAngleStyle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
 		//END
 
 		showAxesNumbers[0] = true;
@@ -613,11 +611,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * Sets the global style for rightAngle drawing.
 	 */
 	public void setRightAngleStyle(int style) {
-		rightAngle=style;
+		rightAngleStyle=style;
 		updateAllDrawables(true);
 	}
 	final public int getRightAngleStyle(){
-		return rightAngle;
+		return rightAngleStyle;
 	}
 	//END
 	final void addBackgroundImage(DrawImage img) {
