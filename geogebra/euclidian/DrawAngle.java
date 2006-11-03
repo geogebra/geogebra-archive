@@ -87,6 +87,7 @@ public class DrawAngle extends Drawable {
 	// maximum angle distance between two ticks.
 	private final double MAX_TICK_DISTANCE=Math.toRadians(15);
 	private GeneralPath square;
+	private boolean DotRightAngle;
 	//END
 	
 
@@ -151,6 +152,7 @@ public class DrawAngle extends Drawable {
 			tick[i]=new Line2D.Double();
 		}
 		square=new GeneralPath();
+		DotRightAngle=false;
 		//END
 		
 	}
@@ -283,6 +285,7 @@ public class DrawAngle extends Drawable {
 			isVisible = false;
 			return;
 		}
+		DotRightAngle=is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT;
 		// For Decoration
 		// Added By Loïc BEGIN
     	switch(geo.decorationType){	
@@ -375,7 +378,7 @@ public class DrawAngle extends Drawable {
 			g2.setPaint(angle.objColor);
 			g2.setStroke(objStroke);
 			g2.draw(shape);
-			if (is90degrees&&angle.isEmphasizeRightAngle()&&view.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT) {
+			if (DotRightAngle) {
 				g2.fill(dot90degree);
 			}
 			switch(geo.decorationType){

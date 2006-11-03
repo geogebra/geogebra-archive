@@ -451,8 +451,38 @@ public class GeoGebraToPstricks implements ActionListener {
         	angSt = angSt - angExt;
         }
         angExt+=angSt;
-	    // set arc in real world coords
 		double r = arcSize /euclidianView.getXscale();
+		// if angle=90° and decoration=little square
+        if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
+        	r=r/2;
+        	double[] x=new double[8];
+        	x[0]=m[0]+r*Math.cos(angSt);
+        	x[1]=m[1]+r*Math.sin(angSt);
+        	x[2]=m[0]+r*Math.sqrt(2)*Math.cos(angSt+Kernel.PI_HALF/2);
+        	x[3]=m[1]+r*Math.sqrt(2)*Math.sin(angSt+Kernel.PI_HALF/2);
+        	x[4]=m[0]+r*Math.cos(angSt+Kernel.PI_HALF);
+        	x[5]=m[1]+r*Math.sin(angSt+Kernel.PI_HALF);
+        	x[6]=m[0];
+        	x[7]=m[1];
+        	
+          	// command: \pspolygon[par](x0,y0)....(xn,yn)
+        	float alpha=geo.getAlphaValue();
+//        	if (alpha==0.0f) return;
+        	Color polyColor=geo.getColor();
+        	codeFilledObject.append("\\pspolygon");
+        	codeFilledObject.append(LineOptionCode(geo,true));
+        	for (int i=0;i<4;i++){
+         		codeFilledObject.append("(");
+        		codeFilledObject.append(kernel.format(x[2*i]));
+        		codeFilledObject.append(",");
+        		codeFilledObject.append(kernel.format(x[2*i+1]));
+        		codeFilledObject.append(")");
+        	}
+        	codeFilledObject.append("\n");	
+        }
+        // draw arc for the angle
+        else {	
+       	// set arc in real world coords
 		code.append("\\pscustom");
 		code.append(LineOptionCode(geo,true));
 		code.append("{\\parametricplot{");
@@ -473,9 +503,31 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(",");
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
-    
-		int deco=geo.decorationType;
+		// draw the dot if angle= 90° and decoration=dot
+		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
+			double diameter = geo.lineThickness/euclidianView.getXscale();
+			double radius = arcSize/euclidianView.getXscale()/1.7;
+			double labelAngle = (angSt+angExt) / 2.0;
+			double x1=m[0] + radius * Math.cos(labelAngle);
+			double x2 = m[1] + radius * Math.sin(labelAngle);
+			// draw an ellipse
+			// command:  \psellipse(0,0)(20.81,-10.81)}
+				code.append("\\psellipse*");
+				code.append(LineOptionCode(geo,true));
+				code.append("(");
+				code.append(kernel.format(x1));
+				code.append(",");
+				code.append(kernel.format(x2));
+				code.append(")(");
+				code.append(kernel.format(diameter));
+				code.append(",");
+				code.append(kernel.format(diameter));
+				code.append(")\n");
+			}
+        }
+   		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
+
     }
     private void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
 		code.append("\\parametricplot");
