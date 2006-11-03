@@ -70,7 +70,7 @@ public class DrawAngle extends Drawable {
 	private double coords[] = new double[2];
 	private double[] firstVec = new double[2];
 	private GeoPoint tempPoint;
-	private int addXLabelOffset;
+	private boolean drawDot;
 
 	private Kernel kernel;
 	
@@ -242,11 +242,11 @@ public class DrawAngle extends Drawable {
 		coords[1]=m[1];
 		view.toScreenCoords(coords);
 		
-		boolean dotted_angle=false;
+		// for 90 degree angle
+		drawDot = false;
+		
 		// SPECIAL case for 90 degree angle, by Loic and Markus
-		if (show90degrees) {	
-			addXLabelOffset = 0;
-			
+		if (show90degrees) {						
 			switch (view.rightAngleStyle) {									
 				case EuclidianView.RIGHT_ANGLE_STYLE_SQUARE:
 					// set 90 degrees square									
@@ -265,9 +265,10 @@ public class DrawAngle extends Drawable {
 					shape = square;
 					break;								
 					
-				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
-					dotted_angle=true;
+				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:					
 					//	set 90 degrees dot			
+					drawDot = true;
+					
 					if (dot90degree == null) 
 						dot90degree = new Ellipse2D.Double();
 					int diameter = 2 * geo.lineThickness;
@@ -277,17 +278,11 @@ public class DrawAngle extends Drawable {
 					coords[1] = m[1] + radius * Math.sin(labelAngle);
 					view.toScreenCoords(coords);
 					dot90degree.setFrame(coords[0] - geo.lineThickness, coords[1]
-							- geo.lineThickness, diameter, diameter);
-					addXLabelOffset = addLabelOffset() ?  0 : diameter;												
+							- geo.lineThickness, diameter, diameter);											
 				
 					// set arc in real world coords and transform to screen coords
 					drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);
-					shape = view.coordTransform.createTransformedShape(drawArc);
-					if (labelVisible) {
-						labelDesc = angle.getLabelDescription();
-						xLabel = (int) (coords[0] - 3) + addXLabelOffset;
-						yLabel = (int) (coords[1] + 5);			
-					}
+					shape = view.coordTransform.createTransformedShape(drawArc);					
 					break;
 			}																				
 		}
@@ -346,24 +341,30 @@ public class DrawAngle extends Drawable {
 	    	}
 			// END
 		}
+		
+		// shape on screen?
+		if (!shape.intersects(0, 0, view.width, view.height)) {
+			isVisible = false;
+			return;
+		}	
 	
-		if (labelVisible&& !dotted_angle) {
+		if (labelVisible) {
 			// calculate label position
 			double radius = r / 1.7;
 			double labelAngle = angSt + angExt / 2.0;
 			coords[0] = m[0] + radius * Math.cos(labelAngle);
 			coords[1] = m[1] + radius * Math.sin(labelAngle);
 			view.toScreenCoords(coords);
-		
+				
 			labelDesc = angle.getLabelDescription();
-			xLabel = (int) (coords[0] - 3) + addXLabelOffset;
+			xLabel = (int) (coords[0] - 3);
 			yLabel = (int) (coords[1] + 5);			
+			
+			if (!addLabelOffset() && drawDot)
+				xLabel = (int) (coords[0] + 2 * geo.lineThickness);
 		}
 		
-		// shape on screen?
-		if (!shape.intersects(0, 0, view.width, view.height)) {
-			isVisible = false;			
-		}						
+							
 	}
 
 	final public void draw(Graphics2D g2) {
