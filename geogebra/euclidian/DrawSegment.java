@@ -37,8 +37,7 @@ implements Previewable {
    
     private GeoLine s;
     private GeoPoint A, B;
-     
-    private double nx, ny, unit;
+       
     boolean isVisible, labelVisible;
     private ArrayList points;
     
@@ -47,11 +46,7 @@ implements Previewable {
 	private double [] coordsB = new double[2];
     
 	// For drawing ticks
-	private Line2D.Double tick1=new Line2D.Double();
-    private Line2D.Double tick2=new Line2D.Double();
-    private Line2D.Double tick3=new Line2D.Double();
-    private double midX,midY,cos,sin,angle;
-	
+	private Line2D.Double [] decoTicks;	
     
 	/** Creates new DrawSegment */
     public DrawSegment(EuclidianView view, GeoLine s) {
@@ -74,90 +69,122 @@ implements Previewable {
 
 	final public void update() {
         isVisible = geo.isEuclidianVisible();
-        if (isVisible) { 
-			labelVisible = geo.isLabelVisible();       
-			updateStrokes(s);
-			
-			A = s.getStartPoint();
-	        B = s.getEndPoint();
-			
-            A.getInhomCoords(coordsA);
-            B.getInhomCoords(coordsB);                         
-			view.toScreenCoords(coordsA);
-			view.toScreenCoords(coordsB);					
-			line.setLine(coordsA[0], coordsA[1], coordsB[0], coordsB[1]);        
+        if (!isVisible) return; 
+		labelVisible = geo.isLabelVisible();       
+		updateStrokes(s);
+		
+		A = s.getStartPoint();
+        B = s.getEndPoint();
+		
+        A.getInhomCoords(coordsA);
+        B.getInhomCoords(coordsB);                         
+		view.toScreenCoords(coordsA);
+		view.toScreenCoords(coordsB);					
+		line.setLine(coordsA[0], coordsA[1], coordsB[0], coordsB[1]);        
 
-			// line on screen?		
-    		if (!line.intersects(0,0, view.width, view.height)) {				
-    			isVisible = false;
-    			return;
-    		}	
-    		// update decoration
-    		
-			//added by Loïc BEGIN
-    		if (geo.decorationType!=GeoElement.DECORATION_NONE) update_mark();
-    		//END
-    		
-			// draw trace
-			if (s.trace) {
-				isTracing = true;
-				Graphics2D g2 = view.getBackgroundGraphics();
-				if (g2 != null) drawTrace(g2);
-			} else {
-				if (isTracing) {
-					isTracing = false;
-					view.updateBackground();
-				}
-			}					           
-                            
-            // label position
-            // use unit perpendicular vector to move away from line
-            if (labelVisible) {
-				labelDesc = geo.getLabelDescription();
-				
-				nx = coordsA[1] - coordsB[1]; 			
-				ny = coordsB[0] - coordsA[0];
-				double length = GeoVec2D.length(nx, ny);
-				if (length > 0.0) {
-					unit = 16d / length;        		    		   				           					
-				} else {
-					nx = 0.0;
-					ny = 1.0;
-					unit = 16d;
-				}				   
-				xLabel = (int) ((coordsA[0] + coordsB[0])/ 2.0 + nx * unit);
-				yLabel = (int) ((coordsA[1] + coordsB[1])/ 2.0 + ny * unit);	  
-				addLabelOffset();        
-            }		                                                
-        }
+		// line on screen?		
+		if (!line.intersects(0,0, view.width, view.height)) {				
+			isVisible = false;
+			return;
+		}	
+		    		    	
+		// draw trace
+		if (s.trace) {
+			isTracing = true;
+			Graphics2D g2 = view.getBackgroundGraphics();
+			if (g2 != null) drawTrace(g2);
+		} else {
+			if (isTracing) {
+				isTracing = false;
+				view.updateBackground();
+			}
+		}			
+		
+		// if no label and no decoration then we're done
+		if (!labelVisible && geo.decorationType == GeoElement.DECORATION_NONE) 
+			return;
+		
+		// calc midpoint (midX, midY) and perpendicular vector (nx, ny)
+		double midX = (coordsA[0] + coordsB[0])/ 2.0;
+		double midY = (coordsA[1] + coordsB[1])/ 2.0;		
+		double nx = coordsA[1] - coordsB[1]; 			
+		double ny = coordsB[0] - coordsA[0];		
+		double nLength = GeoVec2D.length(nx, ny);			
+			
+		// label position
+        // use unit perpendicular vector to move away from line
+        if (labelVisible) {   
+        	labelDesc = geo.getLabelDescription();	
+        	if (nLength > 0.0) {    		
+        		xLabel = (int) (midX + nx * 16 / nLength);
+    			yLabel = (int) (midY + ny * 16 / nLength);	
+    		} else {
+    			xLabel = (int) midX;
+    			yLabel = (int) (midY + 16);    			
+    		}	        													  			  
+			addLabelOffset();        
+        }	
+        
+        // update decoration    		
+		//added by Loïc and Markus BEGIN,
+		if (geo.decorationType != GeoElement.DECORATION_NONE && nLength > 0) {	
+			if (decoTicks == null) {
+				// only create these object when they are really needed
+				decoTicks =	new Line2D.Double[3];
+				for (int i = 0; i < decoTicks.length; i++)
+					decoTicks[i] = new Line2D.Double();
+			}
+			
+			// tick spacing and length.
+			double tickSpacing = 2.5 + geo.lineThickness/2d;
+			double tickLength =  tickSpacing + 1;	
+			double vx, vy, factor;
+																	
+			switch(geo.decorationType){
+				case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+					// use perpendicular vector to set tick	
+					factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX - nx, midY - ny,
+										 midX + nx, midY + ny);	
+					break;
+			 	
+			 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+			 		// vector (vx, vy) to get 2 points around midpoint		
+			 		factor = tickSpacing / (2 * nLength);		
+			 		vx = -ny * factor;
+			 		vy =  nx * factor;	
+			 		// use perpendicular vector to set ticks			 		
+			 		factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
+										 midX + vx + nx, midY + vy + ny);						
+					decoTicks[1].setLine(midX - vx - nx, midY - vy - ny,
+							 			 midX - vx + nx, midY - vy + ny);
+			 		break;
+			 	
+			 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+			 		// vector (vx, vy) to get 2 points around midpoint				 		
+			 		factor = tickSpacing / nLength;		
+			 		vx = -ny * factor;
+			 		vy =  nx * factor;	
+			 		// use perpendicular vector to set ticks			 		
+			 		factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
+										 midX + vx + nx, midY + vy + ny);	
+					decoTicks[1].setLine(midX - nx, midY - ny,
+							 			 midX + nx, midY + ny);
+					decoTicks[2].setLine(midX - vx - nx, midY - vy - ny,
+				 			 			 midX - vx + nx, midY - vy + ny);
+			 		break;
+			}    		    		    		
+    	}			                                           
     }
-	private void update_mark(){
-		midX=(coordsA[0]+coordsB[0])/2;
-		midY=(coordsA[1]+coordsB[1])/2;
-		angle=Math.PI/2-Math.atan2(coordsA[1]-coordsB[1],coordsB[0]-coordsA[0]);
- 		cos=Math.cos(angle);
- 		sin=Math.sin(angle);
- 		switch(geo.decorationType){
-			case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-		 		tick1.setLine(midX-4.5*cos,midY-4.5*sin,
-		 				midX+4.5*cos, midY+4.5*sin);	
-		 	break;
-		 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-		 		tick1.setLine(midX-2*sin-4.5*cos, midY+2*cos-4.5*sin,
-		 				midX-2*sin+4.5*cos, midY+2*cos+4.5*sin);
-		 		tick2.setLine(midX+2*sin-4.5*cos,midY-2*cos-4.5*sin,
-		 				midX+2*sin+4.5*cos, midY-2*cos+4.5*sin);
-		 	break;
-		 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-		 		tick1.setLine(midX-4.5*cos,midY-4.5*sin,
-		 				midX+4.5*cos,midY+4.5*sin);
-		 		tick2.setLine(midX-4*sin-4.5*cos,midY+4*cos-4.5*sin,
-		 				midX-4*sin+4.5*cos,midY+4*cos+4.5*sin);
-		 		tick3.setLine(midX+4*sin-4.5*cos,midY-4*cos-4.5*sin,
-		 				midX+4*sin+4.5*cos,midY-4*cos+4.5*sin);
-		 		break;
-		 }
-	}
+	
    
 	final public void draw(Graphics2D g2) {
         if (isVisible) {		        	
@@ -171,21 +198,25 @@ implements Previewable {
             g2.setStroke(objStroke);            
 			g2.draw(line);
 
-			//added by Loïc BEGIN
-			if (geo.decorationType!=GeoElement.DECORATION_NONE){
+			//added by Loïc BEGIN			
+			if (geo.decorationType != GeoElement.DECORATION_NONE){
+				g2.setStroke(decoStroke);
+				
 				switch(geo.decorationType){
 					case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-						g2.draw(tick1);
-					break;
+						g2.draw(decoTicks[0]);
+						break;
+						
 					case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-						g2.draw(tick1);
-						g2.draw(tick2);
-					break;
+						g2.draw(decoTicks[0]);
+						g2.draw(decoTicks[1]);
+						break;
+						
 					case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-						g2.draw(tick1);
-						g2.draw(tick2);
-						g2.draw(tick3);
-					break;
+						g2.draw(decoTicks[0]);
+						g2.draw(decoTicks[1]);
+						g2.draw(decoTicks[2]);
+						break;
 				}
 			}
 			//END

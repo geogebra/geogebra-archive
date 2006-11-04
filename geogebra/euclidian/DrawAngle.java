@@ -292,29 +292,36 @@ public class DrawAngle extends Drawable {
 			drawArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.PIE);			
 			shape = view.coordTransform.createTransformedShape(drawArc);
 			
+			double rdiff;
+			
 			// For Decoration
 			// Added By Loïc BEGIN
 	    	switch(geo.decorationType){	
 		    	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
-		    		r=(angle.arcSize-5)*view.invXscale;
+		    		rdiff = 4 + geo.lineThickness/2d;
+		    		r=(angle.arcSize-rdiff)*view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
-				break;
+					break;
+				
 				case GeoElement.DECORATION_ANGLE_THREE_ARCS:
-					r = (angle.arcSize-5) * view.invXscale;
+					rdiff = 4 + geo.lineThickness/2d;
+					r = (angle.arcSize-rdiff) * view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
-					r = (angle.arcSize-10) * view.invXscale;
+					r = (angle.arcSize-2*rdiff) * view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc2 = view.coordTransform.createTransformedShape(decoArc);
-				break;
+					break;
+					
 				case GeoElement.DECORATION_ANGLE_ONE_TICK:
 					angleTick[0]=-angSt-angExt/2;
 					updateTick(angleTick[0],angle.arcSize,0);
-				break;
+					break;
+				
 				case GeoElement.DECORATION_ANGLE_TWO_TICKS:
 					angleTick[0]=-angSt-2*angExt/5;
 					angleTick[1]=-angSt-3*angExt/5;
@@ -324,7 +331,8 @@ public class DrawAngle extends Drawable {
 					}
 					updateTick(angleTick[0],angle.arcSize,0);
 					updateTick(angleTick[1],angle.arcSize,1);
-				break;
+					break;
+				
 				case GeoElement.DECORATION_ANGLE_THREE_TICKS:
 					angleTick[0]=-angSt-3*angExt/8;
 					angleTick[1]=-angSt-5*angExt/8;
@@ -397,24 +405,31 @@ public class DrawAngle extends Drawable {
 				}
 			} 			
 			else {
-				// if we don't have a special 90 degrees appearance we might nee to draw
+				// if we don't have a special 90 degrees appearance we might need to draw
 				// other decorations							
 				switch(geo.decorationType){
 					case GeoElement.DECORATION_ANGLE_TWO_ARCS:
 						g2.draw(shapeArc1);
 						break;
+						
 					case GeoElement.DECORATION_ANGLE_THREE_ARCS:
 						g2.draw(shapeArc1);
 						g2.draw(shapeArc2);
 						break;
+						
 					case GeoElement.DECORATION_ANGLE_ONE_TICK:
+						g2.setStroke(decoStroke);
 						g2.draw(tick[0]);
 						break;
+						
 					case GeoElement.DECORATION_ANGLE_TWO_TICKS:
+						g2.setStroke(decoStroke);
 						g2.draw(tick[0]);
 						g2.draw(tick[1]);
 						break;
+						
 					case GeoElement.DECORATION_ANGLE_THREE_TICKS:
+						g2.setStroke(decoStroke);
 						g2.draw(tick[0]);
 						g2.draw(tick[1]);
 						g2.draw(tick[2]);
@@ -445,10 +460,12 @@ public class DrawAngle extends Drawable {
 		double cos = Math.cos(angle);
 		double sin = Math.sin(angle);
 		
-		tick[id].setLine(coords[0]+(radius-3)*cos, 
-				coords[1]+(radius-3)* sin * view.getScaleRatio(), 
-				coords[0]+(radius+3)* cos,
-				coords[1]+(radius+3)* sin *view.getScaleRatio());
+		double length = 2.5 + geo.lineThickness / 4d;		
+		
+		tick[id].setLine(coords[0]+ (radius-length)*cos, 
+				coords[1]+(radius-length)* sin * view.getScaleRatio(), 
+				coords[0]+(radius+length)* cos,
+				coords[1]+(radius+length)* sin *view.getScaleRatio());
 	}
 
 	final public boolean hit(int x, int y) {

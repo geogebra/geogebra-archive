@@ -121,27 +121,19 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	}
 
 	public static final int AXES_LINE_TYPE_FULL = 0;
-
 	public static final int AXES_LINE_TYPE_ARROW = 1;
 
 	public static final int POINT_STYLE_DOT = 0;
-
 	public static final int POINT_STYLE_CROSS = 1;
-
 	public static final int POINT_STYLE_CIRCLE = 2;
-
-	public static final int RIGHT_ANGLE_STYLE_DOT = 0;
-
-	public static final int RIGHT_ANGLE_STYLE_NONE = 1;
-
-	public static final int RIGHT_ANGLE_STYLE_SQUARE = 2;
-
+	
+	public static final int RIGHT_ANGLE_STYLE_NONE = 0;
+	public static final int RIGHT_ANGLE_STYLE_SQUARE = 1;
+	public static final int RIGHT_ANGLE_STYLE_DOT = 2;		
+	
 	public static final int DEFAULT_POINT_SIZE = 3;
-
 	public static final int DEFAULT_LINE_THICKNESS = 2;
-
 	public static final int DEFAULT_ANGLE_SIZE = 30;
-
 	public static final int DEFAULT_LINE_TYPE = LINE_TYPE_FULL;
 
 	public static final float SELECTION_ADD = 2.0f;
@@ -376,7 +368,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	
 	// added by Loïc BEGIN
 	// right angle
-	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 	//END
 	
 	int pointStyle = POINT_STYLE_DOT;
@@ -515,7 +507,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		pointStyle = POINT_STYLE_DOT;
 		
 		// added by Loïc BEGIN
-		rightAngleStyle=EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		//END
 
 		showAxesNumbers[0] = true;
@@ -2252,6 +2244,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		sb.append(pointCapturingMode);
 		sb.append("\" pointStyle=\"");
 		sb.append(pointStyle);
+		sb.append("\" rightAngleStyle=\"");
+		sb.append(rightAngleStyle);
 		sb.append("\"/>\n");
 
 		// background color

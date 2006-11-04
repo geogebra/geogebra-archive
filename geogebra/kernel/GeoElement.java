@@ -213,8 +213,9 @@ public abstract class GeoElement
 	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;		
 	
 	// decoration types
-	public int decorationType;
+	public int decorationType = DECORATION_NONE;	
 	
+	// DECORATION
 	public static final int DECORATION_NONE = 0;
 	// segment decorations
 	public static final int DECORATION_SEGMENT_ONE_TICK = 1;
@@ -1854,8 +1855,16 @@ public abstract class GeoElement
 				sb.append("\t<trace val=\"true\"/>\n");
 			}
 		}
-
-		return sb.toString();
+		
+		// decoration type
+		if (decorationType != DECORATION_NONE) {
+			sb.append("\t<decoration");		
+			sb.append(" type=\"");
+			sb.append(decorationType);
+			sb.append("\"/>\n");
+		}
+		
+		return sb.toString();	
 	}
 
 	String getXMLanimationTags() {
@@ -1910,7 +1919,7 @@ public abstract class GeoElement
 		sb.append("\"");
 		sb.append("/>\n");
 		return sb.toString();
-	}
+	}	
 
 	/**
 	 * Returns line type and line thickness as xml string.
@@ -1950,6 +1959,10 @@ public abstract class GeoElement
 	 */
 	public void setLineType(int i) {
 		lineType = i;
+	}
+	
+	public void setDecorationType(int type) {
+		decorationType = type;
 	}
 	
 	

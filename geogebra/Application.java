@@ -124,15 +124,11 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "27. October 2006";
+    public static final String buildDate = "4. November 2006";
 	
-    public static final String versionString = "2.8 pre-release";    
-    public static final String XML_FILE_FORMAT = "2.7";    
-    
-    // TODO: uncomment #V3.0 entries in command.properties of en, de and es
-	//public static final String versionString = "3.0 early alpha";    
-    //public static final String XML_FILE_FORMAT = "3.0";    
-    
+    public static final String versionString = "Pre-Release";    
+    public static final String XML_FILE_FORMAT = "3.0";    
+  
     // GeoGebra basic jar file
     public static final String JAR_FILE = "geogebra.jar";
     // GeoGebra GUI jar file
@@ -955,6 +951,16 @@ public class Application {
         } catch (Exception e) {
             showError(e.getMessage());
             locale = currentLocale;
+        }
+        
+        // change rightAngleStyle for German to
+        // EuclidianView.RIGHT_ANGLE_STYLE_DOT
+        if (euclidianView.getRightAngleStyle() != EuclidianView.RIGHT_ANGLE_STYLE_NONE) {
+	        if (locale.getLanguage().equals("de")) {
+	        	euclidianView.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
+	        } else {
+	        	euclidianView.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE);
+	        }
         }
 
         // load resource files
@@ -2494,6 +2500,7 @@ public class Application {
         updateMenuAngleUnit();
         updateMenuDecimalPlaces();
         updateMenuPointStyle();
+        updateMenuRightAngleStyle();
         updateMenuCoordStyle();
     }
     
@@ -2730,10 +2737,10 @@ public class Application {
 
         menuRightAngleStyle = new JMenu(getMenu("RightAngleStyle"));
         // dot, none, square
-        String[] strAngleStyle = { "DottedAngle", "None", "Square" };
-        String[] strAngleStyleAC = { String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT),
-        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
-        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE)};
+        String[] strAngleStyle = { getPlain("off"), "\u25a1", "\u2219" };
+        String[] strAngleStyleAC = { String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
+        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE),
+        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT)};
         ActionListener asal = new ActionListener() {
         	public void actionPerformed(ActionEvent ae) {
         		int style = Integer.parseInt(ae.getActionCommand());

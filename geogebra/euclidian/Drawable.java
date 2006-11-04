@@ -36,6 +36,7 @@ import java.awt.font.TextLayout;
 public abstract class Drawable {
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
 	BasicStroke selStroke = EuclidianView.getDefaultSelectionStroke();
+	BasicStroke decoStroke = EuclidianView.getDefaultStroke();
 
 	private int lineThickness = -1;
 	public int lineType = -1;
@@ -275,6 +276,7 @@ public abstract class Drawable {
 
 			float width = lineThickness / 2.0f;
 			objStroke = EuclidianView.getStroke(width, lineType);
+			decoStroke = EuclidianView.getStroke(width, EuclidianView.LINE_TYPE_FULL);
 			selStroke =
 				EuclidianView.getStroke(
 					width + EuclidianView.SELECTION_ADD,

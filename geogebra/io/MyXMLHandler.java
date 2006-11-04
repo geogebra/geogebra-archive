@@ -361,6 +361,14 @@ public class MyXMLHandler implements DocHandler {
             if (strPointStyle != null)
             	ev.setPointStyle(Integer.parseInt(strPointStyle));
             
+            // v3.0: appearance of right angle
+            String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
+            if (strRightAngleStyle == null)
+            	// before v3.0 the default was a dot to show a right angle
+            	ev.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);            
+            else 
+            	ev.setRightAngleStyle(Integer.parseInt(strRightAngleStyle));            	
+            
             return true;
         } catch (Exception e) {
             return false;
@@ -845,10 +853,15 @@ public class MyXMLHandler implements DocHandler {
                  }
         		
         	case 'd':
-        		if (eName.equals("decimals")) {
+        		if (eName.equals("decoration")) {
+                    ok = handleDecoration(attrs);
+                    break;
+        		}
+        		else if (eName.equals("decimals")) {
                     ok = handleTextDecimals(attrs);
                     break;
         		}
+        		
         		
         	case 'e':
         		if (eName.equals("eqnStyle")) {
@@ -1002,6 +1015,15 @@ public class MyXMLHandler implements DocHandler {
             return false;
         }
     }
+    
+    private boolean handleDecoration(LinkedHashMap attrs) {
+        try {
+            geo.setDecorationType(Integer.parseInt((String) attrs.get("type")));            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }        
 
     private boolean handleEqnStyle(LinkedHashMap attrs) {
         // line                                 
