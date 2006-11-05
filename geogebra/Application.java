@@ -97,6 +97,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -303,7 +304,7 @@ public class Application {
     private JMenuBar menuBar;
     private AlgebraInput algebraInput;
     private JPanel statusBar, centerPanel;
-    private JLabel statusLabelMode, statusLabelAxesRatio;
+    private JLabel modeNameLabel, statusLabelAxesRatio;
     private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
                 cbShowAuxiliaryObjects, cbHorizontalSplit, cbShowConsProtNavigation,
                 cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
@@ -484,6 +485,7 @@ public class Application {
         // updateCenterPanel
         updateCenterPanel(false);
         
+        
         // show statusBar too
         if (showToolBar) { 
         	initStatusBar();   
@@ -494,6 +496,7 @@ public class Application {
         } else {
         	panel.add(centerPanel, BorderLayout.CENTER);
         }
+        
         
         // SOUTH: inputField       
         if (showAlgebraInput) {
@@ -551,12 +554,12 @@ public class Application {
     }
     
     private void initStatusBar() {
-    	if (statusLabelMode == null) {
-    		statusLabelMode = new JLabel();
+    	if (modeNameLabel == null) {
+    		modeNameLabel = new JLabel();
     		statusLabelAxesRatio = new JLabel();    		
     	}
     	statusBar = new JPanel(new BorderLayout(5, 5));
-        statusBar.add(statusLabelMode, BorderLayout.WEST);  
+        statusBar.add(modeNameLabel, BorderLayout.WEST);  
         statusBar.add(statusLabelAxesRatio, BorderLayout.EAST);         
     }
     
@@ -1914,8 +1917,8 @@ public class Application {
             algebraView.updateFonts();
         if (algebraInput != null)
             algebraInput.updateFonts();
-        if (statusLabelMode != null)
-            statusLabelMode.setFont(getPlainFont());        
+        if (modeNameLabel != null)
+            modeNameLabel.setFont(getPlainFont());        
         if (statusLabelAxesRatio != null)
             statusLabelAxesRatio.setFont(getPlainFont());
                    
@@ -2018,7 +2021,7 @@ public class Application {
 
         if (showToolBar) createToolbar();
         if (showMenuBar) setMenuBar(guiController);
-        if (statusLabelMode != null) updateStatusLabelMode();
+        if (modeNameLabel != null) updateModeLabel();
         if (statusLabelAxesRatio != null) updateStatusLabelAxesRatio();
         if (algebraView != null) algebraView.setLabels(); // update views    
         if (algebraInput != null) algebraInput.setLabels();
@@ -2052,12 +2055,15 @@ public class Application {
     	
         // create toolBars                       
         appToolBarPanel.removeAll();
-        JToolBar tb = new JToolBar();
+        appToolBarPanel.setLayout(new BorderLayout(5,5));        
+        
+        JToolBar tb = new JToolBar();   
+        tb.setBackground(appToolBarPanel.getBackground());
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
         moveToggleMenus = new ArrayList();
         
         //JPanel tb = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 2));           
-        tb.setFloatable(false);
+        tb.setFloatable(false);        
         appToolBarPanel.add(tb, BorderLayout.WEST);             
                   
         if (algebraInput != null)        	
@@ -2065,24 +2071,31 @@ public class Application {
                        
         // add menus with modes to toolbar
        	addCustomModesToToolbar(tb, bg);
+       	
+       	// mode label
+       	JPanel modeLabelPanel = new JPanel(new BorderLayout(5,5));  
+       	modeLabelPanel.add(modeNameLabel, BorderLayout.NORTH);
+       	appToolBarPanel.add(modeLabelPanel, BorderLayout.CENTER);  
+       	
 
         // UNDO Toolbar     
         if (undoActive) {
 	        // undo part            
-	        //tb = new JPanel();
-        	tb = new JToolBar();
-	        tb.setFloatable(false);       
-	        appToolBarPanel.add(tb, BorderLayout.EAST);
-	        
-	        MySmallJButton button = new MySmallJButton(undoAction, 10); 
+	        JPanel undoPanel = new JPanel(new BorderLayout(0,0));        	   
+	        	        
+	        MySmallJButton button = new MySmallJButton(undoAction, 7); 	
+	        String text = getMenu("Undo");
 	        button.setText(null);
-	        button.setToolTipText(getMenu("Undo"));                     
-	        tb.add(button);
+	        button.setToolTipText(text);                     
+	        undoPanel.add(button, BorderLayout.NORTH);
 	        
-	        button = new MySmallJButton(redoAction, 10);         
-	        button.setToolTipText(getMenu("Redo")); 
-	        button.setText(null);       
-	        tb.add(button);                         
+	        button = new MySmallJButton(redoAction, 7);         	        
+	        text = getMenu("Redo");
+	        button.setText(null);
+	        button.setToolTipText(text);        
+	        undoPanel.add(button, BorderLayout.SOUTH);   
+	        
+	        appToolBarPanel.add(undoPanel, BorderLayout.EAST);
         }                   
     }
     
@@ -3860,16 +3873,10 @@ public class Application {
         }
     }
 
-    public void updateStatusLabelMode() {
-    	if (statusLabelMode == null) return;
-    	
-        StringBuffer sb = new StringBuffer();
-        sb.append(' ');
-        sb.append(getMenu("Mode"));
-        sb.append(": ");
-        sb.append(getMenu(getModeText(euclidianView.getMode())));
-        sb.append("  ");
-        statusLabelMode.setText(sb.toString());       
+    public void updateModeLabel() {
+    	if (modeNameLabel == null) return;
+ 
+        modeNameLabel.setText(getMenu(getModeText(euclidianView.getMode())));       
     }
     
     public void updateStatusLabelAxesRatio() {
@@ -3898,7 +3905,7 @@ public class Application {
         		if (mtm.selectMode(mode)) break;
         	}
         }                            
-        updateStatusLabelMode();
+        updateModeLabel();
             	
     	// if the properties dialog is showing, move mode is a selection mode
         // for the properties dialog

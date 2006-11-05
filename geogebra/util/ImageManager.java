@@ -73,7 +73,7 @@ public class ImageManager {
 		}
 		else {
 			 // load the icon		
-			 Image im = getImageResource(fileName);
+			 Image im = getImageResource(fileName);			 
 			 if (im != null) {			 	 
 			 	 icon = new ImageIcon(addBorder(im, borderColor));
 			 	 iconTable.put(fileName, icon);				 	 		 	
@@ -87,7 +87,8 @@ public class ImageManager {
 		if (borderColor == null) return im;
 		
 		BufferedImage bim = toBufferedImage(im);
-		Graphics g = bim.getGraphics();
+		Graphics g = bim.getGraphics();					
+		
 		g.setColor(borderColor);
 		g.drawRect(0, 0, bim.getWidth()-1, bim.getHeight()-1);		 	
 		return bim;		

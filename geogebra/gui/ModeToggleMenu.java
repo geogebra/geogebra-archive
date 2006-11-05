@@ -237,17 +237,17 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		Graphics2D g2 = (Graphics2D) g;
 			
 		super.paint(g2);	
-		
+				
 		if (isSelected()) {
-			Stroke oldStroke = g2.getStroke();
+			Stroke oldStroke = g2.getStroke();					
 			
 			g2.setColor(selColor);
 			g2.setStroke(selStroke);
 			g2.drawRect(BORDER-1,BORDER-1, iconWidth, iconHeight);			
 
 			g2.setStroke(oldStroke);				
-		}				
-					
+		}		
+							
 		// draw little arrow (for popup menu)
 		if (menu.size > 1) {
 			if (gp == null) initPath();							
