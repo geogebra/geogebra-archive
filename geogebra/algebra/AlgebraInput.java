@@ -31,6 +31,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * @author Markus Hohenwarter
@@ -78,22 +80,21 @@ implements ActionListener, MouseListener, KeyListener
 			cmdCB.addActionListener(this);
 		}
 			
-		helpButton.addActionListener(this);
-		inputButton.addActionListener(this);
+		helpButton.addActionListener(this);		
+		inputButton.addMouseListener(this);
 				
-		// add to panel
-		JPanel p = new JPanel(new BorderLayout(5,5));
-		p.add(helpButton, BorderLayout.WEST);	
-		p.add(inputButton, BorderLayout.CENTER);    
-		
+		// add to panel				 		
 		setLayout(new BorderLayout(5, 5));	
-		add(p, BorderLayout.WEST);   
+		add(inputButton, BorderLayout.WEST);   
 		add(inputPanel, BorderLayout.CENTER);
-		if (app.showCmdList()) {
-			p = new JPanel(new BorderLayout(5,5));
-			p.add(cmdCB, BorderLayout.CENTER);		
-			add(p, BorderLayout.EAST);
+							 	
+		JPanel p = new JPanel(new BorderLayout(5,5));				
+		if (app.showCmdList()) {			
+			p.add(cmdCB, BorderLayout.CENTER);					
 		}
+		p.add(helpButton, BorderLayout.EAST);
+		add(p, BorderLayout.EAST);
+		
 		setBorder(BorderFactory.createCompoundBorder(
 				   BorderFactory.createEtchedBorder(),  
 				   BorderFactory.createEmptyBorder(2,2,2,2) )
@@ -108,6 +109,10 @@ implements ActionListener, MouseListener, KeyListener
 	
 	public void setFocus() {
 		inputField.requestFocus();
+	}
+	
+	public boolean hasFocus() {
+		return inputField.hasFocus();
 	}
 	
 	public void clear() {
@@ -202,18 +207,9 @@ implements ActionListener, MouseListener, KeyListener
 		else if (source == helpButton) {
 			// show help dialog
 			app.showHelp("InputFieldHelp");
-		}
-		//
-		else if (source == inputButton) {
-			if (app.showToolBar()) {
-				app.setAglebraInputMode();
-			} else {
-				inputButton.setSelected(false);
-			}
-			
-			inputField.requestFocus();
-		}
+		}		
 	}
+	
       
 
 
@@ -232,9 +228,11 @@ implements ActionListener, MouseListener, KeyListener
 	 * sets AlgebraInput mode on double click
 	 */
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			app.setAglebraInputMode();
-			inputField.requestFocus();
+		if (e.getSource() == inputField) {		
+			if (e.getClickCount() == 2) {
+				app.setAglebraInputMode();
+				inputField.requestFocus();
+			}
 		}
 	}
 
@@ -246,8 +244,17 @@ implements ActionListener, MouseListener, KeyListener
 	}
 
 
-	public void mousePressed(MouseEvent arg0) {
-
+	public void mousePressed(MouseEvent e) {
+		if (e.getSource() == inputButton) {	
+			if (!inputButton.isSelected()) {
+				inputButton.setSelected(true);
+				app.setAglebraInputMode();
+				inputField.requestFocusInWindow();
+			} else {
+				inputButton.setSelected(false);
+				app.setMoveMode();
+			}
+		} 		
 	}
 
 	public void mouseReleased(MouseEvent arg0) {

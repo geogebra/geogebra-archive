@@ -111,9 +111,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
                 break;
 
              // clear textfield
-            case KeyEvent.VK_ESCAPE:
-                 setText(null);
-                 break;
+            case KeyEvent.VK_ESCAPE: 
+            	if ("".equals(getText())) {
+            		app.setMoveMode();
+            		requestFocus();
+            	} else {
+            		setText(null);
+            	}
+                break;
 
             case KeyEvent.VK_UP:
                  String text = getPreviousInput();

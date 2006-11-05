@@ -148,11 +148,23 @@ implements ActionListener, KeyEventDispatcher
 			 			consumed = true;
 			 		}
 			 		break;
+			 		
+			 	// ESC changes to move mode
+				case KeyEvent.VK_ESCAPE:											
+					// ESC is also handeled by algebra input field  
+					ai = app.getAlgebraInput();
+					if (ai != null && ai.hasFocus()) {
+						consumed = false;
+					} else {
+						app.setMode(EuclidianView.MODE_MOVE);
+						consumed = true;
+					}												
+					break;									
     					
-		 		case KeyEvent.VK_F4:
-		 		case KeyEvent.VK_ESCAPE:
+				// F4 changes to move mode
+		 		case KeyEvent.VK_F4:		 		
 		 			app.setMode(EuclidianView.MODE_MOVE);
-		 			consumed = true;
+		 			consumed = true;		 			
 		 			break;		 					 		 
 		}
 			
