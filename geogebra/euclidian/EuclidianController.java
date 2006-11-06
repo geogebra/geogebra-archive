@@ -2675,7 +2675,7 @@ final public class EuclidianController implements MouseListener,
 			Construction cons = kernel.getConstruction();
 			boolean oldVal = cons.isInMacroMode();
 			cons.setMacroMode(true);
-			Object [] ob = app.showAngleInputDialog(app.getMenu(Application.getModeText(mode)),
+			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];			
 			cons.setMacroMode(oldVal);						
@@ -2721,7 +2721,7 @@ final public class EuclidianController implements MouseListener,
 		
 		// we got the mirror point
 		if (selPoints() == 1) {		
-			NumberValue num = app.showNumberInputDialog(app.getMenu(Application.getModeText(mode)),
+			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Numeric"), null);			
 			if (num == null) {
 				view.resetMode();
@@ -2754,7 +2754,7 @@ final public class EuclidianController implements MouseListener,
 		// we got the point
 		if (selPoints() == 1) {
 			// get length of segment
-			NumberValue num = app.showNumberInputDialog(app.getMenu(Application.getModeText(mode)),
+			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Length"), null);		
 			
 			if (num == null) {
@@ -2787,7 +2787,7 @@ final public class EuclidianController implements MouseListener,
 			Construction cons = kernel.getConstruction();
 			boolean oldVal = cons.isInMacroMode();
 			cons.setMacroMode(true);
-			Object [] ob = app.showAngleInputDialog(app.getMenu(Application.getModeText(mode)),
+			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
 			AngleInputDialog aDialog = (AngleInputDialog) ob[1]; 
@@ -2822,7 +2822,7 @@ final public class EuclidianController implements MouseListener,
 		
 		// we got the center point
 		if (selPoints() == 1) {	
-			NumberValue num = app.showNumberInputDialog(app.getMenu(Application.getModeText(mode)),
+			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Radius"), null);
 
 			if (num == null) {

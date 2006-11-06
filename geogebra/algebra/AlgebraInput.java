@@ -84,16 +84,18 @@ implements ActionListener, MouseListener, KeyListener
 		inputButton.addMouseListener(this);
 				
 		// add to panel				 		
+		JPanel p = new JPanel(new BorderLayout(5,5));
+		p.add(helpButton, BorderLayout.WEST);	
+		p.add(inputButton, BorderLayout.CENTER);    
+		
 		setLayout(new BorderLayout(5, 5));	
-		add(inputButton, BorderLayout.WEST);   
+		add(p, BorderLayout.WEST);   
 		add(inputPanel, BorderLayout.CENTER);
-							 	
-		JPanel p = new JPanel(new BorderLayout(5,5));				
-		if (app.showCmdList()) {			
-			p.add(cmdCB, BorderLayout.CENTER);					
+		if (app.showCmdList()) {
+			p = new JPanel(new BorderLayout(5,5));
+			p.add(cmdCB, BorderLayout.CENTER);		
+			add(p, BorderLayout.EAST);
 		}
-		p.add(helpButton, BorderLayout.EAST);
-		add(p, BorderLayout.EAST);
 		
 		setBorder(BorderFactory.createCompoundBorder(
 				   BorderFactory.createEtchedBorder(),  

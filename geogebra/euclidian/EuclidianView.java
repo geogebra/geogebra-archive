@@ -2796,4 +2796,156 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 	}
+	
+	 public static String getModeText(int mode) {
+	        switch (mode) {
+	            case EuclidianView.MODE_ALGEBRA_INPUT :
+	                return "InputField";
+
+	            case EuclidianView.MODE_MOVE :
+	                return "Move";
+
+	            case EuclidianView.MODE_POINT :
+	                return "Point";
+	                
+	            case EuclidianView.MODE_JOIN :
+	                return "Join";
+	                
+	            case EuclidianView.MODE_SEGMENT :
+	                return "Segment";     
+	            
+	            case EuclidianView.MODE_SEGMENT_FIXED :
+	                return "SegmentFixed";     
+	                
+	            case EuclidianView.MODE_RAY :
+	                return "Ray";              
+
+	            case EuclidianView.MODE_POLYGON :
+	                return "Polygon";
+	                
+	            case EuclidianView.MODE_PARALLEL :
+	                return "Parallel";
+	                
+	            case EuclidianView.MODE_ORTHOGONAL :
+	                return "Orthogonal";
+	                
+	            case EuclidianView.MODE_INTERSECT :
+	                return "Intersect";
+	                
+	            case EuclidianView.MODE_LINE_BISECTOR :
+	                return "LineBisector";
+	                
+	            case EuclidianView.MODE_ANGULAR_BISECTOR :
+	                return "AngularBisector";
+	                
+	            case EuclidianView.MODE_TANGENTS :
+	                return "Tangent";
+	                
+	            case EuclidianView.MODE_POLAR_DIAMETER :
+	                return "PolarDiameter";
+	            
+	            case EuclidianView.MODE_CIRCLE_TWO_POINTS :
+	                return "Circle2";
+	                
+	            case EuclidianView.MODE_CIRCLE_THREE_POINTS :
+	                return "Circle3";
+	                
+	            case EuclidianView.MODE_CONIC_FIVE_POINTS :
+	                return "Conic5";
+	                
+	            case EuclidianView.MODE_RELATION :
+	                return "Relation";
+	                
+	            case EuclidianView.MODE_TRANSLATEVIEW :
+	                return "TranslateView";
+	            
+	            case EuclidianView.MODE_SHOW_HIDE_OBJECT:
+	            	return "ShowHideObject";
+	            
+	            case EuclidianView.MODE_SHOW_HIDE_LABEL:
+	            	return "ShowHideLabel";
+	            
+	            case EuclidianView.MODE_COPY_VISUAL_STYLE:
+	            	return "CopyVisualStyle";
+
+	            case EuclidianView.MODE_DELETE :
+	                return "Delete";
+	                
+	            case EuclidianView.MODE_VECTOR :
+	                return "Vector";
+	                               
+	            case EuclidianView.MODE_TEXT :
+	                return "Text";
+	            
+	            case EuclidianView.MODE_IMAGE :
+	                return "Image";
+	            
+	            case EuclidianView.MODE_MIDPOINT :
+	                return "Midpoint";
+	            
+	            case EuclidianView.MODE_SEMICIRCLE :
+	                return "Semicircle";
+	            
+	            case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS :
+	                return "CircleArc3";
+	            
+	            case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS :
+	                return "CircleSector3";
+	            
+	            case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS :
+	                return "CircumcircleArc3";
+	            
+	            case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS :
+	                return "CircumcircleSector3";
+	            
+	            case EuclidianView.MODE_SLIDER:
+	            	return "Slider";
+	            
+	            case EuclidianView.MODE_MIRROR_AT_POINT:
+	            	return "MirrorAtPoint";
+	            	
+	            case EuclidianView.MODE_MIRROR_AT_LINE:
+	            	return "MirrorAtLine";
+	                        
+	            case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+	            	return "TranslateByVector";
+	            
+	            case EuclidianView.MODE_ROTATE_BY_ANGLE:
+	            	return "RotateByAngle";
+	            
+	            case EuclidianView.MODE_DILATE_FROM_POINT:
+	            	return "DilateFromPoint";
+	            
+	            case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
+	            	return "CirclePointRadius";
+	            
+	            case EuclidianView.MODE_ANGLE:
+	            	return "Angle";
+	            
+	            case EuclidianView.MODE_ANGLE_FIXED:
+	            	return "AngleFixed";
+	            
+	            case EuclidianView.MODE_VECTOR_FROM_POINT:
+	            	return "VectorFromPoint";
+	            
+	            case EuclidianView.MODE_DISTANCE:
+	            	return "Distance";
+	            
+	            case EuclidianView.MODE_MOVE_ROTATE:
+	            	return "MoveRotate";
+	            
+	            case EuclidianView.MODE_ZOOM_IN:
+	            	return "ZoomIn";
+	            
+	            case EuclidianView.MODE_ZOOM_OUT:
+	            	return "ZoomOut";    
+	            
+	            case EuclidianView.MODE_LOCUS:            	
+	            	return "Locus";
+	           
+	            default:
+	                return "";
+	        }
+	    }
+
 }

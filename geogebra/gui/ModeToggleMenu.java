@@ -13,24 +13,23 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -40,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 
 /**
  * JToggle button combined with popup menu for mode selction
@@ -104,7 +104,7 @@ public class ModeToggleMenu extends JPanel {
 	}
 	
 	public void addMode(int mode) {
-		String modeText = Application.getModeText(mode);
+		String modeText = EuclidianView.getModeText(mode);
 		String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
 		ImageIcon icon = app.getImageIcon(iconName, getBackground());		
 				
@@ -117,10 +117,12 @@ public class ModeToggleMenu extends JPanel {
 		String actionText = mode + "";
 		JMenuItem mi = new JMenuItem();
 		mi.setFont(app.getPlainFont());
-	    mi.setText(app.getMenu(modeText));
+		mi.setText(app.getMenu(modeText));
+	    
 		mi.setIcon(icon);
 		mi.addActionListener(popupMenuItemListener);
 		mi.setActionCommand(actionText);
+		
 		popMenu.add(mi);	
 		menuItemList.add(mi);
 		size++;
@@ -243,7 +245,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 			
 			g2.setColor(selColor);
 			g2.setStroke(selStroke);
-			g2.drawRect(BORDER-1,BORDER-1, iconWidth, iconHeight);			
+			g2.drawRect(BORDER-1,BORDER-1, iconWidth+1, iconHeight+1);			
 
 			g2.setStroke(oldStroke);				
 		}		

@@ -97,7 +97,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	
     public static void main(String[] args) {      	
     	try {           
-           UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());                                    
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());                                    
         } catch (Exception e) {
             System.err.println(e);
         }  	        
