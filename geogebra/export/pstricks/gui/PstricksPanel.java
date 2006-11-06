@@ -14,7 +14,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-
+import geogebra.Application;
 import geogebra.export.pstricks.GeoGebraToPstricks;
 
 import java.awt.event.ActionListener;
@@ -33,11 +33,13 @@ public class PstricksPanel extends JFrame{
 	private JCheckBox jcb;
 	private JScrollPane js;
 	private JTextArea textarea;
+	private Application app;
 	private final double width,height;
 	public PstricksPanel(GeoGebraToPstricks ggb2ps,double w,double h){
+		this.app=ggb2ps.getApp();
 		width=w;
 		height=h;
-		setTitle("GeoGebra to PSTricks Export");
+		setTitle(app.getPlain("TitleExportPstricks"));
 		textXUnit=new TextValue(this,"1"){
 			public void keyReleased(KeyEvent e){
 				try{
@@ -78,14 +80,14 @@ public class PstricksPanel extends JFrame{
 		
 		};
 		panel=new JPanel();
-		button=new JButton("Generate PSTricks");
-		button_copy=new JButton("Copy to clipboard");
-		labelXUnit=new JLabel("X units (cm)");
-		labelYUnit=new JLabel("Y units (cm)");
-		labelwidth=new JLabel("Picture width");
-		labelheight=new JLabel("Picture height");
-		labelFontSize=new JLabel("Latex font size:");
-		jcb=new JCheckBox("Display the symbol for points");
+		button=new JButton(app.getPlain("GeneratePstricks"));
+		button_copy=new JButton(app.getPlain("CopyToClipboard"));
+		labelXUnit=new JLabel(app.getPlain("XUnits"));
+		labelYUnit=new JLabel(app.getPlain("YUnits"));
+		labelwidth=new JLabel(app.getPlain("PictureWidth"));
+		labelheight=new JLabel(app.getPlain("PictureHeight"));
+		labelFontSize=new JLabel(app.getPlain("LatexFontSize"));
+		jcb=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		comboFontSize=new JComboBox(msg);
 		jcb.setSelected(true);
 		button.addActionListener(ggb2ps);

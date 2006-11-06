@@ -77,7 +77,7 @@ implements Previewable {
         B = s.getEndPoint();
 		
         A.getInhomCoords(coordsA);
-        B.getInhomCoords(coordsB);                         
+        B.getInhomCoords(coordsB);
 		view.toScreenCoords(coordsA);
 		view.toScreenCoords(coordsB);					
 		line.setLine(coordsA[0], coordsA[1], coordsB[0], coordsB[1]);        

@@ -81,7 +81,7 @@ public class DrawAngle extends Drawable {
 	private Line2D.Double[] tick;
 	private double[] angleTick=new double[2];
 	// maximum angle distance between two ticks.
-	private static final double MAX_TICK_DISTANCE=Math.toRadians(15);
+	public static final double MAX_TICK_DISTANCE=Math.toRadians(15);
 	private GeneralPath square;
 	//END
 	
@@ -254,14 +254,12 @@ public class DrawAngle extends Drawable {
 						square = new GeneralPath();
 					else					
 						square.reset();
-					
 					double length = angle.arcSize * 0.7071067811865;
-					square.moveTo((float)coords[0],(float)coords[1]);
-					square.lineTo((float)(coords[0]+length),(float)coords[1]);
-					square.lineTo((float)(coords[0]+length),(float)(coords[1]-length));
-					square.lineTo((float)coords[0],(float)(coords[1]-length));
+		     		square.moveTo((float)coords[0],(float)coords[1]);
+					square.lineTo((float)(coords[0]+length*Math.cos(angSt)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio()));
+					square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(angSt+Kernel.PI_HALF/2)),(float)(coords[1]-angle.arcSize*Math.sin(angSt+Kernel.PI_HALF/2)*view.getScaleRatio()));
+					square.lineTo((float)(coords[0]+length*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt+Kernel.PI_HALF)*view.getScaleRatio()));
 					square.lineTo((float)coords[0],(float)coords[1]);
-					square.transform(AffineTransform.getRotateInstance(-angSt,coords[0],coords[1]));
 					shape = square;
 					break;								
 					

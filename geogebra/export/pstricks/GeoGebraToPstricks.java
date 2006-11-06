@@ -21,6 +21,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -40,7 +41,7 @@ import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.awt.FontMetrics;
 import java.awt.Font;
-
+import geogebra.euclidian.DrawAngle;
 /**
  * @author Le Coq loïc
  */
@@ -69,13 +70,15 @@ public class GeoGebraToPstricks implements ActionListener {
     	this.euclidianView = app.getEuclidianView();
     	initGui();
     }
+    public Application getApp(){
+    	return app;
+    }
     private void initGui(){   	
     	xmin=euclidianView.getXmin();
     	xmax=euclidianView.getXmax();
     	ymin=euclidianView.getYmin();
     	ymax=euclidianView.getYmax();
     	frame=new PstricksPanel(this,xmax-xmin,ymax-ymin);
-    	
     }
     
  
@@ -454,7 +457,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		double r = arcSize /euclidianView.getXscale();
 		// if angle=90° and decoration=little square
         if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
-        	r=r/2;
+        	r=r/Math.sqrt(2);
         	double[] x=new double[8];
         	x[0]=m[0]+r*Math.cos(angSt);
         	x[1]=m[1]+r*Math.sin(angSt);
@@ -548,14 +551,13 @@ public class GeoGebraToPstricks implements ActionListener {
 
     }
 	private void drawTick(GeoAngle geo,double[] vertex,double angle){
-		double radius=geo.getArcSize()/euclidianView.getXscale();
-		int thick=geo.getLineThickness();
-		double diff=thick*2/euclidianView.getXscale();
-		if (thick<3) diff=3 /euclidianView.getXscale();
-		double x1=vertex[0]+(radius-diff)*Math.cos(angle);
-		double x2=vertex[0]+(radius+diff)*Math.cos(angle);
-		double y1=vertex[1]+(radius-diff)*Math.sin(angle);
-		double y2=vertex[1]+(radius+diff)*Math.sin(angle);
+		angle=-angle;
+		double radius=geo.getArcSize();
+		double diff= 2.5 + geo.lineThickness / 4d;
+		double x1=euclidianView.toRealWorldCoordX(vertex[0]+(radius-diff)*Math.cos(angle));
+		double x2=euclidianView.toRealWorldCoordX(vertex[0]+(radius+diff)*Math.cos(angle));
+		double y1=euclidianView.toRealWorldCoordY(vertex[1]+(radius-diff)*Math.sin(angle)*euclidianView.getScaleRatio());
+		double y2=euclidianView.toRealWorldCoordY(vertex[1]+(radius+diff)*Math.sin(angle)*euclidianView.getScaleRatio());
 		code.append("\\psline");
 		code.append(LineOptionCode(geo,false));
 		code.append("(");
@@ -571,33 +573,55 @@ public class GeoGebraToPstricks implements ActionListener {
 		
 	}
     private void markAngle(GeoAngle geo,double r, double[] vertex,double  angSt,double angEnd){
+    	double rdiff;
     	switch(geo.decorationType){
     		case GeoElement.DECORATION_ANGLE_TWO_ARCS:
+    			rdiff = 4 + geo.lineThickness/2d;
     			drawArc(geo,vertex,angSt,angEnd,r);
-    			r+=5/euclidianView.getXscale();
+    			r-=rdiff/euclidianView.getXscale();
     			drawArc(geo,vertex,angSt,angEnd,r);
     		break;
     		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
+    			rdiff = 4 + geo.lineThickness/2d;
     			drawArc(geo,vertex,angSt,angEnd,r);
-    			r+=5/euclidianView.getXscale();
+    			r-=rdiff/euclidianView.getXscale();
     			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=10/euclidianView.getXscale();
+    			r-=rdiff/euclidianView.getXscale();
     			drawArc(geo,vertex,angSt,angEnd,r);
     		break;
     		case GeoElement.DECORATION_ANGLE_ONE_TICK:
     			drawArc(geo,vertex,angSt,angEnd,r);
+    			euclidianView.toScreenCoords(vertex);
     			drawTick(geo,vertex,(angSt+angEnd)/2);
+    			
     		break;
     		case GeoElement.DECORATION_ANGLE_TWO_TICKS:
     			drawArc(geo,vertex,angSt,angEnd,r);
-    			drawTick(geo,vertex,(2*angSt+3*angEnd)/5);
-    			drawTick(geo,vertex,(3*angSt+2*angEnd)/5);
+    			euclidianView.toScreenCoords(vertex);	
+    			double angleTick[] =new double[2];
+    			angleTick[0]=(2*angSt+3*angEnd)/5;
+    			angleTick[1]=(3*angSt+2*angEnd)/5;
+				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
+					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
+					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
+				}
+
+    			drawTick(geo,vertex,angleTick[0]);
+    			drawTick(geo,vertex,angleTick[1]);
     		break;
     		case GeoElement.DECORATION_ANGLE_THREE_TICKS:
     			drawArc(geo,vertex,angSt,angEnd,r);
+    			euclidianView.toScreenCoords(vertex);
+    			angleTick=new double[2];
+    			angleTick[0]=(5*angSt+3*angEnd)/8;
+    			angleTick[1]=(3*angSt+5*angEnd)/8;
+				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
+					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
+					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
+				}
     			drawTick(geo,vertex,(angSt+angEnd)/2);
-    			drawTick(geo,vertex,(5*angSt+3*angEnd)/8);
-    			drawTick(geo,vertex,(3*angSt+5*angEnd)/8);
+    			drawTick(geo,vertex,angleTick[0]);
+    			drawTick(geo,vertex,angleTick[1]);
     		break;
     	}
     }
@@ -1264,48 +1288,72 @@ public class GeoGebraToPstricks implements ActionListener {
 		
 	}
 	private void mark(double[] A, double[] B,int deco,GeoElement geo){
- 		double midX=(A[0]+B[0])/2;
-		double midY=(A[1]+B[1])/2;
-		double angle=Math.PI/2-Math.atan2(B[1]-A[1],B[0]-A[0]);
- 		double cos=Math.cos(angle);
- 		double sin=Math.sin(angle);
- 		double xlength=0.15/xunit;
- 		double ylength=0.15/yunit;
+		// calc midpoint (midX, midY) and perpendicular vector (nx, ny)
+		euclidianView.toScreenCoords(A);
+		euclidianView.toScreenCoords(B);					
+		double midX = (A[0] + B[0])/ 2.0;
+		double midY = (A[1] + B[1])/ 2.0;			
+		double nx = A[1] - B[1]; 			
+		double ny = B[0] - A[0];		
+		double nLength = GeoVec2D.length(nx, ny);			
+		// tick spacing and length.
+		double tickSpacing = 2.5 + geo.lineThickness/2d;
+		double tickLength =  tickSpacing + 1;	
+		double vx, vy, factor,x1,x2,y1,y2;
 		switch(deco){
 		case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-	 		double x1=midX-xlength*cos;
-	 		double x2=midX+xlength*cos;
-	 		double y1=midY+ylength*sin;
-	 		double y2=midY-ylength*sin;
+			factor = tickLength / nLength;
+			nx *= factor/xunit;
+			ny *= factor/yunit;
+			x1=euclidianView.toRealWorldCoordX(midX - nx);
+			y1=euclidianView.toRealWorldCoordY(midY - ny);
+			x2=euclidianView.toRealWorldCoordX(midX + nx);
+			y2=euclidianView.toRealWorldCoordY(midY + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-	 		x1=midX-xlength*sin/2.5-xlength*cos;
-	 		x2=midX-xlength*sin/2.5+xlength*cos;
-	 		y1=midY-ylength*cos/2.5+ylength*sin;
-	 		y2=midY-ylength*cos/2.5-ylength*sin;
+	 		// vector (vx, vy) to get 2 points around midpoint		
+	 		factor = tickSpacing / (2 * nLength);		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=midX+xlength*sin/2.5-xlength*cos;
-	 		x2=midX+xlength*sin/2.5+xlength*cos;
-	 		y1=midY+ylength*cos/2.5+ylength*sin;
-	 		y2=midY+ylength*cos/2.5-ylength*sin;
+	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-	 		x1=midX-xlength*cos;
-	 		x2=midX+xlength*cos;
-	 		y1=midY+ylength*sin;
-	 		y2=midY-ylength*sin;
+	 		// vector (vx, vy) to get 2 points around midpoint				 		
+	 		factor = tickSpacing / nLength;		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=midX-xlength*sin/1.25-xlength*cos;
-	 		x2=midX-xlength*sin/1.25+xlength*cos;
-	 		y1=midY-ylength*cos/1.25+ylength*sin;
-	 		y2=midY-ylength*cos/1.25-ylength*sin;
+	 		x1=euclidianView.toRealWorldCoordX(midX - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=midX+xlength*sin/1.25-xlength*cos;
-	 		x2=midX+xlength*sin/1.25+xlength*cos;
-	 		y1=midY+ylength*cos/1.25+ylength*sin;
-	 		y2=midY+ylength*cos/1.25-ylength*sin;
+	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
 	 		drawLine(x1,y1,x2,y2,geo);
 	 	break;
 	 }
