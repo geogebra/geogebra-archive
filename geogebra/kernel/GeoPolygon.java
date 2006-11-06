@@ -12,7 +12,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -42,7 +41,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 		super(c);
 		this.points = points;
 		setLabelVisible(false);
-		setAlphaValue(EuclidianView.DEFAULT_POLYGON_ALPHA);
+		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
 	
 	String getClassName() {

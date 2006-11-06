@@ -634,7 +634,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	public void setVisualStyle(GeoElement geo) {
 		super.setVisualStyle(geo);
 		
-		if (geo instanceof GeoPoint) {
+		if (geo.isGeoPoint()) {
 			pointSize = ((GeoPoint) geo).pointSize;
 		}
 	}

@@ -22,6 +22,7 @@ import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoSumUpperLower;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
@@ -239,63 +240,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int POINT_CAPTURING_ON = 1;
 
 	public static final int POINT_CAPTURING_ON_GRID = 2;
+	
 
-	// DEFAULTS
-
-	// points
-	private static final Color colPoint = Color.blue;
-
-	private static final Color colDepPoint = Color.darkGray;
-
-	private static final Color colPathPoint = new Color(125, 125, 255);
-
-	// lines
-	private static final Color colDepLine = Color.black;
-
-	private static final Color colLine = Color.black;
-
-	// segments
-	private static final Color colDepSegment = Color.black;
-
-	private static final Color colSegment = Color.black;
-
-	// vectors
-	private static final Color colDepVector = Color.black;
-
-	private static final Color colVector = Color.black;
-
-	// conics
-	private static final Color colDepConic = Color.black;
-
-	private static final Color colConic = Color.black;
-
-	// polygons
-	private static final Color colDepPolygon = new Color(153, 51, 0);
-
-	private static final Color colPolygon = colDepPolygon;
-
-	public static final float DEFAULT_POLYGON_ALPHA = 0.1f;
-
-	// angles
-	private static final Color colDrawAngle = new Color(0, 100, 0);
-
-	public static final float DEFAULT_ANGLE_ALPHA = 0.1f;
-
-	// locus lines
-	private static final Color colDepLocus = Color.darkGray;
-
-	// numbers (slope, definite integral)
-	private static final Color colNumber = Color.black;
-
-	private static final Color colDepNumber = new Color(153, 51, 0);
-
-	// preview colors
-	public static final Color colPreview = Color.darkGray;
-
-	public static final Color colPreviewFill = new Color(
-			colDepPolygon.getRed(), colDepPolygon.getGreen(), colDepPolygon
-					.getBlue(), (int) (DEFAULT_POLYGON_ALPHA * 255));
-
+	
 	// zoom rectangle colors
 	private static final Color colZoomRectangle = new Color(200, 200, 250);
 
@@ -620,56 +567,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		drawImageList.add(img);
 	}
 
-	/**
-	 * get default color for geo
-	 * 
-	 * @param geo
-	 */
-	static public Color getDefaultColor(GeoElement geo) {
-		Color objcol = Color.black;
-		if (geo.isGeoPoint())
-			objcol = colPoint;
-		else if (geo.isGeoSegment())
-			objcol = colSegment;
-		else if (geo.isGeoLine())
-			objcol = colLine;
-		else if (geo.isGeoVector())
-			objcol = colVector;
-		else if (geo.isGeoConic())
-			objcol = colConic;
-		else if (geo.isGeoPolygon())
-			objcol = colPolygon;
-		return objcol;
-	}
-
-	/**
-	 * get default dependent-color for geo
-	 * 
-	 * @param geo
-	 */
-	static public Color getDependentColor(GeoElement geo) {
-		Color objcol = Color.black;
-		if (geo.isGeoPoint()) {
-			GeoPoint p = (GeoPoint) geo;
-			if (p.hasPath())
-				objcol = colPathPoint;
-			else
-				objcol = colDepPoint;
-		} else if (geo.isGeoSegment())
-			objcol = colDepSegment;
-		else if (geo.isGeoLine())
-			objcol = colDepLine;
-		else if (geo.isGeoVector())
-			objcol = colDepVector;
-		else if (geo.isGeoConic())
-			objcol = colDepConic;
-		else if (geo.isGeoPolygon())
-			objcol = colDepPolygon;
-		else if (geo.isGeoLocus())
-			objcol = colDepLocus;
-		return objcol;
-	}
-
+	
+	
 	static public MyBasicStroke getDefaultStroke() {
 		return standardStroke;
 	}
@@ -2059,15 +1958,19 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			} else {
 				d = new DrawAngle(this, (GeoAngle) geo);
 				if (geo.isDrawable()) {
-					if (!geo.isColorSet())
-						geo.setObjColor(colDrawAngle);
+					if (!geo.isColorSet()) {
+						Color col = geo.getConstruction().getConstructionDefaults().
+							getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
+						geo.setObjColor(col);
+					}
+						
 					drawNumericList.add(d);
 				}
 			}
 		} else if (geo.isGeoNumeric()) {
 			AlgoElement algo = geo.getParentAlgorithm();
 			if (algo == null) {
-				// indpendent number may be shown as slider
+				// independent number may be shown as slider
 				d = new DrawSlider(this, (GeoNumeric) geo);
 			} else if (algo instanceof AlgoSlope) {
 				d = new DrawSlope(this, (GeoNumeric) geo);
@@ -2080,10 +1983,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			}
 			if (d != null) {
 				if (!geo.isColorSet()) {
-					if (geo.isIndependent())
-						geo.setObjColor(colNumber);
-					else
-						geo.setObjColor(colDepNumber);
+					ConstructionDefaults consDef = geo.getConstruction().getConstructionDefaults();
+					if (geo.isIndependent()) {
+						Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER).getColor();			
+						geo.setObjColor(col);
+					} else {
+						Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
+						geo.setObjColor(col);
+					}
 				}
 				drawNumericList.add(d);
 			}

@@ -35,7 +35,7 @@ import java.util.TreeSet;
  * 
  * @author Markus Hohenwarter
  */
-public class Construction {
+public class Construction {		
     
     private String title, author, date;
     // text for dynamic worksheets: 0 .. above, 1 .. below
@@ -76,6 +76,9 @@ public class Construction {
     private GeoAxis xAxis, yAxis;
     private String xAxisLocalName, yAxisLocalName;
 
+    // default elements
+    private ConstructionDefaults consDefaults;    
+    
     /**
      * Creates a new Construction.   
      */
@@ -88,12 +91,24 @@ public class Construction {
                 
         geoSet = new TreeSet();
         
+        consDefaults = new ConstructionDefaults(this);
+        
         xAxis = new GeoAxis(this, GeoAxis.X_AXIS);    
     	yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
     	
     	geoTable = new HashMap(200);
-    	initGeoTable();
+    	initGeoTable(); 
+    	
+    	
     }
+    
+    /**
+     * Returns the construction default object of this 
+     * construction.
+     */
+    public ConstructionDefaults getConstructionDefaults() {    	
+    	return consDefaults;
+    }              
     
     private void initGeoTable() {
     	geoTable.clear();

@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.euclidian;
 
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -155,10 +156,10 @@ implements Previewable {
     
 	final public void drawPreview(Graphics2D g2) {
     	if (isVisible) {
-			g2.setPaint(EuclidianView.colPreviewFill);                       
+			g2.setPaint(ConstructionDefaults.colPreviewFill);                       
 			g2.fill(gp);  			
 		  			            						
-			g2.setPaint(EuclidianView.colPreview);             
+			g2.setPaint(ConstructionDefaults.colPreview);             
 			g2.setStroke(objStroke);            
 			g2.draw(gp);
     	}		            	

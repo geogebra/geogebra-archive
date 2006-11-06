@@ -18,7 +18,6 @@
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -70,7 +69,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public GeoNumeric(Construction c) {
 		super(c);
 		setEuclidianVisible(false);
-		setAlphaValue(EuclidianView.DEFAULT_POLYGON_ALPHA);
+		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 		animationStep = 0.1;
 		setLabelMode(GeoElement.LABEL_NAME_VALUE);				
 	}
@@ -289,7 +288,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public void setVisualStyle(GeoElement geo) {
 		super.setVisualStyle(geo);
 		
-		if (geo instanceof GeoNumeric) {
+		if (geo.isGeoNumeric()) {
 			slopeTriangleSize = ((GeoNumeric) geo).slopeTriangleSize;
 		}
 	}

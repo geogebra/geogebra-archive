@@ -62,7 +62,7 @@ public final class GeoAngle extends GeoNumeric {
     /** Creates new GeoAngle */
     public GeoAngle(Construction c) {
     	super(c);
-		setAlphaValue(EuclidianView.DEFAULT_ANGLE_ALPHA);
+		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
 		setLabelMode(GeoElement.LABEL_NAME);
 		setEuclidianVisible(false);
 		animationStep = Math.PI / 180.0;	
@@ -142,7 +142,7 @@ public final class GeoAngle extends GeoNumeric {
 	public void setVisualStyle(GeoElement geo) {
 		super.setVisualStyle(geo);
 		
-		if (geo instanceof GeoAngle) {
+		if (geo.isGeoAngle()) {
 			allowReflexAngle = ((GeoAngle) geo).allowReflexAngle;
 		}
 	}

@@ -339,16 +339,10 @@ public abstract class GeoElement
 		labelVisible =  ! isPath() || app.showAlgebraView();
 	}
 	
-	public void setDefaultColors() {
-		Color col;
-		if (isIndependent())
-			col = EuclidianView.getDefaultColor(this);
-		else
-			col = EuclidianView.getDependentColor(this);
-		
-		boolean oldColorSetVal = isColorSet;
-		setObjColor(col);
-		isColorSet = oldColorSetVal;
+	public void setDefaultColors() {		
+		ConstructionDefaults consDef = cons.getConstructionDefaults();
+		if (consDef != null) 
+				consDef.setDefaultVisualStyles(this);		
 	}
 
 	public void setObjColor(Color color) {
@@ -373,7 +367,7 @@ public abstract class GeoElement
 	}
 
 	public void setAlphaValue(float alpha) {
-		if (alpha < 0.0f || alpha > 1.0f)
+		if (fillColor == null || alpha < 0.0f || alpha > 1.0f)
 			return;
 		alphaValue = alpha;
 
