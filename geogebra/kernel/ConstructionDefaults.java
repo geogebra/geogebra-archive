@@ -4,6 +4,7 @@ import geogebra.Application;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Color;
+import java.util.Set;
 
 public class ConstructionDefaults {
 	
@@ -77,6 +78,14 @@ public class ConstructionDefaults {
 		this.cons = cons;
 		createDefaultGeoElements();
 	}
+	
+	/**
+	 * Returns a set of all default GeoElements used by this construction.
+	 */
+	public Set getDefaultGeos() {
+		return defaultGeoElements.entrySet();
+	}
+	
 	
 	private void createDefaultGeoElements() {
 		defaultGeoElements = new FastHashMapKeyless();		
@@ -158,6 +167,8 @@ public class ConstructionDefaults {
 	public GeoElement getDefaultGeo(int type) {
 		return (GeoElement) defaultGeoElements.get(type);		
 	}
+	
+	
 	
 	/**
 	 * Sets default color for given geo. 
