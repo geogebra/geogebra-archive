@@ -1307,9 +1307,10 @@ implements ExpressionValue {
      * in the subtree
      */
     final public boolean isConstant() {
-        if (isLeaf()) return left.isConstant();
-        
-        return left.isConstant() && right.isConstant();                  
+        if (isLeaf()) 
+        	return left.isConstant();
+        else
+        	return left.isConstant() && right.isConstant();                  
     }
     
     /* *
@@ -1369,16 +1370,22 @@ implements ExpressionValue {
     final public HashSet getVariables() {   
         if (leaf) return left.getVariables();
         
-        HashSet temp, varset = left.getVariables();
-        if (varset == null) varset = new HashSet();                        
-        temp = right.getVariables();
-        if (temp != null) varset.addAll(temp);                
-        
-        return varset;
+        HashSet leftVars = left.getVariables();
+        HashSet rightVars = right.getVariables();        
+        if (leftVars == null) {
+        	return rightVars;        		
+        } 
+        else if (rightVars == null) {
+        	return leftVars;
+        }
+        else {        	
+        	leftVars.addAll(rightVars);        	
+        	return leftVars;
+        }        	
     }               
     
     final public GeoElement [] getGeoElementVariables() {
-        HashSet varset = getVariables();
+    	HashSet varset = getVariables();
         if (varset == null) return null;
         Iterator i = varset.iterator();        
         GeoElement [] ret = new GeoElement[varset.size()];
@@ -1387,7 +1394,7 @@ implements ExpressionValue {
             ret[j++] = (GeoElement) i.next();
         }                
         return ret;
-    }
+    }       
       
     final public boolean isLeaf() {
          return leaf; //|| operation == NO_OPERATION;

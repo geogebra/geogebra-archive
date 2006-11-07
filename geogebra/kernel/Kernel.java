@@ -810,6 +810,28 @@ public class Kernel {
 		b.setLabel(label);
 		return b;
 	}
+		
+	/**
+	 * Creates a free list object with the given
+	 * @param label
+	 * @param geoElementList: list of GeoElement objects
+	 * @return
+	 */
+	final public GeoList List(String label, ArrayList geoElementList, boolean isIndependent) {
+		if (isIndependent) {
+			GeoList list = new GeoList(cons);		
+			int size = geoElementList.size();
+			for (int i=0; i < size; i++) {
+				list.add((GeoElement) geoElementList.get(i));
+			}
+			list.setLabel(label);
+			return list;
+		} 
+		else {
+			AlgoDependentList algoList = new AlgoDependentList(cons, label, geoElementList);
+			return algoList.getGeoList();
+		}		
+	}
 	
 	/********************
 	 * ALGORITHMIC PART *

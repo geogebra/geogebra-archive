@@ -175,7 +175,9 @@ public class ConstructionDefaults {
 	 * Note: this is mostly kept for downward compatibility.
 	 */
 	public void setDefaultVisualStyles(GeoElement geo) {
-		int type = 0;
+		// all object types that are not specifically supported
+		// should get the default values of a line
+		int type = DEFAULT_LINE;
 		
 		// free
 		if (geo.isIndependent()) {		
@@ -190,7 +192,7 @@ public class ConstructionDefaults {
 			else if (geo.isGeoFunction())
 				type = DEFAULT_FUNCTION;		
 			else if (geo.isGeoNumeric())
-				type = DEFAULT_NUMBER;	
+				type = DEFAULT_NUMBER;				
 		} 
 		
 		// dependent

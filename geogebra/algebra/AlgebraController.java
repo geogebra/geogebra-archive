@@ -20,7 +20,6 @@ package geogebra.algebra;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.MyParseError;
 import geogebra.algebra.parser.ParseException;
 import geogebra.algebra.parser.Parser;
 import geogebra.euclidian.EuclidianView;
@@ -46,7 +45,9 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Parametric;
@@ -509,7 +510,7 @@ public class AlgebraController
 			// explicit Function in x
 			else if (ve instanceof Function) {
 				ret = processFunction((Function) ve);
-			}
+			}						
 	
 			// Parametric Line        
 			else if (ve instanceof Parametric) {
@@ -722,12 +723,10 @@ public class AlgebraController
 			Command c = (Command) n.getLeft();
 			c.setLabels(n.getLabels());
 			return cmdProcessor.processCommand(c, true);
-		}		
-				
-		// resolve variables
-		n.resolveVariables();
-		
-		// ELSE: evaluate expressionnode
+		}				
+						
+// ELSE:  resolve variables and evaluate expressionnode		
+		n.resolveVariables();			
 		ExpressionValue eval = n.evaluate();
 
 		// leaf: just return the existing object
@@ -735,17 +734,18 @@ public class AlgebraController
 			GeoElement[] ret = {(GeoElement) eval };
 			return ret;
 		}
-
 		else if (eval.isNumberValue())
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
-			return processPointVector(n, eval);
+			return processPointVector(n, eval);	
+		else if (eval.isListValue())
+			return processList(((ListValue) eval).getMyList());	
 		else if (eval.isTextValue())
 			return processText(n, eval);
 		else if (eval.isBooleanValue())
 			return processBoolean(n, eval);
 		else if (eval instanceof Function)
-			return processFunction((Function) eval);
+			return processFunction((Function) eval);			
 		else {
 			System.err.println(
 				"Unhandled ExpressionNode: " + eval + ", " + eval.getClass());
@@ -770,6 +770,33 @@ public class AlgebraController
 				ret[0] = new GeoNumeric(cons, label, value);
 		} else
 			ret[0] = kernel.DependentNumber(label, n, isAngle);
+		return ret;
+	}
+	
+	private GeoElement [] processList(MyList myList) {		
+		String label = myList.getLabel();		
+		
+		// PROCESS list items to generate a list of geoElements		
+		ArrayList geoElements = new ArrayList();
+		boolean isIndependent = true;
+		
+		// make sure we don't create any labels for the list elements
+		boolean oldMacroMode = cons.isInMacroMode();
+		cons.setMacroMode(true);
+		
+		int size = myList.size();
+		for (int i=0; i < size; i++) {
+			GeoElement [] results = processExpressionNode((ExpressionNode) myList.getListElement(i));			
+			// we only take one resulting object			
+			geoElements.add(results[0]);
+			if (!results[0].isIndependent() || results[0].isLabelSet())
+				isIndependent = false;			
+		}		
+		cons.setMacroMode(oldMacroMode);
+		
+		// CREATE GeoList object
+		GeoElement[] ret = new GeoElement[1];
+		ret[0] = kernel.List(label, geoElements, isIndependent);
 		return ret;
 	}
 

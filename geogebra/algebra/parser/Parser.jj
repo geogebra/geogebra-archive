@@ -856,25 +856,16 @@ ExpressionNode enelement():
      LOOKAHEAD(2147483647)
     en = numVecVariable()
         { return en; }
+|        
+    //list
+    LOOKAHEAD(2147483647)
+	ev = list()
+	    { return new ExpressionNode(kernel, ev); }      
 |
     // parenthesis
     LOOKAHEAD(2147483647)
     "("  en = expressionnode()  ")" 
-        { return  en; }
-        
-|
-    // list
-    LOOKAHEAD(2147483647)
-    "{" (","  en = expressionnode())*  "}" 
-        { return  en; }
-    "{"  en = expressionnode() 
-        {   
-            labels = new Vector(); labels.add(t.image);  
-        }
-     ( "," t = <LABEL> { labels.add(t.image); } )*
-    "}"         
-        
-        
+        { return  en; }       	           
 |
     // cartesian vector  (x, y) or (x|y)
     LOOKAHEAD(2147483647)
@@ -893,6 +884,27 @@ ExpressionNode enelement():
     	String text = c.image.substring(1, c.image.length()-1);
     	return new ExpressionNode(kernel, new MyStringBuffer(text));
      }  
+}
+
+ExpressionValue list():
+{
+    MyList myList;
+    ExpressionNode en;
+}
+{
+    // list
+    "{"  en = cmdexpression()     
+       {   
+            myList = new MyList(kernel);
+            myList.addListElement(en);
+        }
+       ( "," en = cmdexpression()  
+       	 {
+       		myList.addListElement(en); 
+       	 } 
+        )*
+    "}"    
+    {  return myList;  }
 }
 
 ExpressionNode numVecVariable():

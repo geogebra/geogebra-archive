@@ -265,7 +265,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 			  sb.append(label);
 		  sb.append("\">\n");
 		  sb.append(getXMLtags());
-		  sb.append("</element>");
+		  sb.append("</element>\n");
 		  
 		  return sb.toString();
 	  }

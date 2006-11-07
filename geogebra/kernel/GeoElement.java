@@ -1384,6 +1384,18 @@ public abstract class GeoElement
 			//	dependent object
 			return algoParent.getMaxConstructionIndex();
 	}
+	
+	/**
+	 * Returns the label for a free geo and the definition description 
+	 * for a dependent geo.
+	 * @return
+	 */	
+	public String getLabelOrDefinitionDescription() {
+		if (algoParent == null)
+			return getLabel();
+		else
+			return algoParent.toString();    	
+    }
 
 	public String getDefinitionDescription() {
 		if (algoParent == null)
