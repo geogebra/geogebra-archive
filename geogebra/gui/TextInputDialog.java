@@ -9,10 +9,12 @@ under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or 
 (at your option) any later version.
 */
-package geogebra.util;
+package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.util.InputDialog;
+import geogebra.util.LaTeXinputHandler;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

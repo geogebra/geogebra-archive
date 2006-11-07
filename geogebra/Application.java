@@ -36,6 +36,7 @@ import geogebra.gui.MyPopupMenu;
 import geogebra.gui.PrintPreview;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
+import geogebra.gui.TextInputDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -51,7 +52,6 @@ import geogebra.util.ImageManager;
 import geogebra.util.InputDialog;
 import geogebra.util.InputHandler;
 import geogebra.util.LaTeXinputHandler;
-import geogebra.util.TextInputDialog;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -1497,7 +1497,7 @@ public class Application {
     public void showRedefineDialog(GeoElement geo) {
     	//doBeforeRedefine();    	 
     	
-    	if (geo instanceof GeoText) {
+    	if (geo.isGeoText()) {
 			showTextDialog((GeoText) geo);
 			return;
     	}

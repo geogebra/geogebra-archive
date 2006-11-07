@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.util.InputPanel;
-import geogebra.util.NumberComboBox;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
