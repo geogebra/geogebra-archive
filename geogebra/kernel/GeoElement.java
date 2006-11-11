@@ -1441,7 +1441,7 @@ public abstract class GeoElement
 		return getTypeString();
 	}
 	
-	private String translatedTypeString() {
+	final public String translatedTypeString() {
 		return app.getPlain(getTypeString());
 	}
 

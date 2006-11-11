@@ -22,10 +22,7 @@ import java.util.TreeSet;
  * locus line for Q dependent on P
  */
 public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
-	
-	/**
-	 * 
-	 */
+		
 	private static final long serialVersionUID = 1L;
 	private static int MAX_X_PIXEL_DIST = 8;
 	private static int MAX_Y_PIXEL_DIST = 8;
@@ -238,14 +235,14 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
       	Iterator it = locusConsOrigElements.iterator();
       	while (it.hasNext()) {
       		GeoElement geoOrig = (GeoElement) it.next();    		
-      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);
-      		if (geoOrig != null) {
-      			try {
-      				geoCopy.set(geoOrig);    			
-      				geoCopy.update();      	      			 
-      			} catch (Exception e) {
-      				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
-      			}
+      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
+      		if (geoCopy != null) {
+	  			try {
+	  				geoCopy.set(geoOrig);    			
+	  				geoCopy.update();      	      			 
+	  			} catch (Exception e) {
+	  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
+	  			}
       		}
       	}    	
       	

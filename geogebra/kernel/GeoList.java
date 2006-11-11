@@ -86,9 +86,21 @@ public class GeoList extends GeoElement implements ListValue {
     	}
     	
     	return myList;
-    }        
+    }     
     
- 
+    /**
+     * Returns all list items of this GeoList in an array.
+     */
+    public GeoElement [] toArray() {        	
+    	int size = geoList.size();    	
+    	GeoElement [] geos = new GeoElement[size];
+    	
+    	for (int i=0; i < size; i++) {
+    		geos[i] = (GeoElement) geoList.get(i);	
+    	}
+    	
+    	return geos;
+    }          
         
     public boolean isDefined() {
     	//TODO: change

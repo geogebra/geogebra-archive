@@ -276,7 +276,7 @@ public class AlgoSequence extends AlgoElement {
 			
 		} else {
 	    	// all other objects are copies that can be set directly
-			copy.set(orig);
+			copy.setInternal(orig);
 		}						
     }   
     

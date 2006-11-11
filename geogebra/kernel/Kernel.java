@@ -67,7 +67,7 @@ public class Kernel {
 	private boolean JSCLprintForm = false;
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
-	// had an angle as result. Now the result is a number
+	// had an angle as result. Now the result is a number.
 	// this flag is used to distinguish the different behaviour
 	// depending on the the age of save construction file
 	public boolean arcusFunctionCreatesAngle = false;
@@ -88,6 +88,8 @@ public class Kernel {
 	protected Application app;
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
+	
+	private MacroManager macroManager;
 				
 	public Kernel(Application app) {
 		this();
@@ -736,6 +738,58 @@ public class Kernel {
 			views[i].clearView();
 		}
 	}
+	
+	/* **********************************
+	 *   MACRO handling
+	 * **********************************/
+	
+	/**
+	 * Creates a new macro within the kernel. A macro is a user defined
+	 * command in GeoGebra.
+	 */
+	final public void addMacro(String name, String description, GeoElement [] input, GeoElement [] output) {
+		if (macroManager == null) {
+			macroManager = new MacroManager();
+		}
+	
+		// we need a not null macro name, this is the command name of the user defined command
+		String macroName = name;
+		if (macroName == null || macroName.length() == 0) {
+			macroName = "Macro" + (macroManager.getMacroNumber() + 1);
+		}		
+		
+		try {		
+			// create new macro
+			Macro macro = new Macro(this, macroName, description, input, output);
+			macroManager.addMacro(macro);
+			
+			// TODO: remove
+			System.out.println("added macro: " + macro);
+			
+		} catch (Exception e) {	
+			e.printStackTrace();
+			String [] strs = { "InvalidMacroDefinition", e.getMessage() };
+			throw new MyError(app, strs);
+		}		
+	}
+	
+	/**
+	 * Returns the macro object for a given macro name.
+	 * Note: null may be returned.
+	 */
+	final public Macro getMacro(String name) {
+		return (macroManager == null) ? null : macroManager.getMacro(name);		
+	}
+	
+	/**
+	 * Creates a new algorithm that uses the given macro.
+	 * @return output of macro algorithm
+	 */
+	final public GeoElement [] useMacro(String [] labels, Macro macro, GeoElement [] input) {		
+		AlgoMacro algo = new AlgoMacro(cons, labels, macro, input);
+		return algo.getOutput();				
+	}
+	
 
 	/***********************************
 	 * FACTORY METHODS FOR GeoElements

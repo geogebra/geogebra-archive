@@ -49,8 +49,7 @@ implements EuclidianViewAlgo {
         if (rbalgo2command == null) {
         	rbalgo2command = app.initAlgo2CommandBundle();
         }
-        
-    	
+            	
     	// translate algorithm class name to internal command name
     	return rbalgo2command.getString(classname);
     }
@@ -361,7 +360,7 @@ implements EuclidianViewAlgo {
     /**
      * translate class name to internal command name
      */
-    private String getCommandName() {
+    String getCommandName() {
         String cmdname, classname;
         // get class name
         //classname = this.getClass().toString();

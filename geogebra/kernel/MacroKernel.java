@@ -46,6 +46,10 @@ class MacroKernel extends Kernel  {
 		macroCons.addReservedLabel(label);
 	}
 	
+	public void setGlobalVariableLookup(boolean flag) {
+		macroCons.setGlobalVariableLookup(flag);
+	}
+	
 	/**
 	 * Sets macro construction of this kernel via XML string.	 
 	 * @return success state

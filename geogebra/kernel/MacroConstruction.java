@@ -20,6 +20,7 @@ class MacroConstruction extends Construction {
 	
 	private Construction parentCons;
 	private HashSet reservedLabels;
+	private boolean globalVariableLookup = true;
 	
 	public MacroConstruction(MacroKernel kernel) {
 		super(kernel);
@@ -56,7 +57,7 @@ class MacroConstruction extends Construction {
     	if (label == null) return null;
                 
         GeoElement geo =  (GeoElement) geoTable.get(label);                  
-        if (geo == null && !isReservedLabel(label)) {
+        if (geo == null && globalVariableLookup && !isReservedLabel(label)) {
         	// try parent construction        	
         	 geo =  (GeoElement) parentCons.geoTable.get(label);
         }
@@ -66,4 +67,12 @@ class MacroConstruction extends Construction {
     private boolean isReservedLabel(String label) {
     	return reservedLabels.contains(label);        	
     }
+
+	public boolean isGlobalVariableLookup() {
+		return globalVariableLookup;
+	}
+
+	public void setGlobalVariableLookup(boolean globalVariableLookup) {
+		this.globalVariableLookup = globalVariableLookup;
+	}
 }

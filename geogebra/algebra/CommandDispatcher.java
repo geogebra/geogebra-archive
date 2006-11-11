@@ -16,6 +16,8 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.util.FastHashMapKeyless;
 
@@ -23,16 +25,19 @@ import geogebra.util.FastHashMapKeyless;
 public class CommandDispatcher {
     
 	private AlgebraController algCtrl;
+	private Kernel kernel;
     private Construction cons;
     private Application app;
     
     // stores (String name, CommandProcessor cmdProc) pairs
     private FastHashMapKeyless cmdTable;
+    private MacroProcessor macroProc;
     
     public CommandDispatcher(AlgebraController algCtrl) {
         this.algCtrl = algCtrl;      
         app = algCtrl.getApplication();
-        cons = algCtrl.getKernel().getConstruction();              
+        kernel = algCtrl.getKernel();
+        cons = kernel.getConstruction();              
     }
     
     /**
@@ -43,20 +48,32 @@ public class CommandDispatcher {
     	
     	if (cmdTable == null) {
     		initCmdTable();
-    	}
-    	
-        String name = c.getName();
+    	}    	        
 
         // switch on macro mode to avoid labeling of output if desired
         boolean oldMacroMode = cons.isInMacroMode();
         if (!labelOutput)
             cons.setMacroMode(true);
-                     
-        // get CommandProcessor object for command name from command table
-        CommandProcessor cmdProc = (CommandProcessor) cmdTable.get(name);
+        
+        // cmdName
+        String cmdName = c.getName();
+        CommandProcessor cmdProc;
+                
+        // MACRO: is there a macro with this command name?        
+        Macro macro = kernel.getMacro(cmdName);
+        if (macro != null) {    
+        	macroProc.setMacro(macro);
+        	cmdProc = macroProc;
+        } 
+        // STANDARD CASE
+        else {
+        	// get CommandProcessor object for command name from command table
+            cmdProc = (CommandProcessor) cmdTable.get(cmdName);
+        }
+                      
                 
         GeoElement[] ret = null;
-        try {              	         	
+        try {              	                
         	ret =  cmdProc.process(c);        	        	
         } 
         catch (MyError e) {
@@ -67,14 +84,16 @@ public class CommandDispatcher {
             e.printStackTrace();
             throw new MyError(app, app.getError("UnknownCommand") + " : " + c);
         }
+              		
+        cons.setMacroMode(oldMacroMode);        
         
-        cons.setMacroMode(oldMacroMode);
         return ret;
     }
            
     private void initCmdTable() {    	 
+    	macroProc = new MacroProcessor(algCtrl);
+    	
     	cmdTable = new FastHashMapKeyless(500);
-
     	cmdTable.put("UnitVector", new CmdUnitVector(algCtrl));	   
     	cmdTable.put("SecondAxis", new CmdSecondAxis(algCtrl));	   
     	cmdTable.put("CircleArc", new CmdCircleArc(algCtrl));	   
@@ -144,6 +163,7 @@ public class CommandDispatcher {
     	cmdTable.put("UpperSum", new CmdUpperSum(algCtrl));    	  
     	cmdTable.put("If", new CmdIf(algCtrl));
     	cmdTable.put("Sequence", new CmdSequence(algCtrl));
+    	cmdTable.put("Macro", new MacroCreator(algCtrl));
     }
 
 
