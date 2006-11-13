@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.util.Util;
 
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -27,6 +28,7 @@ public class Macro {
 	
 	private Kernel kernel;
 	private String name, description;
+	private String iconFileName; // image file
 	private GeoElement [] macroInput, macroOutput;
 		
 	private TreeSet macroConsOrigElements;
@@ -61,7 +63,7 @@ public class Macro {
 	}
 	
 	private void initMacro(GeoElement [] input, GeoElement [] output)  throws Exception {
-		// TODO: check dependence of input and output
+		// TODO: check dependencies of input and output
 		/*
 		//check whether we found any macro elements:
     	// if not input and output elements don't depend on each other
@@ -70,7 +72,7 @@ public class Macro {
         	throw new Exception("InvalidMacroDefinition");
 		*/
 		
-		// basic idea to create a macro
+		// steps to create a macro
 		// 1) outputParents = set of all predecessors of output objects
 		// 2) inputChildren = set of all children of input objects
 		// 3) macroElements = intersection of outputParents and inputChildren
@@ -190,13 +192,12 @@ public class Macro {
 	  */
 	 private void createMacroConstruction(String macroConsXML, String [] inputLabels, String [] outputLabels) throws Exception {		 
     	// build macro construction
-    	MacroKernel mk = new MacroKernel(kernel);     	
-    	    	
-    	// tell the macro kernel that global variables are not allowed    	
-    	mk.setGlobalVariableLookup(false);      	  	      	    
+    	MacroKernel mk = new MacroKernel(kernel);   
+    	mk.setUndoActive(false);
+    	mk.setGlobalVariableLookup(false);    	        	      	  	      	    
     	
     	try {    	
-    		mk.loadXML(macroConsXML.toString());
+    		mk.loadXML(macroConsXML);
     	
 	    	// get the copies of input and output from the macro kernel
     		macroInput = new GeoElement[inputLabels.length];
@@ -328,5 +329,51 @@ public class Macro {
 		
 		return sb.toString();
 	}
+	
+	
+	/**
+	 * Returns XML representation of this macro for
+	 * saving in a ggb file.
+	 */
+    public String getXML() {      
+        StringBuffer sb = new StringBuffer();               
+        sb.append("<macro name=\"");
+        sb.append(name);
+        sb.append("\" iconFile=\""); 
+        sb.append(iconFileName);
+        sb.append("\" description=\"");
+        sb.append(description);        
+		sb.append("\"/>\n");
+    			        
+        // add input labels
+        sb.append("\t<input");
+        for (int i = 0; i < macroInput.length; i++) {
+	    	// attribute name is input no. 
+	        sb.append(" a");
+	        sb.append(i);                
+	        sb.append("=\"");
+	        sb.append(Util.encodeXML(macroInput[i].label));                                                           
+	        sb.append("\"");
+        }
+        sb.append("/>\n");
+        
+        // add output labels           
+        sb.append("\t<output");
+        for (int i = 0; i < macroOutput.length; i++) {
+	    	// attribute name is output no.
+	        sb.append(" a");
+	        sb.append(i);                
+	        sb.append("=\"");
+	        sb.append(Util.encodeXML(macroOutput[i].label));                                                           
+	        sb.append("\"");
+        }        
+        sb.append("/>\n");            
+        
+        // macro construction XML
+        macroCons.appendConstructionXML(sb);     
+        
+        sb.append("</macro>\n");           
+        return sb.toString();
+    }
 		
 }

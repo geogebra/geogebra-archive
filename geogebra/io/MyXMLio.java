@@ -54,8 +54,12 @@ import javax.imageio.ImageIO;
 public class MyXMLio {
     
     // All xml output is zipped. The created zip archive contains
-    // an entry named XML_FILE 
-    final private static String XML_FILE = "geogebra.xml";  
+    // an entry named XML_FILE for the construction
+    final private static String XML_FILE = "geogebra.xml";
+    
+    // All xml output is zipped. The created zip archive contains
+    // an entry named XML_FILE_MACRO for the macros 
+    final private static String XML_FILE_MACRO = "geogebra_macro.xml";  
     
     // Use the default (non-validating) parser
     //private static XMLReaderFactory factory;
@@ -206,11 +210,19 @@ public class MyXMLio {
         // write images
         writeImages(zip);
         
-        // write XML file
+        // write macro XML file
+        if (kernel.hasMacros()) {
+        	zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));
+            OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");
+            osw.write(getFullMacroXML());  
+            osw.close(); 
+        }        
+        
+        // write XML file for construction
         zip.putNextEntry(new ZipEntry(XML_FILE));
-        OutputStreamWriter osw = new  OutputStreamWriter(zip,  "UTF8");
+        OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");
         osw.write(getFullXML());  
-        osw.close(); 
+        osw.close();                         
         
         zip.close();           
         b.close();      
@@ -306,6 +318,21 @@ public class MyXMLio {
         
         // save construction
         sb.append(kernel.getConstructionXML());  
+        
+        sb.append("</geogebra>");
+        return sb.toString();            
+    }
+    
+    /**
+     * Returns XML representation of all macros in the kernel.
+     */ 
+    public String getFullMacroXML() {    	    	
+        StringBuffer sb = new StringBuffer();            
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");
+        
+        // save construction
+        sb.append(kernel.getMacroXML());  
         
         sb.append("</geogebra>");
         return sb.toString();            

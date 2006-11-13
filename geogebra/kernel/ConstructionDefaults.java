@@ -152,6 +152,7 @@ public class ConstructionDefaults {
 		GeoNumeric number = new GeoNumeric(cons);	
 		number.setLocalVariableLabel(app.getPlain("Numeric"));
 		number.setObjColor(colNumber);
+		number.setLabelMode(GeoElement.LABEL_NAME_VALUE);	
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
 		// angle

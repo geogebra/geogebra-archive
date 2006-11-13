@@ -11,6 +11,7 @@ the Free Software Foundation; either version 2 of the License, or
 */
 package geogebra.kernel;
 
+import geogebra.MyError;
 import geogebra.algebra.AlgebraController;
 
 /**
@@ -81,5 +82,20 @@ class MacroKernel extends Kernel  {
 		return parentKernel.getYscale();
 	}	
 	
+	
+	/**
+	 * Creates a new macro in the parent kernel.
+	 */
+	public void addMacro(String name, String description, GeoElement [] input, GeoElement [] output) {
+		parentKernel.addMacro(name, description, input, output);
+	}
+	
+	/**
+	 * Returns the macro object for the given macro name.
+	 * Note: null may be returned.
+	 */
+	public Macro getMacro(String name) {
+		return parentKernel.getMacro(name);	
+	}			
 	
 }

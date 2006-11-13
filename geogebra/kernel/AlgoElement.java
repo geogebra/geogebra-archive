@@ -468,7 +468,7 @@ implements EuclidianViewAlgo {
                 sb.append("=\"");
                 
                 // ensure a vector stays a vector!
-                if (!input[i].isLabelSet() && input[i] instanceof GeoVector) {
+                if (!input[i].isLabelSet() && input[i].isGeoVector()) {
                     // add Vector[ ] command around argument
                     // to make sure that this really becomes a vector again
                     sb.append("Vector[");

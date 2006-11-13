@@ -1808,7 +1808,8 @@ public abstract class GeoElement
 	}
 		
 	String getXMLvisualTags(boolean withLabelOffset) {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();		
+		
 		// show object and label  
 		sb.append("\t<show");
 		sb.append(" object=\"");
@@ -1845,14 +1846,12 @@ public abstract class GeoElement
 			sb.append("\"");
 			sb.append("/>\n");
 		}
-
-		if (labelMode != LABEL_NAME) {
-			sb.append("\t<labelMode");
-			sb.append(" val=\"");
-			sb.append(labelMode);
-			sb.append("\"");
-			sb.append("/>\n");
-		}
+		
+		sb.append("\t<labelMode");
+		sb.append(" val=\"");
+		sb.append(labelMode);
+		sb.append("\"");
+		sb.append("/>\n");
 
 		// trace on or off
 		if (isTraceable()) {

@@ -70,8 +70,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		super(c);
 		setEuclidianVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
-		animationStep = 0.1;
-		setLabelMode(GeoElement.LABEL_NAME_VALUE);				
+		animationStep = 0.1;					
 	}
 
 	String getClassName() {
@@ -163,11 +162,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 					}
 				}
 			}
-			// !visible
-			else {
+			
+			/* we don't want to remove min, max values when slider is hidden			
+			else { // !visible
 				intervalMinActive = false;
 				intervalMaxActive = false;
-			}
+			}*/
 		} 
 		
 		super.setEuclidianVisible(visible);

@@ -13,6 +13,7 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Manages macros (user defined tools).
@@ -44,6 +45,22 @@ public class MacroManager {
 	 */
 	public int getMacroNumber() {
 		return macroMap.size();
+	}
+	
+	/**
+	 * Returns an XML represenation of ALL macros in this kernel.
+	 * @return
+	 */
+	public String getMacroXML() {				
+		StringBuffer sb = new StringBuffer();
+		
+		Iterator it = macroMap.values().iterator();
+		while(it.hasNext()) {
+			Macro macro = (Macro) it.next();
+			sb.append(macro.getXML());
+		}
+		
+		return sb.toString();
 	}
 
 }

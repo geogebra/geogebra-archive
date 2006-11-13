@@ -44,7 +44,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean isPalive [];     
     
     private int i;
-    private boolean isTangent, firstIntersection;
+    private boolean isTangent;
+    private boolean firstIntersection = true;
     private GeoPoint tangentPoint;
   
     // mean distance computation
@@ -231,18 +232,17 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 
         // STANDARD CASE
         // calc new points Q
-        intersect(c, g, Q);        
-        
-       
+        intersect(c, g, Q);                
         
         // for limited paths we have to distinguish between intersection points Q
         // that lie on both limited paths or not. This is important for choosing
         // the right permutation in setNearTo()
         if (isLimitedPathSituation) {
         	updateQonPath();
-        }
+        }        
         
-        if (firstIntersection) {            	        	
+        if (firstIntersection) {           	
+        	        	
         // init points in order P[0], P[1]
             int count=0;
             for (i=0; i < Q.length; i++) {

@@ -742,11 +742,7 @@ public class Construction {
     /**
      * Returns this construction in XML format.
      */
-    public String getXML() {
-    	// set coord style to A = (x, y)
-    	int oldCoordStlye = kernel.getCoordStyle();
-        kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);        
-    	
+    public String getXML() {    	       	
         StringBuffer sb = new StringBuffer();
 
         // kernel settings
@@ -764,12 +760,25 @@ public class Construction {
         
         // coord style
         sb.append("\t<coordStyle val=\"");
-        sb.append(oldCoordStlye);           
+        sb.append(kernel.getCoordStyle());           
         sb.append("\"/>\n");
         
         sb.append("</kernel>\n");
 
-        //  save construction elements
+        // construction XML
+        appendConstructionXML(sb);        
+                         
+        return sb.toString();
+    }
+    
+    void appendConstructionXML(StringBuffer sb) {
+    	// change kernel settings temporarily
+    	int oldCoordStlye = kernel.getCoordStyle();
+    	int oldDecimals = kernel.getPrintDecimals();
+        kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
+        kernel.setPrintDecimals(50);
+    	
+    	// save construction elements
         sb.append("<construction title=\""); 
         sb.append(Util.encodeXML(getTitle())); 
         sb.append("\" author=\"");
@@ -785,25 +794,20 @@ public class Construction {
 	        sb.append("\" below=\"");
 	        sb.append(Util.encodeXML(getWorksheetText(1)));        
 	        sb.append("\"/>\n");     
-        }
-        
-        int oldDecimals = kernel.getPrintDecimals();		
-        kernel.setPrintDecimals(50);
+        }                
         
         ConstructionElement ce;
         int size = ceList.size();
         for (int i = 0; i < size; ++i) {
             ce = (ConstructionElement) ceList.get(i);
             sb.append(ce.getXML());
-        }
-        
-        kernel.setPrintDecimals(oldDecimals);
+        }       
         
         sb.append("</construction>\n");
         
-        // reset coord style
-        kernel.setCoordStyle(oldCoordStlye);                     
-        return sb.toString();
+        // restore old kernel settings
+        kernel.setPrintDecimals(oldDecimals);
+        kernel.setCoordStyle(oldCoordStlye);    
     }
     
     /**
