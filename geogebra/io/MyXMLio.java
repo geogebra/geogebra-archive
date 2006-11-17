@@ -206,24 +206,26 @@ public class MyXMLio {
 
         // zip stream
         ZipOutputStream zip = new ZipOutputStream(b);  
-               
+        OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
+        
         // write images
         writeImages(zip);
         
         // write macro XML file
         if (kernel.hasMacros()) {
-        	zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));
-            OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");
-            osw.write(getFullMacroXML());  
-            osw.close(); 
+        	zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));                       
+            osw.write(getFullMacroXML()); 
+            osw.flush();
+            zip.closeEntry();
         }        
         
         // write XML file for construction
-        zip.putNextEntry(new ZipEntry(XML_FILE));
-        OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");
-        osw.write(getFullXML());  
-        osw.close();                         
-        
+        zip.putNextEntry(new ZipEntry(XML_FILE));           
+        osw.write(getFullXML());        
+        osw.flush();
+        zip.closeEntry();
+                    
+        osw.close();
         zip.close();           
         b.close();      
         f.close();

@@ -243,7 +243,7 @@ public abstract class GeoElement
 	public GeoElement(Construction c) {
 		super(c);
 		// this.geoID = geoCounter++;                                 
-		setDefaultColors(); // init colors       
+		setConstructionDefaults(); // init colors       
 		
 		// init label
 		initSetLabelVisible();
@@ -339,7 +339,7 @@ public abstract class GeoElement
 		labelVisible =  ! isPath() || app.showAlgebraView();
 	}
 	
-	public void setDefaultColors() {		
+	public void setConstructionDefaults() {		
 		ConstructionDefaults consDef = cons.getConstructionDefaults();
 		if (consDef != null) 
 				consDef.setDefaultVisualStyles(this);		
@@ -572,7 +572,7 @@ public abstract class GeoElement
 	public void setParentAlgorithm(AlgoElement algorithm) {
 		algoParent = algorithm;
 		if (algorithm != null)
-			setDefaultColors(); // set colors to dependent colors
+			setConstructionDefaults(); // set colors to dependent colors
 	}
 
 	final public AlgoElement getParentAlgorithm() {
@@ -1766,7 +1766,7 @@ public abstract class GeoElement
 	 * SAVING
 	 *******************************************************/
 
-	private String getXMLtypeString() {		
+	final public String getXMLtypeString() {		
 		return getClassName().substring(3).toLowerCase();
 	}
 	

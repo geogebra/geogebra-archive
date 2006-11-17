@@ -29,7 +29,7 @@ public class MacroManager {
 	}
 		
 	public void addMacro(Macro macro) {						
-		macroMap.put(macro.getName(), macro);
+		macroMap.put(macro.getCommandName(), macro);
 	}
 	
 	public Macro getMacro(String name) {
@@ -37,7 +37,7 @@ public class MacroManager {
 	}
 	
 	public void removeMacro(Macro macro) {
-		macroMap.remove(macro.getName());		
+		macroMap.remove(macro.getCommandName());		
 	}	
 	
 	/**

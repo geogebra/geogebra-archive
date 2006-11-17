@@ -64,7 +64,7 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	private boolean JSCLprintForm = false;
+	private boolean JSCLprintForm = false;		
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -284,41 +284,75 @@ public class Kernel {
 	 * GeoElement specific
 	 */
 	
+	
+	
 	/**
-     * Creates a new independent GeoElement object for the given type string.
+     * Creates a new GeoElement object for the given type string.
      * @param type: String as produced by GeoElement.getXMLtypeString()
      */
-    final public GeoElement createGeoElement(String type) throws MyError {
-    	char ch = Character.toLowerCase(type.charAt(0));
-    	
-    	switch (ch) {
-    		case 'a': //angle
-    			return new GeoAngle(cons);
+    final public static GeoElement createGeoElement(Construction cons, String type) throws MyError {    	
+    	// the type strings are the classnames in lowercase without the beginning "geo"
+    	// due to a bug in GeoGebra 2.6c the type strings for conics
+        // in XML may be "ellipse", "hyperbola", ...  
+    	    	
+    	switch (type.charAt(0)) {
+    		case 'a': //angle    			
+    			return new GeoAngle(cons);	    			     		    			
     			
     		case 'b': //angle
     			return new GeoBoolean(cons);
     		
     		case 'c': // conic
+    			if (type.equals("conic"))
+    				return new GeoConic(cons);   
+    			else if (type.equals("conicpart"))    					
+    				return new GeoConicPart(cons, 0);
+    			else if (type.equals("circle")) { // bug in GeoGebra 2.6c
+    				return new GeoConic(cons);
+    			}
+    			
+    		case 'd': // doubleLine 			// bug in GeoGebra 2.6c
     			return new GeoConic(cons);    			
     			
+    		case 'e': // ellipse, emptyset	//  bug in GeoGebra 2.6c
+				return new GeoConic(cons);     			
+    				
     		case 'f': // function
     			return new GeoFunction(cons);
     		
+    		case 'h': // hyperbola			//  bug in GeoGebra 2.6c
+				return new GeoConic(cons);     			
+    			
     		case 'i': // image
-    			return new GeoImage(cons);
+    			if (type.equals("image"))    				
+    				return new GeoImage(cons);
+    			else if (type.equals("intersectinglines")) //  bug in GeoGebra 2.6c
+    				return new GeoConic(cons);
     		
-    		case 'l': // line, locus
-    			//if (type.equals("line"))
+    		case 'l': // line, list, locus
+    			if (type.equals("line"))
     				return new GeoLine(cons);
-    			// locus is only created as dependent object
-    			//else 
-    				//return new GeoLocus(cons);
+    			else if (type.equals("list"))
+    				return new GeoList(cons);    			
+    			else 
+    				return new GeoLocus(cons, null);
     		
-    		case 'n': // number
+    		case 'n': // numeric
     			return new GeoNumeric(cons);
     			
-    		case 'p': // point
-    			return new GeoPoint(cons);
+    		case 'p': // point, polygon
+    			if (type.equals("point")) 
+    				return new GeoPoint(cons);
+    			else if (type.equals("polygon"))
+    				return new GeoPolygon(cons, null);
+    			else // parabola, parallelLines, point //  bug in GeoGebra 2.6c
+    				return new GeoConic(cons);
+    			
+    		case 'r': // ray
+    			return new GeoRay(cons, null);
+    			
+    		case 's': // segment    			
+    			return new GeoSegment(cons, null, null);	    			    			
     			
     		case 't': // text
     			return new GeoText(cons);
@@ -326,30 +360,11 @@ public class Kernel {
     		case 'v': // vector
 				return new GeoVector(cons);
     		
-    		default:
-    			GeoElement ret = handleTypeBugGeoGebra26c(type);
-    			if (ret != null) return ret;
-    			throw new MyError(app, "Kernel: GeoElement of type "
+    		default:    			
+    			throw new MyError(cons.getApplication(), "Kernel: GeoElement of type "
     		            + type + " could not be created.");		    		
     	}    		    
-    }
-    
-    // due to a bug in GeoGebra 2.6c the type strings for conics
-    // in XML may be "ellipse", "hyperbola", ...
-    private GeoElement handleTypeBugGeoGebra26c(String type) {
-    	if (type.equals("circle") ||
-    		type.equals("doubleLine") ||
-    		type.equals("ellipse") ||
-    		type.equals("emptySet") ||
-    		type.equals("hyperbola") ||
-    		type.equals("intersectingLines") ||
-    		type.equals("parabola") ||
-    		type.equals("parallelLines") ||
-    		type.equals("point"))
-			return new GeoConic(cons);
-		else
-			return null;			    			    	
-    }
+    }     
 
 	/* *******************************************
 	 *  Construction specific methods
@@ -747,20 +762,20 @@ public class Kernel {
 	 * Creates a new macro within the kernel. A macro is a user defined
 	 * command in GeoGebra.
 	 */
-	public void addMacro(String name, String description, GeoElement [] input, GeoElement [] output) {
+	public void addMacro(String cmdName, String toolName, String toolHelp, GeoElement [] input, GeoElement [] output) {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}	
 	
 		// we need a not null macro name, this is the command name of the user defined command
-		String macroName = name;
+		String macroName = cmdName;
 		if (macroName == null || macroName.length() == 0) {
 			macroName = "Macro" + (macroManager.getMacroNumber() + 1);
 		}		
 		
 		try {		
 			// create new macro
-			Macro macro = new Macro(this, macroName, description, input, output);
+			Macro macro = new Macro(this, macroName, toolName, toolHelp, input, output);
 			macroManager.addMacro(macro);
 			
 			// TODO: remove

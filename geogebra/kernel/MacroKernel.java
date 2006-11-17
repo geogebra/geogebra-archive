@@ -17,7 +17,7 @@ import geogebra.algebra.AlgebraController;
 /**
  * Kernel with its own construction for macros.
  */
-class MacroKernel extends Kernel  {
+public class MacroKernel extends Kernel  {
 
 	private Kernel parentKernel;
 	private MacroConstruction macroCons;
@@ -86,8 +86,8 @@ class MacroKernel extends Kernel  {
 	/**
 	 * Creates a new macro in the parent kernel.
 	 */
-	public void addMacro(String name, String description, GeoElement [] input, GeoElement [] output) {
-		parentKernel.addMacro(name, description, input, output);
+	public void addMacro(String cmdName, String toolName, String toolHelp, GeoElement [] input, GeoElement [] output) {
+		parentKernel.addMacro(cmdName, toolName, toolHelp, input, output);
 	}
 	
 	/**

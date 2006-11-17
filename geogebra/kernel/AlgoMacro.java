@@ -34,7 +34,7 @@ public class AlgoMacro extends AlgoElement {
     	    	    	    	     
         this.macro = macro;
     	this.input = input;
-    	this.output = macro.createOutputCopies();                             
+    	this.output = macro.createOutputCopies(cons);                             
     	
     	setInputOutput();                 
         compute();
@@ -47,7 +47,7 @@ public class AlgoMacro extends AlgoElement {
 	}
 	
 	String getCommandName() {
-		return macro.getName();
+		return macro.getCommandName();
 	}
     
     void setInputOutput() {    	             

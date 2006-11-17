@@ -530,14 +530,26 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 	
 	/**
-	 * Creates a GeoFunction f(x) = value
+	 * Creates a GeoFunction of the form f(x) = thisNumber 
 	 * @return
 	 */	
 	public GeoFunction getGeoFunction() {
 		ExpressionNode en = new ExpressionNode(kernel, this);
-		Function fun = new Function(en, new FunctionVariable(kernel));		
-		GeoFunction ret = new GeoFunction(cons);
-		ret.setFunction(fun);
+		Function fun = new Function(en, new FunctionVariable(kernel));			
+		GeoFunction ret;
+		
+		// we get a dependent function if this number has a label
+		if (isLabelSet()) {
+			// don't create a label for the new dependent function
+			boolean oldMacroMode = cons.isInMacroMode();
+			cons.setMacroMode(true);
+			ret = kernel.DependentFunction(null, fun);
+			cons.setMacroMode(oldMacroMode);
+		} else {
+			ret = new GeoFunction(cons);
+			ret.setFunction(fun);
+		}					
+				
 		return ret;
 	}
 	

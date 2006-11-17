@@ -173,7 +173,9 @@ public class ConstructionDefaults {
 		// locus
 		GeoLocus locus = new GeoLocus(cons, null);	
 		locus.setLocalVariableLabel(app.getPlain("Locus"));
-		locus.setObjColor(colLocus);		
+		locus.setObjColor(colLocus);
+		locus.setAlgebraVisible(false);
+		locus.setLabelVisible(false);
 		defaultGeoElements.put(DEFAULT_LOCUS, locus);		
 	}
 	

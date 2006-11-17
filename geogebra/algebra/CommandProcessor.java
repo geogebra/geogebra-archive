@@ -66,35 +66,19 @@ public abstract class CommandProcessor  {
            boolean oldMacroMode = cons.isInMacroMode();
            cons.setMacroMode(true);
 
-           // resolve arguments to get GeoElements
-           LinkedList list = new LinkedList();
-           GeoElement[] result;
-
-           int i;
+           // resolve arguments to get GeoElements                     
            ExpressionNode[] arg = c.getArguments();
-           for (i = 0; i < arg.length; ++i) {
+           GeoElement[] result = new GeoElement[arg.length];
+           
+           for (int i = 0; i < arg.length; ++i) {
         	   // resolve variables in argument expression
         	   arg[i].resolveVariables();
         	   
                // resolve i-th argument and get GeoElements
-               result = resArg(arg[i]);               
-
-               // add only first result to linked list
-           		list.add(result[0]);
-           	
-           	/*
-			    * for (j = 0; j < result.length; ++j) { // add all results to
-			    * linked list // list.add(result[j]); }
-			    */
+               // use only first resolved argument object for result
+               result[i] = resArg(arg[i])[0];               
            }
-
-           result = new GeoElement[list.size()];
-           ListIterator li = list.listIterator();
-           i = 0;
-           while (li.hasNext()) {
-               result[i++] = (GeoElement) li.next();
-           }
-
+           
            cons.setMacroMode(oldMacroMode);
            return result;
        }    
@@ -3017,7 +3001,7 @@ final public    GeoElement[] process(Command c) throws MyError {
         case 1 :                
             if (ok[0] = (arg[0].isGeoFunctionable())) {
                 GeoElement[] ret =
-                    { kernel.Integral(c.getLabel(), (GeoFunction) arg[0])};
+                    { kernel.Integral(c.getLabel(), ((GeoFunctionable) arg[0]).getGeoFunction())};
                 return ret;
             } else
 				throw argErr(app, "Integral", arg[0]);
@@ -3550,9 +3534,9 @@ class CmdIf extends CommandProcessor {
                 // boolean function in x as condition 
                 //   example: If[ x < 2, x^2, x + 2 ]
                 // DO NOT change instanceof here (see GeoFunction.isGeoFunctionable())
-                else if (ok[0] = (arg[0] instanceof GeoFunction)) {
-                	GeoFunction fun = (GeoFunction) arg[0];
-                	if ((ok[0] = fun.isBooleanFunction()) &&
+                else if (ok[0] = (arg[0].isGeoFunction())) {
+                	GeoFunction booleanFun = (GeoFunction) arg[0];
+                	if ((ok[0] = booleanFun.isBooleanFunction()) &&
                 		(ok[1] = arg[1].isGeoFunctionable()) &&
 						(geoElse == null || geoElse.isGeoFunctionable())) 
                 	{
@@ -3563,7 +3547,7 @@ class CmdIf extends CommandProcessor {
                         	{
                              kernel.If(
                                 c.getLabel(),
-                                (GeoFunction) fun,
+                                (GeoFunction) booleanFun,
                                 ((GeoFunctionable) arg[1]).getGeoFunction(),
                                 elseFun )
                         	};

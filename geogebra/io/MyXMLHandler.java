@@ -38,6 +38,8 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
+import geogebra.kernel.Macro;
+import geogebra.kernel.MacroKernel;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -63,6 +65,7 @@ public class MyXMLHandler implements DocHandler {
     
     private static final int MODE_INVALID = -1;
     private static final int MODE_GEOGEBRA = 1;
+    private static final int MODE_MACRO = 50;
     private static final int MODE_EUCLIDIAN_VIEW = 100;
     private static final int MODE_KERNEL = 200;
     private static final int MODE_CONSTRUCTION = 300;
@@ -75,6 +78,8 @@ public class MyXMLHandler implements DocHandler {
 
     private GeoElement geo;
     private Command cmd;
+    private Macro macro;
+    private String [] macroInputLabels, macroOutputLabels;
     private GeoElement[] cmdOutput;
     private Application app;
     private Kernel kernel;
@@ -153,13 +158,17 @@ public class MyXMLHandler implements DocHandler {
             case MODE_GEOGEBRA : // top level mode
                 startGeoGebraElement(eName, attrs);
                 break;
-
+                
             case MODE_EUCLIDIAN_VIEW :
                 startEuclidianViewElement(eName, attrs);
                 break;
 
             case MODE_KERNEL :
                 startKernelElement(eName, attrs);
+                break;
+                
+            case MODE_MACRO : 
+                startMacroElement(eName, attrs);
                 break;
 
             case MODE_CONSTRUCTION :
@@ -233,6 +242,13 @@ public class MyXMLHandler implements DocHandler {
                 endConstructionElement(eName);
                 break;
                 
+            case MODE_MACRO : 
+            	if (eName.equals("macro")) {
+            		endMacro();
+            		mode = MODE_GEOGEBRA;
+            	}
+                break;
+                
             case MODE_GEOGEBRA:
             	if (eName.equals("geogebra")) {
             		// reset the standard setting for file format 2.6 or later
@@ -251,12 +267,19 @@ public class MyXMLHandler implements DocHandler {
             mode = MODE_KERNEL;
         } else if (eName.equals("gui")) {
             mode = MODE_GUI;
+        } else if (eName.equals("macro")) {
+            mode = MODE_MACRO;
+            initMacro(attrs);
         } else if (eName.equals("construction")) {
             mode = MODE_CONSTRUCTION;
             handleConstruction(attrs);
         } else {
             System.err.println("unknown tag in <geogebra>: " + eName);
         }
+    }
+    
+    private void startMacroElement(String eName, LinkedHashMap attrs) {
+        // TODO: implement
     }
 
     // ====================================
@@ -672,20 +695,47 @@ public class MyXMLHandler implements DocHandler {
             String author = (String) attrs.get("author");
             String date = (String) attrs.get("date");
             if (title != null)
-                cons.setTitle(title);
-            else
-                System.err.println("title missing in <construction>");
+                cons.setTitle(title);            
             if (author != null)
-                cons.setAuthor(author);
-            else
-                System.err.println("author missing in <construction>");
+                cons.setAuthor(author);            
             if (date != null)
-                cons.setDate(date);
-            else
-                System.err.println("date missing in <construction>");
+                cons.setDate(date);            
         } catch (Exception e) {
             System.err.println("error in <construction>");
         }
+    }
+    
+    
+    private void initMacro(LinkedHashMap attrs) {
+        try {
+            String cmdName = (String) attrs.get("cmdName");
+            String toolName = (String) attrs.get("toolName");
+            String toolHelp = (String) attrs.get("toolHelp");
+            String iconFile = (String) attrs.get("iconFile");
+            
+            // create macro and a kernel for it
+            macro = new Macro(kernel, cmdName, toolName, toolHelp);
+            macro.setIconFileName(iconFile);            
+            MacroKernel macroKernel = new MacroKernel(kernel);
+            
+            // we have to change the construction object temporarily so everything 
+            // is done in the macro construction from now on
+            kernel = macroKernel;
+            cons = macroKernel.getConstruction();                        
+                                    
+        } catch (Exception e) {
+            System.err.println("error in <macro>");
+        }
+    }
+    
+    private void endMacro() {
+    	// at the moment cons holds a reference to the macroConstruction
+    	macro.setMacroConstruction(cons, macroInputLabels, macroOutputLabels);
+    	
+    	// TODO: go on
+    	
+        //kernel = macroKernel;
+        //cons = macroKernel.getConstruction();                                           
     }
     
     /*
@@ -782,7 +832,7 @@ public class MyXMLHandler implements DocHandler {
         geo = cons.lookupLabel(label);
         
         if (geo == null) {        
-        	geo = kernel.createGeoElement(type);        	
+        	geo = Kernel.createGeoElement(cons, type);        	
         	geo.setLoadedLabel(label);	 
 	            
             // independent GeoElements should be hidden by default

@@ -27,23 +27,23 @@ import java.util.TreeSet;
 public class Macro {
 	
 	private Kernel kernel;
-	private String name, description;
+	private String cmdName, toolName, toolHelp;
 	private String iconFileName; // image file
 	private GeoElement [] macroInput, macroOutput;
 		
-	private TreeSet macroConsOrigElements;
 	private Construction macroCons;
 	
 	/**
 	 * Creates a new macro with a name and description by
 	 * using the given input and output GeoElements.	 
 	 */
-	public Macro(Kernel kernel, String name, String description, 
+	public Macro(Kernel kernel, String cmdName, String toolName, String toolHelp, 
 					GeoElement [] input, GeoElement [] output) 
 	throws Exception {
 		this.kernel = kernel;
-		this.name = name;
-		this.description = description;
+		setCommandName(cmdName);
+		setToolName(toolName);
+		setToolHelp(toolHelp);
 		
 		initMacro(input, output);
 	}
@@ -52,14 +52,32 @@ public class Macro {
 	 * Creates a new macro with a name and description by
 	 * processing the given XML string and the given input and output labels.	 
 	 */
-	public Macro(Kernel kernel, String name, String description,
-					String macroConsXML, String [] inputLabels, String [] outputLabels) 
-	throws Exception {
+	public Macro(Kernel kernel, String cmdName, String toolName, String toolHelp) { 	
 		this.kernel = kernel;
-		this.name = name;
-		this.description = description;
+		setCommandName(cmdName);
+		setToolName(toolName);
+		setToolHelp(toolHelp);				
+	}
+	
+	public void setMacroConstruction(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
+		this.macroCons = macroCons;
 		
-		createMacroConstruction(macroConsXML, inputLabels, outputLabels);
+		// get the copies of input and output from the macro constructoin
+		macroInput = new GeoElement[inputLabels.length];
+		macroOutput = new GeoElement[outputLabels.length];
+		for (int i=0; i < inputLabels.length; i++) {    		
+			macroInput[i] = macroCons.lookupLabel(inputLabels[i]);  
+			macroInput[i].setFixed(false);
+			
+			// TODO:remove
+			System.out.println("macroInput[" + i + "] = " + macroInput[i]);
+    	}    	    
+    	for (int i=0; i < outputLabels.length; i++) {    		
+    		macroOutput[i] = macroCons.lookupLabel(outputLabels[i]);            		
+    		
+			// TODO:remove
+			System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
+    	}        	
 	}
 	
 	private void initMacro(GeoElement [] input, GeoElement [] output)  throws Exception {
@@ -87,7 +105,7 @@ public class Macro {
 		}			
 		
 		// 2) and 3) get intersection of all inputChildren and all outputParents    	       	
-    	macroConsOrigElements = new TreeSet(); 
+		TreeSet macroConsOrigElements = new TreeSet(); 
     	Iterator it = outputParents.iterator();
     	while (it.hasNext()) {
     		GeoElement parent = (GeoElement) it.next();
@@ -197,26 +215,8 @@ public class Macro {
     	mk.setGlobalVariableLookup(false);    	        	      	  	      	    
     	
     	try {    	
-    		mk.loadXML(macroConsXML);
-    	
-	    	// get the copies of input and output from the macro kernel
-    		macroInput = new GeoElement[inputLabels.length];
-    		macroOutput = new GeoElement[outputLabels.length];
-    		for (int i=0; i < inputLabels.length; i++) {    		
-    			macroInput[i] = mk.lookupLabel(inputLabels[i]);  
-    			macroInput[i].setFixed(false);
-    			
-    			// TODO:remove
-    			System.out.println("macroInput[" + i + "] = " + macroInput[i]);
-        	}    	    
-        	for (int i=0; i < outputLabels.length; i++) {    		
-        		macroOutput[i] = mk.lookupLabel(outputLabels[i]);            		
-        		
-    			// TODO:remove
-    			System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
-        	}        			    		    	
-	    	
-        	macroCons = mk.getConstruction();	    	    	
+    		mk.loadXML(macroConsXML);    		    			    		    	    	        	        	
+        	setMacroConstruction(mk.getConstruction(), inputLabels, outputLabels);
     	} 
     	catch (MyError e) {  
     		String msg = e.getLocalizedMessage();
@@ -254,28 +254,32 @@ public class Macro {
 		
 		// use input objects to set macro construction   
 		for (int i=0; i < macroInput.length; i++) {   
-			macroInput[i].set(input[i]);						
+			macroInput[i].setInternal(input[i]);	
+			macroInput[i].update();
     	}  
 				
+		// TODO: macro updating: think of making this more efficient
       	// update all algorithms of the macro construction	        
       	macroCons.updateConstruction();
       	
       	// set output objects to set macro construction   
 		for (int i=0; i < macroOutput.length; i++) {    					 
-			output[i].setInternal(macroOutput[i]);						
+			output[i].setInternal(macroOutput[i]);	
+			output[i].update();
     	} 
 	}
 	
 	/**
-	 * Creates copies of all output elements of this macro. These copies can then be used
+	 * Creates copies for the construction cons of all output elements of this macro. These copies can then be used
 	 * to call applyMacro().
 	 */	
-	public GeoElement [] createOutputCopies() {
+	public GeoElement [] createOutputCopies(Construction cons) {
 		GeoElement [] outputCopies = new GeoElement[macroOutput.length];
 		
 		// copy output objects  
-		for (int i=0; i < macroOutput.length; i++) { 
+		for (int i=0; i < macroOutput.length; i++) {
 			outputCopies[i] = macroOutput[i].copyInternal();
+			outputCopies[i].setConstruction(cons);
 			outputCopies[i].setVisualStyle(macroOutput[i]);					
     	} 
 		
@@ -291,20 +295,48 @@ public class Macro {
 		return macroInput;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getToolHelp() {
+		return toolHelp;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setToolHelp(String toolHelp) {
+		if (toolHelp == null)
+			this.toolHelp = "";
+		else
+			this.toolHelp = toolHelp;
 	}
 
-	public String getName() {
-		return name;
+	public String getCommandName() {
+		return cmdName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCommandName(String name) {
+		if (name == null)
+			this.cmdName = "";
+		else
+			this.cmdName = name;
+	}
+
+	public String getToolName() {
+		return toolName;
+	}
+
+	public void setToolName(String name) {
+		if (name == null)
+			this.toolName = "";
+		else
+			this.toolName = name;
+	}
+	
+	public void setIconFileName(String name) {
+		if (name == null)
+			this.iconFileName = "";
+		else
+			this.iconFileName = name;
+	}
+	
+	public String getIconFileName() {
+		return iconFileName;
 	}
 	
 	/**
@@ -312,7 +344,7 @@ public class Macro {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(name);
+		sb.append(cmdName);
         sb.append("[ ");
         
         // input types
@@ -337,16 +369,18 @@ public class Macro {
 	 */
     public String getXML() {      
         StringBuffer sb = new StringBuffer();               
-        sb.append("<macro name=\"");
-        sb.append(name);
+        sb.append("<macro cmdName=\"");
+        sb.append(Util.encodeXML(cmdName));    
+        sb.append("\" toolName=\"");
+        sb.append(Util.encodeXML(toolName));
+        sb.append("\" toolHelp=\"");
+        sb.append(Util.encodeXML(toolHelp));  
         sb.append("\" iconFile=\""); 
-        sb.append(iconFileName);
-        sb.append("\" description=\"");
-        sb.append(description);        
-		sb.append("\"/>\n");
+        sb.append(Util.encodeXML(iconFileName));             
+		sb.append("\">\n");
     			        
         // add input labels
-        sb.append("\t<input");
+        sb.append("<macroInput");
         for (int i = 0; i < macroInput.length; i++) {
 	    	// attribute name is input no. 
 	        sb.append(" a");
@@ -358,7 +392,7 @@ public class Macro {
         sb.append("/>\n");
         
         // add output labels           
-        sb.append("\t<output");
+        sb.append("<macroOutput");
         for (int i = 0; i < macroOutput.length; i++) {
 	    	// attribute name is output no.
 	        sb.append(" a");

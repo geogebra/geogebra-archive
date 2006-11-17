@@ -41,7 +41,7 @@ public class MacroProcessor extends CommandProcessor {
 		// wrong number of arguments
 		if (n != macroInput.length) {
 			StringBuffer sb = new StringBuffer();
-	        sb.append(app.getPlain("Macro") + " " + macro.getName() + ":\n");
+	        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
 	        sb.append(app.getError("IllegalArgumentNumber") + ": " + n);
 	        sb.append("\n\nSyntax:\n" + macro.toString());
 			throw new MyError(app, sb.toString());
@@ -56,7 +56,7 @@ public class MacroProcessor extends CommandProcessor {
 				macroInput[i].setInternal(arg[i]);							
 			} catch(Exception e) {
 				StringBuffer sb = new StringBuffer();
-		        sb.append(app.getPlain("Macro") + " " + macro.getName() + ":\n");
+		        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
 		        sb.append(app.getError("IllegalArgument") + ": ");	            
 	            sb.append(arg[i].getNameDescription());	            	            
 		        sb.append("\n\nSyntax:\n" + macro.toString());

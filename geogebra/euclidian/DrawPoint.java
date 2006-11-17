@@ -42,7 +42,8 @@ public final class DrawPoint extends Drawable {
 	private int diameter, selDiameter, pointSize;
     boolean isVisible, labelVisible;   
     // for dot and selection
-	private Ellipse2D.Double circle, circleSel = new Ellipse2D.Double();
+	private Ellipse2D.Double circle = new Ellipse2D.Double();
+	private Ellipse2D.Double circleSel = new Ellipse2D.Double();
 	private Line2D.Double line1, line2;// for cross	
     private double [] coords = new double[2];
     
@@ -109,15 +110,14 @@ public final class DrawPoint extends Drawable {
         	case EuclidianView.POINT_STYLE_CIRCLE:
         		if (crossStrokes[pointSize] == null)
         			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
-        	
+        		break;
+        		
         	// case EuclidianView.POINT_STYLE_DOT:
-        	default:			        
-		        if (circle == null) {
-		        	circle = new Ellipse2D.Double();		        	
-		        }		        
-		        
-		        circle.setFrame(xUL, yUL, diameter, diameter); 		    
+        	//default:			        		        			        		    
         }    
+        
+        // circle might be needed at least for tracing
+        circle.setFrame(xUL, yUL, diameter, diameter);
         
         // selection area
         circleSel.setFrame(xUL - SELECTION_OFFSET, 
@@ -145,13 +145,13 @@ public final class DrawPoint extends Drawable {
 
     final public void draw(Graphics2D g2) {   
         if (isVisible) { 
+        	if (geo.doHighlighting()) {           
+    		 	g2.setPaint(geo.selColor);		
+    		 	g2.fill(circleSel);  
+            }
+        	        	
             switch (view.pointStyle) {
-            	case EuclidianView.POINT_STYLE_CROSS:
-            		 if (geo.doHighlighting()) {           
-            		 	g2.setPaint(geo.selColor);		
-        				g2.fill(circle);
-                    }
-                    
+            	case EuclidianView.POINT_STYLE_CROSS:            		                     
              		// draw cross like: X     
                     g2.setPaint(geo.objColor);
                     g2.setStroke(crossStrokes[pointSize]);            
@@ -160,11 +160,7 @@ public final class DrawPoint extends Drawable {
             		break;
             		
             	case EuclidianView.POINT_STYLE_CIRCLE:
-            		// draw a circle
-            		if (geo.doHighlighting()) {
-        				g2.setPaint(geo.selColor);		
-        				g2.fill(circleSel);       
-                    } 		
+            		// draw a circle            		
         			g2.setPaint(geo.objColor);	
         			g2.setStroke(crossStrokes[pointSize]);
         			g2.draw(circle);  										                                                               		
@@ -172,11 +168,7 @@ public final class DrawPoint extends Drawable {
             	
            		// case EuclidianView.POINT_STYLE_CIRCLE:
             	default:
-            		// draw a dot
-            		if (geo.doHighlighting()) {
-        				g2.setPaint(geo.selColor);		
-        				g2.fill(circleSel);       
-                    } 		
+            		// draw a dot            			
         			g2.setPaint(geo.objColor);	
         			g2.fill(circle);  										           
                     
@@ -197,8 +189,18 @@ public final class DrawPoint extends Drawable {
     }
     
     final void drawTrace(Graphics2D g2) {
-		g2.setPaint(geo.objColor);
-		g2.fill(circle);	
+    	g2.setPaint(geo.objColor);
+    	
+		switch (view.pointStyle) {
+	     	case EuclidianView.POINT_STYLE_CIRCLE:
+	 			g2.setStroke(crossStrokes[pointSize]);
+	 			g2.draw(circle);  										                                                               		
+	    		break;
+	     	
+	     	case EuclidianView.POINT_STYLE_CROSS:
+	     	default: // case EuclidianView.POINT_STYLE_CIRCLE:	     		
+	 			g2.fill(circle);  										           	     	
+	     }    		       
     }
 
     /**

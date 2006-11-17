@@ -22,9 +22,7 @@ public class GeoLocus extends GeoElement {
 	private AlgoLocus locusAlgorithm;
 	
 	public GeoLocus(Construction c, AlgoLocus locusAlgorithm) {
-		super(c);
-		setAlgebraVisible(false); // don't show in algebra view
-		setLabelVisible(false);
+		super(c);		
 		this.locusAlgorithm = locusAlgorithm;
 		myPointList = new LinkedList();		
 	}  
