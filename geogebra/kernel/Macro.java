@@ -28,7 +28,7 @@ public class Macro {
 	
 	private Kernel kernel;
 	private String cmdName, toolName, toolHelp;
-	private String iconFileName; // image file
+	private String iconFileName = ""; // image file
 	private GeoElement [] macroInput, macroOutput;
 		
 	private Construction macroCons;

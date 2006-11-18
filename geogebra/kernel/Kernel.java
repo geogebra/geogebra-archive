@@ -789,6 +789,18 @@ public class Kernel {
 	}
 	
 	/**
+	 * Creates a new macro within the kernel. A macro is a user defined
+	 * command in GeoGebra.
+	 */
+	public void addMacro(Macro macro) {
+		if (macroManager == null) {
+			macroManager = new MacroManager();
+		}	
+		
+		macroManager.addMacro(macro);
+	}
+	
+	/**
 	 * Returns the macro object for a given macro name.
 	 * Note: null may be returned.
 	 */

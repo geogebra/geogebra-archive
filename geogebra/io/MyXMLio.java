@@ -89,7 +89,10 @@ public class MyXMLio {
         // we have to read everything (i.e. all images)
         // before we process the XML file, that's why we
         // read the XML file into a buffer first
-        byte [] xmlFileBuffer = null;
+        byte [] xmlFileBuffer = null;        
+        byte [] macroXmlFileBuffer = null;
+        boolean xmlFound = false;
+        boolean macroXMLfound = false;
                 
         // get all entries from the zip archive        
         while (true) {        	
@@ -99,8 +102,14 @@ public class MyXMLio {
         	String name = entry.getName();                	        	
         	if (name.equals(XML_FILE)) {
         	    // load xml file into memory first
-        		xmlFileBuffer = Util.loadIntoMemory(zip);                               
-        	}
+        		xmlFileBuffer = Util.loadIntoMemory(zip);  
+        		xmlFound = true;
+        	} 
+        	else if (name.equals(XML_FILE_MACRO)) {
+        	    // load macro xml file into memory first
+        		macroXmlFileBuffer = Util.loadIntoMemory(zip);     
+        		macroXMLfound = true;
+        	} 
         	else {
         		// try to load image        		
         		try {        			
@@ -118,11 +127,19 @@ public class MyXMLio {
         zip.close();  
         bis.close();
         
-        // did we find the XML file?
+                        
+        // process macros
+        if (macroXmlFileBuffer != null) {
+        	processXMLBuffer(macroXmlFileBuffer, true);        	
+        }  
+        
+        // process construction
         if (xmlFileBuffer != null) {
-        	processXMLBuffer(xmlFileBuffer);
-        } else
-			throw new Exception(XML_FILE + " not found");   
+        	processXMLBuffer(xmlFileBuffer, !macroXMLfound);
+        } 
+        
+        if (!(macroXMLfound || xmlFound)) 
+			throw new Exception("No XML data found in file.");   
     }
 
     
@@ -130,13 +147,13 @@ public class MyXMLio {
      * Handles the XML file stored in buffer.
      * @param buffer
      */
-    private void processXMLBuffer(byte [] buffer) throws Exception {
+    private void processXMLBuffer(byte [] buffer, boolean clearAll) throws Exception {
     	// handle the data in the memory buffer 
 		ByteArrayInputStream bs = new ByteArrayInputStream(buffer); 		
 		InputStreamReader ir = new InputStreamReader(bs, "UTF8");
 		
         // process xml file  		  
-		doParseXML(ir, true);            
+		doParseXML(ir, clearAll);            
         
         ir.close();
         bs.close();        

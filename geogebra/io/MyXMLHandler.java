@@ -119,6 +119,8 @@ public class MyXMLHandler implements DocHandler {
         startPointList.clear();
         consStep = -2;
         
+        cons = kernel.getConstruction();
+        
         mode = MODE_INVALID;
         constMode = MODE_CONSTRUCTION;
     }
@@ -168,6 +170,9 @@ public class MyXMLHandler implements DocHandler {
                 break;
                 
             case MODE_MACRO : 
+            	//TODO: remove
+            	System.out.println("startMacroElement");
+            	
                 startMacroElement(eName, attrs);
                 break;
 
@@ -244,6 +249,9 @@ public class MyXMLHandler implements DocHandler {
                 
             case MODE_MACRO : 
             	if (eName.equals("macro")) {
+//          		TODO: remove
+                   	System.out.println("end macro ****");
+            		            		
             		endMacro();
             		mode = MODE_GEOGEBRA;
             	}
@@ -279,7 +287,27 @@ public class MyXMLHandler implements DocHandler {
     }
     
     private void startMacroElement(String eName, LinkedHashMap attrs) {
-        // TODO: implement
+    	 if (eName.equals("macroInput")) {
+//    		TODO: remove
+         	System.out.println("macroInput");
+         	
+    		 macroInputLabels = getAttributeStrings(attrs);
+         } 
+    	 else if (eName.equals("macroOutput")) {
+//     		TODO: remove
+          	System.out.println("macroOutput");
+          	
+    		 macroOutputLabels = getAttributeStrings(attrs);         
+         } 
+    	 else if (eName.equals("construction")) {
+//      		TODO: remove
+           	System.out.println("start building macro construction...");
+           	
+             mode = MODE_CONSTRUCTION;
+             handleConstruction(attrs);
+         } else {
+             System.err.println("unknown tag in <macro>: " + eName);
+         }
     }
 
     // ====================================
@@ -719,8 +747,7 @@ public class MyXMLHandler implements DocHandler {
             MacroKernel macroKernel = new MacroKernel(kernel);
             
             // we have to change the construction object temporarily so everything 
-            // is done in the macro construction from now on
-            kernel = macroKernel;
+            // is done in the macro construction from now on           
             cons = macroKernel.getConstruction();                        
                                     
         } catch (Exception e) {
@@ -729,13 +756,14 @@ public class MyXMLHandler implements DocHandler {
     }
     
     private void endMacro() {
-    	// at the moment cons holds a reference to the macroConstruction
+    	// cons now holds a reference to the macroConstruction
     	macro.setMacroConstruction(cons, macroInputLabels, macroOutputLabels);
     	
-    	// TODO: go on
-    	
-        //kernel = macroKernel;
-        //cons = macroKernel.getConstruction();                                           
+    	// set construction back to the old reference       
+        cons = kernel.getConstruction();  
+        
+        // ad the new built macro to the kernel
+        kernel.addMacro(macro);
     }
     
     /*
@@ -790,8 +818,17 @@ public class MyXMLHandler implements DocHandler {
             case MODE_CONSTRUCTION :
                 if (eName.equals("construction")) {
                     // process start points at end of construction
-                    processStartPointList();                    
-                    mode = MODE_GEOGEBRA;
+                    processStartPointList();                       
+                    
+                    if (cons == kernel.getConstruction()) {
+                    	mode = MODE_GEOGEBRA;
+                    } else {
+                    	// TODO: remove
+                       	System.out.println("macro construction end ");
+                       	
+                        // macro construction
+                    	mode = MODE_MACRO;
+                    }
                 }
                 break;
 
@@ -1137,7 +1174,7 @@ public class MyXMLHandler implements DocHandler {
 
     // for point or vector
     private boolean handleCoordStyle(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoPoint || geo instanceof GeoVector)) {
+        if (!(geo.isGeoPoint() || geo.isGeoVector())) {
             System.err.println(
                 "wrong element type for <coordStyle>: " + geo.getClass());
             return false;
@@ -1156,7 +1193,7 @@ public class MyXMLHandler implements DocHandler {
     }
 
     private boolean handleValue(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoNumeric)) {
+        if (!(geo.isGeoNumeric())) {
             System.err.println(
                 "wrong element type for <value>: " + geo.getClass());
             return false;
@@ -1172,7 +1209,7 @@ public class MyXMLHandler implements DocHandler {
     }
 
     private boolean handlePointSize(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoPoint)) {
+        if (!(geo.isGeoPoint())) {
             System.err.println(
                 "wrong element type for <pointSize>: " + geo.getClass());
             return false;
@@ -1188,7 +1225,7 @@ public class MyXMLHandler implements DocHandler {
     }
     
     private boolean handleSlider(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoNumeric)) {
+        if (!(geo.isGeoNumeric())) {
             System.err.println(
                 "wrong element type for <slider>: " + geo.getClass());
             return false;
@@ -1270,7 +1307,7 @@ public class MyXMLHandler implements DocHandler {
     }
     
      private boolean handleFile(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoImage)) {
+        if (!(geo.isGeoImage())) {
              System.err.println(
                  "wrong element type for <file>: " + geo.getClass());
              return false;
@@ -1286,7 +1323,7 @@ public class MyXMLHandler implements DocHandler {
      
      //   <font serif="false" size="12" style="0">
      private boolean handleTextFont(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoText)) {
+        if (!(geo.isGeoText())) {
             System.err.println(
                 "wrong element type for <font>: " + geo.getClass());
             return false;
@@ -1304,7 +1341,7 @@ public class MyXMLHandler implements DocHandler {
     }
           
      private boolean handleTextDecimals(LinkedHashMap attrs) {
-     	  if (!(geo instanceof GeoText)) {
+     	  if (!(geo.isGeoText())) {
             System.err.println(
                 "wrong element type for <decimals>: " + geo.getClass());
             return false;
@@ -1320,7 +1357,7 @@ public class MyXMLHandler implements DocHandler {
     }
      
      private boolean handleInBackground(LinkedHashMap attrs) {
-         if (!(geo instanceof GeoImage)) {
+         if (!(geo.isGeoImage())) {
              System.err.println(
                  "wrong element type for <inBackground>: " + geo.getClass());
              return false;
@@ -1389,7 +1426,7 @@ public class MyXMLHandler implements DocHandler {
     }
     
      private boolean handleAllowReflexAngle(LinkedHashMap attrs) {
-         if (!(geo instanceof GeoAngle)) {
+         if (!(geo.isGeoAngle())) {
              System.err.println(
                 "wrong element type for <allowReflexAngle>: " + geo.getClass());         
              return false;
@@ -1438,7 +1475,7 @@ public class MyXMLHandler implements DocHandler {
     }               
     
     private boolean handleSlopeTriangleSize(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoNumeric)) {
+        if (!(geo.isGeoNumeric())) {
             System.err.println(
                  "wrong element type for <slopeTriangleSize>: " + geo.getClass());
             return false;
@@ -1520,7 +1557,7 @@ public class MyXMLHandler implements DocHandler {
     }
        
     private boolean handleEigenvectors(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoConic)) {
+        if (!(geo.isGeoConic())) {
             System.err.println(
                 "wrong element type for <eigenvectors>: " + geo.getClass());
             return false;
@@ -1543,7 +1580,7 @@ public class MyXMLHandler implements DocHandler {
     }
 
     private boolean handleMatrix(LinkedHashMap attrs) {
-        if (!(geo instanceof GeoConic)) {
+        if (!(geo.isGeoConic())) {
             System.err.println(
                 "wrong element type for <matrix>: " + geo.getClass());
             return false;
@@ -1708,6 +1745,25 @@ public class MyXMLHandler implements DocHandler {
         } catch (Exception e) {
             throw new MyError(app, "processing of command: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Reads all attributes into a String array.
+     * @param attrs
+     * @return
+     */
+    private String [] getAttributeStrings(LinkedHashMap attrs) {                 
+        Collection values = attrs.values();        
+        Iterator it = values.iterator();
+        
+        String [] ret = new String[values.size()];
+        int i=0;
+        
+        while (it.hasNext()) {          
+        	ret[i] = (String) it.next();
+        	i++;
+        }
+        return ret;        
     }
 
     //  ====================================
