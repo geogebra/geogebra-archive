@@ -139,6 +139,8 @@ public class Application {
 	// GeoGebra uses a computer algebra system 
 	public final static String CAS_FILE = "geogebra_cas.jar";
 	
+	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
+	
 	// update URL
 	//public static final String UPDATE_URL = "http://www.geogebra.at/webstart/unpacked/";
     
@@ -3397,7 +3399,7 @@ public class Application {
                 sb.append("</b> (");
                 sb.append(Application.buildDate);
                 sb.append(")<br>");
-                sb.append(getPlain("ApplicationURL"));                
+                sb.append(GEOGEBRA_WEBSITE);                
                 sb.append("<br><br>");
                 sb.append(getPlain("Copyright"));
                 sb.append("<ul>");
@@ -3552,7 +3554,7 @@ public class Application {
     private URL getHelpURL(String languageISOcode)  {
     	// try to get help for given language
         String strFile = "docu" + languageISOcode + "/index.html";
-        String strURL = "http://www.geogebra.at/help/" + strFile;
+        String strURL = GEOGEBRA_WEBSITE + "/help/" + strFile;
         try {
             File f = new File(strFile);
             if (f.exists())

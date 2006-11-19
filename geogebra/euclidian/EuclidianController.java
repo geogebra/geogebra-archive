@@ -1170,7 +1170,7 @@ final public class EuclidianController implements MouseListener,
 			break;			
 			
 		case EuclidianView.MODE_MOVE_ROTATE:
-			// moveRotate() is dummy function for highlighting only
+			// moveRotate() is a dummy function for highlighting only
 			if (selectionPreview) {
 				moveRotate(view.getTopHits(hits));
 			}

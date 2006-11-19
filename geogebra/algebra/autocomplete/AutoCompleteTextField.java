@@ -89,7 +89,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
   }  
     
     public void geoElementSelected(GeoElement geo, boolean add) {
-        replaceSelection(geo.getLabel());       
+        replaceSelection(geo.getLabel());   
+        requestFocus();
     }
 
   //----------------------------------------------------------------------------
