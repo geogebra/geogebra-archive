@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.TreeSet;
 
 public abstract class ConstructionElement 
-implements Serializable, Comparable {
+implements Comparable {
 	
 	transient Construction cons; // parent construction of this element
 	transient Kernel kernel;      // parent kernel of this element

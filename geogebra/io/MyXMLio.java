@@ -161,27 +161,23 @@ public class MyXMLio {
     
     private void doParseXML(Reader ir, boolean clearAll) throws Exception {
     	boolean oldVal = kernel.isNotifyViewsActive();    	 
-    	kernel.setNotifyViewsActive(false);
+    	//kernel.setNotifyViewsActive(false);
 		
 		if (clearAll)
-			kernel.clearAll();   
+			kernel.clearAll();	
 		
 		try {		    
 			xmlParser.parse(handler, ir);				
 		} catch (Error e) {
-			//e.printStackTrace();			
-			 kernel.updateConstruction();
-			 kernel.setNotifyViewsActive(oldVal);
+			//e.printStackTrace();						 
 			 throw e;
-		} catch (Exception e) {
-			 kernel.updateConstruction();
-			 kernel.setNotifyViewsActive(oldVal);
+		} catch (Exception e) {			 
 			 throw e;
+		} finally {
+			kernel.updateConstruction();	
+	     	kernel.setNotifyViewsActive(oldVal);	
 		}
-			    	
-		kernel.updateConstruction();	
-     	kernel.setNotifyViewsActive(oldVal);	
-     	     
+			    			     	     
      	// handle construction step stored in XMLhandler     	
      	if (app.showConsProtNavigation() && oldVal) // do this only if the views are active
      		app.getConstructionProtocol().setConstructionStep(handler.getConsStep());     		

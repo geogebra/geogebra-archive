@@ -71,7 +71,7 @@ public class GeoList extends GeoElement implements ListValue {
         
         // copy geoList        
         geoList = new ArrayList(l.geoList.size());
-        geoList.addAll(l.geoList);        	                
+    	geoList.addAll(l.geoList);                        	               
     }    
     
     /**

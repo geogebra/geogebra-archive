@@ -58,8 +58,8 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 	}
 
 	/**
-	 * the copy of a polygon is a number (!) with
-	 *  its value set to the polygons current area
+	 * The copy of a polygon is a number (!) with
+	 * its value set to the polygons current area
 	 */      
 	public GeoElement copy() {
 		return new GeoNumeric(cons, getArea());        

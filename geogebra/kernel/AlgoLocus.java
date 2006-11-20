@@ -64,7 +64,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         kernel.registerEuclidianViewAlgo(this);   
         init();  
         updateScreenBorders();
-        locus = new GeoLocus(cons, this);                      
+        locus = new GeoLocus(cons);                      
         setInputOutput(); // for AlgoElement       
         
         compute();

@@ -343,17 +343,17 @@ public class Construction {
     	 int size = ceList.size();   
          for (int i = 0; i < size; ++i) {
              ConstructionElement ce = (ConstructionElement) ceList.get(i);
-             if (ce.isIndependent())  {	
+             if (ce.isIndependent()) {	             
              	ce.update();                    
              }
          }    
          
          // init and update all algorithms
          Iterator it = algoList.iterator();
-         while (it.hasNext()) {
-        	 AlgoElement algo = (AlgoElement) it.next();        	 
+         while (it.hasNext()) {        	        	
+        	 AlgoElement algo = (AlgoElement) it.next();        	         
              algo.initForNearToRelationship();
-             algo.update();               
+             algo.update();                         	
          }        
     }   
     

@@ -39,7 +39,7 @@ public class AlgoMacro extends AlgoElement {
     	setInputOutput();                 
         compute();
         
-        GeoElement.setLabels(labels, output);
+        GeoElement.setLabels(labels, output);                       
     }   
     
 	String getClassName() {

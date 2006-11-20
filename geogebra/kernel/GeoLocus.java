@@ -19,16 +19,14 @@ public class GeoLocus extends GeoElement {
 	
 	// coords of points on locus
 	private LinkedList myPointList;		
-	private AlgoLocus locusAlgorithm;
 	
-	public GeoLocus(Construction c, AlgoLocus locusAlgorithm) {
-		super(c);		
-		this.locusAlgorithm = locusAlgorithm;
+	public GeoLocus(Construction c) {
+		super(c);				
 		myPointList = new LinkedList();		
 	}  
 			
 	public GeoElement copy() {
-		GeoLocus ret =  new GeoLocus(cons, locusAlgorithm);
+		GeoLocus ret =  new GeoLocus(cons);
 		ret.setInternal(this);
 		return ret; 
 	}
@@ -38,21 +36,19 @@ public class GeoLocus extends GeoElement {
 	}
 	
 	public void setInternal(GeoElement geo) {
-		GeoLocus gt = (GeoLocus) geo;	
+		GeoLocus locus = (GeoLocus) geo;	
 		
-		defined = gt.defined;		
+		defined = locus.defined;		
 		
 		// coords of points on locus
-		myPointList = gt.myPointList;	
-		locusAlgorithm = gt.locusAlgorithm;
-	}
-	
-	public AlgoLocus getLocusAlgorithm() {
-		return locusAlgorithm;
+		if (locus.cons == cons)
+			myPointList = locus.myPointList;
+		else {
+			myPointList.clear();
+			myPointList.addAll(locus.myPointList);
+		}
 	}
 		
-		
-	
 	/**
 	 * Number of valid points in x and y arrays.
 	 * @return

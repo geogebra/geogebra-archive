@@ -34,7 +34,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
@@ -82,9 +81,11 @@ public class MyXMLHandler implements DocHandler {
     private String [] macroInputLabels, macroOutputLabels;
     private GeoElement[] cmdOutput;
     private Application app;
-    private Kernel kernel;
     private Construction cons;
-    private Parser parser;    
+    
+//  for macros we need to change the kernel, so remember the original kernel too
+    private Kernel kernel, origKernel;     
+    private Parser parser, origParser;    
     
     // List of GeoStringPair objects 
     // for processing the start points at the end of the construction
@@ -105,11 +106,11 @@ public class MyXMLHandler implements DocHandler {
     private double ggbFileFormat;
     
     /** Creates a new instance of MyXMLHandler */
-    public MyXMLHandler(Kernel kernel) {
-        this.kernel = kernel;
-        app = kernel.getApplication();
-        cons = kernel.getConstruction();        
-        parser = new Parser(kernel);              
+    public MyXMLHandler(Kernel kernel) {             
+        origKernel = kernel;
+        origParser = new Parser(origKernel);                                                       
+        app = origKernel.getApplication();
+        initKernelVars();
         
         mode = MODE_INVALID;
         constMode = MODE_CONSTRUCTION;
@@ -117,12 +118,18 @@ public class MyXMLHandler implements DocHandler {
     
     private void reset() {
         startPointList.clear();
-        consStep = -2;
-        
-        cons = kernel.getConstruction();
+        consStep = -2;                
         
         mode = MODE_INVALID;
         constMode = MODE_CONSTRUCTION;
+        
+        initKernelVars();
+    }
+    
+    private void initKernelVars() {
+    	this.kernel = origKernel;
+        this.parser = origParser;        
+        this.cons = origKernel.getConstruction();
     }
     
     public int getConsStep() {
@@ -169,10 +176,7 @@ public class MyXMLHandler implements DocHandler {
                 startKernelElement(eName, attrs);
                 break;
                 
-            case MODE_MACRO : 
-            	//TODO: remove
-            	System.out.println("startMacroElement");
-            	
+            case MODE_MACRO :             	            	
                 startMacroElement(eName, attrs);
                 break;
 
@@ -248,10 +252,7 @@ public class MyXMLHandler implements DocHandler {
                 break;
                 
             case MODE_MACRO : 
-            	if (eName.equals("macro")) {
-//          		TODO: remove
-                   	System.out.println("end macro ****");
-            		            		
+            	if (eName.equals("macro")) {         	
             		endMacro();
             		mode = MODE_GEOGEBRA;
             	}
@@ -288,21 +289,12 @@ public class MyXMLHandler implements DocHandler {
     
     private void startMacroElement(String eName, LinkedHashMap attrs) {
     	 if (eName.equals("macroInput")) {
-//    		TODO: remove
-         	System.out.println("macroInput");
-         	
     		 macroInputLabels = getAttributeStrings(attrs);
          } 
     	 else if (eName.equals("macroOutput")) {
-//     		TODO: remove
-          	System.out.println("macroOutput");
-          	
     		 macroOutputLabels = getAttributeStrings(attrs);         
          } 
     	 else if (eName.equals("construction")) {
-//      		TODO: remove
-           	System.out.println("start building macro construction...");
-           	
              mode = MODE_CONSTRUCTION;
              handleConstruction(attrs);
          } else {
@@ -748,7 +740,9 @@ public class MyXMLHandler implements DocHandler {
             
             // we have to change the construction object temporarily so everything 
             // is done in the macro construction from now on           
-            cons = macroKernel.getConstruction();                        
+            kernel = macroKernel;
+            cons = macroKernel.getConstruction();     
+            parser = new Parser(macroKernel);
                                     
         } catch (Exception e) {
             System.err.println("error in <macro>");
@@ -758,12 +752,11 @@ public class MyXMLHandler implements DocHandler {
     private void endMacro() {
     	// cons now holds a reference to the macroConstruction
     	macro.setMacroConstruction(cons, macroInputLabels, macroOutputLabels);
-    	
-    	// set construction back to the old reference       
-        cons = kernel.getConstruction();  
+    	// ad the newly built macro to the kernel
+        origKernel.addMacro(macro);
         
-        // ad the new built macro to the kernel
-        kernel.addMacro(macro);
+    	// set kernel and construction back to the original values
+    	initKernelVars();            
     }
     
     /*
@@ -820,12 +813,9 @@ public class MyXMLHandler implements DocHandler {
                     // process start points at end of construction
                     processStartPointList();                       
                     
-                    if (cons == kernel.getConstruction()) {
+                    if (kernel == origKernel) {
                     	mode = MODE_GEOGEBRA;
                     } else {
-                    	// TODO: remove
-                       	System.out.println("macro construction end ");
-                       	
                         // macro construction
                     	mode = MODE_MACRO;
                     }

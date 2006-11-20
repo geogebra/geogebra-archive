@@ -34,7 +34,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     public static final int PARAMETRIC = 2;		
     
     private String parameter = "\u03bb";	
-    private GeoPoint startPoint, endPoint;    
+    GeoPoint startPoint, endPoint;    
     
     //  enable negative sign of first coefficient in implicit equations
 	private static boolean KEEP_LEADING_SIGN = true;
@@ -191,25 +191,45 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 		}  
 	}
    
-    void setStartPoint(GeoPoint P) {
-    	startPoint = P;
+    final void setStartPoint(GeoPoint P) {    	    	
+    	// we need to make sure that the start point is part of the
+    	// same construction. If P is not, we create a copy of P
+    	
+    	if (cons == P.cons) {
+    		startPoint = P;
+    	} else {    	
+    		if (startPoint == null || startPoint.cons != cons) {
+    			startPoint = new GeoPoint(cons);
+    		}    		    	
+    		startPoint.setInternal(P);
+    	}    	    	
     }
     
-    void setEndPoint(GeoPoint Q) {
-    	endPoint = Q;
+    final void setEndPoint(GeoPoint Q) {
+    	// we need to make sure that the end point is part of the
+    	// same construction. If Q is not, we create a copy of Q
+    	
+    	if (cons == Q.cons) {
+    		endPoint = Q;
+    	} else {    	
+    		if (endPoint == null || endPoint.cons != cons) {
+    			endPoint = new GeoPoint(cons);
+    		}    		    	
+    		endPoint.setInternal(Q);
+    	}
     }
     
 	/**
 	 * Retuns first defining point of this line or null.
 	 */
-	public GeoPoint getStartPoint() {
+	final public GeoPoint getStartPoint() {
 		return startPoint;
 	}   
     
 	/**
 	 * Retuns second point of this line or null.
 	 */
-	public GeoPoint getEndPoint() {
+	final public GeoPoint getEndPoint() {
 		return endPoint;
 	}   
 

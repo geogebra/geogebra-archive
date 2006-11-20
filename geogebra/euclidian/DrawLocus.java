@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLocus;
-import geogebra.kernel.GeoPoint;
 import geogebra.util.MyPoint;
 
 import java.awt.Graphics2D;
@@ -27,10 +26,10 @@ public final class DrawLocus extends Drawable {
 	
  
 	private GeoLocus locus;    	
-	private GeoPoint parentPoint;
     
     boolean isVisible, labelVisible;   
 	private GeneralPath gp;	
+	private double [] lastPointCoords;
 	    
     public DrawLocus(EuclidianView view, GeoLocus locus) {      
     	this.view = view;          
@@ -43,9 +42,7 @@ public final class DrawLocus extends Drawable {
     
     final public void update() {    	
         isVisible = geo.isEuclidianVisible();   
-        if (!isVisible) return;
-					        	
-        parentPoint = locus.getLocusAlgorithm().getQ();        
+        if (!isVisible) return;					        	          
         
 		buildGeneralPath(locus.getMyPointList());
 		
@@ -60,8 +57,8 @@ public final class DrawLocus extends Drawable {
 		labelVisible = geo.isLabelVisible();
 		if (labelVisible) {								
 			labelDesc = geo.getLabelDescription();			
-			xLabel = view.toScreenCoordX(parentPoint.inhomX) - 5;
-			yLabel = view.toScreenCoordY(parentPoint.inhomY) + 4 + view.fontSize;   
+			xLabel = (int) (lastPointCoords[0] - 5);
+			yLabel = (int) (lastPointCoords[1] + 4 + view.fontSize);   
 			addLabelOffset();           
 		}
     }
@@ -76,7 +73,7 @@ public final class DrawLocus extends Drawable {
     		p = (MyPoint) it.next();
     		coords[0] = p.x;
     		coords[1] = p.y;
-    		view.toScreenCoords(coords);    		
+    		view.toScreenCoords(coords);      		    		
     		
     		if ( coords[0] < Float.MAX_VALUE && 
     			  coords[1] < Float.MAX_VALUE) 
@@ -88,6 +85,8 @@ public final class DrawLocus extends Drawable {
 				}           	 	    		
     		}
         }
+    	
+    	lastPointCoords = coords;    	
     }      
 
     final public void draw(Graphics2D g2) {   

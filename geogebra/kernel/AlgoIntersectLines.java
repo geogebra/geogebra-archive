@@ -73,7 +73,7 @@ public class AlgoIntersectLines extends AlgoElement {
 
     // calc intersection S of lines g, h
     final void compute() {   	
-        GeoVec3D.cross(g, h, S);
+        GeoVec3D.cross(g, h, S);     
         
         // test the intersection point
         // this is needed for the intersection of segments

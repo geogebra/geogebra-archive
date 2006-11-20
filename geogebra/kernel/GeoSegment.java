@@ -28,7 +28,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	 */
 	private static final long serialVersionUID = 1L;
 	// GeoSegment is constructed by AlgoJoinPointsSegment 
-	private GeoPoint A, B;
+	//private GeoPoint A, B;
 	private double length;
 	private boolean defined;
 	private boolean allowOutlyingIntersections = false;
@@ -51,9 +51,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	//end		
 	
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
-		super(c);
-		this.A = A;
-		this.B = B;
+		super(c);		
 		setStartPoint(A);
 		setEndPoint(B);
 	}
@@ -75,18 +73,16 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	}   */     
 	 
 	public GeoElement copyInternal() {
-		GeoSegment seg = new GeoSegment(cons, A, B);
+		GeoSegment seg = new GeoSegment(cons, startPoint, endPoint);
 		seg.setInternal(this);
 		return seg;
 	}
 	
 	public void setInternal(GeoElement geo) {
 		GeoSegment seg = (GeoSegment) geo;
-		
-		A = seg.A;
-		B = seg.B;
-		setStartPoint(A);
-		setEndPoint(B);
+				
+		setStartPoint(seg.startPoint);
+		setEndPoint(seg.endPoint);
 		length = seg.length;
 		defined = seg.defined;
 		super.set(seg);
@@ -97,8 +93,8 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	 * its parent algorithm of type AlgoJoinPointsSegment
 	 */
 	public void calcLength() {
-		defined = A.isFinite() && B.isFinite();
-		if (defined) length = A.distance(B);
+		defined = startPoint.isFinite() && endPoint.isFinite();
+		if (defined) length = startPoint.distance(endPoint);
 		else length = Double.NaN;	
 	}
 	
@@ -127,7 +123,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	* startpoint and endpoint of this segment.
 	*/
    final public boolean equals(GeoSegment s) {        
-	   return A.equals(s.A) && B.equals(s.B);             	                  
+	   return startPoint.equals(s.startPoint) && endPoint.equals(s.endPoint);             	                  
    }
 	
    final public String toString() {
@@ -223,7 +219,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		double px = P.x, py = P.y, pz = P.z;
 		tempPP.set(P.pathParameter);
 
-		super.pointChanged(P);			
+		super.pointChanged(P);		
 		
 		boolean result = 	P.pathParameter.t >= -eps && 
 							P.pathParameter.t <= 1 + eps;
@@ -247,22 +243,22 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		// ensure that the point doesn't get outside the segment
 		// i.e. ensure 0 <= t <= 1 
 		if (P.pathParameter.t < 0.0) {
-			P.x = A.x;
-			P.y = A.y;
-			P.z = A.z; 
+			P.x = startPoint.x;
+			P.y = startPoint.y;
+			P.z = startPoint.z; 
 			P.pathParameter.t = 0.0;
 		} else if  (P.pathParameter.t > 1.0) {
-			P.x = B.x;
-			P.y = B.y;
-			P.z = B.z; 
+			P.x = endPoint.x;
+			P.y = endPoint.y;
+			P.z = endPoint.z; 
 			P.pathParameter.t = 1.0;
 		}
 	}
 
 	public void pathChanged(GeoPoint P) {
 		// calc point for given parameter
-		P.x = A.inhomX + P.pathParameter.t * y;
-		P.y = A.inhomY - P.pathParameter.t * x;
+		P.x = startPoint.inhomX + P.pathParameter.t * y;
+		P.y = startPoint.inhomY - P.pathParameter.t * x;
 		P.z = 1.0;		
 	}
 	

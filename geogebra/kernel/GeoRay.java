@@ -23,8 +23,6 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private GeoPoint A;
 	
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true;
@@ -33,8 +31,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	 * Creates ray with start point A.
 	 */
 	public GeoRay(Construction c, GeoPoint A) {
-		super(c);
-		this.A = A;
+		super(c);		
 		setStartPoint(A);
 	}
 	
@@ -55,15 +52,14 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	 
 	
 	public GeoElement copyInternal() {
-		GeoRay ray = new GeoRay(cons, A);
+		GeoRay ray = new GeoRay(cons, startPoint);
 		ray.setInternal(this);
 		return ray;
 	}
 	
 	public void setInternal(GeoElement geo) {
-		GeoRay ray = (GeoRay) geo;
-		A = ray.A;
-		setStartPoint(A);		
+		GeoRay ray = (GeoRay) geo;		
+		setStartPoint(ray.startPoint);		
 		super.set(ray);
 	}
 	
@@ -76,17 +72,17 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		// ensure that the point doesn't get outside the ray
 		// i.e. ensure 0 <= t <= 1 
 		if (P.pathParameter.t < 0.0) {
-			P.x = A.x;
-			P.y = A.y;
-			P.z = A.z; 
+			P.x = startPoint.x;
+			P.y = startPoint.y;
+			P.z = startPoint.z; 
 			P.pathParameter.t = 0.0;
 		} 
 	}
 
 	public void pathChanged(GeoPoint P) {
 		// calc point for given parameter
-		P.x = A.inhomX + P.pathParameter.t * y;
-		P.y = A.inhomY - P.pathParameter.t * x;
+		P.x = startPoint.inhomX + P.pathParameter.t * y;
+		P.y = startPoint.inhomY - P.pathParameter.t * x;
 		P.z = 1.0;		
 	}
 	

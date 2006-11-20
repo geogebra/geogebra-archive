@@ -335,7 +335,7 @@ public class Kernel {
     			else if (type.equals("list"))
     				return new GeoList(cons);    			
     			else 
-    				return new GeoLocus(cons, null);
+    				return new GeoLocus(cons);
     		
     		case 'n': // numeric
     			return new GeoNumeric(cons);
@@ -796,6 +796,9 @@ public class Kernel {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}	
+		
+//		 TODO: remove
+		System.out.println("added macro: " + macro);
 		
 		macroManager.addMacro(macro);
 	}

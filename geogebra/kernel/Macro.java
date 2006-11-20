@@ -60,7 +60,7 @@ public class Macro {
 	}
 	
 	public void setMacroConstruction(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
-		this.macroCons = macroCons;
+		this.macroCons = macroCons;				
 		
 		// get the copies of input and output from the macro constructoin
 		macroInput = new GeoElement[inputLabels.length];
@@ -70,13 +70,13 @@ public class Macro {
 			macroInput[i].setFixed(false);
 			
 			// TODO:remove
-			System.out.println("macroInput[" + i + "] = " + macroInput[i]);
+			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
     	}    	    
     	for (int i=0; i < outputLabels.length; i++) {    		
     		macroOutput[i] = macroCons.lookupLabel(outputLabels[i]);            		
     		
 			// TODO:remove
-			System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
+			//System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
     	}        	
 	}
 	
@@ -191,12 +191,11 @@ public class Macro {
     	macroConsXML.append("</geogebra>");
     	   
     	
-    	// TODO: remove
-    	
-    	System.out.println("*** Macro XML BEGIN ***");
-    	System.out.println(macroConsXML);
-    	System.out.flush();
-    	System.out.println("*** Macro XML END ***");
+    	// TODO: remove    	
+//    	System.out.println("*** Macro XML BEGIN ***");
+//    	System.out.println(macroConsXML);
+//    	System.out.flush();
+//    	System.out.println("*** Macro XML END ***");
     	
     	
     	return macroConsXML.toString();
@@ -250,12 +249,12 @@ public class Macro {
 	  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
 	  			}
       		}
-      	} */   	
+      	} */   						
 		
 		// use input objects to set macro construction   
 		for (int i=0; i < macroInput.length; i++) {   
 			macroInput[i].setInternal(input[i]);	
-			macroInput[i].update();
+			macroInput[i].update();			 	
     	}  
 				
 		// TODO: macro updating: think of making this more efficient
@@ -265,7 +264,7 @@ public class Macro {
       	// set output objects to set macro construction   
 		for (int i=0; i < macroOutput.length; i++) {    					 
 			output[i].setInternal(macroOutput[i]);	
-			output[i].update();
+			output[i].update();						
     	} 
 	}
 	
