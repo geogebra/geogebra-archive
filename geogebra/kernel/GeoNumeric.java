@@ -80,6 +80,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
     String getTypeString() {
 		return "Numeric";
 	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_NUMERIC;
+    }
 
 	public GeoNumeric(Construction c, String label, double x) {
 		this(c, x);

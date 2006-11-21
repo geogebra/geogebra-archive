@@ -90,6 +90,10 @@ public class GeoLocus extends GeoElement {
     String getTypeString() {
 		return "Locus";
 	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_LOCUS;
+    }
 	
 	public boolean showToolTipText() {
 		return true;

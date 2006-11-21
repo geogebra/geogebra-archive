@@ -313,6 +313,10 @@ implements Locateable, AbsoluteScreenLocateable,
 		return "Image";
 	}
 	
+    public int getGeoClassType() {
+    	return GEO_CLASS_IMAGE;
+    }
+	
 	/**
 	 * Returns whether this image can be 
 	 * moved in Euclidian View.

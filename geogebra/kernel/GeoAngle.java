@@ -83,6 +83,10 @@ public final class GeoAngle extends GeoNumeric {
 		return "Angle";
 	}
     
+    public int getGeoClassType() {
+    	return GEO_CLASS_ANGLE;
+    }
+    
 	public GeoAngle(Construction c, double x) {
 		this(c);
 		setValue(x);
@@ -250,5 +254,7 @@ public final class GeoAngle extends GeoNumeric {
 	public void setEmphasizeRightAngle(boolean emphasizeRightAngle) {
 		this.emphasizeRightAngle = emphasizeRightAngle;
 	}
+	
+	
 
 }

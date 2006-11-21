@@ -46,6 +46,10 @@ public class GeoBoolean extends GeoElement implements BooleanValue {
 		return "Boolean";
 	}
     
+    public int getGeoClassType() {
+    	return GEO_CLASS_BOOLEAN;
+    }
+    
     public void setValue(boolean val) {
     	value = val;
     }

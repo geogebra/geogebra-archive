@@ -51,7 +51,14 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
     String getTypeString() {
 		return "Polygon";
 	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_POLYGON;
+    }
 	
+    public void setPoints(GeoPoint [] points) {
+		this.points = points;
+	}
 	
 	public void setSegments(GeoSegment [] segments) {
 		this.segments = segments;
@@ -81,6 +88,10 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 
 	public GeoPoint [] getPoints() {
 		return points;
+	}
+	
+	public GeoSegment [] getSegments() {
+		return segments;
 	}
 
 	public boolean isFillable() {

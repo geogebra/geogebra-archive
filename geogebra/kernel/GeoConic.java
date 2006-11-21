@@ -116,6 +116,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		return "GeoConic";
 	}
 	
+    public int getGeoClassType() {
+    	return GEO_CLASS_CONIC;
+    }
+	
 	String getTypeString() {      
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE: 

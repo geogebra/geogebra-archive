@@ -61,6 +61,10 @@ implements Path, VectorValue, Locateable, Rotateable {
     String getTypeString() {
 		return "Vector";
 	}
+
+	public int getGeoClassType() {
+		return GEO_CLASS_VECTOR;
+	}    
     
     /** Creates new GeoVector */
     public GeoVector(Construction c, String label, double x, double y, double z) {

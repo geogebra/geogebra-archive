@@ -180,7 +180,29 @@ public abstract class GeoElement
 			'\u03c7',
 			'\u03c8',
 			'\u03c9' };
-
+	
+	
+	// GeoElement types
+	public static final int GEO_CLASS_ANGLE = 10;
+	public static final int GEO_CLASS_AXIS = 20;
+	public static final int GEO_CLASS_BOOLEAN = 30;
+	public static final int GEO_CLASS_CONIC = 40;
+	public static final int GEO_CLASS_CONICPART = 50;
+	public static final int GEO_CLASS_FUNCTION = 60;
+	public static final int GEO_CLASS_FUNCTIONCONDITIONAL = 70;
+	public static final int GEO_CLASS_IMAGE = 80;
+	public static final int GEO_CLASS_LINE = 90;
+	public static final int GEO_CLASS_LIST = 100;
+	public static final int GEO_CLASS_LOCUS = 110;
+	public static final int GEO_CLASS_NUMERIC = 120;
+	public static final int GEO_CLASS_POINT = 130;
+	public static final int GEO_CLASS_POLYGON = 140;
+	public static final int GEO_CLASS_RAY = 150;
+	public static final int GEO_CLASS_SEGMENT = 160;
+	public static final int GEO_CLASS_TEXT = 170;
+	public static final int GEO_CLASS_VECTOR = 180;
+	
+	
 	public static final int LABEL_NAME = 0;
 	public static final int LABEL_NAME_VALUE = 1;
 	public static final int LABEL_VALUE = 2;
@@ -203,7 +225,7 @@ public abstract class GeoElement
 
 	private boolean isColorSet = false;
 	private boolean highlighted = false;
-	private boolean selected = false;
+	private boolean selected = false;	
 	private String strAlgebraDescription, strAlgebraDescTextOrHTML;
 	private StringBuffer sb = new StringBuffer();
 
@@ -290,6 +312,11 @@ public abstract class GeoElement
 	public int getLabelMode() {
 		return labelMode;
 	}
+	
+	/** 
+	 * Returns the GEO_CLASS_ type integer 
+	 */
+	public abstract int getGeoClassType();
 
 	/** 
 	 * every subclass implements it's own copy method 

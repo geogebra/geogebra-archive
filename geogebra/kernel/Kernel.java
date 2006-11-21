@@ -1105,7 +1105,7 @@ public class Kernel {
 	final public GeoPoint Midpoint(
 		String label,
 		GeoSegment s) {
-		AlgoMidpoint algo = new AlgoMidpoint(cons, label, s.getStartPoint(), s.getEndPoint());
+		AlgoMidpointSegment algo = new AlgoMidpointSegment(cons, label, s);
 		GeoPoint M = algo.getPoint();
 		return M;
 	}

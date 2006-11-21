@@ -84,6 +84,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		return "Point";
 	}
     
+    public int getGeoClassType() {
+    	return GEO_CLASS_POINT;
+    }
+    
     public GeoPoint(GeoPoint point) {
     	super(point.cons);
     	pathParameter = new PathParameter();

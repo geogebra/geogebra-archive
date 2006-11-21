@@ -74,4 +74,8 @@ public class GeoAxis extends GeoLine {
 	public String typeString() {
 		return "Line";
 	}
+	
+    public int getGeoClassType() {
+    	return GEO_CLASS_AXIS;
+    }
 }

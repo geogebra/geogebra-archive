@@ -29,10 +29,11 @@ public class Macro {
 	private Kernel kernel;
 	private String cmdName, toolName, toolHelp;
 	private String iconFileName = ""; // image file
-	private GeoElement [] macroInput, macroOutput;
-		
+	private GeoElement [] macroInput, macroOutput;		
 	private Construction macroCons;
 	
+	private int usingAlgos = 0;
+		
 	/**
 	 * Creates a new macro with a name and description by
 	 * using the given input and output GeoElements.	 
@@ -63,17 +64,19 @@ public class Macro {
 		this.macroCons = macroCons;				
 		
 		// get the copies of input and output from the macro constructoin
-		macroInput = new GeoElement[inputLabels.length];
+		macroInput = new GeoElement[inputLabels.length];		
 		macroOutput = new GeoElement[outputLabels.length];
+		
 		for (int i=0; i < inputLabels.length; i++) {    		
 			macroInput[i] = macroCons.lookupLabel(inputLabels[i]);  
 			macroInput[i].setFixed(false);
 			
 			// TODO:remove
 			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
-    	}    	    
+    	}
+		
     	for (int i=0; i < outputLabels.length; i++) {    		
-    		macroOutput[i] = macroCons.lookupLabel(outputLabels[i]);            		
+    		macroOutput[i] = macroCons.lookupLabel(outputLabels[i]);            		    		    		
     		
 			// TODO:remove
 			//System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
@@ -227,71 +230,65 @@ public class Macro {
         	throw new Exception("");
     	}    	
     }
+	 
+	
                  	
 	/**
-	 * Applies this macro to the given input objects and uses the result to set
-	 * the given output objects.
+	 * Applies this macro for the given macro algorithm.
 	 */	
-	public void applyMacro(GeoElement [] input, GeoElement [] output) {			
-		// TODO: think about continuity and global vars
-		/*
-		// set all ellements in locusConsElements 
-        // to the current values of the main construction    
-      	Iterator it = locusConsOrigElements.iterator();
-      	while (it.hasNext()) {
-      		GeoElement geoOrig = (GeoElement) it.next();    		
-      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
-      		if (geoCopy != null) {
-	  			try {
-	  				geoCopy.set(geoOrig);    			
-	  				geoCopy.update();      	      			 
-	  			} catch (Exception e) {
-	  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
-	  			}
-      		}
-      	} */   						
-		
+	public void applyMacro(AlgoMacro algoMacro) {						
 		// use input objects to set macro construction   
 		for (int i=0; i < macroInput.length; i++) {   
-			macroInput[i].setInternal(input[i]);	
+			macroInput[i].setInternal(algoMacro.input[i]);	
 			macroInput[i].update();			 	
-    	}  
-				
-		// TODO: macro updating: think of making this more efficient
-      	// update all algorithms of the macro construction	        
-      	macroCons.updateConstruction();
+    	}
+		
+		// update all algorithms of macro-construction
+        macroCons.updateAllAlgorithms();
       	
       	// set output objects to set macro construction   
-		for (int i=0; i < macroOutput.length; i++) {    					 
-			output[i].setInternal(macroOutput[i]);	
-			output[i].update();						
-    	} 
+      	// note: there might be more to set than only the output[] as
+      	// some GeoElement types may reference other objects too
+      	// (e.g. like a segment references a start and an end point)
+		algoMacro.updateMappedGeoElements();
+	}
+		
+	public void registerAlgorithm(AlgoMacro algoMacro) {
+		usingAlgos++;				
+	}
+	
+	public void unregisterAlgorithm(AlgoMacro algoMacro) {
+		usingAlgos--;
 	}
 	
 	/**
-	 * Creates copies for the construction cons of all output elements of this macro. These copies can then be used
-	 * to call applyMacro().
-	 */	
-	public GeoElement [] createOutputCopies(Construction cons) {
-		GeoElement [] outputCopies = new GeoElement[macroOutput.length];
-		
-		// copy output objects  
-		for (int i=0; i < macroOutput.length; i++) {
-			outputCopies[i] = macroOutput[i].copyInternal();
-			outputCopies[i].setConstruction(cons);
-			outputCopies[i].setVisualStyle(macroOutput[i]);					
-    	} 
-		
-		return outputCopies;
+	 * Returns the number of algorithms that are currently using
+	 * this macro.
+	 * @return
+	 */
+	public int getRegisteredAlgorithms() {
+		return usingAlgos;
 	}
 	
+					
+	
 	/**
-	 * Returns an array of input objects for this macro.
-	 * This can be used to check the
+	 * Returns the array of input objects for this macro.
+	 * This can be used to check whether a given array of GeoElements can
+	 * be used as input of this macro.
 	 * @return
 	 */
 	public GeoElement [] getInputObjects() {
 		return macroInput;
+	}
+	
+	/**
+	 * Returns the array of output objects of this macro.
+	 * This can be used to create copies of the output objects.
+	 * @return
+	 */
+	public GeoElement [] getOutputObjects() {
+		return macroOutput;
 	}
 
 	public String getToolHelp() {

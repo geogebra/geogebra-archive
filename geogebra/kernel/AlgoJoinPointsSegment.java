@@ -59,7 +59,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         this.P = P;
         this.Q = Q;
           
-        s = new GeoSegment(cons, P, Q);               
+        s = new GeoSegment(cons, P, Q);                
         setInputOutput(); // for AlgoElement
                
         // compute line through P, Q
@@ -96,10 +96,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     final void compute() {
         // g = P v Q  <=>  g_n : n = P x Q
         // g = cross(P, Q)
-    	GeoVec3D.lineThroughPoints(P, Q, s);
-        
-    	s.setStartPoint(P);
-    	s.setEndPoint(Q);
+    	GeoVec3D.lineThroughPoints(P, Q, s);            	
     	s.calcLength();
     }
 

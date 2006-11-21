@@ -63,6 +63,10 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	 String getTypeString() {
 		return "Segment";
 	}
+	 
+	public int getGeoClassType() {
+		return GEO_CLASS_SEGMENT;
+	}
 
 	/**
 	 * the copy of a segment is a number (!) with

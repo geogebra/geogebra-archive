@@ -43,6 +43,11 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		return "Ray";
 	}
 
+	public int getGeoClassType() {
+		return GEO_CLASS_RAY;
+	}
+
+	 
 	/**
 	 * the copy of a ray is an independent line
 	 *

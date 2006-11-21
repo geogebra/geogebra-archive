@@ -45,7 +45,7 @@ public class Construction {
     private ArrayList ceList;
     
     //  AlgoElement List (for objects of type AlgoElement)
-    private LinkedList algoList; // used in updateConstruction()
+    private ArrayList algoList; // used in updateConstruction()
     
     // GeoElementTable for (label, GeoElement) pairs    
     protected HashMap geoTable, localVariableTable;  
@@ -86,7 +86,7 @@ public class Construction {
         kernel = k;
         
         ceList = new ArrayList(200);
-        algoList = new LinkedList();
+        algoList = new ArrayList();
         step = -1;
                 
         geoSet = new TreeSet();
@@ -338,7 +338,7 @@ public class Construction {
     /**
      * Updates all objects in this construction.
      */
-    public void updateConstruction() { 
+    final public void updateConstruction() { 
     	// update all independet GeoElements    	    	
     	 int size = ceList.size();   
          for (int i = 0; i < size; ++i) {
@@ -348,14 +348,18 @@ public class Construction {
              }
          }    
          
-         // init and update all algorithms
-         Iterator it = algoList.iterator();
-         while (it.hasNext()) {        	        	
-        	 AlgoElement algo = (AlgoElement) it.next();        	         
-             algo.initForNearToRelationship();
-             algo.update();                         	
-         }        
+               
     }   
+    
+    final void updateAllAlgorithms() {
+    	// init and update all algorithms
+        int size = algoList.size();
+        for (int i = 0; i < size; ++i) {        	        	
+       	 AlgoElement algo = (AlgoElement)algoList.get(i);        	         
+            algo.initForNearToRelationship();
+            algo.update();                         	
+        }  
+    }
     
     /**
      * Build a set with all algorithms of this construction (in topological order). 

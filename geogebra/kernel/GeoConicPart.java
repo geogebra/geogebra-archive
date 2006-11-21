@@ -57,6 +57,10 @@ implements LimitedPath, NumberValue {
 		return "GeoConicPart";
  	}
 	
+    public int getGeoClassType() {
+    	return GEO_CLASS_CONICPART;
+    }
+	
 	String getTypeString() {      
 		switch (conic_part_type) {
 			case CONIC_PART_ARC: 

@@ -54,6 +54,10 @@ public class GeoFunctionConditional extends GeoFunction {
 	String getTypeString() {
 		return "Function";
 	}		
+	
+    public int getGeoClassType() {
+    	return GEO_CLASS_FUNCTIONCONDITIONAL;
+    }
 				
 	/**
 	 * Returns this function's value at position x.

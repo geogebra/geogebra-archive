@@ -192,6 +192,10 @@ implements Locateable, AbsoluteScreenLocateable {
     String getTypeString() {
 		return "Text";
 	}
+
+	public int getGeoClassType() {
+		return GEO_CLASS_TEXT;
+	}    
 	
 	public boolean isMoveable() {
 		return !isFixed();

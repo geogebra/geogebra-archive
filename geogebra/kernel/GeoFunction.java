@@ -54,6 +54,10 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	String getTypeString() {
 		return "Function";
 	}
+	
+    public int getGeoClassType() {
+    	return GEO_CLASS_FUNCTION;
+    }
 
 	/** copy constructor */
 	public GeoFunction(GeoFunction f) {

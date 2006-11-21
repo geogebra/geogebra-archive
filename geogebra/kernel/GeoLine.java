@@ -68,6 +68,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     String getTypeString() {
 		return "Line";
 	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_LINE;
+    }
       
     public GeoElement copy() {
         return new GeoLine(this);        
@@ -192,31 +196,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 	}
    
     final void setStartPoint(GeoPoint P) {    	    	
-    	// we need to make sure that the start point is part of the
-    	// same construction. If P is not, we create a copy of P
-    	
-    	if (cons == P.cons) {
-    		startPoint = P;
-    	} else {    	
-    		if (startPoint == null || startPoint.cons != cons) {
-    			startPoint = new GeoPoint(cons);
-    		}    		    	
-    		startPoint.setInternal(P);
-    	}    	    	
+    	startPoint = P;	    	
     }
     
     final void setEndPoint(GeoPoint Q) {
-    	// we need to make sure that the end point is part of the
-    	// same construction. If Q is not, we create a copy of Q
-    	
-    	if (cons == Q.cons) {
-    		endPoint = Q;
-    	} else {    	
-    		if (endPoint == null || endPoint.cons != cons) {
-    			endPoint = new GeoPoint(cons);
-    		}    		    	
-    		endPoint.setInternal(Q);
-    	}
+    	endPoint = Q;
     }
     
 	/**

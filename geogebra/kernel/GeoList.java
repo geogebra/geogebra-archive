@@ -60,6 +60,10 @@ public class GeoList extends GeoElement implements ListValue {
     String getTypeString() {
 		return "List";
 	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_LIST;
+    }
       
     public GeoElement copy() {
         return new GeoList(this);        
