@@ -182,10 +182,11 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	}
     	locusConsXML.append("</construction>\n");
     	locusConsXML.append("</geogebra>");
-    	    	    	
-    	//System.out.println("*** XML ***");
-    	//System.out.println(locusConsXML);
-    	//System.out.flush();
+    	
+    	// TODO: remove
+    	System.out.println("*** XML ***");
+    	System.out.println(locusConsXML);
+    	System.out.flush();
     	
     	
     	// build macro construction
@@ -237,8 +238,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
       		GeoElement geoOrig = (GeoElement) it.next();    		
       		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
       		if (geoCopy != null) {
-	  			try {
-	  				geoCopy.set(geoOrig);    			
+	  			try {	    				
+	  				geoCopy.set(geoOrig);	  				
 	  				geoCopy.update();      	      			 
 	  			} catch (Exception e) {
 	  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());

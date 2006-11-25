@@ -56,10 +56,10 @@ public class Parser {
     private Construction cons;
     private Application app;
     
-    public Parser(Kernel kernel) {
+    public Parser(Kernel kernel, Construction cons) {
     	 this ( new java.io.StringReader("") ); // dummy stream for parser initing
          this.kernel = kernel;
-         this.cons = kernel.getConstruction();
+         this.cons = cons;
          app = kernel.getApplication();
     }   
 

@@ -36,10 +36,10 @@ public class MacroProcessor extends CommandProcessor {
 		
 	public GeoElement[] process(Command c) throws MyError {        						 
 		int n = c.getArgumentNumber();		
-		GeoElement [] macroInput = macro.getInputObjects();
+		Class [] macroInputTypes = macro.getInputTypes();
 		
 		// wrong number of arguments
-		if (n != macroInput.length) {
+		if (n != macroInputTypes.length) {
 			StringBuffer sb = new StringBuffer();
 	        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
 	        sb.append(app.getError("IllegalArgumentNumber") + ": " + n);
@@ -51,10 +51,8 @@ public class MacroProcessor extends CommandProcessor {
 		GeoElement [] arg = resArgs(c);
 		
 		// check whether the types of the arguments are ok for our macro
-		for (int i=0; i < macroInput.length; i++) {
-			try {		
-				macroInput[i].setInternal(arg[i]);							
-			} catch(Exception e) {
+		for (int i=0; i < macroInputTypes.length; i++) {
+			if (!macroInputTypes[i].isInstance(arg[i]))	{				
 				StringBuffer sb = new StringBuffer();
 		        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
 		        sb.append(app.getError("IllegalArgument") + ": ");	            

@@ -51,9 +51,9 @@ public class CommandDispatcher {
     	}    	        
 
         // switch on macro mode to avoid labeling of output if desired
-        boolean oldMacroMode = cons.isInMacroMode();
+        boolean oldMacroMode = cons.isSuppressLabelsActive();
         if (!labelOutput)
-            cons.setMacroMode(true);
+            cons.setSuppressLabelCreation(true);
         
         // cmdName
         String cmdName = c.getName();
@@ -77,15 +77,15 @@ public class CommandDispatcher {
         	ret =  cmdProc.process(c);        	        	
         } 
         catch (MyError e) {
-        	cons.setMacroMode(oldMacroMode);
+        	cons.setSuppressLabelCreation(oldMacroMode);
             throw e;
         } catch (Exception e) {        	  
-            cons.setMacroMode(oldMacroMode);        	  
+            cons.setSuppressLabelCreation(oldMacroMode);        	  
             e.printStackTrace();
             throw new MyError(app, app.getError("UnknownCommand") + " : " + c);
         }
               		
-        cons.setMacroMode(oldMacroMode);        
+        cons.setSuppressLabelCreation(oldMacroMode);        
         
         return ret;
     }

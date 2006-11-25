@@ -16,11 +16,15 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.util.Util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
  * A macro is a user defined commmand.
+ * It has its own macro construction that is used by all using AlgoMacro 
+ * instances if this macro is non-continous. However, if it is continous
+ * every AlgoMacro instance gets its own copy of the macro construction.
  * 
  * @author Markus Hohenwarter
  */
@@ -28,59 +32,99 @@ public class Macro {
 	
 	private Kernel kernel;
 	private String cmdName, toolName, toolHelp;
-	private String iconFileName = ""; // image file
-	private GeoElement [] macroInput, macroOutput;		
-	private Construction macroCons;
+	private String iconFileName = ""; // image file			
+				
+	private Construction macroCons; // macro construction
+	private String macroConsXML, macroConsFullXML;
+	private GeoElement [] macroInput, macroOutput; // input and output objects 
+	private String [] macroInputLabels, macroOutputLabels;
+	private Class [] inputTypes;
 	
 	private int usingAlgos = 0;
 		
 	/**
-	 * Creates a new macro with a name and description by
-	 * using the given input and output GeoElements.	 
+	 * Creates a new macro 
+	 * using the given input and output GeoElements.		  
 	 */
-	public Macro(Kernel kernel, String cmdName, String toolName, String toolHelp, 
+	public Macro(Kernel kernel, String cmdName,  
 					GeoElement [] input, GeoElement [] output) 
 	throws Exception {
-		this.kernel = kernel;
-		setCommandName(cmdName);
-		setToolName(toolName);
-		setToolHelp(toolHelp);
-		
+		this(kernel, cmdName);				
 		initMacro(input, output);
 	}
 	
 	/**
-	 * Creates a new macro with a name and description by
-	 * processing the given XML string and the given input and output labels.	 
+	 * Creates a new macro.
 	 */
-	public Macro(Kernel kernel, String cmdName, String toolName, String toolHelp) { 	
+	public Macro(Kernel kernel, String cmdName) { 	
 		this.kernel = kernel;
-		setCommandName(cmdName);
-		setToolName(toolName);
-		setToolHelp(toolHelp);				
+		setCommandName(cmdName);						
 	}
 	
-	public void setMacroConstruction(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
-		this.macroCons = macroCons;				
+	/**
+	 * Returns all input geos from the macro construction.
+	 */
+	public GeoElement [] getMacroInput() {
+		return macroInput;
+	}
+	
+	/**
+	 * Returns all output geos from the macro construction.
+	 */
+	public GeoElement [] getMacroOutput() {
+		return macroOutput;
+	}
+	
+	/**
+	 * Updates all algorithms of the macro construction.	
+	 */	
+	final public void updateAllAlgorithms() {
+		macroCons.updateAllAlgorithms();
+	}
+	
+	public void initMacro(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
+		this.macroCons = macroCons;
+		this.macroConsXML = macroCons.getConstructionXML();
+		this.macroInputLabels = inputLabels;
+		this.macroOutputLabels = outputLabels;	
 		
-		// get the copies of input and output from the macro constructoin
-		macroInput = new GeoElement[inputLabels.length];		
-		macroOutput = new GeoElement[outputLabels.length];
+		initInputOutput();
 		
-		for (int i=0; i < inputLabels.length; i++) {    		
-			macroInput[i] = macroCons.lookupLabel(inputLabels[i]);  
+		// init inputTypes array		
+		inputTypes = new Class[macroInput.length];		
+		for (int i=0; i < macroInput.length; i++) {
+			inputTypes[i] = macroInput[i].getClass();
+		}			
+		
+	 	StringBuffer sb = new StringBuffer(500);
+	 	sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+	 	sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
+	 	sb.append("<construction author=\"\" title=\"\" date=\"\">\n");
+	 	sb.append(macroConsXML);
+	 	sb.append("<geogebra/>");
+	 	macroConsFullXML = sb.toString();		
+		
+	}	
+	
+	private void initInputOutput() {
+		// get the input and output geos from the macro construction
+		macroInput = new GeoElement[macroInputLabels.length];		
+		macroOutput = new GeoElement[macroOutputLabels.length];
+		
+		for (int i=0; i < macroInputLabels.length; i++) {    		
+			macroInput[i] = macroCons.lookupLabel(macroInputLabels[i]);  
 			macroInput[i].setFixed(false);
 			
 			// TODO:remove
 			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
     	}
 		
-    	for (int i=0; i < outputLabels.length; i++) {    		
-    		macroOutput[i] = macroCons.lookupLabel(outputLabels[i]);            		    		    		
+    	for (int i=0; i < macroOutputLabels.length; i++) {    		
+    		macroOutput[i] = macroCons.lookupLabel(macroOutputLabels[i]);            		    		    		
     		
 			// TODO:remove
 			//System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
-    	}        	
+    	}         		
 	}
 	
 	private void initMacro(GeoElement [] input, GeoElement [] output)  throws Exception {
@@ -152,7 +196,7 @@ public class Macro {
     	}    	    	
     	    	
 		// 5) create XML representation for macro-construction
-    	String macroXML = buildMacroXML(input, macroConsOrigElements);
+    	String macroConsXML = buildMacroXML(input, macroConsOrigElements);
     	 	    
     	// if we used temp labels in step (4) remove them again
     	for (int i=0; i < input.length; i++) {    		
@@ -166,7 +210,10 @@ public class Macro {
     	
     	
 		// 6) create a new macro-construction from this XML representation
-    	createMacroConstruction(macroXML, inputLabels, outputLabels);   
+    	Construction macroCons = createMacroConstruction(macroConsXML); 
+    	    	
+    	// init macro 
+    	initMacro(macroCons, inputLabels, outputLabels);
     }
 	
 	 private String buildMacroXML(GeoElement [] input, TreeSet macroConsElements) {        	
@@ -177,8 +224,9 @@ public class Macro {
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
     	
     	// get XML for input elements first 
-    	for (int i=0; i < input.length; i++) {    		
-    		macroConsXML.append(input[i].getXML());	    		
+    	for (int i=0; i < input.length; i++) {     
+    		if (!macroConsElements.contains(input[i]))
+    			macroConsXML.append(input[i].getXML());	    		
     	}   
     	
     	// get XML for the rest of the macro construction
@@ -210,15 +258,15 @@ public class Macro {
 	  * are given by inputLabels and outputLabels
 	  * @param macroXML
 	  */
-	 private void createMacroConstruction(String macroConsXML, String [] inputLabels, String [] outputLabels) throws Exception {		 
+	 private Construction createMacroConstruction(String macroConsXML) throws Exception {		 
     	// build macro construction
     	MacroKernel mk = new MacroKernel(kernel);   
-    	mk.setUndoActive(false);
-    	mk.setGlobalVariableLookup(false);    	        	      	  	      	    
+    	mk.setContinous(false);
+    	mk.setGlobalVariableLookup(false);    	        	      	  	      	        	    	
     	
     	try {    	
     		mk.loadXML(macroConsXML);    		    			    		    	    	        	        	
-        	setMacroConstruction(mk.getConstruction(), inputLabels, outputLabels);
+        	return mk.getConstruction();
     	} 
     	catch (MyError e) {  
     		String msg = e.getLocalizedMessage();
@@ -229,68 +277,26 @@ public class Macro {
     		e.printStackTrace();       		   
         	throw new Exception("");
     	}    	
-    }
-	 
+    }	 	                 
+			
 	
-                 	
-	/**
-	 * Applies this macro for the given macro algorithm.
-	 */	
-	public void applyMacro(AlgoMacro algoMacro) {						
-		// use input objects to set macro construction   
-		for (int i=0; i < macroInput.length; i++) {   
-			macroInput[i].setInternal(algoMacro.input[i]);	
-			macroInput[i].update();			 	
-    	}
-		
-		// update all algorithms of macro-construction
-        macroCons.updateAllAlgorithms();
-      	
-      	// set output objects to set macro construction   
-      	// note: there might be more to set than only the output[] as
-      	// some GeoElement types may reference other objects too
-      	// (e.g. like a segment references a start and an end point)
-		algoMacro.updateMappedGeoElements();
-	}
-		
 	public void registerAlgorithm(AlgoMacro algoMacro) {
-		usingAlgos++;				
+		usingAlgos++;	
 	}
 	
 	public void unregisterAlgorithm(AlgoMacro algoMacro) {
-		usingAlgos--;
-	}
-	
+		usingAlgos--;		
+	}		
+						
 	/**
-	 * Returns the number of algorithms that are currently using
-	 * this macro.
-	 * @return
+	 * Returns the types of input objects of the default macro construction.
+	 * This can be used to check whether a given GeoElement array can be used
+	 * as input for this macro.
 	 */
-	public int getRegisteredAlgorithms() {
-		return usingAlgos;
-	}
+	final public Class [] getInputTypes() {	
+		return inputTypes;
+	}			
 	
-					
-	
-	/**
-	 * Returns the array of input objects for this macro.
-	 * This can be used to check whether a given array of GeoElements can
-	 * be used as input of this macro.
-	 * @return
-	 */
-	public GeoElement [] getInputObjects() {
-		return macroInput;
-	}
-	
-	/**
-	 * Returns the array of output objects of this macro.
-	 * This can be used to create copies of the output objects.
-	 * @return
-	 */
-	public GeoElement [] getOutputObjects() {
-		return macroOutput;
-	}
-
 	public String getToolHelp() {
 		return toolHelp;
 	}
@@ -342,7 +348,7 @@ public class Macro {
 		StringBuffer sb = new StringBuffer();
 		sb.append(cmdName);
         sb.append("[ ");
-        
+               
         // input types
         sb.append('<');
         sb.append(macroInput[0].translatedTypeString());
@@ -366,7 +372,7 @@ public class Macro {
     public String getXML() {      
         StringBuffer sb = new StringBuffer();               
         sb.append("<macro cmdName=\"");
-        sb.append(Util.encodeXML(cmdName));    
+        sb.append(Util.encodeXML(cmdName));         
         sb.append("\" toolName=\"");
         sb.append(Util.encodeXML(toolName));
         sb.append("\" toolHelp=\"");
@@ -377,33 +383,33 @@ public class Macro {
     			        
         // add input labels
         sb.append("<macroInput");
-        for (int i = 0; i < macroInput.length; i++) {
+        for (int i = 0; i < macroInputLabels.length; i++) {
 	    	// attribute name is input no. 
 	        sb.append(" a");
 	        sb.append(i);                
 	        sb.append("=\"");
-	        sb.append(Util.encodeXML(macroInput[i].label));                                                           
+	        sb.append(Util.encodeXML(macroInputLabels[i]));                                                           
 	        sb.append("\"");
         }
         sb.append("/>\n");
         
         // add output labels           
         sb.append("<macroOutput");
-        for (int i = 0; i < macroOutput.length; i++) {
+        for (int i = 0; i < macroOutputLabels.length; i++) {
 	    	// attribute name is output no.
 	        sb.append(" a");
 	        sb.append(i);                
 	        sb.append("=\"");
-	        sb.append(Util.encodeXML(macroOutput[i].label));                                                           
+	        sb.append(Util.encodeXML(macroOutputLabels[i]));                                                           
 	        sb.append("\"");
         }        
         sb.append("/>\n");            
         
         // macro construction XML
-        macroCons.appendConstructionXML(sb);     
+        sb.append(macroConsXML);    
         
         sb.append("</macro>\n");           
         return sb.toString();
     }
-		
+		  
 }

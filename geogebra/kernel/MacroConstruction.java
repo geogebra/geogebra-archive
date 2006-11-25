@@ -23,7 +23,7 @@ class MacroConstruction extends Construction {
 	private boolean globalVariableLookup = true;
 	
 	public MacroConstruction(MacroKernel kernel) {
-		super(kernel);
+		super(kernel, kernel.getParentKernel().getConstruction());
 		parentCons = kernel.getParentKernel().getConstruction();
 		reservedLabels = new HashSet();
 	}
@@ -33,6 +33,9 @@ class MacroConstruction extends Construction {
 	 * @return success state
 	 */
 	public void loadXML(String xmlString) throws Exception {
+		if (undoManager == null)
+			undoManager = new UndoManager(this);
+		
 		undoManager.processXML(xmlString);		
 	}
 	

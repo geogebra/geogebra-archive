@@ -144,7 +144,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 				
 				// init screen location
 				if (sliderX == 0 && sliderY ==0) {				
-					Iterator it = cons.getAllGeoElementsIterator();
+					Iterator it = cons.getGeoElementsIterator();
 					int count = 0;
 					while (it.hasNext()) {
 						GeoElement ob = (GeoElement) it.next();
@@ -545,10 +545,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		// we get a dependent function if this number has a label
 		if (isLabelSet()) {
 			// don't create a label for the new dependent function
-			boolean oldMacroMode = cons.isInMacroMode();
-			cons.setMacroMode(true);
+			boolean oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
 			ret = kernel.DependentFunction(null, fun);
-			cons.setMacroMode(oldMacroMode);
+			cons.setSuppressLabelCreation(oldMacroMode);
 		} else {
 			ret = new GeoFunction(cons);
 			ret.setFunction(fun);

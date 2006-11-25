@@ -775,7 +775,7 @@ public abstract class GeoElement
 	 * Otherwise nothing is done.
 	 */
 	public void setLabel(String newLabel) {				
-		if (cons.isInMacroMode())
+		if (cons.isSuppressLabelsActive())
 			return;
 		
 		labelWanted = true;

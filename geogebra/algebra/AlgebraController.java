@@ -32,7 +32,6 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
@@ -76,11 +75,11 @@ public class AlgebraController
 	private boolean kernelChanged;
 
 	/** Creates new CommandProcessor */
-	public AlgebraController(Kernel kernel) {
+	public AlgebraController(Kernel kernel, Construction cons) {
 		this.kernel = kernel;
-		cons = kernel.getConstruction();
+		this.cons = cons;
 		app = kernel.getApplication();
-		parser = new Parser(kernel);
+		parser = new Parser(kernel, cons);
 		cmdProcessor = new CommandDispatcher(this);
 
 		
@@ -401,8 +400,8 @@ public class AlgebraController
 	 * Returns null if something went wrong.
 	 */
 	public GeoPoint evaluateToPoint(String str) {
-		boolean oldMacroMode = cons.isInMacroMode();
-		cons.setMacroMode(true);
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 
 		GeoPoint p = null;
 		GeoElement [] temp = null;;
@@ -429,7 +428,7 @@ public class AlgebraController
 			app.showError("InvalidInput");
 		} 
 		
-		cons.setMacroMode(oldMacroMode);
+		cons.setSuppressLabelCreation(oldMacroMode);
 		return p;
 	}
 
@@ -486,9 +485,9 @@ public class AlgebraController
 		}
 
 		GeoElement[] ret;
-		boolean oldMacroMode = cons.isInMacroMode();
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		if (replaceable != null)
-			cons.setMacroMode(true);
+			cons.setSuppressLabelCreation(true);
 		
 		// we have to make sure that the macro mode is
 		// set back at the end
@@ -524,7 +523,7 @@ public class AlgebraController
 				throw new MyError(app, "Unhandled ValidExpression : " + ve);
 		}
 		finally {
-			cons.setMacroMode(oldMacroMode);
+			cons.setSuppressLabelCreation(oldMacroMode);
 		}
 			
 		//	try to replace replaceable geo by ret[0]		
@@ -534,7 +533,7 @@ public class AlgebraController
 			// (note: texts are always redefined)
 			if (!redefineIndependent
 				&& replaceable.isChangeable()
-				&& !(replaceable instanceof GeoText)) {
+				&& !(replaceable.isGeoText())) {
 				try {
 					replaceable.set(ret[0]);
 					replaceable.updateRepaint();
@@ -680,8 +679,8 @@ public class AlgebraController
         } */       
 		
 		// point and vector are created silently
-		boolean oldMacroMode = cons.isInMacroMode();
-		cons.setMacroMode(true);
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 
 		// get point
 		ExpressionNode node = par.getP();
@@ -696,7 +695,7 @@ public class AlgebraController
 		GeoVector v = (GeoVector) temp[0];
 
 		// switch back to old mode
-		cons.setMacroMode(oldMacroMode);
+		cons.setSuppressLabelCreation(oldMacroMode);
 
 		// Line through P with direction v
 		GeoLine line;
@@ -781,8 +780,8 @@ public class AlgebraController
 		boolean isIndependent = true;
 		
 		// make sure we don't create any labels for the list elements
-		boolean oldMacroMode = cons.isInMacroMode();
-		cons.setMacroMode(true);
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 		
 		int size = myList.size();
 		for (int i=0; i < size; i++) {
@@ -792,7 +791,7 @@ public class AlgebraController
 			if (!results[0].isIndependent() || results[0].isLabelSet())
 				isIndependent = false;			
 		}		
-		cons.setMacroMode(oldMacroMode);
+		cons.setSuppressLabelCreation(oldMacroMode);
 		
 		// CREATE GeoList object
 		GeoElement[] ret = new GeoElement[1];

@@ -63,8 +63,8 @@ public abstract class CommandProcessor  {
    	public abstract GeoElement [] process(Command c) throws MyError, CircularDefinitionException;   	
     
     final GeoElement[] resArgs(Command c) throws MyError {	  	
-           boolean oldMacroMode = cons.isInMacroMode();
-           cons.setMacroMode(true);
+           boolean oldMacroMode = cons.isSuppressLabelsActive();
+           cons.setSuppressLabelCreation(true);
 
            // resolve arguments to get GeoElements                     
            ExpressionNode[] arg = c.getArguments();
@@ -79,7 +79,7 @@ public abstract class CommandProcessor  {
                result[i] = resArg(arg[i])[0];               
            }
            
-           cons.setMacroMode(oldMacroMode);
+           cons.setSuppressLabelCreation(oldMacroMode);
            return result;
        }    
 
@@ -612,7 +612,7 @@ final public GeoElement[] process(Command c) throws MyError {
 			 */
             else if (ok[0] = (arg[0] .isGeoVector())) {
               	// maybe we have to set a label here
-            	if (!cons.isInMacroMode() && !arg[0].isLabelSet()) {            	           
+            	if (!cons.isSuppressLabelsActive() && !arg[0].isLabelSet()) {            	           
             		arg[0].setLabel(c.getLabel());
             		
             		// make sure that arg[0] is in construction list
@@ -994,7 +994,7 @@ final public GeoElement[] process(Command c) throws MyError {
             // and angles in XML)
             if (arg[0] .isGeoAngle()) {
             	// maybe we have to set a label here
-            	if (!cons.isInMacroMode() && !arg[0].isLabelSet()) {
+            	if (!cons.isSuppressLabelsActive() && !arg[0].isLabelSet()) {
             		arg[0].setLabel(c.getLabel());
             		
             		// make sure that arg[0] is in construction list

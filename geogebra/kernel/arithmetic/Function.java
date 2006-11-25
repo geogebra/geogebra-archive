@@ -104,7 +104,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     
     private Parser getParser() {
     	if (parser == null)
-    		parser = new Parser(kernel);
+    		parser = new Parser(kernel, kernel.getConstruction());
     	return parser;
     }
     

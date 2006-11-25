@@ -82,6 +82,11 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 		GeoPolygon poly = (GeoPolygon) geo;
 		points = poly.points;
 		segments = poly.segments;
+		set(geo);	
+	}
+	
+	public void set(GeoElement geo) {
+		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
 		defined = poly.defined;	
 	}
@@ -271,11 +276,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
         return varset;          
     }                   
     
-    final public ExpressionValue evaluate() { return this; }
-
-	public void set(GeoElement geo) {
-		// dummy
-	}
+    final public ExpressionValue evaluate() { return this; }	
 
 	public void setMode(int mode) {
 		// dummy		

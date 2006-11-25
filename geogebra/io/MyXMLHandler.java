@@ -80,11 +80,11 @@ public class MyXMLHandler implements DocHandler {
     private Macro macro;
     private String [] macroInputLabels, macroOutputLabels;
     private GeoElement[] cmdOutput;
-    private Application app;
-    private Construction cons;
+    private Application app;   
     
 //  for macros we need to change the kernel, so remember the original kernel too
     private Kernel kernel, origKernel;     
+    private Construction cons, origCons;
     private Parser parser, origParser;    
     
     // List of GeoStringPair objects 
@@ -106,9 +106,10 @@ public class MyXMLHandler implements DocHandler {
     private double ggbFileFormat;
     
     /** Creates a new instance of MyXMLHandler */
-    public MyXMLHandler(Kernel kernel) {             
+    public MyXMLHandler(Kernel kernel, Construction cons) {             
         origKernel = kernel;
-        origParser = new Parser(origKernel);                                                       
+        origCons = cons;
+        origParser = new Parser(origKernel, origCons);                                                       
         app = origKernel.getApplication();
         initKernelVars();
         
@@ -734,7 +735,9 @@ public class MyXMLHandler implements DocHandler {
             String iconFile = (String) attrs.get("iconFile");
             
             // create macro and a kernel for it
-            macro = new Macro(kernel, cmdName, toolName, toolHelp);
+            macro = new Macro(kernel, cmdName);
+            macro.setToolName(toolName);
+            macro.setToolHelp(toolHelp);
             macro.setIconFileName(iconFile);            
             MacroKernel macroKernel = new MacroKernel(kernel);
             
@@ -742,16 +745,16 @@ public class MyXMLHandler implements DocHandler {
             // is done in the macro construction from now on           
             kernel = macroKernel;
             cons = macroKernel.getConstruction();     
-            parser = new Parser(macroKernel);
+            parser = new Parser(macroKernel, cons);
                                     
         } catch (Exception e) {
             System.err.println("error in <macro>");
         }
     }
     
-    private void endMacro() {
+    private void endMacro() {    		    	
     	// cons now holds a reference to the macroConstruction
-    	macro.setMacroConstruction(cons, macroInputLabels, macroOutputLabels);
+    	macro.initMacro(cons, macroInputLabels, macroOutputLabels);
     	// ad the newly built macro to the kernel
         origKernel.addMacro(macro);
         
@@ -1809,9 +1812,7 @@ public class MyXMLHandler implements DocHandler {
     //   UTILS          
     //  ====================================       
 
-    private boolean parseBoolean(String str) throws Exception {
-        if (str == null)
-            throw new Exception();
-        return str.equals("true");
+    private boolean parseBoolean(String str) throws Exception {   
+        return "true".equals(str);
     }
 }

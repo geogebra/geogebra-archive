@@ -371,14 +371,14 @@ public class Application {
         kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
         
         //  init xml io for construction loading
-        myXMLio = new MyXMLio(kernel);
+        myXMLio = new MyXMLio(kernel, kernel.getConstruction());
 
         //  init Controllers and Views      
         guiController = new GUIController(this);   
         // for key listening 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().
                 addKeyEventDispatcher(guiController);	     
-        algebraController = new AlgebraController(kernel);
+        algebraController = new AlgebraController(kernel, kernel.getConstruction());
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
 	
@@ -1812,14 +1812,14 @@ public class Application {
     public NumberValue showNumberInputDialog(String title, String message, String initText) {
 		// avoid labeling of num
     	Construction cons = kernel.getConstruction();
-		boolean oldVal = cons.isInMacroMode();
-		cons.setMacroMode(true);
+		boolean oldVal = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 		
 		NumberInputHandler handler = new NumberInputHandler();
 		InputDialog id = new InputDialog(this,  message, title, initText, false, handler, true);       
         id.setVisible(true); 
         
-        cons.setMacroMode(oldVal);
+        cons.setSuppressLabelCreation(oldVal);
         return handler.num;
 	}
     

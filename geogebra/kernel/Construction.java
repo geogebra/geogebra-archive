@@ -20,7 +20,6 @@ import geogebra.util.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.TreeSet;
 
 /**
@@ -83,6 +82,10 @@ public class Construction {
      * Creates a new Construction.   
      */
     public Construction(Kernel k) {
+    	this(k, null);
+    }
+    
+    Construction(Kernel k, Construction parentConstruction) {
         kernel = k;
         
         ceList = new ArrayList(200);
@@ -91,16 +94,19 @@ public class Construction {
                 
         geoSet = new TreeSet();
         
-        consDefaults = new ConstructionDefaults(this);
+        if (parentConstruction != null)
+        	consDefaults = parentConstruction.getConstructionDefaults();
+        else
+        	consDefaults = new ConstructionDefaults(this);
         
         xAxis = new GeoAxis(this, GeoAxis.X_AXIS);    
     	yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
     	
     	geoTable = new HashMap(200);
-    	initGeoTable(); 
-    	
-    	
+    	initGeoTable();     	    	
     }
+    
+    
     
     /**
      * Returns the construction default object of this 
@@ -154,14 +160,14 @@ public class Construction {
     }  
     
     /**
-     * In macro mode no new labels or construction elements
-     * can be added.
+     * If this is set to true new construction elements
+     * won't get labels.
      */
-    public void setMacroMode(boolean flag) {
+    public void setSuppressLabelCreation(boolean flag) {
         macroMode = flag;
     }
     
-    public boolean isInMacroMode() {
+    public boolean isSuppressLabelsActive() {
         return macroMode;
     }
     
@@ -193,7 +199,7 @@ public class Construction {
      * Returns an iterator for 
      * all labeled GeoElements of this construction in their construction order.
      */
-    final public Iterator getAllGeoElementsIterator() {     	    	    	
+    final public Iterator getGeoElementsIterator() {     	    	    	
         return geoSet.iterator();
     }     
     
@@ -348,16 +354,30 @@ public class Construction {
              }
          }    
          
-               
+         // init and update all algorithms
+         size = algoList.size();
+         for (int i = 0; i < size; ++i) {        	        	
+        	 AlgoElement algo = (AlgoElement)algoList.get(i);           	 	
+        	 algo.initForNearToRelationship();
+             algo.update();                         	
+         }    
     }   
-    
+        
     final void updateAllAlgorithms() {
+    	// update all algorithms
+        int size = algoList.size();
+        for (int i = 0; i < size; ++i) {        	        	
+       	AlgoElement algo = (AlgoElement)algoList.get(i);   
+            algo.update();                         	
+        }  
+    }
+    
+    final void updateContinuity() {
     	// init and update all algorithms
         int size = algoList.size();
         for (int i = 0; i < size; ++i) {        	        	
-       	 AlgoElement algo = (AlgoElement)algoList.get(i);        	         
-            algo.initForNearToRelationship();
-            algo.update();                         	
+       	 AlgoElement algo = (AlgoElement)algoList.get(i);        	                     
+            algo.continuityUpdate();                        	
         }  
     }
     
@@ -770,12 +790,14 @@ public class Construction {
         sb.append("</kernel>\n");
 
         // construction XML
-        appendConstructionXML(sb);        
+        sb.append(getConstructionXML());        
                          
         return sb.toString();
     }
     
-    void appendConstructionXML(StringBuffer sb) {
+    public String getConstructionXML() {
+    	StringBuffer sb = new StringBuffer(500);
+    	
     	// change kernel settings temporarily
     	int oldCoordStlye = kernel.getCoordStyle();
     	int oldDecimals = kernel.getPrintDecimals();
@@ -811,7 +833,9 @@ public class Construction {
         
         // restore old kernel settings
         kernel.setPrintDecimals(oldDecimals);
-        kernel.setCoordStyle(oldCoordStlye);    
+        kernel.setCoordStyle(oldCoordStlye);   
+        
+        return sb.toString();
     }
     
     /**

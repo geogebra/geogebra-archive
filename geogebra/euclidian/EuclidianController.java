@@ -291,7 +291,7 @@ final public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
 			// select all hidden objects			
-			Iterator it = kernel.getConstruction().getAllGeoElementsIterator();
+			Iterator it = kernel.getConstruction().getGeoElementsIterator();
 			while (it.hasNext()) {
 				GeoElement geo = (GeoElement) it.next();
 				// independent numbers should not be set visible
@@ -2673,12 +2673,12 @@ final public class EuclidianController implements MouseListener,
 		// we got the rotation center point
 		if (selPoints() == 1) {		
 			Construction cons = kernel.getConstruction();
-			boolean oldVal = cons.isInMacroMode();
-			cons.setMacroMode(true);
+			boolean oldVal = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];			
-			cons.setMacroMode(oldVal);						
+			cons.setSuppressLabelCreation(oldVal);						
 			
 			if (num == null) {
 				view.resetMode();
@@ -2785,13 +2785,13 @@ final public class EuclidianController implements MouseListener,
 		if (selPoints() == 2 || selSegments() == 1) {
 			// get angle
 			Construction cons = kernel.getConstruction();
-			boolean oldVal = cons.isInMacroMode();
-			cons.setMacroMode(true);
+			boolean oldVal = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
 			AngleInputDialog aDialog = (AngleInputDialog) ob[1]; 
-			cons.setMacroMode(oldVal);
+			cons.setSuppressLabelCreation(oldVal);
 			
 			if (num == null) {
 				view.resetMode();

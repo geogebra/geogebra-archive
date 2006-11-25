@@ -501,7 +501,7 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	public synchronized String [] getAllObjectNames() {			
 		Construction cons = kernel.getConstruction();
-		Iterator it = cons.getAllGeoElementsIterator();
+		Iterator it = cons.getGeoElementsIterator();
 		String [] objNames = new String[cons.getGeoElementsIteratorSize()];
 				
 		int i=0; 

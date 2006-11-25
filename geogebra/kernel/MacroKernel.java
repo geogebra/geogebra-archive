@@ -11,6 +11,8 @@ the Free Software Foundation; either version 2 of the License, or
 */
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import geogebra.algebra.AlgebraController;
 
 /**
@@ -19,16 +21,19 @@ import geogebra.algebra.AlgebraController;
 public class MacroKernel extends Kernel  {
 
 	private Kernel parentKernel;
+//	private ArrayList macroConstructions;
 	private MacroConstruction macroCons;
 	private AlgebraController algCtrl;
 	
 	public MacroKernel(Kernel parentKernel) {
 		this.parentKernel = parentKernel;
 		app = parentKernel.app;
+		setUndoActive(false);
 		
+	//	macroConstructions = new ArrayList();
+	//	macroConstructions.add(new MacroConstruction(this));
 		macroCons = new MacroConstruction(this);
-		cons = macroCons;
-		cons.initUndoInfo(); // needed for loadXML
+		cons = macroCons;				
 	}
 	
 	public Kernel getParentKernel() {
@@ -37,7 +42,7 @@ public class MacroKernel extends Kernel  {
 	
 	public AlgebraController getAlgebraController() {
 		if (algCtrl == null) {
-			algCtrl = new AlgebraController(this);
+			algCtrl = new AlgebraController(this, macroCons);
 		}
 		return algCtrl;
 	}

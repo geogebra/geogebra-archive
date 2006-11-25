@@ -41,7 +41,7 @@ public class MacroCreator extends CommandProcessor {
                 {
                 	GeoElement [] input = ((GeoList) arg[0]).toArray();
                 	GeoElement [] output = ((GeoList) arg[1]).toArray();	                		                		               
-                   	kernel.addMacro(c.getLabel(), null, null, input, output);	
+                   	kernel.addMacro(c.getLabel(), kernel.isContinous(), input, output);	
                    	
                    	// no GeoElement created here
                     return null; 

@@ -89,6 +89,7 @@ public class Kernel {
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
 	
+	private boolean continous = true;
 	private MacroManager macroManager;
 				
 	public Kernel(Application app) {
@@ -645,7 +646,7 @@ public class Kernel {
 	final public void notifyAddAll(View view) {
 		if (!notifyViewsActive) return;
 		
-		Iterator it = cons.getAllGeoElementsIterator();
+		Iterator it = cons.getGeoElementsIterator();
 		while (it.hasNext()) {
 			view.add((GeoElement) it.next());
 		}			
@@ -712,7 +713,7 @@ public class Kernel {
 				viewCnt = oldViewCnt;			
 				
 				// add all geos to all views
-				Iterator it = cons.getAllGeoElementsIterator();
+				Iterator it = cons.getGeoElementsIterator();
 				while (it.hasNext()) {										
 					notifyAdd(  (GeoElement) it.next() );
 				}				
@@ -762,7 +763,7 @@ public class Kernel {
 	 * Creates a new macro within the kernel. A macro is a user defined
 	 * command in GeoGebra.
 	 */
-	public void addMacro(String cmdName, String toolName, String toolHelp, GeoElement [] input, GeoElement [] output) {
+	public void addMacro(String cmdName, boolean continous, GeoElement [] input, GeoElement [] output) {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}	
@@ -775,7 +776,7 @@ public class Kernel {
 		
 		try {		
 			// create new macro
-			Macro macro = new Macro(this, macroName, toolName, toolHelp, input, output);
+			Macro macro = new Macro(this, macroName, input, output);		
 			macroManager.addMacro(macro);
 			
 			// TODO: remove
@@ -3200,6 +3201,17 @@ public class Kernel {
 
 	public void setTranslateCommandName(boolean b) {
 		translateCommandName = b;
+	}
+
+	final public boolean isContinous() {
+		return continous;
+	}
+
+	public void setContinous(boolean continous) {
+		if (continous != this.continous) {
+			this.continous = continous;
+			cons.updateContinuity();
+		}		
 	}
 
 }

@@ -96,7 +96,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	 * Calculates this segment's length . This method should only be called by
 	 * its parent algorithm of type AlgoJoinPointsSegment
 	 */
-	public void calcLength() {
+	public void calcLength() {			
 		defined = startPoint.isFinite() && endPoint.isFinite();
 		if (defined) length = startPoint.distance(endPoint);
 		else length = Double.NaN;	

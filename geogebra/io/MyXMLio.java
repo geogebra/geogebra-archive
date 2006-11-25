@@ -69,12 +69,12 @@ public class MyXMLio {
     private MyXMLHandler handler;
     private QDParser xmlParser;
     
-    public MyXMLio(Kernel kernel) {
+    public MyXMLio(Kernel kernel, Construction cons) {
         this.kernel = kernel;
         app = kernel.getApplication();  
 	
         // similar to SAX event handler
-        handler = new MyXMLHandler(kernel);
+        handler = new MyXMLHandler(kernel, cons);
         xmlParser = new QDParser();   
     }
     
@@ -245,7 +245,7 @@ public class MyXMLio {
     } 
     
     private void writeImages(ZipOutputStream zip) throws IOException {    	    	    	    	
-    	Iterator it = kernel.getConstruction().getAllGeoElementsIterator();
+    	Iterator it = kernel.getConstruction().getGeoElementsIterator();
     	while (it.hasNext()) {
     		// get next GeoImage  
     		GeoElement ob = (GeoElement) it.next();

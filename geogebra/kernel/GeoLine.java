@@ -195,11 +195,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 		}  
 	}
    
-    final void setStartPoint(GeoPoint P) {    	    	
+    final void setStartPoint(GeoPoint P) {        	
     	startPoint = P;	    	
     }
     
-    final void setEndPoint(GeoPoint Q) {
+    final void setEndPoint(GeoPoint Q) {    	
     	endPoint = Q;
     }
     

@@ -39,17 +39,14 @@ public class UndoManager {
 	 */	
 	public UndoManager(Construction c) {
 		construction = c;
-		xmlio = new MyXMLio(c.getKernel());
-		
-		undoInfoList = new LinkedList();
-		initUndoInfo();
+		xmlio = new MyXMLio(c.getKernel(), c);					
 	}
 	
 	/**
 	 * Clears undo info list and adds current state to the undo info list.	 
 	 */
 	void initUndoInfo() {
-		undoInfoList.clear();
+		undoInfoList = new LinkedList();	
 		iterator = undoInfoList.listIterator();
 		storeUndoInfo(); // store current state                                    
 	}        
