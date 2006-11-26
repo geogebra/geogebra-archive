@@ -68,14 +68,35 @@ implements EuclidianViewAlgo {
      */
     void initForNearToRelationship() {}
     
+    // TODO: remove
+    public static double startTime, endTime;
+    public static double computeTime, updateTime;
+    public static double counter;
+    
     void update() {
+    	// TODO:remove
+    	counter++;
+    	startTime = System.currentTimeMillis(); 
+    		
         // compute output from input
         compute();
+        
+    	// TODO:remove
+        endTime = System.currentTimeMillis(); 
+        computeTime += (endTime - startTime);
 
+
+//      TODO:remove
+    	startTime = System.currentTimeMillis(); 
+    	
         // update dependent objects 
         for (int i = 0; i < output.length; i++) {           
                 output[i].update();
         }           
+        
+    	// TODO:remove
+        endTime = System.currentTimeMillis(); 
+        updateTime += (endTime - startTime );                
     }          
 
     // public part    
@@ -387,7 +408,11 @@ implements EuclidianViewAlgo {
     /**
      * Returns this algorithm and it's output objects (GeoElement) in XML format.
      */
-    public String getXML() {
+    final public String getXML() {
+    	return getXML(true);    	
+    }
+    	
+    final public String getXML(boolean includeOutputXML) {
         // this is needed for helper commands like 
         // intersect for single intersection points
         if (!isPrintedInXML) return ""; 

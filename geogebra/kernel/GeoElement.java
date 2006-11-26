@@ -226,7 +226,10 @@ public abstract class GeoElement
 	private boolean isColorSet = false;
 	private boolean highlighted = false;
 	private boolean selected = false;	
-	private String strAlgebraDescription, strAlgebraDescTextOrHTML;
+	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML;
+	private boolean strAlgebraDescriptionNeedsUpdate = true;
+	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
+	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
 	private StringBuffer sb = new StringBuffer();
 
 	// line thickness and line type: s	
@@ -834,7 +837,7 @@ public abstract class GeoElement
 		labelWanted = false; // got a label, no longer wanted					
 		
 		cons.putLabel(this); // add new table entry	   		
-		setAlgebraDescription();
+		strAlgebraDescriptionNeedsUpdate = true;
 		notifyAdd();
 	}
 
@@ -843,7 +846,7 @@ public abstract class GeoElement
 		cons.removeLabel(this); // remove old table entry
 		label = newLabel; // set new label
 		cons.putLabel(this); // add new table entry    
-		setAlgebraDescription();
+		strAlgebraDescriptionNeedsUpdate = true;
 		kernel.notifyRename(this); // tell views   
 		
 		update();		
@@ -1196,23 +1199,25 @@ public abstract class GeoElement
 			}
 		}
 	}
-
-
+	
 	/**
 	 * updates this object and notifies kernel. 
 	 * Note: no dependent objects are updated.
 	 * @see updateRepaint()
 	 */
-	public void update() {			
+	public void update() {		
 		if (labelWanted && !labelSet) {
 			// check if this object's label needs to be set
 			if (isVisible())
 				setLabel(label);			
 		}
 
-		// update algebra description
-		setAlgebraDescription();
-		kernel.notifyUpdate(this);	        			   	
+		// texts need updates
+		strAlgebraDescriptionNeedsUpdate = true;	
+		strAlgebraDescTextOrHTMLneedsUpdate = true;
+		strAlgebraDescriptionHTMLneedsUpdate = true;				
+		        
+		kernel.notifyUpdate(this);	        			
 	}
 	
 	/**
@@ -1603,40 +1608,53 @@ public abstract class GeoElement
 		* is not possible (because there are indices in the representation)
 		* a HTML string is returned.		
 		*/
-	public String getAlgebraDescriptionTextOrHTML() {
+	final public String getAlgebraDescriptionTextOrHTML() {
+		if (strAlgebraDescTextOrHTMLneedsUpdate) {
+			String algDesc = getAlgebraDescription();
+			// convertion to html is only needed if indices are found
+			if (includesIndex(algDesc)) {
+				strAlgebraDescTextOrHTML =
+					indicesToHTML(algDesc, true);
+			} else {
+				strAlgebraDescTextOrHTML = algDesc;
+			}
+			
+			strAlgebraDescTextOrHTMLneedsUpdate = false;
+		}
+		
 		return strAlgebraDescTextOrHTML;
 	}
 
-	public String getAlgebraDescriptionHTML(boolean addHTMLtag) {
-		return indicesToHTML(strAlgebraDescription, false);
+	final public String getAlgebraDescriptionHTML(boolean addHTMLtag) {
+		if (strAlgebraDescriptionHTMLneedsUpdate) {
+			strAlgebraDescriptionHTML = indicesToHTML(getAlgebraDescription(), false);
+			
+			strAlgebraDescriptionHTMLneedsUpdate = false;
+		}
+		
+		return strAlgebraDescriptionHTML;		
 	}
 
 	/**
 		* Returns algebraic representation of this GeoElement.		
 		*/
-	public String getAlgebraDescription() {
+	final public String getAlgebraDescription() {
+		if (strAlgebraDescriptionNeedsUpdate) {
+			if (isDefined()) {
+				strAlgebraDescription = toString();
+			} else {
+				sb.setLength(0);			
+				sb.append(label);
+				sb.append(' ');
+				sb.append(app.getPlain("undefined"));
+				strAlgebraDescription = sb.toString();
+			}		
+			
+			strAlgebraDescriptionNeedsUpdate = false;
+		}
+		
 		return strAlgebraDescription;
-	}
-
-	private void setAlgebraDescription() {
-		if (isDefined()) {
-			strAlgebraDescription = toString();
-		} else {
-			StringBuffer sb = new StringBuffer();
-			sb.append(label);
-			sb.append(' ');
-			sb.append(app.getPlain("undefined"));
-			strAlgebraDescription = sb.toString();
-		}
-
-		// convertion to html is only needed if indices are found
-		if (includesIndex(strAlgebraDescription)) {
-			strAlgebraDescTextOrHTML =
-				indicesToHTML(strAlgebraDescription, true);
-		} else {
-			strAlgebraDescTextOrHTML = strAlgebraDescription;
-		}
-	}
+	}	
 
 	/*
 	 * replaces all indices (_ and _{}) in str by <sub> tags, all and converts all

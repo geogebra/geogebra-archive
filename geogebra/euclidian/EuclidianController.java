@@ -19,6 +19,8 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoMacro;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -1017,7 +1019,18 @@ final public class EuclidianController implements MouseListener,
 		//view.setDrawMode(EuclidianView.DRAW_MODE_BACKGROUND_IMAGE);
 		moveMode = MOVE_NONE;
 		initShowMouseCoords();				
-		kernel.notifyRepaint();		
+		kernel.notifyRepaint();	
+		
+		// TODO: remove
+		double totalTime = AlgoElement.computeTime + AlgoElement.updateTime;
+        System.out.println("AlgoElement: compute: " + (100* AlgoElement.computeTime / totalTime) +
+        		"%, update: " + (100* AlgoElement.updateTime / totalTime) +"%" );
+        
+    	totalTime = AlgoMacro.getTime + AlgoMacro.updateAlgosTime + AlgoMacro.setTime;
+        System.out.println("AlgoMacro: set state: " + (100* AlgoMacro.setTime / totalTime) +
+        		"%, algoUpdate: " + (100* AlgoMacro.updateAlgosTime / totalTime) +
+        		"%, get state: " + (100* AlgoMacro.getTime / totalTime) +"%" );
+        
 	}
 	
 	private boolean hitResetIcon() {

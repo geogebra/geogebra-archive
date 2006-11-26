@@ -12,8 +12,9 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.util.FastHashMapKeyless;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -26,16 +27,20 @@ public class AlgoMacro extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;	
 	
-	private Macro macro;   	
+	private Macro macro; 
 	
 	// macro construction, its input and output used by this algo	
 	private GeoElement [] macroInput, macroOutput;
 	
 	// maps macro geos to algo geos
-	private HashMap macroToAlgoMap = new HashMap();
+	private FastHashMapKeyless macroToAlgoMap;
 	
 	// all keys of macroToAlgoMap that are not part of macroInput
-	private ArrayList outputAndReferencedGeos = new ArrayList();
+	private ArrayList outputAndReferencedGeos;
+	
+	// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
+	// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
+	private GeoElement [] macroGeos, algoGeos;
         
     /**
      * Creates a new algorithm that applies a macro to the
@@ -46,16 +51,16 @@ public class AlgoMacro extends AlgoElement {
     	  
     	this.input = input;
         this.macro = macro;
+        
         this.macroInput = macro.getMacroInput();
         this.macroOutput = macro.getMacroOutput();
                  	   
-        // register algorithm with macro: the macro will        
-        // call setMacroConsInputOutput
+        // register algorithm with macro
         macro.registerAlgorithm(this);
         
         // create copies for the output objects
     	initOuput();
-    	
+    	    	
     	// initialize the mapping between macro geos and algo geos
     	initMap();    	  	
     	
@@ -87,16 +92,46 @@ public class AlgoMacro extends AlgoElement {
     void setInputOutput() {    	             
         setDependencies();
     }             
+    
+    
+    // TODO: remove
+    public static double startTime, endTime;
+    public static double setTime, updateAlgosTime, getTime;
+    public static double counter;
         
     final void compute() {	
+    	
+//    	 TODO:remove
+    	counter++;
+    	startTime = System.currentTimeMillis(); 
+    	
     	// set macro geos to algo geos state
     	setMacroConstructionState();
+    	
+//    	 TODO:remove
+        endTime = System.currentTimeMillis(); 
+        setTime += (endTime - startTime);
+        
+//   	 TODO:remove    	
+    	startTime = System.currentTimeMillis(); 
 		
 		// update all algorithms of macro-construction
-        macro.updateAllAlgorithms();        
+    	macro.updateAllAlgorithms();   
+    	
+//   	 TODO:remove
+        endTime = System.currentTimeMillis(); 
+        updateAlgosTime += (endTime - startTime);
+        
+//  	 TODO:remove    	
+    	startTime = System.currentTimeMillis(); 
         
       	// set algo geos to macro geos state   
-        getMacroConstructionState();            
+        getMacroConstructionState();     
+        
+
+//  	 TODO:remove
+       endTime = System.currentTimeMillis(); 
+       getTime += (endTime - startTime);
     }   
     
     final public String toString() {    	
@@ -131,16 +166,23 @@ public class AlgoMacro extends AlgoElement {
 	/** 
 	 * Sets algo geos to the current state of macro geos.	 
 	 */
-	final void getMacroConstructionState() {				
+	final void getMacroConstructionState() {	
+		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
+		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
+		for (int i=0; i < macroGeos.length; i++) {											
+			algoGeos[i].set(macroGeos[i]);
+		
+			// TODO: remove
+			System.out.println("RESULT from macro: " + macroGeos[i] + " => " + algoGeos[i]);
+		}
+		
+		/* old code:
 		int size = outputAndReferencedGeos.size();
 		for (int i=0; i < size; i++) {			
 			GeoElement macroGeo = (GeoElement) outputAndReferencedGeos.get(i);
 			GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);							
-			algoGeo.set(macroGeo);
-		
-			// TODO: remove
-			//System.out.println("RESULT from macro: " + macroGeo + " => " + algoGeo);
-		}			
+			algoGeo.set(macroGeo);					
+		}*/	
 	}
 	
 	
@@ -155,7 +197,7 @@ public class AlgoMacro extends AlgoElement {
 			output[i] = macroOutput[i].copyInternal();
 			output[i].setConstruction(cons);
 			output[i].setVisualStyle(macroOutput[i]);				
-    	}			
+    	}
 	}
 	
 	/**
@@ -166,7 +208,8 @@ public class AlgoMacro extends AlgoElement {
 	 * construction.
 	 */
 	private void initMap() {	
-		macroToAlgoMap.clear();		
+		macroToAlgoMap = new FastHashMapKeyless();
+		outputAndReferencedGeos = new ArrayList();
 		
 		// map macro input to algo input
 		for (int i=0; i < macroInput.length; i++) {
@@ -181,7 +224,22 @@ public class AlgoMacro extends AlgoElement {
 			// make sure all algo-output objects reference objects
 			// in their own construction
 			initSpecialReferences(macroOutput[i], output[i]);
-    	}																									
+    	}	
+		
+		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
+		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
+		int size = outputAndReferencedGeos.size();
+		macroGeos = new GeoElement[size];
+		algoGeos = new GeoElement[size];
+		for (int i=0; i < size; i++) {
+			macroGeos[i] = (GeoElement) outputAndReferencedGeos.get(i);
+		}				
+		for (int i=0; i < size; i++) {
+			algoGeos[i] = (GeoElement) macroToAlgoMap.get(macroGeos[i]);
+		}				
+		
+		macroToAlgoMap = null;		
+		outputAndReferencedGeos = null;
 	}
 	
 	/**
@@ -198,15 +256,8 @@ public class AlgoMacro extends AlgoElement {
 			
 			// remember non-input macroGeo
 			if (!isMacroInputObject(macroGeo)) {
-				outputAndReferencedGeos.add(macroGeo);
-				
-//				 TODO: remove
-			//	System.out.println(this + ": map entry: " + macroGeo + " => " + algoGeo);
-			}	
-			
-//			 TODO: remove
-		//	else
-		//	System.out.println(this + ": map entry (INPUT): " + macroGeo + " => " + algoGeo);								
+				outputAndReferencedGeos.add(macroGeo);			
+			}				
 		}
 	}
 	

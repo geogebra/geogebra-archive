@@ -35,7 +35,7 @@ public class Macro {
 	private String iconFileName = ""; // image file			
 				
 	private Construction macroCons; // macro construction
-	private String macroConsXML, macroConsFullXML;
+	private String macroConsXML;
 	private GeoElement [] macroInput, macroOutput; // input and output objects 
 	private String [] macroInputLabels, macroOutputLabels;
 	private Class [] inputTypes;
@@ -59,7 +59,7 @@ public class Macro {
 	public Macro(Kernel kernel, String cmdName) { 	
 		this.kernel = kernel;
 		setCommandName(cmdName);						
-	}
+	}		
 	
 	/**
 	 * Returns all input geos from the macro construction.
@@ -94,16 +94,7 @@ public class Macro {
 		inputTypes = new Class[macroInput.length];		
 		for (int i=0; i < macroInput.length; i++) {
 			inputTypes[i] = macroInput[i].getClass();
-		}			
-		
-	 	StringBuffer sb = new StringBuffer(500);
-	 	sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-	 	sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
-	 	sb.append("<construction author=\"\" title=\"\" date=\"\">\n");
-	 	sb.append(macroConsXML);
-	 	sb.append("<geogebra/>");
-	 	macroConsFullXML = sb.toString();		
-		
+		}						 	
 	}	
 	
 	private void initInputOutput() {
@@ -216,6 +207,12 @@ public class Macro {
     	initMacro(macroCons, inputLabels, outputLabels);
     }
 	
+	/**
+	 * Note: changes macroConsElements
+	 * @param input
+	 * @param macroConsElements
+	 * @return
+	 */
 	 private String buildMacroXML(GeoElement [] input, TreeSet macroConsElements) {        	
     	// get the XML for all macro construction elements
     	StringBuffer macroConsXML = new StringBuffer(500);
@@ -229,14 +226,18 @@ public class Macro {
     			macroConsXML.append(input[i].getXML());	    		
     	}   
     	
+    	// TODO: GO ON
+    	// problem: macro output may appear twice
+    	
     	// get XML for the rest of the macro construction
     	Iterator it = macroConsElements.iterator();
     	while (it.hasNext()) {
     		GeoElement geo = (GeoElement) it.next();    		
     		if (geo.isIndependent())
     			macroConsXML.append(geo.getXML());
-    		else 
+    		else {
     			macroConsXML.append(geo.getParentAlgorithm().getXML());
+    		}
     	}
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
@@ -271,6 +272,7 @@ public class Macro {
     	catch (MyError e) {  
     		String msg = e.getLocalizedMessage();
     		System.err.println(msg);
+    		e.printStackTrace(); 
     		throw new Exception(msg);
     	}    	
     	catch (Exception e) {
