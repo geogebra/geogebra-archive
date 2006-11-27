@@ -287,12 +287,31 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         return vx*vx + vy*vy;
     }
     
+    /** 
+     * Returns whether the three points A, B and C are collinear. 
+     */
+	public static boolean collinear(GeoPoint A, GeoPoint B, GeoPoint C) {
+		// A, B, C are collinear iff det(ABC) == 0
+		
+		// calculate the determinante of ABC
+		// det(ABC) = sum1 - sum2		
+		double sum1 = A.x * B.y * C.z + 
+					  B.x * C.y * A.z +
+					  C.x * A.y * B.z;
+		double sum2 = A.z * B.y * C.x +
+					  B.z * C.y * A.x +
+					  C.z * A.y * B.x;
+				
+		// det(ABC) == 0  <=>  sum1 == sum2		
+		return Kernel.isEqual(sum1, sum2, Kernel.MIN_PRECISION);
+	}
+    
     /**
      * Calcs determinant of P and Q. Note: no test for defined or infinite is done here.
      */
 	public static final double det(GeoPoint P, GeoPoint Q) {		 
 		return (P.x * Q.y - Q.x * P.y) / (P.z * Q.z); 
-	}
+	}	
 	
 	/**
 	 * Calcs split factor lambda where AB = lambda * AC.

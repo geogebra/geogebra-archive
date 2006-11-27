@@ -2753,7 +2753,7 @@ public class Kernel {
 		return x - EPSILON < y && y < x + EPSILON;
 	}
 	
-	final public boolean isEqual(double x, double y, double eps) {		
+	public static boolean isEqual(double x, double y, double eps) {		
 		return x - eps < y && y < x + eps;
 	}
 	
