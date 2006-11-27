@@ -41,45 +41,52 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         String label,
         GeoPoint P,
         GeoPoint Q) {
-        this(cons, P, Q);
+        this(cons, P, Q, null);
         s.setLabel(label);
     }
 
     AlgoJoinPointsSegment(
-        Construction cons,
-        GeoPolygon poly,
+        Construction cons,        
         GeoPoint P,
-        GeoPoint Q) {
-        this(cons, P, Q);
-        this.poly = poly;
-    }
-
-    private AlgoJoinPointsSegment(Construction cons, GeoPoint P, GeoPoint Q) {
-        super(cons);
+        GeoPoint Q,
+        GeoPolygon poly) {
+    	super(cons);
+    	
+        this.poly = poly;                
         this.P = P;
         this.Q = Q;
           
-        s = new GeoSegment(cons, P, Q);                
+        s = new GeoSegment(cons, P, Q);          
         setInputOutput(); // for AlgoElement
                
         // compute line through P, Q
-        compute();        
-    }
+        compute();
+    }   
 
     String getClassName() {
         return "AlgoJoinPointsSegment";
     }
 
     // for AlgoElement
-    void setInputOutput() {    	  
-        input = new GeoElement[2];
-        input[0] = P;
-        input[1] = Q;
-
+    void setInputOutput() {
+    	GeoElement [] efficientInput = new GeoElement[2];
+    	efficientInput[0] = P;
+    	efficientInput[1] = Q;
+    	
+    	if (poly == null) {
+    		input = efficientInput;    		
+    	} else {
+    		input = new GeoElement[3];
+    		input[0] = P;
+            input[1] = Q;
+            input[2] = poly;            
+    	}            	
+    	
         output = new GeoElement[1];
         output[0] = s;
           
-        setDependencies();
+        //setDependencies();
+        setEfficientDependencies(input, efficientInput);
     }
 
     GeoSegment getSegment() {

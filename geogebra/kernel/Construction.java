@@ -218,7 +218,7 @@ public class Construction {
      */
     public void addToConstructionList(ConstructionElement ce, boolean checkContains) {      	
     	if (macroMode) return;        
-        if (checkContains && ceList.contains(ce)) return;
+        if (checkContains && ce.isInConstructionList()) return;
         
         ++step;
         ceList.add(step, ce);            
@@ -235,10 +235,12 @@ public class Construction {
             return;
         else if (pos <= step) {
             ceList.remove(ce);
+            ce.setConstructionIndex(-1);
             //setStep(step-1);
             --step;
         } else { // pos > step
             ceList.remove(ce);
+            ce.setConstructionIndex(-1);
         }        
                 
         updateConstructionIndex(pos);                
@@ -315,9 +317,9 @@ public class Construction {
      */    
     public boolean isInConstructionList(GeoElement geo) {
     	if (geo.isIndependent())
-    		return ceList.contains(geo);
+    		return geo.isInConstructionList();
     	else 
-    		return ceList.contains(geo.getParentAlgorithm());
+    		return geo.getParentAlgorithm().isInConstructionList();
     }
 
     /**

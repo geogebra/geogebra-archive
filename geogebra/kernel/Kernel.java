@@ -784,7 +784,7 @@ public class Kernel {
 			
 		} catch (Exception e) {	
 			e.printStackTrace();
-			String [] strs = { "InvalidMacroDefinition", e.getMessage() };
+			String [] strs = { "Macro.CreationFailed", e.getMessage() };
 			throw new MyError(app, strs);
 		}		
 	}

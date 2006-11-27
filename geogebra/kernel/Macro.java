@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.util.Util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -119,17 +118,37 @@ public class Macro {
 	}
 	
 	private void initMacro(GeoElement [] input, GeoElement [] output)  throws Exception {
-		// TODO: check dependencies of input and output
-		/*
-		//check whether we found any macro elements:
-    	// if not input and output elements don't depend on each other
-    	if (macroConsOrigElements.size() == 0)
-        	// TODO: localize error message
-        	throw new Exception("InvalidMacroDefinition");
-		*/
+		// check that every output object depends on an input object
+		// and that all input objects are really needed
+		boolean [] inputNeeded = new boolean[input.length];
+		for (int i=0; i < output.length; i++) {
+			boolean dependsOnInput = false;
+			
+			for (int k=0; k < input.length; k++) {
+				boolean dependencyFound = output[i].isChildOf(input[k]);
+				if (dependencyFound) {
+					dependsOnInput = true; 
+					inputNeeded[k] = true;
+				}
+			}
+			
+			if (!dependsOnInput) {
+				throw new Exception(kernel.getApplication()
+						.getError("Macro.OutputNotDependent") +
+						": " + output[i]);
+			}
+		}	
+		for (int k=0; k < input.length; k++) {			
+			if (!inputNeeded[k]) {
+				throw new Exception(kernel.getApplication()
+						.getError("Macro.InputNotNeeded") +
+						": " + input[k]);
+			}
+		}
+		
 		
 		// steps to create a macro
-		// 1) outputParents = set of all predecessors of output objects
+		// 1) outputAndParents = set of all predecessors of output objects 
 		// 2) inputChildren = set of all children of input objects
 		// 3) macroElements = intersection of outputParents and inputChildren
 		// 4) add input and output objects to macroElements
@@ -139,23 +158,24 @@ public class Macro {
 		// 1) create the set of all parents of this macro's output objects
 		TreeSet outputParents = new TreeSet();		
 		for (int i=0; i < output.length; i++) {
-			 output[i].addPredecessorsToSet(outputParents, false);
+			 output[i].addPredecessorsToSet(outputParents, false);			
 		}			
 		
-		// 2) and 3) get intersection of all inputChildren and all outputParents    	       	
+		// 2) and 3) get intersection of inputChildren and outputParents				
 		TreeSet macroConsOrigElements = new TreeSet(); 
-    	Iterator it = outputParents.iterator();
+    	Iterator it = outputParents.iterator();    	
     	while (it.hasNext()) {
-    		GeoElement parent = (GeoElement) it.next();
-    		if (parent.isLabelSet()) {
+    		GeoElement outputParent = (GeoElement) it.next();
+    		if (outputParent.isLabelSet()) {
     			for (int i=0; i < input.length; i++) {
-    				 if (parent.isChildOf(input[i])) {
-    					 macroConsOrigElements.add(parent);
-    					 i = input.length; // add parent only once: get out of loop
+    				 if (outputParent.isChildOf(input[i])) {
+    					 addDependentElement(outputParent, macroConsOrigElements);    					    			    	 
+    			    	 // add parent only once: get out of loop
+    					 i = input.length; 
     				 }
     			}    			
     		}
-    	}        	    	
+    	}        	       	    	
     	
     	// 4) add input and output objects to macroElements
     	// ensure that all input and all output objects have labels set
@@ -170,20 +190,23 @@ public class Macro {
     		if (!isInputLabeled[i]) {
     			input[i].label = input[i].getDefaultLabel();
     			input[i].labelSet = true;
-        	}
-    		    		
+        	}    		        		    			    		        	    	
     		inputLabels[i] = input[i].label;
-    	}    	    
+    		
+    		// add input element to macroConsOrigElements 	        	
+    		macroConsOrigElements.add(input[i]);
+    	}   
+    	
     	for (int i=0; i < output.length; i++) {
     		isOutputLabeled[i] = output[i].isLabelSet();
     		if (!isOutputLabeled[i]) {
     			output[i].label = output[i].getDefaultLabel();
     			output[i].labelSet = true;    			
-        	}
-    		
-    		// add labeled output elements to macroElements
-    		macroConsOrigElements.add(output[i]);
+        	}        		   		    		
     		outputLabels[i] = output[i].label;
+    		
+    		// add output element and its algorithm to macroConsOrigElements 
+    		addDependentElement(output[i], macroConsOrigElements); 	    		
     	}    	    	
     	    	
 		// 5) create XML representation for macro-construction
@@ -197,8 +220,7 @@ public class Macro {
     	for (int i=0; i < output.length; i++) {    		
     		if (!isOutputLabeled[i])		
     			output[i].labelSet = false;        
-    	}    	    	
-    	
+    	}    	    	    	    	    
     	
 		// 6) create a new macro-construction from this XML representation
     	Construction macroCons = createMacroConstruction(macroConsXML); 
@@ -208,46 +230,63 @@ public class Macro {
     }
 	
 	/**
+	 * Adds the geo, its parent algorithm and all its siblings to the consElementSet
+	 */	
+	private void addDependentElement(GeoElement geo, TreeSet consElementSet) {		 
+		 AlgoElement algo = geo.getParentAlgorithm();
+		 
+	   	 if (algo.isInConstructionList()) {
+	   		// STANDARD case
+	   		// add algorithm
+	   		consElementSet.add(algo);
+	   		
+	   		// add all output elements including geo
+	   		GeoElement [] algoOutput = algo.getOutput();
+	   		for (int i=0; i < algoOutput.length; i++) {
+	   			consElementSet.add(algoOutput[i]);
+	   		}	   		
+	   	 } else {
+			// HELPER algorithm, e.g. segment of polygon
+	   		// we only add the geo because it is output 
+	   		// of some other algorithm in construction list
+	   		consElementSet.add(geo);
+	   	 }
+	}
+	
+	/**
 	 * Note: changes macroConsElements
 	 * @param input
 	 * @param macroConsElements
 	 * @return
 	 */
-	 private String buildMacroXML(GeoElement [] input, TreeSet macroConsElements) {        	
+	 private String buildMacroXML(GeoElement [] input, TreeSet macroConsElements) {				 
     	// get the XML for all macro construction elements
     	StringBuffer macroConsXML = new StringBuffer(500);
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     	macroConsXML.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
-    	
-    	// get XML for input elements first 
-    	for (int i=0; i < input.length; i++) {     
-    		if (!macroConsElements.contains(input[i]))
-    			macroConsXML.append(input[i].getXML());	    		
-    	}   
-    	
-    	// TODO: GO ON
-    	// problem: macro output may appear twice
-    	
-    	// get XML for the rest of the macro construction
+    	    	      	    	    
     	Iterator it = macroConsElements.iterator();
-    	while (it.hasNext()) {
-    		GeoElement geo = (GeoElement) it.next();    		
-    		if (geo.isIndependent())
-    			macroConsXML.append(geo.getXML());
-    		else {
-    			macroConsXML.append(geo.getParentAlgorithm().getXML());
+    	while (it.hasNext()) {    		
+    		ConstructionElement ce = (ConstructionElement) it.next();
+    		if (ce.isGeoElement()) {
+    			macroConsXML.append(ce.getXML());
+    		}
+    		else if (ce.isAlgoElement()) {
+    			AlgoElement algo = (AlgoElement) ce;
+        		macroConsXML.append(algo.getXML(false));    			
     		}
     	}
+    	
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
     	   
     	
     	// TODO: remove    	
-//    	System.out.println("*** Macro XML BEGIN ***");
-//    	System.out.println(macroConsXML);
-//    	System.out.flush();
-//    	System.out.println("*** Macro XML END ***");
+    	System.out.println("*** Macro XML BEGIN ***");
+    	System.out.println(macroConsXML);
+    	System.out.flush();
+    	System.out.println("*** Macro XML END ***");
     	
     	
     	return macroConsXML.toString();
@@ -277,7 +316,7 @@ public class Macro {
     	}    	
     	catch (Exception e) {
     		e.printStackTrace();       		   
-        	throw new Exception("");
+        	throw new Exception(e.getMessage());
     	}    	
     }	 	                 
 			

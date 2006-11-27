@@ -173,7 +173,7 @@ public class AlgoMacro extends AlgoElement {
 			algoGeos[i].set(macroGeos[i]);
 		
 			// TODO: remove
-			System.out.println("RESULT from macro: " + macroGeos[i] + " => " + algoGeos[i]);
+			//System.out.println("RESULT from macro: " + macroGeos[i] + " => " + algoGeos[i]);
 		}
 		
 		/* old code:
@@ -196,6 +196,7 @@ public class AlgoMacro extends AlgoElement {
 			// copy output object of macro and make the copy it part of this construction
 			output[i] = macroOutput[i].copyInternal();
 			output[i].setConstruction(cons);
+			output[i].setUseVisualDefaults(false);
 			output[i].setVisualStyle(macroOutput[i]);				
     	}
 	}

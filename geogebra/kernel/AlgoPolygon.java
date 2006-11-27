@@ -94,8 +94,9 @@ public class AlgoPolygon extends AlgoElement {
         AlgoJoinPointsSegment []  segmentAlgos = 
                         new AlgoJoinPointsSegment[points.length];
         for (int i=0; i < points.length; i++) {
-            segmentAlgos[i] = new AlgoJoinPointsSegment(cons, poly, points[i], 
-                                                                points[(i+1) % points.length]);            
+            segmentAlgos[i] = new AlgoJoinPointsSegment(cons, points[i], 
+                                                              points[(i+1) % points.length],
+                                                              poly);            
             cons.removeFromConstructionList(segmentAlgos[i]);                       
             segments[i] = segmentAlgos[i].getSegment();
         }

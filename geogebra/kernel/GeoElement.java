@@ -223,6 +223,7 @@ public abstract class GeoElement
 	private boolean auxiliaryObject = false;
 	// on change: see setVisualValues()
 
+	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
 	private boolean highlighted = false;
 	private boolean selected = false;	
@@ -369,10 +370,12 @@ public abstract class GeoElement
 		labelVisible =  ! isPath() || app.showAlgebraView();
 	}
 	
-	public void setConstructionDefaults() {		
-		ConstructionDefaults consDef = cons.getConstructionDefaults();
-		if (consDef != null) 
-				consDef.setDefaultVisualStyles(this);		
+	public void setConstructionDefaults() {	
+		if (useVisualDefaults) {
+			ConstructionDefaults consDef = cons.getConstructionDefaults();
+			if (consDef != null) 
+				consDef.setDefaultVisualStyles(this);
+		}
 	}
 
 	public void setObjColor(Color color) {
@@ -2133,6 +2136,14 @@ public abstract class GeoElement
 	
 	public boolean isListValue() {
 		return false;
+	}
+
+	public boolean isUseVisualDefaults() {
+		return useVisualDefaults;
+	}
+
+	public void setUseVisualDefaults(boolean useVisualDefaults) {
+		this.useVisualDefaults = useVisualDefaults;
 	}
    	
 

@@ -26,8 +26,8 @@ implements Comparable {
 	
 	private int constIndex = -1; // index in construction list 
 	
-	private static int ceIDcounter = Integer.MIN_VALUE;
-	private int ceID; // creation ID of this ConstructionElement, used for sorting
+	private static long ceIDcounter = Long.MIN_VALUE;
+	private long ceID; // creation ID of this ConstructionElement, used for sorting
 	
 	public ConstructionElement(Construction c) {
 		ceID = ceIDcounter++;	
@@ -68,6 +68,14 @@ implements Comparable {
 	 */
 	void setConstructionIndex(int index) {
 		constIndex = index;
+	}
+	
+	/**
+	 * Returns whether this construction element is in the
+	 * construction list of its construction.	 
+	 */	
+	final public boolean isInConstructionList() {
+		return constIndex > -1;
 	}
 	
 	/**

@@ -409,10 +409,10 @@ implements EuclidianViewAlgo {
      * Returns this algorithm and it's output objects (GeoElement) in XML format.
      */
     final public String getXML() {
-    	return getXML(true);    	
+    	return getXML(true);
     }
     	
-    final public String getXML(boolean includeOutputXML) {
+    final String getXML(boolean includeOutputGeos) {  
         // this is needed for helper commands like 
         // intersect for single intersection points
         if (!isPrintedInXML) return ""; 
@@ -434,16 +434,18 @@ implements EuclidianViewAlgo {
             sb.append(getExpXML());
         else
             sb.append(getCmdXML(cmdname));
-            
-        // output               
-        GeoElement geo;                   
-        for (int i = 0; i < output.length; i++) {
-            geo = output[i];
-            // save only GeoElements that have a valid label
-            if (geo.isLabelSet()) {
-                sb.append(geo.getXML());
-            }
-        }           
+        
+        if (includeOutputGeos) {	       
+	        // output               
+	        GeoElement geo;                   
+	        for (int i = 0; i < output.length; i++) {
+	            geo = output[i];
+	            // save only GeoElements that have a valid label
+	            if (geo.isLabelSet()) {
+	                sb.append(geo.getXML());
+	            }
+	        }
+        }
         
         // set changes back
         kernel.setTranslateCommandName(oldValue);
