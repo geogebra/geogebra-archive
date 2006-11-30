@@ -1260,12 +1260,36 @@ implements ExpressionValue {
         }
         
         // right tree
-        if (right == oldOb) {
-            right = newOb;
-        } else if (right.isExpressionNode()) {
-            right = ((ExpressionNode) right).replace(oldOb, newOb);
+        if (right != null) {
+	        if (right == oldOb) {
+	            right = newOb;
+	        } else if (right.isExpressionNode()) {
+	            right = ((ExpressionNode) right).replace(oldOb, newOb);
+	        }
         }
         return this;
+    }
+    
+    /**
+     * Replaces every reference to oldGeo by a reference to newGeo in this ExpressionNode tree 
+     */
+    final public void replaceGeoElementReference(GeoElement oldGeo, GeoElement newGeo) {                                                                                                                  
+        // left tree
+    	if (left == oldGeo) {
+            left = newGeo;
+        } else if (left.isExpressionNode()) {
+        	((ExpressionNode) left).replaceGeoElementReference(oldGeo, newGeo);
+        }         
+        
+        // right tree
+        if (right != null) {
+        	if (right == oldGeo) {
+            	right = newGeo;
+            }
+        	else if (right.isExpressionNode()) {
+            	((ExpressionNode) right).replaceGeoElementReference(oldGeo, newGeo);
+            } 
+        }                
     }
     
     /** 
@@ -1366,7 +1390,9 @@ implements ExpressionValue {
     }
         
     
-    /** returns all GeoElement objects in the subtree */
+    /** 
+     * Returns all GeoElement objects in the subtree 
+     */
     final public HashSet getVariables() {   
         if (leaf) return left.getVariables();
         

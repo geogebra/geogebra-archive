@@ -276,7 +276,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     }
 
     /**
-     * Calculates the roots of the given function resp. its derivative
+     * Calculates the roots of the given function resp. its derivative,
      * stores them in curRoots and
      * sets curRealRoots to the number of real roots found.
      * @param derivDegree: degree of derivative to compute roots from

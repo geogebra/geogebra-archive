@@ -61,8 +61,9 @@ public class SymbolicPolyFunction extends PolyFunction {
 		try {
 			//	evaluate all the coefficients			
 			 double coeff;
-			 for (int i=0; i < symbCoeffs.length; i++) {
-				coeff = ((NumberValue) symbCoeffs[i].evaluate()).getDouble();
+			 for (int i=0; i < symbCoeffs.length; i++) {				 
+				ExpressionValue eval = symbCoeffs[i].evaluate();
+				coeff = ((NumberValue) eval).getDouble();
 				if (Double.isNaN(coeff) || Double.isInfinite(coeff))
 					return false; // no valid values			 	
 				coeffs[i] =  coeff; // set polynomial coefficient				 

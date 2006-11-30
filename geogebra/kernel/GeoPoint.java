@@ -63,11 +63,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     	setUndefined(); 
     }
   
-    /** Creates new GeoPoint */  
+    /**
+     * Creates new GeoPoint 
+     */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
         super(c, x, y, z); // GeoVec3D constructor  
         pathParameter = new PathParameter();
-        setLabel(label);             
+        setLabel(label);
     }
     
     public GeoPoint(Construction c, Path path) {

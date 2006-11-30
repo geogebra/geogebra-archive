@@ -1676,7 +1676,7 @@ public class MyXMLHandler implements DocHandler {
                     en = new ExpressionNode(kernel, geo);                       
                 } else {
                     // parse argument expressions
-                    en = parser.parseCmdExpression(arg);
+                    en = parser.parseCmdExpression(arg);                    
                 }                                       
                 cmd.addArgument(en);
              } catch (Exception e) {      

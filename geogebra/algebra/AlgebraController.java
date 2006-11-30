@@ -378,6 +378,7 @@ public class AlgebraController
 		try {
 			ValidExpression ve = parser.parse(str);
 			ExpressionNode en = (ExpressionNode) ve;
+			en.resolveVariables();
 			NumberValue nv = (NumberValue) en.evaluate();
 			return nv.getDouble();
 		} catch (Exception e) {

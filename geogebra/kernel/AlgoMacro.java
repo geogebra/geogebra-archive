@@ -12,9 +12,14 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.util.FastHashMapKeyless;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 
 /**
@@ -237,10 +242,7 @@ public class AlgoMacro extends AlgoElement {
 		}				
 		for (int i=0; i < size; i++) {
 			algoGeos[i] = (GeoElement) macroToAlgoMap.get(macroGeos[i]);
-		}				
-		
-		macroToAlgoMap = null;		
-		outputAndReferencedGeos = null;
+		}								
 	}
 	
 	/**
@@ -302,7 +304,7 @@ public class AlgoMacro extends AlgoElement {
 		
 		switch (algoGeo.getGeoClassType()) {				
 			case GeoElement.GEO_CLASS_FUNCTION:
-				// TODO: implement function support
+				initFunction((GeoFunction) macroGeo, (GeoFunction) algoGeo);
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
@@ -392,6 +394,39 @@ public class AlgoMacro extends AlgoElement {
 			initSegment(macroPolySegments[i], polySegments[i]);
 		}
 		poly.setSegments(polySegments);									
+	} 
+	
+	/**
+	 * Makes sure that all referenced GeoElements of geoFun are
+	 * in its construction.
+	 */			
+	final public void initFunction(GeoFunction macroFun, GeoFunction geoFun) {								
+		// geoFun was created as a copy of macroFun, 
+		// so its function-expression references GeoElements in the macro construction
+		// we need to replace these macroGeos by their corresponding algoGeos		
+
+		// give geoFun its own function Variable
+		Function fun = geoFun.getFunction();
+		ExpressionNode exp = fun.getExpression();
+		FunctionVariable fVar = new FunctionVariable(kernel);		
+		exp.replace(fun.getFunctionVariable(), fVar);
+		fun.setExpression(exp, fVar);
+		
+		// get all referenced GeoElements
+		HashSet geoElements = fun.getVariables();
+		if (geoElements == null) return;
+
+		Iterator it = geoElements.iterator();
+		while (it.hasNext()) {
+			GeoElement macroGeo = (GeoElement) it.next();
+			GeoElement algoGeo = getAlgoGeo(macroGeo);
+			fun.replaceGeoElementReference(macroGeo, algoGeo);
+			
+			// TODO: remove
+			System.out.println(this + ", replaced " + macroGeo + " by " + algoGeo);
+		}	
+		
+
 	} 
     
 }

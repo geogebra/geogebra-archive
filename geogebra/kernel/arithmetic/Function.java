@@ -254,6 +254,13 @@ implements ExpressionValue, RealRootFunction, Functional {
 	final public String toLaTeXString(boolean symbolic) {
 		return expression.toLaTeXString(symbolic);		
 	}
+	
+	/**
+     * Replaces every reference to oldGeo by a reference to newGeo in this ExpressionNode tree 
+     */
+	public void replaceGeoElementReference(GeoElement oldGeo, GeoElement newGeo) {
+		expression.replaceGeoElementReference(oldGeo, newGeo);
+	}
     
     /**
      * translate this function by vector (vx, vy)
@@ -674,7 +681,9 @@ implements ExpressionValue, RealRootFunction, Functional {
      */
     final private ExpressionNode evaluateToExpressionNode(String str) {
          try {
-            return  getParser().parseExpression(str);
+            ExpressionNode en = getParser().parseExpression(str);
+            en.resolveVariables();
+            return en;
          }
          catch (Exception e) {
             e.printStackTrace();
@@ -761,8 +770,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }           
         
         try {           
-            // evaluate expression by JSCL
-        	// TODO: remove        
+            // evaluate expression by JSCL        	       
             String result = GeoGebraCAS.evaluateJSCL(sb.toString());       
 			sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
@@ -771,6 +779,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     
              // parse result
              Function fun = getParser().parseFunction(sb.toString());
+             fun.initFunction();
              return fun;
          } catch (Error err) {       
              return null;
@@ -877,6 +886,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     
              // parse result
              Function fun =  getParser().parseFunction(sb.toString());
+             fun.initFunction();
              return fun;
          } catch (Error err) {   
              return null;

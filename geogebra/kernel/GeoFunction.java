@@ -30,12 +30,13 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public boolean trace;
-
-	private Function fun;	
-
+	
+	private Function fun;		
 	private boolean isDefined = true;
+	public boolean trace;
+	
+	// for macros:
+	private Function lastMacroFunction;
 
 	public GeoFunction(Construction c) {
 		super(c);
@@ -70,8 +71,25 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	}
 
 	public void set(GeoElement geo) {
-		fun = new Function(((GeoFunction)geo).fun);
+		GeoFunction geoFun = (GeoFunction) geo;					
+		if (geo.cons == cons) {
+			// geo is in same construction
+			fun = new Function(geoFun.fun);
+		} 
+		else {
+			// geo is from a macro
+			// check if anything has changed
+			if (lastMacroFunction != geoFun.fun) { 	
+				AlgoMacro algo = (AlgoMacro) getParentAlgorithm();
+				algo.initFunction(geoFun, this);
+				lastMacroFunction = geoFun.fun;
+				
+				// TODO: remove
+				System.out.println("set " + this.getDefinitionDescription());
+			}
+		}						
 	}
+	
 
 	public void setFunction(Function f) {
 		fun = f;

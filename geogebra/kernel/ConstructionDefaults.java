@@ -198,6 +198,8 @@ public class ConstructionDefaults {
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
 		
+		//TODO: use geo.getGeoClassType() in switch
+		
 		// free
 		if (geo.isIndependent()) {		
 			if (geo.isGeoPoint())
