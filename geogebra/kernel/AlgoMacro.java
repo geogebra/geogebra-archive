@@ -406,24 +406,32 @@ public class AlgoMacro extends AlgoElement {
 		// we need to replace these macroGeos by their corresponding algoGeos		
 
 		// give geoFun its own function Variable
+		
 		Function fun = geoFun.getFunction();
+		
+		/*
 		ExpressionNode exp = fun.getExpression();
 		FunctionVariable fVar = new FunctionVariable(kernel);		
 		exp.replace(fun.getFunctionVariable(), fVar);
 		fun.setExpression(exp, fVar);
+		*/
 		
 		// get all referenced GeoElements
 		HashSet geoElements = fun.getVariables();
 		if (geoElements == null) return;
 
+		// make sure all referenced GeoElements are in the same construction
 		Iterator it = geoElements.iterator();
 		while (it.hasNext()) {
-			GeoElement macroGeo = (GeoElement) it.next();
-			GeoElement algoGeo = getAlgoGeo(macroGeo);
-			fun.replaceGeoElementReference(macroGeo, algoGeo);
+			GeoElement referencedGeo = (GeoElement) it.next();
+			if (referencedGeo.cons != geoFun.cons) {
+				GeoElement algoGeo = getAlgoGeo(referencedGeo);
+				fun.replaceGeoElementReference(referencedGeo, algoGeo);
+//				 TODO: remove
+				System.out.println(this + ", replaced " + referencedGeo + " by " + algoGeo);
+			}
 			
-			// TODO: remove
-			System.out.println(this + ", replaced " + macroGeo + " by " + algoGeo);
+			
 		}	
 		
 

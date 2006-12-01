@@ -106,6 +106,10 @@ public class Construction {
     	initGeoTable();     	    	
     }
     
+    boolean isMacroConstruction() {
+    	return false;
+    }
+    
     
     
     /**

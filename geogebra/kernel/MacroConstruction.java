@@ -28,6 +28,11 @@ class MacroConstruction extends Construction {
 		reservedLabels = new HashSet();
 	}
 	
+	 final boolean isMacroConstruction() {
+	    return true;
+	 }
+	    
+	
 	/**
 	 * Set construction via XML string.	 
 	 * @return success state

@@ -35,8 +35,8 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	private boolean isDefined = true;
 	public boolean trace;
 	
-	// for macros:
-	private Function lastMacroFunction;
+	// for macro handling in set()
+	private Function lastSetFunction;
 
 	public GeoFunction(Construction c) {
 		super(c);
@@ -71,23 +71,45 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	}
 
 	public void set(GeoElement geo) {
-		GeoFunction geoFun = (GeoFunction) geo;					
-		if (geo.cons == cons) {
-			// geo is in same construction
-			fun = new Function(geoFun.fun);
-		} 
-		else {
-			// geo is from a macro
-			// check if anything has changed
-			if (lastMacroFunction != geoFun.fun) { 	
-				AlgoMacro algo = (AlgoMacro) getParentAlgorithm();
-				algo.initFunction(geoFun, this);
-				lastMacroFunction = geoFun.fun;
-				
-				// TODO: remove
-				System.out.println("set " + this.getDefinitionDescription());
+		GeoFunction geoFun = (GeoFunction) geo;		
+		
+		if (lastSetFunction != geoFun.fun) { 
+			lastSetFunction = geoFun.fun;
+			
+			if (geo.cons == cons) {
+				// STANDARD case: both functions are in the same construction
+				fun = new Function(geoFun.fun);
 			}
-		}						
+			else {
+				// MACRO handling
+				// geo is from another contruction
+	
+				if (cons.isMacroConstruction()) {
+					// CONS -> MACRO
+					// this GeoFunction is part of a macro construction
+					// geo is from another construction
+					// set MACRO INPUT
+					fun = new Function(geoFun.fun);
+					
+					// this GeoFunction is 
+//					 TODO: remove
+					System.out.println("SET macro input: " + this);
+				} 
+				else if (geo.cons.isMacroConstruction()) {
+					// MACRO -> CONS
+					// geo is part of a macro construction
+					// this GeoFunction is from another construction
+					// set MACRO OUTPUT
+					
+					AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+					algoMacro.initFunction(geoFun, this);
+//					 TODO: remove
+					System.out.println("SET macro output: " + this + ", " + algoMacro);
+				}
+			}	
+			
+			
+		}
 	}
 	
 
