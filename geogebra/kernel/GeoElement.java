@@ -449,7 +449,7 @@ public abstract class GeoElement
 		labelMode = geo.labelMode;
 		
 		// style of equation, coordinates, ...
-		if (getClass().isInstance(geo))
+		if (getGeoClassType() == geo.getGeoClassType())
 			toStringMode = geo.toStringMode;
 
 		// colors
