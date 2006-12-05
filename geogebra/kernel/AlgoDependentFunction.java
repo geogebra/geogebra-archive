@@ -53,7 +53,7 @@ public class AlgoDependentFunction extends AlgoElement {
         expression = fun.getExpression();
         expContainsFunctions = containsFunctions(expression);
         if (expContainsFunctions) {
-            expandedFun = new Function(fun);
+            expandedFun = new Function(fun, kernel);
         }
         
         setInputOutput(); // for AlgoElement

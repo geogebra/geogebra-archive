@@ -213,6 +213,7 @@ public abstract class GeoElement
 	private boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
+	boolean isAlgoMacroOutput; // is an output object of a macro construction
 	private boolean fixed = false;
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
@@ -220,9 +221,10 @@ public abstract class GeoElement
 	public double animationStep = 0.1;
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
-	private boolean auxiliaryObject = false;
+	private boolean auxiliaryObject = false;	
 	// on change: see setVisualValues()
 
+	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
 	private boolean highlighted = false;

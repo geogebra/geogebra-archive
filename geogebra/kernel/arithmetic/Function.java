@@ -14,7 +14,6 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.algebra.parser.Parser;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -47,8 +46,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     private boolean isConstantFunction = false; 
     
     transient private Application app;
-    transient private Kernel kernel;
-    transient private Parser parser;
+    transient private Kernel kernel;    
     
     //  function may be limited to interval [a, b] 
     public boolean interval = false; 
@@ -91,25 +89,19 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
     
     // copy constructor
-    public Function(Function f) {   
+    public Function(Function f, Kernel kernel) {   
         expression = f.expression.getCopy();
         fVar = f.fVar; // no deep copy of function variable             
         isBooleanFunction = f.isBooleanFunction;
         isConstantFunction = f.isConstantFunction;
        
-        app = f.app;
-        kernel = f.kernel;
-        parser = f.parser;
+        app = kernel.getApplication();
+        this.kernel = kernel;
     }
-    
-    private Parser getParser() {
-    	if (parser == null)
-    		parser = new Parser(kernel, kernel.getConstruction());
-    	return parser;
-    }
+       
     
     public ExpressionValue deepCopy() {
-        return new Function(this);        
+        return new Function(this, kernel);        
     }
     
     final public ExpressionNode getExpression() {
@@ -255,13 +247,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 		return expression.toLaTeXString(symbolic);		
 	}
 	
-	/**
-     * Replaces every reference to oldGeo by a reference to newGeo in this ExpressionNode tree 
-     */
-	public void replaceGeoElementReference(GeoElement oldGeo, GeoElement newGeo) {
-		expression.replaceGeoElementReference(oldGeo, newGeo);
-	}
-    
+	
     /**
      * translate this function by vector (vx, vy)
      */
@@ -679,9 +665,9 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Parses given String str and tries to evaluate it to an ExpressionNode.
      * Returns null if something went wrong.
      */
-    final private ExpressionNode evaluateToExpressionNode(String str) {
+    private ExpressionNode evaluateToExpressionNode(String str) {
          try {
-            ExpressionNode en = getParser().parseExpression(str);
+            ExpressionNode en = kernel.getTempParser().parseExpression(str);
             en.resolveVariables();
             return en;
          }
@@ -778,7 +764,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             sb.append(result);
     
              // parse result
-             Function fun = getParser().parseFunction(sb.toString());
+             Function fun = kernel.getTempParser().parseFunction(sb.toString());
              fun.initFunction();
              return fun;
          } catch (Error err) {       
@@ -803,8 +789,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         // variable in our function
         right.replace(b.fVar, a.fVar);
         
-        ExpressionNode diffExp= new ExpressionNode(a.kernel,
-                                                            left, ExpressionNode.MINUS, right);
+        ExpressionNode diffExp= new ExpressionNode(a.kernel, left, ExpressionNode.MINUS, right);
         c.setExpression(diffExp);
         c.fVar = a.fVar;
     }
@@ -885,7 +870,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             sb.append(result);
     
              // parse result
-             Function fun =  getParser().parseFunction(sb.toString());
+             Function fun =  kernel.getTempParser().parseFunction(sb.toString());
              fun.initFunction();
              return fun;
          } catch (Error err) {   

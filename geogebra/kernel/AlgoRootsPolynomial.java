@@ -224,7 +224,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         if (f.isDefined() && g.isDefined()) {	         	        
             yValFunction = f.getFunction();
             // get difference f - g
-            Function.difference(f.getFunction(), g.getFunction(), diffFunction);
+            Function.difference(f.getFunction(), g.getFunction(), diffFunction);                                 
             calcRoots(diffFunction, 0);
                                   
             // check if the intersection points are really on the functions

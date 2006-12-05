@@ -22,6 +22,7 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.View;
 import geogebra.algebra.AlgebraController;
+import geogebra.algebra.parser.Parser;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
@@ -88,6 +89,7 @@ public class Kernel {
 	protected Application app;
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
+	private Parser tempParser;
 	
 	private boolean continous = true;
 	private MacroManager macroManager;
@@ -147,17 +149,23 @@ public class Kernel {
 		return cons.showOnlyBreakpoints();
 	}
 	
-	public EquationSolver getEquationSolver() {
+	final public EquationSolver getEquationSolver() {
 		if (eqnSolver == null)
 			eqnSolver = new EquationSolver(this);
 		return eqnSolver;
 	}
 	
-	public ExtremumFinder getExtremumFinder() {
+	final public ExtremumFinder getExtremumFinder() {
 		if (extrFinder == null)
 			extrFinder = new ExtremumFinder();
 		return extrFinder;
 	}
+	
+	final public Parser getTempParser() {
+    	if (tempParser == null)
+    		tempParser = new Parser(this, this.getConstruction());
+    	return tempParser;
+    }
 
 	final public void setEpsilon(double epsilon) {
 		EPSILON = epsilon;

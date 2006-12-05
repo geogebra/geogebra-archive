@@ -75,6 +75,13 @@ public class Macro {
 	}
 	
 	/**
+	 * Returns whether geo is part of this macro's construction.
+	 */
+	final public boolean isInMacroConstruction(GeoElement geo) {
+		return geo.cons == macroCons;
+	}
+	
+	/**
 	 * Updates all algorithms of the macro construction.	
 	 */	
 	final public void updateAllAlgorithms() {
@@ -103,8 +110,7 @@ public class Macro {
 		
 		for (int i=0; i < macroInputLabels.length; i++) {    		
 			macroInput[i] = macroCons.lookupLabel(macroInputLabels[i]);  
-			macroInput[i].setFixed(false);
-			
+			macroInput[i].setFixed(false);			
 			// TODO:remove
 			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
     	}

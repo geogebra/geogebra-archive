@@ -105,11 +105,7 @@ public class Construction {
     	geoTable = new HashMap(200);
     	initGeoTable();     	    	
     }
-    
-    boolean isMacroConstruction() {
-    	return false;
-    }
-    
+         
     
     
     /**

@@ -80,7 +80,7 @@ public class AlgoFunctionInterval extends AlgoElement {
         if (exp != curExp) { 
             // f has changed
             curExp = exp;
-            gfun = new Function(fun);
+            gfun = new Function(fun, kernel);
             g.setFunction(gfun);
         }
                         

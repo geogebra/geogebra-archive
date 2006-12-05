@@ -71,44 +71,16 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	}
 
 	public void set(GeoElement geo) {
-		GeoFunction geoFun = (GeoFunction) geo;		
+		GeoFunction geoFun = (GeoFunction) geo;				
+					
+		fun = new Function(geoFun.fun, kernel);
 		
-		if (lastSetFunction != geoFun.fun) { 
-			lastSetFunction = geoFun.fun;
-			
-			if (geo.cons == cons) {
-				// STANDARD case: both functions are in the same construction
-				fun = new Function(geoFun.fun);
-			}
-			else {
-				// MACRO handling
-				// geo is from another contruction
-	
-				if (cons.isMacroConstruction()) {
-					// CONS -> MACRO
-					// this GeoFunction is part of a macro construction
-					// geo is from another construction
-					// set MACRO INPUT
-					fun = new Function(geoFun.fun);
-					
-					// this GeoFunction is 
-//					 TODO: remove
-					System.out.println("SET macro input: " + this);
-				} 
-				else if (geo.cons.isMacroConstruction()) {
-					// MACRO -> CONS
-					// geo is part of a macro construction
-					// this GeoFunction is from another construction
-					// set MACRO OUTPUT
-					
-					AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-					algoMacro.initFunction(geoFun, this);
-//					 TODO: remove
-					System.out.println("SET macro output: " + this + ", " + algoMacro);
-				}
-			}	
-			
-			
+		// macro OUTPUT
+		if (geo.cons != cons && isAlgoMacroOutput) {			
+			// this object is an output object of AlgoMacro
+			// we need to check the references to all geos in its function's expression
+			AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+			algoMacro.initFunction(geoFun, this);
 		}
 	}
 	

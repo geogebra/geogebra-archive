@@ -151,11 +151,11 @@ implements ExpressionValue {
     	holdsLaTeXtext = flag;
     }
     
-    public ExpressionValue getLeft() {
+    final public ExpressionValue getLeft() {
         return left;
     }
     
-    public void setLeft(ExpressionValue l) {
+    final public void setLeft(ExpressionValue l) {
         left = l;
     }
     
@@ -166,11 +166,11 @@ implements ExpressionValue {
             return new ExpressionNode(kernel, left);
     }
     
-    public ExpressionValue getRight() {
+    final public ExpressionValue getRight() {
         return right;
     }
     
-    public void setRight(ExpressionValue r) {
+    final public void setRight(ExpressionValue r) {
         right = r;
     }
     
@@ -1270,27 +1270,7 @@ implements ExpressionValue {
         return this;
     }
     
-    /**
-     * Replaces every reference to oldGeo by a reference to newGeo in this ExpressionNode tree 
-     */
-    final public void replaceGeoElementReference(GeoElement oldGeo, GeoElement newGeo) {                                                                                                                  
-        // left tree
-    	if (left == oldGeo) {
-            left = newGeo;
-        } else if (left.isExpressionNode()) {
-        	((ExpressionNode) left).replaceGeoElementReference(oldGeo, newGeo);
-        }         
-        
-        // right tree
-        if (right != null) {
-        	if (right == oldGeo) {
-            	right = newGeo;
-            }
-        	else if (right.isExpressionNode()) {
-            	((ExpressionNode) right).replaceGeoElementReference(oldGeo, newGeo);
-            } 
-        }                
-    }
+   
     
     /** 
      * Returns true when the given object is found in this expression tree.

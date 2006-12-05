@@ -26,12 +26,7 @@ class MacroConstruction extends Construction {
 		super(kernel, kernel.getParentKernel().getConstruction());
 		parentCons = kernel.getParentKernel().getConstruction();
 		reservedLabels = new HashSet();
-	}
-	
-	 final boolean isMacroConstruction() {
-	    return true;
-	 }
-	    
+	}		   
 	
 	/**
 	 * Set construction via XML string.	 

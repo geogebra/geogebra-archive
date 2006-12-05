@@ -13,6 +13,7 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.util.FastHashMapKeyless;
@@ -202,7 +203,8 @@ public class AlgoMacro extends AlgoElement {
 			output[i] = macroOutput[i].copyInternal();
 			output[i].setConstruction(cons);
 			output[i].setUseVisualDefaults(false);
-			output[i].setVisualStyle(macroOutput[i]);				
+			output[i].setVisualStyle(macroOutput[i]);	
+			output[i].isAlgoMacroOutput = true;
     	}
 	}
 	
@@ -402,39 +404,43 @@ public class AlgoMacro extends AlgoElement {
 	 */			
 	final public void initFunction(GeoFunction macroFun, GeoFunction geoFun) {								
 		// geoFun was created as a copy of macroFun, 
-		// so its function-expression references GeoElements in the macro construction
-		// we need to replace these macroGeos by their corresponding algoGeos		
-
-		// give geoFun its own function Variable
-		
-		Function fun = geoFun.getFunction();
-		
-		/*
-		ExpressionNode exp = fun.getExpression();
-		FunctionVariable fVar = new FunctionVariable(kernel);		
-		exp.replace(fun.getFunctionVariable(), fVar);
-		fun.setExpression(exp, fVar);
-		*/
-		
-		// get all referenced GeoElements
-		HashSet geoElements = fun.getVariables();
-		if (geoElements == null) return;
-
-		// make sure all referenced GeoElements are in the same construction
-		Iterator it = geoElements.iterator();
-		while (it.hasNext()) {
-			GeoElement referencedGeo = (GeoElement) it.next();
-			if (referencedGeo.cons != geoFun.cons) {
-				GeoElement algoGeo = getAlgoGeo(referencedGeo);
-				fun.replaceGeoElementReference(referencedGeo, algoGeo);
-//				 TODO: remove
-				System.out.println(this + ", replaced " + referencedGeo + " by " + algoGeo);
-			}
-			
-			
-		}	
-		
-
+		// make sure all referenced GeoElements are from the algo-construction
+		replaceReferencedMacroObjects(geoFun.getFunction().getExpression());
 	} 
+	
+	/**
+	 * Replaces all references to macroGeos in expression exp by references to the corresponding
+	 * algoGeos
+	 */
+	private void replaceReferencedMacroObjects(ExpressionNode exp) {
+		ExpressionValue left = exp.getLeft();
+		ExpressionValue right = exp.getRight();
+		
+		// left tree
+		if (left.isGeoElement()) {								
+			GeoElement referencedGeo = (GeoElement) left;			
+			if (macro.isInMacroConstruction(referencedGeo)) {		
+				exp.setLeft(getAlgoGeo(referencedGeo));				
+			}	
+		}
+		else if (left.isExpressionNode()) {
+			replaceReferencedMacroObjects((ExpressionNode) left);
+		}		
+		
+		// right tree
+		if (right == null) 
+			return;
+		else if (right.isGeoElement()) {
+			GeoElement referencedGeo = (GeoElement) right;
+			if (macro.isInMacroConstruction(referencedGeo)) {		
+				exp.setRight(getAlgoGeo(referencedGeo));		
+			}	
+		}
+		else if (right.isExpressionNode()) {
+			replaceReferencedMacroObjects((ExpressionNode) right);
+		}		
+	}
+	
+	
     
 }
