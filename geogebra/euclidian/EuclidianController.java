@@ -1933,7 +1933,10 @@ final public class EuclidianController implements MouseListener,
 		// first hit is a line
 		if (a.isGeoLine()) {
 			if (b.isGeoLine())
-				return kernel.IntersectLines(null, (GeoLine) a, (GeoLine) b);
+				if (!((GeoLine) a).linDep((GeoLine) b))
+					return kernel.IntersectLines(null, (GeoLine) a, (GeoLine) b);
+				else 
+					return null;
 			else if (b.isGeoConic())
 				return kernel.IntersectLineConicSingle(null, (GeoLine) a,
 						(GeoConic) b, xRW, yRW);

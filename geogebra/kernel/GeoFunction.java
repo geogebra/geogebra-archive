@@ -32,7 +32,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	private static final long serialVersionUID = 1L;
 	
 	private Function fun;		
-	private boolean isDefined = true;
+	protected boolean isDefined = true;
 	public boolean trace;
 	
 	// for macro handling in set()
@@ -92,6 +92,17 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	final public Function getFunction() {
 		return fun;
 	}	
+	
+	/**
+	 * Returns the corresponding Function for the given x-value.
+	 * This is important for conditional functions where we have
+	 * two differen Function objects.
+	 * @param startValue
+	 * @return
+	 */
+	public Function getFunction(double x) {
+		return fun;
+	}
 	
 	/**
 	 * Set this function to the n-th derivative of f
@@ -154,7 +165,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	}
 	
 	final public boolean isTranslateable() {
-		return true;
+		return fun != null && !isBooleanFunction();
 	}
 	
 	final public void translate(double vx, double vy) {
@@ -225,6 +236,13 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 		else
 			return app.getPlain("undefined");
 	}	
+	
+	public String toSymbolicString() {	
+		if (fun != null)
+			return fun.toString();
+		else
+			return app.getPlain("undefined");
+	}
 	
 	public String toLaTeXString(boolean symbolic) {
 		if (isDefined())

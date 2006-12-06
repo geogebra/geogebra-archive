@@ -69,7 +69,7 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
             rootPoint.setUndefined();
         } else {
             // get difference f - g            
-        	Function.difference(f.getFunction(), g.getFunction(), diffFunction);         
+        	Function.difference(f.getFunction(startPoint.inhomX), g.getFunction(startPoint.inhomX), diffFunction);         
             double x = calcRoot(diffFunction, startPoint.inhomX);
                
             // check if x and g(x) are defined 

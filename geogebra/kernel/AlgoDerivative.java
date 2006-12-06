@@ -47,7 +47,7 @@ public class AlgoDerivative extends AlgoElement {
         if (order != null)
             orderGeo = order.toGeoElement();
 
-        g = new GeoFunction(cons); // output
+        g = (GeoFunction) f.copyInternal();  // output
         setInputOutput(); // for AlgoElement    
         compute();
         g.setLabel(label);
@@ -121,7 +121,7 @@ public class AlgoDerivative extends AlgoElement {
             sb.append(": ");
             sb.append(g.getLabel());
             sb.append("(x) = ");
-            sb.append(g.getFunction().toString());
+    		sb.append(g.toSymbolicString());            
         }
         return sb.toString();
     }

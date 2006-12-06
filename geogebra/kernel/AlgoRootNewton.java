@@ -85,9 +85,11 @@ public class AlgoRootNewton extends AlgoElement {
         if (!(f.isDefined() && startGeo.isDefined())) {
             rootPoint.setUndefined();
         } else {
-            // try to get derivative        
-            Function fun = f.getFunction();
-            rootPoint.setCoords(calcRoot(fun, start.getDouble()), 0.0, 1.0);                       
+        	double startValue = start.getDouble();
+        	Function fun = f.getFunction(startValue);        	
+        	
+            // try to get derivative            
+            rootPoint.setCoords(calcRoot(fun, startValue), 0.0, 1.0);                       
         }
     }
 

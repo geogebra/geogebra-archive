@@ -3534,7 +3534,7 @@ class CmdIf extends CommandProcessor {
                 // boolean function in x as condition 
                 //   example: If[ x < 2, x^2, x + 2 ]
                 // DO NOT change instanceof here (see GeoFunction.isGeoFunctionable())
-                else if (ok[0] = (arg[0].isGeoFunction())) {
+                else if (ok[0] = (arg[0] instanceof GeoFunction)) {
                 	GeoFunction booleanFun = (GeoFunction) arg[0];
                 	if ((ok[0] = booleanFun.isBooleanFunction()) &&
                 		(ok[1] = arg[1].isGeoFunctionable()) &&
