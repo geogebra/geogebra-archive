@@ -85,7 +85,7 @@ public class Macro {
 	 * Updates all algorithms of the macro construction.	
 	 */	
 	final public void updateAllAlgorithms() {
-		macroCons.updateAllAlgorithms();
+		macroCons.updateAllAlgorithms();		
 	}
 	
 	public void initMacro(Construction macroCons, String [] inputLabels, String [] outputLabels) {				

@@ -122,7 +122,7 @@ public class AlgoMacro extends AlgoElement {
     	startTime = System.currentTimeMillis(); 
 		
 		// update all algorithms of macro-construction
-    	macro.updateAllAlgorithms();   
+    	macro.updateAllAlgorithms();
     	
 //   	 TODO:remove
         endTime = System.currentTimeMillis(); 
@@ -162,9 +162,10 @@ public class AlgoMacro extends AlgoElement {
 	final void setMacroConstructionState() {									
 		// set input objects of macro construction		
 		for (int i=0; i < macroInput.length; i++) {   
-			macroInput[i].set(input[i]);							
-			// TODO: remove
-			//System.out.println("SET input object: " + macroInput[i]);
+			macroInput[i].set(input[i]);
+
+			// TODO: remove		
+			//System.out.println("SET input object: " + input[i] + " => " + macroInput[i]);
     	}		
 	}
 
@@ -304,7 +305,7 @@ public class AlgoMacro extends AlgoElement {
 	 */	
 	private void initSpecialReferences(GeoElement macroGeo, GeoElement algoGeo) {
 		
-		switch (algoGeo.getGeoClassType()) {				
+		switch (macroGeo.getGeoClassType()) {				
 			case GeoElement.GEO_CLASS_FUNCTION:
 				initFunction((GeoFunction) macroGeo, (GeoFunction) algoGeo);
 				break;

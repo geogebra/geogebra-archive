@@ -121,9 +121,9 @@ implements EuclidianViewAlgo {
         // dependens on input
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);            
-        }      
-        setOutputDependencies();                
+        }    
         
+        setOutputDependencies();                
         cons.addToAlgorithmList(this); 
     }
     
@@ -140,10 +140,11 @@ implements EuclidianViewAlgo {
         	efficientInput[i].addToUpdateSetOnly(this);            
         }
         
-        setOutputDependencies();
-        
         // input is standardInput
         input = standardInput;
+        
+        setOutputDependencies();
+        cons.addToAlgorithmList(this); 
     }
     
     private void setOutputDependencies() {
