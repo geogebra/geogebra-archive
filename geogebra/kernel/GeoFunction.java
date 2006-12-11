@@ -33,10 +33,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 	
 	private Function fun;		
 	protected boolean isDefined = true;
-	public boolean trace;
-	
-	// for macro handling in set()
-	private Function lastSetFunction;
+	public boolean trace;	
 
 	public GeoFunction(Construction c) {
 		super(c);

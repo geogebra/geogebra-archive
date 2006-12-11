@@ -275,6 +275,7 @@ public class AlgoMacro extends AlgoElement {
 	 * the map automatically.
 	 */
 	private GeoElement getAlgoGeo(GeoElement macroGeo) {
+		if (macroGeo == null) return null;
 		GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);
 		
 		// if we don't have a corresponding GeoElement in our map yet, 
@@ -311,15 +312,17 @@ public class AlgoMacro extends AlgoElement {
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-				// TODO: implement function conditional support
+				// done by set() in GeoFunctionConditional 
+				// actually a GeoFunctionConditional consists of three GeoFunction objects,
+				// so initFunction() is eventually used for them
 				break;
 				
 			case GeoElement.GEO_CLASS_IMAGE:
-				// TODO: implement image support
+				initImage((GeoImage) macroGeo, (GeoImage) algoGeo);
 				break;
 				
 			case GeoElement.GEO_CLASS_LIST:
-				// TODO: implement list support
+				initList((GeoList) macroGeo, (GeoList) algoGeo);
 				break;
 			
 			case GeoElement.GEO_CLASS_POLYGON:
@@ -335,11 +338,11 @@ public class AlgoMacro extends AlgoElement {
 				break;
 
 			case GeoElement.GEO_CLASS_TEXT:
-				// TODO: implement list support
+				initLocateable((GeoText) macroGeo, (GeoText) algoGeo);
 				break;
 
 			case GeoElement.GEO_CLASS_VECTOR:
-				// TODO: implement list support
+				initLocateable((GeoVector) macroGeo, (GeoVector) algoGeo);
 				break;										
 				
 			default:
@@ -375,6 +378,30 @@ public class AlgoMacro extends AlgoElement {
 		segment.setStartPoint(startPoint);
 		segment.setEndPoint(endPoint);					
 	}
+
+	/**
+	 * Makes sure that the start point of locateable is
+	 * in its construction.
+	 */	
+	private void initLocateable(Locateable macroLocateable, Locateable locateable) {
+		GeoPoint startPoint = (GeoPoint) getAlgoGeo(macroLocateable.getStartPoint());	
+		try {
+			locateable.setStartPoint(startPoint);
+		} catch (Exception e) {
+			System.err.println("AlgoMacro.initLocateable:\n" + e.getStackTrace());
+		}
+	}
+	
+	/**
+	 * Makes sure that the start point of locateable is
+	 * in its construction.
+	 */	
+	private void initImage(GeoImage macroImg, GeoImage img) {
+		for (int i=0; i < 2; i++) {
+			GeoPoint corner = (GeoPoint) getAlgoGeo(macroImg.getCorner(i));
+			img.setCorner(corner, i);
+		}		
+	}
 	
 	/**
 	 * Makes sure that the points and segments of poly are
@@ -400,6 +427,21 @@ public class AlgoMacro extends AlgoElement {
 	} 
 	
 	/**
+	 * Makes sure that all referenced GeoElements of geoList are
+	 * in its construction.
+	 */			
+	final public void initList(GeoList macroList, GeoList geoList) {			
+		// make sure all referenced GeoElements are from the algo-construction
+		
+		int size = macroList.size();
+		geoList.clear();
+		geoList.ensureCapacity(size);
+		for (int i=0; i < size; i++) {	
+			geoList.add( getAlgoGeo(macroList.get(i)) );				
+		}			
+	} 
+	
+	/**
 	 * Makes sure that all referenced GeoElements of geoFun are
 	 * in its construction.
 	 */			
@@ -408,7 +450,7 @@ public class AlgoMacro extends AlgoElement {
 		// make sure all referenced GeoElements are from the algo-construction
 		replaceReferencedMacroObjects(geoFun.getFunction().getExpression());
 	} 
-	
+		
 	/**
 	 * Replaces all references to macroGeos in expression exp by references to the corresponding
 	 * algoGeos

@@ -39,6 +39,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_FUNCTION = 60;		
 	public static final int DEFAULT_POLYGON = 70;
 	public static final int DEFAULT_LOCUS = 80;
+	public static final int DEFAULT_LIST = 90;
 			
 	
 	// DEFAULT COLORs
@@ -176,7 +177,12 @@ public class ConstructionDefaults {
 		locus.setObjColor(colLocus);
 		locus.setAlgebraVisible(false);
 		locus.setLabelVisible(false);
-		defaultGeoElements.put(DEFAULT_LOCUS, locus);		
+		defaultGeoElements.put(DEFAULT_LOCUS, locus);	
+		
+		// list
+		GeoList list = new GeoList(cons);
+		list.setLabelVisible(false);
+		defaultGeoElements.put(DEFAULT_LIST, list);	
 	}
 	
 	/**
@@ -197,9 +203,7 @@ public class ConstructionDefaults {
 		// all object types that are not specifically supported
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
-		
-		//TODO: use geo.getGeoClassType() in switch
-		
+				
 		// free
 		if (geo.isIndependent()) {		
 			if (geo.isGeoPoint())
@@ -213,7 +217,9 @@ public class ConstructionDefaults {
 			else if (geo.isGeoFunction())
 				type = DEFAULT_FUNCTION;		
 			else if (geo.isGeoNumeric())
-				type = DEFAULT_NUMBER;				
+				type = DEFAULT_NUMBER;		
+			else if (geo.isGeoList()) 
+				type = DEFAULT_LIST;
 		} 
 		
 		// dependent
@@ -241,6 +247,8 @@ public class ConstructionDefaults {
 				type = DEFAULT_NUMBER;	
 			else if (geo.isGeoLocus())
 				type = DEFAULT_LOCUS;	
+			else if (geo.isGeoList()) 
+				type = DEFAULT_LIST;
 		}
 		
 		// default

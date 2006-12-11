@@ -43,13 +43,11 @@ public class GeoList extends GeoElement implements ListValue {
     
     public GeoList(Construction c) { 
     	super(c);     	
-    	geoList = new ArrayList();    	
-    	
-    	setLabelVisible(false);
+    	geoList = new ArrayList();    	    	
     }
              
     public GeoList(GeoList list) {
-    	super(list.cons);
+    	this(list.cons);
         set(list);
     }
     
@@ -70,12 +68,25 @@ public class GeoList extends GeoElement implements ListValue {
     } 
     
     public void set(GeoElement geo) {
-    	// TODO: check
-        GeoList l = (GeoList) geo;  
-        
-        // copy geoList        
-        geoList = new ArrayList(l.geoList.size());
-    	geoList.addAll(l.geoList);                        	               
+        GeoList l = (GeoList) geo;                 
+               
+		if (l.cons != cons && isAlgoMacroOutput) {
+			// MACRO CASE
+			// this object is an output object of AlgoMacro
+			// we need to check the references to all geos in the list
+			AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+			algoMacro.initList(l, this);			
+		} 
+		else {
+			// STANDARD CASE
+			// copy geoList                
+	        int size = l.geoList.size();
+	        geoList.clear();
+	        geoList.ensureCapacity(size);
+	        for (int i=0; i < size; i++) {
+	        	geoList.add(l.geoList.get(i));
+	        }
+		}
     }    
     
     /**
@@ -148,11 +159,15 @@ public class GeoList extends GeoElement implements ListValue {
     /**
      * Returns the element at the specified position in this list.
      */
-    public GeoElement get(int index) {
+    final public GeoElement get(int index) {
     	return (GeoElement) geoList.get(index);
     }       
     
-    public final int size() {
+    final public void ensureCapacity(int size) {
+    	geoList.ensureCapacity(size);
+    }
+    
+    final public int size() {
     	return geoList.size();
     }
             

@@ -60,23 +60,26 @@ public class GeoFunctionConditional extends GeoFunction {
 		return new GeoFunctionConditional(this);
 	}
 	
-	public void set(GeoElement geo) {
+	public void set(GeoElement geo) {				
 		GeoFunctionConditional geoFunCond = (GeoFunctionConditional) geo;
 			
-		if (condFun == null) {
+		if (condFun == null) 
 			condFun = new GeoFunction(geoFunCond.condFun);
-		}
+		else 
+			condFun.set(geoFunCond.condFun);
 		
-		if (ifFun == null) {
+		if (ifFun == null)
 			ifFun = new GeoFunction(geoFunCond.ifFun);
-		}
+		else
+			ifFun.set(geoFunCond.ifFun);
 		
 		if (geoFunCond.elseFun == null) {
 			elseFun = null;
 		} else {
-			if (elseFun == null) {
+			if (elseFun == null)
 				elseFun = new GeoFunction(geoFunCond.elseFun);
-			}
+			else
+				elseFun.set(geoFunCond.elseFun);
 		}
 	}		
 	

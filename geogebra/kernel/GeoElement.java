@@ -1869,7 +1869,7 @@ public abstract class GeoElement
 		sb.append(labelVisible);
 		sb.append("\"");
 		sb.append("/>\n");
-
+		
 		sb.append("\t<objColor");
 		sb.append(" r=\"");
 		sb.append(objColor.getRed());
