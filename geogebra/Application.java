@@ -125,7 +125,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "8. December 2006";
+    public static final String buildDate = "12. December 2006";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -147,8 +147,10 @@ public class Application {
     // supported GUI languages (from properties files)
     private static ArrayList supportedLocales = new ArrayList();
     static {
+    	supportedLocales.add( new Locale("ar") );           // Arabic
     	supportedLocales.add( new Locale("eu") );           // Basque
     	supportedLocales.add( new Locale("bs") );          	// Bosnian
+    	supportedLocales.add( new Locale("bg") );          	// Bulgarian
     	supportedLocales.add( new Locale("ca") );           // Catalan
         supportedLocales.add( new Locale("zh") );          	// Chinese
         supportedLocales.add( new Locale("hr") );          	// Croatian
@@ -171,7 +173,8 @@ public class Application {
         supportedLocales.add( new Locale("sr") );           	// Serbian
         supportedLocales.add( new Locale("sk") );          	// Slovakian  
         supportedLocales.add( new Locale("sl") );           	// Slovenian
-        supportedLocales.add( new Locale("es") );          	// Spanish         
+        supportedLocales.add( new Locale("es") );          	// Spanish   
+        supportedLocales.add( new Locale("tr") );          	// Turkish
     }    
     
     // specialLanguageNames: Java does show an English name for all languages
