@@ -82,6 +82,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue {
 	public void set(GeoElement geo) {
 		GeoBoolean b = (GeoBoolean) geo;
 		setValue(b.value);
+		isDefined = b.isDefined;
 	}
 
 	final public void setUndefined() {

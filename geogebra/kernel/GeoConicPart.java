@@ -76,13 +76,15 @@ implements LimitedPath, NumberValue {
 	
 	public GeoElement copyInternal() {
 		GeoConicPart ret = new GeoConicPart(cons, conic_part_type);
-		ret.setInternal(this);
+		ret.set(this);
 		return ret;
 	}
 	
-	public void setInternal(GeoElement geo) {		
-		GeoConicPart cp = (GeoConicPart) geo;		
-		super.set(cp);
+	public void set(GeoElement geo) {		
+		super.set(geo);
+		if (!geo.isGeoConicPart()) return;
+		
+		GeoConicPart cp = (GeoConicPart) geo;				
 
 		// class specific attributes
 		paramStart = cp.paramStart;
@@ -92,7 +94,18 @@ implements LimitedPath, NumberValue {
 		conic_part_type = cp.conic_part_type;
 		
 		value = cp.value;
-		value_defined = cp.value_defined;		
+		value_defined = cp.value_defined;	
+		
+		keepTypeOnGeometricTransform = cp.keepTypeOnGeometricTransform;
+	}
+	
+	public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);
+		
+		if (geo.isGeoConicPart()) { 
+			GeoConicPart cp = (GeoConicPart) geo;
+			allowOutlyingIntersections = cp.allowOutlyingIntersections;
+		}
 	}
 	
 	final public int getConicPartType() {

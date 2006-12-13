@@ -78,18 +78,34 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	 
 	public GeoElement copyInternal() {
 		GeoSegment seg = new GeoSegment(cons, startPoint, endPoint);
-		seg.setInternal(this);
+		seg.set(this);
 		return seg;
-	}
+	}		
 	
-	public void setInternal(GeoElement geo) {
-		GeoSegment seg = (GeoSegment) geo;
-				
-		setStartPoint(seg.startPoint);
-		setEndPoint(seg.endPoint);
-		length = seg.length;
-		defined = seg.defined;
-		super.set(seg);
+	public void set(GeoElement geo) {
+		super.set(geo);		
+		if (!geo.isGeoSegment()) return;
+		
+		GeoSegment seg = (GeoSegment) geo;				
+        length = seg.length;
+        defined = seg.defined;      
+    	keepTypeOnGeometricTransform = seg.keepTypeOnGeometricTransform; 
+        
+    	// macro output: don't set start and end point
+    	if (geo.cons != cons && isAlgoMacroOutput) 
+    		return;
+    	
+    	setStartPoint(seg.startPoint);
+    	setEndPoint(seg.endPoint);    		
+	}   
+
+	public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);
+		
+		if (geo.isGeoSegment()) { 
+			GeoSegment seg = (GeoSegment) geo;
+			allowOutlyingIntersections = seg.allowOutlyingIntersections;
+		}
 	}
 	
 	/** 

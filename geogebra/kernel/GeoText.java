@@ -52,9 +52,11 @@ implements Locateable, AbsoluteScreenLocateable {
 	public void set(GeoElement geo) {
 		GeoText gt = (GeoText) geo;
 		str = gt.str;
-
-		// macro: don't set start point
-		if (cons != geo.cons) return;
+		isLaTeX = gt.isLaTeX;
+		
+		// macro output: don't set start point
+		if (cons != geo.cons && isAlgoMacroOutput) 
+			return;
 	
 		try {
 			if (gt.startPoint != null) {
@@ -70,6 +72,17 @@ implements Locateable, AbsoluteScreenLocateable {
 		catch (CircularDefinitionException e) {
 			System.err.println("set GeoText: CircularDefinitionException");
 		}		
+	}
+	
+	public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);		
+		if (!geo.isGeoText()) return;
+		
+		GeoText text = (GeoText) geo;		
+		serifFont = text.serifFont;
+		fontStyle = text.fontStyle;
+		fontSize = text.fontSize;
+		printDecimals = text.printDecimals;	
 	}
 	
 	final public void setTextString(String text) {

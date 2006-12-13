@@ -62,6 +62,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	public void set(GeoElement geo) {				
 		GeoFunctionConditional geoFunCond = (GeoFunctionConditional) geo;
+		isDefined = geoFunCond.isDefined;
 			
 		if (condFun == null) 
 			condFun = new GeoFunction(geoFunCond.condFun);

@@ -232,11 +232,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
         return isIndependent() || isDefined();        
     }                
     
-    public void set(GeoElement geo) {    
-        GeoLine l = (GeoLine) geo;                
-        toStringMode = l.toStringMode;
-        parameter = l.parameter;
-        super.set(geo);
+    public void set(GeoElement geo) { 
+    	super.set(geo);
+    	
+        GeoLine l = (GeoLine) geo;                      
+        parameter = l.parameter;        
     }    
     
     /** 

@@ -89,7 +89,34 @@ implements Path, VectorValue, Locateable, Rotateable {
 		 x = v.x;
 		 y = v.y;
 		 z = v.z;
-	 } 
+	} 
+	
+	public void set(GeoElement geo) {
+		super.set(geo);	
+		if (!geo.isGeoVector()) return;
+		
+		GeoVector vec = (GeoVector) geo;		
+	
+		// don't set start point for macro output
+		// see AlgoMacro.initRay()
+		if (geo.cons != cons && isAlgoMacroOutput)
+			return;
+	
+		try {
+			if (vec.startPoint != null) {
+				if (vec.hasAbsoluteLocation()) {
+					//	create new location point	
+					setStartPoint(new GeoPoint(vec.startPoint));
+				} else {
+					//	take existing location point	
+					setStartPoint(vec.startPoint);
+				}
+			}
+		}
+		catch (CircularDefinitionException e) {
+			System.err.println("set GeoVector: CircularDefinitionException");
+		}		
+	}
     
     public GeoElement copy() {
         return new GeoVector(this);        

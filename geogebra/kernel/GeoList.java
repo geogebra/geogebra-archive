@@ -89,6 +89,15 @@ public class GeoList extends GeoElement implements ListValue {
 		}
     }    
     
+    public void setVisualStyle(GeoElement geo) {
+    	// TODO: think about this
+    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+        	((GeoElement) geoList.get(i)).setVisualStyle(geo);
+        }
+    }
+    
     /**
      * Returns this GeoList as a MyList object.
      */

@@ -173,14 +173,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	/** geo is expected to be a conic. make deep copy of
 	 * member vars of geo.
 	 */
-	final public void set(GeoElement geo) {
-		set((GeoConic) geo);
-	}
-
-	/** 
-	 * deep copy of member vars of co
-	 */
-	final public void set(GeoConic co) {
+	public void set(GeoElement geo) {
+		GeoConic co =(GeoConic) geo;
+	
 		// copy everything
 		mode = co.mode;
 		type = co.type;
@@ -1741,22 +1736,22 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			case GeoConic.CONIC_CIRCLE:
 			  	// x^2 + y^2 = r^2
 				double radius2 = halfAxes[0]*halfAxes[0];
-			  	result = kernel.isEqual(px*px/radius2 + py*py/radius2, 1, eps);
+			  	result = Kernel.isEqual(px*px/radius2 + py*py/radius2, 1, eps);
 				break;		   					
 		  	
 			case GeoConic.CONIC_ELLIPSE:
           		// x^2/a^2 + y^2/b^2 = 1
-			  	result = kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]) + py*py / (halfAxes[1]*halfAxes[1]), 1, eps);
+			  	result = Kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]) + py*py / (halfAxes[1]*halfAxes[1]), 1, eps);
 				break;	
 				
 			case GeoConic.CONIC_HYPERBOLA:   
 	          	// 	x^2/a^2 - y^2/b^2 = 1
-			  	result = kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]), 1 + py*py / (halfAxes[1]*halfAxes[1]), eps);
+			  	result = Kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]), 1 + py*py / (halfAxes[1]*halfAxes[1]), eps);
 				break;	
 				
 			case GeoConic.CONIC_PARABOLA: 
           		// y^2 = 2 p x								               
-                result = kernel.isEqual(py*py, 2*p*px, eps);
+                result = Kernel.isEqual(py*py, 2*p*px, eps);
 				break;	
 		}
 			

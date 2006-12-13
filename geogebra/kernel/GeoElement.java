@@ -340,16 +340,7 @@ public abstract class GeoElement
 	public GeoElement copyInternal() {
 		// default implementation: changed in some subclasses
 		return copy();
-	}
-
-	/** 
-	 * every subclass implements it's own set internal method 
-	 * This method will only work for GeoElements of the 
-	 * SAME CLASS as this GeoElement
-	 */
-	public void setInternal(GeoElement geo) {
-		set(geo);
-	}
+	}	
 	
 	public ExpressionValue deepCopy() {
 		//default implementation: changed in some subclasses
@@ -1223,11 +1214,7 @@ public abstract class GeoElement
 
 		// texts need updates
 		algebraStringsNeedUpdate();			
-		    
-		// TODO: remove
-		//if (isGeoSegment())
-		//	System.out.println("update: " + this + ", " + this.cons);
-		
+		    		
 		kernel.notifyUpdate(this);	        			
 	}
 	

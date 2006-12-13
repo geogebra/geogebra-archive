@@ -88,8 +88,9 @@ implements Locateable, AbsoluteScreenLocateable,
 		GeoImage img = (GeoImage) geo;
 		setFileName(img.fileName);
 		
-		// macro: don't set corners
-		if (cons != geo.cons) return;
+		// macro output: don't set corners
+		if (cons != geo.cons && isAlgoMacroOutput) 
+			return;
 		
 		// location settings
 		hasAbsoluteScreenLocation = img.hasAbsoluteScreenLocation;
@@ -110,6 +111,14 @@ implements Locateable, AbsoluteScreenLocateable,
 					corners[i] = tempPoints[i];
 				}
 			}
+		}
+	}
+	
+	public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);
+		
+		if (geo.isGeoImage()) {
+			inBackground = ((GeoImage)geo).inBackground;
 		}
 	}
 	

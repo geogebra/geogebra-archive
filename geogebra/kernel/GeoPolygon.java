@@ -74,21 +74,22 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 	
 	public GeoElement copyInternal() {
 		GeoPolygon ret = new GeoPolygon(cons, points); 
-		ret.setInternal(this);
+		ret.set(this);
 		return ret;		
-	} 
-	
-	public void setInternal(GeoElement geo) {
-		GeoPolygon poly = (GeoPolygon) geo;
-		points = poly.points;
-		segments = poly.segments;
-		set(geo);	
-	}
+	} 		
 	
 	public void set(GeoElement geo) {
 		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
 		defined = poly.defined;	
+	
+		// don't set points and segments for macro output
+		// see AlgoMacro.initPolygon()
+		if (geo.cons != cons && isAlgoMacroOutput) 
+			return;
+		
+		points = poly.points;
+		segments = poly.segments;		
 	}
 
 	public GeoPoint [] getPoints() {

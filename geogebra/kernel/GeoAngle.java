@@ -101,6 +101,18 @@ public final class GeoAngle extends GeoNumeric {
         setValue(num.getValue());     
     }    
     
+    public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);
+		
+		if (geo.isGeoAngle()) {
+			GeoAngle ang = (GeoAngle) geo;
+			arcSize = ang.arcSize;
+			allowReflexAngle = ang.allowReflexAngle;
+			emphasizeRightAngle = ang.emphasizeRightAngle;
+		}
+	}
+    
+    
     /**
      * Sets the value of this angle. Every value
      * is limited between 0 and 2pi. If allowReflexAngle() is false
@@ -143,13 +155,7 @@ public final class GeoAngle extends GeoNumeric {
         return angle;
     }
     
-	public void setVisualStyle(GeoElement geo) {
-		super.setVisualStyle(geo);
-		
-		if (geo.isGeoAngle()) {
-			allowReflexAngle = ((GeoAngle) geo).allowReflexAngle;
-		}
-	}
+	
     
     
     /**

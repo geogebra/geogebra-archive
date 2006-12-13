@@ -79,12 +79,12 @@ public class AlgoIf extends AlgoElement {
     final void compute() {	 
     	try {
 	    	if (condition.getBoolean()) {
-	    		result.setInternal(ifGeo);
+	    		result.set(ifGeo);
 	    	} else {
 	    		if (elseGeo == null)
 	    			result.setUndefined();
 	    		else
-	    			result.setInternal(elseGeo);
+	    			result.set(elseGeo);
 	    	}    	
     	} catch (Exception e) {
     		result.setUndefined();

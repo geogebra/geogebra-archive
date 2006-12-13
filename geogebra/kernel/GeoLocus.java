@@ -27,25 +27,21 @@ public class GeoLocus extends GeoElement {
 			
 	public GeoElement copy() {
 		GeoLocus ret =  new GeoLocus(cons);
-		ret.setInternal(this);
+		ret.set(this);
 		return ret; 
 	}
 
 	public void set(GeoElement geo) {
-	//	GeoLocus gt = (GeoLocus) geo;		
-	}
-	
-	public void setInternal(GeoElement geo) {
-		GeoLocus locus = (GeoLocus) geo;	
-		
+		GeoLocus locus = (GeoLocus) geo;			
 		defined = locus.defined;		
 		
-		// coords of points on locus
-		if (locus.cons == cons)
-			myPointList = locus.myPointList;
-		else {
+		if (locus.cons != cons && isAlgoMacroOutput) {
+			// MACRO output
 			myPointList.clear();
 			myPointList.addAll(locus.myPointList);
+		} else {
+			// STANDARD case
+			myPointList = locus.myPointList;
 		}
 	}
 		
