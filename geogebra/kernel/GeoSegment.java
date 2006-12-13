@@ -137,7 +137,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		sbToString.append(kernel.format(length));
 	   return sbToString.toString();
    }      
-   private StringBuffer sbToString = new StringBuffer(50);
+   private StringBuffer sbToString = new StringBuffer(30);
    
    final public String toValueString() {
 	   return kernel.format(length);

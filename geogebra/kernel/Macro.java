@@ -161,10 +161,23 @@ public class Macro {
 		// 5) create XML representation for macro-construction
 		// 6) create a new macro-construction from this XML representation
 		
-		// 1) create the set of all parents of this macro's output objects
+		// 1) create the set of all parents of this macro's output objects				
 		TreeSet outputParents = new TreeSet();		
 		for (int i=0; i < output.length; i++) {
-			 output[i].addPredecessorsToSet(outputParents, false);			
+			 output[i].addPredecessorsToSet(outputParents, false);
+			 
+			 // note: Locateables (like Texts, Images, Vectors) may depend on points, 
+			 //       these points must be part of the macro construction
+			 if (output[i] instanceof Locateable) {
+				 Locateable loc = (Locateable) output[i];
+				 GeoPoint [] points = loc.getStartPoints();
+				 if (points != null) {
+					 for (int k=0; k < points.length; k++) {
+						 outputParents.add(points[k]);
+						 points[k].addPredecessorsToSet(outputParents, false);
+					 }
+				 }
+			 }
 		}			
 		
 		// 2) and 3) get intersection of inputChildren and outputParents				

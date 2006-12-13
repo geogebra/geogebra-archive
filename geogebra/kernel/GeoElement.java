@@ -841,17 +841,21 @@ public abstract class GeoElement
 		labelSet = true;
 		labelWanted = false; // got a label, no longer wanted					
 		
-		cons.putLabel(this); // add new table entry	   		
-		strAlgebraDescriptionNeedsUpdate = true;
+		cons.putLabel(this); // add new table entry	
+		
+		algebraStringsNeedUpdate();
+		
 		notifyAdd();
-	}
+	}	
 
 	private void doRenameLabel(String newLabel) {
 		//	UPDATE KERNEL		
 		cons.removeLabel(this); // remove old table entry
 		label = newLabel; // set new label
 		cons.putLabel(this); // add new table entry    
-		strAlgebraDescriptionNeedsUpdate = true;
+		
+		algebraStringsNeedUpdate();
+		
 		kernel.notifyRename(this); // tell views   
 		
 		update();		
@@ -1218,11 +1222,19 @@ public abstract class GeoElement
 		}
 
 		// texts need updates
+		algebraStringsNeedUpdate();			
+		    
+		// TODO: remove
+		//if (isGeoSegment())
+		//	System.out.println("update: " + this + ", " + this.cons);
+		
+		kernel.notifyUpdate(this);	        			
+	}
+	
+	private void algebraStringsNeedUpdate() {
 		strAlgebraDescriptionNeedsUpdate = true;	
 		strAlgebraDescTextOrHTMLneedsUpdate = true;
-		strAlgebraDescriptionHTMLneedsUpdate = true;				
-		        
-		kernel.notifyUpdate(this);	        			
+		strAlgebraDescriptionHTMLneedsUpdate = true;
 	}
 	
 	/**
@@ -1624,7 +1636,7 @@ public abstract class GeoElement
 				strAlgebraDescTextOrHTML = algDesc;
 			}
 			
-			strAlgebraDescTextOrHTMLneedsUpdate = false;
+			strAlgebraDescTextOrHTMLneedsUpdate = false;						
 		}
 		
 		return strAlgebraDescTextOrHTML;

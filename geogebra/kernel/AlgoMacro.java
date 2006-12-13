@@ -318,7 +318,7 @@ public class AlgoMacro extends AlgoElement {
 				break;
 				
 			case GeoElement.GEO_CLASS_IMAGE:
-				initImage((GeoImage) macroGeo, (GeoImage) algoGeo);
+				initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
 				break;
 				
 			case GeoElement.GEO_CLASS_LIST:
@@ -338,11 +338,11 @@ public class AlgoMacro extends AlgoElement {
 				break;
 
 			case GeoElement.GEO_CLASS_TEXT:
-				initLocateable((GeoText) macroGeo, (GeoText) algoGeo);
+				initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
 				break;
 
 			case GeoElement.GEO_CLASS_VECTOR:
-				initLocateable((GeoVector) macroGeo, (GeoVector) algoGeo);
+				initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
 				break;										
 				
 			default:
@@ -380,28 +380,26 @@ public class AlgoMacro extends AlgoElement {
 	}
 
 	/**
-	 * Makes sure that the start point of locateable is
+	 * Makes sure that the start points of locateable are
 	 * in its construction.
 	 */	
 	private void initLocateable(Locateable macroLocateable, Locateable locateable) {
-		GeoPoint startPoint = (GeoPoint) getAlgoGeo(macroLocateable.getStartPoint());	
-		try {
-			locateable.setStartPoint(startPoint);
+		GeoPoint [] macroStartPoints = macroLocateable.getStartPoints();
+		if (macroStartPoints == null) return;
+		
+		try {					
+			for (int i=0; i < macroStartPoints.length; i++) {
+				GeoPoint point = (GeoPoint) getAlgoGeo(macroStartPoints[i]);
+				locateable.initStartPoint(point, i);
+				
+				// TODO: remove
+				System.out.println("set start point: " + locateable + " => " + point + "(" + point.cons +")");
+				
+			}	
 		} catch (Exception e) {
 			System.err.println("AlgoMacro.initLocateable:\n" + e.getStackTrace());
 		}
-	}
-	
-	/**
-	 * Makes sure that the start point of locateable is
-	 * in its construction.
-	 */	
-	private void initImage(GeoImage macroImg, GeoImage img) {
-		for (int i=0; i < 2; i++) {
-			GeoPoint corner = (GeoPoint) getAlgoGeo(macroImg.getCorner(i));
-			img.setCorner(corner, i);
-		}		
-	}
+	}		
 	
 	/**
 	 * Makes sure that the points and segments of poly are

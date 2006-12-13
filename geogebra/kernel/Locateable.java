@@ -6,12 +6,19 @@ package geogebra.kernel;
  */
 public interface Locateable {
 	public void setStartPoint(GeoPoint p) throws CircularDefinitionException;
-	public void removeStartPoint(GeoPoint p);
-	
+	public void removeStartPoint(GeoPoint p);	
+	public GeoPoint getStartPoint();
+		
 	// GeoImage has three startPoints (i.e. corners)
 	public void setStartPoint(GeoPoint p, int number) throws CircularDefinitionException;
+	public GeoPoint [] getStartPoints();
 	
-	public GeoPoint getStartPoint();
+	/**
+	 * Sets the startpoint without performing any checks.
+	 * This is needed for macros.	 
+	 */
+	public void initStartPoint(GeoPoint p, int number);
+	
 	public boolean hasAbsoluteLocation();
 	
 	/**

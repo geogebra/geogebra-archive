@@ -21,6 +21,7 @@ package geogebra.io;
 import geogebra.Application;
 import geogebra.ConstructionProtocolNavigation;
 import geogebra.MyError;
+import geogebra.algebra.AlgebraController;
 import geogebra.algebra.parser.Parser;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
@@ -1536,10 +1537,12 @@ public class MyXMLHandler implements DocHandler {
     private void processStartPointList() {  
         try {
             Iterator it = startPointList.iterator();
+            AlgebraController algCtrl = kernel.getAlgebraController();
+            
             while (it.hasNext()) {
-                LocateableExpPair pair = (LocateableExpPair) it.next();
-                GeoPoint P =  kernel.getAlgebraController().evaluateToPoint(pair.exp);      
-                pair.locateable.setStartPoint(P, pair.number);
+                LocateableExpPair pair = (LocateableExpPair) it.next();                                              
+                GeoPoint P =  algCtrl.evaluateToPoint(pair.exp);      
+                pair.locateable.setStartPoint(P, pair.number);                
             }
         } catch (Exception e) { 
             startPointList.clear();

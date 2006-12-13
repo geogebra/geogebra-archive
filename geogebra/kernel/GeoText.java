@@ -52,7 +52,10 @@ implements Locateable, AbsoluteScreenLocateable {
 	public void set(GeoElement geo) {
 		GeoText gt = (GeoText) geo;
 		str = gt.str;
-		
+
+		// macro: don't set start point
+		if (cons != geo.cons) return;
+	
 		try {
 			if (gt.startPoint != null) {
 				if (gt.hasAbsoluteLocation()) {
@@ -66,7 +69,7 @@ implements Locateable, AbsoluteScreenLocateable {
 		}
 		catch (CircularDefinitionException e) {
 			System.err.println("set GeoText: CircularDefinitionException");
-		}
+		}		
 	}
 	
 	final public void setTextString(String text) {
@@ -82,6 +85,14 @@ implements Locateable, AbsoluteScreenLocateable {
 		return str;
 	}
 	
+	/**
+	 * Sets the startpoint without performing any checks.
+	 * This is needed for macros.	 
+	 */
+	public void initStartPoint(GeoPoint p, int number) {
+		startPoint = p;
+	}
+	
 	public void setStartPoint(GeoPoint p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
 	}
@@ -94,7 +105,10 @@ implements Locateable, AbsoluteScreenLocateable {
 		}
 	}
 			
-	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException {    
+	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException {     
+		// macro output uses initStartPoint() only
+		if (isAlgoMacroOutput) return; 
+		
 		// check for circular definition
 		if (isParentOf(p))
 			throw new CircularDefinitionException();		
@@ -120,6 +134,8 @@ implements Locateable, AbsoluteScreenLocateable {
 		}											
 	}
 	
+	
+	
 	void doRemove() {
 		super.doRemove();
 		// tell startPoint	
@@ -128,6 +144,16 @@ implements Locateable, AbsoluteScreenLocateable {
 	
 	public GeoPoint getStartPoint() {
 		return startPoint;
+	}
+	
+	
+	public GeoPoint [] getStartPoints() {
+		if (startPoint == null)
+			return null;
+	
+		GeoPoint [] ret = new GeoPoint[1];
+		ret[0] = startPoint;
+		return ret;			
 	}
 	
 	public boolean hasAbsoluteLocation() {

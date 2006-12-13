@@ -88,6 +88,9 @@ implements Locateable, AbsoluteScreenLocateable,
 		GeoImage img = (GeoImage) geo;
 		setFileName(img.fileName);
 		
+		// macro: don't set corners
+		if (cons != geo.cons) return;
+		
 		// location settings
 		hasAbsoluteScreenLocation = img.hasAbsoluteScreenLocation;
 			
@@ -173,11 +176,22 @@ implements Locateable, AbsoluteScreenLocateable,
 	}
 	
 	/**
+	 * Sets the startpoint without performing any checks.
+	 * This is needed for macros.	 
+	 */
+	public void initStartPoint(GeoPoint p, int number) {
+		corners[number] = p;
+	}
+	
+	/**
 	 * Sets a corner of this image. 
 	 * @param p
 	 * @param number: 0, 1 or 2 (first, second and fourth corner)
 	 */
 	public void setCorner(GeoPoint p, int number)  {
+		// macro output uses initStartPoint() only
+		if (isAlgoMacroOutput) return; 
+		
 		if (corners[0] == null && number > 0) return;
 		
 		// check for circular definition
@@ -252,6 +266,10 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	public GeoPoint getStartPoint() {
 		return corners[0];
+	}
+	
+	public GeoPoint [] getStartPoints() {
+		return corners;
 	}
 	
 	final public GeoPoint getCorner(int number) {

@@ -123,12 +123,29 @@ implements Path, VectorValue, Locateable, Rotateable {
 		return startPoint;
     }   
     
+	public GeoPoint [] getStartPoints() {
+		if (startPoint == null)
+			return null;
+	
+		GeoPoint [] ret = new GeoPoint[1];
+		ret[0] = startPoint;
+		return ret;			
+	}
+    
 	public boolean hasAbsoluteLocation() {
 		return startPoint == null || startPoint.isAbsoluteStartPoint();
 	}
 	
 	public void setStartPoint(GeoPoint p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
+	}
+	
+	/**
+	 * Sets the startpoint without performing any checks.
+	 * This is needed for macros.	 
+	 */
+	public void initStartPoint(GeoPoint p, int number) {
+		startPoint = p;
 	}
 	
 	public void removeStartPoint(GeoPoint p) {    
@@ -140,6 +157,9 @@ implements Path, VectorValue, Locateable, Rotateable {
 	}
     
     public void setStartPoint(GeoPoint p) throws CircularDefinitionException {    
+    	// macro output uses initStartPoint() only
+		if (isAlgoMacroOutput) return; 
+    	
 		// check for circular definition
 		if (isParentOf(p))
 			throw new CircularDefinitionException();
@@ -178,7 +198,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 	  // the startpoint should not be used as long
 	  // as waitingForStartPoint is true
 	  // This is important for points on this vector:
-	  // their coords should not be changed until the
+	  // their coords should not be changed until 
 	  // the startPoint was finally set
 		waitingForStartPoint = true;
 	}

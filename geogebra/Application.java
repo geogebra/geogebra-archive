@@ -823,7 +823,7 @@ public class Application {
         return algebraView;
     }
 
-    public AlgebraController getAlgebraController() {
+    final public AlgebraController getAlgebraController() {
         return algebraController;
     }
     
