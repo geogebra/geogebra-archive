@@ -71,6 +71,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 		GeoFunction geoFun = (GeoFunction) geo;				
 					
 		fun = new Function(geoFun.fun, kernel);
+		isDefined = geoFun.isDefined;
 		
 		// macro OUTPUT
 		if (geo.cons != cons && isAlgoMacroOutput) {			

@@ -75,9 +75,10 @@ public class AlgoIfFunction extends AlgoElement {
     	// nothing to do here: this algorithm is only
     	// needed to make sure the resulting function is
     	// updated when ifFun or elseFun is updated
-    	    	
-    	// set fun to dummy value
+    	    	    	
     	if (ifFun.isDefined())
+    		// set fun to dummy value to show that the function has changed
+    		// note: result is a GeoFunctionConditional object 
     		result.setFunction(ifFun.getFunction());
     	else
     		result.setUndefined();
