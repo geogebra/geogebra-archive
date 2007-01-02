@@ -73,7 +73,11 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	GeoPoint[] getLastDefinedIntersectionPoints() {	
 		return null;
 	}
-	
+
+    public boolean isNearToAlgorithm() {
+    	return true;
+    }
+    
 	final void initForNearToRelationship() {				
 		parentOutput = algo.getIntersectionPoints();		
 		needsIniting = false;

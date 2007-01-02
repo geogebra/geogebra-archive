@@ -201,6 +201,8 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_SEGMENT = 160;
 	public static final int GEO_CLASS_TEXT = 170;
 	public static final int GEO_CLASS_VECTOR = 180;
+	public static final int GEO_CLASS_CURVE_CARTESIAN = 190;
+	public static final int GEO_CLASS_CURVE_POLAR = 191;
 	
 	
 	public static final int LABEL_NAME = 0;
@@ -217,7 +219,10 @@ public abstract class GeoElement
 	private boolean fixed = false;
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
-	public Color objColor, selColor, labelColor, fillColor;
+	public Color objColor = Color.black;
+	public Color selColor = objColor, 
+				 labelColor = objColor, 
+				 fillColor = objColor;
 	public double animationStep = 0.1;
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
@@ -2044,6 +2049,10 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	public boolean isGeoFunctionConditional() {		
+		return false;
+	}
+	
 	public boolean isGeoFunctionable() {
 		return false;
 	}		
@@ -2085,6 +2094,10 @@ public abstract class GeoElement
 	}
 	
 	public boolean isGeoVector() {
+		return false;
+	}
+	
+	public boolean isGeoCurveCartesian() {
 		return false;
 	}
 	

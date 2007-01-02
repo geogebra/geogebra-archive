@@ -14,21 +14,18 @@ package geogebra.kernel;
 
 
 /**
- * Special case of if for functions.
+ * Special case of If for functions.
  * Example:  If[ x < 2, x^2, x + 2 ]
  * 
  * @author  Markus
  * @version 
  */
 public class AlgoIfFunction extends AlgoElement {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private GeoFunction boolFun;     // input
 	private GeoFunction ifFun, elseFun;  // input
-	private GeoFunction result; // output
+	private GeoFunctionConditional result; // output
     	   
     public AlgoIfFunction(Construction cons, String label, 
     		GeoFunction boolFun, 
@@ -71,17 +68,16 @@ public class AlgoIfFunction extends AlgoElement {
     
     public GeoFunction getGeoFunction() { return result; }
        
-    final void compute() {	
-    	// nothing to do here: this algorithm is only
-    	// needed to make sure the resulting function is
-    	// updated when ifFun or elseFun is updated
-    	    	    	
-    	if (ifFun.isDefined())
-    		// set fun to dummy value to show that the function has changed
-    		// note: result is a GeoFunctionConditional object 
-    		result.setFunction(ifFun.getFunction());
-    	else
-    		result.setUndefined();
+    final void compute() {
+    	for (int i=0; i < input.length; i++) {
+    		if (!input[i].isDefined())
+    			result.setUndefined();
+    	}
+    	
+    	// set fun to dummy value to show that the function has changed
+		// note: result is a GeoFunctionConditional object 
+		result.setFunction(ifFun.getFunction()); 		    
+    	result.setDefined(true);
     }   
     
     final public String toString() {        

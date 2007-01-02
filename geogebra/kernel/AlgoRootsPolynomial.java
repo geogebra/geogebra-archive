@@ -180,12 +180,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
 
     GeoPoint[] getLastDefinedIntersectionPoints() {
         return null;
-    }
-    
-    final void initForNearToRelationship() {
-		// dummy implementation: near-to is not supported here
-    	// as the roots are sorted by ascending x-coords
-	}
+    }       
 
     void compute() {
         switch (mode) {

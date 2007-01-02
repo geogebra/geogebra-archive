@@ -161,7 +161,7 @@ public class ConstructionDefaults {
 		angle.setLocalVariableLabel(app.getPlain("Angle"));
 		angle.setObjColor(colAngle);		
 		angle.setAlphaValue(DEFAULT_ANGLE_ALPHA);
-		angle.setDrawable(true);
+		//angle.setDrawable(true);
 		//angle.setParentAlgorithm(new AlgoElement(cons));
 		defaultGeoElements.put(DEFAULT_ANGLE, angle);
 		

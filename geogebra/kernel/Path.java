@@ -17,6 +17,7 @@ package geogebra.kernel;
  */
 public interface Path {
 	
+	/*
 	static final int PATH_LINE = 0;
 	static final int PATH_SEGMENT = 1;
 	static final int PATH_ELLIPSE = 10;
@@ -25,6 +26,7 @@ public interface Path {
 	static final int PATH_POINT = 13;
 	static final int PATH_EMPTY = 14;
 	static final int PATH_FUNCTION = 20;
+	*/
 	
 	/**
 	 * Sets coords of P and its path parameter when

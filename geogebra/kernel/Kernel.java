@@ -26,6 +26,7 @@ import geogebra.algebra.parser.Parser;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 
@@ -995,6 +996,34 @@ public class Kernel {
 			AlgoSequence algo = new AlgoSequence(cons, labels, expression, localVar, from, to, step);
 			return algo.getOutput();				
 	}	
+	
+	/** 
+	 * Cartesian curve command:
+ 	 * Curve[ <expression x-coord>, <expression x-coord>, <number-var>, <from>, <to> ]  
+	 */
+	final public GeoCurveCartesian CurveCartesian(String label, 
+			NumberValue xcoord, NumberValue ycoord, 
+			GeoNumeric localVar, NumberValue from, NumberValue to) 
+	{									
+		AlgoCurveCartesian algo = new AlgoCurveCartesian(cons, label, xcoord, ycoord, localVar, from, to);
+		return algo.getCurve();		
+	}	
+	
+	/**
+	 * Converts a NumberValue object to an ExpressionNode object. 
+	 */
+	public ExpressionNode convertNumberValueToExpressionNode(NumberValue nv) {
+		GeoElement geo = nv.toGeoElement();
+		AlgoElement algo = geo.getParentAlgorithm();
+		
+		if (algo != null && algo instanceof AlgoDependentNumber) {
+			AlgoDependentNumber algoDep = (AlgoDependentNumber) algo;
+			return algoDep.getExpression().getCopy();
+		}
+		else {
+			return new ExpressionNode(this, geo);
+		}		
+	}
 	
 	/** Number dependent on arithmetic expression with variables,
 	 * represented by a tree. e.g. t = 6z - 2
@@ -2805,6 +2834,7 @@ public class Kernel {
     	return value;
     }
 
+    /*
 	// calc acos(x). returns 0 for x > 1 and pi for x < -1    
 	final static double trimmedAcos(double x) {
 		if (Math.abs(x) <= 1.0d)
@@ -2815,7 +2845,7 @@ public class Kernel {
 			return Math.PI;
 		else
 			return Double.NaN;
-	}
+	}*/
 
 	/** returns max of abs(a[i]) */
 	final static double maxAbs(double[] a) {

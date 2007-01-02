@@ -1067,20 +1067,23 @@ ExpressionNode numberFunction():
            	}
       		
       		if (order > 0) { // derivative
-      			if (geo instanceof GeoFunction) {// function 
+      			if (geo.isGeoFunction()) {// function 
       				// n-th derivative of geo
 	      			ExpressionNode derivative =  new ExpressionNode(kernel, geo, ExpressionNode.DERIVATIVE, 
 	      																new MyDouble(kernel, order));
 	      			return new ExpressionNode(kernel, derivative, ExpressionNode.FUNCTION, en); 
-	      		} else {
+	      		} 	      		
+	      		else {
 	                String [] str = { "FunctionExpected", funcName };
 	                throw new MyParseError(app, str);
 	      		} 		
       		}
       		else { // no derivative
-	      		if (geo instanceof GeoFunction) // function 
+	      		if (geo.isGeoFunction()) // function 
 	      			return new ExpressionNode(kernel, geo, ExpressionNode.FUNCTION, en); 
-	      		else {// error: no functin
+	      		else if (geo.isGeoCurveCartesian()) // vector function 
+	      			return new ExpressionNode(kernel, geo, ExpressionNode.VEC_FUNCTION, en); 
+	      		else {// error: no function
 	      			String [] str = { "FunctionExpected", funcName };
 	                throw new MyParseError(app, str);
 	            }

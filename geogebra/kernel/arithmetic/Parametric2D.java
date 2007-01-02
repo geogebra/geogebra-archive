@@ -12,11 +12,15 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoVec2D;
 
 
-public interface Functional {
-	public double evaluate(double x);
-	public Function getFunction();
-	public GeoFunction getGeoDerivative(int order);
+public interface Parametric2D {
+	double getMinParameter(); 
+	double getMaxParameter();	
+	GeoVec2D evaluate(double t);		
+	void evaluate(double t, double [] out);
+	
+	GeoElement toGeoElement();
 }

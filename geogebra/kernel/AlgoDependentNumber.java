@@ -67,6 +67,8 @@ public class AlgoDependentNumber extends AlgoElement {
     
     public GeoNumeric getNumber() { return number; }
     
+    ExpressionNode getExpression() { return root; }
+    
     // calc the current value of the arithmetic tree
     final void compute() {    
     	try {

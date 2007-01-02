@@ -16,6 +16,7 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.roots.RealRootDerivFunction;
@@ -696,6 +697,21 @@ implements ExpressionValue, RealRootFunction, Functional {
     //  stores derivatives as (order, result function) pairs
     private FastHashMapKeyless derivativeMap = new FastHashMapKeyless(); 
     private Function integralFun;
+    
+    /**
+     * Returns n-th derivative of this function wrapped
+     * as a GeoFunction object.
+     */
+    public GeoFunction getGeoDerivative(int n) {
+    	if (geoDeriv == null)
+    		geoDeriv = new GeoFunction(kernel.getConstruction());
+    	
+    	Function deriv = getDerivative(n);
+    	geoDeriv.setFunction(deriv);
+    	geoDeriv.setDefined(deriv != null);
+    	return geoDeriv;
+    }
+    private GeoFunction geoDeriv;
  
     /**
       * Returns n-th derivative of this function

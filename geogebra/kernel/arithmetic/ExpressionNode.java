@@ -86,7 +86,8 @@ implements ExpressionValue {
     public static final int GAMMA = 28;         
      
     public static final int FUNCTION = 100;
-    public static final int DERIVATIVE = 101;    
+    public static final int VEC_FUNCTION = 101;
+    public static final int DERIVATIVE = 110;    
     
     private Application app;
     private Kernel kernel;
@@ -1069,9 +1070,11 @@ implements ExpressionValue {
        
         case FUNCTION:      
             // function(number)
-            if (rt.isNumberValue())
-				return ((NumberValue)rt).getNumber().apply((Functional)lt);
-			else if (lt.isPolynomialInstance() &&
+            if (rt.isNumberValue()) {    
+            	NumberValue arg = (NumberValue) rt;                     			            
+            	return arg.getNumber().apply((Functional)lt);
+            }
+            else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
                 lt = ((Polynomial) lt).getConstantCoefficient();
                 rt = ((Polynomial) rt).getConstantCoefficient();                    
@@ -1088,12 +1091,36 @@ implements ExpressionValue {
                 throw new MyError(app, str);
             }
             
+        case VEC_FUNCTION:      
+            // vecfunction(number)
+            if (rt.isNumberValue()) {    
+            	NumberValue arg = (NumberValue) rt;
+            	return ((Parametric2D)lt).evaluate(arg.getDouble());            	
+            }
+            else if (lt.isPolynomialInstance() &&
+                rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
+                lt = ((Polynomial) lt).getConstantCoefficient();
+                rt = ((Polynomial) rt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.VEC_FUNCTION, rt),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                //System.out.println("lt: " + lt.getClass() + " rt: " + rt.getClass());
+                 String [] str = { "IllegalArgument", rt.toString() };
+                throw new MyError(app, str);
+            }            
+            
         case DERIVATIVE:
         //System.out.println("DERIVATIVE called");
             // derivative(function, order)
-            if (rt.isNumberValue())
-				return ((Functional)lt).
-				            getDerivative((int)Math.round(((NumberValue)rt).getDouble()));
+            if (rt.isNumberValue()) {            	
+            	return ((Functional)lt).
+	            	getGeoDerivative((int)Math.round(((NumberValue)rt).getDouble()));
+            }				
 			else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
                 lt = ((Polynomial) lt).getConstantCoefficient();                               
@@ -1518,7 +1545,8 @@ implements ExpressionValue {
         }
 
         // expression node 
-        String leftStr =  left.toValueString();
+        String leftStr = left.toValueString();        
+        
         String rightStr = null;     
         if (right != null) {
             rightStr = right.toValueString();
@@ -2034,17 +2062,40 @@ implements ExpressionValue {
                 break;
                 
             case FUNCTION:
-                sb.append(leftStr);
+            	// GeoFunction and GeoFunctionConditional should not be expanded
+            	if (left.isGeoElement() &&
+                     	((GeoElement)left).isGeoFunction()) {
+            		 sb.append(((GeoElement)left).getLabel());
+            	} else
+            		 sb.append(leftStr);            	 
                 sb.append('(');
                 sb.append(rightStr);
                 sb.append(')');
                 break;
+               
+            case VEC_FUNCTION:
+            	// GeoFunction and GeoFunctionConditional should not be expanded
+            	if (left.isGeoElement() &&
+                     	((GeoElement)left).isGeoCurveCartesian()) {
+            		 sb.append(((GeoElement)left).getLabel());
+            	} else
+            		 sb.append(leftStr);            	 
+                sb.append('(');
+                sb.append(rightStr);
+                sb.append(')');
+                break;                  
                 
             case DERIVATIVE: // e.g. f''
-                sb.append(leftStr);
-                for (int order = (int) Math.round(((MyDouble)right).getDouble());               
-                        order > 0; order--)
-                    sb.append('\'');
+            	// GeoFunctionConditional should not be expanded
+            	if (left.isGeoElement() &&
+                     	((GeoElement)left).isGeoFunctionConditional()) {
+            		 sb.append(((GeoElement)left).getLabel());
+            	} else
+            		 sb.append(leftStr); 
+            	
+            	int order = (int) Math.round(((MyDouble)right).getDouble());
+            	for (;order > 0; order--) 
+            		sb.append('\'');
                 break;
                 
             default:

@@ -48,7 +48,7 @@ public class GeoFunctionConditional extends GeoFunction {
 		super(c);
 		this.condFun 	= condFun;
 		this.ifFun 		= ifFun;
-		this.elseFun 	= elseFun;				
+		this.elseFun 	= elseFun;	
 	}	
 	
 	public GeoFunctionConditional(GeoFunctionConditional geo) {
@@ -58,7 +58,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	public GeoElement copy() {
 		return new GeoFunctionConditional(this);
-	}
+	}		
 	
 	public void set(GeoElement geo) {				
 		GeoFunctionConditional geoFunCond = (GeoFunctionConditional) geo;
@@ -97,7 +97,7 @@ public class GeoFunctionConditional extends GeoFunction {
     }
     
     public boolean isDefined() {
-		return isDefined && condFun != null && ifFun != null;
+		return isDefined;
 	}      
       
     /**
@@ -143,6 +143,16 @@ public class GeoFunctionConditional extends GeoFunction {
 				return elseFun.getFunction(x);
 		}
 	}		
+		
+	public GeoFunction getGeoDerivative(int order){	
+		if (derivGeoFun == null) {
+			derivGeoFun = new GeoFunctionConditional(this);
+		}
+		
+		derivGeoFun.setDerivative(this, order);
+		return derivGeoFun;				
+	}
+	private GeoFunctionConditional derivGeoFun;
 			
 	public boolean isPolynomialFunction(boolean forRootFinding) {		
 		return false;   			
@@ -227,12 +237,18 @@ public class GeoFunctionConditional extends GeoFunction {
 			Math.abs(evaluate(P.inhomX) - P.inhomY) <= eps;
 	}
 
-	public boolean isGeoFunctionable() {
+	public boolean isGeoFunction() {
+		return true;
+	}		
+	
+	public boolean isGeoFunctionConditional() {		
 		return true;
 	}
 	
 	public boolean isBooleanFunction() {
 		return false;
-	}		
+	}
+
+
 
 }

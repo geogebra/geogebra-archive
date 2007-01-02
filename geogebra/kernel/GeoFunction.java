@@ -78,7 +78,7 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in its function's expression
 			AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-			algoMacro.initFunction(geoFun, this);
+			algoMacro.initFunction(this.fun);
 		}
 	}
 	
@@ -146,10 +146,15 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 		return fun.evaluateBoolean(x);
 	}
 	
-	final public Function getDerivative(int order){
-		if (fun == null) return null;
-		else return fun.getDerivative(order);
+	public GeoFunction getGeoDerivative(int order){	
+		if (derivGeoFun == null) {
+			derivGeoFun = new GeoFunction(cons);
+		}
+		
+		derivGeoFun.setDerivative(this, order);
+		return derivGeoFun;					
 	}
+	private GeoFunction derivGeoFun;
 	
 	public ExpressionValue evaluate() {
 		return this;

@@ -164,6 +164,7 @@ public class CommandDispatcher {
     	cmdTable.put("If", new CmdIf(algCtrl));
     	cmdTable.put("Sequence", new CmdSequence(algCtrl));
     	cmdTable.put("Macro", new MacroCreator(algCtrl));
+    	cmdTable.put("CurveCartesian", new CmdCurveCartesian(algCtrl));
     }
 
 

@@ -108,6 +108,10 @@ public class AlgoAngularBisectorLines extends AlgoElement {
     GeoPoint getB() {
         return B;
     }
+    
+    public boolean isNearToAlgorithm() {
+    	return true;
+    }
 
     final void compute() {
         // calc intersection B of g and h
@@ -147,6 +151,7 @@ public class AlgoAngularBisectorLines extends AlgoElement {
             wx = gx;
             wy = gy;
 
+            // NEAR TO RELATIONSHIP
             // check orientation: take smallest change!!!
             if (wv[index].x * wx + wv[index].y * wy >= 0) {
                 wv[index].x = wx;

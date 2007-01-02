@@ -110,7 +110,7 @@ public class Term implements Comparable, Serializable {
             if (aval == 0.0d)
 				return b;
 			else {
-                if (b instanceof ExpressionNode) {
+                if (b.isExpressionNode()) {
                     ExpressionNode ben = (ExpressionNode) b;   
                     if (ben.left.isConstant()) {
                         switch (ben.operation) {

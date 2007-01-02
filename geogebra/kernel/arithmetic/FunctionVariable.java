@@ -19,6 +19,8 @@ import geogebra.kernel.Kernel;
  */
 public class FunctionVariable extends MyDouble {
 	
+	private String varStr = "x";
+	
 	public FunctionVariable(Kernel kernel) {
 		super(kernel);
 	}
@@ -30,8 +32,12 @@ public class FunctionVariable extends MyDouble {
 		return false;
 	}
 	
+	public void setVarString(String varStr) {
+		this.varStr = varStr;
+	}
+	
 	final public String toString() {
-		return "x";
+		return varStr;
 	}
 
 }

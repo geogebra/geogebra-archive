@@ -113,7 +113,11 @@ public class AlgoIntersectConics extends AlgoIntersect {
 		return D;
 	}
 	
-	 final void initForNearToRelationship() {        	    	
+	public boolean isNearToAlgorithm() {
+    	return true;
+    }
+	
+	final void initForNearToRelationship() {        	    	
     	distMemoryIndex = 0;
     	for (int i=0; i < P.length; i++) {    
     	 	 meanDistance[i] = 0;

@@ -135,22 +135,21 @@ public class AlgoAnglePoints extends AlgoElement {
         vy = A.inhomY - by;
         wx = C.inhomX - bx;
         wy = C.inhomY - by;
-        
+                
         if (kernel.isZero(vx) && kernel.isZero(vy) ||
         		kernel.isZero(wx) && kernel.isZero(wy)) {
         	angle.setUndefined();
         	return;
         }
+        
+       	// |v| * |w| * sin(alpha) = det(v, w)
+    	// cos(alpha) = v . w / (|v| * |w|)
+    	// tan(alpha) = sin(alpha) / cos(alpha)
+    	// => tan(alpha) = det(v, w) / v . w    	    	
+    	double det = vx * wy - vy * wx;
+    	double prod = vx * wx + vy * wy;    	    
+    	double value = Math.atan2(det, prod);                  	    	       
 
-        double value =
-            Kernel.trimmedAcos(
-                (vx * wx + vy * wy)
-                    / (GeoVec2D.length(vx, vy) * GeoVec2D.length(wx, wy)));
-
-        // check if angle is between pi an 2pi
-        if (vx * wy < vy * wx) {
-            value = Kernel.PI_2 - value;
-        }
         angle.setValue(value);
     }
 

@@ -606,7 +606,7 @@ public class Construction {
         if (oldGeo == null || 
              newGeo == null || 
              oldGeo == newGeo) return;  
-        
+               
         // check for circular definition
         if (newGeo.isChildOf(oldGeo)) {
             restoreCurrentUndoInfo();
@@ -660,9 +660,9 @@ public class Construction {
             //  NEAR-TO-RELATION for dependent new geo:
             //  copy oldGeo's values to newGeo so that the
             // near-to-relationship can do its job if possible
-            if (newGeoAlgo != null) { 
+            if (newGeoAlgo != null && newGeoAlgo.isNearToAlgorithm()) { 
                 try {                   
-                    newGeo.set(oldGeo);
+                    newGeo.set(oldGeo);                    
                 } catch (Exception e) {}                
             }
             

@@ -73,15 +73,14 @@ public class AlgoAngleLines extends AlgoElement {
     // calc angle between lines g and h
     // use normalvectors (gx, gy), (hx, hy)
     final void compute() {
-        double value =
-            Kernel.trimmedAcos(
-                (g.x * h.x + g.y * h.y)
-                    / (GeoVec2D.length(g.x, g.y) * GeoVec2D.length(h.x, h.y)));
-
-        // check if angle between pi an 2pi
-        if (g.x * h.y < g.y * h.x) {
-            value = Kernel.PI_2 - value;
-        }
+     	// |v| * |w| * sin(alpha) = det(v, w)
+    	// cos(alpha) = v . w / (|v| * |w|)
+    	// tan(alpha) = sin(alpha) / cos(alpha)
+    	// => tan(alpha) = det(v, w) / v . w    	    	
+    	double det = g.x * h.y - g.y * h.x;
+    	double prod = g.x * h.x + g.y * h.y;    	    
+    	double value = Math.atan2(det, prod);                  	    	
+        
         angle.setValue(value);
     }
 

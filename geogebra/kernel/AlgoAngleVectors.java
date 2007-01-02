@@ -77,16 +77,14 @@ public class AlgoAngleVectors extends AlgoElement {
     // calc angle between vectors v and w
     // angle in range [0, 2pi) 
     // use normalvector to 
-    final void compute() {
-        double value =
-            Kernel.trimmedAcos(
-                (v.x * w.x + v.y * w.y)
-                    / (GeoVec2D.length(v.x, v.y) * GeoVec2D.length(w.x, w.y)));
-
-        // check if angle between pi an 2pi
-        if (v.x * w.y < v.y * w.x) {
-            value = Kernel.PI_2 - value;
-        }
+    final void compute() {    	    	    	
+    	// |v| * |w| * sin(alpha) = det(v, w)
+    	// cos(alpha) = v . w / (|v| * |w|)
+    	// tan(alpha) = sin(alpha) / cos(alpha)
+    	// => tan(alpha) = det(v, w) / v . w    	    	
+    	double det = v.x * w.y - v.y * w.x;
+    	double prod = v.x * w.x + v.y * w.y;    	    
+    	double value = Math.atan2(det, prod);                  	    	
         angle.setValue(value);
     }
 

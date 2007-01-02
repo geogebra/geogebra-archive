@@ -154,6 +154,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     GeoPoint [] getLastDefinedIntersectionPoints() {
         return D;
     }
+    
+    public boolean isNearToAlgorithm() {
+    	return true;
+    }
     	 
     final void initForNearToRelationship() {   
     	if (isTangent) return;

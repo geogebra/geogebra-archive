@@ -68,6 +68,10 @@ implements EuclidianViewAlgo {
      */
     void initForNearToRelationship() {}
     
+    public boolean isNearToAlgorithm() {
+    	return false;
+    }
+    
     // TODO: remove
     public static double startTime, endTime;
     public static double computeTime, updateTime;

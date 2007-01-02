@@ -284,9 +284,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public void setAllVisualProperties(GeoElement geo) {
 		super.setAllVisualProperties(geo);
 		
-		if (geo instanceof GeoNumeric) {
+		/*
+		if (geo.isGeoNumeric()) {
 			isDrawable = ((GeoNumeric) geo).isDrawable;
-		}
+		}*/
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

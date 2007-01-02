@@ -112,28 +112,48 @@ public class AlgoDependentFunction extends AlgoElement {
      * expression. 
      * @return new ExpressionNode as result
      */
-    private ExpressionValue expandFunctionDerivativeNodes(ExpressionValue ev) {
+    private static ExpressionValue expandFunctionDerivativeNodes(ExpressionValue ev) {
         if (ev != null && ev.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) ev;
-            switch (node.getOperation()) {
-                case ExpressionNode.FUNCTION:
-                    if (node.getLeft().isExpressionNode()) {// could be DERIVATIVE node
-                        node.setLeft(expandFunctionDerivativeNodes(node.getLeft()));
-                    }
-                    Function fun = ((Functional) node.getLeft()).getFunction();
-                    FunctionVariable x = fun.getFunctionVariable();
-                    //  don't destroy the function
-                    ExpressionNode funcExpression = fun.getExpression().getCopy();
-                    // now replace every x in function by the expanded argument
-                    return funcExpression.replace(x, 
-                                        expandFunctionDerivativeNodes(node.getRight()));
+            ExpressionValue leftValue = node.getLeft();
             
-                case ExpressionNode.DERIVATIVE:
-                    int order = (int) Math.round(((NumberValue)node.getRight()).getDouble());
-                    return ((Functional) node.getLeft()).getDerivative(order);  
+            switch (node.getOperation()) {
+                case ExpressionNode.FUNCTION:                                   
+                    // could be DERIVATIVE node
+                    if (leftValue.isExpressionNode()) {
+                    	leftValue = expandFunctionDerivativeNodes(leftValue);
+                        node.setLeft(leftValue);
+                        if (leftValue.isExpressionNode())
+                        	return node;
+                    }                        
+                    
+                	// we do NOT expand GeoFunctionConditional objects in expression tree
+                    if (leftValue.isGeoElement() &&
+                    	((GeoElement)leftValue).isGeoFunctionConditional()) 
+                    		return node;
+                
+                	Function fun = ((Functional) leftValue).getFunction();
+                	FunctionVariable x = fun.getFunctionVariable();
+                	//  don't destroy the function
+                	ExpressionNode funcExpression = fun.getExpression().getCopy();
+                	// now replace every x in function by the expanded argument
+                	return funcExpression.replace(x, 
+                                    expandFunctionDerivativeNodes(node.getRight()));                    
+            
+                case ExpressionNode.DERIVATIVE:                		
+                	// don't expand derivative of GeoFunctionConditional 
+                    if (leftValue.isGeoElement() &&
+                    	((GeoElement)leftValue).isGeoFunctionConditional()) {
+                    	return node;
+                    }
+                    // STANDARD case
+                    else {
+                    	int order = (int) Math.round(((NumberValue)node.getRight()).getDouble());                        
+                    	return ((Functional) leftValue).getGeoDerivative(order);	
+                    }
                 
                 default: // recursive calls
-                    node.setLeft(expandFunctionDerivativeNodes(node.getLeft()));
+                    node.setLeft(expandFunctionDerivativeNodes(leftValue));
                     node.setRight(expandFunctionDerivativeNodes(node.getRight()));
                     return node;
             }
@@ -141,7 +161,7 @@ public class AlgoDependentFunction extends AlgoElement {
 			return ev;
     }
     
-    private boolean containsFunctions(ExpressionValue ev) {
+    public static boolean containsFunctions(ExpressionValue ev) {
         if (ev != null && ev.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) ev;
             int op = node.getOperation();

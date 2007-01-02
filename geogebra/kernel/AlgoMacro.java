@@ -308,7 +308,7 @@ public class AlgoMacro extends AlgoElement {
 		
 		switch (macroGeo.getGeoClassType()) {				
 			case GeoElement.GEO_CLASS_FUNCTION:
-				initFunction((GeoFunction) macroGeo, (GeoFunction) algoGeo);
+				initFunction(((GeoFunction) algoGeo).getFunction());
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
@@ -440,13 +440,13 @@ public class AlgoMacro extends AlgoElement {
 	} 
 	
 	/**
-	 * Makes sure that all referenced GeoElements of geoFun are
-	 * in its construction.
+	 * Makes sure that all referenced GeoElements of fun are
+	 * in this algorithm's construction.
 	 */			
-	final public void initFunction(GeoFunction macroFun, GeoFunction geoFun) {								
+	final public void initFunction(Function fun) {								
 		// geoFun was created as a copy of macroFun, 
 		// make sure all referenced GeoElements are from the algo-construction
-		replaceReferencedMacroObjects(geoFun.getFunction().getExpression());
+		replaceReferencedMacroObjects(fun.getExpression());
 	} 
 		
 	/**
