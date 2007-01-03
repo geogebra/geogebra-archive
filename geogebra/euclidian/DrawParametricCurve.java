@@ -12,14 +12,19 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.euclidian;
 
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.Parametric2D;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Draws graph of a GeoFunction
@@ -29,32 +34,29 @@ public class DrawParametricCurve extends Drawable {
 	
 	// TODO: check discontinuities on the borders
 	
-	// maximum angle between two line segments
-	private static final float MAX_TAN_ANGLE = 0.07f;
-	
-	// in pixel
-	private static final float MAX_STEP = 8;
-	private static final float INIT_MIN_STEP = 0.001f;
-	private static final float STEP_INCREMENT = 0.5f;
-	private static final float STEP_DIVISOR = 2f;
-	private static final float MAX_SLOPE_BEND = 0.07f;
+	// maximum distance between two plot points in pixels
+	private static final int MAX_X_DISTANCE = 2; // pixels
+	private static final int MAX_Y_DISTANCE = 2; // pixels
+
+	// maximum number of plot points = 2^MAX_DEPTH
+	private static final int MAX_DEPTH = 18; 
+
+	// minimum depth of iterations to be reached
+	// this ensures that closed curves are also drawn	
+	private static final int MIN_POINTS = 10; // 
    
-    GeoFunction f;
-    
+    private GeoCurveCartesian curve;    
 	GeneralPath gp = new GeneralPath();
-    boolean isVisible, labelVisible;
+    boolean isVisible, labelVisible;   
    
-    public DrawParametricCurve(EuclidianView view, GeoFunction f) {
+    public DrawParametricCurve(EuclidianView view, GeoCurveCartesian curve) {
     	this.view = view;
-        this.f = f;
-        geo = f;
+        this.curve = curve;
+        geo = curve;
         update();
     }
-    
-    // for DrawIntegral
-    DrawParametricCurve() {
-    }
-    
+        
+    /*
     private boolean checkAngle(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
     	double vx = p1.x - p2.x;
     	double vy = p1.y - p2.y;
@@ -69,27 +71,19 @@ public class DrawParametricCurve extends Drawable {
     	double prod = vx * wx + vy * wy;    	    
     	double value = Math.atan2(det, prod);   
     	return value < MAX_TAN_ANGLE;
-    }
+    }*/
 
     final public void update() {				   
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();            
-		updateStrokes(f);
-		
-		
-		double a = view.xmin;
-		double b = view.xmax;
-		
-		// is function limited to interval?
-		Function fun = f.getFunction();
-		if (fun != null && fun.interval) {
-			a = Math.max(a, fun.a);
-			b = Math.min(b, fun.b);
-		}
-		
-		gp.reset();
-		Point p = plotFunction(f, a, b, view, gp, labelVisible, true);		
+		updateStrokes(curve);
+						
+		gp.reset();		
+		Point p = plotCurve(curve, 
+				curve.getMinParameter(), 
+				curve.getMaxParameter(), 
+				view, gp, labelVisible, true);		
 
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
@@ -105,7 +99,7 @@ public class DrawParametricCurve extends Drawable {
 		}
 		
 		// draw trace
-		if (f.trace) {
+		if (curve.getTrace()) {
 			isTracing = true;
 			Graphics2D g2 = view.getBackgroundGraphics();
 			if (g2 != null) drawTrace(g2);
@@ -118,6 +112,262 @@ public class DrawParametricCurve extends Drawable {
     }
     
     /**
+     * Draws a parametric curve (x(t), y(t)) for t in [t1, t2]. 
+     * @param gp: generalpath the can be drawn afterwards
+     * @param calcLabelPos: whether label position should be calculated and returned
+     * @param moveToAllowed: whether moveTo() may be used for gp
+     * @return label position as Point
+     * @author Markus Hohenwarter, based on an algorithm by John Gillam     
+     */
+	final public static Point plotCurve(Parametric2D curve,
+								double t1, double t2, EuclidianView view, 
+								GeneralPath gp,
+								boolean calcLabelPos, 
+								boolean moveToAllowed) {   
+		
+		boolean needLabelPos = calcLabelPos;
+		Point labelPoint = null;
+    	
+		// this algorithm by John Gillam avoids multiple
+		// evaluations of the curve for the same parameter value t
+		// see an explanation of this algorithm at the end of this method
+		double x0,y0,x,y,t;
+		boolean onScreen, valid, prevValid;
+		double [] eval = new double[2];
+		
+		int dyadicStack[]=new int[20];
+		int depthStack[]=new int[20];
+		double xStack[]=new double[20];
+		double yStack[]=new double[20];
+		boolean onScreenStack[]=new boolean[20];
+		boolean validStack[]=new boolean[20];
+		double divisors[]=new double[20];
+		divisors[0]=t2-t1;
+		for (int i=1;i<20;divisors[i]=divisors[i-1]/2,i++)
+			;
+		int i=1;
+		dyadicStack[0]=1;
+		depthStack[0]=0;
+
+		curve.evaluate(t1, eval);
+		view.toScreenCoords(eval);
+		x0=eval[0]; // xEval(t1);
+		y0=eval[1]; // yEval(t1);
+		
+		// with a GeneralPath moveTo(sx0,sy0) , the "screen" point
+		if (moveToAllowed) 
+			gp.moveTo((float) x0, (float) y0);
+		else
+			gp.lineTo((float) x0, (float) y0);			
+
+		curve.evaluate(t2, eval);
+		onScreenStack[0] = onScreen = view.toClippedScreenCoords(eval);
+		xStack[0] = x = eval[0]; // xEval(t2);
+		yStack[0] = y = eval[1]; // yEval(t2);	
+		validStack[0] = valid = !(Double.isNaN(x) || Double.isNaN(y));		
+		prevValid = valid;
+		
+		int top=1;
+		int depth=0;
+		int pointsCount = 1;
+		do {
+			boolean distNotOK = true;							
+			while ( depth < MAX_DEPTH 
+//					// TODO:think about this
+					// && (valid || prevValid) 
+					&&
+					( 												
+						(distNotOK = (Math.abs(x-x0) >= MAX_X_DISTANCE || Math.abs(y-y0) >= MAX_Y_DISTANCE))
+						|| 
+						pointsCount <= MIN_POINTS
+					)
+				  )				
+			{
+				// push stacks
+				dyadicStack[top]=i; 
+				depthStack[top]=depth;
+				onScreenStack[top]=onScreen;
+				validStack[top]=valid;
+				xStack[top]=x; 
+				yStack[top++]=y;
+				i<<=1; i--;
+				depth++;				
+				t=t1+i*divisors[depth];  // t=t1+(t2-t1)*(i/2^depth)										
+				
+				// evaluate curve for parameter t
+				curve.evaluate(t, eval);
+				onScreen = view.toClippedScreenCoords(eval);
+				x=eval[0]; // xEval(t);
+				y=eval[1]; // yEval(t);
+				valid = !(Double.isNaN(x) || Double.isNaN(y));	
+				
+				// TODO: remove
+				if (!valid)
+					System.out.println("not valid: " + t);
+			}
+			
+			// drawLine(x0,y0,x,y);  // or with a GeneralPath lineTo(sx,sy)
+			if (moveToAllowed && distNotOK) 
+				gp.moveTo((float) x, (float) y);
+			else
+				gp.lineTo((float) x, (float) y);					
+			prevValid = valid;	
+			pointsCount++;			
+			
+			// calculate label position
+			if (needLabelPos && onScreen) {
+				double xLabel = x + 10;
+				if (xLabel < 20) xLabel = 5;					
+			
+				double yLabel = y + 15;		
+				if (yLabel < 40) 
+					yLabel = 15;
+				else if (yLabel > view.height - 30) 
+					yLabel = view.height - 5;
+			
+				labelPoint = new Point((int) xLabel, (int) yLabel);
+				needLabelPos = false;											
+			}
+									
+			x0=x; y0=y;
+			
+			/*
+			 * Here's the real utility of the algorithm: Now pop stack and go to
+			 * right; notice the corresponding dyadic value when we go to right is
+			 * 2*i/(2^(d+1) = i/2^d !! So we've already calculated the corresponding
+			 * x and y values when we pushed.
+			 */
+		    y=yStack[--top]; 
+		    x=xStack[top];
+		    onScreen=onScreenStack[top];
+		    valid=validStack[top];
+		    depth=depthStack[top]+1; // pop stack and go to right
+		    i=dyadicStack[top]<<1;
+		} while (top !=0);
+				
+		// TODO: remove
+		System.out.println("CURVE points = " + pointsCount);
+		
+		return labelPoint;		
+		
+		/*
+		 * Explanation by John Gillam
+		 * 
+		 
+		 Let X(t)=(x(t),y(t)) be a function defined on [a,b].  
+		 Make a uniform partition t0=a<t1<t2...<tn=b of [a,b].  Assume we've already plotted X(ti).  
+		 Choose j>i and see if it's acceptable for the next point to be X(tj).  If not, "back up" and try another j.  
+		 Unfortunately, this probably leads to multiple evaluations of the function X at the same point.  
+		 The following discussion presents an algorithm which basically does this "back up" but multiple 
+		 function evaluations at the same point are avoided.
+
+		 The actual algorithm always has n a power of 2, namely 2 to the maxDepth.  
+		 In Math Okay, the user sets maxDepth in the drawing quality under Max lines.  
+
+		    The following first creates a complete binary tree of height h(3)
+		    Then the following algorithm visits all the leaves of the tree
+		    (2^h leaves): (easy induction on height h).  Furthermore,
+		    the maximum stack size is clearly h+1:
+		
+		    Node root=create(1,3),p;
+		    p=root;
+		    Node[] stack=new Node[20];
+		    int top=0;
+		    stack[top++]=p;
+		    do {
+		      while (p.left!=null) {
+		        stack[top++]=p;
+		        p=(Node)p.left;
+		      }
+		      System.out.print(" "+p.n); // visit p
+		      p=stack[--top];
+		      p=(Node)p.right;
+		    } while (top!=0);
+		
+		    Now the following code "clearly" generates as t values all the
+		    dyadic rationals with denominator 2^n, with n==maxDepth
+		
+		    int dyadicStack[]=new int[20];
+		    int depthStack[]=new int[20];
+		    double divisors[]=new double[20];
+		    divisors[0]=1;
+		    for (int i=1;i<20;divisors[i]=divisors[i-1]/2,i++)
+		      ;
+		    int top=0,maxDepth=5; // of course 5 is just a test
+		    double t;
+		    int i=1;
+		    dyadicStack[0]=1;
+		    depthStack[0]=0;
+		    top=1;
+		    int depth=0;
+		    do {
+		      while (depth<maxDepth) {
+		        dyadicStack[top]=i; depthStack[top++]=depth;
+		        i<<=1; i--;
+		        depth++;
+		      }
+		      t=i*divisors[maxDepth]; //  a visit of dyadic rational t
+		      depth=depthStack[--top]+1; // pop stack and go to right
+		      i=dyadicStack[top]<<1;
+		    } while (top !=0);
+		
+		Finally, here is code which draws a curve (continuous) x(t),y(t) for
+		t1<=t<=t2; xEval and yEval evaluate x and y at t; maxXDistance and maxYDistance are set somewhere.  
+		Let P0=(x0,y0) be "previous point" and P=(x,y) the "current point".  The while loop that goes down the tree
+		has condition of form: depth<maxDepth && !acceptable(P0,P); i.e., go on
+		down the tree when it is unacceptable to draw the line from P0 to P.
+		
+		  double x0,y0,x,y,t;
+		  int dyadicStack[]=new int[20];
+		  int depthStack[]=new int[20];
+		  double xStack[]=new double[20];
+		  double yStack[]=new double[20];
+		  double divisors[]=new double[20];
+		  divisors[0]=t2-t1;
+		  for (int i=1;i<20;divisors[i]=divisors[i-1]/2,i++)
+		    ;
+		  int i=1;
+		  dyadicStack[0]=1;
+		  depthStack[0]=0;
+		  x0=xEval(t1);
+		  y0=yEval(t1);
+		  xStack[0]=x=xEval(t2); yStack[0]=y=yEval(t2);
+		  top=1;
+		  int depth=0;
+		  // with a GeneralPath moveTo(sx0,sy0) , the "screen" point
+		  do {
+		    while (depth<maxDepth &&
+		          (abs(x-x0)>=maxXDistance || abs(y-y0)>=maxYDistance)) {
+		      dyadicStack[top]=i; depthStack[top]=depth;
+		      xStack[top]=x; yStack[top++]=y;
+		      i<<=1; i--;
+		      depth++;
+		      t=t1+i*divisors[depth];  // t=t1+(t2-t1)*(i/2^depth)
+		      x=xEval(t); y=yEval(t);
+		    }
+		    drawLine(x0,y0,x,y);  // or with a GeneralPath lineTo(sx,sy)
+		    // above is call to user written function
+		    x0=x; y0=y;
+			//  Here's the real utility of the algorithm:
+			//Now pop stack and go to right; notice the corresponding dyadic value when we go to right is 2*i/(2^(d+1) = i/2^d !! So we've already
+			//calculated the corresponding x and y values when we pushed.
+		    y=yStack[--top]; x=xStack[top]
+		    depth=depthStack[top]+1; // pop stack and go to right
+		    i=dyadicStack[top]<<1;
+		  } while (top !=0);
+		
+		Notice the lines drawn from (x0,y0) to (x,y) always satisfy |x-x0|<maxXDistance 
+		and |y-y0|<maxYDistance or the minimum mesh 1/2^maxDepth has been reached.  
+		Also the maximum number of evaluations of functions x and y is 2^maxDepth.  
+	    All this pushing and popping looks expensive, but compared to function evaluation and rendering, it's trivial.
+		
+		For the special case of y=f(x), of course x(t)==t and y(t)=f(t).  In this special case, you  still 
+		have to worry about discontinuities of f, and in particular vertical asymptopes.  So you need to adjust the Boolean acceptable.		 		 
+		 */
+		
+    }
+    
+    /*
      * Draws the graph of f between a and b to gp. (Note: a < b) 
      * @param f
      * @param a: left x value in real wold coords
@@ -127,7 +377,7 @@ public class DrawParametricCurve extends Drawable {
      * @param calcLabelPos: whether label position should be calculated and returned
      * @param moveToAllowed: whether moveTo() may be used for gp
      * @return label position as Point     
-     */
+     *
 	final public static Point plotFunction(GeoFunction f,
 								double aRW, double bRW, EuclidianView view, 
 								GeneralPath gp, boolean calcLabelPos, 
@@ -397,27 +647,27 @@ public class DrawParametricCurve extends Drawable {
 				return new Point((int) xLabel, (int) yLabel);
 			else
 				return null;
-	}        
+	} */       
     
 	final public void draw(Graphics2D g2) {
-        if (isVisible) {
+        if (isVisible) {         	
         	try {
 	            if (geo.doHighlighting()) {
-	                g2.setPaint(f.selColor);
+	                g2.setPaint(geo.selColor);
 	                g2.setStroke(selStroke);            
-	                g2.draw(gp);           
+	                g2.draw(gp);	                
 	            } 
         	} catch (Exception e) {
         		System.err.println(e.getMessage());
         	}
             
 			try {
-            	g2.setPaint(f.objColor);
+            	g2.setPaint(geo.objColor);
 				g2.setStroke(objStroke);                                   
-				g2.draw(gp);     
+				g2.draw(gp);   			
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
-			}    
+			} 			        	        	
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);
@@ -425,11 +675,11 @@ public class DrawParametricCurve extends Drawable {
 				drawLabel(g2);
             }        
         }
-    }
+    }		
     
 	final void drawTrace(Graphics2D g2) {
 	   try {
-		   g2.setPaint(f.objColor);
+		   g2.setPaint(geo.objColor);
 		   g2.setStroke(objStroke);                                   
 			g2.draw(gp);    
 	   } catch (Exception e) {
@@ -438,12 +688,10 @@ public class DrawParametricCurve extends Drawable {
 	}
     
 	final public boolean hit(int x,int y) {  
-    	if (!isVisible) return false;
-    	double rwX = view.toRealWorldCoordX(x);
-    	double rwY = view.toRealWorldCoordY(y);
-    	double maxError = 7 * view.invYscale; // pixel
-    	double yVal =  f.evaluate(rwX);  	
-        return Math.abs(yVal - rwY) <= maxError;      
+    	if (!isVisible) 
+    		return false;
+    	return gp.intersects(x-2,y-2,4,4)
+			&& !gp.contains(x-2,y-2,4,4);      
     }
     
     public GeoElement getGeoElement() {

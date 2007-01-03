@@ -188,9 +188,11 @@ public class DrawFunction extends Drawable {
 			yPrev = y;			
 			slopePrev = 0;
 			slope = 0;
-									
-			
+												
 			int COUNTER = 0;
+			
+			//TODO: remove
+			int PLOTPOINTS = 1;
 			
 			// plotting loop: x from a to b
 			// (x, y) in screen coorrds
@@ -281,7 +283,11 @@ public class DrawFunction extends Drawable {
 						}
 					} 						
 				}
-												
+							
+				// TODO: remove
+				PLOTPOINTS++;
+				
+				
 				// line drawing									
 				if (onScreen) { // valid and on screen
 					if (needLabelPos) {
@@ -374,7 +380,11 @@ public class DrawFunction extends Drawable {
 				} 					
 			}		
 			
-			//System.out.println("plot loop: " + COUNTER);
+			// System.out.println("plot loop: " + COUNTER);
+			// TODO: remove
+			System.out.println("FUNCTION plotpoints = " + PLOTPOINTS);
+			
+			
 										
 			if (calcLabelPos) 
 				return new Point((int) xLabel, (int) yLabel);

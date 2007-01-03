@@ -26,6 +26,7 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
@@ -265,13 +266,13 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private Line2D.Double tempLine = new Line2D.Double();
 
 	private static RenderingHints defRenderingHints = new RenderingHints(null);
-	{
+	{		
 		defRenderingHints.put(RenderingHints.KEY_RENDERING,
 				RenderingHints.VALUE_RENDER_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
 				RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_COLOR_RENDERING,
-				RenderingHints.VALUE_COLOR_RENDER_SPEED);
+				RenderingHints.VALUE_COLOR_RENDER_SPEED);			
 	}
 
 	// FONTS
@@ -808,6 +809,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			return toScreenCoordY(yRW);
 	}
 
+	/**
+	 * Converts real world coordinates to screen coordinates. 	 
+	 * @param inOut: input and output array with x and y coords
+	 */
 	final public void toScreenCoords(double[] inOut) {
 		inOut[0] = xZero + inOut[0] * xscale;
 		inOut[1] = yZero - inOut[1] * yscale;
@@ -818,6 +823,42 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			inOut[0] = Double.NaN;
 			inOut[1] = Double.NaN;
 		}
+	}
+	
+	/**
+	 * Converts real world coordinates to screen coordinates. If a coord
+	 * value is outside the screen it is clipped to 10 pixel outside.	 
+	 * @param inOut: input and output array with x and y coords
+	 * @return true iff resulting coords are on screen
+	 */
+	final public boolean toClippedScreenCoords(double[] inOut) {
+		inOut[0] = xZero + inOut[0] * xscale;
+		inOut[1] = yZero - inOut[1] * yscale;
+				
+		double PIXEL_OFFSET = 10;
+		boolean onScreen = true;
+		
+		// x-coord on screen? 
+		if (inOut[0] < 0) {
+			inOut[0] = -PIXEL_OFFSET;
+			onScreen = false;
+		}
+		else if (inOut[0] > width) {
+			inOut[0] = width + PIXEL_OFFSET;
+			onScreen = false;
+		}
+
+		// y-coord on screen? 
+		if (inOut[1] < 0) {
+			inOut[1] = -PIXEL_OFFSET;
+			onScreen = false;
+		}
+		else if (inOut[1] > width) {
+			inOut[1] = height + PIXEL_OFFSET;
+			onScreen = false;
+		}
+
+		return onScreen;
 	}
 
 	public static final double MAX_SCREEN_COORD_VAL = 1E6;
@@ -1934,93 +1975,126 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 */
 	final Drawable createDrawable(GeoElement geo) {
 		Drawable d = null;
-
-		if (geo.isGeoPoint()) {
-			d = new DrawPoint(this, (GeoPoint) geo);
-			drawPointList.add(d);
-		} else if (geo.isGeoSegment()) {
-			d = new DrawSegment(this, (GeoSegment) geo);
-			drawSegmentList.add(d);
-		} else if (geo.isGeoRay()) {
-			d = new DrawRay(this, (GeoRay) geo);
-			drawSegmentList.add(d);
-		} else if (geo.isGeoLine()) {
-			d = new DrawLine(this, (GeoLine) geo);
-			drawLineList.add(d);
-		} else if (geo.isGeoPolygon()) {
-			d = new DrawPolygon(this, (GeoPolygon) geo);
-			drawPolygonList.add(d);
-		} else if (geo.isGeoAngle()) {
-			if (geo.isIndependent()) {
-				// independent number may be shown as slider
-				d = new DrawSlider(this, (GeoNumeric) geo);
-				drawNumericList.add(d);
-			} else {
-				d = new DrawAngle(this, (GeoAngle) geo);
-				if (geo.isDrawable()) {
-					if (!geo.isColorSet()) {
-						Color col = geo.getConstruction().getConstructionDefaults().
-							getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
-						geo.setObjColor(col);
+		
+		switch (geo.getGeoClassType()) {
+			case GeoElement.GEO_CLASS_POINT:
+				d = new DrawPoint(this, (GeoPoint) geo);
+				drawPointList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_SEGMENT:		
+				d = new DrawSegment(this, (GeoSegment) geo);
+				drawSegmentList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_RAY:		
+				d = new DrawRay(this, (GeoRay) geo);
+				drawSegmentList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_LINE:
+				d = new DrawLine(this, (GeoLine) geo);
+				drawLineList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_POLYGON:
+				d = new DrawPolygon(this, (GeoPolygon) geo);
+				drawPolygonList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_ANGLE:
+				if (geo.isIndependent()) {
+					// independent number may be shown as slider
+					d = new DrawSlider(this, (GeoNumeric) geo);
+					drawNumericList.add(d);
+				} else {
+					d = new DrawAngle(this, (GeoAngle) geo);
+					if (geo.isDrawable()) {
+						if (!geo.isColorSet()) {
+							Color col = geo.getConstruction().getConstructionDefaults().
+								getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
+							geo.setObjColor(col);
+						}
+							
+						drawNumericList.add(d);
 					}
-						
+				}
+				break;
+				
+			case GeoElement.GEO_CLASS_NUMERIC:
+				AlgoElement algo = geo.getParentAlgorithm();
+				if (algo == null) {
+					// independent number may be shown as slider
+					d = new DrawSlider(this, (GeoNumeric) geo);
+				} else if (algo instanceof AlgoSlope) {
+					d = new DrawSlope(this, (GeoNumeric) geo);
+				} else if (algo instanceof AlgoIntegralDefinite) {
+					d = new DrawIntegral(this, (GeoNumeric) geo);
+				} else if (algo instanceof AlgoIntegralFunctions) {
+					d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
+				} else if (algo instanceof AlgoSumUpperLower) {
+					d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
+				}
+				if (d != null) {
+					if (!geo.isColorSet()) {
+						ConstructionDefaults consDef = geo.getConstruction().getConstructionDefaults();
+						if (geo.isIndependent()) {
+							Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER).getColor();			
+							geo.setObjColor(col);
+						} else {
+							Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
+							geo.setObjColor(col);
+						}
+					}
 					drawNumericList.add(d);
 				}
-			}
-		} else if (geo.isGeoNumeric()) {
-			AlgoElement algo = geo.getParentAlgorithm();
-			if (algo == null) {
-				// independent number may be shown as slider
-				d = new DrawSlider(this, (GeoNumeric) geo);
-			} else if (algo instanceof AlgoSlope) {
-				d = new DrawSlope(this, (GeoNumeric) geo);
-			} else if (algo instanceof AlgoIntegralDefinite) {
-				d = new DrawIntegral(this, (GeoNumeric) geo);
-			} else if (algo instanceof AlgoIntegralFunctions) {
-				d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
-			} else if (algo instanceof AlgoSumUpperLower) {
-				d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
-			}
-			if (d != null) {
-				if (!geo.isColorSet()) {
-					ConstructionDefaults consDef = geo.getConstruction().getConstructionDefaults();
-					if (geo.isIndependent()) {
-						Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER).getColor();			
-						geo.setObjColor(col);
-					} else {
-						Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
-						geo.setObjColor(col);
-					}
-				}
-				drawNumericList.add(d);
-			}
-		} else if (geo.isGeoVector()) {
-			d = new DrawVector(this, (GeoVector) geo);
-			drawVectorList.add(d);
-		} else if (geo.isGeoConicPart()) {
-			d = new DrawConicPart(this, (GeoConicPart) geo);
-			drawConicList.add(d);
-		} else if (geo.isGeoConic()) {
-			d = new DrawConic(this, (GeoConic) geo);
-			drawConicList.add(d);
-		} else if (geo.isGeoFunction()) {
-			d = new DrawFunction(this, (GeoFunction) geo);
-			drawFunctionList.add(d);
-		} else if (geo.isGeoText()) {
-			d = new DrawText(this, (GeoText) geo);
-			drawTextList.add(d);
-		} else if (geo.isGeoImage()) {
-			d = new DrawImage(this, (GeoImage) geo);
-			if (!bgImageList.contains(d))
-				drawImageList.add(d);
-		} else if (geo.isGeoLocus()) {
-			d = new DrawLocus(this, (GeoLocus) geo);
-			drawLocusList.add(d);
-		}
+				break;
+					
+			case GeoElement.GEO_CLASS_VECTOR:
+				d = new DrawVector(this, (GeoVector) geo);
+				drawVectorList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_CONICPART:
+				d = new DrawConicPart(this, (GeoConicPart) geo);
+				drawConicList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_CONIC:
+				d = new DrawConic(this, (GeoConic) geo);
+				drawConicList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_FUNCTION:
+				d = new DrawFunction(this, (GeoFunction) geo);
+				drawFunctionList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_TEXT:
+				d = new DrawText(this, (GeoText) geo);
+				drawTextList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_IMAGE:
+				d = new DrawImage(this, (GeoImage) geo);
+				if (!bgImageList.contains(d))
+					drawImageList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_LOCUS:
+				d = new DrawLocus(this, (GeoLocus) geo);
+				drawLocusList.add(d);
+				break;
+				
+			case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
+				d = new DrawParametricCurve(this, (GeoCurveCartesian) geo);
+				drawFunctionList.add(d);
+				break;		
 
-		else if (geo.isGeoList()) {
-			// the geolist adds all its items in its update() method
-			d = new DrawList(this, (GeoList) geo);
+			case GeoElement.GEO_CLASS_LIST:
+				// the geolist adds all its items in its update() method
+				d = new DrawList(this, (GeoList) geo);
+				break;
 		}
 
 		if (d != null) {

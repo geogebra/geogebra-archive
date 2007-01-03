@@ -23,7 +23,7 @@ import geogebra.kernel.arithmetic.Parametric2D;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoElement
-implements Path, Translateable, Parametric2D {
+implements Path, Translateable, Traceable, Parametric2D {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -31,7 +31,8 @@ implements Path, Translateable, Parametric2D {
 	private double startParam, endParam;
 	private boolean isDefined = true;
 	private boolean isClosedPath;
-
+	private boolean trace = false;
+	
 	public GeoCurveCartesian(Construction c, 
 			Function fx, Function fy) 
 	{
@@ -319,4 +320,16 @@ implements Path, Translateable, Parametric2D {
 	public GeoVec2D evaluate(double t) {		
 		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
 	}
+	
+	final public boolean isTraceable() {
+		return true;
+	}
+
+	final public boolean getTrace() {		
+		return trace;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;	
+	}   
 }
