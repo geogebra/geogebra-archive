@@ -14,7 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.Parametric2D;
+import geogebra.kernel.roots.RealRootFunction;
 
 /**
  * Cartesian parametric curve, e.g. (cos(t), sin(t)) for t from 0 to 2pi.
@@ -23,7 +23,7 @@ import geogebra.kernel.arithmetic.Parametric2D;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoElement
-implements Path, Translateable, Traceable, Parametric2D {
+implements Path, Translateable, Traceable, ParametricCurve {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -86,6 +86,9 @@ implements Path, Translateable, Traceable, Parametric2D {
 		this.startParam = startParam;
 		this.endParam = endParam;
 		
+		if (startParam > endParam)
+			isDefined = false;
+		
 		// update isClosedPath, i.e. startPoint == endPoint
 		isClosedPath =  
 			Kernel.isEqual(funX.evaluate(startParam), funX.evaluate(endParam), Kernel.MIN_PRECISION) &&
@@ -124,14 +127,14 @@ implements Path, Translateable, Traceable, Parametric2D {
 		}	
 	}		
 		
-	/**
-	 * Calculates the Cartesian coordinates of this curve
-	 * for the given parameter paramVal. The result is written
-	 * to out.
-	 */
-	public void evaluate(double paramVal, double [] out) {		
-		out[0] = funX.evaluate(paramVal);
-		out[1] = funY.evaluate(paramVal);
+	
+	
+	final public RealRootFunction getRealRootFunctionX() {
+		return funX;
+	}
+	
+	final public RealRootFunction getRealRootFunctionY() {
+		return funY;
 	}
 	
 	public ExpressionValue evaluate() {
@@ -315,11 +318,7 @@ implements Path, Translateable, Traceable, Parametric2D {
 	
 	public boolean isGeoCurveCartesian() {
 		return true;
-	}
-
-	public GeoVec2D evaluate(double t) {		
-		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
-	}
+	}	
 	
 	final public boolean isTraceable() {
 		return true;
@@ -331,5 +330,19 @@ implements Path, Translateable, Traceable, Parametric2D {
 
 	public void setTrace(boolean trace) {
 		this.trace = trace;	
-	}   
+	}   	
+	
+	/**
+	 * Calculates the Cartesian coordinates of this curve
+	 * for the given parameter paramVal. The result is written
+	 * to out.
+	 */
+	public void evaluateCurve(double paramVal, double [] out) {		
+		out[0] = funX.evaluate(paramVal);
+		out[1] = funY.evaluate(paramVal);
+	}
+	
+	public GeoVec2D evaluateCurve(double t) {		
+		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
+	}  
 }

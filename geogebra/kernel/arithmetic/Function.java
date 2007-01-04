@@ -50,8 +50,8 @@ implements ExpressionValue, RealRootFunction, Functional {
     transient private Kernel kernel;    
     
     //  function may be limited to interval [a, b] 
-    public boolean interval = false; 
-    public double a, b; // interval borders 
+    private boolean interval = false; 
+    private double a, b; // interval borders 
     
 	private StringBuffer sb = new StringBuffer(80);
 
@@ -215,6 +215,18 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         fVar.set(x);
         return ((NumberValue) expression.evaluate()).getDouble();       
+    }
+    
+    public boolean setInterval(double a, double b) {
+    	if (a <= b) {         
+            interval = true;
+            this.a = a; 
+            this.b = b;              
+        } else {
+        	interval = false;            
+        }   
+    	
+    	return interval;  
     }
     
     /**
@@ -964,4 +976,16 @@ implements ExpressionValue, RealRootFunction, Functional {
 			return fun.evaluate(x);
 		}
     }
+
+	public final double getIntervalMin() {
+		return a;
+	}
+
+	public final double getIntervalMax() {
+		return b;
+	}
+	
+	public final boolean hasInterval() {
+		return interval;
+	}
 }

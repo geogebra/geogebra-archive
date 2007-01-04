@@ -10,17 +10,20 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.kernel.arithmetic;
+package geogebra.kernel;
 
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.roots.RealRootFunction;
 
 
-public interface Parametric2D {
+public interface ParametricCurve extends Traceable {
 	double getMinParameter(); 
 	double getMaxParameter();	
-	GeoVec2D evaluate(double t);		
-	void evaluate(double t, double [] out);
+	
+	RealRootFunction getRealRootFunctionX();
+	RealRootFunction getRealRootFunctionY();
+			
+	void evaluateCurve(double t, double [] out);
+	GeoVec2D evaluateCurve(double t);	
 	
 	GeoElement toGeoElement();
 }

@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.Functional;
+import geogebra.kernel.roots.RealRootFunction;
 
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
@@ -24,7 +25,8 @@ import geogebra.kernel.arithmetic.Functional;
  * @author Markus Hohenwarter
  */
 public class GeoFunction extends GeoElement
-implements Path, Translateable, Traceable, Functional, GeoFunctionable {
+implements Path, Translateable, Traceable, Functional, GeoFunctionable,
+ParametricCurve {
 
 	/**
 	 * 
@@ -330,12 +332,14 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 			P.x = P.x / P.z;			
 		}
 				
-		if (fun.interval) {
+		if (fun.hasInterval()) {
 			//	don't let P move out of interval
-			if (P.x < fun.a) 
-				P.x = fun.a;
-			else if (P.x > fun.b) 
-				P.x = fun.b;
+			double a = fun.getIntervalMin();
+			double b = fun.getIntervalMax();			
+			if (P.x < a) 
+				P.x = a;
+			else if (P.x > b) 
+				P.x = b;
 		}
 		
 		P.y = fun.evaluate(P.x);
@@ -438,4 +442,32 @@ implements Path, Translateable, Traceable, Functional, GeoFunctionable {
 		else
 			return false;
 	}
+
+	
+	public void evaluateCurve(double t, double[] out) {
+		out[0] = t;
+		out[1] = evaluate(t);		
+	}
+
+	final public RealRootFunction getRealRootFunctionX() {
+		return new RealRootFunction() {
+			public double evaluate(double t) {
+				return t;
+			}
+		};
+	}
+	
+	final public RealRootFunction getRealRootFunctionY() {
+		return new RealRootFunction() {
+			public double evaluate(double t) {
+				return GeoFunction.this.evaluate(t);
+			}
+		};
+	}
+
+	public GeoVec2D evaluateCurve(double t) {
+		return new GeoVec2D(kernel, t, evaluate(t));
+	}
+
+	
 }

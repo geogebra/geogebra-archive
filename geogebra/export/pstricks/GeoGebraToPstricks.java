@@ -890,9 +890,9 @@ public class GeoGebraToPstricks implements ActionListener {
 		value=killSpace(Util.toLaTeXString(value,true));
 		double a=xmin;
 		double b=xmax;
-		if (f.interval) {
-			a=Math.max(a,f.a);
-			b=Math.min(b,f.b);
+		if (f.hasInterval()) {
+			a=Math.max(a,f.getIntervalMin());
+			b=Math.min(b,f.getIntervalMax());
 		}
 		double xrangemax=a,xrangemin=a;
 		while (xrangemax<b){

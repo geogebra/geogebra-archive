@@ -82,12 +82,12 @@ public class Polyline {
         gp.transform(at);           
     }     
     
-    public void draw(Graphics2D g2) {       
-     	g2.draw(gp);
+    final public void draw(Graphics2D g2) {            	
+     	Drawable.drawGeneralPath(gp, g2);
     }
     
-    public void fill(Graphics2D g2) {
-    	g2.fill(gp);
+    final public void fill(Graphics2D g2) {
+    	Drawable.fillGeneralPath(gp, g2);
     }
     
     final public boolean intersects(double x, double y, double w, double h) {

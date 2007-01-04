@@ -65,7 +65,7 @@ public class DrawIntegral extends Drawable {
 		// plot definite integral
 		gp.reset(); 				
 		gp.moveTo(ax, y0); 
-		DrawFunction.plotFunction(f, aRW, bRW, view, gp, false, false);
+		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);
 		gp.lineTo(bx, y0);
 		gp.lineTo(ax, y0);			
 		
@@ -84,34 +84,23 @@ public class DrawIntegral extends Drawable {
     }
     
 	final public void draw(Graphics2D g2) {
-        if (isVisible) {
-        	try {
-	            if (geo.doHighlighting()) {
-	                g2.setPaint(n.selColor);
-	                g2.setStroke(selStroke);            
-	                g2.draw(gp);        
-	            } 
-        	} catch (Exception e) {
-        		System.err.println(e.getMessage());
-        	}
+        if (isVisible) {        	
+            if (geo.doHighlighting()) {
+                g2.setPaint(n.selColor);
+                g2.setStroke(selStroke);            
+                Drawable.drawGeneralPath(gp, g2);     
+            } 
             
         	// filling
-        	if (n.alphaValue > 0f) {
-				try {
-	            	g2.setPaint(n.fillColor);                                  
-					g2.fill(gp);    
-				} catch (Exception e) {
-					System.err.println(e.getMessage());
-				}    
+        	if (n.alphaValue > 0f) {				
+            	g2.setPaint(n.fillColor);                                  
+            	Drawable.fillGeneralPath(gp, g2);    			   
         	}
 			
-			try {
-				g2.setPaint(n.objColor);
-				g2.setStroke(objStroke);                                   
-				g2.draw(gp);   
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}    
+			
+			g2.setPaint(n.objColor);
+			g2.setStroke(objStroke);                                   
+			Drawable.drawGeneralPath(gp, g2);   			 
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);

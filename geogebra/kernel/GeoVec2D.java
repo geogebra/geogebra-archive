@@ -309,6 +309,10 @@ implements VectorValue {
         c.y = a.y / b;
     }        
     
+    final public boolean isDefined() {		
+		return !(Double.isNaN(x) || Double.isNaN( y));
+	}
+    
     final public String toString() {          
 		sbToString.setLength(0);
 		sbToString.append('(');

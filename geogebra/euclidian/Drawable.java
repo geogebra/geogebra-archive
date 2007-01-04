@@ -25,8 +25,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.GeneralPath;
 
 /**
  *
@@ -287,5 +289,19 @@ public abstract class Drawable {
 			float width = lineThickness / 2.0f;
 			objStroke = EuclidianView.getStroke(width, lineType);
 		}
+	}
+	
+	final public static void drawGeneralPath(GeneralPath gp, Graphics2D g2) {
+		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
+		g2.draw(gp);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
+	}
+	
+	final public static void fillGeneralPath(GeneralPath gp, Graphics2D g2) {
+		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
+		g2.fill(gp);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
 }

@@ -25,6 +25,7 @@ import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.ParametricCurve;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1095,7 +1096,7 @@ implements ExpressionValue {
             // vecfunction(number)
             if (rt.isNumberValue()) {    
             	NumberValue arg = (NumberValue) rt;
-            	return ((Parametric2D)lt).evaluate(arg.getDouble());            	
+            	return ((ParametricCurve)lt).evaluateCurve(arg.getDouble());            	
             }
             else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  

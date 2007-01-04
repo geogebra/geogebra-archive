@@ -167,8 +167,8 @@ public class DrawVector extends Drawable implements Previewable {
             
             g2.setPaint(v.objColor);
 			g2.setStroke(objStroke);  
-			g2.draw(line);  
-            g2.fill(gp);                                    
+			g2.draw(line);              
+            g2.fill(gp);
                                               
             if (labelVisible) {
 				g2.setFont(view.fontVector);

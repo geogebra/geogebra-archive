@@ -86,15 +86,8 @@ public class AlgoFunctionInterval extends AlgoElement {
                         
         double ad = a.getDouble();
         double bd = b.getDouble(); 
-        if (ad <= bd) {         
-            gfun.interval = true;
-            gfun.a = ad; 
-            gfun.b = bd;
-            g.setDefined(true);     
-        } else {
-            g.setUndefined();
-        }            
-                            
+        boolean defined = gfun.setInterval(ad, bd);
+        g.setDefined(defined);        
     }
 
     final public String toString() {

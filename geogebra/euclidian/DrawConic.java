@@ -643,7 +643,8 @@ final public class DrawConic extends Drawable implements Previewable {
 				if (conic.alphaValue > 0.0f) {
 					g2.setColor(conic.fillColor);
 					g2.fill(shape);
-					if (arcFiller != null) g2.fill(arcFiller);
+					if (arcFiller != null) 
+						Drawable.fillGeneralPath(arcFiller, g2);
 				}			                                               
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
@@ -712,7 +713,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				 g2.setStroke(objStroke);
 				 g2.setColor(conic.objColor);				 
 				 hypLeft.draw(g2);                                                
-				 hypRight.draw(g2); 					                                          
+				 hypRight.draw(g2); 				  
 				break;      
 		}
 	}

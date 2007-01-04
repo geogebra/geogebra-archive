@@ -105,13 +105,13 @@ implements Previewable {
         if (isVisible) {
         	if (poly.alphaValue > 0.0f) {
 				g2.setPaint(poly.fillColor);                       
-				g2.fill(gp);  
+				g2.fill(gp);  				
         	}
 					  
             if (geo.doHighlighting()) {
                 g2.setPaint(poly.selColor);
                 g2.setStroke(selStroke);            
-                g2.draw(gp);          
+                g2.draw(gp);                
             }            
             
             if (labelVisible) {

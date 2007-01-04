@@ -66,6 +66,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -266,14 +267,18 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private Line2D.Double tempLine = new Line2D.Double();
 
 	private static RenderingHints defRenderingHints = new RenderingHints(null);
-	{		
+	{				
 		defRenderingHints.put(RenderingHints.KEY_RENDERING,
 				RenderingHints.VALUE_RENDER_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
 				RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_COLOR_RENDERING,
-				RenderingHints.VALUE_COLOR_RENDER_SPEED);			
-	}
+				RenderingHints.VALUE_COLOR_RENDER_SPEED);
+						
+		// needed for nice antialiasing of GeneralPath objects: 	
+		//defRenderingHints.put(RenderingHints.KEY_STROKE_CONTROL,
+		//		RenderingHints.VALUE_STROKE_PURE);				
+	}		
 
 	// FONTS
 	public Font fontPoint, fontLine, fontVector, fontConic, fontCoords,
@@ -824,44 +829,45 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			inOut[1] = Double.NaN;
 		}
 	}
+	public static final double MAX_SCREEN_COORD_VAL = 1E6;
 	
 	/**
 	 * Converts real world coordinates to screen coordinates. If a coord
-	 * value is outside the screen it is clipped to 10 pixel outside.	 
+	 * value is outside the screen it is clipped to a rectangle with
+	 * border PIXEL_OFFSET around the screen.	 
 	 * @param inOut: input and output array with x and y coords
-	 * @return true iff resulting coords are on screen
+	 * @return true iff resulting coords are on screen, note: Double.NaN is NOT checked
 	 */
-	final public boolean toClippedScreenCoords(double[] inOut) {
+	final public boolean toClippedScreenCoords(double[] inOut, int PIXEL_OFFSET) {
 		inOut[0] = xZero + inOut[0] * xscale;
 		inOut[1] = yZero - inOut[1] * yscale;
-				
-		double PIXEL_OFFSET = 10;
+						
 		boolean onScreen = true;
 		
-		// x-coord on screen? 
+		// x-coord on screen? 		
 		if (inOut[0] < 0) {
-			inOut[0] = -PIXEL_OFFSET;
+			inOut[0] = Math.max(inOut[0], -PIXEL_OFFSET);
 			onScreen = false;
 		}
 		else if (inOut[0] > width) {
-			inOut[0] = width + PIXEL_OFFSET;
+			inOut[0] = Math.min(inOut[0], width + PIXEL_OFFSET);
 			onScreen = false;
 		}
 
 		// y-coord on screen? 
 		if (inOut[1] < 0) {
-			inOut[1] = -PIXEL_OFFSET;
+			inOut[1] = Math.max(inOut[1], -PIXEL_OFFSET);
 			onScreen = false;
 		}
-		else if (inOut[1] > width) {
-			inOut[1] = height + PIXEL_OFFSET;
+		else if (inOut[1] > height) {
+			inOut[1] = Math.min(inOut[1], height + PIXEL_OFFSET);
 			onScreen = false;
 		}
 
 		return onScreen;
 	}
 
-	public static final double MAX_SCREEN_COORD_VAL = 1E6;
+	
 
 	/**
 	 * convert screen coordinate x to real world coordinate x
@@ -952,8 +958,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				height);
 		bgGraphics = bgImage.createGraphics();
 		if (antiAliasing) {
-			bgGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+			setAntialiasing(bgGraphics);			
 		}
 
 		updateBackgroundImage();
@@ -1134,7 +1139,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);		
 	}
 
 	private void drawZoomRectangle(Graphics2D g2) {
@@ -1273,7 +1278,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
+				RenderingHints.VALUE_RENDER_QUALITY);	
 
 		setAntialiasing(g2d);
 
@@ -2066,7 +2071,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTION:
-				d = new DrawFunction(this, (GeoFunction) geo);
+				d = new DrawParametricCurve(this, (GeoFunction) geo);
 				drawFunctionList.add(d);
 				break;
 				

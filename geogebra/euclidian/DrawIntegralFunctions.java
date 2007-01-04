@@ -69,8 +69,8 @@ public class DrawIntegralFunctions extends Drawable {
 		//	plot area between f and g
 		gp.reset();
 		gp.moveTo(ax, ay);
-		DrawFunction.plotFunction(f, aRW, bRW, view, gp, false, false);		
-		DrawFunction.plotFunction(g, bRW, aRW, view, gp, false, false);
+		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);		
+		DrawParametricCurve.plotCurve(g, bRW, aRW, view, gp, false, false);
 		gp.closePath();		
 		
 //		 gp on screen?		
@@ -91,31 +91,19 @@ public class DrawIntegralFunctions extends Drawable {
     }
     
 	final public void draw(Graphics2D g2) {
-        if (isVisible) {
-        	try {
-	            if (geo.doHighlighting()) {
-	                g2.setPaint(n.selColor);
-	                g2.setStroke(selStroke);            
-	                g2.draw(gp);           
-	            } 
-        	} catch (Exception e) {
-        		System.err.println(e.getMessage());
-        	}
-            
-			try {
-            	g2.setPaint(n.fillColor);                                  
-				g2.fill(gp);    
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}    
-			
-			try {
-				g2.setPaint(n.objColor);
-				g2.setStroke(objStroke);                                   
-				g2.draw(gp);   
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}    
+        if (isVisible) {        	
+            if (geo.doHighlighting()) {
+                g2.setPaint(n.selColor);
+                g2.setStroke(selStroke);            
+                Drawable.drawGeneralPath(gp, g2);             
+            }         	
+            			
+        	g2.setPaint(n.fillColor);                                  
+        	Drawable.fillGeneralPath(gp, g2);       
+					
+			g2.setPaint(n.objColor);
+			g2.setStroke(objStroke);                                   
+			Drawable.drawGeneralPath(gp, g2);    
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);
