@@ -135,7 +135,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 	
 	public void addToPathParameter(double a) {
-		pathParameter.t += a;
+		setPathParameter(pathParameter.t + a);
+	}
+	
+	public void setPathParameter(double t) {
+		pathParameter.t = t;
+		
 		// update point relative to path
 		path.pathChanged(this);
 		updateCoords();
@@ -529,7 +534,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
      */
     String getXMLtags() {
         StringBuffer sb = new StringBuffer();
-        sb.append(super.getXMLtags());
+        sb.append(super.getXMLtags());               
         	       
         // polar or cartesian coords
         switch(toStringMode) {

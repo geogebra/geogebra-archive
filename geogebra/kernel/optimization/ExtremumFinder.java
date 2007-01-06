@@ -208,7 +208,8 @@ public class ExtremumFinder extends Object {
 			x,
 			tol3;
 
-		c = .5 * (3.0 - Math.sqrt(5.0));
+		// start value		
+		c = .5 * (3.0 - Math.sqrt(5.0));		
 		d = 0.0;
 
 		// 1.1102e-16 is machine precision
@@ -217,6 +218,7 @@ public class ExtremumFinder extends Object {
 		tol1 = eps + 1.0;
 		eps = Math.sqrt(eps);
 
+		
 		v = a + c * (b - a);
 		w = v;
 		x = v;

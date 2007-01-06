@@ -1200,7 +1200,7 @@ public class MyXMLHandler implements DocHandler {
         } catch (Exception e) {
             return false;
         }
-    }
+    }        
 
     private boolean handlePointSize(LinkedHashMap attrs) {
         if (!(geo.isGeoPoint())) {
@@ -1216,7 +1216,7 @@ public class MyXMLHandler implements DocHandler {
         } catch (Exception e) {
             return false;
         }
-    }
+    }       
     
     private boolean handleSlider(LinkedHashMap attrs) {
         if (!(geo.isGeoNumeric())) {

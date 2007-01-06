@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 
 /**
@@ -27,11 +28,16 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 
 	private static final long serialVersionUID = 1L;
 	
+	// samples to find interval with closest parameter position to given point
+	private static final int CLOSEST_PARAMETER_SAMPLES = 50;
+	
 	private Function funX, funY;	
 	private double startParam, endParam;
 	private boolean isDefined = true;
 	private boolean isClosedPath;
 	private boolean trace = false;	
+	
+	private ParametricCurveDistanceFunction distFun;
 	
 	public GeoCurveCartesian(Construction c, 
 			Function fx, Function fy) 
@@ -236,7 +242,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 			return app.getPlain("undefined");		
 	}		
 	
-	/**
+   /**
 	* returns all class-specific xml tags for getXML
 	*/
    String getXMLtags() {
@@ -252,21 +258,30 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPoint P) {				
-		// TODO: implement pointChanged() for path interface
-		// note: find minimum of (funX(t) - P.inhomX)^2 + (funY(t) - P.inhomY)^2
-		// using ExtremumFinder.findMinimum
+	public void pointChanged(GeoPoint P) {								
+		// get closest parameter position on curve
+		double t = getClosestParameter(P, P.pathParameter.t);
+		P.pathParameter.t = t;
+		pathChanged(P);	
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
-		return false;
+		//TODO: use root search funX(t) - Px == 0
 		
-		// TODO: implement isOnPath() for path interface
-		//return isDefined &&
-		//	Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
+		// get closest parameter position on curve
+		double t = getClosestParameter(P, P.pathParameter.t);
+		boolean onPath =
+			Math.abs(funX.evaluate(t) - P.inhomX) <= eps &&
+			Math.abs(funY.evaluate(t) - P.inhomY) <= eps;				
+		return onPath;
 	}
 
 	public void pathChanged(GeoPoint P) {
+		if (P.pathParameter.t < startParam)
+			P.pathParameter.t = startParam;
+		else if (P.pathParameter.t > endParam)
+			P.pathParameter.t = endParam;
+		
 		// calc point for given parameter
 		P.x = funX.evaluate(P.pathParameter.t);
 		P.y = funY.evaluate(P.pathParameter.t);
@@ -275,6 +290,64 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	
 	public boolean isPath() {
 		return true;
+	}
+	
+	/**
+	 * Returns the parameter value t where this curve has minimal distance
+	 * to point P.			
+	 */
+	public double getClosestParameter(GeoPoint P) {
+		return getClosestParameter(P, Double.NaN);
+	}
+	
+	/**
+	 * Returns the parameter value t where this curve has minimal distance
+	 * to point P.
+	 * @param startValue: an intervall around startValue is specially investigated				
+	 */
+	private double getClosestParameter(GeoPoint P, double startValue) {		
+		if (distFun == null)
+			distFun = new ParametricCurveDistanceFunction(this);				
+		distFun.setDistantPoint(P.x/P.z, P.y/P.z);
+		
+		// first sample distFun to find a start intervall for ExtremumFinder		
+		double step = (endParam - startParam) / CLOSEST_PARAMETER_SAMPLES;
+		double minVal = distFun.evaluate(startParam);
+		double minParam = startParam;
+		double t = startParam;		
+		for (int i=0; i < CLOSEST_PARAMETER_SAMPLES; i++) {
+			t = t + step;
+			double ft = distFun.evaluate(t);
+			if (ft < minVal) {
+				// found new minimum
+				minVal = ft;
+				minParam = t;
+			}
+		}
+		
+		// use interval around our minParam found by sampling
+		// to find minimum
+		double left = Math.max(startParam, minParam - step);
+		double right = Math.min(endParam, minParam + step);	
+		ExtremumFinder extFinder = kernel.getExtremumFinder();
+		double sampleResult = extFinder.findMinimum(left, right,
+									distFun, Kernel.MIN_PRECISION);	
+		
+		// if we have a valid startParam we try the intervall around it too
+		// however, we don't check the same intervall again
+		if (!Double.isNaN(startValue) &&
+			(startValue < left || right < startValue)) {
+			left = Math.max(startParam, startValue - step);
+			right = Math.min(endParam, startValue + step);				
+			double startValResult = extFinder.findMinimum(left, right,
+										distFun, Kernel.MIN_PRECISION);
+			if (distFun.evaluate(startValResult) <
+					distFun.evaluate(sampleResult)	) {				
+				return startValResult;
+			}				
+		}
+
+		return sampleResult;
 	}
 
 	

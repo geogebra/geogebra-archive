@@ -1022,6 +1022,7 @@ final public class EuclidianController implements MouseListener,
 		kernel.notifyRepaint();	
 		
 		// TODO: remove
+		/*
 		double totalTime = AlgoElement.computeTime + AlgoElement.updateTime;
         System.out.println("AlgoElement: compute: " + (100* AlgoElement.computeTime / totalTime) +
         		"%, update: " + (100* AlgoElement.updateTime / totalTime) +"%" );
@@ -1030,7 +1031,7 @@ final public class EuclidianController implements MouseListener,
         System.out.println("AlgoMacro: set state: " + (100* AlgoMacro.setTime / totalTime) +
         		"%, algoUpdate: " + (100* AlgoMacro.updateAlgosTime / totalTime) +
         		"%, get state: " + (100* AlgoMacro.getTime / totalTime) +"%" );
-        
+        */
 	}
 	
 	private boolean hitResetIcon() {
