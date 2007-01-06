@@ -2950,8 +2950,8 @@ final public class EuclidianController implements MouseListener,
 	
 
 	// new slider
-	final private boolean slider() {
-		return !selectionPreview && app.showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
+	final private boolean slider() {		
+		return !selectionPreview && mouseLoc != null && app.showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 
 	/***************************************************************************

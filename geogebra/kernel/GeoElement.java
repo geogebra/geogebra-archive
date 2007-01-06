@@ -2101,6 +2101,14 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	public boolean isGeoCurveable() {
+		return false;
+	}	
+	
+	public boolean isGeoDeriveable() {
+		return false;
+	}
+	
 	final public boolean isExpressionNode() {
 		return false;
 	}

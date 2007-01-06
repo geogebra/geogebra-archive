@@ -2116,33 +2116,66 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		Drawable d = (Drawable) DrawableMap.get(geo);
 
 		if (d != null) {
-			if (geo.isGeoPoint()) {
-				drawPointList.remove(d);
-			} else if (geo.isGeoSegment()) {
-				drawSegmentList.remove(d);
-			} else if (geo.isGeoRay()) {
-				drawSegmentList.remove(d);
-			} else if (geo.isGeoLine()) {
-				drawLineList.remove(d);
-			} else if (geo.isGeoPolygon()) {
-				drawPolygonList.remove(d);
-			} else if (geo.isGeoNumeric()) {
-				drawNumericList.remove(d);
-			} else if (geo.isGeoVector()) {
-				drawVectorList.remove(d);
-			} else if (geo.isGeoConic()) {
-				drawConicList.remove(d);
-			} else if (geo.isGeoFunction()) {
-				drawFunctionList.remove(d);
-			} else if (geo.isGeoText()) {
-				drawTextList.remove(d);
-				// remove HotEqn
-				((DrawText) d).remove();
-			} else if (geo.isGeoImage()) {
-				drawImageList.remove(d);
-			} else if (geo.isGeoLocus()) {
-				drawLocusList.remove(d);
-			}
+			switch (geo.getGeoClassType()) {
+				case GeoElement.GEO_CLASS_POINT:					
+					drawPointList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_SEGMENT:
+				case GeoElement.GEO_CLASS_RAY:				
+					drawSegmentList.remove(d);
+					break;
+																					
+				case GeoElement.GEO_CLASS_LINE:					
+					drawLineList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_POLYGON:					
+					drawPolygonList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_ANGLE:
+				case GeoElement.GEO_CLASS_NUMERIC:
+					drawNumericList.remove(d);
+					break;								
+						
+				case GeoElement.GEO_CLASS_VECTOR:					
+					drawVectorList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_CONICPART:					
+					drawConicList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_CONIC:					
+					drawConicList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_FUNCTION:					
+					drawFunctionList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_TEXT:					
+					drawTextList.remove(d);
+					//remove HotEqn
+					((DrawText) d).remove();
+					break;
+					
+				case GeoElement.GEO_CLASS_IMAGE:					
+					drawImageList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_LOCUS:					
+					drawLocusList.remove(d);
+					break;
+					
+				case GeoElement.GEO_CLASS_CURVE_CARTESIAN:					
+					drawFunctionList.remove(d);
+					break;		
+	
+				case GeoElement.GEO_CLASS_LIST:					
+					break;
+			}				
 
 			allDrawableList.remove(d);
 			DrawableMap.remove(geo);

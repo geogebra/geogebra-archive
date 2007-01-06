@@ -541,16 +541,34 @@ ExpressionNode cmdexpression():
 Function  function():
 {
     ExpressionNode rhs;
-    Token l;
+    Token l = null;
+    Token var;
+    Function f;
 }
 {    
+l = <FUNCTION_LABEL>
+(
 // e.g. f(x) =  x^2	
-	l = <FUNCTION_LABEL> <VARX> ")" "="	 rhs = expressionnode()
+	 <VARX> ")" "="	 rhs = expressionnode()
 	    {
-	        Function f = new Function(rhs);
+	        f = new Function(rhs);
 	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
 	        return f;
 	    }   
+)	   
+/* 
+functions of other variables than x not implemented yet
+|
+(
+	// e.g. f(t) =  t^2	
+	var = <LABEL> ")" "="	 rhs = expressionnode()
+	    {
+	        f = new Function(rhs, var.image);
+	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
+	        return f;
+	    }  	    
+)
+*/	    
 }
 
 /**

@@ -25,6 +25,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
     private GeoLine tangent; // output  
 
     private GeoPoint T;
+    private boolean pointOnFunction;
 
     AlgoTangentFunctionPoint(
         Construction cons,
@@ -36,7 +37,18 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         this.f = f;
 
         tangent = new GeoLine(cons);
-        T = new GeoPoint(cons);
+        
+        // check if P is defined as a point of the function's graph
+        pointOnFunction = false;
+        if (P.getParentAlgorithm() instanceof AlgoPointOnPath) {
+        	AlgoPointOnPath algo = (AlgoPointOnPath) P.getParentAlgorithm();
+        	pointOnFunction = algo.getPath() == f;
+        }        
+        
+        if (pointOnFunction)
+        	T = P;
+        else
+        	T = new GeoPoint(cons);
         tangent.setStartPoint(T);
 
         setInputOutput(); // for AlgoElement                
@@ -91,7 +103,9 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         double fa = f.evaluate(a);
         double slope = df.evaluate(a);
         tangent.setCoords(-slope, 1.0, a * slope - fa);
-        T.setCoords(a, fa, 1.0);
+        
+        if (!pointOnFunction)
+        	T.setCoords(a, fa, 1.0);
     }
 
     public final String toString() {

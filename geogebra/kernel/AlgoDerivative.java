@@ -25,32 +25,35 @@ public class AlgoDerivative extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoFunction f; // input
+	private GeoElement fgeo, ggeo;
+	private GeoDeriveable f; // input
     private NumberValue order;
-    private GeoFunction g; // output g = f'    
+    private GeoDeriveable g; // output g = f'    
 
     private GeoElement orderGeo;
 
-    /** Creates new AlgoDependentFunction */
-    public AlgoDerivative(Construction cons, String label, GeoFunction f) {
+    public AlgoDerivative(Construction cons, String label, GeoDeriveable f) {
         this(cons, label, f, null);
     }
 
     public AlgoDerivative(
         Construction cons,
         String label,
-        GeoFunction f,
+        GeoDeriveable f,
         NumberValue order) {
         super(cons);
         this.f = f;
         this.order = order;
         if (order != null)
             orderGeo = order.toGeoElement();
-
-        g = (GeoFunction) f.copyInternal();  // output
+        
+        this.fgeo = f.toGeoElement();        
+        g = (GeoDeriveable) fgeo.copyInternal();  // output
+        ggeo = g.toGeoElement();
+        
         setInputOutput(); // for AlgoElement    
         compute();
-        g.setLabel(label);
+        ggeo.setLabel(label);
     }
 
     String getClassName() {
@@ -61,35 +64,33 @@ public class AlgoDerivative extends AlgoElement {
     void setInputOutput() {
         int length = (order == null) ? 1 : 2;
         input = new GeoElement[length];
-        input[0] = f;
+        input[0] = fgeo;
         if (orderGeo != null)
             input[1] = orderGeo;
 
         output = new GeoElement[1];
-        output[0] = g;
+        output[0] = ggeo;
         setDependencies(); // done by AlgoElement
     }
 
-    public GeoFunction getDerivative() {
-        return g;
+    public GeoElement getDerivative() {
+        return ggeo;
     }
 
     final void compute() {
-        if (!f.isDefined()) {
-            g.setUndefined();
+        if (!fgeo.isDefined()) {
+            ggeo.setUndefined();
             return;
         }
 
-        if (order == null) {
-            g.setDefined(true);
+        if (order == null) {            
             g.setDerivative(f, 1);
         } else {
             double ord;
-            if (orderGeo.isDefined() && (ord = order.getDouble()) >= 0) {
-                g.setDefined(true);
+            if (orderGeo.isDefined() && (ord = order.getDouble()) >= 0) {                
                 g.setDerivative(f, (int) Math.round(ord));
             } else {
-                g.setUndefined();
+                ggeo.setUndefined();
             }
         }
     }
@@ -106,7 +107,7 @@ public class AlgoDerivative extends AlgoElement {
             sb.append(app.getPlain("of"));
             sb.append(' ');
         }
-        sb.append(f.getLabel());
+        sb.append(fgeo.getLabel());
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("of"));
@@ -117,10 +118,12 @@ public class AlgoDerivative extends AlgoElement {
             }
             sb.append(app.getPlain("Derivative"));
         }
-        if (!f.isIndependent()) { // show the symbolic representation too
+        if (!fgeo.isIndependent()) { // show the symbolic representation too
             sb.append(": ");
-            sb.append(g.getLabel());
-            sb.append("(x) = ");
+            sb.append(ggeo.getLabel());
+            sb.append('(');
+            sb.append(g.getVarString());
+            sb.append(")= ");
     		sb.append(g.toSymbolicString());            
         }
         return sb.toString();

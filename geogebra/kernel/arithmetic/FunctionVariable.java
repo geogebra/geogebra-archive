@@ -34,7 +34,7 @@ public class FunctionVariable extends MyDouble {
 	
 	public void setVarString(String varStr) {
 		this.varStr = varStr;
-	}
+	}		
 	
 	final public String toString() {
 		return varStr;

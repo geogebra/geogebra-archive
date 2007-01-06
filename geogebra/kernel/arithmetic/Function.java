@@ -53,11 +53,11 @@ implements ExpressionValue, RealRootFunction, Functional {
     private boolean interval = false; 
     private double a, b; // interval borders 
     
-	private StringBuffer sb = new StringBuffer(80);
+	private StringBuffer sb = new StringBuffer(80);	
 
 	 /**
-     * Creates new Function from expression where the function
-     * variable in expression is already known.
+     * Creates new Function from expression where x is
+     * the variable. 
      * Note: call initFunction() after this constructor.
      */ 
     public Function(ExpressionNode expression) {
@@ -66,6 +66,27 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         this.expression = expression;       
     }
+    
+    /**
+     * Creates new Function from expression where var is
+     * the variable.
+     * Note: call initFunction() after this constructor.
+     *
+    public Function(ExpressionNode expression, String var) {
+    	if (var.equals("y"))
+    		throw new MyError(app, "InvalidFunction");  
+    	
+    	kernel = expression.getKernel();
+    	app = kernel.getApplication();        	
+        
+        this.expression = expression;  
+        
+        // GeoGebra initally only supported functions in x,
+        // so we simulate this  
+        FunctionVariable fVar = new FunctionVariable(kernel);
+        fVar.setVarString(var);
+        expression.replaceSpecificVariable(var, fVar);
+    } */
     
     /**
      * Creates new Function from expression where the function
@@ -142,9 +163,9 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Call this function to resolve variables and init the function.
      * May throw MyError (InvalidFunction).
      */
-    public void initFunction() {                              
+    public void initFunction() {              	
         // check if this is really a function in x
-        if (!expression.isFunctionInX())
+        if (fVar == null && !expression.isFunctionInX())
             throw new MyError(app, "InvalidFunction");
         
         // replace variable names by objects
@@ -157,14 +178,20 @@ implements ExpressionValue, RealRootFunction, Functional {
 
         // replace all polynomials in expression (they are all equal to "1x" if we got this far)
         // by an instance of MyDouble
-        fVar = new FunctionVariable(kernel);        
-        int replacements = expression.replacePolynomials(fVar);
-        isConstantFunction = replacements == 0;        
+        if (fVar == null) {
+        	fVar = new FunctionVariable(kernel);        
+        	int replacements = expression.replacePolynomials(fVar);
+        	isConstantFunction = replacements == 0;
+        }
         
         //  simplify constant parts in expression
         expression.simplifyConstants();
 
-        // check type of function
+        initType();              
+    }               
+    
+    private void initType() {
+    	// check type of function
         ExpressionValue ev = expression.evaluate();        
         if (ev.isNumberValue()) {
         	isBooleanFunction = false;
@@ -172,8 +199,8 @@ implements ExpressionValue, RealRootFunction, Functional {
         else if (ev.isBooleanValue()) {
         	isBooleanFunction = true;
         } else
-			throw new MyError(app, "InvalidFunction");                
-    }               
+			throw new MyError(app, "InvalidFunction");  
+    }
 
     /**
      * Returns whether this function always evaluates to BooleanValue.
@@ -774,33 +801,43 @@ implements ExpressionValue, RealRootFunction, Functional {
 		sb.setLength(0);
         sb.append("d(");
         // function expression with multiply sign "*"
+        
+        // temporarily replace the variable by "x"
+        String oldVar = fVar.toString();
+        fVar.setVarString("x");
+        
         sb.append(expression.getJSCLString(true));
         if (order == 1) {
-            sb.append(",x)");
+            sb.append(",x)");            
         } else {
-            sb.append(",x,x,");
+        	sb.append(",x,x,");            
             sb.append(order);
-            sb.append(')');
+            sb.append(')');            
         }           
         
         try {           
             // evaluate expression by JSCL        	       
             String result = GeoGebraCAS.evaluateJSCL(sb.toString());       
 			sb.setLength(0);
-            // it doesn't matter what label we use here as it is never used
-            sb.append("f(x)="); 
+            // it doesn't matter what label we use here as it is never used            			
+			sb.append("f(x) = ");			
             sb.append(result);
     
              // parse result
              Function fun = kernel.getTempParser().parseFunction(sb.toString());
              fun.initFunction();
+             fun.getFunctionVariable().setVarString(oldVar);
+             
              return fun;
          } catch (Error err) {       
              return null;
          } catch (Exception e) {
         	 //e.printStackTrace();
              return null;
-         }      
+         }     
+         finally {
+        	 fVar.setVarString(oldVar);
+         }
     }	
     
     /**

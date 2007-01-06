@@ -26,7 +26,7 @@ import geogebra.kernel.roots.RealRootFunction;
  */
 public class GeoFunction extends GeoElement
 implements Path, Translateable, Traceable, Functional, GeoFunctionable,
-ParametricCurve {
+GeoDeriveable, ParametricCurve {
 
 	/**
 	 * 
@@ -36,6 +36,7 @@ ParametricCurve {
 	private Function fun;		
 	protected boolean isDefined = true;
 	public boolean trace;	
+	private String varStr = "x";
 
 	public GeoFunction(Construction c) {
 		super(c);
@@ -109,9 +110,12 @@ ParametricCurve {
 	 * @param f
 	 * @param order
 	 */
-	public void setDerivative(GeoFunction f, int n) {
+	public void setDerivative(GeoDeriveable fd, int n) {
+		GeoFunction f = (GeoFunction) fd;
+		
 		if (f.isDefined()) {
 			fun = f.fun.getDerivative(n);
+			isDefined = fun != null;
 		} else {
 			isDefined = false;
 		}	
@@ -228,7 +232,9 @@ ParametricCurve {
 		sbToString.setLength(0);
 		if (isLabelSet()) {
 			sbToString.append(label);
-			sbToString.append("(x) = ");
+			sbToString.append("(");
+			sbToString.append(varStr);
+			sbToString.append(") = ");
 		}		
 		sbToString.append(toValueString());
 		return sbToString.toString();
@@ -469,5 +475,11 @@ ParametricCurve {
 		return new GeoVec2D(kernel, t, evaluate(t));
 	}
 
+	public boolean isGeoDeriveable() {
+		return true;
+	}
 	
+	public String getVarString() {	
+		return varStr;
+	}
 }

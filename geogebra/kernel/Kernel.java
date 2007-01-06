@@ -1326,7 +1326,7 @@ public class Kernel {
 	 */
 	final public GeoFunction Slope(String label, GeoFunction f) {
 		AlgoDerivative algo = new AlgoDerivative(cons, label, f);
-		GeoFunction g = algo.getDerivative();
+		GeoFunction g = (GeoFunction) algo.getDerivative();
 		return g;
 	}
 	
@@ -2625,31 +2625,27 @@ public class Kernel {
 	}
 	
 	/**
-	 * first derivative of function f
+	 * first derivative of deriveable f
 	 */
-	final public GeoFunction Derivative(
+	final public GeoElement Derivative(
 		String label,
-		GeoFunction f) {
+		GeoDeriveable f) {
 		
 		AlgoDerivative algo = new AlgoDerivative(cons, label, f);
-		GeoFunction g = algo.getDerivative();
-				
-		return g;
+		return algo.getDerivative();				
 	}	
 	
 	/**
-	 * n-th derivative of function f
+	 * n-th derivative of deriveable f
 	 */
-	final public GeoFunction Derivative(
+	final public GeoElement Derivative(
 		String label,
-		GeoFunction f,
+		GeoDeriveable f,
 		NumberValue n) {
 		
 		AlgoDerivative algo = new AlgoDerivative(cons, label, f, n);
-		GeoFunction g = algo.getDerivative();
-				
-		return g;
-	}
+		return algo.getDerivative();	
+	}			
 	
 	/**
 	 * Tries to expand a function f to a polynomial.

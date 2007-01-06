@@ -23,7 +23,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoElement
-implements Path, Translateable, Traceable, ParametricCurve {
+implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -31,14 +31,14 @@ implements Path, Translateable, Traceable, ParametricCurve {
 	private double startParam, endParam;
 	private boolean isDefined = true;
 	private boolean isClosedPath;
-	private boolean trace = false;
+	private boolean trace = false;	
 	
 	public GeoCurveCartesian(Construction c, 
 			Function fx, Function fy) 
 	{
 		super(c);
 		setFunctionX(fx);
-		setFunctionY(fy);				
+		setFunctionY(fy);					
 	}
 	
 	String getClassName() {
@@ -117,11 +117,15 @@ implements Path, Translateable, Traceable, ParametricCurve {
 	/**
 	 * Set this curve to the n-th derivative of curve c
 	 */
-	public void setDerivative(GeoCurveCartesian c, int n) {
-		if (c.isDefined()) {
-			
+	public void setDerivative(GeoDeriveable cd, int n) {
+		GeoCurveCartesian c = (GeoCurveCartesian) cd;
+		
+		if (c.isDefined()) {			
 			funX = c.funX.getDerivative(n);
-			funY = c.funY.getDerivative(n);			
+			funY = c.funY.getDerivative(n);	
+			isDefined = !(funX == null || funY == null);
+			if (isDefined)
+				setInterval(c.startParam, c.endParam);			
 		} else {
 			isDefined = false;
 		}	
@@ -345,4 +349,16 @@ implements Path, Translateable, Traceable, ParametricCurve {
 	public GeoVec2D evaluateCurve(double t) {		
 		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
 	}  
+	
+	final public boolean isGeoCurveable() {
+		return true;
+	}
+	
+	public boolean isGeoDeriveable() {
+		return true;
+	}
+
+	public String getVarString() {	
+		return funX.getFunctionVariable().toString();
+	}
 }

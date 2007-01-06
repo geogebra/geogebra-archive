@@ -24,13 +24,11 @@ import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
@@ -2912,14 +2910,12 @@ public class PropertiesDialog
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoLine
-					|| geos[i] instanceof GeoVector
-					|| geos[i] instanceof GeoConic
-					|| geos[i] instanceof GeoFunction
-					|| geos[i] instanceof GeoPolygon
-					|| geos[i] instanceof GeoLocus
-					|| (geos[i] instanceof GeoNumeric
-						&& ((GeoNumeric) geos[i]).isDrawable()))) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (!(geo.isPath())
+					|| geo.isGeoPolygon()
+					|| geo.isGeoLocus()
+					|| (geo.isGeoNumeric()
+						&& ((GeoNumeric) geo).isDrawable())) {
 					geosOK = false;
 					break;
 				}

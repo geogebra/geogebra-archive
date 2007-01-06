@@ -316,19 +316,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}	
 	
 	/**
-	 * Calcs split factor lambda where AB = lambda * AC.
-	 * Note: A, B and C must lie on one line.
+	 * Returns the affine ratio for three collinear points A, B and C. 
+	 * The ratio is lambda with A = B + lambda * BC, i.e. lambda = |BA|/|BC|.
+	 * Note: the collinearity is not checked in this method.
 	 */
-	public static final double splitFactor(GeoPoint A, GeoPoint B, GeoPoint C) {
-		double ACx = C.inhomX - A.inhomX;
-		double ACy = C.inhomY - A.inhomY;
-		double lambda;
-		if (Math.abs(ACx) > Math.abs(ACy)) {
-			lambda = (B.inhomX - A.inhomX) / ACx;
+	public static final double affineRatio(GeoPoint A, GeoPoint B, GeoPoint C) {		
+		double BCx = B.inhomX - C.inhomX;
+		double BCy = B.inhomY - C.inhomY;
+		
+		// avoid division by a number close to zero
+		if (Math.abs(BCx) > Math.abs(BCy)) {
+			return (B.inhomX - A.inhomX) / BCx;
 		} else {
-			lambda = (B.inhomY - A.inhomY) / ACy;
-		}
-		return lambda;
+			return (B.inhomY - A.inhomY) / BCy;
+		}		
 	}
     
 /***********************************************************

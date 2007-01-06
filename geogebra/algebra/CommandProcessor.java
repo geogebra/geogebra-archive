@@ -19,6 +19,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoDeriveable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
@@ -39,9 +40,6 @@ import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
-
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 public abstract class CommandProcessor  {
 	
@@ -2926,6 +2924,7 @@ final public  GeoElement[] process(Command c) throws MyError {
 
 /*
  * Derivative[ <GeoFunction> ]
+ * Derivative[ <GeoCurveCartesian> ]
  */
 class CmdDerivative extends CommandProcessor {
 	
@@ -2940,29 +2939,27 @@ final public   GeoElement[] process(Command c) throws MyError {
 
     
     switch (n) {
-        case 1 :
-           
-            if (arg[0].isGeoFunctionable()) {
-                GeoFunction f = ((GeoFunctionable) arg[0]).getGeoFunction();
-                if (label == null && f.isLabelSet())
-                    label = f.getLabel() + "'";
+        case 1 :           
+            if (arg[0].isGeoDeriveable()) {
+            	GeoDeriveable f = (GeoDeriveable) arg[0];
+                if (label == null)
+                    label = getDerivLabel(f.toGeoElement(), 1);
                 GeoElement[] ret = { kernel.Derivative(label, f)};
                 return ret;
-            } else
+            }                   
+            else
 				throw argErr(app, "Derivative", arg[0]);
 
         case 2 :                
-            if (arg[0].isGeoFunctionable()
+            if (arg[0].isGeoDeriveable()
                 && arg[1] .isNumberValue()) {
                 double order = ((NumberValue) arg[1]).getDouble();
-                if (order >= 0) {
-                    int iorder = (int) Math.round(order);
-                    GeoFunction f = ((GeoFunctionable) arg[0]).getGeoFunction();
-                    if (label == null && f.isLabelSet()) {
-                        label = f.getLabel();
-                        for (int i = 0; i < iorder; i++)
-                            label = label + "'";
-                    }
+                if (order >= 0) {                    
+                	GeoDeriveable f = (GeoDeriveable) arg[0];
+                    if (label == null) {
+                    	int iorder = (int) Math.round(order);
+                    	label = getDerivLabel(f.toGeoElement(), iorder);
+                    }                    	
                     GeoElement[] ret =
                         {
                              kernel.Derivative(
@@ -2972,14 +2969,28 @@ final public   GeoElement[] process(Command c) throws MyError {
                     return ret;
                 } else
 					throw argErr(app, "Derivative", arg[1]);
-            } else {
+            }            
+            else {
                 argErr(app, "Derivative", arg[0]);
             }
 
         default :
             throw argNumErr(app, "Derivative", n);
     }
+        
 }
+
+	private String getDerivLabel(GeoElement geo, int order) {
+		String label = null;
+		
+		if (geo.isLabelSet()) {
+            label = geo.getLabel();
+            for (int i = 0; i < order; i++)
+                label = label + "'";
+        }
+        
+		return label;
+	}
 }
 
 /*

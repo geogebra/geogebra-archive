@@ -558,5 +558,9 @@ implements EuclidianViewAlgo {
     boolean isPrintedInXML() {
         return isPrintedInXML;
     }
+    
+    public String toString() {
+    	return getCommandDescription();
+    }
 
 }

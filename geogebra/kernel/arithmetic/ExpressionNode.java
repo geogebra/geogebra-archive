@@ -1150,20 +1150,46 @@ implements ExpressionValue {
      */
     public void resolveVariables() {        
         // resolve left wing
-    	if (left instanceof Variable) {
+    	if (left.isVariable()) {
             left = ((Variable) left).resolve();                
         } else
         	left.resolveVariables();
     	
         // resolve right wing
         if (right != null) {
-            if (right instanceof Variable) {
+            if (right.isVariable()) {
                 right = ((Variable) right).resolve();
             } 
             else
             	right.resolveVariables();
         }                       
     }
+    
+    /** 
+     *  Looks for Variable objects that hold String var in the tree and 
+     *  replaces them by their newOb.
+     *
+    public void replaceSpecificVariable(String var, ExpressionValue newOb) {
+    	// left wing
+    	if (left.isVariable()) {
+            if (var.equals(((Variable) left).getName()))
+            		left = newOb;                
+        }
+    	else if (left.isExpressionNode()) {
+    		((ExpressionNode) left).replaceSpecificVariable(var, newOb);
+    	}
+        	    	
+        // right wing
+        if (right != null) {
+        	if (right.isVariable()) {
+                if (var.equals(((Variable) right).getName()))
+                	right = newOb;                
+            }
+        	else if (right.isExpressionNode()) {
+        		((ExpressionNode) right).replaceSpecificVariable(var, newOb);
+        	}
+        }     
+    } */
     
     
     /** 
@@ -2075,9 +2101,9 @@ implements ExpressionValue {
                 break;
                
             case VEC_FUNCTION:
-            	// GeoFunction and GeoFunctionConditional should not be expanded
+            	// GeoCurveables should not be expanded
             	if (left.isGeoElement() &&
-                     	((GeoElement)left).isGeoCurveCartesian()) {
+                     	((GeoElement)left).isGeoCurveable()) {
             		 sb.append(((GeoElement)left).getLabel());
             	} else
             		 sb.append(leftStr);            	 
@@ -2087,9 +2113,8 @@ implements ExpressionValue {
                 break;                  
                 
             case DERIVATIVE: // e.g. f''
-            	// GeoFunctionConditional should not be expanded
-            	if (left.isGeoElement() &&
-                     	((GeoElement)left).isGeoFunctionConditional()) {
+            	// labeled GeoElements should not be expanded
+            	if (left.isGeoElement() && ((GeoElement)left).isLabelSet()) {
             		 sb.append(((GeoElement)left).getLabel());
             	} else
             		 sb.append(leftStr); 

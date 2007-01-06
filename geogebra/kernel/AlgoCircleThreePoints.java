@@ -35,7 +35,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
 
     // line bisectors
     private GeoLine s0, s1;
-    private GeoPoint midpoint;    
+    private GeoPoint center;    
     private double[] det = new double[3];
     transient private double ax,
         ay,
@@ -78,7 +78,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
             s0 = new GeoLine(cons);
             s1 = new GeoLine(cons);
 
-            midpoint = new GeoPoint(cons);            
+            center = new GeoPoint(cons);            
 
             setInputOutput(); // for AlgoElement
 
@@ -176,8 +176,8 @@ public class AlgoCircleThreePoints extends AlgoElement {
         // A, B, C are collinear: set M to infinite point
         // in perpendicular direction of AB
         if (kernel.isZero(maxDet)) {
-            midpoint.setCoords(-ABy, ABx, 0.0d);
-            circle.setCircle(midpoint, A);
+            center.setCoords(-ABy, ABx, 0.0d);
+            circle.setCircle(center, A);
         }
         // standard case
         else {
@@ -215,8 +215,8 @@ public class AlgoCircleThreePoints extends AlgoElement {
             }
 
             // intersect line bisectors to get midpoint
-            GeoVec3D.cross(s0, s1, midpoint);
-            circle.setCircle(midpoint, midpoint.distance(A));
+            GeoVec3D.cross(s0, s1, center);
+            circle.setCircle(center, center.distance(A));
         }
     }
 

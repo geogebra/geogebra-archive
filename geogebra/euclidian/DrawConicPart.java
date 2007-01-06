@@ -125,7 +125,7 @@ implements Previewable {
 			}
 			
 	    	// shape on screen?		
-			if (!shape.intersects(0,0, view.width, view.height)) {				
+			if (shape != null && !shape.intersects(0,0, view.width, view.height)) {				
 				isVisible = false;
 				return;
 			}
