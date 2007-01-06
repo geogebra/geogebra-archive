@@ -137,7 +137,10 @@ final public class GeoRay extends GeoLine implements LimitedPath {
     }
     
     /** returns true if P lies on this segment */
-    public boolean isOnPath(GeoPoint P, double eps) {       	
+    public boolean isOnPath(GeoPoint P, double eps) {  
+    	if (P.getPath() == this)
+			return true;
+    	
     	// check if P lies on line first
     	if (!isOnFullLine(P, eps))
     		return false;

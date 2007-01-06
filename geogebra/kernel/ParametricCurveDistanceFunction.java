@@ -36,9 +36,6 @@ public class ParametricCurveDistanceFunction implements RealRootFunction {
 	public void setDistantPoint(double px, double py) {
 		this.px = px;
 		this.py = py;
-
-		//		TODO: remove
-		System.out.println("   point " + px + ", " + py);
 	}
 
 	/**

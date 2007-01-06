@@ -233,6 +233,9 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
+		if (P.getPath() == this)
+			return true;
+		
 		return isDefined() &&
 			Math.abs(evaluate(P.inhomX) - P.inhomY) <= eps;
 	}

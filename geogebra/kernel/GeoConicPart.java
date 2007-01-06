@@ -275,7 +275,10 @@ implements LimitedPath, NumberValue {
 	/** 
 	 * states wheter P lies on this conic part or not 
 	 */
-	public boolean isOnPath(GeoPoint P, double eps) {	
+	public boolean isOnPath(GeoPoint P, double eps) {
+		if (P.getPath() == this)
+			return true;
+		
 		// check if P lies on conic first
     	if (!isOnFullConic(P, eps))
     		return false;

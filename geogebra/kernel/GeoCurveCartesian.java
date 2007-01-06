@@ -265,9 +265,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		pathChanged(P);	
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {
-		//TODO: use root search funX(t) - Px == 0
-		
+	public boolean isOnPath(GeoPoint P, double eps) {						
+		if (P.getPath() == this)
+			return true;
+			
 		// get closest parameter position on curve
 		double t = getClosestParameter(P, P.pathParameter.t);
 		boolean onPath =
@@ -294,18 +295,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	
 	/**
 	 * Returns the parameter value t where this curve has minimal distance
-	 * to point P.			
-	 */
-	public double getClosestParameter(GeoPoint P) {
-		return getClosestParameter(P, Double.NaN);
-	}
-	
-	/**
-	 * Returns the parameter value t where this curve has minimal distance
 	 * to point P.
 	 * @param startValue: an intervall around startValue is specially investigated				
 	 */
-	private double getClosestParameter(GeoPoint P, double startValue) {		
+	public double getClosestParameter(GeoPoint P, double startValue) {		
 		if (distFun == null)
 			distFun = new ParametricCurveDistanceFunction(this);				
 		distFun.setDistantPoint(P.x/P.z, P.y/P.z);

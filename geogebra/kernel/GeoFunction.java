@@ -357,6 +357,9 @@ GeoDeriveable, ParametricCurve {
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
+		if (P.getPath() == this)
+			return true;
+		
 		return isDefined &&
 			Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
 	}

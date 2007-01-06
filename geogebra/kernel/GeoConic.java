@@ -2098,6 +2098,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
+		if (P.getPath() == this)
+			return true;
+		
 		return isOnFullConic(P, eps);
 	}
 	
