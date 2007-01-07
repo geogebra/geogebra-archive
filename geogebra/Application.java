@@ -97,7 +97,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -125,7 +124,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "12. December 2006";
+    public static final String buildDate = "7. January 2006";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1290,9 +1289,9 @@ public class Application {
     }
 
     public void showLicenseMessage() {
-        String text = readTextFromJar("properties/license_message.txt");  
+        String text = readTextFromJar("gui/license_message.txt");  
                
-        JTextArea textArea = new JTextArea(20, 40);
+        JTextArea textArea = new JTextArea(21, 43);
         JScrollPane scrollPane = 
             new JScrollPane(textArea,
                             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1304,7 +1303,7 @@ public class Application {
         JOptionPane.showConfirmDialog(
         		mainComp,
         		scrollPane,
-            getPlain("ApplicationName") + " " + getMenu("License"),
+            getPlain("ApplicationName") + " Copyright / " + getMenu("License"),
             JOptionPane.DEFAULT_OPTION,
 			JOptionPane.PLAIN_MESSAGE);
     }
@@ -3316,7 +3315,7 @@ public class Application {
             }
         };*/
 
-        licenceAction = new AbstractAction(getMenu("License"), getEmptyIcon()) {
+        licenceAction = new AbstractAction("Copyright / " + getMenu("License"), getEmptyIcon()) {
         	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 showLicenseMessage();
@@ -3402,20 +3401,30 @@ public class Application {
                 sb.append("</b> (");
                 sb.append(Application.buildDate);
                 sb.append(")<br>");
-                sb.append(GEOGEBRA_WEBSITE);                
-                sb.append("<br><br>");
-                sb.append(getPlain("Copyright"));
-                sb.append("<ul>");
-                sb.append("<li>Markus Hohenwarter<br>project leader, idea and development since 2001");                
-                sb.append("<li>Yves Kreis<br>developer since 2006");
-                sb.append("</ul>");
-                sb.append("</html>");
-
+                sb.append(GEOGEBRA_WEBSITE);
                 
-                JOptionPane infoPane = new JOptionPane(sb.toString(),
+                sb.append("<br><br>");   
+                sb.append("<strong>GeoGebra User Forum</strong><br>");
+                sb.append("&nbsp;&nbsp; ");
+                sb.append(GEOGEBRA_WEBSITE);
+                sb.append("/forum");
+                
+                sb.append("<br><br>");   
+                sb.append("<strong>GeoGebraWiki</strong><br>");
+                sb.append("&nbsp;&nbsp; ");
+                sb.append(GEOGEBRA_WEBSITE);
+                sb.append("/wiki");
+                       
+                sb.append("<br><br>");   
+                sb.append("<strong>Contact</strong><br/>");                                
+                sb.append("&nbsp;&nbsp; Markus Hohenwarter<br/>");                
+                sb.append("&nbsp;&nbsp; mhohen@gmail.com<br/>");
+                sb.append("<br>");                                                        
+                sb.append("</html>");                              
+                
+                JOptionPane infoPane = new JOptionPane( sb.toString()  ,
                 		JOptionPane.INFORMATION_MESSAGE,
-                		JOptionPane.DEFAULT_OPTION,
-                		getImageIcon("markus.jpg"));
+                		JOptionPane.DEFAULT_OPTION);
                                              
                 final JDialog dialog = infoPane.createDialog(mainComp, getPlain("Info"));   
                 
