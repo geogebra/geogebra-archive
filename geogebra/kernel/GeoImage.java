@@ -75,7 +75,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	private void initTempPoints() {
 		if (tempPoints == null) {
-			//		 temp corner points for transformations and absolute location
+			//	temp corner points for transformations and absolute location
 			tempPoints = new GeoPoint[3];
 	    	for (int i = 0; i < tempPoints.length; i++) {
 	    		tempPoints[i] = new GeoPoint(cons);    		
@@ -533,6 +533,9 @@ implements Locateable, AbsoluteScreenLocateable,
 			result.setUndefined();
 			return;
 		}
+		
+		if (corners[0] == null)
+			initTempPoints();
 		
 		switch (n) {
 			case 1: // get A

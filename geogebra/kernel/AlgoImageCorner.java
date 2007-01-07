@@ -55,7 +55,7 @@ implements EuclidianViewAlgo {
          
     GeoPoint getCorner() { return corner; }        
     
-    final void compute() {     
+    final void compute() {         	
 		img.calculateCornerPoint(corner, (int) number.getDouble());	    	
     }
     
