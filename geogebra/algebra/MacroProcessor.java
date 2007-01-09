@@ -14,6 +14,7 @@ package geogebra.algebra;
 
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
 
@@ -34,21 +35,31 @@ public class MacroProcessor extends CommandProcessor {
 		this.macro = macro;
 	}
 		
-	public GeoElement[] process(Command c) throws MyError {        						 
-		int n = c.getArgumentNumber();		
-		Class [] macroInputTypes = macro.getInputTypes();
-		
-		// wrong number of arguments
-		if (n != macroInputTypes.length) {
-			StringBuffer sb = new StringBuffer();
-	        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
-	        sb.append(app.getError("IllegalArgumentNumber") + ": " + n);
-	        sb.append("\n\nSyntax:\n" + macro.toString());
-			throw new MyError(app, sb.toString());
-		}
-		
+	public GeoElement[] process(Command c) throws MyError {        						 							
 		// resolve command arguments
 		GeoElement [] arg = resArgs(c);
+				
+		Class [] macroInputTypes = macro.getInputTypes();		
+		
+		// wrong number of arguments
+		if (arg.length != macroInputTypes.length) {
+			boolean lengthOk = false;
+			
+			// check if we have a polygon in the arguments
+			// if yes, let's use its points
+			if (arg[0].isGeoPolygon()) {
+				arg = ((GeoPolygon) arg[0]).getPoints();
+				lengthOk = true;
+			}
+			
+			if (!lengthOk) {
+				StringBuffer sb = new StringBuffer();
+		        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
+		        sb.append(app.getError("IllegalArgumentNumber") + ": " + arg.length);
+		        sb.append("\n\nSyntax:\n" + macro.toString());
+				throw new MyError(app, sb.toString());
+			}
+		}				
 		
 		// check whether the types of the arguments are ok for our macro
 		for (int i=0; i < macroInputTypes.length; i++) {
