@@ -276,10 +276,7 @@ public abstract class GeoElement
 	public GeoElement(Construction c) {
 		super(c);
 		// this.geoID = geoCounter++;                                 
-		setConstructionDefaults(); // init colors       
-		
-		// init label
-		initSetLabelVisible();
+		setConstructionDefaults(); // init visual settings       				
 		
 		// new elements become breakpoints if only breakpoints are shown
 		isConsProtBreakpoint = cons.showOnlyBreakpoints();
@@ -361,12 +358,7 @@ public abstract class GeoElement
 
 	public abstract boolean isDefined();
 	public abstract void setUndefined();
-	public abstract String toValueString();
-
-	
-	void initSetLabelVisible() {
-		labelVisible =  ! isPath() || app.showAlgebraView();
-	}
+	public abstract String toValueString();		
 	
 	public void setConstructionDefaults() {	
 		if (useVisualDefaults) {

@@ -40,8 +40,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POLYGON = 70;
 	public static final int DEFAULT_LOCUS = 80;
 	public static final int DEFAULT_LIST = 90;
-			
-	
+		
 	// DEFAULT COLORs
 	// points
 	private static final Color colPoint = Color.blue;
@@ -80,8 +79,14 @@ public class ConstructionDefaults {
 			colPolygon.getBlue(), 
 			(int) (DEFAULT_POLYGON_ALPHA * 255));	
 	
+	// label visibility
+	public static final int LABEL_VISIBLE_USE_DEFAULTS = 0;
+	public static final int LABEL_VISIBLE_ALWAYS_ON = 1;
+	public static final int LABEL_VISIBLE_ALWAYS_OFF = 2;	
+		
 	// construction
 	private Construction cons;
+	private int labelVisibility = LABEL_VISIBLE_USE_DEFAULTS;
 	
 	// defaultGeoElement list
 	private FastHashMapKeyless defaultGeoElements;		
@@ -250,11 +255,45 @@ public class ConstructionDefaults {
 			else if (geo.isGeoList()) 
 				type = DEFAULT_LIST;
 		}
+			
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
 		if (defaultGeo != null)
-			geo.setAllVisualProperties(defaultGeo);
+			geo.setAllVisualProperties(defaultGeo);			
+
+		 // TODO: change label visibility
+        labelVisibility = cons.getApplication().showAlgebraView() ?
+        		ConstructionDefaults.LABEL_VISIBLE_USE_DEFAULTS :
+        		ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF;        
+        
+        // label visibility
+		switch (labelVisibility) {						
+			case LABEL_VISIBLE_ALWAYS_ON:
+				geo.setLabelVisible(true);
+				break;
+			
+			case LABEL_VISIBLE_ALWAYS_OFF:
+				geo.setLabelVisible(false);
+				break;
+				
+			default:
+			// case LABEL_VISIBLE_USE_DEFAULTS:
+				// don't change anything
+		}				
+		
+		/*
+		void initSetLabelVisible() {
+			labelVisible =  ! isPath() || app.showAlgebraView();
+		}*/
+	}
+
+	public int getLabelVisibility() {
+		return labelVisibility;
+	}
+
+	public void setLabelVisibility(int labelVisibility) {
+		this.labelVisibility = labelVisibility;
 	}
 
 }

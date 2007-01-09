@@ -39,6 +39,7 @@ import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
@@ -124,7 +125,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "7. January 2006";
+    public static final String buildDate = "9. January 2006";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -559,7 +560,7 @@ public class Application {
         		createMatteBorder(eupTopBorder, 0, eupBottomBorder, 0, Color.gray));
         
         if (updateUI)        	
-        	updateComponentTreeUI();
+        	updateComponentTreeUI();               
     }
     
     /*
