@@ -38,12 +38,11 @@ public class GeoList extends GeoElement implements ListValue {
 	private static String STR_OPEN = "{";
 	private static String STR_CLOSE = "}";
 	
-	private ArrayList geoList;	  
+	private ArrayList geoList = new ArrayList();	  
 	private boolean isDefined = true;
     
     public GeoList(Construction c) { 
-    	super(c);     	
-    	geoList = new ArrayList();    	    	
+    	super(c);     	    	    	    
     }
              
     public GeoList(GeoList list) {
@@ -90,12 +89,14 @@ public class GeoList extends GeoElement implements ListValue {
     }    
     
     public void setVisualStyle(GeoElement geo) {
-    	// TODO: think about this
+    	// TODO: think about setVisualStyle() for lists
     	
+    	/*
+    	if (geoList == null) return;    	
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
         	((GeoElement) geoList.get(i)).setVisualStyle(geo);
-        }
+        }*/
     }
     
     /**

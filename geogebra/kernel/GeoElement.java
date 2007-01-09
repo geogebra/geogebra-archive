@@ -1218,9 +1218,9 @@ public abstract class GeoElement
 		}
 
 		// texts need updates
-		algebraStringsNeedUpdate();			
-		    		
-		kernel.notifyUpdate(this);	        			
+		algebraStringsNeedUpdate();					    			
+		
+		kernel.notifyUpdate(this);	        				
 	}
 	
 	private void algebraStringsNeedUpdate() {
@@ -1591,7 +1591,7 @@ public abstract class GeoElement
 	public String getLabelDescription() {
 		switch (labelMode) {
 			case LABEL_NAME_VALUE :
-				return strAlgebraDescription;
+				return getAlgebraDescription();
 
 			case LABEL_VALUE :
 				return toDefinedValueString();

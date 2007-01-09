@@ -135,11 +135,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 	
 	public void addToPathParameter(double a) {
-		setPathParameter(pathParameter.t + a);
+		pathParameter.t += a;
+		
+		// update point relative to path
+		path.pathChanged(this);
+		updateCoords();
 	}
 	
-	public void setPathParameter(double t) {
-		pathParameter.t = t;
+	public void initPathParameter(PathParameter pp) {
+		pathParameter = pp;		
 		
 		// update point relative to path
 		path.pathChanged(this);
@@ -173,7 +177,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	
 	final public boolean isFixable() {
 		return path != null || super.isFixable();
-	}
+	}		
     
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
@@ -534,7 +538,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
      */
     String getXMLtags() {
         StringBuffer sb = new StringBuffer();
-        sb.append(super.getXMLtags());               
+        sb.append(super.getXMLtags()); 
+        
+        /* should not be needed
+        if (path != null) {        	
+        	pathParameter.appendXML(sb);
+        }*/
         	       
         // polar or cartesian coords
         switch(toStringMode) {

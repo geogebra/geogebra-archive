@@ -43,7 +43,7 @@ public class DrawSlider extends Drawable {
     public DrawSlider(EuclidianView view, GeoNumeric number) {
         this.view = view;
         this.number = number;
-        geo = number;
+        geo = number;              
         
         // create point for slider
         geoPoint = new GeoPoint(view.getKernel().getConstruction());        
@@ -114,7 +114,7 @@ public class DrawSlider extends Drawable {
 	        	line.setLine(coordsScreen[0], coordsScreen[1], coordsScreen[0], coordsScreen[1] - widthScreen);
         	}	        		                 	        	
                                      
-            updateStrokes(number);                                        
+            updateStrokes(number);                
         }
     }
     

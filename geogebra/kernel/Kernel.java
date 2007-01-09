@@ -772,7 +772,7 @@ public class Kernel {
 	 * Creates a new macro within the kernel. A macro is a user defined
 	 * command in GeoGebra.
 	 */
-	public void addMacro(String cmdName, boolean continous, GeoElement [] input, GeoElement [] output) {
+	public void addMacro(String cmdName, GeoElement [] input, GeoElement [] output) {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}	
@@ -787,6 +787,10 @@ public class Kernel {
 			// create new macro
 			Macro macro = new Macro(this, macroName, input, output);		
 			macroManager.addMacro(macro);
+			
+			// if we are not currently loading a file, show success
+			if (isNotifyViewsActive())
+				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);			
 			
 			// TODO: remove
 			System.out.println("added macro: " + macro);

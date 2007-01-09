@@ -30,7 +30,7 @@ import java.util.TreeSet;
 public class Macro {
 	
 	private Kernel kernel;
-	private String cmdName, toolName, toolHelp;
+	private String cmdName, toolName = "", toolHelp = "";
 	private String iconFileName = ""; // image file			
 				
 	private Construction macroCons; // macro construction
@@ -214,6 +214,11 @@ public class Macro {
     		
     		// add input element to macroConsOrigElements 	        	
     		macroConsOrigElements.add(input[i]);
+    		
+    		// make sure we don't have any parent algorithms of input[i] in our construction
+    		AlgoElement algo = input[i].getParentAlgorithm();
+    		if (algo != null)
+    			macroConsOrigElements.remove(algo);
     	}   
     	
     	for (int i=0; i < output.length; i++) {
@@ -284,7 +289,7 @@ public class Macro {
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     	macroConsXML.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
-    	    	      	    	    
+    	     	    	   
     	Iterator it = macroConsElements.iterator();
     	while (it.hasNext()) {    		
     		ConstructionElement ce = (ConstructionElement) it.next();

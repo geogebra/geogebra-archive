@@ -40,6 +40,7 @@ import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Macro;
 import geogebra.kernel.MacroKernel;
+import geogebra.kernel.PathParameter;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -1015,6 +1016,11 @@ public class MyXMLHandler implements DocHandler {
                     ok = handlePointSize(attrs);
                     break;
                 }
+        		/* should not be needed
+        		else if (eName.equals("pathParameter")) {
+                    ok = handlePathParameter(attrs);
+                    break;
+                }*/
         		
         	case 's':
         		if (eName.equals("show")) {
@@ -1216,7 +1222,40 @@ public class MyXMLHandler implements DocHandler {
         } catch (Exception e) {
             return false;
         }
-    }       
+    }     
+            
+    /*
+     * this should not be needed
+    private boolean handlePathParameter(LinkedHashMap attrs) {
+        if (!(geo.isGeoPoint())) {
+            System.err.println(
+                "wrong element type for <handlePathParameter>: " + geo.getClass());
+            return false;
+        }
+
+        try {
+        	GeoPoint p = (GeoPoint) geo;
+            PathParameter param = new PathParameter();                                    
+            double t = Double.parseDouble((String) attrs.get("val"));
+            param.setT(t);
+            
+            String strBranch = (String) attrs.get("branch");
+            if (strBranch != null) {
+            	param.setBranch(Integer.parseInt(strBranch));
+            }
+            
+            String strType = (String) attrs.get("type");
+            if (strType != null) {
+            	param.setPathType(Integer.parseInt(strType));
+            }
+            
+            p.initPathParameter(param);                     
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }     
+    */
     
     private boolean handleSlider(LinkedHashMap attrs) {
         if (!(geo.isGeoNumeric())) {

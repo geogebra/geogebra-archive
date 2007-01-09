@@ -36,4 +36,43 @@ public class PathParameter {
 		branch = pp.branch;
 		pathType = pp.pathType;
 	}
+	
+	void appendXML(StringBuffer sb) {
+		// pathParameter
+		sb.append("\t<pathParameter val=\"");
+			sb.append(t);
+		if (branch > 0) {
+			sb.append("\" branch=\"");
+			sb.append(branch);
+		}		
+		if (pathType > -1) {
+			sb.append("\" type=\"");
+			sb.append(pathType);
+		}
+		sb.append("\"/>\n");
+	}
+
+	public final int getBranch() {
+		return branch;
+	}
+
+	public final void setBranch(int branch) {
+		this.branch = branch;
+	}
+
+	public final int getPathType() {
+		return pathType;
+	}
+
+	public final void setPathType(int pathType) {
+		this.pathType = pathType;
+	}
+
+	public final double getT() {
+		return t;
+	}
+
+	public final void setT(double t) {
+		this.t = t;
+	}
 }

@@ -267,8 +267,7 @@ public class Application {
         redoAction,
         exitAction,
         exitAllAction,
-        helpAction,
-        licenceAction,
+        helpAction,        
         //updateAction,
         infoAction,
         exportGraphicAction,
@@ -1287,26 +1286,7 @@ public class Application {
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.INFORMATION_MESSAGE);
     }
-
-    public void showLicenseMessage() {
-        String text = readTextFromJar("gui/license_message.txt");  
-               
-        JTextArea textArea = new JTextArea(21, 43);
-        JScrollPane scrollPane = 
-            new JScrollPane(textArea,
-                            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setEditable(false);
-        textArea.setText(text);
-        textArea.setCaretPosition(0);
-
-        JOptionPane.showConfirmDialog(
-        		mainComp,
-        		scrollPane,
-            getPlain("ApplicationName") + " Copyright / " + getMenu("License"),
-            JOptionPane.DEFAULT_OPTION,
-			JOptionPane.PLAIN_MESSAGE);
-    }
+    
     
       public String readTextFromJar(String s) {
         StringBuffer sb = new StringBuffer();
@@ -2867,8 +2847,7 @@ public class Application {
         
       //  menu.add(updateAction);        
       //  menu.addSeparator();
-        
-        menu.add(licenceAction);
+                
         menu.add(infoAction);
         menuBar.add(menu);
 
@@ -3313,14 +3292,7 @@ public class Application {
                 };
                 runner.start();
             }
-        };*/
-
-        licenceAction = new AbstractAction("Copyright / " + getMenu("License"), getEmptyIcon()) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                showLicenseMessage();
-            }
-        };
+        };*/       
 
         exportGraphicAction =
             new AbstractAction(
@@ -3390,7 +3362,7 @@ public class Application {
         };
 
         infoAction =
-            new AbstractAction(getMenu("About"), getImageIcon("info.gif")) {
+            new AbstractAction(getMenu("About") + " / " + getMenu("License"), getImageIcon("info.gif")) {
         	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
@@ -3398,35 +3370,29 @@ public class Application {
                 sb.append(getPlain("ApplicationName"));
                 sb.append(" ");
                 sb.append(Application.versionString);
-                sb.append("</b> (");
-                sb.append(Application.buildDate);
-                sb.append(")<br>");
-                sb.append(GEOGEBRA_WEBSITE);
+                sb.append("</b><br>");
+                sb.append(Application.buildDate);                             
                 
-                sb.append("<br><br>");   
-                sb.append("<strong>GeoGebra User Forum</strong><br>");
-                sb.append("&nbsp;&nbsp; ");
-                sb.append(GEOGEBRA_WEBSITE);
-                sb.append("/forum");
+                // license                 
+                String text = readTextFromJar("gui/license_message.txt");                  
+                JTextArea textArea = new JTextArea(21, 43);
+                JScrollPane scrollPane = 
+                    new JScrollPane(textArea,
+                                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                textArea.setEditable(false);
+                textArea.setText(text);
+                textArea.setCaretPosition(0);
                 
-                sb.append("<br><br>");   
-                sb.append("<strong>GeoGebraWiki</strong><br>");
-                sb.append("&nbsp;&nbsp; ");
-                sb.append(GEOGEBRA_WEBSITE);
-                sb.append("/wiki");
-                       
-                sb.append("<br><br>");   
-                sb.append("<strong>Contact</strong><br/>");                                
-                sb.append("&nbsp;&nbsp; Markus Hohenwarter<br/>");                
-                sb.append("&nbsp;&nbsp; mhohen@gmail.com<br/>");
-                sb.append("<br>");                                                        
-                sb.append("</html>");                              
+                JPanel panel = new JPanel(new BorderLayout(5,5));
+                panel.add(new JLabel(sb.toString()), BorderLayout.NORTH);
+                panel.add(scrollPane, BorderLayout.SOUTH);
                 
-                JOptionPane infoPane = new JOptionPane( sb.toString()  ,
-                		JOptionPane.INFORMATION_MESSAGE,
+                JOptionPane infoPane = new JOptionPane( panel,
+                		JOptionPane.PLAIN_MESSAGE,
                 		JOptionPane.DEFAULT_OPTION);
                                              
-                final JDialog dialog = infoPane.createDialog(mainComp, getPlain("Info"));   
+                final JDialog dialog = infoPane.createDialog(mainComp, getMenu("About") + " / " + getMenu("License"));   
                 
                 final ActionListener listener = new ActionListener() {
                     public final void actionPerformed(final ActionEvent e) {                    	

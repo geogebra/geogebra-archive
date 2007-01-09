@@ -1604,12 +1604,12 @@ final public class EuclidianController implements MouseListener,
 												oldLoc.y + mouseLoc.y-startLoc.y);
 		} else {
 			movedGeoNumeric.setSliderLocation(xRW - startPoint.x, yRW - startPoint.y);
-		}
+		}		
 		
 		if (repaint)
 			movedGeoNumeric.updateRepaint();
 		else
-			movedGeoNumeric.updateCascade();
+			movedGeoNumeric.updateCascade();				
 	}
 	
 	final private void moveDependent(boolean repaint) {
