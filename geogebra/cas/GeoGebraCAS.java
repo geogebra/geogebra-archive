@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.cas;
 
+import yacas.YacasInterpreter;
 import jscl.math.Expression;
 import jscl.math.Generic;
 import jscl.math.GenericVariable;
@@ -25,7 +26,9 @@ import jscl.math.Variable;
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
-    
+    		
+	private static YacasInterpreter yacas = new YacasInterpreter();
+	
     private static Variable xVar;
     private static StringBuffer sbInsertSpecial, sbReverse;
     
@@ -42,6 +45,53 @@ public class GeoGebraCAS {
     	catch(Exception e) {
     		e.printStackTrace();
     	} 
+    }
+    
+    public static void main(String [] args) {
+    	YacasInterpreter yacas = new YacasInterpreter();
+    	
+    	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
+    			"D(ö) mysin(ö);"};
+    	
+    	for (int i=0; i < commands.length; i++) {
+    		String result = yacas.Evaluate(removeSpecialChars(commands[i]));
+    		System.out.println("command: " + commands[i]);
+        	System.out.println("result: " + insertSpecialChars(result));        	        
+    	}    	
+    	
+    }
+    
+    /** 
+     * Evaluates an YACAS expression and returns the result as a string.
+     * e.g. exp = "d(x^2, x)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */
+    // TODO: go on
+    final public static synchronized String evaluateYACAS(String exp) {
+    	//System.out.println("exp for JSCL: " + exp);
+        
+        try {
+        	String result;
+        	
+        	// JSCL has problems with special characters:
+        	// get rid of them        	
+        	String myExp = removeSpecialChars(exp);          	        
+           
+        	result = yacas.Evaluate(myExp);
+        	
+        	//System.out.println("   result: " + result);
+        	//System.out.println("   result (special chars): " + insertSpecialChars(result));
+        	
+            return insertSpecialChars(result);
+            
+        } catch (Error err) {
+            err.printStackTrace();
+            return null;    
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }       
     }
     
     /** 
@@ -68,7 +118,7 @@ public class GeoGebraCAS {
             Generic out = in.expand();
                         
         	//System.out.println("   expand: " + out);
-            
+            /*
             if (out.isPolynomial(xVar)) {
                 // build polynomial
                 UnivariatePolynomial p = UnivariatePolynomial.valueOf(out, xVar);
@@ -76,11 +126,12 @@ public class GeoGebraCAS {
             } else {
                 out = out.simplify();                                             
                 result =  out.toString();
-            }   
+            } */  
                        
         	//System.out.println("   result: " + result);
         	//System.out.println("   result (special chars): " + insertSpecialChars(result));
         	
+            result = out.toString();
             return insertSpecialChars(result);
             
         } catch (Error err) {

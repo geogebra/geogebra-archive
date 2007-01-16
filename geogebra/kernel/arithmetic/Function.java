@@ -816,12 +816,49 @@ implements ExpressionValue, RealRootFunction, Functional {
         }           
         
         try {           
-            // evaluate expression by JSCL        	       
-            String result = GeoGebraCAS.evaluateJSCL(sb.toString());       
+        	// TODO: remove
+        	long startTime = System.currentTimeMillis();
+        	
+            // evaluate expression by JSCL          	        	        	
+            String JSCLresult = GeoGebraCAS.evaluateJSCL(sb.toString());
+            
+            long endTime = System.currentTimeMillis();
+            counter++;
+            JSCLtime = endTime - startTime;
+                         
+            
+            // build expression string for YACAS             
+    		sb.setLength(0);
+            sb.append("D(x)(");
+            // function expression with multiply sign "*"                                  
+            sb.append(expression.getJSCLString(true));
+            if (order == 1) {
+                sb.append(")");            
+            } else {
+            	sb.append(",");            
+                sb.append(order);
+                sb.append(')');            
+            }           
+            
+//          TODO: remove
+        	startTime = System.currentTimeMillis();
+        	
+            // evaluate expression by JSCL          	        	        	
+            String YACASresult = GeoGebraCAS.evaluateYACAS(sb.toString());
+            
+            endTime = System.currentTimeMillis();           
+            YACAStime = endTime - startTime;
+            
+            // TODO: remove
+            System.out.println("***");
+            System.out.println("JSCLtime: " + JSCLtime + ", result: " + JSCLresult);
+            System.out.println("YACAStime: " + YACAStime + ", result: " + YACASresult );            
+                        
+            
 			sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
 			sb.append("f(x) = ");			
-            sb.append(result);
+            sb.append(YACASresult);
     
              // parse result
              Function fun = kernel.getTempParser().parseFunction(sb.toString());
@@ -839,6 +876,10 @@ implements ExpressionValue, RealRootFunction, Functional {
         	 fVar.setVarString(oldVar);
          }
     }	
+    
+    // TODO: remove
+    static long JSCLtime = 0, YACAStime = 0;
+    static long counter = 0;
     
     /**
      * Creates the difference expression (a - b) and stores the result in
