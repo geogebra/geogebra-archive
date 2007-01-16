@@ -8,7 +8,6 @@ import jscl.math.JSCLInteger;
 import jscl.math.NotIntegrableException;
 import jscl.math.NumericWrapper;
 import jscl.math.Variable;
-import jscl.text.IndentedBuffer;
 import jscl.text.ParseException;
 import jscl.text.Parser;
 import jscl.util.ArrayComparator;
@@ -24,7 +23,7 @@ public class Constant extends Variable {
 	public static final Parser primeCharacters=PrimeCharacters.parser;
 	public static final Parser integer=IntegerParser.parser;
 	public static final Parser subscriptParser=Subscript.parser;
-	static final int PRIMECHARS=2;
+	static final int PRIMECHARS=3;
 	public int prime;
 	public Generic subscript[];
 
@@ -107,9 +106,14 @@ public class Constant extends Variable {
 			if(c<0) return -1;
 			else if(c>0) return 1;
 			else {
-				if(prime<v.prime) return -1;
-				else if(prime>v.prime) return 1;
-				else return ArrayComparator.comparator.compare(subscript,v.subscript);
+				c=ArrayComparator.comparator.compare(subscript,v.subscript);
+				if(c<0) return -1;
+				else if(c>0) return 1;
+				else {
+					if(prime<v.prime) return -1;
+					else if(prime>v.prime) return 1;
+					else return 0;
+				}
 			}
 		}
 	}
@@ -117,12 +121,12 @@ public class Constant extends Variable {
 	public String toString() {
 		StringBuffer buffer=new StringBuffer();
 		buffer.append(name);
-		if(prime==0);
-		else if(prime<=PRIMECHARS) buffer.append(primechars(prime));
-		else buffer.append("{").append(prime).append("}");
 		for(int i=0;i<subscript.length;i++) {
 			buffer.append("[").append(subscript[i]).append("]");
 		}
+		if(prime==0);
+		else if(prime<=PRIMECHARS) buffer.append(primechars(prime));
+		else buffer.append("{").append(prime).append("}");
 		return buffer.toString();
 	}
 
@@ -152,98 +156,74 @@ public class Constant extends Variable {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			if(prime==0) {
-				if(subscript.length==0) {
-					buffer.append(nameToMathML());
-				} else {
-					buffer.append("<msub>\n");
-					buffer.append(1,nameToMathML());
-					buffer.append(1,"<mrow>\n");
-					for(int i=0;i<subscript.length;i++) {
-						buffer.append(2,subscript[i].toMathML(null));
-					}
-					buffer.append(1,"</mrow>\n");
-					buffer.append("</msub>\n");
-				}
-			} else {
-				if(subscript.length==0) {
-					buffer.append("<msup>\n");
-					buffer.append(1,nameToMathML());
-					buffer.append(1,primeToMathML());
-					buffer.append("</msup>\n");
-				} else {
-					buffer.append("<msubsup>\n");
-					buffer.append(1,nameToMathML());
-					buffer.append(1,"<mrow>\n");
-					for(int i=0;i<subscript.length;i++) {
-						buffer.append(2,subscript[i].toMathML(null));
-					}
-					buffer.append(1,"</mrow>\n");
-					buffer.append(1,primeToMathML());
-					buffer.append("</msubsup>\n");
-				}
-			}
-		} else {
-			if(prime==0) {
-				if(subscript.length==0) {
-					buffer.append("<msup>\n");
-					buffer.append(1,nameToMathML());
-					buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-					buffer.append("</msup>\n");
-				} else {
-					buffer.append("<msubsup>\n");
-					buffer.append(1,nameToMathML());
-					buffer.append(1,"<mrow>\n");
-					for(int i=0;i<subscript.length;i++) {
-						buffer.append(2,subscript[i].toMathML(null));
-					}
-					buffer.append(1,"</mrow>\n");
-					buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-					buffer.append("</msubsup>\n");
-				}
-			} else {
-				if(subscript.length==0) {
-					buffer.append("<msup>\n");
-					buffer.append(1,"<msup>\n");
-					buffer.append(2,nameToMathML());
-					buffer.append(2,primeToMathML());
-					buffer.append(1,"</msup>\n");
-					buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-					buffer.append("</msup>\n");
-				} else {
-					buffer.append("<msup>\n");
-					buffer.append(1,"<msubsup>\n");
-					buffer.append(2,nameToMathML());
-					buffer.append(2,"<mrow>\n");
-					for(int i=0;i<subscript.length;i++) {
-						buffer.append(3,subscript[i].toMathML(null));
-					}
-					buffer.append(2,"</mrow>\n");
-					buffer.append(2,primeToMathML());
-					buffer.append(1,"</msubsup>\n");
-					buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-					buffer.append("</msup>\n");
-				}
-			}
-		}
-		return buffer.toString();
-	}
-
-	String primeToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		if(prime<=PRIMECHARS) {
-			buffer.append("<mo>"+primechars(prime)+"</mo>\n");
-		} else {
-			buffer.append("<mfenced>\n");
-			buffer.append(1,"<mn>").append(prime).append("</mn>\n");
-			buffer.append("</mfenced>\n");
-		}
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            bodyToMathML(e1);
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    public void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        if(subscript.length==0) {
+//            if(prime==0) {
+//                nameToMathML(element);
+//            } else {
+//                Element e1=new ElementImpl(document,"msup");
+//                nameToMathML(e1);
+//                primeToMathML(e1);
+//                element.appendChild(e1);
+//            }
+//        } else {
+//            if(prime==0) {
+//                Element e1=new ElementImpl(document,"msub");
+//                nameToMathML(e1);
+//                Element e2=new ElementImpl(document,"mrow");
+//                for(int i=0;i<subscript.length;i++) {
+//                    subscript[i].toMathML(e2,null);
+//                }
+//                e1.appendChild(e2);
+//                element.appendChild(e1);
+//            } else {
+//                Element e1=new ElementImpl(document,"msubsup");
+//                nameToMathML(e1);
+//                Element e2=new ElementImpl(document,"mrow");
+//                for(int i=0;i<subscript.length;i++) {
+//                    subscript[i].toMathML(e2,null);
+//                }
+//                e1.appendChild(e2);
+//                primeToMathML(e1);
+//                element.appendChild(e1);
+//            }
+//        }
+//    }
+//
+//    void primeToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        if(prime<=PRIMECHARS) {
+//            primecharsToMathML(element,prime);
+//        } else {
+//            Element e1=new ElementImpl(document,"mfenced");
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(prime)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    static void primecharsToMathML(Element element, int n) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Element e1=new ElementImpl(document,"mo");
+//        for(int i=0;i<n;i++) e1.appendChild(new TextImpl(document,"\u2032"));
+//        element.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Constant(name,prime,new Generic[subscript.length]);
@@ -264,20 +244,20 @@ class ConstantParser extends Parser {
 		} catch (ParseException e) {
 			throw e;
 		}
-		try {
-			prime=((Integer)Prime.parser.parse(str,pos)).intValue();
-		} catch (ParseException e) {}
 		while(true) {
 			try {
-				Generic a=(Generic)Subscript.parser.parse(str,pos);
-				vector.addElement(a);
+				Generic s=(Generic)Subscript.parser.parse(str,pos);
+				vector.addElement(s);
 			} catch (ParseException e) {
 				break;
 			}
 		}
-		Generic a[]=new Generic[vector.size()];
-		vector.copyInto(a);
-		Constant v=new Constant(name,prime,a);
+		try {
+			prime=((Integer)Prime.parser.parse(str,pos)).intValue();
+		} catch (ParseException e) {}
+		Generic s[]=new Generic[vector.size()];
+		vector.copyInto(s);
+		Constant v=new Constant(name,prime,s);
 		return v;
 	}
 }
@@ -309,6 +289,38 @@ class Identifier extends Parser {
 
 	static boolean isLetter(char c) {
 		return (c>='A' && c<='Z') || (c>='a' && c<='z');
+	}
+}
+
+class Subscript extends Parser {
+	public static final Parser parser=new Subscript();
+
+	private Subscript() {}
+
+	public Object parse(String str, int pos[]) throws ParseException {
+		int pos0=pos[0];
+		Generic a;
+		skipWhitespaces(str,pos);
+		if(pos[0]<str.length() && str.charAt(pos[0])=='[') {
+			str.charAt(pos[0]++);
+		} else {
+			pos[0]=pos0;
+			throw new ParseException();
+		}
+		try {
+			a=(Generic)Expression.parser.parse(str,pos);
+		} catch (ParseException e) {
+			pos[0]=pos0;
+			throw e;
+		}
+		skipWhitespaces(str,pos);
+		if(pos[0]<str.length() && str.charAt(pos[0])==']') {
+			str.charAt(pos[0]++);
+		} else {
+			pos[0]=pos0;
+			throw new ParseException();
+		}
+		return a;
 	}
 }
 
@@ -414,37 +426,5 @@ class IntegerParser extends Parser {
 		}
 //		return new Integer(buffer.toString());
 		return new Integer(n);
-	}
-}
-
-class Subscript extends Parser {
-	public static final Parser parser=new Subscript();
-
-	private Subscript() {}
-
-	public Object parse(String str, int pos[]) throws ParseException {
-		int pos0=pos[0];
-		Generic a;
-		skipWhitespaces(str,pos);
-		if(pos[0]<str.length() && str.charAt(pos[0])=='[') {
-			str.charAt(pos[0]++);
-		} else {
-			pos[0]=pos0;
-			throw new ParseException();
-		}
-		try {
-			a=(Generic)Expression.parser.parse(str,pos);
-		} catch (ParseException e) {
-			pos[0]=pos0;
-			throw e;
-		}
-		skipWhitespaces(str,pos);
-		if(pos[0]<str.length() && str.charAt(pos[0])==']') {
-			str.charAt(pos[0]++);
-		} else {
-			pos[0]=pos0;
-			throw new ParseException();
-		}
-		return a;
 	}
 }

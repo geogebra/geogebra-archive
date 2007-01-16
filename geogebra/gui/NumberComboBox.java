@@ -37,6 +37,7 @@ public class NumberComboBox extends JComboBox {
 		kernel = app.getKernel();
 		
 		addItem(PI_STRING); //pi
+		addItem(PI_STRING + "/2"); //pi/2
 		setEditable(true);
 		setSelectedItem(null);
 		
@@ -49,20 +50,8 @@ public class NumberComboBox extends JComboBox {
 		setPreferredSize(dim);
 	}
 	
-	public void setValue(final double val) {				
-		if (kernel.isZero(val))
-			setSelectedItem("0");
-		else {
-			final double piFac = val / Math.PI;	
-			if (kernel.isEqual(piFac, 1))
-				setSelectedItem(PI_STRING);
-			else if (kernel.isEqual(piFac, Math.round(piFac)))			
-				setSelectedItem(nf.format(piFac) + PI_STRING);
-			else if (kernel.isEqual(1/piFac, Math.round(1/piFac)))			
-				setSelectedItem(PI_STRING + "/" + nf.format(1/piFac));
-			else
-				setSelectedItem(nf.format(val));
-		}		
+	public void setValue(final double val) {	
+		setSelectedItem(kernel.formatPi(val, nf));			
 	}
 	
 	public double getValue() {

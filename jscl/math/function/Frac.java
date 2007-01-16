@@ -10,7 +10,6 @@ import jscl.math.NotPowerException;
 import jscl.math.NotVariableException;
 import jscl.math.NumericWrapper;
 import jscl.math.Variable;
-import jscl.text.IndentedBuffer;
 import jscl.util.ArrayComparator;
 
 public class Frac extends Function implements Algebraic {
@@ -144,30 +143,29 @@ public class Frac extends Function implements Algebraic {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,"<mfenced>\n");
-			buffer.append(2,bodyToMathML());
-			buffer.append(1,"</mfenced>\n");
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
-
-	String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append("<mfrac>\n");
-		buffer.append(1,parameter[0].toMathML(null));
-		buffer.append(1,parameter[1].toMathML(null));
-		buffer.append("</mfrac>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            Element e2=new ElementImpl(document,"mfenced");
+//            bodyToMathML(e2);
+//            e1.appendChild(e2);
+//            e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Element e1=new ElementImpl(document,"mfrac");
+//        parameter[0].toMathML(e1,null);
+//        parameter[1].toMathML(e1,null);
+//        element.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Frac(null,null);

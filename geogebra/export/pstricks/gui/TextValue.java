@@ -6,10 +6,11 @@
  */
 package geogebra.export.pstricks.gui;
 
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-import javax.swing.JTextField;
+import java.awt.event.KeyListener;
+
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
 /**
  * @author loic

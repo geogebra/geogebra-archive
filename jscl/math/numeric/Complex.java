@@ -98,7 +98,11 @@ public final class Complex extends Numeric {
 	}
 
 	public Numeric log() {
-		return new Complex(Math.log(magnitude()),angle());
+		if(signum()==0) {
+			return JSCLDouble.valueOf(0).log();
+		} else {
+			return new Complex(Math.log(magnitude()),angle());
+		}
 	}
 
 	public Numeric exp() {
@@ -162,7 +166,8 @@ public final class Complex extends Numeric {
 			if(real==0.);
 			else {
 				buffer.append(real);
-				if(imag>0.) buffer.append("+");
+				if(imag<=0.);
+                                else buffer.append("+");
 			}
 			if(imag==1.);
 			else if(imag==-1.) buffer.append("-");
@@ -173,9 +178,5 @@ public final class Complex extends Numeric {
 			buffer.append("sqrt(-1)");
 		}
 		return buffer.toString();
-	}
-
-	protected Numeric newinstance() {
-		return null;
 	}
 }

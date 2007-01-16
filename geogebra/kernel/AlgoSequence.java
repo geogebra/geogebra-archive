@@ -18,11 +18,11 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+
+import java.util.ArrayList;
 
 
 /**

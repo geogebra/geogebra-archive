@@ -11,7 +11,6 @@ import jscl.math.Polynomial;
 import jscl.math.Variable;
 import jscl.math.function.Constant;
 import jscl.math.function.ImplicitFunction;
-import jscl.text.IndentedBuffer;
 
 public class Groebner extends Operator {
 	public Groebner(Generic generic, Generic variable, Generic ordering, Generic modulo) {
@@ -51,7 +50,7 @@ public class Groebner extends Operator {
 		else if(v.compareTo(new Constant("drl"))==0) return Monomial.degreeReverseLexicographic;
 		else if(v instanceof ImplicitFunction) {
 			int k=((ImplicitFunction)v).parameter[0].integerValue().intValue();
-			if(v.compareTo(new ImplicitFunction("elim",new Generic[] {JSCLInteger.valueOf(k)},new int[] {0}))==0) return Monomial.kthElimination(k);
+			if(v.compareTo(new ImplicitFunction("elim",new Generic[] {JSCLInteger.valueOf(k)},new int[] {0},new Generic[] {}))==0) return Monomial.kthElimination(k);
 		}
 		throw new ArithmeticException();
 		
@@ -73,29 +72,30 @@ public class Groebner extends Operator {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		int n=4;
-		if(parameter[3].signum()==0) {
-			n=3;
-			if(ordering(parameter[2])==Monomial.lexicographic) n=2;
-		}
-		if(exponent==1) {
-			buffer.append(nameToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,nameToMathML());
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		buffer.append("<mfenced>\n");
-		for(int i=0;i<n;i++) {
-			buffer.append(1,parameter[i].toMathML(null));
-		}
-		buffer.append("</mfenced>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Element e1;
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        int n=4;
+//        if(parameter[3].signum()==0) {
+//            n=3;
+//            if(ordering(parameter[2])==Monomial.lexicographic) n=2;
+//        }
+//        if(exponent==1) nameToMathML(element);
+//        else {
+//            e1=new ElementImpl(document,"msup");
+//            nameToMathML(e1);
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//        e1=new ElementImpl(document,"mfenced");
+//        for(int i=0;i<n;i++) {
+//            parameter[i].toMathML(e1,null);
+//        }
+//        element.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Groebner(null,null,null,null);
@@ -125,24 +125,23 @@ class PolynomialVector extends JSCLVector {
 		return buffer.toString();
 	}
 
-	protected String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		Generic v[]=elements();
-		buffer.append("<mfenced>\n");
-		buffer.append(1,"<mtable>\n");
-		for(int i=0;i<v.length;i++) {
-			buffer.append(2,"<mtr>\n");
-			buffer.append(3,"<mtd>\n");
-			buffer.append(4,basis.polynomial(v[i]).toMathML(null));
-			buffer.append(3,"</mtd>\n");
-			buffer.append(2,"</mtr>\n");
-		}
-		buffer.append(1,"</mtable>\n");
-		buffer.append("</mfenced>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Generic v[]=elements();
+//        Element e1=new ElementImpl(document,"mfenced");
+//        Element e2=new ElementImpl(document,"mtable");
+//        for(int i=0;i<v.length;i++) {
+//            Element e3=new ElementImpl(document,"mtr");
+//            Element e4=new ElementImpl(document,"mtd");
+//            basis.polynomial(v[i]).toMathML(e4,null);
+//            e3.appendChild(e4);
+//            e2.appendChild(e3);
+//        }
+//        e1.appendChild(e2);
+//        element.appendChild(e1);
+//    }
 
-	protected Generic newinstance(int n) {
-		return new PolynomialVector(new Generic[n],basis);
+	protected Generic newinstance(Generic element[]) {
+		return new PolynomialVector(element,basis);
 	}
 }

@@ -44,8 +44,8 @@ GeoDeriveable, ParametricCurve {
 
 	public GeoFunction(Construction c, String label, Function f) {
 		super(c);
-		fun = f;
-		setLabel(label);
+		fun = f;		
+		setLabel(label);		
 	}
 	
 	String getClassName() {

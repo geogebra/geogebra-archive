@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import jscl.math.function.Conjugate;
 import jscl.math.function.Frac;
-import jscl.text.IndentedBuffer;
 import jscl.text.ParseException;
 import jscl.text.Parser;
 import jscl.util.ArrayComparator;
@@ -159,10 +158,8 @@ public class JSCLVector extends Generic {
 		if(generic instanceof JSCLVector ||  generic instanceof Matrix) {
 			throw new ArithmeticException();
 		} else {
-			JSCLVector v=(JSCLVector)newinstance();
-			JSCLVector v2=(JSCLVector)unity(n).multiply(generic);
-			for(int i=0;i<n;i++) v.element[i]=v2.element[i];
-			return v;
+			JSCLVector v=(JSCLVector)unity(n).multiply(generic);
+                        return newinstance(v.element);
 		}
 	}
 
@@ -276,14 +273,6 @@ public class JSCLVector extends Generic {
 		return m;
 	}
 
-	public JSCLVector laplacian(Variable variable[]) {
-		JSCLVector v=(JSCLVector)newinstance();
-		for(int i=0;i<n;i++) {
-			v.element[i]=element[i].expressionValue().laplacian(variable);
-		}
-		return v;
-	}
-
 	public Generic del(Variable variable[]) {
 		return differential(geometric[log2e(n)],variable);
 	}
@@ -357,42 +346,42 @@ public class JSCLVector extends Generic {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,bodyToMathML());
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
+	/*
+    public void toMathML(Element element, Object data) {
+        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+        if(exponent==1) bodyToMathML(element);
+        else {
+            Element e1=new ElementImpl(document,"msup");
+            bodyToMathML(e1);
+            Element e2=new ElementImpl(document,"mn");
+            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+            e1.appendChild(e2);
+            element.appendChild(e1);
+        }
+    }
 
-	protected String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append("<mfenced>\n");
-		buffer.append(1,"<mtable>\n");
-		for(int i=0;i<n;i++) {
-			buffer.append(2,"<mtr>\n");
-			buffer.append(3,"<mtd>\n");
-			buffer.append(4,element[i].toMathML(null));
-			buffer.append(3,"</mtd>\n");
-			buffer.append(2,"</mtr>\n");
-		}
-		buffer.append(1,"</mtable>\n");
-		buffer.append("</mfenced>\n");
-		return buffer.toString();
-	}
-
+    protected void bodyToMathML(Element e0) {
+        CoreDocumentImpl document=(CoreDocumentImpl)e0.getOwnerDocument();
+        Element e1=new ElementImpl(document,"mfenced");
+        Element e2=new ElementImpl(document,"mtable");
+        for(int i=0;i<n;i++) {
+            Element e3=new ElementImpl(document,"mtr");
+            Element e4=new ElementImpl(document,"mtd");
+            element[i].toMathML(e4,null);
+            e3.appendChild(e4);
+            e2.appendChild(e3);
+        }
+        e1.appendChild(e2);
+        e0.appendChild(e1);
+    }
+*/
 	protected Generic newinstance() {
-		return newinstance(n);
+		return newinstance(new Generic[n]);
 	}
 
-	protected Generic newinstance(int n) {
-		return new JSCLVector(new Generic[n]);
+	protected Generic newinstance(Generic element[]) {
+		return new JSCLVector(element);
 	}
 
 	static final int quaternion[][];

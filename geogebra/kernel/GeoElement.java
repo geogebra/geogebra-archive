@@ -832,8 +832,8 @@ public abstract class GeoElement
 		cons.putLabel(this); // add new table entry	
 		
 		algebraStringsNeedUpdate();
-		
-		notifyAdd();
+			
+		notifyAdd();		
 	}	
 
 	private void doRenameLabel(String newLabel) {

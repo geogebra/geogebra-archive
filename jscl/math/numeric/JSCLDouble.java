@@ -71,11 +71,19 @@ public final class JSCLDouble extends Numeric {
 		return new JSCLDouble(Math.exp(content));
 	}
 
-	public Numeric sqrt() {
-		if(signum()>=0) {
-			return new JSCLDouble(Math.sqrt(content));
+	public Numeric pow(Numeric numeric) {
+		if(signum()<0) {
+			return Complex.valueOf(content,0).pow(numeric);
 		} else {
+			return super.pow(numeric);
+		}
+	}
+
+	public Numeric sqrt() {
+		if(signum()<0) {
 			return Complex.valueOf(0,1).multiply(negate().sqrt());
+		} else {
+			return new JSCLDouble(Math.sqrt(content));
 		}
 	}
 
@@ -142,9 +150,5 @@ public final class JSCLDouble extends Numeric {
 
 	public String toString() {
 		return new Double(content).toString();
-	}
-
-	protected Numeric newinstance() {
-		return null;
 	}
 }

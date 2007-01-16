@@ -6,7 +6,6 @@ import jscl.math.function.Conjugate;
 import jscl.math.function.Frac;
 import jscl.math.function.trigonometric.Cos;
 import jscl.math.function.trigonometric.Sin;
-import jscl.text.IndentedBuffer;
 import jscl.text.ParseException;
 import jscl.text.Parser;
 import jscl.util.ArrayComparator;
@@ -68,7 +67,7 @@ public class Matrix extends Generic {
 
 	public Matrix multiply(Matrix matrix) {
 		if(p!=matrix.n) throw new ArithmeticException();
-		Matrix m=(Matrix)newinstance(n,matrix.p);
+		Matrix m=(Matrix)newinstance(new Generic[n][matrix.p]);
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<matrix.p;j++) {
 				m.element[i][j]=JSCLInteger.valueOf(0);
@@ -84,7 +83,7 @@ public class Matrix extends Generic {
 		if(generic instanceof Matrix) {
 			return multiply((Matrix)generic);
 		} else if(generic instanceof JSCLVector) {
-			JSCLVector v=(JSCLVector)((JSCLVector)generic).newinstance(n);
+			JSCLVector v=(JSCLVector)((JSCLVector)generic).newinstance(new Generic[n]);
 			JSCLVector v2=(JSCLVector)generic;
 			if(p!=v2.n) throw new ArithmeticException();
 			for(int i=0;i<n;i++) {
@@ -236,14 +235,8 @@ public class Matrix extends Generic {
 		if(generic instanceof Matrix || generic instanceof JSCLVector) {
 			throw new ArithmeticException();
 		} else {
-			Matrix m=(Matrix)newinstance();
-			Matrix m2=(Matrix)identity(Math.max(n,p)).multiply(generic);
-			for(int i=0;i<n;i++) {
-				for(int j=0;j<p;j++) {
-					m.element[i][j]=m2.element[i][j];
-				}
-			}
-			return m;
+			Matrix m=(Matrix)identity(n,p).multiply(generic);
+                        return newinstance(m.element);
 		}
 	}
 
@@ -295,7 +288,7 @@ public class Matrix extends Generic {
 	}
 
 	public Generic tensorProduct(Matrix matrix) {
-		Matrix m=(Matrix)newinstance(n*matrix.n,p*matrix.p);
+		Matrix m=(Matrix)newinstance(new Generic[n*matrix.n][p*matrix.p]);
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<p;j++) {
 				for(int k=0;k<matrix.n;k++) {
@@ -309,7 +302,7 @@ public class Matrix extends Generic {
 	}
 
 	public Generic transpose() {
-		Matrix m=(Matrix)newinstance(p,n);
+		Matrix m=(Matrix)newinstance(new Generic[p][n]);
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<p;j++) {
 				m.element[j][i]=element[i][j];
@@ -352,7 +345,7 @@ public class Matrix extends Generic {
 			for(int i=0;i<n;i++) {
 				if(element[i][0].signum()==0);
 				else {
-					Matrix m=(Matrix)newinstance(n-1,n-1);
+					Matrix m=(Matrix)newinstance(new Generic[n-1][n-1]);
 					for(int j=0;j<n-1;j++) {
 						for(int k=0;k<n-1;k++) m.element[j][k]=element[j<i?j:j+1][k+1];
 					}
@@ -388,9 +381,13 @@ public class Matrix extends Generic {
 	}
 
 	public static Matrix identity(int dimension) {
-		Matrix m=new Matrix(new Generic[dimension][dimension]);
-		for(int i=0;i<m.n;i++) {
-			for(int j=0;j<m.p;j++) {
+            return identity(dimension,dimension);
+	}
+
+	public static Matrix identity(int n, int p) {
+		Matrix m=new Matrix(new Generic[n][p]);
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<p;j++) {
 				if(i==j) {
 					m.element[i][j]=JSCLInteger.valueOf(1);
 				} else {
@@ -465,44 +462,43 @@ public class Matrix extends Generic {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,bodyToMathML());
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
-
-	String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append("<mfenced>\n");
-		buffer.append(1,"<mtable>\n");
-		for(int i=0;i<n;i++) {
-			buffer.append(2,"<mtr>\n");
-			for(int j=0;j<p;j++) {
-				buffer.append(3,"<mtd>\n");
-				buffer.append(4,element[i][j].toMathML(null));
-				buffer.append(3,"</mtd>\n");
-			}
-			buffer.append(2,"</mtr>\n");
-		}
-		buffer.append(1,"</mtable>\n");
-		buffer.append("</mfenced>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            bodyToMathML(e1);
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    protected void bodyToMathML(Element e0) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)e0.getOwnerDocument();
+//        Element e1=new ElementImpl(document,"mfenced");
+//        Element e2=new ElementImpl(document,"mtable");
+//        for(int i=0;i<n;i++) {
+//            Element e3=new ElementImpl(document,"mtr");
+//            for(int j=0;j<p;j++) {
+//                Element e4=new ElementImpl(document,"mtd");
+//                element[i][j].toMathML(e4,null);
+//                e3.appendChild(e4);
+//            }
+//            e2.appendChild(e3);
+//        }
+//        e1.appendChild(e2);
+//        e0.appendChild(e1);
+//    }
 
 	protected Generic newinstance() {
-		return newinstance(n,p);
+		return newinstance(new Generic[n][p]);
 	}
 
-	protected Generic newinstance(int n, int p) {
-		return new Matrix(new Generic[n][p]);
+	protected Generic newinstance(Generic element[][]) {
+		return new Matrix(element);
 	}
 }
 

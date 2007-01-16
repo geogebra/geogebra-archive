@@ -39,7 +39,6 @@ import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;

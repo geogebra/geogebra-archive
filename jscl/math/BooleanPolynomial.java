@@ -1,83 +1,68 @@
 package jscl.math;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
 
 class BooleanPolynomial extends ModularPolynomial {
-	static final Integer ONE=new Integer(1);
+    boolean defining;
 
-	BooleanPolynomial(Variable unknown[], Comparator ordering) {
-		super(unknown,ordering,2);
-	}
+    BooleanPolynomial(Variable unknown[], Comparator ordering, boolean defining) {
+        super(unknown,ordering,2);
+        this.defining=defining;
+    }
 
-	public Polynomial normalize() {
-		return this;
-	}
+    void add(Monomial monomial, Generic coef) {
+        if(coef.signum()!=0) content.add(monomial,JSCLBoolean.ONE);
+    }
 
-	public Polynomial s_polynomial(Polynomial polynomial) {
-		BooleanPolynomial p2=(BooleanPolynomial)polynomial;
-		Monomial m1=headMonomial();
-		Monomial m2=p2.headMonomial();
-		Monomial m=m1.gcd(m2);
-		m1=m1.divide(m);
-		m2=m2.divide(m);
-		BooleanPolynomial p=(BooleanPolynomial)multiply(m2);
-		p.mutableReduce(p2,m1);
-		return p;
-	}
+    public Polynomial normalize() {
+        return this;
+    }
 
-	public Polynomial reduce(Basis basis, boolean completely, boolean tail) {
-		BooleanPolynomial p=(BooleanPolynomial)valueof(this);
-		Monomial l=null;
-		loop: while(p.signum()!=0) {
-			Iterator it=p.subContent(l,completely,tail).entrySet().iterator(true);
-			while(it.hasNext()) {
-				Map.Entry e1=(Map.Entry)it.next();
-				Monomial m1=(Monomial)e1.getKey();
-				Iterator it2=basis.content.values().iterator();
-				while(it2.hasNext()) {
-					BooleanPolynomial q=(BooleanPolynomial)it2.next();
-					Monomial m2=q.headMonomial();
-					if(m1.multiple(m2)) {
-						Monomial m=m1.divide(m2);
-						p.mutableReduce(q,m);
-						l=m1;
-						continue loop;
-					}
-				}
-			}
-			break;
-		}
-		return p;
-	}
+    public Polynomial s_polynomial(Polynomial polynomial) {
+        Monomial m1=headMonomial();
+        Monomial m2=polynomial.headMonomial();
+        Monomial m=m1.gcd(m2);
+        m1=m1.divide(m);
+        m2=m2.divide(m);
+        return multiply(m2).multiplyAndSubtract(m1,JSCLBoolean.ONE,polynomial);
+    }
 
-	void mutableReduce(BooleanPolynomial p, Monomial m) {
-		Iterator it=p.content.entrySet().iterator();
-		while(it.hasNext()) {
-			Map.Entry e=(Map.Entry)it.next();
-			put(
-				((Monomial)e.getKey()).multiply(m),
-				((Integer)e.getValue()).intValue()
-			);
-		}
-		sugar=Math.max(sugar,p.sugar+m.degree());
-	}
+    public Polynomial reduce(Basis basis, boolean completely, boolean tail) {
+        MultivariatePolynomial p=this;
+        Monomial l=null;
+        loop: while(p.signum()!=0) {
+            int n=p.end(l,completely,tail);
+            int b=p.beginning(l,completely,tail);
+            for(int i=n-1;i>=b;i--) {
+                Monomial m1=p.monomial(i);
+                Iterator it=basis.content.values().iterator();
+                while(it.hasNext()) {
+                    Polynomial q=(Polynomial)it.next();
+                    Monomial m2=q.headMonomial();
+                    if(m1.multiple(m2)) {
+                        Monomial m=m1.divide(m2);
+                        p=(MultivariatePolynomial)p.multiplyAndSubtract(m,JSCLBoolean.ONE,q);
+                        l=m1;
+                        continue loop;
+                    }
+                }
+            }
+            break;
+        }
+        return p;
+    }
 
-	Monomial monomial(Literal literal) {
-		return BooleanMonomial.valueOf(literal,unknown,ordering);
-	}
+    protected Generic coefficient(Generic generic) {
+        return ((JSCLInteger)generic).content.mod(BigInteger.valueOf(2)).longValue()==0?JSCLBoolean.ZERO:JSCLBoolean.ONE;
+    }
 
-	void put(Monomial monomial, int n) {
-		if(n==0) return;
-		Object o=content.get(monomial);
-		if(o!=null) content.remove(monomial);
-		else content.put(monomial,ONE);
-		if(content.isEmpty()) degree=0;
-		else degree=headMonomial().degree();
-	}
+    Monomial monomial(Literal literal) {
+        return defining?BooleanMonomial.valueOf(literal,unknown,ordering):Monomial.valueOf(literal,unknown,ordering);
+    }
 
-	protected Polynomial newinstance() {
-		return new BooleanPolynomial(unknown,ordering);
-	}
+    protected MultivariatePolynomial newinstance() {
+        return new BooleanPolynomial(unknown,ordering,defining);
+    }
 }

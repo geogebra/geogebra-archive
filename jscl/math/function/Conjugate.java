@@ -9,7 +9,6 @@ import jscl.math.NotIntegrableException;
 import jscl.math.NotVariableException;
 import jscl.math.NumericWrapper;
 import jscl.math.Variable;
-import jscl.text.IndentedBuffer;
 
 public class Conjugate extends Function {
 	public Conjugate(Generic generic) {
@@ -48,7 +47,7 @@ public class Conjugate extends Function {
 			return parameter[0].integerValue();
 		} catch (NotIntegerException e) {}
 		if(parameter[0].signum()<0) {
-			return new Conjugate(parameter[0].negate()).evaluate().negate();
+			return new Conjugate(parameter[0].negate()).evalsimp().negate();
 		} else if(parameter[0].compareTo(Constant.i)==0) {
 			return Constant.i.negate();
 		}
@@ -57,7 +56,13 @@ public class Conjugate extends Function {
 			if(v instanceof Conjugate) {
 				Function f=(Function)v;
 				return f.parameter[0];
-			}
+			} else if(v instanceof Exp) {
+				Function f=(Function)v;
+				return new Exp(new Conjugate(f.parameter[0]).evalsimp()).evalsimp();
+			} else if(v instanceof Log) {
+				Function f=(Function)v;
+				return new Log(new Conjugate(f.parameter[0]).evalsimp()).evalsimp();
+                        }
 		} catch (NotVariableException e) {
 			Generic a[]=parameter[0].sumValue();
 			if(a.length>1) {
@@ -97,30 +102,31 @@ public class Conjugate extends Function {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,"<mfenced>\n");
-			buffer.append(2,bodyToMathML());
-			buffer.append(1,"</mfenced>\n");
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
-
-	String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append("<mover>\n");
-		buffer.append(1,parameter[0].toMathML(null));
-		buffer.append(1,"<mo>&macr;</mo>\n");
-		buffer.append("</mover>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            Element e2=new ElementImpl(document,"mfenced");
+//            bodyToMathML(e2);
+//            e1.appendChild(e2);
+//            e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Element e1=new ElementImpl(document,"mover");
+//        parameter[0].toMathML(e1,null);
+//        Element e2=new ElementImpl(document,"mo");
+//        e2.appendChild(new TextImpl(document,"_"));
+//        e1.appendChild(e2);
+//        element.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Conjugate(null);

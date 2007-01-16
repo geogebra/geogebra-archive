@@ -259,17 +259,31 @@ implements ExpressionValue {
     final public void simplifyConstants() {                 
         if (left.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) left;
-            if (left.isConstant()) 
-                left = node.evaluate();
-            else
+            if (left.isConstant()) {            	
+            	ExpressionValue eval = node.evaluate();
+            	if (eval.isNumberValue()) {
+            		// we only simplify numbers that have integer values
+            		if (kernel.isInteger(((NumberValue) eval).getDouble())) 
+            			left = eval;            		
+            	} else {
+            		left = eval;
+            	}
+            } else
                 node.simplifyConstants();
         }
         
         if (right != null && right.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) right;
-            if (right.isConstant()) 
-                right = node.evaluate(); 
-            else 
+            if (right.isConstant()) {
+            	ExpressionValue eval = node.evaluate();
+	        	if (eval.isNumberValue()) {
+	        		// we only simplify numbers that have integer values
+	        		if (kernel.isInteger(((NumberValue) eval).getDouble())) 
+	        			right = eval;            		
+	        	} else {
+	        		right = eval;
+	        	}
+            } else 
                 node.simplifyConstants();
         }             
     }

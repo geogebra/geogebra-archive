@@ -40,7 +40,6 @@ import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Macro;
 import geogebra.kernel.MacroKernel;
-import geogebra.kernel.PathParameter;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;

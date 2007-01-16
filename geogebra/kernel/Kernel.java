@@ -26,7 +26,6 @@ import geogebra.algebra.parser.Parser;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 
@@ -3107,17 +3106,66 @@ public class Kernel {
 			return format(x);
 	}
 
-	final public String format(double x) {			
-		if (x == Math.PI) {
-			if (JSCLprintForm)
-				return "pi";
-			else
-				return "\u03c0"; 
-		}			 
-		else if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";
-		else
-			return nf.format(x);	
+	final public String format(double x) {								
+		return formatPi(x, nf);					
+	}
+	
+	final public String formatPi(double x, NumberFormat nf) {
+		// ZERO
+		if (-MIN_PRECISION < x && x < MIN_PRECISION)
+			return "0";		
+		// 	MULTIPLES OF PI/2
+		// i.e. x = a * pi/2
+		double a = 2*x / Math.PI;
+		int aint = (int) Math.round(a);
+		double diff = a - aint; // zero?
+		if (-STANDARD_PRECISION < diff && diff < STANDARD_PRECISION) {	
+			switch (aint) {					
+				case 1:
+					if (JSCLprintForm)
+						return "pi/2";
+					else
+						return "\u03c0/2";
+					
+				case -1:
+					if (JSCLprintForm)
+						return "-pi/2";
+					else
+						return "-\u03c0/2";
+					
+				case 2:
+					if (JSCLprintForm)
+						return "pi";
+					else
+						return "\u03c0";
+					
+				case -2:
+					if (JSCLprintForm)
+						return "-pi";
+					else
+						return "-\u03c0";
+				
+				default:
+					// 	even
+					long half = aint / 2;			
+					if (aint == 2 * half) {			
+						if (JSCLprintForm)
+							return half + "* pi";
+						else					
+							return half + "\u03c0";
+					}
+					// odd
+					else {			
+						if (JSCLprintForm)
+							return aint + "* pi/2";
+						else
+							return aint + "\u03c0/2";
+					}
+			}									
+		}		
+		
+		// STANDARD CASE
+		return nf.format(x);
 	}
 
 	final public StringBuffer formatSigned(double x) {

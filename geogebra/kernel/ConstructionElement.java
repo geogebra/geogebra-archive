@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 import geogebra.Application;
 
-import java.io.Serializable;
 import java.util.TreeSet;
 
 public abstract class ConstructionElement 

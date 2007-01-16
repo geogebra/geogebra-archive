@@ -19,8 +19,6 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoMacro;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;

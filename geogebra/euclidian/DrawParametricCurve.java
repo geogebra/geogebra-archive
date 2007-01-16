@@ -20,6 +20,7 @@ import geogebra.kernel.roots.RealRootUtil;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 
 /**
  * Draws graph of parametric curves and functions
@@ -41,7 +42,7 @@ public class DrawParametricCurve extends Drawable {
 	
 	// if the curve is undefined at both endpoints, we break
 	// the parameter interval up into smaller intervals
-	private static final int DESPERATE_MODE_INTERVALS = 5;		
+	private static final int DESPERATE_MODE_INTERVALS = 100;		
    
     private ParametricCurve curve;        
 	private GeneralPath gp = new GeneralPath();
@@ -79,6 +80,7 @@ public class DrawParametricCurve extends Drawable {
         updateStrokes(geo);		 
 		
 		gp.reset();		
+		
 		Point labelPoint = plotCurve(curve,
 					curve.getMinParameter(),
 					curve.getMaxParameter(), 
@@ -127,42 +129,40 @@ public class DrawParametricCurve extends Drawable {
     {     	
     	pointsCount = 0;
     	
-		// curves with undefined or equal start and end points
-		// need to be broken into intervals
+    	// we break the curve in at least two parts to ensure that
+    	// closed curves are also drawn.
+		// Curves with undefined start and end points
+		// are be broken into more intervals
+    	
 		// check first and last point of curve
 		GeoVec2D p1 = curve.evaluateCurve(t1);
-		GeoVec2D p2 = curve.evaluateCurve(t2);					
-		int intervals = 1;
+		GeoVec2D p2 = curve.evaluateCurve(t2);
+		Point labelPoint = null;		
+		int intervals = 3;
 			
 		// start and end point are undefined
 		if (!(p1.isDefined() || p2.isDefined())) {					
 			intervals = DESPERATE_MODE_INTERVALS;
-		}
-		// start and end point are equal
-		else if (p1.equals(p2)) {
-			intervals = 2;
-		}
+		}		
 		
-		// plot all intervals
-		Point labelPoint = null;
-		if (intervals == 1) {						
-			// STANDARD CASE: 1 interval
-			labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);	
-		}
-		else {				 
-			// DESPARATE CASE: the curve is undefined at both t1 and t2
-			// or its endpoints are equal: we split up the interval [t1, t2] 					
-			double intervalWidth = (t2 - t1) / intervals;
-			t2 = t1 + intervalWidth;
-			for (int i=0; i < intervals; i++) {
-				t1 = t2;
-				t2 = t1 + intervalWidth;									
-				Point p = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);
+		// plot all intervals					
+		double intervalWidth = (t2 - t1) / intervals;
+		t2 = t1 + intervalWidth;
+		for (int i=0; i < intervals; i++) {				
+			p2 = curve.evaluateCurve(t2);
+
+			// only plot this intervall if at least one border is defined
+			if (p1.isDefined() || p2.isDefined()) {			
+				Point p = plotInterval(curve, t1, t2, view, gp, 
+										calcLabelPos && labelPoint == null, moveToAllowed);									
 				if (labelPoint == null)
-					labelPoint = p;					
-			}			
-		}
-		
+					labelPoint = p;		
+			}
+			
+			t1 = t2;
+			t2 = t1 + intervalWidth;	
+			p1 = p2;
+		}						
 		
 //		System.out.println("*** CURVE plot: " + curve);
 //		System.out.println("          points: " + pointsCount + ", intervals: " + intervals);	
@@ -193,13 +193,13 @@ public class DrawParametricCurve extends Drawable {
 		t1 = Double.isNaN(lowerBound) ? t1 : lowerBound;
 		t2 = Double.isNaN(upperBound) ? t2 : upperBound;
 		
-		boolean moveToFirstPoint = moveToAllowed;
+		boolean moveToFirstPoint = moveToAllowed;			
 		boolean needLabelPos = calcLabelPos;
 		Point labelPoint = null;
     	
-		// this algorithm by John Gillam avoids multiple
+		// The following algorithm by John Gillam avoids multiple
 		// evaluations of the curve for the same parameter value t
-		// see an explanation of this algorithm at the end of this method
+		// see an explanation of this algorithm at the end of this method.
 		double x0,y0,x,y,t,moveX=0, moveY=0;		
 		boolean onScreen, prevOnScreen, valid, nextLineToNeedsMoveToFirst = false;		
 		double [] eval = new double[2];
@@ -228,11 +228,11 @@ public class DrawParametricCurve extends Drawable {
 		
 		// with a GeneralPath moveTo(sx0,sy0) , the "screen" point		
 		if (valid) {
-			if (moveToFirstPoint) {			
-				gp.moveTo((float) x0, (float) y0);
+			if (moveToFirstPoint) {	
+				moveTo(gp, x0, y0);				
 				moveToFirstPoint = false;
 			} else {
-				gp.lineTo((float) x0, (float) y0);
+				lineTo(gp, x0, y0);
 			}
 			pointsCount++;
 		}
@@ -286,12 +286,13 @@ public class DrawParametricCurve extends Drawable {
 			}
 			
 			// drawLine(x0,y0,x,y)
-			if (valid) {				
+			// don't add points to gerneral path that are in the same pixel as the previous point			
+			if (valid) {					
 				// move to is possible
 				if (moveToAllowed) {	
 					// still need first point
 					if (moveToFirstPoint) { 
-						gp.moveTo((float) x, (float) y);
+						moveTo(gp, x, y);
 						moveToFirstPoint = false;						
 						pointsCount++;
 					}					
@@ -303,33 +304,32 @@ public class DrawParametricCurve extends Drawable {
 					} 
 					// distance too big
 					else if (distNotOK){
-						gp.moveTo((float) x, (float) y);						
+						moveTo(gp, x, y);					
 						nextLineToNeedsMoveToFirst = false;
 						pointsCount++;
 					}
 					// everything ok: let's draw a line!
 					else { 
 						if (nextLineToNeedsMoveToFirst) {
-							gp.moveTo((float) moveX, (float) moveY);
+							moveTo(gp, moveX, moveY);							
 							nextLineToNeedsMoveToFirst = false;
 						}
 						
-						gp.lineTo((float) x, (float) y);
+						lineTo(gp, x, y);
 						pointsCount++;
 					}	
 				}	
 				// move to is not allowed: we have to draw all lines
 				else { 					
 					// line to
-					gp.lineTo((float) x, (float) y);
+					lineTo(gp, x, y);
 					pointsCount++;
 				}																
 				
 				// remember last point in general path
 				x0=x; 
 				y0=y;
-				prevOnScreen = onScreen;
-				
+				prevOnScreen = onScreen;				
 			}
 			
 			// remember first point on screen for label position 
@@ -364,6 +364,41 @@ public class DrawParametricCurve extends Drawable {
 		} while (top !=0);					
 		
 		return labelPoint;	
+	 }	 
+	 
+	 /**
+	  * Calls gp.moveTo(x, y) only if the current point
+	  * is not already at this position.
+	  */
+	 public static void moveTo(GeneralPath gp, double x, double y) {		
+		 drawTo(gp, x, y, false);
+	 }
+	 
+	 /**
+	  * Calls gp.lineTo(x, y) only if the current point
+	  * is not already at this position.
+	  */
+	 public static void lineTo(GeneralPath gp, double x, double y) {		
+		 drawTo(gp, x, y, true);
+	 }
+
+	 /**
+	  * Calls gp.lineTo(x, y) resp. gp.moveTo(x, y) only if the current point
+	  * is not already at this position.
+	  */
+	 private static void drawTo(GeneralPath gp, double x, double y, boolean lineTo) {		
+		Point2D point = gp.getCurrentPoint();
+		
+		// check pixel distance
+		if (point == null ||
+			Math.abs(point.getX() - x) > 1 ||
+			Math.abs(point.getY() - y) > 1) 
+		{
+			if (lineTo)
+				gp.lineTo((float) x, (float) y);				
+			else
+				gp.moveTo((float) x, (float) y);
+		}
 	 }
 		
 	/*

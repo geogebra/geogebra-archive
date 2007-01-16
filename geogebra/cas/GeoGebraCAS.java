@@ -51,7 +51,8 @@ public class GeoGebraCAS {
      * @return result string (null possible)
      */
     final public static synchronized String evaluateJSCL(String exp) {
-        //System.out.println("exp for JSCL: " + exp);
+    	//System.out.println("exp for JSCL: " + exp);
+        
         try {
         	String result;
         	
@@ -65,15 +66,21 @@ public class GeoGebraCAS {
             //String [] str = new String[2];
                 
             Generic out = in.expand();
+                        
+        	//System.out.println("   expand: " + out);
             
             if (out.isPolynomial(xVar)) {
                 // build polynomial
                 UnivariatePolynomial p = UnivariatePolynomial.valueOf(out, xVar);
                 result = toReverseString(p);
             } else {
-                out = out.simplify();
+                out = out.simplify();                                             
                 result =  out.toString();
             }   
+                       
+        	//System.out.println("   result: " + result);
+        	//System.out.println("   result (special chars): " + insertSpecialChars(result));
+        	
             return insertSpecialChars(result);
             
         } catch (Error err) {

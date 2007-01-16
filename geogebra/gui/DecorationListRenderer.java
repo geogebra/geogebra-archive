@@ -1,13 +1,15 @@
 package geogebra.gui;
 
+import geogebra.kernel.GeoSegment;
+
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.Color;
+
 import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import geogebra.kernel.GeoSegment;
 
 
 /**

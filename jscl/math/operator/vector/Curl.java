@@ -4,7 +4,6 @@ import jscl.math.Generic;
 import jscl.math.JSCLVector;
 import jscl.math.Variable;
 import jscl.math.operator.VectorOperator;
-import jscl.text.IndentedBuffer;
 
 public class Curl extends VectorOperator {
 	public Curl(Generic vector, Generic variable) {
@@ -20,13 +19,14 @@ public class Curl extends VectorOperator {
 		return expressionValue();
 	}
 
-	protected String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append(operator("nabla"));
-		buffer.append("<mo>&wedge;</mo>\n");
-		buffer.append(parameter[0].toMathML(null));
-		return buffer.toString();
-	}
+//    protected void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        operator(element,"nabla");
+//        Element e1=new ElementImpl(document,"mo");
+//        e1.appendChild(new TextImpl(document,"\u2227"));
+//        element.appendChild(e1);
+//        parameter[0].toMathML(element,null);
+//    }
 
 	protected Variable newinstance() {
 		return new Curl(null,null);

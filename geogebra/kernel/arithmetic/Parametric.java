@@ -12,7 +12,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.MyParseError;
 import geogebra.kernel.Kernel;
 
 

@@ -88,10 +88,8 @@ public class NumericVector extends Numeric {
 		if(numeric instanceof NumericVector ||  numeric instanceof NumericMatrix) {
 			throw new ArithmeticException();
 		} else {
-			NumericVector v=(NumericVector)newinstance();
-			NumericVector v2=(NumericVector)unity(n).multiply(numeric);
-			for(int i=0;i<n;i++) v.element[i]=v2.element[i];
-			return v;
+			NumericVector v=(NumericVector)unity(n).multiply(numeric);
+                        return newinstance(v.element);
 		}
 	}
 
@@ -152,11 +150,11 @@ public class NumericVector extends Numeric {
 		return buffer.toString();
 	}
 
-	protected Numeric newinstance() {
-		return newinstance(n);
+	protected NumericVector newinstance() {
+		return newinstance(new Numeric[n]);
 	}
 
-	protected Numeric newinstance(int n) {
-		return new NumericVector(new Numeric[n]);
+	protected NumericVector newinstance(Numeric element[]) {
+		return new NumericVector(element);
 	}
 }

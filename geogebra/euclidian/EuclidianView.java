@@ -66,7 +66,6 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -88,6 +87,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		Transferable, ClipboardOwner {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final String PI_STRING = "\u03c0";
 
 	// pixel per centimeter (at 72dpi)
 	private static final double PRINTER_PIXEL_PER_CM = 72.0 / 2.54;
@@ -1447,31 +1448,15 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		int maxX = width - SCREEN_BORDER;
 		for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
 			if (pix <= maxX) {
-				if (showAxesNumbers[0]) {
+				if (showAxesNumbers[0]) {															
+					String strNum = kernel.formatPi(rw, axesNumberFormat[0]);					
+					boolean zero = strNum.equals("0");
+					
 					sb.setLength(0);
-					String strNum = axesNumberFormat[0].format(rw);
-					boolean zero = strNum.equals("0") || strNum.equals("-0");
-					if (axesUnitLabels[0] != null) {
-						if (piAxisUnit[0]) {
-							if (zero) {
-								sb.append(strNum);
-							} else {
-								double piUnits = rw / Math.PI;
-								strNum = axesNumberFormat[0].format(piUnits);
-								if (strNum.equals("-1")) {
-									sb.append("-");
-								} else if (!strNum.equals("1")) {
-									sb.append(strNum);
-								}
-								sb.append("\u03c0"); // pi
-							}
-						} else {
-							sb.append(strNum);
-							sb.append(axesUnitLabels[0]);
-						}
-					} else {
-						sb.append(strNum);
-					}
+					sb.append(strNum);					
+					if (axesUnitLabels[0] != null && axesUnitLabels[0] != PI_STRING) 						
+						sb.append(axesUnitLabels[0]);
+						
 					TextLayout layout = new TextLayout(sb.toString(), fontAxes,
 							frc);
 					int x, y = (int) (yZero + yoffset);
@@ -1552,30 +1537,13 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
 			if (pix <= maxY) {
 				if (showAxesNumbers[1]) {
+					String strNum = kernel.formatPi(rw, axesNumberFormat[1]);					
+					boolean zero = strNum.equals("0");
+					
 					sb.setLength(0);
-					String strNum = axesNumberFormat[1].format(rw);
-					boolean zero = strNum.equals("0") || strNum.equals("-0");
-					if (axesUnitLabels[1] != null) {
-						if (piAxisUnit[1]) {
-							if (zero) {
-								sb.append(strNum);
-							} else {
-								strNum = axesNumberFormat[1].format(rw
-										/ Math.PI);
-								if (strNum.equals("-1")) {
-									sb.append("-");
-								} else if (!strNum.equals("1")) {
-									sb.append(strNum);
-								}
-								sb.append("\u03c0"); // pi
-							}
-						} else {
-							sb.append(strNum);
-							sb.append(axesUnitLabels[1]);
-						}
-					} else {
-						sb.append(strNum);
-					}
+					sb.append(strNum);					
+					if (axesUnitLabels[1] != null && axesUnitLabels[1] != PI_STRING) 						
+						sb.append(axesUnitLabels[1]);
 
 					TextLayout layout = new TextLayout(sb.toString(), fontAxes,
 							frc);

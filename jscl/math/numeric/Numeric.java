@@ -49,7 +49,11 @@ public abstract class Numeric implements Arithmetic, Comparable {
 	public abstract Numeric exp();
 
 	public Numeric pow(Numeric numeric) {
-		return numeric.multiply(log()).exp();
+		if(numeric.signum()==0) {
+			return JSCLDouble.valueOf(1);
+		} else {
+			return numeric.multiply(log()).exp();
+		}
 	}
 
 	public Numeric sqrt() {
@@ -123,6 +127,4 @@ public abstract class Numeric implements Arithmetic, Comparable {
 			return compareTo((Numeric)obj)==0;
 		} else return false;
 	}
-
-	protected abstract Numeric newinstance();
 }

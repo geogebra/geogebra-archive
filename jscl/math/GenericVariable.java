@@ -104,9 +104,12 @@ public abstract class GenericVariable extends Variable {
 		return content.toJava();
 	}
 
-	public String toMathML(Object data) {
-		return content.toMathML(data);
-	}
+	/*
+    public void toMathML(Element element, Object data) {
+        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+        content.toMathML(element,data);
+    }
+    */
 }
 
 class BracketedExpression extends Parser {

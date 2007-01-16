@@ -1,11 +1,9 @@
 package jscl.math.operator.matrix;
 
 import jscl.math.Generic;
-import jscl.math.GenericVariable;
 import jscl.math.Matrix;
 import jscl.math.Variable;
 import jscl.math.operator.Operator;
-import jscl.text.IndentedBuffer;
 
 public class Determinant extends Operator {
 	public Determinant(Generic matrix) {
@@ -20,41 +18,42 @@ public class Determinant extends Operator {
 		return expressionValue();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,bodyToMathML());
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            bodyToMathML(e1);
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
 
-	String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		Generic m=GenericVariable.content(parameter[0]);
-		buffer.append("<mfenced open=\"|\" close=\"|\">\n");
-		if(m instanceof Matrix) {
-			Generic element[][]=((Matrix)m).elements();
-			buffer.append(1,"<mtable>\n");
-			for(int i=0;i<element.length;i++) {
-				buffer.append(2,"<mtr>\n");
-				for(int j=0;j<element.length;j++) {
-					buffer.append(3,"<mtd>\n");
-					buffer.append(4,element[i][j].toMathML(null));
-					buffer.append(3,"</mtd>\n");
-				}
-				buffer.append(2,"</mtr>\n");
-			}
-			buffer.append(1,"</mtable>\n");
-		} else buffer.append(1,m.toMathML(null));
-		buffer.append("</mfenced>\n");
-		return buffer.toString();
-	}
+//    void bodyToMathML(Element e0) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)e0.getOwnerDocument();
+//        Generic m=GenericVariable.content(parameter[0]);
+//        Element e1=new ElementImpl(document,"mfenced");
+//        e1.setAttribute("open","|");
+//        e1.setAttribute("close","|");
+//        if(m instanceof Matrix) {
+//            Generic element[][]=((Matrix)m).elements();
+//            Element e2=new ElementImpl(document,"mtable");
+//            for(int i=0;i<element.length;i++) {
+//                Element e3=new ElementImpl(document,"mtr");
+//                for(int j=0;j<element.length;j++) {
+//                    Element e4=new ElementImpl(document,"mtd");
+//                    element[i][j].toMathML(e4,null);
+//                    e3.appendChild(e4);
+//                }
+//                e2.appendChild(e3);
+//            }
+//            e1.appendChild(e2);
+//        } else m.toMathML(e1,null);
+//        e0.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Determinant(null);

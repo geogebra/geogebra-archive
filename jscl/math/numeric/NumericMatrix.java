@@ -54,7 +54,7 @@ public class NumericMatrix extends Numeric {
 
 	public NumericMatrix multiply(NumericMatrix matrix) {
 		if(p!=matrix.n) throw new ArithmeticException();
-		NumericMatrix m=(NumericMatrix)newinstance(n,matrix.p);
+		NumericMatrix m=(NumericMatrix)newinstance(new Numeric[n][matrix.p]);
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<matrix.p;j++) {
 				m.element[i][j]=JSCLDouble.valueOf(0);
@@ -70,7 +70,7 @@ public class NumericMatrix extends Numeric {
 		if(numeric instanceof NumericMatrix) {
 			return multiply((NumericMatrix)numeric);
 		} else if(numeric instanceof NumericVector) {
-			NumericVector v=(NumericVector)((NumericVector)numeric).newinstance(n);
+			NumericVector v=(NumericVector)((NumericVector)numeric).newinstance(new Numeric[n]);
 			NumericVector v2=(NumericVector)numeric;
 			if(p!=v2.n) throw new ArithmeticException();
 			for(int i=0;i<n;i++) {
@@ -132,14 +132,8 @@ public class NumericMatrix extends Numeric {
 		if(numeric instanceof NumericMatrix || numeric instanceof NumericVector) {
 			throw new ArithmeticException();
 		} else {
-			NumericMatrix m=(NumericMatrix)newinstance();
-			NumericMatrix m2=(NumericMatrix)identity(Math.max(n,p)).multiply(numeric);
-			for(int i=0;i<n;i++) {
-				for(int j=0;j<p;j++) {
-					m.element[i][j]=m2.element[i][j];
-				}
-			}
-			return m;
+			NumericMatrix m=(NumericMatrix)identity(n,p).multiply(numeric);
+                        return newinstance(m.element);
 		}
 	}
 
@@ -155,7 +149,7 @@ public class NumericMatrix extends Numeric {
 	}
 
 	public Numeric transpose() {
-		NumericMatrix m=(NumericMatrix)newinstance(p,n);
+		NumericMatrix m=(NumericMatrix)newinstance(new Numeric[p][n]);
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<p;j++) {
 				m.element[j][i]=element[i][j];
@@ -198,7 +192,7 @@ public class NumericMatrix extends Numeric {
 			for(int i=0;i<n;i++) {
 				if(element[i][0].signum()==0);
 				else {
-					NumericMatrix m=(NumericMatrix)newinstance(n-1,n-1);
+					NumericMatrix m=(NumericMatrix)newinstance(new Numeric[n-1][n-1]);
 					for(int j=0;j<n-1;j++) {
 						for(int k=0;k<n-1;k++) m.element[j][k]=element[j<i?j:j+1][k+1];
 					}
@@ -242,9 +236,13 @@ public class NumericMatrix extends Numeric {
 	}
 
 	public static NumericMatrix identity(int dimension) {
-		NumericMatrix m=new NumericMatrix(new Numeric[dimension][dimension]);
-		for(int i=0;i<m.n;i++) {
-			for(int j=0;j<m.p;j++) {
+		return identity(dimension,dimension);
+	}
+
+	public static NumericMatrix identity(int n, int p) {
+		NumericMatrix m=new NumericMatrix(new Numeric[n][p]);
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<p;j++) {
 				if(i==j) {
 					m.element[i][j]=JSCLDouble.valueOf(1);
 				} else {
@@ -269,11 +267,11 @@ public class NumericMatrix extends Numeric {
 		return buffer.toString();
 	}
 
-	protected Numeric newinstance() {
-		return newinstance(n,p);
+	protected NumericMatrix newinstance() {
+		return newinstance(new Numeric[n][p]);
 	}
 
-	protected Numeric newinstance(int n, int p) {
-		return new NumericMatrix(new Numeric[n][p]);
+	protected NumericMatrix newinstance(Numeric element[][]) {
+		return new NumericMatrix(element);
 	}
 }

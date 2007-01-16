@@ -495,7 +495,7 @@ ItemListener, WindowListener {
 			cbUnitLabel.setEditable(true);
 		
 			cbUnitLabel.addItem(null);
-			cbUnitLabel.addItem(PI_STR); // pi			
+			cbUnitLabel.addItem(PI_STR); // pi				
 			cbUnitLabel.addItem("mm");
 			cbUnitLabel.addItem("cm");
 			cbUnitLabel.addItem("m");

@@ -8,7 +8,6 @@ import jscl.math.NotVariableException;
 import jscl.math.Variable;
 import jscl.math.function.Frac;
 import jscl.math.function.Pow;
-import jscl.text.IndentedBuffer;
 import jscl.util.ArrayComparator;
 
 public class Factorial extends Operator {
@@ -58,40 +57,41 @@ public class Factorial extends Operator {
 		return buffer.toString();
 	}
 
-	public String toMathML(Object data) {
-		IndentedBuffer buffer=new IndentedBuffer();
-		int exponent=data instanceof Integer?((Integer)data).intValue():1;
-		if(exponent==1) {
-			buffer.append(bodyToMathML());
-		} else {
-			buffer.append("<msup>\n");
-			buffer.append(1,bodyToMathML());
-			buffer.append(1,"<mn>").append(exponent).append("</mn>\n");
-			buffer.append("</msup>\n");
-		}
-		return buffer.toString();
-	}
-
-	String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append("<mrow>\n");
-		try {
-			JSCLInteger en=parameter[0].integerValue();
-			buffer.append(1,en.toMathML(null));
-		} catch (NotIntegerException e) {
-			try {
-				Variable v=parameter[0].variableValue();
-				if(v instanceof Pow) {
-					buffer.append(1,GenericVariable.valueOf(parameter[0]).toMathML(null));
-				} else buffer.append(1,v.toMathML(null));
-			} catch (NotVariableException e2) {
-				buffer.append(1,GenericVariable.valueOf(parameter[0]).toMathML(null));
-			}
-		}
-		buffer.append(1,"<mo>!</mo>\n");
-		buffer.append("</mrow>\n");
-		return buffer.toString();
-	}
+//    public void toMathML(Element element, Object data) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        int exponent=data instanceof Integer?((Integer)data).intValue():1;
+//        if(exponent==1) bodyToMathML(element);
+//        else {
+//            Element e1=new ElementImpl(document,"msup");
+//            bodyToMathML(e1);
+//            Element e2=new ElementImpl(document,"mn");
+//            e2.appendChild(new TextImpl(document,String.valueOf(exponent)));
+//            e1.appendChild(e2);
+//            element.appendChild(e1);
+//        }
+//    }
+//
+//    void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        Element e1=new ElementImpl(document,"mrow");
+//        try {
+//            JSCLInteger en=parameter[0].integerValue();
+//            en.toMathML(e1,null);
+//        } catch (NotIntegerException e) {
+//            try {
+//                Variable v=parameter[0].variableValue();
+//                if(v instanceof Pow) {
+//                    GenericVariable.valueOf(parameter[0]).toMathML(e1,null);
+//                } else v.toMathML(e1,null);
+//            } catch (NotVariableException e2) {
+//                GenericVariable.valueOf(parameter[0]).toMathML(e1,null);
+//            }
+//        }
+//        Element e2=new ElementImpl(document,"mo");
+//        e2.appendChild(new TextImpl(document,"!"));
+//        e1.appendChild(e2);
+//        element.appendChild(e1);
+//    }
 
 	protected Variable newinstance() {
 		return new Factorial(null);

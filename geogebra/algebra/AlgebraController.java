@@ -331,7 +331,7 @@ public class AlgebraController
 		// parse command string
 		try {
 			ve = parser.parse(cmd);
-					 
+			
 			//System.out.println("parsed valid exp: " + ve);
 			//System.out.println("  " + ve.getClass());
 			
@@ -565,21 +565,22 @@ public class AlgebraController
 		return ret;
 	}
 
-	private GeoElement[] processFunction(Function fun) {
+	private GeoElement[] processFunction(Function fun) {	
 		fun.initFunction();		
 		
 		String label = fun.getLabel();
 		GeoFunction f;
 		GeoElement[] ret = new GeoElement[1];
 
-		GeoElement[] vars = fun.getGeoElementVariables();
+		GeoElement[] vars = fun.getGeoElementVariables();				
 		boolean isIndependent = (vars == null || vars.length == 0);
 
-		if (isIndependent)
-			f = kernel.Function(label, fun);
-		else
+		if (isIndependent) {
+			f = kernel.Function(label, fun);			
+		} else {			
 			f = kernel.DependentFunction(label, fun);
-		ret[0] = f;
+		}
+		ret[0] = f;		
 		return ret;
 	}
 
@@ -723,11 +724,12 @@ public class AlgebraController
 			Command c = (Command) n.getLeft();
 			c.setLabels(n.getLabels());
 			return cmdProcessor.processCommand(c, true);
-		}				
-						
+		}											
+		
 // ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
-		ExpressionValue eval = n.evaluate();
+		
+		ExpressionValue eval = n.evaluate();		
 
 		// leaf: just return the existing object
 		if (eval.isGeoElement()) {
@@ -744,9 +746,9 @@ public class AlgebraController
 			return processText(n, eval);
 		else if (eval.isBooleanValue())
 			return processBoolean(n, eval);
-		else if (eval instanceof Function)
+		else if (eval instanceof Function) {
 			return processFunction((Function) eval);			
-		else {
+		} else {
 			System.err.println(
 				"Unhandled ExpressionNode: " + eval + ", " + eval.getClass());
 			return null;

@@ -4,7 +4,6 @@ import jscl.math.Generic;
 import jscl.math.JSCLVector;
 import jscl.math.Variable;
 import jscl.math.operator.VectorOperator;
-import jscl.text.IndentedBuffer;
 
 public class VectorProduct extends VectorOperator {
 	public VectorProduct(Generic vector1, Generic vector2) {
@@ -20,13 +19,14 @@ public class VectorProduct extends VectorOperator {
 		return expressionValue();
 	}
 
-	protected String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append(parameter[0].toMathML(null));
-		buffer.append("<mo>&wedge;</mo>\n");
-		buffer.append(parameter[1].toMathML(null));
-		return buffer.toString();
-	}
+//    protected void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        parameter[0].toMathML(element,null);
+//        Element e1=new ElementImpl(document,"mo");
+//        e1.appendChild(new TextImpl(document,"\u2227"));
+//        element.appendChild(e1);
+//        parameter[1].toMathML(element,null);
+//    }
 
 	protected Variable newinstance() {
 		return new VectorProduct(null,null);

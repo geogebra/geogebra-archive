@@ -7,13 +7,13 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Line2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import java.awt.geom.Line2D;
-import java.awt.geom.Arc2D;
 /**
  * @author Loïc Le Coq
  * date 31/10/2006

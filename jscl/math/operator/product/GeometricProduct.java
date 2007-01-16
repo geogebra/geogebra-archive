@@ -4,7 +4,6 @@ import jscl.math.Generic;
 import jscl.math.JSCLVector;
 import jscl.math.Variable;
 import jscl.math.operator.VectorOperator;
-import jscl.text.IndentedBuffer;
 
 public class GeometricProduct extends VectorOperator {
 	public GeometricProduct(Generic vector1, Generic vector2) {
@@ -20,12 +19,11 @@ public class GeometricProduct extends VectorOperator {
 		return expressionValue();
 	}
 
-	protected String bodyToMathML() {
-		IndentedBuffer buffer=new IndentedBuffer();
-		buffer.append(parameter[0].toMathML(null));
-		buffer.append(parameter[1].toMathML(null));
-		return buffer.toString();
-	}
+//    protected void bodyToMathML(Element element) {
+//        CoreDocumentImpl document=(CoreDocumentImpl)element.getOwnerDocument();
+//        parameter[0].toMathML(element,null);
+//        parameter[1].toMathML(element,null);
+//    }
 
 	protected Variable newinstance() {
 		return new GeometricProduct(null,null);
