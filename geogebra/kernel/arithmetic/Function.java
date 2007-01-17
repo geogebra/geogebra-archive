@@ -14,7 +14,6 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -666,8 +665,8 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
                 
         // get coefficients as strings
-        String function = node.getJSCLString(symbolic);        
-        String [] strCoeffs = GeoGebraCAS.getPolynomialCoeffs(function);
+        String function = node.getYacasString(symbolic);        
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function);
         if (strCoeffs == null)
 			// this is not a valid polynomial           
             return null;
@@ -806,7 +805,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         String oldVar = fVar.toString();
         fVar.setVarString("x");
         
-        sb.append(expression.getJSCLString(true));
+        sb.append(expression.getYacasString(true));
         if (order == 1) {
             sb.append(",x)");            
         } else {
@@ -815,23 +814,12 @@ implements ExpressionValue, RealRootFunction, Functional {
             sb.append(')');            
         }           
         
-        try {           
-        	// TODO: remove
-        	long startTime = System.currentTimeMillis();
-        	
-            // evaluate expression by JSCL          	        	        	
-            String JSCLresult = GeoGebraCAS.evaluateJSCL(sb.toString());
-            
-            long endTime = System.currentTimeMillis();
-            counter++;
-            JSCLtime = endTime - startTime;
-                         
-            
+        try {                   	            
             // build expression string for YACAS             
     		sb.setLength(0);
             sb.append("D(x)(");
             // function expression with multiply sign "*"                                  
-            sb.append(expression.getJSCLString(true));
+            sb.append(expression.getYacasString(true));
             if (order == 1) {
                 sb.append(")");            
             } else {
@@ -839,21 +827,9 @@ implements ExpressionValue, RealRootFunction, Functional {
                 sb.append(order);
                 sb.append(')');            
             }           
-            
-//          TODO: remove
-        	startTime = System.currentTimeMillis();
-        	
-            // evaluate expression by JSCL          	        	        	
-            String YACASresult = GeoGebraCAS.evaluateYACAS(sb.toString());
-            
-            endTime = System.currentTimeMillis();           
-            YACAStime = endTime - startTime;
-            
-            // TODO: remove
-            System.out.println("***");
-            System.out.println("JSCLtime: " + JSCLtime + ", result: " + JSCLresult);
-            System.out.println("YACAStime: " + YACAStime + ", result: " + YACASresult );            
-                        
+          
+            // evaluate expression by YACAS          	        	        	
+            String YACASresult = kernel.evaluateYACAS(sb.toString());                       
             
 			sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
@@ -875,11 +851,7 @@ implements ExpressionValue, RealRootFunction, Functional {
          finally {
         	 fVar.setVarString(oldVar);
          }
-    }	
-    
-    // TODO: remove
-    static long JSCLtime = 0, YACAStime = 0;
-    static long counter = 0;
+    }	    
     
     /**
      * Creates the difference expression (a - b) and stores the result in
@@ -960,16 +932,16 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return result as function
      */
     final private Function integral() {
-        // build expression string for JSCL
+        // build expression string for YACAS
         sb.setLength(0);
-        sb.append("integral(");
+        sb.append("Integrate(x)(");
         // function expression with multiply sign "*"
-        sb.append(expression.getJSCLString(true));
-        sb.append(",x)");
+        sb.append(expression.getYacasString(true));
+        sb.append(")");
 
         try {           
             // evaluate expression by JSCL
-            String result = GeoGebraCAS.evaluateJSCL(sb.toString());       
+            String result = kernel.evaluateYACAS(sb.toString());       
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
             sb.append("f(x)="); 

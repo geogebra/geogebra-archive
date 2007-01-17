@@ -30,7 +30,7 @@ public class CYacas
       if (env.iPrettyReader != null)
       {
        // InputStatus someStatus = new InputStatus();
-        StringBuffer inp = new StringBuffer();
+        inp.setLength(0);
         inp.append(input);
         InputStatus oldstatus = env.iInputStatus;
         env.iInputStatus.SetTo("String");
@@ -67,13 +67,13 @@ public class CYacas
       }
 
       LispPtr result = new LispPtr();
-      env.iEvaluator.Eval(env, result, in_expr);
+      env.iEvaluator.Eval(env, result, in_expr);            
 
       String percent = env.HashTable().LookUp("%");
       env.SetVariable(percent,result);
       env.SetGlobalEvaluates(percent);
 
-      StringBuffer string_out = new StringBuffer();
+      string_out.setLength(0);
       LispOutput output = new StringOutput(string_out);
 
       if (env.iPrettyPrinter != null)
@@ -103,4 +103,8 @@ public class CYacas
   LispTokenizer tokenizer = null;
   LispPrinter printer = null;
   String iError = null;
+    
+  // by Markus Hohenwarter
+  StringBuffer inp = new StringBuffer();
+  StringBuffer string_out = new StringBuffer();
 }

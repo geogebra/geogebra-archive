@@ -159,6 +159,7 @@ TOKEN : {
   |     < PARAMETRICVAR: "X" >
   |     < FLOAT: <INTEGER> ( "." <INTEGER> )? 
         | "." <INTEGER> 
+        | <INTEGER> "."
         >
  |     < EFLOAT: <FLOAT> "E"  (<MINUS>)? <INTEGER> >
   |     < #INTEGER: ( <DIGIT> )+ >
@@ -240,27 +241,27 @@ TOKEN : {
 TOKEN: {
     < X_FUNC: "x(" >
 |	< Y_FUNC: "y(" > 
-|	< COS_FUNC: "cos(" > 
-|	< SIN_FUNC: "sin(" > 
-|	< TAN_FUNC: "tan(" > 
-|	< ACOS_FUNC: "acos(" > 
-|	< ASIN_FUNC: "asin(" > 
-|	< ATAN_FUNC: "atan(" > 
-|	< COSH_FUNC: "cosh(" > 
-|	< SINH_FUNC: "sinh(" > 
-|	< TANH_FUNC: "tanh(" > 
-|	< ACOSH_FUNC: "acosh(" > 
-|	< ASINH_FUNC: "asinh(" > 
-|	< ATANH_FUNC: "atanh(" > 
-|	< EXP_FUNC:  "exp(" > 
-|	< LOG_FUNC:  "log(" > 
-|	< SQRT_FUNC: "sqrt(" > 
-|	< ABS_FUNC:  "abs(" > 
-|	< SGN_FUNC:  "sgn(" > 
-|	< FLOOR_FUNC: "floor(" > 
-|	< CEIL_FUNC:  "ceil(" > 
-|	< ROUND_FUNC: "round(" > 
-|	< GAMMA_FUNC: "gamma(" > 
+|	< COS_FUNC: ( "cos(" | "Cos(" ) > 
+|	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
+|	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
+|	< ACOS_FUNC: ( "acos(" | "arccos" | "ArcCos(" )> 
+|	< ASIN_FUNC: ( "asin(" | "arcsin" | "ArcSin(" ) > 
+|	< ATAN_FUNC: ( "atan(" | "arctan" | "ArcTan(" )> 
+|	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
+|	< SINH_FUNC: ( "sinh(" | "Sinh(" ) > 
+|	< TANH_FUNC: ( "tanh(" | "Tanh") > 
+|	< ACOSH_FUNC: ( "acosh(" | "arccosh" | "ArcCosh(" ) > 
+|	< ASINH_FUNC: ( "asinh(" | "arcsinh" | "ArcSinh(" ) > 
+|	< ATANH_FUNC: ( "atanh(" | "arctanh" | "ArcTanh(" ) > 
+|	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
+|	< LOG_FUNC: ( "log(" | "ln(" | "Ln(" ) > 
+|	< SQRT_FUNC: ( "sqrt(" | "Sqrt(" ) > 
+|	< ABS_FUNC:  ( "abs(" | "Abs(" ) > 
+|	< SGN_FUNC:  ( "sgn(" | "Sign(" ) > 
+|	< FLOOR_FUNC: ( "floor(" | "Floor(" ) > 
+|	< CEIL_FUNC:  ( "ceil(" | "Ceil(" ) > 
+|	< ROUND_FUNC: ( "round(" | "Round(" ) > 
+|	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 | 	< FUNCTION_LABEL: <LABEL> "(" >
 }
 

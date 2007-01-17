@@ -13,7 +13,6 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel;
 
 import geogebra.algebra.parser.Parser;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -77,10 +76,10 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
                 
         // get numeric string for function
         //String function = f.getFunction().getExpression().getJSCLString(false);        
-		String function = f.getFunction().getExpression().getJSCLString(false);
+		String function = f.getFunction().getExpression().getYacasString(false);
         
         // expand expression and get polynomial coefficients
-        String [] strCoeffs = GeoGebraCAS.getPolynomialCoeffs(function);
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function);
         if (strCoeffs == null) {
         	 g.setDefined(false);
         	 return;

@@ -1548,15 +1548,6 @@ NormalVectorForm normalvectorform():
     finally { jj_save(21, xla); }
   }
 
-  final private boolean jj_3R_25() {
-    if (jj_scan_token(78)) return true;
-    if (jj_3R_26()) return true;
-    if (jj_scan_token(EOL)) return true;
-    if (jj_3R_26()) return true;
-    if (jj_scan_token(77)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_74() {
     if (jj_3R_81()) return true;
     Token xsp;
@@ -2503,6 +2494,15 @@ NormalVectorForm normalvectorform():
 
   final private boolean jj_3R_82() {
     if (jj_scan_token(SQUARED)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_25() {
+    if (jj_scan_token(78)) return true;
+    if (jj_3R_26()) return true;
+    if (jj_scan_token(EOL)) return true;
+    if (jj_3R_26()) return true;
+    if (jj_scan_token(77)) return true;
     return false;
   }
 

@@ -12,13 +12,11 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.cas;
 
-import yacas.YacasInterpreter;
 import jscl.math.Expression;
 import jscl.math.Generic;
-import jscl.math.GenericVariable;
-import jscl.math.JSCLInteger;
 import jscl.math.UnivariatePolynomial;
 import jscl.math.Variable;
+import yacas.YacasInterpreter;
 
 /**
  * This class provides an interface for GeoGebra to use JSCL.
@@ -26,55 +24,47 @@ import jscl.math.Variable;
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
-    		
-	private static YacasInterpreter yacas = new YacasInterpreter();
-	
-    private static Variable xVar;
-    private static StringBuffer sbInsertSpecial, sbReverse;
     
-    private static final String UNICODE_PREFIX = "unicode";
+	private static final String UNICODE_PREFIX = "uNiCoDe";
     private static final String UNICODE_DELIMITER = "U";
-         
-    static {
-    	sbInsertSpecial = new StringBuffer(80);
-    	sbReverse = new StringBuffer(80);
+    
+	private YacasInterpreter yacas;
+	private Variable xVar;
+    private StringBuffer sbInsertSpecial, sbRemoveSpecial;
+    
+    
+    
+    
+    public GeoGebraCAS() {    	    	
+    	yacas = new YacasInterpreter();    	 
     	
+    	// JSCL
     	try { 
     	 	xVar = Variable.valueOf("x"); 
     	} 
     	catch(Exception e) {
     		e.printStackTrace();
     	} 
-    }
-    
-    public static void main(String [] args) {
-    	YacasInterpreter yacas = new YacasInterpreter();
     	
-    	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
-    			"D(ö) mysin(ö);"};
     	
-    	for (int i=0; i < commands.length; i++) {
-    		String result = yacas.Evaluate(removeSpecialChars(commands[i]));
-    		System.out.println("command: " + commands[i]);
-        	System.out.println("result: " + insertSpecialChars(result));        	        
-    	}    	
-    	
-    }
+    	sbInsertSpecial = new StringBuffer(80);
+    	sbRemoveSpecial = new StringBuffer(80);    	     	
+    }        
     
     /** 
-     * Evaluates an YACAS expression and returns the result as a string.
-     * e.g. exp = "d(x^2, x)" returns "2*x"
+     * Evaluates a YACAS expression and returns the result as a string.
+     * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
-     */
-    // TODO: go on
-    final public static synchronized String evaluateYACAS(String exp) {
-    	//System.out.println("exp for JSCL: " + exp);
+     */ 
+    final public String evaluateYACAS(String exp) {
+    	//TODO: remove
+    	//System.out.println("exp for YACAS: " + exp);
         
         try {
         	String result;
         	
-        	// JSCL has problems with special characters:
+        	// YACAS has problems with special characters:
         	// get rid of them        	
         	String myExp = removeSpecialChars(exp);          	        
            
@@ -82,13 +72,15 @@ public class GeoGebraCAS {
         	
         	//System.out.println("   result: " + result);
         	//System.out.println("   result (special chars): " + insertSpecialChars(result));
-        	
+        	//System.out.println("  result: " + result);
             return insertSpecialChars(result);
             
         } catch (Error err) {
+        	yacas.Evaluate("restart;");
             err.printStackTrace();
             return null;    
         } catch (Exception e) {
+        	yacas.Evaluate("restart;");
             e.printStackTrace();
             return null;
         }       
@@ -99,8 +91,8 @@ public class GeoGebraCAS {
      * e.g. exp = "d(x^2, x)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
-     */
-    final public static synchronized String evaluateJSCL(String exp) {
+     *
+    final public String evaluateJSCL(String exp) {
     	//System.out.println("exp for JSCL: " + exp);
         
         try {
@@ -118,7 +110,7 @@ public class GeoGebraCAS {
             Generic out = in.expand();
                         
         	//System.out.println("   expand: " + out);
-            /*
+          
             if (out.isPolynomial(xVar)) {
                 // build polynomial
                 UnivariatePolynomial p = UnivariatePolynomial.valueOf(out, xVar);
@@ -126,7 +118,7 @@ public class GeoGebraCAS {
             } else {
                 out = out.simplify();                                             
                 result =  out.toString();
-            } */  
+            }  
                        
         	//System.out.println("   result: " + result);
         	//System.out.println("   result (special chars): " + insertSpecialChars(result));
@@ -141,8 +133,9 @@ public class GeoGebraCAS {
             e.printStackTrace();
             return null;
         }       
-    }
+    } */
     
+    /*
     private static String toReverseString(UnivariatePolynomial p) {
     	sbReverse.setLength(0);     
         if(p.signum()==0) sbReverse.append("0");
@@ -170,7 +163,7 @@ public class GeoGebraCAS {
             n++;
         }
         return sbReverse.toString();
-    }
+    }*/
     
     /**
      * Finds the polynomial coefficients of
@@ -180,8 +173,11 @@ public class GeoGebraCAS {
      * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
      * ["0", "b", "3*a"]
      */
-    final public static synchronized  String [] getPolynomialCoeffs(String exp) {
-        try {                       	
+    final public String [] getPolynomialCoeffs(String exp) {
+// TODO:  getPolynomialCoeffs() adapt for Yacas
+    	// Coef(exp, x, 0 .. Degree(exp,x)), how to check for polynomial?
+    	
+        try {                     	
             // JSCL does not recognize x^2 / 4 as a polynomial
             // but it does recognize x^2 * 1/4, so we replace every "/" by "*1/"
             String noDivExp = removeSpecialChars(exp.replaceAll("/", "*1/"));         
@@ -219,6 +215,7 @@ public class GeoGebraCAS {
                 //System.out.println("   coeff " + i + ": " + coeffs[i]);
                 //System.out.println("   is constant: " + p.get(i).isConstant(xVar));                 
             }
+            
             return coeffs;                      
         } catch (Error err) {
             err.printStackTrace();
@@ -234,10 +231,10 @@ public class GeoGebraCAS {
      * to "unicode" + charactercode + DELIMITER Strings. This is neede because
      * JSCL cannot handle all unicode characters.     
      */
-    private static String removeSpecialChars(String str) {
+    private String removeSpecialChars(String str) {
     	int len = str.length();
-    	StringBuffer sb = new StringBuffer(len * 2);    	    	
-
+    	sbRemoveSpecial.setLength(0);
+    	
     	// convert every single character and append it to sb        
         for (int i = 0; i < len; i++) {
             char c = str.charAt(i);
@@ -248,37 +245,37 @@ public class GeoGebraCAS {
                 switch (code) {
                     case 95: // replace _
                     //case 39: // replace '
-                    	sb.append(UNICODE_PREFIX);
-                    	sb.append(code);
-                    	sb.append(UNICODE_DELIMITER);
+                    	sbRemoveSpecial.append(UNICODE_PREFIX);
+                    	sbRemoveSpecial.append(code);
+                    	sbRemoveSpecial.append(UNICODE_DELIMITER);
                         break;                                            
 
                     default :
                         //do not convert                
-                        sb.append(c);
+                    	sbRemoveSpecial.append(c);
                 }
             }
             // special characters
             else {
             	switch (code) {
             		case 176: // replace degree sign by " * unicode_string_of_degree_sign"
-            			sb.append("*");
+            			sbRemoveSpecial.append("*");
             			
             		default:
-            			sb.append(UNICODE_PREFIX);
-                		sb.append(code);          
-                		sb.append(UNICODE_DELIMITER);
+            			sbRemoveSpecial.append(UNICODE_PREFIX);
+            			sbRemoveSpecial.append(code);          
+            			sbRemoveSpecial.append(UNICODE_DELIMITER);
             	}
             	
             }
         }
-        return sb.toString();   	
+        return sbRemoveSpecial.toString();   	
     }        
     
     /**
      * Reverse operation of removeSpecialChars().
      */
-    final private static String insertSpecialChars(String str) {  
+    private String insertSpecialChars(String str) {  
     	int len = str.length();    	
     	sbInsertSpecial.setLength(0);    	
     	
@@ -332,12 +329,16 @@ public class GeoGebraCAS {
     
     /*
     public static void main(String [] args) {
+    	YacasInterpreter yacas = new YacasInterpreter();
     	
-    	String str = "d(\u03b1_{45}^2 *f'(x), \u03b1_{45})";
-    	System.out.println("orig        : " + str);
-    	System.out.println("transformed : " + unicodeToJSCL(str));
-    	System.out.println("back        : " + JSCLToUnicode(unicodeToJSCL(str))); 
-    	System.out.println("evaluate    : " + evaluateJSCL(str));
+    	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
+    			"D(ö) mysin(ö);"};
+    	
+    	for (int i=0; i < commands.length; i++) {
+    		String result = yacas.Evaluate(removeSpecialChars(commands[i]));
+    		System.out.println("command: " + commands[i]);
+        	System.out.println("result: " + insertSpecialChars(result));        	        
+    	}    	
     	
     }*/
  

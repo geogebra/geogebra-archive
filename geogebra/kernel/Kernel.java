@@ -23,6 +23,7 @@ import geogebra.MyError;
 import geogebra.View;
 import geogebra.algebra.AlgebraController;
 import geogebra.algebra.parser.Parser;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
@@ -65,7 +66,7 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	private boolean JSCLprintForm = false;		
+	private boolean yacasPrintForm = false;		
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -90,6 +91,7 @@ public class Kernel {
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
 	private Parser tempParser;
+	private GeoGebraCAS ggbCAS;
 	
 	private boolean continous = true;
 	private MacroManager macroManager;
@@ -165,6 +167,49 @@ public class Kernel {
     	if (tempParser == null)
     		tempParser = new Parser(this, this.getConstruction());
     	return tempParser;
+    }
+	
+	/** 
+     * Evaluates a YACAS expression and returns the result as a String.
+     * e.g. exp = "D(x) (x^2)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */ 
+	final public String evaluateYACAS(String exp) {
+		if (ggbCAS == null) {
+			initYACAS();
+			if (ggbCAS == null)
+				return null;			
+		}
+		
+		return ggbCAS.evaluateYACAS(exp);
+	}
+	
+	public synchronized void initYACAS() {
+		if (ggbCAS == null) {
+			try {
+				ggbCAS = new GeoGebraCAS();
+			} catch (Exception e) {
+				System.err.println("Kernel.initYacas: Could not initialize CAS.");
+			}
+		}			
+	}
+	/**
+     * Finds the polynomial coefficients of
+     * the given expression and returns it in ascending order. 
+     * If exp is not a polynomial null is returned.
+     * 
+     * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
+     * ["0", "b", "3*a"]
+     */
+    final public String [] getPolynomialCoeffs(String exp) {
+    	if (ggbCAS == null) {
+			initYACAS();
+			if (ggbCAS == null)
+				return null;			
+		}
+    	
+    	return ggbCAS.getPolynomialCoeffs(exp);
     }
 
 	final public void setEpsilon(double epsilon) {
@@ -256,12 +301,12 @@ public class Kernel {
 		nf.setMaximumFractionDigits(digits);
 	}
 	
-	final public void setJSCLprintForm(boolean flag) {
-		JSCLprintForm = flag;
+	final public void setYacasPrintForm(boolean flag) {
+		yacasPrintForm = flag;
 	}
 	
-	final public boolean isJSCLprintForm() {
-		return JSCLprintForm;
+	final public boolean isYacasPrintForm() {
+		return yacasPrintForm;
 	}
 
 	final public void setPrintDecimals(int decimals) {
@@ -3106,14 +3151,18 @@ public class Kernel {
 			return format(x);
 	}
 
-	final public String format(double x) {								
-		return formatPi(x, nf);					
+	final public String format(double x) {	
+		if (yacasPrintForm)
+			return nf.format(x);
+		else
+			return formatPi(x, nf);					
 	}
 	
 	final public String formatPi(double x, NumberFormat nf) {
 		// ZERO
 		if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";		
+			return "0";						
+		
 		// 	MULTIPLES OF PI/2
 		// i.e. x = a * pi/2
 		double a = 2*x / Math.PI;
@@ -3122,25 +3171,25 @@ public class Kernel {
 		if (-STANDARD_PRECISION < diff && diff < STANDARD_PRECISION) {	
 			switch (aint) {					
 				case 1:
-					if (JSCLprintForm)
+					if (yacasPrintForm)
 						return "pi/2";
 					else
 						return "\u03c0/2";
 					
 				case -1:
-					if (JSCLprintForm)
+					if (yacasPrintForm)
 						return "-pi/2";
 					else
 						return "-\u03c0/2";
 					
 				case 2:
-					if (JSCLprintForm)
+					if (yacasPrintForm)
 						return "pi";
 					else
 						return "\u03c0";
 					
 				case -2:
-					if (JSCLprintForm)
+					if (yacasPrintForm)
 						return "-pi";
 					else
 						return "-\u03c0";
@@ -3149,14 +3198,14 @@ public class Kernel {
 					// 	even
 					long half = aint / 2;			
 					if (aint == 2 * half) {			
-						if (JSCLprintForm)
+						if (yacasPrintForm)
 							return half + "* pi";
 						else					
 							return half + "\u03c0";
 					}
 					// odd
 					else {			
-						if (JSCLprintForm)
+						if (yacasPrintForm)
 							return aint + "* pi/2";
 						else
 							return aint + "\u03c0/2";
