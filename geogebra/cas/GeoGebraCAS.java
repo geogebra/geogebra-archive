@@ -327,9 +327,10 @@ public class GeoGebraCAS {
     }
     
     
-    /*
+    
     public static void main(String [] args) {
-    	YacasInterpreter yacas = new YacasInterpreter();
+    /*
+          YacasInterpreter yacas = new YacasInterpreter();
     	
     	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
     			"D(ö) mysin(ö);"};
@@ -339,7 +340,18 @@ public class GeoGebraCAS {
     		System.out.println("command: " + commands[i]);
         	System.out.println("result: " + insertSpecialChars(result));        	        
     	}    	
-    	
-    }*/
+    */
+    	/*
+    	Jasymca cas = new Jasymca();
+    	String [] commands = {"abs(-3)", "diff(sin(x),x)",
+		"3+2"};
+		
+		for (int i=0; i < commands.length; i++) {
+			String result = cas.evaluate(commands[i]);
+			System.out.println("command: " + commands[i]);
+			System.out.println("result: " + result);        	        
+		}    */	
+    }
+    
  
 }
