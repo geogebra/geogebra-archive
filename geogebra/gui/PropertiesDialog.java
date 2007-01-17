@@ -2911,11 +2911,11 @@ public class PropertiesDialog
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!(geo.isPath())
+				if (!(geo.isPath()
 					|| geo.isGeoPolygon()
 					|| geo.isGeoLocus()
 					|| (geo.isGeoNumeric()
-						&& ((GeoNumeric) geo).isDrawable())) {
+						&& ((GeoNumeric) geo).isDrawable()))) {
 					geosOK = false;
 					break;
 				}
