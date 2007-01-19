@@ -4,7 +4,7 @@ package jasymca;
 	doc: http://www.vni.com/corner/garage/grande/api/com/imsl/math/Complex.htm
 	
  * -------------------------------------------------------------------------
- *	$Id: JMath.java,v 1.1 2007-01-18 23:12:37 hohenwarter Exp $
+ *	$Id: JMath.java,v 1.2 2007-01-19 05:20:35 hohenwarter Exp $
  * -------------------------------------------------------------------------
  *	Copyright (c) 1999 Visual Numerics Inc. All Rights Reserved.
  *

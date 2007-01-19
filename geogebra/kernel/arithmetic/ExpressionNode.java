@@ -38,6 +38,11 @@ import java.util.Iterator;
  */
 public class ExpressionNode extends ValidExpression
 implements ExpressionValue {   
+	
+	public static final int STRING_TYPE_GEOGEBRA = 0;
+	public static final int STRING_TYPE_JASYMCA = 1;
+	public static final int STRING_TYPE_YACAS = 2;
+	public static final int STRING_TYPE_LATEX = 100;
     
 	// boolean
 	public static final int NOT = -9;
@@ -1479,19 +1484,20 @@ implements ExpressionValue {
     }
     
     /**
-     * Returns a string representation of this node that can be used with YASAC.
-     * e.g. "*" and "^" are always printed.
+     * Returns a string representation of this node that can be used with 
+     * the given CAS, e.g. "*" and "^" are always printed.
      * @param symbolic: true for variable names, false for values of variables
+     * @param STRING_TYPE: e.g. ExpressionNode.STRING_TYPE_JASYMCA
      */
-    final public String getYacasString(boolean symbolic) {
+    final public String getCASstring(int STRING_TYPE, boolean symbolic) {
         int oldDigits = kernel.getMaximumFractionDigits();
         kernel.setMaximumFractionDigits(50);
-        String ret = printYacasString(symbolic);
+        String ret = printCASstring(STRING_TYPE, symbolic);
         kernel.setMaximumFractionDigits(oldDigits);
         return ret;
     }
         
-    private String printYacasString(boolean symbolic) {  
+    private String printCASstring(int STRING_TYPE, boolean symbolic) {  
         boolean oldPrintForm = kernel.isYacasPrintForm();
         kernel.setYacasPrintForm(true);
         
@@ -1513,7 +1519,7 @@ implements ExpressionValue {
         	if (symbolic && left.isGeoElement()) 
 	            ret = ((GeoElement)left).getLabel();                            
 	        else if (left.isExpressionNode())
-	            ret  = ((ExpressionNode)left).printYacasString(symbolic);
+	            ret  = ((ExpressionNode)left).printCASstring(STRING_TYPE, symbolic);
 	        else 
 	        	ret = symbolic ? left.toString() : left.toValueString(); 	        
         } 
@@ -1525,7 +1531,7 @@ implements ExpressionValue {
 	        if (symbolic && left.isGeoElement()) {  
 	            leftStr = ((GeoElement)left).getLabel();                            
 	        } else if (left.isExpressionNode())
-	            leftStr  = ((ExpressionNode)left).printYacasString(symbolic);
+	            leftStr  = ((ExpressionNode)left).printCASstring(STRING_TYPE, symbolic);
 	        else {
 	        	leftStr = symbolic ? left.toString() : left.toValueString(); 
 	        }
@@ -1534,12 +1540,12 @@ implements ExpressionValue {
 	            if (symbolic && right.isGeoElement()) {
 	                rightStr = ((GeoElement)right).getLabel();
 	            } else if (right.isExpressionNode()) {
-	                rightStr  = ((ExpressionNode)right).printYacasString(symbolic);
+	                rightStr  = ((ExpressionNode)right).printCASstring(STRING_TYPE, symbolic);
 	            } else {
 	            	rightStr = symbolic ? right.toString() : right.toValueString(); 
 	            }            
 	        }     
-	        ret = operationToString(leftStr, rightStr, true, !symbolic, false);
+	        ret = operationToString(leftStr, rightStr, !symbolic, STRING_TYPE);
         }                
                 
         kernel.setYacasPrintForm(oldPrintForm);
@@ -1574,7 +1580,7 @@ implements ExpressionValue {
                 rightStr = right.toString();
             }
         }        
-        return operationToString(leftStr, rightStr, false, false, false);
+        return operationToString(leftStr, rightStr, false, STRING_TYPE_GEOGEBRA);
     }
   
     
@@ -1593,7 +1599,7 @@ implements ExpressionValue {
             rightStr = right.toValueString();
         }
             
-        return operationToString(leftStr, rightStr, false, true, false);
+        return operationToString(leftStr, rightStr, true, STRING_TYPE_GEOGEBRA);
     }
     
     /**
@@ -1615,7 +1621,7 @@ implements ExpressionValue {
         if (right != null) {
             rightStr = right.toLaTeXString(symbolic);
         }
-        return operationToString(leftStr, rightStr, false, !symbolic, true);
+        return operationToString(leftStr, rightStr,!symbolic, STRING_TYPE_GEOGEBRA);
     }
     
 
@@ -1627,7 +1633,7 @@ implements ExpressionValue {
      * 
      */
     final private String operationToString(String leftStr, String rightStr, 
-    		boolean YACASform, boolean valueForm, boolean forLaTeX) {
+    		boolean valueForm, int STRING_TYPE) {
     	   
     	ExpressionValue leftEval;
         StringBuffer sb = new StringBuffer();
@@ -1768,14 +1774,21 @@ implements ExpressionValue {
                 if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -           
                     // two digits colide: insert *    
                     if (nounary) {
-                        if (YACASform ||
-                             Character.isDigit(rightStr.charAt(0)) &&
-                             Character.isDigit(sb.charAt(sb.length() - 1)) )
-                        {
-                            sb.append(" * "); 
-                         }
-                        else 
-                            sb.append(' '); // space instead of '*'                      
+                    	switch (STRING_TYPE) {
+                    		case STRING_TYPE_JASYMCA:
+                    		case STRING_TYPE_YACAS:
+                    			sb.append(" * "); 
+                    			break;
+                    			
+                    		default:
+                    		   if (Character.isDigit(rightStr.charAt(0)) &&
+                                    Character.isDigit(sb.charAt(sb.length() - 1)) )
+                               {
+                                   sb.append(" * "); 
+                                }
+                               else 
+                                   sb.append(' '); // space instead of '*'  
+                    	}                               
                     }                 
                     
                     if (rightStr.charAt(0) == '-') {
@@ -1786,10 +1799,15 @@ implements ExpressionValue {
                     	sb.append(rightStr);
                 } else {
                     if (nounary) {
-                        if (YACASform)
-                            sb.append(" * ");          
-                        else 
-                            sb.append(' '); // space instead of '*'                      
+                    	switch (STRING_TYPE) {
+                			case STRING_TYPE_JASYMCA:
+                			case STRING_TYPE_YACAS:
+                				sb.append(" * ");  
+                				break;
+                				
+                			default:                        
+                				sb.append(' '); // space instead of '*'  
+                    	}
                     }                      
                     sb.append('(');
                     sb.append(rightStr);
@@ -1798,34 +1816,36 @@ implements ExpressionValue {
                 break;
                 
             case DIVIDE:   
-            	if (forLaTeX) {
-            		sb.append("\\frac{");
-            		sb.append(leftStr);
-            		sb.append("}{");
-            		sb.append(rightStr);
-            		sb.append("}");
-            	}
-            	else {
-	                // left wing              	
-	                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -
-	                    sb.append(leftStr);                
-	                } else { 
-	                    sb.append('(');
-	                    sb.append(leftStr);
-	                    sb.append(')');
-	                }                
-	                sb.append(" / ");
-	                 
-	                // right wing
-	                if (right.isLeaf() || opID(right) >= POWER) // not +, -, *, /                
-	                    sb.append(rightStr);
-	                else { 
-	                    sb.append('(');
-	                    sb.append(rightStr);
-	                    sb.append(')');
-	                }          
-            	}
-                break;
+            	switch (STRING_TYPE) {
+    				case STRING_TYPE_LATEX:
+    					sb.append("\\frac{");
+                		sb.append(leftStr);
+                		sb.append("}{");
+                		sb.append(rightStr);
+                		sb.append("}");
+                		break;
+    				
+	    			default:                        
+		                // left wing              	
+		                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -
+		                    sb.append(leftStr);                
+		                } else { 
+		                    sb.append('(');
+		                    sb.append(leftStr);
+		                    sb.append(')');
+		                }                
+		                sb.append(" / ");
+		                 
+		                // right wing
+		                if (right.isLeaf() || opID(right) >= POWER) // not +, -, *, /                
+		                    sb.append(rightStr);
+		                else { 
+		                    sb.append('(');
+		                    sb.append(rightStr);
+		                    sb.append(')');
+		                }          
+	            	}
+	                break;
                 
             case POWER:
                 // left wing                   	
@@ -1836,42 +1856,49 @@ implements ExpressionValue {
                     sb.append('(');
                     sb.append(leftStr);
                     sb.append(')');
-                }                                
+                }           
+                
                 // right wing  
-                if (forLaTeX) {
-                	 sb.append('^'); 
-                     sb.append('{');
-                     sb.append(rightStr);
-                     sb.append('}');
-                }                
-                else if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  
-                    if (YACASform) {
-                        sb.append('^'); 
+                switch (STRING_TYPE) {
+                	case STRING_TYPE_LATEX:
+                		sb.append('^'); 
+                        sb.append('{');
                         sb.append(rightStr);
-                    }                     
-                    else {
-                        if (rightStr.length() == 1) {
-                            switch (rightStr.charAt(0)) {
-                                case '2': sb.append('\u00b2'); break;
-                                case '3': sb.append('\u00b3'); break;
-                                case '4': sb.append('\u2074'); break;
-                                case '5': sb.append('\u2075'); break;
-                                case '6': sb.append('\u2076'); break;
-                                default: 
-                                            sb.append('^'); 
-                                            sb.append(rightStr);
-                            }
-                       } else {
-                           sb.append('^'); 
-                           sb.append(rightStr);
-                       }
-                    }                
-                } else { 
-                    sb.append('^'); 
-                    sb.append('(');
-                    sb.append(rightStr);
-                    sb.append(')');
-                }                                
+                        sb.append('}');
+                        break;
+                        
+	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_YACAS:
+	        			sb.append('^'); 
+                        sb.append('(');
+                        sb.append(rightStr);
+                        sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
+                             if (rightStr.length() == 1) {
+                                 switch (rightStr.charAt(0)) {
+                                     case '2': sb.append('\u00b2'); break;
+                                     case '3': sb.append('\u00b3'); break;
+                                     case '4': sb.append('\u2074'); break;
+                                     case '5': sb.append('\u2075'); break;
+                                     case '6': sb.append('\u2076'); break;
+                                     default: 
+                                                 sb.append('^'); 
+                                                 sb.append(rightStr);
+                                 }
+                            } else {
+                                sb.append('^'); 
+                                sb.append(rightStr);
+                            }                         
+	                     } else { 
+	                         sb.append('^'); 
+	                         sb.append('(');
+	                         sb.append(rightStr);
+	                         sb.append(')');
+	                     }   
+                }                        
                 break;
                 
             case FACTORIAL:
@@ -1886,287 +1913,383 @@ implements ExpressionValue {
                 sb.append('!');
                 break;    
                         
-            case COS:            	
-            	if (YACASform)
-            		sb.append("Cos(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("cos(");
-            	}            		
+            case COS:  
+            	switch (STRING_TYPE) {
+            		case STRING_TYPE_LATEX:
+            			sb.append("\\cos(");
+            			break;
+            			
+            		case STRING_TYPE_YACAS:
+            			sb.append("Cos(");
+            			break;
+            			
+            		default:
+            			sb.append("cos(");         		
+            	}    		
                 sb.append(leftStr);
                 sb.append(')');
                 break;
             
             case SIN:            	
-            	if (YACASform)
-            		sb.append("Sin(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("sin(");
-            	}            		
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sin(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Sin(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("sin(");         		
+	        	}           		
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                 
-            case TAN:            	
-            	if (YACASform)
-            		sb.append("Tan(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("tan(");
-            	}            		
+            case TAN:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\tan(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Tan(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("tan(");         		
+	        	}            		
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                 
             case ARCCOS:
-            	if (YACASform)
-            		sb.append("ArcCos(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\arccos");
-            		else
-            			sb.append("acos(");
-            	}               	
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\arccos(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcCos(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("acos(");         		
+	        	}  	             	
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                 
             case ARCSIN:
-            	if (YACASform)
-            		sb.append("ArcSin(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\arcsin");
-            		else
-            			sb.append("asin(");
-            	}   
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\arcsin(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcSin(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("asin(");         		
+	        	}  	   
                 sb.append(leftStr);
                 sb.append(')');
                 break;
 
             case ARCTAN:
-            	if (YACASform)
-            		sb.append("ArcTan(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\arctan");
-            		else
-            			sb.append("atan(");
-            	}          
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\arctan(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcTan(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("atan(");         		
+	        	}  	        	      
                 sb.append(leftStr);
                 sb.append(')');
                 break;
 
-            case COSH:            
-            	if (YACASform)
-            		sb.append("Cosh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("cosh(");
-            	}            		                
+            case COSH:      
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\cosh(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Cosh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("cosh(");         		
+	        	}  	         	       		                
                 sb.append(leftStr);
                 sb.append(')');
                 break;
             
-            case SINH:            	
-            	if (YACASform)
-            		sb.append("Sinh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("sinh(");
-            	}            		                 
+            case SINH:  
+              	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sinh(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Sinh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("sinh(");         		
+	        	}    		                 
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                 
-            case TANH:            	
-            	if (YACASform)
-            		sb.append("Tanh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\");
-            		sb.append("tanh(");
-            	}            		  
-                sb.append(leftStr);
+            case TANH:  
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\tanh(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Tanh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("tanh(");         		
+	        	}    	
+            	sb.append(leftStr);
                 sb.append(')');
                 break;
 
             case ACOSH:
-            	if (YACASform)
-            		sb.append("ArcCosh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\mathrm{acosh}(");
-            		else
-                		sb.append("acosh("); 
-            	}            	            	
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\mathrm{acosh}(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcCosh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("acosh(");         		
+	        	}           	        	            	
                 sb.append(leftStr);
                 sb.append(')');
                 break;
             
             case ASINH:
-            	if (YACASform)
-            		sb.append("ArcSinh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\mathrm{asinh}(");
-            		else
-                		sb.append("asinh("); 
-            	}     
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\mathrm{asinh}(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcSinh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("asinh(");         		
+	        	}               	
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                 
             case ATANH:
-            	if (YACASform)
-            		sb.append("ArcTanh(");
-            	else {
-            		if (forLaTeX) 
-                		sb.append("\\mathrm{atanh}(");
-            		else
-                		sb.append("atanh("); 
-            	}     
-                sb.append(leftStr);
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\mathrm{atanh}(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("ArcTanh(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("atanh(");         		
+	        	}      
+            	sb.append(leftStr);
                 sb.append(')');
                 break;
                
             case EXP:
-            	if (YACASform)
-            		sb.append("Exp(");
-            	else {
-            		if (forLaTeX) 
-            			sb.append("\\");
-            		sb.append("exp(");
-            	}
-                sb.append(leftStr);
-                sb.append(')');
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("e^{");
+	        			 sb.append(leftStr);
+	        			 sb.append('}');
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Exp(");
+	        			sb.append(leftStr);
+	                    sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			sb.append("exp(");     
+		        		sb.append(leftStr);
+	                    sb.append(')');
+	        	}           	
                 break;
 
             case LOG:
-            	if (YACASform)
-            		sb.append("Ln(");
-            	else {
-            		if (forLaTeX) 
-            			sb.append("\\");
-            		sb.append("log(");
-            	}            	
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\log(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Ln(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("log(");         		
+	        	}              	      	
                 sb.append(leftStr);
                 sb.append(')');
                 break;
                                             
             case SQRT:
-            	if (YACASform) {
-            		sb.append("Sqrt(");
-            		sb.append(leftStr);
-                	sb.append(')');
-            	} else {
-	            	if (forLaTeX) {
-	            		sb.append("\\sqrt{");
-	            		sb.append(leftStr);
-	                    sb.append('}');
-	            	} else {
-	            		 sb.append("sqrt(");
-	                     sb.append(leftStr);
-	                     sb.append(')');
-	            	}       
-            	}
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sqrt{");
+	        			 sb.append(leftStr);
+	        			 sb.append('}');
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Sqrt(");
+	        			sb.append(leftStr);
+	                    sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			sb.append("sqrt(");     
+		        		sb.append(leftStr);
+	                    sb.append(')');
+	        	}         
                 break;
                 
             case ABS:   
-            	if (YACASform) {
-            		sb.append("Abs(");
-            		sb.append(leftStr);
-                	sb.append(')');
-            	} else {
-	            	if (forLaTeX) {
-	            		sb.append("\\left|");
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\left|");
 	            		sb.append(leftStr);
 	                    sb.append("\\right|");
-	            	} else {
-		                sb.append("abs(");
-		                sb.append(leftStr);
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Abs(");
+	        			sb.append(leftStr);
 		                sb.append(')');
-	            	}
-            	}
+	        			break;
+	        			
+	        		default:
+	        			sb.append("abs(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+	        	}               
                 break;
             
             case SGN:
-            	if (YACASform) {
-            		sb.append("Sign(");            		
-            	} else {
-	            	if (forLaTeX) 
-	            		sb.append("\\mathrm{sgn}(");
-	            	else
-	            		sb.append("sgn("); 	              
-            	}
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\mathrm{sgn}(");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Sign(");
+	        			break;
+	        			
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("sign(");
+	        			break;
+
+	        		default:
+	        			sb.append("sgn(");         		
+	        	}        
             	sb.append(leftStr);
 	            sb.append(')');
                 break;
                 
             case FLOOR:
-            	if (YACASform) {
-            		sb.append("Floor(");   
-            		sb.append(leftStr);
-                    sb.append(')');
-            	} else {
-	            	if (forLaTeX) {
-	            		 sb.append("\\lfloor");
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\lfloor");
 	                     sb.append(leftStr);
 	                     sb.append("\\rfloor");
-	            	} else {
-	            		 sb.append("floor(");
-	                     sb.append(leftStr);
-	                     sb.append(')');
-	            	}
-            	}
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Floor(");
+	        			sb.append(leftStr);
+		                sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			sb.append("floor(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+	        	}         
                 break;                
 
             case CEIL:
-            	if (YACASform) {
-            		sb.append("Ceil(");   
-            		sb.append(leftStr);
-                    sb.append(')');
-            	} else {
-	               	if (forLaTeX) {
-	               		sb.append("\\lceil");
-	                    sb.append(leftStr);
-	                    sb.append("\\rceil");
-		           	} else {
-		           		 sb.append("ceil(");
-		                 sb.append(leftStr);
-		                 sb.append(')');
-		           	}   
-            	}
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\lceil");
+	                     sb.append(leftStr);
+	                     sb.append("\\rceil");
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Ceil(");
+	        			sb.append(leftStr);
+		                sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			sb.append("ceil(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+	        	}               	
                 break;       
                 
             case ROUND:
-            	if (YACASform) {
-            		sb.append("Round(");               		
-            	} else {
-	            	if (forLaTeX) 
-	            		sb.append("\\mathrm{round}(");
-	            	else
-	            		sb.append("round("); 	              
-            	}
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\mathrm{round}(");            
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Round(");        			
+	        			break;
+	        			
+	        		default:
+	        			sb.append("round(");      		
+	        	}                 	
                 sb.append(leftStr);
                 sb.append(')');
                 break;  
                 
             case GAMMA:
-            	if (YACASform) {
-            		sb.append("Gamma(");               		
-            	} else {
-	            	if (forLaTeX)
-	            		sb.append("\\Gamma(");
-	            	else
-	            		sb.append("gamma(");
-            	}
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\Gamma(");            
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Gamma(");        			
+	        			break;
+	        			
+	        		default:
+	        			sb.append("gamma(");      		
+	        	}                 	         
                 sb.append(leftStr);
                 sb.append(')');
                 break;  
@@ -2175,7 +2298,7 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getX()));
             	} else {
-            		if (forLaTeX)
+            		if (STRING_TYPE == STRING_TYPE_LATEX)
                 		sb.append("\\mathrm{x}(");
             		else
             			sb.append("x(");
@@ -2188,7 +2311,7 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getY()));            		
             	} else {
-            		if (forLaTeX)
+            		if (STRING_TYPE == STRING_TYPE_LATEX)
                 		sb.append("\\mathrm{y}(");
             		else
             			sb.append("y(");            	

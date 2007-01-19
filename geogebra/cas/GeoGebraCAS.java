@@ -1,17 +1,7 @@
-/* 
-GeoGebra - Dynamic Geometry and Algebra
-Copyright Markus Hohenwarter, http://www.geogebra.at
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation; either version 2 of the License, or 
-(at your option) any later version.
-*/
-
 package geogebra.cas;
 
+
+import jasymca.GeoGebraJasymca;
 import jscl.math.Expression;
 import jscl.math.Generic;
 import jscl.math.UnivariatePolynomial;
@@ -24,11 +14,14 @@ import yacas.YacasInterpreter;
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
+	
+
     
 	private static final String UNICODE_PREFIX = "uNiCoDe";
     private static final String UNICODE_DELIMITER = "U";
     
 	private YacasInterpreter yacas;
+	private GeoGebraJasymca jasymca;
 	private Variable xVar;
     private StringBuffer sbInsertSpecial, sbRemoveSpecial;
     
@@ -36,7 +29,7 @@ public class GeoGebraCAS {
     
     
     public GeoGebraCAS() {    	    	
-    	yacas = new YacasInterpreter();    	 
+    		 
     	
     	// JSCL
     	try { 
@@ -61,6 +54,15 @@ public class GeoGebraCAS {
     	//TODO: remove
     	//System.out.println("exp for YACAS: " + exp);
         
+    	if (yacas == null) {
+    		try {
+    			yacas = new YacasInterpreter();    
+    		} catch (Exception e) {
+    			System.err.println("Could not initialize YACAS");
+    			return null;
+    		}
+    	}
+    	
         try {
         	String result;
         	
@@ -84,6 +86,32 @@ public class GeoGebraCAS {
             e.printStackTrace();
             return null;
         }       
+    }
+    
+    /** 
+     * Evaluates a JASYMCA expression and returns the result as a string.
+     * e.g. exp = "diff(x^2)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */ 
+    final public String evaluateJASYMCA(String exp) {
+    	//TODO: remove
+    	//System.out.println("exp for JASYMCA: " + exp);
+        
+    	if (jasymca == null) {
+    		try {
+    			jasymca = new GeoGebraJasymca();    
+    		} catch (Exception e) {
+    			System.err.println("Could not initialize JASYMCA");
+    			return null;
+    		}
+    	}
+    	
+    	String  result = jasymca.evaluate(exp);
+    
+    	// TODO: remove
+        //System.out.println("  result: " + result);
+        return result;
     }
     
     /** 
@@ -341,8 +369,9 @@ public class GeoGebraCAS {
         	System.out.println("result: " + insertSpecialChars(result));        	        
     	}    	
     */
-    	/*
-    	Jasymca cas = new Jasymca();
+    	
+    	/*Jasymca test = new Jasymca();
+    	GeoGebraJasymca cas = new GeoGebraJasymca();
     	String [] commands = {"abs(-3)", "diff(sin(x),x)",
 		"3+2"};
 		
@@ -350,7 +379,8 @@ public class GeoGebraCAS {
 			String result = cas.evaluate(commands[i]);
 			System.out.println("command: " + commands[i]);
 			System.out.println("result: " + result);        	        
-		}    */	
+		}  
+		*/
     }
     
  

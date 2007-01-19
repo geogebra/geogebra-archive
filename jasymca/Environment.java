@@ -52,7 +52,7 @@ public class Environment extends Hashtable{
 		// Let the Java Classloader do the work
 		if(r == null){ 
 			try{
-				Class c 	= Class.forName("Lambda"+var);
+				Class c 	= Class.forName("jasymca.Lambda" + var);
 				Lambda f 	= (Lambda)c.newInstance();
 				putValue(var, f);
 				r 			= f;

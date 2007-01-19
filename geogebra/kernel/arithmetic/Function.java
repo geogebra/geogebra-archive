@@ -665,7 +665,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
                 
         // get coefficients as strings
-        String function = node.getYacasString(symbolic);        
+        String function = node.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, symbolic);        
         String [] strCoeffs = kernel.getPolynomialCoeffs(function);
         if (strCoeffs == null)
 			// this is not a valid polynomial           
@@ -805,36 +805,22 @@ implements ExpressionValue, RealRootFunction, Functional {
         String oldVar = fVar.toString();
         fVar.setVarString("x");
         
-        sb.append(expression.getYacasString(true));
-        if (order == 1) {
-            sb.append(",x)");            
-        } else {
-        	sb.append(",x,x,");            
-            sb.append(order);
-            sb.append(')');            
-        }           
-        
-        try {                   	            
-            // build expression string for YACAS             
-    		sb.setLength(0);
-            sb.append("D(x)(");
-            // function expression with multiply sign "*"                                  
-            sb.append(expression.getYacasString(true));
-            if (order == 1) {
-                sb.append(")");            
-            } else {
-            	sb.append(",");            
-                sb.append(order);
-                sb.append(')');            
-            }           
+        // build expression string for JASYMCA             
+		sb.setLength(0);
+		for (int i=0; i < order; i++)
+         	sb.append("diff("); 
+        // function expression with multiply sign "*"                                  
+		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
+		sb.append(",x)");
           
-            // evaluate expression by YACAS          	        	        	
-            String YACASresult = kernel.evaluateYACAS(sb.toString());                       
+        try {                   	            
+            // evaluate expression by JASYMCA          	        	        	
+            String result = kernel.evaluateJASYMCA(sb.toString());                       
             
 			sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
 			sb.append("f(x) = ");			
-            sb.append(YACASresult);
+            sb.append(result);
     
              // parse result
              Function fun = kernel.getTempParser().parseFunction(sb.toString());
@@ -932,16 +918,23 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return result as function
      */
     final private Function integral() {
-        // build expression string for YACAS
+    	// temporarily replace the variable by "x"
+        String oldVar = fVar.toString();
+        fVar.setVarString("x");
+    	
+        // build expression string for JASYMCA
         sb.setLength(0);
-        sb.append("Integrate(x)(");
+        sb.append("integrate(");
         // function expression with multiply sign "*"
-        sb.append(expression.getYacasString(true));
-        sb.append(")");
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
+        sb.append(",x)");
 
         try {           
             // evaluate expression by JSCL
-            String result = kernel.evaluateYACAS(sb.toString());       
+            String result = kernel.evaluateJASYMCA(sb.toString());   
+            
+            
+            
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
             sb.append("f(x)="); 
@@ -956,6 +949,9 @@ implements ExpressionValue, RealRootFunction, Functional {
          } catch (Exception e) {
              return null;
          }      
+         finally {
+        	 fVar.setVarString(oldVar);
+         }
     }
     
     public boolean isNumberValue() {

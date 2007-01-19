@@ -1,3 +1,4 @@
+package jasymca;
 /* Jasymca	-	- Symbolic Calculator for Mobile Devices
    This version is written for J2ME, CLDC 1.1,  MIDP 2, JSR 75
    or J2SE
@@ -21,7 +22,6 @@
 
 /*------------------------------------------------------------*/
 
-package jasymca;
 import java.util.*;
 import java.io.*;
 
@@ -91,7 +91,7 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 		
 		start(JSystem.in, JSystem.out);
     }
-		*/
+	*/	
 //////// End J2ME-only     -       
 
    public void destroyApp(boolean a){}

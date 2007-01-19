@@ -22,6 +22,7 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
+import java.util.*;
 
 // A little bit of Lisp
 public class Lisp{
@@ -151,6 +152,7 @@ public class Lisp{
 	// is this a list of Algebraics
 	public static boolean algebraicq(Object x){
 		try{
+			//Class a = Class.forName("jasymca.Algebraic");
 			Class a = jasymca.Algebraic.class;
 			return kindof(x,a);
 		}catch(Exception e){

@@ -177,21 +177,29 @@ public class Kernel {
      */ 
 	final public String evaluateYACAS(String exp) {
 		if (ggbCAS == null) {
-			initYACAS();
-			if (ggbCAS == null)
-				return null;			
+			initCAS();		
 		}
 		
 		return ggbCAS.evaluateYACAS(exp);
 	}
 	
-	public synchronized void initYACAS() {
+	/** 
+     * Evaluates a JASYMCA expression and returns the result as a String.
+     * e.g. exp = "diff(x^2,x)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */ 
+	final public String evaluateJASYMCA(String exp) {
 		if (ggbCAS == null) {
-			try {
-				ggbCAS = new GeoGebraCAS();
-			} catch (Exception e) {
-				System.err.println("Kernel.initYacas: Could not initialize CAS.");
-			}
+			initCAS();		
+		}
+		
+		return ggbCAS.evaluateJASYMCA(exp);
+	}
+	
+	public synchronized void initCAS() {
+		if (ggbCAS == null) {
+			ggbCAS = new GeoGebraCAS();
 		}			
 	}
 	/**
@@ -204,9 +212,7 @@ public class Kernel {
      */
     final public String [] getPolynomialCoeffs(String exp) {
     	if (ggbCAS == null) {
-			initYACAS();
-			if (ggbCAS == null)
-				return null;			
+			initCAS();					
 		}
     	
     	return ggbCAS.getPolynomialCoeffs(exp);

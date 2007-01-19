@@ -22,7 +22,8 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
-import java.util.Vector;
+import java.util.*;
+// Sum of Exponentials a*exp(b*x)+c
 
 public class Exponential extends Polynomial{
 	public Variable 	expvar;
