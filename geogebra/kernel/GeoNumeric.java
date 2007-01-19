@@ -214,12 +214,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public void setValue(double x) {
 		if (intervalMinActive && x < intervalMin) {	
 			value = intervalMin;
-		}			
-		else if (intervalMaxActive && x > intervalMax) {
+			return;
+		}					
+		if (intervalMaxActive && x > intervalMax) {
 			value = intervalMax;
-		}			
-		else 
-			value = x;
+			return;
+		}							
+		 
+		value = x;
 	}
 
 	final public void setValue(MyDouble x) {

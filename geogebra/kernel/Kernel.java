@@ -66,7 +66,7 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	private boolean yacasPrintForm = false;		
+	private boolean casPrintForm = false;		
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -210,12 +210,12 @@ public class Kernel {
      * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
      * ["0", "b", "3*a"]
      */
-    final public String [] getPolynomialCoeffs(String exp) {
+    final public String [] getPolynomialCoeffs(String exp, String variable) {
     	if (ggbCAS == null) {
 			initCAS();					
 		}
     	
-    	return ggbCAS.getPolynomialCoeffs(exp);
+    	return ggbCAS.getPolynomialCoeffs(exp, variable);
     }
 
 	final public void setEpsilon(double epsilon) {
@@ -307,12 +307,12 @@ public class Kernel {
 		nf.setMaximumFractionDigits(digits);
 	}
 	
-	final public void setYacasPrintForm(boolean flag) {
-		yacasPrintForm = flag;
+	final public void setCASPrintForm(boolean flag) {
+		casPrintForm = flag;
 	}
 	
-	final public boolean isYacasPrintForm() {
-		return yacasPrintForm;
+	final public boolean isCASPrintForm() {
+		return casPrintForm;
 	}
 
 	final public void setPrintDecimals(int decimals) {
@@ -3158,7 +3158,7 @@ public class Kernel {
 	}
 
 	final public String format(double x) {	
-		if (yacasPrintForm)
+		if (casPrintForm)
 			return nf.format(x);
 		else
 			return formatPi(x, nf);					
@@ -3177,25 +3177,25 @@ public class Kernel {
 		if (-STANDARD_PRECISION < diff && diff < STANDARD_PRECISION) {	
 			switch (aint) {					
 				case 1:
-					if (yacasPrintForm)
+					if (casPrintForm)
 						return "pi/2";
 					else
 						return "\u03c0/2";
 					
 				case -1:
-					if (yacasPrintForm)
+					if (casPrintForm)
 						return "-pi/2";
 					else
 						return "-\u03c0/2";
 					
 				case 2:
-					if (yacasPrintForm)
+					if (casPrintForm)
 						return "pi";
 					else
 						return "\u03c0";
 					
 				case -2:
-					if (yacasPrintForm)
+					if (casPrintForm)
 						return "-pi";
 					else
 						return "-\u03c0";
@@ -3204,14 +3204,14 @@ public class Kernel {
 					// 	even
 					long half = aint / 2;			
 					if (aint == 2 * half) {			
-						if (yacasPrintForm)
+						if (casPrintForm)
 							return half + "* pi";
 						else					
 							return half + "\u03c0";
 					}
 					// odd
 					else {			
-						if (yacasPrintForm)
+						if (casPrintForm)
 							return aint + "* pi/2";
 						else
 							return aint + "\u03c0/2";
@@ -3323,6 +3323,18 @@ public class Kernel {
 			return Math.round(x);
 		else
 			return Math.round(x / scale) * scale;
+	}
+	
+	/**
+	 * Checks if x is very close (1E-8) to an integer. If yes,
+	 * the integer value is returned. If no, x is returnd.
+	 */	
+	final public double checkInteger(double x) {		
+		double roundVal = Math.round(x);
+		if (Math.abs(x - roundVal) < EPSILON)
+			return roundVal;
+		else
+			return x;
 	}
 	
 	/*******************************************************

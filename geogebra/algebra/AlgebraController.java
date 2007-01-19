@@ -185,7 +185,7 @@ public class AlgebraController
 				
 			case KeyEvent.VK_UP :
 				changeVal = base;
-				if (geo.isChangeable() && geo instanceof Translateable) {
+				if (geo.isChangeable() && geo.isTranslateable()) {
 					tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
 					((Translateable) geo).translate(tempVec);
 					geo.updateRepaint();
@@ -195,7 +195,7 @@ public class AlgebraController
 
 			case KeyEvent.VK_DOWN :
 				changeVal = -base;
-				if (geo.isChangeable() && geo instanceof Translateable) {
+				if (geo.isChangeable() && geo.isTranslateable()) {
 					tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
 					((Translateable) geo).translate(tempVec);
 					geo.updateRepaint();
@@ -205,7 +205,7 @@ public class AlgebraController
 
 			case KeyEvent.VK_RIGHT :
 				changeVal = base;
-				if (geo.isChangeable() && geo instanceof Translateable) {
+				if (geo.isChangeable() && geo.isTranslateable()) {
 					tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
 					((Translateable) geo).translate(tempVec);
 					geo.updateRepaint();
@@ -215,7 +215,7 @@ public class AlgebraController
 
 			case KeyEvent.VK_LEFT :
 				changeVal = -base;
-				if (geo.isChangeable() && geo instanceof Translateable) {
+				if (geo.isChangeable() && geo.isTranslateable()) {
 					tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
 					((Translateable) geo).translate(tempVec);
 					geo.updateRepaint();
@@ -249,10 +249,10 @@ public class AlgebraController
 			if (geo.isChangeable()) {
 				if (geo.isNumberValue()) {
 					GeoNumeric num = (GeoNumeric) geo;
-					num.setValue(kernel.chop(
+					num.setValue(kernel.checkInteger(
 							num.getValue() + changeVal * num.animationStep));					
 					num.updateRepaint();
-				} else if (geo instanceof GeoPoint) {
+				} else if (geo.isGeoPoint()) {
 					GeoPoint p = (GeoPoint) geo;
 					if (p.hasPath()) {						
 						p.addToPathParameter(changeVal * p.animationStep);

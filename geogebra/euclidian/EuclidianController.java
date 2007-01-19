@@ -1588,6 +1588,8 @@ final public class EuclidianController implements MouseListener,
 			else if (val > Kernel.PI_2)
 				val = Kernel.PI_2;
 		}
+		
+		val = kernel.checkInteger(val);		
 		movedGeoNumeric.setValue(val);		
 				
 		if (repaint)

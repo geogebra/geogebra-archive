@@ -22,10 +22,6 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
-import geogebra.kernel.Kernel;
-
-import java.math.BigInteger;
-import java.util.*;
 
 // A little bit of Lisp
 public class Lisp{
@@ -247,9 +243,9 @@ public class Lisp{
 						
 						// BEGIN Markus Hohenwarter:
 						// keep Integers als Exakt numbers
-						long xround = Math.round(x);
-						if (xround == x)
-							return new  Exakt( BigInteger.valueOf(xround));
+						//long xround = Math.round(x);
+						//if (xround == x)
+						//	return new  Exakt( BigInteger.valueOf(xround));
 						// END Markus Hohenwarter
 						
 						return new Unexakt(x);

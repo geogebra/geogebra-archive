@@ -1498,8 +1498,8 @@ implements ExpressionValue {
     }
         
     private String printCASstring(int STRING_TYPE, boolean symbolic) {  
-        boolean oldPrintForm = kernel.isYacasPrintForm();
-        kernel.setYacasPrintForm(true);
+        boolean oldPrintForm = kernel.isCASPrintForm();
+        kernel.setCASPrintForm(true);
         
         String ret = null;
                     
@@ -1548,7 +1548,7 @@ implements ExpressionValue {
 	        ret = operationToString(leftStr, rightStr, !symbolic, STRING_TYPE);
         }                
                 
-        kernel.setYacasPrintForm(oldPrintForm);
+        kernel.setCASPrintForm(oldPrintForm);
         return ret;     
     }
     

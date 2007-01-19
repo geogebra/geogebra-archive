@@ -666,7 +666,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 
         // get coefficients as strings
         String function = node.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, symbolic);        
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function);
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
         if (strCoeffs == null)
 			// this is not a valid polynomial           
             return null;

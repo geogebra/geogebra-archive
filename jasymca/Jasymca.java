@@ -22,8 +22,12 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
-import java.util.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 ///////// Start J2SE-only +
 
@@ -175,7 +179,7 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 		
 		// Read/eval/print loop
 		while(true){
-			ps.print( "(c"+i+") ");				// Prompt
+			ps.print( "(In"+i+") ");				// Prompt
 			try{
 				String s 		= readLine(is);
 				Object expr 	= eval(s);
@@ -184,8 +188,8 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 					break;
 				}
 				String ans = formatExpression(expr);
-				ps.println( "(d"+i+")     "+ans );
-				env.putValue("d"+i, expr);				// Save expression
+				ps.println( "(Out"+i+")     "+ans );
+				env.putValue("Out"+i, expr);				// Save expression
 				i++;
 			}catch(ParseException e){
 				ps.println("\n"+e);

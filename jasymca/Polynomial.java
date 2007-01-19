@@ -22,8 +22,7 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
-import java.util.*;
-import java.io.*;
+import java.util.Vector;
 
 public class Polynomial extends Algebraic{
 	public Algebraic[] 	coef 	=	null;

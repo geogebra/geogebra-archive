@@ -2,52 +2,61 @@ package geogebra.cas;
 
 
 import jasymca.GeoGebraJasymca;
-import jscl.math.Expression;
-import jscl.math.Generic;
-import jscl.math.UnivariatePolynomial;
-import jscl.math.Variable;
 import yacas.YacasInterpreter;
 
 /**
- * This class provides an interface for GeoGebra to use JSCL.
+ * This class provides an interface for GeoGebra to use the computer algebra
+ * systems Jasymca and Yacas.
  * 
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
-	
-
-    
-	private static final String UNICODE_PREFIX = "uNiCoDe";
-    private static final String UNICODE_DELIMITER = "U";
-    
+	    	
 	private YacasInterpreter yacas;
-	private GeoGebraJasymca jasymca;
-	private Variable xVar;
+	private GeoGebraJasymca ggbJasymca;	
     private StringBuffer sbInsertSpecial, sbRemoveSpecial;
     
+    private static final String UNICODE_PREFIX = "uNiCoDe";
+    private static final String UNICODE_DELIMITER = "U";           
     
-    
-    
-    public GeoGebraCAS() {    	    	
-    		 
-    	
-    	// JSCL
-    	try { 
-    	 	xVar = Variable.valueOf("x"); 
-    	} 
-    	catch(Exception e) {
-    		e.printStackTrace();
-    	} 
-    	
-    	
+    public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
-    	sbRemoveSpecial = new StringBuffer(80);    	     	
+    	sbRemoveSpecial = new StringBuffer(80);  
+    	ggbJasymca = new GeoGebraJasymca();    
     }        
     
     /** 
-     * Evaluates a YACAS expression and returns the result as a string.
-     * e.g. exp = "D(x) (x^2)" returns "2*x"
-     * @param expression string
+     * Evaluates a JASYMCA expression and returns the result as a string,
+     * e.g. exp = "diff(x^2,x)" returns "2*x".
+     * @return result string, null possible
+     */ 
+    final public String evaluateJASYMCA(String exp) {
+    	//TODO: remove
+    	//System.out.println("exp for JASYMCA: " + exp);            	
+    	
+    	String  result = ggbJasymca.evaluate(exp);
+    
+    	// TODO: remove
+        //System.out.println("  result: " + result);
+        return result;
+    }
+    
+    /**
+     * Expands the given JASYMCA expression and tries to 
+     * get its polynomial coefficients.
+     * The coefficients are returned in ascending order. 
+     * If exp is not a polynomial null is returned.
+     * 
+     * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
+     * ["0", "b", "3*a"]
+     */
+    final public String [] getPolynomialCoeffs(String jasymcaExp, String variable) {
+       return ggbJasymca.getPolynomialCoeffs(jasymcaExp, variable);
+    } 
+    
+    /** 
+     * Evaluates a YACAS expression and returns the result as a string,
+     * e.g. exp = "D(x) (x^2)" returns "2*x".
      * @return result string (null possible)
      */ 
     final public String evaluateYACAS(String exp) {
@@ -86,33 +95,7 @@ public class GeoGebraCAS {
             e.printStackTrace();
             return null;
         }       
-    }
-    
-    /** 
-     * Evaluates a JASYMCA expression and returns the result as a string.
-     * e.g. exp = "diff(x^2)" returns "2*x"
-     * @param expression string
-     * @return result string (null possible)
-     */ 
-    final public String evaluateJASYMCA(String exp) {
-    	//TODO: remove
-    	System.out.println("exp for JASYMCA: " + exp);
-        
-    	if (jasymca == null) {
-    		try {
-    			jasymca = new GeoGebraJasymca();    
-    		} catch (Exception e) {
-    			System.err.println("Could not initialize JASYMCA");
-    			return null;
-    		}
-    	}
-    	
-    	String  result = jasymca.evaluate(exp);
-    
-    	// TODO: remove
-        System.out.println("  result: " + result);
-        return result;
-    }
+    }        
     
     /** 
      * Evaluates an JSCL expression and returns the result as a string.
@@ -193,18 +176,12 @@ public class GeoGebraCAS {
         return sbReverse.toString();
     }*/
     
-    /**
-     * Finds the polynomial coefficients of
-     * the given expression and returns it in ascending order. 
-     * If exp is not a polynomial null is returned.
+    
+    
+    /*
+     * old code for JSCL
      * 
-     * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
-     * ["0", "b", "3*a"]
-     */
-    final public String [] getPolynomialCoeffs(String exp) {
-// TODO:  getPolynomialCoeffs() adapt for Yacas
-    	// Coef(exp, x, 0 .. Degree(exp,x)), how to check for polynomial?
-    	
+    final public String [] getPolynomialCoeffs(String exp) {    	    	
         try {                     	
             // JSCL does not recognize x^2 / 4 as a polynomial
             // but it does recognize x^2 * 1/4, so we replace every "/" by "*1/"
@@ -252,12 +229,13 @@ public class GeoGebraCAS {
             e.printStackTrace();
             return null;
         }       
-    }   
+	    }   
+	*/    
     
     /**
      * Converts all special characters (like greek letters) in the given String
      * to "unicode" + charactercode + DELIMITER Strings. This is neede because
-     * JSCL cannot handle all unicode characters.     
+     * YACAS cannot handle all unicode characters.     
      */
     private String removeSpecialChars(String str) {
     	int len = str.length();
@@ -355,10 +333,10 @@ public class GeoGebraCAS {
     }
     
     
-    
-    public static void main(String [] args) {
     /*
-          YacasInterpreter yacas = new YacasInterpreter();
+    public static void main(String [] args) {
+    
+        YacasInterpreter yacas = new YacasInterpreter();
     	
     	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
     			"D(ö) mysin(ö);"};
@@ -368,20 +346,7 @@ public class GeoGebraCAS {
     		System.out.println("command: " + commands[i]);
         	System.out.println("result: " + insertSpecialChars(result));        	        
     	}    	
-    */
-    	
-    	/*Jasymca test = new Jasymca();
-    	GeoGebraJasymca cas = new GeoGebraJasymca();
-    	String [] commands = {"abs(-3)", "diff(sin(x),x)",
-		"3+2"};
-		
-		for (int i=0; i < commands.length; i++) {
-			String result = cas.evaluate(commands[i]);
-			System.out.println("command: " + commands[i]);
-			System.out.println("result: " + result);        	        
-		}  
-		*/
     }
-    
+    */
  
 }

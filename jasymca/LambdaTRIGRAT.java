@@ -1,26 +1,6 @@
 package jasymca;
 
 import geogebra.util.MyMath;
-/* Jasymca	-	- Symbolic Calculator for Mobile Devices
-   This version is written for J2ME, CLDC 1.1,  MIDP 2, JSR 75
-   or J2SE
-
-
-   Copyright (C) 2006 - Helmut Dersch  der@hs-furtwangen.de
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /*------------------------------------------------------------*/
 
@@ -368,8 +348,8 @@ class LambdaASIN extends LambdaAlgebraic{
 class LambdaCOSH extends LambdaAlgebraic{
 	public LambdaCOSH(){ 
 		diffrule = "sinh(x)"; 
-		intrule  = "sin(h)"; 		
-		trigrule = "(exp(x)+exp(-x))/2";
+		intrule  = "sinh(x)"; 		
+		trigrule = "1/2*exp(x)+1/2*exp(-x)";
 	}
 	Zahl f( Zahl x) throws JasymcaException{
 		Unexakt z = x.unexakt();
@@ -387,8 +367,8 @@ class LambdaCOSH extends LambdaAlgebraic{
 class LambdaSINH extends LambdaAlgebraic{
 	public LambdaSINH(){ 
 		diffrule = "cosh(x)"; 
-		intrule  = "cosh(h)"; 		
-		trigrule = "(exp(x)-exp(-x))/2";
+		intrule  = "cosh(x)"; 		
+		trigrule = "1/2*exp(x)-1/2*exp(-x)";
 	}
 	Zahl f( Zahl x) throws JasymcaException{
 		Unexakt z = x.unexakt();
@@ -422,17 +402,36 @@ class LambdaTANH extends LambdaAlgebraic{
 	}	
 }
 
-/*
+
 class LambdaACOSH extends LambdaAlgebraic{
 	public LambdaACOSH(){ 
-		diffrule = "1/(sqrt(-1+x))*"; 
-		intrule  = "log(cosh(x))"; 		
-		trigrule = "(exp(x)-exp(-x))/(exp(x)+exp(-x))";
+		diffrule = "1/(sqrt(x-1)*sqrt(x+1))"; 
+		intrule  = "-sqrt(x-1)*sqrt(x+1) + x*acosh(x)"; 		
+		trigrule = "log(x+sqrt(x-1)*sqrt(x+1))";
 	}
 	Zahl f( Zahl x) throws JasymcaException{
 		Unexakt z = x.unexakt();
 		if(z.imag == 0.)
-			return new Unexakt(MyMath.tanh(z.real));
+			return new Unexakt(MyMath.acosh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ONE))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+
+class LambdaASINH extends LambdaAlgebraic{
+	public LambdaASINH(){ 
+		diffrule = "1/sqrt(x^2+1)"; 
+		intrule  = "-sqrt(x^2+1) + x*asinh(x)"; 		
+		trigrule = "log(x+sqrt(x^2+1))";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.asinh(z.real));
 		return (Zahl)Jasymca.evalx(trigrule, z, env);
 	}
 	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
@@ -441,7 +440,49 @@ class LambdaACOSH extends LambdaAlgebraic{
 		return null;
 	}	
 }
-*/
+
+class LambdaATANH extends LambdaAlgebraic{
+	public LambdaATANH(){ 
+		diffrule = "-1/(x^2-1)"; 
+		intrule  = "x*atanh(x)+1/2*log(x^2-1)"; 		
+		trigrule = "1/2*log(1+x)-1/2*log(1-x)";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.atanh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+
+class LambdaROUND extends LambdaAlgebraic{
+	public LambdaROUND(){ 
+		diffrule = null; 
+		intrule  = null; 		
+		trigrule = null;
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(Math.round(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;
+		if(x.equals(Zahl.ONE))
+			return Zahl.ONE;
+		if(x.equals(Zahl.MINUS))
+			return Zahl.MINUS;
+		return null;
+	}	
+}
+
 
 /* 
  * END Markus Hohenwarter
