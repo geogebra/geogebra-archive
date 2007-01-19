@@ -42,7 +42,7 @@ public class Unexakt extends Zahl{
 	}
 	
 	public Unexakt arg(){
-		return new Unexakt(JMath.atan2(imag, real));
+		return new Unexakt(Math.atan2(imag, real));
 	}
 	
 	public Algebraic add(Algebraic x) throws JasymcaException{
@@ -82,7 +82,7 @@ public class Unexakt extends Zahl{
 	}
 	
 	public boolean integerq(){
-		return imag==0. && JMath.round(real) == real;
+		return imag==0. && StrictMath.round(real) == real;
 	}	
 
 	public boolean komplexq(){

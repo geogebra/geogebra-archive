@@ -333,7 +333,7 @@ class LambdaEXP extends LambdaAlgebraic{
 
 	Zahl f( Zahl x){ 
 		Unexakt z = x.unexakt();
-		double  r = JMath.exp(z.real);
+		double  r = StrictMath.exp(z.real);
 		if(z.imag!=0.)
 			return new Unexakt( r*Math.cos(z.imag) , r*Math.sin(z.imag) );
 		return new Unexakt(r);
@@ -416,8 +416,8 @@ class LambdaLOG extends LambdaAlgebraic{
 	Zahl f( Zahl x){ 
 		Unexakt z = x.unexakt();
 		if(z.real<0 || z.imag != 0.)
-			return new Unexakt( JMath.log( z.real*z.real+z.imag*z.imag )/2, JMath.atan2(z.imag,z.real));
-		return new Unexakt(JMath.log(z.real)); 
+			return new Unexakt( StrictMath.log( z.real*z.real+z.imag*z.imag )/2, StrictMath.atan2(z.imag,z.real));
+		return new Unexakt(StrictMath.log(z.real)); 
 	}
 	
 	

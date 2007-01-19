@@ -61,7 +61,7 @@ public class Exakt extends Zahl{
 	BigInteger double2big(double x){
 		int exp = 0;
 		while(x>1e15){ x/=10.;exp++; }
-		BigInteger y = BigInteger.valueOf((long)(JMath.round(x)));
+		BigInteger y = BigInteger.valueOf((long)(StrictMath.round(x)));
 		if(exp>0){
 			BigInteger ten = BigInteger.valueOf(10L);
 			y = y.multiply(ten.pow(exp));

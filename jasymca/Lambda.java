@@ -742,7 +742,7 @@ class LambdaSQRT extends LambdaAlgebraic{
 			return new Unexakt(Math.sqrt(z.real));
 		}
 		double sr  = Math.sqrt(z.real*z.real+z.imag*z.imag);
-		double phi = JMath.atan2(z.imag,z.real)/2.;
+		double phi = Math.atan2(z.imag,z.real)/2.;
 		return new Unexakt( sr*Math.cos(phi), sr*Math.sin(phi));
 	}
 

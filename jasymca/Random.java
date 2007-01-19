@@ -421,7 +421,7 @@ public int nextInt(int n)
         s = v1 * v1 + v2 * v2;
       }
     while (s >= 1);
-    double norm = Math.sqrt(-2 * JMath.log(s) / s);
+    double norm = Math.sqrt(-2 * Math.log(s) / s);
     nextNextGaussian = v2 * norm;
     haveNextNextGaussian = true;
     return v1 * norm;

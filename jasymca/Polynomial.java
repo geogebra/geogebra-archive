@@ -743,7 +743,7 @@ public class Polynomial extends Algebraic{
 
 			while ((Math.abs(dr)+Math.abs(ds)) > eps) {
 				if ((iter % 200) == 0) {
-					r=JMath.random() * 1000;
+					r=Math.random() * 1000;
 				}
 				if ((iter % 500) == 0) {
 					eps*=10.0;

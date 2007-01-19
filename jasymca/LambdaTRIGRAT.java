@@ -309,7 +309,7 @@ class LambdaATAN extends LambdaAlgebraic{
 	Zahl f( Zahl x) throws JasymcaException{
 		Unexakt z = x.unexakt();
 		if(z.imag == 0.)
-			return new Unexakt(JMath.atan(z.real));
+			return new Unexakt(Math.atan(z.real));
 		return (Zahl)Jasymca.evalx(trigrule, z, env);
 	}
 	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
