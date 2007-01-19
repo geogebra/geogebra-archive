@@ -82,7 +82,7 @@ public class Unexakt extends Zahl{
 	}
 	
 	public boolean integerq(){
-		return imag==0. && StrictMath.round(real) == real;
+		return imag==0. && Math.round(real) == real;
 	}	
 
 	public boolean komplexq(){

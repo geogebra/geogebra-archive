@@ -1,4 +1,6 @@
 package jasymca;
+
+import geogebra.util.MyMath;
 /* Jasymca	-	- Symbolic Calculator for Mobile Devices
    This version is written for J2ME, CLDC 1.1,  MIDP 2, JSR 75
    or J2SE
@@ -318,6 +320,134 @@ class LambdaATAN extends LambdaAlgebraic{
 		return null;
 	}	
 }
+
+/* 
+ * BEGIN Markus Hohenwarter
+ */
+class LambdaACOS extends LambdaAlgebraic{
+	public LambdaACOS(){ 
+		diffrule = "-1/sqrt(1-x^2)"; 
+		intrule  = "-sqrt(1-x^2)+x*acos(x)"; 		
+		trigrule = "pi/2+i*log(i*x+sqrt(1-x^2))";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(Math.acos(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ONE))
+			return Zahl.ZERO;	
+		if(x.equals(Zahl.MINUS))
+			return Zahl.PI;
+		return null;
+	}	
+}
+
+class LambdaASIN extends LambdaAlgebraic{
+	public LambdaASIN(){ 
+		diffrule = "1/sqrt(1-x^2)"; 
+		intrule  = "sqrt(1-x^2)+x*asin(x)"; 		
+		trigrule = "-i*log(i*x+sqrt(1-x^2))";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(Math.asin(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+
+
+class LambdaCOSH extends LambdaAlgebraic{
+	public LambdaCOSH(){ 
+		diffrule = "sinh(x)"; 
+		intrule  = "sin(h)"; 		
+		trigrule = "(exp(x)+exp(-x))/2";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.cosh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ONE;			
+		return null;
+	}	
+}
+
+class LambdaSINH extends LambdaAlgebraic{
+	public LambdaSINH(){ 
+		diffrule = "cosh(x)"; 
+		intrule  = "cosh(h)"; 		
+		trigrule = "(exp(x)-exp(-x))/2";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.sinh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+
+class LambdaTANH extends LambdaAlgebraic{
+	public LambdaTANH(){ 
+		diffrule = "1/cosh(x)"; 
+		intrule  = "log(cosh(x))"; 		
+		trigrule = "(exp(x)-exp(-x))/(exp(x)+exp(-x))";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.tanh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+
+/*
+class LambdaACOSH extends LambdaAlgebraic{
+	public LambdaACOSH(){ 
+		diffrule = "1/(sqrt(-1+x))*"; 
+		intrule  = "log(cosh(x))"; 		
+		trigrule = "(exp(x)-exp(-x))/(exp(x)+exp(-x))";
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.tanh(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		return null;
+	}	
+}
+*/
+
+/* 
+ * END Markus Hohenwarter
+ */
+
+
 
 /* Let the user define it if he needs it
 class LambdaATAN2 extends UserFunction{

@@ -27,7 +27,7 @@ public class Constant extends SimpleVariable{
 
 	public Constant(String name, double value){
 		super(name);
-		this.value = new Unexakt(value);
+		this.value = new Unexakt(value);			
 	}
 	
 	public Constant(String name, Unexakt value){

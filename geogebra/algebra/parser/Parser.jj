@@ -244,20 +244,20 @@ TOKEN: {
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
-|	< ACOS_FUNC: ( "acos(" | "arccos" | "ArcCos(" )> 
-|	< ASIN_FUNC: ( "asin(" | "arcsin" | "ArcSin(" ) > 
-|	< ATAN_FUNC: ( "atan(" | "arctan" | "ArcTan(" )> 
+|	< ACOS_FUNC: ( "acos(" | "arccos(" | "ArcCos(" )> 
+|	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
+|	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
 |	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
 |	< SINH_FUNC: ( "sinh(" | "Sinh(" ) > 
-|	< TANH_FUNC: ( "tanh(" | "Tanh") > 
-|	< ACOSH_FUNC: ( "acosh(" | "arccosh" | "ArcCosh(" ) > 
-|	< ASINH_FUNC: ( "asinh(" | "arcsinh" | "ArcSinh(" ) > 
-|	< ATANH_FUNC: ( "atanh(" | "arctanh" | "ArcTanh(" ) > 
+|	< TANH_FUNC: ( "tanh(" | "Tanh(" ) > 
+|	< ACOSH_FUNC: ( "acosh(" | "arccosh(" | "ArcCosh(" ) > 
+|	< ASINH_FUNC: ( "asinh(" | "arcsinh(" | "ArcSinh(" ) > 
+|	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
 |	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
 |	< LOG_FUNC: ( "log(" | "ln(" | "Ln(" ) > 
 |	< SQRT_FUNC: ( "sqrt(" | "Sqrt(" ) > 
 |	< ABS_FUNC:  ( "abs(" | "Abs(" ) > 
-|	< SGN_FUNC:  ( "sgn(" | "Sign(" ) > 
+|	< SGN_FUNC:  ( "sgn(" | "sign(" | "Sign(" ) > 
 |	< FLOOR_FUNC: ( "floor(" | "Floor(" ) > 
 |	< CEIL_FUNC:  ( "ceil(" | "Ceil(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 

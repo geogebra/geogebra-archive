@@ -30,7 +30,7 @@ public abstract class Zahl extends Algebraic{
 	public static Zahl MINUS	= new Unexakt(-1.);
 	public static Zahl IONE   	= new Unexakt(0.,1.);
 	public static Zahl IMINUS 	= new Unexakt(0.,-1.);
-	public static Polynomial PI = new Polynomial(new Constant("pi", Math.PI));
+	public static Polynomial PI = new Polynomial(new Constant("pi", Math.PI));	
 
 	// These must be created after program initialization
 	public static Algebraic SQRT2; 

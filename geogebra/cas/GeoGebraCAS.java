@@ -96,7 +96,7 @@ public class GeoGebraCAS {
      */ 
     final public String evaluateJASYMCA(String exp) {
     	//TODO: remove
-    	//System.out.println("exp for JASYMCA: " + exp);
+    	System.out.println("exp for JASYMCA: " + exp);
         
     	if (jasymca == null) {
     		try {
@@ -110,7 +110,7 @@ public class GeoGebraCAS {
     	String  result = jasymca.evaluate(exp);
     
     	// TODO: remove
-        //System.out.println("  result: " + result);
+        System.out.println("  result: " + result);
         return result;
     }
     

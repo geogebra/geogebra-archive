@@ -333,7 +333,7 @@ class LambdaEXP extends LambdaAlgebraic{
 
 	Zahl f( Zahl x){ 
 		Unexakt z = x.unexakt();
-		double  r = StrictMath.exp(z.real);
+		double  r = Math.exp(z.real);
 		if(z.imag!=0.)
 			return new Unexakt( r*Math.cos(z.imag) , r*Math.sin(z.imag) );
 		return new Unexakt(r);
