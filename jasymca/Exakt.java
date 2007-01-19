@@ -24,6 +24,7 @@ package jasymca;
 
 // Rational arbitrary precision constant
 
+import java.math.BigInteger;
 import java.util.Vector;
 
 public class Exakt extends Zahl{

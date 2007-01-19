@@ -22,8 +22,11 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
-import java.util.*;
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.util.Enumeration;
+import java.util.Vector;
 
 
 // Definitions for function pointers
