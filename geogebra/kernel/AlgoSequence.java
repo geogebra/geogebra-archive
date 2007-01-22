@@ -95,9 +95,7 @@ public class AlgoSequence extends AlgoElement {
         input[3] = var_to.toGeoElement();
         if (len == 5)
         	input[4] = var_step.toGeoElement();  
-        
-        // note: output is not really set here as it's length my change,
-        // so updateOuputArray() is called in createNewList()
+          
         output = new GeoElement[1];
     	output[0] = list;
            
@@ -191,12 +189,14 @@ public class AlgoSequence extends AlgoElement {
 				// now we have to make sure that this copy
 				// is also part of our list
 				if (i >= listSize) {
+					/*
 					// label object: maybe we got loaded labels
 					if (labels != null && labels.length > i+1)
 						copy.setLabel(labels[i+1]);	
 					else 
 						// use list's label to get an indexed label
 						copy.setLabel(list.label);		
+					*/
 					
 					// add to list	
 					list.add(copy);

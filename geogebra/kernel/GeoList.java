@@ -22,6 +22,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 
@@ -98,6 +99,16 @@ public class GeoList extends GeoElement implements ListValue {
         	((GeoElement) geoList.get(i)).setVisualStyle(geo);
         }*/
     }
+    
+    public void setObjColor(Color color) {
+    	super.setObjColor(color);
+    	
+    	if (geoList == null) return;    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+        	((GeoElement) geoList.get(i)).setObjColor(color);
+        }    	    	
+	}
     
     /**
      * Returns this GeoList as a MyList object.
