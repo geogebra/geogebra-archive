@@ -35,7 +35,7 @@ public class DrawParametricCurve extends Drawable {
 	private static final double MAX_BEND = 0.08; // = tan(5 degrees)
 
 	// maximum number of iterations (max number of plot points = 2^MAX_DEPTH)
-	private static final int MAX_DEPTH = 25; 		
+	private static final int MAX_DEPTH = 25;
 
 	// clipping area around screen: pixel-width of border on every side 	
 	private static final int SCREEN_CLIP_BORDER = 200; 
@@ -127,28 +127,126 @@ public class DrawParametricCurve extends Drawable {
 			boolean calcLabelPos, 
 			boolean moveToAllowed) 
     {     	
-    	pointsCount = 0;
+    	pointsCount = 0;  
+    	Point labelPoint = null;				   
     	
-    	// we break the curve in at least two parts to ensure that
-    	// closed curves are also drawn.
 		// Curves with undefined start and end points
-		// are be broken into more intervals
-    	
+		// are be broken into more intervals    	
 		// check first and last point of curve
 		GeoVec2D p1 = curve.evaluateCurve(t1);
-		GeoVec2D p2 = curve.evaluateCurve(t2);
-		Point labelPoint = null;		
-		int intervals = 3;
+		GeoVec2D p2 = curve.evaluateCurve(t2);	
+		boolean p1def = p1.isDefined();
+		boolean p2def = p2.isDefined();
 			
-		// start and end point are undefined
-		if (!(p1.isDefined() || p2.isDefined())) {					
-			intervals = DESPERATE_MODE_INTERVALS;
-		}		
+		// both end points are defined
+		if (p1def && p2def) {	
+			if (tooCloseOnScreen(view, p1, p2)) {		
+				// CLOSED CURVE
+				labelPoint = plotClosedCurve(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1);
+			} 
+			else {
+				// STANDARD CASE
+				labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);									
+			}
+		} 
 		
-		// plot all intervals					
-		double intervalWidth = (t2 - t1) / intervals;
+		// one end point is defined
+		else if (p1def || p2def) {
+			// STANDARD CASE
+			labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);									
+		} 
+		
+		// no end point is defined
+		else { 		
+			// DESPERATE MODE: start and end point are undefined 
+			labelPoint = plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, p2);
+		}
+									
+//		System.out.println("*** CURVE plot: " + curve);
+		//System.out.println("plot points: " + pointsCount );	
+		
+		return labelPoint;
+    }
+    
+    /**
+     * Returns whether the pixel-distance of p1 on p2 is smaller than MAX_PIXEL_DISTANCE.
+     */
+    private static boolean tooCloseOnScreen(EuclidianView view, GeoVec2D p1, GeoVec2D p2) {
+    	// p1
+		double [] coords1 = new double[2];
+		coords1[0] = view.xZero + p1.x * view.xscale;
+		coords1[1] = view.yZero - p1.y * view.yscale;
+		
+		//	p2
+		double [] coords2 = new double[2];
+		coords2[0] = view.xZero + p2.x * view.xscale;
+		coords2[1] = view.yZero - p2.y * view.yscale;
+		
+		// CLOSED CURVE: endpoints too close together 
+		return (Math.abs(coords1[0] - coords2[0]) <= MAX_PIXEL_DISTANCE &&
+				Math.abs(coords1[1] - coords2[1]) <= MAX_PIXEL_DISTANCE); 
+    }
+    
+    /**
+     * Plots a curve where both endpoints are very close on screen. We 
+     * randomly try to find a split parameter t_split in
+     * interval [t1, t2] where c(t_split) is not close to the endpoints of the curve.
+     */
+    private static Point plotClosedCurve(ParametricCurve curve,
+			double t1, double t2, EuclidianView view, 
+			GeneralPath gp,
+			boolean calcLabelPos, 
+			boolean moveToAllowed,
+			GeoVec2D p1) 
+    {    	    
+    	double splitParam = 0;
+    	boolean tooClose = true;		
+    	int tries = 0;        
+    	while (tooClose && tries < 10) {
+    		// random split parameter
+    		double rand = 0.4 + Math.random() * 0.2; // [0.4, 0.6]
+    		splitParam = t1 +  rand * (t2-t1);    		
+    		GeoVec2D splitPoint = curve.evaluateCurve(splitParam);    	
+    		tooClose = tooCloseOnScreen(view, p1, splitPoint);
+    		tries++;
+    	}
+    	
+    	if (tooClose) {
+        	// we could not find a split parameter and give up
+    		return null;    		
+    	} else {
+    		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
+    		Point labelPoint1 = plotInterval(curve, t1, splitParam, view, gp, 
+					calcLabelPos, moveToAllowed);		
+    		Point labelPoint2 = plotInterval(curve, splitParam, t2, view, gp, 
+					calcLabelPos && labelPoint1 == null, moveToAllowed);	
+    		
+    		if (labelPoint1 == null)
+    			return labelPoint2;
+    		else
+    			return labelPoint1;
+    	}    			    	
+    }
+    
+    /**
+     * Plots a curve where both endpoints are undefined. This is done
+     * by splitting up the parameter interval into DESPERATE_MODE_INTERVALS many
+     * intervals and plotting these intervals if at least one of their endpoints
+     * is defined. 
+     */
+    private static Point plotDesperateMode(ParametricCurve curve,
+			double t1, double t2, EuclidianView view, 
+			GeneralPath gp,
+			boolean calcLabelPos, 
+			boolean moveToAllowed,
+			GeoVec2D p1, GeoVec2D p2) 
+    {
+    	Point labelPoint = null;
+    	
+    	//  plot all intervals					
+		double intervalWidth = (t2 - t1) / DESPERATE_MODE_INTERVALS;
 		t2 = t1 + intervalWidth;
-		for (int i=0; i < intervals; i++) {				
+		for (int i=0; i < DESPERATE_MODE_INTERVALS; i++) {				
 			p2 = curve.evaluateCurve(t2);
 
 			// only plot this intervall if at least one border is defined
@@ -162,11 +260,7 @@ public class DrawParametricCurve extends Drawable {
 			t1 = t2;
 			t2 = t1 + intervalWidth;	
 			p1 = p2;
-		}						
-		
-//		System.out.println("*** CURVE plot: " + curve);
-//		System.out.println("          points: " + pointsCount + ", intervals: " + intervals);	
-		
+		}			
 		return labelPoint;
     }
     
@@ -196,6 +290,7 @@ public class DrawParametricCurve extends Drawable {
 		boolean moveToFirstPoint = moveToAllowed;			
 		boolean needLabelPos = calcLabelPos;
 		Point labelPoint = null;
+		
     	
 		// The following algorithm by John Gillam avoids multiple
 		// evaluations of the curve for the same parameter value t
@@ -212,7 +307,7 @@ public class DrawParametricCurve extends Drawable {
 		boolean onScreenStack[]=new boolean[LENGTH];
 		boolean validStack[]=new boolean[LENGTH];
 		double divisors[]=new double[LENGTH];
-		divisors[0]=t2-t1;
+		divisors[0]=t2-t1;		
 		for (int i=1; i < LENGTH; divisors[i] = divisors[i-1]/2, i++);
 		int i=1;
 		dyadicStack[0]=1;
@@ -233,8 +328,7 @@ public class DrawParametricCurve extends Drawable {
 				moveToFirstPoint = false;
 			} else {
 				lineTo(gp, x0, y0);
-			}
-			pointsCount++;
+			}			
 		}
 
 		// evaluate for t2
@@ -245,14 +339,15 @@ public class DrawParametricCurve extends Drawable {
 		validStack[0] = valid = !(Double.isNaN(x) || Double.isNaN(y));	
 		onScreenStack[0] = onScreen = onScreen && valid;
 		double slope = (y - y0) / (x - x0); 
-		double prevSlope = slope;
+		double prevSlope = slope;		
 		
 		int top=1;
-		int depth=0;		
+		int depth=0;				
+			                                 
 		do {
 			boolean distNotOK = true;							
-			while ( depth < MAX_DEPTH &&
-					( 								
+			while ( depth < MAX_DEPTH &&  									
+					( 										
 						// distance from last point too large
 						(distNotOK = ( Math.abs(x-x0) >= MAX_PIXEL_DISTANCE || 
 									   Math.abs(y-y0) >= MAX_PIXEL_DISTANCE) )
@@ -262,7 +357,7 @@ public class DrawParametricCurve extends Drawable {
 						// where tan(alpha) = det(v,w)/v.w, here for slopes
 						( Math.abs(slope - prevSlope) > MAX_BEND * Math.abs(1 + slope * prevSlope))
 					 )
-				  )				
+				  )					
 			{
 				// push stacks
 				dyadicStack[top]=i; 
@@ -282,19 +377,18 @@ public class DrawParametricCurve extends Drawable {
 				y=eval[1]; // yEval(t);
 				valid = !(Double.isNaN(x) || Double.isNaN(y));	
 				onScreen = onScreen && valid;
-				slope = (y - y0) / (x - x0);							
-			}
+				slope = (y - y0) / (x - x0);				 
+			}			
 			
 			// drawLine(x0,y0,x,y)
 			// don't add points to gerneral path that are in the same pixel as the previous point			
-			if (valid) {					
+			if (valid) {								
 				// move to is possible
 				if (moveToAllowed) {	
 					// still need first point
 					if (moveToFirstPoint) { 
 						moveTo(gp, x, y);
-						moveToFirstPoint = false;						
-						pointsCount++;
+						moveToFirstPoint = false;												
 					}					
 					// previous and this point not on screen
 					else if (!onScreen &&  !prevOnScreen) {
@@ -305,8 +399,7 @@ public class DrawParametricCurve extends Drawable {
 					// distance too big
 					else if (distNotOK){
 						moveTo(gp, x, y);					
-						nextLineToNeedsMoveToFirst = false;
-						pointsCount++;
+						nextLineToNeedsMoveToFirst = false;						
 					}
 					// everything ok: let's draw a line!
 					else { 
@@ -315,15 +408,13 @@ public class DrawParametricCurve extends Drawable {
 							nextLineToNeedsMoveToFirst = false;
 						}
 						
-						lineTo(gp, x, y);
-						pointsCount++;
+						lineTo(gp, x, y);					
 					}	
 				}	
 				// move to is not allowed: we have to draw all lines
 				else { 					
 					// line to
-					lineTo(gp, x, y);
-					pointsCount++;
+					lineTo(gp, x, y);					
 				}																
 				
 				// remember last point in general path
@@ -398,7 +489,9 @@ public class DrawParametricCurve extends Drawable {
 				gp.lineTo((float) x, (float) y);				
 			else
 				gp.moveTo((float) x, (float) y);
-		}
+			
+			pointsCount++;
+		}				
 	 }
 		
 	/*
