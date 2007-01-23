@@ -1285,6 +1285,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		double A0A1 =  A[0] * A[1];
 		double A3A3 = A[3] * A[3];	
 		
+		//System.out.println("classify: detS: " + (A0A1 - A3A3));
+		
 		if (kernel.isEqual(A0A1,  A3A3)) {	// det S = 0
 			classifyParabolicConic();
 		} else {

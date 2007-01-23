@@ -374,7 +374,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         }   
                 
         // something went wrong: no intersections
-        System.err.println("intersectWithDegenerate: undefined degenerate conic, type:  " + degConic.type);
+        //System.err.println("intersectWithDegenerate: undefined degenerate conic, type:  " + degConic.type);
         for (int i=0; i < 4; i++) points[i].setUndefined();                   
         
        // System.err.println("degConic type" + degConic.getType());
@@ -404,13 +404,33 @@ public class AlgoIntersectConics extends AlgoIntersect {
      * @param deg are the degenerate conics
      * @return number of conics set
      */      
-    final private int calcDegenerates(double[] flatA, double[] flatB, 
+    final private int calcDegenerates(double[] origFlatA, double[] origFlatB, 
                                              GeoConic [] deg, double eps) {                                                                                                                                                                                                            
         int solnr, i, j;
         double [] sol = new double[4];
-        double [] flatDeg = new double[6]; // flat matrix of degenerate conic        
-        boolean equationExchanged = false;
+        double [] flatDeg = new double[6]; // flat matrix of degenerate conic  
+        double [] flatA = new double[6]; // flat matrix of conic A
+        double [] flatB = new double[6]; // flat matrix of conic B
+        //boolean equationExchanged = false;
         
+        // normalize flat matrices
+        double maxA=0, maxB=0;
+        for (i=0; i<6; i++) {
+        	flatA[i] = origFlatA[i];
+        	double absA = Math.abs(flatA[i]);
+        	if (absA > maxA) maxA = absA;
+        	
+        	flatB[i] = origFlatB[i];
+        	double absB = Math.abs(flatB[i]);
+        	if (absB > maxB) maxB = absB;
+        }
+        // divide by max coeff
+        for (i=0; i<6; i++) {
+        	flatA[i] = flatA[i] / maxA;        	
+        	flatB[i] = flatB[i] / maxB;         	
+        }
+                 
+        /*
         // AVOID HIGHLY DEGENERATE CASE:
         // TEST wheter conics A and B have same submatrix S
         // => degnerate is single line        
@@ -430,6 +450,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
             deg[0].setMatrixFromArray(flatDeg); 
             return 1;            
         }
+        */
                                           
         // STANDARD CASE: solve cubic equation        
         // sol[0] + sol[1] x + sol[2] x� + sol[3] x� = 0        
@@ -458,8 +479,26 @@ public class AlgoIntersectConics extends AlgoIntersect {
         // x�
         sol[3] =    flatB[2] * (flatB[0] * flatB[1] - flatB[3] * flatB[3])
                   + flatB[4] * (2.0 * flatB[3] * flatB[5] - flatB[1] * flatB[4]) 
-                  - flatB[0] * flatB[5] * flatB[5];      
+                  - flatB[0] * flatB[5] * flatB[5];               
         
+        /*
+        // the coefficients of the cubic equation should not get too big      
+        double max=0;
+        for (i=0; i<4; i++) {
+        	double abs = Math.abs(sol[i]);
+        	if (abs > max) max = abs;        		        	                                    
+        }        
+        if (max > 10) {        	
+	        for (i=0; i<4; i++) {
+	        	sol[i] = sol[i] / max;        	        		        	                                   
+	        }
+        }
+        */
+        
+        /*
+         * I don't think that this code is necessary any more
+         * (January 21, 2007)
+         * 
         // sol[3] should not be too small or too big
         double abs3 = Math.abs(sol[3]);
         double abs0 = Math.abs(sol[0]);
@@ -468,7 +507,9 @@ public class AlgoIntersectConics extends AlgoIntersect {
         { 
             // change equation from {0, 1, 2, 3} to {3, 2, 1, 0}
             // i.e. intersect(A,B) = intersect(B,A)
-            //System.out.println("CHANGE EQUATION");            
+            
+        	// TODO: remove
+        	System.out.println("CHANGE EQUATION");            
             double temp = sol[0];
             sol[0] = sol[3];
             sol[3] = temp;
@@ -476,31 +517,33 @@ public class AlgoIntersectConics extends AlgoIntersect {
             sol[1] = sol[2];
             sol[2] = temp;                        
             equationExchanged = true;
-        }                      
+        }  */   
+                     
       
-        
-       // System.out.println(sol[3] + " x� + " + sol[2] + " x� + " 
-       //                  + sol[1] + " x + "  + sol[0] );
+        //System.out.println(sol[3] + " x^3 + " + sol[2] + " x^2 + " 
+        //                 + sol[1] + " x + "  + sol[0] );
          
         // solve cubic equation        
         solnr = eqnSolver.solveCubic(sol, sol);   
+
        // for (i=0;i<solnr;i++) {
-       //     System.out.println("sol[" + i + "] = " + sol[i]);
+        //    System.out.println("sol[" + i + "] = " + sol[i]);
        // }
         
         // set degenerate conics        
-        // C = x A + B        
+        // C = x A + B    
+        /*
         if (equationExchanged) {
             for (i=0; i < solnr; i++) {                
                for (j=0; j < 6; j++) {                                
                     flatDeg[j] = (sol[i] * flatA[j] + flatB[j]);                                  
                 }                
                 // classify degenerate conic
-                deg[i].setMatrixFromArray(flatDeg);
+                deg[i].setMatrixFromArray(flatDeg);                
             }        
         } 
         // C = A + x B
-        else {        
+        else { */        
             for (i=0; i < solnr; i++) {               
                 for (j=0; j < 6; j++) {   
                     flatDeg[j] = (flatA[j] + sol[i] * flatB[j]);
@@ -508,7 +551,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
                 // classify degenerate conic
                 deg[i].setMatrixFromArray(flatDeg);
             }
-        }        
+        //}        
         return solnr;
     }
     

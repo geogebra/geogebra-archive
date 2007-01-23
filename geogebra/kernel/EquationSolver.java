@@ -213,11 +213,11 @@ public class EquationSolver {
                 double theta = Math.acos(R / Math.sqrt(Q3));
                 Q = -2.0 * Math.sqrt(Q);
                 if (res == eqn) {
-                // Copy the eqn so that we don't clobber it with the
-                // roots.  This is needed so that fixRoots can do its
-                // work with the original equation.
-                eqn = new double[4];
-                System.arraycopy(res, 0, eqn, 0, 4);
+	                // Copy the eqn so that we don't clobber it with the
+	                // roots.  This is needed so that fixRoots can do its
+	                // work with the original equation.
+	                eqn = new double[4];
+	                System.arraycopy(res, 0, eqn, 0, 4);
                 }
                 res[roots++] = Q * Math.cos(theta / 3.0) - a;
                 res[roots++] = Q * Math.cos((theta - Math.PI * 2.0)/ 3.0) - a;
