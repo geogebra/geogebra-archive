@@ -338,7 +338,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}
 
 	final boolean showInAlgebraView() {
-		return defined;
+		//return defined;
+		return true;
 	}
 
 	final public boolean isLineConic() {

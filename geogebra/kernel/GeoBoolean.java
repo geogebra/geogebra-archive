@@ -75,7 +75,8 @@ public class GeoBoolean extends GeoElement implements BooleanValue {
 	}
 
 	final boolean showInAlgebraView() {		
-		return isDefined;
+		//return isDefined;
+		return true;
 	}
 
 	public void set(GeoElement geo) {

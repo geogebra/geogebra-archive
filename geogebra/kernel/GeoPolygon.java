@@ -177,7 +177,8 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 	}
         
    final boolean showInAlgebraView() {	   
-	   return defined;        
+	   //return defined;
+	   return true;
    }
    
    

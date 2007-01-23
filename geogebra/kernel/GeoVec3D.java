@@ -61,7 +61,8 @@ implements Traceable {
     
     boolean showInAlgebraView() {
        // return true;
-	   return isDefined();
+	   //return isDefined();
+    	return true;
     }        
     
     public void set(GeoElement geo) {    

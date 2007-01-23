@@ -156,8 +156,7 @@ public class GeoList extends GeoElement implements ListValue {
         return false;
     }
     
-    boolean showInAlgebraView() {
-        // TODO: change
+    boolean showInAlgebraView() {       
         return true;        
     }                
     

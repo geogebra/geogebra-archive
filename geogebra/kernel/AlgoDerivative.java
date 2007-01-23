@@ -40,21 +40,30 @@ public class AlgoDerivative extends AlgoElement {
         Construction cons,
         String label,
         GeoDeriveable f,
-        NumberValue order) {
-        super(cons);
-        this.f = f;
-        this.order = order;
-        if (order != null)
-            orderGeo = order.toGeoElement();
-        
-        this.fgeo = f.toGeoElement();        
-        g = (GeoDeriveable) fgeo.copyInternal();  // output
-        ggeo = g.toGeoElement();
-        
-        setInputOutput(); // for AlgoElement    
-        compute();
+        NumberValue order) 
+    {
+        this(cons, f, order);
         ggeo.setLabel(label);
     }
+    
+    AlgoDerivative(Construction cons,  GeoDeriveable f) {
+    	this(cons, f, null);    	
+    }
+    
+    AlgoDerivative(Construction cons,  GeoDeriveable f, NumberValue order) {
+            super(cons);
+            this.f = f;
+            this.order = order;
+            if (order != null)
+                orderGeo = order.toGeoElement();
+            
+            this.fgeo = f.toGeoElement();        
+            g = (GeoDeriveable) fgeo.copyInternal();  // output
+            ggeo = g.toGeoElement();
+            
+            setInputOutput(); // for AlgoElement    
+            compute();            
+     }
 
     String getClassName() {
         return "AlgoDerivative";

@@ -250,7 +250,8 @@ implements Path, VectorValue, Locateable, Rotateable {
     
     final boolean showInAlgebraView() {
         // independent or defined
-        return isIndependent() || isDefined();        
+       // return isIndependent() || isDefined();
+    	return true;
     }    
     
      /** 

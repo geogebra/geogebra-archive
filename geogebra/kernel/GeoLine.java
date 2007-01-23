@@ -229,7 +229,8 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     
     boolean showInAlgebraView() {
         // independent or defined
-        return isIndependent() || isDefined();        
+        // return isIndependent() || isDefined();
+    	return true;
     }                
     
     public void set(GeoElement geo) { 

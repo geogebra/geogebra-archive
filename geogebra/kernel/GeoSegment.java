@@ -130,7 +130,8 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	}	
         
    final boolean showInAlgebraView() {	   
-	   return defined;        
+	  // return defined;
+	   return true;
    }
    
    boolean showInEuclidianView() {

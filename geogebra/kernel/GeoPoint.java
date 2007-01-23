@@ -171,6 +171,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     	return isDefined && !isInfinite;
     }    
     
+    final boolean showInAlgebraView() {
+        // intersection points
+        return isDefined || !(getParentAlgorithm() instanceof AlgoIntersect);
+    }   
+    
 	final public boolean isDefined() { 
 		return isDefined;        
 	}     
