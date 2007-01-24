@@ -83,7 +83,7 @@ public class Kernel {
 	// Views may register to be informed about 
 	// changes to the Kernel
 	// (add, remove, update)
-	private View[] views = new View[10];
+	private View[] views = new View[20];
 	private int viewCnt = 0;
 	
 	protected Construction cons;

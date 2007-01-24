@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -46,6 +47,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import netscape.javascript.JSObject;
 
 /**
  *
@@ -496,8 +499,7 @@ public class GeoGebraApplet extends JApplet {
 	}	
 	
 	/**
-	 * Returns true if the object with the given name has a vaild
-	 * value at the moment.
+	 * Returns an array with all object names.
 	 */
 	public synchronized String [] getAllObjectNames() {			
 		Construction cons = kernel.getConstruction();
@@ -528,4 +530,102 @@ public class GeoGebraApplet extends JApplet {
 		app.setMode(mode);
 	}	
 	
+	
+	/*
+	 * Change listener implementation
+	 * Java to JavaScript
+	 */
+	
+	// map between GeoElement and JavaScript function names
+	private HashMap geoJSfunMap;
+	private JavaScriptChangeListener jsChangeListener;
+	
+	/**
+	 * Registers a listener that calls the JavaScript Method JSFunctionName whenever
+	 * the object with the given name in the GeoGebra construction changes.
+	 */
+	public synchronized void addChangeListener(String objName, String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;		
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;
+				
+		// init map and view
+		if (geoJSfunMap == null) {
+			geoJSfunMap = new HashMap();
+			kernel.attach(jsChangeListener); // register view
+		}
+		
+		// add map entry
+		geoJSfunMap.put(geo, JSFunctionName);
+	}
+	
+	/**
+	 * Removes a listener that called the JavaScript Method JSFunctionName whenever
+	 * the object with the given name in the GeoGebra construction changed.
+	 */
+	public synchronized void removeChangeListener(String objName, String JSFunctionName) {
+		if (geoJSfunMap != null)
+			geoJSfunMap.remove(objName);
+	}		
+
+	/**
+	 * Implements the View interface for
+	 * Java to JavaScript communication, see
+	 * addChangeListener() and removeChangeListener()
+	 */	
+	private class JavaScriptChangeListener implements View {
+		
+		/**
+		 * If geo has a registered JavaScript method
+		 * (see changeListener()), then this JavaScript
+		 * method is called here.
+		 */
+		public void update(GeoElement geo) {
+			if (geoJSfunMap == null) return;
+			
+			String jsFunction = (String) geoJSfunMap.get(geo);		
+			if (jsFunction != null) {
+	            JSObject win = JSObject.getWindow(GeoGebraApplet.this);	            
+	            win.call(jsFunction, null);
+	        }
+		}
+				
+		public void updateAuxiliaryObject(GeoElement geo) {
+			update(geo);
+		}
+				
+		
+		public void remove(GeoElement geo) {
+			if (geoJSfunMap == null) 
+				geoJSfunMap.remove(geo);			
+		}		
+		
+		public void reset() {
+			if (geoJSfunMap == null) return;			
+			HashMap newGeoJSfunMap = new HashMap(); 
+			
+			// go through all geos and update their maps
+			Iterator it = geoJSfunMap.keySet().iterator();
+			while (it.hasNext()) {
+				// try to find new geo with same label
+				GeoElement oldGeo = (GeoElement) it.next();				
+				GeoElement newGeo = kernel.lookupLabel(oldGeo.getLabel());
+				
+				if (newGeo != null)
+					// add mapping to new map
+					newGeoJSfunMap.put(newGeo,(String) geoJSfunMap.get(oldGeo));				
+			}
+			
+			// use new map
+			geoJSfunMap.clear();
+			geoJSfunMap = newGeoJSfunMap;			
+		}
+		
+		public void add(GeoElement geo) {}
+		public void rename(GeoElement geo) {}
+		public void repaint() {}
+		public void clearView() {}
+	}
+		
 }

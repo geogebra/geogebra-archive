@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="freehep-base.jar"/>
-	<classpathentry kind="lib" path="freehep-graphics2d.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-svg.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio.jar"/>
-	<classpathentry kind="lib" path="geogebra_latex.jar"/>
-	<classpathentry kind="lib" path="MRJAdapter.jar"/>
-	<classpathentry kind="output" path=""/>
+	<classpathentry path="" kind="src"/>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
+	<classpathentry path="freehep-base.jar" kind="lib"/>
+	<classpathentry path="freehep-graphics2d.jar" kind="lib"/>
+	<classpathentry path="freehep-graphicsio-svg.jar" kind="lib"/>
+	<classpathentry path="freehep-graphicsio.jar" kind="lib"/>
+	<classpathentry path="geogebra_latex.jar" kind="lib"/>
+	<classpathentry path="MRJAdapter.jar" kind="lib"/>
+	<classpathentry path="netscape_javascript.jar" kind="lib"/>
+	<classpathentry path="" kind="output"/>
 </classpath>
