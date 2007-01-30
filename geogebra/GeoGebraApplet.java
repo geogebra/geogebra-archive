@@ -537,8 +537,8 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	
 	// map between GeoElement and JavaScript function names
-	private HashMap geoJSfunMap;
-	private JavaScriptChangeListener jsChangeListener;
+	private HashMap changeListenerMap;
+	private JavaToJavaScriptView jsChangeListener;
 	
 	/**
 	 * Registers a listener that calls the JavaScript Method JSFunctionName whenever
@@ -551,13 +551,16 @@ public class GeoGebraApplet extends JApplet {
 		if (geo == null) return;
 				
 		// init map and view
-		if (geoJSfunMap == null) {
-			geoJSfunMap = new HashMap();
+		if (changeListenerMap == null) {
+			changeListenerMap = new HashMap();
 			kernel.attach(jsChangeListener); // register view
 		}
 		
 		// add map entry
-		geoJSfunMap.put(geo, JSFunctionName);
+		changeListenerMap.put(geo, JSFunctionName);
+		
+//		 TODO: remove
+		System.out.println("addChangeListener: " + objName + ", " + JSFunctionName);
 	}
 	
 	/**
@@ -565,8 +568,11 @@ public class GeoGebraApplet extends JApplet {
 	 * the object with the given name in the GeoGebra construction changed.
 	 */
 	public synchronized void removeChangeListener(String objName, String JSFunctionName) {
-		if (geoJSfunMap != null)
-			geoJSfunMap.remove(objName);
+		if (changeListenerMap != null)
+			changeListenerMap.remove(objName);
+		
+//		 TODO: remove
+		System.out.println("removeChangeListener: " + objName + ", " + JSFunctionName);
 	}		
 
 	/**
@@ -574,21 +580,19 @@ public class GeoGebraApplet extends JApplet {
 	 * Java to JavaScript communication, see
 	 * addChangeListener() and removeChangeListener()
 	 */	
-	private class JavaScriptChangeListener implements View {
+	private class JavaToJavaScriptView implements View {
 		
 		/**
-		 * If geo has a registered JavaScript method
-		 * (see changeListener()), then this JavaScript
-		 * method is called here.
+		 * If geo has a registered JavaScript function
+		 * (see addChangeListener()), then this JavaScript
+		 * function is called here.
 		 */
 		public void update(GeoElement geo) {
-			if (geoJSfunMap == null) return;
+			if (changeListenerMap == null) return;
 			
-			String jsFunction = (String) geoJSfunMap.get(geo);		
-			if (jsFunction != null) {
-	            JSObject win = JSObject.getWindow(GeoGebraApplet.this);	            
-	            win.call(jsFunction, null);
-	        }
+			String jsFunction = (String) changeListenerMap.get(geo);
+								
+			callJavaScript(jsFunction, null);
 		}
 				
 		public void updateAuxiliaryObject(GeoElement geo) {
@@ -597,16 +601,16 @@ public class GeoGebraApplet extends JApplet {
 				
 		
 		public void remove(GeoElement geo) {
-			if (geoJSfunMap == null) 
-				geoJSfunMap.remove(geo);			
+			if (changeListenerMap == null) 
+				changeListenerMap.remove(geo);			
 		}		
 		
 		public void reset() {
-			if (geoJSfunMap == null) return;			
+			if (changeListenerMap == null) return;			
 			HashMap newGeoJSfunMap = new HashMap(); 
 			
 			// go through all geos and update their maps
-			Iterator it = geoJSfunMap.keySet().iterator();
+			Iterator it = changeListenerMap.keySet().iterator();
 			while (it.hasNext()) {
 				// try to find new geo with same label
 				GeoElement oldGeo = (GeoElement) it.next();				
@@ -614,12 +618,12 @@ public class GeoGebraApplet extends JApplet {
 				
 				if (newGeo != null)
 					// add mapping to new map
-					newGeoJSfunMap.put(newGeo,(String) geoJSfunMap.get(oldGeo));				
+					newGeoJSfunMap.put(newGeo,(String) changeListenerMap.get(oldGeo));				
 			}
 			
 			// use new map
-			geoJSfunMap.clear();
-			geoJSfunMap = newGeoJSfunMap;			
+			changeListenerMap.clear();
+			changeListenerMap = newGeoJSfunMap;			
 		}
 		
 		public void add(GeoElement geo) {}
@@ -628,4 +632,19 @@ public class GeoGebraApplet extends JApplet {
 		public void clearView() {}
 	}
 		
+	
+	private void callJavaScript(String jsFunction, Object [] args) {
+		
+//		 TODO: remove
+		System.out.println("callJavaScript: " + jsFunction);
+		
+		if (jsFunction != null) {
+			try {
+				JSObject win = JSObject.getWindow(GeoGebraApplet.this);	            
+				win.call(jsFunction, args);
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+        }
+	}
 }
