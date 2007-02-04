@@ -63,10 +63,10 @@ implements ActionListener{
 	private JComboBox cbSpecialChars, cbGreekLetters;
 	
 	public InputPanel(String initText, Application app, int columns) {
-		this(initText, app, 1, columns);
-	}
+		this(initText, app, 1, columns, true);
+	}		
 	
-	public InputPanel(String initText, Application app, int rows, int columns) {
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars) {
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);
 		else
@@ -103,8 +103,9 @@ implements ActionListener{
 			add(sp, BorderLayout.CENTER);
 			
 			JPanel cbPanel = new JPanel(new BorderLayout());
-			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));			
-			tempPanel.add(cbSpecialChars, BorderLayout.NORTH);
+			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));	
+			if (showSpecialChars)
+				tempPanel.add(cbSpecialChars, BorderLayout.NORTH);
 			tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);			
 			cbPanel.add(tempPanel, BorderLayout.NORTH);						
 			add(cbPanel, BorderLayout.EAST);			
@@ -114,7 +115,8 @@ implements ActionListener{
 			add(textComponent, BorderLayout.CENTER);
 			
 			JPanel cbPanel = new JPanel(new BorderLayout(2,0));
-			cbPanel.add(cbSpecialChars, BorderLayout.WEST);
+			if (showSpecialChars)
+				cbPanel.add(cbSpecialChars, BorderLayout.WEST);
 			cbPanel.add(cbGreekLetters, BorderLayout.EAST);
 			add(cbPanel, BorderLayout.EAST);	
 		}				
@@ -130,6 +132,11 @@ implements ActionListener{
 	
 	public String getSelectedText() {
 		return textComponent.getSelectedText();
+	}
+	
+	public void selectText() { 					
+		textComponent.setSelectionStart(0);
+		textComponent.moveCaretPosition(textComponent.getText().length());
 	}
 	
 	public void setText(String text) {

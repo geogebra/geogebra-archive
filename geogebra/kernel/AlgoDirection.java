@@ -43,10 +43,7 @@ public class AlgoDirection extends AlgoElement {
         this.g = g;
         v = new GeoVector(cons);
 
-        GeoPoint possStartPoint = g.getStartPoint();   
-        //TODO: remove
-        System.out.println("possible start point: " + possStartPoint);
-        
+        GeoPoint possStartPoint = g.getStartPoint();                  
         if (possStartPoint!= null && possStartPoint.isLabelSet()) {
 	        try{
 	            v.setStartPoint(possStartPoint);

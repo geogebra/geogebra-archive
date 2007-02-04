@@ -40,6 +40,8 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POLYGON = 70;
 	public static final int DEFAULT_LOCUS = 80;
 	public static final int DEFAULT_LIST = 90;
+	
+	public static final int DEFAULT_TEXT = 100;
 		
 	// DEFAULT COLORs
 	// points
@@ -188,6 +190,10 @@ public class ConstructionDefaults {
 		GeoList list = new GeoList(cons);
 		list.setLabelVisible(false);
 		defaultGeoElements.put(DEFAULT_LIST, list);	
+		
+		// text
+		GeoText text = new GeoText(cons);		
+		defaultGeoElements.put(DEFAULT_TEXT, text);	
 	}
 	
 	/**
@@ -225,6 +231,8 @@ public class ConstructionDefaults {
 				type = DEFAULT_NUMBER;		
 			else if (geo.isGeoList()) 
 				type = DEFAULT_LIST;
+			else if (geo.isGeoText()) 
+				type = DEFAULT_TEXT;
 		} 
 		
 		// dependent
@@ -254,6 +262,8 @@ public class ConstructionDefaults {
 				type = DEFAULT_LOCUS;	
 			else if (geo.isGeoList()) 
 				type = DEFAULT_LIST;
+			else if (geo.isGeoText()) 
+				type = DEFAULT_TEXT;
 		}
 			
 		

@@ -17,6 +17,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.util.InputPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -24,6 +25,8 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -31,8 +34,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
 
-public class SliderDialog extends JDialog implements ActionListener {
+public class SliderDialog extends JDialog implements ActionListener, WindowFocusListener {
 	
 	/**
 	 * 
@@ -40,6 +45,7 @@ public class SliderDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private JButton btApply, btCancel;
 	private JRadioButton rbNumber, rbAngle;
+	private InputPanel tfLabel;
 	private JPanel optionPane;
 	
 	private Application app;
@@ -58,30 +64,32 @@ public class SliderDialog extends JDialog implements ActionListener {
 		super(app.getFrame(), true);
 		this.app = app;		
 		
-		// create temp geos that may returned as result
+		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
 		number = new GeoNumeric(cons);
 		number.setEuclidianVisible(true);
 		number.setSliderLocation(x, y);
 		number.setAbsoluteScreenLocActive(true);
+		number.setValue(1);
 		
 		angle = new GeoAngle(cons);
 		angle.setEuclidianVisible(true);
 		angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 		angle.setSliderLocation(x, y);
 		angle.setAbsoluteScreenLocActive(true);
+		angle.setValue(Math.PI/180);
 		
 		geoResult = null;
 
 		createGUI();	
 		centerOnScreen();
-	}	
+	}			
 	
 	private void createGUI() {
 		setTitle(app.getPlain("Slider"));
 		setResizable(false);		
 
-		//Create components to be displayed
+		//Create components to be displayed			
 		
 		// radio buttons for number or angle
 		ButtonGroup bg = new ButtonGroup();
@@ -91,10 +99,23 @@ public class SliderDialog extends JDialog implements ActionListener {
 		rbAngle.addActionListener(this);
 		rbNumber.setSelected(true);
 		bg.add(rbNumber);
-		bg.add(rbAngle);						
+		bg.add(rbAngle);			
 		JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 		radioPanel.add(rbNumber);
-		radioPanel.add(rbAngle);
+		radioPanel.add(rbAngle);		
+		
+		// label textfield
+		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false);				
+		Border border =
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder(app.getPlain("Name")),
+				BorderFactory.createEmptyBorder(0, 5, 0, 5));
+		tfLabel.setBorder(border);
+		
+		// put together label textfield and radioPanel
+		JPanel topPanel = new JPanel(new BorderLayout(5,5));		
+		topPanel.add(radioPanel, BorderLayout.NORTH);
+		topPanel.add(tfLabel, BorderLayout.CENTER);
 		
 		// slider panels		
 		sliderPanel = new SliderPanel(app, null);
@@ -116,15 +137,17 @@ public class SliderDialog extends JDialog implements ActionListener {
 		btPanel.add(btCancel);
 	
 		//Create the JOptionPane.
-		optionPane = new JPanel(new BorderLayout(5,5));
-		optionPane.add(radioPanel, BorderLayout.NORTH);
+		optionPane = new JPanel(new BorderLayout(5,5));		
+		optionPane.add(topPanel, BorderLayout.NORTH);
 		optionPane.add(slPanel, BorderLayout.CENTER);
 		optionPane.add(btPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		//Make this dialog display it.
-		setContentPane(optionPane);
-		pack();
+		setContentPane(optionPane);			
+		pack();					
+		
+		addWindowFocusListener(this);
 	}
 	
 	private void centerOnScreen() {		
@@ -136,6 +159,17 @@ public class SliderDialog extends JDialog implements ActionListener {
 	}
 	
 	public GeoElement getResult() {
+		if (geoResult != null) {		
+			// set label of geoResult
+			String strLabel;
+			try {								
+				strLabel = app.getAlgebraController().parseLabel(tfLabel.getText());
+			} catch (Exception e) {
+				strLabel = null;
+			}			
+			geoResult.setLabel(strLabel);
+		}
+		
 		return geoResult;
 	}
 		
@@ -151,10 +185,28 @@ public class SliderDialog extends JDialog implements ActionListener {
 		} 
 		else if (source == rbNumber || source == rbAngle) {
 			GeoElement selGeo = rbNumber.isSelected() ? number : angle;
-			GeoElement [] geos = { selGeo };
+			GeoElement [] geos = { selGeo };			
 			sliderPanel.update(geos);
 			stepPanel.update(geos);
+			
+			// update label text field
+			tfLabel.setText(selGeo.getDefaultLabel());	
+			setLabelFieldFocus();
 		}		
+	}
+
+	private void setLabelFieldFocus() {				
+		tfLabel.getTextComponent().requestFocusInWindow();
+		tfLabel.selectText();	
+	}
+
+	public void windowGainedFocus(WindowEvent e) {
+		setLabelFieldFocus();		
+	}
+
+	public void windowLostFocus(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 			
 }

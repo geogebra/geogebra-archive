@@ -66,8 +66,7 @@ public abstract class GeoElement
 			'T',
 			'U',
 			'V',
-			'W',
-			'Y',
+			'W',			
 			'Z' };	
 	
 	private static final char[] functionLabels =

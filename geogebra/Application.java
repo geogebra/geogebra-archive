@@ -1455,7 +1455,7 @@ public class Application {
                       
         // check if name is valid for geo
         private boolean checkName(GeoElement geo, String name) {
-        	if (geo instanceof GeoFunction) {
+        	if (geo.isGeoFunction()) {
         		for (int i=0; i < invalidFunctionNames.length; i++) {
         			if (invalidFunctionNames[i].equals(name))
         				return false;
@@ -1551,11 +1551,7 @@ public class Application {
 	      SliderDialog dialog = new SliderDialog(this, x, y);
 	      dialog.setVisible(true);
 	      GeoElement geo = dialog.getResult();
-	      if (geo != null) {
-	      	geo.setLabel(null);
-	      	return true;
-	      }	      
-	      return false;
+	      return (geo != null);	      	
 	}
 	
     /**
@@ -3780,7 +3776,8 @@ public class Application {
     private void newFile() {
         if (isSaved() || saveCurrentFile()) {
             clearAll();
-            setCurrentFile(null);            
+            setCurrentFile(null);   
+            updateMenuBar();
         }
     }
     
@@ -4063,8 +4060,7 @@ public class Application {
         kernel.initUndoInfo();
         updateActions();
         isSaved = true;
-        System.gc();
-        
+        System.gc();        
     }
 
    /**

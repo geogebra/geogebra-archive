@@ -81,7 +81,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		setResizable(false);		
 
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns);		
+		inputPanel = new InputPanel(initString, app, rows, columns, true);		
 		
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {
@@ -155,9 +155,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	}
 	
 	public void selectText() { 		
-		JTextComponent tf = inputPanel.getTextComponent();		
-		tf.setSelectionStart(0);
-		tf.moveCaretPosition(tf.getText().length());
+		inputPanel.selectText(); 
 	}
 	
 	/**

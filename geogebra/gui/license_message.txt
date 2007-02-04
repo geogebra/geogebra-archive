@@ -1,41 +1,20 @@
-GeoGebra - Dynamic Mathematics for Schools
-  http://www.geogebra.org
-
-COPYRIGHT
-  * Markus Hohenwarter
-      Project Leader and Creator of GeoGebra
-      Main Developer since 2001
-      mhohen@gmail.com, Florida Atlantic University
-  * Yves Kreis
-      Developer since 2005
-      yves.kreis@uni.lu, University of Luxembourg
-  * Loïc Le Coq
-      Developer sind 2006
-      loiclecoq@users.sourceforge.net
+GeoGebra - Dynamic Mathematics for Schools - http://www.geogebra.org
   
 LICENSE
   This program is free software; you can redistribute it and/or modify it 
   under the terms of the GNU General Public License as published by 
   the Free Software Foundation; either version 2 of the License, or 
-  (at your option) any later version.
-  See http://www.gnu.org/licenses/gpl.txt
+  (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
-FUNDED BY
-  * Standards Mapped Graduate Education and Mentoring, http://smgem.mspnet.org  
-    from 2006 to 2008, US National Science Foundation, http://www.nsf.gov
-  * Austrian Federal Ministry for Education, Science and Culture 
-    from 2006 to 2007, http://www.bmbwk.gv.at
-  * Austrian Academy of Sciences, DOC scholarship
-    from 2004 to 2005, http://www.oeaw.ac.at
-
-SUPPORTED BY
-  * hosting the GeoGebra Website
-    Department of Mathematics, University of Salzburg
-  * providing the multi-platform software deployment solution 
-    Faculty LSHASE, University of Luxembourg
-
-TRANSLATORS
-  * Austrian: Markus Hohenwarter (Austria)
+CREDITS
+  * Markus Hohenwarter
+      Creator of GeoGebra, project leader and main developer since 2001
+      mhohen@math.fau.edu, Florida Atlantic University                  
+  Contributions by    
+  * Yves Kreis, developer since 2005, yves.kreis@uni.lu, University of Luxembourg
+  * Loïc Le Coq, developer since 2006, loiclecoq@users.sourceforge.net
+  
+TRANSLATIONS 
   * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
   * Catalan: Jaume Bartrolí, Roser Sebastián (Catalunya, Spain)
@@ -61,14 +40,29 @@ TRANSLATORS
   * Slovakian: Peter Csiba (Slovakia)
   * Slovenian: Stanislav Senveter (Slovenia)
   * Spanish: Liliana Saidon (Argentina)
+
+FUNDED BY
+  * Standards Mapped Graduate Education and Mentoring, http://smgem.mspnet.org  
+     from 08/2006 to 07/2008, US National Science Foundation, http://www.nsf.gov
+  * Austrian Federal Ministry for Education, Science and Culture 
+     from 01/2006 to 12/2007, http://www.bmbwk.gv.at
+  * Austrian Academy of Sciences, DOC scholarship
+     from 02/2004 to 01/2006, http://www.oeaw.ac.at
+
+SUPPORTED BY
+  * hosting the GeoGebra Website
+     Department of Mathematics, University of Salzburg
+  * providing the multi-platform software deployment solution 
+     Faculty LSHASE, University of Luxembourg
   
 SOFTWARE
-  * Java symbolic computation library (JSCL)
-      Rapael Jolly and Elefterios Stamatogiannakis 
-      http://jscl-meditor.sourceforge.net
-  * Java EPS Graphics2D package
-      Paul Mutton
-      http://www.jibble.org/epsgraphics/
-  * HotEqn - LaTeX equation viewer
-      Christian Schmid
+  * Jasymca by Helmut Dersch 
+      http://webuser.hs-furtwangen.de/~dersch
+  * Yacas
+      http://yacas.sourceforge.net
+  * FreeHEP Java Libraries
+      http://java.freehep.org/
+  * Java EPS Graphics2D package by Paul Mutton
+      http://www.jibble.org/epsgraphics
+  * HotEqn - LaTeX equation viewer by Christian Schmid
       http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
