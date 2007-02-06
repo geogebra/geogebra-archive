@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -536,44 +537,149 @@ public class GeoGebraApplet extends JApplet {
 	 * Java to JavaScript
 	 */
 	
-	// map between GeoElement and JavaScript function names
-	private HashMap changeListenerMap;
-	private JavaToJavaScriptView jsChangeListener;
+	// maps between GeoElement and JavaScript function names
+	private HashMap updateListenerMap;
+	private ArrayList addListeners, removeListeners, renameListeners;
+	private JavaToJavaScriptView javaToJavaScriptView;
 	
 	/**
-	 * Registers a listener that calls the JavaScript Method JSFunctionName whenever
-	 * the object with the given name in the GeoGebra construction changes.
+	 * Registers a JavaScript function as an add listener for the applet's construction.
+	 *  Whenever a new object is created in the GeoGebraApplet's construction, the JavaScript 
+	 *  function JSFunctionName is called using the name of the newly created object as a single argument. 
 	 */
-	public synchronized void addChangeListener(String objName, String JSFunctionName) {
+	public synchronized void registerAddListener(String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;				
+						
+		// init view
+		initJavaScriptView();
+		
+		// init list
+		if (addListeners == null) {
+			addListeners = new ArrayList();			
+		}		
+		addListeners.add(JSFunctionName);				
+		System.out.println("registerAddListener: " + JSFunctionName);
+	}
+	
+	/**
+	 * Removes a previously registered add listener 
+	 * @see registerAddListener() 
+	 */
+	public synchronized void unregisterAddListener(String objName) {
+		if (addListeners != null) {
+			addListeners.remove(objName);
+			System.out.println("unregisterAddListener: " + objName);
+		}	
+	}	
+	
+	/**
+	 * Registers a JavaScript function as a remove listener for the applet's construction.
+	 * Whenever an object is deleted in the GeoGebraApplet's construction, the JavaScript 
+	 * function JSFunctionName is called using the name of the deleted object as a single argument. 	
+	 */
+	public synchronized void registerRemoveListener(String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;				
+						
+		// init view
+		initJavaScriptView();
+		
+		// init list
+		if (removeListeners == null) {
+			removeListeners = new ArrayList();			
+		}		
+		removeListeners.add(JSFunctionName);				
+		System.out.println("registerRemoveListener: " + JSFunctionName);
+	}
+	
+	/**
+	 * Removes a previously registered remove listener 
+	 * @see registerRemoveListener() 
+	 */
+	public synchronized void unregisterRemoveListener(String objName) {
+		if (removeListeners != null) {
+			removeListeners.remove(objName);
+			System.out.println("unregisterRemoveListener: " + objName);
+		}	
+	}	
+	
+	/**
+	 * Registers a JavaScript function as a rename listener for the applet's construction.
+	 * Whenever an object is renamed in the GeoGebraApplet's construction, the JavaScript 
+	 * function JSFunctionName is called using the name of the deleted object as a single argument. 	
+	 */
+	public synchronized void registerRenameListener(String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;				
+						
+		// init view
+		initJavaScriptView();
+		
+		// init list
+		if (renameListeners == null) {
+			renameListeners = new ArrayList();			
+		}		
+		renameListeners.add(JSFunctionName);				
+		System.out.println("registerRemoveListener: " + JSFunctionName);
+	}
+	
+	/**
+	 * Removes a previously registered rename listener.
+	 * @see registerRemoveListener() 
+	 */
+	public synchronized void unregisterRenameListener(String objName) {
+		if (renameListeners != null) {
+			renameListeners.remove(objName);
+			System.out.println("unregisterRemoveListener: " + objName);
+		}	
+	}		
+	
+	/**
+	 * Registers a JavaScript update listener for an object. Whenever the object with 
+	 * the given name changes, a JavaScript function named JSFunctionName 
+	 * is called using the name of the changed object as the single argument. 
+	 * If objName previously had a mapping JavaScript function, the old value 
+	 * is replaced.
+	 * 
+	 * Example: First, set a change listening JavaScript function:
+	 * ggbApplet.setChangeListener("A", "myJavaScriptFunction");
+	 * Then the GeoGebra Applet will call the Javascript function
+	 * myJavaScriptFunction("A");
+	 * whenever object A changes.	
+	 */
+	public synchronized void registerUpdateListener(String objName, String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;		
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;
 				
+		// init view
+		initJavaScriptView();
+		
 		// init map and view
-		if (changeListenerMap == null) {
-			changeListenerMap = new HashMap();
-			kernel.attach(jsChangeListener); // register view
+		if (updateListenerMap == null) {
+			updateListenerMap = new HashMap();			
 		}
 		
 		// add map entry
-		changeListenerMap.put(geo, JSFunctionName);
-		
-//		 TODO: remove
-		System.out.println("addChangeListener: " + objName + ", " + JSFunctionName);
+		updateListenerMap.put(geo, JSFunctionName);		
+		System.out.println("registerUpdateListener: object: " + objName + ", function: " + JSFunctionName);
 	}
 	
 	/**
-	 * Removes a listener that called the JavaScript Method JSFunctionName whenever
-	 * the object with the given name in the GeoGebra construction changed.
+	 * Removes a previously set change listener for the given object.
+	 * @see setChangeListener
 	 */
-	public synchronized void removeChangeListener(String objName, String JSFunctionName) {
-		if (changeListenerMap != null)
-			changeListenerMap.remove(objName);
-		
-//		 TODO: remove
-		System.out.println("removeChangeListener: " + objName + ", " + JSFunctionName);
-	}		
+	public synchronized void unregisterUpdateListener(String objName) {
+		if (updateListenerMap != null) {
+			GeoElement geo = kernel.lookupLabel(objName);
+			if (geo != null) {
+				updateListenerMap.remove(geo);
+				System.out.println("unregisterUpdateListener for object: " + objName);
+			}
+		}
+	}				
 
 	/**
 	 * Implements the View interface for
@@ -588,29 +694,28 @@ public class GeoGebraApplet extends JApplet {
 		 * function is called here.
 		 */
 		public void update(GeoElement geo) {
-			if (changeListenerMap == null) return;
+			if (updateListenerMap == null) return;
 			
-			String jsFunction = (String) changeListenerMap.get(geo);
-								
-			callJavaScript(jsFunction, null);
+			String jsFunction = (String) updateListenerMap.get(geo);
+			if (jsFunction != null)
+				callJavaScript(jsFunction, null);
 		}
 				
 		public void updateAuxiliaryObject(GeoElement geo) {
 			update(geo);
-		}
-				
+		}				
 		
 		public void remove(GeoElement geo) {
-			if (changeListenerMap == null) 
-				changeListenerMap.remove(geo);			
+			if (updateListenerMap == null) 
+				updateListenerMap.remove(geo);			
 		}		
 		
 		public void reset() {
-			if (changeListenerMap == null) return;			
+			if (updateListenerMap == null) return;			
 			HashMap newGeoJSfunMap = new HashMap(); 
 			
 			// go through all geos and update their maps
-			Iterator it = changeListenerMap.keySet().iterator();
+			Iterator it = updateListenerMap.keySet().iterator();
 			while (it.hasNext()) {
 				// try to find new geo with same label
 				GeoElement oldGeo = (GeoElement) it.next();				
@@ -618,20 +723,29 @@ public class GeoGebraApplet extends JApplet {
 				
 				if (newGeo != null)
 					// add mapping to new map
-					newGeoJSfunMap.put(newGeo,(String) changeListenerMap.get(oldGeo));				
+					newGeoJSfunMap.put(newGeo,(String) updateListenerMap.get(oldGeo));				
 			}
 			
 			// use new map
-			changeListenerMap.clear();
-			changeListenerMap = newGeoJSfunMap;			
+			updateListenerMap.clear();
+			updateListenerMap = newGeoJSfunMap;			
 		}
 		
 		public void add(GeoElement geo) {}
 		public void rename(GeoElement geo) {}
-		public void repaint() {}
+    	public void repaintView() {
+    		// no repaint should occur here: views that are
+    		// part of the applet do this on their own    		
+    	}
 		public void clearView() {}
 	}
 		
+	private void initJavaScriptView() {
+		if (javaToJavaScriptView == null) {
+			javaToJavaScriptView = new JavaToJavaScriptView();
+			kernel.attach(javaToJavaScriptView); // register view
+		}
+	}
 	
 	private void callJavaScript(String jsFunction, Object [] args) {
 		

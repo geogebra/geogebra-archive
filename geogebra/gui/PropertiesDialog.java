@@ -3275,6 +3275,10 @@ public class PropertiesDialog
 		public void clearView() {
 			listModel.clear();
 		}
+		
+    	final public void repaintView() {
+    		repaint();
+    	}
 
 	} // JListGeoElements
 

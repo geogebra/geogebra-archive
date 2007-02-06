@@ -650,9 +650,9 @@ public class Kernel {
 		}
 				
 		/*
-		//System.out.print("  current views: ");
+		System.out.print("  current views: ");
 		for (int i = 0; i < viewCnt; i++) {
-			System.out.print(views[i].getClass() + ", ");
+			System.out.print(views[i] + ", ");
 		}
 		System.out.println();
 		*/
@@ -691,9 +691,9 @@ public class Kernel {
 		/*
 		System.out.print("  current views: ");
 		for (int i = 0; i < viewCnt; i++) {
-			System.out.print(views[i].getClass() + ", ");
+			System.out.print(views[i] + ", ");
 		}
-		System.out.println();
+		System.out.println();		
 		*/
 		
 		if (!notifyViewsActive) {
@@ -797,8 +797,8 @@ public class Kernel {
 	}
 	
 	public final void notifyRepaint() {				
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].repaint();
+		for (int i = 0; i < viewCnt; ++i) {			
+			views[i].repaintView();
 		}		
 	}
 	

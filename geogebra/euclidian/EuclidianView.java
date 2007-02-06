@@ -2200,6 +2200,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateBackgroundImage(); // clear traces and images
 		// resetMode();
 	}
+	
+	final public void repaintView() {
+		repaint();
+	}
 
 	/**
 	 * returns settings in XML format

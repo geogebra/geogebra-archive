@@ -436,6 +436,10 @@ public class AlgebraView extends JTree implements View {
 		auxiliaryNode.removeAllChildren();
 		model.reload();
 	}
+	
+	final public void repaintView() {
+		repaint();
+	}
 
 	/**
 	 * renames an element and sorts list 

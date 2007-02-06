@@ -1128,6 +1128,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
             geoMap.clear();
             updateNavigationBars();
         }
+        
+    	final public void repaintView() {
+    		repaint();
+    	}
 
         //  update all row numbers >= row
         private void updateRowNumbers(int row) {
