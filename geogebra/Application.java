@@ -124,7 +124,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "22. January 2006";
+    public static final String buildDate = "6. February 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -286,6 +286,7 @@ public class Application {
     private boolean showAlgebraInput = true;
     private boolean showCmdList = true;    
     private boolean showToolBar = true;
+    private boolean showToolBarHelp = true;
     private boolean showMenuBar = true;
     private boolean showConsProtNavigation = false;
     private boolean showAxes = true;
@@ -2063,7 +2064,9 @@ public class Application {
        	
        	// mode label
        	modeNameLabel = new JLabel();
-       	appToolBarPanel.add(modeNameLabel, BorderLayout.CENTER);  
+       	if (showToolBarHelp) {       		
+       		appToolBarPanel.add(modeNameLabel, BorderLayout.CENTER);
+       	}
        	
         // UNDO Toolbar     
         if (undoActive) {
@@ -2449,8 +2452,9 @@ public class Application {
     	showMenuBar = flag;
     }
     
-    void setShowToolBar(boolean flag) {
-    	showToolBar = flag;
+    void setShowToolBar(boolean toolbar, boolean help) {
+    	showToolBar = toolbar;
+    	showToolBarHelp = help;
     }
     
     public boolean showToolBar() {
