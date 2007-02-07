@@ -250,8 +250,7 @@ public class GeoList extends GeoElement implements ListValue {
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toString());
-				// expression   
+				sb.append(toString());			 
 			sb.append("\"/>\n");
 		 }
 	  		  

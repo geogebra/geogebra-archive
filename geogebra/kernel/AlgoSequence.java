@@ -39,7 +39,7 @@ public class AlgoSequence extends AlgoElement {
     
     private String [] labels;
     private AlgoElement algoExp; // parent algo of expression 
-    private double last_from, last_to, last_step;    
+    private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsGeoFunction, isEmpty;
     private Function last_function;
     private ArrayList copyGeos = new ArrayList(50); // reuse copied geos, so remember them in a list
@@ -142,13 +142,13 @@ public class AlgoSequence extends AlgoElement {
     	
     	// for GeoFunction: check if function tree has changed
     	if (expIsGeoFunction) {    		
-    		setValuesOnly = last_function == ((GeoFunction) expression).getFunction();	
+    		setValuesOnly = setValuesOnly && (last_function == ((GeoFunction) expression).getFunction());	
     	}    		    	    	    	
     	
     	if (setValuesOnly)
     		updateListItems(from, to, step);
     	else
-    		createNewList(from, to, step);        				        	    	
+    		createNewList(from, to, step);        	
     }       
     
     private void createNewList(double from, double to, double step) {         	
@@ -272,8 +272,7 @@ public class AlgoSequence extends AlgoElement {
 			// by the current value of var
 			GeoFunction f = (GeoFunction) copy;
 			MyDouble varValue = new MyDouble(kernel, varVal);
-			f.getFunction().getExpression().replace(var, varValue);		
-			
+			f.getFunction().getExpression().replace(var, varValue);					
 		} else {
 	    	// all other objects are copies that can be set directly
 			copy.set(orig);

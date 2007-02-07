@@ -534,13 +534,28 @@ public class GeoGebraApplet extends JApplet {
 		//kernel.setNotifyViewsActive(flag);
 	}	
 	
-	/**
-	 * Returns an array with all object names.
+	/*
+	 * Methods to get all object names of the construction 
 	 */
-	public synchronized String [] getAllObjectNames() {			
+	
+	private String [] objNames;
+	private int lastGeoElementsIteratorSize = 0;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private String [] getObjNames() {
 		Construction cons = kernel.getConstruction();
+		int size = cons.getGeoElementsIteratorSize();
+		// don't build objNames if nothing changed
+		if (size == lastGeoElementsIteratorSize)
+			return objNames;		
+		
+		// build objNames array
+		lastGeoElementsIteratorSize = size;
 		Iterator it = cons.getGeoElementsIterator();
-		String [] objNames = new String[cons.getGeoElementsIteratorSize()];
+		objNames = new String[size];
 				
 		int i=0; 
 		while (it.hasNext()) {
@@ -549,7 +564,34 @@ public class GeoGebraApplet extends JApplet {
 			i++;
 		}
 		return objNames;
+	}
+	
+	/**
+	 * Returns an array with all object names.
+	 */
+	public synchronized String [] getAllObjectNames() {			
+		return getObjNames();
 	}	
+	
+	/**
+	 * Returns the number of objects in the construction.
+	 */
+	public synchronized int getObjectNumber() {					
+		return kernel.getConstruction().getGeoElementsIteratorSize();				
+	}	
+	
+	/**
+	 * Returns the name of the n-th object of this construction.
+	 */
+	public synchronized String getObjectName(int i) {					
+		String [] names = getObjNames();
+					
+		try {
+			return names[i];
+		} catch (Exception e) {
+			return "";
+		}
+	}
 	
 	/**
 	 * Returns the type of the object with the given name as a string (e.g. point, line, circle, ...)
@@ -806,6 +848,7 @@ public class GeoGebraApplet extends JApplet {
 			}
 			*/
 			
+			lastGeoElementsIteratorSize = 0;
 			updateListenerMap = null;			
 			if (clearListeners != null) {  				
 				notifyListeners(clearListeners, null);						

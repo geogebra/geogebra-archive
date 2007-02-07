@@ -764,8 +764,7 @@ public class Kernel {
 			notifyViewsActive = flag;
 			
 			if (flag) {
-				//System.out.println("Activate VIEWS");
-				
+				//System.out.println("Activate VIEWS");				
 				viewReiniting = true;
 				
 				// "attach" views again

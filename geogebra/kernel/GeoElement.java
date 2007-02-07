@@ -209,6 +209,7 @@ public abstract class GeoElement
 	public static final int LABEL_VALUE = 2;
 
 	protected String label; // should only be used directly in subclasses
+	private String oldLabel; // see doRenameLabel
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
 	private boolean algebraVisible = true;
@@ -288,7 +289,7 @@ public abstract class GeoElement
 	 * algoParent.getCommandDescription() or  toValueString() is returned.     
 	 */
 	public String getLabel() {			
-		if (!(labelSet || localVarLabelSet)) {
+		if (!labelSet && !localVarLabelSet) {
 			if (algoParent == null)
 				return toValueString();
 			else
@@ -836,16 +837,26 @@ public abstract class GeoElement
 	}	
 
 	private void doRenameLabel(String newLabel) {
-		//	UPDATE KERNEL		
+		if (label == newLabel) return;
+		
+		//	UPDATE KERNEL			
 		cons.removeLabel(this); // remove old table entry
+		oldLabel = label; // remember old label (for applet to javascript rename)
 		label = newLabel; // set new label
 		cons.putLabel(this); // add new table entry    
 		
 		algebraStringsNeedUpdate();
-		
-		kernel.notifyRename(this); // tell views   
-		
+				
+		kernel.notifyRename(this); // tell views   		
 		update();		
+	}
+	
+	/**
+	 * Returns the label of this object before rename()
+	 * was called.	
+	 */
+	final public String getOldLabel() {
+		return oldLabel;
 	}
 
 	/**
@@ -1072,10 +1083,12 @@ public abstract class GeoElement
 
 		// remove from selection
 		app.removeSelectedGeo(this, false);
+				
+		// notify views before we change labelSet
+		notifyRemove();
 		
 		labelSet = false;
 		labelWanted = false;
-		notifyRemove();
 	}
 
 	final public void notifyAdd() {
