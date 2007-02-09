@@ -36,6 +36,7 @@ public class NumberComboBox extends JComboBox {
 		this.app = app;		
 		kernel = app.getKernel();
 		
+		addItem(1); //pi
 		addItem(PI_STRING); //pi
 		addItem(PI_STRING + "/2"); //pi/2
 		setEditable(true);

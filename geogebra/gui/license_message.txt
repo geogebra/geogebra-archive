@@ -1,4 +1,6 @@
-GeoGebra - Dynamic Mathematics for Schools - http://www.geogebra.org
+GeoGebra - Dynamic Mathematics for Schools
+Markus Hohenwarter, Copyright 2001-2007
+http://www.geogebra.org
   
 LICENSE
   This program is free software; you can redistribute it and/or modify it 
@@ -7,12 +9,12 @@ LICENSE
   (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
 CREDITS
-  * Markus Hohenwarter
-      Creator of GeoGebra, project leader and main developer since 2001
-      mhohen@math.fau.edu, Florida Atlantic University                  
-  Contributions by    
-  * Yves Kreis, developer since 2005, yves.kreis@uni.lu, University of Luxembourg
-  * Loïc Le Coq, developer since 2006, loiclecoq@users.sourceforge.net
+  * Markus Hohenwarter 
+      Creator of GeoGebra, project leader and main developer
+      University of Salzburg / Florida Atlantic University      
+Contributions by    
+  * Yves Kreis, University of Luxembourg
+  * Loïc Le Coq, France
   
 TRANSLATIONS 
   * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)
@@ -56,13 +58,13 @@ SUPPORTED BY
      Faculty LSHASE, University of Luxembourg
   
 SOFTWARE
-  * Jasymca by Helmut Dersch 
+  * Jasymca
       http://webuser.hs-furtwangen.de/~dersch
   * Yacas
       http://yacas.sourceforge.net
   * FreeHEP Java Libraries
       http://java.freehep.org/
-  * Java EPS Graphics2D package by Paul Mutton
+  * Java EPS Graphics2D package
       http://www.jibble.org/epsgraphics
-  * HotEqn - LaTeX equation viewer by Christian Schmid
+  * HotEqn - LaTeX equation viewer 
       http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html

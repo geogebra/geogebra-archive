@@ -22,9 +22,11 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebra;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.BorderLayout;
@@ -67,13 +69,15 @@ public class GeoGebraApplet extends JApplet {
 	private DoubleClickListener dcListener;
 	private EuclidianView ev;
 	boolean showOpenButton, showToolBar, showToolBarHelp, showAlgebraInput, undoActive;
-	boolean showMenuBar = false; // not yet supported
+	boolean enableRightClick = true;
+	boolean showMenuBar = false;
 	boolean showResetIcon = false;
 	private boolean firstAppOpen = true;
 	Color bgColor;
 	private String fileStr, customToolBar;	
 	private boolean showFrame = true;
 	private GeoGebra wnd;
+	private JSObject browserWindow;
 
 	/** Creates a new instance of GeoGebraApplet */
 	public GeoGebraApplet() {}
@@ -82,7 +86,7 @@ public class GeoGebraApplet extends JApplet {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {}
-
+	
 		// get parameters
 		// filename of construction
 		fileStr = getParameter("filename");
@@ -103,8 +107,7 @@ public class GeoGebraApplet extends JApplet {
 		
 		// customToolBar = "0 1 2 | 3 4 5 || 7 8 12" to set the visible toolbar modes
 		customToolBar = getParameter("customToolBar");
-		
-		
+				
 		// showMenuBar = "true" or parameter is not available
 		showMenuBar = "true".equals(getParameter("showMenuBar"));
 		
@@ -118,6 +121,9 @@ public class GeoGebraApplet extends JApplet {
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
 		showFrame = !"false".equals(getParameter("framePossible"));
+		
+		// rightClickActive, default is "true"
+		enableRightClick = !"false".equals(getParameter("enableRightClick"));
 		
 		undoActive = showToolBar || showMenuBar;
 		
@@ -182,7 +188,8 @@ public class GeoGebraApplet extends JApplet {
 			app.setUndoActive(undoActive);			
 			app.setShowMenuBar(showMenuBar);
 			app.setShowAlgebraInput(showAlgebraInput);
-			app.setShowToolBar(showToolBar, showToolBarHelp);		
+			app.setShowToolBar(showToolBar, showToolBarHelp);	
+			app.setRightClickEnabled(enableRightClick);
 			if (customToolBar != null && customToolBar.length() > 0)
 				app.setCustomToolBar(customToolBar);
 			app.setShowResetIcon(showResetIcon);
@@ -245,7 +252,8 @@ public class GeoGebraApplet extends JApplet {
 		app.setShowMenuBar(true);
 		app.setShowAlgebraInput(true);		
 		app.setUndoActive(true);
-		app.setShowToolBar(true, true);		
+		app.setShowToolBar(true, true);	
+		app.setRightClickEnabled(true);
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.setCustomToolBar(customToolBar);
 			
@@ -377,6 +385,28 @@ public class GeoGebraApplet extends JApplet {
 	}
 	
 	/**
+	 * Sets the fixed state of the object with the given name.
+	 */
+	public synchronized void setFixed(String objName, boolean flag) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo != null && geo.isFixable()) {		
+			geo.setFixed(flag);
+			geo.updateRepaint();
+		}
+	}
+	
+	/**
+	 * Turns the trace of the object with the given name on or off.
+	 */
+	public synchronized void setTrace(String objName, boolean flag) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo != null && geo.isTraceable()) {		
+			((Traceable)geo).setTrace(flag);
+			geo.updateRepaint();
+		}
+	}
+	
+	/**
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelVisible(String objName, boolean visible) {
@@ -491,6 +521,8 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	public synchronized double getXcoord(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return 0;
+		
 		if (geo.isGeoPoint())
 			return ((GeoPoint) geo).inhomX;
 		else if (geo.isGeoVector())
@@ -505,6 +537,8 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	public synchronized double getYcoord(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return 0;
+		
 		if (geo.isGeoPoint())
 			return ((GeoPoint) geo).inhomY;
 		else if (geo.isGeoVector())
@@ -514,25 +548,83 @@ public class GeoGebraApplet extends JApplet {
 	}
 	
 	/**
+	 * Sets the coordinates of the object with the given name. Note: if the
+	 * specified object is not a point or a vector, nothing happens.
+	 */
+	public synchronized void setCoords(String objName, double x, double y) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;
+		
+		if (geo.isGeoPoint()) {
+			((GeoPoint) geo).setCoords(x, y, 1);
+			geo.updateRepaint();
+		}
+		else if (geo.isGeoVector()) {
+			((GeoVector) geo).setCoords(x, y, 0);
+			geo.updateRepaint();
+		}
+	}
+	
+	/**
 	 * Returns the double value of the object with the given name. Note: returns 0 if
 	 * the object does not have a value.
 	 */
 	public synchronized double getValue(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo instanceof NumberValue)
+		GeoElement geo = kernel.lookupLabel(objName);		
+		
+		if (geo != null && geo.isNumberValue())
 			return ((NumberValue) geo).getDouble();		
 		else
 			return 0;
 	}
 	
 	/**
-	 * Turns the repainting of this applet on (true) or off (false).
+	 * Sets the double value of the object with the given name. Note: if the
+	 * specified object is not a number, nothing happens.
 	 */
-	public synchronized void setRepaintingActive(boolean flag) {
-		// NOTE: kept for downward compatibility
+	public synchronized void setValue(String objName, double x) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;
+		
+		if (geo.isGeoNumeric()) {
+			((GeoNumeric) geo).setValue(x);
+			geo.updateRepaint();
+		}
+	}
+	
+	/**
+	 * Turns the repainting of all views on or off.
+	 */
+	public synchronized void setRepaintingActive(boolean flag) {		
 		//System.out.println("set repainting: " + flag);
-		//kernel.setNotifyViewsActive(flag);
+		kernel.setNotifyRepaintActive(flag);
 	}	
+	
+
+	/*
+	 * Methods to change the geometry window's properties	 
+	 */
+	
+	/**
+	 * Sets the Cartesian coordinate system in the graphics window.
+	 */
+	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
+		app.getEuclidianView().setRealWorldCoordSystem(xmin, xmax, ymin, ymax);
+	}
+	
+	/**
+	 * Shows or hides the x- and y-axis of the coordinate system in the graphics window.
+	 */
+	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {		
+		app.getEuclidianView().showAxes(xVisible, yVisible);
+	}	
+	
+	/**
+	 * Shows or hides the coordinate grid in the graphics window.
+	 */
+	public synchronized void setGridVisible(boolean flag) {		
+		app.getEuclidianView().showGrid(flag);
+	}
 	
 	/*
 	 * Methods to get all object names of the construction 
@@ -616,7 +708,7 @@ public class GeoGebraApplet extends JApplet {
 	
 	// maps between GeoElement and JavaScript function names
 	private HashMap updateListenerMap;
-	private ArrayList addListeners, removeListeners, renameListeners, clearListeners;
+	private ArrayList addListeners, removeListeners, renameListeners, updateListeners, clearListeners;
 	private JavaToJavaScriptView javaToJavaScriptView;
 	
 	/**
@@ -734,14 +826,45 @@ public class GeoGebraApplet extends JApplet {
 	
 	/**
 	 * Removes a previously registered rename listener.
-	 * @see registerRemoveListener() 
+	 * @see registerRenameListener() 
 	 */
 	public synchronized void unregisterRenameListener(String JSFunctionName) {
 		if (renameListeners != null) {
 			renameListeners.remove(JSFunctionName);
 			System.out.println("unregisterRenameListener: " + JSFunctionName);
 		}	
-	}		
+	}	
+	
+	/**
+	 * Registers a JavaScript function as an update listener for the applet's construction.
+	 * Whenever any object is updated in the GeoGebraApplet's construction, the JavaScript 
+	 * function JSFunctionName is called using the name of the updated object as a single argument. 	
+	 */
+	public synchronized void registerUpdateListener(String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;				
+						
+		// init view
+		initJavaScriptView();
+		
+		// init list
+		if (updateListeners == null) {
+			updateListeners = new ArrayList();			
+		}		
+		updateListeners.add(JSFunctionName);				
+		System.out.println("registerUpdateListener: " + JSFunctionName);
+	}
+	
+	/**
+	 * Removes a previously registered update listener.
+	 * @see registerRemoveListener() 
+	 */
+	public synchronized void unregisterUpdateListener(String JSFunctionName) {
+		if (updateListeners != null) {
+			updateListeners.remove(JSFunctionName);
+			System.out.println("unregisterUpdateListener: " + JSFunctionName);
+		}	
+	}	
 	
 	/**
 	 * Registers a JavaScript update listener for an object. Whenever the object with 
@@ -756,7 +879,7 @@ public class GeoGebraApplet extends JApplet {
 	 * myJavaScriptFunction("A");
 	 * whenever object A changes.	
 	 */
-	public synchronized void registerUpdateListener(String objName, String JSFunctionName) {
+	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;		
 		GeoElement geo = kernel.lookupLabel(objName);
@@ -779,7 +902,7 @@ public class GeoGebraApplet extends JApplet {
 	 * Removes a previously set change listener for the given object.
 	 * @see setChangeListener
 	 */
-	public synchronized void unregisterUpdateListener(String objName) {
+	public synchronized void unregisterObjectUpdateListener(String objName) {
 		if (updateListenerMap != null) {
 			GeoElement geo = kernel.lookupLabel(objName);
 			if (geo != null) {
@@ -879,16 +1002,23 @@ public class GeoGebraApplet extends JApplet {
 		}	
 																	
 		/**
-		 * Calls all registered update listeners.
+		 * Calls all registered update and updateObject listeners.
 		 * @see registerUpdateListener()
 		 */
-		public void update(GeoElement geo) {
-			if (updateListenerMap == null) return;
-			
-			String jsFunction = (String) updateListenerMap.get(geo);		
-			if (jsFunction != null) {
+		public void update(GeoElement geo) {						
+			// update listeners
+			if (updateListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getLabel() };
-				callJavaScript(jsFunction, args);
+				notifyListeners(updateListeners, args);	
+			}
+			
+			// updateObject listeners
+			if (updateListenerMap != null) {			
+				String jsFunction = (String) updateListenerMap.get(geo);		
+				if (jsFunction != null) {	
+					Object [] args = { geo.getLabel() };
+					callJavaScript(jsFunction, args);
+				}
 			}
 		}
 				
@@ -902,26 +1032,30 @@ public class GeoGebraApplet extends JApplet {
     	public void repaintView() {
     		// no repaint should occur here: views that are
     		// part of the applet do this on their own    		
-    	}
-    	
-    	
+    	}    	    	
 	}
 		
 	private void initJavaScriptView() {
 		if (javaToJavaScriptView == null) {
 			javaToJavaScriptView = new JavaToJavaScriptView();
 			kernel.attach(javaToJavaScriptView); // register view
+			
+			try {							
+				browserWindow = JSObject.getWindow(this);
+			} catch (Exception e) {							
+				System.err.println("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
+			}    			
 		}
 	}
 	
 	private void callJavaScript(String jsFunction, Object [] args) {		
 		//System.out.println("callJavaScript: " + jsFunction);		
 		
-		try {
-			JSObject win = JSObject.getWindow(GeoGebraApplet.this);	            
-			win.call(jsFunction, args);
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
+		try {			
+			if (browserWindow != null)
+				browserWindow.call(jsFunction, args);
+		} catch (Exception e) {						
+			e.printStackTrace();
 		}    
 	}
 }

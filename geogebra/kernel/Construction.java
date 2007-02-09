@@ -523,7 +523,7 @@ public class Construction {
      * construction index 0 to step are available.
      * @return may return null
      */
-    public GeoElement lookupLabel(String label) {    	          	
+     public GeoElement lookupLabel(String label) {    	          	
         if (label == null)
             return null;
         
@@ -541,8 +541,7 @@ public class Construction {
         if (geo.isAvailableAtConstructionStep(step))
 			return geo;
 		else
-			return null;
-           
+			return null;           
     }
 
     /**

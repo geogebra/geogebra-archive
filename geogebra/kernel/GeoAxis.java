@@ -22,9 +22,11 @@ public class GeoAxis extends GeoLine {
 	public static final int Y_AXIS = 2;
 	
 	private GeoPoint origin;
+	private int type;
 
 	public GeoAxis(Construction cons, int type) {
 		super(cons);
+		this.type = type;
 		origin = new GeoPoint(cons);
 		origin.setCoords(0,0,1);
 		setStartPoint(origin);
@@ -41,6 +43,10 @@ public class GeoAxis extends GeoLine {
 				break;
 		}
 		setFixed(true);
+	}
+	
+	public int getType() {
+		return type;
 	}
 	
 	/**

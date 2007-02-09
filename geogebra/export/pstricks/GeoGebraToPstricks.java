@@ -132,7 +132,8 @@ public class GeoGebraToPstricks implements ActionListener {
 		}
 		
 		// Draw axis
-		if (euclidianView.getShowAxes()) drawAxis();
+		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
+			drawAxis();
 		
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/

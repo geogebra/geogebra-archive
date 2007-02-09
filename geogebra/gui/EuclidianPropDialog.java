@@ -163,8 +163,10 @@ ItemListener, WindowListener {
         cbAxesStyle = new JComboBox();
         label = new JLabel(app.getPlain("LineStyle") + ":");    
         label.setLabelFor(cbAxesStyle);
-        cbAxesStyle.addItem("\u2014"); // line
+        cbAxesStyle.addItem("\u2014"); // line       
         cbAxesStyle.addItem("\u2192"); // arrow
+        cbAxesStyle.addItem("\u2014" + " " + app.getPlain("Bold")); // bold line 
+        cbAxesStyle.addItem("\u2192" + " " + app.getPlain("Bold")); // bold arrow
         cbAxesStyle.setEditable(false);        
         axesLine.add(label);   
         axesLine.add(cbAxesStyle);   
@@ -278,8 +280,8 @@ ItemListener, WindowListener {
 		btGridColor.setForeground(view.getGridColor());
 		
 		cbShowAxes.removeActionListener(this);
-        cbShowAxes.setSelected(view.getShowAxes());
-        cbShowAxes.addActionListener(this);
+        cbShowAxes.setSelected(view.getShowXaxis() && view.getShowYaxis());
+        cbShowAxes.addActionListener(this);          
         
         cbShowGrid.removeActionListener(this);
         cbShowGrid.setSelected(view.getShowGrid()); 
@@ -362,7 +364,7 @@ ItemListener, WindowListener {
 					app.showColorChooser(view.getGridColor()));			
 		}
 		else if (source == cbShowAxes) {
-			view.showAxes(cbShowAxes.isSelected());			
+			view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());			
 		}
 		else if (source == cbShowGrid) {
 			view.showGrid(cbShowGrid.isSelected());			
@@ -469,20 +471,24 @@ ItemListener, WindowListener {
 
 		private int axis;
 		
-		private JCheckBox cbAxisNumber, cbManualTicks;
+		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks;
 		private NumberComboBox ncbTickDist, ncbMin, ncbMax;		
-		private JComboBox cbAxisLabel, cbUnitLabel;				
+		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;				
 		
 		// axis: 0 = x, 1 = y
 		public AxisPanel(int axis) {
-			this.axis = axis;
-			
-			setLayout(new BorderLayout());			
+			this.axis = axis;			
+						
+			setLayout(new BorderLayout());
+			String strAxis = (axis == 0) ? app.getPlain("xAxis") : app.getPlain("yAxis");
+			cbShowAxis = new JCheckBox(app.getPlain("Show") + " " + strAxis);		
 			cbAxisNumber = new JCheckBox(app.getPlain("AxisNumbers"));			
 			ncbMin = new NumberComboBox(app);
 			ncbMax = new NumberComboBox(app);			
 			ncbTickDist = new NumberComboBox(app);
 			cbManualTicks = new JCheckBox(app.getPlain("TickDistance") + ":");
+			
+			cbShowAxis.addActionListener(this);			
 			cbAxisNumber.addActionListener(this);					
 			ncbMin.addItemListener(this);
 			ncbMax.addItemListener(this);			
@@ -491,8 +497,10 @@ ItemListener, WindowListener {
 			
 			cbAxisLabel = new JComboBox();
 			cbUnitLabel = new JComboBox();
+			cbTickStyle = new JComboBox();
 			cbAxisLabel.setEditable(true);
 			cbUnitLabel.setEditable(true);
+			cbTickStyle.setEditable(false);
 		
 			cbUnitLabel.addItem(null);
 			cbUnitLabel.addItem(PI_STR); // pi				
@@ -507,14 +515,33 @@ ItemListener, WindowListener {
 			for (int i = 0; i < greeks.length; i++) {
 				cbAxisLabel.addItem(greeks[i]);		
 			}					
+			
+			cbTickStyle = new JComboBox();			
+			char big = '|';
+			char small = '\'';
+			cbTickStyle.addItem(" " + big + "  " + small + "  " + big + "  " + small + "  " + big); // major and minor ticks
+			cbTickStyle.addItem( " " + big + "     " + big + "     " + big); // major ticks only
+			cbTickStyle.addItem(""); // no ticks
+						
 			cbAxisLabel.addActionListener(this);
 			cbUnitLabel.addActionListener(this);
+			cbTickStyle.addActionListener(this);
 			
-			JPanel firstLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
-			firstLine.add(cbAxisNumber);
-			firstLine.add(Box.createRigidArea(new Dimension(5,0)));	
-			firstLine.add(cbManualTicks);			
-			firstLine.add(ncbTickDist);											
+			JPanel showAxisPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
+			showAxisPanel.add(cbShowAxis);
+			showAxisPanel.add(Box.createRigidArea(new Dimension(10,0)));	
+			showAxisPanel.add(new JLabel(app.getPlain("AxisTicks") + ":"));			
+			showAxisPanel.add(cbTickStyle);	
+			
+			JPanel numberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
+			numberPanel.add(cbAxisNumber);
+			numberPanel.add(Box.createRigidArea(new Dimension(5,0)));	
+			numberPanel.add(cbManualTicks);			
+			numberPanel.add(ncbTickDist);		
+			
+			JPanel firstLine = new JPanel(new BorderLayout(5,0));
+			firstLine.add(showAxisPanel, BorderLayout.NORTH);
+			firstLine.add(numberPanel, BorderLayout.CENTER);
 					
 			JPanel secondLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
 			secondLine.add(new JLabel(app.getPlain("AxisUnitLabel") + ":"));
@@ -545,7 +572,18 @@ ItemListener, WindowListener {
 		public void actionPerformed(ActionEvent e) {				
 			Object source = e.getSource();
 			
-			if (source == cbAxisNumber) {
+			if (source == cbShowAxis) {
+				boolean showXaxis, showYaxis; 
+				if (axis == 0) {
+					showXaxis = cbShowAxis.isSelected();
+					showYaxis = view.getShowYaxis();
+				} else {					
+					showXaxis = view.getShowXaxis();
+					showYaxis = cbShowAxis.isSelected();
+				}				
+				view.showAxes(showXaxis, showYaxis);	
+			} 
+			else if (source == cbAxisNumber) {
 				boolean [] show = view.getShowAxesNumbers();
 				show[axis] = cbAxisNumber.isSelected();
 				view.setShowAxesNumbers(show); 
@@ -567,6 +605,12 @@ ItemListener, WindowListener {
 				labels[axis] = text;
 				view.setAxesLabels(labels);
 			}
+			else if (source == cbTickStyle) {
+				int type = cbTickStyle.getSelectedIndex();
+				int [] styles = view.getAxesTickStyles();
+				styles[axis] = type;
+				view.setAxesTickStyles(styles);
+			}	
 			
 			view.updateBackground();			
 			updateDialog();
@@ -641,7 +685,20 @@ ItemListener, WindowListener {
 		 	
 		 	cbUnitLabel.removeActionListener(this);
 		 	cbUnitLabel.setSelectedItem(view.getAxesUnitLabels()[axis]);
-		 	cbUnitLabel.addActionListener(this);		 	
+		 	cbUnitLabel.addActionListener(this);
+		 				
+		    cbShowAxis.removeActionListener(this);
+	        cbShowAxis.setSelected(view.getShowXaxis());
+	        cbShowAxis.addActionListener(this);	        
+	        
+	        cbTickStyle.removeActionListener(this);
+	        int type = view.getAxesTickStyles()[axis];
+	        cbTickStyle.setSelectedIndex(type);	        
+	        cbTickStyle.addActionListener(this);
+	        
+	        cbShowAxis.removeActionListener(this);
+	        cbShowAxis.setSelected(axis == 0 ? view.getShowXaxis() : view.getShowYaxis());
+	        cbShowAxis.addActionListener(this);
 		}
 
 		

@@ -102,17 +102,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	// public static final double SCALE_MAX = 10000;
 	// public static final double SCALE_MIN = 0.1;
 	public static final double XZERO_STANDARD = 215;
-
 	public static final double YZERO_STANDARD = 315;
-
 	public static final int LINE_TYPE_FULL = 0;
-
 	public static final int LINE_TYPE_DASHED_SHORT = 10;
-
 	public static final int LINE_TYPE_DASHED_LONG = 15;
-
 	public static final int LINE_TYPE_DOTTED = 20;
-
 	public static final int LINE_TYPE_DASHED_DOTTED = 30;
 
 	public static final Integer[] getLineTypes() {
@@ -126,7 +120,13 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	public static final int AXES_LINE_TYPE_FULL = 0;
 	public static final int AXES_LINE_TYPE_ARROW = 1;
-
+	public static final int AXES_LINE_TYPE_FULL_BOLD = 2;
+	public static final int AXES_LINE_TYPE_ARROW_BOLD = 3;
+	
+	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
+	public static final int AXES_TICK_STYLE_MAJOR = 1;
+	public static final int AXES_TICK_STYLE_NONE = 2;
+	
 	public static final int POINT_STYLE_DOT = 0;
 	public static final int POINT_STYLE_CROSS = 1;
 	public static final int POINT_STYLE_CIRCLE = 2;
@@ -254,16 +254,15 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	// STROKES
 	private static MyBasicStroke standardStroke = new MyBasicStroke(1.0f);
-
-	private static MyBasicStroke selStroke = new MyBasicStroke(
-			1.0f + SELECTION_ADD);
-
-	private static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
-
-	// private static MyBasicStroke thickStroke = new MyBasicStroke(1.5f);
-
+	private static MyBasicStroke selStroke = new MyBasicStroke(1.0f + SELECTION_ADD);
+	//private static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
+	
+	// axes strokes
+	private static BasicStroke defAxesStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+	private static BasicStroke boldAxesStroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);		
+	
 	// axes and grid stroke
-	private BasicStroke axesStroke = thinStroke, gridStroke;
+	private BasicStroke axesStroke, tickStroke, gridStroke;
 
 	private Line2D.Double tempLine = new Line2D.Double();
 
@@ -310,8 +309,6 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	// axesNumberingDistances /
 	// 2
 
-	boolean showAxes = true;
-
 	boolean showGrid = false;
 
 	private boolean antiAliasing = true;
@@ -329,13 +326,12 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	int mode = MODE_MOVE;
 
+	private boolean [] showAxes = {true, true};
 	private boolean[] showAxesNumbers = { true, true };
-
 	private String[] axesLabels = { null, null };
-
 	private String[] axesUnitLabels = { null, null };
-
 	private boolean[] piAxisUnit = { false, false };
+	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR_MINOR , AXES_TICK_STYLE_MAJOR_MINOR};
 
 	// for axes labeling with numbers
 	private boolean[] automaticAxesNumberingDistances = { true, true };
@@ -408,13 +404,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	/**
 	 * Creates EuclidianView
 	 */
-	public EuclidianView(EuclidianController ec, boolean showAxes,
+	public EuclidianView(EuclidianController ec, boolean [] showAxes,
 			boolean showGrid) {
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
 		resetImage = app.getInternalImage("geogebra22.gif");
-		this.showAxes = showAxes;
+		this.showAxes[0] = showAxes[0];
+		this.showAxes[1] = showAxes[1];
 		this.showGrid = showGrid;
 
 		axesNumberFormat = new NumberFormat[2];
@@ -463,7 +460,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// added by Loïc BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		//END
-
+		
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
 		axesLabels[0] = null;
@@ -472,6 +469,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		axesUnitLabels[1] = null;
 		piAxisUnit[0] = false;
 		piAxisUnit[1] = false;
+		axesTickStyles[0] = AXES_TICK_STYLE_MAJOR_MINOR; 
+		axesTickStyles[1] = AXES_TICK_STYLE_MAJOR_MINOR;
 
 		// for axes labeling with numbers
 		automaticAxesNumberingDistances[0] = true;
@@ -1075,15 +1074,21 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		return yZero;
 	}
 
-	public void showAxes(boolean show) {
-		if (show == showAxes)
+	public void showAxes(boolean xAxis, boolean yAxis) {
+		if (xAxis == showAxes[0] && yAxis == showAxes[1])
 			return;
-		showAxes = show;
+		
+		showAxes[0] = xAxis;
+		showAxes[1] = yAxis;
 		updateBackgroundImage();
 	}
 
-	public boolean getShowAxes() {
-		return showAxes;
+	public boolean getShowXaxis() {
+		return showAxes[0];
+	}
+	
+	public boolean getShowYaxis() {
+		return showAxes[1];
 	}
 
 	public void showGrid(boolean show) {
@@ -1132,7 +1137,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			drawZoomRectangle(g2);
 		}
 
-		if (showMouseCoords && (showAxes || showGrid))
+		if (showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
 			drawMouseCoords(g2);
 	}
 
@@ -1383,7 +1388,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		setAntialiasing(g);
 		if (showGrid)
 			drawGrid(g);
-		if (showAxes)
+		if (showAxes[0] || showAxes[1])
 			drawAxes(g);
 
 		if (app.showResetIcon())
@@ -1407,189 +1412,246 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		double ySmall2 = yZero + 3;
 		double xSmall1 = xZero - 2;
 		double xSmall2 = xZero - 3;
-		int xoffset, yoffset;
-		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW;
+		int xoffset, yoffset;	
+		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD || axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
+		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW || axesLineType == AXES_LINE_TYPE_ARROW_BOLD;	
+		
+		//AXES_TICK_STYLE_MAJOR_MINOR = 0;
+		//AXES_TICK_STYLE_MAJOR = 1;
+		//AXES_TICK_STYLE_NONE = 2;
+		boolean [] drawMajorTicks = { axesTickStyles[0] <= 1, axesTickStyles[1] <= 1};
+		boolean [] drawMinorTicks = { axesTickStyles[0] == 0, axesTickStyles[1] == 0};
 
-		FontRenderContext frc = g2.getFontRenderContext();
-
-		g2.setPaint(axesColor);
-		g2.setStroke(thinStroke);
+		FontRenderContext frc = g2.getFontRenderContext();		
 		g2.setFont(fontAxes);
 		int fontsize = fontAxes.getSize();
+		int arrowSize = fontsize / 3;			
+		g2.setPaint(axesColor);
+		 							
+		if (bold) {
+			axesStroke = boldAxesStroke;
+			tickStroke = boldAxesStroke;	
+			ySmall2++;
+			xSmall2--;
+			arrowSize += 1;
+		} else {
+			axesStroke = defAxesStroke;	
+			tickStroke = defAxesStroke;			
+		}					
+		
+		// turn antialiasing off
+		Object antiAliasValue = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		// X - AXIS
-		if (showGrid) {
-			yoffset = fontsize + 4;
-			xoffset = 10;
-		} else {
-			yoffset = fontsize + 4;
-			xoffset = 1;
-		}
-
-		// label of x axis
-		if (axesLabels[0] != null) {
-			TextLayout layout = new TextLayout(axesLabels[0], fontLine, frc);
-			g2.drawString(axesLabels[0], (int) (width - 10 - layout
-					.getAdvance()), (int) (yZero - 4));
-		}
-
-		// numbers
-		double rw = xmin - (xmin % axesNumberingDistances[0]);
-		double pix = xZero + rw * xscale;
-		double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
-		double smallTickPix;
-		double tickStep = axesStep / 2;
-		if (pix < SCREEN_BORDER) {
-			tempLine.setLine(pix, yZeroTick, pix, yBig);
-			g2.draw(tempLine);
-			pix += axesStep;
-			rw += axesNumberingDistances[0];
-		}
-		int maxX = width - SCREEN_BORDER;
-		for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
-			if (pix <= maxX) {
-				if (showAxesNumbers[0]) {															
-					String strNum = kernel.formatPi(rw, axesNumberFormat[0]);					
-					boolean zero = strNum.equals("0");
-					
-					sb.setLength(0);
-					sb.append(strNum);					
-					if (axesUnitLabels[0] != null && axesUnitLabels[0] != PI_STRING) 						
-						sb.append(axesUnitLabels[0]);
-						
-					TextLayout layout = new TextLayout(sb.toString(), fontAxes,
-							frc);
-					int x, y = (int) (yZero + yoffset);
-					if (zero) {
-						x = (int) (pix + 6);
-					} else {
-						x = (int) (pix + xoffset - layout.getAdvance() / 2);
-					}
-					g2.drawString(sb.toString(), x, y);
-				}
-
+		if (showAxes[0]) {
+			if (showGrid) {
+				yoffset = fontsize + 4;
+				xoffset = 10;
+			} else {
+				yoffset = fontsize + 4;
+				xoffset = 1;
+			}
+	
+			// label of x axis
+			if (axesLabels[0] != null) {
+				TextLayout layout = new TextLayout(axesLabels[0], fontLine, frc);
+				g2.drawString(axesLabels[0], (int) (width - 10 - layout.getAdvance()), (int) (yZero - 4));
+			}
+	
+			// numbers
+			double rw = xmin - (xmin % axesNumberingDistances[0]);
+			double pix = xZero + rw * xscale;
+			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
+			double smallTickPix;
+			double tickStep = axesStep / 2;
+			if (pix < SCREEN_BORDER) {
 				// big tick
-				tempLine.setLine(pix, yZeroTick, pix, yBig);
-				g2.draw(tempLine);
-			} else if (!drawArrows) {
-				// draw last tick if there is no arrow
-				tempLine.setLine(pix, yZeroTick, pix, yBig);
-				g2.draw(tempLine);
+				if (drawMajorTicks[0]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(pix, yZeroTick, pix, yBig);
+					g2.draw(tempLine);
+				}
+				pix += axesStep;
+				rw += axesNumberingDistances[0];
 			}
-
-			// small tick
+			int maxX = width - SCREEN_BORDER;
+			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
+				if (pix <= maxX) {
+					if (showAxesNumbers[0]) {															
+						String strNum = kernel.formatPi(rw, axesNumberFormat[0]);					
+						boolean zero = strNum.equals("0");
+						
+						sb.setLength(0);
+						sb.append(strNum);					
+						if (axesUnitLabels[0] != null && !piAxisUnit[0]) 						
+							sb.append(axesUnitLabels[0]);
+							
+						TextLayout layout = new TextLayout(sb.toString(), fontAxes,
+								frc);
+						int x, y = (int) (yZero + yoffset);
+						if (zero && showAxes[1]) {
+							x = (int) (pix + 6);
+						} else {
+							x = (int) (pix + xoffset - layout.getAdvance() / 2);
+						}
+						g2.drawString(sb.toString(), x, y);
+					}
+	
+					// big tick
+					if (drawMajorTicks[0]) {
+						g2.setStroke(tickStroke);
+						tempLine.setLine(pix, yZeroTick, pix, yBig);
+						g2.draw(tempLine);
+					}
+				} else if (drawMajorTicks[0] && !drawArrows) {				
+					// draw last tick if there is no arrow
+					tempLine.setLine(pix, yZeroTick, pix, yBig);
+					g2.draw(tempLine);			
+				}
+	
+				// small tick
+				smallTickPix = pix - tickStep;
+				if (drawMinorTicks[0]) {	
+					g2.setStroke(tickStroke);
+					tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
+					g2.draw(tempLine);
+				}
+			}
+			// last small tick
 			smallTickPix = pix - tickStep;
-			tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
-			g2.draw(tempLine);
-		}
-		// last small tick
-		smallTickPix = pix - tickStep;
-		if (!drawArrows || smallTickPix <= maxX) {
-			tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
-			g2.draw(tempLine);
-		}
-
-		// y-Axis
-		if (showGrid) {
-			xoffset = -2 - fontsize / 4;
-			yoffset = -2;
-		} else {
-			xoffset = -4 - fontsize / 4;
-			yoffset = fontsize / 2 - 1;
-		}
-
-		// label of y axis
-		if (axesLabels[1] != null) {
-			TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
-			g2.drawString(axesLabels[1], (int) (xZero + 5), (int) (5 + layout
-					.getAscent()));
-		}
-
-		// numbers
-		rw = ymax - (ymax % axesNumberingDistances[1]);
-		pix = yZero - rw * yscale;
-		axesStep = yscale * axesNumberingDistances[1]; // pixelstep
-		tickStep = axesStep / 2;
-
-		// first small tick
-		smallTickPix = pix - tickStep;
-		if (!drawArrows || smallTickPix > SCREEN_BORDER) {
-			tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
-			g2.draw(tempLine);
-		}
-
-		// don't get too near to the top of the screen
-		if (pix < SCREEN_BORDER) {
-			if (!drawArrows) {
-				// draw tick if there is no arrow
-				tempLine.setLine(xBig, pix, xZeroTick, pix);
+			if (drawMinorTicks[0] && (!drawArrows || smallTickPix <= maxX)) {
+				g2.setStroke(tickStroke);
+				tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
 				g2.draw(tempLine);
 			}
-			smallTickPix = pix + tickStep;
-			if (smallTickPix > SCREEN_BORDER) {
+			
+			// x-Axis
+			g2.setStroke(axesStroke);
+			tempLine.setLine(0, yZero, width, yZero);
+			g2.draw(tempLine);
+			
+			if (drawArrows) {
+				// tur antialiasing off				
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
+				
+				// draw arrow for x-axis				
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero - arrowSize);
+				g2.draw(tempLine);
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero + arrowSize);
+				g2.draw(tempLine);
+				
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			}
+		}
+
+		// Y-AXIS
+		if (showAxes[1]) {
+			if (showGrid) {
+				xoffset = -2 - fontsize / 4;
+				yoffset = -2;
+			} else {
+				xoffset = -4 - fontsize / 4;
+				yoffset = fontsize / 2 - 1;
+			}
+	
+			// label of y axis
+			if (axesLabels[1] != null) {
+				TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
+				g2.drawString(axesLabels[1], (int) (xZero + 5), (int) (5 + layout
+						.getAscent()));
+			}
+	
+			// numbers
+			double rw = ymax - (ymax % axesNumberingDistances[1]);
+			double pix = yZero - rw * yscale;
+			double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
+			double tickStep = axesStep / 2;
+	
+			// first small tick
+			double smallTickPix = pix - tickStep;
+			if (drawMinorTicks[1] && (!drawArrows || smallTickPix > SCREEN_BORDER)) {
+				g2.setStroke(tickStroke);
 				tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
 				g2.draw(tempLine);
 			}
-			pix += axesStep;
-			rw -= axesNumberingDistances[1];
-		}
-		int maxY = height - SCREEN_BORDER;
-		for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
-			if (pix <= maxY) {
-				if (showAxesNumbers[1]) {
-					String strNum = kernel.formatPi(rw, axesNumberFormat[1]);					
-					boolean zero = strNum.equals("0");
-					
-					sb.setLength(0);
-					sb.append(strNum);					
-					if (axesUnitLabels[1] != null && axesUnitLabels[1] != PI_STRING) 						
-						sb.append(axesUnitLabels[1]);
-
-					TextLayout layout = new TextLayout(sb.toString(), fontAxes,
-							frc);
-					int x = (int) (xZero + xoffset - layout.getAdvance());
-					int y;
-					if (zero) {
-						y = (int) (yZero - 2);
-					} else {
-						y = (int) (pix + yoffset);
-					}
-					g2.drawString(sb.toString(), x, y);
+	
+			// don't get too near to the top of the screen
+			if (pix < SCREEN_BORDER) {
+				if (drawMajorTicks[1] && !drawArrows) {
+					// draw tick if there is no arrow
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xBig, pix, xZeroTick, pix);
+					g2.draw(tempLine);
 				}
+				smallTickPix = pix + tickStep;
+				if (drawMinorTicks[1] && smallTickPix > SCREEN_BORDER) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
+					g2.draw(tempLine);
+				}
+				pix += axesStep;
+				rw -= axesNumberingDistances[1];
 			}
+			int maxY = height - SCREEN_BORDER;
+			for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
+				if (pix <= maxY) {
+					if (showAxesNumbers[1]) {
+						String strNum = kernel.formatPi(rw, axesNumberFormat[1]);					
+						boolean zero = strNum.equals("0");
+						
+						sb.setLength(0);
+						sb.append(strNum);					
+						if (axesUnitLabels[1] != null && !piAxisUnit[1]) 						
+							sb.append(axesUnitLabels[1]);
+	
+						TextLayout layout = new TextLayout(sb.toString(), fontAxes,
+								frc);
+						int x = (int) (xZero + xoffset - layout.getAdvance());
+						int y;
+						if (zero && showAxes[0]) {
+							y = (int) (yZero - 2);
+						} else {
+							y = (int) (pix + yoffset);
+						}
+						g2.drawString(sb.toString(), x, y);
+					}
+				}
+	
+				// big tick
+				if (drawMajorTicks[1]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xBig, pix, xZeroTick, pix);
+					g2.draw(tempLine);
+				}
+				
+				smallTickPix = pix + tickStep;
+				if (drawMinorTicks[1]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
+					g2.draw(tempLine);
+				}
+			}			
 
-			tempLine.setLine(xBig, pix, xZeroTick, pix);
+			// y-Axis
+			tempLine.setLine(xZero, 0, xZero, height);
 			g2.draw(tempLine);
-
-			smallTickPix = pix + tickStep;
-			tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
-			g2.draw(tempLine);
-		}
-
-		// x-Axis
-		g2.setStroke(axesStroke);
-		tempLine.setLine(0, yZero, width, yZero);
-		g2.draw(tempLine);
-
-		// y-Axis
-		tempLine.setLine(xZero, 0, xZero, height);
-		g2.draw(tempLine);
-
-		if (drawArrows) {
-			// draw arrows
-			// x
-			int size = 4;
-			tempLine.setLine(width - 1, yZero, width - 1 - size, yZero - size);
-			g2.draw(tempLine);
-			tempLine.setLine(width - 1, yZero, width - 1 - size, yZero + size);
-			g2.draw(tempLine);
-
-			// y
-			tempLine.setLine(xZero, 0, xZero - size, size);
-			g2.draw(tempLine);
-			tempLine.setLine(xZero, 0, xZero + size, size);
-			g2.draw(tempLine);
-		}
+			
+			if (drawArrows) {
+				// turn antialiasing off				
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
+				
+				// draw arrow for y-axis				
+				tempLine.setLine(xZero, 0, xZero - arrowSize, arrowSize);
+				g2.draw(tempLine);
+				tempLine.setLine(xZero, 0, xZero + arrowSize, arrowSize);
+				g2.draw(tempLine);
+				
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			}
+		}		
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
 	}
 
 	final void drawGrid(Graphics2D g2) {
@@ -1746,11 +1808,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		// look for axis
 		if (imageCount == 0) {
-			if (showAxes) {
-				if (Math.abs(yZero - p.y) < 3)
-					foundHits.add(kernel.getXAxis());
-				if (Math.abs(xZero - p.x) < 3)
-					foundHits.add(kernel.getYAxis());
+			if (showAxes[0] && Math.abs(yZero - p.y) < 3) {				
+				foundHits.add(kernel.getXAxis());				
+			}
+			if (showAxes[1] && Math.abs(xZero - p.x) < 3) {
+				foundHits.add(kernel.getYAxis());
 			}
 		}
 
@@ -2227,9 +2289,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		sb.append("\"");
 		sb.append("/>\n");
 
-		sb.append("\t<evSettings axes=\"");
-		sb.append(showAxes);
-		sb.append("\" grid=\"");
+		sb.append("\t<evSettings grid=\"");
 		sb.append(showGrid);
 		sb.append("\" pointCapturing=\"");
 		sb.append(pointCapturingMode);
@@ -2277,18 +2337,24 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		for (int i = 0; i < 2; i++) {
 			sb.append("\t<axis id=\"");
 			sb.append(i);
+			sb.append("\" show=\"");
+			sb.append(showAxes[i]);
 			sb.append("\" label=\"");
 			sb.append(axesLabels[i] == null ? "" : axesLabels[i]);
 			sb.append("\" unitLabel=\"");
 			sb.append(axesUnitLabels[i] == null ? "" : axesUnitLabels[i]);
+			sb.append("\" tickStyle=\"");
+			sb.append(axesTickStyles[i]);
 			sb.append("\" showNumbers=\"");
 			sb.append(showAxesNumbers[i]);
+			
 			// the tick distance should only be saved if
 			// it isn't calculated automatically
 			if (!automaticAxesNumberingDistances[i]) {
 				sb.append("\" tickDistance=\"");
 				sb.append(axesNumberingDistances[i]);
 			}
+			
 			sb.append("\"/>\n");
 		}
 
@@ -2782,10 +2848,18 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// check if pi is an axis unit
 		for (int i = 0; i < 2; i++) {
 			piAxisUnit[i] = axesUnitLabels[i] != null
-					&& axesUnitLabels[i].equals("\u03c0");
+							&& axesUnitLabels[i].equals(PI_STRING);						
 		}
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
+	}
+	
+	public int[] getAxesTickStyles() {
+		return axesTickStyles;
+	}
+		
+	public void setAxesTickStyles(int[] axesTickStyles) {
+		this.axesTickStyles = axesTickStyles;		
 	}
 	
 	 public static String getModeText(int mode) {

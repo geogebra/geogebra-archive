@@ -795,10 +795,26 @@ public class Kernel {
 		return notifyViewsActive && !viewReiniting;
 	}
 	
-	public final void notifyRepaint() {				
-		for (int i = 0; i < viewCnt; ++i) {			
-			views[i].repaintView();
-		}		
+	private boolean notifyRepaint = true;
+		
+	public void setNotifyRepaintActive(boolean flag) {
+		if (flag != notifyRepaint) {
+			notifyRepaint = flag;
+			if (notifyRepaint)
+				notifyRepaint();
+		}
+	}
+		
+	public boolean isNotifyRepaintActive() {
+		return notifyRepaint;
+	}
+	
+	public final void notifyRepaint() {
+		if (notifyRepaint) {
+			for (int i = 0; i < viewCnt; ++i) {			
+				views[i].repaintView();
+			}
+		}
 	}
 	
 	final void notifyReset() {

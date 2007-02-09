@@ -123,7 +123,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "6. February 2007";
+    public static final String buildDate = "9. February 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -288,10 +288,11 @@ public class Application {
     private boolean showToolBarHelp = true;
     private boolean showMenuBar = true;
     private boolean showConsProtNavigation = false;
-    private boolean showAxes = true;
+    private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
-            
+                
     private boolean undoActive = true;
+    private boolean rightClickEnabled = true;
 
     private File currentPath, currentImagePath, currentFile = null;
     private boolean isSaved = true;
@@ -694,7 +695,8 @@ public class Application {
     					showAlgebraView = !optionValue.equals("false"); 
     				}    				
     				else if (optionName.equals("showAxes")) {    					
-    					showAxes = !optionValue.equals("false");    					
+    					showAxes[0] = !optionValue.equals("false");
+    					showAxes[1] = showAxes[0];
     				}
     				else if (optionName.equals("showGrid")) {    					
     					showGrid = !optionValue.equals("false");    					
@@ -1324,7 +1326,7 @@ public class Application {
      * of the component invoker
      */
     public void showPopupMenu(GeoElement geo, Component invoker, Point p) {
-    	if (geo == null) return;
+    	if (geo == null || !letShowPopupMenu()) return;    	
     	
         if (kernel.isAxis(geo)) {
         	showDrawingPadPopup(invoker, p);
@@ -2465,30 +2467,42 @@ public class Application {
     	kernel.setUndoActive(flag);
     }
     
+    /**
+     * Enables or disables right clicking in this application.
+     * This is useful for applets.
+     */
+    public void setRightClickEnabled(boolean flag) {
+    	rightClickEnabled = flag;
+    }
+    
+    final public boolean isRightClickEnabled() {
+    	return rightClickEnabled;
+    }
+    
     public boolean letRename() {
-    	return true;
-        //return frame != null && frame.isShowing();
+    	return true;     
     }
     
     public boolean letDelete() {
     	return true;
-        //return frame != null && frame.isShowing();
     }
     
     public boolean letRedefine() {
-    	return true;
-        //return frame != null && frame.isShowing();
+    	return true;      
     }
-    
-    public boolean letShowPropertiesDialog() {
-        //return !isApplet();
-        return true;
+
+    public boolean letShowPopupMenu() {       
+        return rightClickEnabled;
+    }
+        
+    public boolean letShowPropertiesDialog() {       
+        return rightClickEnabled;
     }
 
     public void updateMenuBar() {
     	if (!showMenuBar) return;
     	
-        cbShowAxes.setSelected(euclidianView.getShowAxes());
+        cbShowAxes.setSelected(euclidianView.getShowXaxis() && euclidianView.getShowYaxis());
         cbShowGrid.setSelected(euclidianView.getShowGrid());
         cbShowAlgebraView.setSelected(showAlgebraView);
         cbShowAlgebraInput.setSelected(showAlgebraInput);
@@ -2623,7 +2637,7 @@ public class Application {
         // View
         menu = new JMenu(getMenu("View"));
         cbShowAxes = new JCheckBoxMenuItem(showAxesAction);
-        cbShowAxes.setSelected(euclidianView.getShowAxes());
+        cbShowAxes.setSelected(euclidianView.getShowXaxis() && euclidianView.getShowYaxis());
         menu.add(cbShowAxes);
 
         cbShowGrid = new JCheckBoxMenuItem(showGridAction);
@@ -2986,10 +3000,11 @@ public class Application {
 
 			public void actionPerformed(ActionEvent e) {
                 // toggle axes
-            	euclidianView.showAxes(!euclidianView.getShowAxes());
+				boolean bothAxesShown = euclidianView.getShowXaxis() && euclidianView.getShowYaxis();
+				euclidianView.showAxes(!bothAxesShown, !bothAxesShown);				            	
                 euclidianView.repaint();
                 storeUndoInfo();
-                cbShowAxes.setSelected(euclidianView.getShowAxes());
+                cbShowAxes.setSelected(!bothAxesShown);
             }
         };
 

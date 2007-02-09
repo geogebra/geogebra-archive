@@ -384,7 +384,14 @@ public class MyXMLHandler implements DocHandler {
 
     private boolean handleEvSettings(EuclidianView ev, LinkedHashMap attrs) {
         try {
-            ev.showAxes(parseBoolean((String) attrs.get("axes")));
+        	// axes attribute was removed with V3.0, see handleAxis()
+        	// this code is for downward compatibility
+        	String strAxes = (String) attrs.get("axes");
+        	if (strAxes != null) {
+        		boolean showAxes = parseBoolean(strAxes);
+        		ev.showAxes(showAxes, showAxes);
+        	}
+            
             ev.showGrid(parseBoolean((String) attrs.get("grid")));
             
             String str = (String) attrs.get("pointCapturing");
@@ -468,9 +475,21 @@ public class MyXMLHandler implements DocHandler {
     	// <axis id="0" label="x" unitLabel="x" showNumbers="true" tickDistance="2"/>
     	try {
     		int axis = Integer.parseInt((String) attrs.get("id"));
+    		String strShowAxis = (String) attrs.get("show");
     		String label = (String) attrs.get("label");
-    		String unitLabel = (String) attrs.get("unitLabel");
-    		boolean showNumbers = parseBoolean((String) attrs.get("showNumbers"));    		
+    		String unitLabel = (String) attrs.get("unitLabel");    		
+    		boolean showNumbers = parseBoolean((String) attrs.get("showNumbers"));     		
+    		
+    		// show this axis
+    		if (strShowAxis != null) {
+    			boolean showAxis = parseBoolean(strShowAxis);
+    			if (axis == 0) { // xaxis
+    				ev.showAxes(showAxis, ev.getShowYaxis());	
+    			} 
+    			else if (axis == 1) { // yaxis
+        			ev.showAxes(ev.getShowXaxis(), showAxis);	        			
+    			}    			
+    		}    		    		
     		
     		// set label
     		if (label != null && label.length() > 0) {
@@ -496,7 +515,14 @@ public class MyXMLHandler implements DocHandler {
     		if (strTickDist != null) {
     			double tickDist = Double.parseDouble(strTickDist);    			
     			ev.setAxesNumberingDistance(tickDist, axis);
-    		}    		            
+    		}   
+    		    		
+    		// tick style
+    		String strTickStyle = (String) attrs.get("tickStyle");
+    		if (strTickStyle != null) {
+    			int tickStyle = Integer.parseInt(strTickStyle);   
+    			ev.getAxesTickStyles()[axis] = tickStyle;    				
+    		}
     		return true;	
     	} catch (Exception e) {
     		return false;

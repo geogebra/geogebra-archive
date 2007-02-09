@@ -413,6 +413,7 @@ final public class EuclidianController implements MouseListener,
 		DRAGGING_OCCURED = false;			
 
 		if (e.isPopupTrigger() || e.isMetaDown()) {
+			if (!app.isRightClickEnabled()) return;
 			RIGHT_CLICK = true;			
 			zoomStartPoint.setLocation(mouseLoc);
 			return;
@@ -945,7 +946,7 @@ final public class EuclidianController implements MouseListener,
 		ArrayList hits = null;
 		GeoElement geo;
 				
-		if (RIGHT_CLICK) {
+		if (RIGHT_CLICK) {									
 			if (view.zoomRectangle != null) {
 				if (processZoomRectangle())
 					return;
@@ -2495,11 +2496,21 @@ final public class EuclidianController implements MouseListener,
 				
 		GeoElement geo = chooseGeo(hits);
 		if (geo != null) {
-			if (geo instanceof GeoAxis)	{			
-				view.showAxes(false);
+			// hide axis
+			if (geo instanceof GeoAxis)	{
+				switch (((GeoAxis) geo).getType()) {
+					case GeoAxis.X_AXIS:
+						view.showAxes(false, view.getShowYaxis());
+						break;
+						
+					case GeoAxis.Y_AXIS:
+						view.showAxes(view.getShowXaxis(), false);
+						break;
+				}				
 				app.updateMenuBar();
-			} else
+			} else {
 				app.toggleSelectedGeo(geo);
+			}
 			return true;
 		}						
 		return false;

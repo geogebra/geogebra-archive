@@ -161,7 +161,7 @@ public class MyXMLio {
     
     private void doParseXML(Reader ir, boolean clearAll) throws Exception {
     	boolean oldVal = kernel.isNotifyViewsActive();    	 
-    	//kernel.setNotifyViewsActive(false);
+    	kernel.setNotifyViewsActive(false);
 		
 		if (clearAll)
 			kernel.clearAll();	
