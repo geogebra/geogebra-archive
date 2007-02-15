@@ -378,7 +378,7 @@ public class Construction {
     	// init and update all algorithms
         int size = algoList.size();
         for (int i = 0; i < size; ++i) {        	        	
-       	 AlgoElement algo = (AlgoElement)algoList.get(i);        	                     
+       	AlgoElement algo = (AlgoElement)algoList.get(i);        	                     
             algo.continuityUpdate();                        	
         }  
     }

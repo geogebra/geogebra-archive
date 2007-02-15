@@ -3371,10 +3371,17 @@ public class Kernel {
 		translateCommandName = b;
 	}
 
+	/**
+	 * States whether the continuity heuristic is active.
+	 */
 	final public boolean isContinous() {
 		return continous;
 	}
 
+	/**
+	 * Turns the continuity heuristic on or off.
+	 * Note: the macro kernel always turns continuity off. 
+	 */
 	public void setContinous(boolean continous) {
 		if (continous != this.continous) {
 			this.continous = continous;

@@ -91,7 +91,7 @@ public abstract class AlgoIntersect extends AlgoElement {
 				points[i].setUndefined();
 				if (defpoints != null) defpoints[i].setUndefined();
 			}
-		}
+		}		
     }
     
     

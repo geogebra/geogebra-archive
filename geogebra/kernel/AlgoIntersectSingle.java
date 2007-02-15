@@ -80,13 +80,15 @@ public class AlgoIntersectSingle extends AlgoIntersect {
     
 	final void initForNearToRelationship() {				
 		parentOutput = algo.getIntersectionPoints();		
-		needsIniting = false;
+		needsIniting = false;				
 		
 		// tell parent algorithm about the loaded position;
 		// this is needed for initing the intersection algo with
 		// the intersection point stored in XML files
 		algo.initForNearToRelationship();
-		algo.setIntersectionPoint(index, point);			
+		algo.setIntersectionPoint(index, point);
+		// TODO: this line creates bug where intersection points become one
+		// however, it ensures that newly created intersection points are shown
 		algo.compute();
 	}
 

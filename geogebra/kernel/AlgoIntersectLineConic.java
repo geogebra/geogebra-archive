@@ -59,7 +59,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean isLimitedPathSituation;   
     
     /*
-     * There is an important special case I where my heuristic of the 
+     * There is an important special case where my heuristic of the 
      * near-to-relationship fails:
      * Circle[A, B] is intersected with a line passing through A and B.
      * In this case the first intersection point should always be B
@@ -236,7 +236,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 
         // STANDARD CASE
         // calc new points Q
-        intersect(c, g, Q);                
+        intersect(c, g, Q);                         
         
         // for limited paths we have to distinguish between intersection points Q
         // that lie on both limited paths or not. This is important for choosing

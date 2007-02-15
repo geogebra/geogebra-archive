@@ -95,12 +95,19 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     }
     
     /** 
-	 * states wheter P lies on this line or not. Note: this method
-	 * is not overwritten by subclasses like isIntersectionPointIncident()
+	 * States wheter P lies on this line or not.
 	 */
-	final boolean isOnFullLine(GeoPoint P, double eps) {		
-		//return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps;
-		return Math.abs(x * P.x + y * P.y + z * P.z) < eps;		
+	final boolean isOnFullLine(GeoPoint P, double eps) {						
+		if (!P.isDefined()) return false;		
+			
+		double simplelength =  Math.abs(x) + Math.abs(y);
+		if (P.isInfinite()) {		
+			return Math.abs(x * P.x + y * P.y) < eps * simplelength;
+		}
+		else {
+			// STANDARD CASE: finite point			
+			return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps * simplelength;
+		}
 	}
     
     /** returns true if this line and g are parallel */
