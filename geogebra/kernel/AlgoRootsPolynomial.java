@@ -167,6 +167,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         }
 
         output = rootPoints;
+        noUndefinedPointsInAlgebraView();
         setDependencies();
     }
 

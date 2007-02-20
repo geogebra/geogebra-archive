@@ -2,6 +2,9 @@ package geogebra.cas;
 
 
 import jasymca.GeoGebraJasymca;
+
+import java.io.InputStream;
+
 import yacas.YacasInterpreter;
 
 /**
@@ -333,20 +336,41 @@ public class GeoGebraCAS {
     }
     
     
-    /*
+    
     public static void main(String [] args) {
     
         YacasInterpreter yacas = new YacasInterpreter();
     	
-    	String [] commands = {"mysin(x):=Sin(x);", "D(x) Sin(x);",
-    			"D(ö) mysin(ö);"};
+//      Read/eval/print loop
+        int i=1;
+		while(true){
+			System.out.println( "(In"+i+") ");				// Prompt
+			try{
+				String line 		= readLine(System.in);
+				String result = yacas.Evaluate(line);
+	      
+				System.out.println( "(Out"+i+")     "+result );
+				i++;
+			}catch(Exception e){
+				System.out.println("\n"+e);
+			}
+		}
+        
+
     	
-    	for (int i=0; i < commands.length; i++) {
-    		String result = yacas.Evaluate(removeSpecialChars(commands[i]));
-    		System.out.println("command: " + commands[i]);
-        	System.out.println("result: " + insertSpecialChars(result));        	        
-    	}    	
     }
-    */
+    
  
+	
+//	 Read everything until ';' or EOF
+	static String readLine( InputStream in ){
+		StringBuffer s = new StringBuffer();
+		try{
+			int c;
+			while((c=in.read()) != -1 && c!=';')
+				s.append((char)c);
+		}catch(Exception e){
+		}
+		return s.toString();
+	}
 }

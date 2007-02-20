@@ -98,7 +98,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
         input[0] = A;
         input[1] = B;
         
-        output = P;              
+        output = P;
+        noUndefinedPointsInAlgebraView();
         setDependencies(); // done by AlgoElement
     }    
         

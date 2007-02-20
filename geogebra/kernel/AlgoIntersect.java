@@ -26,7 +26,17 @@ public abstract class AlgoIntersect extends AlgoElement {
         super(c);
     }
     
-
+    boolean showUndefinedPointsInAlgebraView() {
+    	return false;
+    }
+    
+    void noUndefinedPointsInAlgebraView() {
+    	 GeoPoint [] points = getIntersectionPoints();
+    	 for (int i=1; i < points.length; i++) {
+    		 points[i].showUndefinedInAlgebraView(false);
+    	 }
+    }
+    
 
     void addUser() {
         numberOfUsers++;
@@ -73,6 +83,9 @@ public abstract class AlgoIntersect extends AlgoElement {
      * remain at their saved positions.
      */
     void setIntersectionPoint(int index, GeoPoint p) {
+    	// don't init intersection point if p is undefined
+    	if (!p.isDefined()) return;
+    	
     	GeoPoint [] points = getIntersectionPoints();
     	GeoPoint [] defpoints = getLastDefinedIntersectionPoints();
     	
@@ -83,11 +96,13 @@ public abstract class AlgoIntersect extends AlgoElement {
     	// set coords of intersection point to those of p
     	points[index].setCoords(p);  
     	if (defpoints != null) defpoints[index].setCoords(p);
+    	// we only remember setting the point if we used a defined point
 		didSetIntersectionPoint[index] = true;
 
 		// all other intersection points should be set undefined
+		// unless they have been set before
 		for (int i=0; i < points.length; i++) {
-			if (!didSetIntersectionPoint[i]) {
+			if (!didSetIntersectionPoint[i]) {				
 				points[i].setUndefined();
 				if (defpoints != null) defpoints[i].setUndefined();
 			}

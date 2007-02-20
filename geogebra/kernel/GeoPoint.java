@@ -51,6 +51,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     // temp
     public double inhomX, inhomY;
     private boolean isInfinite, isDefined;
+    private boolean showUndefinedInAlgebraView = true;
     
     // list of Locateables (GeoElements) that this point is start point of
     // if this point is removed, the Locateables have to be notified
@@ -173,7 +174,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     
     final boolean showInAlgebraView() {
         // intersection points
-        return isDefined || !(getParentAlgorithm() instanceof AlgoIntersect);
+        return isDefined || showUndefinedInAlgebraView;
     }   
     
 	final public boolean isDefined() { 
@@ -689,5 +690,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		return true;
 	}
 	
+	void showUndefinedInAlgebraView(boolean flag) {
+		showUndefinedInAlgebraView = flag;
+	}
 
+	
 }

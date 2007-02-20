@@ -17,7 +17,6 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	// output
 	private GeoPoint point;
 	
-	private boolean needsIniting = true;
 	private GeoPoint [] parentOutput;
 
 	// intersection point is index-th intersection point of algo
@@ -41,6 +40,10 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		compute();
 		point.setLabel(label);		
 	}
+	
+    boolean showUndefinedPointsInAlgebraView() {
+    	return true;
+    }
 	
 	String getClassName() {
 		return "AlgoIntersectSingle";
@@ -79,25 +82,19 @@ public class AlgoIntersectSingle extends AlgoIntersect {
     }
     
 	final void initForNearToRelationship() {				
-		parentOutput = algo.getIntersectionPoints();		
-		needsIniting = false;				
+		parentOutput = algo.getIntersectionPoints();					
 		
 		// tell parent algorithm about the loaded position;
 		// this is needed for initing the intersection algo with
 		// the intersection point stored in XML files
 		algo.initForNearToRelationship();
 		algo.setIntersectionPoint(index, point);
-		// TODO: this line creates bug where intersection points become one
-		// however, it ensures that newly created intersection points are shown
 		algo.compute();
 	}
 
 	void compute() {		
-		if (needsIniting)  { 		
-			point.setUndefined();
-		} else {
-			point.setCoords(parentOutput[index]);						
-		} 
+		// get coordinates from helper algorithm
+		point.setCoords(parentOutput[index]);						
 	}   
 	
 	public void remove() {

@@ -141,7 +141,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         input[0] = c;
         input[1] = g;
         
-        output = P;             
+        output = P;        
+        noUndefinedPointsInAlgebraView();
         setDependencies(); // done by AlgoElement
     }    
     
@@ -204,6 +205,17 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
                 possibleSpecialCase = false;
             }
         }   
+        
+        // continuity is turned off
+        if (!kernel.isContinous()) {
+        	// TODO: continuity off: find initial permutation
+        	// of intersection points (e.g. when loaded) and
+        	// then keep this permutation and never change it
+        }
+        
+        
+        
+        // continuity is turned ON
         
         /* 
          * D ... old defined points
