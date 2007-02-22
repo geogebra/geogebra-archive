@@ -19,6 +19,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoDeriveable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -3579,5 +3580,356 @@ class CmdIf extends CommandProcessor {
     }
     
 }
+
+/**
+* Victor Franco Espino 11-02-2007: Command's processors for new commands
+*/
+
+class CmdAffineRatio extends CommandProcessor {
+	public CmdAffineRatio(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 3 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoPoint()) ) 
+               && (ok[2] = (arg[2].isGeoPoint()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.AffineRatio(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoPoint) arg[1],
+                           (GeoPoint) arg[2])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               if (!ok[1])
+                   throw argErr(app, c.getName(), arg[1]);
+               else
+                   throw argErr(app, c.getName(), arg[2]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdCrossRatio extends CommandProcessor {
+	public CmdCrossRatio(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 4 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoPoint()) ) 
+               && (ok[2] = (arg[2].isGeoPoint()) )
+               && (ok[3] = (arg[3].isGeoPoint()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.CrossRatio(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoPoint) arg[1],
+                           (GeoPoint) arg[2],
+                           (GeoPoint) arg[3])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               if (!ok[1])
+                   throw argErr(app, c.getName(), arg[1]);
+               if (!ok[2])
+                   throw argErr(app, c.getName(), arg[2]);
+               else
+                   throw argErr(app, c.getName(), arg[3]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdCurvatureVector extends CommandProcessor {
+	public CmdCurvatureVector(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 2 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoFunctionable()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.CurvatureVector(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoFunction) arg[1])};
+               return ret;
+           }else if( (ok[0] = (arg[0].isGeoPoint()) )
+                   && (ok[1] = (arg[1].isGeoCurveCartesian()) ) ){
+           	GeoElement[] ret =
+                   {
+                    kernel.CurvatureVectorCurve(
+                       c.getLabel(),
+                       (GeoPoint) arg[0],
+                       (GeoCurveCartesian) arg[1])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               else
+                   throw argErr(app, c.getName(), arg[1]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdCurvature extends CommandProcessor {
+	public CmdCurvature(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 2 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoFunctionable()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.Curvature(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoFunction) arg[1])};
+               return ret;
+           }else if( (ok[0] = (arg[0].isGeoPoint()) )
+                   && (ok[1] = (arg[1].isGeoCurveCartesian()) ) ){
+           	GeoElement[] ret =
+                   {
+                    kernel.CurvatureCurve(
+                       c.getLabel(),
+                       (GeoPoint) arg[0],
+                       (GeoCurveCartesian) arg[1])};
+                return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               else
+                   throw argErr(app, c.getName(), arg[1]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdColorCurvature extends CommandProcessor {
+	public CmdColorCurvature(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 3 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoFunctionable()) )
+               && (ok[2] = (arg[2].isGeoNumeric()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.ColorCurvature(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoFunction) arg[1],
+                           (GeoNumeric) arg[2])};
+               return ret;
+           }else if ( (ok[0] = (arg[0].isGeoPoint()) )
+                   && (ok[1] = (arg[1].isGeoCurveCartesian()) )
+                   && (ok[2] = (arg[2].isGeoNumeric()) ) ){
+                   GeoElement[] ret =
+                       {
+                            kernel.ColorCurvatureCurve(
+                               c.getLabel(),
+                               (GeoPoint) arg[0],
+                               (GeoCurveCartesian) arg[1],
+                               (GeoNumeric) arg[2])};
+                   return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               if (!ok[1])
+                   throw argErr(app, c.getName(), arg[1]);
+               else
+                   throw argErr(app, c.getName(), arg[2]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdOsculatingCircle extends CommandProcessor {
+	public CmdOsculatingCircle(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 2 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+               && (ok[1] = (arg[1].isGeoFunctionable()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.OsculatingCircle(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoFunction) arg[1])};
+               return ret;
+           }else if( (ok[0] = (arg[0].isGeoPoint()) )
+                   && (ok[1] = (arg[1].isGeoCurveCartesian()) ) ){
+           	GeoElement[] ret =
+                   {
+                    kernel.OsculatingCircleCurve(
+                       c.getLabel(),
+                       (GeoPoint) arg[0],
+                       (GeoCurveCartesian) arg[1])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               else
+                   throw argErr(app, c.getName(), arg[1]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdFunctionLength extends CommandProcessor {
+	public CmdFunctionLength(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 3 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoPoint()) )
+           	&& (ok[1] = (arg[1].isGeoPoint()) )
+               && (ok[2] = (arg[2].isGeoFunctionable()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.FunctionLength(
+                           c.getLabel(),
+                           (GeoPoint) arg[0],
+                           (GeoPoint) arg[1],
+                           (GeoFunction) arg[2])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               if (!ok[1])
+                   throw argErr(app, c.getName(), arg[1]);
+               else
+                   throw argErr(app, c.getName(), arg[2]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+class CmdCurveLength extends CommandProcessor {
+	public CmdCurveLength(AlgebraController algCtrl) {
+		super(algCtrl);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 3 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoNumeric()) )
+           	&& (ok[1] = (arg[1].isGeoNumeric()) )
+               && (ok[2] = (arg[2].isGeoCurveCartesian()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.CurveLength(
+                           c.getLabel(),
+                           (GeoNumeric) arg[0],
+                           (GeoNumeric) arg[1],
+                           (GeoCurveCartesian) arg[2])};
+               return ret;
+           } else {
+               if (!ok[0])
+                   throw argErr(app, c.getName(), arg[0]);
+               if (!ok[1])
+                   throw argErr(app, c.getName(), arg[1]);
+               else
+                   throw argErr(app, c.getName(), arg[2]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+/*
+* Victor Franco Espino 11-02-2007: End command's processors for new commands
+*/
+
 
 
