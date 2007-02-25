@@ -22,6 +22,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 
 /**
  *
@@ -62,13 +63,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public static final int CONIC_PARABOLA = 9;
 
 	/* 
-	 *            ( A[0]  A[3]    A[4] )
-	 *      A = ( A[3]  A[1]    A[5] )
-	 *            ( A[4]  A[5]    A[2] )
+	 *               ( A[0]  A[3]    A[4] )
+	 *      matrix = ( A[3]  A[1]    A[5] )
+	 *               ( A[4]  A[5]    A[2] )
 	 */
 	private int mode; // for equation
 	int type; // of conic
-	double[] A = new double[6]; // flat matrix A
+	double[] matrix = new double[6]; // flat matrix A
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
 	private AffineTransform transform = new AffineTransform();
 	public boolean trace;
@@ -85,6 +86,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
 	private boolean defined = true;
+	private ArrayList pointsOnConic;
 	
 	private EquationSolver eqnSolver;
 	
@@ -169,6 +171,32 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public boolean isPath() {
 		return true;
 	}
+	
+	/**
+	 * Returns a list of points that this conic passes through.
+	 * May return null.
+	 */
+	final ArrayList getPointsOnConic() {
+		return pointsOnConic;
+	}
+	
+	/**
+	 * Sets a list of points that this conic passes through.
+	 * This method should only be used by AlgoMacro.
+	 */
+	final void setPointsOnConic(ArrayList points) {
+		pointsOnConic = points;
+	}
+	
+	/**
+	 * Returns a list of points that this conic passes through.
+	 * May return null.
+	 */
+	final void addPointOnConic(GeoPoint p) {
+		if (pointsOnConic == null)
+			pointsOnConic = new ArrayList();
+		pointsOnConic.add(p);
+	}
 
 	/** geo is expected to be a conic. make deep copy of
 	 * member vars of geo.
@@ -180,7 +208,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		mode = co.mode;
 		type = co.type;
 		for (int i = 0; i < 6; i++)
-			A[i] = co.A[i]; // flat matrix A          
+			matrix[i] = co.matrix[i]; // flat matrix A          
 		transform.setTransform(co.transform);
 		eigenvec[0].setCoords(co.eigenvec[0]);
 		eigenvec[1].setCoords(co.eigenvec[1]);
@@ -205,7 +233,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				singlePoint = new GeoPoint(cons);
 			singlePoint.setCoords(co.singlePoint);
 		}
-		defined = co.defined;
+		defined = co.defined;		
 	}
 
 	final public void setMode(int mode) {
@@ -268,11 +296,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			case CONIC_ELLIPSE :
 			case CONIC_HYPERBOLA :
 				//	xy vanished 
-				return (kernel.isZero(A[3]));
+				return (kernel.isZero(matrix[3]));
 
 			case CONIC_PARABOLA :
 				// x\u00b2 or y\u00b2 vanished
-				return kernel.isZero(A[0]) || kernel.isZero(A[1]);
+				return kernel.isZero(matrix[0]) || kernel.isZero(matrix[1]);
 
 			default :
 				return false;
@@ -284,7 +312,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * is possible. 
 	 */
 	final public boolean isExplicitPossible() {
-		return !kernel.isZero(A[5]) && kernel.isZero(A[3]) && kernel.isZero(A[1]);
+		return !kernel.isZero(matrix[5]) && kernel.isZero(matrix[3]) && kernel.isZero(matrix[1]);
 	}
 
 	public boolean isDefined() {
@@ -293,6 +321,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 
 	public void setUndefined() {
 		defined = false;
+		type = CONIC_EMPTY;
 	}
 
 	final public void setDefined() {
@@ -308,9 +337,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		maxCoeffAbs = 0;		
 		
 		for (int i = 0; i < 6; i++) {
-			if (Double.isNaN(A[i]) || Double.isInfinite(A[i]))
+			if (Double.isNaN(matrix[i]) || Double.isInfinite(matrix[i]))
 				return false;
-			double abs = Math.abs(A[i]);			
+			double abs = Math.abs(matrix[i]);			
 			allZero = allZero && abs < Kernel.MIN_PRECISION;
 			maxCoeffAbs = maxCoeffAbs > abs ? maxCoeffAbs : abs;			
 		}
@@ -320,13 +349,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		if (maxCoeffAbs > MAX_COEFFICIENT_SIZE) {			
 			double factor = 0.1;
 			while (maxCoeffAbs * factor > MAX_COEFFICIENT_SIZE) factor /= 10;
-			for (int i=0; i < 6; i++) A[i] *= factor;			
+			for (int i=0; i < 6; i++) matrix[i] *= factor;			
 			maxCoeffAbs *= factor;
 		}
 		else if (maxCoeffAbs < MIN_COEFFICIENT_SIZE) {
 			double factor = 10;
 			while (maxCoeffAbs * factor < MIN_COEFFICIENT_SIZE) factor *= 10;			
-			for (int i=0; i < 6; i++) A[i] *= factor;						
+			for (int i=0; i < 6; i++) matrix[i] *= factor;						
 			maxCoeffAbs *= factor;
 		}			
 		
@@ -388,12 +417,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		double d,
 		double e,
 		double f) {
-		A[0] = a; // x\u00b2
-		A[1] = c; // y\u00b2
-		A[2] = f; // constant
-		A[3] = b / 2.0; // xy
-		A[4] = d / 2.0; // x
-		A[5] = e / 2.0; // y         
+		matrix[0] = a; // x\u00b2
+		matrix[1] = c; // y\u00b2
+		matrix[2] = f; // constant
+		matrix[3] = b / 2.0; // xy
+		matrix[4] = d / 2.0; // x
+		matrix[5] = e / 2.0; // y         
 
 		classifyConic();
 	}
@@ -447,12 +476,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
 	 */
 	public String toString() {
-		coeffs[0] = A[0]; // x\u00b2
-		coeffs[2] = A[1]; // y\u00b2
-		coeffs[5] = A[2]; // constant
-		coeffs[1] = 2 * A[3]; // xy        
-		coeffs[3] = 2 * A[4]; // x
-		coeffs[4] = 2 * A[5]; // y  
+		coeffs[0] = matrix[0]; // x\u00b2
+		coeffs[2] = matrix[1]; // y\u00b2
+		coeffs[5] = matrix[2]; // constant
+		coeffs[1] = 2 * matrix[3]; // xy        
+		coeffs[3] = 2 * matrix[4]; // x
+		coeffs[4] = 2 * matrix[5]; // y  
 	
 		sbToString.setLength(0);
 		sbToString.append(label);
@@ -730,14 +759,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	
 	/** return copy of flat matrix */
 	final public double[] getMatrix() {
-		double[] ret = { A[0], A[1], A[2], A[3], A[4], A[5] };
+		double[] ret = { matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5] };
 		return ret;
 	}
 
 	/** set out with flat matrix of this conic */
 	final public void getMatrix(double[] out) {
 		for (int i = 0; i < 6; i++) {
-			out[i] = A[i];
+			out[i] = matrix[i];
 		}
 	}
 
@@ -745,7 +774,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 */
 	final public void setMatrix(double[] matrix) {
 		for (int i = 0; i < 6; i++) {
-			A[i] = matrix[i];
+			this.matrix[i] = matrix[i];
 		}
 		classifyConic();
 	}
@@ -771,22 +800,22 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	/** 
 	 * Set conic's matrix from flat matrix (array of length 6).	 
 	 */
-	final public void setMatrixFromArray(double[] matrix) {
+	final public void setDegenerateMatrixFromArray(double[] matrix) {
 		for (int i = 0; i < 6; i++) {
-			A[i] = matrix[i];
-		}
-		classifyConic();
+			this.matrix[i] = matrix[i];
+		}				
+		classifyConic(true);						
 	}
 
-	/** set conic's matrix from 3x3 matrix (needn't be symmetric).   
+	/** set conic's matrix from 3x3 matrix (not necessarily be symmetric).   
 	 */
 	final public void setMatrix(double[][] C) {
-		A[0] = C[0][0];
-		A[1] = C[1][1];
-		A[2] = C[2][2];
-		A[3] = (C[0][1] + C[1][0]) / 2.0;
-		A[4] = (C[0][2] + C[2][0]) / 2.0;
-		A[5] = (C[1][2] + C[2][1]) / 2.0;                              		
+		matrix[0] = C[0][0];
+		matrix[1] = C[1][1];
+		matrix[2] = C[2][2];
+		matrix[3] = (C[0][1] + C[1][0]) / 2.0;
+		matrix[4] = (C[0][2] + C[2][0]) / 2.0;
+		matrix[5] = (C[1][2] + C[2][1]) / 2.0;                              		
 		classifyConic();
 	}
 
@@ -836,12 +865,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			lines[1].y = Double.NaN;
 			lines[1].z = Double.NaN;
 			// set degenerate matrix
-			A[0] = 0.0d;
-			A[1] = 0.0d;
-			A[2] = lines[0].z;
-			A[3] = 0.0d;
-			A[4] = lines[0].x / 2.0;
-			A[5] = lines[0].y / 2.0;
+			matrix[0] = 0.0d;
+			matrix[1] = 0.0d;
+			matrix[2] = lines[0].z;
+			matrix[3] = 0.0d;
+			matrix[4] = lines[0].x / 2.0;
+			matrix[5] = lines[0].y / 2.0;
 		} else {
 			setCircleMatrix(M, M.distance(P));
 		}
@@ -860,12 +889,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		//  [   1   0       -m       ]
 		//  [   0   1       -n       ]
 		//  [  -m  -n       m\u00b2+n\u00b2-r\u00b2 ]        
-		A[0] = 1.0d;
-		A[1] = 1.0d;
-		A[2] = b.x * b.x + b.y * b.y - r * r;
-		A[3] = 0.0;
-		A[4] = -b.x;
-		A[5] = -b.y;
+		matrix[0] = 1.0d;
+		matrix[1] = 1.0d;
+		matrix[2] = b.x * b.x + b.y * b.y - r * r;
+		matrix[3] = 0.0;
+		matrix[4] = -b.x;
+		matrix[5] = -b.y;
 
 		if (r > kernel.getEpsilon()) { // radius not zero 
 			if (type != CONIC_CIRCLE) {
@@ -896,13 +925,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		double fx = F.inhomX;
 		double fy = F.inhomY;
 
-		A[0] = g.y * g.y;
-		A[1] = g.x * g.x;
-		double lsq = A[0] + A[1];
-		A[2] = lsq * (fx * fx + fy * fy) - g.z * g.z;
-		A[3] = -g.x * g.y;
-		A[4] = - (lsq * fx + g.x * g.z);
-		A[5] = - (lsq * fy + g.y * g.z);
+		matrix[0] = g.y * g.y;
+		matrix[1] = g.x * g.x;
+		double lsq = matrix[0] + matrix[1];
+		matrix[2] = lsq * (fx * fx + fy * fy) - g.z * g.z;
+		matrix[3] = -g.x * g.y;
+		matrix[4] = - (lsq * fx + g.x * g.z);
+		matrix[5] = - (lsq * fy + g.y * g.z);
 				
 		classifyConic();
 	}
@@ -936,12 +965,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		double asq = a * a;
 		double afo = asq * asq;
 
-		A[0] = 4.0 * (a2 - diff1) * (a2 + diff1);
-		A[3] = -4.0 * diff1 * diff2;
-		A[1] = 4.0 * (a2 - diff2) * (a2 + diff2);
-		A[4] = -2.0 * (asq4 * (b1 + c1) - diff1 * sqsumdiff);
-		A[5] = -2.0 * (asq4 * (b2 + c2) - diff2 * sqsumdiff);
-		A[2] =
+		matrix[0] = 4.0 * (a2 - diff1) * (a2 + diff1);
+		matrix[3] = -4.0 * diff1 * diff2;
+		matrix[1] = 4.0 * (a2 - diff2) * (a2 + diff2);
+		matrix[4] = -2.0 * (asq4 * (b1 + c1) - diff1 * sqsumdiff);
+		matrix[5] = -2.0 * (asq4 * (b2 + c2) - diff2 * sqsumdiff);
+		matrix[2] =
 			-16.0 * afo - sqsumdiff * sqsumdiff + 8.0 * asq * (sqsumb + sqsumc);
 
 		// set eigenvectors' directions (B -> C and normalvector)
@@ -987,12 +1016,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	
 	final private void doTranslate(double vx, double vy) {
 		// calc translated matrix   
-		A[2] =
-			A[2]
-				+ vx * (A[0] * vx - 2.0 * A[4])
-				+ vy * (A[1] * vy - 2.0 * A[5] + 2.0 * A[3] * vx);
-		A[4] = A[4] - A[0] * vx - A[3] * vy;
-		A[5] = A[5] - A[3] * vx - A[1] * vy;
+		matrix[2] =
+			matrix[2]
+				+ vx * (matrix[0] * vx - 2.0 * matrix[4])
+				+ vy * (matrix[1] * vy - 2.0 * matrix[5] + 2.0 * matrix[3] * vx);
+		matrix[4] = matrix[4] - matrix[0] * vx - matrix[3] * vy;
+		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
 		
 		// avoid classification and set changes by hand:        
 		b.x += vx;
@@ -1037,8 +1066,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 */
 	final private void rotate(double phi) {
 		// set rotated matrix
-		double sum = A[0] + A[1];
-		double diff = A[0] - A[1];
+		double sum = matrix[0] + matrix[1];
+		double diff = matrix[0] - matrix[1];
 		double cos = Math.cos(phi);
 		double sin = Math.sin(phi);
 		// cos(2 phi) = cos(phi)\u00b2 - sin(phi)\u00b2 = (cos + sin)*(cos - sin)
@@ -1046,16 +1075,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// cos(2 phi) = 2 cos sin
 		double sin2 = 2.0 * cos * sin;
 
-		double temp = diff * cos2 - 2.0 * A[3] * sin2;
+		double temp = diff * cos2 - 2.0 * matrix[3] * sin2;
 		double A0 = (sum + temp) / 2.0;
 		double A1 = (sum - temp) / 2.0;
-		double A3 = A[3] * cos2 + diff * cos * sin;
-		double A4 = A[4] * cos - A[5] * sin;
-		A[5] = A[5] * cos + A[4] * sin;
-		A[0] = A0;
-		A[1] = A1;
-		A[3] = A3;
-		A[4] = A4;
+		double A3 = matrix[3] * cos2 + diff * cos * sin;
+		double A4 = matrix[4] * cos - matrix[5] * sin;
+		matrix[5] = matrix[5] * cos + matrix[4] * sin;
+		matrix[0] = A0;
+		matrix[1] = A1;
+		matrix[3] = A3;
+		matrix[4] = A4;
 
 		// avoid classification: make changes by hand
 		eigenvec[0].rotate(phi);
@@ -1085,11 +1114,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// calc dilated matrix
 		double r = 1d/factor;
 		double r2 = r*r;
-		A[0] *= r2;
-		A[1] *= r2;		
-		A[3] *= r2;
-		A[4] *= r;
-		A[5] *= r;
+		matrix[0] *= r2;
+		matrix[1] *= r2;		
+		matrix[3] *= r2;
+		matrix[4] *= r;
+		matrix[5] *= r;
 	}	
 
 	/**
@@ -1099,14 +1128,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		double qx = Q.inhomX;
 		double qy = Q.inhomY;
 
-		A[2] =
+		matrix[2] =
 			4.0
-				* (qy * qy * A[1]
-					+ qx * (qx * A[0] + 2.0 * qy * A[3] + A[4])
-					+ qy * A[5])
-				+ A[2];
-		A[4] = -2.0 * (qx * A[0] + qy * A[3]) - A[4];
-		A[5] = -2.0 * (qx * A[3] + qy * A[1]) - A[5];
+				* (qy * qy * matrix[1]
+					+ qx * (qx * matrix[0] + 2.0 * qy * matrix[3] + matrix[4])
+					+ qy * matrix[5])
+				+ matrix[2];
+		matrix[4] = -2.0 * (qx * matrix[0] + qy * matrix[3]) - matrix[4];
+		matrix[5] = -2.0 * (qx * matrix[3] + qy * matrix[1]) - matrix[5];
 
 		// change eigenvectors' orientation
 		eigenvec[0].mult(-1.0);
@@ -1156,8 +1185,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	*/
 	final private void mirror(double phi) {
 		// set rotated matrix
-		double sum = A[0] + A[1];
-		double diff = A[0] - A[1];
+		double sum = matrix[0] + matrix[1];
+		double diff = matrix[0] - matrix[1];
 		double cos = Math.cos(phi);
 		double sin = Math.sin(phi);
 		// cos(2 phi) = cos(phi)\u00b2 - sin(phi)\u00b2 = (cos + sin)*(cos - sin)
@@ -1165,16 +1194,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// cos(2 phi) = 2 cos sin
 		double sin2 = 2.0 * cos * sin;
 
-		double temp = diff * cos2 + 2.0 * A[3] * sin2;
+		double temp = diff * cos2 + 2.0 * matrix[3] * sin2;
 		double A0 = (sum + temp) / 2.0;
 		double A1 = (sum - temp) / 2.0;
-		double A3 = -A[3] * cos2 + diff * cos * sin;
-		double A4 = A[4] * cos + A[5] * sin;
-		A[5] = -A[5] * cos + A[4] * sin;
-		A[0] = A0;
-		A[1] = A1;
-		A[3] = A3;
-		A[4] = A4;
+		double A3 = -matrix[3] * cos2 + diff * cos * sin;
+		double A4 = matrix[4] * cos + matrix[5] * sin;
+		matrix[5] = -matrix[5] * cos + matrix[4] * sin;
+		matrix[0] = A0;
+		matrix[1] = A1;
+		matrix[3] = A3;
+		matrix[4] = A4;
 
 		// avoid classification: make changes by hand
 		eigenvec[0].mirror(phi);
@@ -1221,21 +1250,30 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			eigenvecX = eigenvecX / length;
 			eigenvecY = eigenvecY / length;
 		}
-
-		// first eigenvector
-		if (eigenvec[0].x * eigenvecX < -eigenvec[0].y * eigenvecY) {
-			eigenvec[0].x = -eigenvecX;
-			eigenvec[0].y = -eigenvecY;
-		} else {
+		
+		if (kernel.isContinous()) {
+			// first eigenvector
+			if (eigenvec[0].x * eigenvecX < -eigenvec[0].y * eigenvecY) {
+				eigenvec[0].x = -eigenvecX;
+				eigenvec[0].y = -eigenvecY;
+			} else {
+				eigenvec[0].x = eigenvecX;
+				eigenvec[0].y = eigenvecY;
+			}
+			
+			// second eigenvector (compared to normalvector (-eigenvecY, eigenvecX)
+			if (eigenvec[1].y * eigenvecX < eigenvec[1].x * eigenvecY) {
+				eigenvec[1].x = eigenvecY;
+				eigenvec[1].y = -eigenvecX;
+			} else {
+				eigenvec[1].x = -eigenvecY;
+				eigenvec[1].y = eigenvecX;
+			}
+		} 	
+		// non-continous
+		else {
 			eigenvec[0].x = eigenvecX;
 			eigenvec[0].y = eigenvecY;
-		}
-		
-		// second eigenvector (compared to normalvector (-eigenvecY, eigenvecX)
-		if (eigenvec[1].y * eigenvecX < eigenvec[1].x * eigenvecY) {
-			eigenvec[1].x = eigenvecY;
-			eigenvec[1].y = -eigenvecX;
-		} else {
 			eigenvec[1].x = -eigenvecY;
 			eigenvec[1].y = eigenvecX;
 		}		
@@ -1260,18 +1298,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		eigenvec[0].x = eigenvecX;
 		eigenvec[0].y = eigenvecY;
 
-		// second eigenvector (compared to normalvector (-eigenvecY, eigenvecX)
-		if (eigenvec[1].y * eigenvecX < eigenvec[1].x * eigenvecY) {
-			eigenvec[1].x = eigenvecY;
-			eigenvec[1].y = -eigenvecX;
+		if (kernel.isContinous()) {
+			// second eigenvector (compared to normalvector (-eigenvecY, eigenvecX)
+			if (eigenvec[1].y * eigenvecX < eigenvec[1].x * eigenvecY) {
+				eigenvec[1].x = eigenvecY;
+				eigenvec[1].y = -eigenvecX;
+			} else {
+				eigenvec[1].x = -eigenvecY;
+				eigenvec[1].y = eigenvecX;
+			}
 		} else {
+			// non-continous
 			eigenvec[1].x = -eigenvecY;
 			eigenvec[1].y = eigenvecX;
 		}
 	}
-
+	
 	private void classifyConic() {
-		defined = checkDefined();
+		classifyConic(false);
+	}
+	
+	private void classifyConic(boolean degenerate) {		
+		defined = degenerate || checkDefined();
 		if (!defined)
 			return;
 
@@ -1283,33 +1331,31 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// det of S lets us distinguish between
 		// parabolic and midpoint conics
 		// det(S) = A[0] * A[1] - A[3] * A[3]
-		double A0A1 =  A[0] * A[1];
-		double A3A3 = A[3] * A[3];	
-		
-		//System.out.println("classify: detS: " + (A0A1 - A3A3));
+		double A0A1 =  matrix[0] * matrix[1];
+		double A3A3 = matrix[3] * matrix[3];					
 		
 		if (kernel.isEqual(A0A1,  A3A3)) {	// det S = 0
-			classifyParabolicConic();
+			classifyParabolicConic(degenerate);
 		} else {
 			detS = A0A1 - A3A3;
-			classifyMidpointConic();
+			classifyMidpointConic(degenerate);
 		}		
 		setAffineTransform();		
 		
-		//System.out.println("conic: " + this.getLabel() + " type " + typeString() );
-		//System.out.println("  detS: " + detS);
+		// System.out.println("conic: " + this.getLabel() + " type " + typeString() );
+		// System.out.println("           detS: " + (A0A1 - A3A3));
 	}
 
 	/*************************************
 	* midpoint conics
 	*************************************/
 
-	final private void classifyMidpointConic() {
+	final private void classifyMidpointConic(boolean degenerate) {
 		// calc eigenvalues and eigenvectors
-		if (kernel.isZero(A[3])) {
+		if (kernel.isZero(matrix[3])) {
 			// special case: submatrix S is allready diagonal
-			eigenval[0] = A[0];
-			eigenval[1] = A[1];
+			eigenval[0] = matrix[0];
+			eigenval[1] = matrix[1];
 			eigenvecX = 1.0d;
 			eigenvecY = 0.0d;
 		} else {
@@ -1318,27 +1364,27 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			// detS was computed in classifyConic()            
 			// init array for solver
 			eigenval[0] = detS;
-			eigenval[1] = - (A[0] + A[1]); // -spurS
+			eigenval[1] = - (matrix[0] + matrix[1]); // -spurS
 			eigenval[2] = 1.0d;
 			eqnSolver.solveQuadratic(eigenval, eigenval);
 
 			// set first eigenvector
-			eigenvecX = A[3];
-			eigenvecY = eigenval[0] - A[0];
+			eigenvecX = matrix[3];
+			eigenvecY = eigenval[0] - matrix[0];
 		}
 
 		// calc translation vector b = midpoint
 		// b = -Inverse[S] . a, where a = (A[4], A[5])      
-		b.x = (A[3] * A[5] - A[1] * A[4]) / detS;
-		b.y = (A[3] * A[4] - A[0] * A[5]) / detS;
+		b.x = (matrix[3] * matrix[5] - matrix[1] * matrix[4]) / detS;
+		b.y = (matrix[3] * matrix[4] - matrix[0] * matrix[5]) / detS;
 
 		// beta = a . b + alpha, where alpha = A[2]
-		double beta = A[4] * b.x + A[5] * b.y + A[2];
+		double beta = matrix[4] * b.x + matrix[5] * b.y + matrix[2];
 
 		// beta lets us distinguish between Ellipse, Hyperbola,
 		// single singlePoint and intersecting lines
 		//  if (kernel.isZero(beta)) {
-		if (kernel.isZero(beta)) {
+		if (degenerate || kernel.isZero(beta)) {
 			setEigenvectors();
 			// single point or intersecting lines
 			mu[0] = eigenval[0] / eigenval[1];
@@ -1348,7 +1394,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			} else if (mu[0] < 0.0d) {
 				mu[0] = Math.sqrt(-mu[0]);
 				intersectingLines(mu);
-			} else {
+			} else {												
 				singlePoint();
 			}
 		} else {
@@ -1488,59 +1534,59 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	* parabolic conics
 	*************************************/
 
-	final private void classifyParabolicConic() {			
+	final private void classifyParabolicConic(boolean degenerate) {			
 		// calc eigenvalues and first eigenvector               
-		if (kernel.isZero(A[3])) {						
+		if (kernel.isZero(matrix[3])) {						
 			// special cases: submatrix S is allready diagonal
 			// either A[0] or A[1] have to be zero (due to detS = 0)
-			if (kernel.isZero(A[0])) {
+			if (kernel.isZero(matrix[0])) {
 
 				// special case: the submatrix S is zero!!!
-				if (kernel.isZero(A[1])) {
+				if (kernel.isZero(matrix[1])) {
 					handleSzero();
 					return;
 				}
 								
 				// else
-				lambda = A[1];
+				lambda = matrix[1];
 				//	set first eigenvector
 				eigenvecX = 1.0d; 
 				eigenvecY = 0.0d;	
 				// c = a . T = a, 
 				// where T is the matrix of the eigenvectors and a = (A[4], A[5])                
-				c.x = A[4];
-				c.y = A[5];
+				c.x = matrix[4];
+				c.y = matrix[5];
 			} else { // A[1] is zero                
-				lambda = A[0];
+				lambda = matrix[0];
 				eigenvecX = 0.0d; // set first eigenvector
 				eigenvecY = 1.0d;
 				// c = a . T, 
 				// where T is the matrix of the eigenvectors and a = (A[4], A[5])                
-				c.x = A[5];
-				c.y = -A[4];
+				c.x = matrix[5];
+				c.y = -matrix[4];
 			}
 		} 
 		else { // A[3] != 0			
 			// eigenvalues are solutions of 
 			// 0 = det(S - x E) = x^2 - spurS x + detS = x (x - spurS)                                    
-			lambda = A[0] + A[1]; // spurS                         
+			lambda = matrix[0] + matrix[1]; // spurS                         
 			// set first eigenvector as a unit vector (needed fo computing vector c)
-			length = GeoVec2D.length(A[3], A[0]);
-			eigenvecX = A[3] / length;
-			eigenvecY = -A[0] / length;
+			length = GeoVec2D.length(matrix[3], matrix[0]);
+			eigenvecX = matrix[3] / length;
+			eigenvecY = -matrix[0] / length;
 			// c = a . T, 
 			// where T is the matrix of the eigenvectors and a = (A[4], A[5])                
-			c.x = A[4] * eigenvecX + A[5] * eigenvecY;
-			c.y = A[5] * eigenvecX - A[4] * eigenvecY;
+			c.x = matrix[4] * eigenvecX + matrix[5] * eigenvecY;
+			c.y = matrix[5] * eigenvecX - matrix[4] * eigenvecY;
 		}		
 
-		if (kernel.isZero(c.x)) {
+		if (degenerate || kernel.isZero(c.x)) {
 			setEigenvectors();
 			// b = T . (0, -c.y/lambda)
 			temp = c.y / lambda;
 			b.x = temp * eigenvecY;
 			b.y = -temp * eigenvecX;
-			mu[0] = -temp * temp + A[2] / lambda;
+			mu[0] = -temp * temp + matrix[2] / lambda;
 			
 			if (kernel.isZero(mu[0])) {			
 				doubleLine();
@@ -1550,7 +1596,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			} else {
 				empty();
 			}
-		} else { // parabola
+		} else { // parabola						
 			parabola();
 		}
 
@@ -1585,8 +1631,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	// if S is the zero matrix, set conic as double line or empty
 	final private void handleSzero() {			
 		// conic is line 2*A[4] * x +  2*A[5] * y + A[2] = 0				
-	    if (kernel.isZero(A[4])) {
-	    	if (kernel.isZero(A[5])) {	    		
+	    if (kernel.isZero(matrix[4])) {
+	    	if (kernel.isZero(matrix[5])) {	    		
 	    		empty();
 	    		return;
 	    	} 
@@ -1594,16 +1640,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	    	// A[5] not zero
 	    	// make b a point on the line
 	    	b.x = 0;
-	    	b.y = -A[2] / (2*A[5]);	    	
+	    	b.y = -matrix[2] / (2*matrix[5]);	    	
 	    } else { 
 	    	// A[4] not zero
 	    	// make b a point on the line
-	    	b.x = -A[2] / (2*A[4]);
+	    	b.x = -matrix[2] / (2*matrix[4]);
 	    	b.y = 0;	    	
 	    }
 	    
-	    eigenvecX =  A[5];
-    	eigenvecY = -A[4];
+	    eigenvecX =  matrix[5];
+    	eigenvecY = -matrix[4];
     	setEigenvectors();
     	    	
 	    doubleLine();    			
@@ -1644,7 +1690,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// calc vertex = b
 		// b = T . ((c.y\u00b2/lambda - A2)/(2 c.x) , -c.y/lambda)
 		temp2 = c.y / lambda;
-		temp1 = (c.y * temp2 - A[2]) / (2 * c.x);
+		temp1 = (c.y * temp2 - matrix[2]) / (2 * c.x);
 		b.x = eigenvecY * temp2 + eigenvecX * temp1;
 		b.y = eigenvecY * temp1 - eigenvecX * temp2;
 		setParabolicEigenvectors();
@@ -1669,12 +1715,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * CACLCULATIONS ON CONIC (det, evaluate, intersect, ...)
 	 **********************************************************/
 
-	/** determinant of conic 3x3 matrix */
-	final public double det() {
-		return A[0] * (A[1] * A[2] - A[5] * A[5])
-			- A[2] * A[3] * A[3]
-			- A[1] * A[4] * A[4]
-			+ 2 * A[3] * A[4] * A[5];
+	/** 
+	 * Computes the determinant of a conic's 3x3 matrix.
+	 * @param matrix: flat matrix of conic section 
+	 */
+	public static double det(double [] matrix) {
+		return matrix[0] * (matrix[1] * matrix[2] - matrix[5] * matrix[5])
+			- matrix[2] * matrix[3] * matrix[3]
+			- matrix[1] * matrix[4] * matrix[4]
+			+ 2 * matrix[3] * matrix[4] * matrix[5];
 	}
 	
 	/**
@@ -1770,12 +1819,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * (this = lambda * c).
 	 */
 	final public boolean equals(GeoConic c) {
-		double[] B = c.A;
+		double[] B = c.matrix;
 
 		double lambda = 0.0;
 		boolean aZero, bZero, equal = true;
 		for (int i = 0; i < 6; i++) {
-			aZero = kernel.isZero(A[i]);
+			aZero = kernel.isZero(matrix[i]);
 			bZero = kernel.isZero(B[i]);
 
 			// A[i] == 0 and B[i] != 0  => not equal
@@ -1788,10 +1837,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			else if (!aZero && !bZero) {
 				// init lambda?
 				if (lambda == 0.0)
-					lambda = A[i] / B[i];
+					lambda = matrix[i] / B[i];
 				// check equality
 				else
-					equal = kernel.isEqual(A[i], lambda * B[i]);
+					equal = kernel.isEqual(matrix[i], lambda * B[i]);
 			}
 			// leaf loop
 			if (!equal)
@@ -1804,40 +1853,40 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * evaluates P . A . P
 	 */
 	final public double evaluate(GeoPoint P) {
-		return P.x * (A[0] * P.x + A[3] * P.y + A[4] * P.z)
-			+ P.y * (A[3] * P.x + A[1] * P.y + A[5] * P.z)
-			+ P.z * (A[4] * P.x + A[5] * P.y + A[2] * P.z);
+		return P.x * (matrix[0] * P.x + matrix[3] * P.y + matrix[4] * P.z)
+			+ P.y * (matrix[3] * P.x + matrix[1] * P.y + matrix[5] * P.z)
+			+ P.z * (matrix[4] * P.x + matrix[5] * P.y + matrix[2] * P.z);
 	}
 
 	/**
 	 * evaluates (p.x, p.y, 1) . A . (p.x, p.y, 1)
 	 */
 	final double evaluate(GeoVec2D p) {
-		return A[2]
-			+ A[4] * p.x
-			+ A[5] * p.y
-			+ p.y * (A[5] + A[3] * p.x + A[1] * p.y)
-			+ p.x * (A[4] + A[0] * p.x + A[3] * p.y);
+		return matrix[2]
+			+ matrix[4] * p.x
+			+ matrix[5] * p.y
+			+ p.y * (matrix[5] + matrix[3] * p.x + matrix[1] * p.y)
+			+ p.x * (matrix[4] + matrix[0] * p.x + matrix[3] * p.y);
 	}
 
 	/**
 	 * evaluates (x, y, 1) . A . (x, y, 1)
 	 */
 	final double evaluate(double x, double y) {
-		return A[2]
-			+ A[4] * x
-			+ A[5] * y
-			+ y * (A[5] + A[3] * x + A[1] * y)
-			+ x * (A[4] + A[0] * x + A[3] * y);
+		return matrix[2]
+			+ matrix[4] * x
+			+ matrix[5] * y
+			+ y * (matrix[5] + matrix[3] * x + matrix[1] * y)
+			+ x * (matrix[4] + matrix[0] * x + matrix[3] * y);
 	}
 
 	/**
 	 *  Sets the GeoLine polar to A.P, the polar line of P relativ to this conic.
 	 */
 	final public void polarLine(GeoPoint P, GeoLine polar) {
-		polar.x = A[0] * P.x + A[3] * P.y + A[4] * P.z;
-		polar.y = A[3] * P.x + A[1] * P.y + A[5] * P.z;
-		polar.z = A[4] * P.x + A[5] * P.y + A[2] * P.z;
+		polar.x = matrix[0] * P.x + matrix[3] * P.y + matrix[4] * P.z;
+		polar.y = matrix[3] * P.x + matrix[1] * P.y + matrix[5] * P.z;
+		polar.z = matrix[4] * P.x + matrix[5] * P.y + matrix[2] * P.z;
 	}
 
 	/**
@@ -1845,9 +1894,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * the diameter line parallel to g relativ to this conic.
 	 */
 	final public void diameterLine(GeoVector v, GeoLine diameter) {
-		diameter.x = A[0] * v.x + A[3] * v.y;
-		diameter.y = A[3] * v.x + A[1] * v.y;
-		diameter.z = A[4] * v.x + A[5] * v.y;
+		diameter.x = matrix[0] * v.x + matrix[3] * v.y;
+		diameter.y = matrix[3] * v.x + matrix[1] * v.y;
+		diameter.z = matrix[4] * v.x + matrix[5] * v.y;
 	}
 
 	/**
@@ -1873,7 +1922,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		// see geogebra.io.MyXMLHandler: handleMatrix() and handleEigenvectors()
 		sb.append("\t<matrix");
 		for (int i = 0; i < 6; i++)
-			sb.append(" A" + i + "=\"" + A[i] + "\"");
+			sb.append(" A" + i + "=\"" + matrix[i] + "\"");
 		sb.append("/>\n");
 
 		// implicit or specific mode

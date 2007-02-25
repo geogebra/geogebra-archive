@@ -325,13 +325,16 @@ public class AlgoMacro extends AlgoElement {
 			case GeoElement.GEO_CLASS_POLYGON:
 				initPolygon((GeoPolygon) macroGeo, (GeoPolygon) algoGeo);
 				break;
-
+							
 			case GeoElement.GEO_CLASS_RAY:
-				initRay((GeoRay) macroGeo, (GeoRay) algoGeo);
-				break;
-
+			case GeoElement.GEO_CLASS_LINE:
 			case GeoElement.GEO_CLASS_SEGMENT:
-				initSegment((GeoSegment) macroGeo, (GeoSegment) algoGeo);
+			case GeoElement.GEO_CLASS_AXIS:
+				initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
+				break;	
+				
+			case GeoElement.GEO_CLASS_CONIC:
+				initConic((GeoConic) macroGeo, (GeoConic) algoGeo);
 				break;
 
 			case GeoElement.GEO_CLASS_TEXT:
@@ -343,37 +346,41 @@ public class AlgoMacro extends AlgoElement {
 				break;										
 				
 			default:
-			// no special treatment necessary
-				// case GeoElement.GEO_CLASS_ANGLE:					
-				// case GeoElement.GEO_CLASS_AXIS:
-				// case GeoElement.GEO_CLASS_BOOLEAN:
-				// case GeoElement.GEO_CLASS_CONIC:
+			// no special treatment necessary at the moment
+				// case GeoElement.GEO_CLASS_ANGLE:								
+				// case GeoElement.GEO_CLASS_BOOLEAN:				
 				// case GeoElement.GEO_CLASS_CONICPART:
-				// case GeoElement.GEO_CLASS_LINE:
 				// case GeoElement.GEO_CLASS_LOCUS:
 				// case GeoElement.GEO_CLASS_NUMERIC:
 				// case GeoElement.GEO_CLASS_POINT:										
 		}						
+	}		
+	
+	/**
+	 * Makes sure that the start and end point of line are
+	 * in its construction.
+	 */			
+	private void initLine(GeoLine macroLine, GeoLine line) {				
+		GeoPoint startPoint = (GeoPoint) getAlgoGeo(macroLine.getStartPoint());
+		GeoPoint endPoint   = (GeoPoint) getAlgoGeo(macroLine.getEndPoint());						
+		line.setStartPoint(startPoint);
+		line.setEndPoint(endPoint);					
 	}
 	
 	/**
-	 * Makes sure that the start point of ray is
+	 * Makes sure that all points on conic are
 	 * in its construction.
 	 */			
-	private void initRay(GeoRay macroRay, GeoRay ray) {		
-		GeoPoint startPoint = (GeoPoint) getAlgoGeo(macroRay.getStartPoint());							
-		ray.setStartPoint(startPoint);		
-	}
-	
-	/**
-	 * Makes sure that the start and end point of segment are
-	 * in its construction.
-	 */			
-	private void initSegment(GeoSegment macroSegment, GeoSegment segment) {				
-		GeoPoint startPoint = (GeoPoint) getAlgoGeo(macroSegment.getStartPoint());
-		GeoPoint endPoint   = (GeoPoint) getAlgoGeo(macroSegment.getEndPoint());						
-		segment.setStartPoint(startPoint);
-		segment.setEndPoint(endPoint);					
+	private void initConic(GeoConic macroConic, GeoConic conic) {
+		ArrayList macroPoints = macroConic.getPointsOnConic();
+		if (macroPoints == null) return;
+		
+		int size = macroPoints.size();
+		ArrayList points = new ArrayList(size);		
+		for (int i=0; i < size; i++) {
+			points.add(getAlgoGeo((GeoElement) macroPoints.get(i)));
+		}
+		conic.setPointsOnConic(points);					
 	}
 
 	/**
@@ -389,8 +396,7 @@ public class AlgoMacro extends AlgoElement {
 				GeoPoint point = (GeoPoint) getAlgoGeo(macroStartPoints[i]);
 				locateable.initStartPoint(point, i);
 				
-				// TODO: remove
-				System.out.println("set start point: " + locateable + " => " + point + "(" + point.cons +")");
+				//System.out.println("set start point: " + locateable + " => " + point + "(" + point.cons +")");
 				
 			}	
 		} catch (Exception e) {
@@ -416,7 +422,7 @@ public class AlgoMacro extends AlgoElement {
 		GeoSegment [] polySegments = new GeoSegment[macroPolySegments.length];										
 		for (int i=0; i < macroPolySegments.length; i++) {
 			polySegments[i] = (GeoSegment) getAlgoGeo( macroPolySegments[i] );	
-			initSegment(macroPolySegments[i], polySegments[i]);
+			initLine(macroPolySegments[i], polySegments[i]);
 		}
 		poly.setSegments(polySegments);									
 	} 

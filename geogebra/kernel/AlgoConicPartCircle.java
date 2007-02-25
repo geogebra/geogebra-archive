@@ -46,8 +46,8 @@ public class AlgoConicPartCircle extends AlgoConicPart {
         super(cons, type);  
         this.center = center;
         this.startPoint = startPoint;
-        this.endPoint = endPoint;                        
-        
+        this.endPoint = endPoint;   
+                
         // create circle with center through startPoint        
         AlgoCircleTwoPoints algo = new AlgoCircleTwoPoints(cons, center, startPoint);
         cons.removeFromConstructionList(algo);
@@ -58,6 +58,8 @@ public class AlgoConicPartCircle extends AlgoConicPart {
         Q = new GeoPoint(cons);
         
         conicPart = new GeoConicPart(cons, type);
+        conicPart.addPointOnConic(startPoint);
+        
         setInputOutput(); // for AlgoElement      
         compute();               
     }    	

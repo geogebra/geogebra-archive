@@ -48,6 +48,10 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
         conic = algo.getCircle(); 
         
         conicPart = new GeoConicPart(cons, type);
+        conicPart.addPointOnConic(A);
+        conicPart.addPointOnConic(B);
+        conicPart.addPointOnConic(C);
+        
         setInputOutput(); // for AlgoElement      
         compute();               
     }    	        

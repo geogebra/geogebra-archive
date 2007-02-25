@@ -52,6 +52,9 @@ public class AlgoSemicircle extends AlgoElement {
         conic = algo.getCircle(); 
         
         conicPart = new GeoConicPart(cons, GeoConicPart.CONIC_PART_ARC);
+        conicPart.addPointOnConic(A);
+        conicPart.addPointOnConic(B);
+        
         setInputOutput(); // for AlgoElement      
         compute();               
     }    	

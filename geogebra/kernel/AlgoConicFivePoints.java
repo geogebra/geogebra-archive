@@ -42,6 +42,10 @@ public class AlgoConicFivePoints extends AlgoElement {
         super(cons);
         this.P = P;
         conic = new GeoConic(cons);
+        for (int i=0; i < P.length; i++) {
+        	conic.addPointOnConic(P[i]);
+        }
+        
         setInputOutput(); // for AlgoElement
 
         line = new GeoVec3D[4];

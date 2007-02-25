@@ -18,6 +18,8 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 
 
 
@@ -36,7 +38,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private GeoConic c;
 
     private GeoPoint [] P, D, Q;     // points  
-    private int age[]; // of defined points D       
+    private int age[]; // of defined points D
+    private int permutation[]; // of computed intersection points Q to output points P
     private double [][] distTable;
     private boolean isQonPath []; // for every new intersection point Q: is it on both paths?
     
@@ -46,29 +49,15 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private int i;
     private boolean isTangent;
     private boolean firstIntersection = true;
+    private boolean isPermutationNeeded = true;
     private GeoPoint tangentPoint;
-  
-    // mean distance computation
-    private double meanDistance[]; // for every point P
-    private double distMemory[][]; // for every point P: store old distances
-    private int distMemoryIndex;
+    
     private PointPairList pointList = new PointPairList();
     
     // for segments, rays and conic parts we need to check the
     // intersection points at the end of compute()
-    private boolean isLimitedPathSituation;   
-    
-    /*
-     * There is an important special case where my heuristic of the 
-     * near-to-relationship fails:
-     * Circle[A, B] is intersected with a line passing through A and B.
-     * In this case the first intersection point should always be B
-     * and the other (2A - B) 
-     */    
-    //  if the conic is defined by Circle[A, B] then we should check for
-    // this special case
-     private boolean possibleSpecialCase; 
-     private GeoPoint midpoint, radiuspoint;  
+    private boolean isLimitedPathSituation;              
+    private boolean possibleSpecialCase = false;
     
     String getClassName() {
         return "AlgoIntersectLineConic";
@@ -95,16 +84,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             AlgoTangentLine algo = (AlgoTangentLine) g.getParentAlgorithm();
             tangentPoint = algo.getTangentPoint(c, g);
             isTangent = (tangentPoint != null);            
-        }
-        
-        // possible special case I described above
-        if (c.getParentAlgorithm() instanceof AlgoCircleTwoPoints) {
-            AlgoCircleTwoPoints algo = (AlgoCircleTwoPoints) c.getParentAlgorithm();
-            possibleSpecialCase = true;
-            midpoint = algo.getM();
-            radiuspoint = algo.getP();
-        }
-        
+        }                      
         
         // g is defined as tangent of c
         if (isTangent) {
@@ -112,22 +92,24 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             P[0] = new GeoPoint(cons);
         } 
         // standard case
-        else {
+        else {                	
             P  = new GeoPoint[2];
             D  = new GeoPoint[2];
             Q  = new GeoPoint[2];
             distTable = new double[2][2];                       
             age = new int[2];
+            permutation= new int[2];
             isQonPath = new boolean[2];
             isPalive = new boolean[2];
-            meanDistance = new double[2];
-            distMemory = new double[2][AlgoIntersectConics.DIST_MEMORY_SIZE];            
             
             for (i=0; i < 2; i++) {
                 Q[i] = new GeoPoint(cons);
                 P[i] = new GeoPoint(cons); 
                 D[i] = new GeoPoint(cons);                     
             }
+            
+        	// check possible special case
+            possibleSpecialCase = handleSpecialCase();
         }
         
         setInputOutput(); // for AlgoElement     
@@ -163,12 +145,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     final void initForNearToRelationship() {   
     	if (isTangent) return;
     	    	
-    	distMemoryIndex = 0;
-    	for (int i=0; i < P.length; i++) {    
-    	 	 meanDistance[i] = 0;
-    	 	 for (int j=0; j < AlgoIntersectConics.DIST_MEMORY_SIZE; j++) {
-    	 	 	distMemory[i][j] = 0;
-    	 	 }
+    	isPermutationNeeded = true; // for non-continous intersections    	
+    	for (int i=0; i < P.length; i++) {        	 	
     	 	 age[i] = 0; 
              isQonPath[i] = true;
              isPalive[i] = false;             
@@ -183,41 +161,111 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             return;
         }              
         
+        // check for special case of line through point on conic
         if (possibleSpecialCase) {
-            // does the line pass through midpoint and radiuspoint?        	
-            if (g.isIntersectionPointIncident(midpoint, Kernel.MIN_PRECISION) && 
-            	g.isIntersectionPointIncident(radiuspoint, Kernel.MIN_PRECISION)) {
-                // now we know the intersection points:
-                // radiuspoint and (2* midpoint - radiuspoint)
-                P[0].setCoords(radiuspoint.x, radiuspoint.y, radiuspoint.z);
-                P[1].setCoords(2* midpoint.inhomX - radiuspoint.inhomX, 
-                                        2* midpoint.inhomY - radiuspoint.inhomY,
-                                        1.0);
-                // make sure interesection points lie on limited paths
-                if (isLimitedPathSituation) 
-                	handleLimitedPaths();
-                return;                                     
-            } else {
-                // we switch off the special case in the very moment
-                // the line does not pass through midpoint and radiuspoint
-                // We do this because we don't want to destroy our
-                // near-to-realtionship used in the standard case
-                possibleSpecialCase = false;
-            }
+            if (handleSpecialCase()) return;
         }   
         
-        // continuity is turned off
-        if (!kernel.isContinous()) {
-        	// TODO: continuity off: find initial permutation
-        	// of intersection points (e.g. when loaded) and
-        	// then keep this permutation and never change it
-        }
+        // continous: use near-to-heuristic between old and new intersection points
+        // non-continous: use computeContinous() to init a permutation and then
+        //                always use this permutation
+        boolean continous = isPermutationNeeded || kernel.isContinous();   
+        if (continous) {
+        	computeContinous();        	        	        	        	
+        } else {
+        	computeNonContinous();
+        }        	
+    }     
+            
+    /**
+     * There is an important special case we handle separately:
+     * The conic section c is intersected with a line passing through a point A on c.
+     * In this case the first intersection point should always be A. 
+     * @return true if this special case was handled.
+     */
+    private boolean handleSpecialCase() {
+    	// check if startpoint or endpoint of line is on conic
+    	GeoPoint pointOnConic = null;    	
+    	if (g.startPoint != null && c.isOnPath(g.startPoint, Kernel.MIN_PRECISION)) {    		
+    		pointOnConic = g.startPoint;    		
+    	} 
+    	else if (g.endPoint != null && c.isOnPath(g.endPoint, Kernel.MIN_PRECISION)) {    		
+    		pointOnConic = g.endPoint;    		
+    	}     	 
+    	else {
+    		// get points on conic and see if one of them is on line g
+    		ArrayList pointsOnConic = c.getPointsOnConic();
+    		if (pointsOnConic != null) {
+    			int size = pointsOnConic.size();
+    			for (int i=0; i < size; i++) {
+    				GeoPoint p = (GeoPoint) pointsOnConic.get(i);
+    				if (g.isOnPath(p, Kernel.MIN_PRECISION)) {
+    					pointOnConic = p;
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	if (pointOnConic == null) return false;
+    		    
+    	// calc new intersection points Q
+        intersect(c, g, Q);    
+                          
+	    // pointOnConic should be first intersection point
+        P[0].setCoords(pointOnConic);
         
-        
-        
-        // continuity is turned ON
-        
-        /* 
+        // the other intersection point should be the second one
+        boolean didSetP1 = false;
+        for (int i=0; i < 2; i++) {  
+	   		if (!Q[i].equals(P[0])) {
+	   			P[1].setCoords(Q[i]);
+	   			didSetP1 = true;
+	   			break;
+	   		}
+	    }   
+        if (!didSetP1) 
+        	P[1].setCoords(pointOnConic); 
+	   	 
+	   	if (isLimitedPathSituation) {
+	   		// make sure the points are on a limited path
+	   		for (int i=0; i < 2; i++) {  
+	   			if (!pointLiesOnBothPaths(P[i]))
+	   				P[i].setUndefined();    			          
+	   	    }     	 
+	   	}
+	   	 
+	   	//System.out.println("line-conic special case: took point " + pointOnConic);
+	   	
+	   	return true;
+    }
+    
+    /**
+     * Use the current permutation to set output points P from computed points Q.        
+     */  
+     private void computeNonContinous() {    	     	 
+    	 // calc new intersection points Q
+         intersect(c, g, Q);    
+                           
+         // use fixed permutation to set output points P
+    	 for (int i=0; i < P.length; i++) {        	
+         	P[i].setCoords(Q[permutation[i]]);         	
+         }   
+    	 
+    	 if (isLimitedPathSituation) {
+        	 // make sure the points are on a limited path
+    		 for (int i=0; i < P.length; i++) {  
+    			 if (!pointLiesOnBothPaths(P[i]))
+    				 P[i].setUndefined();    			          
+    	     }     	 
+    	 }
+     }
+    
+    /**
+    * We want to find a permutation of Q, so that the 
+    * distances between old points Di and new points Qi are minimal.         
+    */  
+    private void computeContinous() {
+    	 /* 
          * D ... old defined points
          * P ... current points
          * Q ... new points
@@ -225,8 +273,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
          * We want to find a permutation of Q, so that the 
          * distances between old point Di and new Point Qi are minimal.         
          */        
-  
-
+         
         // remember the defined points D, so that Di = Pi if Pi is defined        
         // and set age                
         boolean noSingularity = !P[0].equals(P[1]); // singularity check        
@@ -245,9 +292,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	        isPalive[i] = isPalive[i] || finite || P[i].labelSet;
         }   
        
-
-        // STANDARD CASE
-        // calc new points Q
+           
+        // calc new intersection points Q
         intersect(c, g, Q);                         
         
         // for limited paths we have to distinguish between intersection points Q
@@ -258,8 +304,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         }        
         
         if (firstIntersection) {           	
-        	        	
-        // init points in order P[0], P[1]
+        	// init points in order P[0], P[1]
             int count=0;
             for (i=0; i < Q.length; i++) {
             	// make sure interesection points lie on limited paths   
@@ -274,18 +319,24 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         }
         
         // calc distance table
-        AlgoIntersectConics.distanceTable(D, age, meanDistance, Q, distTable);                   
+        AlgoIntersectConics.distanceTable(D, age, Q, distTable);                   
         
-        // find permutation and calculate new mean distances
-        distMemoryIndex++;
-        if (distMemoryIndex == AlgoIntersectConics.DIST_MEMORY_SIZE) 
-        	distMemoryIndex = 0;
-        AlgoIntersectConics.setNearTo(P, isPalive, Q, isQonPath, distTable, meanDistance, distMemory, distMemoryIndex, pointList);        
-              
+        // find permutation and calculate new mean distances         
+        AlgoIntersectConics.setNearTo(P, isPalive, Q, isQonPath, distTable, pointList, permutation);          
+        isPermutationNeeded = false;
+        
+        /*
+    	System.out.print("permutation: ");
+    	for (int i=0; i < permutation.length; i++) {
+    		System.out.print(permutation[i] + " ");
+    	}
+    	System.out.println();
+        */
+        
         // make sure interesection points lie on limited paths
         if (isLimitedPathSituation) 
-        	handleLimitedPaths();            
-    }      
+        	handleLimitedPaths();       
+    }
     
         
     /**
@@ -370,16 +421,16 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         
     // do the actual computations
     final static int intersectLineConic(GeoLine g, GeoConic c, GeoPoint [] sol) { 
-        double [] A = c.A;
+        double [] A = c.matrix;
         
-        // get arbitrary point of line          
+        // get arbitrary point of line       
         double px, py;
         if (Math.abs(g.x) > Math.abs(g.y)) {
             px = -g.z / g.x;
-            py = 0.0d;
+            py = 0.0d;            
         } else {
             px = 0.0d;
-            py = -g.z / g.y;
+            py = -g.z / g.y;            
         } 
    
         // we have to solve   u t� + 2d t + w = 0  
@@ -441,13 +492,14 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
                     //     (-d +/- dis) / u
                     // and the other using:
                     //      w / (-d +/- dis)
-                    // Choose the sign of the +/- so that d+dis gets larger in magnitude
-                    if (d < 0.0) {
+                    // Choose the sign of the +/- so that d+dis gets larger in magnitude                   
+                    boolean swap = d < 0.0;
+                    if (swap) {
                         dis = -dis;
                     }
                     double q = -(d + dis);
-                    double t1 = q / u;
-                    double t2 = w / q;
+                    double t1 = swap ? w / q : q / u;
+                    double t2 = swap ? q / u : w / q;
                                         
                     sol[0].setCoords(px + t1 * g.y, py - t1 * g.x, 1.0);
                     sol[1].setCoords(px + t2 * g.y, py - t2 * g.x, 1.0);       

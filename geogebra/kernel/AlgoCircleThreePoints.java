@@ -73,7 +73,10 @@ public class AlgoCircleThreePoints extends AlgoElement {
             this.B = B;
             this.C = C;
             circle = new GeoConic(cons);
-
+            circle.addPointOnConic(A);
+            circle.addPointOnConic(B);
+            circle.addPointOnConic(C);
+            
             // temp: line bisectors
             s0 = new GeoLine(cons);
             s1 = new GeoLine(cons);

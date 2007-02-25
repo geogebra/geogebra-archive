@@ -40,7 +40,7 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
         super(cons, type);        
         conic = circle;
         this.startPoint = startPoint;
-        this.endPoint = endPoint;        
+        this.endPoint = endPoint;                          
         
         // temp points
         P = new GeoPoint(cons, conic);

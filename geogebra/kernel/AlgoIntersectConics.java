@@ -18,17 +18,18 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
- *
- * @author  Markus
+ * Computes intersection points of two conic sections
+ *  
+ * @author  Markus Hohenwarter
  * @version 
  */
 public class AlgoIntersectConics extends AlgoIntersect {
-    
-    /**
-	 * 
-	 */
+      
 	private static final long serialVersionUID = 1L;
 
 	// number of old distances that are used to 
@@ -38,19 +39,19 @@ public class AlgoIntersectConics extends AlgoIntersect {
     private GeoConic A, B;
     private GeoPoint [] P, D, Q;     // points  
         
-    private GeoConic [] degConic;    
-    private int [] age; // for points in D    
+    private GeoConic degConic;  
+    private GeoLine tempLine;
+    private int [] age; // for points in D   
+    private int permutation[]; // of computed intersection points Q to output points P
     private double [][] distTable;   
     private boolean [] isQonPath;
     private boolean [] isPalive; // has P ever been defined?
     private boolean firstIntersection = true;
     private int i;
     private boolean isLimitedPathSituation;
-    
-    // mean distance computation
-    private double meanDistance[]; // for every point P
-    private double distMemory[][]; // for every point P: store old distances
-    private int distMemoryIndex = 0;
+    private boolean isPermutationNeeded = true;
+    private boolean possibleSpecialCase = false;
+      
     private PointPairList pointList = new PointPairList();
     
     private EquationSolver eqnSolver;
@@ -76,16 +77,20 @@ public class AlgoIntersectConics extends AlgoIntersect {
         isQonPath = new boolean[4];    
         isPalive = new boolean[4];
         age = new int[4];
+        permutation = new int[4];
+        distTable = new double[4][4];
         for (i=0; i < 4; i++) {
             P[i] = new GeoPoint(cons);                    
             Q[i] = new GeoPoint(cons);      
             D[i] = new GeoPoint(cons);            
         }                                   
-        degConic = new GeoConic[3];
-        for (i=0; i < 3; i++) degConic[i] = new GeoConic(cons);                
-        distTable = new double[4][4];                      
-        meanDistance = new double[4];
-        distMemory = new double[4][AlgoIntersectConics.DIST_MEMORY_SIZE];        
+        
+        //degConic = new GeoConic[3];
+        //for (i=0; i < 3; i++) degConic[i] = new GeoConic(cons);
+        degConic = new GeoConic(cons);  
+        
+        // check possible special case
+        possibleSpecialCase = handleSpecialCase();
         
         setInputOutput(); // for AlgoElement     
         initForNearToRelationship();
@@ -118,21 +123,127 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	return true;
     }
 	
-	final void initForNearToRelationship() {        	    	
-    	distMemoryIndex = 0;
-    	for (int i=0; i < P.length; i++) {    
-    	 	 meanDistance[i] = 0;
-    	 	 for (int j=0; j < AlgoIntersectConics.DIST_MEMORY_SIZE; j++) {
-    	 	 	distMemory[i][j] = 0;
-    	 	 }
+	final void initForNearToRelationship() {     
+		isPermutationNeeded = true;
+    	for (int i=0; i < P.length; i++) {        	 	 
     	 	 age[i] = 0; 
              isQonPath[i] = true;
              isPalive[i] = false;             
         }
     }
+	
+	 // calc intersections of conics A and B
+    final void compute() {   
+    	// check for special case of two circles with common point
+        if (possibleSpecialCase) {
+            if (handleSpecialCase()) return;
+        }     	
+    	
+        // continous: use near-to-heuristic between old and new intersection points
+        // non-continous: use computeContinous() to init a permutation and then
+        //                always use this permutation
+        boolean continous = isPermutationNeeded || kernel.isContinous();   
+        if (continous) {
+        	computeContinous();        	        	        	        	
+        } else {
+        	computeNonContinous();
+        }        	
+    }     
+    
+    /**
+     * There is an important special case we handle separately:
+     * Both conic sections are circles and one is defined through a 
+     * point A on the other one. In this case the first intersection 
+     * point should always be A. 
+     * @return true if this special case was handled.
+     */
+    private boolean handleSpecialCase() {
+    	// we need two circles
+    	if (A.type != GeoConic.CONIC_CIRCLE || B.type != GeoConic.CONIC_CIRCLE)
+    		return false;
+    	
+		// check if we have a point on A that is also on B
+    	GeoPoint pointOnConic = getPointFrom1on2(A, B);
+    	if (pointOnConic == null) 
+    		// check if we have a point on B that is also on A
+    		 pointOnConic = getPointFrom1on2(B, A); 
+    	// if we didn't have a common point, there's no special case
+    	if (pointOnConic == null) 
+    		return false;				    	
+    		    
+    	// intersect the two circles
+        intersectConicsWithEqualSubmatrixS(A, B, Q);  
+                          
+	    // pointOnConic should be first intersection point
+        P[0].setCoords(pointOnConic);
+        
+        // the other intersection point should be the second one
+        boolean didSetP1 = false;
+        for (int i=0; i < 2; i++) {  
+	   		if (!Q[i].equals(P[0])) {
+	   			P[1].setCoords(Q[i]);
+	   			didSetP1 = true;
+	   			break;
+	   		}
+	    }   
+        if (!didSetP1) 
+        	P[1].setCoords(pointOnConic); 
+	   	 
+	   	if (isLimitedPathSituation) {
+	   		// make sure the points are on a limited path
+	   		for (int i=0; i < 2; i++) {  
+	   			if (!pointLiesOnBothPaths(P[i]))
+	   				P[i].setUndefined();    			          
+	   	    }     	 
+	   	}
+	   	
+	   	//System.out.println("circle-circle special case: took point " + pointOnConic);	   	
+	   	return true;
+    }
+    
+    private GeoPoint getPointFrom1on2(GeoConic A, GeoConic B) {
+    	GeoPoint pointOnConic = null;
+    	
+    	// check if a point on A is also on B
+		// get points on conic and see if one of them is on line g
+		ArrayList pointsOnConic = A.getPointsOnConic();
+		if (pointsOnConic != null) {
+			int size = pointsOnConic.size();
+			for (int i=0; i < size; i++) {
+				GeoPoint p = (GeoPoint) pointsOnConic.get(i);
+				if (B.isOnPath(p, Kernel.MIN_PRECISION)) {
+					pointOnConic = p;
+					break;
+				}
+			}
+		}
+		
+		return pointOnConic;
+    }
+    
+    /**
+     * Use the current permutation to set output points P from computed points Q.        
+     */  
+     private void computeNonContinous() {    	     	 
+    	 // calc new intersection points Q
+    	 intersectConics(A, B, Q);   
+                           
+         // use fixed permutation to set output points P
+    	 for (int i=0; i < P.length; i++) {        	
+         	P[i].setCoords(Q[permutation[i]]);         	
+         }   
+    	 
+    	 if (isLimitedPathSituation) {
+        	 // make sure the points are on a limited path
+    		 for (int i=0; i < P.length; i++) {  
+    			 if (!pointLiesOnBothPaths(P[i]))
+    				 P[i].setUndefined();    			          
+    	     }     	 
+    	 }
+     }
     
     // calc intersections of conics A and B
-    final void compute() {     
+    final void computeContinous() {     
         /* D ... old defined points
          * P ... current points
          * Q ... new points
@@ -189,14 +300,19 @@ public class AlgoIntersectConics extends AlgoIntersect {
         }
         
         // calc distance table of defined points D and new points Q
-        distanceTable(D, age,meanDistance, Q, distTable);           
+        distanceTable(D, age, Q, distTable);           
                 
-        // find permutation and calculate new mean distances
-        distMemoryIndex++;
-        if (distMemoryIndex == AlgoIntersectConics.DIST_MEMORY_SIZE) 
-        	distMemoryIndex = 0;
-        setNearTo(P, isPalive, Q, isQonPath, distTable, meanDistance, distMemory, 
-        		distMemoryIndex, pointList);
+        // find permutation     
+        setNearTo(P, isPalive, Q, isQonPath, distTable, pointList, permutation);
+        isPermutationNeeded = false;
+        
+        /*
+    	System.out.print("permutation: ");
+    	for (int i=0; i < permutation.length; i++) {
+    		System.out.print(permutation[i] + " ");
+    	}
+    	System.out.println();
+    	*/  
         
         // 	make sure interesection points lie on limited paths
         if (isLimitedPathSituation)   
@@ -279,55 +395,40 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	}
     	
     	boolean ok = false;
-    	int i, solnr = 0;                                     
+    	int i = 0;    	
+    	
         // equal conics have no intersection points
         if (conic1.equals(conic2)) {
             for (i=0; i < points.length; i++) {
                 points[i].setUndefined();
             }            
             return;
-        }                       
+        } 
+    	
+        // input is already degenerate
+        if (conic1.isLineConic()) {
+            intersectWithDegenerate(conic2, conic1, points);
+            ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
+        }
+        else if (conic2.isLineConic()) {
+            intersectWithDegenerate(conic1, conic2, points);
+            ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
+        }
         
-      // STANDARD PROCEDURE
+        // STANDARD PROCEDURE
         double epsilon = Kernel.STANDARD_PRECISION;
-       
         while (!ok && epsilon <= Kernel.MIN_PRECISION) { 
-            kernel.setEpsilon(epsilon);            
+            kernel.setEpsilon(epsilon);                        
             
-            // input is allready degenerate
-            if (conic1.isLineConic()) {
-                intersectWithDegenerate(conic2, conic1, points);
-                ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
-            }
-            else if (conic2.isLineConic()) {
-                intersectWithDegenerate(conic1, conic2, points);
-                ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
-            }
-            // standard case
-            else {            
-                // find degenerate conics through intersection points
-                solnr = calcDegenerates(conic1.A, conic2.A, degConic, epsilon);            
-                if (solnr > 0) { // there are solutions
-                    // intersect degenerates conic with conic1
-                    for (i=0; i < solnr; i++) {                    	
-                        intersectWithDegenerate(conic1, degConic[i], points);
-                        ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
-                        if (ok) break; // solution found -> leaf for-loop
-
-                        // calculated points are not on both conics!
-                        // try again with conic2            
-                        intersectWithDegenerate(conic2, degConic[i], points);
-                        ok = testPoints(conic1, conic2, points, Kernel.MIN_PRECISION);
-                        if (ok) break; // solution found -> leaf for loop
-                    }                                
-                }     
-            }            
+            // find intersection points conics through intersection points
+        	ok = calcIntersectionPoints(conic1, conic2, points, epsilon);  
+                                         
             // try it with lower precision     
             epsilon *= 10.0;                        
         }            
         kernel.resetPrecision();
         
-        // NOTHING WORKED
+        // did not find intersections
         if (!ok) {
             //System.err.println("INTERSECTING CONICS FAILED (epsilon = " + epsilon/10.0 + ")");        
             // INTERSECTION FAILED
@@ -353,7 +454,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
 
 				case GeoConic.CONIC_EMPTY: 
 					// this shouldn't happen: try it with doubleline conic
-					degConic.enforceDoubleLine();
+					degConic.enforceDoubleLine();					
 					//System.err.println("intersectWithDegenerate: empty degenerate conic, try double line");	
 					//degConic.setToSpecific();
 					//System.err.println("degConic: " + degConic);
@@ -377,9 +478,9 @@ public class AlgoIntersectConics extends AlgoIntersect {
         // something went wrong: no intersections
         //System.err.println("intersectWithDegenerate: undefined degenerate conic, type:  " + degConic.type);
         for (int i=0; i < 4; i++) points[i].setUndefined();                   
-        
-       // System.err.println("degConic type" + degConic.getType());
-       // for (int i=0; i < 6; i++) 
+        		
+        //System.err.println("intersect conics: invalid degerate conic type: " + degConic.getTypeString());
+        // for (int i=0; i < 6; i++) 
         //    System.out.println(" A[" + i + "] = " +degConic.A[i]);
     }
     
@@ -400,67 +501,78 @@ public class AlgoIntersectConics extends AlgoIntersect {
     }
     
     /**
-     * Solve the cubic equation det(A + x B) = 0 and set degenerate conics C =
-     * A + x B for all solutions x.
-     * @param deg are the degenerate conics
-     * @return number of conics set
+     * Caculates the intersection points of the conic sections A and B.
      */      
-    final private int calcDegenerates(double[] origFlatA, double[] origFlatB, 
-                                             GeoConic [] deg, double eps) {                                                                                                                                                                                                            
-        int solnr, i, j;
-        double [] sol = new double[4];
-        double [] flatDeg = new double[6]; // flat matrix of degenerate conic  
-        double [] flatA = new double[6]; // flat matrix of conic A
-        double [] flatB = new double[6]; // flat matrix of conic B
-        //boolean equationExchanged = false;
-        
-        // normalize flat matrices
-        double maxA=0, maxB=0;
-        for (i=0; i<6; i++) {
-        	flatA[i] = origFlatA[i];
-        	double absA = Math.abs(flatA[i]);
-        	if (absA > maxA) maxA = absA;
-        	
-        	flatB[i] = origFlatB[i];
-        	double absB = Math.abs(flatB[i]);
-        	if (absB > maxB) maxB = absB;
-        }
-        // divide by max coeff
-        for (i=0; i<6; i++) {
-        	flatA[i] = flatA[i] / maxA;        	
-        	flatB[i] = flatB[i] / maxB;         	
-        }
-                 
-        /*
-        // AVOID HIGHLY DEGENERATE CASE:
-        // TEST wheter conics A and B have same submatrix S
-        // => degnerate is single line        
-        if ( (Math.abs(flatA[0] - flatB[0]) <= eps) &&
-             (Math.abs(flatA[1] - flatB[1]) <= eps) &&
-             (Math.abs(flatA[3] - flatB[3]) <= eps) ) 
+    final private boolean calcIntersectionPoints(GeoConic A, GeoConic B, GeoPoint [] points, double eps) {
+    	/* 
+    	 * Pluecker mu method:
+    	 * Solves the cubic equation det(A + x B) = 0 or det(x A + B) = 0 
+    	 * to get degenerate conics C = A + x B or C = x A + B that pass through
+    	 * all intersection points of A and B.
+         */
+       
+        double [] flatDeg = new double[6]; // flat matrix of degenerate conic                
+                
+        // test wheter conics A and B have same submatrix S
+        // => degnerate is single line
+        // (e.g. for circles)
+        if ( (Math.abs(A.matrix[0] - B.matrix[0]) <= eps) &&
+             (Math.abs(A.matrix[1] - B.matrix[1]) <= eps) &&
+             (Math.abs(A.matrix[3] - B.matrix[3]) <= eps) ) 
         {
-            sol[0] = -1.0;            
+        	/*
+            //sol[0] = -1.0;            
             // set single line matrix
             flatDeg[0] = 0.0;
             flatDeg[1] = 0.0;
             flatDeg[3] = 0.0;
-            flatDeg[2] = flatA[2] - flatB[2];
-            flatDeg[4] = flatA[4] - flatB[4];
-            flatDeg[5] = flatA[5] - flatB[5];
+            flatDeg[2] = A.matrix[2] - B.matrix[2];
+            flatDeg[4] = A.matrix[4] - B.matrix[4];
+            flatDeg[5] = A.matrix[5] - B.matrix[5];
+
             // classify degenerate conic
-            deg[0].setMatrixFromArray(flatDeg); 
-            return 1;            
+            degConic.setDegenerateMatrixFromArray(flatDeg); 
+            
+        	// try first conic
+        	intersectWithDegenerate(A, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;
+        	
+        	// try second conic
+        	intersectWithDegenerate(B, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;
+        		*/
+        	        	
+        	return intersectConicsWithEqualSubmatrixS(A, B, points);        	        	
         }
-        */
+              
+        
+        // STANDARD CASE
+        // We search for det(A + x B) = 0 to get a degenerate conic section C
+        // with C = A + x B that includes all intersection points of A and B.
+        // This leads to a cubic equation for x.             
+        double [] eqn = new double[4];
+        double [] sol = new double[3];
+        double [] flatA = new double[6]; // flat matrix of conic A
+        double [] flatB = new double[6]; // flat matrix of conic B       
+        
+        // copy and normalize flat matrices             
+        for (int i=0; i<6; i++) {
+        	flatA[i] = A.matrix[i];        	
+        	flatB[i] = B.matrix[i];        	
+        }        
+        normalizeArray(flatA);
+        normalizeArray(flatB);
                                           
-        // STANDARD CASE: solve cubic equation        
-        // sol[0] + sol[1] x + sol[2] x� + sol[3] x� = 0        
+        // compute coefficients of cubic equation        
+        // sol[0] + sol[1] x + sol[2] x^2 + sol[3] x^3 = 0        
         // constant
-        sol[0] =    flatA[2] * (flatA[0] * flatA[1] - flatA[3] * flatA[3])
+        eqn[0] =    flatA[2] * (flatA[0] * flatA[1] - flatA[3] * flatA[3])
                   + flatA[4] * (2.0 * flatA[3] * flatA[5] - flatA[1] * flatA[4])                                             
                   - flatA[0] * flatA[5] * flatA[5];        
         // x
-        sol[1] =    flatB[0] * (flatA[1] * flatA[2] - flatA[5] * flatA[5])
+        eqn[1] =    flatB[0] * (flatA[1] * flatA[2] - flatA[5] * flatA[5])
                   + flatB[1] * (flatA[0] * flatA[2] - flatA[4] * flatA[4])                                  
                   + flatB[2] * (flatA[0] * flatA[1] - flatA[3] * flatA[3])
                   + 2.0 * (
@@ -468,8 +580,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
                     + flatB[4] * (flatA[3] * flatA[5] - flatA[1] * flatA[4])
                     + flatB[5] * (flatA[3] * flatA[4] - flatA[0] * flatA[5])
                   );                              
-        // x�
-        sol[2] =    flatA[0] * (flatB[1] * flatB[2] - flatB[5] * flatB[5])              
+        // x^2
+        eqn[2] =    flatA[0] * (flatB[1] * flatB[2] - flatB[5] * flatB[5])              
                   + flatA[1] * (flatB[0] * flatB[2] - flatB[4] * flatB[4])
                   + flatA[2] * (flatB[0] * flatB[1] - flatB[3] * flatB[3])
                   + 2.0 * (                                                                        
@@ -477,83 +589,145 @@ public class AlgoIntersectConics extends AlgoIntersect {
                       + flatA[4] * (flatB[3] * flatB[5] - flatB[1] * flatB[4])                  
                       + flatA[5] * (flatB[3] * flatB[4] - flatB[0] * flatB[5])
                   );                                                      
-        // x�
-        sol[3] =    flatB[2] * (flatB[0] * flatB[1] - flatB[3] * flatB[3])
+        // x^3
+        eqn[3] =    flatB[2] * (flatB[0] * flatB[1] - flatB[3] * flatB[3])
                   + flatB[4] * (2.0 * flatB[3] * flatB[5] - flatB[1] * flatB[4]) 
-                  - flatB[0] * flatB[5] * flatB[5];               
-        
-        /*
-        // the coefficients of the cubic equation should not get too big      
-        double max=0;
-        for (i=0; i<4; i++) {
-        	double abs = Math.abs(sol[i]);
-        	if (abs > max) max = abs;        		        	                                    
-        }        
-        if (max > 10) {        	
-	        for (i=0; i<4; i++) {
-	        	sol[i] = sol[i] / max;        	        		        	                                   
-	        }
-        }
-        */
-        
-        /*
-         * I don't think that this code is necessary any more
-         * (January 21, 2007)
-         * 
-        // sol[3] should not be too small or too big
-        double abs3 = Math.abs(sol[3]);
-        double abs0 = Math.abs(sol[0]);
-        if ((abs3 < 1.0d && abs0 > 1.0d) ||
-            (abs0 > 1.0d && abs3 > abs0)) 
-        { 
-            // change equation from {0, 1, 2, 3} to {3, 2, 1, 0}
-            // i.e. intersect(A,B) = intersect(B,A)
-            
-        	// TODO: remove
-        	System.out.println("CHANGE EQUATION");            
-            double temp = sol[0];
-            sol[0] = sol[3];
-            sol[3] = temp;
-            temp = sol[1];
-            sol[1] = sol[2];
-            sol[2] = temp;                        
-            equationExchanged = true;
-        }  */   
-                     
-      
-        //System.out.println(sol[3] + " x^3 + " + sol[2] + " x^2 + " 
-        //                 + sol[1] + " x + "  + sol[0] );
+                  - flatB[0] * flatB[5] * flatB[5];                                                  
          
-        // solve cubic equation        
-        solnr = eqnSolver.solveCubic(sol, sol);   
+       // System.out.println(eqn[3] + " x^3 + " + eqn[2] + " x^2 + " 
+       //                  + eqn[1] + " x + "  + eqn[0] );
+        
+       // solve cubic equation and sort solutions       
+       int solnr = eqnSolver.solveCubic(eqn, sol);                
+       Arrays.sort(sol, 0, solnr);       
 
        // for (i=0;i<solnr;i++) {
-        //    System.out.println("sol[" + i + "] = " + sol[i]);
+       //    System.out.println("sol[" + i + "] = " + sol[i]);
        // }
+       
+       /*              
+       if (!degConic.isLabelSet())  {              	
+       	degConic.setLabel("deg");
+       	degConic.setLabelVisible(true);
+       }
+       */
+      
         
-        // set degenerate conics        
-        // C = x A + B    
-        /*
-        if (equationExchanged) {
-            for (i=0; i < solnr; i++) {                
-               for (j=0; j < 6; j++) {                                
-                    flatDeg[j] = (sol[i] * flatA[j] + flatB[j]);                                  
-                }                
-                // classify degenerate conic
-                deg[i].setMatrixFromArray(flatDeg);                
-            }        
-        } 
-        // C = A + x B
-        else { */        
-            for (i=0; i < solnr; i++) {               
-                for (j=0; j < 6; j++) {   
-                    flatDeg[j] = (flatA[j] + sol[i] * flatB[j]);
-                }                
-                // classify degenerate conic
-                deg[i].setMatrixFromArray(flatDeg);
-            }
-        //}        
-        return solnr;
+       // Go through cubic equation's solutions and take first degenerate conic
+       // with det(A + x B) < eps.           
+	   for (i=0; i < solnr; i++) {  
+ 		   // A + x B
+		   for (int j=0; j < 6; j++) {   
+			   flatDeg[j] = (flatA[j] + sol[i] * flatB[j]);	          	          
+		   }     	 
+
+		   // check if det(A + x B) = 0			   			  			   
+		   degConic.setDegenerateMatrixFromArray(flatDeg);
+			   	
+		    // try first conic
+        	intersectWithDegenerate(A, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;
+        	
+        	// try second conic
+        	intersectWithDegenerate(B, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;			   		   		   	               	
+	   }
+	  	  	   
+	   // DESPARATE MODE
+	   // we did not find a degenerate conic with the solutions from above
+	   // so we try det(x A + B) now 
+      
+        // change equation from {0, 1, 2, 3} to {3, 2, 1, 0}
+        // i.e. intersect(A,B) = intersect(B,A)                	
+    	//System.out.println("CHANGE EQUATION");   
+    	
+        double temp = eqn[0];
+        eqn[0] = eqn[3];
+        eqn[3] = temp;
+        temp = eqn[1];
+        eqn[1] = eqn[2];
+        eqn[2] = temp;                        
+            
+        // solve cubic equation and sort solutions        
+        solnr = eqnSolver.solveCubic(eqn, sol); 
+        Arrays.sort(sol, 0, solnr);
+        
+        // Go through cubic equation's solutions and take first degenerate conic
+        // that gives us intersection points         
+ 	    for (int i=0; i < solnr; i++) {  
+  		   // x A + B
+ 		   for (int j=0; j < 6; j++) {   
+ 			   flatDeg[j] = (sol[i] * flatA[j] + flatB[j]);	          	          
+ 		   }     	  				   			  			  
+ 		   degConic.setDegenerateMatrixFromArray(flatDeg);
+			   		   
+		   //degConic.update();
+		   //System.out.println("degenerate found (2): " + degConic.getTypeString());				   				   			   
+		   
+		    // try first conic
+        	intersectWithDegenerate(A, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;
+        	
+        	// try second conic
+        	intersectWithDegenerate(B, degConic, points);
+        	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+        		return true;			   	               
+ 	   }
+            
+        //System.out.println("no solutions found");
+        //degConic.setUndefined();
+        return false;
+    }
+    
+    /**
+     * If A and B have same submatrix S, the intersection points are on
+     * a (double) line.
+     * @param points: resulting intersection points
+     * @return true if points were found
+     */
+    private boolean intersectConicsWithEqualSubmatrixS(GeoConic A, GeoConic B, GeoPoint [] points) {    	
+	    if (tempLine == null) {			
+			tempLine = new GeoLine(cons);			
+		}
+		
+		// set line passing throug intersection points (e.g. of two circles)
+	    tempLine.setCoords(        			
+				2*(A.matrix[4] - B.matrix[4]),
+				2*(A.matrix[5] - B.matrix[5]),
+				A.matrix[2] - B.matrix[2]);
+		        	        	        	
+		// try first conic
+		AlgoIntersectLineConic.intersectLineConic(tempLine, A, points);        	
+		if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+			return true;
+		
+		// try second conic
+		AlgoIntersectLineConic.intersectLineConic(tempLine, B, points);
+		if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+			return true; 
+		
+		return false;
+	}
+    
+    
+    /**
+     * Divides the given array by its maximum absolute value.
+     */
+    private void normalizeArray(double [] array) {
+    	// find max abs value in array
+    	double max = 0;
+    	for (int i=0; i < array.length; i++) {         	
+         	double abs = Math.abs(array[i]);
+         	if (abs > max) max = abs;
+    	}
+    	
+    	// divide array by max    	
+    	for (int i=0; i < array.length; i++) {         	
+         	array[i] /= max;         	
+    	}
     }
     
     
@@ -563,16 +737,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     /**
      * set tabel[i][j] to square distance between D[i] and Q[j]. 
-     * distSqr(D[i], Q[j]) := (D[i] - Q[j])^2 + age[i] + meanDistance[i].
+     * distSqr(D[i], Q[j]) := (D[i] - Q[j])^2 + age[i].
      * age[i] tells for every D[i], how long it has been undefined
-     * (old points' distances should be larger).
-     * meanDistance[i] is the mean change of the point's location within the
-     * last couple of computations (fixed points should stay at their place).
+     * (old points' distances should be larger).     
      * Undefined (NaN) or infinite distances are set to max of all defined
      * distances + 1. If there are no defined distances, all distances
      * are set to 0.
      */
-    final public static void distanceTable(GeoPoint [] D, int[] age, double[] meanDistance,
+    final public static void distanceTable(GeoPoint [] D, int[] age, 
                                            GeoPoint [] Q, double[][] table) {
         int i, j;        
         boolean foundUndefined = false;
@@ -582,7 +754,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         for (i=0; i < D.length; i++) {
         //	checkFixedPoint = meanDistance[i] == 0.0;
         	for (j=0; j < Q.length; j++) {            
-                dist = D[i].distanceSqr(Q[j]) + age[i] + meanDistance[i];
+                dist = D[i].distanceSqr(Q[j]) + age[i];
                 
                 if (Double.isInfinite(dist) || Double.isNaN(dist)) {
                     dist = -1; // mark as undefined
@@ -633,21 +805,20 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     /**
      * Sets Pi = Qj according to near to heuristic (using the closest
-     * pairs of points in ascending distance order).          
-     * 
-     *  Additionally the new mean distances are computed using the distTable, the
-     *  distMemory and the current distMemoryIndex (0..meanDistance.length-1)
-     *  Note: distMemory[i][] holds the old distance changes of Pi
+     * pairs of points in ascending distance order).               
      *    
      *  For limitedPaths we also have to make sure that we only use points from Q 
-     *  to set P that really lie on both paths.  
+     *  to set P that really lie on both paths.
+     *  
+     *  @param permutation is an output parameter for the permutation
+     *  of points Q used to set points P, e.g. permuation {1,0} 
+     *  means that P[0]=Q[1] and P[1]=Q[0]
      */
     final static void setNearTo(GeoPoint[] P, boolean [] isPalive,
     							GeoPoint[] Q, boolean [] isQonPath,    							    							
     							double[][] distTable, 
-    							double [] meanDistance,
-								double[][] distMemory, 
-								int distMemoryIndex, PointPairList pointList) {
+    							PointPairList pointList,
+								int [] permutation) {
     	int indexP, indexQ;
     	pointList.clear();
     	for (indexP = 0; indexP < P.length; indexP++) {        		
@@ -664,40 +835,24 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	
     	//System.out.println(pointList.toString());
     	//System.out.flush();
- 
-    	double newDist;
-    	PointPair pair;
+   
+    	PointPair pair;    	
         while (!pointList.isEmpty()) {
         	// take first pair from pointList
         	pair = pointList.getHead();	
         	indexP = pair.indexP;
-        	indexQ = pair.indexQ;                	
+        	indexQ = pair.indexQ;          	
         	
         	// remove all other pairs with P[indexP] or Q[indexQ] from list
         	pointList.removeAllPairs(pair);             	        	
          	
         	// P[indexP] = Q[indexQ]
             P[indexP].setCoords(Q[indexQ]);
-            
-            // calculate new mean distance of P[indexP]
-            if (P[indexP].isDefined()) {
-	            newDist =  (distTable[indexP][indexQ] - meanDistance[indexP])
-											  / meanDistance.length;
-	            meanDistance[indexP] = meanDistance[indexP] 
-									- distMemory[indexP][distMemoryIndex]
-									+ newDist;
-	            if (meanDistance[indexP] < Kernel.STANDARD_PRECISION)
-	            	meanDistance[indexP] = 0.0;
-	            distMemory[indexP][distMemoryIndex] = newDist;
-	            	            
-	            //System.out.println("mean distance of "  + P[indexP].label + ": " +
-	            //		meanDistance[indexP]);
-            }
-        }
+            permutation[indexP] = indexQ;                      
+        }               
     }
     
     
 }
-
 
 

@@ -41,6 +41,7 @@ public class AlgoCircleTwoPoints extends AlgoElement {
         this.M = M;
         this.P = P;
         circle = new GeoConic(cons);
+        circle.addPointOnConic(P);
         setInputOutput(); // for AlgoElement
 
         compute();
