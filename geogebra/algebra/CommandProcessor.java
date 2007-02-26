@@ -2153,6 +2153,7 @@ final public GeoElement[] process(Command c) throws MyError {
 /*
  * Tangent[ <GeoPoint>, <GeoConic> ] Tangent[ <GeoLine>, <GeoConic> ] Tangent[
  * <NumberValue>, <GeoFunction> ] Tangent[ <GeoPoint>, <GeoFunction> ]
+ *  Victor Franco 11-02-2007 (for curve's): Tangent[ <GeoPoint>, <GeoCurveCartesian> ]
  */
 class CmdTangent extends CommandProcessor {
 	
@@ -2207,6 +2208,19 @@ final public GeoElement[] process(Command c) throws MyError {
                             ((GeoFunctionable) arg[1]).getGeoFunction())};
                 return ret;
             }
+            //Victor Franco 11-02-2007: for curve's
+            else if( (ok[0] = (arg[0] .isGeoPoint()) )
+                    && (ok[1] = (arg[1] .isGeoCurveCartesian())) ){
+
+            	GeoElement[] ret =
+                {
+                     kernel.TangentCurve(
+                        c.getLabel(),
+                        (GeoPoint) arg[0],
+                        (GeoCurveCartesian) arg[1])};
+                return ret;
+            }
+            //Victor Franco 11-02-2007: end for curve's
 
             // syntax error
             else {
