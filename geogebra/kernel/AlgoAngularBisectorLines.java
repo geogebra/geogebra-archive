@@ -20,15 +20,12 @@ package geogebra.kernel;
 
 
 /**
- *
+ * Angle bisectors between two lines
  * @author  Markus
  * @version 
  */
 public class AlgoAngularBisectorLines extends AlgoElement {
-
-    /**
-	 * 
-	 */
+    
 	private static final long serialVersionUID = 1L;
 	private GeoLine g, h; // input    
     private GeoLine[] bisector; // output   
@@ -151,15 +148,31 @@ public class AlgoAngularBisectorLines extends AlgoElement {
             wx = gx;
             wy = gy;
 
-            // NEAR TO RELATIONSHIP
-            // check orientation: take smallest change!!!
-            if (wv[index].x * wx + wv[index].y * wy >= 0) {
-                wv[index].x = wx;
+            if (kernel.isContinuous()) {
+            	// init old direction of bisectors
+            	if (bisector[0].isDefined()) {
+            		wv[0].x = bisector[0].y;            	
+            		wv[0].y = -bisector[0].x;
+            	}
+            	if (bisector[1].isDefined()) {
+            		wv[1].x = bisector[1].y;            	
+            		wv[1].y = -bisector[1].x;
+            	}
+            	
+	            // NEAR TO RELATIONSHIP
+	            // check orientation: take smallest change!!!
+	            if (wv[index].x * wx + wv[index].y * wy >= 0) {
+	                wv[index].x = wx;
+	                wv[index].y = wy;
+	            } else { // angle > 180�, change orientation
+	                wv[index].x = -wx;
+	                wv[index].y = -wy;
+	                bisector[index].z = -bisector[index].z;
+	            }
+            } else {
+            	// non continuous
+            	wv[index].x = wx;
                 wv[index].y = wy;
-            } else { // angle > 180�, change orientation
-                wv[index].x = -wx;
-                wv[index].y = -wy;
-                bisector[index].z = -bisector[index].z;
             }
 
             // set direction vector of bisector
@@ -179,8 +192,15 @@ public class AlgoAngularBisectorLines extends AlgoElement {
                 wy = gy + hy;
             } else { // ip <= 0.0, angle > 90�            
                 // BC - BA is a normalvector of the bisector                        
-                wx = gy - hy;
-                wy = hx - gx;
+            	wx = hy - gy;
+                wy = gx - hx;
+                
+                // if angle > 180 degree change orientation of direction
+                // det(g,h) < 0
+                if (gx * hy < gy * hx) {
+                	wx = -wx;
+                	wy = -wy;
+                }   
             }
 
             // make (wx, wy) a unit vector
@@ -188,21 +208,39 @@ public class AlgoAngularBisectorLines extends AlgoElement {
             wx /= length;
             wy /= length;
 
-            // check orientations: take smallest change!!!
-            // first bisector: relativ to (wx, wy)
-            if (wv[0].x * wx + wv[0].y * wy >= 0) {
-                wv[0].x = wx;
-                wv[0].y = wy;
-            } else { // angle > 180�, change orientation
-                wv[0].x = -wx;
-                wv[0].y = -wy;
-            }
-            // second bisector: relativ to (wy, -wx) 
-            if (wv[1].x * wy - wv[1].y * wx >= 0) {
-                wv[1].x = wy;
-                wv[1].y = -wx;
-            } else { // angle > 180�, change orientation
-                wv[1].x = -wy;
+            if (kernel.isContinuous()) {
+            	// init old direction of bisectors
+            	if (bisector[0].isDefined()) {
+            		wv[0].x = bisector[0].y;            	
+            		wv[0].y = -bisector[0].x;
+            	}
+            	if (bisector[1].isDefined()) {
+            		wv[1].x = bisector[1].y;            	
+            		wv[1].y = -bisector[1].x;
+            	}
+            	
+	            // check orientations: take smallest change!!!
+	            // first bisector: relativ to (wx, wy)
+	            if (wv[0].x * wx + wv[0].y * wy >= 0) {
+	                wv[0].x = wx;
+	                wv[0].y = wy;
+	            } else { // angle > 180 degree change orientation
+	                wv[0].x = -wx;
+	                wv[0].y = -wy;
+	            }
+	            // second bisector: relativ to (-wy, wx) 
+	            if (wv[1].y * wx - wv[1].x * wy >= 0) {
+	                wv[1].x = -wy;
+	                wv[1].y = wx;
+	            } else { // angle > 180 degree change orientation
+	                wv[1].x = wy;
+	                wv[1].y = -wx;
+	            }
+            } else {
+            	// non continuous
+            	wv[0].x = wx;
+	            wv[0].y = wy;
+	            wv[1].x = -wy;
                 wv[1].y = wx;
             }
 

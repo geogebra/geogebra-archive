@@ -906,7 +906,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				setEigenvectors();
 			}
 		} else if (kernel.isZero(r)) { // radius == 0
-			singlePoint();
+			singlePoint();			
 		} else { // radius < 0 or radius = infinite
 			empty();
 		}
@@ -1251,7 +1251,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			eigenvecY = eigenvecY / length;
 		}
 		
-		if (kernel.isContinous()) {
+		if (kernel.isContinuous()) {
 			// first eigenvector
 			if (eigenvec[0].x * eigenvecX < -eigenvec[0].y * eigenvecY) {
 				eigenvec[0].x = -eigenvecX;
@@ -1298,7 +1298,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		eigenvec[0].x = eigenvecX;
 		eigenvec[0].y = eigenvecY;
 
-		if (kernel.isContinous()) {
+		if (kernel.isContinuous()) {
 			// second eigenvector (compared to normalvector (-eigenvecY, eigenvecX)
 			if (eigenvec[1].y * eigenvecX < eigenvec[1].x * eigenvecY) {
 				eigenvec[1].x = eigenvecY;
@@ -1342,7 +1342,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		}		
 		setAffineTransform();		
 		
-		// System.out.println("conic: " + this.getLabel() + " type " + typeString() );
+		// TODO:remove
+		 System.out.println("conic: " + this.getLabel() + " type " + getTypeString() );
 		// System.out.println("           detS: " + (A0A1 - A3A3));
 	}
 
@@ -1419,7 +1420,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		if (singlePoint == null)
 			singlePoint = new GeoPoint(cons);
 		singlePoint.setCoords(b.x, b.y, 1.0d);
-		//System.out.println("single singlePoint : " + b);
+		//System.out.println("singlePoint : " + b);
 	}
 
 	final private void intersectingLines(double[] mu) {

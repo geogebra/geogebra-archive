@@ -173,15 +173,7 @@ implements EuclidianViewAlgo {
     public void euclidianViewUpdate() {
     	compute();
     }
-    
-    /**     
-     * Used by the kernel to tell algorithms that continuity
-     * was turned on or off.
-     */
-    public void continuityUpdate() {  
-    	update();
-    }
-
+       
     public void remove() {      
         cons.removeFromConstructionList(this);
         

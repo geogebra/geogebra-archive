@@ -325,7 +325,7 @@ public class Macro {
 	 private Construction createMacroConstruction(String macroConsXML) throws Exception {		 
     	// build macro construction
     	MacroKernel mk = new MacroKernel(kernel);   
-    	mk.setContinous(false);
+    	mk.setContinuous(false);
     	mk.setGlobalVariableLookup(false);    	        	      	  	      	        	    	
     	
     	try {    	

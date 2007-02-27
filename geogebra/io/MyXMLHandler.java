@@ -216,6 +216,11 @@ public class MyXMLHandler implements DocHandler {
                         	kernel.arcusFunctionCreatesAngle = true;
                         	app.setShowConstructionProtocolNavigation(false);
                         }
+                        if (ggbFileFormat < 3.0) {
+                        	// before 3.0 the kernel had continuity always on
+                        	if (!(kernel instanceof MacroKernel)) 
+                        		kernel.setContinuous(true);
+                        }
                         
                     } catch (Exception e) {
                         throw new MyError(app, "FileFormatUnknown");
@@ -275,7 +280,7 @@ public class MyXMLHandler implements DocHandler {
         if (eName.equals("euclidianView")) {
             mode = MODE_EUCLIDIAN_VIEW;
         } else if (eName.equals("kernel")) {
-            mode = MODE_KERNEL;
+            mode = MODE_KERNEL;           
         } else if (eName.equals("gui")) {
             mode = MODE_GUI;
         } else if (eName.equals("macro")) {
@@ -539,6 +544,9 @@ public class MyXMLHandler implements DocHandler {
         else  if (eName.equals("coordStyle")) {
             handleKernelCoordStyle(attrs);
         }   
+        else  if (eName.equals("continuous")) {
+            handleKernelContinuous(attrs);
+        } 
         else  if (eName.equals("decimals")) {
              handleKernelDecimals(attrs);
         } 
@@ -579,6 +587,16 @@ public class MyXMLHandler implements DocHandler {
             return false;
         }
     }
+    
+    private boolean handleKernelContinuous(LinkedHashMap attrs) {
+        try {
+            kernel.setContinuous(Boolean.getBoolean((String) attrs.get("val")));                                   
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+        
     
     // ====================================
     //   <gui>    

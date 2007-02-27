@@ -93,7 +93,8 @@ public class Kernel {
 	private Parser tempParser;
 	private GeoGebraCAS ggbCAS;
 	
-	private boolean continous = true;
+	// Continuity on or off, default: false since V3.0
+	private boolean continuous = false;
 	private MacroManager macroManager;
 				
 	public Kernel(Application app) {
@@ -3500,18 +3501,17 @@ public class Kernel {
 	/**
 	 * States whether the continuity heuristic is active.
 	 */
-	final public boolean isContinous() {
-		return continous;
+	final public boolean isContinuous() {
+		return continuous;
 	}
 
 	/**
 	 * Turns the continuity heuristic on or off.
 	 * Note: the macro kernel always turns continuity off. 
 	 */
-	public void setContinous(boolean continous) {
-		if (continous != this.continous) {
-			this.continous = continous;
-			cons.updateContinuity();
+	public void setContinuous(boolean continuous) {
+		if (continuous != this.continuous) {
+			this.continuous = continuous;			
 		}		
 	}
 

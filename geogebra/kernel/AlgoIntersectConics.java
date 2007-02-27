@@ -142,7 +142,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         // continous: use near-to-heuristic between old and new intersection points
         // non-continous: use computeContinous() to init a permutation and then
         //                always use this permutation
-        boolean continous = isPermutationNeeded || kernel.isContinous();   
+        boolean continous = isPermutationNeeded || kernel.isContinuous();   
         if (continous) {
         	computeContinous();        	        	        	        	
         } else {
@@ -226,11 +226,30 @@ public class AlgoIntersectConics extends AlgoIntersect {
      */  
      private void computeNonContinous() {    	     	 
     	 // calc new intersection points Q
-    	 intersectConics(A, B, Q);   
-                           
+    	 intersectConics(A, B, Q);            
+    	 
+    	 // arrange intersection points Q so that all defined
+    	 // intersection points are at the beginning of the array       
+    	 for (int i=0; i < Q.length; i++) {        	    
+         	if (Q[i].isDefined()) {
+          		 // move defined intersection point as far to the front as possible
+         		 int j=i-1;
+         		 boolean move = false;
+         		 while (j >= 0 && !Q[j].isDefined()) {
+         			 move = true;
+         			 j--;
+         		 }
+         		 if (move) {
+         			 j++;
+         			 Q[j].setCoords(Q[i]);
+         			 Q[i].setUndefined();
+         		 }
+         	}
+         }      	     	
+    	 
          // use fixed permutation to set output points P
     	 for (int i=0; i < P.length; i++) {        	
-         	P[i].setCoords(Q[permutation[i]]);         	
+         	P[i].setCoords(Q[permutation[i]]);           	
          }   
     	 
     	 if (isLimitedPathSituation) {

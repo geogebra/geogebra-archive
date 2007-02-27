@@ -67,7 +67,7 @@ implements Traceable {
     
     public void set(GeoElement geo) {    
         GeoVec3D v = (GeoVec3D) geo;        
-        setCoords(v.x, v.y, v.z);    
+        setCoords(v.x, v.y, v.z);        
     }         
     
 	public abstract void setCoords(double x, double y, double z);

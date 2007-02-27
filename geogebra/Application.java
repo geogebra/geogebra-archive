@@ -313,7 +313,7 @@ public class Application {
                 cbShowAuxiliaryObjects, cbHorizontalSplit, cbShowConsProtNavigation,
                 cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
 				cbShowAlgebraInput, cbShowCmdList;
-    private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
+    private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces, menuContinuity,
 			      menuPointStyle,menuRightAngleStyle, menuCoordStyle, menuWindow, menuFile;
     private JMenuItem miCloseAll;
 
@@ -2513,6 +2513,7 @@ public class Application {
         cbShowConsProtNavigationPlay.setSelected(isConsProtNavigationPlayButtonVisible());
         cbShowConsProtNavigationOpenProt.setSelected(isConsProtNavigationProtButtonVisible());
      
+        updateMenuContinuity();
         updateMenuPointCapturing();
         updateMenuAngleUnit();
         updateMenuDecimalPlaces();
@@ -2713,7 +2714,7 @@ public class Application {
         String[] strPointCapturingAC = { "1 PointCapturing", "2 PointCapturing",  "0 PointCapturing" };
         addRadioButtonMenuItems(menuPointCapturing, al, strPointCapturing, strPointCapturingAC, 0);     
         menu.add(menuPointCapturing);
-        updateMenuPointCapturing();
+        updateMenuPointCapturing();               
                 
         // Angle unit
         menuAngleUnit = new JMenu(getMenu("AngleUnit"));
@@ -2729,7 +2730,15 @@ public class Application {
                                                             "3 decimals", "4 decimals", "5 decimals" };
         addRadioButtonMenuItems(menuDecimalPlaces, al, strDecimalSpaces, strDecimalSpacesAC, 0);                
         menu.add(menuDecimalPlaces);
-        updateMenuDecimalPlaces();
+        updateMenuDecimalPlaces();                
+        
+        // continuity
+        menuContinuity = new JMenu(getMenu("Continuity"));
+        String[] strContinuity = { "on", "off" };   
+        String[] strContinuityAC = { "true Continuity", "false Continuity" };
+        addRadioButtonMenuItems(menuContinuity, al, strContinuity, strContinuityAC, 0);     
+        menu.add(menuContinuity);
+        updateMenuContinuity();
         
         menu.addSeparator();
         
@@ -2920,6 +2929,17 @@ public class Application {
         int pos = kernel.getPrintDecimals();
         try {
         ((JRadioButtonMenuItem) menuDecimalPlaces.
+        		getMenuComponent(
+                pos)).setSelected(
+            true);
+        } catch (Exception e) {        	
+        }
+    }
+    
+    private void updateMenuContinuity() {
+    	int pos = kernel.isContinuous() ? 0 : 1;
+        try {
+        ((JRadioButtonMenuItem) menuContinuity.
         		getMenuComponent(
                 pos)).setSelected(
             true);

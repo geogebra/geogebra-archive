@@ -374,14 +374,6 @@ public class Construction {
         }  
     }
     
-    final void updateContinuity() {
-    	// init and update all algorithms
-        int size = algoList.size();
-        for (int i = 0; i < size; ++i) {        	        	
-       	AlgoElement algo = (AlgoElement)algoList.get(i);        	                     
-            algo.continuityUpdate();                        	
-        }  
-    }
     
     /**
      * Build a set with all algorithms of this construction (in topological order). 
@@ -772,6 +764,11 @@ public class Construction {
 
         // kernel settings
         sb.append("<kernel>\n");
+        
+        // continuity: true or false, since V3.0
+        sb.append("\t<continuous val=\"");
+        sb.append(kernel.isContinuous());
+        sb.append("\"/>\n");
         
         // decimal places
         sb.append("\t<decimals val=\"");

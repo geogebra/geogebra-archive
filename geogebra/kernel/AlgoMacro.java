@@ -76,13 +76,7 @@ public class AlgoMacro extends AlgoElement {
     public void remove() {
     	macro.unregisterAlgorithm(this);
     	super.remove();    	
-    }
-    
-    public void continuityUpdate() {
-    	initMap();    
-    	initForNearToRelationship();
-    	super.continuityUpdate();
-    }        
+    }           
     
 	String getClassName() {
 		return "AlgoMacro";

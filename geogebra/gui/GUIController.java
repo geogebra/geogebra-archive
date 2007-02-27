@@ -111,7 +111,15 @@ implements ActionListener, KeyEventDispatcher
 			int mode = Integer.parseInt(cmd.substring(0,1));			
 			app.getEuclidianView().setPointCapturing(mode);														
 			app.setUnsaved();
-		}         
+		}      
+        
+        // Continuity 
+		else if (cmd.endsWith("Continuity")) {				
+			boolean state = cmd.startsWith("true");			
+			kernel.setContinuous(state);	
+			kernel.updateConstruction();
+			app.setUnsaved();
+		}   
           
     }
     

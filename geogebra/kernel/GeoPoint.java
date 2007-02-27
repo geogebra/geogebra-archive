@@ -97,6 +97,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         set(point);        
     }
     
+    public void set(GeoElement geo) {    
+    	GeoPoint p = (GeoPoint) geo;        
+        setCoords(p.x, p.y, p.z);
+        pathParameter.set(p.pathParameter);        
+    } 
+    
     public GeoElement copy() {
         return new GeoPoint(this);        
     }                 

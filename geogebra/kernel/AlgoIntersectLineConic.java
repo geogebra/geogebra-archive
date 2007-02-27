@@ -169,7 +169,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         // continous: use near-to-heuristic between old and new intersection points
         // non-continous: use computeContinous() to init a permutation and then
         //                always use this permutation
-        boolean continous = isPermutationNeeded || kernel.isContinous();   
+        boolean continous = isPermutationNeeded || kernel.isContinuous();   
         if (continous) {
         	computeContinous();        	        	        	        	
         } else {
