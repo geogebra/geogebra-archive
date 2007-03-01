@@ -1479,7 +1479,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
 				if (pix <= maxX) {
 					if (showAxesNumbers[0]) {															
-						String strNum = kernel.formatPi(rw, axesNumberFormat[0]);					
+						String strNum = kernel.formatPiE(rw, axesNumberFormat[0]);					
 						boolean zero = strNum.equals("0");
 						
 						sb.setLength(0);
@@ -1597,7 +1597,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
 				if (pix <= maxY) {
 					if (showAxesNumbers[1]) {
-						String strNum = kernel.formatPi(rw, axesNumberFormat[1]);					
+						String strNum = kernel.formatPiE(rw, axesNumberFormat[1]);					
 						boolean zero = strNum.equals("0");
 						
 						sb.setLength(0);

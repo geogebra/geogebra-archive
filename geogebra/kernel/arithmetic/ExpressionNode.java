@@ -89,7 +89,9 @@ implements ExpressionValue {
     public static final int CEIL = 25;  
     public static final int FACTORIAL = 26;
     public static final int ROUND = 27;  
-    public static final int GAMMA = 28;         
+    public static final int GAMMA = 28;    
+    public static final int LOG10 = 29;  
+    public static final int LOG2 = 30;  
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
@@ -606,8 +608,40 @@ implements ExpressionValue {
         case POWER:
             // number ^ number
             if (lt.isNumberValue() && rt.isNumberValue()) {
-                num = ((NumberValue)lt).getNumber();                
-                MyDouble.pow(num, ((NumberValue)rt).getNumber(), num);
+            	num = ((NumberValue)lt).getNumber();  
+            	double base = num.getDouble();
+            	MyDouble exponent = ((NumberValue)rt).getNumber();
+            	
+            	// special case: e^exponent (Euler number)
+            	if (base == Math.E) {
+            		return exponent.exp();
+            	}
+            	
+            	// special case: left side is negative and right side is a fraction 1/n
+            	if (right.isExpressionNode() && base < 0) {            		
+            		ExpressionNode node = (ExpressionNode) right;
+            		if (node.operation == DIVIDE) {
+            			// check if we have 1/n
+            			double exp = exponent.getDouble();
+            			double rec = 1.0/exp;
+            			double roundRec = Math.round(rec);
+            			// check if we got an integer
+            			if (kernel.isEqual(rec, roundRec)) {  
+            				boolean oddNumber =  ((int)roundRec) % 2 == 1;
+            				if (oddNumber) {
+            					// (-3)^(1/3) = -(3^(1/3))
+            					num.set(-Math.pow(-base, exp));
+            				} else {             		
+            					// (-3)^(1/2) = undefined
+            					num.set(Double.NaN);
+            				}
+            				return num;
+            			}
+            		}
+            	}
+            	
+            	// standard case                           
+                MyDouble.pow(num, exponent, num);
                 return num;
             }               
             // vector ^ 2 (inner product)
@@ -905,6 +939,42 @@ implements ExpressionValue {
             }     
             else { 
                  String [] str = { "IllegalArgument", "log", lt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case LOG10:
+            // log(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().log10();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.LOG10, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "lg", lt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case LOG2:
+            // log(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().log2();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.LOG2, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "ld", lt.toString() };
                 throw new MyError(app, str);
             }
             
@@ -1498,8 +1568,8 @@ implements ExpressionValue {
     }
         
     private String printCASstring(int STRING_TYPE, boolean symbolic) {  
-        boolean oldPrintForm = kernel.isCASPrintForm();
-        kernel.setCASPrintForm(true);
+        int oldPrintForm = kernel.getCASPrintForm();
+        kernel.setCASPrintForm(STRING_TYPE);
         
         String ret = null;
                     
@@ -1868,8 +1938,24 @@ implements ExpressionValue {
                         break;
                         
 	        		case STRING_TYPE_JASYMCA:
+	        			// special case: e^x
+	        			if (leftStr.equals("exp(1)")) {
+	        				sb.setLength(0);
+	        				sb.append("exp");
+	        			} else
+	        				sb.append('^'); 
+                        sb.append('(');
+                        sb.append(rightStr);
+                        sb.append(')');
+	        			break;
+	        			
 	        		case STRING_TYPE_YACAS:
-	        			sb.append('^'); 
+	        			// special case: e^x
+	        			if (leftStr.equals("Exp(1)")) {
+	        				sb.setLength(0);
+	        				sb.append("Exp"); 
+	        			} else
+	        				sb.append('^'); 
                         sb.append('(');
                         sb.append(rightStr);
                         sb.append(')');
@@ -1898,7 +1984,7 @@ implements ExpressionValue {
 	                         sb.append(rightStr);
 	                         sb.append(')');
 	                     }   
-                }                        
+                }      
                 break;
                 
             case FACTORIAL:
@@ -2131,10 +2217,23 @@ implements ExpressionValue {
 	                    sb.append(')');
 	        			break;
 	        			
-	        		default:
-	        			sb.append("exp(");     
-		        		sb.append(leftStr);
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("exp(");
+	        			sb.append(leftStr);
 	                    sb.append(')');
+	        			break;
+	        			
+	        		default:
+	        			sb.append(Kernel.EULER_STRING);
+	        			if (left.isLeaf()) {
+	        				sb.append("^");  
+	        				sb.append(leftStr);
+	        			} else {
+		        			sb.append("^(");     
+			        		sb.append(leftStr);
+		                    sb.append(')');
+	        			}
+	        			break;
 	        	}           	
                 break;
 
@@ -2148,11 +2247,72 @@ implements ExpressionValue {
 	        			sb.append("Ln(");
 	        			break;
 	        			
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("log(");	        			
+	        			break;
+	        			
 	        		default:
-	        			sb.append("log(");         		
+	        			sb.append("ln("); 
+	        			break;
 	        	}              	      	
                 sb.append(leftStr);
                 sb.append(')');
+                break;
+                
+            case LOG10:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\log_{10}(");
+	        			sb.append(leftStr);
+	                    sb.append(')');
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Ln(");
+	        			sb.append(leftStr);
+	        			sb.append(")/Ln(10)");
+	        			break;
+	        			
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("log(");	
+	        			sb.append(leftStr);
+	        			sb.append(")/log(10)");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("lg(");  
+	        			sb.append(leftStr);
+	        			sb.append(')');
+                    	break;
+	        	}              	      	
+                break;
+                
+            case LOG2:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\log_{2}(");
+	        			sb.append(leftStr);
+	                    sb.append(')');
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("Ln(");
+	        			 sb.append(leftStr);
+	        			 sb.append(")/Ln(2)");
+	        			break;
+	        			
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("log(");	
+	        			sb.append(leftStr);
+	        			sb.append(")/log(2)");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("ld(");   
+		        		sb.append(leftStr);
+	                    sb.append(')');
+	                    break;
+	        	}              	      	
                 break;
                                             
             case SQRT:

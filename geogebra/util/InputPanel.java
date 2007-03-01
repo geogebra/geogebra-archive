@@ -2,6 +2,7 @@ package geogebra.util;
 
 import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
+import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -22,16 +23,12 @@ implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	
 	private static String [] specialChars = { 	
-		"\u00b0", // degree		
-		"\u03c0", // pi				
-		"\u00b2",  // exponents ^2 until ^6
-		"^", 		
-		"exp(x)",
-		"log(x)",
-		"sin(x)",
-		"cos(x)",
-		"tan(x)",
+		"\u00b0", // degree	
+		"\u00b2",  // exponents ^2 
+		"\u03c0", // pi	
 		"abs(x)",
+		Kernel.EULER_STRING + "^x", // e^x
+		"ln(x)",
 		"\u00ac", // boolean NOT 
 		"\u2227", // boolean AND
 	    "\u2228", // boolean OR

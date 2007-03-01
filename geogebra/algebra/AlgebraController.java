@@ -884,8 +884,15 @@ public class AlgebraController
 
 		GeoElement geoRight = cons.lookupLabel(rightVar);
 		if (geoRight == null) {
-			String[] str = { "UndefinedVariable", rightVar };
-			throw new MyError(app, str);
+			
+			//special case: label "e" and no GeoElement exists with this name
+	    	// then we use the Euler number    	
+	    	if ("e".equals(rightVar)) {	    		
+	    		geoRight = new GeoNumeric(cons,  Math.E);
+	    	} else {
+				String[] str = { "UndefinedVariable", rightVar };
+				throw new MyError(app, str);
+	    	}
 		}
 		// don't allow copying of dependent functions
 		else if (
@@ -896,7 +903,7 @@ public class AlgebraController
 
 		// no lhs specified: just return rhs
 		if (leftVar == null) {
-			ret[0] = geoRight;
+			ret[0] = geoRight;		
 		}
 		// lefVar exists
 		else {
@@ -909,6 +916,11 @@ public class AlgebraController
 				ret[0] = geoRight;
 			}
 		}
+		
+		if (ret[0] != null && !ret[0].isLabelSet()) {
+			ret[0].setLabel(null);
+		}
+		
 		return ret;
 	}
 	

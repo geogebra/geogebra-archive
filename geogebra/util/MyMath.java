@@ -21,6 +21,9 @@ import java.math.BigDecimal;
  */
 public final class MyMath {
 	
+	public static final double LOG10 = Math.log(10);
+	public static final double LOG2 = Math.log(2);
+	
 	final public static double sgn(Kernel kernel, double a) {
 		if (kernel.isZero(a)) 
 			return 0.0;

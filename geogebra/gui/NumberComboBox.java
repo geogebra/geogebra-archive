@@ -52,7 +52,7 @@ public class NumberComboBox extends JComboBox {
 	}
 	
 	public void setValue(final double val) {	
-		setSelectedItem(kernel.formatPi(val, nf));			
+		setSelectedItem(kernel.formatPiE(val, nf));			
 	}
 	
 	public double getValue() {

@@ -120,6 +120,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
             		setText(null);
             	}
                 break;
+                
+            case KeyEvent.VK_LEFT_PARENTHESIS:
+            	break;
+            	
 
             case KeyEvent.VK_UP:
                  String text = getPreviousInput();

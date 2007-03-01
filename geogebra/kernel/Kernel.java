@@ -57,6 +57,8 @@ public class Kernel {
 	final public static int COORD_CARTESIAN = 3;
 	final public static int COORD_POLAR = 4;
 
+	final public static String EULER_STRING = "\u0435";
+	final public static String PI_STRING = "\u03c0";
 	final public static double PI_2 = 2.0 * Math.PI;
 	final public static double PI_HALF =  Math.PI / 2.0;
 	final public static double SQRT_2_HALF =  Math.sqrt(2.0) / 2.0;
@@ -66,7 +68,8 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	private boolean casPrintForm = false;		
+	private int casPrintForm = ExpressionNode.STRING_TYPE_GEOGEBRA;		
+	private String casPrintFormPI; // for pi
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -308,11 +311,22 @@ public class Kernel {
 		nf.setMaximumFractionDigits(digits);
 	}
 	
-	final public void setCASPrintForm(boolean flag) {
-		casPrintForm = flag;
+	final public void setCASPrintForm(int type) {
+		casPrintForm = type;
+		
+		switch (casPrintForm) {
+			case ExpressionNode.STRING_TYPE_YACAS:
+				casPrintFormPI = "Pi";
+				
+			case ExpressionNode.STRING_TYPE_JASYMCA:
+				casPrintFormPI = "pi";
+		
+			default:
+				casPrintFormPI = PI_STRING;
+		}
 	}
 	
-	final public boolean isCASPrintForm() {
+	final public int getCASPrintForm() {
 		return casPrintForm;
 	}
 
@@ -3300,63 +3314,79 @@ public class Kernel {
 	}
 
 	final public String format(double x) {	
-		if (casPrintForm)
-			return nf.format(x);
-		else
-			return formatPi(x, nf);					
+		return formatPiE(x, nf);				
 	}
 	
-	final public String formatPi(double x, NumberFormat nf) {
+	final public String formatPiE(double x, NumberFormat nf) {
 		// ZERO
 		if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";						
+			return "0";		
 		
+		// 	E
+		if (x == Math.E) {
+			switch (casPrintForm) {
+				case ExpressionNode.STRING_TYPE_GEOGEBRA:	
+					return EULER_STRING;
+				case ExpressionNode.STRING_TYPE_JASYMCA:
+					return "exp(1)";
+				case ExpressionNode.STRING_TYPE_YACAS:
+					return "Exp(1)";
+				default:
+					return nf.format(Math.E);
+			}
+		}			
+		
+		// PI
+		if (x == Math.PI) {
+			return casPrintFormPI;
+		}		
+				
 		// 	MULTIPLES OF PI/2
 		// i.e. x = a * pi/2
 		double a = 2*x / Math.PI;
 		int aint = (int) Math.round(a);
-		double diff = a - aint; // zero?
-		if (-STANDARD_PRECISION < diff && diff < STANDARD_PRECISION) {	
+		sbFormat.setLength(0);
+		if (isEqual(a, aint)) {	
 			switch (aint) {					
-				case 1:
-					if (casPrintForm)
-						return "pi/2";
-					else
-						return "\u03c0/2";
+				case 1: // pi/2
+					sbFormat.append(casPrintFormPI);
+					sbFormat.append("/2");
+					return sbFormat.toString();
 					
-				case -1:
-					if (casPrintForm)
-						return "-pi/2";
-					else
-						return "-\u03c0/2";
+				case -1: // -pi/2
+					sbFormat.append('-');
+					sbFormat.append(casPrintFormPI);
+					sbFormat.append("/2");
+					return sbFormat.toString();
 					
-				case 2:
-					if (casPrintForm)
-						return "pi";
-					else
-						return "\u03c0";
+				case 2: // 2pi/2 = pi
+					return casPrintFormPI;
 					
-				case -2:
-					if (casPrintForm)
-						return "-pi";
-					else
-						return "-\u03c0";
+				case -2: // -2pi/2 = -pi
+					sbFormat.append('-');
+					sbFormat.append(casPrintFormPI);
+					return sbFormat.toString();
 				
 				default:
 					// 	even
 					long half = aint / 2;			
-					if (aint == 2 * half) {			
-						if (casPrintForm)
-							return half + "* pi";
-						else					
-							return half + "\u03c0";
+					if (aint == 2 * half) {		
+						// half * pi
+						sbFormat.append(half);
+						if (casPrintForm != ExpressionNode.STRING_TYPE_GEOGEBRA)
+							sbFormat.append("*");
+						sbFormat.append(casPrintFormPI);
+						return sbFormat.toString();
 					}
 					// odd
-					else {			
-						if (casPrintForm)
-							return aint + "* pi/2";
-						else
-							return aint + "\u03c0/2";
+					else {		
+						// aint * pi/2
+						sbFormat.append(aint);
+						if (casPrintForm != ExpressionNode.STRING_TYPE_GEOGEBRA)
+							sbFormat.append("*");
+						sbFormat.append(casPrintFormPI);
+						sbFormat.append("/2");
+						return sbFormat.toString();
 					}
 			}									
 		}		
@@ -3364,6 +3394,8 @@ public class Kernel {
 		// STANDARD CASE
 		return nf.format(x);
 	}
+	private StringBuffer sbFormat = new StringBuffer();
+
 
 	final public StringBuffer formatSigned(double x) {
 		sbFormatSigned.setLength(0);

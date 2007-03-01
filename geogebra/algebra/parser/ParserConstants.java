@@ -27,49 +27,52 @@ public interface ParserConstants {
   int POWER5 = 25;
   int POWER6 = 26;
   int PI = 27;
-  int DEGREE = 28;
-  int RAD = 29;
-  int DERIVATIVE = 30;
-  int TRUE = 31;
-  int FALSE = 32;
-  int VARX = 33;
-  int VARY = 34;
-  int PARAMETRICVAR = 35;
-  int FLOAT = 36;
-  int EFLOAT = 37;
-  int INTEGER = 38;
-  int DIGIT = 39;
-  int LABEL = 40;
-  int INDEX = 41;
-  int LETTER = 42;
-  int NON_ACCENTUATED_LETTER = 43;
-  int ACCENTUATED_LETTER = 44;
-  int TEXT = 45;
-  int CHAR = 46;
-  int X_FUNC = 47;
-  int Y_FUNC = 48;
-  int COS_FUNC = 49;
-  int SIN_FUNC = 50;
-  int TAN_FUNC = 51;
-  int ACOS_FUNC = 52;
-  int ASIN_FUNC = 53;
-  int ATAN_FUNC = 54;
-  int COSH_FUNC = 55;
-  int SINH_FUNC = 56;
-  int TANH_FUNC = 57;
-  int ACOSH_FUNC = 58;
-  int ASINH_FUNC = 59;
-  int ATANH_FUNC = 60;
-  int EXP_FUNC = 61;
-  int LOG_FUNC = 62;
-  int SQRT_FUNC = 63;
-  int ABS_FUNC = 64;
-  int SGN_FUNC = 65;
-  int FLOOR_FUNC = 66;
-  int CEIL_FUNC = 67;
-  int ROUND_FUNC = 68;
-  int GAMMA_FUNC = 69;
-  int FUNCTION_LABEL = 70;
+  int E = 28;
+  int DEGREE = 29;
+  int RAD = 30;
+  int DERIVATIVE = 31;
+  int TRUE = 32;
+  int FALSE = 33;
+  int VARX = 34;
+  int VARY = 35;
+  int PARAMETRICVAR = 36;
+  int FLOAT = 37;
+  int EFLOAT = 38;
+  int INTEGER = 39;
+  int DIGIT = 40;
+  int LABEL = 41;
+  int INDEX = 42;
+  int LETTER = 43;
+  int NON_ACCENTUATED_LETTER = 44;
+  int ACCENTUATED_LETTER = 45;
+  int TEXT = 46;
+  int CHAR = 47;
+  int X_FUNC = 48;
+  int Y_FUNC = 49;
+  int COS_FUNC = 50;
+  int SIN_FUNC = 51;
+  int TAN_FUNC = 52;
+  int ACOS_FUNC = 53;
+  int ASIN_FUNC = 54;
+  int ATAN_FUNC = 55;
+  int COSH_FUNC = 56;
+  int SINH_FUNC = 57;
+  int TANH_FUNC = 58;
+  int ACOSH_FUNC = 59;
+  int ASINH_FUNC = 60;
+  int ATANH_FUNC = 61;
+  int EXP_FUNC = 62;
+  int LOG_FUNC = 63;
+  int LD_FUNC = 64;
+  int LG_FUNC = 65;
+  int SQRT_FUNC = 66;
+  int ABS_FUNC = 67;
+  int SGN_FUNC = 68;
+  int FLOOR_FUNC = 69;
+  int CEIL_FUNC = 70;
+  int ROUND_FUNC = 71;
+  int GAMMA_FUNC = 72;
+  int FUNCTION_LABEL = 73;
 
   int DEFAULT = 0;
 
@@ -102,6 +105,7 @@ public interface ParserConstants {
     "\"\\u2075\"",
     "\"\\u2076\"",
     "<PI>",
+    "\"\\u0435\"",
     "\"\\u00b0\"",
     "\"rad\"",
     "\"\\\'\"",
@@ -137,6 +141,8 @@ public interface ParserConstants {
     "<ATANH_FUNC>",
     "<EXP_FUNC>",
     "<LOG_FUNC>",
+    "\"ld(\"",
+    "\"lg(\"",
     "<SQRT_FUNC>",
     "<ABS_FUNC>",
     "<SGN_FUNC>",

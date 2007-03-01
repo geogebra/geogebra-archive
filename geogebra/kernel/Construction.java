@@ -76,13 +76,13 @@ public class Construction {
     private String xAxisLocalName, yAxisLocalName;
 
     // default elements
-    private ConstructionDefaults consDefaults;    
+    private ConstructionDefaults consDefaults;   
     
     /**
      * Creates a new Construction.   
      */
     public Construction(Kernel k) {
-    	this(k, null);
+    	this(k, null);   	
     }
     
     Construction(Kernel k, Construction parentConstruction) {
@@ -103,7 +103,7 @@ public class Construction {
     	yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
     	
     	geoTable = new HashMap(200);
-    	initGeoTable();     	    	
+    	initGeoTable();   
     }
          
     
@@ -526,8 +526,9 @@ public class Construction {
         }
                 
         // global var handling        
-        GeoElement geo =  (GeoElement) geoTable.get(label);        
-        if (geo == null) return null;
+        GeoElement geo =  (GeoElement) geoTable.get(label); 
+        if (geo == null) 
+        	return null;       
         
         //  check if geo is available for current step
         if (geo.isAvailableAtConstructionStep(step))
@@ -535,6 +536,7 @@ public class Construction {
 		else
 			return null;           
     }
+    
 
     /**
        * Returns true if label is not occupied by any 

@@ -121,10 +121,10 @@ implements NumberValue {
     		c.val = Double.NaN;
     	else {
     		// check for integer value in exponent
-    		double bint = Math.round(b.val);
-    		if (b.kernel.isZero(b.val - bint))
-    			c.val = Math.pow(a.val, bint);
-    		else
+    		//double bint = Math.round(b.val);
+    		//if (b.kernel.isEqual(b.val, bint))
+    		//	c.val = Math.pow(a.val, bint);
+    		//else
     			c.val = Math.pow(a.val, b.val);
     	}
     		
@@ -149,6 +149,9 @@ implements NumberValue {
     final public MyDouble atan() {  val = Math.atan(val); isAngle = kernel.arcusFunctionCreatesAngle; return this;  }
     
     final public MyDouble log() {  val = Math.log(val);  isAngle = false; return this; }
+    final public MyDouble log10() {  val = Math.log(val)/MyMath.LOG10;  isAngle = false; return this; }
+    final public MyDouble log2() {  val = Math.log(val)/MyMath.LOG2;  isAngle = false; return this; }
+    
     final public MyDouble exp() {  val = Math.exp(val);  isAngle = false; return this; }    
     final public MyDouble sqrt() {  val = Math.sqrt(val); isAngle = false;  return this; }    
     final public MyDouble abs() {  val = Math.abs(val);  return this; }    
