@@ -587,22 +587,33 @@ public class AlgebraController
 	private GeoElement[] processEquation(Equation equ) throws MyError {
 		//System.out.println("EQUATION: " + equ);        
 		//System.out.println("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
-
-		equ.initEquation();
-		
-		// consider algebraic degree of equation        
-		switch (equ.degree()) {
-			// linear equation -> LINE   
-			case 1 :
-				return processLine(equ);
-
-				// quadratic equation -> CONIC                                  
-			case 2 :
-				return processConic(equ);
-
-			default :
-				throw new MyError(app, "InvalidEquation");
-		}
+		try {
+			equ.initEquation();
+			
+			// consider algebraic degree of equation        
+			switch (equ.degree()) {
+				// linear equation -> LINE   
+				case 1 :
+					return processLine(equ);
+	
+					// quadratic equation -> CONIC                                  
+				case 2 :
+					return processConic(equ);
+	
+				default :
+					throw new MyError(app, "InvalidEquation");
+			}
+		} 
+		catch (MyError eqnError) {
+        	// invalid equation: maybe a function?
+			try {
+				return processFunction(new Function(equ.getRHS()));
+			}
+			catch (MyError funError) {
+				throw eqnError;
+			}        	
+        }
+        
 	}
 
 	private GeoElement[] processLine(Equation equ) {

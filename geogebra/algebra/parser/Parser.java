@@ -180,7 +180,7 @@ public class Parser implements ParserConstants {
   final public Assignment assignment() throws ParseException {
     Token t;
     t = jj_consume_token(LABEL);
-           {if (true) return new Assignment(t.image);}
+        {if (true) return new Assignment(t.image);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1760,6 +1760,13 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
+  final private boolean jj_3_19() {
+    if (jj_scan_token(81)) return true;
+    if (jj_3R_15()) return true;
+    if (jj_scan_token(80)) return true;
+    return false;
+  }
+
   final private boolean jj_3_7() {
     if (jj_scan_token(LABEL)) return true;
     if (jj_scan_token(74)) return true;
@@ -1767,8 +1774,8 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
-  final private boolean jj_3_19() {
-    if (jj_scan_token(81)) return true;
+  final private boolean jj_3R_54() {
+    if (jj_scan_token(FLOOR_FUNC)) return true;
     if (jj_3R_15()) return true;
     if (jj_scan_token(80)) return true;
     return false;
@@ -1780,10 +1787,8 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
-  final private boolean jj_3R_54() {
-    if (jj_scan_token(FLOOR_FUNC)) return true;
+  final private boolean jj_3R_26() {
     if (jj_3R_15()) return true;
-    if (jj_scan_token(80)) return true;
     return false;
   }
 
@@ -1801,11 +1806,6 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
-  final private boolean jj_3R_26() {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_53() {
     if (jj_scan_token(SGN_FUNC)) return true;
     if (jj_3R_15()) return true;
@@ -1815,6 +1815,17 @@ NormalVectorForm normalvectorform():
 
   final private boolean jj_3_18() {
     if (jj_3R_23()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_77() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(16)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(17)) return true;
+    }
+    if (jj_3R_27()) return true;
     return false;
   }
 
@@ -1828,17 +1839,6 @@ NormalVectorForm normalvectorform():
     jj_scanpos = xsp;
     if (jj_scan_token(0)) return true;
     }
-    return false;
-  }
-
-  final private boolean jj_3R_77() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(16)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(17)) return true;
-    }
-    if (jj_3R_27()) return true;
     return false;
   }
 
@@ -1859,11 +1859,6 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   final private boolean jj_3_17() {
     if (jj_3R_22()) return true;
     return false;
@@ -1873,6 +1868,11 @@ NormalVectorForm normalvectorform():
     if (jj_scan_token(LD_FUNC)) return true;
     if (jj_3R_15()) return true;
     if (jj_scan_token(80)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_3R_11()) return true;
     return false;
   }
 

@@ -41,6 +41,10 @@ public class Equation extends ValidExpression {
     	this.kernel = kernel;    	    	
     }  
     
+    public ExpressionNode getRHS() {
+    	return rhs;
+    }
+    
     /**
      * Call this method to check that this is a valid equation.
      * May throw MyError (InvalidEquation).     
