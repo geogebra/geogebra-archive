@@ -38,6 +38,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Macro;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
 import geogebra.kernel.PointRotateable;
@@ -192,6 +193,8 @@ final public class EuclidianController implements MouseListener,
 	//private MyPopupMenu popupMenu;
 
 	private int mode, oldMode, moveMode = MOVE_NONE;
+	private Macro macro;
+	private Class [] macroInput;
 
 	private int DEFAULT_INITIAL_DELAY;
 	
@@ -315,6 +318,16 @@ final public class EuclidianController implements MouseListener,
 			
 		default:
 			previewDrawable = null;
+
+			// macro mode?
+			if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+				// get ID of macro
+				int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+				macro = kernel.getMacro(macroID);
+				macroInput = macro.getInputTypes();
+				this.mode = EuclidianView.MODE_MACRO;								
+			}		
+			break;
 		}
 		
 		view.setPreview(previewDrawable);	
@@ -490,8 +503,8 @@ final public class EuclidianController implements MouseListener,
 			xZeroOld = view.xZero;
 			yZeroOld = view.yZero;			
 			//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
-			break;			
-
+			break;		
+				
 		default:
 			moveMode = MOVE_NONE;
 		}
@@ -1370,7 +1383,12 @@ final public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_DISTANCE:
 			changedKernel = distance(hits);
-			break;					
+			break;	
+			
+		case EuclidianView.MODE_MACRO:			
+			changedKernel = macro(hits);
+			break;
+
 
 		default:
 		// do nothing
@@ -2888,6 +2906,30 @@ final public class EuclidianController implements MouseListener,
 		}
 		return false;
 	}
+	
+	/**
+	 * Handles selected objects for a macro
+	 * @param hits
+	 * @return
+	 */
+	final private boolean macro(ArrayList hits) {
+		if (hits == null)
+			return false;
+		
+		// try to get next needed type of macroInput
+		int index = selGeos();		
+		handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);
+		
+		// TODO: remove
+		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
+		
+		// do we have everything we need?
+		if (selGeos() == macro.getInputTypes().length) {						
+			kernel.useMacro(null, macro, getSelectedGeos())	;		
+			return true;
+		} 		
+		return false;
+	}
 			
 	final private boolean geoElementSelected(ArrayList hits, boolean addToSelection) {
 		if (hits == null)
@@ -3086,7 +3128,7 @@ final public class EuclidianController implements MouseListener,
 	final private int addSelectedGeo(ArrayList hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedGeos, GeoElement.class);
-	}
+	}		
 	
 	private int handleAddSelected(ArrayList hits, int max, boolean addMore, ArrayList list, Class geoClass) {		
 		if (selectionPreview)

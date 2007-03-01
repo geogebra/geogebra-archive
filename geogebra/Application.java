@@ -33,6 +33,7 @@ import geogebra.gui.HelpBrowser;
 import geogebra.gui.ModeToggleButtonGroup;
 import geogebra.gui.ModeToggleMenu;
 import geogebra.gui.MyPopupMenu;
+import geogebra.gui.MyToolbar;
 import geogebra.gui.PrintPreview;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
@@ -123,7 +124,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "9. February 2007";
+    public static final String buildDate = "28. February 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -285,7 +286,6 @@ public class Application {
     private boolean showAlgebraInput = true;
     private boolean showCmdList = true;    
     private boolean showToolBar = true;
-    private boolean showToolBarHelp = true;
     private boolean showMenuBar = true;
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
@@ -302,13 +302,12 @@ public class Application {
     private String FONT_NAME = STANDARD_FONT_NAME;
     
     private String strToolBarDefinition;
-    private JPanel appToolBarPanel;     
-    private ArrayList moveToggleMenus;
+    private MyToolbar appToolBarPanel;     
+    
     private JFileChooser fileChooser;
     private JMenuBar menuBar;
     private AlgebraInput algebraInput;
-    private JPanel centerPanel;
-    private JLabel modeNameLabel, statusLabelAxesRatio;
+    private JPanel centerPanel;   
     private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
                 cbShowAuxiliaryObjects, cbHorizontalSplit, cbShowConsProtNavigation,
                 cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
@@ -478,19 +477,16 @@ public class Application {
         
         if (showToolBar) {
         	if (appToolBarPanel == null) {
-        		appToolBarPanel = new JPanel();
-        		 appToolBarPanel.setLayout(new BorderLayout()); 
-        	}        	        	
-            
+        		appToolBarPanel = new MyToolbar(this);        		  
+        	} 
+        	       	        	            
         	 // NORTH: Toolbar       
         	panel.add(appToolBarPanel, BorderLayout.NORTH);        	
         }           
     
         // updateCenterPanel
         updateCenterPanel(false);
-        panel.add(centerPanel, BorderLayout.CENTER);
-        
-        
+        panel.add(centerPanel, BorderLayout.CENTER);                
         
         // SOUTH: inputField       
         if (showAlgebraInput) {
@@ -500,8 +496,7 @@ public class Application {
         }
     
         // init labels    
-        setLabels();
-        
+        setLabels();        
         return panel;
     }
     
@@ -1904,17 +1899,9 @@ public class Application {
             algebraView.updateFonts();
         if (algebraInput != null)
             algebraInput.updateFonts();
-        
-        if (modeNameLabel != null) {
-            modeNameLabel.setFont(getPlainFont());  
-            updateModeLabel();
-        }
-        
-        if (statusLabelAxesRatio != null)
-            statusLabelAxesRatio.setFont(getPlainFont());
                    
-        if (appToolBarPanel != null && showToolBar)
-        	createToolbar();
+        if (appToolBarPanel != null)
+        	appToolBarPanel.initToolbar();
 
         if (propDialog != null)
             propDialog.initGUI();
@@ -2010,14 +1997,11 @@ public class Application {
         // init actions for toolbar buttons and mode menu items
         if (showToolBar || showMenuBar) initActions();
 
-        if (showToolBar) createToolbar();
-        if (showMenuBar) setMenuBar(guiController);
-        if (modeNameLabel != null) updateModeLabel();
-        if (statusLabelAxesRatio != null) updateStatusLabelAxesRatio();
+        if (appToolBarPanel != null) appToolBarPanel.initToolbar();
+        if (showMenuBar) setMenuBar(guiController);      
         if (algebraView != null) algebraView.setLabels(); // update views    
         if (algebraInput != null) algebraInput.setLabels();
-        
-        
+                
         if (propDialog != null)
             propDialog.initGUI();
         if (constProtocol != null)
@@ -2034,266 +2018,7 @@ public class Application {
 
     public String getCustomToolBar() {
     	return strToolBarDefinition;
-    }
-        
-    
-    /**
-     * Creates a toolbar using the current strToolBarDefinition. 
-     */
-    private void createToolbar() {
-    	if (appToolBarPanel == null) 
-    		return;
-    	
-        // create toolBars                       
-        appToolBarPanel.removeAll();
-        appToolBarPanel.setLayout(new BorderLayout(10,5));        
-        
-        JToolBar tb = new JToolBar();   
-        tb.setBackground(appToolBarPanel.getBackground());
-        ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
-        moveToggleMenus = new ArrayList();
-        
-        //JPanel tb = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 2));           
-        tb.setFloatable(false);        
-        appToolBarPanel.add(tb, BorderLayout.WEST);             
-                  
-        if (algebraInput != null)        	
-        	bg.add(algebraInput.getInputButton());     
-                       
-        // add menus with modes to toolbar
-       	addCustomModesToToolbar(tb, bg);
-       	
-       	// mode label
-       	modeNameLabel = new JLabel();
-       	if (showToolBarHelp) {       		
-       		appToolBarPanel.add(modeNameLabel, BorderLayout.CENTER);
-       	}
-       	
-        // UNDO Toolbar     
-        if (undoActive) {
-	        // undo part            
-	        JPanel undoPanel = new JPanel(new BorderLayout(0,0));        	   
-	        	        
-	        MySmallJButton button = new MySmallJButton(undoAction, 7); 	
-	        String text = getMenu("Undo");
-	        button.setText(null);
-	        button.setToolTipText(text);                     
-	        undoPanel.add(button, BorderLayout.NORTH);
-	        
-	        button = new MySmallJButton(redoAction, 7);         	        
-	        text = getMenu("Redo");
-	        button.setText(null);
-	        button.setToolTipText(text);        
-	        undoPanel.add(button, BorderLayout.SOUTH);   
-	        
-	        appToolBarPanel.add(undoPanel, BorderLayout.EAST);
-        }                   
-    }
-    
-    /**
-     * Adds the given modes to a two-dimensional toolbar. 
-     * The toolbar definition string looks like "0 , 1 2 | 3 4 5 || 7 8 9"
-	 * where the int values are mode numbers, "," adds a separator
-	 * within a menu, "|" starts a new menu
-	 * and "||" adds a separator before starting a new menu. 
-     * @param modes
-     * @param tb
-     * @param bg
-     */    
-    private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {        	    	
-    	Vector toolbarVec = handleCustomToolBar(strToolBarDefinition);
-        if (toolbarVec == null) {
-            // set default or custom toolbar
-        	addDefaultModesToToolbar(tb, bg);
-        	return;
-        }
-        
-        boolean firstButton = true;
-    	for (int i = 0; i < toolbarVec.size(); i++) {
-            ModeToggleMenu tm = new ModeToggleMenu(this, bg);
-            moveToggleMenus.add(tm);
-            Vector menu = (Vector) toolbarVec.get(i);
-            for (int k = 0; k < menu.size(); k++) {
-            	// separator
-            	int mode = ((Integer) menu.get(k)).intValue();
-            	if (mode < 0) {
-            		if (k==0) // separator at first position of new menu: toolbar separator 
-            			tb.addSeparator();
-            		else // separator within menu: 
-            			tm.addSeparator();
-            	} 
-            	else { // standard case: add mode
-            		 tm.addMode(mode);
-            		 if (firstButton) {
-                     	tm.getJToggleButton().setSelected(true);
-                     	firstButton = false;
-                     }
-            	}
-            }
-                                   
-            tb.add(tm);
-    	}
-    }
-    
-    /**
-	 * Parses a toolbar definition string like "0 , 1 2 | 3 4 5 || 7 8 9"
-	 * where the int values are mode numbers, "," adds a separator
-	 * within a menu, "|" starts a new menu
-	 * and "||" adds a separator before starting a new menu. 
-	 * @return toolbar as nested Vector objects with Integers for the modes. Note: separators have negative values.
-	 */
-	private static Vector handleCustomToolBar(String strToolBar) {
-		if (strToolBar == null || strToolBar.length() == 0) 
-			return null;
-		
-		String [] tokens = strToolBar.split(" ");
-		Vector toolbar = new Vector();
-		Vector menu = new Vector();
-		int maxMenuLength = 0;
-		
-	    for (int i=0; i < tokens.length; i++) {     
-	         if (tokens[i].equals("|")) { // start new menu	        	 
-	        	 toolbar.add(menu);
-	        	 if (menu.size() > maxMenuLength)
-	        		 maxMenuLength = menu.size();
-	        	 menu = new Vector();
-	         }
-	         else if (tokens[i].equals("||")) { // start new menu with separator	        	 
-	        	 toolbar.add(menu);
-	        	 menu = new Vector();
-	        	 menu.add(new Integer(-1)); // separator = negative mode
-	         }
-	         else if (tokens[i].equals(",")) { // separator within menu
-	        	 menu.add(new Integer(-1));
-	         }
-	         else { // add mode to menu
-	        	 try  {	
-	        		 menu.add(new Integer(Integer.parseInt(tokens[i])));
-	        	 }
-	     		catch(Exception e) {
-	     			e.printStackTrace();
-	     			return null;
-	     		}
-	         }
-	    }
-
-	    // add last menu to toolbar
-	    if (menu.size() > 0)
-	    	toolbar.add(menu);	   
-	    return toolbar;				
-	}
-    
-    private void addDefaultModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {
-    	 // add move mode
-        ModeToggleMenu tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_MOVE);
-        tm.addMode(EuclidianView.MODE_MOVE_ROTATE);
-        tm.getJToggleButton().setSelected(true);        
-        tb.add(tm);
-        tb.addSeparator();        
-        
-        // point, intersect 
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_POINT);
-        tm.addMode(EuclidianView.MODE_INTERSECT);
-        tm.addMode(EuclidianView.MODE_MIDPOINT);        
-        tb.add(tm);     
-                    
-        // line, segment, ray, vector
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_JOIN);
-        tm.addMode(EuclidianView.MODE_SEGMENT);
-        tm.addMode(EuclidianView.MODE_SEGMENT_FIXED);   
-        tm.addMode(EuclidianView.MODE_RAY);             
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_VECTOR);
-        tm.addMode(EuclidianView.MODE_VECTOR_FROM_POINT);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_POLYGON);
-        tb.add(tm);                     
-                
-        // parallel, orthogonal, line bisector, angular bisector, tangents
-        tm = new ModeToggleMenu(this, bg);  
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_ORTHOGONAL);
-        tm.addMode(EuclidianView.MODE_PARALLEL);        
-        tm.addMode(EuclidianView.MODE_LINE_BISECTOR);
-        tm.addMode(EuclidianView.MODE_ANGULAR_BISECTOR);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_TANGENTS);
-        tm.addMode(EuclidianView.MODE_POLAR_DIAMETER);
-        tb.add(tm);
-        
-        tb.addSeparator();        
-
-        // circle 2, circle 3, conic 5
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_CIRCLE_TWO_POINTS);
-        tm.addMode(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
-        tm.addMode(EuclidianView.MODE_CIRCLE_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_SEMICIRCLE);
-        tm.addMode(EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS);
-        tm.addMode(EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);     
-        tm.addMode(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_CONIC_FIVE_POINTS);       
-        tb.add(tm);    
-        
-        // numbers, locus
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_ANGLE); 
-        tm.addMode(EuclidianView.MODE_ANGLE_FIXED); 
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_DISTANCE);   
-        tm.addMode(EuclidianView.MODE_SLIDER);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_LOCUS);  
-        tb.add(tm);   
-        
-        tb.addSeparator();   
-        
-        // transforms
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_MIRROR_AT_POINT);
-        tm.addMode(EuclidianView.MODE_MIRROR_AT_LINE);
-        tm.addMode(EuclidianView.MODE_ROTATE_BY_ANGLE);
-        tm.addMode(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
-        tm.addMode(EuclidianView.MODE_DILATE_FROM_POINT);     
-        tb.add(tm);
-                          
-        // text, relation
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_TEXT);
-        tm.addMode(EuclidianView.MODE_IMAGE);       
-        tm.addMode(EuclidianView.MODE_RELATION);        
-        tb.add(tm); 
-        
-        tb.addSeparator();         
-        
-        // translate view, show/hide modes
-        tm = new ModeToggleMenu(this, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_TRANSLATEVIEW);
-        tm.addMode(EuclidianView.MODE_ZOOM_IN);
-        tm.addMode(EuclidianView.MODE_ZOOM_OUT);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_SHOW_HIDE_OBJECT);
-        tm.addMode(EuclidianView.MODE_SHOW_HIDE_LABEL);
-        tm.addMode(EuclidianView.MODE_COPY_VISUAL_STYLE);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_DELETE);        
-        tb.add(tm);    
-    }
+    }         
 
     public void setSplitDividerLocationHOR(int loc) {       
         initSplitDividerLocationHOR = loc;              
@@ -2455,7 +2180,13 @@ public class Application {
     
     void setShowToolBar(boolean toolbar, boolean help) {
     	showToolBar = toolbar;
-    	showToolBarHelp = help;
+    	
+    	if (showToolBar) {
+    		if (appToolBarPanel == null) {
+    			appToolBarPanel = new MyToolbar(this);
+    			appToolBarPanel.setShowToolBarHelp(help);
+    		}
+    	}    	    	    	
     }
     
     public boolean showToolBar() {
@@ -2465,6 +2196,10 @@ public class Application {
     void setUndoActive(boolean flag) {
     	undoActive = flag;
     	kernel.setUndoActive(flag);
+    }
+    
+    public boolean isUndoActive() {
+    	return undoActive;    	
     }
     
     /**
@@ -3895,24 +3630,13 @@ public class Application {
         }
     }
 
-    public void updateModeLabel() {
-    	if (modeNameLabel == null) return;
- 
-    	String modeText = EuclidianView.getModeText(euclidianView.getMode());
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html><b>");
-        sb.append(getMenu(modeText));
-        sb.append("</b><br>");
-        sb.append(getMenu(modeText + ".Help"));
-        sb.append("</html>");
-    	modeNameLabel.setText(sb.toString());
-    }
-    
+   
+    /*
     public void updateStatusLabelAxesRatio() {
     	if (statusLabelAxesRatio != null)   
     		statusLabelAxesRatio.setText(
     				euclidianView.getXYscaleRatioString());
-    }
+    }*/
     
     public void setMode(int mode) {      		    	
         euclidianView.setMode(mode);
@@ -3928,13 +3652,7 @@ public class Application {
         }
         
         // select toolbar button
-        if (moveToggleMenus != null && mode != EuclidianView.MODE_ALGEBRA_INPUT) {
-        	for (int i=0; i < moveToggleMenus.size(); i++) {
-        		ModeToggleMenu mtm = (ModeToggleMenu) moveToggleMenus.get(i);
-        		if (mtm.selectMode(mode)) break;
-        	}
-        }                            
-        updateModeLabel();
+        appToolBarPanel.setMode(mode);       
             	
     	// if the properties dialog is showing, move mode is a selection mode
         // for the properties dialog
@@ -3943,6 +3661,8 @@ public class Application {
     		setSelectionListenerMode(propDialog);	
     	}
     }
+    
+   
     
     public int getMode() {
         return euclidianView.getMode();
@@ -4424,5 +4144,13 @@ public class Application {
 		else 
 			return null;
     }
+
+	public AbstractAction getRedoAction() {
+		return redoAction;
+	}
+
+	public AbstractAction getUndoAction() {
+		return undoAction;
+	}
     	   
 }

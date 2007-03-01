@@ -869,8 +869,11 @@ public class Kernel {
 			macroManager.addMacro(macro);
 			
 			// if we are not currently loading a file, show success
-			if (isNotifyViewsActive())
-				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);			
+			if (isNotifyViewsActive()) {
+				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);
+				// TODO: change this
+				//app.addTo 
+			}
 			
 			// TODO: remove
 			System.out.println("added macro: " + macro);
@@ -903,6 +906,26 @@ public class Kernel {
 	 */
 	public Macro getMacro(String name) {
 		return (macroManager == null) ? null : macroManager.getMacro(name);		
+	}
+	
+	/**
+	 * Returns the number of currently registered macros
+	 */
+	public int getMacroNumber() {
+		if (macroManager == null)
+			return 0;
+		else
+			return macroManager.getMacroNumber();
+	}
+	
+	/**
+	 * Returns i-th registered macro
+	 */
+	public Macro getMacro(int i) {
+		if (macroManager == null)
+			return null;
+		else			
+			return macroManager.getMacro(i);
 	}
 	
 	/**

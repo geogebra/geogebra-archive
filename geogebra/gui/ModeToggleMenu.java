@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Macro;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -93,7 +94,12 @@ public class ModeToggleMenu extends JPanel {
 		return false;
 	}
 	
-	private void selectItem(JMenuItem mi) {			
+	private void selectItem(JMenuItem mi) {		
+		// check if the menu item is already selected
+		if (tbutton.isSelected() && tbutton.getActionCommand() == mi.getActionCommand()) {			
+			return;
+		}
+		
 		tbutton.setIcon(mi.getIcon());
 		tbutton.setToolTipText(mi.getText());			
 		tbutton.setActionCommand(mi.getActionCommand());
@@ -116,6 +122,44 @@ public class ModeToggleMenu extends JPanel {
 		JMenuItem mi = new JMenuItem();
 		mi.setFont(app.getPlainFont());
 		mi.setText(app.getMenu(modeText));
+	    
+		mi.setIcon(icon);
+		mi.addActionListener(popupMenuItemListener);
+		mi.setActionCommand(actionText);
+		
+		popMenu.add(mi);	
+		menuItemList.add(mi);
+		size++;
+		
+		if (size == 1) {
+			// init tbutton
+			tbutton.setIcon(icon);
+			tbutton.setActionCommand(actionText);
+			tbutton.setToolTipText(mi.getText());
+			// add button to button group
+			bg.add(tbutton);
+		}
+	}	
+	
+	public void addMacro(int macroID, Macro macro) {
+		int mode = EuclidianView.MACRO_MODE_ID_OFFSET + macroID;
+		String modeText = macro.getToolName();
+		if ("".equals(modeText)) 
+			modeText = macro.getCommandName();
+				
+		String iconName = macro.getIconFileName();
+		// TODO: macro icons
+		ImageIcon icon = app.getImageIcon("mode_tool_32.png", getBackground());			
+		if (icon == null) {
+			System.err.println("icon missing for mode " + modeText + " (" + macroID + ")");
+			return;
+		}
+		
+		// add menu item to popu menu
+		String actionText = mode + "";
+		JMenuItem mi = new JMenuItem();
+		mi.setFont(app.getPlainFont());
+		mi.setText(modeText);
 	    
 		mi.setIcon(icon);
 		mi.addActionListener(popupMenuItemListener);
@@ -186,7 +230,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = 1L;
 	private static int BORDER = 6;
 	private int iconWidth, iconHeight;
 	private GeneralPath gp;
@@ -217,7 +261,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 	
 	// set mode
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {		
 		menu.setMode(Integer.parseInt(e.getActionCommand()));		
 	}
 

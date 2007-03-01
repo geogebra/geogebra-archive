@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -23,13 +24,16 @@ import java.util.Iterator;
 public class MacroManager {
 	
 	private HashMap macroMap; // maps macro name to macro object
+	private ArrayList macroList; // lists all macros
 	
 	public MacroManager() {
 		macroMap = new HashMap();
+		macroList = new ArrayList();
 	}
 		
 	public void addMacro(Macro macro) {						
 		macroMap.put(macro.getCommandName(), macro);
+		macroList.add(macro);
 	}
 	
 	public Macro getMacro(String name) {
@@ -37,8 +41,13 @@ public class MacroManager {
 	}
 	
 	public void removeMacro(Macro macro) {
-		macroMap.remove(macro.getCommandName());		
+		macroMap.remove(macro.getCommandName());	
+		macroList.remove(macro);
 	}	
+	
+	public Macro getMacro(int i) {
+		return (Macro) macroList.get(i);		
+	}
 	
 	/**
 	 * Returns the current number of macros handled by this MacroManager. 

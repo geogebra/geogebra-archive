@@ -238,10 +238,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	public static final int MODE_LOCUS = 47;
 
+	public static final int MODE_MACRO = 48;
+	public static final int MACRO_MODE_ID_OFFSET = 1001;
+	
 	public static final int POINT_CAPTURING_OFF = 0;
-
 	public static final int POINT_CAPTURING_ON = 1;
-
 	public static final int POINT_CAPTURING_ON_GRID = 2;
 	
 
@@ -941,7 +942,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (repaint) {
 			updateBackgroundImage();
 			updateAllDrawables(repaint);
-			app.updateStatusLabelAxesRatio();
+			//app.updateStatusLabelAxesRatio();
 		}
 	}
 
@@ -3008,9 +3009,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	            case EuclidianView.MODE_LOCUS:            	
 	            	return "Locus";
 	           
-	            default:
+	            default:	            	
 	                return "";
 	        }
-	    }
-
+	    }	 	
 }
