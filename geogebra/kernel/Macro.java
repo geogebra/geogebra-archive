@@ -363,7 +363,18 @@ public class Macro {
 	}			
 	
 	public String getToolHelp() {
-		return toolHelp;
+		if (toolHelp.length() > 0)		
+			return toolHelp;
+		else {
+			StringBuffer sb = new StringBuffer();			
+	        sb.append(macroInput[0].translatedTypeString());	       
+	        for (int i = 1; i < macroInput.length; ++i) {
+	            sb.append(", ");	            
+	            sb.append(macroInput[i].translatedTypeString());	            
+	        }	        			
+			return sb.toString();
+		}
+					
 	}
 
 	public void setToolHelp(String toolHelp) {
@@ -384,8 +395,15 @@ public class Macro {
 			this.cmdName = name;
 	}
 
-	public String getToolName() {
+	public String getToolName() {		
 		return toolName;
+	}
+	
+	public String getToolOrCommandName() {
+		if (toolName != "") 
+			return toolName;
+		else
+			return cmdName;			
 	}
 
 	public void setToolName(String name) {

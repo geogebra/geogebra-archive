@@ -97,19 +97,22 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         set(point);        
     }
     
+    
     public void set(GeoElement geo) {    
     	GeoPoint p = (GeoPoint) geo;        
-        setCoords(p.x, p.y, p.z);
-        pathParameter.set(p.pathParameter);        
+    	pathParameter.set(p.pathParameter);
+    	setCoords(p.x, p.y, p.z);                
     } 
+    
     
     public GeoElement copy() {
         return new GeoPoint(this);        
     }                 
-    
+       
+    /*
 	void initSetLabelVisible() {
 		setLabelVisible(true);
-	}
+	}*/
 	
 	/**
 	 * @param i

@@ -915,7 +915,7 @@ public abstract class GeoElement
 			if (indexedOnly)
 				label = geos[i].getIndexLabel(label);
 			
-			geos[i].setLabel(label);
+			geos[i].setLabel(label);						
 		}
 	}
 

@@ -32,13 +32,14 @@ public class MyToolbar extends JPanel{
 	private ArrayList moveToggleMenus;   
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
+	private int mode;
 	
 	/**
      * Creates a panel for the application's toolbar. 
      * Note: call initToolbar() to fill the panel.
      */
 	public MyToolbar(Application app) {
-		this.app = app;
+		this.app = app;		
 	}
 		
 	/**
@@ -67,8 +68,7 @@ public class MyToolbar extends JPanel{
        	// mode label
        	modeNameLabel = new JLabel();
        	if (showToolBarHelp) {       		
-       		add(modeNameLabel, BorderLayout.CENTER);
-       		updateModeLabel();
+       		add(modeNameLabel, BorderLayout.CENTER);       		
        	}     
        	
         // UNDO Toolbar     
@@ -89,48 +89,50 @@ public class MyToolbar extends JPanel{
 	        undoPanel.add(button, BorderLayout.SOUTH);   
 	        
 	        add(undoPanel, BorderLayout.EAST);
-        }                             
+        }               
+        setMode(app.getMode());
     }
     
     /**
      * Sets toolbar mode. This will change the selected toolbar icon. 
      */
-    public void setMode(int mode) {    	
-         if (moveToggleMenus != null && mode != EuclidianView.MODE_ALGEBRA_INPUT) {
+    public void setMode(int mode) {   
+    	if (mode == this.mode) return;    	
+    	
+    	this.mode = mode;
+        if (moveToggleMenus != null && mode != EuclidianView.MODE_ALGEBRA_INPUT) {
          	for (int i=0; i < moveToggleMenus.size(); i++) {
          		ModeToggleMenu mtm = (ModeToggleMenu) moveToggleMenus.get(i);
          		if (mtm.selectMode(mode)) break;
-         	}
-         }                            
-         updateModeLabel();
+        	}
+        }                            
+        updateModeLabel();
     }
     
     private void updateModeLabel() {
     	if (modeNameLabel == null) return;
- 
+     	        	
+    	String modeText, helpText;    	
+    	if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+    		// macro    
+    		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);
+    		modeText = macro.getToolName();    	
+    		if (modeText.length() == 0)		
+    			modeText = macro.getCommandName();
+    		helpText = macro.getToolHelp();	    	
+    	} else {
+        	// standard case    		
+	    	modeText = EuclidianView.getModeText(app.getMode());
+	    	helpText = app.getMenu(modeText + ".Help");        
+	    	modeText = app.getMenu(modeText);
+    	}
+    	
     	StringBuffer sb = new StringBuffer();
-    	
-    	// TODO: go on
-    	
-    	// macro
-    	if (app.getMode() >= EuclidianView.MACRO_MODE_ID_OFFSET) {
-    		String modeText = EuclidianView.getModeText(app.getMode());	        
-	        sb.append("<html><b>");
-	        sb.append(modeText);
-	        sb.append("</b><br>");
-	        sb.append(app.getMenu(modeText + ".Help"));
-	        sb.append("</html>");
-    	}
-    	// standard case
-    	else {    	
-	    	String modeText = EuclidianView.getModeText(app.getMode());	        
-	        sb.append("<html><b>");
-	        sb.append(app.getMenu(modeText));
-	        sb.append("</b><br>");
-	        sb.append(app.getMenu(modeText + ".Help"));
-	        sb.append("</html>");
-    	}
-    	
+    	sb.append("<html><b>");
+        sb.append(modeText);
+        sb.append("</b><br>");
+        sb.append(helpText);
+        sb.append("</html>");    	
         modeNameLabel.setText(sb.toString());
     }
     

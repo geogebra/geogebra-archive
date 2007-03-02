@@ -2912,14 +2912,50 @@ final public class EuclidianController implements MouseListener,
 	 * @param hits
 	 * @return
 	 */
-	final private boolean macro(ArrayList hits) {
-		if (hits == null)
-			return false;
-		
+	final private boolean macro(ArrayList hits) {		
 		// try to get next needed type of macroInput
-		int index = selGeos();		
-		handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);
+		int index = selGeos();
 		
+		// standard case: try to get object of needed input type
+		boolean objectFound = 1 == 
+			handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);			
+		
+		// we're done if in selection preview
+		if (selectionPreview) 
+			return false; 			
+			
+		// TODO: add support for numbers
+		if (!objectFound) { // no object found in handleAddSelected()
+			
+			// TODO: don't wait for click
+			
+			// maybe we need a number
+			if (macroInput[index] == GeoNumeric.class || macroInput[index] == GeoAngle.class) {
+				// get the needed number
+				String msg = macroInput[index] == GeoNumeric.class ? "Numeric" : "Angle";
+				NumberValue num = app.showNumberInputDialog(macro.getToolOrCommandName(),
+												app.getPlain(msg), null);									
+				if (num == null || !macroInput[index].isInstance(num)) {
+					// no success: reset mode
+					view.resetMode();
+					return false;
+				} else {
+					// great, we got our number/angle
+					selectedGeos.add(num);
+				}
+			}	
+			
+			// if we need a point and didn't find one, let's create one!
+			else if (macroInput[index] == GeoPoint.class &&  // we look for a point
+					 createNewPoint(hits, true, true)) 		// were able to create new point
+			{				
+				// take movedGeoPoint which is the newly created point
+				selectedGeos.add(movedGeoPoint); 										
+			}			
+			
+			// TODO: add support for functions as macro input in Euclidian view
+		}								
+										
 		// TODO: remove
 		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
 		

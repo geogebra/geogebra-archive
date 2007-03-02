@@ -870,9 +870,8 @@ public class Kernel {
 			
 			// if we are not currently loading a file, show success
 			if (isNotifyViewsActive()) {
-				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);
-				// TODO: change this
-				//app.addTo 
+				app.updateToolBar();
+				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);				
 			}
 			
 			// TODO: remove

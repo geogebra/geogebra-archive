@@ -174,6 +174,7 @@ public class Application {
         supportedLocales.add( new Locale("sl") );           	// Slovenian
         supportedLocales.add( new Locale("es") );          	// Spanish   
         supportedLocales.add( new Locale("tr") );          	// Turkish
+        supportedLocales.add( new Locale("vi") );          	// Vietnamese
     }    
     
     // specialLanguageNames: Java does show an English name for all languages
@@ -1274,12 +1275,13 @@ public class Application {
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.WARNING_MESSAGE);
     }
+        
     
     public void showMessage(String message) {               
         JOptionPane.showConfirmDialog(
         		mainComp,
             message,
-            null,
+            getMenu("Info"),
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.INFORMATION_MESSAGE);
     }
@@ -2232,6 +2234,18 @@ public class Application {
         
     public boolean letShowPropertiesDialog() {       
         return rightClickEnabled;
+    }
+    
+    public void updateToolBar() {
+    	if (appToolBarPanel != null) {
+    		appToolBarPanel.initToolbar();
+    		if (!INITING) {
+            	if (applet != null)
+            		SwingUtilities.updateComponentTreeUI(applet);
+            	if (frame != null)
+            		SwingUtilities.updateComponentTreeUI(frame);
+            }
+    	}
     }
 
     public void updateMenuBar() {
