@@ -893,7 +893,7 @@ public class Application {
     }
 
     public final void zoom(double px, double py, double zoomFactor) {
-        euclidianView.zoom(px, py, zoomFactor, true);
+        euclidianView.zoom(px, py, zoomFactor, 15, true);
     }
     
     /**
@@ -1805,9 +1805,16 @@ public class Application {
      * @return: Object[] with { NumberValue, AngleInputDialog } pair
      */
     public Object [] showAngleInputDialog(String title, String message, String initText) {   
-		NumberInputHandler handler = new NumberInputHandler();
+    	// avoid labeling of num
+    	Construction cons = kernel.getConstruction();
+		boolean oldVal = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+    	
+    	NumberInputHandler handler = new NumberInputHandler();
 		AngleInputDialog id = new AngleInputDialog(this,  message, title, initText, false, handler, true);       
         id.setVisible(true); 
+        
+        cons.setSuppressLabelCreation(oldVal);
         Object [] ret = {handler.num, id};
         return ret;
 	}

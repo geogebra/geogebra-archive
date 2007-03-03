@@ -1342,8 +1342,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		}		
 		setAffineTransform();		
 		
-		// TODO:remove
-		 System.out.println("conic: " + this.getLabel() + " type " + getTypeString() );
+		// System.out.println("conic: " + this.getLabel() + " type " + getTypeString() );
 		// System.out.println("           detS: " + (A0A1 - A3A3));
 	}
 

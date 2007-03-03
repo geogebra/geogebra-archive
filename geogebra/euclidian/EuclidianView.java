@@ -2379,11 +2379,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	/**
 	 * Zooms around fixed point (px, py)
 	 */
-	public final void zoom(double px, double py, double zoomFactor,
+	public final void zoom(double px, double py, double zoomFactor, int steps,
 			boolean storeUndo) {
 		if (zoomer == null)
 			zoomer = new MyZoomer();
-		zoomer.init(px, py, zoomFactor, storeUndo);
+		zoomer.init(px, py, zoomFactor, steps, storeUndo);
 		zoomer.startAnimation();
 	}
 
@@ -2421,14 +2421,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 					}
 					// set the xscale and axes origin
 					setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
-							SCALE_STANDARD, false);
+							SCALE_STANDARD, 15, false);
 				}
 			};
 			waiter.start();
 		} else {
 			// set the xscale and axes origin
 			setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
-					SCALE_STANDARD, false);
+					SCALE_STANDARD, 15, false);
 		}
 		if (storeUndo)
 			app.storeUndoInfo();
@@ -2445,12 +2445,12 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * @param newscale
 	 */
 	final void setAnimatedCoordSystem(double ox, double oy, double newScale,
-			boolean storeUndo) {
+					int steps, boolean storeUndo) {
 		if (!kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
 			double factor = newScale / xscale;
 			zoom((ox - xZero * factor) / (1.0 - factor), (oy - yZero * factor)
-					/ (1.0 - factor), factor, storeUndo);
+					/ (1.0 - factor), factor, steps, storeUndo);
 		} else {
 			// same scales: translate view to standard origin
 			// do this with the following action listener
@@ -2464,7 +2464,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private MyMover mover;
 
 	private class MyZoomer implements ActionListener {
-		static final int STEPS = 15; // frames
+		static final int MAX_STEPS = 15; // frames
 
 		static final int DELAY = 10;
 
@@ -2476,7 +2476,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		private double factor;
 
-		private int counter;
+		private int counter, steps;
 
 		private double oldScale, newScale, add, dx, dy;
 
@@ -2489,7 +2489,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		public void init(double px, double py, double zoomFactor,
-				boolean storeUndo) {
+						 int steps, boolean storeUndo) {
 			this.px = px;
 			this.py = py;
 			// this.zoomFactor = zoomFactor;
@@ -2497,13 +2497,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 			oldScale = xscale;
 			newScale = xscale * zoomFactor;
+			this.steps = Math.min(MAX_STEPS, steps);
 		}
 
 		public synchronized void startAnimation() {
 			if (timer == null)
 				return;
-			// setDrawMode(DRAW_MODE_DIRECT_DRAW);
-			add = (newScale - oldScale) / STEPS;
+			// setDrawMode(DRAW_MODE_DIRECT_DRAW);			
+			add = (newScale - oldScale) / steps;
 			dx = xZero - px;
 			dy = yZero - py;
 			counter = 0;
@@ -2525,7 +2526,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		public synchronized void actionPerformed(ActionEvent e) {
 			counter++;
 			long time = System.currentTimeMillis() - startTime;
-			if (counter == STEPS || time > MAX_TIME) { // end of animation
+			if (counter == steps || time > MAX_TIME) { // end of animation
 				stopAnimation();
 			} else {
 				factor = 1.0 + (counter * add) / oldScale;
@@ -2568,7 +2569,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			if (timer == null)
 				return;
 			// setDrawMode(DRAW_MODE_DIRECT_DRAW);
-			add = (newScale - oldScale) / MyZoomer.STEPS;
+			add = (newScale - oldScale) / MyZoomer.MAX_STEPS;
 			counter = 0;
 
 			startTime = System.currentTimeMillis();
@@ -2586,7 +2587,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		public synchronized void actionPerformed(ActionEvent e) {
 			counter++;
 			long time = System.currentTimeMillis() - startTime;
-			if (counter == MyZoomer.STEPS || time > MyZoomer.MAX_TIME) { // end
+			if (counter == MyZoomer.MAX_STEPS || time > MyZoomer.MAX_TIME) { // end
 				// of
 				// animation
 				stopAnimation();
@@ -2632,7 +2633,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				return;
 
 			// setDrawMode(DRAW_MODE_DIRECT_DRAW);
-			add = 1.0 / MyZoomer.STEPS;
+			add = 1.0 / MyZoomer.MAX_STEPS;
 			counter = 0;
 
 			startTime = System.currentTimeMillis();
@@ -2650,7 +2651,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		public synchronized void actionPerformed(ActionEvent e) {
 			counter++;
 			long time = System.currentTimeMillis() - startTime;
-			if (counter == MyZoomer.STEPS || time > MyZoomer.MAX_TIME) { // end
+			if (counter == MyZoomer.MAX_STEPS || time > MyZoomer.MAX_TIME) { // end
 				// of
 				// animation
 				stopAnimation();

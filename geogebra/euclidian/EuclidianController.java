@@ -103,6 +103,9 @@ final public class EuclidianController implements MouseListener,
 	private static final int MOVE_ROTATE = 113;
 	
 	private static final int MOVE_DEPENDENT = 114;
+	
+	private static final int MOVE_X_AXIS = 115;
+	private static final int MOVE_Y_AXIS = 116;
 
 	private Application app;
 
@@ -387,12 +390,12 @@ final public class EuclidianController implements MouseListener,
 			break;
 			
 		case EuclidianView.MODE_ZOOM_IN:
-			view.zoom(mouseLoc.x, mouseLoc.y, EuclidianView.MODE_ZOOM_FACTOR, false);
+			view.zoom(mouseLoc.x, mouseLoc.y, EuclidianView.MODE_ZOOM_FACTOR, 15,  false);
 			toggleModeChangedKernel = true;
 			break;
 			
 		case EuclidianView.MODE_ZOOM_OUT:
-			view.zoom(mouseLoc.x, mouseLoc.y, 1d/EuclidianView.MODE_ZOOM_FACTOR, false);
+			view.zoom(mouseLoc.x, mouseLoc.y, 1d/EuclidianView.MODE_ZOOM_FACTOR, 15, false);
 			toggleModeChangedKernel = true;
 			break;
 		}
@@ -1065,7 +1068,7 @@ final public class EuclidianController implements MouseListener,
 		Point p = view.zoomRectangle.getLocation();
 		view.zoomRectangle = null;
 		view.setAnimatedCoordSystem((view.xZero - p.x) * factor,
-				(view.yZero - p.y) * factor, view.xscale * factor, true);
+				(view.yZero - p.y) * factor, view.xscale * factor, 15, true);
 		return true;
 	}
 
@@ -2717,14 +2720,10 @@ final public class EuclidianController implements MouseListener,
 		}
 		
 		// we got the rotation center point
-		if (selPoints() == 1) {		
-			Construction cons = kernel.getConstruction();
-			boolean oldVal = cons.isSuppressLabelsActive();
-			cons.setSuppressLabelCreation(true);
+		if (selPoints() == 1) {					
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
-			NumberValue num = (NumberValue) ob[0];			
-			cons.setSuppressLabelCreation(oldVal);						
+			NumberValue num = (NumberValue) ob[0];											
 			
 			if (num == null) {
 				view.resetMode();
@@ -2829,15 +2828,11 @@ final public class EuclidianController implements MouseListener,
 		
 		// we got the points		
 		if (selPoints() == 2 || selSegments() == 1) {
-			// get angle
-			Construction cons = kernel.getConstruction();
-			boolean oldVal = cons.isSuppressLabelsActive();
-			cons.setSuppressLabelCreation(true);
+			// get angle			
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
-			AngleInputDialog aDialog = (AngleInputDialog) ob[1]; 
-			cons.setSuppressLabelCreation(oldVal);
+			AngleInputDialog aDialog = (AngleInputDialog) ob[1]; 			
 			
 			if (num == null) {
 				view.resetMode();
@@ -2922,40 +2917,61 @@ final public class EuclidianController implements MouseListener,
 		
 		// we're done if in selection preview
 		if (selectionPreview) 
-			return false; 			
-			
-		// TODO: add support for numbers
-		if (!objectFound) { // no object found in handleAddSelected()
-			
-			// TODO: don't wait for click
-			
-			// maybe we need a number
-			if (macroInput[index] == GeoNumeric.class || macroInput[index] == GeoAngle.class) {
-				// get the needed number
-				String msg = macroInput[index] == GeoNumeric.class ? "Numeric" : "Angle";
-				NumberValue num = app.showNumberInputDialog(macro.getToolOrCommandName(),
-												app.getPlain(msg), null);									
-				if (num == null || !macroInput[index].isInstance(num)) {
-					// no success: reset mode
-					view.resetMode();
-					return false;
-				} else {
-					// great, we got our number/angle
-					selectedGeos.add(num);
-				}
-			}	
-			
-			// if we need a point and didn't find one, let's create one!
-			else if (macroInput[index] == GeoPoint.class &&  // we look for a point
-					 createNewPoint(hits, true, true)) 		// were able to create new point
-			{				
-				// take movedGeoPoint which is the newly created point
-				selectedGeos.add(movedGeoPoint); 										
-			}			
+			return false; 	
+		
+		// no object found: maybe we need a point?
+		if (!objectFound && 
+			macroInput[index] == GeoPoint.class &&  // we look for a point
+			createNewPoint(hits, true, true)) 		// were able to create new point
+		{				
+			// take movedGeoPoint which is the newly created point
+			selectedGeos.add(movedGeoPoint); 
+			objectFound = true;
+		}																				
+				
+		if (objectFound) { // object found in handleAddSelected()
+			// look ahead if we need a number or an angle next			
+			while (++index < macroInput.length) {
+				
+				// maybe we need a number
+				if (macroInput[index] == GeoNumeric.class) {									
+					NumberValue num = app.showNumberInputDialog(macro.getToolOrCommandName(),
+													app.getPlain("Numeric" ), null);									
+					if (num == null) {
+						// no success: reset mode
+						view.resetMode();
+						return false;
+					} else {
+						// great, we got our number
+						selectedGeos.add(num);
+					}
+				}	
+				
+				// maybe we need an angle
+				else if (macroInput[index] == GeoAngle.class) {									
+					Object [] ob = app.showAngleInputDialog(macro.getToolOrCommandName(),
+										app.getPlain("Angle"), "45\u00b0");
+					NumberValue num = (NumberValue) ob[0];						
+					
+					if (num == null) {
+						// no success: reset mode
+						view.resetMode();
+						return false;
+					} else {
+						// great, we got our angle
+						selectedGeos.add(num);
+					}
+				}	
+				
+				else // other type needed, so leave loop 
+					break;				
+			}
 			
 			// TODO: add support for functions as macro input in Euclidian view
-		}								
-										
+			
+		}
+		
+								
 		// TODO: remove
 		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
 		
@@ -3372,26 +3388,31 @@ final public class EuclidianController implements MouseListener,
 	}
 
 	/**
-	 * Zooms in or out on Ctrl + mouse wheel
+	 * Zooms in or out using mouse wheel
 	 */
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (e.isControlDown()) {					
-			double px = view.width / 2d;
-			double py = view.height / 2d;
+			setMouseLocation(e);
+			
+			//double px = view.width / 2d;
+			//double py = view.height / 2d;
+			double px = mouseLoc.x;
+			double py = mouseLoc.y;
 			double dx = view.xZero - px;
 			double dy = view.yZero - py;
-	        
+			
 	        double factor = (e.getWheelRotation() > 0) ?
 	        		EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR :
 	        		1d / 	EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
 			
-			 view.setCoordSystem(
+	        // make zooming a little bit smoother by having some steps
+	        	       
+			view.setAnimatedCoordSystem(
 		                px + dx * factor,
 		                py + dy * factor,
-		                view.xscale * factor,
-						view.yscale * factor);
+		                view.xscale * factor, 4, false);
+						//view.yscale * factor);
 			app.setUnsaved();
-		}		
+				
 	}
 
 }
