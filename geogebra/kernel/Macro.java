@@ -383,19 +383,18 @@ public class Macro {
 		return toolHelp;				
 	}
 	
-	public String getToolHelpOrNeededTypes() {
-		if (toolHelp.length() > 0)		
-			return toolHelp;
-		else {
-			StringBuffer sb = new StringBuffer();			
-	        sb.append(macroInput[0].translatedTypeString());	       
-	        for (int i = 1; i < macroInput.length; ++i) {
-	            sb.append(", ");	            
-	            sb.append(macroInput[i].translatedTypeString());	            
-	        }	        			
-			return sb.toString();
-		}
-					
+	
+	/**
+	 * Returns a String showing all needed types of this macro.
+	 */
+	public String getNeededTypesString() {
+		StringBuffer sb = new StringBuffer();			
+        sb.append(macroInput[0].translatedTypeString());	       
+        for (int i = 1; i < macroInput.length; ++i) {
+            sb.append(", ");	            
+            sb.append(macroInput[i].translatedTypeString());	            
+        }	        			
+		return sb.toString();				
 	}
 
 	public void setToolHelp(String toolHelp) {

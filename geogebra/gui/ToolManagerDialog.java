@@ -23,6 +23,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -32,6 +33,7 @@ import javax.swing.JButton;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -51,7 +53,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ToolManagerDialog extends javax.swing.JDialog {	
 			
-	private Application app;	
+	private Application app;		
 	
 	public ToolManagerDialog(Application app) {
 		super(app.getFrame());
@@ -95,7 +97,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			} else {
 				// don't delete, remember name
 				foundUsedMacro = true;
-				macroNames += "\n" + macro.getToolOrCommandName() + ": " + macro.getToolHelpOrNeededTypes();
+				macroNames += "\n" + macro.getToolOrCommandName() + ": " + macro.getNeededTypesString();
 			}					
 		}			
 		
@@ -184,7 +186,14 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			ActionListener ac = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Object src = e.getSource();										
-					if (src == btClose) {
+					if (src == btClose) {		
+						// ensure to set macro properties from namePanel
+						namePanel.init(null, null); 
+						
+						// recreate tool bar of application window
+						app.updateToolBar();
+						
+						// destroy dialog
 						setVisible(false);
 						dispose();
 					}	
@@ -205,17 +214,18 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			final ListSelectionModel selModel = toolList.getSelectionModel();
 			ListSelectionListener selListener = new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					if (selModel.getValueIsAdjusting()) return;
+					if (selModel.getValueIsAdjusting()) return;											
 					
 					int [] selIndices = toolList.getSelectedIndices();
 					if (selIndices == null || selIndices.length != 1) {
 						// no or several tools selected
 						namePanel.setEnabled(false);
-						namePanel.init(null);													
-					} else {															
-						Macro macro = (Macro) toolsModel.getElementAt(selIndices[0]);
-						namePanel.init(macro);						
-					}																				
+						namePanel.init(null, null);																	
+					} else {			
+						namePanel.setEnabled(true);
+						Macro macro = (Macro) toolsModel.getElementAt(selIndices[0]);			
+						namePanel.init(ToolManagerDialog.this, macro);	
+					}																		
 				}				
 			};
 			selModel.addListSelectionListener(selListener);		
@@ -232,6 +242,8 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			e.printStackTrace();
 		}
 	}
+	
+	
 	
 	private void insertTools(DefaultListModel listModel) {
 		Kernel kernel = app.getKernel();
@@ -265,9 +277,18 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	        	sb.append("<html><b>");
 	        	sb.append(macro.getToolName());
 	        	sb.append("</b>: ");
-	        	sb.append(macro.getToolHelpOrNeededTypes());
+	        	sb.append(macro.getNeededTypesString());
 	        	sb.append("</html>");
 	        	setText(sb.toString());
+	        	
+	        	BufferedImage img = app.getExternalImage(macro.getIconFileName());
+	        	if (img != null) {
+	        		setIcon(new ImageIcon(img));
+	        		Dimension dim = getPreferredSize();
+	        		dim.height = img.getHeight();
+	        		setPreferredSize(dim);
+	        		setMinimumSize(dim);
+	        	}
 	        }
 	        return this;
 	    }

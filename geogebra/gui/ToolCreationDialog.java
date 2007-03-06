@@ -148,8 +148,7 @@ implements GeoElementSelectionListener {
 			macro.setToolName(namePanel.getToolName());
 			macro.setToolHelp(namePanel.getToolHelp());			
 			macro.setShowInToolBar(namePanel.showInToolBar());
-			if (macro.isShowInToolBar())
-				macro.setIconFileName(namePanel.getIconFileName());
+			macro.setIconFileName(namePanel.getIconFileName());
 		} catch (Exception e) {					
 			app.showError(app.getError("Tool.CreationFailed") 
 								+ "\n" + e.getMessage());

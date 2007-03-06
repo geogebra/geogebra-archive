@@ -31,7 +31,7 @@ public class MyToolbar extends JPanel{
 	private ArrayList moveToggleMenus;   
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
-	private int mode = -1;
+	private int mode;
 	
 	/**
      * Creates a panel for the application's toolbar. 
@@ -45,6 +45,8 @@ public class MyToolbar extends JPanel{
      * Creates a toolbar using the current strToolBarDefinition. 
      */
     public void initToolbar() {    	    	
+    	mode = -1;
+    	
         // create toolBars                       
         removeAll();
         setLayout(new BorderLayout(10,5));        
@@ -59,17 +61,17 @@ public class MyToolbar extends JPanel{
         add(tb, BorderLayout.WEST);             
                   
         if (app.getAlgebraInput() != null)        	
-        	bg.add(app.getAlgebraInput().getInputButton());     
-                       
+        	bg.add(app.getAlgebraInput().getInputButton());                                 
+       
+       	if (showToolBarHelp) {       
+       		// mode label
+           	modeNameLabel = new JLabel();
+       		add(modeNameLabel, BorderLayout.CENTER);       		
+       	}   
+       	
         // add menus with modes to toolbar
        	addCustomModesToToolbar(tb, bg);
-       	
-       	// mode label
-       	modeNameLabel = new JLabel();
-       	if (showToolBarHelp) {       		
-       		add(modeNameLabel, BorderLayout.CENTER);       		
-       	}     
-       	
+       	       	
         // UNDO Toolbar     
         if (app.isUndoActive()) {
 	        // undo part            
@@ -108,7 +110,7 @@ public class MyToolbar extends JPanel{
         updateModeLabel();
     }
     
-    private void updateModeLabel() {
+    private void updateModeLabel() {    	
     	if (modeNameLabel == null) return;
      	        	
     	String modeText, helpText;    	
@@ -117,8 +119,10 @@ public class MyToolbar extends JPanel{
     		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);
     		modeText = macro.getToolName();    	
     		if (modeText.length() == 0)		
-    			modeText = macro.getCommandName();
-    		helpText = macro.getToolHelpOrNeededTypes();	    	
+    			modeText = macro.getCommandName();    		
+    		helpText = macro.getToolHelp();
+    		if (helpText.length() == 0)
+    			helpText = macro.getNeededTypesString();	    	
     	} else {
         	// standard case    		
 	    	modeText = EuclidianView.getModeText(app.getMode());

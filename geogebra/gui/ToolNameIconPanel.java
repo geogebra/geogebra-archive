@@ -46,7 +46,11 @@ public class ToolNameIconPanel extends JPanel {
 	private JLabel labelIcon;		
 	private String iconFileName;			
 	
-	private Application app;			
+	private Application app;
+
+	// tool manager updating
+	private ToolManagerDialog managerDialog;
+	private Macro macro;
 	
 	public ToolNameIconPanel(final Application app) {
 		this.app = app;
@@ -86,7 +90,7 @@ public class ToolNameIconPanel extends JPanel {
 				
 			}
 			public void keyReleased(KeyEvent e) {
-				updateCmdName(e.getSource());
+				updateCmdName(e.getSource());				
 			}
 			public void keyTyped(KeyEvent arg0) {}			
 		};
@@ -132,8 +136,9 @@ public class ToolNameIconPanel extends JPanel {
 						image = ImageResizer.resizeImage(image, ICON_WIDTH, ICON_HEIGHT);
 						app.addExternalImage(fileName, image);
 					}
-					iconFileName = fileName;
-					labelIcon.setIcon(new ImageIcon(image));
+					iconFileName = fileName;					
+					labelIcon.setIcon(new ImageIcon(image));	
+					updateMacro();
 				}
 			}				
 		};
@@ -149,25 +154,56 @@ public class ToolNameIconPanel extends JPanel {
 				boolean active = cbShowInToolBar.isSelected();
 				labelIcon.setEnabled(active);
 				btIconFile.setEnabled(active);
+				updateMacro();
 			}				
 		};
 		cbShowInToolBar.addActionListener(ac2);				
 	}
 	
-	public void init(Macro macro) {		
+	/**
+	 * Uses the textfields in this dialog to set the currently shown macro.
+	 * @see init()	
+	 */
+	private void updateMacro() {
+		if (macro == null) return;
+		
+		macro.setCommandName(getCommandName());
+		macro.setToolName(getToolName());
+		macro.setToolHelp(getToolHelp());			
+		macro.setShowInToolBar(showInToolBar());
+		macro.setIconFileName(getIconFileName());
+		
+		if (managerDialog != null)
+			managerDialog.repaint();
+	}
+	
+	/**
+	 * Inits the textfields in this dialog using the properties of
+	 * the given macro. The ToolManagerDialog is registered as a listener
+	 * to be updated whenever the macro properties are changed.
+	 * @param macro
+	 */
+	public void init(ToolManagerDialog managerDialog, Macro macro) {	
+		updateMacro(); // update last macro if we already had one
+		
+		this.managerDialog = managerDialog;
+		this.macro = macro;
+		
 		if (macro == null) {
 			tfToolName.setText("");		
 			tfCmdName.setText("");				
 			tfToolHelp.setText("");	
 			cbShowInToolBar.setSelected(false);
-			labelIcon.setIcon(null);
+			iconFileName = "";
+			labelIcon.setIcon(null);			
 		} else {			
 			tfToolName.setText(macro.getToolName());		
 			tfCmdName.setText(macro.getCommandName());				
 			tfToolHelp.setText(macro.getToolHelp());	
 			cbShowInToolBar.setSelected(macro.isShowInToolBar());
+			iconFileName = macro.getIconFileName();
 			
-			BufferedImage img = app.getExternalImage(macro.getIconFileName());
+			BufferedImage img = app.getExternalImage(iconFileName);
 			if (img != null)
 				labelIcon.setIcon(new ImageIcon(img));
 			else
@@ -220,6 +256,7 @@ public class ToolNameIconPanel extends JPanel {
 		catch (Exception ex) {	
 			tfCmdName.setText(defaultToolName());
 		}
+		updateMacro();
 	}
 	
 	private String defaultToolName() {
