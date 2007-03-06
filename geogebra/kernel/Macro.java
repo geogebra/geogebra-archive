@@ -16,6 +16,7 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.util.Util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -31,7 +32,8 @@ public class Macro {
 	
 	private Kernel kernel;
 	private String cmdName, toolName = "", toolHelp = "";
-	private String iconFileName = ""; // image file			
+	private String iconFileName = ""; // image file		
+	private boolean showInToolBar = true;
 				
 	private Construction macroCons; // macro construction
 	private String macroConsXML;
@@ -53,7 +55,8 @@ public class Macro {
 	}
 	
 	/**
-	 * Creates a new macro.
+	 * Creates a new macro. Note: you need to call initMacro() when using
+	 * this constructor.
 	 */
 	public Macro(Kernel kernel, String cmdName) { 	
 		this.kernel = kernel;
@@ -79,6 +82,13 @@ public class Macro {
 	 */
 	final public boolean isInMacroConstruction(GeoElement geo) {
 		return geo.cons == macroCons;
+	}
+	
+	/**
+	 * Returns the construction object of this macro.
+	 */
+	public Construction getMacroConstruction() {
+		return macroCons;
 	}
 	
 	/**
@@ -110,15 +120,12 @@ public class Macro {
 		
 		for (int i=0; i < macroInputLabels.length; i++) {    		
 			macroInput[i] = macroCons.lookupLabel(macroInputLabels[i]);  
-			macroInput[i].setFixed(false);			
-			// TODO:remove
+			macroInput[i].setFixed(false);						
 			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
     	}
 		
     	for (int i=0; i < macroOutputLabels.length; i++) {    		
-    		macroOutput[i] = macroCons.lookupLabel(macroOutputLabels[i]);            		    		    		
-    		
-			// TODO:remove
+    		macroOutput[i] = macroCons.lookupLabel(macroOutputLabels[i]);            		    		    		    	
 			//System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
     	}         		
 	}
@@ -140,15 +147,15 @@ public class Macro {
 			
 			if (!dependsOnInput) {
 				throw new Exception(kernel.getApplication()
-						.getError("Macro.OutputNotDependent") +
-						": " + output[i]);
+						.getError("Tool.OutputNotDependent") +
+						": " + output[i].getNameDescription());
 			}
 		}	
 		for (int k=0; k < input.length; k++) {			
 			if (!inputNeeded[k]) {
 				throw new Exception(kernel.getApplication()
-						.getError("Macro.InputNotNeeded") +
-						": " + input[k]);
+						.getError("Tool.InputNotNeeded") +
+						": " + input[k].getNameDescription());
 			}
 		}
 		
@@ -305,12 +312,11 @@ public class Macro {
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
     	   
-    	
-    	// TODO: remove    	
-    	System.out.println("*** Macro XML BEGIN ***");
-    	System.out.println(macroConsXML);
-    	System.out.flush();
-    	System.out.println("*** Macro XML END ***");
+    	    	 
+//    	System.out.println("*** Macro XML BEGIN ***");
+//    	System.out.println(macroConsXML);
+//    	System.out.flush();
+//    	System.out.println("*** Macro XML END ***");
     	
     	
     	return macroConsXML.toString();
@@ -352,6 +358,17 @@ public class Macro {
 	public void unregisterAlgorithm(AlgoMacro algoMacro) {
 		usingAlgos--;		
 	}		
+	
+	/**
+	 * Returns whether this macro is being used by algorithms
+	 * in the current construction.
+	 */
+	final public boolean isUsed() {
+		// TODO: remove
+		System.out.println("macro: " + cmdName + ", users: " + usingAlgos);
+		
+		return usingAlgos >  0;
+	}
 						
 	/**
 	 * Returns the types of input objects of the default macro construction.
@@ -362,7 +379,11 @@ public class Macro {
 		return inputTypes;
 	}			
 	
-	public String getToolHelp() {
+	public String getToolHelp() {		
+		return toolHelp;				
+	}
+	
+	public String getToolHelpOrNeededTypes() {
 		if (toolHelp.length() > 0)		
 			return toolHelp;
 		else {
@@ -461,7 +482,9 @@ public class Macro {
         sb.append("\" toolHelp=\"");
         sb.append(Util.encodeXML(toolHelp));  
         sb.append("\" iconFile=\""); 
-        sb.append(Util.encodeXML(iconFileName));             
+        sb.append(Util.encodeXML(iconFileName));  
+        sb.append("\" showInToolBar=\"");
+        sb.append(showInToolBar);  
 		sb.append("\">\n");
     			        
         // add input labels
@@ -494,5 +517,13 @@ public class Macro {
         sb.append("</macro>\n");           
         return sb.toString();
     }
+
+	public final boolean isShowInToolBar() {
+		return showInToolBar;
+	}
+
+	public final void setShowInToolBar(boolean showInToolBar) {
+		this.showInToolBar = showInToolBar;
+	}
 		  
 }

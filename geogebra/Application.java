@@ -30,14 +30,14 @@ import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.GUIController;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.HelpBrowser;
-import geogebra.gui.ModeToggleButtonGroup;
-import geogebra.gui.ModeToggleMenu;
 import geogebra.gui.MyPopupMenu;
 import geogebra.gui.MyToolbar;
 import geogebra.gui.PrintPreview;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
+import geogebra.gui.ToolCreationDialog;
+import geogebra.gui.ToolManagerDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -45,6 +45,7 @@ import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.AngleInputDialog;
@@ -90,7 +91,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -113,7 +113,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -157,6 +156,7 @@ public class Application {
     	supportedLocales.add( new Locale("da") );     	 	// Danish   
     	supportedLocales.add( new Locale("nl") );     	 	// Dutch
     	supportedLocales.add( new Locale("en"));          	// English
+    	supportedLocales.add( new Locale("fi") );  			// Finnish
     	supportedLocales.add( new Locale("fr") );     		 // French
     	supportedLocales.add( new Locale("gl") );           // Galician
         supportedLocales.add( new Locale("de") );          	// German   
@@ -195,6 +195,7 @@ public class Application {
 
     // file extension string
     public static final String FILE_EXT_GEOGEBRA = "ggb";
+    public static final String FILE_EXT_GEOGEBRA_TOOL = "ggt";
     public static final String FILE_EXT_PNG = "png";
     public static final String FILE_EXT_EPS = "eps";    
     public static final String FILE_EXT_PDF = "pdf";
@@ -273,7 +274,9 @@ public class Application {
         infoAction,
         exportGraphicAction,
         htmlCPAction,
-        exportWorksheet;
+        exportWorksheet,
+        showCreateToolsAction,
+        showManageToolsAction;
 
     private PropertiesDialog propDialog;
     private ConstructionProtocol constProtocol;
@@ -314,7 +317,8 @@ public class Application {
                 cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
 				cbShowAlgebraInput, cbShowCmdList;
     private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces, menuContinuity,
-			      menuPointStyle,menuRightAngleStyle, menuCoordStyle, menuWindow, menuFile;
+			      menuPointStyle,menuRightAngleStyle, menuCoordStyle, menuWindow, menuFile,
+			      menuTools;
     private JMenuItem miCloseAll;
 
     private JSplitPane sp;
@@ -849,6 +853,7 @@ public class Application {
 			if (getMode() != EuclidianView.MODE_ALGEBRA_INPUT)
 				oldMode = getMode();			
 	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
+	        appToolBarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
 		}
     }
     private int oldMode = 0;
@@ -1558,36 +1563,17 @@ public class Application {
      * @return whether a new image was create or not
      */   
 	public boolean showImageCreationDialog(GeoPoint loc) {		
-		File imageFile = showImageFileChooser();
-		if (imageFile == null) return false;				
+		String fileName = showImageFileChooser();
+		if (fileName == null) return false;						
 		
-		try {
-			setWaitCursor();
-			BufferedImage img = ImageIO.read(imageFile);
-			setDefaultCursor();
-			if (img == null) {
-				showError("LoadFileFailed");
-				return false;
-			}			
-			
-			// add image to imageManager
-			String fileName = imageFile.getCanonicalPath();			
-			imageManager.addExternalImage(fileName, img);
-			
-			// create GeoImage object for this fileName
-			GeoImage geoImage = new GeoImage(kernel.getConstruction());					
-			geoImage.setFileName(fileName);			
-			geoImage.setCorner(loc, 0);	
-			geoImage.setLabel(null);
-					     	        	        
-	        GeoImage.updateInstances();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			showError("LoadFileFailed");
-			return false;
-		}		
-		
+		// create GeoImage object for this fileName
+		GeoImage geoImage = new GeoImage(kernel.getConstruction());					
+		geoImage.setFileName(fileName);			
+		geoImage.setCorner(loc, 0);	
+		geoImage.setLabel(null);
+				     	        	        
+        GeoImage.updateInstances();
+		return true;		
 	}
 	
 	public Color showColorChooser(Color currentColor) {
@@ -1608,7 +1594,13 @@ public class Application {
 		}
 	}
 	
-	private File showImageFileChooser() {
+	/**
+	 * Shows a file open dialog to choose an image file.
+	 * Then the image file is loaded and stored in this
+	 * application's imageManager.
+	 * @return fileName of image stored in imageManager
+	 */
+	public String showImageFileChooser() {
 		initFileChooser();
         fileChooser.setCurrentDirectory(currentImagePath);
         MyFileFilter fileFilter = new MyFileFilter();
@@ -1620,14 +1612,57 @@ public class Application {
         fileChooser.resetChoosableFileFilters();
         fileChooser.setFileFilter(fileFilter);    
         
-
-        File file = null;
+        File imageFile = null;
         int returnVal = fileChooser.showOpenDialog(mainComp);
         if (returnVal == JFileChooser.APPROVE_OPTION) {             
-        	file = fileChooser.getSelectedFile();   
-        	if (file != null) currentImagePath = file.getParentFile();
+        	imageFile = fileChooser.getSelectedFile();   
+        	if (imageFile != null) currentImagePath = imageFile.getParentFile();
         }       
-        return file;
+        
+		if (imageFile == null) return null;				
+		
+		try {
+			setWaitCursor();
+			BufferedImage img = ImageIO.read(imageFile);			
+			setDefaultCursor();
+			if (img == null) {
+				showError("LoadFileFailed");
+				return null;
+			}			
+			
+			// add image to imageManager
+			String fileName = imageFile.getCanonicalPath();	
+			
+			// make sure this filename is not taken yet
+			BufferedImage oldImg = imageManager.getExternalImage(fileName);			
+			if (oldImg != null) {								
+				// image with this name exists already
+				if (oldImg.getWidth() == img.getWidth() &&
+					oldImg.getHeight() == img.getHeight()) {
+					// same size and filename => we consider the images as equal
+					return fileName;
+				} else {
+					// same name but different size: change filename
+					int n = 0;
+					do {
+						n++;
+						int pos = fileName.lastIndexOf('.');
+						String firstPart = pos > 0 ? fileName.substring(0, pos) : "";
+						String extension = pos < fileName.length() ? fileName.substring(pos) : "";
+						fileName = firstPart + n + extension; 						
+					} while(imageManager.getExternalImage(fileName) != null);					
+				}
+			}
+			
+			imageManager.addExternalImage(fileName, img);						
+			
+			return fileName;			
+		} catch (Exception e) {
+			setDefaultCursor();
+			e.printStackTrace();
+			showError("LoadFileFailed");
+			return null;
+		}		
 	}
 	
 	public void setWaitCursor() {
@@ -2253,6 +2288,7 @@ public class Application {
             		SwingUtilities.updateComponentTreeUI(frame);
             }
     	}
+    	setMoveMode();
     }
 
     public void updateMenuBar() {
@@ -2612,6 +2648,12 @@ public class Application {
         menu.add(drawingPadPropAction);
         
         menuBar.add(menu);
+        
+        // windows menu
+        menuTools = new JMenu(getMenu("Tools"));        
+        menuBar.add(menuTools);
+        menuTools.add(showCreateToolsAction);
+        menuTools.add(showManageToolsAction);                
         
         // windows menu
         menuWindow = new JMenu(getMenu("Window"));
@@ -3150,6 +3192,26 @@ public class Application {
                 runner.start();
             }
         };
+        
+        showCreateToolsAction =
+            new AbstractAction(
+                    getMenu("Tool.CreateNew") + " ...") {
+            	private static final long serialVersionUID = 1L;
+                public void actionPerformed(ActionEvent e) {
+                	ToolCreationDialog tcd = new ToolCreationDialog(Application.this);
+                	tcd.setVisible(true);
+                }
+            };
+            
+        showManageToolsAction =
+            new AbstractAction(
+                    getMenu("Tool.Manage") + " ...") {
+            	private static final long serialVersionUID = 1L;
+                public void actionPerformed(ActionEvent e) {
+                	ToolManagerDialog tmd = new ToolManagerDialog(Application.this);
+                	tmd.setVisible(true);
+                }
+            };
 
         infoAction =
             new AbstractAction(getMenu("About") + " / " + getMenu("License"), getImageIcon("info.gif")) {
@@ -3202,6 +3264,8 @@ public class Application {
                 dialog.setVisible(true);
             }
         };
+        
+        
 
         updateActions();
     }
@@ -3474,6 +3538,7 @@ public class Application {
 	
 	        MyFileFilter fileFilter = new MyFileFilter();
 	        fileFilter.addExtension(FILE_EXT_GEOGEBRA);
+	        fileFilter.addExtension(FILE_EXT_GEOGEBRA_TOOL);
 	        fileFilter.setDescription(
 	            getPlain("ApplicationName") + " " + getMenu("Files"));
 	        fileChooser.resetChoosableFileFilters();
@@ -3742,6 +3807,25 @@ public class Application {
             mainComp.setCursor(Cursor.getDefaultCursor());
             return true;
         } catch (Exception e) {
+        	mainComp.setCursor(Cursor.getDefaultCursor());
+            showError("SaveFileFailed");
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Saves given macros to file.
+     * @return true if successful
+     */
+    final public boolean saveMacroFile(File file, Macro [] macros) {
+        try {
+        	mainComp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            myXMLio.writeMacroFile(file, macros);            
+            mainComp.setCursor(Cursor.getDefaultCursor());
+            return true;
+        } catch (Exception e) {
+        	mainComp.setCursor(Cursor.getDefaultCursor());
             showError("SaveFileFailed");
             e.printStackTrace();
             return false;

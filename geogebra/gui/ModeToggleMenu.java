@@ -15,6 +15,7 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Macro;
+import geogebra.util.ImageManager;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -147,13 +149,15 @@ public class ModeToggleMenu extends JPanel {
 		if ("".equals(modeText)) 
 			modeText = macro.getCommandName();
 				
-		String iconName = macro.getIconFileName();
-		// TODO: macro icons
-		ImageIcon icon = app.getImageIcon("mode_tool_32.png", getBackground());			
-		if (icon == null) {
-			System.err.println("icon missing for mode " + modeText + " (" + macroID + ")");
-			return;
-		}
+		String iconName = macro.getIconFileName();		
+		BufferedImage img = app.getExternalImage(iconName);
+		ImageIcon icon;
+		if (img == null)
+			// default icon
+			icon = app.getImageIcon("mode_tool_32.png", getBackground());			
+		else
+			// use image as icon
+			icon = new ImageIcon(ImageManager.addBorder(img, getBackground()));							
 		
 		// add menu item to popu menu
 		String actionText = mode + "";

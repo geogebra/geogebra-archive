@@ -130,11 +130,8 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected void centerOnScreen() {
 		pack();
-
 		// center on screen
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension d = getSize();
-		setLocation((dim.width - d.width) / 2, (dim.height - d.height) / 2);
+		setLocationRelativeTo(null);
 	}
 	
 	public String getInputString() {

@@ -149,12 +149,10 @@ public class SliderDialog extends JDialog implements ActionListener, WindowFocus
 		addWindowFocusListener(this);
 	}
 	
-	private void centerOnScreen() {		
-		// center on screen
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension d = getSize();
-		setLocation( (dim.width - d.width) / 2, 
-					 (dim.height - d.height) / 2);
+	private void centerOnScreen() {
+		//	center on screen
+		pack();				
+		setLocationRelativeTo(null);
 	}
 	
 	public GeoElement getResult() {

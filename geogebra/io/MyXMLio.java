@@ -23,6 +23,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Macro;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
@@ -40,6 +41,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -221,13 +223,20 @@ public class MyXMLio {
         ZipOutputStream zip = new ZipOutputStream(b);  
         OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
         
-        // write images
-        writeImages(zip);
+        // write construction images
+        writeConstructionImages(kernel.getConstruction(), zip);
         
-        // write macro XML file
+        // save macros
         if (kernel.hasMacros()) {
+        	// get all registered macros from kernel
+        	Macro [] macros = kernel.getAllMacros();
+        	
+        	// write all images used by macros
+            writeMacroImages(macros, zip);
+ 
+            // write all macros to one special XML file in zip
         	zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));                       
-            osw.write(getFullMacroXML()); 
+            osw.write(getFullMacroXML(macros)); 
             osw.flush();
             zip.closeEntry();
         }        
@@ -244,54 +253,98 @@ public class MyXMLio {
         f.close();
     } 
     
-    private void writeImages(ZipOutputStream zip) throws IOException {    	    	    	    	
-    	Iterator it = kernel.getConstruction().getGeoElementsIterator();
-    	while (it.hasNext()) {
-    		// get next GeoImage  
-    		GeoElement ob = (GeoElement) it.next();
-    		if (!ob.isGeoImage()) continue;
-    		
-    		GeoImage geo = (GeoImage) ob;		
-    		String fileName = geo.getFileName();    		    		
-    		    	       
-    		// create new entry in zip archive
-    		try {
-    			zip.putNextEntry(new ZipEntry(fileName));
-    		} catch (Exception e) {
-    			// if the same image file is used more than once in the construction
-    			// we get a duplicate entry exception: ignore this
-    			continue;		
-    		}
-    		
-    		// try original image file from harddisk
-			File imgFile = new File(fileName);
-    		if (imgFile.exists()) {
-    			// copy file from disk to stream
-    			FileInputStream in = new FileInputStream(imgFile);    		
-    			byte[] buf = new byte[4096];
-    			int len;
-    			while ((len = in.read(buf)) > 0) {
-    				zip.write(buf, 0, len);			
-    			}
-    			in.close();	
-    		} else { 
-    			// take image from memory and write it to stream
-    			BufferedImage img = geo.getImage();
-        		try {
-    	        	// try to write image using the format of the filename extension
-    	        	int pos = fileName.lastIndexOf('.');
-    	        	String ext = fileName.substring(pos+1).toLowerCase();
-    	        	if (ext.equals("jpg") || ext.equals("jpeg"))
-    	        		ext = "JPG";
-    	        	else 
-    	        		ext = "PNG";	        	
-    	        	ImageIO.write(img, ext, zip);          		
-        		} catch (Exception e) {    			
-        			// if this did not work save image as png
-        			ImageIO.write(img, "png", zip);     			
-        		}
-    		}
-	    }
+    /**
+     * Creates a zipped file containing the given macros 
+     * in xml format plus all their external images (e.g. icons).
+     */
+    public void writeMacroFile(File file, Macro [] macros) throws IOException {   
+    	if (macros == null) return;
+    	
+    	// create file
+        FileOutputStream f = new FileOutputStream(file);
+        BufferedOutputStream b = new BufferedOutputStream(f);
+
+        // zip stream
+        ZipOutputStream zip = new ZipOutputStream(b);  
+        OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
+        
+        // write images
+        writeMacroImages(macros, zip);
+        
+        // write macro XML file        
+    	zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));                       
+        osw.write(getFullMacroXML(macros)); 
+        osw.flush();
+        zip.closeEntry();                
+                    
+        osw.close();
+        zip.close();           
+        b.close();      
+        f.close();
+    } 
+    
+    /** 
+     * Writes all images used in construction to zip.
+     */
+    private void writeConstructionImages(Construction cons, ZipOutputStream zip) throws IOException {    	
+    	// save all GeoImage images
+    	ArrayList images = cons.getAllGeoImages();
+    	for (int i=0; i < images.size(); i++) {    	    		
+    		GeoImage geoImage = (GeoImage) images.get(i);    		    		    			
+    		String fileName = geoImage.getFileName();    
+			BufferedImage img = geoImage.getImage();
+    		if (img != null) 	       
+    			writeImageToZip(zip, fileName, img);
+	    }    	    	
+    }
+    
+    /** 
+     * Writes all images used in the given macros to zip.
+     */
+    private void writeMacroImages(Macro [] macros, ZipOutputStream zip) throws IOException {
+    	if (macros == null) return;
+    	
+    	for (int i=0; i < macros.length; i++) {
+	    	// save all images in macro construction 
+	    	writeConstructionImages(macros[i].getMacroConstruction(), zip);
+	    	
+	    	// save macro icon
+	    	String fileName = macros[i].getIconFileName();   
+			BufferedImage img = app.getExternalImage(fileName);
+			if (img != null)
+				writeImageToZip(zip, fileName, img);
+    	}
+    }
+    
+    
+    private void writeImageToZip(ZipOutputStream zip, String fileName, BufferedImage img) {
+    	// create new entry in zip archive
+		try {
+			zip.putNextEntry(new ZipEntry(fileName));
+		} catch (Exception e) {
+			// if the same image file is used more than once in the construction
+			// we get a duplicate entry exception: ignore this
+			return;	
+		}    		    				
+		
+		try {
+        	// try to write image using the format of the filename extension
+        	int pos = fileName.lastIndexOf('.');
+        	String ext = fileName.substring(pos+1).toLowerCase();
+        	if (ext.equals("jpg") || ext.equals("jpeg"))
+        		ext = "JPG";
+        	else 
+        		ext = "PNG";	        	
+        	ImageIO.write(img, ext, zip);          		
+		} catch (Exception e) {    						
+			try {
+				//	if this did not work save image as png
+				ImageIO.write(img, "png", zip);    
+			} catch (Exception ex) {
+				System.err.println(ex.getMessage());
+				return;	
+			}   
+		}		
     }
     
     
@@ -339,15 +392,15 @@ public class MyXMLio {
     }
     
     /**
-     * Returns XML representation of all macros in the kernel.
+     * Returns XML representation of given macros in the kernel.
      */ 
-    public String getFullMacroXML() {    	    	
+    public String getFullMacroXML(Macro [] macros) {    	    	
         StringBuffer sb = new StringBuffer();            
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");
         
         // save construction
-        sb.append(kernel.getMacroXML());  
+        sb.append(kernel.getMacroXML(macros));  
         
         sb.append("</geogebra>");
         return sb.toString();            

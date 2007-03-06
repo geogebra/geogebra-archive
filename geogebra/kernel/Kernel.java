@@ -852,36 +852,21 @@ public class Kernel {
 	 * Creates a new macro within the kernel. A macro is a user defined
 	 * command in GeoGebra.
 	 */
-	public void addMacro(String cmdName, GeoElement [] input, GeoElement [] output) {
+	public Macro createMacro(String cmdName, GeoElement [] input, GeoElement [] output) throws Exception {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}	
 	
-		// we need a not null macro name, this is the command name of the user defined command
+		// we need a non null macro name, this is the command name of the user defined command
 		String macroName = cmdName;
 		if (macroName == null || macroName.length() == 0) {
-			macroName = "Macro" + (macroManager.getMacroNumber() + 1);
+			macroName = app.getMenu("Macro") + (macroManager.getMacroNumber() + 1);
 		}		
-		
-		try {		
-			// create new macro
-			Macro macro = new Macro(this, macroName, input, output);		
-			macroManager.addMacro(macro);
-			
-			// if we are not currently loading a file, show success
-			if (isNotifyViewsActive()) {
-				app.updateToolBar();
-				app.showMessage(app.getPlain("Macro.CreationSuccess") + "\n" +  macro);				
-			}
-			
-			// TODO: remove
-			System.out.println("added macro: " + macro);
-			
-		} catch (Exception e) {	
-			e.printStackTrace();
-			String [] strs = { "Macro.CreationFailed", e.getMessage() };
-			throw new MyError(app, strs);
-		}		
+						
+		// create new macro
+		Macro macro = new Macro(this, macroName, input, output);		
+		macroManager.addMacro(macro);								
+		return macro;		
 	}
 	
 	/**
@@ -891,12 +876,17 @@ public class Kernel {
 	public void addMacro(Macro macro) {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
-		}	
-		
-//		 TODO: remove
-		System.out.println("added macro: " + macro);
-		
+		}						
 		macroManager.addMacro(macro);
+	}
+	
+	/**
+	 * Removes a macro from the kernel. Note: if the macro is
+	 * used by the current construction, nothing is done.
+	 */
+	public void removeMacro(Macro macro) {
+		if (macroManager != null && !macro.isUsed())								
+			macroManager.removeMacro(macro);
 	}
 	
 	/**
@@ -905,7 +895,7 @@ public class Kernel {
 	 */
 	public Macro getMacro(String name) {
 		return (macroManager == null) ? null : macroManager.getMacro(name);		
-	}
+	}		
 	
 	/**
 	 * Returns the number of currently registered macros
@@ -915,6 +905,16 @@ public class Kernel {
 			return 0;
 		else
 			return macroManager.getMacroNumber();
+	}
+	
+	/**
+	 * Returns an array with all currently registered macros.
+	 */
+	public Macro [] getAllMacros() {
+		if (macroManager == null)
+			return null;
+		else
+			return macroManager.getAllMacros();
 	}
 	
 	/**
@@ -928,6 +928,13 @@ public class Kernel {
 	}
 	
 	/**
+	 * Returns the ID of the given macro.
+	 */
+	public int getMacroID(Macro macro) {
+		return (macroManager == null) ? -1 : macroManager.getMacroID(macro);	
+	}
+	
+	/**
 	 * Creates a new algorithm that uses the given macro.
 	 * @return output of macro algorithm
 	 */
@@ -937,12 +944,13 @@ public class Kernel {
 	}
 	
 	/**
-	 * Returns an XML represenation of ALL macros in this kernel.
+	 * Returns an XML represenation of the given macros in this kernel.
+	 * 
 	 * @return
 	 */
-	public String getMacroXML() {
+	public String getMacroXML(Macro [] macros) {
 		if (hasMacros())					
-			return macroManager.getMacroXML();
+			return macroManager.getMacroXML(macros);
 		else
 			return "";
 	}

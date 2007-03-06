@@ -19,9 +19,7 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
 
 /**
- * Tries to find a macro for the given command name. 
- * If a macro is found it will be used.
- * Syntax: Macro[ <list of input objects>, <list of output objects> ]  
+ * Processes the use of macros from the command line.
  */
 public class MacroProcessor extends CommandProcessor {
 	
@@ -49,12 +47,12 @@ public class MacroProcessor extends CommandProcessor {
 			// if yes, let's use its points
 			if (arg[0].isGeoPolygon()) {
 				arg = ((GeoPolygon) arg[0]).getPoints();
-				lengthOk = true;
+				lengthOk = arg.length == macroInputTypes.length;
 			}
 			
 			if (!lengthOk) {
 				StringBuffer sb = new StringBuffer();
-		        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
+		        sb.append(app.getMenu("Macro") + " " + macro.getCommandName() + ":\n");
 		        sb.append(app.getError("IllegalArgumentNumber") + ": " + arg.length);
 		        sb.append("\n\nSyntax:\n" + macro.toString());
 				throw new MyError(app, sb.toString());

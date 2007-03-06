@@ -9,12 +9,13 @@ LICENSE
   (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
 CREDITS
-  * Markus Hohenwarter 
+  * Markus Hohenwarter, since 2001
       Creator of GeoGebra, project leader and main developer
       University of Salzburg / Florida Atlantic University      
 Contributions by    
   * Yves Kreis, University of Luxembourg
   * Loïc Le Coq, France
+  * Eloi Puertas, University of Barcelona
   
 TRANSLATIONS 
   * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)
@@ -58,13 +59,8 @@ SUPPORTED BY
      Faculty LSHASE, University of Luxembourg
   
 SOFTWARE
-  * Jasymca
-      http://webuser.hs-furtwangen.de/~dersch
-  * Yacas
-      http://yacas.sourceforge.net
-  * FreeHEP Java Libraries
-      http://java.freehep.org/
-  * Java EPS Graphics2D package
-      http://www.jibble.org/epsgraphics
-  * HotEqn - LaTeX equation viewer 
-      http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
+  * Jasymca, http://webuser.hs-furtwangen.de/~dersch
+  * Yacas, http://yacas.sourceforge.net
+  * FreeHEP Java Libraries, http://java.freehep.org
+  * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
+  * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html

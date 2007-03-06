@@ -162,8 +162,7 @@ public class CommandDispatcher {
     	cmdTable.put("Point", new CmdPoint(algCtrl));	   
     	cmdTable.put("UpperSum", new CmdUpperSum(algCtrl));    	  
     	cmdTable.put("If", new CmdIf(algCtrl));
-    	cmdTable.put("Sequence", new CmdSequence(algCtrl));
-    	cmdTable.put("Macro", new MacroCreator(algCtrl));
+    	cmdTable.put("Sequence", new CmdSequence(algCtrl));    	
     	cmdTable.put("CurveCartesian", new CmdCurveCartesian(algCtrl));
 //    	Victor Franco Espino 11-02-2007: New commands
     	cmdTable.put("AffineRatio", new CmdAffineRatio(algCtrl));

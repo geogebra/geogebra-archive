@@ -83,7 +83,7 @@ public class ImageManager {
 	}
 	
 	// draw a line around the image
-	private Image addBorder(Image im, Color borderColor) {
+	public static Image addBorder(Image im, Color borderColor) {
 		if (borderColor == null) return im;
 		
 		BufferedImage bim = toBufferedImage(im);
@@ -227,4 +227,6 @@ public class ImageManager {
         ColorModel cm = pg.getColorModel();
         return cm.hasAlpha();
     }
+    
+    
 }

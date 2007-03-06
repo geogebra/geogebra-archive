@@ -1172,7 +1172,7 @@ public abstract class GeoElement
 
 	AlgorithmSet getAlgoUpdateSet() {
 		return algoUpdateSet;
-	}
+	}		
 	
 	boolean hasEmptyAlgoUpdateSet() {
 		return algoUpdateSet.isEmpty();
@@ -1325,7 +1325,7 @@ public abstract class GeoElement
 	// adds all predecessors of this object to the given set
 	// the set is topologically sorted 
 	// @param onlyIndependent: whether only indpendent geos should be added
-	final void addPredecessorsToSet(TreeSet set, boolean onlyIndependent) {
+	final public void addPredecessorsToSet(TreeSet set, boolean onlyIndependent) {
 		if (algoParent == null) { // independent geo
 			if (onlyIndependent) {
 				// OLD: LinkeList implementation
@@ -1340,6 +1340,13 @@ public abstract class GeoElement
 		} else { // parent algo
 			algoParent.addPredecessorsToSet(set, onlyIndependent);          
 		}	
+	}
+	
+	/**
+	 * Returns whether this object is parent of other geos.
+	 */
+	public boolean hasChildren() {
+		return algoUpdateSet.getSize() > 0;
 	}
 
 	/**

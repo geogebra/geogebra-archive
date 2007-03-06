@@ -243,15 +243,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		sizeLabel.setText(sb.toString());	
 	}		
 
-	private void centerOnScreen() {
+	private void centerOnScreen() {		
 		//	center on screen
-		pack();
-		Dimension size = getPreferredSize();
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		int w = Math.min(size.width, dim.width);
-		int h = Math.min(size.height, (int) (dim.height * 0.8));
-		setLocation((dim.width - w) / 2, (dim.height - h) / 2);
-		setSize(w, h);
+		pack();				
+		setLocationRelativeTo(null);	
 	}
 
 	/**

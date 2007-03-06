@@ -13,7 +13,6 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.MySmallJButton;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -32,7 +31,7 @@ public class MyToolbar extends JPanel{
 	private ArrayList moveToggleMenus;   
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
-	private int mode;
+	private int mode = -1;
 	
 	/**
      * Creates a panel for the application's toolbar. 
@@ -89,7 +88,7 @@ public class MyToolbar extends JPanel{
 	        undoPanel.add(button, BorderLayout.SOUTH);   
 	        
 	        add(undoPanel, BorderLayout.EAST);
-        }               
+        }                     
         setMode(app.getMode());
     }
     
@@ -119,7 +118,7 @@ public class MyToolbar extends JPanel{
     		modeText = macro.getToolName();    	
     		if (modeText.length() == 0)		
     			modeText = macro.getCommandName();
-    		helpText = macro.getToolHelp();	    	
+    		helpText = macro.getToolHelpOrNeededTypes();	    	
     	} else {
         	// standard case    		
 	    	modeText = EuclidianView.getModeText(app.getMode());
@@ -330,14 +329,18 @@ public class MyToolbar extends JPanel{
         // macros
         Kernel kernel = app.getKernel();
         if (kernel.getMacroNumber() > 0) {
-        	tm = new ModeToggleMenu(app, bg);
+        	tm = new ModeToggleMenu(app, bg);        	
         	int size = kernel.getMacroNumber();
         	for (int i = 0; i < size; i++) {
         		Macro macro = kernel.getMacro(i);
-        		tm.addMacro(i, macro);
-        	}             	
-        	tb.add(tm);
-        	tb.addSeparator();   
+        		if (macro.isShowInToolBar())
+        			tm.addMacro(i, macro);
+        	}     
+        	if (tm.getComponentCount() > 0) {
+        		moveToggleMenus.add(tm);
+        		tb.add(tm);
+        		tb.addSeparator();          		
+        	}
         }            
         
         // translate view, show/hide modes

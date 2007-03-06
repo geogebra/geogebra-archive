@@ -17,6 +17,7 @@ import geogebra.MyError;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.util.Util;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -105,8 +106,26 @@ public class Construction {
     	geoTable = new HashMap(200);
     	initGeoTable();   
     }
-         
     
+    /**
+     * Returns all GeoImage objects of this construction in an ArrayList.
+     * Note: always returns a not-null ArrayList.
+     */
+    public ArrayList getAllGeoImages() {
+    	ArrayList images = new ArrayList();
+    	
+    	// get all GeoImage objects
+    	Iterator it = getGeoElementsIterator();
+    	while (it.hasNext()) {
+    		// get next GeoImage  
+    		GeoElement geo = (GeoElement) it.next();
+    		if (geo.isGeoImage()) {
+    			images.add(geo);
+    		}    		
+	    }
+    	
+    	return images;    	
+    }            
     
     /**
      * Returns the construction default object of this 

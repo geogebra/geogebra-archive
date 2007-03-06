@@ -1678,17 +1678,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
              centerOnScreen();
         }
         
-        private void centerOnScreen() {
-            //  center on screen
-            pack();
-            Dimension size = getPreferredSize();
-            size.width = Math.max(size.width, DIALOG_WIDTH);
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();    
-            int w = Math.min(size.width, dim.width);
-            int h = Math.min(size.height, (int)(dim.height*0.8));
-            setLocation((dim.width - w) / 2, (dim.height - h) / 2);                
-            setSize(w, h);  
-        }
+    	private void centerOnScreen() {
+    		//	center on screen
+    		pack();				
+    		setLocationRelativeTo(null);
+    	}
         
         /*
          * Keylistener implementation of ConstructionProtocol

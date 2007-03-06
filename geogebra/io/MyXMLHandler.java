@@ -777,13 +777,15 @@ public class MyXMLHandler implements DocHandler {
             String cmdName = (String) attrs.get("cmdName");
             String toolName = (String) attrs.get("toolName");
             String toolHelp = (String) attrs.get("toolHelp");
-            String iconFile = (String) attrs.get("iconFile");
+            String iconFile = (String) attrs.get("iconFile");            
+            String showInToolBar = (String) attrs.get("showInToolBar");
             
             // create macro and a kernel for it
             macro = new Macro(kernel, cmdName);
             macro.setToolName(toolName);
             macro.setToolHelp(toolHelp);
             macro.setIconFileName(iconFile);            
+            macro.setShowInToolBar(parseBoolean(showInToolBar));
             MacroKernel macroKernel = new MacroKernel(kernel);
             
             // we have to change the construction object temporarily so everything 

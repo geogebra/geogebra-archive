@@ -10,7 +10,7 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui;
 
 import java.awt.Dimension;
 
@@ -21,10 +21,7 @@ import javax.swing.JButton;
 
 public class MySmallJButton extends JButton {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	
 
 	public MySmallJButton(Action action, int addPixel) {
 		super(action);

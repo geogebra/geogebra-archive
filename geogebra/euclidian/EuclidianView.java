@@ -2867,7 +2867,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 public static String getModeText(int mode) {
 	        switch (mode) {
 	            case EuclidianView.MODE_ALGEBRA_INPUT :
-	                return "InputField";
+	                return "Select";
 
 	            case EuclidianView.MODE_MOVE :
 	                return "Move";

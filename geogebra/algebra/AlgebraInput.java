@@ -13,8 +13,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.algebra;
 
 import geogebra.Application;
-import geogebra.MySmallJButton;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
+import geogebra.gui.MySmallJButton;
 import geogebra.util.InputPanel;
 
 import java.awt.BorderLayout;

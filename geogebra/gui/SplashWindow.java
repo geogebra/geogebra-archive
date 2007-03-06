@@ -111,11 +111,7 @@ public class SplashWindow extends Window {
         int imgWidth = splashImage.getWidth(this);
         int imgHeight = splashImage.getHeight(this);
         setSize(imgWidth, imgHeight);
-        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(
-            (screenDim.width - imgWidth) / 2,
-            (screenDim.height - imgHeight) / 2
-        );
+        setLocationRelativeTo(null);
 
         // Users shall be able to close the splash window by
         // clicking on its display area. This mouse listener
