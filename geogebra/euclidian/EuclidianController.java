@@ -2946,7 +2946,8 @@ final public class EuclidianController implements MouseListener,
 					// success: let's take the points from the polygon
 					GeoPoint [] points = poly.getPoints();					
 					for (int k=0; k < neededPoints; k++) {
-						selectedGeos.add(points[k]);																			
+						selectedGeos.add(points[k]);
+						app.toggleSelectedGeo(points[k]);
 					}										
 					index = index + neededPoints - 1;					
 				}
@@ -2963,6 +2964,7 @@ final public class EuclidianController implements MouseListener,
 			if (createNewPoint(hits, true, true, false)) {				
 				// take movedGeoPoint which is the newly created point								
 				selectedGeos.add(movedGeoPoint);
+				app.toggleSelectedGeo(movedGeoPoint);
 				objectFound = true;
 			}
 		}
