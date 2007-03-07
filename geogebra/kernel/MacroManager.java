@@ -49,6 +49,16 @@ public class MacroManager {
 		macroList.clear();
 	}
 	
+
+	/**
+	 * Sets the command name of a macro.
+	 */
+	public void setMacroCommandName(Macro macro, String cmdName) {
+		macroMap.remove(macro.getCommandName());
+		macro.setCommandName(cmdName);
+		macroMap.put(macro.getCommandName(), macro);			
+	}
+	
 	public Macro getMacro(int i) {
 		return (Macro) macroList.get(i);		
 	}

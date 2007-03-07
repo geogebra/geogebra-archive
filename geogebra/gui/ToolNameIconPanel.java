@@ -166,15 +166,26 @@ public class ToolNameIconPanel extends JPanel {
 	 */
 	private void updateMacro() {
 		if (macro == null) return;
-		
-		macro.setCommandName(getCommandName());
+				
 		macro.setToolName(getToolName());
 		macro.setToolHelp(getToolHelp());			
 		macro.setShowInToolBar(showInToolBar());
 		macro.setIconFileName(getIconFileName());
+				
+		// be careful when changing the command name of a macro
+		// as this is the internally used name
+		String cmdName = getCommandName();	
+		if (!macro.getCommandName().equals(cmdName)) {
+			// try to change
+			boolean cmdNameChanged = app.getKernel().setMacroCommandName(macro, cmdName);
+			if (!cmdNameChanged) {			
+				// name used by macro: undo textfield change
+				tfCmdName.setText(macro.getCommandName());			
+			}
+		}
 		
 		if (managerDialog != null)
-			managerDialog.repaint();
+			managerDialog.repaint();		
 	}
 	
 	/**
@@ -183,7 +194,7 @@ public class ToolNameIconPanel extends JPanel {
 	 * to be updated whenever the macro properties are changed.
 	 * @param macro
 	 */
-	public void init(ToolManagerDialog managerDialog, Macro macro) {	
+	public void init(ToolManagerDialog managerDialog, Macro macro) {			
 		updateMacro(); // update last macro if we already had one
 		
 		this.managerDialog = managerDialog;

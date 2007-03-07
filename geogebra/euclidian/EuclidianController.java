@@ -461,7 +461,7 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
 			hits = view.getHits(mouseLoc);
-			createNewPoint(hits, true, true);
+			createNewPoint(hits, true, true, true);
 			break;
 		
 		case EuclidianView.MODE_PARALLEL:
@@ -471,21 +471,21 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_TANGENTS:		
 		case EuclidianView.MODE_POLAR_DIAMETER:
 			hits = view.getHits(mouseLoc);
-			createNewPoint(hits, false, true);
+			createNewPoint(hits, false, true, true);
 			break;					
 			
 		case EuclidianView.MODE_ANGLE:
 			hits = view.getTopHits(mouseLoc);
  		 	// check if we got a polygon
 			if (hits == null || !((GeoElement) hits.get(0)).isGeoPolygon()) {
-				createNewPoint(hits, false, false);			
+				createNewPoint(hits, false, false, true);			
 			}			
 			break;
 			
 		case EuclidianView.MODE_ANGLE_FIXED:
 		case EuclidianView.MODE_MIDPOINT:
 			hits = view.getHits(mouseLoc);
-			createNewPoint(hits, false, false);			
+			createNewPoint(hits, false, false, true);			
 			break;
 			
 		case EuclidianView.MODE_MOVE_ROTATE:
@@ -1715,7 +1715,7 @@ final public class EuclidianController implements MouseListener,
 	// or intersection point
 	// returns wether new point was created or not
 	final private boolean createNewPoint(ArrayList hits,
-			boolean onPathPossible, boolean intersectPossible) {
+			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
 		Path path = null;		
 		boolean createPoint = !view.containsGeoPoint(hits);
 		GeoPoint point = null;
@@ -1762,7 +1762,8 @@ final public class EuclidianController implements MouseListener,
 			movedGeoElement = movedGeoPoint;
 			moveMode = MOVE_POINT;
 			view.setDragCursor();
-			doSingleHighlighting(movedGeoPoint);
+			if (doSingleHighlighting)
+				doSingleHighlighting(movedGeoPoint);
 			POINT_CREATED = true;
 			return true;
 		} else {
@@ -2941,12 +2942,12 @@ final public class EuclidianController implements MouseListener,
 					
 				// now we only have polygons with the right number of points: choose one 
 				GeoPolygon poly = (GeoPolygon) chooseGeo(macroPolySearchList);
-				if (poly != null) {
+				if (poly != null) {					
 					// success: let's take the points from the polygon
-					GeoPoint [] points = poly.getPoints();
+					GeoPoint [] points = poly.getPoints();					
 					for (int k=0; k < neededPoints; k++) {
-						selectedGeos.add(points[k]);						
-					}
+						selectedGeos.add(points[k]);																			
+					}										
 					index = index + neededPoints - 1;					
 				}
 			}									
@@ -2958,10 +2959,10 @@ final public class EuclidianController implements MouseListener,
 		
 		
 		// only one point needed: try to create it
-		if (!objectFound && neededPoints == 1) {
-			if (createNewPoint(hits, true, true)) {				
-				// take movedGeoPoint which is the newly created point
-				selectedGeos.add(movedGeoPoint); 
+		if (!objectFound && neededPoints >= 1) {
+			if (createNewPoint(hits, true, true, false)) {				
+				// take movedGeoPoint which is the newly created point								
+				selectedGeos.add(movedGeoPoint);
 				objectFound = true;
 			}
 		}

@@ -125,13 +125,20 @@ implements GeoElementSelectionListener {
 	
 	
 	private void createTool() {
+		// check if command name is not used already by another macro
+		String cmdName = namePanel.getCommandName();
+		Kernel kernel = app.getKernel();
+		if (kernel.getMacro(cmdName) != null) {
+			app.showError("Tool.CommandNameTaken");
+			return;
+		}
+		
 		// get input and output objects		
 		GeoElement [] input = toGeoElements(inputList);
 		GeoElement [] output = toGeoElements(outputList);
 		
 		// try to create macro
-		Macro macro;
-		Kernel kernel = app.getKernel();
+		Macro macro;		
 		try {
 			macro = kernel.createMacro(namePanel.getCommandName(), input, output);
 			macro.setToolName(namePanel.getToolName());

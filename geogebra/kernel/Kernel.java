@@ -855,16 +855,16 @@ public class Kernel {
 	 * Creates a new macro within the kernel. A macro is a user defined
 	 * command in GeoGebra.
 	 */
-	public Macro createMacro(String cmdName, GeoElement [] input, GeoElement [] output) throws Exception {
-		if (macroManager == null) {
-			macroManager = new MacroManager();
-		}	
-	
+	public Macro createMacro(String cmdName, GeoElement [] input, GeoElement [] output) throws Exception {		
 		// we need a non null macro name, this is the command name of the user defined command
 		String macroName = cmdName;
 		if (macroName == null || macroName.length() == 0) {
-			macroName = app.getMenu("Macro") + (macroManager.getMacroNumber() + 1);
+			macroName = app.getMenu("Tool") + (macroManager.getMacroNumber() + 1);
 		}		
+				
+		if (macroManager == null) {
+			macroManager = new MacroManager();
+		}
 						
 		// create new macro
 		Macro macro = new Macro(this, macroName, input, output);		
@@ -899,6 +899,20 @@ public class Kernel {
 			app.removeMacroCommands();			
 			macroManager.removeAllMacros();			
 		}
+	}
+	
+	/**
+	 * Sets the command name of a macro. Note: if the given name is
+	 * already used nothing is done.
+	 * @return if the command name was really set
+	 */
+	public boolean setMacroCommandName(Macro macro, String cmdName) {
+		boolean nameUsed = macroManager.getMacro(cmdName) != null;
+		if (nameUsed || cmdName == null || cmdName.length() == 0) 
+			return false;
+		
+		macroManager.setMacroCommandName(macro, cmdName);		
+		return true;		
 	}
 	
 	/**

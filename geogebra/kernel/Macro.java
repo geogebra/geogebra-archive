@@ -409,7 +409,7 @@ public class Macro {
 		return cmdName;
 	}
 
-	public void setCommandName(String name) {
+	void setCommandName(String name) {
 		if (name == null)
 			this.cmdName = "";
 		else
