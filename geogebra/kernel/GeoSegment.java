@@ -90,7 +90,8 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
         length = seg.length;
         defined = seg.defined;      
     	keepTypeOnGeometricTransform = seg.keepTypeOnGeometricTransform; 
-        
+    	allowOutlyingIntersections = seg.allowOutlyingIntersections;
+    	
     	// macro output: don't set start and end point
     	if (geo.cons != cons && isAlgoMacroOutput) 
     		return;

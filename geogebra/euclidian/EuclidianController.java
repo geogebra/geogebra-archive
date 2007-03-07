@@ -2949,7 +2949,8 @@ final public class EuclidianController implements MouseListener,
 						selectedGeos.add(points[k]);
 						app.toggleSelectedGeo(points[k]);
 					}										
-					index = index + neededPoints - 1;					
+					index = index + neededPoints - 1;	
+					objectFound = true;
 				}
 			}									
 		}		

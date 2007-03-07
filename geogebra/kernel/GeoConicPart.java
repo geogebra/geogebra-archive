@@ -97,6 +97,7 @@ implements LimitedPath, NumberValue {
 		value_defined = cp.value_defined;	
 		
 		keepTypeOnGeometricTransform = cp.keepTypeOnGeometricTransform;
+		allowOutlyingIntersections = cp.allowOutlyingIntersections;
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
