@@ -2,13 +2,16 @@ package sharptools;
 /*
  * @(#)Formula.java
  * 
- * $Id: Formula.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: Formula.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created October 18, 2000, 3:27 PM
  */
-import javax.swing.*;
-import java.util.*;
-import java.io.*;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.TreeSet;
 
 /**
  * This is the class for formula processing.
@@ -26,7 +29,7 @@ import java.io.*;
  * @see ParserException
  *
  * @author Hua Zhong <huaz@cs.columbia.edu>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class Formula {

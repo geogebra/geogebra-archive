@@ -333,7 +333,7 @@ public class GeoGebraApplet extends JApplet {
 	public synchronized void reset() {
 		try {		
 			URL ggbURL = new URL(fileStr);
-			app.loadXML(ggbURL);
+			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -353,11 +353,12 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	public synchronized void openFile(String strURL) {
 		try {
-			if (!( strURL.startsWith("http") || strURL.startsWith("file") )) {
-					strURL = getCodeBase() + strURL;
+			String lowerCase = strURL.toLowerCase();
+			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
+				strURL = getCodeBase() + strURL;
 			}		
-			URL ggbURL = new URL(strURL);			
-			app.loadXML(ggbURL);
+			URL ggbURL = new URL(strURL);				
+			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();
 		} catch (Exception e) {
 			e.printStackTrace();

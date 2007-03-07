@@ -2,14 +2,14 @@ package sharptools;
 /*
  * @(#)NumberField.java
  * 
- * $Id: NumberField.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: NumberField.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created Novenmber 25, 2000, 5:13 AM
  */
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 /**
  * This class is used to only allow number input (int/float).
@@ -22,7 +22,7 @@ import javax.swing.text.*;
  * @see AddressField
  *
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NumberField extends JTextField {
 

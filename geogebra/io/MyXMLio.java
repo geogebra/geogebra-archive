@@ -20,7 +20,6 @@ package geogebra.io;
 
 import geogebra.Application;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -31,7 +30,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +40,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -84,7 +81,7 @@ public class MyXMLio {
      * Reads zipped file from url that includes the construction saved 
      * in xml format and maybe image files.
      */    
-    public final void readZipFromURL(URL url) throws Exception {      	
+    public final void readZipFromURL(URL url, boolean isMacroFile) throws Exception {      	
     	BufferedInputStream bis = new BufferedInputStream(url.openStream());	
         ZipInputStream zip = new ZipInputStream(bis);
                 
@@ -128,15 +125,20 @@ public class MyXMLio {
         }
         zip.close();  
         bis.close();
-        
-                        
+                
+        if (!isMacroFile) {
+        	// ggb file: remove all macros from kernel before processing
+        	kernel.removeAllMacros();
+        }
+                               
         // process macros
-        if (macroXmlFileBuffer != null) {
-        	processXMLBuffer(macroXmlFileBuffer, true);        	
+        if (macroXmlFileBuffer != null) {        	
+        	// don't clear kernel for macro files
+        	processXMLBuffer(macroXmlFileBuffer, !isMacroFile);        	
         }  
         
         // process construction
-        if (xmlFileBuffer != null) {
+        if (!isMacroFile && xmlFileBuffer != null) {
         	processXMLBuffer(xmlFileBuffer, !macroXMLfound);
         } 
         
@@ -149,24 +151,24 @@ public class MyXMLio {
      * Handles the XML file stored in buffer.
      * @param buffer
      */
-    private void processXMLBuffer(byte [] buffer, boolean clearAll) throws Exception {
+    private void processXMLBuffer(byte [] buffer, boolean clearConstruction) throws Exception {
     	// handle the data in the memory buffer 
 		ByteArrayInputStream bs = new ByteArrayInputStream(buffer); 		
 		InputStreamReader ir = new InputStreamReader(bs, "UTF8");
 		
         // process xml file  		  
-		doParseXML(ir, clearAll);            
+		doParseXML(ir, clearConstruction);            
         
         ir.close();
         bs.close();        
     }
     
-    private void doParseXML(Reader ir, boolean clearAll) throws Exception {
+    private void doParseXML(Reader ir, boolean clearConstruction) throws Exception {    
     	boolean oldVal = kernel.isNotifyViewsActive();    	 
     	kernel.setNotifyViewsActive(false);
 		
-		if (clearAll)
-			kernel.clearAll();	
+		if (clearConstruction)
+			kernel.clearConstruction();	
 		
 		try {		    
 			xmlParser.parse(handler, ir);				

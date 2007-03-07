@@ -2,13 +2,19 @@ package sharptools;
 /*
  * @(#)SharpTools.java
  * 
- * $Id: Config.java,v 1.1 2007-02-20 13:58:22 hohenwarter Exp $
+ * $Id: Config.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created on October 10, 2000, 1:15 AM
  */
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 /**
  * This class reads configuration file and provides get functions for
@@ -20,7 +26,7 @@ import java.io.*;
  * This is very important!!!
  * 
  * @author  Hua Zhong <huaz@cs.columbia.edu>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 final class Config {

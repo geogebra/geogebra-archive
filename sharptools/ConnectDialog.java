@@ -2,7 +2,7 @@ package sharptools;
 /*
  * @ (#)ConnectDialog.java
  *
- * $Id: ConnectDialog.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: ConnectDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on May 19, 2001, 09:10:28 PM
  *
@@ -12,13 +12,26 @@ package sharptools;
  * various fixes and enhancements - Hua Zhong
  */
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.BorderFactory;
-import javax.swing.border.Border;
-import java.awt.event.*;
-import java.sql.*;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  * This class provides a database conection dialog.
@@ -26,7 +39,7 @@ import java.util.Vector;
  * 
  * @author Shiraz Kanga (first version)
  * @author Hua Zhong (ported to SharpDialog and various enhancements)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class ConnectDialog extends SharpDialog {

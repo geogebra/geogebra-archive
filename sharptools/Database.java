@@ -2,7 +2,7 @@ package sharptools;
 /*
  * @ (#)Database.java
  *
- * $Id: Database.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: Database.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on May 19, 2001, 09:10:28 PM
  *
@@ -27,20 +27,24 @@ package sharptools;
  *
  */
 
-import javax.swing.*;
-import java.util.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.datatransfer.*;
-import java.sql.*;
-import javax.swing.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  * This contains database operations on the spreadsheet table
  *
  * @author  Shiraz Kanga
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Database
 {

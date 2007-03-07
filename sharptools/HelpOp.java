@@ -2,18 +2,36 @@ package sharptools;
 /*
  * @(#)HelpOp.java
  *
- * $Id: HelpOp.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: HelpOp.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 22, 2000, 2:46 AM
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
 
 /**
  * Code taken from 
@@ -23,7 +41,7 @@ import javax.swing.text.*;
  * This html browser allows for the browsing of local help files. 
  *
  * @author Daniel Medina, Daniel Goldberg
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HelpOp {
 

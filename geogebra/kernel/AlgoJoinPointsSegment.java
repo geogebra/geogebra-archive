@@ -79,7 +79,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     		input = new GeoElement[3];
     		input[0] = P;
             input[1] = Q;
-            input[2] = poly;            
+            input[2] = poly;    		  
     	}            	
     	
         output = new GeoElement[1];

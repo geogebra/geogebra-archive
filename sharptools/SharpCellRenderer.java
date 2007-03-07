@@ -2,18 +2,18 @@ package sharptools;
 /*
  * SharpCellRenderer.java
  *
- * $Id: SharpCellRenderer.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: SharpCellRenderer.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 26, 2000, 9:23 PM
  */
 
-import javax.swing.*;
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.border.*;
-import java.awt.Component;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Component;
+
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /** The class for rendering (displaying) individual Cell objects in a
  * <code>JTable</code>.
@@ -25,7 +25,7 @@ import java.awt.Rectangle;
  * be changed to toggle between displaying the text and value of a formula
  * cell. This was done in a previous version but is not removed.
  * @author Ricky Chin
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SharpCellRenderer extends DefaultTableCellRenderer {
 

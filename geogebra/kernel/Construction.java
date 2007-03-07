@@ -17,7 +17,6 @@ import geogebra.MyError;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.util.Util;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

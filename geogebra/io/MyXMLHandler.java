@@ -780,13 +780,26 @@ public class MyXMLHandler implements DocHandler {
             String iconFile = (String) attrs.get("iconFile");            
             String showInToolBar = (String) attrs.get("showInToolBar");
             
-            // create macro and a kernel for it
-            macro = new Macro(kernel, cmdName);
+            // Make sure we don't have a macro with the same name in kernel.
+            // This can happen when a macro file is loaded as the previous
+            // macros are not cleared in this case.
+            int n = 0;
+            String myCmdName = cmdName;
+            while (kernel.getMacro(myCmdName) != null) {
+            	n++;
+            	myCmdName = cmdName + n;            	
+            }
+            
+            // create macro and a kernel for it            
+            macro = new Macro(kernel, myCmdName);                       
             macro.setToolName(toolName);
             macro.setToolHelp(toolHelp);
             macro.setIconFileName(iconFile);            
             macro.setShowInToolBar(parseBoolean(showInToolBar));
+          
             MacroKernel macroKernel = new MacroKernel(kernel);
+            macroKernel.setContinuous(false);
+            macroKernel.setGlobalVariableLookup(false);
             
             // we have to change the construction object temporarily so everything 
             // is done in the macro construction from now on           

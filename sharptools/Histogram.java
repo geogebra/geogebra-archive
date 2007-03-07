@@ -2,13 +2,25 @@ package sharptools;
 /*
  * @(#)Histogram.java
  * 
- * $Id: Histogram.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: Histogram.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created Novenmber 21, 2000, 11:27 PM
  */
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 /**
  * This is a fully functional histogram class (including UI).
@@ -16,7 +28,7 @@ import javax.swing.*;
  * A tabbed panel is used.  Multiple histograms can be managed simultaneously.
  * 
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class Histogram extends JFrame implements ActionListener {

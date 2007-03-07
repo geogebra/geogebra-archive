@@ -2,19 +2,30 @@ package sharptools;
 /*
  * @(#)HistoDialog.java
  * 
- * $Id: HistoDialog.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: HistoDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created Novenmber 23, 2000, 2:55 PM
  */
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 
 /**
  * This is used to provide options configuration for a histogram
  *
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public final class HistoDialog extends SharpDialog {

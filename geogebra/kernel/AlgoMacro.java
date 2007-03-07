@@ -18,8 +18,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.util.FastHashMapKeyless;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 
 /**

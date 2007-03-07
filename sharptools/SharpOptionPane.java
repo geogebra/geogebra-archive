@@ -6,17 +6,21 @@ package sharptools;
  * The class is used to replace JOptionPane.
  * 
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
  */
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Label;
+
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class SharpOptionPane {
 

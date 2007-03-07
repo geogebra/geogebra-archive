@@ -2,14 +2,22 @@ package sharptools;
 /*
  * @(#)TabPanel.java
  * 
- * $Id: TabPanel.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: TabPanel.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created Novenmber 27, 2000, 11:27 PM
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  * A class for one panel, which includes the image panel and
@@ -17,7 +25,7 @@ import javax.swing.*;
  * for one chart.
  *
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TabPanel extends JPanel {
 
@@ -314,7 +322,7 @@ public class TabPanel extends JPanel {
  *    scale).
  * 
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 class HistoPanel extends JPanel /*implements ComponentListener*/ {    

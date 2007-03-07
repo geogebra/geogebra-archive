@@ -20,13 +20,12 @@ import java.awt.Color;
 import java.util.HashSet;
 
 /**
+ * Polygon through given points
+ * 
  * @author Markus Hohenwarter
  */
 final public class GeoPolygon extends GeoElement implements NumberValue {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static final int POLYGON_MAX_POINTS = 100;

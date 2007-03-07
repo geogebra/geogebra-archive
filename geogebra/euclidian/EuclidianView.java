@@ -1915,6 +1915,23 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			ArrayList result) {
 		return getHits(hits, geoclass, false, result);
 	}
+	
+	/**
+	 * Returns array of polygons with n points out of hits.
+	 * @return
+	 */
+	final public ArrayList getPolygons(ArrayList hits, int n, ArrayList polygons) {
+		// search for polygons in hits that exactly have the needed number of points
+		polygons.clear();
+		getHits(hits, GeoPolygon.class, polygons);
+		for (int k = polygons.size()-1; k > 0 ; k--) {
+			GeoPolygon poly = (GeoPolygon) polygons.get(k);
+			// remove poly with wrong number of points
+			if (n != poly.getPoints().length)
+				polygons.remove(k);
+		}		
+		return polygons;
+	}
 
 	/**
 	 * Stores all GeoElements of type geoclass to result list.

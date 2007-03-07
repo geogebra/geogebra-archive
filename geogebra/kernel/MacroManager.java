@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Manages macros (user defined tools).
@@ -45,6 +44,11 @@ public class MacroManager {
 		macroList.remove(macro);
 	}	
 	
+	public void removeAllMacros() {
+		macroMap.clear();
+		macroList.clear();
+	}
+	
 	public Macro getMacro(int i) {
 		return (Macro) macroList.get(i);		
 	}
@@ -55,6 +59,12 @@ public class MacroManager {
 				return i;			
 		}
 		return -1;				
+	}
+	
+	public void setAllMacrosUnused() {
+		for (int i=0; i < macroList.size(); i++) {
+			((Macro) macroList.get(i)).setUnused();				
+		}
 	}
 	
 	/**
@@ -79,7 +89,7 @@ public class MacroManager {
 	/**
 	 * Returns an XML represenation of the specified macros in this kernel.	 
 	 */
-	public String getMacroXML(Macro [] macros) {				
+	public static String getMacroXML(Macro [] macros) {				
 		if (macros == null) return "";
 
 		StringBuffer sb = new StringBuffer();	

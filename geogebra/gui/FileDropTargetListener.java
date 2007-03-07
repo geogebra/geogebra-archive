@@ -26,6 +26,7 @@ import java.io.File;
 public class FileDropTargetListener implements DropTargetListener {
 
 	private Application app;
+	private boolean isMacroFile = false;
 
 	public FileDropTargetListener(Application app) {
 		this.app = app;
@@ -57,7 +58,7 @@ public class FileDropTargetListener implements DropTargetListener {
 		if (droppedFile == null) {
 			event.dropComplete(false);
 		} else if (app.isSaved() || app.saveCurrentFile()) {	
-			app.loadFile(droppedFile);
+			app.loadFile(droppedFile, isMacroFile);
 			event.dropComplete(true);			
 		}			
 	}
@@ -72,9 +73,16 @@ public class FileDropTargetListener implements DropTargetListener {
 				if (dataFlavor.equals(DataFlavor.javaFileListFlavor)) {
 					java.util.List fileList = (java.util.List) transferable
 							.getTransferData(dataFlavor);
-					File droppedFile = (File) fileList.get(0);			
-					if (droppedFile.getName().endsWith(Application.FILE_EXT_GEOGEBRA))
+					File droppedFile = (File) fileList.get(0);
+					String lowerCase = droppedFile.getName().toLowerCase();
+					if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {
+						isMacroFile = false;
 						return droppedFile;
+					} 
+					else if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL)) {
+						isMacroFile = true;
+						return droppedFile;
+					}											
 				}			
 			} catch (Exception e) {							
 			}

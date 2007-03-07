@@ -2,12 +2,13 @@ package sharptools;
 /*
  * @(#)SharpCellEditor.java
  *
- * $Id: SharpCellEditor.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: SharpCellEditor.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 27, 2000, 2:19 AM
  */
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTextField;
 
 /** This is the only editor for the SharpTableModel because it is the only
  * cell object editor. The only special feature is that it displays the
@@ -15,7 +16,7 @@ import javax.swing.*;
  * all methods of the DefaultCellEditor.
  *
  * @author Ricky Chin
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SharpCellEditor extends DefaultCellEditor {
 

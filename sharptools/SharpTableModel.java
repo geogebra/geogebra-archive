@@ -2,19 +2,22 @@ package sharptools;
 /*
  * @(#)SharpTable.java
  * 
- * $Id: SharpTableModel.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: SharpTableModel.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 14, 2000, 8:10 PM
  */
 
 
-import java.util.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.table.*; 
-import javax.swing.event.TableModelListener; 
-import javax.swing.event.TableModelEvent; 
-import javax.swing.event.TableColumnModelEvent;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Vector;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /** This is the table data structure of the spreadsheet (i.e. the heart of
  * the backend). Although this class implements the methods needed for
@@ -25,7 +28,7 @@ import javax.swing.event.TableColumnModelEvent;
  * the Cell object. If you modified the cell class please check the methods
  * in this class.
  * @author Ricky Chin
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SharpTableModel extends DefaultTableModel {
     

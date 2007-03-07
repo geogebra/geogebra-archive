@@ -1,5 +1,6 @@
 package geogebra.algebra.autocomplete;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -41,6 +42,10 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
   	String lowerCase = s.toLowerCase();
   	remove(lowerCase);
     return treeSet.remove(lowerCase);
+  }
+  
+  public Iterator getLowerCaseIterator() {
+	  return treeSet.iterator();
   }
 
   /**

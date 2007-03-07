@@ -14,6 +14,7 @@ package geogebra.algebra;
 
 import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
+import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.gui.MySmallJButton;
 import geogebra.util.InputPanel;
 
@@ -25,7 +26,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Locale;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -46,7 +47,6 @@ implements ActionListener, MouseListener, KeyListener
 	private JToggleButton inputButton;	
  	
 	private JComboBox cmdCB; // for command list
-	private Locale cmdLocale;
 	
 	// autocompletion text field
 	private AutoCompleteTextField inputField;	
@@ -56,7 +56,7 @@ implements ActionListener, MouseListener, KeyListener
 	 */
 	public AlgebraInput(Application app) {		
 		this.app = app;		
-		cmdCB = new JComboBox(); 		
+		 		
 		initGUI();
 	}
 	
@@ -73,6 +73,7 @@ implements ActionListener, MouseListener, KeyListener
 		inputField.addKeyListener(this);
 		
 		// set up command combo box
+		cmdCB = new JComboBox();
 		if (app.showCmdList()) {			
 			cmdCB.setMaximumSize(new Dimension(200, 200));
 			cmdCB.addActionListener(this);
@@ -170,21 +171,25 @@ implements ActionListener, MouseListener, KeyListener
 	/**
 	 * fill command list with command names of current locale
 	 */	
-	private void setCommandNames() {	
-		// only do something if the locale has changed
-		if (app.getLocale() == cmdLocale) return;
-		cmdLocale = app.getLocale();
+	public void setCommandNames() {							
+		ActionListener [] listeners = cmdCB.getActionListeners();
+		for (int i=0; i < listeners.length; i++) 
+			cmdCB.removeActionListener(listeners[i]);
 		
-		cmdCB.removeActionListener(this);
-		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();
-		
+		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();		
 		cmdCB.addItem(app.getCommand("Command") + " ...");		
-		String [] cmds = app.getCommandNames();
-		for (int i=0; i < cmds.length; i++) {
+		
+		LowerCaseDictionary dict = app.getCommandDictionary();
+		Iterator it = dict.getLowerCaseIterator();
+		while (it.hasNext()) {
 			// combobox
-			cmdCB.addItem(cmds[i]);
+			String cmdName = (String) dict.get(it.next());
+			if (cmdName != null && cmdName.length() > 0)
+				cmdCB.addItem(cmdName);
 		}	 
-		cmdCB.addActionListener(this);
+				
+		for (int i=0; i < listeners.length; i++) 
+			cmdCB.addActionListener(listeners[i]);
 	}
 	
 

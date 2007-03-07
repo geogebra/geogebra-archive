@@ -15,7 +15,6 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.kernel.Macro;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,7 +43,8 @@ public class ToolNameIconPanel extends JPanel {
 	private JTextField tfToolName;	
 	private JCheckBox cbShowInToolBar;
 	private JLabel labelIcon;		
-	private String iconFileName;			
+	private String iconFileName;	
+	private JButton btIconFile;
 	
 	private Application app;
 
@@ -124,7 +124,7 @@ public class ToolNameIconPanel extends JPanel {
 			add(labelIcon, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}	
 	
-		final JButton btIconFile = new JButton();
+		btIconFile = new JButton();
 		add(btIconFile, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		btIconFile.setText(app.getMenu("Icon") + " ...");
 		ActionListener ac = new ActionListener() {
@@ -189,8 +189,9 @@ public class ToolNameIconPanel extends JPanel {
 		this.managerDialog = managerDialog;
 		this.macro = macro;
 		
-		if (macro == null) {
-			tfToolName.setText("");		
+		boolean enabled = macro != null;
+		if (!enabled) {
+			tfToolName.setText("");					
 			tfCmdName.setText("");				
 			tfToolHelp.setText("");	
 			cbShowInToolBar.setSelected(false);
@@ -209,6 +210,13 @@ public class ToolNameIconPanel extends JPanel {
 			else
 				labelIcon.setIcon(app.getImageIcon("mode_tool_32.png"));
 		}
+		
+		tfToolName.setEnabled(enabled);
+		tfCmdName.setEnabled(enabled);			
+		tfToolHelp.setEnabled(enabled);
+		cbShowInToolBar.setEnabled(enabled);		
+		labelIcon.setEnabled(enabled);	
+		btIconFile.setEnabled(enabled);
 	}
 	
 	public void requestFocus() {

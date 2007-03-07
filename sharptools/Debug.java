@@ -3,7 +3,6 @@ package sharptools;
  * This is a class used for print out debug information and can be
  * easily turned on/off.
  */
-import java.io.*;
 
 public class Debug {
 

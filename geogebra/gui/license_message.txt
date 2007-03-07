@@ -1,5 +1,5 @@
 GeoGebra - Dynamic Mathematics for Schools
-Markus Hohenwarter, Copyright 2001-2007
+Markus Hohenwarter, 2001-2007
 http://www.geogebra.org
   
 LICENSE
@@ -8,14 +8,14 @@ LICENSE
   the Free Software Foundation; either version 2 of the License, or 
   (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
-CREDITS
-  * Markus Hohenwarter, since 2001
-      Creator of GeoGebra, project leader and main developer
+DEVELOPERS
+  * Markus Hohenwarter, Creator of GeoGebra
+      Project leader and main developer since 2001
       University of Salzburg / Florida Atlantic University      
 Contributions by    
-  * Yves Kreis, University of Luxembourg
-  * Loïc Le Coq, France
-  * Eloi Puertas, University of Barcelona
+  * Yves Kreis, University of Luxembourg, since 2005
+  * Loïc Le Coq, France, 2006
+  * Eloi Puertas, University of Barcelona, 2007
   
 TRANSLATIONS 
   * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)

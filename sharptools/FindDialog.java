@@ -2,16 +2,21 @@ package sharptools;
 /*
  * @(#)FindDialog.java
  *
- * $Id: FindDialog.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: FindDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on November 28, 2000, 02:12 AM
  */
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.BorderFactory;
-import javax.swing.border.Border;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /** 
  * This class provides a find dialog.
@@ -19,7 +24,7 @@ import java.awt.event.*;
  * 
  * @author Andrei Scudder
  * @author Hua Zhong (use SharpDialog)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class FindDialog extends SharpDialog {
     

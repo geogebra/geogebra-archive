@@ -19,7 +19,6 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
@@ -2911,28 +2910,66 @@ final public class EuclidianController implements MouseListener,
 		// try to get next needed type of macroInput
 		int index = selGeos();
 		
-		// standard case: try to get object of needed input type
+		// standard case: try to get one object of needed input type
 		boolean objectFound = 1 == 
 			handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);			
+		
+		// POLYGON instead of points special case:
+		// if no object was found maybe we need points
+		// in this case let's try to use a polygon's points 
+		int neededPoints = 0;				
+		if (!objectFound) {
+			// how many points do we need?						
+			for (int k = index; k < macroInput.length; k++) {
+				if (macroInput[k] == GeoPoint.class) 
+					++neededPoints;					
+				else 
+					break;				
+			}
+						
+			// several points needed: look for polygons with this number of points
+			if (neededPoints > 2) {				
+				if (macroPolySearchList == null)
+					macroPolySearchList = new ArrayList();
+				// get polygons with needed number of points
+				view.getPolygons(hits, neededPoints, macroPolySearchList);
+											
+				if (selectionPreview) {
+					addToHighlightedList(selectedGeos, macroPolySearchList , macroInput.length);
+					return false;
+				}
+					
+				// now we only have polygons with the right number of points: choose one 
+				GeoPolygon poly = (GeoPolygon) chooseGeo(macroPolySearchList);
+				if (poly != null) {
+					// success: let's take the points from the polygon
+					GeoPoint [] points = poly.getPoints();
+					for (int k=0; k < neededPoints; k++) {
+						selectedGeos.add(points[k]);						
+					}
+					index = index + neededPoints - 1;					
+				}
+			}									
+		}		
 		
 		// we're done if in selection preview
 		if (selectionPreview) 
 			return false; 	
 		
-		// no object found: maybe we need a point?
-		if (!objectFound && 
-			macroInput[index] == GeoPoint.class &&  // we look for a point
-			createNewPoint(hits, true, true)) 		// were able to create new point
-		{				
-			// take movedGeoPoint which is the newly created point
-			selectedGeos.add(movedGeoPoint); 
-			objectFound = true;
-		}																				
+		
+		// only one point needed: try to create it
+		if (!objectFound && neededPoints == 1) {
+			if (createNewPoint(hits, true, true)) {				
+				// take movedGeoPoint which is the newly created point
+				selectedGeos.add(movedGeoPoint); 
+				objectFound = true;
+			}
+		}
 				
-		if (objectFound) { // object found in handleAddSelected()
+		// object found in handleAddSelected()
+		if (objectFound) { 
 			// look ahead if we need a number or an angle next			
-			while (++index < macroInput.length) {
-				
+			while (++index < macroInput.length) {				
 				// maybe we need a number
 				if (macroInput[index] == GeoNumeric.class) {									
 					NumberValue num = app.showNumberInputDialog(macro.getToolOrCommandName(),
@@ -2976,12 +3013,13 @@ final public class EuclidianController implements MouseListener,
 		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
 		
 		// do we have everything we need?
-		if (selGeos() == macro.getInputTypes().length) {						
+		if (selGeos() == macroInput.length) {						
 			kernel.useMacro(null, macro, getSelectedGeos())	;		
 			return true;
 		} 		
 		return false;
 	}
+	private ArrayList macroPolySearchList;
 			
 	final private boolean geoElementSelected(ArrayList hits, boolean addToSelection) {
 		if (hits == null)

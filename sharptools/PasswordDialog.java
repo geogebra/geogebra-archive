@@ -2,14 +2,15 @@ package sharptools;
 /*
  * @(#)PasswordDialog.java
  *
- * $Id: PasswordDialog.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: PasswordDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on November 16, 2000, 12:00 AM
  */
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 /** 
  * This class provides a password validating dialog.
@@ -20,7 +21,7 @@ import java.awt.event.*;
  * 
  * @author Andrei Scudder
  * @author Hua Zhong (rewrote using SharpDialog)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class PasswordDialog extends SharpDialog {
 

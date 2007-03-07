@@ -2,12 +2,10 @@ package sharptools;
 /*
  * @(#)History.java
  *
- * $Id: History.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: History.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on November 15, 2000, 10:38 PM
  */
-import java.util.*;
-import javax.swing.*;
 
 /** This is the class to support nearly-arbitrary undo/redo operations.
  * <p>
@@ -28,7 +26,7 @@ import javax.swing.*;
  *</ol>
  *
  * @author Hua Zhong <huaz@cs.columbia.edu>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class History {
 

@@ -2,12 +2,12 @@ package sharptools;
 /*
  * @(#)Cell.java
  *
- * $Id: Cell.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: Cell.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 14, 2000, 6:23 PM
  */
 
-import java.util.*;
+import java.util.TreeSet;
 
 /** 
  * This is a wrapper class for all objects in the table.
@@ -17,7 +17,7 @@ import java.util.*;
  * In addition, a cell has a list of all cells that reference it.
  *
  * @author Ricky Chin
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class Cell {

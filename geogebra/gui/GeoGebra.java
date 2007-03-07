@@ -125,8 +125,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 						public void actionPerformed(ActionEvent evt) {
 							net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;							
 					        // get filename and build args array
-					        File fileToOpen = mac_evt.getFile();						       
-					        activeInstance.getApplication().loadFile(fileToOpen);						    
+					        File fileToOpen = mac_evt.getFile();	
+					        boolean isMacroFile = Application.FILE_EXT_GEOGEBRA_TOOL.equals(Application.getExtension(fileToOpen).toLowerCase());
+					        activeInstance.getApplication().loadFile(fileToOpen, isMacroFile);						    
 					     }
 				 });
         }         

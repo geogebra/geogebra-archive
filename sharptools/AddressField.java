@@ -2,15 +2,15 @@ package sharptools;
 /*
  * @(#)AddressField.java
  * 
- * $Id: AddressField.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: AddressField.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created Novenmber 25, 2000, 5:13 AM
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 /**
  * This class is used to only allow address input (letters followed
@@ -20,7 +20,7 @@ import javax.swing.text.*;
  * @see NumberField
  *
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AddressField extends JTextField {
 

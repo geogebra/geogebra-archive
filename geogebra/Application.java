@@ -83,11 +83,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -452,10 +449,12 @@ public class Application {
         else
         	cp = frame.getContentPane();                
     	
+        addMacroCommands(); 
         cp.removeAll();
         cp.add(buildApplicationPanel());
         euclidianView.updateSize();
-        setLAFFontSize();                
+        setLAFFontSize();        
+                   
         updateComponentTreeUI();
         setMoveMode();
         
@@ -731,18 +730,20 @@ public class Application {
         	fileArgument = args[args.length - 1];
         }                 
         
-        try {     
-        	boolean success;
-            if (fileArgument.startsWith("http") || 
-            	fileArgument.startsWith("file")) {         
+        try {             	
+        	boolean success;      
+        	String lowerCase = fileArgument.toLowerCase();
+        	boolean isMacroFile = lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
+            if (lowerCase.startsWith("http") || 
+            	lowerCase.startsWith("file")) {         
             	
-                URL url = new URL(args[0]);                
-                success = loadXML(url);              
+                URL url = new URL(fileArgument);                   
+                success = loadXML(url, isMacroFile);              
                 updateContentPane();                          
             } else {                       	
                 File f = new File(fileArgument);
                 f = f.getCanonicalFile();                
-                success = loadFile(f);
+                success = loadFile(f, isMacroFile);
             }
             return success;
         } catch (Exception e) {
@@ -776,7 +777,7 @@ public class Application {
     	if (applet != null)
     		applet.reset();
     	else if (currentFile != null)
-    		loadFile(currentFile);   
+    		loadFile(currentFile, false);   
     	else
     		newFile();
     }
@@ -1117,48 +1118,54 @@ public class Application {
         if (commandDict == null) 
         	commandDict = new LowerCaseDictionary();           
                 
-        translateCommandTable.clear();
-        commandDict.clear();
-        
-        Enumeration e = rbcommand.getKeys();     
-        while (e.hasMoreElements()) {            
-            String internal = (String) e.nextElement();
-            //System.out.println(internal);
-            String local = rbcommand.getString((String) internal);
-            if (!internal.endsWith("Syntax") && 
-            	!internal.equals("Command") ) {
-            	// case is ignored in translating local command names to internal names! 
-                translateCommandTable.put(local.toLowerCase(), internal);                
-                commandDict.addEntry(local);
-            }
-        }       
+       fillCommandDict();
     }    
+    
+    private void fillCommandDict() {
+    	 translateCommandTable.clear();
+         commandDict.clear();
+         
+         Enumeration e = rbcommand.getKeys();     
+         while (e.hasMoreElements()) {            
+             String internal = (String) e.nextElement();
+             //System.out.println(internal);
+             String local = rbcommand.getString((String) internal);
+             if (!internal.endsWith("Syntax") && 
+             	!internal.equals("Command") ) {
+             	// case is ignored in translating local command names to internal names! 
+                 translateCommandTable.put(local.toLowerCase(), internal);                
+                 commandDict.addEntry(local);
+             }
+         }   
+         
+         addMacroCommands();
+    }
+    
+    private void addMacroCommands() {
+    	if (commandDict == null || kernel == null || !kernel.hasMacros()) return;
+    	
+    	Macro [] macros = kernel.getAllMacros();
+		for (int i=0; i < macros.length; i++) {
+			String cmdName = macros[i].getCommandName();
+			if (!commandDict.contains(cmdName))
+				commandDict.addEntry(cmdName);
+		}
+    }
+    
+    public void removeMacroCommands() {
+    	if (commandDict == null || kernel == null || !kernel.hasMacros()) return;
+    	
+    	Macro [] macros = kernel.getAllMacros();
+		for (int i=0; i < macros.length; i++) {
+			String cmdName = macros[i].getCommandName();			
+			commandDict.removeEntry(cmdName);
+		}
+    }
 
     public Locale getLocale() {
         return currentLocale;
     }
-
-    /**
-     * 
-     * @return all command names for the current locale
-     */
-    final public String[] getCommandNames() {  
-    	if (rbcommand == null)
-    		initCommandResources();
-    	    	
-    	// get local names from command dictionary
-    	Collection coll = commandDict.values();
-        String[] ret = new String[coll.size()];
-        Iterator it = coll.iterator();
-        int i=0;
-        while (it.hasNext()) {
-            ret[i++] = (String) it.next();
-        }       
-   
-        // sort the name list
-        Arrays.sort(ret);
-        return ret;                
-    }
+    
 
     final public String getPlain(String key) {
     	if (rbplain == null) {
@@ -2278,17 +2285,30 @@ public class Application {
         return rightClickEnabled;
     }
     
-    public void updateToolBar() {
+    public void updateToolBar() {    	
     	if (appToolBarPanel != null) {
-    		appToolBarPanel.initToolbar();
-    		if (!INITING) {
-            	if (applet != null)
-            		SwingUtilities.updateComponentTreeUI(applet);
-            	if (frame != null)
-            		SwingUtilities.updateComponentTreeUI(frame);
-            }
+    		appToolBarPanel.initToolbar();    	
     	}
+    	    	  
+    	if (!INITING) {
+        	if (applet != null)
+        		SwingUtilities.updateComponentTreeUI(applet);
+        	if (frame != null)
+        		SwingUtilities.updateComponentTreeUI(frame);
+        }
+    	    	    	    	
     	setMoveMode();
+    }
+    
+    public void updateCommandDictionary() {
+    	if (commandDict != null) {
+    		// make sure all macro commands are in dictionary
+    		fillCommandDict();
+    		
+    		if (algebraInput != null) {
+    			algebraInput.setCommandNames();    		
+    		}
+    	}    	  
     }
 
     public void updateMenuBar() {
@@ -3563,21 +3583,28 @@ public class Application {
 		            	file = addExtension(file, FILE_EXT_GEOGEBRA);
 		            } 
 			        
-	        		if (file.exists()) {
-	        			GeoGebra inst = GeoGebra.getInstanceWithFile(file);
-	        			if (inst == null) {
-		        			counter++;
-		        			if (counter == 1) {
-		        				// open first file in current window		        				
-								loadFile(file); 								
-		        			} else {		        				
-		        				// create new window for 
-		        				String [] args = { file.getAbsolutePath() };
-		        				newWindow(args);			        			
-		        			}	 	   
-	        			} else if (counter == 0){
-	        				// there is an instance with this file opened
-	        				inst.requestFocus();
+	        		if (file.exists()) {	        			
+	        			if (FILE_EXT_GEOGEBRA_TOOL.equals(getExtension(file).toLowerCase())) {	        			
+	        				// load macro file
+	        				loadFile(file, true); 
+	        			} 	        			
+	        			else {	        
+	        				// standard GeoGebra file
+		        			GeoGebra inst = GeoGebra.getInstanceWithFile(file);
+		        			if (inst == null) {
+			        			counter++;
+			        			if (counter == 1) {
+			        				// open first file in current window		        				
+									loadFile(file, false); 								
+			        			} else {		        				
+			        				// create new window for 
+			        				String [] args = { file.getAbsolutePath() };
+			        				newWindow(args);			        			
+			        			}	 	   
+		        			} else if (counter == 0){
+		        				// there is an instance with this file opened
+		        				inst.requestFocus();
+		        			}
 	        			}
 	        		}			       
 	        	}	        	        	
@@ -3589,9 +3616,9 @@ public class Application {
 	        }	        	
 	        fileChooser.setMultiSelectionEnabled(false);
         }
-    }
-
-    public boolean loadFile(final File file) {
+    }    
+    
+    public boolean loadFile(final File file, boolean isMacroFile) {
         if (!file.exists()) {
             // show file not found message
             JOptionPane.showConfirmDialog(
@@ -3602,34 +3629,10 @@ public class Application {
                 JOptionPane.WARNING_MESSAGE);
             return false;
         }                         
-   
-        boolean success;
         
-        success = loadXML(file);        
+        boolean success = loadXML(file, isMacroFile);  
         updateContentPane();       
-		return success;
-        
-        /*
-	    final SwingWorker worker = new SwingWorker() {
-	    	
-	        public Object construct() {
-	        	 setWaitCursor();	        	 
-	        	 Boolean ret = new Boolean(loadXML(file));
-	        	
-	             return ret;
-	        }
-	
-	        //Runs on the event-dispatching thread.
-	        public void finished() {
-	        	 updateContentPane();
-	             setMoveMode();      
-	     		setDefaultCursor();  
-	        }
-	    };
-	    worker.start(); 
-	    return ((Boolean)worker.get()).booleanValue();
-	    */				
-
+		return success;               
     }
 
     private void newFile() {
@@ -3836,10 +3839,10 @@ public class Application {
      * Loads all objects. 
      * @return true if successful
      */
-    final public boolean loadXML(File file) {
+    final public boolean loadXML(File file, boolean isMacroFile) {
         try {
-        	boolean success = loadXML(file.toURL());
-        	if (success) {
+        	boolean success = loadXML(file.toURL(), isMacroFile);
+        	if (success && !isMacroFile) {
         		setCurrentFile(file);
         	}
         	return success;       
@@ -3855,12 +3858,14 @@ public class Application {
       * Loads all objects. 
       * @return true if successful
       */
-    final public boolean loadXML(URL url) {
+    final public boolean loadXML(URL url, boolean isMacroFile) {
         try {
-            myXMLio.readZipFromURL(url);
-            kernel.initUndoInfo();
-            isSaved = true;
-            setCurrentFile(null);
+            myXMLio.readZipFromURL(url, isMacroFile);
+            if (!isMacroFile) {
+            	kernel.initUndoInfo();
+            	isSaved = true;
+            	setCurrentFile(null);
+            }
             return true;
         } catch (MyError err) {
             setCurrentFile(null);
@@ -3919,7 +3924,7 @@ public class Application {
     }
 
     final public void clearAll() {
-        kernel.clearAll();
+        kernel.clearConstruction();
         kernel.initUndoInfo();
         updateActions();
         isSaved = true;

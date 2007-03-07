@@ -573,7 +573,10 @@ public class Kernel {
 		return cons.moveInConstructionList(from, to);
 	}
 
-	public void clearAll() {		
+	public void clearConstruction() {		
+		if (macroManager != null)
+			macroManager.setAllMacrosUnused();
+		
 		cons.clearConstruction();
 		notifyClearView();
 		notifyRepaint();
@@ -865,7 +868,7 @@ public class Kernel {
 						
 		// create new macro
 		Macro macro = new Macro(this, macroName, input, output);		
-		macroManager.addMacro(macro);								
+		addMacro(macro);								
 		return macro;		
 	}
 	
@@ -877,16 +880,25 @@ public class Kernel {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}						
-		macroManager.addMacro(macro);
+		macroManager.addMacro(macro);	
 	}
 	
 	/**
-	 * Removes a macro from the kernel. Note: if the macro is
-	 * used by the current construction, nothing is done.
+	 * Removes a macro from the kernel.
 	 */
 	public void removeMacro(Macro macro) {
-		if (macroManager != null && !macro.isUsed())								
-			macroManager.removeMacro(macro);
+		if (macroManager != null)								
+			macroManager.removeMacro(macro);			
+	}
+	
+	/**
+	 * Removes all macros from the kernel. 
+	 */
+	public void removeAllMacros() {
+		if (macroManager != null) {								
+			app.removeMacroCommands();			
+			macroManager.removeAllMacros();			
+		}
 	}
 	
 	/**

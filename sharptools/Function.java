@@ -2,13 +2,13 @@ package sharptools;
 /*
  * @(#)Function.java
  * 
- * $Id: Function.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: Function.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on October 30, 2000, 10:29 AM
  */
 
-import java.util.*;
-import java.io.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Function classes used only by Formula to evaluate functions.
@@ -19,7 +19,7 @@ import java.io.*;
  * is a number, a relative/absolute address or an address range (e.g., A1:B3).
  *
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class Function {    
 

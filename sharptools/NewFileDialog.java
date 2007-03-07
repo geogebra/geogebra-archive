@@ -2,14 +2,19 @@ package sharptools;
 /*
  * @(#)NewFileDialog.java
  *
- * $Id: NewFileDialog.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: NewFileDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on November 16, 2000, 12:00 AM
  */
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /** 
  * This class provides a new-file dialog.
@@ -17,7 +22,7 @@ import java.awt.event.*;
  * new document.
  * 
  * @author Hua Zhong
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class NewFileDialog extends SharpDialog {

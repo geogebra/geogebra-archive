@@ -12,7 +12,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.gui;
 import geogebra.Application;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 
@@ -20,29 +19,20 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -61,6 +51,22 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		
 		this.app = app;
 		initGUI();
+	}
+			
+	/**
+	 * Updates the order of macros using the listModel.
+	 */
+	private void updateToolBar(DefaultListModel listModel) {
+		// update order of macros:
+		// remove all macros from kernel and add them again in new order
+		Kernel kernel = app.getKernel();				
+		kernel.removeAllMacros();		
+		int size = listModel.getSize();		
+		for (int i=0; i < size; i++) {
+			kernel.addMacro((Macro) listModel.getElementAt(i));
+		}
+		
+		app.updateToolBar();
 	}
 	
 	/**
@@ -86,12 +92,13 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		boolean changeToolBar = false;
 		boolean foundUsedMacro = false;
 		String macroNames = "";
+		Kernel kernel = app.getKernel();
 		for (int i=0; i < sel.length; i++) {
 			Macro macro = (Macro) sel[i];				
 			if (!macro.isUsed()) {
 				// delete macro
 				changeToolBar = changeToolBar || macro.isShowInToolBar();
-				app.getKernel().removeMacro(macro);
+				kernel.removeMacro(macro);
 				listModel.removeElement(macro);
 				didDeletion = true;
 			} else {
@@ -104,11 +111,12 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		if (didDeletion){
 			// we reinit the undo info to make sure an undo does not use
 			// any deleted tool
-			app.getKernel().initUndoInfo();
+			kernel.initUndoInfo();
 		}
 		
-		if (changeToolBar)
-			app.updateToolBar();			
+		if (changeToolBar) {
+			updateToolBar(listModel);			
+		}
 		
 		if (foundUsedMacro)
 			app.showError(app.getError("Tool.DeleteUsed") + ": " + macroNames);										
@@ -123,7 +131,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		
 		File file =
 			app.showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
-	                			app.getPlain("ApplicationName") + " " + app.getMenu("Tools"));
+	                	app.getPlain("ApplicationName") + " " + app.getMenu("Tools"));
         if (file == null)
             return;
         
@@ -153,12 +161,15 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			final JList toolList = new JList(toolsModel);					
 			toolList.setCellRenderer(new MacroCellRenderer());
 			toolList.setVisibleRowCount(6);
+			
+			JPanel centerPanel = ToolCreationDialog.createListUpDownRemovePanel(app, toolList, null, false);
 													
-			JScrollPane jScrollPane1 = new JScrollPane(toolList);
-			jScrollPane1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED ));
-			toolListPanel.add(jScrollPane1, BorderLayout.CENTER);					
-				
-			JPanel toolButtonPanel = new JPanel();
+			//JScrollPane jScrollPane1 = new JScrollPane(toolList);
+			//jScrollPane1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED ));
+			//toolListPanel.add(jScrollPane1, BorderLayout.CENTER);					
+			toolListPanel.add(centerPanel, BorderLayout.CENTER);	
+			
+			JPanel toolButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			toolListPanel.add(toolButtonPanel, BorderLayout.SOUTH);
 			
 			final JButton btDelete = new JButton();
@@ -186,16 +197,20 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			ActionListener ac = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Object src = e.getSource();										
-					if (src == btClose) {		
+					if (src == btClose) {	
 						// ensure to set macro properties from namePanel
 						namePanel.init(null, null); 
+										
+						// make sure new macro command gets into dictionary
+						app.updateCommandDictionary();
 						
 						// recreate tool bar of application window
-						app.updateToolBar();
+						updateToolBar(toolsModel);
 						
 						// destroy dialog
 						setVisible(false);
 						dispose();
+						
 					}	
 					else if (src == btDelete) {
 						deleteTools(toolList, toolsModel);
@@ -218,11 +233,9 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 					
 					int [] selIndices = toolList.getSelectedIndices();
 					if (selIndices == null || selIndices.length != 1) {
-						// no or several tools selected
-						namePanel.setEnabled(false);
+						// no or several tools selected						
 						namePanel.init(null, null);																	
-					} else {			
-						namePanel.setEnabled(true);
+					} else {									
 						Macro macro = (Macro) toolsModel.getElementAt(selIndices[0]);			
 						namePanel.init(ToolManagerDialog.this, macro);	
 					}																		
@@ -233,6 +246,8 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			// select first tool in list
 			if (toolsModel.size() > 0)
 				toolList.setSelectedIndex(0);
+			else
+				namePanel.init(null, null);
 			
 			setResizable(false);
 			namePanel.setPreferredSize(new Dimension(400, 200));

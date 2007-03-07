@@ -2,13 +2,12 @@ package sharptools;
 /*
  * @(#)Node.java
  * 
- * $Id: Node.java,v 1.1 2007-02-20 13:58:21 hohenwarter Exp $
+ * $Id: Node.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  * 
  * Created on October 18, 2000, 3:27 PM
  */
 
-import java.io.*;
-import java.util.*;    
+import java.util.LinkedList;
 
 /**
  * Node is basic unit for Formula processing.
@@ -29,7 +28,7 @@ import java.util.*;
  * @see Formula
  *
  * @author Hua Zhong <huaz@cs.columbia.edu>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Node {
     public static final int DEFAULT = 0; // reserved

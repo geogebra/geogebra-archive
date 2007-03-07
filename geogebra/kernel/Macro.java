@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.util.Util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -363,11 +362,13 @@ public class Macro {
 	 * Returns whether this macro is being used by algorithms
 	 * in the current construction.
 	 */
-	final public boolean isUsed() {
-		// TODO: remove
-		System.out.println("macro: " + cmdName + ", users: " + usingAlgos);
-		
+	final public boolean isUsed() {	
 		return usingAlgos >  0;
+	}
+	
+	
+	final public void setUnused() {	
+		usingAlgos = 0;
 	}
 						
 	/**

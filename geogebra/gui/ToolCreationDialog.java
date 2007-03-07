@@ -27,16 +27,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -48,16 +40,13 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -117,11 +106,11 @@ implements GeoElementSelectionListener {
 			GeoPolygon poly = (GeoPolygon) geo;
 			GeoPoint [] points = poly.getPoints();
 			for (int i=0; i < points.length; i++) {
-				outputList.addElement(points[i]);
+				addToOutputList(points[i]);				
 			}
 			GeoSegment [] segments = poly.getSegments();
 			for (int i=0; i < segments.length; i++) {
-				outputList.addElement(segments[i]);
+				addToOutputList(segments[i]);
 			}
 		}
 	}
@@ -158,6 +147,9 @@ implements GeoElementSelectionListener {
 		// hide and dispose dialog
 		setVisible(false);	
 		dispose();
+		
+		// make sure new macro command gets into dictionary
+		app.updateCommandDictionary();
 		
 		// set macro mode
 		if (macro.isShowInToolBar()) {
@@ -254,15 +246,7 @@ implements GeoElementSelectionListener {
 				cbOutputAddList.addElement(geo);	
 			}
 		}								
-	}	
-	
-	private class NameDescriptionComparator implements Comparator {
-		public int compare(Object ob1, Object ob2) {
-			GeoElement geo1 = (GeoElement) ob1;
-			GeoElement geo2 = (GeoElement) ob2;
-			return geo1.getNameDescription().compareTo(geo2.getNameDescription());			
-		}				
-	}
+	}		
 	
 	private void initGUI() {
 		try {
@@ -364,12 +348,7 @@ implements GeoElementSelectionListener {
 		};		
 		tabbedPane.addChangeListener(cl);
 		return btPanel;
-	}
-		
-	
-	
-	
-	
+	}			
 	
 	/** 
 	 * Creates a panel with a list to choose input/output objects of the new tool.
@@ -382,21 +361,52 @@ implements GeoElementSelectionListener {
 		JLabel labelAddOutput = new JLabel(app.getMenu("Tool.SelectObjects"));
 		panel.add(labelAddOutput, BorderLayout.NORTH);																		
 					
-		// CENTER: combobox, list and some buttons on the right		
-		JPanel centerPanel = new JPanel(new BorderLayout(5,5));		
-		JPanel listPanel = new JPanel(new BorderLayout(5,3));		
-		
+		// CENTER: combobox, list and some buttons on the right						
 		// combobox to add geos				
-		final JComboBox cbAdd = new JComboBox(cbModel);				
-		listPanel.add(cbAdd, BorderLayout.NORTH);
-
+		final JComboBox cbAdd = new JComboBox(cbModel);
+		// listener for the combobox
+		ActionListener ac = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				
+				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();								   
+				if (!listModel.contains(geo)) {
+					if (listModel == outputList)
+						addToOutputList(geo);
+					else
+						listModel.addElement(geo);	
+					cbModel.removeElementAt(cbAdd.getSelectedIndex());
+				}			
+			}
+		};
+		cbAdd.addActionListener(ac);
+		
 		// list to show selected geos
-		final JList list = new JList(listModel);
+		JList list = new JList(listModel);												
+		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true), BorderLayout.CENTER);			
+		
+		// renderer to show long description of geos in list and combobox
+		MyCellRenderer rend = new MyCellRenderer();
+		list.setCellRenderer(rend);
+		cbAdd.setRenderer(rend);
+						
+		return panel;
+	}	
+	
+	/**
+	 * Creates a panel with a list on the left and buttons (up, down, remove) on the right.
+	 * If the combobox is not null it is added on top of the list.
+	 * @param listPanel
+	 * @param list
+	 */
+	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, boolean showRemoveButton) {
+		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
+		
+		JPanel listPanel = new JPanel(new BorderLayout(5,3));
 		JScrollPane scrollPane = new JScrollPane(list);
 		scrollPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		if (cbAdd != null)
+			listPanel.add(cbAdd, BorderLayout.NORTH);
 		listPanel.add(scrollPane, BorderLayout.CENTER);
-		centerPanel.add(listPanel, BorderLayout.CENTER);
-		panel.add(centerPanel, BorderLayout.CENTER);										
+		centerPanel.add(listPanel, BorderLayout.CENTER);											
 		
 		// buttons on the right
 		JPanel outputButtonPanel = new JPanel();
@@ -409,65 +419,55 @@ implements GeoElementSelectionListener {
 		btUp.setToolTipText(app.getMenu("Up"));
 		final JButton btDown = new JButton("\u25bc");
 		btDown.setToolTipText(app.getMenu("Down"));
-		outputButtonPanel.add(Box.createRigidArea(new Dimension(0,30)));
+		if (cbAdd != null)
+			outputButtonPanel.add(Box.createRigidArea(new Dimension(0,30)));
 		outputButtonPanel.add(btUp);
 		outputButtonPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		outputButtonPanel.add(btDown);
-		
-		final JButton btRemove = new JButton(app.getImageIcon("delete_small.gif"));
+				
+		final JButton btRemove = new JButton("\u2718");
+		btRemove.setVisible(showRemoveButton);
 		btRemove.setToolTipText(app.getMenu("Remove"));
 		outputButtonPanel.add(Box.createRigidArea(new Dimension(0,15)));
 		outputButtonPanel.add(btRemove);				
 		centerPanel.add(outputButtonPanel, BorderLayout.EAST);								
-		
-		// renderer to show long description of geos in list and combobox
-		MyCellRenderer rend = new MyCellRenderer();
-		list.setCellRenderer(rend);
-		cbAdd.setRenderer(rend);
-		
-		// listeners for the combobox and buttons
+						
+		// listener for buttons
 		ActionListener ac = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object src = e.getSource();
-				if (src == cbAdd) {
-					GeoElement geo = (GeoElement) cbAdd.getSelectedItem();								   
-					if (!listModel.contains(geo)) {
-						if (listModel == outputList)
-							addToOutputList(geo);
-						else
-							listModel.addElement(geo);	
-						cbModel.removeElementAt(cbAdd.getSelectedIndex());
+				DefaultListModel listModel = (DefaultListModel) list.getModel();
+				int [] selIndices = list.getSelectedIndices();
+				if (src == btUp && selIndices != null) {
+					for (int i=0; i < selIndices.length; i++) {
+						int index = selIndices[i];
+						if (index > 0) { 
+							Object ob = listModel.get(index);
+							listModel.remove(index);
+							listModel.add(index-1, ob);
+							selIndices[i] = index-1;
+						}							
 					}
+					list.setSelectedIndices(selIndices);
 				}
-				else {
-					int [] selIndices = list.getSelectedIndices();
-					if (src == btUp && selIndices != null) {
-						for (int i=0; i < selIndices.length; i++) {
-							int index = selIndices[i];
-							if (index > 0) { 
-								Object ob = listModel.get(index);
-								listModel.remove(index);
-								listModel.add(index-1, ob);
-								selIndices[i] = index-1;
-							}							
+				else if (src == btDown && selIndices != null) {
+					for (int i=selIndices.length-1; i >= 0; i--) {
+						int index = selIndices[i];
+						if (index < listModel.size()-1) { 
+							Object ob = listModel.get(index);
+							listModel.remove(index);
+							listModel.add(index+1, ob);
+							selIndices[i] = index+1;
 						}
-						list.setSelectedIndices(selIndices);
 					}
-					else if (src == btDown && selIndices != null) {
-						for (int i=selIndices.length-1; i >= 0; i--) {
-							int index = selIndices[i];
-							if (index < listModel.size()-1) { 
-								Object ob = listModel.get(index);
-								listModel.remove(index);
-								listModel.add(index+1, ob);
-								selIndices[i] = index+1;
-							}
-						}
-						list.setSelectedIndices(selIndices);
-					}
-					else if (src == btRemove && selIndices != null) {
-						NameDescriptionComparator comparator = new NameDescriptionComparator();
-						for (int i=selIndices.length-1; i >= 0; i--) {
+					list.setSelectedIndices(selIndices);
+				}
+				else if (src == btRemove && selIndices != null) {
+					NameDescriptionComparator comparator = new NameDescriptionComparator();
+					for (int i=selIndices.length-1; i >= 0; i--) {
+						if (cbAdd != null) {
+							DefaultComboBoxModel cbModel = (DefaultComboBoxModel) cbAdd.getModel();
+							
 							//	take from list and insert sorted into add-combobox
 							GeoElement geo = (GeoElement) listModel.elementAt(selIndices[i]);
 							int k=0;
@@ -478,21 +478,20 @@ implements GeoElementSelectionListener {
 								}									
 							}
 							cbModel.insertElementAt(geo, k);
-							
-							// remove from list
-							listModel.remove(selIndices[i]);							
 						}
+						
+						// remove from list
+						listModel.remove(selIndices[i]);							
 					}
-				}
+				}				
 			}			
-		};
-		cbAdd.addActionListener(ac);
+		};		
 		btUp.addActionListener(ac);
 		btDown.addActionListener(ac);
 		btRemove.addActionListener(ac);
-						
-		return panel;
-	}	
+		
+		return centerPanel;
+	}
 	
 	private class MyCellRenderer extends DefaultListCellRenderer {			  
 	    /* This is the only method defined by ListCellRenderer.  We just
@@ -535,8 +534,17 @@ implements GeoElementSelectionListener {
 		}
 		
 		
-	}
+	}	
 
+}
+
+class NameDescriptionComparator implements Comparator {				
+	
+	public int compare(Object ob1, Object ob2) {
+		GeoElement geo1 = (GeoElement) ob1;
+		GeoElement geo2 = (GeoElement) ob2;
+		return geo1.getNameDescription().compareTo(geo2.getNameDescription());			
+	}				
 }
 
 

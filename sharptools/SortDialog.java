@@ -2,17 +2,28 @@ package sharptools;
 /*
  * @(#)SortDialog.java
  *
- * $Id: SortDialog.java,v 1.1 2007-02-20 13:58:20 hohenwarter Exp $
+ * $Id: SortDialog.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
  *
  * Created on November 16, 2000, 12:00 AM
  */
 
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Vector;
-import javax.swing.*;
-import java.awt.*;
+
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.Border;
-import java.awt.event.*;
 
 /** 
  * This class provides a sort dialog.
@@ -20,7 +31,7 @@ import java.awt.event.*;
  * 
  * @author Andrei Scudder
  * @author Hua Zhong (use SharpDialog)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SortDialog extends SharpDialog {
     

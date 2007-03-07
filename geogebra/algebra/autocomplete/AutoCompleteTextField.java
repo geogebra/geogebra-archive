@@ -6,6 +6,7 @@ package geogebra.algebra.autocomplete;
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Macro;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -376,6 +377,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
       */
      private String getCmdSyntax(String command) {
      	if (command == null || command.length() == 0) return null;
+     	
+     	// try macro first
+     	Macro macro = app.getKernel().getMacro(command);
+     	if (macro != null) {
+     		return macro.toString();
+     	}
      	
         // translate command to internal name and get syntax description
         // note: the translation ignores the case of command
