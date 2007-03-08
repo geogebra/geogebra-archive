@@ -810,8 +810,9 @@ implements ExpressionValue, RealRootFunction, Functional {
 		for (int i=0; i < order; i++)
          	sb.append("diff("); 
         // function expression with multiply sign "*"                                  
-		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
-		sb.append(",x)");
+		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));		
+		for (int i=0; i < order; i++)
+         	sb.append(",x)"); 
           
         try {                   	            
             // evaluate expression by JASYMCA          	        	        	

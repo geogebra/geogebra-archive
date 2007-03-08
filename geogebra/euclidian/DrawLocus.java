@@ -66,6 +66,9 @@ public final class DrawLocus extends Drawable {
     private void buildGeneralPath(LinkedList pointList) {    	
     	gp.reset(); 
     	
+    	// TODO: remove
+    	//System.out.println("pointList size: " +pointList.size());
+    	
     	Iterator it = pointList.iterator();
     	MyPoint p;
     	double [] coords = new double[2];

@@ -3598,9 +3598,7 @@ public class Kernel {
 	 * Note: the macro kernel always turns continuity off. 
 	 */
 	public void setContinuous(boolean continuous) {
-		if (continuous != this.continuous) {
-			this.continuous = continuous;			
-		}		
+		this.continuous = continuous;
 	}
 
 }
