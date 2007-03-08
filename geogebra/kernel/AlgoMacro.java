@@ -286,8 +286,7 @@ public class AlgoMacro extends AlgoElement {
 							
 			case GeoElement.GEO_CLASS_RAY:
 			case GeoElement.GEO_CLASS_LINE:
-			case GeoElement.GEO_CLASS_SEGMENT:
-			case GeoElement.GEO_CLASS_AXIS:
+			case GeoElement.GEO_CLASS_SEGMENT:			
 				initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
 				break;	
 				
@@ -310,7 +309,8 @@ public class AlgoMacro extends AlgoElement {
 				// case GeoElement.GEO_CLASS_CONICPART:
 				// case GeoElement.GEO_CLASS_LOCUS:
 				// case GeoElement.GEO_CLASS_NUMERIC:
-				// case GeoElement.GEO_CLASS_POINT:										
+				// case GeoElement.GEO_CLASS_POINT:	
+				// case GeoElement.GEO_CLASS_AXIS:
 		}						
 	}		
 	

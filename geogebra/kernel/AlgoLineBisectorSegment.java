@@ -19,20 +19,15 @@ public class AlgoLineBisectorSegment extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoSegment s;  // input
-    private GeoPoint A, B;     
-    private GeoLine  g;     // output   
+	private GeoSegment s;  // input   
+    private GeoLine  g;     // output        
     
-    // temp
-    private double ax, ay, bx, by;
     private GeoPoint midPoint;
         
     /** Creates new AlgoLineBisector */
     AlgoLineBisectorSegment(Construction cons, String label, GeoSegment s) {
         super(cons);
-        this.s = s;
-        A = s.getStartPoint();
-        B = s.getEndPoint();        
+        this.s = s;             
         g = new GeoLine(cons); 
         midPoint = new GeoPoint(cons);
         g.setStartPoint(midPoint);
@@ -59,17 +54,18 @@ public class AlgoLineBisectorSegment extends AlgoElement {
     
     GeoLine getLine() { return g; }
     GeoSegment getSegment() {return s;  }
-    GeoPoint getMidPoint() {
-        return midPoint;
-    }
+    
     
     // line through P normal to v
     final void compute() { 
+    	 GeoPoint A = s.getStartPoint();     
+    	 GeoPoint B = s.getEndPoint();
+    	
         // get inhomogenous coords
-        ax = A.inhomX;
-        ay = A.inhomY;
-        bx = B.inhomX;
-        by = B.inhomY;
+        double ax = A.inhomX;
+        double ay = A.inhomY;
+        double bx = B.inhomX;
+        double by = B.inhomY;
          
         // comput line
         g.x = ax - bx;

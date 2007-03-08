@@ -312,10 +312,10 @@ public class Macro {
     	macroConsXML.append("</geogebra>");
     	   
     	    	 
-//    	System.out.println("*** Macro XML BEGIN ***");
-//    	System.out.println(macroConsXML);
-//    	System.out.flush();
-//    	System.out.println("*** Macro XML END ***");
+    	System.out.println("*** Macro XML BEGIN ***");
+    	System.out.println(macroConsXML);
+    	System.out.flush();
+    	System.out.println("*** Macro XML END ***");
     	
     	
     	return macroConsXML.toString();

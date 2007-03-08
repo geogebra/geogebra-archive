@@ -116,7 +116,7 @@ implements GeoElementSelectionListener {
 	}
 	
 	private void addToInputList(GeoElement geo) {
-		if (!geo.hasChildren() || inputList.contains(geo))
+		if (!possibleInput(geo) || inputList.contains(geo))
 			return;
 		
 		// add geo to list
@@ -246,7 +246,7 @@ implements GeoElementSelectionListener {
 		it = sortedSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();				
-			if (geo.hasChildren()) {
+			if (possibleInput(geo)) {
 				cbInputAddList.addElement(geo);	
 			}			
 			if (!geo.isIndependent()) {
@@ -254,6 +254,16 @@ implements GeoElementSelectionListener {
 			}
 		}								
 	}		
+	
+	/**
+	 * Returns whether geo can be used as an input object.
+	 * @param geo
+	 * @return
+	 */
+	private boolean possibleInput(GeoElement geo) {
+		return geo.hasChildren() &&
+			!(geo.isGeoSegment() || geo.isGeoPolygon() || geo.isGeoConicPart());
+	}
 	
 	private void initGUI() {
 		try {

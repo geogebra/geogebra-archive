@@ -76,13 +76,13 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     	if (poly == null) {
     		input = efficientInput;    		
     	} else {
-//    		input = new GeoElement[3];
-//    		input[0] = P;
-//            input[1] = Q;
-//            input[2] = poly;
-    		input = new GeoElement[2];
+    		input = new GeoElement[3];
     		input[0] = P;
-            input[1] = Q;               
+            input[1] = Q;
+            input[2] = poly;
+//    		input = new GeoElement[2];
+//    		input[0] = P;
+//            input[1] = Q;               
     	}            	
     	
         output = new GeoElement[1];
