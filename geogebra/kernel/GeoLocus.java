@@ -23,10 +23,11 @@ public class GeoLocus extends GeoElement {
 	public GeoLocus(Construction c) {
 		super(c);				
 		myPointList = new LinkedList();		
+		setAlgebraVisible(false);
 	}  
 			
 	public GeoElement copy() {
-		GeoLocus ret =  new GeoLocus(cons);
+		GeoLocus ret = new GeoLocus(cons);
 		ret.set(this);
 		return ret; 
 	}
@@ -35,14 +36,8 @@ public class GeoLocus extends GeoElement {
 		GeoLocus locus = (GeoLocus) geo;			
 		defined = locus.defined;		
 		
-		if (locus.cons != cons && isAlgoMacroOutput) {
-			// MACRO output
-			myPointList.clear();
-			myPointList.addAll(locus.myPointList);
-		} else {
-			// STANDARD case
-			myPointList = locus.myPointList;
-		}
+		myPointList.clear();
+		myPointList.addAll(locus.myPointList);
 	}
 		
 	/**
@@ -126,7 +121,7 @@ public class GeoLocus extends GeoElement {
 	}
 
 	public String toValueString() {
-		return toString();
+		return "";
 	}
 
 	boolean showInEuclidianView() {

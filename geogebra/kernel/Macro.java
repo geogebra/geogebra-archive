@@ -240,7 +240,7 @@ public class Macro {
     	}    	    	
     	    	
 		// 5) create XML representation for macro-construction
-    	String macroConsXML = buildMacroXML(input, macroConsOrigElements);
+    	String macroConsXML = buildMacroXML(macroConsOrigElements);
     	 	    
     	// if we used temp labels in step (4) remove them again
     	for (int i=0; i < input.length; i++) {    		
@@ -262,7 +262,7 @@ public class Macro {
 	/**
 	 * Adds the geo, its parent algorithm and all its siblings to the consElementSet
 	 */	
-	private void addDependentElement(GeoElement geo, TreeSet consElementSet) {		 
+	public static void addDependentElement(GeoElement geo, TreeSet consElementSet) {		 
 		 AlgoElement algo = geo.getParentAlgorithm();
 		 
 	   	 if (algo.isInConstructionList()) {
@@ -289,7 +289,7 @@ public class Macro {
 	 * @param macroConsElements
 	 * @return
 	 */
-	 private String buildMacroXML(GeoElement [] input, TreeSet macroConsElements) {				 
+	 public static String buildMacroXML(TreeSet macroConsElements) {				 
     	// get the XML for all macro construction elements
     	StringBuffer macroConsXML = new StringBuffer(500);
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
@@ -311,7 +311,7 @@ public class Macro {
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
     	   
-    	    	 
+    	// TODO: remove
     	System.out.println("*** Macro XML BEGIN ***");
     	System.out.println(macroConsXML);
     	System.out.flush();

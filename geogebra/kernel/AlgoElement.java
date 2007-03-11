@@ -414,8 +414,7 @@ implements EuclidianViewAlgo {
         // intersect for single intersection points
         if (!isPrintedInXML) return ""; 
         
-        // USE INTERNAL COMMAND NAMES IN EXPRESSION
-        
+        // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);
         

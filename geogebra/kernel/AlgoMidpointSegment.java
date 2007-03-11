@@ -32,7 +32,8 @@ public class AlgoMidpointSegment extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoSegment segment; // input
     private GeoPoint M; // output        
-
+    private GeoPoint P, Q; // endpoints of segment
+    
     /** Creates new AlgoVector */
     AlgoMidpointSegment(Construction cons, String label, GeoSegment segment) {
     	this(cons, segment);
@@ -46,6 +47,9 @@ public class AlgoMidpointSegment extends AlgoElement {
         // create new Point
         M = new GeoPoint(cons);
         setInputOutput();
+        
+        P = segment.getStartPoint();
+    	Q = segment.getEndPoint();
 
         // compute M = (P + Q)/2
         compute();        
@@ -71,9 +75,6 @@ public class AlgoMidpointSegment extends AlgoElement {
 
     // calc midpoint
     final void compute() {
-    	GeoPoint P = segment.getStartPoint();
-    	GeoPoint Q = segment.getEndPoint();
-    	
         boolean pInf = P.isInfinite();
         boolean qInf = Q.isInfinite();
 

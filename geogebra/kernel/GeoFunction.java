@@ -80,8 +80,10 @@ GeoDeriveable, ParametricCurve {
 		if (geo.cons != cons && isAlgoMacroOutput) {			
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in its function's expression
-			AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-			algoMacro.initFunction(this.fun);
+			if (!geo.isIndependent()) {
+				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+				algoMacro.initFunction(this.fun);
+			}
 		}
 	}
 	

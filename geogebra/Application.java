@@ -2731,6 +2731,10 @@ public class Application {
             true);
     }
     
+    private void updateContinuity() {
+    	
+    }
+    
     private void updateMenuPointCapturing() {
     	String pos = Integer.toString(euclidianView.getPointCapturingMode());
     	for (int i=0; i < 3; i++) {

@@ -30,7 +30,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 		
 	
 	// maximum time for the computation of one locus point in millis
-	public static int MAX_TIME_FOR_ONE_STEP = 50;
+	public static int MAX_TIME_FOR_ONE_STEP = 200;
 	
 	private static final long serialVersionUID = 1L;
 	private static int MAX_X_PIXEL_DIST = 8;
@@ -98,8 +98,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	Iterator it = Qin.iterator();
     	while (it.hasNext()) {
     		GeoElement parent = (GeoElement) it.next();
-    		if (parent.isLabelSet() && parent.isChildOf(P))    	 
-    			locusConsOrigElements.add(parent);
+    		if (parent.isLabelSet() && parent.isChildOf(P))    
+    			// note: locusConsOrigElements will contain AlgoElement and GeoElement objects
+    			Macro.addDependentElement(parent, locusConsOrigElements);   
     	}    
     	
     	// ensure that P and Q have labels set
@@ -115,9 +116,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		Q.labelSet = true;
     	}
     	    	
+    	// add moving point on line
     	locusConsOrigElements.add(P);
-    	locusConsOrigElements.add(Q);   	
-    	      
+
+    	// add locus creating point and its algorithm to locusConsOrigElements 
+		Macro.addDependentElement(Q, locusConsOrigElements); 	   	
+    	    	      
+    	// create macro construction
     	buildLocusMacroConstruction(locusConsOrigElements);    
     	
     	// if we used temp labels remove them again
@@ -175,69 +180,53 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }    
     
    
-    
-    private void buildLocusMacroConstruction(TreeSet locusConsElements) {        	
-    	// get the XML for all locus construction elements
-    	StringBuffer locusConsXML = new StringBuffer(500);
-    	locusConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    	locusConsXML.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
-    	locusConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
-    	Iterator it = locusConsElements.iterator();
-    	while (it.hasNext()) {
-    		GeoElement geo = (GeoElement) it.next();    		
-    		if (geo.isIndependent())
-    			locusConsXML.append(geo.getXML());
-    		else 
-    			locusConsXML.append(geo.getParentAlgorithm().getXML());
-    	}
-    	locusConsXML.append("</construction>\n");
-    	locusConsXML.append("</geogebra>");
-    	
-    	// TODO: remove
-    	System.out.println("*** XML ***");
-    	System.out.println(locusConsXML);
-    	System.out.flush();
-    	
-    	
+    private void buildLocusMacroConstruction(TreeSet locusConsElements) {       	
     	// build macro construction
     	macroKernel = new MacroKernel(kernel); 
     	
-    	// tell the macro construction about reserved names
+    	// tell the macro construction about reserved names:
     	// these names will not be looked up in the parent
     	// construction
-    	it = locusConsElements.iterator();
+    	Iterator it = locusConsElements.iterator();
     	while (it.hasNext()) {
-    		GeoElement geo = (GeoElement) it.next();
-    		if (geo.isLabelSet())
-    			macroKernel.addReservedLabel(geo.getLabel());  		
+    		ConstructionElement ce = (ConstructionElement) it.next();
+    		if (ce.isGeoElement()) {
+    			GeoElement geo = (GeoElement) ce;
+    			macroKernel.addReservedLabel(geo.getLabel()); 
+    		}    					
     	}
     	
     	try {    	
-    		macroKernel.loadXML(locusConsXML.toString());
+    		// get XML for macro construction of P -> Q
+        	String locusConsXML = Macro.buildMacroXML(locusConsElements);        	
+    		macroKernel.loadXML(locusConsXML);
     	
 	    	// get the copies of P and Q from the macro kernel
 	    	Pcopy = (GeoPoint) macroKernel.lookupLabel(P.label);
 	    	Pcopy.setFixed(false);
 	    	Qcopy = (GeoPoint) macroKernel.lookupLabel(Q.label);
-	    	
-	    	macroCons = macroKernel.getConstruction();	   	    	
-	    	//macroConsAlgoSet = macroCons.buildOveralAlgorithmSet();
+	    	macroCons = macroKernel.getConstruction();
+
+	    	// make sure that the references to e.g. start/end point of a segment are not
+	    	// change later on. This is achieved by setting isMacroOutput to true	    	
+	    	it = macroCons.getGeoElementsIterator();          
+          	while (it.hasNext()) {	          	
+    	      	GeoElement geo = (GeoElement) it.next();
+    	      	geo.isAlgoMacroOutput = true;
+          	}
+          	Pcopy.isAlgoMacroOutput = false;          	
     	} catch (Exception e) {
     		e.printStackTrace();    
     		locus.setUndefined();
     		macroCons = null;
     	}    
-    	    	
-    	
-    	/*
-    	//System.out.println("P: " + P + ", kernel class: " + P.kernel.getClass());
-    	System.out.println("Pcopy: " + Pcopy  + ", kernel class: " + Pcopy.kernel.getClass());
-    	//System.out.println("P == Pcopy: " + (P == Pcopy));
-    	//System.out.println("Q: " + Q  + ", kernel class: " + Q.kernel.getClass());
-    	System.out.println("Qcopy: " + Qcopy  + ", kernel class: " + Qcopy.kernel.getClass());
-    	//System.out.println("Q == Qcopy: " + (Q == Qcopy));
-    	  */	
-    	
+
+//    	//System.out.println("P: " + P + ", kernel class: " + P.kernel.getClass());
+//    	System.out.println("Pcopy: " + Pcopy  + ", kernel class: " + Pcopy.kernel.getClass());
+//    	//System.out.println("P == Pcopy: " + (P == Pcopy));
+//    	//System.out.println("Q: " + Q  + ", kernel class: " + Q.kernel.getClass());
+//    	System.out.println("Qcopy: " + Qcopy  + ", kernel class: " + Qcopy.kernel.getClass());
+//    	//System.out.println("Q == Qcopy: " + (Q == Qcopy));
     }
     
     private void resetMacroConstruction() {
@@ -245,20 +234,20 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         // to the current values of the main construction    
       	Iterator it = locusConsOrigElements.iterator();
       	while (it.hasNext()) {
-      		GeoElement geoOrig = (GeoElement) it.next();    		
-      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
-      		if (geoCopy != null) {
-	  			try {	    				
-	  				geoCopy.set(geoOrig);	  				
-	  				geoCopy.update();      	      			 
-	  			} catch (Exception e) {
-	  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
-	  			}
+      		ConstructionElement ce = (ConstructionElement) it.next();
+      		if (ce.isGeoElement()) {
+	      		GeoElement geoOrig = (GeoElement) ce;  		
+	      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
+	      		if (geoCopy != null) {
+		  			try {	    				
+		  				geoCopy.set(geoOrig);	  				
+		  				geoCopy.update();      	      			 
+		  			} catch (Exception e) {
+		  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
+		  			}
+	      		}
       		}
-      	}    	
-      	
-      	// update all algorithms of the macro construction	        
-      	macroCons.updateConstruction(); 
+      	}               	      
       }             
 
     // compute locus line
@@ -274,19 +263,22 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	    	    	
     	// set all ellements in the macro construction
     	// to the current values in the main construction
-    	if (continuous)
-    		resetMacroConstruction();
-    	
-    	/*
-    	System.out.println("*** compute ***");
-    	System.out.println("init P: " + Pcopy);
-    	System.out.println("init Q: " + Qcopy);     
-    	*/
+    	if (continuous) {
+    		resetMacroConstruction();   
+    	} else {
+    		Pcopy.set(P);    		
+    	}
+    	// update all algorithms of the macro construction	        
+      	macroCons.updateConstruction(); 
 
     	//  init path mover to the current position of Pcopy
     	pathMover.init(Pcopy); 
-    	Pcopy.updateCascade();
+    	Pcopy.updateCascade();   	 
     	
+//    	System.out.println("*** compute ***");
+//    	System.out.println("init P: " + Pcopy);
+//    	System.out.println("init Q: " + Qcopy); 
+    		
     	// remember the start positions of Pcopy and Qcopy
     	PstartPos.set(Pcopy);
     	QstartPos.set(Qcopy);
@@ -329,6 +321,22 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        	long startTime = System.currentTimeMillis();	        
 	       		Pcopy.updateCascade();
 	       		long updateTime = System.currentTimeMillis() - startTime;	
+	       		
+//	       	 TODO: remove	       	        
+	       	 // PRINT MACRO CONSTRUCTION STATE   
+//	          	Iterator it = macroCons.getGeoElementsIterator();
+//	          	System.out.println("*** locus macro construction state ***");
+//	          	while (it.hasNext()) {	          	
+//	    	      		System.out.println(it.next());			    	      		
+//	          	}
+	        
+	          	
+//	        	// TODO: remove
+//	        	GeoSegment a = (GeoSegment) macroKernel.lookupLabel("a");
+//	        	System.out.println("a: from " + a.getStartPoint() + "(" + a.getStartPoint().getConstruction() + ") to "
+//	        			+ a.getEndPoint() + "(" + a.getEndPoint().getConstruction() + ")");
+	       
+	       		
 	       		// if it takes too much time to calculate a single step, we stop
 	       		if (updateTime > MAX_TIME_FOR_ONE_STEP) {
 	       			System.err.println("AlgoLocus: max time exceeded " + updateTime);	       			
@@ -391,9 +399,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       				finishedRun = true;	       			       				
 	       			}
 	       		}
-	       		
-	       		
-	      		
 	        }		        
 	        
 	        // calculating the steps took too long, so we stopped somewhere
@@ -407,12 +412,11 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 				Pcopy.set(PstartPos);
 				Pcopy.updateCascade();	               	    	       		       	   		   		       	       							
 				insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceQuiteSmall(Qcopy));							
-		    
-				// TODO: remove
-	    		 System.out.println("run: " + runs);
-	    		 System.out.println("pointCount: " + pointCount);
-		       	 System.out.println("  startPos: " + QstartPos); 
-		       	 System.out.println("  Qcopy: " + Qcopy);
+		    				
+//	    		 System.out.println("run: " + runs);
+//	    		 System.out.println("pointCount: " + pointCount);
+//		       	 System.out.println("  startPos: " + QstartPos); 
+//		       	 System.out.println("  Qcopy: " + Qcopy);
 	    		 	        
 	    		// we are finished with all runs
 	    		// if we got back to the start position of Qcopy
@@ -426,14 +430,16 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        pathMover.resetStartParameter();	       
 	        runs++;	        	        	        
         } while (runs < GeoLocus.MAX_PATH_RUNS);
-        
-
-		// System.out.println("points: " + locus.getPointLength() +  ", runs: " + (runs-1));
+            	
+		//System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
     }
             
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
     		
+    	// TODO: remove
+    	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
     	lastY = y;

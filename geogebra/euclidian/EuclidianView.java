@@ -2134,7 +2134,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 					drawImageList.add(d);
 				break;
 				
-			case GeoElement.GEO_CLASS_LOCUS:
+			case GeoElement.GEO_CLASS_LOCUS:				
 				d = new DrawLocus(this, (GeoLocus) geo);
 				drawLocusList.add(d);
 				break;

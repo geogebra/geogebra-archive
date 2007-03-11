@@ -275,7 +275,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	
     	// if there are only two points P[i] that are defined and equal
     	// we are in a singularity situation     
-    	boolean noSingularity = !isSingularitySituation();
+    	boolean noSingularity = !isSingularitySituation();    	    
                      
 		// remember the defined points D, so that Di = Pi if Pi is finite        
 		// and set age
@@ -398,8 +398,13 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	
     	// we have a singularity if there are two defined points
     	// that are equal
-    	return (count == 2 && P[index[0]].equals(P[index[1]]));
-    	//System.out.println("Singularity: " + ret);    	
+    	boolean ret = (count == 2 && P[index[0]].equals(P[index[1]]));
+    	
+    	// TODO: remove
+    	if (ret)
+    		System.out.println("Singularity at " + P[index[0]]);    	
+    	
+    	return ret;
     }
     
     // calc four intersection Points of conics A and B.

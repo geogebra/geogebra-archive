@@ -261,8 +261,11 @@ implements GeoElementSelectionListener {
 	 * @return
 	 */
 	private boolean possibleInput(GeoElement geo) {
-		return geo.hasChildren() &&
-			!(geo.isGeoSegment() || geo.isGeoPolygon() || geo.isGeoConicPart());
+		// TODO: change		
+//		return geo.hasChildren() &&
+//			!(geo.isGeoSegment() || geo.isGeoPolygon() || geo.isGeoConicPart());
+
+		return geo.hasChildren();
 	}
 	
 	private void initGUI() {

@@ -35,23 +35,22 @@ public final class DrawLocus extends Drawable {
     	this.view = view;          
         this.locus = locus;
         geo = locus;                          
-        
+
         gp = new GeneralPath();     
         update();
     }
     
     final public void update() {    	
-        isVisible = geo.isEuclidianVisible();   
-        if (!isVisible) return;					        	          
-        
+        isVisible = geo.isEuclidianVisible(); 
+        if (!isVisible) return;	
+            
 		buildGeneralPath(locus.getMyPointList());
 		
 		 // line on screen?		
-		if (!gp.intersects(0,0, view.width, view.height)) {				
+		if (!gp.intersects(0, 0, view.width, view.height)) {				
 			isVisible = false;
 			return;
-		}
-		
+		}		
 		updateStrokes(geo);
 				
 		labelVisible = geo.isLabelVisible();
@@ -65,10 +64,7 @@ public final class DrawLocus extends Drawable {
     
     private void buildGeneralPath(LinkedList pointList) {    	
     	gp.reset(); 
-    	
-    	// TODO: remove
-    	//System.out.println("pointList size: " +pointList.size());
-    	
+    	    		
     	Iterator it = pointList.iterator();
     	MyPoint p;
     	double [] coords = new double[2];

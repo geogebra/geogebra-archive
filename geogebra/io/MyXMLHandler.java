@@ -590,7 +590,7 @@ public class MyXMLHandler implements DocHandler {
     
     private boolean handleKernelContinuous(LinkedHashMap attrs) {
         try {
-            kernel.setContinuous(Boolean.getBoolean((String) attrs.get("val")));                                   
+            kernel.setContinuous(parseBoolean((String) attrs.get("val")));                                   
             return true;
         } catch (Exception e) {
             return false;
