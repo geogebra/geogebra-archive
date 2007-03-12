@@ -56,8 +56,8 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	}*/
 	 
 	
-	public GeoElement copyInternal() {
-		GeoRay ray = new GeoRay(cons, startPoint);
+	public GeoElement copyInternal(Construction cons) {
+		GeoRay ray = new GeoRay(cons, (GeoPoint) startPoint.copyInternal(cons));
 		ray.set(this);
 		return ray;
 	}
@@ -68,13 +68,8 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		
 		GeoRay ray = (GeoRay) geo;		
 		keepTypeOnGeometricTransform = ray.keepTypeOnGeometricTransform; 
-						
-		// don't set start point for macro output
-		// see AlgoMacro.initRay()
-		if (geo.cons != cons && isAlgoMacroOutput)
-			return;
-	
-		setStartPoint(ray.startPoint);		
+										
+		startPoint.set(ray.startPoint);		
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

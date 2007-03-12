@@ -153,6 +153,7 @@ public class Application {
     	supportedLocales.add( new Locale("da") );     	 	// Danish   
     	supportedLocales.add( new Locale("nl") );     	 	// Dutch
     	supportedLocales.add( new Locale("en"));          	// English
+    	supportedLocales.add( new Locale("et"));          	// Estonian
     	supportedLocales.add( new Locale("fi") );  			// Finnish
     	supportedLocales.add( new Locale("fr") );     		 // French
     	supportedLocales.add( new Locale("gl") );           // Galician

@@ -44,7 +44,7 @@ public class AlgoIf extends AlgoElement {
         this.elseGeo = elseGeo;               
         
         // create output GeoElement of same type as ifGeo
-        result = ifGeo.copyInternal();       	
+        result = ifGeo.copyInternal(cons);       	
         
         setInputOutput(); // for AlgoElement
         

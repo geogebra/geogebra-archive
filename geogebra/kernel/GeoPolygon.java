@@ -71,8 +71,20 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 		return new GeoNumeric(cons, getArea());        
 	}    
 	
-	public GeoElement copyInternal() {
-		GeoPolygon ret = new GeoPolygon(cons, points); 
+	public GeoElement copyInternal(Construction cons) {						
+		GeoPolygon ret = new GeoPolygon(cons, null); 
+		ret.points = GeoElement.copyPoints(cons, points);
+		
+		/*
+		ret.segments = new GeoSegment[points.length-1];
+		for (int i=0; i < segments.length; i++) {
+			ret.segments[i].setStartPoint(ret.points[i]);
+			ret.segments[i].setEndPoint(ret.points[i+1]);
+		}
+		ret.segments[segments.length-1].setStartPoint(ret.points[segments.length]);
+		ret.segments[segments.length-1].setEndPoint(ret.points[0]);
+		*/
+		
 		ret.set(this);
 		return ret;		
 	} 		
@@ -82,13 +94,9 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 		area = poly.area;
 		defined = poly.defined;	
 	
-		// don't set points and segments for macro output
-		// see AlgoMacro.initPolygon()
-		if (geo.cons != cons && isAlgoMacroOutput) 
-			return;
-		
-		points = poly.points;
-		segments = poly.segments;		
+		for (int i=0; i < points.length; i++) {				
+			points[i].set(poly.points[i]);
+		}				
 	}
 
 	public GeoPoint [] getPoints() {

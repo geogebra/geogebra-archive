@@ -116,7 +116,7 @@ public class MyToolbar extends JPanel{
     	String modeText, helpText;    	
     	if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
     		// macro    
-    		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);
+    		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);    	
     		modeText = macro.getToolName();    	
     		if (modeText.length() == 0)		
     			modeText = macro.getCommandName();    		

@@ -206,15 +206,17 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	    	Pcopy.setFixed(false);
 	    	Qcopy = (GeoPoint) macroKernel.lookupLabel(Q.label);
 	    	macroCons = macroKernel.getConstruction();
-
+	    	
+	    	/*
 	    	// make sure that the references to e.g. start/end point of a segment are not
-	    	// change later on. This is achieved by setting isMacroOutput to true	    	
+	    	// changed later on. This is achieved by setting isMacroOutput to true	    	
 	    	it = macroCons.getGeoElementsIterator();          
           	while (it.hasNext()) {	          	
     	      	GeoElement geo = (GeoElement) it.next();
     	      	geo.isAlgoMacroOutput = true;
           	}
-          	Pcopy.isAlgoMacroOutput = false;          	
+          	Pcopy.isAlgoMacroOutput = false;
+          	*/         	
     	} catch (Exception e) {
     		e.printStackTrace();    
     		locus.setUndefined();

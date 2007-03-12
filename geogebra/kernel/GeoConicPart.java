@@ -74,7 +74,7 @@ implements LimitedPath, NumberValue {
 		}                       
 	}  
 	
-	public GeoElement copyInternal() {
+	public GeoElement copyInternal(Construction cons) {
 		GeoConicPart ret = new GeoConicPart(cons, conic_part_type);
 		ret.set(this);
 		return ret;
@@ -96,8 +96,7 @@ implements LimitedPath, NumberValue {
 		value = cp.value;
 		value_defined = cp.value_defined;	
 		
-		keepTypeOnGeometricTransform = cp.keepTypeOnGeometricTransform;
-		allowOutlyingIntersections = cp.allowOutlyingIntersections;
+		keepTypeOnGeometricTransform = cp.keepTypeOnGeometricTransform;		
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

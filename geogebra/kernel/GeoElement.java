@@ -334,15 +334,42 @@ public abstract class GeoElement
 	 * */
 	public abstract GeoElement copy();
 	
-	/** 
-	 * every subclass implements it's own copyInternal method 
-	 * This method will always return a GeoElement of the
-	 * SAME CLASS as this GeoElement
+	/** 	
+	 * This method always returns a GeoElement of the
+	 * SAME CLASS as this GeoElement. Furthermore the resulting geo
+	 * is in construction cons.
 	 */
-	public GeoElement copyInternal() {
+	public GeoElement copyInternal(Construction cons) {
 		// default implementation: changed in some subclasses
-		return copy();
-	}	
+		GeoElement geoCopy = copy();
+		geoCopy.setConstruction(cons);	
+		return geoCopy;
+	}		
+	
+	/**
+	 * Copies the given points array. The resulting points are part of the given construction.
+	 */
+	public static GeoPoint [] copyPoints(Construction cons, GeoPoint [] points) {
+		GeoPoint [] pointsCopy = new GeoPoint[points.length];
+		for (int i=0; i < points.length; i++) {
+			pointsCopy[i] = (GeoPoint) points[i].copyInternal(cons);			
+			pointsCopy[i].set(points[i]);
+		}
+		return pointsCopy;
+	}
+	
+	/**
+	 * Copies the given segments array. The resulting segments are part of the given construction.
+	 *
+	public static GeoSegment [] copySegments(Construction cons, GeoSegment [] segments) {
+		GeoSegment [] segmentsCopy = new GeoSegment[segments.length];
+		for (int i=0; i < segments.length; i++) {
+			segmentsCopy[i] = (GeoSegment) segments[i].copyInternal(cons);	
+			
+		}
+		return segmentsCopy;
+	}*/
+	
 	
 	public ExpressionValue deepCopy() {
 		//default implementation: changed in some subclasses

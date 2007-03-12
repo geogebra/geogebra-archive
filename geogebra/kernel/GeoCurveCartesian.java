@@ -111,12 +111,14 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		isDefined = geoCurve.isDefined;
 		
 		// macro OUTPUT
-		if (geo.cons != cons && isAlgoMacroOutput) {			
-			// this object is an output object of AlgoMacro
-			// we need to check the references to all geos in its function's expression
-			AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-			algoMacro.initFunction(funX);
-			algoMacro.initFunction(funY);
+		if (geo.cons != cons && isAlgoMacroOutput) {	
+			if (!geo.isIndependent()) {
+				// this object is an output object of AlgoMacro
+				// we need to check the references to all geos in its function's expression
+				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+				algoMacro.initFunction(funX);
+				algoMacro.initFunction(funY);
+			}
 		}
 	}		
 	

@@ -175,7 +175,7 @@ public class AlgoSequence extends AlgoElement {
 					copy = (GeoElement) copyGeos.get(i);
 				} else {
 					// create new object and add it to end of list
-					copy = expression.copyInternal();	
+					copy = expression.copyInternal(cons);	
 					// TODO: add description like exp for i=20
 					
 					// visual properties

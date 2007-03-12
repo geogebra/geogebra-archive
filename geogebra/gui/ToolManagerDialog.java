@@ -52,6 +52,14 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		this.app = app;
 		initGUI();
 	}
+	
+	public void setVisible(boolean flag) {
+		if (flag) {
+			app.setMoveMode();
+		}
+		
+		super.setVisible(flag);					
+	}
 			
 	/**
 	 * Updates the order of macros using the listModel.

@@ -58,7 +58,7 @@ public class AlgoDerivative extends AlgoElement {
                 orderGeo = order.toGeoElement();
             
             this.fgeo = f.toGeoElement();        
-            g = (GeoDeriveable) fgeo.copyInternal();  // output
+            g = (GeoDeriveable) fgeo.copyInternal(cons);  // output
             ggeo = g.toGeoElement();
             
             setInputOutput(); // for AlgoElement    

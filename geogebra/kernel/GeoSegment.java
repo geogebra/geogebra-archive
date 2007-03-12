@@ -76,8 +76,10 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		return new GeoNumeric(cons, getLength());   		 
 	}   */     
 	 
-	public GeoElement copyInternal() {
-		GeoSegment seg = new GeoSegment(cons, startPoint, endPoint);
+	public GeoElement copyInternal(Construction cons) {
+		GeoSegment seg = new GeoSegment(cons, 
+										(GeoPoint) startPoint.copyInternal(cons), 
+										(GeoPoint) endPoint.copyInternal(cons));
 		seg.set(this);
 		return seg;
 	}		
@@ -89,15 +91,10 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		GeoSegment seg = (GeoSegment) geo;				
         length = seg.length;
         defined = seg.defined;      
-    	keepTypeOnGeometricTransform = seg.keepTypeOnGeometricTransform; 
-    	allowOutlyingIntersections = seg.allowOutlyingIntersections;
-    	
-    	// macro output: don't set start and end point
-    	if (geo.cons != cons && isAlgoMacroOutput) 
-    		return;
-    	
-    	setStartPoint(seg.startPoint);
-    	setEndPoint(seg.endPoint);    		
+        keepTypeOnGeometricTransform = seg.keepTypeOnGeometricTransform; 	
+    	    	     		   
+    	startPoint.set(seg.startPoint);
+    	endPoint.set(seg.endPoint);    	
 	}   
 
 	public void setVisualStyle(GeoElement geo) {
@@ -105,7 +102,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		
 		if (geo.isGeoSegment()) { 
 			GeoSegment seg = (GeoSegment) geo;
-			allowOutlyingIntersections = seg.allowOutlyingIntersections;
+			allowOutlyingIntersections = seg.allowOutlyingIntersections;						
 		}
 	}
 	

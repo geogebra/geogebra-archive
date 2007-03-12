@@ -217,14 +217,27 @@ public class Macro {
     			input[i].labelSet = true;
         	}    		        		    			    		        	    	
     		inputLabels[i] = input[i].label;
+    		    	
+    		// add input element to macroConsOrigElements
+    		// we handle some special cases for input types like segment, polygons, etc.
+    		switch (input[i].getGeoClassType()) {
+    			case GeoElement.GEO_CLASS_SEGMENT:    				
+    			case GeoElement.GEO_CLASS_RAY:
+    			case GeoElement.GEO_CLASS_POLYGON:
+    				// add parent algo and input (points) to macroConsOrigElements
+    				addSpecialInputElement(input[i], macroConsOrigElements);
+    				break;    				    			
+    				    		    		
+    			default:
+    				// add input element to macroConsOrigElements 	        	
+    	    		macroConsOrigElements.add(input[i]);
+    			
+	        		// make sure we don't have any parent algorithms of input[i] in our construction
+	        		AlgoElement algo = input[i].getParentAlgorithm();
+	        		if (algo != null)
+	        			macroConsOrigElements.remove(algo);
+    		}
     		
-    		// add input element to macroConsOrigElements 	        	
-    		macroConsOrigElements.add(input[i]);
-    		
-    		// make sure we don't have any parent algorithms of input[i] in our construction
-    		AlgoElement algo = input[i].getParentAlgorithm();
-    		if (algo != null)
-    			macroConsOrigElements.remove(algo);
     	}   
     	
     	for (int i=0; i < output.length; i++) {
@@ -280,6 +293,31 @@ public class Macro {
 	   		// we only add the geo because it is output 
 	   		// of some other algorithm in construction list
 	   		consElementSet.add(geo);
+	   	 }
+	}
+	
+	/**
+	 * Adds the geo, its parent algorithm and all input of the parent algorithm to the consElementSet.
+	 * This is used for e.g. a segment that is used as an input object of a macro. We also need to
+	 * have the segment's start and endpoint.
+	 */	
+	public static void addSpecialInputElement(GeoElement geo, TreeSet consElementSet) {		 
+		 // add geo
+		 consElementSet.add(geo);
+		 
+		 // add parent algo and input objects
+		 AlgoElement algo = geo.getParentAlgorithm();
+	   	 if (algo.isInConstructionList()) {
+	   		// STANDARD case
+	   		// add algorithm
+	   		consElementSet.add(algo);
+	   		
+	   		// add all output elements including geo
+	   		GeoElement [] algoInput = algo.getInput();
+	   		for (int i=0; i < algoInput.length; i++) {
+	   			if (algoInput[i].isLabelSet())
+	   				consElementSet.add(algoInput[i]);
+	   		}	   		
 	   	 }
 	}
 	
