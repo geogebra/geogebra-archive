@@ -96,14 +96,24 @@ public class AlgoMacro extends AlgoElement {
     }             
         
     final void compute() {	
-    	// set macro geos to algo geos state
-    	setMacroConstructionState();
+    	try {
+    		
+    		// set macro geos to algo geos state
+    		setMacroConstructionState();
     	
-		// update all algorithms of macro-construction
-    	macro.updateAllAlgorithms();      
+    		// update all algorithms of macro-construction
+    		macro.updateAllAlgorithms();      
         
-      	// set algo geos to macro geos state   
-        getMacroConstructionState();             
+    		// set algo geos to macro geos state   
+    		getMacroConstructionState();
+    		
+    	} catch (Exception e) {
+    		System.err.println("AlgoMacro compute():\n");
+    		e.printStackTrace();
+    		for (int i=0; i < output.length; i++) {
+    			output[i].setUndefined();
+    		}
+    	}
     }   
     
     final public String toString() {    	
