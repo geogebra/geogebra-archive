@@ -148,7 +148,7 @@ public class ModeToggleMenu extends JPanel {
 		String modeText = macro.getToolName();
 		if ("".equals(modeText)) 
 			modeText = macro.getCommandName();
-				
+					
 		String iconName = macro.getIconFileName();		
 		BufferedImage img = app.getExternalImage(iconName);
 		ImageIcon icon;

@@ -183,6 +183,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     private void buildLocusMacroConstruction(TreeSet locusConsElements) {       	
     	// build macro construction
     	macroKernel = new MacroKernel(kernel); 
+    	macroKernel.setGlobalVariableLookup(true);
     	
     	// tell the macro construction about reserved names:
     	// these names will not be looked up in the parent

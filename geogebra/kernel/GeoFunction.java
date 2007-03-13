@@ -72,15 +72,21 @@ GeoDeriveable, ParametricCurve {
 
 	public void set(GeoElement geo) {
 		GeoFunction geoFun = (GeoFunction) geo;				
-					
-		fun = new Function(geoFun.fun, kernel);
-		isDefined = geoFun.isDefined;
+						
+		if (geoFun.fun == null) {
+			fun = null;
+			isDefined = false;
+			return;
+		} else {
+			isDefined = geoFun.isDefined;
+			fun = new Function(geoFun.fun, kernel);
+		}				
 		
 		// macro OUTPUT
 		if (geo.cons != cons && isAlgoMacroOutput) {			
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in its function's expression
-			if (!geo.isIndependent()) {
+			if (!geoFun.isIndependent()) {
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
 				algoMacro.initFunction(this.fun);
 			}

@@ -332,15 +332,19 @@ public class MyToolbar extends JPanel{
         
         // macros
         Kernel kernel = app.getKernel();
-        if (kernel.getMacroNumber() > 0) {
-        	tm = new ModeToggleMenu(app, bg);        	
-        	int size = kernel.getMacroNumber();
-        	for (int i = 0; i < size; i++) {
+        int macroNumber = kernel.getMacroNumber();        
+        if (macroNumber > 0) {
+        	tm = new ModeToggleMenu(app, bg); 
+        	int count = 0;
+        	for (int i = 0; i < macroNumber; i++) {
         		Macro macro = kernel.getMacro(i);
-        		if (macro.isShowInToolBar())
+        		if (macro.isShowInToolBar()) {
+        			count++;
         			tm.addMacro(i, macro);
-        	}     
-        	if (tm.getComponentCount() > 0) {
+        		}        			
+        	}             	        
+        	
+        	if (count > 0) {
         		moveToggleMenus.add(tm);
         		tb.add(tm);
         		tb.addSeparator();          		

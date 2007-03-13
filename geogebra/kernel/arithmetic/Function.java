@@ -816,9 +816,9 @@ implements ExpressionValue, RealRootFunction, Functional {
           
         try {                   	            
             // evaluate expression by JASYMCA          	        	        	
-            String result = kernel.evaluateJASYMCA(sb.toString());                       
+            String result = kernel.evaluateJASYMCA(sb.toString());       
             
-			sb.setLength(0);
+        	sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
 			sb.append("f(x) = ");			
             sb.append(result);
@@ -826,11 +826,11 @@ implements ExpressionValue, RealRootFunction, Functional {
              // parse result
              Function fun = kernel.getTempParser().parseFunction(sb.toString());
              fun.initFunction();
-             fun.getFunctionVariable().setVarString(oldVar);
-             
+             fun.getFunctionVariable().setVarString(oldVar);                       
              return fun;
          } catch (Error err) {       
-             return null;
+             //err.printStackTrace();
+        	 return null;
          } catch (Exception e) {
         	 //e.printStackTrace();
              return null;

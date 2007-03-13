@@ -101,6 +101,11 @@ implements GeoElementSelectionListener {
 		// add geo to list
 		outputList.addElement(geo);
 		
+		// remove listener from output add combobox before removing geo
+		JComboBox cbListener = removeListeningJComboBox(cbOutputAddList);	
+		cbOutputAddList.removeElement(geo);
+		cbOutputAddList.addListDataListener(cbListener);
+		
 		// special case for polygon: add all points and segments too
 		if (geo.isGeoPolygon()) {
 			GeoPolygon poly = (GeoPolygon) geo;
@@ -120,7 +125,12 @@ implements GeoElementSelectionListener {
 			return;
 		
 		// add geo to list
-		inputList.addElement(geo);		
+		inputList.addElement(geo);	
+		
+		// remove listener from input add combobox before removing geo
+		JComboBox cbListener = removeListeningJComboBox(cbInputAddList);	
+		cbInputAddList.removeElement(geo);
+		cbInputAddList.addListDataListener(cbListener);
 	}
 	
 	
@@ -185,17 +195,8 @@ implements GeoElementSelectionListener {
 			output[i].addPredecessorsToSet(freeParents, true);
 		}
 		
-		// we need to remove the JComboBox as listener from the cbInputAddList
-		// temporarily to avoid multiple additions to inputList
-		ListDataListener [] listeners = cbInputAddList.getListDataListeners();
-		JComboBox cbListener = null;
-		for (int i=0; i < listeners.length; i++) {
-			if (listeners[i] instanceof JComboBox) {
-				cbListener = (JComboBox) listeners[i];
-				break;
-			}
-		}					
-		cbInputAddList.removeListDataListener(cbListener);
+		// remove listener from input add combobox
+		JComboBox cbListener = removeListeningJComboBox(cbInputAddList);
 		
 		// fill input list with labeled free parents
 		Iterator it = freeParents.iterator();		
@@ -209,6 +210,21 @@ implements GeoElementSelectionListener {
 		
 		// add JComboBox listener to cbInputAddList again
 		cbInputAddList.addListDataListener(cbListener);
+	}
+	
+	private JComboBox removeListeningJComboBox(DefaultComboBoxModel cbModel) {
+		// we need to remove the JComboBox as listener from the cbInputAddList
+		// temporarily to avoid multiple additions to inputList
+		ListDataListener [] listeners = cbModel.getListDataListeners();
+		JComboBox cbListener = null;
+		for (int i=0; i < listeners.length; i++) {
+			if (listeners[i] instanceof JComboBox) {
+				cbListener = (JComboBox) listeners[i];
+				break;
+			}
+		}					
+		cbModel.removeListDataListener(cbListener);
+		return cbListener;
 	}
 	
 	private GeoElement [] toGeoElements(DefaultListModel listModel) {
@@ -261,10 +277,6 @@ implements GeoElementSelectionListener {
 	 * @return
 	 */
 	private boolean possibleInput(GeoElement geo) {
-		// TODO: change		
-//		return geo.hasChildren() &&
-//			!(geo.isGeoSegment() || geo.isGeoPolygon() || geo.isGeoConicPart());
-
 		return geo.hasChildren();
 	}
 	
@@ -387,14 +399,13 @@ implements GeoElementSelectionListener {
 		// listener for the combobox
 		ActionListener ac = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
-				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();								   
-				if (!listModel.contains(geo)) {
-					if (listModel == outputList)
-						addToOutputList(geo);
-					else
-						listModel.addElement(geo);	
-					cbModel.removeElementAt(cbAdd.getSelectedIndex());
-				}			
+				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
+				if (geo == null) return;
+				
+				if (listModel == outputList)
+					addToOutputList(geo);
+				else if (listModel == inputList)
+					addToInputList(geo);											
 			}
 		};
 		cbAdd.addActionListener(ac);

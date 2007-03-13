@@ -96,7 +96,7 @@ public class AlgoDerivative extends AlgoElement {
             g.setDerivative(f, 1);
         } else {
             double ord;
-            if (orderGeo.isDefined() && (ord = order.getDouble()) >= 0) {                
+            if (orderGeo.isDefined() && (ord = order.getDouble()) > -Kernel.MIN_PRECISION) {                
                 g.setDerivative(f, (int) Math.round(ord));
             } else {
                 ggeo.setUndefined();

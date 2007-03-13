@@ -778,11 +778,11 @@ public class MyXMLHandler implements DocHandler {
             String toolName = (String) attrs.get("toolName");
             String toolHelp = (String) attrs.get("toolHelp");
             String iconFile = (String) attrs.get("iconFile");            
-            String showInToolBar = (String) attrs.get("showInToolBar");
+            String strShowInToolBar = (String) attrs.get("showInToolBar");
             
             // Make sure we don't have a macro with the same name in kernel.
-            // This can happen when a macro file is loaded as the previous
-            // macros are not cleared in this case.
+            // This can happen when a macro file (ggt) is loaded because 
+            // the previous macros are not cleared in this case.
             int n = 0;
             String myCmdName = cmdName;
             while (kernel.getMacro(myCmdName) != null) {
@@ -794,12 +794,12 @@ public class MyXMLHandler implements DocHandler {
             macro = new Macro(kernel, myCmdName);                       
             macro.setToolName(toolName);
             macro.setToolHelp(toolHelp);
-            macro.setIconFileName(iconFile);            
-            macro.setShowInToolBar(parseBoolean(showInToolBar));
+            macro.setIconFileName(iconFile);    
+            boolean showTool = strShowInToolBar == null ? true : parseBoolean(strShowInToolBar);
+            macro.setShowInToolBar(showTool);
           
             MacroKernel macroKernel = new MacroKernel(kernel);
-            macroKernel.setContinuous(false);
-            macroKernel.setGlobalVariableLookup(false);
+            macroKernel.setContinuous(false);           
             
             // we have to change the construction object temporarily so everything 
             // is done in the macro construction from now on           

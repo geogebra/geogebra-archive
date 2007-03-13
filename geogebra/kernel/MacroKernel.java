@@ -26,7 +26,7 @@ public class MacroKernel extends Kernel  {
 	public MacroKernel(Kernel parentKernel) {
 		this.parentKernel = parentKernel;
 		app = parentKernel.app;
-		setUndoActive(false);
+		setUndoActive(false);		
 		
 	//	macroConstructions = new ArrayList();
 	//	macroConstructions.add(new MacroConstruction(this));
@@ -49,7 +49,7 @@ public class MacroKernel extends Kernel  {
 		macroCons.addReservedLabel(label);
 	}
 	
-	public void setGlobalVariableLookup(boolean flag) {
+	void setGlobalVariableLookup(boolean flag) {
 		macroCons.setGlobalVariableLookup(flag);
 	}
 	

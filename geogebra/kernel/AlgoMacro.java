@@ -39,16 +39,11 @@ public class AlgoMacro extends AlgoElement {
 	private FastHashMapKeyless macroToAlgoMap;
 	
 	// all keys of macroToAlgoMap that are not part of macroInput
-	private ArrayList inputAndReferencedGeos, outputAndReferencedGeos;
+	private ArrayList outputAndReferencedGeos;
 	
 	// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
 	// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
-	private GeoElement [] macroOutputAndRefGeos, algoOutputAndRefGeos;
-	private GeoElement [] macroInputAndRefGeos, algoInputAndRefGeos;
-	
-	private static final int INIT_INPUT_REFERENCES = 1;
-	private static final int INIT_OUTPUT_REFERENCES = 2;
-	private int initing_state;
+	private GeoElement [] macroOutputAndRefGeos, algoOutputAndRefGeos;	
         
     /**
      * Creates a new algorithm that applies a macro to the
@@ -138,11 +133,8 @@ public class AlgoMacro extends AlgoElement {
 	final void setMacroConstructionState() {									
 		// set input objects of macro construction		
 		for (int i=0; i < macroInput.length; i++) {   
-			//macroInput[i].set(input[i]);
-			macroInputAndRefGeos[i].set(algoInputAndRefGeos[i]);	
-						
-			// TODO: remove
-			System.out.println("SET INPUT object: " + algoInputAndRefGeos[i] + " => " + macroInputAndRefGeos[i]);
+			macroInput[i].set(input[i]);				
+			//System.out.println("SET INPUT object: " + input[i] + " => " + macroInput[i]);
     	}		
 	}
 
@@ -154,10 +146,8 @@ public class AlgoMacro extends AlgoElement {
 		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
 		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
 		for (int i=0; i < macroOutputAndRefGeos.length; i++) {											
-			algoOutputAndRefGeos[i].set(macroOutputAndRefGeos[i]);
-			
-			// TODO: remove
-			System.out.println("RESULT from macro: " + macroOutputAndRefGeos[i] + " => " + algoOutputAndRefGeos[i]);
+			algoOutputAndRefGeos[i].set(macroOutputAndRefGeos[i]);		
+			//System.out.println("RESULT from macro: " + macroOutputAndRefGeos[i] + " => " + algoOutputAndRefGeos[i]);
 		}
 		
 		/* old code:
@@ -194,26 +184,15 @@ public class AlgoMacro extends AlgoElement {
 	 */
 	private void initMap() {	
 		macroToAlgoMap = new FastHashMapKeyless();
-		inputAndReferencedGeos = new ArrayList();
 		outputAndReferencedGeos = new ArrayList();
-		
-		// INPUT initing
-		initing_state = INIT_INPUT_REFERENCES;
-		
+			
+		// INPUT initing	
 		// map macro input to algo input
 		for (int i=0; i < macroInput.length; i++) {
 			map(macroInput[i], input[i]);
-		}			
-		// SPECIAL REFERENCES of input
-		// make sure all algo-output objects reference objects in their own construction			
-		for (int i=0; i < macroInput.length; i++) { 
-			initSpecialReferences(macroInput[i], input[i]);					
-    	}	
-		
-				
-		// OUTPUT initing
-		initing_state = INIT_OUTPUT_REFERENCES;
-		
+		}					
+						
+		// OUTPUT initing	
 		// map macro output to algo output
 		for (int i=0; i < macroOutput.length; i++) {
 			map(macroOutput[i], output[i]);					
@@ -223,24 +202,11 @@ public class AlgoMacro extends AlgoElement {
 		// note: we do this in an extra loop to make sure we don't create output objects twice	
 		for (int i=0; i < macroOutput.length; i++) { 
 			initSpecialReferences(macroOutput[i], output[i]);					
-    	}		
-		
-		
-		// for efficiency: instead of inputAndReferencedGeos and lookups in macroToAlgoMap 
-		// we use two arrays with corresponding macro and algo geos in setMacroConstructionState()
-		int size = inputAndReferencedGeos.size();
-		macroInputAndRefGeos = new GeoElement[size];
-		algoInputAndRefGeos = new GeoElement[size];
-		for (int i=0; i < size; i++) {
-			macroInputAndRefGeos[i] = (GeoElement) inputAndReferencedGeos.get(i);
-		}				
-		for (int i=0; i < size; i++) {
-			algoInputAndRefGeos[i] = (GeoElement) macroToAlgoMap.get(macroInputAndRefGeos[i]);
-		}
+    	}								
 		
 		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
 		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
-		size = outputAndReferencedGeos.size();
+		int size = outputAndReferencedGeos.size();
 		macroOutputAndRefGeos = new GeoElement[size];
 		algoOutputAndRefGeos = new GeoElement[size];
 		for (int i=0; i < size; i++) {
@@ -259,18 +225,9 @@ public class AlgoMacro extends AlgoElement {
 			// map macroGeo to algoGeo
 			macroToAlgoMap.put(macroGeo, algoGeo);	
 			
-			// remember mapped geos
-			switch (initing_state) {
-				case INIT_INPUT_REFERENCES:
-					inputAndReferencedGeos.add(macroGeo);
-					break;
-					
-				case INIT_OUTPUT_REFERENCES:
-					if (!isMacroInputObject(macroGeo)) {						
-						outputAndReferencedGeos.add(macroGeo);
-					}
-					break;										
-			}			
+			if (!isMacroInputObject(macroGeo)) {						
+				outputAndReferencedGeos.add(macroGeo);
+			}					
 		}
 	}
 	

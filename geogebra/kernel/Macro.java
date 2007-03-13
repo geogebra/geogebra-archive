@@ -109,7 +109,12 @@ public class Macro {
 		inputTypes = new Class[macroInput.length];		
 		for (int i=0; i < macroInput.length; i++) {
 			inputTypes[i] = macroInput[i].getClass();
-		}						 	
+		}			
+		
+		// after initing we turn global variable lookup on again, 
+    	// so we can use for example functions with parameters in macros too.
+    	// Such parameters are global variables
+		((MacroConstruction) macroCons).setGlobalVariableLookup(true);   
 	}	
 	
 	private void initInputOutput() {
@@ -224,7 +229,8 @@ public class Macro {
     			case GeoElement.GEO_CLASS_SEGMENT:    				
     			case GeoElement.GEO_CLASS_RAY:
     			case GeoElement.GEO_CLASS_POLYGON:
-    				// add parent algo and input (points) to macroConsOrigElements
+    			case GeoElement.GEO_CLASS_FUNCTION:
+    				// add parent algo and its input objects to macroConsOrigElements
     				addSpecialInputElement(input[i], macroConsOrigElements);
     				break;    				    			
     				    		    		
@@ -307,7 +313,7 @@ public class Macro {
 		 
 		 // add parent algo and input objects
 		 AlgoElement algo = geo.getParentAlgorithm();
-	   	 if (algo.isInConstructionList()) {
+	   	 if (algo != null && algo.isInConstructionList()) {
 	   		// STANDARD case
 	   		// add algorithm
 	   		consElementSet.add(algo);
@@ -349,12 +355,10 @@ public class Macro {
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
     	   
-    	// TODO: remove
-    	System.out.println("*** Macro XML BEGIN ***");
-    	System.out.println(macroConsXML);
-    	System.out.flush();
-    	System.out.println("*** Macro XML END ***");
-    	
+//    	System.out.println("*** Macro XML BEGIN ***");
+//    	System.out.println(macroConsXML);
+//    	System.out.flush();
+//    	System.out.println("*** Macro XML END ***");   	
     	
     	return macroConsXML.toString();
 	 }
@@ -369,11 +373,13 @@ public class Macro {
     	// build macro construction
     	MacroKernel mk = new MacroKernel(kernel);   
     	mk.setContinuous(false);
+    	
+    	// during initing we turn global variable lookup off, so we can be sure
+    	// that the macro construction only dependes on it's input
     	mk.setGlobalVariableLookup(false);    	        	      	  	      	        	    	
     	
     	try {    	
-    		mk.loadXML(macroConsXML);    		    			    		    	    	        	        	
-        	return mk.getConstruction();
+    		mk.loadXML(macroConsXML);    		    			    		    	    	        	        	        	
     	} 
     	catch (MyError e) {  
     		String msg = e.getLocalizedMessage();
@@ -385,6 +391,8 @@ public class Macro {
     		e.printStackTrace();       		   
         	throw new Exception(e.getMessage());
     	}    	
+    	      
+    	return mk.getConstruction();
     }	 	                 
 			
 	
@@ -437,7 +445,7 @@ public class Macro {
 	}
 
 	public void setToolHelp(String toolHelp) {
-		if (toolHelp == null)
+		if (toolHelp == null || toolHelp.equals("null"))
 			this.toolHelp = "";
 		else
 			this.toolHelp = toolHelp;
@@ -466,8 +474,8 @@ public class Macro {
 	}
 
 	public void setToolName(String name) {
-		if (name == null)
-			this.toolName = "";
+		if (name == null || name.equals("null") || name.length() == 0)
+			this.toolName = cmdName;
 		else
 			this.toolName = name;
 	}
