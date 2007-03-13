@@ -447,9 +447,9 @@ implements GeoElementSelectionListener {
 		outputButtonPanel.setLayout(outputButtonPanelLayout);
 		
 		final JButton btUp = new JButton("\u25b2");
-		btUp.setToolTipText(app.getMenu("Up"));
+		btUp.setToolTipText(app.getPlain("Up"));
 		final JButton btDown = new JButton("\u25bc");
-		btDown.setToolTipText(app.getMenu("Down"));
+		btDown.setToolTipText(app.getPlain("Down"));
 		if (cbAdd != null)
 			outputButtonPanel.add(Box.createRigidArea(new Dimension(0,30)));
 		outputButtonPanel.add(btUp);
@@ -458,7 +458,7 @@ implements GeoElementSelectionListener {
 				
 		final JButton btRemove = new JButton("\u2718");
 		btRemove.setVisible(showRemoveButton);
-		btRemove.setToolTipText(app.getMenu("Remove"));
+		btRemove.setToolTipText(app.getPlain("Remove"));
 		outputButtonPanel.add(Box.createRigidArea(new Dimension(0,15)));
 		outputButtonPanel.add(btRemove);				
 		centerPanel.add(outputButtonPanel, BorderLayout.EAST);								

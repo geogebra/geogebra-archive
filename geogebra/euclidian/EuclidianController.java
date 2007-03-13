@@ -2915,6 +2915,7 @@ final public class EuclidianController implements MouseListener,
 		boolean objectFound = 1 == 
 			handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);			
 		
+		/*
 		// POLYGON instead of points special case:
 		// if no object was found maybe we need points
 		// in this case let's try to use a polygon's points 
@@ -2954,6 +2955,7 @@ final public class EuclidianController implements MouseListener,
 				}
 			}									
 		}		
+		*/
 		
 		// we're done if in selection preview
 		if (selectionPreview) 
@@ -2961,7 +2963,7 @@ final public class EuclidianController implements MouseListener,
 		
 		
 		// only one point needed: try to create it
-		if (!objectFound && neededPoints >= 1) {
+		if (!objectFound && macroInput[index] == GeoPoint.class) {
 			if (createNewPoint(hits, true, true, false)) {				
 				// take movedGeoPoint which is the newly created point								
 				selectedGeos.add(movedGeoPoint);

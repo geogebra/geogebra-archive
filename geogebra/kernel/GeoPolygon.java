@@ -48,7 +48,19 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 	}
 	
     String getTypeString() {
-		return "Polygon";
+    	if (points == null) 
+    		return "Polygon";
+    	
+    	switch (points.length) {
+    		case 3:
+    			return "Triangle";
+    			
+    		case 4:
+    			return "Quadrilateral";
+    		
+    		default:
+    			return "Polygon";    	
+    	}    	    			
 	}
     
     public int getGeoClassType() {
