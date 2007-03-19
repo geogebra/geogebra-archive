@@ -18,32 +18,38 @@ Contributions by
   * Eloi Puertas, University of Barcelona, 2007
   
 TRANSLATIONS 
+  * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Béja, Tunisia)
   * Basque: Gonzalo Elcano Vizcay (Navarra, Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
-  * Catalan: Jaume Bartrolí, Roser Sebastián (Catalunya, Spain)
-  * Chinese: Fu-Kwun Hwang (Taiwan)
-  * Croatian: Sime Suljic and Ela Rac (Croatia)
-  * Czech: Marie Pokorna (Czech Republic)
-  * Danish: Steen Groðe (Denmark)
+  * Catalan: Jorge Sánchez, Jaume Bartrolí, Pep Bujosa, 
+       Antoni Gomà, Roser Sebastián (Catalunya, Spain)
+  * Chinese: Fu-Kwun Hwang (Taiwan), Chen-Hui Lin
+  * Croatian: Sime Suljic, Ela Rac (Croatia)
+  * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
+  * Danish: Steen Groðe, Rasmus Christensen (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
   * English: Markus Hohenwarter (Austria)
-  * French: Pierre Couillard (Canada), Vincent Douce, Nicolas Hainaux, 
-      David Tran, Noel Lambert, Philippe Pham-Ba-Nien (France)
-  * Galician: Jesús García (Spain)
-  * German: Markus Hohenwarter (Austria)
-  * Greek: Nicholas Mousoulides (Cyprus)
+  * Finnish: Hannu Korhonen (Orimattila, Finland)
+  * French: David Tran, Noel Lambert (France)
+  * Galician: Jesús García Otero (Spain)
+  * German (Germany): Markus Hohenwarter (Austria)
+  * German (Austria): Markus Hohenwarter (Austria)
+  * Greek: Nicholas Mousoulides, Marinos Karagiorgis (Cyprus), 
+       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hungarian: Sulik Szabolcs (Hungary)
-  * Italian: Enrico Pontorno and Alessandra Tomasi (Italy)
+  * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Norwegian: Sigbjørn Hals (Norway)
-  * Occitan: Monia Allaya (Beziers, Spain)
-  * Portuguese: Humberto Jose Bortolossi and Herminio Borges Neto (Brazil)
-  * Romanian: Bogdan Enescu (Romania)
-  * Russian: Dima Nikolenkov (Switzerland)
-  * Serbian: Dragoslav Herceg and Djordje Herceg (Serbia)
-  * Slovakian: Peter Csiba (Slovakia)
+  * Persian: Saeed Aminorroaya
+  * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, 
+       Alana Paula, Luciana de Lima (Brazil)
+  * Portuguese (Portugal): Jorge Geraldes (Portugal)
+  * Serbian: Djordje and Dragoslav Herceg (Serbia)
+  * Slovak: Peter Csiba (Slovakia)
   * Slovenian: Stanislav Senveter (Slovenia)
   * Spanish: Liliana Saidon (Argentina)
-
+  * Turkish: Mustafa Dogan, Erol Karakirik, Süleyman Cengiz
+  * Vietnamese: Nguyen Thanh Trung, Quang Nguyen
+   
 FUNDED BY
   * Standards Mapped Graduate Education and Mentoring, http://smgem.mspnet.org  
      from 08/2006 to 07/2008, US National Science Foundation, http://www.nsf.gov
