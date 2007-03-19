@@ -379,9 +379,6 @@ public class Application {
 
         //  init Controllers and Views      
         guiController = new GUIController(this);   
-        // for key listening 
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().
-                addKeyEventDispatcher(guiController);	     
         algebraController = new AlgebraController(kernel, kernel.getConstruction());
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
@@ -4216,9 +4213,7 @@ public class Application {
     		glassPane.addMouseListener(glassPaneListener);
     		glassPane.addMouseMotionListener(glassPaneListener);
     		
-    		// keys
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().
-                   removeKeyEventDispatcher(guiController);	
+    		// keys           
             KeyboardFocusManager.getCurrentKeyboardFocusManager().
             	addKeyEventDispatcher(glassPaneListener);	
     		
@@ -4233,9 +4228,7 @@ public class Application {
     		glassPane.removeMouseMotionListener(glassPaneListener);
     		
     	     KeyboardFocusManager.getCurrentKeyboardFocusManager().
-             	removeKeyEventDispatcher(glassPaneListener);	
-    	     KeyboardFocusManager.getCurrentKeyboardFocusManager().
-			 	addKeyEventDispatcher(guiController);	
+             	removeKeyEventDispatcher(glassPaneListener);    	
     		
     		glassPane.setVisible(false);     		
 	    	glassPaneListener = null;

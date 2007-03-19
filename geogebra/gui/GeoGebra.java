@@ -18,13 +18,19 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.algebra.AlgebraInput;
+import geogebra.algebra.AlgebraView;
+import geogebra.euclidian.EuclidianView;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
@@ -34,7 +40,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-public class GeoGebra extends JFrame implements WindowFocusListener {
+public class GeoGebra extends JFrame implements 
+	WindowFocusListener, KeyEventDispatcher 
+{
 	
 	/**
 	 * 
@@ -111,8 +119,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
             return;                             
         }
         
-        createNewWindow(args);
-
+        GeoGebra ggbWin = createNewWindow(args);
+        
+        // for key listening 
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().
+                addKeyEventDispatcher(ggbWin);	
         
         // check if we run on a Mac
         String lcOSName = System.getProperty("os.name").toLowerCase();
@@ -130,7 +141,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 					        activeInstance.getApplication().loadFile(fileToOpen, isMacroFile);						    
 					     }
 				 });
-        }         
+        }       
+        
+             
     }
     
     public static GeoGebra createNewWindow(String [] args) {
@@ -191,5 +204,76 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		}		
     	return null;
     }
+    
+    /* 
+	 * KeyEventDispatcher implementation
+	 * to handle key events globally for the application
+	 */
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		  //make sure the event is not consumed
+		  if (e.isConsumed()) return true;
+		  		  
+		  Application app = activeInstance.getApplication();
+		  
+		  // if the glass pane is visible, don't do anything
+		  // (there might be an animation running)
+		  if (app.getGlassPane().isVisible())
+			  return false;
+		  
+		  boolean consumed = false;
+		  Object source = e.getSource();
+		  
+		  // catch all key events from algebra view and give
+		  // them to the algebra controller	  
+		  AlgebraView av = app.getAlgebraView();
+		  if (source == av) {			  	
+			switch (e.getID()) {
+				case KeyEvent.KEY_PRESSED:
+					consumed = app.getAlgebraController().
+									keyPressedConsumed(e);					
+					break;				
+			}					
+		  }		  		  		  
+		  if (consumed) return true;
+		  		  	
+		  switch (e.getKeyCode()) {
+				case KeyEvent.VK_F3:
+					// F3 key: set focus to input field
+			 		AlgebraInput ai = app.getAlgebraInput();
+			 		if (ai != null) { 
+			 			ai.setFocus();
+			 			consumed = true;
+			 		}
+			 		break;
+			 		
+			 	// ESC changes to move mode
+				case KeyEvent.VK_ESCAPE:											
+					// ESC is also handeled by algebra input field  
+					ai = app.getAlgebraInput();
+					if (ai != null && ai.hasFocus()) {
+						consumed = false;
+					} else {
+						app.setMode(EuclidianView.MODE_MOVE);
+						consumed = true;
+					}												
+					break;									
+    					
+				// F4 changes to move mode
+		 		case KeyEvent.VK_F4:		 		
+		 			app.setMode(EuclidianView.MODE_MOVE);
+		 			consumed = true;		 			
+		 			break;		 					 		 
+		}
+			
+		  /*
+		 // Ctrl-key pressed
+		  if (!app.isApplet() && e.isMetaDown()){
+			  switch (e.getKeyChar()) {
+			  							 					 		 
+			  }			 
+		  }*/
+
+		  return consumed; 
+	}
 
 }
