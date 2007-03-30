@@ -211,8 +211,9 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 	}
 	
 	String formatExpression(Object expr){
-		if(expr instanceof Algebraic)
+		if(expr instanceof Algebraic) {		
 			return expr.toString();
+		}
 		return infix(expr);
 	}
 
@@ -232,11 +233,11 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 			return (Lisp.car(x)).toString();
 		String op = (String)Lisp.car(x);
 		Object args = Lisp.cdr(x);
-		if( binaryq(op) ){
+		if( binaryq(op) ){	
 			if(Lisp.length(args)==1)
 				return "("+op+" "+infix(Lisp.car(args))+")";
 			else
-				return "("+infix(Lisp.car(args))+op+infix(Lisp.car(Lisp.cdr(args)))+")";
+				return "("+infix(Lisp.car(args)) + op + infix(Lisp.car(Lisp.cdr(args)))+")";
 		}
 		return
 			op + "("+infix(Lisp.list2atom(args))+")";

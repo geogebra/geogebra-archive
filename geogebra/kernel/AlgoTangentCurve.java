@@ -87,16 +87,14 @@ public class AlgoTangentCurve extends AlgoElement {
 
         // calc the tangent;
         double feval[] = new double[2];
-        double dfeval[] = new double[2];
-        double tvalue;
+        double dfeval[] = new double[2];        
         
-        tvalue = f.getClosestParameter(P,f.getMinParameter());
+        double tvalue = f.getClosestParameter(P,f.getMinParameter());
         f.evaluateCurve(tvalue, feval);
         df.evaluateCurve(tvalue, dfeval);
-        tangent.setCoords(dfeval[1],-dfeval[0],dfeval[0]*feval[1]-feval[0]*dfeval[1]);
+        tangent.setCoords(-dfeval[1],dfeval[0],feval[0]*dfeval[1]-dfeval[0]*feval[1]);
         
-        //for function's
-        //if (!pointOnCurve)
-        	//T.setCoords(a, fa, 1.0);
+        if (!pointOnCurve)
+        	T.setCoords(feval[0], feval[1], 1.0);
     }
 }

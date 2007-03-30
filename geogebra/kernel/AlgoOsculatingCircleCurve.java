@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import java.awt.Color;
 
 /**
  * @author  Victor Franco Espino
@@ -19,7 +18,6 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     private GeoVector v;//curvature vector of f in point A 
     private GeoNumeric curv;//curvature of f in point A
     private GeoConic circle; // output
-    private Color colorCircle;
     
     AlgoOsculatingCircleCurve(Construction cons, String label, GeoPoint A, GeoCurveCartesian f) {
         super(cons);
@@ -28,7 +26,6 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
         
         R = new GeoPoint(cons);//R is the center of the circle
         circle = new GeoConic(cons);
-        colorCircle = Color.RED;
 
         //Catch curvature and curvature vector
         AlgoCurvatureCurve algo = new AlgoCurvatureCurve(cons,A,f);
@@ -71,6 +68,5 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     	
     	R.setCoords(A.inhomX + x, A.inhomY + y, 1.0);
     	circle.setCircle(R, A);	
-    	circle.setObjColor(colorCircle);
     }
 }

@@ -33,13 +33,14 @@ public class AlgoCurvatureCurve extends AlgoElement {
        
         //First derivative of curve f
         AlgoDerivative algo = new AlgoDerivative(cons, f);
+        cons.removeFromConstructionList(algo);
 		this.f1 = (GeoCurveCartesian) algo.getDerivative();
 		
 		//Second derivative of curve f
 		algo = new AlgoDerivative(cons, f1);
+		cons.removeFromConstructionList(algo);
 		this.f2 = (GeoCurveCartesian) algo.getDerivative();
-		
-        cons.removeFromConstructionList(algo);
+		        
         setInputOutput();
         compute();
     }
@@ -64,17 +65,23 @@ public class AlgoCurvatureCurve extends AlgoElement {
     }
 
     final void compute() {
-    	double f1eval[] = new double[2];
-    	double f2eval[] = new double[2];
-    	double t, t3, evals, tvalue;
-    	
-    	tvalue = f.getClosestParameter(A,f.getMinParameter());
-    	f1.evaluateCurve(tvalue,f1eval);
-        t = Math.sqrt(f1eval[0]*f1eval[0] + f1eval[1]*f1eval[1]);
-        t3 = t * t * t;
-        f2.evaluateCurve(tvalue,f2eval);
-        evals = f1eval[0]*f2eval[1] - f2eval[0]*f1eval[1];
-        
-        K.setValue( evals / t3 );
+    	try {
+	    	double f1eval[] = new double[2];
+	    	double f2eval[] = new double[2];
+	    	double t, t3, evals, tvalue;
+	    	
+	    	tvalue = f.getClosestParameter(A, f.getMinParameter());
+	    	f1.evaluateCurve(tvalue,f1eval);
+	        t = Math.sqrt(f1eval[0]*f1eval[0] + f1eval[1]*f1eval[1]);
+	        t3 = t * t * t;
+	        f2.evaluateCurve(tvalue,f2eval);
+	        evals = f1eval[0]*f2eval[1] - f2eval[0]*f1eval[1];
+	        
+	        K.setValue( evals / t3 );
+    	} 
+    	catch (Exception e) {
+    		// in case something went wrong, e.g. derivatives not defined
+    		K.setUndefined();
+    	}
     }   
 }

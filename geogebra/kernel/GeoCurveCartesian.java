@@ -29,7 +29,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	private static final long serialVersionUID = 1L;
 	
 	// samples to find interval with closest parameter position to given point
-	private static final int CLOSEST_PARAMETER_SAMPLES = 50;
+	private static final int CLOSEST_PARAMETER_SAMPLES = 100;
 	
 	private Function funX, funY;	
 	private double startParam, endParam;
@@ -303,7 +303,19 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	public double getClosestParameter(GeoPoint P, double startValue) {		
 		if (distFun == null)
 			distFun = new ParametricCurveDistanceFunction(this);				
-		distFun.setDistantPoint(P.x/P.z, P.y/P.z);
+		distFun.setDistantPoint(P.x/P.z, P.y/P.z);	
+		
+		// check if P is on this curve and has the right path parameter already
+    	if (P.getPath() == this) { 
+    		// point A is on curve c, take its parameter
+    		double pathParam = P.pathParameter.t;
+    		if (distFun.evaluate(pathParam) < Kernel.MIN_PRECISION * Kernel.MIN_PRECISION)
+    			return pathParam;   
+    			
+			// if we don't have a startValue yet, let's take the path parameter as a guess
+    		if (Double.isNaN(startValue))
+    			startValue = pathParam;
+    	} 									
 		
 		// first sample distFun to find a start intervall for ExtremumFinder		
 		double step = (endParam - startParam) / CLOSEST_PARAMETER_SAMPLES;

@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import java.awt.Color;
 
 /**
  * @author  Victor Franco Espino
@@ -15,7 +14,6 @@ public class AlgoCurvatureVector extends AlgoElement {
 	private GeoPoint A; // input
     private GeoFunction f, f1, f2; // f = f(x), f1 is f'(x), f2 is f''(x)
     private GeoVector v; // output
-    private Color colorVector;
 
     AlgoCurvatureVector(Construction cons, String label, GeoPoint A, GeoFunction f){
     	this(cons, A, f);
@@ -37,20 +35,18 @@ public class AlgoCurvatureVector extends AlgoElement {
         v = new GeoVector(cons);
         try {     
             v.setStartPoint(A);  
-        } catch (CircularDefinitionException e) {}
-        
-    	colorVector = Color.RED;
-        v.setObjColor(colorVector);
+        } catch (CircularDefinitionException e) {}                         
         
         //First derivative of function f
         AlgoDerivative algo = new AlgoDerivative(cons, f);
+        cons.removeFromConstructionList(algo);
 		this.f1 = (GeoFunction) algo.getDerivative();
 		
 		//Second derivative of function f
 		algo = new AlgoDerivative(cons, f1);
-		this.f2 = (GeoFunction) algo.getDerivative();
-        
 		cons.removeFromConstructionList(algo);
+		this.f2 = (GeoFunction) algo.getDerivative();
+        		
 		setInputOutput();
         compute();
     }
@@ -75,21 +71,23 @@ public class AlgoCurvatureVector extends AlgoElement {
     	return v;
     }
 
-    final void compute() {		
-       double f1eval = f1.evaluate(A.inhomX);
-       double f2eval = f2.evaluate(A.inhomX);
-       double t = Math.sqrt( 1 + f1eval * f1eval);
-       double t4 = t*t*t*t;
-       
-       double x = A.inhomX - (f1eval * f2eval) / t4;
-       double y = A.inhomY + f2eval / t4;
-       
-       if (A.isFinite()) {        
+    final void compute() {
+    	try {
+	       double f1eval = f1.evaluate(A.inhomX);
+	       double f2eval = f2.evaluate(A.inhomX);
+	       double t = Math.sqrt(1 + f1eval * f1eval);
+	       double t4 = t*t*t*t;
+	       
+	       double x = A.inhomX - (f1eval * f2eval) / t4;
+	       double y = A.inhomY + f2eval / t4;
+	       	     
            v.x = x - A.inhomX;
            v.y = y - A.inhomY;             
-           v.z = 0.0;
-       } else {
-           v.setUndefined();
-       }
+           v.z = 0.0;	       	      
+	    } 
+		catch (Exception e) {
+			// in case something went wrong, e.g. derivatives not defined
+			v.setUndefined();
+		}
     }
 }

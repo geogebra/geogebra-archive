@@ -33,10 +33,10 @@ public class GeoGebraCAS {
      * e.g. exp = "diff(x^2,x)" returns "2*x".
      * @return result string, null possible
      */ 
-    final public String evaluateJASYMCA(String exp) {    	
-    	//System.out.println("exp for JASYMCA: " + exp);            	    	
-    	String  result = ggbJasymca.evaluate(exp);        	
-        //System.out.println("  result: " + result);
+    final public String evaluateJASYMCA(String exp) {    	   	
+    	// System.out.println("exp for JASYMCA: " + exp);    	
+    	String result = ggbJasymca.evaluate(exp);    	
+        // System.out.println("  result: " + result);
         return result;
     }
     

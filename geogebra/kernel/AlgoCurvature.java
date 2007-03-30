@@ -33,13 +33,14 @@ public class AlgoCurvature extends AlgoElement {
         
         //First derivative of function f
         AlgoDerivative algo = new AlgoDerivative(cons, f);
+        cons.removeFromConstructionList(algo);
 		this.f1 = (GeoFunction) algo.getDerivative();
 		
 		//Second derivative of function f
 		algo = new AlgoDerivative(cons, f1);
-		this.f2 = (GeoFunction) algo.getDerivative();
-		
 		cons.removeFromConstructionList(algo);
+		this.f2 = (GeoFunction) algo.getDerivative();
+				
         setInputOutput();
         compute();
     }
@@ -64,10 +65,16 @@ public class AlgoCurvature extends AlgoElement {
     }
 
     final void compute() {
-    	double f1eval = f1.evaluate(A.inhomX);
-        double t = Math.sqrt(1 + f1eval * f1eval);
-        double t3 = t * t * t;
+    	try {    	
+    		double f1eval = f1.evaluate(A.inhomX);
+    		double t = Math.sqrt(1 + f1eval * f1eval);
+    		double t3 = t * t * t;
 
-    	K.setValue( f2.evaluate(A.inhomX) / t3 );
+    		K.setValue( f2.evaluate(A.inhomX) / t3 );
+    	} 
+    	catch (Exception e) {
+    		// in case something went wrong, e.g. derivatives not defined
+    		K.setUndefined();
+    	}
     }   
 }

@@ -19,7 +19,6 @@ public class AlgoOsculatingCircle extends AlgoElement {
     private GeoVector v; //curvature vector of f in point A 
     private GeoNumeric curv; //curvature of f in point A
     private GeoConic circle; // output
-    private Color colorCircle;
     
     AlgoOsculatingCircle(Construction cons, String label, GeoPoint A, GeoFunction f) {
         super(cons);
@@ -27,8 +26,7 @@ public class AlgoOsculatingCircle extends AlgoElement {
         this.f = f;
         
         R = new GeoPoint(cons);//R is the center of the circle
-        circle = new GeoConic(cons);
-        colorCircle = Color.RED;
+        circle = new GeoConic(cons);        
         
         //Catch curvature and curvature vector
         AlgoCurvature algo = new AlgoCurvature(cons,A,f);
@@ -70,7 +68,6 @@ public class AlgoOsculatingCircle extends AlgoElement {
     	double y = r2 * v.y;
     	
     	R.setCoords(A.inhomX + x, A.inhomY + y, 1.0);
-    	circle.setCircle(R, A);	
-    	circle.setObjColor(colorCircle);
+    	circle.setCircle(R, A);    	
     }
 }

@@ -98,9 +98,14 @@ public class Rational extends Algebraic{
 		return result;
 	}
 
+	// toString() changed by Markus Hohenwarter, March 30, 2007
+	// old code missed parentheses around denominator
+	//	public String toString(){
+	//		return nom + "/" + den;			
+	//	}
 	
 	public String toString(){
-		return nom + "/" + den;
+		return nom + "/(" + den + ")";			
 	}
 	
 	public boolean equals(Object x){
