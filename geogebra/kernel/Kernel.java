@@ -1607,6 +1607,26 @@ public class Kernel {
 		GeoNumeric num = algo.getArea();
 		return num;
 	}
+	
+	// PhilippWeissenbacher 2007-04-10
+	
+	/**
+	 * Circumference named label of GeoPolygon
+	 */
+	final public GeoNumeric Circumference(String label, GeoPolygon polygon) {
+	    AlgoCircumference algo = new AlgoCircumference(cons, label, polygon);
+	    return algo.getCircumference();
+	}
+	
+	/**
+	 * Circumference named label of GeoConic
+	 */
+	final public GeoNumeric Circumference(String label, GeoConic conic) {
+	    AlgoCircumference algo = new AlgoCircumference(cons, label, conic);
+	    return algo.getCircumference();
+	}
+	
+	// PhilippWeissenbacher 2007-04-10
 		
 	/** 
 	 * polygon P[0], ..., P[n-1]
