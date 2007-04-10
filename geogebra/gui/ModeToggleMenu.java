@@ -110,6 +110,17 @@ public class ModeToggleMenu extends JPanel {
 	}
 	
 	public void addMode(int mode) {
+		// macro
+		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			try {
+				int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+				Macro macro = app.getKernel().getMacro(macroID);							
+				addMacro(macroID, macro);
+			} catch (Exception e) {}
+    		return;
+		}
+		
+		// standard case
 		String modeText = EuclidianView.getModeText(mode);
 		String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
 		ImageIcon icon = app.getImageIcon(iconName, getBackground());		

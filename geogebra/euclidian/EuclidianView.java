@@ -97,7 +97,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	public static final double MOUSE_WHEEL_ZOOM_FACTOR = 1.1;
 
-	public static final double SCALE_STANDARD = 30;
+	public static final double SCALE_STANDARD = 50;
 
 	// public static final double SCALE_MAX = 10000;
 	// public static final double SCALE_MIN = 0.1;
@@ -332,7 +332,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private String[] axesLabels = { null, null };
 	private String[] axesUnitLabels = { null, null };
 	private boolean[] piAxisUnit = { false, false };
-	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR_MINOR , AXES_TICK_STYLE_MAJOR_MINOR};
+	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR , AXES_TICK_STYLE_MAJOR };
 
 	// for axes labeling with numbers
 	private boolean[] automaticAxesNumberingDistances = { true, true };
@@ -470,8 +470,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		axesUnitLabels[1] = null;
 		piAxisUnit[0] = false;
 		piAxisUnit[1] = false;
-		axesTickStyles[0] = AXES_TICK_STYLE_MAJOR_MINOR; 
-		axesTickStyles[1] = AXES_TICK_STYLE_MAJOR_MINOR;
+		axesTickStyles[0] = AXES_TICK_STYLE_MAJOR; 
+		axesTickStyles[1] = AXES_TICK_STYLE_MAJOR;
 
 		// for axes labeling with numbers
 		automaticAxesNumberingDistances[0] = true;

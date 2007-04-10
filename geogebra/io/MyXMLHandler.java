@@ -527,6 +527,9 @@ public class MyXMLHandler implements DocHandler {
     		if (strTickStyle != null) {
     			int tickStyle = Integer.parseInt(strTickStyle);   
     			ev.getAxesTickStyles()[axis] = tickStyle;    				
+    		} else {
+    			// before v3.0 the default tickStyle was MAJOR_MINOR
+    			ev.getAxesTickStyles()[axis] = EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR;
     		}
     		return true;	
     	} catch (Exception e) {
