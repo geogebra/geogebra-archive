@@ -41,7 +41,7 @@ public class AlgoCircumferencePoly extends AlgoElement {
 	}
 
 	String getClassName() {
-		return "AlgoCircumference";
+		return "AlgoCircumferencePoly";
 	}
 
 	void setInputOutput() {
