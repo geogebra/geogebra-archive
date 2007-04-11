@@ -1614,7 +1614,7 @@ public class Kernel {
 	 * Circumference named label of GeoPolygon
 	 */
 	final public GeoNumeric Circumference(String label, GeoPolygon polygon) {
-	    AlgoCircumference algo = new AlgoCircumference(cons, label, polygon);
+	    AlgoCircumferencePoly algo = new AlgoCircumferencePoly(cons, label, polygon);
 	    return algo.getCircumference();
 	}
 	
@@ -1622,7 +1622,7 @@ public class Kernel {
 	 * Circumference named label of GeoConic
 	 */
 	final public GeoNumeric Circumference(String label, GeoConic conic) {
-	    AlgoCircumference algo = new AlgoCircumference(cons, label, conic);
+	    AlgoCircumferenceConic algo = new AlgoCircumferenceConic(cons, label, conic);
 	    return algo.getCircumference();
 	}
 	
