@@ -68,7 +68,7 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	private int casPrintForm = ExpressionNode.STRING_TYPE_GEOGEBRA;		
+	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
@@ -109,6 +109,7 @@ public class Kernel {
 	public Kernel() {
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setGroupingUsed(false);
+		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 	}
 	
 	public GeoElement lookupLabel(String label) {		
@@ -1134,11 +1135,11 @@ public class Kernel {
  	 * Sequence[ <expression>, <number-var>, <from>, <to>, <step> ]  
  	 * @return array with GeoList object and its list items
 	 */
-	final public GeoElement [] Sequence(String [] labels, 
+	final public GeoElement [] Sequence(String label, 
 			GeoElement expression, GeoNumeric localVar, 
 			NumberValue from, NumberValue to, NumberValue step) {
 		
-			AlgoSequence algo = new AlgoSequence(cons, labels, expression, localVar, from, to, step);
+			AlgoSequence algo = new AlgoSequence(cons, label, expression, localVar, from, to, step);
 			return algo.getOutput();				
 	}	
 	

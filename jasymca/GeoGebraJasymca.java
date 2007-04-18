@@ -18,7 +18,7 @@ public class GeoGebraJasymca extends Jasymca {
 	
 	final public String evaluate(String exp) {					
 		try {
-			Object result = eval(exp);
+			Object result = eval(exp);		
 			return formatExpression(result);
 		} catch(Exception e) {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
@@ -62,22 +62,21 @@ public class GeoGebraJasymca extends Jasymca {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
 			return null;
 		}
-	}
+	}		
 	
-	
-	/*
 	  public static void main(String [] args) {
-		  
+		  /*
 	    	GeoGebraJasymca cas = new GeoGebraJasymca();
-	    	String [] commands = {"sqrt(2)", "diff(sin(\ud554),\ud554)",
+	    	String [] commands = {"x^2", "x^(1/3)",
 			"3+2", "myfun(9)"};
 			
 			for (int i=0; i < commands.length; i++) {
 				String result = cas.evaluate(commands[i]);
-				System.out.println("command: " + commands[i]);
-				System.out.println("result: " + result);        	        
-			}    	
+				//System.out.println("command: " + commands[i]);
+				//System.out.println("result: " + result);        	        
+			}
+		  */    	
 	  } 
-	  */
+	  
  }
 

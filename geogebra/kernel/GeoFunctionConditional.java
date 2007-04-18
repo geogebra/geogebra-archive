@@ -105,10 +105,23 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * @param f
 	 * @param order
 	 */
-	public void setDerivative(GeoFunction f, int n) {		
+	public void setDerivative(GeoDeriveable f, int n) {		
 		GeoFunctionConditional fcond = (GeoFunctionConditional) f;
 		ifFun.setDerivative(fcond.ifFun, n);
-		elseFun.setDerivative(fcond.elseFun, n);					
+		if (elseFun != null)
+			elseFun.setDerivative(fcond.elseFun, n);					
+	}
+	
+	/**
+	 * Set this function to the integral of f
+	 * @param f
+	 * @param order
+	 */
+	public void setIntegral(GeoFunction f) {
+		GeoFunctionConditional fcond = (GeoFunctionConditional) f;		
+		ifFun.setIntegral(fcond.ifFun);
+		if (elseFun != null)
+			elseFun.setIntegral(fcond.elseFun);		
 	}
 				
 	/**
@@ -117,7 +130,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * @param x 
 	 * @return f(x) = condition(x) ? ifFun(x) : elseFun(x)
 	 */
-	final public double evaluate(double x) {	
+	final public double evaluate(double x) {		
 		if (condFun.evaluateBoolean(x))
 			return ifFun.evaluate(x);
 		else {
@@ -184,7 +197,7 @@ public class GeoFunctionConditional extends GeoFunction {
 			sb.append("[");
 			
 			if (symbolic) 
-				sb.append(condFun.toValueString());
+				sb.append(condFun.toSymbolicString());
 			else
 				sb.append(condFun.toValueString());
 			
@@ -209,8 +222,7 @@ public class GeoFunctionConditional extends GeoFunction {
 			return app.getPlain("undefined");
 	}	
 	
-	final public String toLaTeXString(boolean symbolic) {
-		// TODO: create latex string for conditional function
+	final public String toLaTeXString(boolean symbolic) {	
 		return toString(symbolic);
 	}
 			

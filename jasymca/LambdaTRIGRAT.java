@@ -483,6 +483,29 @@ class LambdaROUND extends LambdaAlgebraic{
 	}	
 }
 
+class LambdaROOT extends LambdaAlgebraic{
+	public LambdaROOT(){ 
+		diffrule = null; 
+		intrule  = null; 		
+		trigrule = null;
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(Math.round(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;
+		if(x.equals(Zahl.ONE))
+			return Zahl.ONE;
+		if(x.equals(Zahl.MINUS))
+			return Zahl.MINUS;
+		return null;
+	}	
+}
+
 
 /* 
  * END Markus Hohenwarter

@@ -129,6 +129,7 @@ TOKEN :  {
   | < OR:		("||" | "\u2228") >
   | < AND:		("&&" | "\u2227") >
   | < EQUAL_BOOLEAN: "==" >
+  | < NOT_EQUAL: ("!=" | "\u2260") >
   | < LESS:		"<" >
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
@@ -646,6 +647,12 @@ ExpressionNode COMPAREterm():
        (<EQUAL_BOOLEAN>  f = plusminusnode()
     	 {            
            ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  
+         }
+       )   
+     |   
+       (<NOT_EQUAL>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.NOT_EQUAL, f);  
          }
        )   
      |   

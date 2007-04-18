@@ -26,6 +26,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -181,23 +182,34 @@ public class AlgebraController
 			base = 100;
 
 		// ARROW KEYS
-		switch (keyCode) {				
-				
+		switch (keyCode) {								
 			case KeyEvent.VK_UP :
 				changeVal = base;
-				if (geo.isChangeable() && geo.isTranslateable()) {
-					tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-					((Translateable) geo).translate(tempVec);
+				if (geo.isChangeable()) {
+					if (geo.isTranslateable()) {				
+						tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+						((Translateable) geo).translate(tempVec);						
+					}
+					else if (geo.isGeoBoolean()) {
+						GeoBoolean bool = (GeoBoolean) geo;
+						bool.setValue(!bool.getBoolean());						
+					}
 					geo.updateRepaint();
 					return true;
-				}
+				}				
 				break;
 
 			case KeyEvent.VK_DOWN :
 				changeVal = -base;
-				if (geo.isChangeable() && geo.isTranslateable()) {
-					tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-					((Translateable) geo).translate(tempVec);
+				if (geo.isChangeable()) {
+					if (geo.isTranslateable()) {
+						tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+						((Translateable) geo).translate(tempVec);						
+					}
+					else if (geo.isGeoBoolean()) {
+						GeoBoolean bool = (GeoBoolean) geo;
+						bool.setValue(!bool.getBoolean());						
+					}
 					geo.updateRepaint();
 					return true;
 				}

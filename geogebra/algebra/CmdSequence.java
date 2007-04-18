@@ -32,7 +32,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                	 && (ok[3] = arg[3].isNumberValue()))
                {
                    return  kernel.Sequence(
-                                c.getLabels(),
+                                c.getLabel(),
                                 arg[0],
                                 (GeoNumeric) arg[1],
                                 (NumberValue) arg[2],
@@ -52,7 +52,7 @@ final public  GeoElement[] process(Command c) throws MyError {
             	 && (ok[4] = arg[4].isNumberValue()) )
             {
                 return kernel.Sequence(
-                             c.getLabels(),
+                             c.getLabel(),
                              arg[0],
                              (GeoNumeric) arg[1],
                              (NumberValue) arg[2],

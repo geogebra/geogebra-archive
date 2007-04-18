@@ -41,6 +41,7 @@ import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.ParametricCurve;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;
@@ -2119,7 +2120,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTION:
-				d = new DrawParametricCurve(this, (GeoFunction) geo);
+			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
+				d = new DrawParametricCurve(this, (ParametricCurve) geo);
 				drawFunctionList.add(d);
 				break;
 				

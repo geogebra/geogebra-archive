@@ -94,6 +94,7 @@ public class AlgoDerivative extends AlgoElement {
 
         if (order == null) {            
             g.setDerivative(f, 1);
+              
         } else {
             double ord;
             if (orderGeo.isDefined() && (ord = order.getDouble()) > -Kernel.MIN_PRECISION) {                
@@ -101,7 +102,7 @@ public class AlgoDerivative extends AlgoElement {
             } else {
                 ggeo.setUndefined();
             }
-        }
+        }      
     }
 
     final public String toString() {

@@ -224,7 +224,7 @@ public abstract class GeoElement
 				 labelColor = objColor, 
 				 fillColor = objColor;
 	public double animationStep = 0.1;
-	public float alphaValue = 0.0f;
+	public float alphaValue = 1.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
 	// on change: see setVisualValues()

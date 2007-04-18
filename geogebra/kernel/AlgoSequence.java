@@ -36,8 +36,7 @@ public class AlgoSequence extends AlgoElement {
 	private GeoNumeric var; // input: local variable
 	private NumberValue  var_from, var_to, var_step;
     private GeoList list; // output
-    
-    private String [] labels;
+     
     private AlgoElement algoExp; // parent algo of expression 
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsGeoFunction, isEmpty;
@@ -54,11 +53,10 @@ public class AlgoSequence extends AlgoElement {
      * @param var_to
      * @param var_step
      */
-    AlgoSequence(Construction cons, String [] labels, GeoElement expression, GeoNumeric var, 
+    AlgoSequence(Construction cons, String label, GeoElement expression, GeoNumeric var, 
     		NumberValue var_from, NumberValue var_to, NumberValue var_step) {
         super(cons);
                 
-        this.labels = labels;
         this.expression = expression;
         this.var = var;
         this.var_from = var_from;
@@ -69,16 +67,11 @@ public class AlgoSequence extends AlgoElement {
     	algoExp = expression.getParentAlgorithm();
     	expIsGeoFunction = expression.isGeoFunction();    	
     	
-    	// TODO: think about list type
-        //list = new GeoList(cons, expression.getClass());
-    	list = new GeoList(cons);
-        
+    	list = new GeoList(cons);        
         setInputOutput(); // for AlgoElement
-        
-        // we set the list's label first        
-        list.setLabel((labels != null) ? labels[0] : null);
-        compute();                
-        list.update();
+                            
+        compute();
+        list.setLabel(label);        
     }
 
     String getClassName() {
@@ -188,16 +181,7 @@ public class AlgoSequence extends AlgoElement {
 				
 				// now we have to make sure that this copy
 				// is also part of our list
-				if (i >= listSize) {
-					/*
-					// label object: maybe we got loaded labels
-					if (labels != null && labels.length > i+1)
-						copy.setLabel(labels[i+1]);	
-					else 
-						// use list's label to get an indexed label
-						copy.setLabel(list.label);		
-					*/
-					
+				if (i >= listSize) {									
 					// add to list	
 					list.add(copy);
 				}
@@ -210,6 +194,7 @@ public class AlgoSequence extends AlgoElement {
 	    	}
     	}
 		
+    	/*
 		// if we did not use all exising copy geos 
 		// we remove all unneeded objects starting
 		// from the end of list until we find any parent object 
@@ -228,6 +213,8 @@ public class AlgoSequence extends AlgoElement {
 				geo.update();
 			}									
 		}
+		
+		*/
 		
 		// remember current values
     	last_from = from;

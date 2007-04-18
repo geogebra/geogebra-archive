@@ -993,9 +993,7 @@ final public class EuclidianController implements MouseListener,
 		}
 
 		// handle moving
-		boolean changedKernel = POINT_CREATED;
-		POINT_CREATED = false;
-
+		boolean changedKernel = POINT_CREATED;		
 		if (DRAGGING_OCCURED) {			
 			changedKernel = (moveMode != MOVE_NONE);			
 			movedGeoElement = null;
@@ -1013,6 +1011,13 @@ final public class EuclidianController implements MouseListener,
 			//view.setMode(oldMode);
 			mode = oldMode;
 		} 
+		
+		// grid capturing on: newly created point should be taken
+		if (hits == null && POINT_CREATED) {
+			hits = new ArrayList();
+			hits.add(movedGeoPoint);						
+		}
+		POINT_CREATED = false;
 		
 		changedKernel = processMode(hits, e);
 		if (changedKernel)

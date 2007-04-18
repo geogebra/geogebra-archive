@@ -30,8 +30,8 @@ public class AlgoIntegral extends AlgoElement {
 
     public AlgoIntegral(Construction cons, String label, GeoFunction f) {
         super(cons);
-        this.f = f;
-        g = new GeoFunction(cons); // output
+        this.f = f;        
+        g = (GeoFunction) f.copyInternal(cons);  // output
         setInputOutput(); // for AlgoElement        
         compute();
         g.setLabel(label);
@@ -78,7 +78,7 @@ public class AlgoIntegral extends AlgoElement {
             sb.append(": ");
             sb.append(g.getLabel());
             sb.append("(x) = ");
-            sb.append(g.getFunction().toString());
+            sb.append(g.toSymbolicString());
         }
         return sb.toString();
     }

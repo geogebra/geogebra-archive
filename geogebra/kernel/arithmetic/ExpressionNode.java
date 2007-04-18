@@ -45,6 +45,7 @@ implements ExpressionValue {
 	public static final int STRING_TYPE_LATEX = 100;
     
 	// boolean
+	public static final int NOT_EQUAL = -10;
 	public static final int NOT = -9;
 	public static final int OR = -8;
     public static final int AND = -7;
@@ -52,13 +53,14 @@ implements ExpressionValue {
     public static final int LESS = -5;
     public static final int GREATER = -4;
     public static final int LESS_EQUAL = -3;
-    public static final int GREATER_EQUAL = -2;
+    public static final int GREATER_EQUAL = -2;    
     
     private static final String strNOT = "\u00ac";
     private static final String strAND = "\u2227";
     private static final String strOR = "\u2228";
     private static final String strLESS_EQUAL = "\u2264";
     private static final String strGREATER_EQUAL = "\u2265";
+    private static final String strNOT_EQUAL = "\u2260";
 
     // arithmetic
     public static final int PLUS = 0;
@@ -377,10 +379,32 @@ implements ExpressionValue {
 						((NumberValue)rt).getDouble()
 					)
         		);
+        	else if (lt.isBooleanValue() && rt.isBooleanValue())
+				return new MyBoolean(
+						((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
+					);        				
 			else { 
                 String [] str = { "IllegalComparison", lt.toString(), "==",  rt.toString() };
                 throw new MyError(app, str);
             } 
+        	
+        case NOT_EQUAL:
+        	// nummber != number
+        	if (lt.isNumberValue() && rt.isNumberValue())
+				return new MyBoolean(
+        			!kernel.isEqual(
+        				((NumberValue)lt).getDouble(),
+						((NumberValue)rt).getDouble()
+					)
+        		);
+        	else if (lt.isBooleanValue() && rt.isBooleanValue())
+				return new MyBoolean(
+						((BooleanValue)lt).getBoolean() != ((BooleanValue)rt).getBoolean()
+					);  
+			else { 
+                String [] str = { "IllegalComparison", lt.toString(), strNOT_EQUAL,  rt.toString() };
+                throw new MyError(app, str);
+            }         	
                 	
         case LESS:
         	// number < number
@@ -1748,6 +1772,14 @@ implements ExpressionValue {
         	case EQUAL_BOOLEAN:
            	 	sb.append(leftStr);
            	 	sb.append(" == ");
+                sb.append(rightStr);
+                break;
+                
+        	case NOT_EQUAL:
+           	 	sb.append(leftStr);
+           	 	sb.append(' ');
+           	 	sb.append(strNOT_EQUAL);
+           	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
                 

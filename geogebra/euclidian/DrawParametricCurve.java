@@ -131,7 +131,7 @@ public class DrawParametricCurve extends Drawable {
     	Point labelPoint = null;				   
     	
 		// Curves with undefined start and end points
-		// are be broken into more intervals    	
+		// are broken into more intervals    	
 		// check first and last point of curve
 		GeoVec2D p1 = curve.evaluateCurve(t1);
 		GeoVec2D p2 = curve.evaluateCurve(t2);	
