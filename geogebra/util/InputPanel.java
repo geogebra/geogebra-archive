@@ -60,10 +60,11 @@ implements ActionListener{
 	private JComboBox cbSpecialChars, cbGreekLetters;
 	
 	public InputPanel(String initText, Application app, int columns) {
-		this(initText, app, 1, columns, true);
+		this(initText, app, 1, columns, true, true);
 	}		
 	
-	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars) {
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
+						boolean showGreekLetters) {
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);
 		else
@@ -103,7 +104,8 @@ implements ActionListener{
 			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));	
 			if (showSpecialChars)
 				tempPanel.add(cbSpecialChars, BorderLayout.NORTH);
-			tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);			
+			if (showGreekLetters)
+				tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);		
 			cbPanel.add(tempPanel, BorderLayout.NORTH);						
 			add(cbPanel, BorderLayout.EAST);			
 		} 

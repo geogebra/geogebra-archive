@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.Border;
 
-public class SliderDialog extends JDialog implements ActionListener, WindowFocusListener {
+public class SliderDialog extends JDialog implements ActionListener {
 	
 	/**
 	 * 
@@ -102,7 +102,7 @@ public class SliderDialog extends JDialog implements ActionListener, WindowFocus
 		radioPanel.add(rbAngle);		
 		
 		// label textfield
-		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false);				
+		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false, true);				
 		Border border =
 			BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(app.getPlain("Name")),
@@ -111,8 +111,9 @@ public class SliderDialog extends JDialog implements ActionListener, WindowFocus
 		
 		// put together label textfield and radioPanel
 		JPanel topPanel = new JPanel(new BorderLayout(5,5));		
-		topPanel.add(radioPanel, BorderLayout.NORTH);
-		topPanel.add(tfLabel, BorderLayout.CENTER);
+		
+		topPanel.add(tfLabel, BorderLayout.NORTH);
+		topPanel.add(radioPanel, BorderLayout.CENTER);
 		
 		// slider panels		
 		sliderPanel = new SliderPanel(app, null);
@@ -142,9 +143,7 @@ public class SliderDialog extends JDialog implements ActionListener, WindowFocus
 
 		//Make this dialog display it.
 		setContentPane(optionPane);			
-		pack();					
-		
-		addWindowFocusListener(this);
+		pack();							
 	}
 	
 	private void centerOnScreen() {
@@ -194,14 +193,6 @@ public class SliderDialog extends JDialog implements ActionListener, WindowFocus
 		tfLabel.getTextComponent().requestFocusInWindow();
 		tfLabel.selectText();	
 	}
-
-	public void windowGainedFocus(WindowEvent e) {
-		setLabelFieldFocus();		
-	}
-
-	public void windowLostFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 			
 }

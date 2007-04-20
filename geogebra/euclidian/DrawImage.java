@@ -44,7 +44,7 @@ public final class DrawImage extends Drawable {
     
     boolean absoluteLocation;
     private AlphaComposite alphaComp;
-    private float alpha; 
+    private float alpha = -1; 
     private boolean isInBackground = false;    
     private AffineTransform at, atInverse, tempAT;
     private int screenX, screenY;

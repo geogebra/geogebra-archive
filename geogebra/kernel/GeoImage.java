@@ -26,7 +26,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String fileName; // image file
+	private String fileName = ""; // image file
 	private GeoPoint [] corners; // corners of the image
 	private BufferedImage image;	
 	private int pixelWidth, pixelHeight;
@@ -44,14 +44,13 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	public GeoImage(Construction c) {
 		super(c);
-		
-		instances.add(this);
-		
-		// three corners of the image: first, second and fourth
-		corners = new GeoPoint[3]; 				
-		
 		setAlphaValue(1f);
-		setAlgebraVisible(false); // don't show in algebra view			
+		setAlgebraVisible(false); // don't show in algebra view		
+
+		// three corners of the image: first, second and fourth
+		corners = new GeoPoint[3]; 			
+				
+		instances.add(this);						
 	}  
 
 	
@@ -150,7 +149,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * @param fileName
 	 */
 	public void setFileName(String fileName) {	
-		this.fileName = fileName;
+		this.fileName = fileName;		
 		image = app.getExternalImage(fileName);	
 		if (image != null) {
 			pixelWidth = image.getWidth();

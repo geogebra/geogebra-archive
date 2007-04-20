@@ -121,7 +121,7 @@ public class ImageManager {
 		}			
 	}	
 	
-	public BufferedImage getExternalImage(String fileName) {
+	public BufferedImage getExternalImage(String fileName) {		
 		return (BufferedImage) externalImageTable.get(fileName);
 	}
 	

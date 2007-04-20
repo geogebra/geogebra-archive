@@ -79,7 +79,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		setResizable(false);		
 
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns, true);		
+		inputPanel = new InputPanel(initString, app, rows, columns, false, true);		
 		
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {

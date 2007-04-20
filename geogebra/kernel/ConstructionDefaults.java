@@ -39,9 +39,9 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_FUNCTION = 60;		
 	public static final int DEFAULT_POLYGON = 70;
 	public static final int DEFAULT_LOCUS = 80;
-	public static final int DEFAULT_LIST = 90;
 	
 	public static final int DEFAULT_TEXT = 100;
+	public static final int DEFAULT_IMAGE = 110;
 		
 	// DEFAULT COLORs
 	// points
@@ -135,8 +135,7 @@ public class ConstructionDefaults {
 		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
 		pathPoint.setObjColor(colPathPoint);
 		defaultGeoElements.put(DEFAULT_POINT_ON_PATH, pathPoint);
-		
-		
+				
 		// line
 		GeoLine line = new GeoLine(cons);	
 		line.setLocalVariableLabel(app.getPlain("Line"));
@@ -183,16 +182,15 @@ public class ConstructionDefaults {
 		locus.setLocalVariableLabel(app.getPlain("Locus"));
 		locus.setObjColor(colLocus);		
 		locus.setLabelVisible(false);
-		defaultGeoElements.put(DEFAULT_LOCUS, locus);	
-		
-		// list
-		GeoList list = new GeoList(cons);
-		list.setLabelVisible(false);
-		defaultGeoElements.put(DEFAULT_LIST, list);	
+		defaultGeoElements.put(DEFAULT_LOCUS, locus);					
 		
 		// text
 		GeoText text = new GeoText(cons);		
 		defaultGeoElements.put(DEFAULT_TEXT, text);	
+		
+		// image
+		GeoImage img = new GeoImage(cons);
+		defaultGeoElements.put(DEFAULT_IMAGE, img);				
 	}
 	
 	/**
@@ -214,55 +212,56 @@ public class ConstructionDefaults {
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
 				
-		// free
-		if (geo.isIndependent()) {		
-			if (geo.isGeoPoint())
-				type = DEFAULT_POINT_FREE;		
-			else if (geo.isGeoLine())
-				type = DEFAULT_LINE;
-			else if (geo.isGeoVector())
-				type = DEFAULT_VECTOR;
-			else if (geo.isGeoConic())
-				type = DEFAULT_CONIC;
-			else if (geo.isGeoFunction())
-				type = DEFAULT_FUNCTION;		
-			else if (geo.isGeoNumeric())
-				type = DEFAULT_NUMBER;		
-			else if (geo.isGeoList()) 
-				type = DEFAULT_LIST;
-			else if (geo.isGeoText()) 
-				type = DEFAULT_TEXT;
-		} 
+		switch (geo.getGeoClassType()) {
+			case GeoElement.GEO_CLASS_POINT:
+				if (geo.isIndependent()) {
+					type = DEFAULT_POINT_FREE;
+				} else {
+					GeoPoint p = (GeoPoint) geo;
+					if (p.hasPath())
+						type = DEFAULT_POINT_ON_PATH;	
+					else
+						type = DEFAULT_POINT_DEPENDENT;
+				}
+				break;
 		
-		// dependent
-		else {			
-			if (geo.isGeoPoint()) {
-				GeoPoint p = (GeoPoint) geo;
-				if (p.hasPath())
-					type = DEFAULT_POINT_ON_PATH;	
-				else
-					type = DEFAULT_POINT_DEPENDENT;
-			} 
-			else if (geo.isGeoLine())
-				type = DEFAULT_LINE;
-			else if (geo.isGeoVector())
-				type = DEFAULT_VECTOR;
-			else if (geo.isGeoConic())
-				type = DEFAULT_CONIC;
-			else if (geo.isGeoFunction())
-				type = DEFAULT_FUNCTION;	
-			else if (geo.isGeoPolygon())
-				type = DEFAULT_POLYGON;			
-			else if (geo.isGeoAngle())
+			case GeoElement.GEO_CLASS_ANGLE:
 				type = DEFAULT_ANGLE;	
-			else if (geo.isGeoNumeric())
-				type = DEFAULT_NUMBER;	
-			else if (geo.isGeoLocus())
-				type = DEFAULT_LOCUS;	
-			else if (geo.isGeoList()) 
-				type = DEFAULT_LIST;
-			else if (geo.isGeoText()) 
+				break;
+				
+			case GeoElement.GEO_CLASS_CONIC:
+			case GeoElement.GEO_CLASS_CONICPART:
+				type = DEFAULT_CONIC;
+				break;
+				
+			case GeoElement.GEO_CLASS_FUNCTION:
+			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
+				type = DEFAULT_FUNCTION;
+				break;
+				
+			case GeoElement.GEO_CLASS_IMAGE:
+				type = DEFAULT_IMAGE;
+				break;
+				
+			case GeoElement.GEO_CLASS_LOCUS:
+				type = DEFAULT_LOCUS;
+				break;
+									
+			case GeoElement.GEO_CLASS_NUMERIC:
+				type = DEFAULT_NUMBER;
+				break;
+		
+			case GeoElement.GEO_CLASS_POLYGON:
+				type = DEFAULT_POLYGON;
+				break;
+	
+			case GeoElement.GEO_CLASS_TEXT:
 				type = DEFAULT_TEXT;
+				break;
+				
+			case GeoElement.GEO_CLASS_VECTOR:
+				type = DEFAULT_VECTOR;
+				break;					
 		}
 			
 		
