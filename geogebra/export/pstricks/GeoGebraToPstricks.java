@@ -47,7 +47,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 /**
- * @author Le Coq loïc
+ * @author Le Coq loÃ¯c
  */
 /*
 This file is part of GeoGebra.
@@ -187,8 +187,8 @@ public class GeoGebraToPstricks implements ActionListener {
         		drawSlider((GeoNumeric)g);
         	} else {
         		drawAngle((GeoAngle)g);
-        		String label="$"+Util.toLaTeXString(g.getLabelDescription(),true)+"$";
-        		drawLabel(g,euclidianView.getDrawableFor((GeoAngle)g),label);
+//        		String label="$"+Util.toLaTeXString(g.getLabelDescription(),true)+"$";
+        		drawLabel(g,euclidianView.getDrawableFor((GeoAngle)g));
         	}        	                                  
      }  
         else if (g.isGeoNumeric()) {
@@ -460,7 +460,7 @@ public class GeoGebraToPstricks implements ActionListener {
         }
         angExt+=angSt;
 		double r = arcSize /euclidianView.getXscale();
-		// if angle=90° and decoration=little square
+		// if angle=90ï¿½ and decoration=little square
         if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
         	r=r/Math.sqrt(2);
         	double[] x=new double[8];
@@ -474,9 +474,6 @@ public class GeoGebraToPstricks implements ActionListener {
         	x[7]=m[1];
         	
           	// command: \pspolygon[par](x0,y0)....(xn,yn)
-        	float alpha=geo.getAlphaValue();
-//        	if (alpha==0.0f) return;
-        	Color polyColor=geo.getColor();
         	codeFilledObject.append("\\pspolygon");
         	codeFilledObject.append(LineOptionCode(geo,true));
         	for (int i=0;i<4;i++){
@@ -511,7 +508,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		code.append(",");
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
-		// draw the dot if angle= 90° and decoration=dot
+		// draw the dot if angle= 90ï¿½ and decoration=dot
 		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
 			double diameter = geo.lineThickness/euclidianView.getXscale();
 			double radius = arcSize/euclidianView.getXscale()/1.7;
@@ -639,9 +636,6 @@ public class GeoGebraToPstricks implements ActionListener {
     	double x=geo.getSliderX();
     	double y=geo.getSliderY();
     	
-       	double widthRW;
-    	double widthScreen;
-    		
     	// start point of horizontal line for slider
     	if (geo.isAbsoluteScreenLocActive()) {
     		x = euclidianView.toRealWorldCoordX(x);
@@ -695,7 +689,6 @@ public class GeoGebraToPstricks implements ActionListener {
     	// command: \pspolygon[par](x0,y0)....(xn,yn)
     	float alpha=geo.getAlphaValue();
     	if (alpha==0.0f) return;
-    	Color polyColor=geo.getColor();
     	codeFilledObject.append("\\pspolygon");
     	codeFilledObject.append(LineOptionCode(geo,true));
     	GeoPoint [] points = geo.getPoints();	
@@ -1365,7 +1358,6 @@ public class GeoGebraToPstricks implements ActionListener {
 	}
 	private void drawGeoRay(GeoRay geo){
 		GeoPoint pointStart=geo.getStartPoint();
-		GeoPoint pointEnd=geo.getEndPoint();
 		
 		
 		double x1=pointStart.getX();
@@ -1446,7 +1438,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	// if label is Visible, draw it
 	private void drawLabel(GeoElement geo,Drawable drawGeo){
 		if (geo.isLabelVisible()){
-				String name=geo.getLabelDescription();
+				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
 				double xLabel=drawGeo.getxLabel();
 				double yLabel=drawGeo.getyLabel();
@@ -1471,32 +1463,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				codePoint.append("}\n");
 			}		
 		}	
-	// if label is Visible, draw it
-	private void drawLabel(GeoElement geo,Drawable drawGeo,String name){
-		if (geo.isLabelVisible()){
-				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
-				double xLabel=drawGeo.getxLabel()+geo.labelOffsetX;
-				double yLabel=drawGeo.getyLabel()+geo.labelOffsetY;
-				xLabel=euclidianView.toRealWorldCoordX(Math.round(xLabel));
-				yLabel=euclidianView.toRealWorldCoordY(Math.round(yLabel));
-				Color geocolor=geo.getColor();
-				codePoint.append("\\rput[bl](");
-				codePoint.append(kernel.format(xLabel));
-				codePoint.append(",");
-				codePoint.append(kernel.format(yLabel));
-				codePoint.append("){");
-				if (!geocolor.equals(Color.BLACK)){
-					codePoint.append("\\");
-					ColorCode(geocolor,codePoint);
-					codePoint.append("{");
-				}
-				codePoint.append(name);
-				if (!geocolor.equals(Color.BLACK)){
-					codePoint.append("}");
-				}
-				codePoint.append("}\n");
-			}		
-		}	
+
 	private boolean isSinglePointConic(GeoElement geo){
 		if (geo.isGeoConic()){
 			if (((GeoConic)geo).getType()==GeoConic.CONIC_SINGLE_POINT) 
