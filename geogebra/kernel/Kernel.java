@@ -2918,130 +2918,201 @@ public class Kernel {
 		return g;
 	}	
 	/**
-	 * Victor Franco Espino 11-02-2007: New commands
+	 * Victor Franco Espino 18-04-2007: New commands
 	 *
 	 * Calculate affine ratio: (A,B,C) = (t(C)-t(A)) : (t(C)-t(B)) 
 	 */
-	final public GeoNumeric AffineRatio(String label,GeoPoint A,GeoPoint B,GeoPoint C){
-		  AlgoAffineRatio affine = new AlgoAffineRatio(cons,label,A,B,C);
-		  GeoNumeric M = affine.getResult();
-		  return M;
-    }
+
+	final public GeoNumeric AffineRatio(String label, GeoPoint A, GeoPoint B,
+			GeoPoint C) {
+		AlgoAffineRatio affine = new AlgoAffineRatio(cons, label, A, B, C);
+		GeoNumeric M = affine.getResult();
+		return M;
+
+	}
+
 	  
+
 	/**
 	 * Calculate cross ratio: (A,B,C,D) = affineRatio(A, B, C) / affineRatio(A, B, D)
 	 */
+
 	final public GeoNumeric CrossRatio(String label,GeoPoint A,GeoPoint B,GeoPoint C,GeoPoint D){
+
 		  AlgoCrossRatio cross = new AlgoCrossRatio(cons,label,A,B,C,D);
 		  GeoNumeric M = cross.getResult();
 		  return M;
+
 	}
+
 	
+
 	/**
 	 * Calculate Curvature Vector for function: c(x) = (1/T^4)*(-f'*f'',f''), T = sqrt(1+(f')^2)
 	 */
+
 	final public GeoVector CurvatureVector(String label,GeoPoint A,GeoFunction f){
+
 		  AlgoCurvatureVector algo = new AlgoCurvatureVector(cons,label,A,f);
 		  GeoVector v = algo.getVector();
 		  return v;
+
 	}
 
+
+
 	/**
+
 	 * Calculate Curvature Vector for curve: c(t) = ((a'(t)b''(t)-a''(t)b'(t))/T^4) * (-b'(t),a'(t))
      *                                       T = sqrt(a'(t)^2+b'(t)^2)
 	 */
+
 	final public GeoVector CurvatureVectorCurve(String label,GeoPoint A,GeoCurveCartesian f){
+
 		  AlgoCurvatureVectorCurve algo = new AlgoCurvatureVectorCurve(cons,label,A,f);
 		  GeoVector v = algo.getVector();
 		  return v;
+
 	}
+
 	
+
 	/**
 	 * Calculate Curvature for function: k(x) = f''/T^3, T = sqrt(1+(f')^2)
 	 */
+
 	final public GeoNumeric Curvature(String label,GeoPoint A,GeoFunction f){
+
 		  AlgoCurvature algo = new AlgoCurvature(cons,label,A,f);
 		  GeoNumeric k = algo.getResult();
 		  return k;
+
 	}
-	
-	/**
-	 * Color of Curvature for function
-	 */
-	final public GeoNumeric ColorCurvature(String label,GeoPoint A,GeoFunction f, GeoNumeric slider){
-		  AlgoColorCurvature algo = new AlgoColorCurvature(cons,label,A,f,slider);
-		  GeoNumeric k = algo.getValue();
-		  return k;
-	}
-	
+
+		
+
 	/**
 	 * Calculate Curvature for Curve: k(t) = (a'(t)b''(t)-a''(t)b'(t))/T^3, T = sqrt(a'(t)^2+b'(t)^2)
 	 */
+
 	final public GeoNumeric CurvatureCurve(String label,GeoPoint A, GeoCurveCartesian f){
+
 		  AlgoCurvatureCurve algo = new AlgoCurvatureCurve(cons,label,A,f);
 		  GeoNumeric k = algo.getResult();
 		  return k;
+
 	}
 
-	/**
-	 * Color of Curvature for Curve
-	 */
-	final public GeoNumeric ColorCurvatureCurve(String label,GeoPoint A,GeoCurveCartesian f, GeoNumeric slider){
-		  AlgoColorCurvatureCurve algo = new AlgoColorCurvatureCurve(cons,label,A,f,slider);
-		  GeoNumeric k = algo.getValue();
-		  return k;
-	}
 	
+
 	/**
 	 * Osculating Circle of a function f in point A
 	 */
+
 	final public GeoConic OsculatingCircle(String label,GeoPoint A,GeoFunction f){
+
 		  AlgoOsculatingCircle algo = new AlgoOsculatingCircle(cons,label,A,f);
 		  GeoConic circle = algo.getCircle();
 		  return circle;
+
 	}
+
 	
+
 	/**
 	 * Osculating Circle of a curve f in point A
 	 */
+
 	final public GeoConic OsculatingCircleCurve(String label,GeoPoint A,GeoCurveCartesian f){
+
 		  AlgoOsculatingCircleCurve algo = new AlgoOsculatingCircleCurve(cons,label,A,f);
 		  GeoConic circle = algo.getCircle();
 		  return circle;
+
 	}
+
 	
+
+	/**
+	 * Calculate Function Length between the numbers A and B: integral from A to B on T = sqrt(1+(f')^2)
+	 */
+
+	final public GeoNumeric FunctionLength(String label,GeoFunction f,GeoNumeric A,GeoNumeric B){
+
+		  AlgoLengthFunction algo = new AlgoLengthFunction(cons,label,f,A,B);
+		  GeoNumeric length = algo.getLength();
+		  return length;
+
+	}
+
+	
+
 	/**
 	 * Calculate Function Length between the points A and B: integral from A to B on T = sqrt(1+(f')^2)
 	 */
-	final public GeoNumeric FunctionLength(String label,GeoPoint A,GeoPoint B,GeoFunction f){
-		  AlgoLengthFunction algo = new AlgoLengthFunction(cons,label,A,B,f);
+
+	final public GeoNumeric FunctionLength2Points(String label,GeoFunction f,GeoPoint A,GeoPoint B){
+
+		  AlgoLengthFunction2Points algo = new AlgoLengthFunction2Points(cons,label,f,A,B);
 		  GeoNumeric length = algo.getLength();
 		  return length;
+
 	}
+
 	
+
 	/**
+
 	 * Calculate Curve Length between the parameters t0 and t1: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
+
 	 */
-	final public GeoNumeric CurveLength(String label,GeoNumeric t0,GeoNumeric t1,GeoCurveCartesian f){
-		  AlgoLengthCurve algo = new AlgoLengthCurve(cons,label,t0,t1,f);
+
+	final public GeoNumeric CurveLength(String label, GeoCurveCartesian c, GeoNumeric t0,GeoNumeric t1){
+
+		  AlgoLengthCurve algo = new AlgoLengthCurve(cons,label,c,t0,t1);
 		  GeoNumeric length = algo.getLength();
 		  return length;
+
 	}
+
 	
+
+	/**
+
+	 * Calculate Curve Length between the points A and B: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
+
+	 */
+
+	final public GeoNumeric CurveLength2Points(String label, GeoCurveCartesian c, GeoPoint A,GeoPoint B){
+
+		  AlgoLengthCurve2Points algo = new AlgoLengthCurve2Points(cons,label,c,A,B);
+		  GeoNumeric length = algo.getLength();
+		  return length;
+
+	}
+
+	
+
 	/** 
 	 * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t))
 	 */
+
 	final public GeoLine TangentCurve(String label,GeoPoint P,GeoCurveCartesian f) {
+
 		AlgoTangentCurve algo = new AlgoTangentCurve(cons, label, P, f);
 		GeoLine t = algo.getTangent();
 		t.setToExplicit();
 		t.update();     
 		notifyUpdate(t);
 		return t;
+
 	}
+
 	/**
-	 * Victor Franco Espino 11-02-2007: End new commands 
+	 * Victor Franco Espino 18-04-2007: End new commands 
 	 */
+
+
 	
 
 	/***********************************

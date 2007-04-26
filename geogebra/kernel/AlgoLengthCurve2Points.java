@@ -7,22 +7,22 @@ import geogebra.kernel.roots.RealRootFunction;
 * @author  Victor Franco Espino
 * @version 19-04-2007
 *
-* Calculate Curve Length between the parameters t0 and t1: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
+* Calculate Curve Length between the points A and B: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
 */
 
-public class AlgoLengthCurve extends AlgoElement {
+public class AlgoLengthCurve2Points extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoNumeric t0, t1; //input
+	private GeoPoint A, B; //input
 	private GeoCurveCartesian c, c1; //c1 is c'(x)
     private GeoNumeric length; //output
 	private RealRootFunction lengthCurve; //is T = sqrt(a'(t)^2+b'(t)^2)
 	private GaussQuadIntegration gauss;
 
-    AlgoLengthCurve(Construction cons, String label, GeoCurveCartesian c, GeoNumeric t0, GeoNumeric t1) {
+    AlgoLengthCurve2Points(Construction cons, String label, GeoCurveCartesian c, GeoPoint A, GeoPoint B) {
         super(cons);
-        this.t0 = t0;
-        this.t1 = t1;
+        this.A = A;
+        this.B = B;
         this.c = c;
         length = new GeoNumeric(cons);
 
@@ -40,14 +40,14 @@ public class AlgoLengthCurve extends AlgoElement {
     }
 
     String getClassName() {
-        return "AlgoLengthCurve";
+        return "AlgoLengthCurve2Points";
     }
 
     void setInputOutput(){
         input = new GeoElement[3];
         input[0] = c;
-        input[1] = t0;
-        input[2] = t1;
+        input[1] = A;
+        input[2] = B;
 
         output = new GeoElement[1];
         output[0] = length;
@@ -59,8 +59,8 @@ public class AlgoLengthCurve extends AlgoElement {
     }
 
     final void compute() {
-    	double a = t0.getValue();
-    	double b = t1.getValue();
+    	double a = c.getClosestParameter(A,c.getMinParameter());
+    	double b = c.getClosestParameter(B,c.getMinParameter());
 
 		if (a <= b)
 			length.setValue(gauss.integrate(lengthCurve, a, b));

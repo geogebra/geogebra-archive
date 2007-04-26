@@ -164,16 +164,13 @@ public class CommandDispatcher {
     	cmdTable.put("If", new CmdIf(algCtrl));
     	cmdTable.put("Sequence", new CmdSequence(algCtrl));    	
     	cmdTable.put("CurveCartesian", new CmdCurveCartesian(algCtrl));
-    	// Victor Franco Espino 11-02-2007: New commands
+    	// Victor Franco Espino 18-04-2007: New commands
     	cmdTable.put("AffineRatio", new CmdAffineRatio(algCtrl));
     	cmdTable.put("CrossRatio", new CmdCrossRatio(algCtrl));
     	cmdTable.put("CurvatureVector", new CmdCurvatureVector(algCtrl));
     	cmdTable.put("Curvature", new CmdCurvature(algCtrl));
     	cmdTable.put("OsculatingCircle", new CmdOsculatingCircle(algCtrl));
-    	cmdTable.put("FunctionLength", new CmdFunctionLength(algCtrl));
-    	cmdTable.put("CurveLength", new CmdCurveLength(algCtrl));
-    	cmdTable.put("ColorCurvature", new CmdColorCurvature(algCtrl));
-    	// Victor Franco Espino 11-02-2007: End new commands
+    	// Victor Franco Espino 18-04-2007: End new commands
     	// Philipp Weissenbacher 10-04-2007
     	cmdTable.put("Circumference", new CmdCircumference(algCtrl));
     	// Philipp Weissenbacher 10-04-2007
