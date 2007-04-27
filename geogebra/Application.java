@@ -433,6 +433,25 @@ public class Application {
     public boolean isIniting() {
         return INITING;
     }
+    
+    public int getToolBarHeight() {
+    	if (showToolBar)
+    		return appToolBarPanel.getHeight();
+    	else
+    		return 0;
+    }    
+    
+    public int getMenuBarHeight() {
+    	return menuBar.getHeight();
+    }
+    
+    public int getAlgebraInputHeight() {
+    	if (showAlgebraInput)
+    		return algebraInput.getHeight();
+    	else
+    		return 0;
+    }
+
 
     /**
      * Updates the GUI of the main component.
@@ -2392,7 +2411,7 @@ public class Application {
         if (menuBar == null) 
         	menuBar = new JMenuBar();
         else
-        	menuBar.removeAll();
+        	menuBar.removeAll();                
 
         // File          
         menuFile = new JMenu(getMenu("File"));

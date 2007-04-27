@@ -54,7 +54,7 @@ import javax.swing.UIManager;
 import netscape.javascript.JSObject;
 
 /**
- *
+ * Applet interface of GeoGebra.
  * @author  Markus Hohenwarter
  */
 public class GeoGebraApplet extends JApplet {
