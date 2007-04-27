@@ -17,6 +17,8 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 
+import java.awt.Color;
+
 /**
  * Cartesian parametric curve, e.g. (cos(t), sin(t)) for t from 0 to 2pi.
  * 
@@ -36,7 +38,14 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	private boolean isDefined = true;
 	private boolean isClosedPath;
 	private boolean trace = false;	
-	
+//	Victor Franco Espino 25-04-2007
+	/*
+	 * Parameter in dialog box for adjust color of curvature
+	 */
+	double CURVATURE_COLOR = 15;//optimal value 
+    //Victor Franco Espino 25-04-2007
+
+
 	private ParametricCurveDistanceFunction distFun;
 	
 	public GeoCurveCartesian(Construction c, 
@@ -426,6 +435,69 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		out[1] = funY.evaluate(paramVal);
 	}
 	
+//	Victor Franco 25-04-2007
+
+	/*
+
+	 * Evaluate Curve and return a Color
+
+	 * depending on the value of curvature
+
+	 */
+
+	public Color evaluateColorCurvature(double t, double [] out){
+
+		out[0] = funX.evaluate(t);
+		out[1] = funY.evaluate(t);
+
+		Function f1X, f1Y, f2X, f2Y; 
+		f1X = funX.getDerivative(1);
+		f1Y = funY.getDerivative(1);
+		f2X = funX.getDerivative(2);
+		f2Y = funY.getDerivative(2);
+		
+	  	double f1eval[] = new double[2];
+    	double f2eval[] = new double[2];
+    	double t1, t3, evals;
+    
+    	f1eval[0] = f1X.evaluate(t);
+    	f1eval[1] = f1Y.evaluate(t);
+    	f2eval[0] = f2X.evaluate(t);
+    	f2eval[1] = f2Y.evaluate(t);
+        t1 = Math.sqrt(f1eval[0]*f1eval[0] + f1eval[1]*f1eval[1]);
+        t3 = t1 * t1 * t1;
+        evals = (f1eval[0]*f2eval[1] - f2eval[0]*f1eval[1]) / t3;
+
+	    double a = CURVATURE_COLOR;
+	    Color curvColor;
+
+	    if (a<0) a=0;//No negative values for Color
+
+	    /**Color of curvature
+	     * 
+	     * Negative Curvature : Green
+	     * Positive Curvature : Red
+	     * Curvature near zero: Blue
+	    */
+	    float red, green, alpha = (float) 0.5;
+
+	    if (evals >= Kernel.MIN_PRECISION){
+			red = (float) (a*evals/(a*evals+1));
+			green = 0;
+	    	curvColor = new Color(red,green,1-red,alpha);
+
+		}else if (evals < 0){
+			green =  (float) (a*evals/(a*evals-1));
+			red = 0;
+			curvColor = new Color(red,green,1-green,alpha);
+		}
+		else {
+			curvColor = Color.BLACK;//default color
+		}
+		return curvColor;
+	}
+
+    //Victor Franco 25-04-2007
 	public GeoVec2D evaluateCurve(double t) {		
 		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
 	}  
