@@ -17,6 +17,8 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.roots.RealRootFunction;
 
+import java.awt.Color;
+
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
  * in geogebra.kernel.arithmetic. In arithmetic trees (ExpressionNode) it evaluates
@@ -37,6 +39,13 @@ GeoDeriveable, ParametricCurve {
 	protected boolean isDefined = true;
 	public boolean trace;	
 	private String varStr = "x";
+//	Victor Franco Espino 25-04-2007
+	/*
+	 * Parameter in dialog box for adjust color of curvature
+	 */
+	double CURVATURE_COLOR = 15;//optimal value 
+
+    //Victor Franco Espino 25-04-2007
 
 	public GeoFunction(Construction c) {
 		super(c);
@@ -465,7 +474,64 @@ GeoDeriveable, ParametricCurve {
 		out[0] = t;
 		out[1] = evaluate(t);		
 	}
+//	Victor Franco 25-04-2007
 
+	/*
+
+	 * Evaluate Function and return a Color
+
+	 * depending on the value of curvature
+
+	 */
+
+	public Color evaluateColorCurvature(double x, double[] out){
+	   
+		out[0] = x;
+		out[1] = evaluate(x);
+		Function f1, f2; 
+		f1 = fun.getDerivative(1);
+		f2 = fun.getDerivative(2);
+		
+
+		double f1eval = f1.evaluate(x);
+		double t = Math.sqrt(1 + f1eval * f1eval);
+		double t3 = t * t * t;
+		double value = f2.evaluate(x) / t3;
+    	double a = CURVATURE_COLOR;
+
+    	Color curvColor;
+
+    	if (a<0) a=0;//No negative values for Color
+
+    	/**Color of curvature
+    	 * 
+    	 * Negative Curvature : Green
+    	 * Positive Curvature : Red
+    	 * Curvature near zero: Blue
+    	*/
+
+    	float red, green, alpha = (float) 0.5;
+
+
+    	if (value >= Kernel.MIN_PRECISION){
+			red = (float) (a*value/(a*value+1));
+			green = 0;
+    		curvColor = new Color(red,green,1-red,alpha);
+		}else if (value < 0){
+
+			green =  (float) (a*value/(a*value-1));
+			red = 0;
+			curvColor = new Color(red,green,1-green,alpha);
+		}
+
+		else {
+			curvColor = Color.BLACK;//default color
+		}
+
+		return curvColor;
+	}
+
+    //Victor Franco 25-04-2007
 	final public RealRootFunction getRealRootFunctionX() {
 		return new RealRootFunction() {
 			public double evaluate(double t) {
