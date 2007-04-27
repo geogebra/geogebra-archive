@@ -10,7 +10,7 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package tutor;
 
 /*
  * GeoGebraApplet.java
@@ -18,6 +18,9 @@ package geogebra;
  * Created on 23. J�nner 2003, 22:37
  */
 
+import geogebra.Application;
+import geogebra.GeoGebraApplet;
+import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebra;
 import geogebra.kernel.Construction;
@@ -51,7 +54,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import tutor.TutorView;
 
 import netscape.javascript.JSObject;
 

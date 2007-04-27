@@ -2223,11 +2223,11 @@ public class Application {
 			cbShowAuxiliaryObjects.setSelected(flag);
 	}
     
-    void setShowMenuBar(boolean flag) {
+    public void setShowMenuBar(boolean flag) {
     	showMenuBar = flag;
     }
     
-    void setShowToolBar(boolean toolbar, boolean help) {
+    public void setShowToolBar(boolean toolbar, boolean help) {
     	showToolBar = toolbar;
     	
     	if (showToolBar) {
@@ -2242,7 +2242,7 @@ public class Application {
     	return  showToolBar;        
     }
     
-    void setUndoActive(boolean flag) {
+    public void setUndoActive(boolean flag) {
     	undoActive = flag;
     	kernel.setUndoActive(flag);
     }

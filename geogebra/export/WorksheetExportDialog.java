@@ -95,10 +95,10 @@ public class WorksheetExportDialog extends JDialog {
 	JTabbedPane tabbedPane = new JTabbedPane();
 	tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-	tabbedPane.addTab(app.getPlain("GeneralSettings"),
+	tabbedPane.addTab(app.getMenu("GeneralSettings"),
 		createGeneralSettingsTab());
 
-	tabbedPane.addTab(app.getPlain("AdvancedSettings"),
+	tabbedPane.addTab(app.getMenu("AdvancedSettings"),
 		createAdvancedSettingsTab());
 
 	// Cancel and Export Button
@@ -264,7 +264,7 @@ public class WorksheetExportDialog extends JDialog {
     private JPanel createAdvancedSettingsTab() {
 	JPanel tab = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-	showToolbarHelpCB = new JCheckBox(app.getPlain("ShowToolBarHelp"));
+	showToolbarHelpCB = new JCheckBox(app.getMenu("ShowToolBarHelp"));
 	tab.add(showToolbarHelpCB);
 
 	return tab;
