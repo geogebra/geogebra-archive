@@ -10,9 +10,11 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui.toolbar;
 
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.MySmallJButton;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 

@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 class ToolbarConfigDialog extends JDialog implements ActionListener, ListSelectionListener, ChangeListener {
 	public JTabbedPane tPane;
 	private Application app;	
-	public JPanelConfigToolbar1 configToolBar1;
+	public ToolbarConfigPanel configToolBar1;
 	String actLeftToolBar;
 		
 	/**
@@ -44,7 +44,7 @@ class ToolbarConfigDialog extends JDialog implements ActionListener, ListSelecti
 		
 		tPane.addTab("Toolbar auswählen",jPanel);
 		tPane.addTab("Konstruktionsleiste ändern", configToolBar2 = new JPanelConfigToolbar2("bla", geonext, this, 0));
-		tPane.addTab("Konstruktionsleiste konfigurieren", configToolBar1 = new JPanelConfigToolbar1("bla", (ToolBarVector) geonext.allToolBarVectors.get(geonext.activeLeftToolBar), this));
+		tPane.addTab("Konstruktionsleiste konfigurieren", configToolBar1 = new ToolbarConfigPanel("bla", (ToolBarVector) geonext.allToolBarVectors.get(geonext.activeLeftToolBar), this));
 		//
 		//
 		tPane.addChangeListener(this);

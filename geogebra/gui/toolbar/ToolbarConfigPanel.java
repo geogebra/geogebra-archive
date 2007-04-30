@@ -11,7 +11,7 @@
 */
 package geogebra.gui.toolbar;
 import geogebra.Application;
-import geogebra.MyToolbar;
+import geogebra.euclidian.EuclidianView;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,6 +25,8 @@ import javax.swing.event.*;
 import javax.swing.tree.TreeSelectionModel;
 import java.net.URL;
 import java.io.IOException;
+
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -42,14 +44,14 @@ import javax.swing.border.*;
 /**
  * 
  */
-class JPanelConfigToolbar1 extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
-	public javax.swing.JButton okButton;
-	public javax.swing.JButton cancelButton;
-	public javax.swing.JButton editButton;
-	public javax.swing.JButton insertButton;
-	public javax.swing.JButton moveUpButton;
-	public javax.swing.JButton moveDownButton;
-	public javax.swing.JButton deleteButton;
+class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
+	
+	public JButton cancelButton;
+	public JButton editButton;
+	public JButton insertButton;
+	public JButton moveUpButton;
+	public JButton moveDownButton;
+	public JButton deleteButton;
 	public JTree tree;
 	JScrollPane configScrollPane;
 	JScrollPane modeScrollPane;
@@ -58,13 +60,15 @@ class JPanelConfigToolbar1 extends javax.swing.JPanel implements java.awt.event.
 	JList modeList;
 	String toolbar;
 	int selectedRow;	
+	Application app;
 	
 	boolean change = false;
 	/**
 	 * 
 	 */
-	public JPanelConfigToolbar1(String titel, Application app) {
+	public ToolbarConfigPanel(String titel, Application app) {
 		super();	
+		this.app = app;
 		
 		selectionPanel = new JPanel();
 		selectionPanel.setLayout(new BorderLayout(10, 10));
@@ -77,47 +81,51 @@ class JPanelConfigToolbar1 extends javax.swing.JPanel implements java.awt.event.
 		configScrollPane = new JScrollPane(tree);
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		configScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		configScrollPane.setSize(150, 150);
-		configScrollPane.setPreferredSize(new Dimension(150, 150));
+		//configScrollPane.setSize(150, 150);
+		//configScrollPane.setPreferredSize(new Dimension(150, 150));
 		JPanel scrollSpacePanel = new JPanel();
 		scrollSpacePanel.setLayout(new BorderLayout(0, 0));
-		scrollSpacePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		scrollSpacePanel.add("Center", configScrollPane); //
+		scrollSpacePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		scrollSpacePanel.add(configScrollPane, BorderLayout.CENTER); //
 		JPanel scrollPanel = new JPanel();
 		scrollPanel.setLayout(new BorderLayout(0, 0));
-		scrollPanel.setBorder(new TitledBorder(new EtchedBorder(1), " " + "Aktuelle Konstruktionsleiste" + " "));
-		//scrollPanel.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), " " + "Aktuelle Konstruktionsleiste" + " "));
-		scrollPanel.add("Center", scrollSpacePanel);
+		scrollPanel.setBorder(new TitledBorder(app.getMenu("Toolbar")));
+		scrollPanel.add(scrollSpacePanel, BorderLayout.CENTER);
 		//
-		selectionPanel.add("West", scrollPanel);
+		selectionPanel.add(scrollPanel, BorderLayout.WEST);
 		//
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
+		
+		final JButton btUp = new JButton("\u25b2");
+		btUp.setToolTipText(app.getPlain("Up"));
+		final JButton btDown = new JButton("\u25bc");
+		btDown.setToolTipText(app.getPlain("Down"));
+		
 		//
-		insertButton = new javax.swing.JButton("Einfügen", new ImageIcon(getClass().getResource("16/function_left.gif")));
+		insertButton = new JButton("\u25c0" + app.getPlain("Insert"));
 		insertButton.setName("insert");
 		insertButton.addActionListener(this);
 		buttonPanel.add(insertButton);
 		//		
-		moveUpButton = new javax.swing.JButton("Nach oben", new ImageIcon(getClass().getResource("16/function_up.gif")));
+		insertButton = new javax.swing.JButton("\u25b6" + app.getPlain("Remove"));
+		insertButton.setName("delete");
+		insertButton.addActionListener(this);
+		buttonPanel.add(insertButton);
+		//		
+		moveUpButton = new javax.swing.JButton("\u25b2" + app.getPlain("Up"));
 		moveUpButton.setName("moveUp");
 		moveUpButton.addActionListener(this);
 		buttonPanel.add(moveUpButton);
 		//
-		moveDownButton = new javax.swing.JButton("Nach unten", new ImageIcon(getClass().getResource("16/function_down.gif")));
+		moveDownButton = new javax.swing.JButton("\u25bc" + app.getPlain("Down"));
 		moveDownButton.setName("moveDown");
 		moveDownButton.addActionListener(this);
 		buttonPanel.add(moveDownButton);
-		//
-		//
-		insertButton = new javax.swing.JButton("Löschen", new ImageIcon(getClass().getResource("16/mode_delete.gif")));
-		insertButton.setName("delete");
-		insertButton.addActionListener(this);
-		buttonPanel.add(insertButton);
+
 		//
 		JPanel buttonAllPanel = new JPanel();
-		buttonAllPanel.setLayout(new BorderLayout(0, 0));
-		buttonAllPanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), " " + "Eintrag" + " "));
+		buttonAllPanel.setLayout(new BorderLayout(0, 0));		
 		buttonAllPanel.add("North", buttonPanel);
 		buttonAllPanel.add("Center", new JPanel());
 		//
@@ -125,10 +133,10 @@ class JPanelConfigToolbar1 extends javax.swing.JPanel implements java.awt.event.
 		//
 		JPanel modePanel = new JPanel();
 		modePanel.setLayout(new BorderLayout(0, 0));
-		modePanel.setBorder(new TitledBorder(new EtchedBorder(1), " " + "Wählbare Einträge" + " "));
+		modePanel.setBorder(new TitledBorder(app.getPlain("Tools")));
 		//modePanel.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), " " + "Wählbare Einträge" + " "));
 		//
-		Vector modeVector = generateListVector();
+		Vector modeVector = generateToolsVector();
 		modeList = new JList(modeVector);
 		//modeList.setPreferredSize(new Dimension(150, 150));
 		//
@@ -353,91 +361,22 @@ class JPanelConfigToolbar1 extends javax.swing.JPanel implements java.awt.event.
 	 * 
 	 */
 	public void expandAllRows(JTree tree) {}
+	
 	/**
 	 * 
 	 */
-	public void expandRows() {
-		collapseAllRows();
-		tree.expandRow(0);
-		int expandIndex = 1;
-		int lastExpand = 0;
-		for (int i = 0; i < expandedRows.size(); i++) {
-			expandIndex = expandIndex + ((Integer) expandedRows.elementAt(i)).intValue() - lastExpand;
-			tree.expandRow(expandIndex);
-			expandIndex = expandIndex + ((Vector) popups.get(((Integer) expandedRows.elementAt(i)).intValue())).size();
-			lastExpand = ((Integer) expandedRows.elementAt(i)).intValue();
-		}
-	}
-	/**
-	 * 
-	 */
-	public Vector generateListVector() {
+	public Vector generateToolsVector() {
 		Vector vector = new Vector();
-		vector.addElement(Geonext.frontendElements.get("SEPARATOR"));
-		vector.addElement(Geonext.frontendElements.get("MODE_MOVE"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_POINT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_MIDPOINT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_PERPENDICULAR_POINT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_CIRCUMCIRCLE_CENTER"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_PARALLELOGRAM_POINT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_CASPOINT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_INTERSECTION"));
-		vector.addElement(Geonext.frontendElements.get("MODE_SLIDER"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_MIRROR_LINE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_MIRROR_POINT"));
-		//vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_ROTATION"));
-		/*
-		vector = new Vector();
-		vector.addElement(Geonext.frontendElements.get("MODE_SLIDER"));
-		vector.addElement(Geonext.frontendElements.get("FUNCTION_PLAY"));
-		vector.addElement(Geonext.frontendElements.get("FUNCTION_STOP"));
-		tbv.addElement(vector);
-		*/
-		vector.addElement(Geonext.frontendElements.get("MODE_LINE_STRAIGHT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_LINE_SEGMENT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_LINE_RAY"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_BISECTOR"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_PERPENDICULAR"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_NORMAL"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_PARALLEL"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_CIRCLE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_CIRCLE_RADIUS"));
-		vector.addElement(Geonext.frontendElements.get("MODE_CIRCLE_CALC"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_CIRCUMCIRCLE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_ARC"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_SECTOR"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_ARROW"));
-		vector.addElement(Geonext.frontendElements.get("MODE_COMPOSITION_ARROW_PARALLEL"));
-		/*
-		vector = new Vector();
-		vector.addElement(Geonext.frontendElements.get("MODE_INTERSECTION"));
-		tbv.addElement(vector);
-		*/
-		vector.addElement(Geonext.frontendElements.get("MODE_POLYGON"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_GRAPH"));
-		vector.addElement(Geonext.frontendElements.get("MODE_PARAMETERCURVE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_TRACECURVE"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_TEXT_DISTANCE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_TEXT_ANGLE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_TEXT"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_GROUP_ON"));
-		vector.addElement(Geonext.frontendElements.get("MODE_GROUP_OFF"));
-		//vector.addElement(Geonext.frontendElements.get("MODE_GROUP_ROTATE"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_ANGLE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_ARC_CALC"));
-		//
-		vector.addElement(Geonext.frontendElements.get("MODE_RENAME"));
-		vector.addElement(Geonext.frontendElements.get("MODE_SHOWNAME"));
-		vector.addElement(Geonext.frontendElements.get("MODE_VISIBLE"));
-		vector.addElement(Geonext.frontendElements.get("MODE_DRAFT"));
-		vector.addElement(Geonext.frontendElements.get("MODE_SETTRACE"));
+		
+		// separator
+		vector.add(new Integer(-1));
+				
+		for (int mode=0; mode < 200; mode++) {
+			String modeText = EuclidianView.getModeText(mode);
+			if (!"".equals(modeText)) {
+				vector.add(new Integer(mode));
+			}
+		}				
 		return vector;
 	}
 	/**

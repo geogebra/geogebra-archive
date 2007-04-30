@@ -10,8 +10,9 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui.toolbar;
 
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Macro;
 import geogebra.util.ImageManager;
@@ -192,6 +193,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	private int iconWidth, iconHeight;
 	private GeneralPath gp;
 	private boolean showToolTipText = true;
+	private boolean popupTriangleHighlighting = false;
 	private ModeToggleMenu menu;		
 	
 	private static final Color arrowColor = new Color(0,0,0,130);
@@ -235,13 +237,12 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	
 	
 	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-			
+		Graphics2D g2 = (Graphics2D) g;			
+		Stroke oldStroke = g2.getStroke();
+		
 		super.paint(g2);	
 				
-		if (isSelected()) {
-			Stroke oldStroke = g2.getStroke();					
-			
+		if (isSelected()) {										
 			g2.setColor(selColor);
 			g2.setStroke(selStroke);
 			g2.drawRect(BORDER-1,BORDER-1, iconWidth+1, iconHeight+1);			
@@ -255,10 +256,18 @@ implements MouseListener, MouseMotionListener, ActionListener {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 								RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			g2.setColor(Color.white);						
-			g2.fill(gp);
-			g2.setColor(arrowColor);
-			g2.draw(gp);
+			if (popupTriangleHighlighting || menu.isPopupShowing()) {
+				g2.setColor(Color.red);				
+				g2.fill(gp);
+				g2.setColor(Color.black);
+				g2.draw(gp);				
+			} else {
+				g2.setColor(Color.white);
+				g2.fill(gp);
+				g2.setColor(arrowColor);
+				g2.draw(gp);
+			}
+			
 		}
 	}
 	
@@ -277,13 +286,21 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		return (menu.size > 1 && y > iconHeight);
 	}
 
-	public void mouseClicked(MouseEvent e) {				
+	public void mouseClicked(MouseEvent e) {	
+		if (e.getClickCount() == 2) {
+			menu.setPopupVisible(true);
+			requestFocus();
+		}		
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
 	}
 
 	public void mouseExited(MouseEvent arg0) {
+		if (popupTriangleHighlighting) {
+			popupTriangleHighlighting = false;
+			repaint();
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {		
@@ -302,6 +319,13 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	
 	public void mouseMoved(MouseEvent e) {	
 		menu.mouseOver();
-		showToolTipText = !menu.isPopupShowing(); 			
+		showToolTipText = !menu.isPopupShowing(); 
+		
+		// highlight popup menu triangle
+		if (menu.size > 1 &&  
+				popupTriangleHighlighting != popupTriangleClicked(e.getX(), e.getY())) {
+			popupTriangleHighlighting = !popupTriangleHighlighting;
+			repaint();
+		}			
 	}
 }

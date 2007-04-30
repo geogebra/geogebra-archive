@@ -37,6 +37,7 @@ import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.toolbar.MyToolbar;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
