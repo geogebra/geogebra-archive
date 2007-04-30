@@ -219,7 +219,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 			app.setShowToolBar(showToolBar, showToolBarHelp);	
 			app.setRightClickEnabled(enableRightClick);
 			if (customToolBar != null && customToolBar.length() > 0)
-				app.setCustomToolBar(customToolBar);
+				app.setToolBarDefinition(customToolBar);
 			app.setShowResetIcon(showResetIcon);
 			ev = app.getEuclidianView();
 			p.add(app.buildApplicationPanel(), BorderLayout.CENTER);
@@ -283,7 +283,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 		app.setShowToolBar(true, true);	
 		app.setRightClickEnabled(true);
 		if (customToolBar != null && customToolBar.length() > 0)
-			app.setCustomToolBar(customToolBar);
+			app.setToolBarDefinition(customToolBar);
 			
 		app.updateContentPane();
 		app.resetFonts();

@@ -10,9 +10,8 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.gui;
+package geogebra;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Macro;
 import geogebra.util.ImageManager;
@@ -110,25 +109,8 @@ public class ModeToggleMenu extends JPanel {
 	}
 	
 	public void addMode(int mode) {
-		// macro
-		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
-			try {
-				int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
-				Macro macro = app.getKernel().getMacro(macroID);							
-				addMacro(macroID, macro);
-			} catch (Exception e) {}
-    		return;
-		}
-		
-		// standard case
-		String modeText = EuclidianView.getModeText(mode);
-		String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
-		ImageIcon icon = app.getImageIcon(iconName, getBackground());		
-				
-		if (icon == null) {
-			System.err.println("icon missing for mode " + modeText + " (" + mode + ")");
-			return;
-		}
+		String modeText = app.getModeText(mode);
+		ImageIcon icon = app.getModeIcon(mode);
 		
 		// add menu item to popu menu
 		String actionText = mode + "";
@@ -152,47 +134,7 @@ public class ModeToggleMenu extends JPanel {
 			// add button to button group
 			bg.add(tbutton);
 		}
-	}	
-	
-	public void addMacro(int macroID, Macro macro) {
-		int mode = EuclidianView.MACRO_MODE_ID_OFFSET + macroID;
-		String modeText = macro.getToolName();
-		if ("".equals(modeText)) 
-			modeText = macro.getCommandName();
-					
-		String iconName = macro.getIconFileName();		
-		BufferedImage img = app.getExternalImage(iconName);
-		ImageIcon icon;
-		if (img == null)
-			// default icon
-			icon = app.getImageIcon("mode_tool_32.png", getBackground());			
-		else
-			// use image as icon
-			icon = new ImageIcon(ImageManager.addBorder(img, getBackground()));							
-		
-		// add menu item to popu menu
-		String actionText = mode + "";
-		JMenuItem mi = new JMenuItem();
-		mi.setFont(app.getPlainFont());
-		mi.setText(modeText);
-	    
-		mi.setIcon(icon);
-		mi.addActionListener(popupMenuItemListener);
-		mi.setActionCommand(actionText);
-		
-		popMenu.add(mi);	
-		menuItemList.add(mi);
-		size++;
-		
-		if (size == 1) {
-			// init tbutton
-			tbutton.setIcon(icon);
-			tbutton.setActionCommand(actionText);
-			tbutton.setToolTipText(mi.getText());
-			// add button to button group
-			bg.add(tbutton);
-		}
-	}	
+	}			
 	
 	public void addSeparator() {
 		popMenu.addSeparator();

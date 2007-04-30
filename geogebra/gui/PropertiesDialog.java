@@ -15,6 +15,7 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.ConstructionProtocol;
 import geogebra.GeoElementSelectionListener;
+import geogebra.MySmallJButton;
 import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;

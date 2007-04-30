@@ -1013,11 +1013,11 @@ final public class EuclidianController implements MouseListener,
 		} 
 		
 		// grid capturing on: newly created point should be taken
-		if (hits == null && POINT_CREATED) {
+		if (hits == null && POINT_CREATED) {			
 			hits = new ArrayList();
-			hits.add(movedGeoPoint);						
+			hits.add(movedGeoPoint);				
 		}
-		POINT_CREATED = false;
+		POINT_CREATED = false;		
 		
 		changedKernel = processMode(hits, e);
 		if (changedKernel)
@@ -1773,6 +1773,7 @@ final public class EuclidianController implements MouseListener,
 			return true;
 		} else {
 			moveMode = MOVE_NONE;
+			POINT_CREATED = false;
 			return false;
 		}
 	}
@@ -2972,8 +2973,9 @@ final public class EuclidianController implements MouseListener,
 			if (createNewPoint(hits, true, true, false)) {				
 				// take movedGeoPoint which is the newly created point								
 				selectedGeos.add(movedGeoPoint);
-				app.toggleSelectedGeo(movedGeoPoint);
+				app.addSelectedGeo(movedGeoPoint);
 				objectFound = true;
+				POINT_CREATED = false;
 			}
 		}
 				
@@ -3013,10 +3015,7 @@ final public class EuclidianController implements MouseListener,
 				
 				else // other type needed, so leave loop 
 					break;				
-			}
-			
-			// TODO: add support for functions as macro input in Euclidian view
-			
+			}			
 		}
 		
 								
@@ -3030,7 +3029,6 @@ final public class EuclidianController implements MouseListener,
 		} 		
 		return false;
 	}
-	private ArrayList macroPolySearchList;
 			
 	final private boolean geoElementSelected(ArrayList hits, boolean addToSelection) {
 		if (hits == null)

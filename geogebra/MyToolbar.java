@@ -10,9 +10,8 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.gui;
+package geogebra;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -149,40 +148,41 @@ public class MyToolbar extends JPanel{
      * @param tb
      * @param bg
      */    
-    private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {        	    	
-    	Vector toolbarVec = handleCustomToolBar(app.getCustomToolBar());
-        if (toolbarVec == null) {
-            // set default toolbar
-        	addDefaultModesToToolbar(tb, bg);           	
-        }        
-        else {
-        	// set custom toolbar
-		    boolean firstButton = true;
-			for (int i = 0; i < toolbarVec.size(); i++) {
-		        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
-		        moveToggleMenus.add(tm);
-		        Vector menu = (Vector) toolbarVec.get(i);
-		        for (int k = 0; k < menu.size(); k++) {
-		        	// separator
-		        	int mode = ((Integer) menu.get(k)).intValue();
-		        	if (mode < 0) {
-		        		if (k==0) // separator at first position of new menu: toolbar separator 
-		        			tb.addSeparator();
-		        		else // separator within menu: 
-		        			tm.addSeparator();
-		        	} 
-		        	else { // standard case: add mode
-		        		 tm.addMode(mode);
-		        		 if (firstButton) {
-		                 	tm.getJToggleButton().setSelected(true);
-		                 	firstButton = false;
-		                 }
-		        	}
-		        }
-		                               
-		        tb.add(tm);
-			}
-        }
+    private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {  
+    	Vector toolbarVec;
+    	try {
+	    	toolbarVec = createToolBarVec(app.getToolBarDefinition());
+	    } catch (Exception e) {
+			System.err.println("invalid toolbar string: " + app.getToolBarDefinition());
+			toolbarVec = createToolBarVec(getDefaultToolbarString());
+		}
+ 
+    	// set toolbar
+	    boolean firstButton = true;
+		for (int i = 0; i < toolbarVec.size(); i++) {
+	        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
+	        moveToggleMenus.add(tm);
+	        Vector menu = (Vector) toolbarVec.get(i);
+	        for (int k = 0; k < menu.size(); k++) {
+	        	// separator
+	        	int mode = ((Integer) menu.get(k)).intValue();
+	        	if (mode < 0) {
+	        		if (k==0) // separator at first position of new menu: toolbar separator 
+	        			tb.addSeparator();
+	        		else // separator within menu: 
+	        			tm.addSeparator();
+	        	} 
+	        	else { // standard case: add mode
+	        		 tm.addMode(mode);
+	        		 if (firstButton) {
+	                 	tm.getJToggleButton().setSelected(true);
+	                 	firstButton = false;
+	                 }
+	        	}
+	        }
+	                               
+	        tb.add(tm);
+		}        
     }
     
     /**
@@ -192,10 +192,7 @@ public class MyToolbar extends JPanel{
 	 * and "||" adds a separator before starting a new menu. 
 	 * @return toolbar as nested Vector objects with Integers for the modes. Note: separators have negative values.
 	 */
-	private static Vector handleCustomToolBar(String strToolBar) {
-		if (strToolBar == null || strToolBar.length() == 0) 
-			return null;
-		
+	public static Vector createToolBarVec(String strToolBar) {			
 		String [] tokens = strToolBar.split(" ");
 		Vector toolbar = new Vector();
 		Vector menu = new Vector();
@@ -218,7 +215,8 @@ public class MyToolbar extends JPanel{
 	         }
 	         else { // add mode to menu
 	        	 try  {	
-	        		 menu.add(new Integer(Integer.parseInt(tokens[i])));
+	        		 if (tokens[i].length() > 0)
+	        			 menu.add(new Integer(Integer.parseInt(tokens[i])));
 	        	 }
 	     		catch(Exception e) {
 	     			e.printStackTrace();
@@ -230,140 +228,149 @@ public class MyToolbar extends JPanel{
 	    // add last menu to toolbar
 	    if (menu.size() > 0)
 	    	toolbar.add(menu);	   
-	    return toolbar;				
+	    return toolbar;					
 	}
     
-    private void addDefaultModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {
-    	// add move mode
-        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_MOVE);
-        tm.addMode(EuclidianView.MODE_MOVE_ROTATE);
-        tm.getJToggleButton().setSelected(true);        
-        tb.add(tm);
-        tb.addSeparator();        
+	/**
+	 * Returns the default toolbar String definition.
+	 */
+    public String getDefaultToolbarString() {
+    	StringBuffer sb = new StringBuffer();
+    	
+    	// move
+    	sb.append(EuclidianView.MODE_MOVE);    	
+    	sb.append(" ");
+    	sb.append(EuclidianView.MODE_MOVE_ROTATE);
+    	    	               
+        // point, intersect    
+    	sb.append(" || ");
+    	sb.append(EuclidianView.MODE_POINT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_INTERSECT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_MIDPOINT);        
+                             
+        // line, segment, ray, vector   
+        sb.append(" | "); 
+        sb.append(EuclidianView.MODE_JOIN);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_SEGMENT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_SEGMENT_FIXED);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_RAY);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_VECTOR);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_POLYGON);
         
-        // point, intersect 
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_POINT);
-        tm.addMode(EuclidianView.MODE_INTERSECT);
-        tm.addMode(EuclidianView.MODE_MIDPOINT);        
-        tb.add(tm);     
-                    
-        // line, segment, ray, vector
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_JOIN);
-        tm.addMode(EuclidianView.MODE_SEGMENT);
-        tm.addMode(EuclidianView.MODE_SEGMENT_FIXED);   
-        tm.addMode(EuclidianView.MODE_RAY);             
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_VECTOR);
-        tm.addMode(EuclidianView.MODE_VECTOR_FROM_POINT);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_POLYGON);
-        tb.add(tm);                     
                 
         // parallel, orthogonal, line bisector, angular bisector, tangents
-        tm = new ModeToggleMenu(app, bg);  
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_ORTHOGONAL);
-        tm.addMode(EuclidianView.MODE_PARALLEL);        
-        tm.addMode(EuclidianView.MODE_LINE_BISECTOR);
-        tm.addMode(EuclidianView.MODE_ANGULAR_BISECTOR);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_TANGENTS);
-        tm.addMode(EuclidianView.MODE_POLAR_DIAMETER);
-        tb.add(tm);
+        sb.append(" | ");
+        sb.append(EuclidianView.MODE_ORTHOGONAL);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_PARALLEL);     
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_LINE_BISECTOR);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_ANGULAR_BISECTOR);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_TANGENTS);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_POLAR_DIAMETER);
         
-        tb.addSeparator();        
-
         // circle 2, circle 3, conic 5
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_CIRCLE_TWO_POINTS);
-        tm.addMode(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
-        tm.addMode(EuclidianView.MODE_CIRCLE_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_SEMICIRCLE);
-        tm.addMode(EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS);
-        tm.addMode(EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);     
-        tm.addMode(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_CONIC_FIVE_POINTS);       
-        tb.add(tm);    
+        sb.append(" || ");        
+        sb.append(EuclidianView.MODE_CIRCLE_TWO_POINTS);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_CIRCLE_THREE_POINTS);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_SEMICIRCLE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
+        sb.append(" , ");
+        sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);               
         
         // numbers, locus
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_ANGLE); 
-        tm.addMode(EuclidianView.MODE_ANGLE_FIXED); 
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_DISTANCE);   
-        tm.addMode(EuclidianView.MODE_SLIDER);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_LOCUS);  
-        tb.add(tm);   
-        
-        tb.addSeparator();   
+        sb.append(" || ");
+        sb.append(EuclidianView.MODE_ANGLE); 
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_ANGLE_FIXED); 
+        sb.append(" , ");
+        sb.append(EuclidianView.MODE_DISTANCE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_SLIDER);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_LOCUS);                            
         
         // transforms
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_MIRROR_AT_POINT);
-        tm.addMode(EuclidianView.MODE_MIRROR_AT_LINE);
-        tm.addMode(EuclidianView.MODE_ROTATE_BY_ANGLE);
-        tm.addMode(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
-        tm.addMode(EuclidianView.MODE_DILATE_FROM_POINT);     
-        tb.add(tm);
-                          
+        sb.append(" | ");
+        sb.append(EuclidianView.MODE_MIRROR_AT_POINT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_MIRROR_AT_LINE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_ROTATE_BY_ANGLE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_DILATE_FROM_POINT);
+                
         // text, relation
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_TEXT);
-        tm.addMode(EuclidianView.MODE_IMAGE);       
-        tm.addMode(EuclidianView.MODE_RELATION);        
-        tb.add(tm); 
-        
-        tb.addSeparator();   
+        sb.append(" | ");
+        sb.append(EuclidianView.MODE_TEXT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_IMAGE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_RELATION);        
         
         // macros
+        sb.append(" || ");
         Kernel kernel = app.getKernel();
         int macroNumber = kernel.getMacroNumber();        
-        if (macroNumber > 0) {
-        	tm = new ModeToggleMenu(app, bg); 
+        if (macroNumber > 0) {        	
         	int count = 0;
         	for (int i = 0; i < macroNumber; i++) {
         		Macro macro = kernel.getMacro(i);
         		if (macro.isShowInToolBar()) {
         			count++;
-        			tm.addMacro(i, macro);
+        			sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
+        			sb.append(" ");
         		}        			
         	}             	        
         	
         	if (count > 0) {
-        		moveToggleMenus.add(tm);
-        		tb.add(tm);
-        		tb.addSeparator();          		
+        		sb.append(" || ");        		
         	}
         }            
         
-        // translate view, show/hide modes
-        tm = new ModeToggleMenu(app, bg);
-        moveToggleMenus.add(tm);
-        tm.addMode(EuclidianView.MODE_TRANSLATEVIEW);
-        tm.addMode(EuclidianView.MODE_ZOOM_IN);
-        tm.addMode(EuclidianView.MODE_ZOOM_OUT);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_SHOW_HIDE_OBJECT);
-        tm.addMode(EuclidianView.MODE_SHOW_HIDE_LABEL);
-        tm.addMode(EuclidianView.MODE_COPY_VISUAL_STYLE);
-        tm.addSeparator();
-        tm.addMode(EuclidianView.MODE_DELETE);        
-        tb.add(tm);    
+        // translate view, show/hide modes        
+        sb.append(EuclidianView.MODE_TRANSLATEVIEW);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_ZOOM_IN);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_ZOOM_OUT);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_SHOW_HIDE_OBJECT);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_SHOW_HIDE_LABEL);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
+        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_DELETE);
+        
+        //System.out.println("defToolbar: " + sb);
+        
+        return sb.toString();
     }
 
 	public boolean isShowToolBarHelp() {

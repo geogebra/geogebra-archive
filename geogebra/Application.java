@@ -31,7 +31,6 @@ import geogebra.gui.GUIController;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.HelpBrowser;
 import geogebra.gui.MyPopupMenu;
-import geogebra.gui.MyToolbar;
 import geogebra.gui.PrintPreview;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
@@ -2080,13 +2079,72 @@ public class Application {
             helpBrowser.setLabels();
     }    
     
-    public void setCustomToolBar(String toolBarDefinition) {
+    public void setToolBarDefinition(String toolBarDefinition) {
     	strToolBarDefinition = 	toolBarDefinition;
     }
 
-    public String getCustomToolBar() {
-    	return strToolBarDefinition;
-    }         
+    public String getToolBarDefinition() {
+    	if (strToolBarDefinition == null && appToolBarPanel != null)
+    		return appToolBarPanel.getDefaultToolbarString();
+    	else
+    		return strToolBarDefinition;
+    }        
+    
+    /**
+     * Returns text description for given mode number 
+     */
+    public String getModeText(int mode) {    	
+    	// macro
+		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+			try {				
+				Macro macro = kernel.getMacro(macroID);							
+				String modeText = macro.getToolName();
+				if ("".equals(modeText)) 
+					modeText = macro.getCommandName();
+				return modeText;
+			} catch (Exception e) {
+				System.err.println("macro does not exist: ID = " + macroID);
+				return "";
+			}    		
+		}
+		else		
+			// standard case
+			return EuclidianView.getModeText(mode);	
+    }
+    
+    public ImageIcon getModeIcon(int mode) {
+    	ImageIcon icon;
+    	
+    	// macro
+		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+			try {				
+				Macro macro = kernel.getMacro(macroID);											
+				String iconName = macro.getIconFileName();		
+				BufferedImage img = getExternalImage(iconName);				
+				if (img == null)
+					// default icon
+					icon = getImageIcon("mode_tool_32.png", mainComp.getBackground());			
+				else
+					// use image as icon
+					icon = new ImageIcon(ImageManager.addBorder(img, mainComp.getBackground()));				
+			} catch (Exception e) {
+				System.err.println("macro does not exist: ID = " + macroID);
+				return null;
+			}    		
+		}
+		else {	    
+	    	// standard case
+			String modeText = EuclidianView.getModeText(mode);
+			String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
+			icon = getImageIcon(iconName, mainComp.getBackground());						
+			if (icon == null) {
+				System.err.println("icon missing for mode " + modeText + " (" + mode + ")");			
+			}			
+		}			
+		return icon;
+    }
 
     public void setSplitDividerLocationHOR(int loc) {       
         initSplitDividerLocationHOR = loc;              
