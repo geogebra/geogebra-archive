@@ -38,6 +38,7 @@ import geogebra.gui.TextInputDialog;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.toolbar.MyToolbar;
+import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -250,6 +251,7 @@ public class Application {
         propertiesAction,
         constProtocolAction,
         drawingPadPropAction,
+        toolbarConfigAction,
         showAlgebraViewAction,     
         showAlgebraInputAction,
         showCmdListAction,
@@ -440,6 +442,10 @@ public class Application {
     	else
     		return 0;
     }    
+    
+    public MyToolbar getToolbar() {
+    	return appToolBarPanel;
+    }
     
     public int getMenuBarHeight() {
     	return menuBar.getHeight();
@@ -1403,6 +1409,16 @@ public class Application {
       	new EuclidianPropDialog(this, euclidianView);      
       euclidianViewDialog.setVisible(true);
     }
+    
+    /**
+     * Displays the configuration dialog for the toolbar
+     */
+    public void showToolbarConfigDialog() {      
+      euclidianView.resetMode();
+      ToolbarConfigDialog dialog = new ToolbarConfigDialog(this);      
+      dialog.setVisible(true);
+    }
+       
 
     /**
        * Displays the construction protocol dialog 
@@ -2740,8 +2756,14 @@ public class Application {
         menu.add(submenu);
         
         menu.addSeparator();
+       
+        // drawing pad properteis
+        menu.add(toolbarConfigAction);
+        
         // drawing pad properteis
         menu.add(drawingPadPropAction);
+        
+       
         
         menuBar.add(menu);
         
@@ -3069,6 +3091,15 @@ public class Application {
                 showDrawingPadPropertiesDialog();
             }
         };
+        
+        toolbarConfigAction =
+        	new AbstractAction(
+                    getPlain("Toolbar") + " ...") {
+            	private static final long serialVersionUID = 1L;
+                public void actionPerformed(ActionEvent e) {
+                    showToolbarConfigDialog();
+                }
+            };
 
 
         saveAction =

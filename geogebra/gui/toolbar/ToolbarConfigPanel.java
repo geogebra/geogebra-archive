@@ -1,53 +1,37 @@
-/*
-    GEONExT
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
 
-    Copyright (C) 2002  GEONExT-Group, Lehrstuhl für Mathematik und ihre Didaktik, Universität Bayreuth
+This file is part of GeoGebra.
 
-    This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA. 
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
 */
+
 package geogebra.gui.toolbar;
 import geogebra.Application;
-import geogebra.euclidian.EuclidianView;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.border.*;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.event.*;
-import javax.swing.tree.TreeSelectionModel;
-import java.net.URL;
-import java.io.IOException;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JFrame;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.plaf.*;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-/**
- * 
- */
-class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
+import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
+
+public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
 	
-	public JButton cancelButton;
-	public JButton editButton;
 	public JButton insertButton;
 	public JButton moveUpButton;
 	public JButton moveDownButton;
@@ -62,11 +46,10 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 	int selectedRow;	
 	Application app;
 	
-	boolean change = false;
 	/**
 	 * 
 	 */
-	public ToolbarConfigPanel(String titel, Application app) {
+	public ToolbarConfigPanel(Application app) {
 		super();	
 		this.app = app;
 		
@@ -149,7 +132,7 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 		modeScrollPane = new JScrollPane(modeList);
 		modeScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		modeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		modeList.setCellRenderer(new ImageCellRenderer(tree.getBackground(), modeList.getForeground(), modeList.getSelectionBackground(), modeList.getSelectionForeground()));
+		//modeList.setCellRenderer(new ImageCellRenderer(tree.getBackground(), modeList.getForeground(), modeList.getSelectionBackground(), modeList.getSelectionForeground()));
 		modeList.setSelectedIndex(0);
 		//
 		//
@@ -186,172 +169,35 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 		//modeScrollPane.setSize(modeList.getPreferredSize());
 		//modeScrollPane.setSize(modeScrollPane.getPreferredSize());
 		//configScrollPane.setPreferredSize(new Dimension(Math.max(modeScrollPane.getWidth(), configScrollPane.getWidth()), (int) configScrollPane.getSize().getHeight()));
-		expandRows();
+		
+		expandAllRows();
 		try {
 			tree.setSelectionRow(1);
 		} catch (Exception exc) {
 			tree.setSelectionRow(0);
-		}
+		}				
 	}
+		
+	
 	/**
 	 * 
 	 */
-	public void actionPerformed(java.awt.event.ActionEvent event) {
-		try {
-			selectedRow = tree.getSelectionRows()[0];
-		} catch (Exception exc) {
-			tree.setSelectionRow(0);
-		}
-		if (((AbstractButton) (event.getSource())).getName() == "insert") {
-			change = true;
-			/*Vector feVector = new Vector();
-			feVector.addElement(new FrontendElement(null, null, "Separator", null, null));
-			popups.insertElementAt(feVector,modeList.getSelectedIndex());
-			modeList.setSelectedIndex(0);*/
-			int[] pos;
-			try {
-				pos = ((ModeLabel) (((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).getUserObject())).pos;
-			} catch (Exception exc) {
-				pos = new int[] { -1, -1 };
-			}
-			if (pos[1] == -1) {
-				Vector feVector = new Vector();
-				//feVector.addElement(new FrontendElement(null, null, "Separator", null, null));
-				feVector.addElement(modeList.getSelectedValue());
-				increase = true;
-				decrease = false;
-				changeIndex = pos[0];
-				saveExpandedRows();
-				popups.insertElementAt(feVector, pos[0] + 1);
-				updateTree();
-				tree.setSelectionRow(selectedRow + 1);
-			} else {
-				if (!((FrontendElement) modeList.getSelectedValue()).type.equals("Separator")) {
-					increase = true;
-					decrease = false;
-					changeIndex = pos[0];
-					saveExpandedRows();
-					if (((FrontendElement) (((Vector) popups.get(pos[0])).get(0))).type.equals("Separator")) {
-						((Vector) popups.get(pos[0])).insertElementAt(modeList.getSelectedValue(), 0);
-						((Vector) popups.get(pos[0])).removeElementAt(1);
-					} else
-						 ((Vector) popups.get(pos[0])).insertElementAt(modeList.getSelectedValue(), pos[1] + 1);
-					updateTree();
-					tree.setSelectionRow(selectedRow + 1);
-				}
-			}
-		}
-		if (((AbstractButton) (event.getSource())).getName() == "moveUp") {
-			change = true;
-			int[] pos = ((ModeLabel) (((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).getUserObject())).pos;
-			if ((pos[1] == -1) && pos[0] > 0) {
-				increase = false;
-				decrease = false;
-				saveExpandedRows(true, false);
-				popups.insertElementAt(popups.get(pos[0]), pos[0] - 1);
-				popups.removeElementAt(pos[0] + 1);
-				updateTree();
-				tree.setSelectionRow(selectedRow - 1);
-			}
-			if (pos[1] > 0) {
-				//popups.insertElementAt(((Vector)popups.get(pos[0])).get(pos[1]), pos[1] +2);
-				increase = false;
-				decrease = false;
-				saveExpandedRows();
-				((Vector) popups.get(pos[0])).insertElementAt(((Vector) popups.get(pos[0])).get(pos[1]), pos[1] - 1);
-				((Vector) popups.get(pos[0])).removeElementAt(pos[1] + 1);
-				updateTree();
-				tree.setSelectionRow(selectedRow - 1);
-			}
-		}
-		if (((AbstractButton) (event.getSource())).getName() == "moveDown") {
-			change = true;
-			int[] pos = ((ModeLabel) (((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).getUserObject())).pos;
-			if (pos[1] == -1) {
-				if (pos[0] < popups.size() - 1) {
-					increase = false;
-					decrease = false;
-					saveExpandedRows(false, true);
-					popups.insertElementAt(popups.get(pos[0]), pos[0] + 2);
-					popups.removeElementAt(pos[0]);
-					updateTree();
-					tree.setSelectionRow(selectedRow + 1);
-				}
-			} else {
-				if (pos[1] < ((Vector) popups.get(pos[0])).size() - 1) {
-					//popups.insertElementAt(((Vector)popups.get(pos[0])).get(pos[1]), pos[1] +2);
-					increase = false;
-					decrease = false;
-					saveExpandedRows();
-					((Vector) popups.get(pos[0])).insertElementAt(((Vector) popups.get(pos[0])).get(pos[1]), pos[1] + 2);
-					((Vector) popups.get(pos[0])).removeElementAt(pos[1]);
-					updateTree();
-					tree.setSelectionRow(selectedRow + 1);
-				}
-			}
-		}
-		if (((AbstractButton) (event.getSource())).getName() == "delete") {
-			change = true;
-			int[] pos = ((ModeLabel) (((DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent()).getUserObject())).pos;
-			if ((pos[1] == -1)) {
-				changeIndex = pos[0];
-				increase = false;
-				decrease = true;
-				saveExpandedRows(selectedRow);
-				popups.removeElementAt(pos[0]);
-				updateTree();
-				if (selectedRow > 0)
-					tree.setSelectionRow(selectedRow - 1);
-				else
-					tree.setSelectionRow(0);
-			} else {
-				if (((Vector) popups.get(pos[0])).size() > 1) {
-					changeIndex = pos[0];
-					increase = false;
-					decrease = false;
-					saveExpandedRows();
-					((Vector) popups.get(pos[0])).removeElementAt(pos[1]);
-					updateTree();
-					if (selectedRow > 0)
-						tree.setSelectionRow(selectedRow - 1);
-					else
-						tree.setSelectionRow(0);
-				}
-			}
-		}
-		String source = event.getActionCommand();
-		if (source.equals("apply")) {
-			tabbed.exit(true, popups);
-		} else
-			if (source.equals("cancel")) {
-				tabbed.exit(false, popups);
-			}
-		/*
-				if (((AbstractButton) (event.getSource())).getName() == "cancel") {
-					tabbed.exit(false, popups);
-				}
-				if (((AbstractButton) (event.getSource())).getName() == "ok") {
-					tabbed.exit(true, popups);
-				}*/
+	public void actionPerformed(ActionEvent e) {
+		// TODO: implement
+		System.out.println("actionPerformed: " + e);
 	}
-	/**
-	 * 
-	 */
+	
 	public void collapseAllRows() {
 		int z = tree.getRowCount();
 		for (int i = z; i >= 0; i--) {
 			tree.collapseRow(i);
 		}
 	}
-	/**
-	 * 
-	 */
+	
 	public void doLayout() {
 		super.doLayout();
 	}
-	/**
-	 *
-	 */
+	
 	public void expandAllRows() {
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
@@ -365,17 +211,30 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 	/**
 	 * 
 	 */
-	public Vector generateToolsVector() {
-		Vector vector = new Vector();
-		
+	public Vector generateToolsVector() {				
+		Vector vector = new Vector();		
 		// separator
 		vector.add(new Integer(-1));
 				
-		for (int mode=0; mode < 200; mode++) {
-			String modeText = EuclidianView.getModeText(mode);
-			if (!"".equals(modeText)) {
-				vector.add(new Integer(mode));
-			}
+		// get default toolbar as nested vectors
+		Vector defTools = MyToolbar.createToolBarVec(app.getToolbar().getDefaultToolbarString());				
+		for (int i=0; i < defTools.size(); i++) {
+			Object element = defTools.get(i);
+			
+			if (element instanceof Vector) {
+				Vector menu = (Vector) element;
+				for (int j=0; j < menu.size(); j++) {
+					Integer modeInt = (Integer) menu.get(j);
+					int mode = modeInt.intValue();
+					if (mode != -1)
+						vector.add(modeInt);
+				}
+			} else {
+				Integer modeInt = (Integer) element;
+				int mode = modeInt.intValue();
+				if (mode != -1)
+					vector.add(modeInt);
+			}			
 		}				
 		return vector;
 	}
@@ -384,7 +243,7 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 	 */
 	public JTree generateTree(Vector toolbarModes) {
 		JTree jTree = new JTree(generateRootNode(toolbarModes));
-		jTree.setCellRenderer(new ImageTreeCellRenderer());
+		jTree.setCellRenderer(new ModeCellRenderer(app));
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jTree.putClientProperty("JTree.lineStyle", "Angled");
 		jTree.addTreeExpansionListener(this);
@@ -402,7 +261,7 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 				Vector menu = (Vector) ob;  
 				DefaultMutableTreeNode sub = new DefaultMutableTreeNode();
 				for (int j = 0; j < menu.size(); j++) {
-					sub.add(new DefaultMutableTreeNode(menu.get(i)));
+					sub.add(new DefaultMutableTreeNode(menu.get(j)));
 				}
 				node.add(sub);
 			}
@@ -423,17 +282,7 @@ class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.Ac
 		/*tabbed.invalidate();
 		tabbed.validateTree();*/
 	}
-	/**
-	 * 
-	 */
-	public void updateTree() {
-		tree.removeTreeExpansionListener(this);
-		configScrollPane.getViewport().remove(tree);
-		tree = generateTree();
-		expandRows();
-		configScrollPane.setViewportView(tree);
-		tabbed.validateTree();
-	}
+	
 	/**
 	 * 
 	 */
