@@ -253,7 +253,8 @@ public class WorksheetExportDialog extends JDialog {
 		
 		// showToolBarHelp
 		cbShowToolBarHelp = new JCheckBox(app.getMenu("ShowToolBarHelp"));
-		guiPanel.add(cbShowToolBarHelp);
+		cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
+		guiPanel.add(cbShowToolBarHelp);		
 				
 		// showAlgebraInput
 		cbShowInputField = new JCheckBox(app.getMenu("ShowInputField"));		
@@ -281,6 +282,7 @@ public class WorksheetExportDialog extends JDialog {
 				int heightChange = 0;
 				if (src == cbShowToolBar) {
 					heightChange = app.getToolBarHeight();
+					cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 				}
 				else if (src == cbShowMenuBar) {
 					heightChange = app.getMenuBarHeight();
@@ -354,7 +356,7 @@ public class WorksheetExportDialog extends JDialog {
 
 	private void centerOnScreen() {
 		pack();
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(app.getFrame());
 	}
 
 	/**

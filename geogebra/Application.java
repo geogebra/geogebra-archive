@@ -305,8 +305,8 @@ public class Application {
     public Font boldFont, plainFont, smallFont;
     private String FONT_NAME = STANDARD_FONT_NAME;
     
-    private String strToolBarDefinition;
-    private MyToolbar appToolBarPanel;     
+    private String strCustomToolbarDefinition;
+    private MyToolbar appToolbarPanel;     
     
     private JFileChooser fileChooser;
     private JMenuBar menuBar;
@@ -438,13 +438,13 @@ public class Application {
     
     public int getToolBarHeight() {
     	if (showToolBar)
-    		return appToolBarPanel.getHeight();
+    		return appToolbarPanel.getHeight();
     	else
     		return 0;
     }    
     
-    public MyToolbar getToolbar() {
-    	return appToolBarPanel;
+    public String getDefaultToolbarString() {
+    	return appToolbarPanel.getDefaultToolbarString();
     }
     
     public int getMenuBarHeight() {
@@ -503,12 +503,12 @@ public class Application {
         centerPanel = new JPanel(new BorderLayout());       
         
         if (showToolBar) {
-        	if (appToolBarPanel == null) {
-        		appToolBarPanel = new MyToolbar(this);        		  
+        	if (appToolbarPanel == null) {
+        		appToolbarPanel = new MyToolbar(this);        		  
         	} 
         	       	        	            
         	 // NORTH: Toolbar       
-        	panel.add(appToolBarPanel, BorderLayout.NORTH);        	
+        	panel.add(appToolbarPanel, BorderLayout.NORTH);        	
         }           
     
         // updateCenterPanel
@@ -877,7 +877,7 @@ public class Application {
 			if (getMode() != EuclidianView.MODE_ALGEBRA_INPUT)
 				oldMode = getMode();			
 	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
-	        appToolBarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
+	        appToolbarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
 		}
     }
     private int oldMode = 0;
@@ -1984,8 +1984,8 @@ public class Application {
         if (algebraInput != null)
             algebraInput.updateFonts();
                    
-        if (appToolBarPanel != null)
-        	appToolBarPanel.initToolbar();
+        if (appToolbarPanel != null)
+        	appToolbarPanel.initToolbar();
 
         if (propDialog != null)
             propDialog.initGUI();
@@ -2081,7 +2081,7 @@ public class Application {
         // init actions for toolbar buttons and mode menu items
         if (showToolBar || showMenuBar) initActions();
 
-        if (appToolBarPanel != null) appToolBarPanel.initToolbar();
+        if (appToolbarPanel != null) appToolbarPanel.initToolbar();
         if (showMenuBar) setMenuBar(guiController);      
         if (algebraView != null) algebraView.setLabels(); // update views    
         if (algebraInput != null) algebraInput.setLabels();
@@ -2097,14 +2097,17 @@ public class Application {
     }    
     
     public void setToolBarDefinition(String toolBarDefinition) {
-    	strToolBarDefinition = 	toolBarDefinition;
+    	if (toolBarDefinition != getDefaultToolbarString())    	
+    		strCustomToolbarDefinition = toolBarDefinition;
+    	else
+    		strCustomToolbarDefinition = null;
     }
 
     public String getToolBarDefinition() {
-    	if (strToolBarDefinition == null && appToolBarPanel != null)
-    		return appToolBarPanel.getDefaultToolbarString();
+    	if (strCustomToolbarDefinition == null && appToolbarPanel != null)
+    		return appToolbarPanel.getDefaultToolbarString();
     	else
-    		return strToolBarDefinition;
+    		return strCustomToolbarDefinition;
     }        
     
     /**
@@ -2325,9 +2328,9 @@ public class Application {
     	showToolBar = toolbar;
     	
     	if (showToolBar) {
-    		if (appToolBarPanel == null) {
-    			appToolBarPanel = new MyToolbar(this);
-    			appToolBarPanel.setShowToolBarHelp(help);
+    		if (appToolbarPanel == null) {
+    			appToolbarPanel = new MyToolbar(this);
+    			appToolbarPanel.setShowToolBarHelp(help);
     		}
     	}    	    	    	
     }
@@ -2378,8 +2381,8 @@ public class Application {
     }
     
     public void updateToolBar() {    	
-    	if (appToolBarPanel != null) {
-    		appToolBarPanel.initToolbar();    	
+    	if (appToolbarPanel != null) {
+    		appToolbarPanel.initToolbar();    	
     	}
     	    	  
     	if (!INITING) {
@@ -3848,7 +3851,7 @@ public class Application {
         }
         
         // select toolbar button
-        appToolBarPanel.setMode(mode);       
+        appToolbarPanel.setMode(mode);       
             	
     	// if the properties dialog is showing, move mode is a selection mode
         // for the properties dialog

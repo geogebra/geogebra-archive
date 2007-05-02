@@ -16,26 +16,24 @@ import geogebra.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.util.List;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -72,8 +70,8 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		selectionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(5, 5));
 				
-		tree = generateTree(MyToolbar.createToolBarVec(app.getToolBarDefinition()));		
-		collapseAllRows();		
+		tree = generateTree();
+		setToolBarString(app.getToolBarDefinition());	
 		
 		configScrollPane = new JScrollPane(tree);
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -82,7 +80,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		//configScrollPane.setPreferredSize(new Dimension(150, 150));
 		JPanel scrollSpacePanel = new JPanel();
 		scrollSpacePanel.setLayout(new BorderLayout(0, 0));
-		scrollSpacePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		scrollSpacePanel.setBorder(new EmptyBorder(3, 5, 3, 5));
 		scrollSpacePanel.add(configScrollPane, BorderLayout.CENTER); //
 		JPanel scrollPanel = new JPanel();
 		scrollPanel.setLayout(new BorderLayout(0, 0));
@@ -150,7 +148,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		//
 		JPanel modeSpacePanel = new JPanel();
 		modeSpacePanel.setLayout(new BorderLayout(0, 0));
-		modeSpacePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		modeSpacePanel.setBorder(new EmptyBorder(3, 5, 3, 5));
 		modeSpacePanel.add("Center", modeScrollPane);
 		//
 		//modeSpacePanel.setPreferredSize(new Dimension(175, 175));
@@ -189,6 +187,8 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		}				
 	}
 		
+	
+	
 	
 	/**
 	 * Handles remove, add and up, down buttons.
@@ -245,16 +245,16 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 					continue;
 				
 				DefaultMutableTreeNode newNode;
-				if (parentNode == root) {
+				if (parentNode == root && modeInt.intValue() > -1) {
 					// parent is root: create new submenu
 					newNode = new DefaultMutableTreeNode();			
-					newNode.add(new DefaultMutableTreeNode(tools[i]));
+					newNode.add(new DefaultMutableTreeNode(modeInt));
 				}
 				else {
 					// parent is submenu
-					newNode = new DefaultMutableTreeNode(tools[i]);						
+					newNode = new DefaultMutableTreeNode(modeInt);						
 				}											
-				model.insertNodeInto(newNode, parentNode, childIndex++);
+				model.insertNodeInto(newNode, parentNode, childIndex++);				
 				didInsert = true;				
 			}
 			
@@ -264,7 +264,8 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 				
 				// select first inserted node
 				tree.setSelectionRow(++selRow);
-				tree.scrollRowToVisible(selRow);						
+				tree.scrollRowToVisible(selRow);
+				configScrollPane.getHorizontalScrollBar().setValue(0); // scroll to left
 			}
 		}
 		
@@ -311,6 +312,18 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
     }
 	
 	/**
+	 * Inits the toolbar tree in this panel to show the given toolbar definition string.
+	 */
+	public void setToolBarString(String toolbarDefinition) {				
+		// create new tree model
+		Vector toolVec = MyToolbar.createToolBarVec(toolbarDefinition);
+		DefaultTreeModel model = new DefaultTreeModel(generateRootNode(toolVec));
+		tree.setModel(model);		
+		collapseAllRows();	
+		tree.setRowHeight(-1);				
+	}
+	
+	/**
 	 * Returns the custom toolbar created with this panel as a String.
 	 * Separator ("||" between menus, "," in menu), New menu starts with "|"
 	 */
@@ -322,26 +335,25 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
         	DefaultMutableTreeNode menu = (DefaultMutableTreeNode) root.getChildAt(i);
         	
         	if (menu.getChildCount() == 0) { // new menu with separator
-        		sb.append(" || ");
+        		sb.append("|| ");
         	} 
-        	else if (i > 0 && !sb.toString().endsWith(" || ")) // new menu
-        		sb.append(" | ");
+        	else if (i > 0 && !sb.toString().endsWith("|| ")) // new menu
+        		sb.append("| ");
         	
         	for (int j=0; j < menu.getChildCount(); j++) {
             	DefaultMutableTreeNode node = (DefaultMutableTreeNode) menu.getChildAt(j);
             	int mode = ((Integer) node.getUserObject()).intValue();
             	            	
             	if (mode < 0) // separator
-            		sb.append(" , ");
-            	else { // mode number
-            		sb.append(" ");
+            		sb.append(", ");
+            	else { // mode number            		
             		sb.append(mode);
             		sb.append(" ");
             	}            	
             }        	        	
         }
                 
-        return sb.toString();    
+        return sb.toString().trim();    
 	}		
 	
 	public void collapseAllRows() {
@@ -361,7 +373,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		vector.add(MyToolbar.TOOLBAR_SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = MyToolbar.createToolBarVec(app.getToolbar().getDefaultToolbarString());				
+		Vector defTools = MyToolbar.createToolBarVec(app.getDefaultToolbarString());				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			
@@ -385,8 +397,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	/**
 	 *
 	 */
-	public JTree generateTree(Vector toolbarModes) {
-			
+	private JTree generateTree() {			
 		JTree jTree = new JTree() {
 	        protected void setExpandedState(TreePath path, boolean state) {
 	            // Ignore all collapse requests of root        	
@@ -394,14 +405,12 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	                super.setExpandedState(path, state);
 	            }
 	        }
-	    };	    
-	    jTree.setModel(new DefaultTreeModel(generateRootNode(toolbarModes)));	    
+	    };	    	    	   
 		
 		jTree.setCellRenderer(new ModeCellRenderer(app));
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jTree.putClientProperty("JTree.lineStyle", "Angled");
-		jTree.addTreeExpansionListener(this);
-		jTree.setRowHeight(-1);
+		jTree.addTreeExpansionListener(this);		
 		return jTree;
 	}
 	/**
@@ -425,7 +434,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		}
 		return node;
 	}
-	
+		
 	/**
 	 * 
 	 */

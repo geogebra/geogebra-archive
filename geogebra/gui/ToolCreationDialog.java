@@ -309,7 +309,7 @@ implements GeoElementSelectionListener {
 			setResizable(false);			
 			pack();
 			// center
-			setLocationRelativeTo(null);								
+			setLocationRelativeTo(app.getFrame());								
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

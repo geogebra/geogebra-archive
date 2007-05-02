@@ -245,7 +245,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private void centerOnScreen() {		
 		//	center on screen
 		pack();				
-		setLocationRelativeTo(null);	
+		setLocationRelativeTo(app.getFrame());	
 	}
 
 	/**

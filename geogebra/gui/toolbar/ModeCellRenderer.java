@@ -57,13 +57,13 @@ implements ListCellRenderer {
 				handleModeNode(mode);
 			} else {
 				// root node
-				handleRootNode();
+				handleRootNode(node);
 			}
 		} 
 		// folder
 		else {		
 			if (row == 0) {				
-				handleRootNode();
+				handleRootNode(node);
 			} else {
 				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) node.getFirstChild();
 				Object ob = childNode.getUserObject();							
@@ -88,9 +88,13 @@ implements ListCellRenderer {
         return this;
      }
 	
-	private void handleRootNode() {
+	private void handleRootNode(DefaultMutableTreeNode node) {
 		setIcon(null);
-		setText("Root");
+		Object ob = node.getUserObject();
+		if (ob != null)
+			setText(ob.toString());
+		else
+			setText(app.getMenu("Toolbar"));
 	}
 		
 	private void handleModeNode(int mode) {

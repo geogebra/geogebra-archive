@@ -149,7 +149,7 @@ public class SliderDialog extends JDialog implements ActionListener {
 	private void centerOnScreen() {
 		//	center on screen
 		pack();				
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(app.getFrame());
 	}
 	
 	public GeoElement getResult() {

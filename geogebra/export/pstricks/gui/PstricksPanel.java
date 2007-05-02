@@ -157,7 +157,7 @@ public class PstricksPanel extends JFrame{
 	private void centerOnScreen() {
 		//	center on screen
 		pack();				
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(app.getFrame());
 	}
 	
 	public boolean getExportPointSymbol(){
