@@ -78,6 +78,10 @@ public class ModeToggleMenu extends JPanel {
 		size = 0;
 	}
 	
+	public int getToolsCount() {
+		return size;
+	}
+	
 	public JToggleButton getJToggleButton() {
 		return tbutton;
 	}			

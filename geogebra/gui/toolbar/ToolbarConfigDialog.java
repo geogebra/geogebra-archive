@@ -14,39 +14,73 @@ package geogebra.gui.toolbar;
 import geogebra.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
-public class ToolbarConfigDialog extends JDialog implements ActionListener {
+public class ToolbarConfigDialog extends JDialog {
 	
 	private Application app;	
 	public ToolbarConfigPanel confPanel;
 
 	public ToolbarConfigDialog(Application app) {
-		super();
+		super(app.getFrame(), true);
 		this.app = app;
+		
+		setTitle(app.getMenu("CustomizeToolbar"));				
 	
 		setLayout(new BorderLayout(5, 5));
 		confPanel = new ToolbarConfigPanel(app);
 		add(confPanel, BorderLayout.CENTER);
+		add(createButtonPanel(), BorderLayout.SOUTH);
 		
 		pack();
 		setLocationRelativeTo(null);
 	}
-	
-	public void actionPerformed(ActionEvent e) {
-		String source = e.getActionCommand();		
-		if (source.equals("apply")) {
-			apply();
-		} else if (source.equals("cancel")) {
-			dispose();		
-		}	
+		
+	private void apply() {		
+		app.setToolBarDefinition(confPanel.getToolBarString());
+		app.updateToolBar();
+		setVisible(false);
+		dispose();
 	}
 	
-	private void apply() {
-		// TODO: implement
-	}
+	private JPanel createButtonPanel() {		
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));		
+		btPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 5));
+							
+		final JButton btApply = new JButton();
+		btPanel.add(btApply);		
+		btApply.setText(app.getPlain("Apply") );		
+		
+		final JButton btCancel = new JButton();
+		btPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		btPanel.add(btCancel);		
+		btCancel.setText(app.getPlain("Cancel"));	
+		
+		ActionListener ac = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object src = e.getSource();
+				if (src == btApply) {
+					apply();
+				}
+				else if (src == btCancel) {
+					setVisible(false);
+					dispose();
+				}
+			}			
+		};
+		btCancel.addActionListener(ac);		
+		btApply.addActionListener(ac);
+		
+		return btPanel;
+	}			
 	
 }

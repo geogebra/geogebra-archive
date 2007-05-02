@@ -13,22 +13,29 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui.toolbar;
 import geogebra.Application;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.JTree;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
 
-public class ModeCellRenderer extends DefaultTreeCellRenderer {
+public class ModeCellRenderer extends DefaultTreeCellRenderer
+implements ListCellRenderer {
 	
 	private Application app;
 	
 	public ModeCellRenderer(Application app) {
 		setOpaque(true);
-		this.app = app;
+		setBackgroundNonSelectionColor(Color.white);
+		this.app = app;	
 	}
-
 	
 	public Component getTreeCellRendererComponent(
 			JTree tree,
@@ -38,23 +45,70 @@ public class ModeCellRenderer extends DefaultTreeCellRenderer {
 			boolean leaf,
 			int row,
 			boolean hasFocus) {		
+				
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
 		
-		// mode number
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-		Object ob = node.getUserObject();
-		if (ob instanceof Integer) {
-			tree.setRowHeight(-1);
-			int mode = ((Integer) ob).intValue();	
-			if (mode == -1)
-				setText("____");
-			else {
-				setText(app.getModeText(mode));
-				setIcon(app.getModeIcon(mode));
-			}			
-		} else {
-			super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		// mode number				
+		if (leaf) {			
+			Object ob = node.getUserObject();	
+			if (ob instanceof Integer) {
+				// mode node
+				int mode = ((Integer) ob).intValue();	
+				handleModeNode(mode);
+			} else {
+				// root node
+				handleRootNode();
+			}
+		} 
+		// folder
+		else {		
+			if (row == 0) {				
+				handleRootNode();
+			} else {
+				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) node.getFirstChild();
+				Object ob = childNode.getUserObject();							
+				handleModeNode(((Integer) ob).intValue());									
+			}
 		}
+		
+		handleSelection(selected);		
+		
 		return this;
+	}
+	
+	public Component getListCellRendererComponent(
+	         JList list,
+	         Object value,
+	         int index,
+	         boolean isSelected,
+	         boolean cellHasFocus)
+     {
+		handleModeNode(((Integer) value).intValue());
+		handleSelection(isSelected);
+        return this;
+     }
+	
+	private void handleRootNode() {
+		setIcon(null);
+		setText("Root");
+	}
+		
+	private void handleModeNode(int mode) {
+		if (mode == -1) {			
+			setText("\u2500\u2500\u2500 " + app.getMenu("Separator"));
+			setIcon(null);			
+		} else {			
+			setText(app.getModeText(mode));
+			setIcon(app.getModeIcon(mode));
+		}						
+	}
+	
+	private void handleSelection(boolean selected) {
+		if (selected) {
+			setBackground(Application.COLOR_SELECTION);
+		} else {				
+			setBackground(getBackgroundNonSelectionColor());				
+		}
 	}
 	
 }

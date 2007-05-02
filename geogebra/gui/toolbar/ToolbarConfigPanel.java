@@ -16,9 +16,15 @@ import geogebra.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.List;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -28,8 +34,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * Toolbar configuration panel.
+ *  
+ * @author Markus Hohenwarter, based on a dialog from geonext.de
+ *
+ */
 public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
 	
 	public JButton insertButton;
@@ -41,8 +56,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	JScrollPane modeScrollPane;
 	JScrollPane iconScrollPane;
 	JPanel selectionPanel;
-	JList modeList;
-	String toolbar;
+	JList toolList;	
 	int selectedRow;	
 	Application app;
 	
@@ -51,15 +65,15 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 */
 	public ToolbarConfigPanel(Application app) {
 		super();	
-		this.app = app;
+		this.app = app;				
 		
 		selectionPanel = new JPanel();
-		selectionPanel.setLayout(new BorderLayout(10, 10));
-		selectionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		selectionPanel.setLayout(new BorderLayout(5, 5));
+		selectionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(5, 5));
 				
 		tree = generateTree(MyToolbar.createToolBarVec(app.getToolBarDefinition()));		
-		expandAllRows();
+		collapseAllRows();		
 		
 		configScrollPane = new JScrollPane(tree);
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -78,41 +92,39 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		selectionPanel.add(scrollPanel, BorderLayout.WEST);
 		//
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
-		
-		final JButton btUp = new JButton("\u25b2");
-		btUp.setToolTipText(app.getPlain("Up"));
-		final JButton btDown = new JButton("\u25bc");
-		btDown.setToolTipText(app.getPlain("Down"));
-		
+		buttonPanel.setLayout(new GridLayout(2, 1, 5, 10));			
 		//
-		insertButton = new JButton("\u25c0" + app.getPlain("Insert"));
-		insertButton.setName("insert");
+		insertButton = new JButton("< " + app.getPlain("Insert"));		
 		insertButton.addActionListener(this);
 		buttonPanel.add(insertButton);
 		//		
-		insertButton = new javax.swing.JButton("\u25b6" + app.getPlain("Remove"));
-		insertButton.setName("delete");
-		insertButton.addActionListener(this);
-		buttonPanel.add(insertButton);
+		deleteButton = new javax.swing.JButton(app.getPlain("Remove") + " >");		
+		deleteButton.addActionListener(this);
+		buttonPanel.add(deleteButton);
 		//		
-		moveUpButton = new javax.swing.JButton("\u25b2" + app.getPlain("Up"));
-		moveUpButton.setName("moveUp");
+		JPanel upDownPanel = new JPanel();
+		moveUpButton = new javax.swing.JButton("\u25b2 " + app.getPlain("Up"));	
 		moveUpButton.addActionListener(this);
-		buttonPanel.add(moveUpButton);
+		upDownPanel.add(moveUpButton);
 		//
-		moveDownButton = new javax.swing.JButton("\u25bc" + app.getPlain("Down"));
-		moveDownButton.setName("moveDown");
+		moveDownButton = new javax.swing.JButton("\u25bc " + app.getPlain("Down"));		
 		moveDownButton.addActionListener(this);
-		buttonPanel.add(moveDownButton);
+		upDownPanel.add(moveDownButton);
+		
+		scrollPanel.add(upDownPanel, BorderLayout.SOUTH);
 
 		//
-		JPanel buttonAllPanel = new JPanel();
-		buttonAllPanel.setLayout(new BorderLayout(0, 0));		
-		buttonAllPanel.add("North", buttonPanel);
-		buttonAllPanel.add("Center", new JPanel());
+		
+		JPanel buttonAllPanel = new JPanel(new BorderLayout());			
+		buttonAllPanel.add(buttonPanel, BorderLayout.NORTH);
+		JPanel tempPanel = new JPanel();
+		tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.Y_AXIS));
+		tempPanel.add(Box.createRigidArea(new Dimension(10,150)));
+		tempPanel.add(buttonAllPanel);
+		tempPanel.add(Box.createVerticalGlue());
+		
 		//
-		selectionPanel.add("Center", buttonAllPanel);
+		selectionPanel.add(tempPanel, BorderLayout.CENTER);
 		//
 		JPanel modePanel = new JPanel();
 		modePanel.setLayout(new BorderLayout(0, 0));
@@ -120,34 +132,33 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		//modePanel.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), " " + "Wählbare Einträge" + " "));
 		//
 		Vector modeVector = generateToolsVector();
-		modeList = new JList(modeVector);
+		toolList = new JList(modeVector);		
 		//modeList.setPreferredSize(new Dimension(150, 150));
 		//
 		//modeList.setSize(new Dimension(150, 150));
 		//modeList.addListSelectionListener(this);
 		//
-		ListSelectionModel lsm = modeList.getSelectionModel();
-		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		modeList.setBackground(configScrollPane.getBackground());
-		modeScrollPane = new JScrollPane(modeList);
+		ListSelectionModel lsm = toolList.getSelectionModel();
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		toolList.setBackground(configScrollPane.getBackground());
+		modeScrollPane = new JScrollPane(toolList);		
 		modeScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		modeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		//modeList.setCellRenderer(new ImageCellRenderer(tree.getBackground(), modeList.getForeground(), modeList.getSelectionBackground(), modeList.getSelectionForeground()));
-		modeList.setSelectedIndex(0);
+		toolList.setCellRenderer(new ModeCellRenderer(app));
+		toolList.setSelectedIndex(0);
 		//
 		//
 		JPanel modeSpacePanel = new JPanel();
 		modeSpacePanel.setLayout(new BorderLayout(0, 0));
-		modeSpacePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		modeSpacePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		modeSpacePanel.add("Center", modeScrollPane);
 		//
-		modeSpacePanel.setPreferredSize(new Dimension(175, 175));
+		//modeSpacePanel.setPreferredSize(new Dimension(175, 175));
 		//
-		modeSpacePanel.setSize(new Dimension(175, 175));
+		//modeSpacePanel.setSize(new Dimension(175, 175));
 		//
 		modePanel.add("Center", modeSpacePanel);
-		selectionPanel.add("East", modePanel);
-		selectionPanel.doLayout();
+		selectionPanel.add("East", modePanel);		
 		add("Center", selectionPanel);
 		//
 		/*JPanel controlPanel = new JPanel();
@@ -170,7 +181,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		//modeScrollPane.setSize(modeScrollPane.getPreferredSize());
 		//configScrollPane.setPreferredSize(new Dimension(Math.max(modeScrollPane.getWidth(), configScrollPane.getWidth()), (int) configScrollPane.getSize().getHeight()));
 		
-		expandAllRows();
+		
 		try {
 			tree.setSelectionRow(1);
 		} catch (Exception exc) {
@@ -180,41 +191,174 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		
 	
 	/**
-	 * 
+	 * Handles remove, add and up, down buttons.
 	 */
-	public void actionPerformed(ActionEvent e) {
-		// TODO: implement
-		System.out.println("actionPerformed: " + e);
-	}
+	public void actionPerformed(ActionEvent e) {					
+		// get selected node in tree
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();							
+		TreePath selPath = tree.getSelectionPath();
+		if (selPath == null) {			
+		    tree.setSelectionRow(0); // take root if nothing is selected
+		    selPath = tree.getSelectionPath();
+		} 
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+		DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+		// remember row number
+		int selRow = tree.getRowForPath(selPath);	
+		
+		DefaultMutableTreeNode parentNode;		
+		if (selNode == root) { // root is selected
+			parentNode = selNode;
+		} else {
+			parentNode = (DefaultMutableTreeNode) selNode.getParent();							
+		}	
+		int childIndex = parentNode.getIndex(selNode);
+		
+		Object src = e.getSource();	
+		
+		// DELETE
+		if (src == deleteButton) {									
+			if (selRow > 0) { // not root					
+				// delete node				
+				model.removeNodeFromParent(selNode);
+				if (parentNode.getChildCount() == 0 && !parentNode.isRoot()) {					
+					model.removeNodeFromParent(parentNode);
+					selRow--;
+				}
+				
+				// select node at same row or above
+				if (selRow >= tree.getRowCount())
+					selRow--;
+				tree.setSelectionRow(selRow);
+			}						
+		} 
+		// INSERT
+		else if (src == insertButton) {		
+			childIndex++;
+			
+			boolean didInsert = false;
+			Object [] tools = toolList.getSelectedValues();						
+			for (int i=0; i < tools.length; i++) {
+				// check if too is already there
+				Integer modeInt = (Integer)tools[i];
+				if (modeInt.intValue() > -1 && containsTool(root, (Integer)tools[i]))
+					continue;
+				
+				DefaultMutableTreeNode newNode;
+				if (parentNode == root) {
+					// parent is root: create new submenu
+					newNode = new DefaultMutableTreeNode();			
+					newNode.add(new DefaultMutableTreeNode(tools[i]));
+				}
+				else {
+					// parent is submenu
+					newNode = new DefaultMutableTreeNode(tools[i]);						
+				}											
+				model.insertNodeInto(newNode, parentNode, childIndex++);
+				didInsert = true;				
+			}
+			
+			if (didInsert) {
+				// make sure that root is expanded
+				tree.expandPath(new TreePath(model.getRoot()));
+				
+				// select first inserted node
+				tree.setSelectionRow(++selRow);
+				tree.scrollRowToVisible(selRow);						
+			}
+		}
+		
+		// UP
+		else if (src == moveUpButton) {
+			if (selNode == root)
+				return;
+						
+			if (parentNode.getChildBefore(selNode) != null) {							
+				model.removeNodeFromParent(selNode);
+				model.insertNodeInto(selNode, parentNode, --childIndex);
+				tree.setSelectionRow(--selRow);
+			}			
+		}
+		
+		// DOWN
+		else if (src == moveDownButton) {
+			if (selNode == root)
+				return;
+						
+			if (parentNode.getChildAfter(selNode) != null) {							
+				model.removeNodeFromParent(selNode);
+				model.insertNodeInto(selNode, parentNode, ++childIndex);
+				tree.setSelectionRow(++selRow);
+			}			
+		}
+	}	
+	
+	private boolean containsTool(DefaultMutableTreeNode node, Integer mode) {
+        // compare modes
+		Object ob = node.getUserObject();
+        if (ob != null && mode.compareTo((Integer)ob) == 0) {           	
+        	return true;
+        }
+    
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+            	DefaultMutableTreeNode n = (DefaultMutableTreeNode)e.nextElement();
+            	if (containsTool(n, mode))
+            		return true;
+            }
+        }
+        return false;
+    }
+	
+	/**
+	 * Returns the custom toolbar created with this panel as a String.
+	 * Separator ("||" between menus, "," in menu), New menu starts with "|"
+	 */
+	public String getToolBarString() {								
+		StringBuffer sb = new StringBuffer();
+		
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();		            
+        for (int i=0; i < root.getChildCount(); i++) {
+        	DefaultMutableTreeNode menu = (DefaultMutableTreeNode) root.getChildAt(i);
+        	
+        	if (menu.getChildCount() == 0) { // new menu with separator
+        		sb.append(" || ");
+        	} 
+        	else if (i > 0 && !sb.toString().endsWith(" || ")) // new menu
+        		sb.append(" | ");
+        	
+        	for (int j=0; j < menu.getChildCount(); j++) {
+            	DefaultMutableTreeNode node = (DefaultMutableTreeNode) menu.getChildAt(j);
+            	int mode = ((Integer) node.getUserObject()).intValue();
+            	            	
+            	if (mode < 0) // separator
+            		sb.append(" , ");
+            	else { // mode number
+            		sb.append(" ");
+            		sb.append(mode);
+            		sb.append(" ");
+            	}            	
+            }        	        	
+        }
+                
+        return sb.toString();    
+	}		
 	
 	public void collapseAllRows() {
 		int z = tree.getRowCount();
-		for (int i = z; i >= 0; i--) {
+		for (int i = z; i > 0; i--) {
 			tree.collapseRow(i);
 		}
 	}
 	
-	public void doLayout() {
-		super.doLayout();
-	}
-	
-	public void expandAllRows() {
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
-		}
-	}
-	/**
-	 * 
-	 */
-	public void expandAllRows(JTree tree) {}
-	
+		
 	/**
 	 * 
 	 */
 	public Vector generateToolsVector() {				
 		Vector vector = new Vector();		
 		// separator
-		vector.add(new Integer(-1));
+		vector.add(MyToolbar.TOOLBAR_SEPARATOR);
 				
 		// get default toolbar as nested vectors
 		Vector defTools = MyToolbar.createToolBarVec(app.getToolbar().getDefaultToolbarString());				
@@ -242,11 +386,22 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 *
 	 */
 	public JTree generateTree(Vector toolbarModes) {
-		JTree jTree = new JTree(generateRootNode(toolbarModes));
+			
+		JTree jTree = new JTree() {
+	        protected void setExpandedState(TreePath path, boolean state) {
+	            // Ignore all collapse requests of root        	
+	            if (path != getPathForRow(0)) {
+	                super.setExpandedState(path, state);
+	            }
+	        }
+	    };	    
+	    jTree.setModel(new DefaultTreeModel(generateRootNode(toolbarModes)));	    
+		
 		jTree.setCellRenderer(new ModeCellRenderer(app));
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jTree.putClientProperty("JTree.lineStyle", "Angled");
 		jTree.addTreeExpansionListener(this);
+		jTree.setRowHeight(-1);
 		return jTree;
 	}
 	/**
@@ -287,4 +442,6 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 * 
 	 */
 	public void valueChanged(javax.swing.event.ListSelectionEvent e) {}
+	
+	
 }

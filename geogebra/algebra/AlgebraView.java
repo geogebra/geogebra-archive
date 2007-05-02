@@ -483,9 +483,7 @@ public class AlgebraView extends JTree implements View {
 	 */
 	private class MyRenderer extends DefaultTreeCellRenderer {
 		
-		private static final long serialVersionUID = 1L;
-		
-		private Color COLOR_SEL_BG = new Color(230, 230, 230);
+		private static final long serialVersionUID = 1L;				
 		
 		//private sHotEqn eqn = new sHotEqn();	 
 		
@@ -516,7 +514,7 @@ public class AlgebraView extends JTree implements View {
 								
 				
 				if (geo.doHighlighting())				   
-					setBackground(COLOR_SEL_BG);
+					setBackground(Application.COLOR_SELECTION);
 				else 
 					setBackground(getBackgroundNonSelectionColor());
 								

@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 public class MyToolbar extends JPanel{
+	
+	public static final Integer TOOLBAR_SEPARATOR = new Integer(-1);
 
 	private Application app;
 	private ArrayList moveToggleMenus;   
@@ -161,18 +163,26 @@ public class MyToolbar extends JPanel{
  
     	// set toolbar
 	    boolean firstButton = true;
-		for (int i = 0; i < toolbarVec.size(); i++) {
+		for (int i = 0; i < toolbarVec.size(); i++) {	        
+	        Object ob = toolbarVec.get(i);
+	        
+	        // separator between menus
+	        if (ob instanceof Integer) {
+	        	tb.addSeparator();
+	        	continue;
+	        }
+	        
+	        // new menu
+	        Vector menu = (Vector) ob;
 	        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
-	        moveToggleMenus.add(tm);
-	        Vector menu = (Vector) toolbarVec.get(i);
+	        moveToggleMenus.add(tm);	      
+	        
 	        for (int k = 0; k < menu.size(); k++) {
 	        	// separator
 	        	int mode = ((Integer) menu.get(k)).intValue();
-	        	if (mode < 0) {
-	        		if (k==0) // separator at first position of new menu: toolbar separator 
-	        			tb.addSeparator();
-	        		else // separator within menu: 
-	        			tm.addSeparator();
+	        	if (mode < 0) {	        	       	
+	        		// separator within menu: 
+	        		tm.addSeparator();
 	        	} 
 	        	else { // standard case: add mode
 	        		 tm.addMode(mode);
@@ -182,8 +192,9 @@ public class MyToolbar extends JPanel{
 	                 }
 	        	}
 	        }
-	                               
-	        tb.add(tm);
+	            
+	        if (tm.getToolsCount() > 0)
+	        	tb.add(tm);
 		}        
     }
     
@@ -197,23 +208,29 @@ public class MyToolbar extends JPanel{
 	public static Vector createToolBarVec(String strToolBar) {			
 		String [] tokens = strToolBar.split(" ");
 		Vector toolbar = new Vector();
-		Vector menu = new Vector();
-		int maxMenuLength = 0;
+		Vector menu = new Vector();		
 		
 	    for (int i=0; i < tokens.length; i++) {     
 	         if (tokens[i].equals("|")) { // start new menu	        	 
-	        	 toolbar.add(menu);
-	        	 if (menu.size() > maxMenuLength)
-	        		 maxMenuLength = menu.size();
+	        	 if (menu.size() > 0)
+	        		 toolbar.add(menu);	        	
 	        	 menu = new Vector();
 	         }
-	         else if (tokens[i].equals("||")) { // start new menu with separator	        	 
-	        	 toolbar.add(menu);
-	        	 menu = new Vector();
-	        	 menu.add(new Integer(-1)); // separator = negative mode
+	         else if (tokens[i].equals("||")) { // separator between menus	        	 
+	        	 if (menu.size() > 0)
+	        		 toolbar.add(menu);
+	        	 
+	        	 // add separator between two menus
+	        	 //menu = new Vector();
+	        	 //menu.add(TOOLBAR_SEPARATOR);	        	 
+	        	 //toolbar.add(menu);
+	        	 toolbar.add(TOOLBAR_SEPARATOR);
+	        	 
+	        	 // start next menu
+	        	 menu = new Vector();	        	 
 	         }
 	         else if (tokens[i].equals(",")) { // separator within menu
-	        	 menu.add(new Integer(-1));
+	        	 menu.add(TOOLBAR_SEPARATOR);
 	         }
 	         else { // add mode to menu
 	        	 try  {	

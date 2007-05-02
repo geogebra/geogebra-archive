@@ -188,7 +188,7 @@ public class Application {
     	specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
     	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    	    	
     }
-    
+        
     public static final Color COLOR_SELECTION = new Color(225, 225, 245);
     public static final String STANDARD_FONT_NAME = "SansSerif";  
 
@@ -2127,7 +2127,7 @@ public class Application {
 		}
 		else		
 			// standard case
-			return EuclidianView.getModeText(mode);	
+			return getMenu(EuclidianView.getModeText(mode));	
     }
     
     public ImageIcon getModeIcon(int mode) {
@@ -2755,23 +2755,19 @@ public class Application {
         addLanguageMenuItems(submenu, langListener);
         menu.add(submenu);
         
-        menu.addSeparator();
-       
-        // drawing pad properteis
-        menu.add(toolbarConfigAction);
+        menu.addSeparator();             
         
         // drawing pad properteis
-        menu.add(drawingPadPropAction);
-        
-       
-        
+        menu.add(drawingPadPropAction);                       
         menuBar.add(menu);
         
-        // windows menu
+        // tools menu
         menuTools = new JMenu(getMenu("Tools"));        
         menuBar.add(menuTools);
         menuTools.add(showCreateToolsAction);
-        menuTools.add(showManageToolsAction);                
+        menuTools.add(showManageToolsAction);       
+        menuTools.addSeparator(); 
+        menuTools.add(toolbarConfigAction);
         
         // windows menu
         menuWindow = new JMenu(getMenu("Window"));
@@ -3094,7 +3090,7 @@ public class Application {
         
         toolbarConfigAction =
         	new AbstractAction(
-                    getPlain("Toolbar") + " ...") {
+                    getMenu("CustomizeToolbar") + " ...") {
             	private static final long serialVersionUID = 1L;
                 public void actionPerformed(ActionEvent e) {
                     showToolbarConfigDialog();
