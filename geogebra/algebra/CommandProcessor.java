@@ -2287,7 +2287,7 @@ final public GeoElement[] process(Command c) throws MyError {
 
             	GeoElement[] ret =
                 {
-                     kernel.TangentCurve(
+                     kernel.Tangent(
                         c.getLabel(),
                         (GeoPoint) arg[0],
                         (GeoCurveCartesian) arg[1])};

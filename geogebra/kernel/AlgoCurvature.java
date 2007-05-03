@@ -1,17 +1,17 @@
 package geogebra.kernel;
 
 /**
- * @author  Victor Franco Espino
+ * @author  Victor Franco Espino, Markus Hohenwarter
  * @version 11-02-2007
  * 
- * Calculate Curvature for function: k(x) = f''/T^3, T = sqrt(1+(f')^2)
+ * Calculate Curvature for function:
  */
 
 public class AlgoCurvature extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint A; // input
-	private GeoFunction f, f1, f2; // f = f(x), f1 is f'(x), f2 is f''(x)
+	private GeoFunction f;
     private GeoNumeric K; //output
     
     AlgoCurvature(Construction cons, String label, GeoPoint A, GeoFunction f){
@@ -29,17 +29,7 @@ public class AlgoCurvature extends AlgoElement {
         super(cons);
         this.f = f;
         this.A = A;
-        K = new GeoNumeric(cons);
-        
-        //First derivative of function f
-        AlgoDerivative algo = new AlgoDerivative(cons, f);
-        cons.removeFromConstructionList(algo);
-		this.f1 = (GeoFunction) algo.getDerivative();
-		
-		//Second derivative of function f
-		algo = new AlgoDerivative(cons, f1);
-		cons.removeFromConstructionList(algo);
-		this.f2 = (GeoFunction) algo.getDerivative();
+        K = new GeoNumeric(cons);              
 				
         setInputOutput();
         compute();
@@ -65,16 +55,9 @@ public class AlgoCurvature extends AlgoElement {
     }
 
     final void compute() {
-    	try {    	
-    		double f1eval = f1.evaluate(A.inhomX);
-    		double t = Math.sqrt(1 + f1eval * f1eval);
-    		double t3 = t * t * t;
-
-    		K.setValue( f2.evaluate(A.inhomX) / t3 );
-    	} 
-    	catch (Exception e) {
-    		// in case something went wrong, e.g. derivatives not defined
-    		K.setUndefined();
-    	}
+    	if (f.isDefined())
+    		K.setValue( f.evaluateCurvature(A.inhomX) );
+    	else     	
+    		K.setUndefined();    	
     }   
 }

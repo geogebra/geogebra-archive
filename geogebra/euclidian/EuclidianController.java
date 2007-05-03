@@ -23,6 +23,7 @@ import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
@@ -171,6 +172,7 @@ final public class EuclidianController implements MouseListener,
 	private ArrayList selectedConics = new ArrayList();
 
 	private ArrayList selectedFunctions = new ArrayList();
+	private ArrayList selectedCurves = new ArrayList();
 
 	private ArrayList selectedVectors = new ArrayList();
 	
@@ -351,6 +353,7 @@ final public class EuclidianController implements MouseListener,
 		clearSelection(selectedPolygons);
 		clearSelection(selectedGeos);
 		clearSelection(selectedFunctions);		
+		clearSelection(selectedCurves);
 
 		// clear highlighting
 		refreshHighlighting(null);
@@ -2409,17 +2412,19 @@ final public class EuclidianController implements MouseListener,
 		return false;
 	}
 
-	// get (point or line) and (conic or function)
+	// get (point or line) and (conic or function or curve)
 	final private boolean tangents(ArrayList hits) {
 		if (hits == null)
 			return false;
-		boolean hitConic, hitFunction = false;
-
-		hitConic = (addSelectedConic(hits, 1, false) != 0);
-		if (!hitConic)
-			hitFunction = (addSelectedFunction(hits, 1, false) != 0);
-
-		if (!hitConic && !hitFunction) {
+		
+		boolean found=false;
+		found = addSelectedConic(hits, 1, false) != 0;
+		if (!found)
+			found = addSelectedFunction(hits, 1, false) != 0;
+		if (!found)
+			found = addSelectedCurve(hits, 1, false) != 0;		
+		
+		if (!found) {
 			if (selLines() == 0) {
 				addSelectedPoint(hits, 1, false);
 			}
@@ -2442,12 +2447,22 @@ final public class EuclidianController implements MouseListener,
 				kernel.Tangent(null, lines[0], conics[0]);
 				return true;
 			}
-		} else if (selFunctions() == 1) {
+		} 
+		else if (selFunctions() == 1) {
 			if (selPoints() == 1) {
 				GeoFunction[] functions = getSelectedFunctions();
 				GeoPoint[] points = getSelectedPoints();
 				// create new tangents
 				kernel.Tangent(null, points[0], functions[0]);
+				return true;
+			}
+		}
+		else if (selCurves() == 1) {
+			if (selPoints() == 1) {
+				GeoCurveCartesian[] curves = getSelectedCurves();
+				GeoPoint [] points = getSelectedPoints();
+				// create new tangents
+				kernel.Tangent(null, points[0], curves[0]);
 				return true;
 			}
 		}
@@ -3216,6 +3231,19 @@ final public class EuclidianController implements MouseListener,
 		return functions;
 	}
 
+
+	final private GeoCurveCartesian [] getSelectedCurves() {
+		GeoCurveCartesian [] curves = new GeoCurveCartesian[selectedCurves.size()];
+		int i = 0;
+		Iterator it = selectedCurves.iterator();
+		while (it.hasNext()) {
+			curves[i] = (GeoCurveCartesian) it.next();
+			i++;
+		}
+		clearSelection(selectedCurves);
+		return curves;
+	}	
+
 	final private void clearSelection(ArrayList selectionList) {
 		// unselect
 		selectionList.clear();
@@ -3267,6 +3295,11 @@ final public class EuclidianController implements MouseListener,
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedFunctions, GeoFunction.class);
 	}
 	
+	final private int addSelectedCurve(ArrayList hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCurves, GeoCurveCartesian.class);
+	}
+	
 	final private int addSelectedPolygon(ArrayList hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolygons, GeoPolygon.class);
@@ -3302,6 +3335,10 @@ final public class EuclidianController implements MouseListener,
 
 	final int selFunctions() {
 		return selectedFunctions.size();
+	}
+	
+	final int selCurves() {
+		return selectedCurves.size();
 	}
 
 	// selectionList may only contain max objects

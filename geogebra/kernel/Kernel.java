@@ -3097,7 +3097,7 @@ public class Kernel {
 	 * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t))
 	 */
 
-	final public GeoLine TangentCurve(String label,GeoPoint P,GeoCurveCartesian f) {
+	final public GeoLine Tangent(String label,GeoPoint P,GeoCurveCartesian f) {
 
 		AlgoTangentCurve algo = new AlgoTangentCurve(cons, label, P, f);
 		GeoLine t = algo.getTangent();

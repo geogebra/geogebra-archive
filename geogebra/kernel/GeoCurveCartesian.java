@@ -435,72 +435,37 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		out[1] = funY.evaluate(paramVal);
 	}
 	
-//	Victor Franco 25-04-2007
-
-	/*
-
-	 * Evaluate Curve and return a Color
-
-	 * depending on the value of curvature
-
+	public GeoVec2D evaluateCurve(double t) {		
+		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
+	}  
+	
+	/**
+	 * Calculates curvature for curve: 
+	 * k(t) = (a'(t)b''(t)-a''(t)b'(t))/T^3, T = sqrt(a'(t)^2+b'(t)^2)
+	 * @author Victor Franco, Markus Hohenwarter
 	 */
-
-	public Color evaluateColorCurvature(double t, double [] out){
-
-		out[0] = funX.evaluate(t);
-		out[1] = funY.evaluate(t);
-
-		Function f1X, f1Y, f2X, f2Y; 
+	public double evaluateCurvature(double t){		
+		Function f1X, f1Y, f2X, f2Y;		
 		f1X = funX.getDerivative(1);
 		f1Y = funY.getDerivative(1);
 		f2X = funX.getDerivative(2);
 		f2Y = funY.getDerivative(2);
 		
+		if (f1X == null || f1Y == null || f2X == null || f2Y == null)
+			return Double.NaN;
+		
 	  	double f1eval[] = new double[2];
-    	double f2eval[] = new double[2];
-    	double t1, t3, evals;
-    
+    	double f2eval[] = new double[2];    	   
     	f1eval[0] = f1X.evaluate(t);
     	f1eval[1] = f1Y.evaluate(t);
     	f2eval[0] = f2X.evaluate(t);
     	f2eval[1] = f2Y.evaluate(t);
-        t1 = Math.sqrt(f1eval[0]*f1eval[0] + f1eval[1]*f1eval[1]);
-        t3 = t1 * t1 * t1;
-        evals = (f1eval[0]*f2eval[1] - f2eval[0]*f1eval[1]) / t3;
-
-	    double a = CURVATURE_COLOR;
-	    Color curvColor;
-
-	    if (a<0) a=0;//No negative values for Color
-
-	    /**Color of curvature
-	     * 
-	     * Negative Curvature : Green
-	     * Positive Curvature : Red
-	     * Curvature near zero: Blue
-	    */
-	    float red, green, alpha = (float) 0.5;
-
-	    if (evals >= Kernel.MIN_PRECISION){
-			red = (float) (a*evals/(a*evals+1));
-			green = 0;
-	    	curvColor = new Color(red,green,1-red,alpha);
-
-		}else if (evals < 0){
-			green =  (float) (a*evals/(a*evals-1));
-			red = 0;
-			curvColor = new Color(red,green,1-green,alpha);
-		}
-		else {
-			curvColor = Color.BLACK;//default color
-		}
-		return curvColor;
+        double t1 = Math.sqrt(f1eval[0]*f1eval[0] + f1eval[1]*f1eval[1]);
+        double t3 = t1 * t1 * t1;
+        return (f1eval[0]*f2eval[1] - f2eval[0]*f1eval[1]) / t3;
 	}
+	
 
-    //Victor Franco 25-04-2007
-	public GeoVec2D evaluateCurve(double t) {		
-		return new GeoVec2D(kernel, funX.evaluate(t), funY.evaluate(t));
-	}  
 	
 	final public boolean isGeoCurveable() {
 		return true;

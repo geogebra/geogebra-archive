@@ -27,14 +27,7 @@ public interface ParametricCurve extends Traceable {
 	void evaluateCurve(double t, double [] out);
 	GeoVec2D evaluateCurve(double t);	
 
-//	Victor Franco 25-04-2007
-
-	/*
-	 * Evaluate Curve or Function and return 
-	 * a Color depending on the value of curvature
-	 */
-	public Color evaluateColorCurvature(double t, double[] out);
-
-    //Victor Franco 25-04-2007
+	double evaluateCurvature(double t);	
+    
 	GeoElement toGeoElement();
 }
