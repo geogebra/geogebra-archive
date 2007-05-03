@@ -12,7 +12,6 @@
 
 package geogebra.kernel;
 
-import java.awt.Polygon;
 
 /**
  * Algorithm to compute the circumference of a 

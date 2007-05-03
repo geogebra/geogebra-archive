@@ -4069,6 +4069,14 @@ public class Application {
             sb.append(sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT);
             sb.append("\"/>\n");
         }
+        
+        // custom toolbar
+        if (strCustomToolbarDefinition != null) {
+        	sb.append("\t<toolbar");
+        	sb.append(" str=\"");
+        	sb.append(strCustomToolbarDefinition);     
+        	sb.append("\"/>\n");
+        }
 
         sb.append("\t<font ");
         sb.append(" size=\"");

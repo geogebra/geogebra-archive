@@ -12,8 +12,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import geogebra.Application;
-
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.TreeSet;

@@ -527,27 +527,26 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 	}
 	 
 	public void pointChanged(GeoPoint P) {
-		if (Math.abs(x) <= Math.abs(y)) {	
-			P.x = P.x/P.z;
-			P.y = (-x * P.x - z) / y;
-			P.z = 1.0;
-			
-			// set parameter			
-			if (startPoint != null) {
-				P.pathParameter.t = (startPoint.z * P.x - startPoint.x) / (y * startPoint.z);					
+		// project P on line
+		double px = P.x/P.z;
+		double py = P.y/P.z;
+		// param of projection point on perpendicular line
+		double t = -(z + x*px + y*py) / (x*x + y*y); 
+		// calculate projection point using perpendicular line
+		P.x = px + t * x;
+		P.y = py + t * y;
+		P.z = 1.0;	
+						
+		// set path parameter
+		if (startPoint != null) {
+			if (Math.abs(x) <= Math.abs(y)) {	
+				P.pathParameter.t = (startPoint.z * P.x - startPoint.x) / (y * startPoint.z);								
 			} 
-		} 
-		else {
-			P.y = P.y/P.z;
-			P.x = (-y * P.y - z) / x;
-			P.z = 1.0;
-			
-			// set parameter
-			if (startPoint != null) {
-				P.pathParameter.t = (startPoint.y - startPoint.z * P.y) / (x * startPoint.z);
-			} 
-		}
-	}		
+			else {		
+				P.pathParameter.t = (startPoint.y - startPoint.z * P.y) / (x * startPoint.z);			
+			}
+		}		
+	}				
 
 	public void pathChanged(GeoPoint P) {
 		// calc point for given parameter

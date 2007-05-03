@@ -24,7 +24,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-final public class GeoPolygon extends GeoElement implements NumberValue {
+final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -331,5 +331,89 @@ final public class GeoPolygon extends GeoElement implements NumberValue {
 	public boolean isGeoPolygon() {
 		return true;
 	}
+	
+	/*
+	 * Path interface implementation
+	 */
+	
+	public boolean isPath() {
+		return true;
+	}
+
+	public PathMover createPathMover() {
+		return new PathMoverGeneric(this);
+	}
+
+	public double getMaxParameter() {
+		return segments.length;
+	}
+
+	public double getMinParameter() {		
+		return 0;
+	}
+
+	public boolean isClosedPath() {
+		return true;
+	}
+
+	public boolean isOnPath(GeoPoint P, double eps) {
+		if (P.getPath() == this)
+			return true;
+		
+		// check if P is on one of the segments
+		for (int i=0; i < segments.length; i++) {
+			if (segments[i].isOnPath(P, eps))
+				return true;
+		}				
+		return false;
+	}
+
+	public void pathChanged(GeoPoint P) {		
+		// parameter is between 0 and segment.length,
+		// i.e. floor(parameter) gives the segment index
+		
+		int index = (int) Math.floor(P.pathParameter.t);
+		if (index == segments.length) 
+			index--;
+		GeoSegment seg = segments[index];
+		double segParameter = P.pathParameter.t - index;
+		
+		// calc point for given parameter
+		P.x = seg.startPoint.inhomX + segParameter * seg.y;
+		P.y = seg.startPoint.inhomY - segParameter * seg.x;
+		P.z = 1.0;	
+	}
+
+	public void pointChanged(GeoPoint P) {
+		double qx = P.x/P.z;
+		double qy = P.y/P.z;
+		double minDist = Double.POSITIVE_INFINITY;
+		double resx=0, resy=0, resz=0, param=0;
+		
+		// find closest point on each segment
+		for (int i=0; i < segments.length; i++) {
+			P.x = qx;
+			P.y = qy;
+			P.z = 1;
+			segments[i].pointChanged(P);
+			
+			double x = P.x/P.z - qx; 
+			double y = P.y/P.z - qy;
+			double dist = x*x + y*y;			
+			if (dist < minDist) {
+				minDist = dist;
+				// remember closest point
+				resx = P.x;
+				resy = P.y;
+				resz = P.z;
+				param = i + P.pathParameter.t;
+			}
+		}				
+			
+		P.x = resx;
+		P.y = resy;
+		P.z = resz;
+		P.pathParameter.t = param;	
+	}	
 
 }

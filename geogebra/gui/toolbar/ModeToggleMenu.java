@@ -13,9 +13,6 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui.toolbar;
 
 import geogebra.Application;
-import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.Macro;
-import geogebra.util.ImageManager;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -31,7 +28,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;

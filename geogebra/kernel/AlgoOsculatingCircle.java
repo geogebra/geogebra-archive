@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import java.awt.Color;
 
 /**
  * @author  Victor Franco Espino

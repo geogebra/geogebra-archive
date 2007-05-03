@@ -9,13 +9,12 @@ LICENSE
   (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
 DEVELOPERS
-  * Markus Hohenwarter, Creator of GeoGebra
-      Project leader and main developer since 2001
-      University of Salzburg / Florida Atlantic University      
-Contributions by    
+Creator of GeoGebra, project leader and main developer
+  * Markus Hohenwarter, Florida Atlantic University, since 2001
+Contributions by
   * Yves Kreis, University of Luxembourg, since 2005
-  * Loïc Le Coq, France, 2006
-  * Eloi Puertas, University of Barcelona, 2007
+  * Loïc Le Coq, France, since 2006
+  * Eloi Puertas, University of Barcelona, since 2007
   
 TRANSLATIONS 
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Béja, Tunisia)
@@ -51,18 +50,18 @@ TRANSLATIONS
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen
    
 FUNDED BY
-  * Standards Mapped Graduate Education and Mentoring, http://smgem.mspnet.org  
-     from 08/2006 to 07/2008, US National Science Foundation, http://www.nsf.gov
-  * Austrian Federal Ministry for Education, Science and Culture 
-     from 01/2006 to 12/2007, http://www.bmbwk.gv.at
-  * Austrian Academy of Sciences, DOC scholarship
-     from 02/2004 to 01/2006, http://www.oeaw.ac.at
+  * US National Science Foundation
+     08/2006 to 07/2008: Supplement for http://smgem.mspnet.org  
+  * Austrian Federal Ministry for Education, Science and Culture
+     01/2006 to 12/2007: GeoGebra for Austrian Schools
+  * Austrian Academy of Sciences
+     02/2004 to 01/2006: DOC scholarship for Markus Hohenwarter
 
 SUPPORTED BY
-  * hosting the GeoGebra Website
-     Department of Mathematics, University of Salzburg
-  * providing the multi-platform software deployment solution 
-     Faculty LSHASE, University of Luxembourg
+  * Department of Mathematics, University of Salzburg 
+     hosting the GeoGebra Website     
+  * Faculty LSHASE, University of Luxembourg
+     providing the multi-platform software deployment solution      
   
 SOFTWARE
   * Jasymca, http://webuser.hs-furtwangen.de/~dersch

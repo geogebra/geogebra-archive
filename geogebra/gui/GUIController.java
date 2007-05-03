@@ -13,15 +13,10 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.algebra.AlgebraInput;
-import geogebra.algebra.AlgebraView;
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 
-import java.awt.KeyEventDispatcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 

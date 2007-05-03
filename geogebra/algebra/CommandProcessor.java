@@ -3499,7 +3499,7 @@ final public  GeoElement[] process(Command c) throws MyError {
     switch (n) {
         case 1 :
             arg = resArgs(c);
-            if (ok[0] = (arg[0] .isPath())) {
+            if (ok[0] = (arg[0].isPath())) {
                 GeoElement[] ret =
                     { kernel.Point(c.getLabel(), (Path) arg[0], 0, 0)};
                 return ret;

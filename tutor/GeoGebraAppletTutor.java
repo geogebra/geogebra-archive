@@ -19,7 +19,6 @@ package tutor;
  */
 
 import geogebra.Application;
-import geogebra.GeoGebraApplet;
 import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebra;
@@ -53,7 +52,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 
 import netscape.javascript.JSObject;
 

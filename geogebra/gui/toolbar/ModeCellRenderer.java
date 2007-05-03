@@ -16,15 +16,11 @@ import geogebra.Application;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeNode;
 
 public class ModeCellRenderer extends DefaultTreeCellRenderer
 implements ListCellRenderer {

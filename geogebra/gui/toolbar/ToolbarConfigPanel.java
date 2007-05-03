@@ -22,13 +22,11 @@ import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -219,11 +217,21 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		// DELETE
 		if (src == deleteButton) {									
 			if (selRow > 0) { // not root					
-				// delete node				
-				model.removeNodeFromParent(selNode);
-				if (parentNode.getChildCount() == 0 && !parentNode.isRoot()) {					
-					model.removeNodeFromParent(parentNode);
-					selRow--;
+				// delete node unless move node				
+				Object userOb = selNode.getUserObject();
+				if (userOb == null)
+					userOb = ((DefaultMutableTreeNode) selNode.getFirstChild()).getUserObject();				
+				if (userOb instanceof Integer && ((Integer) userOb).intValue() == 0) 
+					return;
+				
+				// not move mode: delete node
+				model.removeNodeFromParent(selNode);				
+				// remove empty menu too	
+				if (parentNode.getChildCount() == 0) {
+					if (!parentNode.isRoot()) { 					
+						model.removeNodeFromParent(parentNode);
+						selRow--;
+					}
 				}
 				
 				// select node at same row or above

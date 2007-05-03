@@ -634,6 +634,12 @@ public class MyXMLHandler implements DocHandler {
                     ok = handleSplitDivider(app, attrs);
                     break;
                 }
+        		 
+        	case 't': 
+        		if (eName.equals("toolbar")) {
+                    ok = handleToolbar(app, attrs);
+                    break;
+                } 
         	        	        	
         	default:
         		 System.err.println("unknown tag in <gui>: " + eName);        
@@ -754,6 +760,16 @@ public class MyXMLHandler implements DocHandler {
         }
     }
 
+    
+    private boolean handleToolbar(Application app, LinkedHashMap attrs) {
+        try {
+            String toolbarDef = (String) attrs.get("str");
+            app.setToolBarDefinition(toolbarDef);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     // ====================================
     //   <construction>    

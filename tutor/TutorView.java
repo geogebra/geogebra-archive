@@ -1,22 +1,16 @@
 package tutor;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocol;
 import geogebra.MyError;
 import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.util.Util;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
-import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class TutorView implements View {
 	
