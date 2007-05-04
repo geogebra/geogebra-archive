@@ -3357,7 +3357,7 @@ public class Application {
                 
                 // license                 
                 String text = readTextFromJar("gui/license_message.txt");                  
-                JTextArea textArea = new JTextArea(21, 43);
+                JTextArea textArea = new JTextArea(21, 45);
                 JScrollPane scrollPane = 
                     new JScrollPane(textArea,
                                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,

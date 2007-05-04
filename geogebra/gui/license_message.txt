@@ -14,7 +14,7 @@ Creator of GeoGebra, project leader and main developer
 Contributions by
   * Yves Kreis, University of Luxembourg, since 2005
   * Loïc Le Coq, France, since 2006
-  * Eloi Puertas, University of Barcelona, since 2007
+  * Joan Carles Naranjo, Victor Franco, Eloi Puertas, University of Barcelona, since 2007
   
 TRANSLATIONS 
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Béja, Tunisia)

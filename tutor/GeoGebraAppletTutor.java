@@ -164,7 +164,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 		app = new Application(null, this, undoActive);
 		// Keep alive the Kernel!
 		kernel =  app.getKernel();
-//		 Load a file if it exists
+		// Load a file if it exists
 		// Creates a new tutorView
 		if (tutorView == null) {
 			tutorView = new TutorView(strategiesXML,app);		
@@ -172,6 +172,9 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 		if (fileStr != null) {					
 			app.loadXML(handleFileArg(fileStr), false);
 		}
+		
+		//TODO: remove test block
+		System.out.println("**** MAIN construction BEGIN");
 		Construction c = kernel.getConstruction();
 		int i=0;
 		while (c.getConstructionElement(i)!= null)
@@ -179,6 +182,9 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
     		System.out.println(c.getConstructionElement(i));
     		i++;
     	}
+		System.out.println("**** MAIN construction END");
+		
+		
 		//Attach TutorView.
 		 kernel.attach(tutorView); // register view  	
 		 initGUI();

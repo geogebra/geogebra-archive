@@ -39,11 +39,8 @@ public class TutorView implements View {
 			}
 	
 	}
-	 private URL handleFileArg(String fileArgument) {
-	     
-	       
-	        try {             	
-	        	
+	 private URL handleFileArg(String fileArgument) {	     	      
+	        try {             		        	
 	        	String lowerCase = fileArgument.toLowerCase();
 	            URL url=null;
 	        	if (lowerCase.startsWith("http") || 
@@ -127,16 +124,11 @@ public class TutorView implements View {
 	 {		 
 	    	// build macro construction
 		 
-		    Kernel k = new Kernel(app); 
-		   
-	        k.setContinuous(true);
-	    	
-	    	xmlio = new MyXMLio(k,k.getConstruction());
-	    	
-	    	
+		    Kernel k = new Kernel(app);
+		    k.setUndoActive(false);
+	    	xmlio = new MyXMLio(k,k.getConstruction());	    		    	
 	    	try {        	
-	    			xmlio.readZipFromURL(url, false);
-	    			k.initUndoInfo();
+	    		xmlio.readZipFromURL(url, false);
 	    	} 
 	    	catch (MyError e) {  
 	    		String msg = e.getLocalizedMessage();
@@ -147,8 +139,12 @@ public class TutorView implements View {
 	    	catch (Exception e) {
 	    		e.printStackTrace();       		   
 	        	throw new Exception(e.getMessage());
-	    	}    	
+	    	}   	    	
 	    	Construction c = k.getConstruction();
+	    	
+	    	
+	    	// TODO: remove test block
+	    	System.out.println("**** STRATEGY construction BEGIN");
 	    	int i=0;
 	    	while (c.getConstructionElement(i)!= null)
 	    	{
@@ -158,6 +154,7 @@ public class TutorView implements View {
 	    		System.out.println(ce.getDefinitionDescription());
 	    		i++;
 	    	}
+	    	System.out.println("**** STRATEGY construction END");
 	    	
 	    	//System.out.println(k.getConstruction().getXML());
 	    	return k.getConstruction();
