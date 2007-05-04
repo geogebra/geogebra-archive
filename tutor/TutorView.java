@@ -5,6 +5,7 @@ import geogebra.MyError;
 import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -152,6 +153,9 @@ public class TutorView implements View {
 	    	while (c.getConstructionElement(i)!= null)
 	    	{
 	    		System.out.println(c.getConstructionElement(i));
+	    		ConstructionElement ce = c.getConstructionElement(i);
+	    		System.out.println(ce.getAlgebraDescription());
+	    		System.out.println(ce.getDefinitionDescription());
 	    		i++;
 	    	}
 	    	
