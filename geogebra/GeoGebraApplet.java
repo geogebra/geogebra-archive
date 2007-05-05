@@ -323,7 +323,7 @@ public class GeoGebraApplet extends JApplet {
 	 * input text field. 	 
 	 */
 	public synchronized void evalCommand(String cmdString) {
-		app.getAlgebraController().processAlgebraCommand(cmdString, false);
+		kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
 	}
 
 	

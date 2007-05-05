@@ -381,7 +381,7 @@ public class Application {
 
         //  init Controllers and Views      
         guiController = new GUIController(this);   
-        algebraController = new AlgebraController(kernel, kernel.getConstruction());
+        algebraController = new AlgebraController(kernel);
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
 	
@@ -1474,7 +1474,7 @@ public class Application {
             		 return false;
             	}
             	
-                String newLabel = algebraController.parseLabel(inputValue);
+                String newLabel = kernel.getAlgebraProcessor().parseLabel(inputValue);
                 
                 // is there a geo with this name?
                 Construction cons = geo.getConstruction();
@@ -1573,7 +1573,7 @@ public class Application {
         public boolean processInput(String inputValue) {
             if (inputValue == null) return false;
             try {
-            	GeoElement newGeo = algebraController.changeGeoElement(geo, inputValue, true);
+            	GeoElement newGeo = kernel.getAlgebraProcessor().changeGeoElement(geo, inputValue, true);
             	doAfterRedefine(newGeo);
                 return newGeo != null;
             } catch (Exception e) {
@@ -1822,7 +1822,7 @@ public class Application {
             boolean createText = text == null;
             if (createText) {
                 GeoElement [] ret = 
-                    algebraController.processAlgebraCommand(inputValue, false);
+                	kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
                 if (ret != null && ret[0].isTextValue()) {
                     GeoText t = (GeoText) ret[0];
                     t.setLaTeX(isLaTeX, true);                 
@@ -1845,7 +1845,7 @@ public class Application {
             // change existing text
             try {           
                 text.setLaTeX(isLaTeX, true);
-                GeoText newText = (GeoText) algebraController.changeGeoElement(text, inputValue, true);
+                GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);
                 doAfterRedefine(newText);
                 return newText != null;
 			} catch (Exception e) {
@@ -1898,7 +1898,7 @@ public class Application {
 		NumberValue num = null;
 		
 		public boolean processInput(String inputString) {			
-			GeoElement [] result = algebraController.processAlgebraCommand(inputString, false);			
+			GeoElement [] result = kernel.getAlgebraProcessor().processAlgebraCommand(inputString, false);			
 			boolean success = result != null && result[0].isNumberValue();
 			if (success) {
 				num = (NumberValue) result[0];				

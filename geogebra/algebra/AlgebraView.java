@@ -61,7 +61,6 @@ public class AlgebraView extends JTree implements View {
 
 	private Application app; // parent appame
 	private Kernel kernel;
-	private AlgebraController algCtrl;
 	private DefaultTreeModel model;
 	
 	private MyRenderer renderer;
@@ -85,8 +84,7 @@ public class AlgebraView extends JTree implements View {
 	private boolean highlightCross;
 
 	/** Creates new AlgebraView */
-	public AlgebraView(AlgebraController algCtrl) {
-		this.algCtrl = algCtrl;
+	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
 		algCtrl.setView(this);			
@@ -602,9 +600,8 @@ public class AlgebraView extends JTree implements View {
 			// only nodes with a GeoElement as userObject can be edited!		
 			selectedNode.setUserObject(selectedGeoElement);
 			
-			// notify the AlgebraController to change this GeoElement
-			// in the Kernel                  
-			GeoElement geo = algCtrl.changeGeoElement(selectedGeoElement, newValue, false);			
+			// change this GeoElement in the Kernel                  
+			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, false);			
 			if (geo != null) {				
 				selectedGeoElement = geo;
 				selectedNode.setUserObject(selectedGeoElement);

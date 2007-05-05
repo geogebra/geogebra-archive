@@ -23,6 +23,7 @@ import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebra;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -179,7 +180,13 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 		int i=0;
 		while (c.getConstructionElement(i)!= null)
     	{
-    		System.out.println(c.getConstructionElement(i));
+			ConstructionElement ce = c.getConstructionElement(i);
+			if (ce.isAlgoElement()) {
+				System.out.println("algo: " + ce);	
+			} else {
+				System.out.println("geo: " + ce);	
+			}
+    		
     		i++;
     	}
 		System.out.println("**** MAIN construction END");
@@ -355,7 +362,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 	 * input text field. 	 
 	 */
 	public synchronized void evalCommand(String cmdString) {
-		app.getAlgebraController().processAlgebraCommand(cmdString, false);
+		kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
 	}
 
 	

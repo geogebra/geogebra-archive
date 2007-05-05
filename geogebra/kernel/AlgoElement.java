@@ -40,7 +40,14 @@ implements EuclidianViewAlgo {
     
     public AlgoElement(Construction c) {
         super(c);                       
-        c.addToConstructionList(this, false);        
+        c.addToConstructionList(this, false); 
+        
+        // TODO: remove
+        try {
+        //	throw new Exception("new AlgoElement: cons: " + c + ", " + getClassName() );
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
     }
     
     private String getCommandString(String classname) {

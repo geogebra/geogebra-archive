@@ -60,6 +60,7 @@ ItemListener, WindowListener {
 	//private static int PREF_FIELD_WIDTH = 100;	
 	
 	private Application app;
+	private Kernel kernel;
 	private EuclidianView view;
 	private JButton cancelButton, applyButton, 
 	        btBackgroundColor, btAxesColor, btGridColor;
@@ -76,8 +77,9 @@ ItemListener, WindowListener {
 	 */
 	public EuclidianPropDialog(Application app, EuclidianView view) {
 		super(app.getFrame(), true);
-		this.app = app;
+		this.app = app;		
 		this.view = view;
+		kernel = app.getKernel();
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
@@ -400,7 +402,7 @@ ItemListener, WindowListener {
 		if (text == null || text.equals("")) 
 			return Double.NaN;
 		else
-			return app.getAlgebraController().evaluateToDouble(text);	
+			return kernel.getAlgebraProcessor().evaluateToDouble(text);	
 	}
 	
 	public void itemStateChanged(ItemEvent e) {

@@ -61,8 +61,7 @@ public class TutorView implements View {
 	    }
 	
 	
-	public void add(GeoElement geo) {
-		// TODO Auto-generated method stub
+	public void add(GeoElement geo) {		
 		//Every GeoElement gets here.
 		Construction c = geo.getConstruction();
 		
@@ -148,11 +147,13 @@ public class TutorView implements View {
 	    	int i=0;
 	    	while (c.getConstructionElement(i)!= null)
 	    	{
-	    		System.out.println(c.getConstructionElement(i));
 	    		ConstructionElement ce = c.getConstructionElement(i);
-	    		System.out.println(ce.getAlgebraDescription());
-	    		System.out.println(ce.getDefinitionDescription());
-	    		i++;
+				if (ce.isAlgoElement()) {
+					System.out.println("algo: " + ce);	
+				} else {
+					System.out.println("geo: " + ce + ", free: " + ce.isIndependent());	
+				}
+				i++;
 	    	}
 	    	System.out.println("**** STRATEGY construction END");
 	    	

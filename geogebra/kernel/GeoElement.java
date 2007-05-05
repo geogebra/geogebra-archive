@@ -640,7 +640,7 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this GeoElement can be 
 	 * changed directly.
-	 * Note: this is needed for points on lines
+	 * Note: for points on lines this is different than isIndependent() 
 	 */
 	public boolean isChangeable() {
 		return !fixed && isIndependent();

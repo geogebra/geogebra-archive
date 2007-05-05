@@ -21,13 +21,13 @@ package geogebra.kernel;
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.View;
-import geogebra.algebra.AlgebraController;
 import geogebra.algebra.parser.Parser;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
 
 import java.text.NumberFormat;
@@ -90,10 +90,11 @@ public class Kernel {
 	private int viewCnt = 0;
 	
 	protected Construction cons;
-	protected Application app;
+	protected Application app;	
+	private AlgebraProcessor algProcessor;
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
-	private Parser tempParser;
+	private Parser parser;
 	private GeoGebraCAS ggbCAS;
 	
 	// Continuity on or off, default: false since V3.0
@@ -103,7 +104,7 @@ public class Kernel {
 	public Kernel(Application app) {
 		this();
 		this.app = app;
-		cons = new Construction(this);					
+		cons = new Construction(this);			
 	}
 	
 	public Kernel() {
@@ -111,6 +112,17 @@ public class Kernel {
 		nf.setGroupingUsed(false);
 		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 	}
+	
+	/**
+	 * Returns this kernel's algebra processor that handles
+	 * all input and commands.
+	 */	
+	final public AlgebraProcessor getAlgebraProcessor() {
+    	if (algProcessor == null)
+    		algProcessor = new AlgebraProcessor(this);
+    	return algProcessor;
+    }
+	
 	
 	public GeoElement lookupLabel(String label) {		
 		return cons.lookupLabel(label);
@@ -123,10 +135,6 @@ public class Kernel {
     public void clearLocalVariableTable() {
    	 	cons.clearLocalVariableTable();
    	}        		
-	
-	public AlgebraController getAlgebraController() {
-		return app.getAlgebraController();
-	}
 	
 	final public GeoAxis getXAxis() {
 		return cons.getXAxis();
@@ -168,11 +176,11 @@ public class Kernel {
 		return extrFinder;
 	}
 	
-	final public Parser getTempParser() {
-    	if (tempParser == null)
-    		tempParser = new Parser(this, this.getConstruction());
-    	return tempParser;
-    }
+	final public Parser getParser() {
+    	if (parser == null)
+    		parser = new Parser(this, cons);
+    	return parser;
+    }		
 	
 	/** 
      * Evaluates a YACAS expression and returns the result as a String.
@@ -982,7 +990,7 @@ public class Kernel {
 	 */
 	public String getMacroXML(Macro [] macros) {
 		if (hasMacros())					
-			return macroManager.getMacroXML(macros);
+			return MacroManager.getMacroXML(macros);
 		else
 			return "";
 	}

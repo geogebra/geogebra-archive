@@ -266,7 +266,7 @@ public class ToolNameIconPanel extends JPanel {
 		// remove spaces
 		cmdName = cmdName.replaceAll(" ", "");
 		try {
-			String parsed = app.getAlgebraController().parseLabel(cmdName);
+			String parsed = app.getKernel().getAlgebraProcessor().parseLabel(cmdName);
 			if (parsed != tfCmdName.getText())
 				tfCmdName.setText(parsed);
 		} catch (Error err) {

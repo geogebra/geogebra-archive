@@ -10,7 +10,7 @@
  * version.
  */
 
-package geogebra.algebra;
+package geogebra.kernel.commands;
 
 import geogebra.Application;
 import geogebra.MyError;
@@ -43,17 +43,17 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public abstract class CommandProcessor  {
-	
-    AlgebraController algCtrl;
+	    
     Application app;
     Kernel kernel;
     Construction cons;
-	
-	public CommandProcessor(AlgebraController algCtrl) {
-		 this.algCtrl = algCtrl;        
-	     kernel = algCtrl.getKernel();     
+	private AlgebraProcessor algProcessor;
+    
+	public CommandProcessor(Kernel kernel) {	      
+	     this.kernel = kernel;     
 	     cons = kernel.getConstruction();
-	     app = kernel.getApplication();
+	     app = kernel.getApplication();	  
+	     algProcessor = kernel.getAlgebraProcessor();
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public abstract class CommandProcessor  {
        }    
 
         final GeoElement[] resArg(ExpressionNode arg) throws MyError {
-           GeoElement[] geos = algCtrl.processExpressionNode(arg);
+           GeoElement[] geos = algProcessor.processExpressionNode(arg);
 
            if (geos != null)
 			return geos;
@@ -160,8 +160,8 @@ public abstract class CommandProcessor  {
 
 
 class CmdCenter extends CmdMidpoint {
-	public CmdCenter(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCenter(Kernel kernel) {
+		super(kernel);
 	}
 }
        
@@ -170,8 +170,8 @@ class CmdCenter extends CmdMidpoint {
  */
 class CmdMidpoint extends CommandProcessor {
 	
-	public CmdMidpoint(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdMidpoint(Kernel kernel) {
+		super(kernel);
 	}
 	
     public GeoElement[] process(Command c) throws MyError {
@@ -223,8 +223,8 @@ class CmdMidpoint extends CommandProcessor {
  */
 class CmdLine extends CommandProcessor {
 	
-	public CmdLine(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdLine(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -293,8 +293,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdRay extends CommandProcessor {
 	
-	public CmdRay(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdRay(Kernel kernel) {
+		super(kernel);
 	}
 	    
 final public GeoElement[] process(Command c) throws MyError {
@@ -350,8 +350,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdSegment extends CommandProcessor {
 	
-	public CmdSegment(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSegment(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {	
@@ -401,8 +401,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdOrthogonalLine extends CommandProcessor {
 	
-	public CmdOrthogonalLine(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdOrthogonalLine(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -459,8 +459,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdLineBisector extends CommandProcessor {
 	
-	public CmdLineBisector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdLineBisector(Kernel kernel) {
+		super(kernel);
 	}
 
 final public GeoElement[] process(Command c) throws MyError {
@@ -520,8 +520,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdAngularBisector extends CommandProcessor {
 	
-	public CmdAngularBisector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdAngularBisector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -585,8 +585,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdVector extends CommandProcessor {
 	
-	public CmdVector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdVector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -654,8 +654,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdDirection extends CommandProcessor {
 	
-	public CmdDirection(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDirection(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -686,8 +686,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdSlope extends CommandProcessor {
 	
-	public CmdSlope(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSlope(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -719,8 +719,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdOrthogonalVector extends CommandProcessor {
 	
-	public CmdOrthogonalVector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdOrthogonalVector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -761,8 +761,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdUnitVector extends CommandProcessor {
 	
-	public CmdUnitVector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdUnitVector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -797,8 +797,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdUnitOrthogonalVector extends CommandProcessor {
 	
-	public CmdUnitOrthogonalVector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdUnitOrthogonalVector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -846,8 +846,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdLength extends CommandProcessor {
 	
-	public CmdLength(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdLength(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -949,8 +949,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdDistance extends CommandProcessor {
 	
-	public CmdDistance(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDistance(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1035,8 +1035,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdAngle extends CommandProcessor {
 	
-	public CmdAngle(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdAngle(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1179,8 +1179,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdArea extends CommandProcessor {
 	
-	public CmdArea(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdArea(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1211,8 +1211,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdPolygon extends CommandProcessor {
 	
-	public CmdPolygon(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdPolygon(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1242,8 +1242,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdFocus extends CommandProcessor {
 	
-	public CmdFocus(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdFocus(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1270,8 +1270,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdVertex extends CommandProcessor {
 	
-	public CmdVertex(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdVertex(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1299,8 +1299,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdCircle extends CommandProcessor {
 	
-	public CmdCircle(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCircle(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1370,8 +1370,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdSemicircle extends CommandProcessor {
 	
-	public CmdSemicircle(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSemicircle(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1409,8 +1409,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdLocus extends CommandProcessor {
 	
-	public CmdLocus(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdLocus(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1448,8 +1448,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdArc extends CommandProcessor {
 	
-	public CmdArc(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdArc(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1506,8 +1506,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdSector extends CommandProcessor {
 	
-	public CmdSector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1563,8 +1563,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdCircleArc extends CommandProcessor {
 	
-	public CmdCircleArc(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCircleArc(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1607,8 +1607,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdCircleSector extends CommandProcessor {
 	
-	public CmdCircleSector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCircleSector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -1651,8 +1651,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdCircumcircleArc extends CommandProcessor {
 	
-	public CmdCircumcircleArc(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCircumcircleArc(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1695,8 +1695,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdCircumcircleSector extends CommandProcessor {
 	
-	public CmdCircumcircleSector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCircumcircleSector(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1739,8 +1739,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdParabola extends CommandProcessor {
 	
-	public CmdParabola(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdParabola(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1778,8 +1778,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdEllipse extends CommandProcessor {
 	
-	public CmdEllipse(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdEllipse(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1819,8 +1819,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdHyperbola extends CommandProcessor {
 	
-	public CmdHyperbola(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdHyperbola(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1860,8 +1860,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdConic extends CommandProcessor {
 	
-	public CmdConic(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdConic(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -1906,8 +1906,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdIntersect extends CommandProcessor {
 	
-	public CmdIntersect(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdIntersect(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2128,8 +2128,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdPolar extends CommandProcessor {
 	
-	public CmdPolar(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdPolar(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public   GeoElement[] process(Command c) throws MyError {
@@ -2172,8 +2172,8 @@ final public   GeoElement[] process(Command c) throws MyError {
  */
 class CmdDiameter extends CommandProcessor {
 	
-	public CmdDiameter(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDiameter(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2230,8 +2230,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdTangent extends CommandProcessor {
 	
-	public CmdTangent(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdTangent(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2314,8 +2314,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdAsymptote extends CommandProcessor {
 	
-	public CmdAsymptote(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdAsymptote(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2343,8 +2343,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdAxes extends CommandProcessor {
 	
-	public CmdAxes(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdAxes(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2372,8 +2372,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdFirstAxis extends CommandProcessor {
 	
-	public CmdFirstAxis(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdFirstAxis(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2403,8 +2403,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdSecondAxis extends CommandProcessor {
 	
-	public CmdSecondAxis(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSecondAxis(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2434,8 +2434,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdFirstAxisLength extends CommandProcessor {
 	
-	public CmdFirstAxisLength(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdFirstAxisLength(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public   GeoElement[] process(Command c) throws MyError {
@@ -2468,8 +2468,8 @@ final public   GeoElement[] process(Command c) throws MyError {
  */
 class CmdSecondAxisLength extends CommandProcessor {
 	
-	public CmdSecondAxisLength(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdSecondAxisLength(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2502,8 +2502,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdExcentricity extends CommandProcessor {
 	
-	public CmdExcentricity(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdExcentricity(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2533,8 +2533,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdParameter extends CommandProcessor {
 	
-	public CmdParameter(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdParameter(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2564,8 +2564,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdRadius extends CommandProcessor {
 	
-	public CmdRadius(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdRadius(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2597,8 +2597,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdDirectrix extends CommandProcessor {
 	
-	public CmdDirectrix(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDirectrix(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2632,8 +2632,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdTranslate extends CommandProcessor {
 	
-	public CmdTranslate(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdTranslate(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitionException {
@@ -2710,8 +2710,8 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
  */
 class CmdRotate extends CommandProcessor {
 	
-	public CmdRotate(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdRotate(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2802,8 +2802,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */ 
 class CmdDilate extends CommandProcessor {
 	
-	public CmdDilate(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDilate(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2868,8 +2868,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */ 
 class CmdMirror extends CommandProcessor {
 	
-	public CmdMirror(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdMirror(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -2944,8 +2944,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdRelation extends CommandProcessor {
 	
-	public CmdRelation(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdRelation(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -2983,8 +2983,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdDelete extends CommandProcessor {
 	
-	public CmdDelete(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDelete(Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3016,8 +3016,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdDerivative extends CommandProcessor {
 	
-	public CmdDerivative (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdDerivative (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public   GeoElement[] process(Command c) throws MyError {
@@ -3087,8 +3087,8 @@ final public   GeoElement[] process(Command c) throws MyError {
  */
 class CmdIntegral extends CommandProcessor {
 	
-	public CmdIntegral (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdIntegral (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public    GeoElement[] process(Command c) throws MyError {
@@ -3162,8 +3162,8 @@ final public    GeoElement[] process(Command c) throws MyError {
  */
 class CmdUpperSum extends CommandProcessor {
 	
-	public CmdUpperSum (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdUpperSum (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public    GeoElement[] process(Command c) throws MyError {
@@ -3201,8 +3201,8 @@ final public    GeoElement[] process(Command c) throws MyError {
  */
 class CmdLowerSum extends CommandProcessor {
 	
-	public CmdLowerSum (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdLowerSum (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -3240,8 +3240,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdPolynomial extends CommandProcessor {
 	
-	public CmdPolynomial (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdPolynomial (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public GeoElement[] process(Command c) throws MyError {
@@ -3273,8 +3273,8 @@ final public GeoElement[] process(Command c) throws MyError {
  */
 class CmdTaylorSeries extends CommandProcessor {
 	
-	public CmdTaylorSeries (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdTaylorSeries (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3311,8 +3311,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdRoot extends CommandProcessor {
 	
-	public CmdRoot (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdRoot (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public   GeoElement[] process(Command c) throws MyError {
@@ -3384,8 +3384,8 @@ final public   GeoElement[] process(Command c) throws MyError {
  */
 class CmdExtremum extends CommandProcessor {
 	
-	public CmdExtremum (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdExtremum (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public   GeoElement[] process(Command c) throws MyError {
@@ -3413,8 +3413,8 @@ final public   GeoElement[] process(Command c) throws MyError {
  */
 class CmdTurningPoint extends CommandProcessor {
 	
-	public CmdTurningPoint (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdTurningPoint (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3443,8 +3443,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdFunction extends CommandProcessor {
 	
-	public CmdFunction (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdFunction (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3487,8 +3487,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdPoint extends CommandProcessor {
 	
-	public CmdPoint (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdPoint (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3535,8 +3535,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdCentroid extends CommandProcessor {
 	
-	public CmdCentroid (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCentroid (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3565,8 +3565,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdCorner extends CommandProcessor {
 	
-	public CmdCorner (AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCorner (Kernel kernel) {
+		super(kernel);
 	}
 	
 final public  GeoElement[] process(Command c) throws MyError {
@@ -3602,8 +3602,8 @@ final public  GeoElement[] process(Command c) throws MyError {
  */
 class CmdIf extends CommandProcessor {
 	
-	public CmdIf(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdIf(Kernel kernel) {
+		super(kernel);
 	}
 	
     public GeoElement[] process(Command c) throws MyError {
@@ -3673,8 +3673,8 @@ class CmdIf extends CommandProcessor {
 */
 
 class CmdAffineRatio extends CommandProcessor {
-	public CmdAffineRatio(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdAffineRatio(Kernel kernel) {
+		super(kernel);
 	}
 	
 	public GeoElement[] process(Command c) throws MyError {
@@ -3712,8 +3712,8 @@ class CmdAffineRatio extends CommandProcessor {
 }
 
 class CmdCrossRatio extends CommandProcessor {
-	public CmdCrossRatio(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCrossRatio(Kernel kernel) {
+		super(kernel);
 	}
 	
 	public GeoElement[] process(Command c) throws MyError {
@@ -3755,8 +3755,8 @@ class CmdCrossRatio extends CommandProcessor {
 }
 
 class CmdCurvatureVector extends CommandProcessor {
-	public CmdCurvatureVector(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCurvatureVector(Kernel kernel) {
+		super(kernel);
 	}
 	
 	public GeoElement[] process(Command c) throws MyError {
@@ -3799,8 +3799,8 @@ class CmdCurvatureVector extends CommandProcessor {
 }
 
 class CmdCurvature extends CommandProcessor {
-	public CmdCurvature(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdCurvature(Kernel kernel) {
+		super(kernel);
 	}
 	
 	public GeoElement[] process(Command c) throws MyError {
@@ -3845,8 +3845,8 @@ class CmdCurvature extends CommandProcessor {
 
 
 class CmdOsculatingCircle extends CommandProcessor {
-	public CmdOsculatingCircle(AlgebraController algCtrl) {
-		super(algCtrl);
+	public CmdOsculatingCircle(Kernel kernel) {
+		super(kernel);
 	}
 	
 	public GeoElement[] process(Command c) throws MyError {

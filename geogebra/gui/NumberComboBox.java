@@ -28,12 +28,10 @@ public class NumberComboBox extends JComboBox {
 	private static final int MAX_FRAC_DIGITS = 5;
 	private static final String PI_STRING = "\u03c0";
 	
-	private NumberFormat nf;
-	private Application app;
+	private NumberFormat nf;	
 	private Kernel kernel;
 	
-	public NumberComboBox(final Application app) {
-		this.app = app;		
+	public NumberComboBox(final Application app) {		
 		kernel = app.getKernel();
 		
 		addItem("1"); //pi
@@ -61,7 +59,7 @@ public class NumberComboBox extends JComboBox {
 		
 		final String text = ob.toString().trim();
 		if (text.equals("")) return Double.NaN;
-		return app.getAlgebraController().evaluateToDouble(text);			
+		return kernel.getAlgebraProcessor().evaluateToDouble(text);			
 	}
 
 

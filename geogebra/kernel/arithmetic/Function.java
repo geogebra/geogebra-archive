@@ -706,7 +706,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      */
     private ExpressionNode evaluateToExpressionNode(String str) {
          try {
-            ExpressionNode en = kernel.getTempParser().parseExpression(str);
+            ExpressionNode en = kernel.getParser().parseExpression(str);
             en.resolveVariables();
             return en;
          }
@@ -824,7 +824,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             sb.append(result);
     
              // parse result
-             Function fun = kernel.getTempParser().parseFunction(sb.toString());
+             Function fun = kernel.getParser().parseFunction(sb.toString());
              fun.initFunction();
              fun.getFunctionVariable().setVarString(oldVar);                       
              return fun;
@@ -942,7 +942,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             sb.append(result);
     
              // parse result
-             Function fun =  kernel.getTempParser().parseFunction(sb.toString());
+             Function fun =  kernel.getParser().parseFunction(sb.toString());
              fun.initFunction();
              return fun;
          } catch (Error err) {   

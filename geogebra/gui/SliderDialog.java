@@ -155,7 +155,8 @@ public class SliderDialog extends JDialog implements ActionListener {
 			// set label of geoResult
 			String strLabel;
 			try {								
-				strLabel = app.getAlgebraController().parseLabel(tfLabel.getText());
+				strLabel = app.getKernel().getAlgebraProcessor().
+								parseLabel(tfLabel.getText());
 			} catch (Exception e) {
 				strLabel = null;
 			}			

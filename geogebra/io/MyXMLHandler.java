@@ -21,7 +21,6 @@ package geogebra.io;
 import geogebra.Application;
 import geogebra.ConstructionProtocolNavigation;
 import geogebra.MyError;
-import geogebra.algebra.AlgebraController;
 import geogebra.algebra.parser.Parser;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
@@ -44,6 +43,7 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.commands.AlgebraProcessor;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -1653,11 +1653,11 @@ public class MyXMLHandler implements DocHandler {
     private void processStartPointList() {  
         try {
             Iterator it = startPointList.iterator();
-            AlgebraController algCtrl = kernel.getAlgebraController();
+            AlgebraProcessor algProc = kernel.getAlgebraProcessor();
             
             while (it.hasNext()) {
                 LocateableExpPair pair = (LocateableExpPair) it.next();                                              
-                GeoPoint P =  algCtrl.evaluateToPoint(pair.exp);      
+                GeoPoint P =  algProc.evaluateToPoint(pair.exp);      
                 pair.locateable.setStartPoint(P, pair.number);                
             }
         } catch (Exception e) { 
@@ -1824,7 +1824,7 @@ public class MyXMLHandler implements DocHandler {
              
     	    //  process the command
             cmdOutput =
-            	 kernel.getAlgebraController().processCommand(cmd, true);
+            	 kernel.getAlgebraProcessor().processCommand(cmd, true);
             String cmdName = cmd.getName();             
             if (cmdOutput == null)
 				throw new MyError(app, 
@@ -1906,7 +1906,7 @@ public class MyXMLHandler implements DocHandler {
                 }               
             }       
                 
-            GeoElement [] result =  kernel.getAlgebraController().processValidExpression(ve);
+            GeoElement [] result =  kernel.getAlgebraProcessor().processValidExpression(ve);
             
             //  ensure that labels are set for invisible objects too    
             if (result != null && label != null && result.length == 1) {

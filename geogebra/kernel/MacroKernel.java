@@ -11,7 +11,6 @@ the Free Software Foundation; either version 2 of the License, or
 */
 package geogebra.kernel;
 
-import geogebra.algebra.AlgebraController;
 
 /**
  * Kernel with its own construction for macros.
@@ -19,31 +18,20 @@ import geogebra.algebra.AlgebraController;
 public class MacroKernel extends Kernel  {
 
 	private Kernel parentKernel;
-//	private ArrayList macroConstructions;
 	private MacroConstruction macroCons;
-	private AlgebraController algCtrl;
 	
 	public MacroKernel(Kernel parentKernel) {
 		this.parentKernel = parentKernel;
 		app = parentKernel.app;
 		setUndoActive(false);		
 		
-	//	macroConstructions = new ArrayList();
-	//	macroConstructions.add(new MacroConstruction(this));
 		macroCons = new MacroConstruction(this);
 		cons = macroCons;				
 	}
 	
 	public Kernel getParentKernel() {
 		return parentKernel;
-	}
-	
-	public AlgebraController getAlgebraController() {
-		if (algCtrl == null) {
-			algCtrl = new AlgebraController(this, macroCons);
-		}
-		return algCtrl;
-	}
+	}		
 	
 	public void addReservedLabel(String label) {
 		macroCons.addReservedLabel(label);

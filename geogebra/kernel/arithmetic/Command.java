@@ -128,7 +128,7 @@ implements ExpressionValue {
         if (evalGeo == null) {  
             GeoElement [] geos = null;
             try {
-                 geos = kernel.getAlgebraController().processCommand(this, false); 
+                 geos = kernel.getAlgebraProcessor().processCommand(this, false); 
             } catch (Error me) {
                 throw me;
             }

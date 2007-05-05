@@ -10,11 +10,13 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.algebra;
+package geogebra.kernel.commands;
 
 import geogebra.MyError;
+import geogebra.algebra.AlgebraController;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
 
@@ -25,8 +27,8 @@ public class MacroProcessor extends CommandProcessor {
 	
 	private Macro macro;
 	
-	public MacroProcessor(AlgebraController algCtrl) {
-		super(algCtrl);
+	public MacroProcessor(Kernel kernel) {
+		super(kernel);
 	}
 	
 	void setMacro(Macro macro) {

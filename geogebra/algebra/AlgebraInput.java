@@ -276,7 +276,7 @@ implements ActionListener, MouseListener, KeyListener
 			  String input = inputField.getText();					   
 			  if (input == null || input.length() == 0) return;
 			  boolean success = null != 
-				 app.getAlgebraController().processAlgebraCommand( input, true );
+				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
 			  if (success) {						   
 				 inputField.addToHistory(input);
 				inputField.setText(null);  							  			   

@@ -1580,7 +1580,7 @@ public class PropertiesDialog
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;
 			} else {
-				newLoc = app.getAlgebraController().evaluateToPoint(strLoc);
+				newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc);
 			}
 
 			for (int i = 0; i < geos.length; i++) {
@@ -1735,7 +1735,7 @@ public class PropertiesDialog
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;
 			} else {
-				newLoc = app.getAlgebraController().evaluateToPoint(strLoc);
+				newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc);
 			}
 
 			for (int i = 0; i < geos.length; i++) {
@@ -3529,7 +3529,7 @@ class SliderPanel
 		boolean emptyString = inputText.equals("");
 		double value = Double.NaN;
 		if (!emptyString) {
-			value = app.getAlgebraController().evaluateToDouble(inputText);					
+			value = kernel.getAlgebraProcessor().evaluateToDouble(inputText);					
 		}			
 		
 		if (source == tfMin) {
@@ -3673,7 +3673,7 @@ class AnimationStepPanel
 
 	private void doActionPerformed() {
 		double newVal =
-			app.getAlgebraController().evaluateToDouble(
+			kernel.getAlgebraProcessor().evaluateToDouble(
 				tfAnimStep.getText());
 		if (!Double.isNaN(newVal)) {
 			for (int i = 0; i < geos.length; i++) {
