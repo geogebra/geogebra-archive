@@ -1,5 +1,5 @@
 
-package geogebra;
+package geogebra.gui.menubar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

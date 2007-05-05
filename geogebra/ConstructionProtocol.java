@@ -177,7 +177,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
         table.addKeyListener(keyListener);
      
         // navigation bar
-        protNavBar = new ConstructionProtocolNavigation(this, false, false);
+        protNavBar = new ConstructionProtocolNavigation(this);
+        protNavBar.setPlayButtonVisible(false);
+        protNavBar.setConsProtButtonVisible(false);
         getContentPane().add(protNavBar, BorderLayout.SOUTH);
         Util.addKeyListenerToAll(protNavBar, keyListener);
         

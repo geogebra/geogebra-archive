@@ -229,7 +229,7 @@ public class Macro {
     			case GeoElement.GEO_CLASS_SEGMENT:    				
     			case GeoElement.GEO_CLASS_RAY:
     			case GeoElement.GEO_CLASS_POLYGON:
-    			case GeoElement.GEO_CLASS_FUNCTION:
+    			case GeoElement.GEO_CLASS_FUNCTION:    			
     				// add parent algo and its input objects to macroConsOrigElements
     				addSpecialInputElement(input[i], macroConsOrigElements);
     				break;    				    			

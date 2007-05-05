@@ -217,9 +217,12 @@ public class MyXMLHandler implements DocHandler {
                         	app.setShowConstructionProtocolNavigation(false);
                         }
                         if (ggbFileFormat < 3.0) {
-                        	// before 3.0 the kernel had continuity always on
+                        	// before V3.0 the kernel had continuity always on
                         	if (!(kernel instanceof MacroKernel)) 
                         		kernel.setContinuous(true);
+                        	
+                        	// before V3.0 the automaticGridDistanceFactor was 0.5
+                        	EuclidianView.automaticGridDistanceFactor = 0.5;
                         }
                         
                     } catch (Exception e) {
@@ -686,7 +689,9 @@ public class MyXMLHandler implements DocHandler {
         	boolean playButton = parseBoolean((String) attrs.get("playButton"));
         	boolean protButton = parseBoolean((String) attrs.get("protButton"));
         	ConstructionProtocolNavigation cpn = 
-        	 	app.getConstructionProtocolNavigation(playButton, protButton);       	          	
+        	 	app.getConstructionProtocolNavigation();    
+        	cpn.setPlayButtonVisible(playButton);
+        	cpn.setConsProtButtonVisible(protButton);
          
      	   boolean show = parseBoolean((String) attrs.get("show"));  	      	
     	   app.setShowConstructionProtocolNavigation(show);    	       	 

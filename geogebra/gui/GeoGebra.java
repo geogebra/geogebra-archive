@@ -151,8 +151,7 @@ public class GeoGebra extends JFrame implements
     	GeoGebra wnd = new GeoGebra();
     	Application app = new Application(args, wnd, true);        
         wnd.app = app;              
-        wnd.getContentPane().add(app.buildApplicationPanel());
-        wnd.addWindowListener(app.getGUIController());
+        wnd.getContentPane().add(app.buildApplicationPanel());        
         //wnd.addComponentListener(app.getGUIController());
         wnd.initFrame();  
         updateAllTitles();        

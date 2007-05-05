@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel;
 
 
+
 /**
  * Kernel with its own construction for macros.
  */

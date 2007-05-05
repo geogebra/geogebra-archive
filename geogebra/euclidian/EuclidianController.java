@@ -2549,7 +2549,7 @@ final public class EuclidianController implements MouseListener,
 						view.showAxes(view.getShowXaxis(), false);
 						break;
 				}				
-				app.updateMenuBar();
+				app.updateMenubar();
 			} else {
 				app.toggleSelectedGeo(geo);
 			}

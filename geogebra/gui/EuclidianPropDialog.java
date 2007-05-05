@@ -290,11 +290,11 @@ ItemListener, WindowListener {
         cbShowGrid.addActionListener(this);
         
         cbAxesStyle.removeActionListener(this);
-        cbAxesStyle.setSelectedIndex(view.getAxesLineType());
+        cbAxesStyle.setSelectedIndex(view.getAxesLineStyle());
         cbAxesStyle.addActionListener(this);
         
         cbGridStyle.removeActionListener(this);
-        int type = view.getGridLineType();
+        int type = view.getGridLineStyle();
         for (int i = 0; i < cbGridStyle.getItemCount(); i++) {
 			if (type == ((Integer) cbGridStyle.getItemAt(i)).intValue()) {
 				cbGridStyle.setSelectedIndex(i);

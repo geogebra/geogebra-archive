@@ -54,11 +54,8 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	 * Creates a new navigation bar to step through the construction protocol.
 	 * @param internalNavigation: true if navigation bar is part of the protocol window
 	 */
-	public ConstructionProtocolNavigation(ConstructionProtocol prot,
-			boolean showPlayButton, boolean showConsProtButton) {		
-		this.prot = prot;	
-		this.showPlayButton = showPlayButton;
-		this.showConsProtButton = showConsProtButton;
+	public ConstructionProtocolNavigation(ConstructionProtocol prot) {		
+		this.prot = prot;			
 		app = prot.getApplication();	
 				
 		SpinnerModel model =

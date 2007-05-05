@@ -1,4 +1,3 @@
-
 /* 
  GeoGebra - Dynamic Geometry and Algebra
  Copyright Markus Hohenwarter, http://www.geogebra.at
@@ -80,14 +79,14 @@ import javax.swing.Timer;
 
 /**
  * 
- * @author Markus
+ * @author Markus Hohenwarter
  * @version
  */
 public final class EuclidianView extends JPanel implements View, Printable,
 		Transferable, ClipboardOwner {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String PI_STRING = "\u03c0";
 
 	// pixel per centimeter (at 72dpi)
@@ -102,11 +101,17 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	// public static final double SCALE_MAX = 10000;
 	// public static final double SCALE_MIN = 0.1;
 	public static final double XZERO_STANDARD = 215;
+
 	public static final double YZERO_STANDARD = 315;
+
 	public static final int LINE_TYPE_FULL = 0;
+
 	public static final int LINE_TYPE_DASHED_SHORT = 10;
+
 	public static final int LINE_TYPE_DASHED_LONG = 15;
+
 	public static final int LINE_TYPE_DOTTED = 20;
+
 	public static final int LINE_TYPE_DASHED_DOTTED = 30;
 
 	public static final Integer[] getLineTypes() {
@@ -119,25 +124,37 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	}
 
 	public static final int AXES_LINE_TYPE_FULL = 0;
+
 	public static final int AXES_LINE_TYPE_ARROW = 1;
+
 	public static final int AXES_LINE_TYPE_FULL_BOLD = 2;
+
 	public static final int AXES_LINE_TYPE_ARROW_BOLD = 3;
-	
+
 	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
+
 	public static final int AXES_TICK_STYLE_MAJOR = 1;
+
 	public static final int AXES_TICK_STYLE_NONE = 2;
-	
+
 	public static final int POINT_STYLE_DOT = 0;
+
 	public static final int POINT_STYLE_CROSS = 1;
+
 	public static final int POINT_STYLE_CIRCLE = 2;
-	
+
 	public static final int RIGHT_ANGLE_STYLE_NONE = 0;
+
 	public static final int RIGHT_ANGLE_STYLE_SQUARE = 1;
-	public static final int RIGHT_ANGLE_STYLE_DOT = 2;		
-	
+
+	public static final int RIGHT_ANGLE_STYLE_DOT = 2;
+
 	public static final int DEFAULT_POINT_SIZE = 3;
+
 	public static final int DEFAULT_LINE_THICKNESS = 2;
+
 	public static final int DEFAULT_ANGLE_SIZE = 30;
+
 	public static final int DEFAULT_LINE_TYPE = LINE_TYPE_FULL;
 
 	public static final float SELECTION_ADD = 2.0f;
@@ -239,14 +256,15 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int MODE_LOCUS = 47;
 
 	public static final int MODE_MACRO = 48;
-	public static final int MACRO_MODE_ID_OFFSET = 1001;
-	
-	public static final int POINT_CAPTURING_OFF = 0;
-	public static final int POINT_CAPTURING_ON = 1;
-	public static final int POINT_CAPTURING_ON_GRID = 2;
-	
 
-	
+	public static final int MACRO_MODE_ID_OFFSET = 1001;
+
+	public static final int POINT_CAPTURING_OFF = 0;
+
+	public static final int POINT_CAPTURING_ON = 1;
+
+	public static final int POINT_CAPTURING_ON_GRID = 2;
+
 	// zoom rectangle colors
 	private static final Color colZoomRectangle = new Color(200, 200, 250);
 
@@ -255,31 +273,37 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	// STROKES
 	private static MyBasicStroke standardStroke = new MyBasicStroke(1.0f);
-	private static MyBasicStroke selStroke = new MyBasicStroke(1.0f + SELECTION_ADD);
-	//private static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
-	
+
+	private static MyBasicStroke selStroke = new MyBasicStroke(
+			1.0f + SELECTION_ADD);
+
+	// private static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
+
 	// axes strokes
-	private static BasicStroke defAxesStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-	private static BasicStroke boldAxesStroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);		
-	
+	private static BasicStroke defAxesStroke = new BasicStroke(1.0f,
+			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+
+	private static BasicStroke boldAxesStroke = new BasicStroke(1.8f,
+			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+
 	// axes and grid stroke
 	private BasicStroke axesStroke, tickStroke, gridStroke;
 
 	private Line2D.Double tempLine = new Line2D.Double();
 
 	private static RenderingHints defRenderingHints = new RenderingHints(null);
-	{				
+	{
 		defRenderingHints.put(RenderingHints.KEY_RENDERING,
 				RenderingHints.VALUE_RENDER_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
 				RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_COLOR_RENDERING,
 				RenderingHints.VALUE_COLOR_RENDER_SPEED);
-						
-		// needed for nice antialiasing of GeneralPath objects: 	
-		//defRenderingHints.put(RenderingHints.KEY_STROKE_CONTROL,
-		//		RenderingHints.VALUE_STROKE_PURE);				
-	}		
+
+		// needed for nice antialiasing of GeneralPath objects:
+		// defRenderingHints.put(RenderingHints.KEY_STROKE_CONTROL,
+		// RenderingHints.VALUE_STROKE_PURE);
+	}
 
 	// FONTS
 	public Font fontPoint, fontLine, fontVector, fontConic, fontCoords,
@@ -317,22 +341,29 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	boolean showMouseCoords = false;
 
 	private int pointCapturingMode = POINT_CAPTURING_OFF; // round point to
-	
+
 	// added by Loïc BEGIN
 	// right angle
 	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
-	//END
-	
+
+	// END
+
 	int pointStyle = POINT_STYLE_DOT;
 
 	int mode = MODE_MOVE;
 
-	private boolean [] showAxes = {true, true};
+	private boolean[] showAxes = { true, true };
+
 	private boolean[] showAxesNumbers = { true, true };
+
 	private String[] axesLabels = { null, null };
+
 	private String[] axesUnitLabels = { null, null };
+
 	private boolean[] piAxisUnit = { false, false };
-	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR , AXES_TICK_STYLE_MAJOR };
+
+	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR,
+			AXES_TICK_STYLE_MAJOR };
 
 	// for axes labeling with numbers
 	private boolean[] automaticAxesNumberingDistances = { true, true };
@@ -341,10 +372,13 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	// distances between grid lines
 	private boolean automaticGridDistance = true;
+	// since V3.0 this factor is 1, before it was 0.5
+	final public static double DEFAULT_GRID_DIST_FACTOR = 1;
+	public static double automaticGridDistanceFactor = DEFAULT_GRID_DIST_FACTOR;
 
 	double[] gridDistances = { 2, 2 };
 
-	private int gridLineType, axesLineType;
+	private int gridLineStyle, axesLineType;
 
 	// colors: axes, grid, background
 	private Color axesColor, gridColor, bgColor;
@@ -405,7 +439,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	/**
 	 * Creates EuclidianView
 	 */
-	public EuclidianView(EuclidianController ec, boolean [] showAxes,
+	public EuclidianView(EuclidianController ec, boolean[] showAxes,
 			boolean showGrid) {
 		euclidianController = ec;
 		kernel = ec.getKernel();
@@ -457,11 +491,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_ON;
 		pointStyle = POINT_STYLE_DOT;
-		
+
 		// added by Loïc BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
-		//END
-		
+		// END
+
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
 		axesLabels[0] = null;
@@ -470,7 +504,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		axesUnitLabels[1] = null;
 		piAxisUnit[0] = false;
 		piAxisUnit[1] = false;
-		axesTickStyles[0] = AXES_TICK_STYLE_MAJOR; 
+		axesTickStyles[0] = AXES_TICK_STYLE_MAJOR;
 		axesTickStyles[1] = AXES_TICK_STYLE_MAJOR;
 
 		// for axes labeling with numbers
@@ -548,22 +582,24 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateAllDrawables(true);
 	}
 
-	
 	final public int getPointStyle() {
 		return pointStyle;
 	}
+
 	// added by Loïc BEGIN
 	/**
 	 * Sets the global style for rightAngle drawing.
 	 */
 	public void setRightAngleStyle(int style) {
-		rightAngleStyle=style;
+		rightAngleStyle = style;
 		updateAllDrawables(true);
 	}
-	final public int getRightAngleStyle(){
+
+	final public int getRightAngleStyle() {
 		return rightAngleStyle;
 	}
-	//END
+
+	// END
 	final void addBackgroundImage(DrawImage img) {
 		bgImageList.addUnique(img);
 		drawImageList.remove(img);
@@ -574,8 +610,6 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		drawImageList.add(img);
 	}
 
-	
-	
 	static public MyBasicStroke getDefaultStroke() {
 		return standardStroke;
 	}
@@ -816,8 +850,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	}
 
 	/**
-	 * Converts real world coordinates to screen coordinates. 	 
-	 * @param inOut: input and output array with x and y coords
+	 * Converts real world coordinates to screen coordinates.
+	 * 
+	 * @param inOut:
+	 *            input and output array with x and y coords
 	 */
 	final public void toScreenCoords(double[] inOut) {
 		inOut[0] = xZero + inOut[0] * xscale;
@@ -830,45 +866,45 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			inOut[1] = Double.NaN;
 		}
 	}
+
 	public static final double MAX_SCREEN_COORD_VAL = 1E6;
-	
+
 	/**
-	 * Converts real world coordinates to screen coordinates. If a coord
-	 * value is outside the screen it is clipped to a rectangle with
-	 * border PIXEL_OFFSET around the screen.	 
-	 * @param inOut: input and output array with x and y coords
-	 * @return true iff resulting coords are on screen, note: Double.NaN is NOT checked
+	 * Converts real world coordinates to screen coordinates. If a coord value
+	 * is outside the screen it is clipped to a rectangle with border
+	 * PIXEL_OFFSET around the screen.
+	 * 
+	 * @param inOut:
+	 *            input and output array with x and y coords
+	 * @return true iff resulting coords are on screen, note: Double.NaN is NOT
+	 *         checked
 	 */
 	final public boolean toClippedScreenCoords(double[] inOut, int PIXEL_OFFSET) {
 		inOut[0] = xZero + inOut[0] * xscale;
 		inOut[1] = yZero - inOut[1] * yscale;
-						
+
 		boolean onScreen = true;
-		
-		// x-coord on screen? 		
+
+		// x-coord on screen?
 		if (inOut[0] < 0) {
 			inOut[0] = Math.max(inOut[0], -PIXEL_OFFSET);
 			onScreen = false;
-		}
-		else if (inOut[0] > width) {
+		} else if (inOut[0] > width) {
 			inOut[0] = Math.min(inOut[0], width + PIXEL_OFFSET);
 			onScreen = false;
 		}
 
-		// y-coord on screen? 
+		// y-coord on screen?
 		if (inOut[1] < 0) {
 			inOut[1] = Math.max(inOut[1], -PIXEL_OFFSET);
 			onScreen = false;
-		}
-		else if (inOut[1] > height) {
+		} else if (inOut[1] > height) {
 			inOut[1] = Math.min(inOut[1], height + PIXEL_OFFSET);
 			onScreen = false;
 		}
 
 		return onScreen;
 	}
-
-	
 
 	/**
 	 * convert screen coordinate x to real world coordinate x
@@ -942,7 +978,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (repaint) {
 			updateBackgroundImage();
 			updateAllDrawables(repaint);
-			//app.updateStatusLabelAxesRatio();
+			// app.updateStatusLabelAxesRatio();
 		}
 	}
 
@@ -959,7 +995,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				height);
 		bgGraphics = bgImage.createGraphics();
 		if (antiAliasing) {
-			setAntialiasing(bgGraphics);			
+			setAntialiasing(bgGraphics);
 		}
 
 		updateBackgroundImage();
@@ -1018,8 +1054,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		axesNumberFormat[axis].setMaximumFractionDigits(Math.max(-exp, kernel
 				.getPrintDecimals()));
 
-		if (automaticGridDistance) {
-			gridDistances[axis] = axesNumberingDistances[axis] / 2.0;
+		if (automaticGridDistance) {			
+			gridDistances[axis] = axesNumberingDistances[axis] * automaticGridDistanceFactor;
 		}
 	}
 
@@ -1078,7 +1114,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public void showAxes(boolean xAxis, boolean yAxis) {
 		if (xAxis == showAxes[0] && yAxis == showAxes[1])
 			return;
-		
+
 		showAxes[0] = xAxis;
 		showAxes[1] = yAxis;
 		updateBackgroundImage();
@@ -1087,7 +1123,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public boolean getShowXaxis() {
 		return showAxes[0];
 	}
-	
+
 	public boolean getShowYaxis() {
 		return showAxes[1];
 	}
@@ -1146,7 +1182,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);		
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	private void drawZoomRectangle(Graphics2D g2) {
@@ -1269,7 +1305,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * @param forEPS:
 	 *            states if export should be optimized for eps. Note: if this is
 	 *            set to true, no traces are drawn.
-	 *  
+	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
 		g2d.scale(scale, scale);
@@ -1285,7 +1321,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);	
+				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
 
@@ -1413,36 +1449,42 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		double ySmall2 = yZero + 3;
 		double xSmall1 = xZero - 2;
 		double xSmall2 = xZero - 3;
-		int xoffset, yoffset;	
-		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD || axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
-		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW || axesLineType == AXES_LINE_TYPE_ARROW_BOLD;	
-		
-		//AXES_TICK_STYLE_MAJOR_MINOR = 0;
-		//AXES_TICK_STYLE_MAJOR = 1;
-		//AXES_TICK_STYLE_NONE = 2;
-		boolean [] drawMajorTicks = { axesTickStyles[0] <= 1, axesTickStyles[1] <= 1};
-		boolean [] drawMinorTicks = { axesTickStyles[0] == 0, axesTickStyles[1] == 0};
+		int xoffset, yoffset;
+		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD
+						|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
+		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW
+								|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
 
-		FontRenderContext frc = g2.getFontRenderContext();		
+		// AXES_TICK_STYLE_MAJOR_MINOR = 0;
+		// AXES_TICK_STYLE_MAJOR = 1;
+		// AXES_TICK_STYLE_NONE = 2;
+		boolean[] drawMajorTicks = { axesTickStyles[0] <= 1,
+				axesTickStyles[1] <= 1 };
+		boolean[] drawMinorTicks = { axesTickStyles[0] == 0,
+				axesTickStyles[1] == 0 };
+
+		FontRenderContext frc = g2.getFontRenderContext();
 		g2.setFont(fontAxes);
 		int fontsize = fontAxes.getSize();
-		int arrowSize = fontsize / 3;			
+		int arrowSize = fontsize / 3;
 		g2.setPaint(axesColor);
-		 							
+
 		if (bold) {
 			axesStroke = boldAxesStroke;
-			tickStroke = boldAxesStroke;	
+			tickStroke = boldAxesStroke;
 			ySmall2++;
 			xSmall2--;
 			arrowSize += 1;
 		} else {
-			axesStroke = defAxesStroke;	
-			tickStroke = defAxesStroke;			
-		}					
-		
+			axesStroke = defAxesStroke;
+			tickStroke = defAxesStroke;
+		}
+
 		// turn antialiasing off
-		Object antiAliasValue = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+//		Object antiAliasValue = g2
+//				.getRenderingHint(RenderingHints.KEY_ANTIALIASING);	
+//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//				RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		// X - AXIS
 		if (showAxes[0]) {
@@ -1453,13 +1495,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				yoffset = fontsize + 4;
 				xoffset = 1;
 			}
-	
+
 			// label of x axis
 			if (axesLabels[0] != null) {
 				TextLayout layout = new TextLayout(axesLabels[0], fontLine, frc);
-				g2.drawString(axesLabels[0], (int) (width - 10 - layout.getAdvance()), (int) (yZero - 4));
+				g2.drawString(axesLabels[0], (int) (width - 10 - layout
+						.getAdvance()), (int) (yZero - 4));
 			}
-	
+
 			// numbers
 			double rw = xmin - (xmin % axesNumberingDistances[0]);
 			double pix = xZero + rw * xscale;
@@ -1469,7 +1512,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			if (pix < SCREEN_BORDER) {
 				// big tick
 				if (drawMajorTicks[0]) {
-					g2.setStroke(tickStroke);
+					g2.setStroke(tickStroke);					
 					tempLine.setLine(pix, yZeroTick, pix, yBig);
 					g2.draw(tempLine);
 				}
@@ -1479,17 +1522,18 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			int maxX = width - SCREEN_BORDER;
 			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
 				if (pix <= maxX) {
-					if (showAxesNumbers[0]) {															
-						String strNum = kernel.formatPiE(rw, axesNumberFormat[0]);					
+					if (showAxesNumbers[0]) {
+						String strNum = kernel.formatPiE(rw,
+								axesNumberFormat[0]);
 						boolean zero = strNum.equals("0");
-						
+
 						sb.setLength(0);
-						sb.append(strNum);					
-						if (axesUnitLabels[0] != null && !piAxisUnit[0]) 						
+						sb.append(strNum);
+						if (axesUnitLabels[0] != null && !piAxisUnit[0])
 							sb.append(axesUnitLabels[0]);
-							
-						TextLayout layout = new TextLayout(sb.toString(), fontAxes,
-								frc);
+
+						TextLayout layout = new TextLayout(sb.toString(),
+								fontAxes, frc);
 						int x, y = (int) (yZero + yoffset);
 						if (zero && showAxes[1]) {
 							x = (int) (pix + 6);
@@ -1498,24 +1542,25 @@ public final class EuclidianView extends JPanel implements View, Printable,
 						}
 						g2.drawString(sb.toString(), x, y);
 					}
-	
+
 					// big tick
 					if (drawMajorTicks[0]) {
 						g2.setStroke(tickStroke);
 						tempLine.setLine(pix, yZeroTick, pix, yBig);
 						g2.draw(tempLine);
 					}
-				} else if (drawMajorTicks[0] && !drawArrows) {				
+				} else if (drawMajorTicks[0] && !drawArrows) {
 					// draw last tick if there is no arrow
 					tempLine.setLine(pix, yZeroTick, pix, yBig);
-					g2.draw(tempLine);			
+					g2.draw(tempLine);
 				}
-	
+
 				// small tick
 				smallTickPix = pix - tickStep;
-				if (drawMinorTicks[0]) {	
+				if (drawMinorTicks[0]) {
 					g2.setStroke(tickStroke);
-					tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
+					tempLine.setLine(smallTickPix, ySmall1, smallTickPix,
+							ySmall2);
 					g2.draw(tempLine);
 				}
 			}
@@ -1526,23 +1571,27 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
 				g2.draw(tempLine);
 			}
-			
+
 			// x-Axis
 			g2.setStroke(axesStroke);
 			tempLine.setLine(0, yZero, width, yZero);
 			g2.draw(tempLine);
-			
+
 			if (drawArrows) {
-				// tur antialiasing off				
-				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
-				
-				// draw arrow for x-axis				
-				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero - arrowSize);
+				// tur antialiasing on
+//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//						antiAliasValue);
+
+				// draw arrow for x-axis
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero
+						- arrowSize);
 				g2.draw(tempLine);
-				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero + arrowSize);
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero
+						+ arrowSize);
 				g2.draw(tempLine);
-				
-				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+				//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				//		RenderingHints.VALUE_ANTIALIAS_OFF);
 			}
 		}
 
@@ -1555,28 +1604,29 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				xoffset = -4 - fontsize / 4;
 				yoffset = fontsize / 2 - 1;
 			}
-	
+
 			// label of y axis
 			if (axesLabels[1] != null) {
 				TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
-				g2.drawString(axesLabels[1], (int) (xZero + 5), (int) (5 + layout
-						.getAscent()));
+				g2.drawString(axesLabels[1], (int) (xZero + 5),
+						(int) (5 + layout.getAscent()));
 			}
-	
+
 			// numbers
 			double rw = ymax - (ymax % axesNumberingDistances[1]);
 			double pix = yZero - rw * yscale;
 			double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
 			double tickStep = axesStep / 2;
-	
+
 			// first small tick
 			double smallTickPix = pix - tickStep;
-			if (drawMinorTicks[1] && (!drawArrows || smallTickPix > SCREEN_BORDER)) {
+			if (drawMinorTicks[1]
+					&& (!drawArrows || smallTickPix > SCREEN_BORDER)) {
 				g2.setStroke(tickStroke);
 				tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
 				g2.draw(tempLine);
 			}
-	
+
 			// don't get too near to the top of the screen
 			if (pix < SCREEN_BORDER) {
 				if (drawMajorTicks[1] && !drawArrows) {
@@ -1588,7 +1638,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				smallTickPix = pix + tickStep;
 				if (drawMinorTicks[1] && smallTickPix > SCREEN_BORDER) {
 					g2.setStroke(tickStroke);
-					tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
+							smallTickPix);
 					g2.draw(tempLine);
 				}
 				pix += axesStep;
@@ -1598,16 +1649,17 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
 				if (pix <= maxY) {
 					if (showAxesNumbers[1]) {
-						String strNum = kernel.formatPiE(rw, axesNumberFormat[1]);					
+						String strNum = kernel.formatPiE(rw,
+								axesNumberFormat[1]);
 						boolean zero = strNum.equals("0");
-						
+
 						sb.setLength(0);
-						sb.append(strNum);					
-						if (axesUnitLabels[1] != null && !piAxisUnit[1]) 						
+						sb.append(strNum);
+						if (axesUnitLabels[1] != null && !piAxisUnit[1])
 							sb.append(axesUnitLabels[1]);
-	
-						TextLayout layout = new TextLayout(sb.toString(), fontAxes,
-								frc);
+
+						TextLayout layout = new TextLayout(sb.toString(),
+								fontAxes, frc);
 						int x = (int) (xZero + xoffset - layout.getAdvance());
 						int y;
 						if (zero && showAxes[0]) {
@@ -1618,41 +1670,44 @@ public final class EuclidianView extends JPanel implements View, Printable,
 						g2.drawString(sb.toString(), x, y);
 					}
 				}
-	
+
 				// big tick
 				if (drawMajorTicks[1]) {
 					g2.setStroke(tickStroke);
 					tempLine.setLine(xBig, pix, xZeroTick, pix);
 					g2.draw(tempLine);
 				}
-				
+
 				smallTickPix = pix + tickStep;
 				if (drawMinorTicks[1]) {
 					g2.setStroke(tickStroke);
-					tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
+							smallTickPix);
 					g2.draw(tempLine);
 				}
-			}			
+			}
 
 			// y-Axis
 			tempLine.setLine(xZero, 0, xZero, height);
 			g2.draw(tempLine);
-			
+
 			if (drawArrows) {
-				// turn antialiasing off				
-				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
-				
-				// draw arrow for y-axis				
+				// turn antialiasing off
+//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//						antiAliasValue);
+
+				// draw arrow for y-axis
 				tempLine.setLine(xZero, 0, xZero - arrowSize, arrowSize);
 				g2.draw(tempLine);
 				tempLine.setLine(xZero, 0, xZero + arrowSize, arrowSize);
 				g2.draw(tempLine);
-				
-				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//						RenderingHints.VALUE_ANTIALIAS_OFF);
 			}
-		}		
-		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
+		}
+
+//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
 	}
 
 	final void drawGrid(Graphics2D g2) {
@@ -1661,16 +1716,26 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		// vertical grid lines
 		double tickStep = xscale * gridDistances[0];
-		for (double i = xZero % tickStep; i <= width; i += tickStep) {
-			tempLine.setLine(i, 0, i, height);
+		double start = xZero % tickStep;
+		double pix = start;		
+		for (int i=0; pix <= width; i++) {			
+			//int val = (int) Math.round(i);
+			//g2.drawLine(val, 0, val, height);
+			tempLine.setLine(pix, 0, pix, height);
 			g2.draw(tempLine);
+			pix = start + i * tickStep;
 		}
 
 		// horizontal grid lines
 		tickStep = yscale * gridDistances[1];
-		for (double j = yZero % tickStep; j <= height; j += tickStep) {
-			tempLine.setLine(0, j, width, j);
+		start = yZero % tickStep;
+		pix = start;
+		for (int j=0; pix <= height; j++) {
+			//int val = (int) Math.round(j);
+			//g2.drawLine(0, val, width, val);
+			tempLine.setLine(0, pix, width, pix);
 			g2.draw(tempLine);
+			pix = start + j * tickStep;			
 		}
 	}
 
@@ -1809,8 +1874,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		// look for axis
 		if (imageCount == 0) {
-			if (showAxes[0] && Math.abs(yZero - p.y) < 3) {				
-				foundHits.add(kernel.getXAxis());				
+			if (showAxes[0] && Math.abs(yZero - p.y) < 3) {
+				foundHits.add(kernel.getXAxis());
 			}
 			if (showAxes[1] && Math.abs(xZero - p.x) < 3) {
 				foundHits.add(kernel.getYAxis());
@@ -1915,21 +1980,23 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			ArrayList result) {
 		return getHits(hits, geoclass, false, result);
 	}
-	
+
 	/**
 	 * Returns array of polygons with n points out of hits.
+	 * 
 	 * @return
 	 */
 	final public ArrayList getPolygons(ArrayList hits, int n, ArrayList polygons) {
-		// search for polygons in hits that exactly have the needed number of points
+		// search for polygons in hits that exactly have the needed number of
+		// points
 		polygons.clear();
 		getHits(hits, GeoPolygon.class, polygons);
-		for (int k = polygons.size()-1; k > 0 ; k--) {
+		for (int k = polygons.size() - 1; k > 0; k--) {
 			GeoPolygon poly = (GeoPolygon) polygons.get(k);
 			// remove poly with wrong number of points
 			if (n != poly.getPoints().length)
 				polygons.remove(k);
-		}		
+		}
 		return polygons;
 	}
 
@@ -2028,127 +2095,133 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 */
 	final Drawable createDrawable(GeoElement geo) {
 		Drawable d = null;
-		
-		switch (geo.getGeoClassType()) {
-			case GeoElement.GEO_CLASS_POINT:
-				d = new DrawPoint(this, (GeoPoint) geo);
-				drawPointList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_SEGMENT:		
-				d = new DrawSegment(this, (GeoSegment) geo);
-				drawSegmentList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_RAY:		
-				d = new DrawRay(this, (GeoRay) geo);
-				drawSegmentList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_LINE:
-				d = new DrawLine(this, (GeoLine) geo);
-				drawLineList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_POLYGON:
-				d = new DrawPolygon(this, (GeoPolygon) geo);
-				drawPolygonList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_ANGLE:
-				if (geo.isIndependent()) {
-					// independent number may be shown as slider
-					d = new DrawSlider(this, (GeoNumeric) geo);
-					drawNumericList.add(d);
-				} else {
-					d = new DrawAngle(this, (GeoAngle) geo);
-					if (geo.isDrawable()) {
-						if (!geo.isColorSet()) {
-							Color col = geo.getConstruction().getConstructionDefaults().
-								getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
-							geo.setObjColor(col);
-						}
-							
-						drawNumericList.add(d);
-					}
-				}
-				break;
-				
-			case GeoElement.GEO_CLASS_NUMERIC:
-				AlgoElement algo = geo.getParentAlgorithm();
-				if (algo == null) {
-					// independent number may be shown as slider
-					d = new DrawSlider(this, (GeoNumeric) geo);
-				} else if (algo instanceof AlgoSlope) {
-					d = new DrawSlope(this, (GeoNumeric) geo);
-				} else if (algo instanceof AlgoIntegralDefinite) {
-					d = new DrawIntegral(this, (GeoNumeric) geo);
-				} else if (algo instanceof AlgoIntegralFunctions) {
-					d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
-				} else if (algo instanceof AlgoSumUpperLower) {
-					d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
-				}
-				if (d != null) {
-					if (!geo.isColorSet()) {
-						ConstructionDefaults consDef = geo.getConstruction().getConstructionDefaults();
-						if (geo.isIndependent()) {
-							Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER).getColor();			
-							geo.setObjColor(col);
-						} else {
-							Color col = consDef.getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON).getColor();
-							geo.setObjColor(col);
-						}
-					}
-					drawNumericList.add(d);
-				}
-				break;
-					
-			case GeoElement.GEO_CLASS_VECTOR:
-				d = new DrawVector(this, (GeoVector) geo);
-				drawVectorList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_CONICPART:
-				d = new DrawConicPart(this, (GeoConicPart) geo);
-				drawConicList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_CONIC:
-				d = new DrawConic(this, (GeoConic) geo);
-				drawConicList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_FUNCTION:
-			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-				d = new DrawParametricCurve(this, (ParametricCurve) geo);
-				drawFunctionList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_TEXT:
-				d = new DrawText(this, (GeoText) geo);
-				drawTextList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_IMAGE:
-				d = new DrawImage(this, (GeoImage) geo);
-				if (!bgImageList.contains(d))
-					drawImageList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_LOCUS:				
-				d = new DrawLocus(this, (GeoLocus) geo);
-				drawLocusList.add(d);
-				break;
-				
-			case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-				d = new DrawParametricCurve(this, (GeoCurveCartesian) geo);
-				drawFunctionList.add(d);
-				break;		
 
-			case GeoElement.GEO_CLASS_LIST:
-				// the geolist adds all its items in its update() method
-				d = new DrawList(this, (GeoList) geo);
-				break;
+		switch (geo.getGeoClassType()) {
+		case GeoElement.GEO_CLASS_POINT:
+			d = new DrawPoint(this, (GeoPoint) geo);
+			drawPointList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_SEGMENT:
+			d = new DrawSegment(this, (GeoSegment) geo);
+			drawSegmentList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_RAY:
+			d = new DrawRay(this, (GeoRay) geo);
+			drawSegmentList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_LINE:
+			d = new DrawLine(this, (GeoLine) geo);
+			drawLineList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_POLYGON:
+			d = new DrawPolygon(this, (GeoPolygon) geo);
+			drawPolygonList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_ANGLE:
+			if (geo.isIndependent()) {
+				// independent number may be shown as slider
+				d = new DrawSlider(this, (GeoNumeric) geo);
+				drawNumericList.add(d);
+			} else {
+				d = new DrawAngle(this, (GeoAngle) geo);
+				if (geo.isDrawable()) {
+					if (!geo.isColorSet()) {
+						Color col = geo.getConstruction()
+								.getConstructionDefaults().getDefaultGeo(
+										ConstructionDefaults.DEFAULT_POLYGON)
+								.getColor();
+						geo.setObjColor(col);
+					}
+
+					drawNumericList.add(d);
+				}
+			}
+			break;
+
+		case GeoElement.GEO_CLASS_NUMERIC:
+			AlgoElement algo = geo.getParentAlgorithm();
+			if (algo == null) {
+				// independent number may be shown as slider
+				d = new DrawSlider(this, (GeoNumeric) geo);
+			} else if (algo instanceof AlgoSlope) {
+				d = new DrawSlope(this, (GeoNumeric) geo);
+			} else if (algo instanceof AlgoIntegralDefinite) {
+				d = new DrawIntegral(this, (GeoNumeric) geo);
+			} else if (algo instanceof AlgoIntegralFunctions) {
+				d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
+			} else if (algo instanceof AlgoSumUpperLower) {
+				d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
+			}
+			if (d != null) {
+				if (!geo.isColorSet()) {
+					ConstructionDefaults consDef = geo.getConstruction()
+							.getConstructionDefaults();
+					if (geo.isIndependent()) {
+						Color col = consDef.getDefaultGeo(
+								ConstructionDefaults.DEFAULT_NUMBER).getColor();
+						geo.setObjColor(col);
+					} else {
+						Color col = consDef.getDefaultGeo(
+								ConstructionDefaults.DEFAULT_POLYGON)
+								.getColor();
+						geo.setObjColor(col);
+					}
+				}
+				drawNumericList.add(d);
+			}
+			break;
+
+		case GeoElement.GEO_CLASS_VECTOR:
+			d = new DrawVector(this, (GeoVector) geo);
+			drawVectorList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CONICPART:
+			d = new DrawConicPart(this, (GeoConicPart) geo);
+			drawConicList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CONIC:
+			d = new DrawConic(this, (GeoConic) geo);
+			drawConicList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_FUNCTION:
+		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
+			d = new DrawParametricCurve(this, (ParametricCurve) geo);
+			drawFunctionList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_TEXT:
+			d = new DrawText(this, (GeoText) geo);
+			drawTextList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_IMAGE:
+			d = new DrawImage(this, (GeoImage) geo);
+			if (!bgImageList.contains(d))
+				drawImageList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_LOCUS:
+			d = new DrawLocus(this, (GeoLocus) geo);
+			drawLocusList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
+			d = new DrawParametricCurve(this, (GeoCurveCartesian) geo);
+			drawFunctionList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_LIST:
+			// the geolist adds all its items in its update() method
+			d = new DrawList(this, (GeoList) geo);
+			break;
 		}
 
 		if (d != null) {
@@ -2166,65 +2239,65 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
-				case GeoElement.GEO_CLASS_POINT:					
-					drawPointList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_SEGMENT:
-				case GeoElement.GEO_CLASS_RAY:				
-					drawSegmentList.remove(d);
-					break;
-																					
-				case GeoElement.GEO_CLASS_LINE:					
-					drawLineList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_POLYGON:					
-					drawPolygonList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_ANGLE:
-				case GeoElement.GEO_CLASS_NUMERIC:
-					drawNumericList.remove(d);
-					break;								
-						
-				case GeoElement.GEO_CLASS_VECTOR:					
-					drawVectorList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_CONICPART:					
-					drawConicList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_CONIC:					
-					drawConicList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_FUNCTION:					
-					drawFunctionList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_TEXT:					
-					drawTextList.remove(d);
-					//remove HotEqn
-					((DrawText) d).remove();
-					break;
-					
-				case GeoElement.GEO_CLASS_IMAGE:					
-					drawImageList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_LOCUS:					
-					drawLocusList.remove(d);
-					break;
-					
-				case GeoElement.GEO_CLASS_CURVE_CARTESIAN:					
-					drawFunctionList.remove(d);
-					break;		
-	
-				case GeoElement.GEO_CLASS_LIST:					
-					break;
-			}				
+			case GeoElement.GEO_CLASS_POINT:
+				drawPointList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_SEGMENT:
+			case GeoElement.GEO_CLASS_RAY:
+				drawSegmentList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_LINE:
+				drawLineList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_POLYGON:
+				drawPolygonList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_ANGLE:
+			case GeoElement.GEO_CLASS_NUMERIC:
+				drawNumericList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_VECTOR:
+				drawVectorList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_CONICPART:
+				drawConicList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_CONIC:
+				drawConicList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_FUNCTION:
+				drawFunctionList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_TEXT:
+				drawTextList.remove(d);
+				// remove HotEqn
+				((DrawText) d).remove();
+				break;
+
+			case GeoElement.GEO_CLASS_IMAGE:
+				drawImageList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_LOCUS:
+				drawLocusList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
+				drawFunctionList.remove(d);
+				break;
+
+			case GeoElement.GEO_CLASS_LIST:
+				break;
+			}
 
 			allDrawableList.remove(d);
 			DrawableMap.remove(geo);
@@ -2281,7 +2354,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateBackgroundImage(); // clear traces and images
 		// resetMode();
 	}
-	
+
 	final public void repaintView() {
 		repaint();
 	}
@@ -2349,7 +2422,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		sb.append("\t<lineStyle axes=\"");
 		sb.append(axesLineType);
 		sb.append("\" grid=\"");
-		sb.append(gridLineType);
+		sb.append(gridLineStyle);
 		sb.append("\"/>\n");
 
 		// axis settings
@@ -2366,19 +2439,19 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			sb.append(axesTickStyles[i]);
 			sb.append("\" showNumbers=\"");
 			sb.append(showAxesNumbers[i]);
-			
+
 			// the tick distance should only be saved if
 			// it isn't calculated automatically
 			if (!automaticAxesNumberingDistances[i]) {
 				sb.append("\" tickDistance=\"");
 				sb.append(axesNumberingDistances[i]);
 			}
-			
+
 			sb.append("\"/>\n");
 		}
 
 		// grid distances
-		if (!automaticGridDistance) {
+		if (automaticGridDistanceFactor != DEFAULT_GRID_DIST_FACTOR) {
 			sb.append("\t<grid distX=\"");
 			sb.append(gridDistances[0]);
 			sb.append("\" distY=\"");
@@ -2463,7 +2536,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * @param newscale
 	 */
 	final void setAnimatedCoordSystem(double ox, double oy, double newScale,
-					int steps, boolean storeUndo) {
+			int steps, boolean storeUndo) {
 		if (!kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
 			double factor = newScale / xscale;
@@ -2506,8 +2579,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			timer = new Timer(DELAY, this);
 		}
 
-		public void init(double px, double py, double zoomFactor,
-						 int steps, boolean storeUndo) {
+		public void init(double px, double py, double zoomFactor, int steps,
+				boolean storeUndo) {
 			this.px = px;
 			this.py = py;
 			// this.zoomFactor = zoomFactor;
@@ -2521,7 +2594,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		public synchronized void startAnimation() {
 			if (timer == null)
 				return;
-			// setDrawMode(DRAW_MODE_DIRECT_DRAW);			
+			// setDrawMode(DRAW_MODE_DIRECT_DRAW);
 			add = (newScale - oldScale) / steps;
 			dx = xZero - px;
 			dy = yZero - py;
@@ -2833,21 +2906,21 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		setAutomaticGridDistance(false);
 	}
 
-	public int getGridLineType() {
-		return gridLineType;
+	public int getGridLineStyle() {
+		return gridLineStyle;
 	}
 
-	public void setGridLineStyle(int gridLineType) {
-		this.gridLineType = gridLineType;
-		gridStroke = getStroke(1f, gridLineType);
+	public void setGridLineStyle(int gridLineStyle) {
+		this.gridLineStyle = gridLineStyle;
+		gridStroke = getStroke(1f, gridLineStyle);
 	}
 
-	public int getAxesLineType() {
+	public int getAxesLineStyle() {
 		return axesLineType;
 	}
 
-	public void setAxesLineStyle(int axesLineType) {
-		this.axesLineType = axesLineType;
+	public void setAxesLineStyle(int axesLineStyle) {
+		this.axesLineType = axesLineStyle;
 	}
 
 	public boolean[] getShowAxesNumbers() {
@@ -2868,168 +2941,168 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// check if pi is an axis unit
 		for (int i = 0; i < 2; i++) {
 			piAxisUnit[i] = axesUnitLabels[i] != null
-							&& axesUnitLabels[i].equals(PI_STRING);						
+					&& axesUnitLabels[i].equals(PI_STRING);
 		}
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 	}
-	
+
 	public int[] getAxesTickStyles() {
 		return axesTickStyles;
 	}
-		
+
 	public void setAxesTickStyles(int[] axesTickStyles) {
-		this.axesTickStyles = axesTickStyles;		
+		this.axesTickStyles = axesTickStyles;
 	}
-	
-	 public static String getModeText(int mode) {
-	        switch (mode) {
-	            case EuclidianView.MODE_ALGEBRA_INPUT :
-	                return "Select";
 
-	            case EuclidianView.MODE_MOVE :
-	                return "Move";
+	public static String getModeText(int mode) {
+		switch (mode) {
+		case EuclidianView.MODE_ALGEBRA_INPUT:
+			return "Select";
 
-	            case EuclidianView.MODE_POINT :
-	                return "Point";
-	                
-	            case EuclidianView.MODE_JOIN :
-	                return "Join";
-	                
-	            case EuclidianView.MODE_SEGMENT :
-	                return "Segment";     
-	            
-	            case EuclidianView.MODE_SEGMENT_FIXED :
-	                return "SegmentFixed";     
-	                
-	            case EuclidianView.MODE_RAY :
-	                return "Ray";              
+		case EuclidianView.MODE_MOVE:
+			return "Move";
 
-	            case EuclidianView.MODE_POLYGON :
-	                return "Polygon";
-	                
-	            case EuclidianView.MODE_PARALLEL :
-	                return "Parallel";
-	                
-	            case EuclidianView.MODE_ORTHOGONAL :
-	                return "Orthogonal";
-	                
-	            case EuclidianView.MODE_INTERSECT :
-	                return "Intersect";
-	                
-	            case EuclidianView.MODE_LINE_BISECTOR :
-	                return "LineBisector";
-	                
-	            case EuclidianView.MODE_ANGULAR_BISECTOR :
-	                return "AngularBisector";
-	                
-	            case EuclidianView.MODE_TANGENTS :
-	                return "Tangent";
-	                
-	            case EuclidianView.MODE_POLAR_DIAMETER :
-	                return "PolarDiameter";
-	            
-	            case EuclidianView.MODE_CIRCLE_TWO_POINTS :
-	                return "Circle2";
-	                
-	            case EuclidianView.MODE_CIRCLE_THREE_POINTS :
-	                return "Circle3";
-	                
-	            case EuclidianView.MODE_CONIC_FIVE_POINTS :
-	                return "Conic5";
-	                
-	            case EuclidianView.MODE_RELATION :
-	                return "Relation";
-	                
-	            case EuclidianView.MODE_TRANSLATEVIEW :
-	                return "TranslateView";
-	            
-	            case EuclidianView.MODE_SHOW_HIDE_OBJECT:
-	            	return "ShowHideObject";
-	            
-	            case EuclidianView.MODE_SHOW_HIDE_LABEL:
-	            	return "ShowHideLabel";
-	            
-	            case EuclidianView.MODE_COPY_VISUAL_STYLE:
-	            	return "CopyVisualStyle";
+		case EuclidianView.MODE_POINT:
+			return "Point";
 
-	            case EuclidianView.MODE_DELETE :
-	                return "Delete";
-	                
-	            case EuclidianView.MODE_VECTOR :
-	                return "Vector";
-	                               
-	            case EuclidianView.MODE_TEXT :
-	                return "Text";
-	            
-	            case EuclidianView.MODE_IMAGE :
-	                return "Image";
-	            
-	            case EuclidianView.MODE_MIDPOINT :
-	                return "Midpoint";
-	            
-	            case EuclidianView.MODE_SEMICIRCLE :
-	                return "Semicircle";
-	            
-	            case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS :
-	                return "CircleArc3";
-	            
-	            case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS :
-	                return "CircleSector3";
-	            
-	            case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS :
-	                return "CircumcircleArc3";
-	            
-	            case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS :
-	                return "CircumcircleSector3";
-	            
-	            case EuclidianView.MODE_SLIDER:
-	            	return "Slider";
-	            
-	            case EuclidianView.MODE_MIRROR_AT_POINT:
-	            	return "MirrorAtPoint";
-	            	
-	            case EuclidianView.MODE_MIRROR_AT_LINE:
-	            	return "MirrorAtLine";
-	                        
-	            case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-	            	return "TranslateByVector";
-	            
-	            case EuclidianView.MODE_ROTATE_BY_ANGLE:
-	            	return "RotateByAngle";
-	            
-	            case EuclidianView.MODE_DILATE_FROM_POINT:
-	            	return "DilateFromPoint";
-	            
-	            case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
-	            	return "CirclePointRadius";
-	            
-	            case EuclidianView.MODE_ANGLE:
-	            	return "Angle";
-	            
-	            case EuclidianView.MODE_ANGLE_FIXED:
-	            	return "AngleFixed";
-	            
-	            case EuclidianView.MODE_VECTOR_FROM_POINT:
-	            	return "VectorFromPoint";
-	            
-	            case EuclidianView.MODE_DISTANCE:
-	            	return "Distance";
-	            
-	            case EuclidianView.MODE_MOVE_ROTATE:
-	            	return "MoveRotate";
-	            
-	            case EuclidianView.MODE_ZOOM_IN:
-	            	return "ZoomIn";
-	            
-	            case EuclidianView.MODE_ZOOM_OUT:
-	            	return "ZoomOut";    
-	            
-	            case EuclidianView.MODE_LOCUS:            	
-	            	return "Locus";
-	           
-	            default:	            	
-	                return "";
-	        }
-	    }	 	
+		case EuclidianView.MODE_JOIN:
+			return "Join";
+
+		case EuclidianView.MODE_SEGMENT:
+			return "Segment";
+
+		case EuclidianView.MODE_SEGMENT_FIXED:
+			return "SegmentFixed";
+
+		case EuclidianView.MODE_RAY:
+			return "Ray";
+
+		case EuclidianView.MODE_POLYGON:
+			return "Polygon";
+
+		case EuclidianView.MODE_PARALLEL:
+			return "Parallel";
+
+		case EuclidianView.MODE_ORTHOGONAL:
+			return "Orthogonal";
+
+		case EuclidianView.MODE_INTERSECT:
+			return "Intersect";
+
+		case EuclidianView.MODE_LINE_BISECTOR:
+			return "LineBisector";
+
+		case EuclidianView.MODE_ANGULAR_BISECTOR:
+			return "AngularBisector";
+
+		case EuclidianView.MODE_TANGENTS:
+			return "Tangent";
+
+		case EuclidianView.MODE_POLAR_DIAMETER:
+			return "PolarDiameter";
+
+		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
+			return "Circle2";
+
+		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+			return "Circle3";
+
+		case EuclidianView.MODE_CONIC_FIVE_POINTS:
+			return "Conic5";
+
+		case EuclidianView.MODE_RELATION:
+			return "Relation";
+
+		case EuclidianView.MODE_TRANSLATEVIEW:
+			return "TranslateView";
+
+		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
+			return "ShowHideObject";
+
+		case EuclidianView.MODE_SHOW_HIDE_LABEL:
+			return "ShowHideLabel";
+
+		case EuclidianView.MODE_COPY_VISUAL_STYLE:
+			return "CopyVisualStyle";
+
+		case EuclidianView.MODE_DELETE:
+			return "Delete";
+
+		case EuclidianView.MODE_VECTOR:
+			return "Vector";
+
+		case EuclidianView.MODE_TEXT:
+			return "Text";
+
+		case EuclidianView.MODE_IMAGE:
+			return "Image";
+
+		case EuclidianView.MODE_MIDPOINT:
+			return "Midpoint";
+
+		case EuclidianView.MODE_SEMICIRCLE:
+			return "Semicircle";
+
+		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
+			return "CircleArc3";
+
+		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
+			return "CircleSector3";
+
+		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+			return "CircumcircleArc3";
+
+		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+			return "CircumcircleSector3";
+
+		case EuclidianView.MODE_SLIDER:
+			return "Slider";
+
+		case EuclidianView.MODE_MIRROR_AT_POINT:
+			return "MirrorAtPoint";
+
+		case EuclidianView.MODE_MIRROR_AT_LINE:
+			return "MirrorAtLine";
+
+		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			return "TranslateByVector";
+
+		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+			return "RotateByAngle";
+
+		case EuclidianView.MODE_DILATE_FROM_POINT:
+			return "DilateFromPoint";
+
+		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
+			return "CirclePointRadius";
+
+		case EuclidianView.MODE_ANGLE:
+			return "Angle";
+
+		case EuclidianView.MODE_ANGLE_FIXED:
+			return "AngleFixed";
+
+		case EuclidianView.MODE_VECTOR_FROM_POINT:
+			return "VectorFromPoint";
+
+		case EuclidianView.MODE_DISTANCE:
+			return "Distance";
+
+		case EuclidianView.MODE_MOVE_ROTATE:
+			return "MoveRotate";
+
+		case EuclidianView.MODE_ZOOM_IN:
+			return "ZoomIn";
+
+		case EuclidianView.MODE_ZOOM_OUT:
+			return "ZoomOut";
+
+		case EuclidianView.MODE_LOCUS:
+			return "Locus";
+
+		default:
+			return "";
+		}
+	}
 }

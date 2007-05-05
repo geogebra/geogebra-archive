@@ -27,16 +27,13 @@ import geogebra.export.GraphicExportDialog;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
-import geogebra.gui.GUIController;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.HelpBrowser;
 import geogebra.gui.MyPopupMenu;
-import geogebra.gui.PrintPreview;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
-import geogebra.gui.ToolCreationDialog;
-import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.menubar.MyMenubar;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.io.MyXMLio;
@@ -62,26 +59,19 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.print.PageFormat;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -93,25 +83,15 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -121,7 +101,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application {
 
-    public static final String buildDate = "20. April 2007";
+    public static final String buildDate = "5. May 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -141,7 +121,7 @@ public class Application {
 	//public static final String UPDATE_URL = "http://www.geogebra.at/webstart/unpacked/";
     
     // supported GUI languages (from properties files)
-    private static ArrayList supportedLocales = new ArrayList();
+    public static ArrayList supportedLocales = new ArrayList();
     static {
     	supportedLocales.add( new Locale("ar") );           // Arabic
     	supportedLocales.add( new Locale("eu") );           // Basque
@@ -176,15 +156,15 @@ public class Application {
         supportedLocales.add( new Locale("vi") );          	// Vietnamese
     }    
     
-    // specialLanguageNames: Java does show an English name for all languages
+    // specialLanguageNames: Java does not show an English name for all languages
     //   supported by GeoGebra, so some language codes have to be treated specially
-    private static Hashtable specialLanguageNames = new Hashtable();
+    public static Hashtable specialLanguageNames = new Hashtable();
     static {
     	specialLanguageNames.put("deAT", "German (Austria)");
-    	specialLanguageNames.put("noNO", "Norsk (bokm\u00e5l)");
-    	specialLanguageNames.put("noNONY", "Norsk (nynorsk)");
+    	specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
+    	specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");
     	specialLanguageNames.put("bs", "Bosnian");
-    	specialLanguageNames.put("cz", "Czeck");
+    	specialLanguageNames.put("cz", "Czech");
     	specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
     	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    	    	
     }
@@ -230,9 +210,7 @@ public class Application {
     private MyXMLio myXMLio;
 
     private AlgebraController algebraController;
-    private EuclidianController euclidianController;
-    private GUIController guiController;    
-    private LanguageActionListener langListener;
+    private EuclidianController euclidianController;        
     private GeoElementSelectionListener currentSelectionListener;
 
     // For language specific settings
@@ -243,40 +221,7 @@ public class Application {
     // Actions
     private AbstractAction 
         showAxesAction,
-        showGridAction,
-        refreshAction,
-        drawingPadToClipboardAction,
-        newFileAction,
-        newWindowAction,
-        propertiesAction,
-        constProtocolAction,
-        drawingPadPropAction,
-        toolbarConfigAction,
-        showAlgebraViewAction,     
-        showAlgebraInputAction,
-        showCmdListAction,
-        horizontalSplitAction,
-        showAuxiliaryObjectsAction,
-        showConsProtNavigationAction,
-        showConsProtNavigationPlayAction,
-        showConsProtNavigationOpenProtAction,
-        loadAction,
-        saveAction,
-        saveAsAction,
-        printProtocolAction,
-        printEuclidianViewAction,
-        undoAction,
-        redoAction,
-        exitAction,
-        exitAllAction,
-        helpAction,        
-        //updateAction,
-        infoAction,
-        exportGraphicAction,
-        htmlCPAction,
-        exportWorksheet,
-        showCreateToolsAction,
-        showManageToolsAction;
+        showGridAction;
 
     private PropertiesDialog propDialog;
     private ConstructionProtocol constProtocol;
@@ -299,8 +244,7 @@ public class Application {
     private boolean rightClickEnabled = true;
 
     private File currentPath, currentImagePath, currentFile = null;
-    private boolean isSaved = true;
-    private boolean actionsInited = false;
+    private boolean isSaved = true;    
     private int appFontSize;
     public Font boldFont, plainFont, smallFont;
     private String FONT_NAME = STANDARD_FONT_NAME;
@@ -309,17 +253,9 @@ public class Application {
     private MyToolbar appToolbarPanel;     
     
     private JFileChooser fileChooser;
-    private JMenuBar menuBar;
+    private MyMenubar menuBar;
     private AlgebraInput algebraInput;
     private JPanel centerPanel;   
-    private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
-                cbShowAuxiliaryObjects, cbHorizontalSplit, cbShowConsProtNavigation,
-                cbShowConsProtNavigationPlay, cbShowConsProtNavigationOpenProt,
-				cbShowAlgebraInput, cbShowCmdList;
-    private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces, menuContinuity,
-			      menuPointStyle,menuRightAngleStyle, menuCoordStyle, menuWindow, menuFile,
-			      menuTools;
-    private JMenuItem miCloseAll;
 
     private JSplitPane sp;
     private int initSplitDividerLocationHOR = 250; // init value
@@ -379,8 +315,7 @@ public class Application {
         //  init xml io for construction loading
         myXMLio = new MyXMLio(kernel, kernel.getConstruction());
 
-        //  init Controllers and Views      
-        guiController = new GUIController(this);   
+        //  init Controllers and Views              
         algebraController = new AlgebraController(kernel);
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
@@ -395,7 +330,10 @@ public class Application {
    			if (appFontSize == 0) setFontSize(getInitFontSize());
         INITING = false;	
         
-        isSaved = true;             
+        isSaved = true;       
+        
+        initShowAxesGridActions();
+        menuBar = new MyMenubar(this);
     }      
     
     public void initInBackground() {
@@ -448,7 +386,10 @@ public class Application {
     }
     
     public int getMenuBarHeight() {
-    	return menuBar.getHeight();
+    	if (menuBar == null)
+    		return 0;
+    	else
+    		return menuBar.getHeight();
     }
     
     public int getAlgebraInputHeight() {
@@ -538,20 +479,7 @@ public class Application {
         	eup.add(constProtocolNavigation, BorderLayout.SOUTH);
         	constProtocolNavigation.setBorder(BorderFactory.
        		     createMatteBorder(1, 0, 0, 0, Color.gray));
-        }      
-        
-        /*
-        // show statusBar too
-        if (showToolBar) { 
-        	initStatusBar();   
-        	JPanel statusPanel = new JPanel(new BorderLayout());
-        	statusPanel.add(eup, BorderLayout.CENTER);
-        	statusPanel.add(statusBar, BorderLayout.SOUTH); 
-        	statusBar.setBorder(BorderFactory.
-        		     createMatteBorder(1, 0, 0, 0, Color.gray));
-        		       
-        	eup = statusPanel;
-        }*/
+        }                    
         
         if (showAlgebraView) {        	
         	if (algebraView == null) {
@@ -583,16 +511,7 @@ public class Application {
         
         if (updateUI)        	
         	updateComponentTreeUI();               
-    }
-    
-    /*
-    private void initStatusBar() {
-    	if (statusLabelAxesRatio == null) {    	
-    		statusLabelAxesRatio = new JLabel();    		
-    	}
-    	statusBar = new JPanel(new BorderLayout(5, 5));  
-        statusBar.add(statusLabelAxesRatio, BorderLayout.EAST);         
-    }*/
+    }    
     
     public JPanel getCenterPanel() {
         return centerPanel;
@@ -818,8 +737,14 @@ public class Application {
    			updateTitle();
    			frame.setIconImage(getInternalImage("geogebra.gif"));
    			frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-   			frame.addWindowListener(guiController);  
-           // frame.addComponentListener(guiController);    
+   			  
+   			// window closing listener
+   			WindowAdapter windowListener = new WindowAdapter() {   				   				   			    
+   			    public void windowClosing(WindowEvent event) {     
+   			            exit(); 
+   			    }  
+   			};
+   			frame.addWindowListener(windowListener);    
     	}
     }
 
@@ -850,11 +775,7 @@ public class Application {
     final public AlgebraController getAlgebraController() {
         return algebraController;
     }
-    
-    public GUIController getGUIController() {
-        return guiController;
-    }
-    
+       
     public AlgebraInput getAlgebraInput() {
         return algebraInput;
     }
@@ -1322,23 +1243,7 @@ public class Application {
     }
     
     
-      public String readTextFromJar(String s) {
-        StringBuffer sb = new StringBuffer();
-        String thisLine;
-        try {
-          InputStream is = getClass().getResourceAsStream(s);
-          BufferedReader br = new BufferedReader
-             (new InputStreamReader(is));
-          while ((thisLine = br.readLine()) != null) {  
-             sb.append(thisLine);
-             sb.append("\n");
-             }
-          }
-        catch (Exception e) {
-          e.printStackTrace();
-          }
-          return sb.toString();
-      }
+     
 
     /**
      * Displays the zoom menu at the position p in the coordinate space 
@@ -1920,7 +1825,7 @@ public class Application {
         if (currentFile != null)
             currentPath = currentFile.getParentFile();   
         updateTitle();
-        updateMenuWindow();
+        menuBar.updateMenuWindow();
     }
 
     public void updateTitle() {   
@@ -2076,13 +1981,18 @@ public class Application {
 
     private void setLabels() {
         if (INITING)
-            return;
+            return;       
 
-        // init actions for toolbar buttons and mode menu items
-        if (showToolBar || showMenuBar) initActions();
-
-        if (appToolbarPanel != null) appToolbarPanel.initToolbar();
-        if (showMenuBar) setMenuBar(guiController);      
+        // menubar inits actions too
+        menuBar.initMenubar(); 
+        if (showMenuBar) {
+	        if (isApplet) 
+	        	applet.setJMenuBar(menuBar);
+	        else 
+	        	frame.setJMenuBar(menuBar);
+        }
+        
+        if (appToolbarPanel != null) appToolbarPanel.initToolbar();              
         if (algebraView != null) algebraView.setLabels(); // update views    
         if (algebraInput != null) algebraInput.setLabels();
                 
@@ -2186,6 +2096,10 @@ public class Application {
             sp.setOrientation(JSplitPane.VERTICAL_SPLIT);
         }           
     }
+    
+    public boolean isHorizontalSplit() {
+    	return horizontalSplit;
+    }
 
     public void setShowAlgebraView(boolean flag) {
         if (showAlgebraView != flag) {
@@ -2203,13 +2117,8 @@ public class Application {
             	if (algebraView != null) algebraView.detachView();
             }                
                 
-            if (showMenuBar) {            	
-	            if (cbShowAuxiliaryObjects != null)
-	                cbShowAuxiliaryObjects.setEnabled(showAlgebraView);
-	            if (cbHorizontalSplit != null)
-	                cbHorizontalSplit.setEnabled(showAlgebraView);
-	            if (cbShowAlgebraView != null)
-	            	cbShowAlgebraView.setSelected(showAlgebraView);
+            if (menuBar != null) {            	
+            	menuBar.updateMenubar();
             }
             isSaved = false;
         }
@@ -2217,9 +2126,7 @@ public class Application {
     
     private void initAlgebraView() {    	
     	algebraView = new AlgebraView(algebraController);
-    	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);
-    	
-    		
+    	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);    	    		
     }
 
     public boolean showAlgebraView() {
@@ -2233,11 +2140,8 @@ public class Application {
     public void setShowAlgebraInput(boolean flag) {
     	showAlgebraInput = flag;
     	
-    	if (showMenuBar) {  
-    		if (cbShowCmdList != null)
-	    		cbShowCmdList.setEnabled(showAlgebraInput);
-	    	if (cbShowAlgebraInput != null)
-	    		cbShowAlgebraInput.setSelected(flag);	    	    	
+    	if (menuBar != null) {  
+    		menuBar.updateMenubar();    	    	
     	}
     }
     
@@ -2247,11 +2151,11 @@ public class Application {
     
     public void setShowCmdList(boolean flag) {
     	showCmdList = flag;
-    	    	
-    	if (cbShowCmdList != null)
-    		cbShowCmdList.setSelected(flag);
+    	    	    	    	
     	if (algebraInput != null)
-    		algebraInput.initGUI();
+    		algebraInput.initGUI();    	
+    	if (menuBar != null)
+    		menuBar.updateMenubar();
     }
     
     /**
@@ -2262,7 +2166,7 @@ public class Application {
 	  	  showConsProtNavigation = flag;
 	  	  
 	  	  if (constProtocolNavigation == null) {
-	  	  	constProtocolNavigation = new ConstructionProtocolNavigation(getConstructionProtocol(), true, true);
+	  	  	constProtocolNavigation = new ConstructionProtocolNavigation(getConstructionProtocol());
 	  	  }	  	 	  	  	  	  
 	  	  
 	  	  if (showConsProtNavigation) {
@@ -2272,36 +2176,30 @@ public class Application {
 	  	  	constProtocolNavigation.unregister();
 	  	  }
 	  	  
-	  	if (cbShowConsProtNavigation != null) {
-	  		cbShowConsProtNavigation.setSelected(showConsProtNavigation);
-	  		cbShowConsProtNavigationPlay.setEnabled(showConsProtNavigation);
-			cbShowConsProtNavigationOpenProt.setEnabled(showConsProtNavigation);
-	  	}	  	
+	  	  menuBar.updateMenubar();  	
 	  }
 	 
 	 public boolean showConsProtNavigation() {
 	 	return showConsProtNavigation;
 	 }
 	 
-	 public ConstructionProtocolNavigation getConstructionProtocolNavigation(boolean playButton, boolean protButton) { 
+	 public ConstructionProtocolNavigation getConstructionProtocolNavigation() { 
 	 	if (constProtocolNavigation == null) {
-	 		constProtocolNavigation = new ConstructionProtocolNavigation(getConstructionProtocol(), playButton, protButton);
-	 	} else {
-	 		constProtocolNavigation.setPlayButtonVisible(playButton);
-	 		constProtocolNavigation.setConsProtButtonVisible(protButton);
+	 		constProtocolNavigation = new ConstructionProtocolNavigation(getConstructionProtocol());
+	 	} else {	 		
 	 		constProtocolNavigation.initGUI();
 	 	}
 	 	return constProtocolNavigation;
 	 }
 	 
-	 private boolean isConsProtNavigationPlayButtonVisible() {
+	 public boolean isConsProtNavigationPlayButtonVisible() {
 	 	if (constProtocolNavigation != null)
 	 		return constProtocolNavigation.isPlayButtonVisible();
 	 	else
 	 		return true;
 	 }
 	 
-	 private boolean isConsProtNavigationProtButtonVisible() {
+	 public boolean isConsProtNavigationProtButtonVisible() {
 	 	if (constProtocolNavigation != null)
 	 		return constProtocolNavigation.isConsProtButtonVisible();
 	 	else
@@ -2316,12 +2214,16 @@ public class Application {
 		showAuxiliaryObjects = flag;
 		if (algebraView != null) 
 			algebraView.setShowAuxiliaryObjects(flag);
-		if (cbShowAuxiliaryObjects != null)
-			cbShowAuxiliaryObjects.setSelected(flag);
+		if (menuBar != null)
+			menuBar.updateMenubar();		
 	}
     
     public void setShowMenuBar(boolean flag) {
     	showMenuBar = flag;
+    	
+    	if (showMenuBar && menuBar == null) {
+    		menuBar = new MyMenubar(this);    			    		
+    	}  
     }
     
     public void setShowToolBar(boolean toolbar, boolean help) {
@@ -2395,6 +2297,10 @@ public class Application {
     	setMoveMode();
     }
     
+    public void updateMenubar() {
+    	menuBar.updateMenubar();
+    }
+    
     public void updateCommandDictionary() {
     	if (commandDict != null) {
     		// make sure all macro commands are in dictionary
@@ -2404,534 +2310,7 @@ public class Application {
     			algebraInput.setCommandNames();    		
     		}
     	}    	  
-    }
-
-    public void updateMenuBar() {
-    	if (!showMenuBar) return;
-    	
-        cbShowAxes.setSelected(euclidianView.getShowXaxis() && euclidianView.getShowYaxis());
-        cbShowGrid.setSelected(euclidianView.getShowGrid());
-        cbShowAlgebraView.setSelected(showAlgebraView);
-        cbShowAlgebraInput.setSelected(showAlgebraInput);
-        cbShowCmdList.setSelected(showCmdList);
-        cbShowAuxiliaryObjects.setSelected(showAuxiliaryObjects);
-        
-        cbShowConsProtNavigation.setSelected(showConsProtNavigation);
-        cbShowConsProtNavigationPlay.setSelected(isConsProtNavigationPlayButtonVisible());
-        cbShowConsProtNavigationOpenProt.setSelected(isConsProtNavigationProtButtonVisible());
-     
-        updateMenuContinuity();
-        updateMenuPointCapturing();
-        updateMenuAngleUnit();
-        updateMenuDecimalPlaces();
-        updateMenuPointStyle();
-        updateMenuRightAngleStyle();
-        updateMenuCoordStyle();
-    }
-    
-    private void updateMenuFile() {
-    	if (frame == null || menuFile == null) return;    	    	                      
-    	
-    	if (miCloseAll == null) {
-    		miCloseAll = new JMenuItem(exitAllAction);
-    	}
-    	    	
-    	menuFile.remove(miCloseAll);
-        if (GeoGebra.getInstanceCount() > 1) {
-        	menuFile.add(miCloseAll);
-        }      
-   }
-    
-    public void updateMenusForInstances() {
-    	updateMenuWindow();
-    	updateMenuFile();
-    }
-    
-    private void updateMenuWindow() {  
-    	if (frame == null || menuWindow == null) return;
-
-    	menuWindow.removeAll();
-    	menuWindow.add(newWindowAction);
-    	
-    	ArrayList ggbInstances = GeoGebra.getInstances();
-    	int size = ggbInstances.size();
-    	if (size == 1) return;
-    	
-    	menuWindow.addSeparator();
-    	StringBuffer sb = new StringBuffer();
-    	ButtonGroup bg = new ButtonGroup();  
-    	JRadioButtonMenuItem mi;  
-    	for (int i = 0; i < size; i++) {    		    		
-    		GeoGebra ggb = (GeoGebra) ggbInstances.get(i);
-    		Application app = ggb.getApplication();
-    		
-    		sb.setLength(0);
-    		sb.append(i+1);
-    		if (app.currentFile != null) {
-    			sb.append(" ");
-    			sb.append(app.currentFile.getName());
-    		}
-    		
-    		 mi = new JRadioButtonMenuItem(sb.toString());
-             if (app == this)
-                 mi.setSelected(true);
-             ActionListener al = new RequestFocusListener(ggb);
-             mi.addActionListener(al);
-             bg.add(mi);
-             menuWindow.add(mi);
-    	}       
-    }
-   
-    private void setMenuBar(ActionListener al) {    
-        JMenu menu, submenu;
-        JMenuItem mi;
-        int pos;
-        if (menuBar == null) 
-        	menuBar = new JMenuBar();
-        else
-        	menuBar.removeAll();                
-
-        // File          
-        menuFile = new JMenu(getMenu("File"));
-        menu = menuFile;    	    	
-    	mi = menu.add(newFileAction);
-        setCtrlAccelerator(mi, 'N');
-        mi = new JMenuItem(newWindowAction);
-        mi.setIcon(getEmptyIcon());
-        menu.add(mi);
-        menu.addSeparator();
-        mi = menu.add(loadAction);
-        setCtrlAccelerator(mi, 'O'); // open            
-        menu.addSeparator();
-        mi = menu.add(saveAction);
-        setCtrlAccelerator(mi, 'S');
-        mi = menu.add(saveAsAction);
-        menu.addSeparator();
-        submenu = new JMenu(getMenu("PrintPreview"));
-        submenu.setIcon(getImageIcon("print.gif"));
-        submenu.add(printEuclidianViewAction);
-        submenu.add(printProtocolAction);
-        menu.add(submenu);
-        submenu = new JMenu(getMenu("Export"));
-        submenu.setIcon(getEmptyIcon());
-        menu.add(submenu);
-        submenu.add(exportWorksheet);
-        submenu.addSeparator();
-        submenu.add(htmlCPAction);
-        submenu.add(exportGraphicAction);
-
-        
-        submenu.addSeparator();
-        submenu.add(drawingPadToClipboardAction);        
-        menu.addSeparator(); 
-        menu.add(exitAction);        
-        updateMenuFile();
-        menuBar.add(menuFile);              
-
-        // Edit
-        menu = new JMenu(getMenu("Edit"));
-        if (undoActive) {
-	        mi = menu.add(undoAction);
-	        setCtrlAccelerator(mi, 'Z');
-	        mi = menu.add(redoAction);
-	        setCtrlAccelerator(mi, 'Y');
-	        menu.addSeparator();
-        }
-        
-        menu.add(propertiesAction);
-        menuBar.add(menu);
-      
-
-        // View
-        menu = new JMenu(getMenu("View"));
-        cbShowAxes = new JCheckBoxMenuItem(showAxesAction);
-        cbShowAxes.setSelected(euclidianView.getShowXaxis() && euclidianView.getShowYaxis());
-        menu.add(cbShowAxes);
-
-        cbShowGrid = new JCheckBoxMenuItem(showGridAction);
-        cbShowGrid.setSelected(euclidianView.getShowGrid());
-        menu.add(cbShowGrid);
-        menu.addSeparator();
-        
-        mi = menu.add(refreshAction);
-        setCtrlAccelerator(mi, 'F');                
-        menu.addSeparator();
-        
-        
-        cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);
-        cbShowAlgebraView.setSelected(showAlgebraView);
-        setCtrlAccelerator(cbShowAlgebraView, 'A');
-        menu.add(cbShowAlgebraView);
-        
-        cbShowAuxiliaryObjects = new JCheckBoxMenuItem(showAuxiliaryObjectsAction);
-        cbShowAuxiliaryObjects.setSelected(algebraView == null ||
-        							algebraView.showAuxiliaryObjects());
-        cbShowAuxiliaryObjects.setEnabled(showAlgebraView);
-        menu.add(cbShowAuxiliaryObjects);
-        
-        cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);
-        cbHorizontalSplit.setSelected(horizontalSplit);     
-        cbHorizontalSplit.setEnabled(showAlgebraView);
-        menu.add(cbHorizontalSplit);
-
-        menu.addSeparator();
-        
-
-        // show/hide cmdlist, algebra input               
-        cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
-        cbShowAlgebraInput.setSelected(showAlgebraInput);       
-        menu.add(cbShowAlgebraInput);
-        
-        cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
-        cbShowCmdList.setSelected(showCmdList);  
-    	cbShowCmdList.setEnabled(showAlgebraInput);
-    
-        menu.add(cbShowCmdList);
-        menu.addSeparator();
-        
-        
-        // Construction Protocol     
-        cbShowConsProtNavigation = new JCheckBoxMenuItem(showConsProtNavigationAction);
-        cbShowConsProtNavigationPlay = new JCheckBoxMenuItem(showConsProtNavigationPlayAction);
-        cbShowConsProtNavigationOpenProt = new JCheckBoxMenuItem(showConsProtNavigationOpenProtAction);
-     
-        cbShowConsProtNavigation.setSelected(showConsProtNavigation);
-        cbShowConsProtNavigationPlay.setSelected(isConsProtNavigationPlayButtonVisible());
-        cbShowConsProtNavigationOpenProt.setSelected(isConsProtNavigationProtButtonVisible());
-  		cbShowConsProtNavigationPlay.setEnabled(showConsProtNavigation);
-		cbShowConsProtNavigationOpenProt.setEnabled(showConsProtNavigation);
-
-        
-        menu.add(cbShowConsProtNavigation);   
-        menu.add(cbShowConsProtNavigationPlay);
-        menu.add(cbShowConsProtNavigationOpenProt);
-                  
-        menu.addSeparator();
-        menu.add(constProtocolAction);
-        menuBar.add(menu);
-
-        // Options
-        menu = new JMenu(getMenu("Options"));
-        
-        // point capturing
-        menuPointCapturing = new JMenu(getMenu("PointCapturing"));
-        String[] strPointCapturing = { "on",         	
-        		getMenu("on") + " (" + getMenu("Grid") + ")", 
-        		"off" };   
-        String[] strPointCapturingAC = { "1 PointCapturing", "2 PointCapturing",  "0 PointCapturing" };
-        addRadioButtonMenuItems(menuPointCapturing, al, strPointCapturing, strPointCapturingAC, 0);     
-        menu.add(menuPointCapturing);
-        updateMenuPointCapturing();               
-                
-        // Angle unit
-        menuAngleUnit = new JMenu(getMenu("AngleUnit"));
-        String[] strAngleUnit = { "Degree", "Radiant" };
-        addRadioButtonMenuItems(menuAngleUnit, al, strAngleUnit, strAngleUnit, 0);
-        menu.add(menuAngleUnit);
-        updateMenuAngleUnit();
-        
-        // decimal places
-        menuDecimalPlaces = new JMenu(getMenu("DecimalPlaces"));
-        String[] strDecimalSpaces = { "0", "1", "2", "3", "4", "5" };           
-        String[] strDecimalSpacesAC = { "0 decimals", "1 decimals", "2 decimals", 
-                                                            "3 decimals", "4 decimals", "5 decimals" };
-        addRadioButtonMenuItems(menuDecimalPlaces, al, strDecimalSpaces, strDecimalSpacesAC, 0);                
-        menu.add(menuDecimalPlaces);
-        updateMenuDecimalPlaces();                
-        
-        // continuity
-        menuContinuity = new JMenu(getMenu("Continuity"));
-        String[] strContinuity = { "on", "off" };   
-        String[] strContinuityAC = { "true Continuity", "false Continuity" };
-        addRadioButtonMenuItems(menuContinuity, al, strContinuity, strContinuityAC, 0);     
-        menu.add(menuContinuity);
-        updateMenuContinuity();
-        
-        menu.addSeparator();
-        
-        // point style
-        menuPointStyle = new JMenu(getMenu("PointStyle"));
-        // dot, circle, cross
-        String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
-        String[] strPointStyleAC = { "0", "2", "1" };
-        ActionListener psal = new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		int style = Integer.parseInt(ae.getActionCommand());
-        		euclidianView.setPointStyle(style);
-        	}
-        };
-        addRadioButtonMenuItems(menuPointStyle, psal, strPointStyle, strPointStyleAC, 0);
-        menu.add(menuPointStyle);
-        updateMenuPointStyle();
-        
-        
-        // added by Loïc BEGIN
-        // right angle style
-
-        menuRightAngleStyle = new JMenu(getMenu("RightAngleStyle"));
-        // dot, none, square
-        String[] strAngleStyle = { getPlain("off"), "\u25a1", "\u2219" };
-        String[] strAngleStyleAC = { String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
-        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE),
-        		String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT)};
-        ActionListener asal = new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		int style = Integer.parseInt(ae.getActionCommand());
-        		euclidianView.setRightAngleStyle(style);
-        	}
-        };
-        addRadioButtonMenuItems(menuRightAngleStyle, asal, strAngleStyle, strAngleStyleAC, 0);
-        menu.add(menuRightAngleStyle);
-        updateMenuRightAngleStyle();
-     //END
-        
-        // coordinate style
-        menuCoordStyle = new JMenu(getPlain("Coordinates"));
-        // dot, circle, cross
-        String[] strCoordStyle = { "A = (x, y)", "A(x | y)" };
-        String[] strCoordStyleAC = { "0", "1" };
-        ActionListener csal = new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		int style = Integer.parseInt(ae.getActionCommand());
-        		kernel.setCoordStyle(style);
-        		kernel.updateConstruction();
-        	}
-        };
-        addRadioButtonMenuItems(menuCoordStyle, csal, strCoordStyle, strCoordStyleAC, 0);
-        menu.add(menuCoordStyle);
-        updateMenuCoordStyle();
-        
-        menu.addSeparator();
-
-        // Graphics quality         
-        submenu = new JMenu(getMenu("GraphicsQuality"));
-        String[] gqfi = { "LowQuality", "HighQuality" };
-        if (euclidianView.getAntialiasing())
-            pos = 1;
-        else
-            pos = 0;
-        addRadioButtonMenuItems(submenu, al, gqfi, gqfi, pos);
-        menu.add(submenu);
-
-        // Font size         
-        submenu = new JMenu(getMenu("FontSize"));
-        String[] fsfi =
-            {                           
-                "12 pt",               
-                "14 pt",
-                "16 pt",
-                "18 pt",
-				"20 pt", 
-				"24 pt" ,				
-				"28 pt", 
-				"32 pt" };
-        
-        // find current pos
-        String strFS = appFontSize + " pt";
-        pos = 0;
-        for (int i=0; i < fsfi.length; i++) {
-        	if (strFS.equals(fsfi[i])) {
-        		pos = i;
-        		break;
-        	}
-        }               
-        
-        addRadioButtonMenuItems(submenu, al, fsfi, fsfi, pos);
-        menu.add(submenu);
-        
-        /*
-        // FontName
-        menuFontName = new JMenu(getMenu("PointCapturing"));
-        String[] strFontName = { "Sans Serif", "Serif" };           
-        String[] strFontNameAC = { "SansSerif", "Serif" };
-        addRadioButtonMenuItems(menuFontName, al, strFontName, strFontNameAC, 0);     
-        menu.add(menuFontName);
-        updateMenuFontName();
-        */
-
-        menu.addSeparator();
-
-        // Language       
-    	if (langListener == null)
-    		langListener = new LanguageActionListener();
-        submenu = new JMenu(getMenu("Language"));
-        addLanguageMenuItems(submenu, langListener);
-        menu.add(submenu);
-        
-        menu.addSeparator();             
-        
-        // drawing pad properteis
-        menu.add(drawingPadPropAction);                       
-        menuBar.add(menu);
-        
-        // tools menu
-        menuTools = new JMenu(getMenu("Tools"));        
-        menuBar.add(menuTools);
-        menuTools.add(showCreateToolsAction);
-        menuTools.add(showManageToolsAction);       
-        menuTools.addSeparator(); 
-        menuTools.add(toolbarConfigAction);
-        
-        // windows menu
-        menuWindow = new JMenu(getMenu("Window"));
-        updateMenuWindow();
-        menuBar.add(menuWindow);
-
-        // help
-        menu = new JMenu(getMenu("Help"));
-        menu.add(helpAction);
-        menu.addSeparator();
-        
-      //  menu.add(updateAction);        
-      //  menu.addSeparator();
-                
-        menu.add(infoAction);
-        menuBar.add(menu);
-
-        if (isApplet) 
-        	applet.setJMenuBar(menuBar);
-        else 
-        	frame.setJMenuBar(menuBar);
-    }
-
-    private void updateMenuAngleUnit() {
-        int pos;
-        if (kernel.getAngleUnit() == Kernel.ANGLE_DEGREE)
-            pos = 0;
-        else
-            pos = 1;
-        (
-            (JRadioButtonMenuItem) menuAngleUnit.getMenuComponent(
-                pos)).setSelected(
-            true);
-    }
-    
-    private void updateMenuPointStyle() {
-        int pos = euclidianView.getPointStyle();        
-        ( (JRadioButtonMenuItem) menuPointStyle.getMenuComponent(
-                pos)).setSelected(
-            true);
-    }
-    // added by Loïc BEGIN
-    private void updateMenuRightAngleStyle() {
-        int pos = euclidianView.getRightAngleStyle();        
-        ( (JRadioButtonMenuItem) menuRightAngleStyle.getMenuComponent(
-                pos)).setSelected(
-            true);
-    }
-    //END
-    
-    private void updateMenuCoordStyle() {
-        int pos = kernel.getCoordStyle();        
-        ( (JRadioButtonMenuItem) menuCoordStyle.getMenuComponent(
-                pos)).setSelected(
-            true);
-    }
-    
-    private void updateContinuity() {
-    	
-    }
-    
-    private void updateMenuPointCapturing() {
-    	String pos = Integer.toString(euclidianView.getPointCapturingMode());
-    	for (int i=0; i < 3; i++) {
-    		JRadioButtonMenuItem mi = (JRadioButtonMenuItem) menuPointCapturing.getMenuComponent(i);    		
-    		String ac = mi.getActionCommand();    	    	
-    		if (ac.substring(0,1).equals(pos)) {
-    			mi.setSelected(true);
-    			break;
-    		}
-    	}      
-    }
-    
-    private void updateMenuDecimalPlaces() {
-        int pos = kernel.getPrintDecimals();
-        try {
-        ((JRadioButtonMenuItem) menuDecimalPlaces.
-        		getMenuComponent(
-                pos)).setSelected(
-            true);
-        } catch (Exception e) {        	
-        }
-    }
-    
-    private void updateMenuContinuity() {
-    	int pos = kernel.isContinuous() ? 0 : 1;
-        try {
-        ((JRadioButtonMenuItem) menuContinuity.
-        		getMenuComponent(
-                pos)).setSelected(
-            true);
-        } catch (Exception e) {        	
-        }
-    }
-
-    private void setCtrlAccelerator(JMenuItem mi, char acc) {
-        KeyStroke ks = KeyStroke.getKeyStroke(acc, Event.CTRL_MASK);
-        mi.setAccelerator(ks);
-    }
-
-    /*
-    private void addMenuItems(JMenu menu, ActionListener al, String[] items) {
-        JMenuItem mi;
-        String label;
-
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].equalsIgnoreCase("SEPARATOR")) {
-                menu.addSeparator();
-            } else {
-                mi = new JMenuItem(getMenu(items[i]));
-                mi.addActionListener(al);
-                menu.add(mi);
-            }
-        }
-    }*/
-
-    private void addLanguageMenuItems(JMenu menu, ActionListener al) {
-        JRadioButtonMenuItem mi;
-        ButtonGroup bg = new ButtonGroup();
-        //String label;
-        String ggbLangCode;
-
-        for (int i = 0; i < supportedLocales.size(); i++) {
-            Locale loc = (Locale) supportedLocales.get(i);
-            ggbLangCode = loc.getLanguage() + loc.getCountry() + loc.getVariant();
-            
-            // enforce to show specialLanguageNames first 
-            // because here getDisplayLanguage doesn't return a good result
-            String text = (String) specialLanguageNames.get(ggbLangCode);
-            if (text == null)
-            	text = loc.getDisplayLanguage(Locale.ENGLISH);            
-            mi = new JRadioButtonMenuItem(text);           
-            
-            if (loc == currentLocale)
-                mi.setSelected(true);
-            mi.setActionCommand(ggbLangCode);
-            mi.addActionListener(al);
-            bg.add(mi);
-            menu.add(mi);
-        }
-    }
-
-    private void addRadioButtonMenuItems(
-        JMenu menu,
-        ActionListener al,
-        String[] items, String [] actionCommands,
-        int selectedPos) {
-        JRadioButtonMenuItem mi;
-        ButtonGroup bg = new ButtonGroup();
-        //String label;
-
-        for (int i = 0; i < items.length; i++) {
-            mi = new JRadioButtonMenuItem(getMenu(items[i]));
-            if (i == selectedPos)
-                mi.setSelected(true);
-            mi.setActionCommand(actionCommands[i]);
-            mi.addActionListener(al);
-            bg.add(mi);
-            menu.add(mi);
-        }
-    }
+    }      
     
     private void initShowAxesGridActions() {
     	showAxesAction = new AbstractAction(getMenu("Axes")) {
@@ -2943,7 +2322,7 @@ public class Application {
 				euclidianView.showAxes(!bothAxesShown, !bothAxesShown);				            	
                 euclidianView.repaint();
                 storeUndoInfo();
-                cbShowAxes.setSelected(!bothAxesShown);
+                menuBar.updateMenubar();
             }
         };
 
@@ -2955,450 +2334,12 @@ public class Application {
                 euclidianView.showGrid(!euclidianView.getShowGrid());
                 euclidianView.repaint();
                 storeUndoInfo();
-                cbShowGrid.setSelected(euclidianView.getShowGrid());
+                menuBar.updateMenubar();
             }
         };
     }
 
-    private void initActions() {
-    	actionsInited = true;    	    
-
-        initShowAxesGridActions();
-      
-        showAlgebraViewAction = new AbstractAction(getPlain("AlgebraWindow")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setShowAlgebraView(!showAlgebraView);               
-                updateCenterPanel(true);             
-            }
-        };
-        
-        showAlgebraInputAction = new AbstractAction(getMenu("InputField")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setShowAlgebraInput(!showAlgebraInput); 
-                updateContentPane();                    
-            }
-        };
-        
-        showCmdListAction = new AbstractAction(getMenu("CmdList")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setShowCmdList(!showCmdList);   
-                if (algebraInput != null)
-                	SwingUtilities.updateComponentTreeUI(algebraInput);
-            }
-        };
-        
-        horizontalSplitAction = new AbstractAction(getPlain("HorizontalSplit")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setHorizontalSplit(!horizontalSplit);               
-                updateCenterPanel(true);                
-            }
-        };
-        
-        showAuxiliaryObjectsAction = new AbstractAction(getPlain("AuxiliaryObjects")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setShowAuxiliaryObjects(!showAuxiliaryObjects);               
-                isSaved = false;
-            }
-        };              
-        
-        showConsProtNavigationAction = new AbstractAction(
-        		getPlain("ConstructionProtocolNavigation")
-				) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                setShowConstructionProtocolNavigation(!showConsProtNavigation);               
-                isSaved = false;
-                updateCenterPanel(true);
-            }
-        };      
-        
-	    showConsProtNavigationPlayAction = new AbstractAction(
-		        		getPlain("PlayButton")
-				) {
-	    	private static final long serialVersionUID = 1L;
-		    public void actionPerformed(ActionEvent e) {
-		        constProtocolNavigation.setPlayButtonVisible(!constProtocolNavigation.isPlayButtonVisible());
-		        constProtocolNavigation.initGUI();
-		        SwingUtilities.updateComponentTreeUI(constProtocolNavigation);
-		        isSaved = false;		       
-		    }
-		};              	
-        	
-        showConsProtNavigationOpenProtAction = new AbstractAction(
-		        		getPlain("ConstructionProtocolButton")
-				) {
-        	private static final long serialVersionUID = 1L;
-		    public void actionPerformed(ActionEvent e) {
-		        constProtocolNavigation.setConsProtButtonVisible(!constProtocolNavigation.isConsProtButtonVisible());
-		        constProtocolNavigation.initGUI();
-		        SwingUtilities.updateComponentTreeUI(constProtocolNavigation);
-		        isSaved = false;		       
-		    }
-		};      
-
-        newFileAction =
-            new AbstractAction(getMenu("New"), getImageIcon("new.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                newFile();
-            }
-        };
-        
-        newWindowAction =
-            new AbstractAction(getMenu("NewWindow") + " ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                newWindow(null);
-            }
-        };
-
-        propertiesAction =
-            new AbstractAction(
-                getPlain("Properties") + " ...",
-                getEmptyIcon()) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                showPropertiesDialog();
-            }
-        };
-
-        constProtocolAction =
-            new AbstractAction(
-            		getPlain("ConstructionProtocol") +  " ..."  ,
-					getImageIcon("properties.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        showConstructionProtocol();
-                    }
-                };
-                runner.start();
-            }
-        };
-        
-        drawingPadPropAction =  
-            new AbstractAction(
-                getPlain("DrawingPad") + " ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                showDrawingPadPropertiesDialog();
-            }
-        };
-        
-        toolbarConfigAction =
-        	new AbstractAction(
-                    getMenu("CustomizeToolbar") + " ...") {
-            	private static final long serialVersionUID = 1L;
-                public void actionPerformed(ActionEvent e) {
-                    showToolbarConfigDialog();
-                }
-            };
-
-
-        saveAction =
-            new AbstractAction(getMenu("Save"), getImageIcon("save.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                	save();
-            }
-        };
-
-        saveAsAction =
-            new AbstractAction(
-                getMenu("SaveAs") + " ...",
-                getImageIcon("saveas.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                saveAs();
-            }
-        };
-
-        printProtocolAction =
-            new AbstractAction(getPlain("ConstructionProtocol") + " ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        if (constProtocol == null) {
-                            constProtocol =
-                                new ConstructionProtocol(Application.this);
-                        }
-                        constProtocol.initProtocol();
-                        new PrintPreview(
-                            Application.this,
-                            constProtocol,
-                            PageFormat.PORTRAIT);
-                    }
-                };
-                runner.start();
-            }
-        };
-
-        printEuclidianViewAction =
-            new AbstractAction(getPlain("DrawingPad") + " ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                    	mainComp.setCursor(
-                            Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        new PrintPreview(
-                            Application.this,
-                            euclidianView,
-                            PageFormat.LANDSCAPE);
-                        mainComp.setCursor(Cursor.getDefaultCursor());
-                    }
-                };
-                runner.start();
-            }
-        };
-
-        exitAction = new AbstractAction(getMenu("Close"), getEmptyIcon()) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                exit();
-            }
-        };
-        
-        exitAllAction = new AbstractAction(getMenu("CloseAll"), getEmptyIcon()) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                exitAll();
-            }
-        };
-
-        loadAction =
-            new AbstractAction(
-                getMenu("Load") + " ...",
-                getImageIcon("open.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-            	load();            	      	               
-            }
-        };
-
-        undoAction =
-            new AbstractAction(getMenu("Undo"), getImageIcon("undo.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                kernel.undo();
-                updateActions();                
-                updateMenuBar();
-                System.gc();
-            }
-        };
-
-        redoAction =
-            new AbstractAction(getMenu("Redo"), getImageIcon("redo.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                kernel.redo();
-                updateActions();
-                updateMenuBar();
-                System.gc();
-            }
-        };
-        
-        refreshAction =
-            new AbstractAction(getMenu("Refresh")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-            	refreshViews();                
-            }
-        };
-                
-        drawingPadToClipboardAction =
-            new AbstractAction(getMenu("DrawingPadToClipboard")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        // copy drawing pad to the system clipboard
-                        Toolkit tools = Toolkit.getDefaultToolkit();
-                        Clipboard clip = tools.getSystemClipboard();
-                        clip.setContents(euclidianView, euclidianView);
-                    }
-                };
-                runner.start();
-            }
-        };
-
-        helpAction =
-            new AbstractAction(getMenu("Help"), getImageIcon("help.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        openHelp();
-                    }
-                };
-                runner.start();
-            }
-        };
-        
-        /*
-        updateAction =
-            new AbstractAction(getMenu("Update"), getEmptyIcon()) {
-            private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        updateGeoGebra();
-                    }
-                };
-                runner.start();
-            }
-        };*/       
-
-        exportGraphicAction =
-            new AbstractAction(
-                getPlain("DrawingPad")
-                    + " "
-                    + getPlain("as")
-                    + " "
-                    + getPlain("Picture")
-                    + " ("
-                    + FILE_EXT_PNG
-                    + ", "
-                    + FILE_EXT_EPS
-                    + ") ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        exportGraphic();
-                    }
-                };
-                runner.start();
-            }
-        };
-               
-
-
-        htmlCPAction =
-            new AbstractAction(
-                getPlain("ConstructionProtocol")
-                    + " "
-                    + getPlain("as")
-                    + " "
-                    + getPlain("html")
-                    + " ("
-                    + FILE_EXT_HTML
-                    + ") ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        exportConstructionProtocolHTML();
-                    }
-                };
-                runner.start();
-            }
-        };
-
-        exportWorksheet =
-            new AbstractAction(
-                getPlain("DynamicWorksheet")
-                    + " "
-                    + getPlain("as")
-                    + " "
-                    + getPlain("html")
-                    + " ("
-                    + FILE_EXT_HTML
-                    + ") ...") {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() {
-                        exportDynamicWorksheetHTML();
-                    }
-                };
-                runner.start();
-            }
-        };
-        
-        showCreateToolsAction =
-            new AbstractAction(
-                    getMenu("Tool.CreateNew") + " ...") {
-            	private static final long serialVersionUID = 1L;
-                public void actionPerformed(ActionEvent e) {
-                	ToolCreationDialog tcd = new ToolCreationDialog(Application.this);
-                	tcd.setVisible(true);
-                }
-            };
-            
-        showManageToolsAction =
-            new AbstractAction(
-                    getMenu("Tool.Manage") + " ...") {
-            	private static final long serialVersionUID = 1L;
-                public void actionPerformed(ActionEvent e) {
-                	ToolManagerDialog tmd = new ToolManagerDialog(Application.this);
-                	tmd.setVisible(true);
-                }
-            };
-
-        infoAction =
-            new AbstractAction(getMenu("About") + " / " + getMenu("License"), getImageIcon("info.gif")) {
-        	private static final long serialVersionUID = 1L;
-            public void actionPerformed(ActionEvent e) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("<html><b>");
-                sb.append(getPlain("ApplicationName"));
-                sb.append(" ");
-                sb.append(Application.versionString);
-                sb.append("</b><br>");
-                sb.append(Application.buildDate);                             
-                
-                // license                 
-                String text = readTextFromJar("gui/license_message.txt");                  
-                JTextArea textArea = new JTextArea(21, 45);
-                JScrollPane scrollPane = 
-                    new JScrollPane(textArea,
-                                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                textArea.setEditable(false);
-                textArea.setText(text);
-                textArea.setCaretPosition(0);
-                
-                JPanel panel = new JPanel(new BorderLayout(5,5));
-                panel.add(new JLabel(sb.toString()), BorderLayout.NORTH);
-                panel.add(scrollPane, BorderLayout.SOUTH);
-                
-                JOptionPane infoPane = new JOptionPane( panel,
-                		JOptionPane.PLAIN_MESSAGE,
-                		JOptionPane.DEFAULT_OPTION);
-                                             
-                final JDialog dialog = infoPane.createDialog(mainComp, getMenu("About") + " / " + getMenu("License"));   
-                
-                final ActionListener listener = new ActionListener() {
-                    public final void actionPerformed(final ActionEvent e) {                    	
-                			JOptionPane.showMessageDialog(dialog,
-                                    null,
-                                    "GeoZebra forever",
-                                    JOptionPane.DEFAULT_OPTION,
-                                    getImageIcon("zebra.gif"));                		
-                    }
-                };
-                
-                final KeyStroke keyStroke =
-                    KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0, true);
-                dialog.getRootPane().registerKeyboardAction(listener, keyStroke,
-                        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);                            
-                
-                dialog.setVisible(true);
-            }
-        };
-        
-        
-
-        updateActions();
-    }
+   
    
     /**
      * // TODO: think about this
@@ -3449,7 +2390,7 @@ public class Application {
     	}
     } */
 
-    private void openHelp() {
+    public void openHelp() {
         try {
             URL helpURL = getHelpURL(currentLocale);
             
@@ -3548,7 +2489,7 @@ public class Application {
         return sb.toString();
     }
 
-    private boolean save() {
+    public boolean save() {
     	if (propDialog != null && propDialog.isShowing()) 
     		propDialog.cancel();
     	
@@ -3558,7 +2499,7 @@ public class Application {
 			return saveAs();
     }
 
-    private boolean saveAs() {
+    public boolean saveAs() {
         File file =
             showSaveDialog(
                 FILE_EXT_GEOGEBRA, currentFile,
@@ -3654,7 +2595,7 @@ public class Application {
 			return fileName.substring(dotPos+1); 
    }
 
-    private void load() {    	
+    public void load() {    	
     	if (propDialog != null && propDialog.isShowing()) 
     		propDialog.cancel();
     	
@@ -3745,15 +2686,15 @@ public class Application {
 		return success;               
     }
 
-    private void newFile() {
+    public void newFile() {
         if (isSaved() || saveCurrentFile()) {
             clearAll();
             setCurrentFile(null);   
-            updateMenuBar();
+            menuBar.updateMenubar();
         }
     }
     
-    private void newWindow(String [] args) {
+    public void newWindow(String [] args) {
     	GeoGebra wnd = GeoGebra.createNewWindow(args);    	
     	updateMenusForInstances();
     	
@@ -3868,12 +2809,7 @@ public class Application {
     }
     
    
-    private void updateActions() {
-    	if (!actionsInited) return;
-		undoAction.setEnabled(kernel.undoPossible());
-		redoAction.setEnabled(kernel.redoPossible());
-        propertiesAction.setEnabled(!kernel.isEmpty());
-    }
+  
 
     /***********************************
      * SAVE / LOAD methodes
@@ -3894,8 +2830,12 @@ public class Application {
          *  Exports construction protocol as html 
          */
     final public void exportDynamicWorksheetHTML() {
-        WorksheetExportDialog d = new WorksheetExportDialog(this);
-        d.setVisible(true);
+    	try {
+    		WorksheetExportDialog d = new WorksheetExportDialog(this);
+    		d.setVisible(true);
+    	} catch (Exception e) {
+    		System.err.println("WorksheetExportDialog not available");
+    	}
     }
 
     /**
@@ -4020,7 +2960,7 @@ public class Application {
     public void storeUndoInfo() { 
     	if (undoActive) { 	    	
 			kernel.storeUndoInfo();
-			updateActions();
+			menuBar.updateActions();
 			isSaved = false;
     	}
     }
@@ -4028,7 +2968,7 @@ public class Application {
     public void restoreCurrentUndoInfo() {
     	if (undoActive) {     		
     		kernel.restoreCurrentUndoInfo();    		
-    		updateActions();
+    		menuBar.updateActions();
     		isSaved = false;
     	}
     }
@@ -4036,7 +2976,7 @@ public class Application {
     final public void clearAll() {
         kernel.clearConstruction();
         kernel.initUndoInfo();
-        updateActions();
+        menuBar.updateActions();
         isSaved = true;
         System.gc();        
     }
@@ -4300,14 +3240,7 @@ public class Application {
                 SwingUtilities.updateComponentTreeUI(frame);
         }
     }
-
-    // handle language changes
-    private class LanguageActionListener implements ActionListener {                        
-        public void actionPerformed(ActionEvent e) {
-        	setLanguage(getLocale(e.getActionCommand()));        	
-        }
-    }
-   
+      
     
     /* Event dispatching */
     private GlassPaneListener glassPaneListener;
@@ -4370,11 +3303,16 @@ public class Application {
     }
 
 	public AbstractAction getRedoAction() {
-		return redoAction;
+		return menuBar.getRedoAction();
 	}
 
 	public AbstractAction getUndoAction() {
-		return undoAction;
+		return menuBar.getUndoAction();
 	}
     	   
+	public void updateMenusForInstances() {
+		menuBar.updateMenuWindow();
+		menuBar.updateMenuFile();
+	}
+	
 }

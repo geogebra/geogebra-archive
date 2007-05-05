@@ -1494,7 +1494,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	private void drawGrid(){
 		Color GridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
-		int GridLine=euclidianView.getGridLineType();
+		int GridLine=euclidianView.getGridLineStyle();
 
 		// Set Units for grid
 		codeBeginPic.append("\\psset{xunit=");
@@ -1556,7 +1556,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		codeBeginPic.append(kernel.format(Dy));
 		codeBeginPic.append(",ticksize=-2pt 0,subticks=2");
 		codeBeginPic.append("]{-");
-		if (euclidianView.getAxesLineType()==EuclidianView.AXES_LINE_TYPE_ARROW)
+		if (euclidianView.getAxesLineStyle()==EuclidianView.AXES_LINE_TYPE_ARROW)
 		codeBeginPic.append(">");
 		codeBeginPic.append("}(0,0)(");
 		codeBeginPic.append(kernel.format(xmin));
