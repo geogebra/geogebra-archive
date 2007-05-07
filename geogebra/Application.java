@@ -38,6 +38,7 @@ import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoPoint;
@@ -239,6 +240,7 @@ public class Application {
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
+    private int labelVisibility = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
                 
     private boolean undoActive = true;
     private boolean rightClickEnabled = true;
@@ -398,6 +400,14 @@ public class Application {
     	else
     		return 0;
     }
+    
+	public int getLabelVisibility() {
+		return labelVisibility;
+	}
+
+	public void setLabelVisibility(int labelVisibility) {
+		this.labelVisibility = labelVisibility;
+	}
 
 
     /**

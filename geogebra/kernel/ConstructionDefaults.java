@@ -82,13 +82,14 @@ public class ConstructionDefaults {
 			(int) (DEFAULT_POLYGON_ALPHA * 255));	
 	
 	// label visibility
+	public static final int LABEL_VISIBLE_AUTOMATIC = -1;
 	public static final int LABEL_VISIBLE_USE_DEFAULTS = 0;
 	public static final int LABEL_VISIBLE_ALWAYS_ON = 1;
-	public static final int LABEL_VISIBLE_ALWAYS_OFF = 2;	
+	public static final int LABEL_VISIBLE_ALWAYS_OFF = 2;
+	public static final int LABEL_VISIBLE_POINTS_ONLY = 3;	
 		
 	// construction
 	private Construction cons;
-	private int labelVisibility = LABEL_VISIBLE_USE_DEFAULTS;
 	
 	// defaultGeoElement list
 	private FastHashMapKeyless defaultGeoElements;		
@@ -268,15 +269,23 @@ public class ConstructionDefaults {
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
 		if (defaultGeo != null)
-			geo.setAllVisualProperties(defaultGeo);			
-
-		 // TODO: change label visibility
-        labelVisibility = cons.getApplication().showAlgebraView() ?
-        		ConstructionDefaults.LABEL_VISIBLE_USE_DEFAULTS :
-        		ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF;        
+			geo.setAllVisualProperties(defaultGeo);					     
         
+				
         // label visibility
-		switch (labelVisibility) {						
+		Application app = cons.getApplication();
+		int labelVisibility = app.getLabelVisibility();
+		
+		// automatic labelling: 
+		// if algebra window open -> all labels
+		// else -> no labels
+		if (labelVisibility == LABEL_VISIBLE_AUTOMATIC) {
+			labelVisibility = app.showAlgebraView() ?
+									LABEL_VISIBLE_USE_DEFAULTS :
+									LABEL_VISIBLE_ALWAYS_OFF;
+		}
+		
+		switch (labelVisibility) {									
 			case LABEL_VISIBLE_ALWAYS_ON:
 				geo.setLabelVisible(true);
 				break;
@@ -285,9 +294,14 @@ public class ConstructionDefaults {
 				geo.setLabelVisible(false);
 				break;
 				
+			case LABEL_VISIBLE_POINTS_ONLY:
+				geo.setLabelVisible(geo.isGeoPoint());
+				break;			
+				
 			default:
-			// case LABEL_VISIBLE_USE_DEFAULTS:
+			case LABEL_VISIBLE_USE_DEFAULTS:
 				// don't change anything
+				break;														
 		}				
 		
 		/*
@@ -296,12 +310,6 @@ public class ConstructionDefaults {
 		}*/
 	}
 
-	public int getLabelVisibility() {
-		return labelVisibility;
-	}
 
-	public void setLabelVisibility(int labelVisibility) {
-		this.labelVisibility = labelVisibility;
-	}
 
 }
