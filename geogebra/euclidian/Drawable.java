@@ -89,6 +89,8 @@ public abstract class Drawable {
 			int fontSize = g2.getFont().getSize();
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, p.x, fontSize + p.y);			
 		}
+		
+		
 	}
 	
 	

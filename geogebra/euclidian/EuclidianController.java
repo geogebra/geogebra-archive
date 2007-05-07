@@ -53,6 +53,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -72,7 +74,7 @@ import javax.swing.ToolTipManager;
  * @version
  */
 final public class EuclidianController implements MouseListener,
-		MouseMotionListener, MouseWheelListener, ComponentListener, FocusListener {
+		MouseMotionListener, MouseWheelListener, ComponentListener {
 
 	private static final int MOVE_NONE = 101;
 
@@ -1428,13 +1430,14 @@ final public class EuclidianController implements MouseListener,
 		view.repaint();
 	}
 
-	public void focusGained(FocusEvent e) {
+	/*
+	public void focusGained(FocusEvent e) {				
 		initToolTipManager();
 	}
 
 	public void focusLost(FocusEvent e) {
 		resetToolTipManager();
-	}
+	}*/
 
 	private void initToolTipManager() {
 		// set tooltip manager
@@ -3498,5 +3501,4 @@ final public class EuclidianController implements MouseListener,
 			app.setUnsaved();
 				
 	}
-
 }

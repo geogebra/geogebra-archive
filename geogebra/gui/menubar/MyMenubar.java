@@ -45,7 +45,7 @@ import javax.swing.SwingUtilities;
 public class MyMenubar extends JMenuBar implements ActionListener {
 
 	// Actions
-	private AbstractAction showAxesAction, showGridAction, refreshAction,
+	private AbstractAction refreshAction,
 			drawingPadToClipboardAction, newFileAction, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
@@ -67,7 +67,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 	private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
 			menuContinuity, menuPointStyle, menuRightAngleStyle,
-			menuCoordStyle, menuWindow, menuFile, menuTools;
+			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools;
 
 	private JMenuItem miCloseAll;
 
@@ -117,6 +117,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
         updateMenuPointStyle();
         updateMenuRightAngleStyle();
         updateMenuCoordStyle();	
+        updateMenuLabeling();
 	}
 
 	public void updateMenuFile() {
@@ -189,12 +190,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// View
 		menu = new JMenu(app.getMenu("View"));
-		cbShowAxes = new JCheckBoxMenuItem(showAxesAction);
+		cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());
 		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 				&& app.getEuclidianView().getShowYaxis());
 		menu.add(cbShowAxes);
 
-		cbShowGrid = new JCheckBoxMenuItem(showGridAction);
+		cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
 		menu.addSeparator();
@@ -340,6 +341,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				strCoordStyleAC, 0);
 		menu.add(menuCoordStyle);
 		updateMenuCoordStyle();
+		
+		// Labeling
+		menuLabeling = new JMenu(app.getMenu("Labeling"));
+		String[] lstr = { "Labeling.automatic", "Labeling.on", "Labeling.off", "Labeling.pointsOnly"  };		
+		String[] lastr = { "0_labeling", "1_labeling", "2_labeling", "3_labeling"  };
+		addRadioButtonMenuItems(menuLabeling, this, lstr, lastr, 0);
+		menu.add(menuLabeling);
 
 		menu.addSeparator();
 
@@ -425,17 +433,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	 **************************************************************************/
 
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() instanceof JMenuItem) {
-			processMenuCommand(event.getActionCommand());
-		}
-	}
-
-	/***************************************************************************
-	 * MENU
-	 **************************************************************************/
-
-	private void processMenuCommand(String cmd) {
-
+		String cmd = event.getActionCommand();
+		
 		// change angle unit
 		if (cmd.equals("Degree")) {
 			kernel.setAngleUnit(Kernel.ANGLE_DEGREE);
@@ -474,8 +473,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				app.setUnsaved();
 			} catch (Exception e) {
 				app.showError(e.toString());
-			}
-			;
+			}			
 		}
 
 		// Point capturing
@@ -490,6 +488,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			boolean state = cmd.startsWith("true");
 			kernel.setContinuous(state);
 			kernel.updateConstruction();
+			app.setUnsaved();
+		}
+		
+		
+		// Labeling
+		else if (cmd.endsWith("labeling")) {
+			int style = Integer.parseInt(cmd.substring(0, 1));
+			app.setLabelingStyle(style);
 			app.setUnsaved();
 		}
 
@@ -993,7 +999,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		((JRadioButtonMenuItem) menuCoordStyle.getMenuComponent(pos))
 				.setSelected(true);
 	}
-
+	
+	private void updateMenuLabeling() {
+		int pos = app.getLabelingStyle();
+		((JRadioButtonMenuItem) menuLabeling.getMenuComponent(pos))
+				.setSelected(true);
+	}
+	
 	private void updateMenuPointCapturing() {
 		String pos = Integer.toString(app.getEuclidianView().getPointCapturingMode());
 		for (int i = 0; i < 3; i++) {

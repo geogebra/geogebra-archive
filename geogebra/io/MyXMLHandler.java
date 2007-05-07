@@ -628,6 +628,12 @@ public class MyXMLHandler implements DocHandler {
                     break;
                 }  
         		
+        	case 'l':
+		        if (eName.equals("labelingStyle")) {                	 
+		        	ok = handleLabelingStyle(app, attrs);      
+		        	break;
+		        }
+        		
         	case 's':
         		 if (eName.equals("show")) {
                     ok = handleGUIShow(app, attrs);
@@ -743,7 +749,17 @@ public class MyXMLHandler implements DocHandler {
             return false;
         }
     }        
-
+    
+    private boolean handleLabelingStyle(Application app, LinkedHashMap attrs) {
+        try {
+            int style = Integer.parseInt((String) attrs.get("val"));
+            app.setLabelingStyle(style);                     
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }  
+        
     private boolean handleSplitDivider(Application app, LinkedHashMap attrs) {
         try {
             int loc = Integer.parseInt((String) attrs.get("loc"));

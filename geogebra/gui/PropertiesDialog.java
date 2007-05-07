@@ -375,7 +375,7 @@ public class PropertiesDialog
 		Object[] geos = geoList.getSelectedValues();
 		if (geos == null)
 			return;
-		app.showRenameDialog((GeoElement) geos[0], false);
+		app.showRenameDialog((GeoElement) geos[0], false, null);
 		//geoList.setSelected((GeoElement) geos[0]);
 		//selectionChanged();
 	}

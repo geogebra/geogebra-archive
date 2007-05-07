@@ -107,6 +107,13 @@ public class Construction {
     }
     
     /**
+     * Returns the last GeoElement object in the construction list;
+     */
+    public GeoElement getLastGeoElement() {		
+    	return (GeoElement) geoSet.last();
+    }
+    
+    /**
      * Returns all GeoImage objects of this construction in an ArrayList.
      * Note: always returns a not-null ArrayList.
      */

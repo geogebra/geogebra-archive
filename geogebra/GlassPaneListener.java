@@ -24,7 +24,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.SwingUtilities;
 
 /**
- * Dispatches all MouseEvents from the glass pane to a given component.
+ * Dispatches all mouse and key events from the glass pane to a given component.
  */
 public class GlassPaneListener implements MouseListener, MouseMotionListener, KeyEventDispatcher {
 	

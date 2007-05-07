@@ -82,11 +82,11 @@ public class ConstructionDefaults {
 			(int) (DEFAULT_POLYGON_ALPHA * 255));	
 	
 	// label visibility
-	public static final int LABEL_VISIBLE_AUTOMATIC = -1;
-	public static final int LABEL_VISIBLE_USE_DEFAULTS = 0;
+	public static final int LABEL_VISIBLE_AUTOMATIC = 0;	
 	public static final int LABEL_VISIBLE_ALWAYS_ON = 1;
 	public static final int LABEL_VISIBLE_ALWAYS_OFF = 2;
-	public static final int LABEL_VISIBLE_POINTS_ONLY = 3;	
+	public static final int LABEL_VISIBLE_POINTS_ONLY = 3;
+	public static final int LABEL_VISIBLE_USE_DEFAULTS = 4;
 		
 	// construction
 	private Construction cons;
@@ -274,18 +274,18 @@ public class ConstructionDefaults {
 				
         // label visibility
 		Application app = cons.getApplication();
-		int labelVisibility = app.getLabelVisibility();
+		int labelingStyle = app.getLabelingStyle();
 		
 		// automatic labelling: 
 		// if algebra window open -> all labels
 		// else -> no labels
-		if (labelVisibility == LABEL_VISIBLE_AUTOMATIC) {
-			labelVisibility = app.showAlgebraView() ?
+		if (labelingStyle == LABEL_VISIBLE_AUTOMATIC) {
+			labelingStyle = app.showAlgebraView() ?
 									LABEL_VISIBLE_USE_DEFAULTS :
 									LABEL_VISIBLE_ALWAYS_OFF;
 		}
 		
-		switch (labelVisibility) {									
+		switch (labelingStyle) {									
 			case LABEL_VISIBLE_ALWAYS_ON:
 				geo.setLabelVisible(true);
 				break;

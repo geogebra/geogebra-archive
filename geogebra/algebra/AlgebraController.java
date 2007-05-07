@@ -71,12 +71,31 @@ public class AlgebraController
 	*/
 	public void keyReleased(KeyEvent e) {}
 
-	public void keyTyped(KeyEvent event) {}
+	public void keyTyped(KeyEvent event) {
+		// if there is one geo object selected, we open the rename dialog
+		// when a key is pressed			
+		if (app.selectedGeosSize() == 1) {					
+			GeoElement geo = (GeoElement) app.getSelectedGeos().get(0);
+			geo.setLabelVisible(true);
+			geo.updateRepaint();
+			app.showRenameDialog(geo, true, Character.toString(event.getKeyChar()));								
+		}
+		
+		// we open the rename dialog for the last created geo			
+		else {
+			GeoElement geo = app.getLastCreatedGeoElement();
+			if (geo != null) {							
+				geo.setLabelVisible(true);
+				geo.updateRepaint();
+				app.showRenameDialog(geo, true, Character.toString(event.getKeyChar()));					
+			}
+		}		
+	}
 
 	/** handle function keys and delete key */
 	public void keyPressed(KeyEvent event) {
 		if (keyPressedConsumed(event))
-			event.consume();
+			event.consume();		
 	}
 
 	/**
@@ -86,11 +105,10 @@ public class AlgebraController
 	public boolean keyPressedConsumed(KeyEvent event) {
 		//Object src = event.getSource();
 		//System.out.println("source: " + src);
-		//if (src != view) return;		
+		//if (src != view) return;					
 		
 		boolean consumed = false;
-		int keyCode = event.getKeyCode();
-		
+		int keyCode = event.getKeyCode();		
 		
 		switch (keyCode) {
 			// ESCAPE: clear all selections in views
@@ -121,7 +139,8 @@ public class AlgebraController
 					consumed = handleKeyPressed(event, geo) || consumed;
 				}		
 				if (consumed) kernelChanged = true;
-		}
+		}								
+		
 
 		// something was done in handleKeyPressed
 		if (consumed) {			

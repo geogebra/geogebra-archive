@@ -64,9 +64,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -100,7 +102,7 @@ import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
 
-public class Application {
+public class Application implements	KeyEventDispatcher {
 
     public static final String buildDate = "5. May 2007";
 	
@@ -240,7 +242,7 @@ public class Application {
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
-    private int labelVisibility = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
+    private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
                 
     private boolean undoActive = true;
     private boolean rightClickEnabled = true;
@@ -336,6 +338,10 @@ public class Application {
         
         initShowAxesGridActions();
         menuBar = new MyMenubar(this);
+        
+        // for key listening
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.addKeyEventDispatcher(this);	
     }      
     
     public void initInBackground() {
@@ -401,12 +407,12 @@ public class Application {
     		return 0;
     }
     
-	public int getLabelVisibility() {
-		return labelVisibility;
+	public int getLabelingStyle() {
+		return labelingStyle;
 	}
 
-	public void setLabelVisibility(int labelVisibility) {
-		this.labelVisibility = labelVisibility;
+	public void setLabelingStyle(int labelingStyle) {
+		this.labelingStyle = labelingStyle;
 	}
 
 
@@ -584,17 +590,11 @@ public class Application {
     	}
     }
     
-    public AbstractAction getShowAxesAction() {
-    	if (showAxesAction == null) {
-    		initShowAxesGridActions();
-    	}    		
+    public AbstractAction getShowAxesAction() {    	  	
     	return showAxesAction;
     }
     
-    public AbstractAction getShowGridAction() {
-    	if (showGridAction == null) {
-    		initShowAxesGridActions();
-    	}  
+    public AbstractAction getShowGridAction() {    	
     	return showGridAction;
     }    
     
@@ -1354,7 +1354,7 @@ public class Application {
     /**
        * Displays the rename dialog for geo
        */
-    public void showRenameDialog(GeoElement geo, boolean storeUndo) {
+    public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText) {
         InputHandler handler = new RenameInputHandler(geo, storeUndo);
         InputDialog id =
             new InputDialog(
@@ -1365,11 +1365,14 @@ public class Application {
                     + " "
                     + geo.getNameDescription(),
                 getPlain("Rename"),
-                geo.getLabel(),
+                initText == null ? geo.getLabel() : initText,
                 false,
                 handler);               
         id.setVisible(true);
-        id.selectText();        
+        if (initText == null) {
+        	id.selectText();
+        	Util.registerForDisposeOnEscape(id);
+        }
     }
     
     private class RenameInputHandler implements InputHandler {
@@ -3027,6 +3030,14 @@ public class Application {
         	sb.append(strCustomToolbarDefinition);     
         	sb.append("\"/>\n");
         }
+        
+        // labeling style
+        if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
+        	sb.append("\t<labelingStyle ");
+        	sb.append(" val=\"");
+        	sb.append(labelingStyle);     
+        	sb.append("\"/>\n");
+        }
 
         sb.append("\t<font ");
         sb.append(" size=\"");
@@ -3101,6 +3112,10 @@ public class Application {
     
     final public ArrayList getSelectedGeos() {
         return selectedGeos;
+    }
+    
+    final public GeoElement getLastCreatedGeoElement() {
+    	return kernel.getConstruction().getLastGeoElement();
     }
     
     /**
@@ -3323,6 +3338,75 @@ public class Application {
 	public void updateMenusForInstances() {
 		menuBar.updateMenuWindow();
 		menuBar.updateMenuFile();
+	}
+	
+	/*
+	 * KeyEventDispatcher implementation to handle key events globally for the
+	 * application
+	 */
+	public boolean dispatchKeyEvent(KeyEvent e) {		
+		// make sure the event is not consumed
+		if (e.isConsumed())
+			return true;		
+
+		// if the glass pane is visible, don't do anything
+		// (there might be an animation running)
+		if (getGlassPane().isVisible())
+			return false;
+		
+		// only handle key events of this mainComponent
+		if (SwingUtilities.getRoot(e.getComponent()) != mainComp) {					
+			return false;
+		}						
+
+		boolean consumed = false;
+		Object source = e.getSource();
+
+		// catch all key events from algebra view and give
+		// them to the algebra controller
+		AlgebraView av = getAlgebraView();
+		if (source == av) {
+			switch (e.getID()) {
+			case KeyEvent.KEY_PRESSED:
+				consumed = getAlgebraController().keyPressedConsumed(e);
+				break;
+			}
+		}
+		if (consumed)
+			return true;
+
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_F3:
+			// F3 key: set focus to input field
+			AlgebraInput ai = getAlgebraInput();
+			if (ai != null) {
+				ai.setFocus();
+				consumed = true;
+			}
+			break;
+
+		// ESC changes to move mode
+		case KeyEvent.VK_ESCAPE:
+			// ESC is also handeled by algebra input field
+			ai = getAlgebraInput();
+			if (ai != null && ai.hasFocus()) {
+				consumed = false;
+			} else {
+				setMode(EuclidianView.MODE_MOVE);
+				consumed = true;
+			}
+			break;
+
+		// F4 changes to move mode
+		case KeyEvent.VK_F4:
+			setMode(EuclidianView.MODE_MOVE);
+			consumed = true;
+			break;
+		}
+		if (consumed)
+			return true;		
+
+		return consumed;
 	}
 	
 }

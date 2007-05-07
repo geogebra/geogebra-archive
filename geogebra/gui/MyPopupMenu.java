@@ -480,7 +480,7 @@ public class MyPopupMenu extends JPopupMenu {
 						private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-                        app.showRenameDialog(geo, true);
+                        app.showRenameDialog(geo, true, null);
                     }
                 });
         }
