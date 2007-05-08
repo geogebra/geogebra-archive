@@ -19,6 +19,7 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
+import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
@@ -51,10 +52,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -106,6 +103,8 @@ final public class EuclidianController implements MouseListener,
 	
 	private static final int MOVE_DEPENDENT = 114;
 	
+	private static final int MOVE_MULTIPLE_OBJECTS = 115; // for multiple objects
+	
 	private static final int MOVE_X_AXIS = 115;
 	private static final int MOVE_Y_AXIS = 116;
 
@@ -155,13 +154,13 @@ final public class EuclidianController implements MouseListener,
 
 	private GeoElement movedLabelGeoElement;
 
-	private GeoElement movedGeoElement;
+	private GeoElement movedGeoElement;	
 	
 	private GeoElement rotGeoElement, rotStartGeo;
 	private GeoPoint rotationCenter;
 	private MyDouble tempNum;
 	private double rotStartAngle;
-	private Translateable [] translateableParents;
+	private Translateable [] translateableGeos;
 	private GeoVector translationVec;
 
 	private ArrayList tempArrayList = new ArrayList();
@@ -581,8 +580,37 @@ final public class EuclidianController implements MouseListener,
 
 		// find and set movedGeoElement
 		ArrayList moveableList = view.getMoveableHits(mouseLoc);
-		ArrayList hits = view.getTopHits(moveableList);					
-					
+		ArrayList hits = view.getTopHits(moveableList);	
+		
+		ArrayList selGeos = app.getSelectedGeos();
+		// if object was chosen before, take it now!
+		if (selGeos.size() == 1 && 
+				hits != null && hits.contains(selGeos.get(0))) 
+		{
+			// object was chosen before: take it			
+			geo = (GeoElement) selGeos.get(0);			
+		} else {
+			// choose out of hits			
+			geo = chooseGeo(hits);
+			if (!selGeos.contains(geo)) {
+				app.clearSelectedGeos();
+				app.addSelectedGeo(geo);
+			}
+		}				
+		
+		if (geo != null) {		
+			moveModeSelectionHandled = true;														
+		} else {
+			// no geo clicked at
+			moveMode = MOVE_NONE;								
+			selectionStartPoint.setLocation(mouseLoc);	
+			return;
+		}				
+		
+		movedGeoElement = geo;
+		//doSingleHighlighting(movedGeoElement);				
+				
+		/*
 		// if object was chosen before, take it now!
 		ArrayList selGeos = app.getSelectedGeos();
 		if (selGeos.size() == 1 && hits != null && hits.contains(selGeos.get(0))) {
@@ -591,6 +619,7 @@ final public class EuclidianController implements MouseListener,
 		} else {
 			geo = chooseGeo(hits);			
 		}		
+				
 		if (geo != null) {
 			app.clearSelectedGeos(false);
 			app.addSelectedGeo(geo);
@@ -598,14 +627,23 @@ final public class EuclidianController implements MouseListener,
 		}						
 		
 		movedGeoElement = geo;
-		doSingleHighlighting(movedGeoElement);		
+		doSingleHighlighting(movedGeoElement);	
+		*/	
+				
 		
-		// set moveMode
-		if (movedGeoElement != null) {
+		// multiple geos selected
+		if (movedGeoElement != null && selGeos.size() > 1) {									
+			moveMode = MOVE_MULTIPLE_OBJECTS;
+			startPoint.setLocation(xRW, yRW);	
+			startLoc = mouseLoc;
+			view.setDragCursor();
+			if (translationVec == null)
+				translationVec = new GeoVector(kernel.getConstruction());
+		}	
 			// dependent object: moveable parents?
-			if (!movedGeoElement.isMoveable()) {				
-				translateableParents = movedGeoElement.getTranslateableParents();
-				if (translateableParents != null) {					
+		else if (!movedGeoElement.isMoveable()) {				
+				translateableGeos = movedGeoElement.getTranslateableParents();
+				if (translateableGeos != null) {					
 					moveMode = MOVE_DEPENDENT;
 					startPoint.setLocation(xRW, yRW);					
 					view.setDragCursor();
@@ -773,22 +811,14 @@ final public class EuclidianController implements MouseListener,
 				moveMode = MOVE_NONE;
 			}
 
-			view.repaint();							
-			
-		} else {
-			moveMode = MOVE_NONE;
-			selectionStartPoint.setLocation(mouseLoc);	
-		}
+			view.repaint();												
 	}
 
 	final public void mouseDragged(MouseEvent e) {
 		if (!DRAGGING_OCCURED) {
 			DRAGGING_OCCURED = true;			
-			
-			//TODO: change
-			if (mode == EuclidianView.MODE_MOVE)
-				app.clearSelectedGeos(false);
-			else if (mode == EuclidianView.MODE_MOVE_ROTATE) {
+					
+			if (mode == EuclidianView.MODE_MOVE_ROTATE) {
 				app.clearSelectedGeos(false);
 				app.addSelectedGeo(rotationCenter, false);						
 			}
@@ -905,6 +935,10 @@ final public class EuclidianController implements MouseListener,
 				
 			case MOVE_DEPENDENT:
 				moveDependent(repaint);
+				break;
+				
+			case MOVE_MULTIPLE_OBJECTS:
+				moveMultipleObjects(repaint);
 				break;
 				
 			case MOVE_VIEW:
@@ -1223,7 +1257,10 @@ final public class EuclidianController implements MouseListener,
 			// move() is for highlighting and selecting
 			if (selectionPreview) {			
 				move(view.getTopHits(hits));				
-			} 
+			} else {
+				if (DRAGGING_OCCURED && app.selectedGeosSize() == 1)
+					app.clearSelectedGeos();
+			}
 			break;			
 			
 		case EuclidianView.MODE_MOVE_ROTATE:
@@ -1664,15 +1701,53 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	final private void moveDependent(boolean repaint) {
-		for (int i=0; i < translateableParents.length; i++) {
-			translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);			
-			translateableParents[i].translate(translationVec);			
-			translateableParents[i].toGeoElement().updateCascade();
+		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
+		for (int i=0; i < translateableGeos.length; i++) {						
+			translateableGeos[i].translate(translationVec);			
+			translateableGeos[i].toGeoElement().updateCascade();
 		}				
 		if (repaint)
 			kernel.notifyRepaint();		
 		startPoint.setLocation(xRW, yRW);		
 	}
+	
+	private void moveMultipleObjects(boolean repaint) {		
+		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
+	
+		// move all selected geos that are moveable and translateable
+		ArrayList sel = app.getSelectedGeos();		
+		for (int i=0; i < sel.size(); i++) {
+			GeoElement geo = (GeoElement) sel.get(i);
+			boolean movedGeo = false;
+			if (geo.isMoveable()) {
+				if (geo.isTranslateable()) {
+					Translateable trans = (Translateable) geo;
+					trans.translate(translationVec);			
+					movedGeo = true;
+				}
+				else if (geo.isAbsoluteScreenLocateable()) {
+					AbsoluteScreenLocateable screenLoc = (AbsoluteScreenLocateable) geo;
+					if (screenLoc.isAbsoluteScreenLocActive()) {
+						int x = screenLoc.getAbsoluteScreenLocX() + mouseLoc.x - startLoc.x;
+						int y = screenLoc.getAbsoluteScreenLocY() + mouseLoc.y - startLoc.y;
+						screenLoc.setAbsoluteScreenLoc(x, y);
+						movedGeo = true;
+					}
+				}								
+			}					
+			
+			if (movedGeo)
+				geo.updateCascade();
+			else
+				app.removeSelectedGeo(geo, false); // remove selected geo if it is not moveable
+		}				
+		
+		if (repaint)
+			kernel.notifyRepaint();		
+		startPoint.setLocation(xRW, yRW);
+		startLoc = mouseLoc;
+	}	
+	
 
 	/**
 	 * COORD TRANSFORM SCREEN -> REAL WORLD
@@ -1692,26 +1767,28 @@ final public class EuclidianController implements MouseListener,
 		// calc real world coords
 		calcRWcoords();
 
-		//	point capturing to grid
-		double pointCapturingPercentage = 1;
-		switch (view.getPointCapturingMode()) {			
-			case EuclidianView.POINT_CAPTURING_ON:
-				pointCapturingPercentage = 0.125;
-			
-			case EuclidianView.POINT_CAPTURING_ON_GRID:
-				// X = (x, y) ... next grid point
-				double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
-				double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
-				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
-				double a = Math.abs(x - xRW);
-				double b = Math.abs(y - yRW);
-				if (a < view.gridDistances[0] * pointCapturingPercentage
-					&& b < view.gridDistances[1] *  pointCapturingPercentage) {
-					xRW = x;
-					yRW = y;
-				}
-			
-			default:
+		if (moveMode == MOVE_POINT) {
+			//	point capturing to grid
+			double pointCapturingPercentage = 1;
+			switch (view.getPointCapturingMode()) {			
+				case EuclidianView.POINT_CAPTURING_ON:
+					pointCapturingPercentage = 0.125;
+				
+				case EuclidianView.POINT_CAPTURING_ON_GRID:
+					// X = (x, y) ... next grid point
+					double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
+					double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
+					// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
+					double a = Math.abs(x - xRW);
+					double b = Math.abs(y - yRW);
+					if (a < view.gridDistances[0] * pointCapturingPercentage
+						&& b < view.gridDistances[1] *  pointCapturingPercentage) {
+						xRW = x;
+						yRW = y;
+					}
+				
+				default:
+			}
 		}
 	}
 	

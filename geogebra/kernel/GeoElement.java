@@ -2206,5 +2206,8 @@ public abstract class GeoElement
 		this.useVisualDefaults = useVisualDefaults;
 	}
    	
+	public boolean isAbsoluteScreenLocateable() {
+		return false;
+	}
 
 }

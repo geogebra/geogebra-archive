@@ -21,7 +21,6 @@ import geogebra.Application;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
-import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;

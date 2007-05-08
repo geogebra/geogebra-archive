@@ -1,7 +1,6 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocol;
 import geogebra.ConstructionProtocolNavigation;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.GraphicExportDialog;
@@ -13,7 +12,6 @@ import geogebra.gui.ToolManagerDialog;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Event;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

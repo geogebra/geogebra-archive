@@ -13,7 +13,6 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel.commands;
 
 import geogebra.MyError;
-import geogebra.algebra.AlgebraController;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;

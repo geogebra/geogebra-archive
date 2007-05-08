@@ -17,8 +17,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 
-import java.awt.Color;
-
 /**
  * Cartesian parametric curve, e.g. (cos(t), sin(t)) for t from 0 to 2pi.
  * 

@@ -1232,35 +1232,41 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 			// scale string:
 			// Scale in cm: 1:1 (x), 1:2 (y)
-			StringBuffer sb = new StringBuffer(app
-					.getPlain("ScaleInCentimeter"));
-			if (printingScale <= 1) {
-				sb.append(": 1:");
-				sb.append(printScaleNF.format(1 / printingScale));
-			} else {
-				sb.append(": ");
-				sb.append(printScaleNF.format(printingScale));
-				sb.append(":1");
-			}
-
-			// add yAxis scale too?
-			if (scaleRatio != 1.0) {
-				sb.append(" (x), ");
-				double yPrintScale = printingScale * yscale / xscale;
-				if (yPrintScale < 1) {
-					sb.append("1:");
-					sb.append(printScaleNF.format(1 / yPrintScale));
+			String scaleString = null;
+			if (app.isPrintScaleString()) {
+				StringBuffer sb = new StringBuffer(app
+						.getPlain("ScaleInCentimeter"));
+				if (printingScale <= 1) {
+					sb.append(": 1:");
+					sb.append(printScaleNF.format(1 / printingScale));
 				} else {
-					sb.append(printScaleNF.format(yPrintScale));
+					sb.append(": ");
+					sb.append(printScaleNF.format(printingScale));
 					sb.append(":1");
 				}
-				sb.append(" (y)");
+	
+				// add yAxis scale too?
+				if (scaleRatio != 1.0) {
+					sb.append(" (x), ");
+					double yPrintScale = printingScale * yscale / xscale;
+					if (yPrintScale < 1) {
+						sb.append("1:");
+						sb.append(printScaleNF.format(1 / yPrintScale));
+					} else {
+						sb.append(printScaleNF.format(yPrintScale));
+						sb.append(":1");
+					}
+					sb.append(" (y)");
+				}
+				scaleString = sb.toString();
 			}
 
-			if (line == null)
-				line = sb.toString();
-			else
-				line = line + " - " + sb.toString();
+			if (scaleString != null) {
+				if (line == null)
+					line = scaleString;
+				else
+					line = line + " - " + sb.toString();
+			}
 
 			if (line != null) {
 				g2d.setFont(app.getPlainFont());

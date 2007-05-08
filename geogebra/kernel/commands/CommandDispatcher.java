@@ -171,6 +171,7 @@ public class CommandDispatcher {
     	// Victor Franco Espino 18-04-2007: End new commands
     	// Philipp Weissenbacher 10-04-2007
     	cmdTable.put("Circumference", new CmdCircumference(kernel));
+    	cmdTable.put("Perimeter", new CmdPerimeter(kernel));
     	// Philipp Weissenbacher 10-04-2007
     }
 

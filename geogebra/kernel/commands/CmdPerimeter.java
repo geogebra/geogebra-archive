@@ -8,12 +8,12 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
 /*
- * Circumference[ <GeoPolygon> ]
- * Circumference[ <Conic> ]
+ * Perimeter[ <GeoPolygon> ]
+ * Perimeter[ <Conic> ]
  */
-public class CmdCircumference extends CommandProcessor {
+public class CmdPerimeter extends CommandProcessor {
 
-	public CmdCircumference(Kernel kernel) {
+	public CmdPerimeter(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -28,7 +28,7 @@ public class CmdCircumference extends CommandProcessor {
 			arg = resArgs(c);
 			if (ok[0] = (arg[0].isGeoPolygon())) {
 
-				GeoElement[] ret = { kernel.Circumference(c.getLabel(),
+				GeoElement[] ret = { kernel.Perimeter(c.getLabel(),
 						(GeoPolygon) arg[0]) };
 				return ret;
 
@@ -47,4 +47,10 @@ public class CmdCircumference extends CommandProcessor {
 		}
 	}
 
+}
+
+class CmdCircumference extends CmdPerimeter {
+	public CmdCircumference(Kernel kernel) {
+		super(kernel);
+	}
 }

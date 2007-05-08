@@ -531,7 +531,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return hasAbsoluteScreenLocation;
 	}
 	
-	public boolean isAbsoluteScreenLocSetable() {
+	public boolean isAbsoluteScreenLocateable() {
 		return isSliderable();
 	}
 	

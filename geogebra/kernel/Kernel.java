@@ -1620,10 +1620,10 @@ public class Kernel {
 	// PhilippWeissenbacher 2007-04-10
 	
 	/**
-	 * Circumference named label of GeoPolygon
+	 * Perimeter named label of GeoPolygon
 	 */
-	final public GeoNumeric Circumference(String label, GeoPolygon polygon) {
-	    AlgoCircumferencePoly algo = new AlgoCircumferencePoly(cons, label, polygon);
+	final public GeoNumeric Perimeter(String label, GeoPolygon polygon) {
+	    AlgoPerimeterPoly algo = new AlgoPerimeterPoly(cons, label, polygon);
 	    return algo.getCircumference();
 	}
 	

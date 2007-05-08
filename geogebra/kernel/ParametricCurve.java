@@ -14,8 +14,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.roots.RealRootFunction;
 
-import java.awt.Color;
-
 
 public interface ParametricCurve extends Traceable {
 	double getMinParameter(); 

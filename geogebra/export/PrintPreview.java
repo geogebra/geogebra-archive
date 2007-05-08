@@ -36,7 +36,10 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -54,6 +57,7 @@ public class PrintPreview extends JDialog {
 	protected int m_scale;
 	protected Printable m_target;
 	protected JComboBox m_cbScale, m_cbOrientation;
+	protected JCheckBox cbEVscalePanel;
 	protected JScrollPane ps;
 	protected PreviewContainer m_preview;
 	protected Application app;
@@ -217,14 +221,31 @@ public class PrintPreview extends JDialog {
 		// show scale panel for euclidian view
 		EuclidianView ev = app.getEuclidianView();
 		app.clearSelectedGeos();
-		if (m_target == ev) {			
-			PrintScalePanel scalePanel = new PrintScalePanel(app, ev);
-			scalePanel.setBorder(BorderFactory.createEtchedBorder());	
-			scalePanel.addActionListener(lst);
-			centerPanel.add(scalePanel, BorderLayout.CENTER);
+		if (m_target == ev) {		
+			// checkbox to turn on/off printing of scale string
+			cbEVscalePanel = new JCheckBox();
+			cbEVscalePanel.setSelected(app.isPrintScaleString());
+			cbEVscalePanel.addActionListener(lst);
+			cbEVscalePanel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					app.setPrintScaleString(cbEVscalePanel.isSelected());
+				}				
+			});
+						
+			// scale panel to set scale of x-axis in cm
+			PrintScalePanel scalePanel = new PrintScalePanel(app, ev);				
+			scalePanel.addActionListener(lst);									
+			
+			JPanel tempPanel = new JPanel();
+			tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.X_AXIS));
+			tempPanel.setBorder(BorderFactory.createEtchedBorder());		
+			tempPanel.add(Box.createHorizontalStrut(10));
+			tempPanel.add(cbEVscalePanel);			
+			tempPanel.add(scalePanel);
+						
 			JPanel panel = new JPanel(new BorderLayout());
 			panel.add(titlePanel, BorderLayout.CENTER);
-			panel.add(scalePanel, BorderLayout.SOUTH);
+			panel.add(tempPanel, BorderLayout.SOUTH);
 			centerPanel.add(panel, BorderLayout.NORTH);
 		} else {
 			centerPanel.add(titlePanel, BorderLayout.NORTH);

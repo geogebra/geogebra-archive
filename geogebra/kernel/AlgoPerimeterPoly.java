@@ -18,7 +18,7 @@ package geogebra.kernel;
  * 
  * @author Philipp Weissenbacher (materthron@users.sourceforge.net)
  */
-public class AlgoCircumferencePoly extends AlgoElement {
+public class AlgoPerimeterPoly extends AlgoElement {
 
 	// Take a polygon as input
 	private GeoPolygon polygon;
@@ -26,12 +26,12 @@ public class AlgoCircumferencePoly extends AlgoElement {
 	// Output is a GeoNumeric (= a number)
 	private GeoNumeric circum;
 
-	AlgoCircumferencePoly(Construction cons, String label, GeoPolygon polygon) {
+	AlgoPerimeterPoly(Construction cons, String label, GeoPolygon polygon) {
 		this(cons, polygon);
 		circum.setLabel(label);
 	}
 
-	AlgoCircumferencePoly(Construction cons, GeoPolygon polygon) {
+	AlgoPerimeterPoly(Construction cons, GeoPolygon polygon) {
 		super(cons);
 		this.polygon = polygon;
 
@@ -41,7 +41,7 @@ public class AlgoCircumferencePoly extends AlgoElement {
 	}
 
 	String getClassName() {
-		return "AlgoCircumferencePoly";
+		return "AlgoPerimeterPoly";
 	}
 
 	void setInputOutput() {

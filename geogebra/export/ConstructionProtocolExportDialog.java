@@ -19,7 +19,6 @@ import geogebra.gui.TitlePanel;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;

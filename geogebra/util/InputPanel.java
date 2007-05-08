@@ -101,11 +101,9 @@ implements ActionListener{
 			add(sp, BorderLayout.CENTER);
 			
 			JPanel cbPanel = new JPanel(new BorderLayout());
-			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));	
-			if (showSpecialChars)
-				tempPanel.add(cbSpecialChars, BorderLayout.NORTH);
-			if (showGreekLetters)
-				tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);		
+			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));			
+			tempPanel.add(cbSpecialChars, BorderLayout.NORTH);						
+			tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);		
 			cbPanel.add(tempPanel, BorderLayout.NORTH);						
 			add(cbPanel, BorderLayout.EAST);			
 		} 
@@ -113,12 +111,22 @@ implements ActionListener{
 			setLayout(new BorderLayout(5,5));
 			add(textComponent, BorderLayout.CENTER);
 			
-			JPanel cbPanel = new JPanel(new BorderLayout(2,0));
-			if (showSpecialChars)
-				cbPanel.add(cbSpecialChars, BorderLayout.WEST);
+			JPanel cbPanel = new JPanel(new BorderLayout(2,0));			
+			cbPanel.add(cbSpecialChars, BorderLayout.WEST);
 			cbPanel.add(cbGreekLetters, BorderLayout.EAST);
 			add(cbPanel, BorderLayout.EAST);	
-		}				
+		}		
+		
+		cbSpecialChars.setVisible(showSpecialChars);
+		cbGreekLetters.setVisible(showGreekLetters);
+	}
+	
+	public void showSpecialChars(boolean flag) {
+		cbSpecialChars.setVisible(flag);
+	}
+	
+	public void showGreekLetters(boolean flag) {
+		cbGreekLetters.setVisible(flag);
 	}
 	
 	public JTextComponent getTextComponent() {

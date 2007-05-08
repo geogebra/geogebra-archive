@@ -65,6 +65,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -577,7 +578,11 @@ public class PropertiesDialog
 				pVec.add(sliderPanel.update(geos));
 				
 				pVec.add(allowOutlyingIntersectionsPanel.update(geos));
-				pVec.add(animStepPanel.update(geos));					
+				
+				// increment (anim step) panel is part of slider Panel
+				if (!pVec.contains(sliderPanel))
+					pVec.add(animStepPanel.update(geos));
+					
 				pVec.add(auxPanel.update(geos));					
 
 				// build new panel					
@@ -1122,7 +1127,7 @@ public class PropertiesDialog
 			for (int i = 0; i < geos.length; i++) {
 				if (geos[i] instanceof AbsoluteScreenLocateable) {
 					AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geos[i];
-					if (!absLoc.isAbsoluteScreenLocSetable())
+					if (!absLoc.isAbsoluteScreenLocateable())
 						return false;
 				}					
 				else
@@ -3337,6 +3342,7 @@ class SliderPanel
 	
 	private Application app;
 	private PropertiesDialog.PropertiesPanel propPanel;
+	private AnimationStepPanel stepPanel;
 	private Kernel kernel;
 
 	public SliderPanel(Application app, PropertiesDialog.PropertiesPanel propPanel) {
@@ -3367,8 +3373,8 @@ class SliderPanel
 					
 		String[] labels = { app.getPlain("min")+":",
 							app.getPlain("max")+":", app.getPlain("Width")+":"};
-		tfMin = new JTextField(8);
-		tfMax = new JTextField(8);
+		tfMin = new JTextField(5);
+		tfMax = new JTextField(5);
 		tfWidth = new JTextField(4);
 		tfields = new JTextField[3];
 		tfields[0] = tfMin;
@@ -3392,17 +3398,24 @@ class SliderPanel
 		    	intervalPanel.add(p);
 		    else 
 		    	sliderPanel.add(p);
-		}														
+		}
+		
+		// add increment to intervalPanel
+		stepPanel = new AnimationStepPanel(app);
+		intervalPanel.add(stepPanel);
 		
 		cbSliderFixed = new JCheckBox(app.getPlain("fixed"));
 		cbSliderFixed.addActionListener(this);
-		sliderPanel.add(cbSliderFixed);
+		sliderPanel.add(cbSliderFixed);				
 		
 		add(intervalPanel);	
+		add(Box.createVerticalStrut(5));
 		add(sliderPanel);					
 	}
 
 	public JPanel update(Object[] geos) {
+		stepPanel.update(geos);
+		
 		this.geos = geos;
 		if (!checkGeos(geos))
 			return null;
@@ -3479,7 +3492,7 @@ class SliderPanel
 		return this;
 	}
 
-	private boolean checkGeos(Object[] geos) {
+	private boolean checkGeos(Object[] geos) {				
 		boolean geosOK = true;
 		for (int i = 0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];

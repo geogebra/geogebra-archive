@@ -17,8 +17,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.roots.RealRootFunction;
 
-import java.awt.Color;
-
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
  * in geogebra.kernel.arithmetic. In arithmetic trees (ExpressionNode) it evaluates

@@ -23,8 +23,6 @@ import geogebra.algebra.AlgebraView;
 import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.export.GraphicExportDialog;
-import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.GeoGebra;
@@ -61,7 +59,6 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
@@ -242,7 +239,8 @@ public class Application implements	KeyEventDispatcher {
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
-    private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
+    private boolean printScaleString = false;
+    private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;    
                 
     private boolean undoActive = true;
     private boolean rightClickEnabled = true;
@@ -1306,19 +1304,17 @@ public class Application implements	KeyEventDispatcher {
         InputDialog id =
             new InputDialog(
                 this,
-                getPlain("NewName")
+                 "<html>" + getPlain("NewName")
                     + " "
                     + getPlain("for")
-                    + " "
-                    + geo.getNameDescription(),
+                    + " <b>"
+                    + geo.getNameDescription()
+                    + "</b></html>",
                 getPlain("Rename"),
-                initText == null ? geo.getLabel() : initText,
+                initText,
                 false,
                 handler, true);                       
-        id.setVisible(true);
-        if (initText == null) {        	
-        	id.selectText();        	
-        }        
+        id.setVisible(true);              
     }
     
     private class RenameInputHandler implements InputHandler {
@@ -1424,7 +1420,8 @@ public class Application implements	KeyEventDispatcher {
                 getPlain("Redefine"),
                 str,
                 true,
-                handler);                      
+                handler);  
+        id.showSpecialCharacters(true);
         id.setVisible(true);     
         id.selectText();            
     }
@@ -1459,7 +1456,7 @@ public class Application implements	KeyEventDispatcher {
      */   
 	public boolean showSliderCreationDialog(int x, int y) {
 	      SliderDialog dialog = new SliderDialog(this, x, y);
-	      dialog.setVisible(true);
+	      dialog.setVisible(true);	      
 	      GeoElement geo = dialog.getResult();
 	      return (geo != null);	      	
 	}
@@ -3336,6 +3333,14 @@ public class Application implements	KeyEventDispatcher {
 			return true;		
 
 		return consumed;
+	}
+
+	public boolean isPrintScaleString() {
+		return printScaleString;
+	}
+
+	public void setPrintScaleString(boolean printScaleString) {
+		this.printScaleString = printScaleString;
 	}
 	
 }

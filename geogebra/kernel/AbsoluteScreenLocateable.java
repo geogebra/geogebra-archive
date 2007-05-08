@@ -28,6 +28,6 @@ public interface AbsoluteScreenLocateable {
 	public void setAbsoluteScreenLocActive(boolean flag);
 	public boolean isAbsoluteScreenLocActive();
 
-	public boolean isAbsoluteScreenLocSetable();
+	public boolean isAbsoluteScreenLocateable();
 	public GeoElement toGeoElement();
 }

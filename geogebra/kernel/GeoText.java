@@ -467,7 +467,7 @@ implements Locateable, AbsoluteScreenLocateable {
 		return hasAbsoluteScreenLocation;
 	}
 	
-	public boolean isAbsoluteScreenLocSetable() {
+	public boolean isAbsoluteScreenLocateable() {
 		return true;
 	}
 

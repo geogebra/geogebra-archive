@@ -23,6 +23,7 @@ import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -289,10 +290,15 @@ public class WorksheetExportDialog extends JDialog {
 		cbShowToolBar = new JCheckBox(app.getMenu("ShowToolBar"));		
 		guiPanel.add(cbShowToolBar);
 		
-		// showToolBarHelp
+		// showToolBarHelp				
 		cbShowToolBarHelp = new JCheckBox(app.getMenu("ShowToolBarHelp"));
 		cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
-		guiPanel.add(cbShowToolBarHelp);		
+		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0,0));
+		tempPanel.add(Box.createHorizontalStrut(20));
+		tempPanel.add(cbShowToolBarHelp);
+		tempPanel.setAlignmentX(LEFT_ALIGNMENT);
+		guiPanel.add(tempPanel);
+		
 				
 		// showAlgebraInput
 		cbShowInputField = new JCheckBox(app.getMenu("ShowInputField"));		
