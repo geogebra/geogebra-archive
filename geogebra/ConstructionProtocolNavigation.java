@@ -41,6 +41,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	private JLabel lbSteps;
 	private JSpinner spDelay;
 	private double playDelay = 2; // in seconds	 
+	private JPanel playPanel;
 	
 	private Application app;
 	private ConstructionProtocol prot;
@@ -74,7 +75,8 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	}
 	
 	public void setPlayButtonVisible(boolean flag) {
-		showPlayButton = flag;			
+		showPlayButton = flag;	
+		playPanel.setVisible(flag);
 	}
 	
 	public boolean isConsProtButtonVisible() {
@@ -82,7 +84,8 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	}	
 	
 	public void setConsProtButtonVisible(boolean flag) {		
-		showConsProtButton = flag;		
+		showConsProtButton = flag;	
+		btOpenWindow.setVisible(flag);
 	}
 	
 	/**
@@ -119,22 +122,24 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		add(btNext);
 		add(btLast);
 		
-		if (showPlayButton) {
-			add(Box.createRigidArea(new Dimension(20,10)));
-			btPlay = new JButton();
-			btPlay.setIcon(app.getImageIcon("nav_play.png"));
-			btPlay.addActionListener(this); 	
-												
-			spDelay.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					playDelay = Double.parseDouble(spDelay.getValue().toString());					
-				}			
-			});
-						
-			add(btPlay);
-			add(spDelay);	
-			add(new JLabel("s"));
-		}
+		playPanel = new JPanel();
+		playPanel.setVisible(showPlayButton);
+		playPanel.add(Box.createRigidArea(new Dimension(20,10)));
+		btPlay = new JButton();
+		btPlay.setIcon(app.getImageIcon("nav_play.png"));
+		btPlay.addActionListener(this); 	
+											
+		spDelay.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				playDelay = Double.parseDouble(spDelay.getValue().toString());					
+			}			
+		});
+					
+		playPanel.add(btPlay);
+		playPanel.add(spDelay);	
+		playPanel.add(new JLabel("s"));		
+		add(playPanel);
+		
 		
 		if (showConsProtButton) {
 			btOpenWindow = new JButton();

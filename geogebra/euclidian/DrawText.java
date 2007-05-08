@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import atp.sHotEqn;
 
@@ -150,6 +151,10 @@ public final class DrawText extends Drawable {
      */
     final public boolean hit(int x, int y) {
 		return super.hitLabel(x, y);				      
+    }
+    
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(labelRectangle);  
     }
     
     /**

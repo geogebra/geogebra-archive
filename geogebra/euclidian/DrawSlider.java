@@ -21,6 +21,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 
 /**
@@ -132,6 +133,10 @@ public class DrawSlider extends Drawable {
     
     final public boolean hit(int x,int y) {        
         return hitPoint(x, y) || hitSlider(x, y);      
+    }
+    
+    final public boolean isInside(Rectangle rect) {
+    	return drawPoint.isInside(rect); 
     }
     
     final public boolean hitPoint(int x,int y) {        

@@ -72,24 +72,27 @@ public class AlgebraController
 	public void keyReleased(KeyEvent e) {}
 
 	public void keyTyped(KeyEvent event) {
-		// if there is one geo object selected, we open the rename dialog
-		// when a key is pressed			
-		if (app.selectedGeosSize() == 1) {					
-			GeoElement geo = (GeoElement) app.getSelectedGeos().get(0);
+		// we open the rename dialog when a letter is typed
+		
+		char ch = event.getKeyChar();
+		if (!Character.isLetter(ch)) return;		
+		
+		GeoElement geo;					
+		if (app.selectedGeosSize() == 1) {
+			// selected geo
+			geo = (GeoElement) app.getSelectedGeos().get(0);										
+		}				
+		else {
+			// last created geo
+			geo = app.getLastCreatedGeoElement();			
+		}	
+		
+		// open rename dialog
+		if (geo != null) {							
 			geo.setLabelVisible(true);
 			geo.updateRepaint();
-			app.showRenameDialog(geo, true, Character.toString(event.getKeyChar()));								
+			app.showRenameDialog(geo, true, Character.toString(ch));					
 		}
-		
-		// we open the rename dialog for the last created geo			
-		else {
-			GeoElement geo = app.getLastCreatedGeoElement();
-			if (geo != null) {							
-				geo.setLabelVisible(true);
-				geo.updateRepaint();
-				app.showRenameDialog(geo, true, Character.toString(event.getKeyChar()));					
-			}
-		}		
 	}
 
 	/** handle function keys and delete key */

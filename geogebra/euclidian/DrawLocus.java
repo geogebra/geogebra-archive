@@ -17,6 +17,7 @@ import geogebra.kernel.GeoLocus;
 import geogebra.util.MyPoint;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -120,6 +121,10 @@ public final class DrawLocus extends Drawable {
     final public boolean hit(int x, int y) {
         return gp.intersects(x-2,y-2,4,4)
 				&& !gp.contains(x-2,y-2,4,4);        
+    }
+    
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(gp.getBounds());  
     }
     
     final public GeoElement getGeoElement() {

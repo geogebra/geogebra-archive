@@ -8,11 +8,14 @@ import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class AutoCompleteTextField extends JTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -113,7 +116,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
                 break;
 
              // clear textfield
-            case KeyEvent.VK_ESCAPE: 
+            case KeyEvent.VK_ESCAPE:   
+            	Component comp = SwingUtilities.getRoot(this);
+            	if (comp instanceof JDialog) {
+            		((JDialog) comp).setVisible(false);
+            		return;
+            	}
+            	
             	if ("".equals(getText())) {
             		app.setMoveMode();
             		requestFocus();

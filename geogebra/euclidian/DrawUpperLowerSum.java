@@ -18,6 +18,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 
 /**
@@ -147,6 +148,11 @@ public class DrawUpperLowerSum extends Drawable {
     }
     
 	final public boolean hit(int x,int y) {  
+    	return false;   
+    }
+	
+
+	final public boolean isInside(Rectangle rect) {  
     	return false;   
     }
     

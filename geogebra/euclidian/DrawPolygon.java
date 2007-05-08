@@ -18,6 +18,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
@@ -171,6 +172,10 @@ implements Previewable {
 	final public boolean hit(int x,int y) {           
        return gp.contains(x, y);
        //return false;      
+    }
+	
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(gp.getBounds());  
     }
     
     public GeoElement getGeoElement() {

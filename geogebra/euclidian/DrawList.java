@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 
@@ -112,6 +113,17 @@ public final class DrawList extends Drawable {
     	}       
     	return false;
     }
+    
+    final public boolean isInside(Rectangle rect) {
+    	DrawableIterator it = drawables.getIterator();
+    	while (it.hasNext()) {
+    		if (!((Drawable) it.next()).isInside(rect))
+    			return false;    			
+    	}       
+    	return true;
+    }
+    
+    
     
     final public GeoElement getGeoElement() {
         return geo;

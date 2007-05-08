@@ -27,8 +27,11 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -48,6 +51,7 @@ public final class DrawImage extends Drawable {
     private boolean isInBackground = false;    
     private AffineTransform at, atInverse, tempAT;
     private int screenX, screenY;
+    private Rectangle boundingBox;
         
     public DrawImage(EuclidianView view, GeoImage geoImage) {      
     	this.view = view;          
@@ -57,6 +61,7 @@ public final class DrawImage extends Drawable {
         // temp
         at = new AffineTransform();
         tempAT = new AffineTransform();
+        boundingBox = new Rectangle();
         
         selStroke = new MyBasicStroke(1.5f);
 
@@ -168,11 +173,16 @@ public final class DrawImage extends Drawable {
 	        
 	        // move image up so that A becomes lower left corner
 		    at.translate(0, -height); 
-		    labelRectangle.setBounds(0, 0, width, height);	
+		    labelRectangle.setBounds(0, 0, width, height);
+		    
+	    	// calculate bounding box for isInside
+	    	boundingBox.setBounds(0, 0, width, height);
+	    	Shape shape = at.createTransformedShape(boundingBox);
+	    	boundingBox = shape.getBounds();
 		    
 		    try { 
 		    	// for hit testing
-		    	atInverse = at.createInverse();		            	
+		    	atInverse = at.createInverse();		    	
 		    } catch (NoninvertibleTransformException e) {
 		    	isVisible = false;
 		    	return;
@@ -246,6 +256,12 @@ public final class DrawImage extends Drawable {
     	return labelRectangle.contains(hitCoords[0], hitCoords[1]);						     
     }
     private double [] hitCoords = new double[2];
+    
+    
+    final public boolean isInside(Rectangle rect) {
+    	if (!isVisible || geoImage.isInBackground()) return false;    	    	
+    	return rect.contains(boundingBox);						     
+    }   
     
     /**
      * Returns false     

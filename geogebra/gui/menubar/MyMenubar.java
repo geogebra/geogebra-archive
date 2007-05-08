@@ -97,9 +97,10 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		cbHorizontalSplit.setEnabled(showAlgebraView);
 		cbHorizontalSplit.setSelected(app.isHorizontalSplit());
 		
+		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowCmdList.setEnabled(app.showAlgebraInput());		
-		cbShowAlgebraInput.setSelected(app.showAlgebraInput());	
+			
 		
 		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());				
 		cbShowConsProtNavigationPlay
@@ -204,7 +205,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		setCtrlAccelerator(mi, 'F');
 		menu.addSeparator();
 
-		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);
+		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
 		cbShowAlgebraView.setSelected(app.showAlgebraView());
 		setCtrlAccelerator(cbShowAlgebraView, 'A');
 		menu.add(cbShowAlgebraView);

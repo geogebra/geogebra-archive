@@ -127,7 +127,7 @@ final public class EuclidianController implements MouseListener,
 	// for moving conics:
 	private Point2D.Double startPoint = new Point2D.Double();
 
-	private Point zoomStartPoint = new Point();
+	private Point selectionStartPoint = new Point();
 
 	private GeoConic tempConic;
 
@@ -431,11 +431,12 @@ final public class EuclidianController implements MouseListener,
 		
 		moveModeSelectionHandled = false;
 		DRAGGING_OCCURED = false;			
+		view.selectionRectangle = null;
 
 		if (e.isPopupTrigger() || e.isMetaDown()) {
 			if (!app.isRightClickEnabled()) return;
-			RIGHT_CLICK = true;			
-			zoomStartPoint.setLocation(mouseLoc);
+			RIGHT_CLICK = true;		
+			selectionStartPoint.setLocation(mouseLoc);
 			return;
 		} 		
 		else if (e.isControlDown()) {
@@ -513,7 +514,7 @@ final public class EuclidianController implements MouseListener,
 			break;		
 				
 		default:
-			moveMode = MOVE_NONE;
+			moveMode = MOVE_NONE;				 
 		}
 	}
 	
@@ -776,12 +777,15 @@ final public class EuclidianController implements MouseListener,
 			
 		} else {
 			moveMode = MOVE_NONE;
+			selectionStartPoint.setLocation(mouseLoc);	
 		}
 	}
 
 	final public void mouseDragged(MouseEvent e) {
 		if (!DRAGGING_OCCURED) {
 			DRAGGING_OCCURED = true;			
+			
+			//TODO: change
 			if (mode == EuclidianView.MODE_MOVE)
 				app.clearSelectedGeos(false);
 			else if (mode == EuclidianView.MODE_MOVE_ROTATE) {
@@ -793,16 +797,13 @@ final public class EuclidianController implements MouseListener,
 		setMouseLocation(e);				
 		transformCoords();
 
-		if (RIGHT_CLICK) {
-			// init zoom rectangle
-			if (view.zoomRectangle == null) {
-				view.zoomRectangle = new Rectangle();
-			}
+		// zoom rectangle (right drag) or selection rectangle (left drag)
+		if (RIGHT_CLICK || moveMode == MOVE_NONE) {			
 			// set zoom rectangle's size
-			updateZoomRectangle();
+			updateSelectionRectangle(RIGHT_CLICK);
 			view.repaint();
 			return;
-		}
+		}		
 
 		// update previewable
 		if (view.previewDrawable != null) {
@@ -815,7 +816,7 @@ final public class EuclidianController implements MouseListener,
 		 * If the mouse is moved wildly we take intermediate steps to
 		 * get a more continous behaviour
 		 */		 		
-		if (lastMouseLoc != null) {
+		if (kernel.isContinuous() && lastMouseLoc != null) {
 			double dx = mouseLoc.x - lastMouseLoc.x;
 			double dy = mouseLoc.y - lastMouseLoc.y;			
 			double distsq = dx*dx + dy*dy;		
@@ -847,7 +848,7 @@ final public class EuclidianController implements MouseListener,
 		
 		handleMouseDragged(true);								
 	}	
-	// square of maximum allowed pixel distance pixel distance 
+	// square of maximum allowed pixel distance 
 	// for continous mouse movements
 	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 64; 	
 	
@@ -918,44 +919,51 @@ final public class EuclidianController implements MouseListener,
 		}
 	}
 
-	private void updateZoomRectangle() {
-		double ratio = (double) view.width / (double) view.height;
-		int dx = mouseLoc.x - zoomStartPoint.x;
-		int dy = mouseLoc.y - zoomStartPoint.y;
+	private void updateSelectionRectangle(boolean keepScreenRatio) {
+		if (view.selectionRectangle == null)
+			 view.selectionRectangle = new Rectangle();
+		
+		
+		int dx = mouseLoc.x - selectionStartPoint.x;
+		int dy = mouseLoc.y - selectionStartPoint.y;
 		int dxabs = Math.abs(dx);
 		int dyabs = Math.abs(dy);
 
-		int width, height;
-		if (dxabs >= dyabs * ratio) {
-			width = dx;
-			height = (int) (Math.round(dxabs / ratio));
-			if (dy < 0)
-				height = -height;
-		} else {
-			width = (int) Math.round(dyabs * ratio);
-			if (dx < 0)
-				width = -width;
-			height = dy;
+		int width = dx;
+		int height = dy;
+		
+		// the zoom rectangle should have the same aspect ratio as the view
+		if (keepScreenRatio) {
+			double ratio = (double) view.width / (double) view.height;
+			if (dxabs >= dyabs * ratio) {		
+				height = (int) (Math.round(dxabs / ratio));
+				if (dy < 0)
+					height = -height;
+			} else {
+				width = (int) Math.round(dyabs * ratio);
+				if (dx < 0)
+					width = -width;			
+			}
 		}
 
 		if (height >= 0) {
 			if (width >= 0) {
-				view.zoomRectangle.setLocation(zoomStartPoint);
-				view.zoomRectangle.setSize(width, height);
+				view.selectionRectangle.setLocation(selectionStartPoint);
+				view.selectionRectangle.setSize(width, height);
 			} else { // width < 0
-				view.zoomRectangle.setLocation(zoomStartPoint.x + width,
-						zoomStartPoint.y);
-				view.zoomRectangle.setSize(-width, height);
+				view.selectionRectangle.setLocation(selectionStartPoint.x + width,
+						selectionStartPoint.y);
+				view.selectionRectangle.setSize(-width, height);
 			}
 		} else { // height < 0
 			if (width >= 0) {
-				view.zoomRectangle.setLocation(zoomStartPoint.x,
-						zoomStartPoint.y + height);
-				view.zoomRectangle.setSize(width, -height);
+				view.selectionRectangle.setLocation(selectionStartPoint.x,
+						selectionStartPoint.y + height);
+				view.selectionRectangle.setSize(width, -height);
 			} else { // width < 0
-				view.zoomRectangle.setLocation(zoomStartPoint.x + width,
-						zoomStartPoint.y + height);
-				view.zoomRectangle.setSize(-width, -height);
+				view.selectionRectangle.setLocation(selectionStartPoint.x + width,
+						selectionStartPoint.y + height);
+				view.selectionRectangle.setSize(-width, -height);
 			}
 		}
 	}
@@ -967,13 +975,9 @@ final public class EuclidianController implements MouseListener,
 		GeoElement geo;
 				
 		if (RIGHT_CLICK) {									
-			if (view.zoomRectangle != null) {
-				if (processZoomRectangle())
-					return;
-			}
-
-			// get selected GeoElements			
+			if (processZoomRectangle()) return;
 			
+			// get selected GeoElements						
 			// show popup menu after right click
 			hits = view.getTopHits(mouseLoc);
 			if (hits == null) {
@@ -1002,7 +1006,12 @@ final public class EuclidianController implements MouseListener,
 		if (DRAGGING_OCCURED) {			
 			changedKernel = (moveMode != MOVE_NONE);			
 			movedGeoElement = null;
-			rotGeoElement = null;										
+			rotGeoElement = null;	
+			
+			if (moveMode == MOVE_NONE) {
+				processSelectionRectangle();
+				return;
+			}
 		} 
 
 		// remember helper point, see createNewPoint()
@@ -1065,20 +1074,29 @@ final public class EuclidianController implements MouseListener,
 
 	// return if we really did zoom
 	private boolean processZoomRectangle() {
-		if (view.zoomRectangle.width < 30) {
-			view.zoomRectangle = null;
+		if (view.selectionRectangle == null) return false;
+		
+		if (view.selectionRectangle.width < 30) {
+			view.selectionRectangle = null;
 			view.repaint();
 			return false;
 		}
 
 		view.resetMode();
 		// zoom zoomRectangle to EuclidianView's size
-		double factor = (double) view.width / (double) view.zoomRectangle.width;
-		Point p = view.zoomRectangle.getLocation();
-		view.zoomRectangle = null;
+		double factor = (double) view.width / (double) view.selectionRectangle.width;
+		Point p = view.selectionRectangle.getLocation();
+		view.selectionRectangle = null;
 		view.setAnimatedCoordSystem((view.xZero - p.x) * factor,
 				(view.yZero - p.y) * factor, view.xscale * factor, 15, true);
 		return true;
+	}
+	
+	// return if we really did zoom
+	private void processSelectionRectangle() {		
+		ArrayList hits = view.getHits(view.selectionRectangle);		
+		app.setSelectedGeos(hits.toArray());					
+		view.repaint();		
 	}
 
 	final public void mouseMoved(MouseEvent e) {

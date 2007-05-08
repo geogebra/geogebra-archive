@@ -13,10 +13,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra;
 
 import geogebra.euclidian.Drawable;
-import geogebra.euclidian.EuclidianView;
-import geogebra.export.GraphicSizePanel;
+import geogebra.export.ConstructionProtocolExportDialog;
 import geogebra.gui.PrintPreview;
-import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -29,7 +27,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -40,22 +37,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -63,7 +53,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -302,7 +291,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     	cbShowOnlyBreakpoints.setSelected(kernel.showOnlyBreakpoints());
     }
     
-    private void setUseColors(boolean flag) {
+    public void setUseColors(boolean flag) {
         useColors = flag;
         cbUseColors.setSelected(flag);
         data.updateAll();
@@ -1365,7 +1354,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
       * Returns a html representation of the construction protocol.
       * @param imgFile: image file to be included
       */
-    private String getHTML(File imgFile) {
+    public String getHTML(File imgFile) {
         StringBuffer sb = new StringBuffer();
 
         sb.append("<html>\n");
@@ -1481,50 +1470,15 @@ public class ConstructionProtocol extends JDialog implements Printable {
     }
     
     public void showHTMLExportDialog() {
-        HTMLExportDialog d = new HTMLExportDialog();    
-        d.setVisible(true);
+    	try {
+    		ConstructionProtocolExportDialog d = new ConstructionProtocolExportDialog(this);    
+    		d.setVisible(true);
+    	} catch (Exception e) {
+    		System.err.println("ConstructionProtocolExportDialog (html) is not available");
+    	}
     }
     
-    /**
-      *  Exports construction protocol as html
-      * @param includePicture: states whether a picture of the drawing pad
-      * should be exportet with the html output file
-      * @param includeAlgebraPicture: states whether a picture of the algebraWindow
-      * should be exportet with the html output file
-      */
-     private void exportHTML(boolean includePicture, int width,  
-                                                boolean includeCenterPanelPicture,
-                                                boolean useColors) {    
-         File file, pngFile = null;
-         setUseColors(useColors);
-         file = app.showSaveDialog(Application.FILE_EXT_HTML, null,
-                app.getPlain("html") + " " + app.getMenu("Files"));
-         if (file == null) return;                       
-         try {          
-            BufferedImage img = null;
-            
-            if (includePicture) {
-                // picture of drawing pad
-                img = app.getEuclidianView().getExportImage(width);             
-            }           
-            else if (includeCenterPanelPicture) {
-                img = app.getCenterPanelImage();
-            }
-            //  save image to PNG file
-            if (img != null) {
-                pngFile = Application.addExtension(file, "png");
-                ImageIO.write(img, "png", pngFile);
-            } 
-                            
-              // write html string to file
-              FileWriter fw = new FileWriter(file);
-              fw.write(getHTML(pngFile));
-              fw.close();                
-         } catch (IOException ex) {
-             app.showError("SaveFileFailed");
-             System.err.println(ex.toString());                      
-         }
-     }   
+   
 
     public String getConsProtocolXML() {    	
     	StringBuffer sb = new StringBuffer();
@@ -1553,156 +1507,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     	return sb.toString();
     }
      
-    private class HTMLExportDialog extends JDialog implements KeyListener {
-        
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = -2626950140196416416L;
-		
-		//private static final int DEFAULT_GRAPHICS_WIDTH = 600;  
-        private static final int DIALOG_WIDTH = 500;
-                
-        private JCheckBox cbDrawingPadPicture, cbScreenshotPicture;
-        private JCheckBox cbColor;
-        private GraphicSizePanel sizePanel;
-        private boolean kernelChanged = false;
-        
-        public HTMLExportDialog() {
-            super(app.getFrame(), true);
-
-            initGUI();
-        }
-        
-        private void initGUI() {
-            setResizable(false);
-            setTitle(app.getMenu("Export") + ": " +
-                                    app.getPlain("ConstructionProtocol") +
-                                    " (" +  Application.FILE_EXT_HTML + ")");
-            
-            JPanel cp = new JPanel(new BorderLayout(5,5));
-            cp.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-            getContentPane().add(cp);
-            
-            TitlePanel tp = new TitlePanel(app);
-            cp.add(tp, BorderLayout.NORTH);         
-            tp.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {                  
-                    kernelChanged = true;                               
-                }
-            });         
-            
-            // checkbox: insert picture of drawing pad      
-            JPanel picPanel = new JPanel(new BorderLayout(20, 5));              
-            cbDrawingPadPicture = new JCheckBox(
-                app.getPlain("InsertPictureOfConstruction"));
-            cbDrawingPadPicture.setSelected(true);
-            cbScreenshotPicture = new JCheckBox(
-                app.getPlain("InsertPictureOfAlgebraAndConstruction"));
-            cbScreenshotPicture.setSelected(false);
-
-            picPanel.add(cbDrawingPadPicture, BorderLayout.WEST);
-            if (app.showAlgebraView()) {
-                picPanel.add(cbScreenshotPicture, BorderLayout.SOUTH);
-            }
-            
-            // panel with fields to enter width and height of picture
-            EuclidianView ev = app.getEuclidianView();
-            //int height = (int) Math.ceil(DEFAULT_GRAPHICS_WIDTH *
-            //                  (double) ev.getHeight() / ev.getWidth());           
-            //sizePanel = new GraphicSizePanel(app, DEFAULT_GRAPHICS_WIDTH, height);
-            sizePanel = new GraphicSizePanel(app, ev.getWidth(), ev.getHeight());
-            picPanel.add(sizePanel, BorderLayout.CENTER);   
-            picPanel.setBorder(BorderFactory.createEtchedBorder());     
-            cp.add(picPanel, BorderLayout.CENTER);
-            
-            cbColor =  new JCheckBox(
-                app.getPlain("ColorfulConstructionProtocol")); 
-            cbColor.setSelected(false);
-            
-            // disable width and height field when checkbox is deselected
-            cbDrawingPadPicture.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {        
-                    boolean flag = cbDrawingPadPicture.isSelected();  
-                    sizePanel.setEnabled(flag); 
-                    if (flag) { 
-                        cbScreenshotPicture.setSelected(false);
-                    } 
-                }
-            });
-            cbScreenshotPicture.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {        
-                    boolean flag = cbScreenshotPicture.isSelected();   
-                    sizePanel.setEnabled(false);  
-                    if (flag) {                 
-                        cbDrawingPadPicture.setSelected(false); 
-                    }                                   
-                }
-            });
-            cbColor.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {          
-                    setUseColors(cbColor.isSelected());                     
-                }
-            });
-                    
-            //  Cancel and Export Button
-             JButton cancelButton = new JButton(app.getPlain("Cancel"));
-             cancelButton.addActionListener(new ActionListener() {
-                     public void actionPerformed(ActionEvent e) {                  
-                         dispose();                             
-                     }
-                 });            
-             JButton exportButton = new JButton(app.getMenu("Export"));
-            exportButton.addActionListener(new ActionListener() {
-                     public void actionPerformed(ActionEvent e) {  
-                        Thread runner = new Thread() {
-                           public void run() {
-                                dispose();      
-                                if (kernelChanged) app.storeUndoInfo();              
-                                exportHTML(cbDrawingPadPicture.isSelected(), sizePanel.getSelectedWidth(),
-                                                    cbScreenshotPicture.isSelected(), cbColor.isSelected());            
-                           }
-                        };
-                        runner.start();                  
-                     }
-                 });
-             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-             buttonPanel.add(exportButton);
-             buttonPanel.add(cancelButton);     
-             
-            JPanel southPanel = new JPanel(new BorderLayout()); 
-            southPanel.add(cbColor, BorderLayout.NORTH);    
-            southPanel.add(buttonPanel, BorderLayout.SOUTH);     
-            cp.add(southPanel, BorderLayout.SOUTH);
-             
-             Util.addKeyListenerToAll(this, this);
-             centerOnScreen();
-        }
-        
-    	private void centerOnScreen() {
-    		//	center on screen
-    		pack();				
-    		setLocationRelativeTo(app.getFrame());
-    	}
-        
-        /*
-         * Keylistener implementation of ConstructionProtocol
-         */
- 
-        public void keyPressed(KeyEvent e) {
-            int code = e.getKeyCode();
-            if (code == KeyEvent.VK_ESCAPE) {       
-                dispose();
-            }   
-        }
-
-        public void keyReleased(KeyEvent e) {
-        }
-
-        public void keyTyped(KeyEvent e) {
-
-        } 
-    }
+   
     
 
 

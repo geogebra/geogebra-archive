@@ -57,6 +57,7 @@ public abstract class Drawable {
 	public abstract void update();
 	public abstract void draw(Graphics2D g2);
 	public abstract boolean hit(int x, int y);
+	public abstract boolean isInside(Rectangle rect);
 	public abstract GeoElement getGeoElement();
 	public abstract void setGeoElement(GeoElement geo);
 	

@@ -24,6 +24,7 @@ import geogebra.kernel.GeoPoint;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 
@@ -209,6 +210,10 @@ public final class DrawPoint extends Drawable {
      */
     final public boolean hit(int x, int y) {
         return circleSel.contains(x, y);        
+    }
+    
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(circleSel.getBounds());  
     }
     
     final public GeoElement getGeoElement() {

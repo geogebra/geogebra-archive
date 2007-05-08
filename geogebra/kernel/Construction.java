@@ -109,8 +109,11 @@ public class Construction {
     /**
      * Returns the last GeoElement object in the construction list;
      */
-    public GeoElement getLastGeoElement() {		
-    	return (GeoElement) geoSet.last();
+    public GeoElement getLastGeoElement() {	
+    	if (geoSet.size() > 0)
+    		return (GeoElement) geoSet.last();
+    	else 
+    		return null;
     }
     
     /**

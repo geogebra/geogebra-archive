@@ -266,10 +266,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int POINT_CAPTURING_ON_GRID = 2;
 
 	// zoom rectangle colors
-	private static final Color colZoomRectangle = new Color(200, 200, 250);
-
-	private static final Color colZoomRectangleFill = new Color(200, 200, 250,
-			70);
+	private static final Color colZoomRectangle = new Color(200, 200, 230);
+	private static final Color colZoomRectangleFill = new Color(200, 200, 230, 50);
 
 	// STROKES
 	private static MyBasicStroke standardStroke = new MyBasicStroke(1.0f);
@@ -418,7 +416,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	Previewable previewDrawable;
 
-	Rectangle zoomRectangle;
+	Rectangle selectionRectangle;
 
 	// temp
 	// public static final int DRAW_MODE_DIRECT_DRAW = 0;
@@ -1170,7 +1168,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// draw all Drawables
 		drawGeometricObjects(g2);
 
-		if (zoomRectangle != null) {
+		if (selectionRectangle != null) {
 			drawZoomRectangle(g2);
 		}
 
@@ -1187,9 +1185,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	private void drawZoomRectangle(Graphics2D g2) {
 		g2.setColor(colZoomRectangleFill);
-		g2.fill(zoomRectangle);
+		g2.fill(selectionRectangle);
 		g2.setColor(colZoomRectangle);
-		g2.draw(zoomRectangle);
+		g2.draw(selectionRectangle);
 	}
 
 	public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
@@ -1308,9 +1306,17 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
-		g2d.scale(scale, scale);
-
-		g2d.setClip(0, 0, width, height);
+		g2d.scale(scale, scale);	
+		
+		// clipping on selection rectangle
+		if (selectionRectangle != null) {
+			Rectangle rect = selectionRectangle;
+			g2d.setClip(0,0, rect.width, rect.height);
+			g2d.translate(-rect.x, -rect.y);					
+		} else {
+			// or take full euclidian view
+			g2d.setClip(0, 0, width, height);	
+		}											
 
 		// DRAWING
 		if (isTracing() || hasBackgroundImages()) {
@@ -1351,23 +1357,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	}
 
 	/**
-	 * Returns image of drawing pad with specified width. The height of the
-	 * image is width * getHeight() / getWidth().
-	 * 
-	 * @param width
-	 * @return
-	 */
-	public BufferedImage getExportImage(int width) throws OutOfMemoryError {
-		double scale = width / (double) getWidth();
-		return getExportImage(scale);
-	}
-
-	/**
 	 * Returns image of drawing pad sized according to the given scale factor.
 	 */
 	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
-		int height = (int) Math.floor(getHeight() * scale);
-		int width = (int) Math.floor(getWidth() * scale);
+		int width = (int) Math.floor(getSelectedWidth() * scale);
+		int height = (int) Math.floor(getSelectedHeight() * scale);		
 		BufferedImage img = createBufferedImage(width, height);
 		exportPaint(img.createGraphics(), scale);
 		img.flush();
@@ -1897,8 +1891,25 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		return foundHits;
 	}
-
 	private ArrayList foundHits = new ArrayList();
+	
+	/**
+	 * Returns array of GeoElements whose visual representation is inside of
+	 * the given screen rectangle
+	 */
+	final public ArrayList getHits(Rectangle rect) {
+		foundHits.clear();		
+		
+		DrawableIterator it = allDrawableList.getIterator();
+		while (it.hasNext()) {
+			Drawable d = it.next();
+			if (d.isInside(rect)) {
+				GeoElement geo = d.getGeoElement();
+				foundHits.add(geo);
+			}
+		}
+		return foundHits;
+	}
 
 	/**
 	 * returns array of independent GeoElements whose visual representation is
@@ -2770,12 +2781,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	}
 
 	public Object getTransferData(DataFlavor flavor) {
-		if (flavor == DataFlavor.imageFlavor) {
-			BufferedImage img = new BufferedImage(getWidth(), getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			paint(img.createGraphics());
-			img.flush();
-			return img;
+		if (flavor == DataFlavor.imageFlavor) {			
+			return getExportImage(1d);
 		}
 		// Otherwise, return generic object
 		return (new Object());
@@ -3105,4 +3112,19 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			return "";
 		}
 	}
+	
+
+	public int getSelectedWidth() {
+		if (selectionRectangle == null)
+			return getWidth();
+		else
+			return selectionRectangle.width;
+	}
+	
+	public int getSelectedHeight() {
+		if (selectionRectangle == null)
+			return getHeight();
+		else
+			return selectionRectangle.height;
+	}		
 }

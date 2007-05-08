@@ -23,6 +23,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
@@ -358,6 +359,20 @@ implements Previewable {
 		}
     }
 	
+	final public boolean isInside(Rectangle rect) {
+		switch (draw_type) {
+		case DRAW_TYPE_ELLIPSE:
+			return rect.contains(shape.getBounds());			  	
+		
+		case DRAW_TYPE_SEGMENT:
+			return drawSegment.isInside(rect);
+			
+		case DRAW_TYPE_RAYS:
+		default:			
+			return false;
+	}
+	}
+	
 	final public boolean hitLabel(int x, int y) {
 		switch (draw_type) {
 			case DRAW_TYPE_ELLIPSE:
@@ -374,6 +389,8 @@ implements Previewable {
 				return false;
 		}
 	}
+	
+	
     
     public GeoElement getGeoElement() {
         return geo;

@@ -25,6 +25,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
@@ -266,6 +267,10 @@ implements Previewable {
     
 	final public boolean hit(int x,int y) {        
         return line.intersects(x-2, y-2, 4, 4);        
+    }
+	
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(line.getBounds());  
     }
     
     public GeoElement getGeoElement() {

@@ -297,11 +297,13 @@ public class Application implements	KeyEventDispatcher {
     	this.undoActive = undoActive;    	    	
     		
 		isApplet = applet != null;
-		if (isApplet) {
-			mainComp = applet;
-		} else {
+		if (frame != null) {
 			mainComp = frame;
-		}
+		} 
+		else if (isApplet) {
+			mainComp = applet;
+		} 
+		
 		initCodeBase();
 		handleOptionArgs(args); // note: the locale is set here too
 		
@@ -533,62 +535,7 @@ public class Application implements	KeyEventDispatcher {
         return centerPanel;
     }
     
-    BufferedImage getCenterPanelImage() {
-        // center Panel to image
-    	if (sp == null || algebraView == null)
-			return euclidianView.getExportImage(euclidianView.getHeight());
-  	
-    	if (sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT) {
-    		// left - right (algebra view - euclidian view)
-    		Component left = sp.getLeftComponent(); 
-    		int leftWidth = Math.min(left.getWidth(), algebraView.getWidth());
-    		int leftHeight = Math.min(left.getHeight(), algebraView.getHeight());	
-        	int height = leftHeight;
-            double evScale = height / (double) euclidianView.getHeight();
-            int width = (int) (leftWidth + euclidianView.getWidth() * evScale + 2);    
-            
-            // image for center panel
-            BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);       
-            Graphics2D g = img.createGraphics();
-            g.setColor(Color.black);
-            g.fillRect(0,0, width, height);    
-            // paint algebra view    
-            algebraView.paint(g);
-            // leave black line	
-            g.translate(leftWidth + 2, 0);  
-           
-            // paint euclidian view 
-            euclidianView.exportPaint(g, evScale);
-            g.dispose();
-            return img;
-    	}
-    	else {
-    		// top - bottom (euclidian view - algebra view)
-    		Component bottom = sp.getRightComponent(); 
-    		int bottomWidth = Math.min(euclidianView.getWidth(), algebraView.getWidth());
-    		int bottomHeight = Math.min(bottom.getHeight(), algebraView.getHeight());
-			int width = bottomWidth;
-        	int height = euclidianView.getHeight() + 
-						 bottomHeight
-						 + 2;  
-            
-            // image for center panel
-            BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);       
-            Graphics2D g = img.createGraphics();
-            g.setColor(Color.black);
-            g.fillRect(0,0, width, height);    
-            // paint euclidian view 
-            g.setClip(0,0, width, height);
-            euclidianView.exportPaint(g, 1.0);
-            g.setClip(0,0,width, height);
-            // leave black line 
-            g.translate(0, height - bottomHeight); 
-            //  paint algebra view    
-            algebraView.paint(g);  
-            g.dispose();
-            return img;
-    	}
-    }
+    
     
     public AbstractAction getShowAxesAction() {    	  	
     	return showAxesAction;
@@ -1367,12 +1314,11 @@ public class Application implements	KeyEventDispatcher {
                 getPlain("Rename"),
                 initText == null ? geo.getLabel() : initText,
                 false,
-                handler);               
+                handler, true);                       
         id.setVisible(true);
-        if (initText == null) {
-        	id.selectText();
-        	Util.registerForDisposeOnEscape(id);
-        }
+        if (initText == null) {        	
+        	id.selectText();        	
+        }        
     }
     
     private class RenameInputHandler implements InputHandler {
@@ -1449,11 +1395,12 @@ public class Application implements	KeyEventDispatcher {
     	}
     	
     	InputHandler handler = new RedefineInputHandler(geo);                
-        StringBuffer initSB = new StringBuffer(geo.isIndependent() ? 
+        	String str = geo.isIndependent() ? 
                             geo.toValueString() :
-                            geo.getCommandDescription());
-                        
-        String str = initSB.toString();
+                            geo.getCommandDescription();
+        
+        /*
+        String str = initSB.toString();        
         // add label to make renaming possible too
         if (str.indexOf('=') == -1) { // no equal sign in definition string
         	// functions need either "f(x) =" or "f ="
@@ -1468,13 +1415,14 @@ public class Application implements	KeyEventDispatcher {
         		initSB.insert(0, geo.getLabel() + ": ");
         	}
         }
+        */
                                                                                                                           
         InputDialog id =
             new InputDialog(
                 this, 
                 geo.getNameDescription(),
                 getPlain("Redefine"),
-                initSB.toString(),
+                str,
                 true,
                 handler);                      
         id.setVisible(true);     

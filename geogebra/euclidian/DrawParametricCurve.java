@@ -19,6 +19,7 @@ import geogebra.kernel.roots.RealRootUtil;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
@@ -642,6 +643,10 @@ public class DrawParametricCurve extends Drawable {
     		return false;
     	return gp.intersects(x-2,y-2,4,4)
 			&& !gp.contains(x-2,y-2,4,4);      
+    }
+	
+    final public boolean isInside(Rectangle rect) {
+    	return rect.contains(gp.getBounds());  
     }
     
     public GeoElement getGeoElement() {

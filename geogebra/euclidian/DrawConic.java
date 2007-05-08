@@ -28,6 +28,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
@@ -743,6 +744,18 @@ final public class DrawConic extends Drawable implements Previewable {
         return false;
     }
 	
+	final public boolean isInside(Rectangle rect) {				
+		switch (type) {
+           case GeoConic.CONIC_SINGLE_POINT:                         
+               return drawPoint.isInside(rect);                          
+                                               
+           case GeoConic.CONIC_CIRCLE:  
+           case GeoConic.CONIC_ELLIPSE:                         	
+        	   return rect.contains(shape.getBounds());
+		}        
+		
+	    return false;
+	}
 
     public GeoElement getGeoElement() {
         return geo;

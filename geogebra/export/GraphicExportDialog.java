@@ -224,16 +224,16 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 						
 		StringBuffer sb = new StringBuffer();
 		// cm size
-		double cmWidth = printingScale * (ev.getXmax() - ev.getXmin());
-		double cmHeight = printingScale * (ev.getYmax() - ev.getYmin());	
+		double cmWidth = printingScale * (ev.getSelectedWidth() / ev.getXscale());
+		double cmHeight = printingScale * (ev.getSelectedHeight() / ev.getYscale());	
 		sb.append(sizeLabelFormat.format(cmWidth));
 		sb.append(" x ");
 		sb.append(sizeLabelFormat.format(cmHeight));
-		sb.append(" cm");
-				
+		sb.append(" cm");			
+		
 		// pixel size
-		pixelWidth = (int) Math.floor(ev.getWidth() * exportScale);
-		pixelHeight = (int) Math.floor(ev.getHeight() * exportScale);	
+		pixelWidth = (int) Math.floor(ev.getSelectedWidth() * exportScale);
+		pixelHeight = (int) Math.floor(ev.getSelectedHeight() * exportScale);	
 		sb.append(", ");
 		sb.append(pixelWidth);
 		sb.append(" x ");
@@ -259,14 +259,14 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {		
-			
-			  EpsGraphics2D g =
+			EuclidianView ev = app.getEuclidianView();						
+			EpsGraphics2D g =
 				new EpsGraphics2D(
 					app.getPlain("ApplicationName") + ", " + app.getPlain("ApplicationURL"),
 					file, 0,0, pixelWidth, pixelHeight);		
 										
 	    	// draw to epsGraphics2D
-			app.getEuclidianView().exportPaint(g, exportScale);
+			ev.exportPaint(g, exportScale);
 			g.close();			
 			return true;						
 		} catch (Exception ex) {
@@ -416,4 +416,6 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 
 	} 
+	
+	
 }

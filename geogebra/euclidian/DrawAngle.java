@@ -27,11 +27,13 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 /**
  * 
  * @author Markus Hohenwarter, Loic De Coq
@@ -467,6 +469,10 @@ public class DrawAngle extends Drawable {
 
 	final public boolean hit(int x, int y) {
 		return shape != null && shape.contains(x, y);
+	}
+	
+	final public boolean isInside(Rectangle rect) {
+		return  shape != null && rect.contains(shape.getBounds());		
 	}
 
 	public GeoElement getGeoElement() {

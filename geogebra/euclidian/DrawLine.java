@@ -25,6 +25,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
@@ -368,6 +369,10 @@ public final class DrawLine extends Drawable implements Previewable {
      */
     final public boolean hit(int x, int y) {
         return line.intersects(x-4, y-4, 8, 8);
+    }
+    
+    final public boolean isInside(Rectangle rect) {  
+    	return false;   
     }
     
     final public GeoElement getGeoElement() {
