@@ -119,7 +119,7 @@ public class Application implements	KeyEventDispatcher {
 	public final static String CAS_FILE = "geogebra_cas.jar";
 	
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
-	
+		
 	// update URL
 	//public static final String UPDATE_URL = "http://www.geogebra.at/webstart/unpacked/";
     
@@ -2787,26 +2787,7 @@ public class Application implements	KeyEventDispatcher {
         constProtocol.showHTMLExportDialog();
     }
 
-    /**
-         *  Exports construction protocol as html 
-         */
-    final public void exportDynamicWorksheetHTML() {
-    	try {
-    		WorksheetExportDialog d = new WorksheetExportDialog(this);
-    		d.setVisible(true);
-    	} catch (Exception e) {
-    		System.err.println("WorksheetExportDialog not available");
-    	}
-    }
-
-    /**
-         *  Exports drawing pad as graphic
-         */
-    final public void exportGraphic() {
-    	clearSelectedGeos();
-        GraphicExportDialog d = new GraphicExportDialog(this);
-        d.setVisible(true);
-    }
+  
     
 
     /**

@@ -416,7 +416,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	Previewable previewDrawable;
 
-	Rectangle selectionRectangle;
+	private Rectangle selectionRectangle;
 
 	// temp
 	// public static final int DRAW_MODE_DIRECT_DRAW = 0;
@@ -756,6 +756,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		this.mode = mode;
 		initCursor();
 		euclidianController.setMode(mode);
+		setSelectionRectangle(null);
 	}
 
 	public int getMode() {
@@ -1190,7 +1191,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		g2.draw(selectionRectangle);
 	}
 
-	public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
+	public int print(Graphics g, PageFormat pageFormat, int pageIndex) {		
 		if (pageIndex > 0)
 			return (NO_SUCH_PAGE);
 		else {
@@ -3127,4 +3128,12 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		else
 			return selectionRectangle.height;
 	}		
+	
+	public Rectangle getSelectionRectangle() {
+		return selectionRectangle;
+	}
+
+	public void setSelectionRectangle(Rectangle selectionRectangle) {
+		this.selectionRectangle = selectionRectangle;		
+	}
 }

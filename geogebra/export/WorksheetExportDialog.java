@@ -13,14 +13,17 @@
 package geogebra.export;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.util.CopyURLToFile;
+import geogebra.util.InputPanel;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,7 +41,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -61,7 +63,7 @@ public class WorksheetExportDialog extends JDialog {
 
 	private Application app;
 	private Kernel kernel;
-	private JTextArea textAbove, textBelow;
+	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbShowResetIcon,
 					cbShowMenuBar, cbShowToolBar, cbShowToolBarHelp, cbShowInputField;
 	private GraphicSizePanel sizePanel;
@@ -72,7 +74,40 @@ public class WorksheetExportDialog extends JDialog {
 		super(app.getFrame(), true);
 		this.app = app;
 		kernel = app.getKernel();
-		initGUI();
+		
+		initGUI();		
+	}
+	
+	public void setVisible(boolean flag) {
+		if (flag)
+			checkEuclidianView();
+		
+		super.setVisible(flag);		
+	}
+	
+	/**
+	 * Checks if the EuclidianView has a selected rectangle. 
+	 * In this case we will automatically move the coord system
+	 * to put the selection rectangle into the upper left
+	 * corner of the euclidian view.
+	 */
+	private void checkEuclidianView() {
+		EuclidianView ev = app.getEuclidianView();
+		
+		// 1) selection rectangle
+		Rectangle rect = ev.getSelectionRectangle();
+		if (rect != null) {
+			double xZero = ev.getXZero() - rect.x;
+			double yZero = ev.getYZero() - rect.y;
+			rect.x = 0;
+			rect.y = 0;			
+			ev.setCoordSystem(xZero, yZero, ev.getXscale(), ev.getYscale(), true);
+
+			// update size panel
+			int width = sizePanel.getSelectedWidth() - (ev.getWidth() - rect.width);
+			int height = sizePanel.getSelectedHeight() - (ev.getHeight() - rect.height);
+			sizePanel.setValues(width, height, false);												
+		}
 	}
 
 	private void initGUI() {
@@ -146,27 +181,30 @@ public class WorksheetExportDialog extends JDialog {
 		// text areas
 		JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
 		JLabel label = new JLabel(app.getPlain("TextBeforeConstruction") + ":");
-		textAbove = new JTextArea(5, 20);
-		JScrollPane scrollPane = new JScrollPane(textAbove);
+		textAbove = new InputPanel(null, app, 5, 20, true, true);				
+		//JScrollPane scrollPane = new JScrollPane(textAbove);
 
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);
-		p.add(scrollPane, BorderLayout.CENTER);
+		p.add(textAbove, BorderLayout.CENTER);
 		centerPanel.add(p, BorderLayout.NORTH);
 
 		label = new JLabel(app.getPlain("TextAfterConstruction") + ":");
-		textBelow = new JTextArea(5, 20);
-		scrollPane = new JScrollPane(textBelow);
+		textBelow = new InputPanel(null, app, 5, 20, true, true);	
+		//scrollPane = new JScrollPane(textBelow);
 		p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);
-		p.add(scrollPane, BorderLayout.CENTER);
+		p.add(textBelow, BorderLayout.CENTER);
 		centerPanel.add(p, BorderLayout.SOUTH);
 
 		// set line wrapping
-		textAbove.setLineWrap(true);
-		textAbove.setWrapStyleWord(true);
-		textBelow.setLineWrap(true);
-		textBelow.setWrapStyleWord(true);
+		JTextArea ta =  (JTextArea) textAbove.getTextComponent();
+		ta.setLineWrap(true);
+		ta.setWrapStyleWord(true);
+		
+		ta =  (JTextArea) textBelow.getTextComponent();
+		ta.setLineWrap(true);
+		ta.setWrapStyleWord(true);
 
 		// init text areas
 		Construction cons = kernel.getConstruction();
@@ -487,8 +525,8 @@ public class WorksheetExportDialog extends JDialog {
 		}
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
-		sb.append("Java 1.4.2 (or later) is installed and activated.");
-		sb.append("(<a href=\"http://java.sun.com/getjava\">click here to install Java now</a>)\n");
+		sb.append("Java 1.4.2 (or later) is installed and active in your browser ");
+		sb.append("(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)\n");
 		sb.append("</applet>\n\n");
 
 		// text after applet

@@ -14,7 +14,7 @@ package geogebra;
 
 import geogebra.euclidian.Drawable;
 import geogebra.export.ConstructionProtocolExportDialog;
-import geogebra.gui.PrintPreview;
+import geogebra.export.PrintPreview;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -308,10 +308,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
         ActionListener lstPreview = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Thread runner = new Thread() {
-                    public void run() {                                         
-                        new PrintPreview(app,
-                            ConstructionProtocol.this,
-                            PageFormat.PORTRAIT);
+                    public void run() {     
+                    	try {
+	                        new PrintPreview(app,
+	                            ConstructionProtocol.this,
+	                            PageFormat.PORTRAIT);
+                    	} catch (Exception e) {
+                    		System.err.println("Print preview not available");
+                    	}
                     }
                 };
                 runner.start();

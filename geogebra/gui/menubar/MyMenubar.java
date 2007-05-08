@@ -4,8 +4,10 @@ import geogebra.Application;
 import geogebra.ConstructionProtocol;
 import geogebra.ConstructionProtocolNavigation;
 import geogebra.euclidian.EuclidianView;
+import geogebra.export.GraphicExportDialog;
+import geogebra.export.PrintPreview;
+import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GeoGebra;
-import geogebra.gui.PrintPreview;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.kernel.Kernel;
@@ -53,7 +55,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			showAuxiliaryObjectsAction, showConsProtNavigationAction,
 			showConsProtNavigationPlayAction,
 			showConsProtNavigationOpenProtAction, loadAction, saveAction,
-			saveAsAction, printProtocolAction, printEuclidianViewAction,
+			saveAsAction, //printProtocolAction, 
+			printEuclidianViewAction,
 			undoAction, redoAction, exitAction, exitAllAction, helpAction,
 			// updateAction,
 			infoAction, exportGraphicAction, htmlCPAction, exportWorksheet,
@@ -156,20 +159,22 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		setCtrlAccelerator(mi, 'S');
 		mi = menu.add(saveAsAction);
 		menu.addSeparator();
-		submenu = new JMenu(app.getMenu("PrintPreview"));
-		submenu.setIcon(app.getImageIcon("print.gif"));
-		submenu.add(printEuclidianViewAction);
-		submenu.add(printProtocolAction);
-		menu.add(submenu);
+//		submenu = new JMenu(app.getMenu("PrintPreview"));
+//		submenu.setIcon(app.getImageIcon("print.gif"));
+//		submenu.add(printEuclidianViewAction);
+//	//	submenu.add(printProtocolAction);
+//		menu.add(submenu);
+		mi = menu.add(printEuclidianViewAction);
+		mi.setText(app.getMenu("PrintPreview"));
+		mi.setIcon(app.getImageIcon("print.gif"));
+		
 		submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		menu.add(submenu);
 		submenu.add(exportWorksheet);
 		submenu.addSeparator();
-		submenu.add(htmlCPAction);
+		//submenu.add(htmlCPAction);
 		submenu.add(exportGraphicAction);
-
-		submenu.addSeparator();
 		submenu.add(drawingPadToClipboardAction);
 		menu.addSeparator();
 		menu.add(exitAction);
@@ -666,6 +671,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
+		/*
 		printProtocolAction = new AbstractAction(
 				app.getPlain("ConstructionProtocol") + " ...") {
 			private static final long serialVersionUID = 1L;
@@ -678,25 +684,32 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 							constProtocol = new ConstructionProtocol(app);
 						}
 						constProtocol.initProtocol();
-						new PrintPreview(app, constProtocol, PageFormat.PORTRAIT);
+						
+						try {
+							new PrintPreview(app, constProtocol, PageFormat.PORTRAIT);
+                    	} catch (Exception e) {
+                    		System.err.println("Print preview not available");
+                    	}
 					}
 				};
 				runner.start();
 			}
 		};
-
+*/
+		
 		printEuclidianViewAction = new AbstractAction(app.getPlain("DrawingPad")
 				+ " ...") {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
-					public void run() {
-						app.getMainComponent().setCursor(Cursor
-								.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						new PrintPreview(app, app.getEuclidianView(),
-								PageFormat.LANDSCAPE);
-						app.getMainComponent().setCursor(Cursor.getDefaultCursor());
+					public void run() {						
+						try {
+							new PrintPreview(app, app.getEuclidianView(),
+									PageFormat.LANDSCAPE);
+                    	} catch (Exception e) {
+                    		System.err.println("Print preview not available");
+                    	}												
 					}
 				};
 				runner.start();
@@ -806,7 +819,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.exportGraphic();
+						exportGraphic();
 					}
 				};
 				runner.start();
@@ -836,7 +849,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.exportDynamicWorksheetHTML();
+						exportDynamicWorksheetHTML();
 					}
 				};
 				runner.start();
@@ -1106,4 +1119,30 @@ public class MyMenubar extends JMenuBar implements ActionListener {
           }
           return sb.toString();
       }
+    
+    /**
+     *  Exports construction protocol as html 
+     */
+final public void exportDynamicWorksheetHTML() {
+	try {
+		app.clearSelectedGeos();
+		WorksheetExportDialog d = new WorksheetExportDialog(app);
+		d.setVisible(true);
+	} catch (Exception e) {
+		System.err.println("WorksheetExportDialog not available");
+	}
+}
+
+/**
+     *  Exports drawing pad as graphic
+     */
+final public void exportGraphic() {
+	try {
+    	app.clearSelectedGeos();
+        GraphicExportDialog d = new GraphicExportDialog(app);
+        d.setVisible(true);
+	} catch (Exception e) {
+		System.err.println("GraphicExportDialog not available");
+	}
+}
 }

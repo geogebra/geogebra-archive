@@ -19,9 +19,13 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -59,17 +63,20 @@ public class MyToolbar extends JPanel{
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
         moveToggleMenus = new ArrayList();
         
-        //JPanel tb = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 2));           
-        tb.setFloatable(false);        
-        add(tb, BorderLayout.WEST);             
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));           
+        add(leftPanel, BorderLayout.WEST);  
+        
+        tb.setFloatable(false);  
+        leftPanel.add(tb);                  
                   
         if (app.getAlgebraInput() != null)        	
         	bg.add(app.getAlgebraInput().getInputButton());                                 
        
        	if (showToolBarHelp) {       
-       		// mode label
-           	modeNameLabel = new JLabel();
-       		add(modeNameLabel, BorderLayout.CENTER);       		
+       		// mode label       		
+           	modeNameLabel = new JLabel();  
+           	leftPanel.add(Box.createRigidArea(new Dimension(5,5)));
+       		leftPanel.add(modeNameLabel);
        	}   
        	
         // add menus with modes to toolbar
@@ -92,7 +99,7 @@ public class MyToolbar extends JPanel{
 	        button.setToolTipText(text);        
 	        undoPanel.add(button, BorderLayout.SOUTH);   
 	        
-	        add(undoPanel, BorderLayout.EAST);
+	        add(undoPanel, BorderLayout.EAST);		        
         }                     
         setMode(app.getMode());
     }

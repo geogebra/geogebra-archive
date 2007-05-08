@@ -10,10 +10,11 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.gui;
+package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.TitlePanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -215,7 +216,7 @@ public class PrintPreview extends JDialog {
 		
 		// show scale panel for euclidian view
 		EuclidianView ev = app.getEuclidianView();
-		ev.resetMode();
+		app.clearSelectedGeos();
 		if (m_target == ev) {			
 			PrintScalePanel scalePanel = new PrintScalePanel(app, ev);
 			scalePanel.setBorder(BorderFactory.createEtchedBorder());	

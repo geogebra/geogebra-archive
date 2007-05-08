@@ -41,10 +41,7 @@ import javax.swing.JPanel;
 public class ConstructionProtocolExportDialog extends JDialog implements KeyListener {
 	        
 	       
-			private static final long serialVersionUID = -2626950140196416416L;
-			
-			//private static final int DEFAULT_GRAPHICS_WIDTH = 600;  
-	        private static final int DIALOG_WIDTH = 500;
+			private static final long serialVersionUID = -2626950140196416416L;				 	     
 	                
 	        private JCheckBox cbDrawingPadPicture, cbScreenshotPicture;
 	        private JCheckBox cbColor;
@@ -221,12 +218,12 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	               }  
 	               else if (includeAlgebraPicture) {
 	            	   // picture of drawing pad
-	                   img = getMainCompScreenshot();
+	                   img = getCenterPanelImage();
 	               }
 	              
 	               //  save image to PNG file
 	               if (img != null) {
-	                   pngFile = Application.addExtension(file, "png");
+	                   pngFile = Application.addExtension(Application.removeExtension(file), "png");
 	                   ImageIO.write(img, "png", pngFile);
 	               } 
 	                               
@@ -240,11 +237,11 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	            }
 	        }
 	        
-	        private BufferedImage getMainCompScreenshot() {
-	        	Component mainComp = app.getMainComponent();
-	        	BufferedImage img = new BufferedImage(mainComp.getWidth(), mainComp.getHeight(), BufferedImage.TYPE_INT_RGB);       
+	        private BufferedImage getCenterPanelImage() {
+	        	JPanel centPanel = app.getCenterPanel();
+	        	BufferedImage img = new BufferedImage(centPanel.getWidth(), centPanel.getHeight(), BufferedImage.TYPE_INT_RGB);       
                 Graphics2D g = img.createGraphics();
-                mainComp.paint(g);
+                centPanel.paint(g);
                 g.dispose();
                 img.flush();
                 return img;
