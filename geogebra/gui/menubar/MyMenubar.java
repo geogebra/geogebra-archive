@@ -152,8 +152,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			mi = new JMenuItem(newWindowAction);
 			mi.setIcon(app.getEmptyIcon());
 			menu.add(mi);
+			menu.addSeparator();
 		}
-		menu.addSeparator();
+		
 		mi = menu.add(loadAction);
 		setCtrlAccelerator(mi, 'O'); // open
 		menu.addSeparator();
@@ -177,9 +178,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		submenu.addSeparator();
 		//submenu.add(htmlCPAction);
 		submenu.add(exportGraphicAction);
-		submenu.add(drawingPadToClipboardAction);
-		menu.addSeparator();
-		menu.add(exitAction);
+		submenu.add(drawingPadToClipboardAction);		
+		
+		if (!app.isApplet()) {
+			menu.addSeparator();
+			menu.add(exitAction);
+		}			
+		
 		updateMenuFile();	
 		add(menuFile);
 
