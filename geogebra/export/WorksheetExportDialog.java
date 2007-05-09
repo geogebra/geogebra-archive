@@ -372,6 +372,11 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append(cbEnableRightClick.isSelected());
 		sb.append("\">\n");
 		
+		// showMenuBar
+		sb.append("\t<param name=\"showMenuBar\" value=\"");
+		sb.append(cbShowMenuBar.isSelected());
+		sb.append("\">\n");
+		
 		// showToolBar
 		sb.append("\t<param name=\"showToolBar\" value=\"");
 		sb.append(cbShowToolBar.isSelected());
