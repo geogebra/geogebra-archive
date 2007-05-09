@@ -43,8 +43,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 /**
- *
- * @author  Markus
+ * Context menu for GeoElement objects.
+ * @author  Markus Hohenwarter
  * @version 
  */
 public class MyPopupMenu extends JPopupMenu {
@@ -76,12 +76,15 @@ public class MyPopupMenu extends JPopupMenu {
         this.geo = geo;
         //this.location = location;                               
                     
-        setTitle(geo.getLongDescriptionHTML(false, true));              
-        addPointItems();
-        addLineItems();
-        addVectorItems();
-        addConicItems();
-        addNumberItems();
+        setTitle(geo.getLongDescriptionHTML(false, true)); 
+        
+        if (app.showAlgebraView()) {
+	        addPointItems();
+	        addLineItems();
+	        addVectorItems();
+	        addConicItems();
+	        addNumberItems();
+        }
 
         if (getComponentCount() > 2)
             addSeparator();
@@ -132,8 +135,8 @@ public class MyPopupMenu extends JPopupMenu {
         if (!(geo instanceof GeoLine))
             return;
         if (geo instanceof GeoSegment)
-            return;
-
+            return;        
+        
         line = (GeoLine) geo;
         int mode = line.getMode();
         AbstractAction action;
@@ -366,7 +369,8 @@ public class MyPopupMenu extends JPopupMenu {
         }
         
         // AUXILIARY OBJECT
-        if (!(geo.isTextValue() || geo.isGeoImage())) {
+        if (app.showAlgebraView() &&
+        	!(geo.isTextValue() || geo.isGeoImage())) {
             
             // show object
         	JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem( app.getPlain("AuxiliaryObject"));

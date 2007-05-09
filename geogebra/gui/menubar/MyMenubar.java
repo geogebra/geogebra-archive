@@ -889,7 +889,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				sb.append(Application.buildDate);
 
 				// license
-				String text = readTextFromJar("gui/license_message.txt");
+				String text = readTextFromJar("license_message.txt");
 				JTextArea textArea = new JTextArea(21, 45);
 				JScrollPane scrollPane = new JScrollPane(textArea,
 						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1101,12 +1101,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
     }
     
     private String readTextFromJar(String s) {
-        StringBuffer sb = new StringBuffer();
-        String thisLine;
+        StringBuffer sb = new StringBuffer();        
         try {
-          InputStream is = getClass().getResourceAsStream(s);
+          InputStream is = GeoGebra.class.getResourceAsStream(s);
           BufferedReader br = new BufferedReader
              (new InputStreamReader(is));
+          String thisLine;
           while ((thisLine = br.readLine()) != null) {  
              sb.append(thisLine);
              sb.append("\n");
