@@ -146,6 +146,7 @@ public class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
         supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
         supportedLocales.add( new Locale("fa") );             	// Persian
+        supportedLocales.add( new Locale("pl") );     		// Polish
         supportedLocales.add( new Locale("pt", "BR") );     // Portugese (Brazil)
         supportedLocales.add( new Locale("pt", "PT") );     // Portuguese (Portugal)        
         supportedLocales.add( new Locale("sr") );           	// Serbian
@@ -293,7 +294,7 @@ public class Application implements	KeyEventDispatcher {
     		}
     	}*/
     	
-    	this.undoActive = undoActive;    	    	
+    	this.undoActive = undoActive;       	
     		
 		isApplet = applet != null;
 		if (frame != null) {
@@ -335,9 +336,8 @@ public class Application implements	KeyEventDispatcher {
    			if (appFontSize == 0) setFontSize(getInitFontSize());
         INITING = false;	
         
-        isSaved = true;       
-        
-        initShowAxesGridActions();        
+        isSaved = true;                         
+        initShowAxesGridActions();
         
         // for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -2174,9 +2174,9 @@ public class Application implements	KeyEventDispatcher {
     
     private void initMenubar() {
     	if (menuBar == null) {
-    		menuBar = new MyMenubar(this);    	
-    		menuBar.initMenubar();
+    		menuBar = new MyMenubar(this);    	    		
     	}  
+    	menuBar.initMenubar();
     }
     
     public void setShowToolBar(boolean toolbar, boolean help) {
@@ -2317,9 +2317,10 @@ public class Application implements	KeyEventDispatcher {
 		};
     }
     
-    private void updateActions() {
-		undoAction.setEnabled(kernel.undoPossible());
-		redoAction.setEnabled(kernel.redoPossible());			
+    private void updateActions() {    
+    	if (undoAction == null) return;
+    	undoAction.setEnabled(kernel.undoPossible());
+    	redoAction.setEnabled(kernel.redoPossible());    	
 	}
 
    

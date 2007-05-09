@@ -40,6 +40,7 @@ TRANSLATIONS
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Norwegian: Sigbjørn Hals (Norway)
   * Persian: Saeed Aminorroaya
+  * Polish: Marzanna Miasko, Ewa Piwek, Katarzyna Winkowska-Nowak (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, 
        Alana Paula, Luciana de Lima (Brazil)
   * Portuguese (Portugal): Jorge Geraldes (Portugal)
