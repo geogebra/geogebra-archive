@@ -39,7 +39,7 @@ TRANSLATIONS
   * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Norwegian: Sigbjørn Hals (Norway)
-  * Persian: Saeed Aminorroaya
+  * Persian: Saeed Aminorroaya (Iran)
   * Polish: Marzanna Miasko, Ewa Piwek, Katarzyna Winkowska-Nowak (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, 
        Alana Paula, Luciana de Lima (Brazil)
