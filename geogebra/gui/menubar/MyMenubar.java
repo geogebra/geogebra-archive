@@ -55,7 +55,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			showConsProtNavigationOpenProtAction, loadAction, saveAction,
 			saveAsAction, //printProtocolAction, 
 			printEuclidianViewAction,
-			undoAction, redoAction, exitAction, exitAllAction, helpAction,
+			exitAction, exitAllAction, helpAction,
 			// updateAction,
 			infoAction, exportGraphicAction, htmlCPAction, exportWorksheet,
 			showCreateToolsAction, showManageToolsAction;
@@ -120,9 +120,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
         updateMenuRightAngleStyle();
         updateMenuCoordStyle();	
         updateMenuLabeling();
+        updateMenuWindow();
+        
+        updateActions();
 	}
 
-	public void updateMenuFile() {
+	private void updateMenuFile() {
 		if (miCloseAll == null) {
 			miCloseAll = new JMenuItem(exitAllAction);
 		}
@@ -182,9 +185,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// Edit
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
-			mi = menu.add(undoAction);
+			mi = menu.add(app.getUndoAction());
 			setCtrlAccelerator(mi, 'Z');
-			mi = menu.add(redoAction);
+			mi = menu.add(app.getRedoAction());
 			setCtrlAccelerator(mi, 'Y');
 			menu.addSeparator();
 		}
@@ -739,29 +742,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		undoAction = new AbstractAction(app.getMenu("Undo"),
-				app.getImageIcon("undo.gif")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				kernel.undo();
-				updateActions();
-				updateMenubar();
-				System.gc();
-			}
-		};
-
-		redoAction = new AbstractAction(app.getMenu("Redo"),
-				app.getImageIcon("redo.gif")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				kernel.redo();
-				updateActions();
-				updateMenubar();
-				System.gc();
-			}
-		};
+		
 
 		refreshAction = new AbstractAction(app.getMenu("Refresh")) {
 			private static final long serialVersionUID = 1L;
@@ -928,9 +909,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		updateActions();
 	}
 
-	public void updateActions() {
-		undoAction.setEnabled(kernel.undoPossible());
-		redoAction.setEnabled(kernel.redoPossible());
+	private void updateActions() {		
 		propertiesAction.setEnabled(!kernel.isEmpty());
 	}
 
@@ -938,16 +917,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		KeyStroke ks = KeyStroke.getKeyStroke(acc, Event.CTRL_MASK);
 		mi.setAccelerator(ks);
 	}
-
-	public AbstractAction getRedoAction() {
-		return redoAction;
-	}
-
-	public AbstractAction getUndoAction() {
-		return undoAction;
-	}
-
-	public void updateMenuWindow() {		
+	
+	private void updateMenuWindow() {		
 		menuWindow.removeAll();
 		menuWindow.add(newWindowAction);
 

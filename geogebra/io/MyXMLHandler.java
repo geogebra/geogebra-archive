@@ -736,6 +736,7 @@ public class MyXMLHandler implements DocHandler {
             
             return true;
         } catch (Exception e) {
+        	System.err.println(e.getMessage() + ": " + e.getCause());
             return false;
         }
     }
@@ -788,6 +789,7 @@ public class MyXMLHandler implements DocHandler {
             app.setToolBarDefinition(toolbarDef);
             return true;
         } catch (Exception e) {
+        	System.err.println(e.getMessage() + ": " + e.getCause());
             return false;
         }
     }

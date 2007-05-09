@@ -221,7 +221,8 @@ public class Application implements	KeyEventDispatcher {
     // Actions
     private AbstractAction 
         showAxesAction,
-        showGridAction;
+        showGridAction,
+        undoAction, redoAction;
 
     private PropertiesDialog propDialog;
     private ConstructionProtocol constProtocol;
@@ -336,8 +337,7 @@ public class Application implements	KeyEventDispatcher {
         
         isSaved = true;       
         
-        initShowAxesGridActions();
-        menuBar = new MyMenubar(this);
+        initShowAxesGridActions();        
         
         // for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -390,7 +390,10 @@ public class Application implements	KeyEventDispatcher {
     }    
     
     public String getDefaultToolbarString() {
-    	return appToolbarPanel.getDefaultToolbarString();
+    	if (appToolbarPanel == null)
+    		return "";
+    	
+    	return appToolbarPanel.getDefaultToolbarString();    	
     }
     
     public int getMenuBarHeight() {
@@ -462,7 +465,7 @@ public class Application implements	KeyEventDispatcher {
         if (showToolBar) {
         	if (appToolbarPanel == null) {
         		appToolbarPanel = new MyToolbar(this);        		  
-        	} 
+        	}        	       
         	       	        	            
         	 // NORTH: Toolbar       
         	panel.add(appToolbarPanel, BorderLayout.NORTH);        	
@@ -1783,7 +1786,7 @@ public class Application implements	KeyEventDispatcher {
         if (currentFile != null)
             currentPath = currentFile.getParentFile();   
         updateTitle();
-        menuBar.updateMenuWindow();
+        updateMenubar();
     }
 
     public void updateTitle() {   
@@ -1940,10 +1943,9 @@ public class Application implements	KeyEventDispatcher {
     private void setLabels() {
         if (INITING)
             return;       
-
-        // menubar inits actions too
-        menuBar.initMenubar(); 
+            
         if (showMenuBar) {
+        	initMenubar();        	
 	        if (isApplet) 
 	        	applet.setJMenuBar(menuBar);
 	        else 
@@ -1964,11 +1966,8 @@ public class Application implements	KeyEventDispatcher {
             helpBrowser.setLabels();
     }    
     
-    public void setToolBarDefinition(String toolBarDefinition) {
-    	if (toolBarDefinition != getDefaultToolbarString())    	
-    		strCustomToolbarDefinition = toolBarDefinition;
-    	else
-    		strCustomToolbarDefinition = null;
+    public void setToolBarDefinition(String toolBarDefinition) {    	  
+    	strCustomToolbarDefinition = toolBarDefinition;    	
     }
 
     public String getToolBarDefinition() {
@@ -2013,10 +2012,10 @@ public class Application implements	KeyEventDispatcher {
 				BufferedImage img = getExternalImage(iconName);				
 				if (img == null)
 					// default icon
-					icon = getImageIcon("mode_tool_32.png", mainComp.getBackground());			
+					icon = getImageIcon("mode_tool_32.png", Color.gray);			
 				else
 					// use image as icon
-					icon = new ImageIcon(ImageManager.addBorder(img, mainComp.getBackground()));				
+					icon = new ImageIcon(ImageManager.addBorder(img, Color.gray));				
 			} catch (Exception e) {
 				System.err.println("macro does not exist: ID = " + macroID);
 				return null;
@@ -2075,9 +2074,7 @@ public class Application implements	KeyEventDispatcher {
             	if (algebraView != null) algebraView.detachView();
             }                
                 
-            if (menuBar != null) {            	
-            	menuBar.updateMenubar();
-            }
+            updateMenubar();            
             isSaved = false;
         }
     }
@@ -2096,11 +2093,8 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public void setShowAlgebraInput(boolean flag) {
-    	showAlgebraInput = flag;
-    	
-    	if (menuBar != null) {  
-    		menuBar.updateMenubar();    	    	
-    	}
+    	showAlgebraInput = flag;    	
+    	updateMenubar();    	    	    	
     }
     
     public boolean showCmdList() {
@@ -2112,8 +2106,7 @@ public class Application implements	KeyEventDispatcher {
     	    	    	    	
     	if (algebraInput != null)
     		algebraInput.initGUI();    	
-    	if (menuBar != null)
-    		menuBar.updateMenubar();
+    	updateMenubar();    	
     }
     
     /**
@@ -2134,7 +2127,7 @@ public class Application implements	KeyEventDispatcher {
 	  	  	constProtocolNavigation.unregister();
 	  	  }
 	  	  
-	  	  menuBar.updateMenubar();  	
+	  	  updateMenubar();  	
 	  }
 	 
 	 public boolean showConsProtNavigation() {
@@ -2172,15 +2165,17 @@ public class Application implements	KeyEventDispatcher {
 		showAuxiliaryObjects = flag;
 		if (algebraView != null) 
 			algebraView.setShowAuxiliaryObjects(flag);
-		if (menuBar != null)
-			menuBar.updateMenubar();		
+		updateMenubar();		
 	}
     
     public void setShowMenuBar(boolean flag) {
-    	showMenuBar = flag;
-    	
-    	if (showMenuBar && menuBar == null) {
-    		menuBar = new MyMenubar(this);    			    		
+    	showMenuBar = flag;    	
+    }
+    
+    private void initMenubar() {
+    	if (menuBar == null) {
+    		menuBar = new MyMenubar(this);    	
+    		menuBar.initMenubar();
     	}  
     }
     
@@ -2256,7 +2251,10 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public void updateMenubar() {
-    	menuBar.updateMenubar();
+    	if (menuBar != null)
+    		menuBar.updateMenubar();
+    	updateActions();
+    	System.gc();
     }
     
     public void updateCommandDictionary() {
@@ -2280,7 +2278,7 @@ public class Application implements	KeyEventDispatcher {
 				euclidianView.showAxes(!bothAxesShown, !bothAxesShown);				            	
                 euclidianView.repaint();
                 storeUndoInfo();
-                menuBar.updateMenubar();
+                updateMenubar();
             }
         };
 
@@ -2291,11 +2289,38 @@ public class Application implements	KeyEventDispatcher {
                     // toggle grid
                 euclidianView.showGrid(!euclidianView.getShowGrid());
                 euclidianView.repaint();
-                storeUndoInfo();
-                menuBar.updateMenubar();
+                storeUndoInfo();                
+                updateMenubar();
             }
         };
+        
+        undoAction = new AbstractAction(getMenu("Undo"),
+				getImageIcon("undo.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				kernel.undo();				
+				updateMenubar();
+				System.gc();
+			}
+		};
+
+		redoAction = new AbstractAction(getMenu("Redo"),
+				getImageIcon("redo.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				kernel.redo();				
+				updateMenubar();
+				System.gc();
+			}
+		};
     }
+    
+    private void updateActions() {
+		undoAction.setEnabled(kernel.undoPossible());
+		redoAction.setEnabled(kernel.redoPossible());			
+	}
 
    
    
@@ -2647,14 +2672,14 @@ public class Application implements	KeyEventDispatcher {
     public void newFile() {
         if (isSaved() || saveCurrentFile()) {
             clearAll();
-            setCurrentFile(null);   
-            menuBar.updateMenubar();
+            setCurrentFile(null);               
+            updateMenubar();
         }
     }
     
     public void newWindow(String [] args) {
     	GeoGebra wnd = GeoGebra.createNewWindow(args);    	
-    	updateMenusForInstances();
+    	updateMenubar();
     	
     	Application app = wnd.getApplication();
     	if (app.getLocale() != getLocale()) {
@@ -2899,7 +2924,7 @@ public class Application implements	KeyEventDispatcher {
     public void storeUndoInfo() { 
     	if (undoActive) { 	    	
 			kernel.storeUndoInfo();
-			menuBar.updateActions();
+			updateMenubar();
 			isSaved = false;
     	}
     }
@@ -2907,15 +2932,15 @@ public class Application implements	KeyEventDispatcher {
     public void restoreCurrentUndoInfo() {
     	if (undoActive) {     		
     		kernel.restoreCurrentUndoInfo();    		
-    		menuBar.updateActions();
+    		updateMenubar();
     		isSaved = false;
     	}
     }
 
     final public void clearAll() {
         kernel.clearConstruction();
-        kernel.initUndoInfo();
-        menuBar.updateActions();
+        kernel.initUndoInfo();        
+        updateMenubar();
         isSaved = true;
         System.gc();        
     }
@@ -2950,7 +2975,8 @@ public class Application implements	KeyEventDispatcher {
         }
         
         // custom toolbar
-        if (strCustomToolbarDefinition != null) {
+        if (strCustomToolbarDefinition != null && 
+        	!strCustomToolbarDefinition.equals(getDefaultToolbarString())) {
         	sb.append("\t<toolbar");
         	sb.append(" str=\"");
         	sb.append(strCustomToolbarDefinition);     
@@ -3254,17 +3280,13 @@ public class Application implements	KeyEventDispatcher {
     }
 
 	public AbstractAction getRedoAction() {
-		return menuBar.getRedoAction();
+		return redoAction;
 	}
 
-	public AbstractAction getUndoAction() {
-		return menuBar.getUndoAction();
+	public AbstractAction getUndoAction() {		
+		return undoAction;
 	}
-    	   
-	public void updateMenusForInstances() {
-		menuBar.updateMenuWindow();
-		menuBar.updateMenuFile();
-	}
+    	   	
 	
 	/*
 	 * KeyEventDispatcher implementation to handle key events globally for the

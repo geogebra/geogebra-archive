@@ -86,12 +86,12 @@ public class TitlePanel extends JPanel {
 
 	p.add(p1, BorderLayout.EAST);
 	add(p, BorderLayout.CENTER);
-	/*
-	 * setBorder(BorderFactory.createCompoundBorder(BorderFactory
-	 * .createEtchedBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-	 */
-	setBorder(BorderFactory.createTitledBorder(app
-		.getPlain("Document info")));
+	
+	 setBorder(BorderFactory.createCompoundBorder(BorderFactory
+	 .createEtchedBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+	
+	//setBorder(BorderFactory.createTitledBorder(app
+	//	.getPlain("Document info")));
 
 	ActionListener lst = new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {

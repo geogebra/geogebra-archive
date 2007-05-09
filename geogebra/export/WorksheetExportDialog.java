@@ -111,8 +111,16 @@ public class WorksheetExportDialog extends JDialog {
 		}
 	}
 
-	private void initGUI() {
-		setLayout(new BorderLayout());
+	private void initGUI() {		
+		// title, author, date
+		TitlePanel tp = new TitlePanel(app);
+		ActionListener kernelChangedListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kernelChanged = true;
+			}
+		};
+		tp.addActionListener(kernelChangedListener);
+		tp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -150,9 +158,11 @@ public class WorksheetExportDialog extends JDialog {
 		buttonPanel.add(exportButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPanel.add(cancelButton);
-
-		add(tabbedPane, BorderLayout.CENTER);
-		add(buttonPanel, BorderLayout.SOUTH);
+		
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(tp, BorderLayout.NORTH);		
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
 		Util.registerForDisposeOnEscape(this);
 
@@ -169,16 +179,7 @@ public class WorksheetExportDialog extends JDialog {
 	private JPanel createGeneralSettingsTab() {
 		JPanel tab = new JPanel(new BorderLayout(5, 5));
 		tab.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-		// title, author, date
-		TitlePanel tp = new TitlePanel(app);
-		ActionListener kernelChangedListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				kernelChanged = true;
-			}
-		};
-		tp.addActionListener(kernelChangedListener);
-
+		
 		// text areas
 		JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
 		JLabel label = new JLabel(app.getPlain("TextBeforeConstruction") + ":");
@@ -244,8 +245,9 @@ public class WorksheetExportDialog extends JDialog {
 		rb = new JRadioButton(app.getPlain("OpenButton"));
 		rb.setActionCommand("openButton");
 		rb.addActionListener(lst);
-		bg.add(rb);		
+		bg.add(rb);			
 		appletPanel.add(rb, BorderLayout.SOUTH);
+		
 		centerPanel.add(appletPanel, BorderLayout.CENTER);
 		tab.add(centerPanel, BorderLayout.CENTER);		
 

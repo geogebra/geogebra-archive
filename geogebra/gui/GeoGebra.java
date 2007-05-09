@@ -75,7 +75,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		activeInstance = this;		
-		app.updateMenusForInstances();	
+		app.updateMenubar();	
 		System.gc();
 	}
 
@@ -95,9 +95,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		/*
 		 * int offset = 20 * (instances.size() - 1); setLocation((dim.width - w) /
 		 * 2 + offset, (dim.height - h) / 2 + offset);
-		 */
-		setLocation((dim.width - w) / 2, (dim.height - h) / 2);
+		 */		
 		setSize(w, h);
+		setLocationRelativeTo(null);
 	}
 
 	public static void main(String[] args) {

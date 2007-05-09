@@ -15,7 +15,7 @@ package geogebra;
 /*
  * GeoGebraApplet.java
  *
- * Created on 23. J�nner 2003, 22:37
+ * Created on 23. January 2003, 22:37
  */
 
 import geogebra.euclidian.EuclidianView;
@@ -155,7 +155,7 @@ public class GeoGebraApplet extends JApplet {
 		
 		kernel = app.getKernel();
 		
-		initGUI();
+		initGUI();						
 	}
 
 	public void start() {
