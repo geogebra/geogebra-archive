@@ -450,6 +450,10 @@ final public class EuclidianController implements MouseListener,
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:
+			hits = view.getHits(mouseLoc, true);
+			createNewPoint(hits, true, true, true);
+			break;
+			
 		case EuclidianView.MODE_SEGMENT:
 		case EuclidianView.MODE_SEGMENT_FIXED:		
 		case EuclidianView.MODE_JOIN:
@@ -1149,6 +1153,10 @@ final public class EuclidianController implements MouseListener,
 				hits = tempArrayList;				
 			}
 		}
+		else if (mode == EuclidianView.MODE_POINT) {
+			// include polygons in hits
+			hits = view.getHits(mouseLoc, true);
+		}
 
 		if (hits == null)
 			hits = view.getHits(mouseLoc);
@@ -1273,7 +1281,7 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_POINT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				point(view.getTopHits(hits));
+				point(hits);
 			}
 			break;
 
@@ -1737,9 +1745,7 @@ final public class EuclidianController implements MouseListener,
 			}					
 			
 			if (movedGeo)
-				geo.updateCascade();
-			else
-				app.removeSelectedGeo(geo, false); // remove selected geo if it is not moveable
+				geo.updateCascade();			
 		}				
 		
 		if (repaint)

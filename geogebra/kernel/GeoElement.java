@@ -412,7 +412,7 @@ public abstract class GeoElement
 		return isColorSet;
 	}
 
-	public Color getColor() {
+	public Color getObjectColor() {
 		return objColor;
 	}
 

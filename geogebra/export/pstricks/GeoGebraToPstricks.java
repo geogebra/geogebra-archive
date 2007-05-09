@@ -371,7 +371,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	float xLabelHor = (x + xright) /2;
         float yLabelHor = y -(float)(
         		(euclidianView.getFont().getSize() + 2)/euclidianView.getYscale());
-		Color geocolor=geo.getColor();
+		Color geocolor=geo.getObjectColor();
 		codePoint.append("\\rput[bl](");
 		codePoint.append(kernel.format(xLabelHor));
 		codePoint.append(",");
@@ -645,7 +645,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	}
         // create point for slider
         GeoPoint geoPoint = new GeoPoint(construction);
-        geoPoint.objColor=geo.getColor();
+        geoPoint.objColor=geo.getObjectColor();
         String label="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
         geoPoint.setLabel(label);
     	double param =  (value - min) / (max - min);
@@ -710,7 +710,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	private void drawText(GeoText geo){
 		boolean isLatex=geo.isLaTeX();
 		String st=geo.getTextString();
-		Color geocolor=geo.getColor();
+		Color geocolor=geo.getObjectColor();
 		int style=geo.getFontStyle();
 		int size=geo.getFontSize()+app.getFontSize();
 		GeoPoint gp;
@@ -1445,7 +1445,7 @@ public class GeoGebraToPstricks implements ActionListener {
 				xLabel=euclidianView.toRealWorldCoordX(Math.round(xLabel));
 				yLabel=euclidianView.toRealWorldCoordY(Math.round(yLabel));
 				
-				Color geocolor=geo.getColor();
+				Color geocolor=geo.getObjectColor();
 				codePoint.append("\\rput[bl](");
 				codePoint.append(kernel.format(xLabel));
 				codePoint.append(",");
@@ -1569,7 +1569,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		codeBeginPic.append(")\n");
 	}
 	private void PointOptionCode(GeoPoint geo){
-		Color dotcolor=geo.getColor();
+		Color dotcolor=geo.getObjectColor();
 		int dotsize=geo.getPointSize();
 		boolean coma=false;
 		boolean bracket=false;
@@ -1596,7 +1596,7 @@ public class GeoGebraToPstricks implements ActionListener {
 	}
 	private String LineOptionCode(GeoElement geo,boolean transparency){
 		StringBuffer sb=new StringBuffer(); 
-		Color linecolor=geo.getColor();
+		Color linecolor=geo.getObjectColor();
 		int linethickness=geo.getLineThickness();
 		int linestyle=geo.getLineType();
 

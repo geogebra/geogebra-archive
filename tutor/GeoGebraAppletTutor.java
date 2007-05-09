@@ -495,7 +495,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 	public synchronized String getColor(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
-		return "#" + geogebra.util.Util.toHexString(geo.getColor());		
+		return "#" + geogebra.util.Util.toHexString(geo.getObjectColor());		
 	}	
 	
 	/**

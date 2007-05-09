@@ -140,7 +140,7 @@ public class Construction {
      * Returns the construction default object of this 
      * construction.
      */
-    public ConstructionDefaults getConstructionDefaults() {    	
+    final public ConstructionDefaults getConstructionDefaults() {    	
     	return consDefaults;
     }              
     

@@ -1843,12 +1843,20 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns array of GeoElements whose visual representation is at screen
+	 * coords (x,y). order: points, vectors, lines, conics
+	 */
+	final public ArrayList getHits(Point p) {
+		return getHits(p, false);
+	}
 
 	/**
 	 * returns array of GeoElements whose visual representation is at screen
 	 * coords (x,y). order: points, vectors, lines, conics
 	 */
-	final public ArrayList getHits(Point p) {
+	final public ArrayList getHits(Point p, boolean includePolygons) {
 		foundHits.clear();
 
 		// count images and Polygons
@@ -1891,7 +1899,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (size - (imageCount + polyCount) > 0) {
 			for (int i = 0; i < foundHits.size(); ++i) {
 				GeoElement geo = (GeoElement) foundHits.get(i);
-				if (geo.isGeoImage() || geo.isGeoPolygon())
+				if (geo.isGeoImage() || (!includePolygons && geo.isGeoPolygon()))
 					foundHits.remove(i);
 			}
 		}
@@ -2003,7 +2011,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	 * Returns array of polygons with n points out of hits.
 	 * 
 	 * @return
-	 */
+	 *
 	final public ArrayList getPolygons(ArrayList hits, int n, ArrayList polygons) {
 		// search for polygons in hits that exactly have the needed number of
 		// points
@@ -2016,7 +2024,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				polygons.remove(k);
 		}
 		return polygons;
-	}
+	}*/
 
 	/**
 	 * Stores all GeoElements of type geoclass to result list.
@@ -2152,7 +2160,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 						Color col = geo.getConstruction()
 								.getConstructionDefaults().getDefaultGeo(
 										ConstructionDefaults.DEFAULT_POLYGON)
-								.getColor();
+								.getObjectColor();
 						geo.setObjColor(col);
 					}
 
@@ -2181,12 +2189,12 @@ public final class EuclidianView extends JPanel implements View, Printable,
 							.getConstructionDefaults();
 					if (geo.isIndependent()) {
 						Color col = consDef.getDefaultGeo(
-								ConstructionDefaults.DEFAULT_NUMBER).getColor();
+								ConstructionDefaults.DEFAULT_NUMBER).getObjectColor();
 						geo.setObjColor(col);
 					} else {
 						Color col = consDef.getDefaultGeo(
 								ConstructionDefaults.DEFAULT_POLYGON)
-								.getColor();
+								.getObjectColor();
 						geo.setObjColor(col);
 					}
 				}

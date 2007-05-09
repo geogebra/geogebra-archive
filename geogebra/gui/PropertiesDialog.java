@@ -728,7 +728,7 @@ public class PropertiesDialog
 			for (int i = 1; i < geos.length; i++) {
 				temp = (GeoElement) geos[i];
 				// same object color
-				if (!geo0.getColor().equals(temp.getColor())) {
+				if (!geo0.getObjectColor().equals(temp.getObjectColor())) {
 					equalObjColor = false;
 					break;
 				}
@@ -736,7 +736,7 @@ public class PropertiesDialog
 
 			// set colorButton's color to object color
 			if (equalObjColor) {
-				currentColor = geo0.getColor();
+				currentColor = geo0.getObjectColor();
 				colorButton.setForeground(currentColor);
 			} else {
 				currentColor = Color.lightGray;

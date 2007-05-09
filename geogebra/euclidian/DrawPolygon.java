@@ -169,9 +169,8 @@ implements Previewable {
 	public void disposePreview() {	
 	}
     
-	final public boolean hit(int x,int y) {           
-       return gp.contains(x, y);
-       //return false;      
+	final public boolean hit(int x,int y) {		
+       return gp.contains(x, y) || gp.intersects(x-2, y-2, 4, 4);        
     }
 	
     final public boolean isInside(Rectangle rect) {

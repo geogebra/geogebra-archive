@@ -48,6 +48,8 @@ public class AlgoPolygon extends AlgoElement {
         poly = new GeoPolygon(cons, points);                       
         createSegments();        
         poly.setSegments(segments);
+        // refresh color to ensure segments have same color as polygon:
+        poly.setObjColor(poly.getObjectColor()); 
         
         setInputOutput(); // for AlgoElement
       

@@ -208,7 +208,7 @@ public class ConstructionDefaults {
 	 * Sets default color for given geo. 
 	 * Note: this is mostly kept for downward compatibility.
 	 */
-	public void setDefaultVisualStyles(GeoElement geo) {
+	final public void setDefaultVisualStyles(GeoElement geo) {
 		// all object types that are not specifically supported
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
