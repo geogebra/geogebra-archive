@@ -114,6 +114,8 @@ public class Application implements	KeyEventDispatcher {
 	public final static String PROPERTIES_FILE = "geogebra_properties.jar";
 	// GeoGebra uses a computer algebra system 
 	public final static String CAS_FILE = "geogebra_cas.jar";
+	// GeoGebra export libraries file 
+	public final static String EXPORT_FILE = "geogebra_export.jar";
 	
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
 		

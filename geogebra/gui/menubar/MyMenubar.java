@@ -123,6 +123,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	}
 
 	private void updateMenuFile() {
+		if (menuFile == null) return;
+		
 		if (miCloseAll == null) {
 			miCloseAll = new JMenuItem(exitAllAction);
 		}
@@ -167,20 +169,18 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi = menu.add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
 		mi.setIcon(app.getImageIcon("print.gif"));
-		
-		if (!app.isApplet()) {		
-			submenu = new JMenu(app.getMenu("Export"));
-			submenu.setIcon(app.getEmptyIcon());
-			menu.add(submenu);
-			submenu.add(exportWorksheet);
-			submenu.addSeparator();
-			//submenu.add(htmlCPAction);
-			submenu.add(exportGraphicAction);
-			submenu.add(drawingPadToClipboardAction);
-			menu.addSeparator();
-			menu.add(exitAction);
-			updateMenuFile();			
-		}
+						
+		submenu = new JMenu(app.getMenu("Export"));
+		submenu.setIcon(app.getEmptyIcon());
+		menu.add(submenu);
+		submenu.add(exportWorksheet);
+		submenu.addSeparator();
+		//submenu.add(htmlCPAction);
+		submenu.add(exportGraphicAction);
+		submenu.add(drawingPadToClipboardAction);
+		menu.addSeparator();
+		menu.add(exitAction);
+		updateMenuFile();	
 		add(menuFile);
 
 		// Edit
@@ -934,7 +934,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi.setAccelerator(ks);
 	}
 	
-	private void updateMenuWindow() {		
+	private void updateMenuWindow() {	
+		if (menuWindow == null) return;
+		
 		menuWindow.removeAll();
 		menuWindow.add(newWindowAction);
 
@@ -979,6 +981,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	}
 
 	private void updateMenuPointStyle() {
+		if (menuPointStyle == null) return;
+		
 		int pos = app.getEuclidianView().getPointStyle();
 		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos))
 				.setSelected(true);
@@ -986,6 +990,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 	// added by Loïc BEGIN
 	private void updateMenuRightAngleStyle() {
+		if (menuRightAngleStyle == null) return;
+		
 		int pos = app.getEuclidianView().getRightAngleStyle();
 		((JRadioButtonMenuItem) menuRightAngleStyle.getMenuComponent(pos))
 				.setSelected(true);
@@ -994,18 +1000,24 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	// END
 
 	private void updateMenuCoordStyle() {
+		if (menuCoordStyle == null) return;
+		
 		int pos = kernel.getCoordStyle();
 		((JRadioButtonMenuItem) menuCoordStyle.getMenuComponent(pos))
 				.setSelected(true);
 	}
 	
 	private void updateMenuLabeling() {
+		if (menuLabeling == null) return;
+		
 		int pos = app.getLabelingStyle();
 		((JRadioButtonMenuItem) menuLabeling.getMenuComponent(pos))
 				.setSelected(true);
 	}
 	
 	private void updateMenuPointCapturing() {
+		if (menuPointCapturing == null) return;
+		
 		String pos = Integer.toString(app.getEuclidianView().getPointCapturingMode());
 		for (int i = 0; i < 3; i++) {
 			JRadioButtonMenuItem mi = (JRadioButtonMenuItem) menuPointCapturing
@@ -1019,6 +1031,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	}
 
 	private void updateMenuDecimalPlaces() {
+		if (menuDecimalPlaces == null) return;
+		
 		int pos = kernel.getPrintDecimals();
 		try {
 			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))

@@ -617,5 +617,14 @@ public class WorksheetExportDialog extends JDialog {
 		dest = new File(destDir, Application.GUI_FILE);
 		jarURL = app.getGUIFileURL();
 		new CopyURLToFile(app, jarURL, dest).start();
+		
+		// menu bar: include export file as well
+		if (cbShowMenuBar.isSelected()) {
+			// copy export file
+			dest = new File(destDir, Application.EXPORT_FILE);
+			jarURL = app.getGUIFileURL();
+			new CopyURLToFile(app, jarURL, dest).start();
+		}
+		
 	}
 }
