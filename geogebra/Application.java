@@ -3203,6 +3203,18 @@ public class Application implements	KeyEventDispatcher {
         }       
     }
     
+    /**
+     * Returns the location of the geogebra_gui.jar file. 
+     * @param app
+     */
+    public URL getEXPORTFileURL() {
+        try {
+            return new URL(getCodeBase() + EXPORT_FILE);
+        } catch (Exception e) {
+            return null;
+        }       
+    }
+    
     // remember split divider location
     private class DividerChangeListener implements PropertyChangeListener {                     
         public void propertyChange(PropertyChangeEvent e) {
