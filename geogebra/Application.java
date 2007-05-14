@@ -101,7 +101,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "9. May 2007";
+    public static final String buildDate = "14. May 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -145,6 +145,7 @@ public class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("el") );            // Greek                
         supportedLocales.add( new Locale("hu") );          	// Hungarian
         supportedLocales.add( new Locale("it") );     		 	// Italian
+        supportedLocales.add( new Locale("mk") );     		 	// Macedonian
         supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
         supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
         supportedLocales.add( new Locale("fa") );             	// Persian
