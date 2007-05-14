@@ -1715,7 +1715,8 @@ implements ExpressionValue {
         if (right != null) {
             rightStr = right.toLaTeXString(symbolic);
         }
-        return operationToString(leftStr, rightStr,!symbolic, STRING_TYPE_GEOGEBRA);
+              
+        return operationToString(leftStr, rightStr,!symbolic, STRING_TYPE_LATEX);
     }
     
 
