@@ -4,6 +4,7 @@ import geogebra.Application;
 import geogebra.ConstructionProtocolNavigation;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebra;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.kernel.Kernel;
@@ -55,7 +56,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			exitAction, exitAllAction, helpAction,
 			// updateAction,
 			infoAction, exportGraphicAction, exportWorksheet,
-			showCreateToolsAction, showManageToolsAction;
+			showCreateToolsAction, showManageToolsAction,
+			savePreferencesAction, clearPreferencesAction;
 
 	private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
@@ -364,6 +366,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		menu.addSeparator();
 
+		/*
 		// Graphics quality
 		submenu = new JMenu(app.getMenu("GraphicsQuality"));
 		String[] gqfi = { "LowQuality", "HighQuality" };
@@ -373,6 +376,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			pos = 0;
 		addRadioButtonMenuItems(submenu, this, gqfi, gqfi, pos);
 		menu.add(submenu);
+		*/
 
 		// Font size
 		submenu = new JMenu(app.getMenu("FontSize"));
@@ -408,6 +412,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		addLanguageMenuItems(submenu, langListener);
 		menu.add(submenu);
 
+		menu.addSeparator();
+		
+		// Preferences
+		menu.add(savePreferencesAction);
+		menu.add(clearPreferencesAction);
+		
 		menu.addSeparator();
 
 		// drawing pad properteis
@@ -927,6 +937,27 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				dialog.setVisible(true);
 			}
 		};
+		
+		
+		savePreferencesAction = new AbstractAction(app.getMenu("Preferences.Save")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				GeoGebraPreferences.savePreferences(app);				
+			}
+		};
+		
+		clearPreferencesAction = new AbstractAction(app.getMenu("Preferences.Clear")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				GeoGebraPreferences.clearPreferences();
+				GeoGebraPreferences.loadPreferences(app, true);
+				//app.updateContentPane();
+			}
+		};
+		
+		
 		updateActions();
 	}
 

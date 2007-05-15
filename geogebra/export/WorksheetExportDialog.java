@@ -46,8 +46,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 /**
- * Dialog which provides for exporting into an HTML page enriched with an
- * Applet.
+ * Dialog which provides for exporting into an HTML page 
+ * enriched with an Applet.
  * 
  * @author Markus Hohenwarter
  * @author Philipp Weissenbacher (materthron@users.sourceforge.net)
@@ -515,7 +515,7 @@ public class WorksheetExportDialog extends JDialog {
 		}
 
 		// include applet
-		sb.append("\n<applet code=\"geogebra.GeoGebraApplet\"");
+		sb.append("\n<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
 		sb.append(" codebase=\"./\"");
 		sb.append(" archive=\"geogebra.jar\"");
 		sb.append(" width=\"");

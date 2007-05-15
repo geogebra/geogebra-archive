@@ -148,16 +148,21 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	public static GeoGebra createNewWindow(String[] args) {
 		// set Application's size, position and font size
 		GeoGebra wnd = new GeoGebra();
-		Application app = new Application(args, wnd, true);
+		Application app = new Application(args, wnd, true);		
+		
+		// init GUI
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
 		// wnd.addComponentListener(app.getGUIController());
 		wnd.initFrame();
 		updateAllTitles();
 		wnd.addWindowFocusListener(wnd);
-		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));
-		app.initInBackground();
+		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));		
+		
+		// show window
 		wnd.setVisible(true);
+		
+		app.initInBackground();
 		return wnd;
 	}
 

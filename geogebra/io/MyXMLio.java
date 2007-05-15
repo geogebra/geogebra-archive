@@ -394,6 +394,24 @@ public class MyXMLio {
     }
     
     /**
+     * Returns XML representation of all settings WITHOUT construction.
+     */ 
+    public String getPreferencesXML() {    	    	
+        StringBuffer sb = new StringBuffer();            
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");
+                
+        // save gui settings
+        sb.append(app.getUserInterfaceXML());       
+        
+        // save euclidianView settings
+        sb.append(app.getEuclidianView().getXML());                  
+        
+        sb.append("</geogebra>");
+        return sb.toString();            
+    }
+    
+    /**
      * Returns XML representation of given macros in the kernel.
      */ 
     public String getFullMacroXML(Macro [] macros) {    	    	

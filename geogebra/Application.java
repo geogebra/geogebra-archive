@@ -26,6 +26,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.GeoGebra;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.HelpBrowser;
 import geogebra.gui.MyPopupMenu;
 import geogebra.gui.PropertiesDialog;
@@ -165,6 +166,7 @@ public class Application implements	KeyEventDispatcher {
     public static Hashtable specialLanguageNames = new Hashtable();
     static {
     	specialLanguageNames.put("deAT", "German (Austria)");
+    	specialLanguageNames.put("gl", "Galician");    	 
     	specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
     	specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");
     	specialLanguageNames.put("bs", "Bosnian");
@@ -314,8 +316,10 @@ public class Application implements	KeyEventDispatcher {
 		
 		if (isApplet) 
 			setApplet(applet); 
-		else 
-			setFrame(frame);
+		else {
+			// frame
+			setFrame(frame);			
+		}
 
         //  init kernel
         kernel = new Kernel(this);
@@ -332,11 +336,18 @@ public class Application implements	KeyEventDispatcher {
         // load file on startup and set fonts
         //  INITING:    to avoid multiple calls of setLabels() and updateContentPane()
         INITING = true; 
-    		if (!handleFileArg(args) && undoActive) {
+        	setFontSize(getInitFontSize());
+        	if (!isApplet)
+        		GeoGebraPreferences.initDefaultXML(this);   
+        
+        	boolean fileLoaded = handleFileArg(args);
+        	if (!fileLoaded && undoActive) {
 				kernel.initUndoInfo();
-			}
-    		    		    		
-   			if (appFontSize == 0) setFontSize(getInitFontSize());
+        	}    		    		    		   				
+   			
+   			// init preferences
+        	if (!isApplet)
+        		GeoGebraPreferences.loadPreferences(this, !fileLoaded);       
         INITING = false;	
         
         isSaved = true;                         
@@ -1867,8 +1878,7 @@ public class Application implements	KeyEventDispatcher {
         if (fileChooser != null){
         	fileChooser.setFont(getPlainFont());
         	SwingUtilities.updateComponentTreeUI(fileChooser);
-        }
-        	
+        }        	
     }
 
     public Font getBoldFont() {
@@ -2900,22 +2910,26 @@ public class Application implements	KeyEventDispatcher {
     //FKH 20040826
     public String getXML() {
         return myXMLio.getFullXML();
-    }
+    }      
     
-    public void setXML(String xml, boolean clearAll) {    	
+    public void setXML(String xml, boolean clearAll) {
+    	setCurrentFile(null); 
+    	
         try {        
             myXMLio.processXMLString(xml, clearAll);
-        } catch (MyError err) {  
-        	setCurrentFile(null); 
+        } catch (MyError err) {          	
         	err.printStackTrace();
             showError(err);                        
-        } catch (Exception e) {
-            setCurrentFile(null);
+        } catch (Exception e) {        
             e.printStackTrace();            
             showError("LoadFileFailed");
         }
     }
     //endFKH
+    
+    public String getPreferencesXML() {
+    	return myXMLio.getPreferencesXML();
+    }
 
     final public MyXMLio getXMLio() {
         return myXMLio;
