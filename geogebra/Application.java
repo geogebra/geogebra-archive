@@ -3066,8 +3066,8 @@ public class Application implements	KeyEventDispatcher {
             path =  applet.getCodeBase().toExternalForm();
         } else {
            	path = Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();	     	
-	    	if (path.endsWith("geogebra.jar")) // remove "geogebra.jar" from end	    
-	    		path = path.substring(0, path.length() - 12);	    		    		    	
+	    	if (path.endsWith(JAR_FILE)) // remove "geogebra.jar" from end	    
+	    		path = path.substring(0, path.length() - JAR_FILE.length());	    		    		    	
         }
         
     	//System.out.println("codebase: " + path);
