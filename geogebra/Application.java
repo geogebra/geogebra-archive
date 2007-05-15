@@ -2922,8 +2922,8 @@ public class Application implements	KeyEventDispatcher {
     }
     //endFKH
     
-    public String getPreferencesXML() {
-    	return myXMLio.getPreferencesXML();
+    public String getPreferencesXML(boolean forInitPreferences) {
+    	return myXMLio.getPreferencesXML(forInitPreferences);
     }
 
     final public MyXMLio getXMLio() {

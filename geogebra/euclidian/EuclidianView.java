@@ -2394,11 +2394,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	/**
 	 * returns settings in XML format
 	 */
-	public String getXML() {
+	public String getXML(boolean forInitPreferences) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<euclidianView>\n");
 		
-		if (width > 0) {
+		if (forInitPreferences && width > 0) {
 			sb.append("\t<size ");
 			sb.append(" width=\"");
 			sb.append(width);

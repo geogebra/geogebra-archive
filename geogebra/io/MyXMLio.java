@@ -384,7 +384,7 @@ public class MyXMLio {
         sb.append(app.getUserInterfaceXML());       
         
         // save euclidianView settings
-        sb.append(app.getEuclidianView().getXML());  
+        sb.append(app.getEuclidianView().getXML(false));  
         
         // save construction
         sb.append(kernel.getConstructionXML());  
@@ -396,7 +396,7 @@ public class MyXMLio {
     /**
      * Returns XML representation of all settings WITHOUT construction.
      */ 
-    public String getPreferencesXML() {    	    	
+    public String getPreferencesXML(boolean forInitPreferences) {    	    	
         StringBuffer sb = new StringBuffer();            
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");
@@ -405,7 +405,7 @@ public class MyXMLio {
         sb.append(app.getUserInterfaceXML());       
         
         // save euclidianView settings
-        sb.append(app.getEuclidianView().getXML());                  
+        sb.append(app.getEuclidianView().getXML(forInitPreferences));                  
         
         sb.append("</geogebra>");
         return sb.toString();            
@@ -435,7 +435,7 @@ public class MyXMLio {
         sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");                
         
         // save euclidianView settings
-        sb.append(app.getEuclidianView().getXML());
+        sb.append(app.getEuclidianView().getXML(false));
         
         // save construction
         sb.append(c.getXML());      

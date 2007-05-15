@@ -23,7 +23,7 @@ public class GeoGebraPreferences {
      */
     public static void initDefaultXML(Application app) {    	    	
     	if (XML_GGB_FACTORY_DEFAULT == null)
-    		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML();    
+    		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML(true);    
     }
 	
     /**
@@ -52,7 +52,7 @@ public class GeoGebraPreferences {
      * Saves preferences by taking the application's current values. 
      */
     public static void savePreferences(Application app) {
-    	String xml = app.getPreferencesXML();
+    	String xml = app.getPreferencesXML(true);
     	ggbPrefs.put(XML_USER_PREFERENCES, xml);     	    
     }
     
