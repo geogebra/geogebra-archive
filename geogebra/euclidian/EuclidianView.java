@@ -50,6 +50,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -87,6 +88,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	private static final long serialVersionUID = 1L;
 
+	private static final int MIN_WIDTH = 50;
+	private static final int MIN_HEIGHT = 50;
+	
 	private static final String PI_STRING = "\u03c0";
 
 	// pixel per centimeter (at 72dpi)
@@ -511,7 +515,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		// distances between grid lines
 		automaticGridDistance = true;
-
+		
 		setCoordSystem(XZERO_STANDARD, YZERO_STANDARD, SCALE_STANDARD,
 				SCALE_STANDARD, repaint);
 	}
@@ -986,15 +990,17 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		height = getHeight();
 		if (width <= 0 || height <= 0)
 			return;
-
+		
 		// real world values
 		setRealWorldBounds();
 
-		bgImage = getGraphicsConfiguration().createCompatibleImage(width,
-				height);
-		bgGraphics = bgImage.createGraphics();
-		if (antiAliasing) {
-			setAntialiasing(bgGraphics);
+		GraphicsConfiguration gc = getGraphicsConfiguration();
+		if (gc != null) {
+			bgImage = gc.createCompatibleImage(width, height);
+			bgGraphics = bgImage.createGraphics();
+			if (antiAliasing) {
+				setAntialiasing(bgGraphics);
+			}
 		}
 
 		updateBackgroundImage();
@@ -2391,6 +2397,17 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public String getXML() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<euclidianView>\n");
+		
+		if (width > 0) {
+			sb.append("\t<size ");
+			sb.append(" width=\"");
+			sb.append(width);
+			sb.append("\"");
+			sb.append(" height=\"");
+			sb.append(height);
+			sb.append("\"");
+			sb.append("/>\n");
+		}
 
 		sb.append("\t<coordSystem");
 		sb.append(" xZero=\"");

@@ -79,7 +79,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		this.app = app;
 		kernel = app.getKernel();
 	}
-
+	
 	public void updateMenubar() {	
 		EuclidianView ev = app.getEuclidianView();
 		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
@@ -109,8 +109,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				.setSelected(app.isConsProtNavigationProtButtonVisible());
 		cbShowConsProtNavigationPlay.setEnabled(app.showConsProtNavigation());
 		cbShowConsProtNavigationOpenProt.setEnabled(app.showConsProtNavigation());	
-	     	       
-    	updateMenuFile();
+	     	           	
         updateMenuContinuity();
         updateMenuPointCapturing();
         updateMenuAngleUnit();
@@ -118,13 +117,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
         updateMenuPointStyle();
         updateMenuRightAngleStyle();
         updateMenuCoordStyle();	
-        updateMenuLabeling();
-        updateMenuWindow();
+        updateMenuLabeling();        
         
         updateActions();
 	}
 
-	private void updateMenuFile() {
+	public void updateMenuFile() {
 		if (menuFile == null) return;
 		
 		if (miCloseAll == null) {
@@ -626,7 +624,15 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.newWindow(null);
+				Thread runner = new Thread() {
+		    		public void run() {   
+		    			app.setWaitCursor();
+		    			GeoGebra wnd = GeoGebra.createNewWindow(null);    			    	    		    	    	
+		    			wnd.setVisible(true);
+		    			app.setDefaultCursor();
+		    		}
+		    	};
+		    	runner.start();				
 			}
 		};
 
@@ -970,7 +976,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi.setAccelerator(ks);
 	}
 	
-	private void updateMenuWindow() {	
+	public void updateMenuWindow() {	
 		if (menuWindow == null) return;
 		
 		menuWindow.removeAll();

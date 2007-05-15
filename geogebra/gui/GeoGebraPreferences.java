@@ -42,8 +42,7 @@ public class GeoGebraPreferences {
 	    		app.setXML(xml, true);	
 	    		app.updateContentPane();
 	    		app.setDefaultCursor();
-	    	} catch (Exception e) {
-	    		app.clearAll();
+	    	} catch (Exception e) {	    		
 	    		e.printStackTrace();
 	    	}
     	}

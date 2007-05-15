@@ -18,9 +18,11 @@
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
@@ -34,11 +36,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+/**
+ * GeoGebra's main window. 
+ */
 public class GeoGebra extends JFrame implements WindowFocusListener {
+	
+	private static final int DEFAULT_WIDTH = 900;
+	private static final int DEFAULT_HEIGHT = 650;
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static ArrayList instances = new ArrayList();
@@ -49,7 +54,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 
 	public GeoGebra() {
 		instances.add(this);
-		activeInstance = this;
+		activeInstance = this;				
 	}
 
 	public void dispose() {
@@ -75,29 +80,55 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		activeInstance = this;		
-		app.updateMenubar();	
-		System.gc();
+		app.updateMenuWindow();		
 	}
 
 	public void windowLostFocus(WindowEvent arg0) {	
 	}
 
-	public void initFrame() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		int w = 900; // width
-		// int w = 1020; // width
-		int h = 650; // height
-		if (dim.width < w)
-			w = dim.width - 10;
-		if (dim.height < h)
-			h = (int) (dim.height * 0.9);
+	public void setVisible(boolean flag) {
+		if (flag) {						
+			updateSize();									
+			
+			// set location
+			int instanceID = instances.size() - 1;
+			if (instanceID > 0) {
+				// move right and down of last instance		
+				GeoGebra prevInstance = getInstance(instanceID - 1);
+				Point loc = prevInstance.getLocation();
+				loc.x += 20;
+				loc.y += 20;
+				setLocation(loc);
+			} else {
+				// center
+				setLocationRelativeTo(null);
+			}								
 
-		/*
-		 * int offset = 20 * (instances.size() - 1); setLocation((dim.width - w) /
-		 * 2 + offset, (dim.height - h) / 2 + offset);
-		 */		
-		setSize(w, h);
-		setLocationRelativeTo(null);
+		}
+				
+		super.setVisible(flag);
+	}
+	
+	public void updateSize() {
+		// use euclidian view pref size to set frame size 
+		EuclidianView ev = app.getEuclidianView();			
+		ev.setMinimumSize(new Dimension(50,50));
+		Dimension evPref = ev.getPreferredSize();						
+		
+		// no preferred size
+		if (evPref == null || evPref.width <= 50 || evPref.height <= 50) {
+			setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		} else {					
+			ev.setPreferredSize(evPref);
+							
+			// pack frame and correct size to really get the preferred size for euclidian view
+			pack(); 
+			Dimension evSize = ev.getSize();
+			Dimension frameSize = getSize();
+			frameSize.width = frameSize.width + (evPref.width - evSize.width);
+			frameSize.height = frameSize.height + (evPref.height - evSize.height);
+			setSize(frameSize);
+		}				
 	}
 
 	public static void main(String[] args) {
@@ -119,7 +150,8 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			return;
 		}
 
-		createNewWindow(args);		
+		// create window
+		GeoGebra wnd = createNewWindow(args);
 
 		// check if we run on a Mac
 		String lcOSName = System.getProperty("os.name").toLowerCase();
@@ -143,6 +175,8 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 					});
 		}
 
+		// show window
+		wnd.setVisible(true);
 	}
 
 	public static GeoGebra createNewWindow(String[] args) {
@@ -152,17 +186,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		
 		// init GUI
 		wnd.app = app;
-		wnd.getContentPane().add(app.buildApplicationPanel());
-		// wnd.addComponentListener(app.getGUIController());
-		wnd.initFrame();
-		updateAllTitles();
+		wnd.getContentPane().add(app.buildApplicationPanel());					
+		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
-		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));		
-		
-		// show window
-		wnd.setVisible(true);
-		
-		app.initInBackground();
+		updateAllTitles();
+		app.initInBackground();						
 		return wnd;
 	}
 

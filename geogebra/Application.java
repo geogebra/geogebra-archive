@@ -65,6 +65,7 @@ import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -187,8 +188,7 @@ public class Application implements	KeyEventDispatcher {
     public static final String FILE_EXT_EMF = "emf";
     public static final String FILE_EXT_SVG = "svg";
     public static final String FILE_EXT_HTML = "html";    
-       
-	
+       	
     // page margin in cm
     public static final double PAGE_MARGIN_X = 1.8 * 72 / 2.54;
     public static final double PAGE_MARGIN_Y = 1.8 * 72 / 2.54;
@@ -359,6 +359,8 @@ public class Application implements	KeyEventDispatcher {
     }      
     
     public void initInBackground() {
+    	if (isApplet) return;
+    	
     	// init file chooser and properties dialog
     	// in a background task
     	Thread runner = new Thread() {
@@ -366,12 +368,9 @@ public class Application implements	KeyEventDispatcher {
     			try {
     				Thread.sleep(2000);
     			} catch (Exception e) {}
-    			
-    			if (!isApplet) {
 	    			initFileChooser();
 	    			initPropertiesDialog();
-    			}	    		
-    		}
+    			}	    		    		
     	};
     	runner.start();
     }
@@ -448,15 +447,18 @@ public class Application implements	KeyEventDispatcher {
     	
         addMacroCommands(); 
         cp.removeAll();
-        cp.add(buildApplicationPanel());
-        euclidianView.updateSize();
-        setLAFFontSize();        
-                   
+        cp.add(buildApplicationPanel());               
+        setLAFFontSize();         
+        if (frame != null)
+        	frame.updateSize();
+        else
+        	euclidianView.updateSize();
+                                        
         updateComponentTreeUI();
         setMoveMode();
         
         System.gc();                                
-    }
+    }     
     
     private void updateComponentTreeUI() {
     	if (frame == null)
@@ -728,7 +730,7 @@ public class Application implements	KeyEventDispatcher {
         return applet;
     }
     
-    public JFrame getFrame() {
+    public GeoGebra getFrame() {
         return frame;
     }
     
@@ -2270,6 +2272,14 @@ public class Application implements	KeyEventDispatcher {
     	System.gc();
     }
     
+    public void updateMenuWindow() {
+    	if (menuBar != null) {
+    		menuBar.updateMenuWindow();
+    		menuBar.updateMenuFile();
+    		System.gc();
+    	}    	
+    }
+    
     public void updateCommandDictionary() {
     	if (commandDict != null) {
     		// make sure all macro commands are in dictionary
@@ -2647,7 +2657,8 @@ public class Application implements	KeyEventDispatcher {
 			        			} else {		        				
 			        				// create new window for 
 			        				String [] args = { file.getAbsolutePath() };
-			        				newWindow(args);			        			
+			        				GeoGebra wnd = GeoGebra.createNewWindow(args);
+			        				wnd.setVisible(true);
 			        			}	 	   
 		        			} else if (counter == 0){
 		        				// there is an instance with this file opened
@@ -2689,23 +2700,7 @@ public class Application implements	KeyEventDispatcher {
             setCurrentFile(null);               
             updateMenubar();
         }
-    }
-    
-    public void newWindow(String [] args) {
-    	GeoGebra wnd = GeoGebra.createNewWindow(args);    	
-    	updateMenubar();
-    	
-    	Application app = wnd.getApplication();
-    	if (app.getLocale() != getLocale()) {
-    		app.setLanguage(getLocale());
-    	}
-    	if (app.currentPath == null)
-    		app.currentPath = currentPath;
-    	if (app.currentImagePath == null)
-    		app.currentImagePath = currentImagePath;
-    	if (app.getFontSize() != getFontSize())
-    		app.setFontSize(getFontSize());
-    }
+    }        
 
     public void exit() {
     	// glassPane is active: don't exit now!
@@ -2956,7 +2951,10 @@ public class Application implements	KeyEventDispatcher {
     }
 
     final public void clearAll() {
-        kernel.clearConstruction();
+       // kernel.clearConstruction();
+        
+        // load preferences
+        GeoGebraPreferences.loadPreferences(this, true);        
         kernel.initUndoInfo();        
         updateMenubar();
         isSaved = true;

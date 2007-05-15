@@ -46,6 +46,7 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -345,7 +346,7 @@ public class MyXMLHandler implements DocHandler {
         		if (eName.equals("evSettings")) {
                     ok = handleEvSettings(ev, attrs);
                     break;
-                }
+                }        		
         		
         	case 'g':
         		if (eName.equals("grid")) {
@@ -360,6 +361,12 @@ public class MyXMLHandler implements DocHandler {
         	case 'l':
         		if (eName.equals("lineStyle")) {
                     ok = handleLineStyle(ev, attrs);
+                    break;
+                }
+        		
+        	case 's':
+        		if (eName.equals("size")) {
+                    ok = handleEvSize(ev, attrs);
                     break;
                 }
         		
@@ -433,6 +440,19 @@ public class MyXMLHandler implements DocHandler {
         } catch (Exception e) {
             return false;
         }
+    }
+    
+    private boolean handleEvSize(EuclidianView ev, LinkedHashMap attrs) {
+    	if (app.isApplet()) return true;
+    	
+    	try {    		
+    		int width = Integer.parseInt((String) attrs.get("width"));
+    		int height = Integer.parseInt((String) attrs.get("height"));    		    		
+    		ev.setPreferredSize(new Dimension(width, height));    		
+    		return true;	
+    	} catch (Exception e) {
+    		return false;
+    	}  
     }
     
     private boolean handleBgColor(EuclidianView ev, LinkedHashMap attrs) {

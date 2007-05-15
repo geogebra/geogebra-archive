@@ -245,8 +245,7 @@ public class GeoGebraApplet extends JApplet {
 //		 build application panel 
 		if (firstAppOpen) {
 			wnd = new GeoGebra();
-			wnd.setApplication(app);
-			wnd.initFrame();
+			wnd.setApplication(app);			
 		}
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
