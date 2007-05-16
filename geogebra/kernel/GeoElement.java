@@ -24,6 +24,11 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -233,11 +238,12 @@ public abstract class GeoElement
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
 	private boolean highlighted = false;
-	private boolean selected = false;	
-	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML;
+	private boolean selected = false;		
+	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML, strLaTeX;
 	private boolean strAlgebraDescriptionNeedsUpdate = true;
 	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
+	private boolean strLaTeXneedsUpdate = true;
 	private StringBuffer sb = new StringBuffer();
 
 	// line thickness and line type: s	
@@ -1258,6 +1264,7 @@ public abstract class GeoElement
 		strAlgebraDescriptionNeedsUpdate = true;	
 		strAlgebraDescTextOrHTMLneedsUpdate = true;
 		strAlgebraDescriptionHTMLneedsUpdate = true;
+		strLaTeXneedsUpdate = true;
 	}
 	
 	/**
@@ -1702,6 +1709,30 @@ public abstract class GeoElement
 		
 		return strAlgebraDescription;
 	}	
+	
+	final public String getLaTeXdescription() {
+		if (strLaTeXneedsUpdate) {			
+			if (isDefined()) {
+				strLaTeX = toLaTeXString(false);
+			} else {				
+				strLaTeX = getAlgebraDescription();
+			}								
+		}
+		
+		return strLaTeX;		
+	}
+	
+	/*
+	final public Image getAlgebraImage(Image tempImage) {		
+		Graphics2D g2 = (Graphics2D) g;
+		GraphicsConfiguration gc = app.getGraphicsConfiguration();
+		if (gc != null) {
+			bgImage = gc.createCompatibleImage(width, height);
+		Point p = drawIndexedString(g2, labelDesc, xLabel, yLabel);
+			
+		setSize(fontSize, p.x, fontSize + p.y);						
+	}
+	*/
 
 	/*
 	 * replaces all indices (_ and _{}) in str by <sub> tags, all and converts all

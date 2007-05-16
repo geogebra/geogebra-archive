@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -59,7 +60,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 
 	public void dispose() {
 		instances.remove(this);
-		super.dispose();
+		GeoGebraPreferences.saveFileList();
+		
+		if (instances.size() == 0) {			
+			super.dispose();
+			System.exit(0);
+		} else {
+			super.dispose();
+			updateAllTitles();
+		}				
 	}
 
 	public Application getApplication() {
@@ -84,6 +93,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	}
 
 	public void windowLostFocus(WindowEvent arg0) {	
+	}
+	
+	public Locale getLocale() {				
+		Locale defLocale = GeoGebraPreferences.getDefaultLocale();		
+		
+		if (defLocale == null)
+			return super.getLocale();
+		else 
+			return defLocale;
 	}
 
 	public void setVisible(boolean flag) {
@@ -111,14 +129,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	
 	public void updateSize() {
 		// use euclidian view pref size to set frame size 
-		EuclidianView ev = app.getEuclidianView();			
-		ev.setMinimumSize(new Dimension(50,50));
-		Dimension evPref = ev.getPreferredSize();						
+		EuclidianView ev = app.getEuclidianView();										
 		
 		// no preferred size
-		if (evPref == null || evPref.width <= 50 || evPref.height <= 50) {
-			setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		} else {					
+		if (ev.hasPreferredSize()) {
+			ev.setMinimumSize(new Dimension(50,50));
+			Dimension evPref = ev.getPreferredSize();
+			// TODO: remove
+			System.out.println("updateSize: evpref: " + evPref );
+			
 			ev.setPreferredSize(evPref);
 							
 			// pack frame and correct size to really get the preferred size for euclidian view
@@ -127,7 +146,19 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			Dimension frameSize = getSize();
 			frameSize.width = frameSize.width + (evPref.width - evSize.width);
 			frameSize.height = frameSize.height + (evPref.height - evSize.height);
-			setSize(frameSize);
+			
+			// check if frame fits on screen
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			if (frameSize.width > screenSize.width || 
+					frameSize.height > screenSize.height) {
+				setSize(screenSize);
+				setLocation(0,0);
+			} else {
+				// everything ok
+				setSize(frameSize);
+			}
+		} else {
+			setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
 		}				
 	}
 
@@ -149,6 +180,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 									+ "\nPlease visit http://www.java.com to get a newer version of Java.");
 			return;
 		}
+		
+		// load list of previously used files
+		GeoGebraPreferences.loadFileList();
 
 		// create window
 		GeoGebra wnd = createNewWindow(args);
@@ -163,21 +197,18 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 					.addOpenDocumentListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;
-							// get filename and build args array
-							File fileToOpen = mac_evt.getFile();
-							boolean isMacroFile = Application.FILE_EXT_GEOGEBRA_TOOL
-									.equals(Application
-											.getExtension(fileToOpen)
-											.toLowerCase());
-							activeInstance.getApplication().loadFile(
-									fileToOpen, isMacroFile);
+							
+							// open file in new window												
+							Application app = activeInstance.getApplication();
+							File [] files = { mac_evt.getFile() };
+							app.doOpenFiles(files, false);
 						}
 					});
 		}
 
 		// show window
 		wnd.setVisible(true);
-	}
+	}	
 
 	public static GeoGebra createNewWindow(String[] args) {
 		// set Application's size, position and font size
@@ -224,16 +255,20 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		if (file == null)
 			return null;
 
-		String absPath = file.getAbsolutePath();
-		for (int i = 0; i < instances.size(); i++) {
-			GeoGebra inst = (GeoGebra) instances.get(i);
-			Application app = inst.app;
-
-			File currFile = app.getCurrentFile();
-			if (currFile != null) {
-				if (absPath.equals(currFile.getAbsolutePath()))
-					return inst;
+		try {
+			String absPath = file.getCanonicalPath();
+			for (int i = 0; i < instances.size(); i++) {
+				GeoGebra inst = (GeoGebra) instances.get(i);
+				Application app = inst.app;
+	
+				File currFile = app.getCurrentFile();
+				if (currFile != null) {
+					if (absPath.equals(currFile.getCanonicalPath()))
+						return inst;
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

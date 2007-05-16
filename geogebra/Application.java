@@ -78,9 +78,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -103,7 +105,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "14. May 2007";
+    public static final String buildDate = "16. May 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -238,7 +240,7 @@ public class Application implements	KeyEventDispatcher {
 
     private boolean INITING = false;
     private boolean showAlgebraView = true; 
-    private boolean showAuxiliaryObjects = true;
+    private boolean showAuxiliaryObjects = false;
     private boolean showAlgebraInput = true;
     private boolean showCmdList = true;    
     private boolean showToolBar = true;
@@ -252,6 +254,7 @@ public class Application implements	KeyEventDispatcher {
     private boolean undoActive = true;
     private boolean rightClickEnabled = true;
 
+    private static LinkedList fileList = new LinkedList();
     private File currentPath, currentImagePath, currentFile = null;
     private boolean isSaved = true;    
     private int appFontSize;
@@ -309,11 +312,10 @@ public class Application implements	KeyEventDispatcher {
 			mainComp = applet;
 		} 
 		
-		initCodeBase();
-		handleOptionArgs(args); // note: the locale is set here too
-		
+		initCodeBase();		
+		handleOptionArgs(args); // note: the locale is set here too	     			
 		imageManager = new ImageManager(mainComp);				
-		
+				
 		if (isApplet) 
 			setApplet(applet); 
 		else {
@@ -339,18 +341,22 @@ public class Application implements	KeyEventDispatcher {
         	setFontSize(getInitFontSize());
         	if (!isApplet)
         		GeoGebraPreferences.initDefaultXML(this);   
-        
-        	boolean fileLoaded = handleFileArg(args);
-        	if (!fileLoaded && undoActive) {
-				kernel.initUndoInfo();
-        	}    		    		    		   				
+        	
+        	// open file given by startup parameter
+        	boolean fileLoaded = handleFileArg(args);        	 		    		    		   		
    			
-   			// init preferences
-        	if (!isApplet)
-        		GeoGebraPreferences.loadPreferences(this, !fileLoaded);       
-        INITING = false;	
-        
-        isSaved = true;                         
+   			// load XML preferences
+        	if (!isApplet) {        		
+        		currentPath = GeoGebraPreferences.getDefaultFilePath();
+        		currentImagePath = GeoGebraPreferences.getDefaultImagePath();
+        		if (!fileLoaded)
+        			GeoGebraPreferences.loadXMLPreferences(this);
+        	}        		        		    	
+        	
+        	// init undo
+        	initUndoInfo();      	
+        INITING = false;	                     
+   
         initShowAxesGridActions();
         
         // for key listening
@@ -395,6 +401,16 @@ public class Application implements	KeyEventDispatcher {
         return INITING;
     }
     
+  
+    
+    public void initUndoInfo() {
+    	if (undoActive) {
+			kernel.initUndoInfo();			
+    	}
+    	updateActions();
+    	isSaved = true; 
+    }
+    
     public int getToolBarHeight() {
     	if (showToolBar)
     		return appToolbarPanel.getHeight();
@@ -436,6 +452,26 @@ public class Application implements	KeyEventDispatcher {
      * Updates the GUI of the main component.
      */
     public void updateContentPane() {
+    	updateContentPane(true);
+    }
+    
+    /**
+     * Updates the GUI of the framd and its size.
+     */
+    public void updateContentPaneAndSize() {
+    	if (INITING)
+             return;  
+    	 
+    	if (frame != null) {
+	    	updateContentPane(false);
+	    	frame.updateSize();
+	    	updateComponentTreeUI();
+    	} else {
+    		updateContentPane();
+    	}
+    }
+    
+    private void updateContentPane(boolean updateComponentTreeUI) {
         if (INITING)
             return;        
         
@@ -448,13 +484,11 @@ public class Application implements	KeyEventDispatcher {
         addMacroCommands(); 
         cp.removeAll();
         cp.add(buildApplicationPanel());               
-        setLAFFontSize();         
-        if (frame != null)
-        	frame.updateSize();
-        else
-        	euclidianView.updateSize();
-                                        
-        updateComponentTreeUI();
+        setLAFFontSize();        
+        euclidianView.updateSize();
+                          
+        if (updateComponentTreeUI)
+        	updateComponentTreeUI();
         setMoveMode();
         
         System.gc();                                
@@ -620,8 +654,7 @@ public class Application implements	KeyEventDispatcher {
     			}
     		}
     	}
-            
-    			    	                
+                			    	                
         setLocale(initLocale);                 
     }
     
@@ -844,7 +877,7 @@ public class Application implements	KeyEventDispatcher {
      * E.g. "en" ... language: English , no country specified, "deAT" or "de_AT" ... language: German , country: Austria,
      * "noNONY" or "no_NO_NY" ... language: Norwegian , country: Norway, variant: Nynorsk    	
      */
-    public Locale getLocale(String languageCode) {    	
+    public static Locale getLocale(String languageCode) {    	
         // remove "_" from string
     	languageCode = languageCode.replaceAll("_", "");
     	
@@ -872,36 +905,19 @@ public class Application implements	KeyEventDispatcher {
      */
     public void setLanguage(Locale locale) {    	    
     	if (locale == null || 
-    		currentLocale.toString().equals(locale.toString())) return;
-    	    
-        // update font for new language (needed for e.g. chinese)
-        try {
-            String fontName = getLanguageFontName(locale);
-            if (fontName != FONT_NAME) {
-                FONT_NAME = fontName;
-                resetFonts();
-            }
-        } catch (Exception e) {
-            showError(e.getMessage());
-            locale = currentLocale;
-        }
+    		currentLocale.toString().equals(locale.toString())) return;    	             	
         
-        // change rightAngleStyle for German to
-        // EuclidianView.RIGHT_ANGLE_STYLE_DOT
-        if (euclidianView.getRightAngleStyle() != EuclidianView.RIGHT_ANGLE_STYLE_NONE) {
-	        if (locale.getLanguage().equals("de")) {
-	        	euclidianView.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
-	        } else {
-	        	euclidianView.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE);
-	        }
-        }
-
         // load resource files
         setLocale(locale);
+        
+        // update right angle style in euclidian view (different for German)
+        if (euclidianView != null) 
+        	euclidianView.updateRightAngleStyle(locale);       
+        
         // make sure to update commands
         if (rbcommand != null)
         	initCommandResources();  
-        updateReverseLanguage(locale);
+       
         kernel.updateLocalAxesNames();
         setLabels(); // update display
 
@@ -969,6 +985,19 @@ public class Application implements	KeyEventDispatcher {
         // problems with the naming of the property files   
         currentLocale = getClosestSupportedLocale(locale);                     
         updateResourceBundles();
+        
+//      update font for new language (needed for e.g. chinese)
+        try {
+            String fontName = getLanguageFontName(locale);
+            if (fontName != FONT_NAME) {
+                FONT_NAME = fontName;
+                resetFonts();
+            }
+        } catch (Exception e) {
+            showError(e.getMessage());
+            locale = currentLocale;
+        }                   	
+        updateReverseLanguage(locale);
     }
     
     /**
@@ -1538,7 +1567,12 @@ public class Application implements	KeyEventDispatcher {
         int returnVal = fileChooser.showOpenDialog(mainComp);
         if (returnVal == JFileChooser.APPROVE_OPTION) {             
         	imageFile = fileChooser.getSelectedFile();   
-        	if (imageFile != null) currentImagePath = imageFile.getParentFile();
+        	if (imageFile != null) {
+        		currentImagePath = imageFile.getParentFile();
+        		if (!isApplet) {
+        			GeoGebraPreferences.saveDefaultImagePath(currentImagePath);
+        		}
+        	}
         }       
         
 		if (imageFile == null) return null;				
@@ -1799,10 +1833,31 @@ public class Application implements	KeyEventDispatcher {
     
     private void setCurrentFile(File file) {
         currentFile = file;
-        if (currentFile != null)
-            currentPath = currentFile.getParentFile();   
+        if (currentFile != null) {
+            currentPath = currentFile.getParentFile();            
+            addToFileList(currentFile);            
+        }
         updateTitle();
         updateMenubar();
+    }
+    
+    public static void addToFileList(File file) {
+    	if (file == null || !file.exists()) return;    	    	    	    	 
+    	
+    	// add or move fileName to front of list    	
+    	fileList.remove(file);
+    	fileList.addFirst(file);
+    }
+    
+    public static File getFromFileList(int i) {    	    	
+       if (fileList.size() > i)
+    		return (File) fileList.get(i);
+       else
+    		return null;
+    }
+    
+    public static int getFileListSize() {
+    	return fileList.size();
     }
 
     public void updateTitle() {   
@@ -1981,6 +2036,22 @@ public class Application implements	KeyEventDispatcher {
             helpBrowser.setLabels();
     }    
     
+    
+    public void clearPreferences() {
+    	if (isSaved() || saveCurrentFile()) {
+    		setWaitCursor();
+			GeoGebraPreferences.clearPreferences();
+			
+			// clear custom toolbar definition
+			strCustomToolbarDefinition = null;			
+			
+			GeoGebraPreferences.loadXMLPreferences(this); // this will load the default settings
+			setLanguage(mainComp.getLocale());
+			updateContentPaneAndSize();
+			setDefaultCursor();
+		}
+    }
+    
     public void setToolBarDefinition(String toolBarDefinition) {    	  
     	strCustomToolbarDefinition = toolBarDefinition;    	
     }
@@ -2018,6 +2089,8 @@ public class Application implements	KeyEventDispatcher {
     public ImageIcon getModeIcon(int mode) {
     	ImageIcon icon;
     	
+    	Color border = Color.lightGray;
+    	
     	// macro
 		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
 			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
@@ -2027,10 +2100,10 @@ public class Application implements	KeyEventDispatcher {
 				BufferedImage img = getExternalImage(iconName);				
 				if (img == null)
 					// default icon
-					icon = getImageIcon("mode_tool_32.png", Color.gray);			
+					icon = getImageIcon("mode_tool_32.png", border);			
 				else
 					// use image as icon
-					icon = new ImageIcon(ImageManager.addBorder(img, Color.gray));				
+					icon = new ImageIcon(ImageManager.addBorder(img, border));				
 			} catch (Exception e) {
 				System.err.println("macro does not exist: ID = " + macroID);
 				return null;
@@ -2040,7 +2113,7 @@ public class Application implements	KeyEventDispatcher {
 	    	// standard case
 			String modeText = EuclidianView.getModeText(mode);
 			String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
-			icon = getImageIcon(iconName, mainComp.getBackground());						
+			icon = getImageIcon(iconName, border);						
 			if (icon == null) {
 				System.err.println("icon missing for mode " + modeText + " (" + mode + ")");			
 			}			
@@ -2322,8 +2395,8 @@ public class Application implements	KeyEventDispatcher {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				kernel.undo();				
-				updateMenubar();
+				kernel.undo();
+				updateActions();
 				System.gc();
 			}
 		};
@@ -2333,11 +2406,13 @@ public class Application implements	KeyEventDispatcher {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				kernel.redo();				
-				updateMenubar();
+				kernel.redo();	
+				updateActions();
 				System.gc();
 			}
 		};
+		
+		updateActions();
     }
     
     private void updateActions() {    
@@ -2602,7 +2677,7 @@ public class Application implements	KeyEventDispatcher {
 			return fileName.substring(dotPos+1); 
    }
 
-    public void load() {    	
+    public void openFile() {    	
     	if (propDialog != null && propDialog.isShowing()) 
     		propDialog.cancel();
     	
@@ -2628,47 +2703,7 @@ public class Application implements	KeyEventDispatcher {
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {             
 	            files = fileChooser.getSelectedFiles();  	               	            
 	        }	  
-	        
-	        // there are selected files
-	        setWaitCursor();
-	        if (files != null) {
-	        	File file;
-	        	int counter = 0;	        	
-	        	for (int i=0; i < files.length; i++) {
-	        		file = files[i];
-	        		
-	        		if (!file.exists()) {
-		            	file = addExtension(file, FILE_EXT_GEOGEBRA);
-		            } 
-			        
-	        		if (file.exists()) {	        			
-	        			if (FILE_EXT_GEOGEBRA_TOOL.equals(getExtension(file).toLowerCase())) {	        			
-	        				// load macro file
-	        				loadFile(file, true); 
-	        			} 	        			
-	        			else {	        
-	        				// standard GeoGebra file
-		        			GeoGebra inst = GeoGebra.getInstanceWithFile(file);
-		        			if (inst == null) {
-			        			counter++;
-			        			if (counter == 1) {
-			        				// open first file in current window		        				
-									loadFile(file, false); 								
-			        			} else {		        				
-			        				// create new window for 
-			        				String [] args = { file.getAbsolutePath() };
-			        				GeoGebra wnd = GeoGebra.createNewWindow(args);
-			        				wnd.setVisible(true);
-			        			}	 	   
-		        			} else if (counter == 0){
-		        				// there is an instance with this file opened
-		        				inst.requestFocus();
-		        			}
-	        			}
-	        		}			       
-	        	}	        	        	
-	        }	      
-	        setDefaultCursor();
+	        doOpenFiles(files, true);
 	       
 	        if (currentFile == null) {	        	
 	        	setCurrentFile(oldCurrentFile);
@@ -2676,6 +2711,53 @@ public class Application implements	KeyEventDispatcher {
 	        fileChooser.setMultiSelectionEnabled(false);
         }
     }    
+    
+    public void doOpenFiles(File [] files, boolean allowOpeningInThisInstance) {    	
+        // there are selected files
+        setWaitCursor();
+        if (files != null) {
+        	File file;
+        	int counter = 0;	        	
+        	for (int i=0; i < files.length; i++) {
+        		file = files[i];
+        		
+        		if (!file.exists()) {
+	            	file = addExtension(file, FILE_EXT_GEOGEBRA);
+	            } 
+		        
+        		if (file.exists()) {	        			
+        			if (FILE_EXT_GEOGEBRA_TOOL.equals(getExtension(file).toLowerCase())) {	        			
+        				// load macro file
+        				loadFile(file, true); 
+        			} 	        			
+        			else {	        
+        				// standard GeoGebra file
+            			GeoGebra inst = GeoGebra.getInstanceWithFile(file);
+            			if (inst == null) {
+                			counter++;
+                			if (counter == 1 && allowOpeningInThisInstance) {
+                				// open first file in current window		        				
+        						loadFile(file, false); 								
+                			} else {		        				
+                				// create new window for file
+                				try {
+        							String [] args = { file.getCanonicalPath() };
+        							GeoGebra wnd = GeoGebra.createNewWindow(args);
+        							wnd.setVisible(true);
+        						} catch (Exception e) {
+        							e.printStackTrace();
+        						}
+                			}	 	   
+            			} else if (counter == 0){
+            				// there is an instance with this file opened
+            				inst.requestFocus();
+            			}
+        			}
+        		}		       
+        	}	        	        	
+        }	      
+        setDefaultCursor();    	
+    }
     
     public boolean loadFile(final File file, boolean isMacroFile) {
         if (!file.exists()) {
@@ -2690,7 +2772,16 @@ public class Application implements	KeyEventDispatcher {
         }                         
         
         boolean success = loadXML(file, isMacroFile);  
-        updateContentPane();       
+          
+        // update GUI
+        
+        if (euclidianView.hasPreferredSize()) {
+            // update GUI: size of euclidian view was set
+        	updateContentPaneAndSize();                              
+        } else {
+        	updateContentPane();
+        }
+        
 		return success;               
     }
 
@@ -2709,14 +2800,8 @@ public class Application implements	KeyEventDispatcher {
         if (isSaved() || applet != null || saveCurrentFile()) {        	
             if (applet != null) {            	
                 applet.showApplet();                
-            } else {
-            	frame.dispose();
-            	
-            	// last frame closed?
-            	if (GeoGebra.getInstanceCount() == 0)
-            		System.exit(0);
-            	else
-            		GeoGebra.updateAllTitles();
+            } else {       
+            	frame.dispose();            	
             }
         }
     }
@@ -2922,8 +3007,8 @@ public class Application implements	KeyEventDispatcher {
     }
     //endFKH
     
-    public String getPreferencesXML(boolean forInitPreferences) {
-    	return myXMLio.getPreferencesXML(forInitPreferences);
+    public String getPreferencesXML() {
+    	return myXMLio.getPreferencesXML();
     }
 
     final public MyXMLio getXMLio() {
@@ -2950,13 +3035,11 @@ public class Application implements	KeyEventDispatcher {
     	}
     }
 
-    final public void clearAll() {
-       // kernel.clearConstruction();
-        
+    final public void clearAll() {       
         // load preferences
-        GeoGebraPreferences.loadPreferences(this, true);        
-        kernel.initUndoInfo();        
-        updateMenubar();
+        GeoGebraPreferences.loadXMLPreferences(this);        
+        updateContentPane();
+        
         isSaved = true;
         System.gc();        
     }
@@ -3391,6 +3474,14 @@ public class Application implements	KeyEventDispatcher {
 
 	public void setPrintScaleString(boolean printScaleString) {
 		this.printScaleString = printScaleString;
+	}
+
+	public File getCurrentImagePath() {
+		return currentImagePath;
+	}
+
+	public void setCurrentImagePath(File currentImagePath) {
+		this.currentImagePath = currentImagePath;
 	}
 	
 }

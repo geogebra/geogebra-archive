@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -69,7 +71,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			menuContinuity, menuPointStyle, menuRightAngleStyle,
 			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools;
 
-	private JMenuItem miCloseAll;
+	//private JMenuItem miCloseAll;
 
 	private Application app;
 
@@ -91,15 +93,15 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		boolean showAlgebraView = app.showAlgebraView();
 		cbShowAlgebraView.setSelected(showAlgebraView);
-		cbShowAuxiliaryObjects.setEnabled(showAlgebraView);
+		cbShowAuxiliaryObjects.setVisible(showAlgebraView);
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
-		cbHorizontalSplit.setEnabled(showAlgebraView);
+		cbHorizontalSplit.setVisible(showAlgebraView);
 		cbHorizontalSplit.setSelected(app.isHorizontalSplit());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowCmdList.setSelected(app.showCmdList());
-		cbShowCmdList.setEnabled(app.showAlgebraInput());		
+		cbShowCmdList.setVisible(app.showAlgebraInput());		
 			
 		
 		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());				
@@ -107,8 +109,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				.setSelected(app.isConsProtNavigationPlayButtonVisible());
 		cbShowConsProtNavigationOpenProt
 				.setSelected(app.isConsProtNavigationProtButtonVisible());
-		cbShowConsProtNavigationPlay.setEnabled(app.showConsProtNavigation());
-		cbShowConsProtNavigationOpenProt.setEnabled(app.showConsProtNavigation());	
+		cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
+		cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
 	     	           	
         updateMenuContinuity();
         updateMenuPointCapturing();
@@ -125,28 +127,10 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	public void updateMenuFile() {
 		if (menuFile == null) return;
 		
-		if (miCloseAll == null) {
-			miCloseAll = new JMenuItem(exitAllAction);
-		}
-
-		menuFile.remove(miCloseAll);
-		if (GeoGebra.getInstanceCount() > 1) {
-			menuFile.add(miCloseAll);
-		}
-	}
-
-	public void initMenubar() {
-		initActions();
+		menuFile.removeAll();
 		
-		JMenu menu, submenu;
-		JMenuItem mi;
-		int pos;
-		removeAll();
-
-		// File
-		menuFile = new JMenu(app.getMenu("File"));
-		menu = menuFile;
-		mi = menu.add(newFileAction);
+		JMenu menu = menuFile;
+		JMenuItem mi = menu.add(newFileAction);
 		setCtrlAccelerator(mi, 'N');
 		if (!app.isApplet()) {
 			mi = new JMenuItem(newWindowAction);
@@ -170,8 +154,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi = menu.add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
 		mi.setIcon(app.getImageIcon("print.gif"));
-						
-		submenu = new JMenu(app.getMenu("Export"));
+				
+		// export
+		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		menu.add(submenu);
 		submenu.add(exportWorksheet);
@@ -180,11 +165,47 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		submenu.add(exportGraphicAction);
 		submenu.add(drawingPadToClipboardAction);		
 		
-		if (!app.isApplet()) {
-			menu.addSeparator();
-			menu.add(exitAction);
-		}			
 		
+		// DONE HERE WHEN APPLET
+		if (app.isApplet()) return;
+		
+		
+		// LAST FILES list
+		int size = Application.getFileListSize();
+		if (size > 0) {
+			menu.addSeparator();						
+			for (int i = 0; i < 4; i++) {
+				File file = Application.getFromFileList(i);
+				if (file != null) {										
+					mi = new JMenuItem(file.getName());
+					//mi.setIcon( new ImageIcon(app.getInternalImage("geogebra22.gif")));
+					ActionListener al = new LoadFileListener(app, file);
+					mi.addActionListener(al);
+					menu.add(mi);
+				}
+			}						
+		}
+		
+		// close
+		menu.addSeparator();
+		menu.add(exitAction);
+					
+		// close all		
+		if (GeoGebra.getInstanceCount() > 1) {								
+			menu.add(exitAllAction);
+		}
+	}
+
+	public void initMenubar() {
+		initActions();
+		
+		JMenu menu, submenu;
+		JMenuItem mi;
+		int pos;
+		removeAll();
+
+		// File
+		menuFile = new JMenu(app.getMenu("File"));
 		updateMenuFile();	
 		add(menuFile);
 
@@ -211,10 +232,6 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
-		menu.addSeparator();
-
-		mi = menu.add(refreshAction);
-		setCtrlAccelerator(mi, 'F');
 		menu.addSeparator();
 
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
@@ -249,12 +266,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				showConsProtNavigationPlayAction);
 		cbShowConsProtNavigationOpenProt = new JCheckBoxMenuItem(
 				showConsProtNavigationOpenProtAction);	
+		menu.add(constProtocolAction);
 		menu.add(cbShowConsProtNavigation);
 		menu.add(cbShowConsProtNavigationPlay);
-		menu.add(cbShowConsProtNavigationOpenProt);
-
+		menu.add(cbShowConsProtNavigationOpenProt);		
+		
 		menu.addSeparator();
-		menu.add(constProtocolAction);
+		mi = menu.add(refreshAction);
+		setCtrlAccelerator(mi, 'F');
+		
+		
 		add(menu);
 
 		// Options
@@ -360,9 +381,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		String[] lstr = { "Labeling.automatic", "Labeling.on", "Labeling.off", "Labeling.pointsOnly"  };		
 		String[] lastr = { "0_labeling", "1_labeling", "2_labeling", "3_labeling"  };
 		addRadioButtonMenuItems(menuLabeling, this, lstr, lastr, 0);
-		menu.add(menuLabeling);
-
-		menu.addSeparator();
+		menu.add(menuLabeling);		
 
 		/*
 		// Graphics quality
@@ -402,7 +421,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		 * 0); menu.add(menuFontName); updateMenuFontName();
 		 */
 
-		menu.addSeparator();
+		//menu.addSeparator();
 
 		// Language		
 		LanguageActionListener langListener = new LanguageActionListener();
@@ -411,16 +430,21 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu.add(submenu);
 
 		menu.addSeparator();
-		
-		// Preferences
-		menu.add(savePreferencesAction);
-		menu.add(clearPreferencesAction);
-		
-		menu.addSeparator();
 
 		// drawing pad properteis
 		menu.add(drawingPadPropAction);
 		add(menu);
+
+		
+		if (!app.isApplet()) {
+			// Preferences
+			menu.addSeparator();
+			//submenu = new JMenu(app.getMenu("Settings"));			
+			menu.add(savePreferencesAction);
+			menu.add(clearPreferencesAction);
+			//menu.add(submenu);
+		}
+		
 		
 		// tools menu		
 		menuTools = new JMenu(app.getMenu("Tools"));
@@ -762,7 +786,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.load();
+				app.openFile();
 			}
 		};
 
@@ -786,6 +810,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 						// copy drawing pad to the system clipboard
 						Toolkit tools = Toolkit.getDefaultToolkit();
 						Clipboard clip = tools.getSystemClipboard();
+						app.clearSelectedGeos();
 						clip.setContents(app.getEuclidianView(), app.getEuclidianView());
 					}
 				};
@@ -945,25 +970,22 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 		
 		
-		savePreferencesAction = new AbstractAction(app.getMenu("Preferences.Save")) {
+		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.savePreferences(app);				
+				GeoGebraPreferences.saveXMLPreferences(app);				
 			}
 		};
 		
-		clearPreferencesAction = new AbstractAction(app.getMenu("Preferences.Clear")) {
+		clearPreferencesAction = new AbstractAction(app.getMenu("Settings.ResetDefault")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.clearPreferences();
-				GeoGebraPreferences.loadPreferences(app, true);
-				//app.updateContentPane();
+				app.clearPreferences();				
 			}
 		};
-		
-		
+				
 		updateActions();
 	}
 
@@ -1140,6 +1162,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
     private class LanguageActionListener implements ActionListener {                        
         public void actionPerformed(ActionEvent e) {
         	app.setLanguage(app.getLocale(e.getActionCommand()));        	
+        	GeoGebraPreferences.saveDefaultLocale(app.getLocale());
         }
     }
     

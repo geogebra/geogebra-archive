@@ -89,9 +89,7 @@ public abstract class Drawable {
 			labelHasIndex = p.y > 0;
 			int fontSize = g2.getFont().getSize();
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, p.x, fontSize + p.y);			
-		}
-		
-		
+		}		
 	}
 	
 	

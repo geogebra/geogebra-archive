@@ -1006,6 +1006,7 @@ final public class EuclidianController implements MouseListener,
 	}
 
 	final public void mouseReleased(MouseEvent e) {	
+		view.requestFocusInWindow();
 		setMouseLocation(e);
 		transformCoords();
 		ArrayList hits = null;
@@ -1046,7 +1047,7 @@ final public class EuclidianController implements MouseListener,
 			rotGeoElement = null;	
 			
 			if (moveMode == MOVE_NONE) {
-				processSelectionRectangle();
+				processSelectionRectangle();				
 				return;
 			}
 		} 
@@ -1131,7 +1132,7 @@ final public class EuclidianController implements MouseListener,
 		return true;
 	}
 	
-	// return if we really did zoom
+	// select all geos in selection rectangle 
 	private void processSelectionRectangle() {		
 		ArrayList hits = view.getHits(view.getSelectionRectangle());		
 		app.setSelectedGeos(hits.toArray());					

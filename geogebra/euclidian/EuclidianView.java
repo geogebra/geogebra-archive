@@ -476,12 +476,29 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		addMouseListener(euclidianController);
 		addMouseWheelListener(euclidianController);
 		addComponentListener(euclidianController);
-
+			
 		// no repaint
 		initView(false);
+		
+		updateRightAngleStyle(app.getLocale());
+	}
+	
+	public void updateRightAngleStyle(Locale locale) {				
+		// change rightAngleStyle for German to
+        // EuclidianView.RIGHT_ANGLE_STYLE_DOT
+        if (getRightAngleStyle() != RIGHT_ANGLE_STYLE_NONE) {
+	        if (locale.getLanguage().equals("de")) {
+	        	setRightAngleStyle(RIGHT_ANGLE_STYLE_DOT);
+	        } else {
+	        	setRightAngleStyle(RIGHT_ANGLE_STYLE_SQUARE);
+	        }
+        }
 	}
 
 	private void initView(boolean repaint) {
+		// preferred size
+		setPreferredSize(null);
+		
 		// init grid's line type
 		setGridLineStyle(LINE_TYPE_DASHED_SHORT);
 		setAxesLineStyle(AXES_LINE_TYPE_ARROW);
@@ -518,6 +535,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		
 		setCoordSystem(XZERO_STANDARD, YZERO_STANDARD, SCALE_STANDARD,
 				SCALE_STANDARD, repaint);
+	}
+	
+	public boolean hasPreferredSize() {
+		Dimension prefSize = getPreferredSize();
+		
+		return prefSize != null &&
+			prefSize.width > MIN_WIDTH &&
+			prefSize.height > MIN_HEIGHT;
 	}
 
 	private void resetLists() {
@@ -2379,7 +2404,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateBackgroundImage();
 	}
 
-	public void clearView() {
+	public void clearView() {		
 		removeAll(); // remove hotEqns
 		resetLists();
 		initView(false);
@@ -2394,11 +2419,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	/**
 	 * returns settings in XML format
 	 */
-	public String getXML(boolean forInitPreferences) {
+	public String getXML() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<euclidianView>\n");
 		
-		if (forInitPreferences && width > 0) {
+		if (width > MIN_WIDTH && height > MIN_HEIGHT) {
 			sb.append("\t<size ");
 			sb.append(" width=\"");
 			sb.append(width);

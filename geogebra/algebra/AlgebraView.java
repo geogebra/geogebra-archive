@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
@@ -47,6 +48,8 @@ import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+
+import atp.sHotEqn;
 
 /**
  *
@@ -483,7 +486,7 @@ public class AlgebraView extends JTree implements View {
 		
 		private static final long serialVersionUID = 1L;				
 		
-		//private sHotEqn eqn = new sHotEqn();	 
+		private sHotEqn eqn = new sHotEqn();	 
 		
 		public MyRenderer() {
 			setOpaque(true);
@@ -507,9 +510,9 @@ public class AlgebraView extends JTree implements View {
 				
 				setFont(app.boldFont);	
 				setForeground(geo.labelColor);
-				String str = geo.getAlgebraDescriptionTextOrHTML();
-				setText(str);
-								
+				//String str = geo.getAlgebraDescriptionTextOrHTML();
+				String str = geo.getAlgebraDescription();
+				setText(str);								
 				
 				if (geo.doHighlighting())				   
 					setBackground(Application.COLOR_SELECTION);
@@ -524,13 +527,10 @@ public class AlgebraView extends JTree implements View {
 				}
 				
 //				 TODO: LaTeX in AlgebraView
-				/*
-				String latex = geo.toLaTeXString(false);
-				eqn.setDoubleBuffered(false);
-				eqn.setEquation(latex);
-				eqn.getImage();				
-				return eqn;
-				*/
+				//if (geo.isGeoFunction()) {
+					
+			//	}
+				
 				
 				/*// HIGHLIGHTING
 				if (geo.highlight) {
@@ -555,8 +555,13 @@ public class AlgebraView extends JTree implements View {
 				setBorder(null);
 				setText(value.toString());
 			}
+			
+			
+			
 			return this;
 		}			
+		
+		
 		
 		/*
 		final public void paint(Graphics g) {
