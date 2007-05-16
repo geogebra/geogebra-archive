@@ -178,6 +178,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				File file = Application.getFromFileList(i);
 				if (file != null) {										
 					mi = new JMenuItem(file.getName());
+					mi.setIcon(app.getEmptyIcon());
 					//mi.setIcon( new ImageIcon(app.getInternalImage("geogebra22.gif")));
 					ActionListener al = new LoadFileListener(app, file);
 					mi.addActionListener(al);
