@@ -135,6 +135,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		if (!app.isApplet()) {
 			mi = new JMenuItem(newWindowAction);
 			mi.setIcon(app.getEmptyIcon());
+			setCtrlShiftAccelerator(mi, 'N');
 			menu.add(mi);
 			menu.addSeparator();
 		}
@@ -144,7 +145,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu.addSeparator();
 		mi = menu.add(saveAction);
 		setCtrlAccelerator(mi, 'S');
-		mi = menu.add(saveAsAction);
+		mi = menu.add(saveAsAction);	
+		setCtrlShiftAccelerator(mi, 'S');
 		menu.addSeparator();
 //		submenu = new JMenu(app.getMenu("PrintPreview"));
 //		submenu.setIcon(app.getImageIcon("print.gif"));
@@ -154,16 +156,21 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi = menu.add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
 		mi.setIcon(app.getImageIcon("print.gif"));
+		setCtrlAccelerator(mi, 'P');
 				
 		// export
 		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		menu.add(submenu);
-		submenu.add(exportWorksheet);
+		mi = submenu.add(exportWorksheet);
+		setCtrlShiftAccelerator(mi, 'W');
+		
 		submenu.addSeparator();
 		//submenu.add(htmlCPAction);
-		submenu.add(exportGraphicAction);
-		submenu.add(drawingPadToClipboardAction);		
+		mi = submenu.add(exportGraphicAction);
+		setCtrlShiftAccelerator(mi, 'P');
+		mi = submenu.add(drawingPadToClipboardAction);
+		setCtrlShiftAccelerator(mi, 'C');
 		
 		
 		// DONE HERE WHEN APPLET
@@ -971,7 +978,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 		
 		
-		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save")) {
+		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save"),
+				app.getImageIcon("save.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -999,11 +1007,17 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi.setAccelerator(ks);
 	}
 	
+	private void setCtrlShiftAccelerator(JMenuItem mi, char acc) {
+		KeyStroke ks = KeyStroke.getKeyStroke(acc, Event.CTRL_MASK + Event.SHIFT_MASK);
+		mi.setAccelerator(ks);
+	}
+	
 	public void updateMenuWindow() {	
 		if (menuWindow == null) return;
 		
 		menuWindow.removeAll();
-		menuWindow.add(newWindowAction);
+		JMenuItem mit = menuWindow.add(newWindowAction);
+		setCtrlShiftAccelerator(mit, 'N');
 
 		ArrayList ggbInstances = GeoGebra.getInstances();
 		int size = ggbInstances.size();

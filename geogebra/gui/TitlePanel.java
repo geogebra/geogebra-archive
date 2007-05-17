@@ -65,8 +65,9 @@ public class TitlePanel extends JPanel {
 	dateField.setColumns(12);
 	dateField.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
-	titleField.setText(cons.getTitle());
-	authorField.setText(cons.getAuthor());
+	titleField.setText(cons.getTitle());	
+	authorField.setText(loadAuthor());	
+
 	dateField.setText(configureDate(cons.getDate()));
 
 	JPanel p = new JPanel(new BorderLayout(5, 5));
@@ -142,6 +143,24 @@ public class TitlePanel extends JPanel {
 
 	return df.format(date);
     }
+    
+    private String loadAuthor() {
+    	String author = cons.getAuthor();
+    	if ("".equals(author)) {
+    		author = GeoGebraPreferences.loadPreference(GeoGebraPreferences.AUTHOR, "");
+    		cons.setAuthor(author);
+    	}
+    	return author;
+    }
+    
+    private boolean saveAuthor(String author) {    	    	
+    	boolean kernelChanged = !author.equals(cons.getAuthor());    	
+    	if (kernelChanged) {
+    		cons.setAuthor(author);
+    		GeoGebraPreferences.savePreference(GeoGebraPreferences.AUTHOR, author);
+    	}    		
+    	return kernelChanged;
+    }
 
     /**
      * Updates the kernel if the user makes changes to the text fields.
@@ -155,11 +174,8 @@ public class TitlePanel extends JPanel {
 		return;
 	    cons.setTitle(text);
 	    kernelChanged = true;
-	} else if (tf == authorField) {
-	    if (text.equals(cons.getAuthor()))
-		return;
-	    cons.setAuthor(text);
-	    kernelChanged = true;
+	} else if (tf == authorField) {	    
+	    kernelChanged = saveAuthor(tf.getText());
 	} else if (tf == dateField) {
 	    if (text.equals(cons.getDate()))
 		return;

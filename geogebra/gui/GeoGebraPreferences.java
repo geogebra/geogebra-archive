@@ -1,3 +1,15 @@
+/* 
+ GeoGebra - Dynamic Geometry and Algebra
+ Copyright Markus Hohenwarter, http://www.geogebra.at
+
+ This file is part of GeoGebra.
+
+ This program is free software; you can redistribute it and/or modify it 
+ under the terms of the GNU General Public License as published by 
+ the Free Software Foundation; either version 2 of the License, or 
+ (at your option) any later version.
+ */
+
 package geogebra.gui;
 
 import geogebra.Application;
@@ -6,7 +18,34 @@ import java.io.File;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
+/**
+ * Stores user settings and options as preferences.
+ *  
+ * @author Markus Hohenwarter
+ * @date May 16, 2007
+ */
 public class GeoGebraPreferences {		
+	
+	public static final String AUTHOR = "author";
+	
+	// worksheet export dialog
+	public static final String EXPORT_WS_RIGHT_CLICK = "export_ws_right_click";
+	public static final String EXPORT_WS_RESET_ICON = "export_ws_reset_icon";
+	public static final String EXPORT_WS_FRAME_POSSIBLE = "export_ws_frame_possible";
+	public static final String EXPORT_WS_SHOW_MENUBAR = "export_ws_show_menubar";
+	public static final String EXPORT_WS_SHOW_TOOLBAR = "export_ws_show_toolbar";
+	public static final String EXPORT_WS_SHOW_TOOLBAR_HELP = "export_ws_show_toolbar_help";
+	public static final String EXPORT_WS_SHOW_INPUT_FIELD = "export_ws_show_input_field";
+	
+	// picture export dialog
+	public static final String EXPORT_PIC_FORMAT = "export_pic_format";
+	public static final String EXPORT_PIC_DPI = "export_pic_dpi";
+	// public static final String EXPORT_PIC_SCALE = "export_pic_scale";
+	
+	// print preview dialog
+	public static final String PRINT_ORIENTATION = "print_orientation";
+	public static final String PRINT_SHOW_SCALE = "print_show_scale";		
+	
 	
 	 // preferences node name for GeoGebra 	 
 	 private static Preferences ggbPrefs;
@@ -15,12 +54,23 @@ public class GeoGebraPreferences {
 	 }	 
 	 private static String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
      
-    // Preference keys for GeoGebra
+    // special preference keys
 	private static final String XML_USER_PREFERENCES = "xml_user_preferences";	
 	private static final String APP_LOCALE = "app_locale";	
 	private static final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
-	private static final String APP_FILE_ = "app_file_";
+	private static final String APP_FILE_ = "app_file_";		
 		
+	
+	public static String loadPreference(String key, String defaultValue) {
+		return ggbPrefs.get(key, defaultValue);
+	}
+	
+	public static void savePreference(String key, String value) {
+		if (key != null && value != null)
+			ggbPrefs.put(key, value);
+	}
+	
+	
 	/**
      * Returns the path of the first file in the file list 
      */

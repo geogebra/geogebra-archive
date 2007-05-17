@@ -14,6 +14,7 @@ package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
@@ -77,14 +78,9 @@ public class WorksheetExportDialog extends JDialog {
 		kernel = app.getKernel();
 		
 		initGUI();		
-	}
-	
-	public void setVisible(boolean flag) {
-		if (flag)
-			checkEuclidianView();
+		loadPreferences();
+	} 
 		
-		super.setVisible(flag);		
-	}
 	
 	/**
 	 * Checks if the EuclidianView has a selected rectangle. 
@@ -131,18 +127,16 @@ public class WorksheetExportDialog extends JDialog {
 		JButton cancelButton = new JButton(app.getPlain("Cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				beforeClose();
-				dispose();
+				setVisible(false);
 			}
 		});
 
 		JButton exportButton = new JButton(app.getMenu("Export"));
 		exportButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				beforeClose();
+			public void actionPerformed(ActionEvent e) {				
 				Thread runner = new Thread() {
 					public void run() {
-						dispose();
+						setVisible(false);
 						if (kernelChanged)
 							app.storeUndoInfo();
 						exportHTML();
@@ -172,6 +166,37 @@ public class WorksheetExportDialog extends JDialog {
 		setResizable(true);
 		centerOnScreen();
 	}
+	
+	private void loadPreferences() {
+		try {
+	    	cbEnableRightClick.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_RIGHT_CLICK, "false")).booleanValue() );
+	    	cbShowResetIcon.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_RESET_ICON, "false")).booleanValue() );
+	    	cbShowFrame.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_FRAME_POSSIBLE, "false")).booleanValue() );
+	    	cbShowMenuBar.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, "false")).booleanValue() );
+	    	cbShowToolBar.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
+	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
+	    	cbShowInputField.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private void savePreferences() {    	    	
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_RIGHT_CLICK, Boolean.toString(cbEnableRightClick.isSelected()));
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_RESET_ICON, Boolean.toString(cbShowResetIcon.isSelected()));    	    	
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_FRAME_POSSIBLE, Boolean.toString(cbShowFrame.isSelected()));
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, Boolean.toString(cbShowMenuBar.isSelected()));
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, Boolean.toString(cbShowToolBar.isSelected()));
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, Boolean.toString(cbShowToolBarHelp.isSelected()));
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
+    }
 
 	/**
 	 * The General Settings Tab contains some of the more general settings.
@@ -393,12 +418,21 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\">\n");	
 	}
 
-	private void beforeClose() {
-		// store the texts of the text ares in
-		// the current construction
-		Construction cons = kernel.getConstruction();
-		cons.setWorksheetText(textAbove.getText(), 0);
-		cons.setWorksheetText(textBelow.getText(), 1);
+	public void setVisible(boolean flag) {
+		if (flag) {
+			checkEuclidianView();
+			loadPreferences();
+			super.setVisible(true);
+		} else {
+			// store the texts of the text ares in
+			// the current construction
+			Construction cons = kernel.getConstruction();
+			cons.setWorksheetText(textAbove.getText(), 0);
+			cons.setWorksheetText(textBelow.getText(), 1);
+		
+			savePreferences();
+			dispose();
+		}		
 	}
 
 	private void updateEnabledStates() {				

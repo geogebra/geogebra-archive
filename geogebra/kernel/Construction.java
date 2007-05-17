@@ -886,7 +886,7 @@ public class Construction {
     }     
 
     public void setAuthor(String string) {
-        author = string;
+        author = string;       
     }
 
     public void setDate(String string) {

@@ -14,6 +14,7 @@ package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.TitlePanel;
 
 import java.awt.BorderLayout;
@@ -83,7 +84,9 @@ public class PrintPreview extends JDialog {
 	private void initPrintPreview(Printable target, int orientation) {	
 		m_target = target;
 		m_orientation = orientation;
-		m_scale = 75; // init scale to 75%						
+		m_scale = 75; // init scale to 75%		
+		
+		loadPreferences();
 		
 		setTitle(app.getMenu("PrintPreview"));
 		Cursor oldCursor = app.getMainComponent().getCursor();
@@ -108,7 +111,7 @@ public class PrintPreview extends JDialog {
 							prnJob.print();
 							setCursor(
 								Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-							dispose();
+							setVisible(false);
 						} catch (PrinterException ex) {
 							ex.printStackTrace();
 							System.err.println("Printing error: " + ex.toString());
@@ -127,7 +130,7 @@ public class PrintPreview extends JDialog {
 		bt = new JButton(app.getMenu("Close"));
 		lst = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				setVisible(false);
 			}
 		};
 		bt.addActionListener(lst);
@@ -258,7 +261,7 @@ public class PrintPreview extends JDialog {
 		getContentPane().add(tb, BorderLayout.NORTH); 
 		// title and preview center
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		//setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		// init the preview
 		initPages();	
@@ -268,18 +271,50 @@ public class PrintPreview extends JDialog {
 		app.getMainComponent().setCursor(oldCursor);
 	}
 	
+	private void loadPreferences() {
+		try {
+			// orientation			
+			String strOrientation = GeoGebraPreferences.loadPreference(
+					GeoGebraPreferences.PRINT_ORIENTATION, "landscape");
+			m_orientation = strOrientation.equals("portrait") ? PageFormat.PORTRAIT : PageFormat.LANDSCAPE;						
+	    						
+			
+			// show printing scale in cm
+			app.setPrintScaleString( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.PRINT_SHOW_SCALE, "false")).booleanValue() );	    							
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private void savePreferences() {    		    	
+    	// orientation
+    	String strOrientation;
+    	switch (m_orientation) {
+    		case PageFormat.LANDSCAPE: strOrientation = "landscape"; break;    		
+    		default: strOrientation = "portrait";
+    	}    	
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.PRINT_ORIENTATION, strOrientation);
+    	
+    	// show printing scale in cm
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.PRINT_SHOW_SCALE, Boolean.toString(app.isPrintScaleString()));  
+    }
 	
 	
 	public void setVisible(boolean flag) {
-		if (!flag) {
+		if (flag) {
+			// note: preferences loaded in initPreview			
+			super.setVisible(true);			
+		} else {
 			// store undo info
 			if (kernelChanged) {
-				app.storeUndoInfo();
-				kernelChanged = false;
+				app.storeUndoInfo();				
 			}
-		}
-		
-		super.setVisible(flag);
+			
+			// save preferences
+			savePreferences();
+			dispose();
+		}				
 	}
 	
 	private void centerOnScreen() {

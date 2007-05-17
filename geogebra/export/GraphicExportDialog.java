@@ -15,6 +15,7 @@ package geogebra.export;
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.pstricks.GeoGebraToPstricks;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.util.MyImageIO;
 import geogebra.util.Util;
 
@@ -51,11 +52,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private static final long serialVersionUID = 1L;
 
 	private Application app;
-	private JComboBox cbFormat;
+	private JComboBox cbFormat, cbDPI;
 	private JLabel sizeLabel;
 	private JButton cancelButton;
-	
-	private int DPI = 300;
+		
 	private double exportScale;
 	private int pixelWidth, pixelHeight;
 	private NumberFormat sizeLabelFormat;
@@ -74,7 +74,17 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		sizeLabelFormat.setGroupingUsed(false);
 		sizeLabelFormat.setMaximumFractionDigits(2);
 		
-		initGUI();		
+		initGUI();				
+	}
+	
+	public void setVisible(boolean flag) {		
+		if (flag) {
+			loadPreferences();
+			super.setVisible(true);
+		} else {
+			savePreferences();
+			dispose();
+		}		
 	}
 
 	private void initGUI() {
@@ -120,14 +130,13 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		JPanel dpiPanel = new JPanel(new FlowLayout(5));
 	
 		String [] dpiStr =  {"72", "96", "150", "300", "600"};
-		final JComboBox cb = new JComboBox(dpiStr);
-		cb.setSelectedItem("300");			
+		cbDPI = new JComboBox(dpiStr);
+		cbDPI.setSelectedItem("300");			
 		dpiPanel.add(new JLabel(app.getPlain("ResolutionInDPI") + ":"));
-		dpiPanel.add(cb);
+		dpiPanel.add(cbDPI);
 		p.add(dpiPanel);
-		cb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				DPI = Integer.parseInt((String)cb.getSelectedItem());				
+		cbDPI.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {							
 				updateSizeLabel();
 			}		
 		});	
@@ -138,18 +147,18 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 					case FORMAT_EPS:
 					//case FORMAT_EMF:
 					case FORMAT_SVG:					
-						cb.setSelectedItem("72");
-						cb.setEnabled(false);						
+						cbDPI.setSelectedItem("72");
+						cbDPI.setEnabled(false);						
 						break;											
 						
 					case FORMAT_PSTRICKS:
-						dispose();
+						setVisible(false);
 						exportPStricks();									
 						break;
 						
 					default:
-						cb.setSelectedItem("300");
-						cb.setEnabled(true);						
+						cbDPI.setSelectedItem("300");
+						cbDPI.setEnabled(true);						
 				}
 			}			
 		});
@@ -165,8 +174,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		//	Cancel and Export Button
 		cancelButton = new JButton(app.getPlain("Cancel"));
 		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
+			public void actionPerformed(ActionEvent e) {				
+				setVisible(false);
 			}
 		});
 		JButton exportButton = new JButton(app.getMenu("Export"));
@@ -174,7 +183,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						dispose();
+						setVisible(false);
 						
 						int index = cbFormat.getSelectedIndex();
 						switch (index) {
@@ -215,11 +224,69 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		centerOnScreen();
 	}
 	
+	private int getDPI() {
+		return Integer.parseInt((String)cbDPI.getSelectedItem());
+	}
+	
+	private void loadPreferences() {
+		try {
+			// format
+			int formatID = FORMAT_PNG;
+			String format = GeoGebraPreferences.loadPreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, "png");		
+	    	if (format.equals("eps")) formatID = FORMAT_EPS; 
+	    	else if (format.equals("svg")) formatID = FORMAT_SVG;
+	    	else if (format.equals("pstricks")) formatID = FORMAT_PSTRICKS;		
+			cbFormat.setSelectedIndex(formatID);					
+			
+			// dpi
+	    	if (cbDPI.isEnabled()) {
+				String strDPI = GeoGebraPreferences.loadPreference(
+		    							GeoGebraPreferences.EXPORT_PIC_DPI, "300");
+				for (int i=0; i < cbDPI.getItemCount(); i++) {
+					String dpi = cbDPI.getItemAt(i).toString();
+					if (dpi.equals(strDPI))
+						cbDPI.setSelectedIndex(i);
+				}		
+	    	}			
+			
+			/*
+	    	// scale in cm
+			double scale = Double.parseDouble(GeoGebraPreferences.loadPreference(
+	    						GeoGebraPreferences.EXPORT_PIC_SCALE, "1"));
+			app.getEuclidianView().setPrintingScale(scale);
+			*/
+			
+			updateSizeLabel();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private void savePreferences() {    		
+    	// dpi
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
+    	
+    	// format
+    	String format;
+    	switch (cbFormat.getSelectedIndex()) {
+    		case FORMAT_EPS: format = "eps"; break;
+    		case FORMAT_SVG: format = "svg"; break;
+    		case FORMAT_PSTRICKS: format = "pstricks"; break;
+    		default: format = "png";
+    	}    	
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
+    	
+    	/*
+    	// scale in cm
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_SCALE, Double.toString(app.getEuclidianView().getPrintingScale()));
+    	*/   
+    }
+	
 	private void updateSizeLabel() {
 		EuclidianView ev = app.getEuclidianView(); 
 		double printingScale = ev.getPrintingScale();
 		// takes dpi into account (note: eps has 72dpi)
-		exportScale = printingScale * DPI / 2.54 / ev.getXscale();
+		exportScale = printingScale * getDPI() / 2.54 / ev.getXscale();
 						
 		StringBuffer sb = new StringBuffer();
 		// cm size
@@ -359,7 +426,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {
 			BufferedImage img =
 			app.getEuclidianView().getExportImage(exportScale);			
-			MyImageIO.write(img, "png", DPI,  file);						
+			MyImageIO.write(img, "png", getDPI(),  file);						
 			return true;
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");

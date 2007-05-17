@@ -1296,7 +1296,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				if (line == null)
 					line = scaleString;
 				else
-					line = line + " - " + sb.toString();
+					line = line + " - " + scaleString;
 			}
 
 			if (line != null) {

@@ -134,10 +134,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		// no preferred size
 		if (ev.hasPreferredSize()) {
 			ev.setMinimumSize(new Dimension(50,50));
-			Dimension evPref = ev.getPreferredSize();
-			// TODO: remove
-			System.out.println("updateSize: evpref: " + evPref );
-			
+			Dimension evPref = ev.getPreferredSize();						
 			ev.setPreferredSize(evPref);
 							
 			// pack frame and correct size to really get the preferred size for euclidian view
@@ -182,7 +179,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		}
 		
 		// load list of previously used files
-		GeoGebraPreferences.loadFileList();
+		GeoGebraPreferences.loadFileList();		
 
 		// create window
 		GeoGebra wnd = createNewWindow(args);
