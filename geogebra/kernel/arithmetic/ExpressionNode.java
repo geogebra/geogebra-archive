@@ -1887,7 +1887,7 @@ implements ExpressionValue {
                     		   if (Character.isDigit(rightStr.charAt(0)) &&
                                     Character.isDigit(sb.charAt(sb.length() - 1)) )
                                {
-                                   sb.append(" * "); 
+                    			   sb.append(" * ");                    			   
                                 }
                                else 
                                    sb.append(' '); // space instead of '*'  

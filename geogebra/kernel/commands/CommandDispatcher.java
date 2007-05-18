@@ -19,7 +19,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.util.FastHashMapKeyless;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class CommandDispatcher {
@@ -28,14 +30,22 @@ public class CommandDispatcher {
     private Construction cons;
     private Application app;
     
-    // stores (String name, CommandProcessor cmdProc) pairs
-    private FastHashMapKeyless cmdTable;
+    // stores (String name, CommandProcessor cmdProc) pairs   
+    private HashMap cmdTable;
     private MacroProcessor macroProc;
     
     public CommandDispatcher(Kernel kernel) {             
     	this.kernel = kernel;
     	cons = kernel.getConstruction();  
     	app = kernel.getApplication();                    
+    }
+    
+    public Iterator getCmdNameIterator() {
+    	if (cmdTable == null) {
+    		initCmdTable();
+    	}  
+    	
+    	return cmdTable.keySet().iterator();
     }
     
     /**
@@ -90,8 +100,8 @@ public class CommandDispatcher {
            
     private void initCmdTable() {    	 
     	macroProc = new MacroProcessor(kernel);
-    	
-    	cmdTable = new FastHashMapKeyless(500);
+    	    	
+    	cmdTable = new HashMap(500);
     	cmdTable.put("UnitVector", new CmdUnitVector(kernel));	   
     	cmdTable.put("SecondAxis", new CmdSecondAxis(kernel));	   
     	cmdTable.put("CircleArc", new CmdCircleArc(kernel));	   

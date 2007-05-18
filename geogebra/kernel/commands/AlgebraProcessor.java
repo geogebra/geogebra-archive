@@ -36,6 +36,7 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AlgebraProcessor {
 	
@@ -52,6 +53,10 @@ public class AlgebraProcessor {
 		cmdDispatcher = new CommandDispatcher(kernel);
 		app = kernel.getApplication();
 		parser = kernel.getParser();
+	}
+	
+	public Iterator getCmdNameIterator() {
+		return cmdDispatcher.getCmdNameIterator();
 	}
 	
 	final public GeoElement[] processCommand(Command c, boolean labelOutput) throws MyError {

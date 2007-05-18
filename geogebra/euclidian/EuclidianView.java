@@ -341,6 +341,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private boolean antiAliasing = true;
 
 	boolean showMouseCoords = false;
+	boolean showAxesRatio = false;
 
 	private int pointCapturingMode = POINT_CAPTURING_OFF; // round point to
 
@@ -1006,7 +1007,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (repaint) {
 			updateBackgroundImage();
 			updateAllDrawables(repaint);
-			// app.updateStatusLabelAxesRatio();
+			//app.updateStatusLabelAxesRatio();
 		}
 	}
 
@@ -1113,7 +1114,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		return yscale / xscale;
 	}
 
-	public String getXYscaleRatioString() {
+	private String getXYscaleRatioString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("x : y = ");
 		if (xscale >= yscale) {
@@ -1206,6 +1207,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		if (showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
 			drawMouseCoords(g2);
+		if (showAxesRatio)
+			drawAxesRatio(g2);
 	}
 
 	private void setAntialiasing(Graphics2D g2) {
@@ -1789,6 +1792,16 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		g2.setColor(Color.darkGray);
 		g2.setFont(fontCoords);
 		g2.drawString(sb.toString(), pos.x + 15, pos.y + 15);
+	}
+	
+	final private void drawAxesRatio(Graphics2D g2) {
+		Point pos = euclidianController.mouseLoc;
+		if (pos == null)
+			return;						
+
+		g2.setColor(Color.darkGray);
+		g2.setFont(fontLine);
+		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 
 	final private void drawGeometricObjects(Graphics2D g2) {

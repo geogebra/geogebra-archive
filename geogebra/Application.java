@@ -78,6 +78,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -1048,7 +1049,7 @@ public class Application implements	KeyEventDispatcher {
         if (rbplain != null) 
         	rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale, getCodeBase());
       //  if (rbcommand != null || (applet != null && applet.enableJavaScript))
-        	initCommandResources();                        
+        	//initCommandResources();                        
     }
     
     private void initCommandResources() {    	    
@@ -1072,9 +1073,10 @@ public class Application implements	KeyEventDispatcher {
     	 translateCommandTable.clear();
          commandDict.clear();
          
-         Enumeration e = rbcommand.getKeys();     
-         while (e.hasMoreElements()) {            
-             String internal = (String) e.nextElement();
+        // Enumeration e = rbcommand.getKeys();
+         Iterator it = kernel.getAlgebraProcessor().getCmdNameIterator();
+         while (it.hasNext()) {            
+             String internal = (String) it.next();
              //System.out.println(internal);
              String local = rbcommand.getString((String) internal);
              if (!internal.endsWith("Syntax") && 

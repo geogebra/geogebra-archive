@@ -137,7 +137,7 @@ TOKEN :  {
   | < EQUAL:    "=" >
   | < PLUS:     "+" >
   | < MINUS:    "-" >
-  | < MULTIPLY: "*" >
+  | < MULTIPLY: ("*" | "\u22c5") >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
@@ -147,7 +147,7 @@ TOKEN :  {
   | < POWER5:   "\u2075" >
   | < POWER6:   "\u2076" >
   | < PI:       ( "pi" | "Pi" | "\u03c0") >
-  | < E:        "\u0435" >
+  | < E:        "\u212f" >  	// Russian: "\u0435"
   | < DEGREE:   "\u00b0" >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >
@@ -200,11 +200,12 @@ TOKEN : {
         "\u3300"-"\u337f",
         "\u3400"-"\u3d2d",
         "\u4e00"-"\u9fff",
-        "\uf900"-"\ufaff"
+        "\uf900"-"\ufaff",
+        "\u00b7"   // middle dot (for Catalan)
        ]
 >
  | < #ACCENTUATED_LETTER:                                        // unicode letters
-       [
+       [        
         "\u00c0"-"\u00c5",     //accentuated A
         "\u00c6",                      //AE
         "\u00c7",                      //C cedille

@@ -47,6 +47,7 @@ import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.AngleInputDialog;
+import geogebra.util.MyMath;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -86,7 +87,7 @@ final public class EuclidianController implements MouseListener,
 	private static final int MOVE_VECTOR_STARTPOINT = 205;
 
 	private static final int MOVE_VIEW = 106;
-
+	
 	private static final int MOVE_FUNCTION = 107;
 
 	private static final int MOVE_LABEL = 108;
@@ -105,8 +106,8 @@ final public class EuclidianController implements MouseListener,
 	
 	private static final int MOVE_MULTIPLE_OBJECTS = 115; // for multiple objects
 	
-	private static final int MOVE_X_AXIS = 115;
-	private static final int MOVE_Y_AXIS = 116;
+	private static final int MOVE_X_AXIS = 116;
+	private static final int MOVE_Y_AXIS = 117;
 
 	private Application app;
 
@@ -116,7 +117,7 @@ final public class EuclidianController implements MouseListener,
 
 	Point startLoc, mouseLoc, lastMouseLoc; // current mouse location
 
-	private double xZeroOld, yZeroOld;
+	private double xZeroOld, yZeroOld, xTemp, yTemp;
 
 	private Point oldLoc = new Point();
 
@@ -506,13 +507,34 @@ final public class EuclidianController implements MouseListener,
 			handleMousePressedForMoveMode(e);			
 			break;
 
-		case EuclidianView.MODE_TRANSLATEVIEW:
-			startLoc = mouseLoc;
-			moveMode = MOVE_VIEW;
-			if (!QUICK_TRANSLATEVIEW)
-				view.setMoveCursor();
+		// move drawing pad or axis
+		case EuclidianView.MODE_TRANSLATEVIEW:			
+			// check if axis is hit
+			hits = view.getHits(mouseLoc);
+			if (hits != null && hits.size() == 1) {
+				Object hit0 = hits.get(0);
+				if (hit0 == kernel.getXAxis())
+					moveMode = MOVE_X_AXIS;
+				else if (hit0 == kernel.getYAxis())
+					moveMode = MOVE_Y_AXIS;
+				else
+					moveMode = MOVE_VIEW;
+			} else {						
+				moveMode = MOVE_VIEW;
+			}						
+			
+			startLoc = mouseLoc; 
+			if (!QUICK_TRANSLATEVIEW) {
+				if (moveMode == MOVE_VIEW)
+					view.setMoveCursor();
+				else
+					view.setDragCursor();
+			}
 			xZeroOld = view.xZero;
-			yZeroOld = view.yZero;			
+			yZeroOld = view.yZero;		
+			xTemp = xRW;
+			yTemp = yRW;
+			view.showAxesRatio = (moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS);
 			//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
 			break;		
 				
@@ -951,11 +973,37 @@ final public class EuclidianController implements MouseListener,
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
 							+ mouseLoc.y - startLoc.y, view.xscale, view.yscale);
 				}
-				break;				
+				break;	
+								
+			case MOVE_X_AXIS:
+				if (repaint) {
+					if (QUICK_TRANSLATEVIEW) view.setDragCursor();
+										
+					// take care when we get close to the origin
+					if (Math.abs(mouseLoc.x - view.xZero) < 2) {
+						mouseLoc.x = (int) Math.round(mouseLoc.x > view.xZero ?  view.xZero + 2 : view.xZero - 2);						
+					}											
+					double xscale = (mouseLoc.x - view.xZero) / xTemp;					
+					view.setCoordSystem(view.xZero, view.yZero, xscale, view.yscale);
+				}
+				break;	
+				
+			case MOVE_Y_AXIS:
+				if (repaint) {
+					if (QUICK_TRANSLATEVIEW) view.setDragCursor();
+					
+					// take care when we get close to the origin
+					if (Math.abs(mouseLoc.y - view.yZero) < 2) {
+						mouseLoc.y = (int) Math.round(mouseLoc.y > view.yZero ?  view.yZero + 2 : view.yZero - 2);						
+					}											
+					double yscale = (view.yZero - mouseLoc.y) / yTemp;					
+					view.setCoordSystem(view.xZero, view.yZero, view.xscale, yscale);					
+				}
+				break;	
 	
 			default: // do nothing
 		}
-	}
+	}		
 
 	private void updateSelectionRectangle(boolean keepScreenRatio) {
 		if (view.getSelectionRectangle() == null)
@@ -1089,7 +1137,8 @@ final public class EuclidianController implements MouseListener,
 		// reinit vars
 		//view.setDrawMode(EuclidianView.DRAW_MODE_BACKGROUND_IMAGE);
 		moveMode = MOVE_NONE;
-		initShowMouseCoords();				
+		initShowMouseCoords();	
+		view.showAxesRatio = false;
 		kernel.notifyRepaint();	
 		
 		// TODO: remove
@@ -1741,16 +1790,27 @@ final public class EuclidianController implements MouseListener,
 						int y = screenLoc.getAbsoluteScreenLocY() + mouseLoc.y - startLoc.y;
 						screenLoc.setAbsoluteScreenLoc(x, y);
 						movedGeo = true;
+					} 					
+					else if (geo.isGeoText()) {
+						// check for GeoText with unlabeled start point
+						GeoText movedGeoText = (GeoText) geo;
+						if (movedGeoText.hasAbsoluteLocation()) {
+							//	absolute location: change location
+							GeoPoint loc = movedGeoText.getStartPoint();
+							loc.translate(translationVec);
+							movedGeo = true;
+						}						
 					}
 				}								
-			}					
+			}											
 			
 			if (movedGeo)
 				geo.updateCascade();			
 		}				
 		
 		if (repaint)
-			kernel.notifyRepaint();		
+			kernel.notifyRepaint();	
+		
 		startPoint.setLocation(xRW, yRW);
 		startLoc = mouseLoc;
 	}	
@@ -1792,6 +1852,8 @@ final public class EuclidianController implements MouseListener,
 						&& b < view.gridDistances[1] *  pointCapturingPercentage) {
 						xRW = x;
 						yRW = y;
+						mouseLoc.x = view.toScreenCoordX(xRW);
+						mouseLoc.y = view.toScreenCoordY(yRW);
 					}
 				
 				default:
@@ -1976,23 +2038,43 @@ final public class EuclidianController implements MouseListener,
 
 	// get two objects (lines or conics) and create intersection point
 	final private boolean intersect(ArrayList hits) {
-		if (hits == null || hits.size() > 2)
-			return false;
+		if (hits == null)
+			return false;				
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created
 		boolean singlePointWanted = selGeos() == 0;
-
-		if (selGeos() < 2) {
-			addSelectedLine(hits, 2, true);
-		}
-		if (selGeos() < 2) {
-			addSelectedConic(hits, 2, true);
-		}
-		if (selFunctions() < 2) {
-			addSelectedFunction(hits, 2, true);
-		}
+							
+		// check how many interesting hits we have
+		if (!selectionPreview && hits.size() > 2 - selGeos()) {
+			ArrayList goodHits = new ArrayList();
+			//goodHits.add(selectedGeos);
+			view.getHits(hits, GeoLine.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			view.getHits(hits, GeoConic.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			view.getHits(hits, GeoFunction.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			
+			if (goodHits.size() > 2 - selGeos()) {
+				//  choose one geo, and select only this one
+				GeoElement geo = chooseGeo(goodHits);
+				hits.clear();
+				hits.add(geo);				
+			} else {
+				hits = goodHits;
+			}
+		}			
+		
+		// get lines, conics and functions
+		addSelectedLine(hits, 2, true);
+		addSelectedConic(hits, 2, true);
+		addSelectedFunction(hits, 2, true);				
+		
 		singlePointWanted = singlePointWanted && selGeos() == 2;
+		
+		if (selGeos() > 2)
+			return false;
 
 		// two lines
 		if (selLines() == 2) {
