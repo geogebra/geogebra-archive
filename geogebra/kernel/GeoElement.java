@@ -217,6 +217,7 @@ public abstract class GeoElement
 	private String oldLabel; // see doRenameLabel
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
+	private GeoBoolean visibilityCondition;
 	private boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
