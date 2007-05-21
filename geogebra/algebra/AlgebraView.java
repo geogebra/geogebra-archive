@@ -118,7 +118,7 @@ public class AlgebraView extends JTree implements View {
 		// add listener
 		addKeyListener(algCtrl);
 		addMouseListener(algCtrl);
-		addMouseMotionListener(algCtrl);
+		addMouseMotionListener(algCtrl);		
 
 		// build default tree structure
 		root = new DefaultMutableTreeNode();
@@ -142,8 +142,9 @@ public class AlgebraView extends JTree implements View {
 		setRootVisible(false);
 		// show lines from parent to children
 		putClientProperty("JTree.lineStyle", "Angled");
-		setInvokesStopCellEditing(false);
-		setScrollsOnExpand(true);		
+		setInvokesStopCellEditing(true);
+		setScrollsOnExpand(true);	
+		setRowHeight(-1); // to enable flexible height of cells
 		
 		tpInd = new TreePath(indNode.getPath());
 		tpDep = new TreePath(depNode.getPath());
@@ -297,8 +298,8 @@ public class AlgebraView extends JTree implements View {
 		}
 	}	*/
 
-	public GeoElement getGeoElementForLocation(int x, int y) {
-		TreePath tp = getPathForLocation(x, y);
+	public static GeoElement getGeoElementForLocation(JTree tree, int x, int y) {
+		TreePath tp = tree.getPathForLocation(x, y);
 		if (tp == null)
 			return null;
 
@@ -413,19 +414,53 @@ public class AlgebraView extends JTree implements View {
 		// label of inserted geo
 		String newLabel = newGeo.getLabel();
 		
+		// standard case: binary search		
+		int left = 0;
+		int right = parent.getChildCount();	
+		if (right == 0) return right;
+		
 		// bigger then last?
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getLastChild();	
 		String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();	
 		if (newLabel.compareTo(nodeLabel) > 0) 
-			return parent.getChildCount();				
+			return right;				
 		
-		// standard case: binary search		
-		int left = 0;
-		int right = parent.getChildCount() - 1;					
+		// binary search
 		while (right > left) {							
 			int middle = (left + right) / 2;
 			node = (DefaultMutableTreeNode) parent.getChildAt(middle);
 			nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
+			
+			if (newLabel.compareTo(nodeLabel) < 0) {
+				right = middle;
+			} else {
+				left = middle + 1;
+			}
+		}													
+		
+		// insert at correct position
+		return right;				
+	}
+	
+	/**
+	 * Performs a binary search for geo among the children of parent. All children of parent
+	 * have to be instances of GeoElement sorted alphabetically by their names.
+	 * @return -1 when not found
+	 */
+	final public static int searchGeo(DefaultMutableTreeNode parent, GeoElement geo) { 
+		// label of searched geo
+		String label = geo.getLabel();
+		
+		// standard case: binary search		
+		int left = 0;
+		int right = parent.getChildCount()-1;	
+		if (right == -1) return -1;
+		
+		// binary search for geo's label
+		while (right >= left) {							
+			int middle = (left + right) / 2;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getChildAt(middle);
+			String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
 			
 			int compare = label.compareTo(nodeLabel);
 			if (compare < 0) {
@@ -435,32 +470,10 @@ public class AlgebraView extends JTree implements View {
 			} else {		
 				return middle;
 			}
-		}										
-		
-		// binary search for geo's label
-		while (right > left) {							
-			int middle = (left + right) / 2;
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(middle);
-			String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
-			
-			int compare = label.compareTo(nodeLabel);
-			if (compare < 0) {
-				right = middle - 1;
-			} else if (compare > 0) {
-				left = middle + 1;
-			} else {		
-				// add to selection
-				TreePath tp = new TreePath(node.getPath());
-				addSelectionPath(tp);
-				return tp;
-			}
 		}		
 		
-		// insert at correct position
-		return right;				
+		return -1;
 	}
-	
-	final 
 	
 	/*
 	// geo should be inserted in alphabetical order
@@ -514,6 +527,7 @@ public class AlgebraView extends JTree implements View {
 	}
 	
 	public void reset() {
+		cancelEditing();
 	  repaint();
 	}
 
@@ -566,15 +580,13 @@ public class AlgebraView extends JTree implements View {
 			
 			// TODO: remove
 			//System.out.println("getTreeCellRendererComponent: " + value);
-			
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
 			Object ob = node.getUserObject();
-			setRowHeight(-1); // to enable flexible height of cells
-			
-			if (leaf && (ob instanceof GeoElement)) {				
-				GeoElement geo = (GeoElement) ob;								
+						
+			if (ob instanceof GeoElement) {	
+				GeoElement geo = (GeoElement) ob;										
 				
-				setFont(app.boldFont);	
+				setFont(app.boldFont);
 				setForeground(geo.labelColor);
 				String str = geo.getAlgebraDescriptionTextOrHTML();
 				//String str = geo.getAlgebraDescription();
@@ -616,13 +628,10 @@ public class AlgebraView extends JTree implements View {
 				setForeground(Color.black);
 				setBackground(getBackgroundNonSelectionColor());
 				setFont(app.plainFont);
-				selected = false;
-				setToolTipText(null);
+				selected = false;				
 				setBorder(null);
 				setText(value.toString());
-			}
-			
-			
+			}		
 			
 			return this;
 		}							

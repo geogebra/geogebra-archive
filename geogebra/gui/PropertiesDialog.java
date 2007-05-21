@@ -16,6 +16,7 @@ import geogebra.Application;
 import geogebra.ConstructionProtocol;
 import geogebra.GeoElementSelectionListener;
 import geogebra.View;
+import geogebra.algebra.AlgebraView;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;
@@ -56,6 +57,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
@@ -299,8 +303,10 @@ public class PropertiesDialog
 	 * shows this dialog and select GeoElement geo at screen position location
 	 */
 	public void setVisibleWithGeos(ArrayList geos) {		
-		setViewActive(true);		
-		geoTree.setSelected(geos, false);		
+		setViewActive(true);	
+		
+		geoTree.setSelected(geos, false);
+		//geoTree.expandAll();
 		if (!isShowing()) {			
 			super.setVisible(true);			
 		}
@@ -312,7 +318,6 @@ public class PropertiesDialog
 		} else {
 			super.setVisible(false);
 			setViewActive(false);
-			
 		}
 	}
 	
@@ -362,10 +367,19 @@ public class PropertiesDialog
 		if (selPath != null) {						
 			for (int i=0; i < selPath.length; i++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();	
-				Object ob = ((DefaultMutableTreeNode) node).getUserObject();
-				if (ob instanceof GeoElement) {
-					// geo
-					selectionList.add(ob);
+			
+				if (node.getParent() == node.getRoot()) {
+					// type node: select all children	
+					for (int k=0; k < node.getChildCount(); k++) {
+						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);
+						
+						//geoTree.addSelectionPath(new TreePath(child.getPath()));
+						selectionList.add(child.getUserObject());
+					}
+				} else {
+					// GeoElement					
+					selectionList.add(node.getUserObject());
+					break;
 				}
 			}						
 		}	
@@ -3159,10 +3173,10 @@ public class PropertiesDialog
 	/**
 	 * INNER CLASS
 	 * JList for displaying GeoElements
-	 * @see GeoListCellRenderer
+	 * @see GeoTreeCellRenderer
 	 * @author Markus Hohenwarter
 	 */
-	private class JTreeGeoElements extends JTree implements View {
+	private class JTreeGeoElements extends JTree implements View, MouseMotionListener, MouseListener {
 	
 		private static final long serialVersionUID = 1L;
 		private DefaultTreeModel treeModel;
@@ -3174,21 +3188,43 @@ public class PropertiesDialog
 		 */
 		public JTreeGeoElements() {
 			// build default tree structure
-			root = new DefaultMutableTreeNode();		
+			root = new DefaultMutableTreeNode(app.getMenu("Objects"));			
 
 			// create model from root node
 			treeModel = new DefaultTreeModel(root);				
 			setModel(treeModel);
 			typeNodesMap = new FastHashMapKeyless();
 			
-			getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-			//setLayoutOrientation(JList.VERTICAL);
-			setVisibleRowCount(8);
-			//GeoListCellRenderer renderer = new GeoListCellRenderer();
-			// TODO: renderer
-			//setCellRenderer(renderer);
-			//setSelectionBackground(Application.COLOR_SELECTION);
+			getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
+			GeoTreeCellRenderer renderer = new GeoTreeCellRenderer(app);			
+			setCellRenderer(renderer);
+			setRowHeight(-1); // to enable flexible height of cells
+
+			// 	tree's options             
+			setRootVisible(true);
+			// show lines from parent to children
+			putClientProperty("JTree.lineStyle", "Angled");
+			setInvokesStopCellEditing(true);
+			setScrollsOnExpand(true);	
+			
+			addMouseMotionListener(this);
+			addMouseListener(this);
 		}
+		
+		protected void setExpandedState(TreePath path, boolean state) {
+            // Ignore all collapse requests of root        	
+            if (path != getPathForRow(0)) {
+                super.setExpandedState(path, state);
+            }
+        }
+		
+		public void expandAll() {
+		    int row = 0;
+		    while (row < getRowCount()) {
+		      expandRow(row);
+		      row++;
+	       }
+	    }
 
 		/**
 		 * selects object geo in the list of GeoElements	 
@@ -3224,6 +3260,7 @@ public class PropertiesDialog
 			if (tp != null) {
 				expandPath(tp);						
 				makeVisible(tp);
+				scrollPathToVisible(tp);
 			}
 		}	
 		
@@ -3232,19 +3269,23 @@ public class PropertiesDialog
 		 * returns its TreePath if successful.	
 		 */
 		private TreePath addToSelection(GeoElement geo) {
-			int type = geo.getGeoClassType();
-			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(type);
+			String typeString = geo.getObjectType();
+			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
 			if (typeNode == null)
 				return null;
 			
-				
-			
-			
-			// not found
-			return null;	
+			int pos = AlgebraView.searchGeo(typeNode, geo);
+			if (pos == -1)
+				return null;
+			else {
+				// add to selection
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(pos);
+				TreePath tp = new TreePath(node.getPath());
+				addSelectionPath(tp);
+				return tp;
+			}
 		}
-				
-
+					
 		public void clearSelection() {
 			getSelectionModel().clearSelection();
 		}
@@ -3252,7 +3293,7 @@ public class PropertiesDialog
 		/**
 		 * Clears the list.
 		 */
-		public void clear() {			
+		private void clear() {			
 			root.removeAllChildren();			
 			treeModel.reload();
 			typeNodesMap.clear();
@@ -3265,44 +3306,59 @@ public class PropertiesDialog
 		/**
 		   * adds a new element to the list
 		   */
-		public void add(GeoElement geo) {	
-			/*
-			if (listModel.contains(geo)) {
-				update(geo);
-				return;
-			}*/
+		final public void add(GeoElement geo) {	
+			if (!geo.isLabelSet() || !geo.hasProperties()) 
+				return;	
+				
+			// get type node
+			String typeString = geo.getObjectType();
+			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
 			
-			if (geo.isLabelSet() && geo.hasProperties()) {	
-				// add node to model (alphabetically ordered)			
-				try {
-					int pos = getInsertPosition(geo);							
-					treeModel.add(pos, geo);
-				} catch (Exception e) { 
-					System.err.println(e.getMessage());
+			// init type node
+			boolean initing = typeNode == null;
+			if (initing) {
+				String transTypeString = geo.translatedTypeString();
+				typeNode = new DefaultMutableTreeNode(transTypeString);			
+				typeNodesMap.put(typeString, typeNode);
+				
+				// find insert pos
+				int pos = root.getChildCount();
+				for (int i=0; i < pos; i++) {
+					DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+					if (transTypeString.compareTo(child.toString()) < 0) {
+						pos = i;
+						break;
+					}
 				}
-			}
-		}				
-
-		// geo should be inserted in alphabetical order
-		private int getInsertPosition(GeoElement geo) {
-			int size = treeModel.size();
-			int insertPos = size;
-			String label = geo.getLabel();
-			for (int i = 0; i < size; i++) {				 
-				GeoElement g = (GeoElement) treeModel.get(i);
-				if (label.compareTo(g.getLabel()) < 0) {
-					insertPos = i;
-					break;
-				}
-			}
-			return insertPos;
-		}
+				
+				treeModel.insertNodeInto(typeNode, root, pos);				
+			}			
+			
+			// add geo to type node   
+			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(geo);
+			treeModel.insertNodeInto(newNode, typeNode, AlgebraView.getInsertPosition(typeNode, geo));
+			//if (initing)
+				//makeVisible(new TreePath(newNode.getPath()));
+		}		
+		
 
 		/**
 		 * removes an element from the list
 		 */
 		public void remove(GeoElement geo) {
-			treeModel.removeElement(geo);
+			// get type node
+			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
+			if (typeNode == null) return;
+			
+			int pos = AlgebraView.searchGeo(typeNode, geo);
+			if (pos > -1) {
+				if (typeNode.getChildCount() == 1) {
+					// last child
+					treeModel.removeNodeFromParent(typeNode);					
+				} else {
+					treeModel.removeNodeFromParent((DefaultMutableTreeNode) typeNode.getChildAt(pos));
+				}
+			}
 		}
 
 		/**
@@ -3330,14 +3386,60 @@ public class PropertiesDialog
 		}
 
 		public void clearView() {
-			treeModel.clear();
+			clear();
 		}
 		
     	final public void repaintView() {
     		repaint();
     	}
 
-	} // JListGeoElements
+		public void mouseDragged(MouseEvent arg0) {			
+		}
+
+		public void mouseMoved(MouseEvent e) {
+			Point loc = e.getPoint();
+			GeoElement geo = AlgebraView.getGeoElementForLocation(this, loc.x, loc.y);
+			EuclidianView ev = app.getEuclidianView();
+
+			// tell EuclidianView to handle mouse over
+			ev.mouseMovedOver(geo);								
+			if (geo != null)
+				setToolTipText(geo.getLongDescriptionHTML(true, true));
+			else
+				setToolTipText(null);
+		}
+
+		public void mouseClicked(MouseEvent e) {
+			Point loc = e.getPoint();
+			int clicks = e.getClickCount();
+			
+			if (clicks == 1) {
+				int row = getRowForLocation(loc.x, loc.y);				
+				addSelectionRow(row);
+			}
+			
+			else if (clicks == 2) {
+				GeoElement geo = AlgebraView.getGeoElementForLocation(this, loc.x, loc.y);						
+				if (geo != null) {
+					app.showRenameDialog(geo, false, null);
+				}
+			}
+		}
+
+		public void mouseEntered(MouseEvent arg0) {
+		
+		}
+
+		public void mouseExited(MouseEvent arg0) {
+		}
+
+		public void mousePressed(MouseEvent arg0) {
+		}
+
+		public void mouseReleased(MouseEvent arg0) {
+		}
+
+	} // JTreeGeoElements
 
 
 	

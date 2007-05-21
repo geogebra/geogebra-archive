@@ -240,10 +240,12 @@ public abstract class GeoElement
 	private boolean isColorSet = false;
 	private boolean highlighted = false;
 	private boolean selected = false;		
-	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML, strLaTeX;
+	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML,
+		strLabelTextOrHTML, strLaTeX;
 	private boolean strAlgebraDescriptionNeedsUpdate = true;
 	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
+	private boolean strLabelTextOrHTMLUpdate = true;
 	private boolean strLaTeXneedsUpdate = true;	
 
 	// line thickness and line type: s	
@@ -1271,6 +1273,7 @@ public abstract class GeoElement
 		strAlgebraDescriptionNeedsUpdate = true;	
 		strAlgebraDescTextOrHTMLneedsUpdate = true;
 		strAlgebraDescriptionHTMLneedsUpdate = true;
+		strLabelTextOrHTMLUpdate = true;
 		strLaTeXneedsUpdate = true;
 	}
 	
@@ -1682,7 +1685,7 @@ public abstract class GeoElement
 		if (strAlgebraDescTextOrHTMLneedsUpdate) {
 			String algDesc = getAlgebraDescription();
 			// convertion to html is only needed if indices are found
-			if (includesIndex(algDesc)) {
+			if (hasIndexLabel()) {
 				strAlgebraDescTextOrHTML =
 					indicesToHTML(algDesc, true);
 			} else {
@@ -1703,6 +1706,21 @@ public abstract class GeoElement
 		}
 		
 		return strAlgebraDescriptionHTML;		
+	}
+	
+	/**
+	* returns type and label of a GeoElement 
+	* (for tooltips and error messages)		
+	*/
+	final public String getLabelTextOrHTML() {
+		if (strLabelTextOrHTMLUpdate) {
+			if (hasIndexLabel())
+				strLabelTextOrHTML = indicesToHTML(getLabel(), true);
+			else
+				strLabelTextOrHTML = getLabel();
+		} 
+		
+		return strLabelTextOrHTML;
 	}
 
 	/**
@@ -1846,7 +1864,7 @@ public abstract class GeoElement
 		* (for tooltips and error messages)		
 		*/
 	final public String getNameDescriptionTextOrHTML() {
-		if (includesIndex(label))
+		if (hasIndexLabel())
 			return getNameDescriptionHTML(false, true);
 		else
 			return getNameDescription();
@@ -1855,9 +1873,17 @@ public abstract class GeoElement
 	/**
 	 * Returns whether the str contains any indices (i.e. '_' chars). 
 	 */
-	private static boolean includesIndex(String str) {
-		return (str == null || str.indexOf('_') > -1);			
+	final public boolean hasIndexLabel() {
+		if (strHasIndexLabel != label) {
+			hasIndexLabel = (label == null || label.indexOf('_') > -1);
+			strHasIndexLabel = label;
+		}
+		
+		return hasIndexLabel;
 	}
+	private String strHasIndexLabel;
+	private boolean hasIndexLabel = false;
+	
 
 	/**
 		* returns type and label of a GeoElement as html string

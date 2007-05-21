@@ -29,6 +29,8 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Translateable;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -295,7 +297,7 @@ public class AlgebraController
 		
 		// RIGHT CLICK
 		if (e.isPopupTrigger() || e.isMetaDown()) {
-			GeoElement geo = view.getGeoElementForLocation(e.getX(), e.getY());
+			GeoElement geo = AlgebraView.getGeoElementForLocation(view, e.getX(), e.getY());
 			
 			if (!app.containsSelectedGeo(geo)) {
 				app.clearSelectedGeos();					
@@ -322,7 +324,7 @@ public class AlgebraController
 				return;				
 			}
 			
-			GeoElement geo = view.getGeoElementForLocation(x, y);			
+			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);			
 			EuclidianView ev = app.getEuclidianView();
 			if (ev.getMode() == EuclidianView.MODE_MOVE) {
 				// double click to edit
@@ -364,7 +366,7 @@ public class AlgebraController
 		view.setClosingCrossHighlighted(false);
 	}
 
-	public void mouseExited(java.awt.event.MouseEvent p1) {
+	public void mouseExited(java.awt.event.MouseEvent p1) {		
 		view.setClosingCrossHighlighted(false);
 		if (kernelChanged) {
 			app.storeUndoInfo();
@@ -386,13 +388,18 @@ public class AlgebraController
 			view.setClosingCrossHighlighted(true);
 		} else {
 			view.setClosingCrossHighlighted(false);
-			GeoElement geo = view.getGeoElementForLocation(x, y);
+			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);
 			EuclidianView ev = app.getEuclidianView();
 
 			// tell EuclidianView to handle mouse over
-			ev.mouseMovedOver(geo);				
+			ev.mouseMovedOver(geo);								
+			if (geo != null)
+				view.setToolTipText(geo.getLongDescriptionHTML(true, true));
+			else
+				view.setToolTipText(null);
 		}
 		
 	}
 
+	
 }

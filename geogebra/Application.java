@@ -1259,7 +1259,7 @@ public class Application implements	KeyEventDispatcher {
      */
     public void showDrawingPadPopup(Component invoker, Point p) {
         // clear highlighting and selections in views
-        euclidianView.resetMode();
+        euclidianView.resetMode();        
 
         // menu for drawing pane context menu
         DrawingPadPopupMenu popupMenu = new DrawingPadPopupMenu(this, p.x, p.y);
@@ -2862,6 +2862,7 @@ public class Application implements	KeyEventDispatcher {
     
     public void setMode(int mode) {      		    	
         euclidianView.setMode(mode);
+        algebraView.reset();
         
         if (algebraInput != null && showAlgebraInput) {
         	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
@@ -2871,7 +2872,7 @@ public class Application implements	KeyEventDispatcher {
         	else {
         		algebraInput.getInputButton().setSelected(false);
         	}
-        }
+        }                
         
         // select toolbar button
         appToolbarPanel.setMode(mode);       
