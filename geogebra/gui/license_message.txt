@@ -13,7 +13,7 @@ Creator of GeoGebra, project leader and main developer
   * Markus Hohenwarter, Florida Atlantic University, since 2001
 Contributions by
   * Yves Kreis, University of Luxembourg, since 2005
-  * Loïc Le Coq, France, 2006
+  * Loic Le Coq, France, 2006
   * Joan Carles Naranjo, Victor Franco, Eloi Puertas, University of Barcelona, 2007
   * Philipp Weissenbacher, Austria, 2007
   
@@ -21,23 +21,23 @@ TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
-  * Catalan: Jorge Sánchez, Jaume Bartrolí, Pep Bujosa, Antoni Gomà, Roser Sebastián (Spain)
+  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, Roser Sebastian (Spain)
   * Chinese: Fu-Kwun Hwang, Chen-Hui Lin (Taiwan)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
-  * Danish: Steen Groðe, Rasmus Christensen (Denmark)
+  * Danish: Steen Grode, Rasmus Christensen (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
   * English: Markus Hohenwarter (Austria)
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: David Tran, Noel Lambert (France)
-  * Galician: Jesús García Otero (Spain)  
+  * Galician: Jesus Garcia Otero (Spain)  
   * German: Markus Hohenwarter (Austria)
   * Greek: Nicholas Mousoulides, Marinos Karagiorgis (Cyprus), Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
-  * Norwegian: Sigbjørn Hals (Norway)
+  * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
   * Polish: Marzanna Miasko, Ewa Piwek, Katarzyna Winkowska-Nowak (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, Luciana de Lima (Brazil)

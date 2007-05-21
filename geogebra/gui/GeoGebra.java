@@ -180,34 +180,55 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			return;
 		}
 		
+		// check if we run on a Mac
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean MAC_OS = lcOSName.startsWith("mac");
+		if (MAC_OS) 
+			initMacOSsupport();		
+		
 		// load list of previously used files
 		GeoGebraPreferences.loadFileList();		
 
 		// create window
 		GeoGebra wnd = createNewWindow(args);
-
-		// check if we run on a Mac
-		String lcOSName = System.getProperty("os.name").toLowerCase();
-		boolean MAC_OS = lcOSName.startsWith("mac");
-
-		if (MAC_OS) {
-			// handle MacOS X file opening when ggb file is double clicked
-			net.roydesign.app.Application.getInstance()
-					.addOpenDocumentListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;
-							
-							// open file in new window												
-							Application app = activeInstance.getApplication();
-							File [] files = { mac_evt.getFile() };
-							app.doOpenFiles(files, false);
-						}
-					});
-		}
-
-		// show window
 		wnd.setVisible(true);
 	}	
+	
+	private static void initMacOSsupport() {			
+		// handle MacOS X file opening 
+		ActionListener fileOpenListener = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;																		
+				File openFile = mac_evt.getFile();
+				
+				if (openFile != null && openFile.exists()) {						
+					// open file in new window												
+					Application app = activeInstance.getApplication();
+					 if (app.isSaved() || app.saveCurrentFile()) {   					
+						 File [] files = { mac_evt.getFile() };
+						 app.doOpenFiles(files, true);
+					 }
+				}
+			}
+		};
+		
+		// get mac application for GeoGebra
+		net.roydesign.app.Application macApp = net.roydesign.app.Application.getInstance();
+		macApp.setName("GeoGebra");
+		
+		// register open file listener
+		macApp.addOpenApplicationListener(fileOpenListener);
+		macApp.addOpenDocumentListener(fileOpenListener);			
+
+		// handle quit application
+		macApp.getQuitJMenuItem().addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						// quit all frames
+						Application app = activeInstance.getApplication();
+						app.exitAll();							
+					}
+				});
+	}
 
 	public static GeoGebra createNewWindow(String[] args) {
 		// set Application's size, position and font size

@@ -65,7 +65,6 @@ import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -76,14 +75,12 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -92,7 +89,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -106,7 +102,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "18. May 2007";
+    public static final String buildDate = "21. May 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -2717,7 +2713,7 @@ public class Application implements	KeyEventDispatcher {
         }
     }    
     
-    public void doOpenFiles(File [] files, boolean allowOpeningInThisInstance) {    	
+    public synchronized void doOpenFiles(File [] files, boolean allowOpeningInThisInstance) {    	
         // there are selected files
         setWaitCursor();
         if (files != null) {

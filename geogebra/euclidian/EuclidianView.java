@@ -1728,22 +1728,28 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			g2.draw(tempLine);
 
 			if (drawArrows) {
-				// turn antialiasing off
-//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//						antiAliasValue);
-
 				// draw arrow for y-axis
 				tempLine.setLine(xZero, 0, xZero - arrowSize, arrowSize);
 				g2.draw(tempLine);
 				tempLine.setLine(xZero, 0, xZero + arrowSize, arrowSize);
 				g2.draw(tempLine);
-
-//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//						RenderingHints.VALUE_ANTIALIAS_OFF);
-			}
+			}								
 		}
 
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAliasValue);
+		/*
+		// TODO: show corner coordintaes if axes out of screen 		
+		if (!showAxes[0]) {
+			
+		}
+		if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
+			// top left
+			sb.setLength(0);
+			g2.drawString(sb.toString(), x, y);
+			
+			TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
+			g2.drawString(axesLabels[1], (int) (xZero + 5),
+					(int) (5 + layout.getAscent()));
+		}*/	
 	}
 
 	final void drawGrid(Graphics2D g2) {
@@ -1772,7 +1778,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			tempLine.setLine(0, pix, width, pix);
 			g2.draw(tempLine);
 			pix = start + j * tickStep;			
-		}
+		}						
 	}
 
 	final private void drawMouseCoords(Graphics2D g2) {
