@@ -368,12 +368,16 @@ public class PropertiesDialog
 			for (int i=0; i < selPath.length; i++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();	
 			
-				if (node.getParent() == node.getRoot()) {
+				if (node == node.getRoot()) {
+					// root: add all objects
+					selectionList.clear();
+					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());
+					break;
+				}				
+				else if (node.getParent() == node.getRoot()) {
 					// type node: select all children	
 					for (int k=0; k < node.getChildCount(); k++) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);
-						
-						//geoTree.addSelectionPath(new TreePath(child.getPath()));
+						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);											
 						selectionList.add(child.getUserObject());
 					}
 				} else {
