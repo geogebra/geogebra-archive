@@ -731,7 +731,7 @@ public class Kernel {
 	final public void notifyAddAll(View view) {
 		if (!notifyViewsActive) return;
 		
-		Iterator it = cons.getGeoElementsIterator();
+		Iterator it = cons.getGeoSetLabelOrder().iterator();
 		while (it.hasNext()) {
 			view.add((GeoElement) it.next());
 		}			
@@ -797,7 +797,7 @@ public class Kernel {
 				viewCnt = oldViewCnt;			
 				
 				// add all geos to all views
-				Iterator it = cons.getGeoElementsIterator();
+				Iterator it = cons.getGeoSetLabelOrder().iterator();				
 				while (it.hasNext()) {										
 					notifyAdd(  (GeoElement) it.next() );
 				}				

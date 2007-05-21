@@ -20,6 +20,7 @@ package geogebra.io;
 
 import geogebra.Application;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -40,6 +41,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -289,10 +292,13 @@ public class MyXMLio {
      * Writes all images used in construction to zip.
      */
     private void writeConstructionImages(Construction cons, ZipOutputStream zip) throws IOException {    	
-    	// save all GeoImage images
-    	ArrayList images = cons.getAllGeoImages();
-    	for (int i=0; i < images.size(); i++) {    	    		
-    		GeoImage geoImage = (GeoImage) images.get(i);    		    		    			
+    	// save all GeoImage images    	    
+    	TreeSet images = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_IMAGE);
+    	if (images == null) return;
+    	
+    	Iterator it = images.iterator();
+    	while (it.hasNext()) {    	    		
+    		GeoImage geoImage = (GeoImage) it.next();    		    		    			
     		String fileName = geoImage.getFileName();    
 			BufferedImage img = geoImage.getImage();
     		if (img != null) 	       

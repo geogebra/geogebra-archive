@@ -43,15 +43,21 @@ public class GeoListCellRenderer extends DefaultListCellRenderer {
 			isSelected,
 			cellHasFocus);	
 		
+		GeoElement geo = (GeoElement) value;
+		setText(geo.getNameDescriptionHTML(true, true));		
+		//etForeground(geo.getObjectColor());
+		
+		/*
 		if (value instanceof GeoElement) {
 			GeoElement geo = (GeoElement) value;
 			//setForeground(geo.labelColor);
 			setText(geo.getNameDescriptionHTML(true, true));
 			setToolTipText(geo.getLongDescriptionHTML(true, true));
+			
 		} else {
 			setText(value.toString());
 			setToolTipText(null);
-		}
+		}*/
 		return this;
 	}
 }

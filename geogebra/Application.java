@@ -490,7 +490,10 @@ public class Application implements	KeyEventDispatcher {
                           
         if (updateComponentTreeUI)
         	updateComponentTreeUI();
-        setMoveMode();
+        setMoveMode(); 
+        
+        if (mainComp.isShowing())        	    	
+    		euclidianView.requestFocusInWindow();
         
         System.gc();                                
     }     
@@ -1301,7 +1304,7 @@ public class Application implements	KeyEventDispatcher {
         euclidianView.resetMode();
         initPropertiesDialog();
         setMoveMode();
-        propDialog.setVisible(selGeos);
+        propDialog.setVisibleWithGeos(selGeos);
     }
     private ArrayList tempGeos = new ArrayList();
     

@@ -249,7 +249,7 @@ implements GeoElementSelectionListener {
 		
 		// get all GeoElements from construction and sort their names
 		Construction cons = app.getKernel().getConstruction();
-		Iterator it = cons.getGeoElementsIterator();		
+		Iterator it = cons.getGeoSetConstructionOrder().iterator();	
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			// sorted inserting using name description of geo

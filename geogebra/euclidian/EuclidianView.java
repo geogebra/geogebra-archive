@@ -23,6 +23,7 @@ import geogebra.kernel.AlgoSumUpperLower;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
@@ -405,7 +406,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	private DrawableList drawFunctionList = new DrawableList();
 
-	private DrawableList drawTextList = new DrawableList();
+	private DrawableList drawTextList = new DrawableList();		
 
 	private DrawableList drawImageList = new DrawableList();
 
@@ -555,7 +556,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		drawVectorList.clear();
 		drawConicList.clear();
 		drawFunctionList.clear();
-		drawTextList.clear();
+		drawTextList.clear();		
 		drawImageList.clear();
 		drawLocusList.clear();
 		drawPolygonList.clear();
@@ -1841,6 +1842,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		// draw text
 		drawTextList.drawAll(g2);
+		
+		// boolean are not drawn as they are JToggleButtons and children of the view
 	}
 
 	// for use in AlgebraController
@@ -2167,10 +2170,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		Drawable d = null;
 
 		switch (geo.getGeoClassType()) {
+		case GeoElement.GEO_CLASS_BOOLEAN:
+			d = new DrawBoolean(this, (GeoBoolean) geo);			
+			break;
+		
 		case GeoElement.GEO_CLASS_POINT:
 			d = new DrawPoint(this, (GeoPoint) geo);
 			drawPointList.add(d);
-			break;
+			break;					
 
 		case GeoElement.GEO_CLASS_SEGMENT:
 			d = new DrawSegment(this, (GeoSegment) geo);
@@ -2309,6 +2316,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
+			case GeoElement.GEO_CLASS_BOOLEAN:
+				// no drawBooleanList		
+				break;
+			
 			case GeoElement.GEO_CLASS_POINT:
 				drawPointList.remove(d);
 				break;

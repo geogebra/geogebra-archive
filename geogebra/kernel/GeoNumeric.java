@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * 
@@ -143,17 +144,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 				}			
 				
 				// init screen location
-				if (sliderX == 0 && sliderY ==0) {				
-					Iterator it = cons.getGeoElementsIterator();
-					int count = 0;
-					while (it.hasNext()) {
-						GeoElement ob = (GeoElement) it.next();
-			    		if (ob.isGeoNumeric()) {
-							GeoNumeric num = (GeoNumeric) ob;
-							if (num.isIndependent() && num.isEuclidianVisible())
-								count++;
-			    		}
-					}
+				if (sliderX == 0 && sliderY ==0) {	
+					int count = countSliders();
 					
 					if (isAbsoluteScreenLocActive()) {
 						sliderX = 30;
@@ -175,6 +167,34 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		} 
 		
 		super.setEuclidianVisible(visible);
+	}
+	
+	private int countSliders() {
+		int count = 0;
+		
+		// get all number and angle sliders		
+		TreeSet numbers = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_NUMERIC);
+		TreeSet angles = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_ANGLE);		
+		if (numbers != null) {
+			if (angles != null)
+				numbers.addAll(angles);
+		} else {
+			numbers = angles;
+		}
+		
+		if (numbers != null) {
+			Iterator it = numbers.iterator();
+			while (it.hasNext()) {
+				GeoNumeric num = (GeoNumeric) it.next();
+	    		if (num.isSlider()) count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	private boolean isSlider() {
+		return isIndependent() && isEuclidianVisible();			
 	}
 
 	public boolean showInEuclidianView() {

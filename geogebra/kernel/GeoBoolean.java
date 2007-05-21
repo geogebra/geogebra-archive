@@ -24,7 +24,8 @@ import java.util.HashSet;
  * @author Markus
  * @version
  */
-public class GeoBoolean extends GeoElement implements BooleanValue {			
+public class GeoBoolean extends GeoElement implements BooleanValue,
+AbsoluteScreenLocateable {			
 
 	/**
 	 * 
@@ -172,6 +173,39 @@ public class GeoBoolean extends GeoElement implements BooleanValue {
 
 	public boolean isTextValue() {
 		return false;
+	}
+
+	
+
+	public double getRealWorldLocX() {
+		return 0;
+	}
+
+	public double getRealWorldLocY() {		
+		return 0;
+	}
+
+	public boolean isAbsoluteScreenLocActive() {		
+		return true;
+	}
+
+	public void setAbsoluteScreenLoc(int x, int y) {
+		labelOffsetX = x;
+		labelOffsetY = y;		
+	}
+
+	public int getAbsoluteScreenLocX() {	
+		return labelOffsetX;
+	}
+
+	public int getAbsoluteScreenLocY() {		
+		return labelOffsetY;
+	}
+
+	public void setAbsoluteScreenLocActive(boolean flag) {				
+	}
+
+	public void setRealWorldLoc(double x, double y) {				
 	}		
 
 }

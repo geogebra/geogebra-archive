@@ -137,7 +137,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/
-        Iterator it =construction.getGeoElementsIterator();    	 
+        Iterator it = construction.getGeoSetConstructionOrder().iterator();  	 
         while (it.hasNext()) {
         	GeoElement g = (GeoElement) it.next();
            	drawGeoElement(g);

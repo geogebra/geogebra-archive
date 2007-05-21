@@ -47,6 +47,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import atp.sHotEqn;
@@ -358,11 +360,12 @@ public class AlgebraView extends JTree implements View {
 		if (model != null) model.nodeChanged(node);
 	}
 
+	/*
 	public String getToolTipText(MouseEvent evt) {				
 		GeoElement geo = getGeoElementForLocation(evt.getX(), evt.getY());
 	   	if (geo == null) return null;
 	   	return geo.getLongDescriptionHTML(true, true);    	   	
-	}
+	}*/
 
 	/**
 	 * adds a new node to the tree
@@ -400,26 +403,86 @@ public class AlgebraView extends JTree implements View {
 		}
 	}
 
+	
+	/**
+	 * Gets the insert position for newGeo to insert it in alphabetical
+	 * order in parent node. Note: all children of parent must have instances of GeoElement 
+	 * as user objects.
+	 */
+	final public static int getInsertPosition(DefaultMutableTreeNode parent, GeoElement newGeo) { 							
+		// label of inserted geo
+		String newLabel = newGeo.getLabel();
+		
+		// bigger then last?
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getLastChild();	
+		String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();	
+		if (newLabel.compareTo(nodeLabel) > 0) 
+			return parent.getChildCount();				
+		
+		// standard case: binary search		
+		int left = 0;
+		int right = parent.getChildCount() - 1;					
+		while (right > left) {							
+			int middle = (left + right) / 2;
+			node = (DefaultMutableTreeNode) parent.getChildAt(middle);
+			nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
+			
+			int compare = label.compareTo(nodeLabel);
+			if (compare < 0) {
+				right = middle - 1;
+			} else if (compare > 0) {
+				left = middle + 1;
+			} else {		
+				return middle;
+			}
+		}										
+		
+		// binary search for geo's label
+		while (right > left) {							
+			int middle = (left + right) / 2;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(middle);
+			String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
+			
+			int compare = label.compareTo(nodeLabel);
+			if (compare < 0) {
+				right = middle - 1;
+			} else if (compare > 0) {
+				left = middle + 1;
+			} else {		
+				// add to selection
+				TreePath tp = new TreePath(node.getPath());
+				addSelectionPath(tp);
+				return tp;
+			}
+		}		
+		
+		// insert at correct position
+		return right;				
+	}
+	
+	final 
+	
+	/*
 	// geo should be inserted in alphabetical order
 	private int getInsertPosition(
 		DefaultMutableTreeNode parent,
 		GeoElement geo) {
 		int childCount = parent.getChildCount();
-		int insertPos = childCount;
-		DefaultMutableTreeNode node;
+		int insertPos = 0;
+		DefaultMutableTreeNode node;			
 		
 		String label = geo.getLabel();
-		for (int i = 0; i < childCount; i++) {
+		for (int i = childCount-1; i >= 0; i--) {
 			// compare using labels
 			node = (DefaultMutableTreeNode) parent.getChildAt(i);
 			GeoElement g = (GeoElement) node.getUserObject();
-			if (label.compareTo(g.getLabel()) < 0) {
-				insertPos = i;
+			if (label.compareTo(g.getLabel()) > 0) {
+				insertPos = i+1;
 				break;
 			}
 		}
 		return insertPos;
-	}
+	}*/
 
 	/**
 	 * removes a node from the tree
@@ -465,8 +528,9 @@ public class AlgebraView extends JTree implements View {
 	   * updates node of GeoElement geo (needed for highlighting)
 	   * @see EuclidianView.setHighlighted()
 	   */
-	final public void update(GeoElement geo) {		
-		cancelEditing();
+	final public void update(GeoElement geo) {	
+		if (isEditing())
+			cancelEditing();
 		DefaultMutableTreeNode node =
 			(DefaultMutableTreeNode) nodeTable.get(geo);						
 		if (node != null) {
@@ -477,7 +541,7 @@ public class AlgebraView extends JTree implements View {
 	final public void updateAuxiliaryObject(GeoElement geo) {
 		remove(geo);
 		add(geo);
-	}
+	}		
 
 	/**
 	 * inner class MyRenderer for GeoElements 
@@ -485,9 +549,7 @@ public class AlgebraView extends JTree implements View {
 	private class MyRenderer extends DefaultTreeCellRenderer {
 		
 		private static final long serialVersionUID = 1L;				
-		
-		private sHotEqn eqn = new sHotEqn();	 
-		
+			
 		public MyRenderer() {
 			setOpaque(true);
 		}
@@ -499,7 +561,11 @@ public class AlgebraView extends JTree implements View {
 			boolean expanded,
 			boolean leaf,
 			int row,
-			boolean hasFocus) {								
+			boolean hasFocus) {	
+			
+			
+			// TODO: remove
+			//System.out.println("getTreeCellRendererComponent: " + value);
 			
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 			Object ob = node.getUserObject();
@@ -510,8 +576,8 @@ public class AlgebraView extends JTree implements View {
 				
 				setFont(app.boldFont);	
 				setForeground(geo.labelColor);
-				//String str = geo.getAlgebraDescriptionTextOrHTML();
-				String str = geo.getAlgebraDescription();
+				String str = geo.getAlgebraDescriptionTextOrHTML();
+				//String str = geo.getAlgebraDescription();
 				setText(str);								
 				
 				if (geo.doHighlighting())				   
@@ -559,9 +625,7 @@ public class AlgebraView extends JTree implements View {
 			
 			
 			return this;
-		}			
-		
-		
+		}							
 		
 		/*
 		final public void paint(Graphics g) {
@@ -748,5 +812,8 @@ public class AlgebraView extends JTree implements View {
 			return editorComponent;
 		}
 	}
+	
+	
+
 
 } // AlgebraView

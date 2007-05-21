@@ -120,11 +120,13 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			} else {
 				// center
 				setLocationRelativeTo(null);
-			}								
-
+			}
 		}
 				
-		super.setVisible(flag);
+		super.setVisible(flag);	
+		
+		if (flag)        	    	
+    		app.getEuclidianView().requestFocusInWindow();
 	}
 	
 	public void updateSize() {

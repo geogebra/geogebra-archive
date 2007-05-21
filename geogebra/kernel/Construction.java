@@ -15,9 +15,11 @@ package geogebra.kernel;
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.optimization.ExtremumFinder;
+import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -48,8 +50,16 @@ public class Construction {
     
     // GeoElementTable for (label, GeoElement) pairs    
     protected HashMap geoTable, localVariableTable;  
+
     // set with all labeled GeoElements in ceList order
     private TreeSet geoSet;
+    
+    // set with all labeled GeoElements in alphabetical order
+    private TreeSet geoSetLabelOrder;
+    
+    // a map for sets with all labeled GeoElements in alphabetical order of specific types
+    // (points, lines, etc.)
+    private FastHashMapKeyless geoSetsTypeMap;
 
     // UndoManager
     protected UndoManager undoManager;
@@ -93,6 +103,8 @@ public class Construction {
         step = -1;
                 
         geoSet = new TreeSet();
+        geoSetLabelOrder = new TreeSet(new LabelComparator());
+        geoSetsTypeMap = new FastHashMapKeyless(50);
         
         if (parentConstruction != null)
         	consDefaults = parentConstruction.getConstructionDefaults();
@@ -114,27 +126,7 @@ public class Construction {
     		return (GeoElement) geoSet.last();
     	else 
     		return null;
-    }
-    
-    /**
-     * Returns all GeoImage objects of this construction in an ArrayList.
-     * Note: always returns a not-null ArrayList.
-     */
-    public ArrayList getAllGeoImages() {
-    	ArrayList images = new ArrayList();
-    	
-    	// get all GeoImage objects
-    	Iterator it = getGeoElementsIterator();
-    	while (it.hasNext()) {
-    		// get next GeoImage  
-    		GeoElement geo = (GeoElement) it.next();
-    		if (geo.isGeoImage()) {
-    			images.add(geo);
-    		}    		
-	    }
-    	
-    	return images;    	
-    }            
+    }           
     
     /**
      * Returns the construction default object of this 
@@ -222,23 +214,37 @@ public class Construction {
         if (index < 0 || index >= ceList.size()) return null;
         return (ConstructionElement) ceList.get(index);
     }
-
+        
     /**
-     * Returns an iterator for 
-     * all labeled GeoElements of this construction in their construction order.
+     * Returns a set with all labeled GeoElement objects of this construction
+     * in construction order.     
      */
-    final public Iterator getGeoElementsIterator() {     	    	    	
-        return geoSet.iterator();
-    }     
+    final public TreeSet getGeoSetConstructionOrder() {
+    	return geoSet;
+    }
     
     /**
-     * Returns the size of the iterator for 
-     * all labeled GeoElements of this construction in their construction order.
+     * Returns a set with all labeled GeoElement objects of this construction
+     * in alphabetical order of their labels.     
      */
-    final public int getGeoElementsIteratorSize() {     	    	    	
-        return geoSet.size();
-    }     
-
+    final public TreeSet getGeoSetLabelOrder() {
+    	return geoSet;
+    }
+    
+    /**
+     * Returns a set with all labeled GeoElement objects of a specific type
+     * in alphabetical order of their labels. 
+     * @param geoClassType: use GeoElement.GEO_CLASS_* constants
+     */
+    final public TreeSet getGeoSetLabelOrder(int geoClassType) {
+    	TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(geoClassType);
+    	if (typeSet == null) {
+    		typeSet = createTypeSet(geoClassType);
+    	} 
+    	return typeSet;
+    }
+    
+    
     /**
      * Adds the given Construction Element to this Construction at position
      * getStep() + 1.    
@@ -358,6 +364,8 @@ public class Construction {
         ceList.clear();
         algoList.clear();
         geoSet.clear();
+        geoSetLabelOrder.clear();
+        geoSetsTypeMap.clear();
         initGeoTable();
         
         // reinit construction step
@@ -494,9 +502,33 @@ public class Construction {
         if (macroMode || geo.label == null) return;
         
         geoTable.put(geo.label, geo);
-        geoSet.add(geo);
-        
-        /*      
+        addToGeoSets(geo);        
+    }       
+
+    /**
+      * Removes given GeoElement from a table
+      * where (label, object) pairs are stored.
+      * @see putLabel()
+      */
+    public void removeLabel(GeoElement geo) {
+        geoTable.remove(geo.label);
+        removeFromGeoSets(geo);               
+    }
+    
+    private void addToGeoSets(GeoElement geo) {
+    	geoSet.add(geo);
+    	geoSetLabelOrder.add(geo);
+    	
+    	// get ordered type set
+    	int type = geo.getGeoClassType();    	
+    	TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(type);
+    	if (typeSet == null) {
+    		typeSet = createTypeSet(type);
+    	} 
+    	typeSet.add(geo);	
+    	
+    	
+    	 /*      
         System.out.println("*** geoSet order (add " + geo + ") ***");
         Iterator it = geoSet.iterator();
       
@@ -506,25 +538,32 @@ public class Construction {
         }
         */
     }
+    
+    private TreeSet createTypeSet(int type) {
+    	TreeSet typeSet = new TreeSet(new LabelComparator());
+		geoSetsTypeMap.put(type, typeSet);
+		return typeSet;
+    }
+    
+    private void removeFromGeoSets(GeoElement geo) {
+    	geoSet.remove(geo);
+    	geoSetLabelOrder.remove(geo);    	    	
+    	
+    	// set ordered type set
+    	int type = geo.getGeoClassType();    	
+    	TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(type);
+    	if (typeSet != null)
+    		typeSet.remove(geo);    		    	
 
-    /**
-      * Removes given GeoElement from a table
-      * where (label, object) pairs are stored.
-      * @see putLabel()
-      */
-    public void removeLabel(GeoElement geo) {
-        geoTable.remove(geo.label);
-        geoSet.remove(geo);
-        
-        /*
-        System.out.println("*** geoSet order (remove " + geo + ") ***");
-        Iterator it = geoSet.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-        	GeoElement g = (GeoElement) it.next();
-        	System.out.println(g.getConstructionIndex() + ": " + g);
-        }
-        */
+   	 /*
+       System.out.println("*** geoSet order (remove " + geo + ") ***");
+       Iterator it = geoSet.iterator();
+       int i = 0;
+       while (it.hasNext()) {
+       	GeoElement g = (GeoElement) it.next();
+       	System.out.println(g.getConstructionIndex() + ": " + g);
+       }
+       */
     }
     	
     public void addLocalVariable(String varname, GeoElement geo) {
@@ -912,4 +951,14 @@ public class Construction {
     	}
     	return false;
     }
+    
+    private class LabelComparator implements Comparator {				    	
+    	public int compare(Object ob1, Object ob2) {
+    		GeoElement geo1 = (GeoElement) ob1;
+    		GeoElement geo2 = (GeoElement) ob2;
+    		return geo1.label.compareTo(geo2.label);			
+    	}				
+    }
 }
+
+

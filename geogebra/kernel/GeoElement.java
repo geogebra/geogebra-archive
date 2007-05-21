@@ -244,8 +244,7 @@ public abstract class GeoElement
 	private boolean strAlgebraDescriptionNeedsUpdate = true;
 	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
-	private boolean strLaTeXneedsUpdate = true;
-	private StringBuffer sb = new StringBuffer();
+	private boolean strLaTeXneedsUpdate = true;	
 
 	// line thickness and line type: s	
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
@@ -1029,14 +1028,18 @@ public abstract class GeoElement
 		}
 
 		int counter = 0, q, r;
-		StringBuffer label = new StringBuffer();
-		label.append(chars[0]);
-		while (!cons.isFreeLabel(label.toString())) {
-			label.setLength(0);
+		sbDefaultLabel.setLength(0);
+		sbDefaultLabel.append(chars[0]);
+		while (!cons.isFreeLabel(sbDefaultLabel.toString())) {
+			sbDefaultLabel.setLength(0);
 			q = counter / chars.length; // quotient
 			r = counter % chars.length; // remainder                    
-			label.append(chars[r]);
+			sbDefaultLabel.append(chars[r]);						
+						
 			if (q > 0) {
+				// don't use indices
+				sbDefaultLabel.append(q);
+				/*
 				// q as index
 				if (q < 10) {
 					label.append('_');
@@ -1046,11 +1049,13 @@ public abstract class GeoElement
 					label.append(q);
 					label.append('}');
 				}
+				*/
 			}
 			counter++;					
 		}
-		return label.toString();
+		return sbDefaultLabel.toString();
 	}
+	private StringBuffer sbDefaultLabel = new StringBuffer();
 	
 	public String getIndexLabel(String prefix) {
 		if (prefix == null) 
@@ -1065,24 +1070,25 @@ public abstract class GeoElement
 		else
 			pref = prefix.substring(0, pos);
 		
-		StringBuffer label = new StringBuffer();
+		sbIndexLabel.setLength(0);
 		int n = 0; // index
 		do {
-			label.setLength(0);
-			label.append(pref);
+			sbIndexLabel.setLength(0);
+			sbIndexLabel.append(pref);
 			// n as index
 			n++;
 			if (n < 10) {
-				label.append('_');
-				label.append(n);
+				sbIndexLabel.append('_');
+				sbIndexLabel.append(n);
 			} else {
-				label.append("_{");
-				label.append(n);
-				label.append('}');
+				sbIndexLabel.append("_{");
+				sbIndexLabel.append(n);
+				sbIndexLabel.append('}');
 			}
-		} while (!cons.isFreeLabel(label.toString()));
-		return label.toString();
+		} while (!cons.isFreeLabel(sbIndexLabel.toString()));
+		return sbIndexLabel.toString();
 	}
+	private StringBuffer sbIndexLabel = new StringBuffer();
 
 	/**
 	 * Removes this object and all dependent objects from the Kernel.
@@ -1387,9 +1393,12 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this object is dependent on geo.
 	 */
-	public boolean isChildOf(GeoElement geo) {
+	public boolean isChildOf(GeoElement geo) {				
 		if (geo == null || algoParent == null)
 			return false;
+		
+		// TODO: remove
+		//System.out.println(this + " isChildOf: " + geo);
 
 		GeoElement [] input = algoParent.getInput();
 		for (int i = 0; i < input.length; i++) {
@@ -1397,6 +1406,8 @@ public abstract class GeoElement
 				return true;
 			if (input[i].isChildOf(geo))
 				return true;
+			
+			//System.out.println(input[i].getLabel() + " isChildOf: " + geo.getLabel());
 		}
 		return false;
 	}
@@ -1539,15 +1550,16 @@ public abstract class GeoElement
 	final public String getLongDescription() {
 		if (algoParent == null)
 			return getNameDescription();
-		else {
-			sb.delete(0, sb.length());
-			sb.append(getNameDescription());			
+		else {			
+			sbLongDesc.setLength(0);
+			sbLongDesc.append(getNameDescription());			
 			// add dependency information
-			sb.append(": ");
-			sb.append(algoParent.toString());			
-			return sb.toString();
+			sbLongDesc.append(": ");
+			sbLongDesc.append(algoParent.toString());			
+			return sbLongDesc.toString();
 		}
 	}
+	private StringBuffer sbLongDesc = new StringBuffer();
 
 	/**
 	 * returns Type, label and definition information about this GeoElement
@@ -1560,43 +1572,45 @@ public abstract class GeoElement
 		if (algoParent == null || isTextValue())
 			return getNameDescriptionHTML(colored, addHTMLtag);
 		else {
-			StringBuffer sb = new StringBuffer();
+			sbLongDescHTML.setLength(0);
 			// html string	
 			if (addHTMLtag)
-				sb.append("<html>");
+				sbLongDescHTML.append("<html>");
 			
 			boolean reverseOrder = app.isReverseNameDescriptionLanguage();		
 			if (!reverseOrder) {
 				//	standard order: "point A"
-				sb.append(translatedTypeString());				
-				sb.append(' ');
+				sbLongDescHTML.append(translatedTypeString());				
+				sbLongDescHTML.append(' ');
 			}				
 						
 			if (colored) {
-				sb.append("<b><font color=\"#");
-				sb.append(Util.toHexString(labelColor));
-				sb.append("\">");
+				sbLongDescHTML.append("<b><font color=\"#");
+				sbLongDescHTML.append(Util.toHexString(labelColor));
+				sbLongDescHTML.append("\">");
 			}
-			sb.append(indicesToHTML(getLabel(), false));
+			sbLongDescHTML.append(indicesToHTML(getLabel(), false));
 			if (colored)
-				sb.append("</font></b>");
+				sbLongDescHTML.append("</font></b>");
 			
 			if (reverseOrder) {
 				// reverse order: "A point"				
-				sb.append(' ');
-				sb.append(translatedTypeString());								
+				sbLongDescHTML.append(' ');
+				sbLongDescHTML.append(translatedTypeString());								
 			}
 
 			// add dependency information
 			if (algoParent != null) {
-				sb.append(": ");
-				sb.append(indicesToHTML(algoParent.toString(), false));
+				sbLongDescHTML.append(": ");
+				sbLongDescHTML.append(indicesToHTML(algoParent.toString(), false));
 			}
 			if (addHTMLtag)
-				sb.append("</html>");
-			return sb.toString();
+				sbLongDescHTML.append("</html>");
+			return sbLongDescHTML.toString();
 		}
 	}
+	private StringBuffer sbLongDescHTML = new StringBuffer();
+
 
 	/**
 	 * Returns long description for all GeoElements in given array.	 	 
@@ -1607,25 +1621,26 @@ public abstract class GeoElement
 		boolean addHTMLtag) {
 		if (geos == null)
 			return null;
-
-		StringBuffer sb = new StringBuffer();
+		
+		sbToolTipDesc.setLength(0);		
 		if (addHTMLtag)
-			sb.append("<html>");
+			sbToolTipDesc.append("<html>");
 		int count=0;
 		for (int i = 0; i < geos.size(); ++i) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			if (geo.showToolTipText()) {
 				count++;
-				sb.append(geo.getLongDescriptionHTML(colored, false));			
+				sbToolTipDesc.append(geo.getLongDescriptionHTML(colored, false));			
 				if (i+1 < geos.size())
-					sb.append("<br>");
+					sbToolTipDesc.append("<br>");
 			}				
 		}
 		if (count == 0) return null;
 		if (addHTMLtag)
-			sb.append("</html>");
-		return sb.toString();
+			sbToolTipDesc.append("</html>");
+		return sbToolTipDesc.toString();
 	}
+	private static StringBuffer sbToolTipDesc = new StringBuffer();
 
 	/**
 		* Returns the label and/or value of this object for 
@@ -1697,12 +1712,12 @@ public abstract class GeoElement
 		if (strAlgebraDescriptionNeedsUpdate) {
 			if (isDefined()) {
 				strAlgebraDescription = toString();
-			} else {
-				sb.setLength(0);			
-				sb.append(label);
-				sb.append(' ');
-				sb.append(app.getPlain("undefined"));
-				strAlgebraDescription = sb.toString();
+			} else {				
+				sbAlgebraDesc.setLength(0);			
+				sbAlgebraDesc.append(label);
+				sbAlgebraDesc.append(' ');
+				sbAlgebraDesc.append(app.getPlain("undefined"));
+				strAlgebraDescription = sbAlgebraDesc.toString();
 			}		
 			
 			strAlgebraDescriptionNeedsUpdate = false;
@@ -1710,6 +1725,7 @@ public abstract class GeoElement
 		
 		return strAlgebraDescription;
 	}	
+	private StringBuffer sbAlgebraDesc = new StringBuffer();
 	
 	final public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {			
@@ -1745,9 +1761,9 @@ public abstract class GeoElement
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
 	static String indicesToHTML(String str, boolean addHTMLtag) {
-		StringBuffer sb = new StringBuffer();
+		sbIndicesToHTML.setLength(0);
 		if (addHTMLtag)
-			sb.append("<html>");
+			sbIndicesToHTML.append("<html>");
 
 		int depth = 0;
 		int startPos = 0;
@@ -1757,7 +1773,7 @@ public abstract class GeoElement
 				case '_' :
 					//	write everything before _
 					if (i > startPos) {
-						sb.append(
+						sbIndicesToHTML.append(
 							Util.toHTMLString(str.substring(startPos, i)));
 					}
 					startPos = i + 1;
@@ -1765,14 +1781,14 @@ public abstract class GeoElement
 
 					// check if next character is a '{' (beginning of index with several chars)
 					if (startPos < length && str.charAt(startPos) != '{') {
-						sb.append(subBegin);
-						sb.append(
+						sbIndicesToHTML.append(subBegin);
+						sbIndicesToHTML.append(
 							Util.toHTMLString(
 								str.substring(startPos, startPos + 1)));
-						sb.append(subEnd);
+						sbIndicesToHTML.append(subEnd);
 						depth--;
 					} else {
-						sb.append(subBegin);
+						sbIndicesToHTML.append(subBegin);
 					}
 					i++;
 					startPos++;
@@ -1781,10 +1797,10 @@ public abstract class GeoElement
 				case '}' :
 					if (depth > 0) {
 						if (i > startPos) {
-							sb.append(
+							sbIndicesToHTML.append(
 								Util.toHTMLString(str.substring(startPos, i)));
 						}
-						sb.append(subEnd);
+						sbIndicesToHTML.append(subEnd);
 						startPos = i + 1;
 						depth--;
 					}
@@ -1793,35 +1809,37 @@ public abstract class GeoElement
 		}
 
 		if (startPos < length) {
-			sb.append(Util.toHTMLString(str.substring(startPos)));
+			sbIndicesToHTML.append(Util.toHTMLString(str.substring(startPos)));
 		}
 		if (addHTMLtag)
-			sb.append("</html>");
-		return sb.toString();
+			sbIndicesToHTML.append("</html>");
+		return sbIndicesToHTML.toString();
 	}
+	private static StringBuffer sbIndicesToHTML = new StringBuffer();
 
 	/**
 		* returns type and label of a GeoElement 
 		* (for tooltips and error messages)		
 		*/
 	public String getNameDescription() {
-		StringBuffer sb = new StringBuffer();
+		sbNameDescription.setLength(0);
 						
 		if (app.isReverseNameDescriptionLanguage()) {
 			//	reverse order: "A point"
-			sb.append(getLabel());				
-			sb.append(' ');			
-			sb.append(translatedTypeString());			
+			sbNameDescription.append(getLabel());				
+			sbNameDescription.append(' ');			
+			sbNameDescription.append(translatedTypeString());			
 		}	
 		else {
 			// standard order: "point A"
-			sb.append(translatedTypeString());				
-			sb.append(' ');
-			sb.append(getLabel());
+			sbNameDescription.append(translatedTypeString());				
+			sbNameDescription.append(' ');
+			sbNameDescription.append(getLabel());
 		}
 				
-		return sb.toString();
+		return sbNameDescription.toString();
 	}
+	private StringBuffer sbNameDescription = new StringBuffer();
 
 	/**
 		* returns type and label of a GeoElement 
@@ -1838,14 +1856,7 @@ public abstract class GeoElement
 	 * Returns whether the str contains any indices (i.e. '_' chars). 
 	 */
 	private static boolean includesIndex(String str) {
-		if (str == null)
-			return false;
-		int length = str.length();
-		for (int i = 0; i < length; i++) {
-			if (str.charAt(i) == '_')
-				return true;
-		}
-		return false;
+		return (str == null || str.indexOf('_') > -1);			
 	}
 
 	/**
@@ -1855,36 +1866,37 @@ public abstract class GeoElement
 	public String getNameDescriptionHTML(
 		boolean colored,
 		boolean addHTMLtag) {
-		StringBuffer sb = new StringBuffer();
+		sbNameDescriptionHTML.setLength(0);
 		if (addHTMLtag)
-			sb.append("<html>");
+			sbNameDescriptionHTML.append("<html>");
 			
 		boolean reverseOrder = app.isReverseNameDescriptionLanguage();		
 		if (!reverseOrder) {
 			//	standard order: "point A"
-			sb.append(translatedTypeString());				
-			sb.append(' ');
+			sbNameDescriptionHTML.append(translatedTypeString());				
+			sbNameDescriptionHTML.append(' ');
 		}						
 		
 		if (colored) {
-			sb.append(" <b><font color=\"#");
-			sb.append(Util.toHexString(objColor));
-			sb.append("\">");
+			sbNameDescriptionHTML.append(" <b><font color=\"#");
+			sbNameDescriptionHTML.append(Util.toHexString(objColor));
+			sbNameDescriptionHTML.append("\">");
 		}
-		sb.append(indicesToHTML(getLabel(), false));
+		sbNameDescriptionHTML.append(indicesToHTML(getLabel(), false));
 		if (colored)
-			sb.append("</font></b>");
+			sbNameDescriptionHTML.append("</font></b>");
 		
 		if (reverseOrder) {
 			//	reverse order: "A point"
-			sb.append(' ');
-			sb.append(translatedTypeString());							
+			sbNameDescriptionHTML.append(' ');
+			sbNameDescriptionHTML.append(translatedTypeString());							
 		}
 		
 		if (addHTMLtag)
-			sb.append("</html>");							
-		return sb.toString();
+			sbNameDescriptionHTML.append("</html>");							
+		return sbNameDescriptionHTML.toString();
 	}
+	private StringBuffer sbNameDescriptionHTML = new StringBuffer();
 
 	/*******************************************************
 	 * SAVING

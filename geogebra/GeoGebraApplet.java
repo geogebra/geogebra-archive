@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
@@ -639,17 +640,18 @@ public class GeoGebraApplet extends JApplet {
 	 */
 	private String [] getObjNames() {
 		Construction cons = kernel.getConstruction();
-		int size = cons.getGeoElementsIteratorSize();
+		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
+		int size = geoSet.size();
 		// don't build objNames if nothing changed
 		if (size == lastGeoElementsIteratorSize)
 			return objNames;		
 		
 		// build objNames array
-		lastGeoElementsIteratorSize = size;
-		Iterator it = cons.getGeoElementsIterator();
+		lastGeoElementsIteratorSize = size;		
 		objNames = new String[size];
 				
 		int i=0; 
+		Iterator it = geoSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			objNames[i] = geo.getLabel();
@@ -669,7 +671,7 @@ public class GeoGebraApplet extends JApplet {
 	 * Returns the number of objects in the construction.
 	 */
 	public synchronized int getObjectNumber() {					
-		return kernel.getConstruction().getGeoElementsIteratorSize();				
+		return getObjNames().length;			
 	}	
 	
 	/**
@@ -1026,7 +1028,7 @@ public class GeoGebraApplet extends JApplet {
 			update(geo);
 		}				
 					
-		public void reset() {				
+		public void reset() {							
 		}
 				
     	public void repaintView() {

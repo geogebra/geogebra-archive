@@ -300,13 +300,16 @@ final public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
 			// select all hidden objects			
-			Iterator it = kernel.getConstruction().getGeoElementsIterator();
+			Iterator it = kernel.getConstruction().getGeoSetConstructionOrder().iterator();
 			while (it.hasNext()) {
 				GeoElement geo = (GeoElement) it.next();
 				// independent numbers should not be set visible
 				// as this would produce a slider
 				if (!geo.isSetEuclidianVisible() && 
-					!(geo.isNumberValue() && geo.isIndependent())) {
+					!(
+					   (geo.isNumberValue() || geo.isBooleanValue()) && geo.isIndependent())
+					 ) 
+				{
 					app.addSelectedGeo(geo);
 					geo.setEuclidianVisible(true);					
 					geo.updateRepaint();										
