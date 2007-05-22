@@ -522,8 +522,6 @@ public class PropertiesDialog
 			
 			setBorder(
 					BorderFactory.createTitledBorder(app.getPlain("Properties")));
-			
-		
 
 			showObjectPanel = new ShowObjectPanel();
 			colorPanel = new ColorPanel();
@@ -552,8 +550,8 @@ public class PropertiesDialog
 			cornerPointsPanel = new CornerPointsPanel();
 			textEditPanel = new TextEditPanel();
 			bgImagePanel = new BackgroundImagePanel();
- 			allowReflexAnglePanel = new AllowReflexAnglePanel();
- 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
+			allowReflexAnglePanel = new AllowReflexAnglePanel();
+			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
  			
  			
  			//tabbed pane for properties
@@ -566,104 +564,119 @@ public class PropertiesDialog
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
-		//END
+		//END		
+		
+		// lists of UpdateablePanel objects
+		private ArrayList basicTabList, styleTabList, algebraTabList, sliderTabList;
+		private JPanel basicTab, styleTab, algebraTab, sliderTab;
 		
 		private void initTabs() {
-			pVec.clear();
-			pVec.add(showObjectPanel);														
-			pVec.add(labelPanel);		
-			pVec.add(tracePanel);
-			pVec.add(fixPanel);			
-			tabs.addTab(app.getMenu("Basic"), createPanel(pVec));
+			// TODO: remove
+			System.out.println("init tabs");
+			
+			// basic tab
+			basicTabList = new ArrayList();
+			basicTabList.add(showObjectPanel);														
+			basicTabList.add(labelPanel);		
+			basicTabList.add(tracePanel);
+			basicTabList.add(fixPanel);			
+			basicTabList.add(auxPanel);
+			basicTabList.add(allowReflexAnglePanel);	
+			basicTabList.add(allowOutlyingIntersectionsPanel);
+			basicTab = createPanel(basicTabList);		
+			tabs.addTab(app.getMenu("Properties.Basic"), basicTab);
+			
+			// style tab
+			styleTabList = new ArrayList();
+			styleTabList.add(colorPanel);				
+			styleTabList.add(textEditPanel);
+			styleTabList.add(textOptionsPanel);
+			styleTabList.add(bgImagePanel);
+			styleTabList.add(absScreenLocPanel);
+			styleTabList.add(pointSizePanel);				
+			styleTabList.add(arcSizePanel);
+			styleTabList.add(slopeTriangleSizePanel);							
+			styleTabList.add(startPointPanel);
+			styleTabList.add(cornerPointsPanel);
+			styleTabList.add(lineStylePanel);			
+			styleTabList.add(decoSegmentPanel);
+			styleTabList.add(decoAnglePanel);
+			styleTabList.add(rightAnglePanel);
+			styleTabList.add(fillingPanel);			
+			styleTab = createPanel(styleTabList);		
+			tabs.addTab(app.getMenu("Properties.Style"), styleTab);
+			
+			// algebra tab
+			algebraTabList = new ArrayList();
+			algebraTabList.add(coordPanel);
+			algebraTabList.add(lineEqnPanel);
+			algebraTabList.add(conicEqnPanel);	
+			algebraTabList.add(animStepPanel);
+			algebraTab = createPanel(algebraTabList);
+			tabs.addTab(app.getMenu("Properties.Algebra"), algebraTab);
+			
+			// slider tab
+			sliderTabList = new ArrayList();
+			sliderTabList.add(sliderPanel);	
+			sliderTab = createPanel(sliderTabList);		
+			tabs.addTab(app.getMenu("Properties.Slider"), sliderTab);
+		}
+		
+		private void updateTabs(Object [] geos) {
+			// TODO: remove
+			System.out.println("update tabs" + geos);
+			
+			tabs.removeAll();
+			
+			if (updateTabPanel(basicTab, basicTabList, geos))
+				tabs.addTab(app.getMenu("Properties.Basic"), basicTab);
+			
+			if (updateTabPanel(styleTab, styleTabList, geos))
+				tabs.addTab(app.getMenu("Properties.Style"), styleTab);
+			
+			if (updateTabPanel(algebraTab, algebraTabList, geos))
+				tabs.addTab(app.getMenu("Properties.Algebra"), algebraTab);
+			
+			if (updateTabPanel(sliderTab, sliderTabList, geos))
+				tabs.addTab(app.getMenu("Properties.Slider"), sliderTab);
+			
+			// TODO: remove
+			System.out.println("tab count " + tabs.getTabCount());
+			
+			// packDialog();	
+		}
+		
+		private boolean updateTabPanel(JPanel tabPanel, ArrayList tabList, Object [] geos) {
+			// update all panels and their visibility			
+			boolean oneVisible = false;
+			int size = tabList.size();
+			for (int i=0; i < size; i++) {
+				UpdateablePanel up = (UpdateablePanel) tabList.get(i);
+				boolean show = (up.update(geos) != null);
+				
+				// TODO: remove
+				System.out.println("update " + up.update(geos));
+				
+				up.setVisible(show);
+				if (show) oneVisible = true;
+			}
+			
+			return oneVisible;				
 		}
 		
 				
-		private Object[] oldSelGeos;
-		private ArrayList pVec = new ArrayList();
+		private Object[] oldSelGeos;		
 		
 		public void updateSelection(Object[] geos) {
 			if (geos == oldSelGeos) return;
-			oldSelGeos = geos;					
-			
-			//tabs.removeAll();	
-			pVec.clear();
-			if (geos != null && geos.length != 0) {
-										
-			// begin BASIC tab				
-				showObjectPanel.setVisible(showObjectPanel.update(geos) != null);
-				labelPanel.setVisible(labelPanel.update(geos)!=null);
-				tracePanel.setVisible(tracePanel.update(geos)!=null);
-				fixPanel.setVisible(fixPanel.update(geos)!=null);
-				
-				/*
-				pVec.add(showObjectPanel.update(geos));														
-				pVec.add(labelPanel.update(geos));		
-				pVec.add(tracePanel.update(geos));
-				pVec.add(fixPanel.update(geos));
-				
-				tabs.addTab(app.getMenu("Basic"), createPanel(pVec));
-				*/
-				
-				// trace, fix
-				//JPanel linePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));	
-				//p = 
-				//	if (p != null) linePanel.add(p);								
-				//p = fixPanel.update(geos);
-				//	if (p != null) linePanel.add(p);															
-				//if (linePanel.getComponentCount() > 0)
-				// pVec.add(linePanel);
-				
-				
-				
-			// begin BASIC tab
-				
-				// style
-				pVec.add(colorPanel.update(geos));
-				
-				
-				// algebra stuff
-				pVec.add(coordPanel.update(geos));
-				pVec.add(lineEqnPanel.update(geos));
-				pVec.add(conicEqnPanel.update(geos));				
-				pVec.add(textEditPanel.update(geos));
-				
-				// visual stuff
-				pVec.add(textOptionsPanel.update(geos));
-				pVec.add(bgImagePanel.update(geos));
- 				pVec.add(allowReflexAnglePanel.update(geos));
- 				pVec.add(absScreenLocPanel.update(geos));				
-				pVec.add(pointSizePanel.update(geos));				
-				pVec.add(arcSizePanel.update(geos));
-				pVec.add(slopeTriangleSizePanel.update(geos));							
-				pVec.add(startPointPanel.update(geos));
-				pVec.add(cornerPointsPanel.update(geos));
-				pVec.add(lineStylePanel.update(geos));
-				// added by Loïc BEGIN
-				pVec.add(decoSegmentPanel.update(geos));
-				pVec.add(decoAnglePanel.update(geos));
-				pVec.add(rightAnglePanel.update(geos));
-				//END
-				pVec.add(fillingPanel.update(geos));
-				pVec.add(sliderPanel.update(geos));
-				
-				pVec.add(allowOutlyingIntersectionsPanel.update(geos));
-				
-				// increment (anim step) panel is part of slider Panel
-				if (!pVec.contains(sliderPanel))
-					pVec.add(animStepPanel.update(geos));
-					
-				pVec.add(auxPanel.update(geos));					
-
-				
-							
-				// update size	
-				//packDialog();				
-			}
+			oldSelGeos = geos;										
+						
+			updateTabs(geos);
 		}				
 				
-		private JPanel createHorPanel(ArrayList pVec) {
-			return createPanel(pVec, false);
-		}
+		//private JPanel createHorPanel(ArrayList pVec) {
+		//	return createPanel(pVec, false);
+		//}
 		
 		private JPanel createPanel(ArrayList pVec) {
 			return createPanel(pVec, true);
@@ -684,23 +697,18 @@ public class PropertiesDialog
 					if (vertical)
 						p.setAlignmentX(LEFT_ALIGNMENT);					
 				}
-			}			
-			pVec.clear();
+			}						
 			
-			if (panel.getComponentCount() == 0)
-				return null;
-			else
-				return panel;
+			return panel;
 		}
 
 	} // PropertiesPanel
-	
-	
+		
 	
 	/**
 	 * panel with show/hide object checkbox
 	 */
-	private class ShowObjectPanel extends JPanel implements ItemListener {
+	private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -784,7 +792,7 @@ public class PropertiesDialog
 	/**
 	 * panel with button for color choosing
 	 */
-	private class ColorPanel extends JPanel {
+	private class ColorPanel extends JPanel implements UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -879,7 +887,7 @@ public class PropertiesDialog
 	 */
 	private class LabelPanel
 		extends JPanel
-		implements ItemListener, ActionListener {
+		implements ItemListener, ActionListener , UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1019,7 +1027,7 @@ public class PropertiesDialog
 	 * panel for trace
 	 * @author Markus Hohenwarter
 	 */
-	private class TracePanel extends JPanel implements ItemListener {
+	private class TracePanel extends JPanel implements ItemListener,  UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1095,7 +1103,7 @@ public class PropertiesDialog
 	 * panel for fixing an object
 	 * @author Markus Hohenwarter
 	 */
-	private class FixPanel extends JPanel implements ItemListener {
+	private class FixPanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1172,7 +1180,7 @@ public class PropertiesDialog
 	 * panel to set object's absoluteScreenLocation flag
 	 * @author Markus Hohenwarter
 	 */
-	private class AbsoluteScreenLocationPanel extends JPanel implements ItemListener {
+	private class AbsoluteScreenLocationPanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1271,7 +1279,7 @@ public class PropertiesDialog
 	 * panel for angles to set whether reflex angles are allowed 
 	 * @author Markus Hohenwarter
 	 */
-	private class AllowReflexAnglePanel extends JPanel implements ItemListener {
+	private class AllowReflexAnglePanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1347,7 +1355,7 @@ public class PropertiesDialog
 	 * panel for limted paths to set whether outlying intersection points are allowed 
 	 * @author Markus Hohenwarter
 	 */
-	private class AllowOutlyingIntersectionsPanel extends JPanel implements ItemListener {
+	private class AllowOutlyingIntersectionsPanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1424,7 +1432,7 @@ public class PropertiesDialog
 	 * panel to set a background image (only one checkbox)
 	 * @author Markus Hohenwarter
 	 */
-	private class BackgroundImagePanel extends JPanel implements ItemListener {
+	private class BackgroundImagePanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1498,7 +1506,7 @@ public class PropertiesDialog
 	 * panel for making an object auxiliary 
 	 * @author Markus Hohenwarter
 	 */
-	private class AuxiliaryObjectPanel extends JPanel implements ItemListener {
+	private class AuxiliaryObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1574,7 +1582,7 @@ public class PropertiesDialog
 	 */
 	private class StartPointPanel
 		extends JPanel
-		implements ActionListener, FocusListener {
+		implements ActionListener, FocusListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1704,7 +1712,7 @@ public class PropertiesDialog
 	 */
 	private class CornerPointsPanel
 		extends JPanel
-		implements ActionListener, FocusListener {
+		implements ActionListener, FocusListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1859,7 +1867,7 @@ public class PropertiesDialog
 	 */
 	private class TextEditPanel
 		extends JPanel
-		implements ActionListener {
+		implements ActionListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1942,7 +1950,7 @@ public class PropertiesDialog
 	 *  for GeoPoint and GeoVector
 	 * @author Markus Hohenwarter
 	 */
-	private class CoordPanel extends JPanel implements ActionListener {
+	private class CoordPanel extends JPanel implements ActionListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2045,7 +2053,7 @@ public class PropertiesDialog
 	 *  for GeoLine 
 	 * @author Markus Hohenwarter
 	 */
-	private class LineEqnPanel extends JPanel implements ActionListener {
+	private class LineEqnPanel extends JPanel implements ActionListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2166,7 +2174,7 @@ public class PropertiesDialog
 	 *  for GeoConic 
 	 * @author Markus Hohenwarter
 	 */
-	private class ConicEqnPanel extends JPanel implements ActionListener {
+	private class ConicEqnPanel extends JPanel implements ActionListener, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2314,7 +2322,7 @@ public class PropertiesDialog
 	 * panel to select the size of a GeoPoint
 	 * @author Markus Hohenwarter
 	 */
-	private class PointSizePanel extends JPanel implements ChangeListener {
+	private class PointSizePanel extends JPanel implements ChangeListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -2404,7 +2412,7 @@ public class PropertiesDialog
 	 * panel to select the size of a GeoText
 	 * @author Markus Hohenwarter
 	 */
-	private class TextOptionsPanel extends JPanel implements ActionListener {
+	private class TextOptionsPanel extends JPanel implements ActionListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -2576,7 +2584,7 @@ public class PropertiesDialog
 	 */
 	private class SlopeTriangleSizePanel
 		extends JPanel
-		implements ChangeListener {
+		implements ChangeListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -2675,7 +2683,7 @@ public class PropertiesDialog
 	 * panel to select the size of a GeoAngle's arc
 	 * @author Markus Hohenwarter
 	 */
-	private class ArcSizePanel extends JPanel implements ChangeListener {
+	private class ArcSizePanel extends JPanel implements ChangeListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -2794,7 +2802,7 @@ public class PropertiesDialog
 	 * panel to select the filling of a polygon or conic section
 	 * @author Markus Hohenwarter
 	 */
-	private class FillingPanel extends JPanel implements ChangeListener {
+	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -2892,7 +2900,7 @@ public class PropertiesDialog
 	 */
 	private class LineStylePanel
 		extends JPanel
-		implements ChangeListener, ActionListener {
+		implements ChangeListener, ActionListener, UpdateablePanel {
 
 		/**
 		 * 
@@ -3055,7 +3063,7 @@ public class PropertiesDialog
 
 	
 	// added by Loïc
-	private class DecoSegmentPanel extends JPanel implements ActionListener{
+	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JComboBox decoCombo;
 		private Object[] geos;
 		DecoSegmentPanel(){
@@ -3111,7 +3119,7 @@ public class PropertiesDialog
 		}
 	}
 	
-	private class DecoAnglePanel extends JPanel implements ActionListener{
+	private class DecoAnglePanel extends JPanel implements ActionListener , UpdateablePanel{
 		private JComboBox decoCombo;
 		private Object[] geos;
 		DecoAnglePanel(){
@@ -3174,7 +3182,7 @@ public class PropertiesDialog
 	}
 	
 	// added 3/11/06
-	private class RightAnglePanel extends JPanel implements ActionListener{
+	private class RightAnglePanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JCheckBox emphasizeRightAngle;
 		private Object[] geos;
 		RightAnglePanel(){
@@ -3552,7 +3560,7 @@ public class PropertiesDialog
  */
 class SliderPanel
 	extends JPanel
-	implements ActionListener, FocusListener {
+	implements ActionListener, FocusListener, UpdateablePanel {
 	/**
 	 * 
 	 */
@@ -3818,7 +3826,7 @@ class SliderPanel
  */
 class AnimationStepPanel
 	extends JPanel
-	implements ActionListener, FocusListener {
+	implements ActionListener, FocusListener, UpdateablePanel {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -3866,7 +3874,7 @@ class AnimationStepPanel
 			// same object visible value
 			if (geo0.getAnimationStep() != temp.getAnimationStep())
 				equalStep = false;
-			if (!(temp instanceof GeoAngle))
+			if (!(temp.isGeoAngle()))
 				onlyAngles = false;
 		}
 
@@ -3891,7 +3899,8 @@ class AnimationStepPanel
 		boolean geosOK = true;
 		for (int i = 0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];
-			if (!geo.isChangeable() || geo instanceof GeoText || geo instanceof GeoImage) {
+			if (!geo.isChangeable() || geo.isGeoText() || geo.isGeoImage()
+				 || (geo.isGeoNumeric() && geo.isVisible())) {
 				geosOK = false;
 				break;
 			}
@@ -3929,3 +3938,7 @@ class AnimationStepPanel
 	}
 }
 
+interface UpdateablePanel {
+	public JPanel update(Object[] geos);
+	public void setVisible(boolean flag);
+}
