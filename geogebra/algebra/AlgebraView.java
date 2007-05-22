@@ -447,55 +447,43 @@ public class AlgebraView extends JTree implements View {
 	 * have to be instances of GeoElement sorted alphabetically by their names.
 	 * @return -1 when not found
 	 */
-	final public static int searchGeo(DefaultMutableTreeNode parent, GeoElement geo) { 
-		// label of searched geo
-		String label = geo.getLabel();
-		
-		// standard case: binary search		
+	final public static int binarySearchGeo(DefaultMutableTreeNode parent, String geoLabel) { 				
 		int left = 0;
-		int right = parent.getChildCount()-1;	
+		int right = parent.getChildCount()-1;
 		if (right == -1) return -1;
-		
+	
 		// binary search for geo's label
-		while (right >= left) {							
+		while (left <= right) {							
 			int middle = (left + right) / 2;
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getChildAt(middle);
 			String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
 			
-			int compare = label.compareTo(nodeLabel);
-			if (compare < 0) {
-				right = middle - 1;
-			} else if (compare > 0) {
-				left = middle + 1;
-			} else {		
-				return middle;
-			}
-		}		
+			int compare = geoLabel.compareTo(nodeLabel);
+			if (compare < 0)
+				right = middle -1;
+		    else if (compare > 0)
+		    	left = middle + 1;	
+		    else
+		    	return middle;
+		}												  
 		
+		return -1;				
+	}		
+	
+	/**
+	 * Performs a linear search for geo among the children of parent.
+	 * @return -1 when not found
+	 */
+	final public static int linearSearchGeo(DefaultMutableTreeNode parent, String geoLabel) { 												
+		int childCount = parent.getChildCount();	
+		for (int i = 0; i < childCount; i++) {			
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getChildAt(i);
+			GeoElement g = (GeoElement) node.getUserObject();
+			if (geoLabel.equals(g.getLabel()))
+				return i;
+		}
 		return -1;
 	}
-	
-	/*
-	// geo should be inserted in alphabetical order
-	private int getInsertPosition(
-		DefaultMutableTreeNode parent,
-		GeoElement geo) {
-		int childCount = parent.getChildCount();
-		int insertPos = 0;
-		DefaultMutableTreeNode node;			
-		
-		String label = geo.getLabel();
-		for (int i = childCount-1; i >= 0; i--) {
-			// compare using labels
-			node = (DefaultMutableTreeNode) parent.getChildAt(i);
-			GeoElement g = (GeoElement) node.getUserObject();
-			if (label.compareTo(g.getLabel()) > 0) {
-				insertPos = i+1;
-				break;
-			}
-		}
-		return insertPos;
-	}*/
 
 	/**
 	 * removes a node from the tree

@@ -1289,15 +1289,14 @@ public class Application implements	KeyEventDispatcher {
     public void showPropertiesDialog(ArrayList geos) {
         if (!letShowPropertiesDialog()) return;
         
-        // save the geos list: it will be cleared by resetMode()
+        // save the geos list: it will be cleared by setMoveMode()
         ArrayList selGeos = null;
         if (geos != null) {
         	tempGeos.clear();
         	tempGeos.addAll(geos);
         	selGeos = tempGeos;
         } 
-        
-        euclidianView.resetMode();
+                
         initPropertiesDialog();
         setMoveMode();
         propDialog.setVisibleWithGeos(selGeos);
@@ -1527,6 +1526,7 @@ public class Application implements	KeyEventDispatcher {
         GeoImage.updateInstances();
 		return true;		
 	}
+	
 	
 	public Color showColorChooser(Color currentColor) {
 		// there seems to be a bug concerning ToolTips in JColorChooser 
@@ -2396,6 +2396,9 @@ public class Application implements	KeyEventDispatcher {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				if (propDialog != null && propDialog.isShowing()) 
+		    		propDialog.cancel();
+				
 				kernel.undo();
 				updateActions();
 				System.gc();
@@ -2407,6 +2410,9 @@ public class Application implements	KeyEventDispatcher {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				if (propDialog != null && propDialog.isShowing()) 
+		    		propDialog.cancel();
+				
 				kernel.redo();	
 				updateActions();
 				System.gc();

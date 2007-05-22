@@ -113,9 +113,13 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			if (instanceID > 0) {
 				// move right and down of last instance		
 				GeoGebra prevInstance = getInstance(instanceID - 1);
-				Point loc = prevInstance.getLocation();
-				loc.x += 20;
-				loc.y += 20;
+				Point loc = prevInstance.getLocation();				
+				
+				// make sure we stay on screen
+				Dimension d1 = getSize();	
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				loc.x = Math.min(loc.x + 20, dim.width - d1.width);
+				loc.y = Math.min(loc.y + 20, dim.height - d1.height - 25);								
 				setLocation(loc);
 			} else {
 				// center

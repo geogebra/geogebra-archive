@@ -38,6 +38,7 @@ import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Traceable;
 import geogebra.util.FastHashMapKeyless;
+import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -47,6 +48,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -67,20 +69,18 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -88,22 +88,20 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+
 
 /**
  * @author Markus Hohenwarter
@@ -118,8 +116,8 @@ public class PropertiesDialog
 		GeoElementSelectionListener {
 		
 	
-	private static final int MAX_COMBOBOX_ENTRIES = 100;
-	
+	private static final int MAX_GEOS_FOR_EXPAND_ALL = 10;
+	private static final int MAX_COMBOBOX_ENTRIES = 200;	
 	
 	private static final long serialVersionUID = 1L;
 	private Application app;
@@ -151,10 +149,10 @@ public class PropertiesDialog
 
 		addWindowListener(this);		
 		geoTree = new JTreeGeoElements();		
-		geoTree.getSelectionModel().addTreeSelectionListener(this);
+		geoTree.addTreeSelectionListener(this);
 				
 		// build GUI
-		initGUI();
+		initGUI();		
 	}
 
 	/**
@@ -168,9 +166,9 @@ public class PropertiesDialog
 		//listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 		listPanel.setLayout(new BorderLayout(5, 5));
 		// JList with GeoElements		
-		geoTree.updateUI();
+		
 		JScrollPane listScroller = new JScrollPane(geoTree);
-		listScroller.setPreferredSize(new Dimension(100, 200));
+		//listScroller.setPreferredSize(new Dimension(100, 200));
 		listPanel.add(listScroller, BorderLayout.CENTER);
 
 		// rename, redefine and delete button
@@ -247,9 +245,9 @@ public class PropertiesDialog
 		contentPane.add(dialogPanel);
 		dialogPanel.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
 		
+		// TODO: check keylistener		
+		Util.addKeyListenerToAll(this, this);	
 		
-		
-		//Util.addKeyListenerToAll(this, this);	
 		
 	}
 	
@@ -279,19 +277,18 @@ public class PropertiesDialog
 		setCursor(Cursor.getDefaultCursor());
 		setVisible(false);	
 	}
-	
-	private void packDialog() {
-		if (!isShowing()) return;
 		
+	private void packDialog() {				
 		pack();				
-		Dimension d1 = getSize();
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+			
 		if (firstTimeVisible) {
 			// center dialog
 			firstTimeVisible = false;						
 			setLocationRelativeTo(app.getMainComponent());
 		} else {
-			Point loc = getLocation(); 
+			Point loc = getLocation();
+			Dimension d1 = getSize();	
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 			int x = Math.min(loc.x, dim.width - d1.width);
 			int y = Math.min(loc.y, dim.height - d1.height - 25);
 			setLocation(x, y);
@@ -304,15 +301,15 @@ public class PropertiesDialog
 	 * shows this dialog and select GeoElement geo at screen position location
 	 */
 	public void setVisibleWithGeos(ArrayList geos) {		
-		setViewActive(true);	
+		setViewActive(true);					
+		geoTree.setSelected(geos, false);		
 		
-		geoTree.setSelected(geos, false);
-		
-		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 30)		
+		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 
+				MAX_GEOS_FOR_EXPAND_ALL)		
 			geoTree.expandAll();
 		
 		if (!isShowing()) {	
-			pack();
+			packDialog();
 			super.setVisible(true);			
 		}
 	}
@@ -349,13 +346,10 @@ public class PropertiesDialog
 	/**
 	 * handles selection change	 
 	 */
-	private void selectionChanged() {				
-		Object [] geos = null;
-		
-		ArrayList selGeos = getSelectedGeos();						
-		if (selGeos.size() > 0)
-			geos = selGeos.toArray();								
-		
+	private void selectionChanged() {			
+		updateSelectedGeos(geoTree.getSelectionPaths());
+				
+		Object [] geos = selectionList.toArray();										
 		propPanel.updateSelection(geos);
 		//Util.addKeyListenerToAll(propPanel, this);
 		
@@ -365,18 +359,18 @@ public class PropertiesDialog
 	}
 	
 	
-	private ArrayList getSelectedGeos() {
-		selectionList.clear();
+	private ArrayList updateSelectedGeos(TreePath [] selPath ) {
+		selectionList.clear();	
 		
-		TreePath [] selPath = geoTree.getSelectionPaths();			
-		if (selPath != null) {						
+		if (selPath != null) {				
+			// add all selected paths
 			for (int i=0; i < selPath.length; i++) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();	
-			
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();						
+				
 				if (node == node.getRoot()) {
 					// root: add all objects
 					selectionList.clear();
-					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());
+					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());										
 					break;
 				}				
 				else if (node.getParent() == node.getRoot()) {
@@ -387,12 +381,12 @@ public class PropertiesDialog
 					}
 				} else {
 					// GeoElement					
-					selectionList.add(node.getUserObject());
-					break;
-				}
-			}						
+					selectionList.add(node.getUserObject());					
+				}										
+			}				
 		}	
 		
+	
 		return selectionList;
 	}
 	private ArrayList selectionList = new ArrayList();
@@ -410,33 +404,48 @@ public class PropertiesDialog
 	 * deletes all selected GeoElements from Kernel	 
 	 */
 	private void deleteSelectedGeos() {
-		ArrayList selGeos = getSelectedGeos();		
-		for (int i = 0; i < selGeos.size(); i++) {
-			((GeoElement) selGeos.get(i)).remove();
+		ArrayList selGeos = selectionList;
+		
+		if (selGeos.size() > 0) {										
+			for (int i = 0; i < selGeos.size()-1; i++) {
+				((GeoElement) selGeos.get(i)).remove();
+			}
+			
+			// select element above last to delete
+			GeoElement geo = (GeoElement) selGeos.get(selGeos.size()-1);
+			TreePath tp = geoTree.getTreePath(geo);			
+			if (tp != null) {
+				int row = geoTree.getRowForPath(tp);
+				tp = geoTree.getPathForRow(row - 1);
+				geo.remove();								
+				if (tp != null) geoTree.setSelectionPath(tp);
+			}
 		}
-		// TODO: select first entry
 	}
 
 	/**
 	 * renames first selected GeoElement
 	 */
 	private void rename() {
-		ArrayList selGeos = getSelectedGeos();	
-		if (selGeos.size() > 0)			
-			app.showRenameDialog((GeoElement) selGeos.get(0), false, null);
-		//geoList.setSelected((GeoElement) geos[0]);
-		//selectionChanged();
+		ArrayList selGeos = selectionList;	
+		if (selGeos.size() > 0)	{
+			GeoElement geo = (GeoElement) selGeos.get(0);
+			app.showRenameDialog(geo, false, null);
+			
+			selectionList.clear();
+			selectionList.add(geo);
+			geoTree.setSelected(selectionList, false);	
+		}								
 	}
 	
 	/**
 	 * redefines first selected GeoElement
 	 */
 	private void redefine() {
-		ArrayList selGeos = getSelectedGeos();	
+		ArrayList selGeos = selectionList;
+		geoTree.clearSelection();
 		if (selGeos.size() > 0)						
-			app.showRedefineDialog((GeoElement) selGeos.get(0));
-		//geoList.setSelected((GeoElement) geos[0]);
-		//selectionChanged();
+			app.showRedefineDialog((GeoElement) selGeos.get(0));		
 	}
 
 	
@@ -445,11 +454,13 @@ public class PropertiesDialog
 	 * Window Listener
 	 */
 	public void windowActivated(WindowEvent e) {
+		/*
 		if (!isModal()) {
 			geoTree.setSelected(null, false);
-			selectionChanged();						
+			//selectionChanged();						
 		}
 		repaint();
+		*/
 	}
 
 	public void windowDeactivated(WindowEvent e) {
@@ -552,30 +563,25 @@ public class PropertiesDialog
 			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
- 			
- 			
+ 			 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
  			initTabs();
- 			add(tabs);
- 			
+ 			add(tabs); 			
 		}		
+		
 		// added by Loïc BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
 		//END		
 		
-		// lists of UpdateablePanel objects
-		private ArrayList basicTabList, styleTabList, algebraTabList, sliderTabList;
-		private JPanel basicTab, styleTab, algebraTab, sliderTab;
-		
-		private void initTabs() {
-			// TODO: remove
-			System.out.println("init tabs");
-			
+		// lists of TabPanel objects
+		private ArrayList tabPanelList;
+				
+		private void initTabs() {			
 			// basic tab
-			basicTabList = new ArrayList();
+			ArrayList basicTabList = new ArrayList();
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);
@@ -583,67 +589,97 @@ public class PropertiesDialog
 			basicTabList.add(auxPanel);
 			basicTabList.add(allowReflexAnglePanel);	
 			basicTabList.add(allowOutlyingIntersectionsPanel);
-			basicTab = createPanel(basicTabList);		
-			tabs.addTab(app.getMenu("Properties.Basic"), basicTab);
+			basicTabList.add(bgImagePanel);	
+			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
+			basicTab.addToTabbedPane(tabs);			
+															
+			// color tab
+			ArrayList colorTabList = new ArrayList();
+			colorTabList.add(colorPanel);		
+			TabPanel colorTab = new TabPanel(app.getPlain("Color"), colorTabList);
+			colorTab.addToTabbedPane(tabs);			
+					
+			// text tab
+			ArrayList textTabList = new ArrayList();			
+			textTabList.add(textEditPanel);
+			textTabList.add(textOptionsPanel);		
+			TabPanel textTab = new TabPanel(app.getPlain("Text"), textTabList);
+			textTab.addToTabbedPane(tabs);	
+			
+			// slider tab
+			ArrayList sliderTabList = new ArrayList();
+			sliderTabList.add(sliderPanel);				
+			TabPanel sliderTab = new TabPanel(app.getPlain("Slider"), sliderTabList);
+			sliderTab.addToTabbedPane(tabs);					
 			
 			// style tab
-			styleTabList = new ArrayList();
-			styleTabList.add(colorPanel);				
-			styleTabList.add(textEditPanel);
-			styleTabList.add(textOptionsPanel);
-			styleTabList.add(bgImagePanel);
-			styleTabList.add(absScreenLocPanel);
+			ArrayList styleTabList = new ArrayList();													
 			styleTabList.add(pointSizePanel);				
 			styleTabList.add(arcSizePanel);
-			styleTabList.add(slopeTriangleSizePanel);							
-			styleTabList.add(startPointPanel);
-			styleTabList.add(cornerPointsPanel);
-			styleTabList.add(lineStylePanel);			
+			styleTabList.add(slopeTriangleSizePanel);												
 			styleTabList.add(decoSegmentPanel);
 			styleTabList.add(decoAnglePanel);
-			styleTabList.add(rightAnglePanel);
-			styleTabList.add(fillingPanel);			
-			styleTab = createPanel(styleTabList);		
-			tabs.addTab(app.getMenu("Properties.Style"), styleTab);
+			styleTabList.add(rightAnglePanel);								
+			TabPanel styleTab = new TabPanel(app.getMenu("Properties.Style"), styleTabList);
+			styleTab.addToTabbedPane(tabs);	
+				
+			// line style
+			ArrayList lineStyleTabList = new ArrayList();	
+			lineStyleTabList.add(lineStylePanel);				
+			TabPanel lineStyleTab = new TabPanel(app.getPlain("LineStyle"), lineStyleTabList);
+			lineStyleTab.addToTabbedPane(tabs);	
+			
+			// filling style
+			ArrayList fillingTabList = new ArrayList();	
+			fillingTabList.add(fillingPanel);			
+			TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
+			fillingTab.addToTabbedPane(tabs);										
+			
+			// position			
+			ArrayList positionTabList = new ArrayList();	
+			positionTabList.add(absScreenLocPanel);
+			positionTabList.add(startPointPanel);
+			positionTabList.add(cornerPointsPanel);
+			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
+			positionTab.addToTabbedPane(tabs);
 			
 			// algebra tab
-			algebraTabList = new ArrayList();
+			ArrayList algebraTabList = new ArrayList();
 			algebraTabList.add(coordPanel);
 			algebraTabList.add(lineEqnPanel);
 			algebraTabList.add(conicEqnPanel);	
 			algebraTabList.add(animStepPanel);
-			algebraTab = createPanel(algebraTabList);
-			tabs.addTab(app.getMenu("Properties.Algebra"), algebraTab);
-			
-			// slider tab
-			sliderTabList = new ArrayList();
-			sliderTabList.add(sliderPanel);	
-			sliderTab = createPanel(sliderTabList);		
-			tabs.addTab(app.getMenu("Properties.Slider"), sliderTab);
+			TabPanel algebraTab = new TabPanel(app.getMenu("Properties.Algebra"), algebraTabList);
+			algebraTab.addToTabbedPane(tabs);						
+					
+			// fill tabPanelList
+			tabPanelList = new ArrayList();
+			for (int i=0; i < tabs.getTabCount(); i++) {
+				tabPanelList.add( (TabPanel) tabs.getComponentAt(i));
+			}
 		}
 		
-		private void updateTabs(Object [] geos) {
-			// TODO: remove
-			System.out.println("update tabs" + geos);
+		private void updateTabs(Object [] geos) {			
+			if (geos.length == 0) {
+				tabs.setVisible(false);
+				return;
+			}
+			tabs.setVisible(true);
 			
-			tabs.removeAll();
+			// remember selected tab
+			Component selectedTab = tabs.getSelectedComponent();
 			
-			if (updateTabPanel(basicTab, basicTabList, geos))
-				tabs.addTab(app.getMenu("Properties.Basic"), basicTab);
-			
-			if (updateTabPanel(styleTab, styleTabList, geos))
-				tabs.addTab(app.getMenu("Properties.Style"), styleTab);
-			
-			if (updateTabPanel(algebraTab, algebraTabList, geos))
-				tabs.addTab(app.getMenu("Properties.Algebra"), algebraTab);
-			
-			if (updateTabPanel(sliderTab, sliderTabList, geos))
-				tabs.addTab(app.getMenu("Properties.Slider"), sliderTab);
-			
-			// TODO: remove
-			System.out.println("tab count " + tabs.getTabCount());
-			
-			// packDialog();	
+			tabs.removeAll();				
+			for (int i=0; i < tabPanelList.size(); i++) {
+				TabPanel tp = (TabPanel) tabPanelList.get(i);
+				tp.update(geos);
+				tp.addToTabbedPane(tabs);
+			}
+														
+			// switch back to previously selected tab
+			int index = tabs.indexOfComponent(selectedTab);
+			tabs.setSelectedIndex(Math.max(0, index));
+						
 		}
 		
 		private boolean updateTabPanel(JPanel tabPanel, ArrayList tabList, Object [] geos) {
@@ -652,11 +688,7 @@ public class PropertiesDialog
 			int size = tabList.size();
 			for (int i=0; i < size; i++) {
 				UpdateablePanel up = (UpdateablePanel) tabList.get(i);
-				boolean show = (up.update(geos) != null);
-				
-				// TODO: remove
-				System.out.println("update " + up.update(geos));
-				
+				boolean show = (up.update(geos) != null);						
 				up.setVisible(show);
 				if (show) oneVisible = true;
 			}
@@ -673,33 +705,48 @@ public class PropertiesDialog
 						
 			updateTabs(geos);
 		}				
+						
+		
+		private class TabPanel extends JPanel {
+		
+			private String title;
+			private ArrayList panelList;
+			private boolean makeVisible = true;			
+			
+			public TabPanel(String title, ArrayList pVec) {
+				this.title = title;
+				panelList = pVec;
 				
-		//private JPanel createHorPanel(ArrayList pVec) {
-		//	return createPanel(pVec, false);
-		//}
-		
-		private JPanel createPanel(ArrayList pVec) {
-			return createPanel(pVec, true);
-		}
-		
-		private JPanel createPanel(ArrayList pVec, boolean vertical) {
-			JPanel panel = new JPanel();
-			if (vertical)
-				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			else
-				panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-			
-			// build new panel					
-			for (int i = 0; i < pVec.size(); i++) {
-				JPanel p = (JPanel) pVec.get(i);
-				if (p != null) {						
-					panel.add(p);
-					if (vertical)
-						p.setAlignmentX(LEFT_ALIGNMENT);					
+				setLayout(new BorderLayout(0,0));				
+				JPanel currentPanel = this;
+				
+				// build new panel					
+				for (int i = 0; i < pVec.size(); i++) {
+					JPanel p = (JPanel) pVec.get(i);
+					if (p != null) {
+						// wrapper panel to guarantee left alignment
+						JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0,0));
+						wrapper.add(p);
+					
+						currentPanel.add(wrapper, BorderLayout.NORTH);					
+						JPanel newPanel = new JPanel(new BorderLayout(0,0));
+						currentPanel.add(newPanel, BorderLayout.CENTER);
+						currentPanel = newPanel;
+						//if (vertical)
+							//wrapper.setAlignmentX(LEFT_ALIGNMENT);					
+					}
 				}
-			}						
+			}
 			
-			return panel;
+			public void update(Object [] geos) {
+				makeVisible = updateTabPanel(this, panelList, geos);
+			}
+			
+			public void addToTabbedPane(JTabbedPane tabs) {
+				if (makeVisible) {
+					tabs.addTab(title, this);
+				}
+			}										
 		}
 
 	} // PropertiesPanel
@@ -799,25 +846,43 @@ public class PropertiesDialog
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private Color currentColor;
-		private JButton colorButton;
+		private JColorChooser colChooser;
+		private JPanel previewPanel;
 
 		public ColorPanel() {
-			// color		
-			//		full block: \u2588, smiley: \u263b
-			colorButton = new JButton("\u2588");
-			colorButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setObjColor(app.showColorChooser(currentColor));
+			colChooser = new JColorChooser();
+			colChooser.setLocale(app.getLocale());
+			previewPanel = new PreviewPanel();					
+			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
+			
+			setLayout(new BorderLayout());			
+			add(tabs[0], BorderLayout.NORTH);		
+			
+			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			p.add(new JLabel(app.getMenu("Preview") + ": "));
+			p.add(previewPanel);
+			add(p, BorderLayout.CENTER);
+			
+			colChooser.getSelectionModel().addChangeListener(new ChangeListener() {			
+				public void stateChanged(ChangeEvent arg0) {					
+					setObjColor(colChooser.getColor());	
+					previewPanel.setForeground(colChooser.getColor());
 				}
-			});
-
-			//	objectPanel with show checkbox and color panel
-			JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,0));
-			colorPanel.add(new JLabel(app.getPlain("Color") + ":"));
-			colorPanel.add(colorButton);
-
-			add(colorPanel);
+			});			
 		}
+		
+		private class PreviewPanel extends JPanel {
+		    public PreviewPanel() {
+		        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
+		        setBorder(BorderFactory.createRaisedBevelBorder());
+		      }
+		      public void paintComponent(Graphics g) {
+		        Dimension size = getSize();
+
+		        g.setColor(getForeground());
+		        g.fillRect(0,0,size.width,size.height);
+		      }
+		    }
 
 		public JPanel update(Object[] geos) {
 			this.geos = geos;
@@ -839,12 +904,11 @@ public class PropertiesDialog
 
 			// set colorButton's color to object color
 			if (equalObjColor) {
-				currentColor = geo0.getObjectColor();
-				colorButton.setForeground(currentColor);
+				currentColor = geo0.getObjectColor();				
 			} else {
-				currentColor = Color.lightGray;
-				colorButton.setForeground(currentColor);
+				currentColor = null;				
 			}
+			previewPanel.setForeground(currentColor);
 			return this;
 		}
 
@@ -852,11 +916,10 @@ public class PropertiesDialog
 		 * sets color of selected GeoElements
 		 *
 		 */
-		private void setObjColor(Color col) {
+		private void setObjColor(Color col) {						
 			if (col == null)
 				return;
-			currentColor = col;
-			colorButton.setForeground(currentColor);
+			currentColor = col;				
 
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
@@ -1618,10 +1681,7 @@ public class PropertiesDialog
 			// repopulate model with names of points from the geoList's model
 			// take all points from construction
 			TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
-			if (points.size() != cbModel.getSize() - 1) {
-				// TODO: remove
-				System.out.println("updated point combo box");
-				
+			if (points.size() != cbModel.getSize() - 1) {				
 				cbModel.removeAllElements();
 				cbModel.addElement(null);			
 				Iterator it = points.iterator();
@@ -1761,10 +1821,7 @@ public class PropertiesDialog
 			// repopulate model with names of points from the geoList's model
 			// take all points from construction
 			TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
-			if (points.size() != cbModel[0].getSize() - 1) {
-				// TODO: remove
-				System.out.println("updated point combo box");
-				
+			if (points.size() != cbModel[0].getSize() - 1) {			
 				// clear models
 				for (int k=0; k<3; k++) {					
 					cbModel[k].removeAllElements();
@@ -3212,11 +3269,12 @@ public class PropertiesDialog
 					geosOK = false;
 					break;
 				}
+				/*
 				// If it isn't a right angle
 				else if (!kernel.isEqual(((GeoAngle)geos[i]).getValue(), Kernel.PI_HALF)){
 					geosOK=false;
 					break;
-				}
+				}*/
 			}
 			return geosOK;
 		}
@@ -3258,7 +3316,7 @@ public class PropertiesDialog
 		 */
 		public JTreeGeoElements() {
 			// build default tree structure
-			root = new DefaultMutableTreeNode(app.getMenu("Objects"));			
+			root = new DefaultMutableTreeNode(app.getPlain("Objects"));			
 
 			// create model from root node
 			treeModel = new DefaultTreeModel(root);				
@@ -3273,7 +3331,7 @@ public class PropertiesDialog
 			// 	tree's options             
 			setRootVisible(true);
 			// show lines from parent to children
-			putClientProperty("JTree.lineStyle", "Angled");
+			//putClientProperty("JTree.lineStyle", "None");
 			setInvokesStopCellEditing(true);
 			setScrollsOnExpand(true);	
 			
@@ -3295,6 +3353,8 @@ public class PropertiesDialog
 		      row++;
 	       }
 	    }
+		
+		
 
 		/**
 		 * selects object geo in the list of GeoElements	 
@@ -3303,15 +3363,22 @@ public class PropertiesDialog
 		public void setSelected(ArrayList geos, boolean addToSelection) {
 			TreePath tp = null;
 			
-			TreeSelectionModel lsm = getSelectionModel();
+			// remove all selection listeners
+			TreeSelectionListener [] listeners = getTreeSelectionListeners();
+			for (int i=0; i < listeners.length; i++) {
+				removeTreeSelectionListener(listeners[i]);
+			}
+			
+			TreeSelectionModel lsm = getSelectionModel();					
 			if (geos == null) {
 				if (lsm.isSelectionEmpty()) {
-					// select first if list is not empty
-					if (root.getChildCount() > 0) {						
+					// select all  if list is not empty
+					/*if (root.getChildCount() > 0) {						
 						DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) root.getFirstChild();
 						tp = new TreePath(((DefaultMutableTreeNode)typeNode.getFirstChild()).getPath());																
 						setSelectionPath(tp); // select																													
-					}
+					}*/
+					setSelectionRow(0); // select root
 				}			
 			}			
 			else {
@@ -3324,7 +3391,7 @@ public class PropertiesDialog
 					if (result != null)
 						tp = result;
 				}																	
-			}				
+			}		
 			
 			// show last selected path
 			if (tp != null) {
@@ -3332,6 +3399,12 @@ public class PropertiesDialog
 				makeVisible(tp);
 				scrollPathToVisible(tp);
 			}
+			
+			// readd all selection listeners			
+			for (int i=0; i < listeners.length; i++) {
+				addTreeSelectionListener(listeners[i]);
+				listeners[i].valueChanged(null);
+			}					
 		}	
 		
 		/**
@@ -3344,7 +3417,7 @@ public class PropertiesDialog
 			if (typeNode == null)
 				return null;
 			
-			int pos = AlgebraView.searchGeo(typeNode, geo);
+			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());
 			if (pos == -1)
 				return null;
 			else {
@@ -3406,36 +3479,66 @@ public class PropertiesDialog
 			
 			// add geo to type node   
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(geo);
-			treeModel.insertNodeInto(newNode, typeNode, AlgebraView.getInsertPosition(typeNode, geo));
-			if (isShowing())
-				makeVisible(new TreePath(newNode.getPath()));
+			int pos = AlgebraView.getInsertPosition(typeNode, geo);
+			treeModel.insertNodeInto(newNode, typeNode, pos);
+		
+			if (isShowing()) {
+				TreePath geoPath = new TreePath(newNode.getPath());
+				//addSelectionPath(geoPath);
+				makeVisible(geoPath);
+			}				
 		}		
 		
 
 		/**
 		 * removes an element from the list
 		 */
-		public void remove(GeoElement geo) {
+		public void remove(GeoElement geo) {	
+			remove(geo, true);
+		}
+		
+		public void remove(GeoElement geo, boolean binarySearch) {
 			// get type node
 			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
 			if (typeNode == null) return;
-			
-			int pos = AlgebraView.searchGeo(typeNode, geo);
-			if (pos > -1) {
-				if (typeNode.getChildCount() == 1) {
-					// last child
-					treeModel.removeNodeFromParent(typeNode);					
-				} else {
-					treeModel.removeNodeFromParent((DefaultMutableTreeNode) typeNode.getChildAt(pos));
-				}
+									
+			int pos = binarySearch ?
+					AlgebraView.binarySearchGeo(typeNode, geo.getLabel()) :					
+					AlgebraView.linearSearchGeo(typeNode, geo.getLabel());
+			if (pos > -1) {				
+				DefaultMutableTreeNode child = (DefaultMutableTreeNode) typeNode.getChildAt(pos);					
+				treeModel.removeNodeFromParent(child);
+				
+				if (typeNode.getChildCount() == 0) {
+					// last child					
+					typeNodesMap.remove(typeNode);	
+					treeModel.removeNodeFromParent(typeNode);									
+				} 						
 			}
+		}
+		
+		/**
+		 * Returns the tree path of geo	
+		 * @return returns null if geo is not in tree
+		 */
+		private TreePath getTreePath(GeoElement geo) {
+			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
+			if (typeNode == null) return null;
+			
+			// find pos of geo 
+			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());					
+			if (pos == -1) return null;
+					
+			return new TreePath(((DefaultMutableTreeNode)typeNode.getChildAt(pos)).getPath());			
 		}
 
 		/**
 		 * renames an element and sorts list 
 		 */
 		public void rename(GeoElement geo) {
-			remove(geo);			
+			// the rename destroyed the alphabetical order,
+			// so we have to use linear instead of binary search
+			remove(geo, false);			
 			add(geo);
 			geoElementSelected(geo, false);
 		}
@@ -3480,8 +3583,10 @@ public class PropertiesDialog
 		}
 
 		public void mouseClicked(MouseEvent e) {
+			/*
 			Point loc = e.getPoint();
 			int clicks = e.getClickCount();
+			
 			
 			if (clicks == 1) {
 				int row = getRowForLocation(loc.x, loc.y);				
@@ -3493,7 +3598,7 @@ public class PropertiesDialog
 				if (geo != null) {
 					app.showRenameDialog(geo, false, null);
 				}
-			}
+			}*/
 		}
 
 		public void mouseEntered(MouseEvent arg0) {
@@ -3538,18 +3643,18 @@ public class PropertiesDialog
 	}
 
 	public void windowGainedFocus(WindowEvent arg0) {
+		app.setMoveMode();
 		app.setSelectionListenerMode(this);
 		selectionChanged();
 	}
 		
 
-	public void windowLostFocus(WindowEvent arg0) {
+	public void windowLostFocus(WindowEvent arg0) {		
 	}
 
 	// Tree selection listener
-	public void valueChanged(TreeSelectionEvent e) {		
-		// selection should be finished		
-		selectionChanged();				
+	public void valueChanged(TreeSelectionEvent e) {			
+		selectionChanged();		
 	}
 
 } // PropertiesDialog
@@ -3727,7 +3832,7 @@ class SliderPanel
 		boolean geosOK = true;
 		for (int i = 0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];
- 			if (!(geo.isIndependent() && geo instanceof GeoNumeric)) {
+ 			if (!(geo.isIndependent() && geo.isGeoNumeric())) {
 				geosOK = false;
 				break;
 			}
