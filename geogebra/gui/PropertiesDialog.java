@@ -84,6 +84,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
@@ -306,8 +307,12 @@ public class PropertiesDialog
 		setViewActive(true);	
 		
 		geoTree.setSelected(geos, false);
-		//geoTree.expandAll();
-		if (!isShowing()) {			
+		
+		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 30)		
+			geoTree.expandAll();
+		
+		if (!isShowing()) {	
+			pack();
 			super.setVisible(true);			
 		}
 	}
@@ -508,13 +513,17 @@ public class PropertiesDialog
 		private TextEditPanel textEditPanel;
 		private BackgroundImagePanel bgImagePanel;
 		private AbsoluteScreenLocationPanel absScreenLocPanel;		
+		
+		private JTabbedPane tabs;
 
 		public PropertiesPanel() {			
-			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
+			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
 			//setLayout(new FlowLayout());
 			
 			setBorder(
-				BorderFactory.createTitledBorder(app.getPlain("Properties")));
+					BorderFactory.createTitledBorder(app.getPlain("Properties")));
+			
+		
 
 			showObjectPanel = new ShowObjectPanel();
 			colorPanel = new ColorPanel();
@@ -545,6 +554,13 @@ public class PropertiesDialog
 			bgImagePanel = new BackgroundImagePanel();
  			allowReflexAnglePanel = new AllowReflexAnglePanel();
  			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
+ 			
+ 			
+ 			//tabbed pane for properties
+			tabs = new JTabbedPane();				
+ 			initTabs();
+ 			add(tabs);
+ 			
 		}		
 		// added by Loïc BEGIN
 		public void setSliderMinValue(){
@@ -552,42 +568,58 @@ public class PropertiesDialog
 		}
 		//END
 		
+		private void initTabs() {
+			pVec.clear();
+			pVec.add(showObjectPanel);														
+			pVec.add(labelPanel);		
+			pVec.add(tracePanel);
+			pVec.add(fixPanel);			
+			tabs.addTab(app.getMenu("Basic"), createPanel(pVec));
+		}
+		
+				
 		private Object[] oldSelGeos;
+		private ArrayList pVec = new ArrayList();
+		
 		public void updateSelection(Object[] geos) {
 			if (geos == oldSelGeos) return;
-			oldSelGeos = geos;
+			oldSelGeos = geos;					
 			
-			removeAll();
-			repaint();
+			//tabs.removeAll();	
+			pVec.clear();
 			if (geos != null && geos.length != 0) {
-				ArrayList pVec = new ArrayList();							
-
-				// visual stuff
-				// object panel: show object & color
-				JPanel objectPanel =
-					new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));		
+										
+			// begin BASIC tab				
+				showObjectPanel.setVisible(showObjectPanel.update(geos) != null);
+				labelPanel.setVisible(labelPanel.update(geos)!=null);
+				tracePanel.setVisible(tracePanel.update(geos)!=null);
+				fixPanel.setVisible(fixPanel.update(geos)!=null);
 				
-				JPanel p = showObjectPanel.update(geos);
-				if (p != null)
-					objectPanel.add(p);
-				p = colorPanel.update(geos);
-				if (p != null)
-					objectPanel.add(p);
-				if (objectPanel.getComponentCount() > 0) {					
-					pVec.add(objectPanel);
-				}					
-
-				// label
-				pVec.add(labelPanel.update(geos));									
-
+				/*
+				pVec.add(showObjectPanel.update(geos));														
+				pVec.add(labelPanel.update(geos));		
+				pVec.add(tracePanel.update(geos));
+				pVec.add(fixPanel.update(geos));
+				
+				tabs.addTab(app.getMenu("Basic"), createPanel(pVec));
+				*/
+				
 				// trace, fix
-				JPanel linePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));	
-				p = tracePanel.update(geos);
-					if (p != null) linePanel.add(p);								
-				p = fixPanel.update(geos);
-					if (p != null) linePanel.add(p);															
-				if (linePanel.getComponentCount() > 0)
-					pVec.add(linePanel);
+				//JPanel linePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));	
+				//p = 
+				//	if (p != null) linePanel.add(p);								
+				//p = fixPanel.update(geos);
+				//	if (p != null) linePanel.add(p);															
+				//if (linePanel.getComponentCount() > 0)
+				// pVec.add(linePanel);
+				
+				
+				
+			// begin BASIC tab
+				
+				// style
+				pVec.add(colorPanel.update(geos));
+				
 				
 				// algebra stuff
 				pVec.add(coordPanel.update(geos));
@@ -622,22 +654,48 @@ public class PropertiesDialog
 					
 				pVec.add(auxPanel.update(geos));					
 
-				// build new panel					
-				for (int i = 0; i < pVec.size(); i++) {
-					p = (JPanel) pVec.get(i);
-					if (p != null) {						
-						add(p);
-						p.setAlignmentX(LEFT_ALIGNMENT);
-						//p.setAlignmentY(Component.TOP_ALIGNMENT);
-					}
-				}
+				
 							
 				// update size	
-				packDialog();				
+				//packDialog();				
 			}
+		}				
+				
+		private JPanel createHorPanel(ArrayList pVec) {
+			return createPanel(pVec, false);
+		}
+		
+		private JPanel createPanel(ArrayList pVec) {
+			return createPanel(pVec, true);
+		}
+		
+		private JPanel createPanel(ArrayList pVec, boolean vertical) {
+			JPanel panel = new JPanel();
+			if (vertical)
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			else
+				panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			
+			// build new panel					
+			for (int i = 0; i < pVec.size(); i++) {
+				JPanel p = (JPanel) pVec.get(i);
+				if (p != null) {						
+					panel.add(p);
+					if (vertical)
+						p.setAlignmentX(LEFT_ALIGNMENT);					
+				}
+			}			
+			pVec.clear();
+			
+			if (panel.getComponentCount() == 0)
+				return null;
+			else
+				return panel;
 		}
 
 	} // PropertiesPanel
+	
+	
 	
 	/**
 	 * panel with show/hide object checkbox
@@ -3341,8 +3399,8 @@ public class PropertiesDialog
 			// add geo to type node   
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(geo);
 			treeModel.insertNodeInto(newNode, typeNode, AlgebraView.getInsertPosition(typeNode, geo));
-			//if (initing)
-				//makeVisible(new TreePath(newNode.getPath()));
+			if (isShowing())
+				makeVisible(new TreePath(newNode.getPath()));
 		}		
 		
 

@@ -740,6 +740,7 @@ ExpressionNode enterm():
 
 /**
  * unary =  -power    |
+ * 	        +power    | 	
  *          power
  */
 ExpressionNode enunary():        
@@ -750,6 +751,11 @@ ExpressionNode enunary():
     <MINUS> e = enpower()
         { // -e  = -1*e
           return new ExpressionNode(kernel, new MyDouble(kernel, -1.0d), ExpressionNode.MULTIPLY, e);              
+        }
+|
+   <PLUS> e = enpower()
+        { // +e  = e
+          return e;              
         }
 |
     e = enpower()

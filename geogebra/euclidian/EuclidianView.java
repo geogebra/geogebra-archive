@@ -1735,21 +1735,34 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				g2.draw(tempLine);
 			}								
 		}
-
-		/*
-		// TODO: show corner coordintaes if axes out of screen 		
-		if (!showAxes[0]) {
-			
-		}
+		
+	
+		// if one of the axes is not visible, show upper left and lower right corner coords
 		if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
-			// top left
+			// uper left corner								
 			sb.setLength(0);
-			g2.drawString(sb.toString(), x, y);
+			sb.append('(');
+			sb.append(axesNumberFormat[0].format(xmin));
+			sb.append(", ");
+			sb.append(axesNumberFormat[1].format(ymax));
+			sb.append(')');
 			
-			TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
-			g2.drawString(axesLabels[1], (int) (xZero + 5),
-					(int) (5 + layout.getAscent()));
-		}*/	
+			int textHeight = 2 + fontAxes.getSize();
+			g2.setFont(fontAxes);			
+			g2.drawString(sb.toString(), 5, textHeight);
+			
+			// lower right corner
+			sb.setLength(0);
+			sb.append('(');
+			sb.append(axesNumberFormat[0].format(xmax));
+			sb.append(", ");
+			sb.append(axesNumberFormat[1].format(ymin));
+			sb.append(')');
+			
+			TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	
+			layout.draw(g2, (int) (width - 5 - layout.getAdvance()), 
+									height - 5);					
+		}	
 	}
 
 	final void drawGrid(Graphics2D g2) {

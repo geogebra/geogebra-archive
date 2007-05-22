@@ -1837,7 +1837,9 @@ final public class EuclidianController implements MouseListener,
 		// calc real world coords
 		calcRWcoords();
 
-		//if (moveMode == MOVE_POINT) {
+		switch (moveMode) {
+		case MOVE_POINT:
+		case MOVE_FUNCTION:
 			//	point capturing to grid
 			double pointCapturingPercentage = 1;
 			switch (view.getPointCapturingMode()) {			
@@ -1861,7 +1863,8 @@ final public class EuclidianController implements MouseListener,
 				
 				default:
 			}
-		//}
+			break;
+		}
 	}
 	
 	private void calcRWcoords() {
