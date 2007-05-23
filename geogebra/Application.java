@@ -810,6 +810,10 @@ public class Application implements	KeyEventDispatcher {
     }
     private int oldMode = 0;
     
+    public GeoElementSelectionListener getCurrentSelectionListener() {
+    	return currentSelectionListener;
+    }
+    
     public void setAglebraInputMode() {        
         setMode(EuclidianView.MODE_ALGEBRA_INPUT);
     }       

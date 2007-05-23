@@ -435,11 +435,11 @@ final public class EuclidianController implements MouseListener,
 		moveModeSelectionHandled = false;
 		DRAGGING_OCCURED = false;			
 		view.setSelectionRectangle(null);
+		selectionStartPoint.setLocation(mouseLoc);	
 
 		if (e.isPopupTrigger() || e.isMetaDown()) {
 			if (!app.isRightClickEnabled()) return;
-			RIGHT_CLICK = true;		
-			selectionStartPoint.setLocation(mouseLoc);
+			RIGHT_CLICK = true;				
 			return;
 		} 		
 		else if (e.isControlDown()) {
@@ -631,8 +631,7 @@ final public class EuclidianController implements MouseListener,
 			moveModeSelectionHandled = true;														
 		} else {
 			// no geo clicked at
-			moveMode = MOVE_NONE;								
-			selectionStartPoint.setLocation(mouseLoc);	
+			moveMode = MOVE_NONE;			
 			return;
 		}				
 		
@@ -1168,7 +1167,7 @@ final public class EuclidianController implements MouseListener,
 		if (rect == null) 
 			return false;
 		
-		if (rect.width < 30) {
+		if (rect.width < 30 || rect.height < 30) {
 			view.setSelectionRectangle(null);
 			view.repaint();
 			return false;

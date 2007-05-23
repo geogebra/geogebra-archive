@@ -116,7 +116,7 @@ public class PropertiesDialog
 		GeoElementSelectionListener {
 		
 	
-	private static final int MAX_GEOS_FOR_EXPAND_ALL = 10;
+	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
 	private static final int MAX_COMBOBOX_ENTRIES = 200;	
 	
 	private static final long serialVersionUID = 1L;
@@ -307,6 +307,8 @@ public class PropertiesDialog
 		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 
 				MAX_GEOS_FOR_EXPAND_ALL)		
 			geoTree.expandAll();
+		else 
+			geoTree.collapseAll();
 		
 		if (!isShowing()) {	
 			packDialog();
@@ -3357,6 +3359,15 @@ public class PropertiesDialog
 	       }
 	    }
 		
+		public void collapseAll() {
+		    int row = 1;
+		    while (row < getRowCount()) {
+		      collapseRow(row);
+		      row++;
+	       }
+	    }
+		
+		
 		
 
 		/**
@@ -3397,8 +3408,9 @@ public class PropertiesDialog
 			}		
 			
 			// show last selected path
-			if (tp != null) {
-				expandPath(tp);						
+			if (tp != null && !addToSelection && geos.size() == 1) {
+				//expandPath(tp);	
+				//collapseAll();
 				makeVisible(tp);
 				scrollPathToVisible(tp);
 			}
@@ -3485,11 +3497,12 @@ public class PropertiesDialog
 			int pos = AlgebraView.getInsertPosition(typeNode, geo);
 			treeModel.insertNodeInto(newNode, typeNode, pos);
 		
+			/*
 			if (isShowing()) {
 				TreePath geoPath = new TreePath(newNode.getPath());
 				//addSelectionPath(geoPath);
 				makeVisible(geoPath);
-			}				
+			} */		
 		}		
 		
 
@@ -3646,9 +3659,13 @@ public class PropertiesDialog
 	}
 
 	public void windowGainedFocus(WindowEvent arg0) {
-		app.setMoveMode();
-		app.setSelectionListenerMode(this);
-		selectionChanged();
+		// make sure this dialog is the current selection listener
+		if (app.getMode() != EuclidianView.MODE_ALGEBRA_INPUT ||
+			app.getCurrentSelectionListener() != this) 
+		{
+			app.setSelectionListenerMode(this);
+			selectionChanged();
+		}		
 	}
 		
 

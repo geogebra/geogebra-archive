@@ -270,7 +270,8 @@ implements Previewable {
     }
 	
     final public boolean isInside(Rectangle rect) {
-    	return rect.contains(line.getBounds());  
+    	return rect.contains(line.getP1()) &&
+    			rect.contains(line.getP2());  
     }
     
     public GeoElement getGeoElement() {

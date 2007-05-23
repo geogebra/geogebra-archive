@@ -133,7 +133,7 @@ public class ListDialog extends JDialog {
     	}    
     	
     	public String toString() {
-    		return geo.getNameDescriptionTextOrHTML();
+    		return geo.getNameDescriptionHTML(true, true);
     	}
     }
 }

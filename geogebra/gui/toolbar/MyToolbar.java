@@ -110,10 +110,16 @@ public class MyToolbar extends JPanel{
     	if (mode == this.mode) return;    	
     	
     	this.mode = mode;
-        if (moveToggleMenus != null && mode != EuclidianView.MODE_ALGEBRA_INPUT) {
+        if (moveToggleMenus != null) {
+        	int showMode = mode;
+        	// show move mode icon for algebra input (selection) mode
+        	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
+        		showMode = EuclidianView.MODE_MOVE;
+        	}
+        	
          	for (int i=0; i < moveToggleMenus.size(); i++) {
          		ModeToggleMenu mtm = (ModeToggleMenu) moveToggleMenus.get(i);
-         		if (mtm.selectMode(mode)) break;
+         		if (mtm.selectMode(showMode)) break;
         	}
         }                            
         updateModeLabel();
