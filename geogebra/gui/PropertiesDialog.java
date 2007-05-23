@@ -664,7 +664,7 @@ public class PropertiesDialog
 				tabs.setVisible(false);
 				return;
 			}
-			tabs.setVisible(true);
+			
 			
 			// remember selected tab
 			Component selectedTab = tabs.getSelectedComponent();
@@ -677,9 +677,12 @@ public class PropertiesDialog
 			}
 														
 			// switch back to previously selected tab
-			int index = tabs.indexOfComponent(selectedTab);
-			tabs.setSelectedIndex(Math.max(0, index));
-						
+			if (tabs.getTabCount() > 0) {				
+				int index = tabs.indexOfComponent(selectedTab);
+				tabs.setSelectedIndex(Math.max(0, index));
+				tabs.setVisible(true);
+			} else
+				tabs.setVisible(false);
 		}
 		
 		private boolean updateTabPanel(JPanel tabPanel, ArrayList tabList, Object [] geos) {

@@ -52,8 +52,12 @@ public class AlgoFocus extends AlgoElement {
         super(cons);
         this.c = c;     
         focus = new GeoPoint[2];
-        focus[0] = new GeoPoint(cons);
-        focus[1] = new GeoPoint(cons);
+        for (int i=0; i < focus.length; i++) {
+        	focus[i] = new GeoPoint(cons);        	
+        	// only first undefined point should be shown in algebra window 
+        	focus[i].showUndefinedInAlgebraView(i == 0);
+      	}
+        
         setInputOutput(); // for AlgoElement
         
         b = c.b;
@@ -61,6 +65,7 @@ public class AlgoFocus extends AlgoElement {
                 
         compute();                                          
     }   
+       
     
     String getClassName() {
         return "AlgoFocus";

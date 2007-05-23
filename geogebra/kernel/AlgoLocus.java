@@ -198,7 +198,11 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	
     	try {    	
     		// get XML for macro construction of P -> Q
-        	String locusConsXML = Macro.buildMacroXML(locusConsElements);        	
+        	String locusConsXML = Macro.buildMacroXML(locusConsElements);  
+        	
+        	// TODO: remove
+        	//System.out.println(locusConsXML);
+        	
     		macroKernel.loadXML(locusConsXML);
     	
 	    	// get the copies of P and Q from the macro kernel

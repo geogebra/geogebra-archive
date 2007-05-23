@@ -51,8 +51,13 @@ public class AlgoVertex extends AlgoElement {
     AlgoVertex(Construction cons, GeoConic c) {
         super(cons);
         this.c = c;        
-        vertex = new GeoPoint[4];
-        for (int i=0; i<4; i++)  vertex[i] = new GeoPoint(cons);
+        vertex = new GeoPoint[4];       
+        for (int i=0; i < vertex.length; i++) {
+        	vertex[i] = new GeoPoint(cons);
+        	// only first undefined point should be shown in algebra window 
+        	vertex[i].showUndefinedInAlgebraView(i == 0);
+      	}
+        
         setInputOutput(); // for AlgoElement
         
         b = c.b;
