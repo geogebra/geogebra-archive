@@ -2492,7 +2492,12 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		sb.append("\"");
 		sb.append("/>\n");
 
-		sb.append("\t<evSettings grid=\"");
+		// NOTE: the attribute "axes" for the visibility state of
+		//  both axes is no longer needed since V3.0.
+		//  Now there are special axis tags, see below.
+		sb.append("\t<evSettings axes=\"");
+		sb.append(showAxes[0] || showAxes[1]);
+		sb.append("\" grid=\"");		
 		sb.append(showGrid);
 		sb.append("\" pointCapturing=\"");
 		sb.append(pointCapturingMode);
