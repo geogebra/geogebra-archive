@@ -441,13 +441,16 @@ final public class EuclidianController implements MouseListener,
 			if (!app.isRightClickEnabled()) return;
 			RIGHT_CLICK = true;				
 			return;
-		} 		
-		else if (e.isControlDown()) {
+		} 
+		else if (e.isShiftDown() // All Platforms: Shift key
+				|| e.isControlDown() // old Windows key: Ctrl key 
+				) 
+		{
 			QUICK_TRANSLATEVIEW = true;
 			oldMode = mode; // remember current mode			
 			//view.setMode(EuclidianView.MODE_TRANSLATEVIEW);
 			mode = EuclidianView.MODE_TRANSLATEVIEW;	
-		} 
+		} 		
 		RIGHT_CLICK = false;
 
 		switch (mode) {

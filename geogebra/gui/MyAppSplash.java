@@ -29,7 +29,7 @@ import java.net.URL;
  * provided this copyright notice is retained on all copies.
  */
 public class MyAppSplash extends Object {
-    public static void main(String[] args) {
+    public static void main(String[] args) {    	
         Frame splashFrame = null;
         URL imageURL = MyAppSplash.class.getResource("/geogebra/gui/images/splash.gif");
         if (imageURL != null) {
@@ -39,13 +39,9 @@ public class MyAppSplash extends Object {
         } else {
             System.err.println("Splash image not found");
         }
-        try {    
-        	GeoGebra.main(args);
-        	/*
-            Class.forName("geogebra.GeoGebra")
-            .getMethod("main", new Class[] {String[].class})
-            .invoke(null, new Object[] {args});
-            */           
+        try {        	
+        	// create and open first GeoGebra window
+        	GeoGebra.main(args);                	
         } catch (Throwable e) {
             e.printStackTrace();
             System.err.flush();
@@ -53,4 +49,7 @@ public class MyAppSplash extends Object {
         }
         if (splashFrame != null) splashFrame.dispose();
     }
+    
+	
+	
 }
