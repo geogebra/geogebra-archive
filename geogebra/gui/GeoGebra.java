@@ -183,11 +183,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		// check if we run on a Mac
     	String lcOSName = System.getProperty("os.name").toLowerCase();
     	boolean MAC_OS = lcOSName.startsWith("mac");
-    	
-    	// the open file listener on Macs has to be inited right at the beginning
-    	// of the main method to make sure we don't lose an open file event
     	if (MAC_OS) 
     		initMacSpecifics(args);
+    	
+    	// set system look and feel
+		try {				
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.err.println(e);
+		}	
     	
     	// create GeoGebra window
     	GeoGebra wnd = getActiveInstance(args);
@@ -199,14 +203,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	 * @param args: initing parameters for the very first window
 	 */
 	private static synchronized GeoGebra getActiveInstance(String [] args) {
-		if (activeInstance == null) {
-			// set system look and feel
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-				System.err.println(e);
-			}	
-			
+		if (activeInstance == null) {						
 			// load list of previously used files
 			GeoGebraPreferences.loadFileList();
 			
@@ -229,9 +226,14 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			app.addApplicationListener(new com.apple.eawt.ApplicationAdapter() {
 				public void handleQuit(com.apple.eawt.ApplicationEvent ev) {
 					// quit all frames
-					Application app = activeInstance.getApplication();
+					Application app = getActiveInstance(null).getApplication();					
 					app.exitAll();	
-				}								
+				}			
+								
+				public void handleAbout(com.apple.eawt.ApplicationEvent event) {
+			         Application app = getActiveInstance(null).getApplication();	
+			         app.showAboutDialog();
+			     }
 
 				public void handleOpenFile(com.apple.eawt.ApplicationEvent ev) {																
 					// open file			
@@ -255,9 +257,16 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 						}
 					}
 				}
-			});
-						
-		
+				
+				public void handlePrintFile(com.apple.eawt.ApplicationEvent event) {
+					handleOpenFile(event);
+					getActiveInstance(cmdArgs).getApplication().showPrintPreview();
+				}
+				
+			});				
+			
+			// Set some System Properties
+		    System.setProperty("com.apple.macos.useScreenMenuBar", "true"); // mac menu bar	
 		} catch (Exception e) {
 			System.err.println(e);
 		}

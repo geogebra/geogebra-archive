@@ -759,17 +759,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {						
-						try {
-							new geogebra.export.PrintPreview(app, app.getEuclidianView(),
-									PageFormat.LANDSCAPE);
-                    	} catch (Exception e) {
-                    		System.err.println("Print preview not available");
-                    	}												
-					}
-				};
-				runner.start();
+				showPrintPreview(app);
 			}
 		};
 
@@ -931,51 +921,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				StringBuffer sb = new StringBuffer();
-				sb.append("<html><b>");
-				sb.append(app.getPlain("ApplicationName"));
-				sb.append(" ");
-				sb.append(Application.versionString);
-				sb.append("</b><br>");
-				sb.append(Application.buildDate);
-
-				// license
-				String text = readTextFromJar("license_message.txt");
-				JTextArea textArea = new JTextArea(21, 45);
-				JScrollPane scrollPane = new JScrollPane(textArea,
-						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				textArea.setEditable(false);
-				textArea.setText(text);
-				textArea.setCaretPosition(0);
-
-				JPanel panel = new JPanel(new BorderLayout(5, 5));
-				panel.add(new JLabel(sb.toString()), BorderLayout.NORTH);
-				panel.add(scrollPane, BorderLayout.SOUTH);
-
-				JOptionPane infoPane = new JOptionPane(panel,
-						JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
-
-				final JDialog dialog = infoPane.createDialog(app.getMainComponent(),
-						app.getMenu("About") + " / " + app.getMenu("License"));
-
-				final ActionListener listener = new ActionListener() {
-					public final void actionPerformed(final ActionEvent e) {
-						JOptionPane.showMessageDialog(dialog, null,
-								"GeoZebra forever", JOptionPane.DEFAULT_OPTION,
-								app.getImageIcon("zebra.gif"));
-					}
-				};
-
-				final KeyStroke keyStroke = KeyStroke.getKeyStroke(
-						KeyEvent.VK_Z, 0, true);
-				dialog.getRootPane().registerKeyboardAction(listener,
-						keyStroke,
-						JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-				dialog.setVisible(true);
+				showAboutDialog(app);
 			}
-		};
+		};			
 		
 		
 		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save"),
@@ -996,6 +944,66 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 				
 		updateActions();
+	}
+	
+	public static void showPrintPreview(final Application  app) {
+		Thread runner = new Thread() {
+			public void run() {						
+				try {
+					new geogebra.export.PrintPreview(app, app.getEuclidianView(),
+							PageFormat.LANDSCAPE);
+            	} catch (Exception e) {
+            		System.err.println("Print preview not available");
+            	}												
+			}
+		};
+		runner.start();
+	}
+	
+	public static void showAboutDialog(final Application app) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html><b>");
+		sb.append(app.getPlain("ApplicationName"));
+		sb.append(" ");
+		sb.append(Application.versionString);
+		sb.append("</b><br>");
+		sb.append(Application.buildDate);
+
+		// license
+		String text = readTextFromJar("license_message.txt");
+		JTextArea textArea = new JTextArea(21, 45);
+		JScrollPane scrollPane = new JScrollPane(textArea,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		textArea.setEditable(false);
+		textArea.setText(text);
+		textArea.setCaretPosition(0);
+
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+		panel.add(new JLabel(sb.toString()), BorderLayout.NORTH);
+		panel.add(scrollPane, BorderLayout.SOUTH);
+
+		JOptionPane infoPane = new JOptionPane(panel,
+				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+
+		final JDialog dialog = infoPane.createDialog(app.getMainComponent(),
+				app.getMenu("About") + " / " + app.getMenu("License"));
+
+		final ActionListener listener = new ActionListener() {
+			public final void actionPerformed(final ActionEvent e) {
+				JOptionPane.showMessageDialog(dialog, null,
+						"GeoZebra forever", JOptionPane.DEFAULT_OPTION,
+						app.getImageIcon("zebra.gif"));
+			}
+		};
+
+		final KeyStroke keyStroke = KeyStroke.getKeyStroke(
+				KeyEvent.VK_Z, 0, true);
+		dialog.getRootPane().registerKeyboardAction(listener,
+				keyStroke,
+				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+		dialog.setVisible(true);
 	}
 
 	private void updateActions() {		
@@ -1181,7 +1189,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
         }
     }
     
-    private String readTextFromJar(String s) {
+    private static String readTextFromJar(String s) {
         StringBuffer sb = new StringBuffer();        
         try {
           InputStream is = GeoGebra.class.getResourceAsStream(s);

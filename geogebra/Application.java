@@ -25,6 +25,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
+import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.HelpBrowser;
@@ -65,6 +66,7 @@ import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -600,6 +602,14 @@ public class Application implements	KeyEventDispatcher {
     	if (commandDict == null)
     		initCommandResources();
         return commandDict;
+    }
+    
+    public void showAboutDialog() {
+    	MyMenubar.showAboutDialog(this);
+    }
+    
+    public void showPrintPreview() {
+    	MyMenubar.showPrintPreview(this);
     }
 
     /**
@@ -2178,7 +2188,8 @@ public class Application implements	KeyEventDispatcher {
     
     private void initAlgebraView() {    	
     	algebraView = new AlgebraView(algebraController);
-    	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);    	    		
+    	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);   
+    	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     }
 
     public boolean showAlgebraView() {
@@ -2759,12 +2770,15 @@ public class Application implements	KeyEventDispatcher {
         							String [] args = { file.getCanonicalPath() };
         							GeoGebra wnd = GeoGebra.createNewWindow(args);
         							wnd.setVisible(true);
+        							wnd.toFront();
+        							wnd.requestFocus();
         						} catch (Exception e) {
         							e.printStackTrace();
         						}
                 			}	 	   
             			} else if (counter == 0){
             				// there is an instance with this file opened
+            				inst.toFront();
             				inst.requestFocus();
             			}
         			}
