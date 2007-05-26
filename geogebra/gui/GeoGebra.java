@@ -188,6 +188,8 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
     	
     	// set system look and feel
 		try {				
+			// Set some System Properties
+		    System.setProperty("com.apple.macos.useScreenMenuBar", "true"); // mac menu bar	
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			System.err.println(e);
@@ -231,6 +233,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 				}			
 								
 				public void handleAbout(com.apple.eawt.ApplicationEvent event) {
+					 event.setHandled(true);
 			         Application app = getActiveInstance(null).getApplication();	
 			         app.showAboutDialog();
 			     }
@@ -264,9 +267,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 				}
 				
 			});				
-			
-			// Set some System Properties
-		    System.setProperty("com.apple.macos.useScreenMenuBar", "true"); // mac menu bar	
+					
 		} catch (Exception e) {
 			System.err.println(e);
 		}
