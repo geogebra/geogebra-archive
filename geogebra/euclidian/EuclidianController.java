@@ -23,6 +23,7 @@ import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
@@ -108,6 +109,9 @@ final public class EuclidianController implements MouseListener,
 	
 	private static final int MOVE_X_AXIS = 116;
 	private static final int MOVE_Y_AXIS = 117;
+	
+	private static final int MOVE_BOOLEAN = 118; // for checkbox moving
+	
 
 	private Application app;
 
@@ -152,6 +156,8 @@ final public class EuclidianController implements MouseListener,
 	private GeoFunction movedGeoFunction;
 	
 	private GeoNumeric movedGeoNumeric;
+	
+	private GeoBoolean movedGeoBoolean;
 
 	private GeoElement movedLabelGeoElement;
 
@@ -817,11 +823,22 @@ final public class EuclidianController implements MouseListener,
 					else {						
 						startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
 					}
-				} 					
+				} 						
 				
 				view.showMouseCoords = false;
 				view.setDragCursor();					
 			}  
+			else if (movedGeoElement.isGeoBoolean()) {
+				movedGeoBoolean = (GeoBoolean) movedGeoElement;
+				// move checkbox
+				moveMode = MOVE_BOOLEAN;					
+				startLoc = mouseLoc;
+				oldLoc.x = movedGeoBoolean.getAbsoluteScreenLocX();
+				oldLoc.y = movedGeoBoolean.getAbsoluteScreenLocY();
+				
+				view.showMouseCoords = false;
+				view.setDragCursor();			
+			}
 			else if (movedGeoElement.isGeoImage()) {
 				moveMode = MOVE_IMAGE;
 				movedGeoImage = (GeoImage) movedGeoElement;
@@ -964,6 +981,10 @@ final public class EuclidianController implements MouseListener,
 				moveSlider(repaint);
 				break;
 				
+			case MOVE_BOOLEAN:
+				moveBoolean(repaint);
+				break;
+				
 			case MOVE_DEPENDENT:
 				moveDependent(repaint);
 				break;
@@ -1099,7 +1120,8 @@ final public class EuclidianController implements MouseListener,
 			movedGeoElement = null;
 			rotGeoElement = null;	
 			
-			if (moveMode == MOVE_NONE) {
+			if (mode == EuclidianView.MODE_MOVE &&
+					moveMode == MOVE_NONE) {
 				processSelectionRectangle();				
 				return;
 			}
@@ -1706,6 +1728,19 @@ final public class EuclidianController implements MouseListener,
 			movedGeoFunction.updateRepaint();
 		else
 			movedGeoFunction.updateCascade();
+	}
+	
+	final private void moveBoolean(boolean repaint) {
+		movedGeoBoolean.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+				oldLoc.y + mouseLoc.y-startLoc.y);
+		
+		// TODO: remove
+		System.out.println("move bool: " + movedGeoBoolean);
+		
+		if (repaint)
+			movedGeoBoolean.updateRepaint();
+		else
+			movedGeoBoolean.updateCascade();
 	}
 	
 	final private void moveNumeric(boolean repaint) {

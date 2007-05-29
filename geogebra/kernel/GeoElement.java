@@ -217,7 +217,6 @@ public abstract class GeoElement
 	private String oldLabel; // see doRenameLabel
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
-	private GeoBoolean visibilityCondition;
 	private boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
@@ -235,6 +234,8 @@ public abstract class GeoElement
 	private boolean auxiliaryObject = false;	
 	// on change: see setVisualValues()
 
+	// condition to show object
+	private GeoBoolean condShow;
 	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
@@ -677,7 +678,7 @@ public abstract class GeoElement
 	 * Note: this is needed for texts
 	 */
 	public boolean isMoveable() {		
-		return isChangeable() ;
+		return isChangeable();
 	}
 	
 	/**
@@ -1778,7 +1779,7 @@ public abstract class GeoElement
 	 */
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
-	static String indicesToHTML(String str, boolean addHTMLtag) {
+	public static String indicesToHTML(String str, boolean addHTMLtag) {
 		sbIndicesToHTML.setLength(0);
 		if (addHTMLtag)
 			sbIndicesToHTML.append("<html>");
@@ -2278,6 +2279,16 @@ public abstract class GeoElement
    	
 	public boolean isAbsoluteScreenLocateable() {
 		return false;
+	}
+
+	public final GeoBoolean getCondShow() {
+		return condShow;
+	}
+
+	public final void setCondShow(GeoBoolean condShow) {
+		
+		
+		this.condShow = condShow;
 	}
 
 }

@@ -7,6 +7,8 @@ import geogebra.kernel.Kernel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -17,8 +19,7 @@ import javax.swing.text.JTextComponent;
 /**
  * @author Markus Hohenwarter
  */
-public class InputPanel extends JPanel
-implements ActionListener{
+public class InputPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -26,9 +27,11 @@ implements ActionListener{
 		"\u00b0", // degree	
 		"\u00b2",  // exponents ^2 
 		"\u03c0", // pi	
+		Kernel.EULER_STRING, // e
 		"abs(x)",
-		Kernel.EULER_STRING + "^x", // e^x
 		"ln(x)",
+		"sin(x)",
+		"cos(x)",
 		"\u00ac", // boolean NOT 
 		"\u2227", // boolean AND
 	    "\u2228", // boolean OR
@@ -90,8 +93,11 @@ implements ActionListener{
 			cbGreekLetters.addItem(greekUpperCase[i]);
 		}
 		
-		cbSpecialChars.addActionListener(this);
-		cbGreekLetters.addActionListener(this);							
+		ComboBoxListener cbl = new ComboBoxListener();
+		cbSpecialChars.addActionListener(cbl);			
+		cbSpecialChars.addMouseListener(cbl);
+		cbGreekLetters.addActionListener(cbl);	
+		cbGreekLetters.addMouseListener(cbl);	
 		
 		if (rows > 1) { // JTextArea
 			setLayout(new BorderLayout(5, 5));	
@@ -149,16 +155,30 @@ implements ActionListener{
 	public void setText(String text) {
 		textComponent.setText(text);
 	}
-
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();		
-		if (source == cbSpecialChars) {
-			insertString(cbSpecialChars.getSelectedItem().toString());
-		}
-		else if (source == cbGreekLetters) {
-			insertString(cbGreekLetters.getSelectedItem().toString());
+	
+	private class ComboBoxListener extends MouseAdapter implements ActionListener {
+		
+		public void mousePressed(MouseEvent e) {
+			doActionPerformed(e.getSource());		
+		}		
+		
+		public void actionPerformed(ActionEvent e) {
+			doActionPerformed(e.getSource());
+		}		
+		
+		private void doActionPerformed(Object source) {			
+			if (source == cbSpecialChars) {				
+				insertString(cbSpecialChars.getSelectedItem().toString());				
+				cbSpecialChars.setPopupVisible(false);
+			}
+			else if (source == cbGreekLetters) {
+				insertString(cbGreekLetters.getSelectedItem().toString());
+				cbGreekLetters.setPopupVisible(false);
+			}
 		}
 	}
+
+	
 	
 	/**
 	 * Inserts string at current position of the input textfield and gives focus

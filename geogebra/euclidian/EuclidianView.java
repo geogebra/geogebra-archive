@@ -394,6 +394,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	private DrawableList allDrawableList = new DrawableList();
 
+	private DrawableList drawBooleanList = new DrawableList();
 	private DrawableList drawPointList = new DrawableList();
 
 	private DrawableList drawLineList = new DrawableList();
@@ -485,6 +486,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		updateRightAngleStyle(app.getLocale());
 	}
 	
+	public Application getApplication() {
+		return app;
+	}
+	
 	public void updateRightAngleStyle(Locale locale) {				
 		// change rightAngleStyle for German to
         // EuclidianView.RIGHT_ANGLE_STYLE_DOT
@@ -561,6 +566,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		drawLocusList.clear();
 		drawPolygonList.clear();
 		drawNumericList.clear();
+		drawBooleanList.clear();
 
 		bgImageList.clear();
 
@@ -2190,7 +2196,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_BOOLEAN:
-			d = new DrawBoolean(this, (GeoBoolean) geo);			
+			d = new DrawBoolean(this, (GeoBoolean) geo);
+			drawBooleanList.add(d);
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:
@@ -2336,7 +2343,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
 			case GeoElement.GEO_CLASS_BOOLEAN:
-				// no drawBooleanList		
+				drawBooleanList.remove(d);
+				// remove checkbox
+				((DrawBoolean) d).remove();
 				break;
 			
 			case GeoElement.GEO_CLASS_POINT:
@@ -3239,5 +3248,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 	public void setSelectionRectangle(Rectangle selectionRectangle) {
 		this.selectionRectangle = selectionRectangle;		
+	}
+
+	public EuclidianController getEuclidianController() {
+		return euclidianController;
 	}
 }

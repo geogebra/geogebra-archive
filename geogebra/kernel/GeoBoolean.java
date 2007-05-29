@@ -16,7 +16,9 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.BooleanValue;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyBoolean;
+import geogebra.util.Util;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -33,6 +35,9 @@ AbsoluteScreenLocateable {
 	private static final long serialVersionUID = 1L;
 	private boolean value;
 	private boolean isDefined = true;
+	private String caption;
+	
+	private ArrayList conditionListeners;
 		
 	public GeoBoolean(Construction c) {
 		super(c);				
@@ -68,11 +73,22 @@ AbsoluteScreenLocateable {
 		return ret;
 	}
 	
+	/**
+	 * Registers geo as a listener for updates
+	 * of this boolean object. If this object is
+	 * updated it calls geo.updateConditions()
+	 * @param geo
+	 */
+	public void registerShowConditionListener(GeoElement geo) {
+		// TODO: go on
+		//.conditionListeners 
+	}
+	
 	public void resolveVariables() {     
     }
 		
 	public boolean showInEuclidianView() {
-		return false;
+		return isIndependent();
 	}
 
 	final boolean showInAlgebraView() {		
@@ -139,17 +155,30 @@ AbsoluteScreenLocateable {
 	final public ExpressionValue evaluate() {
 		return this;
 	}		
+	
+	public String getCaption() {
+		if (caption == null)
+			return getLabel();
+		else
+			return caption;
+	}
 
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
 	String getXMLtags() {
-		// TODO: implement XML saving
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");
-
+		
+		if (caption != null && caption.length() > 0) {
+			sb.append("\t<caption val=\"");
+			sb.append(Util.encodeXML(caption));
+			sb.append("\"/>\n");
+		}
+		
+		sb.append(getXMLvisualTags(isIndependent()));
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
 		return sb.toString();
@@ -188,6 +217,10 @@ AbsoluteScreenLocateable {
 	public boolean isAbsoluteScreenLocActive() {		
 		return true;
 	}
+	
+	public boolean isAbsoluteScreenLocateable() {
+		return true;
+	}
 
 	public void setAbsoluteScreenLoc(int x, int y) {
 		labelOffsetX = x;
@@ -206,6 +239,10 @@ AbsoluteScreenLocateable {
 	}
 
 	public void setRealWorldLoc(double x, double y) {				
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
 	}		
 
 }

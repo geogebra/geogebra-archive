@@ -814,7 +814,7 @@ public class Application implements	KeyEventDispatcher {
 		} else {			
 			if (getMode() != EuclidianView.MODE_ALGEBRA_INPUT)
 				oldMode = getMode();			
-	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
+	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);	        
 	        appToolbarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
 		}
     }

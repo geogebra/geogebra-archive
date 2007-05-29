@@ -701,7 +701,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		toolbarConfigAction = new AbstractAction(app.getMenu("CustomizeToolbar")
+		toolbarConfigAction = new AbstractAction(app.getMenu("Toolbar.Customize")
 				+ " ...") {
 			private static final long serialVersionUID = 1L;
 

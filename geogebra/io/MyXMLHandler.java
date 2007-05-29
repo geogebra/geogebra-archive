@@ -26,6 +26,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
@@ -1052,7 +1053,10 @@ public class MyXMLHandler implements DocHandler {
         		} else if (eName.equals("coordStyle")) {
                     ok = handleCoordStyle(attrs);
                     break;
-                 }
+                } else if (eName.equals("caption")) {
+                	ok = handleCaption(attrs);
+                	break;
+                }
         		
         	case 'd':
         		if (eName.equals("decoration")) {
@@ -1311,17 +1315,43 @@ public class MyXMLHandler implements DocHandler {
         }
         return true;
     }
+    
+    private boolean handleCaption(LinkedHashMap attrs) {
+    	if (!geo.isGeoBoolean()) {
+    	    System.err.println(
+               "wrong element type for <caption>: " + geo.getClass());            
+    		return false;
+    	}
+    	    	
+    	try {
+        	GeoBoolean bool = (GeoBoolean) geo;
+        	bool.setCaption((String) attrs.get("val"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }	
+    }
 
     private boolean handleValue(LinkedHashMap attrs) {
-        if (!(geo.isGeoNumeric())) {
+    	boolean isBoolean = geo.isGeoBoolean();
+    	boolean isNumber = geo.isGeoNumeric();
+    	
+        if (!(isNumber || isBoolean)) {
             System.err.println(
                 "wrong element type for <value>: " + geo.getClass());
             return false;
         }
-
+        
         try {
-            GeoNumeric n = (GeoNumeric) geo;
-            n.setValue(Double.parseDouble((String) attrs.get("val")));
+        	String strVal = (String) attrs.get("val");
+        	if (isNumber) {
+        		GeoNumeric n = (GeoNumeric) geo;
+        		n.setValue(Double.parseDouble(strVal));
+        	}
+        	else if (isBoolean) {
+        		GeoBoolean bool = (GeoBoolean) geo;
+        		bool.setValue(Boolean.getBoolean(strVal));
+        	}
             return true;
         } catch (Exception e) {
             return false;

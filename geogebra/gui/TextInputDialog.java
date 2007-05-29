@@ -54,13 +54,13 @@ public class TextInputDialog extends InputDialog {
 		cbLaTeX.setSelected(isLaTeX);
 		cbLaTeX.addActionListener(this);
 		
-//		 add LaTeX shortcuts
+		// add LaTeX shortcuts
 		cbLaTeXshortcuts = new JComboBox();								
 		cbLaTeXshortcuts.addItem("\u221a"); 											// 0 square root
 		cbLaTeXshortcuts.addItem("\u221b"); 											// 1 cubic root
 		cbLaTeXshortcuts.addItem("a / b");  											// 2 fraction
-		cbLaTeXshortcuts.addItem(app.getPlain("Vector")); 						// 3 vector
-		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 		// 4 overline			
+		cbLaTeXshortcuts.addItem(app.getPlain("Vector")); 								// 3 vector
+		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
 		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
 		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
 		cbLaTeXshortcuts.setFocusable(false);		
