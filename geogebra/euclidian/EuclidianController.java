@@ -19,6 +19,7 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
+import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -47,7 +48,6 @@ import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.AngleInputDialog;
 import geogebra.util.MyMath;
 
 import java.awt.Point;

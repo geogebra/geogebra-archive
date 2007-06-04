@@ -15,11 +15,11 @@ package geogebra.export;
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.InputPanel;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.util.CopyURLToFile;
-import geogebra.util.InputPanel;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;

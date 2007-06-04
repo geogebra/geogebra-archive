@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="freehep-graphicsio-svg.jar"/>
 	<classpathentry kind="lib" path="freehep-graphicsio.jar"/>
 	<classpathentry kind="lib" path="geogebra_latex.jar"/>
-	<classpathentry kind="lib" path="MRJAdapter.jar"/>
+	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

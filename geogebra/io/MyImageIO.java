@@ -1,4 +1,4 @@
-package geogebra.util;
+package geogebra.io;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;

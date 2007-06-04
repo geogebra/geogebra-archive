@@ -755,7 +755,7 @@ public class Kernel {
 
 	final void notifyAdd(GeoElement geo) {
 		for (int i = 0; i < viewCnt; ++i) {
-			views[i].add(geo);
+			views[i].add(geo);					
 		}
 	}
 
@@ -794,12 +794,13 @@ public class Kernel {
 				viewReiniting = true;
 				
 				// "attach" views again
-				viewCnt = oldViewCnt;			
+				viewCnt = oldViewCnt;		
 				
 				// add all geos to all views
 				Iterator it = cons.getGeoSetLabelOrder().iterator();				
-				while (it.hasNext()) {										
-					notifyAdd(  (GeoElement) it.next() );
+				while (it.hasNext()) {	
+					GeoElement geo =  (GeoElement) it.next();					
+					notifyAdd(geo);									
 				}				
 				notifyReset();
 				

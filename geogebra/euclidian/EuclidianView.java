@@ -2576,7 +2576,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		// grid distances
-		if (automaticGridDistanceFactor != DEFAULT_GRID_DIST_FACTOR) {
+		if (!automaticGridDistance) {
 			sb.append("\t<grid distX=\"");
 			sb.append(gridDistances[0]);
 			sb.append("\" distY=\"");

@@ -123,7 +123,7 @@ public class PropertiesDialog
 	private Application app;
 	private Kernel kernel;
 	private JTreeGeoElements geoTree;
-	private JButton cancelButton, applyButton;
+	private JButton closeButton;
 	private PropertiesPanel propPanel;
 	
 	private boolean firstTimeVisible = true;
@@ -215,17 +215,21 @@ public class PropertiesDialog
 		propPanel = new PropertiesPanel();
 		selectionChanged(); // init propPanel		
 
+		/*
 		// Cancel and Apply Button
 		cancelButton = new JButton(app.getPlain("Cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cancel();				
+				//cancel();
+				closeDialog();
 			}
 		});
-		applyButton = new JButton(app.getPlain("Apply"));
-		applyButton.addActionListener(new ActionListener() {
+		*/
+		
+		closeButton = new JButton(app.getPlain("Close"));
+		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				apply();			
+				closeDialog();			
 			}
 		});
 
@@ -233,8 +237,8 @@ public class PropertiesDialog
 		Container contentPane = getContentPane();
 		contentPane.removeAll();
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(applyButton);
-		buttonPanel.add(cancelButton);
+		buttonPanel.add(closeButton);
+		//buttonPanel.add(cancelButton);
 		JPanel rightPanel = new JPanel(new BorderLayout());
 		rightPanel.add(propPanel, BorderLayout.CENTER);
 		rightPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -247,10 +251,9 @@ public class PropertiesDialog
 		
 		// TODO: check keylistener		
 		Util.addKeyListenerToAll(this, this);	
-		
-		
 	}
 	
+	/*
 	public void cancel() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		kernel.detach(geoTree);
@@ -272,6 +275,18 @@ public class PropertiesDialog
 	}
 	
 	public void apply() {
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
+		app.storeUndoInfo();
+		setCursor(Cursor.getDefaultCursor());
+		setVisible(false);	
+	}
+	*/
+	
+	public void cancel() {
+		setVisible(false);
+	}
+	
+	public void closeDialog() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
 		app.storeUndoInfo();
 		setCursor(Cursor.getDefaultCursor());
@@ -408,7 +423,7 @@ public class PropertiesDialog
 	private void deleteSelectedGeos() {
 		ArrayList selGeos = selectionList;
 		
-		if (selGeos.size() > 0) {										
+		if (selGeos.size() > 0) {			
 			for (int i = 0; i < selGeos.size()-1; i++) {
 				((GeoElement) selGeos.get(i)).remove();
 			}
@@ -469,7 +484,8 @@ public class PropertiesDialog
 	}
 
 	public void windowClosing(WindowEvent e) {
-		cancel();
+		//cancel();
+		closeDialog();
 	}
 
 	public void windowClosed(WindowEvent e) {
@@ -603,8 +619,8 @@ public class PropertiesDialog
 					
 			// text tab
 			ArrayList textTabList = new ArrayList();			
-			textTabList.add(textEditPanel);
-			textTabList.add(textOptionsPanel);		
+			textTabList.add(textOptionsPanel);	
+			textTabList.add(textEditPanel);			
 			TabPanel textTab = new TabPanel(app.getPlain("Text"), textTabList);
 			textTab.addToTabbedPane(tabs);	
 			
@@ -722,7 +738,8 @@ public class PropertiesDialog
 				this.title = title;
 				panelList = pVec;
 				
-				setLayout(new BorderLayout(0,0));				
+				setLayout(new BorderLayout(0,0));	
+				setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
 				JPanel currentPanel = this;
 				
 				// build new panel					
@@ -1925,7 +1942,7 @@ public class PropertiesDialog
 	}
 
 	/**
-	 * panel for text to open edit window
+	 * panel for text editing
 	 */
 	private class TextEditPanel
 		extends JPanel
@@ -1933,64 +1950,27 @@ public class PropertiesDialog
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
-		private Object[] geos; // currently selected geos
-		private JButton btEdit;
-		private JTextField tf;
+		private static final long serialVersionUID = 1L;	
+		private TextInputDialog td;
 		
-		private static final int PREVIEW_TEXT_LENGTH = 28;
-
-		public TextEditPanel() {			
-			tf = new JTextField(PREVIEW_TEXT_LENGTH / 2);
-//			int fontSize = app.getFontSize();					
-			
-			
-			tf.setEditable(false);
-			//tf.setEnabled(false);			
-			btEdit = new JButton(app.getImageIcon("redefine.gif"));
-			btEdit.setToolTipText(app.getPlain("Edit"));
-			btEdit.addActionListener(this);
-						
-			/*
-			Border compound =
-				BorderFactory.createCompoundBorder(
-					BorderFactory.createTitledBorder(app.getPlain("Text")),
-					BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			setBorder(compound);*/
-								
-			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));			
-			
-			//add(Box.createHorizontalGlue());
-			//add(Box.createRigidArea(new Dimension(0, 5)));
-			add(btEdit);
-			add(tf);	
+		public TextEditPanel() {	
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+			td = new TextInputDialog(app, app.getPlain("Text"), null, null,
+										30, 5);
+			setLayout(new BorderLayout());
+			add(td.getInputPanel(), BorderLayout.CENTER);
+			JPanel btPanel = new JPanel(new BorderLayout(0,0));
+			btPanel.add(td.getLaTeXPanel(), BorderLayout.WEST);
+			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
+			add(btPanel, BorderLayout.SOUTH);
 		}
 
-		public JPanel update(Object[] geos) {
-			this.geos = geos;
+		public JPanel update(Object[] geos) {			
 			if (geos.length != 1 || !checkGeos(geos))
 				return null;			
 			
-			GeoElement geo = (GeoElement) geos[0];
-			String text; 
-			if (geo.isIndependent())
-				text = geo.toValueString();
-			else
-				text = geo.getDefinitionDescription();
-		
-			// shorten text to max PREVIEW_TEXT_LENGTH characters
-			if (text != null) {
-				text.replaceAll("\n", " ");
-				if (text.length() > PREVIEW_TEXT_LENGTH)
-					text = text.substring(0, PREVIEW_TEXT_LENGTH) + "...";				
-			}
-			
-			tf.setText(text);			
-			btEdit.setEnabled(!geo.isFixed());
-			
-			//Dimension dim = getPreferredSize();
-			//dim.width = Math.min(300, dim.width);
-			//setPreferredSize(dim);
+			GeoText text = (GeoText) geos[0];			
+			td.setGeoText(text);					
 			return this;
 		}
 
@@ -2002,8 +1982,8 @@ public class PropertiesDialog
 		 * handle textfield changes
 		 */
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == btEdit)
-				app.showTextDialog((GeoText) geos[0]);
+			//if (e.getSource() == btEdit)
+			//	app.showTextDialog((GeoText) geos[0]);
 		}
 	}
 
@@ -3642,7 +3622,8 @@ public class PropertiesDialog
 		int code = e.getKeyCode();
 		switch (code) {
 			case KeyEvent.VK_ESCAPE :
-				cancel();
+				//cancel();
+				closeDialog();
 				break;
 
 			case KeyEvent.VK_ENTER :

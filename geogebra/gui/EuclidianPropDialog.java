@@ -15,7 +15,6 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
-import geogebra.util.InputPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -62,7 +61,7 @@ ItemListener, WindowListener {
 	private Application app;
 	private Kernel kernel;
 	private EuclidianView view;
-	private JButton cancelButton, applyButton, 
+	private JButton closeButton, 
 	        btBackgroundColor, btAxesColor, btGridColor;
 	private JCheckBox cbShowAxes, cbShowGrid, cbGridManualTick;
 	private JComboBox cbAxesStyle, cbGridStyle;
@@ -116,10 +115,8 @@ ItemListener, WindowListener {
 		btGridColor.addActionListener(this);
 		
 		// Cancel and Apply Button
-		cancelButton = new JButton(app.getPlain("Cancel"));		
-		applyButton = new JButton(app.getPlain("Apply"));
-		cancelButton.addActionListener(this);
-		applyButton.addActionListener(this);				
+		closeButton = new JButton(app.getPlain("Close"));	
+		closeButton.addActionListener(this);				
 
 		// BUILD PANELS		
 		
@@ -204,9 +201,8 @@ ItemListener, WindowListener {
         //centerPanel.add(buildGridPanel(), BorderLayout.SOUTH);	
 		
 		// apply, cancel buttons
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		buttonPanel.add(applyButton);
-		buttonPanel.add(cancelButton);
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(closeButton);		
 		dialogPanel.add(buttonPanel, BorderLayout.SOUTH);										
 				
 		packDialog();
@@ -340,14 +336,8 @@ ItemListener, WindowListener {
 		doActionPerformed(e.getSource());		
 	}
 	
-	private void doActionPerformed(Object source) {		
-		if (source == cancelButton) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));			
-			app.restoreCurrentUndoInfo();
-			setCursor(Cursor.getDefaultCursor());
-			setVisible(false);		
-		}
-		else if (source == applyButton) {
+	private void doActionPerformed(Object source) {				
+		if (source == closeButton) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			app.storeUndoInfo();
 			setCursor(Cursor.getDefaultCursor());
@@ -452,7 +442,7 @@ ItemListener, WindowListener {
 	}
 
 	public void windowClosing(WindowEvent e) {
-		cancelButton.doClick();
+		closeButton.doClick();
 	}
 
 	public void windowClosed(WindowEvent e) {

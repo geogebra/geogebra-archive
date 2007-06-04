@@ -12,14 +12,19 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.MyError;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
-import geogebra.util.InputDialog;
-import geogebra.util.LaTeXinputHandler;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
+import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -37,18 +42,21 @@ public class TextInputDialog extends InputDialog {
 
 	protected JCheckBox cbLaTeX;
 	private JComboBox cbLaTeXshortcuts;
+	private JPanel latexPanel;
+	private GeoText text;
+	private boolean isLaTeX;
+	private GeoPoint startPoint;
 	
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public TextInputDialog(Application app, String message, String title,
-								String initText, boolean isLaTeX, boolean autoComplete,
-								LaTeXinputHandler handler) {	
+	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
+								int cols, int rows) {	
 		super(app.getFrame(), false);
 		this.app = app;
-		inputHandler = handler;
-		initString = initText;
-
+		this.startPoint = startPoint;
+		inputHandler = new TextInputHandler();
+				
 		// create LaTeX checkbox
 		cbLaTeX = new JCheckBox(app.getPlain("LaTeXFormula"));
 		cbLaTeX.setSelected(isLaTeX);
@@ -63,50 +71,34 @@ public class TextInputDialog extends InputDialog {
 		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
 		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
 		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
+		cbLaTeXshortcuts.addItem(" "); 	// space
 		cbLaTeXshortcuts.setFocusable(false);		
-		cbLaTeXshortcuts.setEnabled(isLaTeX);		
-		cbLaTeXshortcuts.addActionListener(this);
+		cbLaTeXshortcuts.setEnabled(isLaTeX);	
+		ComboBoxListener cbl = new ComboBoxListener();
+		cbLaTeXshortcuts.addActionListener(cbl);
+		cbLaTeXshortcuts.addMouseListener(cbl);
+				
+		createGUI(title, "", false, cols, rows);		
 		
-		createGUI(title, message, autoComplete, 30, DEFAULT_ROWS);		
-		JPanel centerPanel = new JPanel(new BorderLayout());
+		// init dialog using text
+		setGeoText(text);
 		
-		JPanel latexPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel centerPanel = new JPanel(new BorderLayout());		
+		latexPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		latexPanel.add(cbLaTeX);
 		latexPanel.add(cbLaTeXshortcuts);							
-		
-		
+			
 		centerPanel.add(inputPanel, BorderLayout.CENTER);		
 		centerPanel.add(latexPanel, BorderLayout.SOUTH);	
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();		
 	}
 	
-	/**
-	 * Returns state of LaTeX Formula checkbox. 
-	 */
-	public boolean isLaTeX() {
-		return cbLaTeX.isSelected();		
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
-		
-		boolean finished = false;
-		try {
-			if (source == btApply || source == inputPanel.getTextComponent()) {
-				inputText = inputPanel.getText();
-				((LaTeXinputHandler) inputHandler).
-						setLaTeX(cbLaTeX.isSelected());
+	private class ComboBoxListener extends MyComboBoxListener {
 				
-				finished = inputHandler.processInput(inputText);				
-			} 
-			else if (source == btCancel) {
-				finished = true;
-			}
-			else if (source == cbLaTeX) {
-				cbLaTeXshortcuts.setEnabled(cbLaTeX.isSelected());
-			}
-			else if (source == cbLaTeXshortcuts) {		
+		
+		public void doActionPerformed(Object source) {			
+			if (source == cbLaTeXshortcuts) {		
 				String selText = inputPanel.getSelectedText();				
 				if (selText == null) selText = "";
 				
@@ -146,14 +138,93 @@ public class TextInputDialog extends InputDialog {
 						setRelativeCaretPosition(-7 - selText.length());
 						break;
 						
+					case 7: // space
+						insertString(" \\; ");						
+						break;
+						
 					default:
 				}
 				
 			}
+		}
+	}
+	
+	public void setGeoText(GeoText text) {
+		this.text = text;
+        boolean createText = text == null;     
+        isLaTeX = text == null ? false: text.isLaTeX();
+        //String label = null;
+        
+        String descString;
+        
+        if (createText) {
+            //initString = "\"\"";
+        	initString = null;
+            descString = app.getPlain("Text");
+            isLaTeX = false;
+        }           
+        else {                                
+        	//label = text.getLabel();
+          
+            initString = text.isIndependent() ? 
+                           // "\"" + text.toValueString() + "\"" :
+            		 		text.toValueString() :
+                            text.getCommandDescription(); 
+            descString = text.getNameDescription();
+            isLaTeX = text.isLaTeX();
+        }           
+        
+        msgLabel.setText(descString);
+        inputPanel.setText(initString);
+        cbLaTeX.setSelected(isLaTeX);
+        cbLaTeXshortcuts.setEnabled(isLaTeX);
+	}
+	
+	public JPanel getLaTeXPanel() {
+		return latexPanel;
+	}
+	
+	public JPanel getInputPanel() {
+		return inputPanel;
+	}
+	
+	public JButton getApplyButton() {
+		return btApply;
+	}
+	
+	
+	/**
+	 * Returns state of LaTeX Formula checkbox. 
+	 */
+	public boolean isLaTeX() {
+		return cbLaTeX.isSelected();		
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		
+		boolean finished = false;
+		try {
+			if (source == btApply || source == inputPanel.getTextComponent()) {
+				inputText = inputPanel.getText();
+				isLaTeX = cbLaTeX.isSelected();
+				
+				finished = inputHandler.processInput(inputText);				
+			} 
+			else if (source == btCancel) {
+				finished = true;				
+			}
+			else if (source == cbLaTeX) {
+				cbLaTeXshortcuts.setEnabled(cbLaTeX.isSelected());
+			}			
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
 		}
-		setVisible(!finished);
+		
+		if (isShowing())
+			setVisible(!finished);
+		else
+			setGeoText(text);
 	}
 	
 	/**
@@ -238,4 +309,85 @@ public class TextInputDialog extends InputDialog {
 		}
 		return count;		
 	}
+	
+	private class TextInputHandler implements InputHandler {
+		
+		private Kernel kernel;
+		private EuclidianView euclidianView;
+       
+        private TextInputHandler() { 
+        	kernel = app.getKernel();
+        	euclidianView = app.getEuclidianView();
+        }        
+        
+        public boolean processInput(String inputValue) {
+            if (inputValue == null) return false;                        
+          
+            // no quotes?
+        	if (inputValue.indexOf('"') < 0) {
+            	// this should become either
+            	// (1) a + "" where a is an object label or
+            	// (2) "text", a plain text 
+        	
+        		// ad (1) OBJECT LABEL 
+        		// add empty string to end to make sure
+        		// that this will become a text object
+        		if (kernel.lookupLabel(inputValue.trim()) != null) {
+        			inputValue = "(" + inputValue + ") + \"\"";
+        		} 
+        		// ad (2) PLAIN TEXT
+        		// add quotes to string
+        		else {
+        			inputValue = "\"" + inputValue + "\"";
+        		}        			
+        	} 
+        	else {
+        	   // replace \n\" by \"\n, this is useful for e.g.:
+        	  //    "a = " + a + 
+        	  //	"b = " + b 
+        		inputValue = inputValue.replaceAll("\n\"", "\"\n");
+        	}
+            
+            if (inputValue.equals("\"\"")) return false;
+            
+            // create new text
+            boolean createText = text == null;
+            if (createText) {
+                GeoElement [] ret = 
+                	kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
+                if (ret != null && ret[0].isTextValue()) {
+                    GeoText t = (GeoText) ret[0];
+                    t.setLaTeX(isLaTeX, true);                 
+                    
+                    if (startPoint.isLabelSet()) {
+                    	  try { t.setStartPoint(startPoint); }catch(Exception e){};                          
+                    } else {
+                    	// startpoint contains mouse coords
+                    	t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
+                    			euclidianView.toScreenCoordY(startPoint.inhomY));
+                    	t.setAbsoluteScreenLocActive(true);
+                    }
+                    t.updateRepaint();
+                    app.storeUndoInfo();                    
+                    return true;                
+                }
+                return false;
+            }
+                    
+            // change existing text
+            try {           
+                text.setLaTeX(isLaTeX, true);
+                GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);
+                app.doAfterRedefine(newText);
+                return newText != null;
+			} catch (Exception e) {
+                app.showError("ReplaceFailed");
+                return false;
+            } catch (MyError err) {
+                app.showError(err);
+                return false;
+            } 
+        }   
+    }
+
 }

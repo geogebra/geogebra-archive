@@ -354,21 +354,12 @@ public class MyXMLio {
 			}   
 		}		
     }
-    
-    
-    /**
-     * Writes all settings and construction needed for undo in XML format 
-     * to a zipped output stream.   
-     */
-    public void writeUndoXML(OutputStream os, Construction c) 
-    throws IOException {                                                                
-        writeZipped(os, getUndoXML(c));                             
-    }    
+          
     
     /**
      * Compresses xml String and writes result to os.    
      */
-    private static void writeZipped(OutputStream os, String xmlString) 
+    public static void writeZipped(OutputStream os, String xmlString) 
     throws IOException {                                                                
         ZipOutputStream z = new ZipOutputStream(os);
         z.putNextEntry(new ZipEntry(XML_FILE));

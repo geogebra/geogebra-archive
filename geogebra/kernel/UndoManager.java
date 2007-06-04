@@ -33,6 +33,8 @@ public class UndoManager {
 	private LinkedList undoInfoList;	      
 	private ListIterator iterator;  // invariant: iterator.previous() is the current state
 	private MyXMLio xmlio;
+	
+	private String lastUndoXML;
 
 	/**
 	 * Creates a new UndowManager for the given Construction.	 
@@ -55,7 +57,7 @@ public class UndoManager {
 	 * Loads previous construction state from undo info list.
 	 */
 	public void undo() {
-		if (undoPossible()) {
+		if (undoPossible()) {		
 			iterator.previous();
 			loadUndoInfo(iterator.previous());     
 			iterator.next();   
@@ -84,10 +86,17 @@ public class UndoManager {
 	/**
 	 * Adds construction state to undo info list.
 	 */
-	public void storeUndoInfo() {           
+	public void storeUndoInfo() {   
+		String currentUndoXML = xmlio.getUndoXML(construction);
+		if (currentUndoXML.equals(lastUndoXML)) {			
+			return;
+		} else {			
+			lastUndoXML = currentUndoXML;
+		}
+		
 		try {
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();            
-			xmlio.writeUndoXML(bs, construction);             
+			MyXMLio.writeZipped(bs, currentUndoXML);             
 			bs.close();
 			
 			//	insert undo info 
@@ -123,6 +132,7 @@ public class UndoManager {
 			ByteArrayOutputStream undoInfo =  (ByteArrayOutputStream) info;
 			ByteArrayInputStream bs = 
 					new ByteArrayInputStream( undoInfo.toByteArray() );         
+			
 			xmlio.readZipFromMemory(bs);             
 			bs.close();                        
 		} 

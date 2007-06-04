@@ -10,7 +10,7 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.util;
+package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
@@ -43,8 +43,9 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
 	protected JButton btApply, btCancel;
-	private JPanel optionPane;
+	private JPanel optionPane, btPanel;
 	protected GeoElementSelectionListener sl;
+	protected JLabel msgLabel; 
 		
 	protected String initString;
 	protected Application app;
@@ -72,6 +73,10 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected InputDialog(JFrame frame, boolean modal) {
 		super(frame, modal);
+	}
+	
+	public JPanel getButtonPanel() {
+		return btPanel;
 	}
 	
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows) {
@@ -102,13 +107,14 @@ public class InputDialog extends JDialog implements ActionListener,
 		btCancel = new JButton(app.getPlain("Cancel"));
 		btCancel.setActionCommand("Cancel");
 		btCancel.addActionListener(this);
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		btPanel.add(btApply);
 		btPanel.add(btCancel);
 	
 		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
-		optionPane.add(new JLabel(message), BorderLayout.NORTH);	
+		msgLabel = new JLabel(message);
+		optionPane.add(msgLabel, BorderLayout.NORTH);	
 		optionPane.add(btPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -175,6 +181,14 @@ public class InputDialog extends JDialog implements ActionListener,
 			// do nothing on uninitializedValue		
 		}
 		setVisible(!finished);
+	}
+	
+	public String getText() {
+		return inputPanel.getText();
+	}
+	
+	public void setText(String text) {
+		inputPanel.setText(text);
 	}
 	
 	public void setVisible(boolean flag) {	

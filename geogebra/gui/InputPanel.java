@@ -1,14 +1,10 @@
-package geogebra.util;
+package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -156,24 +152,14 @@ public class InputPanel extends JPanel {
 		textComponent.setText(text);
 	}
 	
-	private class ComboBoxListener extends MouseAdapter implements ActionListener {
+	private class ComboBoxListener extends MyComboBoxListener {
 		
-		public void mousePressed(MouseEvent e) {
-			doActionPerformed(e.getSource());		
-		}		
-		
-		public void actionPerformed(ActionEvent e) {
-			doActionPerformed(e.getSource());
-		}		
-		
-		private void doActionPerformed(Object source) {			
+		public void doActionPerformed(Object source) {			
 			if (source == cbSpecialChars) {				
-				insertString(cbSpecialChars.getSelectedItem().toString());				
-				cbSpecialChars.setPopupVisible(false);
+				insertString(cbSpecialChars.getSelectedItem().toString());								
 			}
 			else if (source == cbGreekLetters) {
-				insertString(cbGreekLetters.getSelectedItem().toString());
-				cbGreekLetters.setPopupVisible(false);
+				insertString(cbGreekLetters.getSelectedItem().toString());		
 			}
 		}
 	}

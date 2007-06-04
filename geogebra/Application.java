@@ -23,12 +23,15 @@ import geogebra.algebra.AlgebraView;
 import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.AngleInputDialog;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.HelpBrowser;
+import geogebra.gui.InputDialog;
+import geogebra.gui.InputHandler;
 import geogebra.gui.MyPopupMenu;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.SliderDialog;
@@ -47,11 +50,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.AngleInputDialog;
 import geogebra.util.ImageManager;
-import geogebra.util.InputDialog;
-import geogebra.util.InputHandler;
-import geogebra.util.LaTeXinputHandler;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -90,6 +89,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -104,7 +104,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "25. May 2007";
+    public static final String buildDate = "31. May 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1662,46 +1662,24 @@ public class Application implements	KeyEventDispatcher {
     public void showTextCreationDialog(GeoPoint startPoint) {
         showTextDialog(null, startPoint);
     }
-        
+    
+    
     private void showTextDialog(GeoText text, GeoPoint startPoint) {            	   
-        boolean isLaTeX;        
-        String initString, descString;
-        boolean createText = text == null;     
-        //String label = null;
+    	JDialog dialog = createTextDialog(text, startPoint);
+    	dialog.setVisible(true);
+    }
         
-        if (createText) {
-            //initString = "\"\"";
-        	initString = null;
-            descString = getPlain("Text");
-            isLaTeX = false;
-        }           
-        else {                                
-        	//label = text.getLabel();
-          
-            initString = text.isIndependent() ? 
-                           // "\"" + text.toValueString() + "\"" :
-            		 		text.toValueString() :
-                            text.getCommandDescription(); 
-            descString = text.getNameDescription();
-            isLaTeX = text.isLaTeX();
-        }           
-        
-        LaTeXinputHandler handler = new TextInputHandler(text, startPoint);            
-        
-        InputDialog id =
+    public TextInputDialog createTextDialog(GeoText text, GeoPoint startPoint) {            	         
+        TextInputDialog id =
             new TextInputDialog(
                 this,
-                descString,
                 getPlain("Text"),
-                initString, 
-                isLaTeX, 
-                false,
-                handler);       
-        id.setVisible(true);          
-       // id.setCaretPosition(1);                     
+                text, startPoint,
+                30, 6);
+        return id;
     }
     
-    private void doAfterRedefine(GeoElement geo) {
+    public void doAfterRedefine(GeoElement geo) {
     	// select geoElement with label again
     	 if (propDialog != null && propDialog.isShowing()) {    	 	
          	//propDialog.setViewActive(true);
@@ -1709,90 +1687,7 @@ public class Application implements	KeyEventDispatcher {
          }
     }
     
-    private class TextInputHandler implements LaTeXinputHandler {
-        private GeoText text;
-        private GeoPoint startPoint;
-        private boolean isLaTeX;
-        
-        private TextInputHandler(GeoText text, GeoPoint startPoint) {
-            this.text = text;
-            this.startPoint = startPoint;
-        }
-        
-        public void setLaTeX(boolean flag) {
-            isLaTeX = flag;
-        }
-        
-        public boolean processInput(String inputValue) {
-            if (inputValue == null) return false;                        
-          
-            // no quotes?
-        	if (inputValue.indexOf('"') < 0) {
-            	// this should become either
-            	// (1) a + "" where a is an object label or
-            	// (2) "text", a plain text 
-        	
-        		// ad (1) OBJECT LABEL 
-        		// add empty string to end to make sure
-        		// that this will become a text object
-        		if (kernel.lookupLabel(inputValue.trim()) != null) {
-        			inputValue = "(" + inputValue + ") + \"\"";
-        		} 
-        		// ad (2) PLAIN TEXT
-        		// add quotes to string
-        		else {
-        			inputValue = "\"" + inputValue + "\"";
-        		}        			
-        	} 
-        	else {
-        	   // replace \n\" by \"\n, this is useful for e.g.:
-        	  //    "a = " + a + 
-        	  //	"b = " + b 
-        		inputValue = inputValue.replaceAll("\n\"", "\"\n");
-        	}
-            
-            if (inputValue.equals("\"\"")) return false;
-            
-            // create new text
-            boolean createText = text == null;
-            if (createText) {
-                GeoElement [] ret = 
-                	kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
-                if (ret != null && ret[0].isTextValue()) {
-                    GeoText t = (GeoText) ret[0];
-                    t.setLaTeX(isLaTeX, true);                 
-                    
-                    if (startPoint.isLabelSet()) {
-                    	  try { t.setStartPoint(startPoint); }catch(Exception e){};                          
-                    } else {
-                    	// startpoint contains mouse coords
-                    	t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
-                    			euclidianView.toScreenCoordY(startPoint.inhomY));
-                    	t.setAbsoluteScreenLocActive(true);
-                    }
-                    t.updateRepaint();
-                    storeUndoInfo();                    
-                    return true;                
-                }
-                return false;
-            }
-                    
-            // change existing text
-            try {           
-                text.setLaTeX(isLaTeX, true);
-                GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);
-                doAfterRedefine(newText);
-                return newText != null;
-			} catch (Exception e) {
-                showError("ReplaceFailed");
-                return false;
-            } catch (MyError err) {
-                showError(err);
-                return false;
-            } 
-        }   
-    }
-
+    
     /**
      * Shows a modal dialog to enter a number or number variable name.
      */
@@ -3050,7 +2945,7 @@ public class Application implements	KeyEventDispatcher {
     }
 
     public void storeUndoInfo() { 
-    	if (undoActive) { 	    	
+    	if (undoActive) { 	    
 			kernel.storeUndoInfo();
 			updateMenubar();
 			isSaved = false;
