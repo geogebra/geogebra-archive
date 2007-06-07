@@ -64,7 +64,7 @@ implements ActionListener, MouseListener, KeyListener
 		removeAll();
 		helpButton = new MySmallJButton(app.getImageIcon("help.gif"), 5); 
 		inputButton = new JToggleButton(); // label text
-		InputPanel inputPanel = new InputPanel(null, app, 30);
+		InputPanel inputPanel = new InputPanel(null, app, 30, true);
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
 		
 		// set up input field		

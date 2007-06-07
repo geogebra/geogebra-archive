@@ -76,7 +76,10 @@ public class MyPopupMenu extends JPopupMenu {
         this.geo = geo;
         //this.location = location;                               
                     
-        setTitle(geo.getLongDescriptionHTML(false, true)); 
+        String title = geo.getLongDescriptionHTML(true, true);
+        if (title.length() > 30)
+        	title = geo.getNameDescriptionHTML(true, true);
+        setTitle(title);
         
         if (app.showAlgebraView()) {
 	        addPointItems();
@@ -325,19 +328,22 @@ public class MyPopupMenu extends JPopupMenu {
 
     private void addForAllItems() {
         // SHOW, HIDE
-        if (geo.isDrawable()) {        
+        if (geo.isDrawable()) { 
+        	 JCheckBoxMenuItem cbItem;
             
             // show object
-            JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
-            cbItem.setSelected(geo.isSetEuclidianVisible());
-            cbItem.addActionListener(new ActionListener() {
-        		public void actionPerformed(ActionEvent e) {
-                    geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
-                    geo.updateRepaint();
-                    app.storeUndoInfo();
-                }        	
-        	});
-            addItem(cbItem);
+        	if (geo.getShowObjectCondition() == null) {
+	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
+	            cbItem.setSelected(geo.isSetEuclidianVisible());
+	            cbItem.addActionListener(new ActionListener() {
+	        		public void actionPerformed(ActionEvent e) {
+	                    geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
+	                    geo.updateRepaint();
+	                    app.storeUndoInfo();
+	                }        	
+	        	});
+	            addItem(cbItem);
+        	}
             
             if (!(geo.isTextValue() || geo.isGeoImage())) {           
 	            // show object

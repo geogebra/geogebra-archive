@@ -34,6 +34,8 @@ import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
 import geogebra.gui.MyPopupMenu;
 import geogebra.gui.PropertiesDialog;
+import geogebra.gui.RedefineInputHandler;
+import geogebra.gui.RenameInputHandler;
 import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
 import geogebra.gui.menubar.MyMenubar;
@@ -104,7 +106,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "31. May 2007";
+    public static final String buildDate = "6. June 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -208,7 +210,7 @@ public class Application implements	KeyEventDispatcher {
     private GeoGebraApplet applet;
     private Component mainComp;
     private boolean isApplet = false;    
-    private boolean showResetIcon = false;
+    private boolean showResetIcon = true;
     private String codebase;
 
     private AlgebraView algebraView;
@@ -1366,7 +1368,7 @@ public class Application implements	KeyEventDispatcher {
        * Displays the rename dialog for geo
        */
     public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText) {
-        InputHandler handler = new RenameInputHandler(geo, storeUndo);
+        InputHandler handler = new RenameInputHandler(this, geo, storeUndo);
         InputDialog id =
             new InputDialog(
                 this,
@@ -1383,66 +1385,7 @@ public class Application implements	KeyEventDispatcher {
         id.setVisible(true);              
     }
     
-    private class RenameInputHandler implements InputHandler {
-        private GeoElement geo;
-        private boolean storeUndo;
-                 
-        private RenameInputHandler(GeoElement geo, boolean storeUndo) {
-            this.geo = geo;
-            this.storeUndo = storeUndo;
-        }
-        
-        public boolean processInput(String inputValue) {
-            if (inputValue == null) return false;
-            try {
-            	if (!checkName(geo, inputValue)) {
-            		 showError("InvalidInput");
-            		 return false;
-            	}
-            	
-                String newLabel = kernel.getAlgebraProcessor().parseLabel(inputValue);
-                
-                // is there a geo with this name?
-                Construction cons = geo.getConstruction();
-                GeoElement existingGeo = cons.lookupLabel(newLabel);
-                if (existingGeo != null) {
-                	// rename this geo too:
-                	String tempLabel = existingGeo.getIndexLabel(newLabel);
-                	existingGeo.rename(tempLabel);
-                }
-                
-                if (geo.rename(newLabel) && storeUndo) {
-                    storeUndoInfo();                    
-                }
-                return true;
-            } catch (Exception e) {
-                showError("InvalidInput");
-            } catch (MyError err) {
-                showError(err);
-            }
-            return false;
-        }   
-                      
-        // check if name is valid for geo
-        private boolean checkName(GeoElement geo, String name) {
-        	if (geo.isGeoFunction()) {
-        		for (int i=0; i < invalidFunctionNames.length; i++) {
-        			if (invalidFunctionNames[i].equals(name))
-        				return false;
-        		}
-        	}        
-        	
-        	return true;
-        }
-    }
-    private static String [] invalidFunctionNames = 
-    {
-    		"gamma", "x", "y", 
-			"abs", "sgn", "sqrt", "exp", "log", "ln",
-			"cos", "sin", "tan", "acos", "asin", "atan",
-			"cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-			"floor", "ceil", "round", "min", "max"
-    };
+    
     
     
     /**
@@ -1456,7 +1399,7 @@ public class Application implements	KeyEventDispatcher {
 			return;
     	}
     	
-    	InputHandler handler = new RedefineInputHandler(geo);                
+    	InputHandler handler = new RedefineInputHandler(this, geo);                
         	String str = geo.isIndependent() ? 
                             geo.toValueString() :
                             geo.getCommandDescription();
@@ -1491,30 +1434,7 @@ public class Application implements	KeyEventDispatcher {
         id.setVisible(true);     
         id.selectText();            
     }
-    
-    private class RedefineInputHandler implements InputHandler {
-        private GeoElement geo;
-        
-        private RedefineInputHandler(GeoElement geo) {
-            this.geo = geo;
-        }
-        
-        public boolean processInput(String inputValue) {
-            if (inputValue == null) return false;
-            try {
-            	GeoElement newGeo = kernel.getAlgebraProcessor().changeGeoElement(geo, inputValue, true);
-            	doAfterRedefine(newGeo);
-                return newGeo != null;
-            } catch (Exception e) {
-                showError("ReplaceFailed");
-            } catch (MyError err) {
-                showError(err);
-            } finally {
-            	doAfterRedefine(null);
-            }
-            return false;
-        }   
-    }
+
     
     /**
      * Creates a new slider at given location (screen coords).
@@ -2087,7 +2007,7 @@ public class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     }
 
-    public boolean showAlgebraView() {
+    final public boolean showAlgebraView() {
         return showAlgebraView;
     }        
     

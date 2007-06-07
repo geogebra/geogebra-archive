@@ -34,10 +34,9 @@ AbsoluteScreenLocateable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean value;
-	private boolean isDefined = true;
-	private String caption;
+	private boolean isDefined = true;	
 	
-	private ArrayList conditionListeners;
+	private ArrayList condListenersShowObject;
 		
 	public GeoBoolean(Construction c) {
 		super(c);				
@@ -79,9 +78,53 @@ AbsoluteScreenLocateable {
 	 * updated it calls geo.updateConditions()
 	 * @param geo
 	 */
-	public void registerShowConditionListener(GeoElement geo) {
-		// TODO: go on
-		//.conditionListeners 
+	public void registerConditionListener(GeoElement geo) {
+		if (condListenersShowObject == null)
+			condListenersShowObject = new ArrayList();
+		condListenersShowObject.add(geo);
+	}
+	
+	public void unregisterConditionListener(GeoElement geo) {
+		if (condListenersShowObject != null) {
+			condListenersShowObject.remove(geo);
+		}
+	}
+	
+	
+	/**
+	 * Calls super.update() and update() for all registered condition listener geos.	 
+	 */
+	public void update() {  	
+		super.update();
+				
+		// update all registered locatables (they have this point as start point)
+		if (condListenersShowObject != null) {
+			for (int i=0; i < condListenersShowObject.size(); i++) {
+				GeoElement geo = (GeoElement) condListenersShowObject.get(i);		
+				kernel.notifyUpdate(geo);					
+			}		
+		}
+	}
+	
+	/**
+	 * Tells conidition listeners that their condition is removed
+	 * and calls super.remove()
+	 */
+	void doRemove() {
+		if (condListenersShowObject != null) {
+			// copy conditionListeners into array
+			Object [] geos = condListenersShowObject.toArray();	
+			condListenersShowObject.clear();
+			
+			// tell all condition listeners 
+			for (int i=0; i < geos.length; i++) {		
+				GeoElement geo = (GeoElement) geos[i];
+				geo.removeCondition(this);				
+				kernel.notifyUpdate(geo);			
+			}			
+		}
+		
+		super.doRemove();
 	}
 	
 	public void resolveVariables() {     
@@ -156,13 +199,7 @@ AbsoluteScreenLocateable {
 		return this;
 	}		
 	
-	public String getCaption() {
-		if (caption == null)
-			return getLabel();
-		else
-			return caption;
-	}
-
+	
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
@@ -171,13 +208,7 @@ AbsoluteScreenLocateable {
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");
-		
-		if (caption != null && caption.length() > 0) {
-			sb.append("\t<caption val=\"");
-			sb.append(Util.encodeXML(caption));
-			sb.append("\"/>\n");
-		}
-		
+				
 		sb.append(getXMLvisualTags(isIndependent()));
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
@@ -240,9 +271,5 @@ AbsoluteScreenLocateable {
 
 	public void setRealWorldLoc(double x, double y) {				
 	}
-
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}		
-
+	
 }

@@ -13,15 +13,16 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocol;
 import geogebra.GeoElementSelectionListener;
 import geogebra.View;
 import geogebra.algebra.AlgebraView;
+import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
@@ -49,6 +50,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -160,6 +162,8 @@ public class PropertiesDialog
 	 */
 	public void initGUI() {
 		setTitle(app.getPlain("Properties"));
+		
+	
 
 		//	LIST PANEL
 		JPanel listPanel = new JPanel();
@@ -168,12 +172,13 @@ public class PropertiesDialog
 		// JList with GeoElements		
 		
 		JScrollPane listScroller = new JScrollPane(geoTree);
-		//listScroller.setPreferredSize(new Dimension(100, 200));
+		//geoTree.setMinimumSize(new Dimension(100, 200));
 		listPanel.add(listScroller, BorderLayout.CENTER);
 
 		// rename, redefine and delete button
 		int pixelX = 20;
 		int pixelY = 10;
+		/*
 		MySmallJButton renameButton = new MySmallJButton(app.getImageIcon("rename.gif"), pixelX, pixelY);
 		renameButton.setToolTipText(app.getPlain("Rename"));
 		renameButton.addActionListener(new ActionListener() {
@@ -181,6 +186,9 @@ public class PropertiesDialog
 				rename();
 			}
 		});
+		*/
+		
+		/*
 		MySmallJButton  redefineButton = new MySmallJButton (app.getImageIcon("redefine.gif"), pixelX, pixelY);
 		redefineButton.setToolTipText(app.getPlain("Redefine"));
 		redefineButton.addActionListener(new ActionListener() {
@@ -188,8 +196,10 @@ public class PropertiesDialog
 				redefine();
 			}
 		});
-		MySmallJButton delButton = new MySmallJButton(app.getImageIcon("delete_small.gif"), pixelX, pixelY);
-		delButton.setToolTipText(app.getPlain("Delete"));
+		*/ 
+		
+		JButton delButton = new JButton(app.getImageIcon("delete_small.gif"));
+		delButton.setText(app.getPlain("Delete"));
 		delButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteSelectedGeos();
@@ -197,12 +207,12 @@ public class PropertiesDialog
 		});
 
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));			
-		if (app.letRedefine())
-			buttonPanel.add(redefineButton);
+		//if (app.letRedefine())
+		//	buttonPanel.add(redefineButton);
 		if (app.letDelete())
 			buttonPanel.add(delButton);
-		if (app.letRename())
-			buttonPanel.add(renameButton);
+		//if (app.letRename())
+		//	buttonPanel.add(renameButton);
 
 		listPanel.add(buttonPanel, BorderLayout.SOUTH);
 		Border compound =
@@ -234,7 +244,10 @@ public class PropertiesDialog
 		});
 
 		// put it all together				 		 		 
-		Container contentPane = getContentPane();
+		JPanel contentPane = new JPanel();
+		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+		setContentPane(contentPane);
+		
 		contentPane.removeAll();
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(closeButton);
@@ -442,7 +455,7 @@ public class PropertiesDialog
 
 	/**
 	 * renames first selected GeoElement
-	 */
+	 *
 	private void rename() {
 		ArrayList selGeos = selectionList;	
 		if (selGeos.size() > 0)	{
@@ -453,17 +466,17 @@ public class PropertiesDialog
 			selectionList.add(geo);
 			geoTree.setSelected(selectionList, false);	
 		}								
-	}
+	}*/
 	
 	/**
 	 * redefines first selected GeoElement
-	 */
+	 *
 	private void redefine() {
 		ArrayList selGeos = selectionList;
 		geoTree.clearSelection();
 		if (selGeos.size() > 0)						
 			app.showRedefineDialog((GeoElement) selGeos.get(0));		
-	}
+	}*/
 
 	
 
@@ -512,7 +525,8 @@ public class PropertiesDialog
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private ShowObjectPanel showObjectPanel;
+		private NamePanel namePanel;
+		private ShowObjectPanel showObjectPanel;		
 		private ColorPanel colorPanel;
 		private LabelPanel labelPanel;
 		private CoordPanel coordPanel;
@@ -541,7 +555,8 @@ public class PropertiesDialog
 		private CornerPointsPanel cornerPointsPanel;
 		private TextEditPanel textEditPanel;
 		private BackgroundImagePanel bgImagePanel;
-		private AbsoluteScreenLocationPanel absScreenLocPanel;		
+		private AbsoluteScreenLocationPanel absScreenLocPanel;	
+		private ShowConditionPanel showConditionPanel;
 		
 		private JTabbedPane tabs;
 
@@ -552,6 +567,7 @@ public class PropertiesDialog
 			setBorder(
 					BorderFactory.createTitledBorder(app.getPlain("Properties")));
 
+			namePanel = new NamePanel(app);		
 			showObjectPanel = new ShowObjectPanel();
 			colorPanel = new ColorPanel();
 			labelPanel = new LabelPanel();
@@ -581,7 +597,9 @@ public class PropertiesDialog
 			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
- 			 			
+			showConditionPanel = new ShowConditionPanel(app, this); 			
+			
+			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
  			initTabs();
@@ -600,6 +618,7 @@ public class PropertiesDialog
 		private void initTabs() {			
 			// basic tab
 			ArrayList basicTabList = new ArrayList();
+			basicTabList.add(namePanel);
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);
@@ -634,8 +653,7 @@ public class PropertiesDialog
 			ArrayList styleTabList = new ArrayList();													
 			styleTabList.add(pointSizePanel);				
 			styleTabList.add(arcSizePanel);
-			styleTabList.add(slopeTriangleSizePanel);												
-			styleTabList.add(decoSegmentPanel);
+			styleTabList.add(slopeTriangleSizePanel);			
 			styleTabList.add(decoAnglePanel);
 			styleTabList.add(rightAnglePanel);								
 			TabPanel styleTab = new TabPanel(app.getMenu("Properties.Style"), styleTabList);
@@ -643,7 +661,8 @@ public class PropertiesDialog
 				
 			// line style
 			ArrayList lineStyleTabList = new ArrayList();	
-			lineStyleTabList.add(lineStylePanel);				
+			lineStyleTabList.add(lineStylePanel);	
+			lineStyleTabList.add(decoSegmentPanel);
 			TabPanel lineStyleTab = new TabPanel(app.getPlain("LineStyle"), lineStyleTabList);
 			lineStyleTab.addToTabbedPane(tabs);	
 			
@@ -668,7 +687,13 @@ public class PropertiesDialog
 			algebraTabList.add(conicEqnPanel);	
 			algebraTabList.add(animStepPanel);
 			TabPanel algebraTab = new TabPanel(app.getMenu("Properties.Algebra"), algebraTabList);
-			algebraTab.addToTabbedPane(tabs);						
+			algebraTab.addToTabbedPane(tabs);
+			
+			// advanced tab
+			ArrayList advancedTabList = new ArrayList();
+			advancedTabList.add(showConditionPanel);		
+			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
+			advancedTab.addToTabbedPane(tabs);			
 					
 			// fill tabPanelList
 			tabPanelList = new ArrayList();
@@ -721,8 +746,8 @@ public class PropertiesDialog
 		private Object[] oldSelGeos;		
 		
 		public void updateSelection(Object[] geos) {
-			if (geos == oldSelGeos) return;
-			oldSelGeos = geos;										
+			//if (geos == oldSelGeos) return;
+			//oldSelGeos = geos;										
 						
 			updateTabs(geos);
 		}				
@@ -802,6 +827,7 @@ public class PropertiesDialog
 			// check if properties have same values
 			GeoElement temp, geo0 = (GeoElement) geos[0];
 			boolean equalObjectVal = true;
+			boolean showObjectCondition = geo0.getShowObjectCondition() != null;
 
 			for (int i = 1; i < geos.length; i++) {
 				temp = (GeoElement) geos[i];
@@ -811,6 +837,10 @@ public class PropertiesDialog
 					equalObjectVal = false;
 					break;
 				}
+				
+				if (temp.getShowObjectCondition() != null) {
+					showObjectCondition = true;
+				}
 			}
 
 			// set object visible checkbox
@@ -819,6 +849,8 @@ public class PropertiesDialog
 			else
 				showObjectCB.setSelected(false);
 
+			showObjectCB.setEnabled(!showObjectCondition);
+			
 			showObjectCB.addItemListener(this);
 			return this;
 		}
@@ -3493,6 +3525,11 @@ public class PropertiesDialog
 			remove(geo, true);
 		}
 		
+		/**
+		 * 
+		 * @param geo
+		 * @param binarySearch: true for binary, false for linear search
+		 */
 		public void remove(GeoElement geo, boolean binarySearch) {
 			// get type node
 			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
@@ -3507,7 +3544,7 @@ public class PropertiesDialog
 				
 				if (typeNode.getChildCount() == 0) {
 					// last child					
-					typeNodesMap.remove(typeNode);	
+					typeNodesMap.remove(geo.getObjectType());	
 					treeModel.removeNodeFromParent(typeNode);									
 				} 						
 			}
@@ -4041,6 +4078,253 @@ class AnimationStepPanel
 
 	public void focusLost(FocusEvent e) {
 		doActionPerformed();
+	}
+}
+
+
+/**
+ * panel for condition to show object
+ * @author Markus Hohenwarter
+ */
+class ShowConditionPanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	private JTextField tfCondition;
+	
+	private Kernel kernel;
+	private PropertiesDialog.PropertiesPanel propPanel;
+
+	public ShowConditionPanel(Application app, PropertiesDialog.PropertiesPanel propPanel) {
+		kernel = app.getKernel();
+		this.propPanel = propPanel;
+		
+		// textfield for animation step
+		setBorder(
+				BorderFactory.createTitledBorder(app.getMenu("Condition.ShowObject"))
+				);
+		
+		// non auto complete input panel
+		InputPanel inputPanel = new InputPanel(null, app, 20, false);
+		tfCondition = (AutoCompleteTextField) inputPanel.getTextComponent();				
+		
+		tfCondition.addActionListener(this);
+		tfCondition.addFocusListener(this);
+
+		// put it all together
+		setLayout(new FlowLayout(FlowLayout.LEFT));
+		add(inputPanel);
+	}
+
+	public JPanel update(Object[] geos) {
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		tfCondition.removeActionListener(this);
+
+		// take condition of first geo
+		String strCond = "";
+		GeoElement geo0 = (GeoElement) geos[0];	
+		GeoBoolean cond = geo0.getShowObjectCondition();
+		if (cond != null) {
+			strCond = cond.getLabelOrDefinitionDescription();
+		}	
+		
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			cond = geo.getShowObjectCondition();
+			if (cond != null) {
+				String strCondGeo = cond.getLabelOrDefinitionDescription();
+				if (!strCond.equals(strCondGeo))
+					strCond = "";
+			}	
+		}		
+		
+		tfCondition.setText(strCond);
+		tfCondition.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			if (!geo.isEuclidianShowable())
+				return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == tfCondition)
+			doActionPerformed();
+	}
+
+	private void doActionPerformed() {
+		GeoBoolean cond;			
+		String strCond = tfCondition.getText();
+		if (strCond == null || strCond.trim().length() == 0) {
+			cond = null;
+		} else {
+			cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
+		}
+				
+		for (int i = 0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];
+			geo.setShowObjectCondition(cond);
+			geo.updateRepaint();
+		}	
+		
+		// to update "showObject" as well
+		propPanel.updateSelection(geos);		
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		doActionPerformed();
+	}
+}
+
+
+/**
+ * panel for name of object
+ * @author Markus Hohenwarter
+ */
+class NamePanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+		
+	private AutoCompleteTextField tfName;
+	private RenameInputHandler nameInputHandler;
+	private AutoCompleteTextField tfDefinition;
+	private RedefineInputHandler defInputHandler;
+	private GeoElement currentGeo;
+
+	public NamePanel(Application app) {		
+		// NAME PANEL
+		nameInputHandler = new RenameInputHandler(app, null, false);
+		
+		// non auto complete input panel
+		InputPanel inputPanelName = new InputPanel(null, app, 1, 10, false, true);
+		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
+		tfName.setAutoComplete(false);		
+		tfName.addActionListener(this);
+		tfName.addFocusListener(this);			
+		
+		// DEFINITON PANEL		
+		defInputHandler = new RedefineInputHandler(app, null);
+	
+		// non auto complete input panel
+		InputPanel inputPanelDef = new InputPanel(null, app, 1, 20, true, true);
+		tfDefinition = (AutoCompleteTextField) inputPanelDef.getTextComponent();
+		tfDefinition.setAutoComplete(false);		
+		tfDefinition.addActionListener(this);
+		tfDefinition.addFocusListener(this);
+
+		
+		// put it all together		
+		setLayout(new BorderLayout(0,0));
+		JPanel namePanel = new JPanel();
+		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
+		JLabel nameLabel = new JLabel(app.getPlain("Name") + ":");
+		int dx = 50 - nameLabel.getPreferredSize().width;	
+		namePanel.add(nameLabel);
+		namePanel.add(Box.createHorizontalStrut(dx));
+		namePanel.add(inputPanelName);
+		
+		// 	put it all together		
+		JPanel defPanel = new JPanel();
+		defPanel.setLayout(new FlowLayout());
+		JLabel defLabel = new JLabel(app.getPlain("Definition") + ":");
+		dx = 50 - defLabel.getPreferredSize().width;
+		defPanel.add(defLabel);
+		defPanel.add(Box.createHorizontalStrut(dx));
+		defPanel.add(inputPanelDef);			
+		
+		add(namePanel, BorderLayout.NORTH);
+		add(defPanel, BorderLayout.SOUTH);
+	}
+
+	public JPanel update(Object[] geos) {		
+		if (!checkGeos(geos))
+			return null;
+
+		// NAME
+		tfName.removeActionListener(this);
+
+		// take name of first geo		
+		GeoElement geo0 = (GeoElement) geos[0];	
+		tfName.setText(geo0.getLabel());
+	
+		currentGeo = geo0;
+		nameInputHandler.setGeoElement(geo0);
+		
+		tfName.addActionListener(this);
+		
+		// DEFINITION
+		tfDefinition.removeActionListener(this);
+		defInputHandler.setGeoElement(currentGeo);
+		setDefText(currentGeo);
+		
+		tfDefinition.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {				
+		return geos.length == 1;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {		
+			doActionPerformed(e.getSource());
+	}
+
+	private void doActionPerformed(Object source) {	
+		if (source == tfName) {
+			String strName = tfName.getText();		
+			boolean success = nameInputHandler.processInput(strName);
+			if (!success)
+				tfName.requestFocus();
+		} 
+		else if (source == tfDefinition) {		
+			String strName = tfDefinition.getText();			
+			boolean success = defInputHandler.processInput(strName);
+			if (!success)
+				tfDefinition.requestFocus();
+		}		
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		Object source = e.getSource();
+
+		if (source == tfName) {
+			tfName.setText(currentGeo.getLabel());
+		} else if (source == tfDefinition) {			
+			setDefText(currentGeo);
+		}
+	}
+	
+	private void setDefText(GeoElement geo) {
+		String text = geo.isIndependent() ?
+				geo.toValueString() :
+				geo.getCommandDescription();
+		tfDefinition.setText(text);
 	}
 }
 

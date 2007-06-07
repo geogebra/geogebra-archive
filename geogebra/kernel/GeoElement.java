@@ -215,6 +215,7 @@ public abstract class GeoElement
 
 	protected String label; // should only be used directly in subclasses
 	private String oldLabel; // see doRenameLabel
+	private String caption; // only used by GeoBoolean for check boxes at the moment	
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
 	private boolean algebraVisible = true;
@@ -235,7 +236,7 @@ public abstract class GeoElement
 	// on change: see setVisualValues()
 
 	// condition to show object
-	private GeoBoolean condShow;
+	private GeoBoolean condShowObject;
 	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
@@ -532,11 +533,14 @@ public abstract class GeoElement
 	 * object should be drawn in euclidian view
 	 */
 	final public boolean isEuclidianVisible() {
-		return euclidianVisible && showInEuclidianView();
+		if (condShowObject == null)
+			return euclidianVisible && showInEuclidianView();
+		else
+			return condShowObject.getBoolean();
 	}	
 
 	public void setEuclidianVisible(boolean visible) {
-		euclidianVisible = visible;
+		euclidianVisible = visible;		
 	}
 
 	public boolean isSetEuclidianVisible() {
@@ -627,6 +631,10 @@ public abstract class GeoElement
 
 	abstract boolean showInAlgebraView();
 	abstract boolean showInEuclidianView();
+	
+	final public boolean isEuclidianShowable() {
+		return showInEuclidianView();
+	}
 
 	public void setParentAlgorithm(AlgoElement algorithm) {
 		algoParent = algorithm;
@@ -842,6 +850,17 @@ public abstract class GeoElement
 		} else { // no label set so far -> set new label			 
 			doSetLabel(getFreeLabel(label));
 		}
+	}
+	
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}		
+
+	public String getCaption() {
+		if (caption == null)
+			return getLabel();
+		else
+			return caption;
 	}
 	
 	/**
@@ -1400,10 +1419,7 @@ public abstract class GeoElement
 	public boolean isChildOf(GeoElement geo) {				
 		if (geo == null || algoParent == null)
 			return false;
-		
-		// TODO: remove
-		//System.out.println(this + " isChildOf: " + geo);
-
+			
 		GeoElement [] input = algoParent.getInput();
 		for (int i = 0; i < input.length; i++) {
 			if (geo == input[i])
@@ -1723,7 +1739,7 @@ public abstract class GeoElement
 		
 		return strLabelTextOrHTML;
 	}
-
+	
 	/**
 		* Returns algebraic representation of this GeoElement.		
 		*/
@@ -1947,6 +1963,14 @@ public abstract class GeoElement
 		sb.append(Util.encodeXML(label));
 		sb.append("\">\n");
 		sb.append(getXMLtags());
+		
+		// caption text
+		if (caption != null && caption.length() > 0 && !caption.equals(label)) {
+			sb.append("\t<caption val=\"");
+			sb.append(Util.encodeXML(caption));
+			sb.append("\"/>\n");
+		}
+		
 		sb.append("</element>\n");
 				
 		return sb.toString();
@@ -1982,6 +2006,8 @@ public abstract class GeoElement
 		sb.append(labelVisible);
 		sb.append("\"");
 		sb.append("/>\n");
+		
+		sb.append(getShowObjectConditionXML());
 		
 		sb.append("\t<objColor");
 		sb.append(" r=\"");
@@ -2068,7 +2094,7 @@ public abstract class GeoElement
 		sb.append(getXMLanimationTags());
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
-		sb.append(getBreakpointXML());
+		sb.append(getBreakpointXML());		
 		return sb.toString();
 	}
 
@@ -2099,6 +2125,17 @@ public abstract class GeoElement
 		sb.append(isConsProtBreakpoint);
 		sb.append("\"/>\n");
 		return sb.toString();				
+	}
+	
+	private String getShowObjectConditionXML() {
+		if (condShowObject != null) {
+			StringBuffer sb = new StringBuffer();		
+			sb.append("\t<condition showObject=\"");		
+			sb.append(Util.encodeXML(condShowObject.getLabelOrDefinitionDescription()));
+			sb.append("\"/>\n");
+			return sb.toString();
+		}
+		return "";
 	}
 
 	/**
@@ -2281,14 +2318,28 @@ public abstract class GeoElement
 		return false;
 	}
 
-	public final GeoBoolean getCondShow() {
-		return condShow;
+	public final GeoBoolean getShowObjectCondition() {
+		return condShowObject;
 	}
 
-	public final void setCondShow(GeoBoolean condShow) {
+	public final void setShowObjectCondition(GeoBoolean cond) {
+		// unregister old condition
+		if (condShowObject != null) {
+			condShowObject.unregisterConditionListener(this);
+		}
 		
+		// set new condition
+		condShowObject = cond;
 		
-		this.condShow = condShow;
+		// register new condition
+		if (condShowObject != null) {
+			condShowObject.registerConditionListener(this);
+		}		
+	}
+	
+	public final void removeCondition(GeoBoolean bool) {
+		if (condShowObject == bool)
+			condShowObject = null;
 	}
 
 }

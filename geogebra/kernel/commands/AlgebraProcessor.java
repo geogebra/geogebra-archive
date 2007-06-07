@@ -7,6 +7,7 @@ import geogebra.algebra.parser.Parser;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -191,6 +192,37 @@ public class AlgebraProcessor {
 			app.showError("InvalidInput");
 			return Double.NaN;
 		}
+	}
+	
+	/**
+	 * Parses given String str and tries to evaluate it to a GeoBoolean object.
+	 * Returns null if something went wrong.
+	 */
+	public GeoBoolean evaluateToBoolean(String str) {
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+
+		GeoBoolean bool = null;
+		try {
+			ValidExpression ve = parser.parse(str);		
+			GeoElement [] temp = processValidExpression(ve);
+			bool = (GeoBoolean) temp[0];
+		} catch (CircularDefinitionException e) {
+			System.err.println("CircularDefinition");
+			app.showError("CircularDefinition");
+		} catch (Exception e) {		
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} catch (MyError e) {
+			e.printStackTrace();
+			app.showError(e);
+		} catch (Error e) {
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} 
+		
+		cons.setSuppressLabelCreation(oldMacroMode);
+		return bool;
 	}
 
 	/**

@@ -449,7 +449,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
-		resetImage = app.getInternalImage("geogebra22.gif");
+		resetImage = app.getInternalImage("refresh.gif");
 		this.showAxes[0] = showAxes[0];
 		this.showAxes[1] = showAxes[1];
 		this.showGrid = showGrid;
@@ -1470,9 +1470,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (showAxes[0] || showAxes[1])
 			drawAxes(g);
 
-		if (app.showResetIcon())
-			g.drawImage(resetImage, width - 24, 2, null);
-	}
+		if (app.showResetIcon()) {
+			g.drawImage(resetImage, width - 18, 2, null);
+		}
+	}		
 
 	final private void clearBackground(Graphics2D g) {
 		g.setColor(bgColor);

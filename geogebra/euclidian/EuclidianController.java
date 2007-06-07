@@ -436,12 +436,17 @@ final public class EuclidianController implements MouseListener,
 		//GeoElement geo;
 		ArrayList hits;
 		setMouseLocation(e);
-		transformCoords();
+		transformCoords();			
 		
 		moveModeSelectionHandled = false;
 		DRAGGING_OCCURED = false;			
 		view.setSelectionRectangle(null);
 		selectionStartPoint.setLocation(mouseLoc);	
+		
+		if (hitResetIcon()) {				
+			// see mouseReleased
+			return;
+		}
 
 		if (e.isPopupTrigger() || e.isMetaDown()) {
 			if (!app.isRightClickEnabled()) return;
@@ -1085,6 +1090,11 @@ final public class EuclidianController implements MouseListener,
 		transformCoords();
 		ArrayList hits = null;
 		GeoElement geo;
+
+		if (hitResetIcon()) {				
+			app.reset();
+			return;
+		}
 				
 		if (RIGHT_CLICK) {									
 			if (processZoomRectangle()) return;
@@ -1150,12 +1160,8 @@ final public class EuclidianController implements MouseListener,
 		if (changedKernel)
 			app.storeUndoInfo();
 
-		if (hits == null) {
-			view.setDefaultCursor();
-			if (hitResetIcon()) {				
-				app.reset();	
-			}
-		}			
+		if (hits != null)
+			view.setDefaultCursor();		
 		else
 			view.setHitCursor();
 
@@ -1183,7 +1189,7 @@ final public class EuclidianController implements MouseListener,
 	
 	private boolean hitResetIcon() {
 		return app.showResetIcon() &&
-		  (mouseLoc.y < 24 && mouseLoc.x > view.width - 24);
+		  (mouseLoc.y < 18 && mouseLoc.x > view.width - 18);
 	}
 
 	// return if we really did zoom
@@ -1219,6 +1225,12 @@ final public class EuclidianController implements MouseListener,
 		setMouseLocation(e);
 		ArrayList hits = null;
 		boolean noHighlighting = false;
+		
+		if (hitResetIcon()) {
+			view.setToolTipText(app.getPlain("resetConstruction"));
+			view.setHitCursor();
+			return;
+		} 
 
 		// label hit in move mode: block all other hits
 		if (mode == EuclidianView.MODE_MOVE) {
@@ -1238,14 +1250,8 @@ final public class EuclidianController implements MouseListener,
 		if (hits == null)
 			hits = view.getHits(mouseLoc);
 		if (hits == null) {
-			if (mode == EuclidianView.MODE_MOVE && hitResetIcon()) {
-				view.setToolTipText(app.getPlain("resetConstruction"));
-				view.setHitCursor();
-			} else			{
-				view.setToolTipText(null);
-				view.setDefaultCursor();
-			}
-				
+			view.setToolTipText(null);
+			view.setDefaultCursor();	
 		}			
 		else
 			view.setHitCursor();

@@ -431,7 +431,7 @@ public class WorksheetExportDialog extends JDialog {
 			cons.setWorksheetText(textBelow.getText(), 1);
 		
 			savePreferences();
-			dispose();
+			super.setVisible(false);
 		}		
 	}
 

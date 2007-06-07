@@ -58,8 +58,10 @@ public class InputPanel extends JPanel {
 	private JTextComponent textComponent;	
 	private JComboBox cbSpecialChars, cbGreekLetters;
 	
-	public InputPanel(String initText, Application app, int columns) {
+	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true);
+		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
+		atf.setAutoComplete(autoComplete);
 	}		
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,

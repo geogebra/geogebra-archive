@@ -12,12 +12,20 @@ public abstract class MyComboBoxListener extends MouseAdapter implements ActionL
 	public void mousePressed(MouseEvent e) {
 		Object src = e.getSource();
 		
-		doActionPerformed(src);
+		doActionPerformed(src);		
 		if (src instanceof JComboBox) {
 			JComboBox cb = (JComboBox) src;
 			cb.setPopupVisible(false);
 		}
 	}		
+	
+	public void mouseReleased(MouseEvent e) {
+		Object src = e.getSource();
+		if (src instanceof JComboBox) {
+			JComboBox cb = (JComboBox) src;
+			cb.setPopupVisible(false);
+		}
+	}
 	
 	public void actionPerformed(ActionEvent e) {
 		doActionPerformed(e.getSource());

@@ -586,7 +586,7 @@ public class AlgebraView extends JTree implements View {
 					setBackground(getBackgroundNonSelectionColor());
 								
 				// ICONS               
-				if (geo.isSetEuclidianVisible()) {
+				if (geo.isEuclidianVisible()) {
 					setIcon(iconShown);
 				} else {
 					setIcon(iconHidden);

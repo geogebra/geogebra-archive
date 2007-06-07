@@ -63,9 +63,8 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 			if (geo == null) return this;
 			
 			setFont(app.boldFont);
-			setForeground(geo.labelColor);
-			String str = geo.getLabelTextOrHTML();
-			setText(str);		
+			setForeground(geo.labelColor);			
+			setText(geo.getLabelTextOrHTML());		
 			
 			if (geo.doHighlighting())				   
 				setBackground(Application.COLOR_SELECTION);

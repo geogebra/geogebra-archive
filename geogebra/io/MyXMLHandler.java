@@ -1056,6 +1056,9 @@ public class MyXMLHandler implements DocHandler {
                 } else if (eName.equals("caption")) {
                 	ok = handleCaption(attrs);
                 	break;
+                } else if (eName.equals("condition")) {
+                	ok = handleCondition(attrs);
+                	break;
                 }
         		
         	case 'd':
@@ -1316,16 +1319,20 @@ public class MyXMLHandler implements DocHandler {
         return true;
     }
     
-    private boolean handleCaption(LinkedHashMap attrs) {
-    	if (!geo.isGeoBoolean()) {
-    	    System.err.println(
-               "wrong element type for <caption>: " + geo.getClass());            
-    		return false;
-    	}
-    	    	
+    private boolean handleCaption(LinkedHashMap attrs) {    	    
+    	try {        	
+        	geo.setCaption((String) attrs.get("val"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }	
+    }
+    
+    private boolean handleCondition(LinkedHashMap attrs) {    	
     	try {
-        	GeoBoolean bool = (GeoBoolean) geo;
-        	bool.setCaption((String) attrs.get("val"));
+    		String strShowObject = (String) attrs.get("showObject");
+    		GeoBoolean bool = kernel.getAlgebraProcessor().evaluateToBoolean(strShowObject);
+        	geo.setShowObjectCondition(bool);
             return true;
         } catch (Exception e) {
             return false;

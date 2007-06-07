@@ -55,8 +55,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     
     // list of Locateables (GeoElements) that this point is start point of
     // if this point is removed, the Locateables have to be notified
-    private ArrayList locateableList;     
-    private int locateableSize = 0;
+    private ArrayList locateableList;         
     
     public GeoPoint(Construction c) { 
     	super(c); 
@@ -626,8 +625,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		super.update();
 				
 		// update all registered locatables (they have this point as start point)
-		if (locateableSize > 0) {
-			for (int i=0; i < locateableSize; i++) {
+		if (locateableList != null) {
+			for (int i=0; i < locateableList.size(); i++) {
 				Locateable loc = (Locateable) locateableList.get(i);		
 				loc.toGeoElement().updateCascade();							
 			}		
@@ -649,8 +648,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		if (parentAlgo == null ||
 			!(getAlgoUpdateSet().contains(parentAlgo))) {
 			// add the locatable
-			locateableList.add(l);
-			locateableSize = locateableList.size();
+			locateableList.add(l);			
 		}
 	}
 	
@@ -660,8 +658,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	 */
 	public void unregisterLocateable(Locateable l) {
 		if (locateableList != null) {
-			locateableList.remove(l);
-			locateableSize = locateableList.size();
+			locateableList.remove(l);			
 		}
 	}
 	
