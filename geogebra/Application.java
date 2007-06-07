@@ -106,7 +106,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "6. June 2007";
+    public static final String buildDate = "7. June 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -210,7 +210,7 @@ public class Application implements	KeyEventDispatcher {
     private GeoGebraApplet applet;
     private Component mainComp;
     private boolean isApplet = false;    
-    private boolean showResetIcon = true;
+    private boolean showResetIcon = false;
     private String codebase;
 
     private AlgebraView algebraView;
