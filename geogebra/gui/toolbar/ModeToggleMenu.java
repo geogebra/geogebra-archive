@@ -13,6 +13,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui.toolbar;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Kernel;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -117,7 +119,10 @@ public class ModeToggleMenu extends JPanel {
 		String actionText = mode + "";
 		JMenuItem mi = new JMenuItem();
 		mi.setFont(app.getPlainFont());
-		mi.setText(app.getMenu(modeText));
+		if (mode < EuclidianView.MACRO_MODE_ID_OFFSET)
+			mi.setText(app.getMenu(modeText));
+		else 
+			mi.setText(modeText); // no translation for macro mode text
 	    
 		mi.setIcon(icon);
 		mi.addActionListener(popupMenuItemListener);

@@ -22,8 +22,12 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 
@@ -45,23 +49,27 @@ implements ExpressionValue {
 	public static final int STRING_TYPE_LATEX = 100;
     
 	// boolean
-	public static final int NOT_EQUAL = -10;
-	public static final int NOT = -9;
-	public static final int OR = -8;
-    public static final int AND = -7;
-    public static final int EQUAL_BOOLEAN = -6;
-    public static final int LESS = -5;
-    public static final int GREATER = -4;
-    public static final int LESS_EQUAL = -3;
-    public static final int GREATER_EQUAL = -2;    
+	public static final int NOT_EQUAL = -100;
+	public static final int NOT = -99;
+	public static final int OR = -98;
+    public static final int AND = -97;
+    public static final int EQUAL_BOOLEAN = -96;
+    public static final int LESS = -95;
+    public static final int GREATER = -94;
+    public static final int LESS_EQUAL = -93;
+    public static final int GREATER_EQUAL = -92;    
+    public static final int PARALLEL = -91;  
+    public static final int PERPENDICULAR = -90;
     
-    private static final String strNOT = "\u00ac";
-    private static final String strAND = "\u2227";
-    private static final String strOR = "\u2228";
-    private static final String strLESS_EQUAL = "\u2264";
-    private static final String strGREATER_EQUAL = "\u2265";
-    private static final String strNOT_EQUAL = "\u2260";
-
+    public static final String strNOT = "\u00ac";
+    public static final String strAND = "\u2227";
+    public static final String strOR = "\u2228";
+    public static final String strLESS_EQUAL = "\u2264";
+    public static final String strGREATER_EQUAL = "\u2265";
+    public static final String strNOT_EQUAL = "\u2260";
+    public static final String strPARALLEL = "\u2225";
+    public static final String strPERPENDICULAR = "\u22a5";
+        
     // arithmetic
     public static final int PLUS = 0;
     public static final int MINUS = 1;
@@ -383,10 +391,26 @@ implements ExpressionValue {
 				return new MyBoolean(
 						((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
 					);        				
-			else { 
-                String [] str = { "IllegalComparison", lt.toString(), "==",  rt.toString() };
-                throw new MyError(app, str);
-            } 
+        	else if (lt.isGeoElement() && rt.isGeoElement()) {
+        		GeoElement geo1 = (GeoElement) lt;
+        		GeoElement geo2 = (GeoElement) rt;
+        		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
+        			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
+        		}
+        		else if (geo1.isGeoLine() && geo2.isGeoLine()) {
+        			return new MyBoolean(((GeoLine)geo1).equals((GeoLine) geo2));
+        		}
+        		else if (geo1.isGeoConic() && geo2.isGeoConic()) {
+        			return new MyBoolean(((GeoConic)geo1).equals((GeoConic) geo2));
+        		}
+        		else if (geo1.isGeoVector() && geo2.isGeoVector()) {
+        			return new MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2));
+        		}
+        	}      
+        	{
+            String [] str = { "IllegalComparison", lt.toString(), "==",  rt.toString() };
+            throw new MyError(app, str);
+        	}
         	
         case NOT_EQUAL:
         	// nummber != number
@@ -460,7 +484,25 @@ implements ExpressionValue {
 			else { 
                 String [] str = { "IllegalComparison", lt.toString(), strGREATER_EQUAL,  rt.toString() };
                 throw new MyError(app, str);
-            }         	        
+            }         	  
+        	        	
+        case PARALLEL:
+        	// line parallel to line
+        	if (lt instanceof GeoLine && rt instanceof GeoLine) {
+				return new MyBoolean(((GeoLine)lt).isParallel((GeoLine)rt));        		
+        	} else { 
+                String [] str = { "IllegalComparison", lt.toString(), strPARALLEL,  rt.toString() };
+                throw new MyError(app, str);
+            }         
+        	
+        case PERPENDICULAR:
+        	// line perpendicular to line
+        	if (lt instanceof GeoLine && rt instanceof GeoLine) {
+				return new MyBoolean(((GeoLine)lt).isPerpendicular((GeoLine)rt));   
+        	} else { 
+                String [] str = { "IllegalComparison", lt.toString(), strPERPENDICULAR,  rt.toString() };
+                throw new MyError(app, str);
+            }         	
         
         /*
          * ARITHMETIC operations
@@ -1809,6 +1851,22 @@ implements ExpressionValue {
           	 	sb.append(' ');
           	 	sb.append(strGREATER_EQUAL);
           	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+                
+           case PARALLEL:
+         	 	sb.append(leftStr);
+         	 	sb.append(' ');
+         	 	sb.append(strPARALLEL);
+         	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+               
+           case PERPENDICULAR:
+        	 	sb.append(leftStr);
+        	 	sb.append(' ');
+        	 	sb.append(strPERPENDICULAR);
+        	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
         

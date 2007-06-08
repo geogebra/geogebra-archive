@@ -56,6 +56,7 @@ public class GeoGebraPreferences {
      
     // special preference keys
 	private static final String XML_USER_PREFERENCES = "xml_user_preferences";	
+	private static final String TOOLS_FILE_GGT = "tools_file_ggt";	
 	private static final String APP_LOCALE = "app_locale";	
 	private static final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
 	private static final String APP_FILE_ = "app_file_";		
@@ -168,8 +169,12 @@ public class GeoGebraPreferences {
      * Saves preferences by taking the application's current values. 
      */
     public static void saveXMLPreferences(Application app) {
+    	// preferences xml
     	String xml = app.getPreferencesXML();
     	ggbPrefs.put(XML_USER_PREFERENCES, xml);  
+    	    	
+    	// store current tools including icon images as ggt file (byte array)
+    	ggbPrefs.putByteArray(TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
     	
     	try {
     		ggbPrefs.flush();
@@ -183,14 +188,19 @@ public class GeoGebraPreferences {
      * This method clears the current construction in the application.
      * Note: the XML string used is the same as for ggb files. 
      */
-    public static void loadXMLPreferences(Application app) {    	    	    	 	      	    	    	
-    	// get preferences xml
-    	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);    	
-    			
+    public static void loadXMLPreferences(Application app) {  
     	// load this preferences xml file in application
     	try {
     		app.setWaitCursor();
+    		
+    		// load tools from ggt file (byte array)
+        	byte [] ggtFile = ggbPrefs.getByteArray(TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
+        	app.loadMacroFileFromByteArray(ggtFile);
+    		
+    		// load preferences xml
+        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
     		app.setXML(xml, true);	
+    		
     		app.initUndoInfo();      		
     		app.setDefaultCursor();
     	} catch (Exception e) {	    		

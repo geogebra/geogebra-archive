@@ -55,19 +55,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		instances.add(this);
 		activeInstance = this;				
 	}
-
-	public void dispose() {
-		instances.remove(this);
-		GeoGebraPreferences.saveFileList();
-		
-		if (instances.size() == 0) {			
-			super.dispose();
-			System.exit(0);
-		} else {
-			super.dispose();
-			updateAllTitles();
-		}				
-	}
+	
 
 	public Application getApplication() {
 		return app;
@@ -102,7 +90,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			return defLocale;
 	}
 
-	public void setVisible(boolean flag) {
+	public void setVisible(boolean flag) {				
 		if (flag) {						
 			updateSize();									
 			
@@ -123,12 +111,25 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 				// center
 				setLocationRelativeTo(null);
 			}
+			
+			super.setVisible(true);	
+			app.getEuclidianView().requestFocusInWindow();
 		}
-				
-		super.setVisible(flag);	
-		
-		if (flag)        	    	
-    		app.getEuclidianView().requestFocusInWindow();
+		else {	
+			if (!isShowing()) return;
+			
+			instances.remove(this);
+			GeoGebraPreferences.saveFileList();
+			
+			if (instances.size() == 0) {			
+				super.setVisible(false);
+				dispose();
+				System.exit(0);
+			} else {
+				super.setVisible(false);
+				updateAllTitles();
+			}		
+		}		
 	}
 	
 	public void updateSize() {

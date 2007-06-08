@@ -2,7 +2,7 @@ package sharptools;
 /*
  * @(#)HelpOp.java
  *
- * $Id: HelpOp.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
+ * $Id: HelpOp.java,v 1.3 2007-06-08 17:39:34 hohenwarter Exp $
  *
  * Created on October 22, 2000, 2:46 AM
  */
@@ -41,7 +41,7 @@ import javax.swing.text.Document;
  * This html browser allows for the browsing of local help files. 
  *
  * @author Daniel Medina, Daniel Goldberg
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class HelpOp {
 
@@ -101,8 +101,7 @@ public class HelpOp {
 	exitListener = new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    Window window = e.getWindow();
-		    window.setVisible(false);
-		    window.dispose();
+		    window.setVisible(false);		    
 		}
 	    };
 	

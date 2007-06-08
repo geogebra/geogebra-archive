@@ -312,6 +312,10 @@ public class AlgebraView extends JTree implements View {
 		else
 			return null;
 	}
+	
+	public void setToolTipText(String text) {
+		renderer.setToolTipText(text);
+	}
 
 	/**
 	 * Open Editor textfield for geo.

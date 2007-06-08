@@ -130,9 +130,9 @@ implements Traceable {
      */
     final public boolean linDep(GeoVec3D v) {
         // v lin.dep this  <=>  cross(v,w) = o            
-        return kernel.isZero(y * v.z - z * v.y)
-			        && kernel.isZero(z * v.x - x * v.z) 
-			        && kernel.isZero(x * v.y - y * v.x);       
+        return kernel.isEqual(y * v.z, z * v.y)
+			&& kernel.isEqual(z * v.x, x * v.z) 
+			&& kernel.isEqual(x * v.y, y * v.x);       
     }
     
     final public boolean isZero() {

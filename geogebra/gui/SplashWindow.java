@@ -125,7 +125,7 @@ public class SplashWindow extends Window {
                     paintCalled = true;
                     notifyAll();
                 }
-                dispose();
+                setVisible(false);
             }
         };
         addMouseListener(disposeOnClick);

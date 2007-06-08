@@ -112,7 +112,12 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     
     /** returns true if this line and g are parallel */
     final public boolean isParallel(GeoLine g) {        
-        return kernel.isZero(g.x * y - g.y * x);        
+        return kernel.isEqual(g.x * y, g.y * x);        
+    }
+    
+    /** returns true if this line and g are perpendicular */
+    final public boolean isPerpendicular(GeoLine g) {        
+        return kernel.isEqual(g.x * x, -g.y * y);        
     }
         
     /** Calculates the euclidian distance between this GeoLine and GeoPoint P.

@@ -86,7 +86,16 @@ public class MyXMLio {
      */    
     public final void readZipFromURL(URL url, boolean isMacroFile) throws Exception {      	
     	BufferedInputStream bis = new BufferedInputStream(url.openStream());	
-        ZipInputStream zip = new ZipInputStream(bis);
+        readZipFromInputStream(bis, isMacroFile);
+        bis.close();
+    }
+
+    /**
+     * Reads zipped file from input stream that includes the construction saved 
+     * in xml format and maybe image files.
+     */    
+    public final void readZipFromInputStream(InputStream is, boolean isMacroFile) throws Exception {      	    	
+        ZipInputStream zip = new ZipInputStream(is);
                 
         // we have to read everything (i.e. all images)
         // before we process the XML file, that's why we
@@ -126,8 +135,7 @@ public class MyXMLio {
         	// get next entry
         	zip.closeEntry();        	
         }
-        zip.close();  
-        bis.close();
+        zip.close();          
                 
         if (!isMacroFile) {
         	// ggb file: remove all macros from kernel before processing
@@ -148,7 +156,6 @@ public class MyXMLio {
         if (!(macroXMLfound || xmlFound)) 
 			throw new Exception("No XML data found in file.");   
     }
-
     
     /**
      * Handles the XML file stored in buffer.
@@ -268,9 +275,19 @@ public class MyXMLio {
     	// create file
         FileOutputStream f = new FileOutputStream(file);
         BufferedOutputStream b = new BufferedOutputStream(f);
-
-        // zip stream
-        ZipOutputStream zip = new ZipOutputStream(b);  
+        writeMacroStream(b, macros);           
+        b.close(); 
+        f.close();
+    } 
+    
+    /**
+     * Writes a zipped file containing the given macros 
+     * in xml format plus all their external images (e.g. icons)
+     * to the specified output stream.
+     */
+    public void writeMacroStream(OutputStream os, Macro [] macros) throws IOException {
+    	  // zip stream
+        ZipOutputStream zip = new ZipOutputStream(os);  
         OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
         
         // write images
@@ -283,10 +300,8 @@ public class MyXMLio {
         zip.closeEntry();                
                     
         osw.close();
-        zip.close();           
-        b.close();      
-        f.close();
-    } 
+        zip.close();             
+    }
     
     /** 
      * Writes all images used in construction to zip.

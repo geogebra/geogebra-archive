@@ -134,6 +134,8 @@ TOKEN :  {
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
   | < GREATER_EQUAL: (">=" | "\u2265") >
+  | < PARALLEL: "\u2225" >
+  | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
   | < PLUS:     "+" >
   | < MINUS:    "-" >
@@ -679,7 +681,19 @@ ExpressionNode COMPAREterm():
     	 {            
            ret = new ExpressionNode(kernel, ret, ExpressionNode.GREATER_EQUAL, f);  
          }
-       )                
+       ) 
+      |
+   	    (<PARALLEL>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.PARALLEL, f);  
+         }
+         ) 
+      |
+   	    (<PERPENDICULAR>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.PERPENDICULAR, f);  
+         }
+        )                       
     )? 
     { return ret; }  
 }

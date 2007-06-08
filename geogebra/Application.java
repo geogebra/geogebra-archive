@@ -75,6 +75,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -98,7 +100,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
@@ -106,7 +107,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "7. June 2007";
+    public static final String buildDate = "8. June 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -947,8 +948,7 @@ public class Application implements	KeyEventDispatcher {
                 URL helpURL = getHelpURL(currentLocale);
                 helpBrowser.setHomePage(helpURL);
             } catch (Exception e) {
-                helpBrowser.setVisible(false);
-                helpBrowser.dispose();
+                helpBrowser.setVisible(false);              
                 helpBrowser = null;
             }   
         }
@@ -1469,17 +1469,17 @@ public class Application implements	KeyEventDispatcher {
 	public Color showColorChooser(Color currentColor) {
 		// there seems to be a bug concerning ToolTips in JColorChooser 
 		// so we turn off ToolTips
-		ToolTipManager.sharedInstance().setEnabled(false);
+		//ToolTipManager.sharedInstance().setEnabled(false);
 		try {
 			Color newColor =
 				JColorChooser.showDialog(
 					null,
 					getPlain("ChooseColor"),
 					currentColor);
-			ToolTipManager.sharedInstance().setEnabled(true);
+			//ToolTipManager.sharedInstance().setEnabled(true);
 			return newColor;
 		} catch (Exception e) {
-			ToolTipManager.sharedInstance().setEnabled(true);
+			//ToolTipManager.sharedInstance().setEnabled(true);
 			return null;
 		}
 	}
@@ -2644,8 +2644,8 @@ public class Application implements	KeyEventDispatcher {
         if (isSaved() || applet != null || saveCurrentFile()) {        	
             if (applet != null) {            	
                 applet.showApplet();                
-            } else {       
-            	frame.dispose();            	
+            } else {    
+            	frame.setVisible(false);            	
             }
         }
     }
@@ -2854,6 +2854,28 @@ public class Application implements	KeyEventDispatcher {
     
     public String getPreferencesXML() {
     	return myXMLio.getPreferencesXML();
+    }
+    
+    public byte [] getMacroFileAsByteArray() {
+    	try {
+    		ByteArrayOutputStream os = new ByteArrayOutputStream();
+    		myXMLio.writeMacroStream(os, kernel.getAllMacros());
+    		os.flush();
+    		return os.toByteArray();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
+    
+    public void loadMacroFileFromByteArray(byte [] byteArray) {
+    	try {
+    		ByteArrayInputStream is = new ByteArrayInputStream(byteArray);
+    		myXMLio.readZipFromInputStream(is, true);
+    		is.close();    	
+    	} catch (Exception e) {
+    		e.printStackTrace();    		
+    	}
     }
 
     final public MyXMLio getXMLio() {

@@ -76,9 +76,9 @@ public class MyPopupMenu extends JPopupMenu {
         this.geo = geo;
         //this.location = location;                               
                     
-        String title = geo.getLongDescriptionHTML(true, true);
-        if (title.length() > 30)
-        	title = geo.getNameDescriptionHTML(true, true);
+        String title = geo.getLongDescriptionHTML(false, true);
+        if (title.length() > 50)
+        	title = geo.getNameDescriptionHTML(false, true);
         setTitle(title);
         
         if (app.showAlgebraView()) {

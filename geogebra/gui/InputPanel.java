@@ -3,6 +3,7 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.BorderLayout;
 
@@ -28,11 +29,13 @@ public class InputPanel extends JPanel {
 		"ln(x)",
 		"sin(x)",
 		"cos(x)",
-		"\u00ac", // boolean NOT 
-		"\u2227", // boolean AND
-	    "\u2228", // boolean OR
-	    "\u2264", // boolean LESS EQUAL
-	    "\u2265" // boolean GREATER_EQUAL
+		ExpressionNode.strNOT,
+		ExpressionNode.strAND,
+		ExpressionNode.strOR,
+		ExpressionNode.strLESS_EQUAL,
+		ExpressionNode.strGREATER_EQUAL,
+		ExpressionNode.strPARALLEL,
+		ExpressionNode.strPERPENDICULAR
 	};
 	
 	public final static String [] greekLowerCase = {

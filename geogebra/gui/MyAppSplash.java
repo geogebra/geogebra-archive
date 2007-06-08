@@ -47,7 +47,7 @@ public class MyAppSplash extends Object {
             System.err.flush();
             System.exit(10);
         }
-        if (splashFrame != null) splashFrame.dispose();
+        if (splashFrame != null) splashFrame.setVisible(false);
     }
     
 	

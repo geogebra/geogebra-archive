@@ -390,13 +390,13 @@ public class AlgebraController
 			view.setClosingCrossHighlighted(false);
 			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);
 			EuclidianView ev = app.getEuclidianView();
-
+			
 			// tell EuclidianView to handle mouse over
 			ev.mouseMovedOver(geo);								
-			if (geo != null)
-				view.setToolTipText(geo.getLongDescriptionHTML(true, true));
-			else
-				view.setToolTipText(null);
+			if (geo != null) {
+				view.setToolTipText(geo.getLongDescriptionHTML(true, true));				
+			} else
+				view.setToolTipText(null);			
 		}
 		
 	}

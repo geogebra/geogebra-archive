@@ -397,8 +397,8 @@ implements GeoElementSelectionListener {
 		// combobox to add geos				
 		final JComboBox cbAdd = new JComboBox(cbModel);
 		// listener for the combobox
-		ActionListener ac = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {				
+		MyComboBoxListener ac = new MyComboBoxListener() {
+			public void doActionPerformed(Object source) {				
 				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
 				if (geo == null) return;
 				
@@ -409,6 +409,7 @@ implements GeoElementSelectionListener {
 			}
 		};
 		cbAdd.addActionListener(ac);
+		cbAdd.addMouseListener(ac);
 		
 		// list to show selected geos
 		JList list = new JList(listModel);												
