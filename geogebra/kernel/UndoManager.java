@@ -160,7 +160,7 @@ public class UndoManager {
 	 * Processes xml string. Note: this will change the construction.
 	 */
 	void processXML(String strXML) throws Exception {	
-		xmlio.processXMLString(strXML, true);
+		xmlio.processXMLString(strXML, true, false);
 	}
 	
 	/**

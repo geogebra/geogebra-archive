@@ -29,11 +29,13 @@ public class InputPanel extends JPanel {
 		"ln(x)",
 		"sin(x)",
 		"cos(x)",
-		ExpressionNode.strNOT,
-		ExpressionNode.strAND,
-		ExpressionNode.strOR,
+		ExpressionNode.strEQUAL_BOOLEAN,
+		ExpressionNode.strNOT_EQUAL,
 		ExpressionNode.strLESS_EQUAL,
 		ExpressionNode.strGREATER_EQUAL,
+		ExpressionNode.strNOT,
+		ExpressionNode.strAND,
+		ExpressionNode.strOR, 
 		ExpressionNode.strPARALLEL,
 		ExpressionNode.strPERPENDICULAR
 	};

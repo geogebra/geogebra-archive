@@ -107,7 +107,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "8. June 2007";
+    public static final String buildDate = "11. June 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -520,7 +520,7 @@ public class Application implements	KeyEventDispatcher {
         if (showToolBar) {
         	if (appToolbarPanel == null) {
         		appToolbarPanel = new MyToolbar(this);        		  
-        	}        	       
+        	}                	
         	       	        	            
         	 // NORTH: Toolbar       
         	panel.add(appToolbarPanel, BorderLayout.NORTH);        	
@@ -1910,8 +1910,9 @@ public class Application implements	KeyEventDispatcher {
 				if ("".equals(modeText)) 
 					modeText = macro.getCommandName();
 				return modeText;
-			} catch (Exception e) {
-				System.err.println("macro does not exist: ID = " + macroID);
+			} catch (Exception e) {				
+				System.err.println("Application.getModeText(): macro does not exist: ID = " + macroID);				
+				//e.printStackTrace();
 				return "";
 			}    		
 		}
@@ -2171,6 +2172,35 @@ public class Application implements	KeyEventDispatcher {
         }
     	    	    	    	
     	setMoveMode();
+    }
+    
+    public void removeFromToolbarDefinition(int mode) {    	
+    	if (strCustomToolbarDefinition != null) {
+    		// TODO: remove
+    		System.out.println("before: " + strCustomToolbarDefinition + ",  delete " + mode);
+    		
+    		strCustomToolbarDefinition = 
+    			strCustomToolbarDefinition.replaceAll(Integer.toString(mode), "");
+    		
+    		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+    			// if a macro mode is removed all higher macros get a new id (i.e. id-1)
+    			int lastID = kernel.getMacroNumber() + EuclidianView.MACRO_MODE_ID_OFFSET-1;
+    			for (int id=mode+1; id <= lastID; id++) {
+    				strCustomToolbarDefinition = 
+    					strCustomToolbarDefinition.replaceAll(Integer.toString(id), Integer.toString(id-1));
+    			}
+    		}
+    		
+    		// TODO: remove
+    		System.out.println("after: " + strCustomToolbarDefinition);
+    	}    	
+    }
+    
+    public void addToToolbarDefinition(int mode) {    	
+    	if (strCustomToolbarDefinition != null) {
+    		strCustomToolbarDefinition = 
+    			strCustomToolbarDefinition + " | " + mode;
+    	}  
     }
     
     public void updateMenubar() {
@@ -2616,14 +2646,17 @@ public class Application implements	KeyEventDispatcher {
         }                         
         
         boolean success = loadXML(file, isMacroFile);  
-          
-        // update GUI
-        
-        if (euclidianView.hasPreferredSize()) {
-            // update GUI: size of euclidian view was set
-        	updateContentPaneAndSize();                              
-        } else {
-        	updateContentPane();
+       
+        if (isMacroFile) {
+        	updateToolBar();
+        } else {	        
+	        // update GUI                
+	        if (euclidianView.hasPreferredSize()) {
+	            // update GUI: size of euclidian view was set
+	        	updateContentPaneAndSize();                              
+	        } else {
+	        	updateContentPane();
+	        }
         }
         
 		return success;               
@@ -2699,9 +2732,11 @@ public class Application implements	KeyEventDispatcher {
     				euclidianView.getXYscaleRatioString());
     }*/
     
-    public void setMode(int mode) {      		    	
-        euclidianView.setMode(mode);
-        algebraView.reset();
+    public void setMode(int mode) {  
+    	 if (euclidianView != null)
+    		 euclidianView.setMode(mode);
+        if (algebraView != null)
+        	algebraView.reset();
         
         if (algebraInput != null && showAlgebraInput) {
         	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
@@ -2714,7 +2749,8 @@ public class Application implements	KeyEventDispatcher {
         }                
         
         // select toolbar button
-        appToolbarPanel.setMode(mode);       
+        if (appToolbarPanel != null)
+        	appToolbarPanel.setMode(mode);       
             	
     	// if the properties dialog is showing, move mode is a selection mode
         // for the properties dialog
@@ -2812,7 +2848,7 @@ public class Application implements	KeyEventDispatcher {
       * @return true if successful
       */
     final public boolean loadXML(URL url, boolean isMacroFile) {
-        try {
+        try {        	
             myXMLio.readZipFromURL(url, isMacroFile);
             if (!isMacroFile) {
             	kernel.initUndoInfo();
@@ -2841,7 +2877,7 @@ public class Application implements	KeyEventDispatcher {
     	setCurrentFile(null); 
     	
         try {        
-            myXMLio.processXMLString(xml, clearAll);
+            myXMLio.processXMLString(xml, clearAll, false);
         } catch (MyError err) {          	
         	err.printStackTrace();
             showError(err);                        
@@ -2868,11 +2904,16 @@ public class Application implements	KeyEventDispatcher {
     	}
     }
     
-    public void loadMacroFileFromByteArray(byte [] byteArray) {
+    public void loadMacroFileFromByteArray(byte [] byteArray, boolean removeOldMacros) {
     	try {
-    		ByteArrayInputStream is = new ByteArrayInputStream(byteArray);
-    		myXMLio.readZipFromInputStream(is, true);
-    		is.close();    	
+    		if (removeOldMacros)
+    			kernel.removeAllMacros();
+    		
+    		if (byteArray != null) {	    		
+	    		ByteArrayInputStream is = new ByteArrayInputStream(byteArray);
+	    		myXMLio.readZipFromInputStream(is, true);
+	    		is.close(); 
+    		}  	
     	} catch (Exception e) {
     		e.printStackTrace();    		
     	}

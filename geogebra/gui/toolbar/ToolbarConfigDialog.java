@@ -48,6 +48,7 @@ public class ToolbarConfigDialog extends JDialog {
 	private void apply() {				
 		app.setToolBarDefinition(confPanel.getToolBarString());
 		app.updateToolBar();
+		app.setUnsaved();
 		setVisible(false);
 		dispose();
 	}

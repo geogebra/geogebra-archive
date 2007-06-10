@@ -181,6 +181,7 @@ public class WorksheetExportDialog extends JDialog {
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
 	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
+	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 	    	cbShowInputField.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
 		} catch (Exception e) {

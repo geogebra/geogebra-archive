@@ -31,7 +31,7 @@ public class MyBoolean implements BooleanValue {
     	this.value = value; 
     }
        
-    public String toString() {
+    public String toString() {    	
         return value ? "true" : "false";
     }
 

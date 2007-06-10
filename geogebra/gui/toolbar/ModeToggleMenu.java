@@ -112,7 +112,7 @@ public class ModeToggleMenu extends JPanel {
 	}
 	
 	public void addMode(int mode) {
-		String modeText = app.getModeText(mode);
+		String modeText = app.getModeText(mode);	
 		ImageIcon icon = app.getModeIcon(mode);
 		
 		// add menu item to popu menu

@@ -125,11 +125,11 @@ TOKEN : {
 /* OPERATORS */
 TOKEN :  {   
     < CARTESIAN_SPECIAL_SEPERATOR: "|" >
-  | < NOT: "\u00ac" > 
-  | < OR:		("||" | "\u2228") >
-  | < AND:		("&&" | "\u2227") >
-  | < EQUAL_BOOLEAN: "==" >
-  | < NOT_EQUAL: ("!=" | "\u2260") >
+  | < NOT: ("\u00ac") > 
+  | < OR:		("||" | "\u2228" ) >
+  | < AND:		("&&" | "\u2227" ) >
+  | < EQUAL_BOOLEAN: ("==" | "\u225f" ) >
+  | < NOT_EQUAL: ("!=" | "\u2260" ) >
   | < LESS:		"<" >
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
@@ -153,8 +153,8 @@ TOKEN :  {
   | < DEGREE:   "\u00b0" >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >
-  | < TRUE:     "true" >
-  | < FALSE:    "false" >
+  | < TRUE:     ( "true" | "True" ) >
+  | < FALSE:    ( "false" | "False" ) >
 }
 
 TOKEN : {      

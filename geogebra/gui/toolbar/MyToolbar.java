@@ -34,7 +34,7 @@ public class MyToolbar extends JPanel{
 	public static final Integer TOOLBAR_SEPARATOR = new Integer(-1);
 
 	private Application app;
-	private ArrayList moveToggleMenus;   
+	private ArrayList modeToggleMenus;   
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
 	private int mode;
@@ -60,7 +60,7 @@ public class MyToolbar extends JPanel{
         JToolBar tb = new JToolBar();   
         tb.setBackground(getBackground());
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
-        moveToggleMenus = new ArrayList();
+        modeToggleMenus = new ArrayList();
         
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));           
         add(leftPanel, BorderLayout.WEST);  
@@ -110,15 +110,15 @@ public class MyToolbar extends JPanel{
     	if (mode == this.mode) return;    	
     	
     	this.mode = mode;
-        if (moveToggleMenus != null) {
+        if (modeToggleMenus != null) {
         	int showMode = mode;
         	// show move mode icon for algebra input (selection) mode
         	//if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
         	//	showMode = EuclidianView.MODE_MOVE;
         	//}
         	
-         	for (int i=0; i < moveToggleMenus.size(); i++) {
-         		ModeToggleMenu mtm = (ModeToggleMenu) moveToggleMenus.get(i);
+         	for (int i=0; i < modeToggleMenus.size(); i++) {
+         		ModeToggleMenu mtm = (ModeToggleMenu) modeToggleMenus.get(i);
          		if (mtm.selectMode(showMode)) break;
         	}
         }                            
@@ -187,7 +187,7 @@ public class MyToolbar extends JPanel{
 	        // new menu
 	        Vector menu = (Vector) ob;
 	        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
-	        moveToggleMenus.add(tm);	      
+	        modeToggleMenus.add(tm);	      
 	        
 	        for (int k = 0; k < menu.size(); k++) {
 	        	// separator
@@ -197,11 +197,15 @@ public class MyToolbar extends JPanel{
 	        		tm.addSeparator();
 	        	} 
 	        	else { // standard case: add mode
-	        		 tm.addMode(mode);
-	        		 if (firstButton) {
-	                 	tm.getJToggleButton().setSelected(true);
-	                 	firstButton = false;
-	                 }
+	        		
+	        		// check mode
+	       			if (!"".equals(app.getModeText(mode))) {
+		        		 tm.addMode(mode);
+		        		 if (firstButton) {
+		                 	tm.getJToggleButton().setSelected(true);
+		                 	firstButton = false;
+		                 }
+	       			}	       			 
 	        	}
 	        }
 	            
@@ -246,8 +250,10 @@ public class MyToolbar extends JPanel{
 	         }
 	         else { // add mode to menu
 	        	 try  {	
-	        		 if (tokens[i].length() > 0)
-	        			 menu.add(new Integer(Integer.parseInt(tokens[i])));
+	        		 if (tokens[i].length() > 0) {
+	        			 int mode = Integer.parseInt(tokens[i]);	        			 
+	        			 menu.add(new Integer(mode));
+	        		 }
 	        	 }
 	     		catch(Exception e) {
 	     			e.printStackTrace();
@@ -362,29 +368,10 @@ public class MyToolbar extends JPanel{
         sb.append(" ");
         sb.append(EuclidianView.MODE_IMAGE);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_RELATION);        
+        sb.append(EuclidianView.MODE_RELATION);                     
         
-        // macros
+        // translate view, show/hide modes   
         sb.append(" || ");
-        Kernel kernel = app.getKernel();
-        int macroNumber = kernel.getMacroNumber();        
-        if (macroNumber > 0) {        	
-        	int count = 0;
-        	for (int i = 0; i < macroNumber; i++) {
-        		Macro macro = kernel.getMacro(i);
-        		if (macro.isShowInToolBar()) {
-        			count++;
-        			sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
-        			sb.append(" ");
-        		}        			
-        	}             	        
-        	
-        	if (count > 0) {
-        		sb.append(" || ");        		
-        	}
-        }            
-        
-        // translate view, show/hide modes        
         sb.append(EuclidianView.MODE_TRANSLATEVIEW);
         sb.append(" ");
         sb.append(EuclidianView.MODE_ZOOM_IN);
@@ -398,6 +385,22 @@ public class MyToolbar extends JPanel{
         sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
         sb.append(" , ");        
         sb.append(EuclidianView.MODE_DELETE);
+        
+        // macros       
+        Kernel kernel = app.getKernel();
+        int macroNumber = kernel.getMacroNumber();        
+        if (macroNumber > 0) {    
+        	sb.append(" || ");
+        	int count = 0;
+        	for (int i = 0; i < macroNumber; i++) {
+        		Macro macro = kernel.getMacro(i);
+        		if (macro.isShowInToolBar()) {
+        			count++;
+        			sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
+        			sb.append(" ");
+        		}        			
+        	}             	                	        	
+        }            
         
         //System.out.println("defToolbar: " + sb);
         

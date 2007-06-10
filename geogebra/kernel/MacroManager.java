@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class MacroManager {
 	
 	private HashMap macroMap; // maps macro name to macro object
-	private ArrayList macroList; // lists all macros
+	private ArrayList macroList; // lists all macros	
 	
 	public MacroManager() {
 		macroMap = new HashMap();
@@ -41,7 +41,7 @@ public class MacroManager {
 	
 	public void removeMacro(Macro macro) {
 		macroMap.remove(macro.getCommandName());	
-		macroList.remove(macro);
+		macroList.remove(macro);		
 	}	
 	
 	public void removeAllMacros() {

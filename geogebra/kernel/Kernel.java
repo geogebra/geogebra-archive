@@ -801,7 +801,8 @@ public class Kernel {
 				while (it.hasNext()) {	
 					GeoElement geo =  (GeoElement) it.next();					
 					notifyAdd(geo);									
-				}				
+				}			
+				app.setMoveMode();
 				notifyReset();
 				
 				viewReiniting = false;
@@ -858,28 +859,7 @@ public class Kernel {
 	
 	/* **********************************
 	 *   MACRO handling
-	 * **********************************/	
-	
-	/**
-	 * Creates a new macro within the kernel. A macro is a user defined
-	 * command in GeoGebra.
-	 */
-	public Macro createMacro(String cmdName, GeoElement [] input, GeoElement [] output) throws Exception {		
-		// we need a non null macro name, this is the command name of the user defined command
-		String macroName = cmdName;
-		if (macroName == null || macroName.length() == 0) {
-			macroName = app.getMenu("Tool") + (macroManager.getMacroNumber() + 1);
-		}		
-				
-		if (macroManager == null) {
-			macroManager = new MacroManager();
-		}
-						
-		// create new macro
-		Macro macro = new Macro(this, macroName, input, output);		
-		addMacro(macro);								
-		return macro;		
-	}
+	 * **********************************/			
 	
 	/**
 	 * Creates a new macro within the kernel. A macro is a user defined
@@ -889,7 +869,7 @@ public class Kernel {
 		if (macroManager == null) {
 			macroManager = new MacroManager();
 		}						
-		macroManager.addMacro(macro);	
+		macroManager.addMacro(macro);				
 	}
 	
 	/**

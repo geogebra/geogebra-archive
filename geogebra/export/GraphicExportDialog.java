@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.jibble.epsgraphics.EpsGraphics2D;
 
@@ -63,8 +64,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private final int FORMAT_PNG = 0;
 	private final int FORMAT_EPS = 1;		
 	private final int FORMAT_SVG = 2;
-	private final int FORMAT_PSTRICKS = 3;
-	//private final int FORMAT_EMF = 3;
+	private final int FORMAT_EMF = 3;
+	private final int FORMAT_PSTRICKS = 4;
+	
 
 	public GraphicExportDialog(Application app) {
 		super(app.getFrame(), true);
@@ -100,9 +102,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		String[] formats =
 					{ app.getPlain("png") + " (" + Application.FILE_EXT_PNG + ")",
 					  app.getPlain("eps") + " (" + Application.FILE_EXT_EPS + ")", 			
-					  //app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")",
 					  app.getPlain("svg") + " (" + Application.FILE_EXT_SVG + ")",
-					  "PSTricks"};
+					  app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")",						 
+					"PSTricks"};
 		
 		cbFormat = new JComboBox(formats);
 		formatPanel.add(new JLabel(app.getPlain("Format") + ":"));
@@ -145,8 +147,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			public void actionPerformed(ActionEvent arg0) {
 				switch (cbFormat.getSelectedIndex()) {
 					case FORMAT_EPS:
-					//case FORMAT_EMF:
-					case FORMAT_SVG:					
+					case FORMAT_SVG:
+					case FORMAT_EMF:
 						cbDPI.setSelectedItem("72");
 						cbDPI.setEnabled(false);						
 						break;											
@@ -195,9 +197,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 								exportEPS();
 								break;		
 															
-							//case FORMAT_EMF: // EMF
-							//	exportEMF();
-							//	break;
+							case FORMAT_EMF: // EMF
+								exportEMF();
+								break;
 								
 							case FORMAT_SVG: // SVG
 								exportSVG();
@@ -344,7 +346,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	
 	/**
 	  *  Exports drawing as emf
-	  *
+	  */
 	final private boolean exportEMF() {
 		File file =
 			app.showSaveDialog(
@@ -369,7 +371,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			System.err.println(ex.toString());
 			return false;
 		} 
-	}*/
+	}
 	
 	/**
 	  *  Exports drawing as SVG

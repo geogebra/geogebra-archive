@@ -66,6 +66,7 @@ implements ExpressionValue {
     public static final String strOR = "\u2228";
     public static final String strLESS_EQUAL = "\u2264";
     public static final String strGREATER_EQUAL = "\u2265";
+    public static final String strEQUAL_BOOLEAN = "\u225f";
     public static final String strNOT_EQUAL = "\u2260";
     public static final String strPARALLEL = "\u2225";
     public static final String strPERPENDICULAR = "\u22a5";
@@ -379,55 +380,27 @@ implements ExpressionValue {
          */  
                
         case EQUAL_BOOLEAN:
-        	// nummber == number
-        	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
-        			kernel.isEqual(
-        				((NumberValue)lt).getDouble(),
-						((NumberValue)rt).getDouble()
-					)
-        		);
-        	else if (lt.isBooleanValue() && rt.isBooleanValue())
-				return new MyBoolean(
-						((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
-					);        				
-        	else if (lt.isGeoElement() && rt.isGeoElement()) {
-        		GeoElement geo1 = (GeoElement) lt;
-        		GeoElement geo2 = (GeoElement) rt;
-        		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
-        			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
-        		}
-        		else if (geo1.isGeoLine() && geo2.isGeoLine()) {
-        			return new MyBoolean(((GeoLine)geo1).equals((GeoLine) geo2));
-        		}
-        		else if (geo1.isGeoConic() && geo2.isGeoConic()) {
-        			return new MyBoolean(((GeoConic)geo1).equals((GeoConic) geo2));
-        		}
-        		else if (geo1.isGeoVector() && geo2.isGeoVector()) {
-        			return new MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2));
-        		}
-        	}      
         	{
-            String [] str = { "IllegalComparison", lt.toString(), "==",  rt.toString() };
-            throw new MyError(app, str);
+        		MyBoolean b = evalEquals(lt, rt);
+        		if (b == null) {
+        			String [] str = { "IllegalComparison", lt.toString(), strEQUAL_BOOLEAN,  rt.toString() };
+                    throw new MyError(app, str);
+        		} else {
+        			return b;
+        		}
         	}
         	
         case NOT_EQUAL:
-        	// nummber != number
-        	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
-        			!kernel.isEqual(
-        				((NumberValue)lt).getDouble(),
-						((NumberValue)rt).getDouble()
-					)
-        		);
-        	else if (lt.isBooleanValue() && rt.isBooleanValue())
-				return new MyBoolean(
-						((BooleanValue)lt).getBoolean() != ((BooleanValue)rt).getBoolean()
-					);  
-			else { 
-                String [] str = { "IllegalComparison", lt.toString(), strNOT_EQUAL,  rt.toString() };
-                throw new MyError(app, str);
+	        {
+	    		MyBoolean b = evalEquals(lt, rt);
+	    		if (b == null) {
+	    			String [] str = { "IllegalComparison", lt.toString(), strNOT_EQUAL,  rt.toString() };
+	                throw new MyError(app, str);
+	    		} else {
+	    			// NOT equal
+	    			b.setValue(!b.getBoolean());
+	    			return b;
+	    		}
             }         	
                 	
         case LESS:
@@ -1299,6 +1272,45 @@ implements ExpressionValue {
         }       
     }
     
+    /**
+     * 
+     * @param lt
+     * @param rt
+     * @return null if not defined
+     */
+    private MyBoolean evalEquals(ExpressionValue lt, ExpressionValue rt) {
+    	//  nummber == number
+    	if (lt.isNumberValue() && rt.isNumberValue())
+			return new MyBoolean(
+    			kernel.isEqual(
+    				((NumberValue)lt).getDouble(),
+					((NumberValue)rt).getDouble()
+				)
+    		);
+    	else if (lt.isBooleanValue() && rt.isBooleanValue())
+			return new MyBoolean(
+					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
+				);        				
+    	else if (lt.isGeoElement() && rt.isGeoElement()) {
+    		GeoElement geo1 = (GeoElement) lt;
+    		GeoElement geo2 = (GeoElement) rt;
+    		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
+    			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
+    		}
+    		else if (geo1.isGeoLine() && geo2.isGeoLine()) {
+    			return new MyBoolean(((GeoLine)geo1).equals((GeoLine) geo2));
+    		}
+    		else if (geo1.isGeoConic() && geo2.isGeoConic()) {
+    			return new MyBoolean(((GeoConic)geo1).equals((GeoConic) geo2));
+    		}
+    		else if (geo1.isGeoVector() && geo2.isGeoVector()) {
+    			return new MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2));
+    		}
+    	}      
+    	
+    	return null;
+    }
+    
     /** 
      *  look for Variable objects in the tree and replace them
      *  by their resolved GeoElement
@@ -1777,7 +1789,18 @@ implements ExpressionValue {
         
         switch (operation) {      
         	case NOT:
-        		sb.append(strNOT);
+        		switch (STRING_TYPE) {
+	         		case STRING_TYPE_LATEX:
+	         			sb.append("\\neg ");
+	         			break;
+	         			
+	         		case STRING_TYPE_YACAS:
+	         			sb.append("Not ");
+	         			break;
+	         			
+	         		default:
+	         			sb.append(strNOT);        		
+	         	}           		
         		sb.append(leftStr);
         		break;
         
@@ -1785,7 +1808,20 @@ implements ExpressionValue {
         	case OR:
         		 sb.append(leftStr);
         		 sb.append(' ');
-        		 sb.append(strOR);
+        		 
+        		 switch (STRING_TYPE) {
+	         		case STRING_TYPE_LATEX:
+	         			sb.append("\\vee");
+	         			break;
+	         			
+	         		case STRING_TYPE_YACAS:
+	         			sb.append("Or");
+	         			break;
+	         			
+	         		default:
+	         			sb.append(strOR);        		
+	         	}           		 
+        		 
         		 sb.append(' ');
                  sb.append(rightStr);
                  break;
@@ -1800,7 +1836,18 @@ implements ExpressionValue {
         		}
         		        		
        		 	sb.append(' ');
-       		 	sb.append(strAND);
+	       		switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\wedge");
+		      			break;
+		      			
+		      		case STRING_TYPE_YACAS:
+		      			sb.append("And");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strAND);        		
+		      	}     
        		 	sb.append(' ');
        		 	
 	       		if (right.isLeaf() || opID(right) >= AND) {
@@ -1814,14 +1861,36 @@ implements ExpressionValue {
                 
         	case EQUAL_BOOLEAN:
            	 	sb.append(leftStr);
-           	 	sb.append(" == ");
+           	 	sb.append(' ');
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      		case STRING_TYPE_YACAS:
+		      		case STRING_TYPE_JASYMCA:
+		      			sb.append("=");
+		      			break;
+		      					      		
+		      		default:
+		      			sb.append(strEQUAL_BOOLEAN);        		
+		      	}              	 	
+           	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
                 
         	case NOT_EQUAL:
            	 	sb.append(leftStr);
            	 	sb.append(' ');
-           	 	sb.append(strNOT_EQUAL);
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\neq");
+		      			break;
+		      			
+		      		case STRING_TYPE_YACAS:
+		      			sb.append("!=");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strNOT_EQUAL);        		
+		      	}       
            	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
@@ -1841,7 +1910,18 @@ implements ExpressionValue {
            case LESS_EQUAL:
            	 	sb.append(leftStr);
            	 	sb.append(' ');
-           	 	sb.append(strLESS_EQUAL);
+	           	 switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\leq");
+		      			break;
+		      			
+		      		case STRING_TYPE_YACAS:
+		      			sb.append("<=");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strLESS_EQUAL);        		
+		      	}        
            	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
@@ -1849,7 +1929,18 @@ implements ExpressionValue {
            case GREATER_EQUAL:
           	 	sb.append(leftStr);
           	 	sb.append(' ');
-          	 	sb.append(strGREATER_EQUAL);
+          	 	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\geq");
+		      			break;
+		      			
+		      		case STRING_TYPE_YACAS:
+		      			sb.append(">=");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strGREATER_EQUAL);        		
+		      	}    
           	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
@@ -1857,7 +1948,14 @@ implements ExpressionValue {
            case PARALLEL:
          	 	sb.append(leftStr);
          	 	sb.append(' ');
-         	 	sb.append(strPARALLEL);
+        	 	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\parallel");
+		      			break;
+		      		
+		      		default:
+		      			sb.append(strPARALLEL);        		
+		      	}             	 
          	 	sb.append(' ');
                 sb.append(rightStr);
                 break;
@@ -1865,7 +1963,14 @@ implements ExpressionValue {
            case PERPENDICULAR:
         	 	sb.append(leftStr);
         	 	sb.append(' ');
-        	 	sb.append(strPERPENDICULAR);
+        	 	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\perp");
+		      			break;
+		      		
+		      		default:
+		      			sb.append(strPERPENDICULAR);        		
+		      	}   
         	 	sb.append(' ');
                 sb.append(rightStr);
                 break;

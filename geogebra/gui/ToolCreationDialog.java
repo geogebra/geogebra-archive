@@ -68,6 +68,8 @@ implements GeoElementSelectionListener {
 	private DefaultListModel outputList, inputList;
 	private DefaultComboBoxModel cbOutputAddList, cbInputAddList;
 	
+	private Macro newTool;
+	
 	public ToolCreationDialog(Application app) {
 		super(app.getFrame());
 		this.app = app;
@@ -134,7 +136,29 @@ implements GeoElementSelectionListener {
 	}
 	
 	
-	private void createTool() {
+	private boolean createTool() {		
+		// get input and output objects		
+		GeoElement [] input = toGeoElements(inputList);
+		GeoElement [] output = toGeoElements(outputList);
+		
+		// try to create macro	
+		Kernel kernel = app.getKernel();
+		try {
+			newTool = new Macro(kernel, "newTool", input, output);	
+			return true;
+		} catch (Exception e) {				
+			// go back to output tab
+			tabbedPane.setSelectedIndex(1);		
+			
+			// show error message
+			app.showError(app.getError("Tool.CreationFailed") 
+								+ "\n" + e.getMessage());			
+			newTool = null;			
+			return false;
+		}							
+	}
+	
+	private void finish() {
 		// check if command name is not used already by another macro
 		String cmdName = namePanel.getCommandName();
 		Kernel kernel = app.getKernel();
@@ -143,23 +167,12 @@ implements GeoElementSelectionListener {
 			return;
 		}
 		
-		// get input and output objects		
-		GeoElement [] input = toGeoElements(inputList);
-		GeoElement [] output = toGeoElements(outputList);
-		
-		// try to create macro
-		Macro macro;		
-		try {
-			macro = kernel.createMacro(namePanel.getCommandName(), input, output);
-			macro.setToolName(namePanel.getToolName());
-			macro.setToolHelp(namePanel.getToolHelp());			
-			macro.setShowInToolBar(namePanel.showInToolBar());
-			macro.setIconFileName(namePanel.getIconFileName());
-		} catch (Exception e) {					
-			app.showError(app.getError("Tool.CreationFailed") 
-								+ "\n" + e.getMessage());
-			return;
-		}
+		newTool.setCommandName(namePanel.getCommandName());
+		newTool.setToolName(namePanel.getToolName());
+		newTool.setToolHelp(namePanel.getToolHelp());			
+		newTool.setShowInToolBar(namePanel.showInToolBar());
+		newTool.setIconFileName(namePanel.getIconFileName());	
+		kernel.addMacro(newTool);
 		
 		// hide and dispose dialog
 		setVisible(false);	
@@ -169,9 +182,10 @@ implements GeoElementSelectionListener {
 		app.updateCommandDictionary();
 		
 		// set macro mode
-		if (macro.isShowInToolBar()) {
-			app.updateToolBar();
-			int mode = kernel.getMacroID(macro) + EuclidianView.MACRO_MODE_ID_OFFSET;
+		if (newTool.isShowInToolBar()) {
+			int mode = kernel.getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
+			app.addToToolbarDefinition(mode);			
+			app.updateToolBar();			
 			app.setMode(mode);			
 		}		
 			
@@ -338,8 +352,8 @@ implements GeoElementSelectionListener {
 				if (src == btNext) {
 					int index = tabbedPane.getSelectedIndex() + 1;				
 					if (index == tabbedPane.getTabCount()) {
-						createTool();
-					} else {
+						finish();
+					} else {						
 						tabbedPane.setSelectedIndex(index);
 					}
 				}
@@ -370,10 +384,12 @@ implements GeoElementSelectionListener {
 						btNext.setEnabled(true);
 						break;	
 						
-					case 2:						
-						btNext.setText(app.getPlain("Finish"));	
-						btNext.setEnabled(inputList.size() > 0 && outputList.size() > 0);
-						namePanel.requestFocus();
+					case 2: // name panel (finish)
+						if (createTool()) {
+							btNext.setText(app.getPlain("Finish"));	
+							btNext.setEnabled(inputList.size() > 0 && outputList.size() > 0);
+							namePanel.requestFocus();
+						} 
 						break;				
 				}				
 			}			
@@ -478,7 +494,7 @@ implements GeoElementSelectionListener {
 							listModel.remove(index);
 							listModel.add(index-1, ob);
 							selIndices[i] = index-1;
-						}							
+						}									
 					}
 					list.setSelectedIndices(selIndices);
 				}

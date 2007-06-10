@@ -30,7 +30,7 @@ import java.util.TreeSet;
 public class Macro {
 	
 	private Kernel kernel;
-	private String cmdName, toolName = "", toolHelp = "";
+	private String cmdName = "", toolName = "", toolHelp = "";
 	private String iconFileName = ""; // image file		
 	private boolean showInToolBar = true;
 				
@@ -455,10 +455,8 @@ public class Macro {
 		return cmdName;
 	}
 
-	void setCommandName(String name) {
-		if (name == null)
-			this.cmdName = "";
-		else
+	public void setCommandName(String name) {
+		if (name != null)
 			this.cmdName = name;
 	}
 
@@ -467,7 +465,7 @@ public class Macro {
 	}
 	
 	public String getToolOrCommandName() {
-		if (toolName != "") 
+		if (!"".equals(toolName)) 
 			return toolName;
 		else
 			return cmdName;			

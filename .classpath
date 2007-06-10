@@ -2,10 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="freehep-base.jar"/>
-	<classpathentry kind="lib" path="freehep-graphics2d.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-svg.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio.jar"/>
+	<classpathentry kind="lib" path="freehep-export-2.0.3.jar"/>
+	<classpathentry kind="lib" path="freehep-graphics2d-2.0.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-2.0.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-emf-2.0.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-svg-2.0.jar"/>
+	<classpathentry kind="lib" path="freehep-xml-2.0.1.jar"/>
+	<classpathentry kind="lib" path="freehep-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="freehep-util-2.0.1.jar"/>
 	<classpathentry kind="lib" path="geogebra_latex.jar"/>
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>

@@ -14,9 +14,9 @@
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.BooleanValue;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyBoolean;
-import geogebra.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -166,7 +166,13 @@ AbsoluteScreenLocateable {
 	}
 	
 	final public String toValueString() {
-		return value ? "true" : "false";
+		switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_YACAS:
+				return value ? "True" : "False";							
+		
+			default:
+				return value ? "true" : "false";
+		}
 	}
 	
 	final public String toString() {

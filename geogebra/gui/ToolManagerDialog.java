@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.gui;
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 
@@ -43,7 +44,8 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ToolManagerDialog extends javax.swing.JDialog {	
 			
-	private Application app;		
+	private Application app;	
+	private DefaultListModel toolsModel;
 	
 	public ToolManagerDialog(Application app) {
 		super(app.getFrame());
@@ -56,6 +58,9 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	public void setVisible(boolean flag) {
 		if (flag) {
 			app.setMoveMode();
+		} else {
+			// recreate tool bar of application window
+			updateToolBar(toolsModel);	
 		}
 		
 		super.setVisible(flag);					
@@ -64,7 +69,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	/**
 	 * Updates the order of macros using the listModel.
 	 */
-	private void updateToolBar(DefaultListModel listModel) {
+	private void updateToolBar(DefaultListModel listModel) {		
 		// update order of macros:
 		// remove all macros from kernel and add them again in new order
 		Kernel kernel = app.getKernel();				
@@ -73,7 +78,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		for (int i=0; i < size; i++) {
 			kernel.addMacro((Macro) listModel.getElementAt(i));
 		}
-		
+	
 		app.updateToolBar();
 	}
 	
@@ -106,6 +111,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			if (!macro.isUsed()) {
 				// delete macro
 				changeToolBar = changeToolBar || macro.isShowInToolBar();
+				app.removeFromToolbarDefinition(kernel.getMacroID(macro) + EuclidianView.MACRO_MODE_ID_OFFSET);				
 				kernel.removeMacro(macro);
 				listModel.removeElement(macro);
 				didDeletion = true;
@@ -164,7 +170,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			toolListPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Tools")));
 			getContentPane().add(toolListPanel, BorderLayout.NORTH);				
 				
-			final DefaultListModel toolsModel = new DefaultListModel();			
+			toolsModel = new DefaultListModel();			
 			insertTools(toolsModel);					
 			final JList toolList = new JList(toolsModel);					
 			toolList.setCellRenderer(new MacroCellRenderer());
@@ -210,10 +216,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 						namePanel.init(null, null); 
 										
 						// make sure new macro command gets into dictionary
-						app.updateCommandDictionary();
-						
-						// recreate tool bar of application window
-						updateToolBar(toolsModel);
+						app.updateCommandDictionary();														
 						
 						// destroy dialog
 						setVisible(false);

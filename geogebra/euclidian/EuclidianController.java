@@ -881,7 +881,8 @@ final public class EuclidianController implements MouseListener,
 		transformCoords();
 
 		// zoom rectangle (right drag) or selection rectangle (left drag)
-		if (RIGHT_CLICK || moveMode == MOVE_NONE) {			
+		if (RIGHT_CLICK || 
+			mode == EuclidianView.MODE_MOVE && moveMode == MOVE_NONE) {			
 			// set zoom rectangle's size
 			updateSelectionRectangle(RIGHT_CLICK);
 			view.repaint();

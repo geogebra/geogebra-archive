@@ -94,7 +94,7 @@ public class MyXMLio {
      * Reads zipped file from input stream that includes the construction saved 
      * in xml format and maybe image files.
      */    
-    public final void readZipFromInputStream(InputStream is, boolean isMacroFile) throws Exception {      	    	
+    public final void readZipFromInputStream(InputStream is, boolean isGGTfile) throws Exception {      	    	
         ZipInputStream zip = new ZipInputStream(is);
                 
         // we have to read everything (i.e. all images)
@@ -137,7 +137,7 @@ public class MyXMLio {
         }
         zip.close();          
                 
-        if (!isMacroFile) {
+        if (!isGGTfile) {
         	// ggb file: remove all macros from kernel before processing
         	kernel.removeAllMacros();
         }
@@ -145,12 +145,12 @@ public class MyXMLio {
         // process macros
         if (macroXmlFileBuffer != null) {        	
         	// don't clear kernel for macro files
-        	processXMLBuffer(macroXmlFileBuffer, !isMacroFile);        	
+        	processXMLBuffer(macroXmlFileBuffer, !isGGTfile, isGGTfile);        	
         }  
         
         // process construction
-        if (!isMacroFile && xmlFileBuffer != null) {
-        	processXMLBuffer(xmlFileBuffer, !macroXMLfound);
+        if (!isGGTfile && xmlFileBuffer != null) {
+        	processXMLBuffer(xmlFileBuffer, !macroXMLfound, isGGTfile);
         } 
         
         if (!(macroXMLfound || xmlFound)) 
@@ -161,24 +161,29 @@ public class MyXMLio {
      * Handles the XML file stored in buffer.
      * @param buffer
      */
-    private void processXMLBuffer(byte [] buffer, boolean clearConstruction) throws Exception {
+    private void processXMLBuffer(byte [] buffer, boolean clearConstruction, boolean isGGTFile) throws Exception {
     	// handle the data in the memory buffer 
 		ByteArrayInputStream bs = new ByteArrayInputStream(buffer); 		
 		InputStreamReader ir = new InputStreamReader(bs, "UTF8");
 		
         // process xml file  		  
-		doParseXML(ir, clearConstruction);            
+		doParseXML(ir, clearConstruction, isGGTFile);            
         
         ir.close();
         bs.close();        
     }
     
-    private void doParseXML(Reader ir, boolean clearConstruction) throws Exception {    
-    	boolean oldVal = kernel.isNotifyViewsActive();    	 
-    	kernel.setNotifyViewsActive(false);
+    private void doParseXML(Reader ir, boolean clearConstruction, boolean isGGTFile) throws Exception {    
+    	boolean oldVal = kernel.isNotifyViewsActive();   
+    	if (!isGGTFile) {       		
+    		kernel.setNotifyViewsActive(false);
+    	}
 		
-		if (clearConstruction)
+		if (clearConstruction) {
+			app.setToolBarDefinition(null);
 			kernel.clearConstruction();	
+		}
+			
 		
 		try {		    
 			xmlParser.parse(handler, ir);				
@@ -188,12 +193,14 @@ public class MyXMLio {
 		} catch (Exception e) {			 
 			 throw e;
 		} finally {
-			kernel.updateConstruction();	
-	     	kernel.setNotifyViewsActive(oldVal);	
+			if (!isGGTFile) {
+				kernel.updateConstruction();	
+		     	kernel.setNotifyViewsActive(oldVal);	
+			}
 		}
 			    			     	     
      	// handle construction step stored in XMLhandler     	
-     	if (app.showConsProtNavigation() && oldVal) // do this only if the views are active
+     	if (!isGGTFile && app.showConsProtNavigation() && oldVal) // do this only if the views are active
      		app.getConstructionProtocol().setConstructionStep(handler.getConsStep());     		
     }
     
@@ -208,7 +215,7 @@ public class MyXMLio {
         ZipEntry entry = zip.getNextEntry();
         if (entry != null && entry.getName().equals(XML_FILE)) {
         	// process xml file      		   		
-    		doParseXML(new InputStreamReader(zip, "UTF8"), true);                      
+    		doParseXML(new InputStreamReader(zip, "UTF8"), true, false);                      
         	zip.close();       
         } else {
         	zip.close();   
@@ -216,9 +223,9 @@ public class MyXMLio {
         }   
     }
     
-    public void processXMLString(String str, boolean clearAll) throws Exception {         
+    public void processXMLString(String str, boolean clearAll, boolean isGGTfile) throws Exception {         
         StringReader rs = new StringReader(str);          
-        doParseXML(rs, clearAll);                                    
+        doParseXML(rs, clearAll, isGGTfile);                                    
         rs.close();   
     }
     

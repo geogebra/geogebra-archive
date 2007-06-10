@@ -191,11 +191,12 @@ public class GeoGebraPreferences {
     public static void loadXMLPreferences(Application app) {  
     	// load this preferences xml file in application
     	try {
-    		app.setWaitCursor();
-    		
+    		app.setWaitCursor();    
+    		    	    		
     		// load tools from ggt file (byte array)
-        	byte [] ggtFile = ggbPrefs.getByteArray(TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
-        	app.loadMacroFileFromByteArray(ggtFile);
+        	byte [] ggtFile = ggbPrefs.getByteArray(TOOLS_FILE_GGT, null);
+        	app.loadMacroFileFromByteArray(ggtFile, true);
+        	
     		
     		// load preferences xml
         	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
