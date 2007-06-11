@@ -25,10 +25,12 @@ public class InputPanel extends JPanel {
 		"\u00b2",  // exponents ^2 
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
+		"sqrt(x)",
+		"cbrt(x)",
 		"abs(x)",
 		"ln(x)",
 		"sin(x)",
-		"cos(x)",
+		"asin(x)",
 		ExpressionNode.strEQUAL_BOOLEAN,
 		ExpressionNode.strNOT_EQUAL,
 		ExpressionNode.strLESS_EQUAL,

@@ -32,8 +32,8 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.util.MyPoint;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -42,6 +42,7 @@ import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -273,7 +274,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	
     }
     private void drawLocus(GeoLocus g){
-    	LinkedList ll=g.getMyPointList();
+    	ArrayList ll=g.getMyPointList();
     	Iterator it=ll.iterator();
     	code.append("\\pscustom{");
     	while(it.hasNext()){

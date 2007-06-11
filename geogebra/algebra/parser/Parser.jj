@@ -263,12 +263,14 @@ TOKEN: {
 |	< LD_FUNC:    "ld("  > 
 |	< LG_FUNC:    "lg("  > 
 |	< SQRT_FUNC: ( "sqrt(" | "Sqrt(" ) > 
+|	< CBRT_FUNC:   "cbrt("  > 
 |	< ABS_FUNC:  ( "abs(" | "Abs(" ) > 
 |	< SGN_FUNC:  ( "sgn(" | "sign(" | "Sign(" ) > 
 |	< FLOOR_FUNC: ( "floor(" | "Floor(" ) > 
 |	< CEIL_FUNC:  ( "ceil(" | "Ceil(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
+|	< RANDOM_FUNC:  "random()"  > 
 | 	< FUNCTION_LABEL: <LABEL> "(" >
 }
 
@@ -1098,6 +1100,9 @@ ExpressionNode numberFunction():
     <SQRT_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SQRT, null); }  
 |
+    <CBRT_FUNC> en = expressionnode() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.CBRT, null); }  
+|
     <ABS_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ABS, null); }   
 |
@@ -1116,6 +1121,12 @@ ExpressionNode numberFunction():
     <GAMMA_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA, null); }               
 | 
+  <RANDOM_FUNC> 
+      {  GeoNumeric randNum = new GeoNumeric(kernel.getConstruction());
+         randNum.setValue(Math.random());
+         randNum.setUsedForRandom(true);
+      	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null); }               
+|
 	c = <FUNCTION_LABEL> en = expressionnode() ")"
 	// note: the last character of FUNCTION_LABEL is a "("
       { 

@@ -609,8 +609,11 @@ public class AlgebraProcessor {
 				ret[0] = new GeoAngle(cons, label, value);
 			else
 				ret[0] = new GeoNumeric(cons, label, value);
-		} else
+		} else {
 			ret[0] = kernel.DependentNumber(label, n, isAngle);
+		}
+		
+		
 		return ret;
 	}
 	

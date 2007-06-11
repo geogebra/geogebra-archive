@@ -49,6 +49,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	protected double value;
 
 	private boolean isDrawable = false;
+	private boolean isUsedForRandom = false;
 	
 
 	private int slopeTriangleSize = 1;
@@ -581,6 +582,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	
 	public boolean isGeoFunctionable() {
 		return true;
+	}
+
+	public final boolean isUsedForRandom() {
+		return isUsedForRandom;
+	}
+
+	public final void setUsedForRandom(boolean isUsedForRandom) {
+		this.isUsedForRandom = isUsedForRandom;
 	}
 
 }

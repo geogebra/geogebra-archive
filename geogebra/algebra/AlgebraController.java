@@ -29,8 +29,6 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Translateable;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -256,7 +254,7 @@ public class AlgebraController
 				break;
 		}
 
-		if (changeVal != 0) {
+		if (changeVal != 0) {								
 			if (geo.isChangeable()) {
 				if (geo.isNumberValue()) {
 					GeoNumeric num = (GeoNumeric) geo;
@@ -270,10 +268,18 @@ public class AlgebraController
 						p.updateRepaint();
 					}
 				}
-			}
+			} 
+			
+			if (!geo.isIndependent()) {
+				if (geo.getParentAlgorithm().updateRandomAlgorithm())
+					geo.updateRepaint();				
+			}	
+			
 			return true;
-		}
-
+		}		
+		
+		
+		
 		return false;
 	}
 

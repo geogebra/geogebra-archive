@@ -1,16 +1,24 @@
+/* 
+GeoGebra - Dynamic Geometry and Algebra
+Copyright Markus Hohenwarter, http://www.geogebra.at
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+*/
+
 package geogebra.kernel;
 
-import geogebra.util.MyPoint;
 
-import java.util.LinkedList;
-
+import java.util.ArrayList;
 
 
-public class GeoLocus extends GeoElement {
-	
-	/**
-	 * 
-	 */
+
+public class GeoLocus extends GeoElement implements Path {
+
 	private static final long serialVersionUID = 1L;
 
 	public static final int MAX_PATH_RUNS = 10;
@@ -18,11 +26,11 @@ public class GeoLocus extends GeoElement {
 	private boolean defined;		
 	
 	// coords of points on locus
-	private LinkedList myPointList;		
+	private ArrayList myPointList;		
 	
 	public GeoLocus(Construction c) {
 		super(c);				
-		myPointList = new LinkedList();		
+		myPointList = new ArrayList(500);		
 		setAlgebraVisible(false);
 	}  
 			
@@ -62,7 +70,7 @@ public class GeoLocus extends GeoElement {
 		myPointList.add(new MyPoint(x, y, lineTo));	
 	}
 	
-	public LinkedList getMyPointList() {
+	public ArrayList getMyPointList() {
 		return myPointList;
 	}
 	
@@ -131,5 +139,126 @@ public class GeoLocus extends GeoElement {
 	public boolean isGeoLocus() {
 		return true;
 	}
+
+	public PathMover createPathMover() {
+		return new PathMoverGeneric(this);
+	}
+
+	public double getMaxParameter() {		
+		return myPointList.size() - 1;
+	}
+
+	public double getMinParameter() {		
+		return 0;
+	}
+
+	public boolean isClosedPath() {
+		if (myPointList.size() > 0) {
+			MyPoint first = (MyPoint) myPointList.get(0);
+			MyPoint last = (MyPoint) myPointList.get(myPointList.size() - 1);
+			return first.isEqual(last.x, last.y);
+		} else
+			return false;
+	}
+
+	public boolean isOnPath(GeoPoint P, double eps) {
+		MyPoint closestPoint = getClosestPoint(P);
+		if (closestPoint != null) {
+			return Math.sqrt(closestPointDist) < eps;
+		} else
+			return false;
+	}
 	
+	/**
+	 * Returns the point of this locus that is closest
+	 * to GeoPoint P.
+	 */
+	private MyPoint getClosestPoint(GeoPoint P) {
+		if (!P.isDefined() || P.isInfinite())
+			return null;
+		
+		MyPoint closestPoint  = null;
+		closestPointDist = Double.MAX_VALUE;
+		closestPointIndex = -1;
+		
+		double px = P.x/P.z;
+		double py = P.y/P.z;
+		
+		// search for closest point
+		int size = myPointList.size();
+		for (int i=0; i < size; i++) {
+			MyPoint locusPoint = (MyPoint) myPointList.get(i);
+			double dist = locusPoint.distSqr(px, py);
+			if (dist < closestPointDist) {
+				closestPointDist = dist;
+				closestPointIndex = i;
+				closestPoint = locusPoint;
+			}
+		}
+		
+		return closestPoint;
+	}
+	private double closestPointDist;
+	private int closestPointIndex;
+
+	public void pathChanged(GeoPoint P) {
+		// PATH CHANGED
+		if (Double.isNaN(P.pathParameter.t) ||   // invalid parameter
+			lastPathChangedParameter ==	P.pathParameter.t) // unchanged parameter: path changed but not parameter 
+		{
+			pointChanged(P);
+			return;
+		}
+
+		// PATH MOVER CHANGED PARAMETER (see PathMoverGeneric.calcPoint())
+		
+		/*
+		if (P.pathParameter.t < 0)
+			P.pathParameter.t = 0;
+		else if (P.pathParameter.t >= myPointList.size())
+			P.pathParameter.t = myPointList.size()-1;		
+			
+		// get point for given parameter
+		int index = (int) Math.round(P.pathParameter.t);		
+		MyPoint locusPoint = (MyPoint) myPointList.get(index);
+		P.x = locusPoint.x;
+		P.y = locusPoint.y;
+		P.z = 1.0;	
+		*/
+		
+		// get points left and right of path parameter				
+		int leftIndex = (int) Math.max(0, Math.floor(P.pathParameter.t));
+		int rightIndex = (int) Math.min(myPointList.size()-1, Math.ceil(P.pathParameter.t));
+		MyPoint leftPoint = (MyPoint) myPointList.get(leftIndex);
+		MyPoint rightPoint = (MyPoint) myPointList.get(rightIndex);				
+				
+		// interpolate between leftPoint and rightPoint
+		double param1 = (P.pathParameter.t - leftIndex);
+		double param2 = 1.0 - param1;
+		P.x = param2 * leftPoint.x + param1 * rightPoint.x;
+		P.y = param2 * leftPoint.y + param1 * rightPoint.y;
+		P.z = 1.0;	
+		
+		lastPathChangedParameter = P.pathParameter.t;		
+	}
+	private double lastPathChangedParameter;
+
+	public void pointChanged(GeoPoint P) {
+		MyPoint closestPoint = getClosestPoint(P);
+		if (closestPoint != null) {
+			P.x = closestPoint.x;
+			P.y = closestPoint.y;
+			P.z = 1.0;
+			P.pathParameter.t = closestPointIndex;			
+		}		
+		else {
+			P.pathParameter.t = Double.NaN;
+		}
+		
+		lastPathChangedParameter = P.pathParameter.t;
+	}
+	
+	public boolean isPath() {
+		return true;
+	}
 }

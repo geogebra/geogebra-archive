@@ -34,7 +34,7 @@ public class MyDouble // extends ValidExpression
 implements NumberValue {
 
     private double val;
-    private boolean isAngle = false;
+    private boolean isAngle = false;    
     
     private Kernel kernel;
     
@@ -85,7 +85,11 @@ implements NumberValue {
     public boolean isAngle() { return isAngle; }
     
 
-    
+    final public MyDouble random() {
+    	val = Math.random();
+    	isAngle = false; 
+    	return this;
+    }
     
     /** c = a + b */
     final public static void add(MyDouble a, MyDouble b, MyDouble c) {
@@ -154,6 +158,7 @@ implements NumberValue {
     
     final public MyDouble exp() {  val = Math.exp(val);  isAngle = false; return this; }    
     final public MyDouble sqrt() {  val = Math.sqrt(val); isAngle = false;  return this; }    
+    final public MyDouble cbrt() {  val = MyMath.cbrt(val); isAngle = false;  return this; }
     final public MyDouble abs() {  val = Math.abs(val);  return this; }    
 	final public MyDouble floor() {  val = Math.floor(val);  return this; }
 	final public MyDouble ceil() {  val = Math.ceil(val);  return this; }
@@ -211,7 +216,7 @@ implements NumberValue {
 		val = MyMath.gamma(val);
 		isAngle = false;
 		return this;
-	}
+	}	
   
 	final public MyDouble apply(Functional f) {
 		val = f.evaluate(val);
@@ -224,6 +229,7 @@ implements NumberValue {
     final public MyDouble getNumber() {
         return new MyDouble(this);
     }
+    
     
     public boolean isConstant() {
         return true;

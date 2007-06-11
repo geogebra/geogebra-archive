@@ -73,7 +73,7 @@ public class Kernel {
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
 	// this flag is used to distinguish the different behaviour
-	// depending on the the age of save construction file
+	// depending on the the age of saved construction files
 	public boolean arcusFunctionCreatesAngle = false;
 	
 	private boolean translateCommandName = true;

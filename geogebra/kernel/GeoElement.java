@@ -24,11 +24,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;

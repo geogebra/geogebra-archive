@@ -36,18 +36,14 @@ implements EuclidianViewAlgo {
     
     GeoElement[] input, output;
     
+    // numbers among input objects of algorithm that are used within random()
+    private GeoNumeric [] randomInputNumbers;
+    
     private boolean isPrintedInXML = true;
     
     public AlgoElement(Construction c) {
         super(c);                       
-        c.addToConstructionList(this, false); 
-        
-        // TODO: remove
-        try {
-        //	throw new Exception("new AlgoElement: cons: " + c + ", " + getClassName() );
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
+        c.addToConstructionList(this, false);                 
     }
     
     private String getCommandString(String classname) {
@@ -89,6 +85,11 @@ implements EuclidianViewAlgo {
     	counter++;
     	startTime = System.currentTimeMillis(); 
     		
+    	// update possible random values used by this algorithm
+    	if (randomInputNumbers != null) {
+    		updateRandomInputNumbers();
+    	}
+    	
         // compute output from input
         compute();
         
@@ -108,7 +109,18 @@ implements EuclidianViewAlgo {
     	// TODO:remove
         endTime = System.currentTimeMillis(); 
         updateTime += (endTime - startTime );                
-    }          
+    }              
+    
+    /**
+     * Updates all random numbers of this algorithm (if there
+     * are any).
+     */
+    public boolean updateRandomAlgorithm() {
+    	boolean doUpdate = randomInputNumbers != null;
+    	if (doUpdate) 
+    		update();
+    	return doUpdate;
+    }
 
     // public part    
     final public GeoElement[] getOutput() {
@@ -134,6 +146,7 @@ implements EuclidianViewAlgo {
             input[i].addAlgorithm(this);            
         }    
         
+        initRandomInputNumbers();
         setOutputDependencies();                
         cons.addToAlgorithmList(this); 
     }
@@ -153,9 +166,42 @@ implements EuclidianViewAlgo {
         
         // input is standardInput
         input = standardInput;
-        
+        initRandomInputNumbers();
         setOutputDependencies();
         cons.addToAlgorithmList(this); 
+    }
+    
+    /**
+     * Creates a list of all GeoNumeric objects that
+     * are used as values for random() 
+     */
+    private void initRandomInputNumbers() {
+    	// look for random numbers
+ 		ArrayList randNumList = null;    	
+        for (int i = 0; i < input.length; i++) {
+            if (input[i].isGeoNumeric()) {
+            	GeoNumeric num = (GeoNumeric) input[i];
+            	if (num.isUsedForRandom()) {
+            		if (randNumList == null)
+            			randNumList = new ArrayList();
+            		randNumList.add(num);            		
+            	}
+            }
+        }    
+        
+        // init randomGeoNumerics array
+        if (randNumList != null) {
+        	randomInputNumbers = new GeoNumeric[randNumList.size()];
+        	for (int i = 0; i < randomInputNumbers.length; i++) {
+        		randomInputNumbers[i] = (GeoNumeric) randNumList.get(i);
+        	}
+        }        
+    }
+    
+    private void updateRandomInputNumbers() {
+    	for (int i = 0; i < randomInputNumbers.length; i++) {
+    		randomInputNumbers[i].setValue(Math.random());
+    	}
     }
     
     private void setOutputDependencies() {
@@ -362,7 +408,7 @@ implements EuclidianViewAlgo {
 
     public String getDefinitionDescription() {
         return toString();
-    }
+    }    
         
     public String getCommandDescription() {
         String cmdname = getCommandName();          

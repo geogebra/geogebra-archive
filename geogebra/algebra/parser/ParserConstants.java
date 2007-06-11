@@ -69,13 +69,15 @@ public interface ParserConstants {
   int LD_FUNC = 67;
   int LG_FUNC = 68;
   int SQRT_FUNC = 69;
-  int ABS_FUNC = 70;
-  int SGN_FUNC = 71;
-  int FLOOR_FUNC = 72;
-  int CEIL_FUNC = 73;
-  int ROUND_FUNC = 74;
-  int GAMMA_FUNC = 75;
-  int FUNCTION_LABEL = 76;
+  int CBRT_FUNC = 70;
+  int ABS_FUNC = 71;
+  int SGN_FUNC = 72;
+  int FLOOR_FUNC = 73;
+  int CEIL_FUNC = 74;
+  int ROUND_FUNC = 75;
+  int GAMMA_FUNC = 76;
+  int RANDOM_FUNC = 77;
+  int FUNCTION_LABEL = 78;
 
   int DEFAULT = 0;
 
@@ -150,12 +152,14 @@ public interface ParserConstants {
     "\"ld(\"",
     "\"lg(\"",
     "<SQRT_FUNC>",
+    "\"cbrt(\"",
     "<ABS_FUNC>",
     "<SGN_FUNC>",
     "<FLOOR_FUNC>",
     "<CEIL_FUNC>",
     "<ROUND_FUNC>",
     "<GAMMA_FUNC>",
+    "\"random()\"",
     "<FUNCTION_LABEL>",
     "\":\"",
     "\"[\"",

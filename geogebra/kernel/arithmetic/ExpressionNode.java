@@ -25,6 +25,7 @@ import geogebra.MyError;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
@@ -102,7 +103,9 @@ implements ExpressionValue {
     public static final int ROUND = 27;  
     public static final int GAMMA = 28;    
     public static final int LOG10 = 29;  
-    public static final int LOG2 = 30;  
+    public static final int LOG2 = 30; 
+    public static final int CBRT = 31;   
+    public static final int RANDOM = 32;
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
@@ -1035,6 +1038,25 @@ implements ExpressionValue {
                 throw new MyError(app, str);
             }
             
+        case CBRT:
+            // cbrt(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().cbrt();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.CBRT, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "cbrt", lt.toString() };
+                throw new MyError(app, str);
+            }
+                        
+            
         case ABS:
             // abs(number)
             if (lt.isNumberValue())
@@ -1159,7 +1181,13 @@ implements ExpressionValue {
             else { 
                  String [] str = { "IllegalArgument", "gamma", lt.toString() };
                 throw new MyError(app, str);
-            }    
+            }
+            
+        case RANDOM:
+            // random()
+        	// note: left tree holds MyDouble object to set random number
+        	// in randomize()
+        	return ((NumberValue) lt).getNumber();
                             
         case XCOORD:
             // x(vector)
@@ -1588,8 +1616,7 @@ implements ExpressionValue {
     public void forcePoint() {
         // this expression should be considered as a vector, not a point
         forcePoint = true;
-    }
-        
+    }           
     
     /** 
      * Returns all GeoElement objects in the subtree 
@@ -1777,7 +1804,7 @@ implements ExpressionValue {
         
     /**
      * Returns a string representation of this node.
-     * Note: longForm is used for JSCL conform output, valueForm is used
+     * Note: STRING_TYPE is used for LaTeX, YACAS, Jasymca conform output, valueForm is used
      * by toValueString(), forLaTeX is used for LaTeX output
      * 
      */
@@ -2532,6 +2559,27 @@ implements ExpressionValue {
 	        	}         
                 break;
                 
+            case CBRT:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sqrt[3]{");
+	        			 sb.append(leftStr);
+	        			 sb.append('}');
+	        			break;
+	        			
+	        		case STRING_TYPE_YACAS:
+	        			sb.append("(");
+	        			sb.append(leftStr);
+	                    sb.append(")^(1/3)");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("cbrt(");     
+		        		sb.append(leftStr);
+	                    sb.append(')');
+	        	}         
+                break;
+                
             case ABS:   
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
@@ -2649,6 +2697,13 @@ implements ExpressionValue {
                 sb.append(leftStr);
                 sb.append(')');
                 break;  
+                
+            case RANDOM:   
+            	if (valueForm)
+            		sb.append(leftStr);
+            	else
+            		sb.append("random()");		        		           
+                break;
                 
             case XCOORD:
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												

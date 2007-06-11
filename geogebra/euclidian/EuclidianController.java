@@ -48,7 +48,6 @@ import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.MyMath;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -1740,10 +1739,7 @@ final public class EuclidianController implements MouseListener,
 	final private void moveBoolean(boolean repaint) {
 		movedGeoBoolean.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
 				oldLoc.y + mouseLoc.y-startLoc.y);
-		
-		// TODO: remove
-		System.out.println("move bool: " + movedGeoBoolean);
-		
+			
 		if (repaint)
 			movedGeoBoolean.updateRepaint();
 		else
@@ -1782,9 +1778,13 @@ final public class EuclidianController implements MouseListener,
 				val = Kernel.PI_2;
 		}
 		
-		val = kernel.checkInteger(val);		
-		movedGeoNumeric.setValue(val);		
-				
+		val = kernel.checkInteger(val);	
+		
+		// do not set value unless it really changed!
+		if (movedGeoNumeric.getValue() == val)
+			return;
+		
+		movedGeoNumeric.setValue(val);						
 		if (repaint)
 			movedGeoNumeric.updateRepaint();
 		else

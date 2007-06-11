@@ -23,6 +23,19 @@ public final class MyMath {
 	
 	public static final double LOG10 = Math.log(10);
 	public static final double LOG2 = Math.log(2);
+	public static final double ONE_THIRD = 1d / 3d;
+
+
+	/**
+	 * Cubic root
+	 */
+	final public static double cbrt(double a) {
+		if (a > 0.0)    
+	    	return  Math.pow(a, ONE_THIRD);
+	    else      
+	    	return -Math.pow(-a, ONE_THIRD);  
+	}
+	
 	
 	final public static double sgn(Kernel kernel, double a) {
 		if (kernel.isZero(a)) 

@@ -14,13 +14,12 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLocus;
-import geogebra.util.MyPoint;
+import geogebra.kernel.MyPoint;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public final class DrawLocus extends Drawable {
@@ -63,14 +62,13 @@ public final class DrawLocus extends Drawable {
 		}
     }
     
-    private void buildGeneralPath(LinkedList pointList) {    	
-    	gp.reset(); 
-    	    		
-    	Iterator it = pointList.iterator();
-    	MyPoint p;
+    private void buildGeneralPath(ArrayList pointList) {    	
+    	gp.reset();     	  
     	double [] coords = new double[2];
-    	while (it.hasNext()) {
-    		p = (MyPoint) it.next();
+    	
+    	int size = pointList.size();
+		for (int i=0; i < size; i++) {
+			MyPoint p = (MyPoint) pointList.get(i);    		
     		coords[0] = p.x;
     		coords[1] = p.y;
     		view.toScreenCoords(coords);      		    		

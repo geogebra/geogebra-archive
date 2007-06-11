@@ -10,7 +10,8 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra.util;
+package geogebra.kernel;
+
 
 public class MyPoint {
 	public double x, y;
@@ -20,5 +21,16 @@ public class MyPoint {
 		this.x = x;
 		this.y = y;
 		this.lineTo = lineTo;
+	}
+	
+	public double distSqr(double px, double py) {
+		double vx = px - x;
+        double vy = py - y;        
+        return vx*vx + vy*vy;
+	}
+	
+	public boolean isEqual(double px, double py) {
+		return Kernel.isEqual(x, px, Kernel.MIN_PRECISION) &&
+			   Kernel.isEqual(y, py, Kernel.MIN_PRECISION);
 	}
 }

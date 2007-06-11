@@ -483,6 +483,30 @@ class LambdaROUND extends LambdaAlgebraic{
 	}	
 }
 
+
+class LambdaCBRT extends LambdaAlgebraic{
+	public LambdaCBRT(){ 
+		diffrule = "1/(3*cbrt(x)^2)";		
+		intrule  = "3/4*cbrt(x)^4";	
+		trigrule = null;
+	}
+	Zahl f( Zahl x) throws JasymcaException{
+		Unexakt z = x.unexakt();
+		if(z.imag == 0.)
+			return new Unexakt(MyMath.cbrt(z.real));
+		return (Zahl)Jasymca.evalx(trigrule, z, env);
+	}
+	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
+		if(x.equals(Zahl.ZERO))
+			return Zahl.ZERO;			
+		if(x.equals(Zahl.ONE))
+			return Zahl.ONE;
+		if(x.equals(Zahl.MINUS))
+			return Zahl.MINUS;
+		return null;
+	}	
+}
+
 class LambdaROOT extends LambdaAlgebraic{
 	public LambdaROOT(){ 
 		diffrule = null; 
