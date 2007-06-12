@@ -1176,6 +1176,8 @@ final public GeoElement[] process(Command c) throws MyError {
 
 /*
  * Area[ <GeoPoint>, ..., <GeoPoint> ]
+ * Area[ <GeoConic> ]
+ * Area[ <Polygon> ] (returns Polygon directly)
  */
 class CmdArea extends CommandProcessor {
 	
@@ -1187,7 +1189,25 @@ final public GeoElement[] process(Command c) throws MyError {
     int n = c.getArgumentNumber();
     GeoElement[] arg;
 
-    if (n > 2) {
+    if (n == 1) {
+    	arg = resArgs(c);
+    	
+    	// area of conic
+    	if (arg[0].isGeoConic()) {
+			GeoElement[] ret = { kernel.Area(c.getLabel(), (GeoConic) arg[0]) };
+			return ret;			
+		} 
+    	// area of polygon = polygon variable
+    	else if (arg[0].isGeoPolygon()) {
+			GeoElement[] ret = { arg[0] };
+			return ret;			
+		} 
+    	else
+			throw argErr(app, c.getName(), arg[0]);
+    }
+    
+    // area of points
+    else if (n > 2) {
         arg = resArgs(c);
         GeoPoint[] points = new GeoPoint[n];
         // check arguments

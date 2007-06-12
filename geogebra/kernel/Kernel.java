@@ -1597,6 +1597,51 @@ public class Kernel {
 		return num;
 	}
 	
+	/** 
+	 * Area named label of  conic
+	 */
+	final public GeoNumeric Area(String label, GeoConic c) {
+		AlgoAreaConic algo = new AlgoAreaConic(cons, label, c);
+		GeoNumeric num = algo.getArea();
+		return num;
+	}
+	
+	/** 
+	 * Mod[a, b]
+	 */
+	final public GeoNumeric Mod(String label, NumberValue a, NumberValue b) {
+		AlgoMod algo = new AlgoMod(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Div[a, b]
+	 */
+	final public GeoNumeric Div(String label, NumberValue a, NumberValue b) {
+		AlgoDiv algo = new AlgoDiv(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Min[a, b]
+	 */
+	final public GeoNumeric Min(String label, NumberValue a, NumberValue b) {
+		AlgoMin algo = new AlgoMin(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Max[a, b]
+	 */
+	final public GeoNumeric Max(String label, NumberValue a, NumberValue b) {
+		AlgoMax algo = new AlgoMax(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	// PhilippWeissenbacher 2007-04-10
 	
 	/**
@@ -3166,7 +3211,7 @@ public class Kernel {
 	}
 	
 	final public boolean isInteger(double x) {
-		return isZero(x - Math.round(x));		
+		return isEqual(x, Math.round(x));		
 	}
 	
     final public double convertToAngleValue(double val) {

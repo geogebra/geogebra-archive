@@ -68,23 +68,6 @@ public class AlgoAreaPoints extends AlgoElement {
     // angle in range [0, pi]
     final void compute() {      
         area.setValue(GeoPolygon.calcArea(P));
-    }   
-    
-    final public String toString() {
-        StringBuffer sb = new StringBuffer();
-        
-        sb.append(app.getCommand("Area"));
-        sb.append('[');     
-        // update dependent objects
-        int last = P.length - 1;       
-        for (int i = 0; i < last; i++) {
-            sb.append(P[i].getLabel());
-            sb.append(", ");
-        }
-        sb.append(P[last].getLabel());
-        sb.append("]");        
-        
-        return  sb.toString();
-    }
+    }       
     
 }

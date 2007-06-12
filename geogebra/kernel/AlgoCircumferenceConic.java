@@ -70,8 +70,10 @@ public class AlgoCircumferenceConic extends AlgoElement {
 	 * For all other cases circumference is undefined.
 	 */
 	final void compute() {
-		int type = conic.getType();
+    	if (conic.isGeoConicPart() || !conic.isDefined())
+    		circum.setUndefined();
 		
+		int type = conic.getType();		
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE:
 				// r is length of one of the half axes

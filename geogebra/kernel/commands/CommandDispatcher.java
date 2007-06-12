@@ -172,6 +172,7 @@ public class CommandDispatcher {
     	cmdTable.put("If", new CmdIf(kernel));
     	cmdTable.put("Sequence", new CmdSequence(kernel));    	
     	cmdTable.put("CurveCartesian", new CmdCurveCartesian(kernel));
+    	
     	// Victor Franco Espino 18-04-2007: New commands
     	cmdTable.put("AffineRatio", new CmdAffineRatio(kernel));
     	cmdTable.put("CrossRatio", new CmdCrossRatio(kernel));
@@ -179,10 +180,16 @@ public class CommandDispatcher {
     	cmdTable.put("Curvature", new CmdCurvature(kernel));
     	cmdTable.put("OsculatingCircle", new CmdOsculatingCircle(kernel));
     	// Victor Franco Espino 18-04-2007: End new commands
+    	
     	// Philipp Weissenbacher 10-04-2007
     	cmdTable.put("Circumference", new CmdCircumference(kernel));
     	cmdTable.put("Perimeter", new CmdPerimeter(kernel));
     	// Philipp Weissenbacher 10-04-2007
+    	
+    	cmdTable.put("Mod", new CmdMod(kernel));
+    	cmdTable.put("Div", new CmdDiv(kernel));
+    	cmdTable.put("Min", new CmdMin(kernel));
+    	cmdTable.put("Max", new CmdMax(kernel));
     }
 
 
