@@ -313,16 +313,7 @@ public class PropertiesDialog
 			// center dialog
 			firstTimeVisible = false;						
 			setLocationRelativeTo(app.getMainComponent());
-		} else {
-			Point loc = getLocation();
-			Dimension d1 = getSize();	
-			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-			int x = Math.min(loc.x, dim.width - d1.width);
-			int y = Math.min(loc.y, dim.height - d1.height - 25);
-			setLocation(x, y);
 		}
-		
-		SwingUtilities.updateComponentTreeUI(this);	
 	}
 
 	/**

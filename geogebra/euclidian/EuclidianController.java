@@ -1103,22 +1103,28 @@ final public class EuclidianController implements MouseListener,
 			// show popup menu after right click
 			hits = view.getTopHits(mouseLoc);
 			if (hits == null) {
-				app.clearSelectedGeos();
-				app.showDrawingPadPopup(view, mouseLoc);
-			} else {				
-				geo = chooseGeo(hits);
-				if (!app.containsSelectedGeo(geo)) {
-					app.clearSelectedGeos();					
+				// no hits
+				if (app.selectedGeosSize() > 0) {
+					// there are selected geos: show them
+					app.showPropertiesDialog(app.getSelectedGeos());
 				}
-															
-				// single selection: popup menu
-				if (app.selectedGeosSize() < 2) {				
-					app.showPopupMenu(geo, view, mouseLoc);						
-				} 
-				// multiple selection: properties dialog
-				else {														
-					app.showPropertiesDialog(app.getSelectedGeos());	
-				}																				
+				else {
+					// there are no selected geos: show drawing pad popup menu
+					app.showDrawingPadPopup(view, mouseLoc);
+				}
+			} else {		
+				// there are hits
+				if (app.selectedGeosSize() > 0) {	
+					// selected geos: add first hit to selection and show properties
+					app.addSelectedGeo((GeoElement) hits.get(0));
+					app.showPropertiesDialog(app.getSelectedGeos());				
+				}
+				else {
+					// no selected geos: choose geo and show popup menu
+					geo = chooseGeo(hits);
+					if (geo != null)
+						app.showPopupMenu(geo, view, mouseLoc);
+				}																										
 			}				
 			return;
 		}

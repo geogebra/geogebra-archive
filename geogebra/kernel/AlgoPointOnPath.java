@@ -15,9 +15,6 @@ package geogebra.kernel;
 
 public class AlgoPointOnPath extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Path path; // input
     private GeoPoint P; // output       
