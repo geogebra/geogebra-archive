@@ -127,8 +127,6 @@ public class PropertiesDialog
 	private JTreeGeoElements geoTree;
 	private JButton closeButton;
 	private PropertiesPanel propPanel;
-	
-	private boolean firstTimeVisible = true;
 
 	final static int TEXT_FIELD_FRACTION_DIGITS = 3;
 	final static int SLIDER_MAX_WIDTH = 170;
@@ -260,10 +258,13 @@ public class PropertiesDialog
 		dialogPanel.add(rightPanel, BorderLayout.CENTER);
 
 		contentPane.add(dialogPanel);
-		dialogPanel.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
+		//dialogPanel.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
+		
+		pack();
+		setLocationRelativeTo(app.getMainComponent());
 		
 		// TODO: check keylistener		
-		Util.addKeyListenerToAll(this, this);	
+		//Util.addKeyListenerToAll(this, this);	
 	}
 	
 	/*
@@ -306,33 +307,24 @@ public class PropertiesDialog
 		setVisible(false);	
 	}
 		
-	private void packDialog() {				
-		pack();				
-			
-		if (firstTimeVisible) {
-			// center dialog
-			firstTimeVisible = false;						
-			setLocationRelativeTo(app.getMainComponent());
-		}
-	}
-
 	/**
 	 * shows this dialog and select GeoElement geo at screen position location
 	 */
 	public void setVisibleWithGeos(ArrayList geos) {		
 		setViewActive(true);					
-		geoTree.setSelected(geos, false);		
-		
+	
 		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 
 				MAX_GEOS_FOR_EXPAND_ALL)		
 			geoTree.expandAll();
 		else 
-			geoTree.collapseAll();
+			geoTree.collapseAll();			
 		
+		geoTree.setSelected(geos, false);
 		if (!isShowing()) {	
-			packDialog();
-			super.setVisible(true);			
+			super.setVisible(true);						
 		}
+	
+		pack();
 	}
 
 	public void setVisible(boolean visible) {
@@ -389,30 +381,25 @@ public class PropertiesDialog
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();						
 				
 				// TODO: check selecting of root and type nodes
-				if (node == node.getRoot()) {
-					/*
+				if (node == node.getRoot()) {	
 					// root: add all objects
 					selectionList.clear();
 					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());										
-					break;
-					*/
+					i = selPath.length;		
 				}				
 				else if (node.getParent() == node.getRoot()) {
-					/*
 					// type node: select all children	
 					for (int k=0; k < node.getChildCount(); k++) {
 						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);											
 						selectionList.add(child.getUserObject());
 					}
-					*/
 				} else {
 					// GeoElement					
 					selectionList.add(node.getUserObject());					
 				}										
 			}				
 		}	
-		
-	
+			
 		return selectionList;
 	}
 	private ArrayList selectionList = new ArrayList();
@@ -3334,6 +3321,7 @@ public class PropertiesDialog
 			// create model from root node
 			treeModel = new DefaultTreeModel(root);				
 			setModel(treeModel);
+			setLargeModel(true);
 			typeNodesMap = new FastHashMapKeyless();
 			
 			getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
@@ -3383,13 +3371,7 @@ public class PropertiesDialog
 		 * @param addToSelection: false => clear old selection 
 		 */
 		public void setSelected(ArrayList geos, boolean addToSelection) {
-			TreePath tp = null;
-			
-			// remove all selection listeners
-			TreeSelectionListener [] listeners = getTreeSelectionListeners();
-			for (int i=0; i < listeners.length; i++) {
-				removeTreeSelectionListener(listeners[i]);
-			}
+			TreePath tp = null;					
 			
 			TreeSelectionModel lsm = getSelectionModel();					
 			if (geos == null) {
@@ -3407,37 +3389,34 @@ public class PropertiesDialog
 				if (!addToSelection) 
 					lsm.clearSelection();		
 							
-				// select all geos
+				// get paths for all geos
+				ArrayList paths = new ArrayList();
 				for (int i=0; i<geos.size(); i++) {
-					TreePath result = addToSelection((GeoElement) geos.get(i));
-					if (result != null) {						
+					TreePath result = getGeoPath((GeoElement) geos.get(i));
+					if (result != null) {	
 						tp = result;
+						expandPath(result);
+						paths.add(result);
 					}
-				}																	
+				}				
+							
+				// select geo paths
+				TreePath [] selPaths = new TreePath[paths.size()];
+				for (int i=0; i < selPaths.length; i++) {
+					selPaths[i] = (TreePath) paths.get(i);
+				}
+				lsm.addSelectionPaths(selPaths);
+				
+				if (tp != null && geos.size() == 1) {
+					scrollPathToVisible(tp);
+				}				
 			}		
-			
-			// show last selected path
-			if (tp != null && !addToSelection && geos.size() == 1) {
-				//expandPath(tp);	
-				//collapseAll();
-				makeVisible(tp);
-				scrollPathToVisible(tp);
-			}
-			
-			// readd all selection listeners			
-			for (int i=0; i < listeners.length; i++) {
-				addTreeSelectionListener(listeners[i]);
-				//listeners[i].valueChanged(null);
-			}			
-			
-			selectionChanged();
 		}	
 		
-		/**
-		 * Adds geo to the selection of this tree and 
-		 * returns its TreePath if successful.	
+		/**		 
+		 * returns geo's TreePath 
 		 */
-		private TreePath addToSelection(GeoElement geo) {
+		private TreePath getGeoPath(GeoElement geo) {
 			String typeString = geo.getObjectType();
 			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
 			if (typeNode == null)
@@ -3451,9 +3430,7 @@ public class PropertiesDialog
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(pos);
 				
 				//	expand typenode 
-				TreePath tp = new TreePath(node.getPath());
-				expandPath(tp);
-				addSelectionPath(tp);
+				TreePath tp = new TreePath(node.getPath());						
 
 				return tp;
 			}
