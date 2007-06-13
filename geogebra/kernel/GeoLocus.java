@@ -141,7 +141,7 @@ public class GeoLocus extends GeoElement implements Path {
 	}
 
 	public PathMover createPathMover() {
-		return new PathMoverGeneric(this);
+		return new PathMoverLocus(this);
 	}
 
 	public double getMaxParameter() {		
@@ -202,48 +202,12 @@ public class GeoLocus extends GeoElement implements Path {
 	private int closestPointIndex;
 
 	public void pathChanged(GeoPoint P) {
-		// PATH CHANGED
-		if (Double.isNaN(P.pathParameter.t) ||   // invalid parameter
-			lastPathChangedParameter ==	P.pathParameter.t) // unchanged parameter: path changed but not parameter 
-		{
-			pointChanged(P);
-			return;
-		}
-
-		// PATH MOVER CHANGED PARAMETER (see PathMoverGeneric.calcPoint())
-		
-		/*
-		if (P.pathParameter.t < 0)
-			P.pathParameter.t = 0;
-		else if (P.pathParameter.t >= myPointList.size())
-			P.pathParameter.t = myPointList.size()-1;		
-			
-		// get point for given parameter
-		int index = (int) Math.round(P.pathParameter.t);		
-		MyPoint locusPoint = (MyPoint) myPointList.get(index);
-		P.x = locusPoint.x;
-		P.y = locusPoint.y;
-		P.z = 1.0;	
-		*/
-		
-		// get points left and right of path parameter				
-		int leftIndex = (int) Math.max(0, Math.floor(P.pathParameter.t));
-		int rightIndex = (int) Math.min(myPointList.size()-1, Math.ceil(P.pathParameter.t));
-		MyPoint leftPoint = (MyPoint) myPointList.get(leftIndex);
-		MyPoint rightPoint = (MyPoint) myPointList.get(rightIndex);				
-				
-		// interpolate between leftPoint and rightPoint
-		double param1 = (P.pathParameter.t - leftIndex);
-		double param2 = 1.0 - param1;
-		P.x = param2 * leftPoint.x + param1 * rightPoint.x;
-		P.y = param2 * leftPoint.y + param1 * rightPoint.y;
-		P.z = 1.0;	
-		
-		lastPathChangedParameter = P.pathParameter.t;		
+		// find closest point on changed path to P
+		pointChanged(P);					
 	}
-	private double lastPathChangedParameter;
 
 	public void pointChanged(GeoPoint P) {
+		// find closest point on path
 		MyPoint closestPoint = getClosestPoint(P);
 		if (closestPoint != null) {
 			P.x = closestPoint.x;
@@ -253,9 +217,7 @@ public class GeoLocus extends GeoElement implements Path {
 		}		
 		else {
 			P.pathParameter.t = Double.NaN;
-		}
-		
-		lastPathChangedParameter = P.pathParameter.t;
+		}		
 	}
 	
 	public boolean isPath() {

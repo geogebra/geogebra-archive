@@ -136,6 +136,7 @@ public class AlgebraView extends JTree implements View {
 		model = new DefaultTreeModel(root);
 		// this.treeModel = model;        
 		setModel(model);
+		setLargeModel(true);
 		setLabels();
 
 		// tree's options             

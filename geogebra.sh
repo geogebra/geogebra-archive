@@ -1,1 +1,0 @@
-java geogebra.gui.GeoGebra

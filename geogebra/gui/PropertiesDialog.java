@@ -388,18 +388,23 @@ public class PropertiesDialog
 			for (int i=0; i < selPath.length; i++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();						
 				
+				// TODO: check selecting of root and type nodes
 				if (node == node.getRoot()) {
+					/*
 					// root: add all objects
 					selectionList.clear();
 					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());										
 					break;
+					*/
 				}				
 				else if (node.getParent() == node.getRoot()) {
+					/*
 					// type node: select all children	
 					for (int k=0; k < node.getChildCount(); k++) {
 						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);											
 						selectionList.add(child.getUserObject());
 					}
+					*/
 				} else {
 					// GeoElement					
 					selectionList.add(node.getUserObject());					
@@ -3390,12 +3395,12 @@ public class PropertiesDialog
 			if (geos == null) {
 				if (lsm.isSelectionEmpty()) {
 					// select all  if list is not empty
-					/*if (root.getChildCount() > 0) {						
+					if (root.getChildCount() > 0) {						
 						DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) root.getFirstChild();
 						tp = new TreePath(((DefaultMutableTreeNode)typeNode.getFirstChild()).getPath());																
 						setSelectionPath(tp); // select																													
-					}*/
-					setSelectionRow(0); // select root
+					}
+					//setSelectionRow(0); // select root
 				}			
 			}			
 			else {
@@ -3405,8 +3410,9 @@ public class PropertiesDialog
 				// select all geos
 				for (int i=0; i<geos.size(); i++) {
 					TreePath result = addToSelection((GeoElement) geos.get(i));
-					if (result != null)
+					if (result != null) {						
 						tp = result;
+					}
 				}																	
 			}		
 			
@@ -3421,8 +3427,10 @@ public class PropertiesDialog
 			// readd all selection listeners			
 			for (int i=0; i < listeners.length; i++) {
 				addTreeSelectionListener(listeners[i]);
-				listeners[i].valueChanged(null);
-			}					
+				//listeners[i].valueChanged(null);
+			}			
+			
+			selectionChanged();
 		}	
 		
 		/**
@@ -3441,8 +3449,12 @@ public class PropertiesDialog
 			else {
 				// add to selection
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(pos);
+				
+				//	expand typenode 
 				TreePath tp = new TreePath(node.getPath());
+				expandPath(tp);
 				addSelectionPath(tp);
+
 				return tp;
 			}
 		}
