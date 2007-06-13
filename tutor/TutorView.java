@@ -13,32 +13,59 @@ import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
 
-public class TutorView implements View {
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class TutorView extends JPanel implements View {
 	
 	
 	private Application app;
 	private MyXMLio xmlio;
-	private LinkedList strategies;
-
-	public TutorView (String[] strategiesXML,Application app)
+	private LinkedList strategies = new LinkedList();
+	private DataBaseInterface dbi;
+	private static final String DRIVER = "com.mysql.jdbc.Driver";
+	private static final String URL = "jdbc:mysql://158.109.2.26:33/intermates";
+	private static final String USER ="jmfortuny";
+	private static final String PWD = "jmfortuny";
+	
+	
+	public TutorView (String[] strategiesXML,Application app) 
 	{
 		this.app = app;
-		strategies = new LinkedList();
-			// PROCEED STRATEGIES FILES
+		this.dbi = new DataBaseInterface(DRIVER, URL, USER, PWD);
+		
+		if (strategiesXML != null) 
+		// PROCEED STRATEGIES FILES
+			//nom fitxer
 			for (int i =0; i<strategiesXML.length; i++){
 				// Try to load Strategies files;
 				try {
-				 URL url = handleFileArg(strategiesXML[i]); 
-				 Construction c = getConstruction(url);
-				 //System.out.println("Construction"+i+c.getXML());
-				 strategies.add(c);
+					Strategy str = new Strategy();
+					// What is passed through applet params?
+					str.fillData(dbi,strategiesXML[i]);
+	       			URL url = str.getURL(); 
+	       			
+	       			handleFileArg(strategiesXML[i]); 
+			    
+	       			Construction c = getConstruction(url);
+			    	str.setConstruction(c);
+			    	//System.out.println("Construction"+i+c.getXML());
+				 strategies.add(str);
 				} catch (Exception e) {					
 					app.showError(app.getError("Strategies Loading Process Failed. ") 
 										+ "\n" + e.getMessage());
 				}
 			}
 	
+		createGUI();
 	}
+	
+	public void createGUI() {
+		// TODO: implement user interface of tutor view
+		add(new JLabel("Hello Eloi!"));
+	}
+	
+	
 	 private URL handleFileArg(String fileArgument) {	     	      
 	        try {             		        	
 	        	String lowerCase = fileArgument.toLowerCase();
@@ -66,12 +93,14 @@ public class TutorView implements View {
 		Construction c = geo.getConstruction();
 		
 		//TreeSet t = geo.getAllPredecessors();
+		if (strategies.size() == 0){
 		System.out.println("STR1"+ ((Construction)strategies.getFirst()).getXML());
 		System.out.println("STR2"+ ((Construction)strategies.getLast()).getXML());
 		System.out.println("CMD"+geo.getCommandDescription());
 		System.out.println(geo+"/"+geo.getObjectType());
 		//System.out.println(t);
 		System.out.println(c.getXML());
+		}
 		
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();

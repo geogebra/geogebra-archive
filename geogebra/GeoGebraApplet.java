@@ -60,12 +60,9 @@ import netscape.javascript.JSObject;
  */
 public class GeoGebraApplet extends JApplet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private Application app;
-	private Kernel kernel;
+	protected Application app;
+	protected Kernel kernel;
 	private JButton btOpen;
 	private DoubleClickListener dcListener;
 	private EuclidianView ev;
@@ -169,7 +166,7 @@ public class GeoGebraApplet extends JApplet {
 		repaint();
 	}
 
-	private void initGUI() {
+	protected void initGUI() {
 		// show only button to open application window	
 		if (showOpenButton) {
 			btOpen =
@@ -185,20 +182,9 @@ public class GeoGebraApplet extends JApplet {
 		}
 		// show interactive drawing pad
 		else {
-			JPanel p = new JPanel(new BorderLayout());
-			app.setUndoActive(undoActive);			
-			app.setShowMenuBar(showMenuBar);
-			app.setShowAlgebraInput(showAlgebraInput);
-			app.setShowToolBar(showToolBar, showToolBarHelp);	
-			app.setRightClickEnabled(enableRightClick);
-			if (customToolBar != null && customToolBar.length() > 0)
-				app.setToolBarDefinition(customToolBar);
-			app.setShowResetIcon(showResetIcon);
-			ev = app.getEuclidianView();
-			p.add(app.buildApplicationPanel(), BorderLayout.CENTER);
-			ev.updateBackground();
-			p.setBorder(BorderFactory.createLineBorder(Color.gray));
-			getContentPane().add(p);
+			JPanel panel = createGeoGebraAppletPanel();
+			getContentPane().add(panel);
+			panel.setBorder(BorderFactory.createLineBorder(Color.gray));
 
 			if (showFrame) {
 				//	open frame on double click
@@ -208,6 +194,25 @@ public class GeoGebraApplet extends JApplet {
 			
 			//app.setMoveMode();
 		}
+	}
+	
+	protected JPanel createGeoGebraAppletPanel() {
+		JPanel appletPanel = new JPanel(new BorderLayout());
+		
+		app.setUndoActive(undoActive);			
+		app.setShowMenuBar(showMenuBar);
+		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);
+		app.setShowAlgebraInput(showAlgebraInput);
+		app.setShowToolBar(showToolBar, showToolBarHelp);	
+		app.setRightClickEnabled(enableRightClick);
+		if (customToolBar != null && customToolBar.length() > 0)
+			app.setToolBarDefinition(customToolBar);
+		app.setShowResetIcon(showResetIcon);
+		ev = app.getEuclidianView();
+		
+		ev.updateBackground();
+		
+		return appletPanel;
 	}
 
 	private class DoubleClickListener extends MouseAdapter {
@@ -1060,4 +1065,6 @@ public class GeoGebraApplet extends JApplet {
 			e.printStackTrace();
 		}    
 	}
+
+	
 }
