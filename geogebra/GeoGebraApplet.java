@@ -201,15 +201,15 @@ public class GeoGebraApplet extends JApplet {
 		
 		app.setUndoActive(undoActive);			
 		app.setShowMenuBar(showMenuBar);
-		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
-		ev = app.getEuclidianView();
 		
+		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		
+		ev = app.getEuclidianView();		
 		ev.updateBackground();
 		
 		return appletPanel;
