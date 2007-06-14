@@ -880,8 +880,7 @@ final public class EuclidianController implements MouseListener,
 		transformCoords();
 
 		// zoom rectangle (right drag) or selection rectangle (left drag)
-		if (RIGHT_CLICK || 
-			mode == EuclidianView.MODE_MOVE && moveMode == MOVE_NONE) {			
+		if (RIGHT_CLICK || allowSelectionRectangle()) {
 			// set zoom rectangle's size
 			updateSelectionRectangle(RIGHT_CLICK);
 			view.repaint();
@@ -931,6 +930,15 @@ final public class EuclidianController implements MouseListener,
 		
 		handleMouseDragged(true);								
 	}	
+	
+	private boolean allowSelectionRectangle() {
+		return mode == EuclidianView.MODE_MOVE && moveMode == MOVE_NONE ||
+			mode == EuclidianView.MODE_ALGEBRA_INPUT && app.getCurrentSelectionListener() != null;			
+	}
+	
+	
+	
+	
 	// square of maximum allowed pixel distance 
 	// for continous mouse movements
 	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 64; 	
@@ -1136,8 +1144,7 @@ final public class EuclidianController implements MouseListener,
 			movedGeoElement = null;
 			rotGeoElement = null;	
 			
-			if (mode == EuclidianView.MODE_MOVE &&
-					moveMode == MOVE_NONE) {
+			if (allowSelectionRectangle()) {
 				processSelectionRectangle();				
 				return;
 			}

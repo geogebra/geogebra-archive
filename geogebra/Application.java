@@ -107,7 +107,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "12. June 2007";
+    public static final String buildDate = "14. June 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -809,9 +809,7 @@ public class Application implements	KeyEventDispatcher {
      * Sets a mode where clicking on an object will
      * notify the given selection listener.
      */
-    public void setSelectionListenerMode(GeoElementSelectionListener sl) {
-        currentSelectionListener = sl;
-        
+    public void setSelectionListenerMode(GeoElementSelectionListener sl) {        
 		if (sl == null) {
 			setMode(oldMode);
 		} else {			
@@ -820,6 +818,8 @@ public class Application implements	KeyEventDispatcher {
 	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);	        
 	        appToolbarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
 		}
+		 
+		currentSelectionListener = sl;	      
     }
     private int oldMode = 0;
     
@@ -2733,6 +2733,8 @@ public class Application implements	KeyEventDispatcher {
     }*/
     
     public void setMode(int mode) {  
+    	currentSelectionListener = null;
+    	
     	 if (euclidianView != null)
     		 euclidianView.setMode(mode);
         if (algebraView != null)

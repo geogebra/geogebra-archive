@@ -65,13 +65,12 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 			GeoElement geo = (GeoElement) node.getUserObject();								
 			if (geo == null) return this;
 			
-		/*	// ICONS               
+			// ICONS               
 			if (geo.isEuclidianVisible()) {
 				setIcon(iconShown);
 			} else {
 				setIcon(iconHidden);
-			}
-			*/
+			}			
 			
 			setFont(app.boldFont);
 			setForeground(geo.labelColor);			
@@ -94,9 +93,8 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 			
 			setBorder(null);					
 			setText(value.toString());
+			setIcon(null);		
 		}	
-		
-		setIcon(null);
 		
 		return this;
 		

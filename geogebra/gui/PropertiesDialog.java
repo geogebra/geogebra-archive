@@ -170,7 +170,7 @@ public class PropertiesDialog
 		// JList with GeoElements		
 		
 		JScrollPane listScroller = new JScrollPane(geoTree);
-		//geoTree.setMinimumSize(new Dimension(100, 200));
+		geoTree.setMinimumSize(new Dimension(150, 200));
 		listPanel.add(listScroller, BorderLayout.CENTER);
 
 		// rename, redefine and delete button
@@ -321,10 +321,10 @@ public class PropertiesDialog
 		
 		geoTree.setSelected(geos, false);
 		if (!isShowing()) {	
-			super.setVisible(true);						
-		}
-	
-		pack();
+			super.setVisible(true);			
+			pack();
+			setLocationRelativeTo(app.getMainComponent());		
+		}					
 	}
 
 	public void setVisible(boolean visible) {
