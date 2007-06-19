@@ -5,7 +5,7 @@ package geogebra.kernel;
  * @version 11-02-2007
  * 
  * This class calculate cross ratio of 4 points like the division of 2 affine ratio's:
- *         CrossRatio(A,B,C,D) = affineRatio(A, B, C) / affineRatio(A, B, D)
+ *         CrossRatio(A,B,C,D) = affineRatio(B, C, D) / affineRatio(A, C, D)
  */
 
 public class AlgoCrossRatio extends AlgoElement {
@@ -50,8 +50,8 @@ public class AlgoCrossRatio extends AlgoElement {
     final void compute() {
         //Check if the points are aligned
     	if ( !(A.equals(D)) && !(B.equals(C)) 
-        	 && GeoPoint.collinear(A, C, D) && GeoPoint.collinear(B, C, D) ) {
-        		M.setValue(GeoPoint.affineRatio(A, C, D) / GeoPoint.affineRatio(B, C, D));
+        	 && GeoPoint.collinear(B, C, D) && GeoPoint.collinear(A, C, D) ) {
+        		M.setValue(GeoPoint.affineRatio(B, C, D) / GeoPoint.affineRatio(A, C, D));
         }else{
         	M.setUndefined();
         }
