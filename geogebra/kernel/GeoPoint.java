@@ -340,18 +340,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	
 	/**
 	 * Returns the affine ratio for three collinear points A, B and C. 
-	 * The ratio is lambda with A = B + lambda * BC, i.e. lambda = |BA|/|BC|.
+	 * The ratio is lambda with C = A + lambda * AB, i.e. lambda = AC/AB.
 	 * Note: the collinearity is not checked in this method.
 	 */
 	public static final double affineRatio(GeoPoint A, GeoPoint B, GeoPoint C) {		
-		double BCx = B.inhomX - C.inhomX;
-		double BCy = B.inhomY - C.inhomY;
+		double ABx = B.inhomX - A.inhomX;
+		double ABy = B.inhomY - A.inhomY;
 		
 		// avoid division by a number close to zero
-		if (Math.abs(BCx) > Math.abs(BCy)) {
-			return (B.inhomX - A.inhomX) / BCx;
+		if (Math.abs(ABx) > Math.abs(ABy)) {
+			return (C.inhomX - A.inhomX) / ABx;
 		} else {
-			return (B.inhomY - A.inhomY) / BCy;
+			return (C.inhomY - A.inhomY) / ABy;
 		}		
 	}
     

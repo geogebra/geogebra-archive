@@ -21,6 +21,7 @@ package geogebra.euclidian;
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
+import geogebra.kernel.AlgoMidpoint;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
@@ -46,6 +47,7 @@ import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Translateable;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -66,11 +68,6 @@ import java.util.LinkedList;
 
 import javax.swing.ToolTipManager;
 
-/**
- * 
- * @author Markus
- * @version
- */
 final public class EuclidianController implements MouseListener,
 		MouseMotionListener, MouseWheelListener, ComponentListener {
 
@@ -2643,10 +2640,30 @@ final public class EuclidianController implements MouseListener,
 		if (count == 0) {
 			addSelectedLine(hits, 2, false);
 		}
+		if (count == 0) {
+			addSelectedConic(hits, 2, false);
+		}
+		if (count == 0) {
+			addSelectedPolygon(hits, 2, false);
+		}
 		
 		if (selPoints() == 2) {			
+			// length
 			GeoPoint[] points = getSelectedPoints();
-			kernel.Distance(null, points[0], points[1]);
+			GeoNumeric length = kernel.Distance(null, points[0], points[1]);
+			
+			// create text that shows length
+			// dynamic text for length
+			ExpressionNode exp = new ExpressionNode(kernel, length);
+			GeoText text = kernel.DependentText(null, exp);
+			// set startpoint to midpoint of two points
+			GeoPoint midPoint = kernel.Midpoint(points[0], points[1]);
+			try {
+				text.setStartPoint(midPoint);
+				text.updateRepaint();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 			return true;
 		} 
 		else if (selLines() == 2) {			
@@ -2657,7 +2674,30 @@ final public class EuclidianController implements MouseListener,
 		else if (selPoints() == 1 && selLines() == 1) {	
 			GeoPoint[] points = getSelectedPoints();
 			GeoLine[] lines = getSelectedLines();
-			kernel.Distance(null, points[0], lines[0]);			
+			GeoNumeric length = kernel.Distance(null, points[0], lines[0]);	
+			
+			// TODO: 
+			// create text that shows length
+			// dynamic text for length
+			ExpressionNode exp = new ExpressionNode(kernel, length);
+			GeoText text = kernel.DependentText(null, exp);
+			try {
+				text.setStartPoint(points[0]);
+				text.updateRepaint();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+			
+			return true;
+		}
+		else if (selConics() == 1) {			
+			GeoConic [] conic = getSelectedConics();
+			kernel.Circumference(null, conic[0]);
+			return true;
+		}
+		else if (selPolygons() == 1) {			
+			GeoPolygon [] poly = getSelectedPolygons();
+			kernel.Perimeter(null, poly[0]);
 			return true;
 		}
 		return false;

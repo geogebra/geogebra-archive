@@ -24,9 +24,6 @@ public class GeoLine extends GeoVec3D
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable {
 	
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	// modes
     public static final int EQUATION_IMPLICIT = 0;

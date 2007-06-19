@@ -1260,6 +1260,19 @@ public class Kernel {
 	}
 
 	/** 
+	 * Returns the projected point of P on line g. 
+	 */
+	final public GeoPoint ProjectedPoint(GeoPoint P, GeoLine g) {
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);		
+			GeoLine perp = OrthogonalLine(null, P, g);
+			GeoPoint S = IntersectLines(null, perp, g);		
+		cons.setSuppressLabelCreation(oldMacroMode);
+		return S;
+	}
+
+	
+	/** 
 	 * Midpoint M = (P + Q)/2
 	 */
 	final public GeoPoint Midpoint(
@@ -1269,6 +1282,20 @@ public class Kernel {
 		AlgoMidpoint algo = new AlgoMidpoint(cons, label, P, Q);
 		GeoPoint M = algo.getPoint();
 		return M;
+	}
+	
+	/** 
+	 * Creates Midpoint M = (P + Q)/2 without label (for use as e.g. start point)
+	 */
+	final public GeoPoint Midpoint(
+		GeoPoint P,
+		GeoPoint Q) {
+
+		boolean oldValue = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		GeoPoint midPoint = Midpoint(null, P, Q);
+		cons.setSuppressLabelCreation(oldValue);
+		return midPoint;
 	}
 	
 	/** 

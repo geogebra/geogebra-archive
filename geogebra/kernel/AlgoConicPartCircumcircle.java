@@ -117,7 +117,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
 		// otherwise we got (2) two rays starting at A and C in oposite directions
 		// case (1): use parameters 0, 1 and positive orientation to tell conicPart how to behave
 		// case (2): use parameters 0, 1 and negative orientation
-		double lambda = GeoPoint.affineRatio(B, A, C);
+		double lambda = GeoPoint.affineRatio(A, C, B);
 		if (lambda < 0 || lambda > 1) {
 			// two rays
 			// second ray with start point C and direction of AC 				
