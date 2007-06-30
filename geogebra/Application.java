@@ -2210,6 +2210,11 @@ public class Application implements	KeyEventDispatcher {
     	System.gc();
     }
     
+    private void updateSelection() {
+    	if (menuBar != null)
+    		menuBar.updateSelection();    	
+    }
+    
     public void updateMenuWindow() {
     	if (menuBar != null) {
     		menuBar.updateMenuWindow();
@@ -3092,10 +3097,24 @@ public class Application implements	KeyEventDispatcher {
 	        }
     	}
         kernel.notifyRepaint();
+        updateSelection();
+    }
+    
+    final public void selectAll() {    
+    	clearSelectedGeos(false);
+    	
+    	Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();    	
+    	while (it.hasNext()) {    		
+        	GeoElement geo = (GeoElement) it.next();
+        	addSelectedGeo(geo, false);
+    	}
+        kernel.notifyRepaint();
+        updateSelection();
     }
     
     final public void clearSelectedGeos() {
     	clearSelectedGeos(true);
+    	updateSelection();
     }    
     	
    	public void clearSelectedGeos(boolean repaint) {
@@ -3108,6 +3127,7 @@ public class Application implements	KeyEventDispatcher {
 	    	selectedGeos.clear();
 	    	if (repaint) kernel.notifyRepaint();
     	}
+    	updateSelection();
     }
 
     /**
@@ -3131,6 +3151,7 @@ public class Application implements	KeyEventDispatcher {
     	  
     	if (repaint)
     		kernel.notifyRepaint();
+    	updateSelection();
     }
     
     final public boolean containsSelectedGeo(GeoElement geo) {
@@ -3147,6 +3168,7 @@ public class Application implements	KeyEventDispatcher {
     	selectedGeos.remove(geo);
     	geo.setSelected(false);     	    
     	if (repaint) kernel.notifyRepaint();
+    	updateSelection();
     }
     
     final public void addSelectedGeo(GeoElement geo) {
@@ -3159,6 +3181,7 @@ public class Application implements	KeyEventDispatcher {
     	selectedGeos.add(geo);
     	geo.setSelected(true);     	    
     	if (repaint) kernel.notifyRepaint();
+    	updateSelection();
     }
     
     /**
@@ -3364,12 +3387,6 @@ public class Application implements	KeyEventDispatcher {
 				setMode(EuclidianView.MODE_MOVE);
 				consumed = true;
 			}
-			break;
-
-		// F4 changes to move mode
-		case KeyEvent.VK_F4:
-			setMode(EuclidianView.MODE_MOVE);
-			consumed = true;
 			break;
 		}
 		if (consumed)

@@ -21,6 +21,7 @@ package geogebra.euclidian;
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
+import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
@@ -937,7 +938,7 @@ final public class EuclidianController implements MouseListener,
 	
 	// square of maximum allowed pixel distance 
 	// for continous mouse movements
-	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 64; 	
+	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 16; 	
 	
 	private void handleMouseDragged(boolean repaint) {
 		// moveMode was set in mousePressed()
@@ -1181,19 +1182,7 @@ final public class EuclidianController implements MouseListener,
 		moveMode = MOVE_NONE;
 		initShowMouseCoords();	
 		view.showAxesRatio = false;
-		kernel.notifyRepaint();	
-		
-		// TODO: remove
-		/*
-		double totalTime = AlgoElement.computeTime + AlgoElement.updateTime;
-        System.out.println("AlgoElement: compute: " + (100* AlgoElement.computeTime / totalTime) +
-        		"%, update: " + (100* AlgoElement.updateTime / totalTime) +"%" );
-        
-    	totalTime = AlgoMacro.getTime + AlgoMacro.updateAlgosTime + AlgoMacro.setTime;
-        System.out.println("AlgoMacro: set state: " + (100* AlgoMacro.setTime / totalTime) +
-        		"%, algoUpdate: " + (100* AlgoMacro.updateAlgosTime / totalTime) +
-        		"%, get state: " + (100* AlgoMacro.getTime / totalTime) +"%" );
-        */
+		kernel.notifyRepaint();					
 	}
 	
 	private boolean hitResetIcon() {
@@ -1556,7 +1545,22 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_MACRO:			
 			changedKernel = macro(hits);
 			break;
-
+			
+		case EuclidianView.MODE_AREA:
+			changedKernel = area(hits, e);
+			break;	
+			
+		case EuclidianView.MODE_SLOPE:
+			changedKernel = slope(hits);
+			break;
+			
+		case EuclidianView.MODE_REGULAR_POLYGON:
+			changedKernel = regularPolygon(hits);
+			break;
+			
+		case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
+			changedKernel = showCheckBox(hits);
+			break;
 
 		default:
 		// do nothing
@@ -1885,14 +1889,21 @@ final public class EuclidianController implements MouseListener,
 	 * T^(-1) = ( 0 -1/yscale yZero/yscale ) 
 	 *          ( 0 0 1 )
 	 */
+	
+	private void transformCoords() {
+		transformCoords(false);
+	}
 
-	final private void transformCoords() {
+	final private void transformCoords(boolean usePointCapturing) {
 		// calc real world coords
 		calcRWcoords();
-
-		switch (moveMode) {
-		case MOVE_POINT:
-		case MOVE_FUNCTION:
+		
+		boolean doPointCapturing =
+			usePointCapturing ||
+			moveMode == MOVE_POINT ||
+			moveMode == MOVE_FUNCTION;
+		
+		if (doPointCapturing) {
 			//	point capturing to grid
 			double pointCapturingPercentage = 1;
 			switch (view.getPointCapturingMode()) {			
@@ -1915,8 +1926,8 @@ final public class EuclidianController implements MouseListener,
 					}
 				
 				default:
+					// point capturing off
 			}
-			break;
 		}
 	}
 	
@@ -1983,7 +1994,7 @@ final public class EuclidianController implements MouseListener,
 		}
 
 		if (createPoint) {
-			transformCoords();
+			transformCoords(true); // use point capturing if on
 			if (path == null) {
 				point = kernel.Point(null, xRW, yRW);
 				view.showMouseCoords = true;
@@ -2668,6 +2679,7 @@ final public class EuclidianController implements MouseListener,
 			
 			// length			
 			segments[0].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			segments[0].setLabelVisible(true);
 			segments[0].updateRepaint();
 			return true;
 		}
@@ -2710,7 +2722,7 @@ final public class EuclidianController implements MouseListener,
 			// text			
 			GeoText text = createDynamicText(app.getCommand("Circumference"), circumFerence, e.getPoint());			
 			if (conic.isLabelSet()) {
-				circumFerence.setLabel(app.getCommand("Circumference") + "_{" + conic.getLabel() + "}" );							
+				circumFerence.setLabel(app.getCommand("Circumference").toLowerCase() + conic.getLabel() );							
 				text.setLabel(app.getPlain("Text") + conic.getLabel());				
 			}			
 			return true;
@@ -2722,16 +2734,18 @@ final public class EuclidianController implements MouseListener,
 			GeoNumeric perimeter = kernel.Perimeter(null, poly[0]);
 			
 			// text			
-			GeoText text = createDynamicText(app.getCommand("Perimeter"), perimeter, e.getPoint());			
+			GeoText text = createDynamicText(descriptionPoints(app.getCommand("Perimeter"), poly[0]), 
+									perimeter, e.getPoint());
+			
 			if (poly[0].isLabelSet()) {
-				perimeter.setLabel(app.getCommand("Circumference") + "_{" + poly[0].getLabel() + "}" );							
+				perimeter.setLabel(app.getCommand("Perimeter").toLowerCase() + poly[0].getLabel() );							
 				text.setLabel(app.getPlain("Text") + poly[0].getLabel());				
 			} 
 			return true;
 		}
 		
 		return false;
-	}
+	}	
 	
 	/**
 	 * Creates a text that shows the distance length between geoA and geoB at the given startpoint.
@@ -2743,7 +2757,7 @@ final public class EuclidianController implements MouseListener,
 			String strText = "";
 			boolean useLabels = geoA.isLabelSet() && geoB.isLabelSet();
 			if (useLabels) {		
-				length.setLabel(app.getCommand("Distance")+ "_{" + geoA.getLabel() + geoB.getLabel() + "}");
+				length.setLabel(app.getCommand("Distance").toLowerCase() + geoA.getLabel() + geoB.getLabel());
 				strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
 							+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
 							+ length.getLabel();			
@@ -2753,8 +2767,8 @@ final public class EuclidianController implements MouseListener,
 				geoB.updateRepaint();
 			}
 			else {
-				length.setLabel(app.getCommand("Distance"));					
-				strText = "" + length.getLabel();
+				length.setLabel(app.getCommand("Distance").toLowerCase());					
+				strText = "\"\"" + length.getLabel();
 			}
 							
 			// create dynamic text
@@ -2776,11 +2790,12 @@ final public class EuclidianController implements MouseListener,
 	/**
 	 * Creates a text that shows a number value of geo at the current mouse position.
 	 */
-	private GeoText createDynamicText(String descText, GeoNumeric value, Point loc) {
+	private GeoText createDynamicText(String descText, GeoElement value, Point loc) {
 		// create text that shows length
 		try {
 			// create dynamic text
 			String dynText = "\"" + descText + " = \" + " + value.getLabel();
+			
 			GeoText text = kernel.getAlgebraProcessor().evaluateToText(dynText, true);									
 			text.setAbsoluteScreenLocActive(true);
 			text.setAbsoluteScreenLoc(loc.x, loc.y);			
@@ -2790,6 +2805,105 @@ final public class EuclidianController implements MouseListener,
 			e.printStackTrace();
 			return null;
 		}	
+	}
+	
+	private boolean area(ArrayList hits,  MouseEvent e) {
+		if (hits == null)
+			return false;
+		
+		int count = addSelectedPolygon(hits, 1, false);
+		if (count == 0) {
+			addSelectedConic(hits, 2, false);
+		}				
+		
+		// area of CONIC
+		if (selConics() == 1) {			
+			GeoConic conic = getSelectedConics()[0];			
+			
+			//  check if arc
+			if (conic.isGeoConicPart()) {				
+				GeoConicPart conicPart = (GeoConicPart) conic;
+				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_ARC) {
+					clearSelections();
+					return false;
+				}				
+			} 
+			
+			// standard case: conic
+			GeoNumeric area = kernel.Area(null, conic);
+			
+			// text			
+			GeoText text = createDynamicText(app.getCommand("Area"), area, e.getPoint());			
+			if (conic.isLabelSet()) {				
+				area.setLabel(app.getCommand("Area").toLowerCase() + conic.getLabel());							
+				text.setLabel(app.getPlain("Text") + conic.getLabel());				
+			}			
+			return true;
+		}
+		
+		// area of polygon
+		else if (selPolygons() == 1) {			
+			GeoPolygon [] poly = getSelectedPolygons();	
+					
+									
+			// dynamic text with polygon's area
+			GeoText text = createDynamicText(descriptionPoints(app.getCommand("Area"), poly[0]), poly[0], e.getPoint());			
+			if (poly[0].isLabelSet()) {					
+				text.setLabel(app.getPlain("Text") + poly[0].getLabel());				
+			} 
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private String descriptionPoints(String prefix, GeoPolygon poly) {
+		// build description text including point labels	
+		String descText = prefix;
+		
+//		 use points for polygon with static points (i.e. no list of points)
+		GeoPoint [] points = null;
+		if (poly.getParentAlgorithm() instanceof AlgoPolygon) {
+			points = ((AlgoPolygon) poly.getParentAlgorithm()).getPoints();
+		}	
+		
+		if (points != null) {
+			descText = descText + " \"";
+			boolean allLabelsSet = true;
+			for (int i=0; i < points.length; i++) {
+				if (points[i].isLabelSet()) 
+					descText = descText + " + Name[" + points[i].getLabel() + "]";
+				else {
+					allLabelsSet = false;
+					i = points.length;
+				}
+			}
+			
+			if (allLabelsSet) {
+				descText = descText + " + \"";
+				for (int i=0; i < points.length; i++) {
+					points[i].setLabelVisible(true);
+					points[i].updateRepaint();
+				}
+			} else
+				descText = app.getCommand("Area");
+		}
+		return descText;
+	}
+	
+	private boolean slope(ArrayList hits) {
+		// TODO: implement slope()
+		return false;
+	}
+	
+	private boolean regularPolygon(ArrayList hits) {
+		// TODO: implement regularPolygon()
+		return false;
+	}
+	
+	private boolean showCheckBox(ArrayList hits) {
+		// TODO: implement showCheckBox()
+		return false;
 	}
 
 	// get (point or line) and (conic or function or curve)

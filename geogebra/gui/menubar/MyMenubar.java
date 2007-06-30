@@ -7,6 +7,7 @@ import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
@@ -15,6 +16,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
 import java.io.BufferedReader;
@@ -59,7 +61,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			// updateAction,
 			infoAction, exportGraphicAction, exportWorksheet,
 			showCreateToolsAction, showManageToolsAction,
-			savePreferencesAction, clearPreferencesAction;
+			savePreferencesAction, clearPreferencesAction,
+			selectAllAction, deleteAction;
 
 	private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
@@ -122,6 +125,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
         updateMenuLabeling();        
         
         updateActions();
+        updateSelection();
 	}
 
 	public void updateMenuFile() {
@@ -130,15 +134,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menuFile.removeAll();
 		
 		JMenu menu = menuFile;
-		JMenuItem mi = menu.add(newFileAction);
-		setCtrlAccelerator(mi, 'N');
-		if (!app.isApplet()) {
-			mi = new JMenuItem(newWindowAction);
-			mi.setIcon(app.getEmptyIcon());
-			setCtrlShiftAccelerator(mi, 'N');
-			menu.add(mi);
-			menu.addSeparator();
+		JMenuItem mi;
+		if (app.isApplet()) {
+			// "New" in applet: reset 
+			mi = menu.add(newFileAction);			
+		} else {
+			// "New" in application: new window
+			mi = new JMenuItem(newWindowAction);			
 		}
+		setCtrlAccelerator(mi, 'N');
+		menu.add(mi);
 		
 		mi = menu.add(loadAction);
 		setCtrlAccelerator(mi, 'O'); // open
@@ -196,7 +201,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		// close
 		menu.addSeparator();
-		menu.add(exitAction);
+		mi = menu.add(exitAction);
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK);
+		mi.setAccelerator(ks);
 					
 		// close all		
 		if (GeoGebra.getInstanceCount() > 1) {								
@@ -226,6 +233,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			setCtrlAccelerator(mi, 'Y');
 			menu.addSeparator();
 		}
+		
+		if (app.letDelete()) {
+			mi = menu.add(deleteAction);
+			mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));	
+		}
+		menu.addSeparator();
+		
+		mi = menu.add(selectAllAction);
+		setCtrlAccelerator(mi, 'A');
+		menu.addSeparator();
 
 		menu.add(propertiesAction);
 		add(menu);
@@ -244,7 +261,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
 		cbShowAlgebraView.setSelected(app.showAlgebraView());
-		setCtrlAccelerator(cbShowAlgebraView, 'A');
+		setCtrlShiftAccelerator(cbShowAlgebraView, 'A');
 		menu.add(cbShowAlgebraView);
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
@@ -652,7 +669,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		newWindowAction = new AbstractAction(app.getMenu("NewWindow") + " ...") {
+		newWindowAction = new AbstractAction(app.getMenu("New") + " ...",
+				app.getImageIcon("new.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -942,6 +960,29 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				app.clearPreferences();				
 			}
 		};
+		
+		selectAllAction = new AbstractAction(app.getMenu("SelectAll")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				app.selectAll();
+			}
+		};
+		
+		deleteAction = new AbstractAction(app.getPlain("Delete")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				if (app.letDelete()) {
+					Object [] geos = app.getSelectedGeos().toArray();
+					for (int i=0; i < geos.length; i++) {
+						GeoElement geo = (GeoElement) geos[i];
+						geo.remove();
+					}
+					app.storeUndoInfo();
+				}
+			}
+		};		
 				
 		updateActions();
 	}
@@ -1005,9 +1046,15 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		dialog.setVisible(true);
 	}
+	
+	public void updateSelection() {		
+		boolean haveSelection = !app.getSelectedGeos().isEmpty();
+		deleteAction.setEnabled(haveSelection);
+	}
 
 	private void updateActions() {		
 		propertiesAction.setEnabled(!kernel.isEmpty());
+		selectAllAction.setEnabled(!kernel.isEmpty());
 	}
 
 	private void setCtrlAccelerator(JMenuItem mi, char acc) {
@@ -1020,12 +1067,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi.setAccelerator(ks);
 	}
 	
+	
 	public void updateMenuWindow() {	
 		if (menuWindow == null) return;
 		
 		menuWindow.removeAll();
 		JMenuItem mit = menuWindow.add(newWindowAction);
-		setCtrlShiftAccelerator(mit, 'N');
+		setCtrlAccelerator(mit, 'N');
 
 		ArrayList ggbInstances = GeoGebra.getInstances();
 		int size = ggbInstances.size();

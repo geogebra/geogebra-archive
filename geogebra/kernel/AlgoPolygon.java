@@ -138,6 +138,9 @@ public class AlgoPolygon extends AlgoElement {
     }
     
     GeoPolygon getPoly() { return poly; }    
+    public GeoPoint [] getPoints() {
+    	return points;
+    }
         
     final void compute() {      
         // compute area

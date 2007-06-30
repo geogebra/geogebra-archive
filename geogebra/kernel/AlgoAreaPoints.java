@@ -17,18 +17,8 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-
-
-/**
- *
- * @author  Markus
- * @version 
- */
 public class AlgoAreaPoints extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint [] P;  // input
     private GeoNumeric area;     // output           

@@ -261,6 +261,14 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	public static final int MODE_LOCUS = 47;
 
 	public static final int MODE_MACRO = 48;
+	
+	public static final int MODE_AREA = 49;
+	
+	public static final int MODE_SLOPE = 50;
+	
+	public static final int MODE_REGULAR_POLYGON = 51;
+	
+	public static final int MODE_SHOW_HIDE_CHECKBOX = 52;
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 
@@ -3209,7 +3217,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			return "VectorFromPoint";
 
 		case EuclidianView.MODE_DISTANCE:
-			return "Distance";
+			return "Distance";				
 
 		case EuclidianView.MODE_MOVE_ROTATE:
 			return "MoveRotate";
@@ -3222,6 +3230,18 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		case EuclidianView.MODE_LOCUS:
 			return "Locus";
+			
+		case MODE_AREA:
+			return "Area";
+			
+		case MODE_SLOPE:
+			return "Slope";
+			
+		case MODE_REGULAR_POLYGON:
+			return "RegularPolygon";
+			
+		case MODE_SHOW_HIDE_CHECKBOX:
+			return "ShowCheckBox";
 
 		default:
 			return "";

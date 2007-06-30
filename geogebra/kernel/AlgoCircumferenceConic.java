@@ -102,8 +102,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
 			return;
     	}
     	
-    	// standard case: conic
-			
+    	// standard case: conic			
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE:
 				// r is length of one of the half axes

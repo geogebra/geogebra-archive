@@ -121,18 +121,7 @@ public class AlgebraController
 				consumed = true;
 				break;
 			
-		    // delete selected geos
-			case KeyEvent.VK_DELETE:
-				if (app.letDelete()) {
-					Object [] geos = app.getSelectedGeos().toArray();
-					for (int i=0; i < geos.length; i++) {
-						GeoElement geo = (GeoElement) geos[i];
-						geo.remove();
-					}
-					app.storeUndoInfo();
-					consumed = true;
-				}
-				break;
+		    
 			
 			default:
 				//	handle selected GeoElements
