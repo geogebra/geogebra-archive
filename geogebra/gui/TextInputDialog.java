@@ -151,7 +151,7 @@ public class TextInputDialog extends InputDialog {
 	
 	public void setGeoText(GeoText text) {
 		this.text = text;
-        boolean createText = text == null;     
+        boolean createText = text == null;   
         isLaTeX = text == null ? false: text.isLaTeX();
         //String label = null;
         
@@ -203,28 +203,34 @@ public class TextInputDialog extends InputDialog {
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
-		boolean finished = false;
 		try {
 			if (source == btApply || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
 				
-				finished = inputHandler.processInput(inputText);				
+				boolean finished = inputHandler.processInput(inputText);	
+				if (isShowing())
+					setVisible(!finished);
+				else {			
+					text.setLaTeX(isLaTeX, true);
+					setGeoText(text);
+				}
 			} 
 			else if (source == btCancel) {
-				finished = true;				
+				if (isShowing())
+					setVisible(false);		
+				else {
+					setGeoText(text);
+				}
 			}
 			else if (source == cbLaTeX) {
-				cbLaTeXshortcuts.setEnabled(cbLaTeX.isSelected());
+				isLaTeX = cbLaTeX.isSelected();
+				cbLaTeXshortcuts.setEnabled(isLaTeX);
 			}			
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
-		}
-		
-		if (isShowing())
-			setVisible(!finished);
-		else
-			setGeoText(text);
+			ex.printStackTrace();
+		}			
 	}
 	
 	/**
