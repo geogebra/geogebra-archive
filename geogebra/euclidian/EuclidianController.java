@@ -2861,7 +2861,7 @@ final public class EuclidianController implements MouseListener,
 		// build description text including point labels	
 		String descText = prefix;
 		
-//		 use points for polygon with static points (i.e. no list of points)
+		// use points for polygon with static points (i.e. no list of points)
 		GeoPoint [] points = null;
 		if (poly.getParentAlgorithm() instanceof AlgoPolygon) {
 			points = ((AlgoPolygon) poly.getParentAlgorithm()).getPoints();
@@ -2892,7 +2892,22 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	private boolean slope(ArrayList hits) {
-		// TODO: implement slope()
+		if (hits == null)
+			return false;
+		
+		addSelectedLine(hits, 1, false);			
+		
+		if (selLines() == 1) {			
+			GeoLine line = getSelectedLines()[0];						
+									
+			String strLocale = app.getLocale().toString();
+			if (strLocale.equals("de_AT")) {
+				kernel.Slope("k", line);
+			} else {
+				kernel.Slope("m", line);
+			}			
+			return true;
+		}
 		return false;
 	}
 	
