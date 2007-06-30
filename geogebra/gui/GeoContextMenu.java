@@ -10,11 +10,6 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-/*
- * EuclidianPopupMenu.java
- *
- * Created on 21. April 2002
- */
 
 package geogebra.gui;
 
@@ -47,7 +42,7 @@ import javax.swing.JPopupMenu;
  * @author  Markus Hohenwarter
  * @version 
  */
-public class MyPopupMenu extends JPopupMenu {
+public class GeoContextMenu extends JPopupMenu {
     
     /**
 	 * 
@@ -65,13 +60,13 @@ public class MyPopupMenu extends JPopupMenu {
     //private Point location;
     Application app;
 
-    MyPopupMenu(Application app) {
+    GeoContextMenu(Application app) {
         this.app = app;     
         setBackground(bgColor);
     }
 
     /** Creates new MyPopupMenu for GeoElement*/
-    public MyPopupMenu(Application app, GeoElement geo, Point location) {
+    public GeoContextMenu(Application app, GeoElement geo, Point location) {
         this(app);
         this.geo = geo;
         //this.location = location;                               
@@ -86,7 +81,7 @@ public class MyPopupMenu extends JPopupMenu {
 	        addLineItems();
 	        addVectorItems();
 	        addConicItems();
-	        addNumberItems();
+	        addNumberItems();	       
         }
 
         if (getComponentCount() > 2)
@@ -325,6 +320,35 @@ public class MyPopupMenu extends JPopupMenu {
 
     private void addNumberItems() {
     }
+    
+    private void addTextItems() {
+    	if (geo.isGeoText()) {
+    		final GeoText geoText = (GeoText) geo;
+    		 // show object
+        	JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem(app.getPlain("AbsoluteScreenLocation"));
+            cbItem.setSelected(geoText.isAbsoluteScreenLocActive());
+            cbItem.addActionListener(new ActionListener() {
+        		public void actionPerformed(ActionEvent e) {
+        			boolean flag = !geoText.isAbsoluteScreenLocActive();
+        			if (flag) {
+						// convert real world to screen coords
+						int x = app.getEuclidianView().toScreenCoordX(geoText.getRealWorldLocX());
+						int y = app.getEuclidianView().toScreenCoordY(geoText.getRealWorldLocY());
+						geoText.setAbsoluteScreenLoc(x, y);							
+					} else {
+						// convert screen coords to real world 
+						double x = app.getEuclidianView().toRealWorldCoordX(geoText.getAbsoluteScreenLocX());
+						double y = app.getEuclidianView().toRealWorldCoordY(geoText.getAbsoluteScreenLocY());
+						geoText.setRealWorldLoc(x, y);
+					}
+        			geoText.setAbsoluteScreenLocActive(flag);            		
+        			geoText.updateRepaint();
+                    app.storeUndoInfo();
+                }        	
+        	});
+            addItem(cbItem);     
+    	}
+    }
 
     private void addForAllItems() {
         // SHOW, HIDE
@@ -346,7 +370,7 @@ public class MyPopupMenu extends JPopupMenu {
         	}
             
             if (!(geo.isTextValue() || geo.isGeoImage())) {           
-	            // show object
+	            // show label
 	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowLabel"));
 	            cbItem.setSelected(geo.isLabelVisible());
 	            cbItem.addActionListener(new ActionListener() {
@@ -370,11 +394,20 @@ public class MyPopupMenu extends JPopupMenu {
 	                    }       	
 	            	});
 	                addItem(cbItem);            	
-	            }      
+	            }  	            	            
+            }     
+            
+            // text position
+            if (geo.isGeoText()) {
+            	addTextItems();
             }
+        	addSeparator();
         }
         
+      
+        
         // AUXILIARY OBJECT
+        /*
         if (app.showAlgebraView() &&
         	!(geo.isTextValue() || geo.isGeoImage())) {
             
@@ -390,18 +423,16 @@ public class MyPopupMenu extends JPopupMenu {
         	});
             addItem(cbItem);                      
         }
+        */
         
-        addSeparator();
-
+   
+        
         // EDITING      
         // EDIT Text in special dialog
         if (geo.isTextValue() && !geo.isFixed()) {
             addAction(new AbstractAction(
                 app.getPlain("Edit"),
                 app.getImageIcon("edit_tree.gif")) {
-                /**
-					 * 
-					 */
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -409,14 +440,12 @@ public class MyPopupMenu extends JPopupMenu {
                 }
             });
         }
+        /*
         // EDIT in AlgebraView
         else if (app.showAlgebraView() && geo.isChangeable() && !geo.isGeoImage()) { 
             addAction(new AbstractAction(
                 app.getPlain("Edit"),
                 app.getImageIcon("edit_tree.gif")) {
-                /**
-					 * 
-					 */
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -430,9 +459,7 @@ public class MyPopupMenu extends JPopupMenu {
                 addAction(new AbstractAction(
                             app.getPlain("Redefine"),
                             app.getImageIcon("redefine.gif")) {
-                            /**
-								 * 
-								 */
+
 								private static final long serialVersionUID = 1L;
 
 							public void actionPerformed(ActionEvent e) {
@@ -446,9 +473,7 @@ public class MyPopupMenu extends JPopupMenu {
             addAction(new AbstractAction(
                 app.getMenu("InputField"),
                 app.getImageIcon("edit.gif")) {
-                /**
-					 * 
-					 */
+
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {                    
@@ -461,6 +486,21 @@ public class MyPopupMenu extends JPopupMenu {
                 }
             });
         }
+        */
+        
+        // Rename      
+        if (app.letRename())  {    
+            addAction(new AbstractAction(
+                    app.getPlain("Rename"),
+                    app.getImageIcon("rename.gif")) {
+						private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e) {
+                        app.showRenameDialog(geo, true, null);
+                    }
+                });
+        }
+    
         
         // DELETE    
         if (app.letDelete()) {  
@@ -479,33 +519,13 @@ public class MyPopupMenu extends JPopupMenu {
             });       
         }
 
-        // Rename      
-        if (app.letRename())  {    
-            addAction(new AbstractAction(
-                    app.getPlain("Rename"),
-                    app.getImageIcon("rename.gif")) {
-                    /**
-						 * 
-						 */
-						private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-                        app.showRenameDialog(geo, true, null);
-                    }
-                });
-        }
-    
-
         if (app.letShowPropertiesDialog() && geo.hasProperties()) {
             addSeparator();
 
             // open properties dialog      
             addAction(new AbstractAction(
-                app.getPlain("Properties"),
+                app.getPlain("Properties") + " ...",
                 app.getImageIcon("properties.gif")) {
-                /**
-					 * 
-					 */
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {

@@ -454,7 +454,7 @@ implements Locateable, AbsoluteScreenLocateable {
 		if (flag) {
 			// remove startpoint
 			if (startPoint != null) {
-				startPoint.unregisterLocateable(this);	
+				startPoint.unregisterLocateable(this);				
 				startPoint = null;
 			}			
 		} else {

@@ -1235,6 +1235,17 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Name of geo.
+	 */
+	final public GeoText Name(
+		String label,
+		GeoElement geo) {
+		AlgoName algo = new AlgoName(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
 	 * Text dependent on coefficients of arithmetic expressions with variables,
 	 * represented by trees. e.g. c = a & b
 	 */

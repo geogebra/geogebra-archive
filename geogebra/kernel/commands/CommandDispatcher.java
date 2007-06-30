@@ -190,6 +190,8 @@ public class CommandDispatcher {
     	cmdTable.put("Div", new CmdDiv(kernel));
     	cmdTable.put("Min", new CmdMin(kernel));
     	cmdTable.put("Max", new CmdMax(kernel));
+    	
+    	cmdTable.put("Name", new CmdName(kernel));
     }
 
 

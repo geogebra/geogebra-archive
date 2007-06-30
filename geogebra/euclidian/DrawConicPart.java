@@ -104,7 +104,7 @@ implements Previewable {
 	} 
 
 	final public void update() {
-        isVisible = geo.isEuclidianVisible();
+        isVisible = geo.isEuclidianVisible() && geo.isDefined();
         if (isVisible) { 
 			labelVisible = geo.isLabelVisible();       
 			updateStrokes(conicPart);

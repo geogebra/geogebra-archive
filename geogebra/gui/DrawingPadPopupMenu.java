@@ -35,7 +35,7 @@ import javax.swing.JMenuItem;
  * @author  markus
  * @version 
  */
-public class DrawingPadPopupMenu extends MyPopupMenu
+public class DrawingPadPopupMenu extends GeoContextMenu
 implements ActionListener {
     
     /**

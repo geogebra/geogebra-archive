@@ -898,7 +898,7 @@ public abstract class GeoElement
 		algebraStringsNeedUpdate();
 				
 		kernel.notifyRename(this); // tell views   		
-		update();		
+		updateCascade();		
 	}
 	
 	/**

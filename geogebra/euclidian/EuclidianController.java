@@ -21,12 +21,12 @@ package geogebra.euclidian;
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
-import geogebra.kernel.AlgoMidpoint;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -47,7 +47,6 @@ import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Translateable;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -1551,7 +1550,7 @@ final public class EuclidianController implements MouseListener,
 			break;
 			
 		case EuclidianView.MODE_DISTANCE:
-			changedKernel = distance(hits);
+			changedKernel = distance(hits, e);
 			break;	
 			
 		case EuclidianView.MODE_MACRO:			
@@ -2520,6 +2519,7 @@ final public class EuclidianController implements MouseListener,
 		if (angle != null) {
 			// commented in V3.0:
 			// angle.setAllowReflexAngle(false);
+			//angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 			angle.updateRepaint();
 			return true;
 		} else
@@ -2632,7 +2632,7 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	// get 2 points, 2 lines or 1 point and 1 line
-	final private boolean distance(ArrayList hits) {
+	final private boolean distance(ArrayList hits, MouseEvent e) {
 		if (hits == null)
 			return false;
 		
@@ -2646,61 +2646,150 @@ final public class EuclidianController implements MouseListener,
 		if (count == 0) {
 			addSelectedPolygon(hits, 2, false);
 		}
+		if (count == 0) {
+			addSelectedSegment(hits, 2, false);
+		}			
 		
+		// TWO POINTS
 		if (selPoints() == 2) {			
 			// length
 			GeoPoint[] points = getSelectedPoints();
-			GeoNumeric length = kernel.Distance(null, points[0], points[1]);
-			
-			// create text that shows length
-			// dynamic text for length
-			ExpressionNode exp = new ExpressionNode(kernel, length);
-			GeoText text = kernel.DependentText(null, exp);
-			// set startpoint to midpoint of two points
+			GeoNumeric length = kernel.Distance(null, points[0], points[1]);								
+		
+			// set startpoint of text to midpoint of two points
 			GeoPoint midPoint = kernel.Midpoint(points[0], points[1]);
-			try {
-				text.setStartPoint(midPoint);
-				text.updateRepaint();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-			return true;
+			createDistanceText(points[0], points[1], midPoint, length);			
 		} 
+		
+		// SEGMENT
+		else if (selSegments() == 1) {
+			// length
+			GeoSegment[] segments = getSelectedSegments();
+			
+			// length			
+			segments[0].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			segments[0].updateRepaint();
+			return true;
+		}
+		
+		// TWO LINES
 		else if (selLines() == 2) {			
 			GeoLine[] lines = getSelectedLines();
 			kernel.Distance(null, lines[0], lines[1]);
 			return true;
 		}
+		
+		// POINT AND LINE
 		else if (selPoints() == 1 && selLines() == 1) {	
 			GeoPoint[] points = getSelectedPoints();
 			GeoLine[] lines = getSelectedLines();
-			GeoNumeric length = kernel.Distance(null, points[0], lines[0]);	
+			GeoNumeric length = kernel.Distance(null, points[0], lines[0]);						
 			
-			// TODO: 
-			// create text that shows length
-			// dynamic text for length
-			ExpressionNode exp = new ExpressionNode(kernel, length);
-			GeoText text = kernel.DependentText(null, exp);
-			try {
-				text.setStartPoint(points[0]);
-				text.updateRepaint();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-			
-			return true;
+			// set startpoint of text to midpoint between point and line
+			GeoPoint midPoint = kernel.Midpoint(points[0], kernel.ProjectedPoint(points[0], lines[0]));
+			createDistanceText(points[0],lines[0], midPoint, length);		
 		}
+		
+		// circumference of CONIC
 		else if (selConics() == 1) {			
-			GeoConic [] conic = getSelectedConics();
-			kernel.Circumference(null, conic[0]);
+			GeoConic conic = getSelectedConics()[0];
+			if (conic.isGeoConicPart()) {
+				// length of arc
+				GeoConicPart conicPart = (GeoConicPart) conic;
+				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_ARC) {
+					// conic part
+					conic.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+					conic.updateRepaint();
+					return true;
+				}				
+			} 
+			
+			// standard case: conic
+			GeoNumeric circumFerence = kernel.Circumference(null, conic);
+			
+			// text			
+			GeoText text = createDynamicText(app.getCommand("Circumference"), circumFerence, e.getPoint());			
+			if (conic.isLabelSet()) {
+				circumFerence.setLabel(app.getCommand("Circumference") + "_{" + conic.getLabel() + "}" );							
+				text.setLabel(app.getPlain("Text") + conic.getLabel());				
+			}			
 			return true;
 		}
+		
+		// perimeter of CONIC
 		else if (selPolygons() == 1) {			
 			GeoPolygon [] poly = getSelectedPolygons();
-			kernel.Perimeter(null, poly[0]);
+			GeoNumeric perimeter = kernel.Perimeter(null, poly[0]);
+			
+			// text			
+			GeoText text = createDynamicText(app.getCommand("Perimeter"), perimeter, e.getPoint());			
+			if (poly[0].isLabelSet()) {
+				perimeter.setLabel(app.getCommand("Circumference") + "_{" + poly[0].getLabel() + "}" );							
+				text.setLabel(app.getPlain("Text") + poly[0].getLabel());				
+			} 
 			return true;
 		}
+		
 		return false;
+	}
+	
+	/**
+	 * Creates a text that shows the distance length between geoA and geoB at the given startpoint.
+	 */
+	private GeoText createDistanceText(GeoElement geoA, GeoElement geoB, 
+			GeoPoint startPoint, GeoNumeric length) {
+		// create text that shows length
+		try {				
+			String strText = "";
+			boolean useLabels = geoA.isLabelSet() && geoB.isLabelSet();
+			if (useLabels) {		
+				length.setLabel(app.getCommand("Distance")+ "_{" + geoA.getLabel() + geoB.getLabel() + "}");
+				strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
+							+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
+							+ length.getLabel();			
+				geoA.setLabelVisible(true);				
+				geoB.setLabelVisible(true);
+				geoA.updateRepaint();
+				geoB.updateRepaint();
+			}
+			else {
+				length.setLabel(app.getCommand("Distance"));					
+				strText = "" + length.getLabel();
+			}
+							
+			// create dynamic text
+			GeoText text = kernel.getAlgebraProcessor().evaluateToText(strText, true);
+			if (useLabels) {
+				text.setLabel(app.getPlain("Text") + geoA.getLabel() + geoB.getLabel() );	
+				text.setLaTeX(useLabels, true);
+			}			
+							
+			text.setStartPoint(startPoint);
+			text.updateRepaint();
+			return text;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}	
+	}
+	
+	/**
+	 * Creates a text that shows a number value of geo at the current mouse position.
+	 */
+	private GeoText createDynamicText(String descText, GeoNumeric value, Point loc) {
+		// create text that shows length
+		try {
+			// create dynamic text
+			String dynText = "\"" + descText + " = \" + " + value.getLabel();
+			GeoText text = kernel.getAlgebraProcessor().evaluateToText(dynText, true);									
+			text.setAbsoluteScreenLocActive(true);
+			text.setAbsoluteScreenLoc(loc.x, loc.y);			
+			text.updateRepaint();
+			return text;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}	
 	}
 
 	// get (point or line) and (conic or function or curve)

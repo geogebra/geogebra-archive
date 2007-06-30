@@ -19,6 +19,7 @@ import geogebra.kernel.integration.EllipticArcLength;
  * {@link geogebra.kernel.GeoConic GeoConic}.
  * 
  * @author Philipp Weissenbacher (materthron@users.sourceforge.net)
+ * @author Markus Hohenwarter
  */
 public class AlgoCircumferenceConic extends AlgoElement {
 
@@ -70,10 +71,39 @@ public class AlgoCircumferenceConic extends AlgoElement {
 	 * For all other cases circumference is undefined.
 	 */
 	final void compute() {
-    	if (conic.isGeoConicPart() || !conic.isDefined())
+    	if (!conic.isDefined())
     		circum.setUndefined();
+    	
+    	// conic type
+    	int type = conic.getType();	
 		
-		int type = conic.getType();		
+    	// circumference of sector
+    	if (conic.isGeoConicPart()) {
+    		GeoConicPart conicPart = (GeoConicPart) conic;
+    		int partType = conicPart.getConicPartType();
+			if (type == GeoConic.CONIC_CIRCLE && partType == GeoConicPart.CONIC_PART_SECTOR) {				
+				/* value of sector is area:
+					area = r*r * paramExtent / 2;
+					arclength = r * paramExtent;
+					arclength = area * 2/r;
+				*/
+				double area = conicPart.getValue();
+				double r = conic.halfAxes[0]; 
+				double arclength = area * 2.0 / r;
+				
+				// circumference of sector
+				circum.setValue(arclength + 2 * r);					
+			}
+			else 
+				// circumference of arc or ellipse sector is undefined
+	    		// note: circumference of ellipse sector is simply not implemented yet
+				circum.setUndefined();
+			
+			return;
+    	}
+    	
+    	// standard case: conic
+			
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE:
 				// r is length of one of the half axes

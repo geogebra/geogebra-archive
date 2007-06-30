@@ -669,7 +669,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		propertiesAction = new AbstractAction(app.getPlain("Properties") + " ...",
-				app.getEmptyIcon()) {
+				app.getImageIcon("properties.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

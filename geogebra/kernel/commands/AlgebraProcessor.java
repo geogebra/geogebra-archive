@@ -14,6 +14,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
@@ -260,6 +261,38 @@ public class AlgebraProcessor {
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
 		return p;
+	}
+	
+	/**
+	 * Parses given String str and tries to evaluate it to a GeoText.
+	 * Returns null if something went wrong.
+	 */
+	public GeoText evaluateToText(String str, boolean createLabel) {
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(!createLabel);
+
+		GeoText text = null;
+		GeoElement [] temp = null;;
+		try {
+			ValidExpression ve = parser.parse(str);			
+			temp = processValidExpression(ve);
+			text = (GeoText) temp[0];
+		} catch (CircularDefinitionException e) {
+			System.err.println("CircularDefinition");
+			app.showError("CircularDefinition");
+		} catch (Exception e) {		
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} catch (MyError e) {
+			e.printStackTrace();
+			app.showError(e);
+		} catch (Error e) {
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} 
+		
+		cons.setSuppressLabelCreation(oldMacroMode);
+		return text;
 	}
 
 	/**

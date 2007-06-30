@@ -32,7 +32,7 @@ import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.HelpBrowser;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
-import geogebra.gui.MyPopupMenu;
+import geogebra.gui.GeoContextMenu;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.RedefineInputHandler;
 import geogebra.gui.RenameInputHandler;
@@ -1299,7 +1299,7 @@ public class Application implements	KeyEventDispatcher {
         Point screenPos = invoker.getLocationOnScreen();
         screenPos.translate(p.x, p.y);
 
-        MyPopupMenu popupMenu = new MyPopupMenu(this, geo, screenPos);
+        GeoContextMenu popupMenu = new GeoContextMenu(this, geo, screenPos);
         popupMenu.show(invoker, p.x, p.y);
     }    
 

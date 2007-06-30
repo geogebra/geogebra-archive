@@ -39,20 +39,16 @@ import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Traceable;
 import geogebra.util.FastHashMapKeyless;
-import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -91,7 +87,6 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
@@ -1346,7 +1341,7 @@ public class PropertiesDialog
 			AbsoluteScreenLocateable geo;
 			Object source = e.getItemSelectable();
 
-			// show trace value changed
+			// absolute screen location flag changed
 			if (source == cbAbsScreenLoc) {
 				boolean flag = cbAbsScreenLoc.isSelected();
 				EuclidianView ev = app.getEuclidianView();
@@ -4190,6 +4185,7 @@ class NamePanel
 	private AutoCompleteTextField tfDefinition;
 	private RedefineInputHandler defInputHandler;
 	private GeoElement currentGeo;
+	private JPanel defPanel;
 
 	public NamePanel(Application app) {		
 		// NAME PANEL
@@ -4224,7 +4220,7 @@ class NamePanel
 		namePanel.add(inputPanelName);
 		
 		// 	put it all together		
-		JPanel defPanel = new JPanel();
+		defPanel = new JPanel();
 		defPanel.setLayout(new FlowLayout());
 		JLabel defLabel = new JLabel(app.getPlain("Definition") + ":");
 		dx = 50 - defLabel.getPreferredSize().width;
@@ -4253,9 +4249,14 @@ class NamePanel
 		tfName.addActionListener(this);
 		
 		// DEFINITION
-		tfDefinition.removeActionListener(this);
-		defInputHandler.setGeoElement(currentGeo);
-		setDefText(currentGeo);
+		if (currentGeo.isGeoText()) {
+			defPanel.setVisible(false);
+		} else {
+			tfDefinition.removeActionListener(this);
+			defInputHandler.setGeoElement(currentGeo);
+			setDefText(currentGeo);
+			defPanel.setVisible(true);
+		}
 		
 		tfDefinition.addActionListener(this);
 		return this;
