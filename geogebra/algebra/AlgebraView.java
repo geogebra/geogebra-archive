@@ -33,6 +33,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.util.EventObject;
 
 import javax.swing.DefaultCellEditor;
@@ -232,17 +233,18 @@ public class AlgebraView extends JTree implements View {
 		}
 		g2.drawLine(width-crossOffset, crossBorder, width-crossBorder, crossOffset);
 		g2.drawLine(width-crossOffset, crossOffset, width-crossBorder, crossBorder);
+		
 		if (highlightCross) {
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
 								RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 			// "close" 
 			String strClose = app.getMenu("Close");
-			TextLayout layout = new TextLayout(strClose, 
-										app.smallFont,
-										g2.getFontRenderContext());
+			TextLayout layout = new TextLayout(strClose, app.smallFont, g2.getFontRenderContext());
 			g2.setColor(Color.gray);
-     		g2.drawString(strClose, (int) (width - crossOffset - 4 - layout.getAdvance()),
-     				layout.getAscent()+2);
+			
+			int stringX = (int) (width - crossOffset - crossOffset - layout.getAdvance());
+			
+			g2.drawString(strClose, stringX, layout.getAscent()+2);
 		}
 	}
 	
