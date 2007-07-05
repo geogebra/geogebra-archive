@@ -35,6 +35,7 @@ implements EuclidianViewAlgo {
     private static ResourceBundle rbalgo2command;
     
     GeoElement[] input, output;
+    private GeoElement [] efficientInput;
     
     // numbers among input objects of algorithm that are used within random()
     private GeoNumeric [] randomInputNumbers;
@@ -166,6 +167,7 @@ implements EuclidianViewAlgo {
         
         // input is standardInput
         input = standardInput;
+        this.efficientInput = efficientInput;
         initRandomInputNumbers();
         setOutputDependencies();
         cons.addToAlgorithmList(this); 
@@ -212,7 +214,7 @@ implements EuclidianViewAlgo {
            // every algorithm with an image as output
            // should be notified about view changes
            if (output[i].isGeoImage())
-           	kernel.registerEuclidianViewAlgo(this);
+        	   kernel.registerEuclidianViewAlgo(this);
            
            //  make sure that every output has same construction as this algorithm
            // this is important for macro constructions that have input geos from
@@ -241,7 +243,14 @@ implements EuclidianViewAlgo {
         // delete from algorithm lists of input                
         for (int i = 0; i < input.length; i++) {
             input[i].removeAlgorithm(this);
-        }                                                                      
+        }          
+        
+        if (efficientInput != null) {
+        	// delete from algorithm lists of input                
+            for (int i = 0; i < efficientInput.length; i++) {
+            	efficientInput[i].removeAlgorithm(this);
+            }  
+        }
     }
     
     /**

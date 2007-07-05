@@ -19,10 +19,10 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.io;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocolNavigation;
 import geogebra.MyError;
 import geogebra.algebra.parser.Parser;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;

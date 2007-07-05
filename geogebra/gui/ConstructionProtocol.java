@@ -10,11 +10,11 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package geogebra;
+package geogebra.gui;
 
+import geogebra.Application;
+import geogebra.View;
 import geogebra.euclidian.Drawable;
-import geogebra.export.ConstructionProtocolExportDialog;
-import geogebra.export.PrintPreview;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -310,12 +310,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 Thread runner = new Thread() {
                     public void run() {     
                     	try {
-	                        new PrintPreview(app,
+	                        new geogebra.export.PrintPreview(app,
 	                            ConstructionProtocol.this,
 	                            PageFormat.PORTRAIT);
                     	} catch (Exception e) {
                     		System.err.println("Print preview not available");
-                    	}
+                    	}                    		
                     }
                 };
                 runner.start();
@@ -1475,8 +1475,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     
     public void showHTMLExportDialog() {
     	try {
-    		ConstructionProtocolExportDialog d = new ConstructionProtocolExportDialog(this);    
-    		d.setVisible(true);
+    		new geogebra.export.ConstructionProtocolExportDialog(this).setVisible(true);    
     	} catch (Exception e) {
     		System.err.println("ConstructionProtocolExportDialog (html) is not available");
     	}

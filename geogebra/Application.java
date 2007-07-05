@@ -24,6 +24,8 @@ import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.AngleInputDialog;
+import geogebra.gui.ConstructionProtocol;
+import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.FileDropTargetListener;
@@ -107,7 +109,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "19. June 2007";
+    public static final String buildDate = "5. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -152,8 +154,12 @@ public class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("hu") );          	// Hungarian
         supportedLocales.add( new Locale("it") );     		 	// Italian
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian
-        supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
-        supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
+      
+        //supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
+        //supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
+        supportedLocales.add( new Locale("nb") );     	 	// Norwegian (Bokmal)
+        supportedLocales.add( new Locale("nn") );  			// Norwegian (Nynorsk)
+            
         supportedLocales.add( new Locale("fa") );             	// Persian
         supportedLocales.add( new Locale("pl") );     		// Polish
         supportedLocales.add( new Locale("pt", "BR") );     // Portugese (Brazil)

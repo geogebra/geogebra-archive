@@ -1704,8 +1704,17 @@ public class Kernel {
 	 * polygon P[0], ..., P[n-1]
 	 * The labels name the polygon itself and its segments
 	 */
-	final public GeoElement [] Polygon (String [] labels, GeoPoint [] P) {
+	final public GeoElement [] Polygon(String [] labels, GeoPoint [] P) {
 		AlgoPolygon algo = new AlgoPolygon(cons, labels, P);
+		return algo.getOutput();
+	}
+	
+	/** 
+	 * Regular polygon with vertices A and B and n total vertices.
+	 * The labels name the polygon itself, its segments and points
+	 */
+	final public GeoElement [] RegularPolygon(String [] labels, GeoPoint A, GeoPoint B, NumberValue n) {
+		AlgoPolygonRegular algo = new AlgoPolygonRegular(cons, labels, A, B, n);
 		return algo.getOutput();
 	}
 	

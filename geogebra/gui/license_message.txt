@@ -33,14 +33,16 @@ TRANSLATIONS
   * French: David Tran, Noel Lambert (France)
   * Galician: Jesus Garcia Otero (Spain)  
   * German: Markus Hohenwarter (Austria)
-  * Greek: Nicholas Mousoulides, Marinos Karagiorgis (Cyprus), Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
+  * Greek: Nicholas Mousoulides, Marinos Karagiorgis (Cyprus), 
+      Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
   * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
   * Polish: Marzanna Miasko, Ewa Piwek, Katarzyna Winkowska-Nowak (Poland)
-  * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, Luciana de Lima (Brazil)
+  * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
+      Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes (Portugal)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba (Slovakia)

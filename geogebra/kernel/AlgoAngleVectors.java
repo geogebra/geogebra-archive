@@ -18,17 +18,8 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-
-/**
- *
- * @author  Markus
- * @version 
- */
 public class AlgoAngleVectors extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoVector v, w; // input
     private GeoAngle angle; // output           

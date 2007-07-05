@@ -26,9 +26,6 @@ package geogebra.kernel;
  */
 public class AlgoJoinPointsSegment extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P, Q; // input
     private GeoSegment s; // output: GeoSegment subclasses GeoLine 
@@ -101,6 +98,10 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     GeoPoint getQ() {
         return Q;
     }
+    
+    GeoPolygon getPoly() {
+    	return poly;
+    }
 
     // calc the line g through P and Q    
     final void compute() {
@@ -114,6 +115,13 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         super.remove();
         if (poly != null)
             poly.remove();
+    }
+    
+    /**
+     * Only removes this segment and does not remove parent polygon (if poly != null)
+     */
+    void removeSegmentOnly() {
+    	super.remove();
     }
 
     public int getConstructionIndex() {

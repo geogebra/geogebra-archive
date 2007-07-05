@@ -1228,6 +1228,7 @@ final public GeoElement[] process(Command c) throws MyError {
 
 /*
  * Polygon[ <GeoPoint>, ..., <GeoPoint> ]
+ * Polygon[ <GeoPoint>, <GeoPoint>, <Number>] for regular polygon
  */
 class CmdPolygon extends CommandProcessor {
 	
@@ -1241,19 +1242,28 @@ final public GeoElement[] process(Command c) throws MyError {
 
     if (n > 2) {
         arg = resArgs(c);
-        GeoPoint[] points = new GeoPoint[n];
-        // check arguments
-        for (int i = 0; i < n; i++) {
-            if (!(arg[i].isGeoPoint()))
-				throw argErr(app, "Polygon", arg[i]);
-			else {
-                points[i] = (GeoPoint) arg[i];
-            }
-        }
-        // everything ok
-        return kernel.Polygon(c.getLabels(), points);
-    } else
-		throw argNumErr(app, "Polygon", n);
+        
+        // regular polygon
+        if (arg[0].isGeoPoint() && 
+	        arg[1].isGeoPoint() &&
+	        arg[2].isNumberValue())
+				return kernel.RegularPolygon(c.getLabels(), (GeoPoint) arg[0], (GeoPoint) arg[1], (NumberValue) arg[2]);
+		else {
+			// polygon for given points
+	        GeoPoint[] points = new GeoPoint[n];
+	        // check arguments
+	        for (int i = 0; i < n; i++) {
+	            if (!(arg[i].isGeoPoint()))
+					throw argErr(app, c.getName(), arg[i]);
+				else {
+	                points[i] = (GeoPoint) arg[i];
+	            }
+	        }
+	        // everything ok
+	        return kernel.Polygon(c.getLabels(), points);
+		}
+	} else
+		throw argNumErr(app, c.getName(), n);
 }
 }
 

@@ -17,6 +17,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -29,16 +30,16 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	private static final long serialVersionUID = 1L;
 
 	public static final int POLYGON_MAX_POINTS = 100;
-
-	// GeoSegment is constructed by AlgoPolygon 
+	
 	private GeoPoint [] points;
 	private GeoSegment [] segments;
+	
 	private double area;
 	private boolean defined = false;		
 	
 	public GeoPolygon(Construction c, GeoPoint [] points) {
 		super(c);
-		this.points = points;
+		setPoints(points);
 		setLabelVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
@@ -69,11 +70,113 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
     public void setPoints(GeoPoint [] points) {
 		this.points = points;
-	}
+		updateSegments();
+	}        
+
+    /**
+     * Inits the labels of this polygon, its segments and its points.
+     * labels[0] for polygon itself, labels[1..n] for segments,
+     * labels[n+1..2n-2] for points (only used for regular polygon)
+     * @param labels
+     */
+    public void initLabels(String [] labels) {   
+    	// label polygon
+    	if (labels == null || labels.length == 0) {
+             setLabel(null);
+             return;
+    	}
+    	
+    	// label segments and points
+    	if (points != null && segments != null) {
+    		
+    		// additional labels for the polygon's segments
+    		// poly + segments + points - 2 for AlgoPolygonRegular
+    		if (labels.length == 1 + segments.length + points.length - 2) {
+	            int i=0;
+    			for (int k=0; k < segments.length; k++, i++) {
+	                segments[k].setLabel(labels[i]);
+	            }		            
+    			for (int k=0; k < points.length - 2; k++, i++) {
+	                points[k].setLabel(labels[i]);
+	            }
+	        } 
+    		    		
+    		// additional labels for the polygon's segments
+    		// poly + segments for AlgoPolygon
+    		else if (labels.length == 1 + segments.length) {
+	            for (int i=0; i < segments.length; i++) {
+	                segments[i].setLabel(labels[i+1]);
+	            }	            	           	            
+	        } 
+    		
+	        else { 
+	        	// no labels for segments specified
+	             //  set labels of segments according to point names
+	             if (points.length == 3) {          
+	                setLabel(segments[0], points[2]);
+	                setLabel(segments[1], points[0]);
+	                setLabel(segments[2], points[1]); 
+	             } else {
+	                for (int i=0; i < points.length; i++) {
+	                    setLabel(segments[i], points[i]);
+	                }
+	             }
+	        }
+    	}
+    	
+        // label polygon              
+        // first label for polygon itself
+        setLabel(labels[0]);
+        
+    }
+    
+    private void setLabel(GeoSegment s, GeoPoint p) {
+        if (!p.isLabelSet() || p.getLabel() == null) 
+        	s.setLabel(null);
+        else 
+        	s.setLabel(p.getLabel().toLowerCase());
+    }
 	
-	public void setSegments(GeoSegment [] segments) {
-		this.segments = segments;
-	}
+    /**
+     * Updates all segments of this polygon for its point array.
+     * Note that the point array may be changed: this method makes
+     * sure that segments are reused if possible.
+     */
+	 private void updateSegments() {  	
+		 if (points == null) return;
+		 
+		GeoSegment [] oldSegments = segments;				
+		segments = new GeoSegment[points.length]; // new segments
+				
+		if (oldSegments != null) {
+			// reuse or remove old segments
+			for (int i=0; i < oldSegments.length; i++) {        	
+	        	if (i < segments.length &&
+	        		oldSegments[i].getStartPoint() == points[i] && 
+	        		oldSegments[i].getEndPoint() == points[(i+1) % points.length]) 
+	        	{
+        			// reuse old segment
+        			segments[i] = oldSegments[i];          		
+        		} 
+	        	else {
+        			// remove old segment
+        			((AlgoJoinPointsSegment) oldSegments[i].getParentAlgorithm()).removeSegmentOnly();	        		
+	        	}	        	
+			}
+		}			
+		
+		// create missing segments
+        for (int i=0; i < segments.length; i++) {
+        	GeoPoint startPoint = points[i];
+        	GeoPoint endPoint = points[(i+1) % points.length];
+        	
+        	if (segments[i] == null) {
+        		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
+                cons.removeFromConstructionList(algoSegment);                       
+                segments[i] = algoSegment.getSegment();                                
+        	}     
+        }                            
+    }
 
 	/**
 	 * The copy of a polygon is a number (!) with
@@ -85,18 +188,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
 	public GeoElement copyInternal(Construction cons) {						
 		GeoPolygon ret = new GeoPolygon(cons, null); 
-		ret.points = GeoElement.copyPoints(cons, points);
-		
-		/*
-		ret.segments = new GeoSegment[points.length-1];
-		for (int i=0; i < segments.length; i++) {
-			ret.segments[i].setStartPoint(ret.points[i]);
-			ret.segments[i].setEndPoint(ret.points[i+1]);
-		}
-		ret.segments[segments.length-1].setStartPoint(ret.points[segments.length]);
-		ret.segments[segments.length-1].setEndPoint(ret.points[0]);
-		*/
-		
+		ret.points = GeoElement.copyPoints(cons, points);		
 		ret.set(this);
 		return ret;		
 	} 		
@@ -105,16 +197,25 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
 		defined = poly.defined;	
-	
+		
 		for (int i=0; i < points.length; i++) {				
 			points[i].set(poly.points[i]);
-		}				
+		}	
+		updateSegments();
 	}
 
+	/**
+	 * Returns the points of this polygon.
+	 * Note that this array may change dynamically.
+	 */
 	public GeoPoint [] getPoints() {
 		return points;
 	}
 	
+	/**
+	 * Returns the segments of this polygon.
+	 * Note that this array may change dynamically.
+	 */
 	public GeoSegment [] getSegments() {
 		return segments;
 	}
@@ -143,6 +244,9 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	 * Returns the area of a polygon given by points P
 	 */	
 	final static public double calcArea(GeoPoint [] P) {
+		if (P == null || P.length < 3)
+			return Double.NaN;
+		
 	   int i = 0;   
 	   for (; i < P.length; i++) {
 		   if (P[i].isInfinite())
@@ -373,8 +477,8 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		// i.e. floor(parameter) gives the segment index
 		
 		int index = (int) Math.floor(P.pathParameter.t);
-		if (index == segments.length) 
-			index--;
+		if (index >= segments.length) 
+			index = segments.length - 1;
 		GeoSegment seg = segments[index];
 		double segParameter = P.pathParameter.t - index;
 		

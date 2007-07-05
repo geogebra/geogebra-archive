@@ -13,8 +13,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.export;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocol;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.TitlePanel;
 import geogebra.util.Util;
 

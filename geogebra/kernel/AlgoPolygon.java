@@ -13,6 +13,7 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.kernel;
 
 
+
 /**
  * Creates a Polygon from a given list of points or point array.
  * 
@@ -25,7 +26,6 @@ public class AlgoPolygon extends AlgoElement {
 	private GeoPoint [] points;  // input
 	private GeoList geoList;  // alternative input
     private GeoPolygon poly;     // output
-    private GeoSegment [] segments;   
     
     AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
     	this(cons, labels, null, geoList);
@@ -40,50 +40,79 @@ public class AlgoPolygon extends AlgoElement {
         this.points = points;           
         this.geoList = geoList;
           
-        // TODO: implement polygon for lists
-        if (geoList != null) {
-        //	updatePointArray();
-        }
-                
-        poly = new GeoPolygon(cons, points);                       
-        createSegments();        
-        poly.setSegments(segments);
+        poly = new GeoPolygon(cons, points);
         // refresh color to ensure segments have same color as polygon:
         poly.setObjColor(poly.getObjectColor()); 
+              
+        // compute polygon points
+        compute();  
         
-        setInputOutput(); // for AlgoElement
-      
-        // compute angle
-        compute();          
-        
-        initLabels(labels);
+        setInputOutput(); // for AlgoElement                          
+        poly.initLabels(labels);
     }   
         
     String getClassName() {
         return "AlgoPolygon";
     }
     
+    /**
+     * Update point array of polygon using the given array list
+     * @param pointList
+     */
+    private void updatePointArray(GeoList pointList) {
+    	// check if we have a point list
+    	if (pointList.getElementType() != GeoList.ELEMENT_TYPE_POINT) {
+    		poly.setUndefined();
+    		return;
+    	}
+    	
+    	// remember old number of points
+    	int oldPointsLength = points == null ? 0 : points.length;
+    	
+    	// create new points array
+    	int size = pointList.size();
+    	points = new GeoPoint[size];
+    	for (int i=0; i < size; i++) {    		
+    		points[i] = (GeoPoint) pointList.get(i);
+    	}
+    	poly.setPoints(points);
+    	
+    	if (oldPointsLength != points.length)
+    		setOutput();    	
+    }
+    
     
     // for AlgoElement
     void setInputOutput() {
-        input = points;
-        
-        int size = 1 + points.length;
-        output = new GeoElement[size];                       
-        output[0] = poly;
-        for (int i=0; i < segments.length; i++) {
-            output[i+1] = segments[i];
-        }
-        
-        // set dependencies
+    	if (geoList != null) {
+    		// list as input
+    		input = new GeoElement[1];
+    		input[0] = geoList;
+    	} else {    	
+    		// points as input
+    		input = points;
+    	}    	
+    	// set dependencies
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);
         }
         
+    	setOutput();
+
         // parent of output
         poly.setParentAlgorithm(this);       
         cons.addToAlgorithmList(this); 
     }    
+    
+    private void setOutput() {
+    	GeoSegment [] segments = poly.getSegments();    	    	
+        int size = 1 + segments.length;
+        output = new GeoElement[size];                       
+        output[0] = poly;        
+        for (int i=0; i < segments.length; i++) {
+            output[i+1] = segments[i];
+        }
+    }
     
     void update() {
         // compute output from input
@@ -91,58 +120,17 @@ public class AlgoPolygon extends AlgoElement {
         output[0].update();
     }
     
-    private void createSegments() {             
-        segments = new GeoSegment[points.length];   
-        AlgoJoinPointsSegment []  segmentAlgos = 
-                        new AlgoJoinPointsSegment[points.length];
-        for (int i=0; i < points.length; i++) {
-            segmentAlgos[i] = new AlgoJoinPointsSegment(cons, points[i], 
-                                                              points[(i+1) % points.length],
-                                                              poly);            
-            cons.removeFromConstructionList(segmentAlgos[i]);                       
-            segments[i] = segmentAlgos[i].getSegment();
-        }
-    }
-    
-    private void initLabels(String [] labels) {
-        // additional labels for the polygon's segments
-        if (labels != null && labels.length == segments.length + 1) {
-            for (int i=0; i < segments.length; i++) {
-                segments[i].setLabel(labels[i+1]);
-            }
-        } else { // no labels for segments specified
-            //  set labels of segments according to point names
-             if (points.length == 3) {          
-                setLabel(segments[0], points[2]);
-                setLabel(segments[1], points[0]);
-                setLabel(segments[2], points[1]); 
-             } else {
-                for (int i=0; i < points.length; i++) {
-                    setLabel(segments[i], points[i]);
-                }
-             }
-        }
-        
-        // label polygon
-        if (labels == null || labels.length == 0) {
-           poly.setLabel(null);
-        } else {
-            // first label for polygon itself
-            poly.setLabel(labels[0]);
-        }
-    }
-    
-    private void setLabel(GeoSegment s, GeoPoint p) {
-        if (!p.isLabelSet() || p.getLabel() == null) s.setLabel(null);
-        else s.setLabel(p.getLabel().toLowerCase());
-    }
     
     GeoPolygon getPoly() { return poly; }    
     public GeoPoint [] getPoints() {
     	return points;
     }
         
-    final void compute() {      
+    final void compute() { 
+    	if (geoList != null) {
+    		updatePointArray(geoList);
+    	}
+    	
         // compute area
         poly.calcArea();                                 
     }   

@@ -460,7 +460,7 @@ public abstract class GeoElement
 		labelOffsetX = geo.labelOffsetX;
 		labelOffsetY = geo.labelOffsetY;	
 		
-		if (this instanceof Traceable && geo instanceof Traceable) {
+		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
 		}		
 	}
@@ -1158,8 +1158,9 @@ public abstract class GeoElement
 	final public void notifyRemove() {
 		kernel.notifyRemove(this);
 
-		//	System.out.println("remove " + label);
-		//	printUpdateSets();
+		// TODO: remove
+		System.out.println("remove " + label);
+		//printUpdateSets();
 	}
 	
 	final public void notifyUpdate() {
@@ -1230,10 +1231,7 @@ public abstract class GeoElement
 	AlgorithmSet getAlgoUpdateSet() {
 		return algoUpdateSet;
 	}		
-	
-	boolean hasEmptyAlgoUpdateSet() {
-		return algoUpdateSet.isEmpty();
-	}	
+		
 	
 	/**
 	 * add algorithm to update sets up the construction graph

@@ -1,8 +1,8 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
-import geogebra.ConstructionProtocolNavigation;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ToolCreationDialog;

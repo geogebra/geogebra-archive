@@ -237,10 +237,19 @@ public class MyXMLio {
     	// create file
         FileOutputStream f = new FileOutputStream(file);
         BufferedOutputStream b = new BufferedOutputStream(f);
-
-        // zip stream
-        ZipOutputStream zip = new ZipOutputStream(b);  
-        OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
+        writeGeoGebraFile(b);          
+        b.close();      
+        f.close();
+    } 
+    
+    /**
+     * Creates a zipped file containing the construction and all settings
+     * saved in xml format plus all external images.
+     */
+    public void writeGeoGebraFile(OutputStream os) throws IOException {
+    	 // zip stream
+        ZipOutputStream zip = new ZipOutputStream(os);  
+        OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");       
         
         // write construction images
         writeConstructionImages(kernel.getConstruction(), zip);
@@ -267,10 +276,8 @@ public class MyXMLio {
         zip.closeEntry();
                     
         osw.close();
-        zip.close();           
-        b.close();      
-        f.close();
-    } 
+        zip.close();        
+    }
     
     /**
      * Creates a zipped file containing the given macros 

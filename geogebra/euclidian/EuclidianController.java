@@ -2513,6 +2513,7 @@ final public class EuclidianController implements MouseListener,
 		}
 					
 		GeoAngle angle = null;
+		GeoAngle [] angles = null;
 		if (selPoints() == 3) {
 			GeoPoint[] points = getSelectedPoints();
 			angle = kernel.Angle(null, points[0], points[1], points[2]);					
@@ -2523,15 +2524,23 @@ final public class EuclidianController implements MouseListener,
 			GeoLine[] lines = getSelectedLines();
 			angle = createLineAngle(lines);			
 		} else if (polyFound && selGeos() == 1) {
-			kernel.Angles(null,(GeoPolygon) getSelectedGeos()[0]);	
-			return true;
+			angles = kernel.Angles(null,(GeoPolygon) getSelectedGeos()[0]);	
 		}
 		
 		if (angle != null) {
 			// commented in V3.0:
 			// angle.setAllowReflexAngle(false);
-			//angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			angle.setLabelVisible(true);
 			angle.updateRepaint();
+			return true;
+		} 
+		else if (angles != null) {
+			for (int i=0; i < angles.length; i++) {
+				angles[i].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+				angles[i].setLabelVisible(true);
+				angles[i].updateRepaint();
+			}
 			return true;
 		} else
 			return false;

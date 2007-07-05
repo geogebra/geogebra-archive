@@ -37,6 +37,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -299,6 +301,22 @@ public class GeoGebraApplet extends JApplet {
 					
 
 	/* JAVA SCRIPT INTERFACE */
+	
+	/**
+	 * Returns current construction as a ggb file in form of a byte array.
+	 * @return null if something went wrong 
+	 */
+	public synchronized byte [] getGGBfile() {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			app.getXMLio().writeGeoGebraFile(bos);
+			bos.flush();
+			return bos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	/**
 	 * Returns current construction in XML format. May be used for saving.
