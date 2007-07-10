@@ -115,7 +115,7 @@ ItemListener, WindowListener {
 		btGridColor.addActionListener(this);
 		
 		// Cancel and Apply Button
-		closeButton = new JButton(app.getPlain("Close"));	
+		closeButton = new JButton(app.getMenu("Close"));	
 		closeButton.addActionListener(this);				
 
 		// BUILD PANELS		

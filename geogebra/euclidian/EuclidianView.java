@@ -457,7 +457,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
-		resetImage = app.getInternalImage("refresh.gif");
+		resetImage = app.getInternalImage("view-refresh.png");
 		this.showAxes[0] = showAxes[0];
 		this.showAxes[1] = showAxes[1];
 		this.showGrid = showGrid;

@@ -1,7 +1,9 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
+import geogebra.algebra.AlgebraInput;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
@@ -62,7 +64,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			infoAction, exportGraphicAction, exportWorksheet,
 			showCreateToolsAction, showManageToolsAction,
 			savePreferencesAction, clearPreferencesAction,
-			selectAllAction, deleteAction;
+			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction;
 
 	private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
@@ -154,13 +156,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		setCtrlShiftAccelerator(mi, 'S');
 		menu.addSeparator();
 //		submenu = new JMenu(app.getMenu("PrintPreview"));
-//		submenu.setIcon(app.getImageIcon("print.gif"));
+//		submenu.setIcon(app.getImageIcon("document-print-preview.png"));
 //		submenu.add(printEuclidianViewAction);
 //	//	submenu.add(printProtocolAction);
 //		menu.add(submenu);
 		mi = menu.add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
-		mi.setIcon(app.getImageIcon("print.gif"));
+		mi.setIcon(app.getImageIcon("document-print-preview.png"));
 		setCtrlAccelerator(mi, 'P');
 				
 		// export
@@ -190,8 +192,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				File file = Application.getFromFileList(i);
 				if (file != null) {										
 					mi = new JMenuItem(file.getName());
-					mi.setIcon(app.getEmptyIcon());
-					//mi.setIcon( new ImageIcon(app.getInternalImage("geogebra22.gif")));
+					mi.setIcon(app.getImageIcon("geogebra.gif"));					
 					ActionListener al = new LoadFileListener(app, file);
 					mi.addActionListener(al);
 					menu.add(mi);
@@ -250,11 +251,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// View
 		menu = new JMenu(app.getMenu("View"));
 		cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());
+		cbShowAxes.setIcon(app.getImageIcon("axes.gif"));		
 		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 				&& app.getEuclidianView().getShowYaxis());
 		menu.add(cbShowAxes);
 
 		cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
+		cbShowGrid.setIcon(app.getImageIcon("grid.gif"));
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
 		menu.addSeparator();
@@ -308,6 +311,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// point capturing
 		menuPointCapturing = new JMenu(app.getMenu("PointCapturing"));
+		menuPointCapturing.setIcon(app.getImageIcon("magnet.gif"));
 		String[] strPointCapturing = { "on",
 				app.getMenu("on") + " (" + app.getMenu("Grid") + ")", "off" };
 		String[] strPointCapturingAC = { "1 PointCapturing",
@@ -319,6 +323,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// Angle unit
 		menuAngleUnit = new JMenu(app.getMenu("AngleUnit"));
+		menuAngleUnit.setIcon(app.getImageIcon("mode_angle_16.gif"));
 		String[] strAngleUnit = { "Degree", "Radiant" };
 		addRadioButtonMenuItems(menuAngleUnit, this, strAngleUnit, strAngleUnit,
 				0);
@@ -348,6 +353,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// point style
 		menuPointStyle = new JMenu(app.getMenu("PointStyle"));
+		menuPointStyle.setIcon(app.getImageIcon("mode_point_16.gif"));
 		// dot, circle, cross
 		String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
 		String[] strPointStyleAC = { "0", "2", "1" };
@@ -366,6 +372,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// right angle style
 
 		menuRightAngleStyle = new JMenu(app.getMenu("RightAngleStyle"));
+		menuRightAngleStyle.setIcon(app.getImageIcon("right_angle.gif"));
 		// dot, none, square
 		String[] strAngleStyle = { app.getPlain("off"), "\u25a1", "\u2219" };
 		String[] strAngleStyleAC = {
@@ -403,6 +410,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		// Labeling
 		menuLabeling = new JMenu(app.getMenu("Labeling"));
+		menuLabeling.setIcon(app.getImageIcon("mode_showhidelabel_16.gif"));
 		String[] lstr = { "Labeling.automatic", "Labeling.on", "Labeling.off", "Labeling.pointsOnly"  };		
 		String[] lastr = { "0_labeling", "1_labeling", "2_labeling", "3_labeling"  };
 		addRadioButtonMenuItems(menuLabeling, this, lstr, lastr, 0);
@@ -419,9 +427,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		addRadioButtonMenuItems(submenu, this, gqfi, gqfi, pos);
 		menu.add(submenu);
 		*/
+		
+		menu.addSeparator();
 
 		// Font size
 		submenu = new JMenu(app.getMenu("FontSize"));
+		submenu.setIcon(app.getImageIcon("font.png"));
 		String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
 				"28 pt", "32 pt" };
 
@@ -448,9 +459,10 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		//menu.addSeparator();
 
-		// Language		
+		// Language				
 		LanguageActionListener langListener = new LanguageActionListener();
 		submenu = new JMenu(app.getMenu("Language"));
+		submenu.setIcon(app.getImageIcon("globe.png"));
 		addLanguageMenuItems(submenu, langListener);
 		menu.add(submenu);
 
@@ -491,8 +503,11 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu.add(helpAction);
 		menu.addSeparator();
 
-		// menu.add(updateAction);
-		// menu.addSeparator();
+		menu.add(websiteAction);
+		menu.add(forumAction);
+		menu.add(wikiAction);
+
+		menu.addSeparator();
 
 		menu.add(infoAction);
 		add(menu);
@@ -661,7 +676,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		newFileAction = new AbstractAction(app.getMenu("New"),
-				app.getImageIcon("new.gif")) {
+				app.getImageIcon("document-new.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -670,7 +685,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		newWindowAction = new AbstractAction(app.getMenu("New") + " ...",
-				app.getImageIcon("new.gif")) {
+				app.getImageIcon("document-new.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -687,7 +702,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		propertiesAction = new AbstractAction(app.getPlain("Properties") + " ...",
-				app.getImageIcon("properties.gif")) {
+				app.getImageIcon("document-properties.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -697,7 +712,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		constProtocolAction = new AbstractAction(
 				app.getPlain("ConstructionProtocol") + " ...",
-				app.getImageIcon("properties.gif")) {
+				app.getImageIcon("table.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -711,7 +726,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		drawingPadPropAction = new AbstractAction(app.getPlain("DrawingPad")
-				+ " ...") {
+				+ " ...", app.getImageIcon("document-properties.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -729,7 +744,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		saveAction = new AbstractAction(app.getMenu("Save"),
-				app.getImageIcon("save.gif")) {
+				app.getImageIcon("document-save.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -738,7 +753,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		saveAsAction = new AbstractAction(app.getMenu("SaveAs") + " ...",
-				app.getImageIcon("saveas.gif")) {
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -781,7 +796,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		exitAction = new AbstractAction(app.getMenu("Close"), app.getEmptyIcon()) {
+		exitAction = new AbstractAction(app.getMenu("Close"), app.getImageIcon("exit.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -798,7 +813,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		loadAction = new AbstractAction(app.getMenu("Load") + " ...",
-				app.getImageIcon("open.gif")) {
+				app.getImageIcon("document-open.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -808,7 +823,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		
 
-		refreshAction = new AbstractAction(app.getMenu("Refresh")) {
+		refreshAction = new AbstractAction(app.getMenu("Refresh"),
+				app.getImageIcon("view-refresh.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -817,7 +833,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		drawingPadToClipboardAction = new AbstractAction(
-				app.getMenu("DrawingPadToClipboard")) {
+				app.getMenu("DrawingPadToClipboard"),
+				app.getImageIcon("edit-copy.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -835,7 +852,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		helpAction = new AbstractAction(app.getMenu("Help"),
-				app.getImageIcon("help.gif")) {
+				app.getImageIcon("help.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -857,7 +874,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		exportGraphicAction = new AbstractAction(app.getPlain("DrawingPad") + " "
 				+ app.getPlain("as") + " " + app.getPlain("Picture") + " ("
-				+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...") {
+				+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...", 
+				app.getImageIcon("image-x-generic.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -894,7 +912,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheet") + " "
 				+ app.getPlain("as") + " " + app.getPlain("html") + " ("
-				+ Application.FILE_EXT_HTML + ") ...") {
+				+ Application.FILE_EXT_HTML + ") ...",
+				app.getImageIcon("text-html.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -914,7 +933,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		showCreateToolsAction = new AbstractAction(app.getMenu("Tool.CreateNew")
-				+ " ...") {
+				+ " ...", app.getImageIcon("tool.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -925,7 +944,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		showManageToolsAction = new AbstractAction(app.getMenu("Tool.Manage")
-				+ " ...") {
+				+ " ...", app.getImageIcon("document-properties.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -945,7 +964,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		
 		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save"),
-				app.getImageIcon("save.gif")) {
+				app.getImageIcon("document-save.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -967,9 +986,10 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {			
 				app.selectAll();
 			}
-		};
+		};			
 		
-		deleteAction = new AbstractAction(app.getPlain("Delete")) {
+		deleteAction = new AbstractAction(app.getPlain("Delete"), 
+				app.getImageIcon("delete_small.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
@@ -983,6 +1003,39 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				}
 			}
 		};		
+		
+		websiteAction  = new AbstractAction("www.geogebra.org", 
+							new ImageIcon(app.getInternalImage("geogebra.gif"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE);
+			}
+		};		
+		
+		forumAction  = new AbstractAction("GeoGebra Forum", 
+				new ImageIcon(app.getInternalImage("users.png"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE + "/forum");
+			}
+		};	
+		
+		wikiAction  = new AbstractAction("GeoGebraWiki", 
+				new ImageIcon(app.getInternalImage("wiki.jpg"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {	
+				String url = Application.GEOGEBRA_WEBSITE;
+				if (app.getLocale().getLanguage().equals("de"))
+					url += "/de/wiki";
+				else
+					url += "/en/wiki";
+					
+				BrowserLauncher.openURL(url);				
+			}
+		};	
 				
 		updateActions();
 	}

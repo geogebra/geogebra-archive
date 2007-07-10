@@ -304,7 +304,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         JMenuItem mPreviewP =
             new JMenuItem(
                 app.getMenu("PrintPreview") + "...",
-                app.getImageIcon("print.gif"));
+                app.getImageIcon("document-print-preview.png"));
         ActionListener lstPreview = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Thread runner = new Thread() {

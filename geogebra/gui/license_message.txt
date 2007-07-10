@@ -33,8 +33,8 @@ TRANSLATIONS
   * French: David Tran, Noel Lambert (France)
   * Galician: Jesus Garcia Otero (Spain)  
   * German: Markus Hohenwarter (Austria)
-  * Greek: Nicholas Mousoulides, Marinos Karagiorgis (Cyprus), 
-      Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
+  * Greek: Nicholas Mousoulides, (Cyprus), Spiros Mavrogiannis, Manolis Koutlis, 
+      Fergadiotis Athanasios, Constantinos Christou (Greece)
   * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
@@ -71,3 +71,4 @@ SOFTWARE
   * FreeHEP Java Libraries, http://java.freehep.org
   * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
+  * Tango Icon Gallery, http://tango.freedesktop.org

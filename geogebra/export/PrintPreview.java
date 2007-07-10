@@ -96,7 +96,7 @@ public class PrintPreview extends JDialog {
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(false);
 		JButton bt = new JButton(app.getMenu("Print"), 
-												app.getImageIcon("print.gif"));
+												app.getImageIcon("document-print.png"));
 		ActionListener lst = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {

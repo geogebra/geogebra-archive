@@ -105,6 +105,7 @@ implements ActionListener {
         addSeparator();          
         
         JMenuItem miProperties = new JMenuItem(app.getPlain("Properties"));
+        miProperties.setIcon(app.getImageIcon("document-properties.png"));
         miProperties.setActionCommand("properties");
         miProperties.addActionListener(this);
         miProperties.setBackground(bgColor);

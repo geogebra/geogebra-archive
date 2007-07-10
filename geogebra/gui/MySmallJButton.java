@@ -41,7 +41,7 @@ public class MySmallJButton extends JButton {
 	private void setSmallSize(int pixelX, int pixelY) {
 		Icon icon = getIcon();
 		Dimension dim = new Dimension(icon.getIconWidth()+ pixelX, 
-													   icon.getIconHeight()+ pixelY);
+									  icon.getIconHeight()+ pixelY);
 		setPreferredSize(dim);
 		setMaximumSize(dim);
 		setMinimumSize(dim);				

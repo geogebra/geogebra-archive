@@ -24,17 +24,17 @@ import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.AngleInputDialog;
+import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.DrawingPadPopupMenu;
 import geogebra.gui.EuclidianPropDialog;
 import geogebra.gui.FileDropTargetListener;
+import geogebra.gui.GeoContextMenu;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
-import geogebra.gui.HelpBrowser;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
-import geogebra.gui.GeoContextMenu;
 import geogebra.gui.PropertiesDialog;
 import geogebra.gui.RedefineInputHandler;
 import geogebra.gui.RenameInputHandler;
@@ -62,7 +62,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -109,7 +108,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "5. July 2007";
+    public static final String buildDate = "9. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -153,12 +152,11 @@ public class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("el") );            // Greek                
         supportedLocales.add( new Locale("hu") );          	// Hungarian
         supportedLocales.add( new Locale("it") );     		 	// Italian
-        supportedLocales.add( new Locale("mk") );     		 	// Macedonian
-      
-        //supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
-        //supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
-        supportedLocales.add( new Locale("nb") );     	 	// Norwegian (Bokmal)
-        supportedLocales.add( new Locale("nn") );  			// Norwegian (Nynorsk)
+        supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
+        supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
+        supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
+        //supportedLocales.add( new Locale("nb") );     	 	// Norwegian (Bokmal)
+       // supportedLocales.add( new Locale("nn") );  			// Norwegian (Nynorsk)
             
         supportedLocales.add( new Locale("fa") );             	// Persian
         supportedLocales.add( new Locale("pl") );     		// Polish
@@ -244,7 +242,6 @@ public class Application implements	KeyEventDispatcher {
     private ConstructionProtocol constProtocol;
     private ConstructionProtocolNavigation constProtocolNavigation;
     private ImageManager imageManager;
-    private HelpBrowser helpBrowser;
 
     private boolean INITING = false;
     private boolean showAlgebraView = true; 
@@ -947,17 +944,7 @@ public class Application implements	KeyEventDispatcher {
        
         kernel.updateLocalAxesNames();
         setLabels(); // update display
-
-        //  reinit helpBrowser
-        if (helpBrowser != null) {
-            try {
-                URL helpURL = getHelpURL(currentLocale);
-                helpBrowser.setHomePage(helpURL);
-            } catch (Exception e) {
-                helpBrowser.setVisible(false);              
-                helpBrowser = null;
-            }   
-        }
+       
         System.gc();
     }
     
@@ -1012,7 +999,7 @@ public class Application implements	KeyEventDispatcher {
         currentLocale = getClosestSupportedLocale(locale);                     
         updateResourceBundles();
         
-//      update font for new language (needed for e.g. chinese)
+        // update font for new language (needed for e.g. chinese)
         try {
             String fontName = getLanguageFontName(locale);
             if (fontName != FONT_NAME) {
@@ -1056,7 +1043,7 @@ public class Application implements	KeyEventDispatcher {
 				// found supported country locale
                 return loc;
         }
-        
+     
         // we didn't find a matching country or language,
         // so  we take English
         return Locale.ENGLISH;
@@ -1769,9 +1756,7 @@ public class Application implements	KeyEventDispatcher {
         if (constProtocol != null)
             constProtocol.initGUI();
         if (constProtocolNavigation != null)
-        	constProtocolNavigation.initGUI();
-        if (helpBrowser != null)
-            helpBrowser.updateFonts();
+        	constProtocolNavigation.initGUI();       
         if (fileChooser != null){
         	fileChooser.setFont(getPlainFont());
         	SwingUtilities.updateComponentTreeUI(fileChooser);
@@ -1852,7 +1837,9 @@ public class Application implements	KeyEventDispatcher {
 
     private void setLabels() {
         if (INITING)
-            return;       
+            return;   
+        
+        initShowAxesGridActions();
             
         if (showMenuBar) {
         	initMenubar();        	
@@ -1871,9 +1858,7 @@ public class Application implements	KeyEventDispatcher {
         if (constProtocol != null)
             constProtocol.initGUI();
         if (constProtocolNavigation != null)
-        	constProtocolNavigation.setLabels();
-        if (helpBrowser != null)
-            helpBrowser.setLabels();
+        	constProtocolNavigation.setLabels(); 
     }    
     
     
@@ -2267,7 +2252,7 @@ public class Application implements	KeyEventDispatcher {
         };
         
         undoAction = new AbstractAction(getMenu("Undo"),
-				getImageIcon("undo.gif")) {
+				getImageIcon("edit-undo.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -2281,7 +2266,7 @@ public class Application implements	KeyEventDispatcher {
 		};
 
 		redoAction = new AbstractAction(getMenu("Redo"),
-				getImageIcon("redo.gif")) {
+				getImageIcon("edit-redo.png")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -2360,41 +2345,17 @@ public class Application implements	KeyEventDispatcher {
             
             if (applet != null) {
             	applet.getAppletContext().showDocument(helpURL, "_blank");
-            	return;
+            } else {
+            	BrowserLauncher.openURL(helpURL.toExternalForm());
             }
-
-            if (helpBrowser == null) {
-                // init helpBrowser
-                helpBrowser = new HelpBrowser(this);
-                Dimension screenSize = frame.getToolkit().getScreenSize();
-                int width = 600;
-                int height = 600;
-                helpBrowser.setBounds(
-                    (screenSize.width - width) / 2,
-                    (screenSize.height - height) / 2,
-                    width,
-                    height);
-                helpBrowser.setIconImage(frame.getIconImage());
-                helpBrowser.setHomePage(helpURL);
-            }
-            helpBrowser.setVisible(true);
-            helpBrowser.requestFocus();
-
-        } catch (MyError e) {
-            helpBrowser = null;
+        } catch (MyError e) {           
             showError(e);
-        } catch (Exception e) {
-            helpBrowser = null;
+        } catch (Exception e) {           
             System.err.println(
                 "openHelp error: " + e.toString() + e.getMessage());
             showError(e.toString());
         }
-    }
-
-    // like openHelp for external use
-    public void openHelpBrowser() {
-        openHelp();
-    }
+    }    
 
     private URL getHelpURL(Locale locale) throws Exception {
         String  language = locale.getLanguage();
@@ -2422,6 +2383,7 @@ public class Application implements	KeyEventDispatcher {
     	// try to get help for given language
         String strFile = "docu" + languageISOcode + "/index.html";
         String strURL = GEOGEBRA_WEBSITE + "/help/" + strFile;
+        
         try {
             File f = new File(strFile);
             if (f.exists())

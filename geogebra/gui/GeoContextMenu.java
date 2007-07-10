@@ -358,6 +358,7 @@ public class GeoContextMenu extends JPopupMenu {
             // show object
         	if (geo.getShowObjectCondition() == null) {
 	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
+	            cbItem.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
 	            cbItem.setSelected(geo.isSetEuclidianVisible());
 	            cbItem.addActionListener(new ActionListener() {
 	        		public void actionPerformed(ActionEvent e) {
@@ -371,8 +372,9 @@ public class GeoContextMenu extends JPopupMenu {
             
             if (!(geo.isTextValue() || geo.isGeoImage())) {           
 	            // show label
-	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowLabel"));
+	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowLabel"));	           
 	            cbItem.setSelected(geo.isLabelVisible());
+	            cbItem.setIcon(app.getImageIcon("mode_showhidelabel_16.gif"));
 	            cbItem.addActionListener(new ActionListener() {
 	        		public void actionPerformed(ActionEvent e) {
 	                    geo.setLabelVisible(!geo.isLabelVisible());
@@ -427,25 +429,13 @@ public class GeoContextMenu extends JPopupMenu {
         
    
         
-        // EDITING      
-        // EDIT Text in special dialog
-        if (geo.isTextValue() && !geo.isFixed()) {
-            addAction(new AbstractAction(
-                app.getPlain("Edit"),
-                app.getImageIcon("edit_tree.gif")) {
-					private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent e) {
-                    app.showTextDialog((GeoText) geo); 
-                }
-            });
-        }
+      
         /*
         // EDIT in AlgebraView
         else if (app.showAlgebraView() && geo.isChangeable() && !geo.isGeoImage()) { 
             addAction(new AbstractAction(
                 app.getPlain("Edit"),
-                app.getImageIcon("edit_tree.gif")) {
+                app.getImageIcon("edit.png")) {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -454,25 +444,13 @@ public class GeoContextMenu extends JPopupMenu {
             });
         }             
         
-        // REDEFINE    
-        if (geo.isRedefineable()) {     
-                addAction(new AbstractAction(
-                            app.getPlain("Redefine"),
-                            app.getImageIcon("redefine.gif")) {
-
-								private static final long serialVersionUID = 1L;
-
-							public void actionPerformed(ActionEvent e) {
-                                app.showRedefineDialog(geo);
-                            }
-                        });         
-        }
+        
         
         // EDIT: copy to input field       
         if (app.showAlgebraInput() && !geo.isGeoImage()) {
             addAction(new AbstractAction(
                 app.getMenu("InputField"),
-                app.getImageIcon("edit.gif")) {
+                app.getImageIcon("edit.png")) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -492,7 +470,7 @@ public class GeoContextMenu extends JPopupMenu {
         if (app.letRename())  {    
             addAction(new AbstractAction(
                     app.getPlain("Rename"),
-                    app.getImageIcon("rename.gif")) {
+                    app.getImageIcon("rename.png")) {
 						private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
@@ -501,6 +479,37 @@ public class GeoContextMenu extends JPopupMenu {
                 });
         }
     
+       
+        // EDITING      
+        // EDIT Text in special dialog
+        if (geo.isTextValue() && !geo.isFixed()) {
+            addAction(new AbstractAction(
+                app.getPlain("Edit"),
+                app.getImageIcon("edit.png")) {
+					private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {
+                    app.showTextDialog((GeoText) geo); 
+                }
+            });
+        }      
+        
+        // REDEFINE    
+        else if (app.letRedefine() && geo.isRedefineable()) {     
+                addAction(new AbstractAction(
+                            app.getPlain("Redefine"),
+                            app.getImageIcon("edit.png")) {
+
+								private static final long serialVersionUID = 1L;
+
+							public void actionPerformed(ActionEvent e) {
+                                app.showRedefineDialog(geo);
+                            }
+                        });         
+        }
+        
+                 
+        
         
         // DELETE    
         if (app.letDelete()) {  
@@ -518,6 +527,8 @@ public class GeoContextMenu extends JPopupMenu {
                 }
             });       
         }
+        
+     
 
         if (app.letShowPropertiesDialog() && geo.hasProperties()) {
             addSeparator();
@@ -525,7 +536,7 @@ public class GeoContextMenu extends JPopupMenu {
             // open properties dialog      
             addAction(new AbstractAction(
                 app.getPlain("Properties") + " ...",
-                app.getImageIcon("properties.gif")) {
+                app.getImageIcon("document-properties.png")) {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {

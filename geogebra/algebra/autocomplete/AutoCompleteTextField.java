@@ -376,7 +376,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
          if (help != null) {
              app.showHelp(help);
          } else {
-             app.openHelpBrowser();
+             app.openHelp();
          }
      }
 

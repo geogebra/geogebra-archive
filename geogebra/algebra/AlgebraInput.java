@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
@@ -43,7 +44,7 @@ implements ActionListener, MouseListener, KeyListener
 	
 	private Application app;
 
-	private MySmallJButton helpButton;
+	private JLabel helpButton;
 	private JToggleButton inputButton;	
  	
 	private JComboBox cmdCB; // for command list
@@ -62,7 +63,7 @@ implements ActionListener, MouseListener, KeyListener
 	
 	public void initGUI() {
 		removeAll();
-		helpButton = new MySmallJButton(app.getImageIcon("help.gif"), 5); 
+		helpButton = new JLabel(app.getImageIcon("help.png")); 
 		inputButton = new JToggleButton(); // label text
 		InputPanel inputPanel = new InputPanel(null, app, 30, true);
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
@@ -79,7 +80,7 @@ implements ActionListener, MouseListener, KeyListener
 			cmdCB.addActionListener(this);
 		}
 			
-		helpButton.addActionListener(this);		
+		helpButton.addMouseListener(this);		
 		inputButton.addMouseListener(this);
 				
 		// add to panel				 		
@@ -207,12 +208,7 @@ implements ActionListener, MouseListener, KeyListener
 				insertCommand((String) cmdCB.getSelectedItem());				
 				cmdCB.setSelectedIndex(0);
 			}					
-		}
-		// help button
-		else if (source == helpButton) {
-			// show help dialog
-			app.showHelp("InputFieldHelp");
-		}		
+		}			
 	}
 	
       
@@ -250,7 +246,8 @@ implements ActionListener, MouseListener, KeyListener
 
 
 	public void mousePressed(MouseEvent e) {
-		if (e.getSource() == inputButton) {	
+		Object src = e.getSource();
+		if (src == inputButton) {	
 			if (!inputButton.isSelected()) {
 				inputButton.setSelected(true);
 				app.setAglebraInputMode();
@@ -259,7 +256,11 @@ implements ActionListener, MouseListener, KeyListener
 				inputButton.setSelected(false);
 				app.setMoveMode();
 			}
-		} 		
+		} 	
+		else if (src == helpButton) {
+			// show help dialog
+			app.showHelp("InputFieldHelp");
+		}
 	}
 
 	public void mouseReleased(MouseEvent arg0) {

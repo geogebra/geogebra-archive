@@ -2,7 +2,7 @@ package sharptools;
 /*
  * @(#)SharpTools.java
  * 
- * $Id: SharpTools.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
+ * $Id: SharpTools.java,v 1.3 2007-07-10 15:53:24 hohenwarter Exp $
  * 
  * Created on October 10, 2000, 1:15 AM
  */
@@ -55,7 +55,7 @@ import javax.swing.table.TableColumnModel;
  * @author  Daniel Goldberg (initial UI)
  * @author  Andrei Scudder, Daniel Medina (more work)
  * @author  Hua Zhong (complete for v1.0)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 final public class SharpTools extends JFrame implements ListSelectionListener {
 
@@ -127,7 +127,7 @@ final public class SharpTools extends JFrame implements ListSelectionListener {
     final private ImageIcon saveIcon = getImageIcon("save.gif");
     final private ImageIcon unlockedIcon = getImageIcon("unlocked.gif");
     final private ImageIcon lockedIcon = getImageIcon("locked.gif");
-    final private ImageIcon printIcon = getImageIcon("print.gif");
+    final private ImageIcon printIcon = getImageIcon("document-print.png");
     final private ImageIcon undoIcon = getImageIcon("undo.gif");
     final private ImageIcon redoIcon = getImageIcon("redo.gif");
     final private ImageIcon cutIcon = getImageIcon("cut.gif");

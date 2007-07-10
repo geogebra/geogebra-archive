@@ -2,7 +2,7 @@ package sharptools;
 /*
  * @(#)TabPanel.java
  * 
- * $Id: TabPanel.java,v 1.2 2007-03-07 06:24:32 hohenwarter Exp $
+ * $Id: TabPanel.java,v 1.3 2007-07-10 15:53:24 hohenwarter Exp $
  * 
  * Created Novenmber 27, 2000, 11:27 PM
  */
@@ -25,7 +25,7 @@ import javax.swing.JTabbedPane;
  * for one chart.
  *
  * @author Hua Zhong
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TabPanel extends JPanel {
 
@@ -96,7 +96,7 @@ public class TabPanel extends JPanel {
 
 	// Update button
 	JButton updateButton = new JButton
-	    ("Update", SharpTools.getImageIcon("refresh.gif"));
+	    ("Update", SharpTools.getImageIcon("document-refresh.png"));
 
 	updateButton.setMnemonic(KeyEvent.VK_U);
 	updateButton.addActionListener(new ActionListener() {
@@ -322,7 +322,7 @@ public class TabPanel extends JPanel {
  *    scale).
  * 
  * @author Hua Zhong
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 class HistoPanel extends JPanel /*implements ComponentListener*/ {    

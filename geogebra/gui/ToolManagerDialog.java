@@ -203,7 +203,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			FlowLayout closePanelLayout = new FlowLayout();
 			closePanelLayout.setAlignment(FlowLayout.RIGHT);
 			closePanel.setLayout(closePanelLayout);
-			final JButton btClose = new JButton(app.getPlain("Close"));
+			final JButton btClose = new JButton(app.getMenu("Close"));
 			closePanel.add(btClose);
 			panel.add(closePanel, BorderLayout.SOUTH);
 			

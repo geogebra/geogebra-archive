@@ -83,6 +83,11 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     	// label polygon
     	if (labels == null || labels.length == 0) {
              setLabel(null);
+             if (segments != null) {
+            	 for (int k=0; k < segments.length; k++) {
+ 	                segments[k].setLabel(null);
+ 	            }
+             }
              return;
     	}
     	

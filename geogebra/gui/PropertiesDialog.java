@@ -172,7 +172,7 @@ public class PropertiesDialog
 		int pixelX = 20;
 		int pixelY = 10;
 		/*
-		MySmallJButton renameButton = new MySmallJButton(app.getImageIcon("rename.gif"), pixelX, pixelY);
+		MySmallJButton renameButton = new MySmallJButton(app.getImageIcon("rename.png"), pixelX, pixelY);
 		renameButton.setToolTipText(app.getPlain("Rename"));
 		renameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -229,7 +229,7 @@ public class PropertiesDialog
 		});
 		*/
 		
-		closeButton = new JButton(app.getPlain("Close"));
+		closeButton = new JButton(app.getMenu("Close"));
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();			
@@ -4186,8 +4186,11 @@ class NamePanel
 	private RedefineInputHandler defInputHandler;
 	private GeoElement currentGeo;
 	private JPanel defPanel;
+	private JLabel defLabel;
+	private Application app;
 
-	public NamePanel(Application app) {		
+	public NamePanel(Application app) {	
+		this.app = app;
 		// NAME PANEL
 		nameInputHandler = new RenameInputHandler(app, null, false);
 		
@@ -4222,7 +4225,7 @@ class NamePanel
 		// 	put it all together		
 		defPanel = new JPanel();
 		defPanel.setLayout(new FlowLayout());
-		JLabel defLabel = new JLabel(app.getPlain("Definition") + ":");
+		defLabel = new JLabel(app.getPlain("Definition") + ":");
 		dx = 50 - defLabel.getPreferredSize().width;
 		defPanel.add(defLabel);
 		defPanel.add(Box.createHorizontalStrut(dx));
@@ -4256,7 +4259,13 @@ class NamePanel
 			defInputHandler.setGeoElement(currentGeo);
 			setDefText(currentGeo);
 			defPanel.setVisible(true);
-		}
+			
+			if (currentGeo.isIndependent()) {
+				defLabel.setText(app.getPlain("Value")+ ":");
+			} else {
+				defLabel.setText(app.getPlain("Definition")+ ":");
+			}
+		}		
 		
 		tfDefinition.addActionListener(this);
 		return this;
