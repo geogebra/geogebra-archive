@@ -91,12 +91,14 @@ implements ActionListener {
         // zoom for y-axis
         JMenu yaxisMenu = new JMenu(app.getPlain("xAxis") + " : " 
         							+ app.getPlain("yAxis"));
+        yaxisMenu.setIcon(app.getEmptyIcon());
         yaxisMenu.setBackground(getBackground());   
         addAxesRatioItems(yaxisMenu);
         add(yaxisMenu);                        
        
         
         JMenuItem miStandardView = new JMenuItem(app.getPlain("StandardView"));
+        miStandardView.setIcon(app.getEmptyIcon());
         miStandardView.setActionCommand("standardView");
         miStandardView.addActionListener(this);
         miStandardView.setBackground(bgColor);

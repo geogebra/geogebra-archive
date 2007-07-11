@@ -260,6 +260,18 @@ implements EuclidianViewAlgo {
     void remove(GeoElement output) {
     	remove();
     }
+    
+    /**
+     * Calls doRemove() for all output objects of this
+     * algorithm except for keepGeo.
+     */
+    void removeOutputExcept(GeoElement keepGeo) {
+    	for (int i=0; i < output.length; i++) {
+            GeoElement geo = output[i];
+            if (geo != keepGeo) 
+            	geo.doRemove();
+        }
+    }
 
     /**
      * Tells all views to add all output GeoElements of this algorithm. 

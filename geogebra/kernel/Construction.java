@@ -674,14 +674,11 @@ public class Construction {
         }
         
         AlgoElement oldGeoAlgo = oldGeo.getParentAlgorithm();
-        AlgoElement newGeoAlgo = newGeo.getParentAlgorithm();
+        AlgoElement newGeoAlgo = newGeo.getParentAlgorithm();      
         
         //  1) remove all brothers and sisters of oldGeo
         if (oldGeoAlgo != null) {
-            for (int i=0; i < oldGeoAlgo.output.length; i++) {
-                GeoElement geo = oldGeoAlgo.output[i];
-                if (geo != oldGeo) geo.doRemove();
-            }
+            oldGeoAlgo.removeOutputExcept(oldGeo);
         }
                 
         // if newGeo is not in construction index, we must set its index now
@@ -724,10 +721,13 @@ public class Construction {
                 try {                   
                     newGeo.set(oldGeo);                    
                 } catch (Exception e) {}                
-            }
+            }                        
             
             a = (oldGeoAlgo == null) ? oldGeo.getXML() : oldGeoAlgo.getXML();
-            b = (newGeoAlgo == null) ? newGeo.getXML() : newGeoAlgo.getXML();           
+            b = (newGeoAlgo == null) ? newGeo.getXML() : newGeoAlgo.getXML();              
+
+//            System.out.println("oldGeo: " + oldGeo + ", algo: " + oldGeoAlgo);
+//            System.out.println("newGeo: " + newGeo + ", algo: " + newGeoAlgo);
         }
         
         // set back decimals
@@ -784,27 +784,30 @@ public class Construction {
      */
     private void doReplace(String consXML, String oldXML, String newXML) throws Exception {             
         // try to process the new construction
-        try {   
-                    
+        try {           	
+//            System.out.println("***");
+//            System.out.println("old XML:\n" + oldXML);
+//            System.out.println("new XML:\n" + newXML);  
+            
             //  replace Strings: oldXML by newXML in consXML            
             int pos = consXML.indexOf(oldXML);
             if (pos < 0) {
-                System.err.println("replace failed: oldXML string not found:");
+                System.err.println("replace failed: oldXML string not found:\n"+ oldXML);
                 throw new MyError(getApplication(), "ReplaceFailed");
             }           
             StringBuffer newConsXML = new StringBuffer();
             newConsXML.append(consXML.substring(0, pos));
             newConsXML.append(newXML);
             newConsXML.append(consXML.substring(pos + oldXML.length()));                
-                
-//          System.out.println("***");
-//          System.out.println("old XML:\n" + consXML);
-//          System.out.println("***");      
-//          System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
-//          System.out.println("***");
-//          System.out.println("new XML:\n" + newConsXML);
-//          System.out.println("***");
-            
+   
+//            System.out.println("***");
+//            System.out.println("cons XML:\n" + consXML);
+//            System.out.println("***");      
+//            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
+//            System.out.println("***");
+//            System.out.println("new XML:\n" + newConsXML);
+//            System.out.println("***");
+           
             undoManager.processXML(newConsXML.toString());
             kernel.notifyReset();
             kernel.updateConstruction();              

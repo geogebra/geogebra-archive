@@ -167,7 +167,7 @@ public class AlgoMacro extends AlgoElement {
 		output = new GeoElement[macroOutput.length];								 						
 		
 		for (int i=0; i < macroOutput.length; i++) {  
-			// copy output object of macro and make the copy it part of this construction
+			// copy output object of macro and make the copy part of this construction
 			output[i] = macroOutput[i].copyInternal(cons);			
 			output[i].setUseVisualDefaults(false);
 			output[i].setVisualStyle(macroOutput[i]);	

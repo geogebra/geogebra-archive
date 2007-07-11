@@ -33,32 +33,38 @@ public class AlgoPolygonRegular extends AlgoElement {
     private GeoPoint [] points;
     private GeoPoint centerPoint;	
     private MyDouble rotAngle;
+    private boolean isIniting = true;
     
+    /**
+     * Creates a new regular polygon algorithm
+     * @param cons
+     * @param labels: labels[0] for polygon, then labels for segments and then for points
+     * @param A
+     * @param B
+     * @param num
+     */
     AlgoPolygonRegular(Construction cons, String [] labels, GeoPoint A, GeoPoint B, NumberValue num) {
         super(cons);
         this.A = A;
         this.B = B;
-        this.num = num;                          
+        this.num = num;  
         
         // temp center point of regular polygon
         centerPoint = new GeoPoint(cons);
         rotAngle = new MyDouble(kernel);   
-        
-        // points array
-        points = new GeoPoint[2];
-        points[0] = A;
-        points[1] = B;
-             
+               
         // output
+        points = new GeoPoint[0];
         poly = new GeoPolygon(cons, points);
-        
+                     
         // for AlgoElement
         setInputOutput(); 
         
         // compute poly
-        compute();     
-                                                  
-        poly.initLabels(labels);
+        compute();      
+                                                                
+        poly.initLabels(labels);   
+        isIniting = false;
     }   
         
     String getClassName() {
@@ -76,11 +82,17 @@ public class AlgoPolygonRegular extends AlgoElement {
             input[i].addAlgorithm(this);
         }
         cons.addToAlgorithmList(this);
-        
-        setOutput();               
+
+        // setOutput(); done in compute
+
+        // parent of output
+        poly.setParentAlgorithm(this);       
+        cons.addToAlgorithmList(this); 
     }        
 
-    private void setOutput() {     	
+    private void setOutput() {    
+    	if (points == null) return;
+    	
     	// size = poly + points (without A, B) + segments
     	GeoSegment [] segments = poly.getSegments();
     	GeoPoint [] points = poly.getPoints();
@@ -88,24 +100,23 @@ public class AlgoPolygonRegular extends AlgoElement {
        
         output = new GeoElement[size];   
         int k = 0;
-        output[k] = poly;   
-        output[k].setParentAlgorithm(this);                               
+        output[k] = poly;                                  
               
         for (int i=0; i < segments.length; i++) {
             output[++k] = segments[i];
         }    
         
         for (int i=2; i < points.length; i++) {
-            output[++k] = points[i];
-            output[k].setParentAlgorithm(this);
-        }
+            output[++k] = points[i];            
+        }                
         
-        // init labels
-        for (int i=0; i < output.length; i++) {
-        	if (!output[i].isLabelSet()) {
-            	output[i].setLabel(null);	
-            }
-        }
+        
+//    	System.out.println("*** OUTPUT ****************");
+//        for (int i=0; i < output.length; i++) {
+//			System.out.println(" " + i + ": " + output[i].getLongDescription());		     	        	     	
+//		} 
+//    	System.out.println("*****************");
+        
     }
     
     GeoPolygon getPoly() { return poly; }    
@@ -115,27 +126,27 @@ public class AlgoPolygonRegular extends AlgoElement {
      */
     final void compute() {      
     	// check points and number
-    	if (!A.isDefined() || !B.isDefined() || Double.isNaN(num.getDouble())) {
-    		poly.setUndefined();
-    		return;
-    	}
+    	double nd = num.getDouble();
+    	if (Double.isNaN(nd)) nd = 2;
     	
-    	// get number of vertices n
-    	int n = Math.max(2, (int) Math.round( num.getDouble() ));
+    	// get integer number of vertices n
+    	int n = Math.max(2, (int) Math.round( nd ));
     	
-    	// make sure we have n points
-    	boolean pointNumberChanged = updatePointsArray(n);
-    	if (pointNumberChanged) {
+    	// if number of points changed, we need to update the
+    	// points array and the output array
+    	int oldPointNumber = points.length;
+    	if (n != oldPointNumber) {
+    		updatePointsArray(n);
     		poly.setPoints(points);
-    	    setOutput();
+    		setOutput();
     	}
     	
-    	if (n < 3) {
-    		poly.setPoints(new GeoPoint[0]);
-    		poly.setUndefined();
-    		return;
-    	}
-    	    	  	
+    	// check if regular polygon is defined
+    	if (n < 3 || !A.isDefined() || !B.isDefined()) {
+     		poly.setUndefined();
+     		return;
+     	}
+    	 	  	
     	// some temp values
     	double mx = (A.inhomX + B.inhomX) / 2; // midpoint of AB
     	double my = (A.inhomY + B.inhomY) / 2;
@@ -152,8 +163,6 @@ public class AlgoPolygonRegular extends AlgoElement {
     						  my + tanBetaHalf * ny,
     						  1.0);
     	
-    	
-    	
     	// now we have the center point of the polygon and
     	// the center angle alpha between two neighbouring points
     	// let's create the points by rotating A around the center point
@@ -165,89 +174,100 @@ public class AlgoPolygonRegular extends AlgoElement {
     	}
     	
     	// compute area of poly
-    	poly.calcArea();    	
-    }   
-    
-    // TODO: check this
-    /*
-    void update() {
-        // compute output from input
-        compute();
-                
-        // update points     
-        for (int i = 0; i < pointList.size(); i++) {           
-        	pointList.get(i).update();
-        } 
-        
-        // update polygon
-        poly.update();
-    } */
+    	poly.calcArea();  
+    	
+    	// update new points and segments 
+    	if (n != oldPointNumber) {
+    		GeoSegment [] segments = poly.getSegments();
+    		   	   
+			for (int i=Math.max(2, oldPointNumber); i < points.length; i++) {            	
+				if (!points[i].isLabelSet())
+					points[i].setLabel(null);        		           	
+			}
+    		
+            for (int i=0; i < segments.length; i++) {
+            	segments[i].getParentAlgorithm().update();   
+            	if (!segments[i].isLabelSet())
+            		segments[i].setLabel(null);            	
+            }
+    	}    	    	
+    }         
     
     /**
      * Ensures that the pointList holds n points.
      * @param n
-     * @return point number changed
      */
-    private boolean updatePointsArray(int n) {
+    private void updatePointsArray(int n) {
     	GeoPoint [] oldPoints = points;	
-    	int oldPointsLength = oldPoints == null ? 0 : oldPoints.length;    	
-    	if (oldPointsLength == n) return false;    	    	
-    	
-    	// new points
-		points = new GeoPoint[n]; 
-			
+    	int oldPointsLength = oldPoints == null ? 0 : oldPoints.length;    	    	
+		if (oldPointsLength < 2) {
+			// init old points array with first two points A and B
+			oldPoints = new GeoPoint[2];
+			oldPoints[0] = A;
+			oldPoints[1] = B;
+			oldPointsLength = 2;
+		}
+		
+		// new points
+		points = new GeoPoint[n];
+        
+		// reuse old points
         for (int i=0; i < oldPointsLength; i++) {
         	if (i < points.length) {
         		// reuse old point
         		points[i] = oldPoints[i];	
         	} else {
-        		// remove old point        		
-        		oldPoints[i].setUndefined();       		
+        		removePoint(oldPoints[i]);  
         	}        		        	
 		}
         
-        for (int i=0; i < oldPointsLength; i++) {
-        	if (i < points.length) {
-        		// reuse old point
-        		points[i] = oldPoints[i];	
-        	} else {
-        		// remove old point                     	
-        		oldPoints[i].setParentAlgorithm(null);
-        		
-        		// remove dependent segment algorithm that are part of this polygon
-        		// to make sure we don't remove the polygon as well
-        		ArrayList list = oldPoints[i].getAlogrithmList();
-        		for (int k=0; k < list.size(); k++) {        			
-        			AlgoElement algo = (AlgoElement) list.get(k);	
-        			// make sure we don't remove the polygon as well
-        			if (algo instanceof AlgoJoinPointsSegment &&
-        				((AlgoJoinPointsSegment) algo).getPoly() == poly) 
-        			{        				
-        			} else {
-        				algo.remove();
-        			}
-        		}
-        		
-        		oldPoints[i].getAlogrithmList().clear();
-        		// remove point
-        		oldPoints[i].doRemove();   
-        	}        		        	
-		}
-        
-
-        // create missing points
+        // create new points if needed
         for (int i=oldPointsLength; i < points.length; i++) {
 			GeoPoint newPoint = new GeoPoint(cons);
 			newPoint.setCoords(0,0,1); // set defined
-			points[i] = newPoint;			     	        	     	
-		}
-        
-    	// TODO: remove
-        System.out.println("*** new points: ");
-        for (int i=0; i < points.length; i++) {
-			System.out.println(" " + i + ": " + points[i]);		     	        	     	
-		}       
-        
-        return true;
+			newPoint.setParentAlgorithm(this);
+			points[i] = newPoint;						 	        	     
+		}    
     }
+    
+    private void removePoint(GeoPoint oldPoint) {
+    	// remove old point                     	
+		oldPoint.setParentAlgorithm(null);
+		
+		// remove dependent segment algorithm that are part of this polygon
+		// to make sure we don't remove the polygon as well
+		ArrayList list = oldPoint.getAlogrithmList();
+		for (int k=0; k < list.size(); k++) {        			
+			AlgoElement algo = (AlgoElement) list.get(k);	
+			// make sure we don't remove the polygon as well
+			if (algo instanceof AlgoJoinPointsSegment &&
+				((AlgoJoinPointsSegment) algo).getPoly() == poly) 
+			{        				
+			} else {
+				algo.remove();
+			}
+		}
+		
+		oldPoint.getAlogrithmList().clear();
+		// remove point
+		oldPoint.doRemove(); 
+    }
+    
+    
+    /**
+     * Calls doRemove() for all output objects of this
+     * algorithm except for keepGeo.
+     */
+    void removeOutputExcept(GeoElement keepGeo) {
+    	for (int i=0; i < output.length; i++) {
+            GeoElement geo = output[i];
+            if (geo != keepGeo) {
+            	if (geo.isGeoPoint())
+            		removePoint((GeoPoint) geo);
+            	else 
+            		geo.doRemove();
+            }            	
+        }
+    }
+       
 }

@@ -250,31 +250,32 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// View
 		menu = new JMenu(app.getMenu("View"));
-		cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());
-		cbShowAxes.setIcon(app.getImageIcon("axes.gif"));		
+		cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());		
 		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 				&& app.getEuclidianView().getShowYaxis());
 		menu.add(cbShowAxes);
 
 		cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
-		cbShowGrid.setIcon(app.getImageIcon("grid.gif"));
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
 		menu.addSeparator();
 
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
+		cbShowAlgebraView.setIcon(app.getEmptyIcon());
 		cbShowAlgebraView.setSelected(app.showAlgebraView());
 		setCtrlShiftAccelerator(cbShowAlgebraView, 'A');
 		menu.add(cbShowAlgebraView);
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
+		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
 		cbShowAuxiliaryObjects.setSelected(app.getAlgebraView() == null
 				|| app.getAlgebraView().showAuxiliaryObjects());
 		cbShowAuxiliaryObjects.setEnabled(app.showAlgebraView());
 		menu.add(cbShowAuxiliaryObjects);
 
 		cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);				
+		cbHorizontalSplit.setIcon(app.getEmptyIcon());
 		menu.add(cbHorizontalSplit);
 
 		menu.addSeparator();
@@ -332,6 +333,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// decimal places
 		menuDecimalPlaces = new JMenu(app.getMenu("DecimalPlaces"));
+		menuDecimalPlaces.setIcon(app.getEmptyIcon());
 		String[] strDecimalSpaces = { "0", "1", "2", "3", "4", "5" };
 		String[] strDecimalSpacesAC = { "0 decimals", "1 decimals",
 				"2 decimals", "3 decimals", "4 decimals", "5 decimals" };
@@ -342,6 +344,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// continuity
 		menuContinuity = new JMenu(app.getMenu("Continuity"));
+		menuContinuity.setIcon(app.getEmptyIcon());
 		String[] strContinuity = { "on", "off" };
 		String[] strContinuityAC = { "true Continuity", "false Continuity" };
 		addRadioButtonMenuItems(menuContinuity, this, strContinuity,
@@ -393,6 +396,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		// coordinate style
 		menuCoordStyle = new JMenu(app.getPlain("Coordinates"));
+		menuCoordStyle.setIcon(app.getEmptyIcon());
 		// dot, circle, cross
 		String[] strCoordStyle = { "A = (x, y)", "A(x | y)" };
 		String[] strCoordStyleAC = { "0", "1" };
@@ -598,7 +602,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField")) {
+		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -607,7 +612,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		showCmdListAction = new AbstractAction(app.getMenu("CmdList")) {
+		showCmdListAction = new AbstractAction(app.getMenu("CmdList"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -637,7 +643,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		showConsProtNavigationAction = new AbstractAction(
-				app.getPlain("ConstructionProtocolNavigation")) {
+				app.getPlain("ConstructionProtocolNavigation"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -735,7 +742,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};
 
 		toolbarConfigAction = new AbstractAction(app.getMenu("Toolbar.Customize")
-				+ " ...") {
+				+ " ...", app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -972,7 +979,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 		
-		clearPreferencesAction = new AbstractAction(app.getMenu("Settings.ResetDefault")) {
+		clearPreferencesAction = new AbstractAction(app.getMenu("Settings.ResetDefault"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -980,7 +988,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 		
-		selectAllAction = new AbstractAction(app.getMenu("SelectAll")) {
+		selectAllAction = new AbstractAction(app.getMenu("SelectAll"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			

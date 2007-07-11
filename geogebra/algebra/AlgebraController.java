@@ -89,8 +89,6 @@ public class AlgebraController
 		
 		// open rename dialog
 		if (geo != null) {							
-			geo.setLabelVisible(true);
-			geo.updateRepaint();
 			app.showRenameDialog(geo, true, Character.toString(ch));					
 		}
 	}

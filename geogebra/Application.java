@@ -108,7 +108,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "9. July 2007";
+    public static final String buildDate = "11. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1361,7 +1361,10 @@ public class Application implements	KeyEventDispatcher {
        * Displays the rename dialog for geo
        */
     public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText) {
-        InputHandler handler = new RenameInputHandler(this, geo, storeUndo);
+		geo.setLabelVisible(true);
+		geo.updateRepaint();
+    	
+    	InputHandler handler = new RenameInputHandler(this, geo, storeUndo);
         InputDialog id =
             new InputDialog(
                 this,
@@ -2226,7 +2229,8 @@ public class Application implements	KeyEventDispatcher {
     }      
     
     private void initShowAxesGridActions() {
-    	showAxesAction = new AbstractAction(getMenu("Axes")) {
+    	showAxesAction = new AbstractAction(getMenu("Axes"),
+    			getImageIcon("axes.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -2239,7 +2243,8 @@ public class Application implements	KeyEventDispatcher {
             }
         };
 
-        showGridAction = new AbstractAction(getMenu("Grid")) {
+        showGridAction = new AbstractAction(getMenu("Grid"),
+        		getImageIcon("grid.gif")) {
         	private static final long serialVersionUID = 1L;
         	
             public void actionPerformed(ActionEvent e) {

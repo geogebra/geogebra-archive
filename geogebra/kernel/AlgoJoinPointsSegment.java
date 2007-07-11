@@ -115,7 +115,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         super.remove();
         if (poly != null)
             poly.remove();
-    }
+    }       
     
     /**
      * Only removes this segment and does not remove parent polygon (if poly != null)

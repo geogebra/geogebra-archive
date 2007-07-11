@@ -71,6 +71,19 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     public void setPoints(GeoPoint [] points) {
 		this.points = points;
 		updateSegments();
+		
+//		if (points != null) {
+//		System.out.println("*** " + this + " *****************");
+//        System.out.println("POINTS: " + points.length);
+//        for (int i=0; i < points.length; i++) {
+//			System.out.println(" " + i + ": " + points[i]);		     	        	     	
+//		}   
+//        System.out.println("SEGMENTS: " + segments.length);
+//        for (int i=0; i < segments.length; i++) {
+//			System.out.println(" " + i + ": " + segments[i]);		     	        	     	
+//		}  
+//        System.out.println("********************");
+//		}
 	}        
 
     /**
@@ -79,9 +92,13 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
      * labels[n+1..2n-2] for points (only used for regular polygon)
      * @param labels
      */
-    public void initLabels(String [] labels) {   
+    public void initLabels(String [] labels) {     	
+    	// System.out.println("INIT LABELS");
+    	
     	// label polygon
-    	if (labels == null || labels.length == 0) {
+    	if (labels == null || labels.length == 0) {    		
+        	// System.out.println("no labels given");
+        	
              setLabel(null);
              if (segments != null) {
             	 for (int k=0; k < segments.length; k++) {
@@ -91,17 +108,23 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
              return;
     	}
     	
+    	// label polygon              
+        // first label for polygon itself
+        setLabel(labels[0]);        
+    	
     	// label segments and points
     	if (points != null && segments != null) {
     		
     		// additional labels for the polygon's segments
     		// poly + segments + points - 2 for AlgoPolygonRegular
     		if (labels.length == 1 + segments.length + points.length - 2) {
-	            int i=0;
+            	//System.out.println("labels for segments and points");
+    			
+	            int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
 	                segments[k].setLabel(labels[i]);
 	            }		            
-    			for (int k=0; k < points.length - 2; k++, i++) {
+    			for (int k=2; k < points.length; k++, i++) {
 	                points[k].setLabel(labels[i]);
 	            }
 	        } 
@@ -109,13 +132,18 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     		// additional labels for the polygon's segments
     		// poly + segments for AlgoPolygon
     		else if (labels.length == 1 + segments.length) {
-	            for (int i=0; i < segments.length; i++) {
-	                segments[i].setLabel(labels[i+1]);
-	            }	            	           	            
+            	// System.out.println("labels for segments");
+    			
+            	int i=1;
+    			for (int k=0; k < segments.length; k++, i++) {
+	                segments[k].setLabel(labels[i]);
+	            }		            	           	            
 	        } 
     		
 	        else { 
-	        	// no labels for segments specified
+	        	// System.out.println("label for polygon (autoset segment labels)");
+	        	
+	        	 // no labels for segments specified
 	             //  set labels of segments according to point names
 	             if (points.length == 3) {          
 	                setLabel(segments[0], points[2]);
@@ -127,12 +155,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	                }
 	             }
 	        }
-    	}
-    	
-        // label polygon              
-        // first label for polygon itself
-        setLabel(labels[0]);
-        
+    	}    	        
     }
     
     private void setLabel(GeoSegment s, GeoPoint p) {
@@ -178,7 +201,9 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
         	if (segments[i] == null) {
         		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
                 cons.removeFromConstructionList(algoSegment);                       
-                segments[i] = algoSegment.getSegment();                                
+                segments[i] = algoSegment.getSegment(); 
+                // refresh color to ensure segments have same color as polygon:
+                segments[i].setObjColor(getObjectColor()); 
         	}     
         }                            
     }

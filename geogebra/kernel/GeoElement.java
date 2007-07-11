@@ -875,19 +875,43 @@ public abstract class GeoElement
 			cons.addToConstructionList(this, true);			
 		}
 		
+		/*
+		if (!cons.isFreeLabel(label)) {
+			try {
+				throw new Exception("SET LABEL: label: " + label + ", type: " + this.getTypeString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("SET LABEL: " + label + ", type: " + this.getTypeString());
+		}
+		*/
+				
 		this.label = label; // set new label
 		labelSet = true;
 		labelWanted = false; // got a label, no longer wanted					
 		
-		cons.putLabel(this); // add new table entry	
-		
+		cons.putLabel(this); // add new table entry			
 		algebraStringsNeedUpdate();
 			
 		notifyAdd();		
 	}	
 
 	private void doRenameLabel(String newLabel) {
-		if (label == newLabel) return;
+		if (newLabel == null || newLabel.equals(label)) 
+			return;
+		
+		/*
+		if (!cons.isFreeLabel(newLabel)) {
+			try {
+				throw new Exception("RENAME ERROR: old: " + label + ", new: " + newLabel + ", type: " + this.getTypeString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.err.println("RENAME: old: " + label + ", new: " + newLabel + ", type: " + this.getTypeString());
+		}
+		*/
 		
 		//	UPDATE KERNEL			
 		cons.removeLabel(this); // remove old table entry
@@ -1135,8 +1159,9 @@ public abstract class GeoElement
 		}
 
 		// remove this object from table
-		if (isLabelSet())
-			cons.removeLabel(this);
+		if (isLabelSet()) {
+			cons.removeLabel(this);			
+		}
 
 		// remove from selection
 		app.removeSelectedGeo(this, false);
@@ -1157,9 +1182,8 @@ public abstract class GeoElement
 
 	final public void notifyRemove() {
 		kernel.notifyRemove(this);
-
-		// TODO: remove
-		System.out.println("remove " + label);
+		
+		//System.out.println("remove " + label);
 		//printUpdateSets();
 	}
 	
