@@ -8,6 +8,10 @@ LICENSE
   the Free Software Foundation; either version 2 of the License, or 
   (at your option) any later version, see http://www.gnu.org/licenses/gpl.txt
 
+  "Free software" is a matter of liberty, not price. 
+  To understand the concept, you should think of "free" as in "free speech," 
+  not as in "free beer." (Free Software Foundation, http://www.fsf.org)
+
 DEVELOPERS
 Creator of GeoGebra, project leader and main developer
   * Markus Hohenwarter, Florida Atlantic University, since 2001
@@ -21,7 +25,8 @@ TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
-  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, Roser Sebastian (Spain)
+  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, 
+      Roser Sebastian (Spain)
   * Chinese: Fu-Kwun Hwang, Chen-Hui Lin (Taiwan)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)

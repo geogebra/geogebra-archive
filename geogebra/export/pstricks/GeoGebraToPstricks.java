@@ -1,3 +1,11 @@
+/*
+This file is part of GeoGebra.
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License, or 
+(at your option) any later version.
+ */
+
 package geogebra.export.pstricks;
 import geogebra.Application;
 import geogebra.euclidian.DrawAngle;
@@ -50,13 +58,7 @@ import java.util.StringTokenizer;
 /**
  * @author Le Coq loïc
  */
-/*
-This file is part of GeoGebra.
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation; either version 2 of the License, or 
-(at your option) any later version.
- * */
+
 public class GeoGebraToPstricks implements ActionListener {
 	private final double PRECISION_XRANGE_FUNCTION=0.00001;
 	private StringBuffer code,codePoint,codePreamble,codeFilledObject,codeBeginDoc,codeBeginPic;

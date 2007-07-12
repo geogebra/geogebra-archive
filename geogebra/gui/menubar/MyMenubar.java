@@ -1,7 +1,6 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
-import geogebra.algebra.AlgebraInput;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocolNavigation;
@@ -62,6 +61,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			exitAction, exitAllAction, helpAction,
 			// updateAction,
 			infoAction, exportGraphicAction, exportWorksheet,
+			exportPSTricksAction,
 			showCreateToolsAction, showManageToolsAction,
 			savePreferencesAction, clearPreferencesAction,
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction;
@@ -176,10 +176,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		//submenu.add(htmlCPAction);
 		mi = submenu.add(exportGraphicAction);
 		setCtrlShiftAccelerator(mi, 'P');
+		
+		mi = submenu.add(exportPSTricksAction);
+		setCtrlShiftAccelerator(mi, 'T');
+		
 		mi = submenu.add(drawingPadToClipboardAction);
 		setCtrlShiftAccelerator(mi, 'C');
-		
-		
+				
 		// DONE HERE WHEN APPLET
 		if (app.isApplet()) return;
 		
@@ -900,7 +903,22 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				runner.start();
 			}
 		};
+		
+		
+		exportPSTricksAction = new AbstractAction(app.getPlain("DrawingPad") + " "
+				+ app.getPlain("as") + " PSTricks ...", 
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
 
+			public void actionPerformed(ActionEvent e) {				
+				try {		
+					new geogebra.export.pstricks.GeoGebraToPstricks(app);		
+				} catch (Exception ex) {
+					System.err.println("GeoGebraToPstricks not available");
+				}	
+			}
+		};
+		
 		/*
 		htmlCPAction = new AbstractAction(app.getPlain("ConstructionProtocol")
 				+ " " + app.getPlain("as") + " " + app.getPlain("html") + " ("

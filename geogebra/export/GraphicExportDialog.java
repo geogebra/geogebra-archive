@@ -65,7 +65,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private final int FORMAT_EPS = 1;		
 	private final int FORMAT_SVG = 2;
 	private final int FORMAT_EMF = 3;
-	private final int FORMAT_PSTRICKS = 4;
+	//private final int FORMAT_PSTRICKS = 4;
 	
 
 	public GraphicExportDialog(Application app) {
@@ -85,7 +85,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			super.setVisible(true);
 		} else {
 			savePreferences();
-			dispose();
+			super.setVisible(false);
 		}		
 	}
 
@@ -103,8 +103,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 					{ app.getPlain("png") + " (" + Application.FILE_EXT_PNG + ")",
 					  app.getPlain("eps") + " (" + Application.FILE_EXT_EPS + ")", 			
 					  app.getPlain("svg") + " (" + Application.FILE_EXT_SVG + ")",
-					  app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")",						 
-					"PSTricks"};
+					  app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")"};
 		
 		cbFormat = new JComboBox(formats);
 		formatPanel.add(new JLabel(app.getPlain("Format") + ":"));
@@ -152,12 +151,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 						cbDPI.setSelectedItem("72");
 						cbDPI.setEnabled(false);						
 						break;											
-						
-					case FORMAT_PSTRICKS:
-						setVisible(false);
-						exportPStricks();									
-						break;
-						
+					
 					default:
 						cbDPI.setSelectedItem("300");
 						cbDPI.setEnabled(true);						
@@ -182,9 +176,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		});
 		JButton exportButton = new JButton(app.getMenu("Export"));
 		exportButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {	
 				Thread runner = new Thread() {
-					public void run() {
+					public void run() {				
 						setVisible(false);
 						
 						int index = cbFormat.getSelectedIndex();
@@ -204,11 +198,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 							case FORMAT_SVG: // SVG
 								exportSVG();
 								break;	
-
-							case FORMAT_PSTRICKS: // PSTRICKS
-								exportPStricks();
-								break;
-						}
+							
+						}				
 					}
 				};
 				runner.start();
@@ -236,8 +227,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			int formatID = FORMAT_PNG;
 			String format = GeoGebraPreferences.loadPreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, "png");		
 	    	if (format.equals("eps")) formatID = FORMAT_EPS; 
-	    	else if (format.equals("svg")) formatID = FORMAT_SVG;
-	    	else if (format.equals("pstricks")) formatID = FORMAT_PSTRICKS;		
+	    	else if (format.equals("svg")) formatID = FORMAT_SVG;	    	
 			cbFormat.setSelectedIndex(formatID);					
 			
 			// dpi
@@ -272,8 +262,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     	String format;
     	switch (cbFormat.getSelectedIndex()) {
     		case FORMAT_EPS: format = "eps"; break;
-    		case FORMAT_SVG: format = "svg"; break;
-    		case FORMAT_PSTRICKS: format = "pstricks"; break;
+    		case FORMAT_SVG: format = "svg"; break;    		
     		default: format = "png";
     	}    	
     	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
@@ -399,21 +388,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			System.err.println(ex.toString());
 			return false;
 		} 
-	}
-	
-	/**
-	 *  Shows save dialog and exports drawing as eps. 
-	 */
-	final private boolean exportPStricks() {
-		try {		
-			new GeoGebraToPstricks(app);		
-			return true;
-		} catch (Exception ex) {
-			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
-			return false;
-		}				
-	}
+	}		
 
 	/**
 	  *  Exports drawing as png with given resolution in dpi
@@ -474,7 +449,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	public void keyPressed(KeyEvent e) {		
 		int code = e.getKeyCode();
 		if (code == KeyEvent.VK_ESCAPE) {				
-			cancelButton.doClick();
+			setVisible(false);
 		}	
 	}
 
