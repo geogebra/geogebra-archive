@@ -256,7 +256,7 @@ AbsoluteScreenLocateable {
 	}
 	
 	public boolean isAbsoluteScreenLocateable() {
-		return true;
+		return isIndependent();
 	}
 
 	public void setAbsoluteScreenLoc(int x, int y) {

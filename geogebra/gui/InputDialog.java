@@ -139,7 +139,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected void centerOnScreen() {
 		pack();
 		// center on screen
-		setLocationRelativeTo(app.getFrame());
+		setLocationRelativeTo(app.getMainComponent());
 	}
 	
 	public String getInputString() {

@@ -46,10 +46,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	private static final long serialVersionUID = 1L;
 
 	private static ArrayList instances = new ArrayList();
-
 	private static GeoGebra activeInstance;
-
 	private Application app;
+	
+	// check if we are on a mac
+	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase().startsWith("mac");
 
 	public GeoGebra() {
 		instances.add(this);
@@ -180,10 +181,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 									+ "\nPlease visit http://www.java.com to get a newer version of Java.");
 			return;
 		}
-		
-		// check if we run on a Mac
-    	String lcOSName = System.getProperty("os.name").toLowerCase();
-    	boolean MAC_OS = lcOSName.startsWith("mac");
+				
     	if (MAC_OS) 
     		initMacSpecifics(args);
     	

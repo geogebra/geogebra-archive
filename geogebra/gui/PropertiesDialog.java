@@ -18,6 +18,7 @@ import geogebra.View;
 import geogebra.algebra.AlgebraView;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.util.SpringUtilities;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.CircularDefinitionException;
@@ -48,6 +49,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,6 +89,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
@@ -169,8 +173,8 @@ public class PropertiesDialog
 		listPanel.add(listScroller, BorderLayout.CENTER);
 
 		// rename, redefine and delete button
-		int pixelX = 20;
-		int pixelY = 10;
+		//int pixelX = 20;
+		//int pixelY = 10;
 		/*
 		MySmallJButton renameButton = new MySmallJButton(app.getImageIcon("rename.png"), pixelX, pixelY);
 		renameButton.setToolTipText(app.getPlain("Rename"));
@@ -208,11 +212,12 @@ public class PropertiesDialog
 		//	buttonPanel.add(renameButton);
 
 		listPanel.add(buttonPanel, BorderLayout.SOUTH);
-		Border compound =
-			BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(app.getPlain("Objects")),
-				BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		listPanel.setBorder(compound);		
+//		Border compound =		
+//			BorderFactory.createCompoundBorder(
+//				//	BorderFactory.createTitledBorder(app.getPlain("Objects")),
+//				BorderFactory.createEtchedBorder(),
+//				BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		listPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 8));		
 
 		// PROPERTIES PANEL
 		propPanel = new PropertiesPanel();
@@ -542,8 +547,8 @@ public class PropertiesDialog
 			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
 			//setLayout(new FlowLayout());
 			
-			setBorder(
-					BorderFactory.createTitledBorder(app.getPlain("Properties")));
+			//setBorder(
+					//BorderFactory.createTitledBorder(app.getPlain("Properties")));
 
 			namePanel = new NamePanel(app);		
 			showObjectPanel = new ShowObjectPanel();
@@ -575,8 +580,7 @@ public class PropertiesDialog
 			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-			showConditionPanel = new ShowConditionPanel(app, this); 			
-			
+			showConditionPanel = new ShowConditionPanel(app, this); 						
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -593,7 +597,7 @@ public class PropertiesDialog
 		// lists of TabPanel objects
 		private ArrayList tabPanelList;
 				
-		private void initTabs() {			
+		private void initTabs() {		
 			// basic tab
 			ArrayList basicTabList = new ArrayList();
 			basicTabList.add(namePanel);
@@ -601,13 +605,30 @@ public class PropertiesDialog
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);
 			basicTabList.add(fixPanel);			
-			basicTabList.add(auxPanel);
-			basicTabList.add(allowReflexAnglePanel);	
-			basicTabList.add(allowOutlyingIntersectionsPanel);
+			basicTabList.add(auxPanel);	
 			basicTabList.add(bgImagePanel);	
 			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
-			basicTab.addToTabbedPane(tabs);			
-															
+			basicTab.addToTabbedPane(tabs);	
+											
+			// change basic tab layout: create grid with two columns
+			basicTab.removeAll();
+			basicTab.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.fill = GridBagConstraints.NONE;
+			c.anchor = GridBagConstraints.NORTHWEST;
+			c.weightx = 0.1;
+			c.weighty = 0.1;				
+			c.gridwidth = 2;
+			basicTab.add(namePanel, c);
+			c.gridwidth = 1;
+			for (int i = 1; i < basicTabList.size(); i++) {
+				JPanel p = (JPanel) basicTabList.get(i);
+				c.gridx = (i-1) % 2;
+				c.gridy = (i-1) / 2 + 1;													
+				basicTab.add(p, c);
+			}	
+			
+	        
 			// color tab
 			ArrayList colorTabList = new ArrayList();
 			colorTabList.add(colorPanel);		
@@ -669,7 +690,9 @@ public class PropertiesDialog
 			
 			// advanced tab
 			ArrayList advancedTabList = new ArrayList();
-			advancedTabList.add(showConditionPanel);		
+			advancedTabList.add(showConditionPanel);
+			advancedTabList.add(allowReflexAnglePanel);	
+			advancedTabList.add(allowOutlyingIntersectionsPanel);
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
 					
@@ -740,27 +763,26 @@ public class PropertiesDialog
 			public TabPanel(String title, ArrayList pVec) {
 				this.title = title;
 				panelList = pVec;
+					
+				setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));			
+							
+				// create grid with one column
+				setLayout(new GridBagLayout());
+				GridBagConstraints c = new GridBagConstraints();
+				c.fill = GridBagConstraints.NONE;
+				c.anchor = GridBagConstraints.NORTHWEST;
+				c.weightx = 1.0;
+				c.weighty = 1E-12;
 				
-				setLayout(new BorderLayout(0,0));	
-				setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
-				JPanel currentPanel = this;
-				
-				// build new panel					
 				for (int i = 0; i < pVec.size(); i++) {
 					JPanel p = (JPanel) pVec.get(i);
-					if (p != null) {
-						// wrapper panel to guarantee left alignment
-						JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0,0));
-						wrapper.add(p);
+					c.gridx = 0;
+					c.gridy = i;
 					
-						currentPanel.add(wrapper, BorderLayout.NORTH);					
-						JPanel newPanel = new JPanel(new BorderLayout(0,0));
-						currentPanel.add(newPanel, BorderLayout.CENTER);
-						currentPanel = newPanel;
-						//if (vertical)
-							//wrapper.setAlignmentX(LEFT_ALIGNMENT);					
-					}
-				}
+					if (i == pVec.size() - 1)
+						c.weighty = 1.0;
+					add(p, c);
+				}								
 			}
 			
 			public void update(Object [] geos) {
@@ -792,7 +814,7 @@ public class PropertiesDialog
 			// check box for show object
 			showObjectCB = new JCheckBox(app.getPlain("ShowObject"));
 			showObjectCB.addItemListener(this);			
-			add(showObjectCB);
+			add(showObjectCB);			
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1323,9 +1345,10 @@ public class PropertiesDialog
 
 		private boolean checkGeos(Object[] geos) {
 			for (int i = 0; i < geos.length; i++) {
-				if (geos[i] instanceof AbsoluteScreenLocateable) {
-					AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geos[i];
-					if (!absLoc.isAbsoluteScreenLocateable())
+				GeoElement geo = (GeoElement) geos[i];
+				if (geo instanceof AbsoluteScreenLocateable) {
+					AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geo;
+					if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean())
 						return false;
 				}					
 				else
@@ -4018,6 +4041,7 @@ class AnimationStepPanel
 		for (int i = 0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];
 			if (!geo.isChangeable() || geo.isGeoText() || geo.isGeoImage()
+					|| geo.isGeoBoolean() 
 				 || (geo.isGeoNumeric() && geo.isVisible())) {
 				geosOK = false;
 				break;
@@ -4180,13 +4204,12 @@ class NamePanel
 	
 	private static final long serialVersionUID = 1L;
 		
-	private AutoCompleteTextField tfName;
+	private AutoCompleteTextField tfName, tfDefinition, tfCaption;
+	private JLabel defLabel, captionLabel;
+	private InputPanel inputPanelDef, inputPanelCap;
 	private RenameInputHandler nameInputHandler;
-	private AutoCompleteTextField tfDefinition;
 	private RedefineInputHandler defInputHandler;
-	private GeoElement currentGeo;
-	private JPanel defPanel;
-	private JLabel defLabel;
+	private GeoElement currentGeo;	
 	private Application app;
 
 	public NamePanel(Application app) {	
@@ -4199,40 +4222,49 @@ class NamePanel
 		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
 		tfName.setAutoComplete(false);		
 		tfName.addActionListener(this);
-		tfName.addFocusListener(this);			
+		tfName.addFocusListener(this);	
 		
 		// DEFINITON PANEL		
 		defInputHandler = new RedefineInputHandler(app, null);
 	
-		// non auto complete input panel
-		InputPanel inputPanelDef = new InputPanel(null, app, 1, 20, true, true);
+		// definition field: non auto complete input panel
+		inputPanelDef = new InputPanel(null, app, 1, 20, true, true);
 		tfDefinition = (AutoCompleteTextField) inputPanelDef.getTextComponent();
 		tfDefinition.setAutoComplete(false);		
 		tfDefinition.addActionListener(this);
 		tfDefinition.addFocusListener(this);
 
+		// caption field: non auto complete input panel
+		inputPanelCap = new InputPanel(null, app, 1, 20, true, true);
+		tfCaption = (AutoCompleteTextField) inputPanelCap.getTextComponent();
+		tfCaption.setAutoComplete(false);		
+		tfCaption.addActionListener(this);
+		tfCaption.addFocusListener(this);
 		
-		// put it all together		
-		setLayout(new BorderLayout(0,0));
-		JPanel namePanel = new JPanel();
-		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
-		JLabel nameLabel = new JLabel(app.getPlain("Name") + ":");
-		int dx = 50 - nameLabel.getPreferredSize().width;	
-		namePanel.add(nameLabel);
-		namePanel.add(Box.createHorizontalStrut(dx));
-		namePanel.add(inputPanelName);
+		// name panel			
+		JLabel nameLabel = new JLabel(app.getPlain("Name") + ":");	
+		nameLabel.setLabelFor(inputPanelName);
+		add(nameLabel);		
+		add(inputPanelName);
 		
-		// 	put it all together		
-		defPanel = new JPanel();
-		defPanel.setLayout(new FlowLayout());
-		defLabel = new JLabel(app.getPlain("Definition") + ":");
-		dx = 50 - defLabel.getPreferredSize().width;
-		defPanel.add(defLabel);
-		defPanel.add(Box.createHorizontalStrut(dx));
-		defPanel.add(inputPanelDef);			
+		// definition panel
+		defLabel = new JLabel(app.getPlain("Definition") + ":");		
+		defLabel.setLabelFor(inputPanelDef);
+		add(defLabel);
+		add(inputPanelDef);	
 		
-		add(namePanel, BorderLayout.NORTH);
-		add(defPanel, BorderLayout.SOUTH);
+		// caption panel
+		captionLabel = new JLabel(app.getMenu("Button.Caption") + ":");		
+		captionLabel.setLabelFor(inputPanelCap);
+		add(captionLabel);
+		add(inputPanelCap);
+				
+        //Lay out the panel
+		setLayout(new SpringLayout());
+        SpringUtilities.makeCompactGrid(this,
+                                        3, 2, 	// rows, cols
+                                        5, 5,   //initX, initY
+                                        5, 5);  //xPad, yPad		
 	}
 
 	public JPanel update(Object[] geos) {		
@@ -4249,25 +4281,39 @@ class NamePanel
 		currentGeo = geo0;
 		nameInputHandler.setGeoElement(geo0);
 		
-		tfName.addActionListener(this);
+		tfName.addActionListener(this);		
 		
 		// DEFINITION
-		if (currentGeo.isGeoText()) {
-			defPanel.setVisible(false);
-		} else {
+		boolean showDefinition = !currentGeo.isGeoText();
+		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);
 			setDefText(currentGeo);
-			defPanel.setVisible(true);
+			tfDefinition.addActionListener(this);
 			
 			if (currentGeo.isIndependent()) {
 				defLabel.setText(app.getPlain("Value")+ ":");
 			} else {
 				defLabel.setText(app.getPlain("Definition")+ ":");
 			}
-		}		
+		}
+		defLabel.setVisible(showDefinition);
+		inputPanelDef.setVisible(showDefinition);
 		
-		tfDefinition.addActionListener(this);
+		// CAPTION
+		boolean showCaption = currentGeo.isGeoBoolean();
+		if (showCaption) {			
+			tfCaption.removeActionListener(this);
+			String strCap = currentGeo.getCaption();
+			if (strCap.equals(currentGeo.getLabel()))
+				tfCaption.setText("");
+			else
+				tfCaption.setText(strCap);
+			tfCaption.addActionListener(this);			
+		} 
+		captionLabel.setVisible(showCaption);
+		inputPanelCap.setVisible(showCaption);
+		
 		return this;
 	}
 
@@ -4290,11 +4336,19 @@ class NamePanel
 				tfName.requestFocus();
 		} 
 		else if (source == tfDefinition) {		
-			String strName = tfDefinition.getText();			
-			boolean success = defInputHandler.processInput(strName);
+			String strDefinition = tfDefinition.getText();			
+			boolean success = defInputHandler.processInput(strDefinition);
 			if (!success)
 				tfDefinition.requestFocus();
 		}		
+		else if (source == tfCaption) {		
+			String strCaption = tfCaption.getText().trim();			
+			if (strCaption.length() > 0) {
+				currentGeo.setCaption(strCaption);
+				currentGeo.updateRepaint();
+			} else
+				tfCaption.requestFocus();
+		}	
 	}
 
 	public void focusGained(FocusEvent arg0) {

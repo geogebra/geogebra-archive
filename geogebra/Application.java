@@ -24,6 +24,7 @@ import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.AngleInputDialog;
+import geogebra.gui.BooleanCheckboxCreationDialog;
 import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.ConstructionProtocolNavigation;
@@ -46,6 +47,7 @@ import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoPoint;
@@ -105,10 +107,9 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
-
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "11. July 2007";
+    public static final String buildDate = "12. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1603,6 +1604,13 @@ public class Application implements	KeyEventDispatcher {
          }
     }
     
+    /**
+     * Creates a new text at given startPoint
+     */   
+	  public void showBooleanCheckboxCreationDialog(Point loc, GeoBoolean bool) {
+		  BooleanCheckboxCreationDialog d = new BooleanCheckboxCreationDialog(this, loc, bool);		   
+		  d.setVisible(true);
+	  }    
     
     /**
      * Shows a modal dialog to enter a number or number variable name.
@@ -1620,6 +1628,8 @@ public class Application implements	KeyEventDispatcher {
         cons.setSuppressLabelCreation(oldVal);
         return handler.num;
 	}
+    
+    
     
     /**
      * Shows a modal dialog to enter an angle or angle variable name.
@@ -2169,9 +2179,8 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public void removeFromToolbarDefinition(int mode) {    	
-    	if (strCustomToolbarDefinition != null) {
-    		// TODO: remove
-    		System.out.println("before: " + strCustomToolbarDefinition + ",  delete " + mode);
+    	if (strCustomToolbarDefinition != null) {    		
+    		//System.out.println("before: " + strCustomToolbarDefinition + ",  delete " + mode);
     		
     		strCustomToolbarDefinition = 
     			strCustomToolbarDefinition.replaceAll(Integer.toString(mode), "");
@@ -2184,9 +2193,8 @@ public class Application implements	KeyEventDispatcher {
     					strCustomToolbarDefinition.replaceAll(Integer.toString(id), Integer.toString(id-1));
     			}
     		}
-    		
-    		// TODO: remove
-    		System.out.println("after: " + strCustomToolbarDefinition);
+
+    		//System.out.println("after: " + strCustomToolbarDefinition);
     	}    	
     }
     

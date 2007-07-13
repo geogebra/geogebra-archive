@@ -90,8 +90,8 @@ public class MyXMLHandler implements DocHandler {
     private Construction cons, origCons;
     private Parser parser, origParser;    
     
-    // List of GeoStringPair objects 
-    // for processing the start points at the end of the construction
+    // List of LocateableExpPair objects 
+    // for setting the start points at the end of the construction
     // (needed for GeoText and GeoVector)
     private LinkedList startPointList = new LinkedList();
     private class LocateableExpPair {
@@ -103,6 +103,20 @@ public class MyXMLHandler implements DocHandler {
              locateable = g; exp = s; number = n;
         }
     }
+    
+    // List of GeoExpPair condition objects 
+    // for setting the conditions at the end of the construction
+    // (needed for GeoText and GeoVector)
+    private LinkedList showObjectConditionList = new LinkedList();
+    private class GeoExpPair {
+        GeoElement geo;  
+        String exp;       
+         
+        GeoExpPair(GeoElement g, String exp) {
+             geo = g; this.exp = exp;
+        }
+    }
+    
     // construction step stored in <consProtNavigation> : handled after parsing
     private int consStep;
     
@@ -122,6 +136,7 @@ public class MyXMLHandler implements DocHandler {
     
     private void reset() {
         startPointList.clear();
+        showObjectConditionList.clear();
         consStep = -2;                
         
         mode = MODE_INVALID;
@@ -937,7 +952,8 @@ public class MyXMLHandler implements DocHandler {
             case MODE_CONSTRUCTION :
                 if (eName.equals("construction")) {
                     // process start points at end of construction
-                    processStartPointList();                       
+                    processStartPointList(); 
+                    processShowObjectConditionList();
                     
                     if (kernel == origKernel) {
                     	mode = MODE_GEOGEBRA;
@@ -1330,9 +1346,14 @@ public class MyXMLHandler implements DocHandler {
     
     private boolean handleCondition(LinkedHashMap attrs) {    	
     	try {
-    		String strShowObject = (String) attrs.get("showObject");
-    		GeoBoolean bool = kernel.getAlgebraProcessor().evaluateToBoolean(strShowObject);
-        	geo.setShowObjectCondition(bool);
+    		// condition for visibility of object
+    		String strShowObjectCond = (String) attrs.get("showObject");    		
+    		if (strShowObjectCond != null) {
+                // store (geo, epxression) values
+                // they will be processed in processShowObjectConditionList() later
+    			showObjectConditionList.add(new GeoExpPair(geo, strShowObjectCond));                               
+           }
+    		
             return true;
         } catch (Exception e) {
             return false;
@@ -1747,6 +1768,25 @@ public class MyXMLHandler implements DocHandler {
         }
         startPointList.clear();
     }
+    
+    private void processShowObjectConditionList() {  
+        try {
+            Iterator it = showObjectConditionList.iterator();
+            AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+            
+            while (it.hasNext()) {
+                GeoExpPair pair = (GeoExpPair) it.next();                                              
+                GeoBoolean condition =  algProc.evaluateToBoolean(pair.exp);      
+                pair.geo.setShowObjectCondition(condition);                
+            }
+        } catch (Exception e) { 
+        	showObjectConditionList.clear();
+            e.printStackTrace();
+            throw new MyError(app, "processShowObjectConditionList: " + e.toString());
+        }
+        showObjectConditionList.clear();
+    }
+    
        
     private boolean handleEigenvectors(LinkedHashMap attrs) {
         if (!(geo.isGeoConic())) {

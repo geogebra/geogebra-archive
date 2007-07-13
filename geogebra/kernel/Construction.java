@@ -221,14 +221,14 @@ public class Construction {
      */
     final public TreeSet getGeoSetConstructionOrder() {
     	return geoSet;
-    }
+    }        
     
     /**
      * Returns a set with all labeled GeoElement objects of this construction
      * in alphabetical order of their labels.     
      */
     final public TreeSet getGeoSetLabelOrder() {
-    	return geoSet;
+    	return geoSetLabelOrder;
     }
     
     /**
@@ -244,6 +244,26 @@ public class Construction {
     	return typeSet;
     }
     
+    /**
+	 * Returns a set with all labeled GeoElement objects sorted
+     * in alphabetical order of their type strings and labels
+     * (e.g. Line g, Line h, Point A, Point B, ...).  
+     * Note: the returned TreeSet is a copy of the current
+     * situation and is not updated by the construction later on.
+	 */
+	final public TreeSet getGeoSetNameDescriptionOrder() {
+		// sorted set of geos
+		TreeSet sortedSet = new TreeSet(new NameDescriptionComparator());
+		
+		// get all GeoElements from construction and sort them		
+		Iterator it = geoSet.iterator();	
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			// sorted inserting using name description of geo
+			sortedSet.add(geo);			
+		}	
+		return sortedSet;
+	}
     
     /**
      * Adds the given Construction Element to this Construction at position
@@ -960,8 +980,12 @@ public class Construction {
     		GeoElement geo1 = (GeoElement) ob1;
     		GeoElement geo2 = (GeoElement) ob2;
     		return geo1.label.compareTo(geo2.label);			
-    	}				
+    	}				 
     }
+    
+   
 }
+
+
 
 

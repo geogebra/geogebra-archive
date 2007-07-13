@@ -144,16 +144,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			// "New" in application: new window
 			mi = new JMenuItem(newWindowAction);			
 		}
-		setCtrlAccelerator(mi, 'N');
+		setMenuShortCutAccelerator(mi, 'N');
 		menu.add(mi);
 		
 		mi = menu.add(loadAction);
-		setCtrlAccelerator(mi, 'O'); // open
+		setMenuShortCutAccelerator(mi, 'O'); // open
 		menu.addSeparator();
 		mi = menu.add(saveAction);
-		setCtrlAccelerator(mi, 'S');
+		setMenuShortCutAccelerator(mi, 'S');
 		mi = menu.add(saveAsAction);	
-		setCtrlShiftAccelerator(mi, 'S');
+		setMenuShortCutShiftAccelerator(mi, 'S');
 		menu.addSeparator();
 //		submenu = new JMenu(app.getMenu("PrintPreview"));
 //		submenu.setIcon(app.getImageIcon("document-print-preview.png"));
@@ -163,25 +163,25 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		mi = menu.add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
 		mi.setIcon(app.getImageIcon("document-print-preview.png"));
-		setCtrlAccelerator(mi, 'P');
+		setMenuShortCutAccelerator(mi, 'P');
 				
 		// export
 		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		menu.add(submenu);
 		mi = submenu.add(exportWorksheet);
-		setCtrlShiftAccelerator(mi, 'W');
+		setMenuShortCutShiftAccelerator(mi, 'W');
 		
 		submenu.addSeparator();
 		//submenu.add(htmlCPAction);
 		mi = submenu.add(exportGraphicAction);
-		setCtrlShiftAccelerator(mi, 'P');
+		setMenuShortCutShiftAccelerator(mi, 'P');
 		
 		mi = submenu.add(exportPSTricksAction);
-		setCtrlShiftAccelerator(mi, 'T');
+		setMenuShortCutShiftAccelerator(mi, 'T');
 		
 		mi = submenu.add(drawingPadToClipboardAction);
-		setCtrlShiftAccelerator(mi, 'C');
+		setMenuShortCutShiftAccelerator(mi, 'C');
 				
 		// DONE HERE WHEN APPLET
 		if (app.isApplet()) return;
@@ -206,9 +206,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// close
 		menu.addSeparator();
 		mi = menu.add(exitAction);
-		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK);
-		mi.setAccelerator(ks);
-					
+		if (GeoGebra.MAC_OS) {
+			setMenuShortCutAccelerator(mi, 'W');
+		} else {
+			// Alt + F4
+			KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK);
+			mi.setAccelerator(ks);
+		}
+
 		// close all		
 		if (GeoGebra.getInstanceCount() > 1) {								
 			menu.add(exitAllAction);
@@ -232,9 +237,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
 			mi = menu.add(app.getUndoAction());
-			setCtrlAccelerator(mi, 'Z');
+			setMenuShortCutAccelerator(mi, 'Z');
 			mi = menu.add(app.getRedoAction());
-			setCtrlAccelerator(mi, 'Y');
+			if (GeoGebra.MAC_OS)
+				// Command-Shift-Z
+				setMenuShortCutShiftAccelerator(mi, 'Z');
+			else
+				// Ctrl-Y
+				setMenuShortCutAccelerator(mi, 'Y');
 			menu.addSeparator();
 		}
 		
@@ -245,7 +255,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu.addSeparator();
 		
 		mi = menu.add(selectAllAction);
-		setCtrlAccelerator(mi, 'A');
+		setMenuShortCutAccelerator(mi, 'A');
 		menu.addSeparator();
 
 		menu.add(propertiesAction);
@@ -266,7 +276,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
 		cbShowAlgebraView.setIcon(app.getEmptyIcon());
 		cbShowAlgebraView.setSelected(app.showAlgebraView());
-		setCtrlShiftAccelerator(cbShowAlgebraView, 'A');
+		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
 		menu.add(cbShowAlgebraView);
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
@@ -305,7 +315,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		menu.addSeparator();
 		mi = menu.add(refreshAction);
-		setCtrlAccelerator(mi, 'F');
+		setMenuShortCutAccelerator(mi, 'F');
 		
 		
 		add(menu);
@@ -1137,13 +1147,15 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		selectAllAction.setEnabled(!kernel.isEmpty());
 	}
 
-	private void setCtrlAccelerator(JMenuItem mi, char acc) {
-		KeyStroke ks = KeyStroke.getKeyStroke(acc, Event.CTRL_MASK);
+	private void setMenuShortCutAccelerator(JMenuItem mi, char acc) {
+		KeyStroke ks = KeyStroke.getKeyStroke(acc, 
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 		mi.setAccelerator(ks);
 	}
 	
-	private void setCtrlShiftAccelerator(JMenuItem mi, char acc) {
-		KeyStroke ks = KeyStroke.getKeyStroke(acc, Event.CTRL_MASK + Event.SHIFT_MASK);
+	private void setMenuShortCutShiftAccelerator(JMenuItem mi, char acc) {
+		KeyStroke ks = KeyStroke.getKeyStroke(acc, 
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + Event.SHIFT_MASK);
 		mi.setAccelerator(ks);
 	}
 	
@@ -1153,7 +1165,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		menuWindow.removeAll();
 		JMenuItem mit = menuWindow.add(newWindowAction);
-		setCtrlAccelerator(mit, 'N');
+		setMenuShortCutAccelerator(mit, 'N');
 
 		ArrayList ggbInstances = GeoGebra.getInstances();
 		int size = ggbInstances.size();

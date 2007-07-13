@@ -20,6 +20,7 @@ package geogebra.euclidian;
 
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
+import geogebra.gui.BooleanCheckboxCreationDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
@@ -483,6 +484,7 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_SEMICIRCLE:
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
+		case EuclidianView.MODE_REGULAR_POLYGON:	
 			hits = view.getHits(mouseLoc);
 			createNewPoint(hits, true, true, true);
 			break;
@@ -929,8 +931,19 @@ final public class EuclidianController implements MouseListener,
 	}	
 	
 	private boolean allowSelectionRectangle() {
-		return mode == EuclidianView.MODE_MOVE && moveMode == MOVE_NONE ||
-			mode == EuclidianView.MODE_ALGEBRA_INPUT && app.getCurrentSelectionListener() != null;			
+		switch (mode) {
+			case EuclidianView.MODE_MOVE:
+				return moveMode == MOVE_NONE;
+				
+			case EuclidianView.MODE_ALGEBRA_INPUT:
+				return app.getCurrentSelectionListener() != null;
+			
+			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
+				return true;
+				
+			default:
+				return false;
+		}		
 	}
 	
 	
@@ -2921,13 +2934,36 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	private boolean regularPolygon(ArrayList hits) {
-		// TODO: implement regularPolygon()
+		if (hits == null)
+			return false;
+
+		// need two points
+		addSelectedPoint(hits, 2, false);
+		
+		// we got the rotation center point
+		if (selPoints() == 2) {					
+			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+														app.getPlain("Numeric"), "4");													
+			
+			if (num == null) {
+				view.resetMode();
+				return false;
+			}
+			
+			GeoPoint [] points = getSelectedPoints();
+			kernel.RegularPolygon(null, points[0], points[1], num);			
+			return true;
+		}
 		return false;
 	}
 	
 	private boolean showCheckBox(ArrayList hits) {
 		// TODO: implement showCheckBox()
-		return false;
+		if (hits != null || selectionPreview)
+			return false;
+		
+		app.showBooleanCheckboxCreationDialog(mouseLoc, null);
+		return true;
 	}
 
 	// get (point or line) and (conic or function or curve)
@@ -3550,9 +3586,7 @@ final public class EuclidianController implements MouseListener,
 					break;				
 			}			
 		}
-		
-								
-		// TODO: remove
+										
 		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
 		
 		// do we have everything we need?

@@ -302,9 +302,8 @@ public class MyToolbar extends JPanel{
         sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);
         sb.append(" , ");        
         sb.append(EuclidianView.MODE_POLYGON);        
-        // TODO: add mode
-        //sb.append(" ");
-        //sb.append(EuclidianView.MODE_REGULAR_POLYGON);                
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_REGULAR_POLYGON);                
                 
         // parallel, orthogonal, line bisector, angular bisector, tangents
         sb.append(" | ");
@@ -353,9 +352,8 @@ public class MyToolbar extends JPanel{
         sb.append(EuclidianView.MODE_SLOPE);
         sb.append(" , ");           
         sb.append(EuclidianView.MODE_SLIDER);
-        // TODO: add mode
-        //sb.append(" ");
-        //sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);        
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);        
         sb.append(" , ");        
         sb.append(EuclidianView.MODE_LOCUS);            
         

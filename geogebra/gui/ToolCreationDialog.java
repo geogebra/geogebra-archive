@@ -22,6 +22,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.kernel.NameDescriptionComparator;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -65,15 +66,16 @@ implements GeoElementSelectionListener {
 	private JTabbedPane tabbedPane;		
 	private ToolNameIconPanel namePanel;	
 	
-	private DefaultListModel outputList, inputList;
-	private DefaultComboBoxModel cbOutputAddList, cbInputAddList;
+	private OutputListModel outputList;
+	private InputListModel inputList;
+	private DefaultComboBoxModel cbInputAddList, cbOutputAddList;
 	
 	private Macro newTool;
 	
 	public ToolCreationDialog(Application app) {
 		super(app.getFrame());
-		this.app = app;
-			
+		this.app = app;		
+		
 		initLists();						
 		initGUI();
 	}
@@ -86,7 +88,7 @@ implements GeoElementSelectionListener {
 			ArrayList selGeos = app.getSelectedGeos();
 			for (int i=0; i < selGeos.size(); i++) {
 				GeoElement geo = (GeoElement) selGeos.get(i);
-				addToOutputList(geo);
+				outputList.addElement(geo);
 			}
 			
 			app.setMoveMode();			
@@ -96,43 +98,68 @@ implements GeoElementSelectionListener {
 		}					
 	}
 	
-	private void addToOutputList(GeoElement geo) {
-		if (geo.isIndependent() || outputList.contains(geo))
-			return;
+	private class OutputListModel extends DefaultListModel {
+			
+		private DefaultComboBoxModel cbOutputAddList;
 		
-		// add geo to list
-		outputList.addElement(geo);
+		public OutputListModel(DefaultComboBoxModel cbOutputAddList) {
+			this.cbOutputAddList = cbOutputAddList;
+		}
 		
-		// remove listener from output add combobox before removing geo
-		JComboBox cbListener = removeListeningJComboBox(cbOutputAddList);	
-		cbOutputAddList.removeElement(geo);
-		cbOutputAddList.addListDataListener(cbListener);
-		
-		// special case for polygon: add all points and segments too
-		if (geo.isGeoPolygon()) {
-			GeoPolygon poly = (GeoPolygon) geo;
-			GeoPoint [] points = poly.getPoints();
-			for (int i=0; i < points.length; i++) {
-				addToOutputList(points[i]);				
-			}
-			GeoSegment [] segments = poly.getSegments();
-			for (int i=0; i < segments.length; i++) {
-				addToOutputList(segments[i]);
+		public void addElement(Object ob) {
+			if (!(ob instanceof GeoElement)) return;
+			
+			GeoElement geo = (GeoElement) ob;
+			if (geo.isIndependent() || contains(geo))
+				return;
+			
+			// add geo to list
+			super.addElement(geo);
+			
+			// remove listener from output add combobox before removing geo
+			JComboBox cbListener = removeListeningJComboBox(cbOutputAddList);	
+			cbOutputAddList.removeElement(geo);
+			cbOutputAddList.addListDataListener(cbListener);
+			
+			// special case for polygon: add all points and segments too
+			if (geo.isGeoPolygon()) {
+				GeoPolygon poly = (GeoPolygon) geo;
+				GeoPoint [] points = poly.getPoints();
+				for (int i=0; i < points.length; i++) {
+					super.addElement(points[i]);				
+				}
+				GeoSegment [] segments = poly.getSegments();
+				for (int i=0; i < segments.length; i++) {
+					super.addElement(segments[i]);
+				}
 			}
 		}
+	
 	}
 	
-	private void addToInputList(GeoElement geo) {
-		if (!possibleInput(geo) || inputList.contains(geo))
-			return;
+	private class InputListModel extends DefaultListModel {
 		
-		// add geo to list
-		inputList.addElement(geo);	
+		private DefaultComboBoxModel cbInputAddList;
 		
-		// remove listener from input add combobox before removing geo
-		JComboBox cbListener = removeListeningJComboBox(cbInputAddList);	
-		cbInputAddList.removeElement(geo);
-		cbInputAddList.addListDataListener(cbListener);
+		public InputListModel(DefaultComboBoxModel cbInputAddList) {
+			this.cbInputAddList = cbInputAddList;
+		}
+		
+		public void addElement(Object ob) {
+			if (!(ob instanceof GeoElement)) return;
+			
+			GeoElement geo = (GeoElement) ob;
+			if (!possibleInput(geo) || contains(geo))
+				return;
+			
+			// add geo to list
+			super.addElement(geo);	
+			
+			// remove listener from input add combobox before removing geo
+			JComboBox cbListener = removeListeningJComboBox(this.cbInputAddList);	
+			this.cbInputAddList.removeElement(geo);
+			this.cbInputAddList.addListDataListener(cbListener);
+		}
 	}
 	
 	
@@ -209,21 +236,14 @@ implements GeoElementSelectionListener {
 			output[i].addPredecessorsToSet(freeParents, true);
 		}
 		
-		// remove listener from input add combobox
-		JComboBox cbListener = removeListeningJComboBox(cbInputAddList);
-		
 		// fill input list with labeled free parents
 		Iterator it = freeParents.iterator();		
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isLabelSet()) {
-				inputList.addElement(geo);												
-				cbInputAddList.removeElement(geo);						
+				inputList.addElement(geo);																				
 			}
-		}
-		
-		// add JComboBox listener to cbInputAddList again
-		cbInputAddList.addListDataListener(cbListener);
+		}				
 	}
 	
 	private JComboBox removeListeningJComboBox(DefaultComboBoxModel cbModel) {
@@ -252,28 +272,19 @@ implements GeoElementSelectionListener {
 	}
 	
 	private void initLists() {
-		// lists for input and output objects
-		inputList = new DefaultListModel();
-		outputList = new DefaultListModel();
-				
-		// lists for combo boxes to select input and output objects
-				
-		// sorted set of geos
-		TreeSet sortedSet = new TreeSet(new NameDescriptionComparator());
-		
-		// get all GeoElements from construction and sort their names
-		Construction cons = app.getKernel().getConstruction();
-		Iterator it = cons.getGeoSetConstructionOrder().iterator();	
-		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
-			// sorted inserting using name description of geo
-			sortedSet.add(geo);			
-		}		
-		
-		// input and output objects list
+		// input and output objects combobox
 		cbInputAddList = new DefaultComboBoxModel();							
 		cbOutputAddList = new DefaultComboBoxModel();
-		it = sortedSet.iterator();
+		
+		// lists for input and output objects
+		inputList = new InputListModel(cbInputAddList);
+		outputList = new OutputListModel(cbOutputAddList);
+		
+		TreeSet sortedSet = app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();			
+		
+		// lists for combo boxes to select input and output objects
+		// fill combobox models
+		Iterator it = sortedSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();				
 			if (possibleInput(geo)) {
@@ -284,6 +295,7 @@ implements GeoElementSelectionListener {
 			}
 		}								
 	}		
+		
 	
 	/**
 	 * Returns whether geo can be used as an input object.
@@ -310,8 +322,8 @@ implements GeoElementSelectionListener {
 			getContentPane().add(navPanel, BorderLayout.SOUTH);									
 							
 			// output and input panel
-			JPanel outputPanel = createInputOutputPanel(outputList, cbOutputAddList);
-			JPanel inputPanel = createInputOutputPanel(inputList, cbInputAddList);
+			JPanel outputPanel = createInputOutputPanel(app, outputList, cbOutputAddList, true);
+			JPanel inputPanel = createInputOutputPanel(app, inputList, cbInputAddList, true);
 			
 			tabbedPane.addTab(app.getMenu("OutputObjects"), null, outputPanel, null);
 			tabbedPane.addTab(app.getMenu("InputObjects"), null, inputPanel, null);															
@@ -401,7 +413,10 @@ implements GeoElementSelectionListener {
 	/** 
 	 * Creates a panel with a list to choose input/output objects of the new tool.
 	 */
-	private JPanel createInputOutputPanel(final DefaultListModel listModel, final DefaultComboBoxModel cbModel) {		
+	public static JPanel createInputOutputPanel(Application app, 
+			final DefaultListModel listModel, final DefaultComboBoxModel cbModel,
+			boolean showUpDownButtons) 
+	{		
 		JPanel panel = new JPanel(new BorderLayout(5, 5));		
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
@@ -418,10 +433,7 @@ implements GeoElementSelectionListener {
 				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
 				if (geo == null) return;
 				
-				if (listModel == outputList)
-					addToOutputList(geo);
-				else if (listModel == inputList)
-					addToInputList(geo);											
+				listModel.addElement(geo);														
 			}
 		};
 		cbAdd.addActionListener(ac);
@@ -429,7 +441,7 @@ implements GeoElementSelectionListener {
 		
 		// list to show selected geos
 		JList list = new JList(listModel);												
-		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true), BorderLayout.CENTER);			
+		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true, showUpDownButtons), BorderLayout.CENTER);			
 		
 		// renderer to show long description of geos in list and combobox
 		MyCellRenderer rend = new MyCellRenderer();
@@ -445,7 +457,8 @@ implements GeoElementSelectionListener {
 	 * @param listPanel
 	 * @param list
 	 */
-	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, boolean showRemoveButton) {
+	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, 
+			boolean showRemoveButton, boolean showUpDownButtons) {
 		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
 		
 		JPanel listPanel = new JPanel(new BorderLayout(5,3));
@@ -464,8 +477,10 @@ implements GeoElementSelectionListener {
 		outputButtonPanel.setLayout(outputButtonPanelLayout);
 		
 		final JButton btUp = new JButton("\u25b2");
+		btUp.setVisible(showUpDownButtons);
 		btUp.setToolTipText(app.getPlain("Up"));
 		final JButton btDown = new JButton("\u25bc");
+		btDown.setVisible(showUpDownButtons);
 		btDown.setToolTipText(app.getPlain("Down"));
 		if (cbAdd != null)
 			outputButtonPanel.add(Box.createRigidArea(new Dimension(0,30)));
@@ -541,30 +556,7 @@ implements GeoElementSelectionListener {
 		return centerPanel;
 	}
 	
-	private class MyCellRenderer extends DefaultListCellRenderer {			  
-	    /* This is the only method defined by ListCellRenderer.  We just
-	     * reconfigure the Jlabel each time we're called.
-	     */
-	    public Component getListCellRendererComponent(
-	        JList list,
-		Object value,   // value to display
-		int index,      // cell index
-		boolean iss,    // is the cell selected
-		boolean chf)    // the list and the cell have the focus
-	    {
-	        /* The DefaultListCellRenderer class will take care of
-	         * the JLabels text property, it's foreground and background
-	         * colors, and so on.
-	         */
-	        super.getListCellRendererComponent(list, value, index, iss, chf);
-	       
-	        if (value != null) {
-	        	GeoElement geo = (GeoElement) value;	     
-	        	setText(geo.getLongDescriptionHTML(true, true));
-	        }
-	        return this;
-	    }
-	}
+	
 
 	/**
 	 * Adds selected geo to input/output list of dialog.
@@ -573,11 +565,11 @@ implements GeoElementSelectionListener {
 		int tab = tabbedPane.getSelectedIndex();							
 		switch (tab) {
 			case 0: // output objects								
-				addToOutputList(geo);
+				outputList.addElement(geo);
 				break;
 				
 			case 1: // input objects								
-				addToInputList(geo);
+				inputList.addElement(geo);
 				break;			
 		}
 		
@@ -586,13 +578,31 @@ implements GeoElementSelectionListener {
 
 }
 
-class NameDescriptionComparator implements Comparator {				
-	
-	public int compare(Object ob1, Object ob2) {
-		GeoElement geo1 = (GeoElement) ob1;
-		GeoElement geo2 = (GeoElement) ob2;
-		return geo1.getNameDescription().compareTo(geo2.getNameDescription());			
-	}				
+class MyCellRenderer extends DefaultListCellRenderer {			  
+    /* This is the only method defined by ListCellRenderer.  We just
+     * reconfigure the Jlabel each time we're called.
+     */
+    public Component getListCellRendererComponent(
+        JList list,
+	Object value,   // value to display
+	int index,      // cell index
+	boolean iss,    // is the cell selected
+	boolean chf)    // the list and the cell have the focus
+    {
+        /* The DefaultListCellRenderer class will take care of
+         * the JLabels text property, it's foreground and background
+         * colors, and so on.
+         */
+        super.getListCellRendererComponent(list, value, index, iss, chf);
+       
+        if (value != null) {
+        	GeoElement geo = (GeoElement) value;	     
+        	setText(geo.getLongDescriptionHTML(true, true));
+        }
+        return this;
+    }
 }
+
+
 
 
