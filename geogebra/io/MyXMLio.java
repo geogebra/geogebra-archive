@@ -31,6 +31,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -362,21 +363,28 @@ public class MyXMLio {
 			// if the same image file is used more than once in the construction
 			// we get a duplicate entry exception: ignore this
 			return;	
-		}    		    				
+		}    		  
 		
+		writeImageToStream(zip, fileName, img);	
+    }
+    
+    
+    public void writeImageToStream(OutputStream os, String fileName, BufferedImage img) {
+		// if we get here we need to save the image from the memory
 		try {
         	// try to write image using the format of the filename extension
         	int pos = fileName.lastIndexOf('.');
-        	String ext = fileName.substring(pos+1).toLowerCase();
+        	String ext = fileName.substring(pos+1).toLowerCase();      
         	if (ext.equals("jpg") || ext.equals("jpeg"))
         		ext = "JPG";
         	else 
         		ext = "PNG";	        	
-        	ImageIO.write(img, ext, zip);          		
-		} catch (Exception e) {    						
+        	ImageIO.write(img, ext, os);          		
+		} catch (Exception e) {    	
+			System.err.println(e.getMessage());
 			try {
 				//	if this did not work save image as png
-				ImageIO.write(img, "png", zip);    
+				ImageIO.write(img, "png", os);    
 			} catch (Exception ex) {
 				System.err.println(ex.getMessage());
 				return;	

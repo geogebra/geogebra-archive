@@ -74,8 +74,9 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	
 	private void initLists() {
 		// fill combo box with all geos
-		comboModel = new DefaultComboBoxModel();		
-		TreeSet sortedSet = app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();			
+		comboModel = new DefaultComboBoxModel();
+		TreeSet sortedSet = app.getKernel().getConstruction().
+									getGeoSetNameDescriptionOrder();			
 		
 		// lists for combo boxes to select input and output objects
 		// fill combobox models
@@ -119,7 +120,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getMenu("Button.Caption")+":");
 		String initString = geoBoolean == null ? "" : geoBoolean.getCaption();
-		InputPanel ip = new InputPanel(initString, app, 1, 30, true, true);				
+		InputPanel ip = new InputPanel(initString, app, 1, 15, true, true);				
 		tfCaption = ip.getTextComponent();
 		if (tfCaption instanceof AutoCompleteTextField) {
 			AutoCompleteTextField atf = (AutoCompleteTextField) tfCaption;
@@ -129,7 +130,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		captionLabel.setLabelFor(tfCaption);
 		JPanel captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		captionPanel.add(captionLabel);
-		captionPanel.add(tfCaption);
+		captionPanel.add(ip);
 		
 		// list panel
 		JPanel listPanel = ToolCreationDialog.

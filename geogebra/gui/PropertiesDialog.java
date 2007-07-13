@@ -1172,14 +1172,16 @@ public class PropertiesDialog
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (geos[i] instanceof GeoNumeric) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (geo.isGeoNumeric()) {
 					GeoNumeric num = (GeoNumeric) geos[i];
 					if (!num.isDrawable()) {
 						geosOK = false;
 						break;
 					}
-				} else if (geos[i] instanceof GeoText || 
-						   geos[i] instanceof GeoImage) {
+				} else if (geo.isGeoText() || 
+						   geo.isGeoImage() ||
+						   geo.isGeoBoolean()) {
 					geosOK = false;
 					break;
 				}
@@ -4383,7 +4385,7 @@ class NamePanel
 		tfName.addActionListener(this);		
 		
 		// DEFINITION
-		boolean showDefinition = !currentGeo.isGeoText();
+		boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);

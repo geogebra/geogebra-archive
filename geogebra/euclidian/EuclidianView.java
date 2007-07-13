@@ -756,7 +756,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private void initCursor() {
 		defaultCursor = null;
 
-		switch (mode) {
+		switch (mode) {	
 		case EuclidianView.MODE_ZOOM_IN:
 			defaultCursor = getCursorForImage(app
 					.getInternalImage("cursor_zoomin.gif"));
@@ -765,7 +765,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		case EuclidianView.MODE_ZOOM_OUT:
 			defaultCursor = getCursorForImage(app
 					.getInternalImage("cursor_zoomout.gif"));
-			break;
+			break;	
 		}
 
 		setDefaultCursor();

@@ -94,17 +94,23 @@ public final class DrawBoolean extends Drawable {
 		}
 
 		public void mouseDragged(MouseEvent e) {	
-			dragging = true;
+			dragging = true;			
 			e.translatePoint(checkBox.getX(), checkBox.getY());
 			ec.mouseDragged(e);
+			view.setToolTipText(null);
 		}
 
 		public void mouseMoved(MouseEvent e) {				
 			e.translatePoint(checkBox.getX(), checkBox.getY());
-			ec.mouseMoved(e);			
+			ec.mouseMoved(e);
+			view.setToolTipText(null);
 		}
 
 		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() > 1) return;
+			
+			e.translatePoint(checkBox.getX(), checkBox.getY());
+			ec.mouseClicked(e);
 		}
 
 		public void mousePressed(MouseEvent e) {
@@ -133,7 +139,8 @@ public final class DrawBoolean extends Drawable {
 		}
 
 		public void mouseEntered(MouseEvent arg0) {
-			hit = view.getMode() == EuclidianView.MODE_MOVE;
+			hit = true;
+			view.setToolTipText(null);
 		}
 
 		public void mouseExited(MouseEvent arg0) {

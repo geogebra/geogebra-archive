@@ -1182,7 +1182,7 @@ final public class EuclidianController implements MouseListener,
 		changedKernel = processMode(hits, e);
 		if (changedKernel)
 			app.storeUndoInfo();
-
+			
 		if (hits != null)
 			view.setDefaultCursor();		
 		else

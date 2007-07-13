@@ -1515,15 +1515,33 @@ public class Application implements	KeyEventDispatcher {
 		
 		try {
 			setWaitCursor();
-			BufferedImage img = ImageIO.read(imageFile);			
+			
+			// get file name
+			String fileName = imageFile.getCanonicalPath();	
+			
+			// load image
+			BufferedImage img = ImageIO.read(imageFile);	
+			
+			// write and reload image to make sure we can save it
+			// without problems
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			myXMLio.writeImageToStream(os, fileName, img);
+			os.flush();
+			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+			
+			// reload the image
+			img = ImageIO.read(is);
+			is.close();
+			os.close();
+			
+			
 			setDefaultCursor();
 			if (img == null) {
 				showError("LoadFileFailed");
 				return null;
 			}			
 			
-			// add image to imageManager
-			String fileName = imageFile.getCanonicalPath();	
+			
 			
 			// make sure this filename is not taken yet
 			BufferedImage oldImg = imageManager.getExternalImage(fileName);			
