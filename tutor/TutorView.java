@@ -9,12 +9,14 @@ import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class TutorView extends JPanel implements View {
 	
@@ -27,6 +29,11 @@ public class TutorView extends JPanel implements View {
 	private static final String URL = "jdbc:mysql://158.109.2.26:33/intermates";
 	private static final String USER ="jmfortuny";
 	private static final String PWD = "jmfortuny";
+	private static final int STUDENT = 0;
+	private static final int TUTOR = 1;
+	private static final String studentName = "Eloi";
+	private static final String tutorName = "Fortuny";
+	private JTextArea resultArea = new JTextArea(6, 20);
 	
 	
 	public TutorView (String[] strategiesXML,Application app) 
@@ -61,8 +68,20 @@ public class TutorView extends JPanel implements View {
 	}
 	
 	public void createGUI() {
+		
 		// TODO: implement user interface of tutor view
-		add(new JLabel("Hello Eloi!"));
+		//add(new JLabel("Hello Eloi!"));
+	
+	
+	        resultArea.setText("HOLA");
+	        resultArea.setEditable(false);
+	        
+	        JScrollPane scrollingArea = new JScrollPane(resultArea);
+	        //... Get the content pane, set layout, add to center
+	        setLayout(new BorderLayout());
+	        add(scrollingArea, BorderLayout.CENTER);
+	        add(new JTextArea(),BorderLayout.SOUTH);
+	
 	}
 	
 	
@@ -90,20 +109,39 @@ public class TutorView extends JPanel implements View {
 	
 	public void add(GeoElement geo) {		
 		//Every GeoElement gets here.
-		Construction c = geo.getConstruction();
+		//Construction c = geo.getConstruction();
 		
 		//TreeSet t = geo.getAllPredecessors();
-		if (strategies.size() == 0){
-		System.out.println("STR1"+ ((Construction)strategies.getFirst()).getXML());
-		System.out.println("STR2"+ ((Construction)strategies.getLast()).getXML());
-		System.out.println("CMD"+geo.getCommandDescription());
-		System.out.println(geo+"/"+geo.getObjectType());
+		//if (strategies.size() == 0){
+		//System.out.println("STR1"+ ((Construction)strategies.getFirst()).getXML());
+		//System.out.println("STR2"+ ((Construction)strategies.getLast()).getXML());
+		//System.out.println("CMD"+geo.getCommandDescription());
+		//System.out.println(geo+"/"+geo.getObjectType());
 		//System.out.println(t);
-		System.out.println(c.getXML());
-		}
+	//	System.out.println(c.getXML());
+		printTextArea(objectToDialogue(geo),TUTOR);
 		
+	}
+	private String objectToDialogue(GeoElement geo)
+	{
+		return geo.getObjectType()+":"+geo.getLabel()+"\n";
+	}
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();
+		
+	private void printTextArea(String txt, int user)
+	{
+		
+		if (user==STUDENT) {
+		
+		//	resultArea.set
+			resultArea.append(studentName+":"+txt);
+		
+		}
+		else if (user == TUTOR){
+			
+			resultArea.append(tutorName+":"+txt);
+		}
 		
 	}
 
