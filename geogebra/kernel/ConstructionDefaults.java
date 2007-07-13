@@ -34,7 +34,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_CONIC = 40;
 		
 	public static final int DEFAULT_NUMBER = 50;	
-	public static final int DEFAULT_ANGLE = 52;	
+	public static final int DEFAULT_ANGLE = 52;			
 	
 	public static final int DEFAULT_FUNCTION = 60;		
 	public static final int DEFAULT_POLYGON = 70;
@@ -42,6 +42,7 @@ public class ConstructionDefaults {
 	
 	public static final int DEFAULT_TEXT = 100;
 	public static final int DEFAULT_IMAGE = 110;
+	public static final int DEFAULT_BOOLEAN = 120;
 		
 	// DEFAULT COLORs
 	// points
@@ -187,11 +188,18 @@ public class ConstructionDefaults {
 		
 		// text
 		GeoText text = new GeoText(cons);		
+		text.setLocalVariableLabel(app.getPlain("Text"));
 		defaultGeoElements.put(DEFAULT_TEXT, text);	
 		
 		// image
 		GeoImage img = new GeoImage(cons);
-		defaultGeoElements.put(DEFAULT_IMAGE, img);				
+		img.setLocalVariableLabel(app.getPlain("Image"));
+		defaultGeoElements.put(DEFAULT_IMAGE, img);	
+		
+		// boolean
+		GeoBoolean bool = new GeoBoolean(cons);		
+		bool.setLocalVariableLabel(app.getPlain("Boolean"));
+		defaultGeoElements.put(DEFAULT_BOOLEAN, bool);
 	}
 	
 	/**

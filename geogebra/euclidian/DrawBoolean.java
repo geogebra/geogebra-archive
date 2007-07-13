@@ -15,19 +15,15 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 
 /**
@@ -45,28 +41,27 @@ public final class DrawBoolean extends Drawable {
 	private JCheckBox checkBox;
 	private boolean hit = false;
 	private String oldCaption;
+	private BooleanCheckBoxListener cbl;
 
 	/** Creates new DrawText */
 	public DrawBoolean(EuclidianView view, GeoBoolean geoBool) {
 		this.view = view;
 		this.geoBool = geoBool;
 		geo = geoBool;
-
-		checkBox = new JCheckBox();
-		checkBox.setOpaque(false);
-		view.add(checkBox);
-
+		
 		// action listener for checkBox
-		BooleanCheckBoxListener cbl = new BooleanCheckBoxListener();
-		checkBox.addActionListener(cbl);
+		cbl = new BooleanCheckBoxListener();
+		checkBox = new JCheckBox();	
+		checkBox.addItemListener(cbl);
 		checkBox.addMouseListener(cbl);
 		checkBox.addMouseMotionListener(cbl);
-		checkBox.setFocusable(false);
-
+		checkBox.setFocusable(false);	
+		view.add(checkBox);
+		
 		update();
 	}
 
-	private class BooleanCheckBoxListener implements ActionListener,
+	private class BooleanCheckBoxListener implements ItemListener,
 			MouseListener, MouseMotionListener {
 
 		private boolean dragging = false;
@@ -75,14 +70,27 @@ public final class DrawBoolean extends Drawable {
 		/**
 		 * Handles click on check box. Changes value of GeoBoolean.
 		 */
-		public void actionPerformed(ActionEvent ev) {
+		public void itemStateChanged(ItemEvent e) {
 			if (dragging) {
-				checkBox.setSelected(geoBool.getBoolean());
+				checkBox.removeItemListener(this);
+				checkBox.setSelected(!checkBox.isSelected());
+				checkBox.addItemListener(this);
 				return;
 			}
-				
-			geoBool.setValue(checkBox.isSelected());
-			geoBool.updateRepaint();
+			
+			Object source = e.getItemSelectable();
+		    if (source == checkBox) {
+		    	 if (e.getStateChange() == ItemEvent.DESELECTED) {
+		    		 geoBool.setValue(false);
+		    	 } else {
+		    		 geoBool.setValue(true);
+		    	 }
+		    	 geoBool.updateRepaint();
+		    	 
+		    	 // make sure mouseReleased does not change
+		    	 // the value back my faking a drag
+		    	 dragging = true;
+		    } 		   
 		}
 
 		public void mouseDragged(MouseEvent e) {	
@@ -97,8 +105,6 @@ public final class DrawBoolean extends Drawable {
 		}
 
 		public void mouseClicked(MouseEvent e) {
-			e.translatePoint(checkBox.getX(), checkBox.getY());
-			ec.mouseClicked(e);			
 		}
 
 		public void mousePressed(MouseEvent e) {
@@ -107,25 +113,41 @@ public final class DrawBoolean extends Drawable {
 			ec.mousePressed(e);		
 		}
 
-		public void mouseReleased(MouseEvent e) {
-			e.translatePoint(checkBox.getX(), checkBox.getY());
-			ec.mouseReleased(e);		
+		public void mouseReleased(MouseEvent e) {	
+			if (!dragging && !e.isMetaDown() && !e.isPopupTrigger()
+					&& view.getMode() == EuclidianView.MODE_MOVE) 
+			{
+				// handle LEFT CLICK
+				geoBool.setValue(!geoBool.getBoolean());
+				geoBool.updateRepaint();
+				
+				// make sure itemChanged does not change
+		    	// the value back my faking a drag
+		    	dragging = true;				
+			}
+			else {
+				// handle right click and dragging
+				e.translatePoint(checkBox.getX(), checkBox.getY());
+				ec.mouseReleased(e);	
+			}
 		}
 
 		public void mouseEntered(MouseEvent arg0) {
-			hit = true;
+			hit = view.getMode() == EuclidianView.MODE_MOVE;
 		}
 
 		public void mouseExited(MouseEvent arg0) {
 			hit = false;
 		}
+
+		
 	}
 
 	final public void update() {
 		isVisible = geo.isEuclidianVisible();
 		checkBox.setVisible(isVisible);
 		if (!isVisible)
-			return;
+			return;		
 
 		// update caption string
 		String caption = geoBool.getCaption();
@@ -133,10 +155,15 @@ public final class DrawBoolean extends Drawable {
 			oldCaption = caption;
 			labelDesc = GeoElement.indicesToHTML(caption, true);
 		}
+		checkBox.setOpaque(false);
 		checkBox.setText(labelDesc);
 		checkBox.setFont(view.fontPoint);
 		checkBox.setForeground(geoBool.getObjectColor());
+		
+		// set checkbox state		
+		checkBox.removeItemListener(cbl);
 		checkBox.setSelected(geoBool.getBoolean());
+		checkBox.addItemListener(cbl);
 		
 		xLabel = geo.labelOffsetX;
 		yLabel = geo.labelOffsetY;		
@@ -147,7 +174,8 @@ public final class DrawBoolean extends Drawable {
 	}
 
 	final public void draw(Graphics2D g2) {
-		if (isVisible) {
+		/*
+		if (isVisible) {		
 			// the button is drawn as a swing component by the view
 			// They are Swing components and children of the view
 
@@ -157,11 +185,13 @@ public final class DrawBoolean extends Drawable {
 				g2.setPaint(Color.lightGray);
 				g2.draw(labelRectangle);
 				
-				// TODO: remove
 				System.out.println("highlight drawn");
 				checkBox.setBorder(BorderFactory.createEtchedBorder());
 			}
+			
+			
 		}
+		*/
 	}
 
 	/**

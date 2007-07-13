@@ -1075,7 +1075,10 @@ public class MyXMLHandler implements DocHandler {
                 } else if (eName.equals("condition")) {
                 	ok = handleCondition(attrs);
                 	break;
-                }
+                } else if (eName.equals("checkbox")) {
+                    ok = handleCheckbox(attrs);
+                    break;
+                } 
         		
         	case 'd':
         		if (eName.equals("decoration")) {
@@ -1257,7 +1260,7 @@ public class MyXMLHandler implements DocHandler {
 
     private boolean handleEqnStyle(LinkedHashMap attrs) {
         // line                                 
-        if (geo instanceof GeoLine) {
+        if (geo.isGeoLine()) {
             GeoLine line = (GeoLine) geo;
             String style = (String) attrs.get("style");
             if (style.equals("implicit")) {
@@ -1274,7 +1277,7 @@ public class MyXMLHandler implements DocHandler {
             }
         }
         // conic    
-        else if (geo instanceof GeoConic) {
+        else if (geo.isGeoConic()) {
             GeoConic conic = (GeoConic) geo;
             String style = (String) attrs.get("style");
             if (style.equals("implicit")) {
@@ -1344,7 +1347,7 @@ public class MyXMLHandler implements DocHandler {
         }	
     }
     
-    private boolean handleCondition(LinkedHashMap attrs) {    	
+    private boolean handleCondition(LinkedHashMap attrs) {
     	try {
     		// condition for visibility of object
     		String strShowObjectCond = (String) attrs.get("showObject");    		
@@ -1359,6 +1362,23 @@ public class MyXMLHandler implements DocHandler {
             return false;
         }	
     }
+    
+    private boolean handleCheckbox(LinkedHashMap attrs) {    	
+	   if (!(geo.isGeoBoolean())) {
+           System.err.println(
+               "wrong element type for <checkbox>: " + geo.getClass());
+           return false;
+       }
+    	
+    	try {
+    		GeoBoolean bool = (GeoBoolean) geo;
+    		bool.setCheckboxFixed( parseBoolean((String) attrs.get("fixed")) );    		
+            return true;
+        } catch (Exception e) {
+            return false;
+        }	
+    }
+    
 
     private boolean handleValue(LinkedHashMap attrs) {
     	boolean isBoolean = geo.isGeoBoolean();
@@ -1378,7 +1398,7 @@ public class MyXMLHandler implements DocHandler {
         	}
         	else if (isBoolean) {
         		GeoBoolean bool = (GeoBoolean) geo;
-        		bool.setValue(Boolean.getBoolean(strVal));
+        		bool.setValue(parseBoolean(strVal));
         	}
             return true;
         } catch (Exception e) {

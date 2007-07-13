@@ -103,7 +103,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 
-
 /**
  * @author Markus Hohenwarter
  */
@@ -160,8 +159,6 @@ public class PropertiesDialog
 	public void initGUI() {
 		setTitle(app.getPlain("Properties"));
 		
-	
-
 		//	LIST PANEL
 		JPanel listPanel = new JPanel();
 		//listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -528,6 +525,7 @@ public class PropertiesDialog
 		private FillingPanel fillingPanel;
 		private TracePanel tracePanel;
 		private FixPanel fixPanel;
+		private CheckBoxFixPanel checkBoxFixPanel;
  		private AllowReflexAnglePanel allowReflexAnglePanel;
  		private AllowOutlyingIntersectionsPanel allowOutlyingIntersectionsPanel;
 		private AuxiliaryObjectPanel auxPanel;
@@ -570,6 +568,7 @@ public class PropertiesDialog
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
 			fixPanel = new FixPanel();
+			checkBoxFixPanel = new CheckBoxFixPanel();
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
 			auxPanel = new AuxiliaryObjectPanel();
 			animStepPanel = new AnimationStepPanel(app);
@@ -598,9 +597,14 @@ public class PropertiesDialog
 		private ArrayList tabPanelList;
 				
 		private void initTabs() {		
+			// name tab
+			ArrayList nameTabList = new ArrayList();
+			nameTabList.add(namePanel);
+			TabPanel nameTab = new TabPanel(app.getPlain("Name"), nameTabList);
+			nameTab.addToTabbedPane(tabs);	
+			
 			// basic tab
 			ArrayList basicTabList = new ArrayList();
-			basicTabList.add(namePanel);
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);
@@ -609,7 +613,8 @@ public class PropertiesDialog
 			basicTabList.add(bgImagePanel);	
 			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
 			basicTab.addToTabbedPane(tabs);	
-											
+				
+			/*
 			// change basic tab layout: create grid with two columns
 			basicTab.removeAll();
 			basicTab.setLayout(new GridBagLayout());
@@ -627,7 +632,7 @@ public class PropertiesDialog
 				c.gridy = (i-1) / 2 + 1;													
 				basicTab.add(p, c);
 			}	
-			
+			*/
 	        
 			// color tab
 			ArrayList colorTabList = new ArrayList();
@@ -676,6 +681,7 @@ public class PropertiesDialog
 			positionTabList.add(absScreenLocPanel);
 			positionTabList.add(startPointPanel);
 			positionTabList.add(cornerPointsPanel);
+			positionTabList.add(checkBoxFixPanel);
 			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
 			positionTab.addToTabbedPane(tabs);
 			
@@ -890,6 +896,84 @@ public class PropertiesDialog
 
 	} // ShowObjectPanel
 
+	/**
+	 * panel to fix checkbox (boolean object)
+	 */
+	private class CheckBoxFixPanel extends JPanel implements ItemListener, UpdateablePanel {
+
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JCheckBox checkboxFixCB;
+
+		public CheckBoxFixPanel() {
+			checkboxFixCB = new JCheckBox(app.getPlain("FixCheckbox"));
+			checkboxFixCB.addItemListener(this);			
+			add(checkboxFixCB);			
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			checkboxFixCB.removeItemListener(this);
+
+			// check if properties have same values
+			GeoBoolean temp, geo0 = (GeoBoolean) geos[0];
+			boolean equalObjectVal = true;
+			
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoBoolean) geos[i];
+				// same object visible value
+				if (geo0.isCheckboxFixed() != temp.isCheckboxFixed()) {
+					equalObjectVal = false;
+					break;
+				}								
+			}
+
+			// set object visible checkbox
+			if (equalObjectVal)
+				checkboxFixCB.setSelected(geo0.isCheckboxFixed());
+			else
+				checkboxFixCB.setSelected(false);
+			
+			checkboxFixCB.addItemListener(this);
+			return this;
+		}
+
+		// show everything but numbers (note: drawable angles are shown)
+		private boolean checkGeos(Object[] geos) {
+			for (int i = 0; i < geos.length; i++) {
+				if (geos[i] instanceof GeoBoolean) {
+					GeoBoolean bool = (GeoBoolean) geos[i];
+					if (!bool.isIndependent()) {
+						return false;
+					}
+ 				} else
+ 					return false;
+			}
+			return true;
+		}
+
+		/**
+		 * listens to checkboxes and sets object and label visible state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+			Object source = e.getItemSelectable();
+
+			// show object value changed
+			if (source == checkboxFixCB) {
+				for (int i = 0; i < geos.length; i++) {
+					GeoBoolean bool = (GeoBoolean) geos[i];
+					bool.setCheckboxFixed(checkboxFixCB.isSelected());
+					bool.updateRepaint();
+				}
+			}
+			propPanel.updateSelection(geos);
+		}
+
+	} // CheckBoxFixPanel
+	
 	/**
 	 * panel with button for color choosing
 	 */
@@ -4175,14 +4259,29 @@ class ShowConditionPanel
 			cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
 		}
 				
-		for (int i = 0; i < geos.length; i++) {
-			GeoElement geo = (GeoElement) geos[i];
-			geo.setShowObjectCondition(cond);
-			geo.updateRepaint();
+		// set condition
+		boolean requestFocus = false;
+		try {
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				geo.setShowObjectCondition(cond);				
+			}	
+			
+		} catch (CircularDefinitionException e) {
+			tfCondition.setText("");
+			kernel.getApplication().showError("CircularDefinition");
+			requestFocus = true;			
 		}	
 		
+		if (cond != null)
+			cond.updateRepaint();		
+		
 		// to update "showObject" as well
-		propPanel.updateSelection(geos);		
+		propPanel.updateSelection(geos);
+		
+		// request focus
+		if (requestFocus)
+			tfCondition.requestFocus();
 	}
 
 	public void focusGained(FocusEvent arg0) {
@@ -4304,11 +4403,7 @@ class NamePanel
 		boolean showCaption = currentGeo.isGeoBoolean();
 		if (showCaption) {			
 			tfCaption.removeActionListener(this);
-			String strCap = currentGeo.getCaption();
-			if (strCap.equals(currentGeo.getLabel()))
-				tfCaption.setText("");
-			else
-				tfCaption.setText(strCap);
+			setCaptionText(currentGeo);
 			tfCaption.addActionListener(this);			
 		} 
 		captionLabel.setVisible(showCaption);
@@ -4342,12 +4437,12 @@ class NamePanel
 				tfDefinition.requestFocus();
 		}		
 		else if (source == tfCaption) {		
-			String strCaption = tfCaption.getText().trim();			
-			if (strCaption.length() > 0) {
-				currentGeo.setCaption(strCaption);
-				currentGeo.updateRepaint();
-			} else
+			String strCaption = tfCaption.getText().trim();	
+			boolean success = currentGeo.setCaption(strCaption);			
+			if (!success)
 				tfCaption.requestFocus();
+			else
+				currentGeo.updateRepaint();
 		}	
 	}
 
@@ -4359,7 +4454,11 @@ class NamePanel
 
 		if (source == tfName) {
 			tfName.setText(currentGeo.getLabel());
-		} else if (source == tfDefinition) {			
+		} 
+		else if (source == tfDefinition) {			
+			setDefText(currentGeo);
+		}
+		else if (source == tfCaption) {			
 			setDefText(currentGeo);
 		}
 	}
@@ -4370,6 +4469,15 @@ class NamePanel
 				geo.getCommandDescription();
 		tfDefinition.setText(text);
 	}
+	
+	private void  setCaptionText(GeoElement geo) {
+		String strCap = currentGeo.getCaption();
+		if (strCap.equals(currentGeo.getLabel()))
+			tfCaption.setText("");
+		else
+			tfCaption.setText(strCap);
+	}
+	
 }
 
 interface UpdateablePanel {

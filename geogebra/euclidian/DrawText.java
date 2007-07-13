@@ -97,7 +97,7 @@ public final class DrawText extends Drawable {
 				//eqn.removeMouseListener(eqn);
 				//eqn.removeMouseMotionListener(eqn);				
 				eqn.setDebug(false);
-				eqn.setOpaque(true);	
+				eqn.setOpaque(false);	
 				//eqn.setFont(view.getFont());		
 				
 				eqn.setFontname(Application.STANDARD_FONT_NAME);

@@ -847,8 +847,14 @@ public abstract class GeoElement
 		}
 	}
 	
-	public void setCaption(String caption) {
+	public boolean setCaption(String caption) {
+		if (caption == null 
+			|| caption.length() == 0
+			|| caption.equals(label))
+			return false;
+		
 		this.caption = caption;
+		return true;
 	}		
 
 	public String getCaption() {
@@ -1977,7 +1983,7 @@ public abstract class GeoElement
 		sb.append(" type=\"");
 		sb.append(type);
 		sb.append("\" label=\"");
-		sb.append(Util.encodeXML(label));
+		sb.append(Util.encodeXML(label));		
 		sb.append("\">\n");
 		sb.append(getXMLtags());
 		
@@ -2339,7 +2345,12 @@ public abstract class GeoElement
 		return condShowObject;
 	}
 
-	public final void setShowObjectCondition(GeoBoolean cond) {
+	public final void setShowObjectCondition(GeoBoolean cond) 
+	throws CircularDefinitionException {
+		// check for circular definition
+		if (this == cond || isParentOf(cond))
+			throw new CircularDefinitionException();	
+		
 		// unregister old condition
 		if (condShowObject != null) {
 			condShowObject.unregisterConditionListener(this);

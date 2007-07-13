@@ -13,7 +13,9 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
+import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 
@@ -117,8 +119,13 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getMenu("Button.Caption")+":");
 		String initString = geoBoolean == null ? "" : geoBoolean.getCaption();
-		InputPanel ip = new InputPanel(initString, app, 1, 30, true, true);		
+		InputPanel ip = new InputPanel(initString, app, 1, 30, true, true);				
 		tfCaption = ip.getTextComponent();
+		if (tfCaption instanceof AutoCompleteTextField) {
+			AutoCompleteTextField atf = (AutoCompleteTextField) tfCaption;
+			atf.setAutoComplete(false);
+		}
+		
 		captionLabel.setLabelFor(tfCaption);
 		JPanel captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		captionPanel.add(captionLabel);
@@ -171,17 +178,20 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	private void apply() {
 		// 	create new GeoBoolean
 		if (geoBoolean == null) {
-			geoBoolean = new GeoBoolean(app.getKernel().getConstruction());	
-			geoBoolean.setValue(true);
+			geoBoolean = new GeoBoolean(app.getKernel().getConstruction());				
 			geoBoolean.setAbsoluteScreenLoc(location.x, location.y);
-			geoBoolean.setLabel(null);			
+			geoBoolean.setLabel(null);	
 		}
 
 		// set visibility condition for all GeoElements in list
-		for (int i=0; i < listModel.size(); i++) {
-			GeoElement geo = (GeoElement) listModel.get(i);
-			geo.setShowObjectCondition(geoBoolean);
-		}
+		try {
+			for (int i=0; i < listModel.size(); i++) {
+				GeoElement geo = (GeoElement) listModel.get(i);
+				geo.setShowObjectCondition(geoBoolean);
+			}
+		} catch (CircularDefinitionException e) {
+			app.showError("CircularDefinition");
+		}		
 		
 		// set caption text
 		String strCaption = tfCaption.getText().trim();
@@ -189,7 +199,9 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 			geoBoolean.setCaption(strCaption);			
 		}
 		
-		// update boolean (updates visibility of geos from list too)
+		// update boolean (updates visibility of geos from list too)		
+		geoBoolean.setValue(true);
+		geoBoolean.setEuclidianVisible(true);
 		geoBoolean.updateRepaint();
 	}
 	

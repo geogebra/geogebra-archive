@@ -33,13 +33,15 @@ AbsoluteScreenLocateable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean value;
+	private boolean value = false;
 	private boolean isDefined = true;	
+	private boolean checkboxFixed = false;
 	
 	private ArrayList condListenersShowObject;
 		
 	public GeoBoolean(Construction c) {
-		super(c);				
+		super(c);			
+		setEuclidianVisible(false);
 	}
 
 	String getClassName() {
@@ -213,11 +215,19 @@ AbsoluteScreenLocateable {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<value val=\"");
 		sb.append(value);
-		sb.append("\"/>\n");
+		sb.append("\"/>\n");				
 				
 		sb.append(getXMLvisualTags(isIndependent()));
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
+		
+		// checkbox fixed
+		if (checkboxFixed) {			
+			sb.append("\t<checkbox fixed=\"");
+			sb.append(checkboxFixed);
+			sb.append("\"/>\n");	
+		}
+		
 		return sb.toString();
 	}	
 
@@ -259,7 +269,9 @@ AbsoluteScreenLocateable {
 		return isIndependent();
 	}
 
-	public void setAbsoluteScreenLoc(int x, int y) {
+	public void setAbsoluteScreenLoc(int x, int y) {		
+		if (checkboxFixed) return;
+		
 		labelOffsetX = x;
 		labelOffsetY = y;		
 	}
@@ -276,6 +288,14 @@ AbsoluteScreenLocateable {
 	}
 
 	public void setRealWorldLoc(double x, double y) {				
+	}
+
+	public final boolean isCheckboxFixed() {
+		return checkboxFixed;
+	}
+
+	public final void setCheckboxFixed(boolean checkboxFixed) {
+		this.checkboxFixed = checkboxFixed;
 	}
 	
 }
