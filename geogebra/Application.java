@@ -2123,8 +2123,11 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public void setUndoActive(boolean flag) {
+    	if (flag == undoActive) return;
+    	
     	undoActive = flag;
-    	kernel.setUndoActive(flag);
+    	kernel.setUndoActive(flag);  
+    	updateActions();
     }
     
     public boolean isUndoActive() {
@@ -2296,7 +2299,7 @@ public class Application implements	KeyEventDispatcher {
     }
     
     private void updateActions() {    
-    	if (undoAction == null) return;
+    	if (undoAction == null || !undoActive) return;
     	undoAction.setEnabled(kernel.undoPossible());
     	redoAction.setEnabled(kernel.redoPossible());    	
 	}
