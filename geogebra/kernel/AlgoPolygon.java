@@ -59,7 +59,7 @@ public class AlgoPolygon extends AlgoElement {
      */
     private void updatePointArray(GeoList pointList) {
     	// check if we have a point list
-    	if (pointList.getElementType() != GeoList.ELEMENT_TYPE_POINT) {
+    	if (pointList.getElementType() != GeoElement.GEO_CLASS_POINT) {
     		poly.setUndefined();
     		return;
     	}

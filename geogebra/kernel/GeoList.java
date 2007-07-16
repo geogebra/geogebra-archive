@@ -31,9 +31,7 @@ import java.util.ArrayList;
  */
 public class GeoList extends GeoElement implements ListValue {
 	
-	public final static int ELEMENT_TYPE_MIXED = 0;
-	public final static int ELEMENT_TYPE_NUMBER_VALUE = 1;
-	public final static int ELEMENT_TYPE_POINT = 2;
+	public final static int ELEMENT_TYPE_MIXED = -1;
 
 	private static final long serialVersionUID = 1L;
 	private static String STR_OPEN = "{";
@@ -41,7 +39,7 @@ public class GeoList extends GeoElement implements ListValue {
 	
 	private ArrayList geoList = new ArrayList();	  
 	private boolean isDefined = true;
-	private int elementType;
+	private int elementType = ELEMENT_TYPE_MIXED;
     
     public GeoList(Construction c) { 
     	super(c);     	    	    	    
@@ -66,7 +64,7 @@ public class GeoList extends GeoElement implements ListValue {
     
     /**
      * Returns the element type of this list.
-     * @return ELEMENT_TYPE_MIXED, ELEMENT_TYPE_NUMBER_VALUE or ELEMENT_TYPE_POINT
+     * @return ELEMENT_TYPE_MIXED or GeoElement.GEO_CLASS_xx constant
      */
     public int getElementType() {
     	return elementType;
@@ -160,9 +158,9 @@ public class GeoList extends GeoElement implements ListValue {
     	setDefined(false);
     }
         
+    
     boolean showInEuclidianView() {
-        // TODO: change
-        return false;
+        return isDefined();
     }
     
     boolean showInAlgebraView() {       
@@ -178,22 +176,13 @@ public class GeoList extends GeoElement implements ListValue {
     	
     	// init element type    	    
     	if (geoList.size() == 1) {    		
-    		elementType = getElementType(geo);
+    		elementType = geo.getGeoClassType();
     	}
     	// check element type
-    	else if (elementType != getElementType(geo)) {
+    	else if (elementType != geo.getGeoClassType()) {
     		elementType = ELEMENT_TYPE_MIXED;
     	}
-    }
-    
-    private int getElementType(GeoElement geo) {
-    	if (geo.isGeoPoint())
-    		return ELEMENT_TYPE_POINT;
-    	else if (geo.isNumberValue())
-    		return ELEMENT_TYPE_NUMBER_VALUE;
-    	else
-    		return ELEMENT_TYPE_MIXED;
-    }
+    }       
        
     public final void remove(GeoElement geo) {
     	geoList.remove(geo);

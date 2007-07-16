@@ -1,9 +1,8 @@
 package geogebra.kernel.commands;
 
 import geogebra.MyError;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -23,6 +22,16 @@ public class CmdMax extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
+		case 1:
+			arg = resArgs(c);
+			if (arg[0].isGeoList()) {
+				GeoElement[] ret = { 
+						kernel.Max(c.getLabel(),
+						(GeoList) arg[0]) };
+				return ret;
+			} else
+				throw argErr(app, c.getName(), arg[0]);
+		
 		case 2:			
 			arg = resArgs(c);
 			if ((ok[0] = arg[0].isNumberValue()) &&

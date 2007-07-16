@@ -41,8 +41,7 @@ public class AlgoSequence extends AlgoElement {
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsGeoFunction, isEmpty;
     private Function last_function;
-    private ArrayList copyGeos = new ArrayList(50); // reuse copied geos, so remember them in a list
-
+   
     /**
      * Creates a new algorithm to create a sequence of objects that form a list.
      * @param cons
@@ -146,10 +145,9 @@ public class AlgoSequence extends AlgoElement {
     
     private void createNewList(double from, double to, double step) {         	
     	    	    	
-    	// check if defined    	
-    	int listSize = list.size();
-    	int copyGeosSize = copyGeos.size();
+    	// clear list if defined  
     	int i=0;
+    	int oldListSize = list.size();
     	
     	if (!isEmpty) {    		
     		// create the sequence    		    
@@ -160,38 +158,38 @@ public class AlgoSequence extends AlgoElement {
 			{
 				var.setValue(currentVal);
 				if (algoExp != null) algoExp.update();
-	
-				// we need a copy of the expression GeoElement
-				GeoElement copy;
-				if (i < copyGeosSize) {
-					// take existing object
-					copy = (GeoElement) copyGeos.get(i);
+				
+				// and only add new objects
+				GeoElement listElement;
+				if (i < oldListSize) {	
+					// we reuse existing list element
+					listElement = list.get(i);					
 				} else {
-					// create new object and add it to end of list
-					copy = expression.copyInternal(cons);	
-					// TODO: add description like exp for i=20
-					
+					// create new list element and add it to end of list
+					listElement = expression.copyInternal(cons);						
 					// visual properties
-					copy.setVisualStyle(list);	
-					copy.setLabelVisible(false);
+					listElement.setVisualStyle(list);	
+					listElement.setLabelVisible(false);
 					
-					// remember this copy
-					copyGeos.add(copy);
+					// add this element to end of list
+					list.add(listElement);
 				}
-				
-				// now we have to make sure that this copy
-				// is also part of our list
-				if (i >= listSize) {									
-					// add to list	
-					list.add(copy);
-				}
-				
+					
 				// set the value of our element
-				setValue(copy, expression, currentVal);		
+				setValue(listElement, expression, currentVal);		
 				
 				currentVal += step;
 				i++;
 	    	}
+    	}
+    	
+    	// if the old list was longer than the new one
+    	// we need to remove the last elements
+    	for (int k=oldListSize-1; k >= i ; k--) {
+    		GeoElement listElement = list.get(k);
+    		list.remove(k); // remove from list
+    		listElement.setParentAlgorithm(null);
+    		listElement.doRemove();    		
     	}
 		
     	/*
@@ -241,8 +239,8 @@ public class AlgoSequence extends AlgoElement {
 		{
 			var.setValue(currentVal);
 			if (algoExp != null) algoExp.update();
-			GeoElement copy = list.get(i);
-			setValue(copy, expression, currentVal);	   			    		
+			GeoElement listElement = list.get(i);
+			setValue(listElement, expression, currentVal);	   			    		
 			
 			currentVal += step;
 			i++;

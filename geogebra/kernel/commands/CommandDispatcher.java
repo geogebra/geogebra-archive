@@ -190,6 +190,9 @@ public class CommandDispatcher {
     	cmdTable.put("Div", new CmdDiv(kernel));
     	cmdTable.put("Min", new CmdMin(kernel));
     	cmdTable.put("Max", new CmdMax(kernel));
+    	cmdTable.put("Element", new CmdElement(kernel));
+    	cmdTable.put("Iteration", new CmdIteration(kernel));
+    	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	
     	cmdTable.put("Name", new CmdName(kernel));    	
     }

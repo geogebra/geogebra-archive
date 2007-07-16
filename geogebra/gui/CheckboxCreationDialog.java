@@ -42,7 +42,7 @@ import javax.swing.text.JTextComponent;
  * Dialog to create a GeoBoolean object (checkbox) that determines the
  * visibility of a list of objects.
  */
-public class BooleanCheckboxCreationDialog extends JDialog 
+public class CheckboxCreationDialog extends JDialog 
 implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	
 	private static final long serialVersionUID = 1L;
@@ -60,7 +60,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public BooleanCheckboxCreationDialog(Application app, Point location, GeoBoolean geoBoolean) {	
+	public CheckboxCreationDialog(Application app, Point location, GeoBoolean geoBoolean) {	
 		super(app.getFrame(), false);
 		this.app = app;
 		this.location = location;
@@ -97,7 +97,6 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 					GeoElement geo = (GeoElement) ob;
 					if (geo.isEuclidianShowable()) {
 						super.addElement(geo);						
-						comboModel.removeElement(geo);
 					}
 				}	
 			}

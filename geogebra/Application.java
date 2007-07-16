@@ -24,7 +24,7 @@ import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.AngleInputDialog;
-import geogebra.gui.BooleanCheckboxCreationDialog;
+import geogebra.gui.CheckboxCreationDialog;
 import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.ConstructionProtocolNavigation;
@@ -109,7 +109,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "12. July 2007";
+    public static final String buildDate = "16. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1091,12 +1091,14 @@ public class Application implements	KeyEventDispatcher {
          while (it.hasNext()) {            
              String internal = (String) it.next();
              //System.out.println(internal);
-             String local = rbcommand.getString((String) internal);
-             if (!internal.endsWith("Syntax") && 
-             	!internal.equals("Command") ) {
-             	// case is ignored in translating local command names to internal names! 
-                 translateCommandTable.put(local.toLowerCase(), internal);                
-                 commandDict.addEntry(local);
+             if (!internal.endsWith("Syntax") && !internal.equals("Command") ) {
+            	 String local = rbcommand.getString((String) internal);
+            	 if (local != null) {
+            		 local = local.trim();
+	             	 // case is ignored in translating local command names to internal names! 
+	                 translateCommandTable.put(local.toLowerCase(), internal);                
+	                 commandDict.addEntry(local);
+            	 }
              }
          }   
          
@@ -1626,7 +1628,7 @@ public class Application implements	KeyEventDispatcher {
      * Creates a new text at given startPoint
      */   
 	  public void showBooleanCheckboxCreationDialog(Point loc, GeoBoolean bool) {
-		  BooleanCheckboxCreationDialog d = new BooleanCheckboxCreationDialog(this, loc, bool);		   
+		  CheckboxCreationDialog d = new CheckboxCreationDialog(this, loc, bool);		   
 		  d.setVisible(true);
 	  }    
     

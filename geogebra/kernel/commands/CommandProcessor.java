@@ -26,6 +26,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -838,7 +839,9 @@ final public GeoElement[] process(Command c) throws MyError {
 }
 
 /*
- * Length[ <GeoVector> ] Length[ <GeoPoint> ]
+ * Length[ <GeoVector> ] 
+ * Length[ <GeoPoint> ]
+ * Length[ <GeoList> ] 
  * Victor Franco 18-04-2007: add Length[ <Function>, <Number>, <Number> ]
  * 							 add Length[ <Function>, <Point>, <Point> ]
  * 							 add Length[ <Curve>, <Number>, <Number> ]
@@ -858,15 +861,20 @@ final public GeoElement[] process(Command c) throws MyError {
     switch (n) {
         case 1 :
             arg = resArgs(c);
-            if (ok[0] = (arg[0] .isGeoVector() ||
-            		     arg[0] .isGeoPoint())) {
+            if (arg[0].isGeoVector() || arg[0].isGeoPoint()) {
                 GeoElement[] ret =
                     { kernel.Length(c.getLabel(), (GeoVec3D) arg[0])};
                 return ret;
-            } else {
-                if (!ok[0])
-                    throw argErr(app, "Length", arg[0]);
+            } 
+            else if (arg[0].isGeoList()) {
+            	GeoElement[] ret =
+                	{ kernel.Length(c.getLabel(), (GeoList) arg[0])};
+            	return ret;
             }
+            else {
+                throw argErr(app, c.getName(), arg[0]);
+            }
+            
 //          Victor Franco 18-04-2007
         case 3 :
             arg = resArgs(c);

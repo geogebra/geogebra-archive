@@ -75,7 +75,10 @@ public class AlgebraController
 		// we open the rename dialog when a letter is typed
 		
 		char ch = event.getKeyChar();
-		if (!Character.isLetter(ch)) return;		
+		if (!Character.isLetter(ch) || 
+			 event.isMetaDown() ||
+			 event.isAltDown() ||
+			 event.isControlDown()) return;		
 		
 		GeoElement geo;					
 		if (app.selectedGeosSize() == 1) {

@@ -1672,12 +1672,69 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Min[list]
+	 */
+	final public GeoNumeric Min(String label, GeoList list) {
+		AlgoListMin algo = new AlgoListMin(cons, label, list);
+		GeoNumeric num = algo.getMin();
+		return num;
+	}
+	
+	/** 
 	 * Max[a, b]
 	 */
 	final public GeoNumeric Max(String label, NumberValue a, NumberValue b) {
 		AlgoMax algo = new AlgoMax(cons, label, a, b);
 		GeoNumeric num = algo.getResult();
 		return num;
+	}
+	
+	/** 
+	 * Max[list]
+	 */
+	final public GeoNumeric Max(String label, GeoList list) {
+		AlgoListMax algo = new AlgoListMax(cons, label, list);
+		GeoNumeric num = algo.getMax();
+		return num;
+	}
+	
+	/** 
+	 * Iteration[ f(x), x0, n ] 
+	 */
+	final public GeoNumeric Iteration(String label, GeoFunction f, NumberValue start,
+			NumberValue n) {
+		AlgoIteration algo = new AlgoIteration(cons, label, f, start, n);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * IterationList[ f(x), x0, n ] 
+	 */
+	final public GeoList IterationList(String label, GeoFunction f, NumberValue start,
+			NumberValue n) {
+		// TODO: implement IterationList
+		return null;
+//		AlgoIterationList algo = new AlgoIterationList(cons, label, f, start, n);
+//		GeoList list = algo.getResult();
+//		return list;		
+	}
+	
+	/** 
+	 * Element[list, number]
+	 */
+	final public GeoElement Element(String label, GeoList list, NumberValue n) {
+		AlgoListElement algo = new AlgoListElement(cons, label, list, n);
+		GeoElement geo = algo.getElement();
+		return geo;
+	}
+	
+	/** 
+	 * Length[list]
+	 */
+	final public GeoNumeric Length(String label, GeoList list) {
+		AlgoListLength algo = new AlgoListLength(cons, label, list);
+		return algo.getLength();
 	}
 	
 	// PhilippWeissenbacher 2007-04-10

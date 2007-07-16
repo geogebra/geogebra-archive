@@ -387,6 +387,7 @@ public class GeoContextMenu extends JPopupMenu {
 	            // trace
 	            if (geo.isTraceable()) {            	
 	                cbItem = new JCheckBoxMenuItem( app.getPlain("TraceOn"));
+	                cbItem.setIcon(app.getEmptyIcon());
 	                cbItem.setSelected(((Traceable) geo).getTrace());
 	                cbItem.addActionListener(new ActionListener() {
 	                	public void actionPerformed(ActionEvent e) {

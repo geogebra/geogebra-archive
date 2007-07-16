@@ -28,15 +28,15 @@ import java.util.ArrayList;
 
 
 /**
- *
+ * Draw a list of objects
  * @author  Markus Hohenwarter
  * @version 
  */
 public final class DrawList extends Drawable {
 	 	
 	private GeoList geoList;	
-	private ArrayList listItems = new ArrayList();
 	private DrawableList drawables = new DrawableList();
+	private boolean isVisible;
    
     public DrawList(EuclidianView view, GeoList geoList) {      
     	this.view = view;          
@@ -46,60 +46,41 @@ public final class DrawList extends Drawable {
         update();
     }
     
-    final public void update() {               
-    	if (geoList.size() == listItems.size()) 
-    		updateDrawables();
-    	else    	
-    		buildNewLists();    	
+    final public void update() {
+    	isVisible = geoList.isVisible();
+    	if (!isVisible) return;
+    	
+    	updateDrawables();       
     }
     
-    private void updateDrawables() {
-    	DrawableIterator it = drawables.getIterator();
-    	while (it.hasNext()) {
-    		((Drawable) it.next()).update();    			    		
-    	}           	
-    }
-    
-    private void buildNewLists() {
-    	// the size has changed     	
-    	// we need to remove all old GeoElements from view
-    	// and add all new ones  
-    	int oldSize = listItems.size();
-    	for (int i=0; i < oldSize; i++ ) {
-    		view.remove((GeoElement) listItems.get(i));
-    	}    	
-    	
-    	// build new lists
-    	listItems.clear();
-    	drawables.clear();
-    	
+    private void updateDrawables() {    	          	  
+    	// go through list elements and create and/or update drawables
     	int size = geoList.size();
-    	for (int i=0; i < size; i++ ) {
-    		// add all list itmes of geolist to our local list
-    		GeoElement geo = (GeoElement) geoList.get(i);
-    		listItems.add(geo);
+
+    	// build new drawable list
+    	drawables.clear();    
+    	for (int i=0; i < size; i++) {    		
+    		GeoElement listElement = geoList.get(i);
+
+    		// try to get existing drawable for list element
+    		Drawable d = view.getDrawable(listElement);
+    		if (d == null) {    			
+    			// create a new drawable for geo
+    			d = view.createDrawable(listElement);    			
+    		}    
     		
-    		// create drawable    		
-    		// check if there is already a drawable for geo
-    		Drawable d = view.getDrawable(geo);
-    		if (d != null) {
-    			// remember existing drawable
+    		// add drawable to list
+    		if (d != null) {        			
     			drawables.add(d);
-    		} else {
-    			// try to create a new drawable for geo
-    			d = view.createDrawable(geo);
-    			if (d != null) { 
-            		// new drawable was created
-        			//d.setGeoElement(geoList);        			
-        			drawables.add(d);
-    			}
-    		}    			
+    			d.update();
+			}
     	}    
     }
 
     final public void draw(Graphics2D g2) {   
-       // nothing to do: all list items have been added
-       // in update() 
+    	if (isVisible) {
+    		drawables.drawAll(g2);
+    	}
     }
     
     /**

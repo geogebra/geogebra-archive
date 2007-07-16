@@ -20,7 +20,7 @@ package geogebra.euclidian;
 
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
-import geogebra.gui.BooleanCheckboxCreationDialog;
+import geogebra.gui.CheckboxCreationDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;

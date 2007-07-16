@@ -459,6 +459,7 @@ public abstract class GeoElement
 		algebraVisible = geo.algebraVisible;	
 		labelOffsetX = geo.labelOffsetX;
 		labelOffsetY = geo.labelOffsetY;	
+		caption = geo.caption;
 		
 		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());

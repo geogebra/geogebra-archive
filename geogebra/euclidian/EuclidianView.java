@@ -424,6 +424,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	private DrawableList drawPolygonList = new DrawableList();
 
 	private DrawableList drawNumericList = new DrawableList();
+	
+	private DrawableList drawListList = new DrawableList();
 
 	// on add: change resetLists()
 
@@ -575,6 +577,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		drawPolygonList.clear();
 		drawNumericList.clear();
 		drawBooleanList.clear();
+		drawListList.clear();
 
 		bgImageList.clear();
 
@@ -1846,6 +1849,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (previewDrawable != null) {
 			previewDrawable.drawPreview(g2);
 		}
+		
+		// draw lists of objects
+		drawListList.drawAll(g2);
 
 		// draw polygons
 		drawPolygonList.drawAll(g2);
@@ -2193,8 +2199,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			return;
 
 		d = createDrawable(geo);
-		if (d != null)
-			repaint();
+		if (d != null) {
+			addToDrawableLists(d);
+			repaint();			
+		}
 	}
 
 	/**
@@ -2205,40 +2213,33 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_BOOLEAN:
-			d = new DrawBoolean(this, (GeoBoolean) geo);
-			drawBooleanList.add(d);
+			d = new DrawBoolean(this, (GeoBoolean) geo);			
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:
 			d = new DrawPoint(this, (GeoPoint) geo);
-			drawPointList.add(d);
 			break;					
 
 		case GeoElement.GEO_CLASS_SEGMENT:
 			d = new DrawSegment(this, (GeoSegment) geo);
-			drawSegmentList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_RAY:
 			d = new DrawRay(this, (GeoRay) geo);
-			drawSegmentList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LINE:
 			d = new DrawLine(this, (GeoLine) geo);
-			drawLineList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_POLYGON:
 			d = new DrawPolygon(this, (GeoPolygon) geo);
-			drawPolygonList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:
 			if (geo.isIndependent()) {
 				// independent number may be shown as slider
 				d = new DrawSlider(this, (GeoNumeric) geo);
-				drawNumericList.add(d);
 			} else {
 				d = new DrawAngle(this, (GeoAngle) geo);
 				if (geo.isDrawable()) {
@@ -2249,8 +2250,6 @@ public final class EuclidianView extends JPanel implements View, Printable,
 								.getObjectColor();
 						geo.setObjColor(col);
 					}
-
-					drawNumericList.add(d);
 				}
 			}
 			break;
@@ -2283,65 +2282,148 @@ public final class EuclidianView extends JPanel implements View, Printable,
 								.getObjectColor();
 						geo.setObjColor(col);
 					}
-				}
-				drawNumericList.add(d);
+				}			
 			}
 			break;
 
 		case GeoElement.GEO_CLASS_VECTOR:
 			d = new DrawVector(this, (GeoVector) geo);
-			drawVectorList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CONICPART:
 			d = new DrawConicPart(this, (GeoConicPart) geo);
-			drawConicList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CONIC:
 			d = new DrawConic(this, (GeoConic) geo);
-			drawConicList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_FUNCTION:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 			d = new DrawParametricCurve(this, (ParametricCurve) geo);
-			drawFunctionList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_TEXT:
 			d = new DrawText(this, (GeoText) geo);
-			drawTextList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_IMAGE:
 			d = new DrawImage(this, (GeoImage) geo);
+			break;
+
+		case GeoElement.GEO_CLASS_LOCUS:
+			d = new DrawLocus(this, (GeoLocus) geo);
+			break;
+
+		case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
+			d = new DrawParametricCurve(this, (GeoCurveCartesian) geo);
+			break;
+
+		case GeoElement.GEO_CLASS_LIST:
+			d = new DrawList(this, (GeoList) geo);
+			break;
+		}
+		
+		if (d != null) {			
+			DrawableMap.put(geo, d);
+		}
+
+		return d;
+	}
+	
+	/**
+	 * adds a GeoElement to this view
+	 */
+	final private void addToDrawableLists(Drawable d) {
+		if (d == null) return;
+		
+		GeoElement geo = d.getGeoElement();
+
+		switch (geo.getGeoClassType()) {
+		case GeoElement.GEO_CLASS_BOOLEAN:			
+			drawBooleanList.add(d);
+			break;
+		
+		case GeoElement.GEO_CLASS_POINT:
+			drawPointList.add(d);
+			break;					
+
+		case GeoElement.GEO_CLASS_SEGMENT:
+			drawSegmentList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_RAY:
+			drawSegmentList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_LINE:
+			drawLineList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_POLYGON:
+			drawPolygonList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_ANGLE:
+			if (geo.isIndependent()) {				
+				drawNumericList.add(d);
+			} else {				
+				if (geo.isDrawable()) {					
+					drawNumericList.add(d);
+				} 
+				else 
+					d = null;
+			}
+			break;
+
+		case GeoElement.GEO_CLASS_NUMERIC:			
+			drawNumericList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_VECTOR:			
+			drawVectorList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CONICPART:
+			drawConicList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CONIC:
+			drawConicList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_FUNCTION:
+		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
+			drawFunctionList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_TEXT:
+			drawTextList.add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_IMAGE:
 			if (!bgImageList.contains(d))
 				drawImageList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LOCUS:
-			d = new DrawLocus(this, (GeoLocus) geo);
 			drawLocusList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-			d = new DrawParametricCurve(this, (GeoCurveCartesian) geo);
 			drawFunctionList.add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LIST:
-			// the geolist adds all its items in its update() method
-			d = new DrawList(this, (GeoList) geo);
+			drawListList.add(d);
 			break;
 		}
 
 		if (d != null) {
-			allDrawableList.add(d);
-			DrawableMap.put(geo, d);
+			allDrawableList.add(d);			
 		}
-		return d;
 	}
+	
 
 	/**
 	 * removes a GeoElement from this view
@@ -2421,7 +2503,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			DrawableMap.remove(geo);
 			repaint();
 		}
-	}
+	}	
 
 	/**
 	 * renames an element
