@@ -315,7 +315,7 @@ ValidExpression buildValidExpression() :
         [LOOKAHEAD(2147483647) l = <LABEL> ":"] ve = parametric()   
      |
         LOOKAHEAD(2147483647)
-        l = <LABEL> ":" ve = equation()     
+        l = <LABEL> ":" ve = equation()           
     |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
@@ -330,7 +330,7 @@ ValidExpression buildValidExpression() :
             if (lhs.isSingleVariable() && !rhs.includesPolynomial()) {                                  
                 // it's an expression
                 ve = rhs;
-                ve.setLabel(((Variable)lhs.evaluate()).getName());                
+                ve.setLabel(((Variable)lhs.evaluate()).getName());                         
             } else {
                 // it's a polynomial
                 ve = new Equation(kernel, lhs, rhs); 

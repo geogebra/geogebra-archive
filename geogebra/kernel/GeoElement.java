@@ -1008,7 +1008,7 @@ public abstract class GeoElement
 			else if (suggestedLabel.length() > 0)
 				return getIndexLabel(suggestedLabel);
 		}
-		
+				
 		// standard case: get default label
 		return getDefaultLabel(); 
 	}

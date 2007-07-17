@@ -383,7 +383,10 @@ final public class EuclidianController implements MouseListener,
 			case 1:			
 				// handle selection click
 				if (mode == EuclidianView.MODE_MOVE) {			
-					handleSelectClick(view.getTopHits(mouseLoc), e.isControlDown());
+					handleSelectClick(view.getTopHits(mouseLoc), 
+							e.isControlDown() || 
+							e.isShiftDown() || 
+							e.isMetaDown());
 				}
 				break;
 			

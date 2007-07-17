@@ -612,9 +612,11 @@ public class AlgebraProcessor {
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
 			return processPointVector(n, eval);	
-		else if (eval.isListValue())
-			return processList(((ListValue) eval).getMyList());	
-		else if (eval.isTextValue())
+		else if (eval.isListValue()) {
+			MyList myList = ((ListValue) eval).getMyList();
+			myList.setLabel(n.getLabel());
+			return processList(myList);	
+		} else if (eval.isTextValue())
 			return processText(n, eval);
 		else if (eval.isBooleanValue())
 			return processBoolean(n, eval);
@@ -644,14 +646,13 @@ public class AlgebraProcessor {
 				ret[0] = new GeoNumeric(cons, label, value);
 		} else {
 			ret[0] = kernel.DependentNumber(label, n, isAngle);
-		}
-		
+		}		
 		
 		return ret;
 	}
 	
 	private GeoElement [] processList(MyList myList) {		
-		String label = myList.getLabel();		
+		String label = myList.getLabel();				
 		
 		// PROCESS list items to generate a list of geoElements		
 		ArrayList geoElements = new ArrayList();

@@ -166,15 +166,17 @@ public class AlgoSequence extends AlgoElement {
 					listElement = list.get(i);					
 				} else {
 					// create new list element and add it to end of list
-					listElement = expression.copyInternal(cons);						
+					listElement = expression.copyInternal(cons);	
+					listElement.setUseVisualDefaults(false);
+					listElement.setParentAlgorithm(this);
+					
 					// visual properties
-					listElement.setVisualStyle(list);	
-					listElement.setLabelVisible(false);
+					listElement.setVisualStyle(list);
 					
 					// add this element to end of list
 					list.add(listElement);
 				}
-					
+				
 				// set the value of our element
 				setValue(listElement, expression, currentVal);		
 				
@@ -241,7 +243,8 @@ public class AlgoSequence extends AlgoElement {
 			if (algoExp != null) algoExp.update();
 			GeoElement listElement = list.get(i);
 			setValue(listElement, expression, currentVal);	   			    		
-			
+			// visual properties
+			listElement.setVisualStyle(list);
 			currentVal += step;
 			i++;
 		}    	      

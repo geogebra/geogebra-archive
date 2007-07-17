@@ -47,7 +47,7 @@ public final class DrawList extends Drawable {
     }
     
     final public void update() {
-    	isVisible = geoList.isVisible();
+    	isVisible = geoList.isEuclidianVisible(); 
     	if (!isVisible) return;
     	
     	updateDrawables();       
@@ -61,7 +61,7 @@ public final class DrawList extends Drawable {
     	drawables.clear();    
     	for (int i=0; i < size; i++) {    		
     		GeoElement listElement = geoList.get(i);
-
+    		    	
     		// try to get existing drawable for list element
     		Drawable d = view.getDrawable(listElement);
     		if (d == null) {    			
