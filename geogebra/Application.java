@@ -28,15 +28,15 @@ import geogebra.gui.CheckboxCreationDialog;
 import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.ConstructionProtocolNavigation;
-import geogebra.gui.DrawingPadPopupMenu;
-import geogebra.gui.EuclidianPropDialog;
+import geogebra.gui.ContextMenuGraphicsWindow;
+import geogebra.gui.PropertiesDialogGraphicsWindow;
 import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.GeoContextMenu;
+import geogebra.gui.ContextMenuGeoElement;
 import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
-import geogebra.gui.PropertiesDialog;
+import geogebra.gui.PropertiesDialogGeoElement;
 import geogebra.gui.RedefineInputHandler;
 import geogebra.gui.RenameInputHandler;
 import geogebra.gui.SliderDialog;
@@ -109,7 +109,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "16. July 2007";
+    public static final String buildDate = "17. July 2007";
 	
     public static final String versionString = "Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -239,7 +239,7 @@ public class Application implements	KeyEventDispatcher {
         showGridAction,
         undoAction, redoAction;
 
-    private PropertiesDialog propDialog;
+    private PropertiesDialogGeoElement propDialog;
     private ConstructionProtocol constProtocol;
     private ConstructionProtocolNavigation constProtocolNavigation;
     private ImageManager imageManager;
@@ -395,7 +395,7 @@ public class Application implements	KeyEventDispatcher {
 	
 	private synchronized void initPropertiesDialog() {
 		if (propDialog == null) {
-			propDialog = new PropertiesDialog(this);
+			propDialog = new PropertiesDialogGeoElement(this);
         }		
 	}
     
@@ -1274,7 +1274,7 @@ public class Application implements	KeyEventDispatcher {
         euclidianView.resetMode();        
 
         // menu for drawing pane context menu
-        DrawingPadPopupMenu popupMenu = new DrawingPadPopupMenu(this, p.x, p.y);
+        ContextMenuGraphicsWindow popupMenu = new ContextMenuGraphicsWindow(this, p.x, p.y);
         popupMenu.show(invoker, p.x, p.y);
     }
 
@@ -1295,7 +1295,7 @@ public class Application implements	KeyEventDispatcher {
         Point screenPos = invoker.getLocationOnScreen();
         screenPos.translate(p.x, p.y);
 
-        GeoContextMenu popupMenu = new GeoContextMenu(this, geo, screenPos);
+        ContextMenuGeoElement popupMenu = new ContextMenuGeoElement(this, geo, screenPos);
         popupMenu.show(invoker, p.x, p.y);
     }    
 
@@ -1329,8 +1329,8 @@ public class Application implements	KeyEventDispatcher {
     public void showDrawingPadPropertiesDialog() {
       if (!letShowPropertiesDialog()) return;
       euclidianView.resetMode();      
-      EuclidianPropDialog euclidianViewDialog = 
-      	new EuclidianPropDialog(this, euclidianView);      
+      PropertiesDialogGraphicsWindow euclidianViewDialog = 
+      	new PropertiesDialogGraphicsWindow(this, euclidianView);      
       euclidianViewDialog.setVisible(true);
     }
     

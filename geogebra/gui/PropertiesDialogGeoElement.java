@@ -106,7 +106,7 @@ import javax.swing.tree.TreeSelectionModel;
 /**
  * @author Markus Hohenwarter
  */
-public class PropertiesDialog
+public class PropertiesDialogGeoElement
 	extends JDialog
 	implements
 		WindowListener,
@@ -137,7 +137,7 @@ public class PropertiesDialog
 	 * Creates new PropertiesDialog.
 	 * @param app: parent frame
 	 */
-	public PropertiesDialog(Application app) {
+	public PropertiesDialogGeoElement(Application app) {
 		super(app.getFrame(), false);
 		this.app = app;
 		kernel = app.getKernel();		
@@ -158,6 +158,12 @@ public class PropertiesDialog
 	 */
 	public void initGUI() {
 		setTitle(app.getPlain("Properties"));
+		geoTree.root.setUserObject(app.getPlain("Objects"));
+		
+		boolean wasShowing = isShowing();
+		if (wasShowing) {
+			setVisible(false);
+		}
 		
 		//	LIST PANEL
 		JPanel listPanel = new JPanel();
@@ -166,7 +172,7 @@ public class PropertiesDialog
 		// JList with GeoElements		
 		
 		JScrollPane listScroller = new JScrollPane(geoTree);
-		geoTree.setMinimumSize(new Dimension(150, 200));
+		//geoTree.setMinimumSize(new Dimension(150, 200));		
 		listPanel.add(listScroller, BorderLayout.CENTER);
 
 		// rename, redefine and delete button
@@ -262,6 +268,10 @@ public class PropertiesDialog
 		
 		// TODO: check keylistener		
 		//Util.addKeyListenerToAll(this, this);	
+				
+		if (wasShowing) {
+			setVisible(true);
+		}
 	}
 	
 	/*
@@ -3420,7 +3430,7 @@ public class PropertiesDialog
 		 */
 		public JTreeGeoElements() {
 			// build default tree structure
-			root = new DefaultMutableTreeNode(app.getPlain("Objects"));			
+			root = new DefaultMutableTreeNode(app.getPlain("Objects"));					
 
 			// create model from root node
 			treeModel = new DefaultTreeModel(root);				
@@ -3442,7 +3452,7 @@ public class PropertiesDialog
 			
 			addMouseMotionListener(this);
 			addMouseListener(this);
-		}
+		}				
 		
 		protected void setExpandedState(TreePath path, boolean state) {
             // Ignore all collapse requests of root        	
@@ -3799,11 +3809,11 @@ class SliderPanel
 	private JComboBox coSliderHorizontal;
 	
 	private Application app;
-	private PropertiesDialog.PropertiesPanel propPanel;
+	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 	private AnimationStepPanel stepPanel;
 	private Kernel kernel;
 
-	public SliderPanel(Application app, PropertiesDialog.PropertiesPanel propPanel) {
+	public SliderPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
 		this.app = app;
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
@@ -3910,7 +3920,7 @@ class SliderPanel
 
 		// set values
 		int oldDigits = kernel.getMaximumFractionDigits();
-		kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
+		kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
 			if (onlyAngles)
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());
@@ -4107,7 +4117,7 @@ class AnimationStepPanel
 
 		// set trace visible checkbox
 		int oldDigits = kernel.getMaximumFractionDigits();
-		kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
+		kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalStep)
 			if (onlyAngles)
 				tfAnimStep.setText(
@@ -4181,9 +4191,9 @@ class ShowConditionPanel
 	private JTextField tfCondition;
 	
 	private Kernel kernel;
-	private PropertiesDialog.PropertiesPanel propPanel;
+	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 
-	public ShowConditionPanel(Application app, PropertiesDialog.PropertiesPanel propPanel) {
+	public ShowConditionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
 		

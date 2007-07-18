@@ -35,7 +35,7 @@ import javax.swing.JMenuItem;
  * @author  markus
  * @version 
  */
-public class DrawingPadPopupMenu extends GeoContextMenu
+public class ContextMenuGraphicsWindow extends ContextMenuGeoElement
 implements ActionListener {
     
     /**
@@ -56,7 +56,7 @@ implements ActionListener {
     private ImageIcon iconZoom;
 
     /** Creates new ZoomMenu */
-    public DrawingPadPopupMenu(Application app, double px, double py) {  
+    public ContextMenuGraphicsWindow(Application app, double px, double py) {  
         super(app);      
         
         iconZoom      = app.getImageIcon("zoom16.gif");

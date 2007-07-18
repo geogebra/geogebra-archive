@@ -2770,12 +2770,19 @@ final public GeoElement[] process(Command c) throws MyError {
             	Rotateable p = (Rotateable) arg[0];
                 NumberValue phi = (NumberValue) arg[1];
                 GeoElement geo = p.toGeoElement();
-                if (label == null && geo.isIndependent()) {
+                // if we are not in a nested command (suppress labels)
+                // and no label is given and the input object is independent
+                // we change the input object
+                if (!cons.isSuppressLabelsActive() &&                		
+                	label == null && geo.isIndependent()) 
+                {                	
                         p.rotate(phi);
                         geo.updateRepaint();
                         ret[0] = geo;
-                } else {
-                    ret = kernel.Rotate(label, p, phi);
+                } 
+                // otherwise we create a new object
+                else {                	
+                    ret = kernel.Rotate(label, p, phi);           
                 }
                 return ret;
             }             

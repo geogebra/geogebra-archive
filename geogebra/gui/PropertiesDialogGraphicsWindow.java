@@ -44,7 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-public class EuclidianPropDialog extends JDialog 
+public class PropertiesDialogGraphicsWindow extends JDialog 
 implements ActionListener, FocusListener, 
 ItemListener, WindowListener {
 	
@@ -74,7 +74,7 @@ ItemListener, WindowListener {
 	 * Creates a new dialog for the properties of the euclidian view.
 	 * @param app: parent frame
 	 */
-	public EuclidianPropDialog(Application app, EuclidianView view) {
+	public PropertiesDialogGraphicsWindow(Application app, EuclidianView view) {
 		super(app.getFrame(), true);
 		this.app = app;		
 		this.view = view;

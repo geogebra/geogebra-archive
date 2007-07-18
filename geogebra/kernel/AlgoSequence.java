@@ -36,11 +36,11 @@ public class AlgoSequence extends AlgoElement {
 	private GeoNumeric var; // input: local variable
 	private NumberValue  var_from, var_to, var_step;
     private GeoList list; // output
-     
-    private AlgoElement algoExp; // parent algo of expression 
+        
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsGeoFunction, isEmpty;
     private Function last_function;
+   
    
     /**
      * Creates a new algorithm to create a sequence of objects that form a list.
@@ -60,11 +60,16 @@ public class AlgoSequence extends AlgoElement {
         this.var = var;
         this.var_from = var_from;
         this.var_to = var_to;
-        this.var_step = var_step;      
+        this.var_step = var_step;              
+    	        
+        // TODO: remove
+    	System.out.println("expression: " + expression);
+    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
+    	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));
         
-    	// parent algorithm of expression;
-    	algoExp = expression.getParentAlgorithm();
-    	expIsGeoFunction = expression.isGeoFunction();    	
+    	System.out.println("  variable: " + var);
+    	
+    	expIsGeoFunction = expression.isGeoFunction();    	      
     	
     	list = new GeoList(cons);        
         setInputOutput(); // for AlgoElement
@@ -92,6 +97,11 @@ public class AlgoSequence extends AlgoElement {
     	output[0] = list;
            
         setDependencies(); // done by AlgoElement
+        
+        // TODO: check
+        // remove this algorithm so we can updateCascade()
+        // the variable in setValue()
+        var.removeAlgorithm(this);
     }
     
     /**
@@ -156,9 +166,6 @@ public class AlgoSequence extends AlgoElement {
 			while ((step > 0 && currentVal <= to) || 
 				   (step < 0 && currentVal >= to)) 
 			{
-				var.setValue(currentVal);
-				if (algoExp != null) algoExp.update();
-				
 				// and only add new objects
 				GeoElement listElement;
 				if (i < oldListSize) {	
@@ -178,7 +185,7 @@ public class AlgoSequence extends AlgoElement {
 				}
 				
 				// set the value of our element
-				setValue(listElement, expression, currentVal);		
+				setValue(listElement, currentVal);		
 				
 				currentVal += step;
 				i++;
@@ -238,11 +245,9 @@ public class AlgoSequence extends AlgoElement {
     	
 		while ((step > 0 && currentVal <= to) || 
 			   (step < 0 && currentVal >= to)) 
-		{
-			var.setValue(currentVal);
-			if (algoExp != null) algoExp.update();
+		{			
 			GeoElement listElement = list.get(i);
-			setValue(listElement, expression, currentVal);	   			    		
+			setValue(listElement, currentVal);	   			    		
 			// visual properties
 			listElement.setVisualStyle(list);
 			currentVal += step;
@@ -253,8 +258,8 @@ public class AlgoSequence extends AlgoElement {
     /**
      * Sets copy to the current value of orig using the current variable value.
      */
-    private void setValue(GeoElement copy, GeoElement orig, double varVal) {
-		if (expIsGeoFunction) {
+    private void setValue(GeoElement copy, double varVal) {  	
+    	if (expIsGeoFunction) {
 	    	// function's point to the local variable var
 			// so we have to replace every occurance of var
 			// by the current value of var
@@ -263,7 +268,16 @@ public class AlgoSequence extends AlgoElement {
 			f.getFunction().getExpression().replace(var, varValue);					
 		} else {
 	    	// all other objects are copies that can be set directly
-			copy.set(orig);
+			// updating the local variable will change expression
+	    	var.setValue(varVal);	    		    	
+	    	var.updateCascade();
+	    	
+	    	// TODO: remove
+	    	System.out.println("set variable: " + var);
+	    	System.out.println("  expression: " + expression);
+	    	
+	    	
+			copy.set(expression);
 		}						
     }   
     

@@ -42,7 +42,7 @@ import javax.swing.JPopupMenu;
  * @author  Markus Hohenwarter
  * @version 
  */
-public class GeoContextMenu extends JPopupMenu {
+public class ContextMenuGeoElement extends JPopupMenu {
     
     /**
 	 * 
@@ -60,13 +60,13 @@ public class GeoContextMenu extends JPopupMenu {
     //private Point location;
     Application app;
 
-    GeoContextMenu(Application app) {
+    ContextMenuGeoElement(Application app) {
         this.app = app;     
         setBackground(bgColor);
     }
 
     /** Creates new MyPopupMenu for GeoElement*/
-    public GeoContextMenu(Application app, GeoElement geo, Point location) {
+    public ContextMenuGeoElement(Application app, GeoElement geo, Point location) {
         this(app);
         this.geo = geo;
         //this.location = location;                               
