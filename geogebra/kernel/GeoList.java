@@ -156,8 +156,7 @@ public class GeoList extends GeoElement implements ListValue {
     
     public void setUndefined() {
     	setDefined(false);
-    }
-        
+    }               
     
     boolean showInEuclidianView() {
         return isDefined();
@@ -184,13 +183,21 @@ public class GeoList extends GeoElement implements ListValue {
     	}
     }       
        
+    /**
+     * Removes geo from this list. Note: geo is not removed
+     * from the construction.
+     */
     public final void remove(GeoElement geo) {
-    	geoList.remove(geo);
+    	geoList.remove(geo);    	
     }
     
+    /**
+     * Removes i-th element from this list. Note: this element is not removed
+     * from the construction.
+     */
     public final void remove(int index) {
     	geoList.remove(index);
-    }
+    }       
     
     /**
      * Returns the element at the specified position in this list.
@@ -229,13 +236,13 @@ public class GeoList extends GeoElement implements ListValue {
        if (lastIndex > -1) {
 	       for (int i=0; i < lastIndex; i++) {
 	    	   GeoElement geo = (GeoElement) geoList.get(i);
-	   		   sbBuildValueString.append(geo.toValueString());
+	    	   sbBuildValueString.append(geo.toDefinedValueString());
 	    	   sbBuildValueString.append(", ");
 	       }
 	       
 	       // last element
 	       GeoElement geo = (GeoElement) geoList.get(lastIndex);
-		   sbBuildValueString.append(geo.toValueString());
+		   sbBuildValueString.append(geo.toDefinedValueString());
        }
 	   
        sbBuildValueString.append(STR_CLOSE);       

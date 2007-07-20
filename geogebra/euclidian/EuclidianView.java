@@ -2496,6 +2496,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				break;
 
 			case GeoElement.GEO_CLASS_LIST:
+				drawListList.remove(d);
 				break;
 			}
 
@@ -2503,7 +2504,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			DrawableMap.remove(geo);
 			repaint();
 		}
-	}	
+	}		
 
 	/**
 	 * renames an element

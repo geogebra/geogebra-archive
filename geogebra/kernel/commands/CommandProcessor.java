@@ -71,12 +71,30 @@ public abstract class CommandProcessor  {
            GeoElement[] result = new GeoElement[arg.length];
            
            for (int i = 0; i < arg.length; ++i) {
-        	   // resolve variables in argument expression
-        	   arg[i].resolveVariables();
+        	   
+        	   ExpressionNode n = arg[i];
+        	   // resolve variables in argument expression        	   
+        	   //n.resolveVariables();
+        	   
+//        	 TODO: remove
+        	   System.out.println("arg " + i + ": " + n + ", leaf: " +
+        			   n.isLeaf() + ", left class: " + n.getLeft().getClass());
+        	   
+        	   /*
+        	   // command is leaf: process command
+	       		if (n.isLeaf() && n.getLeft() instanceof Command) {
+	       			Command innerCommand = (Command) n.getLeft();
+	       			innerCommand.setLabels(n.getLabels());
+	       			result[i] = algProcessor.processCommand(innerCommand, false)[0];
+	       		} else {*/
+	       			n.resolveVariables();
+	       			result[i] = resArg(arg[i])[0];
+	       		//}
+        	   //result[i] = algProcessor.processExpressionNode(arg[i])[0];
         	   
                // resolve i-th argument and get GeoElements
                // use only first resolved argument object for result
-               result[i] = resArg(arg[i])[0];               
+                              
            }
            
            cons.setSuppressLabelCreation(oldMacroMode);
@@ -2691,7 +2709,12 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
             	Translateable p = (Translateable) arg[0];
                 GeoVector v = (GeoVector) arg[1];
                 GeoElement geo = p.toGeoElement();
-                if (label == null && geo.isIndependent()) {
+                // if we are not in a nested command (suppress labels)
+                // and no label is given
+                // we change the input object
+                if (!cons.isSuppressLabelsActive() &&  
+                	label == null) 
+                {
                         p.translate(v);                     
                         geo.updateRepaint();
                         ret[0] = geo;
@@ -2770,6 +2793,7 @@ final public GeoElement[] process(Command c) throws MyError {
             	Rotateable p = (Rotateable) arg[0];
                 NumberValue phi = (NumberValue) arg[1];
                 GeoElement geo = p.toGeoElement();
+                
                 // if we are not in a nested command (suppress labels)
                 // and no label is given and the input object is independent
                 // we change the input object
@@ -2810,7 +2834,13 @@ final public GeoElement[] process(Command c) throws MyError {
                 NumberValue phi = (NumberValue) arg[1];
                 GeoPoint Q = (GeoPoint) arg[2];
                 GeoElement geo = p.toGeoElement();
-                if (label == null && geo.isIndependent()) {
+                
+                // if we are not in a nested command (suppress labels)
+                // and no label is given and the input object is independent
+                // we change the input object
+                if (!cons.isSuppressLabelsActive() &&  
+                	label == null && geo.isIndependent()) 
+                {
                         p.rotate(phi, Q);
                         geo.updateRepaint();
                         ret[0] = geo;
@@ -2870,7 +2900,12 @@ final public GeoElement[] process(Command c) throws MyError {
                 NumberValue phi = (NumberValue) arg[1];
                 GeoPoint Q = (GeoPoint) arg[2];
                 GeoElement geo = p.toGeoElement();
-                if (label == null && geo.isIndependent()) {
+                // if we are not in a nested command (suppress labels)
+                // and no label is given and the input object is independent
+                // we change the input object
+                if (!cons.isSuppressLabelsActive() &&  
+                	label == null && geo.isIndependent()) 
+                {
                         p.dilate(phi, Q);
                         geo.updateRepaint();
                         ret[0] = geo;
@@ -2936,7 +2971,12 @@ final public  GeoElement[] process(Command c) throws MyError {
             	 // mirror at point
             	if (ok[1] = (arg[1] .isGeoPoint())) {	                	
                     GeoPoint Q = (GeoPoint) arg[1];	                    
-                    if (label == null && geo.isIndependent()) {
+                    // if we are not in a nested command (suppress labels)
+                    // and no label is given and the input object is independent
+                    // we change the input object
+                    if (!cons.isSuppressLabelsActive() &&  
+                    	label == null && geo.isIndependent()) 
+                    {
                         p.mirror(Q);
                         geo.updateRepaint();
                         ret[0] = geo;
@@ -2948,7 +2988,12 @@ final public  GeoElement[] process(Command c) throws MyError {
             	 // mirror is line
             	else if (ok[1] = (arg[1] .isGeoLine())) {
                     GeoLine line = (GeoLine) arg[1];
-                    if (label == null && geo.isIndependent()) {
+                    // if we are not in a nested command (suppress labels)
+                    // and no label is given and the input object is independent
+                    // we change the input object
+                    if (!cons.isSuppressLabelsActive() &&  
+                    	label == null && geo.isIndependent()) 
+                    {
 	                    p.mirror(line);
 	                    geo.updateRepaint();
 	                    ret[0] = geo;

@@ -35,6 +35,7 @@ public class AlgoSequence extends AlgoElement {
 	private GeoElement expression; // input expression dependent on var
 	private GeoNumeric var; // input: local variable
 	private NumberValue  var_from, var_to, var_step;
+	private GeoElement var_from_geo, var_to_geo, var_step_geo;
     private GeoList list; // output
         
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
@@ -59,15 +60,17 @@ public class AlgoSequence extends AlgoElement {
         this.expression = expression;
         this.var = var;
         this.var_from = var_from;
+        var_from_geo = var_from.toGeoElement();
         this.var_to = var_to;
-        this.var_step = var_step;              
-    	        
-        // TODO: remove
-    	System.out.println("expression: " + expression);
-    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
-    	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));
-        
-    	System.out.println("  variable: " + var);
+        var_to_geo = var_to.toGeoElement(); 
+        this.var_step = var_step;          
+        if (var_step != null)
+        	var_step_geo = var_step.toGeoElement();
+    	                
+//    	System.out.println("expression: " + expression);
+//    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
+//    	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
+//    	System.out.println("  variable: " + var);
     	
     	expIsGeoFunction = expression.isGeoFunction();    	      
     	
@@ -88,17 +91,16 @@ public class AlgoSequence extends AlgoElement {
         input = new GeoElement[len];
         input[0] = expression;
         input[1] = var;
-        input[2] = var_from.toGeoElement();
-        input[3] = var_to.toGeoElement();
+        input[2] = var_from_geo;
+        input[3] = var_to_geo;
         if (len == 5)
-        	input[4] = var_step.toGeoElement();  
+        	input[4] = var_step_geo;  
           
         output = new GeoElement[1];
     	output[0] = list;
            
         setDependencies(); // done by AlgoElement
         
-        // TODO: check
         // remove this algorithm so we can updateCascade()
         // the variable in setValue()
         var.removeAlgorithm(this);
@@ -126,6 +128,14 @@ public class AlgoSequence extends AlgoElement {
     }      
     
     final void compute() {    	
+    	for (int i=0; i < input.length; i++) {
+    		if (!input[i].isDefined()) {
+    			list.setUndefined();
+    			return;
+    		}
+    	}    	
+    	list.setDefined(true);
+    	
     	// create sequence for expression(var) by changing var according to the given range
     	double from = var_from.getDouble();
     	double to = var_to.getDouble();
@@ -173,12 +183,10 @@ public class AlgoSequence extends AlgoElement {
 					listElement = list.get(i);					
 				} else {
 					// create new list element and add it to end of list
-					listElement = expression.copyInternal(cons);	
-					listElement.setUseVisualDefaults(false);
+					listElement = expression.copyInternal(cons);
 					listElement.setParentAlgorithm(this);
-					
-					// visual properties
-					listElement.setVisualStyle(list);
+					listElement.setConstructionDefaults();
+					listElement.setUseVisualDefaults(false);																							
 					
 					// add this element to end of list
 					list.add(listElement);

@@ -23,6 +23,7 @@ public class InputPanel extends JPanel {
 	private static String [] specialChars = { 	
 		"\u00b0", // degree	
 		"\u00b2",  // exponents ^2 
+		"\u00b3",  // exponents ^3 
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
 		"sqrt(x)",

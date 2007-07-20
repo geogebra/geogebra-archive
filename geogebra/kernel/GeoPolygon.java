@@ -17,7 +17,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -220,6 +219,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		GeoPolygon ret = new GeoPolygon(cons, null); 
 		ret.points = GeoElement.copyPoints(cons, points);		
 		ret.set(this);
+				
 		return ret;		
 	} 		
 	

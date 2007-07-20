@@ -924,7 +924,7 @@ public class Application implements	KeyEventDispatcher {
     /**
      * set language via iso language string
      */
-    public void setLanguage(Locale locale) {    	    
+    public void setLanguage(Locale locale) {    	
     	if (locale == null || 
     		currentLocale.toString().equals(locale.toString())) return;    	             	
         
@@ -981,7 +981,7 @@ public class Application implements	KeyEventDispatcher {
     
     private String getChineseFontName() throws Exception {
         String chinesesample = "\u4e00";
-        if (plainFont.canDisplayUpTo(chinesesample) == -1)
+        if (plainFont != null && plainFont.canDisplayUpTo(chinesesample) == -1)
 			return plainFont.getFontName();
         
         // Determine which fonts support Chinese here ...
@@ -994,7 +994,7 @@ public class Application implements	KeyEventDispatcher {
         throw new Exception("Sorry, there is no font available on your computer\nthat could display Chinese characters.");
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(Locale locale) {    
         // only allow special locales due to some weird server
         // problems with the naming of the property files   
         currentLocale = getClosestSupportedLocale(locale);                     
@@ -1007,7 +1007,9 @@ public class Application implements	KeyEventDispatcher {
                 FONT_NAME = fontName;
                 resetFonts();
             }
-        } catch (Exception e) {
+        }        
+        catch (Exception e) {
+        	e.printStackTrace();
             showError(e.getMessage());
             locale = currentLocale;
         }                   	

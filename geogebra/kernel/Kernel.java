@@ -1713,11 +1713,8 @@ public class Kernel {
 	 */
 	final public GeoList IterationList(String label, GeoFunction f, NumberValue start,
 			NumberValue n) {
-		// TODO: implement IterationList
-		return null;
-//		AlgoIterationList algo = new AlgoIterationList(cons, label, f, start, n);
-//		GeoList list = algo.getResult();
-//		return list;		
+		AlgoIterationList algo = new AlgoIterationList(cons, label, f, start, n);
+		return algo.getResult();				
 	}
 	
 	/** 

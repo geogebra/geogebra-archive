@@ -65,6 +65,22 @@ public class AlgoDependentList extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }    
     
+    /**
+     * Call super.remove() to remove the list.
+     * Then remove all unlabeled input objects (= list elements)
+     */
+    public void remove() {
+    	super.remove();
+    	
+		//  removing unlabeled input
+		for (int i=0; i < input.length; i++) {
+			if (!input[i].isLabelSet()) {				
+				input[i].remove();
+			}
+		}    		
+    		    	 	    
+    }
+    
     public GeoList getGeoList() { 
     	return geoList; 
     }       
