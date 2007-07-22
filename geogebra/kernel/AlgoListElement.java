@@ -73,7 +73,7 @@ public class AlgoListElement extends AlgoElement {
 
     final void compute() {
     	if (!numGeo.isDefined() || !geoList.isDefined()) {
-    		element.setUndefined();
+        	element.setUndefined();
     		return;
     	}
     	

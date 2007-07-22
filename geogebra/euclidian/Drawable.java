@@ -305,4 +305,5 @@ public abstract class Drawable {
 		g2.fill(gp);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
+
 }

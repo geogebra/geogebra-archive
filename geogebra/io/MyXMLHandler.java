@@ -228,10 +228,13 @@ public class MyXMLHandler implements DocHandler {
                                     */
                         }
                         
+                        // init settings
+                        // hide navigation bar for construction steps
+                        app.setShowConstructionProtocolNavigation(false);
+                        
                         // fileFormat dependent settings
                         if (ggbFileFormat < 2.6) {
-                        	kernel.arcusFunctionCreatesAngle = true;
-                        	app.setShowConstructionProtocolNavigation(false);
+                        	kernel.arcusFunctionCreatesAngle = true;                        	
                         }
                         if (ggbFileFormat < 3.0) {
                         	// before V3.0 the kernel had continuity always on

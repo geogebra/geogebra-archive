@@ -12,6 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.Functional;
@@ -108,6 +109,13 @@ GeoDeriveable, ParametricCurve {
 	final public Function getFunction() {
 		return fun;
 	}	
+	
+	final public ExpressionNode getFunctionExpression() {
+		if (fun == null)
+			return null;
+		else 
+			return fun.getExpression();
+	}
 	
 	/**
 	 * Returns the corresponding Function for the given x-value.

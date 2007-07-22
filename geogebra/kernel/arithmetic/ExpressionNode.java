@@ -121,6 +121,9 @@ implements ExpressionValue {
     
     // for leaf mode
     private boolean leaf = false;
+    
+    // local variable (see AlgoSequence)
+    private MyDouble localVar;
         
     /** Creates new ExpressionNode */        
     public ExpressionNode(Kernel kernel, ExpressionValue left, int operation, ExpressionValue right) {  
@@ -256,19 +259,19 @@ implements ExpressionValue {
      * Replaces all ExpressionNodes in tree that are leafs by their leaf
      * objects (of type ExpressionValue).
      */
-    final public void simplifyLeafs() {         
+    final private void simplifyLeafs() {         
         if (left.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) left;
             if (node.leaf) 
-                left = node.evaluate(); // get leaf object
+            	left = node.evaluate();
             else 
                 node.simplifyLeafs();
         }
         
         if (right != null && right.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) right;
-            if (node.leaf) 
-                right = node.evaluate(); // get leaf object
+            if (node.leaf)             	
+            	right = node.evaluate();            	
             else 
                 node.simplifyLeafs();
         }               
@@ -1343,7 +1346,12 @@ implements ExpressionValue {
      *  look for Variable objects in the tree and replace them
      *  by their resolved GeoElement
      */
-    public void resolveVariables() {        
+    public void resolveVariables() {   
+    	doResolveVariables();
+    	simplifyLeafs();
+    }
+    	
+    private void doResolveVariables() {
         // resolve left wing
     	if (left.isVariable()) {
             left = ((Variable) left).resolve();                
@@ -2809,6 +2817,14 @@ implements ExpressionValue {
     final public boolean isExpressionNode() {
         return true;
     }
+
+	public final MyDouble getLocalVar() {
+		return localVar;
+	}
+
+	public final void setLocalVar(MyDouble localVar) {
+		this.localVar = localVar;
+	}
     
 	
 }

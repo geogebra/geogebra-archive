@@ -18,6 +18,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.euclidian.Drawable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
@@ -72,11 +73,11 @@ public class GeoList extends GeoElement implements ListValue {
       
     public GeoElement copy() {
         return new GeoList(this);        
-    } 
+    }         
     
-    public void set(GeoElement geo) {
-        GeoList l = (GeoList) geo;                 
-               
+    public void set(GeoElement geo) {    	
+        GeoList l = (GeoList) geo;              
+        
 		if (l.cons != cons && isAlgoMacroOutput) {
 			// MACRO CASE
 			// this object is an output object of AlgoMacro
@@ -87,14 +88,53 @@ public class GeoList extends GeoElement implements ListValue {
 		else {
 			// STANDARD CASE
 			// copy geoList                
-	        int size = l.geoList.size();
-	        geoList.clear();
-	        geoList.ensureCapacity(size);
-	        for (int i=0; i < size; i++) {
-	        	add((GeoElement) l.geoList.get(i));
-	        }
+	        copyListElements(l);
 		}
+				  
+        isDefined = l.isDefined;
+        elementType = l.elementType;		
     }    
+    
+    private void copyListElements(GeoList otherList) {
+    	int otherListSize = otherList.size();
+        geoList.ensureCapacity(otherListSize);
+        int oldListSize = geoList.size();
+    	
+    	for (int i=0; i < otherListSize; i++) {    		
+    		GeoElement otherListElement = otherList.get(i);
+
+    		//  try to reuse old GeoElement
+    		if (i < oldListSize) {        			
+	    		GeoElement oldGeo = get(i);    	
+	    		// same object type: use old geo
+	    		if (oldGeo.getGeoClassType() == otherListElement.getGeoClassType()) {
+	            	oldGeo.set(otherListElement);
+	            }
+	    		else {
+	    			geoList.set(i, getCopyForList(otherListElement));
+	    		} 		    		    	
+    		} else {
+    			geoList.add(getCopyForList(otherListElement));
+    		}        		
+    	}    
+        	
+    	// remove end of list
+    	for (int i=geoList.size()-1; i >= otherListSize; i--) {      		 
+    		geoList.remove(i);
+    	}
+    }
+
+	private GeoElement getCopyForList(GeoElement geo) {
+		if (geo.isLabelSet()) {
+			// take original element
+			return geo;
+		} else {
+			// create a copy of geo
+			GeoElement ret = geo.copyInternal(cons);
+			ret.setVisualStyle(geo);
+			return ret;
+		}
+	}
     
     public void setVisualStyle(GeoElement geo) {
     	// TODO: think about setVisualStyle() for lists
@@ -109,12 +149,24 @@ public class GeoList extends GeoElement implements ListValue {
     
     public void setObjColor(Color color) {
     	super.setObjColor(color);
-    	
-    	if (geoList == null) return;    	
+    	  	
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
-        	((GeoElement) geoList.get(i)).setObjColor(color);
+        	GeoElement geo = get(i);
+        	if (!geo.isLabelSet())
+        		geo.setObjColor(color);
         }    	    	
+	}
+    
+    public void setEuclidianVisible(boolean visible) {
+    	super.setEuclidianVisible(visible);
+    	 	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+        	GeoElement geo = get(i);
+        	if (!geo.isLabelSet())
+        		geo.setEuclidianVisible(visible);
+        }    	
 	}
     
     /**
@@ -145,8 +197,7 @@ public class GeoList extends GeoElement implements ListValue {
     	return geos;
     }          
         
-    public boolean isDefined() {
-    	//TODO: change
+    public boolean isDefined() {    	
         return isDefined;  
     }
     
@@ -181,7 +232,15 @@ public class GeoList extends GeoElement implements ListValue {
     	else if (elementType != geo.getGeoClassType()) {
     		elementType = ELEMENT_TYPE_MIXED;
     	}
-    }       
+    }      
+    
+    final void set(int i, GeoElement geo) {
+    	geoList.set(i, geo);
+    	
+    	if (elementType != geo.getGeoClassType()) {
+    		elementType = ELEMENT_TYPE_MIXED;
+    	}
+    }
        
     /**
      * Removes geo from this list. Note: geo is not removed

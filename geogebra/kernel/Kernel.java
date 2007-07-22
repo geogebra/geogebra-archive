@@ -127,14 +127,6 @@ public class Kernel {
 		return cons.lookupLabel(label);
 	}
 	
-	public void addLocalVariable(String varname, GeoElement geo) {
-		cons.addLocalVariable(varname, geo);
-    }
-    
-    public void clearLocalVariableTable() {
-   	 	cons.clearLocalVariableTable();
-   	}        		
-	
 	final public GeoAxis getXAxis() {
 		return cons.getXAxis();
 	}

@@ -18,7 +18,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.euclidian;
 
-import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 
@@ -35,9 +34,10 @@ import java.util.ArrayList;
 public final class DrawList extends Drawable {
 	 	
 	private GeoList geoList;	
-	private DrawableList drawables = new DrawableList();
+	private ArrayList drawables = new ArrayList();
 	private boolean isVisible;
-   
+	
+	
     public DrawList(EuclidianView view, GeoList geoList) {      
     	this.view = view;          
         this.geoList = geoList;
@@ -46,40 +46,71 @@ public final class DrawList extends Drawable {
         update();
     }
     
-    final public void update() {
-    	isVisible = geoList.isEuclidianVisible(); 
-    	if (!isVisible) return;
+    final public void update() {    
+    	isVisible = geoList.isEuclidianVisible();
+    	if (!isVisible) return;    	
     	
-    	updateDrawables();       
-    }
-    
-    private void updateDrawables() {    	          	  
     	// go through list elements and create and/or update drawables
     	int size = geoList.size();
-
-    	// build new drawable list
-    	drawables.clear();    
+    	drawables.ensureCapacity(size);
+    	int oldDrawableSize = drawables.size();
+    	
+    	int drawablePos = 0;
     	for (int i=0; i < size; i++) {    		
     		GeoElement listElement = geoList.get(i);
-    		    	
-    		// try to get existing drawable for list element
-    		Drawable d = view.getDrawable(listElement);
-    		if (d == null) {    			
-    			// create a new drawable for geo
-    			d = view.createDrawable(listElement);    			
-    		}    
+    		if (!listElement.isDrawable()) 
+    			continue;
+
+    		Drawable d = null;
+    		boolean inOldDrawableRange = drawablePos < oldDrawableSize;
+    		if (inOldDrawableRange) {
+    			// try to reuse old drawable
+	    		Drawable oldDrawable = (Drawable) drawables.get(drawablePos);
+	    		if (oldDrawable.geo == listElement) {	
+	    			d = oldDrawable;
+	    		} else {
+	    			d = getDrawable(listElement);  			
+	    		}	    		    		    	
+    		} else {
+    			d = getDrawable(listElement); 
+    		}
     		
-    		// add drawable to list
-    		if (d != null) {        			
-    			drawables.add(d);
+    		if (d != null) {
     			d.update();
-			}
+    			if (inOldDrawableRange) {    				
+    				drawables.set(drawablePos, d);
+    			} else {
+    				drawables.add(drawablePos, d);
+    			}
+    			++drawablePos;
+    		}
     	}    
+    	
+    	// remove end of list
+    	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
+    		drawables.remove(i);
+    	}
+    }
+    
+    private Drawable getDrawable(GeoElement listElement) {
+    	Drawable d = view.getDrawable(listElement);
+		if (d == null) {    			
+			// create a new drawable for geo
+			d = view.createDrawable(listElement);   
+		} 
+		return d;
     }
 
     final public void draw(Graphics2D g2) {   
     	if (isVisible) {
-    		drawables.drawAll(g2);
+    		boolean doHighlight = geoList.doHighlighting();
+    		
+    		int size = drawables.size();
+    		for (int i=0; i < size; i++) {     			    			
+    			Drawable d = (Drawable) drawables.get(i);
+    			d.geo.setHighlighted(doHighlight);
+    			d.draw(g2);
+    		}
     	}
     }
     
@@ -87,20 +118,22 @@ public final class DrawList extends Drawable {
      * Returns whether any one of the list items is at the given screen position.
      */
     final public boolean hit(int x, int y) {
-    	DrawableIterator it = drawables.getIterator();
-    	while (it.hasNext()) {
-    		if (((Drawable) it.next()).hit(x, y))
+   		int size = drawables.size();
+		for (int i=0; i < size; i++) {    		
+			Drawable d = (Drawable) drawables.get(i);
+    		if (d.hit(x, y))
     			return true;    			
     	}       
     	return false;
     }
     
     final public boolean isInside(Rectangle rect) {
-    	DrawableIterator it = drawables.getIterator();
-    	while (it.hasNext()) {
-    		if (!((Drawable) it.next()).isInside(rect))
-    			return false;    			
-    	}       
+   		int size = drawables.size();
+		for (int i=0; i < size; i++) {    		
+			Drawable d = (Drawable) drawables.get(i);
+			if (!d.isInside(rect))
+    			return false;   			
+    	}        		
     	return true;
     }
     

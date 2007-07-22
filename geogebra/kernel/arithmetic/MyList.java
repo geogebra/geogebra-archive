@@ -58,7 +58,8 @@ public class MyList extends ValidExpression implements ListValue {
 
 	public void resolveVariables() {
 		for (int i = 0; i < listElements.size(); i++) {
-			((ExpressionNode) listElements.get(i)).resolveVariables();
+			ExpressionNode en = (ExpressionNode) listElements.get(i);
+			en.resolveVariables();
 		}
 	}
 

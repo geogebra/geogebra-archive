@@ -70,31 +70,13 @@ public abstract class CommandProcessor  {
            ExpressionNode[] arg = c.getArguments();
            GeoElement[] result = new GeoElement[arg.length];
            
-           for (int i = 0; i < arg.length; ++i) {
-        	   
-        	   ExpressionNode n = arg[i];
+           for (int i = 0; i < arg.length; ++i) {        	           	   
         	   // resolve variables in argument expression        	   
-        	   //n.resolveVariables();
-        	   
-//        	 TODO: remove
-        	   System.out.println("arg " + i + ": " + n + ", leaf: " +
-        			   n.isLeaf() + ", left class: " + n.getLeft().getClass());
-        	   
-        	   /*
-        	   // command is leaf: process command
-	       		if (n.isLeaf() && n.getLeft() instanceof Command) {
-	       			Command innerCommand = (Command) n.getLeft();
-	       			innerCommand.setLabels(n.getLabels());
-	       			result[i] = algProcessor.processCommand(innerCommand, false)[0];
-	       		} else {*/
-	       			n.resolveVariables();
-	       			result[i] = resArg(arg[i])[0];
-	       		//}
-        	   //result[i] = algProcessor.processExpressionNode(arg[i])[0];
-        	   
+        	   arg[i].resolveVariables();
+    
                // resolve i-th argument and get GeoElements
                // use only first resolved argument object for result
-                              
+        	   result[i] = resArg(arg[i])[0];     
            }
            
            cons.setSuppressLabelCreation(oldMacroMode);
@@ -124,16 +106,16 @@ public abstract class CommandProcessor  {
     			throw argErr(app, c.getLabel(), c.getArgument(varPos));
     		}
     		
-    		// create local variable
+    		// add local variable name to construction 
     	    GeoNumeric num = new GeoNumeric(cons);
-    	    kernel.addLocalVariable(localVarName, num);            
+    	    num.setValue(1);
+    	    cons.addLocalVariable(localVarName, num);            
     	    
     	    // resolve all command arguments including the local variable just created
     	    GeoElement [] arg = resArgs(c);                                   
     	    
-    	    // clear local var table again
-    	    kernel.clearLocalVariableTable();
-    	    
+    	    // remove local variable name from kernel again
+    	    cons.removeLocalVariable(localVarName);     	    
     	    return arg;
     	}
 

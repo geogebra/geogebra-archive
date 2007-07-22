@@ -1848,7 +1848,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 
 		if (previewDrawable != null) {
 			previewDrawable.drawPreview(g2);
-		}
+		}		
 		
 		// draw lists of objects
 		drawListList.drawAll(g2);
@@ -1868,7 +1868,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		// draw lines
 		drawLineList.drawAll(g2);
 
-		// draw lines
+		// draw segments
 		drawSegmentList.drawAll(g2);
 
 		// draw vectors
@@ -2329,7 +2329,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		return d;
-	}
+	}	
 	
 	/**
 	 * adds a GeoElement to this view

@@ -456,7 +456,7 @@ NormalVectorForm normalvectorform():
       f = ANDterm();
                  ret = new ExpressionNode(kernel, ret, ExpressionNode.OR, f);
     }
-        ret.simplifyLeafs();
+        //ret.simplifyLeafs();
         {if (true) return ret;}
     throw new Error("Missing return statement in function");
   }
@@ -594,7 +594,7 @@ NormalVectorForm normalvectorform():
             else
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.MINUS, f);
     }
-        ret.simplifyLeafs();
+        //ret.simplifyLeafs();
         {if (true) return ret;}
     throw new Error("Missing return statement in function");
   }

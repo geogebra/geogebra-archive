@@ -593,7 +593,7 @@ ExpressionNode expressionnode():
         }
     )*
     { 
-    	ret.simplifyLeafs();
+    	//ret.simplifyLeafs();
     	return ret; 
     }
 }
@@ -698,7 +698,7 @@ ExpressionNode plusminusnode():
         }
     )*
     { 
-    	ret.simplifyLeafs();
+    	//ret.simplifyLeafs();
     	return ret; 
     }
 }

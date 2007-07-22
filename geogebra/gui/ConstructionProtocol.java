@@ -397,7 +397,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         
         JMenu mHelp = new JMenu(app.getMenu("Help"));
         JMenuItem mi = new JMenuItem(app.getMenu("FastHelp"), 
-                                                app.getImageIcon("help.gif"));                                              
+                                                app.getImageIcon("help.png"));                                              
         ActionListener lstHelp = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 app.showHelp("ConstructionProtocolHelp"); 

@@ -23,9 +23,6 @@ import java.util.HashSet;
  */
 final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	// GeoSegment is constructed by AlgoJoinPointsSegment 
 	//private GeoPoint A, B;
@@ -70,7 +67,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 
 	/**
 	 * the copy of a segment is a number (!) with
-	 *  its value set to the segments current length
+	 * its value set to the segments current length
 	 *
 	public GeoElement copy() {
 		return new GeoNumeric(cons, getLength());   		 

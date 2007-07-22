@@ -86,12 +86,7 @@ implements ExpressionValue {
         return ret;                
     }
     
-    public void resolveVariables() {
-        for (int i=0; i < args.size(); i++) {        
-            ((ExpressionNode) args.get(i)).resolveVariables();        
-        }
-    }
-    
+  
     public ExpressionNode getArgument(int i) {
         return (ExpressionNode) args.get(i);
     }
@@ -143,6 +138,16 @@ implements ExpressionValue {
         
         return evalGeo;
     }
+    
+    public void resolveVariables() {
+    	// nothing to do here: argument variables are resolved
+    	// while command processing (see evaluate())
+    	
+//        for (int i=0; i < args.size(); i++) {        
+//            ((ExpressionNode) args.get(i)).resolveVariables();        
+//        }
+    }
+    
 
     public boolean isConstant() {
         return evaluate().isConstant();

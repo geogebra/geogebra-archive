@@ -598,9 +598,8 @@ public class AlgebraProcessor {
 			return cmdDispatcher.processCommand(c, true);
 		}											
 		
-// ELSE:  resolve variables and evaluate expressionnode		
+		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
-		
 		ExpressionValue eval = n.evaluate();		
 
 		// leaf: just return the existing object

@@ -1532,11 +1532,11 @@ public abstract class GeoElement
 	 * for a dependent geo.
 	 * @return
 	 */	
-	public String getLabelOrDefinitionDescription() {
+	public String getLabelOrCommandDescription() {
 		if (algoParent == null)
 			return getLabel();
 		else
-			return algoParent.toString();    	
+			return algoParent.getCommandDescription();	
     }
 
 	public String getDefinitionDescription() {
@@ -2155,7 +2155,7 @@ public abstract class GeoElement
 		if (condShowObject != null) {
 			StringBuffer sb = new StringBuffer();		
 			sb.append("\t<condition showObject=\"");		
-			sb.append(Util.encodeXML(condShowObject.getLabelOrDefinitionDescription()));
+			sb.append(Util.encodeXML(condShowObject.getLabelOrCommandDescription()));
 			sb.append("\"/>\n");
 			return sb.toString();
 		}

@@ -115,6 +115,7 @@ public class Construction {
     	yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
     	
     	geoTable = new HashMap(200);
+    	localVariableTable = new HashMap();
     	initGeoTable();   
     }
     
@@ -386,6 +387,7 @@ public class Construction {
         geoSet.clear();
         geoSetLabelOrder.clear();
         geoSetsTypeMap.clear();
+        localVariableTable.clear();
         initGeoTable();
         
         // reinit construction step
@@ -586,15 +588,19 @@ public class Construction {
        */
     }
     	
-    public void addLocalVariable(String varname, GeoElement geo) {
-    	 if (localVariableTable == null)
-    		 localVariableTable = new HashMap();
+    final public void addLocalVariable(String varname, GeoElement geo) {    	
     	 localVariableTable.put(varname, geo);
     	 geo.setLocalVariableLabel(varname);
+    	 
+	 	// TODO: remove
+	 	System.out.println("add local var: " + varname + ", " + geo.getTypeString());    	 
     }
     
-    public void clearLocalVariableTable() {
-   	 	localVariableTable = null;
+    final public void removeLocalVariable(String varname) {
+   	 	localVariableTable.remove(varname);
+   	 	
+   	 	// TODO: remove
+	 	System.out.println("remove local var: " + varname );    	   
    	}        			
 
     /**
@@ -607,8 +613,8 @@ public class Construction {
             return null;
         
         // local var handling
-        if (localVariableTable != null) {        	
-        	GeoElement localGeo =  (GeoElement) localVariableTable.get(label);        
+        if (!localVariableTable.isEmpty()) {        	
+        	GeoElement localGeo = (GeoElement) localVariableTable.get(label);        
             if (localGeo != null) return localGeo;
         }
                 

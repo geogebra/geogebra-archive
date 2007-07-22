@@ -120,13 +120,31 @@ public class AlgorithmSet {
         return false;
     }
     
+    /**
+     * Updates all algorithms of this set.
+     */
     final public void updateAll() {
         Link cur = head;
         while (cur != null) {
             cur.algo.update();
             cur = cur.next;
         }
-    }        
+    }    
+    
+    /**
+     * Updates all algorithms of this set until the given algorithm
+     * is reached.
+     * @param lastAlgoToUpdate: last algorithm to update
+     */
+    final public void updateAllUntil(AlgoElement lastAlgoToUpdate) {
+        Link cur = head;
+        while (cur != null) {        	
+        	cur.algo.update();
+        	if (cur.algo == lastAlgoToUpdate) 
+        		return;
+            cur = cur.next;
+        }
+    } 
     
     
     public String toString() {
@@ -174,8 +192,7 @@ public class AlgorithmSet {
     		Object ret = cur.algo;
     		cur = cur.next; 
     		return ret;
-    	}
-
+    	}    	
     }
 }
 

@@ -22,8 +22,7 @@ import java.util.TreeSet;
 /**
  * A macro is a user defined commmand.
  * It has its own macro construction that is used by all using AlgoMacro 
- * instances if this macro is non-continous. However, if it is continous
- * every AlgoMacro instance gets its own copy of the macro construction.
+ * instances.
  * 
  * @author Markus Hohenwarter
  */

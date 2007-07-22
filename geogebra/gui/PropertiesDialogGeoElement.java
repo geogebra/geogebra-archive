@@ -4226,14 +4226,14 @@ class ShowConditionPanel
 		GeoElement geo0 = (GeoElement) geos[0];	
 		GeoBoolean cond = geo0.getShowObjectCondition();
 		if (cond != null) {
-			strCond = cond.getLabelOrDefinitionDescription();
+			strCond = cond.getLabelOrCommandDescription();
 		}	
 		
 		for (int i=0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];	
 			cond = geo.getShowObjectCondition();
 			if (cond != null) {
-				String strCondGeo = cond.getLabelOrDefinitionDescription();
+				String strCondGeo = cond.getLabelOrCommandDescription();
 				if (!strCond.equals(strCondGeo))
 					strCond = "";
 			}	

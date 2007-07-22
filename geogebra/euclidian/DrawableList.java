@@ -139,7 +139,7 @@ public class DrawableList {
 		private Link it;
 	
 		private DrawableIterator() {
-			it = head;
+			reset();
 		}
 	
 		final public Drawable next() {
@@ -150,6 +150,10 @@ public class DrawableList {
 	
 		final public boolean hasNext() {
 			return (it != null);
+		}
+		
+		final public void reset() {
+			it = head;
 		}
 	
 	}

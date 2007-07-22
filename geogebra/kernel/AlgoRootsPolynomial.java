@@ -60,7 +60,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         Construction cons,
         String[] labels,
         GeoFunction f) {
-        this(cons, labels, true, f, null, null);
+        this(cons, labels, !cons.isSuppressLabelsActive(), f, null, null);
     }
 
     /**

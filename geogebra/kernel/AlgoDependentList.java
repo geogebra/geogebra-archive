@@ -95,10 +95,10 @@ public class AlgoDependentList extends AlgoElement {
     	StringBuffer sb = new StringBuffer();
     	sb.append("{");    	    
     	for (int i=0; i < input.length - 1; i++) {
-    		sb.append(input[i].getLabelOrDefinitionDescription());
+    		sb.append(input[i].getLabelOrCommandDescription());
     		sb.append(", ");
     	}    	
-    	sb.append(input[input.length-1].getLabelOrDefinitionDescription());
+    	sb.append(input[input.length-1].getLabelOrCommandDescription());
     	sb.append("}");    		    	    	
         return sb.toString();
     }        

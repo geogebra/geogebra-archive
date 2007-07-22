@@ -318,7 +318,12 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         // make sure that expression object is changed!
         // this is needed to know that the expression has changed
-        expression = new ExpressionNode(expression);    
+        if (expression.isLeaf() && expression.getLeft().isExpressionNode()) {
+        	expression = new ExpressionNode( (ExpressionNode) expression.left);
+        } else {
+        	 expression = new ExpressionNode(expression);
+        }
+
     }
     
     // replace every x in tree by (x - vx)
