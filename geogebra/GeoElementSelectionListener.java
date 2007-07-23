@@ -12,6 +12,8 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra;
 
+import java.util.ArrayList;
+
 import geogebra.kernel.GeoElement;
 
 public interface GeoElementSelectionListener {

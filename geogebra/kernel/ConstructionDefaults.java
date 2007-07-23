@@ -43,6 +43,8 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_TEXT = 100;
 	public static final int DEFAULT_IMAGE = 110;
 	public static final int DEFAULT_BOOLEAN = 120;
+	
+	public static final int DEFAULT_LIST = 130;
 		
 	// DEFAULT COLORs
 	// points
@@ -65,10 +67,13 @@ public class ConstructionDefaults {
 	public static final float DEFAULT_ANGLE_ALPHA = 0.1f;
 
 	// locus lines	
-	private static final Color colLocus = Color.darkGray;
+	private static final Color colLocus = Color.black;
 	
 	// functions
-	private static final Color colFunction = Color.darkGray;
+	private static final Color colFunction = Color.black;
+	
+	// lists
+	private static final Color colList = new Color(50, 200, 50);
 
 	// numbers (slope, definite integral)
 	private static final Color colNumber = Color.black;	
@@ -104,6 +109,7 @@ public class ConstructionDefaults {
 		this.cons = cons;
 		createDefaultGeoElements();
 	}
+
 	
 	/**
 	 * Returns a set of all default GeoElements used by this construction.
@@ -200,6 +206,13 @@ public class ConstructionDefaults {
 		GeoBoolean bool = new GeoBoolean(cons);		
 		bool.setLocalVariableLabel(app.getPlain("Boolean"));
 		defaultGeoElements.put(DEFAULT_BOOLEAN, bool);
+		
+		// list
+		GeoList list = new GeoList(cons);	
+		list.setLocalVariableLabel(app.getPlain("List"));
+		list.setObjColor(colList);		
+		list.setAlphaValue(DEFAULT_POLYGON_ALPHA);
+		defaultGeoElements.put(DEFAULT_LIST, list);
 	}
 	
 	/**
@@ -238,6 +251,10 @@ public class ConstructionDefaults {
 				type = DEFAULT_ANGLE;	
 				break;
 				
+			case GeoElement.GEO_CLASS_BOOLEAN:
+				type = DEFAULT_BOOLEAN;
+				break;	
+				
 			case GeoElement.GEO_CLASS_CONIC:
 			case GeoElement.GEO_CLASS_CONICPART:
 				type = DEFAULT_CONIC;
@@ -251,6 +268,10 @@ public class ConstructionDefaults {
 			case GeoElement.GEO_CLASS_IMAGE:
 				type = DEFAULT_IMAGE;
 				break;
+				
+			case GeoElement.GEO_CLASS_LIST:
+				type = DEFAULT_LIST;
+				break;	
 				
 			case GeoElement.GEO_CLASS_LOCUS:
 				type = DEFAULT_LOCUS;
@@ -270,16 +291,16 @@ public class ConstructionDefaults {
 				
 			case GeoElement.GEO_CLASS_VECTOR:
 				type = DEFAULT_VECTOR;
-				break;					
-		}
+				break;	
+				
 			
+		}			
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
 		if (defaultGeo != null)
 			geo.setAllVisualProperties(defaultGeo);					     
-        
-				
+
         // label visibility
 		Application app = cons.getApplication();
 		int labelingStyle = app.getLabelingStyle();

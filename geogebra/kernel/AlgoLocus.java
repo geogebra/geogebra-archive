@@ -200,7 +200,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		// get XML for macro construction of P -> Q
         	String locusConsXML = Macro.buildMacroXML(locusConsElements);  
         	
-        	// TODO: remove
         	//System.out.println(locusConsXML);
         	
     		macroKernel.loadXML(locusConsXML);
@@ -309,7 +308,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		boolean finishedRun = false;
     		int whileLoops = 0;
     		
-//    		 TODO: remove
         //	System.out.println("RUN " + runs);
     		
 	        while ( !finishedRun && 
@@ -320,15 +318,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        	whileLoops++;	        	
 	        	boolean lineTo = pathMover.getNext(Pcopy);
 	        	
-//	        	 TODO: remove
 	     //   	System.out.println("   while " + whileLoops + ", Pcopy: " + Pcopy);
 	        	
 	        	// measure time needed for update of construction
 	        	long startTime = System.currentTimeMillis();	        
 	       		Pcopy.updateCascade();
 	       		long updateTime = System.currentTimeMillis() - startTime;	
-	       		
-//	       	 TODO: remove	       	        
+	       		      	        
 	       	 // PRINT MACRO CONSTRUCTION STATE   
 //	          	Iterator it = macroCons.getGeoElementsIterator();
 //	          	System.out.println("*** locus macro construction state ***");
@@ -337,7 +333,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 //	          	}
 	        
 	          	
-//	        	// TODO: remove
 //	        	GeoSegment a = (GeoSegment) macroKernel.lookupLabel("a");
 //	        	System.out.println("a: from " + a.getStartPoint() + "(" + a.getStartPoint().getConstruction() + ") to "
 //	        			+ a.getEndPoint() + "(" + a.getEndPoint().getConstruction() + ")");
@@ -356,10 +351,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       				boolean stepChanged = false;
 	       		
 	       				while (Qcopy.isDefined() && !distanceOK(Qcopy)) {	
-//	       				 TODO: remove
 	       	//	        	System.out.println("        lineto while ");
-	       					
-	       					
+	       								
 	       					//go back and try smaller step	       					
 	       					if (!pathMover.smallerStep()) break;
 	       					stepChanged = true;	       					
@@ -443,7 +436,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
     		
-    	// TODO: remove
     	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);

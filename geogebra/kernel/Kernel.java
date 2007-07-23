@@ -1092,7 +1092,6 @@ public class Kernel {
 	/*	}
 		else {
 			// incompatible types
-			// TODO: remove
 			System.out.println("if incompatible: " + geoIf + ", " + geoElse);
 			return null;
 		}	*/			

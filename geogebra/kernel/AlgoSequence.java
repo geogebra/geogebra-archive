@@ -42,6 +42,7 @@ public class AlgoSequence extends AlgoElement {
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsGeoFunction, funExpUnchanged, isEmpty;
     private ExpressionNode last_function_Expression;
+    private AlgoElement expressionParentAlgo;
    
    
     /**
@@ -70,9 +71,10 @@ public class AlgoSequence extends AlgoElement {
     	               
 //    	System.out.println("expression: " + expression);
 //    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
-//    	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
+//    //	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
 //    	System.out.println("  variable: " + var);
-    	
+    		
+    	expressionParentAlgo = expression.getParentAlgorithm();
     	expIsGeoFunction = expression.isGeoFunction();    	      
     	funExpUnchanged = true;
     	
@@ -101,10 +103,7 @@ public class AlgoSequence extends AlgoElement {
         output = new GeoElement[1];
     	output[0] = list;
            
-        setDependencies(); // done by AlgoElement  
-        
-        // set list color using expression
-    	list.setObjColor(expression.getObjectColor());
+        setDependencies(); // done by AlgoElement          
     }
     
     /**
@@ -284,13 +283,14 @@ public class AlgoSequence extends AlgoElement {
 	    	// set local variable to given value
 	    	var.setValue(varVal);
 	    		    	   
-	        // update all directly algorithms until we reach expression 
-	    	var.getAlgoUpdateSet().updateAllUntil(expression.getParentAlgorithm());
+	    	// update var's algorithms until we reach expression 
+	    	if (expressionParentAlgo != null) {
+	    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+			}
+	    	
+	    	// copy expression value to listElement
 			listElement.set(expression);
 		}		
-    	
-    	// TODO: set visual style of list elements
-    	listElement.setObjColor(list.getObjectColor());
     }   
     
 

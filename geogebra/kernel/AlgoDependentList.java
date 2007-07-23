@@ -56,8 +56,7 @@ public class AlgoDependentList extends AlgoElement {
     	int size = listItems.size();
         input = new GeoElement[size];
     	for (int i=0; i < size; i++) {
-    		input[i] = (GeoElement) listItems.get(i);
-    		geoList.add(input[i]);
+    		input[i] = (GeoElement) listItems.get(i);    		
     	}          
         
         output = new GeoElement[1];        
@@ -87,8 +86,18 @@ public class AlgoDependentList extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     final void compute() {	
-    	// nothing has to be done here as all the dependent GeoElements
-    	// have already been updated before
+    	// add all input and their siblings to the list
+    	geoList.clear();
+    	for (int i=0; i < input.length; i++) {
+    		AlgoElement algo = input[i].getParentAlgorithm();
+    		if (algo == null) {
+    			geoList.add(input[i]);
+    		} else {
+    			for (int k=0; k < algo.output.length; k++) {
+    				geoList.add(algo.output[k]);
+    			}
+    		}
+    	}
     }   
     
     final public String toString() {

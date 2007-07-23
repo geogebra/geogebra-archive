@@ -271,50 +271,6 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			System.err.println(e);
 		}
 		
-		/*
-		// get mac application for GeoGebra
-		net.roydesign.app.Application macApp = net.roydesign.app.Application.getInstance();		
-		
-		final String [] cmdArgs = args;		
-		ActionListener openFileListener = new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				// make sure we have an active instance
-				showFirstInstance(cmdArgs);
-										
-				// open file
-				net.roydesign.event.ApplicationEvent mac_evt = (net.roydesign.event.ApplicationEvent) evt;				
-				File openFile = mac_evt.getFile();
-				
-				// TODO: remove
-				JOptionPane.showConfirmDialog(null, evt.getClass() + 
-						"\n action command: " + evt.getActionCommand()  + 
-						"\n file: " + openFile);
-				
-				if (openFile != null && openFile.exists()) {						
-					// open file in new window												
-					Application app = activeInstance.getApplication();
-					 if (app.isSaved() || app.saveCurrentFile()) {   					
-						 File [] files = { mac_evt.getFile() };
-						 app.doOpenFiles(files, true);
-					 }
-				}
-			}
-		};
-		
-		// handle MacOS X file opening 			
-		macApp.addOpenDocumentListener(openFileListener);
-		macApp.addOpenApplicationListener(openFileListener);
-		macApp.addReopenApplicationListener(openFileListener);
-		
-		// handle quit application
-		macApp.getQuitJMenuItem().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					// quit all frames
-					Application app = activeInstance.getApplication();
-					app.exitAll();							
-				}
-			});
-			*/
 	}
 	
 	

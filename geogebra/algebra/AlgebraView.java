@@ -571,9 +571,7 @@ public class AlgebraView extends JTree implements View {
 			boolean leaf,
 			int row,
 			boolean hasFocus) {	
-			
-			
-			// TODO: remove
+						
 			//System.out.println("getTreeCellRendererComponent: " + value);
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
 			Object ob = node.getUserObject();

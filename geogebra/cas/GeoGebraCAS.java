@@ -59,7 +59,6 @@ public class GeoGebraCAS {
      * @return result string (null possible)
      */ 
     final public String evaluateYACAS(String exp) {
-    	//TODO: remove
     	//System.out.println("exp for YACAS: " + exp);
         
     	if (yacas == null) {

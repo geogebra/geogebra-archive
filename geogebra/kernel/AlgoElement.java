@@ -76,15 +76,13 @@ implements EuclidianViewAlgo {
     	return false;
     }
     
-    // TODO: remove
-    public static double startTime, endTime;
-    public static double computeTime, updateTime;
-    public static double counter;
+//    public static double startTime, endTime;
+//    public static double computeTime, updateTime;
+//    public static double counter;
     
     void update() {
-    	// TODO:remove
-    	counter++;
-    	startTime = System.currentTimeMillis(); 
+//    	counter++;
+//    	startTime = System.currentTimeMillis(); 
     		
     	// update possible random values used by this algorithm
     	if (randomInputNumbers != null) {
@@ -94,22 +92,17 @@ implements EuclidianViewAlgo {
         // compute output from input
         compute();
         
-    	// TODO:remove
-        endTime = System.currentTimeMillis(); 
-        computeTime += (endTime - startTime);
-
-
-//      TODO:remove
-    	startTime = System.currentTimeMillis(); 
+//        endTime = System.currentTimeMillis(); 
+//        computeTime += (endTime - startTime);
+    	//startTime = System.currentTimeMillis(); 
     	
         // update dependent objects 
         for (int i = 0; i < output.length; i++) {           
                 output[i].update();
         }           
         
-    	// TODO:remove
-        endTime = System.currentTimeMillis(); 
-        updateTime += (endTime - startTime );                
+//        endTime = System.currentTimeMillis(); 
+//        updateTime += (endTime - startTime );                
     }              
     
     /**

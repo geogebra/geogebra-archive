@@ -1230,9 +1230,29 @@ final public class EuclidianController implements MouseListener,
 	
 	// select all geos in selection rectangle 
 	private void processSelectionRectangle() {		
-		ArrayList hits = view.getHits(view.getSelectionRectangle());		
-		app.setSelectedGeos(hits.toArray());					
-		view.repaint();		
+		ArrayList hits = view.getHits(view.getSelectionRectangle());						
+		
+		// tell properties dialog
+		switch (mode) {
+			case EuclidianView.MODE_ALGEBRA_INPUT:
+				if (hits.size() > 0 &&
+					app.getCurrentSelectionListener() == app.getPropDialog()) 
+				{
+					GeoElement geo = (GeoElement) hits.get(0);
+					app.geoElementSelected(geo, false);
+					for (int i=1; i < hits.size(); i++) {
+						app.geoElementSelected((GeoElement) hits.get(i), true);
+					}
+				} 
+				break;
+			
+			case EuclidianView.MODE_MOVE:
+				// STANDARD CASE
+				app.setSelectedGeos(hits);									
+				break;
+		}
+		
+		view.repaint();	
 	}
 
 	final public void mouseMoved(MouseEvent e) {
@@ -2546,14 +2566,22 @@ final public class EuclidianController implements MouseListener,
 		if (angle != null) {
 			// commented in V3.0:
 			// angle.setAllowReflexAngle(false);
-			angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			// 	make sure that we show angle value
+			if (angle.isLabelVisible()) 
+				angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			else 
+				angle.setLabelMode(GeoElement.LABEL_VALUE);
 			angle.setLabelVisible(true);
 			angle.updateRepaint();
 			return true;
 		} 
 		else if (angles != null) {
 			for (int i=0; i < angles.length; i++) {
-				angles[i].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+				//	make sure that we show angle value
+				if (angles[i].isLabelVisible()) 
+					angles[i].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+				else 
+					angles[i].setLabelMode(GeoElement.LABEL_VALUE);
 				angles[i].setLabelVisible(true);
 				angles[i].updateRepaint();
 			}
@@ -2703,7 +2731,10 @@ final public class EuclidianController implements MouseListener,
 			GeoSegment[] segments = getSelectedSegments();
 			
 			// length			
-			segments[0].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			if (segments[0].isLabelVisible()) 
+				segments[0].setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			else 
+				segments[0].setLabelMode(GeoElement.LABEL_VALUE);
 			segments[0].setLabelVisible(true);
 			segments[0].updateRepaint();
 			return true;
@@ -2734,8 +2765,11 @@ final public class EuclidianController implements MouseListener,
 				// length of arc
 				GeoConicPart conicPart = (GeoConicPart) conic;
 				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_ARC) {
-					// conic part
-					conic.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+					// arc length
+					if (conic.isLabelVisible()) 
+						conic.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+					else 
+						conic.setLabelMode(GeoElement.LABEL_VALUE);
 					conic.updateRepaint();
 					return true;
 				}				
@@ -2926,11 +2960,21 @@ final public class EuclidianController implements MouseListener,
 			GeoLine line = getSelectedLines()[0];						
 									
 			String strLocale = app.getLocale().toString();
+			GeoNumeric slope;
 			if (strLocale.equals("de_AT")) {
-				kernel.Slope("k", line);
+				slope = kernel.Slope("k", line);
 			} else {
-				kernel.Slope("m", line);
+				slope = kernel.Slope("m", line);
 			}			
+			
+			// show value
+			if (slope.isLabelVisible()) {
+				slope.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			} else {
+				slope.setLabelMode(GeoElement.LABEL_VALUE);
+			}
+			slope.setLabelVisible(true);
+			slope.updateRepaint();
 			return true;
 		}
 		return false;
@@ -3417,7 +3461,7 @@ final public class EuclidianController implements MouseListener,
 				return false;
 			}
 						
-			GeoAngle angle;
+			GeoAngle angle = null;
 			boolean posOrientation = aDialog.isCounterClockWise();
 			if (selPoints() == 2) {
 				GeoPoint[] points = getSelectedPoints();		
@@ -3426,6 +3470,13 @@ final public class EuclidianController implements MouseListener,
 				GeoSegment[] segment = getSelectedSegments();		
 				angle = (GeoAngle) kernel.Angle(null, segment[0].getEndPoint(), segment[0].getStartPoint(), num, posOrientation)[0];
 			}			
+			
+			// make sure that we show angle value
+			if (angle.isLabelVisible()) 
+				angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			else 
+				angle.setLabelMode(GeoElement.LABEL_VALUE);
+			angle.setLabelVisible(true);		
 			angle.updateRepaint();					
 			return true;
 		}

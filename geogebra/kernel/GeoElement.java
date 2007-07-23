@@ -463,7 +463,7 @@ public abstract class GeoElement
 		
 		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
-		}		
+		}
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

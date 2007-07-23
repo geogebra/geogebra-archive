@@ -27,6 +27,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,8 +39,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.Border;
 
-public class SliderDialog extends JDialog implements ActionListener, KeyListener,
-WindowFocusListener {
+public class SliderDialog extends JDialog 
+			implements ActionListener, KeyListener, WindowListener
+{
 	
 	/**
 	 * 
@@ -63,7 +65,8 @@ WindowFocusListener {
 	 */
 	public SliderDialog(Application app, int x, int y) {
 		super(app.getFrame(), true);
-		this.app = app;				
+		this.app = app;		
+		addWindowListener(this);
 		
 		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
@@ -83,7 +86,6 @@ WindowFocusListener {
 		geoResult = null;
 
 		createGUI();	
-		centerOnScreen();
 	}			
 	
 	private void createGUI() {
@@ -104,27 +106,27 @@ WindowFocusListener {
 		//JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		JPanel radioPanel = new JPanel();
 		radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
-		radioPanel.add(Box.createVerticalStrut(5));
+		radioPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
 		radioPanel.add(rbNumber);		
-		radioPanel.add(rbAngle);		
+		radioPanel.add(rbAngle);			
 		
 		// label textfield
 		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false, true);				
 		tfLabel.getTextComponent().addKeyListener(this);				
 		Border border =
 			BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(app.getPlain("Name")),
-				BorderFactory.createEmptyBorder(0, 5, 0, 5));
+					BorderFactory.createTitledBorder(app.getPlain("Name")),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		tfLabel.setBorder(border);
 		
 		// put together label textfield and radioPanel
 		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-		topPanel.add(tfLabel);
-		topPanel.add(Box.createHorizontalStrut(20));
-		topPanel.add(radioPanel);
-		topPanel.add(Box.createHorizontalStrut(10));	
-		
+		topPanel.setLayout(new BorderLayout(0,0));
+		//JPanel labelPanel = new JPanel();
+		//labelPanel.add(tfLabel);
+		topPanel.add(tfLabel, BorderLayout.CENTER);
+		topPanel.add(radioPanel, BorderLayout.WEST);
+
 		// slider panels		
 		sliderPanel = new SliderPanel(app, null);			
 		JPanel slPanel = new JPanel(new BorderLayout(0,0));		
@@ -151,16 +153,9 @@ WindowFocusListener {
 		
 		//Make this dialog display it.
 		setContentPane(optionPane);			
-		pack();							
-		
-		addWindowFocusListener(this);
+		pack();	
+		setLocationRelativeTo(app.getFrame());	
 	}
-	
-	private void centerOnScreen() {
-		//	center on screen
-		pack();				
-		setLocationRelativeTo(app.getFrame());		
-	}	
 	
 	public GeoElement getResult() {
 		if (geoResult != null) {		
@@ -199,8 +194,8 @@ WindowFocusListener {
 		}		
 	}
 
-	private void setLabelFieldFocus() {		
-		tfLabel.getTextComponent().requestFocusInWindow();
+	private void setLabelFieldFocus() {	
+		tfLabel.getTextComponent().requestFocus();
 		tfLabel.selectText();	
 	}
 
@@ -223,12 +218,28 @@ WindowFocusListener {
 	public void keyTyped(KeyEvent arg0) {		
 	}
 
-	public void windowGainedFocus(WindowEvent arg0) {		
-		setLabelFieldFocus();		
+	public void windowActivated(WindowEvent arg0) {		
 	}
 
-	public void windowLostFocus(WindowEvent arg0) {		
+	public void windowClosed(WindowEvent arg0) {		
 	}
+
+	public void windowClosing(WindowEvent arg0) {		
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+	}
+
+	public void windowOpened(WindowEvent arg0) {		
+		setLabelFieldFocus();
+	}
+
 	
 			
 }

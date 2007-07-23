@@ -400,9 +400,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	// that are equal
     	boolean ret = (count == 2 && P[index[0]].equals(P[index[1]]));
     	
-    	// TODO: remove
-    	if (ret)
-    		System.out.println("Singularity at " + P[index[0]]);    	
+    	//if (ret)
+    	//	System.out.println("Singularity at " + P[index[0]]);    	
     	
     	return ret;
     }

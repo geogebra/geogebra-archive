@@ -50,6 +50,7 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
@@ -109,9 +110,9 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "17. July 2007";
+    public static final String buildDate = "22. July 2007";
 	
-    public static final String versionString = "Pre-Release";    
+    public static final String versionString = "3.0 (Beta 1)";    
     public static final String XML_FILE_FORMAT = "3.0";    
   
     // GeoGebra basic jar file
@@ -445,10 +446,18 @@ public class Application implements	KeyEventDispatcher {
     		return 0;
     }
     
+    /**
+     * Returns labeling style. See the constants in
+     * ConstructionDefaults (e.g. LABEL_VISIBLE_AUTOMATIC)
+     */
 	public int getLabelingStyle() {
 		return labelingStyle;
 	}
 
+    /**
+     * Sets labeling style. See the constants in
+     * ConstructionDefaults (e.g. LABEL_VISIBLE_AUTOMATIC)
+     */
 	public void setLabelingStyle(int labelingStyle) {
 		this.labelingStyle = labelingStyle;
 	}
@@ -1317,6 +1326,7 @@ public class Application implements	KeyEventDispatcher {
                 
         initPropertiesDialog();
         setMoveMode();
+        
         propDialog.setVisibleWithGeos(selGeos);
     }
     private ArrayList tempGeos = new ArrayList();
@@ -1444,8 +1454,14 @@ public class Application implements	KeyEventDispatcher {
 	public boolean showSliderCreationDialog(int x, int y) {
 	      SliderDialog dialog = new SliderDialog(this, x, y);
 	      dialog.setVisible(true);	      
-	      GeoElement geo = dialog.getResult();
-	      return (geo != null);	      	
+	      GeoNumeric num = (GeoNumeric) dialog.getResult();
+	      if (num != null) {
+	    	// make sure that we show name and value of slider
+	    	num.setLabelMode(GeoElement.LABEL_NAME_VALUE);					
+	    	num.setLabelVisible(true);
+	    	num.update();
+	      }
+	      return num != null;	      	
 	}
 	
     /**
@@ -2239,7 +2255,7 @@ public class Application implements	KeyEventDispatcher {
     
     private void updateSelection() {
     	if (menuBar != null)
-    		menuBar.updateSelection();    	
+    		menuBar.updateSelection();   	       
     }
     
     public void updateMenuWindow() {
@@ -2744,6 +2760,11 @@ public class Application implements	KeyEventDispatcher {
     }*/
     
     public void setMode(int mode) {  
+    	// if the properties dialog is showing, close it
+    	if (propDialog != null && propDialog.isShowing()) {    		
+    		propDialog.setVisible(false);	
+    	}
+    	
     	currentSelectionListener = null;
     	
     	 if (euclidianView != null)
@@ -2763,14 +2784,7 @@ public class Application implements	KeyEventDispatcher {
         
         // select toolbar button
         if (appToolbarPanel != null)
-        	appToolbarPanel.setMode(mode);       
-            	
-    	// if the properties dialog is showing, move mode is a selection mode
-        // for the properties dialog
-    	if (mode == EuclidianView.MODE_MOVE &&
-    			propDialog != null && propDialog.isShowing()) {    		
-    		setSelectionListenerMode(propDialog);	
-    	}
+        	appToolbarPanel.setMode(mode);           	
     }
     
    
@@ -3076,6 +3090,10 @@ public class Application implements	KeyEventDispatcher {
     	codebase = path;
     }
     
+    public PropertiesDialogGeoElement getPropDialog() {
+    	return propDialog;
+    }
+    
 /* ** selection handling ***/
     
     final public int selectedGeosSize() {
@@ -3091,19 +3109,19 @@ public class Application implements	KeyEventDispatcher {
     }
     
     /**
-     * Object [] geos must contain GeoElement objects only.
+     * geos must contain GeoElement objects only.
      * @param geos
      */
-    final public void setSelectedGeos(Object [] geos) {    
+    final public void setSelectedGeos(ArrayList geos) { 
     	clearSelectedGeos(false);
     	if (geos != null) {    		
-	        for (int i=0; i < geos.length; i++) {
-	        	GeoElement geo = (GeoElement) geos[i];
+	        for (int i=0; i < geos.size(); i++) {
+	        	GeoElement geo = (GeoElement) geos.get(i);
 	        	addSelectedGeo(geo, false);
 	        }
     	}
         kernel.notifyRepaint();
-        updateSelection();
+        updateSelection();   	    
     }
     
     final public void selectAll() {    
@@ -3353,12 +3371,20 @@ public class Application implements	KeyEventDispatcher {
 			return false;
 		
 		// only handle key events of this mainComponent
-		if (SwingUtilities.getRoot(e.getComponent()) != mainComp) {					
+		Component rootComp = SwingUtilities.getRoot(e.getComponent());
+		if (rootComp != mainComp) {	
+			// ESC for dialog: close it
+			if (rootComp instanceof JDialog &&
+				e.getKeyCode() == KeyEvent.VK_ESCAPE) 
+			{
+				((JDialog) rootComp).setVisible(false);
+				return true;
+			}
 			return false;
 		}						
 
 		boolean consumed = false;
-		Object source = e.getSource();
+		Object source = e.getSource();		
 
 		// catch all key events from algebra view and give
 		// them to the algebra controller
@@ -3389,7 +3415,7 @@ public class Application implements	KeyEventDispatcher {
 			ai = getAlgebraInput();
 			if (ai != null && ai.hasFocus()) {
 				consumed = false;
-			} else {
+			} else {						
 				setMode(EuclidianView.MODE_MOVE);
 				consumed = true;
 			}

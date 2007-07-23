@@ -91,6 +91,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
@@ -112,7 +113,7 @@ public class PropertiesDialogGeoElement
 		WindowListener,
 		WindowFocusListener,
 		TreeSelectionListener,
-		KeyListener,
+		//KeyListener,
 		GeoElementSelectionListener {
 		
 	
@@ -265,10 +266,8 @@ public class PropertiesDialogGeoElement
 		
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
-		
-		// TODO: check keylistener		
-		//Util.addKeyListenerToAll(this, this);	
 				
+		
 		if (wasShowing) {
 			setVisible(true);
 		}
@@ -327,10 +326,10 @@ public class PropertiesDialogGeoElement
 			geoTree.collapseAll();			
 		
 		geoTree.setSelected(geos, false);
-		if (!isShowing()) {	
-			super.setVisible(true);			
+		if (!isShowing()) {				
+			setLocationRelativeTo(app.getMainComponent());	
 			pack();
-			setLocationRelativeTo(app.getMainComponent());		
+			super.setVisible(true);				
 		}					
 	}
 
@@ -375,7 +374,7 @@ public class PropertiesDialogGeoElement
 		
 		// update selection of application too
 		if (app.getMode() == EuclidianView.MODE_ALGEBRA_INPUT)
-			app.setSelectedGeos(geos);		
+			app.setSelectedGeos(selectionList);		
 	}
 	
 	
@@ -387,7 +386,6 @@ public class PropertiesDialogGeoElement
 			for (int i=0; i < selPath.length; i++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();						
 				
-				// TODO: check selecting of root and type nodes
 				if (node == node.getRoot()) {	
 					// root: add all objects
 					selectionList.clear();
@@ -606,23 +604,23 @@ public class PropertiesDialogGeoElement
 		// lists of TabPanel objects
 		private ArrayList tabPanelList;
 				
-		private void initTabs() {		
+		private void initTabs() {				
+			// basic tab
+			ArrayList basicTabList = new ArrayList();
+			//basicTabList.add(namePanel);
+			basicTabList.add(showObjectPanel);														
+			basicTabList.add(labelPanel);		
+			basicTabList.add(tracePanel);
+			basicTabList.add(fixPanel);			
+			basicTabList.add(bgImagePanel);	
+			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
+			basicTab.addToTabbedPane(tabs);	
+			
 			// name tab
 			ArrayList nameTabList = new ArrayList();
 			nameTabList.add(namePanel);
 			TabPanel nameTab = new TabPanel(app.getPlain("Name"), nameTabList);
 			nameTab.addToTabbedPane(tabs);	
-			
-			// basic tab
-			ArrayList basicTabList = new ArrayList();
-			basicTabList.add(showObjectPanel);														
-			basicTabList.add(labelPanel);		
-			basicTabList.add(tracePanel);
-			basicTabList.add(fixPanel);			
-			basicTabList.add(auxPanel);	
-			basicTabList.add(bgImagePanel);	
-			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
-			basicTab.addToTabbedPane(tabs);	
 				
 			/*
 			// change basic tab layout: create grid with two columns
@@ -643,13 +641,7 @@ public class PropertiesDialogGeoElement
 				basicTab.add(p, c);
 			}	
 			*/
-	        
-			// color tab
-			ArrayList colorTabList = new ArrayList();
-			colorTabList.add(colorPanel);		
-			TabPanel colorTab = new TabPanel(app.getPlain("Color"), colorTabList);
-			colorTab.addToTabbedPane(tabs);			
-					
+			
 			// text tab
 			ArrayList textTabList = new ArrayList();			
 			textTabList.add(textOptionsPanel);	
@@ -661,23 +653,30 @@ public class PropertiesDialogGeoElement
 			ArrayList sliderTabList = new ArrayList();
 			sliderTabList.add(sliderPanel);				
 			TabPanel sliderTab = new TabPanel(app.getPlain("Slider"), sliderTabList);
-			sliderTab.addToTabbedPane(tabs);					
-			
+			sliderTab.addToTabbedPane(tabs);	
+	        
+			// color tab
+			ArrayList colorTabList = new ArrayList();
+			colorTabList.add(colorPanel);		
+			TabPanel colorTab = new TabPanel(app.getPlain("Color"), colorTabList);
+			colorTab.addToTabbedPane(tabs);			
+					
+
 			// style tab
-			ArrayList styleTabList = new ArrayList();													
-			styleTabList.add(pointSizePanel);				
-			styleTabList.add(arcSizePanel);
-			styleTabList.add(slopeTriangleSizePanel);			
-			styleTabList.add(decoAnglePanel);
-			styleTabList.add(rightAnglePanel);								
+			ArrayList styleTabList = new ArrayList();
+			styleTabList.add(slopeTriangleSizePanel);
+			styleTabList.add(pointSizePanel);	
+			styleTabList.add(lineStylePanel);			
+			styleTabList.add(arcSizePanel);													
 			TabPanel styleTab = new TabPanel(app.getMenu("Properties.Style"), styleTabList);
 			styleTab.addToTabbedPane(tabs);	
 				
-			// line style
-			ArrayList lineStyleTabList = new ArrayList();	
-			lineStyleTabList.add(lineStylePanel);	
-			lineStyleTabList.add(decoSegmentPanel);
-			TabPanel lineStyleTab = new TabPanel(app.getPlain("LineStyle"), lineStyleTabList);
+			// decoration
+			ArrayList decorationTabList = new ArrayList();	
+			decorationTabList.add(rightAnglePanel);
+			decorationTabList.add(decoAnglePanel);
+			decorationTabList.add(decoSegmentPanel);
+			TabPanel lineStyleTab = new TabPanel(app.getPlain("Decoration"), decorationTabList);
 			lineStyleTab.addToTabbedPane(tabs);	
 			
 			// filling style
@@ -689,11 +688,11 @@ public class PropertiesDialogGeoElement
 			// position			
 			ArrayList positionTabList = new ArrayList();	
 			positionTabList.add(absScreenLocPanel);
-			positionTabList.add(startPointPanel);
+			positionTabList.add(startPointPanel);	
 			positionTabList.add(cornerPointsPanel);
 			positionTabList.add(checkBoxFixPanel);
 			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
-			positionTab.addToTabbedPane(tabs);
+			positionTab.addToTabbedPane(tabs);	
 			
 			// algebra tab
 			ArrayList algebraTabList = new ArrayList();
@@ -701,6 +700,7 @@ public class PropertiesDialogGeoElement
 			algebraTabList.add(lineEqnPanel);
 			algebraTabList.add(conicEqnPanel);	
 			algebraTabList.add(animStepPanel);
+			algebraTabList.add(auxPanel);	
 			TabPanel algebraTab = new TabPanel(app.getMenu("Properties.Algebra"), algebraTabList);
 			algebraTab.addToTabbedPane(tabs);
 			
@@ -757,10 +757,7 @@ public class PropertiesDialogGeoElement
 			}
 			
 			return oneVisible;				
-		}
-		
-				
-		private Object[] oldSelGeos;		
+		}				
 		
 		public void updateSelection(Object[] geos) {
 			//if (geos == oldSelGeos) return;
@@ -875,13 +872,11 @@ public class PropertiesDialogGeoElement
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (geos[i] instanceof GeoNumeric) {
-					GeoNumeric num = (GeoNumeric) geos[i];
-					if (!num.isDrawable()) {
-						geosOK = false;
-						break;
-					}
- 				} 
+				GeoElement geo = (GeoElement) geos[i];
+				if (!geo.isDrawable()) {
+					geosOK = false;
+					break;
+				}
 			}
 			return geosOK;
 		}
@@ -1183,15 +1178,13 @@ public class PropertiesDialogGeoElement
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (geo.isGeoNumeric()) {
-					GeoNumeric num = (GeoNumeric) geos[i];
-					if (!num.isDrawable()) {
-						geosOK = false;
-						break;
-					}
+				if (!geo.isDrawable()) {
+					geosOK = false;
+					break;
 				} else if (geo.isGeoText() || 
 						   geo.isGeoImage() ||
-						   geo.isGeoBoolean()) {
+						   geo.isGeoBoolean() ||
+						   geo.isGeoList()) {
 					geosOK = false;
 					break;
 				}
@@ -3141,8 +3134,8 @@ public class PropertiesDialogGeoElement
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			thicknessPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			dashPanel.setAlignmentX(Component.LEFT_ALIGNMENT);	
-			add(dashPanel);
 			add(thicknessPanel);
+			add(dashPanel);			
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3747,7 +3740,7 @@ public class PropertiesDialogGeoElement
 	
 	/*
 	 * Keylistener implementation of PropertiesDialog
-	 */
+	 *
 
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
@@ -3759,7 +3752,7 @@ public class PropertiesDialogGeoElement
 
 			case KeyEvent.VK_ENTER :
 				// needed for input fields
-				//applyButton.doClick();
+				//applyButton.doClick();				
 				break;
 		}
 	}
@@ -3768,7 +3761,7 @@ public class PropertiesDialogGeoElement
 	}
 
 	public void keyTyped(KeyEvent e) {
-	}
+	} */
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		// make sure this dialog is the current selection listener
@@ -3821,18 +3814,10 @@ class SliderPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 				
 		JPanel intervalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
-		//Border compound =
-		//	BorderFactory.createCompoundBorder(
-		//		BorderFactory.createTitledBorder(app.getPlain("Interval")),
-		//		BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		Border compound =
-			BorderFactory.createTitledBorder(app.getPlain("Interval"));
-		intervalPanel.setBorder(compound);			
+		intervalPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Interval")));			
 		
 		JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		compound =
-			BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider")));
-		sliderPanel.setBorder(compound);
+		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider"))));
 		
 		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
 		coSliderHorizontal = new JComboBox(comboStr);
@@ -4094,7 +4079,7 @@ class AnimationStepPanel
 		add(animPanel);
 	}
 
-	public JPanel update(Object[] geos) {
+	public JPanel update(Object[] geos) {		
 		this.geos = geos;
 		if (!checkGeos(geos))
 			return null;
@@ -4136,13 +4121,17 @@ class AnimationStepPanel
 		boolean geosOK = true;
 		for (int i = 0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];
-			if (!geo.isChangeable() || geo.isGeoText() || geo.isGeoImage()
-					|| geo.isGeoBoolean() 
-				 || (geo.isGeoNumeric() && geo.isVisible())) {
+			if (!geo.isChangeable() 
+					|| geo.isGeoText() 
+					|| geo.isGeoImage()
+					|| geo.isGeoList()
+					|| geo.isGeoBoolean()) 
+			{
 				geosOK = false;
 				break;
 			}
 		}
+		
 		return geosOK;
 	}
 

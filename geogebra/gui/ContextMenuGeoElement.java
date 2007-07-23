@@ -370,7 +370,10 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	            addItem(cbItem);
         	}
             
-            if (!(geo.isTextValue() || geo.isGeoImage())) {           
+            if (!(geo.isTextValue() ||
+            	  geo.isGeoImage() ||
+            	  geo.isGeoBoolean() ||
+            	  geo.isGeoList())) {           
 	            // show label
 	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowLabel"));	           
 	            cbItem.setSelected(geo.isLabelVisible());

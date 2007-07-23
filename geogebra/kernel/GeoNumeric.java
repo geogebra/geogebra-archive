@@ -37,9 +37,6 @@ import java.util.TreeSet;
 public class GeoNumeric extends GeoElement 
 implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {	
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
@@ -119,6 +116,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 	
 	public void setEuclidianVisible(boolean visible) {
+		if (visible == isSetEuclidianVisible()) return;
+		
 		// slider is only possible for independent
 		// number with given min and max
 		if (isIndependent()) {
@@ -158,6 +157,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 						sliderY = 10 - count;
 					}
 				}
+				
+				// make sure
 			}
 			
 			/* we don't want to remove min, max values when slider is hidden			

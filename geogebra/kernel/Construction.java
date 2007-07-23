@@ -590,17 +590,11 @@ public class Construction {
     	
     final public void addLocalVariable(String varname, GeoElement geo) {    	
     	 localVariableTable.put(varname, geo);
-    	 geo.setLocalVariableLabel(varname);
-    	 
-	 	// TODO: remove
-	 	System.out.println("add local var: " + varname + ", " + geo.getTypeString());    	 
+    	 geo.setLocalVariableLabel(varname); 
     }
     
     final public void removeLocalVariable(String varname) {
-   	 	localVariableTable.remove(varname);
-   	 	
-   	 	// TODO: remove
-	 	System.out.println("remove local var: " + varname );    	   
+   	 	localVariableTable.remove(varname);   	 	   	  	  
    	}        			
 
     /**

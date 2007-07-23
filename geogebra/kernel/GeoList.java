@@ -40,10 +40,17 @@ public class GeoList extends GeoElement implements ListValue {
 	
 	private ArrayList geoList = new ArrayList();	  
 	private boolean isDefined = true;
+	private boolean isDrawable = true;
 	private int elementType = ELEMENT_TYPE_MIXED;
     
     public GeoList(Construction c) { 
-    	super(c);     	    	    	    
+    	super(c);     	    	 
+    	setEuclidianVisible(false);
+    }
+    
+    public void setParentAlgorithm(AlgoElement algo) { 	    	   
+    	super.setParentAlgorithm(algo);
+    	setEuclidianVisible(true); 
     }
              
     public GeoList(GeoList list) {
@@ -137,6 +144,7 @@ public class GeoList extends GeoElement implements ListValue {
 	}
     
     public void setVisualStyle(GeoElement geo) {
+    	super.setVisualStyle(geo);
     	// TODO: think about setVisualStyle() for lists
     	
     	/*
@@ -147,7 +155,7 @@ public class GeoList extends GeoElement implements ListValue {
         }*/
     }
     
-    public void setObjColor(Color color) {
+    public void setObjColor(Color color) {        	
     	super.setObjColor(color);
     	  	
     	int size = geoList.size();	        
@@ -197,7 +205,7 @@ public class GeoList extends GeoElement implements ListValue {
     	return geos;
     }          
         
-    public boolean isDefined() {    	
+    final public boolean isDefined() {    	
         return isDefined;  
     }
     
@@ -210,7 +218,11 @@ public class GeoList extends GeoElement implements ListValue {
     }               
     
     boolean showInEuclidianView() {
-        return isDefined();
+        return isDefined() && isDrawable();
+    }
+    
+    public boolean isDrawable() {
+    	return isDrawable && !isIndependent();
     }
     
     boolean showInAlgebraView() {       
@@ -225,12 +237,20 @@ public class GeoList extends GeoElement implements ListValue {
     	geoList.add(geo);   
     	
     	// init element type    	    
-    	if (geoList.size() == 1) {    		
+    	if (geoList.size() == 1) {   
+    		isDrawable = geo.isDrawable();
     		elementType = geo.getGeoClassType();
     	}
     	// check element type
-    	else if (elementType != geo.getGeoClassType()) {
+    	else if (elementType != geo.getGeoClassType()) {    		
     		elementType = ELEMENT_TYPE_MIXED;
+    	}    	
+    	
+    	isDrawable = isDrawable && geo.isDrawable();
+    	
+    	// TODO: think about visual style of list elements
+    	if (!geo.isLabelSet()) {
+    		geo.setVisualStyle(this);    		
     	}
     }      
     
@@ -240,6 +260,8 @@ public class GeoList extends GeoElement implements ListValue {
     	if (elementType != geo.getGeoClassType()) {
     		elementType = ELEMENT_TYPE_MIXED;
     	}
+    	
+    	isDrawable = isDrawable && geo.isDrawable();
     }
        
     /**
