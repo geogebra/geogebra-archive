@@ -125,7 +125,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			if (instances.size() == 0) {			
 				super.setVisible(false);
 				dispose();
-				System.exit(0);
+				
+				if (!app.isApplet())
+					System.exit(0);
 			} else {
 				super.setVisible(false);
 				updateAllTitles();
