@@ -157,9 +157,6 @@ public class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
         supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
         supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
-        //supportedLocales.add( new Locale("nb") );     	 	// Norwegian (Bokmal)
-       // supportedLocales.add( new Locale("nn") );  			// Norwegian (Nynorsk)
-            
         supportedLocales.add( new Locale("fa") );             	// Persian
         supportedLocales.add( new Locale("pl") );     		// Polish
         supportedLocales.add( new Locale("pt", "BR") );     // Portugese (Brazil)
