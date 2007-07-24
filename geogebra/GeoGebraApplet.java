@@ -277,6 +277,7 @@ public class GeoGebraApplet extends JApplet {
 	}
 
 	public void showApplet() {
+		
 		wnd.setVisible(false); // hide frame
 		
 		if (showOpenButton) {

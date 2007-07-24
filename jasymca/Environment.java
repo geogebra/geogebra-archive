@@ -31,6 +31,12 @@ public class Environment extends Hashtable{
 	
 	static Polynomial NULL=new Polynomial(new SimpleVariable("null"));
 		
+	// BEGIN: added by Markus Hohenwarter, July 23, 2007
+	public Environment() {
+		initLambdaFunctions();
+	}
+	// END: added by Markus Hohenwarter, July 23, 2007
+	
 	// Store Variable	
 	public void putValue(String var, Object x){
 		var 		= var.toUpperCase();
@@ -42,12 +48,14 @@ public class Environment extends Hashtable{
 		}
 	}
 
-
 	// Value of Variable var	
 	public Object getValue(String var){
 		var 		= var.toUpperCase();
 		Object r 	= get(var);
 
+		/* COMMENTED by Markus Hohenwarter, July 23, 2007:
+		 * don't use reflection!
+		 * 
 		// If this is an uninstantiated Operator, create an instance
 		// Let the Java Classloader do the work
 		if(r == null){ 
@@ -58,10 +66,12 @@ public class Environment extends Hashtable{
 				r 			= f;
 			}catch(Exception e){
 			}
-		}
-		return r;
+		}*/
+	
+		return r;	
 	}
 	
+
 	// Get numeric constant
 	public Zahl getnum(String var){
 		var 		= var.toUpperCase();
@@ -71,4 +81,55 @@ public class Environment extends Hashtable{
 		return null;
 	}
 
+	
+//	 BEGIN: added by Markus Hohenwarter, July 23, 2007
+	private void initLambdaFunctions() {
+		putValue("EXP", new LambdaEXP()); 
+		putValue("LOG", new LambdaLOG());
+		putValue("ALGSYS", new LambdaALGSYS());
+		putValue("INTEGRATE", new LambdaINTEGRATE());
+		putValue("ROMBERG", new LambdaROMBERG());
+		putValue("FLOAT", new LambdaFLOAT());
+		putValue("GCD", new LambdaGCD());
+		putValue("EXIT", new LambdaEXIT());
+		putValue("EXPAND", new LambdaEXPAND());
+		putValue("REALPART", new LambdaREALPART());
+		putValue("IMAGPART", new LambdaIMAGPART());
+		putValue("CFS", new LambdaCFS());
+		putValue("DIFF", new LambdaDIFF());
+		putValue("SUBST", new LambdaSUBST());
+		putValue("SUM", new LambdaSUM());
+		putValue("LSUM", new LambdaLSUM());
+		putValue("DIVIDE", new LambdaDIVIDE());
+		putValue("TAYLOR", new LambdaTAYLOR());
+		putValue("SAVE", new LambdaSAVE());
+		putValue("LOADFILE", new LambdaLOADFILE());
+		putValue("RAT", new LambdaRAT());
+		putValue("SQFR", new LambdaSQFR());
+		putValue("ALLROOTS", new LambdaALLROOTS());
+		putValue("SQRT", new LambdaSQRT());
+		putValue("SIGN", new LambdaSIGN());
+		putValue("LINSOLVE", new LambdaLINSOLVE());
+		putValue("SOLVE", new LambdaSOLVE());
+		putValue("TRIGRAT", new LambdaTRIGRAT());
+		putValue("TRIGEXP", new LambdaTRIGEXP());
+		putValue("SIN", new LambdaSIN());
+		putValue("COS", new LambdaCOS());
+		putValue("TAN", new LambdaTAN());
+		putValue("ATAN", new LambdaATAN());
+		putValue("ACOS", new LambdaACOS());
+		putValue("ASIN", new LambdaASIN());
+		putValue("COSH", new LambdaCOSH());
+		putValue("SINH", new LambdaSINH());
+		putValue("TANH", new LambdaTANH());
+		putValue("ACOSH", new LambdaACOSH());
+		putValue("ASINH", new LambdaASINH());
+		putValue("ATANH", new LambdaATANH());
+		putValue("ROUND", new LambdaROUND());
+		putValue("CBRT", new LambdaCBRT());
+		putValue("ROOT", new LambdaROOT());
+		//putValue("ATAN2", new LambdaATAN2());
+	}
+//	 END: added by Markus Hohenwarter, July 23, 2007
+	
 }

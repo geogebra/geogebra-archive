@@ -12,8 +12,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.util;
 
-import geogebra.Application;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,41 +23,10 @@ import java.net.URLConnection;
  */
 public class CopyURLToFile extends Thread {
 
-	private URL src;
-	private File dest;
-	private Application app;
-
-	/**     
-		 * 	Copies the file associated with the URL argument to the local
-		*     hard drive with the given filename showing a progress dialog in app
-		*/
-	public CopyURLToFile(Application app, URL src, File dest) {
-		this.src = src;
-		this.dest = dest;
-		this.app = app;
-	}
-
-	public void run() {
-		copyURLToFile(app, src, dest);
-	}
-	
-	/*
-	void doUpdate(Runnable r) {
-		try {
-			SwingUtilities.invokeAndWait(r);
-		}
-		catch (InvocationTargetException e1) {
-			System.err.println(e1);
-		}
-		catch (InterruptedException e2) {
-			System.err.println(e2);
-		}
-	}*/
-	
 	/**
 	 * Returns success state.
 	 */
-	public static boolean copyURLToFile(Application app, URL src, File dest) {		
+	public static boolean copyURLToFile(URL src, File dest) throws Exception {		
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		try {			
@@ -84,9 +51,7 @@ public class CopyURLToFile extends Thread {
 			} catch (Exception ex) {}
 			dest.delete();
 			
-			e.printStackTrace();
-			app.showError(app.getError("SaveFileFailed") + ": " + dest);
-			return false;
+			throw e;
 		}
 	}
 

@@ -19,7 +19,6 @@ import geogebra.gui.InputPanel;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
-import geogebra.util.CopyURLToFile;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -30,8 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
-import java.net.URLConnection;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -450,38 +447,54 @@ public class WorksheetExportDialog extends JDialog {
 	 * Exports construction as html worksheet and returns success state
 	 */
 	private void exportHTML() {
-		File file = null;
-		File ggbFile = null;
+		File htmlFile = null;
 
 		File currFile = Application.removeExtension(app.getCurrentFile());
 		if (currFile != null)
-			file = Application
+			htmlFile = Application
 					.addExtension(currFile, Application.FILE_EXT_HTML);
 
-		file = app.showSaveDialog(Application.FILE_EXT_HTML, file, app
+		htmlFile = app.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
 				+ " " + app.getMenu("Files"));
-		if (file == null)
+		if (htmlFile == null)
 			return;
+		
 		try {
 			// save construction file
 			// as file_worksheet.ggb
-			String ggbFileName = Application.removeExtension(file).getName()
+			String ggbFileName = Application.removeExtension(htmlFile).getName()
 					+ "_worksheet.ggb";
-			ggbFile = new File(file.getParent(), ggbFileName);
+			final File ggbFile = new File(htmlFile.getParent(), ggbFileName);
 			app.getXMLio().writeGeoGebraFile(ggbFile);
 
 			// write html string to file
-			FileWriter fw = new FileWriter(file);
+			FileWriter fw = new FileWriter(htmlFile);
 			fw.write(getHTML(ggbFile));
 			fw.close();
 
-			// copy jar to same directory as ggbFile
-			copyJar(ggbFile.getParent());
-		} catch (Exception ex) {
+			final File HTMLfile = htmlFile;
+			// copy files and open browser
+			Thread runner = new Thread() {
+	    		public void run() {    
+	    			try {
+		    			//copy jar to same directory as ggbFile
+		    			app.copyJarsTo(HTMLfile.getParent());
+		    			
+		    			// open html file in browser
+		    			app.showURLinBrowser(HTMLfile.toURL());
+	    			} catch (Exception ex) {			
+	    				app.showError("SaveFileFailed");
+	    				System.err.println(ex.toString());
+	    			} 
+	    		}
+			};
+			runner.start();
+						
+		} catch (Exception ex) {			
 			app.showError("SaveFileFailed");
 			System.err.println(ex.toString());
-		}
+		} 
 	}
 
 	/**
@@ -619,48 +632,4 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 	}
 
-	// copy jars to destition directory destDir
-	private void copyJar(String destDir) throws Exception {
-		File dest = new File(destDir, Application.JAR_FILE);
-		URL jarURL = app.getJarURL();
-
-		if (dest.exists()) {
-			// check if jarURL is newer then dest
-			try {
-				URLConnection connection = jarURL.openConnection();
-				if (connection.getLastModified() <= dest.lastModified())
-					return;
-			} catch (Exception e) {
-				// we don't know if the file behind jarURL is newer than dest
-				// so don't do anything
-				return;
-			}
-		}
-		// copy JAR_FILE
-		new CopyURLToFile(app, jarURL, dest).start();
-
-		// copy properties file
-		dest = new File(destDir, Application.PROPERTIES_FILE);
-		jarURL = app.getPropertiesFileURL();
-		new CopyURLToFile(app, jarURL, dest).start();
-
-		// copy cas file
-		dest = new File(destDir, Application.CAS_FILE);
-		jarURL = app.getCASFileURL();
-		new CopyURLToFile(app, jarURL, dest).start();
-
-		// copy gui file
-		dest = new File(destDir, Application.GUI_FILE);
-		jarURL = app.getGUIFileURL();
-		new CopyURLToFile(app, jarURL, dest).start();
-		
-		// menu bar: include export file as well
-		if (cbShowMenuBar.isSelected()) {
-			// copy export file
-			dest = new File(destDir, Application.EXPORT_FILE);
-			jarURL = app.getEXPORTFileURL();
-			new CopyURLToFile(app, jarURL, dest).start();
-		}
-		
-	}
 }

@@ -57,6 +57,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.Util;
 
@@ -110,22 +111,20 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "July 23, 2007";
+    public static final String buildDate = "July 24, 2007";
 	
     public static final String versionString = "3.0 (Beta 1)";    
     public static final String XML_FILE_FORMAT = "3.0";    
   
-    // GeoGebra basic jar file
-    public static final String JAR_FILE = "geogebra.jar";
-    // GeoGebra GUI jar file
-    public static final String GUI_FILE = "geogebra_gui.jar";
-	// GeoGebra uses a language file for all languages except en and de
-	public final static String PROPERTIES_FILE = "geogebra_properties.jar";
-	// GeoGebra uses a computer algebra system 
-	public final static String CAS_FILE = "geogebra_cas.jar";
-	// GeoGebra export libraries file 
-	public final static String EXPORT_FILE = "geogebra_export.jar";
-	
+    // GeoGebra jar files    
+    public static final String [] JAR_FILES = 
+    	{ "geogebra.jar", 
+    	  "geogebra_gui.jar", 
+    	  "geogebra_properties.jar",
+    	  "geogebra_cas.jar",
+    	  "geogebra_export.jar"
+    	};
+ 
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
 		
 	// update URL
@@ -215,7 +214,7 @@ public class Application implements	KeyEventDispatcher {
     private Component mainComp;
     private boolean isApplet = false;    
     private boolean showResetIcon = false;
-    private String codebase;
+    private URL codebase;
 
     private AlgebraView algebraView;
     private EuclidianView euclidianView;
@@ -292,7 +291,7 @@ public class Application implements	KeyEventDispatcher {
     }
     
     private Application(String[] args, GeoGebra frame, GeoGebraApplet applet, boolean undoActive) {
-
+    	
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
@@ -369,17 +368,20 @@ public class Application implements	KeyEventDispatcher {
     }      
     
     public void initInBackground() {
-    	if (isApplet) return;
-    	
     	// init file chooser and properties dialog
     	// in a background task
     	Thread runner = new Thread() {
     		public void run() {    	 
     			try {
-    				Thread.sleep(2000);
+    				Thread.sleep(1000);
     			} catch (Exception e) {}
-	    			initFileChooser();
-	    			initPropertiesDialog();
+	    			if (letShowPropertiesDialog())
+	    				initPropertiesDialog();
+	    			
+	    			if (showMenuBar) {
+	    				initFileChooser();
+	    				copyJarsToTempDir();
+	    			}	    				
     			}	    		    		
     	};
     	runner.start();
@@ -1059,23 +1061,23 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public ResourceBundle initAlgo2CommandBundle() {    	
-		return MyResourceBundle.loadSingleBundleFile(RB_ALGO2COMMAND, getCodeBase());
+		return MyResourceBundle.loadSingleBundleFile(RB_ALGO2COMMAND);
     }
 
     private void updateResourceBundles() {      	
     	if (rbmenu != null)
-    		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale, getCodeBase());
+    		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
         if (rberror != null)
-        	rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale, getCodeBase());
+        	rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale);
         if (rbplain != null) 
-        	rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale, getCodeBase());
+        	rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
       //  if (rbcommand != null || (applet != null && applet.enableJavaScript))
         	//initCommandResources();                        
     }
     
     private void initCommandResources() {    	    
     	//System.out.println("init command resources");    	
-        rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale, getCodeBase());    
+        rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);    
         
         // build Hashtable for translation of commands from
         // local language to internal name
@@ -1141,7 +1143,7 @@ public class Application implements	KeyEventDispatcher {
 
     final public String getPlain(String key) {
     	if (rbplain == null) {
-    		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale, getCodeBase());
+    		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
     	}
     	
         try {
@@ -1153,7 +1155,7 @@ public class Application implements	KeyEventDispatcher {
     
     final public String getMenu(String key) {
     	if (rbmenu == null) 
-    		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale, getCodeBase());
+    		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
     	
         try {
             return rbmenu.getString(key);
@@ -1164,7 +1166,7 @@ public class Application implements	KeyEventDispatcher {
 
     final public String getSetting(String key) {
     	if (rbsettings == null) 
-    		rbsettings = MyResourceBundle.loadSingleBundleFile(RB_SETTINGS, getCodeBase());
+    		rbsettings = MyResourceBundle.loadSingleBundleFile(RB_SETTINGS);
     	
         try {
             return rbsettings.getString(key);
@@ -1175,7 +1177,7 @@ public class Application implements	KeyEventDispatcher {
 
     final public String getError(String key) {
     	if (rberror == null) 
-    		rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale, getCodeBase());    	
+    		rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale);    	
         try {
             return rberror.getString(key);
         } catch (Exception e) {
@@ -2393,12 +2395,7 @@ public class Application implements	KeyEventDispatcher {
     public void openHelp() {
         try {
             URL helpURL = getHelpURL(currentLocale);
-            
-            if (applet != null) {
-            	applet.getAppletContext().showDocument(helpURL, "_blank");
-            } else {
-            	BrowserLauncher.openURL(helpURL.toExternalForm());
-            }
+            showURLinBrowser(helpURL);
         } catch (MyError e) {           
             showError(e);
         } catch (Exception e) {           
@@ -2407,6 +2404,14 @@ public class Application implements	KeyEventDispatcher {
             showError(e.toString());
         }
     }    
+    
+    public void showURLinBrowser(URL url) {
+    	if (applet != null) {
+        	applet.getAppletContext().showDocument(url, "_blank");
+        } else {
+        	BrowserLauncher.openURL(url.toExternalForm());
+        }
+    }
 
     private URL getHelpURL(Locale locale) throws Exception {
         String  language = locale.getLanguage();
@@ -2699,7 +2704,8 @@ public class Application implements	KeyEventDispatcher {
     	if (glassPaneListener != null) return;
     	
         if (isSaved() || applet != null || saveCurrentFile()) {        	
-            if (applet != null) {            	
+            if (applet != null) {   
+            	setApplet(applet);
                 applet.showApplet();                
             } else {    
             	frame.setVisible(false);            	
@@ -3068,23 +3074,26 @@ public class Application implements	KeyEventDispatcher {
     /**
      * Returns the CodeBase URL as String.     
      */
-    public String getCodeBase() {
+    public URL getCodeBase() {
     	return codebase;
     }
     
     private void initCodeBase() {
-    	String path = null;
-    	
-        if (applet != null) {
-            path =  applet.getCodeBase().toExternalForm();
-        } else {
-           	path = Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();	     	
-	    	if (path.endsWith(JAR_FILE)) // remove "geogebra.jar" from end	    
-	    		path = path.substring(0, path.length() - JAR_FILE.length());	    		    		    	
-        }
+    	try {
+	        if (applet != null) {
+	        	codebase =  applet.getCodeBase();
+	        } else {
+	         	String path = Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();	     	
+		    	if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from end	    
+		    		path = path.substring(0, path.length() - JAR_FILES[0].length());	    		    		    	
+		    	codebase = new URL(path);        
+	        }
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
         
-    	//System.out.println("codebase: " + path);
-    	codebase = path;
+        // TODO: remove
+    	System.out.println("codebase: " + codebase);
     }
     
     public PropertiesDialogGeoElement getPropDialog() {
@@ -3204,67 +3213,7 @@ public class Application implements	KeyEventDispatcher {
     	if (repaint) kernel.notifyRepaint();
     	updateSelection();
     }
-    
-    /**
-     * Returns the location of the jar file of this application. 
-     * @param app
-     */
-    public URL getJarURL() {
-        try {
-            return getClass().getProtectionDomain().getCodeSource().getLocation();
-        } catch (Exception e) {
-            return null;
-        }       
-    }
-    
-    /**
-     * Returns the location of the geogebra_properties.jar file. 
-     * @param app
-     */
-    public URL getPropertiesFileURL() {
-        try {
-            return new URL(getCodeBase() + PROPERTIES_FILE);
-        } catch (Exception e) {
-            return null;
-        }       
-    }
-    
-    /**
-     * Returns the location of the geogebra_cas.jar file. 
-     * @param app
-     */
-    public URL getCASFileURL() {
-        try {
-            return new URL(getCodeBase() + CAS_FILE);
-        } catch (Exception e) {
-            return null;
-        }       
-    }
-    
-    /**
-     * Returns the location of the geogebra_gui.jar file. 
-     * @param app
-     */
-    public URL getGUIFileURL() {
-        try {
-            return new URL(getCodeBase() + GUI_FILE);
-        } catch (Exception e) {
-            return null;
-        }       
-    }
-    
-    /**
-     * Returns the location of the geogebra_gui.jar file. 
-     * @param app
-     */
-    public URL getEXPORTFileURL() {
-        try {
-            return new URL(getCodeBase() + EXPORT_FILE);
-        } catch (Exception e) {
-            return null;
-        }       
-    }
-    
+
     // remember split divider location
     private class DividerChangeListener implements PropertyChangeListener {                     
         public void propertyChange(PropertyChangeEvent e) {
@@ -3439,5 +3388,61 @@ public class Application implements	KeyEventDispatcher {
 	public void setCurrentImagePath(File currentImagePath) {
 		this.currentImagePath = currentImagePath;
 	}
+	
+
+	
+	/**
+	 * Copies all jar files of this application to the 
+	 * temp directory
+	 */
+	private synchronized void copyJarsToTempDir() {
+		try {		
+			String tempDir = System.getProperty("java.io.tmpdir"); 
+			
+			// copy jar files to tempDir
+			for (int i=0; i < JAR_FILES.length; i++) {
+				File dest = new File(tempDir, JAR_FILES[i]);
+				URL src = new URL(getCodeBase() + JAR_FILES[i]);
+				CopyURLToFile.copyURLToFile(src, dest);
+			}
+			
+			// TODO: remove
+			System.out.println("copied geogebra jar files to temp directory " + tempDir);
+			
+		} catch (Exception e) {				
+		}			
+	}
+
+	
+	/**
+	 * Copies all jar files of this application to the 
+	 * given directory
+	 * @param destDir
+	 */
+	public void copyJarsTo(String destDir) throws Exception {
+		// try to copy from temp dir
+		String tempDir = System.getProperty("java.io.tmpdir"); 
+		
+		URL srcDir;			
+		File tempJarFile = new File(tempDir, JAR_FILES[0]);			
+		if (tempJarFile.exists()) {
+			// try to copy from temp dir 
+			srcDir = new File(tempDir).toURL();
+		} else {
+			//	try to copy from codebas
+			srcDir = getCodeBase();
+		}
+		
+		// copy jar files to tempDir
+		for (int i=0; i < JAR_FILES.length; i++) {	
+			File dest = new File(destDir, JAR_FILES[i]);	
+			URL src = new URL(srcDir, JAR_FILES[i]);
+			CopyURLToFile.copyURLToFile(src, dest);
+		}
+				
+		// TODO: remove
+		System.out.println("copied geogebra jar files from " + srcDir + " to " + destDir);	
+	}
+	
 	
 }

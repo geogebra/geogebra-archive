@@ -31,11 +31,11 @@ public class MyResourceBundle extends PropertyResourceBundle {
 			super(in);
 	}
 	
-	final  public  static ResourceBundle createBundle(String name, Locale locale, String codebaseURL) {						
+	final  public  static ResourceBundle createBundle(String name, Locale locale) {						
 		MyResourceBundle bundle, temp = null;
 		
 		// base properties file
-		bundle = loadSingleBundleFile(name, codebaseURL);
+		bundle = loadSingleBundleFile(name);
 
 		// language properties file
 		String lang = locale.getLanguage();
@@ -46,7 +46,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
     	
     	// load only non-English languages (English has already been loaded as base file)
     	if (!"en".equals(lang))
-    		temp = loadSingleBundleFile(fileNameLanguage, codebaseURL);
+    		temp = loadSingleBundleFile(fileNameLanguage);
     	
     	if (temp != null) {
     		temp.setParent(bundle);
@@ -71,7 +71,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
     		}    		    		    		
     		
     		String fileNameLanguageCountry = sb.toString();
-    		temp = loadSingleBundleFile(fileNameLanguageCountry, codebaseURL);
+    		temp = loadSingleBundleFile(fileNameLanguageCountry);
     		if (temp != null) {
         		temp.setParent(bundle);
         		bundle = temp;
@@ -80,7 +80,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
     	return bundle;
 	}
 	
-    public  static MyResourceBundle loadSingleBundleFile(String name, String codebaseURL) {    	    	
+    public  static MyResourceBundle loadSingleBundleFile(String name) {    	    	
     	//System.out.println("loadBundle: " + name);
     	try {    		        	    		    		
     		String fileName = name + ".properties";
