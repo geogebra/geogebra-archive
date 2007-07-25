@@ -15,7 +15,6 @@ package geogebra.gui;
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -31,7 +30,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -126,11 +124,11 @@ implements GeoElementSelectionListener {
 				GeoPolygon poly = (GeoPolygon) geo;
 				GeoPoint [] points = poly.getPoints();
 				for (int i=0; i < points.length; i++) {
-					super.addElement(points[i]);				
+					addElement(points[i]);				
 				}
 				GeoSegment [] segments = poly.getSegments();
 				for (int i=0; i < segments.length; i++) {
-					super.addElement(segments[i]);
+					addElement(segments[i]);
 				}
 			}
 		}
@@ -272,9 +270,15 @@ implements GeoElementSelectionListener {
 	}
 	
 	private void initLists() {
-		// input and output objects combobox
-		cbInputAddList = new DefaultComboBoxModel();							
+		// input and output objects combobox						
 		cbOutputAddList = new DefaultComboBoxModel();
+		cbInputAddList = new DefaultComboBoxModel() {
+			public void removeElement(Object geo) {
+				super.removeElement(geo);
+				// remove every input from outputList
+				outputList.removeElement(geo);
+			}
+		};
 		
 		// lists for input and output objects
 		inputList = new InputListModel(cbInputAddList);
@@ -433,7 +437,12 @@ implements GeoElementSelectionListener {
 				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
 				if (geo == null) return;
 				
-				listModel.addElement(geo);														
+				listModel.addElement(geo);	
+				
+				cbAdd.removeActionListener(this);		
+				
+				cbAdd.setSelectedItem(null);
+				cbAdd.addActionListener(this);
 			}
 		};
 		cbAdd.addActionListener(ac);

@@ -955,16 +955,7 @@ ExpressionNode numVecVariable():
     }
 |
     c = <LABEL>
-    {   // single variable name
-    
-    	// special case: label "e" and no GeoElement exists with this name
-    	// then we use the Euler number    	
-    	if ("e".equals(c.image)) {
-    		if (kernel.lookupLabel("e") == null) {
-    			return new ExpressionNode(kernel, new MyDouble(kernel, Math.E));
-    		}
-    	}
-    	
+    {   
     	// standard case for variable
         return new ExpressionNode(kernel, new Variable(kernel, c.image));
     }

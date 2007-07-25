@@ -81,6 +81,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		// lists for combo boxes to select input and output objects
 		// fill combobox models
 		Iterator it = sortedSet.iterator();
+		comboModel.addElement(null);
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();				
 			if (geo.isEuclidianShowable()) {				
@@ -96,12 +97,14 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 				if (ob instanceof GeoElement) {
 					GeoElement geo = (GeoElement) ob;
 					if (geo.isEuclidianShowable()) {
-						super.addElement(geo);						
+						super.addElement(geo);
+						comboModel.removeElement(geo);
 					}
 				}	
 			}
 		};
 		
+		// add all selected geos to list
 	    for (int i=0; i < app.getSelectedGeos().size(); i++) {
 		  GeoElement geo = (GeoElement) app.getSelectedGeos().get(i);
 		  listModel.addElement(geo);
