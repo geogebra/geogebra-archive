@@ -124,7 +124,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		//
 		JPanel modePanel = new JPanel();
 		modePanel.setLayout(new BorderLayout(0, 0));
-		modePanel.setBorder(new TitledBorder(app.getPlain("Tools")));
+		modePanel.setBorder(new TitledBorder(app.getMenu("Tools")));
 		//modePanel.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), " " + "Wählbare Einträge" + " "));
 		//
 		Vector modeVector = generateToolsVector();
