@@ -119,18 +119,21 @@ implements GeoElementSelectionListener {
 			cbOutputAddList.removeElement(geo);
 			cbOutputAddList.addListDataListener(cbListener);
 			
-			// special case for polygon: add all points and segments too
+			/*
+			// special case for polygon: add all visible points and segments too
 			if (geo.isGeoPolygon()) {
 				GeoPolygon poly = (GeoPolygon) geo;
 				GeoPoint [] points = poly.getPoints();
 				for (int i=0; i < points.length; i++) {
-					addElement(points[i]);				
+					if (points[i].isVisible())
+						addElement(points[i]);				
 				}
 				GeoSegment [] segments = poly.getSegments();
 				for (int i=0; i < segments.length; i++) {
-					addElement(segments[i]);
+					if (segments[i].isVisible())
+						addElement(segments[i]);
 				}
-			}
+			} */
 		}
 	
 	}
@@ -275,7 +278,7 @@ implements GeoElementSelectionListener {
 		cbInputAddList = new DefaultComboBoxModel() {
 			public void removeElement(Object geo) {
 				super.removeElement(geo);
-				// remove every input from outputList
+				// remove every input from outputList too
 				outputList.removeElement(geo);
 			}
 		};
@@ -288,6 +291,8 @@ implements GeoElementSelectionListener {
 		
 		// lists for combo boxes to select input and output objects
 		// fill combobox models
+		cbInputAddList.addElement(null);
+		cbOutputAddList.addElement(null);		
 		Iterator it = sortedSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();				
