@@ -107,15 +107,15 @@ public abstract class CommandProcessor  {
     		}
     		
     		// add local variable name to construction 
-    	    GeoNumeric num = new GeoNumeric(cons);
-    	    num.setValue(1);
-    	    cons.addLocalVariable(localVarName, num);            
-    	    
+    		Construction cmdCons = c.getKernel().getConstruction();    		
+    	    GeoNumeric num = new GeoNumeric(cmdCons);
+    	    cmdCons.addLocalVariable(localVarName, num);    
+    	     
     	    // resolve all command arguments including the local variable just created
     	    GeoElement [] arg = resArgs(c);                                   
     	    
     	    // remove local variable name from kernel again
-    	    cons.removeLocalVariable(localVarName);     	    
+    	    cmdCons.removeLocalVariable(localVarName);     	    
     	    return arg;
     	}
 

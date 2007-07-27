@@ -1,7 +1,7 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
-import geogebra.gui.GeoGebra;
+import geogebra.GeoGebra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

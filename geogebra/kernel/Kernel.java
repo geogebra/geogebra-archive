@@ -3592,7 +3592,7 @@ public class Kernel {
 	}
 
 	final public String format(double x) {	
-		return formatPiE(x, nf);				
+		return nf.format(x);				
 	}
 	
 	final public String formatPiE(double x, NumberFormat nf) {

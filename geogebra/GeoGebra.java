@@ -15,10 +15,11 @@
  *
  * @author Markus Hohenwarter
  */
-package geogebra.gui;
+package geogebra;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.FileDropTargetListener;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.Dimension;

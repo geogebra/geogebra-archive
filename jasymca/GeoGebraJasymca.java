@@ -13,6 +13,8 @@ public class GeoGebraJasymca extends Jasymca {
 			eval("ceil(x):=round(x+1/2)");						
 		} catch(Exception e) {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
+			
+			//e.printStackTrace();
 		}		
 	}
 	
@@ -22,6 +24,8 @@ public class GeoGebraJasymca extends Jasymca {
 			return formatExpression(result);
 		} catch(Exception e) {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
+
+			//e.printStackTrace();
 			return null;
 		}				
 	}
@@ -39,29 +43,40 @@ public class GeoGebraJasymca extends Jasymca {
 		try {
 			StringBuffer sb = new StringBuffer("expand(");
 			sb.append(exp);
-			sb.append(')');						
+			sb.append(')');		
 			
 			// expand expression
 			Object result = eval(sb.toString());
-					 
-            // try to convert to polynomial                        
-            Polynomial poly = (Polynomial) result;
-            if (variable != poly.var.toString())
-            	return null;            
-            
-            // get coefficients
-            int deg = poly.degree();
-            String [] coeffs = new String[deg+1];
-            for (int i=0; i <= deg; i++) {         	
-            	coeffs[i] = poly.coef[i].toString();         	
-            	//System.out.println("   coeff " + i + ": " + coeffs[i] + ", class: " + poly.coef[i].getClass());    	                                                                         
-            }
-            
-            return coeffs;  
+	 
+			// number
+			if (result instanceof Zahl) {
+				String [] coeffs = new String[1];
+				coeffs[0] = result.toString();
+				return coeffs;
+			}	
+			
+            // polynomial  
+			else if (result instanceof Polynomial) {
+	            Polynomial poly = (Polynomial) result;
+	            if (variable != poly.var.toString())
+	            	return null;            
+	            
+	            // get coefficients
+	            int deg = poly.degree();
+	            String [] coeffs = new String[deg+1];
+	            for (int i=0; i <= deg; i++) {         	
+	            	coeffs[i] = poly.coef[i].toString();         	
+	            	//System.out.println("   coeff " + i + ": " + coeffs[i] + ", class: " + poly.coef[i].getClass());    	                                                                         
+	            }	            
+	            return coeffs;  
+			}
+			
 		} catch(Exception e) {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
-			return null;
+			//e.printStackTrace();
 		}
+		
+		return null;
 	}		
 	
 	  public static void main(String [] args) {

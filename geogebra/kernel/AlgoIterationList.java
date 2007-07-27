@@ -74,42 +74,34 @@ public class AlgoIterationList extends AlgoElement {
     	}     
     	
     	// number of iterations
+    	list.clear();
        	int iterations = (int) Math.round(n.getDouble());   
-    	if (iterations < 0) {
-    		list.clear();
-    		return;
-    	}
+    	if (iterations < 0) return;    	
     	    	    	     	
     	// perform iteration f(f(f(...(startValue))))
-    	// and fill list with all intermediate results
-    	int oldListSize = list.size();
+    	// and fill list with all intermediate results    	
     	double val = startValue.getDouble();
     	setListElement(0, val);    	
     	for (int i=0; i < iterations; i++) {    		    		
     		val = f.evaluate(val);
     		setListElement(i+1, val);
-    	}    	    	
-    	
-    	// remove all list elements that are no longer used
-    	// the new list has size = iterations + 1
-		for (int i=oldListSize-1; i > iterations; i--) {
-			list.remove(i);
-		}
+    	}    	    	    
     }   
     
     private void setListElement(int index, double value) {
     	GeoNumeric listElement;
-    	if (index < list.size()) {
+    	if (index < list.getCacheSize()) {
     		// use existing list element
-    		listElement = (GeoNumeric) list.get(index);    	
+    		listElement = (GeoNumeric) list.getCached(index);    	
     	} else {
     		// create a new list element
     		listElement = new GeoNumeric(cons);
     		listElement.setParentAlgorithm(this);
     		listElement.setConstructionDefaults();
-			listElement.setUseVisualDefaults(false);	
-    		list.add(listElement);
+			listElement.setUseVisualDefaults(false);	    		
     	}
+    	
+    	list.add(listElement);
     	listElement.setValue(value);
     }
     

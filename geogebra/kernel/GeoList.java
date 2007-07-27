@@ -38,13 +38,25 @@ public class GeoList extends GeoElement implements ListValue {
 	private static String STR_OPEN = "{";
 	private static String STR_CLOSE = "}";
 	
-	private ArrayList geoList = new ArrayList();	  
+	// GeoElement list members
+	private ArrayList geoList;	  
+	
+ 	// lists will often grow and shrink dynamically,
+	// so we keep a cacheList of all old list elements
+	private ArrayList cacheList;	  		
+	
 	private boolean isDefined = true;
 	private boolean isDrawable = true;
 	private int elementType = ELEMENT_TYPE_MIXED;
     
     public GeoList(Construction c) { 
-    	super(c);     	    	 
+    	this(c, 20);
+    }
+    
+    private GeoList(Construction c, int size) { 
+    	super(c);    	
+    	geoList = new ArrayList(size);
+    	cacheList = new ArrayList(size);
     	setEuclidianVisible(false);
     }
     
@@ -54,7 +66,7 @@ public class GeoList extends GeoElement implements ListValue {
     }
              
     public GeoList(GeoList list) {
-    	this(list.cons);
+    	this(list.cons, list.size());
         set(list);
     }
     
@@ -104,42 +116,53 @@ public class GeoList extends GeoElement implements ListValue {
     
     private void copyListElements(GeoList otherList) {
     	int otherListSize = otherList.size();
-        geoList.ensureCapacity(otherListSize);
-        int oldListSize = geoList.size();
-    	
+        ensureCapacity(otherListSize);
+        ensureCapacity(otherListSize);      
+                     
+        geoList.clear();
+        int cacheListSize = cacheList.size();
+        
     	for (int i=0; i < otherListSize; i++) {    		
-    		GeoElement otherListElement = otherList.get(i);
-
-    		//  try to reuse old GeoElement
-    		if (i < oldListSize) {        			
-	    		GeoElement oldGeo = get(i);    	
-	    		// same object type: use old geo
-	    		if (oldGeo.getGeoClassType() == otherListElement.getGeoClassType()) {
-	            	oldGeo.set(otherListElement);
-	            }
-	    		else {
-	    			geoList.set(i, getCopyForList(otherListElement));
-	    		} 		    		    	
-    		} else {
-    			geoList.add(getCopyForList(otherListElement));
-    		}        		
-    	}    
-        	
-    	// remove end of list
-    	for (int i=geoList.size()-1; i >= otherListSize; i--) {      		 
-    		geoList.remove(i);
-    	}
+    		GeoElement otherElement = otherList.get(i);
+    		GeoElement thisElement = null;
+    		
+    		//  try to reuse cached GeoElement
+    		if (i < cacheListSize) {        			
+	    		GeoElement cachedGeo = (GeoElement) cacheList.get(i);    		    		
+	    		if (!cachedGeo.isLabelSet() &&
+	    			 cachedGeo.getGeoClassType() == otherElement.getGeoClassType()) 
+	    		{
+	    			// cached geo is unlabeled and has needed object type: use it
+	    			cachedGeo.set(otherElement);	    		
+	    			thisElement = cachedGeo;
+	            }	    				    		    
+    		} 
+    		
+    		// could not use cached element -> get copy element
+    		if (thisElement == null) {
+	    		thisElement = getCopyForList(otherElement);
+    		}
+    		  
+    		// set list element
+    		add(thisElement);    		    		
+    	}            	
     }
 
 	private GeoElement getCopyForList(GeoElement geo) {
 		if (geo.isLabelSet()) {
 			// take original element
 			return geo;
-		} else {
+		} else {			
 			// create a copy of geo
 			GeoElement ret = geo.copyInternal(cons);
-			ret.setVisualStyle(geo);
 			return ret;
+		}
+	}
+	
+	private void applyVisualStyle(GeoElement geo) {
+		// TODO: think about setVisualStyle() for lists
+		if (!geo.isLabelSet()) {
+			geo.setObjColor(this.getObjectColor());		
 		}
 	}
     
@@ -234,34 +257,38 @@ public class GeoList extends GeoElement implements ListValue {
     }
     
     public final void add(GeoElement geo) {
-    	geoList.add(geo);   
+    	// add geo to end of list 
+    	geoList.add(geo);
+    	
+    	// add to cache
+    	int pos = geoList.size()-1;
+    	if (pos < cacheList.size()) {
+    		cacheList.set(pos, geo);  
+    	} else {
+    		cacheList.add(geo);
+    	}    	 
+    	
+//    	 set visual style of this list
+		applyVisualStyle(geo);
+    }      
+    
+    final void set(int pos, GeoElement geo) {
+    	geoList.set(pos, geo);
+    	cacheList.set(pos, geo);
     	
     	// init element type    	    
-    	if (geoList.size() == 1) {   
+    	if (pos == 0) {   
     		isDrawable = geo.isDrawable();
     		elementType = geo.getGeoClassType();
     	}
     	// check element type
     	else if (elementType != geo.getGeoClassType()) {    		
     		elementType = ELEMENT_TYPE_MIXED;
-    	}    	
+    	}    	    	
+    	isDrawable = isDrawable && geo.isDrawable(); 
     	
-    	isDrawable = isDrawable && geo.isDrawable();
-    	
-    	// TODO: think about visual style of list elements
-    	if (!geo.isLabelSet()) {
-    		geo.setVisualStyle(this);    		
-    	}
-    }      
-    
-    final void set(int i, GeoElement geo) {
-    	geoList.set(i, geo);
-    	
-    	if (elementType != geo.getGeoClassType()) {
-    		elementType = ELEMENT_TYPE_MIXED;
-    	}
-    	
-    	isDrawable = isDrawable && geo.isDrawable();
+    	// set visual style of this list
+		applyVisualStyle(geo);
     }
        
     /**
@@ -285,15 +312,29 @@ public class GeoList extends GeoElement implements ListValue {
      */
     final public GeoElement get(int index) {
     	return (GeoElement) geoList.get(index);
-    }       
+    }    
     
+   
     final public void ensureCapacity(int size) {
     	geoList.ensureCapacity(size);
+    	cacheList.ensureCapacity(size);
     }
     
     final public int size() {
     	return geoList.size();
     }
+    
+    final public int getCacheSize() {
+    	return cacheList.size();
+    }
+    
+    /**
+     * Returns the cached element at the specified position in this list's cache.
+     */
+    final public GeoElement getCached(int index) {
+    	return (GeoElement) cacheList.get(index);
+    } 
+    
             
     public String toString() {       
     	sbToString.setLength(0);

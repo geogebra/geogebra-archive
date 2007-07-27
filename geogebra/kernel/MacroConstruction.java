@@ -59,6 +59,12 @@ class MacroConstruction extends Construction {
      */
     final public GeoElement lookupLabel(String label) {
     	if (label == null) return null;
+    	
+    	// local var handling
+        if (!localVariableTable.isEmpty()) {        	
+        	GeoElement localGeo = (GeoElement) localVariableTable.get(label);        
+            if (localGeo != null) return localGeo;
+        }
     	    	       
         GeoElement geo =  (GeoElement) geoTable.get(label);
         if (geo == null && globalVariableLookup && !isReservedLabel(label)) {

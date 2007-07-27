@@ -196,13 +196,12 @@ public class GeoGebraPreferences {
     		// load tools from ggt file (byte array)
         	byte [] ggtFile = ggbPrefs.getByteArray(TOOLS_FILE_GGT, null);
         	app.loadMacroFileFromByteArray(ggtFile, true);
-        	
-    		
+        	    		
     		// load preferences xml
         	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
     		app.setXML(xml, true);	
     		
-    		app.initUndoInfo();      		
+    		app.setUndoActive(app.isUndoActive());      		
     		app.setDefaultCursor();
     	} catch (Exception e) {	    		
     		e.printStackTrace();

@@ -32,7 +32,6 @@ import geogebra.gui.ContextMenuGraphicsWindow;
 import geogebra.gui.PropertiesDialogGraphicsWindow;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.ContextMenuGeoElement;
-import geogebra.gui.GeoGebra;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
@@ -303,9 +302,7 @@ public class Application implements	KeyEventDispatcher {
     	            JOptionPane.DEFAULT_OPTION,
     	            JOptionPane.PLAIN_MESSAGE);
     		}
-    	}*/
-    	
-    	this.undoActive = undoActive;       	
+    	}*/     	
     		
 		isApplet = applet != null;
 		if (frame != null) {
@@ -356,8 +353,9 @@ public class Application implements	KeyEventDispatcher {
         			GeoGebraPreferences.loadXMLPreferences(this);
         	}        		        		    	
         	
-        	// init undo
-        	initUndoInfo();      	
+        	
+        // init undo
+       	setUndoActive(undoActive);  	
         INITING = false;	                     
    
         initShowAxesGridActions();
@@ -405,17 +403,7 @@ public class Application implements	KeyEventDispatcher {
     
     public boolean isIniting() {
         return INITING;
-    }
-    
-  
-    
-    public void initUndoInfo() {
-    	if (undoActive) {
-			kernel.initUndoInfo();			
-    	}
-    	updateActions();
-    	isSaved = true; 
-    }
+    }        
     
     public int getToolBarHeight() {
     	if (showToolBar)
@@ -2160,11 +2148,10 @@ public class Application implements	KeyEventDispatcher {
     }
     
     public void setUndoActive(boolean flag) {
-    	if (flag == undoActive) return;
-    	
     	undoActive = flag;
     	kernel.setUndoActive(flag);  
     	updateActions();
+    	isSaved = true;
     }
     
     public boolean isUndoActive() {
@@ -2311,9 +2298,10 @@ public class Application implements	KeyEventDispatcher {
 			public void actionPerformed(ActionEvent e) {
 				if (propDialog != null && propDialog.isShowing()) 
 		    		propDialog.cancel();
-				
+				setWaitCursor();
 				kernel.undo();
 				updateActions();
+				setDefaultCursor();
 				System.gc();
 			}
 		};
@@ -2326,8 +2314,10 @@ public class Application implements	KeyEventDispatcher {
 				if (propDialog != null && propDialog.isShowing()) 
 		    		propDialog.cancel();
 				
+				setWaitCursor();
 				kernel.redo();	
 				updateActions();
+				setDefaultCursor();
 				System.gc();
 			}
 		};

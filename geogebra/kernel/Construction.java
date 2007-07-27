@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.io.MyXMLio;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
@@ -654,7 +655,8 @@ public class Construction {
     }
 
     public void restoreCurrentUndoInfo() {
-        undoManager.restoreCurrentUndoInfo();
+    	if (undoManager != null)
+    		undoManager.restoreCurrentUndoInfo();
     }
 
     public void redo() {
@@ -683,7 +685,7 @@ public class Construction {
      * Replaces oldGeo by newGeo in the current construction
      */ 
     public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {        
-        if (oldGeo == null || 
+    	if (oldGeo == null || 
              newGeo == null || 
              oldGeo == newGeo) return;  
                
@@ -820,13 +822,13 @@ public class Construction {
             newConsXML.append(newXML);
             newConsXML.append(consXML.substring(pos + oldXML.length()));                
    
-//            System.out.println("***");
-//            System.out.println("cons XML:\n" + consXML);
-//            System.out.println("***");      
-//            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
-//            System.out.println("***");
-//            System.out.println("new XML:\n" + newConsXML);
-//            System.out.println("***");
+            System.out.println("***");
+            System.out.println("cons XML:\n" + consXML);
+            System.out.println("***");      
+            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
+            System.out.println("***");
+            System.out.println("new XML:\n" + newConsXML);
+            System.out.println("***");
            
             undoManager.processXML(newConsXML.toString());
             kernel.notifyReset();
@@ -932,7 +934,7 @@ public class Construction {
      * Returns undo xml string of this  construction.
      */
     public String getCurrentUndoXML() {
-        return undoManager.getCurrentUndoXML();
+        return MyXMLio.getUndoXML(this);
     }
 
     public String getAuthor() {

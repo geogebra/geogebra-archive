@@ -19,7 +19,6 @@ package geogebra;
  */
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.GeoGebra;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -347,7 +346,7 @@ public class GeoGebraApplet extends JApplet {
 	 * input text field. 	 
 	 */
 	public synchronized void evalCommand(String cmdString) {
-		kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
+			kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
 	}
 
 	

@@ -105,23 +105,6 @@ public class AlgoSequence extends AlgoElement {
            
         setDependencies(); // done by AlgoElement          
     }
-    
-    /**
-     * All list objects are output of this algorithm.
-     * Whenever the number of these objects changes,
-     * we have to call this method.    
-     */    		
-    private void updateOutputArray() {
-    	int size = list.size();
-    	output = new GeoElement[size+1];
-    	output[0] = list;
-    	
-    	for (int i=0; i < size; i++) {
-    		GeoElement geo = list.get(i);
-    		geo.setParentAlgorithm(this);
-    		output[i+1] = geo;    		
-    	}    	
-    }
 
     GeoList getList() {
         return list;
@@ -164,23 +147,29 @@ public class AlgoSequence extends AlgoElement {
     		createNewList(from, to, step);        	
     }         
     
-    private void createNewList(double from, double to, double step) {    	    	    	
+    private void createNewList(double from, double to, double step) {     
     	// clear list if defined  
     	int i=0;
     	int oldListSize = list.size();
+    	list.clear();
     	
     	if (!isEmpty) {    		
+    		//  needed capacity
+        	int n = (int) Math.ceil((to - from)/step) + 1;
+        	list.ensureCapacity(n);
+    		
     		// create the sequence    		    
     		double currentVal = from;   
-	    	
+    		int cacheListSize = list.getCacheSize();
+    		
 			while ((step > 0 && currentVal <= to) || 
 				   (step < 0 && currentVal >= to)) 
 			{
 				// only add new objects
-				GeoElement listElement;								
-				if (i < oldListSize) {		
-					// we reuse existing list element					
-					listElement = list.get(i);	
+				GeoElement listElement = null;								
+				if (i < cacheListSize) {		
+					// we reuse existing list element from cache				
+					listElement = list.getCached(i);	
 					
 					if (!funExpUnchanged) {
 						// if function expression changed, we need a new element
@@ -188,17 +177,15 @@ public class AlgoSequence extends AlgoElement {
 			    		listElement.doRemove(); 
 	
 			    		// replace old list element by a new one
-						listElement = createNewListElement();
-						list.set(i, listElement); 
-					}					
+						listElement = createNewListElement();						
+					}			
 				} else {
 					// create new list element and add it to end of list
 					listElement = createNewListElement();					
-					// add this element to end of list
-					list.add(listElement);
 				}
 				
 				// set the value of our element
+				list.add(listElement);
 				setValue(listElement, currentVal);		
 				
 				currentVal += step;
@@ -207,12 +194,10 @@ public class AlgoSequence extends AlgoElement {
     	}
     	
     	// if the old list was longer than the new one
-    	// we need to remove the last elements
+    	// we need to set some cached elements to undefined
     	for (int k=oldListSize-1; k >= i ; k--) {
-    		GeoElement listElement = list.get(k);
-    		list.remove(k); // remove from list
-    		listElement.setParentAlgorithm(null);
-    		listElement.doRemove();    		
+    		GeoElement oldElement = list.getCached(k);
+    		oldElement.setUndefined();    				
     	}		    
 		
 		// remember current values
@@ -224,9 +209,6 @@ public class AlgoSequence extends AlgoElement {
     	if (expIsGeoFunction) {    	
     		last_function_Expression = ((GeoFunction) expression).getFunctionExpression();
     	}
-    	
-    	// update output array
-    	updateOutputArray();
     }        
     
     private GeoElement createNewListElement() {

@@ -529,8 +529,10 @@ public abstract class GeoElement
 	 * object should be drawn in euclidian view
 	 */
 	final public boolean isEuclidianVisible() {
+		if (!showInEuclidianView()) return false;
+		
 		if (condShowObject == null)
-			return euclidianVisible && showInEuclidianView();
+			return euclidianVisible;
 		else
 			return condShowObject.getBoolean();
 	}	

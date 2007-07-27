@@ -13,6 +13,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.gui;
  
 
+import geogebra.GeoGebra;
+
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.net.URL;
