@@ -370,10 +370,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	            addItem(cbItem);
         	}
             
-            if (!(geo.isTextValue() ||
-            	  geo.isGeoImage() ||
-            	  geo.isGeoBoolean() ||
-            	  geo.isGeoList())) {           
+            if (geo.isLabelShowable()) {           
 	            // show label
 	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowLabel"));	           
 	            cbItem.setSelected(geo.isLabelVisible());
@@ -385,23 +382,23 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	                    app.storeUndoInfo();
 	                }        	
 	        	});
-	            addItem(cbItem);
-	        	
-	            // trace
-	            if (geo.isTraceable()) {            	
-	                cbItem = new JCheckBoxMenuItem( app.getPlain("TraceOn"));
-	                cbItem.setIcon(app.getEmptyIcon());
-	                cbItem.setSelected(((Traceable) geo).getTrace());
-	                cbItem.addActionListener(new ActionListener() {
-	                	public void actionPerformed(ActionEvent e) {
-	                        ((Traceable) geo).setTrace(!((Traceable) geo).getTrace());
-	                        geo.updateRepaint();
-	                        app.storeUndoInfo();
-	                    }       	
-	            	});
-	                addItem(cbItem);            	
-	            }  	            	            
+	            addItem(cbItem);	        		            	            	            
             }     
+            
+            //  trace
+            if (geo.isTraceable()) {            	
+                cbItem = new JCheckBoxMenuItem( app.getPlain("TraceOn"));
+                cbItem.setIcon(app.getEmptyIcon());
+                cbItem.setSelected(((Traceable) geo).getTrace());
+                cbItem.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                        ((Traceable) geo).setTrace(!((Traceable) geo).getTrace());
+                        geo.updateRepaint();
+                        app.storeUndoInfo();
+                    }       	
+            	});
+                addItem(cbItem);            	
+            }  
             
             // text position
             if (geo.isGeoText()) {

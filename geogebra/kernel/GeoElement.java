@@ -604,8 +604,32 @@ public abstract class GeoElement
 		labelVisible = visible;
 	}
 
+	/**
+	 * Returns whether the label should be shown in 
+	 * Euclidian view.
+	 */
 	public boolean isLabelVisible() {
 		return labelVisible;
+	}
+	
+	/**
+	 * Returns whether the label can be shown in 
+	 * Euclidian view.
+	 */
+	final public boolean isLabelShowable() {
+		return isDrawable() && 
+				!(isTextValue() ||
+					isGeoImage() ||
+					isGeoList());
+	}	
+	
+	/**
+	 * Returns whether the value (e.g. equation) should be shown
+	 * as part of the label description
+	 */
+	final public boolean isLabelValueShowable() {
+		return !(isGeoLocus() ||
+					isGeoBoolean());
 	}
 
 	/**

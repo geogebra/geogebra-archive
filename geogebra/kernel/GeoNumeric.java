@@ -360,6 +360,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return isIndependent() && intervalMinActive || intervalMaxActive;
 	}
 	
+	public boolean isFixable() {
+		// visible slider should not be fixable
+		return isIndependent() && !isSetEuclidianVisible();
+	}
+	
 	String getXMLsliderTag() {
 		if (!isSliderable())
 			return "";

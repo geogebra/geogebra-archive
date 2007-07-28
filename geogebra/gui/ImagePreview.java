@@ -92,7 +92,7 @@ public class ImagePreview extends JPanel implements PropertyChangeListener {
     public void paintComponent(Graphics g) {
 	Graphics2D g2 = (Graphics2D) g;
 	// fill background
-	g2.setColor(Color.gray);
+	g2.setColor(Color.white);
 	g2.fillRect(0, 0, getWidth(), getHeight());
 
 	g2.setRenderingHint(RenderingHints.KEY_RENDERING,

@@ -29,6 +29,7 @@ import geogebra.gui.BrowserLauncher;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.ContextMenuGraphicsWindow;
+import geogebra.gui.ImagePreview;
 import geogebra.gui.PropertiesDialogGraphicsWindow;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.ContextMenuGeoElement;
@@ -1505,7 +1506,12 @@ public class Application implements	KeyEventDispatcher {
         fileFilter.setDescription(getPlain("Image"));
         fileChooser.resetChoosableFileFilters();
         fileChooser.setFileFilter(fileFilter);    
-        
+               
+        // add image previewto fileChooser, Philipp Weissenbacher
+        ImagePreview preview = new ImagePreview(fileChooser);
+        fileChooser.setAccessory(preview);
+        fileChooser.addPropertyChangeListener(preview);
+
         File imageFile = null;
         int returnVal = fileChooser.showOpenDialog(mainComp);
         if (returnVal == JFileChooser.APPROVE_OPTION) {             
@@ -1516,7 +1522,11 @@ public class Application implements	KeyEventDispatcher {
         			GeoGebraPreferences.saveDefaultImagePath(currentImagePath);
         		}
         	}
-        }       
+        }      
+        
+        // remove image preview in order to reset fileChooser
+        fileChooser.removePropertyChangeListener(preview);
+        fileChooser.setAccessory(null);
         
 		if (imageFile == null) return null;				
 		
@@ -2507,7 +2517,7 @@ public class Application implements	KeyEventDispatcher {
         if (fileDescription != null)
             fileFilter.setDescription(fileDescription);
         fileChooser.resetChoosableFileFilters();
-        fileChooser.setFileFilter(fileFilter);        
+        fileChooser.setFileFilter(fileFilter);
 
         while (!done) {
             // show save dialog
@@ -3415,6 +3425,11 @@ public class Application implements	KeyEventDispatcher {
 		
 		URL srcDir;			
 		File tempJarFile = new File(tempDir, JAR_FILES[0]);			
+		
+		// TODO: remove
+		System.out.println("temp jar file: " + tempJarFile);
+		System.out.println("   exists " + tempJarFile.exists());	
+		
 		if (tempJarFile.exists()) {
 			// try to copy from temp dir 
 			srcDir = new File(tempDir).toURL();

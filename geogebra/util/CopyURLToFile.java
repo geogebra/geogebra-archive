@@ -49,7 +49,7 @@ public class CopyURLToFile extends Thread {
 				in.close();
 				out.close();
 			} catch (Exception ex) {}
-			dest.delete();
+			//dest.delete();
 			
 			throw e;
 		}

@@ -28,7 +28,6 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
@@ -58,8 +57,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -91,8 +88,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -611,7 +606,8 @@ public class PropertiesDialogGeoElement
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);
-			basicTabList.add(fixPanel);			
+			basicTabList.add(fixPanel);		
+			basicTabList.add(checkBoxFixPanel);
 			basicTabList.add(bgImagePanel);	
 			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
 			basicTab.addToTabbedPane(tabs);	
@@ -690,7 +686,6 @@ public class PropertiesDialogGeoElement
 			positionTabList.add(absScreenLocPanel);
 			positionTabList.add(startPointPanel);	
 			positionTabList.add(cornerPointsPanel);
-			positionTabList.add(checkBoxFixPanel);
 			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
 			positionTab.addToTabbedPane(tabs);	
 			
@@ -980,15 +975,12 @@ public class PropertiesDialogGeoElement
 	} // CheckBoxFixPanel
 	
 	/**
-	 * panel with button for color choosing
+	 * panel color chooser and preview panel
 	 */
-	private class ColorPanel extends JPanel implements UpdateablePanel {
-		/**
-		 * 
-		 */
+	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener {
+
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
-		private Color currentColor;
 		private JColorChooser colChooser;
 		private JPanel previewPanel;
 
@@ -1006,13 +998,13 @@ public class PropertiesDialogGeoElement
 			p.add(previewPanel);
 			add(p, BorderLayout.CENTER);
 			
-			colChooser.getSelectionModel().addChangeListener(new ChangeListener() {			
-				public void stateChanged(ChangeEvent arg0) {					
-					setObjColor(colChooser.getColor());	
-					previewPanel.setForeground(colChooser.getColor());
-				}
-			});			
+			// in order to get state changes we need to set color chooser to
+			// a color that is different to the 	
+			colChooser.setColor(new Color(1, 1,1, 100));
+			colChooser.getSelectionModel().addChangeListener(this);	
 		}
+		
+
 		
 		private class PreviewPanel extends JPanel {
 		    public PreviewPanel() {
@@ -1021,11 +1013,11 @@ public class PropertiesDialogGeoElement
 		      }
 		      public void paintComponent(Graphics g) {
 		        Dimension size = getSize();
-
+	
 		        g.setColor(getForeground());
 		        g.fillRect(0,0,size.width,size.height);
 		      }
-		    }
+	    }
 
 		public JPanel update(Object[] geos) {
 			this.geos = geos;
@@ -1046,30 +1038,39 @@ public class PropertiesDialogGeoElement
 			}
 
 			// set colorButton's color to object color
+			Color col;
 			if (equalObjColor) {
-				currentColor = geo0.getObjectColor();				
+				col = geo0.getObjectColor();				
 			} else {
-				currentColor = null;				
+				col = null;				
 			}
-			previewPanel.setForeground(currentColor);
+			previewPanel.setForeground(col);
 			return this;
 		}
 
 		/**
 		 * sets color of selected GeoElements
-		 *
 		 */
-		private void setObjColor(Color col) {						
-			if (col == null)
+		private void updateColor(Color col) {						
+			if (col == null || geos == null)
 				return;
-			currentColor = col;				
+			
+			// update preview panel
+			previewPanel.setForeground(col);
 
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
 				geo = (GeoElement) geos[i];
 				geo.setObjColor(col);
 				geo.updateRepaint();
-			}
+			}					
+			
+			// in order to get state changes we need to set color chooser to
+			// a color that is different to the current one
+			colChooser.getSelectionModel().removeChangeListener(this);		
+			Color differentColor = new Color(col.getRed(), col.getGreen(), (col.getBlue() + 1) % 256);
+			colChooser.setColor(differentColor);
+			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 
 	
@@ -1085,6 +1086,13 @@ public class PropertiesDialogGeoElement
 			}
 			return true;
 		}
+		
+		/**
+		 * Listens for color chooser state changes
+		 */
+		public void stateChanged(ChangeEvent arg0) {
+			updateColor(colChooser.getColor());	
+		}	
 
 	} // ColorPanel
 
@@ -1101,7 +1109,7 @@ public class PropertiesDialogGeoElement
 		private Object[] geos; // currently selected geos
 		private JCheckBox showLabelCB;
 		private JComboBox labelModeCB;
-		private boolean locusSelected;
+		private boolean showNameValueComboBox;
 
 		public LabelPanel() {
 			// check boxes for show object, show label
@@ -1135,7 +1143,7 @@ public class PropertiesDialogGeoElement
 			GeoElement temp, geo0 = (GeoElement) geos[0];
 			boolean equalLabelVal = true;
 			boolean equalLabelMode = true;
-			locusSelected =  geo0 instanceof GeoLocus;
+			showNameValueComboBox =  geo0.isLabelValueShowable();
 
 			for (int i = 1; i < geos.length; i++) {
 				temp = (GeoElement) geos[i];
@@ -1146,8 +1154,8 @@ public class PropertiesDialogGeoElement
 				if (geo0.getLabelMode() != temp.getLabelMode())
 					equalLabelMode = false;
 				
-				if (!locusSelected)
-					locusSelected = temp instanceof GeoLocus;
+				showNameValueComboBox =
+					showNameValueComboBox && temp.isLabelValueShowable();
 			}
 
 			//	set label visible checkbox
@@ -1166,7 +1174,7 @@ public class PropertiesDialogGeoElement
 				labelModeCB.setSelectedItem(null);
 
 			// locus in selection
-			labelModeCB.setEnabled(!locusSelected);
+			labelModeCB.setVisible(showNameValueComboBox);
 			
 			showLabelCB.addItemListener(this);
 			labelModeCB.addActionListener(this);
@@ -1178,13 +1186,7 @@ public class PropertiesDialogGeoElement
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isDrawable()) {
-					geosOK = false;
-					break;
-				} else if (geo.isGeoText() || 
-						   geo.isGeoImage() ||
-						   geo.isGeoBoolean() ||
-						   geo.isGeoList()) {
+				if (!geo.isLabelShowable()) {
 					geosOK = false;
 					break;
 				}
@@ -1202,7 +1204,7 @@ public class PropertiesDialogGeoElement
 			// show label value changed
 			if (source == showLabelCB) {
 				boolean flag = showLabelCB.isSelected();
-				labelModeCB.setEnabled(!locusSelected && flag);
+				labelModeCB.setEnabled(!showNameValueComboBox && flag);
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
 					geo.setLabelVisible(flag);
@@ -1354,7 +1356,8 @@ public class PropertiesDialogGeoElement
 
 		private boolean checkGeos(Object[] geos) {
 			for (int i = 0; i < geos.length; i++) {
-				if (!((GeoElement) geos[i]).isFixable())
+				GeoElement geo = (GeoElement) geos[i];
+				if (!geo.isFixable())
 					return false;
 			}
 			return true;
@@ -3817,12 +3820,16 @@ class SliderPanel
 		intervalPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Interval")));			
 		
 		JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider"))));
+		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider"))));		
+
+		cbSliderFixed = new JCheckBox(app.getPlain("fixed"));
+		cbSliderFixed.addActionListener(this);
+		sliderPanel.add(cbSliderFixed);		
 		
 		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
 		coSliderHorizontal = new JComboBox(comboStr);
 		coSliderHorizontal.addActionListener(this);
-		sliderPanel.add(coSliderHorizontal);
+		sliderPanel.add(coSliderHorizontal);				
 					
 		String[] labels = { app.getPlain("min")+":",
 							app.getPlain("max")+":", app.getPlain("Width")+":"};
@@ -3855,11 +3862,7 @@ class SliderPanel
 		
 		// add increment to intervalPanel
 		stepPanel = new AnimationStepPanel(app);
-		intervalPanel.add(stepPanel);
-		
-		cbSliderFixed = new JCheckBox(app.getPlain("fixed"));
-		cbSliderFixed.addActionListener(this);
-		sliderPanel.add(cbSliderFixed);				
+		intervalPanel.add(stepPanel);		
 		
 		add(intervalPanel);	
 		add(Box.createVerticalStrut(5));

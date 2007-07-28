@@ -137,8 +137,12 @@ AbsoluteScreenLocateable {
 	}
 
 	final boolean showInAlgebraView() {		
-		//return isDefined;
 		return true;
+	}
+	
+	public boolean isFixable() {
+		// visible checkbox should not be fixable
+		return isIndependent() && !isSetEuclidianVisible();
 	}
 
 	public void set(GeoElement geo) {

@@ -27,7 +27,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JCheckBox;
 
 /**
- * Toggle Button for free GeoBoolean object.
+ * Checkbox for free GeoBoolean object.
  * 
  * @author Markus Hohenwarter
  * @version
@@ -156,14 +156,21 @@ public final class DrawBoolean extends Drawable {
 		if (!isVisible)
 			return;		
 
-		// update caption string
-		String caption = geoBool.getCaption();
-		if (!caption.equals(oldCaption)) {
-			oldCaption = caption;
-			labelDesc = GeoElement.indicesToHTML(caption, true);
-		}
-		checkBox.setOpaque(false);
-		checkBox.setText(labelDesc);
+		// show hide label by setting text
+		if (geo.isLabelVisible()) {
+			// get caption to show r
+			String caption = geoBool.getCaption();
+			if (!caption.equals(oldCaption)) {
+				oldCaption = caption;
+				labelDesc = GeoElement.indicesToHTML(caption, true);
+			}	
+			checkBox.setText(labelDesc);
+		} else {
+			// don't show label
+			checkBox.setText("");
+		}			
+		
+		checkBox.setOpaque(false);		
 		checkBox.setFont(view.fontPoint);
 		checkBox.setForeground(geoBool.getObjectColor());
 		
@@ -178,6 +185,8 @@ public final class DrawBoolean extends Drawable {
 		labelRectangle.setBounds(xLabel, yLabel, prefSize.width,
 				prefSize.height);
 		checkBox.setBounds(labelRectangle);
+		
+		
 	}
 
 	final public void draw(Graphics2D g2) {
@@ -194,9 +203,7 @@ public final class DrawBoolean extends Drawable {
 				
 				System.out.println("highlight drawn");
 				checkBox.setBorder(BorderFactory.createEtchedBorder());
-			}
-			
-			
+			}				
 		}
 		*/
 	}

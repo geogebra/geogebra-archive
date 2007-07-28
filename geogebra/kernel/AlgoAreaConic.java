@@ -61,9 +61,11 @@ public class AlgoAreaConic extends AlgoElement {
     
     // calc area of conic c 
     final void compute() {  
-    	if (!conic.isDefined())
+    	if (!conic.isDefined()) {
     		area.setUndefined();
-    	
+    		return;
+    	}
+    
     	// area of sector
     	if (conic.isGeoConicPart()) {
     		GeoConicPart conicPart = (GeoConicPart) conic;
