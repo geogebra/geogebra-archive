@@ -14,7 +14,6 @@ package geogebra.gui.toolbar;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.Kernel;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

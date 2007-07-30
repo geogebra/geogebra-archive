@@ -12,6 +12,7 @@ package geogebra.gui;
 /////////////////////////////////////////////////////////
 
 import java.lang.reflect.Method;
+
 import javax.swing.JOptionPane;
 
 public class BrowserLauncher {

@@ -53,7 +53,6 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 /**
  * @author Le Coq loïc

@@ -22,7 +22,6 @@ import geogebra.kernel.Kernel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -209,9 +208,9 @@ public class TextInputDialog extends InputDialog {
 				isLaTeX = cbLaTeX.isSelected();
 				
 				boolean finished = inputHandler.processInput(inputText);	
-				if (isShowing())
+				if (isShowing()) {				
 					setVisible(!finished);
-				else {			
+				} else {			
 					text.setLaTeX(isLaTeX, true);
 					setGeoText(text);
 				}

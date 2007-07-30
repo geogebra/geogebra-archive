@@ -795,7 +795,7 @@ public class Kernel {
 					GeoElement geo =  (GeoElement) it.next();					
 					notifyAdd(geo);									
 				}			
-				app.setMoveMode();
+				//app.setMoveMode();
 				notifyReset();
 				
 				viewReiniting = false;

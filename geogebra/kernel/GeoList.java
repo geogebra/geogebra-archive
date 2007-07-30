@@ -18,7 +18,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import geogebra.euclidian.Drawable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;

@@ -18,7 +18,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.Util;
 
 import java.util.ArrayList;

@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.gui.InputPanel;
-import geogebra.gui.MySmallJButton;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -823,13 +823,13 @@ public class Construction {
             newConsXML.append(newXML);
             newConsXML.append(consXML.substring(pos + oldXML.length()));                
    
-            System.out.println("***");
-            System.out.println("cons XML:\n" + consXML);
-            System.out.println("***");      
-            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
-            System.out.println("***");
-            System.out.println("new XML:\n" + newConsXML);
-            System.out.println("***");
+//            System.out.println("***");
+//            System.out.println("cons XML:\n" + consXML);
+//            System.out.println("***");      
+//            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
+//            System.out.println("***");
+//            System.out.println("new XML:\n" + newConsXML);
+//            System.out.println("***");
            
             undoManager.processXML(newConsXML.toString());
             kernel.notifyReset();

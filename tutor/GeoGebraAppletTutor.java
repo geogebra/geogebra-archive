@@ -21,9 +21,6 @@ package tutor;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 /**

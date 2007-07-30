@@ -14,7 +14,6 @@ package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
-import geogebra.export.pstricks.GeoGebraToPstricks;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.io.MyImageIO;
 import geogebra.util.Util;
