@@ -28,8 +28,9 @@ public class RenameInputHandler implements InputHandler {
 	}
 
 	public boolean processInput(String inputValue) {
-		if (inputValue == null || inputValue.equals(geo.getLabel()))
+		if (inputValue == null)
 			return false;
+	
 		try {
 			if (!checkName(geo, inputValue)) {
 				app.showError("InvalidInput");
