@@ -9,14 +9,23 @@ import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
-import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+
 
 public class TutorView extends JPanel implements View {
 	
@@ -33,8 +42,10 @@ public class TutorView extends JPanel implements View {
 	private static final int TUTOR = 1;
 	private static final String studentName = "Eloi";
 	private static final String tutorName = "Fortuny";
-	private JTextArea resultArea = new JTextArea(6, 20);
-	
+	private static final String WELCOME = "Welcome!!!\n";
+	private JTextArea resultArea = new JTextArea(40, 20);
+	private JComboBox justificationCombo = new JComboBox();
+	private JTextField commentField = new JTextField(70);
 	
 	public TutorView (String[] strategiesXML,Application app) 
 	{
@@ -72,19 +83,35 @@ public class TutorView extends JPanel implements View {
 		// TODO: implement user interface of tutor view
 		//add(new JLabel("Hello Eloi!"));
 	
-	
-	        resultArea.setText("HOLA");
+		
+	        resultArea.setText(WELCOME);
 	        resultArea.setEditable(false);
+	        commentField.setEditable(true);
+	        commentField.setEnabled(true);
 	        
 	        JScrollPane scrollingArea = new JScrollPane(resultArea);
 	        //... Get the content pane, set layout, add to center
-	        setLayout(new BorderLayout());
-	        add(scrollingArea, BorderLayout.CENTER);
-	        add(new JTextArea(),BorderLayout.SOUTH);
-	
+	        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+	        add(scrollingArea);
+	        
+	        add(Box.createVerticalGlue());  
+
+	        add(new JLabel("Comments3332:",SwingConstants.LEFT));
+	       // commentField.setMaximumSize(commentField.getPreferredSize());
+	        commentField.addActionListener(new ActionListener() {
+	        		public void actionPerformed( ActionEvent evt ) {
+	        			processCommentField();
+	        		}
+	        }
+	        );
+	        //add(commentField);
+	       // add(justificationCombo);
+	        
 	}
 	
-	
+	private void processCommentField(){
+		System.out.println(commentField.getText());
+	}
 	 private URL handleFileArg(String fileArgument) {	     	      
 	        try {             		        	
 	        	String lowerCase = fileArgument.toLowerCase();
@@ -119,9 +146,14 @@ public class TutorView extends JPanel implements View {
 		//System.out.println(geo+"/"+geo.getObjectType());
 		//System.out.println(t);
 	//	System.out.println(c.getXML());
-		printTextArea(objectToDialogue(geo),TUTOR);
+		//if (geo.getObjectType()  )
 		
+		printTextArea(objectToDialogue(geo),TUTOR);
+		commentField.requestFocus();
 	}
+	/*
+	 * Method to pass GeoElement to Diaologue text
+	 */
 	private String objectToDialogue(GeoElement geo)
 	{
 		return geo.getObjectType()+":"+geo.getLabel()+"\n";
@@ -129,6 +161,9 @@ public class TutorView extends JPanel implements View {
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();
 		
+	/*
+	 * Print text into Tutor Dialogue area.
+	 */
 	private void printTextArea(String txt, int user)
 	{
 		

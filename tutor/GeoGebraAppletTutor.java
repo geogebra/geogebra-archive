@@ -18,10 +18,13 @@ package tutor;
  * Created on 23. J�nner 2003, 22:37
  */
 
+import java.awt.Container;
+
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
