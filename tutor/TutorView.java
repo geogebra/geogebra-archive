@@ -96,7 +96,7 @@ public class TutorView extends JPanel implements View {
 	        
 	        add(Box.createVerticalGlue());  
 
-	        add(new JLabel("Comments3332:",SwingConstants.LEFT));
+	        add(new JLabel("Comments:",SwingConstants.LEFT));
 	       // commentField.setMaximumSize(commentField.getPreferredSize());
 	        commentField.addActionListener(new ActionListener() {
 	        		public void actionPerformed( ActionEvent evt ) {
@@ -104,8 +104,8 @@ public class TutorView extends JPanel implements View {
 	        		}
 	        }
 	        );
-	        //add(commentField);
-	       // add(justificationCombo);
+	        add(commentField);
+	        add(justificationCombo);
 	        
 	}
 	
