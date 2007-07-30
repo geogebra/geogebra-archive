@@ -74,8 +74,7 @@ public class WorksheetExportDialog extends JDialog {
 		this.app = app;
 		kernel = app.getKernel();
 		
-		initGUI();		
-		loadPreferences();				
+		initGUI();					
 	} 
 		
 	
@@ -182,10 +181,31 @@ public class WorksheetExportDialog extends JDialog {
 	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 	    	cbShowInputField.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+	    	
+	    	addHeight();
+	    
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
     }
+	
+	private void addHeight() {
+		int height = 0;
+		
+		if (cbShowToolBar.isSelected()) {
+			height += app.getToolBarHeight();			
+		}
+		if (cbShowMenuBar.isSelected()) {
+			height += app.getMenuBarHeight();
+		}
+		if (cbShowInputField.isSelected()) {
+			height +=app.getAlgebraInputHeight();
+		}
+		
+		sizePanel.setValues(sizePanel.getSelectedWidth(), 
+				sizePanel.getSelectedHeight() + height, 
+				false);	
+	}
     
     private void savePreferences() {    	    	
     	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_RIGHT_CLICK, Boolean.toString(cbEnableRightClick.isSelected()));

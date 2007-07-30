@@ -712,8 +712,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				Thread runner = new Thread() {
 		    		public void run() {   
 		    			app.setWaitCursor();
-		    			GeoGebra wnd = GeoGebra.createNewWindow(null);    			    	    		    	    	
-		    			wnd.setVisible(true);
+		    			GeoGebra.createNewWindow(null);		    		
 		    			app.setDefaultCursor();
 		    		}
 		    	};
@@ -1324,7 +1323,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	 // handle language changes
     private class LanguageActionListener implements ActionListener {                        
         public void actionPerformed(ActionEvent e) {
-        	app.setLanguage(app.getLocale(e.getActionCommand()));        	
+        	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
         	GeoGebraPreferences.saveDefaultLocale(app.getLocale());
         }
     }
@@ -1332,7 +1331,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
     private static String readTextFromJar(String s) {
         StringBuffer sb = new StringBuffer();        
         try {
-          InputStream is = GeoGebra.class.getResourceAsStream(s);
+          InputStream is = MyMenubar.class.getResourceAsStream(s);
           BufferedReader br = new BufferedReader
              (new InputStreamReader(is));
           String thisLine;

@@ -194,7 +194,7 @@ public class TutorView extends JPanel implements View {
 		    k.setUndoActive(false);
 	    	xmlio = new MyXMLio(k,k.getConstruction());	    		    	
 	    	try {        	
-	    		xmlio.readZipFromURL(url, false);
+	    		xmlio.readZipFromInputStream(url.openStream(), false);
 	    	} 
 	    	catch (MyError e) {  
 	    		String msg = e.getLocalizedMessage();

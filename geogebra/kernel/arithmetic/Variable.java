@@ -65,12 +65,6 @@ public class Variable implements ExpressionValue {
 			return  geo;
 		else {
             String [] str = { "UndefinedVariable", name };
-            
-            // TODO: remove
-            System.out.println("undefined var: " + name);
-            System.out.println(" kernel class: " + kernel.getClass());
-            System.out.flush();
-            
             throw new MyParseError(kernel.getApplication(), str);                 
         }
     }

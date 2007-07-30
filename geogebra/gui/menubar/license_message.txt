@@ -27,7 +27,7 @@ TRANSLATIONS
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
   * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, 
       Roser Sebastian (Spain)
-  * Chinese: Fu-Kwun Hwang, Chen-Hui Lin (Taiwan)
+  * Chinese: Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe (Taiwan)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
   * Danish: Steen Grode, Rasmus Christensen (Denmark)

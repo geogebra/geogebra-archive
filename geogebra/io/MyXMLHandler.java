@@ -1904,9 +1904,6 @@ public class MyXMLHandler implements DocHandler {
             if (cmd == null)
 				throw new MyError(app, "no command set for <input>");
             ok = handleCmdInput(attrs);
-            
-     
-            
         } else if (eName.equals("output")) {
             ok = handleCmdOutput(attrs);
         }   
@@ -1958,12 +1955,28 @@ public class MyXMLHandler implements DocHandler {
             String label;
             Collection values = attrs.values();
             Iterator it = values.iterator();
+            int countLabels = 0;
             while (it.hasNext()) {      
                 label = (String) it.next();
                 if ("".equals(label))
                     label = null;
+                else
+                	countLabels++;
                 cmd.addLabel(label);
             }       
+            
+            // it is possible that we get a command that has been saved
+            // where NONE of its output objects had a label 
+            // (e.g. intersection that never produced any points).
+            // Such a command should not be processed as it might
+            // use up labels that are needed later on.
+            // For example, since v3.0 every intersection command shows
+            // at least one labeled (and possibly undefined) point
+            // whereas in v2.7 the label was not set before an intersection
+            // point became defined for the first time.
+            // THUS: let's not process commands with no labels for their output
+            if (countLabels == 0)
+            	return true;
              
     	    //  process the command
             cmdOutput =

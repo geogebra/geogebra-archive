@@ -112,6 +112,32 @@ public class AlgoTangentLine extends AlgoElement {
             return null;
     }
     
+    /**
+     * Inits the helping interesection algorithm to take
+     * the current position of the lines into account.
+     * This is important so the the tangent lines are not
+     * switched after loading a file
+     */
+    public void initForNearToRelationship() {
+    	// if first tangent point is not on first tangent,
+    	// we switch the intersection points
+    	if (!tangents[0].isOnFullLine(tangentPoints[0], Kernel.MIN_PRECISION)) {
+        	algoIntersect.initForNearToRelationship();
+        	
+        	// remember first point
+    		double px = tangentPoints[0].x;
+    		double py = tangentPoints[0].y;
+    		double pz = tangentPoints[0].z;
+    		
+    		// first = second
+    		algoIntersect.setIntersectionPoint(0, tangentPoints[1]);
+    		
+    		// second = first
+    		tangentPoints[1].setCoords(px, py, pz);
+    		algoIntersect.setIntersectionPoint(1, tangentPoints[1]);
+     	}		    	
+    }
+    
     // calc tangents parallel to g
     final void compute() {               
         // degenerates should not have any tangents

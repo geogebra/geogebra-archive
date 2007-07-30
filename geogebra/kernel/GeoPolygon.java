@@ -100,9 +100,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
         	
              setLabel(null);
              if (segments != null) {
-            	 for (int k=0; k < segments.length; k++) {
- 	                segments[k].setLabel(null);
- 	            }
+            	 defaultSegmentLabels();
              }
              return;
     	}
@@ -117,7 +115,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     		// additional labels for the polygon's segments
     		// poly + segments + points - 2 for AlgoPolygonRegular
     		if (labels.length == 1 + segments.length + points.length - 2) {
-            	//System.out.println("labels for segments and points");
+    			//System.out.println("labels for segments and points");
     			
 	            int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
@@ -131,7 +129,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     		// additional labels for the polygon's segments
     		// poly + segments for AlgoPolygon
     		else if (labels.length == 1 + segments.length) {
-            	// System.out.println("labels for segments");
+    			//System.out.println("labels for segments");
     			
             	int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
@@ -140,21 +138,24 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	        } 
     		
 	        else { 
-	        	// System.out.println("label for polygon (autoset segment labels)");
-	        	
-	        	 // no labels for segments specified
-	             //  set labels of segments according to point names
-	             if (points.length == 3) {          
-	                setLabel(segments[0], points[2]);
-	                setLabel(segments[1], points[0]);
-	                setLabel(segments[2], points[1]); 
-	             } else {
-	                for (int i=0; i < points.length; i++) {
-	                    setLabel(segments[i], points[i]);
-	                }
-	             }
+	        	System.out.println("label for polygon (autoset segment labels)");     	
+	        	defaultSegmentLabels();
 	        }
     	}    	        
+    }
+    
+    private void defaultSegmentLabels() {
+    	//  no labels for segments specified
+        //  set labels of segments according to point names
+        if (points.length == 3) {          
+           setLabel(segments[0], points[2]);
+           setLabel(segments[1], points[0]);
+           setLabel(segments[2], points[1]); 
+        } else {
+           for (int i=0; i < points.length; i++) {
+               setLabel(segments[i], points[i]);
+           }
+        }
     }
     
     private void setLabel(GeoSegment s, GeoPoint p) {

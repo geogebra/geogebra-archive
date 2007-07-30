@@ -12,12 +12,11 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
-
+/**
+ * Two tangents through point P to conic section c
+ */
 public class AlgoTangentPoint extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P; // input
     private GeoConic c; // input
@@ -70,7 +69,7 @@ public class AlgoTangentPoint extends AlgoElement {
         // check if both lines are equal after creation:
         // if they are equal we started with a point on the conic section
         // in this case we only want to see one tangent line,
-        // se we make the second one undefined
+        // so we make the second one undefined
         equalLines = tangents[0].equals(tangents[1]);
         if (equalLines) {
             tangents[1].setUndefined();
@@ -100,7 +99,7 @@ public class AlgoTangentPoint extends AlgoElement {
     }
     GeoConic getConic() {
         return c;
-    }
+    }       
 
     /**
      * return intersection point of tangent line and conic c.
@@ -116,6 +115,32 @@ public class AlgoTangentPoint extends AlgoElement {
 			return tangentPoints[1];
 		else
             return null;
+    }
+    
+    /**
+     * Inits the helping interesection algorithm to take
+     * the current position of the lines into account.
+     * This is important so the the tangent lines are not
+     * switched after loading a file
+     */
+    public void initForNearToRelationship() {
+    	// if first tangent point is not on first tangent,
+    	// we switch the intersection points
+    	if (!tangents[0].isOnFullLine(tangentPoints[0], Kernel.MIN_PRECISION)) {
+        	algoIntersect.initForNearToRelationship();
+        	
+        	// remember first point
+    		double px = tangentPoints[0].x;
+    		double py = tangentPoints[0].y;
+    		double pz = tangentPoints[0].z;
+    		
+    		// first = second
+    		algoIntersect.setIntersectionPoint(0, tangentPoints[1]);
+    		
+    		// second = first
+    		tangentPoints[1].setCoords(px, py, pz);
+    		algoIntersect.setIntersectionPoint(1, tangentPoints[1]);
+     	}		    	
     }
 
     // calc tangents

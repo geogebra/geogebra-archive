@@ -319,6 +319,7 @@ public class Kernel {
 				casPrintFormPI = "Pi";
 				
 			case ExpressionNode.STRING_TYPE_JASYMCA:
+			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
 				casPrintFormPI = "pi";
 		
 			default:
@@ -723,7 +724,7 @@ public class Kernel {
 	final public void notifyAddAll(View view) {
 		if (!notifyViewsActive) return;
 		
-		Iterator it = cons.getGeoSetLabelOrder().iterator();
+		Iterator it = cons.getGeoSetConstructionOrder().iterator();
 		while (it.hasNext()) {
 			view.add((GeoElement) it.next());
 		}			
@@ -789,7 +790,7 @@ public class Kernel {
 				viewCnt = oldViewCnt;		
 				
 				// add all geos to all views
-				Iterator it = cons.getGeoSetLabelOrder().iterator();				
+				Iterator it = cons.getGeoSetConstructionOrder().iterator();				
 				while (it.hasNext()) {	
 					GeoElement geo =  (GeoElement) it.next();					
 					notifyAdd(geo);									
@@ -3592,14 +3593,19 @@ public class Kernel {
 	}
 
 	final public String format(double x) {	
+		// ZERO
+		if (-MIN_PRECISION < x && x < MIN_PRECISION)
+			return "0";			
+		
 		return nf.format(x);				
 	}
 	
 	final public String formatPiE(double x, NumberFormat nf) {
 		// ZERO
 		if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";		
+			return "0";			
 		
+		/*
 		// 	E
 		if (x == Math.E) {
 			switch (casPrintForm) {
@@ -3612,7 +3618,8 @@ public class Kernel {
 				default:
 					return nf.format(Math.E);
 			}
-		}			
+		}	
+		*/		
 		
 		// PI
 		if (x == Math.PI) {

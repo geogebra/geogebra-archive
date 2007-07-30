@@ -18,6 +18,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -294,7 +295,7 @@ implements EuclidianViewAlgo {
 
     final public boolean isGeoElement() {
         return false;
-    }   
+    }      
 
 	/**
 	 * Returns true iff one of the output geos is shown
@@ -483,36 +484,37 @@ implements EuclidianViewAlgo {
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
-        kernel.setTranslateCommandName(false);
-        
-        // use all digits for plain numbers
+        kernel.setTranslateCommandName(false);             
         int oldDigits = kernel.getMaximumFractionDigits();
         kernel.setMaximumFractionDigits(50);
         
         StringBuffer sb = new StringBuffer();
         
-        // command
-        String cmdname = getCommandName();
-        if (cmdname.equals("Expression"))
-            sb.append(getExpXML());
-        else
-            sb.append(getCmdXML(cmdname));
-        
-        if (includeOutputGeos) {	       
-	        // output               
-	        GeoElement geo;                   
-	        for (int i = 0; i < output.length; i++) {
-	            geo = output[i];
-	            // save only GeoElements that have a valid label
-	            if (geo.isLabelSet()) {
-	                sb.append(geo.getXML());
-	            }
-	        }
+        try {
+	        // command
+	        String cmdname = getCommandName();
+	        if (cmdname.equals("Expression"))
+	            sb.append(getExpXML());
+	        else
+	            sb.append(getCmdXML(cmdname));
+	        
+	        if (includeOutputGeos) {	       
+		        // output               
+		        GeoElement geo;                   
+		        for (int i = 0; i < output.length; i++) {
+		            geo = output[i];
+		            // save only GeoElements that have a valid label
+		            if (geo.isLabelSet()) {
+		                sb.append(geo.getXML());
+		            }
+		        }
+	        }            
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
         
-        // set changes back
-        kernel.setTranslateCommandName(oldValue);
         kernel.setMaximumFractionDigits(oldDigits);
+        kernel.setTranslateCommandName(oldValue);
         
         return sb.toString();
     }

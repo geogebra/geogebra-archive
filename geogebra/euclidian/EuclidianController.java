@@ -20,7 +20,6 @@ package geogebra.euclidian;
 
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
-import geogebra.gui.CheckboxCreationDialog;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
@@ -164,7 +163,7 @@ final public class EuclidianController implements MouseListener,
 	private GeoPoint rotationCenter;
 	private MyDouble tempNum;
 	private double rotStartAngle;
-	private Translateable [] translateableGeos;
+	private ArrayList translateableGeos;
 	private GeoVector translationVec;
 
 	private ArrayList tempArrayList = new ArrayList();
@@ -685,7 +684,8 @@ final public class EuclidianController implements MouseListener,
 		}	
 			// dependent object: moveable parents?
 		else if (!movedGeoElement.isMoveable()) {				
-				translateableGeos = movedGeoElement.getTranslateableParents();
+				translateableGeos = movedGeoElement.getMoveableParentPoints();
+			
 				if (translateableGeos != null) {					
 					moveMode = MOVE_DEPENDENT;
 					startPoint.setLocation(xRW, yRW);					
@@ -1247,6 +1247,7 @@ final public class EuclidianController implements MouseListener,
 				break;
 			
 			case EuclidianView.MODE_MOVE:
+			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
 				// STANDARD CASE
 				app.setSelectedGeos(hits);									
 				break;
@@ -1856,9 +1857,10 @@ final public class EuclidianController implements MouseListener,
 	
 	final private void moveDependent(boolean repaint) {
 		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
-		for (int i=0; i < translateableGeos.length; i++) {						
-			translateableGeos[i].translate(translationVec);			
-			translateableGeos[i].toGeoElement().updateCascade();
+		for (int i=0; i < translateableGeos.size(); i++) {	
+			Translateable t = (Translateable) translateableGeos.get(i);
+			t.translate(translationVec);			
+			t.toGeoElement().updateCascade();
 		}				
 		if (repaint)
 			kernel.notifyRepaint();		

@@ -409,9 +409,9 @@ public class AlgebraProcessor {
 			// redefine
 			else {
 				try {
-					// TODO: remove
-					System.out.println("replace: " + replaceable);
-					System.out.println("     by: " + ret[0]);
+				
+//					System.out.println("replace: " + replaceable);
+//					System.out.println("     by: " + ret[0]);
 					
 					cons.replace(replaceable, ret[0]);
 					// now all objects have changed

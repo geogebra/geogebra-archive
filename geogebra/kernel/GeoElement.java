@@ -712,41 +712,42 @@ public abstract class GeoElement
 	}
 	
 	/**
-	 * Returns whether this GeoElement's parents can be 
-	 * moved in Euclidian View.
+	 * Returns all movealbe parents of this GeoElement.
+	 * Note: they are all instances of Translateable.	 
 	 */
-	public boolean hasMoveableParents() {		
+	public ArrayList getMoveableParentPoints() {		
 		AlgoElement algo = getParentAlgorithm();
-		boolean ret = false;
-		if (algo != null) {
+		if (algo == null) return null;
+
+		if (moveableParents == null) {
+			/*
+			 *  Note: we could get all independent movealbe parents, but
+			 *        this will make almost everything moveable and a difficult to understand
+			 *        why certain objects can be moved
+			 * 
+			TreeSet pred = getAllIndependentPredecessors();
+			moveableParents = new ArrayList(pred.size());
+			Iterator it = pred.iterator();
+			while (it.hasNext()) {
+				GeoElement parent = (GeoElement) it.next();
+				if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
+					moveableParents.add(parent);			
+			}				
+			*/
+						
+			moveableParents = new ArrayList(algo.input.length);
 			for (int i=0; i < algo.input.length; i++) {
 				GeoElement parent = algo.input[i];
-				ret = parent.isEuclidianVisible() &&
-							parent.isMoveable() && parent.isTranslateable();
-				if (!ret) break;
-			}
+				//if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
+				if (parent.isGeoPoint() && parent.isIndependent() && parent.isEuclidianVisible())
+					moveableParents.add(parent);			
+			}				
 		}
-		return ret;
-	}
-	
-	/**
-	 * Checks if all parents of this object are Translateables and
-	 * returns them.
-	 */
-	public Translateable [] getTranslateableParents() {
-		AlgoElement algo = getParentAlgorithm();		
-		if (algo == null) return null;
 		
-		Translateable [] ret = new Translateable[algo.input.length];
-		for (int i=0; i < algo.input.length; i++) {
-			GeoElement parent = algo.input[i];
-			if (parent.isTranslateable())
-				ret[i] = (Translateable) parent;
-			else
-				return null;				
-		}
-		return ret;
+		return (moveableParents.size() > 0) ? moveableParents : null;
 	}
+	private ArrayList moveableParents;
+	
 	
 	/**
 	 * Returns whether this object's class implements the interface Translateable.	 

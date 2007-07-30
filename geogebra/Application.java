@@ -80,9 +80,12 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -111,9 +114,9 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "July 27, 2007";
+    public static final String buildDate = "July 30, 2007";
 	
-    public static final String versionString = "3.0 (Beta 1)";    
+    public static final String versionString = "3.0 (Beta 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
   
     // GeoGebra jar files    
@@ -1550,16 +1553,13 @@ public class Application implements	KeyEventDispatcher {
 			img = ImageIO.read(is);
 			is.close();
 			os.close();
-			
-			
+						
 			setDefaultCursor();
 			if (img == null) {
 				showError("LoadFileFailed");
 				return null;
 			}			
-			
-			
-			
+									
 			// make sure this filename is not taken yet
 			BufferedImage oldImg = imageManager.getExternalImage(fileName);			
 			if (oldImg != null) {								
@@ -2643,7 +2643,6 @@ public class Application implements	KeyEventDispatcher {
                 				try {
         							String [] args = { file.getCanonicalPath() };
         							GeoGebra wnd = GeoGebra.createNewWindow(args);
-        							wnd.setVisible(true);
         							wnd.toFront();
         							wnd.requestFocus();
         						} catch (Exception e) {
@@ -2713,7 +2712,7 @@ public class Application implements	KeyEventDispatcher {
         }
     }
     
-    public void exitAll() {
+    public synchronized void exitAll() {
     	// glassPane is active: don't exit now!
     	if (glassPaneListener != null) return;
     	
@@ -2855,12 +2854,14 @@ public class Application implements	KeyEventDispatcher {
     }
 
     /**
-     * Loads all objects. 
+     * Loads construction file
      * @return true if successful
      */
     final public boolean loadXML(File file, boolean isMacroFile) {
-        try {
-        	boolean success = loadXML(file.toURL(), isMacroFile);
+    	try {
+        	FileInputStream fis = null;
+    		fis = new FileInputStream(file);
+        	boolean success = loadXML(fis, isMacroFile);
         	if (success && !isMacroFile) {
         		setCurrentFile(file);
         	}
@@ -2868,32 +2869,43 @@ public class Application implements	KeyEventDispatcher {
         } catch (Exception e) {
             setCurrentFile(null);
             e.printStackTrace();
-            showError("LoadFileFailed");
+            showError(getError("LoadFileFailed") + ":/n" + file);
             return false;
         }
     }
 
     /**
-      * Loads all objects. 
+      * Loads construction file from URL
       * @return true if successful
       */
     final public boolean loadXML(URL url, boolean isMacroFile) {
-        try {        	
-            myXMLio.readZipFromURL(url, isMacroFile);
-            if (!isMacroFile) {
+    	try {
+    		return loadXML(url.openStream(), isMacroFile);
+    	} 
+    	catch (Exception e) {
+            setCurrentFile(null);
+            e.printStackTrace();
+            showError(getError("LoadFileFailed") + ":/n" + url);
+            return false;
+        }
+    }
+    
+    private boolean loadXML(InputStream is, boolean isMacroFile) throws Exception {
+    	try {        	
+    		BufferedInputStream bis = new BufferedInputStream(is);	
+    		myXMLio.readZipFromInputStream(bis, isMacroFile);
+            is.close();
+    		bis.close();
+    		
+    		if (!isMacroFile) {
             	kernel.initUndoInfo();
             	isSaved = true;
             	setCurrentFile(null);
-            }
+            }    		
             return true;
         } catch (MyError err) {
             setCurrentFile(null);
             showError(err);
-            return false;
-        } catch (Exception e) {
-            setCurrentFile(null);
-            e.printStackTrace();
-            showError("LoadFileFailed");
             return false;
         }
     }
@@ -3092,8 +3104,7 @@ public class Application implements	KeyEventDispatcher {
     		e.printStackTrace();
     	}
         
-        // TODO: remove
-    	System.out.println("codebase: " + codebase);
+    	//System.out.println("codebase: " + codebase);
     }
     
     public PropertiesDialogGeoElement getPropDialog() {
@@ -3406,10 +3417,10 @@ public class Application implements	KeyEventDispatcher {
 				CopyURLToFile.copyURLToFile(src, dest);
 			}
 			
-			// TODO: remove
-			System.out.println("copied geogebra jar files to temp directory " + tempDir);
+			//System.out.println("copied geogebra jar files to temp directory " + tempDir);
 			
-		} catch (Exception e) {				
+		} catch (Exception e) {		
+			System.err.println("copyJarsToTempDir: " + e.getMessage());
 		}			
 	}
 
@@ -3426,9 +3437,8 @@ public class Application implements	KeyEventDispatcher {
 		URL srcDir;			
 		File tempJarFile = new File(tempDir, JAR_FILES[0]);			
 		
-		// TODO: remove
-		System.out.println("temp jar file: " + tempJarFile);
-		System.out.println("   exists " + tempJarFile.exists());	
+//		System.out.println("temp jar file: " + tempJarFile);
+//		System.out.println("   exists " + tempJarFile.exists());	
 		
 		if (tempJarFile.exists()) {
 			// try to copy from temp dir 
@@ -3444,9 +3454,8 @@ public class Application implements	KeyEventDispatcher {
 			URL src = new URL(srcDir, JAR_FILES[i]);
 			CopyURLToFile.copyURLToFile(src, dest);
 		}
-				
-		// TODO: remove
-		System.out.println("copied geogebra jar files from " + srcDir + " to " + destDir);	
+
+//		System.out.println("copied geogebra jar files from " + srcDir + " to " + destDir);	
 	}
 	
 	

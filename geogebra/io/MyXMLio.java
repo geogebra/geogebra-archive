@@ -79,17 +79,7 @@ public class MyXMLio {
         // similar to SAX event handler
         handler = new MyXMLHandler(kernel, cons);
         xmlParser = new QDParser();   
-    }
-    
-    /**
-     * Reads zipped file from url that includes the construction saved 
-     * in xml format and maybe image files.
-     */    
-    public final void readZipFromURL(URL url, boolean isMacroFile) throws Exception {      	
-    	BufferedInputStream bis = new BufferedInputStream(url.openStream());	
-        readZipFromInputStream(bis, isMacroFile);
-        bis.close();
-    }
+    }    
 
     /**
      * Reads zipped file from input stream that includes the construction saved 

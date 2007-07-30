@@ -172,7 +172,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	 * Main method to create inital GeoGebra window.
 	 * @param args: file name parameter
 	 */
-	public static void main(String[] args) {		
+	public static synchronized void main(String[] args) {		
 		// check java version
 		double javaVersion = Util.getJavaVersion();
 		if (javaVersion < 1.42) {
@@ -184,102 +184,52 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 									+ "\nPlease visit http://www.java.com to get a newer version of Java.");
 			return;
 		}
+		    	
+     	if (MAC_OS) 
+    		initMacSpecifics();
 				
-    	if (MAC_OS) 
-    		initMacSpecifics(args);
-    	
     	// set system look and feel
-		try {				
-			// Set some System Properties
-		    System.setProperty("com.apple.macos.useScreenMenuBar", "true"); // mac menu bar	
+		try {							
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			System.err.println(e);
 		}	
-    	
-    	// create GeoGebra window
-    	GeoGebra wnd = getActiveInstance(args);
-    	wnd.setVisible(true);
+    	    
+		// load list of previously used files
+		GeoGebraPreferences.loadFileList();
+		
+		// create first window and show it
+		createNewWindow(args);
 	}	
 	
 	/**
 	 * Returns the active GeoGebra window.
-	 * @param args: initing parameters for the very first window
 	 */
-	private static synchronized GeoGebra getActiveInstance(String [] args) {
-		if (activeInstance == null) {						
-			// load list of previously used files
-			GeoGebraPreferences.loadFileList();
-			
-			// create first window and show it
-			return createNewWindow(args);			
-		}		
-		else
-			return activeInstance;
+	public static synchronized GeoGebra getActiveInstance() {
+		return activeInstance;
 	}
 
 	/**
 	 * MacOS X specific initing. Note: this method can only be run
 	 * on a Mac!
 	 */
-	public static void initMacSpecifics(String [] args) {
+	public static void initMacSpecifics() {
 		try {
-			final String [] cmdArgs = args;	
-			
 			com.apple.eawt.Application app = new com.apple.eawt.Application();
-			app.addApplicationListener(new com.apple.eawt.ApplicationAdapter() {
-				public void handleQuit(com.apple.eawt.ApplicationEvent ev) {
-					// quit all frames
-					Application app = getActiveInstance(null).getApplication();					
-					app.exitAll();	
-				}			
-								
-				public void handleAbout(com.apple.eawt.ApplicationEvent event) {
-					 event.setHandled(true);
-			         Application app = getActiveInstance(null).getApplication();	
-			         app.showAboutDialog();
-			     }
-
-				public void handleOpenFile(com.apple.eawt.ApplicationEvent ev) {																
-					// open file			
-					String fileName = ev.getFilename();					
-										
-					if (fileName != null) {				
-						File openFile = new File(fileName);
-						if (openFile.exists()) {
-							// get application instance
-							GeoGebra ggb = getActiveInstance(cmdArgs);
-							Application app = ggb.getApplication();
-							
-							// open file 
-							File [] files = { openFile };
-							boolean openInThisWindow = app.getCurrentFile() == null;
-							app.doOpenFiles(files, openInThisWindow);
-							
-							// make sure window is visible
-							if (openInThisWindow)
-								ggb.setVisible(true);							
-						}
-					}
-				}
-				
-				public void handlePrintFile(com.apple.eawt.ApplicationEvent event) {
-					handleOpenFile(event);
-					getActiveInstance(cmdArgs).getApplication().showPrintPreview();
-				}
-				
-			});				
-					
+			app.addApplicationListener(new MacApplicationListener());
+	
+			//mac menu bar	
+		    //System.setProperty("com.apple.macos.useScreenMenuBar", "true"); 	
+		    System.setProperty("apple.laf.useScreenMenuBar", "true"); 	
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		
 	}
 	
 	
 	
 
-	public static GeoGebra createNewWindow(String[] args) {				
+	public static synchronized GeoGebra createNewWindow(String[] args) {				
 		// set Application's size, position and font size
 		GeoGebra wnd = new GeoGebra();
 		Application app = new Application(args, wnd, true);		
@@ -290,7 +240,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
 		updateAllTitles();
-		app.initInBackground();						
+		app.initInBackground();		
+		
+		wnd.setVisible(true);
 		return wnd;
 	}
 

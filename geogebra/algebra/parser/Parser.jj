@@ -771,7 +771,7 @@ ExpressionNode enpower():
     (   
     	<SQUARED>
         {            
-            ret = new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
             			 new MyDouble(kernel, 2));  
 	    } 
     |       
@@ -801,11 +801,20 @@ ExpressionNode enpower():
     |
     	(LOOKAHEAD(<POWER>) <POWER> f = enunary()
         {            
-            ret = new ExpressionNode(kernel, ret, ExpressionNode.POWER, f);                    
+        	// check if we have e^
+        	if (ret.isLeaf() &&  ret.getLeft() instanceof MyDouble) {
+        		MyDouble num = (MyDouble) ret.getLeft();
+        		if (num.getDouble() == Math.E) {      	
+        	    	return new ExpressionNode(kernel, f, ExpressionNode.EXP, null);        		
+        		} 
+        	}       
+        	
+        	// standard case ret^f
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, f);                              
         }      
     	)*
-    )
-    {  return ret;  }          
+    )     
+    { return ret; }    
 }
 
 /**

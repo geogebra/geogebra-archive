@@ -3486,13 +3486,7 @@ public class PropertiesDialogGeoElement
 			TreeSelectionModel lsm = getSelectionModel();					
 			if (geos == null) {
 				if (lsm.isSelectionEmpty()) {
-					// select all  if list is not empty
-					if (root.getChildCount() > 0) {						
-						DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) root.getFirstChild();
-						tp = new TreePath(((DefaultMutableTreeNode)typeNode.getFirstChild()).getPath());																
-						setSelectionPath(tp); // select																													
-					}
-					//setSelectionRow(0); // select root
+					selectFirstElement();					
 				}			
 			}			
 			else {
@@ -3522,6 +3516,15 @@ public class PropertiesDialogGeoElement
 				}				
 			}		
 		}	
+		
+		private void selectFirstElement() {
+			//  select all  if list is not empty
+			if (root.getChildCount() > 0) {						
+				DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) root.getFirstChild();
+				TreePath tp = new TreePath(((DefaultMutableTreeNode)typeNode.getFirstChild()).getPath());																
+				setSelectionPath(tp); // select																													
+			}
+		}
 		
 		/**		 
 		 * returns geo's TreePath 
@@ -3594,10 +3597,19 @@ public class PropertiesDialogGeoElement
 				treeModel.insertNodeInto(typeNode, root, pos);				
 			}			
 			
+			// check if already present in type node
+			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());
+			if (pos >= 0) return;
+			
 			// add geo to type node   
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(geo);
-			int pos = AlgebraView.getInsertPosition(typeNode, geo);
+			pos = AlgebraView.getInsertPosition(typeNode, geo);
 			treeModel.insertNodeInto(newNode, typeNode, pos);
+			
+			// make sure something is selected
+			if (getSelectionModel().isSelectionEmpty()) {
+				selectFirstElement();					
+			}
 		
 			/*
 			if (isShowing()) {
@@ -3611,8 +3623,13 @@ public class PropertiesDialogGeoElement
 		/**
 		 * removes an element from the list
 		 */
-		public void remove(GeoElement geo) {	
+		public void remove(GeoElement geo) {		
 			remove(geo, true);
+			
+			// make sure something is selected
+			if (getSelectionModel().isSelectionEmpty()) {
+				selectFirstElement();					
+			}
 		}
 		
 		/**
@@ -3639,6 +3656,8 @@ public class PropertiesDialogGeoElement
 				} 						
 			}
 		}
+		
+		
 		
 		/**
 		 * Returns the tree path of geo	

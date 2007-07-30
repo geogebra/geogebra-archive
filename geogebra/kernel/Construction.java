@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.io.MyXMLio;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
@@ -893,39 +894,46 @@ public class Construction {
     	// change kernel settings temporarily
     	int oldCoordStlye = kernel.getCoordStyle();
     	int oldDecimals = kernel.getPrintDecimals();
+    	int oldPrintForm = kernel.getCASPrintForm();        
         kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
         kernel.setPrintDecimals(50);
-    	
-    	// save construction elements
-        sb.append("<construction title=\""); 
-        sb.append(Util.encodeXML(getTitle())); 
-        sb.append("\" author=\"");
-        sb.append(Util.encodeXML(getAuthor()));
-        sb.append("\" date=\"");
-        sb.append(Util.encodeXML(getDate()));
-        sb.append("\">\n");
+        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         
-        // worksheet text
-        if (worksheetTextDefined()) {
-	        sb.append("\t<worksheetText above=\""); 
-	        sb.append(Util.encodeXML(getWorksheetText(0))); 
-	        sb.append("\" below=\"");
-	        sb.append(Util.encodeXML(getWorksheetText(1)));        
-	        sb.append("\"/>\n");     
-        }                
-        
-        ConstructionElement ce;
-        int size = ceList.size();
-        for (int i = 0; i < size; ++i) {
-            ce = (ConstructionElement) ceList.get(i);
-            sb.append(ce.getXML());
-        }       
-        
-        sb.append("</construction>\n");
+        try {
+	    	// save construction elements
+	        sb.append("<construction title=\""); 
+	        sb.append(Util.encodeXML(getTitle())); 
+	        sb.append("\" author=\"");
+	        sb.append(Util.encodeXML(getAuthor()));
+	        sb.append("\" date=\"");
+	        sb.append(Util.encodeXML(getDate()));
+	        sb.append("\">\n");
+	        
+	        // worksheet text
+	        if (worksheetTextDefined()) {
+		        sb.append("\t<worksheetText above=\""); 
+		        sb.append(Util.encodeXML(getWorksheetText(0))); 
+		        sb.append("\" below=\"");
+		        sb.append(Util.encodeXML(getWorksheetText(1)));        
+		        sb.append("\"/>\n");     
+	        }                
+	        
+	        ConstructionElement ce;
+	        int size = ceList.size();
+	        for (int i = 0; i < size; ++i) {
+	            ce = (ConstructionElement) ceList.get(i);
+	            sb.append(ce.getXML());
+	        }       
+	        
+	        sb.append("</construction>\n");	        
+        } catch (Exception e) {
+	        e.printStackTrace();
+	    }  
         
         // restore old kernel settings
         kernel.setPrintDecimals(oldDecimals);
         kernel.setCoordStyle(oldCoordStlye);   
+        kernel.setCASPrintForm(oldPrintForm);
         
         return sb.toString();
     }

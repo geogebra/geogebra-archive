@@ -2051,7 +2051,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			geo = (GeoElement) hits.get(i);
 			switch (test) {
 			case TEST_MOVEABLE:
-				if (geo.isMoveable() || geo.hasMoveableParents())
+				if (geo.isMoveable() || geo.getMoveableParentPoints() != null)
 					moveableList.add(geo);
 				break;
 
@@ -2361,7 +2361,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 			break;
 
 		case GeoElement.GEO_CLASS_POLYGON:
-			drawPolygonList.add(d);
+			drawPolygonList.add(d);					
 			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:
@@ -2668,7 +2668,10 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		}
 
 		// grid distances
-		if (!automaticGridDistance) {
+		if (!automaticGridDistance || 
+				// compatibility to v2.7:
+			automaticGridDistanceFactor != DEFAULT_GRID_DIST_FACTOR) 
+		{
 			sb.append("\t<grid distX=\"");
 			sb.append(gridDistances[0]);
 			sb.append("\" distY=\"");

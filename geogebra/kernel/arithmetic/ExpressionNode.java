@@ -44,9 +44,10 @@ import java.util.Iterator;
 public class ExpressionNode extends ValidExpression
 implements ExpressionValue {   
 	
-	public static final int STRING_TYPE_GEOGEBRA = 0;
-	public static final int STRING_TYPE_JASYMCA = 1;
-	public static final int STRING_TYPE_YACAS = 2;
+	public static final int STRING_TYPE_GEOGEBRA_XML = 0;
+	public static final int STRING_TYPE_GEOGEBRA = 1;
+	public static final int STRING_TYPE_JASYMCA = 2;
+	public static final int STRING_TYPE_YACAS = 3;
 	public static final int STRING_TYPE_LATEX = 100;
     
 	// boolean
@@ -1674,16 +1675,18 @@ implements ExpressionValue {
      */
     final public String getCASstring(int STRING_TYPE, boolean symbolic) {
         int oldDigits = kernel.getMaximumFractionDigits();
-        kernel.setMaximumFractionDigits(50);
-        String ret = printCASstring(STRING_TYPE, symbolic);
+        int oldPrintForm = kernel.getCASPrintForm();
+        kernel.setMaximumFractionDigits(50);       
+        kernel.setCASPrintForm(STRING_TYPE);
+        
+        String ret = printCASstring(symbolic);
+        
         kernel.setMaximumFractionDigits(oldDigits);
+        kernel.setCASPrintForm(oldPrintForm);
         return ret;
     }
         
-    private String printCASstring(int STRING_TYPE, boolean symbolic) {  
-        int oldPrintForm = kernel.getCASPrintForm();
-        kernel.setCASPrintForm(STRING_TYPE);
-        
+    private String printCASstring(boolean symbolic) {  
         String ret = null;
                     
         if (leaf) { // leaf is GeoElement or not      
@@ -1702,7 +1705,7 @@ implements ExpressionValue {
         	if (symbolic && left.isGeoElement()) 
 	            ret = ((GeoElement)left).getLabel();                            
 	        else if (left.isExpressionNode())
-	            ret  = ((ExpressionNode)left).printCASstring(STRING_TYPE, symbolic);
+	            ret  = ((ExpressionNode)left).printCASstring(symbolic);
 	        else 
 	        	ret = symbolic ? left.toString() : left.toValueString(); 	        
         } 
@@ -1714,7 +1717,7 @@ implements ExpressionValue {
 	        if (symbolic && left.isGeoElement()) {  
 	            leftStr = ((GeoElement)left).getLabel();                            
 	        } else if (left.isExpressionNode())
-	            leftStr  = ((ExpressionNode)left).printCASstring(STRING_TYPE, symbolic);
+	            leftStr  = ((ExpressionNode)left).printCASstring(symbolic);
 	        else {
 	        	leftStr = symbolic ? left.toString() : left.toValueString(); 
 	        }
@@ -1723,15 +1726,14 @@ implements ExpressionValue {
 	            if (symbolic && right.isGeoElement()) {
 	                rightStr = ((GeoElement)right).getLabel();
 	            } else if (right.isExpressionNode()) {
-	                rightStr  = ((ExpressionNode)right).printCASstring(STRING_TYPE, symbolic);
+	                rightStr  = ((ExpressionNode)right).printCASstring(symbolic);
 	            } else {
 	            	rightStr = symbolic ? right.toString() : right.toValueString(); 
 	            }            
 	        }     
-	        ret = operationToString(leftStr, rightStr, !symbolic, STRING_TYPE);
+	        ret = operationToString(leftStr, rightStr, !symbolic);
         }                
-                
-        kernel.setCASPrintForm(oldPrintForm);
+
         return ret;     
     }
     
@@ -1763,7 +1765,7 @@ implements ExpressionValue {
                 rightStr = right.toString();
             }
         }        
-        return operationToString(leftStr, rightStr, false, STRING_TYPE_GEOGEBRA);
+        return operationToString(leftStr, rightStr, false);
     }
   
     
@@ -1782,7 +1784,7 @@ implements ExpressionValue {
             rightStr = right.toValueString();
         }
             
-        return operationToString(leftStr, rightStr, true, STRING_TYPE_GEOGEBRA);
+        return operationToString(leftStr, rightStr, true);
     }
     
     /**
@@ -1805,7 +1807,13 @@ implements ExpressionValue {
             rightStr = right.toLaTeXString(symbolic);
         }
               
-        return operationToString(leftStr, rightStr,!symbolic, STRING_TYPE_LATEX);
+        // build latex string
+        int oldPrintForm = kernel.getCASPrintForm();       
+        kernel.setCASPrintForm(STRING_TYPE_LATEX);
+        String ret = operationToString(leftStr, rightStr,!symbolic);
+        kernel.setCASPrintForm(oldPrintForm);
+        
+        return ret;
     }
     
 
@@ -1817,10 +1825,12 @@ implements ExpressionValue {
      * 
      */
     final private String operationToString(String leftStr, String rightStr, 
-    		boolean valueForm, int STRING_TYPE) {
+    		boolean valueForm) {
     	   
-    	ExpressionValue leftEval;
-        StringBuffer sb = new StringBuffer();
+    	ExpressionValue leftEval;   
+    	StringBuffer sb = new StringBuffer();
+    	
+    	int STRING_TYPE = kernel.getCASPrintForm();
         
         switch (operation) {      
         	case NOT:
@@ -2103,6 +2113,7 @@ implements ExpressionValue {
                     	switch (STRING_TYPE) {
                 			case STRING_TYPE_JASYMCA:
                 			case STRING_TYPE_YACAS:
+                			case STRING_TYPE_GEOGEBRA_XML:
                 				sb.append(" * ");  
                 				break;
                 				
@@ -2169,28 +2180,14 @@ implements ExpressionValue {
                         break;
                         
 	        		case STRING_TYPE_JASYMCA:
-	        			// special case: e^x
-	        			if (leftStr.equals("exp(1)")) {
-	        				sb.setLength(0);
-	        				sb.append("exp");
-	        			} else
-	        				sb.append('^'); 
-                        sb.append('(');
-                        sb.append(rightStr);
-                        sb.append(')');
-	        			break;
-	        			
 	        		case STRING_TYPE_YACAS:
-	        			// special case: e^x
-	        			if (leftStr.equals("Exp(1)")) {
-	        				sb.setLength(0);
-	        				sb.append("Exp"); 
-	        			} else
-	        				sb.append('^'); 
+	        		case STRING_TYPE_GEOGEBRA_XML:
+	        			sb.append('^'); 
                         sb.append('(');
                         sb.append(rightStr);
                         sb.append(')');
 	        			break;
+	
 	        			
 	        		default:
 	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
@@ -2449,6 +2446,7 @@ implements ExpressionValue {
 	        			break;
 	        			
 	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("exp(");
 	        			sb.append(leftStr);
 	                    sb.append(')');
@@ -2479,6 +2477,7 @@ implements ExpressionValue {
 	        			break;
 	        			
 	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("log(");	        			
 	        			break;
 	        			
@@ -2780,6 +2779,7 @@ implements ExpressionValue {
         }                
         return sb.toString();
     }
+    
     
     // return operation number
     static public int opID(ExpressionValue ev) {
