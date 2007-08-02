@@ -32,6 +32,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_LINE = 20;			
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
+	public static final int DEFAULT_CONIC_SECTOR = 41;
 		
 	public static final int DEFAULT_NUMBER = 50;	
 	public static final int DEFAULT_ANGLE = 52;			
@@ -161,7 +162,15 @@ public class ConstructionDefaults {
 		GeoConic conic = new GeoConic(cons);	
 		conic.setLocalVariableLabel(app.getPlain("Conic"));
 		conic.setObjColor(colConic);
-		defaultGeoElements.put(DEFAULT_CONIC, conic);		
+		defaultGeoElements.put(DEFAULT_CONIC, conic);	
+		
+		// conic sector
+		GeoConicPart conicSector = new GeoConicPart(cons, GeoConicPart.CONIC_PART_SECTOR);	
+		conicSector.setLocalVariableLabel(app.getPlain("Sector"));
+		conicSector.setObjColor(colPolygon);
+		conicSector.setAlphaValue(DEFAULT_POLYGON_ALPHA);
+		defaultGeoElements.put(DEFAULT_CONIC_SECTOR, conicSector);	
+		
 		
 		// number
 		GeoNumeric number = new GeoNumeric(cons);	
@@ -255,9 +264,17 @@ public class ConstructionDefaults {
 				type = DEFAULT_BOOLEAN;
 				break;	
 				
-			case GeoElement.GEO_CLASS_CONIC:
-			case GeoElement.GEO_CLASS_CONICPART:
+			case GeoElement.GEO_CLASS_CONIC:			
 				type = DEFAULT_CONIC;
+				break;
+				
+			case GeoElement.GEO_CLASS_CONICPART:
+				GeoConicPart conicPart = (GeoConicPart) geo;
+				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_SECTOR) {
+					type = DEFAULT_CONIC_SECTOR;
+				} else {
+					type = DEFAULT_CONIC;
+				}
 				break;
 				
 			case GeoElement.GEO_CLASS_FUNCTION:

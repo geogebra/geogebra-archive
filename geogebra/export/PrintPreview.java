@@ -313,7 +313,7 @@ public class PrintPreview extends JDialog {
 			
 			// save preferences
 			savePreferences();
-			dispose();
+			super.setVisible(false);
 		}				
 	}
 	

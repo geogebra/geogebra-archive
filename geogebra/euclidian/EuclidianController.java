@@ -2536,9 +2536,9 @@ final public class EuclidianController implements MouseListener,
 		int count = 0;
 		if (selPoints() == 0) {
 			if (selVectors() == 0)
-				count = addSelectedLine(hits, 2, true);
+				count = addSelectedLine(hits, 2, false);
 			if (selLines() == 0) 
-				count = addSelectedVector(hits, 2, true);			
+				count = addSelectedVector(hits, 2, false);			
 		}		
 		if (count == 0)
 			count = addSelectedPoint(hits, 3, false);	

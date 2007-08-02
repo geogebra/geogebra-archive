@@ -77,7 +77,7 @@ public class TextInputDialog extends InputDialog {
 		cbLaTeXshortcuts.addActionListener(cbl);
 		cbLaTeXshortcuts.addMouseListener(cbl);
 				
-		createGUI(title, "", false, cols, rows);		
+		createGUI(title, "", false, cols, rows, true, true);		
 		
 		// init dialog using text
 		setGeoText(text);

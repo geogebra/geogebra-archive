@@ -155,6 +155,7 @@ public class PropertiesDialogGeoElement
 	public void initGUI() {
 		setTitle(app.getPlain("Properties"));
 		geoTree.root.setUserObject(app.getPlain("Objects"));
+		geoTree.setFont(app.plainFont);
 		
 		boolean wasShowing = isShowing();
 		if (wasShowing) {
@@ -1203,13 +1204,13 @@ public class PropertiesDialogGeoElement
 
 			// show label value changed
 			if (source == showLabelCB) {
-				boolean flag = showLabelCB.isSelected();
-				labelModeCB.setEnabled(!showNameValueComboBox && flag);
+				boolean flag = showLabelCB.isSelected();				
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
 					geo.setLabelVisible(flag);
 					geo.updateRepaint();
-				}
+				}	
+				update(geos);
 			}
 		}
 

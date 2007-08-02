@@ -64,9 +64,9 @@ public class AlgoDependentText extends AlgoElement {
     // calc the current value of the arithmetic tree
     final void compute() {	
     	int oldPrintDecimals = kernel.getPrintDecimals();
+    	kernel.setPrintDecimals(text.getPrintDecimals());
     	
-    	try {
-    		kernel.setPrintDecimals(text.getPrintDecimals());
+    	try {    	
 	    	boolean latex = text.isLaTeX();
 	    	root.setHoldsLaTeXtext(latex);
 	    	

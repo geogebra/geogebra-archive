@@ -720,9 +720,13 @@ public class Construction {
        
         String a, b; // a = old string, b = new string
         
-        // set maximum digits for XML
-        int oldDecimals = kernel.getPrintDecimals();		
-        kernel.setPrintDecimals(50);        
+       	// change kernel settings temporarily
+    	int oldCoordStlye = kernel.getCoordStyle();
+    	int oldDecimals = kernel.getPrintDecimals();
+    	int oldPrintForm = kernel.getCASPrintForm();        
+        kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
+        kernel.setPrintDecimals(50);
+        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         
         // set label to get replaceable XML              
         if (newGeo.isLabelSet()) { // newGeo already exists in construction
@@ -753,8 +757,10 @@ public class Construction {
 //            System.out.println("newGeo: " + newGeo + ", algo: " + newGeoAlgo);
         }
         
-        // set back decimals
+        // restore old kernel settings
         kernel.setPrintDecimals(oldDecimals);
+        kernel.setCoordStyle(oldCoordStlye);   
+        kernel.setCASPrintForm(oldPrintForm);
 
         // 3) replace oldGeo by newGeo
         doReplace(getCurrentUndoXML(), a, b);       
