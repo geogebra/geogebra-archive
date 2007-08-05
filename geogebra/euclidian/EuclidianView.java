@@ -2005,8 +2005,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		DrawableIterator it = allDrawableList.getIterator();
 		while (it.hasNext()) {
 			Drawable d = it.next();
-			if (d.isInside(rect)) {
-				GeoElement geo = d.getGeoElement();
+			GeoElement geo = d.getGeoElement();
+			if (geo.isEuclidianVisible() && d.isInside(rect)) {				
 				foundHits.add(geo);
 			}
 		}

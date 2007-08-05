@@ -3007,7 +3007,6 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	private boolean showCheckBox(ArrayList hits) {
-		// TODO: implement showCheckBox()
 		if (hits != null || selectionPreview)
 			return false;
 		

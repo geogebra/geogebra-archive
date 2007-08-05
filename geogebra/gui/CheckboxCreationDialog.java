@@ -205,6 +205,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		// update boolean (updates visibility of geos from list too)		
 		geoBoolean.setValue(true);
 		geoBoolean.setEuclidianVisible(true);
+		geoBoolean.setLabelVisible(true);
 		geoBoolean.updateRepaint();
 	}
 	

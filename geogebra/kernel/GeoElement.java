@@ -739,7 +739,7 @@ public abstract class GeoElement
 			for (int i=0; i < algo.input.length; i++) {
 				GeoElement parent = algo.input[i];
 				//if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
-				if (parent.isGeoPoint() && parent.isIndependent() && parent.isEuclidianVisible())
+				if (parent.isEuclidianVisible() && parent.isMoveable() && parent.isGeoPoint() )
 					moveableParents.add(parent);			
 			}				
 		}
@@ -1610,7 +1610,7 @@ public abstract class GeoElement
 		return getTypeString();
 	}
 	
-	final public String translatedTypeString() {
+	public String translatedTypeString() {
 		return app.getPlain(getTypeString());
 	}
 

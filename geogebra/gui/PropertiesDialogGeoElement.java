@@ -1937,10 +1937,12 @@ public class PropertiesDialogGeoElement
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
 			// textfield for animation step
-			String strLabelEnd = ". " + app.getPlain("CornerPoint") + ": ";
+			String strLabelStart = app.getPlain("CornerPoint");
 			String strLabel;
 			for (int i = 0; i < 3; i++) {
-				strLabel = i < 2 ? (i+1) + strLabelEnd : (i+2) + strLabelEnd;
+				int pointNumber = i < 2 ? (i+1) : (i+2);
+				strLabel = strLabelStart + " " + pointNumber + ":";
+	
 				JLabel label = new JLabel(strLabel);
 				cbLocation[i] = new JComboBox();
 				cbLocation[i].setEditable(true);

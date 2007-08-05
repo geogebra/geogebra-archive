@@ -20,7 +20,6 @@ import geogebra.kernel.roots.RealRootFunction;
 /**
  * Cartesian parametric curve, e.g. (cos(t), sin(t)) for t from 0 to 2pi.
  * 
- * 
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoElement
@@ -60,6 +59,11 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	
 	String getTypeString() {
 		return "CurveCartesian";
+	}
+	
+	public String translatedTypeString() {
+		// TODO: add translation for "Curve" in plain.properties and remove this method
+		return app.getCommand("CurveCartesian");
 	}
 	
     public int getGeoClassType() {
