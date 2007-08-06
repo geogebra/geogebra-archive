@@ -745,7 +745,7 @@ public class Application implements	KeyEventDispatcher {
     	else if (currentFile != null)
     		loadFile(currentFile, false);   
     	else
-    		newFile();
+    		deleteAllGeoElements();
     }
     
     public void refreshViews() {
@@ -2690,12 +2690,27 @@ public class Application implements	KeyEventDispatcher {
 		return success;               
     }
 
-    public void newFile() {
+    public void deleteAllGeoElements() {
+    	// delete all
+    	Object [] geos = kernel.getConstruction().getGeoSetConstructionOrder().toArray();
+    	if (geos.length == 0) return;
+    	
+    	if (isSaved() || saveCurrentFile()) {
+	    	for (int i=0; i < geos.length; i++) {
+	    		GeoElement geo = (GeoElement) geos[i];
+	    		if (geo.isLabelSet()) 
+	    			geo.remove();
+	    	}
+    		kernel.initUndoInfo();
+    		setCurrentFile(null);
+    	}
+    	
+    	/*
         if (isSaved() || saveCurrentFile()) {
             clearAll();
             setCurrentFile(null);               
             updateMenubar();
-        }
+        }*/
     }        
 
     public void exit() {
@@ -2985,14 +3000,19 @@ public class Application implements	KeyEventDispatcher {
     	}
     }
 
+    /*
     final public void clearAll() {       
         // load preferences
         GeoGebraPreferences.loadXMLPreferences(this);        
         updateContentPane();
-        
+    	
+    	// clear construction
+    	kernel.clearConstruction();
+        kernel.initUndoInfo();
+    	
         isSaved = true;
         System.gc();        
-    }
+    }*/
 
    /**
      * Returns gui settings in XML format

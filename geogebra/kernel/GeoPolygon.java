@@ -57,6 +57,12 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     			
     		case 4:
     			return "Quadrilateral";
+    			
+    		case 5:
+    			return "Pentagon";
+    		
+    		case 6:
+    			return "Hexagon";
     		
     		default:
     			return "Polygon";    	
@@ -396,16 +402,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
    final public String toValueString() {
 	   return kernel.format(getArea());
    }
-   
-   public String typeString() {
-		switch (points.length) {
-			case 3: return "Triangle";
-			case 4: return "Quadrangle";
-			case 5: return "Pentagon";
-			case 6: return "Hexagon";
-			default: return "Polygon";	
-		}
-   }
+
 	
 	 /**
      * interface NumberValue

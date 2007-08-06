@@ -49,7 +49,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 	// Actions
 	private AbstractAction refreshAction,
-			drawingPadToClipboardAction, newFileAction, newWindowAction,
+			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
 			showCmdListAction, horizontalSplitAction,
@@ -137,15 +137,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		JMenu menu = menuFile;
 		JMenuItem mi;
-		if (app.isApplet()) {
-			// "New" in applet: reset 
-			mi = menu.add(newFileAction);			
-		} else {
+		
+		if (!app.isApplet()) {
 			// "New" in application: new window
-			mi = new JMenuItem(newWindowAction);			
-		}
-		setMenuShortCutAccelerator(mi, 'N');
-		menu.add(mi);
+			mi = new JMenuItem(newWindowAction);	
+			setMenuShortCutAccelerator(mi, 'N');
+			menu.add(mi);
+		}			
+		
+		// "New": reset 
+		mi = menu.add(deleteAll);	
 		
 		mi = menu.add(loadAction);
 		setMenuShortCutAccelerator(mi, 'O'); // open
@@ -695,16 +696,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			}
 		};
 
-		newFileAction = new AbstractAction(app.getMenu("New"),
-				app.getImageIcon("document-new.png")) {
+		deleteAll = new AbstractAction(app.getMenu("New"),
+				app.getEmptyIcon()) {				
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.newFile();
+				app.deleteAllGeoElements();
 			}
 		};
 
-		newWindowAction = new AbstractAction(app.getMenu("New") + " ...",
+		newWindowAction = new AbstractAction(app.getMenu("NewWindow"),
 				app.getImageIcon("document-new.png")) {
 			private static final long serialVersionUID = 1L;
 
