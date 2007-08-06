@@ -1,8 +1,8 @@
 /*
- * Créé le 18 juin 2006
+ * Crï¿½ï¿½ le 18 juin 2006
  *
- * Pour changer le modèle de ce fichier généré, allez à :
- * Fenêtre&gt;Préférences&gt;Java&gt;Génération de code&gt;Code et commentaires
+ * Pour changer le modï¿½le de ce fichier gï¿½nï¿½rï¿½, allez ï¿½ :
+ * Fenï¿½tre&gt;Prï¿½fï¿½rences&gt;Java&gt;Gï¿½nï¿½ration de code&gt;Code et commentaires
  */
 package geogebra.export.pstricks.gui;
 
@@ -17,10 +17,13 @@ import javax.swing.JTextField;
  *
  */
 public  abstract class TextValue extends JTextField implements KeyListener {
+	// do we allow negative values in the textfeld?
+	private boolean ALLOW_NEGATIVE=false;
 	JFrame jf;
-	TextValue(JFrame jf, String s){
+	TextValue(JFrame jf, String s, boolean b){
 		super(s);
 		this.jf=jf;
+		this.ALLOW_NEGATIVE=b;
 		addKeyListener(this);
 	}
 	public double getValue() throws NumberFormatException{
@@ -41,8 +44,13 @@ public  abstract class TextValue extends JTextField implements KeyListener {
 				(c == KeyEvent.VK_BACK_SPACE) ||
 				(c == KeyEvent.VK_DELETE) ||
 				(c=='.'))) {
-		    e.consume();
+			if (c!='-'||!ALLOW_NEGATIVE) e.consume();
+			//  Only one - in first position
+			else if (getText().indexOf('-')!=-1||getCaretPosition()!=0){
+				e.consume();
+			}
 		}
+		
 		// if character is '.', check there's no other '.' in the number		
 		else if (c=='.'&&getText().indexOf('.')!=-1){
 		    e.consume();
@@ -51,5 +59,7 @@ public  abstract class TextValue extends JTextField implements KeyListener {
 	}
 	public void keyPressed(KeyEvent e){
 	}
+	
+	
 	public abstract void keyReleased(KeyEvent e);
 }

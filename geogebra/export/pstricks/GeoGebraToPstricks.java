@@ -46,6 +46,7 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,24 +80,83 @@ public class GeoGebraToPstricks implements ActionListener {
     public Application getApp(){
     	return app;
     }
-    private void initGui(){   	
-    	xmin=euclidianView.getXmin();
-    	xmax=euclidianView.getXmax();
-    	ymin=euclidianView.getYmin();
-    	ymax=euclidianView.getYmax();
-    	frame=new PstricksPanel(this,xmax-xmin,ymax-ymin);
+    private void initGui(){	
+    	xunit=1;
+    	yunit=1;
+    	//Changes to make xmin,xmax,ymin,ymax be defined by the selection rectangle
+    	//when this one is defined.
+    	Rectangle rect = this.euclidianView.getSelectionRectangle();
+    	if( rect != null){
+    		xmin=euclidianView.toRealWorldCoordX(rect.getMinX());
+        	xmax=euclidianView.toRealWorldCoordX(rect.getMaxX());
+        	ymin=euclidianView.toRealWorldCoordY(rect.getMaxY());
+        	ymax=euclidianView.toRealWorldCoordY(rect.getMinY());
+    	}
+    	else{
+    		xmin=euclidianView.getXmin();
+    		xmax=euclidianView.getXmax();
+    		ymin=euclidianView.getYmin();
+    		ymax=euclidianView.getYmax();
+    	}
+    	frame=new PstricksPanel(this);
     }
+    //Functions added to access and modify xmin, xmax, ymin and ymax
+    //When xmin,xmax,ymin or ymax are changed
+    //the selected area is reported accodingly on the euclidianView.
+    //This is not visible, on the view, but one may expect that when
+    //the selection rectangle is changed it is displayed on the view.
+    //This may be implemented by changing the class EuclidianView.
+    //Furthermore the definition of a class EuclidianView listerner 
+    //which this class would implement would be desirable so that 
+    //when the selection is modified by the mouse, this is reported
+    //to the values xmin, xmax, ymin and ymax of instances of this class.
     
- 
-
+    private void refreshEuclidianView(){
+    	int x=euclidianView.toScreenCoordX(xmin);
+    	int y=euclidianView.toScreenCoordY(ymin);
+    	int width=euclidianView.toScreenCoordX(xmax)-x;
+    	int height=euclidianView.toScreenCoordY(ymax)-y;
+    	Rectangle r= new Rectangle(x,y,width,height);
+    	this.euclidianView.setSelectionRectangle(r);
+    }
+    public void setxmin(double xmin){
+    	this.xmin=xmin;
+    	this.refreshEuclidianView();
+    }
+    public void setxmax(double xmax){
+    	this.xmax=xmax;
+    	this.refreshEuclidianView();
+    }
+    public void setymin(double ymin){
+    	this.ymin=ymin;
+    	this.refreshEuclidianView();
+    }
+    public void setymax(double ymax){
+    	this.ymax=ymax;
+    	this.refreshEuclidianView();
+    }
+    public double getxmin(){return this.xmin;}
+    public double getxmax(){return this.xmax;}
+    public double getymin(){return this.ymin;}
+    public double getymax(){return this.ymax;}
+    //end changes.
+    //
+    //Adding edition and reading function for xunit and yunit
+    //to make the PstricksPanel be only a view of GeoGebraToPstricks
+    public void setxunit(double xunit){this.xunit=xunit;}
+    public void setyunit(double yunit){this.yunit=yunit;}
+    public double getxunit(){return this.xunit;}
+    public double getyunit(){return this.yunit;}
+    //end addition
+   
 	 
     public void createPstricks() {
  
     	// init unit variables
-    	try{
+    	try{	
     		xunit=frame.getXUnit();
     		yunit=frame.getYUnit();
-    	}
+     	}
     	catch(NullPointerException e2){
     		xunit=1;yunit=1;
     	}
@@ -148,11 +208,11 @@ public class GeoGebraToPstricks implements ActionListener {
         code.append(codePoint);
         // Close Environment pspicture
 		code.append("\\end{pspicture*}\n");
-		String formatFont=resizeFont(app.getFontSize());
+/*		String formatFont=resizeFont(app.getFontSize());
 		if (null!=formatFont){
 			codeBeginPic.insert(0,formatFont+"\n");
 			code.append("}\n");
-		}
+		}*/
 		code.insert(0,codeFilledObject);
 		code.insert(0,codeBeginPic);
         code.insert(0,codeBeginDoc);		
@@ -794,12 +854,13 @@ public class GeoGebraToPstricks implements ActionListener {
 			ColorCode(geocolor,code);
 			code.append("{");
 		}
+/*
 		if (size!=app.getFontSize()) {
 			String formatFont=resizeFont(size);
 			if (null!=formatFont) code.append(formatFont);
-		}
+		}*/
 		code.append(st);
-		if (size!=app.getFontSize()) code.append("}");
+//		if (size!=app.getFontSize()) code.append("}");
 		if (!geocolor.equals(Color.BLACK)){
 			code.append("}");
 		}
@@ -1414,9 +1475,9 @@ public class GeoGebraToPstricks implements ActionListener {
     private void initUnitAndVariable(){
 		// Initaialze uits, dot style, dot size .... 
 		codeBeginPic.append("\\psset{xunit=");
-		codeBeginPic.append(xunit);
+		codeBeginPic.append(sci2dec(xunit));
 		codeBeginPic.append("cm,yunit=");
-		codeBeginPic.append(yunit);
+		codeBeginPic.append(sci2dec(yunit));
 		codeBeginPic.append("cm,algebraic=true,dotstyle=");
 		switch(euclidianView.getPointStyle()){
 			case EuclidianView.POINT_STYLE_CIRCLE:
@@ -1500,9 +1561,9 @@ public class GeoGebraToPstricks implements ActionListener {
 
 		// Set Units for grid
 		codeBeginPic.append("\\psset{xunit=");
-		codeBeginPic.append(GridDist[0]*xunit);
+		codeBeginPic.append(sci2dec(GridDist[0]*xunit));
 		codeBeginPic.append("cm,yunit=");
-		codeBeginPic.append(GridDist[1]*yunit);
+		codeBeginPic.append(sci2dec(GridDist[1]*yunit));
 		codeBeginPic.append("cm}\n");
 		
 		// environment pspicture
@@ -1543,10 +1604,16 @@ public class GeoGebraToPstricks implements ActionListener {
 	
 	// Draw Axis
 	private void drawAxis(){
+		boolean xAxis=euclidianView.getShowXaxis();
+		boolean yAxis=euclidianView.getShowYaxis();
 //		\psaxes[Dx=5,Dy=0.5]{->}(0,0)(-10.5,-0.4)(10.5,1.2)
 		double Dx=euclidianView.getAxesNumberingDistances()[0];
 		double Dy=euclidianView.getAxesNumberingDistances()[1];
-		codeBeginPic.append("\\psaxes[");
+		codeBeginPic.append("\\psaxes[xAxis=");
+		codeBeginPic.append(xAxis);
+		codeBeginPic.append(",yAxis=");
+		codeBeginPic.append(yAxis);
+		codeBeginPic.append(',');
 		boolean bx=euclidianView.getShowAxesNumbers()[0];
 		boolean by=euclidianView.getShowAxesNumbers()[1];
 		if (!bx&&!by) codeBeginPic.append("labels=none,");
@@ -1736,7 +1803,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		}
 		return new String(sb);
 	}
-	// Resize text 
+/*	// Resize text 
 	// Keep the ratio between font size and picture height
 	private String resizeFont(int fontSize){
 		int latexFont=frame.getFontSize();
@@ -1784,7 +1851,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			break;
 		}
 		return st;
-	}
+	}*/
 	private void defineTransparency(){
 		String str="\\makeatletter\n\\define@key[psset]{}{transpalpha}{\\pst@checknum{#1}\\pstranspalpha}\n"+
 		"\\psset{transpalpha=1}\n"+
@@ -1799,5 +1866,50 @@ public class GeoGebraToPstricks implements ActionListener {
 	// When The Button "generate PSTricks" has been clicked
 	public void actionPerformed(ActionEvent e){
 		this.createPstricks();
+	}
+	
+	// refresh the selection rectangle when values change in TextField
+	public void refreshSelectionRectangle(){
+		int x1=euclidianView.toScreenCoordX(xmin);
+		int x2=euclidianView.toScreenCoordX(xmax);
+		int y1=euclidianView.toScreenCoordY(ymin);
+		int y2=euclidianView.toScreenCoordY(ymax);
+		Rectangle rec=new Rectangle(x1,y2,x2-x1,y1-y2);
+	//		System.out.println(x1+" "+x2+" "+y1+" "+y2);
+		euclidianView.setSelectionRectangle(rec);
+		euclidianView.repaint();
+	}
+	//	convert a double with engineering noattion to decimal
+	// eg: 3E-4 becomes 0.0003 
+	private String sci2dec(double d){
+		String s=String.valueOf(d).toLowerCase();
+		StringTokenizer st=new StringTokenizer(s,"e");
+		StringBuffer number;
+		if (st.countTokens()==1) return s;
+		else {
+			String token1=st.nextToken();
+			String token2=st.nextToken();
+			number=new StringBuffer(token1);
+			int exp=Integer.parseInt(token2);
+			if (exp>0){
+				int id_point=number.indexOf(".");
+				if (id_point==-1){
+					for (int i=0;i<exp;i++) number.append("0");
+				}
+				else{
+					number.deleteCharAt(id_point);
+					int zeros=exp-(number.length()-id_point);
+					for (int i=0;i<zeros;i++) number.append("0");
+				}
+			}
+			else {
+				exp=-exp;
+				int id_point=number.indexOf(".");
+				number.deleteCharAt(id_point);
+				for (int i=0;i<exp-1;i++) number.insert(0, "0");
+				number.insert(0, "0.");
+			}
+		}
+		return number.toString();
 	}
 }
