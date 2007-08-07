@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "August 5, 2007";
+    public static final String buildDate = "August 6, 2007";
 	
     public static final String versionString = "3.0 (Beta 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -147,6 +147,7 @@ public class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("da") );     	 	// Danish   
     	supportedLocales.add( new Locale("nl") );     	 	// Dutch
     	supportedLocales.add( new Locale("en"));          	// English
+    	supportedLocales.add( new Locale("en", "UK"));       // English (UK)
     	supportedLocales.add( new Locale("et"));          	// Estonian
     	supportedLocales.add( new Locale("fi") );  			// Finnish
     	supportedLocales.add( new Locale("fr") );     		 // French
@@ -175,6 +176,8 @@ public class Application implements	KeyEventDispatcher {
     //   supported by GeoGebra, so some language codes have to be treated specially
     public static Hashtable specialLanguageNames = new Hashtable();
     static {
+    	specialLanguageNames.put("en", "English (US)");
+    	specialLanguageNames.put("enUK", "English (UK)");
     	specialLanguageNames.put("deAT", "German (Austria)");
     	specialLanguageNames.put("gl", "Galician");    	 
     	specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
@@ -759,7 +762,7 @@ public class Application implements	KeyEventDispatcher {
         	this.frame = frame;
         	mainComp = frame;
    			updateTitle();
-   			frame.setIconImage(getInternalImage("geogebra.gif"));
+   			frame.setIconImage(getInternalImage("geogebra.png"));
    			frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
    			  
    			// window closing listener
@@ -2703,6 +2706,7 @@ public class Application implements	KeyEventDispatcher {
 	    	}
     		kernel.initUndoInfo();
     		setCurrentFile(null);
+    		setMoveMode();
     	}
     	
     	/*

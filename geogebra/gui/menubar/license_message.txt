@@ -32,12 +32,13 @@ TRANSLATIONS
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
   * Danish: Steen Grode, Rasmus Christensen (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
-  * English: Markus Hohenwarter (Austria)
+  * English: Markus Hohenwarter, Judith Preiner (Austria), 
+      Michael Borcherds (Great Britain)
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: David Tran, Noel Lambert (France)
   * Galician: Jesus Garcia Otero (Spain)  
-  * German: Markus Hohenwarter (Austria)
+  * German: Markus Hohenwarter, Judith Preiner (Austria)
   * Greek: Nicholas Mousoulides, (Cyprus), Spiros Mavrogiannis, Manolis Koutlis, 
       Fergadiotis Athanasios, Constantinos Christou (Greece)
   * Hungarian: Sulik Szabolcs (Hungary)

@@ -196,7 +196,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				File file = Application.getFromFileList(i);
 				if (file != null) {										
 					mi = new JMenuItem(file.getName());
-					mi.setIcon(app.getImageIcon("geogebra.gif"));					
+					mi.setIcon(app.getImageIcon("geogebra.png"));					
 					ActionListener al = new LoadFileListener(app, file);
 					mi.addActionListener(al);
 					menu.add(mi);
@@ -1042,7 +1042,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		};		
 		
 		websiteAction  = new AbstractAction("www.geogebra.org", 
-							new ImageIcon(app.getInternalImage("geogebra.gif"))) {
+							new ImageIcon(app.getInternalImage("geogebra.png"))) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
