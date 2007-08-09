@@ -33,7 +33,7 @@ import java.net.URL;
 public class MyAppSplash extends Object {
     public static void main(String[] args) {    	
         Frame splashFrame = null;
-        URL imageURL = MyAppSplash.class.getResource("/geogebra/gui/images/splash.gif");
+        URL imageURL = MyAppSplash.class.getResource("/geogebra/gui/images/splash.png");
         if (imageURL != null) {
             splashFrame = SplashWindow.splash(
                 Toolkit.getDefaultToolkit().createImage(imageURL)
