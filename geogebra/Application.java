@@ -2417,10 +2417,13 @@ public class Application implements	KeyEventDispatcher {
     }
 
     private URL getHelpURL(Locale locale) throws Exception {
-        String  language = locale.getLanguage();
-
+    	 // try to get help for current locale (language + country + variant)
+        URL helpURL = getHelpURL(locale.toString());
+        if (helpURL != null) return helpURL;
+    	
         // try to get help for current language
-        URL helpURL = getHelpURL(language);
+        String  language = locale.getLanguage();     
+        helpURL = getHelpURL(language);
         if (helpURL != null) return helpURL;
                 
         // for Catalan and Basque we take the 

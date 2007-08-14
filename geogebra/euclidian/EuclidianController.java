@@ -4082,6 +4082,15 @@ final public class EuclidianController implements MouseListener,
 	 * Zooms in or out using mouse wheel
 	 */
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		    // don't allow mouse wheel zooming for applets if mode is not zoom mode
+			boolean allowMouseWheel = 
+				!app.isApplet() ||
+				mode == EuclidianView.MODE_ZOOM_IN ||
+				mode == EuclidianView.MODE_ZOOM_OUT ||
+				e.isControlDown() || e.isMetaDown() || e.isShiftDown();			
+			if (!allowMouseWheel)
+				return;
+		
 			setMouseLocation(e);
 			
 			//double px = view.width / 2d;
