@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "August 9, 2007";
+    public static final String buildDate = "August 17, 2007";
 	
     public static final String versionString = "3.0 (Release Candidate 1)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -141,7 +141,8 @@ public class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("bs") );          	// Bosnian
     	supportedLocales.add( new Locale("bg") );          	// Bulgarian
     	supportedLocales.add( new Locale("ca") );           // Catalan
-        supportedLocales.add( new Locale("zh") );          	// Chinese
+        supportedLocales.add( new Locale("zh") );          	// Chinese (Simplified)
+        supportedLocales.add( new Locale("zh","TW") );      // Chinese (Traditional)
         supportedLocales.add( new Locale("hr") );          	// Croatian
     	supportedLocales.add( new Locale("cz") );          	// Czeck
     	supportedLocales.add( new Locale("da") );     	 	// Danish   
@@ -185,7 +186,9 @@ public class Application implements	KeyEventDispatcher {
     	specialLanguageNames.put("bs", "Bosnian");
     	specialLanguageNames.put("cz", "Czech");
     	specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
-    	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    	    	
+    	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    
+    	specialLanguageNames.put("zh", "Chinese (Simplified)"); 
+    	specialLanguageNames.put("zhTW", "Chinese (Traditional)" ); 
     }
         
     public static final Color COLOR_SELECTION = new Color(225, 225, 245);
@@ -2419,23 +2422,31 @@ public class Application implements	KeyEventDispatcher {
     private URL getHelpURL(Locale locale) throws Exception {
     	 // try to get help for current locale (language + country + variant)
         URL helpURL = getHelpURL(locale.toString());
-        if (helpURL != null) return helpURL;
+        if (helpURL != null) {        	
+        	return helpURL;
+        }
     	
         // try to get help for current language
         String  language = locale.getLanguage();     
         helpURL = getHelpURL(language);
-        if (helpURL != null) return helpURL;
+        if (helpURL != null) {        	
+        	return helpURL;
+        }
                 
         // for Catalan and Basque we take the 
         // Spanish help instead of the English one
         if (language.equals("eu") || language.equals("ca")) {        	
         	helpURL = getHelpURL("es"); // Spanish
-            if (helpURL != null) return helpURL;
+        	if (helpURL != null) {            	
+            	return helpURL;
+            }
         }
                 
         // last attempt: try to get English help 
         helpURL = getHelpURL("en");
-        if (helpURL != null) return helpURL;
+        if (helpURL != null) {        	
+        	return helpURL;
+        }
         
         // sorry, no help available
         throw new Exception("HelpNotFound");
