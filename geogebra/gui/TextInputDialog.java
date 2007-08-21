@@ -167,7 +167,7 @@ public class TextInputDialog extends InputDialog {
           
             initString = text.isIndependent() ? 
                            // "\"" + text.toValueString() + "\"" :
-            		 		text.toValueString() :
+            		 		text.getTextString() :
                             text.getCommandDescription(); 
             descString = text.getNameDescription();
             isLaTeX = text.isLaTeX();

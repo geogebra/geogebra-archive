@@ -296,7 +296,7 @@ public abstract class GeoElement
 	public String getLabel() {			
 		if (!labelSet && !localVarLabelSet) {
 			if (algoParent == null)
-				return toValueString();
+				return toOutputValueString();
 			else
 				return algoParent.getCommandDescription();
 		} else
@@ -390,7 +390,16 @@ public abstract class GeoElement
 
 	public abstract boolean isDefined();
 	public abstract void setUndefined();
-	public abstract String toValueString();		
+	public abstract String toValueString();	
+	
+	/**
+	 * Returns a value string that is saveable in an XML file.
+	 * Note: this is needed for texts that need to be quoted
+	 * in lists and as command arguments.
+	 */
+	public String toOutputValueString() {		
+		return toValueString();		
+	}
 	
 	public void setConstructionDefaults() {	
 		if (useVisualDefaults) {
@@ -1792,8 +1801,8 @@ public abstract class GeoElement
 	}
 	
 	/**
-		* Returns algebraic representation of this GeoElement.		
-		*/
+	 * Returns algebraic representation of this GeoElement.		
+	 */
 	final public String getAlgebraDescription() {
 		if (strAlgebraDescriptionNeedsUpdate) {
 			if (isDefined()) {

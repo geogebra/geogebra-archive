@@ -187,7 +187,7 @@ implements Locateable, AbsoluteScreenLocateable {
 	}
 
 	/**
-	 * allways returns true
+	 * always returns true
 	*/
 	public boolean isDefined() {
 		return str != null && (startPoint == null || startPoint.isDefined());
@@ -202,6 +202,18 @@ implements Locateable, AbsoluteScreenLocateable {
 
 	public String toValueString() {		
 		return str;		
+	}
+	
+	/**
+	 * Returns quoted text value string.
+	 */
+	public String toOutputValueString() {	
+		sbToString.setLength(0);
+		sbToString.append('\"');
+		if (str != null)
+			sbToString.append(str);
+		sbToString.append('\"');	
+		return sbToString.toString();	
 	}
 	
 	public String toString() {		
@@ -269,7 +281,7 @@ implements Locateable, AbsoluteScreenLocateable {
 	}	
 		
 	/**
-	   * save object in xml format
+	   * save object in XML format
 	   */ 
 	  public final String getXML() {
 		 StringBuffer sb = new StringBuffer();
@@ -282,10 +294,7 @@ implements Locateable, AbsoluteScreenLocateable {
 				sb.append(" label=\"");
 				sb.append(Util.encodeXML(label));
 				sb.append("\" exp=\"");
-				sb.append("&quot;");
-				if (str != null)
-					sb.append(Util.encodeXML(str));
-				sb.append("&quot;");
+				sb.append(Util.encodeXML(toOutputValueString()));
 				// expression   
 			sb.append("\"/>\n");
 		 }

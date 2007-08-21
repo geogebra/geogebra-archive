@@ -143,6 +143,7 @@ TOKEN :  {
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
+  | < UNDEFINED: ( "?" | "\ufffd" ) >
   | < SQUARED:  "\u00b2" >
   | < CUBED:    "\u00b3" >
   | < POWER4:   "\u2074" >
@@ -1008,6 +1009,11 @@ MyDouble myDouble():
     <E>
     {
         return new MyDouble(kernel, Math.E);
+    }
+|
+	<UNDEFINED>
+	{
+        return new MyDouble(kernel, Double.NaN);
     }
 }
 

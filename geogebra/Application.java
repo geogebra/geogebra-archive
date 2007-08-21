@@ -114,9 +114,9 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "August 17, 2007";
+    public static final String buildDate = "August 21, 2007";
 	
-    public static final String versionString = "3.0 (Release Candidate 1)";    
+    public static final String versionString = "3.0 (Release Candidate 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
   
     // GeoGebra jar files    
@@ -2902,7 +2902,7 @@ public class Application implements	KeyEventDispatcher {
         } catch (Exception e) {
             setCurrentFile(null);
             e.printStackTrace();
-            showError(getError("LoadFileFailed") + ":/n" + file);
+            showError(getError("LoadFileFailed") + ":\n" + file);
             return false;
         }
     }

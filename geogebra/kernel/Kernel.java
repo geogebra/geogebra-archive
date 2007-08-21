@@ -3592,12 +3592,14 @@ public class Kernel {
 			return format(x);
 	}
 
-	final public String format(double x) {	
+	final public String format(double x) {
+		if (Double.isNaN(x))
+			return "?";		
 		// ZERO
-		if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";			
-		
-		return nf.format(x);				
+		else if (-MIN_PRECISION < x && x < MIN_PRECISION)
+			return "0";					
+		else
+			return nf.format(x);				
 	}
 	
 	final public String formatPiE(double x, NumberFormat nf) {

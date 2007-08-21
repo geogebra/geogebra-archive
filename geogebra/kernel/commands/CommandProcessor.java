@@ -1318,17 +1318,44 @@ final public GeoElement[] process(Command c) throws MyError {
     GeoElement[] arg;
 
     switch (n) {
+    	// Vertex[ <GeoConic> ]
         case 1 :
             arg = resArgs(c);
             if (ok[0] = (arg[0] .isGeoConic()))
 				return kernel.Vertex(c.getLabels(), (GeoConic) arg[0]);
 			else
-				throw argErr(app, "Vertex", arg[0]);
+				throw argErr(app, c.getName(), arg[0]);
 
+        // Corner[ <Image>, <number> ]
+        case 2 :
+            arg = resArgs(c);
+            if ((ok[0] = (arg[0].isGeoImage())) &&
+            	(ok[1] = (arg[1].isNumberValue()))) {
+                GeoElement[] ret =
+                    { kernel.Corner(c.getLabel(), (GeoImage) arg[0], (NumberValue) arg[1])};
+                return ret;
+            } else {
+            	if (!ok[0])
+            		throw argErr(app, c.getName(), arg[0]);
+            	else
+            		throw argErr(app, c.getName(), arg[1]);
+            }
+            
         default :
-            throw argNumErr(app, "Vertex", n);
+            throw argNumErr(app, c.getName(), n);
     }
 }
+}
+
+/*
+ * Corner[ <Image>, <number> ]
+ */
+class CmdCorner extends CmdVertex {
+	
+	public CmdCorner (Kernel kernel) {
+		super(kernel);
+	}
+
 }
 
 /*
@@ -3632,40 +3659,7 @@ final public  GeoElement[] process(Command c) throws MyError {
 }
 }
 
-/*
- * Corner[ <Image> ]
- */
-class CmdCorner extends CommandProcessor {
-	
-	public CmdCorner (Kernel kernel) {
-		super(kernel);
-	}
-	
-final public  GeoElement[] process(Command c) throws MyError {
-    int n = c.getArgumentNumber();
-    boolean[] ok = new boolean[n];
-    GeoElement[] arg;
 
-    switch (n) {
-        case 2 :
-            arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isGeoImage())) &&
-            	(ok[1] = (arg[1] .isNumberValue()))) {
-                GeoElement[] ret =
-                    { kernel.Corner(c.getLabel(), (GeoImage) arg[0], (NumberValue) arg[1])};
-                return ret;
-            } else {
-            	if (!ok[0])
-            		throw argErr(app, c.getName(), arg[0]);
-            	else
-            		throw argErr(app, c.getName(), arg[1]);
-            }
-
-        default :
-            throw argNumErr(app, c.getName(), n);
-    }
-}
-}
 
 
 /*

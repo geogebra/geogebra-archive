@@ -4491,7 +4491,7 @@ class NamePanel
 	
 	private void setDefText(GeoElement geo) {
 		String text = geo.isIndependent() ?
-				geo.toValueString() :
+				geo.toOutputValueString() :
 				geo.getCommandDescription();
 		tfDefinition.setText(text);
 	}

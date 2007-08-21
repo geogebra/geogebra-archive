@@ -566,14 +566,15 @@ implements EuclidianViewAlgo {
                 // attribute name is input No. 
                 sb.append("=\"");
                 
-                // ensure a vector stays a vector!
-                if (!input[i].isLabelSet() && input[i].isGeoVector()) {
+                // ensure a vector stays a vector!               
+                if (input[i].isGeoVector() && !input[i].isLabelSet()) {
                     // add Vector[ ] command around argument
                     // to make sure that this really becomes a vector again
                     sb.append("Vector[");
                         sb.append(Util.encodeXML(input[i].getLabel()));
                     sb.append("]");
                 } else {
+                	// standard case
                     sb.append(Util.encodeXML(input[i].getLabel()));                 
                 }                       
                         

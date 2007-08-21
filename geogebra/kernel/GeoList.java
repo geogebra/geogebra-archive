@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.util.Util;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -357,13 +358,13 @@ public class GeoList extends GeoElement implements ListValue {
        if (lastIndex > -1) {
 	       for (int i=0; i < lastIndex; i++) {
 	    	   GeoElement geo = (GeoElement) geoList.get(i);
-	    	   sbBuildValueString.append(geo.toDefinedValueString());
+	    	   sbBuildValueString.append(geo.toOutputValueString());
 	    	   sbBuildValueString.append(", ");
 	       }
 	       
 	       // last element
 	       GeoElement geo = (GeoElement) geoList.get(lastIndex);
-		   sbBuildValueString.append(geo.toDefinedValueString());
+		   sbBuildValueString.append(geo.toOutputValueString());
        }
 	   
        sbBuildValueString.append(STR_CLOSE);       
@@ -381,7 +382,7 @@ public class GeoList extends GeoElement implements ListValue {
 	}
 	
 	/**
-	   * save object in xml format
+	   * save object in XML format
 	   */ 
 	  public final String getXML() {
 		 StringBuffer sb = new StringBuffer();
@@ -392,9 +393,9 @@ public class GeoList extends GeoElement implements ListValue {
 		 if (isIndependent()) {
 			sb.append("<expression");
 				sb.append(" label =\"");
-				sb.append(label);
+				sb.append(Util.encodeXML(label));
 				sb.append("\" exp=\"");
-				sb.append(toString());			 
+				sb.append(Util.encodeXML(toValueString()));			 
 			sb.append("\"/>\n");
 		 }
 	  		  

@@ -139,29 +139,37 @@ public class DrawParametricCurve extends Drawable {
 		boolean p1def = p1.isDefined();
 		boolean p2def = p2.isDefined();
 			
-		// both end points are defined
-		if (p1def && p2def) {	
-			if (tooCloseOnScreen(view, p1, p2)) {		
-				// CLOSED CURVE
-				labelPoint = plotClosedCurve(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1);
+		try {
+			// both end points are defined
+			if (p1def && p2def) {	
+				if (tooCloseOnScreen(view, p1, p2)) {		
+					// CLOSED CURVE
+					labelPoint = plotClosedCurve(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1);
+				} 
+				else {
+					// STANDARD CASE
+					labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);									
+				}
 			} 
-			else {
+			
+			// one end point is defined
+			else if (p1def || p2def) {
 				// STANDARD CASE
 				labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);									
+			} 
+			
+			// no end point is defined
+			else { 		
+				// DESPERATE MODE: start and end point are undefined 
+				labelPoint = plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, p2);
 			}
-		} 
-		
-		// one end point is defined
-		else if (p1def || p2def) {
-			// STANDARD CASE
-			labelPoint = plotInterval(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);									
-		} 
-		
-		// no end point is defined
-		else { 		
-			// DESPERATE MODE: start and end point are undefined 
-			labelPoint = plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, p2);
 		}
+		catch (Exception e) {
+			// curve was undefined in interval
+			return plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, p2);
+		}
+
+		
 									
 //		System.out.println("*** CURVE plot: " + curve);
 		//System.out.println("plot points: " + pointsCount );	
@@ -216,16 +224,22 @@ public class DrawParametricCurve extends Drawable {
         	// we could not find a split parameter and give up
     		return null;    		
     	} else {
-    		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
-    		Point labelPoint1 = plotInterval(curve, t1, splitParam, view, gp, 
-					calcLabelPos, moveToAllowed);		
-    		Point labelPoint2 = plotInterval(curve, splitParam, t2, view, gp, 
-					calcLabelPos && labelPoint1 == null, moveToAllowed);	
-    		
-    		if (labelPoint1 == null)
-    			return labelPoint2;
-    		else
-    			return labelPoint1;
+    		try {
+	    		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
+	    		Point labelPoint1 = plotInterval(curve, t1, splitParam, view, gp, 
+						calcLabelPos, moveToAllowed);		
+	    		Point labelPoint2 = plotInterval(curve, splitParam, t2, view, gp, 
+						calcLabelPos && labelPoint1 == null, moveToAllowed);	
+	    		
+	    		if (labelPoint1 == null)
+	    			return labelPoint2;
+	    		else
+	    			return labelPoint1;
+    		}
+    		catch (Exception e) {
+    			// curve was undefined in interval
+    			return plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, curve.evaluateCurve(t2));
+    		}
     	}    			    	
     }
     
@@ -250,12 +264,17 @@ public class DrawParametricCurve extends Drawable {
 		for (int i=0; i < DESPERATE_MODE_INTERVALS; i++) {				
 			p2 = curve.evaluateCurve(t2);
 
-			// only plot this intervall if at least one border is defined
-			if (p1.isDefined() || p2.isDefined()) {			
-				Point p = plotInterval(curve, t1, t2, view, gp, 
+			// only plot this interval if at least one border is defined
+			if (p1.isDefined() || p2.isDefined()) {	
+				try {
+					Point p = plotInterval(curve, t1, t2, view, gp, 
 										calcLabelPos && labelPoint == null, moveToAllowed);									
-				if (labelPoint == null)
-					labelPoint = p;		
+					if (labelPoint == null)
+						labelPoint = p;
+				}
+				catch (Exception e) {
+					// curve was undefined in interval					
+				}
 			}
 			
 			t1 = t2;
@@ -277,7 +296,7 @@ public class DrawParametricCurve extends Drawable {
 								double t1, double t2, EuclidianView view, 
 								GeneralPath gp,
 								boolean calcLabelPos, 
-								boolean moveToAllowed) { 		
+								boolean moveToAllowed) throws Exception { 		
 		
 		// check wether the curve is defined at the interval borders
 		// if not, we try to find a valid domain
@@ -297,7 +316,7 @@ public class DrawParametricCurve extends Drawable {
 		// evaluations of the curve for the same parameter value t
 		// see an explanation of this algorithm at the end of this method.
 		double x0,y0,x,y,t,moveX=0, moveY=0;		
-		boolean onScreen, prevOnScreen, valid, nextLineToNeedsMoveToFirst = false;		
+		boolean onScreen, prevOnScreen, nextLineToNeedsMoveToFirst = false;		
 		double [] eval = new double[2];
 				
 		int LENGTH = MAX_DEPTH + 1;
@@ -305,8 +324,7 @@ public class DrawParametricCurve extends Drawable {
 		int depthStack[]=new int[LENGTH];
 		double xStack[]=new double[LENGTH];
 		double yStack[]=new double[LENGTH];
-		boolean onScreenStack[]=new boolean[LENGTH];
-		boolean validStack[]=new boolean[LENGTH];
+		boolean onScreenStack[]=new boolean[LENGTH];		
 		double divisors[]=new double[LENGTH];
 		divisors[0]=t2-t1;		
 		for (int i=1; i < LENGTH; divisors[i] = divisors[i-1]/2, i++);
@@ -319,26 +337,32 @@ public class DrawParametricCurve extends Drawable {
 		prevOnScreen = view.toClippedScreenCoords(eval, SCREEN_CLIP_BORDER);
 		x0=eval[0]; // xEval(t1);
 		y0=eval[1]; // yEval(t1);
-		valid = !(Double.isNaN(x0) || Double.isNaN(y0));
-		prevOnScreen = prevOnScreen && valid;
-		
-		// with a GeneralPath moveTo(sx0,sy0) , the "screen" point		
-		if (valid) {
-			if (moveToFirstPoint) {	
-				moveTo(gp, x0, y0);				
-				moveToFirstPoint = false;
-			} else {
-				lineTo(gp, x0, y0);
-			}			
-		}
 
+		// invalid: desperate mode
+		if (Double.isNaN(x0) || Double.isNaN(y0)) {
+			throw new Exception("Curve undefined at t = " + t1);
+		}						
+		
+		// with a GeneralPath moveTo(sx0,sy0) , the "screen" point			
+		if (moveToFirstPoint) {	
+			moveTo(gp, x0, y0);				
+			moveToFirstPoint = false;
+		} else {
+			lineTo(gp, x0, y0);
+		}			
+		
 		// evaluate for t2
 		curve.evaluateCurve(t2, eval);
 		onScreen = view.toClippedScreenCoords(eval, SCREEN_CLIP_BORDER);
+		onScreenStack[0] = onScreen;
 		xStack[0] = x = eval[0]; // xEval(t2);
 		yStack[0] = y = eval[1]; // yEval(t2);	
-		validStack[0] = valid = !(Double.isNaN(x) || Double.isNaN(y));	
-		onScreenStack[0] = onScreen = onScreen && valid;
+		
+		// invalid: desperate mode
+		if (Double.isNaN(x) || Double.isNaN(y)) {
+			throw new Exception("Curve undefined at t = " + t2);
+		}	
+		
 		double slope = (y - y0) / (x - x0); 
 		double prevSlope = slope;		
 		
@@ -364,7 +388,6 @@ public class DrawParametricCurve extends Drawable {
 				dyadicStack[top]=i; 
 				depthStack[top]=depth;
 				onScreenStack[top]=onScreen;
-				validStack[top]=valid;
 				xStack[top]=x; 
 				yStack[top++]=y;
 				i<<=1; i--;
@@ -376,53 +399,56 @@ public class DrawParametricCurve extends Drawable {
 				onScreen = view.toClippedScreenCoords(eval, SCREEN_CLIP_BORDER);
 				x=eval[0]; // xEval(t);
 				y=eval[1]; // yEval(t);
-				valid = !(Double.isNaN(x) || Double.isNaN(y));	
-				onScreen = onScreen && valid;
+					
+				// invalid: desperate mode
+				if (Double.isNaN(x) || Double.isNaN(y)) {
+					throw new Exception("Curve undefined at t = " + t);
+				}
+								
 				slope = (y - y0) / (x - x0);				 
 			}			
 			
 			// drawLine(x0,y0,x,y)
 			// don't add points to gerneral path that are in the same pixel as the previous point			
-			if (valid) {								
-				// move to is possible
-				if (moveToAllowed) {	
-					// still need first point
-					if (moveToFirstPoint) { 
-						moveTo(gp, x, y);
-						moveToFirstPoint = false;												
-					}					
-					// previous and this point not on screen
-					else if (!onScreen &&  !prevOnScreen) {
-						nextLineToNeedsMoveToFirst = true;
-						moveX = x;
-						moveY = y;
-					} 
-					// distance too big
-					else if (distNotOK){
-						moveTo(gp, x, y);					
-						nextLineToNeedsMoveToFirst = false;						
+										
+			// move to is possible
+			if (moveToAllowed) {	
+				// still need first point
+				if (moveToFirstPoint) { 
+					moveTo(gp, x, y);
+					moveToFirstPoint = false;												
+				}					
+				// previous and this point not on screen
+				else if (!onScreen &&  !prevOnScreen) {
+					nextLineToNeedsMoveToFirst = true;
+					moveX = x;
+					moveY = y;
+				} 
+				// distance too big
+				else if (distNotOK){
+					moveTo(gp, x, y);					
+					nextLineToNeedsMoveToFirst = false;						
+				}
+				// everything ok: let's draw a line!
+				else { 
+					if (nextLineToNeedsMoveToFirst) {
+						moveTo(gp, moveX, moveY);							
+						nextLineToNeedsMoveToFirst = false;
 					}
-					// everything ok: let's draw a line!
-					else { 
-						if (nextLineToNeedsMoveToFirst) {
-							moveTo(gp, moveX, moveY);							
-							nextLineToNeedsMoveToFirst = false;
-						}
-						
-						lineTo(gp, x, y);					
-					}	
-				}	
-				// move to is not allowed: we have to draw all lines
-				else { 					
-					// line to
+					
 					lineTo(gp, x, y);					
-				}																
-				
-				// remember last point in general path
-				x0=x; 
-				y0=y;
-				prevOnScreen = onScreen;				
-			}
+				}	
+			}	
+			// move to is not allowed: we have to draw all lines
+			else { 					
+				// line to
+				lineTo(gp, x, y);					
+			}																
+			
+			// remember last point in general path
+			x0=x; 
+			y0=y;
+			prevOnScreen = onScreen;							
 			
 			// remember first point on screen for label position 
 			if (needLabelPos && onScreen) {
@@ -448,7 +474,6 @@ public class DrawParametricCurve extends Drawable {
 		    y=yStack[--top]; 
 		    x=xStack[top];
 		    onScreen=onScreenStack[top];
-		    valid=validStack[top];
 		    depth=depthStack[top]+1; // pop stack and go to right
 		    i=dyadicStack[top]<<1;		    		    
 			prevSlope = slope;	

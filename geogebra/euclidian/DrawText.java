@@ -64,7 +64,7 @@ public final class DrawText extends Drawable {
     		eqn.setVisible(isVisible);
         if (!isVisible) return;        
         
-		labelDesc = text.toValueString();		
+		labelDesc = text.getTextString();	
 		isLaTeX = text.isLaTeX();			
         		
         // compute location of text		
