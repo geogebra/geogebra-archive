@@ -166,6 +166,7 @@ public class DrawParametricCurve extends Drawable {
 		}
 		catch (Exception e) {
 			// curve was undefined in interval
+			gp.reset();
 			return plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, p2);
 		}
 
@@ -238,6 +239,7 @@ public class DrawParametricCurve extends Drawable {
     		}
     		catch (Exception e) {
     			// curve was undefined in interval
+    			gp.reset();
     			return plotDesperateMode(curve, t1, t2, view, gp, calcLabelPos, moveToAllowed, p1, curve.evaluateCurve(t2));
     		}
     	}    			    	
