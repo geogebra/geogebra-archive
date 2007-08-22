@@ -114,14 +114,14 @@ LICENSE DETAILS
    purposes, you need to get permission of Markus Hohenwarter (mhohen@gmail.com). 
 
    Translations
-     * Translations of GeoGebra, GeoGebra installers or GeoGebra documentation files
-       are only allowed with permission of their respective authors. 
-       Resulting translations are subject to the same copyright as the original work 
-       (i.e. copyright of the original authors and Creative Commons Attribution-
-       NonCommercial-NoDerivs license). The translators have the right to be attributed 
-       by name and contact address in their translated work.
-     * Translations of GeoGebra documentation may not be used for commercial purposes 
-       without permission of the original authors and the respective translators.
+     Translations of GeoGebra, GeoGebra installers or GeoGebra documentation files
+     are only allowed with permission of their respective authors. 
+     Resulting translations are subject to the same copyright as the original work 
+     (i.e. copyright of the original authors and Creative Commons Attribution-
+     NonCommercial-NoDerivs license). The translators have the right to be attributed 
+     by name and contact address in their translated work.
+     Translations may not be used for commercial purposes without permission 
+     of the original authors and the respective translators.
 
   
 2) GeoGebra Source Code License (GNU GPL 2)
