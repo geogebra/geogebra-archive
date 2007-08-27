@@ -731,15 +731,28 @@ final public class DrawConic extends Drawable implements Previewable {
                                                 
             case GeoConic.CONIC_CIRCLE:  
             case GeoConic.CONIC_ELLIPSE:
-            case GeoConic.CONIC_PARABOLA: 
-            case GeoConic.CONIC_HYPERBOLA:                 	
+            case GeoConic.CONIC_PARABOLA:
+            	if (strokedShape == null) {
+        			strokedShape = objStroke.createStrokedShape(shape);
+        		}    		
+        		return strokedShape.intersects(x-3,y-3,6,6);            	
+            	
+            case GeoConic.CONIC_HYPERBOLA: 
+            	if (strokedShape == null) {
+        			strokedShape = hypLeft.createStrokedShape(objStroke);
+        			strokedShape2 = hypRight.createStrokedShape(objStroke);
+        		}    		
+        		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
+            	
+            	/*
             	if (tempPoint == null) {
 	       			 tempPoint = new GeoPoint(conic.getConstruction());
 	       		}	       		
 	       		double rwX = view.toRealWorldCoordX(x);	       		
 	       		double rwY = view.toRealWorldCoordY(y);	       		
 	       		tempPoint.setCoords(rwX, rwY, 1.0);
-	       		return conic.isOnPath(tempPoint, 0.09);                                                                                                          
+	       		return conic.isOnPath(tempPoint, 0.09);
+	       		*/                                                                                                          
         }        
         return false;
     }

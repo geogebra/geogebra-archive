@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -82,6 +83,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
  
     String getClassName() {
         return "AlgoLocus";
+    }
+    
+    public ArrayList getMoveableInputPoints() {
+    	return null;
     }
     
     public GeoPoint getQ() {

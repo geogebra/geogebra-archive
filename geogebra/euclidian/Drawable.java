@@ -26,6 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
@@ -51,8 +52,12 @@ public abstract class Drawable {
 	private String oldLabelDesc;	
 	private boolean labelHasIndex = false;
 	Rectangle labelRectangle = new Rectangle(); // for label hit testing
+	Shape strokedShape, strokedShape2;
+	
 	// tracing	
 	boolean isTracing = false;
+	
+	boolean createdByDrawList = false;	
 
 	public abstract void update();
 	public abstract void draw(Graphics2D g2);
@@ -273,6 +278,9 @@ public abstract class Drawable {
 	}
 
 	final void updateStrokes(GeoElement geo) {
+		strokedShape = null;
+		strokedShape2 = null;		
+		
 		if (lineThickness != geo.lineThickness) {
 			lineThickness = geo.lineThickness;
 			lineType = geo.lineType;
@@ -292,17 +300,17 @@ public abstract class Drawable {
 		}
 	}
 	
-	final public static void drawGeneralPath(GeneralPath gp, Graphics2D g2) {
+	final public static void drawGeneralPath(Shape shape, Graphics2D g2) {
 		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
-		g2.draw(gp);
+		g2.draw(shape);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
 	
-	final public static void fillGeneralPath(GeneralPath gp, Graphics2D g2) {
+	final public static void fillGeneralPath(Shape shape, Graphics2D g2) {
 		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
-		g2.fill(gp);
+		g2.fill(shape);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
 

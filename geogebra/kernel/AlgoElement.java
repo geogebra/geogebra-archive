@@ -388,6 +388,39 @@ implements EuclidianViewAlgo {
             parent.addPredecessorsToSet(set, onlyIndependent);
         }
     }
+    
+    /**
+	 * Returns all moveable input points of this algorithm.	 
+	 */
+    public ArrayList getMoveableInputPoints() {
+		if (moveableInputPoints == null) {
+			/*
+			 *  Note: we could get all independent movealbe parents, but
+			 *        this will make almost everything moveable and then it's difficult to understand
+			 *        why certain objects can be moved
+			 * 
+			TreeSet pred = getAllIndependentPredecessors();
+			moveableParents = new ArrayList(pred.size());
+			Iterator it = pred.iterator();
+			while (it.hasNext()) {
+				GeoElement parent = (GeoElement) it.next();
+				if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
+					moveableParents.add(parent);			
+			}				
+			*/
+						
+			moveableInputPoints = new ArrayList(input.length);
+			for (int i=0; i < input.length; i++) {
+				//if (input[i].isEuclidianVisible() &&	input[i].isMoveable() && input[i].isTranslateable())
+				if (input[i].isEuclidianVisible() && input[i].isMoveable() && input[i].isGeoPoint() )
+					moveableInputPoints.add(input[i]);			
+			}				
+		}
+	
+		return (moveableInputPoints.size() > 0) ? moveableInputPoints : null;
+    }
+    private ArrayList moveableInputPoints;
+    
 
     final public boolean isIndependent() {
         return false;

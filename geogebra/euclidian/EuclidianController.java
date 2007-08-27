@@ -467,7 +467,7 @@ final public class EuclidianController implements MouseListener,
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:
-			hits = view.getHits(mouseLoc, true);
+			hits = view.getHitsNoSinglePolygon(view.getHits(mouseLoc, true));
 			createNewPoint(hits, true, true, true);
 			break;
 			
@@ -1399,7 +1399,7 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_POINT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				point(hits);
+				point(view.getHitsNoSinglePolygon(hits));
 			}
 			break;
 

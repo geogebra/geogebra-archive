@@ -97,6 +97,7 @@ public final class DrawList extends Drawable {
 		if (d == null) {    			
 			// create a new drawable for geo
 			d = view.createDrawable(listElement);   
+			d.createdByDrawList = true;
 		} 
 		return d;
     }
@@ -106,10 +107,14 @@ public final class DrawList extends Drawable {
     		boolean doHighlight = geoList.doHighlighting();
     		
     		int size = drawables.size();
-    		for (int i=0; i < size; i++) {     			    			
+    		for (int i=0; i < size; i++) {     			     			
     			Drawable d = (Drawable) drawables.get(i);
-    			d.geo.setHighlighted(doHighlight);
-    			d.draw(g2);
+    			// draw only those drawables that have been created by this list;
+    			// if d belongs to another object, we don't want to mess with it here
+    			if (createdByDrawList || !d.geo.isLabelSet()) {
+    				d.geo.setHighlighted(doHighlight);
+    				d.draw(g2);
+    			}
     		}
     	}
     }

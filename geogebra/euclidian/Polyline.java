@@ -19,6 +19,8 @@ the Free Software Foundation; either version 2 of the License, or
 package geogebra.euclidian;
 
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 
@@ -34,8 +36,7 @@ public class Polyline {
         
     private int max_capacity = DrawConic.MAX_PLOT_POINTS;
 	double [] x, y; 	
-    private GeneralPath gp 
-    	= new GeneralPath(GeneralPath.WIND_EVEN_ODD, max_capacity);
+    private GeneralPath gp = new GeneralPath();
     
     /** Creates new Polyline for n vertices */
     public Polyline(int n) {
@@ -96,6 +97,10 @@ public class Polyline {
     
     final public boolean contains(double x, double y, double w, double h) {
     	return gp.contains(x, y, w, h);
+    }
+    
+    final public Shape createStrokedShape(Stroke stroke) {
+    	return stroke.createStrokedShape(gp);
     }
 
 }

@@ -266,7 +266,7 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {        
-        return line.intersects(x-2, y-2, 4, 4);        
+        return line.intersects(x-3, y-3, 6, 6);        
     }
 	
     final public boolean isInside(Rectangle rect) {

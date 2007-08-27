@@ -25,7 +25,7 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoTranslate extends AlgoElement {
+public class AlgoTranslate extends AlgoTransformation {
 
     /**
 	 * 

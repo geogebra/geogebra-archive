@@ -1938,6 +1938,16 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	final public ArrayList getHits(Point p) {
 		return getHits(p, false);
 	}
+	
+	final public ArrayList getHitsNoSinglePolygon(ArrayList hits) {		
+		if (hits != null && hits.size() == 1) {
+			GeoElement geo = (GeoElement) hits.get(0);
+			if (geo.isGeoPolygon())
+				hits.clear();
+		}
+		
+		return hits;
+	}
 
 	/**
 	 * returns array of GeoElements whose visual representation is at screen
@@ -1946,7 +1956,8 @@ public final class EuclidianView extends JPanel implements View, Printable,
 	final public ArrayList getHits(Point p, boolean includePolygons) {
 		foundHits.clear();
 
-		// count images and Polygons
+		// count lists, images and Polygons
+		int listCount = 0;
 		int polyCount = 0;
 		int imageCount = 0;
 
@@ -1958,7 +1969,9 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				GeoElement geo = d.getGeoElement();
 
 				if (geo.isEuclidianVisible()) {
-					if (geo.isGeoImage()) {
+					if (geo.isGeoList()) {
+						listCount++;
+					} else if (geo.isGeoImage()) {
 						imageCount++;
 					} else if (geo.isGeoPolygon()) {
 						polyCount++;
@@ -1982,11 +1995,11 @@ public final class EuclidianView extends JPanel implements View, Printable,
 		if (size == 0)
 			return null;
 
-		// remove all images and polygons if there are other objects too
-		if (size - (imageCount + polyCount) > 0) {
+		// remove all lists, images and polygons if there are other objects too
+		if (size - (listCount + imageCount + polyCount) > 0) {
 			for (int i = 0; i < foundHits.size(); ++i) {
 				GeoElement geo = (GeoElement) foundHits.get(i);
-				if (geo.isGeoImage() || (!includePolygons && geo.isGeoPolygon()))
+				if (geo.isGeoList() || geo.isGeoImage() || (!includePolygons && geo.isGeoPolygon()))
 					foundHits.remove(i);
 			}
 		}

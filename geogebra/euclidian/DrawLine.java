@@ -368,7 +368,7 @@ public final class DrawLine extends Drawable implements Previewable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
-        return line.intersects(x-4, y-4, 8, 8);
+        return line.intersects(x-3, y-3, 6, 6);
     }
     
     final public boolean isInside(Rectangle rect) {  

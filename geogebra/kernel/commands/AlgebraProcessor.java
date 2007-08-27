@@ -670,7 +670,7 @@ public class AlgebraProcessor {
 			GeoElement [] results = processExpressionNode((ExpressionNode) myList.getListElement(i));			
 			// we only take one resulting object			
 			geoElements.add(results[0]);
-			if (!results[0].isIndependent() || results[0].isLabelSet())
+			if (results[0].isLabelSet() || !results[0].isIndependent())
 				isIndependent = false;			
 		}		
 		cons.setSuppressLabelCreation(oldMacroMode);

@@ -117,8 +117,15 @@ public final class DrawLocus extends Drawable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
+    	if (strokedShape == null) {
+			strokedShape = objStroke.createStrokedShape(gp);
+		}    		
+		return strokedShape.intersects(x-3,y-3,6,6); 
+    	
+    	/*
         return gp.intersects(x-2,y-2,4,4)
-				&& !gp.contains(x-2,y-2,4,4);        
+				&& !gp.contains(x-2,y-2,4,4);
+				*/        
     }
     
     final public boolean isInside(Rectangle rect) {

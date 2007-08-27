@@ -23,7 +23,7 @@ public class AlgoDependentList extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;	
 	private ArrayList listItems; //input GeoElements
-    private GeoList geoList;     // output    
+    private GeoList geoList;     // output            
         
     /**
      * Creates a new algorithm that takes a list of GeoElements to build a Geolist with 
@@ -84,13 +84,13 @@ public class AlgoDependentList extends AlgoElement {
     	return geoList; 
     }       
     
-    // calc the current value of the arithmetic tree
     final void compute() {	
     	// add all input and their siblings to the list
     	geoList.clear();
-    	for (int i=0; i < input.length; i++) {
+    	for (int i=0; i < input.length; i++) {    		
     		AlgoElement algo = input[i].getParentAlgorithm();
-    		if (algo == null) {
+    		// don't add siblings for polygons
+    		if (algo == null || input[i].isGeoPolygon()) {
     			geoList.add(input[i]);
     		} else {
     			for (int k=0; k < algo.output.length; k++) {
@@ -104,10 +104,10 @@ public class AlgoDependentList extends AlgoElement {
     	StringBuffer sb = new StringBuffer();
     	sb.append("{");    	    
     	for (int i=0; i < input.length - 1; i++) {
-    		sb.append(input[i].getLabelOrCommandDescription());
+    		sb.append(input[i].getLabel());
     		sb.append(", ");
     	}    	
-    	sb.append(input[input.length-1].getLabelOrCommandDescription());
+    	sb.append(input[input.length-1].getLabel());
     	sb.append("}");    		    	    	
         return sb.toString();
     }        

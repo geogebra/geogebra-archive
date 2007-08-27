@@ -26,7 +26,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author  Markus
  * @version 
  */
-public class AlgoRotatePoint extends AlgoElement {
+public class AlgoRotatePoint extends AlgoTransformation {
 
 	/**
 	 * 

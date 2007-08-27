@@ -25,7 +25,7 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoMirror extends AlgoElement {
+public class AlgoMirror extends AlgoTransformation {
 
     /**
 	 * 

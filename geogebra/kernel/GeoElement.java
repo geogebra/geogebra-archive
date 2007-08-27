@@ -721,42 +721,14 @@ public abstract class GeoElement
 	}
 	
 	/**
-	 * Returns all movealbe parents of this GeoElement.
-	 * Note: they are all instances of Translateable.	 
+	 * Returns all moveable parent points of this GeoElement.	 
 	 */
 	public ArrayList getMoveableParentPoints() {		
-		AlgoElement algo = getParentAlgorithm();
-		if (algo == null) return null;
-
-		if (moveableParents == null) {
-			/*
-			 *  Note: we could get all independent movealbe parents, but
-			 *        this will make almost everything moveable and a difficult to understand
-			 *        why certain objects can be moved
-			 * 
-			TreeSet pred = getAllIndependentPredecessors();
-			moveableParents = new ArrayList(pred.size());
-			Iterator it = pred.iterator();
-			while (it.hasNext()) {
-				GeoElement parent = (GeoElement) it.next();
-				if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
-					moveableParents.add(parent);			
-			}				
-			*/
-						
-			moveableParents = new ArrayList(algo.input.length);
-			for (int i=0; i < algo.input.length; i++) {
-				GeoElement parent = algo.input[i];
-				//if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
-				if (parent.isEuclidianVisible() && parent.isMoveable() && parent.isGeoPoint() )
-					moveableParents.add(parent);			
-			}				
-		}
-		
-		return (moveableParents.size() > 0) ? moveableParents : null;
+		if (algoParent == null) 
+			return null;
+		else
+			return algoParent.getMoveableInputPoints();		
 	}
-	private ArrayList moveableParents;
-	
 	
 	/**
 	 * Returns whether this object's class implements the interface Translateable.	 

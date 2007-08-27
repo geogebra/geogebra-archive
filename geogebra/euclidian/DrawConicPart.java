@@ -331,11 +331,17 @@ implements Previewable {
 	final public boolean hit(int x,int y) { 
 		switch (draw_type) {
 			case DRAW_TYPE_ELLIPSE:
+				if (strokedShape == null) {
+        			strokedShape = objStroke.createStrokedShape(shape);
+        		}    		
+        		return strokedShape.intersects(x-3,y-3,6,6); 
+				
+				/*
 				// sector: take shape for hit testing
-				if (closure == Arc2D.PIE)
+				if (closure == Arc2D.PIE) {
 					return shape.intersects(x-2, y-2, 4, 4) &&
 								!shape.contains(x-2, y-2, 4, 4);
-				else {
+				} else {
 					if (tempPoint == null) {
 		       			 tempPoint = new GeoPoint(conicPart.getConstruction());
 		       		}
@@ -345,14 +351,15 @@ implements Previewable {
 		       		double maxError = 4 * view.invXscale; // pixel	
 		       		tempPoint.setCoords(rwX, rwY, 1.0);
 		       		return conicPart.isOnPath(tempPoint, maxError);	
-				}            	
+				} 
+				*/           	
 			
 			case DRAW_TYPE_SEGMENT:
 				return drawSegment.hit(x, y);
 				
 			case DRAW_TYPE_RAYS:
 				return drawRay1.hit(x, y) || 
-						drawRay2.hit(x, y);
+					   drawRay2.hit(x, y);
 			
 			default:
 				return false;

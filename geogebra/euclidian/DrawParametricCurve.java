@@ -20,6 +20,7 @@ import geogebra.kernel.roots.RealRootUtil;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
@@ -93,7 +94,7 @@ public class DrawParametricCurve extends Drawable {
 			isVisible = false;
 			return;
 		}
-				 
+				
 		if (labelPoint != null) {
 			xLabel = labelPoint.x;
 			yLabel = labelPoint.y;
@@ -647,9 +648,9 @@ public class DrawParametricCurve extends Drawable {
                 drawGeneralPath(gp, g2);		                
             } 
         	            
-		    g2.setPaint(geo.objColor);
+		    g2.setPaint(geo.objColor);		    
 			g2.setStroke(objStroke);                                   
-			drawGeneralPath(gp, g2);				
+			drawGeneralPath(gp, g2);		    
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);
@@ -660,16 +661,23 @@ public class DrawParametricCurve extends Drawable {
     }		
     
 	final void drawTrace(Graphics2D g2) {	   
-	   g2.setPaint(geo.objColor);
+	   g2.setPaint(geo.objColor);	   
 	   g2.setStroke(objStroke); 		   
-	   drawGeneralPath(gp, g2);				   
+	   drawGeneralPath(gp, g2);		   
 	}		
     
 	final public boolean hit(int x,int y) {  
-    	if (!isVisible) 
+    	if (isVisible) {
+    		if (strokedShape == null) {
+    			strokedShape = objStroke.createStrokedShape(gp);
+    		}    		
+    		return strokedShape.intersects(x-3,y-3,6,6);
+    	} else
     		return false;
-    	return gp.intersects(x-2,y-2,4,4)
-			&& !gp.contains(x-2,y-2,4,4);      
+    	/*
+    	return gp.intersects(x-3,y-3,6,6)
+			&& !gp.contains(x-3,y-3,6,6);
+			*/    
     }
 	
     final public boolean isInside(Rectangle rect) {
