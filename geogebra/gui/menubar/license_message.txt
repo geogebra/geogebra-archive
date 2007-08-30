@@ -54,7 +54,7 @@ TRANSLATIONS
    
 GRANTS
   * US National Science Foundation
-     08/2006 to 07/2008: Supplement for http://smgem.mspnet.org  
+     08/2006 to 07/2009: 2 Supplements for http://smgem.mspnet.org  
   * Austrian Federal Ministry for Education, Science and Culture
      01/2006 to 12/2007: GeoGebra for Austrian Schools
   * Austrian Academy of Sciences
@@ -74,12 +74,12 @@ SOFTWARE
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
   * Tango Icon Gallery, http://tango.freedesktop.org
   
-LICENSE DETAILS
-  1) GeoGebra Binary, Installer and Documentation License 
-     (Creative Commons Attribution-NonCommercial-NoDerivs 3.0)
-  2) GeoGebra Source Code License 
-     (GNU General Public License v2)
-  See details below. Markus Hohenwarter, August 2007
+LICENSE
+1) GeoGebra Binary, Installer and Documentation License 
+   (Creative Commons Attribution-NonCommercial-NoDerivs 3.0)
+2) GeoGebra Source Code License 
+   (GNU General Public License v2)
+See details below. Markus Hohenwarter, August 2007
 
 1) GeoGebra Binary, Installer and Documentation License 
 
@@ -111,18 +111,20 @@ LICENSE DETAILS
         application and documentation files for your operating system 
         (MS Windows, MacOS X, Linux, etc).
    If you want to use or distribute any of these files for commercial
-   purposes, you need to get permission of Markus Hohenwarter (mhohen@gmail.com). 
+   purposes, you need to get permission of Markus Hohenwarter (mhohen@gmail.com)
+   If you want to use or distribute GeoGebra installer files for commercial
+   purposes, you also need to get permission of Yves Kreis (yves.kreis@uni.lu).
 
    Translations
      Translations of GeoGebra, GeoGebra installers or GeoGebra documentation files
-     are only allowed with permission of their respective authors. 
-     Resulting translations are subject to the same copyright as the original work 
+     are only allowed with permission of their respective authors. Resulting 
+     translations are subject to the same copyright as the original work 
      (i.e. copyright of the original authors and Creative Commons Attribution-
-     NonCommercial-NoDerivs license). The translators have the right to be attributed 
-     by name and contact address in their translated work.
-     Translations may not be used for commercial purposes without permission 
-     of the original authors and the respective translators.
-
+     NonCommercial-NoDerivs license). The translators have the right to be 
+     attributed by name and contact address in their translated work.     
+     Furthermore, translated GeoGebra documentation files may not be used 
+     for commercial purposes without permission of the original authors and 
+     the respective translators.
   
 2) GeoGebra Source Code License (GNU GPL 2)
 
