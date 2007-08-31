@@ -57,10 +57,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -84,8 +80,7 @@ import javax.swing.Timer;
  * @author Markus Hohenwarter
  * @version
  */
-public final class EuclidianView extends JPanel implements View, Printable,
-		Transferable, ClipboardOwner {
+public final class EuclidianView extends JPanel implements View, Printable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -2986,32 +2981,6 @@ public final class EuclidianView extends JPanel implements View, Printable,
 						yscale);
 			}
 		}
-	}
-
-	/*
-	 * Transferable implementation
-	 */
-	public DataFlavor[] getTransferDataFlavors() {
-		DataFlavor[] flavors = { DataFlavor.imageFlavor };
-		return flavors;
-	}
-
-	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		if (flavor == DataFlavor.imageFlavor)
-			return true;
-		else
-			return false;
-	}
-
-	public Object getTransferData(DataFlavor flavor) {
-		if (flavor == DataFlavor.imageFlavor) {			
-			return getExportImage(1d);
-		}
-		// Otherwise, return generic object
-		return (new Object());
-	}
-
-	public void lostOwnership(Clipboard arg0, Transferable arg1) {
 	}
 
 	public final double getPrintingScale() {

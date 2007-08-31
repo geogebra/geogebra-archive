@@ -8,11 +8,13 @@ import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
@@ -857,17 +859,18 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				app.getImageIcon("edit-copy.png")) {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {			
+				app.clearSelectedGeos();
+				
 				Thread runner = new Thread() {
-					public void run() {
+					public void run() {				
 						// copy drawing pad to the system clipboard
-						Toolkit tools = Toolkit.getDefaultToolkit();
-						Clipboard clip = tools.getSystemClipboard();
-						app.clearSelectedGeos();
-						clip.setContents(app.getEuclidianView(), app.getEuclidianView());
+						Image img = app.getEuclidianView().getExportImage(1d);
+						ImageSelection imgSel = new ImageSelection(img);
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
 					}
 				};
-				runner.start();
+				runner.start();						    			    								
 			}
 		};
 
