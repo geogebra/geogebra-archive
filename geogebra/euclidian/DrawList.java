@@ -139,7 +139,7 @@ public final class DrawList extends Drawable {
 			if (!d.isInside(rect))
     			return false;   			
     	}        		
-    	return true;
+    	return size > 0;
     }
     
     

@@ -268,14 +268,6 @@ public class GeoList extends GeoElement implements ListValue {
     		cacheList.add(geo);
     	}    	 
     	
-//    	 set visual style of this list
-		applyVisualStyle(geo);
-    }      
-    
-    final void set(int pos, GeoElement geo) {
-    	geoList.set(pos, geo);
-    	cacheList.set(pos, geo);
-    	
     	// init element type    	    
     	if (pos == 0) {   
     		isDrawable = geo.isDrawable();
@@ -288,8 +280,9 @@ public class GeoList extends GeoElement implements ListValue {
     	isDrawable = isDrawable && geo.isDrawable(); 
     	
     	// set visual style of this list
-		applyVisualStyle(geo);
-    }
+		applyVisualStyle(geo);	
+    }      
+
        
     /**
      * Removes geo from this list. Note: geo is not removed

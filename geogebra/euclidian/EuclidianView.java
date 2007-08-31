@@ -2487,6 +2487,7 @@ public final class EuclidianView extends JPanel implements View, Printable,
 				break;
 
 			case GeoElement.GEO_CLASS_FUNCTION:
+			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 				drawFunctionList.remove(d);
 				break;
 
