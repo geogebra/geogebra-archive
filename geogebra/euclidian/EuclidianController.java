@@ -1274,7 +1274,8 @@ final public class EuclidianController implements MouseListener,
 				} 
 				break;
 				
-			case EuclidianView.MODE_MIRROR_AT_POINT:				
+			case EuclidianView.MODE_MIRROR_AT_POINT:	
+			case EuclidianView.MODE_MIRROR_AT_LINE:
 				for (int i=0; i < hits.size(); i++) {
 					GeoElement geo = (GeoElement) hits.get(i);
 					if (!(geo instanceof Mirrorable || geo.isGeoPolygon())) {
@@ -1595,7 +1596,7 @@ final public class EuclidianController implements MouseListener,
 			break;
 			
 		case EuclidianView.MODE_MIRROR_AT_LINE:
-			changedKernel = mirrorAtLine(hits);
+			changedKernel = mirrorAtLine(view.getTopHits(hits));
 			break;
 			
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
@@ -3269,8 +3270,7 @@ final public class EuclidianController implements MouseListener,
 		int count = 0;
 		if (selGeos() == 0) {
 			ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);		
-			count = addSelectedGeo(mirAbles, 1, false);
-			System.out.println("mirAbles selected: " + count);
+			count = addSelectedGeo(mirAbles, 1, false);	
 		}
 				
 		// polygon
@@ -3281,16 +3281,17 @@ final public class EuclidianController implements MouseListener,
 		// point = mirror
 		if (count == 0) {
 			count = addSelectedPoint(hits, 1, false);
-			System.out.println("point selected: " + count);
 		}					
 		
 		// we got the mirror point
-		if (selPoints() == 1 && selGeos() > 0) {							
+		if (selPoints() == 1) {							
 			if (selPolygons() == 1) {
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoPoint[] points = getSelectedPoints();
 				kernel.Mirror(null,  polys[0], points[0]);
-			} else {					
+				return true;
+			} 
+			else if (selGeos() > 0) {					
 				// mirror all selected geos
 				GeoElement [] geos = getSelectedGeos();
 				GeoPoint point = getSelectedPoints()[0];						
@@ -3302,9 +3303,9 @@ final public class EuclidianController implements MouseListener,
 							kernel.Mirror(null, (GeoPolygon) geos[i], point);
 						}
 					}
-				}						
-			}			
-			return true;
+				}		
+				return true;
+			}						
 		}
 		return false;
 	}
@@ -3360,9 +3361,12 @@ final public class EuclidianController implements MouseListener,
 		if (hits == null)
 			return false;
 
-		// mirrorable		
-		ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);
-		int count =addSelectedGeo(mirAbles, 1, false);
+		// mirrorable	
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);
+			count =addSelectedGeo(mirAbles, 1, false);
+		}
 		
 		// polygon
 		if (count == 0) {					
@@ -3380,14 +3384,24 @@ final public class EuclidianController implements MouseListener,
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoLine[] lines = getSelectedLines();	
 				kernel.Mirror(null,  polys[0], lines[0]);
-			} else {
-				Mirrorable mirAble = (Mirrorable) getFirstSelectedInstance(Mirrorable.class);
-				if (mirAble == null) return false;
-				GeoLine[] lines = getSelectedLines();		
-				kernel.Mirror(null, mirAble, lines[0]);
-			}
-			return true;
-		}
+				return true;
+			} 
+			else if (selGeos() > 0) {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoLine line = getSelectedLines()[0];						
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != line) {
+						if (geos[i] instanceof Mirrorable)
+							kernel.Mirror(null,  (Mirrorable) geos[i], line);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Mirror(null, (GeoPolygon) geos[i], line);
+						}
+					}
+				}		
+				return true;
+			}	
+		}				
 		return false;
 	}
 	
