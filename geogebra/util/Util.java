@@ -177,7 +177,7 @@ public class Util extends Object {
 		switch (code) {
 		case 10:
 		case 13: // replace LF or CR with <br/>
-		    sb.append("<br/>\n");
+		    sb.append("<br>\n");
 		    break;
 
 		case 9: // replace TAB with space

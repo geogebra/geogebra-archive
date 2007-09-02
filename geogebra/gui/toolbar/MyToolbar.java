@@ -17,19 +17,23 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MySmallJButton;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.util.Util;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class MyToolbar extends JPanel{
+public class MyToolbar extends JPanel implements ComponentListener{
 	
 	public static final Integer TOOLBAR_SEPARATOR = new Integer(-1);
 
@@ -37,14 +41,17 @@ public class MyToolbar extends JPanel{
 	private ArrayList modeToggleMenus;   
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
+	private JPanel toolbarHelpPanel;
 	private int mode;
 	
 	/**
      * Creates a panel for the application's toolbar. 
      * Note: call initToolbar() to fill the panel.
      */
-	public MyToolbar(Application app) {
-		this.app = app;		
+	public MyToolbar(Application app)  {
+		this.app = app;	
+		addComponentListener(this);
+		
 	}
 		
 	/**
@@ -55,37 +62,36 @@ public class MyToolbar extends JPanel{
     	
         // create toolBars                       
         removeAll();
-        setLayout(new BorderLayout(10,5));        
+        setLayout(new BorderLayout(5,2));   
+        setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
         
         JToolBar tb = new JToolBar();   
+        tb.setFloatable(false);  
         tb.setBackground(getBackground());
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
         modeToggleMenus = new ArrayList();
         
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));           
-        add(leftPanel, BorderLayout.WEST);  
-        
-        tb.setFloatable(false);  
-        leftPanel.add(tb);                  
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));    
+        leftPanel.add(tb);      
+        add(leftPanel, BorderLayout.WEST); 
                   
         if (app.getAlgebraInput() != null)        	
         	bg.add(app.getAlgebraInput().getInputButton());                                 
        
        	if (showToolBarHelp) {       
        		// mode label       		
-           	modeNameLabel = new JLabel();  
-           	leftPanel.add(Box.createRigidArea(new Dimension(5,5)));
-       		leftPanel.add(modeNameLabel);
+           	modeNameLabel = new JLabel();             	
+
+           	toolbarHelpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 5));
+           	//leftPanel.add(Box.createRigidArea(new Dimension(5,5)));
+           	toolbarHelpPanel.add(modeNameLabel);
+           	add(toolbarHelpPanel, BorderLayout.CENTER);
        	}   
-       	
-        // add menus with modes to toolbar
-       	addCustomModesToToolbar(tb, bg);
        	       	
         // UNDO Toolbar     
         if (app.isUndoActive()) {
-	        // undo part            
-	        JPanel undoPanel = new JPanel(new BorderLayout(0,0));        	   
-	        	        
+	        // undo part                  	   
+	        JPanel undoPanel = new JPanel(new BorderLayout(0,0)); 
 	        MySmallJButton button = new MySmallJButton(app.getUndoAction(), 7); 	
 	        String text = app.getMenu("Undo");
 	        button.setText(null);
@@ -97,10 +103,14 @@ public class MyToolbar extends JPanel{
 	        button.setText(null);
 	        button.setToolTipText(text);        
 	        undoPanel.add(button, BorderLayout.SOUTH);   
-	        
+	       
 	        add(undoPanel, BorderLayout.EAST);		        
-        }                     
+        }         
+        
+        // add menus with modes to toolbar
+       	addCustomModesToToolbar(tb, bg);
         setMode(app.getMode());
+        updateModeLabel();
     }
     
     /**
@@ -123,9 +133,9 @@ public class MyToolbar extends JPanel{
         	}
         }                            
         updateModeLabel();
-    }
-    
-    private void updateModeLabel() {    	
+    }     
+
+    public void updateModeLabel() {    	
     	if (modeNameLabel == null) return;
      	        	
     	String modeText, helpText;    	
@@ -144,15 +154,106 @@ public class MyToolbar extends JPanel{
 	    	helpText = app.getMenu(modeText + ".Help");        
 	    	modeText = app.getMenu(modeText);
     	}
-    	
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("<html><b>");
-        sb.append(modeText);
-        sb.append("</b><br>");
-        sb.append(helpText);
-        sb.append("</html>");    	
-        modeNameLabel.setText(sb.toString());
+    	    
+    	// update wrapped toolbar help text
+        String wrappedText = wrappedModeText(modeText, helpText, toolbarHelpPanel);
+        modeNameLabel.setText(wrappedText);
     }
+    
+    /** 
+     * Returns mode text and toolbar help as html text with line breaks
+     * to fit in the given panel.
+     * 
+     */
+    private String wrappedModeText(String modeName, String helpText, JPanel panel) {
+    	FontMetrics fm = getFontMetrics(app.getBoldFont());    	
+    	int maxLines = Math.max(2, panel.getHeight() / fm.getHeight());
+	
+    	int panelWidth;
+    	if (panel.getWidth() == 0) {
+    		panelWidth = oldToolbarHelpWidth;
+    	} else {
+    		// remember panel width to use during update of fonts or language
+    		panelWidth = panel.getWidth() - fm.stringWidth("W");
+    		oldToolbarHelpWidth = panelWidth;
+    	}
+    	
+    	StringBuffer sb = new StringBuffer();    
+    	sb.append("<html><b>");
+    	
+    	// mode name
+    	BreakIterator iterator = BreakIterator.getWordInstance(app.getLocale());
+		iterator.setText(modeName);
+		int start = iterator.first();
+		int end = iterator.next();
+		int line = 1;
+		
+		int len = 0;
+		while (end != BreakIterator.DONE)
+		{
+			String word = modeName.substring(start,end);
+			if( len + fm.stringWidth(word) > panelWidth )
+			{
+				if (++line > maxLines) {
+					sb.append("...");
+					sb.append("</b></html>");
+					return sb.toString();
+				}
+				sb.append("<br>");
+				len = fm.stringWidth(word);	
+			}
+			else
+			{
+				len += fm.stringWidth(word);
+			}
+ 
+			sb.append(Util.toHTMLString(word));
+			start = end;
+			end = iterator.next();
+		}		
+		sb.append("</b>");
+    	
+		
+		// mode help text
+		fm = getFontMetrics(app.getPlainFont());
+		
+		// try to put help text into single line
+		if (line < maxLines && fm.stringWidth(helpText) < panelWidth) {
+			sb.append("<br>");
+			sb.append(Util.toHTMLString(helpText));
+		}
+		else {			
+			sb.append(": ");
+			iterator.setText(helpText);
+			start = iterator.first();
+			end = iterator.next();
+			while (end != BreakIterator.DONE)
+			{
+				String word = helpText.substring(start,end);
+				if( len + fm.stringWidth(word) >  panelWidth)
+				{
+					if (++line > maxLines) {
+						sb.append("...");
+						break;
+					}
+					sb.append("<br>");
+					len = fm.stringWidth(word);								
+				}
+				else
+				{
+					len += fm.stringWidth(word);
+				}
+	 
+				sb.append(Util.toHTMLString(word));
+				start = end;
+				end = iterator.next();
+			}
+		}
+		
+		sb.append("</html>"); 
+		return sb.toString();
+	}
+    int oldToolbarHelpWidth;
     
     /**
      * Adds the given modes to a two-dimensional toolbar. 
@@ -275,122 +376,124 @@ public class MyToolbar extends JPanel{
     	StringBuffer sb = new StringBuffer();
     	
     	// move
-    	sb.append(EuclidianView.MODE_MOVE);    	
-    	sb.append(" ");
-    	sb.append(EuclidianView.MODE_MOVE_ROTATE);
-    	    	               
-        // point, intersect    
-    	sb.append(" || ");
-    	sb.append(EuclidianView.MODE_POINT);
+        sb.append(EuclidianView.MODE_MOVE);        
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_MOVE_ROTATE);
+                               
+        // points   
+        sb.append(" || ");
+        sb.append(EuclidianView.MODE_POINT);
         sb.append(" ");
         sb.append(EuclidianView.MODE_INTERSECT);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_MIDPOINT);        
-                             
-        // line, segment, ray, vector   
-        sb.append(" | "); 
+        sb.append (EuclidianView.MODE_MIDPOINT);       
+                            
+        // basic lines 
+        sb.append(" | ");
         sb.append(EuclidianView.MODE_JOIN);
         sb.append(" ");
         sb.append(EuclidianView.MODE_SEGMENT);
         sb.append(" ");
         sb.append(EuclidianView.MODE_SEGMENT_FIXED);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_RAY);
-        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_RAY );
+        sb.append(" , ");       
         sb.append(EuclidianView.MODE_VECTOR);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);
-        sb.append(" , ");        
-        sb.append(EuclidianView.MODE_POLYGON);        
-        sb.append(" ");
-        sb.append(EuclidianView.MODE_REGULAR_POLYGON);                
-                
-        // parallel, orthogonal, line bisector, angular bisector, tangents
+        sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);                
+               
+        // advanced lines
         sb.append(" | ");
         sb.append(EuclidianView.MODE_ORTHOGONAL);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_PARALLEL);     
+        sb.append(EuclidianView.MODE_PARALLEL);    
         sb.append(" ");
         sb.append(EuclidianView.MODE_LINE_BISECTOR);
         sb.append(" ");
         sb.append(EuclidianView.MODE_ANGULAR_BISECTOR);
-        sb.append(" , ");        
+        sb.append(" , ");       
         sb.append(EuclidianView.MODE_TANGENTS);
         sb.append(" ");
         sb.append(EuclidianView.MODE_POLAR_DIAMETER);
-        
-        // circle 2, circle 3, conic 5
-        sb.append(" || ");        
+        sb.append(" , ");       
+        sb.append(EuclidianView.MODE_LOCUS ); 
+         
+        // polygon
+        sb.append(" || ");       
+        sb.append(EuclidianView.MODE_POLYGON);       
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_REGULAR_POLYGON ); 
+       
+        // circles, arcs, conics
+        sb.append(" | ");       
         sb.append(EuclidianView.MODE_CIRCLE_TWO_POINTS);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
+        sb.append(EuclidianView.MODE_CIRCLE_POINT_RADIUS );
         sb.append(" ");
-        sb.append(EuclidianView.MODE_CIRCLE_THREE_POINTS);
-        sb.append(" , ");        
+        sb.append(EuclidianView.MODE_CIRCLE_THREE_POINTS);   
+        sb.append(" , ");            
         sb.append(EuclidianView.MODE_SEMICIRCLE);
-        sb.append(" ");
+        sb.append("  ");
         sb.append(EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS);
         sb.append(" ");
         sb.append(EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
-        sb.append(" , ");        
+        sb.append (" , ");       
         sb.append(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);
         sb.append(" ");
         sb.append(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
-        sb.append(" , ");
-        sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);               
-        
-        // numbers, locus
+        sb.append (" , ");
+        sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);
+            
+        // measurements
         sb.append(" || ");
-        sb.append(EuclidianView.MODE_ANGLE); 
+        sb.append(EuclidianView.MODE_ANGLE);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_ANGLE_FIXED); 
+        sb.append(EuclidianView.MODE_ANGLE_FIXED);
         sb.append(" , ");
         sb.append(EuclidianView.MODE_DISTANCE);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_AREA);
+        sb.append (EuclidianView.MODE_AREA);
         sb.append(" ");
         sb.append(EuclidianView.MODE_SLOPE);
-        sb.append(" , ");           
-        sb.append(EuclidianView.MODE_SLIDER);
-        sb.append(" ");
-        sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);        
-        sb.append(" , ");        
-        sb.append(EuclidianView.MODE_LOCUS);            
-        
-        // transforms
+       
+        // transformations
         sb.append(" | ");
-        sb.append(EuclidianView.MODE_MIRROR_AT_POINT);
+        sb.append(EuclidianView.MODE_MIRROR_AT_LINE );      
         sb.append(" ");
-        sb.append(EuclidianView.MODE_MIRROR_AT_LINE);
+        sb.append(EuclidianView.MODE_MIRROR_AT_POINT);
         sb.append(" ");
         sb.append(EuclidianView.MODE_ROTATE_BY_ANGLE);
         sb.append(" ");
         sb.append(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
         sb.append(" ");
         sb.append(EuclidianView.MODE_DILATE_FROM_POINT);
-                
-        // text, relation
+       
+        // dialogs
         sb.append(" | ");
-        sb.append(EuclidianView.MODE_TEXT);
+        sb.append(EuclidianView.MODE_SLIDER);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_IMAGE);
+        sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
+        sb.append(" , ");  
+        sb.append(EuclidianView.MODE_TEXT );
         sb.append(" ");
-        sb.append(EuclidianView.MODE_RELATION);                     
-        
-        // translate view, show/hide modes   
+        sb.append(EuclidianView.MODE_IMAGE);        
+        sb.append(" , ");
+        sb.append(EuclidianView.MODE_RELATION);  
+ 
+        // properties
         sb.append(" || ");
         sb.append(EuclidianView.MODE_TRANSLATEVIEW);
         sb.append(" ");
         sb.append(EuclidianView.MODE_ZOOM_IN);
         sb.append(" ");
         sb.append(EuclidianView.MODE_ZOOM_OUT);
-        sb.append(" , ");        
+        sb.append(" , ");       
         sb.append(EuclidianView.MODE_SHOW_HIDE_OBJECT);
         sb.append(" ");
-        sb.append(EuclidianView.MODE_SHOW_HIDE_LABEL);
+        sb.append(EuclidianView.MODE_SHOW_HIDE_LABEL );
         sb.append(" ");
         sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
-        sb.append(" , ");        
+        sb.append(" , ");       
         sb.append(EuclidianView.MODE_DELETE);
         
         // macros       
@@ -420,5 +523,18 @@ public class MyToolbar extends JPanel{
 
 	public void setShowToolBarHelp(boolean showToolBarHelp) {
 		this.showToolBarHelp = showToolBarHelp;
+	}
+
+	public void componentHidden(ComponentEvent e) {		
+	}
+
+	public void componentMoved(ComponentEvent e) {		
+	}
+
+	public void componentResized(ComponentEvent e) {
+		updateModeLabel();
+	}		
+
+	public void componentShown(ComponentEvent e) {		
 	}
 }

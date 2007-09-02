@@ -148,8 +148,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		btPanel.add(btApply);
 		btPanel.add(btCancel);
-	
-		
+			
 		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
 		
@@ -174,8 +173,6 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 			apply();
 			setVisible(false);
 		}
-
-		
 	}
 	
 	private void apply() {

@@ -1773,8 +1773,7 @@ public class Application implements	KeyEventDispatcher {
         		SwingUtilities.updateComponentTreeUI(applet);
         	if (frame != null)
         		SwingUtilities.updateComponentTreeUI(frame);
-        }
-            
+        }       
     }
     
     private static int getInitFontSize() {

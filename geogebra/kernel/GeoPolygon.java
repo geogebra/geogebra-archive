@@ -144,7 +144,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	        } 
     		
 	        else { 
-	        	System.out.println("label for polygon (autoset segment labels)");     	
+	        	//System.out.println("label for polygon (autoset segment labels)");     	
 	        	defaultSegmentLabels();
 	        }
     	}    	        

@@ -166,6 +166,7 @@ final public class EuclidianController implements MouseListener,
 	private ArrayList translateableGeos;
 	private GeoVector translationVec;
 
+	private ArrayList groupArrayList = new ArrayList();
 	private ArrayList tempArrayList = new ArrayList();
 	private ArrayList selectedPoints = new ArrayList();
 
@@ -361,9 +362,11 @@ final public class EuclidianController implements MouseListener,
 		clearSelection(selectedGeos);
 		clearSelection(selectedFunctions);		
 		clearSelection(selectedCurves);
-
+		
+		app.clearSelectedGeos();
+		
 		// clear highlighting
-		refreshHighlighting(null);
+		refreshHighlighting(null);		
 	}
 
 	final public void mouseClicked(MouseEvent e) {	
@@ -499,7 +502,8 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_POLAR_DIAMETER:
 			hits = view.getHits(mouseLoc);
 			createNewPoint(hits, false, true, true);
-			break;					
+			break;		
+				
 			
 		case EuclidianView.MODE_ANGLE:
 			hits = view.getTopHits(mouseLoc);
@@ -553,7 +557,7 @@ final public class EuclidianController implements MouseListener,
 			yTemp = yRW;
 			view.showAxesRatio = (moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS);
 			//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
-			break;		
+			break;								
 				
 		default:
 			moveMode = MOVE_NONE;				 
@@ -941,7 +945,12 @@ final public class EuclidianController implements MouseListener,
 			case EuclidianView.MODE_ALGEBRA_INPUT:
 				return app.getCurrentSelectionListener() != null;
 			
-			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
+			case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			case EuclidianView.MODE_DILATE_FROM_POINT:	
+			case EuclidianView.MODE_MIRROR_AT_POINT:
+			case EuclidianView.MODE_MIRROR_AT_LINE:
+			case EuclidianView.MODE_ROTATE_BY_ANGLE:
+			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
 				return true;
 				
 			default:
@@ -1161,7 +1170,25 @@ final public class EuclidianController implements MouseListener,
 				processSelectionRectangle();				
 				return;
 			}
-		} 
+		} else {	
+			// no hits: release mouse button creates a point
+			// for the transformation tools
+			// (note: this cannot be done in mousePressed because
+			// we want to be able to select multiple objects using the selection rectangle)
+			switch (mode) {
+				case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+				case EuclidianView.MODE_DILATE_FROM_POINT:	
+				case EuclidianView.MODE_MIRROR_AT_POINT:
+				case EuclidianView.MODE_MIRROR_AT_LINE:
+				case EuclidianView.MODE_ROTATE_BY_ANGLE:
+					hits = view.getHits(mouseLoc);
+					POINT_CREATED = createNewPoint(hits, false, false, true);
+					changedKernel = POINT_CREATED;
+					break;
+					
+				default:
+			}
+		}
 
 		// remember helper point, see createNewPoint()
 		if (changedKernel)
@@ -1230,7 +1257,8 @@ final public class EuclidianController implements MouseListener,
 	
 	// select all geos in selection rectangle 
 	private void processSelectionRectangle() {		
-		ArrayList hits = view.getHits(view.getSelectionRectangle());						
+		clearSelections();
+		ArrayList hits = view.getHits(view.getSelectionRectangle());		
 		
 		// tell properties dialog
 		switch (mode) {
@@ -1245,15 +1273,34 @@ final public class EuclidianController implements MouseListener,
 					}
 				} 
 				break;
-			
-			case EuclidianView.MODE_MOVE:
-			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
+				
+			case EuclidianView.MODE_MIRROR_AT_POINT:				
+				for (int i=0; i < hits.size(); i++) {
+					GeoElement geo = (GeoElement) hits.get(i);
+					if (!(geo instanceof Mirrorable || geo.isGeoPolygon())) {
+						hits.remove(i);
+					}
+				}	
+				removeParentPoints(hits);				
+				selectedGeos.addAll(hits);
+				app.setSelectedGeos(hits);	
+				
+				// TODO: remove
+				System.out.println("processSelRectangle: " + app.getSelectedGeos());
+				System.out.println("selGeos(): " + selGeos());
+				
+				break;
+							
+			default:
 				// STANDARD CASE
-				app.setSelectedGeos(hits);									
+				app.setSelectedGeos(hits);		
+			
+		
+			
 				break;
 		}
 		
-		view.repaint();	
+		kernel.notifyRepaint();
 	}
 
 	final public void mouseMoved(MouseEvent e) {
@@ -1544,7 +1591,7 @@ final public class EuclidianController implements MouseListener,
 			break;			
 			
 		case EuclidianView.MODE_MIRROR_AT_POINT:
-			changedKernel = mirrorAtPoint(hits);
+			changedKernel = mirrorAtPoint(view.getTopHits(hits));
 			break;
 			
 		case EuclidianView.MODE_MIRROR_AT_LINE:
@@ -2992,7 +3039,7 @@ final public class EuclidianController implements MouseListener,
 		// we got the rotation center point
 		if (selPoints() == 2) {					
 			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
-														app.getPlain("Numeric"), "4");													
+														app.getPlain("Points"), "4");													
 			
 			if (num == null) {
 				view.resetMode();
@@ -3213,15 +3260,19 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	
-	// get mirrorable and point
-	final private boolean mirrorAtPoint(ArrayList hits) {
+	// get mirrorables and point
+	final private boolean mirrorAtPoint(ArrayList hits) {	
 		if (hits == null)
 			return false;
-
-		// mirrorable		
-		ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);
-		int	count = addSelectedGeo(mirAbles, 1, false);
 		
+		// try to get one mirrorable	
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);		
+			count = addSelectedGeo(mirAbles, 1, false);
+			System.out.println("mirAbles selected: " + count);
+		}
+				
 		// polygon
 		if (count == 0) {					
 			count = addSelectedPolygon(hits, 1, false);
@@ -3230,23 +3281,78 @@ final public class EuclidianController implements MouseListener,
 		// point = mirror
 		if (count == 0) {
 			count = addSelectedPoint(hits, 1, false);
+			System.out.println("point selected: " + count);
 		}					
 		
 		// we got the mirror point
-		if (selPoints() == 1) {							
+		if (selPoints() == 1 && selGeos() > 0) {							
 			if (selPolygons() == 1) {
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoPoint[] points = getSelectedPoints();
 				kernel.Mirror(null,  polys[0], points[0]);
-			} else {
-				Mirrorable mirAble = (Mirrorable) getFirstSelectedInstance(Mirrorable.class);
-				if (mirAble == null) return false;				
-				GeoPoint[] points = getSelectedPoints();
-				kernel.Mirror(null,  mirAble, points[0]);
+			} else {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoPoint point = getSelectedPoints()[0];						
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != point) {
+						if (geos[i] instanceof Mirrorable)
+							kernel.Mirror(null,  (Mirrorable) geos[i], point);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Mirror(null, (GeoPolygon) geos[i], point);
+						}
+					}
+				}						
 			}			
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Removes parent points of segments, rays, polygons, etc. from selGeos
+	 * that are not necessary for transformations of these objects.
+	 */
+	private void removeParentPoints(ArrayList selGeos) {
+		tempArrayList.clear();	
+		tempArrayList.addAll(selGeos);
+		
+		// remove parent points
+		for (int i=0; i < selGeos.size(); i++) {
+			GeoElement geo = (GeoElement) selGeos.get(i);
+
+			switch (geo.getGeoClassType()) {			
+				case GeoElement.GEO_CLASS_SEGMENT:
+				case GeoElement.GEO_CLASS_RAY:
+					// remove start and end point of segment
+					GeoLine line = (GeoLine) geo;						
+					tempArrayList.remove(line.getStartPoint());
+					tempArrayList.remove(line.getEndPoint());									
+					break;
+					
+				case GeoElement.GEO_CLASS_CONICPART:
+					GeoConicPart cp = (GeoConicPart) geo;
+					ArrayList ip = cp.getParentAlgorithm().getInputPoints();
+					tempArrayList.removeAll(ip);
+					break;
+					
+				case GeoElement.GEO_CLASS_POLYGON:
+					// remove points and segments of poly
+					GeoPolygon poly = (GeoPolygon) geo;
+					GeoPoint [] points = poly.getPoints();
+					for (int k=0; k < points.length; k++) {
+						tempArrayList.remove(points[k]);
+					}
+					GeoSegment [] segs = poly.getSegments();
+					for (int k=0; k < segs.length; k++) {
+						tempArrayList.remove(segs[k]);
+					}
+					break;					
+			}				
+		}		
+		
+		selGeos.clear();
+		selGeos.addAll(tempArrayList);						
 	}
 	
 	// get mirrorable and line
@@ -4055,6 +4161,14 @@ final public class EuclidianController implements MouseListener,
 			break;
 
 		default:		
+			// TODO: remove
+			try {
+				throw new Exception("choose");
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+			}
+			
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
 			ttm.setEnabled(false);			
 			ListDialog dialog = new ListDialog(view, geos, null);

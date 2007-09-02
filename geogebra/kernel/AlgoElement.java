@@ -421,6 +421,17 @@ implements EuclidianViewAlgo {
     }
     private ArrayList moveableInputPoints;
     
+    /**
+	 * Returns all input points of this algorithm.	 
+	 */
+    public ArrayList getInputPoints() {			
+		ArrayList inputPoints = new ArrayList(input.length);
+		for (int i=0; i < input.length; i++) {			
+			if (input[i].isGeoPoint() )
+				moveableInputPoints.add(input[i]);			
+		}						
+		return inputPoints;
+    }
 
     final public boolean isIndependent() {
         return false;
