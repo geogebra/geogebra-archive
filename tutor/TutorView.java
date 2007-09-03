@@ -47,7 +47,7 @@ public class TutorView extends JPanel implements View {
 	private JTextArea resultArea = new JTextArea(40, 20);
 	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
-	private static final String LN = System.getProperty("LN");
+	private static final String LN = System.getProperty("line.separator");
 	private Strategy[] strategies;
 
 	
@@ -56,17 +56,18 @@ public class TutorView extends JPanel implements View {
 		this.app = app;
 		this.dbi = new DataBaseInterface();
 		strategies = this.dbi.retrieveStrategies(problema);
-			
+		
 		 if (strategies != null) 
 		 //PROCEED STRATEGIES FILES
 		//nom fitxer
 			for (int i =0; i<strategies.length; i++){
 				// Try to load Strategies files;
+				System.out.println(strategies[0].getUrl());
 				try {
-					URL url = strategies[i].getURL(); 
+					URL url = strategies[i].getUrl(); 
 					Construction c = getConstruction(url);
 					strategies[i].setConstruction(c);	
-			    	//System.out.println("Construction"+i+c.getXML());
+			    	System.out.println("Construction"+i+c.getXML());
 				
 				} catch (Exception e) {					
 					app.showError(app.getError("Strategies Loading Process Failed. ") 

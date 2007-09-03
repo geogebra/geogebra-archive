@@ -41,7 +41,7 @@ public class DataBaseInterface {
 	                f = f.getCanonicalFile();
 	                if (f.exists())
 	                	url = f.toURL();
-	                else new Exception("File doesn't exists");
+	                else throw new Exception("File:"+ fileArgument +" doesn't exists");
 	            }
 	            return url;
 	        } catch (Exception e) {
@@ -58,20 +58,21 @@ public class DataBaseInterface {
 	{
 		try {
 			LinkedList list = new LinkedList();
-		
+			Strategy[] result = new Strategy[0];
 			Connection con = connectURL();
 			ResultSet rs = execQuery(con, "select * from est_estrategies where id_problema= "+problema);
 			while (rs.next())
 			{
 				Strategy str = new Strategy();
 				str.setIdstrategy(rs.getLong("id"));
-				str.setIdproblema(rs.getLong("idproblema"));
+				str.setIdproblema(rs.getLong("id_problema"));
 				str.setTitle(rs.getString("titol"));
 				str.setUrl(handleFileArg(rs.getString("fitxer_estrategia")));
 				list.add(str);
 			}
 			con.close();
-			return (Strategy[])list.toArray();
+			result  = (Strategy[]) list.toArray(result);
+			return result;
 			}
 			catch (SQLException e)
 			{

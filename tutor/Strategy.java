@@ -72,14 +72,7 @@ public Message getMessage(long id)
 	return null;
 }
 
-/**
- * TODO where is the URL of XML in database
- * @return
- */
-public URL getURL ()
-{
-	return null;
-}
+
 /**
  * TODO WRITE SQL SENTENCE
  * @param bdi
