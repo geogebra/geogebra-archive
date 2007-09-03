@@ -2726,11 +2726,18 @@ public class Kernel {
 	GeoPoint [] translatePoints(GeoPoint [] points, GeoVector v) {		
 		// rotate all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
-		for (int i = 0; i < points.length; i++) {
-			String pointLabel = points[i].isLabelSet() ? points[i].label + "'" : null;
-			newPoints[i] = (GeoPoint) Translate(pointLabel, points[i], v)[0]; 				
+		for (int i = 0; i < points.length; i++) {			
+			newPoints[i] = (GeoPoint) Translate(transformedPointLabel(points[i]), points[i], v)[0]; 				
 		}			
 		return newPoints;
+	}
+	
+	private String transformedPointLabel(GeoPoint point) {
+		if (point.isLabelSet() && !point.label.endsWith("'")) {
+			return point.label + "'";
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -2751,7 +2758,7 @@ public class Kernel {
 		// rotate all points
 		GeoPoint [] rotPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = points[i].isLabelSet() ? points[i].label + "'" : null;
+			String pointLabel = transformedPointLabel(points[i]);
 			if (Q == null)
 				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi)[0]; 	
 			else
@@ -2771,7 +2778,7 @@ public class Kernel {
 		// dilate all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = points[i].isLabelSet() ? points[i].label + "'"  : null;
+			String pointLabel = transformedPointLabel(points[i]);
 			newPoints[i] = (GeoPoint) Dilate(pointLabel, points[i], r, S)[0];			
 		}			
 		return newPoints;
@@ -2795,7 +2802,7 @@ public class Kernel {
 		// mirror all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = points[i].isLabelSet() ? points[i].label + "'" : null;
+			String pointLabel = transformedPointLabel(points[i]);
 			if (Q == null)
 				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], g)[0]; 	
 			else
@@ -2816,6 +2823,13 @@ public class Kernel {
 			polyLabel = new String[1];
 			polyLabel[0] = label;
 		}
+		
+		// use visibility of points for transformed points
+		GeoPoint [] oldPoints = oldPoly.getPoints();
+		for (int i=0; i < oldPoints.length; i++) {
+			transformedPoints[i].setEuclidianVisible(oldPoints[i].isSetEuclidianVisible());			
+			notifyUpdate(transformedPoints[i]);
+		}
 	
 		// build the polygon from the transformed points
 		return Polygon(polyLabel, transformedPoints);
@@ -2829,22 +2843,43 @@ public class Kernel {
 	static final int TRANSFORM_DILATE = 5;
 	
 	GeoPoint [] transformPoints(int type, GeoPoint [] points, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {
+		GeoPoint [] result = null;
+		
 		switch (type) {
 			case TRANSFORM_TRANSLATE:
-				return translatePoints(points, vec);			
+				result = translatePoints(points, vec);	
+				break;
+				
 			case TRANSFORM_MIRROR_AT_POINT:
-				return mirrorPoints(points, Q, null);			
+				result = mirrorPoints(points, Q, null);	
+				break;
+				
 			case TRANSFORM_MIRROR_AT_LINE:	
-				return mirrorPoints(points, null, l);		
+				result = mirrorPoints(points, null, l);	
+				break;
+				
 			case TRANSFORM_ROTATE:
-				return rotPoints(points, n, null);							
+				result = rotPoints(points, n, null);		
+				break;
+				
 			case TRANSFORM_ROTATE_AROUND_POINT:
-				return rotPoints(points, n, Q);			
+				result = rotPoints(points, n, Q);	
+				break;
+				
 			case TRANSFORM_DILATE:
-				return dilatePoints(points, n, Q);	
+				result = dilatePoints(points, n, Q);	
+				break;
+				
 			default:
-				return null;
+				return null;			
 		}
+				
+		// use visibility of points for transformed points
+		for (int i=0; i < points.length; i++) {
+			result[i].setEuclidianVisible(points[i].isSetEuclidianVisible());			
+			notifyUpdate(result[i]);
+		}
+		return result;
 	}	
 	
 	GeoLine getTransformedLine(int type, GeoLine line, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {

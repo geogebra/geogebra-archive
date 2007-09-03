@@ -1259,10 +1259,10 @@ final public class EuclidianController implements MouseListener,
 	private void processSelectionRectangle() {		
 		clearSelections();
 		ArrayList hits = view.getHits(view.getSelectionRectangle());		
-		
-		// tell properties dialog
+				
 		switch (mode) {
 			case EuclidianView.MODE_ALGEBRA_INPUT:
+				// tell properties dialog
 				if (hits.size() > 0 &&
 					app.getCurrentSelectionListener() == app.getPropDialog()) 
 				{
@@ -1276,32 +1276,40 @@ final public class EuclidianController implements MouseListener,
 				
 			case EuclidianView.MODE_MIRROR_AT_POINT:	
 			case EuclidianView.MODE_MIRROR_AT_LINE:
-				for (int i=0; i < hits.size(); i++) {
-					GeoElement geo = (GeoElement) hits.get(i);
-					if (!(geo instanceof Mirrorable || geo.isGeoPolygon())) {
-						hits.remove(i);
-					}
-				}	
-				removeParentPoints(hits);				
-				selectedGeos.addAll(hits);
-				app.setSelectedGeos(hits);	
-				
-				// TODO: remove
-				System.out.println("processSelRectangle: " + app.getSelectedGeos());
-				System.out.println("selGeos(): " + selGeos());
-				
+				processSelectionRectangleForTransformations(hits, Mirrorable.class);									
 				break;
+				
+			case EuclidianView.MODE_ROTATE_BY_ANGLE:
+				processSelectionRectangleForTransformations(hits, PointRotateable.class);									
+				break;		
+				
+			case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+				processSelectionRectangleForTransformations(hits, Translateable.class);									
+				break;	
+				
+			case EuclidianView.MODE_DILATE_FROM_POINT:
+				processSelectionRectangleForTransformations(hits, Dilateable.class);									
+				break;	
 							
 			default:
 				// STANDARD CASE
 				app.setSelectedGeos(hits);		
-			
-		
-			
 				break;
 		}
 		
 		kernel.notifyRepaint();
+	}
+	
+	private void processSelectionRectangleForTransformations(ArrayList hits, Class transformationInterface) {
+		for (int i=0; i < hits.size(); i++) {
+			GeoElement geo = (GeoElement) hits.get(i);
+			if (!(transformationInterface.isInstance(geo) || geo.isGeoPolygon())) {
+				hits.remove(i);
+			}
+		}	
+		removeParentPoints(hits);				
+		selectedGeos.addAll(hits);
+		app.setSelectedGeos(hits);
 	}
 
 	final public void mouseMoved(MouseEvent e) {
@@ -1600,15 +1608,15 @@ final public class EuclidianController implements MouseListener,
 			break;
 			
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-			changedKernel = translateByVector(hits);
+			changedKernel = translateByVector(view.getTopHits(hits));
 			break;
 						
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
-			changedKernel = rotateByAngle(hits);
+			changedKernel = rotateByAngle(view.getTopHits(hits));
 			break;
 			
 		case EuclidianView.MODE_DILATE_FROM_POINT:
-			changedKernel = dilateFromPoint(hits);
+			changedKernel = dilateFromPoint(view.getTopHits(hits));
 			break;
 			
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
@@ -3410,21 +3418,22 @@ final public class EuclidianController implements MouseListener,
 		if (hits == null)
 			return false;
 
-		// translateable		
-		ArrayList transAbles = view.getHits(hits, Translateable.class, tempArrayList);
-		int count = addSelectedGeo(transAbles, 1, false);
+		// translateable
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList transAbles = view.getHits(hits, Translateable.class, tempArrayList);
+			count = addSelectedGeo(transAbles, 1, false);
+		}
 		
 		// polygon
 		if (count == 0) {					
 			count = addSelectedPolygon(hits, 1, false);
 		}	
 		
-		if (selGeos() == 1) {
-			// translation vector
-			if (count == 0) {
-				addSelectedVector(hits, 1, false);
-			}
-		}
+		// translation vector
+		if (count == 0) {
+			addSelectedVector(hits, 1, false);
+		}				
 		
 		// we got the mirror point
 		if (selVectors() == 1) {		
@@ -3432,13 +3441,23 @@ final public class EuclidianController implements MouseListener,
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoVector[] vecs = getSelectedVectors();	
 				kernel.Translate(null,  polys[0], vecs[0]);
-			} else {
-				Translateable transAble = (Translateable) getFirstSelectedInstance(Translateable.class);
-				if (transAble == null) return false;
-				GeoVector[] vecs = getSelectedVectors();			
-				kernel.Translate(null, transAble, vecs[0]);
+				return true;
 			}
-			return true;
+			else if (selGeos() > 0) {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoVector vec = getSelectedVectors()[0];						
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != vec) {
+						if (geos[i] instanceof Translateable)
+							kernel.Translate(null,  (Translateable) geos[i], vec);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Translate(null, (GeoPolygon) geos[i], vec);
+						}
+					}
+				}		
+				return true;
+			}				
 		}
 		return false;
 	}
@@ -3449,10 +3468,13 @@ final public class EuclidianController implements MouseListener,
 			return false;
 
 		// translateable
-		ArrayList rotAbles = view.getHits(hits, PointRotateable.class, tempArrayList);
-		int count = addSelectedGeo(rotAbles, 1, false);
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList rotAbles = view.getHits(hits, PointRotateable.class, tempArrayList);
+			count = addSelectedGeo(rotAbles, 1, false);
+		}
 		
-//		 polygon
+		// polygon
 		if (count == 0) {					
 			count = addSelectedPolygon(hits, 1, false);
 		}
@@ -3463,7 +3485,7 @@ final public class EuclidianController implements MouseListener,
 		}
 		
 		// we got the rotation center point
-		if (selPoints() == 1) {					
+		if (selPoints() == 1 && selGeos() > 0) {					
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];											
@@ -3477,14 +3499,23 @@ final public class EuclidianController implements MouseListener,
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoPoint[] points = getSelectedPoints();
 				kernel.Rotate(null,  polys[0], num, points[0]);
-			} else {
-				PointRotateable rotAble = (PointRotateable) getFirstSelectedInstance(PointRotateable.class);
-				if (rotAble == null) return false;
-				GeoPoint[] points = getSelectedPoints();		
-				kernel.Rotate(null, rotAble, num, points[0]);
+			} else {	
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoPoint point = getSelectedPoints()[0];						
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != point) {
+						if (geos[i] instanceof PointRotateable)
+							kernel.Rotate(null,  (PointRotateable) geos[i], num, point);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Rotate(null, (GeoPolygon) geos[i], num, point);
+						}
+					}
+				}						
 			}
 			return true;
 		}
+		
 		return false;
 	}		
 	
@@ -3494,8 +3525,11 @@ final public class EuclidianController implements MouseListener,
 			return false;
 
 		// dilateable
-		ArrayList dilAbles = view.getHits(hits, Dilateable.class, tempArrayList);
-		int count =	addSelectedGeo(dilAbles, 1, false);
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList dilAbles = view.getHits(hits, Dilateable.class, tempArrayList);
+			count =	addSelectedGeo(dilAbles, 1, false);
+		}
 		
 //		 polygon
 		if (count == 0) {					
@@ -3520,13 +3554,23 @@ final public class EuclidianController implements MouseListener,
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoPoint[] points = getSelectedPoints();
 				kernel.Dilate(null,  polys[0], num, points[0]);
-			} else {
-				Dilateable dilAble = (Dilateable) getFirstSelectedInstance(Dilateable.class);
-				if (dilAble == null) return false;
-				GeoPoint[] points = getSelectedPoints();		
-				kernel.Dilate(null, dilAble, num, points[0]);
-			}
-			return true;
+				return true;
+			} 
+			else if (selGeos() > 0) {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoPoint point = getSelectedPoints()[0];					
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != point) {
+						if (geos[i] instanceof Dilateable)
+							kernel.Dilate(null,  (Dilateable) geos[i], num, point);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Dilate(null, (GeoPolygon) geos[i], num, point);
+						}
+					}
+				}		
+				return true;
+			}		
 		}
 		return false;
 	}
@@ -4174,14 +4218,15 @@ final public class EuclidianController implements MouseListener,
 			ret =  (GeoElement) geos.get(0);
 			break;
 
-		default:		
-			// TODO: remove
+		default:	
+			/*
 			try {
 				throw new Exception("choose");
 			} catch (Exception e) {
 				e.printStackTrace();
 				
 			}
+			*/
 			
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
 			ttm.setEnabled(false);			
