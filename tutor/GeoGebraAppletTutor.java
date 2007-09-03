@@ -33,32 +33,32 @@ import javax.swing.SwingUtilities;
 public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 
 
-	private String[] strategiesXML= null;
+	private String problem= null;
+	private String student = null;
 	private TutorView tutorView;
 	
 
 	/** Creates a new instance of GeoGebraApplet */
 	public GeoGebraAppletTutor() {}
 
-	public void init() {
+	public void init() 
+	{
 		super.init();
-		
+		problem = getParameter("problem");
+		student = getParameter("student");
 		// STRATEGY FILES
-		if (getParameter("strategies")!=null) {
-		strategiesXML = getParameter("strategies").split(",");
-		for (int i=0; i<strategiesXML.length; i++)
-		{
-			strategiesXML[i] = strategiesXML[i].trim();
-			if (strategiesXML[i] != null && 
-					!( strategiesXML[i].startsWith("http") || strategiesXML[i].startsWith("file") )) {
-				strategiesXML[i] = getCodeBase() + strategiesXML[i];			
-				}			
+		if (problem!=null && student != null) {
+			
+			if (tutorView == null) {
+				tutorView = new TutorView(problem.trim(),student.trim(),app);		
+			}
+			//			Attach TutorView
+			// Creates a new tutorView
+			kernel.attach(tutorView); // register view  	
+			initGUI();
 		}
-		}
 		
-		
-		
-		//TODO: remove test block
+		/*
 		System.out.println("**** MAIN construction BEGIN");
 		Construction c = kernel.getConstruction();
 		int i=0;
@@ -74,15 +74,9 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
     		i++;
     	}
 		System.out.println("**** MAIN construction END");
+		*/
 		
 		
-		//Attach TutorView
-		// Creates a new tutorView
-		if (tutorView == null) {
-			tutorView = new TutorView(strategiesXML,app);		
-		}
-		 kernel.attach(tutorView); // register view  	
-		 initGUI();
 	}
 	
 	protected void initGUI() {

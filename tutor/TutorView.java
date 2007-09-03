@@ -13,7 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,52 +36,56 @@ public class TutorView extends JPanel implements View {
 	
 	private Application app;
 	private MyXMLio xmlio;
-	private LinkedList strategies = new LinkedList();
+	
 	private DataBaseInterface dbi;
-	private static final String DRIVER = "com.mysql.jdbc.Driver";
-	private static final String URL = "jdbc:mysql://158.109.2.26:33/intermates";
-	private static final String USER ="jmfortuny";
-	private static final String PWD = "jmfortuny";
+	
 	private static final int STUDENT = 0;
 	private static final int TUTOR = 1;
 	private static final String studentName = "Eloi";
 	private static final String tutorName = "Fortuny";
 	private static final String WELCOME = "Welcome!!!\n";
 	private JTextArea resultArea = new JTextArea(40, 20);
-	private JComboBox justificationCombo = new JComboBox();
+	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
+	private static final String LN = System.getProperty("LN");
+	private Strategy[] strategies;
+
 	
-	public TutorView (String[] strategiesXML,Application app) 
+	public TutorView (String problema, String alumne,Application app) 
 	{
 		this.app = app;
-		this.dbi = new DataBaseInterface(DRIVER, URL, USER, PWD);
-		
-		if (strategiesXML != null) 
-		// PROCEED STRATEGIES FILES
-			//nom fitxer
-			for (int i =0; i<strategiesXML.length; i++){
+		this.dbi = new DataBaseInterface();
+		strategies = this.dbi.retrieveStrategies(problema);
+			
+		 if (strategies != null) 
+		 //PROCEED STRATEGIES FILES
+		//nom fitxer
+			for (int i =0; i<strategies.length; i++){
 				// Try to load Strategies files;
 				try {
-					Strategy str = new Strategy();
-					// What is passed through applet params?
-					str.fillData(dbi,strategiesXML[i]);
-	       			URL url = str.getURL(); 
-	       			
-	       			handleFileArg(strategiesXML[i]); 
-			    
-	       			Construction c = getConstruction(url);
-			    	str.setConstruction(c);
+					URL url = strategies[i].getURL(); 
+					Construction c = getConstruction(url);
+					strategies[i].setConstruction(c);	
 			    	//System.out.println("Construction"+i+c.getXML());
-				 strategies.add(str);
+				
 				} catch (Exception e) {					
 					app.showError(app.getError("Strategies Loading Process Failed. ") 
 										+ "\n" + e.getMessage());
 				}
 			}
+		justificationCombo = new JComboBox(getJustifications());
 	
 		createGUI();
 	}
-	
+	public Vector getJustifications() {
+		
+			Vector a = new Vector();
+			a.add("");
+			a.add("1");
+			a.add("2");
+			
+			return a;
+	}
 	public void createGUI() {
 		
 		// TODO: implement user interface of tutor view
@@ -105,33 +113,18 @@ public class TutorView extends JPanel implements View {
 	        }
 	        );
 	        add(commentField);
+	        
 	        add(justificationCombo);
 	        
 	}
 	
 	private void processCommentField(){
-		System.out.println(commentField.getText());
+		
+		printTextArea(commentField.getText(),STUDENT);
+		commentField.setText("");
+		//System.out.println(commentField.getText());
 	}
-	 private URL handleFileArg(String fileArgument) {	     	      
-	        try {             		        	
-	        	String lowerCase = fileArgument.toLowerCase();
-	            URL url=null;
-	        	if (lowerCase.startsWith("http") || 
-	            	lowerCase.startsWith("file")) {         
-	                 url = new URL(fileArgument);                                        
-	            } else {                       	
-	                File f = new File(fileArgument);
-	                f = f.getCanonicalFile();
-	                if (f.exists())
-	                	url = f.toURL();
-	                else new Exception("File doesn't exists");
-	            }
-	            return url;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
+	
 	
 	
 	public void add(GeoElement geo) {		
@@ -150,13 +143,14 @@ public class TutorView extends JPanel implements View {
 		
 		printTextArea(objectToDialogue(geo),TUTOR);
 		commentField.requestFocus();
+		
 	}
 	/*
 	 * Method to pass GeoElement to Diaologue text
 	 */
 	private String objectToDialogue(GeoElement geo)
 	{
-		return geo.getObjectType()+":"+geo.getLabel()+"\n";
+		return geo.getObjectType()+":"+geo.getLabel();
 	}
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();
@@ -168,16 +162,15 @@ public class TutorView extends JPanel implements View {
 	{
 		
 		if (user==STUDENT) {
-		
-		//	resultArea.set
-			resultArea.append(studentName+":"+txt);
-		
+//			resultArea.setForeground(Color.GREEN);
+			resultArea.append(studentName);
 		}
 		else if (user == TUTOR){
-			
-			resultArea.append(tutorName+":"+txt);
+//			resultArea.setForeground(Color.BLUE);
+			resultArea.append(tutorName);
 		}
-		
+		//resultArea.setForeground(Color.BLACK);
+		resultArea.append(": "+txt+LN);
 	}
 
 	public void clearView() {

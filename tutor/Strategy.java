@@ -11,8 +11,14 @@ import java.util.LinkedList;
 
 public class Strategy {
 	
-private  long id_strategy;
-private String element ;
+private  long idstrategy;
+private URL url;
+private String title;
+private long idproblema;
+
+
+//private String element ;
+
 private LinkedList messages = new LinkedList();
 private Construction construction;
 
@@ -20,17 +26,20 @@ public Strategy() {
 	super();
 	// TODO Auto-generated constructor stub
 }
-public String getElement() {
+/*public String getElement() {
 	return element;
 }
+
 public void setElement(String element) {
 	this.element = element;
 }
-public long getId_strategy() {
-	return id_strategy;
+*/
+
+public long getIdstrategy() {
+	return idstrategy;
 }
-public void setId_strategy(long id_strategy) {
-	this.id_strategy = id_strategy;
+public void setIdstrategy(long idstrategy) {
+	this.idstrategy = idstrategy;
 }
 public LinkedList getMessages() {
 	return messages;
@@ -85,7 +94,7 @@ public void fillData(DataBaseInterface bdi, String strategy){
 try {
 	while (rs.next())
 	{
-	 this.element = rs.getString("element");	
+	// this.element = rs.getString("element");	
 	 String message = rs.getString("missatge");
 	 Message m = new Message(message);
 	 this.messages.add(m);
@@ -96,4 +105,47 @@ catch (SQLException e){
 }
 
 }
+
+/**
+ * @return the idproblema
+ */
+public long getIdproblema() {
+	return idproblema;
+}
+
+/**
+ * @param idproblema the idproblema to set
+ */
+public void setIdproblema(long idproblema) {
+	this.idproblema = idproblema;
+}
+
+/**
+ * @return the title
+ */
+public String getTitle() {
+	return title;
+}
+
+/**
+ * @param title the title to set
+ */
+public void setTitle(String title) {
+	this.title = title;
+}
+
+/**
+ * @return the url
+ */
+public URL getUrl() {
+	return url;
+}
+
+/**
+ * @param url the url to set
+ */
+public void setUrl(URL url) {
+	this.url = url;
+}
+
 }
