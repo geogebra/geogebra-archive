@@ -20,7 +20,6 @@ package geogebra.euclidian;
 
 import geogebra.Application;
 import geogebra.gui.AngleInputDialog;
-import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -1921,61 +1920,28 @@ final public class EuclidianController implements MouseListener,
 	
 	final private void moveDependent(boolean repaint) {
 		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
-		for (int i=0; i < translateableGeos.size(); i++) {	
-			Translateable t = (Translateable) translateableGeos.get(i);
-			t.translate(translationVec);			
-			t.toGeoElement().updateCascade();
-		}				
+
+		// we don't specify screen coords for translation as all objects are Translateables
+		GeoElement.moveObjects(translateableGeos, translationVec);		
+		
 		if (repaint)
-			kernel.notifyRepaint();		
-		startPoint.setLocation(xRW, yRW);		
+			kernel.notifyRepaint();
+				
+		startPoint.setLocation(xRW, yRW);
 	}
 	
 	private void moveMultipleObjects(boolean repaint) {		
 		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
-	
-		// move all selected geos that are moveable and translateable
-		ArrayList sel = app.getSelectedGeos();		
-		for (int i=0; i < sel.size(); i++) {
-			GeoElement geo = (GeoElement) sel.get(i);
-			boolean movedGeo = false;
-			if (geo.isMoveable()) {
-				if (geo.isTranslateable()) {
-					Translateable trans = (Translateable) geo;
-					trans.translate(translationVec);			
-					movedGeo = true;
-				}
-				else if (geo.isAbsoluteScreenLocateable()) {
-					AbsoluteScreenLocateable screenLoc = (AbsoluteScreenLocateable) geo;
-					if (screenLoc.isAbsoluteScreenLocActive()) {
-						int x = screenLoc.getAbsoluteScreenLocX() + mouseLoc.x - startLoc.x;
-						int y = screenLoc.getAbsoluteScreenLocY() + mouseLoc.y - startLoc.y;
-						screenLoc.setAbsoluteScreenLoc(x, y);
-						movedGeo = true;
-					} 					
-					else if (geo.isGeoText()) {
-						// check for GeoText with unlabeled start point
-						GeoText movedGeoText = (GeoText) geo;
-						if (movedGeoText.hasAbsoluteLocation()) {
-							//	absolute location: change location
-							GeoPoint loc = movedGeoText.getStartPoint();
-							loc.translate(translationVec);
-							movedGeo = true;
-						}						
-					}
-				}								
-			}											
-			
-			if (movedGeo)
-				geo.updateCascade();			
-		}				
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec);				
 		
 		if (repaint)
 			kernel.notifyRepaint();	
 		
 		startPoint.setLocation(xRW, yRW);
 		startLoc = mouseLoc;
-	}	
+	}		
+	
+	
 	
 
 	/**

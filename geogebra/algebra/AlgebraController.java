@@ -27,7 +27,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.Translateable;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -165,58 +164,26 @@ public class AlgebraController
 		switch (keyCode) {								
 			case KeyEvent.VK_UP :
 				changeVal = base;
-				if (geo.isChangeable()) {
-					if (geo.isTranslateable()) {				
-						tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-						((Translateable) geo).translate(tempVec);
-						geo.updateRepaint();
-						return true;
-					}
-					else if (geo.isGeoBoolean()) {
-						GeoBoolean bool = (GeoBoolean) geo;
-						bool.setValue(!bool.getBoolean());
-						geo.updateRepaint();
-						return true;
-					}					
-				}				
+				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+				handleArrowKeyMovement(geo, tempVec);		
 				break;
 
 			case KeyEvent.VK_DOWN :
 				changeVal = -base;
-				if (geo.isChangeable()) {
-					if (geo.isTranslateable()) {
-						tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-						((Translateable) geo).translate(tempVec);	
-						geo.updateRepaint();
-						return true;
-					}
-					else if (geo.isGeoBoolean()) {
-						GeoBoolean bool = (GeoBoolean) geo;
-						bool.setValue(!bool.getBoolean());
-						geo.updateRepaint();
-						return true;
-					}					
-				}
+				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+				handleArrowKeyMovement(geo, tempVec);				
 				break;
 
 			case KeyEvent.VK_RIGHT :
 				changeVal = base;
-				if (geo.isChangeable() && geo.isTranslateable()) {
-					tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-					((Translateable) geo).translate(tempVec);
-					geo.updateRepaint();
-					return true;
-				}
+				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+				handleArrowKeyMovement(geo, tempVec);
 				break;
 
 			case KeyEvent.VK_LEFT :
 				changeVal = -base;
-				if (geo.isChangeable() && geo.isTranslateable()) {
-					tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-					((Translateable) geo).translate(tempVec);
-					geo.updateRepaint();
-					return true;
-				}
+				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+				handleArrowKeyMovement(geo, tempVec);				
 				break;
 
 			case KeyEvent.VK_F2 :
@@ -274,7 +241,22 @@ public class AlgebraController
 	}
 
 	
-
+	private void handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
+		// try to move objvect
+		boolean moved = geo.moveObject(tempVec);				
+		if (!moved) {	
+			// toggle boolean value
+			if (geo.isChangeable() && geo.isGeoBoolean()) {
+				GeoBoolean bool = (GeoBoolean) geo;
+				bool.setValue(!bool.getBoolean());
+				bool.updateCascade();
+				moved = true;
+			}					
+		}	
+		
+		if (moved) 
+			kernel.notifyRepaint();
+	}
 	
 
 

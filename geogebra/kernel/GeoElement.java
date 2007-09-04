@@ -2378,5 +2378,58 @@ public abstract class GeoElement
 		if (condShowObject == bool)
 			condShowObject = null;
 	}
+	
+	
+	/**
+	 * Translates all GeoElement objects in geos by a vector in real world coordinates or by
+	 * (xPixel, yPixel) in screen coordinates.	 
+	 */
+	public static void moveObjects(ArrayList geos, GeoVector rwTransVec) {
+		for (int i=0; i < geos.size(); i++) {
+			GeoElement geo = (GeoElement) geos.get(i);
+			geo.moveObject(rwTransVec);		
+		}					
+	}
+	
+	/**
+	 * Moves geo by a vector in real world coordinates.
+	 * @return whether actual moving occurred 	 
+	 */
+	final public boolean moveObject(GeoVector rwTransVec) {
+		boolean movedGeo = false;
+		if (isMoveable()) {
+			if (isTranslateable()) {
+				Translateable trans = (Translateable) this;
+				trans.translate(rwTransVec);			
+				movedGeo = true;
+			}
+			else if (isAbsoluteScreenLocateable()) {
+				AbsoluteScreenLocateable screenLoc = (AbsoluteScreenLocateable) this;
+				if (screenLoc.isAbsoluteScreenLocActive()) {					
+					int vxPixel = (int) Math.round(kernel.getXscale() * rwTransVec.x);
+					int vyPixel = -(int) Math.round(kernel.getYscale() * rwTransVec.y);
+					int x = screenLoc.getAbsoluteScreenLocX() + vxPixel;
+					int y = screenLoc.getAbsoluteScreenLocY() + vyPixel;
+					screenLoc.setAbsoluteScreenLoc(x, y);
+					movedGeo = true;
+				} 					
+				else if (isGeoText()) {
+					// check for GeoText with unlabeled start point
+					GeoText movedGeoText = (GeoText) this;
+					if (movedGeoText.hasAbsoluteLocation()) {
+						//	absolute location: change location
+						GeoPoint loc = movedGeoText.getStartPoint();
+						loc.translate(rwTransVec);
+						movedGeo = true;
+					}						
+				}
+			}								
+		}											
+			
+		if (movedGeo)
+			updateCascade();
+		
+		return movedGeo;
+	}
 
 }
