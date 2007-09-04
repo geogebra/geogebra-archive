@@ -2621,11 +2621,14 @@ public class Kernel {
 	 * translate geoTrans by vector v
 	 */
 	final public GeoElement [] Translate(String label, Translateable geoTrans, GeoVector v) {
+		if (label == null)
+			label = transformedGeoLabel(geoTrans.toGeoElement());
+		
 		if (geoTrans.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoTrans).createTransformedObject(TRANSFORM_TRANSLATE, label, null, null, v, null); 
 		
-		// standard case
+		// standard case	
 		AlgoTranslate algo = new AlgoTranslate(cons, label, geoTrans, v);			
 		GeoElement [] geos = {algo.getResult()};
 		return geos;				
@@ -2645,6 +2648,9 @@ public class Kernel {
 	 * rotate geoRot by angle phi around (0,0)
 	 */
 	final public GeoElement [] Rotate(String label, Rotateable geoRot, NumberValue phi) {
+		if (label == null)
+			label = transformedGeoLabel(geoRot.toGeoElement());
+		
 		if (geoRot.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_ROTATE, label, null, null, null, phi);
@@ -2660,6 +2666,9 @@ public class Kernel {
 	 * rotate geoRot by angle phi around Q
 	 */
 	final public GeoElement [] Rotate(String label, PointRotateable geoRot, NumberValue phi, GeoPoint Q) {
+		if (label == null)
+			label = transformedGeoLabel(geoRot.toGeoElement());
+		
 		if (geoRot.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_ROTATE_AROUND_POINT, label, Q, null, null, phi);
@@ -2674,6 +2683,9 @@ public class Kernel {
 	 * dilate geoRot by r from S
 	 */
 	final public GeoElement [] Dilate(String label, Dilateable geoRot, NumberValue r, GeoPoint S) {
+		if (label == null)
+			label = transformedGeoLabel(geoRot.toGeoElement());
+		
 		if (geoRot.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_DILATE, label, S, null, null, r);
@@ -2687,7 +2699,10 @@ public class Kernel {
 	/**
 	 * mirror geoMir at point Q
 	 */
-	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoPoint Q) {		
+	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoPoint Q) {	
+		if (label == null)
+			label = transformedGeoLabel(geoMir.toGeoElement());
+		
 		if (geoMir.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_POINT, label, Q, null, null, null);
@@ -2702,6 +2717,9 @@ public class Kernel {
 	 * mirror geoMir at line g
 	 */
 	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoLine g) {
+		if (label == null)
+			label = transformedGeoLabel(geoMir.toGeoElement());
+		
 		if (geoMir.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return  ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_LINE, label, null, g, null, null);
@@ -2727,14 +2745,14 @@ public class Kernel {
 		// rotate all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {			
-			newPoints[i] = (GeoPoint) Translate(transformedPointLabel(points[i]), points[i], v)[0]; 				
+			newPoints[i] = (GeoPoint) Translate(transformedGeoLabel(points[i]), points[i], v)[0]; 				
 		}			
 		return newPoints;
 	}
 	
-	private String transformedPointLabel(GeoPoint point) {
-		if (point.isLabelSet() && !point.label.endsWith("'")) {
-			return point.label + "'";
+	private static String transformedGeoLabel(GeoElement geo) {
+		if (geo.isLabelSet() && !geo.hasIndexLabel() && !geo.label.endsWith("'''")) {
+			return geo.label + "'";
 		} else {
 			return null;
 		}
@@ -2758,7 +2776,7 @@ public class Kernel {
 		// rotate all points
 		GeoPoint [] rotPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedPointLabel(points[i]);
+			String pointLabel = transformedGeoLabel(points[i]);
 			if (Q == null)
 				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi)[0]; 	
 			else
@@ -2778,7 +2796,7 @@ public class Kernel {
 		// dilate all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedPointLabel(points[i]);
+			String pointLabel = transformedGeoLabel(points[i]);
 			newPoints[i] = (GeoPoint) Dilate(pointLabel, points[i], r, S)[0];			
 		}			
 		return newPoints;
@@ -2802,7 +2820,7 @@ public class Kernel {
 		// mirror all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedPointLabel(points[i]);
+			String pointLabel = transformedGeoLabel(points[i]);
 			if (Q == null)
 				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], g)[0]; 	
 			else
@@ -2814,10 +2832,10 @@ public class Kernel {
 	private GeoElement [] transformPoly(String label, GeoPolygon oldPoly, GeoPoint [] transformedPoints) {
 		// get label for polygon
 		String [] polyLabel = null;		
-		if (label == null) {
+		if (label == null) {							
 			if (oldPoly.isLabelSet()) {		
 				polyLabel = new String[1];
-				polyLabel[0] = oldPoly.label + "'";
+				polyLabel[0] = transformedGeoLabel(oldPoly);
 			}			
 		} else {
 			polyLabel = new String[1];

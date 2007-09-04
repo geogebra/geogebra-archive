@@ -13,9 +13,9 @@ public class RenameInputHandler implements InputHandler {
 	private Application app;
 
 	private static String[] invalidFunctionNames = { "gamma", "x", "y", "abs",
-			"sgn", "sqrt", "exp", "log", "ln", "cos", "sin", "tan", "acos",
+			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan", "acos",
 			"asin", "atan", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-			"floor", "ceil", "round", "min", "max" };
+			"floor", "ceil", "round", "min", "max", "random" };
 
 	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
 		this.app = app;
@@ -28,41 +28,48 @@ public class RenameInputHandler implements InputHandler {
 	}
 
 	public boolean processInput(String inputValue) {
-		if (inputValue == null)
+		GeoElement geo = this.geo;
+		
+		if (inputValue == null || inputValue.equals(geo.getLabel()))
 			return false;
-	
-		try {
-			if (!checkName(geo, inputValue)) {
-				app.showError("InvalidInput");
-				return false;
-			}
+		
+		if (!checkName(geo, inputValue)) {
+			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
+			return false;
+		}
 
+		try {
 			String newLabel = app.getKernel().getAlgebraProcessor().parseLabel(
 					inputValue);
 
 			// is there a geo with this name?
 			Construction cons = geo.getConstruction();
-			GeoElement existingGeo = cons.lookupLabel(newLabel);
+			GeoElement existingGeo = cons.lookupLabel(newLabel);						
+			
 			if (existingGeo != null) {
 				// rename this geo too:
 				String tempLabel = existingGeo.getIndexLabel(newLabel);
-				existingGeo.rename(tempLabel);
-			}
+				existingGeo.rename(tempLabel);				
+			}					
 
 			if (geo.rename(newLabel) && storeUndo) {
 				app.storeUndoInfo();
 			}
+
 			return true;
 		} catch (Exception e) {
-			app.showError("InvalidInput");
+			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
 		} catch (MyError err) {
-			app.showError(err);
+			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
 		}
 		return false;
 	}
 
 	// check if name is valid for geo
 	private boolean checkName(GeoElement geo, String name) {
+		if (name == null) return true;
+		
+		name = name.toLowerCase();
 		if (geo.isGeoFunction()) {
 			for (int i = 0; i < invalidFunctionNames.length; i++) {
 				if (invalidFunctionNames[i].equals(name))

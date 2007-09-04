@@ -109,13 +109,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError(app.getError("InvalidInput") + ":\n" + newValue);
 		} catch (MyError e) {
 			e.printStackTrace();
 			app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError(app.getError("InvalidInput") + ":\n" + newValue);
 		}
 		return null;
 	}

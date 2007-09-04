@@ -57,6 +57,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -93,6 +94,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -110,8 +112,7 @@ public class PropertiesDialogGeoElement
 		TreeSelectionListener,
 		//KeyListener,
 		GeoElementSelectionListener {
-		
-	
+			
 	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
 	private static final int MAX_COMBOBOX_ENTRIES = 200;	
 	
@@ -142,7 +143,14 @@ public class PropertiesDialogGeoElement
 		setResizable(false);
 
 		addWindowListener(this);		
-		geoTree = new JTreeGeoElements();		
+		geoTree = new JTreeGeoElements();	
+		geoTree.addMouseListener(new MouseAdapter() {
+			public void mouseEntered(MouseEvent e) {
+				// some textfields are updated when they lose focus
+				// give them a chance to do that before we change the selection
+				requestFocusInWindow();
+			}
+		});
 		geoTree.addTreeSelectionListener(this);
 				
 		// build GUI
@@ -361,7 +369,7 @@ public class PropertiesDialogGeoElement
 	/**
 	 * handles selection change	 
 	 */
-	private void selectionChanged() {			
+	private void selectionChanged() {	
 		updateSelectedGeos(geoTree.getSelectionPaths());
 				
 		Object [] geos = selectionList.toArray();										
@@ -3680,7 +3688,7 @@ public class PropertiesDialogGeoElement
 		/**
 		 * renames an element and sorts list 
 		 */
-		public void rename(GeoElement geo) {
+		public void rename(GeoElement geo) {		
 			// the rename destroyed the alphabetical order,
 			// so we have to use linear instead of binary search
 			remove(geo, false);			
@@ -4413,7 +4421,7 @@ class NamePanel
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);
-			setDefText(currentGeo);
+			tfDefinition.setText(getDefText(currentGeo));
 			tfDefinition.addActionListener(this);
 			
 			if (currentGeo.isIndependent()) {
@@ -4429,7 +4437,7 @@ class NamePanel
 		boolean showCaption = currentGeo.isGeoBoolean();
 		if (showCaption) {			
 			tfCaption.removeActionListener(this);
-			setCaptionText(currentGeo);
+			tfCaption.setText(getCaptionText(currentGeo));
 			tfCaption.addActionListener(this);			
 		} 
 		captionLabel.setVisible(showCaption);
@@ -4449,59 +4457,70 @@ class NamePanel
 			doActionPerformed(e.getSource());
 	}
 
-	private void doActionPerformed(Object source) {	
+	private synchronized void doActionPerformed(Object source) {
+		actionPerforming = true;
+		
 		if (source == tfName) {
-			String strName = tfName.getText();		
-			boolean success = nameInputHandler.processInput(strName);
-			if (!success)
+			// rename
+			String strName = tfName.getText();				
+			nameInputHandler.processInput(strName);
+			
+			// reset label if not successful
+			strName = currentGeo.getLabel();
+			if (!strName.equals(tfName.getText())) {
+				tfName.setText(strName);
 				tfName.requestFocus();
+			}
 		} 
 		else if (source == tfDefinition) {		
-			String strDefinition = tfDefinition.getText();			
-			boolean success = defInputHandler.processInput(strDefinition);
-			if (!success)
-				tfDefinition.requestFocus();
+			String strDefinition = tfDefinition.getText();	
+			if (!strDefinition.equals(getDefText(currentGeo))) {		
+				defInputHandler.processInput(strDefinition);
+	
+				// reset definition string if not successful
+				strDefinition = getDefText(currentGeo);
+				if (!strDefinition.equals(tfDefinition.getText())) {
+					tfDefinition.setText(strDefinition);
+					tfDefinition.requestFocus();
+				}
+			}
 		}		
 		else if (source == tfCaption) {		
-			String strCaption = tfCaption.getText().trim();	
-			boolean success = currentGeo.setCaption(strCaption);			
-			if (!success)
+			String strCaption = tfCaption.getText();	
+			currentGeo.setCaption(strCaption);			
+			
+			strCaption = getCaptionText(currentGeo);
+			if (!strCaption.equals(tfCaption.getText().trim())) {
+				tfCaption.setText(strCaption);	
 				tfCaption.requestFocus();
-			else
-				currentGeo.updateRepaint();
+			}
 		}	
+		currentGeo.updateRepaint();
+		
+		actionPerforming = false;
 	}
+	private boolean actionPerforming = false;
 
 	public void focusGained(FocusEvent arg0) {
 	}
 
-	public void focusLost(FocusEvent e) {
-		Object source = e.getSource();
-
-		if (source == tfName) {
-			tfName.setText(currentGeo.getLabel());
-		} 
-		else if (source == tfDefinition) {			
-			setDefText(currentGeo);
-		}
-		else if (source == tfCaption) {			
-			setDefText(currentGeo);
-		}
+	public void focusLost(FocusEvent e) {	
+		if (!actionPerforming) 
+			doActionPerformed(e.getSource());
 	}
 	
-	private void setDefText(GeoElement geo) {
-		String text = geo.isIndependent() ?
+	private String getDefText(GeoElement geo) {
+		return geo.isIndependent() ?
 				geo.toOutputValueString() :
-				geo.getCommandDescription();
-		tfDefinition.setText(text);
+				geo.getCommandDescription();		
 	}
 	
-	private void  setCaptionText(GeoElement geo) {
+	private String getCaptionText(GeoElement geo) {
 		String strCap = currentGeo.getCaption();
 		if (strCap.equals(currentGeo.getLabel()))
-			tfCaption.setText("");
+			return "";
 		else
-			tfCaption.setText(strCap);
+			return strCap;
 	}
 	
 }

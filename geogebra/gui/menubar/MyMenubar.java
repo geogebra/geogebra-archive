@@ -329,10 +329,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// point capturing
 		menuPointCapturing = new JMenu(app.getMenu("PointCapturing"));
 		menuPointCapturing.setIcon(app.getImageIcon("magnet.gif"));
-		String[] strPointCapturing = { "on",
-				app.getMenu("on") + " (" + app.getMenu("Grid") + ")", "off" };
-		String[] strPointCapturingAC = { "1 PointCapturing",
-				"2 PointCapturing", "0 PointCapturing" };
+		String[] strPointCapturing = { 
+				"Labeling.automatic",
+				"on",
+				app.getMenu("on") + " (" + app.getMenu("Grid") + ")", 
+				"off" };
+		String[] strPointCapturingAC = { 
+				"3 Automatic" ,
+				"1 PointCapturing",
+				"2 PointCapturing", 
+				"0 PointCapturing" };
 		addRadioButtonMenuItems(menuPointCapturing, this, strPointCapturing,
 				strPointCapturingAC, 0);
 		menu.add(menuPointCapturing);
@@ -1249,7 +1255,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		if (menuPointCapturing == null) return;
 		
 		String pos = Integer.toString(app.getEuclidianView().getPointCapturingMode());
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 			JRadioButtonMenuItem mi = (JRadioButtonMenuItem) menuPointCapturing
 					.getMenuComponent(i);
 			String ac = mi.getActionCommand();

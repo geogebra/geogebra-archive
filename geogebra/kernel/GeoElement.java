@@ -771,7 +771,7 @@ public abstract class GeoElement
     		return toDefinedValueString();	
     }     
 
-	/********************************************************
+	/* *******************************************************
 	 * GeoElementTable Management
 	 * Hashtable: String (label) -> GeoElement 
 	 ********************************************************/
@@ -793,12 +793,12 @@ public abstract class GeoElement
 		if (newLabel.equals(oldLabel))
 			return false;
 		else if (cons.isFreeLabel(newLabel)) {
-			setLabel(newLabel); // now we rename			 
+			setLabel(newLabel); // now we rename				
 			return true;
 		} else {
 			String str[] = { "NameUsed", newLabel };
 			throw new MyError(app, str);
-		}
+		}				
 	}
 
 	/**
@@ -862,7 +862,7 @@ public abstract class GeoElement
 			|| caption.equals(label))
 			return false;
 		
-		this.caption = caption;
+		this.caption = caption.trim();
 		return true;
 	}		
 

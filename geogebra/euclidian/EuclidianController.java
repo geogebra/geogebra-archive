@@ -587,9 +587,7 @@ final public class EuclidianController implements MouseListener,
 			moveModeSelectionHandled = true;
 			
 			// find and set rotGeoElement
-			hits = view.getPointRotateableHits(hits, rotationCenter);					
-			
-			// object was chosen before, take it now!
+			hits = view.getPointRotateableHits(hits, rotationCenter);
 			if (hits != null && hits.contains(rotGeoElement))
 				geo = rotGeoElement;
 			else {
@@ -686,7 +684,7 @@ final public class EuclidianController implements MouseListener,
 			if (translationVec == null)
 				translationVec = new GeoVector(kernel.getConstruction());
 		}	
-			// dependent object: moveable parents?
+		// dependent object: moveable parents?
 		else if (!movedGeoElement.isMoveable()) {				
 				translateableGeos = movedGeoElement.getMoveableParentPoints();
 			
@@ -939,17 +937,27 @@ final public class EuclidianController implements MouseListener,
 	
 	private boolean allowSelectionRectangle() {
 		switch (mode) {
+			// move objects
 			case EuclidianView.MODE_MOVE:
 				return moveMode == MOVE_NONE;
 				
+			// move rotate objects
+			case EuclidianView.MODE_MOVE_ROTATE:
+				return selPoints() > 0; // need rotation center
+				
+			// object selection mode
 			case EuclidianView.MODE_ALGEBRA_INPUT:
 				return app.getCurrentSelectionListener() != null;
 			
+			// transformations
 			case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
 			case EuclidianView.MODE_DILATE_FROM_POINT:	
 			case EuclidianView.MODE_MIRROR_AT_POINT:
 			case EuclidianView.MODE_MIRROR_AT_LINE:
 			case EuclidianView.MODE_ROTATE_BY_ANGLE:
+				return true;
+				
+			// checkbox
 			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
 				return true;
 				
@@ -1984,27 +1992,56 @@ final public class EuclidianController implements MouseListener,
 	 *          ( 0 0 1 )
 	 */
 	
+	/*
 	private void transformCoords() {
 		transformCoords(false);
-	}
+	} */
 
+	final private void transformCoords() {
+		// calc real world coords
+		calcRWcoords();
+
+		//	point capturing to grid
+		double pointCapturingPercentage = 1;
+		switch (view.getPointCapturingMode()) {	
+			case EuclidianView.POINT_CAPTURING_AUTOMATIC:
+				if (!view.isGridOrAxesShown())break;
+			
+			case EuclidianView.POINT_CAPTURING_ON:
+				pointCapturingPercentage = 0.125;
+			
+			case EuclidianView.POINT_CAPTURING_ON_GRID:
+				// X = (x, y) ... next grid point
+				double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
+				double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
+				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
+				double a = Math.abs(x - xRW);
+				double b = Math.abs(y - yRW);
+				if (a < view.gridDistances[0] * pointCapturingPercentage
+					&& b < view.gridDistances[1] *  pointCapturingPercentage) {
+					xRW = x;
+					yRW = y;
+				}
+			
+			default:
+		}
+	}
+	
+	/*
 	final private void transformCoords(boolean usePointCapturing) {
 		// calc real world coords
 		calcRWcoords();
 		
-		boolean doPointCapturing =
-			usePointCapturing ||
-			moveMode == MOVE_POINT ||
-			moveMode == MOVE_FUNCTION;
-		
-		if (doPointCapturing) {
-			//	point capturing to grid
+		if (usePointCapturing) {	
 			double pointCapturingPercentage = 1;
-			switch (view.getPointCapturingMode()) {			
+			switch (view.getPointCapturingMode()) {		
+				case EuclidianView.POINT_CAPTURING_AUTOMATIC:
+					if (!view.isGridOrAxesShown())break;
+			
 				case EuclidianView.POINT_CAPTURING_ON:
 					pointCapturingPercentage = 0.125;
 				
-				case EuclidianView.POINT_CAPTURING_ON_GRID:
+				case EuclidianView.POINT_CAPTURING_ON_GRID:								
 					// X = (x, y) ... next grid point
 					double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
 					double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
@@ -2021,9 +2058,10 @@ final public class EuclidianController implements MouseListener,
 				
 				default:
 					// point capturing off
-			}
+			}		
 		}
 	}
+	*/
 	
 	private void calcRWcoords() {
 		xRW = (mouseLoc.x - view.xZero) * view.invXscale;
@@ -2088,7 +2126,7 @@ final public class EuclidianController implements MouseListener,
 		}
 
 		if (createPoint) {
-			transformCoords(true); // use point capturing if on
+			transformCoords(); // use point capturing if on
 			if (path == null) {
 				point = kernel.Point(null, xRW, yRW);
 				view.showMouseCoords = true;

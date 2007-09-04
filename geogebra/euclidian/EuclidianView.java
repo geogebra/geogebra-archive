@@ -266,12 +266,12 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	public static final int MODE_SHOW_HIDE_CHECKBOX = 52;
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
-
+	
 	public static final int POINT_CAPTURING_OFF = 0;
-
 	public static final int POINT_CAPTURING_ON = 1;
-
 	public static final int POINT_CAPTURING_ON_GRID = 2;
+	public static final int POINT_CAPTURING_AUTOMATIC = 3;
+	
 
 	// zoom rectangle colors
 	private static final Color colZoomRectangle = new Color(200, 200, 230);
@@ -347,7 +347,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	boolean showMouseCoords = false;
 	boolean showAxesRatio = false;
 
-	private int pointCapturingMode = POINT_CAPTURING_OFF; // round point to
+	private int pointCapturingMode; // snap to grid points
 
 	// added by Loïc BEGIN
 	// right angle
@@ -520,13 +520,13 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 		// showAxes = true;
 		// showGrid = false;
-		pointCapturingMode = POINT_CAPTURING_ON;
+		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
 		pointStyle = POINT_STYLE_DOT;
 
 		// added by Loïc BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		// END
-
+			
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
 		axesLabels[0] = null;
@@ -1163,6 +1163,10 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		showAxes[1] = yAxis;
 		updateBackgroundImage();
 	}
+	
+	final boolean isGridOrAxesShown() {
+		return showAxes[0] || showAxes[1] || showGrid;
+	}	
 
 	public boolean getShowXaxis() {
 		return showAxes[0];
