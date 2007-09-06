@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 4, 2007";
+    public static final String buildDate = "September 6, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -141,7 +141,7 @@ public class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("bs") );          	// Bosnian
     	supportedLocales.add( new Locale("bg") );          	// Bulgarian
     	supportedLocales.add( new Locale("ca") );           // Catalan
-        supportedLocales.add( new Locale("zh") );          	// Chinese (Simplified)
+        // supportedLocales.add( new Locale("zh") );          	// Chinese (Simplified)
         supportedLocales.add( new Locale("zh","TW") );      // Chinese (Traditional)
         supportedLocales.add( new Locale("hr") );          	// Croatian
     	supportedLocales.add( new Locale("cz") );          	// Czeck
@@ -187,7 +187,7 @@ public class Application implements	KeyEventDispatcher {
     	specialLanguageNames.put("cz", "Czech");
     	specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
     	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    
-    	specialLanguageNames.put("zh", "Chinese (Simplified)"); 
+    	// specialLanguageNames.put("zh", "Chinese (Simplified)"); 
     	specialLanguageNames.put("zhTW", "Chinese (Traditional)" ); 
     }
         
