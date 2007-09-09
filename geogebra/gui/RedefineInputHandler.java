@@ -18,7 +18,7 @@ public class RedefineInputHandler implements InputHandler {
 		this.geo = geo;
 	}
 
-	public boolean processInput(String inputValue) {
+	public boolean processInput(String inputValue) {			
 		if (inputValue == null)
 			return false;
 		try {

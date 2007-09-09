@@ -647,7 +647,7 @@ public class Kernel {
 	 * methods for view-Pattern (Model-View-Controller)
 	 * *******************************************************/
 
-	public void attach(View view) {			
+	public void attach(View view) {					
 		//System.out.println("attach " + view + ", notifyActive: " + notifyViewsActive);
 		
 		if (!notifyViewsActive) {			
@@ -682,8 +682,8 @@ public class Kernel {
 		}
 	}
 
-	public void detach(View view) {
-		//System.out.println("detach " + view);
+	public void detach(View view) {    
+		// System.out.println("detach " + view);
 		
 		if (!notifyViewsActive) {
 			viewCnt = oldViewCnt;

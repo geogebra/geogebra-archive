@@ -59,6 +59,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     //private AlgorithmSet macroConsAlgoSet;
 	// list with all original elements used for the macro construction
     private TreeSet locusConsOrigElements, Qin; 
+    
+   // private Updater updater;
 
     AlgoLocus(Construction cons,  String label, GeoPoint Q, GeoPoint P) {
         super(cons);
@@ -262,21 +264,23 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 
     // compute locus line
     final void compute() {
-    	if (!Q.isDefined() || macroCons == null) {    		
+    	if (!P.isDefined() || macroCons == null) {    		
     		locus.setUndefined();
     		return;
     	}
     	
     	// continuous kernel?
     	boolean continuous = kernel.isContinuous();
-    	macroKernel.setContinuous(continuous);
+    	macroKernel.setContinuous(continuous);    
     	    	    	
-    	// set all ellements in the macro construction
+    	// set all elements in the macro construction
     	// to the current values in the main construction
+    	int max_runs = GeoLocus.MAX_PATH_RUNS;
     	if (continuous) {
     		resetMacroConstruction();   
     	} else {
-    		Pcopy.set(P);    		
+    		Pcopy.set(P);   
+    		max_runs = 1; // we only go through the path once for non-continous constructions
     	}
     	// update all algorithms of the macro construction	        
       	macroCons.updateConstruction(); 
@@ -292,9 +296,27 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// remember the start positions of Pcopy and Qcopy
     	PstartPos.set(Pcopy);
     	QstartPos.set(Qcopy);
-    	if (!Qcopy.isDefined()) {    	    		
-    		locus.setUndefined();
-    		return;
+    	
+    	if (!Qcopy.isDefined()) {  
+    		// try to find a position of P where Q is defined
+    		boolean foundDefined = false;
+    		while (pathMover.hasNext()) {
+    			pathMover.getNext(Pcopy);
+    			Pcopy.updateCascade();    			
+    			if (Qcopy.isDefined()) {
+    				foundDefined = true;
+    				break;
+    			}
+    		}
+    		
+    		if (foundDefined) {
+    			pathMover.init(Pcopy);
+    			PstartPos.set(Pcopy);
+    	    	QstartPos.set(Qcopy);
+    		} else {
+    			locus.setUndefined();
+        		return;
+    		}
     	}
     	
     	//  init locus with this first point    	
@@ -309,6 +331,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	int runs = 1;   
     	int MAX_LOOPS = 2*PathMover.MAX_POINTS;
     	boolean maxTimeExceeded = false;
+    	
+    	// thread to perform update of P
+    	/*
+    	updater = new Updater();
+    	updater.setGeoElement(Pcopy);
+    	*/
+    	
     	do {    		    		
     		boolean finishedRun = false;
     		int whileLoops = 0;
@@ -325,10 +354,15 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        	
 	     //   	System.out.println("   while " + whileLoops + ", Pcopy: " + Pcopy);
 	        	
+	        	
+	        	// TODO: check
+	        	//safeUpdateCascade();
+	        	
 	        	// measure time needed for update of construction
 	        	long startTime = System.currentTimeMillis();	        
 	       		Pcopy.updateCascade();
-	       		long updateTime = System.currentTimeMillis() - startTime;	
+	       		long updateTime = System.currentTimeMillis() - startTime;	   
+	       			       	
 	       		      	        
 	       	 // PRINT MACRO CONSTRUCTION STATE   
 //	          	Iterator it = macroCons.getGeoElementsIterator();
@@ -343,6 +377,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 //	        			+ a.getEndPoint() + "(" + a.getEndPoint().getConstruction() + ")");
 	       
 	       		
+	        	// TODO: check
 	       		// if it takes too much time to calculate a single step, we stop
 	       		if (updateTime > MAX_TIME_FOR_ONE_STEP) {
 	       			System.err.println("AlgoLocus: max time exceeded " + updateTime);	       			
@@ -364,6 +399,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       					pathMover.stepBack(); 
 	       					pathMover.getNext(Pcopy);
 	       					
+	       				// TODO: check
+	       					// safeUpdateCascade();
 	       					// measure time needed for update of construction
 	       		        	long st = System.currentTimeMillis();	        
 	       		       		Pcopy.updateCascade();
@@ -373,7 +410,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       		       			System.err.println("AlgoLocus: max time exceeded  " + updateTime);	       		       				       		       			 
 	       		       			maxTimeExceeded = true;
 	       		       			return;
-	       		       		}	       					
+	       		       		}	       			
 	       					//if (!lineTo) break;	       		
 	       				}	       					       					       			
 	       				
@@ -433,15 +470,18 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        
 	        pathMover.resetStartParameter();	       
 	        runs++;	        	        	        
-        } while (runs < GeoLocus.MAX_PATH_RUNS);
+        } while (runs < max_runs);
             	
 		//System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
     }
+    
+  
             
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
     		
-    	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    	// TODO: remove
+    	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
@@ -450,8 +490,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }
     
     private boolean isFarAway(double x, double y) {
-    	return (x > farXmax || x < farXmin ||
-    				 y > farYmax || y < farYmin);    	       	
+    	boolean farAway =  (x > farXmax || x < farXmin ||
+    						y > farYmax || y < farYmin);        	    	
+    	return farAway;
 	}
     
     private boolean distanceOK(GeoPoint Q) {    	
@@ -465,8 +506,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }    
     
     private boolean distanceSmall(GeoPoint Q) {
-    	return Math.abs(Q.inhomX - lastX) < maxXdist &&
-					Math.abs(Q.inhomY - lastY) < maxYdist;
+    	boolean distSmall = Math.abs(Q.inhomX - lastX) < maxXdist &&
+							Math.abs(Q.inhomY - lastY) < maxYdist;    	
+    	return distSmall;
     }
     
     private boolean distanceQuiteSmall(GeoPoint Q) {
@@ -485,6 +527,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	maxXdist = MAX_X_PIXEL_DIST / kernel.getXscale(); // widthRW / 100;
     	maxYdist = MAX_Y_PIXEL_DIST / kernel.getYscale(); // heightRW / 100;   
     	
+    	// TODO: remove
+    	System.out.println("maxXdist: " + maxXdist);
+    	System.out.println("maxYdist: " + maxYdist);
+    	
     	// we take a bit more than the screen
     	// itself so that we don't loose locus
     	// lines too often 
@@ -494,6 +540,12 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	farXmax = xmax + widthRW / 4;
     	farYmin = ymin - heightRW / 4;
     	farYmax = ymax + heightRW / 4;
+    	
+    	// TODO: remove
+    	System.out.println("farXmin: " + farXmin);
+    	System.out.println("farXmax: " + farXmax);
+    	System.out.println("farYmin: " + farYmin);
+    	System.out.println("farYmax: " + farYmax);
     	    			
     	// near to screen rectangle
     	nearToScreenRect.setFrame(farXmin, farYmin, 
@@ -506,6 +558,61 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
   		update();		
   	}
     
-
+    // TODO: check updater, what does suspend(), resume(), interrupt() do exactly?
+    /*
+    private class Updater extends Thread {
+    	GeoElement geo;
+    	Thread sleeper;
+    	
+    	public Updater() {
+    		sleeper = new Thread() {
+        		public void run() {
+        			// TODO: remove
+            		System.out.println("sleeper: start");
+        			try {
+        				sleep(MAX_TIME_FOR_ONE_STEP);
+        			} catch (Exception e) {    				
+        			}
+        			
+        			if (Updater.this.isAlive()) {
+        				// TODO: remove
+        				System.out.println("updater: suspend (TOOK TOO LONG)");
+        				Updater.this.interrupt();
+        			}
+        		}
+        	};       
+    	}
+    	
+    	public void setGeoElement(GeoElement geo) {
+    		this.geo = geo;
+    	}
+    	
+    	public void run() {    		
+    		sleeper.start();
+    		
+    		// TODO: remove
+    		System.out.println("updater: start");
+    		geo.updateCascade();    		
+    		
+    		System.out.println("updater: finished");
+    		System.out.println("sleeper: suspend");
+    		sleeper.suspend();    		
+    	}    
+    	    	
+    }
+*/
+    
+    
+    /*
+     * Calls geo.updateCascade(). This method will terminate after
+     * MAX_MILLIS.
+     * @return
+     *
+    private void safeUpdateCascade() {
+    	// measure time needed for update of construction
+    
+    	updater.start();    	
+    }
+    */ 
 	
 }

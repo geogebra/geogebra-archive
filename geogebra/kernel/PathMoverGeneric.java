@@ -205,11 +205,11 @@ public class PathMoverGeneric implements PathMover {
 		double abs_new_step = Math.abs(new_step);		
 		
 		if (abs_new_step > max_step_width) {
-			step_width = new_step >= 0 ? max_step_width : -max_step_width;
+			step_width = (new_step >= 0 ? max_step_width : -max_step_width);
 			return false;
 		} 
 		else if (abs_new_step < MIN_STEP_WIDTH) {
-			step_width = new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH;
+			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);		
 			return false;
 		} 
 		else {

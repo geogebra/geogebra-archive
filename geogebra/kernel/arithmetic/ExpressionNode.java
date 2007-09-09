@@ -1465,6 +1465,30 @@ implements ExpressionValue {
                  
        return isFunction;
    }
+   
+   /**
+    * Returns true if this tree includes a division by val
+    */    
+   final public boolean includesDivisionBy(ExpressionValue val) {                      
+        if (operation == DIVIDE) {
+        	if (right.contains(val))
+        		return true;
+        	 
+        	if (left.isExpressionNode() && 
+        			((ExpressionNode) left).includesDivisionBy(val))
+        		return true;        	
+        } else {
+        	if (left.isExpressionNode() && 
+        			((ExpressionNode) left).includesDivisionBy(val))
+        		return true;        	
+        		
+        	if (right != null && right.isExpressionNode() && 
+        			((ExpressionNode) right).includesDivisionBy(val))
+        		return true;
+        }
+        
+        return false;
+   }
      
    
     /**

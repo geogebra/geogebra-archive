@@ -226,13 +226,9 @@ public class MyXMLHandler implements DocHandler {
                                     + ": "
                                     + ggbFileFormat);
                                     */
-                        }
+                        }                                                          
                         
-                        // init settings
-                        // hide navigation bar for construction steps
-                        app.setShowConstructionProtocolNavigation(false);
-                        
-                        // fileFormat dependent settings
+                        // fileFormat dependent settings for downward compatibility
                         if (ggbFileFormat < 2.6) {
                         	kernel.arcusFunctionCreatesAngle = true;                        	
                         }

@@ -167,9 +167,9 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 	private GeoFunctionConditional derivGeoFun;
 			
-	public boolean isPolynomialFunction(boolean forRootFinding) {		
+	public boolean isPolynomialFunction(boolean forRootFinding, boolean symbolic) {		
 		return false;   			
-	}
+	}		
 	
 	public final String toString() {
 		sbToString.setLength(0);

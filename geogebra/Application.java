@@ -1090,7 +1090,9 @@ public class Application implements	KeyEventDispatcher {
        fillCommandDict();
     }    
     
-    private void fillCommandDict() {
+    private void fillCommandDict() {    	
+    	if (rbcommand == null) return;
+    	
     	 translateCommandTable.clear();
          commandDict.clear();
          
@@ -1146,7 +1148,7 @@ public class Application implements	KeyEventDispatcher {
     	
         try {
             return rbplain.getString(key);
-        } catch (MissingResourceException e) {
+        } catch (Exception e) {
             return key;
         }
     }
@@ -1157,7 +1159,7 @@ public class Application implements	KeyEventDispatcher {
     	
         try {
             return rbmenu.getString(key);
-        } catch (MissingResourceException e) {        	   
+        } catch (Exception e) {        	   
         	return key;
         }
     }
@@ -1168,7 +1170,7 @@ public class Application implements	KeyEventDispatcher {
     	
         try {
             return rbsettings.getString(key);
-        } catch (MissingResourceException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -1189,7 +1191,7 @@ public class Application implements	KeyEventDispatcher {
     	
         try {
             return rbcommand.getString(key);
-        } catch (MissingResourceException e) {
+        } catch (Exception e) {
             return key;
         }
     }
@@ -1230,7 +1232,7 @@ public class Application implements	KeyEventDispatcher {
         String text;
         try {
             text = rbplain.getString(key);
-        } catch (MissingResourceException e) {
+        } catch (Exception e) {
             text = key;
         }
         JOptionPane.showConfirmDialog(
@@ -1639,10 +1641,10 @@ public class Application implements	KeyEventDispatcher {
     
     public void doAfterRedefine(GeoElement geo) {
     	// select geoElement with label again
-    	 if (propDialog != null && propDialog.isShowing()) {    	 	
+    	if (propDialog != null && propDialog.isShowing()) {    	 	
          	//propDialog.setViewActive(true);
             propDialog.geoElementSelected(geo, false);          
-         }
+        }    	     
     }
     
     /**
@@ -1745,7 +1747,7 @@ public class Application implements	KeyEventDispatcher {
     	if (frame == null) return;
     	
         StringBuffer sb = new StringBuffer();
-        sb.append(getPlain("ApplicationName"));        
+        sb.append("GeoGebra");        
         if (currentFile != null) {
             sb.append(" - ");
             sb.append(currentFile.getName());
@@ -2593,7 +2595,7 @@ public class Application implements	KeyEventDispatcher {
 			return fileName.substring(dotPos+1); 
    }
 
-    public void openFile() {    	
+    public void openFile() {    	      	
     	if (propDialog != null && propDialog.isShowing()) 
     		propDialog.cancel();
     	
@@ -2687,7 +2689,12 @@ public class Application implements	KeyEventDispatcher {
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE);
             return false;
-        }                         
+        }             
+        
+        if (!isMacroFile) {
+            // hide navigation bar for construction steps if visible
+            setShowConstructionProtocolNavigation(false); 
+        }
         
         boolean success = loadXML(file, isMacroFile);  
        

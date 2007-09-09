@@ -84,18 +84,22 @@ public class AlgoDependentList extends AlgoElement {
     	return geoList; 
     }       
     
-    final void compute() {	
-    	// add all input and their siblings to the list
+    final void compute() {	    	
     	geoList.clear();
-    	for (int i=0; i < input.length; i++) {    		
+    	for (int i=0; i < input.length; i++) {    
+    		// add input and its siblings to the list
+    		// if the siblings are of the same type
+    		
     		AlgoElement algo = input[i].getParentAlgorithm();
-    		// don't add siblings for polygons
-    		if (algo == null || input[i].isGeoPolygon()) {
-    			geoList.add(input[i]);
-    		} else {
+    		if (algo != null && algo.hasSingleOutputType()) {
+    			// all siblings have same type: add them all
     			for (int k=0; k < algo.output.length; k++) {
     				geoList.add(algo.output[k]);
-    			}
+    			}    			
+    		} else {
+    			// independent or mixed sibling types:
+    			// add only this element
+    			geoList.add(input[i]);
     		}
     	}
     }   

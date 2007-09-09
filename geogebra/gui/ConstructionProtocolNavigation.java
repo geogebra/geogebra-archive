@@ -173,8 +173,9 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	 * the number of construction steps.	
 	 */
 	public void update() {	
-		lbSteps.setText(prot.getCurrentStepNumber() + " / " 
-				         + prot.getLastStepNumber());		
+		int currentStep = prot.getCurrentStepNumber();
+		int stepNumber  = prot.getLastStepNumber();
+		lbSteps.setText(currentStep + " / " + stepNumber);	
 	}
 	
 	/**

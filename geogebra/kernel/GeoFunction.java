@@ -38,6 +38,11 @@ GeoDeriveable, ParametricCurve {
 	protected boolean isDefined = true;
 	public boolean trace;	
 	private String varStr = "x";
+	
+	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
+    private boolean includesDivisionByVar = false;
+    
+	
 //	Victor Franco Espino 25-04-2007
 	/*
 	 * Parameter in dialog box for adjust color of curvature
@@ -219,16 +224,39 @@ GeoDeriveable, ParametricCurve {
 	 * @param forRootFinding: set to true if you want to allow
 	 * functions that can be factored into polynomial factors
 	 * for root finding (e.g. sqrt(x) could be replaced by x)
+	 * @param symbolic: function's symbolic expression must be a polynomial,
+	 * e.g. x^2 is ok but not x^a
 	 */
-	public boolean isPolynomialFunction(boolean forRootFinding) {		
+	public boolean isPolynomialFunction(boolean forRootFinding, boolean symbolic) {		
 		// don't do root finding simplification here
 		// i.e. don't replace a factor "sqrt(x)" by "x"
 		if (!isDefined()) 
 			return false;
 		else
 			return fun.isConstantFunction() || 
-						fun.getPolynomialFactors(forRootFinding) != null;
+				(symbolic ? 
+						fun.getSymbolicPolynomialFactors(forRootFinding) :
+						fun.getPolynomialFactors(forRootFinding))
+					!= null;
 	}
+	
+	public boolean isPolynomialFunction(boolean forRootFinding) {
+		return isPolynomialFunction(forRootFinding, false);
+	}
+	
+	/**
+     * Returns whether this function includes a division by variable,
+     * e.g. f(x) = 1/x, 1/(2+x), sin(3/x), ...
+     */
+    final public boolean includesDivisionByVar() {
+    	if (includesDivisionByVarFun != fun) {
+    		includesDivisionByVarFun = fun;    		
+    		includesDivisionByVar = fun != null && fun.includesDivisionByVariable();    		
+    	}
+    	return includesDivisionByVar;
+    }
+    private Function includesDivisionByVarFun = null;
+    
 
 	public boolean isDefined() {
 		return isDefined && fun != null;

@@ -44,7 +44,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     
     // if the function is of type f(x) = c
     private boolean isConstantFunction = false; 
-    
+      
     transient private Application app;
     transient private Kernel kernel;    
     
@@ -214,7 +214,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      */
     final public boolean isConstantFunction() {
     	return isConstantFunction;
-    }
+    }      
     
     public boolean isConstant() {
         return false;
@@ -533,7 +533,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * 
      * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
      */
-    private LinkedList getSymbolicPolynomialFactors(boolean rootFindingSimplification) {       	
+    public LinkedList getSymbolicPolynomialFactors(boolean rootFindingSimplification) {       	
         if (factorParentExp != expression) { 
             // new expression
             factorParentExp = expression;
@@ -1039,5 +1039,12 @@ implements ExpressionValue, RealRootFunction, Functional {
 	
 	public final boolean hasInterval() {
 		return interval;
+	}
+	
+	public final boolean includesDivisionByVariable() {
+		if (expression == null)
+			return false;
+		else
+			return expression.includesDivisionBy(fVar);
 	}
 }

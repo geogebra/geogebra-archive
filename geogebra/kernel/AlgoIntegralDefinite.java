@@ -120,19 +120,22 @@ public class AlgoIntegralDefinite extends AlgoElement {
         Function fun = f.getFunction();
 
         /* 
-         * DO NOT use symbolic integration here as there are several
-         * problems, e.g.
-         * Integral[ 1/x, -2, -1 ] would do (log(-1) - log(-2))
-         * Integral[ 1/x^2, -1, 1 ] would give -2
-         * 
-        //  try to get symbolic integral
-        Function intFun = fun.getIntegral();
-        if (intFun != null) {
-        	double val = intFun.evaluate(upperLimit) - intFun.evaluate(lowerLimit);
-            n.setValue(val);
-            if (n.isDefined()) return;
+         * Try to get symbolic integral
+         *
+         * We only do this for functions that do NOT include divisions by their variable.
+         * Otherwise there might be problems like:
+         * Integral[ 1/x, -2, -1 ] would be undefined (log(-1) - log(-2))
+         * Integral[ 1/x^2, -1, 1 ] would be defined (-2)
+         */
+        if (!f.includesDivisionByVar()) {
+	        Function intFun = fun.getIntegral();
+	        if (intFun != null) {
+	        	double val = intFun.evaluate(upperLimit) - intFun.evaluate(lowerLimit);
+	            n.setValue(val);	        
+	            if (n.isDefined()) return;
+	        }
         }
-        */
+
         
         // init GaussQuad classes for numerical integration
         if (firstGauss == null) {
@@ -145,6 +148,7 @@ public class AlgoIntegralDefinite extends AlgoElement {
         //maxstep = 0;              
         double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit, 0);
         n.setValue(integral);
+              
         /*
         System.out.println("***\nsteps: " + maxstep);                   
         System.out.println("max_error: " + max_error);
@@ -163,7 +167,7 @@ public class AlgoIntegralDefinite extends AlgoElement {
         double secondSum = secondGauss.integrate(fun, a, b);
         double error = Math.abs(firstSum - secondSum);
         if (error < max_error) { // success
-            max_error = Math.max(10E-10, max_error - error);
+            max_error = Math.max(Kernel.STANDARD_PRECISION, max_error - error);
             //if (step > maxstep) maxstep = step;       
             return secondSum;
         } else {

@@ -286,7 +286,21 @@ implements EuclidianViewAlgo {
 
     final public GeoElement[] getGeoElements() {
         return output;
-    }       
+    }
+    
+    /** 
+     * Returns whether all output objects have
+     * the same type.     
+     */
+    final public boolean hasSingleOutputType() {
+    	int type = output[0].getGeoClassType();
+    	
+    	 for (int i = 1; i < output.length; ++i) {
+            if (output[i].getGeoClassType() != type)
+            	return false;
+         }    	
+    	 return true;
+    }
     
     final public boolean isAlgoElement() {
         return true;

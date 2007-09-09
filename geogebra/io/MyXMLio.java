@@ -449,13 +449,15 @@ public class MyXMLio {
     /**
      * Returns XML representation of all settings and construction needed for undo.
      */ 
-    public static String getUndoXML(Construction c) {      
+    public static String getUndoXML(Construction c) {    
+    	Application app = c.getApplication();
+    	    	
         StringBuffer sb = new StringBuffer();            
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");                
         
         // save euclidianView settings
-        sb.append(c.getApplication().getEuclidianView().getXML());
+        sb.append(app.getEuclidianView().getXML());
         
         // save construction
         sb.append(c.getXML());      
