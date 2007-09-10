@@ -121,8 +121,7 @@ public class Application implements	KeyEventDispatcher {
   
     // GeoGebra jar files    
     public static final String [] JAR_FILES = 
-    	{ "geogebra.jar", 
-    	  "geogebra_gui.jar", 
+    	{ "geogebra.jar",  
     	  "geogebra_properties.jar",
     	  "geogebra_cas.jar",
     	  "geogebra_export.jar"
