@@ -4,9 +4,9 @@ http://www.geogebra.org
 
 IMPORTANT NOTE concerning LICENSES
 
-GeoGebra is distributed under GNU GPL v2. However, in this CVS
-repository you will also find libraries and plug-in files that
-are subject to other licenses. 
+The software GeoGebra is licensed under GNU GPL v2. 
+However, as part of this CVS repository you will also find libraries 
+and plug-in files that are subject to other licenses. 
 You are free to copy, distribute and transmit all files in this
 repository for non-commercial purposes. For details please read
 on and see the file LICENSE.txt
@@ -16,7 +16,6 @@ Libraries and Plug-In Licenses
   Copyright 2001-2007 Markus Hohenwarter and GeoGebra Inc.
   Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
   http://creativecommons.org/licenses/by-nc-nd/3.0/
-  
 * Jasymca, http://webuser.hs-furtwangen.de/~dersch,  GNU GPL v2  
 * Yacas, http://yacas.sourceforge.net, GNU GPL v2
 * FreeHEP Java Libraries, http://java.freehep.org, GNU LGPL v2.1
