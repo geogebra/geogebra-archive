@@ -1,13 +1,13 @@
 /* 
-GeoGebra - Dynamic Geometry and Algebra
-Copyright Markus Hohenwarter, http://www.geogebra.at
+GeoGebra - Dynamic Mathematics for Schools
+Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation; either version 2 of the License, or 
-(at your option) any later version.
+under the terms of the GNU General Public License v2 as published by 
+the Free Software Foundation.
+
 */
 
 /**
@@ -130,7 +130,7 @@ public class Application implements	KeyEventDispatcher {
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
 		
 	// update URL
-	//public static final String UPDATE_URL = "http://www.geogebra.at/webstart/unpacked/";
+	//public static final String UPDATE_URL = "http://www.geogebra.org/webstart/unpacked/";
     
     // supported GUI languages (from properties files)
     public static ArrayList supportedLocales = new ArrayList();

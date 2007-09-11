@@ -1,6 +1,6 @@
 /*
- * GeoGebra - Dynamic Geometry and Algebra Copyright Markus Hohenwarter,
- * http://www.geogebra.at
+ * GeoGebra - Dynamic Mathematics for Schools Copyright Markus Hohenwarter and GeoGebra Inc., 
+ * http://www.geogebra.org
  * 
  * This file is part of GeoGebra.
  * 
