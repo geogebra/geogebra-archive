@@ -157,4 +157,4 @@ Translations
    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
    If you are interested in GeoGebra's source code or want to help with 
-   programming, please write to office@geogebra.org
+   programming, please write to Markus Hohenwarter (markus@geogebra.org)
