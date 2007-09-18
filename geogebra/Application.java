@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 6, 2007";
+    public static final String buildDate = "September 18, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -825,7 +825,7 @@ public class Application implements	KeyEventDispatcher {
 			if (getMode() != EuclidianView.MODE_ALGEBRA_INPUT)
 				oldMode = getMode();			
 	        euclidianView.setMode(EuclidianView.MODE_ALGEBRA_INPUT);	        
-	        appToolbarPanel.setMode(EuclidianView.MODE_ALGEBRA_INPUT);
+	        appToolbarPanel.setSelectedMode(EuclidianView.MODE_ALGEBRA_INPUT);
 		}
 		 
 		currentSelectionListener = sl;	      
@@ -842,10 +842,17 @@ public class Application implements	KeyEventDispatcher {
 
     
     public void setMoveMode() {
-    	setMode(EuclidianView.MODE_MOVE);        
+    	setMode(EuclidianView.MODE_MOVE);       
+    	
+    	// check if toolbar shows move mode
+    	if (showToolBar && appToolbarPanel != null) {
+    		int selMode = appToolbarPanel.getSelectedMode();
+    		if (selMode != EuclidianView.MODE_MOVE) {
+    			setMode(selMode);
+    		}
+    	}  
     }
     
-
     public ImageIcon getImageIcon(String filename) {
         return getImageIcon(filename, null);
     }
@@ -2823,8 +2830,9 @@ public class Application implements	KeyEventDispatcher {
         }                
         
         // select toolbar button
-        if (appToolbarPanel != null)
-        	appToolbarPanel.setMode(mode);           	
+        if (appToolbarPanel != null) {
+        	appToolbarPanel.setSelectedMode(mode);
+        }
     }
     
    
@@ -2897,6 +2905,7 @@ public class Application implements	KeyEventDispatcher {
      */
     final public boolean loadXML(File file, boolean isMacroFile) {
     	try {
+    	
         	FileInputStream fis = null;
     		fis = new FileInputStream(file);
         	boolean success = loadXML(fis, isMacroFile);
@@ -2929,7 +2938,11 @@ public class Application implements	KeyEventDispatcher {
     }
     
     private boolean loadXML(InputStream is, boolean isMacroFile) throws Exception {
-    	try {        	
+    	try {      
+    		if (!isMacroFile) {
+    			setMoveMode();
+    		}
+    		
     		BufferedInputStream bis = new BufferedInputStream(is);	
     		myXMLio.readZipFromInputStream(bis, isMacroFile);
             is.close();
@@ -2938,7 +2951,7 @@ public class Application implements	KeyEventDispatcher {
     		if (!isMacroFile) {
             	kernel.initUndoInfo();
             	isSaved = true;
-            	setCurrentFile(null);
+            	setCurrentFile(null);            	            	          	
             }    		
             return true;
         } catch (MyError err) {

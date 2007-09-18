@@ -42,7 +42,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	private boolean showToolBarHelp = true;	
 	private JLabel modeNameLabel;
 	private JPanel toolbarHelpPanel;
-	private int mode;
+	private int selectedMode;
 	
 	/**
      * Creates a panel for the application's toolbar. 
@@ -58,7 +58,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
      * Creates a toolbar using the current strToolBarDefinition. 
      */
     public void initToolbar() {    	    	
-    	mode = -1;
+    	selectedMode = -1;
     	
         // create toolBars                       
         removeAll();
@@ -109,36 +109,58 @@ public class MyToolbar extends JPanel implements ComponentListener{
         
         // add menus with modes to toolbar
        	addCustomModesToToolbar(tb, bg);
-        setMode(app.getMode());
+        setSelectedMode(app.getMode());
         updateModeLabel();
     }
     
     /**
-     * Sets toolbar mode. This will change the selected toolbar icon. 
+     * Sets toolbar mode. This will change the selected toolbar icon.
+     * @return true if mode could be selected in toolbar. 
      */
-    public void setMode(int mode) {   
-    	if (mode == this.mode) return;    	
+    public boolean setSelectedMode(int mode) {       
+    	boolean success = false;
     	
-    	this.mode = mode;
         if (modeToggleMenus != null) {
-        	int showMode = mode;
         	// show move mode icon for algebra input (selection) mode
         	//if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
         	//	showMode = EuclidianView.MODE_MOVE;
         	//}
-        	
+        	       
          	for (int i=0; i < modeToggleMenus.size(); i++) {
          		ModeToggleMenu mtm = (ModeToggleMenu) modeToggleMenus.get(i);
-         		if (mtm.selectMode(showMode)) break;
+         		if (mtm.selectMode(mode)) {
+         			success = true;
+         			break;
+         		}
         	}
-        }                            
+         	
+         	if (success) {
+         		this.selectedMode = mode;         		
+         	}          	
+        }              
+                
         updateModeLabel();
+        return success;
     }     
+    
+    public int getSelectedMode() {
+    	return selectedMode;
+    }
+    
+    public int getFirstMode() {
+    	if (modeToggleMenus == null || modeToggleMenus.size() == 0) 
+    		return  -1;
+    	else {
+    		ModeToggleMenu mtm = (ModeToggleMenu) modeToggleMenus.get(0);
+    		return mtm.getFirstMode();
+    	}
+    }
 
     public void updateModeLabel() {    	
     	if (modeNameLabel == null) return;
      	        	
-    	String modeText, helpText;    	
+    	String modeText, helpText;   
+    	int mode = app.getMode();
     	if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
     		// macro    
     		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);    	
@@ -150,7 +172,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
     			helpText = macro.getNeededTypesString();	    	
     	} else {
         	// standard case    		
-	    	modeText = EuclidianView.getModeText(app.getMode());
+	    	modeText = EuclidianView.getModeText(mode);
 	    	helpText = app.getMenu(modeText + ".Help");        
 	    	modeText = app.getMenu(modeText);
     	}

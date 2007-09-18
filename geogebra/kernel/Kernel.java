@@ -929,10 +929,11 @@ public class Kernel {
 	 * Returns i-th registered macro
 	 */
 	public Macro getMacro(int i) {
-		if (macroManager == null)
-			return null;
-		else			
+		try {
 			return macroManager.getMacro(i);
+		} catch (Exception e) {
+			return null;
+		}		
 	}
 	
 	/**

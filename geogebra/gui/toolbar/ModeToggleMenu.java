@@ -97,6 +97,15 @@ public class ModeToggleMenu extends JPanel {
 		return false;
 	}
 	
+	public int getFirstMode() {
+		if (menuItemList == null || menuItemList.size() == 0)
+			return -1;
+		else {
+			JMenuItem mi = (JMenuItem) menuItemList.get(0);
+			return Integer.parseInt(mi.getActionCommand());
+		}
+	}
+	
 	private void selectItem(JMenuItem mi) {		
 		// check if the menu item is already selected
 		if (tbutton.isSelected() && tbutton.getActionCommand() == mi.getActionCommand()) {			

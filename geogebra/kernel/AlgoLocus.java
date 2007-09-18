@@ -481,7 +481,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	pointCount++;
     		
     	// TODO: remove
-    	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
@@ -528,8 +528,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	maxYdist = MAX_Y_PIXEL_DIST / kernel.getYscale(); // heightRW / 100;   
     	
     	// TODO: remove
-    	System.out.println("maxXdist: " + maxXdist);
-    	System.out.println("maxYdist: " + maxYdist);
+    	//System.out.println("maxXdist: " + maxXdist);
+    	//System.out.println("maxYdist: " + maxYdist);
     	
     	// we take a bit more than the screen
     	// itself so that we don't loose locus
@@ -542,10 +542,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	farYmax = ymax + heightRW / 4;
     	
     	// TODO: remove
-    	System.out.println("farXmin: " + farXmin);
-    	System.out.println("farXmax: " + farXmax);
-    	System.out.println("farYmin: " + farYmin);
-    	System.out.println("farYmax: " + farYmax);
+//    	System.out.println("farXmin: " + farXmin);
+//    	System.out.println("farXmax: " + farXmax);
+//    	System.out.println("farYmin: " + farYmin);
+//    	System.out.println("farYmax: " + farYmax);
     	    			
     	// near to screen rectangle
     	nearToScreenRect.setFrame(farXmin, farYmin, 
