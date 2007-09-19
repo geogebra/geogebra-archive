@@ -605,12 +605,14 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 		
 		public PathMoverLine() {
 			super(GeoLine.this);
+			moverStartPoint = new GeoPoint(cons);
 		}
 		
 		public void init(GeoPoint p) {						
 			//	we need a point on the line:		
 			// p is a point on the line ;-)
-			moverStartPoint = new GeoPoint(p);
+			moverStartPoint.set(p);
+			moverStartPoint.setConstruction(p.cons);
 			p.pathParameter.t = 0;												
 			start_param = 0; 								
 			

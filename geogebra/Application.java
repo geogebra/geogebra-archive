@@ -103,6 +103,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -112,9 +113,11 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
+import jspreadsheet.JSpreadsheet;
+
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 18, 2007";
+    public static final String buildDate = "September 19, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -259,6 +262,8 @@ public class Application implements	KeyEventDispatcher {
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
+    private boolean showSpreadsheet = false;
+    private boolean showCAS = false;
     private boolean printScaleString = false;
     private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;    
                 
@@ -372,6 +377,26 @@ public class Application implements	KeyEventDispatcher {
         // for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);	
+		
+		
+		// TODO: remove spreadsheet and CAS testing
+		if (showSpreadsheet) {
+			try {
+				JComponent sp = new geogebra.spreadsheet.SpreadsheetView(this, 10, 10);
+				
+				JFrame spFrame = new JFrame();
+		        Container contentPane = spFrame.getContentPane();
+		        contentPane.setLayout(new BorderLayout());
+		        contentPane.add(sp, BorderLayout.CENTER);
+		        spFrame.setResizable(true);
+		        spFrame.setTitle("GeoGebra Spreadsheet");
+		        spFrame.pack();
+		        spFrame.setVisible(true);
+		        
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
     }      
     
     public void initInBackground() {
@@ -673,6 +698,15 @@ public class Application implements	KeyEventDispatcher {
     					showGrid = !optionValue.equals("false");    					
     				}
     				
+    				// TODO: remove spreadsheet parameter, introduced only for testing
+    				else if (optionName.equals("showSpreadsheet")) {    					
+    					showSpreadsheet = !optionValue.equals("false");    					
+    				}
+    				
+    				// TODO: remove spreadsheet parameter, introduced only for testing
+    				else if (optionName.equals("showCAS")) {    					
+    					showCAS = !optionValue.equals("false");    					
+    				}
     			}
     		}
     	}

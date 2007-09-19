@@ -277,18 +277,16 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// to the current values in the main construction
     	int max_runs = GeoLocus.MAX_PATH_RUNS;
     	if (continuous) {
-    		resetMacroConstruction();   
+    		resetMacroConstruction();       		        	
     	} else {
     		Pcopy.set(P);   
-    		max_runs = 1; // we only go through the path once for non-continous constructions
+    		max_runs = 1; // we only go through the path once for non-continous constructions    		        	
     	}
-    	// update all algorithms of the macro construction	        
-      	macroCons.updateConstruction(); 
-
-    	//  init path mover to the current position of Pcopy
-    	pathMover.init(Pcopy); 
-    	Pcopy.updateCascade();   	 
     	
+    	pathMover.init(Pcopy);  // init path mover to the current position of Pcopy    	        
+      	macroCons.updateConstruction(); // update all algorithms of the macro construction	         	
+    	Pcopy.updateCascade();   
+    	        	
 //    	System.out.println("*** compute ***");
 //    	System.out.println("init P: " + Pcopy);
 //    	System.out.println("init Q: " + Qcopy); 
@@ -330,6 +328,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// this may require several runs of Pcopy along the whole path
     	int runs = 1;   
     	int MAX_LOOPS = 2*PathMover.MAX_POINTS;
+    	int whileLoops = 0;
     	boolean maxTimeExceeded = false;
     	
     	// thread to perform update of P
@@ -340,7 +339,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	
     	do {    		    		
     		boolean finishedRun = false;
-    		int whileLoops = 0;
+    		
     		
         //	System.out.println("RUN " + runs);
     		
@@ -390,14 +389,15 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       			if (lineTo) { // no parameter jump	   
 	       				boolean stepChanged = false;
 	       		
-	       				while (Qcopy.isDefined() && !distanceOK(Qcopy)) {	
-	       	//	        	System.out.println("        lineto while ");
-	       								
-	       					//go back and try smaller step	       					
-	       					if (!pathMover.smallerStep()) break;
+	       				while (Qcopy.isDefined() && !distanceOK(Qcopy)) {			
+	       					//go back and try smaller step	  
+	       		        	boolean smallerStep = pathMover.smallerStep();
+	       					if (!smallerStep) {
+	       						break;
+	       					}
 	       					stepChanged = true;	       					
 	       					pathMover.stepBack(); 
-	       					pathMover.getNext(Pcopy);
+	       					pathMover.getNext(Pcopy);	       						       					
 	       					
 	       				// TODO: check
 	       					// safeUpdateCascade();
@@ -410,7 +410,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       		       			System.err.println("AlgoLocus: max time exceeded  " + updateTime);	       		       				       		       			 
 	       		       			maxTimeExceeded = true;
 	       		       			return;
-	       		       		}	       			
+	       		       		}	       
+	       					
+	       				
 	       					//if (!lineTo) break;	       		
 	       				}	       					       					       			
 	       				
@@ -445,6 +447,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        // calculating the steps took too long, so we stopped somewhere
 	        // change orientation of pathMove to get other side of start position too
 	        if (maxTimeExceeded) {
+	        	// TODO: remove
+	        	System.out.println("AlgoLocus: max time exceeded");
+	        	
 	        	return;	        
 	        } 
 	        else {	        
@@ -469,45 +474,53 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        }
 	        
 	        pathMover.resetStartParameter();	       
-	        runs++;	        	        	        
+	        runs++;	        	 
+	        
+	    
+	        
         } while (runs < max_runs);
-            	
-		//System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
+            		
+//    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
+//    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
     }
     
   
             
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
-    		
-    	// TODO: remove
+    	
     	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
     	lastY = y;
-    	lastFarAway = isFarAway(lastX, lastY);    	
+    	lastFarAway = isFarAway(lastX, lastY);        	    	
     }
     
     private boolean isFarAway(double x, double y) {
     	boolean farAway =  (x > farXmax || x < farXmin ||
-    						y > farYmax || y < farYmin);        	    	
+    						y > farYmax || y < farYmin);    
     	return farAway;
 	}
     
-    private boolean distanceOK(GeoPoint Q) {    	
-    	if (lastFarAway && isFarAway(Q.inhomX, Q.inhomY))
+    private boolean distanceOK(GeoPoint Q) {   
+    	boolean distanceOK;
+    	
+    	if (lastFarAway && isFarAway(Q.inhomX, Q.inhomY)) {
 			// if last point Q' was far away and Q is far away
     		// let's check whether the line Q'Q intersects the
     		// near to screen rectangle    	        		    	
-    		return !nearToScreenRect.intersects(lastX, lastY, Q.inhomX, Q.inhomY);
-		else
-			return distanceSmall(Q);            
+    		distanceOK = !nearToScreenRect.intersects(lastX, lastY, Q.inhomX, Q.inhomY);
+    	} else {
+    		distanceOK = distanceSmall(Q);             		    		
+    	}
+
+    	return distanceOK;
     }    
     
     private boolean distanceSmall(GeoPoint Q) {
     	boolean distSmall = Math.abs(Q.inhomX - lastX) < maxXdist &&
-							Math.abs(Q.inhomY - lastY) < maxYdist;    	
+							Math.abs(Q.inhomY - lastY) < maxYdist;   
     	return distSmall;
     }
     
@@ -526,11 +539,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	double heightRW = ymax - ymin;    	
     	maxXdist = MAX_X_PIXEL_DIST / kernel.getXscale(); // widthRW / 100;
     	maxYdist = MAX_Y_PIXEL_DIST / kernel.getYscale(); // heightRW / 100;   
-    	
-    	// TODO: remove
-    	//System.out.println("maxXdist: " + maxXdist);
-    	//System.out.println("maxYdist: " + maxYdist);
-    	
+
     	// we take a bit more than the screen
     	// itself so that we don't loose locus
     	// lines too often 
@@ -540,13 +549,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	farXmax = xmax + widthRW / 4;
     	farYmin = ymin - heightRW / 4;
     	farYmax = ymax + heightRW / 4;
-    	
-    	// TODO: remove
-//    	System.out.println("farXmin: " + farXmin);
-//    	System.out.println("farXmax: " + farXmax);
-//    	System.out.println("farYmin: " + farYmin);
-//    	System.out.println("farYmax: " + farYmax);
-    	    			
+ 			
     	// near to screen rectangle
     	nearToScreenRect.setFrame(farXmin, farYmin, 
     			  farXmax - farXmin, 

@@ -30,7 +30,7 @@ public interface PathMover {
 	 * and sets the orientation to positive.
 	 * Note: the path parameter of p may be changed here!
 	 */
-	public void init(GeoPoint p);		
+	public void init(GeoPoint p);	
 	
 	/**
 	 * Sets point p to the next position on the path

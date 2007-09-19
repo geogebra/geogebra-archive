@@ -469,7 +469,7 @@ final public class EuclidianController implements MouseListener,
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:
-			hits = view.getHitsNoSinglePolygon(view.getHits(mouseLoc, true));
+			hits = view.getHitsForNewPointMode(view.getHits(mouseLoc, true));
 			createNewPoint(hits, true, true, true);
 			break;
 			
@@ -1462,7 +1462,7 @@ final public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_POINT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				point(view.getHitsNoSinglePolygon(hits));
+				point(view.getHitsForNewPointMode(hits));
 			}
 			break;
 
@@ -2207,7 +2207,7 @@ final public class EuclidianController implements MouseListener,
 	// get two objects (lines or conics) and create intersection point
 	final private boolean intersect(ArrayList hits) {
 		if (hits == null)
-			return false;				
+			return false;		
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created

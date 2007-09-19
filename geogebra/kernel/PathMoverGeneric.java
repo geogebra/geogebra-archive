@@ -94,7 +94,7 @@ public class PathMoverGeneric implements PathMover {
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
 		resetStartParameter();
-	}
+	}		
 	
 	public void resetStartParameter() {		
 		curr_param = start_param;	
@@ -139,8 +139,7 @@ public class PathMoverGeneric implements PathMover {
 				//System.out.println("set MIN Border: " + curr_param);
 			}
 		}					
-			
-		//System.out.println("curr_param: " + curr_param);
+
 		calcPoint(p);
 					
 		return lineTo;
@@ -209,7 +208,7 @@ public class PathMoverGeneric implements PathMover {
 			return false;
 		} 
 		else if (abs_new_step < MIN_STEP_WIDTH) {
-			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);		
+			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);			
 			return false;
 		} 
 		else {
@@ -219,7 +218,7 @@ public class PathMoverGeneric implements PathMover {
 	}
 
 	final public void stepBack() {
-		curr_param = last_param;			
+		curr_param = last_param;		
 	}
 	
 	/**

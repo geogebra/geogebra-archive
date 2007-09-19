@@ -70,6 +70,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 import javax.swing.JPanel;
@@ -1938,12 +1939,31 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		return getHits(p, false);
 	}
 	
-	final public ArrayList getHitsNoSinglePolygon(ArrayList hits) {		
-		if (hits != null && hits.size() == 1) {
-			GeoElement geo = (GeoElement) hits.get(0);
-			if (geo.isGeoPolygon())
-				hits.clear();
-		}
+	/**
+	 * Returns hits that are suitable for new point mode.
+	 * A polygon is only kept if one of its sides is also in
+	 * hits.
+	 */
+	final public ArrayList getHitsForNewPointMode(ArrayList hits) {	
+		if (hits == null) return null;
+		
+		Iterator it = hits.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			if (geo.isGeoPolygon()) {
+				boolean sidePresent = false;
+				GeoSegment [] sides = ((GeoPolygon) geo).getSegments();
+				for (int k=0; k < sides.length; k++) {
+					if (hits.contains(sides[k])) {
+						sidePresent = true;
+						break;
+					}
+				}
+				
+				if (!sidePresent)
+					it.remove();					
+			}				
+		}				
 		
 		return hits;
 	}
