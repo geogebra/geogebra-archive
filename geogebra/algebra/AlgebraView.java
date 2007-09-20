@@ -516,7 +516,7 @@ public class AlgebraView extends JTree implements View {
 	}
 	
 	public void reset() {
-		cancelEditing();
+	  	cancelEditing();
 	  repaint();
 	}
 

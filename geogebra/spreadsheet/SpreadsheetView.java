@@ -4,14 +4,16 @@ import geogebra.Application;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -27,7 +29,14 @@ public class SpreadsheetView extends JComponent implements View
     
     private JTable table;
     private Kernel kernel;
-    private SpreadsheetTableModel tableModel;
+    private DefaultTableModel tableModel;
+    
+    //Nodes of the Spreadsheet  
+    String Label, Value;
+ // store all pairs of GeoElement -> node in the Spreadsheet
+	private FastHashMapKeyless nodeTable = new FastHashMapKeyless(500);
+      
+    private GeoElement selectedGeoElement;
     
     public SpreadsheetView(Application app,int rows, int columns)
     {
@@ -49,16 +58,22 @@ public class SpreadsheetView extends JComponent implements View
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
        add(scrollPane, BorderLayout.CENTER);
 
-       JTable rowHeader = new JTable(new RowModel(table.getModel()));
+//       JTable rowHeader = new JTable(new RowModel(table.getModel()));
 
-       rowHeader.setIntercellSpacing(new Dimension(0, 0));
+//       rowHeader.setIntercellSpacing(new Dimension(0, 0));
        table.setRequestFocusEnabled(true);
        table.requestFocus();
        
+       //Build the structure for the spreadsheet data
+  
+       attachView();	
        
      }
     
-
+    public void attachView() {
+		kernel.notifyAddAll(this);
+		kernel.attach(this);		
+	}
     
         /** Can be used by subclasses to customize the underlying JTable
      * @return The JTable to be used by the spreadsheet
@@ -138,8 +153,16 @@ public class SpreadsheetView extends JComponent implements View
      */
     public void add(GeoElement geo)
     {
-        // TODO Auto-generated method stub
-        
+    	// TODO: remove
+    	System.out.println("add: " + geo);
+    	
+    	Point location = geo.getSpreadsheetCoords();
+    	
+    	if (location != null) 
+    	{                	
+    		Value = geo.toValueString();
+        	tableModel.setValueAt(Value, location.y, location.x);        	       
+        }        
     }
     /* (non-Javadoc)
      * @see geogebra.View#clearView()
@@ -154,23 +177,43 @@ public class SpreadsheetView extends JComponent implements View
      */
     public void remove(GeoElement geo)
     {
-        // TODO Auto-generated method stub
-        
+    	// TODO: remove
+    	System.out.println("remove: " + geo);
+    	
+    	// remove old value from table
+    	Point location = geo.getSpreadsheetCoords();    	
+    	if (location != null) 
+    	{                	
+    		Value = geo.toValueString();
+        	tableModel.setValueAt(null, location.y, location.x);        	       
+        }    
     }
-    /* (non-Javadoc)
+    
+ 
+	/* (non-Javadoc)
      * @see geogebra.View#rename(geogebra.kernel.GeoElement)
      */
     public void rename(GeoElement geo)
     {
-        // TODO Auto-generated method stub
-        
+    	// TODO: remove
+    	System.out.println("rename: " + geo);
+    	
+    	// remove old value from table
+    	Point location = geo.getOldSpreadsheetCoords();    	
+    	if (location != null) 
+    	{                	
+        	tableModel.setValueAt(null, location.y, location.x);        	       
+        }    
+    	
+    	// add new one
+    	add(geo);
     }
     /* (non-Javadoc)
      * @see geogebra.View#repaintView()
      */
     public void repaintView()
     {
-        // TODO Auto-generated method stub
+    	repaint();
         
     }
     /* (non-Javadoc)
@@ -184,9 +227,18 @@ public class SpreadsheetView extends JComponent implements View
     /* (non-Javadoc)
      * @see geogebra.View#update(geogebra.kernel.GeoElement)
      */
-    public void update(GeoElement geo)
+    final public void update(GeoElement geo)
     {
-        // TODO Auto-generated method stub
+    	// TODO: remove
+    	System.out.println("update: " + geo);
+    	
+    	Point location = geo.getSpreadsheetCoords();
+    	
+    	if (location != null) 
+    	{                	
+    		Value = geo.toValueString();
+        	tableModel.setValueAt(Value, location.y, location.x);        	       
+        }  
         
     }
     /* (non-Javadoc)
@@ -194,7 +246,10 @@ public class SpreadsheetView extends JComponent implements View
      */
     public void updateAuxiliaryObject(GeoElement geo)
     {
-        // TODO Auto-generated method stub
+    	// TODO: remove
+    	System.out.println("update: " + geo);
+    	
+    	update(geo);
         
     }
    

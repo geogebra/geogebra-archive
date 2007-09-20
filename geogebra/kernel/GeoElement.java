@@ -232,7 +232,7 @@ public abstract class GeoElement
 	// on change: see setVisualValues()
 
 	// spreadsheet specific properties
-	private Point spreadsheetCoords; 
+	private Point spreadsheetCoords, oldSpreadsheetCoords;	 
 	
 	// condition to show object
 	private GeoBoolean condShowObject;
@@ -912,9 +912,39 @@ public abstract class GeoElement
 		
 		cons.putLabel(this); // add new table entry			
 		algebraStringsNeedUpdate();
+		updateSpreadsheetCoordinates();
 			
 		notifyAdd();		
 	}	
+	
+	// TODO: improve updateSpreadSheet Coordinates
+	private void updateSpreadsheetCoordinates() {			
+		if(labelSet && label.length() > 1 
+			&& Character.isLetter(label.charAt(0))
+			&& Character.isDigit(label.charAt(1))) 
+		{
+			
+			// init old and current spreadsheet coords
+			if (spreadsheetCoords == null) {	
+				oldSpreadsheetCoords = null;		
+				spreadsheetCoords = new Point();
+			} else {
+				if (oldSpreadsheetCoords == null) 
+					oldSpreadsheetCoords = new Point();
+				oldSpreadsheetCoords.setLocation(spreadsheetCoords);
+			}
+			
+			int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
+			int row = Integer.parseInt(label.charAt(1) + "") - 1;
+			spreadsheetCoords.setLocation(column, row);    		
+    	} else {
+    		oldSpreadsheetCoords = spreadsheetCoords;
+    		spreadsheetCoords = null;
+    	}
+		
+		// TODO: remove
+		System.out.println("update spread sheet coords: " + spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
+	}
 
 	private void doRenameLabel(String newLabel) {
 		if (newLabel == null || newLabel.equals(label)) 
@@ -939,10 +969,11 @@ public abstract class GeoElement
 		cons.putLabel(this); // add new table entry    
 		
 		algebraStringsNeedUpdate();
+		updateSpreadsheetCoordinates();
 				
 		kernel.notifyRename(this); // tell views   		
-		updateCascade();		
-	}
+		updateCascade();
+		}
 	
 	/**
 	 * Returns the label of this object before rename()
@@ -2455,6 +2486,10 @@ public abstract class GeoElement
 	 */
 	public void setSpreadsheetCoords(Point spreadsheetCoords) {
 		this.spreadsheetCoords = spreadsheetCoords;
+	}
+
+	public Point getOldSpreadsheetCoords() {
+		return oldSpreadsheetCoords;
 	}
 
 }
