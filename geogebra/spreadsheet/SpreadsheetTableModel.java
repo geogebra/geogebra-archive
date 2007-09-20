@@ -2,10 +2,8 @@
  * 
  */
 package geogebra.spreadsheet;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
-
-import jspreadsheet.Cell;
+import javax.swing.table.DefaultTableModel;
 /**
  * @author brisk1
  *

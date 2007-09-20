@@ -1,22 +1,18 @@
 package geogebra.spreadsheet;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
-
-import jspreadsheet.JSpreadsheet;
-
 import geogebra.Application;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 
 /**
  * A class which will give the view of the Spreadsheet
@@ -58,7 +54,8 @@ public class SpreadsheetView extends JComponent implements View
        rowHeader.setIntercellSpacing(new Dimension(0, 0));
        table.setRequestFocusEnabled(true);
        table.requestFocus();
-    
+       
+       
      }
     
 
@@ -200,14 +197,5 @@ public class SpreadsheetView extends JComponent implements View
         // TODO Auto-generated method stub
         
     }
-    public static void main(String args[])
-    {        
-        JFrame frame = new JFrame();
-        Container contentPane = frame.getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(new JSpreadsheet(10,10), BorderLayout.CENTER);
-        frame.pack();
-        frame.setVisible(true);
-        
-    }
+   
 }

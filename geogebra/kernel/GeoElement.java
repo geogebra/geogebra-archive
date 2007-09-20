@@ -24,6 +24,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -230,6 +231,9 @@ public abstract class GeoElement
 	private boolean auxiliaryObject = false;	
 	// on change: see setVisualValues()
 
+	// spreadsheet specific properties
+	private Point spreadsheetCoords; 
+	
 	// condition to show object
 	private GeoBoolean condShowObject;
 	
@@ -2430,6 +2434,27 @@ public abstract class GeoElement
 			updateCascade();
 		
 		return movedGeo;
+	}
+
+	/**
+	 * Returns the position of this GeoElement in
+	 * GeoGebra's spreadsheet view. 
+	 * The x-coordinate of the returned point specifies its
+	 * column and the y-coordinate specifies its row location.	
+	 * Note that this method
+	 * may return null if no position was specified so far.	 
+	 */
+	public Point getSpreadsheetCoords() {
+		return spreadsheetCoords;
+	}
+
+	/**
+	 * Sets the position of this GeoElement in
+	 * GeoGebra's spreadsheet. The x-coordinate specifies its
+	 * column and the y-coordinate specifies its row location.	 
+	 */
+	public void setSpreadsheetCoords(Point spreadsheetCoords) {
+		this.spreadsheetCoords = spreadsheetCoords;
 	}
 
 }
