@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="freehep-xml-2.0.1.jar"/>
 	<classpathentry kind="lib" path="freehep-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="freehep-util-2.0.1.jar"/>
-        <classpathentry kind="lib" path="geogebra_properties.zip"/>
 	<classpathentry kind="lib" path="geogebra_latex.jar"/>
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>

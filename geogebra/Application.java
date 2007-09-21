@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 19, 2007";
+    public static final String buildDate = "September 20, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -363,8 +363,7 @@ public class Application implements	KeyEventDispatcher {
         		if (!fileLoaded)
         			GeoGebraPreferences.loadXMLPreferences(this);
         	}        		        		    	
-        	
-        	
+        	        	
         // init undo
        	setUndoActive(undoActive);  	
         INITING = false;	                     
@@ -377,24 +376,27 @@ public class Application implements	KeyEventDispatcher {
 		
 		
 		// TODO: remove spreadsheet and CAS testing
-		if (showSpreadsheet) {
-			try {
-				JComponent sp = new geogebra.spreadsheet.SpreadsheetView(this, 10, 10);
-				
-				JFrame spFrame = new JFrame();
-		        Container contentPane = spFrame.getContentPane();
-		        contentPane.setLayout(new BorderLayout());
-		        contentPane.add(sp, BorderLayout.CENTER);
-		        spFrame.setResizable(true);
-		        spFrame.setTitle("GeoGebra Spreadsheet");
-		        spFrame.pack();
-		        spFrame.setVisible(true);
-		        
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (showSpreadsheet) {			
+			openSpreadsheet(this);
 		}
     }      
+    
+    public static void openSpreadsheet(Application app) {
+    	try {
+	    	geogebra.spreadsheet.SpreadsheetView sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10);
+			
+			JFrame spFrame = new JFrame();
+	        Container contentPane = spFrame.getContentPane();
+	        contentPane.setLayout(new BorderLayout());
+	        contentPane.add(sp, BorderLayout.CENTER);
+	        spFrame.setResizable(true);
+	        spFrame.setTitle("GeoGebra Spreadsheet");
+	        spFrame.pack();
+	        spFrame.setVisible(true);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
     
     public void initInBackground() {
     	// init file chooser and properties dialog

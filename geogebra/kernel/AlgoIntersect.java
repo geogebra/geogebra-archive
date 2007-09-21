@@ -82,7 +82,7 @@ public abstract class AlgoIntersect extends AlgoElement {
      * loading constructions from a file to make sure the intersection points
      * remain at their saved positions.
      */
-    void setIntersectionPoint(int index, GeoPoint p) {
+    final void setIntersectionPoint(int index, GeoPoint p) {
     	// don't init intersection point if p is undefined
     	if (!p.isDefined()) return;
     	
@@ -106,10 +106,20 @@ public abstract class AlgoIntersect extends AlgoElement {
 				points[i].setUndefined();
 				if (defpoints != null) defpoints[i].setUndefined();
 			}
-		}		
+		}
+		
+//		System.out.println("SET INTERSECTION POINT");	
+//		for (int i=0; i < points.length; i++) {
+//			System.out.println("    point " + i + ": " + points[i] + ", defPoint " + defpoints[i]);										
+//		}						
     }
     
-    
+    /**
+     * Returns true if setIntersectionPoint was called for index-th point.
+     */
+    boolean didSetIntersectionPoint(int index) {
+    	return didSetIntersectionPoint != null && didSetIntersectionPoint[index];
+    }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();

@@ -51,6 +51,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     private boolean isLimitedPathSituation;
     private boolean isPermutationNeeded = true;
     private boolean possibleSpecialCase = false;
+    private int specialCasePointOnCircleIndex = 0; // index of point on both circles
       
     private PointPairList pointList = new PointPairList();
     
@@ -175,19 +176,38 @@ public class AlgoIntersectConics extends AlgoIntersect {
         intersectConicsWithEqualSubmatrixS(A, B, Q);  
                           
 	    // pointOnConic should be first intersection point
-        P[0].setCoords(pointOnConic);
+        // Note: if the first intersection point was already set when a file
+        //       was loaded, then we need to make sure that we don't lose this information
+        int firstIndex = specialCasePointOnCircleIndex;
+        int secondIndex = (firstIndex + 1) % 2;
+                
+        if (firstIntersection && didSetIntersectionPoint(firstIndex)) {           
+        	if (!P[firstIndex].equals(pointOnConic)) {
+            	// pointOnConic is NOT equal to the loaded intersection point:
+        		// we need to swap the indices
+        		int temp = firstIndex;
+        		firstIndex = secondIndex;
+        		secondIndex = temp;
+        		
+        		specialCasePointOnCircleIndex = firstIndex;        		     
+        	}  
+        	firstIntersection = false;
+        } 
+        
+        // pointOnConic should be first intersection point
+        P[firstIndex].setCoords(pointOnConic);        
         
         // the other intersection point should be the second one
         boolean didSetP1 = false;
         for (int i=0; i < 2; i++) {  
-	   		if (!Q[i].equals(P[0])) {
-	   			P[1].setCoords(Q[i]);
+	   		if (!Q[i].equals(P[firstIndex])) {
+	   			P[secondIndex].setCoords(Q[i]);
 	   			didSetP1 = true;
 	   			break;
 	   		}
 	    }   
-        if (!didSetP1) 
-        	P[1].setCoords(pointOnConic); 
+        if (!didSetP1) // this happens when both intersection points are equal
+        	P[secondIndex].setCoords(pointOnConic); 
 	   	 
 	   	if (isLimitedPathSituation) {
 	   		// make sure the points are on a limited path
@@ -224,7 +244,12 @@ public class AlgoIntersectConics extends AlgoIntersect {
     /**
      * Use the current permutation to set output points P from computed points Q.        
      */  
-     private void computeNonContinous() {    	     	 
+     private void computeNonContinous() {    
+     	// TODO: remove        	
+     	System.out.println("compute NONcontinous");
+
+    	 
+    	 
     	 // calc new intersection points Q
     	 intersectConics(A, B, Q);            
     	 
@@ -263,6 +288,10 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     // calc intersections of conics A and B
     final void computeContinous() {     
+    	// TODO: remove        	
+    	System.out.println("compute continous");
+    	
+    	
         /* D ... old defined points
          * P ... current points
          * Q ... new points
@@ -304,6 +333,12 @@ public class AlgoIntersectConics extends AlgoIntersect {
         }
                  
         if (firstIntersection) {
+        	// TODO: remove        	
+        	System.out.println("FIRST INTERSECTION");
+        	for (i=0; i < P.length; i++) {
+        		System.out.println("   before handling: " + i + ", " + P[i]);
+        	}
+        	
         // init points in order P[0], P[1] , ...
             int count=0;
             for (i=0; i < Q.length; i++) {
@@ -314,7 +349,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
                     firstIntersection = false;
                     count++;
                 }
-            }            
+            }   
+            
+            
+         // TODO: remove        	
+        	for (i=0; i < P.length; i++) {
+        		System.out.println("   after handling: " + i + ", " + P[i]);
+        	}
+            
             return;
         }
         

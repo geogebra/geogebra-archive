@@ -942,9 +942,8 @@ public abstract class GeoElement
     		spreadsheetCoords = null;
     	}
 		
-		// TODO: remove
-		System.out.println("update spread sheet coords: " + spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
-	}
+		//System.out.println("update spread sheet coords: " + spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
+	}				
 
 	private void doRenameLabel(String newLabel) {
 		if (newLabel == null || newLabel.equals(label)) 
