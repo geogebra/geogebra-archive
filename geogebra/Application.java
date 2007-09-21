@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 20, 2007";
+    public static final String buildDate = "September 21, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -876,12 +876,14 @@ public class Application implements	KeyEventDispatcher {
     
     public void setMoveMode() {
     	setMode(EuclidianView.MODE_MOVE);       
-    	
+    	    	
     	// check if toolbar shows move mode
-    	if (showToolBar && appToolbarPanel != null) {
-    		int selMode = appToolbarPanel.getSelectedMode();
-    		if (selMode != EuclidianView.MODE_MOVE) {
-    			setMode(selMode);
+    	// if not we set the first mode of toolbar
+    	if (showToolBar && appToolbarPanel != null) {    		
+    		if (appToolbarPanel.getSelectedMode() != EuclidianView.MODE_MOVE) {
+    			int firstMode = appToolbarPanel.getFirstMode();
+    			if (firstMode > 0)
+    				setMode(firstMode);    		
     		}
     	}  
     }
@@ -2984,7 +2986,7 @@ public class Application implements	KeyEventDispatcher {
     		if (!isMacroFile) {
             	kernel.initUndoInfo();
             	isSaved = true;
-            	setCurrentFile(null);            	            	          	
+            	setCurrentFile(null);             
             }    		
             return true;
         } catch (MyError err) {

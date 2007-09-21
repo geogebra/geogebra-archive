@@ -245,11 +245,6 @@ public class AlgoIntersectConics extends AlgoIntersect {
      * Use the current permutation to set output points P from computed points Q.        
      */  
      private void computeNonContinous() {    
-     	// TODO: remove        	
-     	System.out.println("compute NONcontinous");
-
-    	 
-    	 
     	 // calc new intersection points Q
     	 intersectConics(A, B, Q);            
     	 
@@ -288,10 +283,6 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     // calc intersections of conics A and B
     final void computeContinous() {     
-    	// TODO: remove        	
-    	System.out.println("compute continous");
-    	
-    	
         /* D ... old defined points
          * P ... current points
          * Q ... new points
@@ -333,12 +324,6 @@ public class AlgoIntersectConics extends AlgoIntersect {
         }
                  
         if (firstIntersection) {
-        	// TODO: remove        	
-        	System.out.println("FIRST INTERSECTION");
-        	for (i=0; i < P.length; i++) {
-        		System.out.println("   before handling: " + i + ", " + P[i]);
-        	}
-        	
         // init points in order P[0], P[1] , ...
             int count=0;
             for (i=0; i < Q.length; i++) {
@@ -350,13 +335,6 @@ public class AlgoIntersectConics extends AlgoIntersect {
                     count++;
                 }
             }   
-            
-            
-         // TODO: remove        	
-        	for (i=0; i < P.length; i++) {
-        		System.out.println("   after handling: " + i + ", " + P[i]);
-        	}
-            
             return;
         }
         

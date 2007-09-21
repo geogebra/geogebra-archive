@@ -67,6 +67,7 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -3430,7 +3431,7 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;
 		private DefaultTreeModel treeModel;
 		private DefaultMutableTreeNode root;
-		private FastHashMapKeyless typeNodesMap;		
+		private HashMap typeNodesMap;		
 
 		/*
 		 * has to be registered as view for GeoElement 
@@ -3443,7 +3444,7 @@ public class PropertiesDialogGeoElement
 			treeModel = new DefaultTreeModel(root);				
 			setModel(treeModel);
 			setLargeModel(true);
-			typeNodesMap = new FastHashMapKeyless();
+			typeNodesMap = new HashMap();
 			
 			getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
 			GeoTreeCellRenderer renderer = new GeoTreeCellRenderer(app);			
@@ -3592,7 +3593,7 @@ public class PropertiesDialogGeoElement
 			boolean initing = typeNode == null;
 			if (initing) {
 				String transTypeString = geo.translatedTypeString();
-				typeNode = new DefaultMutableTreeNode(transTypeString);			
+				typeNode = new DefaultMutableTreeNode(transTypeString);									
 				typeNodesMap.put(typeString, typeNode);
 				
 				// find insert pos

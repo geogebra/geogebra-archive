@@ -1211,13 +1211,10 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 		// FOREGROUND
 		if (antiAliasing)
-			setAntialiasing(g2);
-
-		// paint HotEquations
-		paintChildren(g2);
-
-		// draw all Drawables
-		drawGeometricObjects(g2);
+			setAntialiasing(g2);		
+		
+		// draw equations, checkboxes and all geo objects
+		drawObjects(g2);			
 
 		if (selectionRectangle != null) {
 			drawZoomRectangle(g2);
@@ -1389,12 +1386,8 @@ public final class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-
-		// draw HotEquations
-		paintChildren(g2d);
-
-		drawGeometricObjects(g2d);
-	}
+		drawObjects(g2d);
+	}		
 
 	/**
 	 * Tells if there are any traces in the background image.
@@ -1841,10 +1834,22 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		g2.setFont(fontLine);
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
-
-	final private void drawGeometricObjects(Graphics2D g2) {
+	
+	private void drawObjects(Graphics2D g2) {		
 		// draw images
 		drawImageList.drawAll(g2);
+		
+		// draw HotEquations
+		paintChildren(g2);
+		
+		// draw Geometric objects
+		drawGeometricObjects(g2);
+	}
+
+	/**
+	 * Draws all GeoElements except images.
+	 */
+	private void drawGeometricObjects(Graphics2D g2) {	
 
 		if (previewDrawable != null) {
 			previewDrawable.drawPreview(g2);

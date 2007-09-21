@@ -72,7 +72,7 @@ public class GeoGebraApplet extends JApplet {
 	boolean showMenuBar = false;
 	boolean showResetIcon = false;
 	private boolean firstAppOpen = true;
-	Color bgColor;
+	Color bgColor, borderColor;
 	private String fileStr, customToolBar;	
 	private boolean showFrame = true;
 	private GeoGebra wnd;
@@ -120,7 +120,7 @@ public class GeoGebraApplet extends JApplet {
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
 		showFrame = !"false".equals(getParameter("framePossible"));
-		
+			
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(getParameter("enableRightClick"));
 		
@@ -142,6 +142,14 @@ public class GeoGebraApplet extends JApplet {
 			bgColor = Color.decode(getParameter("bgcolor"));
 		} catch (Exception e) {
 			bgColor = Color.white;
+		}
+		
+		// borderColor = "#CCFFFF" specifies the border color to be used for
+		// the applet panel
+		try {
+			borderColor = Color.decode(getParameter("borderColor"));
+		} catch (Exception e) {
+			borderColor = Color.gray;
 		}
 
 		//	build application and open file		
@@ -184,17 +192,18 @@ public class GeoGebraApplet extends JApplet {
 		// show interactive drawing pad
 		else {
 			JPanel panel = createGeoGebraAppletPanel();
-			getContentPane().add(panel);
-			panel.setBorder(BorderFactory.createLineBorder(Color.gray));
+			getContentPane().add(panel);			
+			
+			// border around applet panel
+			panel.setBorder(BorderFactory.createLineBorder(borderColor));			
 
 			if (showFrame) {
 				//	open frame on double click
 				dcListener = new DoubleClickListener();				
 				ev.addMouseListener(dcListener);
-			}
-			
-			//app.setMoveMode();
+			}						
 		}
+		app.setMoveMode();
 	}
 	
 	protected JPanel createGeoGebraAppletPanel() {

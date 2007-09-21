@@ -3067,7 +3067,7 @@ final public class EuclidianController implements MouseListener,
 	}
 	
 	private boolean showCheckBox(ArrayList hits) {
-		if (hits != null || selectionPreview)
+		if (selectionPreview)
 			return false;
 		
 		app.showBooleanCheckboxCreationDialog(mouseLoc, null);
