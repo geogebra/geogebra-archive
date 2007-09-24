@@ -83,12 +83,12 @@ public abstract class CommandProcessor  {
            return result;
        }    
 
-        final GeoElement[] resArg(ExpressionNode arg) throws MyError {
+       final GeoElement[] resArg(ExpressionNode arg) throws MyError {
            GeoElement[] geos = algProcessor.processExpressionNode(arg);
 
            if (geos != null)
 			return geos;
-		else {
+	   else {
                String[] str = { "IllegalArgument", arg.toString()};
                throw new MyError(app, str);
            }
@@ -102,14 +102,16 @@ public abstract class CommandProcessor  {
     	final GeoElement [] resArgsLocalNumVar(Command c, int varPos) {
     		// check if there is a local variable in arguments    	
     		String localVarName = c.getVariableName(varPos);
-    		if (localVarName == null) {        		        		    	
-    			throw argErr(app, c.getLabel(), c.getArgument(varPos));
-    		}
+    		if (localVarName == null) {        		    
+    			throw argErr(app, c.getName(), c.getArgument(varPos));
+    		}    		    	
     		
     		// add local variable name to construction 
     		Construction cmdCons = c.getKernel().getConstruction();    		
     	    GeoNumeric num = new GeoNumeric(cmdCons);
-    	    cmdCons.addLocalVariable(localVarName, num);    
+    	    cmdCons.addLocalVariable(localVarName, num); 
+    	    // set local variable as our varPos argument
+    	    c.setArgument(varPos, new ExpressionNode(c.getKernel(), num));
     	     
     	    // resolve all command arguments including the local variable just created
     	    GeoElement [] arg = resArgs(c);                                   

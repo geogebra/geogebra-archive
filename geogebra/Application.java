@@ -1284,7 +1284,8 @@ public class Application implements	KeyEventDispatcher {
             JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void showError(String key) {    	    	
+    public void showError(String key) {   
+    	
         String text = getError(key);       
         JOptionPane.showConfirmDialog(
         		mainComp,
@@ -1294,7 +1295,12 @@ public class Application implements	KeyEventDispatcher {
             JOptionPane.WARNING_MESSAGE);
     }
 
-    public void showError(MyError e) {    
+    public void showError(MyError e) {   
+    	// TODO: remove
+    	e.printStackTrace();
+    	
+    	
+    	
         JOptionPane.showConfirmDialog(
         		mainComp,
             e.getLocalizedMessage(),

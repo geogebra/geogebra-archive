@@ -68,12 +68,22 @@ implements ExpressionValue {
      * If there is no variable name at this position, null is returned.
      */
     public String getVariableName(int i) {
+    	if (i >= args.size())
+    		return null;
+    	
     	ExpressionValue ev = ((ExpressionNode) args.get(i)).getLeft();
     	if (ev instanceof Variable)
     		return ((Variable) ev).getName();
-    	else {    		
-    		return null;
-    	}
+    	else if (ev instanceof GeoElement) {
+    		// XML Handler looks up labels of GeoElements
+    		// so we may end up having a GeoElement object here
+    		// return its name to use as local variable name
+    		GeoElement geo = ((GeoElement) ev);
+    		if (geo.isLabelSet())
+    			return ((GeoElement) ev).getLabel();
+    	}     	    	
+    	
+    	return null;
     }
     
     public ExpressionNode [] getArguments() {
@@ -89,6 +99,10 @@ implements ExpressionValue {
   
     public ExpressionNode getArgument(int i) {
         return (ExpressionNode) args.get(i);
+    }
+    
+    public void setArgument(int i, ExpressionNode en) {
+        args.set(i, en);
     }
     
     public int getArgumentNumber() {

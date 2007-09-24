@@ -61,6 +61,7 @@ public class Variable implements ExpressionValue {
     
     public GeoElement resolve() {
         GeoElement geo = kernel.lookupLabel(name);
+        
         if (geo != null)
 			return  geo;
 		else {

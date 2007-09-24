@@ -610,7 +610,7 @@ public class Construction {
         
         // local var handling
         if (!localVariableTable.isEmpty()) {        	
-        	GeoElement localGeo = (GeoElement) localVariableTable.get(label);        
+        	GeoElement localGeo = (GeoElement) localVariableTable.get(label); 
             if (localGeo != null) return localGeo;
         }
                 
