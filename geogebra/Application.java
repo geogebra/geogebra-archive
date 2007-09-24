@@ -3520,7 +3520,7 @@ public class Application implements	KeyEventDispatcher {
 	 * Copies all jar files of this application to the 
 	 * temp directory
 	 */
-	private synchronized void copyJarsToTempDir() {
+	private void copyJarsToTempDir() {
 		try {		
 			String tempDir = System.getProperty("java.io.tmpdir"); 
 			
