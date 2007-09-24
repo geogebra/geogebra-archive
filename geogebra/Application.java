@@ -410,12 +410,29 @@ public class Application implements	KeyEventDispatcher {
 	    				initPropertiesDialog();
 	    			
 	    			if (showMenuBar) {
-	    				initFileChooser();
-	    				copyJarsToTempDir();
+	    				initFileChooser();	    				
 	    			}	    				
     			}	    		    		
     	};
     	runner.start();
+    	
+    	
+    	// Download jar files to temp directory in background
+    	// this is done because Java WebStart uses strange jar file
+    	// names in its cache. However, we need the GeoGebra jar files
+    	// to export dynamic worksheets, thus we copy the jar files 
+    	// to the temp directory where we can find them.
+    	Thread runner2 = new Thread() {
+    		public void run() {    	 
+    			try {
+    				Thread.sleep(5000);
+    			} catch (Exception e) {}
+	    			if (showMenuBar) {    				
+	    				copyJarsToTempDir();
+	    			}	    				
+    			}	    		    		
+    	};
+    	runner2.start();
     }
     
 	private synchronized void initFileChooser() {
