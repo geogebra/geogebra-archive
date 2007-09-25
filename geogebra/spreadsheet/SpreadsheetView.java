@@ -2,16 +2,22 @@ package geogebra.spreadsheet;
 
 import geogebra.Application;
 import geogebra.View;
+import geogebra.algebra.MyCellEditor;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -30,16 +36,15 @@ public class SpreadsheetView extends JComponent implements View
     private JTable table;
     private Kernel kernel;
     private DefaultTableModel tableModel;
-    
-    //Nodes of the Spreadsheet  
-    String Label, Value;
- // store all pairs of GeoElement -> node in the Spreadsheet
-	private FastHashMapKeyless nodeTable = new FastHashMapKeyless(500);
+    private Application app;
+    private SpreadsheetController spController; 
+
       
     private GeoElement selectedGeoElement;
     
     public SpreadsheetView(Application app,int rows, int columns)
     {
+       this.app =app;
        table = createTable();
        kernel =app.getKernel();
        setLayout(new BorderLayout());
@@ -66,6 +71,8 @@ public class SpreadsheetView extends JComponent implements View
        
        //Build the structure for the spreadsheet data
   
+       spController = new SpreadsheetController(app, table);
+       initTreeCellRendererEditor();
        attachView();	
        
      }
@@ -75,6 +82,20 @@ public class SpreadsheetView extends JComponent implements View
 		kernel.attach(this);		
 	}
     
+    
+    private void initTreeCellRendererEditor() {
+         // renderer = new MyRenderer();   
+        // setCellRenderer(renderer);
+        
+         // set up cell editor
+         JTextField editTF = new JTextField();
+         MyCellEditor editor = new MyCellEditor(editTF);
+         table.setCellEditor(editor);
+         
+         // listen to editor events
+         editor.addCellEditorListener(spController); 
+    }
+    
         /** Can be used by subclasses to customize the underlying JTable
      * @return The JTable to be used by the spreadsheet
      */
@@ -83,57 +104,6 @@ public class SpreadsheetView extends JComponent implements View
        return new JTable();
     }
     
-    private static class RowModel implements TableModel
-    {
-       private TableModel source;
-
-       RowModel(TableModel source)
-       {
-          this.source = source;
-       }
-
-       public boolean isCellEditable(int rowIndex, int columnIndex)
-       {
-          return false;
-       }
-
-       public Class getColumnClass(int columnIndex)
-       {
-          return Object.class;
-       }
-
-       public int getColumnCount()
-       {
-          return 1;
-       }
-
-       public String getColumnName(int columnIndex)
-       {
-          return null;
-       }
-
-       public int getRowCount()
-       {
-          return source.getRowCount();
-       }
-
-       public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-       {
-       }
-
-       public Object getValueAt(int rowIndex, int columnIndex)
-       {
-          return null;
-       }
-
-       public void addTableModelListener(javax.swing.event.TableModelListener l)
-       {
-       }
-
-       public void removeTableModelListener(javax.swing.event.TableModelListener l)
-       {
-       }
-    }
     
     /**
      * Creates new blank SharpTableModel object with specified number of
@@ -160,8 +130,7 @@ public class SpreadsheetView extends JComponent implements View
     	
     	if (location != null) 
     	{                	
-    		Value = geo.toValueString();
-        	tableModel.setValueAt(Value, location.y, location.x);        	       
+        	tableModel.setValueAt(geo, location.y, location.x);        	       
         }        
     }
     /* (non-Javadoc)
@@ -184,7 +153,6 @@ public class SpreadsheetView extends JComponent implements View
     	Point location = geo.getSpreadsheetCoords();    	
     	if (location != null) 
     	{                	
-    		Value = geo.toValueString();
         	tableModel.setValueAt(null, location.y, location.x);        	       
         }    
     }
@@ -233,13 +201,7 @@ public class SpreadsheetView extends JComponent implements View
     	System.out.println("update: " + geo);
     	
     	Point location = geo.getSpreadsheetCoords();
-    	
-    	if (location != null) 
-    	{                	
-    		Value = geo.toValueString();
-        	tableModel.setValueAt(Value, location.y, location.x);        	       
-        }  
-        
+        tableModel.fireTableCellUpdated(location.y, location.x);    	    	
     }
     /* (non-Javadoc)
      * @see geogebra.View#updateAuxiliaryObject(geogebra.kernel.GeoElement)
@@ -252,5 +214,8 @@ public class SpreadsheetView extends JComponent implements View
     	update(geo);
         
     }
+
+   
+
    
 }

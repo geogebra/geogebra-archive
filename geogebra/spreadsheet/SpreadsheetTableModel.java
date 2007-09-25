@@ -2,6 +2,8 @@
  * 
  */
 package geogebra.spreadsheet;
+import geogebra.kernel.GeoElement;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -29,11 +31,11 @@ public class SpreadsheetTableModel extends DefaultTableModel
     {
         super(numRows, numColumns);
 
-        for (int row = 0; row < numRows; row++)
-           for (int col = 0; col < numColumns; col++)
-
-              // we initialize it here
-//              super.setValueAt(new Cell(""), row, col);
+//        for (int row = 0; row < numRows; row++)
+//           for (int col = 0; col < numColumns; col++)
+//
+//              // we initialize it here
+//              super.setValueAt(new String(""), row, col);
 
         // initialize state to unmodified and file to untitled
         modified = false;
@@ -68,6 +70,13 @@ public class SpreadsheetTableModel extends DefaultTableModel
 
        // initialize state to unmodified and file to untitled
        modified = false;
+    }
+    
+  
+   
+    public boolean isCellEditable(int row, int col) {
+        GeoElement geo = (GeoElement) getValueAt(row, col);
+        return geo.isChangeable() || geo.isRedefineable();   
     }
 
 }
