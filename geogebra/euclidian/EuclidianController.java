@@ -1189,7 +1189,9 @@ final public class EuclidianController implements MouseListener,
 				case EuclidianView.MODE_MIRROR_AT_LINE:
 				case EuclidianView.MODE_ROTATE_BY_ANGLE:
 					hits = view.getHits(mouseLoc);
-					POINT_CREATED = createNewPoint(hits, false, false, true);
+					if (hits == null) { 
+						POINT_CREATED = createNewPoint(hits, false, false, true);					
+					}
 					changedKernel = POINT_CREATED;
 					break;
 					

@@ -42,7 +42,7 @@ TRANSLATIONS
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
   * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
-  * Polish: Marzanna Miasko, Ewa Piwek, Katarzyna Winkowska-Nowak (Poland)
+  * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
       Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes (Portugal)
