@@ -768,48 +768,6 @@ public class AlgebraView extends JTree implements View {
 	}  // MyEditor
 	
 	
-	// this is needed to distinguish between the editing
-	// of independent and dependent objects
-	private class MyCellEditor extends DefaultCellEditor {	
-		
-		private static final long serialVersionUID = 1L;
-		
-		public MyCellEditor(final JTextField textField) {
-			super(textField);			
-		}
-		
-		/** Implements the <code>TreeCellEditor</code> interface. */
-		public Component getTreeCellEditorComponent(JTree tree, Object value,
-							boolean isSelected,
-							boolean expanded,
-							boolean leaf, int row) {
-				
-			String str = null;		
-			if (value instanceof DefaultMutableTreeNode) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-				Object ob = node.getUserObject();
-				if (ob instanceof GeoElement) {
-					GeoElement geo = (GeoElement) ob;
-					if (geo.isChangeable()) {
-						str = geo.toString();
-					} else {
-						str = geo.getCommandDescription();
-					}
-				}
-			}
-		
-			String stringValue;
-			if (str == null) {				
-				stringValue = (value == null) ? "" : value.toString();
-			} else {
-				stringValue = str;
-			}			
-			delegate.setValue(stringValue);
-			return editorComponent;
-		}
-	}
 	
-	
-
 
 } // AlgebraView
