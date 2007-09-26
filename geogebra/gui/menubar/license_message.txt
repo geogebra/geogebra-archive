@@ -103,8 +103,7 @@ following conditions:
  * Attribution. You must attribute the work
      (i.e. by linking to http://www.geogebra.org/)
  * NonCommercial. You may not use this work for commercial purposes 
-     without permission of Markus Hohenwarter (markus@geogebra.org) 
-     or Yves Kreis (yves@geogebra.org).
+     without permission of GeoGebra Inc. (office@geogebra.org).
  * No Derivative Works. You may not alter, transform, or build upon 
      this work.
 
@@ -141,20 +140,20 @@ Translations
 
 2) GeoGebra Application and Source Code License
 
-   GeoGebra's application and source code is subject to the following 
-   GNU General Public License version 2:
+GeoGebra's source code is subject to the following 
+GNU General Public License version 2:
 
-   This program is free software; you can redistribute it and/or modify 
-   it under the terms of the GNU General Public License version 2
-   as published by the Free Software Foundation.
+This program is free software; you can redistribute it and/or modify 
+it under the terms of the GNU General Public License version 2 as 
+published by the Free Software Foundation.
 
-   This program is distributed in the hope that it will be useful, 
-   but WITHOUT ANY WARRANTY; without even the implied warranty of 
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-   GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU General Public License for more details.
 
-   The GNU General Public License 2.0 can be found at:
-   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+The GNU General Public License 2.0 can be found at:
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-   If you are interested in GeoGebra's source code or want to help with 
-   programming, please write to Markus Hohenwarter (markus@geogebra.org)
+If you are interested in GeoGebra's source code or want to help with 
+programming, please write to Markus Hohenwarter (markus@geogebra.org).
