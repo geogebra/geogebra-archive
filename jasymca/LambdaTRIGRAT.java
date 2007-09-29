@@ -385,7 +385,7 @@ class LambdaSINH extends LambdaAlgebraic{
 
 class LambdaTANH extends LambdaAlgebraic{
 	public LambdaTANH(){ 
-		diffrule = "1/cosh(x)"; 
+		diffrule = "1/cosh(x)^2"; 
 		intrule  = "log(cosh(x))"; 		
 		trigrule = "(exp(x)-exp(-x))/(exp(x)+exp(-x))";
 	}

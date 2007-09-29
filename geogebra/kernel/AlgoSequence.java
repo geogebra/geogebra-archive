@@ -159,8 +159,8 @@ public class AlgoSequence extends AlgoElement {
     		double currentVal = from;   
     		int cacheListSize = list.getCacheSize();
     		
-			while ((step > 0 && currentVal <= to) || 
-				   (step < 0 && currentVal >= to)) 
+			while ((step > 0 && currentVal <= to + Kernel.MIN_PRECISION) || 
+				   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
 			{
 				// only add new objects
 				GeoElement listElement = null;								
@@ -236,8 +236,8 @@ public class AlgoSequence extends AlgoElement {
     	double currentVal = from;
     	int i=0;
     	
-		while ((step > 0 && currentVal <= to) || 
-			   (step < 0 && currentVal >= to)) 
+		while ((step > 0 && currentVal <= to + Kernel.MIN_PRECISION) || 
+			   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
 		{			
 			GeoElement listElement = list.get(i);
 			setValue(listElement, currentVal);	   			    		

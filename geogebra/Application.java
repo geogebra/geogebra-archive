@@ -154,7 +154,8 @@ public class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("gl") );           // Galician
         supportedLocales.add( new Locale("de") );          	// German   
     	supportedLocales.add( new Locale("de", "AT") ); 	// German (Austria)
-        supportedLocales.add( new Locale("el") );            // Greek                
+        supportedLocales.add( new Locale("el") );            // Greek   
+        supportedLocales.add( new Locale("iw") );            // Hebrew
         supportedLocales.add( new Locale("hu") );          	// Hungarian
         supportedLocales.add( new Locale("it") );     		 	// Italian
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
