@@ -2,7 +2,9 @@
  * 
  */
 package geogebra.spreadsheet;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -72,11 +74,77 @@ public class SpreadsheetTableModel extends DefaultTableModel
        modified = false;
     }
     
-  
-   
+    public void setValueAt( Object obj, int row, int col)
+    {
+        GeoElement geo = null;
+        if( !(obj instanceof GeoElement))
+        {
+            System.out.println("null");
+            geo = (GeoElement)getValueAt( row, col);
+            if( geo == null)
+            {
+                // TODO: need to create new geo Element
+            }
+            else
+            {
+               if( obj != null)
+               {
+                   String newValue = obj.toString();
+                   int index = newValue.indexOf("=");
+                   if( index != -1)
+                   {
+                       newValue = newValue.substring(index + 1);
+                       newValue = newValue.trim();
+                       if( geo instanceof GeoNumeric)
+                       {
+                           GeoNumeric geoNum = (GeoNumeric )geo;
+                           try{
+                           geoNum.setValue(Double.parseDouble(newValue) );
+                           geoNum.update();
+                           }catch( NumberFormatException nfe){
+                               nfe.printStackTrace();
+                           }
+                       }
+                   }
+               }
+               else
+               {
+                   super.setValueAt(obj, row, col);
+               }
+                // super.setValueAt(geo, row, col);
+            }
+            //super.setValueAt(geo, row, col);
+        }
+        else
+        {
+            super.setValueAt(obj, row, col);
+        }
+    }
+    
+    public Object getValueAt( int row, int col)
+    {
+        Object obj = super.getValueAt(row,col );
+        if( !(obj instanceof GeoElement ))
+        {
+            //System.out.println("Getting a non-geo element");
+        }
+        return obj;
+    }
+    
     public boolean isCellEditable(int row, int col) {
-        GeoElement geo = (GeoElement) getValueAt(row, col);
-        return geo.isChangeable() || geo.isRedefineable();   
+        //GeoElement geo = (GeoElement) getValueAt(row, col);
+        GeoElement geo = null;
+        Object obj = getValueAt(row, col);
+        if( !(obj instanceof GeoElement))
+        {
+            System.out.println("null");
+            return true;
+        }
+        else
+        {
+            geo = (GeoElement )obj;
+            return geo.isChangeable() || geo.isRedefineable();
+        }
     }
 
 }

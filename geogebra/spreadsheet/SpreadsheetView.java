@@ -170,7 +170,8 @@ public class SpreadsheetView extends JComponent implements View
     	Point location = geo.getOldSpreadsheetCoords();    	
     	if (location != null) 
     	{                	
-        	tableModel.setValueAt(null, location.y, location.x);        	       
+        	tableModel.setValueAt(null, location.y, location.x);       
+            tableModel.fireTableCellUpdated(location.y, location.x);
         }    
     	
     	// add new one

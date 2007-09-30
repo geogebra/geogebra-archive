@@ -5,14 +5,6 @@ package geogebra.spreadsheet;
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import geogebra.kernel.*;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -46,6 +38,8 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
        
         // get the entered String
         String inputStr = table.getCellEditor().getCellEditorValue().toString();
+      //  String inputStr = table.getCellEditor((table.getLocation().y), (table.getLocation().x)).getCellEditorValue().toString();
+        Object obj = event.getSource();
         
         // TODO: remove
         System.out.println("editingStopped: inputStr = " + inputStr);
@@ -71,6 +65,9 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
         // change this GeoElement in the Kernel                  
         GeoElement [] geo = app.getKernel().getAlgebraProcessor().
             processAlgebraCommand(inputStr, true);  
+        
+        //assign it to the cell in the selected location
+        
            
     }
 
