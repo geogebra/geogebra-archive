@@ -2,6 +2,8 @@
  * 
  */
 package geogebra.spreadsheet;
+import java.awt.Point;
+
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -100,6 +102,8 @@ public class SpreadsheetTableModel extends DefaultTableModel
                            GeoNumeric geoNum = (GeoNumeric )geo;
                            try{
                            geoNum.setValue(Double.parseDouble(newValue) );
+                           //Point pt=geoNum.getOldSpreadsheetCoords();
+                           //geoNum.setSpreadsheetCoords(pt);
                            geoNum.update();
                            }catch( NumberFormatException nfe){
                                nfe.printStackTrace();
