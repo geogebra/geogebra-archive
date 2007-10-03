@@ -37,7 +37,8 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
         //TODO: why is string returned here null?
        
         // get the entered String
-        String inputStr = table.getCellEditor().getCellEditorValue().toString();
+       // String inputStr = table.getCellEditor().getCellEditorValue().toString();
+    	 String inputStr = (String)(table.getCellEditor().getCellEditorValue());
       //  String inputStr = table.getCellEditor((table.getLocation().y), (table.getLocation().x)).getCellEditorValue().toString();
         Object obj = event.getSource();
         

@@ -8,6 +8,8 @@ import geogebra.kernel.Kernel;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -18,9 +20,13 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * A class which will give the view of the Spreadsheet
@@ -216,7 +222,52 @@ public class SpreadsheetView extends JComponent implements View
         
     }
 
-   
+    /**
+	 * inner class MyRenderer for GeoElements 
+	 */
+	private class MyRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;				
+			
+		public MyRenderer() {
+			setOpaque(true);
+		}
+		
+		public Component getDefaultTableCellRenderer(
+			JTable table,
+			Object value,
+			boolean selected,
+			boolean hasFocus,
+			int row,
+			int column) {	
+						
+			System.out.println("getTableCellRendererComponent: " + value);
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
+			Object ob = node.getUserObject();
+						
+			if (ob instanceof GeoElement) {	
+				GeoElement geo = (GeoElement) ob;										
+				
+				setFont(app.boldFont);
+				setForeground(geo.labelColor);
+				String str = geo.getAlgebraDescriptionTextOrHTML();
+				//String str = geo.getAlgebraDescription();
+				setText(str);								
+				
+						
+			}								
+			//	no leaf (no GeoElement)
+			else { 
+				
+				setForeground(Color.black);
+				setFont(app.plainFont);
+				selected = false;				
+				setBorder(null);
+				setText(value.toString());
+			}		
+			
+			return this;
+		}							
 
-   
+	}
 }
