@@ -4,6 +4,7 @@ import geogebra.Application;
 import geogebra.View;
 import geogebra.algebra.MyCellEditor;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.util.FastHashMapKeyless;
 
@@ -107,7 +108,9 @@ public class SpreadsheetView extends JComponent implements View
      */
     protected JTable createTable()
     {
-       return new JTable();
+       JTable t = new JTable();
+       t.setDefaultRenderer(Object.class, new MyRenderer() );
+       return t;
     }
     
     
@@ -230,10 +233,31 @@ public class SpreadsheetView extends JComponent implements View
 		private static final long serialVersionUID = 1L;				
 			
 		public MyRenderer() {
-			setOpaque(true);
+            super();
+			//setOpaque(true);
 		}
+        
+        public void setValue(Object value)
+        {
+            if( value instanceof GeoElement)
+            {
+                if( value instanceof GeoNumeric)
+                {
+                    GeoNumeric geonum = (GeoNumeric )value;
+                    setText( geonum.toValueString() );
+                }
+                else
+                {
+                    setText("");
+                }
+            }
+            else
+            {
+                setText("");
+            }
+        }
 		
-		public Component getDefaultTableCellRenderer(
+		/*public Component getDefaultTableCellRenderer(
 			JTable table,
 			Object value,
 			boolean selected,
@@ -267,7 +291,7 @@ public class SpreadsheetView extends JComponent implements View
 			}		
 			
 			return this;
-		}							
+		}*/							
 
 	}
 }
