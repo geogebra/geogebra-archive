@@ -110,6 +110,7 @@ public class SpreadsheetView extends JComponent implements View
     {
        JTable t = new JTable();
        t.setDefaultRenderer(Object.class, new MyRenderer() );
+     //  t.setDefaultEditor(Object.class, new MyCellEditor());
        return t;
     }
     
