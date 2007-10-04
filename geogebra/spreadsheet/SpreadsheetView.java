@@ -42,13 +42,11 @@ public class SpreadsheetView extends JComponent implements View
     
     private JTable table;
     private Kernel kernel;
-    private DefaultTableModel tableModel;
+ //   private DefaultTableModel tableModel;
+    private SpreadsheetTableModel tableModel;
     private Application app;
     private SpreadsheetController spController; 
-
-      
-    private GeoElement selectedGeoElement;
-    
+   
     public SpreadsheetView(Application app,int rows, int columns)
     {
        this.app =app;
@@ -69,17 +67,12 @@ public class SpreadsheetView extends JComponent implements View
  
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
        add(scrollPane, BorderLayout.CENTER);
-
-//       JTable rowHeader = new JTable(new RowModel(table.getModel()));
-
-//       rowHeader.setIntercellSpacing(new Dimension(0, 0));
        table.setRequestFocusEnabled(true);
        table.requestFocus();
        
        //Build the structure for the spreadsheet data
-  
-       spController = new SpreadsheetController(app, table);
-       initTreeCellRendererEditor();
+       spController = new SpreadsheetController(app, table,tableModel);
+       initTableCellRendererEditor();
        attachView();	
        
      }
@@ -90,15 +83,12 @@ public class SpreadsheetView extends JComponent implements View
 	}
     
     
-    private void initTreeCellRendererEditor() {
-         // renderer = new MyRenderer();   
-        // setCellRenderer(renderer);
-        
+    private void initTableCellRendererEditor() {
+               
          // set up cell editor
          JTextField editTF = new JTextField();
-         MyCellEditor editor = new MyCellEditor(editTF);
-         table.setCellEditor(editor);
-         
+         TableCellEditor editor = new TableCellEditor(editTF);
+         table.setDefaultEditor(Object.class, editor);
          // listen to editor events
          editor.addCellEditorListener(spController); 
     }
@@ -108,9 +98,10 @@ public class SpreadsheetView extends JComponent implements View
      */
     protected JTable createTable()
     {
+    //	JTextField editTF = new JTextField();
        JTable t = new JTable();
        t.setDefaultRenderer(Object.class, new MyRenderer() );
-     //  t.setDefaultEditor(Object.class, new MyCellEditor());
+      // t.setDefaultEditor(Object.class, new TableCellEditor(editTF));
        return t;
     }
     
@@ -135,9 +126,7 @@ public class SpreadsheetView extends JComponent implements View
     {
     	// TODO: remove
     	System.out.println("add: " + geo);
-    	
     	Point location = geo.getSpreadsheetCoords();
-    	
     	if (location != null) 
     	{                	
         	tableModel.setValueAt(geo, location.y, location.x);        	       
@@ -257,42 +246,5 @@ public class SpreadsheetView extends JComponent implements View
                 setText("");
             }
         }
-		
-		/*public Component getDefaultTableCellRenderer(
-			JTable table,
-			Object value,
-			boolean selected,
-			boolean hasFocus,
-			int row,
-			int column) {	
-						
-			System.out.println("getTableCellRendererComponent: " + value);
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
-			Object ob = node.getUserObject();
-						
-			if (ob instanceof GeoElement) {	
-				GeoElement geo = (GeoElement) ob;										
-				
-				setFont(app.boldFont);
-				setForeground(geo.labelColor);
-				String str = geo.getAlgebraDescriptionTextOrHTML();
-				//String str = geo.getAlgebraDescription();
-				setText(str);								
-				
-						
-			}								
-			//	no leaf (no GeoElement)
-			else { 
-				
-				setForeground(Color.black);
-				setFont(app.plainFont);
-				selected = false;				
-				setBorder(null);
-				setText(value.toString());
-			}		
-			
-			return this;
-		}*/							
-
 	}
 }
