@@ -13,7 +13,7 @@ DEVELOPMENT
   * Markus Hohenwarter (Univ. Salzburg, FAU): since 2001
   * Yves Kreis (University of Luxembourg): since 2005
  Contributions by
-  * Loic Le Coq (France): 2006
+  * Loïc Le Coq (France): 2006
   * Joan Carles Naranjo, Victor Franco, Eloi Puertas (Univ. of Barcelona): 2007
   * Philipp Weissenbacher (Austria): 2007
   
@@ -21,30 +21,31 @@ TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
-  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, 
-      Roser Sebastian (Spain)
+  * Catalan: Jorge Sánchez, Jaume Bartrolí, Pep Bujosa, Antoni Gomà, 
+      Roser Sebastián (Spain)
   * Chinese: Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
-  * Danish: Steen Grode (Denmark)
+  * Danish: Steen Groðe (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
   * English: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg),
       Michael Borcherds (Great Britain)
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: Noel Lambert (France)
-  * Galician: Jesus Garcia Otero (Spain)  
+  * Galician: Jesús García Otero (Spain)  
   * German: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg)
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
+  * Hebrew: Guy Hed (Israel)
   * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
-  * Norwegian: Sigbjorn Hals (Norway)
+  * Norwegian: Sigbjørn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
   * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
-      Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
+      Luciana de Lima, Araújo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes (Portugal)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba (Slovakia)
