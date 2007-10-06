@@ -119,9 +119,7 @@ public class AlgebraController
 				app.clearSelectedGeos();
 				app.getEuclidianView().reset();
 				consumed = true;
-				break;
-			
-		    
+				break;			   
 			
 			default:
 				//	handle selected GeoElements
@@ -243,7 +241,8 @@ public class AlgebraController
 	
 	private void handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
 		// try to move objvect
-		boolean moved = geo.moveObject(tempVec);				
+		
+		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);				
 		if (!moved) {	
 			// toggle boolean value
 			if (geo.isChangeable() && geo.isGeoBoolean()) {

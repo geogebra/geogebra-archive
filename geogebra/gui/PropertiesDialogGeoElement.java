@@ -123,6 +123,7 @@ public class PropertiesDialogGeoElement
 	private JTreeGeoElements geoTree;
 	private JButton closeButton;
 	private PropertiesPanel propPanel;
+	private JColorChooser colChooser;
 
 	final static int TEXT_FIELD_FRACTION_DIGITS = 3;
 	final static int SLIDER_MAX_WIDTH = 170;
@@ -138,7 +139,9 @@ public class PropertiesDialogGeoElement
 	public PropertiesDialogGeoElement(Application app) {
 		super(app.getFrame(), false);
 		this.app = app;
-		kernel = app.getKernel();		
+		kernel = app.getKernel();	
+		
+		colChooser = new JColorChooser();
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setResizable(false);
@@ -563,7 +566,7 @@ public class PropertiesDialogGeoElement
 
 			namePanel = new NamePanel(app);		
 			showObjectPanel = new ShowObjectPanel();
-			colorPanel = new ColorPanel();
+			colorPanel = new ColorPanel(colChooser);
 			labelPanel = new LabelPanel();
 			coordPanel = new CoordPanel();
 			lineEqnPanel = new LineEqnPanel();
@@ -990,12 +993,10 @@ public class PropertiesDialogGeoElement
 	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener {
 
 		private static final long serialVersionUID = 1L;
-		private Object[] geos; // currently selected geos
-		private JColorChooser colChooser;
+		private Object[] geos; // currently selected geos		
 		private JPanel previewPanel;
 
-		public ColorPanel() {
-			colChooser = new JColorChooser();
+		public ColorPanel(JColorChooser colChooser) {
 			colChooser.setLocale(app.getLocale());
 			previewPanel = new PreviewPanel();					
 			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
@@ -1010,6 +1011,10 @@ public class PropertiesDialogGeoElement
 			
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the 	
+			
+			// TODO: remove listener for color chooser
+			
+			
 			colChooser.setColor(new Color(1, 1,1, 100));
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}

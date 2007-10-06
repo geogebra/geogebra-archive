@@ -114,7 +114,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "September 21, 2007";
+    public static final String buildDate = "September 28, 2007";
 	
     public static final String versionString = "3.0 (RC 2)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -127,7 +127,7 @@ public class Application implements	KeyEventDispatcher {
     	  "geogebra_export.jar"
     	};
  
-	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org";
+	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 		
 	// update URL
 	//public static final String UPDATE_URL = "http://www.geogebra.org/webstart/unpacked/";
@@ -2521,7 +2521,7 @@ public class Application implements	KeyEventDispatcher {
     private URL getHelpURL(String languageISOcode)  {
     	// try to get help for given language
         String strFile = "docu" + languageISOcode + "/index.html";
-        String strURL = GEOGEBRA_WEBSITE + "/help/" + strFile;
+        String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
         
         try {
             File f = new File(strFile);

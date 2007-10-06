@@ -1064,7 +1064,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE + "/forum");
+				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE + "forum/");
 			}
 		};	
 		
@@ -1075,9 +1075,9 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {	
 				String url = Application.GEOGEBRA_WEBSITE;
 				if (app.getLocale().getLanguage().equals("de"))
-					url += "/de/wiki";
+					url += "de/wiki/";
 				else
-					url += "/en/wiki";
+					url += "en/wiki/";
 					
 				BrowserLauncher.openURL(url);				
 			}
