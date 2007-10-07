@@ -115,7 +115,7 @@ public class SpreadsheetView extends JComponent implements View
      */
     private void newTableModel(int rows, int cols)
     {
-        tableModel = new SpreadsheetTableModel(table , rows, cols);
+        tableModel = new SpreadsheetTableModel(table , rows, cols,app);
         table.setModel(tableModel);
         
     }

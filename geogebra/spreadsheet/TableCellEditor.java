@@ -14,41 +14,45 @@ import javax.swing.tree.TreePath;
 
 public class TableCellEditor extends DefaultCellEditor{
 	
-	JTextField txtField;
 	 public TableCellEditor(final JTextField textField) {
 		 
 	        super(textField); 
 	 }
 		 
-	 public Component getTableCellEditorComponent(JTable table,Object value,
-				boolean selected,
-				int row,
-				int column){
-		 String str = null;   
-		 if(value instanceof GeoNumeric)
-		 {
-			 GeoNumeric cell=(GeoNumeric)value;
-			 Object obj=new Double(cell.getDouble());
-			 if(obj instanceof GeoElement)
-			 {
-				 GeoElement geo = (GeoElement) obj;
-	                if (geo.isChangeable()) {
-	                    str = geo.toString();
-	                } else {
-	                    str = geo.getCommandDescription();
-	                }
-		      }
-		 }
-		 String stringValue;
-	        if (str == null) {              
-	            stringValue = (value == null) ? "" : value.toString();
-	        } else {
-	            stringValue = str;
-	        }           
-	        delegate.setValue(stringValue);
-		
-		 return editorComponent;
-	 }
+	 public Component getTableCellEditorComponent(JTable table, Object value, boolean selected, int row, int column)
+    {
+        String str = null;
+        if (value instanceof GeoNumeric)
+        {
+            GeoElement geo = (GeoElement) value;
+            if (geo.isChangeable())
+            {
+                str = geo.toValueString();
+            }
+            else
+            {
+                str = geo.getCommandDescription();
+            }
+        }
+        String stringValue;
+        if (str == null)
+        {
+            stringValue = (value == null) ? "" : value.toString();
+        }
+        else
+        {
+            stringValue = str;
+        }
+        Component  c = this.getComponent();
+        if( c instanceof JTextField)
+        {
+            ((JTextField)c).setText(stringValue);
+        }
+        delegate.setValue(stringValue);
+
+        //return editorComponent;
+        return c;
+    }
 //	 public Object getCellEditorValue() 
 //	 {
 //		 

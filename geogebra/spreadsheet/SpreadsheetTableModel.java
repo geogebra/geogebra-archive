@@ -4,6 +4,8 @@
 package geogebra.spreadsheet;
 import java.awt.Point;
 
+import geogebra.Application;
+import geogebra.algebra.parser.Parser;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -23,6 +25,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
      */
     private boolean modified;
 
+    private Application app = null;
 
     public SpreadsheetTableModel(JTable table)
     {
@@ -31,10 +34,10 @@ public class SpreadsheetTableModel extends DefaultTableModel
         modified=false;
     }
     
-    public SpreadsheetTableModel(JTable table, int numRows, int numColumns)
+    public SpreadsheetTableModel(JTable table, int numRows, int numColumns, Application app)
     {
         super(numRows, numColumns);
-
+        this.app = app;
 //        for (int row = 0; row < numRows; row++)
 //           for (int col = 0; col < numColumns; col++)
 //
@@ -59,9 +62,9 @@ public class SpreadsheetTableModel extends DefaultTableModel
      * @param data
      *            the array of objects to place into the SharpTableModel
      */
-    public SpreadsheetTableModel(JTable table, Object[][] data)
+    public SpreadsheetTableModel(JTable table, Object[][] data, Application app)
     {
-       this(table, data.length, data[0].length);
+       this(table, data.length, data[0].length,app);
 
        /* load the data */
        for (int i = 0; i < data.length; i++)
@@ -76,16 +79,50 @@ public class SpreadsheetTableModel extends DefaultTableModel
        modified = false;
     }
     
+    public String getLabel (int row, int col)
+    {
+        String lbl = "";
+        lbl = getColName(col) + (row + 1);
+        return lbl;
+    }
+    
+    public String getColName( int col)
+    {
+        String colLbl = "";
+        if( col >=0 && col <26)
+        {
+            char c = (char)( 'A' + col);
+            colLbl = c + "";
+        }
+        else
+        {
+            System.out.println(col +" is greater than 25");
+        }
+        return colLbl;
+    }
+    
     public void setValueAt( Object obj, int row, int col)
     {
         GeoElement geo = null;
         if( !(obj instanceof GeoElement))
         {
-            System.out.println("null");
             geo = (GeoElement)getValueAt( row, col);
             if( geo == null)
             {
-                // TODO: need to create new geo Element
+                if( obj.toString().startsWith("="))
+                {
+                    //TODO: do the equation here
+                    String str = getLabel(row, col) + obj.toString();
+                    app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+                    fireTableDataChanged();
+                }
+                else
+                {
+                    String str = getLabel(row, col) + "=" + obj.toString();
+                    
+                    app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+                    fireTableDataChanged();
+                }
             }
             else
             {
@@ -95,33 +132,51 @@ public class SpreadsheetTableModel extends DefaultTableModel
                    int index = newValue.indexOf("=");
                    if( index != -1)
                    {
+                       // case of formula
                        newValue = newValue.substring(index + 1);
-                       newValue = newValue.trim();
-                       if( geo instanceof GeoNumeric)
-                       {
-                           GeoNumeric geoNum = (GeoNumeric )geo;
-                           try{
-                           geoNum.setValue(Double.parseDouble(newValue) );
-                           //Point pt=geoNum.getOldSpreadsheetCoords();
-                           //geoNum.setSpreadsheetCoords(pt);
-                           geoNum.update();
-                           }catch( NumberFormatException nfe){
-                               nfe.printStackTrace();
-                           }
-                       }
+                       updateGeoElement(geo, newValue);
+                   }
+                   else
+                   {
+                       updateGeoElement(geo, newValue);
                    }
                }
                else
                {
                    super.setValueAt(obj, row, col);
                }
-                // super.setValueAt(geo, row, col);
+                
             }
-            //super.setValueAt(geo, row, col);
         }
         else
         {
             super.setValueAt(obj, row, col);
+        }
+    }
+
+    /**
+     * @param geo
+     * @param newValue
+     */
+    private void updateGeoElement(GeoElement geo, String newValue)
+    {
+        newValue = newValue.trim();
+        if (geo instanceof GeoNumeric)
+        {
+            GeoNumeric geoNum = (GeoNumeric) geo;
+            try
+            {
+                geoNum.setValue(Double.parseDouble(newValue));
+                geoNum.update();
+            }
+            catch (NumberFormatException nfe)
+            {
+                nfe.printStackTrace();
+            }
+        }
+        else
+        {
+            //
         }
     }
     
@@ -131,6 +186,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
         if( !(obj instanceof GeoElement ))
         {
             //System.out.println("Getting a non-geo element");
+          
         }
         return obj;
     }
