@@ -4,30 +4,21 @@ import geogebra.Application;
 import geogebra.View;
 import geogebra.algebra.MyCellEditor;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
-import geogebra.util.FastHashMapKeyless;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
-import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * A class which will give the view of the Spreadsheet
@@ -54,7 +45,6 @@ public class SpreadsheetView extends JComponent implements View
        kernel =app.getKernel();
        setLayout(new BorderLayout());
        newTableModel(rows, columns);
-
        // clobber resizing of all columns
        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -63,9 +53,27 @@ public class SpreadsheetView extends JComponent implements View
        table.setCellSelectionEnabled(true);
        
        // we don't allow reordering
-       table.getTableHeader().setReorderingAllowed(false);
+       table.getTableHeader().setReorderingAllowed(false);      
  
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+       
+       // add row headers
+       JTable rowHeader = new JTable(new RowModel(table.getModel()));
+       TableCellRenderer renderer = new RowHeaderRenderer();
+       Component comp = renderer.getTableCellRendererComponent(rowHeader, null, false, false, rowHeader.getRowCount() - 1, 0);
+       rowHeader.setIntercellSpacing(new Dimension(0, 0));
+       Dimension d = rowHeader.getPreferredScrollableViewportSize();
+       d.width = comp.getPreferredSize().width;
+       rowHeader.setPreferredScrollableViewportSize(d);
+       rowHeader.setRowHeight(table.getRowHeight());
+       rowHeader.setDefaultRenderer(Object.class, renderer);
+       //rowHeader.addMouseListener(ml);
+
+       scrollPane.setRowHeaderView(rowHeader);
+       
+       
+       
+       
        add(scrollPane, BorderLayout.CENTER);
        table.setRequestFocusEnabled(true);
        table.requestFocus();
@@ -90,7 +98,7 @@ public class SpreadsheetView extends JComponent implements View
          TableCellEditor editor = new TableCellEditor(editTF);
          table.setDefaultEditor(Object.class, editor);
          // listen to editor events
-         editor.addCellEditorListener(spController); 
+         //editor.addCellEditorListener(spController); 
     }
     
         /** Can be used by subclasses to customize the underlying JTable
@@ -229,22 +237,95 @@ public class SpreadsheetView extends JComponent implements View
         
         public void setValue(Object value)
         {
-            if( value instanceof GeoElement)
-            {
-                if( value instanceof GeoNumeric)
-                {
-                    GeoNumeric geonum = (GeoNumeric )value;
-                    setText( geonum.toValueString() );
-                }
-                else
-                {
-                    setText("");
-                }
-            }
-            else
-            {
-                setText("");
-            }
+        	if (value != null) {
+        		GeoElement geo = (GeoElement )value;
+        		setText( geo.toValueString() );
+        	} else {
+        		setText("");
+        	}        	           
         }
 	}
+	
+	 private static class RowModel implements TableModel
+	   {
+	      private TableModel source;
+
+	      RowModel(TableModel source)
+	      {
+	         this.source = source;
+	      }
+
+	      public boolean isCellEditable(int rowIndex, int columnIndex)
+	      {
+	         return false;
+	      }
+
+	      public Class getColumnClass(int columnIndex)
+	      {
+	         return Object.class;
+	      }
+
+	      public int getColumnCount()
+	      {
+	         return 1;
+	      }
+
+	      public String getColumnName(int columnIndex)
+	      {
+	         return null;
+	      }
+
+	      public int getRowCount()
+	      {
+	         return source.getRowCount();
+	      }
+
+	      public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+	      {
+	      }
+
+	      public Object getValueAt(int rowIndex, int columnIndex)
+	      {
+	         return null;
+	      }
+
+	      public void addTableModelListener(javax.swing.event.TableModelListener l)
+	      {
+	      }
+
+	      public void removeTableModelListener(javax.swing.event.TableModelListener l)
+	      {
+	      }
+	   }
+	 
+	  private static class RowHeaderRenderer extends DefaultTableCellRenderer
+	   {
+	      public RowHeaderRenderer()
+	      {
+	         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+	         setHorizontalAlignment(RIGHT);
+	      }
+
+	      public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column)
+	      {
+	         if (table != null)
+	         {
+	            JTableHeader header = table.getTableHeader();
+	            if (header != null)
+	            {
+	               setForeground(header.getForeground());
+	               setBackground(header.getBackground());
+	            }
+	         }
+	         setValue(String.valueOf(row + 1));
+
+	         return this;
+	      }
+
+	      public void updateUI()
+	      {
+	         super.updateUI();
+	         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+	      }
+	   }
 }

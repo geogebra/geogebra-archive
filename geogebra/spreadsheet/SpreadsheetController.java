@@ -16,7 +16,7 @@ import javax.swing.tree.TreePath;
  * @author Amy Mathew Varkey
  *
  */
-public class SpreadsheetController extends JPanel implements CellEditorListener 
+public class SpreadsheetController extends JPanel
 {
     private Application app;
     private JTable table;
@@ -35,19 +35,21 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
     public GeoElement getSelectedGeoElement() {
 		return selectedGeoElement;
 	}
+    
     /*
      * CellEditorListener implementation 
-    */
+    *
     public void editingCanceled(ChangeEvent event) {
     }
+    */
 
+    /*
     public void editingStopped(ChangeEvent event) {
            
     	GeoElement geo=null;
         // get the entered String
        // String inputStr = table.getCellEditor().getCellEditorValue().toString();
-    	 String inputStr = (String)(table.getDefaultEditor(this.getClass()).getCellEditorValue());
-    	 Object obj = event.getSource();
+    	 String inputStr = (String)(table.getDefaultEditor(this.getClass()).getCellEditorValue());    	
         
         // TODO: remove
         System.out.println("editingStopped: inputStr = " + inputStr);
@@ -61,9 +63,8 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
         // only nodes with a GeoElement as userObject can be edited!        
         //selectedNode.setUserObject(selectedGeoElement);
         //model=(SpreadsheetTableModel)table.getModel();
-        
-        Object comp=table.getDefaultEditor(this.getClass()).getTableCellEditorComponent(table, (Object)inputStr, true, 1, 1);
-        if (inputStr == null || inputStr.length() == 0) return;
+                
+        if (inputStr == null || inputStr.trim().length() == 0) return;
         
         // TODO: if String starts with = we need to add the name of the resulting
         // GeoElement
@@ -80,6 +81,7 @@ public class SpreadsheetController extends JPanel implements CellEditorListener
         
            
     }
+    */
     
 	
 

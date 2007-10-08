@@ -104,67 +104,57 @@ public class SpreadsheetTableModel extends DefaultTableModel
     public void setValueAt( Object obj, int row, int col)
     {
         GeoElement geo = null;
-        if( !(obj instanceof GeoElement))
+        // input string
+        if(obj instanceof String)
         {
+        	String inputString = ((String) obj).trim();           	
             geo = (GeoElement)getValueAt( row, col);
-            if( geo == null)
+                        
+            // delete old cell object if empty input string
+            if (inputString.length() == 0) {
+            	if (geo != null) geo.remove();
+            	return;
+            }
+            
+            // cell is empty at the moment:
+            if( geo == null )
             {
-                if( obj.toString().startsWith("="))
+            	String str;
+                if( inputString.startsWith("=") )
                 {
                     //TODO: do the equation here
-                    String str = getLabel(row, col) + obj.toString();
-                    app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
-                    fireTableDataChanged();
+                    str = getLabel(row, col) + inputString;                   
                 }
-                else
+                else 
                 {
-                    String str = getLabel(row, col) + "=" + obj.toString();
-                    
-                    app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
-                    fireTableDataChanged();
+                     str = getLabel(row, col) + "=" + inputString;                    
                 }
+                app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+                fireTableDataChanged();
             }
+            
+            // we have a GeoElement in this cell already:
             else
             {
-               if( obj != null)
+              
+               String newValue = inputString;                  
+               if( inputString.startsWith("=") )
                {
-                   String newValue = obj.toString();
-                   int index = newValue.indexOf("=");
-                   if( index != -1)
-                   {
-                       // case of formula
-                       newValue = newValue.substring(index + 1);
-                       if ( geo.isIndependent()) {
-                    	     // change geo, but don't redefine       
-                    	     app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
-                    	} else {
-                    	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
-                    	    GeoElement changedGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
-                    	//    updateGeoElement(geo, newValue);
-                    	}         
-                       
-                   }
-                   else
-                   {
-                	   if ( geo.isIndependent()) 
-                	   {
-                  	     // change geo, but don't redefine       
-                  	     app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
-                	   	} 
-                	   else 
-                	   {
-                  	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
-                  	    GeoElement changedGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
-                  	 //   updateGeoElement(geo, newValue);
-                  	}      
-                    //   updateGeoElement(geo, newValue);
-                   }
+                   // case of formula
+                   newValue = newValue.substring(1);
+                           
+                   
                }
-               else
-               {
-                   super.setValueAt(obj, row, col);
-               }
-                
+              
+               if ( geo.isIndependent()) {
+          	     // change geo, but don't redefine       
+          	     	app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
+              	} else {
+              	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
+              	    app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
+              	//    updateGeoElement(geo, newValue);
+              	}               
+            
             }
         }
         else
@@ -173,31 +163,31 @@ public class SpreadsheetTableModel extends DefaultTableModel
         }
     }
 
-    /**
-     * @param geo
-     * @param newValue
-     */
-    private void updateGeoElement(GeoElement geo, String newValue)
-    {
-        newValue = newValue.trim();
-        if (geo instanceof GeoNumeric)
-        {
-            GeoNumeric geoNum = (GeoNumeric) geo;
-            try
-            {
-                geoNum.setValue(Double.parseDouble(newValue));
-                geoNum.update();
-            }
-            catch (NumberFormatException nfe)
-            {
-                nfe.printStackTrace();
-            }
-        }
-        else
-        {
-            //
-        }
-    }
+//    /**
+//     * @param geo
+//     * @param newValue
+//     */
+//    private void updateGeoElement(GeoElement geo, String newValue)
+//    {
+//        newValue = newValue.trim();
+//        if (geo instanceof GeoNumeric)
+//        {
+//            GeoNumeric geoNum = (GeoNumeric) geo;
+//            try
+//            {
+//                geoNum.setValue(Double.parseDouble(newValue));
+//                geoNum.update();
+//            }
+//            catch (NumberFormatException nfe)
+//            {
+//                nfe.printStackTrace();
+//            }
+//        }
+////        else
+//        {
+//            //
+//        }
+//    }
     
     public Object getValueAt( int row, int col)
     {
