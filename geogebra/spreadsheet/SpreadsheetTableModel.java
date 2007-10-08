@@ -134,11 +134,30 @@ public class SpreadsheetTableModel extends DefaultTableModel
                    {
                        // case of formula
                        newValue = newValue.substring(index + 1);
-                       updateGeoElement(geo, newValue);
+                       if ( geo.isIndependent()) {
+                    	     // change geo, but don't redefine       
+                    	     app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
+                    	} else {
+                    	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
+                    	    GeoElement changedGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
+                    	//    updateGeoElement(geo, newValue);
+                    	}         
+                       
                    }
                    else
                    {
-                       updateGeoElement(geo, newValue);
+                	   if ( geo.isIndependent()) 
+                	   {
+                  	     // change geo, but don't redefine       
+                  	     app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
+                	   	} 
+                	   else 
+                	   {
+                  	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
+                  	    GeoElement changedGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
+                  	 //   updateGeoElement(geo, newValue);
+                  	}      
+                    //   updateGeoElement(geo, newValue);
                    }
                }
                else
@@ -197,7 +216,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
         Object obj = getValueAt(row, col);
         if( !(obj instanceof GeoElement))
         {
-            System.out.println("null");
+         //   System.out.println("null");
             return true;
         }
         else
