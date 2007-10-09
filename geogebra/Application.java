@@ -380,7 +380,31 @@ public class Application implements	KeyEventDispatcher {
 		if (showSpreadsheet) {			
 			openSpreadsheet(this);
 		}
+		
+		// TODO: remove spreadsheet and CAS testing
+		if (showCAS) {
+			openCAS(this);
+		}
+
     }      
+    
+    public static void openCAS(Application app) {
+    	try {
+			JComponent casView = new geogebra.cas.view.CASView(app);
+			
+			JFrame spFrame = new JFrame();
+	        Container contentPane = spFrame.getContentPane();
+	        contentPane.setLayout(new BorderLayout());
+	        contentPane.add(casView, BorderLayout.CENTER);
+	        spFrame.setResizable(true);
+	        spFrame.setTitle("GeoGebra CAS");
+	        spFrame.pack();
+	        spFrame.setVisible(true);
+	        
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
     
     public static void openSpreadsheet(Application app) {
     	try {
