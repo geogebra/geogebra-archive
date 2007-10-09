@@ -101,6 +101,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import sunw.util.EventListener;
+
 
 /**
  * @author Markus Hohenwarter
@@ -140,8 +142,6 @@ public class PropertiesDialogGeoElement
 		super(app.getFrame(), false);
 		this.app = app;
 		kernel = app.getKernel();	
-		
-		colChooser = new JColorChooser();
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setResizable(false);
@@ -167,12 +167,13 @@ public class PropertiesDialogGeoElement
 	public void initGUI() {
 		setTitle(app.getPlain("Properties"));
 		geoTree.root.setUserObject(app.getPlain("Objects"));
-		geoTree.setFont(app.plainFont);
+		geoTree.setFont(app.plainFont);			
 		
 		boolean wasShowing = isShowing();
 		if (wasShowing) {
 			setVisible(false);
 		}
+		
 		
 		//	LIST PANEL
 		JPanel listPanel = new JPanel();
@@ -231,21 +232,17 @@ public class PropertiesDialogGeoElement
 //				BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		listPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 8));		
 
+			
 		// PROPERTIES PANEL
-		propPanel = new PropertiesPanel();
+		if (colChooser == null) {
+			// init color chooser
+			colChooser = new JColorChooser();
+			colChooser.setColor(new Color(1, 1,1, 100));
+		}
+			
+		propPanel = new PropertiesPanel(colChooser);
 		selectionChanged(); // init propPanel		
 
-		/*
-		// Cancel and Apply Button
-		cancelButton = new JButton(app.getPlain("Cancel"));
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//cancel();
-				closeDialog();
-			}
-		});
-		*/
-		
 		closeButton = new JButton(app.getMenu("Close"));
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -557,7 +554,7 @@ public class PropertiesDialogGeoElement
 		
 		private JTabbedPane tabs;
 
-		public PropertiesPanel() {			
+		public PropertiesPanel(JColorChooser colChooser) {			
 			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
 			//setLayout(new FlowLayout());
 			
@@ -1012,10 +1009,17 @@ public class PropertiesDialogGeoElement
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the 	
 			
-			// TODO: remove listener for color chooser
-			
-			
-			colChooser.setColor(new Color(1, 1,1, 100));
+			/*
+			// remove possible old change listeners from color chooser						
+			ChangeListener [] listeners = (ChangeListener[]) colChooser.getListeners(ChangeListener.class);
+			if (listeners != null) {
+				for (int i = 0; i< listeners.length; i++) {
+					colChooser.getSelectionModel().removeChangeListener( listeners[i]);
+				}
+			}
+			*/
+						
+			//colChooser.setColor(new Color(1, 1,1, 100));
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 		

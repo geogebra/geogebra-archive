@@ -45,6 +45,10 @@ public class Equation extends ValidExpression {
     	return rhs;
     }
     
+    public ExpressionNode getLHS() {
+    	return lhs;
+    }
+    
     /**
      * Call this method to check that this is a valid equation.
      * May throw MyError (InvalidEquation).     

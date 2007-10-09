@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
@@ -440,7 +441,7 @@ public class AlgebraProcessor {
 
 		GeoElement[] vars = fun.getGeoElementVariables();				
 		boolean isIndependent = (vars == null || vars.length == 0);
-
+		
 		if (isIndependent) {
 			f = kernel.Function(label, fun);			
 		} else {			
@@ -473,7 +474,15 @@ public class AlgebraProcessor {
 		catch (MyError eqnError) {
         	// invalid equation: maybe a function?
 			try {
-				return processFunction(new Function(equ.getRHS()));
+				Function fun = new Function(equ.getRHS());
+				
+				// try to use LHS as label
+				String label = equ.getLHS().toString();				
+				if (label.indexOf("x") == -1) {
+					fun.setLabel(label);	 
+				}
+								
+				return processFunction(fun);
 			}
 			catch (MyError funError) {
 				throw eqnError;
