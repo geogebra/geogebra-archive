@@ -2474,7 +2474,7 @@ public abstract class GeoElement
 	 * Note that this method
 	 * may return null if no position was specified so far.	 
 	 */
-	public Point getSpreadsheetCoords() {
+	final public Point getSpreadsheetCoords() {
 		return spreadsheetCoords;
 	}
 
@@ -2483,11 +2483,11 @@ public abstract class GeoElement
 	 * GeoGebra's spreadsheet. The x-coordinate specifies its
 	 * column and the y-coordinate specifies its row location.	 
 	 */
-	public void setSpreadsheetCoords(Point spreadsheetCoords) {
+	final public void setSpreadsheetCoords(Point spreadsheetCoords) {
 		this.spreadsheetCoords = spreadsheetCoords;
 	}
 
-	public Point getOldSpreadsheetCoords() {
+	final public Point getOldSpreadsheetCoords() {
 		return oldSpreadsheetCoords;
 	}
 
