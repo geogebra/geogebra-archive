@@ -46,7 +46,7 @@ TRANSLATIONS
   * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
       Luciana de Lima, Araújo Freitas, Alana Souza de Olivieira (Brazil)
-  * Portuguese (Portugal): Jorge Geraldes (Portugal)
+  * Portuguese (Portugal): Jorge Geraldes, António Ribeiro (Portugal)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba (Slovakia)
   * Slovenian: Stanislav Senveter (Slovenia)
