@@ -36,7 +36,10 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
     		int selectedIndex = ((Integer)value).intValue();
     		this.id=selectedIndex;
     			if (isSelected) {
-    				setBackground(list.getSelectionBackground());
+// Michael Borcherds 20071006 start
+//    				setBackground(list.getSelectionBackground());
+    				setBackground(Color.GRAY);
+// Michael Borcherds 20071006 end
 //    				setForeground(list.getSelectionForeground());
     			} else {
     				setBackground(list.getBackground());
@@ -49,7 +52,10 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
     	public void paint(Graphics g){
     		super.paint(g);
     		
-    		g.setColor(getBackground());
+// Michael Borcherds 20071006 start
+//    		g.setColor(getBackground());
+    		if (getBackground()==Color.GRAY) g.setColor(Color.GRAY); else g.setColor(Color.WHITE); 
+//    		 Michael Borcherds 20071006 end
     		g.fillRect(0,0,getWidth(),getHeight());
     		g.setColor(Color.BLACK);
     		int mid = getHeight() / 2;
@@ -76,6 +82,32 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
 					g.drawLine(mid_width+3,quart,mid_width+3,mid+quart);
 					g.drawLine(mid_width-3,quart,mid_width-3,mid+quart);
    				break;
-    		}		
+// Michael Borcherds 20071006 start
+    			case GeoSegment.DECORATION_SEGMENT_ONE_ARROW:
+    	    		quart=mid/2;
+    				mid_width=getWidth()/2;
+    				g.drawLine(mid_width,mid,mid_width-quart,mid-quart);
+    				g.drawLine(mid_width,mid,mid_width-quart,mid+quart);
+    			break;
+    			case GeoSegment.DECORATION_SEGMENT_TWO_ARROWS:
+    				quart=mid/2;
+					mid_width=getWidth()/2;
+    				g.drawLine(mid_width-3,mid,mid_width-quart-3,mid-quart);
+    				g.drawLine(mid_width-3,mid,mid_width-quart-3,mid+quart);
+    				g.drawLine(mid_width+3,mid,mid_width-quart+3,mid-quart);
+    				g.drawLine(mid_width+3,mid,mid_width-quart+3,mid+quart);
+    			break;
+    			case GeoSegment.DECORATION_SEGMENT_THREE_ARROWS:
+    	    		quart=mid/2;
+					mid_width=getWidth()/2;
+    				g.drawLine(mid_width,mid,mid_width-quart,mid-quart);
+    				g.drawLine(mid_width,mid,mid_width-quart,mid+quart);
+    				g.drawLine(mid_width+6,mid,mid_width-quart+6,mid-quart);
+    				g.drawLine(mid_width+6,mid,mid_width-quart+6,mid+quart);
+    				g.drawLine(mid_width-6,mid,mid_width-quart-6,mid-quart);
+    				g.drawLine(mid_width-6,mid,mid_width-quart-6,mid+quart);
+   				break;
+//   			 Michael Borcherds 20071006 end
+   				}		
     	}
     }

@@ -263,6 +263,11 @@ public abstract class GeoElement
 	public static final int DECORATION_SEGMENT_ONE_TICK = 1;
 	public static final int DECORATION_SEGMENT_TWO_TICKS = 2;
 	public static final int DECORATION_SEGMENT_THREE_TICKS = 3;
+// Michael Borcherds 2007-10-06
+	public static final int DECORATION_SEGMENT_ONE_ARROW = 4;
+	public static final int DECORATION_SEGMENT_TWO_ARROWS = 5;
+	public static final int DECORATION_SEGMENT_THREE_ARROWS = 6;
+//	 Michael Borcherds 2007-10-06
 	// angle decorations
 	public static final int DECORATION_ANGLE_TWO_ARCS = 1;
 	public static final int DECORATION_ANGLE_THREE_ARCS = 2;
@@ -1538,7 +1543,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * Returns the smallest possible construction index for this object in it's construction.
+	 * Returns the smallest possible construction index for this object in its construction.
 	 * For an independent object 0 is returned.
 	 */
 	public int getMinConstructionIndex() {
@@ -2474,7 +2479,7 @@ public abstract class GeoElement
 	 * Note that this method
 	 * may return null if no position was specified so far.	 
 	 */
-	final public Point getSpreadsheetCoords() {
+	public Point getSpreadsheetCoords() {
 		return spreadsheetCoords;
 	}
 
@@ -2483,11 +2488,11 @@ public abstract class GeoElement
 	 * GeoGebra's spreadsheet. The x-coordinate specifies its
 	 * column and the y-coordinate specifies its row location.	 
 	 */
-	final public void setSpreadsheetCoords(Point spreadsheetCoords) {
+	public void setSpreadsheetCoords(Point spreadsheetCoords) {
 		this.spreadsheetCoords = spreadsheetCoords;
 	}
 
-	final public Point getOldSpreadsheetCoords() {
+	public Point getOldSpreadsheetCoords() {
 		return oldSpreadsheetCoords;
 	}
 

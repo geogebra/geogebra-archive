@@ -132,7 +132,7 @@ implements Previewable {
 		if (geo.decorationType != GeoElement.DECORATION_NONE && nLength > 0) {	
 			if (decoTicks == null) {
 				// only create these object when they are really needed
-				decoTicks =	new Line2D.Double[3];
+				decoTicks =	new Line2D.Double[6]; // Michael Borcherds 20071006 changed from 3 to 6
 				for (int i = 0; i < decoTicks.length; i++)
 					decoTicks[i] = new Line2D.Double();
 			}
@@ -140,49 +140,113 @@ implements Previewable {
 			// tick spacing and length.
 			double tickSpacing = 2.5 + geo.lineThickness/2d;
 			double tickLength =  tickSpacing + 1;	
+//			 Michael Borcherds 20071006 start
+			double arrowlength = 1.5;
+//			 Michael Borcherds 20071006 end
 			double vx, vy, factor;
 																	
 			switch(geo.decorationType){
-				case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-					// use perpendicular vector to set tick	
-					factor = tickLength / nLength;
-					nx *= factor;
-					ny *= factor;
-					decoTicks[0].setLine(midX - nx, midY - ny,
-										 midX + nx, midY + ny);	
-					break;
-			 	
-			 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-			 		// vector (vx, vy) to get 2 points around midpoint		
-			 		factor = tickSpacing / (2 * nLength);		
-			 		vx = -ny * factor;
-			 		vy =  nx * factor;	
-			 		// use perpendicular vector to set ticks			 		
-			 		factor = tickLength / nLength;
-					nx *= factor;
-					ny *= factor;
-					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
-										 midX + vx + nx, midY + vy + ny);						
-					decoTicks[1].setLine(midX - vx - nx, midY - vy - ny,
-							 			 midX - vx + nx, midY - vy + ny);
-			 		break;
-			 	
-			 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-			 		// vector (vx, vy) to get 2 points around midpoint				 		
-			 		factor = tickSpacing / nLength;		
-			 		vx = -ny * factor;
-			 		vy =  nx * factor;	
-			 		// use perpendicular vector to set ticks			 		
-			 		factor = tickLength / nLength;
-					nx *= factor;
-					ny *= factor;
-					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
-										 midX + vx + nx, midY + vy + ny);	
-					decoTicks[1].setLine(midX - nx, midY - ny,
-							 			 midX + nx, midY + ny);
-					decoTicks[2].setLine(midX - vx - nx, midY - vy - ny,
-				 			 			 midX - vx + nx, midY - vy + ny);
-			 		break;
+			case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+				// use perpendicular vector to set tick	
+				factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX - nx, midY - ny,
+									 midX + nx, midY + ny);	
+				break;
+		 	
+		 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+		 		// vector (vx, vy) to get 2 points around midpoint		
+		 		factor = tickSpacing / (2 * nLength);		
+		 		vx = -ny * factor;
+		 		vy =  nx * factor;	
+		 		// use perpendicular vector to set ticks			 		
+		 		factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
+									 midX + vx + nx, midY + vy + ny);						
+				decoTicks[1].setLine(midX - vx - nx, midY - vy - ny,
+						 			 midX - vx + nx, midY - vy + ny);
+		 		break;
+		 	
+		 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+		 		// vector (vx, vy) to get 2 points around midpoint				 		
+		 		factor = tickSpacing / nLength;		
+		 		vx = -ny * factor;
+		 		vy =  nx * factor;	
+		 		// use perpendicular vector to set ticks			 		
+		 		factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
+									 midX + vx + nx, midY + vy + ny);	
+				decoTicks[1].setLine(midX - nx, midY - ny,
+						 			 midX + nx, midY + ny);
+				decoTicks[2].setLine(midX - vx - nx, midY - vy - ny,
+			 			 			 midX - vx + nx, midY - vy + ny);
+		 		break;
+//		 	 Michael Borcherds 20071006 start
+			case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
+		 		// vector (vx, vy) to get 2 points around midpoint				 		
+		 		factor = tickSpacing / nLength;		
+		 		vx = -ny * factor;
+		 		vy =  nx * factor;	
+				// use perpendicular vector to set tick	
+				factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX - arrowlength*vx, midY - arrowlength*vy,
+						 midX - arrowlength*vx + arrowlength*(nx + vx), midY - arrowlength*vy + arrowlength*(ny + vy));	
+				decoTicks[1].setLine(midX - arrowlength*vx, midY - arrowlength*vy,
+						 midX - arrowlength*vx + arrowlength*(-nx + vx), midY - arrowlength*vy + arrowlength*(-ny + vy));	
+				break;
+		 	
+		 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
+		 		// vector (vx, vy) to get 2 points around midpoint		
+		 		factor = tickSpacing / nLength;		
+		 		vx = -ny * factor;
+		 		vy =  nx * factor;	
+		 		// use perpendicular vector to set ticks			 		
+		 		factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX - 2*arrowlength*vx, midY - 2*arrowlength*vy,
+						 midX - 2*arrowlength*vx + arrowlength*(nx + vx), midY - 2*arrowlength*vy + arrowlength*(ny + vy));	
+				decoTicks[1].setLine(midX - 2*arrowlength*vx, midY - 2*arrowlength*vy,
+						 midX - 2*arrowlength*vx + arrowlength*(-nx + vx), midY - 2*arrowlength*vy + arrowlength*(-ny + vy));	
+				
+				decoTicks[2].setLine(midX, midY,
+						 midX + arrowlength*(nx + vx), midY + arrowlength*(ny + vy));	
+				decoTicks[3].setLine(midX, midY,
+						 midX + arrowlength*(-nx + vx), midY + arrowlength*(-ny + vy));	
+		 		break;
+		 	
+		 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
+		 		// vector (vx, vy) to get 2 points around midpoint				 		
+		 		factor = tickSpacing / nLength;		
+		 		vx = -ny * factor;
+		 		vy =  nx * factor;	
+		 		// use perpendicular vector to set ticks			 		
+		 		factor = tickLength / nLength;
+				nx *= factor;
+				ny *= factor;
+				decoTicks[0].setLine(midX - arrowlength*vx, midY - arrowlength*vy,
+						 midX - arrowlength*vx + arrowlength*(nx + vx), midY - arrowlength*vy + arrowlength*(ny + vy));	
+				decoTicks[1].setLine(midX - arrowlength*vx, midY - arrowlength*vy,
+						 midX - arrowlength*vx + arrowlength*(-nx + vx), midY - arrowlength*vy + arrowlength*(-ny + vy));	
+				
+				decoTicks[2].setLine(midX + arrowlength*vx, midY + arrowlength*vy,
+						 midX + arrowlength*vx + arrowlength*(nx + vx), midY + arrowlength*vy + arrowlength*(ny + vy));	
+				decoTicks[3].setLine(midX + arrowlength*vx, midY + arrowlength*vy,
+						 midX + arrowlength*vx + arrowlength*(-nx + vx), midY + arrowlength*vy + arrowlength*(-ny + vy));	
+				
+				decoTicks[4].setLine(midX - 3*arrowlength*vx, midY - 3*arrowlength*vy,
+						 midX - 3*arrowlength*vx + arrowlength*(nx + vx), midY - 3*arrowlength*vy + arrowlength*(ny + vy));	
+				decoTicks[5].setLine(midX - 3*arrowlength*vx, midY - 3*arrowlength*vy,
+						 midX - 3*arrowlength*vx + arrowlength*(-nx + vx), midY - 3*arrowlength*vy + arrowlength*(-ny + vy));	
+		 		break;
+//		 	 Michael Borcherds 20071006 end
 			}    		    		    		
     	}			                                           
     }
@@ -205,20 +269,42 @@ implements Previewable {
 				g2.setStroke(decoStroke);
 				
 				switch(geo.decorationType){
-					case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-						g2.draw(decoTicks[0]);
-						break;
-						
-					case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-						g2.draw(decoTicks[0]);
-						g2.draw(decoTicks[1]);
-						break;
-						
-					case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-						g2.draw(decoTicks[0]);
-						g2.draw(decoTicks[1]);
-						g2.draw(decoTicks[2]);
-						break;
+				case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+					g2.draw(decoTicks[0]);
+					break;
+					
+				case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					break;
+					
+				case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					break;
+// Michael Borcherds 20071006 start
+				case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					break;
+					
+				case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					g2.draw(decoTicks[3]);
+					break;
+					
+				case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					g2.draw(decoTicks[3]);
+					g2.draw(decoTicks[4]);
+					g2.draw(decoTicks[5]);
+					break;
+// Michael Borcherds 20071006 end
 				}
 			}
 			//END
