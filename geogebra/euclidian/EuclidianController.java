@@ -1235,11 +1235,12 @@ final public class EuclidianController implements MouseListener,
 		// now handle current mode
 		hits = view.getHits(mouseLoc);
 		if (TEMPORARY_MODE) {
-//			Michael Borcherds 2007-10-12
+//			Michael Borcherds 2007-10-13
 			view.setMode(oldMode);
 			TEMPORARY_MODE = false;
+			clearSelection(selectedPoints);
 			//mode = oldMode;
-//			Michael Borcherds 2007-10-12
+//			Michael Borcherds 2007-10-13
 		} 
 //		 Michael Borcherds 2007-10-12 bugfix: ctrl-click on a point does the original mode's command at end of drag if a point was clicked on
 //  also needed for right-drag
