@@ -44,7 +44,9 @@ public class DecorationAngleListRenderer extends JPanel implements ListCellRende
 		int selectedIndex = ((Integer)value).intValue();
 		this.id=selectedIndex;
 			if (isSelected) {
-				setBackground(list.getSelectionBackground());
+// Michael Borcherds 2007-10-13 BEGIN
+				setBackground(Color.LIGHT_GRAY);
+// Michael Borcherds 2007-10-13 END
 //				setForeground(list.getSelectionForeground());
 			} else {
 				setBackground(list.getBackground());
@@ -68,7 +70,10 @@ public class DecorationAngleListRenderer extends JPanel implements ListCellRende
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 							RenderingHints.VALUE_ANTIALIAS_ON);
 		// added by Markus Hohenwarter, END
-		g2.setColor(getBackground());
+//		 Michael Borcherds 2007-10-13 BEGIN
+//		g2.setColor(getBackground());
+		if (getBackground()==Color.LIGHT_GRAY) g2.setColor(Color.LIGHT_GRAY); else g2.setColor(Color.WHITE); 
+//		 Michael Borcherds 2007-10-13 END
 		g2.fillRect(0,0,getWidth(),getHeight());
 		g2.setColor(Color.BLACK);
 		g2.drawLine(13,27, 67, 27);

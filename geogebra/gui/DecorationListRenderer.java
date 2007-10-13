@@ -38,7 +38,7 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
     			if (isSelected) {
 // Michael Borcherds 20071006 start
 //    				setBackground(list.getSelectionBackground());
-    				setBackground(Color.GRAY);
+    				setBackground(Color.LIGHT_GRAY);
 // Michael Borcherds 20071006 end
 //    				setForeground(list.getSelectionForeground());
     			} else {
@@ -54,7 +54,7 @@ public class DecorationListRenderer extends JPanel implements ListCellRenderer {
     		
 // Michael Borcherds 20071006 start
 //    		g.setColor(getBackground());
-    		if (getBackground()==Color.GRAY) g.setColor(Color.GRAY); else g.setColor(Color.WHITE); 
+    		if (getBackground()==Color.LIGHT_GRAY) g.setColor(Color.LIGHT_GRAY); else g.setColor(Color.WHITE); 
 //    		 Michael Borcherds 20071006 end
     		g.fillRect(0,0,getWidth(),getHeight());
     		g.setColor(Color.BLACK);
