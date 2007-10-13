@@ -1431,7 +1431,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1451,7 +1451,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - 2*arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1463,7 +1463,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			
 	 		x1=euclidianView.toRealWorldCoordX(midX);
 	 		y1=euclidianView.toRealWorldCoordY(midY);
-	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*(nx + vx));
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
 	 		x1=euclidianView.toRealWorldCoordX(midX);
@@ -1482,7 +1482,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1494,7 +1494,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			
 	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
 	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*vx + arrowlength*(nx + vx));
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
 	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
