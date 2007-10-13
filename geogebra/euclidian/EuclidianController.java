@@ -64,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.swing.ToolTipManager;
 
@@ -106,7 +108,6 @@ final public class EuclidianController implements MouseListener,
 	private static final int MOVE_Y_AXIS = 117;
 	
 	private static final int MOVE_BOOLEAN = 118; // for checkbox moving
-	
 
 	private Application app;
 
@@ -121,7 +122,7 @@ final public class EuclidianController implements MouseListener,
 	private Point oldLoc = new Point();
 
 	double xRW, yRW, // real world coords of mouse location
-			xRWold = Double.NEGATIVE_INFINITY, yRWold = xRWold, temp;
+	xRWold = Double.NEGATIVE_INFINITY, yRWold = xRWold, temp;
 
 	// for moving conics:
 	private Point2D.Double startPoint = new Point2D.Double();
@@ -190,7 +191,7 @@ final public class EuclidianController implements MouseListener,
 
 	private boolean RIGHT_CLICK = false;
 
-	private boolean QUICK_TRANSLATEVIEW = false;
+	private boolean TEMPORARY_MODE = false; // changed from QUICK_TRANSLATEVIEW Michael Borcherds 2007-10-08
 
 	private boolean DRAGGING_OCCURED = false; // for moving objects
 
@@ -234,7 +235,10 @@ final public class EuclidianController implements MouseListener,
 
 	void setMode(int newMode) {
 		endOfMode(mode);
-		app.clearSelectedGeos(false);
+// Michael Borcherds 2007-10-12
+//		app.clearSelectedGeos(false);
+		if (!TEMPORARY_MODE) app.clearSelectedGeos(false);
+//		 Michael Borcherds 2007-10-12
 		initNewMode(newMode);
 		kernel.notifyRepaint();
 	}
@@ -260,8 +264,11 @@ final public class EuclidianController implements MouseListener,
 	private void initNewMode(int mode) {
 		this.mode = mode;
 		initShowMouseCoords();
-		clearSelections();
-		moveMode = MOVE_NONE;	
+// Michael Borcherds 2007-10-12
+		//clearSelections();
+		if (!TEMPORARY_MODE) clearSelections();
+//		 Michael Borcherds 2007-10-12
+		moveMode = MOVE_NONE;
 
 		Previewable previewDrawable = null;
 		// init preview drawables
@@ -352,6 +359,7 @@ final public class EuclidianController implements MouseListener,
 	}
 
 	void clearSelections() {
+	
 		clearSelection(selectedPoints);
 		clearSelection(selectedLines);
 		clearSelection(selectedSegments);
@@ -450,7 +458,6 @@ final public class EuclidianController implements MouseListener,
 		}
 
 		if (e.isPopupTrigger() || e.isMetaDown()) {
-			if (!app.isRightClickEnabled()) return;
 			RIGHT_CLICK = true;				
 			return;
 		} 
@@ -458,10 +465,9 @@ final public class EuclidianController implements MouseListener,
 				|| e.isControlDown() // old Windows key: Ctrl key 
 				) 
 		{
-			QUICK_TRANSLATEVIEW = true;
-			oldMode = mode; // remember current mode			
-			//view.setMode(EuclidianView.MODE_TRANSLATEVIEW);
-			mode = EuclidianView.MODE_TRANSLATEVIEW;	
+			TEMPORARY_MODE = true;
+			oldMode = mode; // remember current mode	
+			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
 		} 		
 		RIGHT_CLICK = false;
 
@@ -544,7 +550,7 @@ final public class EuclidianController implements MouseListener,
 			}						
 			
 			startLoc = mouseLoc; 
-			if (!QUICK_TRANSLATEVIEW) {
+			if (!TEMPORARY_MODE) {
 				if (moveMode == MOVE_VIEW)
 					view.setMoveCursor();
 				else
@@ -559,7 +565,7 @@ final public class EuclidianController implements MouseListener,
 			break;								
 				
 		default:
-			moveMode = MOVE_NONE;				 
+			moveMode = MOVE_NONE;			 
 		}
 	}
 	
@@ -646,7 +652,7 @@ final public class EuclidianController implements MouseListener,
 			moveModeSelectionHandled = true;														
 		} else {
 			// no geo clicked at
-			moveMode = MOVE_NONE;			
+			moveMode = MOVE_NONE;	
 			return;
 		}				
 		
@@ -688,6 +694,7 @@ final public class EuclidianController implements MouseListener,
 				translateableGeos = movedGeoElement.getMoveableParentPoints();
 			
 				if (translateableGeos != null) {					
+
 					moveMode = MOVE_DEPENDENT;
 					startPoint.setLocation(xRW, yRW);					
 					view.setDragCursor();
@@ -872,7 +879,21 @@ final public class EuclidianController implements MouseListener,
 	final public void mouseDragged(MouseEvent e) {
 		if (!DRAGGING_OCCURED) {
 			DRAGGING_OCCURED = true;			
-					
+
+// Michael Borcherds 2007-10-07 allow right mouse button to drag points
+			if (RIGHT_CLICK)
+				if (view.getHits(mouseLoc, true)!=null) 
+				{
+					TEMPORARY_MODE = true;
+					oldMode = mode; // remember current mode			
+					view.setMode(EuclidianView.MODE_MOVE);
+					handleMousePressedForMoveMode(e);	
+					return;
+				}
+			if (!app.isRightClickEnabled()) return;
+//			 Michael Borcherds 2007-10-07
+			
+			
 			if (mode == EuclidianView.MODE_MOVE_ROTATE) {
 				app.clearSelectedGeos(false);
 				app.addSelectedGeo(rotationCenter, false);						
@@ -883,7 +904,9 @@ final public class EuclidianController implements MouseListener,
 		transformCoords();
 
 		// zoom rectangle (right drag) or selection rectangle (left drag)
-		if (RIGHT_CLICK || allowSelectionRectangle()) {
+// Michael Borcherds 2007-10-07 allow dragging with right mouse button
+		if (((RIGHT_CLICK) || allowSelectionRectangle()) && !TEMPORARY_MODE) {
+//			 Michael Borcherds 2007-10-07 
 			// set zoom rectangle's size
 			updateSelectionRectangle(RIGHT_CLICK);
 			view.repaint();
@@ -1037,7 +1060,7 @@ final public class EuclidianController implements MouseListener,
 				
 			case MOVE_VIEW:
 				if (repaint) {
-					if (QUICK_TRANSLATEVIEW) view.setMoveCursor();
+					if (TEMPORARY_MODE) view.setMoveCursor();
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
 							+ mouseLoc.y - startLoc.y, view.xscale, view.yscale);
 				}
@@ -1045,7 +1068,7 @@ final public class EuclidianController implements MouseListener,
 								
 			case MOVE_X_AXIS:
 				if (repaint) {
-					if (QUICK_TRANSLATEVIEW) view.setDragCursor();
+					if (TEMPORARY_MODE) view.setDragCursor();
 										
 					// take care when we get close to the origin
 					if (Math.abs(mouseLoc.x - view.xZero) < 2) {
@@ -1058,8 +1081,7 @@ final public class EuclidianController implements MouseListener,
 				
 			case MOVE_Y_AXIS:
 				if (repaint) {
-					if (QUICK_TRANSLATEVIEW) view.setDragCursor();
-					
+					if (TEMPORARY_MODE) view.setDragCursor();
 					// take care when we get close to the origin
 					if (Math.abs(mouseLoc.y - view.yZero) < 2) {
 						mouseLoc.y = (int) Math.round(mouseLoc.y > view.yZero ?  view.yZero + 2 : view.yZero - 2);						
@@ -1133,8 +1155,12 @@ final public class EuclidianController implements MouseListener,
 			return;
 		}
 				
-		if (RIGHT_CLICK) {									
+// Michael Borcherds 2007-10-08 allow drag with right mouse button
+		if (RIGHT_CLICK && !TEMPORARY_MODE)
+		{						
 			if (processZoomRectangle()) return;
+			if (!app.isRightClickEnabled()) return;
+//			 Michael Borcherds 2007-10-08
 			
 			// get selected GeoElements						
 			// show popup menu after right click
@@ -1173,6 +1199,9 @@ final public class EuclidianController implements MouseListener,
 			movedGeoElement = null;
 			rotGeoElement = null;	
 			
+// Michael Borcherds 2007-10-08 allow dragging with right mouse button
+			if (!TEMPORARY_MODE)
+// Michael Borcherds 2007-10-08
 			if (allowSelectionRectangle()) {
 				processSelectionRectangle();				
 				return;
@@ -1205,11 +1234,22 @@ final public class EuclidianController implements MouseListener,
 
 		// now handle current mode
 		hits = view.getHits(mouseLoc);
-		if (QUICK_TRANSLATEVIEW) {
-			QUICK_TRANSLATEVIEW = false;
-			//view.setMode(oldMode);
-			mode = oldMode;
+		if (TEMPORARY_MODE) {
+//			Michael Borcherds 2007-10-12
+			view.setMode(oldMode);
+			TEMPORARY_MODE = false;
+			//mode = oldMode;
+//			Michael Borcherds 2007-10-12
 		} 
+//		 Michael Borcherds 2007-10-12 bugfix: ctrl-click on a point does the original mode's command at end of drag if a point was clicked on
+//  also needed for right-drag
+		else
+		{
+			changedKernel = processMode(hits, e);
+			if (changedKernel)
+			app.storeUndoInfo();
+		}
+//Michael Borcherds 2007-10-12
 		
 		// grid capturing on: newly created point should be taken
 		if (hits == null && POINT_CREATED) {			
@@ -1218,9 +1258,12 @@ final public class EuclidianController implements MouseListener,
 		}
 		POINT_CREATED = false;		
 		
-		changedKernel = processMode(hits, e);
-		if (changedKernel)
-			app.storeUndoInfo();
+//		Michael Borcherds 2007-10-12
+//      moved up a few lines
+//		changedKernel = processMode(hits, e);
+//		if (changedKernel)
+//			app.storeUndoInfo();
+//		Michael Borcherds 2007-10-12
 			
 		if (hits != null)
 			view.setDefaultCursor();		
@@ -1439,7 +1482,7 @@ final public class EuclidianController implements MouseListener,
 		}
 	}
 
-	// process mode and return wheter kernel was changed
+	// process mode and return whether kernel was changed
 	final boolean processMode(ArrayList hits, MouseEvent e) {
 		boolean changedKernel = false;
 
@@ -1925,7 +1968,6 @@ final public class EuclidianController implements MouseListener,
 
 		// we don't specify screen coords for translation as all objects are Translateables
 		GeoElement.moveObjects(translateableGeos, translationVec);		
-		
 		if (repaint)
 			kernel.notifyRepaint();
 				
@@ -1979,6 +2021,7 @@ final public class EuclidianController implements MouseListener,
 				pointCapturingPercentage = 0.125;
 			
 			case EuclidianView.POINT_CAPTURING_ON_GRID:
+				
 				// X = (x, y) ... next grid point
 				double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
 				double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
