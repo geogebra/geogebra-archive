@@ -189,11 +189,11 @@ implements Previewable {
 //		 	 Michael Borcherds 20071006 start
 			case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
 		 		// vector (vx, vy) to get 2 points around midpoint				 		
-		 		factor = tickSpacing / (2 * nLength);		
+		 		factor = tickSpacing / (1.5 * nLength);		
 		 		vx = -ny * factor;
 		 		vy =  nx * factor;	
 				// use perpendicular vector to set tick	
-				factor = tickLength / (2 * nLength);
+				factor = tickLength / (1.5 * nLength);
 				nx *= factor;
 				ny *= factor;
 				decoTicks[0].setLine(midX - arrowlength*vx, midY - arrowlength*vy,
@@ -204,11 +204,11 @@ implements Previewable {
 		 	
 		 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
 		 		// vector (vx, vy) to get 2 points around midpoint		
-		 		factor = tickSpacing / (2 * nLength);		
+		 		factor = tickSpacing / (1.5 * nLength);		
 		 		vx = -ny * factor;
 		 		vy =  nx * factor;	
 		 		// use perpendicular vector to set ticks			 		
-		 		factor = tickLength / (2 * nLength);
+		 		factor = tickLength / (1.5 * nLength);
 				nx *= factor;
 				ny *= factor;
 				decoTicks[0].setLine(midX - 2*arrowlength*vx, midY - 2*arrowlength*vy,
@@ -224,11 +224,11 @@ implements Previewable {
 		 	
 		 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
 		 		// vector (vx, vy) to get 2 points around midpoint				 		
-		 		factor = tickSpacing / (2 * nLength);		
+		 		factor = tickSpacing / (1.5 * nLength);		
 		 		vx = -ny * factor;
 		 		vy =  nx * factor;	
 		 		// use perpendicular vector to set ticks			 		
-		 		factor = tickLength / (2 * nLength);
+		 		factor = tickLength / (1.5 * nLength);
 				nx *= factor;
 				ny *= factor;
 				decoTicks[0].setLine(midX - arrowlength*vx, midY - arrowlength*vy,

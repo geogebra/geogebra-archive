@@ -1423,11 +1423,11 @@ public class GeoGebraToPstricks implements ActionListener {
 // Michael Borcherds 20071006 start
 		case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
+	 		factor = tickSpacing / (1.5 * nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (2 * nLength);
+	 		factor = tickLength / (1.5 * nLength);
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
@@ -1443,11 +1443,11 @@ public class GeoGebraToPstricks implements ActionListener {
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / ( 2 * nLength);		
+	 		factor = tickSpacing / (1.5 * nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (2 * nLength);
+	 		factor = tickLength / (1.5 * nLength);
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
@@ -1474,11 +1474,11 @@ public class GeoGebraToPstricks implements ActionListener {
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
 	 		// vector (vx, vy) to get 2 points around midpoint				 		
-	 		factor = tickSpacing / (2 * nLength);		
+	 		factor = tickSpacing / (1.5 * nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (2 * nLength);
+	 		factor = tickLength / (1.5 * nLength);
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
