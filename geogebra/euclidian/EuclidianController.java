@@ -1238,7 +1238,7 @@ final public class EuclidianController implements MouseListener,
 //			Michael Borcherds 2007-10-13
 			view.setMode(oldMode);
 			TEMPORARY_MODE = false;
-			clearSelection(selectedPoints);
+			clearSelections();			
 			//mode = oldMode;
 //			Michael Borcherds 2007-10-13
 		} 
