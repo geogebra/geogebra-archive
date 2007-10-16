@@ -15,8 +15,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -51,7 +49,7 @@ public class SpreadsheetView extends JComponent implements View
        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
        // set selection mode for contiguous  intervals
-       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+       table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
        table.setCellSelectionEnabled(true);
        
        // we don't allow reordering
@@ -70,19 +68,19 @@ public class SpreadsheetView extends JComponent implements View
        rowHeader.setRowHeight(table.getRowHeight());
        rowHeader.setDefaultRenderer(Object.class, renderer);
        //rowHeader.addMouseListener(ml);
+
        scrollPane.setRowHeaderView(rowHeader);
-        add(scrollPane, BorderLayout.CENTER);
+       add(scrollPane, BorderLayout.CENTER);
        table.setRequestFocusEnabled(true);
        table.requestFocus();
+       
+       //allowing slection
+      // table.addKeyListener(l);
        
        //Build the structure for the spreadsheet data
        spController = new SpreadsheetController(app, table,tableModel);
        initTableCellRendererEditor();
        attachView();	
-     //  ListSelectionListener lsl = new SelectionAdapter();
-     //  table.getSelectionModel().addListSelectionListener(lsl);
-     //  table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
-       
        
      }
     
@@ -90,40 +88,8 @@ public class SpreadsheetView extends JComponent implements View
 		kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
-    /** Get the current selection range.
-     * @return The selected range of cells, or null if no cells are selected.
-     */
-//    public CellRange getSelectedRange()
-//    {
-//       if ((table.getSelectedRowCount() != 0) && (table.getSelectedColumnCount() != 0))
-//       {
-//          int[] rows = table.getSelectedRows();
-//          int[] cols = table.getSelectedColumns();
-//          int minColIndex = 0;
-//          if (cols[0] < 0)
-//          {
-//             if (cols.length == 1)
-//             {
-//                return null;
-//             }
-//             minColIndex++;
-//          }
-//
-//          int minRow = rows[0];
-//          int maxRow = rows[rows.length - 1];
-//
-//          //columns selected are in ascending order
-//          int minCol = cols[minColIndex];
-//          int maxCol = cols[cols.length - 1];
-//
-//          return new CellRange(minRow, maxRow, minCol, maxCol);
-//       }
-//       else
-//       {
-//          return null;
-//       }
-//    }
-//    
+    
+    
     private void initTableCellRendererEditor() {
                
          // set up cell editor
@@ -146,16 +112,6 @@ public class SpreadsheetView extends JComponent implements View
        return t;
     }
     
-//    /** Called when firing an event as a result of the selected cells changing. */
-//    protected void fireSelectionChanged()
-//    {
-//       SpreadsheetSelectionListener[] listeners = (SpreadsheetSelectionListener[]) listenerList.getListeners(SpreadsheetSelectionListener.class);
-//       SpreadsheetSelectionEvent event = new SpreadsheetSelectionEvent(this, getSelectedRange());
-//       for (int i = 0; i < listeners.length; i++)
-//       {
-//          listeners[i].selectionChanged(event);
-//       }
-//    }
     
     /**
      * Creates new blank SharpTableModel object with specified number of
@@ -252,8 +208,7 @@ public class SpreadsheetView extends JComponent implements View
     	System.out.println("update: " + geo);
     	
     	Point location = geo.getSpreadsheetCoords();
-    	if (location != null)
-    		tableModel.fireTableCellUpdated(location.y, location.x);    	    	
+        tableModel.fireTableCellUpdated(location.y, location.x);    	    	
     }
     /* (non-Javadoc)
      * @see geogebra.View#updateAuxiliaryObject(geogebra.kernel.GeoElement)
@@ -372,16 +327,4 @@ public class SpreadsheetView extends JComponent implements View
 	         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
 	      }
 	   }
-	  
-//	   private class SelectionAdapter implements ListSelectionListener
-//	   {
-//	      public void valueChanged(ListSelectionEvent e)
-//	      {
-//	        // int c = listenerList.getListenerCount(SpreadsheetSelectionListener.class);
-//	         if (c > 0)
-//	         {
-//	        //    fireSelectionChanged();
-//	         }
-//	      }
-//	   }
 }
