@@ -206,9 +206,11 @@ public class SpreadsheetView extends JComponent implements View
     {
     	// TODO: remove
     	System.out.println("update: " + geo);
-    	
+    	    
     	Point location = geo.getSpreadsheetCoords();
-        tableModel.fireTableCellUpdated(location.y, location.x);    	    	
+    	if (location != null) {
+    		tableModel.fireTableCellUpdated(location.y, location.x);
+    	}
     }
     /* (non-Javadoc)
      * @see geogebra.View#updateAuxiliaryObject(geogebra.kernel.GeoElement)

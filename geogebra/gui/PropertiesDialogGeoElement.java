@@ -429,13 +429,14 @@ public class PropertiesDialogGeoElement
 	private void deleteSelectedGeos() {
 		ArrayList selGeos = selectionList;
 		
-		if (selGeos.size() > 0) {			
-			for (int i = 0; i < selGeos.size()-1; i++) {
-				((GeoElement) selGeos.get(i)).remove();
+		if (selGeos.size() > 0) {	
+			Object [] geos = selGeos.toArray();			
+			for (int i = 0; i < geos.length - 1; i++) {
+				((GeoElement) geos[i]).remove();
 			}
 			
 			// select element above last to delete
-			GeoElement geo = (GeoElement) selGeos.get(selGeos.size()-1);
+			GeoElement geo = (GeoElement) geos[geos.length - 1];
 			TreePath tp = geoTree.getTreePath(geo);			
 			if (tp != null) {
 				int row = geoTree.getRowForPath(tp);
