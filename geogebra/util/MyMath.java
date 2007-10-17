@@ -72,7 +72,12 @@ public final class MyMath {
 	}
 	
 	final public static double gamma(double x) {		
-		return Math.exp(gammln(x));				
+//		 Michael Borcherds 2007-10-15 BEGIN added case for x<0 otherwise no results in 3rd quadrant
+		if (x>=0) 
+			return Math.exp(gammln(x));
+		else
+			return -Math.PI/(x*gamma(-x)*Math.sin(Math.PI*x));
+// Michael Borcherds 2007-10-15 END
 	}
 	
 	/**
