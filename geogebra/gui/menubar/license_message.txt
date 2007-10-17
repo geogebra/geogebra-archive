@@ -55,7 +55,7 @@ TRANSLATIONS
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
    
 GRANTS
-  * University of Luxembourg et. al., co-funded by the European Union
+  * University of Luxembourg et. al., co-funded by the Community programme eContentplus
      09/2007 to 09/2010: Interoperable Interactive Geometry for Europe (Intergeo)
   * University of Luxembourg
      01/2007 to 12/2009: GeoGebra for Primary School 
