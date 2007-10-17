@@ -2501,12 +2501,21 @@ public class Application implements	KeyEventDispatcher {
         }
     }    
     
+    public void showURLinBrowser(String strURL) {
+    	try {
+    		URL url = new URL(strURL);
+    		showURLinBrowser(url);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
     public void showURLinBrowser(URL url) {
-    	if (applet != null) {
-        	applet.getAppletContext().showDocument(url, "_blank");
-        } else {
+    //	if (applet != null) {
+     //   	applet.getAppletContext().showDocument(url, "_blank");
+     //   } else {
         	BrowserLauncher.openURL(url.toExternalForm());
-        }
+      //  }
     }
 
     private URL getHelpURL(Locale locale) throws Exception {

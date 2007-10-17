@@ -1055,7 +1055,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE);
+				app.showURLinBrowser(Application.GEOGEBRA_WEBSITE);
 			}
 		};		
 		
