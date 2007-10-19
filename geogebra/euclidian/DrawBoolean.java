@@ -167,7 +167,10 @@ public final class DrawBoolean extends Drawable {
 			checkBox.setText(labelDesc);
 		} else {
 			// don't show label
-			checkBox.setText("");
+// Michael Borcherds 2007-10-18 BEGIN changed so that vertical position of checkbox doesn't change when label is shown/hidden
+//			checkBox.setText("");
+			checkBox.setText(" ");
+// Michael Borcherds 2007-10-18 END
 		}			
 		
 		checkBox.setOpaque(false);		
