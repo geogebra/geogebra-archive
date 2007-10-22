@@ -11,6 +11,10 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.BoxLayout;
@@ -18,6 +22,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -114,6 +120,10 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
        spController = new SpreadsheetController(app, table,tableModel);
        initTableCellRendererEditor();
        attachView();	
+       
+       
+       //Popup menu code
+       createPopupMenu();
        
      }
     
@@ -367,38 +377,52 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        //Cell selection is disabled in Multiple Interval Selection
 	        //mode. The enabled state of cellCheck is a convenient flag
 	        //for this status.
-	        if ("Row Selection" == command) {
+	        if ("Row Selection" == command) 
+	        {
 	            table.setRowSelectionAllowed(rowCheck.isSelected());
 	            //In MIS mode, column selection allowed must be the
 	            //opposite of row selection allowed.
-	            if (!cellCheck.isEnabled()) {
+	            if (!cellCheck.isEnabled()) 
+	            {
 	                table.setColumnSelectionAllowed(!rowCheck.isSelected());
 	            }
-	        } else if ("Column Selection" == command) {
+	        } 
+	        else if ("Column Selection" == command) 
+	        {
 	            table.setColumnSelectionAllowed(columnCheck.isSelected());
 	            //In MIS mode, row selection allowed must be the
 	            //opposite of column selection allowed.
-	            if (!cellCheck.isEnabled()) {
+	            if (!cellCheck.isEnabled()) 
+	            {
 	                table.setRowSelectionAllowed(!columnCheck.isSelected());
 	            }
-	        } else if ("Cell Selection" == command) {
+	        } 
+	        else if ("Cell Selection" == command) 
+	        {
 	            table.setCellSelectionEnabled(cellCheck.isSelected());
-	        } else if ("Multiple Interval Selection" == command) { 
+	        } 
+	        else if ("Multiple Interval Selection" == command) 
+	        { 
 	            table.setSelectionMode(
 	                    ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	            //If cell selection is on, turn it off.
-	            if (cellCheck.isSelected()) {
+	            if (cellCheck.isSelected()) 
+	            {
 	                cellCheck.setSelected(false);
 	                table.setCellSelectionEnabled(false);
 	            }
 	            //And don't let it be turned back on.
 	            cellCheck.setEnabled(false);
-	        } else if ("Single Interval Selection" == command) {
+	        } 
+	        else if ("Single Interval Selection" == command) 
+	        {
 	            table.setSelectionMode(
 	                    ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 	            //Cell selection is ok in this mode.
 	            cellCheck.setEnabled(true);
-	        } else if ("Single Selection" == command) {
+	        } 
+	        else if ("Single Selection" == command) 
+	        {
 	            table.setSelectionMode(
 	                    ListSelectionModel.SINGLE_SELECTION);
 	            //Cell selection is ok in this mode.
@@ -408,7 +432,8 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        //Update checkboxes to reflect selection mode side effects.
 	        rowCheck.setSelected(table.getRowSelectionAllowed());
 	        columnCheck.setSelected(table.getColumnSelectionAllowed());
-	        if (cellCheck.isEnabled()) {
+	        if (cellCheck.isEnabled()) 
+	        {
 	            cellCheck.setSelected(table.getCellSelectionEnabled());
 	        }
 		
@@ -447,6 +472,52 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	            if (event.getValueIsAdjusting()) 
 	            {
 	                return;
+	            }
+	        }
+	    }
+	    
+	    public void createPopupMenu() 
+	    {
+	        JMenuItem menuItem;
+
+	        //Create the popup menu.
+	        JPopupMenu popup = new JPopupMenu();
+	        menuItem = new JMenuItem("Copy");
+	        menuItem.addActionListener(this);
+	        popup.add(menuItem);
+	        menuItem = new JMenuItem("Paste");
+	        menuItem.addActionListener(this);
+	        popup.add(menuItem);
+
+	        //Add listener to the text area so the popup menu can come up.
+	        MouseListener popupListener = new PopupListener(popup);
+	        this.addMouseListener(popupListener);
+	    }
+	    class PopupListener extends MouseAdapter 
+	    {
+	        JPopupMenu popup;
+
+	        PopupListener(JPopupMenu popupMenu) 
+	        {
+	            popup = popupMenu;
+	        }
+
+	        public void mousePressed(MouseEvent e) 
+	        {
+	            maybeShowPopup(e);
+	        }
+
+	        public void mouseReleased(MouseEvent e) 
+	        {
+	            maybeShowPopup(e);
+	        }
+
+	        private void maybeShowPopup(MouseEvent e) 
+	        {
+	            if (e.isPopupTrigger()) 
+	            {
+	                popup.show(e.getComponent(),
+	                           e.getX(), e.getY());
 	            }
 	        }
 	    }
