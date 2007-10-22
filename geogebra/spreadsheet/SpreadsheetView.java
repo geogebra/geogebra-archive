@@ -9,9 +9,19 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -28,7 +38,7 @@ import javax.swing.table.TableModel;
  * @author Amy Mathew Varkey
  *
  */
-public class SpreadsheetView extends JComponent implements View
+public class SpreadsheetView extends JComponent implements View, ActionListener
 {
     
     private JTable table;
@@ -37,26 +47,49 @@ public class SpreadsheetView extends JComponent implements View
     private SpreadsheetTableModel tableModel;
     private Application app;
     private SpreadsheetController spController; 
-   
+    private ButtonGroup buttonGroup;
+    private JCheckBox rowCheck;
+    private JCheckBox columnCheck;
+    private JCheckBox cellCheck;
+    private JTextArea output;
+    
     public SpreadsheetView(Application app,int rows, int columns)
     {
+    	
        this.app =app;
        table = createTable();
        kernel =app.getKernel();
-       setLayout(new BorderLayout());
+     //  setLayout(new BorderLayout());
+       setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
        newTableModel(rows, columns);
        // clobber resizing of all columns
        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
        // set selection mode for contiguous  intervals
-       table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-       table.setCellSelectionEnabled(true);
-       
-       // we don't allow reordering
+    //   table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    //   table.setCellSelectionEnabled(true);
+       table.getSelectionModel().addListSelectionListener(new RowListener());
+       table.getColumnModel().getSelectionModel().
+           addListSelectionListener(new ColumnListener());
+    
        table.getTableHeader().setReorderingAllowed(false);      
  
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
        
+       add(new JLabel("Selection Mode"));
+       buttonGroup = new ButtonGroup();
+       addRadio("Multiple Interval Selection").setSelected(true);
+       addRadio("Single Selection");
+       addRadio("Single Interval Selection");
+       
+       add(new JLabel("Selection Options"));
+       rowCheck = addCheckBox("Row Selection");
+       rowCheck.setSelected(true);
+       columnCheck = addCheckBox("Column Selection");
+       cellCheck = addCheckBox("Cell Selection");
+       cellCheck.setEnabled(false);
+
+            
        // add row headers
        JTable rowHeader = new JTable(new RowModel(table.getModel()));
        TableCellRenderer renderer = new RowHeaderRenderer();
@@ -105,10 +138,8 @@ public class SpreadsheetView extends JComponent implements View
      */
     protected JTable createTable()
     {
-    //	JTextField editTF = new JTextField();
        JTable t = new JTable();
        t.setDefaultRenderer(Object.class, new MyRenderer() );
-      // t.setDefaultEditor(Object.class, new TableCellEditor(editTF));
        return t;
     }
     
@@ -329,4 +360,94 @@ public class SpreadsheetView extends JComponent implements View
 	         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
 	      }
 	   }
+
+	public void actionPerformed(ActionEvent event) 
+	{
+		 String command = event.getActionCommand();
+	        //Cell selection is disabled in Multiple Interval Selection
+	        //mode. The enabled state of cellCheck is a convenient flag
+	        //for this status.
+	        if ("Row Selection" == command) {
+	            table.setRowSelectionAllowed(rowCheck.isSelected());
+	            //In MIS mode, column selection allowed must be the
+	            //opposite of row selection allowed.
+	            if (!cellCheck.isEnabled()) {
+	                table.setColumnSelectionAllowed(!rowCheck.isSelected());
+	            }
+	        } else if ("Column Selection" == command) {
+	            table.setColumnSelectionAllowed(columnCheck.isSelected());
+	            //In MIS mode, row selection allowed must be the
+	            //opposite of column selection allowed.
+	            if (!cellCheck.isEnabled()) {
+	                table.setRowSelectionAllowed(!columnCheck.isSelected());
+	            }
+	        } else if ("Cell Selection" == command) {
+	            table.setCellSelectionEnabled(cellCheck.isSelected());
+	        } else if ("Multiple Interval Selection" == command) { 
+	            table.setSelectionMode(
+	                    ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	            //If cell selection is on, turn it off.
+	            if (cellCheck.isSelected()) {
+	                cellCheck.setSelected(false);
+	                table.setCellSelectionEnabled(false);
+	            }
+	            //And don't let it be turned back on.
+	            cellCheck.setEnabled(false);
+	        } else if ("Single Interval Selection" == command) {
+	            table.setSelectionMode(
+	                    ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+	            //Cell selection is ok in this mode.
+	            cellCheck.setEnabled(true);
+	        } else if ("Single Selection" == command) {
+	            table.setSelectionMode(
+	                    ListSelectionModel.SINGLE_SELECTION);
+	            //Cell selection is ok in this mode.
+	            cellCheck.setEnabled(true);
+	        }
+
+	        //Update checkboxes to reflect selection mode side effects.
+	        rowCheck.setSelected(table.getRowSelectionAllowed());
+	        columnCheck.setSelected(table.getColumnSelectionAllowed());
+	        if (cellCheck.isEnabled()) {
+	            cellCheck.setSelected(table.getCellSelectionEnabled());
+	        }
+		
+	}
+	  private JRadioButton addRadio(String text) 
+	  {
+	        JRadioButton b = new JRadioButton(text);
+	        b.addActionListener(this);
+	        buttonGroup.add(b);
+	        add(b);
+	        return b;
+	  }
+	  
+	  private JCheckBox addCheckBox(String text) 
+	  {
+	        JCheckBox checkBox = new JCheckBox(text);
+	        checkBox.addActionListener(this);
+	        add(checkBox);
+	        return checkBox;
+	  }
+	  private class RowListener implements ListSelectionListener 
+	  {
+	        public void valueChanged(ListSelectionEvent event) 
+	        {
+	            if (event.getValueIsAdjusting()) 
+	            {
+	                return;
+	            }
+	       }
+	    }
+
+	    private class ColumnListener implements ListSelectionListener 
+	    {
+	        public void valueChanged(ListSelectionEvent event) 
+	        {
+	            if (event.getValueIsAdjusting()) 
+	            {
+	                return;
+	            }
+	        }
+	    }
 }
