@@ -39,7 +39,14 @@ public class CASView extends JComponent
        setLayout(new BorderLayout());
        
       // input = new JTextField();
-       JTable table = new JTable(new CASTableModel(8,1));
+       //JTable table = new JTable(new CASTableModel(8,1));
+       Object[][] data = {
+    		   {"Welcome to Geogebra CAS!", new Integer(10)},
+    		   {"Test", new Integer(5)}
+       };
+       
+       String[] columnNames = {"Data", "Number"};
+       JTable table = new JTable(data, columnNames);
        JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
        //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
        //table.
@@ -47,7 +54,7 @@ public class CASView extends JComponent
        //add(sp, BorderLayout.NORTH);
       // add(input, BorderLayout.NORTH);
        sp.add(table);
-       //table.setValueAt(new String("test"), 0, 0);
+       table.setValueAt(new String("test"), 0, 0);
        add(sp, BorderLayout.CENTER);
        //add(output, BorderLayout.SOUTH);
        
