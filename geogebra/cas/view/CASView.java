@@ -47,15 +47,18 @@ public class CASView extends JComponent
        
        String[] columnNames = {"Data", "Number"};
        JTable table = new JTable(data, columnNames);
-       JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+     //  JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
        //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
+       JScrollPane sp= new JScrollPane(table);
+       
        //table.
      //  output = new JTextField();
        //add(sp, BorderLayout.NORTH);
       // add(input, BorderLayout.NORTH);
-       sp.add(table);
-       table.setValueAt(new String("test"), 0, 0);
        add(sp, BorderLayout.CENTER);
+   //    sp.add(table);
+    //   table.setValueAt(new String("test"), 0, 0);
+      
        //add(output, BorderLayout.SOUTH);
        
 //       input.addActionListener(new ActionListener() {
