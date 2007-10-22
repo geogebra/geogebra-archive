@@ -95,7 +95,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
        cellCheck = addCheckBox("Cell Selection");
        cellCheck.setEnabled(false);
 
-            
+       table.setColumnSelectionAllowed(true);
+//		table.setRowSelectionAllowed(true);
+		table.setRowSelectionAllowed(false);     
        // add row headers
        JTable rowHeader = new JTable(new RowModel(table.getModel()));
        TableCellRenderer renderer = new RowHeaderRenderer();
@@ -492,6 +494,15 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        //Add listener to the text area so the popup menu can come up.
 	        MouseListener popupListener = new PopupListener(popup);
 	        this.addMouseListener(popupListener);
+	        
+	        this.addMouseListener(new MouseAdapter(){
+	            public void mouseReleased(MouseEvent Me){
+	              if(Me.isPopupTrigger()){
+	//            	  popup.show(Me.getComponent(), Me.getX(), Me.getY());
+	              }
+	            }
+	          });
+	        
 	    }
 	    class PopupListener extends MouseAdapter 
 	    {
