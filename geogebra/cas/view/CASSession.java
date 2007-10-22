@@ -31,6 +31,16 @@ public class CASSession {
 		return ggbCAS.evaluateYACAS(input);
 	}
 	
+	public String get(int idx, boolean command)
+	{
+		return ((CASCommandObj) cnrs.get(idx)).get(command);
+	}
+	
+	public String get(int idx)
+	{
+		return get(idx, true);
+	}
+	
 	private void setFocus(int command)
 	{
 		curFocus = command;
@@ -54,5 +64,10 @@ public class CASSession {
 		CASCommandObj thisCmd = (CASCommandObj) cnrs.get(curFocus);
 		thisCmd.set(curCommand);
 		cnrs.set(curFocus, thisCmd);
+	}
+	
+	public int count()
+	{
+		return cnrs.size();
 	}
 }

@@ -3,30 +3,35 @@ package geogebra.cas.view;
 import javax.swing.table.AbstractTableModel;
 
 public class CASTableModel extends AbstractTableModel {
-	private String[] columnNames;
-    private Object[][] data;
+    private CASSession session;
     
-    public CASTableModel(int x, int y)
+    public CASTableModel()
     {
-    	//initial rows and columns.
-    	data = new Object[x][y];
-    	columnNames = new String[x];
+    	session = new CASSession();
     }
 
     public int getColumnCount() {
-        return columnNames.length;
+        return 1;
     }
 
     public int getRowCount() {
-        return data.length;
+        return (2*session.count());
     }
 
     public String getColumnName(int col) {
-        return columnNames[col];
+        return "Console";
     }
 
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+    	if ((row%2) == 0)
+    	{
+    		// we are asking for the value of a command (since 1st row is "welcome")
+    		return session.get(((row - 1)/2), false);
+    	} else {
+    		// we are asking for the value of a response
+    		if (row == 1) return "Welcome to CAS!";
+    		return session.get(((row - 2)/2), false); 
+    	}
     }
 
     public Class getColumnClass(int c) {
@@ -40,11 +45,8 @@ public class CASTableModel extends AbstractTableModel {
     public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
         //no matter where the cell appears onscreen.
-        if (col < 2) {
-            return false;
-        } else {
-            return true;
-        }
+        return false;
+        // TODO: should do something WRT this?
     }
 
     /*
@@ -52,7 +54,9 @@ public class CASTableModel extends AbstractTableModel {
      * data can change.
      */
     public void setValueAt(Object value, int row, int col) {
-        data[row][col] = value;
+        /*data[row][col] = value;
         fireTableCellUpdated(row, col);
+        */
+    	// TODO: should do something WRT this?
     }
 }

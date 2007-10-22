@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  * A class which will give the view of the CAS
@@ -39,17 +42,22 @@ public class CASView extends JComponent
        setLayout(new BorderLayout());
        
       // input = new JTextField();
-       //JTable table = new JTable(new CASTableModel(8,1));
+       
        Object[][] data = {
     		   {"Welcome to Geogebra CAS!", new Integer(10)},
     		   {"Test", new Integer(5)}
        };
        
        String[] columnNames = {"Data", "Number"};
-       JTable table = new JTable(data, columnNames);
-     //  JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-       //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
-       JScrollPane sp= new JScrollPane(table);
+       //JTable table = new JTable(data, columnNames);
+       JTable table = new JTable(new CASTableModel());
+       TableColumn console = table.getColumnModel().getColumn(0);
+       console.setMinWidth(384);
+       //console.setCellRenderer(javax.swing.table.DefaultTableCellRenderer);
+       //JTable table = new JTable()
+    //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
+     //JScrollPane sp= new JScrollPane(table);
+       JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
        
        //table.
      //  output = new JTextField();

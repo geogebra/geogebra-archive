@@ -44,6 +44,32 @@ public class CASCommandObj {
 		parse();			// parse our commands (update formatting, etc..)
 	}
 	
+	public String get()
+	{
+		return (String) get(true, true);
+	}
+	
+	public String get(boolean command)
+	{
+		return (String) get(command, true);
+	}
+	
+	public Object get(boolean command, boolean string)
+	{
+		if (command)
+		{
+			if (string) return commandString;
+			return commands;
+		} else {
+			if (!string) return responses;
+			String retstr = responses.toString();
+			retstr.substring(1, retstr.length() - 2);
+			// TODO: Note that this returns the responses as:
+			// response1,response2,response3 instead of using \n!
+			return retstr;
+		}
+	}
+	
 	public void set(String tCommand)
 	{
 		split(tCommand);
