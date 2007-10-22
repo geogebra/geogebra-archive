@@ -29,8 +29,12 @@ public class CASTableModel extends AbstractTableModel {
     		return session.get(((row - 1)/2), false);
     	} else {
     		// we are asking for the value of a response
-    		if (row == 1) return "Welcome to CAS!";
-    		return session.get(((row - 2)/2), false); 
+    		if (row == 0) 
+    		{
+    			return "Welcome to CAS!";
+    		} else {
+    			return session.get(((row - 2)/2), false);
+    		} 
     	}
     }
 

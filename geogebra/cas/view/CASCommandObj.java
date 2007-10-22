@@ -63,7 +63,8 @@ public class CASCommandObj {
 		} else {
 			if (!string) return responses;
 			String retstr = responses.toString();
-			retstr.substring(1, retstr.length() - 2);
+			if (retstr.length() == 2) retstr = "";
+			if (retstr.length() > 2) retstr.substring(1, retstr.length() - 2);
 			// TODO: Note that this returns the responses as:
 			// response1,response2,response3 instead of using \n!
 			return retstr;

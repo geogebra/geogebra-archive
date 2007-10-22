@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.cas.view.CASTableRenderer;
+
 import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
@@ -31,6 +33,7 @@ public class CASView extends JComponent
     private Kernel kernel;
     private JTextField input, output;
     private GeoGebraCAS cas;
+    private CASTableRenderer renderer;
     
     private boolean showMenuBar = true;
     
@@ -53,7 +56,7 @@ public class CASView extends JComponent
        JTable table = new JTable(new CASTableModel());
        TableColumn console = table.getColumnModel().getColumn(0);
        console.setMinWidth(384);
-       //console.setCellRenderer(javax.swing.table.DefaultTableCellRenderer);
+       console.setCellRenderer(renderer);
        //JTable table = new JTable()
     //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
      //JScrollPane sp= new JScrollPane(table);
