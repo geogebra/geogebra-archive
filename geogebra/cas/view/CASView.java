@@ -38,26 +38,29 @@ public class CASView extends JComponent
        
        setLayout(new BorderLayout());
        
-       input = new JTextField();
-       JScrollPane sp= new JScrollPane();
-       JTable table = new JTable(1,20);
-       output = new JTextField();
-       
-       add(input, BorderLayout.NORTH);
+      // input = new JTextField();
+       JTable table = new JTable(new CASTableModel(8,1));
+       JScrollPane sp= new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+       //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
+       //table.
+     //  output = new JTextField();
+       //add(sp, BorderLayout.NORTH);
+      // add(input, BorderLayout.NORTH);
        sp.add(table);
+       //table.setValueAt(new String("test"), 0, 0);
        add(sp, BorderLayout.CENTER);
-       add(output, BorderLayout.SOUTH);
+       //add(output, BorderLayout.SOUTH);
        
-       input.addActionListener(new ActionListener() {
-
-		public void actionPerformed(ActionEvent arg0) {
-			String inputText = input.getText();
-			String evalStr = cas.evaluateYACAS(inputText);
-			//String evalStr = 
-			output.setText(evalStr);
-		}
-    	   
-       });
+//       input.addActionListener(new ActionListener() {
+//
+//		public void actionPerformed(ActionEvent arg0) {
+//			//String inputText = input.getText();
+//			//String evalStr = cas.evaluateYACAS(inputText);
+//			//String evalStr = 
+//			//output.setText(evalStr);
+//		}
+//    	   
+//       });
      }
     
   
