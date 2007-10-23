@@ -24,6 +24,12 @@ public class CASCommandObj {
 	private ArrayList responses;
 	private String commandString;
 	private CASSession parentSession;
+	private boolean hasExecuted;
+	
+	public boolean hasExecuted()
+	{
+		return hasExecuted;
+	}
 	
 	public CASCommandObj(CASSession parentSession)
 	{
@@ -31,6 +37,7 @@ public class CASCommandObj {
 		//do nothing?
 		commands = new ArrayList();
 		responses = new ArrayList();
+		hasExecuted = false;
 		//commandString = new String(); dont need this
 	}
 	
@@ -39,6 +46,7 @@ public class CASCommandObj {
 		//do nothing?
 		commands = new ArrayList();
 		responses = new ArrayList();
+		hasExecuted = false;
 		commandString = tCommand;
 		split(tCommand); 	// split it into separate commands
 		parse();			// parse our commands (update formatting, etc..)
@@ -73,6 +81,7 @@ public class CASCommandObj {
 	
 	public void set(String tCommand)
 	{
+		hasExecuted = false;
 		split(tCommand);
 		parse();
 	}
@@ -88,6 +97,7 @@ public class CASCommandObj {
 	{
 		for (int i = 0; i < commands.size(); i++)
 		responses.add(parentSession.evaluate(((GeoTDS) commands.get(i)).get()));
+		hasExecuted = true;
 		// evaluate all commands and send them to the responses list.
 	}
 	

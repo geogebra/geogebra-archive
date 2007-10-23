@@ -46,7 +46,33 @@ public class CASSession {
 		curFocus = command;
 	}
 	
+	public void alter(String text)
+	{
+		alter(curFocus, text);
+	}
+	
+	public void alter(int idx, String text)
+	{
+		if ((idx + 1) > cnrs.size())
+		{
+			//append to the end
+			//Add new object
+			CASCommandObj tObj = new CASCommandObj(this, text);
+			cnrs.add(tObj);
+			//set focus to the next command..
+			setFocus(idx);
+		} else {
+			CASCommandObj tObj = (CASCommandObj) cnrs.get(idx);
+			tObj.set(text);
+		}
+	}
+	
 	public void send()
+	{
+		send(false);
+	}
+	
+	public void send(boolean changeAll)
 	{
 		/*	1) Send current command string to our history (and update the view)...
 		 * 	2) Send current command to our CAS interpreter, which will return:
@@ -57,6 +83,32 @@ public class CASSession {
 		CASCommandObj thisCmd = (CASCommandObj) cnrs.get(curFocus);
 		thisCmd.execute();
 		cnrs.set(curFocus, thisCmd);
+		/*// note: we should delete all following commands (since we just changed everything?
+		ArrayList tCnrs = new ArrayList();
+		tCnrs.addAll(cnrs.subList(0, curFocus));
+		cnrs.clear();
+		cnrs.addAll(tCnrs);*/
+		// ok, we're doing something different -- we're going to run down the list of commands
+		// and re-evaluate them
+		if (changeAll)
+		{
+			if (curFocus < (cnrs.size() - 1))
+			{
+				// we are changing an entry up above some other entries.
+				int i = curFocus + 1;
+				while (i < cnrs.size())
+				{
+					CASCommandObj tCmd = (CASCommandObj) cnrs.get(i);
+					tCmd.execute();
+					i++;
+				}
+			}
+		}
+	}
+	
+	public void sendAll()
+	{
+		send(true);
 	}
 	
 	public void update()

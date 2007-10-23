@@ -5,9 +5,9 @@ import javax.swing.table.AbstractTableModel;
 public class CASTableModel extends AbstractTableModel {
     private CASSession session;
     
-    public CASTableModel()
+    public CASTableModel(CASSession session)
     {
-    	session = new CASSession();
+    	this.session = session;
     }
 
     public int getColumnCount() {
@@ -29,13 +29,7 @@ public class CASTableModel extends AbstractTableModel {
     		return session.get(((row - 1)/2), false);
     	} else {
     		// we are asking for the value of a response
-    		if (row == 0)
-    			// TODO: works when row == 1.. but then it shows in the second row!
-    		{
-    			return "Welcome to CAS!";
-    		} else {
-    			return session.get(((row - 2)/2), false);
-    		} 
+    		return session.get(((row - 2)/2), false);    		 
     	}
     }
 
@@ -50,8 +44,13 @@ public class CASTableModel extends AbstractTableModel {
     public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
         //no matter where the cell appears onscreen.
-        return false;
-        // TODO: should do something WRT this?
+    	if ((row%2) == 0)
+    	{
+    		// its a command row
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
 
     /*
@@ -59,7 +58,14 @@ public class CASTableModel extends AbstractTableModel {
      * data can change.
      */
     public void setValueAt(Object value, int row, int col) {
-        /*data[row][col] = value;
+        if ((row%2) == 0)
+        {
+        	// command
+        	session.alter(row, (String) value);
+        	session.send();
+        }
+        //fireTableCellUpdated()
+    	/*data[row][col] = value;
         fireTableCellUpdated(row, col);
         */
     	// TODO: should do something WRT this?

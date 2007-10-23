@@ -34,26 +34,20 @@ public class CASView extends JComponent
     private JTextField input, output;
     private GeoGebraCAS cas;
     private CASTableRenderer renderer;
-    
+    private CASSession session;
     private boolean showMenuBar = true;
     
-    public CASView(Application app)
+    public CASView (Application app)
     {
        kernel =app.getKernel();
        cas = new GeoGebraCAS();
-       
+       session = new CASSession();
        setLayout(new BorderLayout());
        
       // input = new JTextField();
-       
-       Object[][] data = {
-    		   {"Welcome to Geogebra CAS!", new Integer(10)},
-    		   {"Test", new Integer(5)}
-       };
-       
-       String[] columnNames = {"Data", "Number"};
        //JTable table = new JTable(data, columnNames);
-       JTable table = new JTable(new CASTableModel());
+       JTable table = new JTable(new CASTableModel(session));
+       //table.getModel().addTableModelListener(this);
        TableColumn console = table.getColumnModel().getColumn(0);
        console.setMinWidth(384);
        console.setCellRenderer(renderer);
