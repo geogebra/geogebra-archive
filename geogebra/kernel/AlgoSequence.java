@@ -37,8 +37,7 @@ public class AlgoSequence extends AlgoElement {
     private GeoList list; // output
         
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
-    private boolean expIsGeoFunction, funExpUnchanged, isEmpty;
-    private ExpressionNode last_function_Expression;
+    private boolean expIsGeoFunction, isEmpty;
     private AlgoElement expressionParentAlgo;
    
    
@@ -65,15 +64,15 @@ public class AlgoSequence extends AlgoElement {
         this.var_step = var_step;          
         if (var_step != null)
         	var_step_geo = var_step.toGeoElement();
-    	               
+        	
+    	expressionParentAlgo = expression.getParentAlgorithm();
+    	expIsGeoFunction = expression.isGeoFunction();    	      
+    	       
 //    	System.out.println("expression: " + expression);
 //    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
 //    //	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
 //    	System.out.println("  variable: " + var);
-    		
-    	expressionParentAlgo = expression.getParentAlgorithm();
-    	expIsGeoFunction = expression.isGeoFunction();    	      
-    	funExpUnchanged = true;
+//    	System.out.println("  expIsGeoFunction: " + expIsGeoFunction);
     	
     	list = new GeoList(cons);       
         setInputOutput(); // for AlgoElement
@@ -132,11 +131,8 @@ public class AlgoSequence extends AlgoElement {
     			to == last_to &&
     			step == last_step );
     	    	
-    	if (expIsGeoFunction) {    	
-    		// for GeoFunction: check if function expression has changed
-    		funExpUnchanged = (last_function_Expression == ((GeoFunction) expression).getFunctionExpression());    		
-    		setValuesOnly = setValuesOnly && funExpUnchanged;	    		
-    	}    		    	    	    	
+    	// setValues does not work for functions
+    	setValuesOnly = setValuesOnly && !expIsGeoFunction;    	
     	
     	if (setValuesOnly)
     		updateListItems(from, to, step);
@@ -161,15 +157,19 @@ public class AlgoSequence extends AlgoElement {
     		
 			while ((step > 0 && currentVal <= to + Kernel.MIN_PRECISION) || 
 				   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
-			{
+			{				
+				// set local var value
+				updateLocalVar(currentVal);	  
+				
 				// only add new objects
-				GeoElement listElement = null;								
+				GeoElement listElement = null;
+				
 				if (i < cacheListSize) {		
 					// we reuse existing list element from cache				
 					listElement = list.getCached(i);	
 					
-					if (!funExpUnchanged) {
-						// if function expression changed, we need a new element
+					if (expIsGeoFunction) {
+						// for functions we always need a new element
 						listElement.setParentAlgorithm(null);
 			    		listElement.doRemove(); 
 	
@@ -177,13 +177,16 @@ public class AlgoSequence extends AlgoElement {
 						listElement = createNewListElement();						
 					}			
 				} else {
-					// create new list element and add it to end of list
+					// create new list element
 					listElement = createNewListElement();					
 				}
 				
 				// set the value of our element
-				list.add(listElement);
-				setValue(listElement, currentVal);		
+				list.add(listElement);								
+ 			    						
+				// copy current expression value to listElement    
+				if (!expIsGeoFunction)
+					listElement.set(expression);	
 				
 				currentVal += step;
 				i++;
@@ -201,11 +204,6 @@ public class AlgoSequence extends AlgoElement {
     	last_from = from;
     	last_to = to;
     	last_step = step;
-    	
-    	// for GeoFunctions we have to make sure that the function hasn't changed
-    	if (expIsGeoFunction) {    	
-    		last_function_Expression = ((GeoFunction) expression).getFunctionExpression();
-    	}
     }        
     
     private GeoElement createNewListElement() {
@@ -216,14 +214,12 @@ public class AlgoSequence extends AlgoElement {
 		
 		if (expIsGeoFunction) {
 			// functions point to the local variable var
-			// so we have to replace every occurance of var
-			// by a special local variable object
+			// so we have to replace var and all dependent objects of var
+			// by their current values
 			GeoFunction f = (GeoFunction) listElement;
 			ExpressionNode funExp = f.getFunctionExpression();				
 			if (funExp != null) {
-				MyDouble localVar = new MyDouble(kernel, var.getValue());	
-				funExp.replace(var, localVar);	
-				funExp.setLocalVar(localVar);
+				funExp.replaceChildrenByValues(var);	
 			}
 		}		
 		
@@ -240,37 +236,31 @@ public class AlgoSequence extends AlgoElement {
 			   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
 		{			
 			GeoElement listElement = list.get(i);
-			setValue(listElement, currentVal);	   			    		
-
+			
+			// set local var value
+			updateLocalVar(currentVal);	   			    		
+			
+			// copy expression value to listElement    	
+			listElement.set(expression);
+			
 			currentVal += step;
 			i++;
 		}    	      
     }       
     
     /**
-     * Sets copy to the current value of orig using the current variable value.
+     * Sets value of the local loop variable of the sequence
+     * and updates all it's dependencies until we reach the sequence algo.
      */
-    private void setValue(GeoElement listElement, double varVal) {  	
-    	if (expIsGeoFunction) {
-    		// set local variable of function to current var value
-    		GeoFunction f = (GeoFunction) listElement;
-    		ExpressionNode funExp = f.getFunctionExpression();
-    		if (funExp != null) {
-    			funExp.getLocalVar().set(varVal);	
-    		}    				
-		} else {
-	    	// set local variable to given value
-	    	var.setValue(varVal);
-	    		    	   
-	    	// update var's algorithms until we reach expression 
-	    	if (expressionParentAlgo != null) {
-	    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
-			}
-	    	
-	    	// copy expression value to listElement
-			listElement.set(expression);
-		}		
-    }   
+    private void updateLocalVar(double varVal) {
+    	// set local variable to given value
+    	var.setValue(varVal);
+    		    	   
+    	// update var's algorithms until we reach expression 
+    	if (expressionParentAlgo != null) {
+    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+		}
+    }
     
 
     final public String toString() {

@@ -571,8 +571,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		Function fun = new Function(en, new FunctionVariable(kernel));			
 		GeoFunction ret;
 		
-		// we get a dependent function if this number has a label
-		if (isLabelSet()) {
+		// we get a dependent function if this number has a label or is dependent
+		if (isLabelSet() || !isIndependent()) {
 			// don't create a label for the new dependent function
 			boolean oldMacroMode = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);

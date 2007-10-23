@@ -121,10 +121,7 @@ implements ExpressionValue {
     
     // for leaf mode
     private boolean leaf = false;
-    
-    // local variable (see AlgoSequence)
-    private MyDouble localVar;
-        
+
     /** Creates new ExpressionNode */        
     public ExpressionNode(Kernel kernel, ExpressionValue left, int operation, ExpressionValue right) {  
         this.kernel = kernel;
@@ -1538,17 +1535,48 @@ implements ExpressionValue {
             left = newOb;
         } else if (left.isExpressionNode()) {
             left = ((ExpressionNode) left).replace(oldOb, newOb);
-        }
+        } 
         
         // right tree
         if (right != null) {
-	        if (right == oldOb) {
+	        if (right == oldOb) {        	
 	            right = newOb;
 	        } else if (right.isExpressionNode()) {
 	            right = ((ExpressionNode) right).replace(oldOb, newOb);
-	        }
+	        } 
+
         }
         return this;
+    }
+    
+    /**
+     * Replaces geo and all its dependent geos in this tree by
+     * copies of their values.
+     */
+    public void replaceChildrenByValues(GeoElement geo) {                                                
+        // left tree
+        if (left.isGeoElement()) {
+        	GeoElement treeGeo = (GeoElement) left;
+        	if (left == geo || treeGeo.isChildOf(geo)) {        		 
+        		left = treeGeo.copyInternal(treeGeo.getConstruction());
+        	}
+        }         
+        else if (left.isExpressionNode()) {
+            ((ExpressionNode) left).replaceChildrenByValues(geo);
+        } 
+        
+        // right tree
+        if (right != null) {
+        	if (right.isGeoElement()) {
+        		GeoElement treeGeo = (GeoElement) right;
+            	if (right == geo || treeGeo.isChildOf(geo)) {            		     
+            		right = treeGeo.copyInternal(treeGeo.getConstruction());
+            	}
+            }         
+            else if (right.isExpressionNode()) {
+                ((ExpressionNode) right).replaceChildrenByValues(geo);
+            } 
+        }
     }
     
    
@@ -2841,13 +2869,5 @@ implements ExpressionValue {
         return true;
     }
 
-	public final MyDouble getLocalVar() {
-		return localVar;
-	}
-
-	public final void setLocalVar(MyDouble localVar) {
-		this.localVar = localVar;
-	}
-    
 	
 }
