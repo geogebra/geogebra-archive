@@ -29,7 +29,8 @@ public class CASTableModel extends AbstractTableModel {
     		return session.get(((row - 1)/2), false);
     	} else {
     		// we are asking for the value of a response
-    		if (row == 0) 
+    		if (row == 0)
+    			// TODO: works when row == 1.. but then it shows in the second row!
     		{
     			return "Welcome to CAS!";
     		} else {
