@@ -75,8 +75,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
     //   table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     //   table.setCellSelectionEnabled(true);
        table.getSelectionModel().addListSelectionListener(new RowListener());
-       table.getColumnModel().getSelectionModel().
-           addListSelectionListener(new ColumnListener());
+       table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());
     
        table.getTableHeader().setReorderingAllowed(false);      
  
@@ -374,7 +373,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	   }
 
 	public void actionPerformed(ActionEvent event) 
-	{
+	{//TODO:Localize the strings used here
 		 String command = event.getActionCommand();
 	        //Cell selection is disabled in Multiple Interval Selection
 	        //mode. The enabled state of cellCheck is a convenient flag
@@ -462,6 +461,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        {
 	            if (event.getValueIsAdjusting()) 
 	            {
+	            	
 	                return;
 	            }
 	       }
@@ -483,7 +483,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        JMenuItem menuItem;
 
 	        //Create the popup menu.
-	        JPopupMenu popup = new JPopupMenu();
+	        final JPopupMenu popup = new JPopupMenu();
 	        menuItem = new JMenuItem("Copy");
 	        menuItem.addActionListener(this);
 	        popup.add(menuItem);
@@ -498,7 +498,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        this.addMouseListener(new MouseAdapter(){
 	            public void mouseReleased(MouseEvent Me){
 	              if(Me.isPopupTrigger()){
-	//            	  popup.show(Me.getComponent(), Me.getX(), Me.getY());
+	            	  popup.show(Me.getComponent(), Me.getX(), Me.getY());
 	              }
 	            }
 	          });
@@ -532,4 +532,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	            }
 	        }
 	    }
+	    
+	    //control the selection
+	    
 }
