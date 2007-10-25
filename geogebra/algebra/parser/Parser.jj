@@ -223,8 +223,8 @@ TOKEN : {
 
 // labels for function names
 TOKEN: {
-    < X_FUNC: "x(" >
-|	< Y_FUNC: "y(" > 
+    < X_FUNC:  "x("  >
+|	< Y_FUNC:  "y("  > 
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 

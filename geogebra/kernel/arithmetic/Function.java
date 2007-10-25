@@ -937,9 +937,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 
         try {           
             // evaluate expression by JSCL
-            String result = kernel.evaluateJASYMCA(sb.toString());   
-            
-            
+            String result = kernel.evaluateJASYMCA(sb.toString());                           
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used

@@ -9,6 +9,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 /*
  * Element[ <list>, <n> ]
+ * Element[ <point>, <n> ]
  */
 public class CmdElement extends CommandProcessor {
 	
@@ -25,6 +26,7 @@ final public  GeoElement[] process(Command c) throws MyError {
     switch (n) {    	
     	case 2 :
     		arg = resArgs(c);
+    		// list
             if ((ok[0] = arg[0].isGeoList())
                	 && (ok[1] = arg[1].isNumberValue()))
                {
@@ -33,11 +35,14 @@ final public  GeoElement[] process(Command c) throws MyError {
                                 (GeoList) arg[0],
                                 (NumberValue) arg[1]) };
                    return ret; 
-               } else {          
-               	for (int i=0; i < n; i++) {
-               		if (!ok[i]) throw argErr(app, c.getName(), arg[i]);	
-               	}            	
-               }                   		    		     
+               }   
+                     
+            // error
+            else {          
+            	for (int i=0; i < n; i++) {
+            		if (!ok[i]) throw argErr(app, c.getName(), arg[i]);	
+            	}            	
+            }  
 
         default :
             throw argNumErr(app, c.getLabel(), n);

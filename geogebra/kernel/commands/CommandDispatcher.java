@@ -32,6 +32,7 @@ public class CommandDispatcher {
     
     // stores (String name, CommandProcessor cmdProc) pairs   
     private HashMap cmdTable;
+    private HashMap internalCmdTable;
     private MacroProcessor macroProc;
     
     public CommandDispatcher(Kernel kernel) {             
@@ -77,6 +78,10 @@ public class CommandDispatcher {
         else {
         	// get CommandProcessor object for command name from command table
             cmdProc = (CommandProcessor) cmdTable.get(cmdName);
+            
+            // check internal wrapper commands
+            if (cmdProc == null)
+            	cmdProc = (CommandProcessor) internalCmdTable.get(cmdName);
         }
                       
                 
@@ -100,7 +105,14 @@ public class CommandDispatcher {
            
     private void initCmdTable() {    	 
     	macroProc = new MacroProcessor(kernel);
-    	    	
+    	
+    	// internal wrappers for x(A) and y(A) so they work with derivatives
+    	// in the CAS systems used
+    	internalCmdTable = new HashMap(20);
+    	internalCmdTable.put("Xcoord", new CmdXcoord(kernel));
+    	internalCmdTable.put("Ycoord", new CmdYcoord(kernel));  
+    	
+    	// external commands: visible to users    	    	
     	cmdTable = new HashMap(500);
     	cmdTable.put("UnitVector", new CmdUnitVector(kernel));	   
     	cmdTable.put("SecondAxis", new CmdSecondAxis(kernel));	   
@@ -195,6 +207,8 @@ public class CommandDispatcher {
     	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	
     	cmdTable.put("Name", new CmdName(kernel));    	
+    	
+    	
     }
 
 

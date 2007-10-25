@@ -48,6 +48,9 @@ implements ExpressionValue {
 	public static final int STRING_TYPE_JASYMCA = 2;
 	public static final int STRING_TYPE_YACAS = 3;
 	public static final int STRING_TYPE_LATEX = 100;
+	
+	public static final String UNICODE_PREFIX = "uNiCoDe";
+	public static final String UNICODE_DELIMITER = "U";  
     
 	// boolean
 	public static final int NOT_EQUAL = -100;
@@ -2767,12 +2770,31 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getX()));
             	} else {
-            		if (STRING_TYPE == STRING_TYPE_LATEX)
-                		sb.append("\\mathrm{x}(");
-            		else
-            			sb.append("x(");
-            		sb.append(leftStr);
-            		sb.append(')');
+            		switch (STRING_TYPE) {
+            			case STRING_TYPE_LATEX:            		
+            				sb.append("\\mathrm{x}(");
+            				sb.append(leftStr);
+                    		sb.append(')');
+            				break;
+            				
+            			case STRING_TYPE_JASYMCA:
+    	        		case STRING_TYPE_YACAS:
+    	        			// note: see GeoGebraCAS.insertSpecialChars()
+    	        			sb.append("x");		        		
+    	        			sb.append(UNICODE_PREFIX);
+		        			sb.append("40"); // decimal unicode for (
+		        			sb.append(UNICODE_DELIMITER);
+		        			sb.append(leftStr);
+		        			sb.append(UNICODE_PREFIX);
+		        			sb.append("41"); // decimal unicode for )
+		        			sb.append(UNICODE_DELIMITER);
+		        			break;
+            		
+    	        		default:
+    	        			sb.append("x(");
+    	        			sb.append(leftStr);
+    	        			sb.append(')');
+            		}            		            		
             	}
                 break;
                 
@@ -2780,12 +2802,31 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getY()));            		
             	} else {
-            		if (STRING_TYPE == STRING_TYPE_LATEX)
-                		sb.append("\\mathrm{y}(");
-            		else
-            			sb.append("y(");            	
-            		sb.append(leftStr);
-            		sb.append(')');
+            		switch (STRING_TYPE) {
+	        			case STRING_TYPE_LATEX:            		
+	        				sb.append("\\mathrm{y}(");
+	        				sb.append(leftStr);
+	                		sb.append(')');
+	        				break;
+	        				
+	        			case STRING_TYPE_JASYMCA:
+		        		case STRING_TYPE_YACAS:
+		        			// note: see GeoGebraCAS.insertSpecialChars()
+		        			sb.append("y");		        		
+		        			sb.append(UNICODE_PREFIX);
+		        			sb.append("40"); // decimal unicode for (
+		        			sb.append(UNICODE_DELIMITER);
+		        			sb.append(leftStr);
+		        			sb.append(UNICODE_PREFIX);
+		        			sb.append("41"); // decimal unicode for )
+		        			sb.append(UNICODE_DELIMITER);
+		        			break;
+	        		
+		        		default:
+		        			sb.append("y(");
+		        			sb.append(leftStr);
+		        			sb.append(')');
+	        		}       
             	} 
                 break;
                 

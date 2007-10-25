@@ -1,6 +1,7 @@
 package geogebra.cas;
 
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import jasymca.GeoGebraJasymca;
 
 import java.io.InputStream;
@@ -19,8 +20,7 @@ public class GeoGebraCAS {
 	private GeoGebraJasymca ggbJasymca;	
     private StringBuffer sbInsertSpecial, sbRemoveSpecial;
     
-    private static final String UNICODE_PREFIX = "uNiCoDe";
-    private static final String UNICODE_DELIMITER = "U";           
+            
     
     public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
@@ -33,10 +33,15 @@ public class GeoGebraCAS {
      * e.g. exp = "diff(x^2,x)" returns "2*x".
      * @return result string, null possible
      */ 
-    final public String evaluateJASYMCA(String exp) {    	   	
-    	// System.out.println("exp for JASYMCA: " + exp);    	
-    	String result = ggbJasymca.evaluate(exp);    	
-        // System.out.println("  result: " + result);
+    final public String evaluateJASYMCA(String exp) {    	   	  	
+    	//System.out.println("exp for JASYMCA: " + exp);    	
+    	String result = ggbJasymca.evaluate(exp);      	
+    	  
+    	// to handle x(A) and x(B) they are converted
+    	// to unicode strings in ExpressionNode, 
+    	// we need to convert them back here
+    	result = insertSpecialChars(result);
+    	        
         return result;
     }
     
@@ -249,9 +254,9 @@ public class GeoGebraCAS {
                 switch (code) {
                     case 95: // replace _
                     //case 39: // replace '
-                    	sbRemoveSpecial.append(UNICODE_PREFIX);
+                    	sbRemoveSpecial.append(ExpressionNode.UNICODE_PREFIX);
                     	sbRemoveSpecial.append(code);
-                    	sbRemoveSpecial.append(UNICODE_DELIMITER);
+                    	sbRemoveSpecial.append(ExpressionNode.UNICODE_DELIMITER);
                         break;                                            
 
                     default :
@@ -266,9 +271,9 @@ public class GeoGebraCAS {
             			sbRemoveSpecial.append("*");
             			
             		default:
-            			sbRemoveSpecial.append(UNICODE_PREFIX);
+            			sbRemoveSpecial.append(ExpressionNode.UNICODE_PREFIX);
             			sbRemoveSpecial.append(code);          
-            			sbRemoveSpecial.append(UNICODE_DELIMITER);
+            			sbRemoveSpecial.append(ExpressionNode.UNICODE_DELIMITER);
             	}
             	
             }
@@ -284,8 +289,8 @@ public class GeoGebraCAS {
     	sbInsertSpecial.setLength(0);    	
     	
     	// convert every single character and append it to sb    	
-    	char prefixStart = UNICODE_PREFIX.charAt(0);
-    	int prefixLen = UNICODE_PREFIX.length();
+    	char prefixStart = ExpressionNode.UNICODE_PREFIX.charAt(0);
+    	int prefixLen = ExpressionNode.UNICODE_PREFIX.length();
     	boolean prefixFound;
     	for (int i = 0; i < len; i++) {
            char c = str.charAt(i);           
@@ -297,7 +302,7 @@ public class GeoGebraCAS {
            		// check prefix
            		int j = i;
                 for (int k = 0; k < prefixLen; k++, j++) {
-                	if (UNICODE_PREFIX.charAt(k) != str.charAt(j)) {
+                	if (ExpressionNode.UNICODE_PREFIX.charAt(k) != str.charAt(j)) {
                 		prefixFound = false;
                 		break;
                 	}
@@ -311,12 +316,12 @@ public class GeoGebraCAS {
             			code = 10*code + (digit-48);
             			j++;
             		}
-            		
+            		            		
             		if (code > 0 && code < 65536) { // valid unicode
             			sbInsertSpecial.append((char) code);
             			i = j;
             		} else { // invalid
-            			sbInsertSpecial.append(UNICODE_PREFIX);
+            			sbInsertSpecial.append(ExpressionNode.UNICODE_PREFIX);
             			i += prefixLen;
             		}            		                	
                 } else {
@@ -334,7 +339,9 @@ public class GeoGebraCAS {
     
     public static void main(String [] args) {
     
-        YacasInterpreter yacas = new YacasInterpreter();
+    	GeoGebraCAS cas = new GeoGebraCAS();
+      
+    	System.out.println("GGBCAS");
     	
 //      Read/eval/print loop
         int i=1;
@@ -342,7 +349,9 @@ public class GeoGebraCAS {
 			System.out.println( "(In"+i+") ");				// Prompt
 			try{
 				String line 		= readLine(System.in);
-				String result = yacas.Evaluate(line);
+				//String result = yacas.Evaluate(line);
+				
+				String result = cas.evaluateJASYMCA(line);
 	      
 				System.out.println( "(Out"+i+")     "+result );
 				i++;

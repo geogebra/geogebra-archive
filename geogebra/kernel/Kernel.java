@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
 
@@ -1717,6 +1718,22 @@ public class Kernel {
 		AlgoListElement algo = new AlgoListElement(cons, label, list, n);
 		GeoElement geo = algo.getElement();
 		return geo;
+	}
+	
+	/** 
+	 * Xcoord[point]	
+	 */
+	final public GeoNumeric Xcoord(String label, VectorValue point) {
+		ExpressionNode en = new ExpressionNode(this, point, ExpressionNode.XCOORD , null);				
+		return DependentNumber(label, en, false);
+	}
+	
+	/** 
+	 * Ycoord[point]	
+	 */
+	final public GeoNumeric Ycoord(String label, VectorValue point) {
+		ExpressionNode en = new ExpressionNode(this, point, ExpressionNode.YCOORD , null);				
+		return DependentNumber(label, en, false);
 	}
 	
 	/** 
