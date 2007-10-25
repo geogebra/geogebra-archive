@@ -410,7 +410,14 @@ implements LimitedPath, NumberValue {
 		}	
 	}
 	
-	public void pathChanged(GeoPoint P) {			
+	public void pathChanged(GeoPoint P) {	
+		if (P.pathParameter.t < 0.0) {
+			P.pathParameter.t = 0;
+		} 
+		else if (P.pathParameter.t > 1.0) {
+			P.pathParameter.t = 1;
+		}
+		
 		// handle conic types	
 		switch (type) {
 			case CONIC_CIRCLE:	
