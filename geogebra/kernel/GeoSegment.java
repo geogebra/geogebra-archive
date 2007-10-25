@@ -285,6 +285,13 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	}
 
 	public void pathChanged(GeoPoint P) {
+		if (P.pathParameter.t < 0.0) {
+			P.pathParameter.t = 0;
+		} 
+		else if (P.pathParameter.t > 1.0) {
+			P.pathParameter.t = 1;
+		}
+		
 		// calc point for given parameter
 		P.x = startPoint.inhomX + P.pathParameter.t * y;
 		P.y = startPoint.inhomY - P.pathParameter.t * x;

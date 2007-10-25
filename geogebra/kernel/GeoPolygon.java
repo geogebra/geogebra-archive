@@ -504,9 +504,10 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		// parameter is between 0 and segment.length,
 		// i.e. floor(parameter) gives the segment index
 		
-		int index = (int) Math.floor(P.pathParameter.t);
-		if (index >= segments.length) 
-			index = segments.length - 1;
+		P.pathParameter.t = P.pathParameter.t % segments.length;
+		if (P.pathParameter.t < 0) 
+			P.pathParameter.t += segments.length;
+		int index = (int) Math.floor(P.pathParameter.t) ;		
 		GeoSegment seg = segments[index];
 		double segParameter = P.pathParameter.t - index;
 		
