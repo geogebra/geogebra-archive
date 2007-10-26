@@ -1,17 +1,20 @@
-package geogebra.gui;
+package geogebra.gui.util;
 
 /////////////////////////////////////////////////////////
-//Bare Bones Browser Launch                          //
-//Version 1.5                                        //
-//December 10, 2005                                  //
-//Supports: Mac OS X, GNU/Linux, Unix, Windows XP    //
-//Example Usage:                                     //
-// String url = "http://www.centerkey.com/";       //
-// BareBonesBrowserLaunch.openURL(url);            //
-//Public Domain Software -- Free to Use as You Like  //
+// Bare Bones Browser Launch                          //
+// Version 1.5                                        //
+// December 10, 2005                                  //
+// Supports: Mac OS X, GNU/Linux, Unix, Windows XP    //
+// Example Usage:                                     //
+//  String url = "http://www.centerkey.com/";       //
+//  BareBonesBrowserLaunch.openURL(url);            //
+// Public Domain Software -- Free to Use as You Like  //
 /////////////////////////////////////////////////////////
+
+import geogebra.util.Util;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 
 import javax.swing.JOptionPane;
 
@@ -20,6 +23,27 @@ public class BrowserLauncher {
 private static final String errMsg = "Error attempting to launch web browser";
 
 public static void openURL(String url) {
+  // java 6 supports open URLs in the default browser directly
+  double javaVersion = Util.getJavaVersion();
+  if (javaVersion >= 1.6) {
+	  try {
+		  URI uri = new URI(url);
+		  	 
+		  // since Java 6:
+		  // java.awt.Desktop.getDesktop().browse(uri)
+		  Class desktopClass = Class.forName("java.awt.Desktop");
+	      Method getDesktop = desktopClass.getDeclaredMethod("getDesktop", null);   
+	      Method browse = desktopClass.getDeclaredMethod("browse", new Class[] {URI.class});   
+	      Object desktopObj = getDesktop.invoke(null, null);     
+	      browse.invoke(desktopObj, new Object[] {uri});
+	      
+	      return; // java 1.6 was successful
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }            
+  }
+
+  // older Java version 
   String osName = System.getProperty("os.name");
   try {
      if (osName.startsWith("Mac OS")) {
@@ -29,7 +53,7 @@ public static void openURL(String url) {
         openURL.invoke(null, new Object[] {url});
         }
      else if (osName.startsWith("Windows"))
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+        Runtime.getRuntime().exec("rundll32.exe url.dll,FileProtocolHandler " + url);
      else { //assume Unix or Linux
         String[] browsers = {
            "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape" };
