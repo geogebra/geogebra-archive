@@ -41,7 +41,7 @@ public class DrawSlider extends Drawable {
     private GeoPoint geoPoint;
     private DrawPoint drawPoint;
     
-    public DrawSlider(EuclidianView view, GeoNumeric number) {
+    public DrawSlider(EuclidianView view, GeoNumeric number) {    	
         this.view = view;
         this.number = number;
         geo = number;              

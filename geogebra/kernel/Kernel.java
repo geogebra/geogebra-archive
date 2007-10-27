@@ -1718,23 +1718,7 @@ public class Kernel {
 		AlgoListElement algo = new AlgoListElement(cons, label, list, n);
 		GeoElement geo = algo.getElement();
 		return geo;
-	}
-	
-	/** 
-	 * Xcoord[point]	
-	 */
-	final public GeoNumeric Xcoord(String label, VectorValue point) {
-		ExpressionNode en = new ExpressionNode(this, point, ExpressionNode.XCOORD , null);				
-		return DependentNumber(label, en, false);
-	}
-	
-	/** 
-	 * Ycoord[point]	
-	 */
-	final public GeoNumeric Ycoord(String label, VectorValue point) {
-		ExpressionNode en = new ExpressionNode(this, point, ExpressionNode.YCOORD , null);				
-		return DependentNumber(label, en, false);
-	}
+	}		
 	
 	/** 
 	 * Length[list]

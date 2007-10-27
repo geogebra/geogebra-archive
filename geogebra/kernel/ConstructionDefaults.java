@@ -74,7 +74,7 @@ public class ConstructionDefaults {
 	private static final Color colFunction = Color.black;
 	
 	// lists
-	private static final Color colList = new Color(0, 150, 0);
+	private static final Color colList = new Color(0, 110, 0);
 
 	// numbers (slope, definite integral)
 	private static final Color colNumber = Color.black;	

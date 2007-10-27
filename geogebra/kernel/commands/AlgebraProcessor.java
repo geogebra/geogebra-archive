@@ -26,7 +26,6 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
@@ -676,9 +675,12 @@ public class AlgebraProcessor {
 		
 		int size = myList.size();
 		for (int i=0; i < size; i++) {
-			GeoElement [] results = processExpressionNode((ExpressionNode) myList.getListElement(i));			
+			GeoElement [] results = processExpressionNode((ExpressionNode) myList.getListElement(i));						
+			GeoElement geo = results[0];
+			
 			// we only take one resulting object			
-			geoElements.add(results[0]);
+			geoElements.add(geo);
+					
 			if (results[0].isLabelSet() || !results[0].isIndependent())
 				isIndependent = false;			
 		}		

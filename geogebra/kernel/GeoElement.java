@@ -1090,7 +1090,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = "T" + counter;
+				str = "text" + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoImage()) {
@@ -1114,7 +1114,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = "L" + counter;
+				str = "list" + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		}

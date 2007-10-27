@@ -111,51 +111,49 @@ public class GeoList extends GeoElement implements ListValue {
 		}
 				  
         isDefined = l.isDefined;
-        elementType = l.elementType;		
+        elementType = l.elementType;	        
     }    
     
-    private void copyListElements(GeoList otherList) {
+    private void copyListElements(GeoList otherList) {		
     	int otherListSize = otherList.size();
-        ensureCapacity(otherListSize);
-        ensureCapacity(otherListSize);      
-                     
-        geoList.clear();
-        int cacheListSize = cacheList.size();
+        ensureCapacity(otherListSize);                          
+        geoList.clear();      
         
-    	for (int i=0; i < otherListSize; i++) {    		
+    	for (int i=0; i < otherListSize; i++) {    		    		    		
     		GeoElement otherElement = otherList.get(i);
     		GeoElement thisElement = null;
     		
     		//  try to reuse cached GeoElement
-    		if (i < cacheListSize) {        			
+    		if (i < cacheList.size()) {      				
 	    		GeoElement cachedGeo = (GeoElement) cacheList.get(i);    		    		
-	    		if (!cachedGeo.isLabelSet() &&
+	    		if (!cachedGeo.isLabelSet() && 
 	    			 cachedGeo.getGeoClassType() == otherElement.getGeoClassType()) 
 	    		{
-	    			// cached geo is unlabeled and has needed object type: use it
+	    			// cached geo is unlabeled and has needed object type: use it	    				    		
 	    			cachedGeo.set(otherElement);	    		
-	    			thisElement = cachedGeo;
-	            }	    				    		    
+	    			thisElement = cachedGeo;	    		
+	            }		    			    		
     		} 
     		
     		// could not use cached element -> get copy element
     		if (thisElement == null) {
-	    		thisElement = getCopyForList(otherElement);
-    		}
-    		  
+	    		thisElement = getCopyForList(otherElement);	    		
+    		}    		    	
+    		
     		// set list element
     		add(thisElement);    		    		
     	}            	
     }
 
-	private GeoElement getCopyForList(GeoElement geo) {
+	private GeoElement getCopyForList(GeoElement geo) {	
 		if (geo.isLabelSet()) {
 			// take original element
 			return geo;
 		} else {			
 			// create a copy of geo
 			GeoElement ret = geo.copyInternal(cons);
-			return ret;
+			ret.setParentAlgorithm(getParentAlgorithm());			
+			return ret;		
 		}
 	}
 	
@@ -195,7 +193,7 @@ public class GeoList extends GeoElement implements ListValue {
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
         	GeoElement geo = get(i);
-        	if (!geo.isLabelSet())
+        	if (!geo.isLabelSet() && !geo.isGeoNumeric())
         		geo.setEuclidianVisible(visible);
         }    	
 	}
@@ -258,7 +256,7 @@ public class GeoList extends GeoElement implements ListValue {
     
     public final void add(GeoElement geo) {
     	// add geo to end of list 
-    	geoList.add(geo);
+    	geoList.add(geo);    	     	
     	
     	// add to cache
     	int pos = geoList.size()-1;
@@ -372,6 +370,10 @@ public class GeoList extends GeoElement implements ListValue {
 	
 	public boolean isListValue() {
 		return true;
+	}
+	
+	public ArrayList getMoveableParentPoints() {
+		return null;
 	}
 	
 	/**

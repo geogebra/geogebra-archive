@@ -98,8 +98,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return new GeoNumeric(cons, value);
 	}
 	
-	public boolean isDrawable() {
-		return isDrawable || isIndependent();
+	public boolean isDrawable() {		
+		return isDrawable || (isIndependent() && isLabelSet());		
 	}
 
 	public boolean isFillable() {
@@ -116,7 +116,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 	
 	public void setEuclidianVisible(boolean visible) {
-		if (visible == isSetEuclidianVisible()) return;
+		if (visible == isSetEuclidianVisible()) return;		
 		
 		// slider is only possible for independent
 		// number with given min and max

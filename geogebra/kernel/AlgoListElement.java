@@ -39,11 +39,13 @@ public class AlgoListElement extends AlgoElement {
         this.geoList = geoList;
         this.num = num;
         numGeo = num.toGeoElement();
+        
+        int initIndex = Math.max(0, (int) Math.round( num.getDouble() ) - 1);
                
         // init return element as copy of first list element
-        if (geoList.size() > 0) {
+        if (geoList.size() > initIndex) {
         	// create copy of first GeoElement in list
-        	element = geoList.get(0).copyInternal(cons);
+        	element = geoList.get(initIndex).copyInternal(cons);
         } else {
         	element = new GeoNumeric(cons);
         }      
