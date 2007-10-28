@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec2D;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.roots.RealRootUtil;
 
@@ -44,7 +43,7 @@ public class DrawParametricCurve extends Drawable {
 	
 	// if the curve is undefined at both endpoints, we break
 	// the parameter interval up into smaller intervals
-	private static final int MAX_INTERVALS = 500;		
+	private static final int MAX_INTERVAL_DEPTH = 8;		
    
     private ParametricCurve curve;        
 	private GeneralPath gp = new GeneralPath();
@@ -130,8 +129,7 @@ public class DrawParametricCurve extends Drawable {
 			boolean moveToAllowed) 
     {     	
     	pointsCount = 0;  
-    	Point labelPoint = null;	
-    	double minInterval = Math.abs(t2 - t1) / MAX_INTERVALS;
+    	Point labelPoint = null;	    	
     	
 		// Curves with undefined start and end points
 		// are broken into more intervals    	
@@ -143,12 +141,12 @@ public class DrawParametricCurve extends Drawable {
 		
 		// CLOSED CURVE
 		if (p1def && p2def && tooCloseOnScreen(view, p1, p2)) {								
-			labelPoint = plotClosedCurve(curve, t1, t2, minInterval, view, gp, calcLabelPos, moveToAllowed, p1);					
+			labelPoint = plotClosedCurve(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed, p1);					
 		} 
 		
 		// STANDARD CASE
 		else {			
-			labelPoint = plotInterval(curve, t1, t2, minInterval, view, gp, calcLabelPos, moveToAllowed);									
+			labelPoint = plotInterval(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed);									
 		} 
 											
 //		System.out.println("*** CURVE plot: " + curve);
@@ -182,7 +180,7 @@ public class DrawParametricCurve extends Drawable {
      * interval [t1, t2] where c(t_split) is not close to the endpoints of the curve.
      */
     private static Point plotClosedCurve(ParametricCurve curve,
-			double t1, double t2, double minInterval, EuclidianView view, 
+			double t1, double t2, int depth, EuclidianView view, 
 			GeneralPath gp,
 			boolean calcLabelPos, 
 			boolean moveToAllowed,
@@ -193,7 +191,7 @@ public class DrawParametricCurve extends Drawable {
     	int tries = 0;        
     	while (tooClose && tries < 10) {
     		// random split parameter
-    		double rand = 0.5 + (Math.random()-1.0) * 0.8; // [0.1, 0.9]
+    		double rand = 0.4 + Math.random() * 0.2; // [0.4, 0.6]
     		splitParam = t1 +  rand * (t2-t1);    		
     		GeoVec2D splitPoint = curve.evaluateCurve(splitParam);    	
     		tooClose = tooCloseOnScreen(view, p1, splitPoint);
@@ -205,9 +203,9 @@ public class DrawParametricCurve extends Drawable {
     		return null;    		
     	} else {
     		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
-    		Point labelPoint1 = plotInterval(curve, t1, splitParam, minInterval, view, gp, 
+    		Point labelPoint1 = plotInterval(curve, t1, splitParam, depth + 1, view, gp, 
 					calcLabelPos, moveToAllowed);		
-    		Point labelPoint2 = plotInterval(curve, splitParam, t2, minInterval, view, gp, 
+    		Point labelPoint2 = plotInterval(curve, splitParam, t2, depth + 1, view, gp, 
 					calcLabelPos && labelPoint1 == null, moveToAllowed);	
     		
     		if (labelPoint1 != null)
@@ -267,7 +265,7 @@ public class DrawParametricCurve extends Drawable {
      * @author Markus Hohenwarter, based on an algorithm by John Gillam     
      */
 	 private static Point plotInterval(ParametricCurve curve,
-								double t1, double t2, double minInterval, EuclidianView view, 
+								double t1, double t2, int intervalDepth, EuclidianView view, 
 								GeneralPath gp,
 								boolean calcLabelPos, 
 								boolean moveToAllowed) 
@@ -293,7 +291,7 @@ public class DrawParametricCurve extends Drawable {
 		if (Double.isNaN(eval[0]) || Double.isNaN(eval[1])) {
 			// System.out.println("Curve undefined at t = " + t1);			
 			return plotProblemInterval(curve, t1, t2, 
-					minInterval, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
+					intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 		}	
 		
 		prevOnScreen = view.toClippedScreenCoords(eval, SCREEN_CLIP_BORDER);
@@ -313,7 +311,7 @@ public class DrawParametricCurve extends Drawable {
 		if (Double.isNaN(eval[0]) || Double.isNaN(eval[1])) {
 			// System.out.println("Curve undefined at t = " + t2);
 			return plotProblemInterval(curve, t1, t2, 
-					minInterval, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
+					intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 		}	
 		
 		int LENGTH = MAX_DEPTH + 1;
@@ -341,7 +339,9 @@ public class DrawParametricCurve extends Drawable {
 		double prevSlope = slope;		
 		
 		int top=1;
-		int depth=0;			 
+		int depth=0;
+		t = t1;
+		double left = t1;
 		
 		long counter = 0;		
 		do {		
@@ -384,8 +384,8 @@ public class DrawParametricCurve extends Drawable {
 					// split interval: f(t+eps) or f(t-eps) not defined
 					if (!singularity) {					
 						// System.out.println("Curve undefined at t = " + t);					
-						return plotProblemInterval(curve, t1, t2, 
-							minInterval, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
+						return plotProblemInterval(curve, left, t2, 
+								intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 					} else {
 						//System.out.println("singularity at: " + t);
 					}
@@ -454,6 +454,7 @@ public class DrawParametricCurve extends Drawable {
 			// remember last point in general path
 			x0=x; 
 			y0=y;
+			left = t;
 			prevOnScreen = onScreen;							
 			
 			// remember first point on screen for label position 
@@ -485,7 +486,8 @@ public class DrawParametricCurve extends Drawable {
 			prevSlope = slope;	
 			xdiff = x - x0;
 			ydiff = y - y0;
-			slope = ydiff / xdiff;		    
+			slope = ydiff / xdiff;		
+			t=t1+i*divisors[depth];
 		} while (top !=0);	
 				
 		//System.out.println("curve evaluations: " + counter);
@@ -511,35 +513,35 @@ public class DrawParametricCurve extends Drawable {
 	  * Plots an interval where f(t1) or f(t2) is undefined.
 	  */
 	 private static Point plotProblemInterval(ParametricCurve curve,
-				double t1, double t2, double minInterval, EuclidianView view, 
+				double t1, double t2, int intervalDepth, EuclidianView view, 
 				GeneralPath gp,
 				boolean calcLabelPos, 
 				boolean moveToAllowed, Point labelPoint, double [] eval) 
 	 {
+		// stop recursion for too many intervals
+		if (intervalDepth > MAX_INTERVAL_DEPTH) {	
+			return labelPoint;
+		} 
+		 		 
 		// plot interval for t in [t1, t2]
 		// If we run into a problem, i.e. an undefined point f(t), we bisect
 		// the interval and plot both intervals [t, (t+t2)/2] and [(t+t2)/2], t2]											
 		double splitParam = (t1 + t2) / 2.0;	
-		
-		// stop recursion for too small interval
-		if (Math.abs(splitParam - t1) < minInterval) {	
-			return labelPoint;
-		} 
 					
-		// look at the end points of the intervals [t, (t+t2)/2] and [(t+t2)/2]
+		// look at the end points of the intervals [t1, (t1+t2)/2] and [(t1+t2)/2, t2]
 		// and try to get a defined interval. This is important if we one of
 		// both interval borders is defined and the other is undefined. In this
 		// case we want to find a smaller interval where both borders are defined		
 		
-		// plot interval [t, (t+t2)/2]
+		// plot interval [t1, (t1+t2)/2]
 		getDefinedInterval(curve, t1, splitParam, eval);			
 		calcLabelPos = calcLabelPos && labelPoint == null;
- 		Point labelPoint1 = plotInterval(curve, eval[0], eval[1], minInterval, view, gp, calcLabelPos, moveToAllowed);	
+ 		Point labelPoint1 = plotInterval(curve, eval[0], eval[1], intervalDepth + 1, view, gp, calcLabelPos, moveToAllowed);	
  		
- 		// plot interval [(t+t2)/2]
+ 		// plot interval [(t1+t2)/2, t2]
  		getDefinedInterval(curve, splitParam, t2, eval);	
  		calcLabelPos = calcLabelPos && labelPoint1 == null;
- 		Point labelPoint2 = plotInterval(curve, eval[0], eval[1], minInterval, view, gp, calcLabelPos, moveToAllowed);	
+ 		Point labelPoint2 = plotInterval(curve, eval[0], eval[1], intervalDepth + 1, view, gp, calcLabelPos, moveToAllowed);	
  		
  		if (labelPoint != null)
  			return labelPoint;
