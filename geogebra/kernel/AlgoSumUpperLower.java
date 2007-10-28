@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.optimization.NegativeRealRootFunction;
@@ -134,7 +133,7 @@ implements EuclidianViewAlgo {
 				&& ngeo.isDefined())) 
 			sum.setUndefined();
 				
-		Function fun = f.getFunction();					
+		RealRootFunction fun = f.getRealRootFunctionY();				
 		double ad = a.getDouble();
 		double bd = b.getDouble();		 
 		 

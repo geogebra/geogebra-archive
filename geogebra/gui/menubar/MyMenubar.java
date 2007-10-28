@@ -484,12 +484,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		//menu.addSeparator();
 
-		// Language				
-		LanguageActionListener langListener = new LanguageActionListener();
-		submenu = new JMenu(app.getMenu("Language"));
-		submenu.setIcon(app.getImageIcon("globe.png"));
-		addLanguageMenuItems(submenu, langListener);
-		menu.add(submenu);
+		// Language		
+		if (app.propertiesFilesPresent()) {
+			LanguageActionListener langListener = new LanguageActionListener();
+			submenu = new JMenu(app.getMenu("Language"));
+			submenu.setIcon(app.getImageIcon("globe.png"));
+			addLanguageMenuItems(submenu, langListener);
+			menu.add(submenu);
+		}
 
 		menu.addSeparator();
 
@@ -1291,7 +1293,12 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		// String label;
 		String ggbLangCode;
 
-		for (int i = 0; i < Application.supportedLocales.size(); i++) {
+		JMenu submenu1 = new JMenu("A - G");
+		JMenu submenu2 = new JMenu("H - Z");
+		menu.add(submenu1);
+		menu.add(submenu2);
+		
+		for (int i = 0; i < Application.supportedLocales.size(); i++) {						
 			Locale loc = (Locale)  Application.supportedLocales.get(i);
 			ggbLangCode = loc.getLanguage() + loc.getCountry()
 					+ loc.getVariant();
@@ -1308,7 +1315,11 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			mi.setActionCommand(ggbLangCode);
 			mi.addActionListener(al);
 			bg.add(mi);
-			menu.add(mi);
+			
+			if (text.charAt(0) <= 'G')
+				submenu1.add(mi);
+			else
+				submenu2.add(mi);
 		}
 	}
 

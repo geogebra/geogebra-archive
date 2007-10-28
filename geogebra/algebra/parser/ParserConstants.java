@@ -33,50 +33,51 @@ public interface ParserConstants {
   int PI = 31;
   int E = 32;
   int DEGREE = 33;
-  int RAD = 34;
-  int DERIVATIVE = 35;
-  int TRUE = 36;
-  int FALSE = 37;
-  int VARX = 38;
-  int VARY = 39;
-  int PARAMETRICVAR = 40;
-  int FLOAT = 41;
-  int EFLOAT = 42;
-  int INTEGER = 43;
-  int DIGIT = 44;
-  int LABEL = 45;
-  int INDEX = 46;
-  int LETTER = 47;
-  int TEXT = 48;
-  int CHAR = 49;
-  int X_FUNC = 50;
-  int Y_FUNC = 51;
-  int COS_FUNC = 52;
-  int SIN_FUNC = 53;
-  int TAN_FUNC = 54;
-  int ACOS_FUNC = 55;
-  int ASIN_FUNC = 56;
-  int ATAN_FUNC = 57;
-  int COSH_FUNC = 58;
-  int SINH_FUNC = 59;
-  int TANH_FUNC = 60;
-  int ACOSH_FUNC = 61;
-  int ASINH_FUNC = 62;
-  int ATANH_FUNC = 63;
-  int EXP_FUNC = 64;
-  int LOG_FUNC = 65;
-  int LD_FUNC = 66;
-  int LG_FUNC = 67;
-  int SQRT_FUNC = 68;
-  int CBRT_FUNC = 69;
-  int ABS_FUNC = 70;
-  int SGN_FUNC = 71;
-  int FLOOR_FUNC = 72;
-  int CEIL_FUNC = 73;
-  int ROUND_FUNC = 74;
-  int GAMMA_FUNC = 75;
-  int RANDOM_FUNC = 76;
-  int FUNCTION_LABEL = 77;
+  int INFINITY = 34;
+  int RAD = 35;
+  int DERIVATIVE = 36;
+  int TRUE = 37;
+  int FALSE = 38;
+  int VARX = 39;
+  int VARY = 40;
+  int PARAMETRICVAR = 41;
+  int FLOAT = 42;
+  int EFLOAT = 43;
+  int INTEGER = 44;
+  int DIGIT = 45;
+  int LABEL = 46;
+  int INDEX = 47;
+  int LETTER = 48;
+  int TEXT = 49;
+  int CHAR = 50;
+  int X_FUNC = 51;
+  int Y_FUNC = 52;
+  int COS_FUNC = 53;
+  int SIN_FUNC = 54;
+  int TAN_FUNC = 55;
+  int ACOS_FUNC = 56;
+  int ASIN_FUNC = 57;
+  int ATAN_FUNC = 58;
+  int COSH_FUNC = 59;
+  int SINH_FUNC = 60;
+  int TANH_FUNC = 61;
+  int ACOSH_FUNC = 62;
+  int ASINH_FUNC = 63;
+  int ATANH_FUNC = 64;
+  int EXP_FUNC = 65;
+  int LOG_FUNC = 66;
+  int LD_FUNC = 67;
+  int LG_FUNC = 68;
+  int SQRT_FUNC = 69;
+  int CBRT_FUNC = 70;
+  int ABS_FUNC = 71;
+  int SGN_FUNC = 72;
+  int FLOOR_FUNC = 73;
+  int CEIL_FUNC = 74;
+  int ROUND_FUNC = 75;
+  int GAMMA_FUNC = 76;
+  int RANDOM_FUNC = 77;
+  int FUNCTION_LABEL = 78;
 
   int DEFAULT = 0;
 
@@ -115,6 +116,7 @@ public interface ParserConstants {
     "<PI>",
     "\"\\u212f\"",
     "\"\\u00b0\"",
+    "\"\\u221e\"",
     "\"rad\"",
     "\"\\\'\"",
     "<TRUE>",

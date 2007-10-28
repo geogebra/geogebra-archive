@@ -150,8 +150,9 @@ TOKEN :  {
   | < POWER5:   "\u2075" >
   | < POWER6:   "\u2076" >
   | < PI:       ( "pi" | "Pi" | "\u03c0") >
-  | < E:        "\u212f" >  	// Russian: "\u0435"
+  | < E:        "\u212f" >  
   | < DEGREE:   "\u00b0" >
+  | < INFINITY: "\u221e" >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >
   | < TRUE:     ( "true" | "True" ) >
@@ -1010,6 +1011,11 @@ MyDouble myDouble():
     {
         return new MyDouble(kernel, Math.E);
     }
+ |
+    <INFINITY>
+    {
+        return new MyDouble(kernel, Double.POSITIVE_INFINITY);
+    }   
 |
 	<UNDEFINED>
 	{

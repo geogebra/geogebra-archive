@@ -636,13 +636,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
         eqn[3] =    flatB[2] * (flatB[0] * flatB[1] - flatB[3] * flatB[3])
                   + flatB[4] * (2.0 * flatB[3] * flatB[5] - flatB[1] * flatB[4]) 
                   - flatB[0] * flatB[5] * flatB[5];                                                  
-         
-       // System.out.println(eqn[3] + " x^3 + " + eqn[2] + " x^2 + " 
-       //                  + eqn[1] + " x + "  + eqn[0] );
+              
+      // System.out.println(eqn[3] + " x^3 + " + eqn[2] + " x^2 + " 
+      //                  + eqn[1] + " x + "  + eqn[0] );
         
        // solve cubic equation and sort solutions       
-       int solnr = eqnSolver.solveCubic(eqn, sol);                
-       Arrays.sort(sol, 0, solnr);       
+       int solnr = eqnSolver.solveCubic(eqn, sol);
+       if (solnr > -1)
+    	   Arrays.sort(sol, 0, solnr);       
 
        // for (i=0;i<solnr;i++) {
        //    System.out.println("sol[" + i + "] = " + sol[i]);
@@ -695,7 +696,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
             
         // solve cubic equation and sort solutions        
         solnr = eqnSolver.solveCubic(eqn, sol); 
-        Arrays.sort(sol, 0, solnr);
+        if (solnr > -1)
+        	Arrays.sort(sol, 0, solnr);
         
         // Go through cubic equation's solutions and take first degenerate conic
         // that gives us intersection points         
@@ -736,7 +738,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
 			tempLine = new GeoLine(cons);			
 		}
 		
-		// set line passing throug intersection points (e.g. of two circles)
+		// set line passing through intersection points (e.g. of two circles)
 	    tempLine.setCoords(        			
 				2*(A.matrix[4] - B.matrix[4]),
 				2*(A.matrix[5] - B.matrix[5]),

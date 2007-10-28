@@ -24,15 +24,12 @@ import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
- *
- * @author  Markus
+ * Cartesian curve: Curve[ x-expression in var, y-expression in var, var, from, to]
+ * @author Markus Hohenwarter
  * @version 
  */
 public class AlgoCurveCartesian extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private NumberValue xcoord, ycoord, from, to;  // input
     private GeoNumeric localVar;     // input

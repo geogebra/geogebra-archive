@@ -18,9 +18,7 @@ public class GeoGebraCAS {
 	    	
 	private YacasInterpreter yacas;
 	private GeoGebraJasymca ggbJasymca;	
-    private StringBuffer sbInsertSpecial, sbRemoveSpecial;
-    
-            
+    private StringBuffer sbInsertSpecial, sbRemoveSpecial;                
     
     public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
@@ -33,14 +31,16 @@ public class GeoGebraCAS {
      * e.g. exp = "diff(x^2,x)" returns "2*x".
      * @return result string, null possible
      */ 
-    final public String evaluateJASYMCA(String exp) {    	   	  	
-    	//System.out.println("exp for JASYMCA: " + exp);    	
+    final public String evaluateJASYMCA(String exp) {    
     	String result = ggbJasymca.evaluate(exp);      	
     	  
     	// to handle x(A) and x(B) they are converted
     	// to unicode strings in ExpressionNode, 
     	// we need to convert them back here
     	result = insertSpecialChars(result);
+
+//    	System.out.println("exp for JASYMCA: " + exp);  
+//    	System.out.println("         result: " + result);  
     	        
         return result;
     }

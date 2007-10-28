@@ -27,7 +27,6 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
 

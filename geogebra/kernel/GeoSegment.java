@@ -133,6 +133,11 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	public boolean isDefined() {
 		return defined;
 	}	
+	
+	public void setUndefined() {
+		super.setUndefined();
+		defined = false;
+	}
         
    final boolean showInAlgebraView() {	   
 	  // return defined;

@@ -26,6 +26,7 @@ public class InputPanel extends JPanel {
 		"\u00b3",  // exponents ^3 
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
+		"\u221e", // infinity
 		"sqrt(x)",
 		"cbrt(x)",
 		"abs(x)",

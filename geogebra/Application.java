@@ -301,8 +301,7 @@ public class Application implements	KeyEventDispatcher {
     	this(args, null, applet, undoActive);
     }
     
-    private Application(String[] args, GeoGebra frame, GeoGebraApplet applet, boolean undoActive) {
-    	
+    private Application(String[] args, GeoGebra frame, GeoGebraApplet applet, boolean undoActive) {    	
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
@@ -1154,6 +1153,10 @@ public class Application implements	KeyEventDispatcher {
         	rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
       //  if (rbcommand != null || (applet != null && applet.enableJavaScript))
         	//initCommandResources();                        
+    }
+    
+    public boolean propertiesFilesPresent() {
+    	return rbplain != null;
     }
     
     private void initCommandResources() {    	    

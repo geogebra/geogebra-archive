@@ -28,15 +28,11 @@ import geogebra.kernel.arithmetic.ValidExpression;
  */
 public class AlgoPolynomialFromFunction extends AlgoElement {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
     private GeoFunction g; // output         
     private Parser parser;
    
-
     public AlgoPolynomialFromFunction(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
@@ -67,7 +63,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         return g;
     }
 
-//  ON CHANGE: similiar code is in AlgoTaylorSeries
+//  ON CHANGE: similar code is in AlgoTaylorSeries
     final void compute() {       
         if (!f.isDefined()) {
         	g.setUndefined();

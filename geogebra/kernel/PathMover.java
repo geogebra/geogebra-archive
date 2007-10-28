@@ -17,7 +17,7 @@ public interface PathMover {
 	public static final int MIN_STEPS = 32;
 	public static final int DEFAULT_STEPS = 128;
 	public static final double STEP_DECREASE_FACTOR = 0.5;
-	public static final double STEP_INCREASE_FACTOR = 1.25;
+	public static final double STEP_INCREASE_FACTOR = 4;
 	
 	public static final double INIT_STEP_WIDTH = 1E-2;
 	public static final double MIN_STEP_WIDTH = 1E-8;

@@ -103,8 +103,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		this.startParam = startParam;
 		this.endParam = endParam;
 		
-		if (startParam > endParam)
-			isDefined = false;
+		isDefined = startParam <= endParam;			
 		
 		// update isClosedPath, i.e. startPoint == endPoint
 		isClosedPath =  

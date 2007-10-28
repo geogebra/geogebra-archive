@@ -4,6 +4,8 @@ package jasymca;
 
 public class GeoGebraJasymca extends Jasymca {
 	
+	private StringBuffer sb = new StringBuffer(100);
+	
 	public GeoGebraJasymca() {
 		try {
 			// init user functions for GeoGebra
@@ -41,10 +43,12 @@ public class GeoGebraJasymca extends Jasymca {
      */
 	final public String [] getPolynomialCoeffs(String exp, String variable) {
 		try {
-			StringBuffer sb = new StringBuffer("expand(");
+			sb.setLength(0);
+			sb.append("expand(");
 			sb.append(exp);
 			sb.append(')');		
-			
+	    	//System.out.println("exp for JASYMCA: " + sb.toString());  
+
 			// expand expression
 			Object result = eval(sb.toString());
 	 

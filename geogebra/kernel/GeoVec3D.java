@@ -51,7 +51,7 @@ implements Traceable {
     	return (!(Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z)));        
     }
     
-    final public void setUndefined() {     
+    public void setUndefined() {     
     	setCoords(Double.NaN, Double.NaN, Double.NaN);        
     }       
     

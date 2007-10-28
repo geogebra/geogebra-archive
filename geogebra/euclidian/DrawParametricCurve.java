@@ -31,6 +31,7 @@ public class DrawParametricCurve extends Drawable {
 	
 	// maximum distance between two plot points in pixels
 	private static final int MAX_PIXEL_DISTANCE = 3; // pixels		
+	private static final int HUGE_PIXEL_DISTANCE = 32; // pixels	
 	
 	// maximum angle between two line segments
 	private static final double MAX_BEND = 0.087488; // = tan(5 degrees)
@@ -343,15 +344,19 @@ public class DrawParametricCurve extends Drawable {
 		t = t1;
 		double left = t1;
 		
-		long counter = 0;		
+		long counter = 0;	
+		boolean distTooLarge;
+		boolean distVeryLarge;
+		boolean angleTooLarge;
+		
 		do {		
 			// distance from last point too large
-			boolean distNotOK = distanceNotOK(xdiff, ydiff);
+			distTooLarge = checkDistance(xdiff, ydiff);
 			
 			// angle between line segments too large
-			boolean angleNotOK = angleNotOK(slope, prevSlope);
+			angleTooLarge = checkAngle(slope, prevSlope);
 			
-			while (depth < MAX_DEPTH &&  ( distNotOK || angleNotOK )) {										
+			while (depth < MAX_DEPTH &&  ( distTooLarge || angleTooLarge )) {										
 				// push stacks
 				dyadicStack[top]=i; 
 				depthStack[top]=depth;
@@ -400,23 +405,25 @@ public class DrawParametricCurve extends Drawable {
 				
 				// stop at very small pixel distance		
 				if (Math.abs(xdiff) < 1 && Math.abs(ydiff) < 1) {
-					distNotOK = false;
-					angleNotOK = false;
+					distTooLarge = false;						
 					break;
 				}
 				
 				// distance from last point too large
-				distNotOK = distanceNotOK(xdiff, ydiff);
+				distTooLarge = checkDistance(xdiff, ydiff);
 				
 				// angle between line segments too large
-				angleNotOK = angleNotOK(slope, prevSlope);
+				angleTooLarge = checkAngle(slope, prevSlope);
 				
 				counter++;
 			}											
 			
 			// drawLine(x0,y0,x,y)
 			// don't add points to gerneral path that are in the same pixel as the previous point			
-										
+					
+			// check if distance was very large
+			distVeryLarge = distTooLarge && checkDistanceVeryLarge(xdiff, ydiff);
+			
 			// move to is possible
 			if (moveToAllowed) {	
 				// still need first point
@@ -431,7 +438,7 @@ public class DrawParametricCurve extends Drawable {
 					moveY = y;
 				} 
 				// distance too big
-				else if (distNotOK && angleNotOK){
+				else if (distTooLarge && (angleTooLarge || distVeryLarge)){
 					moveTo(gp, x, y);					
 					nextLineToNeedsMoveToFirst = false;						
 				}
@@ -495,13 +502,20 @@ public class DrawParametricCurve extends Drawable {
 		return labelPoint;						
 	 }	 
 	 
-	 private static boolean distanceNotOK(double xdiff, double ydiff) {
+	 private static boolean checkDistance(double xdiff, double ydiff) {		 	
 			// distance from last point too large
 			return ( Math.abs(xdiff) > MAX_PIXEL_DISTANCE || 
 					 Math.abs(ydiff) > MAX_PIXEL_DISTANCE);			
 	 }
 	 
-	 private static boolean angleNotOK(double slope, double prevSlope) {			
+	 private static boolean checkDistanceVeryLarge(double xdiff, double ydiff) {		 	
+			// distance from last point too large
+			return ( Math.abs(xdiff) > HUGE_PIXEL_DISTANCE || 
+					 Math.abs(ydiff) > HUGE_PIXEL_DISTANCE);			
+	 }
+	 
+	 
+	 private static boolean checkAngle(double slope, double prevSlope) {			
 			// angle between line segments too large
 			// tan(alpha) > MAX_BEND
 			// where tan(alpha) = det(v,w)/v.w, here for slopes

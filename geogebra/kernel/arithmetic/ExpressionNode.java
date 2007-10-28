@@ -2190,6 +2190,14 @@ implements ExpressionValue {
                 		sb.append(rightStr);
                 		sb.append("}");
                 		break;
+                		
+    				case STRING_TYPE_JASYMCA:
+    					 sb.append('(');
+		                 sb.append(leftStr);
+		                 sb.append(")/(");
+		                 sb.append(rightStr);
+		                 sb.append(')');
+		                 break;
     				
 	    			default:                        
 		                // left wing              	

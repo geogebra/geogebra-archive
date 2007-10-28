@@ -311,7 +311,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     			pathMover.init(Pcopy);
     			PstartPos.set(Pcopy);
     	    	QstartPos.set(Qcopy);
-    		} else {
+    		} else {    		
     			locus.setUndefined();
         		return;
     		}
@@ -392,7 +392,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       				while (Qcopy.isDefined() && !distanceOK(Qcopy)) {			
 	       					//go back and try smaller step	  
 	       		        	boolean smallerStep = pathMover.smallerStep();
-	       					if (!smallerStep) {
+	       					if (!smallerStep) {	       						
 	       						break;
 	       					}
 	       					stepChanged = true;	       					
@@ -431,7 +431,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       			}
 	       		} 
 	       		else {
-		       		// TODO: add undefined case	       		
+		       		// TODO: add undefined case	 	       			
 	       		}	       		
 	       			       		       		
 	       		if (!pathMover.hasNext()) {	       			
@@ -479,9 +479,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	    
 	        
         } while (runs < max_runs);
-            		
-//    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
-//    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
+            
+    	// TODO: remove
+    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
+    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
     }
     
   
@@ -489,7 +490,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
     	
-    	//System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    	// TODO: remove
+    	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
@@ -545,10 +547,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// lines too often 
     	// that leave and reenter the screen
     	    	
-    	farXmin = xmin - widthRW / 4;
-    	farXmax = xmax + widthRW / 4;
-    	farYmin = ymin - heightRW / 4;
-    	farYmax = ymax + heightRW / 4;
+    	farXmin = xmin - widthRW / 2;
+    	farXmax = xmax + widthRW / 2;
+    	farYmin = ymin - heightRW / 2;
+    	farYmax = ymax + heightRW / 2;
  			
     	// near to screen rectangle
     	nearToScreenRect.setFrame(farXmin, farYmin, 
