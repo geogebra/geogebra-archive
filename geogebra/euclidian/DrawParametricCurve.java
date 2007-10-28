@@ -31,10 +31,10 @@ import java.awt.geom.Point2D;
 public class DrawParametricCurve extends Drawable {	
 	
 	// maximum distance between two plot points in pixels
-	private static final int MAX_PIXEL_DISTANCE = 5; // pixels		
+	private static final int MAX_PIXEL_DISTANCE = 3; // pixels		
 	
 	// maximum angle between two line segments
-	private static final double MAX_BEND = 0.08; // = tan(5 degrees)
+	private static final double MAX_BEND = 0.087488; // = tan(5 degrees)
 
 	// maximum number of iterations (max number of plot points = 2^MAX_DEPTH)
 	private static final int MAX_DEPTH = 14;
@@ -345,20 +345,13 @@ public class DrawParametricCurve extends Drawable {
 		
 		long counter = 0;		
 		do {		
-			boolean distNotOK = true;							
-			while (depth < MAX_DEPTH &&  									
-					( 	
-						// distance from last point too large
-						(distNotOK = ( Math.abs(xdiff) >= MAX_PIXEL_DISTANCE || 
-									   Math.abs(ydiff) >= MAX_PIXEL_DISTANCE) )									   								
-					||
-						// angle between line segments too large
-						// tan(alpha) > MAX_BEND
-						// where tan(alpha) = det(v,w)/v.w, here for slopes
-						( Math.abs(slope - prevSlope) > MAX_BEND * Math.abs(1 + slope * prevSlope))
-					 )
-				  )					
-			{										
+			// distance from last point too large
+			boolean distNotOK = distanceNotOK(xdiff, ydiff);
+			
+			// angle between line segments too large
+			boolean angleNotOK = angleNotOK(slope, prevSlope);
+			
+			while (depth < MAX_DEPTH &&  ( distNotOK || angleNotOK )) {										
 				// push stacks
 				dyadicStack[top]=i; 
 				depthStack[top]=depth;
@@ -406,14 +399,20 @@ public class DrawParametricCurve extends Drawable {
 				slope = ydiff / xdiff;								
 				
 				// stop at very small pixel distance		
-				if (depth == MAX_DEPTH || Math.abs(xdiff) < 1 && Math.abs(ydiff) < 1) {
+				if (Math.abs(xdiff) < 1 && Math.abs(ydiff) < 1) {
 					distNotOK = false;
+					angleNotOK = false;
 					break;
 				}
 				
+				// distance from last point too large
+				distNotOK = distanceNotOK(xdiff, ydiff);
+				
+				// angle between line segments too large
+				angleNotOK = angleNotOK(slope, prevSlope);
+				
 				counter++;
-			}		
-						
+			}											
 			
 			// drawLine(x0,y0,x,y)
 			// don't add points to gerneral path that are in the same pixel as the previous point			
@@ -432,7 +431,7 @@ public class DrawParametricCurve extends Drawable {
 					moveY = y;
 				} 
 				// distance too big
-				else if (distNotOK){
+				else if (distNotOK && angleNotOK){
 					moveTo(gp, x, y);					
 					nextLineToNeedsMoveToFirst = false;						
 				}
@@ -493,6 +492,20 @@ public class DrawParametricCurve extends Drawable {
 		
 		return labelPoint;						
 	 }	 
+	 
+	 private static boolean distanceNotOK(double xdiff, double ydiff) {
+			// distance from last point too large
+			return ( Math.abs(xdiff) > MAX_PIXEL_DISTANCE || 
+					 Math.abs(ydiff) > MAX_PIXEL_DISTANCE);			
+	 }
+	 
+	 private static boolean angleNotOK(double slope, double prevSlope) {			
+			// angle between line segments too large
+			// tan(alpha) > MAX_BEND
+			// where tan(alpha) = det(v,w)/v.w, here for slopes
+			return Math.abs(slope - prevSlope) > 
+									MAX_BEND * Math.abs(1 + slope * prevSlope);
+	 }
 	 
 	 /**
 	  * Plots an interval where f(t1) or f(t2) is undefined.
