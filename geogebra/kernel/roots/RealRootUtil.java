@@ -24,7 +24,7 @@ public class RealRootUtil {
 	private static double EPSILON = 1E-12;        // epsilon			
 		
 	/**
-	 * Returns an intervall within [a, b] where f(x) is defined. 
+	 * Returns an interval within [a, b] where f(x) is defined. 
 	 * @see getDefinitionBorder()
 	 */
 	public static double [] getDefinedInterval(RealRootFunction f, double a, double b) {
