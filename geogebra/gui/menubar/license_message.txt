@@ -16,6 +16,7 @@ DEVELOPMENT
   * Loïc Le Coq (France): 2006
   * Joan Carles Naranjo, Victor Franco, Eloi Puertas (Univ. of Barcelona): 2007
   * Philipp Weissenbacher (Austria): 2007
+  * Michael Borcherds (UK): 2007
   
 TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
