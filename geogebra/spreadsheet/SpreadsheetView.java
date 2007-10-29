@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -44,7 +45,7 @@ import javax.swing.table.TableModel;
  * @author Amy Mathew Varkey
  *
  */
-public class SpreadsheetView extends JComponent implements View, ActionListener
+public class SpreadsheetView extends JComponent implements View, ActionListener, ListSelectionListener
 {
     
     private JTable table;
@@ -58,6 +59,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
     private JCheckBox columnCheck;
     private JCheckBox cellCheck;
     private JTextArea output;
+    private ListSelectionEvent levent;
+    private boolean ALLOW_ROW_SELECTION = true;
+    private boolean ALLOW_COLUMN_SELECTION = false;
     
     public SpreadsheetView(Application app,int rows, int columns)
     {
@@ -96,7 +100,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 
        table.setColumnSelectionAllowed(true);
 //		table.setRowSelectionAllowed(true);
-		table.setRowSelectionAllowed(false);     
+       table.setRowSelectionAllowed(false);     
        // add row headers
        JTable rowHeader = new JTable(new RowModel(table.getModel()));
        TableCellRenderer renderer = new RowHeaderRenderer();
@@ -126,9 +130,72 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
        //Popup menu code
        createPopupMenu();
        
-     }
+       
+       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+       if (ALLOW_ROW_SELECTION) 
+       { // true by default
+           ListSelectionModel rowSM = table.getSelectionModel();
+           rowSM.addListSelectionListener(new ListSelectionListener() {
+               public void valueChanged(ListSelectionEvent e) {
+                   //Ignore extra messages.
+                   if (e.getValueIsAdjusting()) return;
+
+                   ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                   if (lsm.isSelectionEmpty()) 
+                   {
+                       System.out.println("No rows are selected.");
+                   } 
+                   else 
+                   {
+                       int selectedRowStart = lsm.getMinSelectionIndex();
+                       int selectedRowEnd	= lsm.getMaxSelectionIndex();
+                       System.out.println("Rows " + (selectedRowStart + 1) +"to" +(selectedRowEnd + 1)
+                                          + " is now selected.");
+                   }
+               }
+           });
+       }
+       else 
+       {
+           table.setRowSelectionAllowed(false);
+       }
+       
+	       if (ALLOW_COLUMN_SELECTION) 
+	       { // false by default
+	         //  if (ALLOW_ROW_SELECTION) {
+	               //We allow both row and column selection, which
+	               //implies that we *really* want to allow individual
+	               //cell selection.
+	               table.setCellSelectionEnabled(true);
+           }
+           table.setColumnSelectionAllowed(true);
+           ListSelectionModel colSM =
+               table.getColumnModel().getSelectionModel();
+           colSM.addListSelectionListener(new ListSelectionListener() {
+               public void valueChanged(ListSelectionEvent e) 
+               {
+                   //Ignore extra messages.
+                   if (e.getValueIsAdjusting()) return;
+
+                   ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                   if (lsm.isSelectionEmpty()) 
+                   {
+                       System.out.println("No columns are selected.");
+                   } 
+                   else 
+                   {
+                       int selectedColStart = lsm.getMinSelectionIndex();
+                       int selectedColEnd = lsm.getMaxSelectionIndex();
+                       System.out.println("Column " + (selectedColStart + 1)+"to" +(selectedColEnd + 1)
+                                          + " is now selected.");
+                   }
+               }
+           });
+       }
+    // }
     
-    public void attachView() {
+    
+	public void attachView() {
 		kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
@@ -390,6 +457,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        } 
 	        else if ("Column Selection" == command) 
 	        {
+	        	ALLOW_COLUMN_SELECTION=true;
 	            table.setColumnSelectionAllowed(columnCheck.isSelected());
 	            //In MIS mode, row selection allowed must be the
 	            //opposite of column selection allowed.
@@ -437,7 +505,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	        {
 	            cellCheck.setSelected(table.getCellSelectionEnabled());
 	        }
-		
+	 //get the cells which are selected
+	         
+	        
 	}
 	  private JRadioButton addRadio(String text) 
 	  {
@@ -532,7 +602,10 @@ public class SpreadsheetView extends JComponent implements View, ActionListener
 	            }
 	        }
 	    }
-	    
-	    //control the selection
-	    
+
+	
+		public void valueChanged(ListSelectionEvent arg0) {
+			
+			
+		}
 }
