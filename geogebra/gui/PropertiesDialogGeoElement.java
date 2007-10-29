@@ -43,6 +43,7 @@ import geogebra.util.FastHashMapKeyless;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -144,7 +145,7 @@ public class PropertiesDialogGeoElement
 		kernel = app.getKernel();	
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setResizable(false);
+		setResizable(true);
 
 		addWindowListener(this);		
 		geoTree = new JTreeGeoElements();	
@@ -251,11 +252,11 @@ public class PropertiesDialogGeoElement
 		});
 
 		// put it all together				 		 		 
-		JPanel contentPane = new JPanel();
-		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-		setContentPane(contentPane);
-		
+		Container contentPane = getContentPane();
 		contentPane.removeAll();
+		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));		
+		contentPane.setLayout(new BorderLayout());
+				
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(closeButton);
 		//buttonPanel.add(cancelButton);
@@ -269,13 +270,10 @@ public class PropertiesDialogGeoElement
 		contentPane.add(dialogPanel);
 		//dialogPanel.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
 		
-		pack();
-		setLocationRelativeTo(app.getMainComponent());
-				
-		
+							
 		if (wasShowing) {
 			setVisible(true);
-		}
+		}		
 	}
 	
 	/*
@@ -331,12 +329,16 @@ public class PropertiesDialogGeoElement
 			geoTree.collapseAll();			
 		
 		geoTree.setSelected(geos, false);
-		if (!isShowing()) {				
-			setLocationRelativeTo(app.getMainComponent());	
-			pack();
-			super.setVisible(true);				
+		if (!isShowing()) {										
+			if (firstTime) {
+				pack();		
+				setLocationRelativeTo(app.getMainComponent());	
+				firstTime = false;
+			}
+			super.setVisible(true);	
 		}					
 	}
+	private boolean firstTime = true;
 
 	public void setVisible(boolean visible) {
 		if (visible) {			
@@ -598,7 +600,9 @@ public class PropertiesDialogGeoElement
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
  			initTabs();
- 			add(tabs); 			
+ 			
+ 			setLayout(new BorderLayout());
+ 			add(tabs, BorderLayout.CENTER); 			
 		}		
 		
 		// added by Loïc BEGIN
@@ -613,21 +617,23 @@ public class PropertiesDialogGeoElement
 		private void initTabs() {				
 			// basic tab
 			ArrayList basicTabList = new ArrayList();
-			//basicTabList.add(namePanel);
+			basicTabList.add(namePanel);			
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
-			basicTabList.add(tracePanel);
-			basicTabList.add(fixPanel);		
+			basicTabList.add(tracePanel);			
+			basicTabList.add(fixPanel);	
+			basicTabList.add(auxPanel);
 			basicTabList.add(checkBoxFixPanel);
 			basicTabList.add(bgImagePanel);	
+			basicTabList.add(absScreenLocPanel);
 			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
 			basicTab.addToTabbedPane(tabs);	
 			
 			// name tab
-			ArrayList nameTabList = new ArrayList();
-			nameTabList.add(namePanel);
-			TabPanel nameTab = new TabPanel(app.getPlain("Name"), nameTabList);
-			nameTab.addToTabbedPane(tabs);	
+//			ArrayList nameTabList = new ArrayList();
+//			nameTabList.add(namePanel);
+//			TabPanel nameTab = new TabPanel(app.getPlain("Name"), nameTabList);
+//			nameTab.addToTabbedPane(tabs);	
 				
 			/*
 			// change basic tab layout: create grid with two columns
@@ -657,8 +663,8 @@ public class PropertiesDialogGeoElement
 			textTab.addToTabbedPane(tabs);	
 			
 			// slider tab
-			ArrayList sliderTabList = new ArrayList();
-			sliderTabList.add(sliderPanel);				
+			ArrayList sliderTabList = new ArrayList();	
+			sliderTabList.add(sliderPanel);	
 			TabPanel sliderTab = new TabPanel(app.getPlain("Slider"), sliderTabList);
 			sliderTab.addToTabbedPane(tabs);	
 	        
@@ -673,8 +679,9 @@ public class PropertiesDialogGeoElement
 			ArrayList styleTabList = new ArrayList();
 			styleTabList.add(slopeTriangleSizePanel);
 			styleTabList.add(pointSizePanel);	
-			styleTabList.add(lineStylePanel);			
-			styleTabList.add(arcSizePanel);													
+			styleTabList.add(lineStylePanel);	
+			styleTabList.add(arcSizePanel);		
+			styleTabList.add(fillingPanel);
 			TabPanel styleTab = new TabPanel(app.getMenu("Properties.Style"), styleTabList);
 			styleTab.addToTabbedPane(tabs);	
 				
@@ -687,14 +694,13 @@ public class PropertiesDialogGeoElement
 			lineStyleTab.addToTabbedPane(tabs);	
 			
 			// filling style
-			ArrayList fillingTabList = new ArrayList();	
-			fillingTabList.add(fillingPanel);			
-			TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
-			fillingTab.addToTabbedPane(tabs);										
+//			ArrayList fillingTabList = new ArrayList();	
+//			fillingTabList.add(fillingPanel);			
+//			TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
+//			fillingTab.addToTabbedPane(tabs);										
 			
 			// position			
 			ArrayList positionTabList = new ArrayList();	
-			positionTabList.add(absScreenLocPanel);
 			positionTabList.add(startPointPanel);	
 			positionTabList.add(cornerPointsPanel);
 			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
@@ -705,8 +711,7 @@ public class PropertiesDialogGeoElement
 			algebraTabList.add(coordPanel);
 			algebraTabList.add(lineEqnPanel);
 			algebraTabList.add(conicEqnPanel);	
-			algebraTabList.add(animStepPanel);
-			algebraTabList.add(auxPanel);	
+			algebraTabList.add(animStepPanel);	
 			TabPanel algebraTab = new TabPanel(app.getMenu("Properties.Algebra"), algebraTabList);
 			algebraTab.addToTabbedPane(tabs);
 			
@@ -751,7 +756,7 @@ public class PropertiesDialogGeoElement
 				tabs.setVisible(false);
 		}
 		
-		private boolean updateTabPanel(JPanel tabPanel, ArrayList tabList, Object [] geos) {
+		private boolean updateTabPanel(TabPanel tabPanel, ArrayList tabList, Object [] geos) {
 			// update all panels and their visibility			
 			boolean oneVisible = false;
 			int size = tabList.size();
@@ -782,11 +787,16 @@ public class PropertiesDialogGeoElement
 			public TabPanel(String title, ArrayList pVec) {
 				this.title = title;
 				panelList = pVec;
-					
-				setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));			
+				
+				setLayout(new BorderLayout());
+				JPanel panel = new JPanel();
+				panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
+				JScrollPane scrollPane = new JScrollPane(panel);
+				//setPreferredSize(new Dimension(450, 110));
+				add(scrollPane, BorderLayout.CENTER);
 							
 				// create grid with one column
-				setLayout(new GridBagLayout());
+				panel.setLayout(new GridBagLayout());
 				GridBagConstraints c = new GridBagConstraints();
 				c.fill = GridBagConstraints.NONE;
 				c.anchor = GridBagConstraints.NORTHWEST;
@@ -797,11 +807,11 @@ public class PropertiesDialogGeoElement
 					JPanel p = (JPanel) pVec.get(i);
 					c.gridx = 0;
 					c.gridy = i;
-					
-					if (i == pVec.size() - 1)
-						c.weighty = 1.0;
-					add(p, c);
-				}								
+										
+					panel.add(p, c);
+				}			
+				c.weighty = 1.0;
+				panel.add(Box.createVerticalGlue(), c);
 			}
 			
 			public void update(Object [] geos) {
@@ -822,9 +832,7 @@ public class PropertiesDialogGeoElement
 	 * panel with show/hide object checkbox
 	 */
 	private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
-		/**
-		 * 
-		 */
+	
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JCheckBox showObjectCB;
@@ -1885,9 +1893,12 @@ public class PropertiesDialogGeoElement
 		}
 
 		private boolean checkGeos(Object[] geos) {
-			boolean geosOK = true;
+			boolean geosOK = true; 
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof Locateable) || geos[i] instanceof GeoImage) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (!(geo instanceof Locateable) 
+						||	geo.isGeoImage())					  
+				{
 					geosOK = false;
 					break;
 				}
@@ -4099,14 +4110,12 @@ class AnimationStepPanel
 	private Object[] geos; // currently selected geos
 	private JTextField tfAnimStep;
 	
-	private Application app;
 	private Kernel kernel;
 
 	public AnimationStepPanel(Application app) {
-		this.app = app;
 		kernel = app.getKernel();
 		
-		// textfield for animation step
+		// text field for animation step
 		JLabel label = new JLabel(app.getPlain("AnimationStep") + ": ");
 		tfAnimStep = new JTextField(5);
 		label.setLabelFor(tfAnimStep);
@@ -4169,7 +4178,8 @@ class AnimationStepPanel
 					|| geo.isGeoText() 
 					|| geo.isGeoImage()
 					|| geo.isGeoList()
-					|| geo.isGeoBoolean()) 
+					|| geo.isGeoBoolean()
+					|| geo.isGeoNumeric() && geo.isIndependent()) // slider 
 			{
 				geosOK = false;
 				break;
@@ -4349,8 +4359,8 @@ class NamePanel
 	private static final long serialVersionUID = 1L;
 		
 	private AutoCompleteTextField tfName, tfDefinition, tfCaption;
-	private JLabel defLabel, captionLabel;
-	private InputPanel inputPanelDef, inputPanelCap;
+	private JLabel nameLabel, defLabel, captionLabel;
+	private InputPanel inputPanelName, inputPanelDef, inputPanelCap;
 	private RenameInputHandler nameInputHandler;
 	private RedefineInputHandler defInputHandler;
 	private GeoElement currentGeo;	
@@ -4362,7 +4372,7 @@ class NamePanel
 		nameInputHandler = new RenameInputHandler(app, null, false);
 		
 		// non auto complete input panel
-		InputPanel inputPanelName = new InputPanel(null, app, 1, 10, false, true);
+		inputPanelName = new InputPanel(null, app, 1, 10, false, true);
 		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
 		tfName.setAutoComplete(false);		
 		tfName.addActionListener(this);
@@ -4386,29 +4396,47 @@ class NamePanel
 		tfCaption.addFocusListener(this);
 		
 		// name panel			
-		JLabel nameLabel = new JLabel(app.getPlain("Name") + ":");	
+		nameLabel = new JLabel(app.getPlain("Name") + ":");	
 		nameLabel.setLabelFor(inputPanelName);
-		add(nameLabel);		
-		add(inputPanelName);
+	
 		
 		// definition panel
 		defLabel = new JLabel(app.getPlain("Definition") + ":");		
 		defLabel.setLabelFor(inputPanelDef);
-		add(defLabel);
-		add(inputPanelDef);	
+	
 		
 		// caption panel
 		captionLabel = new JLabel(app.getMenu("Button.Caption") + ":");		
 		captionLabel.setLabelFor(inputPanelCap);
-		add(captionLabel);
-		add(inputPanelCap);
-				
-        //Lay out the panel
+
+		updateGUI(true, true);
+	}
+	
+	private void updateGUI(boolean showDefinition, boolean showCaption) {
+		int rows = 1;
+		removeAll();
+		
+		add(nameLabel);		
+		add(inputPanelName);
+		
+		if (showDefinition) {	
+			rows++;
+			add(defLabel);
+			add(inputPanelDef);
+		}
+		
+		if (showCaption) {
+			rows++;
+			add(captionLabel);
+			add(inputPanelCap);
+		}
+		
+		 //Lay out the panel
 		setLayout(new SpringLayout());
         SpringUtilities.makeCompactGrid(this,
-                                        3, 2, 	// rows, cols
+                                        rows, 2, 	// rows, cols
                                         5, 5,   //initX, initY
-                                        5, 5);  //xPad, yPad		
+                                        5, 5);  //xPad, yPad	
 	}
 
 	public JPanel update(Object[] geos) {		
@@ -4441,8 +4469,8 @@ class NamePanel
 				defLabel.setText(app.getPlain("Definition")+ ":");
 			}
 		}
-		defLabel.setVisible(showDefinition);
-		inputPanelDef.setVisible(showDefinition);
+//		defLabel.setVisible(showDefinition);
+//		inputPanelDef.setVisible(showDefinition);
 		
 		// CAPTION
 		boolean showCaption = currentGeo.isGeoBoolean();
@@ -4451,8 +4479,10 @@ class NamePanel
 			tfCaption.setText(getCaptionText(currentGeo));
 			tfCaption.addActionListener(this);			
 		} 
-		captionLabel.setVisible(showCaption);
-		inputPanelCap.setVisible(showCaption);
+//		captionLabel.setVisible(showCaption);
+//		inputPanelCap.setVisible(showCaption);
+		
+		updateGUI(showDefinition, showCaption);
 		
 		return this;
 	}
