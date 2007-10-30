@@ -107,7 +107,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 				Dimension d1 = getSize();	
 				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 				loc.x = Math.min(loc.x + 20, dim.width - d1.width);
-				loc.y = Math.min(loc.y + 20, dim.height - d1.height - 25);								
+				loc.y = Math.min(loc.y + 20, dim.height - d1.height - 25);									
 				setLocation(loc);
 			} else {
 				// center
@@ -137,9 +137,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 	}
 	
 	public void updateSize() {
-		// use euclidian view pref size to set frame size 
-		EuclidianView ev = app.getEuclidianView();										
-		
+		Dimension frameSize = getSize();
+
+		// use euclidian view pref size to set frame size 		
+		EuclidianView ev = app.getEuclidianView();		
+
 		// no preferred size
 		if (ev.hasPreferredSize()) {
 			ev.setMinimumSize(new Dimension(50,50));
@@ -149,23 +151,25 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			// pack frame and correct size to really get the preferred size for euclidian view
 			pack(); 
 			Dimension evSize = ev.getSize();
-			Dimension frameSize = getSize();
 			frameSize.width = frameSize.width + (evPref.width - evSize.width);
-			frameSize.height = frameSize.height + (evPref.height - evSize.height);
-			
-			// check if frame fits on screen
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			if (frameSize.width > screenSize.width || 
-					frameSize.height > screenSize.height) {
-				setSize(screenSize);
-				setLocation(0,0);
-			} else {
-				// everything ok
-				setSize(frameSize);
-			}
+			frameSize.height = frameSize.height + (evPref.height - evSize.height);					
 		} else {
-			setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
-		}				
+			frameSize.width = DEFAULT_WIDTH;
+			frameSize.height = DEFAULT_HEIGHT;			
+		}
+		
+		// check if frame fits on screen
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
+		screenSize.height -= 30;
+		
+		if (frameSize.width > screenSize.width || 
+				frameSize.height > screenSize.height) {
+			setSize(screenSize);
+			setLocation(0,0);
+		} else {
+			// everything ok
+			setSize(frameSize);
+		}
 	}
 
 	/** 

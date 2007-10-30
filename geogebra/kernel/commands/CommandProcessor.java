@@ -2724,7 +2724,7 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
                 // and no label is given
                 // we change the input object
                 if (!cons.isSuppressLabelsActive() &&  
-                	label == null) 
+                	label == null && geo.isIndependent()) 
                 {
                         p.translate(v);                     
                         geo.updateRepaint();

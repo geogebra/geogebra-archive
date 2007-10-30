@@ -474,7 +474,10 @@ public class Kernel {
 	}
 
 	public void setConstructionStep(int step) {
-		cons.setStep(step);
+		if (cons.getStep() != step) {
+			cons.setStep(step);
+			app.setUnsaved();
+		}
 	}
 
 	public int getConstructionStep() {
@@ -494,9 +497,9 @@ public class Kernel {
 		int step = 0;
 		
 		if (showOnlyBreakpoints()) {
-			cons.setStep(getNextBreakpoint(step));		
+			setConstructionStep(getNextBreakpoint(step));		
 		} else {	
-    		cons.setStep(step);
+			setConstructionStep(step);
     	}
 	}
 	
@@ -509,9 +512,9 @@ public class Kernel {
 		int step = getLastConstructionStep();
 		
 		if (showOnlyBreakpoints()) {
-			cons.setStep(getPreviousBreakpoint(step));		
+			setConstructionStep(getPreviousBreakpoint(step));		
 		} else {	
-    		cons.setStep(step);
+			setConstructionStep(step);
     	}
 	}
 	
@@ -524,9 +527,9 @@ public class Kernel {
 		int step = cons.getStep() + 1;
 		
 		if (showOnlyBreakpoints()) {
-			cons.setStep(getNextBreakpoint(step));		
+			setConstructionStep(getNextBreakpoint(step));		
 		} else {	
-    		cons.setStep(step);
+			setConstructionStep(step);
     	}
 	}
 	
@@ -534,10 +537,13 @@ public class Kernel {
 		int lastStep = getLastConstructionStep();
 		// go to next breakpoint
 		while (step <= lastStep) {
-			if (cons.getConstructionElement(step).isConsProtocolBreakpoint())
+			if (cons.getConstructionElement(step).isConsProtocolBreakpoint()) {				
 				return step;
+			}
+				
 			step++;
 		}
+		
 		return lastStep;
 	}
 
@@ -647,9 +653,8 @@ public class Kernel {
 	 * methods for view-Pattern (Model-View-Controller)
 	 * *******************************************************/
 
-	public void attach(View view) {					
-		//System.out.println("attach " + view + ", notifyActive: " + notifyViewsActive);
-		
+	public void attach(View view) {							
+	//	System.out.println("ATTACH " + view + ", notifyActive: " + notifyViewsActive);			
 		if (!notifyViewsActive) {			
 			viewCnt = oldViewCnt;
 		}
@@ -722,11 +727,22 @@ public class Kernel {
 	}	
 
 	final public void notifyAddAll(View view) {
-		if (!notifyViewsActive) return;
+		int consStep = cons.getStep();
+		notifyAddAll(view, consStep);
+	}
 		
+	final public void notifyAddAll(View view, int consStep) {
+		if (!notifyViewsActive) return;
+				
 		Iterator it = cons.getGeoSetConstructionOrder().iterator();
 		while (it.hasNext()) {
-			view.add((GeoElement) it.next());
+			GeoElement geo = (GeoElement) it.next();
+			
+			// stop when not visible for current construction step
+			if (!geo.isAvailableAtConstructionStep(consStep))
+				break;
+			
+			view.add(geo);
 		}			
 	}	
 	

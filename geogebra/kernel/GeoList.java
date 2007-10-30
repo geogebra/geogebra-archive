@@ -160,7 +160,9 @@ public class GeoList extends GeoElement implements ListValue {
 	private void applyVisualStyle(GeoElement geo) {
 		// TODO: think about setVisualStyle() for lists
 		if (!geo.isLabelSet()) {
-			geo.setObjColor(this.getObjectColor());		
+			geo.setObjColor(this.getObjectColor());	
+			
+			setElementEuclidianVisible(geo, isSetEuclidianVisible());  
 		}
 	}
     
@@ -193,10 +195,14 @@ public class GeoList extends GeoElement implements ListValue {
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
         	GeoElement geo = get(i);
-        	if (!geo.isLabelSet() && !geo.isGeoNumeric())
-        		geo.setEuclidianVisible(visible);
-        }    	
+        	setElementEuclidianVisible(geo, visible);        
+        }
 	}
+    
+    private void setElementEuclidianVisible(GeoElement geo, boolean visible) {
+    	if (!geo.isLabelSet() && !geo.isGeoNumeric())
+    		geo.setEuclidianVisible(visible);
+    }
     
     /**
      * Returns this GeoList as a MyList object.
@@ -243,7 +249,7 @@ public class GeoList extends GeoElement implements ListValue {
     }
     
     public boolean isDrawable() {
-    	return isDrawable && !isIndependent();
+    	return isDrawable;
     }
     
     boolean showInAlgebraView() {       
@@ -275,7 +281,7 @@ public class GeoList extends GeoElement implements ListValue {
     	else if (elementType != geo.getGeoClassType()) {    		
     		elementType = ELEMENT_TYPE_MIXED;
     	}    	    	
-    	isDrawable = isDrawable && geo.isDrawable(); 
+    	isDrawable = isDrawable && geo.isDrawable();     	
     	
     	// set visual style of this list
 		applyVisualStyle(geo);	

@@ -260,7 +260,8 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		setMenuShortCutAccelerator(mi, 'A');
 		menu.addSeparator();
 
-		menu.add(propertiesAction);
+		mi = menu.add(propertiesAction);
+		setMenuShortCutAccelerator(mi, 'E');
 		add(menu);
 
 		// View

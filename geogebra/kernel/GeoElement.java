@@ -293,7 +293,7 @@ public abstract class GeoElement
 		setConstructionDefaults(); // init visual settings       				
 		
 		// new elements become breakpoints if only breakpoints are shown
-		isConsProtBreakpoint = cons.showOnlyBreakpoints();
+		//isConsProtBreakpoint = cons.showOnlyBreakpoints();
 	}
 
 	/* *******************************************************/	
@@ -572,7 +572,27 @@ public abstract class GeoElement
 	}	
 	
 	public void setConsProtocolBreakpoint(boolean flag) {
+		/*
+		// all siblings need to have same breakpoint information
+		GeoElement [] siblings = getSiblings();
+		if (siblings != null) {			
+			for (int i=0; i < siblings.length; i++) {
+				siblings[i].isConsProtBreakpoint = flag;
+			}	
+		}*/
+		
 		isConsProtBreakpoint = flag;
+	}
+	
+	/**
+	 * Returns the children of the parent algorithm or null.	 
+	 */
+	public GeoElement [] getSiblings() {
+		if (algoParent != null) {
+			return algoParent.getOutput();
+		}
+		else 
+			return null;
 	}
 
 	public boolean isDrawable() {
@@ -831,11 +851,12 @@ public abstract class GeoElement
 		if (cons.isSuppressLabelsActive())
 			return;
 		
+		
 		labelWanted = true;
 
 		// had no label: try to set it
 		if (!labelSet) {
-			// to avoid wasting of lables, new elements must wait
+			// to avoid wasting of labels, new elements must wait
 			// until they are shown in one of the views to get a label            
 			if (isVisible()) {
 				doSetLabel(getFreeLabel(newLabel));
@@ -850,6 +871,7 @@ public abstract class GeoElement
 				doRenameLabel(newLabel);
 			}
 		}
+		
 	}
 
 	/**
@@ -909,7 +931,7 @@ public abstract class GeoElement
 		} else {
 			System.out.println("SET LABEL: " + label + ", type: " + this.getTypeString());
 		}
-		*/
+		*/	
 				
 		this.label = label; // set new label
 		labelSet = true;
@@ -918,11 +940,10 @@ public abstract class GeoElement
 		cons.putLabel(this); // add new table entry			
 		algebraStringsNeedUpdate();
 		updateSpreadsheetCoordinates();
-			
+		
 		notifyAdd();		
 	}	
 	
-	// TODO: improve updateSpreadSheet Coordinates
 	private void updateSpreadsheetCoordinates() {			
 		if(labelSet && label.length() > 1 
 			&& Character.isLetter(label.charAt(0))
@@ -939,6 +960,7 @@ public abstract class GeoElement
 				oldSpreadsheetCoords.setLocation(spreadsheetCoords);
 			}
 			
+			// TODO: improve updateSpreadSheet Coordinates
 			int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
 			int row = Integer.parseInt(label.charAt(1) + "") - 1;
 			spreadsheetCoords.setLocation(column, row);    		

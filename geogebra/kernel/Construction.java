@@ -493,16 +493,18 @@ public class Construction {
      * @param s: step number from range -1 ... steps()-1 where
      * -1 shows an empty construction.
      */
-    public void setStep(int s) {
+    public void setStep(int s) {	
         if (s == step || s < -1 || s >= ceList.size())
 			return;
 
         if (s < step) {
-            for (int i = s + 1; i <= step; ++i)
-                 ((ConstructionElement) ceList.get(i)).notifyRemove();
+            for (int i = s + 1; i <= step; ++i) {
+                 ((ConstructionElement) ceList.get(i)).notifyRemove();                                  
+            }
         } else {
-            for (int i = step + 1; i <= s; ++i)
+            for (int i = step + 1; i <= s; ++i) {
                  ((ConstructionElement) ceList.get(i)).notifyAdd();
+            }
         }
         step = s;
     }

@@ -187,7 +187,7 @@ public class MyXMLio {
 		}
 			    			     	     
      	// handle construction step stored in XMLhandler     	
-     	if (!isGGTFile && app.showConsProtNavigation() && oldVal) // do this only if the views are active
+     	if (!isGGTFile && app.showConsProtNavigation() & oldVal) // do this only if the views are active
      		app.getConstructionProtocol().setConstructionStep(handler.getConsStep());     		
     }
     

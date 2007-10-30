@@ -38,7 +38,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Traceable;
-import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,6 +57,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -96,13 +97,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import sunw.util.EventListener;
 
 
 /**
@@ -114,7 +112,7 @@ public class PropertiesDialogGeoElement
 		WindowListener,
 		WindowFocusListener,
 		TreeSelectionListener,
-		//KeyListener,
+		KeyListener,
 		GeoElementSelectionListener {
 			
 	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
@@ -131,7 +129,7 @@ public class PropertiesDialogGeoElement
 	final static int TEXT_FIELD_FRACTION_DIGITS = 3;
 	final static int SLIDER_MAX_WIDTH = 170;
 	
-	final private static int MIN_WIDTH = 200;
+	final private static int MIN_WIDTH = 500;
 	final private static int MIN_HEIGHT = 300;
 
 	
@@ -157,6 +155,7 @@ public class PropertiesDialogGeoElement
 			}
 		});
 		geoTree.addTreeSelectionListener(this);
+		geoTree.addKeyListener(this);
 				
 		// build GUI
 		initGUI();		
@@ -179,7 +178,7 @@ public class PropertiesDialogGeoElement
 		//	LIST PANEL
 		JPanel listPanel = new JPanel();
 		//listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		listPanel.setLayout(new BorderLayout(5, 5));
+		listPanel.setLayout(new BorderLayout(5, 2));
 		// JList with GeoElements		
 		
 		JScrollPane listScroller = new JScrollPane(geoTree);
@@ -217,7 +216,7 @@ public class PropertiesDialogGeoElement
 			}
 		});
 
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));			
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));			
 		//if (app.letRedefine())
 		//	buttonPanel.add(redefineButton);
 		if (app.letDelete())
@@ -231,7 +230,7 @@ public class PropertiesDialogGeoElement
 //				//	BorderFactory.createTitledBorder(app.getPlain("Objects")),
 //				BorderFactory.createEtchedBorder(),
 //				BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		listPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 8));		
+		listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));		
 
 			
 		// PROPERTIES PANEL
@@ -242,6 +241,7 @@ public class PropertiesDialogGeoElement
 		}
 			
 		propPanel = new PropertiesPanel(colChooser);
+		propPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 		selectionChanged(); // init propPanel		
 
 		closeButton = new JButton(app.getMenu("Close"));
@@ -267,9 +267,7 @@ public class PropertiesDialogGeoElement
 		dialogPanel.add(listPanel, BorderLayout.WEST);
 		dialogPanel.add(rightPanel, BorderLayout.CENTER);
 
-		contentPane.add(dialogPanel);
-		//dialogPanel.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
-		
+		contentPane.add(dialogPanel);						
 							
 		if (wasShowing) {
 			setVisible(true);
@@ -329,12 +327,25 @@ public class PropertiesDialogGeoElement
 			geoTree.collapseAll();			
 		
 		geoTree.setSelected(geos, false);
-		if (!isShowing()) {										
+		if (!isShowing()) {		
+			// pack and center on first showing
 			if (firstTime) {
 				pack();		
 				setLocationRelativeTo(app.getMainComponent());	
 				firstTime = false;
 			}
+			
+			// ensure min size
+			Dimension dim = getSize();
+			if (dim.width < MIN_WIDTH) {
+				dim.width = MIN_WIDTH;
+				setSize(dim);
+			}
+			if (dim.height < MIN_HEIGHT) {
+				dim.height = MIN_HEIGHT;
+				setSize(dim);
+			}			
+			
 			super.setVisible(true);	
 		}					
 	}
@@ -626,6 +637,9 @@ public class PropertiesDialogGeoElement
 			basicTabList.add(checkBoxFixPanel);
 			basicTabList.add(bgImagePanel);	
 			basicTabList.add(absScreenLocPanel);
+			basicTabList.add(allowReflexAnglePanel);	
+			basicTabList.add(rightAnglePanel);
+			basicTabList.add(allowOutlyingIntersectionsPanel);
 			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
 			basicTab.addToTabbedPane(tabs);	
 			
@@ -687,7 +701,6 @@ public class PropertiesDialogGeoElement
 				
 			// decoration
 			ArrayList decorationTabList = new ArrayList();	
-			decorationTabList.add(rightAnglePanel);
 			decorationTabList.add(decoAnglePanel);
 			decorationTabList.add(decoSegmentPanel);
 			TabPanel lineStyleTab = new TabPanel(app.getPlain("Decoration"), decorationTabList);
@@ -717,9 +730,7 @@ public class PropertiesDialogGeoElement
 			
 			// advanced tab
 			ArrayList advancedTabList = new ArrayList();
-			advancedTabList.add(showConditionPanel);
-			advancedTabList.add(allowReflexAnglePanel);	
-			advancedTabList.add(allowOutlyingIntersectionsPanel);
+			advancedTabList.add(showConditionPanel);	
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
 					
@@ -3517,10 +3528,9 @@ public class PropertiesDialogGeoElement
 			TreePath tp = null;					
 			
 			TreeSelectionModel lsm = getSelectionModel();					
-			if (geos == null) {
-				if (lsm.isSelectionEmpty()) {
-					selectFirstElement();					
-				}			
+			if (geos == null || geos.size() == 0) {
+				lsm.clearSelection();
+				selectFirstElement();
 			}			
 			else {
 				if (!addToSelection) 
@@ -3835,6 +3845,25 @@ public class PropertiesDialogGeoElement
 	// Tree selection listener
 	public void valueChanged(TreeSelectionEvent e) {			
 		selectionChanged();		
+	}
+
+	/*
+	 * KeyListener
+	 */
+	public void keyPressed(KeyEvent e) {
+		Object src = e.getSource();
+		
+		if (src instanceof JTreeGeoElements) {
+			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+				deleteSelectedGeos();
+			}			
+		}		
+	}
+
+	public void keyReleased(KeyEvent e) {	
+	}
+
+	public void keyTyped(KeyEvent e) {	
 	}
 
 } // PropertiesDialog

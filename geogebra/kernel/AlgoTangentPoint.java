@@ -72,6 +72,10 @@ public class AlgoTangentPoint extends AlgoElement {
         // so we make the second one undefined
         equalLines = tangents[0].equals(tangents[1]);
         if (equalLines) {
+        	
+        	// TODO: remove
+        	System.out.println("equal tangent lines: " + equalLines);
+        	
             tangents[1].setUndefined();
             tangentPoints[1].setUndefined();
         }

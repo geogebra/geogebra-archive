@@ -345,7 +345,10 @@ public class Application implements	KeyEventDispatcher {
         algebraController = new AlgebraController(kernel);
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
-	
+    	algebraView = new AlgebraView(algebraController);
+    	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
+   
+        
         // load file on startup and set fonts
         //  INITING:    to avoid multiple calls of setLabels() and updateContentPane()
         INITING = true; 
@@ -629,10 +632,7 @@ public class Application implements	KeyEventDispatcher {
        		     createMatteBorder(1, 0, 0, 0, Color.gray));
         }                    
         
-        if (showAlgebraView) {        	
-        	if (algebraView == null) {
-     	        initAlgebraView(); 	
-        	}
+        if (showAlgebraView) {        	     
             if (horizontalSplit) {
                 sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         new JScrollPane(algebraView), eup);
@@ -1409,11 +1409,14 @@ public class Application implements	KeyEventDispatcher {
         
         // save the geos list: it will be cleared by setMoveMode()
         ArrayList selGeos = null;
+        if (geos == null)
+        	geos = getSelectedGeos();
+        
         if (geos != null) {
         	tempGeos.clear();
         	tempGeos.addAll(geos);
         	selGeos = tempGeos;
-        } 
+        }
                 
         initPropertiesDialog();
         setMoveMode();
@@ -2120,32 +2123,21 @@ public class Application implements	KeyEventDispatcher {
     }
 
     public void setShowAlgebraView(boolean flag) {
-        if (showAlgebraView != flag) {
-            showAlgebraView = flag;
-            if (showAlgebraView) {
-            	if (algebraView == null) {
-            		initAlgebraView();           		
-            	}
-            	else {
-            		algebraView.attachView();    		
-            	}
-            	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);
-            }         
-            else {
-            	if (algebraView != null) algebraView.detachView();
-            }                
-                
-            updateMenubar();            
-            isSaved = false;
-        }
+        if (showAlgebraView == flag) return;
+        
+        showAlgebraView = flag;
+        if (showAlgebraView) {        	
+        	algebraView.attachView();    		        	
+        	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);
+        }         
+        else {
+        	algebraView.detachView();
+        }                
+            
+        updateMenubar();            
+        isSaved = false;        
     }
-    
-    private void initAlgebraView() {    	
-    	algebraView = new AlgebraView(algebraController);
-    	algebraView.setShowAuxiliaryObjects(showAuxiliaryObjects);   
-    	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
-    }
-
+       
     final public boolean showAlgebraView() {
         return showAlgebraView;
     }        

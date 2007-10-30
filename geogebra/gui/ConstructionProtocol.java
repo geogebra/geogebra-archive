@@ -246,14 +246,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
     	if (isViewAttached) kernel.detach(data);
         kernel.nextStep();
         if (isViewAttached) kernel.attach(data);  
-        updateNavigationBars();
+        updateNavigationBars();      
         repaint();
     }
     
     public void previousStep() {
     	if (isViewAttached) kernel.detach(data);
         kernel.previousStep();
-        if (isViewAttached) kernel.attach(data); 
+        if (isViewAttached) kernel.attach(data);         
         updateNavigationBars();
     }
     
@@ -512,26 +512,57 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 if (e.isPopupTrigger() || e.isMetaDown()) {
                     GeoElement geo = data.getGeoElement(row);
                     app.showPopupMenu(geo, table, origin);
-                } else { // left double click                   	      
-                	// the last column is for breakpoint toggling
-                	int column = table.columnAtPoint(origin);
-                	if (column == table.getColumnCount()-1) {
-                		RowData rd = data.getRow(row);
-                		GeoElement geo = rd.geo;
-                		boolean newVal = !geo.isConsProtocolBreakpoint();
-                		geo.setConsProtocolBreakpoint(newVal);
-                		rd.updateAll();
+                } else { // left click     
+                	
+                	if (e.getClickCount() == 1) {
                 		
-                		// no longer a breakpoint: hide it
-                		if (kernel.showOnlyBreakpoints() && !newVal) {
-                			data.remove(geo);
-                		}                			                		
-                	}                
-                    else if (e.getClickCount() == 2) {
+	                	// click on breakpoint column?
+	                	int column = table.columnAtPoint(origin); 	                	
+	                	String colName = table.getColumnName(column);
+	                		                
+	                	if (colName.equals(app.getPlain("Breakpoint"))) {                		
+	                		RowData rd = data.getRow(row);
+	                		GeoElement geo = rd.geo;
+	                		boolean newVal = !geo.isConsProtocolBreakpoint();
+	                		geo.setConsProtocolBreakpoint(newVal);	   
+	                		
+	                		// update only current row
+                			rd.updateAll();
+                			
+                			if (kernel.showOnlyBreakpoints() && !newVal) {	     
+	                			data.remove(geo);
+                			}
+                			                			
+	                		/*
+	                		// update geo and all siblings
+	                		GeoElement [] siblings = geo.getSiblings();
+	                		if (siblings != null) {			
+	                			data.updateAll();
+	                		} else {           
+	                			// update only current row
+	                			rd.updateAll();
+	                		}
+	                		                		
+	                		// no longer a breakpoint: hide it
+	                		if (kernel.showOnlyBreakpoints() && !newVal) {
+	                			if (siblings == null)
+	                				data.remove(geo);
+	                			else {
+	                				for (int i=0; i < siblings.length; i++) {
+	                					data.remove(siblings[i]);
+	                				}
+	                			}
+	                		}   
+	                		*/             			                		
+	                	}           
+                	}
+                	
+                	// double click
+                    if (e.getClickCount() == 2) {
                         data.setConstructionStepForRow(row);
                         table.repaint();
                     } 
-                }
+            	}               
             } else if (ob == table.getTableHeader()) {
                 if (e.getClickCount() == 2) {
                     setConstructionStep(-1);
@@ -835,7 +866,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		 * 
 		 */
 		private static final long serialVersionUID = -6933858200673625046L;
-
+			
 		final public ColumnData columns[] =
             {
                 new ColumnData("No.", 35, 35, SwingConstants.CENTER, true),                
@@ -843,7 +874,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 new ColumnData("Definition", 150, 50, SwingConstants.LEFT, true),
                 new ColumnData("Command", 150, 50, SwingConstants.LEFT, false),
                 new ColumnData("Algebra", 150, 50, SwingConstants.LEFT, true),							
-				new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER, false)
+                new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER, false)
 			};
 
         private ArrayList rowList;
@@ -924,7 +955,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         	// init view
             rowList.clear();
             geoMap.clear();
-            kernel.notifyAddAll(this);
+            kernel.notifyAddAll(this, kernel.getLastConstructionStep());
         }
 
         public void attachView() {                	

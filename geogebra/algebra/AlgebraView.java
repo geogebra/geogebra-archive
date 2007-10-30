@@ -150,6 +150,7 @@ public class AlgebraView extends JTree implements View {
 	}
 
 	public void attachView() {
+		clearView();
 		kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}

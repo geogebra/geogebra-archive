@@ -99,13 +99,14 @@ public class Rational extends Algebraic{
 	}
 
 	// toString() changed by Markus Hohenwarter, March 30, 2007
-	// old code missed parentheses around denominator
+	// old code missing parentheses leading to wrong result of
+	// for example the derivative of f(x) = sqrt(1 + 1/x)
 	//	public String toString(){
 	//		return nom + "/" + den;			
 	//	}
 	
 	public String toString(){
-		return nom + "/(" + den + ")";			
+		return "((" + nom + ")/(" + den + "))";			
 	}
 	
 	public boolean equals(Object x){

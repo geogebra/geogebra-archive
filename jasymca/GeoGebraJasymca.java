@@ -23,6 +23,7 @@ public class GeoGebraJasymca extends Jasymca {
 	final public String evaluate(String exp) {					
 		try {
 			Object result = eval(exp);		
+	
 			return formatExpression(result);
 		} catch(Exception e) {
 			System.err.println("GeoGebraJasymca: " + e.getMessage());
