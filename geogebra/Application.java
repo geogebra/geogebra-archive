@@ -86,6 +86,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -114,16 +115,16 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "October 27, 2007";
+    public static final String buildDate = "November 1, 2007";
 	
-    public static final String versionString = "3.0 (RC 2)";    
+    public static final String versionString = "3.0 (RC 3)";    
     public static final String XML_FILE_FORMAT = "3.0";    
   
     // GeoGebra jar files    
     public static final String [] JAR_FILES = 
     	{ "geogebra.jar",  
     	  "geogebra_properties.jar",
-    	  "geogebra_cas.jar",
+    //	  "geogebra_cas.jar",
     	  "geogebra_export.jar"
     	};
  
@@ -392,7 +393,13 @@ public class Application implements	KeyEventDispatcher {
     
     public static void openCAS(Application app) {
     	try {
-			JComponent casView = new geogebra.cas.view.CASView(app);
+    		// use reflection for
+  		    // JComponent casView = new geogebra.cas.view.CASView(app);    		
+  		    Class casViewClass = Class.forName("geogebra.cas.view.CASView");
+  		    Object[] args = new Object[] { app };
+  		    Class [] types = new Class[] {Application.class};
+  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+  	        JComponent casView = (JComponent) constructor.newInstance(args);  	          	      
 			
 			JFrame spFrame = new JFrame();
 	        Container contentPane = spFrame.getContentPane();
@@ -410,8 +417,14 @@ public class Application implements	KeyEventDispatcher {
     
     public static void openSpreadsheet(Application app) {
     	try {
-	    	geogebra.spreadsheet.SpreadsheetView sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10);
-			
+	    	// use reflection for
+  		    // JComponent sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10); 		
+  		    Class SpreadsheetView = Class.forName("geogebra.spreadsheet.SpreadsheetView");
+  		    Object[] args = new Object[] { app, new Integer(10), new Integer(10)};
+  		    Class [] types = new Class[] {Application.class, int.class, int.class};
+  	        Constructor constructor = SpreadsheetView.getDeclaredConstructor(types); 	        
+  	        JComponent sp = (JComponent) constructor.newInstance(args);  
+	    		    	
 			JFrame spFrame = new JFrame();
 	        Container contentPane = spFrame.getContentPane();
 	        contentPane.setLayout(new BorderLayout());
@@ -2634,8 +2647,18 @@ public class Application implements	KeyEventDispatcher {
             // show save dialog
             int returnVal = fileChooser.showSaveDialog(mainComp);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                file =
-                    addExtension(fileChooser.getSelectedFile(), fileExtension);
+            	file = fileChooser.getSelectedFile();
+            	
+            	// remove all special characters from HTML filename
+                if (fileExtension == Application.FILE_EXT_HTML) {    
+                	file = Application.removeExtension(file);
+                	file = new File(file.getParent(), Util.keepOnlyLettersAndDigits(file.getName()));
+                }
+            	
+            	// add file extension
+                file = addExtension(file, fileExtension);
+                fileChooser.setSelectedFile(file);
+                                                
                 if (file.exists()) {
                     // ask overwrite question
                     int n =
@@ -3573,7 +3596,7 @@ public class Application implements	KeyEventDispatcher {
 	 * given directory
 	 * @param destDir
 	 */
-	public void copyJarsTo(String destDir) throws Exception {
+	public void copyJarsTo(String destDir, boolean copyExportJAR) throws Exception {
 		// try to copy from temp dir
 		String tempDir = System.getProperty("java.io.tmpdir"); 
 		
@@ -3593,6 +3616,9 @@ public class Application implements	KeyEventDispatcher {
 		
 		// copy jar files to tempDir
 		for (int i=0; i < JAR_FILES.length; i++) {	
+			if (!copyExportJAR && JAR_FILES[i].endsWith("export.jar"))
+				continue;
+			
 			File dest = new File(destDir, JAR_FILES[i]);	
 			URL src = new URL(srcDir, JAR_FILES[i]);
 			CopyURLToFile.copyURLToFile(src, dest);

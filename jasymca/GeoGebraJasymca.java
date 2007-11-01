@@ -83,9 +83,9 @@ public class GeoGebraJasymca extends Jasymca {
 		
 		return null;
 	}		
-	
+	/*
 	  public static void main(String [] args) {
-		  /*
+		  
 	    	GeoGebraJasymca cas = new GeoGebraJasymca();
 	    	String [] commands = {"x^2", "x^(1/3)",
 			"3+2", "myfun(9)"};
@@ -95,8 +95,8 @@ public class GeoGebraJasymca extends Jasymca {
 				//System.out.println("command: " + commands[i]);
 				//System.out.println("result: " + result);        	        
 			}
-		  */    	
+		    	
 	  } 
-	  
+	  */  
  }
 

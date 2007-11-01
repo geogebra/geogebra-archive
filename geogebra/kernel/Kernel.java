@@ -178,14 +178,14 @@ public class Kernel {
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
-     */ 
+     *
 	final public String evaluateYACAS(String exp) {
 		if (ggbCAS == null) {
 			initCAS();		
 		}
 		
 		return ggbCAS.evaluateYACAS(exp);
-	}
+	}*/
 	
 	/** 
      * Evaluates a JASYMCA expression and returns the result as a String.
@@ -202,6 +202,7 @@ public class Kernel {
 	}
 	
 	public synchronized void initCAS() {
+		// TODO: use reflection to load CAS from separate jar file
 		if (ggbCAS == null) {
 			ggbCAS = new GeoGebraCAS();
 		}			

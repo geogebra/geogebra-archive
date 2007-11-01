@@ -84,13 +84,13 @@ public class MyResourceBundle extends PropertyResourceBundle {
     	//System.out.println("loadBundle: " + name);
     	try {    		        	    		    		
     		String fileName = name + ".properties";
-    		InputStream in =MyResourceBundle.class.getResourceAsStream(fileName);    		
+    		InputStream in = MyResourceBundle.class.getResourceAsStream(fileName);    		
     		    		
     		//System.out.println("SUCCESS loadBundle : " + name);
 			return new MyResourceBundle(in);
     	}
 		catch (Exception e) {			
-			System.err.println("Exception: could not load bundle: " + name);
+			//System.err.println("Exception: could not load bundle: " + name);
 			//e.printStackTrace();
 			return null;
 		}

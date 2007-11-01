@@ -74,7 +74,12 @@ public abstract class GeoElement
 	{		
 		'f',
 		'g',
-		'h'
+		'h',
+		'p',
+		'q',
+		'r',
+		's',
+		't'
 	};
 
 	private static final char[] lineLabels =
@@ -1072,6 +1077,9 @@ public abstract class GeoElement
 	/** Get a free label. Try the suggestedLabel first */
 	public String getFreeLabel(String suggestedLabel) {		
 		if (suggestedLabel != null) {
+			if ("x".equals(suggestedLabel) || "y".equals(suggestedLabel))
+				return getDefaultLabel();
+			
 			if (cons.isFreeLabel(suggestedLabel))
 				return suggestedLabel;
 			else if (suggestedLabel.length() > 0)

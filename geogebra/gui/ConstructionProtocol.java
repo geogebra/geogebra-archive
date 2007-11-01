@@ -44,6 +44,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
@@ -308,14 +309,23 @@ public class ConstructionProtocol extends JDialog implements Printable {
         ActionListener lstPreview = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Thread runner = new Thread() {
-                    public void run() {     
+                    public void run() { 
+                    	app.setWaitCursor();
                     	try {
-	                        new geogebra.export.PrintPreview(app,
-	                            ConstructionProtocol.this,
-	                            PageFormat.PORTRAIT);
+                    		// use reflection for
+        		  		    // new geogebra.export.PrintPreview(app,
+                            //		ConstructionProtocol.this,
+                            //			PageFormat.PORTRAIT);
+        		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
+        		  		    Object[] args = new Object[] { app , ConstructionProtocol.this, new Integer(PageFormat.PORTRAIT)};
+        		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
+        		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
+        		  	        constructor.newInstance(args);
+                    		   
                     	} catch (Exception e) {
                     		System.err.println("Print preview not available");
-                    	}                    		
+                    	}   
+                    	app.setDefaultCursor();
                     }
                 };
                 runner.start();
@@ -1505,11 +1515,21 @@ public class ConstructionProtocol extends JDialog implements Printable {
     }
     
     public void showHTMLExportDialog() {
+    	app.setWaitCursor();
     	try {
-    		new geogebra.export.ConstructionProtocolExportDialog(this).setVisible(true);    
+    		// use reflection for
+  		    // JDialog d = new geogebra.export.ConstructionProtocolExportDialog(this);   		
+  		    Class casViewClass = Class.forName("geogebra.export.ConstructionProtocolExportDialog");
+  		    Object[] args = new Object[] { this };
+  		    Class [] types = new Class[] {ConstructionProtocol.class};
+  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+  	        JDialog d =  (JDialog) constructor.newInstance(args);  
+    		
+    		d.setVisible(true);    		    
     	} catch (Exception e) {
     		System.err.println("ConstructionProtocolExportDialog (html) is not available");
     	}
+    	app.setDefaultCursor();
     }
     
    

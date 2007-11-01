@@ -33,6 +33,7 @@ import java.io.PrintStream;
 
   public class Jasymca{
 
+	  /*
 	// Start interactive session
 	public static void main(String args[]){
 		// get name of startupfile
@@ -41,6 +42,7 @@ import java.io.PrintStream;
 		// Start interactive session
 		new Jasymca().start(System.in, System.out);
 	}
+	*/
 
 	static InputStream getFileInputStream(String fname) throws IOException{
 		return new FileInputStream( fname );

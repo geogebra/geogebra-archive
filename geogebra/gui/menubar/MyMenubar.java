@@ -21,10 +21,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -871,11 +873,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				app.clearSelectedGeos();
 				
 				Thread runner = new Thread() {
-					public void run() {				
+					public void run() {		
+						app.setWaitCursor();
 						// copy drawing pad to the system clipboard
 						Image img = app.getEuclidianView().getExportImage(1d);
 						ImageSelection imgSel = new ImageSelection(img);
 						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
+						app.setDefaultCursor();
 					}
 				};
 				runner.start();						    			    								
@@ -912,13 +916,24 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						try {
+						app.setWaitCursor();
+						try {							
 					    	app.clearSelectedGeos();
-					        geogebra.export.GraphicExportDialog d = new geogebra.export.GraphicExportDialog(app);
+					    	
+					    	// use reflection for
+				  		    // JDialog d = new geogebra.export.GraphicExportDialog(app);   		
+				  		    Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
+				  		    Object[] args = new Object[] { app };
+				  		    Class [] types = new Class[] {Application.class};
+				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        JDialog d =  (JDialog) constructor.newInstance(args);  					    
+					      
 					        d.setVisible(true);
+					       
 						} catch (Exception e) {
 							System.err.println("GraphicExportDialog not available");
 						}
+						app.setDefaultCursor();
 					}
 				};
 				runner.start();
@@ -933,7 +948,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 			public void actionPerformed(ActionEvent e) {				
 				try {		
-					new geogebra.export.pstricks.GeoGebraToPstricks(app);		
+					// use reflection for
+		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
+		  		    Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
+		  		    Object[] args = new Object[] { app };
+		  		    Class [] types = new Class[] {Application.class};
+		  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+		  	        constructor.newInstance(args);  																
 				} catch (Exception ex) {
 					System.err.println("GeoGebraToPstricks not available");
 				}	
@@ -965,13 +986,24 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
+						app.setWaitCursor();
 						try {
 							app.clearSelectedGeos();
-							geogebra.export.WorksheetExportDialog d = new geogebra.export.WorksheetExportDialog(app);
+							
+							// use reflection for
+				  		    // JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
+				  		    Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
+				  		    Object[] args = new Object[] { app };
+				  		    Class [] types = new Class[] {Application.class};
+				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        JDialog d =  (JDialog) constructor.newInstance(args); 
+														
 							d.setVisible(true);
 						} catch (Exception e) {
 							System.err.println("WorksheetExportDialog not available");
+							e.printStackTrace();
 						}
+						app.setDefaultCursor();
 					}
 				};
 				runner.start();
@@ -1090,13 +1122,23 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	
 	public static void showPrintPreview(final Application  app) {
 		Thread runner = new Thread() {
-			public void run() {						
+			public void run() {			
+				app.setWaitCursor();
+				
 				try {
-					new geogebra.export.PrintPreview(app, app.getEuclidianView(),
-							PageFormat.LANDSCAPE);
+					// use reflection for
+		  		    // new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
+		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
+		  		    Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
+		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
+		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
+		  	        constructor.newInstance(args); 										
+					
             	} catch (Exception e) {
-            		System.err.println("Print preview not available");
-            	}												
+            		System.err.println("Print preview not available");            		
+            	}	
+            	
+            	app.setDefaultCursor();
 			}
 		};
 		runner.start();

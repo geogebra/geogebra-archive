@@ -64,7 +64,8 @@ public class WorksheetExportDialog extends JDialog {
 	private Kernel kernel;
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbShowResetIcon,
-					cbShowMenuBar, cbShowToolBar, cbShowToolBarHelp, cbShowInputField;
+					cbShowMenuBar, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
+					cbOnlineArchive;
 	private GraphicSizePanel sizePanel;
 	private boolean useWorksheet = true, kernelChanged = false;			
 	private JTabbedPane tabbedPane;
@@ -181,6 +182,8 @@ public class WorksheetExportDialog extends JDialog {
 	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 	    	cbShowInputField.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+	    	cbOnlineArchive.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_ONLINE_ARCHIVE, "false")).booleanValue() );
 	    	
 	    	addHeight();
 	    
@@ -215,6 +218,7 @@ public class WorksheetExportDialog extends JDialog {
     	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, Boolean.toString(cbShowToolBar.isSelected()));
     	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, Boolean.toString(cbShowToolBarHelp.isSelected()));
     	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
+    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_ONLINE_ARCHIVE, Boolean.toString(cbOnlineArchive.isSelected()));        
     }
 
 	/**
@@ -236,7 +240,7 @@ public class WorksheetExportDialog extends JDialog {
 		centerPanel.add(p, BorderLayout.NORTH);
 
 		label = new JLabel(app.getPlain("TextAfterConstruction") + ":");
-		textBelow = new InputPanel(null, app, 5, 40, true, true);	
+		textBelow = new InputPanel(null, app, 8, 40, true, true);	
 		//scrollPane = new JScrollPane(textBelow);
 		p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);
@@ -363,6 +367,16 @@ public class WorksheetExportDialog extends JDialog {
 		sizePanel = new GraphicSizePanel(app, width, height, false);
 		sizePanel.setAlignmentX(LEFT_ALIGNMENT);
 		guiPanel.add(sizePanel);
+		
+		// Applet panel
+		JPanel appletPanel = new JPanel();
+		appletPanel.setBorder(BorderFactory.createTitledBorder("Java Applet"));
+		appletPanel.setLayout(new BoxLayout(appletPanel, BoxLayout.Y_AXIS));
+		tab.add(appletPanel);
+		
+		// showAlgebraInput
+		cbOnlineArchive = new JCheckBox("archive=\"http://www.geogebra.org/webstart/geogebra.jar\"");		
+		appletPanel.add(cbOnlineArchive);
 		
 		
 		ActionListener heightChanger = new ActionListener() {
@@ -499,7 +513,8 @@ public class WorksheetExportDialog extends JDialog {
 	    		public void run() {    
 	    			try {
 		    			//copy jar to same directory as ggbFile
-		    			app.copyJarsTo(HTMLfile.getParent());
+	    				if (!cbOnlineArchive.isSelected()) 
+	    					app.copyJarsTo(HTMLfile.getParent(), cbShowMenuBar.isSelected());
 		    			
 		    			// open html file in browser
 		    			app.showURLinBrowser(HTMLfile.toURL());
@@ -586,7 +601,15 @@ public class WorksheetExportDialog extends JDialog {
 		// include applet
 		sb.append("\n<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
 		sb.append(" codebase=\"./\"");
-		sb.append(" archive=\"geogebra.jar\"");
+		
+		if (cbOnlineArchive.isSelected()) {
+			// use online geogebra.jar
+			sb.append(" archive=\"http://www.geogebra.org/webstart/geogebra.jar\"");
+		} else {
+			// use local geogebra.jar
+			sb.append(" archive=\"geogebra.jar\"");
+		}
+				
 		sb.append(" width=\"");
 		sb.append(appletWidth);
 		sb.append("\" height=\"");

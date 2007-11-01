@@ -515,5 +515,32 @@ public class Util extends Object {
 	root.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"), "dispose-on-escape");
 	root.getActionMap().put("dispose-on-escape", new DisposeDialogAction(dialog));
     }
+    
+    /**
+     * Removes all characters that are neither letters nor digits from the filename
+     * and changes the given file accordingly.
+     * @param file
+     */
+    public static String keepOnlyLettersAndDigits(String name) {
+		int length = name != null ? name.length() : 0;
+    	
+    	StringBuffer sb = new StringBuffer();
+		for (int i=0; i < length ; i++) {
+			char c = name.charAt(i);
+			if (Character.isDigit(c) ||  // 0 - 9
+				(65 <= c && c <= 90 ) || // A - Z
+				(97 <= c && c <= 122 ) || // a - z
+				c == '_')  // underscore
+			{
+				sb.append(c);
+			}
+		}
+		
+		if (sb.length() == 0) {
+			sb.append("geogebra");
+		}
+		
+		return sb.toString();
+	}       
 
 }

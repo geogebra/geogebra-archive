@@ -10,11 +10,11 @@ a commercial license is also provided. Full license information can be
 found at http://www.jibble.org/licenses/
 
 $Author: hohenwarter $
-$Id: EpsDocument.java,v 1.1 2006-10-19 15:58:11 hohenwarter Exp $
+$Id: EpsDocument.java,v 1.1 2007-11-01 06:32:58 hohenwarter Exp $
 
 */
 
-package org.jibble.epsgraphics;
+package geogebra.export.epsgraphics;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -28,7 +28,7 @@ public class CASSession {
 	}
 	
 	public String evaluate(String input) {
-		return ggbCAS.evaluateYACAS(input);
+		return ggbCAS.evaluateJASYMCA(input);
 	}
 	
 	public String get(int idx, boolean command)

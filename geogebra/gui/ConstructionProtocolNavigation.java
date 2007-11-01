@@ -101,7 +101,13 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	
 	public void setPlayDelay(double delay) {
 		playDelay = delay;
-		spDelay.setValue(new Double(playDelay));
+		
+		try {
+			spDelay.setValue(new Double(playDelay));
+		} catch (Exception e) {
+			spDelay.setValue(new Integer((int) Math.round(playDelay)));
+			
+		}
 	}	
 	
 	public void initGUI() {
@@ -133,7 +139,11 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 											
 		spDelay.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				playDelay = Double.parseDouble(spDelay.getValue().toString());					
+				try {
+					playDelay = Double.parseDouble(spDelay.getValue().toString());
+				} catch (Exception ex) {
+					playDelay = 2;
+				}
 			}			
 		});
 					

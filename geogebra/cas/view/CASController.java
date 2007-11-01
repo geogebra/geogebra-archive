@@ -29,7 +29,7 @@ public class CASController implements KeyListener {
 			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
 				JTextArea ta = (JTextArea) src;	
 				String inputText = ta.getText();								
-				String evaluation = view.getCAS().evaluateYACAS(inputText);												
+				String evaluation = view.getCAS().evaluateJASYMCA(inputText);												
 				
 				// show message box
 				StringBuffer sb = new StringBuffer();

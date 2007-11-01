@@ -36,6 +36,7 @@ public class GeoGebraPreferences {
 	public static final String EXPORT_WS_SHOW_TOOLBAR = "export_ws_show_toolbar";
 	public static final String EXPORT_WS_SHOW_TOOLBAR_HELP = "export_ws_show_toolbar_help";
 	public static final String EXPORT_WS_SHOW_INPUT_FIELD = "export_ws_show_input_field";
+	public static final String EXPORT_WS_ONLINE_ARCHIVE = "export_ws_online_archive";	
 	
 	// picture export dialog
 	public static final String EXPORT_PIC_FORMAT = "export_pic_format";

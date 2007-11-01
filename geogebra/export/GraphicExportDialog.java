@@ -14,6 +14,7 @@ package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.io.MyImageIO;
 import geogebra.util.Util;
@@ -41,7 +42,6 @@ import javax.swing.JPanel;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
-import org.jibble.epsgraphics.EpsGraphics2D;
 
 
 /**

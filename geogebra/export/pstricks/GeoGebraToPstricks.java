@@ -13,7 +13,6 @@ import geogebra.euclidian.DrawLine;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
-import geogebra.export.pstricks.gui.PstricksPanel;
 import geogebra.kernel.AlgoAngleLines;
 import geogebra.kernel.AlgoAnglePoints;
 import geogebra.kernel.AlgoAngleVector;

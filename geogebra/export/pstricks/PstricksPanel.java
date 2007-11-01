@@ -1,7 +1,6 @@
-package geogebra.export.pstricks.gui;
+package geogebra.export.pstricks;
 
 import geogebra.Application;
-import geogebra.export.pstricks.GeoGebraToPstricks;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
