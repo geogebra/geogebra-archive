@@ -11,6 +11,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -45,7 +47,7 @@ import javax.swing.table.TableModel;
  * @author Amy Mathew Varkey
  *
  */
-public class SpreadsheetView extends JComponent implements View, ActionListener, ListSelectionListener
+public class SpreadsheetView extends JComponent implements View, ActionListener, ListSelectionListener, ItemListener
 {
     
     private JTable table;
@@ -611,6 +613,12 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 	
 		public void valueChanged(ListSelectionEvent arg0) {
 			
+			
+		}
+
+
+		public void itemStateChanged(ItemEvent arg0) {
+			// TODO Auto-generated method stub
 			
 		}
 }
