@@ -152,6 +152,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
                        System.out.println("Rows " + (selectedRowStart + 1) +"to" +(selectedRowEnd + 1)
                                           + " is now selected.");
                    }
+                   
                }
            });
        }
@@ -191,6 +192,10 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
                    }
                }
            });
+           
+           //to check when we try to copy a cell value to another cell
+          // if(ALLOW_ROW_SELECTION)
+           
        }
     // }
     
