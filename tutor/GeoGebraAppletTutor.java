@@ -18,39 +18,45 @@ package tutor;
  * Created on 23. J�nner 2003, 22:37
  */
 
-import java.awt.Container;
-
+import geogebra.GeoGebraApplet;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 
 /**
  *
  * @author  Markus Hohenwarter
  */
-public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
+public class GeoGebraAppletTutor extends GeoGebraApplet {
 
 
-	private String problem= null;
+	private String problem = null;
 	private String student = null;
 	private TutorView tutorView;
+	private TutorController tutorController = null;
 	
 
 	/** Creates a new instance of GeoGebraApplet */
 	public GeoGebraAppletTutor() {}
-
+	
 	public void init() 
 	{
 		super.init();
-		problem = getParameter("problem");
-		student = getParameter("student");
+		if (problem == null) problem = getParameter("problem");
+		if (student == null) student = getParameter("student");
+		
 		// STRATEGY FILES
 		if (problem!=null && student != null) {
 			
 			if (tutorView == null) {
-				tutorView = new TutorView(problem.trim(),student.trim(),app);		
+				tutorController = new TutorController(app.getKernel());
+				tutorView = new TutorView(problem.trim(),student.trim(), tutorController);
+				
+				app.getEuclidianView().addMouseListener(tutorController);
 			}
 			//			Attach TutorView
 			// Creates a new tutorView
@@ -58,7 +64,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 			initGUI();
 		}
 		
-		/*
+		
 		System.out.println("**** MAIN construction BEGIN");
 		Construction c = kernel.getConstruction();
 		int i=0;
@@ -74,7 +80,7 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
     		i++;
     	}
 		System.out.println("**** MAIN construction END");
-		*/
+		
 		
 		
 	}
@@ -84,6 +90,9 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 	
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				createGeoGebraAppletPanel(), tutorView);
+
+		splitPane.setDividerLocation(800);
+		this.setSize(1000,500);
 		
 		getContentPane().add(splitPane);
 	}
@@ -97,6 +106,36 @@ public class GeoGebraAppletTutor extends geogebra.GeoGebraApplet {
 	public void stop() {
 		repaint();
 	}
+
+	public String getProblem() {
+		return problem;
+	}
+
+	public void setProblem(String problem) {
+		this.problem = problem;
+	}
+
+	public String getStudent() {
+		return student;
+	}
+
+	public void setStudent(String student) {
+		this.student = student;
+	}
+
+	public TutorView getTutorView() {
+		return tutorView;
+	}
+
+	public void setTutorView(TutorView tutorView) {
+		this.tutorView = tutorView;
+	}
 	
+	public static void main(String[] args) throws Throwable {
+		
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.getTime();
+		
+	}
 			
 }

@@ -9,54 +9,92 @@ import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
+
+import tutor.model.Justification;
+import tutor.model.Strategy;
+import tutor.persistence.dao.http.HttpJustificationDao;
+import tutor.persistence.dao.http.HttpStrategyDao;
+import tutor.persistence.dao.iface.JustificationDao;
+import tutor.persistence.dao.iface.StrategyDao;
 
 
 
-public class TutorView extends JPanel implements View {
+public class TutorView extends JPanel implements View  {
 	
 	
 	private Application app;
+	private Kernel kernel;
 	private MyXMLio xmlio;
+	private TutorController tutorController;
 	
 	private DataBaseInterface dbi;
 	
 	private static final int STUDENT = 0;
 	private static final int TUTOR = 1;
+	private static final int GRAPHICAL_INFO = 2;
+	private static final int SENTENCE = 3;
+	private static final int ARGUMENT = 4;
+	
 	private static final String studentName = "Eloi";
 	private static final String tutorName = "Fortuny";
 	private static final String WELCOME = "Welcome!!!\n";
-	private JTextArea resultArea = new JTextArea(40, 20);
+	
 	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
 	private static final String LN = System.getProperty("line.separator");
 	private Strategy[] strategies;
 
+	private StyleContext styleContext = new StyleContext();
+	private StyledDocument doc = new DefaultStyledDocument(styleContext);
 	
-	public TutorView (String problema, String alumne,Application app) 
+	private JTextPane resultArea = new JTextPane(doc);
+	
+	private DefaultListModel listModel = new DefaultListModel(); 
+	private JList resArea = new JList();
+	
+	private long lineCounter = 0;
+	
+	public TutorView (String problema, String alumne, TutorController tc) 
 	{
-		this.app = app;
-		this.dbi = new DataBaseInterface();
-		strategies = this.dbi.retrieveStrategies(problema);
+		this.app = tc.getApp();
+		this.kernel = tc.getKernel();
+		this.tutorController = tc;
+		tc.setView(this);
+		resultArea.setBackground(Color.WHITE);
 		
+		
+		//this.dbi = new DataBaseInterface();
+		//strategies = this.dbi.retrieveStrategies(problema);
+		
+		
+		StrategyDao strategiesDao = new HttpStrategyDao();
+		List strats = strategiesDao.findStrategiesByProblemId(new Long(problema));
+		Strategy[] result = new Strategy[0];
+		result  = (Strategy[]) strats.toArray(result);
+		/*
 		 if (strategies != null) 
 		 //PROCEED STRATEGIES FILES
 		//nom fitxer
@@ -74,7 +112,14 @@ public class TutorView extends JPanel implements View {
 										+ "\n" + e.getMessage());
 				}
 			}
+		 */
 		justificationCombo = new JComboBox(getJustifications());
+		justificationCombo.addActionListener(new ActionListener() {
+    		public void actionPerformed( ActionEvent evt ) {
+    			JComboBox cb = (JComboBox) evt.getSource();
+    	        String just = (String)cb.getSelectedItem();    			
+    	        printTextArea(just, ARGUMENT);
+    		}});
 	
 		createGUI();
 	}
@@ -82,11 +127,17 @@ public class TutorView extends JPanel implements View {
 		
 			Vector a = new Vector();
 			a.add("");
-			a.add("1");
-			a.add("2");
+		
+			JustificationDao dao = new HttpJustificationDao();
+			List justs = dao.findProblemJustifications(new Long(7));
+			for (Iterator it = justs.iterator(); it.hasNext();) {
+				Justification j = (Justification) it.next();
+				a.add(j.getDescription());
+			}
 			
 			return a;
 	}
+	
 	public void createGUI() {
 		
 		// TODO: implement user interface of tutor view
@@ -98,30 +149,49 @@ public class TutorView extends JPanel implements View {
 	        commentField.setEditable(true);
 	        commentField.setEnabled(true);
 	        
+	
 	        JScrollPane scrollingArea = new JScrollPane(resultArea);
+	        //resultArea.setSize(300,600);
+	        //scrollingArea.setSize(300,600);
+	        
 	        //... Get the content pane, set layout, add to center
 	        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-	        add(scrollingArea);
 	        
-	        add(Box.createVerticalGlue());  
+	        //setLayout(new FlowLayout());
+	        add(scrollingArea);
+	        //scrollingArea.setSize(200,400);
+	        //add(Box.createVerticalGlue());  
 
 	        add(new JLabel("Comments:",SwingConstants.LEFT));
 	       // commentField.setMaximumSize(commentField.getPreferredSize());
+	        
 	        commentField.addActionListener(new ActionListener() {
 	        		public void actionPerformed( ActionEvent evt ) {
 	        			processCommentField();
 	        		}
 	        }
 	        );
+	        
 	        add(commentField);
-	        
+	        //add( new JTextArea(3, 70));
+	        //add( new JTextArea(3, 70));
 	        add(justificationCombo);
+	        //add( new JTextArea(3, 70));
 	        
+	        try {
+	        	for (int i=0; i<20; i++)
+	        		doc.insertString(doc.getLength(), ""+LN, null);
+	        }catch (Throwable t) {}
 	}
 	
 	private void processCommentField(){
 		
-		printTextArea(commentField.getText(),STUDENT);
+		//String strSel = (String) justificationCombo.getSelectedItem();
+		//int selectedUser = Integer.parseInt(strSel);
+		
+		printTextArea(commentField.getText(), TUTOR);
+		
+		//System.out.println(strSel);
 		commentField.setText("");
 		//System.out.println(commentField.getText());
 	}
@@ -142,7 +212,7 @@ public class TutorView extends JPanel implements View {
 	//	System.out.println(c.getXML());
 		//if (geo.getObjectType()  )
 		
-		printTextArea(objectToDialogue(geo),TUTOR);
+		printTextArea(objectToDialogue(geo), GRAPHICAL_INFO);
 		commentField.requestFocus();
 		
 	}
@@ -156,22 +226,102 @@ public class TutorView extends JPanel implements View {
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();
 		
+
+    
 	/*
 	 * Print text into Tutor Dialogue area.
 	 */
-	private void printTextArea(String txt, int user)
+	private void printTextArea(String text, int user)
 	{
+		switch(user) {
 		
-		if (user==STUDENT) {
-//			resultArea.setForeground(Color.GREEN);
-			resultArea.append(studentName);
+			case STUDENT:
+				break;
+				
+			case TUTOR:
+				printTutorMessage(text);
+				break;
+				
+			case GRAPHICAL_INFO:
+				printGraphicalInfo(text);
+				break;
+				
+			case SENTENCE:
+				printSentence(text);
+				break;
+				
+			case ARGUMENT:
+				printArgument(text);
+				break;
+				
+			default:
+				break;
 		}
-		else if (user == TUTOR){
-//			resultArea.setForeground(Color.BLUE);
-			resultArea.append(tutorName);
+		
+	}
+	
+	private void printTutorMessage(String text) {
+		
+		lineCounter++;
+		
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		
+		try {
+			StyleConstants.setForeground(attributes, Color.BLUE);
+			StyleConstants.setItalic(attributes, true);
+			
+			doc.insertString(doc.getLength(), lineCounter+" - Tutor: ", attributes);
+			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
-		//resultArea.setForeground(Color.BLACK);
-		resultArea.append(": "+txt+LN);
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+	
+	private void printGraphicalInfo(String text) {
+		
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		
+		try {
+			StyleConstants.setForeground(attributes, Color.BLACK);
+			
+			doc.insertString(doc.getLength(), "Info: ", attributes);
+			doc.insertString(doc.getLength(), text+LN, attributes);
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+	
+	private void printSentence(String text) {
+		
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		
+		try {
+			StyleConstants.setForeground(attributes, Color.BLACK);
+			StyleConstants.setBold(attributes, true);
+			
+			doc.insertString(doc.getLength(), "Sentence: ", attributes);
+			doc.insertString(doc.getLength(), text+LN, attributes);
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+	
+	private void printArgument(String text) {
+		
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		
+		try {
+			StyleConstants.setFontSize(attributes, 16);
+			
+			doc.insertString(doc.getLength(), "Argument: ", attributes);
+			doc.insertString(doc.getLength(), text+LN, attributes);
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	public void clearView() {
@@ -255,6 +405,10 @@ public class TutorView extends JPanel implements View {
 	    	
 	    	//System.out.println(k.getConstruction().getXML());
 	    	return k.getConstruction();
+	 }
+	 
+	 public void setCommentFieldFocus() {
+		 commentField.requestFocusInWindow();
 	 }
 }
 
