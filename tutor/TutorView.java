@@ -6,10 +6,13 @@ import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -151,6 +154,7 @@ public class TutorView extends JPanel implements View  {
 	        
 	
 	        JScrollPane scrollingArea = new JScrollPane(resultArea);
+	        
 	        //resultArea.setSize(300,600);
 	        //scrollingArea.setSize(300,600);
 	        
@@ -178,10 +182,13 @@ public class TutorView extends JPanel implements View  {
 	        add(justificationCombo);
 	        //add( new JTextArea(3, 70));
 	        
+	        
 	        try {
 	        	for (int i=0; i<20; i++)
 	        		doc.insertString(doc.getLength(), ""+LN, null);
 	        }catch (Throwable t) {}
+	        
+	        
 	}
 	
 	private void processCommentField(){
@@ -189,7 +196,7 @@ public class TutorView extends JPanel implements View  {
 		//String strSel = (String) justificationCombo.getSelectedItem();
 		//int selectedUser = Integer.parseInt(strSel);
 		
-		printTextArea(commentField.getText(), TUTOR);
+		printTextArea(commentField.getText(), SENTENCE);
 		
 		//System.out.println(strSel);
 		commentField.setText("");
@@ -221,7 +228,31 @@ public class TutorView extends JPanel implements View  {
 	 */
 	private String objectToDialogue(GeoElement geo)
 	{
-		return geo.getObjectType()+":"+geo.getLabel();
+		String objectType = geo.getObjectType();
+		String objectLabel = geo.getLabel();
+		String message = "";
+		
+		if (geo instanceof GeoBoolean) {
+			GeoBoolean blnGeo = (GeoBoolean) geo;
+			if (blnGeo.getBoolean()) {
+				message = app.getPlain("valid.deduction");
+			}
+			else {
+				message = app.getPlain("non-valid.deduction");
+			}
+		}
+		else if (geo instanceof GeoFunction) {
+			GeoFunction fnGeo = (GeoFunction) geo;
+			message = ""+fnGeo.getNameDescription();
+		}
+		else {
+			String objectTypeDesc = app.getPlain("geoelement.type."+objectType);
+			String objectTypeArt = app.getPlain("geoelement.type."+objectType+".article").split(",")[1];
+			
+			message = "ha creat " + objectTypeArt + " " + objectTypeDesc + ": " + objectLabel;
+		}
+		
+		return message;
 	}
 		
 		//ConstructionProtocol cp = c.getApplication().getConstructionProtocol();
@@ -258,6 +289,9 @@ public class TutorView extends JPanel implements View  {
 				break;
 		}
 		
+		// Scrolls text area
+		resultArea.scrollRectToVisible(
+				  new Rectangle(0,resultArea.getHeight()-2,1,1));
 	}
 	
 	private void printTutorMessage(String text) {
@@ -285,7 +319,7 @@ public class TutorView extends JPanel implements View  {
 		try {
 			StyleConstants.setForeground(attributes, Color.BLACK);
 			
-			doc.insertString(doc.getLength(), "Info: ", attributes);
+			doc.insertString(doc.getLength(), "", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
@@ -301,7 +335,7 @@ public class TutorView extends JPanel implements View  {
 			StyleConstants.setForeground(attributes, Color.BLACK);
 			StyleConstants.setBold(attributes, true);
 			
-			doc.insertString(doc.getLength(), "Sentence: ", attributes);
+			doc.insertString(doc.getLength(), "", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
@@ -314,9 +348,9 @@ public class TutorView extends JPanel implements View  {
 		SimpleAttributeSet attributes = new SimpleAttributeSet();
 		
 		try {
-			StyleConstants.setFontSize(attributes, 16);
+			StyleConstants.setFontSize(attributes, 12);
 			
-			doc.insertString(doc.getLength(), "Argument: ", attributes);
+			doc.insertString(doc.getLength(), "   ", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
