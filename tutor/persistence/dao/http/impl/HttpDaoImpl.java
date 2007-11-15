@@ -64,7 +64,7 @@ public abstract class HttpDaoImpl implements HttpDao {
 		
 		Object o = null;
 		
-		Document doc = query(serviceName, params, mapper);
+		Document doc = query(serviceName, params);
 		
 		XmlRowMapper mapperInstance = null;
 		try {
@@ -85,7 +85,7 @@ public abstract class HttpDaoImpl implements HttpDao {
 		
 		List l = new ArrayList();
 		
-		Document doc = query(serviceName, params, mapper);
+		Document doc = query(serviceName, params);
 		
 		XmlRowMapper mapperInstance = null;
 		try {
@@ -113,7 +113,7 @@ public abstract class HttpDaoImpl implements HttpDao {
 	 * @param mapper
 	 * @return
 	 */
-	private Document query(String serviceName, Map params, Class mapper) {
+	private Document query(String serviceName, Map params) {
 	
 		String serviceUrl = serviceName + "?" + resolveParams(params);
 		Document doc = invoke(serviceUrl);
