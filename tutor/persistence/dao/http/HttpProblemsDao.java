@@ -14,13 +14,15 @@ public class HttpProblemsDao extends HttpDaoImpl implements ProblemsDao {
 
 	private static String SERVICE_NAME = "problemes";
 	
+	private static String IP = "158.109.2.26";
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public List getProblems() {
 		
-		String serviceName = "http://127.0.0.1/agentgeom/ws/wstestlist.php";
+		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
@@ -33,7 +35,7 @@ public class HttpProblemsDao extends HttpDaoImpl implements ProblemsDao {
 	
 	public Problem getProblemById(Long id) {
 
-		String serviceName = "http://127.0.0.1/agentgeom/ws/wstest.php";
+		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);

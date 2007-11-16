@@ -14,9 +14,11 @@ public class HttpTeachersDao extends HttpDaoImpl implements TeachersDao {
 
 	private static String SERVICE_NAME = "professors";
 	
+	private static String IP = "158.109.2.26";
+	
 	public List getTeachers() {
 		
-		String serviceName = "http://127.0.0.1/agentgeom/ws/wstestlist.php";
+		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
@@ -29,7 +31,7 @@ public class HttpTeachersDao extends HttpDaoImpl implements TeachersDao {
 	
 	public Teacher getTeacherById(Long id) {
 		
-		String serviceName = "http://127.0.0.1/agentgeom/ws/wstestlist.php";
+		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);

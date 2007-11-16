@@ -28,4 +28,11 @@ public class HttpStrategyDao extends HttpDaoImpl implements StrategyDao {
 		return strategies;
 	}
 
+	public static void main(String[] args) throws Throwable {
+		
+		HttpStrategyDao dao = new HttpStrategyDao();
+		
+		List l = dao.findStrategiesByProblemId(new Long(1));
+		System.out.println("");
+	}
 }
