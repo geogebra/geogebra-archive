@@ -40,7 +40,7 @@ TRANSLATIONS
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hebrew: Guy Hed (Israel)
   * Hungarian: Sulik Szabolcs (Hungary)
-  * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi (Italy)
+  * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi, Simona Riva (Italy)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
   * Norwegian: Sigbjørn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
