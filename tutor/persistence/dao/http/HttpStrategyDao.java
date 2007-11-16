@@ -12,9 +12,11 @@ public class HttpStrategyDao extends HttpDaoImpl implements StrategyDao {
 
 	private static String SERVICE_NAME = "estrategies";
 	
+	private static String IP = "158.109.2.26";
+	
 	public List findStrategiesByProblemId(Long id) {
 
-		String serviceName = "http://127.0.0.1/agentgeom/ws/wstestlist.php";
+		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
