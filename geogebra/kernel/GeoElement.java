@@ -279,6 +279,10 @@ public abstract class GeoElement
 	public static final int DECORATION_ANGLE_ONE_TICK = 3;
 	public static final int DECORATION_ANGLE_TWO_TICKS = 4;
 	public static final int DECORATION_ANGLE_THREE_TICKS = 5;
+//	 Michael Borcherds START 2007-11-19
+	public static final int DECORATION_ANGLE_ARROW_ANTICLOCKWISE = 6; //	 Michael Borcherds 2007-10-22
+	public static final int DECORATION_ANGLE_ARROW_CLOCKWISE = 7; //	 Michael Borcherds 2007-10-22
+//	 Michael Borcherds END 2007-11-19
 	
 	// public int geoID;    
 	//  static private int geoCounter = 0;

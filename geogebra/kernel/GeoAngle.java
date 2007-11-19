@@ -37,14 +37,27 @@ public final class GeoAngle extends GeoNumeric {
 	public int arcSize = EuclidianView.DEFAULT_ANGLE_SIZE; 
 	
 	// allow angle > pi
-	private boolean allowReflexAngle = true; 	
+//	private boolean allowReflexAngle = true; 	
 	
     // shows whether the current value was changed to (2pi - value)
-	private boolean changedReflexAngle; 
+//	private boolean changedReflexAngle; 
 
 	// states whether a special right angle appearance should be used to draw this angle
 	private boolean emphasizeRightAngle = true;
 	
+// Michael Borcherds 2007-10-20
+	private double raw_value;
+	
+	final public static int ANGLE_ISANTICLOCKWISE = 0; // old allowReflexAngle=true
+	
+	final public static int ANGLE_ISCLOCKWISE = 1; 
+
+	final public static int ANGLE_ISNOTREFLEX = 2; // old allowReflexAngle=false
+
+	final public static int ANGLE_ISREFLEX = 3;
+
+	private int angleStyle=ANGLE_ISANTICLOCKWISE;
+
 	// added by Loïc
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
@@ -53,6 +66,8 @@ public final class GeoAngle extends GeoNumeric {
 				new Integer(GeoElement.DECORATION_ANGLE_ONE_TICK),
 				new Integer(GeoElement.DECORATION_ANGLE_TWO_TICKS),
 				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),	
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE),	
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE),	
 				};
 		return ret;
 	}
@@ -106,31 +121,50 @@ public final class GeoAngle extends GeoNumeric {
 		if (geo.isGeoAngle()) {
 			GeoAngle ang = (GeoAngle) geo;
 			arcSize = ang.arcSize;
-			allowReflexAngle = ang.allowReflexAngle;
+//			allowReflexAngle = ang.allowReflexAngle;
+			angleStyle=ang.angleStyle;
 			emphasizeRightAngle = ang.emphasizeRightAngle;
 		}
 	}
     
     
+//  Michael Borcherds 2007-10-21 BEGIN
     /**
      * Sets the value of this angle. Every value
-     * is limited between 0 and 2pi. If allowReflexAngle() is false
-     * every value > pi will be changed to (2pi - value).
-     * @see allowReflexAngle() 	
+     * is limited between 0 and 2pi. Under some conditions
+     * a value > pi will be changed to (2pi - value).
+     * @see setAngleStyle() 	
      */
     public void setValue(double val) {    	    	    	
     	// limit to [0, 2pi]
-		double angVal = kernel.convertToAngleValue(val);						
+		double angVal = kernel.convertToAngleValue(val);
 		
-		// if needed: limit to [0, pi]
-		changedReflexAngle = !allowReflexAngle && angVal > Math.PI;
-		if (changedReflexAngle) {
-			angVal = Kernel.PI_2 - angVal;
-		}					
+		raw_value=angVal;
+		
+		// if needed: change angle
+		if (angleStyle==ANGLE_ISCLOCKWISE) angVal=2.0*Math.PI-angVal;
+		
+//		if (angleStyle==ANGLE_ISANTICLOCKWISE) return value;
+
+		if (angleStyle==ANGLE_ISNOTREFLEX && angVal>Math.PI) angVal=2.0*Math.PI-angVal;
+		
+		if (angleStyle==ANGLE_ISREFLEX && angVal<Math.PI) angVal=2.0*Math.PI-angVal;
+		
+		
+//		if (raw_value!=angVal) changedReflexAngle=true; else changedReflexAngle=false;
+
+		
+		//		changedReflexAngle = !allowReflexAngle && angVal > Math.PI;
+//		changedReflexAngle = ((angleStyle==ANGLE_ISNOTREFLEX && angVal > Math.PI) ||
+//				              (angleStyle==ANGLE_ISREFLEX && angVal < Math.PI));
+//		if (changedReflexAngle) {
+//			angVal = Kernel.PI_2 - angVal;
+//		}					
 		
 		super.setValue(angVal);
     }
-    
+//  Michael Borcherds 2007-10-21 END
+   
 	public void setIntervalMax(double max) {
 		if (max > Kernel.PI_2) return;
 		super.setIntervalMax(max);
@@ -156,36 +190,100 @@ public final class GeoAngle extends GeoNumeric {
     
 	
     
-    
+//  Michael Borcherds 2007-10-21 BEGIN    
     /**
-     * If allowReflexAngle is set to false every value > pi will be changed to (2pi - value).    
+     * Depending upon angleStyle, some values > pi will be changed to (2pi - value).  
+     * raw_value contains the original value.  
      * @see setValue()
      */
     final public void setAllowReflexAngle(boolean allowReflexAngle) {
-    	if (allowReflexAngle == this.allowReflexAngle) return;
+    	switch (angleStyle) {
+    	case ANGLE_ISNOTREFLEX:
+        	if (allowReflexAngle) setAngleStyle(ANGLE_ISANTICLOCKWISE); 
+    		break;
+    	case ANGLE_ISREFLEX:
+        	// do nothing
+    		break;
+    	default: // ANGLE_ISANTICLOCKWISE
+        	if (!allowReflexAngle) setAngleStyle(ANGLE_ISNOTREFLEX);
+   		break;
+    		
+    	}
+    	if (allowReflexAngle) setAngleStyle(ANGLE_ISANTICLOCKWISE); else setAngleStyle(ANGLE_ISNOTREFLEX);
+    }
+    final public void setForceReflexAngle(boolean forceReflexAngle) {
+
+    	switch (angleStyle) {
+    	case ANGLE_ISNOTREFLEX:
+        	if (forceReflexAngle) setAngleStyle(ANGLE_ISREFLEX); 
+    		break;
+    	case ANGLE_ISREFLEX:
+        	if (forceReflexAngle) setAngleStyle(ANGLE_ISREFLEX); else setAngleStyle(ANGLE_ISANTICLOCKWISE);
+    		break;
+    	default: // ANGLE_ISANTICLOCKWISE
+        	if (forceReflexAngle) setAngleStyle(ANGLE_ISREFLEX); 
+   		break;
+    		
+    	}
+    }
+
+	public void setAngleStyle(int angleStyle) {
+    	if (angleStyle == this.angleStyle) return;
     	
-    	this.allowReflexAngle = allowReflexAngle;
-    	
+    	this.angleStyle = angleStyle;
+		switch (angleStyle) {
+			case ANGLE_ISCLOCKWISE :
+				angleStyle = ANGLE_ISCLOCKWISE;
+				break;
+
+			case ANGLE_ISNOTREFLEX :
+				angleStyle = ANGLE_ISNOTREFLEX;
+				break;
+
+			case ANGLE_ISREFLEX :
+				angleStyle = ANGLE_ISREFLEX;
+				break;
+
+			default :
+				angleStyle = ANGLE_ISANTICLOCKWISE;
+			}
     	// we have to reset the value of this angle
     	AlgoElement algoParent = getParentAlgorithm();    	
     	if (algoParent == null)
-    		setValue(value);
+//    		setValue(value);
+			setValue(raw_value);
     	else 
     		algoParent.update();
-    }
+		}	
+	public int getAngleStyle() {
+		return angleStyle;
+		
+	}
     
+/*    
     final public boolean allowReflexAngle() {
-    	return allowReflexAngle;
-    }
+//    	return allowReflexAngle;
+    	return angleStyle==ANGLE_ISREFLEX;
+    } */
     
     /**
      * Returns true if the current value was limited to a
      * value between 0 and pi in setValue()
      * @see setAllowReflexAngle(), setValue()
      */
+	/*
     final public boolean changedReflexAngle() {
-    	return changedReflexAngle;
+    	return changedReflexAngle; 
+    }*/
+	
+	final public double getRawAngle() {
+		return raw_value;
+	}
+    
+    final public int angleStyle() {
+    	return angleStyle;
     }
+//	 Michael Borcherds 2007-10-21 END
     
 	public boolean isAngle() {
 		return true;
@@ -246,9 +344,20 @@ public final class GeoAngle extends GeoNumeric {
 		if (isIndependent()) return "";
 		
 		StringBuffer sb = new StringBuffer();
+// Michael Borcherds 2007-10-21
 		sb.append("\t<allowReflexAngle val=\"");
-			sb.append(allowReflexAngle);
-		sb.append("\"/>\n");	
+		sb.append(angleStyle!=2);
+    	sb.append("\"/>\n");
+    	if (angleStyle==3) {
+    		sb.append("\t<forceReflexAngle val=\"");
+    		sb.append(true);
+    		sb.append("\"/>\n");	
+    	}
+		
+//		sb.append("\t<angleStyle val=\"");
+//		sb.append(angleStyle);
+//		sb.append("\"/>\n");	
+//	 Michael Borcherds 2007-10-21
 		return sb.toString();
 	}
 
@@ -259,7 +368,4 @@ public final class GeoAngle extends GeoNumeric {
 	public void setEmphasizeRightAngle(boolean emphasizeRightAngle) {
 		this.emphasizeRightAngle = emphasizeRightAngle;
 	}
-	
-	
-
 }

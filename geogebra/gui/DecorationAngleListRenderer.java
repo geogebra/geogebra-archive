@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Arc2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 import javax.swing.BorderFactory;
@@ -27,6 +28,7 @@ import javax.swing.ListCellRenderer;
 public class DecorationAngleListRenderer extends JPanel implements ListCellRenderer {
 	private Line2D.Double tick=new Line2D.Double();
 	private Arc2D.Double arc=new Arc2D.Double();
+    private GeneralPath polygon = new GeneralPath(); // Michael Borcherds 2007-10-28
 	private int id=0;
 	public DecorationAngleListRenderer() {
 		setOpaque(true);
@@ -109,6 +111,26 @@ public class DecorationAngleListRenderer extends JPanel implements ListCellRende
 				drawTick(Math.toRadians(16));
 				g2.draw(tick);
 			break;			
+//			 Michael Borcherds 2007-11-19 BEGIN
+			case GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE:
+				polygon.reset();
+			    polygon.moveTo(56,15);
+			    polygon.lineTo(48,19);
+			    polygon.lineTo(50,10);
+			    polygon.lineTo(56,15);
+			    polygon.closePath();
+				g2.fill(polygon);
+			break;
+			case GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE:
+				polygon.reset();
+			    polygon.moveTo(54,27);
+			    polygon.lineTo(48,20);
+			    polygon.lineTo(56,18);
+			    polygon.lineTo(54,27);
+			    polygon.closePath();
+				g2.fill(polygon);
+			break;
+//			 Michael Borcherds 2007-11-19 END
 		}
 	}
 

@@ -1112,6 +1112,12 @@ public class MyXMLHandler implements DocHandler {
          			ok = handleTextFont(attrs);
          			break;
          		}
+//       		 Michael Borcherds 2007-11-19
+        		else if (eName.equals("forceReflexAngle")) {
+	            	 ok = handleForceReflexAngle(attrs);
+		             break;
+	            } 	         
+//        		 Michael Borcherds 2007-11-19
         		
         	case 'i':
 			  	if (eName.equals("isLaTeX")) {
@@ -1672,6 +1678,25 @@ public class MyXMLHandler implements DocHandler {
          }
      }    
      
+//   Michael Borcherds 2007-11-19
+     private boolean handleForceReflexAngle(LinkedHashMap attrs) {
+         if (!(geo.isGeoAngle())) {
+             System.err.println(
+                "wrong element type for <forceReflexAngle>: " + geo.getClass());         
+             return false;
+         }
+
+         try {
+         	   GeoAngle angle = (GeoAngle) geo;
+             angle.setForceReflexAngle(parseBoolean((String) attrs.get("val")));
+             return true;
+         } catch (Exception e) {
+         	
+            return false;
+         }
+     }    
+//   Michael Borcherds 2007-11-19
+
      private boolean handleOutlyingIntersections(LinkedHashMap attrs) {
         if (!(geo instanceof LimitedPath)) {
             System.err.println(

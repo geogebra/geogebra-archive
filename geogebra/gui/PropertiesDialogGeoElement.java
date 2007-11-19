@@ -1535,14 +1535,21 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JCheckBox reflexAngleCB;
+		private JCheckBox forcereflexAngleCB;
 
 		public AllowReflexAnglePanel() {
-			// check boxes for show trace			
+//			 Michael Borcherds 2007-11-19
 			reflexAngleCB = new JCheckBox(app.getPlain("allowReflexAngle"));
 			reflexAngleCB.addItemListener(this);
-			
+			forcereflexAngleCB = new JCheckBox(app.getPlain("forceReflexAngle"));
+			forcereflexAngleCB.addItemListener(this);
+			add(reflexAngleCB);	
+
+			// TODO make sure this line is commented out for 3.0 release, then reinstated
+			add(forcereflexAngleCB);			
+
 			setLayout(new FlowLayout(FlowLayout.LEFT));
-			add(reflexAngleCB);			
+			
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1550,26 +1557,52 @@ public class PropertiesDialogGeoElement
 			if (!checkGeos(geos))
 				return null;
 
+//			 Michael Borcherds 2007-11-19
 			reflexAngleCB.removeItemListener(this);
+			forcereflexAngleCB.removeItemListener(this);
 
 			// check if properties have same values
 			GeoAngle temp, geo0 = (GeoAngle) geos[0];
-			boolean equalReflexAngle = true;
-
+			boolean equalangleStyle=true;
+			boolean allreflex=true;
+			
 			for (int i = 0; i < geos.length; i++) {
 				temp = (GeoAngle) geos[i];
 				// same object visible value
-				if (geo0.allowReflexAngle() != temp.allowReflexAngle())
-					equalReflexAngle = false;
+				if (temp.getAngleStyle()!=3) allreflex=false;
+				if (geo0.getAngleStyle() != temp.getAngleStyle())
+					equalangleStyle = false;
+			}
+			
+			if (allreflex==true) reflexAngleCB.setEnabled(false); else reflexAngleCB.setEnabled(true);
+
+			
+			if (equalangleStyle)
+			{
+				switch (geo0.getAngleStyle()) {
+				case 2: // acute/obtuse
+					reflexAngleCB.setSelected(false);
+					forcereflexAngleCB.setSelected(false);
+					break;
+				case 3: // force reflex
+					reflexAngleCB.setSelected(true);
+					forcereflexAngleCB.setSelected(true);
+					break;
+				default: // should be 0: anticlockwise
+					reflexAngleCB.setSelected(true);
+					forcereflexAngleCB.setSelected(false);
+					break;
+					
+				}
+			}
+			else
+			{
+				reflexAngleCB.setSelected(false);
+				forcereflexAngleCB.setSelected(false);
 			}
 
-			// set trace visible checkbox
-			if (equalReflexAngle)
-				reflexAngleCB.setSelected(geo0.allowReflexAngle());
-			else
-				reflexAngleCB.setSelected(false);
-
 			reflexAngleCB.addItemListener(this);
+			forcereflexAngleCB.addItemListener(this);
 			return this;
 		}
 
@@ -1589,11 +1622,23 @@ public class PropertiesDialogGeoElement
 			GeoAngle geo;
 			Object source = e.getItemSelectable();
 
-			// show trace value changed
-			if (source == reflexAngleCB) {
+//Michael Borcherds 2007-11-19
+			if (source == reflexAngleCB || source==forcereflexAngleCB) {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
-					geo.setAllowReflexAngle(reflexAngleCB.isSelected());
+					if (forcereflexAngleCB.isSelected()) {
+						geo.setAngleStyle(3);
+						reflexAngleCB.setEnabled(false);
+					}
+					else 
+					{
+						reflexAngleCB.setEnabled(true);
+						if (reflexAngleCB.isSelected())
+							geo.setAngleStyle(0);
+						else
+							geo.setAngleStyle(2);							
+					}
+//					Michael Borcherds 2007-11-19
 					geo.updateRepaint();
 				}
 			}

@@ -64,6 +64,7 @@ public class DrawAngle extends Drawable {
 
 	//private Arc2D.Double fillArc = new Arc2D.Double();
 	private Arc2D.Double drawArc = new Arc2D.Double();
+    private GeneralPath polygon = new GeneralPath(); // Michael Borcherds 2007-11-19
 	private Ellipse2D.Double dot90degree;
 	private Shape shape;
 	private double m[] = new double[2];
@@ -220,13 +221,40 @@ public class DrawAngle extends Drawable {
 			isVisible = false;
 			return;
 		}
-		double angExt = angle.getValue();
+		// Michael Borcherds 2007-11-19 BEGIN
+//		double angExt = angle.getValue();
+		double angExt = angle.getRawAngle();
 
 		// if this angle was not allowed to become a reflex angle
 		// (i.e. greater than pi) we got (2pi - angleValue) for angExt
-		if (angle.changedReflexAngle()) {
-			angSt = angSt - angExt;
+//		if (angle.changedReflexAngle()) {
+//			angSt = angSt - angExt;
+//		}
+
+		if (angle.angleStyle()==angle.ANGLE_ISCLOCKWISE)
+		{
+			angSt+=angExt;
+			angExt=2.0*Math.PI-angExt;
 		}
+		
+		if (angle.angleStyle()==angle.ANGLE_ISNOTREFLEX)
+		{
+			if (angExt>Math.PI)
+			{
+				angSt+=angExt;
+				angExt=2.0*Math.PI-angExt;
+			}
+		}
+		
+		if (angle.angleStyle()==angle.ANGLE_ISREFLEX)
+		{
+			if (angExt<Math.PI)
+			{
+				angSt+=angExt;
+				angExt=2.0*Math.PI-angExt;
+			}
+		}
+		// Michael Borcherds 2007-11-19 END
 
 		double as = Math.toDegrees(angSt);
 		double ae = Math.toDegrees(angExt);
@@ -344,6 +372,83 @@ public class DrawAngle extends Drawable {
 					angleTick[0]=-angSt-angExt/2;
 					updateTick(angleTick[0],angle.arcSize,2);
 					break;
+//					 Michael Borcherds 2007-11-19 START
+				case GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE:
+				case GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE:
+					double nx,ny,vx,vy;
+					double n2[] = new double[2]; // actual angle for arrow point
+					double n[] = new double[2];  // adjusted to rotate arrow slightly
+					double v[] = new double[2];  // adjusted to rotate arrow slightly
+					
+					double rotateangle=0.25d; // rotate arrow slightly
+					
+					if (geo.decorationType==GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE)
+					{
+						n2[0]=Math.cos(angSt);
+						n2[1]=Math.sin(angSt);
+						n[0]=Math.cos(angSt+rotateangle);
+						n[1]=Math.sin(angSt+rotateangle);
+						v[0]=-n[1];
+						v[1]=n[0];
+					}
+					else
+					{
+						n2[0]=Math.cos(angExt+angSt);
+						n2[1]=Math.sin(angExt+angSt);
+						n[0]=Math.cos(angExt+angSt-rotateangle);
+						n[1]=Math.sin(angExt+angSt-rotateangle);
+						v[0]=n[1];
+						v[1]=-n[0];
+					}
+					
+					if (tick == null) {
+						tick = new Line2D.Double[2];
+							tick[0] = new Line2D.Double();
+							tick[1] = new Line2D.Double();
+					}			
+					double p1[] = new double[2];
+					double p2[] = new double[2];
+					double p3[] = new double[2];
+		    		rdiff = 4 + geo.lineThickness/2d;
+		    		r=(angle.arcSize)*view.invXscale;
+//					view.toScreenCoords(m);
+//					view.toScreenCoords(n);
+//					view.toScreenCoords(v);
+					
+					p1[0]=m[0]+r*n2[0];
+					p1[1]=m[1]+r*n2[1]; // arrow tip
+//					view.toScreenCoords(p1);
+					
+					double size=4d+(double)geo.lineThickness/4d;
+					size=size*0.9d;
+					
+					p2[0]=p1[0]+(1*n[0]+3*v[0])*size*view.invXscale;;
+					p2[1]=p1[1]+(1*n[1]+3*v[1])*size*view.invYscale;; // arrow end 1
+					
+					p3[0]=p1[0]+(-1*n[0]+3*v[0])*size*view.invXscale;;
+					p3[1]=p1[1]+(-1*n[1]+3*v[1])*size*view.invYscale;; // arrow end 2
+					
+					view.toScreenCoords(p1);
+					view.toScreenCoords(p2);
+					view.toScreenCoords(p3);
+					tick[0].setLine(p2[0],p2[1],p1[0],p1[1]);
+					tick[1].setLine(p3[0],p3[1],p1[0],p1[1]);
+//				    polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,4); // Michael Borcherds 2007-10-22
+
+					polygon.reset();
+				    polygon.moveTo(p1[0], p1[1]);
+				    polygon.lineTo(p2[0], p2[1]);
+				    polygon.lineTo(p3[0], p3[1]);
+				    polygon.lineTo(p1[0], p1[1]);
+				    polygon.closePath();
+
+
+					
+					
+					
+					break;
+//					 Michael Borcherds 2007-11-19 END
+				
 	    	}
 			// END
 		}
@@ -432,6 +537,13 @@ public class DrawAngle extends Drawable {
 						g2.draw(tick[1]);
 						g2.draw(tick[2]);
 						break;
+//						 Michael Borcherds 2007-11-19 START
+					case GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE:
+					case GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE:
+						g2.setStroke(decoStroke);
+						g2.fill(polygon);
+						break;
+// Michael Borcherds 2007-11-19
 				}
 			}
 			
@@ -459,7 +571,7 @@ public class DrawAngle extends Drawable {
 		double sin = Math.sin(angle);
 		
 		double length = 2.5 + geo.lineThickness / 4d;		
-		
+
 		tick[id].setLine(coords[0]+ (radius-length)*cos, 
 				coords[1]+(radius-length)* sin * view.getScaleRatio(), 
 				coords[0]+(radius+length)* cos,
