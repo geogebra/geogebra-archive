@@ -57,6 +57,15 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	}
 	//end		
 	
+//	 Michael Borcherds 2007-11-20
+	public void setDecorationType(int type) {
+		if (type>=getDecoTypes().length || type<0)
+			decorationType=DECORATION_NONE;
+		else
+			decorationType = type;
+	}
+//	 Michael Borcherds 2007-11-20
+
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
 		super(c);		
 		setStartPoint(A);

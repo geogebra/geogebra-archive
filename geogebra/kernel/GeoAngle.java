@@ -66,8 +66,8 @@ public final class GeoAngle extends GeoNumeric {
 				new Integer(GeoElement.DECORATION_ANGLE_ONE_TICK),
 				new Integer(GeoElement.DECORATION_ANGLE_TWO_TICKS),
 				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),	
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE),	
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE),	
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE),  // Michael Borcherds 2007-11-19
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE),	   // Michael Borcherds 2007-11-19
 				};
 		return ret;
 	}
@@ -360,6 +360,16 @@ public final class GeoAngle extends GeoNumeric {
 //	 Michael Borcherds 2007-10-21
 		return sb.toString();
 	}
+	
+//	 Michael Borcherds 2007-11-20
+	public void setDecorationType(int type) {
+		if (type>=getDecoTypes().length || type<0)
+			decorationType=DECORATION_NONE;
+		else
+			decorationType = type;
+	}
+//	 Michael Borcherds 2007-11-20
+
 
 	public boolean isEmphasizeRightAngle() {
 		return emphasizeRightAngle;

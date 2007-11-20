@@ -3368,7 +3368,10 @@ public class PropertiesDialogGeoElement
 				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoSegment) geos[i];
-					geo.decorationType = type;					
+// Michael Borcherds 2007-11-20 BEGIN
+//					geo.decorationType = type;
+					geo.setDecorationType(type);
+// Michael Borcherds 2007-11-20 END
 					geo.updateRepaint();
 				}
 			}
@@ -3422,7 +3425,10 @@ public class PropertiesDialogGeoElement
 				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
-					geo.decorationType = type;
+// Michael Borcherds 2007-11-20 BEGIN
+//					geo.decorationType = type;
+					geo.setDecorationType(type);
+// Michael Borcherds 2007-11-20 END
 					// addded by Loïc BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
