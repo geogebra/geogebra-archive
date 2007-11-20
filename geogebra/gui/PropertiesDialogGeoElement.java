@@ -1546,7 +1546,7 @@ public class PropertiesDialogGeoElement
 			add(reflexAngleCB);	
 
 			// TODO make sure this line is commented out for 3.0 release, then reinstated
-			add(forcereflexAngleCB);			
+			//add(forcereflexAngleCB);			
 
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			

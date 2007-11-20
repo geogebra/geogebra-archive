@@ -153,7 +153,7 @@ GeoDeriveable, ParametricCurve {
 			isDefined = fun != null;
 		} else {
 			isDefined = false;
-		}	
+		}		
 	}
 	
 	/**

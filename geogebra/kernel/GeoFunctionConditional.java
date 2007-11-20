@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 
 
@@ -66,12 +65,12 @@ public class GeoFunctionConditional extends GeoFunction {
 		isDefined = geoFunCond.isDefined;
 			
 		if (condFun == null) 
-			condFun = new GeoFunction(geoFunCond.condFun);
+			condFun = (GeoFunction) geoFunCond.condFun.copy();
 		else 
 			condFun.set(geoFunCond.condFun);
 		
 		if (ifFun == null)
-			ifFun = new GeoFunction(geoFunCond.ifFun);
+			ifFun = (GeoFunction) geoFunCond.ifFun.copy();
 		else
 			ifFun.set(geoFunCond.ifFun);
 		
@@ -79,7 +78,7 @@ public class GeoFunctionConditional extends GeoFunction {
 			elseFun = null;
 		} else {
 			if (elseFun == null)
-				elseFun = new GeoFunction(geoFunCond.elseFun);
+				elseFun = (GeoFunction) geoFunCond.elseFun.copy();
 			else
 				elseFun.set(geoFunCond.elseFun);
 		}

@@ -419,7 +419,7 @@ public class Macro {
 	
 	
 	final public void setUnused() {	
-		usingAlgos = null;
+		usingAlgos.clear();
 	}
 						
 	/**
