@@ -12,6 +12,13 @@
 	<classpathentry kind="lib" path="geogebra_latex.jar"/>
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
+	<classpathentry kind="lib" path="tutor/commons-collections-2.1.1.jar"/>
+	<classpathentry kind="lib" path="tutor/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="tutor/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="tutor/mysql-connector-java-5.0.6-bin.jar"/>
+	<classpathentry kind="lib" path="tutor/xerces-2.6.2.jar"/>
+	<classpathentry kind="lib" path="tutor/xml-apis.jar"/>
 	<classpathentry kind="lib" path="freehep-export-2.0.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
