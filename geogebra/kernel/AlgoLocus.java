@@ -479,10 +479,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	    
 	        
         } while (runs < max_runs);
-            
-    	// TODO: remove
-    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
-    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
+                	
+//    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
+//    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
     }
     
   
@@ -490,8 +489,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     private void insertPoint(double x, double y, boolean lineTo) {
     	pointCount++;
     	
-    	// TODO: remove
-    	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    	
+    //	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;

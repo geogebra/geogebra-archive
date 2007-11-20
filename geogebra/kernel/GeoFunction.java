@@ -115,12 +115,19 @@ GeoDeriveable, ParametricCurve {
 		return fun;
 	}	
 	
+	public boolean setInterval(double a, double b) {
+		if (fun == null)
+			return false;
+		else
+			return fun.setInterval(a, b);
+	}		
+	
 	final public ExpressionNode getFunctionExpression() {
 		if (fun == null)
 			return null;
 		else 
 			return fun.getExpression();
-	}
+	}	
 	
 	/**
 	 * Returns the corresponding Function for the given x-value.

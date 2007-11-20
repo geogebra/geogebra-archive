@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 
 
@@ -99,6 +100,22 @@ public class GeoFunctionConditional extends GeoFunction {
     public boolean isDefined() {
 		return isDefined;
 	}      
+    
+    public GeoFunction getIfFunction() {
+    	return ifFun;
+    }
+    
+    public GeoFunction getElseFunction() {
+    	return elseFun;
+    }
+    
+    public boolean setInterval(double a, double b) {
+    	boolean success = ifFun.setInterval(a, b);
+    	if (elseFun != null)
+    		success = elseFun.setInterval(a, b) && success;
+    	
+    	return success;
+	}       
       
     /**
 	 * Set this function to the n-th derivative of f

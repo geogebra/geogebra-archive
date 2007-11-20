@@ -281,7 +281,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	 * Returns the area of a polygon given by points P
 	 */	
 	final static public double calcArea(GeoPoint [] P) {
-		if (P == null || P.length < 3)
+		if (P == null || P.length < 2)
 			return Double.NaN;
 		
 	   int i = 0;   

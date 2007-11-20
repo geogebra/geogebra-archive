@@ -135,6 +135,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
 	
 	 // calc intersections of conics A and B
     final void compute() {   
+    	// check if conics A and B are defined	   
+   	   	if (!(A.isDefined() && B.isDefined())) {
+   	   		for (int i=0; i < P.length; i++) {
+   	   			P[i].setUndefined();
+   	   		}
+   	   		return;
+   	   	}               	
+    	
     	// check for special case of two circles with common point
         if (possibleSpecialCase) {
             if (handleSpecialCase()) return;
@@ -149,6 +157,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
         } else {
         	computeNonContinous();
         }        	
+        
+        
     }     
     
     /**
@@ -160,9 +170,11 @@ public class AlgoIntersectConics extends AlgoIntersect {
      */
     private boolean handleSpecialCase() {
     	// we need two circles
-    	if (A.type != GeoConic.CONIC_CIRCLE || B.type != GeoConic.CONIC_CIRCLE)
+    	if (A.type != GeoConic.CONIC_CIRCLE ||
+    		B.type != GeoConic.CONIC_CIRCLE)
     		return false;
     	
+    		
 		// check if we have a point on A that is also on B
     	GeoPoint pointOnConic = getPointFrom1on2(A, B);
     	if (pointOnConic == null) 
@@ -215,7 +227,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
 	   			if (!pointLiesOnBothPaths(P[i]))
 	   				P[i].setUndefined();    			          
 	   	    }     	 
-	   	}
+	   	}	   		   	
 	   	
 	   	//System.out.println("circle-circle special case: took point " + pointOnConic);	   	
 	   	return true;

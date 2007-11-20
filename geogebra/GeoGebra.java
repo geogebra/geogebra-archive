@@ -136,9 +136,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		}		
 	}
 	
-	public void updateSize() {
-		Dimension frameSize = getSize();
-
+	public void updateSize() {		
+		Dimension frameSize;
+		
 		// use euclidian view pref size to set frame size 		
 		EuclidianView ev = app.getEuclidianView();		
 
@@ -147,29 +147,27 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 			ev.setMinimumSize(new Dimension(50,50));
 			Dimension evPref = ev.getPreferredSize();						
 			ev.setPreferredSize(evPref);
-							
+		
 			// pack frame and correct size to really get the preferred size for euclidian view
 			pack(); 
+			frameSize = getSize();
 			Dimension evSize = ev.getSize();
 			frameSize.width = frameSize.width + (evPref.width - evSize.width);
 			frameSize.height = frameSize.height + (evPref.height - evSize.height);					
 		} else {
-			frameSize.width = DEFAULT_WIDTH;
-			frameSize.height = DEFAULT_HEIGHT;			
+			frameSize = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
 		}
 		
 		// check if frame fits on screen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
-		screenSize.height -= 30;
-		
+		screenSize.height -= 30; // task bar		
 		if (frameSize.width > screenSize.width || 
 				frameSize.height > screenSize.height) {
-			setSize(screenSize);
+			frameSize = screenSize;
 			setLocation(0,0);
-		} else {
-			// everything ok
-			setSize(frameSize);
-		}
+		} 		
+				
+		setSize(frameSize);
 	}
 
 	/** 

@@ -321,7 +321,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 
 	public void setUndefined() {
 		defined = false;
-		type = CONIC_EMPTY;
+		type = CONIC_EMPTY;		
 	}
 
 	final public void setDefined() {
@@ -844,8 +844,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 */
 	final public void setCircle(GeoPoint M, GeoPoint P) {
 		defined = M.isDefined() && P.isDefined() && !P.isInfinite();
-		if (!defined)
+		if (!defined) {			
 			return;
+		}
 
 		if (M.isInfinite()) {
 			// midpoint at infinity -> parallelLines

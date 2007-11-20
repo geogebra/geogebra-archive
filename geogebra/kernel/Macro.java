@@ -16,7 +16,9 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.util.Util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 /**
@@ -39,7 +41,7 @@ public class Macro {
 	private String [] macroInputLabels, macroOutputLabels;
 	private Class [] inputTypes;
 	
-	private int usingAlgos = 0;
+	private LinkedList usingAlgos = new LinkedList();	
 		
 	/**
 	 * Creates a new macro 
@@ -395,25 +397,29 @@ public class Macro {
     }	 	                 
 			
 	
-	public void registerAlgorithm(AlgoMacro algoMacro) {
-		usingAlgos++;	
+	public void registerAlgorithm(AlgoMacro algoMacro) {						
+		usingAlgos.add(algoMacro);	
 	}
 	
 	public void unregisterAlgorithm(AlgoMacro algoMacro) {
-		usingAlgos--;		
+		usingAlgos.remove(algoMacro);		
 	}		
+	
+	public LinkedList getUsingAlgorithms() {
+		return usingAlgos;
+	}
 	
 	/**
 	 * Returns whether this macro is being used by algorithms
 	 * in the current construction.
 	 */
 	final public boolean isUsed() {	
-		return usingAlgos >  0;
+		return usingAlgos.size() >  0;
 	}
 	
 	
 	final public void setUnused() {	
-		usingAlgos = 0;
+		usingAlgos = null;
 	}
 						
 	/**

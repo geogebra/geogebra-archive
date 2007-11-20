@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -22,21 +21,16 @@ import geogebra.kernel.arithmetic.NumberValue;
  */
 public class AlgoFunctionInterval extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input    
     private NumberValue a, b; // input
     private GeoElement ageo, bgeo;
     private GeoFunction g; // output g     
-    
-    private Function gfun; // current function of g 
-    private ExpressionNode curExp; // current expression of f (needed to notice change of f)
-        
+           
     /** Creates new AlgoDependentFunction */
-    public AlgoFunctionInterval(Construction cons, String label, GeoFunction f, 
-                                                NumberValue a, NumberValue b) {
+    public AlgoFunctionInterval(Construction cons, String label, 
+    		GeoFunction f, NumberValue a, NumberValue b) 
+    {
         super(cons);
         this.f = f;
         this.a = a;
@@ -44,12 +38,20 @@ public class AlgoFunctionInterval extends AlgoElement {
         ageo = a.toGeoElement();
         bgeo = b.toGeoElement();
             
-        g = new GeoFunction(cons); // output
+        //g = new GeoFunction(cons); // output
+        //g = new GeoFunction(cons); // output
+        
+        g = (GeoFunction) f.copyInternal(cons);       
+        
+        //buildFunction();
+       // g = initHelperAlgorithm();
+        
         setInputOutput(); // for AlgoElement    
         compute();
         g.setLabel(label);
     }
     
+  
     String getClassName() {
         return "AlgoFunctionInterval";
     }   
@@ -73,22 +75,49 @@ public class AlgoFunctionInterval extends AlgoElement {
     final void compute() {  
         if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined())) 
             g.setUndefined();
-        
-        // check if f has changed
-        Function fun = f.getFunction();
-        ExpressionNode exp = fun.getExpression();
-        if (exp != curExp) { 
-            // f has changed
-            curExp = exp;
-            gfun = new Function(fun, kernel);
-            g.setFunction(gfun);
+               
+        // check if f has changed           
+        if (!hasEqualExpressions(f, g)) {        	 
+        	g.set(f);
         }
                         
         double ad = a.getDouble();
         double bd = b.getDouble(); 
-        boolean defined = gfun.setInterval(ad, bd);
-        g.setDefined(defined);        
+        if (ad > bd) {
+        	g.setUndefined();
+        } else {
+        	boolean defined = g.setInterval(ad, bd);
+         	g.setDefined(defined); 
+        }
+       
     }
+    
+    private boolean hasEqualExpressions(GeoFunction f, GeoFunction g) {
+    	boolean equal;
+    	
+    	if (f.isGeoFunctionConditional()) {
+    		GeoFunctionConditional geoFun = (GeoFunctionConditional) f;
+    		ExpressionNode en2 = null;
+    		ExpressionNode en = geoFun.getIfFunction().getFunctionExpression();    		 		
+    		equal = exp == en;
+    		exp = en;
+    		
+    		if (geoFun.getElseFunction() != null) {
+    			en2 = geoFun.getElseFunction().getFunctionExpression();    			
+    			equal = equal && exp2 == en2;
+    			exp2 = en2;
+    		}
+    	} 
+    	else {
+    		ExpressionNode en = f.getFunctionExpression();    		
+    		equal = exp == en;
+    		exp = en;
+    	}
+    	
+    	return equal;
+    }   
+    private ExpressionNode exp, exp2; // current expression of f (needed to notice change of f)
+  
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();

@@ -436,20 +436,29 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 	
 	public void setIntervalMax(double max) {	
-		if (Double.isNaN(max) || Double.isInfinite(max) ||
-            intervalMinActive && max <= intervalMin) return;
+		if (Double.isNaN(max) || Double.isInfinite(max)) return;
 				
 		intervalMax = max;
 		intervalMaxActive = true;
+		
+		if (intervalMinActive && max <= intervalMin) {
+			setIntervalMin(max - 1);
+		}
+		
 		setValue(value);			
 	}
 	
 	public void setIntervalMin(double min) {
-		if (Double.isNaN(min) || Double.isInfinite(min) ||
-	            intervalMaxActive && min >= intervalMax) return;
+		if (Double.isNaN(min) || Double.isInfinite(min))
+				return;
 
 		intervalMin = min;
-		intervalMinActive = true;		
+		intervalMinActive = true;	
+		
+		if (intervalMaxActive && min >= intervalMax) {
+			setIntervalMax(min + 1);
+		}
+		
 		setValue(value);			
 	}
 	

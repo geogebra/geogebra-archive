@@ -36,7 +36,7 @@ public class GeoGebraCAS {
     	// to unicode strings in ExpressionNode, 
     	// we need to convert them back here
     	result = insertSpecialChars(result);
-
+    	
 //    	System.out.println("exp for JASYMCA: " + exp);  
 //    	System.out.println("         result: " + result);  
     	        

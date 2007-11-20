@@ -3714,10 +3714,16 @@ public class PropertiesDialogGeoElement
 		public void remove(GeoElement geo) {		
 			remove(geo, true);
 			
+			// close dialog if no elements left
+			if (root.getChildCount() == 0) {	
+				closeDialog();
+				return;
+			}
+			
 			// make sure something is selected
 			if (getSelectionModel().isSelectionEmpty()) {
 				selectFirstElement();					
-			}
+			}						
 		}
 		
 		/**
@@ -3988,6 +3994,7 @@ class SliderPanel
 		
 		// add increment to intervalPanel
 		stepPanel = new AnimationStepPanel(app);
+		stepPanel.setPartOfSliderPanel();
 		intervalPanel.add(stepPanel);		
 		
 		add(intervalPanel);	
@@ -4183,6 +4190,7 @@ class AnimationStepPanel
 	
 	private Object[] geos; // currently selected geos
 	private JTextField tfAnimStep;
+	private boolean partOfSliderPanel = false;
 	
 	private Kernel kernel;
 
@@ -4204,6 +4212,10 @@ class AnimationStepPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
+	}
+	
+	public void setPartOfSliderPanel() {
+		partOfSliderPanel = true;
 	}
 
 	public JPanel update(Object[] geos) {		
@@ -4253,12 +4265,14 @@ class AnimationStepPanel
 					|| geo.isGeoImage()
 					|| geo.isGeoList()
 					|| geo.isGeoBoolean()
-					|| geo.isGeoNumeric() && geo.isIndependent()) // slider 
-			{
+					|| !partOfSliderPanel && geo.isGeoNumeric() && geo.isIndependent() // slider						
+			)  
+			{				
 				geosOK = false;
 				break;
 			}
 		}
+		
 		
 		return geosOK;
 	}

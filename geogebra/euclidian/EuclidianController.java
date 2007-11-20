@@ -692,6 +692,11 @@ final public class EuclidianController implements MouseListener,
 		// dependent object: moveable parents?
 		else if (!movedGeoElement.isMoveable()) {				
 				translateableGeos = movedGeoElement.getMoveableParentPoints();
+				
+				// allow only moving of segments and polygons
+				if (!(movedGeoElement.isGeoSegment() || movedGeoElement.isGeoPolygon())) {
+					translateableGeos = null;
+				}
 			
 				if (translateableGeos != null) {					
 

@@ -29,8 +29,16 @@ public class AlgoIfFunction extends AlgoElement {
     	   
     public AlgoIfFunction(Construction cons, String label, 
     		GeoFunction boolFun, 
-    		GeoFunction ifFun, GeoFunction elseFun) {
+    		GeoFunction ifFun, GeoFunction elseFun) 
+    {    
+    	this(cons, boolFun, ifFun, elseFun);
+    	result.setLabel(label);
+    }
     	
+    AlgoIfFunction(Construction cons,  
+    		GeoFunction boolFun, 
+    		GeoFunction ifFun, GeoFunction elseFun) 
+    {
     	super(cons);
     	this.boolFun = boolFun;
         this.ifFun = ifFun;
@@ -42,8 +50,7 @@ public class AlgoIfFunction extends AlgoElement {
         setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
-        compute();      
-        result.setLabel(label);
+        compute();        
     }   
     
 	String getClassName() {

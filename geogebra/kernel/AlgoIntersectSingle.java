@@ -93,8 +93,12 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	}
 
 	void compute() {		
-		// get coordinates from helper algorithm
-		point.setCoords(parentOutput[index]);						
+		if (input[0].isDefined() && input[1].isDefined()) {		
+			// 	get coordinates from helper algorithm
+			point.setCoords(parentOutput[index]);
+		} else {
+			point.setUndefined();
+		}
 	}   
 	
 	public void remove() {

@@ -426,7 +426,7 @@ implements EuclidianViewAlgo {
 			moveableInputPoints = new ArrayList(input.length);
 			for (int i=0; i < input.length; i++) {
 				//if (input[i].isEuclidianVisible() &&	input[i].isMoveable() && input[i].isTranslateable())
-				if (input[i].isEuclidianVisible() && input[i].isMoveable() && input[i].isGeoPoint() )
+				if (input[i].isEuclidianVisible() && input[i].isMoveable() && input[i].isGeoPoint() && input[i].isIndependent())
 					moveableInputPoints.add(input[i]);			
 			}				
 		}
