@@ -375,7 +375,6 @@ public class DrawAngle extends Drawable {
 //					 Michael Borcherds 2007-11-19 START
 				case GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE:
 				case GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE:
-					double nx,ny,vx,vy;
 					double n2[] = new double[2]; // actual angle for arrow point
 					double n[] = new double[2];  // adjusted to rotate arrow slightly
 					double v[] = new double[2];  // adjusted to rotate arrow slightly
@@ -401,23 +400,14 @@ public class DrawAngle extends Drawable {
 						v[1]=-n[0];
 					}
 					
-					if (tick == null) {
-						tick = new Line2D.Double[2];
-							tick[0] = new Line2D.Double();
-							tick[1] = new Line2D.Double();
-					}			
 					double p1[] = new double[2];
 					double p2[] = new double[2];
 					double p3[] = new double[2];
 		    		rdiff = 4 + geo.lineThickness/2d;
 		    		r=(angle.arcSize)*view.invXscale;
-//					view.toScreenCoords(m);
-//					view.toScreenCoords(n);
-//					view.toScreenCoords(v);
 					
 					p1[0]=m[0]+r*n2[0];
 					p1[1]=m[1]+r*n2[1]; // arrow tip
-//					view.toScreenCoords(p1);
 					
 					double size=4d+(double)geo.lineThickness/4d;
 					size=size*0.9d;
@@ -431,20 +421,13 @@ public class DrawAngle extends Drawable {
 					view.toScreenCoords(p1);
 					view.toScreenCoords(p2);
 					view.toScreenCoords(p3);
-					tick[0].setLine(p2[0],p2[1],p1[0],p1[1]);
-					tick[1].setLine(p3[0],p3[1],p1[0],p1[1]);
-//				    polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,4); // Michael Borcherds 2007-10-22
 
 					polygon.reset();
-				    polygon.moveTo(p1[0], p1[1]);
-				    polygon.lineTo(p2[0], p2[1]);
-				    polygon.lineTo(p3[0], p3[1]);
-				    polygon.lineTo(p1[0], p1[1]);
+				    polygon.moveTo((float)p1[0], (float)p1[1]);
+				    polygon.lineTo((float)p2[0], (float)p2[1]);
+				    polygon.lineTo((float)p3[0], (float)p3[1]);
+				    polygon.lineTo((float)p1[0], (float)p1[1]);
 				    polygon.closePath();
-
-
-					
-					
 					
 					break;
 //					 Michael Borcherds 2007-11-19 END
