@@ -356,10 +356,7 @@ public class GeoGebraCAS {
 			}catch(Exception e){
 				System.out.println("\n"+e);
 			}
-		}
-        
-
-    	
+		}            	
     }
     
  

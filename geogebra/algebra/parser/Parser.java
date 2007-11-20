@@ -627,7 +627,6 @@ NormalVectorForm normalvectorform():
       case FLOAT:
       case EFLOAT:
       case LABEL:
-      case TEXT:
       case X_FUNC:
       case Y_FUNC:
       case COS_FUNC:
@@ -656,6 +655,7 @@ NormalVectorForm normalvectorform():
       case GAMMA_FUNC:
       case RANDOM_FUNC:
       case FUNCTION_LABEL:
+      case TEXT:
       case 83:
       case 86:
         ;
@@ -701,7 +701,6 @@ NormalVectorForm normalvectorform():
       case FLOAT:
       case EFLOAT:
       case LABEL:
-      case TEXT:
       case X_FUNC:
       case Y_FUNC:
       case COS_FUNC:
@@ -730,6 +729,7 @@ NormalVectorForm normalvectorform():
       case GAMMA_FUNC:
       case RANDOM_FUNC:
       case FUNCTION_LABEL:
+      case TEXT:
       case 83:
       case 86:
         f = enpower();
@@ -780,7 +780,6 @@ NormalVectorForm normalvectorform():
     case FLOAT:
     case EFLOAT:
     case LABEL:
-    case TEXT:
     case X_FUNC:
     case Y_FUNC:
     case COS_FUNC:
@@ -809,6 +808,7 @@ NormalVectorForm normalvectorform():
     case GAMMA_FUNC:
     case RANDOM_FUNC:
     case FUNCTION_LABEL:
+    case TEXT:
     case 83:
     case 86:
       e = enpower();
@@ -936,7 +936,6 @@ NormalVectorForm normalvectorform():
     case FLOAT:
     case EFLOAT:
     case LABEL:
-    case TEXT:
     case X_FUNC:
     case Y_FUNC:
     case COS_FUNC:
@@ -965,6 +964,7 @@ NormalVectorForm normalvectorform():
     case GAMMA_FUNC:
     case RANDOM_FUNC:
     case FUNCTION_LABEL:
+    case TEXT:
     case 83:
     case 86:
       en = enelement();
@@ -1627,17 +1627,6 @@ NormalVectorForm normalvectorform():
     try { return !jj_3_22(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(21, xla); }
-  }
-
-  final private boolean jj_3R_74() {
-    if (jj_3R_79()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_64() {
-    if (jj_scan_token(81)) return true;
-    if (jj_3R_16()) return true;
-    return false;
   }
 
   final private boolean jj_3R_73() {
@@ -2685,6 +2674,17 @@ NormalVectorForm normalvectorform():
     return false;
   }
 
+  final private boolean jj_3R_74() {
+    if (jj_3R_79()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_64() {
+    if (jj_scan_token(81)) return true;
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
   public ParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -2707,10 +2707,10 @@ NormalVectorForm normalvectorform():
       jj_la1_0 = new int[] {0x21,0x0,0x21,0x0,0x0,0x0,0x0,0x180000,0x200000,0x100,0x200,0x3fc00,0x3fc00,0x180000,0x180000,0x83600080,0x600000,0x83600080,0x83180080,0x7c000000,0x1000080,0x83000080,0x82000000,0x0,0x0,0x0,0x0,0x82000000,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x200,0x0,0x0,0x0,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfffa4def,0x0,0xfffa4def,0xfffa4def,0x0,0x0,0xfffa4def,0xc6f,0x20000,0x0,0x4180,0xc00,0xc0f,0xfff80000,0x0,};
+      jj_la1_1 = new int[] {0x0,0x200,0x0,0x0,0x0,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfffe4def,0x0,0xfffe4def,0xfffe4def,0x0,0x0,0xfffe4def,0xc6f,0x0,0x0,0x4180,0xc00,0xc0f,0xfffe0000,0x0,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x20000,0x20000,0x20000,0x80000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x487fff,0x0,0x487fff,0x487fff,0x0,0x0,0x487fff,0x0,0x0,0x20000,0x0,0x0,0x0,0x7fff,0x400000,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x20000,0x20000,0x20000,0x80000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x483fff,0x0,0x483fff,0x483fff,0x0,0x0,0x483fff,0x0,0x2000,0x20000,0x0,0x0,0x0,0x1fff,0x400000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[22];
   private boolean jj_rescan = false;

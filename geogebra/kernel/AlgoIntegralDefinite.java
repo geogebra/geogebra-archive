@@ -33,11 +33,10 @@ public class AlgoIntegralDefinite extends AlgoElement {
     private GeoNumeric n; // output g = integral(f(x), x, a, b)   
 
     // for numerical adaptive GaussQuad integration
-    private static final int MAX_STEP = 30; // max bisection steps
+    private static final int MAX_STEP = 40; // max bisection steps
     private static final int FIRST_ORDER = 5;
     private static final int SECOND_ORDER = 7;
-    private static final double ACCURACY = Kernel.MIN_PRECISION;
-    private double max_error;
+    private static final double ACCURACY = Kernel.MIN_PRECISION;   
     private GaussQuadIntegration firstGauss, secondGauss;
 
     public AlgoIntegralDefinite(
@@ -144,9 +143,9 @@ public class AlgoIntegralDefinite extends AlgoElement {
         }
 
         // numerical integration
-        max_error = ACCURACY; // current maximum error
+       // max_error = ACCURACY; // current maximum error
         //maxstep = 0;              
-        double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit, 0);
+        double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit, 0, ACCURACY);
         n.setValue(integral);
               
         /*
@@ -162,26 +161,28 @@ public class AlgoIntegralDefinite extends AlgoElement {
         Function fun,
         double a,
         double b,
-        int step) {
+        int step,
+        double maxError) 
+    {
         double firstSum = firstGauss.integrate(fun, a, b);
         double secondSum = secondGauss.integrate(fun, a, b);
         double error = Math.abs(firstSum - secondSum);
-        if (error < max_error) { // success
-            max_error = Math.max(Kernel.STANDARD_PRECISION, max_error - error);
-            //if (step > maxstep) maxstep = step;       
+               
+        if (error <= maxError || error <= 1E-10) { // success              
             return secondSum;
         } else {
             if (step < MAX_STEP) { // do bisection
                 double mid = (a + b) / 2;
                 int s = step + 1;
-                double left = adaptiveGaussQuad(fun, a, mid, s);
+                double err = maxError / 2;
+                double left = adaptiveGaussQuad(fun, a, mid, s, err);
                 if (Double.isNaN(left))
                     return Double.NaN;
                 else
-                    return left + adaptiveGaussQuad(fun, mid, b, s);
+                    return left + adaptiveGaussQuad(fun, mid, b, s, err);
             } else
 				//  if we get here then the accuracy could not be reached
-                //System.out.println("MAX_STEP reached: no integral found");
+                //System.out.println("MAX_STEP reached: no integral found: " + a + ", " + b + ", err: " + error);
                 return Double.NaN;
         }
     }

@@ -191,9 +191,9 @@ TOKEN : {
 }   
 
 TOKEN : {  
-   < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'"  )* (<INDEX>)? >
+   < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'"  )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
- |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}") )  >  
+ |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}" ) )  >  
  | < #LETTER:  // unicode letters
        [
         "\u0041"-"\u005a",      //upper case (A-Z)
@@ -217,10 +217,7 @@ TOKEN : {
 >
 }
  
- TOKEN : {
- < TEXT: "\""  (<CHAR>)* "\"" > |
- < #CHAR: ["\u0000"-"\u0021", "\u0023"-"\uffff"]  >    
-}
+
 
 // labels for function names
 TOKEN: {
@@ -252,6 +249,11 @@ TOKEN: {
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  > 
 | 	< FUNCTION_LABEL: <LABEL> "(" >
+}
+
+ TOKEN : {
+ < TEXT: "\""  (<CHAR>)* "\"" > |
+ < #CHAR: ["\u0000"-"\u0021", "\u0023"-"\uffff"]  >    
 }
 
 String label():

@@ -48,6 +48,9 @@ public class Exponential extends Polynomial{
 		super(x.var, x.coef);
 		this.expvar = ((Polynomial)((FunctionVariable)this.var).arg).var;
 		this.exp_b  = ((Polynomial)((FunctionVariable)this.var).arg).coef[1];
+		
+		// TODO: remove
+		System.out.println("poly: " + x + " to exponential: " + this);
 	}
 	
 	// return x as exponential if it fits

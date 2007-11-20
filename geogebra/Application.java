@@ -115,7 +115,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "November 4, 2007";
+    public static final String buildDate = "November 20, 2007";
 	
     public static final String versionString = "3.0 (RC 3)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -2653,6 +2653,11 @@ public class Application implements	KeyEventDispatcher {
                 if (fileExtension == Application.FILE_EXT_HTML) {    
                 	file = Application.removeExtension(file);
                 	file = new File(file.getParent(), Util.keepOnlyLettersAndDigits(file.getName()));
+                }
+                
+                // remove colon from file name
+                if (file.getName().indexOf(':') > -1) {
+                	file = new File(file.getParent(), file.getName().replaceAll(":", "_"));
                 }
             	
             	// add file extension

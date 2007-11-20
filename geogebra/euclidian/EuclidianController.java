@@ -2894,8 +2894,8 @@ final public class EuclidianController implements MouseListener,
 			// text			
 			GeoText text = createDynamicText(app.getCommand("Circumference"), circumFerence, e.getPoint());			
 			if (conic.isLabelSet()) {
-				circumFerence.setLabel(app.getCommand("Circumference").toLowerCase() + conic.getLabel() );							
-				text.setLabel(app.getPlain("Text") + conic.getLabel());				
+				circumFerence.setLabel(removeUnderscores(app.getCommand("Circumference").toLowerCase() + conic.getLabel()));							
+				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
 			}			
 			return true;
 		}
@@ -2910,8 +2910,8 @@ final public class EuclidianController implements MouseListener,
 									perimeter, e.getPoint());
 			
 			if (poly[0].isLabelSet()) {
-				perimeter.setLabel(app.getCommand("Perimeter").toLowerCase() + poly[0].getLabel() );							
-				text.setLabel(app.getPlain("Text") + poly[0].getLabel());				
+				perimeter.setLabel(removeUnderscores(app.getCommand("Perimeter").toLowerCase() + poly[0].getLabel()));							
+				text.setLabel(removeUnderscores(app.getPlain("Text") + poly[0].getLabel()));				
 			} 
 			return true;
 		}
@@ -2929,7 +2929,7 @@ final public class EuclidianController implements MouseListener,
 			String strText = "";
 			boolean useLabels = geoA.isLabelSet() && geoB.isLabelSet();
 			if (useLabels) {		
-				length.setLabel(app.getCommand("Distance").toLowerCase() + geoA.getLabel() + geoB.getLabel());
+				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase() + geoA.getLabel() + geoB.getLabel()));
 				strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
 							+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
 							+ length.getLabel();			
@@ -2939,14 +2939,14 @@ final public class EuclidianController implements MouseListener,
 				geoB.updateRepaint();
 			}
 			else {
-				length.setLabel(app.getCommand("Distance").toLowerCase());					
+				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase()));					
 				strText = "\"\"" + length.getLabel();
 			}
 							
 			// create dynamic text
 			GeoText text = kernel.getAlgebraProcessor().evaluateToText(strText, true);
 			if (useLabels) {
-				text.setLabel(app.getPlain("Text") + geoA.getLabel() + geoB.getLabel() );	
+				text.setLabel(removeUnderscores(app.getPlain("Text") + geoA.getLabel() + geoB.getLabel()));	
 				text.setLaTeX(useLabels, true);
 			}			
 							
@@ -2978,6 +2978,11 @@ final public class EuclidianController implements MouseListener,
 			return null;
 		}	
 	}
+		
+	private String removeUnderscores(String label) {	
+			// remove all indices
+		return label.replaceAll("_", "");			
+	}
 	
 	private boolean area(ArrayList hits,  MouseEvent e) {
 		if (hits == null)
@@ -3006,28 +3011,29 @@ final public class EuclidianController implements MouseListener,
 			
 			// text			
 			GeoText text = createDynamicText(app.getCommand("Area"), area, e.getPoint());			
-			if (conic.isLabelSet()) {				
-				area.setLabel(app.getCommand("Area").toLowerCase() + conic.getLabel());							
-				text.setLabel(app.getPlain("Text") + conic.getLabel());				
+			if (conic.isLabelSet()) {					
+				area.setLabel(removeUnderscores(app.getCommand("Area").toLowerCase() + conic.getLabel()));							
+				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
 			}			
 			return true;
 		}
 		
 		// area of polygon
 		else if (selPolygons() == 1) {			
-			GeoPolygon [] poly = getSelectedPolygons();	
-					
+			GeoPolygon [] poly = getSelectedPolygons();						
 									
 			// dynamic text with polygon's area
 			GeoText text = createDynamicText(descriptionPoints(app.getCommand("Area"), poly[0]), poly[0], e.getPoint());			
 			if (poly[0].isLabelSet()) {					
-				text.setLabel(app.getPlain("Text") + poly[0].getLabel());				
+				text.setLabel(removeUnderscores(app.getPlain("Text") + poly[0].getLabel()));				
 			} 
 			return true;
 		}
 		
 		return false;
 	}
+	
+	
 	
 	private String descriptionPoints(String prefix, GeoPolygon poly) {
 		// build description text including point labels	

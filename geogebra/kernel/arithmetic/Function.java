@@ -786,12 +786,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         //  do calculus only if parent expression changed
         if (intParentExp != expression) {
             intParentExp = expression;
-            integralFun = null;
-        }   
-        
-        if (integralFun == null) {
-            integralFun = integral();                       
+            integralFun = integral();
         }
+        
         return integralFun;
      }
 

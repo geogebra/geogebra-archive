@@ -196,7 +196,7 @@ public class Kernel {
 	final public String evaluateJASYMCA(String exp) {
 		if (ggbCAS == null) {
 			initCAS();		
-		}
+		}				
 		
 		return ggbCAS.evaluateJASYMCA(exp);
 	}

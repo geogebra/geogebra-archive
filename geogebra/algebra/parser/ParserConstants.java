@@ -48,36 +48,36 @@ public interface ParserConstants {
   int LABEL = 46;
   int INDEX = 47;
   int LETTER = 48;
-  int TEXT = 49;
-  int CHAR = 50;
-  int X_FUNC = 51;
-  int Y_FUNC = 52;
-  int COS_FUNC = 53;
-  int SIN_FUNC = 54;
-  int TAN_FUNC = 55;
-  int ACOS_FUNC = 56;
-  int ASIN_FUNC = 57;
-  int ATAN_FUNC = 58;
-  int COSH_FUNC = 59;
-  int SINH_FUNC = 60;
-  int TANH_FUNC = 61;
-  int ACOSH_FUNC = 62;
-  int ASINH_FUNC = 63;
-  int ATANH_FUNC = 64;
-  int EXP_FUNC = 65;
-  int LOG_FUNC = 66;
-  int LD_FUNC = 67;
-  int LG_FUNC = 68;
-  int SQRT_FUNC = 69;
-  int CBRT_FUNC = 70;
-  int ABS_FUNC = 71;
-  int SGN_FUNC = 72;
-  int FLOOR_FUNC = 73;
-  int CEIL_FUNC = 74;
-  int ROUND_FUNC = 75;
-  int GAMMA_FUNC = 76;
-  int RANDOM_FUNC = 77;
-  int FUNCTION_LABEL = 78;
+  int X_FUNC = 49;
+  int Y_FUNC = 50;
+  int COS_FUNC = 51;
+  int SIN_FUNC = 52;
+  int TAN_FUNC = 53;
+  int ACOS_FUNC = 54;
+  int ASIN_FUNC = 55;
+  int ATAN_FUNC = 56;
+  int COSH_FUNC = 57;
+  int SINH_FUNC = 58;
+  int TANH_FUNC = 59;
+  int ACOSH_FUNC = 60;
+  int ASINH_FUNC = 61;
+  int ATANH_FUNC = 62;
+  int EXP_FUNC = 63;
+  int LOG_FUNC = 64;
+  int LD_FUNC = 65;
+  int LG_FUNC = 66;
+  int SQRT_FUNC = 67;
+  int CBRT_FUNC = 68;
+  int ABS_FUNC = 69;
+  int SGN_FUNC = 70;
+  int FLOOR_FUNC = 71;
+  int CEIL_FUNC = 72;
+  int ROUND_FUNC = 73;
+  int GAMMA_FUNC = 74;
+  int RANDOM_FUNC = 75;
+  int FUNCTION_LABEL = 76;
+  int TEXT = 77;
+  int CHAR = 78;
 
   int DEFAULT = 0;
 
@@ -131,8 +131,6 @@ public interface ParserConstants {
     "<LABEL>",
     "<INDEX>",
     "<LETTER>",
-    "<TEXT>",
-    "<CHAR>",
     "\"x(\"",
     "\"y(\"",
     "<COS_FUNC>",
@@ -161,6 +159,8 @@ public interface ParserConstants {
     "<GAMMA_FUNC>",
     "\"random()\"",
     "<FUNCTION_LABEL>",
+    "<TEXT>",
+    "<CHAR>",
     "\":\"",
     "\"[\"",
     "\",\"",
