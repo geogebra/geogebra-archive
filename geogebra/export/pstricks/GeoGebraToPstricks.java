@@ -514,12 +514,42 @@ public class GeoGebraToPstricks implements ActionListener {
 
 		}
 		double angSt = Math.atan2(firstVec[1], firstVec[0]);
-        double angExt = geo.getValue();
-        if (angExt>Math.PI*2) angExt-=Math.PI*2;
-        if (geo.changedReflexAngle()) {        	
-        	angSt = angSt - angExt;
-        }
-        angExt+=angSt;
+
+// Michael Borcherds 2007-10-21 BEGIN
+//      double angExt = geo.getValue();
+		double angExt = geo.getRawAngle();
+		if (angExt>Math.PI*2) angExt-=Math.PI*2;
+		
+		if (geo.angleStyle()==geo.ANGLE_ISCLOCKWISE)
+		{
+			angSt+=angExt;
+			angExt=2.0*Math.PI-angExt;
+		}
+		
+		if (geo.angleStyle()==geo.ANGLE_ISNOTREFLEX)
+		{
+			if (angExt>Math.PI)
+			{
+				angSt+=angExt;
+				angExt=2.0*Math.PI-angExt;
+			}
+		}
+		
+		if (geo.angleStyle()==geo.ANGLE_ISREFLEX)
+		{
+			if (angExt<Math.PI)
+			{
+				angSt+=angExt;
+				angExt=2.0*Math.PI-angExt;
+			}
+		}
+        
+//        if (geo.changedReflexAngle()) {        	
+//        	angSt = angSt - angExt;
+//        }
+		// Michael Borcherds 2007-10-21 END
+
+		angExt+=angSt;
 		double r = arcSize /euclidianView.getXscale();
 		// if angle=90� and decoration=little square
         if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
@@ -1422,15 +1452,15 @@ public class GeoGebraToPstricks implements ActionListener {
 // Michael Borcherds 20071006 start
 		case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (1.5 * nLength);		
+	 		factor = tickSpacing / (2 * nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (1.5 * nLength);
+	 		factor = tickLength / nLength;
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1442,15 +1472,15 @@ public class GeoGebraToPstricks implements ActionListener {
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (1.5 * nLength);		
+	 		factor = tickSpacing / (2 * nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (1.5 * nLength);
+	 		factor = tickLength / nLength;
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordX(midY - 2*arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1462,7 +1492,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			
 	 		x1=euclidianView.toRealWorldCoordX(midX);
 	 		y1=euclidianView.toRealWorldCoordY(midY);
-	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*(nx + vx));
+	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
 	 		x1=euclidianView.toRealWorldCoordX(midX);
@@ -1473,15 +1503,15 @@ public class GeoGebraToPstricks implements ActionListener {
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
 	 		// vector (vx, vy) to get 2 points around midpoint				 		
-	 		factor = tickSpacing / (1.5 * nLength);		
+	 		factor = tickSpacing / nLength;		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / (1.5 * nLength);
+	 		factor = tickLength / nLength;
 			nx *= factor;
 			ny *= factor;
 	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
 			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
@@ -1493,7 +1523,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			
 	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
 	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*vx + arrowlength*(nx + vx));
+	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*vx + arrowlength*(nx + vx));
 			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(ny + vy));	
 	 		drawLine(x1,y1,x2,y2,geo);
 	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
