@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.Iterator;
+
 
 /**
  * Finds all local extrema of a polynomial
@@ -30,6 +32,15 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         String[] labels,
         GeoFunction f) {
         super(cons, labels, f);
+        
+        
+        // TODO: remove
+       // System.out.println("AlgoExtremumPolynomial: " + f + ", " + f.cons);
+        Iterator it = f.getVariables().iterator();
+        while (it.hasNext()) {
+        	GeoElement var = (GeoElement) it.next();
+        	System.out.println("  " + var + ", " + var.cons );
+        }
     }
 
     String getClassName() {
@@ -42,7 +53,10 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
 
     final void compute() {
         if (f.isDefined()) {
-            yValFunction = f.getFunction();                                                                    
+            // TODO: remove
+            //System.out.println("*** extremum of " + f);
+                    	
+            yValFunction = f.getFunction();       
             
             // roots of first derivative 
             //(roots without change of sign are removed)

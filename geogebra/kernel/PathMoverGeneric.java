@@ -141,6 +141,10 @@ public class PathMoverGeneric implements PathMover {
 		}					
 
 		calcPoint(p);
+		
+	     // TODO: remove
+//        System.out.println("*** path mover: " + p);
+//        System.out.println("            a = " + p.kernel.lookupLabel("a"));
 					
 		return lineTo;
 	}

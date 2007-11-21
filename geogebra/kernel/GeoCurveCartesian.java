@@ -121,7 +121,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		isDefined = geoCurve.isDefined;
 		
 		// macro OUTPUT
-		if (geo.cons != cons && isAlgoMacroOutput) {	
+		if (geo.cons != cons && isAlgoMacroOutput()) {	
 			if (!geo.isIndependent()) {
 				// this object is an output object of AlgoMacro
 				// we need to check the references to all geos in its function's expression

@@ -88,7 +88,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		setFileName(img.fileName);
 		
 		// macro output: don't set corners
-		if (cons != geo.cons && isAlgoMacroOutput) 
+		if (cons != geo.cons && isAlgoMacroOutput()) 
 			return;
 		
 		// location settings
@@ -198,7 +198,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 */
 	public void setCorner(GeoPoint p, int number)  {
 		// macro output uses initStartPoint() only
-		if (isAlgoMacroOutput) return; 
+		if (isAlgoMacroOutput()) return; 
 		
 		if (corners[0] == null && number > 0) return;
 		

@@ -497,6 +497,8 @@ public class Construction {
         if (s == step || s < -1 || s >= ceList.size())
 			return;
 
+        kernel.setAllowVisibilitySideEffects(false);
+        
         if (s < step) {
             for (int i = s + 1; i <= step; ++i) {
                  ((ConstructionElement) ceList.get(i)).notifyRemove();                                  
@@ -505,8 +507,10 @@ public class Construction {
             for (int i = step + 1; i <= s; ++i) {
                  ((ConstructionElement) ceList.get(i)).notifyAdd();
             }
-        }
+        }        
         step = s;
+        
+        kernel.setAllowVisibilitySideEffects(true);
     }
 
     /**

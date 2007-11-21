@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -340,10 +341,11 @@ public class Macro {
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     	macroConsXML.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
-    	     	    	   
+    	     	    	      	
     	Iterator it = macroConsElements.iterator();
     	while (it.hasNext()) {    		
-    		ConstructionElement ce = (ConstructionElement) it.next();
+    		ConstructionElement ce = (ConstructionElement) it.next();    		    		
+    		
     		if (ce.isGeoElement()) {
     			macroConsXML.append(ce.getXML());
     		}

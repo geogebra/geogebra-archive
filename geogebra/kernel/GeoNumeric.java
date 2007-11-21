@@ -41,7 +41,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
 	double DEFAULT_SLIDER_MIN = -5;
-	double DEFAULT_SLIDER_MAX = 5;	
+	double DEFAULT_SLIDER_MAX = 5;
 
 	protected double value;
 
@@ -109,7 +109,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public void setDrawable(boolean flag) {
 		isDrawable = flag;
 		
-		if (isDrawable && kernel.isNotifyViewsActive() ) {
+		if (isDrawable && kernel.isNotifyViewsActive() && kernel.isAllowVisibilitySideEffects() ) {
 			//System.out.println("side effect for: " + this);
 			setEuclidianVisible(true);
 		}						

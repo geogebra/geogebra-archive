@@ -55,7 +55,7 @@ implements Locateable, AbsoluteScreenLocateable {
 		isLaTeX = gt.isLaTeX;
 		
 		// macro output: don't set start point
-		if (cons != geo.cons && isAlgoMacroOutput) 
+		if (cons != geo.cons && isAlgoMacroOutput()) 
 			return;
 	
 		try {
@@ -120,7 +120,7 @@ implements Locateable, AbsoluteScreenLocateable {
 			
 	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException {     
 		// macro output uses initStartPoint() only
-		if (isAlgoMacroOutput) return; 
+		if (isAlgoMacroOutput()) return; 
 		
 		// check for circular definition
 		if (isParentOf(p))

@@ -71,11 +71,7 @@ public class AlgoTangentPoint extends AlgoElement {
         // in this case we only want to see one tangent line,
         // so we make the second one undefined
         equalLines = tangents[0].equals(tangents[1]);
-        if (equalLines) {
-        	
-        	// TODO: remove
-        	System.out.println("equal tangent lines: " + equalLines);
-        	
+        if (equalLines) {        
             tangents[1].setUndefined();
             tangentPoints[1].setUndefined();
         }

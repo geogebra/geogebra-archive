@@ -147,6 +147,7 @@ public class AlgoMacro extends AlgoElement {
 		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
 		for (int i=0; i < macroOutputAndRefGeos.length; i++) {											
 			algoOutputAndRefGeos[i].set(macroOutputAndRefGeos[i]);		
+
 			//System.out.println("RESULT from macro: " + macroOutputAndRefGeos[i] + " => " + algoOutputAndRefGeos[i]);
 		}
 		
@@ -171,7 +172,7 @@ public class AlgoMacro extends AlgoElement {
 			output[i] = macroOutput[i].copyInternal(cons);			
 			output[i].setUseVisualDefaults(false);
 			output[i].setVisualStyle(macroOutput[i]);	
-			output[i].isAlgoMacroOutput = true;						
+			output[i].setAlgoMacroOutput(true);
     	}
 	}
 	

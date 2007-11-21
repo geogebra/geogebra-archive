@@ -97,7 +97,7 @@ public class GeoList extends GeoElement implements ListValue {
     public void set(GeoElement geo) {    	
         GeoList l = (GeoList) geo;              
         
-		if (l.cons != cons && isAlgoMacroOutput) {
+		if (l.cons != cons && isAlgoMacroOutput()) {
 			// MACRO CASE
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in the list

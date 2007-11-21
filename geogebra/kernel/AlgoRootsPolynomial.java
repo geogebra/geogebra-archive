@@ -429,11 +429,16 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
             	//	rootPoints[i].setUndefined();
             	//else
             		rootPoints[i].setCoords(roots[i], 0.0, 1.0); // root point
-            } else // extremum or turnal point
+            } else { // extremum or turnal point
                 rootPoints[i].setCoords(
                     roots[i],
                     yValFunction.evaluate(roots[i]),
                     1.0);
+                
+             // TODO: remove
+              //  System.out.println("   " + rootPoints[i]);
+                
+            }
         }
 
         // all other roots are undefined

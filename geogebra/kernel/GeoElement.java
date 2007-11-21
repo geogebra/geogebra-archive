@@ -222,7 +222,7 @@ public abstract class GeoElement
 	private boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
-	boolean isAlgoMacroOutput; // is an output object of a macro construction
+	private boolean isAlgoMacroOutput; // is an output object of a macro construction
 	private boolean fixed = false;
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
@@ -364,7 +364,7 @@ public abstract class GeoElement
 	 */
 	public GeoElement copyInternal(Construction cons) {
 		// default implementation: changed in some subclasses
-		GeoElement geoCopy = copy();
+		GeoElement geoCopy = copy();	
 		geoCopy.setConstruction(cons);	
 		return geoCopy;
 	}		
@@ -2528,6 +2528,14 @@ public abstract class GeoElement
 
 	public Point getOldSpreadsheetCoords() {
 		return oldSpreadsheetCoords;
+	}
+
+	final boolean isAlgoMacroOutput() {
+		return isAlgoMacroOutput;
+	}
+
+	final void setAlgoMacroOutput(boolean isAlgoMacroOutput) {
+		this.isAlgoMacroOutput = isAlgoMacroOutput;
 	}
 
 }

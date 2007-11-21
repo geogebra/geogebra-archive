@@ -42,6 +42,9 @@ GeoDeriveable, ParametricCurve {
 	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
     private boolean includesDivisionByVar = false;
     
+    // parent conditional function
+   // private GeoFunctionConditional parentCondFun = null;
+    
 	
 //	Victor Franco Espino 25-04-2007
 	/*
@@ -93,16 +96,16 @@ GeoDeriveable, ParametricCurve {
 		} else {
 			isDefined = geoFun.isDefined;
 			fun = new Function(geoFun.fun, kernel);
-		}				
-		
+		}			
+	
 		// macro OUTPUT
-		if (geo.cons != cons && isAlgoMacroOutput) {			
+		if (geo.cons != cons && isAlgoMacroOutput()) {								
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in its function's expression
 			if (!geoFun.isIndependent()) {
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-				algoMacro.initFunction(this.fun);
-			}
+				algoMacro.initFunction(this.fun);								
+			}			
 		}
 	}
 	
@@ -559,4 +562,13 @@ GeoDeriveable, ParametricCurve {
 	public String getVarString() {	
 		return varStr;
 	}
+
+	/*
+	public final GeoFunctionConditional getParentCondFun() {
+		return parentCondFun;
+	}
+
+	public final void setParentCondFun(GeoFunctionConditional parentCondFun) {
+		this.parentCondFun = parentCondFun;
+	}*/
 }

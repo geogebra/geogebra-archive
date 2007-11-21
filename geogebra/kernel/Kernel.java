@@ -78,7 +78,9 @@ public class Kernel {
 	
 	private boolean translateCommandName = true;
 	private boolean undoActive = true;
-	private boolean notifyViewsActive = true, viewReiniting = false;
+	private boolean notifyViewsActive = true;
+	private boolean viewReiniting = false;
+	private boolean allowVisibilitySideEffects = false;
 		
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
@@ -3901,6 +3903,15 @@ public class Kernel {
 	 */
 	public void setContinuous(boolean continuous) {
 		this.continuous = continuous;
+	}
+
+	public final boolean isAllowVisibilitySideEffects() {
+		return allowVisibilitySideEffects;
+	}
+
+	public final void setAllowVisibilitySideEffects(
+			boolean allowVisibilitySideEffects) {
+		this.allowVisibilitySideEffects = allowVisibilitySideEffects;
 	}
 
 }

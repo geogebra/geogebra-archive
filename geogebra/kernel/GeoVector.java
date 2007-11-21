@@ -99,7 +99,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 	
 		// don't set start point for macro output
 		// see AlgoMacro.initRay()
-		if (geo.cons != cons && isAlgoMacroOutput)
+		if (geo.cons != cons && isAlgoMacroOutput())
 			return;
 	
 		try {
@@ -185,7 +185,7 @@ implements Path, VectorValue, Locateable, Rotateable {
     
     public void setStartPoint(GeoPoint p) throws CircularDefinitionException {    
     	// macro output uses initStartPoint() only
-		if (isAlgoMacroOutput) return; 
+		if (isAlgoMacroOutput()) return; 
     	
 		// check for circular definition
 		if (isParentOf(p))

@@ -46,9 +46,9 @@ public class GeoFunctionConditional extends GeoFunction {
 	public GeoFunctionConditional(Construction c, 
 			GeoFunction condFun, GeoFunction ifFun, GeoFunction elseFun) {
 		super(c);
-		this.condFun 	= condFun;
-		this.ifFun 		= ifFun;
-		this.elseFun 	= elseFun;	
+		this.condFun 	= condFun;		
+		this.ifFun 		= ifFun;		
+		this.elseFun 	= elseFun;					
 	}	
 	
 	public GeoFunctionConditional(GeoFunctionConditional geo) {
@@ -64,25 +64,41 @@ public class GeoFunctionConditional extends GeoFunction {
 		GeoFunctionConditional geoFunCond = (GeoFunctionConditional) geo;
 		isDefined = geoFunCond.isDefined;
 			
-		if (condFun == null) 
-			condFun = (GeoFunction) geoFunCond.condFun.copy();
-		else 
-			condFun.set(geoFunCond.condFun);
+		if (condFun == null) { 
+			condFun = (GeoFunction) geoFunCond.condFun.copyInternal(cons);			
+		}		
+		if (isAlgoMacroOutput()) {
+			condFun.setAlgoMacroOutput(true);
+			condFun.setParentAlgorithm(getParentAlgorithm());
+			condFun.setConstruction(cons);
+		}		
+		condFun.set(geoFunCond.condFun);
 		
-		if (ifFun == null)
-			ifFun = (GeoFunction) geoFunCond.ifFun.copy();
-		else
-			ifFun.set(geoFunCond.ifFun);
+		if (ifFun == null) {
+			ifFun = (GeoFunction) geoFunCond.ifFun.copyInternal(cons);				
+		}
+		if (isAlgoMacroOutput()) {
+			ifFun.setAlgoMacroOutput(true);
+			ifFun.setParentAlgorithm(getParentAlgorithm());
+			ifFun.setConstruction(cons);
+		}
+		ifFun.set(geoFunCond.ifFun);
 		
 		if (geoFunCond.elseFun == null) {
 			elseFun = null;
 		} else {
-			if (elseFun == null)
-				elseFun = (GeoFunction) geoFunCond.elseFun.copy();
-			else
-				elseFun.set(geoFunCond.elseFun);
-		}
-	}		
+			if (elseFun == null) {
+				elseFun = (GeoFunction) geoFunCond.elseFun.copyInternal(cons);					
+			}			
+			if (isAlgoMacroOutput()) {
+				elseFun.setAlgoMacroOutput(true);
+				elseFun.setParentAlgorithm(getParentAlgorithm());	
+				elseFun.setConstruction(cons);
+			}
+			elseFun.set(geoFunCond.elseFun);
+		}					
+	}	
+	
 	
 	String getClassName() {
 		return "GeoFunctionConditional";

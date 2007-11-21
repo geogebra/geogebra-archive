@@ -3047,7 +3047,7 @@ public class Application implements	KeyEventDispatcher {
     	catch (Exception e) {
             setCurrentFile(null);
             e.printStackTrace();
-            showError(getError("LoadFileFailed") + ":/n" + url);
+            showError(getError("LoadFileFailed") + ":\n" + url);
             return false;
         }
     }
