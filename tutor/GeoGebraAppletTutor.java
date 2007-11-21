@@ -55,7 +55,6 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 			initGUI(problem, student);
 		}
 		
-		
 		System.out.println("**** MAIN construction BEGIN");
 		Construction c = kernel.getConstruction();
 		int i=0;
@@ -71,9 +70,6 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
     		i++;
     	}
 		System.out.println("**** MAIN construction END");
-		
-		
-		
 	}
 	
 	protected void initGUI(String p, String s) {
