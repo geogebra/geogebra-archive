@@ -2,6 +2,7 @@ package tutor;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.MyResourceBundle;
 import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.Construction;
@@ -18,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -79,6 +81,22 @@ public class TutorView extends JPanel implements View  {
 	private JList resArea = new JList();
 	
 	private long lineCounter = 0;
+	
+	private ResourceBundle tutorResources;
+	
+	public String getPlain(String key) {
+	
+		if (tutorResources == null) {
+			tutorResources = MyResourceBundle.createBundle("/tutor/properties/plain", app.getLocale());
+		}
+		
+		try {
+			return tutorResources.getString(key);
+		}
+		catch (Exception e) {
+			return key;
+		}
+	}
 	
 	public TutorView (String problema, String alumne, TutorController tc) 
 	{
@@ -236,10 +254,10 @@ public class TutorView extends JPanel implements View  {
 		if (geo instanceof GeoBoolean) {
 			GeoBoolean blnGeo = (GeoBoolean) geo;
 			if (blnGeo.getBoolean()) {
-				message = app.getPlain("valid.deduction");
+				message = getPlain("valid.deduction");
 			}
 			else {
-				message = app.getPlain("non-valid.deduction");
+				message = getPlain("non-valid.deduction");
 			}
 		}
 		else if (geo instanceof GeoFunction) {
@@ -247,8 +265,8 @@ public class TutorView extends JPanel implements View  {
 			message = ""+fnGeo.getNameDescription();
 		}
 		else {
-			String objectTypeDesc = app.getPlain("geoelement.type."+objectType);
-			String objectTypeArt = app.getPlain("geoelement.type."+objectType+".article").split(",")[1];
+			String objectTypeDesc = getPlain("geoelement.type."+objectType);
+			String objectTypeArt = getPlain("geoelement.type."+objectType+".article").split(",")[1];
 			
 			message = "ha creat " + objectTypeArt + " " + objectTypeDesc + ": " + objectLabel;
 		}
