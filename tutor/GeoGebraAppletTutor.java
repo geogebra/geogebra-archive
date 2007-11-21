@@ -25,6 +25,7 @@ import geogebra.kernel.ConstructionElement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 /**
@@ -50,18 +51,8 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		if (student == null) student = getParameter("student");
 		
 		// STRATEGY FILES
-		if (problem!=null && student != null) {
-			
-			if (tutorView == null) {
-				tutorController = new TutorController(app.getKernel());
-				tutorView = new TutorView(problem.trim(),student.trim(), tutorController);
-				
-				app.getEuclidianView().addMouseListener(tutorController);
-			}
-			//			Attach TutorView
-			// Creates a new tutorView
-			kernel.attach(tutorView); // register view  	
-			initGUI();
+		if (problem!=null && student != null) {	
+			initGUI(problem, student);
 		}
 		
 		
@@ -85,16 +76,25 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		
 	}
 	
-	protected void initGUI() {
+	protected void initGUI(String p, String s) {
 		// TODO: build user interface of applet in here	
 	
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				createGeoGebraAppletPanel(), tutorView);
+		//this.setSize(1000,500);
 
-		splitPane.setDividerLocation(800);
-		this.setSize(1000,500);
+		tutorController = new TutorController(app.getKernel());
+		app.getEuclidianView().addMouseListener(tutorController);
+
+		tutorView = new TutorView(p.trim(),s.trim(), tutorController);
+
+		kernel.attach(tutorView); // register view  
 		
+		JPanel geogebraPanel = createGeoGebraAppletPanel();
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				geogebraPanel, tutorView);
+
 		getContentPane().add(splitPane);
+		
+		splitPane.setDividerLocation(800);
 	}
 
 	public void start() {

@@ -3,8 +3,6 @@ package tutor;
 import geogebra.Application;
 import geogebra.kernel.Kernel;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -47,6 +45,7 @@ public class TutorController implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("Mouse Clicked.");
 		this.view.setCommentFieldFocus();
+		view.incrementLineCounter();
 	}
 
 	public void mouseEntered(MouseEvent e) {

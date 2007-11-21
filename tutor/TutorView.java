@@ -207,16 +207,17 @@ public class TutorView extends JPanel implements View  {
 	
 	public void add(GeoElement geo) {		
 		//Every GeoElement gets here.
-		//Construction c = geo.getConstruction();
-		
+		Construction c = geo.getConstruction();
+		GeoElement[] goes = geo.getGeoElements();
+
 		//TreeSet t = geo.getAllPredecessors();
-		//if (strategies.size() == 0){
+		//if (strategies.size() == 0) {
 		//System.out.println("STR1"+ ((Construction)strategies.getFirst()).getXML());
 		//System.out.println("STR2"+ ((Construction)strategies.getLast()).getXML());
 		//System.out.println("CMD"+geo.getCommandDescription());
 		//System.out.println(geo+"/"+geo.getObjectType());
 		//System.out.println(t);
-	//	System.out.println(c.getXML());
+		//System.out.println(c.getXML());
 		//if (geo.getObjectType()  )
 		
 		printTextArea(objectToDialogue(geo), GRAPHICAL_INFO);
@@ -267,6 +268,7 @@ public class TutorView extends JPanel implements View  {
 		switch(user) {
 		
 			case STUDENT:
+				printStudentMessage(text);
 				break;
 				
 			case TUTOR:
@@ -291,7 +293,10 @@ public class TutorView extends JPanel implements View  {
 		
 		// Scrolls text area
 		resultArea.scrollRectToVisible(
-				  new Rectangle(0,resultArea.getHeight()-2,1,1));
+				  new Rectangle(0,resultArea.getHeight()+10,1,1));
+	}
+	
+	private void printStudentMessage(String text) {
 	}
 	
 	private void printTutorMessage(String text) {
@@ -304,22 +309,26 @@ public class TutorView extends JPanel implements View  {
 			StyleConstants.setForeground(attributes, Color.BLUE);
 			StyleConstants.setItalic(attributes, true);
 			
-			doc.insertString(doc.getLength(), lineCounter+" - Tutor: ", attributes);
+			doc.insertString(doc.getLength(), "Tutor: ", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
 		}
 	}
-	
+	static long lastCount = -1;
 	private void printGraphicalInfo(String text) {
 		
 		SimpleAttributeSet attributes = new SimpleAttributeSet();
 		
 		try {
 			StyleConstants.setForeground(attributes, Color.BLACK);
-			
-			doc.insertString(doc.getLength(), "", attributes);
+			String strLineCount = "";
+			if (lastCount != lineCounter) {
+				strLineCount = ""+lineCounter;
+				lastCount = lineCounter;
+			}
+			doc.insertString(doc.getLength(), strLineCount+" - "+studentName+": ", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
@@ -335,7 +344,7 @@ public class TutorView extends JPanel implements View  {
 			StyleConstants.setForeground(attributes, Color.BLACK);
 			StyleConstants.setBold(attributes, true);
 			
-			doc.insertString(doc.getLength(), "", attributes);
+			doc.insertString(doc.getLength(), studentName+": ", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
@@ -350,8 +359,8 @@ public class TutorView extends JPanel implements View  {
 		try {
 			StyleConstants.setFontSize(attributes, 12);
 			
-			doc.insertString(doc.getLength(), "   ", attributes);
-			doc.insertString(doc.getLength(), text+LN, attributes);
+			doc.insertString(doc.getLength(), studentName+":   ", attributes);
+			doc.insertString(doc.getLength(), text.toUpperCase()+LN, attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -443,6 +452,10 @@ public class TutorView extends JPanel implements View  {
 	 
 	 public void setCommentFieldFocus() {
 		 commentField.requestFocusInWindow();
+	 }
+	 
+	 public void incrementLineCounter() {
+		 this.lineCounter++;
 	 }
 }
 
