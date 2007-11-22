@@ -28,6 +28,8 @@ import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -159,13 +161,26 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		}
 		
 		// check if frame fits on screen
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
+
+		// Michael Borcherds 2007-11-22 BEGIN
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Rectangle screenSize = env.getMaximumWindowBounds();
+
+		if (frameSize.width > screenSize.width || 
+				frameSize.height > screenSize.height) {
+			frameSize.width = screenSize.width;
+			frameSize.height = screenSize.height;
+			setLocation(0,0);
+		} 		
+		
+/*		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
 		screenSize.height -= 30; // task bar		
 		if (frameSize.width > screenSize.width || 
 				frameSize.height > screenSize.height) {
 			frameSize = screenSize;
 			setLocation(0,0);
-		} 		
+		} 		*/
+		// Michael Borcherds 2007-11-22 END
 				
 		setSize(frameSize);
 	}
