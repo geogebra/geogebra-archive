@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<project default="main">
+    <target name="main" depends="compile, compress" description="Main target">
+        <echo>
+            Building geogebra_unsigned.jar file.
+        </echo>
+    </target>
+  
+    <target name="compile" description="Compilation target">
+        <javac srcdir="./"/>
+    </target>
+  
+  <target name="compress" description="Compression target">
+        <jar jarfile="geogebra_unsigned.jar" basedir="./" includes="*.class" />
+  </target>
+</project>

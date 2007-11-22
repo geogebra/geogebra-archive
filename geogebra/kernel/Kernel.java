@@ -80,7 +80,7 @@ public class Kernel {
 	private boolean undoActive = true;
 	private boolean notifyViewsActive = true;
 	private boolean viewReiniting = false;
-	private boolean allowVisibilitySideEffects = false;
+	private boolean allowVisibilitySideEffects = true;
 		
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
