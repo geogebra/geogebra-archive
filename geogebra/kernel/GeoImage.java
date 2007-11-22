@@ -155,12 +155,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * @param fileName
 	 */
 	public void setFileName(String fileName) {	
+		if (this.fileName.equals(fileName))
+			return;
+				
 		this.fileName = fileName;
-// Michael Borcherds 2007-11-22 BEGIN
-		if (fileName=="") return; // don't know why setFileName is being called with a null string
-		if (fileNameMD5!="") return; // no point calculating MD5 twice
-		System.err.println(fileName);
-//		 Michael Borcherds 2007-11-22 END
+														
 		image = app.getExternalImage(fileName);	
 		if (image != null) {
 			pixelWidth = image.getWidth();
@@ -169,6 +168,7 @@ implements Locateable, AbsoluteScreenLocateable,
 			pixelWidth = 0;
 			pixelHeight = 0;
 		}
+		
 // Michael Borcherds 2007-11-20 BEGIN
 		String zip_directory="";
 		try
@@ -189,14 +189,12 @@ implements Locateable, AbsoluteScreenLocateable,
 			System.err.println("MD5 Error");
 			zip_directory="images";
 		}
-		
-	
+			
 		String fn=fileName;
 		int index = fileName.lastIndexOf(File.separator);
 	    if( index != -1 )
 	       fn = fn.substring( index,fn.length() ); // filename without path
-		this.fileNameMD5=zip_directory+fn;
-		
+		this.fileNameMD5=zip_directory+fn;		
 	}
 	
 	public String getFileNameMD5() {
