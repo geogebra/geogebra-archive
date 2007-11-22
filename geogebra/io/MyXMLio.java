@@ -315,7 +315,10 @@ public class MyXMLio {
     	Iterator it = images.iterator();
     	while (it.hasNext()) {    	    		
     		GeoImage geoImage = (GeoImage) it.next();    		    		    			
-    		String fileName = geoImage.getFileName();    
+//    		 Michael Borcherds 2007-11-20 BEGIN
+//    		String fileName = geoImage.getFileName();    
+    		String fileName = geoImage.getFileNameMD5();    
+//    		 Michael Borcherds 2007-11-20 END
 			BufferedImage img = geoImage.getImage();
     		if (img != null) 	       
     			writeImageToZip(zip, fileName, img);
