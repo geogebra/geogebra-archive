@@ -334,7 +334,9 @@ public class TutorView extends JPanel implements View  {
 			t.printStackTrace();
 		}
 	}
+	
 	static long lastCount = -1;
+	
 	private void printGraphicalInfo(String text) {
 		
 		SimpleAttributeSet attributes = new SimpleAttributeSet();
@@ -362,7 +364,8 @@ public class TutorView extends JPanel implements View  {
 			StyleConstants.setForeground(attributes, Color.BLACK);
 			StyleConstants.setBold(attributes, true);
 			
-			doc.insertString(doc.getLength(), studentName+": ", attributes);
+			//doc.insertString(doc.getLength(), studentName+": ", attributes);
+			doc.insertString(doc.getLength(), "     ", attributes);
 			doc.insertString(doc.getLength(), text+LN, attributes);
 		}
 		catch (Throwable t) {
@@ -377,7 +380,8 @@ public class TutorView extends JPanel implements View  {
 		try {
 			StyleConstants.setFontSize(attributes, 12);
 			
-			doc.insertString(doc.getLength(), studentName+":   ", attributes);
+			//doc.insertString(doc.getLength(), studentName+":   ", attributes);
+			doc.insertString(doc.getLength(), "     ", attributes);
 			doc.insertString(doc.getLength(), text.toUpperCase()+LN, attributes);
 		}
 		catch (Throwable t) {
