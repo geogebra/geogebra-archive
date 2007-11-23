@@ -193,8 +193,9 @@ implements Locateable, AbsoluteScreenLocateable,
 		String fn=fileName;
 		int index = fileName.lastIndexOf(File.separator);
 	    if( index != -1 )
-	       fn = fn.substring( index,fn.length() ); // filename without path
-		this.fileNameMD5=zip_directory+fn;		
+	       fn = fn.substring( index+1,fn.length() ); // filename without path
+	    fn=Util.processFilename(fn);
+	    this.fileNameMD5=zip_directory+File.separator+fn;		
 	}
 	
 	public String getFileNameMD5() {

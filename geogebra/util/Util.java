@@ -530,7 +530,48 @@ public class Util extends Object {
 			if (Character.isDigit(c) ||  // 0 - 9
 				(65 <= c && c <= 90 ) || // A - Z
 				(97 <= c && c <= 122 ) || // a - z
+				c == '.' || // Michael Borcherds 2007-11-23
 				c == '_')  // underscore
+			{
+				sb.append(c);
+			}
+			else
+			{
+				sb.append("_"); // Michael Borcherds 2007-11-23
+			}
+		}
+		
+		if (sb.length() == 0) {
+			sb.append("geogebra");
+		}
+		
+		return sb.toString();
+	}       
+    /**
+     * Removes < > " * / ? | \ and replaces them with underscore (_)
+	 * Michael Borcherds 2007-11-23
+     * @param file
+     */
+    public static String processFilename(String name) {
+		int length = name != null ? name.length() : 0;
+    	
+    	StringBuffer sb = new StringBuffer();
+		for (int i=0; i < length ; i++) {
+			char c = name.charAt(i);
+			if     (c == '<' ||
+					c == '>' ||
+					c == '"' ||
+					c == ':' ||
+					c == '*' ||
+					c == '/' ||
+					c == '\\' ||
+					c == '?' ||
+					c == '£' || // seems to turn into 'ú' inside zips
+					c == '|' )
+			{
+				sb.append("_");
+			}
+			else
 			{
 				sb.append(c);
 			}

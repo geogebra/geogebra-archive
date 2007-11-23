@@ -2655,10 +2655,8 @@ public class Application implements	KeyEventDispatcher {
                 	file = new File(file.getParent(), Util.keepOnlyLettersAndDigits(file.getName()));
                 }
                 
-                // remove colon from file name
-                if (file.getName().indexOf(':') > -1) {
-                	file = new File(file.getParent(), file.getName().replaceAll(":", "_"));
-                }
+                // remove "*<>/\?|:
+                file = new File(file.getParent(), Util.processFilename(file.getName())); // Michael Borcherds 2007-11-23
             	
             	// add file extension
                 file = addExtension(file, fileExtension);
