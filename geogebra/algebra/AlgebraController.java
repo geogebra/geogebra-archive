@@ -159,29 +159,30 @@ public class AlgebraController
 			base = 100;
 
 		// ARROW KEYS
+		boolean moved = false;
 		switch (keyCode) {								
 			case KeyEvent.VK_UP :
 				changeVal = base;
 				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				handleArrowKeyMovement(geo, tempVec);		
+				moved = handleArrowKeyMovement(geo, tempVec);		
 				break;
 
 			case KeyEvent.VK_DOWN :
 				changeVal = -base;
 				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				handleArrowKeyMovement(geo, tempVec);				
+				moved = handleArrowKeyMovement(geo, tempVec);				
 				break;
 
 			case KeyEvent.VK_RIGHT :
 				changeVal = base;
 				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				handleArrowKeyMovement(geo, tempVec);
+				moved = handleArrowKeyMovement(geo, tempVec);
 				break;
 
 			case KeyEvent.VK_LEFT :
 				changeVal = -base;
 				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				handleArrowKeyMovement(geo, tempVec);				
+				moved = handleArrowKeyMovement(geo, tempVec);				
 				break;
 
 			case KeyEvent.VK_F2 :
@@ -189,10 +190,10 @@ public class AlgebraController
 				return true;				
 		}
 		
-		
+		if (moved) return true;
 		
 	
-		// PLUS, MINUS keys
+		// PLUS, MINUS keys	
 		switch (keyCode) {
 			case KeyEvent.VK_PLUS :
 			case KeyEvent.VK_ADD :
@@ -208,7 +209,15 @@ public class AlgebraController
 				changeVal = -base;
 				break;
 		}
-
+		
+		if (changeVal == 0) {
+			char keyChar = event.getKeyChar();
+			if (keyChar == '+')
+				changeVal = base;
+			else if (keyChar == '-')
+				changeVal = -base;
+		}
+	
 		if (changeVal != 0) {								
 			if (geo.isChangeable()) {
 				if (geo.isNumberValue()) {
@@ -239,7 +248,7 @@ public class AlgebraController
 	}
 
 	
-	private void handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
+	private boolean handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
 		// try to move objvect
 		
 		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);				
@@ -255,6 +264,8 @@ public class AlgebraController
 		
 		if (moved) 
 			kernel.notifyRepaint();
+		
+		return moved;
 	}
 	
 

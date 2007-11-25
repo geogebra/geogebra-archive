@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.Application;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Locale;
 import java.util.prefs.Preferences;
@@ -170,12 +171,14 @@ public class GeoGebraPreferences {
      * Saves preferences by taking the application's current values. 
      */
     public static void saveXMLPreferences(Application app) {
+    	
+    	
     	// preferences xml
     	String xml = app.getPreferencesXML();
     	ggbPrefs.put(XML_USER_PREFERENCES, xml);  
-    	    	
+    
     	// store current tools including icon images as ggt file (byte array)
-    	ggbPrefs.putByteArray(TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
+    	putByteArray(ggbPrefs, TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
     	
     	try {
     		ggbPrefs.flush();
@@ -185,17 +188,121 @@ public class GeoGebraPreferences {
     }
     
     /**
+     * Breaks up byte array value into pieces and calls prefs.putByteArray(prefs, key+k, piece_k)
+     * for every piece.
+     */
+    private static void putByteArray(Preferences prefs, String key, byte [] value) {
+    	// byte array must not be longer than 3/4 of max value length
+    	int max_length = (int) Math.floor(Preferences.MAX_VALUE_LENGTH * 0.75);
+    	
+    	// value array is small enough
+    	if (value == null || value.length < max_length) {
+    		ggbPrefs.putByteArray(key, value);
+
+    		// remove possible old part keys
+    		int partCount = 0;    		
+    		while (true) {
+    			byte [] temp = ggbPrefs.getByteArray(key+partCount, null);
+    			if (temp != null) {
+    				ggbPrefs.remove(key+partCount);
+    				partCount++;
+    			} else
+    				break;
+    		}
+    	} 
+    	
+    	// break value array up into smaller pieces
+    	else {
+    		// delete key value    		
+    		ggbPrefs.remove(key);
+  
+    		byte [] bytePart = new byte[max_length];
+    		int pos = 0;
+    		int partCount = 0;
+    		while (pos + max_length <= value.length) {        			
+    			for (int k=0; k < max_length; k++, pos++) {
+    				bytePart[k] = value[pos];
+    			}        			    		
+    			
+    			// put piece key + partCount
+    			partCount++;
+    			ggbPrefs.putByteArray(key + partCount, bytePart);
+    		}
+    		
+    		// write last part
+    		if (pos < value.length) {    			
+    			bytePart = new byte[value.length - pos];
+    			
+    			for (int k=0; pos < value.length; k++, pos++) {
+    				bytePart[k] = value[pos];
+    			} 
+
+    			// put piece key + partCount
+    			partCount++;
+    			ggbPrefs.putByteArray(key + partCount, bytePart);
+    		}
+    	}
+    	
+    	try {
+    		ggbPrefs.flush();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    /**
+     * Breaks up byte array value into pieces and calls prefs.putByteArray(prefs, key+k, piece_k)
+     * for every piece.
+     */
+    private static byte [] getByteArray(Preferences prefs, String key, byte [] def) {    	    	
+    	byte [] ret = ggbPrefs.getByteArray(key, null);
+    	    
+    	if (ret != null) {
+    		// no parts: return byte array
+    		return ret;
+    	} 
+    	// we had parts, get them and glue them together
+    	else {    		    		    
+    		try {
+    			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    		int partCount = 1;
+	    		while (true) {
+	    			ret = ggbPrefs.getByteArray(key + partCount, null);
+	    			if (ret != null) {
+	    	    		bos.write(ret);
+	    				partCount++;
+	    			} else {
+	    				break;
+	    			}
+	    		}		    		
+	    		bos.flush();
+	    		if (bos.size() > 0)
+		        	ret = bos.toByteArray();
+    		} 
+    		catch (Exception e) {
+    			e.printStackTrace();
+    			ret = null;
+    		}    	
+    		    
+    		if (ret != null)
+	        	return ret;
+    		else
+    			return def;
+    	}
+    }
+    
+    /**
      * Loads XML preferences (empty construction with GUI and kernel settings) and sets application accordingly.
      * This method clears the current construction in the application.
      * Note: the XML string used is the same as for ggb files. 
      */
     public static void loadXMLPreferences(Application app) {  
+    	app.setWaitCursor();  
+    	
     	// load this preferences xml file in application
-    	try {
-    		app.setWaitCursor();    
-    		    	    		
+    	try {    		      		    	    
     		// load tools from ggt file (byte array)
-        	byte [] ggtFile = ggbPrefs.getByteArray(TOOLS_FILE_GGT, null);
+        	byte [] ggtFile = getByteArray(ggbPrefs, TOOLS_FILE_GGT, null);
         	app.loadMacroFileFromByteArray(ggtFile, true);
         	    		
     		// load preferences xml
@@ -203,10 +310,12 @@ public class GeoGebraPreferences {
     		app.setXML(xml, true);	
     		
     		app.setUndoActive(app.isUndoActive());      		
-    		app.setDefaultCursor();
+    		
     	} catch (Exception e) {	    		
     		e.printStackTrace();
     	}    	
+    	
+    	app.setDefaultCursor();
     }
     
     

@@ -222,7 +222,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		// undefined and on path: remember old path parameter
 		if (!(isDefined || path == null)) {
 			pathParameter.set(tempPathParameter);
-		}
+		}				
 	}  
 	private PathParameter tempPathParameter = new PathParameter();
 	
@@ -636,7 +636,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 				Locateable loc = (Locateable) locateableList.get(i);		
 				loc.toGeoElement().updateCascade();							
 			}		
-		}
+		}			
 	}
 	
 	

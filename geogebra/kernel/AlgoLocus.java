@@ -220,7 +220,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         	String locusConsXML = Macro.buildMacroXML(locusConsElements);  
         	
         	// TODO: remove
-        	System.out.println(locusConsXML);
+        	//System.out.println(locusConsXML);
         	
     		macroKernel.loadXML(locusConsXML);
     	
