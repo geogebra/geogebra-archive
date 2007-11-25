@@ -47,8 +47,8 @@ import java.util.ArrayList;
 final public class DrawConic extends Drawable implements Previewable {        
     
     // plotpoints per quadrant for hyperbola
-    private static final int PLOT_POINTS = 16;
-	static final int MAX_PLOT_POINTS = 100;
+    private static final int PLOT_POINTS = 32;
+	static final int MAX_PLOT_POINTS = 300;
     // maximum of pixels for a standard circle radius
     // bigger circles are drawn via Arc2D
     private static final double BIG_CIRCLE_RADIUS = 600;    
@@ -102,10 +102,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private double x, y;
     private int index0, index1, n, points;
     private Polyline hypLeft, hypRight;    
-    private boolean hypLeftOnScreen, hypRightOnScreen;
-    
-    // hit testing    
-    private GeoPoint tempPoint;
+    private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
 	private ArrayList prevPoints;      
@@ -491,7 +488,10 @@ final public class DrawConic extends Drawable implements Previewable {
 		}  
 		
 		// set number of plot points according to size of x0
-		n = PLOT_POINTS + (int)((x0 / 32)) * 4;
+		// add ten points per screen width
+		n = PLOT_POINTS + 
+		   (int) (Math.abs(x0 - a) / (view.xmax - view.xmin)) * 10;		
+		
 		if (points != n) {				
 			points = Math.min(n, MAX_PLOT_POINTS); 			
 			hypRight.setNumberOfPoints(2 * points -1);  
@@ -501,12 +501,11 @@ final public class DrawConic extends Drawable implements Previewable {
 		 // hyperbola is visible on screen	
 		 step = Math.sqrt((x0 - a) / (x0 + a)) / (points - 1);		               		    
 		 
-		 /*
-		System.out.println("POINTS: " + points);
-		 System.out.println("x0   = " + x0);                
-		 System.out.println("a     = " + a);
-		 System.out.println("step = " + step + "\n");
-		 */
+//		 System.out.println("n: " + n);
+//		System.out.println("POINTS: " + points);
+//		 System.out.println("x0   = " + x0);                
+//		 System.out.println("a     = " + a);
+//		 System.out.println("step = " + step + "\n");		
 
         // build Polyline of parametric hyperbola
         // hyp(t) = 1/(1-t�) {a(1+t�), 2bt}, 0 <= t < 1

@@ -39,7 +39,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	private static final long serialVersionUID = 1L;
 	// avoid very large and small coefficients for numerical stability	
 	private static final double MAX_COEFFICIENT_SIZE = 10000;
-	private static final double MIN_COEFFICIENT_SIZE = 0.01;
+	private static final double MIN_COEFFICIENT_SIZE = 1;
 
 	// modes
 	public static final int EQUATION_IMPLICIT = 0;
@@ -343,18 +343,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			allZero = allZero && abs < Kernel.MIN_PRECISION;
 			maxCoeffAbs = maxCoeffAbs > abs ? maxCoeffAbs : abs;			
 		}
-		if (allZero) return false;						
+		if (allZero) return false;		
 		
 		// huge or tiny coefficients?
 		if (maxCoeffAbs > MAX_COEFFICIENT_SIZE) {			
 			double factor = 0.1;
-			while (maxCoeffAbs * factor > MAX_COEFFICIENT_SIZE) factor /= 10;
+			while (maxCoeffAbs * factor > MAX_COEFFICIENT_SIZE) factor /= 2;
 			for (int i=0; i < 6; i++) matrix[i] *= factor;			
 			maxCoeffAbs *= factor;
 		}
 		else if (maxCoeffAbs < MIN_COEFFICIENT_SIZE) {
 			double factor = 10;
-			while (maxCoeffAbs * factor < MIN_COEFFICIENT_SIZE) factor *= 10;			
+			while (maxCoeffAbs * factor < MIN_COEFFICIENT_SIZE) factor *= 2;			
 			for (int i=0; i < 6; i++) matrix[i] *= factor;						
 			maxCoeffAbs *= factor;
 		}			
