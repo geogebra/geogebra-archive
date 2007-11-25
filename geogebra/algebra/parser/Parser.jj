@@ -284,11 +284,8 @@ ValidExpression buildValidExpression() :
 } 
 {         
      (  
-      LOOKAHEAD(2147483647)
-        ve = functioncommand()      
-      |	 
         LOOKAHEAD(2147483647)
-        ve = function()   
+        ve = functionExpressionnode()          
     |            
         LOOKAHEAD(2147483647)
          [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      
@@ -529,26 +526,61 @@ ExpressionNode cmdexpression():
 }
 
 /**
- * function = 	label(x) = expressionnode
+ * function = functionExpressionnode 
  */
 Function  function():
 {
     ExpressionNode rhs;
     Token l = null;
-    Token var;
     Function f;
 }
-{    
-l = <FUNCTION_LABEL>
+{          
 (
-// e.g. f(x) =  x^2	
-	 <VARX> ")" "="	 rhs = expressionnode()
+	   // f(x) =  x^2 + 3	
+	 	 rhs = functionExpressionnode()
 	    {
-	        f = new Function(rhs);
-	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
-	        return f;
+	    	if (rhs.getLeft() instanceof Function) {
+	    		f = (Function) rhs.getLeft();
+	    	}
+	    	else {
+		        f = new Function(rhs);		        
+		    }
+		    f.setLabel(rhs.getLabel());	       
+		    return f;
 	    }   
 )	   
+}
+
+/**
+ * function = 	label(x) = expressionnode 
+ * note: may also include commands in expressionnode
+ */
+ExpressionNode functionExpressionnode():
+{
+    ExpressionNode rhs;
+    Token l = null;
+    Token var;
+}
+{          
+(
+	   // f(x) =  x^2 + 3	
+	   l = <FUNCTION_LABEL> <VARX> ")" "="
+	 	 rhs = expressionnode()
+	    {	        
+	    	String label = l.image.substring(0,l.image.length()-1);	
+	    
+	        // convert to function if not only command
+	    	if (!(rhs.getLeft() instanceof Command)) {
+	    	    Function fun = new Function(rhs);
+	    	    fun.setLabel(label);
+       			rhs = new ExpressionNode(kernel, fun);       			   
+       		}
+       		
+       		rhs.setLabel(label);		
+       		return rhs;
+	    }   
+)	   
+
 /* 
 functions of other variables than x not implemented yet
 |
@@ -565,21 +597,41 @@ functions of other variables than x not implemented yet
 }
 
 /**
- * functioncommand = 	label(x) =  command 
- */
-Command  functioncommand():
+ * function = 	label(x) = ( expressionnode | command ) 
+ *
+ValidExpression  functionOrCommand():
 {
+    ExpressionNode rhs;
+    Token l = null;
+    Token var;
+    Function f;
     Command c;
-    Token l;
 }
-{    
-// e.g. f(x) = Derivative[ 3 x^2 ]
-	l = <FUNCTION_LABEL> <VARX> ")" "="	 c = command()
+{   
+    LOOKAHEAD(10)  
+   (      
+	// f(x) = Derivative[ 3 x^2 ]
+	l = <FUNCTION_LABEL> <VARX> ")" "="  
+	    c = command()
 	    {	    		       
 	        c.setLabel(l.image.substring(0,l.image.length()-1));	       
 	        return c;
 	    }   
+	)
+	|
+	(
+	   // f(x) =  x^2 + 3	
+	    l = <FUNCTION_LABEL> <VARX> ")" "="  
+	 	rhs = expressionnode()
+	    {
+	        f = new Function(rhs);
+	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
+	        return f;
+	    }   
+    )	   
+
 }
+*/
 
 /**
  *  expression =  term <OR> term

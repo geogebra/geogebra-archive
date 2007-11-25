@@ -203,21 +203,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     			GeoElement geo = (GeoElement) ce;
     			macroKernel.addReservedLabel(geo.getLabel()); 
     		}    					
-    	}
-    	
-    	// change kernel settings temporarily
-    	int oldCoordStlye = kernel.getCoordStyle();
-    	int oldDecimals = kernel.getPrintDecimals();
-    	int oldPrintForm = kernel.getCASPrintForm();        
-        kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
-        kernel.setPrintDecimals(50);
-        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+    	}    	    	
     	
     	try {    	
     		// get XML for macro construction of P -> Q
     	
     		
-        	String locusConsXML = Macro.buildMacroXML(locusConsElements);  
+        	String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements);  
         	
         	// TODO: remove
         	//System.out.println(locusConsXML);
@@ -245,12 +237,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		locus.setUndefined();
     		macroCons = null;
     	}    
-    	
-    	 // restore old kernel settings
-        kernel.setPrintDecimals(oldDecimals);
-        kernel.setCoordStyle(oldCoordStlye);   
-        kernel.setCASPrintForm(oldPrintForm);
-
+    	   
 //    	//System.out.println("P: " + P + ", kernel class: " + P.kernel.getClass());
 //    	System.out.println("Pcopy: " + Pcopy  + ", kernel class: " + Pcopy.kernel.getClass());
 //    	//System.out.println("P == Pcopy: " + (P == Pcopy));

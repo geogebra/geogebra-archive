@@ -104,7 +104,7 @@ GeoDeriveable, ParametricCurve {
 			// we need to check the references to all geos in its function's expression
 			if (!geoFun.isIndependent()) {
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
-				algoMacro.initFunction(this.fun);								
+				algoMacro.initFunction(this.fun);	
 			}			
 		}
 	}

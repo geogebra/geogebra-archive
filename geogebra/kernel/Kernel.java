@@ -3914,4 +3914,7 @@ public class Kernel {
 		this.allowVisibilitySideEffects = allowVisibilitySideEffects;
 	}
 
+	public boolean isMacroKernel() {
+		return false;
+	}
 }

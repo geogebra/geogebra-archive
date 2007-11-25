@@ -43,6 +43,10 @@ implements Comparable {
 	public Construction getConstruction() {
 		return cons;
 	}
+	
+	public final Kernel getKernel() {
+		return kernel;
+	}
 
 	/**
 	 * Returns the smallest possible construction index for this object in its construction.

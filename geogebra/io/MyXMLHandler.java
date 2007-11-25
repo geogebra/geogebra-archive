@@ -1468,7 +1468,11 @@ public class MyXMLHandler implements DocHandler {
         }
 
         try {
-            GeoNumeric num = (GeoNumeric) geo;
+        	 // don't create sliders in macro construction
+            if (geo.getKernel().isMacroKernel()) return true;
+        	
+            GeoNumeric num = (GeoNumeric) geo;                      
+            
             String str = (String) attrs.get("min");
             if (str != null) {
             	num.setIntervalMin(Double.parseDouble(str));

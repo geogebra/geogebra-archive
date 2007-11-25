@@ -66,7 +66,8 @@ public class GeoFunctionConditional extends GeoFunction {
 			
 		if (condFun == null) { 
 			condFun = (GeoFunction) geoFunCond.condFun.copyInternal(cons);			
-		}		
+		}	
+		
 		if (isAlgoMacroOutput()) {
 			condFun.setAlgoMacroOutput(true);
 			condFun.setParentAlgorithm(getParentAlgorithm());

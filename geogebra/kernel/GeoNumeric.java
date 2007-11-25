@@ -116,7 +116,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 	
 	public void setEuclidianVisible(boolean visible) {
-		if (visible == isSetEuclidianVisible()) return;		
+		if (visible == isSetEuclidianVisible() || kernel.isMacroKernel() ) return;		
+		
+	
 		
 		// slider is only possible for independent
 		// number with given min and max
@@ -128,7 +130,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 						double min = Math.min(DEFAULT_SLIDER_MIN, Math.floor(value));
 						double max = Math.max(DEFAULT_SLIDER_MAX, Math.ceil(value));
 						setIntervalMin(min);
-						setIntervalMax(max);					
+						setIntervalMax(max);												
 					} else {
 						// max is available but no min
 						double min = Math.min(DEFAULT_SLIDER_MIN, Math.floor(value));
@@ -235,7 +237,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	}
 
 	public void setValue(double x) {
-		if (intervalMinActive && x < intervalMin) {	
+		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
 		}					
 		else if (intervalMaxActive && x > intervalMax) {
@@ -437,7 +439,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	
 	public void setIntervalMax(double max) {	
 		if (Double.isNaN(max) || Double.isInfinite(max)) return;
-				
+	
 		intervalMax = max;
 		intervalMaxActive = true;
 		

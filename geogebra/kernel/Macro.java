@@ -261,7 +261,7 @@ public class Macro {
     	}    	    	
     	    	
 		// 5) create XML representation for macro-construction
-    	String macroConsXML = buildMacroXML(macroConsOrigElements);
+    	String macroConsXML = buildMacroXML(input[0].kernel, macroConsOrigElements);
     	 	    
     	// if we used temp labels in step (4) remove them again
     	for (int i=0; i < input.length; i++) {    		
@@ -335,7 +335,15 @@ public class Macro {
 	 * @param macroConsElements
 	 * @return
 	 */
-	 public static String buildMacroXML(TreeSet macroConsElements) {				 
+	 public static String buildMacroXML(Kernel kernel, TreeSet macroConsElements) {	
+		// change kernel settings temporarily
+		int oldCoordStlye = kernel.getCoordStyle();
+		int oldDecimals = kernel.getPrintDecimals();
+		int oldPrintForm = kernel.getCASPrintForm();        
+	    kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
+	    kernel.setPrintDecimals(50);
+	    kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+		 
     	// get the XML for all macro construction elements
     	StringBuffer macroConsXML = new StringBuffer(500);
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
@@ -361,7 +369,12 @@ public class Macro {
 //    	System.out.println("*** Macro XML BEGIN ***");
 //    	System.out.println(macroConsXML);
 //    	System.out.flush();
-//    	System.out.println("*** Macro XML END ***");   	
+//    	System.out.println("*** Macro XML END ***"); 
+    	
+    	 // restore old kernel settings
+        kernel.setPrintDecimals(oldDecimals);
+        kernel.setCoordStyle(oldCoordStlye);   
+        kernel.setCASPrintForm(oldPrintForm);
     	
     	return macroConsXML.toString();
 	 }

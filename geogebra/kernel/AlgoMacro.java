@@ -39,11 +39,8 @@ public class AlgoMacro extends AlgoElement {
 	private FastHashMapKeyless macroToAlgoMap;
 	
 	// all keys of macroToAlgoMap that are not part of macroInput
-	private ArrayList outputAndReferencedGeos;
-	
-	// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
-	// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
-	private GeoElement [] macroOutputAndRefGeos, algoOutputAndRefGeos;	
+	private ArrayList macroOutputAndReferencedGeos;
+	private ArrayList algoOutputAndReferencedGeos; // for efficiency, see getMacroConstructionState()	
         
     /**
      * Creates a new algorithm that applies a macro to the
@@ -95,10 +92,10 @@ public class AlgoMacro extends AlgoElement {
     		
     		// set macro geos to algo geos state
     		setMacroConstructionState();
-    	
+    			
     		// update all algorithms of macro-construction
     		macro.updateAllAlgorithms();      
-        
+       
     		// set algo geos to macro geos state   
     		getMacroConstructionState();
     		
@@ -134,6 +131,7 @@ public class AlgoMacro extends AlgoElement {
 		// set input objects of macro construction		
 		for (int i=0; i < macroInput.length; i++) {   
 			macroInput[i].set(input[i]);				
+					
 			//System.out.println("SET INPUT object: " + input[i] + " => " + macroInput[i]);
     	}		
 	}
@@ -143,21 +141,25 @@ public class AlgoMacro extends AlgoElement {
 	 * Sets algo geos to the current state of macro geos.	 
 	 */
 	final void getMacroConstructionState() {	
-		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
-		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
-		for (int i=0; i < macroOutputAndRefGeos.length; i++) {											
-			algoOutputAndRefGeos[i].set(macroOutputAndRefGeos[i]);		
-
-			//System.out.println("RESULT from macro: " + macroOutputAndRefGeos[i] + " => " + algoOutputAndRefGeos[i]);
+		// for efficiency: instead of macroOutputAndReferencedGeos and lookups in macroToAlgoMap 
+		// we use two arrays with corresponding macro and algo geos
+		int size = macroOutputAndReferencedGeos.size();
+		for (int i=0; i < size; i++) {	
+			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
+			GeoElement algoGeo = (GeoElement) algoOutputAndReferencedGeos.get(i);							
+			algoGeo.set(macroGeo);	
 		}
 		
-		/* old code:
-		int size = outputAndReferencedGeos.size();
-		for (int i=0; i < size; i++) {			
-			GeoElement macroGeo = (GeoElement) outputAndReferencedGeos.get(i);
-			GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);							
-			algoGeo.set(macroGeo);					
-		}*/	
+// old code:		
+//		int size = macroOutputAndReferencedGeos.size();
+//		for (int i=0; i < size; i++) {			
+//			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
+//			GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);							
+//			algoGeo.set(macroGeo);	
+//			
+//			System.out.println("RESULT from macro: " + macroGeo + " => " + algoGeo);
+//	
+//		}
 	}
 	
 	
@@ -185,7 +187,8 @@ public class AlgoMacro extends AlgoElement {
 	 */
 	private void initMap() {	
 		macroToAlgoMap = new FastHashMapKeyless();
-		outputAndReferencedGeos = new ArrayList();
+		macroOutputAndReferencedGeos = new ArrayList();
+		algoOutputAndReferencedGeos = new ArrayList();
 			
 		// INPUT initing	
 		// map macro input to algo input
@@ -203,19 +206,7 @@ public class AlgoMacro extends AlgoElement {
 		// note: we do this in an extra loop to make sure we don't create output objects twice	
 		for (int i=0; i < macroOutput.length; i++) { 
 			initSpecialReferences(macroOutput[i], output[i]);					
-    	}								
-		
-		// for efficiency: instead of outputAndReferencedGeos and lookups in macroToAlgoMap 
-		// we use two arrays with corresponding macro and algo geos in getMacroConstructionState()
-		int size = outputAndReferencedGeos.size();
-		macroOutputAndRefGeos = new GeoElement[size];
-		algoOutputAndRefGeos = new GeoElement[size];
-		for (int i=0; i < size; i++) {
-			macroOutputAndRefGeos[i] = (GeoElement) outputAndReferencedGeos.get(i);
-		}				
-		for (int i=0; i < size; i++) {
-			algoOutputAndRefGeos[i] = (GeoElement) macroToAlgoMap.get(macroOutputAndRefGeos[i]);
-		}								
+    	}																		
 	}
 	
 	/**
@@ -227,7 +218,9 @@ public class AlgoMacro extends AlgoElement {
 			macroToAlgoMap.put(macroGeo, algoGeo);	
 			
 			if (!isMacroInputObject(macroGeo)) {						
-				outputAndReferencedGeos.add(macroGeo);
+				macroOutputAndReferencedGeos.add(macroGeo);
+				// for efficiency: to avoid lookups in macroToAlgoMap
+				algoOutputAndReferencedGeos.add(algoGeo); 
 			}					
 		}
 	}
@@ -247,8 +240,8 @@ public class AlgoMacro extends AlgoElement {
 		// create a new geo and update the map
 		if (algoGeo == null) {		
 			algoGeo = createAlgoCopy(macroGeo);
-			map(macroGeo, algoGeo);										
-		}					
+			map(macroGeo, algoGeo);	
+		}			
 		
 		return algoGeo;		
 	}
@@ -423,7 +416,7 @@ public class AlgoMacro extends AlgoElement {
 		if (left.isGeoElement()) {								
 			GeoElement referencedGeo = (GeoElement) left;			
 			if (macro.isInMacroConstruction(referencedGeo)) {		
-				exp.setLeft(getAlgoGeo(referencedGeo));				
+				exp.setLeft(getAlgoGeo(referencedGeo));			
 			}	
 		}
 		else if (left.isExpressionNode()) {
@@ -436,7 +429,7 @@ public class AlgoMacro extends AlgoElement {
 		else if (right.isGeoElement()) {
 			GeoElement referencedGeo = (GeoElement) right;
 			if (macro.isInMacroConstruction(referencedGeo)) {		
-				exp.setRight(getAlgoGeo(referencedGeo));		
+				exp.setRight(getAlgoGeo(referencedGeo));
 			}	
 		}
 		else if (right.isExpressionNode()) {

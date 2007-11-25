@@ -24,10 +24,15 @@ public class MacroKernel extends Kernel  {
 	public MacroKernel(Kernel parentKernel) {
 		this.parentKernel = parentKernel;
 		app = parentKernel.app;
-		setUndoActive(false);		
+		setUndoActive(false);
+		setAllowVisibilitySideEffects(false);
 		
 		macroCons = new MacroConstruction(this);
 		cons = macroCons;				
+	}
+	
+	public final boolean isMacroKernel() {
+		return true;
 	}
 	
 	public Kernel getParentKernel() {
