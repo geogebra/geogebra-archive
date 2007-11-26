@@ -167,8 +167,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	 * translate function by vector v
 	 */
 	final public void translate(GeoVector v) {
-		funX.translate(v.x, 0);
-		funY.translate(0, v.y);
+		funX.translateY(v.x);
+		funY.translateY(v.y);
 	}
 	
 	final public boolean isTranslateable() {

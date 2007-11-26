@@ -401,7 +401,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         return node;
     }
     
-    final private void translateY(double vy) {                                  
+    final public void translateY(double vy) {                                  
         try { // is there a constant number to the right
             MyDouble num = (MyDouble) expression.getRight();
             if (num == fVar) { // right side might be the function variable
