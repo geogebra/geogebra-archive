@@ -2818,7 +2818,8 @@ public class Application implements	KeyEventDispatcher {
         boolean success = loadXML(file, isMacroFile);  
        
         if (isMacroFile) {
-        	updateToolBar();
+        	updateToolBar();        	
+        	updateContentPane();
         } else {	        
 	        // update GUI                
 	        if (euclidianView.hasPreferredSize()) {
