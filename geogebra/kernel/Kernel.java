@@ -2139,6 +2139,14 @@ public class Kernel {
 	}
 
 	/** 
+	 * Corner of text Michael Borcherds 2007-11-26
+	 */
+	final public GeoPoint Corner(String label, GeoText txt, NumberValue number) {
+		AlgoTextCorner algo = new AlgoTextCorner(cons, label, txt, number);	
+		return algo.getCorner();
+	}
+
+	/** 
 	 * parabola with focus F and line l
 	 */
 	final public GeoConic Parabola(

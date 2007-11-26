@@ -31,6 +31,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -1335,6 +1336,16 @@ final public GeoElement[] process(Command c) throws MyError {
                 GeoElement[] ret =
                     { kernel.Corner(c.getLabel(), (GeoImage) arg[0], (NumberValue) arg[1])};
                 return ret;
+            }
+            // Michael Borcherds 2007-11-26 BEGIN Corner[] for textboxes
+            // Corner[ <Text>, <number> ]
+            else if ((ok[0] = (arg[0].isGeoText())) &&
+                    	(ok[1] = (arg[1].isNumberValue())))
+                {
+                        GeoElement[] ret =
+                        { kernel.Corner(c.getLabel(), (GeoText) arg[0], (NumberValue) arg[1])};
+                    return ret;
+                    // Michael Borcherds 2007-11-26 END
             } else {
             	if (!ok[0])
             		throw argErr(app, c.getName(), arg[0]);

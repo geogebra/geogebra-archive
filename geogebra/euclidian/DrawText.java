@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import atp.sHotEqn;
 
@@ -121,7 +122,15 @@ public final class DrawText extends Drawable {
 									
 			labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
 			eqn.setBounds(labelRectangle);							
-		}			                
+		}		
+		// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
+		Rectangle2D rect2=new Rectangle2D.Double(
+				view.toRealWorldCoordX(labelRectangle.x),
+				view.toRealWorldCoordY(labelRectangle.y),				                                 
+				view.toRealWorldCoordX(labelRectangle.x+labelRectangle.width)-view.toRealWorldCoordX(labelRectangle.x),
+				view.toRealWorldCoordY(labelRectangle.y+labelRectangle.height)-view.toRealWorldCoordY(labelRectangle.y));		                                 
+		text.setCorner(rect2);
+		// Michael Borcherds 2007-11-26 END
     }
 
     final public void draw(Graphics2D g2) {   	   

@@ -4,6 +4,7 @@ import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.util.Util;
 
 import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 
 public class GeoText extends GeoElement
 implements Locateable, AbsoluteScreenLocateable {
@@ -15,6 +16,7 @@ implements Locateable, AbsoluteScreenLocateable {
 	private String str; 	
 	private GeoPoint startPoint; // location of Text on screen
 	private boolean isLaTeX; // text is a LaTeX formula
+	private Rectangle2D corners; // corners of the text Michael Borcherds 2007-11-26
 	
 	// font options
 	private boolean serifFont = false;
@@ -507,5 +509,38 @@ implements Locateable, AbsoluteScreenLocateable {
 	}
 	public void setSerifFont(boolean serifFont) {
 		this.serifFont = serifFont;
+	}
+	public void calculateCornerPoint(GeoPoint result, int n) {	
+		// adapted from GeoImage by Michael Borcherds 2007-11-26
+		if (hasAbsoluteScreenLocation) {
+			result.setUndefined();
+			return;
+		}
+	
+		switch (n) {
+			case 4: // top left
+				result.setCoords((double)corners.getX(),(double)corners.getY(),1.0);
+				break;
+			
+			case 3: // top right
+				result.setCoords((double)(corners.getX()+corners.getWidth()),(double)corners.getY(),1.0);
+				break;
+				
+			case 2: // bottom right
+				result.setCoords(corners.getX()+corners.getWidth(),(double)(corners.getY()+corners.getHeight()),1.0);
+				break;
+				
+			case 1: // bottom left
+				result.setCoords((double)corners.getX(),(double)(corners.getY()+corners.getHeight()),1.0);
+				break;
+				
+			default:
+				result.setUndefined();
+		}	
+	}
+	
+	public void setCorner(Rectangle2D rect)
+	{ // Michael Borcherds 2007-11-26
+		corners=rect;
 	}
 }
