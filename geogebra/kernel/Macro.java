@@ -17,7 +17,6 @@ import geogebra.MyError;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.Util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
