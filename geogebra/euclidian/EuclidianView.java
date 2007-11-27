@@ -438,10 +438,11 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	// or use volatile image
 	// private int drawMode = DRAW_MODE_BACKGROUND_IMAGE;
 	private BufferedImage bgImage;
-
 	private Graphics2D bgGraphics; // g2d of bgImage
-
 	private Image resetImage;
+	
+	// temp image
+	private Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 
 	private StringBuffer sb = new StringBuffer();
 
@@ -3371,5 +3372,9 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 	public EuclidianController getEuclidianController() {
 		return euclidianController;
+	}
+	
+	final public Graphics2D getTempGraphics2D() {
+		return g2Dtemp;
 	}
 }

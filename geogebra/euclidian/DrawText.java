@@ -46,7 +46,7 @@ public final class DrawText extends Drawable {
     private GeoPoint loc; // text location
     
     private sHotEqn eqn;
-    private Dimension eqnSize;    
+    private Dimension eqnSize;        
     
     /** Creates new DrawText */
     public DrawText(EuclidianView view, GeoText text) {      
@@ -63,9 +63,11 @@ public final class DrawText extends Drawable {
         isVisible = geo.isEuclidianVisible();       				 
         if (eqn != null)
     		eqn.setVisible(isVisible);
-        if (!isVisible) return;        
+        if (!isVisible) return;          
         
-		labelDesc = text.getTextString();	
+        String newText = text.getTextString();
+       // boolean textChanged = labelDesc == null || !labelDesc.equals(newText);
+		labelDesc = newText;
 		isLaTeX = text.isLaTeX();			
         		
         // compute location of text		
@@ -108,6 +110,7 @@ public final class DrawText extends Drawable {
 		
 		updateFontSize();				
 			
+		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
 			eqn.setForeground(geo.objColor);		
 			eqn.setBackground(view.getBackground());
@@ -122,15 +125,23 @@ public final class DrawText extends Drawable {
 									
 			labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
 			eqn.setBounds(labelRectangle);							
-		}		
-		// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
-		Rectangle2D rect2=new Rectangle2D.Double(
-				view.toRealWorldCoordX(labelRectangle.x),
-				view.toRealWorldCoordY(labelRectangle.y),				                                 
-				view.toRealWorldCoordX(labelRectangle.x+labelRectangle.width)-view.toRealWorldCoordX(labelRectangle.x),
-				view.toRealWorldCoordY(labelRectangle.y+labelRectangle.height)-view.toRealWorldCoordY(labelRectangle.y));		                                 
-		text.setCorner(rect2);
-		// Michael Borcherds 2007-11-26 END
+		} 
+		else if (text.isNeedsUpdatedBoundingBox()) {
+			// ensure that bounding box gets updated by drawing text once
+			drawLabel(view.getTempGraphics2D());	
+		}
+		
+		if (text.isNeedsUpdatedBoundingBox()) {
+			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
+			double xRW = view.toRealWorldCoordX(labelRectangle.x);
+			double yRW = view.toRealWorldCoordY(labelRectangle.y);		
+			Rectangle2D rect2=new Rectangle2D.Double(
+					xRW, yRW,				                                 
+					view.toRealWorldCoordX(labelRectangle.x+labelRectangle.width)-xRW,
+					view.toRealWorldCoordY(labelRectangle.y+labelRectangle.height)-yRW);		                                 
+			text.setBoundingBox(rect2);
+			// Michael Borcherds 2007-11-26 END
+		}
     }
 
     final public void draw(Graphics2D g2) {   	   
@@ -188,13 +199,13 @@ public final class DrawText extends Drawable {
     	if (eqn != null) view.remove(eqn);
     }
 
-	final void updateFontSize() {				
+	final void updateFontSize() {	
 		// text's font size is relative to the global font size
 		int newFontSize = view.fontSize + text.getFontSize();		
 		int newFontStyle = text.getFontStyle();	
 		boolean newSerifFont = text.isSerifFont();
 		
-		if (fontSize !=newFontSize || fontStyle != newFontStyle || newSerifFont != serifFont) {		
+		if (fontSize !=newFontSize || fontStyle != newFontStyle || newSerifFont != serifFont) {					
 			super.updateFontSize();
 			
 			fontSize = newFontSize;
@@ -205,8 +216,8 @@ public final class DrawText extends Drawable {
 				setEqnFontSize();				
 			} else {				
 				textFont = new Font(serifFont ? "Serif" : "SansSerif", fontStyle, fontSize);				
-			}					
-		}					 
+			}		
+		}			
 	}
 	
 	private void setEqnFontSize() {		

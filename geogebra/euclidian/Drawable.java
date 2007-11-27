@@ -29,7 +29,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.geom.GeneralPath;
 
 /**
  *
@@ -95,8 +94,7 @@ public abstract class Drawable {
 			int fontSize = g2.getFont().getSize();
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, p.x, fontSize + p.y);			
 		}		
-	}
-	
+	}			
 	
 	final void drawMultilineText(Graphics2D g2) {
 		int lines = 0;				
@@ -149,9 +147,7 @@ public abstract class Drawable {
 			int height = (int) ( (lines +1)*lineSpread);
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
 		}
-	}
-	
-	
+	}		
 	
 	/**
 	 * Draws a string str with possible indices to g2 at position x, y. 

@@ -32,6 +32,10 @@ implements EuclidianViewAlgo {
         this.txt = txt;   
         this.number = number;
         
+        // make sure bounding box of text is kept up to date
+        // so we can use it in compute()
+        txt.setNeedsUpdatedBoundingBox(true);
+                
         corner = new GeoPoint(cons);                
         setInputOutput(); // for AlgoElement                
         compute();              

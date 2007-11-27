@@ -16,7 +16,10 @@ implements Locateable, AbsoluteScreenLocateable {
 	private String str; 	
 	private GeoPoint startPoint; // location of Text on screen
 	private boolean isLaTeX; // text is a LaTeX formula
-	private Rectangle2D corners; // corners of the text Michael Borcherds 2007-11-26
+	
+	// corners of the text Michael Borcherds 2007-11-26, see AlgoTextCorner
+	private Rectangle2D boundingBox; 
+	private boolean needsUpdatedBoundingBox = false;
 	
 	// font options
 	private boolean serifFont = false;
@@ -515,23 +518,23 @@ implements Locateable, AbsoluteScreenLocateable {
 		if (hasAbsoluteScreenLocation) {
 			result.setUndefined();
 			return;
-		}
+		}				
 	
 		switch (n) {
 			case 4: // top left
-				result.setCoords((double)corners.getX(),(double)corners.getY(),1.0);
+				result.setCoords(boundingBox.getX(),boundingBox.getY(),1.0);
 				break;
 			
 			case 3: // top right
-				result.setCoords((double)(corners.getX()+corners.getWidth()),(double)corners.getY(),1.0);
+				result.setCoords(boundingBox.getX()+boundingBox.getWidth(),boundingBox.getY(),1.0);
 				break;
 				
 			case 2: // bottom right
-				result.setCoords(corners.getX()+corners.getWidth(),(double)(corners.getY()+corners.getHeight()),1.0);
+				result.setCoords(boundingBox.getX()+boundingBox.getWidth(),boundingBox.getY()+boundingBox.getHeight(),1.0);
 				break;
 				
 			case 1: // bottom left
-				result.setCoords((double)corners.getX(),(double)(corners.getY()+corners.getHeight()),1.0);
+				result.setCoords(boundingBox.getX(),boundingBox.getY()+boundingBox.getHeight(),1.0);
 				break;
 				
 			default:
@@ -539,8 +542,16 @@ implements Locateable, AbsoluteScreenLocateable {
 		}	
 	}
 	
-	public void setCorner(Rectangle2D rect)
+	public void setBoundingBox(Rectangle2D rect)
 	{ // Michael Borcherds 2007-11-26
-		corners=rect;
+		boundingBox=rect;
+	}
+
+	public final boolean isNeedsUpdatedBoundingBox() {
+		return needsUpdatedBoundingBox;
+	}
+
+	public final void setNeedsUpdatedBoundingBox(boolean needsUpdatedBoundingBox) {
+		this.needsUpdatedBoundingBox = needsUpdatedBoundingBox;
 	}
 }

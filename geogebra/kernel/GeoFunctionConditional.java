@@ -188,7 +188,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	/**
 	 * Returns the corresponding Function for the given x-value.
 	 * This is important for conditional functions where we have
-	 * two differen Function objects.
+	 * two different Function objects.
 	 */
 	public Function getFunction(double x) {
 		if (elseFun == null) { 
