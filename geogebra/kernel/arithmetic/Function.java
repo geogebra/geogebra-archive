@@ -308,8 +308,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         // translate y
         if (!kernel.isZero(vy)) {                       
             if (isLeaf && left != fVar) { // special case f(x) = constant               
-                MyDouble c = (MyDouble) expression.getLeft();
-                c.set(c.getDouble() + vy);          
+                MyDouble c = ((NumberValue) expression.getLeft()).getNumber();
+                c.set(c.getDouble() + vy);
+                expression.setLeft(c);
             } else {                
                 // f(x) = f(x) + vy
                 translateY(vy);

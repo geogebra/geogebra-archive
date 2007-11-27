@@ -208,14 +208,14 @@ GeoDeriveable, ParametricCurve {
 	 * translate function by vector v
 	 */
 	final public void translate(GeoVector v) {
-		fun.translate(v.x, v.y);
+		translate(v.x, v.y);
 	}
 	
 	final public boolean isTranslateable() {
 		return fun != null && !isBooleanFunction();
 	}
 	
-	final public void translate(double vx, double vy) {
+	public void translate(double vx, double vy) {
 		fun.translate(vx, vy);
 	}
 

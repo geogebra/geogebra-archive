@@ -172,7 +172,18 @@ public class GeoFunctionConditional extends GeoFunction {
 			else
 				return elseFun.evaluate(x);
 		}		
-	}		
+	}	
+	
+	public void translate(double vx, double vy) {	
+		// translate condition by vx, thus
+		// changing every x into (x - vx)
+		condFun.translate(vx, 0);
+		
+		// translate if and else parts too
+		ifFun.translate(vx, vy);	
+		if (elseFun != null)
+			elseFun.translate(vx, vy);			
+	}
 	
 	/**
 	 * Returns the corresponding Function for the given x-value.
@@ -203,6 +214,8 @@ public class GeoFunctionConditional extends GeoFunction {
 	public boolean isPolynomialFunction(boolean forRootFinding, boolean symbolic) {		
 		return false;   			
 	}		
+	
+
 	
 	public final String toString() {
 		sbToString.setLength(0);
