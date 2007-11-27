@@ -64,8 +64,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import javax.swing.ToolTipManager;
 
@@ -461,9 +459,13 @@ final public class EuclidianController implements MouseListener,
 			RIGHT_CLICK = true;				
 			return;
 		} 
-		else if (e.isShiftDown() // All Platforms: Shift key
-				|| e.isControlDown() // old Windows key: Ctrl key 
-				) 
+		else if (
+				app.isShiftDragZoomEnabled() && 
+				(
+					e.isShiftDown() // All Platforms: Shift key
+					|| 
+					e.isControlDown() // old Windows key: Ctrl key 
+				)) 
 		{
 			TEMPORARY_MODE = true;
 			oldMode = mode; // remember current mode	
@@ -4321,7 +4323,8 @@ final public class EuclidianController implements MouseListener,
 				!app.isApplet() ||
 				mode == EuclidianView.MODE_ZOOM_IN ||
 				mode == EuclidianView.MODE_ZOOM_OUT ||
-				e.isControlDown() || e.isMetaDown() || e.isShiftDown();			
+				(app.isShiftDragZoomEnabled() && 
+					(e.isControlDown() || e.isMetaDown() || e.isShiftDown()));			
 			if (!allowMouseWheel)
 				return;
 		

@@ -69,6 +69,7 @@ public class GeoGebraApplet extends JApplet {
 	private EuclidianView ev;
 	boolean showOpenButton, showToolBar, showToolBarHelp, showAlgebraInput, undoActive;
 	boolean enableRightClick = true;
+	boolean enableShiftDragZoom = true;
 	boolean showMenuBar = false;
 	boolean showResetIcon = false;
 	private boolean firstAppOpen = true;
@@ -123,6 +124,9 @@ public class GeoGebraApplet extends JApplet {
 			
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(getParameter("enableRightClick"));
+		
+		// enableShiftDragZoom, default is "true"
+		enableShiftDragZoom = !"false".equals(getParameter("enableShiftDragZoom"));		
 		
 		undoActive = showToolBar || showMenuBar;
 		
@@ -214,6 +218,7 @@ public class GeoGebraApplet extends JApplet {
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
+		app.setShiftDragZoomEnabled(enableShiftDragZoom);
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
@@ -354,10 +359,20 @@ public class GeoGebraApplet extends JApplet {
 	 * Evaluates the given string as if it was entered into GeoGebra's 
 	 * input text field. 	 
 	 */
-	public synchronized void evalCommand(String cmdString) {
-			kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
+	public synchronized boolean evalCommand(String cmdString) {
+		GeoElement [] result = kernel.getAlgebraProcessor().
+								processAlgebraCommand(cmdString, false);
+		// return success
+		return result != null;
 	}
 
+	/**
+	 * Turns showing of error dialogs on (true) or (off). 
+	 * Note: this is especially useful together with evalCommand().
+	 */
+	public synchronized void setErrorDialogsActive(boolean flag) {
+		app.setErrorDialogsActive(flag);
+	}
 	
 	/**
 	 * Resets the initial construction (given in filename parameter) of this applet.	 

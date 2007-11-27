@@ -115,7 +115,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "November 20, 2007";
+    public static final String buildDate = "November 27, 2007";
 	
     public static final String versionString = "3.0 (RC 3)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -268,6 +268,8 @@ public class Application implements	KeyEventDispatcher {
                 
     private boolean undoActive = true;
     private boolean rightClickEnabled = true;
+    private boolean shiftDragZoomEnabled = true;
+    private boolean isErrorDialogsActive = true;
 
     private static LinkedList fileList = new LinkedList();
     private File currentPath, currentImagePath, currentFile = null;
@@ -1342,29 +1344,23 @@ public class Application implements	KeyEventDispatcher {
             JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void showError(String key) {   
-    	
-        String text = getError(key);       
-        JOptionPane.showConfirmDialog(
-        		mainComp,
-            text,
-            getError("Error"),
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.WARNING_MESSAGE);
+    public void showError(String key) {       	
+    	showErrorDialog(getError(key));              
     }
 
     public void showError(MyError e) {   
-    	// TODO: remove
-    	e.printStackTrace();
+    	showErrorDialog(e.getLocalizedMessage());
+    }
+    
+    private void showErrorDialog(String msg) {
+    	if (!isErrorDialogsActive) return;
     	
-    	
-    	
-        JOptionPane.showConfirmDialog(
-        		mainComp,
-            e.getLocalizedMessage(),
-            getError("Error"),
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.WARNING_MESSAGE);
+    	 JOptionPane.showConfirmDialog(
+         		mainComp,
+             msg,
+             getError("Error"),
+             JOptionPane.DEFAULT_OPTION,
+             JOptionPane.WARNING_MESSAGE);
     }
         
     
@@ -1483,7 +1479,9 @@ public class Application implements	KeyEventDispatcher {
        * Displays the rename dialog for geo
        */
     public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText) {
-		geo.setLabelVisible(true);
+		if (!rightClickEnabled) return;
+    	
+    	geo.setLabelVisible(true);
 		geo.updateRepaint();
     	
     	InputHandler handler = new RenameInputHandler(this, geo, storeUndo);
@@ -3629,6 +3627,22 @@ public class Application implements	KeyEventDispatcher {
 		}
 
 //		System.out.println("copied geogebra jar files from " + srcDir + " to " + destDir);	
+	}
+
+	public final boolean isErrorDialogsActive() {
+		return isErrorDialogsActive;
+	}
+
+	public final void setErrorDialogsActive(boolean isErrorDialogsActive) {
+		this.isErrorDialogsActive = isErrorDialogsActive;
+	}
+
+	public final boolean isShiftDragZoomEnabled() {
+		return shiftDragZoomEnabled;
+	}
+
+	public final void setShiftDragZoomEnabled(boolean shiftDragZoomEnabled) {
+		this.shiftDragZoomEnabled = shiftDragZoomEnabled;
 	}
 	
 	
