@@ -50,7 +50,7 @@ public class Polynomial implements Serializable, ExpressionValue {
         //System.out.println("poly copy constructor output: " + this);        
     }
     
-    public ExpressionValue deepCopy() {
+    public ExpressionValue deepCopy(Kernel kernel) {
         return new Polynomial(kernel, this);
     }
     

@@ -48,7 +48,7 @@ public class Term implements Comparable, Serializable {
     public Term(Term t) {                
         kernel = t.kernel;
         variables = new StringBuffer(t.variables.toString());
-        coefficient = ExpressionNode.copy(t.coefficient);               
+        coefficient = ExpressionNode.copy(t.coefficient, kernel);               
     }
     
     

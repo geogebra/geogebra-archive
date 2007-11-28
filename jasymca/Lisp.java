@@ -506,6 +506,15 @@ public class Lisp{
 				if(car(expr) instanceof String){ // Function?
 					return list(car(expr), list(in_pr(cdr(expr))));
 				}
+				
+				// TODO: remove
+				try {
+					throw new Exception("Illegal expression: "+expr);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 				System.out.println("Illegal expression: "+expr);
 				return null;
 		}

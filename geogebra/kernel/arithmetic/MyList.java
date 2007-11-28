@@ -106,13 +106,13 @@ public class MyList extends ValidExpression implements ListValue {
 		return false;
 	}
 
-	public ExpressionValue deepCopy() {
+	public ExpressionValue deepCopy(Kernel kernel) {
 		// copy arguments
 		int size = listElements.size();
 		MyList c = new MyList(kernel, size());
 
 		for (int i = 0; i < size; i++) {
-			c.addListElement(((ExpressionNode) listElements.get(i)).getCopy());
+			c.addListElement(((ExpressionNode) listElements.get(i)).getCopy(kernel));
 		}
 		return c;
 	}

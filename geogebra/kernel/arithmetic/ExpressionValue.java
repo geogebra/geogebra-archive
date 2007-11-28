@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.Kernel;
+
 import java.util.HashSet;
 
 /**
@@ -38,7 +40,7 @@ public interface ExpressionValue {
 	public boolean isGeoElement();
 	public boolean isVariable();
 	public boolean contains(ExpressionValue ev);
-	public ExpressionValue deepCopy();
+	public ExpressionValue deepCopy(Kernel kernel);
     public ExpressionValue evaluate();
     public HashSet getVariables();   
     public String toValueString();

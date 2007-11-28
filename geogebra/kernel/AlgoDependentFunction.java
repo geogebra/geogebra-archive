@@ -94,7 +94,7 @@ public class AlgoDependentFunction extends AlgoElement {
         if (isDefined && expContainsFunctions) {
             // expand the functions and derivatives in expression tree
             ExpressionValue ev = null;
-            ev = expandFunctionDerivativeNodes(expression.getCopy());
+            ev = expandFunctionDerivativeNodes(expression.deepCopy(kernel));
 
             ExpressionNode node;
             if (ev.isExpressionNode()) 
@@ -135,7 +135,7 @@ public class AlgoDependentFunction extends AlgoElement {
                 	Function fun = ((Functional) leftValue).getFunction();
                 	FunctionVariable x = fun.getFunctionVariable();
                 	//  don't destroy the function
-                	ExpressionNode funcExpression = fun.getExpression().getCopy();
+                	ExpressionNode funcExpression = fun.getExpression().getCopy(fun.getKernel());
                 	// now replace every x in function by the expanded argument
                 	return funcExpression.replace(x, 
                                     expandFunctionDerivativeNodes(node.getRight()));                    

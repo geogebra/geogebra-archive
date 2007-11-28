@@ -65,7 +65,7 @@ implements VectorValue {
         y = v.y;
     }
     
-	public ExpressionValue deepCopy() {
+	public ExpressionValue deepCopy(Kernel kernel) {
 		return new GeoVec2D(this);
 	}   
 	

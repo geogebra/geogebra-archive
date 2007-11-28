@@ -139,7 +139,8 @@ public class AlgorithmSet {
     final public void updateAllUntil(AlgoElement lastAlgoToUpdate) {
         Link cur = head;
         while (cur != null) {        	
-        	cur.algo.update();
+        	cur.algo.update();        	
+        	
         	if (cur.algo == lastAlgoToUpdate) 
         		return;
             cur = cur.next;

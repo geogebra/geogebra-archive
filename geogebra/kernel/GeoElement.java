@@ -394,9 +394,9 @@ public abstract class GeoElement
 	}*/
 	
 	
-	public ExpressionValue deepCopy() {
+	public ExpressionValue deepCopy(Kernel kernel) {
 		//default implementation: changed in some subclasses
-		return copy();
+		return copy();				
 	}
 	
 	public void resolveVariables() {     
@@ -1308,7 +1308,7 @@ public abstract class GeoElement
 	/**
 	 * add algorithm to dependency list of this GeoElement
 	 */
-	final void addAlgorithm(AlgoElement algorithm) {
+	final void addAlgorithm(AlgoElement algorithm) {		
 		algorithmList.add(algorithm);
 		addToUpdateSets(algorithm);
 	}

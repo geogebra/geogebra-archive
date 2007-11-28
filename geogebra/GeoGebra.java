@@ -23,13 +23,13 @@ import geogebra.gui.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -41,7 +41,8 @@ import javax.swing.UIManager;
 /**
  * GeoGebra's main window. 
  */
-public class GeoGebra extends JFrame implements WindowFocusListener {
+public class GeoGebra extends JFrame implements WindowFocusListener
+{
 	
 	private static final int DEFAULT_WIDTH = 900;
 	private static final int DEFAULT_HEIGHT = 650;
@@ -256,6 +257,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		wnd.getContentPane().add(app.buildApplicationPanel());					
 		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
+		
 		updateAllTitles();
 		app.initInBackground();		
 		
@@ -311,7 +313,9 @@ public class GeoGebra extends JFrame implements WindowFocusListener {
 		return null;
 	}
 
-	
+	public boolean isIconified() {
+		return getExtendedState() == JFrame.ICONIFIED;		
+	}
 	
 
 }

@@ -209,18 +209,18 @@ implements ExpressionValue {
             return new ExpressionNode(kernel, right);
     }
     
-    public ExpressionValue deepCopy() {
-        return getCopy();
+    public ExpressionValue deepCopy(Kernel kernel) {
+        return getCopy(kernel);
     }
     
     /** copy the whole tree structure except leafs */
-    public ExpressionNode getCopy() {
+    public ExpressionNode getCopy(Kernel kernel) {
         //System.out.println("getCopy() input: " + this);   
         ExpressionNode newNode = null;
         ExpressionValue lev = null, rev = null;                
         
-        if (left != null) lev = copy(left);
-        if (right != null) rev = copy(right);
+        if (left != null) lev = copy(left, kernel);
+        if (right != null) rev = copy(right, kernel);
         
         if (lev != null) {
             newNode = new ExpressionNode(kernel, lev, operation, rev);
@@ -237,17 +237,18 @@ implements ExpressionValue {
     }        
     
     /** deep copy except for GeoElements */
-    public static ExpressionValue copy(ExpressionValue ev) {
+    public static ExpressionValue copy(ExpressionValue ev, Kernel kernel) {
         if (ev == null) return null;
         
         ExpressionValue ret = null;        
         //System.out.println("copy ExpressionValue input: " + ev);        
         if (ev.isExpressionNode()) {
-            ret = ((ExpressionNode)ev).getCopy(); 
+        	ExpressionNode en = (ExpressionNode) ev;
+            ret = en.getCopy(kernel); 
         } else if (ev.isPolynomialInstance()) {           
-            ret = ev.deepCopy();              
+            ret = ev.deepCopy(kernel);              
         } else if (ev.isConstant()) {           
-            ret = ev.deepCopy();             
+            ret = ev.deepCopy(kernel);             
         } else {            
             ret = ev;                        
         }           
@@ -1742,7 +1743,7 @@ implements ExpressionValue {
         
     private String printCASstring(boolean symbolic) {  
         String ret = null;
-                    
+
         if (leaf) { // leaf is GeoElement or not      
         	/*
         	if (symbolic) {

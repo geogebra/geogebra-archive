@@ -41,7 +41,7 @@ public class Variable implements ExpressionValue {
         this.kernel = kernel;
     }      
     
-	public ExpressionValue deepCopy() {
+	public ExpressionValue deepCopy(Kernel kernel) {
 		return new Variable(kernel, name);
 	}   
     

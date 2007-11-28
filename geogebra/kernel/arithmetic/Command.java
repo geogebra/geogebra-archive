@@ -194,12 +194,12 @@ implements ExpressionValue {
         return evaluate().isTextValue();
     }   
 
-    public ExpressionValue deepCopy() {
+    public ExpressionValue deepCopy(Kernel kernel) {
         Command c = new Command(kernel, name, false);
         // copy arguments     
         int size = args.size();
         for (int i=0; i < size; i++) {
-            c.addArgument(((ExpressionNode) args.get(i)).getCopy());
+            c.addArgument(((ExpressionNode) args.get(i)).getCopy(kernel));
         }
         return c;
     }

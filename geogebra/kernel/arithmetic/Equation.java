@@ -65,8 +65,8 @@ public class Equation extends ValidExpression {
         
      // build normal form polynomial        
         // copy the expression trees
-        ExpressionNode leftEN  = lhs.getCopy();
-        ExpressionNode rightEN = rhs.getCopy();
+        ExpressionNode leftEN  = lhs.getCopy(kernel);
+        ExpressionNode rightEN = rhs.getCopy(kernel);
         
         // ensure that they only consist of polynomials
         leftEN.makePolynomialTree();

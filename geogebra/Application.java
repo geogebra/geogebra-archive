@@ -1324,7 +1324,7 @@ public class Application implements	KeyEventDispatcher {
         JOptionPane.showConfirmDialog(
             mainComp,
             new Relation(kernel).relation(a, b),
-            getCommand("Relation"),
+            getPlain("ApplicationName") + " - " + getCommand("Relation"),
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.INFORMATION_MESSAGE);
     }
@@ -1339,7 +1339,7 @@ public class Application implements	KeyEventDispatcher {
         JOptionPane.showConfirmDialog(
         		mainComp,
             text,
-            getMenu("Help"),
+            getPlain("ApplicationName") + " - " +getMenu("Help"),
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.PLAIN_MESSAGE);
     }
@@ -1358,7 +1358,7 @@ public class Application implements	KeyEventDispatcher {
     	 JOptionPane.showConfirmDialog(
          		mainComp,
              msg,
-             getError("Error"),
+             getPlain("ApplicationName") + " - " + getError("Error"),
              JOptionPane.DEFAULT_OPTION,
              JOptionPane.WARNING_MESSAGE);
     }
@@ -1368,7 +1368,7 @@ public class Application implements	KeyEventDispatcher {
         JOptionPane.showConfirmDialog(
         		mainComp,
             message,
-            getMenu("Info"),
+            getPlain("ApplicationName") + " - " + getMenu("Info"),
             JOptionPane.DEFAULT_OPTION,
             JOptionPane.INFORMATION_MESSAGE);
     }
@@ -2890,11 +2890,14 @@ public class Application implements	KeyEventDispatcher {
     		propDialog.cancel();
     	euclidianView.reset();
     	
+    	// use null component for iconified frame
+    	Component comp = frame != null && !frame.isIconified() ? frame : null;
+    	
         int returnVal =
             JOptionPane.showConfirmDialog(
-                mainComp,
+            		comp,
                 getMenu("SaveCurrentFileQuestion"),
-                getPlain("Question"),
+                getPlain("ApplicationName") + " - " + getPlain("Question"),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 

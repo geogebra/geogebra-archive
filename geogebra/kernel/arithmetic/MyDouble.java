@@ -54,7 +54,7 @@ implements NumberValue {
         isAngle = d.isAngle;
     }    
     
-	public ExpressionValue deepCopy() {
+	public ExpressionValue deepCopy(Kernel kernel) {
 		return new MyDouble(this);
 	}   
     

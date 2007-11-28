@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -258,7 +257,9 @@ public class AlgoSequence extends AlgoElement {
     		    	   
     	// update var's algorithms until we reach expression 
     	if (expressionParentAlgo != null) {
+    		this.setStopUpdateCascade(true);
     		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+    		this.setStopUpdateCascade(false);
 		}
     }
     

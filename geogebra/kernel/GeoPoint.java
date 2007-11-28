@@ -633,8 +633,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		// update all registered locatables (they have this point as start point)
 		if (locateableList != null) {
 			for (int i=0; i < locateableList.size(); i++) {
-				Locateable loc = (Locateable) locateableList.get(i);		
-				loc.toGeoElement().updateCascade();							
+				Locateable loc = (Locateable) locateableList.get(i);
+				loc.toGeoElement().updateCascade();													
 			}		
 		}			
 	}

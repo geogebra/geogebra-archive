@@ -74,7 +74,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         //String function = f.getFunction().getExpression().getJSCLString(false);        
 		String function = f.getFunction().
 			getExpression().getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, false);
-        
+    	
         // expand expression and get polynomial coefficients
         String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
         if (strCoeffs == null) {

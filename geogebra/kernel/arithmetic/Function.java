@@ -111,7 +111,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     
     // copy constructor
     public Function(Function f, Kernel kernel) {   
-        expression = f.expression.getCopy();
+        expression = f.expression.getCopy(kernel);
         fVar = f.fVar; // no deep copy of function variable             
         isBooleanFunction = f.isBooleanFunction;
         isConstantFunction = f.isConstantFunction;
@@ -121,7 +121,11 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
        
     
-    public ExpressionValue deepCopy() {
+    public Kernel getKernel() {
+    	return kernel;
+    }
+    
+    public ExpressionValue deepCopy(Kernel kernel) {
         return new Function(this, kernel);        
     }
     
@@ -851,7 +855,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     Function c) {
         // copy only the second function and replace b.fVar by a.fVar
         ExpressionNode left = a.expression;
-        ExpressionNode right = b.expression.getCopy();
+        ExpressionNode right = b.expression.getCopy(a.kernel);
         
         // replace b.fVar in right by a.fVar to have only one function
         // variable in our function

@@ -1164,7 +1164,7 @@ public class Kernel {
 		
 		if (algo != null && algo instanceof AlgoDependentNumber) {
 			AlgoDependentNumber algoDep = (AlgoDependentNumber) algo;
-			return algoDep.getExpression().getCopy();
+			return algoDep.getExpression().getCopy(this);
 		}
 		else {
 			return new ExpressionNode(this, geo);

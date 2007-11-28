@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.Kernel;
+
 import java.util.HashSet;
 
 /**
@@ -66,7 +68,7 @@ public class MyBoolean implements BooleanValue {
         return false;
     }
 
-    public ExpressionValue deepCopy() {
+    public ExpressionValue deepCopy(Kernel kernel) {
         return new MyBoolean(value);
     }
 

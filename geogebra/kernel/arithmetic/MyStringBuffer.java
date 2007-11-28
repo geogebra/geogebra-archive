@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.Kernel;
+
 import java.util.HashSet;
 
 /**
@@ -75,7 +77,7 @@ public class MyStringBuffer implements TextValue {
         return true;
     }
 
-    public ExpressionValue deepCopy() {
+    public ExpressionValue deepCopy(Kernel kernel) {
         return getText();
     }
 

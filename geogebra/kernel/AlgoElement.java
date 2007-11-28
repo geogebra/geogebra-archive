@@ -41,6 +41,7 @@ implements EuclidianViewAlgo {
     private GeoNumeric [] randomInputNumbers;
     
     private boolean isPrintedInXML = true;
+    private boolean stopUpdateCascade = false;
     
     public AlgoElement(Construction c) {
         super(c);                       
@@ -81,6 +82,8 @@ implements EuclidianViewAlgo {
 //    public static double counter;
     
     void update() {
+    	if (stopUpdateCascade) return;
+    	
 //    	counter++;
 //    	startTime = System.currentTimeMillis(); 
     		
@@ -131,11 +134,11 @@ implements EuclidianViewAlgo {
      *  every algorithm. Note: setDependencies() is
      *  called by every algorithm in topological order
      *  (i.e. possible helper algos call this method before
-     *  the using algo does so).
+     *  the using algo does).
      * @see setInputOutput()
      */
     final void setDependencies() {       	      	      	
-        // dependens on input
+        // dependents on input
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);            
         }    
@@ -680,5 +683,13 @@ implements EuclidianViewAlgo {
     public String toString() {
     	return getCommandDescription();
     }
+
+	final boolean doStopUpdateCascade() {
+		return stopUpdateCascade;
+	}
+
+	final void setStopUpdateCascade(boolean stopUpdateCascade) {
+		this.stopUpdateCascade = stopUpdateCascade;
+	}
 
 }
