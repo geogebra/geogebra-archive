@@ -36,7 +36,7 @@ public class Macro {
 	private boolean showInToolBar = true;
 				
 	private Construction macroCons; // macro construction
-	private String macroConsXML;
+	//private String macroConsXML;
 	private GeoElement [] macroInput, macroOutput; // input and output objects 
 	private String [] macroInputLabels, macroOutputLabels;
 	private Class [] inputTypes;
@@ -89,7 +89,7 @@ public class Macro {
 	 */
 	public Construction getMacroConstruction() {
 		return macroCons;
-	}
+	}		
 	
 	/**
 	 * Updates all algorithms of the macro construction.	
@@ -100,7 +100,7 @@ public class Macro {
 	
 	public void initMacro(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
 		this.macroCons = macroCons;
-		this.macroConsXML = macroCons.getConstructionXML();
+		//this.macroConsXML = macroCons.getConstructionXML();
 		this.macroInputLabels = inputLabels;
 		this.macroOutputLabels = outputLabels;	
 		
@@ -115,7 +115,7 @@ public class Macro {
 		// after initing we turn global variable lookup on again, 
     	// so we can use for example functions with parameters in macros too.
     	// Such parameters are global variables
-		((MacroConstruction) macroCons).setGlobalVariableLookup(true);   
+		((MacroConstruction) macroCons).setGlobalVariableLookup(true);   				
 	}	
 	
 	private void initInputOutput() {
@@ -419,10 +419,6 @@ public class Macro {
 		usingAlgos.remove(algoMacro);		
 	}		
 	
-	public LinkedList getUsingAlgorithms() {
-		return usingAlgos;
-	}
-	
 	/**
 	 * Returns whether this macro is being used by algorithms
 	 * in the current construction.
@@ -575,7 +571,8 @@ public class Macro {
         sb.append("/>\n");            
         
         // macro construction XML
-        sb.append(macroConsXML);    
+       // sb.append(macroConsXML);
+        sb.append(macroCons.getConstructionXML());
         
         sb.append("</macro>\n");           
         return sb.toString();

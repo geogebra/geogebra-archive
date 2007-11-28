@@ -894,7 +894,7 @@ public class MyXMLHandler implements DocHandler {
     	macro.initMacro(cons, macroInputLabels, macroOutputLabels);
     	// ad the newly built macro to the kernel
         origKernel.addMacro(macro);
-        
+
     	// set kernel and construction back to the original values
     	initKernelVars();            
     }
@@ -2098,13 +2098,15 @@ public class MyXMLHandler implements DocHandler {
             }
             
         } catch (Exception e) {
-            System.err.println("error in <expression>: label=" + label + ", exp= " + exp);
+        	String msg = "error in <expression>: label=" + label + ", exp= " + exp;
+            System.err.println(msg);
             e.printStackTrace();
-            throw new MyError(app, "error in <expression>");            
+            throw new MyError(app, msg);          
         } catch (Error e) {
-            System.err.println("error in <expression>: label=" + label + ", exp= " + exp);
+        	String msg = "error in <expression>: label = " + label + ", exp = " + exp;
+            System.err.println(msg);
             e.printStackTrace();
-            throw new MyError(app, "error in <expression>");            
+            throw new MyError(app, msg);          
         }
     }
 

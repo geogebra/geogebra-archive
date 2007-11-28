@@ -988,10 +988,21 @@ ExpressionValue list():
     ExpressionNode en;
 }
 {
+   LOOKAHEAD(5)
+   (
+     // empty list
+      "{" "}"  
+      {   
+           return new MyList(kernel);               
+       }
+    )
+    |
+   ( 
     // list
-    "{"  en = cmdexpression()     
+    "{"
+      en = cmdexpression()     
        {   
-            myList = new MyList(kernel);
+            myList = new MyList(kernel);         
             myList.addListElement(en);
         }
        ( "," en = cmdexpression()  
@@ -999,8 +1010,10 @@ ExpressionValue list():
        		myList.addListElement(en); 
        	 } 
         )*
-    "}"    
+    "}"
     {  return myList;  }
+   )          
+    
 }
 
 ExpressionNode numVecVariable():

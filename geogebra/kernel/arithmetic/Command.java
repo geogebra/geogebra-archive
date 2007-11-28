@@ -22,6 +22,7 @@ import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Macro;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ implements ExpressionValue {
     private Kernel kernel;
     private Application app;
     private GeoElement evalGeo; // evaluated Element
+    private Macro macro; // command may correspond to a macro 
     
     /** Creates new Command */
     public Command(Kernel kernel, String name, boolean translateName) {    
@@ -234,5 +236,13 @@ implements ExpressionValue {
 
 	public boolean isListValue() {		
 		return false;
+	}
+
+	public final Macro getMacro() {
+		return macro;
+	}
+
+	public final void setMacro(Macro macro) {
+		this.macro = macro;
 	}    
 }

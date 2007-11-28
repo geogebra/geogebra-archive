@@ -24,19 +24,14 @@ import geogebra.kernel.arithmetic.Command;
  */
 public class MacroProcessor extends CommandProcessor {
 	
-	private Macro macro;
-	
 	public MacroProcessor(Kernel kernel) {
 		super(kernel);
-	}
-	
-	void setMacro(Macro macro) {
-		this.macro = macro;
-	}
+	}	
 		
 	public GeoElement[] process(Command c) throws MyError {        						 							
 		// resolve command arguments
 		GeoElement [] arg = resArgs(c);
+		Macro macro = c.getMacro();
 				
 		Class [] macroInputTypes = macro.getInputTypes();		
 		

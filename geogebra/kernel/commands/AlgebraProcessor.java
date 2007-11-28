@@ -136,7 +136,7 @@ public class AlgebraProcessor {
 			
 		} catch (ParseException e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError(app.getError("InvalidInput") + ":\n" + cmd);
 			return null;
 		} catch (MyError e) {
 			e.printStackTrace();
@@ -144,7 +144,7 @@ public class AlgebraProcessor {
 			return null;
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError(app.getError("InvalidInput") + ":\n" + cmd);
 			return null;
 		}
 

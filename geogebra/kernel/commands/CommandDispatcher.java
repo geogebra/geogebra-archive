@@ -66,23 +66,22 @@ public class CommandDispatcher {
         // cmdName
         String cmdName = c.getName();
         CommandProcessor cmdProc;
-                
+        
         // MACRO: is there a macro with this command name?        
         Macro macro = kernel.getMacro(cmdName);
         if (macro != null) {    
-        	macroProc.setMacro(macro);
+        	c.setMacro(macro);
         	cmdProc = macroProc;
         } 
         // STANDARD CASE
         else {
         	// get CommandProcessor object for command name from command table
-            cmdProc = (CommandProcessor) cmdTable.get(cmdName);                      
+        	cmdProc = (CommandProcessor) cmdTable.get(cmdName);            
         }
-                      
                 
         GeoElement[] ret = null;
-        try {              	                
-        	ret =  cmdProc.process(c);        	        	
+        try {            
+	        ret = cmdProc.process(c);	                       	        	        
         } 
         catch (MyError e) {
         	cons.setSuppressLabelCreation(oldMacroMode);
@@ -92,6 +91,9 @@ public class CommandDispatcher {
             e.printStackTrace();
             throw new MyError(app, app.getError("UnknownCommand") + " : " + c);
         }
+        
+        // remember macros used
+        
               		
         cons.setSuppressLabelCreation(oldMacroMode);        
         
