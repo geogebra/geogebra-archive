@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -57,31 +58,33 @@ public class TutorView extends JPanel implements View  {
 	
 	private DataBaseInterface dbi;
 	
+	private JustificationDao justificationDao;
+	private StrategyDao strategyDao;
+	
+	private String alumne;
+	private String problema;
+
 	private static final int STUDENT = 0;
 	private static final int TUTOR = 1;
 	private static final int GRAPHICAL_INFO = 2;
 	private static final int SENTENCE = 3;
 	private static final int ARGUMENT = 4;
-	
 	private static final String studentName = "Eloi";
 	private static final String tutorName = "Fortuny";
 	private static final String WELCOME = "Welcome!!!\n";
+	private static final String LN = System.getProperty("line.separator");
 	
 	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
-	private static final String LN = System.getProperty("line.separator");
-	private Strategy[] strategies;
-
 	private StyleContext styleContext = new StyleContext();
 	private StyledDocument doc = new DefaultStyledDocument(styleContext);
-	
 	private JTextPane resultArea = new JTextPane(doc);
-	
 	private DefaultListModel listModel = new DefaultListModel(); 
 	private JList resArea = new JList();
 	
+	private Strategy[] strategies;
+
 	private long lineCounter = 0;
-	
 	private ResourceBundle tutorResources;
 	
 	public String getPlain(String key) {
@@ -98,23 +101,38 @@ public class TutorView extends JPanel implements View  {
 		}
 	}
 	
-	public TutorView (String problema, String alumne, TutorController tc) 
+	public TutorView(String problema, String alumne, TutorController tc) 
 	{
 		this.app = tc.getApp();
 		this.kernel = tc.getKernel();
 		this.tutorController = tc;
+		this.problema = problema;
+		this.alumne = alumne;
 		tc.setView(this);
-		resultArea.setBackground(Color.WHITE);
-		
+	}
+	
+	public void initDataModel() {
 		
 		//this.dbi = new DataBaseInterface();
 		//strategies = this.dbi.retrieveStrategies(problema);
+		//StrategyDao strategiesDao = new HttpStrategyDao();
 		
+		List strats = strategyDao.findStrategiesByProblemId(new Long(problema));
+
+		for (Iterator it = strats.iterator(); it.hasNext();) {
+			Strategy strategy = (Strategy) it.next();
+			try {
+				URL strategyUrl = new URL(strategy.getUrl());
+				Construction c = getConstruction(strategyUrl);
+			}
+			catch (MalformedURLException mue) {
+				
+			}
+			catch (Exception e) {
+				
+			}
+		}
 		
-		StrategyDao strategiesDao = new HttpStrategyDao();
-		List strats = strategiesDao.findStrategiesByProblemId(new Long(problema));
-		Strategy[] result = new Strategy[0];
-		result  = (Strategy[]) strats.toArray(result);
 		/*
 		 if (strategies != null) 
 		 //PROCEED STRATEGIES FILES
@@ -134,23 +152,15 @@ public class TutorView extends JPanel implements View  {
 				}
 			}
 		 */
-		justificationCombo = new JComboBox(getJustifications());
-		justificationCombo.addActionListener(new ActionListener() {
-    		public void actionPerformed( ActionEvent evt ) {
-    			JComboBox cb = (JComboBox) evt.getSource();
-    	        String just = (String)cb.getSelectedItem();    			
-    	        printTextArea(just, ARGUMENT);
-    		}});
-	
-		createGUI();
 	}
+	
 	public Vector getJustifications() {
 		
 			Vector a = new Vector();
 			a.add("");
 		
-			JustificationDao dao = new HttpJustificationDao();
-			List justs = dao.findProblemJustifications(new Long(7));
+			//JustificationDao dao = new HttpJustificationDao();
+			List justs = justificationDao.findProblemJustifications(new Long(7));
 			for (Iterator it = justs.iterator(); it.hasNext();) {
 				Justification j = (Justification) it.next();
 				a.add(j.getDescription());
@@ -161,8 +171,15 @@ public class TutorView extends JPanel implements View  {
 	
 	public void createGUI() {
 		
-		// TODO: implement user interface of tutor view
-		//add(new JLabel("Hello Eloi!"));
+		resultArea.setBackground(Color.WHITE);
+
+		justificationCombo = new JComboBox(getJustifications());
+		justificationCombo.addActionListener(new ActionListener() {
+    		public void actionPerformed( ActionEvent evt ) {
+    			JComboBox cb = (JComboBox) evt.getSource();
+    	        String just = (String)cb.getSelectedItem();    			
+    	        printTextArea(just, ARGUMENT);
+    		}});
 	
 		
 	        resultArea.setText(WELCOME);
@@ -479,5 +496,37 @@ public class TutorView extends JPanel implements View  {
 	 public void incrementLineCounter() {
 		 this.lineCounter++;
 	 }
+
+	public JustificationDao getJustificationDao() {
+		return justificationDao;
+	}
+
+	public void setJustificationDao(JustificationDao justificationDao) {
+		this.justificationDao = justificationDao;
+	}
+
+	public StrategyDao getStrategyDao() {
+		return strategyDao;
+	}
+
+	public void setStrategyDao(StrategyDao strategyDao) {
+		this.strategyDao = strategyDao;
+	}
+
+	public String getAlumne() {
+		return alumne;
+	}
+
+	public void setAlumne(String alumne) {
+		this.alumne = alumne;
+	}
+
+	public String getProblema() {
+		return problema;
+	}
+
+	public void setProblema(String problema) {
+		this.problema = problema;
+	}
 }
 
