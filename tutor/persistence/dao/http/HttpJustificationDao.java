@@ -12,11 +12,10 @@ import tutor.persistence.dao.iface.JustificationDao;
 public class HttpJustificationDao extends HttpDaoImpl implements JustificationDao {
 
 	private static String SERVICE_NAME = "justificacions";
-	private static String IP = "158.109.2.26";
 	
 	public Justification getJustificationById(Long id) {
 		
-		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
+		String serviceName = getDataSource();
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
@@ -31,7 +30,7 @@ public class HttpJustificationDao extends HttpDaoImpl implements JustificationDa
 
 	public List getJustificationsList() {
 		
-		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
+		String serviceName = getDataSource();
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
@@ -44,7 +43,7 @@ public class HttpJustificationDao extends HttpDaoImpl implements JustificationDa
 	
 	public List findProblemJustifications(Long problemId) {
 
-		String serviceName = "http://"+IP+"/edumat/agentgeom/ws/wstestlist.php";
+		String serviceName = getDataSource();
 		
 		Map params = new HashMap();
 		params.put("service", SERVICE_NAME);
