@@ -27,4 +27,7 @@ public interface HttpDao {
 	 * @return
 	 */
 	public List queryForList(String serviceName, Map params, Class mapper);
+	
+	public void setDataSource(String ds);
+	public String getDataSource();
 }

@@ -26,6 +26,16 @@ import tutor.persistence.dao.http.mapper.iface.XmlRowMapper;
  */
 public abstract class HttpDaoImpl implements HttpDao {
 
+	String dataSource = null;
+	
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String ds) {
+		this.dataSource = ds;
+	}
+
 	/**
 	 * 
 	 * @param service
@@ -115,6 +125,8 @@ public abstract class HttpDaoImpl implements HttpDao {
 	 */
 	private Document query(String serviceName, Map params) {
 	
+		serviceName = getDataSource();
+		
 		String serviceUrl = serviceName + "?" + resolveParams(params);
 		Document doc = invoke(serviceUrl);
 		
