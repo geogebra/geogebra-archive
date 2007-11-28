@@ -28,6 +28,10 @@ import java.util.GregorianCalendar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import tutor.persistence.dao.http.factory.HttpDaoFactory;
+import tutor.persistence.dao.iface.JustificationDao;
+import tutor.persistence.dao.iface.StrategyDao;
+
 /**
  *
  * @author  Markus Hohenwarter
@@ -40,20 +44,76 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 	private TutorView tutorView;
 	private TutorController tutorController = null;
 	
+	private HttpDaoFactory httpDaoFactory;
 
-	/** Creates a new instance of GeoGebraApplet */
+	String protocol = null;
+	String ip = null;
+	String port = null;
+	String context = null;
+
 	public GeoGebraAppletTutor() {}
 	
 	public void init() 
 	{
 		super.init();
-		if (problem == null) problem = getParameter("problem");
-		if (student == null) student = getParameter("student");
 		
-		// STRATEGY FILES
+		// Collect parameters
+		
+		problem = getParameter("problem");
+		student = getParameter("student");
+		protocol = getParameter("protocol");
+		ip = getParameter("ip");
+		port = getParameter("port");
+		context = getParameter("context");
+		
+		if (problem == null) problem = "7";
+		if (student == null)  student = "1";
+		
+		if (protocol == null) protocol = "http";
+		if (ip == null) ip = "localhost";
+		if (port == null) port = "80";
+		if (context == null) context = "agentgeom/ws/wstestlist.php";
+		
 		if (problem!=null && student != null) {	
 			initGUI(problem, student);
 		}
+		
+		httpDaoFactory = new HttpDaoFactory(protocol, ip, port, context);
+		
+		JustificationDao justificationDao =
+			(JustificationDao) httpDaoFactory.getDao(JustificationDao.class);
+		StrategyDao strategyDao =
+			(StrategyDao) httpDaoFactory.getDao(StrategyDao.class);
+		
+		tutorView.setJustificationDao(justificationDao);
+		tutorView.setStrategyDao(strategyDao);
+		
+		tutorView.initDataModel();
+		tutorView.createGUI();
+	}
+	
+	protected void initGUI(String p, String s) {
+		// TODO: build user interface of applet in here	
+	
+		//this.setSize(1000,500);
+
+		tutorController = new TutorController(app.getKernel());
+		app.getEuclidianView().addMouseListener(tutorController);
+
+		tutorView = new TutorView(p,s, tutorController);
+
+		kernel.attach(tutorView); // register view  
+		
+		JPanel geogebraPanel = createGeoGebraAppletPanel();
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				geogebraPanel, tutorView);
+
+		getContentPane().add(splitPane);
+		
+		splitPane.setDividerLocation(800);
+	}
+
+	protected void initDataModel() {
 		
 		System.out.println("**** MAIN construction BEGIN");
 		Construction c = kernel.getConstruction();
@@ -72,27 +132,6 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		System.out.println("**** MAIN construction END");
 	}
 	
-	protected void initGUI(String p, String s) {
-		// TODO: build user interface of applet in here	
-	
-		//this.setSize(1000,500);
-
-		tutorController = new TutorController(app.getKernel());
-		app.getEuclidianView().addMouseListener(tutorController);
-
-		tutorView = new TutorView(p.trim(),s.trim(), tutorController);
-
-		kernel.attach(tutorView); // register view  
-		
-		JPanel geogebraPanel = createGeoGebraAppletPanel();
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				geogebraPanel, tutorView);
-
-		getContentPane().add(splitPane);
-		
-		splitPane.setDividerLocation(800);
-	}
-
 	public void start() {
 		//	for some strange reason this is needed to get the right font size		
 		//showApplet();
