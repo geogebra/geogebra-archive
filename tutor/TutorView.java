@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,16 +34,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import tutor.model.Annotation;
 import tutor.model.Justification;
 import tutor.model.Strategy;
-import tutor.persistence.dao.http.HttpJustificationDao;
-import tutor.persistence.dao.http.HttpStrategyDao;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
 
@@ -71,8 +72,8 @@ public class TutorView extends JPanel implements View  {
 	private static final int ARGUMENT = 4;
 	private static final String studentName = "Eloi";
 	private static final String tutorName = "Fortuny";
-	private static final String WELCOME = "Welcome!!!\n";
 	private static final String LN = System.getProperty("line.separator");
+	private static final String WELCOME = "Welcome!!!"+LN;
 	
 	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
@@ -86,6 +87,8 @@ public class TutorView extends JPanel implements View  {
 
 	private long lineCounter = 0;
 	private ResourceBundle tutorResources;
+	
+	private List annotations = new ArrayList();
 	
 	public String getPlain(String key) {
 	
@@ -326,9 +329,52 @@ public class TutorView extends JPanel implements View  {
 				break;
 		}
 		
+		String anos = showAnnotation();
+		System.out.println(anos);
+		
 		// Scrolls text area
 		resultArea.scrollRectToVisible(
 				  new Rectangle(0,resultArea.getHeight()+10,1,1));
+	}
+	
+	private void insertAnnotatedString(String text, String annotation, SimpleAttributeSet attributes) {
+		
+		int pos = doc.getLength();
+		int length = text.length();
+		
+		try {
+			doc.insertString(pos, text, attributes);
+			
+			Annotation anno = new Annotation();
+			anno.setOffset(pos);
+			anno.setLength(length);
+			anno.setAnnotation(annotation);
+			annotations.add(anno);
+		}
+		catch (BadLocationException ble) {
+			ble.printStackTrace();
+		}
+	}
+	
+	private String showAnnotation() {
+		
+		String annotatedDoc = "";
+		
+		for (Iterator it = annotations.iterator(); it.hasNext();) {
+			Annotation annotation = (Annotation) it.next();
+			int pos = annotation.getOffset();
+			int len = annotation.getLength();
+			try {
+				String text = doc.getText(pos, len);
+				
+				annotatedDoc += "<" + annotation.getAnnotation() + ">" + text +"<" + annotation.getAnnotation() + ">\n";
+			}
+			catch (BadLocationException ble) {
+				ble.printStackTrace();
+			}
+		}
+		
+		return "<annotated-document>\n" + annotatedDoc +"</annotated-document>";
 	}
 	
 	private void printStudentMessage(String text) {
@@ -345,7 +391,8 @@ public class TutorView extends JPanel implements View  {
 			StyleConstants.setItalic(attributes, true);
 			
 			doc.insertString(doc.getLength(), "Tutor: ", attributes);
-			doc.insertString(doc.getLength(), text+LN, attributes);
+			//doc.insertString(doc.getLength(), text+LN, attributes);
+			insertAnnotatedString(text+LN, "tutorMessage", attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -366,7 +413,8 @@ public class TutorView extends JPanel implements View  {
 				lastCount = lineCounter;
 			}
 			doc.insertString(doc.getLength(), strLineCount+" - "+studentName+": ", attributes);
-			doc.insertString(doc.getLength(), text+LN, attributes);
+			//doc.insertString(doc.getLength(), text+LN, attributes);
+			insertAnnotatedString(text+LN, "graphicalInfo", attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -383,7 +431,8 @@ public class TutorView extends JPanel implements View  {
 			
 			//doc.insertString(doc.getLength(), studentName+": ", attributes);
 			doc.insertString(doc.getLength(), "     ", attributes);
-			doc.insertString(doc.getLength(), text+LN, attributes);
+			//doc.insertString(doc.getLength(), text+LN, attributes);
+			insertAnnotatedString(text+LN, "sentence", attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -399,7 +448,8 @@ public class TutorView extends JPanel implements View  {
 			
 			//doc.insertString(doc.getLength(), studentName+":   ", attributes);
 			doc.insertString(doc.getLength(), "     ", attributes);
-			doc.insertString(doc.getLength(), text.toUpperCase()+LN, attributes);
+			//doc.insertString(doc.getLength(), text.toUpperCase()+LN, attributes);
+			insertAnnotatedString(text.toUpperCase()+LN, "argumentation", attributes);
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
