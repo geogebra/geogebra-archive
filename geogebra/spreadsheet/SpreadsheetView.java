@@ -25,6 +25,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
@@ -52,7 +54,6 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
     
     private JTable table;
     private Kernel kernel;
- //   private DefaultTableModel tableModel;
     private SpreadsheetTableModel tableModel;
     private Application app;
     private SpreadsheetController spController; 
@@ -64,6 +65,12 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
     private ListSelectionEvent levent;
     private boolean ALLOW_ROW_SELECTION = true;
     private boolean ALLOW_COLUMN_SELECTION = false;
+    
+    int selectedColStart;
+    //Adding a Menu Bar to do the Copying
+    JMenuBar menuBar;
+    JMenu menu;
+    JMenuItem cutmenuItem, copymenuItem, pastemenuItem;
     
     public SpreadsheetView(Application app,int rows, int columns)
     {
@@ -86,6 +93,24 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        table.getTableHeader().setReorderingAllowed(false);      
  
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+       
+       //Create Menu Bar
+       menuBar=  new JMenuBar();
+       //Build the first Menu
+       menu = new JMenu("Edit");
+       menuBar.add(menu);
+       cutmenuItem = new JMenuItem("Cut");
+       menu.add(cutmenuItem);
+       copymenuItem = new JMenuItem("Copy");
+       menu.add(copymenuItem);
+       pastemenuItem = new JMenuItem("Paste");
+       menu.add(pastemenuItem);
+       
+       add(menuBar);
+       
+       cutmenuItem.addActionListener(this);
+       copymenuItem.addActionListener(this);
+       pastemenuItem.addActionListener(this);
        
        add(new JLabel("Selection Mode"));
        buttonGroup = new ButtonGroup();
@@ -128,7 +153,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        initTableCellRendererEditor();
        attachView();	
        
-       
+     
        //Popup menu code
        createPopupMenu();
        
@@ -435,7 +460,6 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 	            }
 	         }
 	         setValue(String.valueOf(row + 1));
-
 	         return this;
 	      }
 
@@ -448,10 +472,27 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 
 	public void actionPerformed(ActionEvent event) 
 	{//TODO:Localize the strings used here
+		 Object obj =	event.getSource();	
+		 int row=0, col=0;
+		 if(event.getSource() == cutmenuItem)
+		 {
+			 
+		 }
+		 else if(event.getSource() == copymenuItem)
+		 {
+			 tableModel.copy(obj, row, col);
+		 }
+		 else if(event.getSource() == pastemenuItem)
+		 {
+			 
+		 }
+		 else
+		 {
 		 String command = event.getActionCommand();
 	        //Cell selection is disabled in Multiple Interval Selection
 	        //mode. The enabled state of cellCheck is a convenient flag
 	        //for this status.
+		// if(obj)
 	        if ("Row Selection" == command) 
 	        {
 	            table.setRowSelectionAllowed(rowCheck.isSelected());
@@ -513,7 +554,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 	            cellCheck.setSelected(table.getCellSelectionEnabled());
 	        }
 	 //get the cells which are selected
-	         
+		 }  
 	        
 	}
 	  private JRadioButton addRadio(String text) 

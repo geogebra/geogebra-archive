@@ -129,6 +129,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
                 {
                      str = getLabel(row, col) + "=" + inputString;                    
                 }
+                                
                 app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
                 fireTableDataChanged();
             }
@@ -162,6 +163,26 @@ public class SpreadsheetTableModel extends DefaultTableModel
             super.setValueAt(obj, row, col);
         }
     }
+    
+    /*Function to copy 1 element to another in a spreadsheet*/
+    
+    public void copy(Object obj, int row, int col)
+    {
+    	GeoElement geo= null;
+    	GeoElement copyGeo= null;
+    	if(geo == null)
+    	{
+    		
+    	}
+    	else
+    	{
+    		copyGeo = geo.copyInternal(geo.getConstruction());
+    	}
+    }
+    
+    
+    
+    
 
 //    /**
 //     * @param geo
