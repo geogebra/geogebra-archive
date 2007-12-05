@@ -67,6 +67,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
     private boolean ALLOW_COLUMN_SELECTION = false;
     
     int selectedColStart;
+    int selectedRowStart;
     //Adding a Menu Bar to do the Copying
     JMenuBar menuBar;
     JMenu menu;
@@ -480,7 +481,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 		 }
 		 else if(event.getSource() == copymenuItem)
 		 {
-			 tableModel.copy(obj, row, col);
+			 tableModel.copy(obj, selectedRowStart, selectedColStart);
 		 }
 		 else if(event.getSource() == pastemenuItem)
 		 {
@@ -492,7 +493,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 	        //Cell selection is disabled in Multiple Interval Selection
 	        //mode. The enabled state of cellCheck is a convenient flag
 	        //for this status.
-		// if(obj)
+
 	        if ("Row Selection" == command) 
 	        {
 	            table.setRowSelectionAllowed(rowCheck.isSelected());
