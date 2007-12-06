@@ -481,7 +481,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 		 }
 		 else if(event.getSource() == copymenuItem)
 		 {
-			 tableModel.copy(obj, selectedRowStart, selectedColStart);
+			 tableModel.copy(tableModel.getValueAt(selectedRowStart, selectedColStart), selectedRowStart, selectedColStart);
 		 }
 		 else if(event.getSource() == pastemenuItem)
 		 {
