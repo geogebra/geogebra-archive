@@ -3,6 +3,7 @@
  */
 package geogebra.spreadsheet;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import geogebra.Application;
 import geogebra.algebra.parser.Parser;
@@ -26,24 +27,21 @@ public class SpreadsheetTableModel extends DefaultTableModel
     private boolean modified;
 
     private Application app = null;
+   // ArrayList copyGeo;
+    GeoElement copyGeo= null;
 
     public SpreadsheetTableModel(JTable table)
     {
         super();
         this.table=table;
         modified=false;
+  //      copyGeo= new ArrayList();
     }
     
     public SpreadsheetTableModel(JTable table, int numRows, int numColumns, Application app)
     {
         super(numRows, numColumns);
         this.app = app;
-//        for (int row = 0; row < numRows; row++)
-//           for (int col = 0; col < numColumns; col++)
-//
-//              // we initialize it here
-//              super.setValueAt(new String(""), row, col);
-
         // initialize state to unmodified and file to untitled
         modified = false;
         this.table = table;
@@ -166,10 +164,10 @@ public class SpreadsheetTableModel extends DefaultTableModel
     
     /*Function to copy 1 element to another in a spreadsheet*/
     
-    public void copy(Object obj, int row, int col)
+    public void copy(Object obj, int row, int col, int rowRange, int colRange)
     {
-    	GeoElement geo= null;
-    	GeoElement copyGeo= null;
+    	GeoElement geo= (GeoElement)obj;
+    	
     	if(geo == null)
     	{
     		
@@ -177,10 +175,24 @@ public class SpreadsheetTableModel extends DefaultTableModel
     	else
     	{
     		copyGeo = geo.copyInternal(geo.getConstruction());
+    //		copyGeo.add(geo.copyInternal(geo.getConstruction()));
+    		System.out.println("copyGeo is: " + copyGeo);
     	}
     }
     
-    
+    public void paste(int row, int col, int rowRange, int colRange)
+    {
+    	//Get the range of rows and columns and loop around them
+   /* 	for(int i=row;i<(row+rowRange);i++)
+    	{
+    		for(int j=col;j<(col+colRange);j++)
+    		{*/
+		    	String lbl = getLabel(row,col);
+		    	//copyGeo.set(index, element);
+		    	copyGeo.setLabel(lbl);
+    		/*}
+    	}*/
+    }
     
     
 
@@ -215,7 +227,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
         Object obj = super.getValueAt(row,col );
         if( !(obj instanceof GeoElement ))
         {
-            //System.out.println("Getting a non-geo element");
+       //     System.out.println("Getting a non-geo element");
           
         }
         return obj;

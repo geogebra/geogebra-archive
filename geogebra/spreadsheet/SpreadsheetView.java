@@ -49,6 +49,7 @@ import javax.swing.table.TableModel;
  * @author Amy Mathew Varkey
  *
  */
+
 public class SpreadsheetView extends JComponent implements View, ActionListener, ListSelectionListener, ItemListener
 {
     
@@ -65,9 +66,24 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
     private ListSelectionEvent levent;
     private boolean ALLOW_ROW_SELECTION = true;
     private boolean ALLOW_COLUMN_SELECTION = false;
-    
+
     int selectedColStart;
     int selectedRowStart;
+    int selectedRowEnd;
+    int selectedColEnd;
+    
+    int copyColStart;
+    int copyColEnd;
+    int copyRowStart;
+    int copyRowEnd;
+    
+    int pasteColStart;
+    int pasteColEnd;
+    int pasteRowStart;
+    int pasteRowEnd;
+    
+    int rowRange;
+    int colRange;
     //Adding a Menu Bar to do the Copying
     JMenuBar menuBar;
     JMenu menu;
@@ -175,9 +191,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
                    } 
                    else 
                    {
-                       int selectedRowStart = lsm.getMinSelectionIndex();
-                       int selectedRowEnd	= lsm.getMaxSelectionIndex();
-                       System.out.println("Rows " + (selectedRowStart + 1) +"to" +(selectedRowEnd + 1)
+                       selectedRowStart = lsm.getMinSelectionIndex();
+                       selectedRowEnd	= lsm.getMaxSelectionIndex();
+                       System.out.println("Rows " + (selectedRowStart) +"to" +(selectedRowEnd)
                                           + " is now selected.");
                    }
                    
@@ -213,9 +229,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
                    } 
                    else 
                    {
-                       int selectedColStart = lsm.getMinSelectionIndex();
-                       int selectedColEnd = lsm.getMaxSelectionIndex();
-                       System.out.println("Column " + (selectedColStart + 1)+"to" +(selectedColEnd + 1)
+                       selectedColStart = lsm.getMinSelectionIndex();
+                       selectedColEnd = lsm.getMaxSelectionIndex();
+                       System.out.println("Column " + (selectedColStart)+"to" +(selectedColEnd)
                                           + " is now selected.");
                    }
                }
@@ -383,7 +399,9 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
         	if (value != null) {
         		GeoElement geo = (GeoElement )value;
         		setText( geo.toValueString() );
-        	} else {
+        	}
+        	else 
+        	{
         		setText("");
         	}        	           
         }
@@ -473,20 +491,68 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 
 	public void actionPerformed(ActionEvent event) 
 	{//TODO:Localize the strings used here
-		 Object obj =	event.getSource();	
-		 int row=0, col=0;
+		
 		 if(event.getSource() == cutmenuItem)
 		 {
 			 
 		 }
 		 else if(event.getSource() == copymenuItem)
 		 {
-			 tableModel.copy(tableModel.getValueAt(selectedRowStart, selectedColStart), selectedRowStart, selectedColStart);
+			 //tableModel.setValueAt("55", 4, 2);
+			 copyColStart = selectedColStart;
+			 copyRowStart = selectedRowStart;
+			 copyColEnd = selectedColEnd;
+			 copyRowEnd = selectedRowEnd;
+			 
+			  rowRange = copyRowEnd - copyRowStart;
+			  colRange = copyColEnd - copyColStart;
+			  
+			 System.out.println("Row range is :"+rowRange);
+			 System.out.println("Column range is:"+colRange);
+		//	 GeoElement geo= (GeoElement)(tableModel.getValueAt((selectedRowStart), (selectedColStart)));
+		//	 System.out.println("Element to be copied: " + geo);
+			 //copying all elements from the selected set of rows and columns
+			
 		 }
 		 else if(event.getSource() == pastemenuItem)
 		 {
+			 pasteColStart = selectedColStart;
+			 pasteRowStart = selectedRowStart;
+			 pasteColEnd = selectedColEnd;
+			 pasteRowEnd = selectedRowEnd;
 			 
-		 }
+			 rowRange = pasteRowEnd - pasteRowStart;
+			 colRange = pasteColEnd - pasteColStart;
+			// newrowRange = selectedRowEnd - selectedRowStart;
+			// newcolRange = selectedColEnd - selectedColStart;
+			  
+			 for(int i=copyRowStart;i<=copyRowEnd;i++)
+			 {
+				 for(int j=copyColStart;j<=copyColEnd;j++)
+				 {
+					
+					 tableModel.copy((GeoElement)(tableModel.getValueAt(i,j)), i, j,rowRange,colRange);
+					 System.out.println("Element to be copied:"+(GeoElement)(tableModel.getValueAt(i,j)));
+					 tableModel.paste(pasteRowStart, pasteColStart, rowRange, colRange );
+					
+					 pasteColStart++;
+					
+				 }
+				 for(int k=0;k<=colRange;k++)
+				 {
+				 pasteColStart --;
+				 }
+				 pasteRowStart++;
+			 }
+			
+			/* for(int i=pasteRowStart;i<=pasteRowEnd;i++)
+			 {
+				 for(int j=pasteColStart;j<=pasteColEnd;j++)
+				 {
+					 tableModel.paste(i, j, rowRange, colRange );
+				 }
+			 }*/
+		 }	 
 		 else
 		 {
 		 String command = event.getActionCommand();
