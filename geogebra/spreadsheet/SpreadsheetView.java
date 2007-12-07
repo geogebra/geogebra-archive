@@ -509,8 +509,6 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 			  
 			 System.out.println("Row range is :"+rowRange);
 			 System.out.println("Column range is:"+colRange);
-		//	 GeoElement geo= (GeoElement)(tableModel.getValueAt((selectedRowStart), (selectedColStart)));
-		//	 System.out.println("Element to be copied: " + geo);
 			 //copying all elements from the selected set of rows and columns
 			
 		 }
@@ -523,18 +521,14 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 			 
 			 rowRange = pasteRowEnd - pasteRowStart;
 			 colRange = pasteColEnd - pasteColStart;
-			// newrowRange = selectedRowEnd - selectedRowStart;
-			// newcolRange = selectedColEnd - selectedColStart;
-			  
+		  
 			 for(int i=copyRowStart;i<=copyRowEnd;i++)
 			 {
 				 for(int j=copyColStart;j<=copyColEnd;j++)
 				 {
 					
-					 tableModel.copy((GeoElement)(tableModel.getValueAt(i,j)), i, j,rowRange,colRange);
-					 System.out.println("Element to be copied:"+(GeoElement)(tableModel.getValueAt(i,j)));
-					 tableModel.paste(pasteRowStart, pasteColStart, rowRange, colRange );
-					
+					 //here we are copying the values from source to the destination
+					 tableModel.paste(i, j, pasteRowStart, pasteColStart);
 					 pasteColStart++;
 					
 				 }
@@ -545,13 +539,6 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 				 pasteRowStart++;
 			 }
 			
-			/* for(int i=pasteRowStart;i<=pasteRowEnd;i++)
-			 {
-				 for(int j=pasteColStart;j<=pasteColEnd;j++)
-				 {
-					 tableModel.paste(i, j, rowRange, colRange );
-				 }
-			 }*/
 		 }	 
 		 else
 		 {

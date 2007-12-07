@@ -164,7 +164,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     
     /*Function to copy 1 element to another in a spreadsheet*/
     
-    public void copy(Object obj, int row, int col, int rowRange, int colRange)
+ /*   public void copy(Object obj, int row, int col, int rowRange, int colRange)
     {
     	GeoElement geo= (GeoElement)obj;
     	
@@ -178,20 +178,21 @@ public class SpreadsheetTableModel extends DefaultTableModel
     //		copyGeo.add(geo.copyInternal(geo.getConstruction()));
     		System.out.println("copyGeo is: " + copyGeo);
     	}
-    }
+    }*/
     
-    public void paste(int row, int col, int rowRange, int colRange)
+    /**
+     * Copies cell (fromRow, fromCol) to cell (toRow, toCol).
+     */
+    public void paste(int fromRow, int fromCol, int toRow, int toCol)
     {
     	//Get the range of rows and columns and loop around them
-   /* 	for(int i=row;i<(row+rowRange);i++)
-    	{
-    		for(int j=col;j<(col+colRange);j++)
-    		{*/
-		    	String lbl = getLabel(row,col);
-		    	//copyGeo.set(index, element);
-		    	copyGeo.setLabel(lbl);
-    		/*}
-    	}*/
+     			GeoElement geo= (GeoElement)getValueAt(fromRow,fromCol);
+    			if(geo != null)
+    			{
+    			copyGeo = geo.copyInternal(geo.getConstruction());
+		    	String lbl = getLabel(toRow,toCol);
+		       	copyGeo.setLabel(lbl);
+    			}
     }
     
     
