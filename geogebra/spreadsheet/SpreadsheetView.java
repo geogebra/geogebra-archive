@@ -530,13 +530,22 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 					 //here we are copying the values from source to the destination
 					 tableModel.paste(i, j, pasteRowStart, pasteColStart);
 					 pasteColStart++;
-					
+					/*if(pasteColStart != pasteColEnd)
+						continue;*/
 				 }
 				 for(int k=0;k<=colRange;k++)
 				 {
 				 pasteColStart --;
 				 }
 				 pasteRowStart++;
+				/* if(pasteColStart == pasteColEnd)
+				 {
+					 break;
+				 }
+				 else
+				 {
+					 continue;
+				 }*/
 			 }
 			
 		 }	 

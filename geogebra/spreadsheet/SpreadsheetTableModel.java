@@ -4,6 +4,7 @@
 package geogebra.spreadsheet;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import geogebra.Application;
 import geogebra.algebra.parser.Parser;
@@ -13,6 +14,7 @@ import geogebra.kernel.GeoNumeric;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import java.util.Iterator;
 /**
  * @author brisk1
  *
@@ -29,6 +31,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     private Application app = null;
    // ArrayList copyGeo;
     GeoElement copyGeo= null;
+    
 
     public SpreadsheetTableModel(JTable table)
     {
@@ -185,14 +188,68 @@ public class SpreadsheetTableModel extends DefaultTableModel
      */
     public void paste(int fromRow, int fromCol, int toRow, int toCol)
     {
-    	//Get the range of rows and columns and loop around them
-     			GeoElement geo= (GeoElement)getValueAt(fromRow,fromCol);
-    			if(geo != null)
+    	GeoElement geo= (GeoElement)getValueAt(fromRow,fromCol);
+    	//Check if the geoElement is dependent on other GeElements(Relative Copy)
+    	if(!geo.isIndependent())
+    	{
+    		TreeSet geoTree = geo.getAllPredecessors();
+    		String geoAll = geo.getDefinitionDescription();
+    		System.out.println("The elements are\n"+geoAll);
+    		int size = geoTree.size();
+    		Iterator it = geoTree.iterator();
+    		while(it.hasNext())
+    		{
+    			//Do the processing
+    			GeoElement geoIt = (GeoElement) it.next();
+    			if(geoIt != null)
     			{
-    			copyGeo = geo.copyInternal(geo.getConstruction());
-		    	String lbl = getLabel(toRow,toCol);
-		       	copyGeo.setLabel(lbl);
+    				Point loc= getCellLocation( geoAll.trim().substring(0));
+    				if(toRow>fromRow)
+    				{
+    					int diff = toRow - fromRow;
+    					Point newLoc = new Point();
+    					newLoc.setLocation((loc.x+diff), loc.y);
+    					System.out.println("Old Location are \n"+loc.x +loc.y);
+    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
+    					String newPos1 = getLabel(newLoc.x, newLoc.y);
+    		
+    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
+    					System.out.println("Old label is\n"+geoIt.getLabel());
+    					System.out.println("New Label is \n"+newPos1);
+    					System.out.println("New geoAll is\n"+geoAll);
+    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
+    					String newLabel = getLabel(toRow,toCol);
+    					geoArray[0].setLabel(newLabel);
+    				}
+    				else if(toRow < fromRow)
+    				{
+    					fromRow --;
+    				}
+    				else if(toCol > fromCol)
+    				{
+    					fromCol++;
+    				}
+    				else if(toCol < fromCol)
+    				{
+    					
+    				}
+    				
     			}
+    	//		System.out.println("Geo Elements are:",+geoTree );
+    		}
+    		
+    	}
+    	else
+    	{//Independent case
+    	//Get the range of rows and columns and loop around them
+    	
+	    	if(geo != null)
+	    	{
+	    	copyGeo = geo.copyInternal(geo.getConstruction());
+			String lbl = getLabel(toRow,toCol);
+			copyGeo.setLabel(lbl);
+	    	}
+    	}
     }
     
     
@@ -248,6 +305,21 @@ public class SpreadsheetTableModel extends DefaultTableModel
             geo = (GeoElement )obj;
             return geo.isChangeable() || geo.isRedefineable();
         }
+    }
+    
+    /*Function which will return the position of a geoElement in the spreadsheet*/
+    
+    public static Point getCellLocation(String label)
+    {
+    	Point coords = new Point();
+    	if(label.length()> 1 && Character.isLetter(label.charAt(0))
+    			&& Character.isDigit(label.charAt(1)))
+    	{
+    		int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
+			int row = Integer.parseInt(label.charAt(1) + "") - 1;
+			coords.setLocation(column, row);
+    	}
+    	return coords;
     }
 
 }
