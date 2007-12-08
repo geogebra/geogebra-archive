@@ -1051,7 +1051,8 @@ public class GeoGebraToPstricks implements ActionListener {
 		renameFunc(sb,"atanh(","ATANH(");
 		renameFunc(sb,"sinh(","SINH(");
 		renameFunc(sb,"tanh(","TANH(");
-		
+		// for exponential in new Geogbra version.
+		renameFunc(sb,kernel.EULER_STRING,"2,718281828");
 		return new String(sb);
 	}
 	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
@@ -1688,6 +1689,7 @@ public class GeoGebraToPstricks implements ActionListener {
 
 		// Set Units for grid
 		codeBeginPic.append("\\psset{xunit=");
+//		System.out.println(GridDist[0]*xunit);
 		codeBeginPic.append(sci2dec(GridDist[0]*xunit));
 		codeBeginPic.append("cm,yunit=");
 		codeBeginPic.append(sci2dec(GridDist[1]*yunit));
