@@ -152,7 +152,15 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			ev.setPreferredSize(evPref);
 		
 			// pack frame and correct size to really get the preferred size for euclidian view
-			pack(); 
+// Michael Borcherds 2007-12-08 BEGIN pack() sometimes fails (only when run from Eclipse??)
+			try {
+			pack();
+			}
+			catch (Exception e)
+			{
+				// do nothing
+			}
+//			 Michael Borcherds 2007-12-08 END
 			frameSize = getSize();
 			Dimension evSize = ev.getSize();
 			frameSize.width = frameSize.width + (evPref.width - evSize.width);

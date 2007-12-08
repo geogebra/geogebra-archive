@@ -191,6 +191,8 @@ final public class EuclidianController implements MouseListener,
 
 	private boolean TEMPORARY_MODE = false; // changed from QUICK_TRANSLATEVIEW Michael Borcherds 2007-10-08
 
+	private boolean DONT_CLEAR_SELECTION = false; // Michael Borcherds 2007-12-08
+
 	private boolean DRAGGING_OCCURED = false; // for moving objects
 
 	private boolean POINT_CREATED = false;
@@ -467,6 +469,14 @@ final public class EuclidianController implements MouseListener,
 					e.isControlDown() // old Windows key: Ctrl key 
 				)) 
 		{
+// Michael Borcherds 2007-12-08 BEGIN
+			// bugfix: couldn't select multiple points with Ctrl
+			hits = view.getHits(mouseLoc);
+			if (hits != null && ((GeoElement) hits.get(0)).isGeoPoint())
+			{
+				DONT_CLEAR_SELECTION=true;
+			}
+//			 Michael Borcherds 2007-12-08 END
 			TEMPORARY_MODE = true;
 			oldMode = mode; // remember current mode	
 			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
@@ -1241,13 +1251,30 @@ final public class EuclidianController implements MouseListener,
 
 		// now handle current mode
 		hits = view.getHits(mouseLoc);
+		
+// Michael Borcherds 2007-12-08 BEGIN moved up a few lines (bugfix: Tools eg Line Segment weren't working with grid on)
+		// grid capturing on: newly created point should be taken
+		if (hits == null && POINT_CREATED) {			
+			hits = new ArrayList();
+			hits.add(movedGeoPoint);				
+		}
+		POINT_CREATED = false;		
+//		 Michael Borcherds 2007-12-08 END	
+
+		
+		
+		
 		if (TEMPORARY_MODE) {
-//			Michael Borcherds 2007-10-13
+//			Michael Borcherds 2007-10-13 BEGIN
 			view.setMode(oldMode);
 			TEMPORARY_MODE = false;
-			clearSelections();			
+// Michael Borcherds 2007-12-08 BEGIN bugfix: couldn't select multiple points with Ctrl
+			if (DONT_CLEAR_SELECTION==false)
+				clearSelections();	
+			DONT_CLEAR_SELECTION=false;
+//			 Michael Borcherds 2007-12-08 END
 			//mode = oldMode;
-//			Michael Borcherds 2007-10-13
+//			Michael Borcherds 2007-10-13 END
 		} 
 //		 Michael Borcherds 2007-10-12 bugfix: ctrl-click on a point does the original mode's command at end of drag if a point was clicked on
 //  also needed for right-drag
@@ -1259,12 +1286,6 @@ final public class EuclidianController implements MouseListener,
 		}
 //Michael Borcherds 2007-10-12
 		
-		// grid capturing on: newly created point should be taken
-		if (hits == null && POINT_CREATED) {			
-			hits = new ArrayList();
-			hits.add(movedGeoPoint);				
-		}
-		POINT_CREATED = false;		
 		
 //		Michael Borcherds 2007-10-12
 //      moved up a few lines
