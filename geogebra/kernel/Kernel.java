@@ -889,7 +889,7 @@ public class Kernel {
 	 */
 	public void removeMacro(Macro macro) {
 		if (macroManager != null)								
-			macroManager.removeMacro(macro);			
+			macroManager.removeMacro(macro);
 	}
 	
 	/**
@@ -935,9 +935,9 @@ public class Kernel {
 	}
 	
 	/**
-	 * Returns an array with all currently registered macros.
+	 * Returns a list with all currently registered macros.
 	 */
-	public Macro [] getAllMacros() {
+	public ArrayList getAllMacros() {
 		if (macroManager == null)
 			return null;
 		else
@@ -981,7 +981,7 @@ public class Kernel {
 	 * 
 	 * @return
 	 */
-	public String getMacroXML(Macro [] macros) {
+	public String getMacroXML(ArrayList macros) {
 		if (hasMacros())					
 			return MacroManager.getMacroXML(macros);
 		else

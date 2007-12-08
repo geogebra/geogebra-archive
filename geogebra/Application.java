@@ -115,7 +115,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "November 27, 2007";
+    public static final String buildDate = "December 8, 2007";
 	
     public static final String versionString = "3.0 (RC 3)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1219,9 +1219,9 @@ public class Application implements	KeyEventDispatcher {
     private void addMacroCommands() {
     	if (commandDict == null || kernel == null || !kernel.hasMacros()) return;
     	
-    	Macro [] macros = kernel.getAllMacros();
-		for (int i=0; i < macros.length; i++) {
-			String cmdName = macros[i].getCommandName();
+    	ArrayList macros = kernel.getAllMacros();
+		for (int i=0; i < macros.size(); i++) {
+			String cmdName = ((Macro)macros.get(i)).getCommandName();
 			if (!commandDict.contains(cmdName))
 				commandDict.addEntry(cmdName);
 		}
@@ -1230,9 +1230,9 @@ public class Application implements	KeyEventDispatcher {
     public void removeMacroCommands() {
     	if (commandDict == null || kernel == null || !kernel.hasMacros()) return;
     	
-    	Macro [] macros = kernel.getAllMacros();
-		for (int i=0; i < macros.length; i++) {
-			String cmdName = macros[i].getCommandName();			
+    	ArrayList macros = kernel.getAllMacros();
+		for (int i=0; i < macros.size(); i++) {
+			String cmdName = ((Macro)macros.get(i)).getCommandName();		
 			commandDict.removeEntry(cmdName);
 		}
     }
@@ -3000,7 +3000,7 @@ public class Application implements	KeyEventDispatcher {
      * Saves given macros to file.
      * @return true if successful
      */
-    final public boolean saveMacroFile(File file, Macro [] macros) {
+    final public boolean saveMacroFile(File file, ArrayList macros) {
         try {
         	mainComp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             myXMLio.writeMacroFile(file, macros);            

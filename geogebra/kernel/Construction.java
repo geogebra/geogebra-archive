@@ -62,6 +62,9 @@ public class Construction {
     // a map for sets with all labeled GeoElements in alphabetical order of specific types
     // (points, lines, etc.)
     private FastHashMapKeyless geoSetsTypeMap;
+    
+    //  list of Macro commands used in this construction
+    private ArrayList usedMacros;
 
     // UndoManager
     protected UndoManager undoManager;
@@ -401,6 +404,8 @@ public class Construction {
         date = null;
         worksheetText[0] = null;
         worksheetText[1] = null;
+        
+        usedMacros = null;
     }
     
     /**
@@ -1005,7 +1010,15 @@ public class Construction {
     	}				 
     }
     
-   
+    public final void addUsedMacro(Macro macro) {
+    	if (usedMacros == null)
+    		usedMacros = new ArrayList();
+    	usedMacros.add(macro);
+    }    
+    
+    public ArrayList getUsedMacros() {
+    	return usedMacros;
+    }
 }
 
 

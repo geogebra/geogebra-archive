@@ -92,7 +92,11 @@ public class CommandDispatcher {
             throw new MyError(app, app.getError("UnknownCommand") + " : " + c);
         }
         
-        // remember macros used
+        // remember macro command used:
+        // this is needed when a single tool A[] is exported to find
+        // all other tools that are needed for A[]
+        if (macro != null)
+        	cons.addUsedMacro(macro);
         
               		
         cons.setSuppressLabelCreation(oldMacroMode);        

@@ -24,6 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -149,11 +152,22 @@ public class ToolManagerDialog extends javax.swing.JDialog {
         if (file == null)
             return;
         
-        // create Macro array from selection
-        Macro [] macros = new Macro[sel.length];
-        for (int i=0; i < sel.length; i++)
-        	macros[i] = (Macro) sel[i];
-        
+        // we need to save all selected tools and all tools
+        // that are used by the selected tools
+        LinkedHashSet tools = new LinkedHashSet();
+        for (int i=0; i < sel.length; i++) {
+        	Macro macro = (Macro) sel[i];
+        	tools.addAll(macro.getUsedMacros());
+        	tools.add(macro);        	
+        }
+                
+        // create Macro array list from tools set
+        ArrayList macros = new ArrayList(tools.size());
+        Iterator it = tools.iterator();
+        while (it.hasNext()) {
+        	 macros.add(it.next());
+        }
+               
         // save selected macros
         app.saveMacroFile(file, macros);							
 	}

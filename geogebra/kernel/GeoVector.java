@@ -183,9 +183,11 @@ implements Path, VectorValue, Locateable, Rotateable {
 		}
 	}
     
-    public void setStartPoint(GeoPoint p) throws CircularDefinitionException {    
+    public void setStartPoint(GeoPoint p) throws CircularDefinitionException {  
+    	if (startPoint == p) return;
+    	
     	// macro output uses initStartPoint() only
-		if (isAlgoMacroOutput()) return; 
+		if (isAlgoMacroOutput()) return; 				
     	
 		// check for circular definition
 		if (isParentOf(p))
@@ -193,8 +195,10 @@ implements Path, VectorValue, Locateable, Rotateable {
 		
 		// remove old dependencies
 		if (startPoint != null) startPoint.unregisterLocateable(this);	
+	
 		// set new location	
-		startPoint = p;
+		startPoint = p;		
+		
 		//	add new dependencies
 		if (startPoint != null) startPoint.registerLocateable(this);	
 		

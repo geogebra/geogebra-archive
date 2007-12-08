@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
@@ -244,7 +245,7 @@ public class MyXMLio {
         // save macros
         if (kernel.hasMacros()) {
         	// get all registered macros from kernel
-        	Macro [] macros = kernel.getAllMacros();
+        	ArrayList macros = kernel.getAllMacros();
         	
         	// write all images used by macros
             writeMacroImages(macros, zip);
@@ -270,7 +271,7 @@ public class MyXMLio {
      * Creates a zipped file containing the given macros 
      * in xml format plus all their external images (e.g. icons).
      */
-    public void writeMacroFile(File file, Macro [] macros) throws IOException {   
+    public void writeMacroFile(File file, ArrayList macros) throws IOException {   
     	if (macros == null) return;
     	
     	// create file
@@ -286,7 +287,7 @@ public class MyXMLio {
      * in xml format plus all their external images (e.g. icons)
      * to the specified output stream.
      */
-    public void writeMacroStream(OutputStream os, Macro [] macros) throws IOException {
+    public void writeMacroStream(OutputStream os, ArrayList macros) throws IOException {
     	  // zip stream
         ZipOutputStream zip = new ZipOutputStream(os);  
         OutputStreamWriter osw = new OutputStreamWriter(zip,  "UTF8");       
@@ -328,15 +329,16 @@ public class MyXMLio {
     /** 
      * Writes all images used in the given macros to zip.
      */
-    private void writeMacroImages(Macro [] macros, ZipOutputStream zip) throws IOException {
+    private void writeMacroImages(ArrayList macros, ZipOutputStream zip) throws IOException {
     	if (macros == null) return;
     	
-    	for (int i=0; i < macros.length; i++) {
-	    	// save all images in macro construction 
-	    	writeConstructionImages(macros[i].getMacroConstruction(), zip);
+    	for (int i=0; i < macros.size(); i++) {
+	    	// save all images in macro construction
+    		Macro macro = (Macro) macros.get(i);
+	    	writeConstructionImages(macro.getMacroConstruction(), zip);
 	    	
 	    	// save macro icon
-	    	String fileName = macros[i].getIconFileName();   
+	    	String fileName = macro.getIconFileName();   
 			BufferedImage img = app.getExternalImage(fileName);
 			if (img != null)
 				writeImageToZip(zip, fileName, img);
@@ -437,7 +439,7 @@ public class MyXMLio {
     /**
      * Returns XML representation of given macros in the kernel.
      */ 
-    public String getFullMacroXML(Macro [] macros) {    	    	
+    public String getFullMacroXML(ArrayList macros) {    	    	
         StringBuffer sb = new StringBuffer();            
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         sb.append("<geogebra format=\"" + Application.XML_FILE_FORMAT + "\">\n");

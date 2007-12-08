@@ -337,7 +337,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				app.getMenu("on") + " (" + app.getMenu("Grid") + ")", 
 				"off" };
 		String[] strPointCapturingAC = { 
-				"3 Automatic" ,
+				"3 PointCapturing" ,
 				"1 PointCapturing",
 				"2 PointCapturing", 
 				"0 PointCapturing" };

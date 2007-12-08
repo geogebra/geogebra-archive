@@ -706,7 +706,11 @@ final public class EuclidianController implements MouseListener,
 				translateableGeos = movedGeoElement.getMoveableParentPoints();
 				
 				// allow only moving of segments and polygons
-				if (!(movedGeoElement.isGeoSegment() || movedGeoElement.isGeoPolygon())) {
+				if (!(movedGeoElement.isGeoLine() || 
+					  movedGeoElement.isGeoPolygon() ||
+					  movedGeoElement.isGeoVector() ||
+					  movedGeoElement.isGeoConic() )) 
+				{
 					translateableGeos = null;
 				}
 			
@@ -1286,6 +1290,8 @@ final public class EuclidianController implements MouseListener,
 		}
 //Michael Borcherds 2007-10-12
 		
+		
+		// TODO: undo this!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 //		Michael Borcherds 2007-10-12
 //      moved up a few lines
@@ -2043,7 +2049,7 @@ final public class EuclidianController implements MouseListener,
 		//	point capturing to grid
 		double pointCapturingPercentage = 1;
 		switch (view.getPointCapturingMode()) {	
-			case EuclidianView.POINT_CAPTURING_AUTOMATIC:
+			case EuclidianView.POINT_CAPTURING_AUTOMATIC:				
 				if (!view.isGridOrAxesShown())break;
 			
 			case EuclidianView.POINT_CAPTURING_ON:

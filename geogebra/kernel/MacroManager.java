@@ -87,25 +87,20 @@ public class MacroManager {
 	/**
 	 * Returns an array of all macros handled by this MacroManager. 
 	 */
-	public Macro [] getAllMacros() {
-		int size = macroList.size();
-		Macro [] macros = new Macro[size];
-		for (int i=0; i < size; i++) {
-			macros[i] = (Macro) macroList.get(i);
-		}
-		return macros;
+	public ArrayList getAllMacros() {
+		return macroList;
 	}
 	
 	/**
 	 * Returns an XML represenation of the specified macros in this kernel.	 
 	 */
-	public static String getMacroXML(Macro [] macros) {				
+	public static String getMacroXML(ArrayList macros) {				
 		if (macros == null) return "";
 
 		StringBuffer sb = new StringBuffer();	
 		// save selected macros
-		for (int i=0; i < macros.length; i++) {				
-			sb.append(macros[i].getXML());
+		for (int i=0; i < macros.size(); i++) {				
+			sb.append(((Macro) macros.get(i)).getXML());
 		}						
 		return sb.toString();
 	}

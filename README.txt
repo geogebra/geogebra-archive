@@ -11,10 +11,10 @@ repository for non-commercial purposes. For details please read
 on and see the file LICENSE.txt
 
 Libraries and Plug-In Licenses
-* GeoGebra Language Files (geogebra_properties.zip)
-  Copyright 2001-2007 GeoGebra Inc.
-  Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
-  http://creativecommons.org/licenses/by-nc-nd/3.0/
+* GeoGebra Language Files (geogebra.properties folder)
+   Copyright 2001-2007 GeoGebra Inc.
+   Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
+   http://creativecommons.org/licenses/by-nc-nd/3.0/
 * Jasymca, http://webuser.hs-furtwangen.de/~dersch,  GNU GPL v2
 * Yacas, http://yacas.sourceforge.net, GNU GPL v2
 * FreeHEP Java Libraries, http://java.freehep.org, GNU LGPL v2.1
