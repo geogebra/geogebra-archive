@@ -295,6 +295,28 @@ implements VectorValue {
         c.y = a.y * b;        
     }    
    
+    /** c = a / b Michael Borcherds 2007-12-09 */
+    final public static void complexDivide(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
+    	// NB temporary variables *crucial*: a and c can be the same variable
+    	double x1=a.x,y1=a.y,x2=b.x,y2=b.y;
+    	// complex division
+      c.x = (x1 * x2 + y1 * y2)/(x2 * x2 + y2 * b.y);
+      c.y = (y1 * x2 - x1 * y2)/(x2 * x2 + y2 * b.y);
+    	// actually do multiply!?
+//      c.x = (x1 * x2 - y1 * y2);
+//      c.y = (y2 * x1 + x2 * y1);
+
+    }
+    
+    /** c = a / b Michael Borcherds 2007-12-09 */
+    final public static void complexMultiply(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
+    	// NB temporary variables *crucial*: a and c can be the same variable
+    	double x1=a.x,y1=a.y,x2=b.x,y2=b.y;
+    	//  do multiply
+      c.x = (x1 * x2 - y1 * y2);
+      c.y = (y2 * x1 + x2 * y1);
+    }
+
     final public static void inner(GeoVec2D a, GeoVec2D b, double c) {
         c = a.x * b.x + a.y * b.y;        
     }       

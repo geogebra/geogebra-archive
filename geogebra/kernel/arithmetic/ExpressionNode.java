@@ -645,6 +645,13 @@ implements ExpressionValue {
                 poly = new Polynomial(kernel, (Polynomial)lt);                
                 poly.divide((Polynomial)rt);                
                 return poly;
+            }
+            // vector / vector (complex division Michael Borcherds 2007-12-09)
+            else if (lt.isVectorValue() && rt.isVectorValue()) { 
+                    vec = ((VectorValue)lt).getVector();
+                    GeoVec2D.complexDivide(vec, ((VectorValue)rt).getVector(), vec);                                         
+                    return vec;
+                    
             }                
             else { 
                 String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };

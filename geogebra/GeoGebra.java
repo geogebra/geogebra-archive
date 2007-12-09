@@ -159,6 +159,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			catch (Exception e)
 			{
 				// do nothing
+				System.err.println("updateSize: pack() failed");
 			}
 //			 Michael Borcherds 2007-12-08 END
 			frameSize = getSize();
