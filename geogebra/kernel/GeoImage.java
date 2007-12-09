@@ -423,7 +423,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	
 	public boolean isFixable() {
-		return (hasAbsoluteLocation || hasAbsoluteScreenLocation) && isIndependent();
+		return false; // Michael Borcherds 2007-12-09
 	}
 	
 	public boolean isFillable() {
