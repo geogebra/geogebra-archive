@@ -32,7 +32,6 @@ implements Locateable, AbsoluteScreenLocateable,
 	 */
 	private static final long serialVersionUID = 1L;
 	private String fileName = ""; // image file
-	private String fileNameMD5 = ""; // Michael Borcherds 2007-11-20
 	private GeoPoint [] corners; // corners of the image
 	private BufferedImage image;	
 	private int pixelWidth, pixelHeight;
@@ -168,59 +167,8 @@ implements Locateable, AbsoluteScreenLocateable,
 			pixelWidth = 0;
 			pixelHeight = 0;
 		}
-		
-// Michael Borcherds 2007-11-20 BEGIN
-		String zip_directory="";
-		try
-		{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(image, "png", baos);		
-		byte [] fileData= baos.toByteArray();
-		
-		MessageDigest md;
-		md = MessageDigest.getInstance("MD5");
-		byte[] md5hash = new byte[32];
-		md.update(fileData, 0, fileData.length);
-		md5hash = md.digest();
-		zip_directory=convertToHex(md5hash);
-		}
-		catch (Exception e)
-		{
-			System.err.println("MD5 Error");
-			zip_directory="images";
-		}
-			
-		String fn=fileName;
-		int index = fileName.lastIndexOf(File.separator);
-	    if( index != -1 )
-	       fn = fn.substring( index+1,fn.length() ); // filename without path
-	    fn=Util.processFilename(fn);
-	    this.fileNameMD5=zip_directory+File.separator+fn;		
+		// Michael Borcherds 2007-12-10 MD5 code moved to Application.java
 	}
-	
-	public String getFileNameMD5() {
-		return fileNameMD5; 
-	}
-	
-// code from freenet
-//	http://emu.freenetproject.org/pipermail/cvs/2007-June/040186.html
-// GPL2
-	private static String convertToHex(byte[] data) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < data.length; i++) {
-        	int halfbyte = (data[i] >>> 4) & 0x0F;
-        	int two_halfs = 0;
-        	do {
-	        	if ((0 <= halfbyte) && (halfbyte <= 9))
-	                buf.append((char) ('0' + halfbyte));
-	            else
-	            	buf.append((char) ('a' + (halfbyte - 10)));
-	        	halfbyte = data[i] & 0x0F;
-        	} while(two_halfs++ < 1);
-        }
-        return buf.toString();
-    }
-//	 Michael Borcherds 2007-11-20 END
 	
 	public String getFileName() {
 		return fileName;
@@ -461,10 +409,8 @@ implements Locateable, AbsoluteScreenLocateable,
 		
 	   	// name of image file
 		sb.append("\t<file name=\"");
-// Michael Borcherds 2007-11-20 BEGIN
-//		sb.append(fileName);
-		sb.append(fileNameMD5);
-// Michael Borcherds 2007-11-20 END
+// Michael Borcherds 2007-12-10 this line restored (not needed now MD5 code put in the correct place)
+		sb.append(fileName);
 		sb.append("\"/>\n");
 		
 	 	// name of image file

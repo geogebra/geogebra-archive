@@ -88,6 +88,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -1656,7 +1657,42 @@ public class Application implements	KeyEventDispatcher {
 			// load image
 			BufferedImage img = ImageIO.read(imageFile);	
 			
-			// write and reload image to make sure we can save it
+		    // Michael Borcherds 2007-12-10 START moved MD5 code from GeoImage to here
+			String zip_directory="";
+			try
+			{
+			  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			  if (img==null) System.out.println("image==null");
+			  ImageIO.write(img, "png", baos);		
+			  byte [] fileData= baos.toByteArray();
+			
+			  MessageDigest md;
+			  md = MessageDigest.getInstance("MD5");
+			  byte[] md5hash = new byte[32];
+			  md.update(fileData, 0, fileData.length);
+			  md5hash = md.digest();
+			  zip_directory=convertToHex(md5hash);
+			}
+			catch (Exception e)
+			{
+				System.err.println("MD5 Error");
+				zip_directory="images";
+				//e.printStackTrace();
+			}
+				
+			String fn=fileName;
+			int index = fileName.lastIndexOf(File.separator);
+		    if( index != -1 )
+		       fn = fn.substring( index+1,fn.length() ); // filename without path
+		    fn=Util.processFilename(fn);
+		    
+		    // filename will be of form "a04c62e6a065b47476607ac815d022cc\liar.gif"
+		    fileName=zip_directory+File.separator+fn;
+
+		    // Michael Borcherds 2007-12-10 END
+		    
+		    
+		    // write and reload image to make sure we can save it
 			// without problems
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			myXMLio.writeImageToStream(os, fileName, img);
@@ -1684,6 +1720,8 @@ public class Application implements	KeyEventDispatcher {
 					return fileName;
 				} else {
 					// same name but different size: change filename
+					// TODO Michael Borcherds: this bit of code should now be redundant as it
+					// is near impossible for the filename to be the same unless the files are the same
 					int n = 0;
 					do {
 						n++;
@@ -1706,6 +1744,25 @@ public class Application implements	KeyEventDispatcher {
 		}		
 	}
 	
+//	 code from freenet
+//	http://emu.freenetproject.org/pipermail/cvs/2007-June/040186.html
+// GPL2
+	private static String convertToHex(byte[] data) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < data.length; i++) {
+        	int halfbyte = (data[i] >>> 4) & 0x0F;
+        	int two_halfs = 0;
+        	do {
+	        	if ((0 <= halfbyte) && (halfbyte <= 9))
+	                buf.append((char) ('0' + halfbyte));
+	            else
+	            	buf.append((char) ('a' + (halfbyte - 10)));
+	        	halfbyte = data[i] & 0x0F;
+        	} while(two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
+
 	public void setWaitCursor() {
 		mainComp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));        		     					
 	}

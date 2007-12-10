@@ -316,10 +316,8 @@ public class MyXMLio {
     	Iterator it = images.iterator();
     	while (it.hasNext()) {    	    		
     		GeoImage geoImage = (GeoImage) it.next();    		    		    			
-//    		 Michael Borcherds 2007-11-20 BEGIN
-//    		String fileName = geoImage.getFileName();    
-    		String fileName = geoImage.getFileNameMD5();    
-//    		 Michael Borcherds 2007-11-20 END
+//    		 Michael Borcherds 2007-12-10 this line put back (not needed now MD5 code put in the correct place!)
+    		String fileName = geoImage.getFileName();    
 			BufferedImage img = geoImage.getImage();
     		if (img != null) 	       
     			writeImageToZip(zip, fileName, img);
