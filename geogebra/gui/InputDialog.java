@@ -56,19 +56,22 @@ public class InputDialog extends JDialog implements ActionListener,
 	 */
 	public InputDialog(Application app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler) {
-		this(app, message,title, initString, autoComplete, handler, false);
+		this(app, message,title, initString, autoComplete, handler, false, false);
 	}
 	
 	public InputDialog(Application app,  String message, String title, String initString,
-			boolean autoComplete, InputHandler handler, boolean modal) {
+			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText) {
 		this(app.getFrame(), modal);
 		this.app = app;		
 		inputHandler = handler;
 		this.initString = initString;			
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true);
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
+		
+		if (initString != null && selectInitText)
+			inputPanel.selectText();
 	}	
 	
 	protected InputDialog(JFrame frame, boolean modal) {
@@ -80,13 +83,13 @@ public class InputDialog extends JDialog implements ActionListener,
 	}
 	
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows,
-			boolean specialChars, boolean greekLetters) {
+			boolean specialChars, boolean greekLetters, boolean selectInitText) {
 		setTitle(title);
 		setResizable(false);		
 
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters);		
-		
+		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters);	
+				
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {
 				insertGeoElement(geo);

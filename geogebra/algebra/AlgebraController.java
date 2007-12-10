@@ -91,7 +91,7 @@ public class AlgebraController
 		
 		// open rename dialog
 		if (geo != null) {							
-			app.showRenameDialog(geo, true, Character.toString(ch));					
+			app.showRenameDialog(geo, true, Character.toString(ch), false);					
 		}
 	}
 

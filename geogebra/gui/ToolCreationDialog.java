@@ -607,8 +607,12 @@ class MyCellRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, iss, chf);
        
         if (value != null) {
-        	GeoElement geo = (GeoElement) value;	     
-        	setText(geo.getLongDescriptionHTML(true, true));
+        	GeoElement geo = (GeoElement) value;
+        	String text = geo.getLongDescriptionHTML(true, true);
+        	if (text.length() < 100)
+        		setText(text);
+        	else
+        		setText(geo.getNameDescriptionHTML(true, true));
         }
         return this;
     }

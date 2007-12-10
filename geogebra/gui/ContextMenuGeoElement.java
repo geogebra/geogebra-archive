@@ -474,7 +474,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-                        app.showRenameDialog(geo, true, null);
+                        app.showRenameDialog(geo, true, geo.getLabel(), true);
                     }
                 });
         }

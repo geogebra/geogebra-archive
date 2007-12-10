@@ -115,7 +115,7 @@ import javax.swing.plaf.FontUIResource;
 
 public class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "December 8, 2007";
+    public static final String buildDate = "December 10, 2007";
 	
     public static final String versionString = "3.0 (RC 3)";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -1478,7 +1478,7 @@ public class Application implements	KeyEventDispatcher {
     /**
        * Displays the rename dialog for geo
        */
-    public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText) {
+    public void showRenameDialog(GeoElement geo, boolean storeUndo, String initText, boolean selectInitText) {
 		if (!rightClickEnabled) return;
     	
     	geo.setLabelVisible(true);
@@ -1497,7 +1497,7 @@ public class Application implements	KeyEventDispatcher {
                 getPlain("Rename"),
                 initText,
                 false,
-                handler, true);                       
+                handler, true, selectInitText);                       
         id.setVisible(true);              
     }
     
@@ -1771,7 +1771,7 @@ public class Application implements	KeyEventDispatcher {
 		cons.setSuppressLabelCreation(true);
 		
 		NumberInputHandler handler = new NumberInputHandler();
-		InputDialog id = new InputDialog(this,  message, title, initText, false, handler, true);       
+		InputDialog id = new InputDialog(this,  message, title, initText, false, handler, true, false);       
         id.setVisible(true); 
         
         cons.setSuppressLabelCreation(oldVal);
