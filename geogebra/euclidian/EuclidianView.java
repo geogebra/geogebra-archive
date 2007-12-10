@@ -606,8 +606,6 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	 * Set capturing of points to the grid.
 	 */
 	public void setPointCapturing(int mode) {
-		System.out.println("point capturing: " + mode);
-		
 		pointCapturingMode = mode;
 	}
 

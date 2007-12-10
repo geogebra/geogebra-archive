@@ -163,8 +163,7 @@ final public class EuclidianController implements MouseListener,
 	private double rotStartAngle;
 	private ArrayList translateableGeos;
 	private GeoVector translationVec;
-
-	private ArrayList groupArrayList = new ArrayList();
+	
 	private ArrayList tempArrayList = new ArrayList();
 	private ArrayList selectedPoints = new ArrayList();
 
@@ -486,8 +485,8 @@ final public class EuclidianController implements MouseListener,
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
-		case EuclidianView.MODE_POINT:
-			hits = view.getHitsForNewPointMode(view.getHits(mouseLoc, true));
+		case EuclidianView.MODE_POINT:			
+			hits = view.getHits(mouseLoc, true);
 			createNewPoint(hits, true, true, true);
 			break;
 			
@@ -2140,6 +2139,11 @@ final public class EuclidianController implements MouseListener,
 	// returns wether new point was created or not
 	final private boolean createNewPoint(ArrayList hits,
 			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
+		
+		// only keep polygon in hits if one side of polygon is in hits too
+		if (hits != null)
+			hits = view.getHitsForNewPointMode(hits);
+		
 		Path path = null;		
 		boolean createPoint = !view.containsGeoPoint(hits);
 		GeoPoint point = null;
@@ -3992,15 +3996,15 @@ final public class EuclidianController implements MouseListener,
 		return selectedGeos.contains(geo);
 	}*/
 	
-	final private GeoElement getFirstSelectedInstance(Class myclass) {
-		Iterator it = selectedGeos.iterator();		
-		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
-			if (myclass.isInstance(geo))
-				return geo;
-		}
-		return null;
-	}
+//	final private GeoElement getFirstSelectedInstance(Class myclass) {
+//		Iterator it = selectedGeos.iterator();		
+//		while (it.hasNext()) {
+//			GeoElement geo = (GeoElement) it.next();
+//			if (myclass.isInstance(geo))
+//				return geo;
+//		}
+//		return null;
+//	}
 
 	final private GeoElement[] getSelectedGeos() {
 		GeoElement[] ret = new GeoElement[selectedGeos.size()];

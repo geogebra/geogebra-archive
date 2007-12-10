@@ -56,6 +56,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
         this.r = r;
         rgeo = r.toGeoElement();
         circle = new GeoConic(cons);
+        
         setInputOutput(); // for AlgoElement
 
         compute();            

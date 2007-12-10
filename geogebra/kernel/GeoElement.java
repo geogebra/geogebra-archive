@@ -955,8 +955,8 @@ public abstract class GeoElement
 	
 	private void updateSpreadsheetCoordinates() {			
 		if(labelSet && label.length() > 1 
-			&& Character.isLetter(label.charAt(0))
-			&& Character.isDigit(label.charAt(1))) 
+			&& Character.isLetter(label.charAt(0)) // starts with letter
+			&& Character.isDigit(label.charAt(label.length()-1)))  // ends with digit
 		{
 			
 			// init old and current spreadsheet coords
@@ -969,10 +969,14 @@ public abstract class GeoElement
 				oldSpreadsheetCoords.setLocation(spreadsheetCoords);
 			}
 			
-			// TODO: improve updateSpreadSheet Coordinates
-			int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
-			int row = Integer.parseInt(label.charAt(1) + "") - 1;
-			spreadsheetCoords.setLocation(column, row);    		
+			try {
+				// TODO: improve updateSpreadSheet Coordinates
+				int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
+				int row = Integer.parseInt(label.substring(1)) - 1;
+				spreadsheetCoords.setLocation(column, row);
+			} catch (Exception e) {
+				spreadsheetCoords = null;
+			}
     	} else {
     		oldSpreadsheetCoords = spreadsheetCoords;
     		spreadsheetCoords = null;

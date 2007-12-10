@@ -67,7 +67,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 *      matrix = ( A[3]  A[1]    A[5] )
 	 *               ( A[4]  A[5]    A[2] )
 	 */
-	private int mode; // for equation
+
 	int type; // of conic
 	double[] matrix = new double[6]; // flat matrix A
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
@@ -100,6 +100,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public GeoConic(Construction c) {
 		super(c);
 		eqnSolver = c.getEquationSolver();
+		toStringMode = EQUATION_IMPLICIT;
 	}		
 
 	/** Creates new GeoConic */
@@ -205,7 +206,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		GeoConic co =(GeoConic) geo;
 	
 		// copy everything
-		mode = co.mode;
+		toStringMode = co.toStringMode;
 		type = co.type;
 		for (int i = 0; i < 6; i++)
 			matrix[i] = co.matrix[i]; // flat matrix A          
@@ -234,27 +235,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			singlePoint.setCoords(co.singlePoint);
 		}
 		defined = co.defined;		
-	}
+	}		
 
-	final public void setMode(int mode) {
+	final public void setToStringMode(int mode) {
 		switch (mode) {
-			case EQUATION_SPECIFIC :
-				if (isSpecificPossible())
-					this.mode = EQUATION_SPECIFIC;
+			case EQUATION_SPECIFIC :				
+				this.toStringMode = EQUATION_SPECIFIC;
 				break;
 				
-			case EQUATION_EXPLICIT:
-				if (isExplicitPossible())
-					this.mode = EQUATION_EXPLICIT;
+			case EQUATION_EXPLICIT:				
+				this.toStringMode = EQUATION_EXPLICIT;
 				break;
 
 			default :
-				this.mode = EQUATION_IMPLICIT;
-		}
+				this.toStringMode = EQUATION_IMPLICIT;
+		}						
 	}
 
-	final public int getMode() {
-		return mode;
+	final public int getToStringMode() {
+		return toStringMode;
 	}
 	final public int getType() {
 		return type;
@@ -271,19 +270,19 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}*/
 
 	final public void setToSpecific() {
-		setMode(EQUATION_SPECIFIC);
+		setToStringMode(EQUATION_SPECIFIC);
 	}
 
 	final public void setToImplicit() {
-		setMode(EQUATION_IMPLICIT);
+		setToStringMode(EQUATION_IMPLICIT);
 	}
 	
 	final public void setToExplicit() {
-		setMode(EQUATION_EXPLICIT);
+		setToStringMode(EQUATION_EXPLICIT);
 	}
 
 	/**
-	 * Returns wheter specific equation representation ist possible.     
+	 * Returns whether specific equation representation is possible.     
 	 */
 	final public boolean isSpecificPossible() {
 		switch (type) {
@@ -475,14 +474,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * in implicit mode: a x\u00b2 + b xy + c y\u00b2 + d x + e y + f = 0. 
 	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
 	 */
-	public String toString() {
-		coeffs[0] = matrix[0]; // x\u00b2
-		coeffs[2] = matrix[1]; // y\u00b2
-		coeffs[5] = matrix[2]; // constant
-		coeffs[1] = 2 * matrix[3]; // xy        
-		coeffs[3] = 2 * matrix[4]; // x
-		coeffs[4] = 2 * matrix[5]; // y  
-	
+	public String toString() {		
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");
@@ -493,14 +485,19 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	
 	public String toValueString() {
 		return buildValueString().toString();	
-	}	
-	
-	
+	}			
 	
 	private StringBuffer buildValueString() {
+		coeffs[0] = matrix[0]; // x\u00b2
+		coeffs[2] = matrix[1]; // y\u00b2
+		coeffs[5] = matrix[2]; // constant
+		coeffs[1] = 2 * matrix[3]; // xy        
+		coeffs[3] = 2 * matrix[4]; // x
+		coeffs[4] = 2 * matrix[5]; // y  
+		
 		sbToValueString.setLength(0);				
 		
-		switch (mode) {
+		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
 				if (!isSpecificPossible())
 					return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN);						
@@ -836,7 +833,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		if (defined) {
 			setCircleMatrix(M, r);
 			setAffineTransform();
-		} 
+		} 		
 	}
 
 	/**
@@ -1927,7 +1924,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		sb.append("/>\n");
 
 		// implicit or specific mode
-		switch (mode) {
+		switch (toStringMode) {
 			case GeoConic.EQUATION_SPECIFIC :
 				sb.append("\t<eqnStyle style=\"specific\"/>\n");
 				break;

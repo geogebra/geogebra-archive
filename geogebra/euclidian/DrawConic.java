@@ -763,7 +763,7 @@ final public class DrawConic extends Drawable implements Previewable {
                                                
            case GeoConic.CONIC_CIRCLE:  
            case GeoConic.CONIC_ELLIPSE:                         	
-        	   return rect.contains(shape.getBounds());
+        	   return rect != null && rect.contains(shape.getBounds());
 		}        
 		
 	    return false;

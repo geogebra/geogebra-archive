@@ -2474,7 +2474,7 @@ public class PropertiesDialogGeoElement
 				if (geo0.getType() != temp.getType())
 					equalType = false;
 				// same mode?
-				if (geo0.getMode() != temp.getMode())
+				if (geo0.getToStringMode() != temp.getToStringMode())
 					equalMode = false;
 				// specific equation possible?
 				if (!temp.isSpecificPossible())
@@ -2506,7 +2506,7 @@ public class PropertiesDialogGeoElement
 
 			int mode;
 			if (equalMode)
-				mode = geo0.getMode();
+				mode = geo0.getToStringMode();
 			else
 				mode = -1;
 			switch (mode) {

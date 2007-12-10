@@ -68,7 +68,7 @@ public class AlgoSequence extends AlgoElement {
     	expIsGeoFunction = expression.isGeoFunction();    	      
     	       
 //    	System.out.println("expression: " + expression);
-//    	System.out.println("  parent algo: " + expression.getParentAlgorithm());
+//   	System.out.println("  parent algo: " + expression.getParentAlgorithm());
 //    //	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
 //    	System.out.println("  variable: " + var);
 //    	System.out.println("  expIsGeoFunction: " + expIsGeoFunction);
@@ -178,14 +178,16 @@ public class AlgoSequence extends AlgoElement {
 				} else {
 					// create new list element
 					listElement = createNewListElement();					
+				}														
+ 			    						
+				// copy current expression value to listElement    
+				if (!expIsGeoFunction) {
+					listElement.set(expression);
 				}
 				
 				// set the value of our element
-				list.add(listElement);								
- 			    						
-				// copy current expression value to listElement    
-				if (!expIsGeoFunction)
-					listElement.set(expression);	
+				listElement.update();
+				list.add(listElement);	
 				
 				currentVal += step;
 				i++;
@@ -208,7 +210,7 @@ public class AlgoSequence extends AlgoElement {
     private GeoElement createNewListElement() {
     	GeoElement listElement = expression.copyInternal(cons);
 		listElement.setParentAlgorithm(this);
-		listElement.setConstructionDefaults();
+		listElement.setConstructionDefaults();		
 		listElement.setUseVisualDefaults(false);
 		
 		if (expIsGeoFunction) {
@@ -221,7 +223,7 @@ public class AlgoSequence extends AlgoElement {
 				funExp.replaceChildrenByValues(var);	
 			}
 		}		
-		
+				
 		return listElement;
     }
     
@@ -239,8 +241,9 @@ public class AlgoSequence extends AlgoElement {
 			// set local var value
 			updateLocalVar(currentVal);	   			    		
 			
-			// copy expression value to listElement    	
+			// copy expression value to listElement    				
 			listElement.set(expression);
+			listElement.update();
 			
 			currentVal += step;
 			i++;

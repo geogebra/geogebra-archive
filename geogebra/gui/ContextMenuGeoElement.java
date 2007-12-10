@@ -249,7 +249,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         if (!(specificPossible || explicitPossible))
             return;
 
-        int mode = conic.getMode();
+        int mode = conic.getToStringMode();
         AbstractAction action;
         StringBuffer sb = new StringBuffer();
 
