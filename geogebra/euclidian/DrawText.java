@@ -128,7 +128,7 @@ public final class DrawText extends Drawable {
 		} 
 		else if (text.isNeedsUpdatedBoundingBox()) {
 			// ensure that bounding box gets updated by drawing text once
-			drawLabel(view.getTempGraphics2D());	
+			drawMultilineText(view.getTempGraphics2D());	
 		}
 		
 		if (text.isNeedsUpdatedBoundingBox()) {
