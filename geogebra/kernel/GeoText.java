@@ -515,10 +515,10 @@ implements Locateable, AbsoluteScreenLocateable {
 	}
 	public void calculateCornerPoint(GeoPoint result, int n) {	
 		// adapted from GeoImage by Michael Borcherds 2007-11-26
-		if (hasAbsoluteScreenLocation) {
+		if (hasAbsoluteScreenLocation || boundingBox == null) {
 			result.setUndefined();
 			return;
-		}				
+		}					
 	
 		switch (n) {
 			case 4: // top left

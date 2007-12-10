@@ -2342,7 +2342,12 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			break;
 
 		case GeoElement.GEO_CLASS_TEXT:
-			d = new DrawText(this, (GeoText) geo);
+			GeoText text = (GeoText) geo;
+			d = new DrawText(this, text);
+			// we may need to propagate the update of the bounding box of the text
+			if (text.isNeedsUpdatedBoundingBox()) {
+				text.updateCascade();
+			}			
 			break;
 
 		case GeoElement.GEO_CLASS_IMAGE:
