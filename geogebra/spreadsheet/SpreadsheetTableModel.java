@@ -38,7 +38,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
         super();
         this.table=table;
         modified=false;
-  //      copyGeo= new ArrayList();
     }
     
     public SpreadsheetTableModel(JTable table, int numRows, int numColumns, Application app)
@@ -220,10 +219,28 @@ public class SpreadsheetTableModel extends DefaultTableModel
     					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
     					String newLabel = getLabel(toRow,toCol);
     					geoArray[0].setLabel(newLabel);
+    					toRow++;
+    					fromRow++;
     				}
     				else if(toRow < fromRow)
     				{
-    					fromRow --;
+    					int diff = fromRow - toRow;
+    					Point newLoc = new Point();
+    					newLoc.setLocation((loc.x+diff), loc.y);
+    					System.out.println("Old Location are \n"+loc.x +loc.y);
+    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
+    					String newPos1 = getLabel(newLoc.x, newLoc.y);
+    		
+    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
+    					System.out.println("Old label is\n"+geoIt.getLabel());
+    					System.out.println("New Label is \n"+newPos1);
+    					System.out.println("New geoAll is\n"+geoAll);
+    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
+    					String newLabel = getLabel(toRow,toCol);
+    					geoArray[0].setLabel(newLabel);
+    					toRow++;
+    					fromRow++;
+    					
     				}
     				else if(toCol > fromCol)
     				{
@@ -251,34 +268,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
 	    	}
     	}
     }
-    
-    
-
-//    /**
-//     * @param geo
-//     * @param newValue
-//     */
-//    private void updateGeoElement(GeoElement geo, String newValue)
-//    {
-//        newValue = newValue.trim();
-//        if (geo instanceof GeoNumeric)
-//        {
-//            GeoNumeric geoNum = (GeoNumeric) geo;
-//            try
-//            {
-//                geoNum.setValue(Double.parseDouble(newValue));
-//                geoNum.update();
-//            }
-//            catch (NumberFormatException nfe)
-//            {
-//                nfe.printStackTrace();
-//            }
-//        }
-////        else
-//        {
-//            //
-//        }
-//    }
     
     public Object getValueAt( int row, int col)
     {

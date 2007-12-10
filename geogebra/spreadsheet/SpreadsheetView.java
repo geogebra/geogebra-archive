@@ -100,15 +100,11 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        newTableModel(rows, columns);
        // clobber resizing of all columns
        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-       // set selection mode for contiguous  intervals
-    //   table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-    //   table.setCellSelectionEnabled(true);
        table.getSelectionModel().addListSelectionListener(new RowListener());
        table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());
     
        table.getTableHeader().setReorderingAllowed(false);      
- 
+      
        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
        
        //Create Menu Bar
@@ -143,7 +139,6 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        cellCheck.setEnabled(false);
 
        table.setColumnSelectionAllowed(true);
-//		table.setRowSelectionAllowed(true);
        table.setRowSelectionAllowed(false);     
        // add row headers
        JTable rowHeader = new JTable(new RowModel(table.getModel()));
@@ -155,8 +150,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        rowHeader.setPreferredScrollableViewportSize(d);
        rowHeader.setRowHeight(table.getRowHeight());
        rowHeader.setDefaultRenderer(Object.class, renderer);
-       //rowHeader.addMouseListener(ml);
-
+   
        scrollPane.setRowHeaderView(rowHeader);
        add(scrollPane, BorderLayout.CENTER);
        table.setRequestFocusEnabled(true);
@@ -166,7 +160,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
       // table.addKeyListener(l);
        
        //Build the structure for the spreadsheet data
-       spController = new SpreadsheetController(app, table,tableModel);
+       spController = new SpreadsheetController(app, this,tableModel);
        initTableCellRendererEditor();
        attachView();	
        
@@ -248,7 +242,12 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 		kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
-    
+
+	  
+    public JTable getTable() {
+    	return table;
+    }
+   
     
     private void initTableCellRendererEditor() {
                

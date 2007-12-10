@@ -2,88 +2,87 @@
  * 
  */
 package geogebra.spreadsheet;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
-
-
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 /**
  * @author Amy Mathew Varkey
  *
  */
-public class SpreadsheetController extends JPanel
+public class SpreadsheetController extends JPanel implements KeyListener
 {
     private Application app;
-    private JTable table;
+    private SpreadsheetView view;
     private GeoElement geo;
     private SpreadsheetTableModel model;
     private GeoElement selectedGeoElement;
+    int x1,y1,x2,y2;
+   
      /**
      * 
      */
-    public SpreadsheetController(Application app, JTable table, SpreadsheetTableModel model){
+    public SpreadsheetController(Application app, SpreadsheetView view, SpreadsheetTableModel model){
         this.app=app;
-        this.table = table;
+        this.view=view;
         this.model=model;
+        view.addKeyListener(this);
+        int y1= view.selectedColStart;
+    	int y2 = view.selectedColEnd;
+    	int x1 = view.selectedRowStart;
+    	int x2 = view.selectedRowEnd;
+       
     }
-   
+  
     public GeoElement getSelectedGeoElement() {
 		return selectedGeoElement;
 	}
-    
-    /*
-     * CellEditorListener implementation 
-    *
-    public void editingCanceled(ChangeEvent event) {
-    }
-    */
 
-    /*
-    public void editingStopped(ChangeEvent event) {
-           
-    	GeoElement geo=null;
-        // get the entered String
-       // String inputStr = table.getCellEditor().getCellEditorValue().toString();
-    	 String inputStr = (String)(table.getDefaultEditor(this.getClass()).getCellEditorValue());    	
-        
-        // TODO: remove
-        System.out.println("editingStopped: inputStr = " + inputStr);
-        
-    //    geo=;
-        // TODO: make sure to set GeoElement into this cell again, otherwise we have a String here
-        // compare to MyDefaultTreeCellEditor in AlgebraView
-        //      the userObject was changed to this String
-        // reset it to the old userObject, which we stored
-        // in selectedGeoElement (see valueChanged())        
-        // only nodes with a GeoElement as userObject can be edited!        
-        //selectedNode.setUserObject(selectedGeoElement);
-        //model=(SpreadsheetTableModel)table.getModel();
-                
-        if (inputStr == null || inputStr.trim().length() == 0) return;
-        
-        // TODO: if String starts with = we need to add the name of the resulting
-        // GeoElement
-        if (inputStr.charAt(0) == '=') {
-            inputStr = inputStr.substring(1);   // remove leading = sign, CHANGE THIS
-        }
-       
-     //   model.setValueAt(obj, model.get, col);
-        // change this GeoElement in the Kernel                  
-    //     geo = app.getKernel().getAlgebraProcessor().changeGeoElement(geo, inputStr, false);
-          
-        
-        //assign it to the cell in the selected location
-        
-           
-    }
-    */
-    
+    /*To handle delete function*/
+	public void keyPressed(KeyEvent event) {
+		if (keyPressedConsumed(event))
+			event.consume();	
+	}
 	
+	public boolean keyPressedConsumed(KeyEvent event){
+		
+   		boolean consumed = false;
+		int keyCode =event.getKeyCode();
+		
+		switch(keyCode){
+			//Case to delete GeoElements from the table
+			case KeyEvent.VK_DELETE:
+				System.out.println("Coming to delete function");
+				//Get the elements which are selected and delete them
+				
+				for(int i=x1; i<= x2; i++ )
+				{
+					for(int j=y1; j<= y2; j++)
+					{
+						
+						GeoElement geo= (GeoElement)model.getValueAt(x1, y1);
+						geo.remove();
+					}
+				}
+				break;
+		}
+		return true;
+	}
 
-  
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+
 }
+
