@@ -2089,7 +2089,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			geo = (GeoElement) hits.get(i);
 			switch (test) {
 			case TEST_MOVEABLE:
-				if (geo.isMoveable() || geo.getMoveableParentPoints() != null)
+				if (geo.isMoveable() || geo.hasOnlyMoveableInputPoints())
 					moveableList.add(geo);
 				break;
 

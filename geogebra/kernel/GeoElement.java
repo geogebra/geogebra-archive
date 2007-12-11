@@ -758,14 +758,30 @@ public abstract class GeoElement
 		return isChangeable();
 	}
 	
+	public boolean hasOnlyMoveableInputPoints() {
+		return containsOnlyMoveableAndVisibleGeos(getFreeInputPoints());
+	}
+	
 	/**
-	 * Returns all moveable parent points of this GeoElement.	 
+	 * Returns all free parent points of this GeoElement.	 
 	 */
-	public ArrayList getMoveableParentPoints() {		
+	public ArrayList getFreeInputPoints() {		
 		if (algoParent == null) 
 			return null;
 		else
-			return algoParent.getMoveableInputPoints();		
+			return algoParent.getFreeInputPoints();		
+	}
+	
+	private static boolean containsOnlyMoveableAndVisibleGeos(ArrayList geos) {
+		if (geos == null || geos.size() == 0)
+			return false;
+				
+		for (int i=0; i < geos.size(); i++) {
+			GeoElement geo = (GeoElement) geos.get(i);
+    		if (!geo.isEuclidianVisible() || !geo.isMoveable())
+    			return false;
+    	}
+		return true;
 	}
 	
 	/**

@@ -408,47 +408,35 @@ implements EuclidianViewAlgo {
     
     /**
 	 * Returns all moveable input points of this algorithm.	 
-	 */
-    public ArrayList getMoveableInputPoints() {
-		if (moveableInputPoints == null) {
-			/*
-			 *  Note: we could get all independent movealbe parents, but
-			 *        this will make almost everything moveable and then it's difficult to understand
-			 *        why certain objects can be moved
-			 * 
-			TreeSet pred = getAllIndependentPredecessors();
-			moveableParents = new ArrayList(pred.size());
-			Iterator it = pred.iterator();
-			while (it.hasNext()) {
-				GeoElement parent = (GeoElement) it.next();
-				if (parent.isEuclidianVisible() &&	parent.isMoveable() && parent.isTranslateable())
-					moveableParents.add(parent);			
-			}				
-			*/
-						
-			moveableInputPoints = new ArrayList(input.length);
-			for (int i=0; i < input.length; i++) {
-				//if (input[i].isEuclidianVisible() &&	input[i].isMoveable() && input[i].isTranslateable())
-				if (input[i].isEuclidianVisible() && input[i].isMoveable() && input[i].isGeoPoint() && input[i].isIndependent())
-					moveableInputPoints.add(input[i]);			
+	 */   
+    public ArrayList getFreeInputPoints() {
+		if (freeInputPoints == null) {				
+			freeInputPoints = new ArrayList(input.length);
+			for (int i=0; i < input.length; i++) {				
+				if (input[i].isGeoPoint() && input[i].isIndependent())
+					freeInputPoints.add(input[i]);			
 			}				
 		}
 	
-		return (moveableInputPoints.size() > 0) ? moveableInputPoints : null;
+		return freeInputPoints;
     }
-    private ArrayList moveableInputPoints;
+    private ArrayList freeInputPoints;
     
     /**
 	 * Returns all input points of this algorithm.	 
 	 */
-    public ArrayList getInputPoints() {			
-		ArrayList inputPoints = new ArrayList(input.length);
-		for (int i=0; i < input.length; i++) {			
-			if (input[i].isGeoPoint() )
-				moveableInputPoints.add(input[i]);			
-		}						
+    public ArrayList getInputPoints() {	
+    	if (inputPoints == null) {
+			inputPoints = new ArrayList(input.length);
+			for (int i=0; i < input.length; i++) {			
+				if (input[i].isGeoPoint() )
+					inputPoints.add(input[i]);			
+			}	
+    	}
+		
 		return inputPoints;
     }
+    private ArrayList inputPoints;
 
     final public boolean isIndependent() {
         return false;

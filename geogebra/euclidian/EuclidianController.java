@@ -700,9 +700,9 @@ final public class EuclidianController implements MouseListener,
 			if (translationVec == null)
 				translationVec = new GeoVector(kernel.getConstruction());
 		}	
-		// dependent object: moveable parents?
-		else if (!movedGeoElement.isMoveable()) {				
-				translateableGeos = movedGeoElement.getMoveableParentPoints();
+		// dependent object: moveable input points as parents?
+		else if (!movedGeoElement.isMoveable() && movedGeoElement.hasOnlyMoveableInputPoints()) {				
+				translateableGeos = movedGeoElement.getFreeInputPoints();				
 				
 				// allow only moving of segments and polygons
 				if (!(movedGeoElement.isGeoLine() || 
