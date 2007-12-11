@@ -1325,7 +1325,9 @@ final public class EuclidianController implements MouseListener,
 		if (rect == null) 
 			return false;
 		
-		if (rect.width < 30 || rect.height < 30) {
+		if (rect.width < 30 || rect.height < 30
+		|| !app.isShiftDragZoomEnabled() // Michael Borcherds 2007-12-11		
+		) {
 			view.setSelectionRectangle(null);
 			view.repaint();
 			return false;
