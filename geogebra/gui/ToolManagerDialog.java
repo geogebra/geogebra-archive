@@ -157,7 +157,9 @@ public class ToolManagerDialog extends javax.swing.JDialog {
         LinkedHashSet tools = new LinkedHashSet();
         for (int i=0; i < sel.length; i++) {
         	Macro macro = (Macro) sel[i];
-        	tools.addAll(macro.getUsedMacros());
+        	ArrayList macros = macro.getUsedMacros();
+        	if (macros != null)
+        		tools.addAll(macros);
         	tools.add(macro);        	
         }
                 
