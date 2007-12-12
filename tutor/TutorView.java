@@ -83,7 +83,7 @@ public class TutorView extends JPanel implements View  {
 	private DefaultListModel listModel = new DefaultListModel(); 
 	private JList resArea = new JList();
 	
-	private Strategy[] strategies;
+	private List strategies;
 
 	private long lineCounter = 0;
 	private ResourceBundle tutorResources;
@@ -100,6 +100,7 @@ public class TutorView extends JPanel implements View  {
 			return tutorResources.getString(key);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			return key;
 		}
 	}
@@ -120,19 +121,25 @@ public class TutorView extends JPanel implements View  {
 		//strategies = this.dbi.retrieveStrategies(problema);
 		//StrategyDao strategiesDao = new HttpStrategyDao();
 		
-		List strats = strategyDao.findStrategiesByProblemId(new Long(problema));
+		strategies = strategyDao.findStrategiesByProblemId(new Long(problema));
 
-		for (Iterator it = strats.iterator(); it.hasNext();) {
+		String context = "http://antalya.uab.es/edumat/agentgeom/problemes";
+		
+		for (Iterator it = strategies.iterator(); it.hasNext();) {
 			Strategy strategy = (Strategy) it.next();
 			try {
-				URL strategyUrl = new URL(strategy.getUrl());
-				Construction c = getConstruction(strategyUrl);
-			}
-			catch (MalformedURLException mue) {
 				
+				String file = strategy.getFile();
+				String strUrl = context + "/" + file;
+				strategy.setUrl(strUrl);
+				URL strategyUrl = new URL(strategy.getUrl());
+				System.out.println(strategyUrl);
+				Construction construction = getConstruction(strategyUrl);
+				strategy.setConstruction(construction);
 			}
 			catch (Exception e) {
-				
+				app.showError(app.getError("Strategies Loading Process Failed. ") 
+						+ "\n" + e.getMessage());
 			}
 		}
 		

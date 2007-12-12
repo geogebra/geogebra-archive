@@ -1,16 +1,52 @@
 <?xml version="1.0" ?>
-<project default="main">
-    <target name="main" depends="compile, compress" description="Main target">
+<project default="dist">
+	
+	<property name="src.dir" location="."/>
+	<property name="build.dir" location="build"/>
+	<property name="dist.dir"  location="dist"/>
+	
+	<path id="project.classpath">
+		<pathelement path="${java.class.path}"/>
+		<fileset dir=".">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+	
+    <target name="dist" depends="compile, compress, sign">
         <echo>
             Building geogebra_unsigned.jar file.
         </echo>
     </target>
   
     <target name="compile" description="Compilation target">
-        <javac srcdir="./"/>
+    	<mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}">
+			<classpath refid="project.classpath" />
+        </javac>
+    	<copy todir="${build.dir}">
+    		<fileset dir="${src.dir}">
+    			<include name="*.jar"/>
+    		</fileset>
+    	</copy>
     </target>
   
-  <target name="compress" description="Compression target">
-        <jar jarfile="geogebra_unsigned.jar" basedir="./" includes="*.class" />
-  </target>
+	<target name="compress" depends="compile" description="Compression target">
+		<mkdir dir="${dist.dir}"/>
+		<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
+			basedir="${build.dir}"
+			includes="**/*.class, *.jar"/>
+	</target>
+	
+	<target name="sign" depends="compress">
+		<signjar keystore="keystore.ks"
+			jar="${dist.dir}/geogebra_unsigned.jar"
+			signedjar="${dist.dir}/geogebra.jar"
+			alias="myalias"
+			storepass="mypassword" />
+	</target>
+
 </project>

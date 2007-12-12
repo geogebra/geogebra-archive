@@ -70,7 +70,7 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		if (student == null)  student = "1";
 		
 		if (protocol == null) protocol = "http";
-		if (ip == null) ip = "localhost";
+		if (ip == null) ip = "192.168.1.4";
 		if (port == null) port = "80";
 		if (context == null) context = "agentgeom/ws/wstestlist.php";
 		

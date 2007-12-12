@@ -25,7 +25,7 @@ public class StrategyMapper implements XmlRowMapper {
 		strategy.setId(new Long(id));
 		strategy.setProblemId(new Long(problemaId));
 		strategy.setTitol(titol);
-		strategy.setUrl(fEstrategia);
+		strategy.setFile(fEstrategia);
 		
 		return strategy;
 	}
