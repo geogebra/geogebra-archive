@@ -31,11 +31,7 @@ public class SpreadsheetController extends JPanel implements KeyListener
         this.view=view;
         this.model=model;
         view.addKeyListener(this);
-     /*   this.y1= view.selectedColStart;
-    	this.y2 = view.selectedColEnd;
-    	this.x1 = view.selectedRowStart;
-    	this.x2 = view.selectedRowEnd;
- */      
+  
     }
   
     public GeoElement getSelectedGeoElement() {
