@@ -31,11 +31,11 @@ public class SpreadsheetController extends JPanel implements KeyListener
         this.view=view;
         this.model=model;
         view.addKeyListener(this);
-        this.y1= view.selectedColStart;
+     /*   this.y1= view.selectedColStart;
     	this.y2 = view.selectedColEnd;
     	this.x1 = view.selectedRowStart;
     	this.x2 = view.selectedRowEnd;
-       
+ */      
     }
   
     public GeoElement getSelectedGeoElement() {
@@ -57,20 +57,28 @@ public class SpreadsheetController extends JPanel implements KeyListener
 			//Case to delete GeoElements from the table
 			case KeyEvent.VK_DELETE:
 				System.out.println("Coming to delete function");
+                int colStart = view.selectedColStart;
+                int colEnd = view.selectedColEnd;
+                int rowStart = view.selectedRowStart;
+                int rowEnd = view.selectedRowEnd;
 				//Get the elements which are selected and delete them
 				
-				for(int i=x1; i<= x2; i++ )
+				for(int i=colStart; i<= colEnd; i++ )
 				{
-					for(int j=y1; j<= y2; j++)
+					for(int j=rowStart; j<= rowEnd; j++)
 					{
 						
-						GeoElement geo= (GeoElement)model.getValueAt(x1, y1);
-						geo.remove();
+						GeoElement geo= (GeoElement)model.getValueAt(j, i);
+                        if( geo != null)
+                        {
+                            geo.remove();
+                        }
 					}
 				}
+                consumed =  true;
 				break;
 		}
-		return true;
+		return consumed;
 	}
 
 	public void keyReleased(KeyEvent e) {

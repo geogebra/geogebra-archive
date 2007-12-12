@@ -189,7 +189,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     {
     	GeoElement geo= (GeoElement)getValueAt(fromRow,fromCol);
     	//Check if the geoElement is dependent on other GeElements(Relative Copy)
-    	if(!geo.isIndependent())
+    	if(geo != null && !geo.isIndependent())
     	{
     		TreeSet geoTree = geo.getAllPredecessors();
     		String geoAll = geo.getDefinitionDescription();

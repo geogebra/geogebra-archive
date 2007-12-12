@@ -161,6 +161,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
        
        //Build the structure for the spreadsheet data
        spController = new SpreadsheetController(app, this,tableModel);
+       table.addKeyListener( spController);
        initTableCellRendererEditor();
        attachView();	
        
@@ -248,6 +249,7 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
     	return table;
     }
    
+ //   public int 
     
     private void initTableCellRendererEditor() {
                
@@ -526,17 +528,21 @@ public class SpreadsheetView extends JComponent implements View, ActionListener,
 				 for(int j=copyColStart;j<=copyColEnd;j++)
 				 {
 					
+                     int pasterow = pasteRowStart + i - copyRowStart;
+                     int pastecol = pasteColStart + j - copyColStart;
 					 //here we are copying the values from source to the destination
-					 tableModel.paste(i, j, pasteRowStart, pasteColStart);
-					 pasteColStart++;
+                     System.out.println("Copying ("+ i + ", " + j + ") to (" +(pasterow)+", " + (pastecol) +")");
+					 tableModel.paste(i, j, pasterow, pastecol);
+					 //pasteColStart++;
 					/*if(pasteColStart != pasteColEnd)
 						continue;*/
 				 }
-				 for(int k=0;k<=colRange;k++)
+				 /*for(int k=0;k<=colRange;k++)
 				 {
 				 pasteColStart --;
 				 }
-				 pasteRowStart++;
+				 */
+                 //pasteRowStart++;
 				/* if(pasteColStart == pasteColEnd)
 				 {
 					 break;
