@@ -62,8 +62,7 @@ public class SpreadsheetView extends JComponent implements View,
 	private JCheckBox rowCheck;
 	private JCheckBox columnCheck;
 	private JCheckBox cellCheck;
-	private JTextArea output;
-	private ListSelectionEvent levent;
+
 	private boolean ALLOW_ROW_SELECTION = true;
 	private boolean ALLOW_COLUMN_SELECTION = false;
 
@@ -165,9 +164,6 @@ public class SpreadsheetView extends JComponent implements View,
 		table.setRequestFocusEnabled(true);
 		table.requestFocus();
 
-		//allowing slection
-		// table.addKeyListener(l);
-
 		//Build the structure for the spreadsheet data
 		spController = new SpreadsheetController(app, this, tableModel);
 		table.addKeyListener(spController);
@@ -177,6 +173,7 @@ public class SpreadsheetView extends JComponent implements View,
 		//Popup menu code
 		createPopupMenu();
 
+		/*Single selection getting enabled*/
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		if (ALLOW_ROW_SELECTION) { // true by default
 			ListSelectionModel rowSM = table.getSelectionModel();
@@ -229,12 +226,7 @@ public class SpreadsheetView extends JComponent implements View,
 			}
 		});
 
-		//to check when we try to copy a cell value to another cell
-		// if(ALLOW_ROW_SELECTION)
-
 	}
-
-	// }
 
 	public void attachView() {
 		kernel.notifyAddAll(this);
@@ -245,7 +237,6 @@ public class SpreadsheetView extends JComponent implements View,
 		return table;
 	}
 
-	//   public int 
 
 	private void initTableCellRendererEditor() {
 
@@ -481,79 +472,6 @@ public class SpreadsheetView extends JComponent implements View,
 			//copying all elements from the selected set of rows and columns
 
 		}
-		/*	 else if(event.getSource() == pastemenuItem)
-			 {
-				 int i,k;
-				 int j;
-				
-				 pasteColStart = selectedColStart;
-				 pasteRowStart = selectedRowStart;
-				 pasteColEnd = selectedColEnd;
-				 pasteRowEnd = selectedRowEnd;
-				
-				 
-				 rowRange = (pasteRowEnd - pasteRowStart)+1 ;
-				 colRange = (pasteColEnd - pasteColStart)+1 ;
-				 
-				 nCellsPaste = rowRange * colRange;
-				 int pasterow;
-				 int pastecol;
-				 
-				 do
-				 {
-				 for(i=copyRowStart;i<=copyRowEnd;i++)
-				 {
-					 for(j=copyColStart;j<=copyColEnd;j++)
-					 {
-						 
-		               pasterow = pasteRowStart + i - copyRowStart;
-		               pastecol = pasteColStart + j - copyColStart;
-						 //here we are copying the values from source to the destination
-		                 System.out.println("Copying ("+ i + ", " + j + ") to (" +(pasterow)+", " + (pastecol) +")");
-						 tableModel.paste(i, j, pasterow, pastecol);
-						 //pasteColStart++;
-						 if(i ==copyRowEnd &&j==copyColEnd && pastecol !=pasteColEnd )
-						 {
-							 for(i=copyRowStart;i<=copyRowEnd;i++)
-							 {
-								 for(j=copyColStart;j<=copyColEnd;j++)
-								 {
-									  pasterow = (pasteRowEnd + i - copyRowStart)-1 ;
-					                  pastecol = (pasteColEnd + j - copyColStart)-1;
-								//	 pasterow = (pasteRowStart + i - copyRowStart)-1-pasteRowEnd ;
-								//	 pastecol = (pasteColStart + j - copyColStart)-1-pasteColEnd;
-								
-					                   System.out.println("Copying ("+ i + ", " + j + ") to (" +(pasterow)+", " + (pastecol) +")");
-									 tableModel.paste(i, j, pasterow, pastecol);
-								
-								 }
-							 }
-							
-						 }
-						 if(i ==copyRowEnd &&j==copyColEnd && pasterow !=pasteRowEnd )
-						 {
-							 for(i=copyRowStart;i<=copyRowEnd;i++)
-							 {
-								 for(j=copyColStart;j<=copyColEnd;j++)
-								 {
-									  pasterow = (pasteRowEnd + i - copyRowStart) -1;
-					                 pastecol = (pasteColEnd + j - copyColStart)-1;
-								//	 pasterow ++;
-								//	 pastecol --;
-					                   System.out.println("Copying ("+ i + ", " + j + ") to (" +(pasterow)+", " + (pastecol) +")");
-									 tableModel.paste(i, j, pasterow, pastecol);
-								//	 pasterow --;
-								//	 pastecol ++;
-								 }
-							 }
-							
-						 }
-					 }
-				 }//main for loop ends
-				 }
-				 while((nCellsPaste % nCellsCopy) ==0);
-			 }	 */
-
 		else if (event.getSource() == pastemenuItem) {
 			int i, k;
 			int j;
@@ -582,18 +500,12 @@ public class SpreadsheetView extends JComponent implements View,
 				rowMultiple = 1;
 
 			nCellsPaste = rowRange * colRange;
-			//int pasterow;
-			//int pastecol;
 
 			for (int rowOffset = 0; rowOffset < rowMultiple; rowOffset++)
-
 			{
-
 				for (i = copyRowStart; i <= copyRowEnd; i++) {
 					for (int colOffset = 0; colOffset < colMultiple; colOffset++) {
-
 						for (j = copyColStart; j <= copyColEnd; j++) {
-
 							int pasterow = pasteRowStart + i - copyRowStart
 									+ (rowOffset * copyRowRange);
 							int pastecol = pasteColStart + j - copyColStart
@@ -604,7 +516,6 @@ public class SpreadsheetView extends JComponent implements View,
 									+ ") to (" + (pasterow) + ", " + (pastecol)
 									+ ")");
 							tableModel.paste(i, j, pasterow, pastecol);
-
 						}
 					}
 				}//main for loop ends

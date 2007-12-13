@@ -163,25 +163,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
             super.setValueAt(obj, row, col);
         }
     }
-    
-    /*Function to copy 1 element to another in a spreadsheet*/
-    
- /*   public void copy(Object obj, int row, int col, int rowRange, int colRange)
-    {
-    	GeoElement geo= (GeoElement)obj;
-    	
-    	if(geo == null)
-    	{
-    		
-    	}
-    	else
-    	{
-    		copyGeo = geo.copyInternal(geo.getConstruction());
-    //		copyGeo.add(geo.copyInternal(geo.getConstruction()));
-    		System.out.println("copyGeo is: " + copyGeo);
-    	}
-    }*/
-    
+      
     /**
      * Copies cell (fromRow, fromCol) to cell (toRow, toCol).
      */
@@ -203,7 +185,8 @@ public class SpreadsheetTableModel extends DefaultTableModel
     			GeoElement geoIt = (GeoElement) it.next();
     			if(geoIt != null)
     			{
-    				Point loc= getCellLocation( geoAll.trim().substring(0));
+    			//	Point loc =getCellLocation(geoAll.substring(0, 2));
+    				Point loc =getCellLocation(geoAll.substring(0, 2));
     				if(toRow>fromRow)
     				{
     					int diff = toRow - fromRow;
@@ -227,7 +210,52 @@ public class SpreadsheetTableModel extends DefaultTableModel
     				{
     					int diff = fromRow - toRow;
     					Point newLoc = new Point();
-    					newLoc.setLocation((loc.x+diff), loc.y);
+    					newLoc.setLocation((loc.x-diff), loc.y);
+    					System.out.println("Old Location are \n"+loc.x +loc.y);
+    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
+    					String newPos1 = getLabel(newLoc.x, newLoc.y);
+    		
+    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
+    					System.out.println("Old label is\n"+geoIt.getLabel());
+    					System.out.println("New Label is \n"+newPos1);
+    					System.out.println("New geoAll is\n"+geoAll);
+    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
+    					String newLabel = getLabel(toRow,toCol);
+    					geoArray[0].setLabel(newLabel);
+    					toRow--;
+    					fromRow--;
+    					
+    				}
+    				else if(toCol > fromCol)
+    				{
+    					int diff = toCol - fromCol;
+    					Point newLoc = new Point();
+    					newLoc.setLocation(loc.x, (loc.y+diff));
+    					System.out.println("Old Location are \n"+loc.x +loc.y);
+    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
+    					String newPos1 = getLabel(newLoc.x, newLoc.y);
+    		
+    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
+    					System.out.println("Old label is\n"+geoIt.getLabel());
+    					System.out.println("New Label is \n"+newPos1);
+    					System.out.println("New geoAll is\n"+geoAll);
+    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
+    					String newLabel = getLabel(toRow,toCol);
+    			//		geoArray[0].setLabel(newLabel);
+    					geoArray[0].setLabel(newLabel);
+    					toCol++;
+    					fromCol++;
+    				}
+    				else if(toCol < fromCol)
+    				{
+    					
+    				}
+    				else if(toRow>fromRow && toCol > fromCol)
+    				{
+    					int diffx = toRow - fromRow;
+    					int diffy = toCol - fromCol;
+    					Point newLoc = new Point();
+    					newLoc.setLocation((loc.x+diffx), (loc.y+diffy));
     					System.out.println("Old Location are \n"+loc.x +loc.y);
     					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
     					String newPos1 = getLabel(newLoc.x, newLoc.y);
@@ -240,20 +268,12 @@ public class SpreadsheetTableModel extends DefaultTableModel
     					String newLabel = getLabel(toRow,toCol);
     					geoArray[0].setLabel(newLabel);
     					toRow++;
-    				//	fromRow++;
-    					
-    				}
-    				else if(toCol > fromCol)
-    				{
+    					fromRow++;
+    					toCol++;
     					fromCol++;
-    				}
-    				else if(toCol < fromCol)
-    				{
-    					
     				}
     				
     			}
-    	//		System.out.println("Geo Elements are:",+geoTree );
     		}
     		
     	}
@@ -287,7 +307,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
         Object obj = getValueAt(row, col);
         if( !(obj instanceof GeoElement))
         {
-         //   System.out.println("null");
             return true;
         }
         else
@@ -307,7 +326,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     	{
     		int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
 			int row = Integer.parseInt(label.charAt(1) + "") - 1;
-			coords.setLocation(column, row);
+			coords.setLocation(row, column);
     	}
     	return coords;
     }

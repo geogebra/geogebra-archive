@@ -44,6 +44,7 @@ public class SpreadsheetController extends JPanel implements KeyListener
 			event.consume();	
 	}
 	
+	/*This function deals with the pressing of the delete key to delete GeoElements*/
 	public boolean keyPressedConsumed(KeyEvent event){
 		
    		boolean consumed = false;

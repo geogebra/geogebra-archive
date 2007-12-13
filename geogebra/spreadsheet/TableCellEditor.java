@@ -53,24 +53,5 @@ public class TableCellEditor extends DefaultCellEditor{
         //return editorComponent;
         return c;
     }
-//	 public Object getCellEditorValue() 
-//	 {
-//		 
-//	 }
-	 /** stores currently selected GeoElement and node.
-		 *  selectedNode, selectedGeoElement are private members of AlgebraView
-		 */
-//		private void storeSelection(TreePath tp) {
-//			if (tp == null)
-//				return;
-//
-//			Object ob;
-//			textField = (DefaultMutableTreeNode) tp.getLastPathComponent();
-//			if (selectedNode != null
-//				&& (ob = selectedNode.getUserObject()) instanceof GeoElement) {
-//				selectedGeoElement = (GeoElement) ob;
-//			} else {
-//				selectedGeoElement = null;
-//			}
-//		}
+
 }
