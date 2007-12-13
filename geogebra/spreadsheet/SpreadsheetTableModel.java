@@ -195,6 +195,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     		String geoAll = geo.getDefinitionDescription();
     		System.out.println("The elements are\n"+geoAll);
     		int size = geoTree.size();
+    		System.out.println("Size of GeoTree is\n"+size);
     		Iterator it = geoTree.iterator();
     		while(it.hasNext())
     		{
@@ -239,7 +240,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     					String newLabel = getLabel(toRow,toCol);
     					geoArray[0].setLabel(newLabel);
     					toRow++;
-    					fromRow++;
+    				//	fromRow++;
     					
     				}
     				else if(toCol > fromCol)
