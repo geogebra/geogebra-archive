@@ -11,6 +11,7 @@ import geogebra.algebra.parser.Parser;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.Kernel;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -31,6 +32,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     private Application app = null;
    // ArrayList copyGeo;
     GeoElement copyGeo= null;
+    int flag=0;
     
 
     public SpreadsheetTableModel(JTable table)
@@ -173,108 +175,50 @@ public class SpreadsheetTableModel extends DefaultTableModel
     	//Check if the geoElement is dependent on other GeElements(Relative Copy)
     	if(geo != null && !geo.isIndependent())
     	{
-    		TreeSet geoTree = geo.getAllPredecessors();
+    	//	TreeSet geoTree = geo.getAllPredecessors();
     		String geoAll = geo.getDefinitionDescription();
-    		System.out.println("The elements are\n"+geoAll);
-    		int size = geoTree.size();
-    		System.out.println("Size of GeoTree is\n"+size);
-    		Iterator it = geoTree.iterator();
-    		while(it.hasNext())
-    		{
+    	//	System.out.println("The elements are\n"+geoAll);
+    	//	int size = geoTree.size();
+    	//	System.out.println("Size of GeoTree is\n"+size);
+    	//	Iterator it = geoTree.iterator();
+    	//	while(it.hasNext())
+    	//	{
     			//Do the processing
-    			GeoElement geoIt = (GeoElement) it.next();
-    			if(geoIt != null)
+    	//		GeoElement geoIt = (GeoElement) it.next();
+    	/*		if(geoIt != null)
     			{
-    			//	Point loc =getCellLocation(geoAll.substring(0, 2));
-    				Point loc =getCellLocation(geoAll.substring(0, 2));
+    				Point loc =getCellLocation(geoAll.substring(0, 2));*/
     				if(toRow>fromRow)
     				{
+    					flag =1;
     					int diff = toRow - fromRow;
-    					Point newLoc = new Point();
-    					newLoc.setLocation((loc.x+diff), loc.y);
-    					System.out.println("Old Location are \n"+loc.x +loc.y);
-    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
-    					String newPos1 = getLabel(newLoc.x, newLoc.y);
-    		
-    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
-    					System.out.println("Old label is\n"+geoIt.getLabel());
-    					System.out.println("New Label is \n"+newPos1);
-    					System.out.println("New geoAll is\n"+geoAll);
-    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
-    					String newLabel = getLabel(toRow,toCol);
-    					geoArray[0].setLabel(newLabel);
+    					processGeoElement(diff, geo, toRow, toCol);
     					toRow++;
     					fromRow++;
     				}
     				else if(toRow < fromRow)
     				{
+    					flag=2;
     					int diff = fromRow - toRow;
-    					Point newLoc = new Point();
-    					newLoc.setLocation((loc.x-diff), loc.y);
-    					System.out.println("Old Location are \n"+loc.x +loc.y);
-    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
-    					String newPos1 = getLabel(newLoc.x, newLoc.y);
-    		
-    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
-    					System.out.println("Old label is\n"+geoIt.getLabel());
-    					System.out.println("New Label is \n"+newPos1);
-    					System.out.println("New geoAll is\n"+geoAll);
-    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
-    					String newLabel = getLabel(toRow,toCol);
-    					geoArray[0].setLabel(newLabel);
+    					processGeoElement(diff, geo, toRow, toCol);
     					toRow--;
     					fromRow--;
     					
     				}
     				else if(toCol > fromCol)
     				{
+    					flag=3;
     					int diff = toCol - fromCol;
-    					Point newLoc = new Point();
-    					newLoc.setLocation(loc.x, (loc.y+diff));
-    					System.out.println("Old Location are \n"+loc.x +loc.y);
-    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
-    					String newPos1 = getLabel(newLoc.x, newLoc.y);
-    		
-    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
-    					System.out.println("Old label is\n"+geoIt.getLabel());
-    					System.out.println("New Label is \n"+newPos1);
-    					System.out.println("New geoAll is\n"+geoAll);
-    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
-    					String newLabel = getLabel(toRow,toCol);
-    			//		geoArray[0].setLabel(newLabel);
-    					geoArray[0].setLabel(newLabel);
+    					processGeoElement(diff, geo, toRow, toCol);
     					toCol++;
     					fromCol++;
     				}
     				else if(toCol < fromCol)
     				{
-    					
+    					flag=4;
     				}
-    				else if(toRow>fromRow && toCol > fromCol)
-    				{
-    					int diffx = toRow - fromRow;
-    					int diffy = toCol - fromCol;
-    					Point newLoc = new Point();
-    					newLoc.setLocation((loc.x+diffx), (loc.y+diffy));
-    					System.out.println("Old Location are \n"+loc.x +loc.y);
-    					System.out.println("New Label is\n"+newLoc.x +newLoc.y);
-    					String newPos1 = getLabel(newLoc.x, newLoc.y);
-    		
-    					geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
-    					System.out.println("Old label is\n"+geoIt.getLabel());
-    					System.out.println("New Label is \n"+newPos1);
-    					System.out.println("New geoAll is\n"+geoAll);
-    					GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );
-    					String newLabel = getLabel(toRow,toCol);
-    					geoArray[0].setLabel(newLabel);
-    					toRow++;
-    					fromRow++;
-    					toCol++;
-    					fromCol++;
-    				}
-    				
-    			}
-    		}
+    	//		}
+    	//	}//while(it.hasnext()) loop ends
     		
     	}
     	else
@@ -290,7 +234,78 @@ public class SpreadsheetTableModel extends DefaultTableModel
     	}
     }
     
-    public Object getValueAt( int row, int col)
+    private void processGeoElement(int diff, GeoElement geo, int toRow, int toCol) 
+    {
+    	int i=1;
+    	TreeSet geoTree = geo.getAllPredecessors();
+		String geoAll = geo.getDefinitionDescription();
+		System.out.println("The elements are\n"+geoAll);
+		int size = geoTree.size();
+		System.out.println("Size of GeoTree is\n"+size);
+		Iterator it = geoTree.iterator();
+		while(it.hasNext())
+		{
+			//Get the GeoElement
+			GeoElement newgeo =(GeoElement)it.next();
+			//Iterate through ist of all predecessors and replace with a new string
+			String l = newgeo.getLabel();
+			//Replace the string with a new one for now
+			
+				geoAll = geoAll.replaceAll(l, "pReDeCeSsOr"+i);
+				System.out.println("The elements are\n"+geoAll);
+				i++;
+		}
+			//Do the processing
+	//		GeoElement geoIt = (GeoElement) it.next();
+	/*		if(geoIt != null)
+			{
+				Point loc =getCellLocation(geoAll.substring(0, 2));*/
+    /*	Point newLoc = new Point();
+    	if(flag==1)
+    	{
+    		newLoc.setLocation((loc.x+diff), loc.y);
+    	}
+    	else if(flag==2)
+    	{
+    		newLoc.setLocation((loc.x-diff), loc.y);
+    	}
+    	else if(flag==3)
+    	{
+    		newLoc.setLocation(loc.x, (loc.y+diff));
+    	}
+    	else if(flag==4)
+    	{
+    		newLoc.setLocation(loc.x, (loc.y-diff));
+    	}
+    	else if(flag==5)
+    	{
+    		
+    	}
+    	
+    	// changed variable name due to relative copy
+		System.out.println("Old Location are \n"+loc.x +loc.y);
+		System.out.println("New Label is\n"+newLoc.x +newLoc.y);
+		String newPos1 = getLabel(newLoc.x, newLoc.y);
+		
+		// check if there is a GeoElement with label newPos1 in the construction
+		Kernel kernel = app.getKernel();
+		geo = kernel.lookupLabel(newPos1);
+		
+		// only paste if there is a GeoElement with this name
+		if (geo != null) {
+			geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
+			System.out.println("Old label is\n"+geoIt.getLabel());
+			System.out.println("New Label is \n"+newPos1);
+			System.out.println("New geoAll is\n"+geoAll);
+			
+			GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );    					
+	    	String newLabel = getLabel(toRow,toCol);
+	    	geoArray[0].setLabel(newLabel);
+		}*/
+	}
+  
+
+	public Object getValueAt( int row, int col)
     {
         Object obj = super.getValueAt(row,col );
         if( !(obj instanceof GeoElement ))
