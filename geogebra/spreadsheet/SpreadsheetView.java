@@ -218,6 +218,7 @@ public class SpreadsheetView extends JComponent implements View,
 				if (lsm.isSelectionEmpty()) {
 					System.out.println("No columns are selected.");
 				} else {
+					
 					selectedColStart = lsm.getMinSelectionIndex();
 					selectedColEnd = lsm.getMaxSelectionIndex();
 					System.out.println("Column " + (selectedColStart) + "to"
@@ -244,8 +245,6 @@ public class SpreadsheetView extends JComponent implements View,
 		JTextField editTF = new JTextField();
 		TableCellEditor editor = new TableCellEditor(editTF);
 		table.setDefaultEditor(Object.class, editor);
-		// listen to editor events
-		//editor.addCellEditorListener(spController); 
 	}
 
 	/** Can be used by subclasses to customize the underlying JTable
@@ -342,7 +341,7 @@ public class SpreadsheetView extends JComponent implements View,
 	 * @see geogebra.View#update(geogebra.kernel.GeoElement)
 	 */
 	final public void update(GeoElement geo) {
-		// TODO: remove
+	
 		System.out.println("update: " + geo);
 
 		Point location = geo.getSpreadsheetCoords();
@@ -371,7 +370,6 @@ public class SpreadsheetView extends JComponent implements View,
 
 		public MyRenderer() {
 			super();
-			//setOpaque(true);
 		}
 
 		public void setValue(Object value) {
@@ -452,12 +450,12 @@ public class SpreadsheetView extends JComponent implements View,
 		}
 	}
 
-	public void actionPerformed(ActionEvent event) {//TODO:Localize the strings used here
+	public void actionPerformed(ActionEvent event) {
 
 		if (event.getSource() == cutmenuItem) {
 
 		} else if (event.getSource() == copymenuItem) {
-			//tableModel.setValueAt("55", 4, 2);
+			
 			copyColStart = selectedColStart;
 			copyRowStart = selectedRowStart;
 			copyColEnd = selectedColEnd;
@@ -473,7 +471,7 @@ public class SpreadsheetView extends JComponent implements View,
 
 		}
 		else if (event.getSource() == pastemenuItem) {
-			int i, k;
+			int i;
 			int j;
 
 			pasteColStart = selectedColStart;
@@ -503,9 +501,12 @@ public class SpreadsheetView extends JComponent implements View,
 
 			for (int rowOffset = 0; rowOffset < rowMultiple; rowOffset++)
 			{
-				for (i = copyRowStart; i <= copyRowEnd; i++) {
-					for (int colOffset = 0; colOffset < colMultiple; colOffset++) {
-						for (j = copyColStart; j <= copyColEnd; j++) {
+				for (i = copyRowStart; i <= copyRowEnd; i++) 
+				{
+					for (int colOffset = 0; colOffset < colMultiple; colOffset++) 
+					{
+						for (j = copyColStart; j <= copyColEnd; j++) 
+						{
 							int pasterow = pasteRowStart + i - copyRowStart
 									+ (rowOffset * copyRowRange);
 							int pastecol = pasteColStart + j - copyColStart

@@ -2,15 +2,9 @@
  * 
  */
 package geogebra.spreadsheet;
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.TreeSet;
-
 import geogebra.Application;
-import geogebra.algebra.parser.Parser;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 
 import javax.swing.JTable;
@@ -28,7 +22,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
      * Stores modified state of document
      */
     private boolean modified;
-
     private Application app = null;
    // ArrayList copyGeo;
     GeoElement copyGeo= null;
@@ -103,36 +96,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
         return colLbl;
     }
     
-    public int getColValue( String str)
-    {
-        int ret = 0;
-        if( str != null && str.length() > 1)
-        {
-            char ch = str.toUpperCase().charAt(0);
-            ret = ch - 'A';
-        }
-        return ret;
-    }
-    
-    public int getRowValue(String str)
-    {
-        int ret = -1;
-        if( str != null && str.length()>1)
-        {
-            String rowstr = str.substring(1); // only one char for the column
-            try
-            {
-                ret = Integer.parseInt(rowstr);
-                ret--;
-            }
-            catch( NumberFormatException nfe)
-            {
-                ret = -1;
-                nfe.printStackTrace();
-            }
-        }
-        return ret;
-    }
+   
     public void setValueAt( Object obj, int row, int col)
     {
         GeoElement geo = null;
@@ -175,8 +139,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
                {
                    // case of formula
                    newValue = newValue.substring(1);
-                           
-                   
                }
               
                if ( geo.isIndependent()) {
@@ -185,7 +147,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
               	} else {
               	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
               	    app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
-              	//    updateGeoElement(geo, newValue);
               	}               
             
             }
@@ -205,53 +166,9 @@ public class SpreadsheetTableModel extends DefaultTableModel
     	//Check if the geoElement is dependent on other GeElements(Relative Copy)
     	if(geo != null && !geo.isIndependent())
     	{
-    	//	TreeSet geoTree = geo.getAllPredecessors();
+    
     		String geoAll = geo.getDefinitionDescription();
-    	//	System.out.println("The elements are\n"+geoAll);
-    	//	int size = geoTree.size();
-    	//	System.out.println("Size of GeoTree is\n"+size);
-    	//	Iterator it = geoTree.iterator();
-    	//	while(it.hasNext())
-    	//	{
-    			//Do the processing
-    	//		GeoElement geoIt = (GeoElement) it.next();
-    	/*		if(geoIt != null)
-    			{
-    				Point loc =getCellLocation(geoAll.substring(0, 2));*/
-                    processGeoElement(toRow - fromRow,toCol - fromCol, geo, toRow, toCol);
-/*            
-    				if(toRow>fromRow)
-    				{
-    					flag =1;
-    					int diff = toRow - fromRow;
-    					processGeoElement(0,diff, geo, toRow, toCol);
-    					toRow++;
-    					fromRow++;
-    				}
-    				else if(toRow < fromRow)
-    				{
-    					flag=2;
-    					int diff = fromRow - toRow;
-    					processGeoElement(0,diff, geo, toRow, toCol);
-    					toRow--;
-    					fromRow--;
-    					
-    				}
-    				else if(toCol > fromCol)
-    				{
-    					flag=3;
-    					int diff = toCol - fromCol;
-    					processGeoElement(0,diff, geo, toRow, toCol);
-    					toCol++;
-    					fromCol++;
-    				}
-    				else if(toCol < fromCol)
-    				{
-    					flag=4;
-    				}
-                    */
-    	//		}
-    	//	}//while(it.hasnext()) loop ends
+            processGeoElement(toRow - fromRow,toCol - fromCol, geo, toRow, toCol);
     		
     	}
     	else
@@ -276,7 +193,27 @@ public class SpreadsheetTableModel extends DefaultTableModel
 		int size = geoTree.size();
 		System.out.println("Size of GeoTree is\n"+size);
 		Iterator it = geoTree.iterator();
-        geoAll = geoAll.toLowerCase() + " ";
+		
+		// change geoAll String to protect variable names like A1, A2, ...
+		// add @ sign in front of all cell variable names 
+		// e.g. "A1 + A2 + b" is changed to "@A1 + @A2 + b"
+		 while(it.hasNext())
+		{
+		 	// for all in geoTree 
+		 	//Get the GeoElement
+			GeoElement newgeo =(GeoElement)it.next();
+            //Iterate through ist of all predecessors and replace with a new string
+			 String l = newgeo.getLabel();
+			 int col = GeoElement.getSpreadsheetColumn( l );
+	         int row = GeoElement.getSpreadsheetRow( l );
+			 if( row == -1 || col == -1)
+	                continue;
+			 geoAll = geoAll.replaceAll(l, "@" + l);
+		}
+   
+	    // change geoAll String to result value
+		// now transform "@A1 + @A2 + b" for example into "A2 + A3 + b" 
+		it = geoTree.iterator();
         while(it.hasNext())
 		{
 			//Get the GeoElement
@@ -284,8 +221,8 @@ public class SpreadsheetTableModel extends DefaultTableModel
             //Iterate through ist of all predecessors and replace with a new string
 			String l = newgeo.getLabel();
             System.out.println("new geo label ="+l);
-            int col = getColValue( l );
-            int row = getRowValue( l );
+            int col = GeoElement.getSpreadsheetColumn( l );
+            int row = GeoElement.getSpreadsheetRow( l );
             if( row == -1 || col == -1)
                 continue;
             System.out.println("col ="+col + " row = " + row);
@@ -300,58 +237,15 @@ public class SpreadsheetTableModel extends DefaultTableModel
                 break;
             }
             
-            geoAll = geoAll.replaceAll(l.toLowerCase()+" ", newLabel.toUpperCase()+" ");
-            //Replace the string with a new one for now
-			
-				//geoAll = geoAll.replaceAll(l, "pReDeCeSsOr"+i);
-				//System.out.println("The elements are\n"+geoAll);
-				//i++;
+            geoAll = geoAll.replaceAll("@" + l, newLabel);
+          
 		}
         System.out.println("new formula = " + geoAll);
-			//Do the processing
-	//		GeoElement geoIt = (GeoElement) it.next();
-	/*		if(geoIt != null)
-			{
-				Point loc =getCellLocation(geoAll.substring(0, 2));*/
-    /*	Point newLoc = new Point();
-    	if(flag==1)
-    	{
-    		newLoc.setLocation((loc.x+diff), loc.y);
-    	}
-    	else if(flag==2)
-    	{
-    		newLoc.setLocation((loc.x-diff), loc.y);
-    	}
-    	else if(flag==3)
-    	{
-    		newLoc.setLocation(loc.x, (loc.y+diff));
-    	}
-    	else if(flag==4)
-    	{
-    		newLoc.setLocation(loc.x, (loc.y-diff));
-    	}
-    	else if(flag==5)
-    	{
-    		
-    	}
-    	
-    	// changed variable name due to relative copy
-		System.out.println("Old Location are \n"+loc.x +loc.y);
-		System.out.println("New Label is\n"+newLoc.x +newLoc.y);*/
-		//String newPos1 = getLabel(toRow,toCol);
-        //System.out.println("New pos is\n"+newPos1);
-        
-		// check if there is a GeoElement with label newPos1 in the construction
-		//Kernel kernel = app.getKernel();
-		//geo = kernel.lookupLabel(newPos1);
-		
+			
+	
 		// only paste if there is a GeoElement with this name
 		if (createNew ) {
-			/*geoAll = geoAll.replaceAll(geoIt.getLabel(), newPos1);
-			System.out.println("Old label is\n"+geoIt.getLabel());
-			System.out.println("New Label is \n"+newPos1);
-			System.out.println("New geoAll is\n"+geoAll);
-			*/
+			
 			GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );    					
 	    	String newLabel = getLabel(toRow,toCol);
 	    	geoArray[0].setLabel(newLabel);
@@ -362,7 +256,6 @@ public class SpreadsheetTableModel extends DefaultTableModel
         }
 	}
   
-
 	public Object getValueAt( int row, int col)
     {
         Object obj = super.getValueAt(row,col );
@@ -388,20 +281,4 @@ public class SpreadsheetTableModel extends DefaultTableModel
             return geo.isChangeable() || geo.isRedefineable();
         }
     }
-    
-    /*Function which will return the position of a geoElement in the spreadsheet*/
-    
-    public static Point getCellLocation(String label)
-    {
-    	Point coords = new Point();
-    	if(label.length()> 1 && Character.isLetter(label.charAt(0))
-    			&& Character.isDigit(label.charAt(1)))
-    	{
-    		int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
-			int row = Integer.parseInt(label.charAt(1) + "") - 1;
-			coords.setLocation(row, column);
-    	}
-    	return coords;
-    }
-
 }

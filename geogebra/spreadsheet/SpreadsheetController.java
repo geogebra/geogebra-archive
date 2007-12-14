@@ -18,10 +18,8 @@ public class SpreadsheetController extends JPanel implements KeyListener
 {
     private Application app;
     private SpreadsheetView view;
-    private GeoElement geo;
     private SpreadsheetTableModel model;
     private GeoElement selectedGeoElement;
-    int x1,y1,x2,y2;
    
      /**
      * 
