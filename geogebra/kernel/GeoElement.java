@@ -985,12 +985,11 @@ public abstract class GeoElement
 				oldSpreadsheetCoords.setLocation(spreadsheetCoords);
 			}
 			
-			try {
-				// TODO: improve updateSpreadSheet Coordinates
-				int column = Character.getNumericValue(label.charAt(0)) - Character.getNumericValue('A');
-				int row = Integer.parseInt(label.substring(1)) - 1;
+			int column = getSpreadsheetColumn(label);
+			int row = getSpreadsheetRow(label);
+			if (column >= 0 && row >= 0) {			
 				spreadsheetCoords.setLocation(column, row);
-			} catch (Exception e) {
+			} else {
 				spreadsheetCoords = null;
 			}
     	} else {
@@ -998,8 +997,41 @@ public abstract class GeoElement
     		spreadsheetCoords = null;
     	}
 		
-		//System.out.println("update spread sheet coords: " + spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
-	}				
+		System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
+	}		
+	
+	 public static int getSpreadsheetColumn( String str)
+	    {
+	        int ret = -1;
+	        if( str != null && str.length() > 1)
+	        {	            
+	        	char ch = str.charAt(0);
+	        	if (Character.isUpperCase(ch)) {
+	        		ret = ch - 'A';
+	        	}
+	        }
+	        return ret;
+	    }
+	    
+    public static int getSpreadsheetRow(String str)
+    {
+        int ret = -1;
+        if( str != null && str.length()>1)
+        {
+            String rowstr = str.substring(1); // only one char for the column
+            try
+            {
+                ret = Integer.parseInt(rowstr);
+                ret--;
+            }
+            catch( NumberFormatException nfe)
+            {
+                ret = -1;
+                nfe.printStackTrace();
+            }
+        }
+        return ret;
+    }
 
 	private void doRenameLabel(String newLabel) {
 		if (newLabel == null || newLabel.equals(label)) 
