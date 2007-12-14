@@ -97,7 +97,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
         return colLbl;
     }
     
-   
+   /*Used to set value of a geoelement in a cell in the spreadsheet*/
     public void setValueAt( Object obj, int row, int col)
     {
         GeoElement geo = null;
@@ -184,7 +184,8 @@ public class SpreadsheetTableModel extends DefaultTableModel
 	    	}
     	}
     }
-    
+    /*Takes the dependent elements in a formula and replaces it with the new elements
+      and in the respective cells*/
     private void processGeoElement(int rowdiff,int coldiff, GeoElement geo, int toRow, int toCol) 
     {
     	boolean createNew = true;
