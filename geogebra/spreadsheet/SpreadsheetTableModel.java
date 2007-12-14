@@ -5,6 +5,7 @@ package geogebra.spreadsheet;
 import java.util.TreeSet;
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 
 import javax.swing.JTable;
@@ -220,7 +221,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
 			GeoElement newgeo =(GeoElement)it.next();
             //Iterate through ist of all predecessors and replace with a new string
 			String l = newgeo.getLabel();
-            System.out.println("new geo label ="+l);
+            System.out.println("geo label ="+l);
             int col = GeoElement.getSpreadsheetColumn( l );
             int row = GeoElement.getSpreadsheetRow( l );
             if( row == -1 || col == -1)
@@ -228,13 +229,14 @@ public class SpreadsheetTableModel extends DefaultTableModel
             System.out.println("col ="+col + " row = " + row);
             String newLabel = getLabel(row + rowdiff, col + coldiff);
             System.out.println("new label ="+newLabel);
+           
             Kernel kernel = app.getKernel();
             geo = kernel.lookupLabel(newLabel);
             if( geo == null)
             {
                 System.out.println(newLabel + " is not defined.");
-                createNew = false;
-                break;
+                createNew = false;                
+                break;              
             }
             
             geoAll = geoAll.replaceAll("@" + l, newLabel);
@@ -244,8 +246,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
 			
 	
 		// only paste if there is a GeoElement with this name
-		if (createNew ) {
-			
+		if (createNew ) {			
 			GeoElement[] geoArray =app.getKernel().getAlgebraProcessor().processAlgebraCommand( geoAll, true );    					
 	    	String newLabel = getLabel(toRow,toCol);
 	    	geoArray[0].setLabel(newLabel);

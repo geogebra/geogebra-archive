@@ -66,6 +66,7 @@ public class SpreadsheetView extends JComponent implements View,
 	private boolean ALLOW_ROW_SELECTION = true;
 	private boolean ALLOW_COLUMN_SELECTION = false;
 
+	//Variables to get the selected rows and columns from the spreadsheet
 	int selectedColStart;
 	int selectedRowStart;
 	int selectedRowEnd;
@@ -119,6 +120,7 @@ public class SpreadsheetView extends JComponent implements View,
 		//Build the first Menu
 		menu = new JMenu("Edit");
 		menuBar.add(menu);
+		//Add items for cut,copy and paste
 		cutmenuItem = new JMenuItem("Cut");
 		menu.add(cutmenuItem);
 		copymenuItem = new JMenuItem("Copy");
@@ -170,9 +172,7 @@ public class SpreadsheetView extends JComponent implements View,
 		initTableCellRendererEditor();
 		attachView();
 
-		//Popup menu code
-		createPopupMenu();
-
+	
 		/*Single selection getting enabled*/
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		if (ALLOW_ROW_SELECTION) { // true by default
@@ -226,7 +226,6 @@ public class SpreadsheetView extends JComponent implements View,
 				}
 			}
 		});
-
 	}
 
 	public void attachView() {
@@ -299,6 +298,7 @@ public class SpreadsheetView extends JComponent implements View,
 		// remove old value from table
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
+			//Set the new value at the respective location
 			tableModel.setValueAt(null, location.y, location.x);
 		}
 	}
@@ -307,9 +307,7 @@ public class SpreadsheetView extends JComponent implements View,
 	 * @see geogebra.View#rename(geogebra.kernel.GeoElement)
 	 */
 	public void rename(GeoElement geo) {
-		// TODO: remove
 		System.out.println("rename: " + geo);
-
 		// remove old value from table
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
@@ -354,9 +352,8 @@ public class SpreadsheetView extends JComponent implements View,
 	 * @see geogebra.View#updateAuxiliaryObject(geogebra.kernel.GeoElement)
 	 */
 	public void updateAuxiliaryObject(GeoElement geo) {
-		// TODO: remove
+		
 		System.out.println("update: " + geo);
-
 		update(geo);
 
 	}
@@ -424,6 +421,7 @@ public class SpreadsheetView extends JComponent implements View,
 		}
 	}
 
+	/*Renderer for the rows in the spreadsheet*/
 	private static class RowHeaderRenderer extends DefaultTableCellRenderer {
 		public RowHeaderRenderer() {
 			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
@@ -452,9 +450,12 @@ public class SpreadsheetView extends JComponent implements View,
 
 	public void actionPerformed(ActionEvent event) {
 
+		//If the event is a cut menu..currently doing nothing
 		if (event.getSource() == cutmenuItem) {
 
-		} else if (event.getSource() == copymenuItem) {
+		}
+		/*If the event is a copy */
+		else if (event.getSource() == copymenuItem) {
 			
 			copyColStart = selectedColStart;
 			copyRowStart = selectedRowStart;
@@ -470,6 +471,7 @@ public class SpreadsheetView extends JComponent implements View,
 			//copying all elements from the selected set of rows and columns
 
 		}
+		/*If the event is a paste operation*/
 		else if (event.getSource() == pastemenuItem) {
 			int i;
 			int j;
@@ -479,7 +481,9 @@ public class SpreadsheetView extends JComponent implements View,
 			pasteColEnd = selectedColEnd;
 			pasteRowEnd = selectedRowEnd;
 
+			//Get the range of rows which are being copied
 			int copyRowRange = (copyRowEnd - copyRowStart) + 1;
+			//Get the range of columns which are being copied
 			int copyColRange = (copyColEnd - copyColStart) + 1;
 
 			rowRange = (pasteRowEnd - pasteRowStart) + 1;
@@ -501,16 +505,29 @@ public class SpreadsheetView extends JComponent implements View,
 
 			for (int rowOffset = 0; rowOffset < rowMultiple; rowOffset++)
 			{
+				// go through rows				
+				int increment, rowStart, rowEnd;
+				
+				
+				
 				for (i = copyRowStart; i <= copyRowEnd; i++) 
 				{
 					for (int colOffset = 0; colOffset < colMultiple; colOffset++) 
 					{
+						// go through columns
 						for (j = copyColStart; j <= copyColEnd; j++) 
-						{
-							int pasterow = pasteRowStart + i - copyRowStart
-									+ (rowOffset * copyRowRange);
-							int pastecol = pasteColStart + j - copyColStart
-									+ (colOffset * copyColRange);
+						{		
+							// calculate paste row
+							int rowAdd = (i - copyRowStart) + (rowOffset * copyRowRange);
+							// is paste range above copy range
+							int pasterow = (pasteRowEnd < copyRowStart) ? 																										
+										pasteRowEnd - rowAdd : pasteRowStart + rowAdd;
+									 
+							// calculate paste column
+							int colAdd = (j - copyColStart) + (colOffset * copyColRange);
+							// is paste range left of copy range
+							int pastecol = (pasteColEnd < copyColStart) ? 																										
+									pasteColEnd - colAdd : pasteColStart + colAdd;
 
 							//here we are copying the values from source to the destination
 							System.out.println("Copying (" + i + ", " + j
@@ -522,6 +539,8 @@ public class SpreadsheetView extends JComponent implements View,
 				}//main for loop ends
 			}
 		}
+		//Code for the selection modes in the spreadsheet application-
+		//Multiple Interval Selection,Single Interval Selection,Single Selection
 		else {
 			String command = event.getActionCommand();
 			//Cell selection is disabled in Multiple Interval Selection
@@ -609,31 +628,6 @@ public class SpreadsheetView extends JComponent implements View,
 		}
 	}
 
-	public void createPopupMenu() {
-		JMenuItem menuItem;
-
-		//Create the popup menu.
-		final JPopupMenu popup = new JPopupMenu();
-		menuItem = new JMenuItem("Copy");
-		menuItem.addActionListener(this);
-		popup.add(menuItem);
-		menuItem = new JMenuItem("Paste");
-		menuItem.addActionListener(this);
-		popup.add(menuItem);
-
-		//Add listener to the text area so the popup menu can come up.
-		MouseListener popupListener = new PopupListener(popup);
-		this.addMouseListener(popupListener);
-
-		this.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent Me) {
-				if (Me.isPopupTrigger()) {
-					popup.show(Me.getComponent(), Me.getX(), Me.getY());
-				}
-			}
-		});
-
-	}
 
 	class PopupListener extends MouseAdapter {
 		JPopupMenu popup;

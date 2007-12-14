@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+/*Is the default Editor for the class*/
 public class TableCellEditor extends DefaultCellEditor{
 	
 	 public TableCellEditor(final JTextField textField) {
