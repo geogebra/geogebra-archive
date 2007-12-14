@@ -116,7 +116,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
     
     public int getRowValue(String str)
     {
-        int ret = 0;
+        int ret = -1;
         if( str != null && str.length()>1)
         {
             String rowstr = str.substring(1); // only one char for the column
@@ -127,7 +127,7 @@ public class SpreadsheetTableModel extends DefaultTableModel
             }
             catch( NumberFormatException nfe)
             {
-                ret = 0;
+                ret = -1;
                 nfe.printStackTrace();
             }
         }
@@ -286,6 +286,8 @@ public class SpreadsheetTableModel extends DefaultTableModel
             System.out.println("new geo label ="+l);
             int col = getColValue( l );
             int row = getRowValue( l );
+            if( row == -1 || col == -1)
+                continue;
             System.out.println("col ="+col + " row = " + row);
             String newLabel = getLabel(row + rowdiff, col + coldiff);
             System.out.println("new label ="+newLabel);
