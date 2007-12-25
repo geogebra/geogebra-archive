@@ -68,7 +68,7 @@ public class GeoGebraToPstricks implements ActionListener {
     private PstricksPanel frame;
     private HashMap CustomColor;
     private double xunit,yunit,xmin,xmax,ymin,ymax;
-    private boolean transparency;
+//    private boolean transparency;
     public GeoGebraToPstricks(Application app) {
     	this.app = app;
     	this.kernel = app.getKernel();
@@ -169,7 +169,6 @@ public class GeoGebraToPstricks implements ActionListener {
 		codeBeginDoc=new StringBuffer();
 		codeBeginPic=new StringBuffer();
 		CustomColor=new HashMap();
- 		transparency=false;
  		
     	codePreamble.append("\\documentclass[" +
     			frame.getFontSize()+"pt]{article}\n" +
@@ -520,13 +519,13 @@ public class GeoGebraToPstricks implements ActionListener {
 		double angExt = geo.getRawAngle();
 		if (angExt>Math.PI*2) angExt-=Math.PI*2;
 		
-		if (geo.angleStyle()==geo.ANGLE_ISCLOCKWISE)
+		if (geo.angleStyle()==GeoAngle.ANGLE_ISCLOCKWISE)
 		{
 			angSt+=angExt;
 			angExt=2.0*Math.PI-angExt;
 		}
 		
-		if (geo.angleStyle()==geo.ANGLE_ISNOTREFLEX)
+		if (geo.angleStyle()==GeoAngle.ANGLE_ISNOTREFLEX)
 		{
 			if (angExt>Math.PI)
 			{
@@ -535,7 +534,7 @@ public class GeoGebraToPstricks implements ActionListener {
 			}
 		}
 		
-		if (geo.angleStyle()==geo.ANGLE_ISREFLEX)
+		if (geo.angleStyle()==GeoAngle.ANGLE_ISREFLEX)
 		{
 			if (angExt<Math.PI)
 			{
@@ -1052,7 +1051,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		renameFunc(sb,"sinh(","SINH(");
 		renameFunc(sb,"tanh(","TANH(");
 		// for exponential in new Geogbra version.
-		renameFunc(sb,kernel.EULER_STRING,"2,718281828");
+		renameFunc(sb,Kernel.EULER_STRING,"2,718281828");
 		return new String(sb);
 	}
 	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
@@ -1825,14 +1824,13 @@ public class GeoGebraToPstricks implements ActionListener {
 		ColorCode(linecolor,sb);
 	}
 	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
-		defineTransparency();
 		if (coma) sb.append(",");
 		else coma=true;
 		if (!bracket) sb.append("[");
 		bracket=true;
 		sb.append("fillcolor=");
 		ColorCode(linecolor,sb);
-		sb.append(",fillstyle=transp,transpalpha=");
+		sb.append(",fillstyle=transparent,transpalpha=");
 		sb.append(geo.getAlphaValue());
 	}
 	if (bracket) sb.append("]");
@@ -1981,7 +1979,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		}
 		return st;
 	}*/
-	private void defineTransparency(){
+/*	private void defineTransparency(){
 		String str="\\makeatletter\n\\define@key[psset]{}{transpalpha}{\\pst@checknum{#1}\\pstranspalpha}\n"+
 		"\\psset{transpalpha=1}\n"+
 		"\\def\\psfs@transp{%\n"+
@@ -1990,7 +1988,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		if (!transparency) codePreamble.append(str);
 		transparency=true;
 	}
-	
+	*/
 	
 	// When The Button "generate PSTricks" has been clicked
 	public void actionPerformed(ActionEvent e){
