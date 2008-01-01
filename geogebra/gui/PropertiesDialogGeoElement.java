@@ -4473,7 +4473,9 @@ class NamePanel
 		tfName.addFocusListener(this);	
 		
 		// DEFINITON PANEL		
-		defInputHandler = new RedefineInputHandler(app, null);
+// Michael Borcherds 2007-12-31 BEGIN added third argument
+		defInputHandler = new RedefineInputHandler(app, null, null);
+//		 Michael Borcherds 2007-12-31 END
 	
 		// definition field: non auto complete input panel
 		inputPanelDef = new InputPanel(null, app, 1, 20, true, true);

@@ -1515,12 +1515,14 @@ public class Application implements	KeyEventDispatcher {
 			showTextDialog((GeoText) geo);
 			return;
     	}
-    	
-    	InputHandler handler = new RedefineInputHandler(this, geo);                
+
+    	// Michael Borcherds 2007-12-31 BEGIN
+    	//InputHandler handler = new RedefineInputHandler(this, geo);                
         	String str = geo.isIndependent() ? 
                             geo.toValueString() :
                             geo.getCommandDescription();
-        
+        InputHandler handler = new RedefineInputHandler(this, geo, str);                
+//                          Michael Borcherds 2007-12-31 END    
         /*
         String str = initSB.toString();        
         // add label to make renaming possible too

@@ -8,10 +8,12 @@ public class RedefineInputHandler implements InputHandler {
 
 	private GeoElement geo;
 	private Application app;
+	private String oldString; // Michael Borcherds 2007-12-31
 
-	public RedefineInputHandler(Application app, GeoElement geo) {
+	public RedefineInputHandler(Application app, GeoElement geo, String oldString) {
 		this.geo = geo;
 		this.app = app;
+		this.oldString=oldString; // Michael Borcherds 2007-12-31
 	}
 	
 	public void setGeoElement(GeoElement geo) {
@@ -21,6 +23,7 @@ public class RedefineInputHandler implements InputHandler {
 	public boolean processInput(String inputValue) {			
 		if (inputValue == null)
 			return false;
+		if (inputValue.equals(this.oldString)) return true; // Michael Borcherds 2007-12-31
 		try {
 			GeoElement newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
 					geo, inputValue, true);
