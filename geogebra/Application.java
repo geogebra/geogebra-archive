@@ -2621,6 +2621,10 @@ public class Application implements	KeyEventDispatcher {
         String strFile = "docu" + languageISOcode + "/index.html";
         String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
         
+        if (GeoGebra.MAC_OS) {
+        	strFile = "GeoGebra.app/Contents/Resources/Help/" + strFile;
+        }
+        
         try {
             File f = new File(strFile);
             if (f.exists())
