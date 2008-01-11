@@ -2622,7 +2622,7 @@ public class Application implements	KeyEventDispatcher {
         String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
         
         if (GeoGebra.MAC_OS) {
-        	strFile = "GeoGebra.app/Contents/Resources/Help/" + strFile;
+        	strFile = codebase.getPath().substring(0, codebase.getPath().lastIndexOf("/Java/")) + "/Help/" + strFile;
         }
         
         try {
