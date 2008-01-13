@@ -2562,7 +2562,7 @@ public class Application implements	KeyEventDispatcher {
         } catch (Exception e) {           
             System.err.println(
                 "openHelp error: " + e.toString() + e.getMessage());
-            showError(e.toString());
+            showError(e.getMessage());
         }
     }    
     
