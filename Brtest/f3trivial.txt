@@ -6,7 +6,7 @@ This line will be changed by Markus only after the first merge.
 
 This line will be left alone.
 
-This line will be changed by Michael only.
+This line changed by Michael in Iteration 1.
 
 This line will be changed by Michael only after the first merge.
 
