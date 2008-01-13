@@ -1,0 +1,13 @@
+This file will be edited by Markus and Michael.
+
+This line will be changed by Markus only.
+
+This line will be changed by Markus only after the first merge.
+
+This line will be left alone.
+
+This line will be changed by Michael only.
+
+This line will be changed by Michael only after the first merge.
+
+The rest of this file will remain the same.
