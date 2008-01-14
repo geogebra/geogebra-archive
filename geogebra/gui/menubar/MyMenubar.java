@@ -55,6 +55,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
+			showSpreadsheetAction,     // Michael Borcherds 2008-01-14
 			showCmdListAction, horizontalSplitAction,
 			showAuxiliaryObjectsAction, showConsProtNavigationAction,
 			showConsProtNavigationPlayAction,
@@ -70,6 +71,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction;
 
 	private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
+	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
 			cbShowConsProtNavigation, cbShowConsProtNavigationPlay,
 			cbShowConsProtNavigationOpenProt, cbShowAlgebraInput,
@@ -96,6 +98,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	    cbShowGrid.setSelected(ev.getShowGrid());
 	    
 	    cbShowAlgebraView.setSelected(app.showAlgebraView());
+	    cbShowSpreadsheet.setSelected(app.showSpreadsheet());     // Michael Borcherds 2008-01-14
         cbShowAlgebraInput.setSelected(app.showAlgebraInput());
         cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
@@ -283,6 +286,13 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		cbShowAlgebraView.setSelected(app.showAlgebraView());
 		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
 		menu.add(cbShowAlgebraView);
+
+	    // Michael Borcherds 2008-01-14
+		cbShowSpreadsheet = new JCheckBoxMenuItem(showSpreadsheetAction);		
+		cbShowSpreadsheet.setIcon(app.getEmptyIcon());
+		cbShowSpreadsheet.setSelected(app.showSpreadsheet());
+		setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
+		menu.add(cbShowSpreadsheet);
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
@@ -625,6 +635,16 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				app.setShowAlgebraView(!app.showAlgebraView());
 				app.updateCenterPanel(true);
+			}
+		};
+
+	    // Michael Borcherds 2008-01-14
+		showSpreadsheetAction = new AbstractAction(app.getPlain("Spreadsheet")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowSpreadsheet(!app.showSpreadsheet());
+				//app.updateCenterPanel(true);
 			}
 		};
 

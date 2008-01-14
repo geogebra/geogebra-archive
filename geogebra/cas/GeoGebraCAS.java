@@ -3,6 +3,7 @@ package geogebra.cas;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import jasymca.GeoGebraJasymca;
+import yacas.YacasInterpreter;
 
 import java.io.InputStream;
 
@@ -14,13 +15,13 @@ import java.io.InputStream;
  */
 public class GeoGebraCAS {
 	    	
-	//private YacasInterpreter yacas;
+	private YacasInterpreter yacas;
 	private GeoGebraJasymca ggbJasymca;	
-    private StringBuffer sbInsertSpecial; //, sbRemoveSpecial;                
+    private StringBuffer sbInsertSpecial, sbRemoveSpecial;                
     
     public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
-    	//sbRemoveSpecial = new StringBuffer(80);  
+    	sbRemoveSpecial = new StringBuffer(80);  
     	ggbJasymca = new GeoGebraJasymca();    
     }        
     
@@ -60,7 +61,7 @@ public class GeoGebraCAS {
      * Evaluates a YACAS expression and returns the result as a string,
      * e.g. exp = "D(x) (x^2)" returns "2*x".
      * @return result string (null possible)
-     *
+     */
     final public String evaluateYACAS(String exp) {
     	//System.out.println("exp for YACAS: " + exp);
         
@@ -96,7 +97,42 @@ public class GeoGebraCAS {
             e.printStackTrace();
             return null;
         }       
-    }        */
+    }        
+    
+    /** 
+     * Evaluates a YACAS expression without any preprocessing and returns the result as a string,
+     * e.g. exp = "D(x) (x^2)" returns "2*x".
+     * @return result string (null possible)
+     */
+    final public String evaluateYACASRaw(String exp) {
+    	//System.out.println("exp for YACAS: " + exp);
+        
+    	if (yacas == null) {
+    		try {
+    			yacas = new YacasInterpreter();    
+    		} catch (Exception e) {
+    			System.err.println("Could not initialize YACAS");
+    			return null;
+    		}
+    	}
+    	
+        try {
+        	String result;
+        	
+        	result = yacas.Evaluate(exp);
+        	
+            return result;
+            
+        } catch (Error err) {
+        	yacas.Evaluate("restart;");
+            err.printStackTrace();
+            return null;    
+        } catch (Exception e) {
+        	yacas.Evaluate("restart;");
+            e.printStackTrace();
+            return null;
+        }       
+    }        
     
     /** 
      * Evaluates an JSCL expression and returns the result as a string.
@@ -237,7 +273,7 @@ public class GeoGebraCAS {
      * Converts all special characters (like greek letters) in the given String
      * to "unicode" + charactercode + DELIMITER Strings. This is neede because
      * YACAS cannot handle all unicode characters.     
-     *
+     */
     private String removeSpecialChars(String str) {
     	int len = str.length();
     	sbRemoveSpecial.setLength(0);
@@ -277,7 +313,7 @@ public class GeoGebraCAS {
             }
         }
         return sbRemoveSpecial.toString();   	
-    }  */
+    }  
     
     /**
      * Reverse operation of removeSpecialChars().

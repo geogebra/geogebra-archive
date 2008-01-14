@@ -180,14 +180,28 @@ public class Kernel {
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
-     *
+     */
 	final public String evaluateYACAS(String exp) {
 		if (ggbCAS == null) {
 			initCAS();		
 		}
 		
 		return ggbCAS.evaluateYACAS(exp);
-	}*/
+	}
+	
+	/** 
+     * Evaluates a YACAS expression without any preprocessing and returns the result as a String.
+     * e.g. exp = "D(x) (x^2)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */
+	final public String evaluateYACASRaw(String exp) {
+		if (ggbCAS == null) {
+			initCAS();		
+		}
+		
+		return ggbCAS.evaluateYACASRaw(exp);
+	}
 	
 	/** 
      * Evaluates a JASYMCA expression and returns the result as a String.
@@ -1708,6 +1722,96 @@ public class Kernel {
 		AlgoListMax algo = new AlgoListMax(cons, label, list);
 		GeoNumeric num = algo.getMax();
 		return num;
+	}
+	
+	/** 
+	 * LCM[a, b]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric LCM(String label, NumberValue a, NumberValue b) {
+		AlgoLCM algo = new AlgoLCM(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * LCM[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric LCM(String label, GeoList list) {
+		AlgoListLCM algo = new AlgoListLCM(cons, label, list);
+		GeoNumeric num = algo.getLCM();
+		return num;
+	}
+	
+	/** 
+	 * GCD[a, b]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric GCD(String label, NumberValue a, NumberValue b) {
+		AlgoGCD algo = new AlgoGCD(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * GCD[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric GCD(String label, GeoList list) {
+		AlgoListGCD algo = new AlgoListGCD(cons, label, list);
+		GeoNumeric num = algo.getGCD();
+		return num;
+	}
+	
+	/** 
+	 * SigmaXY[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaXY(String label, GeoList list) {
+		AlgoListSigmaXY algo = new AlgoListSigmaXY(cons, label, list);
+		GeoNumeric num = algo.getSigmaXY();
+		return num;
+	}
+	
+	/** 
+	 * SigmaXY[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaXY(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSigmaXY algo = new AlgoDoubleListSigmaXY(cons, label, listX, listY);
+		GeoNumeric num = algo.getSigmaXY();
+		return num;
+	}
+	
+	/** 
+	 * FitLineY[list of coords]
+	 * Michael Borcherds
+	 */
+	final public GeoLine FitLineY(String label, GeoList list) {
+		AlgoFitLineY algo = new AlgoFitLineY(cons, label, list);
+		GeoLine line = algo.getFitLineY();
+		return line;
+	}
+	
+	/** 
+	 * FitLineX[list of coords]
+	 * Michael Borcherds
+	 */
+	final public GeoLine FitLineX(String label, GeoList list) {
+		AlgoFitLineX algo = new AlgoFitLineX(cons, label, list);
+		GeoLine line = algo.getFitLineX();
+		return line;
+	}
+	
+	/** 
+	 * Sort[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Sort(String label, GeoList list) {
+		AlgoSort algo = new AlgoSort(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
 	}
 	
 	/** 

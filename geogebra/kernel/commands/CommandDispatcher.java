@@ -197,6 +197,12 @@ public class CommandDispatcher {
     	cmdTable.put("Div", new CmdDiv(kernel));
     	cmdTable.put("Min", new CmdMin(kernel));
     	cmdTable.put("Max", new CmdMax(kernel));
+    	cmdTable.put("LCM", new CmdLCM(kernel));
+    	cmdTable.put("GCD", new CmdGCD(kernel));
+    	cmdTable.put("Sort", new CmdSort(kernel));
+    	cmdTable.put("SigmaXY", new CmdSigmaXY(kernel));
+    	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
+    	cmdTable.put("FitLineX", new CmdFitLineX(kernel));
     	cmdTable.put("Element", new CmdElement(kernel));
     	cmdTable.put("Iteration", new CmdIteration(kernel));
     	cmdTable.put("IterationList", new CmdIterationList(kernel));

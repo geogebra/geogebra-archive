@@ -391,7 +391,6 @@ public class Application implements	KeyEventDispatcher {
 		if (showCAS) {
 			openCAS(this);
 		}
-
     }      
     
     public static void openCAS(Application app) {
@@ -417,6 +416,7 @@ public class Application implements	KeyEventDispatcher {
 			e.printStackTrace();
 		}
     }
+	private static JFrame spFrame= new JFrame();
     
     public static void openSpreadsheet(Application app) {
     	try {
@@ -427,8 +427,7 @@ public class Application implements	KeyEventDispatcher {
   		    Class [] types = new Class[] {Application.class, int.class, int.class};
   	        Constructor constructor = SpreadsheetView.getDeclaredConstructor(types); 	        
   	        JComponent sp = (JComponent) constructor.newInstance(args);  
-	    		    	
-			JFrame spFrame = new JFrame();
+  	         	
 	        Container contentPane = spFrame.getContentPane();
 	        contentPane.setLayout(new BorderLayout());
 	        contentPane.add(sp, BorderLayout.CENTER);
@@ -436,6 +435,15 @@ public class Application implements	KeyEventDispatcher {
 	        spFrame.setTitle("GeoGebra Spreadsheet");
 	        spFrame.pack();
 	        spFrame.setVisible(true);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    // Michael Borcherds 2008-01-14
+    public static void closeSpreadsheet() {
+    	try {
+	        spFrame.setVisible(false);
     	} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2207,9 +2215,31 @@ public class Application implements	KeyEventDispatcher {
         updateMenubar();            
         isSaved = false;        
     }
+ 
+    // Michael Borcherds 2008-01-14
+    public void setShowSpreadsheet(boolean flag) {
+        if (showSpreadsheet == flag) return;
+        
+        showSpreadsheet = flag;
+        if (showSpreadsheet) {        	
+    		openSpreadsheet(this);
+        }         
+        else {
+    		closeSpreadsheet();
+
+        }                
+            
+        updateMenubar();            
+        isSaved = false;        
+    }
        
     final public boolean showAlgebraView() {
         return showAlgebraView;
+    }        
+    
+    // Michael Borcherds 2008-01-14
+    final public boolean showSpreadsheet() {
+        return showSpreadsheet;
     }        
     
     public boolean showAlgebraInput() {
