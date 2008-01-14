@@ -2,6 +2,6 @@ This file will be edited by Markus and Michael.
 
 This line changed by Michael and Markus in Iteration 1.
 
-This line will be changed by both Markus and Michael after the first merge.
+This line will changed by Michael in Iteration 2.
 
 The rest of this file will remain the same.

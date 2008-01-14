@@ -8,6 +8,6 @@ This line will be left alone.
 
 This line changed by Michael in Iteration 1.
 
-This line will be changed by Michael only after the first merge.
+This line changed by Michael in Iteration 2.
 
 The rest of this file will remain the same.
