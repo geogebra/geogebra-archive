@@ -58,26 +58,26 @@ public class CASView extends JComponent
        JTable table = new JTable(new CASTableModel(session));
        
        /*
-       //table.getModel().addTableModelListener(this);
-       TableColumn console = table.getColumnModel().getColumn(0);
-       console.setMinWidth(384);
-       console.setCellRenderer(renderer);
-       //JTable table = new JTable()
-    //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
-     //JScrollPane sp= new JScrollPane(table);
-       JScrollPane sp= new JScrollPane(table, 
+       	//table.getModel().addTableModelListener(this);
+       	TableColumn console = table.getColumnModel().getColumn(0);
+       	console.setMinWidth(384);
+       	console.setCellRenderer(renderer);
+       	//JTable table = new JTable()
+		//table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
+     	//JScrollPane sp= new JScrollPane(table);
+       	JScrollPane sp= new JScrollPane(table, 
     		   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
     		   JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
        
-       //table.
-     //  output = new JTextField();
-       //add(sp, BorderLayout.NORTH);
-      // add(input, BorderLayout.NORTH);
-       add(sp, BorderLayout.CENTER);
-   //    sp.add(table);
-    //   table.setValueAt(new String("test"), 0, 0);
+       	//table.
+     	//  output = new JTextField();
+       	//add(sp, BorderLayout.NORTH);
+      	// add(input, BorderLayout.NORTH);
+       	add(sp, BorderLayout.CENTER);
+   		//    sp.add(table);
+    	//   table.setValueAt(new String("test"), 0, 0);
       
-       //add(output, BorderLayout.SOUTH);
+       	//add(output, BorderLayout.SOUTH);
        
 //       input.addActionListener(new ActionListener() {
 //
@@ -94,14 +94,14 @@ public class CASView extends JComponent
        // init scroll pane
        setLayout(new BorderLayout());
        JPanel panel = new JPanel();
-       panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
-		JScrollPane scrollPane = new JScrollPane(panel);
-		//setPreferredSize(new Dimension(450, 110));
-		add(scrollPane, BorderLayout.CENTER);
+       panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+       JScrollPane scrollPane = new JScrollPane(panel);
+       //setPreferredSize(new Dimension(450, 110));
+       add(scrollPane, BorderLayout.CENTER);
        
 	
-		 // focus listenerr
-        FocusListener fl = new FocusListener() {
+       // focus listenerr
+       FocusListener fl = new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				Object src = e.getSource();
 				

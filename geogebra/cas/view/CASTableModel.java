@@ -1,64 +1,67 @@
 package geogebra.cas.view;
 
-import javax.swing.table.AbstractTableModel;
+import geogebra.Application;
+import geogebra.kernel.GeoElement;
 
-public class CASTableModel extends AbstractTableModel {
-    private CASSession session;
-    
-    public CASTableModel(CASSession session)
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class CASTableModel extends DefaultTableModel {
+   
+	private CASSession session;
+   
+	private JTable table;
+    private boolean modified;
+    private Application app = null;
+    GeoElement copyGeo= null;
+	
+    public CASTableModel(CASSession session, JTable table)
     {
+    	super();
+    	
+        this.table=table;
+        modified=false;    	
     	this.session = session;
     }
 
-    public int getColumnCount() {
-        return 1;
-    }
+    public CASTableModel(JTable table, int numRows, CASSession session, Application app)
+    {
+        super(numRows, 1);
+        this.app = app;
+        
+        // initialize state to unmodified and file to untitled
+        modified = false;
+        this.table = table;
+        this.session = session;
+    }   
+    
+    public CASTableModel(JTable table, Object[] data, CASSession session, Application app)
+    {
+       this(table, data.length, session, app);
 
-    public int getRowCount() {
-        return (2*session.count());
-    }
+       /* load the data */
+       for (int i = 0; i < data.length; i++)
+       {
+             setValueAt(data[i], i);
+       }
 
-    public String getColumnName(int col) {
-        return "Console";
+       // initialize state to unmodified and file to untitled
+       modified = false;
+       this.session = session;
     }
-
-    public Object getValueAt(int row, int col) {
+    
+    public String getRowLabel (int row)
+    {
+        String lbl = "";
+        lbl = String.valueOf(row + 1);
+        return lbl;
+    }
+    
+    /*Used to set value of a geoelement in a cell in the CASView*/
+    public void setValueAt( Object obj, int row)
+    {
+    	/**********Old things
     	if ((row%2) == 0)
-    	{
-    		// we are asking for the value of a command (since 1st row is "welcome")
-    		return session.get(((row - 1)/2), false);
-    	} else {
-    		// we are asking for the value of a response
-    		return session.get(((row - 2)/2), false);    		 
-    	}
-    }
-
-    public Class getColumnClass(int c) {
-        return getValueAt(0, c).getClass();
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * editable.
-     */
-    public boolean isCellEditable(int row, int col) {
-        //Note that the data/cell address is constant,
-        //no matter where the cell appears onscreen.
-    	if ((row%2) == 0)
-    	{
-    		// its a command row
-    		return true;
-    	} else {
-    		return false;
-    	}
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * data can change.
-     */
-    public void setValueAt(Object value, int row, int col) {
-        if ((row%2) == 0)
         {
         	// command
         	session.alter(row, (String) value);
@@ -67,7 +70,81 @@ public class CASTableModel extends AbstractTableModel {
         //fireTableCellUpdated()
     	/*data[row][col] = value;
         fireTableCellUpdated(row, col);
-        */
-    	// TODO: should do something WRT this?
+        ************/
+    	
+    	GeoElement geo = null;
+        // input is the panel of a pair
+        if(obj instanceof String)
+        {
+        	String inputString = ((String) obj).trim();           	
+            geo = (GeoElement)getValueAt( row, 1);
+                        
+            // delete old cell object if empty input string
+            if (inputString.length() == 0) {
+            	if (geo != null) geo.remove();
+            	return;
+            }
+            
+            // cell is empty at the moment:
+            if( geo == null )
+            {
+            	String str;
+                if( inputString.startsWith("=") )
+                {
+                    //TODO: do the equation here
+                    str = getRowLabel(row) + inputString;                   
+                }
+                else 
+                {
+                     str = getRowLabel(row) + "=" + inputString;                    
+                }
+                                
+                app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+                fireTableDataChanged();
+            }
+            
+            // we have a GeoElement in this cell already:
+            else
+            {
+              
+               String newValue = inputString;                  
+               if( inputString.startsWith("=") )
+               {
+                   // case of formula
+                   newValue = newValue.substring(1);
+               }
+              
+               if ( geo.isIndependent()) {
+          	     // change geo, but don't redefine       
+          	     	app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
+              	} else {
+              	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
+              	    app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
+              	}               
+            
+            }
+        }
+        else
+        {
+            super.setValueAt(obj, row, 1);
+        }
     }
+
+    public Object getValueAt(int row) {
+        Object obj = super.getValueAt(row, 1);
+        if( !(obj instanceof GeoElement ))
+        {
+        	System.out.println("Getting a non-geo element");  
+        }
+        return obj;
+    }
+
+    /*
+     * Don't need to implement this method unless your table's
+     * editable.
+     */
+    public boolean isCellEditable(int row, int col) {
+    	return true;
+    }
+
 }
