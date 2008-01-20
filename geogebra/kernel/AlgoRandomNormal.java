@@ -32,12 +32,12 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
       
     final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
-    		num.setValue(randomNormal());
+    		if (b.getDouble()<0) num.setUndefined(); else num.setValue(randomNormal(a.getDouble(),b.getDouble()));
     	} else
     		num.setUndefined();
     }       
     
-    private static double randomNormal()
+    private static double randomNormal(double mean, double sd)
     {
     	double fac,rsq,v1,v2;
     	do {
@@ -47,7 +47,7 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
     	} while (rsq>= 1.0 || rsq==0.0); // keep going until they are in the unit circle
     	fac=Math.sqrt(-2.0*Math.log(rsq)/rsq);
     	//System.out.println("randomNormal="+(v1*fac));
-    	return v1*fac;
+    	return v1*fac*sd+mean;
     	
     }
     
