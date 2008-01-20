@@ -1,7 +1,0 @@
-This file will only be edited by Michael.
-
-This line will be changed later.
-
-This line changed by Michael in Iteration 2.
-
-The rest of this file will remain the same.

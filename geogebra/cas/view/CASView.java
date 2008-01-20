@@ -55,7 +55,7 @@ public class CASView extends JComponent
        
       // input = new JTextField();
        //JTable table = new JTable(data, columnNames);
-       JTable table = new JTable(new CASTableModel(session));
+       //JTable table = new JTable(new CASTableModel(session));
        
        /*
        	//table.getModel().addTableModelListener(this);

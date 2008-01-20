@@ -196,6 +196,19 @@ implements EuclidianViewAlgo {
         }        
     }
     
+    /**
+     * Sets the array of random input numbers (GeoNumeric objects with
+     * isUsedForRandom() returns true). Those numbers will be set using
+     * Math.random() every time before the algorithm is updated. 
+     * Usually this method does not need
+     * to be called (see initRandomInputNumbers(). Use this method only
+     * when you need to use random numbers as helper objects in your 
+     * algorithm. 
+     *
+    void setRandomInputNumbers(GeoNumeric [] randNums) {
+    	randomInputNumbers = randNums;
+    }*/
+    
     private void updateRandomInputNumbers() {
     	for (int i = 0; i < randomInputNumbers.length; i++) {
     		randomInputNumbers[i].setValue(Math.random());

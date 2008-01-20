@@ -1,7 +1,0 @@
-This file will only be edited by Markus.
-
-This line changed in Iteration 1.
-
-This line will be changed after the first merge.
-
-The rest of this file will remain the same.
