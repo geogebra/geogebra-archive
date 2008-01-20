@@ -1000,8 +1000,18 @@ public abstract class GeoElement
 		System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
 	}		
 	
-	 public static int getSpreadsheetColumn( String str)
+	// Michael Borcherds 2008-01-19 
+	public static String getSpreadsheetCellName( int i, int j)
 	    {
+	        if (i>25) return "A1"; // TODO rewrite to cope with more than 26 columns
+	        i+='A';
+	        j+=1;
+	        String ret = Character.toString((char)i)+j;
+	        return ret;
+	    }
+	 
+	 public static int getSpreadsheetColumn( String str)
+	    {// TODO rewrite to cope with more than 26 columns
 	        int ret = -1;
 	        if( str != null && str.length() > 1)
 	        {	            
@@ -1014,7 +1024,7 @@ public abstract class GeoElement
 	    }
 	    
     public static int getSpreadsheetRow(String str)
-    {
+    {// TODO rewrite to cope with more than 26 columns
         int ret = -1;
         if( str != null && str.length()>1)
         {

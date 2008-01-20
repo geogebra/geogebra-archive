@@ -102,7 +102,7 @@ public class AlgoSort extends AlgoElement {
     final void sortNumbers() {
     	
        double[] sortList = new double[size];
-       
+
        // copy inputList into an array
        for (int i=0 ; i<size ; i++)
        {
@@ -165,4 +165,5 @@ public class AlgoSort extends AlgoElement {
     	outputList.add(listElement);
     	listElement.setTextString(value);
     }    
+    
 }

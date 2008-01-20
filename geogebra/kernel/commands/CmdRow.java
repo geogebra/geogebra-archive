@@ -8,29 +8,34 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /*
- * Sort[ <List> ]
+ * Row[ <Number>, <Number> ]
+ * Row[ <Number> ]
  */
-public class CmdSort extends CommandProcessor {
+public class CmdRow extends CommandProcessor {
 
-	public CmdSort(Kernel kernel) {
+	public CmdRow(Kernel kernel) {
 		super(kernel);
 	}
 
 	public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
+		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 
 		switch (n) {
-		case 1:
+		case 2:			
 			arg = resArgs(c);
-			if (arg[0].isGeoList()) {
+			if ((ok[0] = arg[0].isNumberValue()) &&
+				(ok[1] = arg[1].isNumberValue())) 
+			{
 				GeoElement[] ret = { 
-						kernel.Sort(c.getLabel(),
-						(GeoList) arg[0]) };
+						kernel.Row(c.getLabel(),
+						(NumberValue) arg[0], (NumberValue) arg[1]) };
 				return ret;
-			} else
+				
+			}  else
 				throw argErr(app, c.getName(), arg[0]);
-		
+
 		default:
 			throw argNumErr(app, c.getName(), n);
 		}

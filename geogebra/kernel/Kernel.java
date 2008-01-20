@@ -1805,6 +1805,26 @@ public class Kernel {
 	}
 	
 	/** 
+	 * RandomNormal[mean,variance]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric RandomNormal(String label, NumberValue a, NumberValue b) {
+		AlgoRandomNormal algo = new AlgoRandomNormal(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Row[number,number]
+	 * Michael Borcherds
+	 */
+	final public GeoList Row(String label, NumberValue a, NumberValue b) {
+		AlgoRow algo = new AlgoRow(cons, label, a, b);
+		GeoList list = algo.getResult();
+		return list;
+	}
+	
+	/** 
 	 * Sort[list]
 	 * Michael Borcherds
 	 */
