@@ -204,6 +204,7 @@ public class CommandDispatcher {
     	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
     	cmdTable.put("FitLineX", new CmdFitLineX(kernel));
     	cmdTable.put("RandomNormal", new CmdRandomNormal(kernel));
+    	cmdTable.put("InverseNormal", new CmdInverseNormal(kernel));
     	cmdTable.put("Row", new CmdRow(kernel));
     	cmdTable.put("Element", new CmdElement(kernel));
     	cmdTable.put("Iteration", new CmdIteration(kernel));

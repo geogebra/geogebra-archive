@@ -1815,6 +1815,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * RandomNormal[mean,variance,x]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric InverseNormal(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseNormal algo = new AlgoInverseNormal(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * Row[number,number]
 	 * Michael Borcherds
 	 */
