@@ -22,8 +22,7 @@ public class CASController implements KeyListener {
 	
 	public void keyPressed(KeyEvent e) {		
 		Object src = e.getSource();
-		
-	
+		System.out.println(src.getClass().getName());
 		
 		if (src instanceof JTextArea) {
 			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {

@@ -118,12 +118,6 @@ public class CASView extends JComponent {
 		consoleTable.getColumn("A").setCellEditor(
 				new CASTableCellEditor(new JTextField(), new CASTableCell()));
 
-		// init the scroll panel
-		JScrollPane scrollPane = new JScrollPane(consoleTable,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		setLayout(new BorderLayout());
-		add(scrollPane, BorderLayout.CENTER);
 
 		// focus listenerr
 		//       FocusListener fl = new FocusListener() {
@@ -148,7 +142,13 @@ public class CASView extends JComponent {
 
 		// CAScontroller
 		CASController casCtrl = new CASController(this, session);
-
+		consoleTable.addKeyListener(casCtrl);
+		// init the scroll panel
+		JScrollPane scrollPane = new JScrollPane(consoleTable,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		setLayout(new BorderLayout());
+		add(scrollPane, BorderLayout.CENTER);
 		// create the cells of the table
 		//ArrayList jcomponents = new ArrayList();
 		//for (int i = 0; i < this.numOfRows; i++) {

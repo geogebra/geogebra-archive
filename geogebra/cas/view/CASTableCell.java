@@ -1,6 +1,8 @@
 package geogebra.cas.view;
 
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.*;
 
@@ -26,19 +28,21 @@ public class CASTableCell extends JPanel{
 	}			
 
 	public void setInput(String inValue){
+		this.inputArea.setText(inValue);
 		this.input = inValue;
 	}
 	
 	public void setOutput(String inValue){
+		this.outputArea.setText(inValue);
 		this.output = inValue;
 	}
 	
 	public String getInput(){
-		return input;
+		return inputArea.getText();
 	}
 	
 	public String getOutput(){
-		return output;
+		return outputArea.getText();
 	}
 	
 }
