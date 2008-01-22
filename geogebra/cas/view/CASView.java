@@ -119,14 +119,10 @@ public class CASView extends JComponent {
 				new CASTableCellEditor(new JTextField(), new CASTableCell()));
 
 		// init the scroll panel
-		setLayout(new BorderLayout());
-		//JPanel panel = new JPanel();
-		//panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		//JScrollPane scrollPane = new JScrollPane(panel);
-		//setPreferredSize(new Dimension(450, 110));
 		JScrollPane scrollPane = new JScrollPane(consoleTable,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
 
 		// focus listenerr
@@ -151,7 +147,7 @@ public class CASView extends JComponent {
 		//        };
 
 		// CAScontroller
-		//CASController casCtrl = new CASController(this, session);
+		CASController casCtrl = new CASController(this, session);
 
 		// create the cells of the table
 		//ArrayList jcomponents = new ArrayList();
@@ -159,22 +155,20 @@ public class CASView extends JComponent {
 		//CASTableCell ta = new CASTableCell();			
 		//	JTextArea input = new JTextArea(1,1);
 		//	input.append(">>");
-		//ta.setLineWrap(true);
+		//	ta.setLineWrap(true);
 
 		// register focus listener with ta
-		//ta.addFocusListener(fl);
+		//	ta.addFocusListener(fl);
 
 		// register key listener
-		//ta.addKeyListener(casCtrl);
+		//	ta.addKeyListener(casCtrl);
 
 		//jcomponents.add(ta);
-		//tableModel.setValueAt(ta, i);
-		//tableModel.setValueAt(input, i);
-		//tableModel.setValueAt(new String("Fuck you"), i);
+		//	tableModel.setValueAt(ta, i);
+		//	tableModel.setValueAt(input, i);
+		//	tableModel.setValueAt(new String("Fuck you"), i);
 		//}	
 
-		//table.repaint();
-		//table.updateUI();
 		//initSessionPanel(panel, jcomponents);  
 	}
 
@@ -230,22 +224,5 @@ public class CASView extends JComponent {
 		//		c.weighty = 1.0;
 		//		panel.add(Box.createVerticalGlue(), c);
 	}
-
-	private class CASTableRenderer extends DefaultTableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		public CASTableRenderer() {
-			super();
-		}
-
-		public void setValue(Object value) {
-			if (value != null) {
-				GeoElement geo = (GeoElement) value;
-				setText(geo.toValueString());
-			} else {
-				setText("");
-			}
-		}
-	}
+	
 }
