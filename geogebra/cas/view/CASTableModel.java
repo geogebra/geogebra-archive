@@ -77,7 +77,8 @@ public class CASTableModel extends DefaultTableModel {
         if(obj instanceof String)
         {
         	String inputString = ((String) obj).trim();           	
-            geo = (GeoElement)getValueAt( row, 1);
+            //geo = (GeoElement)getValueAt( row, 1);
+        	geo = null;
                         
             // delete old cell object if empty input string
             if (inputString.length() == 0) {
@@ -98,8 +99,9 @@ public class CASTableModel extends DefaultTableModel {
                 {
                      str = getRowLabel(row) + "=" + inputString;                    
                 }
-                                
-                app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+                System.out.println(str);  
+                //super.setValueAt(str, row, 1);
+                //app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
                 fireTableDataChanged();
             }
             
@@ -127,6 +129,7 @@ public class CASTableModel extends DefaultTableModel {
         else
         {
             super.setValueAt(obj, row, 1);
+            //fireTableDataChanged();
         }
     }
 
