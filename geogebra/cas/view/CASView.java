@@ -38,147 +38,150 @@ import javax.swing.table.TableColumn;
  * @author James King
  *
  */
-public class CASView extends JComponent
-{
-    
-    private Kernel kernel;
-    private JTable consoleTable;
-    private CASTableModel tableModel;
-    private Application app;
-    
-    private JTextField input, output;
-    private GeoGebraCAS cas;
-    private CASTableRenderer renderer;
-    private CASSession session;
-    private boolean showMenuBar = true;
-    private final int numOfRows = 25; 
-    
-    public CASView (Application app)
-    {
-       kernel =app.getKernel();
-       this.app = app;
-       cas = new GeoGebraCAS();
-       session = new CASSession();
-       setLayout(new BorderLayout());
-       
-      // input = new JTextField();
-  
-       consoleTable = createTable(); 
-       consoleTable.setShowGrid(true);  
-       consoleTable.setRowHeight(60);
-       consoleTable.setSelectionBackground(Color.yellow);//设置所选择行的背景色
-       consoleTable.setSelectionForeground(Color.red);//设置所选择行的前景色
-       //consoleTable.setRowMargin(5);//设置相邻两行单元格的距离
-       consoleTable.setBackground(Color.white);
-       
-       newTableModel(numOfRows);
-       //new JTable(new CASTableModel(session));
-       
-       /*
-       	//table.getModel().addTableModelListener(this);
-       	TableColumn console = table.getColumnModel().getColumn(0);
-       	console.setMinWidth(384);
-       	console.setCellRenderer(renderer);
-       	//JTable table = new JTable()
-		//table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
-     	//JScrollPane sp= new JScrollPane(table);
-       	JScrollPane sp= new JScrollPane(table, 
-    		   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-    		   JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-       
-       	//table.
-     	//  output = new JTextField();
-       	//add(sp, BorderLayout.NORTH);
-      	// add(input, BorderLayout.NORTH);
-       	add(sp, BorderLayout.CENTER);
-   		//    sp.add(table);
-    	//   table.setValueAt(new String("test"), 0, 0);
-      
-       	//add(output, BorderLayout.SOUTH);
-       
-//       input.addActionListener(new ActionListener() {
-//
-//		public void actionPerformed(ActionEvent arg0) {
-//			//String inputText = input.getText();
-//			//String evalStr = cas.evaluateYACAS(inputText);
-//			//String evalStr = 
-//			//output.setText(evalStr);
-//		}
-//    	   
-//       });
- * */
-       	// init the table
-		consoleTable.getColumn("A").setCellRenderer(
-				new CASTableCellRender());
+public class CASView extends JComponent {
+
+	private Kernel kernel;
+
+	private JTable consoleTable;
+
+	private CASTableModel tableModel;
+
+	private Application app;
+
+	private JTextField input, output;
+
+	private GeoGebraCAS cas;
+
+	private CASTableRenderer renderer;
+
+	private CASSession session;
+
+	private boolean showMenuBar = true;
+
+	private final int numOfRows = 25;
+
+	public CASView(Application app) {
+		kernel = app.getKernel();
+		this.app = app;
+		cas = new GeoGebraCAS();
+		session = new CASSession();
+		setLayout(new BorderLayout());
+
+		// input = new JTextField();
+
+		consoleTable = createTable();
+		consoleTable.setShowGrid(true);
+		consoleTable.setRowHeight(60);
+		consoleTable.setSelectionBackground(Color.yellow);//设置所选择行的背景色
+		consoleTable.setSelectionForeground(Color.red);//设置所选择行的前景色
+		//consoleTable.setRowMargin(5);//设置相邻两行单元格的距离
+		consoleTable.setBackground(Color.white);
+
+		newTableModel(numOfRows);
+		//new JTable(new CASTableModel(session));
+
+		/*
+		 //table.getModel().addTableModelListener(this);
+		 TableColumn console = table.getColumnModel().getColumn(0);
+		 console.setMinWidth(384);
+		 console.setCellRenderer(renderer);
+		 //JTable table = new JTable()
+		 //table.setFillsViewportHeight(true); <-- I think this is only for > 1.4.2
+		 //JScrollPane sp= new JScrollPane(table);
+		 JScrollPane sp= new JScrollPane(table, 
+		 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+		 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		 
+		 //table.
+		 //  output = new JTextField();
+		 //add(sp, BorderLayout.NORTH);
+		 // add(input, BorderLayout.NORTH);
+		 add(sp, BorderLayout.CENTER);
+		 //    sp.add(table);
+		 //   table.setValueAt(new String("test"), 0, 0);
+		 
+		 //add(output, BorderLayout.SOUTH);
+		 
+		 //       input.addActionListener(new ActionListener() {
+		 //
+		 //		public void actionPerformed(ActionEvent arg0) {
+		 //			//String inputText = input.getText();
+		 //			//String evalStr = cas.evaluateYACAS(inputText);
+		 //			//String evalStr = 
+		 //			//output.setText(evalStr);
+		 //		}
+		 //    	   
+		 //       });
+		 * */
+		// init the table
+		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender());
 		consoleTable.getColumn("A").setCellEditor(
-				new CASTableCellEditor(new JTextField(), new CASTableCell()));		
-		
-       // init the scroll panel
-       setLayout(new BorderLayout());
-       //JPanel panel = new JPanel();
-       //panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-       //JScrollPane scrollPane = new JScrollPane(panel);
-       //setPreferredSize(new Dimension(450, 110));
-       JScrollPane scrollPane = new JScrollPane(consoleTable,
+				new CASTableCellEditor(new JTextField(), new CASTableCell()));
+
+		// init the scroll panel
+		setLayout(new BorderLayout());
+		//JPanel panel = new JPanel();
+		//panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		//JScrollPane scrollPane = new JScrollPane(panel);
+		//setPreferredSize(new Dimension(450, 110));
+		JScrollPane scrollPane = new JScrollPane(consoleTable,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-       add(scrollPane, BorderLayout.CENTER);
-       
-	
-       // focus listenerr
-//       FocusListener fl = new FocusListener() {
-//			public void focusGained(FocusEvent e) {
-//				Object src = e.getSource();
-//				
-//				if (src instanceof JTextArea) {
-//					JTextArea ta = (JTextArea) src;					
-//					ta.setBorder(BorderFactory.createLineBorder(Color.red));
-//				}
-//			}
-//
-//			public void focusLost(FocusEvent e) {
-//				Object src = e.getSource();
-//				
-//				if (src instanceof JTextArea) {
-//					JTextArea ta = (JTextArea) src;					
-//					ta.setBorder(null);
-//				}
-//			}        	
-//        };
-        
-       
+		add(scrollPane, BorderLayout.CENTER);
+
+		// focus listenerr
+		//       FocusListener fl = new FocusListener() {
+		//			public void focusGained(FocusEvent e) {
+		//				Object src = e.getSource();
+		//				
+		//				if (src instanceof JTextArea) {
+		//					JTextArea ta = (JTextArea) src;					
+		//					ta.setBorder(BorderFactory.createLineBorder(Color.red));
+		//				}
+		//			}
+		//
+		//			public void focusLost(FocusEvent e) {
+		//				Object src = e.getSource();
+		//				
+		//				if (src instanceof JTextArea) {
+		//					JTextArea ta = (JTextArea) src;					
+		//					ta.setBorder(null);
+		//				}
+		//			}        	
+		//        };
+
 		// CAScontroller
-        //CASController casCtrl = new CASController(this, session);
-        
+		//CASController casCtrl = new CASController(this, session);
+
 		// create the cells of the table
 		//ArrayList jcomponents = new ArrayList();
 		//for (int i = 0; i < this.numOfRows; i++) {
-			//CASTableCell ta = new CASTableCell();			
+		//CASTableCell ta = new CASTableCell();			
 		//	JTextArea input = new JTextArea(1,1);
 		//	input.append(">>");
-			//ta.setLineWrap(true);
-			
-			 // register focus listener with ta
-			//ta.addFocusListener(fl);
-			
-			// register key listener
-			//ta.addKeyListener(casCtrl);
-			
-			//jcomponents.add(ta);
-			//tableModel.setValueAt(ta, i);
-			//tableModel.setValueAt(input, i);
-			//tableModel.setValueAt(new String("Fuck you"), i);
+		//ta.setLineWrap(true);
+
+		// register focus listener with ta
+		//ta.addFocusListener(fl);
+
+		// register key listener
+		//ta.addKeyListener(casCtrl);
+
+		//jcomponents.add(ta);
+		//tableModel.setValueAt(ta, i);
+		//tableModel.setValueAt(input, i);
+		//tableModel.setValueAt(new String("Fuck you"), i);
 		//}	
-		
+
 		//table.repaint();
 		//table.updateUI();
-        //initSessionPanel(panel, jcomponents);  
-     }
-    
-    public GeoGebraCAS getCAS() {
-    	return cas;
-    }
-    
+		//initSessionPanel(panel, jcomponents);  
+	}
+
+	public GeoGebraCAS getCAS() {
+		return cas;
+	}
+
 	/** Can be used by subclasses to customize the underlying JTable
 	 * @return The JTable to be used by the CAS
 	 */
@@ -198,36 +201,36 @@ public class CASView extends JComponent
 		tableModel = new CASTableModel(consoleTable, rows, session, app);
 		consoleTable.setModel(tableModel);
 	}
-	
-    /**
-     * Inits a panel to hold all components given in the list jcomponents.
-     * @param panel
-     * @param jcomponents
-     */
-    private void initSessionPanel(JPanel panel, ArrayList jcomponents) {
-//   	 panel.removeAll();		
-    	 
-//		// create grid with one column
-//		panel.setLayout(new GridBagLayout());
-//		GridBagConstraints c = new GridBagConstraints();
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.anchor = GridBagConstraints.NORTHWEST;
-//		c.weightx = 1.0;
-//		c.weighty = 0;
-//		
-//		
-//		for (int i = 0; i < jcomponents.size(); i++) {
-//			JComponent p = (JComponent) jcomponents.get(i);
-//			c.gridx = 0;
-//			c.gridy = i;
-//								
-//			panel.add(p, c);			
-//		}			
-//		
-//		c.weighty = 1.0;
-//		panel.add(Box.createVerticalGlue(), c);
-    }
-  
+
+	/**
+	 * Inits a panel to hold all components given in the list jcomponents.
+	 * @param panel
+	 * @param jcomponents
+	 */
+	private void initSessionPanel(JPanel panel, ArrayList jcomponents) {
+		//   	 panel.removeAll();		
+
+		//		// create grid with one column
+		//		panel.setLayout(new GridBagLayout());
+		//		GridBagConstraints c = new GridBagConstraints();
+		//		c.fill = GridBagConstraints.HORIZONTAL;
+		//		c.anchor = GridBagConstraints.NORTHWEST;
+		//		c.weightx = 1.0;
+		//		c.weighty = 0;
+		//		
+		//		
+		//		for (int i = 0; i < jcomponents.size(); i++) {
+		//			JComponent p = (JComponent) jcomponents.get(i);
+		//			c.gridx = 0;
+		//			c.gridy = i;
+		//								
+		//			panel.add(p, c);			
+		//		}			
+		//		
+		//		c.weighty = 1.0;
+		//		panel.add(Box.createVerticalGlue(), c);
+	}
+
 	private class CASTableRenderer extends DefaultTableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
