@@ -3163,6 +3163,14 @@ public class Kernel {
 	}
 	
 	/**
+	 * Fits a polynomial exactly to a list of coordinates
+	 */
+	final public GeoFunction PolynomialFunction(String label, GeoList list) {		
+		AlgoPolynomialFromCoordinates algo = new AlgoPolynomialFromCoordinates(cons, label, list);
+		return algo.getPolynomial();			
+	}
+	
+	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(

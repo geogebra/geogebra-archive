@@ -28,6 +28,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -35,6 +37,8 @@ import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 
 /**
  * Context menu for GeoElement objects.
@@ -560,14 +564,21 @@ public class ContextMenuGeoElement extends JPopupMenu {
     }
 
     void setTitle(String str) {
-        JMenuItem title = new JMenuItem(str);
-        title.setFont(app.getBoldFont());       
-        title.setEnabled(false);        
-        title.setBackground(bgColor);   
-        title.setForeground(fgColor);   
-                
+    	JLabel title = new JLabel(str);
+        title.setFont(app.getBoldFont());
+        title.setBackground(bgColor);
+        title.setForeground(fgColor);
+
+        title.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
         add(title);
         addSeparator();
+
+        title.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		setVisible(false);
+        	}
+        });
+
     }
         
 }
