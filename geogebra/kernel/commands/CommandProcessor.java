@@ -3370,6 +3370,8 @@ final public GeoElement[] process(Command c) throws MyError {
                              c.getLabel(),
                              ((GeoFunctionable) arg[0]).getGeoFunction())};
                  return ret;
+                 // Michael Borcherds 2008-01-22 BEGIN
+                 // PolynomialFromCoordinates
              } else if (ok[0] = (arg[0] .isGeoList())) {
                  GeoElement[] ret =
                  {
@@ -3377,6 +3379,7 @@ final public GeoElement[] process(Command c) throws MyError {
                          c.getLabel(),
                          ((GeoList) arg[0]))};
                  return ret;
+                 // Michael Borcherds 2008-01-22 END
              } else
 				throw argErr(app, c.getName(), arg[0]);
 

@@ -19,7 +19,7 @@ import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 
 /**
- * Fit a Polynomial exactly to a set of coordinates. Unstable above about 16-20 coords
+ * Fit a Polynomial exactly to a set of coordinates. Unstable above about 12 coords
  * adapted from AlgoPolynomialFromFunction
  * @author Michael Borcherds
  */
@@ -65,6 +65,12 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
         }    
         
         int n=inputList.size();
+        
+        if (n<2) { // can't draw a unique polynomial through 0 or 1 points!
+        	g.setUndefined();
+        	return;
+        }    
+        
         double x[] = new double[n];
         double y[] = new double[n];
         
@@ -107,14 +113,30 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
    		}
 
         //  build polynomial 
+   		Function polyFun = buildPolyFunctionExpression(kernel,cof);
+   		
+   		if (polyFun==null)
+   		{
+   		    g.setUndefined();
+       	    return;			   			   			
+   		}
+   			
+		g.setFunction(polyFun);			
+		g.setDefined(true);	
+		
+		
+    } 
+    
+    public static Function buildPolyFunctionExpression(Kernel kernel,double [] cof)
+        {
+    	int n=cof.length;
         ExpressionNode poly = null; // expression for the expanded polynomial		
 		FunctionVariable fVar = new FunctionVariable(kernel);	
 		double coeff;
   	    for (int k = n-1; k >= 0 ; k--) {
   	        coeff = cof[k]; 	 
 			 if (Double.isNaN(coeff) || Double.isInfinite(coeff)) {
-					 g.setUndefined();
-					 return;
+					 return null;
 			 }
 			 else if (kernel.isZero(coeff)) 
 			 	continue; // this part vanished
@@ -183,14 +205,12 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
   	    if (poly == null) {
   	    	poly = new ExpressionNode(kernel, new MyDouble(kernel, 0));
   	    }  	       
-    	
     	//  polynomial Function
 		Function polyFun = new Function(poly, fVar);	
-		g.setFunction(polyFun);			
-		g.setDefined(true);	
-		
-		
-    } 
+    	return polyFun;
+    	
+    	
+    }
     
     final public String toString() {
     	return getCommandDescription();
@@ -222,4 +242,5 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
     }
   
   }
+
 }

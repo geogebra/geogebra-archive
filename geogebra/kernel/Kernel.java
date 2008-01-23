@@ -3164,6 +3164,7 @@ public class Kernel {
 	
 	/**
 	 * Fits a polynomial exactly to a list of coordinates
+	 * Michael Borcherds 2008-01-22
 	 */
 	final public GeoFunction PolynomialFunction(String label, GeoList list) {		
 		AlgoPolynomialFromCoordinates algo = new AlgoPolynomialFromCoordinates(cons, label, list);

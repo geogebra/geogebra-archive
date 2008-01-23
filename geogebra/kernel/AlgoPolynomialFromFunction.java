@@ -83,6 +83,30 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         }
         
         //  build polynomial 
+        
+        // Michael Borcherds 2008-23-01 BEGIN
+        // moved shared code into AlgoPolynomialFromCoordinates.buildPolyFunctionExpression()
+        
+        int n=strCoeffs.length;
+        double coeffs[] = new double[n];
+  	    for (int k = strCoeffs.length-1; k >= 0 ; k--) {
+  	        coeffs[k] = evaluateToDouble(strCoeffs[k]);  	 	 
+			 if (Double.isNaN(coeffs[k]) || Double.isInfinite(coeffs[k])) {
+				 g.setUndefined();
+				 return;
+			 }
+		 }
+        
+   		Function polyFun = AlgoPolynomialFromCoordinates.buildPolyFunctionExpression(kernel,coeffs);
+
+   		if (polyFun==null)
+   		{
+   		    g.setUndefined();
+       	    return;			   			   			
+   		}
+        
+        /*
+        
         ExpressionNode poly = null; // expression for the expanded polynomial		
 		FunctionVariable fVar = new FunctionVariable(kernel);	
 		double coeff;
@@ -161,7 +185,10 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
   	    }  	       
     	
     	//  polynomial Function
-		Function polyFun = new Function(poly, fVar);	
+		Function polyFun = new Function(poly, fVar);	*/
+        // Michael Borcherds 2008-23-01 END
+   		
+   		
 		g.setFunction(polyFun);			
 		g.setDefined(true);	
 		
