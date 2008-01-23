@@ -5,14 +5,11 @@ import java.awt.Component;
 import java.awt.Point;
 import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import javax.swing.UIManager;
 
 import geogebra.Application;
@@ -22,23 +19,28 @@ import geogebra.kernel.Kernel;
 
 public class SpreadsheetView extends JScrollPane implements View
 {
-	public static final int TABLE_CELL_WIDTH = 100;
-	public static final int TABLE_CELL_HEIGHT = 20;
 	
 	private static final long serialVersionUID = 1L;
 
-	protected JTable table;
+	protected MyTable table;
 	protected MyTableModel tableModel;
 	
 	public SpreadsheetView(Application app, int columns, int rows) {
 		Kernel kernel = app.getKernel();
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
+		// table
 		tableModel = new MyTableModel(rows, columns);
-		table = new JTable(tableModel);
-		setupTableLook();
-		table.setDefaultRenderer(Object.class, new MyCellRenderer());
-		table.setDefaultEditor(Object.class, new MyCellEditor(kernel));
+		table = new MyTable(tableModel, kernel);
+		// row header list
+		MyListModel listModel = new MyListModel(tableModel.getRowCount());
+		JList rowHeader = new JList(listModel);
+		rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
+		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
+		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+		// put the table and the row header list into a scroll plane
+		setRowHeaderView(rowHeader);
+		setViewportView(table);
 	}
 	
 	public void add(GeoElement geo) {
@@ -81,43 +83,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void clearView() {
 	}
-	
-	protected void setupTableLook() {
-		// new a table
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		table.setCellSelectionEnabled(true);
-		// cell size
-		table.setRowHeight(TABLE_CELL_HEIGHT);
-		for (int i = 0; i < table.getColumnCount(); ++ i) {
-			TableColumn column = table.getColumnModel().getColumn(i);
-			column.setPreferredWidth(TABLE_CELL_WIDTH);
-		}
-		// use a list as the row labels in the table
-		MyListModel listModel = new MyListModel(tableModel.getRowCount());
-		JList rowHeader = new JList(listModel);
-		rowHeader.setFixedCellWidth(TABLE_CELL_WIDTH);
-		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
-		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-		// put the table and the row list into a scroll plane
-		setRowHeaderView(rowHeader);
-		setViewportView(table);
-	}
-	
-	public class MyCellRenderer extends DefaultTableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		public void setValue(Object value) {
-			if (value == null) {
-				setText("");
-			}
-			else {
-				setText(((GeoElement)value).toValueString());
-			}
-		}
-	}
-
+		
 	// a trivial class 
 	public static class MyListModel extends AbstractListModel {
 		
