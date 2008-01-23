@@ -54,6 +54,7 @@ public class MyCellEditor extends DefaultCellEditor {
 
 	public boolean stopCellEditing0() {
     	String text = (String)delegate.getCellEditorValue();
+    	
     	if (text != null) {
     		text = text.trim();
     		if (text.length() == 0) {
@@ -68,23 +69,47 @@ public class MyCellEditor extends DefaultCellEditor {
     		return true;
     	}
     	else if (value == null) {
-    		if (text.startsWith("=")) {
+    		int posEqual = text.indexOf('=');
+    		// text like "= A1 + A2"
+    		if (posEqual == 0) {
     			text = name + text;
     		}
+    		// text like "x^2 + y^2 = 25"
+    		else if (posEqual > 0) {
+    			text = name + ":" + text;
+    		}
+    		// no equal sign in input
     		else {
     			text = name + "=" + text;
     		}
     		GeoElement[] newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
-    		if (newValues != null) {
+    		
+    		if (newValues != null) {    
     			value = newValues[0];
     			return true;    		
-    		}
+    		} 
+    		
+    		// TODO: 
+    		// make input text if input is not recognized like in Excel    		
+//    		else {    
+//        		
+//        		text = name + "\"" + text + "\"";
+//        		newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+//        		
+//        		value = newValues[0];
+//    			if (value.isGeoText()) {
+//    				value.setEuclidianVisible(false);
+//    				value.update();
+//    			}
+//        	}
+    		
     		return false;
     	}
         else { // value != null;
         	if (text.startsWith("=")) {
         		text = text.substring(1);
-        	}
+        	} 
+        	
         	GeoElement newValue = null;
         	if (value.isIndependent()) {
         		newValue = kernel.getAlgebraProcessor().changeGeoElement(value, text, false);
@@ -96,7 +121,15 @@ public class MyCellEditor extends DefaultCellEditor {
     			value = newValue;
     			return true;    		
     		}
-    		return false;
+    		return false;    
+    		
+    		
+    		// TODO: make text changeable too
+//    		else if (value.isGeoText()) {
+//        		if
+////        		text = "\"" + text + "\"";
+////        	}
+        	
         }
     }
 
