@@ -26,7 +26,8 @@ public class MyCellEditor extends DefaultCellEditor {
 	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row, int column) {
 		table = table0;
 		value = (GeoElement)value0;
-		name = Util.getCellName(table, row, column);
+		column = table.convertColumnIndexToModel(column);
+		name = table.getModel().getColumnName(column) + (row + 1);
 		String text = "";
 		if (value != null) {
 			if (value.isChangeable()) {

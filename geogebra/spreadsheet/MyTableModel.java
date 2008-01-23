@@ -33,7 +33,8 @@ public class MyTableModel extends DefaultTableModel {
     	else {
     		data.put(rowIndex + "-" + columnIndex, aValue);
     	}
-    	fireTableCellUpdated(rowIndex, columnIndex);
+    	//fireTableCellUpdated(rowIndex, columnIndex);
+    	fireTableDataChanged();
     }
-    
+        
 }

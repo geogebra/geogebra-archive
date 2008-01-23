@@ -1,7 +1,6 @@
 
 package geogebra.spreadsheet;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
 import javax.swing.AbstractListModel;
@@ -9,7 +8,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -22,7 +20,7 @@ import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
-public class SpreadsheetView extends JPanel implements View
+public class SpreadsheetView extends JScrollPane implements View
 {
 	public static final int TABLE_CELL_WIDTH = 100;
 	public static final int TABLE_CELL_HEIGHT = 20;
@@ -32,7 +30,7 @@ public class SpreadsheetView extends JPanel implements View
 	protected JTable table;
 	protected MyTableModel tableModel;
 	
-	public SpreadsheetView(Application app, int rows, int columns) {
+	public SpreadsheetView(Application app, int columns, int rows) {
 		Kernel kernel = app.getKernel();
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
@@ -102,10 +100,8 @@ public class SpreadsheetView extends JPanel implements View
 		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 		// put the table and the row list into a scroll plane
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setRowHeaderView(rowHeader);
-		scrollPane.setViewportView(table);
-		add(scrollPane, BorderLayout.CENTER);
+		setRowHeaderView(rowHeader);
+		setViewportView(table);
 	}
 	
 	public class MyCellRenderer extends DefaultTableCellRenderer {

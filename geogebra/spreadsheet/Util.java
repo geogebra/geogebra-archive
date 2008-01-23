@@ -23,14 +23,4 @@ public class Util {
 		JOptionPane.showMessageDialog(component, output.toString(), "Exception", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public static String getCellName(Component component, int row, int column) {
-		if (row < 0 || row > 100) {
-			handleException(component, "row < 0 || row > 100");
-		}
-		if (column < 0 || column > 25) {
-			handleException(component, "column < 0 || column > 25");
-		}
-		return "" + (char)('A' + column) + (row + 1);
-	}
-
 }
