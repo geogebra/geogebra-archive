@@ -3,6 +3,8 @@ package geogebra.spreadsheet;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent ;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -26,8 +28,10 @@ public class MyTable extends JTable
 	private static final long serialVersionUID = 1L;
 	
 	protected Kernel kernel;
-	protected RelativeCopy relativeCopy;
 	protected MyCellEditor editor;
+	protected RelativeCopy relativeCopy;
+	protected CopyPasteCut copyPasteCut;
+	protected KeyListener[] defaultKeyListeners;
 
 	public MyTable(MyTableModel tableModel, Kernel kernel0) {
 		super(tableModel);
@@ -61,11 +65,18 @@ public class MyTable extends JTable
 			removeMouseMotionListener(mouseMotionListeners[i]);
 			addMouseMotionListener(mouseMotionListeners[i]);
 		}
+		// key listener
+		defaultKeyListeners = getKeyListeners();
+		for (int i = 0; i < defaultKeyListeners.length; ++ i) {
+			removeKeyListener(defaultKeyListeners[i]);
+		}
+		addKeyListener(new KeyListener1());
 		// setup selection listener
 		getSelectionModel().addListSelectionListener(new ListSelectionListener1());
 		getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener2());
 		// relative copy
 		relativeCopy = new RelativeCopy(this, kernel);
+		copyPasteCut = new CopyPasteCut(this, kernel);
 	}
 
 	protected int Column = -1;
@@ -76,7 +87,7 @@ public class MyTable extends JTable
 	protected boolean isDragingDot = false;
 	protected int dragingToRow = -1;
 	protected int dragingToColumn = -1;
-	
+		
 	protected void selectionChanged() {
 		repaint();
 	}
@@ -211,8 +222,6 @@ public class MyTable extends JTable
 	protected class MouseListener1 implements MouseListener
 	{
 		
-		private static final long serialVersionUID = 1L;
-
 		public void mouseClicked(MouseEvent e) {
 		}
 		
@@ -250,6 +259,7 @@ public class MyTable extends JTable
 		
 		public void mouseReleased(MouseEvent e)	 {
 			if (isDragingDot) {
+				if (dragingToColumn == -1 || dragingToRow == -1) return;
 				int x1 = -1;
 				int y1 = -1;
 				int x2 = -1;
@@ -281,7 +291,13 @@ public class MyTable extends JTable
 					x2 = dragingToColumn;
 					y2 = maxSelectionRow;
 				}
-				relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
+				boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
+				if (succ) {
+					minSelectionColumn = -1;
+					minSelectionRow = -1;
+					maxSelectionColumn = -1;
+					maxSelectionRow = -1;
+				}
 				isDragingDot = false;
 				dragingToRow = -1;
 				dragingToColumn = -1;
@@ -294,8 +310,6 @@ public class MyTable extends JTable
 	protected class MouseMotionListener1 implements MouseMotionListener
 	{
 		
-		private static final long serialVersionUID = 1L;
-
 		public void mouseDragged(MouseEvent e) {
 			if (isDragingDot) {
 				e.consume();
@@ -384,24 +398,81 @@ public class MyTable extends JTable
 		
 	}
 	
+	protected boolean ctrlPressed = false;
+
+	protected class KeyListener1 implements KeyListener 
+	{
+		
+		public void keyTyped(KeyEvent e) {
+		}
+		
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			//System.out.println(keyCode);
+			switch (keyCode) {
+			case 17 : ctrlPressed = true; break;
+			case 67:
+			case 86:
+			case 127:
+				if (! editor.isEditing()) {
+					e.consume();
+					if (keyCode == 67) {
+						copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					}
+					else if (keyCode == 86) {
+						copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					}
+					else if (keyCode == 88) {
+						copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					}
+					else {
+						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					}
+					return;
+				}
+				break;
+			}
+			if (keyCode >= 37 && keyCode <= 40) {
+				if (editor.isEditing())	return;			
+			}
+			for (int i = 0; i < defaultKeyListeners.length; ++ i) {
+				if (e.isConsumed()) break;
+				defaultKeyListeners[i].keyPressed(e);			
+			}
+		}
+		
+		public void keyReleased(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			switch (keyCode) {
+			case 17 : ctrlPressed = false; break;
+			}
+		}
+		
+	}
+
 	protected class ListSelectionListener1 implements ListSelectionListener
 	{
+		
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionRow = selectionModel.getMinSelectionIndex(); 
 			maxSelectionRow = selectionModel.getMaxSelectionIndex();
 			selectionChanged();
 		}
+		
 	}
 	
 	protected class ListSelectionListener2 implements ListSelectionListener
 	{
+		
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
 			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
 			selectionChanged();
 		}
+		
 	}
 	
 	protected class MyCellRenderer extends DefaultTableCellRenderer

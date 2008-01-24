@@ -32,13 +32,13 @@ public class RelativeCopy {
 					return true;
 				}
 			}
-			else if (sy1 == dy1 && sy1 == dy2) {
+			else if (sy1 == dy1 && sy2 == dy2) {
 				if (dx2 < sx1) { // 2
-					doCopyVertical(sy1, sy1, sx1, dx1, dx2);
+					doCopyVertical(sy1, sy2, sx1, dx1, dx2);
 					return true;
 				}
 				else if (dx1 > sx2) { // 4
-					doCopyVertical(sy1, sy1, sx2, dx1, dx2);
+					doCopyVertical(sy1, sy2, sx2, dx1, dx2);
 					return true;
 				}			
 			}
@@ -59,8 +59,8 @@ public class RelativeCopy {
 	}
 	
 	public void doCopyHorizontal(int x1, int x2, int sy, int dy1, int dy2) {
-		GeoElement[][] values1 = getValues(x1, sy, x2, sy);
-		GeoElement[][] values2 = getValues(x1, dy1, x2, dy2);
+		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
+		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
 		for (int x = x1; x <= x2; ++ x) {
 			int ix = x - x1;
 			if (values1[ix][0] == null) {
@@ -80,8 +80,8 @@ public class RelativeCopy {
 	}
 	
 	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2) {
-		GeoElement[][] values1 = getValues(sx, y1, sx, y2);
-		GeoElement[][] values2 = getValues(dx1, y1, dx2, y2);
+		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
+		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
 		for (int y = y1; y <= y2; ++ y) {
 			int iy = y - y1;
 			if (values1[0][iy] == null) {
@@ -126,7 +126,7 @@ public class RelativeCopy {
 	
 	// return true if any of elems1 is dependent on any of elems
 	// preposition: every elems1 is not null.
-	protected static boolean checkDependency(GeoElement[][] elems1, GeoElement[][] elems2) {
+	public static boolean checkDependency(GeoElement[][] elems1, GeoElement[][] elems2) {
 		for (int i = 0; i < elems1.length; ++ i) {
 			for (int j = 0; j < elems1[i].length; ++ j) {
 				if (checkDependency(elems1[i][j], elems2)) return true;
@@ -137,7 +137,7 @@ public class RelativeCopy {
 	
 	// return true if elem is dependent on any of elems
 	// preposition: elem is not null
-	protected static boolean checkDependency(GeoElement elem, GeoElement[][] elems) {
+	public static boolean checkDependency(GeoElement elem, GeoElement[][] elems) {
 		for (int i = 0; i < elems.length; ++ i) {
 			for (int j = 0; j < elems[i].length; ++ j) {
 				if (elems[i] == null) continue;
@@ -149,7 +149,7 @@ public class RelativeCopy {
 	
 	// return true if elem1 is dependent on elem2
 	// preposition: elem is not null
-	protected static boolean checkDependency(GeoElement elem1, GeoElement elem2) {
+	public static boolean checkDependency(GeoElement elem1, GeoElement elem2) {
 		if (elem2 == null) return false;
 		GeoElement[] elems = getDependentObjects(elem1);
 		if (elems.length == 0) return false;
@@ -164,24 +164,24 @@ public class RelativeCopy {
 		return false;
 	}
 	
-	protected static GeoElement[] getDependentObjects(GeoElement geo) {
+	public static GeoElement[] getDependentObjects(GeoElement geo) {
 		if (geo.isIndependent()) return new GeoElement[0];
     	TreeSet geoTree = geo.getAllPredecessors();
     	return (GeoElement[])geoTree.toArray(new GeoElement[0]);
 	}
 	
-	protected GeoElement[][] getValues(int x1, int y1, int x2, int y2) {
+	public static GeoElement[][] getValues(MyTable table, int x1, int y1, int x2, int y2) {
 		GeoElement[][] values = new GeoElement[x2 - x1 + 1][y2 - y1 + 1];
 		for (int y = y1; y <= y2; ++ y) {
 			for (int x = x1; x <= x2; ++ x) {
 				int x0 = table.convertColumnIndexToModel(x);
-				values[x - x1][y - y1] = getValue(x0, y);
+				values[x - x1][y - y1] = getValue(table, x0, y);
 			}			
 		}
 		return values;
 	}
 	
-	protected GeoElement getValue(int column, int row) {
+	public static GeoElement getValue(MyTable table, int column, int row) {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
