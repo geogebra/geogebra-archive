@@ -423,7 +423,7 @@ public class Application implements	KeyEventDispatcher {
 	    	// use reflection for
   		    // JComponent sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10); 		
   		    Class SpreadsheetView = Class.forName("geogebra.spreadsheet.SpreadsheetView");
-  		    Object[] args = new Object[] { app, new Integer(10), new Integer(10)};
+  		    Object[] args = new Object[] { app, new Integer(26), new Integer(100)};
   		    Class [] types = new Class[] {Application.class, int.class, int.class};
   	        Constructor constructor = SpreadsheetView.getDeclaredConstructor(types); 	        
   	        JComponent sp = (JComponent) constructor.newInstance(args);  
