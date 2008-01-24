@@ -35,7 +35,7 @@ import javax.swing.table.TableColumn;
  */
 
 /**
- * @author James King
+ * @author Quan Yuan
  *
  */
 public class CASView extends JComponent {
@@ -70,12 +70,6 @@ public class CASView extends JComponent {
 		// input = new JTextField();
 
 		consoleTable = createTable();
-		consoleTable.setShowGrid(true);
-		consoleTable.setRowHeight(60);
-		consoleTable.setSelectionBackground(Color.yellow);//设置所选择行的背景色
-		consoleTable.setSelectionForeground(Color.red);//设置所选择行的前景色
-		//consoleTable.setRowMargin(5);//设置相邻两行单元格的距离
-		consoleTable.setBackground(Color.white);
 
 		newTableModel(numOfRows);
 		//new JTable(new CASTableModel(session));
@@ -114,9 +108,12 @@ public class CASView extends JComponent {
 		 //       });
 		 * */
 		// init the table
-		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender());
+		//CASTableCellController cellContrl =  new CASTableCellController(this, session);
+		CASTableCell cell= new CASTableCell(this);
+		//cell.addKeyListener(cellContrl);
+		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender(this));
 		consoleTable.getColumn("A").setCellEditor(
-				new CASTableCellEditor(new JTextField(), new CASTableCell()));
+				new CASTableCellEditor(new JTextField(), cell));
 
 
 		// focus listenerr
@@ -181,6 +178,12 @@ public class CASView extends JComponent {
 	 */
 	protected JTable createTable() {
 		JTable t = new JTable();
+		
+		t.setShowGrid(true);
+		//Dynamically change the height of the table
+		//t.setRowHeight(-1);
+		t.setRowHeight(60);
+		t.setBackground(Color.white);
 		//t.setDefaultRenderer(Object.class, new MyRenderer());
 		return t;
 	}

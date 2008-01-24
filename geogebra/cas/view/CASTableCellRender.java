@@ -9,8 +9,8 @@ import javax.swing.table.TableCellRenderer;
 public class CASTableCellRender extends CASTableCell implements 
 	TableCellRenderer{
 
-	CASTableCellRender() {
-		super();
+	CASTableCellRender(CASView view) {
+		super(view);
 	}
 
 	public Component getTableCellRendererComponent(JTable table,
