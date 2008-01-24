@@ -626,9 +626,9 @@ public class Construction {
         }
                 
         // global var handling        
-        GeoElement geo =  (GeoElement) geoTable.get(label); 
-        if (geo == null) 
-        	return null;       
+        GeoElement geo = geoTabelVarLookup(label);
+        if (geo == null)
+        	return null;
         
         //  check if geo is available for current step
         if (geo.isAvailableAtConstructionStep(step))
@@ -637,6 +637,22 @@ public class Construction {
 			return null;           
     }
     
+    GeoElement geoTabelVarLookup(String label) {
+    	 GeoElement geo =  (GeoElement) geoTable.get(label); 
+    	 
+    	 // TODO: dollar sign support for spreadsheet 
+    	 /*
+         if (geo == null) {
+         	// in the spreadsheet we can have "$" signs for absolute
+         	// cell references like "$A$4"
+         	// remove all $ signs and try again
+         	if (label.indexOf('\u0024') > -1) {
+         		String strNoDollar = label.replaceAll("\u0024", "");             		
+         		geo = (GeoElement) geoTable.get(strNoDollar);         		
+         	}         	
+         } */
+         return geo;
+    }
 
     /**
        * Returns true if label is not occupied by any 

@@ -66,10 +66,11 @@ class MacroConstruction extends Construction {
             if (localGeo != null) return localGeo;
         }
     	    	       
-        GeoElement geo =  (GeoElement) geoTable.get(label);
+        // global var handling        
+        GeoElement geo = geoTabelVarLookup(label);
         if (geo == null && globalVariableLookup && !isReservedLabel(label)) {
         	// try parent construction        	
-        	 geo =  (GeoElement) parentCons.geoTable.get(label);      
+        	 geo =  parentCons.geoTabelVarLookup(label);      
         }
         return geo;                   
     }

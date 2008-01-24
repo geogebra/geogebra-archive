@@ -997,7 +997,7 @@ public abstract class GeoElement
     		spreadsheetCoords = null;
     	}
 		
-		System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
+		//System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
 	}		
 	
 	// Michael Borcherds 2008-01-19 

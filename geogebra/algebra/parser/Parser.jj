@@ -191,11 +191,12 @@ TOKEN : {
 }   
 
 TOKEN : {  
-   < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'"  )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
+   < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
  |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}" ) )  >  
  | < #LETTER:  // unicode letters
        [
+        "$", // for absolute references in the spreadsheet
         "\u0041"-"\u005a",      //upper case (A-Z)
         "\u0061"-"\u007a",      //lower case (a-z)
         "\u00b7",   			// middle dot (for Catalan)

@@ -1690,12 +1690,6 @@ ValidExpression  functionOrCommand():
     finally { jj_save(21, xla); }
   }
 
-  final private boolean jj_3R_31() {
-    if (jj_scan_token(81)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_44() {
     if (jj_scan_token(ASINH_FUNC)) return true;
     if (jj_3R_14()) return true;
@@ -2745,6 +2739,12 @@ ValidExpression  functionOrCommand():
     if (jj_scan_token(ATANH_FUNC)) return true;
     if (jj_3R_14()) return true;
     if (jj_scan_token(85)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_31() {
+    if (jj_scan_token(81)) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
