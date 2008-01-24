@@ -15,19 +15,21 @@ public class MyCellEditor extends DefaultCellEditor {
 
 	protected Kernel kernel;
 	protected GeoElement value;
-	protected String name;
-	protected JTable table;
+	protected MyTable table;
+	protected int column; 
+	protected int row; 
+	protected boolean editing = false; 
 
     public MyCellEditor(Kernel kernel0) {
 		super(new JTextField());
 		kernel = kernel0;
     }
 
-	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row, int column) {
-		table = table0;
+	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row0, int column0) {
+		table = (MyTable)table0;
 		value = (GeoElement)value0;
-		column = table.convertColumnIndexToModel(column);
-		name = table.getModel().getColumnName(column) + (row + 1);
+		column = column0;
+		row = row0;
 		String text = "";
 		if (value != null) {
 			if (value.isChangeable()) {
@@ -38,23 +40,46 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 		}
 		delegate.setValue(text);
+		editing = true;
 		return getComponent();
     }
+	
+	public boolean isEditing() {
+		return editing;
+	}
+	
+	public void addLabel(int column, int row) {
+		if (! editing) return;
+		column = table.convertColumnIndexToModel(column);
+		String name = table.getModel().getColumnName(column) + (row + 1);
+		String text = (String)delegate.getCellEditorValue();
+		delegate.setValue(text + name);
+	}
+
+	public String getEditingValue() {
+		return (String)delegate.getCellEditorValue();
+	}
 
     public Object getCellEditorValue() {
     	return value;
     }
 
 	public boolean stopCellEditing() {
-		if (! stopCellEditing0()) {
+		String text = (String)delegate.getCellEditorValue();
+		try {
+			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
+		} catch (Exception ex) {
+			Util.handleException(table, ex);
 			return false;
 		}
+		editing = false;
 		return super.stopCellEditing();
 	}
-
-	public boolean stopCellEditing0() {
-    	String text = (String)delegate.getCellEditorValue();
-    	
+	
+	// also used in RelativeCopy.java
+	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) {
+		column = table.convertColumnIndexToModel(column);
+		String name = table.getModel().getColumnName(column) + (row + 1);
     	if (text != null) {
     		text = text.trim();
     		if (text.length() == 0) {
@@ -62,13 +87,13 @@ public class MyCellEditor extends DefaultCellEditor {
     		}
     	}
     	if (text == null) {
-    		if (value != null) {
-    			value.remove();
-    			value = null;
+    		if (oldValue != null) {
+    			oldValue.remove();
+    			oldValue = null;
     		}
-    		return true;
+    		return null;
     	}
-    	else if (value == null) {
+    	else if (oldValue == null) {
     		int posEqual = text.indexOf('=');
     		// text like "= A1 + A2"
     		if (posEqual == 0) {
@@ -83,10 +108,8 @@ public class MyCellEditor extends DefaultCellEditor {
     			text = name + "=" + text;
     		}
     		GeoElement[] newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
-    		
     		if (newValues != null) {    
-    			value = newValues[0];
-    			return true;    		
+    			return newValues[0];
     		} 
     		
     		// TODO: 
@@ -103,25 +126,23 @@ public class MyCellEditor extends DefaultCellEditor {
 //    			}
 //        	}
     		
-    		return false;
+    		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
     	}
         else { // value != null;
         	if (text.startsWith("=")) {
         		text = text.substring(1);
         	} 
-        	
         	GeoElement newValue = null;
-        	if (value.isIndependent()) {
-        		newValue = kernel.getAlgebraProcessor().changeGeoElement(value, text, false);
+        	if (oldValue.isIndependent()) {
+        		newValue = kernel.getAlgebraProcessor().changeGeoElement(oldValue, text, false);
         	}
         	else {
-        		newValue = kernel.getAlgebraProcessor().changeGeoElement(value, text, true);
+        		newValue = kernel.getAlgebraProcessor().changeGeoElement(oldValue, text, true);
         	}        
     		if (newValue != null) {
-    			value = newValue;
-    			return true;    		
+    			return newValue;    		
     		}
-    		return false;    
+    		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
     		
     		
     		// TODO: make text changeable too

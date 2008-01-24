@@ -27,6 +27,7 @@ public class MyTable extends JTable
 	
 	protected Kernel kernel;
 	protected RelativeCopy relativeCopy;
+	protected MyCellEditor editor;
 
 	public MyTable(MyTableModel tableModel, Kernel kernel0) {
 		super(tableModel);
@@ -41,7 +42,8 @@ public class MyTable extends JTable
 		}
 		// add renderer & editor
 		setDefaultRenderer(Object.class, new MyCellRenderer());
-		setDefaultEditor(Object.class, new MyCellEditor(kernel));
+		editor = new MyCellEditor(kernel);
+		setDefaultEditor(Object.class, editor);
 		// set selection colors
 		setSelectionBackground(new Color(200, 220, 240));
 		setSelectionForeground(Color.BLACK);
@@ -233,6 +235,16 @@ public class MyTable extends JTable
 					isDragingDot = true;
 					e.consume();
 				}
+				else if (editor.isEditing()) {
+					String text = editor.getEditingValue();
+					if (text.startsWith("=")) {
+						e.consume();					
+						Point point = getIndexFromPixel(e.getX(), e.getY());
+						int column = (int)point.getX();
+						int row = (int)point.getY();
+						editor.addLabel(column, row);
+					}	
+				}
 			}
 		}
 		
@@ -273,6 +285,7 @@ public class MyTable extends JTable
 				isDragingDot = false;
 				dragingToRow = -1;
 				dragingToColumn = -1;
+				repaint();
 			}
 		}
 		
@@ -356,7 +369,7 @@ public class MyTable extends JTable
 						else if (dragingToColumn > maxSelectionColumn) { // 4
 							dragingToRow = minSelectionRow;							
 						}
-						else {
+						else { // 5
 							dragingToRow = -1;
 							dragingToColumn = -1;
 						}
