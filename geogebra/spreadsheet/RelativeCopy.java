@@ -114,6 +114,14 @@ public class RelativeCopy {
 			int row = GeoElement.getSpreadsheetRow(dependents[i].getLabel());
 			if (column == -1 || row == -1) continue;
 			String name1 = "" + (char)('A' + column) + (row + 1);
+			String name2 = "" + (char)('A' + column) + "::" + (row + 1);
+			text = text.replaceAll(name1, name2);
+		}
+		for (int i = 0; i < dependents.length; ++ i) {
+			int column = GeoElement.getSpreadsheetColumn(dependents[i].getLabel());
+			int row = GeoElement.getSpreadsheetRow(dependents[i].getLabel());
+			if (column == -1 || row == -1) continue;
+			String name1 = "" + (char)('A' + column) + "::" + (row + 1);
 			String name2 = "" + (char)('A' + column + dx) + (row + dy + 1);
 			text = text.replaceAll(name1, name2);
 		}
