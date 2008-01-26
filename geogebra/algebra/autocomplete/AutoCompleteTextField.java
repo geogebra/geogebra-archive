@@ -1,7 +1,4 @@
-//------------------------------------------------------------------------------
-// Copyright (c) 1999-2001 Matt Welsh.  All Rights Reserved.
-// extended by Markus Hohenwarter, 2004
-//------------------------------------------------------------------------------
+
 package geogebra.algebra.autocomplete;
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;

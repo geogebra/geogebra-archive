@@ -16,6 +16,7 @@ import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
+import hoteqn.sHotEqn;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
-import atp.sHotEqn;
 
 
 /**
@@ -97,8 +97,8 @@ public final class DrawText extends Drawable {
 				eqn = new sHotEqn();
 				eqn.setDoubleBuffered(false);
 				eqn.setEditable(false);	
-				//eqn.removeMouseListener(eqn);
-				//eqn.removeMouseMotionListener(eqn);				
+				eqn.removeMouseListener(eqn);
+				eqn.removeMouseMotionListener(eqn);				
 				eqn.setDebug(false);
 				eqn.setOpaque(false);	
 				//eqn.setFont(view.getFont());		
@@ -114,15 +114,11 @@ public final class DrawText extends Drawable {
 		if (isLaTeX) {
 			eqn.setForeground(geo.objColor);		
 			eqn.setBackground(view.getBackground());
-			eqn.setEquation(labelDesc);	
-			try {
-				// for some reason hotEqn may throw
-				// a NullPointerException here				
-				eqnSize = eqn.getSizeof(labelDesc);	
-			} catch (Exception e) {
-				eqnSize = eqn.getPreferredSize();	
-			}		
-									
+	
+			// set equation and get it's size
+			eqnSize = eqn.getSizeof(labelDesc);
+
+			// set bounding box of text component
 			labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
 			eqn.setBounds(labelRectangle);							
 		} 
