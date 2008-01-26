@@ -57,7 +57,7 @@ public class AlgoAreaPoints extends AlgoElement {
     // calc area of polygon P[0], ..., P[n]  
     // angle in range [0, pi]
     final void compute() {      
-        area.setValue(GeoPolygon.calcAreaWithSign(P)); // Michael Borcherds 2008-01-26
+        area.setValue(GeoPolygon.calcArea(P)); 
     }       
     
 }

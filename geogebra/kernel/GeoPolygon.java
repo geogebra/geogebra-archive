@@ -286,6 +286,12 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 
 	/**
 	 * Returns the area of a polygon given by points P
+	 */	
+	final static public double calcArea(GeoPoint [] P) {
+	    return Math.abs(calcAreaWithSign(P));
+	}
+	/**
+	 * Returns the area of a polygon given by points P, negative if clockwise
 	 * changed name from calcArea as we need the sign when calculating the centroid Michael Borcherds 2008-01-26
 	 * TODO Does not work if polygon is self-entrant
 	 */	
