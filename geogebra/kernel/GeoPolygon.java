@@ -266,21 +266,30 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	 * its parent algorithm of type AlgoPolygon
 	 */
 	public void calcArea() {
-		area = calcArea(points);	
+		area = calcAreaWithSign(points);	
 		defined = !(Double.isNaN(area) || Double.isInfinite(area));
 	}
 	
 	public double getArea() {
 		if (defined)
-			return area;				        
+			return Math.abs(area);				        
+		else 
+			return Double.NaN;			        	
+	}
+	
+	public double getDirection() { // clockwise=-1/anticlockwise=+1/no area=0
+		if (defined)
+			return Math.signum(area);				        
 		else 
 			return Double.NaN;			        	
 	}	
 
 	/**
 	 * Returns the area of a polygon given by points P
+	 * changed name from calcArea as we need the sign when calculating the centroid Michael Borcherds 2008-01-26
+	 * TODO Does not work if polygon is self-entrant
 	 */	
-	final static public double calcArea(GeoPoint [] P) {
+	final static public double calcAreaWithSign(GeoPoint [] P) {
 		if (P == null || P.length < 2)
 			return Double.NaN;
 		
@@ -297,12 +306,15 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 			sum += GeoPoint.det(P[i], P[i+1]);
 	   }
 	   sum += GeoPoint.det(P[last], P[0]);
-	   return Math.abs(sum) / 2.0;      	
+	   return sum / 2.0;  // positive (anticlockwise points) or negative (clockwise)
    }   
 	
+//	Michael Borcherds 2008-01-26 BEGIN
 	/**
 	 * Calculates the centroid of this polygon and writes
 	 * the result to the given point.
+	 * algorithm at http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
+	 * TODO Does not work if polygon is self-entrant
 	 */
 	public void calcCentroid(GeoPoint centroid) {
 		if (!defined) {
@@ -312,15 +324,35 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
 		double xsum = 0;
 		double ysum = 0;
+		double factor=0;
 		for (int i=0; i < points.length; i++) {
-			xsum += points[i].inhomX;
-			ysum += points[i].inhomY;
+			factor=pointsClosedX(i)*pointsClosedY(i+1)-pointsClosedX(i+1)*pointsClosedY(i);
+			xsum+=(pointsClosedX(i)+pointsClosedX(i+1)) * factor;
+			ysum+=(pointsClosedY(i)+pointsClosedY(i+1)) * factor;
 		}
-		centroid.setCoords(xsum,
-									 ysum,
-									  points.length);
+		centroid.setCoords(xsum, ysum, 6.0*getAreaWithSign()); // getArea includes the +/- to compensate for clockwise/anticlockwise
+	}
+	
+	private double pointsClosedX(int i)
+	{
+		// pretend array has last element==first element
+		if (i==points.length) return points[0].inhomX; else return points[i].inhomX;
 	}
 	 	
+	private double pointsClosedY(int i)
+	{
+		// pretend array has last element==first element
+		if (i==points.length) return points[0].inhomY; else return points[i].inhomY;
+	}
+	 	
+	public double getAreaWithSign() {
+		if (defined)
+			return area;				        
+		else 
+			return Double.NaN;			        	
+	}	
+//	Michael Borcherds 2008-01-26 END
+
 	/*
 	 * overwrite methods
 	 */
