@@ -5,5 +5,14 @@
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
 	<classpathentry kind="lib" path="dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="freehep-graphics2d-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-emf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-pdf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-graphicsio-svg-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-io-2.0.2.jar"/>
+	<classpathentry kind="lib" path="freehep-util-2.0.2.jar"/>
+	<classpathentry kind="lib" path="freehep-xml-2.1.1.jar"/>
+	<classpathentry kind="lib" path="freehep-export-2.1.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

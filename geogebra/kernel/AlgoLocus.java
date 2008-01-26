@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -280,13 +280,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	    	    	
     	// set all elements in the macro construction
     	// to the current values in the main construction
-    	int max_runs = GeoLocus.MAX_PATH_RUNS;
+    	int max_runs = GeoLocus.MAX_PATH_RUNS;    		
     	if (continuous) {
-    		resetMacroConstruction();       		        	
+    		resetMacroConstruction();          	
     	} else {
     		Pcopy.set(P);   
     		max_runs = 1; // we only go through the path once for non-continous constructions    		        	
-    	}
+    	} 
     	
     	pathMover.init(Pcopy);  // init path mover to the current position of Pcopy    	        
       	macroCons.updateConstruction(); // update all algorithms of the macro construction	         	
@@ -312,7 +312,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     			}
     		}
     		
-    		if (foundDefined) {
+    		if (foundDefined) {    		
     			pathMover.init(Pcopy);
     			PstartPos.set(Pcopy);
     	    	QstartPos.set(Qcopy);
@@ -330,7 +330,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	
     	// move Pcopy along the path
     	// do this until Qcopy comes back to its start position
-    	// this may require several runs of Pcopy along the whole path
+    	// for continouse constructions 
+   		//this may require several runs of Pcopy along the whole path
+   		
     	int runs = 1;   
     	int MAX_LOOPS = 2*PathMover.MAX_POINTS;
     	int whileLoops = 0;
@@ -355,8 +357,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        		        	
 	        	whileLoops++;	        	
 	        	boolean lineTo = pathMover.getNext(Pcopy);
-	        	
-	     //   	System.out.println("   while " + whileLoops + ", Pcopy: " + Pcopy);
+	     
+	        	// TODO: remove    		
+	        	//System.out.println("   while " + whileLoops + ", Pcopy: " + Pcopy);
 	        	
 	        	
 	        	// TODO: check

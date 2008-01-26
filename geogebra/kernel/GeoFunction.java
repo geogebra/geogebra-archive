@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -131,6 +131,16 @@ GeoDeriveable, ParametricCurve {
 		else 
 			return fun.getExpression();
 	}	
+	
+	 /**
+     * Replaces geo and all its dependent geos in this function's
+     * expression by copies of their values.
+     */
+    public void replaceChildrenByValues(GeoElement geo) {     	
+    	if (fun != null) {
+    		fun.replaceChildrenByValues(geo);
+    	}
+    }
 	
 	/**
 	 * Returns the corresponding Function for the given x-value.

@@ -1,5 +1,6 @@
-GeoGebra - Dynamic Mathematics for Schools (http://www.geogebra.org/)
-Copyright 2001-2007 GeoGebra Inc.
+GeoGebra - Dynamic Mathematics for Schools
+Copyright 2001-2008 GeoGebra Inc.
+http://www.geogebra.org/
   
 LICENSE
   You are free to copy, distribute and transmit GeoGebra 
@@ -143,20 +144,20 @@ Translations
 
 2) GeoGebra Application and Source Code License
 
-GeoGebra's source code is subject to the following 
-GNU General Public License version 2:
+GeoGebra's source code is subject to the GNU General Public License:
 
-This program is free software; you can redistribute it and/or modify 
-it under the terms of the GNU General Public License version 2 as 
-published by the Free Software Foundation.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
 This program is distributed in the hope that it will be useful, 
 but WITHOUT ANY WARRANTY; without even the implied warranty of 
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 GNU General Public License for more details.
 
-The GNU General Public License 2.0 can be found at:
-http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+The GNU General Public License can be found at:
+http://www.gnu.org/licenses/
 
 If you are interested in GeoGebra's source code or want to help with 
 programming, please write to Markus Hohenwarter (markus@geogebra.org).

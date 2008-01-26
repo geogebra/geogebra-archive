@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -115,13 +115,13 @@ public class GeoFunctionConditional extends GeoFunction {
     
     public boolean isDefined() {
 		return isDefined;
-	}      
-    
-    public GeoFunction getIfFunction() {
+	}    
+      
+    final public GeoFunction getIfFunction() {
     	return ifFun;
     }
     
-    public GeoFunction getElseFunction() {
+    final public GeoFunction getElseFunction() {
     	return elseFun;
     }
     
@@ -132,6 +132,22 @@ public class GeoFunctionConditional extends GeoFunction {
     	
     	return success;
 	}       
+    
+	 /**
+     * Replaces geo and all its dependent geos in this function's
+     * expressions by copies of their values.
+     */
+    public void replaceChildrenByValues(GeoElement geo) {     	
+    	if (condFun != null) {
+    		condFun.replaceChildrenByValues(geo);
+    	}
+    	if (ifFun != null) {
+    		ifFun.replaceChildrenByValues(geo);
+    	}
+    	if (elseFun != null) {
+    		elseFun.replaceChildrenByValues(geo);
+    	}
+    }
       
     /**
 	 * Set this function to the n-th derivative of f

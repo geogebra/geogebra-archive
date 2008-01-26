@@ -262,6 +262,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		return true;
 	}
 	
+//	Michael Borcherds 2008-01-26 BEGIN
 	/** 
 	 * Calculates this polygon's area . This method should only be called by
 	 * its parent algorithm of type AlgoPolygon
@@ -280,7 +281,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
 	public double getDirection() { // clockwise=-1/anticlockwise=+1/no area=0
 		if (defined)
-			return MyMath.sgn(kernel, area);			        
+			return MyMath.sgn(kernel, area);				        
 		else 
 			return Double.NaN;			        	
 	}	
@@ -316,7 +317,6 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	   return sum / 2.0;  // positive (anticlockwise points) or negative (clockwise)
    }   
 	
-//	Michael Borcherds 2008-01-26 BEGIN
 	/**
 	 * Calculates the centroid of this polygon and writes
 	 * the result to the given point.

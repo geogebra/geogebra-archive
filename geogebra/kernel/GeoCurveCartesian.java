@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -85,7 +85,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	 */
 	final public void setFunctionX(Function funX) {
 		this.funX = funX;			
-	}
+	}		
 	
 	/** 
 	 * Sets the function of the x coordinate of this curve.
@@ -93,6 +93,19 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	final public void setFunctionY(Function funY) {
 		this.funY = funY;			
 	}
+	
+	/**
+     * Replaces geo and all its dependent geos in this function's
+     * expression by copies of their values.
+     */
+    public void replaceChildrenByValues(GeoElement geo) {     	
+    	if (funX != null) {
+    		funX.replaceChildrenByValues(geo);
+    	}
+    	if (funY != null) {
+    		funY.replaceChildrenByValues(geo);
+    	}
+    }
 	
 	/** 
 	 * Sets the start and end parameter value of this curve.

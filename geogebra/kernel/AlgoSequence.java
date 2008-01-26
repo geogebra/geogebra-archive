@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -36,7 +35,7 @@ public class AlgoSequence extends AlgoElement {
     private GeoList list; // output
         
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
-    private boolean expIsGeoFunction, isEmpty;
+    private boolean expIsFunctionOrCurve, isEmpty;
     private AlgoElement expressionParentAlgo;
    
    
@@ -65,7 +64,7 @@ public class AlgoSequence extends AlgoElement {
         	var_step_geo = var_step.toGeoElement();
         	
     	expressionParentAlgo = expression.getParentAlgorithm();
-    	expIsGeoFunction = expression.isGeoFunction();    	      
+    	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
     	       
 //    	System.out.println("expression: " + expression);
 //   	System.out.println("  parent algo: " + expression.getParentAlgorithm());
@@ -131,7 +130,7 @@ public class AlgoSequence extends AlgoElement {
     			step == last_step );
     	    	
     	// setValues does not work for functions
-    	setValuesOnly = setValuesOnly && !expIsGeoFunction;    	
+    	setValuesOnly = setValuesOnly && !expIsFunctionOrCurve;    	
     	
     	if (setValuesOnly)
     		updateListItems(from, to, step);
@@ -167,7 +166,7 @@ public class AlgoSequence extends AlgoElement {
 					// we reuse existing list element from cache				
 					listElement = list.getCached(i);	
 					
-					if (expIsGeoFunction) {
+					if (expIsFunctionOrCurve) {
 						// for functions we always need a new element
 						listElement.setParentAlgorithm(null);
 			    		listElement.doRemove(); 
@@ -181,7 +180,7 @@ public class AlgoSequence extends AlgoElement {
 				}														
  			    						
 				// copy current expression value to listElement    
-				if (!expIsGeoFunction) {
+				if (!expIsFunctionOrCurve) {
 					listElement.set(expression);
 				}
 				
@@ -213,14 +212,20 @@ public class AlgoSequence extends AlgoElement {
 		listElement.setConstructionDefaults();		
 		listElement.setUseVisualDefaults(false);
 		
-		if (expIsGeoFunction) {
-			// functions point to the local variable var
-			// so we have to replace var and all dependent objects of var
-			// by their current values
-			GeoFunction f = (GeoFunction) listElement;
-			ExpressionNode funExp = f.getFunctionExpression();				
-			if (funExp != null) {
-				funExp.replaceChildrenByValues(var);	
+		
+		// functions and curves point to the local variable var
+		// so we have to replace var and all dependent objects of var
+		// by their current values
+		if (expIsFunctionOrCurve) {
+			// GeoFunction
+			if (listElement.isGeoFunction()) {
+				GeoFunction f = (GeoFunction) listElement;
+				f.replaceChildrenByValues(var);
+			}
+			// GeoCurve
+			else if (listElement.isGeoCurveCartesian()) {				
+				GeoCurveCartesian curve = (GeoCurveCartesian) listElement;
+				curve.replaceChildrenByValues(var);
 			}
 		}		
 				

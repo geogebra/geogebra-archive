@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -43,13 +43,7 @@ public class PathMoverGeneric implements PathMover {
 			start_param = (start_param - min_param) % (max_param - min_param);
 			if (start_param < min_param)
 				start_param += (max_param - min_param);		
-		}
-		
-		/*
-		System.out.println("min_param : " + min_param);
-		System.out.println("max_param : " + max_param);
-		System.out.println("start_param : " + start_param);
-		*/
+		}				
 		
 		if (min_param == Double.NEGATIVE_INFINITY) { 
 			if (max_param == Double.POSITIVE_INFINITY){
@@ -58,7 +52,10 @@ public class PathMoverGeneric implements PathMover {
 				
 				// infFunction(-1, 1)
 				min_param  = -1 + OPEN_BORDER_OFFSET;
-				max_param  =  1 - OPEN_BORDER_OFFSET;								
+				max_param  =  1 - OPEN_BORDER_OFFSET;	
+				
+				// transform start parameter to be in (-1, 1)
+				start_param = inverseInfFunction(start_param);
 			}
 			else { 
 				// (-infinite, max_param]
@@ -94,6 +91,13 @@ public class PathMoverGeneric implements PathMover {
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
 		resetStartParameter();
+		
+
+//		System.out.println("init Path mover");
+//		System.out.println("  min_param : " + min_param);
+//		System.out.println("  max_param : " + max_param);
+//		System.out.println("  start_param : " + start_param);
+	
 	}		
 	
 	public void resetStartParameter() {		
@@ -141,11 +145,8 @@ public class PathMoverGeneric implements PathMover {
 		}					
 
 		calcPoint(p);
-		
-	     // TODO: remove
-//        System.out.println("*** path mover: " + p);
-//        System.out.println("            a = " + p.kernel.lookupLabel("a"));
-					
+			    
+       // System.out.println("* get next: " + curr_param + ", " +  p);      			
 		return lineTo;
 	}
 	
@@ -178,12 +179,16 @@ public class PathMoverGeneric implements PathMover {
 		// check if we pass the start parameter
 		// from last_param to the next parameter curr_param							
 		double next_param = curr_param + step_width;
+		
+		boolean hasNext;
 		if (posOrientation)
-			return !(curr_param < start_param && next_param >= start_param
+			hasNext = !(curr_param < start_param && next_param >= start_param
 				|| curr_param < start_paramUP && next_param >= start_paramUP);
 		else
-			return !(curr_param > start_param && next_param <= start_param
+			hasNext = !(curr_param > start_param && next_param <= start_param
 				|| curr_param > start_paramUP && next_param <= start_paramUP);								
+					
+		return hasNext;
 	}
 	
 	public void changeOrientation() {
@@ -226,14 +231,25 @@ public class PathMoverGeneric implements PathMover {
 	}
 	
 	/**
-	 * Function t: [-1, 1] -> (-inf, +inf)
+	 * Function t: (-1, 1) -> (-inf, +inf)
 	 * @param t
 	 * @return
 	 */
 	public static double infFunction(double t) {		
 		return  t /  (1 - Math.abs(t));
 	}
-
-
+	
+	/**
+	 * Function z: (-inf, +inf) -> (-1, 1)
+	 * @param t
+	 * @return
+	 */
+	private static double inverseInfFunction(double z) {
+		if (z >= 0) {
+			return z / (1 + z);
+		} else {
+			return z / (1 - z);
+		}
+	}
 
 }

@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 
@@ -61,11 +62,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private NumberFormat sizeLabelFormat;
 	
 	private final int FORMAT_PNG = 0;
-	private final int FORMAT_EPS = 1;		
-	private final int FORMAT_SVG = 2;
-	private final int FORMAT_EMF = 3;
-	//private final int FORMAT_PSTRICKS = 4;
-	
+	private final int FORMAT_PDF = 1;
+	private final int FORMAT_EPS = 2;		
+	private final int FORMAT_SVG = 3;
+	private final int FORMAT_EMF = 4;		
 
 	public GraphicExportDialog(Application app) {
 		super(app.getFrame(), true);
@@ -100,6 +100,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		JPanel formatPanel = new JPanel(new FlowLayout(5));
 		String[] formats =
 					{ app.getPlain("png") + " (" + Application.FILE_EXT_PNG + ")",
+					  app.getPlain("pdf") + " (" + Application.FILE_EXT_PDF + ")",
 					  app.getPlain("eps") + " (" + Application.FILE_EXT_EPS + ")", 			
 					  app.getPlain("svg") + " (" + Application.FILE_EXT_SVG + ")",
 					  app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")"};
@@ -147,6 +148,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 					case FORMAT_EPS:
 					case FORMAT_SVG:
 					case FORMAT_EMF:
+					case FORMAT_PDF:
 						cbDPI.setSelectedItem("72");
 						cbDPI.setEnabled(false);						
 						break;											
@@ -192,6 +194,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 															
 							case FORMAT_EMF: // EMF
 								exportEMF();
+								break;
+								
+							case FORMAT_PDF: // PDF
+								exportPDF();
 								break;
 								
 							case FORMAT_SVG: // SVG
@@ -345,6 +351,35 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return false;
 		try {					   
 			VectorGraphics g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
+		    g.startExport();			
+			app.getEuclidianView().exportPaint(g, exportScale);
+			g.endExport();								    		     		   		    		    			
+			
+			return true;
+		} catch (Exception ex) {
+			app.showError("SaveFileFailed");
+			System.err.println(ex.toString());
+			return false;
+		} catch (Error ex) {
+			app.showError("SaveFileFailed");
+			System.err.println(ex.toString());
+			return false;
+		} 
+	}
+	
+	/**
+	  *  Exports drawing as pdf
+	  */
+	final private boolean exportPDF() {
+		File file =
+			app.showSaveDialog(
+				Application.FILE_EXT_PDF, null,
+				app.getPlain("pdf") + " " + app.getMenu("Files"));
+		
+		if (file == null)
+			return false;
+		try {					   
+			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 		    g.startExport();			
 			app.getEuclidianView().exportPaint(g, exportScale);
 			g.endExport();								    		     		   		    		    			

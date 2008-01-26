@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -173,10 +173,23 @@ public class GeoGebraApplet extends JApplet {
 		//	for some strange reason this is needed to get the right font size		
 		//showApplet();
 		repaint();
+		
+		System.gc();
 	}
 
 	public void stop() {
 		repaint();
+		
+		System.gc();
+	}
+	
+	public void destroy() {
+		wnd = null;
+		app = null;
+		ev = null;
+		kernel = null;
+		
+		System.gc();
 	}
 
 	protected void initGUI() {

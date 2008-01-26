@@ -138,7 +138,7 @@ TOKEN :  {
   | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
   | < PLUS:     "+" >
-  | < MINUS:    "-" >
+  | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  

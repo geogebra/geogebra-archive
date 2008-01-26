@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -670,25 +670,26 @@ implements ExpressionValue {
             		return exponent.exp();
             	}
             	
-            	// special case: left side is negative and right side is a fraction 1/n
-            	if (right.isExpressionNode() && base < 0) {            		
+            	// special case: left side is negative and 
+            	// right side is a fraction a/b with a and b integers
+            	if (base < 0 && right.isExpressionNode()) {            		
             		ExpressionNode node = (ExpressionNode) right;
             		if (node.operation == DIVIDE) {
-            			// check if we have 1/n
-            			double exp = exponent.getDouble();
-            			double rec = 1.0/exp;
-            			double roundRec = Math.round(rec);
-            			// check if we got an integer
-            			if (kernel.isEqual(rec, roundRec)) {  
-            				boolean oddNumber =  ((int)roundRec) % 2 == 1;
-            				if (oddNumber) {
-            					// (-3)^(1/3) = -(3^(1/3))
-            					num.set(-Math.pow(-base, exp));
-            				} else {             		
-            					// (-3)^(1/2) = undefined
-            					num.set(Double.NaN);
-            				}
-            				return num;
+            			// check if we have a/b with a and b integers
+            			double a = ((NumberValue) node.left.evaluate()).getDouble();
+            			if (kernel.isInteger(a)) {
+            				double b = ((NumberValue) node.right.evaluate()).getDouble();                 			
+                			if (kernel.isInteger(b)) {  
+                				boolean oddNumber = ((long) b) % 2 == 1;
+                				if (oddNumber) {
+                					// (-3)^(1/3) = -(3^(1/3))
+                					num.set(-Math.pow(-base, a/b));
+                				} else {             		
+                					// (-3)^(1/2) = undefined
+                					num.set(Double.NaN);
+                				}
+                				return num;
+                			}
             			}
             		}
             	}

@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -38,6 +37,7 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
     private GeoLine tangent; // output  
 
     private GeoPoint T;
+    private GeoFunction deriv;
 
     AlgoTangentFunctionNumber(
         Construction cons,
@@ -52,6 +52,11 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
         tangent = new GeoLine(cons);
         T = new GeoPoint(cons);
         tangent.setStartPoint(T);
+        
+        // derivative of f
+        AlgoDerivative algoDeriv = new AlgoDerivative(cons, f);       
+        deriv = (GeoFunction) algoDeriv.getDerivative();
+        cons.removeFromConstructionList(algoDeriv);
 
         setInputOutput(); // for AlgoElement                
         compute();
@@ -83,21 +88,14 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
     // calc tangent at x=a
     final void compute() {
         double a = n.getDouble();
-        if (!f.isDefined() || Double.isInfinite(a) || Double.NaN == a) {
+        if (!f.isDefined() || !deriv.isDefined() || Double.isInfinite(a) || Double.NaN == a) {
             tangent.setUndefined();
             return;
-        }
-
-        // first derivative
-        Function df = f.getFunction().getDerivative(1);
-        if (df == null) {
-            tangent.setUndefined();
-            return;
-        }
+        }       
 
         // calc the tangent;    
         double fa = f.evaluate(a);
-        double slope = df.evaluate(a);
+        double slope = deriv.evaluate(a);
         tangent.setCoords(-slope, 1.0, a * slope - fa);
         T.setCoords(a, fa, 1.0);
     }

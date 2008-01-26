@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -23,6 +23,7 @@ public interface PathMover {
 	public static final double MIN_STEP_WIDTH = 1E-8;
 	
 	public static final double OPEN_BORDER_OFFSET = 1E-5;	
+	
 	public static final int MAX_POINTS = 5000;
 	
 	/**

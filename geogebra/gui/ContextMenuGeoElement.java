@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -34,11 +34,11 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 
 /**
  * Context menu for GeoElement objects.
@@ -75,7 +75,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         //this.location = location;                               
                     
         String title = geo.getLongDescriptionHTML(false, true);
-        if (title.length() > 50)
+        if (title.length() > 80)
         	title = geo.getNameDescriptionHTML(false, true);
         setTitle(title);
         
@@ -565,20 +565,20 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
     void setTitle(String str) {
     	JLabel title = new JLabel(str);
-        title.setFont(app.getBoldFont());
+        title.setFont(app.getBoldFont());                      
         title.setBackground(bgColor);
-        title.setForeground(fgColor);
-
-        title.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
+        title.setForeground(fgColor);          
+                
+        title.setBorder(BorderFactory.createEmptyBorder(5, 10, 2, 5));      
         add(title);
-        addSeparator();
-
+        addSeparator();   
+        
         title.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
         		setVisible(false);
         	}
         });
-
+        
     }
         
 }

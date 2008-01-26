@@ -102,7 +102,7 @@ public interface ParserConstants {
     "\"\\u22a5\"",
     "\"=\"",
     "\"+\"",
-    "\"-\"",
+    "<MINUS>",
     "<MULTIPLY>",
     "\"/\"",
     "\"^\"",

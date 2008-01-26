@@ -5,7 +5,7 @@
  This file is part of GeoGebra.
 
  This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License v2 as published by 
+ under the terms of the GNU General Public License as published by 
  the Free Software Foundation.
  
  */
@@ -952,7 +952,9 @@ final public class EuclidianController implements MouseListener,
 				double factor = Math.sqrt(MOUSE_DRAG_MAX_DIST_SQUARE / distsq);				
 				dx *= factor;
 				dy *= factor;
-				int steps = (int) (1.0 / factor);
+
+				// number of continuity steps <= MAX_CONTINUITY_STEPS
+				int steps = Math.min((int) (1.0 / factor), MAX_CONTINUITY_STEPS);
 				int mx = mouseLoc.x;
 				int my = mouseLoc.y;
 
@@ -1012,8 +1014,9 @@ final public class EuclidianController implements MouseListener,
 	
 	
 	// square of maximum allowed pixel distance 
-	// for continous mouse movements
-	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 16; 	
+	// for continuous mouse movements
+	private static double MOUSE_DRAG_MAX_DIST_SQUARE = 36; 
+	private static int MAX_CONTINUITY_STEPS = 4; 
 	
 	private void handleMouseDragged(boolean repaint) {
 		// moveMode was set in mousePressed()

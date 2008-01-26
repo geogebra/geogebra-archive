@@ -5,7 +5,7 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
@@ -997,6 +997,7 @@ public abstract class GeoElement
     		spreadsheetCoords = null;
     	}
 		
+		
 		//System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
 	}		
 	
@@ -1029,15 +1030,17 @@ public abstract class GeoElement
         if( str != null && str.length()>1 && Character.isDigit(str.charAt(0)))
         {
             String rowstr = str.substring(1); // only one char for the column
-            try
-            {
-                ret = Integer.parseInt(rowstr);
-                ret--;
-            }
-            catch( NumberFormatException nfe)
-            {
-                ret = -1;
-                nfe.printStackTrace();
+            if (Character.isDigit(rowstr.charAt(0))) {	            
+	            try
+	            {
+	                ret = Integer.parseInt(rowstr);
+	                ret--;
+	            }
+	            catch( NumberFormatException nfe)
+	            {
+	                ret = -1;
+	                //nfe.printStackTrace();
+	            }
             }
         }
         return ret;

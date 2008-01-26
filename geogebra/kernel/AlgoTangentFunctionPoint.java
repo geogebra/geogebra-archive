@@ -5,14 +5,13 @@ Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
 This file is part of GeoGebra.
 
 This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License v2 as published by 
+under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
 */
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.Function;
 
 public class AlgoTangentFunctionPoint extends AlgoElement {
 
@@ -26,6 +25,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
 
     private GeoPoint T;
     private boolean pointOnFunction;
+    private GeoFunction deriv;
 
     AlgoTangentFunctionPoint(
         Construction cons,
@@ -50,6 +50,11 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         else
         	T = new GeoPoint(cons);
         tangent.setStartPoint(T);
+        
+        // derivative of f
+        AlgoDerivative algoDeriv = new AlgoDerivative(cons, f);       
+        deriv = (GeoFunction) algoDeriv.getDerivative();
+        cons.removeFromConstructionList(algoDeriv);
 
         setInputOutput(); // for AlgoElement                
         compute();
@@ -86,22 +91,15 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
 
     // calc tangent at x=a
     final void compute() {
-        if (!(f.isDefined() && P.isDefined())) {
+        if (!(f.isDefined() && P.isDefined() && deriv.isDefined())) {
             tangent.setUndefined();
             return;
-        }
-
-        // first derivative
-        Function df = f.getFunction().getDerivative(1);
-        if (df == null) {
-            tangent.setUndefined();
-            return;
-        }
+        }      
 
         // calc the tangent;
         double a = P.inhomX;
         double fa = f.evaluate(a);
-        double slope = df.evaluate(a);
+        double slope = deriv.evaluate(a);
         tangent.setCoords(-slope, 1.0, a * slope - fa);
         
         if (!pointOnFunction)

@@ -5,7 +5,7 @@
  This file is part of GeoGebra.
 
  This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License v2 as published by 
+ under the terms of the GNU General Public License as published by 
  the Free Software Foundation.
  
  */
@@ -516,7 +516,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		// init grid's line type
 		setGridLineStyle(LINE_TYPE_DASHED_SHORT);
 		setAxesLineStyle(AXES_LINE_TYPE_ARROW);
-		setAxesColor(Color.darkGray);
+		setAxesColor(Color.black); // Michael Borcherds 2008-01-26 was darkgray
 		setGridColor(Color.lightGray);
 		setBackground(Color.white);
 

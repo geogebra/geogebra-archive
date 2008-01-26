@@ -12,6 +12,8 @@
 
 package geogebra.kernel.commands;
 
+import java.util.ArrayList;
+
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.CircularDefinitionException;
@@ -153,7 +155,36 @@ public abstract class CommandProcessor  {
        }
         
         
-    	
+        /**
+         * Creates a dependent list with all GeoElement objects from the given array.
+         * @param args
+         * @param type: -1 for any GeoElement object type; GeoElement.GEO_CLASS_ANGLE, etc. for specific types
+         * @return null if GeoElement objects did not have the correct type
+         * @author Markus Hohenwarter
+         * @date Jan 26, 2008
+         */
+         GeoList wrapInList(GeoElement [] args, int type) {
+		     boolean correctType = true;		        
+		   	 ArrayList geoElementList = new ArrayList();
+		   	 for (int i=0; i < args.length; i++) {
+		   		 if (type < 0 || args[i].getGeoClassType() == type) 
+		   			 geoElementList.add(args[i]);
+		   		 else {
+		   			correctType = false;
+		   			break;
+		   		 }
+		   	 }
+		   	 
+		   	GeoList list = null;
+		   	 if (correctType) {
+		   		boolean oldMacroMode = cons.isSuppressLabelsActive();
+				cons.setSuppressLabelCreation(true);		
+				list = kernel.List(null, geoElementList, false);	
+				cons.setSuppressLabelCreation(oldMacroMode);		   		
+		   	 }
+		   	 
+		   	 return list;
+        }            	
 }
 
 
@@ -2729,7 +2760,9 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
                 && (ok[1] = (arg[1] .isGeoVector()))) {
             	Translateable p = (Translateable) arg[0];
                 GeoVector v = (GeoVector) arg[1];
-                GeoElement geo = p.toGeoElement();
+                //GeoElement geo = p.toGeoElement();
+               
+                /*
                 // if we are not in a nested command (suppress labels)
                 // and no label is given
                 // we change the input object
@@ -2742,6 +2775,9 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
                 } else {
                     ret = kernel.Translate(label, p, v);                 
                 }
+                */
+                
+                ret = kernel.Translate(label, p, v); 
                 return ret;
             }
             
@@ -2813,8 +2849,9 @@ final public GeoElement[] process(Command c) throws MyError {
                 && (ok[1] = (arg[1] .isNumberValue()))) {
             	Rotateable p = (Rotateable) arg[0];
                 NumberValue phi = (NumberValue) arg[1];
-                GeoElement geo = p.toGeoElement();
+                //GeoElement geo = p.toGeoElement();
                 
+                /*
                 // if we are not in a nested command (suppress labels)
                 // and no label is given and the input object is independent
                 // we change the input object
@@ -2829,6 +2866,9 @@ final public GeoElement[] process(Command c) throws MyError {
                 else {                	
                     ret = kernel.Rotate(label, p, phi);           
                 }
+                */
+                
+                ret = kernel.Rotate(label, p, phi);  
                 return ret;
             }             
 
@@ -2854,8 +2894,9 @@ final public GeoElement[] process(Command c) throws MyError {
             	PointRotateable p = (PointRotateable) arg[0];
                 NumberValue phi = (NumberValue) arg[1];
                 GeoPoint Q = (GeoPoint) arg[2];
-                GeoElement geo = p.toGeoElement();
+                //GeoElement geo = p.toGeoElement();
                 
+                /*
                 // if we are not in a nested command (suppress labels)
                 // and no label is given and the input object is independent
                 // we change the input object
@@ -2868,6 +2909,9 @@ final public GeoElement[] process(Command c) throws MyError {
                 } else {
                     ret = kernel.Rotate(label, p, phi, Q);
                 }
+                */
+                
+                ret = kernel.Rotate(label, p, phi, Q);
                 return ret;
             }
             
@@ -2920,7 +2964,9 @@ final public GeoElement[] process(Command c) throws MyError {
             	Dilateable p = (Dilateable) arg[0];
                 NumberValue phi = (NumberValue) arg[1];
                 GeoPoint Q = (GeoPoint) arg[2];
-                GeoElement geo = p.toGeoElement();
+                //GeoElement geo = p.toGeoElement();
+                
+                /*
                 // if we are not in a nested command (suppress labels)
                 // and no label is given and the input object is independent
                 // we change the input object
@@ -2933,6 +2979,9 @@ final public GeoElement[] process(Command c) throws MyError {
                 } else {
                     ret = kernel.Dilate(label, p, phi, Q);
                 }
+                */
+                
+                ret = kernel.Dilate(label, p, phi, Q);
                 return ret;
             }
             
@@ -2987,11 +3036,13 @@ final public  GeoElement[] process(Command c) throws MyError {
             // mirror object
             if (ok[0] = (arg[0] instanceof Mirrorable)) {
             	Mirrorable p = (Mirrorable) arg[0];
-            	GeoElement geo = p.toGeoElement();
+            	//GeoElement geo = p.toGeoElement();
             	
             	 // mirror at point
             	if (ok[1] = (arg[1] .isGeoPoint())) {	                	
-                    GeoPoint Q = (GeoPoint) arg[1];	                    
+                    GeoPoint Q = (GeoPoint) arg[1];	  
+                    
+                    /*
                     // if we are not in a nested command (suppress labels)
                     // and no label is given and the input object is independent
                     // we change the input object
@@ -3004,11 +3055,16 @@ final public  GeoElement[] process(Command c) throws MyError {
                     } else {
                         ret = kernel.Mirror(label, p, Q);
                     }
+                    */
+                    
+                    ret = kernel.Mirror(label, p, Q);
                     return ret;
             	} 
             	 // mirror is line
             	else if (ok[1] = (arg[1] .isGeoLine())) {
                     GeoLine line = (GeoLine) arg[1];
+                    
+                    /*
                     // if we are not in a nested command (suppress labels)
                     // and no label is given and the input object is independent
                     // we change the input object
@@ -3021,6 +3077,9 @@ final public  GeoElement[] process(Command c) throws MyError {
                     } else {
                         ret = kernel.Mirror(label, p, line);
                     }
+                    */
+                    
+                    ret = kernel.Mirror(label, p, line);
                     return ret;
             	}
             }              
@@ -3359,32 +3418,44 @@ final public GeoElement[] process(Command c) throws MyError {
      int n = c.getArgumentNumber();
      boolean[] ok = new boolean[n];
      GeoElement[] arg;
-
+     arg = resArgs(c);
+     
      switch (n) {
-         case 1 :
-             arg = resArgs(c);
+         case 1 :             
              if (ok[0] = (arg[0] .isGeoFunctionable())) {
                  GeoElement[] ret =
                      {
                           kernel.PolynomialFunction(
                              c.getLabel(),
                              ((GeoFunctionable) arg[0]).getGeoFunction())};
-                 return ret;
-                 // Michael Borcherds 2008-01-22 BEGIN
-                 // PolynomialFromCoordinates
-             } else if (ok[0] = (arg[0] .isGeoList())) {
+                 return ret;                
+             }                        
+             // Michael Borcherds 2008-01-22 BEGIN
+             // PolynomialFromCoordinates
+             else if (ok[0] = (arg[0].isGeoList())) {
                  GeoElement[] ret =
                  {
                       kernel.PolynomialFunction(
                          c.getLabel(),
                          ((GeoList) arg[0]))};
-                 return ret;
-                 // Michael Borcherds 2008-01-22 END
-             } else
-				throw argErr(app, c.getName(), arg[0]);
-
+                 return ret;                 
+             } 
+             // Michael Borcherds 2008-01-22 END                                   
+             else
+            	 throw argErr(app, c.getName(), arg[0]);         
+			 
+	     // more than one argument
          default :
-             throw argNumErr(app, c.getName(), n);
+        	 // Markus Hohenwarter 2008-01-26 BEGIN
+             // try to create list of points
+        	 GeoList list = wrapInList(arg, GeoElement.GEO_CLASS_POINT);
+             if (list != null) {
+            	 GeoElement[] ret = { kernel.PolynomialFunction(c.getLabel(), list)};
+                 return ret;             	     	 
+             } 
+             // Markus Hohenwarter 2008-01-26 END
+             else        	 
+            	 throw argNumErr(app, c.getName(), n);
      }
  }    
 }
