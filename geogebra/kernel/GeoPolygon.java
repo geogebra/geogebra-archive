@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.util.MyMath;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -279,7 +280,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	
 	public double getDirection() { // clockwise=-1/anticlockwise=+1/no area=0
 		if (defined)
-			return Math.signum(area);				        
+			return MyMath.sgn(kernel, area);			        
 		else 
 			return Double.NaN;			        	
 	}	
