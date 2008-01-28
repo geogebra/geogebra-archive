@@ -1,19 +1,18 @@
 TODO for including 3D packages
 ==============================
+DON'T DO IT !!!
+==============================
+
 
 In geogebra.kernel package
 --------------------------
 
 * Run script.Geo.sh
 
-* In ConstructionElement :
-  Change cons to protected 
-  Change kernel to protected 
-  Change app to protected 
-  Change getClassName() to protected
+* Run script.ConstructionElement.sh
   
 * In GeoElement :
-  Change getAlgoUpdateSet to protected
+  Change AlgorithmSet getAlgoUpdateSet() to protected AlgorithmSet getAlgoUpdateSet()
   Add method
   	public boolean isGeoElement3D() {
 		return false;
@@ -25,37 +24,19 @@ In geogebra.kernel package
 In geogebra.euclidian package
 -----------------------------
 
-* In EuclidianView :
-  Remove final keyword
-  Remove final keyword from add(GeoElement geo)
-  Change final to protected in createDrawable(GeoElement geo)
-  Change final private to protected addToDrawableLists(Drawable d)
-  Change final Graphics2D getBackgroundGraphics() to final public Graphics2D getBackgroundGraphics() 
-  Change private to protected
-  Change void setMoveCursor() to public void setMoveCursor()
-  Change final void updateBackgroundImage() to final protected void updateBackgroundImage() 
+* Run script.EuclidianView.sh
 
-* In DrawableList
-  Change final void add(Drawable d) to public final void add(Drawable d)
-  Change public final void drawAll(Graphics2D g2) to public final void drawAll(Graphics2D g2)
+* Run script.DrawableList.sh
   
-* In Drawable
-  Change EuclidianView view to protected EuclidianView view
-  Change GeoElement geo to protected GeoElement geo
-  Change boolean isTracing to protected boolean isTracing
-  Change String labelDesc to protected String labelDesc
-  Change final boolean addLabelOffset() to final protected boolean addLabelOffset()
-  Change final void drawLabel(Graphics2D g2) to final protected void drawLabel(Graphics2D g2)
+* Run script.Drawable.sh
   
-* In EuclidianController
-  Remove final keyword
-  Change private to protected 
-  Change Point startLoc, mouseLoc, lastMouseLoc; to protected Point startLoc, mouseLoc, lastMouseLoc;
-  Change final public void mousePressed(MouseEvent e) to public void mousePressed(MouseEvent e)
+* Run script.EuclidianController.sh
       
-    
-For test
---------
+
+
+----------------    
+DO THIS For test
+----------------
 * In Application
   Add code at the end of init
 		//Mathieu Blossier - start
