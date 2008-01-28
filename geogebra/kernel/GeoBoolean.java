@@ -44,11 +44,11 @@ AbsoluteScreenLocateable {
 		setEuclidianVisible(false);
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoBoolean";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Boolean";
 	}
     
@@ -112,7 +112,7 @@ AbsoluteScreenLocateable {
 	 * Tells conidition listeners that their condition is removed
 	 * and calls super.remove()
 	 */
-	void doRemove() {
+	protected void doRemove() {
 		if (condListenersShowObject != null) {
 			// copy conditionListeners into array
 			Object [] geos = condListenersShowObject.toArray();	
@@ -136,7 +136,7 @@ AbsoluteScreenLocateable {
 		return isIndependent();
 	}
 
-	final boolean showInAlgebraView() {		
+	final protected boolean showInAlgebraView() {		
 		return true;
 	}
 	
@@ -215,7 +215,7 @@ AbsoluteScreenLocateable {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	String getXMLtags() {
+	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<value val=\"");
 		sb.append(value);

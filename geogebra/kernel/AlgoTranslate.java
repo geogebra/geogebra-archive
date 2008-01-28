@@ -54,7 +54,7 @@ public class AlgoTranslate extends AlgoTransformation {
         compute();               
     }           
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTranslate";
     }
     

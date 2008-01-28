@@ -60,7 +60,7 @@ public class AlgoRootNewton extends AlgoElement {
         rootFinder = new RealRoot();
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRootNewton";
     }
 

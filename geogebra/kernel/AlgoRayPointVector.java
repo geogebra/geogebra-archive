@@ -39,7 +39,7 @@ public class AlgoRayPointVector extends AlgoElement {
         ray.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRayPointVector";
     }
 

@@ -40,7 +40,7 @@ public class AlgoSort extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoSort";
     }
 

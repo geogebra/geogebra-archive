@@ -43,7 +43,7 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         }
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoExtremumPolynomial";
     }
 

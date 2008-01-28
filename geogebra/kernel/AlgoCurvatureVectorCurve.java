@@ -58,7 +58,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		compute();
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoCurvatureVectorCurve";
 	}
 

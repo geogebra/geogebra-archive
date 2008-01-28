@@ -63,7 +63,7 @@ public class AlgoDependentConic extends AlgoElement {
         conic.setLabel(label);                
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoDependentConic";
 	}
     

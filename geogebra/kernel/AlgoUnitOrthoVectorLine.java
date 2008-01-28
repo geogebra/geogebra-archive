@@ -56,7 +56,7 @@ public class AlgoUnitOrthoVectorLine extends AlgoElement {
         n.setLabel(label);
     }   
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoUnitOrthoVectorLine";
     }
     

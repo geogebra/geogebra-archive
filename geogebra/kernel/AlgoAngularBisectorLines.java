@@ -56,7 +56,7 @@ public class AlgoAngularBisectorLines extends AlgoElement {
         GeoElement.setLabels(labels, bisector);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoAngularBisectorLines";
     }
 

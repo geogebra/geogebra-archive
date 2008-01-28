@@ -266,7 +266,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		}
 	}		
 	
-	void doRemove() {
+	protected void doRemove() {
 		instances.remove(this);		
 		
 		// remove background image
@@ -333,19 +333,19 @@ implements Locateable, AbsoluteScreenLocateable,
 		return label;
 	}	
 
-	boolean showInAlgebraView() {
+	protected boolean showInAlgebraView() {
 		return false;
 	}
 
-	boolean showInEuclidianView() {		
+	protected boolean showInEuclidianView() {		
 		return image != null && isDefined();
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoImage";
 	}
 	
-	String getTypeString() {
+	protected String getTypeString() {
 		return "Image";
 	}
 	
@@ -401,7 +401,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   	String getXMLtags() {   	
+   	protected String getXMLtags() {   	
 	   	StringBuffer sb = new StringBuffer();
 	   		   		   	
 	   	sb.append(getXMLvisualTags());

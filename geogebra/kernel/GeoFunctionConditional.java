@@ -101,11 +101,11 @@ public class GeoFunctionConditional extends GeoFunction {
 	}	
 	
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoFunctionConditional";
 	}
 	
-	String getTypeString() {
+	protected String getTypeString() {
 		return "Function";
 	}		
 	

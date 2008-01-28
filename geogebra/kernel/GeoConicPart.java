@@ -53,7 +53,7 @@ implements LimitedPath, NumberValue {
 		conic_part_type = type;			
 	}
 	
-	String getClassName() {	
+	protected String getClassName() {	
 		return "GeoConicPart";
  	}
 	
@@ -61,7 +61,7 @@ implements LimitedPath, NumberValue {
     	return GEO_CLASS_CONICPART;
     }
 	
-	String getTypeString() {      
+	protected String getTypeString() {      
 		switch (conic_part_type) {
 			case CONIC_PART_ARC: 
 				return "Arc";
@@ -523,7 +523,7 @@ implements LimitedPath, NumberValue {
 	/**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
 		

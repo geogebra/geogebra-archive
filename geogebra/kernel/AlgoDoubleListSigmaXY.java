@@ -41,7 +41,7 @@ public class AlgoDoubleListSigmaXY extends AlgoElement {
         num.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoDoubleListSigmaXY";
     }
 

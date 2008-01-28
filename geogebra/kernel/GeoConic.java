@@ -115,7 +115,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		set(conic);
 	}
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoConic";
 	}
 	
@@ -123,7 +123,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
     	return GEO_CLASS_CONIC;
     }
 	
-	String getTypeString() {      
+	protected String getTypeString() {      
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE: 
 				return "Circle";
@@ -361,11 +361,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		return true;
 	}
 
-	final boolean showInEuclidianView() {
+	final protected boolean showInEuclidianView() {
 		return defined && (type != CONIC_EMPTY);
 	}
 
-	final boolean showInAlgebraView() {
+	final protected boolean showInAlgebraView() {
 		//return defined;
 		return true;
 	}
@@ -1900,7 +1900,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	String getXMLtags() {
+	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.getXMLtags());
 		//	line thickness and type  

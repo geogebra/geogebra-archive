@@ -37,7 +37,7 @@ public abstract class AlgoConicPart extends AlgoElement {
         this.type = type;        
     }
     
-	String getClassName() {
+	protected String getClassName() {
 		switch (type) {
 			case GeoConicPart.CONIC_PART_ARC:
 				return "AlgoConicArc";

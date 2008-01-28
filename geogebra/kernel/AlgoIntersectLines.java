@@ -46,7 +46,7 @@ public class AlgoIntersectLines extends AlgoElement {
         S.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoIntersectLines";
     }
 

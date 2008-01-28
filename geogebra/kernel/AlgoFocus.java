@@ -67,7 +67,7 @@ public class AlgoFocus extends AlgoElement {
     }   
        
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoFocus";
     }
     

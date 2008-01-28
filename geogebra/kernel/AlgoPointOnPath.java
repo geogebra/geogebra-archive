@@ -37,7 +37,7 @@ public class AlgoPointOnPath extends AlgoElement {
         P.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoPointOnPath";
     }
 

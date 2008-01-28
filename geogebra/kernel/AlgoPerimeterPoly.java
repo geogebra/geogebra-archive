@@ -40,7 +40,7 @@ public class AlgoPerimeterPoly extends AlgoElement {
 		compute();
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoPerimeterPoly";
 	}
 

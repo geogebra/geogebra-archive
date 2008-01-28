@@ -55,11 +55,11 @@ implements Traceable {
     	setCoords(Double.NaN, Double.NaN, Double.NaN);        
     }       
     
-    boolean showInEuclidianView() {     
+    protected boolean showInEuclidianView() {     
         return isDefined();
     }
     
-    boolean showInAlgebraView() {
+    protected boolean showInAlgebraView() {
        // return true;
 	   //return isDefined();
     	return true;
@@ -283,7 +283,7 @@ implements Traceable {
     /**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
         

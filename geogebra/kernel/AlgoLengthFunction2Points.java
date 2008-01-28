@@ -39,7 +39,7 @@ public class AlgoLengthFunction2Points extends AlgoElement {
         length.setLabel(label); 
 	}
 	 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoLengthFunction2Points";
     }
 

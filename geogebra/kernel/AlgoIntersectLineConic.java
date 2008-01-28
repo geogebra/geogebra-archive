@@ -59,7 +59,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean isLimitedPathSituation;              
     private boolean possibleSpecialCase = false;
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoIntersectLineConic";
     }
 

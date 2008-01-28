@@ -154,7 +154,7 @@ implements Locateable, AbsoluteScreenLocateable {
 	
 	
 	
-	void doRemove() {
+	protected void doRemove() {
 		super.doRemove();
 		// tell startPoint	
 		if (startPoint != null) startPoint.unregisterLocateable(this);
@@ -233,19 +233,19 @@ implements Locateable, AbsoluteScreenLocateable {
 	}
 	private StringBuffer sbToString = new StringBuffer(80);
 
-	boolean showInAlgebraView() {
+	protected boolean showInAlgebraView() {
 		return false;
 	}
 
-	boolean showInEuclidianView() {		
+	protected boolean showInEuclidianView() {		
 		return isDefined();
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoText";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Text";
 	}
 
@@ -318,7 +318,7 @@ implements Locateable, AbsoluteScreenLocateable {
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   	String getXMLtags() {   	
+   	protected String getXMLtags() {   	
 	   	StringBuffer sb = new StringBuffer();
 	   	sb.append(getXMLvisualTags(false));			
 		

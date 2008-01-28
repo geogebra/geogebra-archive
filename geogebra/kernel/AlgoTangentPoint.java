@@ -77,7 +77,7 @@ public class AlgoTangentPoint extends AlgoElement {
         }
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTangentPoint";
     }
 

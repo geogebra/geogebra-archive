@@ -53,7 +53,7 @@ public class AlgoTranslateVector extends AlgoElement {
         w.setLabel(label);
     }           
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTranslateVector";
     }
     

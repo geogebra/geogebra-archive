@@ -54,7 +54,7 @@ public class AlgoAxisSecond extends AlgoElement {
         axis.setLabel(label);            
     }   
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoAxisSecond";
     }
     

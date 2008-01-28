@@ -49,7 +49,7 @@ public class AlgoPolygon extends AlgoElement {
         poly.initLabels(labels);
     }   
         
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoPolygon";
     }
     

@@ -58,11 +58,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
         set(line);
     }
     
-    String getClassName() {
+    protected String getClassName() {
     	return "GeoLine";
     }
     
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Line";
 	}
     
@@ -231,12 +231,12 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
                 !(kernel.isZero(x) && kernel.isZero(y)));  
     }
         
-    boolean showInEuclidianView() {
+    protected boolean showInEuclidianView() {
         // defined
         return isDefined();
     }
     
-    boolean showInAlgebraView() {
+    protected boolean showInAlgebraView() {
         // independent or defined
         //return isIndependent() || isDefined();
     	return isLabelSet();
@@ -494,7 +494,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     /**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
 		//	line thickness and type  

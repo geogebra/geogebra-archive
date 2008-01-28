@@ -72,11 +72,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		animationStep = 0.1;					
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoNumeric";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Numeric";
 	}
     
@@ -205,7 +205,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return isDrawable() && isDefined() && !isInfinite();
 	}
 
-	final boolean showInAlgebraView() {
+	final protected boolean showInAlgebraView() {
 		// independent or defined
 		//return isIndependent() || isDefined();
 		return true;
@@ -326,7 +326,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	String getXMLtags() {
+	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<value val=\"");
 		sb.append(value);

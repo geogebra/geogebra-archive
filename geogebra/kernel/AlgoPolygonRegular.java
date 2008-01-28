@@ -67,7 +67,7 @@ public class AlgoPolygonRegular extends AlgoElement {
         isIniting = false;
     }   
         
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoPolygonRegular";
     }        
     

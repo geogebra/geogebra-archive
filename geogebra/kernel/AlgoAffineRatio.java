@@ -25,7 +25,7 @@ public class AlgoAffineRatio extends AlgoElement {
         M.setLabel(label);
     }
  
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoAffineRatio";
     }
 

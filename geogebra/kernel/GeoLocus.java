@@ -78,15 +78,15 @@ public class GeoLocus extends GeoElement implements Path {
 		return getLabel();
 	}	
 
-	boolean showInAlgebraView() {
+	protected boolean showInAlgebraView() {
 		return false;
 	}
 
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoLocus";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Locus";
 	}
     
@@ -101,7 +101,7 @@ public class GeoLocus extends GeoElement implements Path {
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   	String getXMLtags() {   
+   	protected String getXMLtags() {   
    		//return super.getXMLtags();
 	   	StringBuffer sb = new StringBuffer();
 	   	sb.append(getXMLvisualTags());		
@@ -132,7 +132,7 @@ public class GeoLocus extends GeoElement implements Path {
 		return "";
 	}
 
-	boolean showInEuclidianView() {
+	protected boolean showInEuclidianView() {
 		return isDefined();
 	}	
 	

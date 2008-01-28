@@ -36,7 +36,7 @@ public class AlgoFitLineX extends AlgoElement {
         g.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoFitLineX";
     }
 

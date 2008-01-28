@@ -64,11 +64,11 @@ GeoDeriveable, ParametricCurve {
 		setLabel(label);		
 	}
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoFunction";
 	}
 	
-	String getTypeString() {
+	protected String getTypeString() {
 		return "Function";
 	}
 	
@@ -290,11 +290,11 @@ GeoDeriveable, ParametricCurve {
 		isDefined = false;
 	}
 
-	boolean showInAlgebraView() {
+	protected boolean showInAlgebraView() {
 		return true;
 	}
 
-	boolean showInEuclidianView() {
+	protected boolean showInEuclidianView() {
 		return isDefined();
 	}
 	
@@ -389,7 +389,7 @@ GeoDeriveable, ParametricCurve {
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   String getXMLtags() {
+   protected String getXMLtags() {
 	   StringBuffer sb = new StringBuffer();
 	   sb.append(super.getXMLtags());
 	 

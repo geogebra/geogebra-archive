@@ -53,7 +53,7 @@ public class AlgoDirectrix extends AlgoElement {
         directrix.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoDirectrix";
     }
 

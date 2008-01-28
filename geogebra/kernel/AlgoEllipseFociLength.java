@@ -54,7 +54,7 @@ public class AlgoEllipseFociLength extends AlgoElement {
         ellipse.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoEllipseFociLength";
     }
 

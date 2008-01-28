@@ -81,7 +81,7 @@ implements EuclidianViewAlgo {
 		super.update();
 	}
 	
-	abstract String getClassName();
+	abstract protected String getClassName();
 
 	// for AlgoElement
 	void setInputOutput() {

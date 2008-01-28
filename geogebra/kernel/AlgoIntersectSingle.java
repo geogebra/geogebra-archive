@@ -45,7 +45,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
     	return true;
     }
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoIntersectSingle";
 	}
     

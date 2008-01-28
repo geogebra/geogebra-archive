@@ -46,7 +46,7 @@ public class AlgoVectorPoint extends AlgoElement {
         v.setLabel(label);
     }           
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoVectorPoint";
     }
     

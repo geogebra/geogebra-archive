@@ -66,7 +66,7 @@ public class AlgoMirror extends AlgoTransformation {
         compute();                                     
     }           
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoMirror";
     }
     

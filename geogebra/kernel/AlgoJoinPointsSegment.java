@@ -60,7 +60,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         compute();
     }   
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoJoinPointsSegment";
     }
 

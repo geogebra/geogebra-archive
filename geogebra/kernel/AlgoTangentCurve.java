@@ -45,7 +45,7 @@ public class AlgoTangentCurve extends AlgoElement {
         tangent.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTangentCurve";
     }
 

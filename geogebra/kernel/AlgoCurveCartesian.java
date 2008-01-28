@@ -69,7 +69,7 @@ public class AlgoCurveCartesian extends AlgoElement {
         curve.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoCurveCartesian";
 	}
     

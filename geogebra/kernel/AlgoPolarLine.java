@@ -48,7 +48,7 @@ public class AlgoPolarLine extends AlgoElement {
         polar.setLabel(label);
     }   
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoPolarLine";
     }
     

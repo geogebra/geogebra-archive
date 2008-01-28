@@ -29,7 +29,7 @@ public class AlgoTurningPointPolynomial extends AlgoRootsPolynomial {
         super(cons, labels, f);             
     }
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTurningPointPolynomial";    
     }
             

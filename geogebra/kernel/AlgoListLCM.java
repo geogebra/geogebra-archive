@@ -36,7 +36,7 @@ public class AlgoListLCM extends AlgoElement {
         num.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoListLCM";
     }
 

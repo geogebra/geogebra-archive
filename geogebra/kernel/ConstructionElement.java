@@ -19,9 +19,9 @@ import java.util.TreeSet;
 public abstract class ConstructionElement 
 implements Comparable {
 	
-	transient Construction cons; // parent construction of this element
-	transient Kernel kernel;      // parent kernel of this element
-	transient Application app;  // parent application of this element
+	protected transient Construction cons; // parent construction of this element
+	protected transient Kernel kernel;      // parent kernel of this element
+	protected transient Application app;  // parent application of this element
 	
 	private int constIndex = -1; // index in construction list 
 	
@@ -175,7 +175,7 @@ implements Comparable {
 	/**
 	 * Returns name of class. This is needed to allow code obfuscation.	
 	 */
-	abstract String getClassName();
+	abstract protected String getClassName();
 	
 	
 	/* Comparable interface */

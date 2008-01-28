@@ -49,7 +49,7 @@ public class AlgoDistancePoints extends AlgoElement {
         dist.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoDistancePoints";
     }
 

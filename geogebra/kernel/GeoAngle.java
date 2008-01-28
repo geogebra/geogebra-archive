@@ -89,11 +89,11 @@ public final class GeoAngle extends GeoNumeric {
 		setLabel(label);
 	}  
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoAngle";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Angle";
 	}
     
@@ -311,7 +311,7 @@ public final class GeoAngle extends GeoNumeric {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	String getXMLtags() {
+	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("\t<value val=\"");

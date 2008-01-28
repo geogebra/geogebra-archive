@@ -44,7 +44,7 @@ public class AlgoRow extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRow";
     }
 

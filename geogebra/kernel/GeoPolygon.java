@@ -44,11 +44,11 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoPolygon";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
     	if (points == null) 
     		return "Polygon";
     	
@@ -375,7 +375,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		   defined = false;
 	}
         
-   final boolean showInAlgebraView() {	   
+   final protected boolean showInAlgebraView() {	   
 	   //return defined;
 	   return true;
    }
@@ -479,7 +479,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		return 0;
 	}
 
-	boolean showInEuclidianView() {
+	protected boolean showInEuclidianView() {
 		return defined;
 	}    
 	

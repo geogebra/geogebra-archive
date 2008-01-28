@@ -54,11 +54,11 @@ implements Path, VectorValue, Locateable, Rotateable {
     	//setEuclidianVisible(false);
     }
     
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoVector";
 	}
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Vector";
 	}
 
@@ -234,7 +234,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 		waitingForStartPoint = true;
 	}
     
-    void doRemove() {
+    protected void doRemove() {
     	super.doRemove();
 		// tell startPoint	
 		if (startPoint != null) startPoint.unregisterLocateable(this);
@@ -248,11 +248,11 @@ implements Path, VectorValue, Locateable, Rotateable {
        return Double.isInfinite(x) || Double.isInfinite(y);  
     }
     
-    final boolean showInEuclidianView() {               
+    final protected boolean showInEuclidianView() {               
         return isDefined() && !isInfinite();
     }    
     
-    final boolean showInAlgebraView() {
+    final protected boolean showInAlgebraView() {
         // independent or defined
        // return isIndependent() || isDefined();
     	return true;
@@ -359,7 +359,7 @@ implements Path, VectorValue, Locateable, Rotateable {
     /**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
 		//	line thickness and type  

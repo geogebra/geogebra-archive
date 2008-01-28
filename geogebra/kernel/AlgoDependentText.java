@@ -46,7 +46,7 @@ public class AlgoDependentText extends AlgoElement {
         text.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoDependentText";
 	}
     

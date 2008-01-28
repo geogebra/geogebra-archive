@@ -43,7 +43,7 @@ public class AlgoAxisFirstLength extends AlgoElement {
         num.setLabel(label);            
     }   
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoAxisFirstLength";
     }
     

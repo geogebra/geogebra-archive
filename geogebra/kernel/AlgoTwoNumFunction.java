@@ -43,7 +43,7 @@ public abstract class AlgoTwoNumFunction extends AlgoElement {
       num.setLabel(label);
     }   
   
-    abstract String getClassName();
+    abstract protected String getClassName();
     
     // for AlgoElement
     void setInputOutput() {

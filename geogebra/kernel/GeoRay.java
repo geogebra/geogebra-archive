@@ -35,11 +35,11 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		setStartPoint(A);
 	}
 	
-	String getClassName() {	
+	protected String getClassName() {	
 		return "GeoRay";
  	}
 	
-	 String getTypeString() {
+	 protected String getTypeString() {
 		return "Ray";
 	}
 
@@ -187,7 +187,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
 		

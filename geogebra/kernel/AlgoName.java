@@ -42,7 +42,7 @@ public class AlgoName extends AlgoElement {
         text.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoName";
 	}
     

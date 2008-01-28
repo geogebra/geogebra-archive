@@ -51,7 +51,7 @@ public class AlgoRotateVector extends AlgoElement {
         B.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRotateVector";
     }
 

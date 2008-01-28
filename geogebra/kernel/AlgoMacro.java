@@ -75,7 +75,7 @@ public class AlgoMacro extends AlgoElement {
     	super.remove();    	
     }           
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoMacro";
 	}
 	

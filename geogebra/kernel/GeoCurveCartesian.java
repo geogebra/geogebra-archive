@@ -53,11 +53,11 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		setFunctionY(fy);					
 	}
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoCurveCartesian";
 	}
 	
-	String getTypeString() {
+	protected String getTypeString() {
 		return "CurveCartesian";
 	}
 	
@@ -205,11 +205,11 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		isDefined = false;
 	}
 
-	boolean showInAlgebraView() {
+	protected boolean showInAlgebraView() {
 		return true;
 	}
 
-	boolean showInEuclidianView() {
+	protected boolean showInEuclidianView() {
 		return isDefined();
 	}
 	
@@ -270,7 +270,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
    /**
 	* returns all class-specific xml tags for getXML
 	*/
-   String getXMLtags() {
+   protected String getXMLtags() {
 	   StringBuffer sb = new StringBuffer();
 	   sb.append(super.getXMLtags());
 	 

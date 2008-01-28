@@ -38,7 +38,7 @@ public class AlgoListMin extends AlgoElement {
         min.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoListMin";
     }
 

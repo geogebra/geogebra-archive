@@ -70,11 +70,11 @@ public class GeoList extends GeoElement implements ListValue {
         set(list);
     }
     
-    String getClassName() {
+    protected String getClassName() {
     	return "GeoList";
     }
     
-    String getTypeString() {
+    protected String getTypeString() {
 		return "List";
 	}
     
@@ -244,7 +244,7 @@ public class GeoList extends GeoElement implements ListValue {
     	setDefined(false);
     }               
     
-    boolean showInEuclidianView() {
+    protected boolean showInEuclidianView() {
         return isDefined() && isDrawable();
     }
     
@@ -252,7 +252,7 @@ public class GeoList extends GeoElement implements ListValue {
     	return isDrawable;
     }
     
-    boolean showInAlgebraView() {       
+    protected boolean showInAlgebraView() {       
         return true;        
     }                
     

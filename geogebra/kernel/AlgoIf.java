@@ -53,7 +53,7 @@ public class AlgoIf extends AlgoElement {
         result.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoIf";
 	}
     

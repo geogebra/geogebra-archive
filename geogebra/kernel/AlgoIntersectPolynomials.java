@@ -31,7 +31,7 @@ public class AlgoIntersectPolynomials extends AlgoRootsPolynomial {
         super(cons, f, g);                      
     }
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoIntersectPolynomials";
     }
     

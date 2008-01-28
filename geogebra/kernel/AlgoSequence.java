@@ -79,7 +79,7 @@ public class AlgoSequence extends AlgoElement {
         list.setLabel(label);        
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoSequence";
     }
 

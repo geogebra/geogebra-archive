@@ -51,7 +51,7 @@ public class AlgoMidpoint extends AlgoElement {
         compute();        
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoMidpoint";
     }
 

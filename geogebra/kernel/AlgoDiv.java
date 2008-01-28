@@ -33,7 +33,7 @@ public class AlgoDiv extends AlgoTwoNumFunction {
 	  super(cons, label, a, b);     
     }   
   
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoDiv";
     }        
     

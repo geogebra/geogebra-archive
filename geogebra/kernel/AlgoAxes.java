@@ -47,7 +47,7 @@ public class AlgoAxes extends AlgoElement {
         GeoElement.setLabels(labels, axes);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoAxes";
     }
 

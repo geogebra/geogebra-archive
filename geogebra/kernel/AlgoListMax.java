@@ -38,7 +38,7 @@ public class AlgoListMax extends AlgoElement {
         max.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoListMax";
     }
 

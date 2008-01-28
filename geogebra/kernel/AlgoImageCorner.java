@@ -38,7 +38,7 @@ implements EuclidianViewAlgo {
         kernel.registerEuclidianViewAlgo(this);
     }   
     
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoImageCorner";
     }
     

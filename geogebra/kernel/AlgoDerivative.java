@@ -65,7 +65,7 @@ public class AlgoDerivative extends AlgoElement {
             compute();            
      }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoDerivative";
     }
 

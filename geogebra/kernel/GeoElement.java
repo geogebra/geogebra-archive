@@ -698,8 +698,8 @@ public abstract class GeoElement
 		return algebraVisible;
 	}
 
-	abstract boolean showInAlgebraView();
-	abstract boolean showInEuclidianView();
+	abstract protected boolean showInAlgebraView();
+	abstract protected boolean showInEuclidianView();
 	
 	final public boolean isEuclidianShowable() {
 		return showInEuclidianView();
@@ -1298,7 +1298,7 @@ public abstract class GeoElement
 	}
 
 	// removes this GeoElement and all its dependents
-	void doRemove() {
+	protected void doRemove() {
 		// remove this object from List
 		if (isIndependent()) 
 			cons.removeFromConstructionList(this);
@@ -1405,7 +1405,7 @@ public abstract class GeoElement
 		removeFromUpdateSets(algorithm);
 	}
 
-	AlgorithmSet getAlgoUpdateSet() {
+	protected AlgorithmSet getAlgoUpdateSet() {
 		return algoUpdateSet;
 	}		
 		
@@ -1719,7 +1719,7 @@ public abstract class GeoElement
 	 * Returns type string of GeoElement. Note: this is
 	 * equal to getClassName().substring(3), but faster
 	 */
-	abstract String getTypeString();
+	abstract protected String getTypeString();
 	/*{
 		// e.g. GeoPoint -> type = Point
 		//return getClassName().substring(3);		
@@ -2258,7 +2258,7 @@ public abstract class GeoElement
 	/**
 	 * returns all class-specific xml tags for getXML
 	 */
-	String getXMLtags() {
+	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getXMLvisualTags());
 		sb.append(getXMLanimationTags());
@@ -2344,6 +2344,11 @@ public abstract class GeoElement
 	/*
 	 *  NOTE: change in GeoElementWrapper too!
 	 */
+	
+  	public boolean isGeoElement3D() {
+		return false;
+	}
+	
 	
 	public boolean isGeoAngle() {
 		return false;

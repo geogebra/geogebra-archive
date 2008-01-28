@@ -26,7 +26,7 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
 	  super(cons, label, a, b); 
     }   
   
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRandomNormal";
     }
       

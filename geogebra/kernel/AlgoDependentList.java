@@ -45,7 +45,7 @@ public class AlgoDependentList extends AlgoElement {
         geoList.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoDependentList";
 	}
     

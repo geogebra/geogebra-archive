@@ -88,7 +88,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
             compute();            
         }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoCircleThreePoints";
     }
 

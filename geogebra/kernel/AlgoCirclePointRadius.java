@@ -62,7 +62,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
         compute();            
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoCirclePointRadius";
     }
 

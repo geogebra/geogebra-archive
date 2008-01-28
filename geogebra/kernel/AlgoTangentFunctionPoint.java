@@ -61,7 +61,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         tangent.setLabel(label);
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoTangentFunctionPoint";
     }
 

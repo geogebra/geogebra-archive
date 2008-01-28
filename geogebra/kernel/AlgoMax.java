@@ -30,7 +30,7 @@ public class AlgoMax extends AlgoTwoNumFunction {
 	  super(cons, label, a, b); 
     }   
   
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoMax";
     }
       

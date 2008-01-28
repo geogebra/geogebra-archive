@@ -41,7 +41,7 @@ public class AlgoDependentBoolean extends AlgoElement {
         bool.setLabel(label);
     }   
     
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoDependentBoolean";
 	}
     

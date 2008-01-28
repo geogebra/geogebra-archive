@@ -25,7 +25,7 @@ public class AlgoGCD extends AlgoTwoNumFunction {
 	  super(cons, label, a, b); 
     }   
   
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoGCD";
     }
       

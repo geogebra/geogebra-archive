@@ -57,7 +57,7 @@ public class AlgoRotate extends AlgoTransformation {
         compute();        
     }
 
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoRotate";
     }
 

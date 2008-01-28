@@ -85,7 +85,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         locus.setLabel(label);
     }
  
-    String getClassName() {
+    protected String getClassName() {
         return "AlgoLocus";
     }
     

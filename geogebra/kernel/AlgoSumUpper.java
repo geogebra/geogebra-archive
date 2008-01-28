@@ -31,7 +31,7 @@ public class AlgoSumUpper extends AlgoSumUpperLower {
 		super(cons, label, f, a, b, n, true);		
 	}
 	
-	String getClassName() {
+	protected String getClassName() {
 		return "AlgoSumUpper";
 	}
 	

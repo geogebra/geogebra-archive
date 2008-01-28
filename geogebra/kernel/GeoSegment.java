@@ -72,11 +72,11 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		setEndPoint(B);
 	}
 	
-	String getClassName() {	
+	protected String getClassName() {	
 		return "GeoSegment";
  	}
 	
-	 String getTypeString() {
+	 protected String getTypeString() {
 		return "Segment";
 	}
 	 
@@ -148,12 +148,12 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		defined = false;
 	}
         
-   final boolean showInAlgebraView() {	   
+   final protected boolean showInAlgebraView() {	   
 	  // return defined;
 	   return true;
    }
    
-   boolean showInEuclidianView() {
+   protected boolean showInEuclidianView() {
 	   return defined;
    }
    
@@ -337,7 +337,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	/**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags());
 		

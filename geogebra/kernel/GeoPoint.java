@@ -78,11 +78,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		pathParameter = new PathParameter();
 	}
     
-	String getClassName() {
+	protected String getClassName() {
 		return "GeoPoint";
 	}        
 	
-    String getTypeString() {
+    protected String getTypeString() {
 		return "Point";
 	}
     
@@ -186,7 +186,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     	return isDefined && !isInfinite;
     }    
     
-    final boolean showInAlgebraView() {
+    final protected boolean showInAlgebraView() {
         // intersection points
         return isDefined || showUndefinedInAlgebraView;
     }   
@@ -556,7 +556,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     /**
      * returns all class-specific xml tags for saveXML
      */
-    String getXMLtags() {
+    protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.getXMLtags()); 
         
@@ -672,7 +672,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	 * Tells Locateables that their start point is removed
 	 * and calls super.remove()
 	 */
-	void doRemove() {
+	protected void doRemove() {
 		if (locateableList != null) {
 			// copy locateableList into array
 			Object [] locs = locateableList.toArray();	
