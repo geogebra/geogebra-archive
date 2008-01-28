@@ -32,7 +32,7 @@ public class DrawableList {
 	/**
 	 * Inserts d at the end of the list.
 	 */
-	final void add(Drawable d) {		
+	public final void add(Drawable d) {		
 		if (head == null) {
 			head = new Link(d, null);
 			tail = head;
@@ -92,7 +92,7 @@ public class DrawableList {
 		}
 	}
 	
-	final void drawAll(Graphics2D g2) {		
+	public final void drawAll(Graphics2D g2) {		
 		Link cur = head;
 		while (cur != null) {
 			cur.d.draw(g2);

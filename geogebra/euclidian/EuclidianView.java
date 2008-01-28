@@ -81,17 +81,17 @@ import javax.swing.Timer;
  * @author Markus Hohenwarter
  * @version
  */
-public final class EuclidianView extends JPanel implements View, Printable {
+public class EuclidianView extends JPanel implements View, Printable {
 
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-	private static final int MIN_WIDTH = 50;
-	private static final int MIN_HEIGHT = 50;
+	protected static final int MIN_WIDTH = 50;
+	protected static final int MIN_HEIGHT = 50;
 	
-	private static final String PI_STRING = "\u03c0";
+	protected static final String PI_STRING = "\u03c0";
 
 	// pixel per centimeter (at 72dpi)
-	private static final double PRINTER_PIXEL_PER_CM = 72.0 / 2.54;
+	protected static final double PRINTER_PIXEL_PER_CM = 72.0 / 2.54;
 
 	public static final double MODE_ZOOM_FACTOR = 1.5;
 
@@ -275,30 +275,30 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	
 
 	// zoom rectangle colors
-	private static final Color colZoomRectangle = new Color(200, 200, 230);
-	private static final Color colZoomRectangleFill = new Color(200, 200, 230, 50);
+	protected static final Color colZoomRectangle = new Color(200, 200, 230);
+	protected static final Color colZoomRectangleFill = new Color(200, 200, 230, 50);
 
 	// STROKES
-	private static MyBasicStroke standardStroke = new MyBasicStroke(1.0f);
+	protected static MyBasicStroke standardStroke = new MyBasicStroke(1.0f);
 
-	private static MyBasicStroke selStroke = new MyBasicStroke(
+	protected static MyBasicStroke selStroke = new MyBasicStroke(
 			1.0f + SELECTION_ADD);
 
-	// private static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
+	// protected static MyBasicStroke thinStroke = new MyBasicStroke(1.0f);
 
 	// axes strokes
-	private static BasicStroke defAxesStroke = new BasicStroke(1.0f,
+	protected static BasicStroke defAxesStroke = new BasicStroke(1.0f,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
-	private static BasicStroke boldAxesStroke = new BasicStroke(1.8f,
+	protected static BasicStroke boldAxesStroke = new BasicStroke(1.8f,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	// axes and grid stroke
-	private BasicStroke axesStroke, tickStroke, gridStroke;
+	protected BasicStroke axesStroke, tickStroke, gridStroke;
 
-	private Line2D.Double tempLine = new Line2D.Double();
+	protected Line2D.Double tempLine = new Line2D.Double();
 
-	private static RenderingHints defRenderingHints = new RenderingHints(null);
+	protected static RenderingHints defRenderingHints = new RenderingHints(null);
 	{
 		defRenderingHints.put(RenderingHints.KEY_RENDERING,
 				RenderingHints.VALUE_RENDER_SPEED);
@@ -319,36 +319,36 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	int fontSize;
 
 	// member variables
-	private Application app;
+	protected Application app;
 
-	private Kernel kernel;
+	protected Kernel kernel;
 
-	private EuclidianController euclidianController;
+	protected EuclidianController euclidianController;
 
 	AffineTransform coordTransform = new AffineTransform();
 
 	int width, height;
 
-	private NumberFormat[] axesNumberFormat;
+	protected NumberFormat[] axesNumberFormat;
 
-	private NumberFormat printScaleNF;
+	protected NumberFormat printScaleNF;
 
 	double xmin, xmax, ymin, ymax, invXscale, invYscale, xZero, yZero, xscale,
 			yscale, scaleRatio = 1.0; // ratio yscale / xscale
 
-	private double[] AxesTickInterval = { 1, 1 }; // for axes =
+	protected double[] AxesTickInterval = { 1, 1 }; // for axes =
 
 	// axesNumberingDistances /
 	// 2
 
 	boolean showGrid = false;
 
-	private boolean antiAliasing = true;
+	protected boolean antiAliasing = true;
 
 	boolean showMouseCoords = false;
 	boolean showAxesRatio = false;
 
-	private int pointCapturingMode; // snap to grid points
+	protected int pointCapturingMode; // snap to grid points
 
 	// added by Loïc BEGIN
 	// right angle
@@ -360,93 +360,93 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 	int mode = MODE_MOVE;
 
-	private boolean[] showAxes = { true, true };
+	protected boolean[] showAxes = { true, true };
 
-	private boolean[] showAxesNumbers = { true, true };
+	protected boolean[] showAxesNumbers = { true, true };
 
-	private String[] axesLabels = { null, null };
+	protected String[] axesLabels = { null, null };
 
-	private String[] axesUnitLabels = { null, null };
+	protected String[] axesUnitLabels = { null, null };
 
-	private boolean[] piAxisUnit = { false, false };
+	protected boolean[] piAxisUnit = { false, false };
 
-	private int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR,
+	protected int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR,
 			AXES_TICK_STYLE_MAJOR };
 
 	// for axes labeling with numbers
-	private boolean[] automaticAxesNumberingDistances = { true, true };
+	protected boolean[] automaticAxesNumberingDistances = { true, true };
 
-	private double[] axesNumberingDistances = { 2, 2 };
+	protected double[] axesNumberingDistances = { 2, 2 };
 
 	// distances between grid lines
-	private boolean automaticGridDistance = true;
+	protected boolean automaticGridDistance = true;
 	// since V3.0 this factor is 1, before it was 0.5
 	final public static double DEFAULT_GRID_DIST_FACTOR = 1;
 	public static double automaticGridDistanceFactor = DEFAULT_GRID_DIST_FACTOR;
 
 	double[] gridDistances = { 2, 2 };
 
-	private int gridLineStyle, axesLineType;
+	protected int gridLineStyle, axesLineType;
 
 	// colors: axes, grid, background
-	private Color axesColor, gridColor, bgColor;
+	protected Color axesColor, gridColor, bgColor;
 
-	private double printingScale;
+	protected double printingScale;
 
 	// Map (geo, drawable) for GeoElements and Drawables
-	private FastHashMapKeyless DrawableMap = new FastHashMapKeyless(500);
+	protected FastHashMapKeyless DrawableMap = new FastHashMapKeyless(500);
 
-	private DrawableList allDrawableList = new DrawableList();
+	protected DrawableList allDrawableList = new DrawableList();
 
-	private DrawableList drawBooleanList = new DrawableList();
-	private DrawableList drawPointList = new DrawableList();
+	protected DrawableList drawBooleanList = new DrawableList();
+	protected DrawableList drawPointList = new DrawableList();
 
-	private DrawableList drawLineList = new DrawableList();
+	protected DrawableList drawLineList = new DrawableList();
 
-	private DrawableList drawSegmentList = new DrawableList();
+	protected DrawableList drawSegmentList = new DrawableList();
 
-	private DrawableList drawVectorList = new DrawableList();
+	protected DrawableList drawVectorList = new DrawableList();
 
-	private DrawableList drawConicList = new DrawableList();
+	protected DrawableList drawConicList = new DrawableList();
 
-	private DrawableList drawFunctionList = new DrawableList();
+	protected DrawableList drawFunctionList = new DrawableList();
 
-	private DrawableList drawTextList = new DrawableList();		
+	protected DrawableList drawTextList = new DrawableList();		
 
-	private DrawableList drawImageList = new DrawableList();
+	protected DrawableList drawImageList = new DrawableList();
 
-	private DrawableList drawLocusList = new DrawableList();
+	protected DrawableList drawLocusList = new DrawableList();
 
-	private DrawableList drawPolygonList = new DrawableList();
+	protected DrawableList drawPolygonList = new DrawableList();
 
-	private DrawableList drawNumericList = new DrawableList();
+	protected DrawableList drawNumericList = new DrawableList();
 	
-	private DrawableList drawListList = new DrawableList();
+	protected DrawableList drawListList = new DrawableList();
 
 	// on add: change resetLists()
 
-	private DrawableList bgImageList = new DrawableList();
+	protected DrawableList bgImageList = new DrawableList();
 
 	Previewable previewDrawable;
 
-	private Rectangle selectionRectangle;
+	protected Rectangle selectionRectangle;
 
 	// temp
 	// public static final int DRAW_MODE_DIRECT_DRAW = 0;
 	// public static final int DRAW_MODE_BACKGROUND_IMAGE = 1;
 
 	// or use volatile image
-	// private int drawMode = DRAW_MODE_BACKGROUND_IMAGE;
-	private BufferedImage bgImage;
-	private Graphics2D bgGraphics; // g2d of bgImage
-	private Image resetImage;
+	// protected int drawMode = DRAW_MODE_BACKGROUND_IMAGE;
+	protected BufferedImage bgImage;
+	protected Graphics2D bgGraphics; // g2d of bgImage
+	protected Image resetImage;
 	
 	// temp image
-	private Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
+	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 
-	private StringBuffer sb = new StringBuffer();
+	protected StringBuffer sb = new StringBuffer();
 
-	private Cursor defaultCursor;
+	protected Cursor defaultCursor;
 
 	/**
 	 * Creates EuclidianView
@@ -509,7 +509,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
         }
 	}
 
-	private void initView(boolean repaint) {
+	protected void initView(boolean repaint) {
 		// preferred size
 		setPreferredSize(null);
 		
@@ -559,7 +559,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			prefSize.height > MIN_HEIGHT;
 	}
 
-	private void resetLists() {
+	protected void resetLists() {
 		DrawableMap.clear();
 		allDrawableList.clear();
 		drawPointList.clear();
@@ -735,7 +735,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 
-	void setMoveCursor() {
+	public void setMoveCursor() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 	}
 
@@ -753,7 +753,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			setCursor(defaultCursor);
 	}
 
-	private void initCursor() {
+	protected void initCursor() {
 		defaultCursor = null;
 
 		switch (mode) {	
@@ -771,7 +771,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		setDefaultCursor();
 	}
 
-	private Cursor getCursorForImage(Image image) {
+	protected Cursor getCursorForImage(Image image) {
 		if (image == null)
 			return null;
 
@@ -1050,11 +1050,11 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 	// move view:
 	/*
-	 * private void setDrawMode(int mode) { if (mode != drawMode) { drawMode =
+	 * protected void setDrawMode(int mode) { if (mode != drawMode) { drawMode =
 	 * mode; if (mode == DRAW_MODE_BACKGROUND_IMAGE) updateBackgroundImage(); } }
 	 */
 
-	final private void setRealWorldBounds() {
+	final protected void setRealWorldBounds() {
 		xmin = -xZero * invXscale;
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
@@ -1068,14 +1068,14 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		calcPrintingScale();
 	}
 
-	private void calcPrintingScale() {
+	protected void calcPrintingScale() {
 		double unitPerCM = PRINTER_PIXEL_PER_CM / xscale;
 		int exp = (int) Math.round(Math.log(unitPerCM) / Math.log(10));
 		printingScale = Math.pow(10, -exp);
 	}
 
 	// axis: 0 for x-axis, 1 for y-axis
-	private void setAxesIntervals(double scale, int axis) {
+	protected void setAxesIntervals(double scale, int axis) {
 		double maxPix = 100; // only one tick is allowed per maxPix pixels
 		double units = maxPix / scale;
 		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
@@ -1129,7 +1129,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		return yscale / xscale;
 	}
 
-	private String getXYscaleRatioString() {
+	protected String getXYscaleRatioString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("x : y = ");
 		if (xscale >= yscale) {
@@ -1227,14 +1227,14 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			drawAxesRatio(g2);
 	}
 
-	private void setAntialiasing(Graphics2D g2) {
+	protected void setAntialiasing(Graphics2D g2) {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
-	private void drawZoomRectangle(Graphics2D g2) {
+	protected void drawZoomRectangle(Graphics2D g2) {
 		g2.setColor(colZoomRectangleFill);
 		g2.fill(selectionRectangle);
 		g2.setColor(colZoomRectangle);
@@ -1393,7 +1393,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * Tells if there are any traces in the background image.
 	 */
-	private boolean isTracing() {
+	protected boolean isTracing() {
 		DrawableIterator it = allDrawableList.getIterator();
 		while (it.hasNext()) {
 			if (it.next().isTracing)
@@ -1405,7 +1405,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * Tells if there are any images in the background.
 	 */
-	private boolean hasBackgroundImages() {
+	protected boolean hasBackgroundImages() {
 		return bgImageList.size() > 0;
 	}
 
@@ -1421,7 +1421,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		return img;
 	}
 
-	private BufferedImage createBufferedImage(int width, int height)
+	protected BufferedImage createBufferedImage(int width, int height)
 			throws OutOfMemoryError {
 		// this image might be too big for our memory
 		BufferedImage img = null;
@@ -1445,7 +1445,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		return img;
 	}
 
-	final Graphics2D getBackgroundGraphics() {
+	final public Graphics2D getBackgroundGraphics() {
 		return bgGraphics;
 	}
 
@@ -1455,7 +1455,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		// repaint();
 	}
 
-	final void updateBackgroundImage() {
+	final protected void updateBackgroundImage() {
 		if (bgGraphics != null) {
 			clearBackground(bgGraphics);
 			bgImageList.drawAll(bgGraphics);
@@ -1464,7 +1464,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		}
 	}
 
-	final private void drawBackground(Graphics2D g, boolean clear) {
+	final protected void drawBackground(Graphics2D g, boolean clear) {
 		if (clear) {
 			clearBackground(g);
 		}
@@ -1480,12 +1480,12 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		}
 	}		
 
-	final private void clearBackground(Graphics2D g) {
+	final protected void clearBackground(Graphics2D g) {
 		g.setColor(bgColor);
 		g.fillRect(0, 0, width, height);
 	}
 
-	private static int SCREEN_BORDER = 10;
+	protected static int SCREEN_BORDER = 10;
 
 	final void drawAxes(Graphics2D g2) {
 		// for axes ticks
@@ -1806,7 +1806,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		}						
 	}
 
-	final private void drawMouseCoords(Graphics2D g2) {
+	final protected void drawMouseCoords(Graphics2D g2) {
 		Point pos = euclidianController.mouseLoc;
 		if (pos == null)
 			return;
@@ -1826,7 +1826,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(sb.toString(), pos.x + 15, pos.y + 15);
 	}
 	
-	final private void drawAxesRatio(Graphics2D g2) {
+	final protected void drawAxesRatio(Graphics2D g2) {
 		Point pos = euclidianController.mouseLoc;
 		if (pos == null)
 			return;						
@@ -1836,7 +1836,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 	
-	private void drawObjects(Graphics2D g2) {		
+	protected void drawObjects(Graphics2D g2) {		
 		// draw images
 		drawImageList.drawAll(g2);
 		
@@ -1850,7 +1850,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * Draws all GeoElements except images.
 	 */
-	private void drawGeometricObjects(Graphics2D g2) {	
+	protected void drawGeometricObjects(Graphics2D g2) {	
 
 		if (previewDrawable != null) {
 			previewDrawable.drawPreview(g2);
@@ -1905,7 +1905,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			kernel.notifyRepaint();
 	}
 
-	private ArrayList tempArrayList = new ArrayList();
+	protected ArrayList tempArrayList = new ArrayList();
 
 	// for use in AlgebraController
 	final public void clickedGeo(GeoElement geo, MouseEvent e) {
@@ -2031,7 +2031,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 		return foundHits;
 	}
-	private ArrayList foundHits = new ArrayList();
+	protected ArrayList foundHits = new ArrayList();
 	
 	/**
 	 * Returns array of GeoElements whose visual representation is inside of
@@ -2075,11 +2075,11 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		return getMoveables(hits, TEST_ROTATEMOVEABLE, rotCenter);
 	}
 
-	private final int TEST_MOVEABLE = 1;
+	protected final int TEST_MOVEABLE = 1;
 
-	private final int TEST_ROTATEMOVEABLE = 2;
+	protected final int TEST_ROTATEMOVEABLE = 2;
 
-	private ArrayList getMoveables(ArrayList hits, int test, GeoPoint rotCenter) {
+	protected ArrayList getMoveables(ArrayList hits, int test, GeoPoint rotCenter) {
 		if (hits == null)
 			return null;
 
@@ -2109,7 +2109,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			return moveableList;
 	}
 
-	private ArrayList moveableList = new ArrayList();
+	protected ArrayList moveableList = new ArrayList();
 
 	/**
 	 * returns array of GeoElements of type geoclass whose visual representation
@@ -2158,7 +2158,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	 *            true: returns array of GeoElements NOT of type geoclass out of
 	 *            hits.
 	 */
-	final private ArrayList getHits(ArrayList hits, Class geoclass,
+	final protected ArrayList getHits(ArrayList hits, Class geoclass,
 			boolean other, ArrayList result) {
 		if (hits == null)
 			return null;
@@ -2203,7 +2203,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			return hits;
 	}
 
-	private ArrayList topHitsList = new ArrayList();
+	protected ArrayList topHitsList = new ArrayList();
 
 	final public boolean containsGeoPoint(ArrayList hits) {
 		if (hits == null)
@@ -2230,7 +2230,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * adds a GeoElement to this view
 	 */
-	final public void add(GeoElement geo) {
+	public void add(GeoElement geo) {
 		// check if there is already a drawable for geo
 		Drawable d = getDrawable(geo);
 		if (d != null)
@@ -2246,7 +2246,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * adds a GeoElement to this view
 	 */
-	final Drawable createDrawable(GeoElement geo) {
+	protected Drawable createDrawable(GeoElement geo) {
 		Drawable d = null;
 
 		switch (geo.getGeoClassType()) {
@@ -2377,7 +2377,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	/**
 	 * adds a GeoElement to this view
 	 */
-	final private void addToDrawableLists(Drawable d) {
+	protected void addToDrawableLists(Drawable d) {
 		if (d == null) return;
 		
 		GeoElement geo = d.getGeoElement();
@@ -2576,13 +2576,13 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		// repaint();
 	}
 
-	final private void updateAllDrawables(boolean repaint) {
+	final protected void updateAllDrawables(boolean repaint) {
 		allDrawableList.updateAll();
 		if (repaint)
 			repaint();
 	}
 
-	final private void updateDrawableFontSize() {
+	final protected void updateDrawableFontSize() {
 		allDrawableList.updateFontSizeAll();
 		repaint();
 	}
@@ -2742,7 +2742,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		zoomer.startAnimation();
 	}
 
-	private MyZoomer zoomer;
+	protected MyZoomer zoomer;
 
 	/**
 	 * Zooms towards the given axes scale ratio. Note: Only the y-axis is
@@ -2755,7 +2755,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		axesRatioZoomer.startAnimation();
 	}
 
-	private MyAxesRatioZoomer axesRatioZoomer;
+	protected MyAxesRatioZoomer axesRatioZoomer;
 
 	public final void setStandardView(boolean storeUndo) {
 		if (scaleRatio != 1.0) {
@@ -2816,28 +2816,28 @@ public final class EuclidianView extends JPanel implements View, Printable {
 		}
 	}
 
-	private MyMover mover;
+	protected MyMover mover;
 
-	private class MyZoomer implements ActionListener {
+	protected class MyZoomer implements ActionListener {
 		static final int MAX_STEPS = 15; // frames
 
 		static final int DELAY = 10;
 
 		static final int MAX_TIME = 400; // millis
 
-		private Timer timer; // for animation
+		protected Timer timer; // for animation
 
-		private double px, py; // zoom point
+		protected double px, py; // zoom point
 
-		private double factor;
+		protected double factor;
 
-		private int counter, steps;
+		protected int counter, steps;
 
-		private double oldScale, newScale, add, dx, dy;
+		protected double oldScale, newScale, add, dx, dy;
 
-		private long startTime;
+		protected long startTime;
 
-		private boolean storeUndo;
+		protected boolean storeUndo;
 
 		public MyZoomer() {
 			timer = new Timer(DELAY, this);
@@ -2868,7 +2868,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			timer.start();
 		}
 
-		private synchronized void stopAnimation() {
+		protected synchronized void stopAnimation() {
 			timer.stop();
 			// setDrawMode(DRAW_MODE_BACKGROUND_IMAGE);
 			factor = newScale / oldScale;
@@ -2893,19 +2893,19 @@ public final class EuclidianView extends JPanel implements View, Printable {
 
 	// changes the scale of the y-Axis continously to reach
 	// the given scale ratio yscale / xscale
-	private class MyAxesRatioZoomer implements ActionListener {
+	protected class MyAxesRatioZoomer implements ActionListener {
 
-		private Timer timer; // for animation
+		protected Timer timer; // for animation
 
-		private double factor;
+		protected double factor;
 
-		private int counter;
+		protected int counter;
 
-		private double oldScale, newScale, add;
+		protected double oldScale, newScale, add;
 
-		private long startTime;
+		protected long startTime;
 
-		private boolean storeUndo;
+		protected boolean storeUndo;
 
 		public MyAxesRatioZoomer() {
 			timer = new Timer(MyZoomer.DELAY, this);
@@ -2931,7 +2931,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			timer.start();
 		}
 
-		private synchronized void stopAnimation() {
+		protected synchronized void stopAnimation() {
 			timer.stop();
 			// setDrawMode(DRAW_MODE_BACKGROUND_IMAGE);
 			setCoordSystem(xZero, yZero, xscale, newScale);
@@ -2958,18 +2958,18 @@ public final class EuclidianView extends JPanel implements View, Printable {
 	}
 
 	// used for animated moving of euclidian view to standard origin
-	private class MyMover implements ActionListener {
-		private double dx, dy, add;
+	protected class MyMover implements ActionListener {
+		protected double dx, dy, add;
 
-		private int counter;
+		protected int counter;
 
-		private double ox, oy; // new origin
+		protected double ox, oy; // new origin
 
-		private Timer timer;
+		protected Timer timer;
 
-		private long startTime;
+		protected long startTime;
 
-		private boolean storeUndo;
+		protected boolean storeUndo;
 
 		public MyMover() {
 			timer = new Timer(MyZoomer.DELAY, this);
@@ -2995,7 +2995,7 @@ public final class EuclidianView extends JPanel implements View, Printable {
 			timer.start();
 		}
 
-		private synchronized void stopAnimation() {
+		protected synchronized void stopAnimation() {
 			timer.stop();
 			// setDrawMode(DRAW_MODE_BACKGROUND_IMAGE);
 			setCoordSystem(ox, oy, xscale, yscale);
