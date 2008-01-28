@@ -1,0 +1,74 @@
+TODO for including 3D packages
+==============================
+
+In geogebra.kernel package
+--------------------------
+
+* Run script.Geo.sh
+
+* In ConstructionElement :
+  Change cons to protected 
+  Change kernel to protected 
+  Change app to protected 
+  Change getClassName() to protected
+  
+* In GeoElement :
+  Change getAlgoUpdateSet to protected
+  Add method
+  	public boolean isGeoElement3D() {
+		return false;
+	}
+
+* Run script.Algo.sh
+
+
+In geogebra.euclidian package
+-----------------------------
+
+* In EuclidianView :
+  Remove final keyword
+  Remove final keyword from add(GeoElement geo)
+  Change final to protected in createDrawable(GeoElement geo)
+  Change final private to protected addToDrawableLists(Drawable d)
+  Change final Graphics2D getBackgroundGraphics() to final public Graphics2D getBackgroundGraphics() 
+  Change private to protected
+  Change void setMoveCursor() to public void setMoveCursor()
+  Change final void updateBackgroundImage() to final protected void updateBackgroundImage() 
+
+* In DrawableList
+  Change final void add(Drawable d) to public final void add(Drawable d)
+  Change public final void drawAll(Graphics2D g2) to public final void drawAll(Graphics2D g2)
+  
+* In Drawable
+  Change EuclidianView view to protected EuclidianView view
+  Change GeoElement geo to protected GeoElement geo
+  Change boolean isTracing to protected boolean isTracing
+  Change String labelDesc to protected String labelDesc
+  Change final boolean addLabelOffset() to final protected boolean addLabelOffset()
+  Change final void drawLabel(Graphics2D g2) to final protected void drawLabel(Graphics2D g2)
+  
+* In EuclidianController
+  Remove final keyword
+  Change private to protected 
+  Change Point startLoc, mouseLoc, lastMouseLoc; to protected Point startLoc, mouseLoc, lastMouseLoc;
+  Change final public void mousePressed(MouseEvent e) to public void mousePressed(MouseEvent e)
+      
+    
+For test
+--------
+* In Application
+  Add code at the end of init
+		//Mathieu Blossier - start
+		new geogebra.kernel3D.Kernel3D().test(kernel);
+		//Mathieu Blossier - end
+  Change private EuclidianView euclidianView to private geogebra.euclidian3D.EuclidianView3D euclidianView
+  Change euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
+  	  to euclidianView = new geogebra.euclidian3D.EuclidianView3D(euclidianController, showAxes, showGrid);
+
+  Change private EuclidianController euclidianController to private geogebra.euclidian3D.EuclidianController3D euclidianController;
+  Change euclidianController = new EuclidianController(kernel);
+      to euclidianController = new geogebra.euclidian3D.EuclidianController3D(kernel);        
+       
+  			  
+  			
+    
