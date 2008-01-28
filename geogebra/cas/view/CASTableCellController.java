@@ -40,7 +40,7 @@ public class CASTableCellController implements KeyListener {
 				//sb.append(evaluation);
 				curCell.setOutput("<<" + evaluation);
 				//JOptionPane.showMessageDialog(view, sb.toString());
-
+				curCell.getConsoleTable().setRowHeight(0,50);
 			}
 		}
 	}

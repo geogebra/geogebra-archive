@@ -13,10 +13,12 @@ public class CASTableCell extends JPanel{
 	private CASTableCellController inputListener;
 	private String		input;
 	private String		output;
+	private JTable		consoleTable;
 	
-	public CASTableCell(CASView view) {
+	public CASTableCell(CASView view, JTable consoleTable) {
 		inputArea = new JTextField();
 		outputArea = new JTextField();
+		this.consoleTable = consoleTable;
 		
 		inputListener =  new CASTableCellController(this, view);
 		inputArea.addKeyListener(inputListener);
@@ -47,6 +49,10 @@ public class CASTableCell extends JPanel{
 	
 	public String getOutput(){
 		return outputArea.getText();
+	}
+	
+	public JTable getConsoleTable(){
+		return consoleTable;
 	}
 	
 }

@@ -109,9 +109,9 @@ public class CASView extends JComponent {
 		 * */
 		// init the table
 		//CASTableCellController cellContrl =  new CASTableCellController(this, session);
-		CASTableCell cell= new CASTableCell(this);
+		CASTableCell cell= new CASTableCell(this,consoleTable);
 		//cell.addKeyListener(cellContrl);
-		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender(this));
+		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender(this,consoleTable));
 		consoleTable.getColumn("A").setCellEditor(
 				new CASTableCellEditor(new JTextField(), cell));
 
@@ -182,7 +182,7 @@ public class CASView extends JComponent {
 		t.setShowGrid(true);
 		//Dynamically change the height of the table
 		//t.setRowHeight(-1);
-		t.setRowHeight(60);
+		t.setRowHeight(25);
 		t.setBackground(Color.white);
 		//t.setDefaultRenderer(Object.class, new MyRenderer());
 		return t;
