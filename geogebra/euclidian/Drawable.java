@@ -43,18 +43,18 @@ public abstract class Drawable {
 	private int lineThickness = -1;
 	public int lineType = -1;
 
-	EuclidianView view;
-	GeoElement geo;
+	protected EuclidianView view;
+	protected GeoElement geo;
 	public int xLabel, yLabel;
 	int mouseX, mouseY; // for Previewables
-	String labelDesc; // label Description
+	protected String labelDesc; // label Description
 	private String oldLabelDesc;	
 	private boolean labelHasIndex = false;
 	Rectangle labelRectangle = new Rectangle(); // for label hit testing
 	Shape strokedShape, strokedShape2;
 	
 	// tracing	
-	boolean isTracing = false;
+	protected boolean isTracing = false;
 	
 	boolean createdByDrawList = false;	
 
@@ -78,7 +78,7 @@ public abstract class Drawable {
 		labelHasIndex = true; 
 	}
 	
-	final void drawLabel(Graphics2D g2) {
+	final protected void drawLabel(Graphics2D g2) {
 		if (labelDesc == null) return;
 		
 		// no index in label
@@ -248,7 +248,7 @@ public abstract class Drawable {
 	 * Adds geo's label offset to xLabel and yLabel.
 	 * @return whether something was changed
 	 */
-	final boolean addLabelOffset() {
+	final protected boolean addLabelOffset() {
 		if (geo.labelOffsetX == 0 && geo.labelOffsetY == 0) return false;
 			
 		int x = xLabel + geo.labelOffsetX;
