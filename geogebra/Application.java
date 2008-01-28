@@ -391,6 +391,10 @@ public class Application implements	KeyEventDispatcher {
 		if (showCAS) {
 			openCAS(this);
 		}
+		
+		//Mathieu Blossier - place for code to test 3D packages	
+		
+		
     }      
     
     public static void openCAS(Application app) {
