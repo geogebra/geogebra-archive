@@ -1051,7 +1051,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		renameFunc(sb,"sinh(","SINH(");
 		renameFunc(sb,"tanh(","TANH(");
 		// for exponential in new Geogbra version.
-		renameFunc(sb,Kernel.EULER_STRING,"2,718281828");
+		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
 		return new String(sb);
 	}
 	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
