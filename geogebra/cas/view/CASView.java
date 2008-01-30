@@ -109,13 +109,27 @@ public class CASView extends JComponent {
 		 * */
 		// init the table
 		//CASTableCellController cellContrl =  new CASTableCellController(this, session);
-		CASTableCell cell= new CASTableCell(this,consoleTable);
-		//cell.addKeyListener(cellContrl);
-		consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender(this,consoleTable));
-		consoleTable.getColumn("A").setCellEditor(
-				new CASTableCellEditor(new JTextField(), cell));
-
-
+		//Creat the cell one by one;
+		//for(int i=0; i< this.numOfRows; i++){	
+			consoleTable.getColumn("A").setCellRenderer(new CASTableCellRender(this,consoleTable));
+			consoleTable.getColumn("A").setCellEditor(
+					new CASTableCellEditor(new JTextField(), new CASTableCell(this,consoleTable)));
+//			for(int i=0; i< this.numOfRows; i++){
+//				tableModel.setValueAt(new CASTableCellEditor(new JTextField(), new CASTableCell(this,consoleTable)), 
+//				i, 0);				
+//			}
+//			tableModel.setValueAt(new String("This is test"), 
+//					0, 0);
+//			tableModel.setValueAt(new String("This is test2"), 
+//					1, 0);
+//			tableModel.setValueAt(new CASTableCellEditor(new JTextField(), new CASTableCell(this,consoleTable)), 
+//					2, 0);
+//			tableModel.setValueAt(new CASTableCellEditor(new JTextField(), new CASTableCell(this,consoleTable)), 
+//					3, 0);
+		//}
+		//Object[] rowData = new Object[1];
+		//rowData[0] = new CASTableCell(this,consoleTable);	
+		//tableModel.addRow(rowData);
 		// focus listenerr
 		//       FocusListener fl = new FocusListener() {
 		//			public void focusGained(FocusEvent e) {
@@ -163,7 +177,6 @@ public class CASView extends JComponent {
 		//jcomponents.add(ta);
 		//	tableModel.setValueAt(ta, i);
 		//	tableModel.setValueAt(input, i);
-		//	tableModel.setValueAt(new String("Fuck you"), i);
 		//}	
 
 		//initSessionPanel(panel, jcomponents);  
@@ -179,10 +192,9 @@ public class CASView extends JComponent {
 	protected JTable createTable() {
 		JTable t = new JTable();
 		
-		t.setShowGrid(true);
+		t.setShowGrid(false);
 		//Dynamically change the height of the table
-		//t.setRowHeight(-1);
-		t.setRowHeight(25);
+		t.setRowHeight(22);
 		t.setBackground(Color.white);
 		//t.setDefaultRenderer(Object.class, new MyRenderer());
 		return t;

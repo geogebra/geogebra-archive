@@ -29,6 +29,12 @@ public class CASTableModel extends DefaultTableModel {
         super(numRows, 1);
         this.app = app;
         
+        for(int i=0; i<numRows; i++){
+        	CASTableCellValue value = new CASTableCellValue();
+        	setValueAt(value, i, 0);
+        	fireTableCellUpdated(i, 0);
+        }
+        
         // initialize state to unmodified and file to untitled
         modified = false;
         this.table = table;
@@ -58,7 +64,7 @@ public class CASTableModel extends DefaultTableModel {
     }
     
     /*Used to set value of a geoelement in a cell in the CASView*/
-    public void setValueAt( Object obj, int row)
+    public void setValueAt(Object obj, int row)
     {
     	/**********Old things
     	if ((row%2) == 0)
@@ -72,72 +78,79 @@ public class CASTableModel extends DefaultTableModel {
         fireTableCellUpdated(row, col);
         ************/
     	
-    	GeoElement geo = null;
-        // input is the panel of a pair
-        if(obj instanceof String)
-        {
-        	String inputString = ((String) obj).trim();           	
-            //geo = (GeoElement)getValueAt( row, 1);
-        	geo = null;
-                        
-            // delete old cell object if empty input string
-            if (inputString.length() == 0) {
-            	if (geo != null) geo.remove();
-            	return;
-            }
-            
-            // cell is empty at the moment:
-            if( geo == null )
-            {
-            	String str;
-                if( inputString.startsWith("=") )
-                {
-                    //TODO: do the equation here
-                    str = getRowLabel(row) + inputString;                   
-                }
-                else 
-                {
-                     str = getRowLabel(row) + "=" + inputString;                    
-                }
-                System.out.println(str);  
-                //super.setValueAt(str, row, 1);
-                //app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
-                fireTableDataChanged();
-            }
-            
-            // we have a GeoElement in this cell already:
-            else
-            {
-              
-               String newValue = inputString;                  
-               if( inputString.startsWith("=") )
-               {
-                   // case of formula
-                   newValue = newValue.substring(1);
-               }
-              
-               if ( geo.isIndependent()) {
-          	     // change geo, but don't redefine       
-          	     	app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
-              	} else {
-              	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
-              	    app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
-              	}               
-            
-            }
-        }
-        else
-        {
-            super.setValueAt(obj, row, 1);
-            //fireTableDataChanged();
-        }
+//    	GeoElement geo = null;
+//        // input is the panel of a pair
+//        if(obj instanceof String)
+//        {
+//        	String inputString = ((String) obj).trim();           	
+//            //geo = (GeoElement)getValueAt( row, 1);
+//        	geo = null;
+//                        
+//            // delete old cell object if empty input string
+//            if (inputString.length() == 0) {
+//            	if (geo != null) geo.remove();
+//            	return;
+//            }
+//            
+//            // cell is empty at the moment:
+//            if( geo == null )
+//            {
+//            	String str;
+//                if( inputString.startsWith("=") )
+//                {
+//                    //TODO: do the equation here
+//                    str = getRowLabel(row) + inputString;                   
+//                }
+//                else 
+//                {
+//                     str = getRowLabel(row) + "=" + inputString;                    
+//                }
+//                System.out.println(str);  
+//                //super.setValueAt(str, row, 1);
+//                //app.getKernel().getAlgebraProcessor().processAlgebraCommand( str, true );
+//                fireTableDataChanged();
+//            }
+//            
+//            // we have a GeoElement in this cell already:
+//            else
+//            {
+//              
+//               String newValue = inputString;                  
+//               if( inputString.startsWith("=") )
+//               {
+//                   // case of formula
+//                   newValue = newValue.substring(1);
+//               }
+//              
+//               if ( geo.isIndependent()) {
+//          	     // change geo, but don't redefine       
+//          	     	app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, false);  
+//              	} else {
+//              	    // redefine geo, note that redefining changes the entire construction and produces new GeoElement objects
+//              	    app.getKernel().getAlgebraProcessor().changeGeoElement(geo, newValue, true);
+//              	}               
+//            
+//            }
+//        }
+//        else
+//        {
+//            super.setValueAt(obj, row, 1);
+//            fireTableCellUpdated(row, 0);
+//        }
+    	if(obj instanceof CASTableCellValue){
+    		setValueAt(obj, row, 0);
+    		fireTableCellUpdated(row, 0);
+    		System.out.println("Updated");
+    		System.out.println(((CASTableCellValue)obj).getCommand());
+    		System.out.println(((CASTableCellValue)obj).getOutput());
+    	}
     }
 
     public Object getValueAt(int row) {
-        Object obj = super.getValueAt(row, 1);
-        if( !(obj instanceof GeoElement ))
+        Object obj = super.getValueAt(row, 0);
+        if( !(obj instanceof CASTableCellValue ))
         {
-        	System.out.println("Getting a non-geo element");  
+        	System.out.println("Getting a non-CASTableCellValue");  
         }
         return obj;
     }

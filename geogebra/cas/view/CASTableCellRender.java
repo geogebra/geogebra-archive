@@ -19,6 +19,14 @@ public class CASTableCellRender extends CASTableCell implements
 //		if (value instanceof Integer) {
 //			setSelectedIndex(((Integer) value).intValue());
 //		}
+		if (value instanceof CASTableCellValue){
+			//this.setInput(((String) value).toString());
+			System.out.println("Row: " + row);
+    		System.out.println(((CASTableCellValue)value).getCommand());
+    		System.out.println(((CASTableCellValue)value).getOutput());
+			setInput(((CASTableCellValue)value).getCommand());
+			setOutput(((CASTableCellValue)value).getOutput());			
+		}
 		return this;
 	}	
 	

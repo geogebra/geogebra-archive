@@ -33,14 +33,17 @@ public class CASTableCellController implements KeyListener {
 				String evaluation = view.getCAS().evaluateYACAS(inputText);
 				//String evaluation = view.getCAS().evaluateJASYMCA(inputText);
 				// show message box
-				StringBuffer sb = new StringBuffer();
-				sb.append("in: ");
-				sb.append(inputText);
+				//StringBuffer sb = new StringBuffer();
+				//sb.append("in: ");
+				//sb.append(inputText);
 				//sb.append("\nout: ");				
 				//sb.append(evaluation);
-				curCell.setOutput("<<" + evaluation);
 				//JOptionPane.showMessageDialog(view, sb.toString());
-				curCell.getConsoleTable().setRowHeight(0,50);
+				curCell.setOutput(evaluation);
+				//We enlarge the height of the selected row
+				int selectedRow = curCell.getConsoleTable().getSelectedRow();
+				curCell.getConsoleTable().setRowHeight(selectedRow, 45);
+				((CASTableModel)curCell.getConsoleTable().getModel()).setValueAt(new CASTableCellValue(inputText, evaluation), selectedRow);
 			}
 		}
 	}
