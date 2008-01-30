@@ -39,11 +39,14 @@ public class CASTableCellController implements KeyListener {
 				//sb.append("\nout: ");				
 				//sb.append(evaluation);
 				//JOptionPane.showMessageDialog(view, sb.toString());
+				curCell.setInput(inputText);
 				curCell.setOutput(evaluation);
 				//We enlarge the height of the selected row
 				int selectedRow = curCell.getConsoleTable().getSelectedRow();
 				curCell.getConsoleTable().setRowHeight(selectedRow, 45);
 				((CASTableModel)curCell.getConsoleTable().getModel()).setValueAt(new CASTableCellValue(inputText, evaluation), selectedRow);
+				//Object t= ((CASTableModel)curCell.getConsoleTable().getModel()).getValueAt(selectedRow); 
+				//System.out.println("Out: " + ((CASTableCellValue)t).getOutput());
 			}
 		}
 	}

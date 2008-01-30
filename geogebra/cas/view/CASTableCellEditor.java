@@ -6,12 +6,15 @@ import java.awt.event.ItemEvent;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTable;
+import javax.swing.table.TableCellEditor;
 
-public class CASTableCellEditor extends DefaultCellEditor {
+public class CASTableCellEditor extends DefaultCellEditor implements TableCellEditor{
 
 	CASTableCell panel;
+	protected Object value;
 
 	public CASTableCellEditor(JTextField textField, CASTableCell panel) {
 		super(textField);
@@ -32,13 +35,28 @@ public class CASTableCellEditor extends DefaultCellEditor {
 		return panel;
 	}
 
+//	public boolean stopCellEditing() {
+//		setCellEditorValue(new CASTableCellValue(panel.getInput(), panel.getInput()));
+//
+//		return super.stopCellEditing();
+//	}
+	
 	public Object getCellEditorValue() {
-		// return new Integer(panel.getSelectedIndex());
-		return this;
+		return value;
 	}
 
 	public void itemStateChanged(ItemEvent e) {
 		super.fireEditingStopped();
 	}
 
+	public void setCellEditorValue(Object value) {
+		this.value = value;
+	}
+	
+	public boolean stopCellEditing() {
+		
+		setCellEditorValue(new CASTableCellValue(panel.getInput(), panel.getOutput()));
+
+		return super.stopCellEditing();
+	}
 }

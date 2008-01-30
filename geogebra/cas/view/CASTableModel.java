@@ -150,7 +150,8 @@ public class CASTableModel extends DefaultTableModel {
         Object obj = super.getValueAt(row, 0);
         if( !(obj instanceof CASTableCellValue ))
         {
-        	System.out.println("Getting a non-CASTableCellValue");  
+        	System.out.println("Getting a non-CASTableCellValue"); 
+        	System.out.println(obj.getClass().getName());
         }
         return obj;
     }

@@ -35,13 +35,30 @@ public class CASTableCell extends JPanel{
 		return;
 	}			
 
+	public void setInputA(String inValue){
+		this.inputArea.setText(">>" + inValue);
+	}
+	
+	public void setInputS(String inValue){
+		this.input = inValue;
+	}
+	
 	public void setInput(String inValue){
 		this.inputArea.setText(">>" + inValue);
 		this.input = inValue;
 	}
 	
-	public void setOutput(String inValue){
+	public void setOutputA(String inValue){
 		//add outputarea
+		this.outputArea.setText("<<" + inValue);
+	}
+	
+	public void setOutputS(String inValue){
+		//add outputarea
+		this.output = inValue;
+	}
+	
+	public void setOutput(String inValue){
 		this.outputArea.setText("<<" + inValue);
 		this.output = inValue;
 	}
@@ -49,9 +66,17 @@ public class CASTableCell extends JPanel{
 	public String getInputCAS(){
 		return inputArea.getText();
 	}
+
+	public String getInput(){
+		return input;
+	}
 	
 	public String getOutputCAS(){
 		return outputArea.getText();
+	}
+	
+	public String getOutput(){
+		return output;
 	}
 	
 	public JTable getConsoleTable(){
