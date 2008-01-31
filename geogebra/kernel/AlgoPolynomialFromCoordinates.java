@@ -73,6 +73,7 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
         
         double x[] = new double[n];
         double y[] = new double[n];
+        double z;
         
         // copy inputList into two arrays
         for (int i=0 ; i<n ; i++)
@@ -80,8 +81,9 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
       	  GeoElement geo = inputList.get(i); 
    		  if (geo.isGeoPoint()) {
        		GeoPoint listElement = (GeoPoint) inputList.getCached(i); 
-   			x[i]=listElement.getX();
-   			y[i]=listElement.getY();
+   			z=listElement.getZ();
+       		x[i]=listElement.getX()/z;
+   			y[i]=listElement.getY()/z;
   		  }
    		  else
    		  {
