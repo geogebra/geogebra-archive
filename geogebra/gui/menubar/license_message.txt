@@ -40,7 +40,7 @@ TRANSLATIONS
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hebrew: Guy Hed (Israel)
-  * Hungarian: Sulik Szabolcs (Hungary)
+  * Hungarian: Sulik Szabolcs, Zsuzsanna Papp-Varga (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi, Simona Riva (Italy)
   * Japanese: Akihito Wachi (Japan)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
@@ -71,9 +71,9 @@ GRANTS
      
 SUPPORT 
   * Department of Mathematics, University of Salzburg 
-     hosting the GeoGebra Website     
+     hosting the GeoGebra Website
   * Faculty LSHASE, University of Luxembourg
-     providing the multi-platform software deployment solution      
+     providing the multi-platform software deployment solution
   
 SOFTWARE
   * Jasymca, http://webuser.hs-furtwangen.de/~dersch
