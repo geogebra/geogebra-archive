@@ -25,7 +25,7 @@ public class CASTableCellController implements KeyListener {
 		//System.out.println(src.getClass().getName());
 
 		if (src instanceof JTextField) {
-			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				JTextField ta = (JTextField) src;
 				//Get the input of the user
 				String inputText = (ta.getText().substring(2)).trim();
