@@ -2,18 +2,23 @@ package geogebra.cas.view;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 
-public class CASController implements KeyListener {
+public class CASKeyController implements KeyListener{
 
 	private CASSession session;
 	private CASView view;
+	private JTable	consoleTable;
 	
-	public CASController(CASView view, CASSession session) {
+	public CASKeyController(CASView view, CASSession session, JTable table) {
 		this.session = session;
 		this.view = view;
+		this.consoleTable = table;
 	}
 	
 	/*
@@ -22,7 +27,7 @@ public class CASController implements KeyListener {
 	
 	public void keyPressed(KeyEvent e) {		
 		Object src = e.getSource();
-		System.out.println(src.getClass().getName());
+		System.out.println("Key Pressed " + src.getClass().getName());
 		
 		if (src instanceof JTextArea) {
 			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -49,6 +54,33 @@ public class CASController implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		Object src = e.getSource();
+		System.out.println("Mouse Clicked--------- " + src.getClass().getName());
+		
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent e) {
+		Object src = e.getSource();
+		System.out.println("Mouse Pressed--------- " + src.getClass().getName());
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		Object src = e.getSource();
+		System.out.println("Mouse Released--------- " + src.getClass().getName());		
 	}
 	
 

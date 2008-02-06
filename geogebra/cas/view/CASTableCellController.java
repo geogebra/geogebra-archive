@@ -45,6 +45,9 @@ public class CASTableCellController implements KeyListener {
 				int selectedRow = curCell.getConsoleTable().getSelectedRow();
 				curCell.getConsoleTable().setRowHeight(selectedRow, 45);
 				((CASTableModel)curCell.getConsoleTable().getModel()).setValueAt(new CASTableCellValue(inputText, evaluation), selectedRow);
+				//Set the cursor
+				//curCell.getConsoleTable().changeSelection(selectedRow, 1, true, true);
+				
 				//Object t= ((CASTableModel)curCell.getConsoleTable().getModel()).getValueAt(selectedRow); 
 				//System.out.println("Out: " + ((CASTableCellValue)t).getOutput());
 			}

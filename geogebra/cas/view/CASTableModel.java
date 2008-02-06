@@ -26,7 +26,7 @@ public class CASTableModel extends DefaultTableModel {
 
     public CASTableModel(JTable table, int numRows, CASSession session, Application app)
     {
-        super(numRows, 1);
+        super(numRows, 2);
         this.app = app;
         
         for(int i=0; i<numRows; i++){
@@ -161,7 +161,10 @@ public class CASTableModel extends DefaultTableModel {
      * editable.
      */
     public boolean isCellEditable(int row, int col) {
-    	return true;
+    	if(col == 1)
+    		return false;
+    	else
+    		return true;
     }
 
 }
