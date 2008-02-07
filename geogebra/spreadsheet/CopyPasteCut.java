@@ -49,7 +49,8 @@ public class CopyPasteCut {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
-				Util.handleException(table, ex);
+				kernel.getApplication().showError(ex.getMessage());
+				//Util.handleException(table, ex);
 			}
 		}
 		if (buf != null) {
@@ -69,16 +70,21 @@ public class CopyPasteCut {
 					}
 				}
 			} catch (Exception ex) {
-				Util.handleException(table, ex);
+				//Util.handleException(table, ex);
+				kernel.getApplication().showError(ex.getMessage());
 			}
 		}
 	}
 
-	public void delete(int column1, int row1, int column2, int row2) {
+	public void delete(int column1, int row1, int column2, int row2)  {
 		for (int column = column1; column <= column2; ++ column) {
 			for (int row = row1; row <= row2; ++ row) {
 				GeoElement value0 = RelativeCopy.getValue(table, column, row);
-				MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column, row);
+				try {
+					MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column, row);
+				} catch (Exception e) {
+					System.err.println("spreadsheet.delete: " + e.getMessage());
+				}
 			}
 		}
 	}

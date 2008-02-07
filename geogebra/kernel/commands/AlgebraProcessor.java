@@ -70,9 +70,24 @@ public class AlgebraProcessor {
 	 * @return changed geo
 	 */
 	public GeoElement changeGeoElement(
-		GeoElement geo,
-		String newValue,
-		boolean redefineIndependent) {
+			GeoElement geo,
+			String newValue,
+			boolean redefineIndependent) {
+						
+			try {
+				return changeGeoElementNoExceptionHandling(geo, newValue, redefineIndependent);
+			} catch (Exception e) {
+				app.showError(e.getMessage());
+				return null;
+			}						
+	}	
+	
+	/**
+	 * for AlgebraView changes in the tree selection and redefine dialog
+	 * @return changed geo
+	 */
+	public GeoElement changeGeoElementNoExceptionHandling(GeoElement geo, String newValue, boolean redefineIndependent) 
+	throws Exception {
 		String oldLabel, newLabel;
 		ValidExpression ve;
 		GeoElement[] result;
@@ -106,18 +121,17 @@ public class AlgebraProcessor {
 			}
 		} catch (CircularDefinitionException e) {
 			System.err.println("CircularDefinition");
-			app.showError("CircularDefinition");
+			throw new Exception("CircularDefinition");
 		} catch (Exception e) {
 			e.printStackTrace();
-			app.showError(app.getError("InvalidInput") + ":\n" + newValue);
+			throw new Exception(app.getError("InvalidInput") + ":\n" + newValue);
 		} catch (MyError e) {
 			e.printStackTrace();
-			app.showError(e);
+			throw new Exception(e.getLocalizedMessage());
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError(app.getError("InvalidInput") + ":\n" + newValue);
+			throw new Exception(app.getError("InvalidInput") + ":\n" + newValue);
 		}
-		return null;
 	}
 	
 	/*
@@ -125,6 +139,17 @@ public class AlgebraProcessor {
 	 */
 	// returns non-null GeoElement array when successful
 	public GeoElement[] processAlgebraCommand(String cmd, boolean storeUndo) {
+		
+		try {
+			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo);
+		} catch (Exception e) {
+			app.showError(e.getMessage());
+			return null;
+		}	
+	}
+	
+	public GeoElement[] processAlgebraCommandNoExceptionHandling(String cmd, boolean storeUndo) 
+	throws Exception {
 		ValidExpression ve;
 
 		// parse command string
@@ -136,16 +161,13 @@ public class AlgebraProcessor {
 			
 		} catch (ParseException e) {
 			e.printStackTrace();
-			app.showError(app.getError("InvalidInput") + ":\n" + cmd);
-			return null;
+			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		} catch (MyError e) {
 			e.printStackTrace();
-			app.showError(e);
-			return null;
+			throw new Exception(e.getLocalizedMessage());
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError(app.getError("InvalidInput") + ":\n" + cmd);
-			return null;
+			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		}
 
 		// process ValidExpression (built by parser)     
@@ -156,15 +178,13 @@ public class AlgebraProcessor {
 				app.storeUndoInfo();
 		} catch (MyError e) {
 			e.printStackTrace();
-			app.showError(e);
-			return null;
+			throw new Exception(e.getLocalizedMessage());
 		} catch (CircularDefinitionException e) {
 			System.err.println("CircularDefinition");
-			app.showError("CircularDefinition");
+			throw new Exception("CircularDefinition");
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			app.showError("InvalidInput");
-			return null;
+			throw new Exception("InvalidInput");
 		}
 		return geoElements;
 	}

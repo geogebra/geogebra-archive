@@ -69,7 +69,10 @@ public class MyCellEditor extends DefaultCellEditor {
 		try {
 			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
 		} catch (Exception ex) {
-			Util.handleException(table, ex);
+			// show GeoGebra error dialog
+			kernel.getApplication().showError(ex.getMessage());
+			
+			//Util.handleException(table, ex);
 			return false;
 		}
 		editing = false;
@@ -77,7 +80,8 @@ public class MyCellEditor extends DefaultCellEditor {
 	}
 	
 	// also used in RelativeCopy.java
-	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) {
+	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) 
+	throws Exception {
 		column = table.convertColumnIndexToModel(column);
 		String name = table.getModel().getColumnName(column) + (row + 1);
     	if (text != null) {
@@ -107,7 +111,16 @@ public class MyCellEditor extends DefaultCellEditor {
     		else {
     			text = name + "=" + text;
     		}
-    		GeoElement[] newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+    		
+    		GeoElement[] newValues = null;
+    		try {
+    			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+    		} catch (Exception e) {
+    			// TODO: handle exception
+        		System.err.println("SPREADSHEET: input error: " + e.getMessage());        		
+        		throw e;
+    		}
+    		
     		if (newValues != null) {    
     			return newValues[0];
     		} 
@@ -126,23 +139,31 @@ public class MyCellEditor extends DefaultCellEditor {
 //    			}
 //        	}
     		
-    		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
+    	
+    		
     	}
         else { // value != null;
         	if (text.startsWith("=")) {
         		text = text.substring(1);
         	} 
         	GeoElement newValue = null;
-        	if (oldValue.isIndependent()) {
-        		newValue = kernel.getAlgebraProcessor().changeGeoElement(oldValue, text, false);
+        	try {
+	        	if (oldValue.isIndependent()) {
+	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
+	        	}
+	        	else {
+	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
+	        	}
+        	} catch (Exception e) {
+        		// TODO: handle exception
+        		System.err.println("SPREADSHEET: input error: " + e.getMessage());
+        		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
         	}
-        	else {
-        		newValue = kernel.getAlgebraProcessor().changeGeoElement(oldValue, text, true);
-        	}        
+        	
     		if (newValue != null) {
     			return newValue;    		
     		}
-    		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
+    		
     		
     		
     		// TODO: make text changeable too
@@ -152,6 +173,8 @@ public class MyCellEditor extends DefaultCellEditor {
 ////        	}
         	
         }
+    	
+    	return null;
     }
 
 }

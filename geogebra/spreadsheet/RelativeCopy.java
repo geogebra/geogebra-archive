@@ -53,12 +53,13 @@ public class RelativeCopy {
 				"dy2 = " + dy2 + "\r\n";
 			throw new RuntimeException("Error state:\r\n" + msg);
 		} catch (Exception ex) {
-			Util.handleException(table, ex);
+			kernel.getApplication().showError(ex.getMessage());
+			//Util.handleException(table, ex);
 			return false;
 		}
 	}
 	
-	public void doCopyHorizontal(int x1, int x2, int sy, int dy1, int dy2) {
+	public void doCopyHorizontal(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
 		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
 		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
 		for (int x = x1; x <= x2; ++ x) {
@@ -79,7 +80,7 @@ public class RelativeCopy {
 		}
 	}
 	
-	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2) {
+	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2)  throws Exception  {
 		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
 		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
 		for (int y = y1; y <= y2; ++ y) {
@@ -100,7 +101,7 @@ public class RelativeCopy {
 		}
 	}
 	
-	protected void doCopy0(GeoElement value, GeoElement oldValue, int dx, int dy) {
+	protected void doCopy0(GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
 		String text = null;
 		if (value.isChangeable()) {
 			text = value.toValueString();
