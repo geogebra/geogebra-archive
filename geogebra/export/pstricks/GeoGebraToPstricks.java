@@ -1830,7 +1830,7 @@ public class GeoGebraToPstricks implements ActionListener {
 		bracket=true;
 		sb.append("fillcolor=");
 		ColorCode(linecolor,sb);
-		sb.append(",fillstyle=transparent,transpalpha=");
+		sb.append(",fillstyle=solid,opacity=");
 		sb.append(geo.getAlphaValue());
 	}
 	if (bracket) sb.append("]");
