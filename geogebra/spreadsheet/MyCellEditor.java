@@ -69,6 +69,7 @@ public class MyCellEditor extends DefaultCellEditor {
 		try {
 			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
 		} catch (Exception ex) {
+			kernel.getApplication().showError(ex.getMessage());
 			// show GeoGebra error dialog
 			kernel.getApplication().showError(ex.getMessage());
 			
@@ -80,8 +81,7 @@ public class MyCellEditor extends DefaultCellEditor {
 	}
 	
 	// also used in RelativeCopy.java
-	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) 
-	throws Exception {
+	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) throws Exception {
 		column = table.convertColumnIndexToModel(column);
 		String name = table.getModel().getColumnName(column) + (row + 1);
     	if (text != null) {
@@ -139,8 +139,6 @@ public class MyCellEditor extends DefaultCellEditor {
 //    			}
 //        	}
     		
-    	
-    		
     	}
         else { // value != null;
         	if (text.startsWith("=")) {
@@ -157,15 +155,11 @@ public class MyCellEditor extends DefaultCellEditor {
         	} catch (Exception e) {
         		// TODO: handle exception
         		System.err.println("SPREADSHEET: input error: " + e.getMessage());
-        		throw new RuntimeException("Add GeoElement to table: Expression rejected by kernel.");
+        		throw e;
         	}
-        	
     		if (newValue != null) {
     			return newValue;    		
-    		}
-    		
-    		
-    		
+    		}   
     		// TODO: make text changeable too
 //    		else if (value.isGeoText()) {
 //        		if
@@ -173,8 +167,7 @@ public class MyCellEditor extends DefaultCellEditor {
 ////        	}
         	
         }
-    	
-    	return null;
+    	throw new RuntimeException("Error state.");
     }
 
 }

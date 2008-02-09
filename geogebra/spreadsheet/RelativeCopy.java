@@ -54,7 +54,6 @@ public class RelativeCopy {
 			throw new RuntimeException("Error state:\r\n" + msg);
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
-			//Util.handleException(table, ex);
 			return false;
 		}
 	}
@@ -80,7 +79,7 @@ public class RelativeCopy {
 		}
 	}
 	
-	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2)  throws Exception  {
+	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
 		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
 		for (int y = y1; y <= y2; ++ y) {

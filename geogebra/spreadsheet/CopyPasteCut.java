@@ -50,6 +50,7 @@ public class CopyPasteCut {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
 				kernel.getApplication().showError(ex.getMessage());
+				kernel.getApplication().showError(ex.getMessage());
 				//Util.handleException(table, ex);
 			}
 		}
@@ -70,6 +71,7 @@ public class CopyPasteCut {
 					}
 				}
 			} catch (Exception ex) {
+				kernel.getApplication().showError(ex.getMessage());
 				//Util.handleException(table, ex);
 				kernel.getApplication().showError(ex.getMessage());
 			}
