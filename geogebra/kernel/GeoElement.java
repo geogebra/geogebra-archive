@@ -1027,7 +1027,7 @@ public abstract class GeoElement
     public static int getSpreadsheetRow(String str)
     {// TODO rewrite to cope with more than 26 columns
         int ret = -1;
-        if( str != null && str.length()>1 && Character.isDigit(str.charAt(0)))
+        if( str != null && str.length()>1)
         {
             String rowstr = str.substring(1); // only one char for the column
             if (Character.isDigit(rowstr.charAt(0))) {	            
