@@ -84,7 +84,7 @@ public class Kernel3D
 		cons=kernel.getConstruction();
 		geogebra.kernel.GeoPoint p2d = Point("M2d",2,1);
 		cons.addToConstructionList(p2d,false);
-		geogebra.kernel.GeoText t = Text("T","Move Mode is changed");
+		geogebra.kernel.GeoText t = Text("T","Move Mode has changed");
 		try{
 			t.setStartPoint(p2d);
 		}catch(geogebra.kernel.CircularDefinitionException cde){}
