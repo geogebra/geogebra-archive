@@ -466,7 +466,9 @@ public class Application implements	KeyEventDispatcher {
 	    			
 	    			if (showMenuBar) {
 	    				initFileChooser();	    				
-	    			}	    				
+	    			}	
+	    			
+	    			kernel.initCAS();
     			}	    		    		
     	};
     	runner.start();
@@ -2780,7 +2782,7 @@ public class Application implements	KeyEventDispatcher {
 
     public static File addExtension(File file, String fileExtension) {
     	if (file == null) return null;
-        if (getExtension(file).equals(fileExtension))
+        if (getExtension(file).equals(fileExtension)) 
 			return file;
 		else
 			return new File(file.getParentFile(), // path
@@ -2806,7 +2808,7 @@ public class Application implements	KeyEventDispatcher {
         if (dotPos <= 0 || dotPos == fileName.length()-1)
 			return "";
 		else
-			return fileName.substring(dotPos+1); 
+			return fileName.substring(dotPos+1).toLowerCase(); // Michael Borcherds 2008-02-06 added .toLowerCase()
    }
 
     public void openFile() {    	      	

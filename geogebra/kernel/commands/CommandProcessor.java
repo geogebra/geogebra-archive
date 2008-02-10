@@ -3033,6 +3033,19 @@ final public  GeoElement[] process(Command c) throws MyError {
         case 2 :
             arg = resArgs(c);
 
+            if (arg[0].isGeoPoint() && arg[1].isGeoConic())
+            {  // mirror point in circle Michael Borcherds 2008-02-10
+                GeoPoint Q = (GeoPoint) arg[0];
+                GeoConic conic = (GeoConic) arg[1];
+                
+                if (conic.getType()==GeoConic.CONIC_CIRCLE)
+                {
+                  ret = kernel.Mirror(label, Q, conic);
+                  return ret;
+                }
+
+            }
+            
             // mirror object
             if (ok[0] = (arg[0] instanceof Mirrorable)) {
             	Mirrorable p = (Mirrorable) arg[0];

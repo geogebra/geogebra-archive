@@ -429,6 +429,23 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         				 z );
     }
     
+// Michael Borcherds 2008-02-10
+    final public void mirror(GeoConic c) {
+    	if (c.getType()==GeoConic.CONIC_CIRCLE)
+    	{ // Mirror point in circle
+    		double r =  c.getHalfAxes()[0];
+    		GeoVec2D midpoint=c.getTranslationVector();
+    		double a=midpoint.x;
+    		double b=midpoint.y;
+    		double sf=r*r/((x-a)*(x-a)+(y-b)*(y-b));
+            setCoords( a+sf*(x-a), b+sf*(y-b) ,1.0);
+    	}
+    	else
+    	{
+    		setUndefined();
+    	}
+    }
+    
     /**
      * mirror this point at line g
      */

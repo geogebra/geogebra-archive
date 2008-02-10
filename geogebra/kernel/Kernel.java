@@ -2859,6 +2859,23 @@ public class Kernel {
 	}
 
 	/**
+	 * mirror geoMir in circle c
+	 */
+	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoConic c) {	
+		if (label == null)
+			label = transformedGeoLabel(geoMir.toGeoElement());
+		
+		if (geoMir.toGeoElement().isGeoPoint())
+		{
+		  AlgoMirror algo = new AlgoMirror(cons, label, geoMir, c);		
+		  GeoElement [] geos = {algo.getResult()};
+		  return geos;
+		}
+		else
+			return null;
+	}
+
+	/**
 	 * mirror geoMir at point Q
 	 */
 	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoPoint Q) {	
@@ -2871,6 +2888,19 @@ public class Kernel {
 		
 		// standard case
 		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, Q);		
+		GeoElement [] geos = {algo.getResult()};
+		return geos;	
+	}
+
+	/**
+	 * mirror point Q in conic 
+	 * Michael Borcherds 2008-02-10
+	 */
+	final public GeoElement [] Mirror(String label, GeoPoint Q, GeoConic conic) {	
+		if (label == null)
+			label = transformedGeoLabel(conic.toGeoElement());
+	
+		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);		
 		GeoElement [] geos = {algo.getResult()};
 		return geos;	
 	}
@@ -3070,7 +3100,7 @@ public class Kernel {
 				
 			case Kernel.TRANSFORM_MIRROR_AT_POINT:
 			case Kernel.TRANSFORM_MIRROR_AT_LINE:	
-				AlgoMirror algoMirror = new AlgoMirror(cons, line, l, Q);			
+				AlgoMirror algoMirror = new AlgoMirror(cons, line, l, Q, null);			
 				return (GeoLine) algoMirror.getResult();			
 						
 			case Kernel.TRANSFORM_ROTATE:
@@ -3098,7 +3128,7 @@ public class Kernel {
 				
 			case Kernel.TRANSFORM_MIRROR_AT_POINT:
 			case Kernel.TRANSFORM_MIRROR_AT_LINE:	
-				AlgoMirror algoMirror = new AlgoMirror(cons, conic, l, Q);			
+				AlgoMirror algoMirror = new AlgoMirror(cons, conic, l, Q, null);			
 				return (GeoConic) algoMirror.getResult();			
 						
 			case Kernel.TRANSFORM_ROTATE:

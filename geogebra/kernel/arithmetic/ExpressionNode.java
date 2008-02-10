@@ -579,6 +579,12 @@ implements ExpressionValue {
                     GeoVec2D.mult(vec, ((NumberValue)lt).getDouble(), vec);
                     return vec;
                 }
+                // number * list Michael Borcherds 2008-02-02
+          	    else if (rt.isListValue()) {             	
+    			    MyList myList = ((ListValue) rt).getMyList();
+    			    myList.multiply(((NumberValue) lt));
+    			    return myList;
+            	}            	  
                 else {    
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
@@ -609,6 +615,28 @@ implements ExpressionValue {
                 poly = new Polynomial(kernel, (Polynomial)lt);
                 poly.multiply((Polynomial)rt);                
                 return poly;
+            }         
+            // list * ...
+            // Michael Borcherds 2008-02-02
+            else if (lt.isListValue())
+            	{
+            	  // list * list
+            	  if (rt.isListValue()) {             	
+    			    MyList myList = ((ListValue) lt).getMyList();
+    			    myList.multiply(((ListValue) rt).getMyList());
+    			    return myList;
+            	  }
+            	  // list * number
+            	  else if (rt.isNumberValue()) {             	
+      			    MyList myList = ((ListValue) lt).getMyList();
+      			    myList.multiply(((NumberValue) rt));
+      			    return myList;
+              	  }            	  
+            	  else {    
+                      String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
+                      throw new MyError(app, str);    
+                  }
+            		  
             }         
             else {    
                 String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };

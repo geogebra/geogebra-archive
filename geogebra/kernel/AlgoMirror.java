@@ -35,28 +35,37 @@ public class AlgoMirror extends AlgoTransformation {
     private GeoElement geoIn, geoOut; 
     private GeoLine mirrorLine;   
     private GeoPoint mirrorPoint;      
+    private GeoConic mirrorConic;      
     private GeoElement mirror;
     
     AlgoMirror(Construction cons, String label,Mirrorable in,GeoPoint p) {
-    	this(cons, in, null, p);  
+    	this(cons, in, null, p, null);  
+    	 geoOut.setLabel(label);
+    }
+    
+    AlgoMirror(Construction cons, String label,Mirrorable in,GeoConic c) {
+    	this(cons, in, null, null, c);  
     	 geoOut.setLabel(label);
     }
     
     AlgoMirror(Construction cons, String label,Mirrorable in,GeoLine g) {
-    	this(cons, in, g, null);
+    	this(cons, in, g, null, null);
     	 geoOut.setLabel(label);
     }    
     
-    AlgoMirror(Construction cons, Mirrorable in, GeoLine g, GeoPoint p) {
+    AlgoMirror(Construction cons, Mirrorable in, GeoLine g, GeoPoint p, GeoConic c) {
         super(cons);
         //this.in = in;      
         mirrorLine = g;
         mirrorPoint = p;
+        mirrorConic = c; // Michael Borcherds 2008-02-10
         
         if (g != null)
         	mirror = g;
-		else 
+		else if (p != null)
 			mirror = p;
+		else
+			mirror = c; // Michael Borcherds 2008-02-10
               
         geoIn = in.toGeoElement();
         out = (Mirrorable) geoIn.copy();               
@@ -90,8 +99,10 @@ public class AlgoMirror extends AlgoTransformation {
         
         if (mirror == mirrorLine)
         	out.mirror(mirrorLine);
-        else
+        else if (mirror == mirrorPoint)
         	out.mirror(mirrorPoint);
+        else
+        	((GeoPoint)geoOut).mirror(mirrorConic); // Michael Borcherds 2008-02-10
     }       
     
     final public String toString() {

@@ -51,8 +51,90 @@ public class MyList extends ValidExpression implements ListValue {
 	public void addListElement(ExpressionNode arg) {
 		listElements.add(arg);
 	}
+	
+	// Michael Borcherds 2008-02-02
+	public void multiply(MyList list)
+	{
+		if (size()!=list.size())
+		{
+			// return empty list if sizes don't match
+			listElements.clear();
+			return;
+		}
+		
+		for (int i=0 ; i<size() ; i++)
+		{
+			ExpressionNode exp =  (ExpressionNode) listElements.get(i);
+			ExpressionNode exp2 =  (ExpressionNode) list.getListElement(i);
+			if (exp.isNumberValue() && exp2.isNumberValue()) {
+				NumberValue num=(NumberValue) exp.evaluate();
+				NumberValue num2=(NumberValue) exp2.evaluate();
+				//NumberValue num2=(NumberValue) exp2; TODO doesn't work...
+				MyDouble d1=num.getNumber();
+				MyDouble d2=num2.getNumber();
+				MyDouble.mult(d2,d1,d1);
+				num=(NumberValue)d1;
+				listElements.set(i,(kernel.convertNumberValueToExpressionNode(num)));
+			}
+			else
+			{
+				// return empty list if any of the elements aren't numbers
+				listElements.clear();
+				return;				
+			}
+		}
+	}
 
-	public int size() {
+	// Michael Borcherds 2008-02-02
+	public void multiply(NumberValue num2)
+	{
+		
+		MyDouble d2=num2.getNumber();
+		for (int i=0 ; i<size() ; i++)
+		{
+			ExpressionNode exp =  (ExpressionNode) listElements.get(i);
+			if (exp.isNumberValue()) {
+				NumberValue num=(NumberValue) exp.evaluate();
+				//NumberValue num=(NumberValue) exp; TODO doesn't work...
+				MyDouble d1=num.getNumber();
+				MyDouble.mult(d2,d1,d1);
+				num=(NumberValue)d1;
+				listElements.set(i,(kernel.convertNumberValueToExpressionNode(num)));
+			}
+			else
+			{
+				// return empty list if any of the elements aren't numbers
+				listElements.clear();
+				return;				
+			}
+		}
+	}
+
+    // Michael Borcherds 2008-02-04
+	// adapted from GeoList
+	public String toString() {		                               		
+        StringBuffer sbBuildValueString = new StringBuffer();
+        sbBuildValueString.append("{");
+
+        // first (n-1) elements
+        int lastIndex = listElements.size()-1;
+        if (lastIndex > -1) {
+ 	       for (int i=0; i < lastIndex; i++) {
+ 	    	  ExpressionNode exp =  (ExpressionNode) listElements.get(i);
+ 	    	   sbBuildValueString.append(exp.toString()); // .toOutputValueString());
+ 	    	   sbBuildValueString.append(", ");
+ 	       }
+ 	
+ 	       // last element
+ 	      ExpressionNode exp =  (ExpressionNode) listElements.get(lastIndex);
+ 		   sbBuildValueString.append(exp.toString());
+        }
+ 	
+        sbBuildValueString.append("}");
+        return sbBuildValueString.toString();   	
+     }
+
+    public int size() {
 		return listElements.size();
 	}
 
