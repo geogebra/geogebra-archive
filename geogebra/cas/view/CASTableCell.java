@@ -10,6 +10,7 @@ public class CASTableCell extends JPanel{
 
 	private JTextField	inputArea;
 	private JTextField	outputArea;
+	private CASBPanel	BBorder;
 	private CASTableCellController inputListener;
 	private String		input;
 	private String		output;
@@ -18,6 +19,7 @@ public class CASTableCell extends JPanel{
 	public CASTableCell(CASView view, JTable consoleTable) {
 		inputArea = new JTextField();
 		outputArea = new JTextField();
+		BBorder	= new CASBPanel();
 		inputArea.setBorder(BorderFactory.createEmptyBorder());
 		outputArea.setBorder(BorderFactory.createEmptyBorder());
 		this.consoleTable = consoleTable;
@@ -25,12 +27,13 @@ public class CASTableCell extends JPanel{
 		inputListener =  new CASTableCellController(this, view);
 		inputArea.addKeyListener(inputListener);
 		inputArea.setText(">>");
-		//outputArea.setText("<<");
+		//outputArea.setText("<<"); 
 		
 		//this.setLayout(new GridLayout(2, 1));
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(inputArea);	
 		this.add(outputArea);
+		this.add(BBorder);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		return;
 	}			

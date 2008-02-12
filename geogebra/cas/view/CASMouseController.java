@@ -83,6 +83,7 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 		if (rowI > -1)
 			System.out.println("single click at"
 					+ rowI + "" + colI);
+		
 	}
 
 	/*
@@ -97,11 +98,11 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 			System.out.println("double click at"
 					+ rowI + "" + colI);
 
-		if (colI == 1){
+		if (colI == CASPara.indexCol){
 			//Insert a new row
 			CASTableCellValue value = new CASTableCellValue();
 			((CASTableModel) consoleTable.getModel()).insertRow(
-					(rowI >= 0 ? rowI : 0), new Object[]{ value, "New"});
+					(rowI >= 0 ? rowI : 0), new Object[]{ "New", value});
 		}
 	}
 }

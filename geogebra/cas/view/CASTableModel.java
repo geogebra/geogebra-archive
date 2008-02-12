@@ -26,13 +26,13 @@ public class CASTableModel extends DefaultTableModel {
 
     public CASTableModel(JTable table, int numRows, CASSession session, Application app)
     {
-        super(numRows, 2);
+        super(numRows, CASPara.numOfCol);
         this.app = app;
         
         for(int i=0; i<numRows; i++){
         	CASTableCellValue value = new CASTableCellValue();
-        	setValueAt(value, i, 0);
-        	fireTableCellUpdated(i, 0);
+        	setValueAt(value, i, CASPara.contCol);
+        	fireTableCellUpdated(i, CASPara.contCol);
         }
         
         // initialize state to unmodified and file to untitled
@@ -138,8 +138,8 @@ public class CASTableModel extends DefaultTableModel {
 //            fireTableCellUpdated(row, 0);
 //        }
     	if(obj instanceof CASTableCellValue){
-    		setValueAt(obj, row, 0);
-    		fireTableCellUpdated(row, 0);
+    		setValueAt(obj, row, CASPara.contCol);
+    		fireTableCellUpdated(row, CASPara.contCol);
     		System.out.println("Updated");
     		System.out.println(((CASTableCellValue)obj).getCommand());
     		System.out.println(((CASTableCellValue)obj).getOutput());
@@ -147,7 +147,7 @@ public class CASTableModel extends DefaultTableModel {
     }
 
     public Object getValueAt(int row) {
-        Object obj = super.getValueAt(row, 0);
+        Object obj = super.getValueAt(row, CASPara.contCol);
         if( !(obj instanceof CASTableCellValue ))
         {
         	System.out.println("Getting a non-CASTableCellValue"); 
@@ -161,7 +161,7 @@ public class CASTableModel extends DefaultTableModel {
      * editable.
      */
     public boolean isCellEditable(int row, int col) {
-    	if(col == 1)
+    	if(col == CASPara.indexCol)
     		return false;
     	else
     		return true;

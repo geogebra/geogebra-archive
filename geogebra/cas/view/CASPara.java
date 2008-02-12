@@ -2,8 +2,12 @@ package geogebra.cas.view;
 
 public class CASPara {
 	//For the table column
-	public	final static int indexColumn = 0;
-	public	final static int contentColumn = 1;
+	public	final static int indexCol = 0;
+	public	final static int contCol = 1;
+	public	final static int numOfCol = 2;
 	
+	//For adjust the cell height
+	public	final static int originalHeight = 22;
+	public	final static int reactiveHeight = 45;
 	
 }

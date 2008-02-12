@@ -34,7 +34,7 @@ public class CASKeyController implements KeyListener {
 		//Here we delete the chosen row when press DELETE at coloumn 1;
 		if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 			int selectedCol = consoleTable.getSelectedColumn();
-			if(selectedCol == 1){
+			if(selectedCol == CASPara.indexCol){
 				int selectedRow = consoleTable.getSelectedRow();
 				((CASTableModel)consoleTable.getModel()).removeRow(selectedRow);
 			}

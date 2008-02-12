@@ -93,11 +93,10 @@ public class CASView extends JComponent {
 		 * //String evalStr = // //output.setText(evalStr); // } // // });
 		 */
 
-
 		//Set the property of the value column;
-		consoleTable.getColumn("A").setCellRenderer(
+		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellRenderer(
 				new CASTableCellRender(this, consoleTable));
-		consoleTable.getColumn("A").setCellEditor(
+		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellEditor(
 				new CASTableCellEditor(new JTextField(), new CASTableCell(this,
 						consoleTable)));
 
@@ -170,9 +169,10 @@ public class CASView extends JComponent {
 	protected JTable createTable(int rows) {
 		JTable t = new JTable();
 
-		t.setShowGrid(false);
+		t.setShowGrid(true);
 		// Dynamically change the height of the table
-		t.setRowHeight(22);
+		//t.setRowHeight(22);
+		t.setRowHeight(45);
 		t.setBackground(Color.white);
 		// t.setDefaultRenderer(Object.class, new MyRenderer());
 
@@ -180,8 +180,8 @@ public class CASView extends JComponent {
 		t.setModel(tableModel);
 		
 		//Set the width of the index column;
-		t.getColumn("B").setMinWidth(30);
-		t.getColumn("B").setMaxWidth(30);
+		t.getColumn(t.getColumnName(CASPara.indexCol)).setMinWidth(30);
+		t.getColumn(t.getColumnName(CASPara.indexCol)).setMaxWidth(30);
 		t.sizeColumnsToFit(0);
 		
 		return t;
