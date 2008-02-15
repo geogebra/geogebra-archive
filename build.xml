@@ -30,6 +30,8 @@
     	<copy todir="${build.dir}">
     		<fileset dir="${src.dir}">
     			<include name="*.jar"/>
+    			<include name="**/*.png"/>
+    			<include name="**/*.gif"/>
     		</fileset>
     	</copy>
     </target>
@@ -38,7 +40,7 @@
 		<mkdir dir="${dist.dir}"/>
 		<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
 			basedir="${build.dir}"
-			includes="**/*.class, *.jar"/>
+			includes="**/*.class, *.jar, **/*.png, **/*.gif"/>
 	</target>
 	
 	<target name="sign" depends="compress">
