@@ -80,10 +80,14 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 		int rowI, colI;
 		rowI = consoleTable.rowAtPoint(e.getPoint());// Get the row number
 		colI = consoleTable.columnAtPoint(e.getPoint());
-		if (rowI > -1)
-			System.out.println("single click at"
+		if (rowI <0 )
+			return;
+		System.out.println("single click at"
 					+ rowI + "" + colI);
-		
+		if (colI == CASPara.contCol){ //Jump to the input textfiled
+			//CASTableCellValue src = (CASTableCellValue)((CASTableModel) consoleTable.getModel()).getValueAt(rowI);
+			//src
+		}
 	}
 
 	/*

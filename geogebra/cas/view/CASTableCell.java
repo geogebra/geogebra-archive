@@ -86,4 +86,8 @@ public class CASTableCell extends JPanel{
 		return consoleTable;
 	}
 	
+	public void setInputCursor(){
+		this.inputArea.requestFocus();
+	}
+	
 }
