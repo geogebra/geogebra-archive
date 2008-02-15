@@ -18,6 +18,8 @@ package tutor;
  * Created on 23. J�nner 2003, 22:37
  */
 
+import geogebra.Application;
+import geogebra.CustomApplication;
 import geogebra.GeoGebraApplet;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
@@ -39,6 +41,15 @@ import tutor.persistence.dao.iface.StrategyDao;
 public class GeoGebraAppletTutor extends GeoGebraApplet {
 
 
+	protected Application buildApplication(String[] args, boolean undoActive) {
+		
+		Application app = new CustomApplication(args, this, undoActive);
+		app.setMenubar(new MyCustomMenubar(app));
+		app.initMenubar();
+		
+		return app; 
+	}
+
 	private String problem = null;
 	private String student = null;
 	private TutorView tutorView;
@@ -50,6 +61,7 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 	String ip = null;
 	String port = null;
 	String context = null;
+	String strategyFilesContext = null;
 
 	public GeoGebraAppletTutor() {}
 	
@@ -65,6 +77,7 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		ip = getParameter("ip");
 		port = getParameter("port");
 		context = getParameter("context");
+		strategyFilesContext = getParameter("strategyFilesContext");
 		
 		if (problem == null) problem = "7";
 		if (student == null)  student = "1";
@@ -73,12 +86,15 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		if (ip == null) ip = "192.168.1.4";
 		if (port == null) port = "80";
 		if (context == null) context = "agentgeom/ws/wstestlist.php";
+		if (strategyFilesContext == null) strategyFilesContext = "agentgeom/problemes";
 		
 		if (problem!=null && student != null) {	
 			initGUI(problem, student);
 		}
 		
 		httpDaoFactory = new HttpDaoFactory(protocol, ip, port, context);
+		
+		tutorView.setStrategyFilesURL(protocol+"://"+ip+":"+port+"/"+strategyFilesContext);
 		
 		JustificationDao justificationDao =
 			(JustificationDao) httpDaoFactory.getDao(JustificationDao.class);
@@ -90,6 +106,8 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 		
 		tutorView.initDataModel();
 		tutorView.createGUI();
+		
+		
 	}
 	
 	protected void initGUI(String p, String s) {

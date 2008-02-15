@@ -1,12 +1,19 @@
 package tutor.model;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author albert
  *
  */
-public class Student {
+public class Student implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6714074031640121155L;
+	
 	private Long id;
 	private String name;
 	private String surnames;

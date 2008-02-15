@@ -67,6 +67,9 @@ public class HttpDaoFactory {
 		else if (c.equals(JustificationDao.class)) {
 			dao = new HttpJustificationDao();
 		}
+		else {
+			throw new NoClassDefFoundError();
+		}
 		
 		if (dao != null) dao.setDataSource(ds);
 		

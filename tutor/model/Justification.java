@@ -1,7 +1,14 @@
 package tutor.model;
 
-public class Justification {
+import java.io.Serializable;
 
+public class Justification implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3322747914923941338L;
+	
 	private Long id;
 	private String description;
 	

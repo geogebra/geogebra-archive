@@ -2,6 +2,7 @@ package tutor.model;
 
 import geogebra.kernel.Construction;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
@@ -9,8 +10,13 @@ import java.util.LinkedList;
  * @author albert
  *
  */
-public class Strategy {
+public class Strategy implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6162563882785239552L;
+	
 	private Long id;
 	private Long problemId;
 	private String titol;

@@ -1,7 +1,14 @@
 package tutor.model;
 
-public class Annotation {
+import java.io.Serializable;
 
+public class Annotation implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -336301359049095877L;
+	
 	private int offset;
 	private int length;
 	private String annotation;

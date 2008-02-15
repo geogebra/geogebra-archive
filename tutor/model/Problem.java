@@ -1,5 +1,6 @@
 package tutor.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,8 +8,13 @@ import java.util.Date;
  * @author albert
  *
  */
-public class Problem {
+public class Problem implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6411800593887272345L;
+	
 	private Long id;
 	private Long teacherId;
 	private String title;
