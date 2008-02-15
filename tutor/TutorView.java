@@ -16,7 +16,9 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,6 +28,7 @@ import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,11 +44,15 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import tutor.io.StringOutputStream;
 import tutor.model.Annotation;
 import tutor.model.Justification;
 import tutor.model.Strategy;
+import tutor.net.util.HttpMultiPartFileUpload;
+import tutor.net.util.HttpParam;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
+
 
 
 
@@ -83,6 +90,9 @@ public class TutorView extends JPanel implements View  {
 	private DefaultListModel listModel = new DefaultListModel(); 
 	private JList resArea = new JList();
 	
+    private JButton botoNou;
+    private JButton botoGuardar;
+
 	private List strategies;
 
 	private long lineCounter = 0;
@@ -90,6 +100,16 @@ public class TutorView extends JPanel implements View  {
 	
 	private List annotations = new ArrayList();
 	
+	String strategyFilesURL;
+	
+	public String getStrategyFilesURL() {
+		return strategyFilesURL;
+	}
+
+	public void setStrategyFilesURL(String strategyFilesURL) {
+		this.strategyFilesURL = strategyFilesURL;
+	}
+
 	public String getPlain(String key) {
 	
 		if (tutorResources == null) {
@@ -123,7 +143,8 @@ public class TutorView extends JPanel implements View  {
 		
 		strategies = strategyDao.findStrategiesByProblemId(new Long(problema));
 
-		String context = "http://antalya.uab.es/edumat/agentgeom/problemes";
+		//String context = "http://antalya.uab.es/edumat/agentgeom/problemes";
+		String context = strategyFilesURL;
 		
 		for (Iterator it = strategies.iterator(); it.hasNext();) {
 			Strategy strategy = (Strategy) it.next();
@@ -138,6 +159,7 @@ public class TutorView extends JPanel implements View  {
 				strategy.setConstruction(construction);
 			}
 			catch (Exception e) {
+				System.out.println(e);
 				app.showError(app.getError("Strategies Loading Process Failed. ") 
 						+ "\n" + e.getMessage());
 			}
@@ -220,6 +242,78 @@ public class TutorView extends JPanel implements View  {
 	        		}
 	        }
 	        );
+	        
+	        this.botoNou = new JButton("Nou");
+	        this.botoGuardar = new JButton("Guardar");
+	        
+	        botoNou.addActionListener(new ActionListener() {
+        		public void actionPerformed( ActionEvent evt ) {
+        			//
+        			System.out.println("Nou");
+        			//app.setUnsaved();
+        			app.deleteAllGeoElements();
+        			
+        		}
+	        });
+	        
+	        botoGuardar.addActionListener(new ActionListener() {
+        		public void actionPerformed( ActionEvent evt ) {
+
+        			System.out.println("Guardar");
+        			System.out.println(app.getXML());
+        			
+        			//String url = "http://localhost/agentgeom/continguts/problemes/upload_file.php";
+        			String url = "http://158.109.2.26/edumat/agentgeom/continguts/problemes/upload_file.php";
+        			
+        			System.out.println("1111111111111");
+        			
+        			StringOutputStream sos = new StringOutputStream();
+        			File fileOut = null;
+        			
+        			System.out.println("222222222222222");
+        			
+        			try {
+        				fileOut = File.createTempFile("tempfile",".tmp");
+        				System.out.println(fileOut.getAbsolutePath());
+        				
+						FileOutputStream fos = new FileOutputStream(fileOut);
+						app.getXMLio().writeGeoGebraFile(fos);
+						
+						HttpParam param = new HttpParam();
+						param.setName("fitxer");
+						param.setValue(fileOut);
+						
+						HttpParam pIdProblema = new HttpParam();
+						pIdProblema.setName("id_problem");
+						pIdProblema.setValue("1");
+						
+						HttpParam pIdStudent = new HttpParam();
+						pIdStudent.setName("id_student");
+						pIdStudent.setValue("2");
+						
+						List params = new ArrayList();
+						params.add(param);
+						params.add(pIdStudent);
+						params.add(pIdProblema);
+
+						HttpMultiPartFileUpload mpfu = new HttpMultiPartFileUpload();
+						
+						mpfu.send(url, params);
+					}
+        			catch (IOException e) {
+						e.printStackTrace();
+					}
+        			catch (Exception e) {
+						e.printStackTrace();
+					}
+        			catch (Throwable t) {
+        				t.printStackTrace();
+        			}
+        		}
+	        });
+	        
+	        add(botoNou);
+	        add(botoGuardar);
 	        
 	        add(commentField);
 	        //add( new JTextArea(3, 70));
