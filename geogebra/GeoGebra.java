@@ -38,6 +38,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import tutor.MyCustomMenubar;
+
 /**
  * GeoGebra's main window. 
  */
@@ -226,6 +228,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		GeoGebraPreferences.loadFileList();
 		
 		// create first window and show it
+		
 		createNewWindow(args);
 	}	
 	
@@ -254,16 +257,21 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	}
 	
 	
-	
+	//public abstract GeoGebra buildGeoGebra();
 
 	public static synchronized GeoGebra createNewWindow(String[] args) {				
 		// set Application's size, position and font size
 		GeoGebra wnd = new GeoGebra();
-		Application app = new Application(args, wnd, true);		
+		
+		//GeoGebra wnd = buildGeoGebra();
+
+		Application app = new Application(args, wnd, true);
+		app.setMenubar(new MyCustomMenubar(app));
+		app.initMenubar();
 		
 		// init GUI
 		wnd.app = app;
-		wnd.getContentPane().add(app.buildApplicationPanel());					
+		wnd.getContentPane().add(app.buildApplicationPanel());
 		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
 		
