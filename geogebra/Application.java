@@ -105,6 +105,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -113,6 +114,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
+
+import tutor.Menubar;
 
 public class Application implements	KeyEventDispatcher {
 
@@ -283,7 +286,7 @@ public class Application implements	KeyEventDispatcher {
     private MyToolbar appToolbarPanel;     
     
     private JFileChooser fileChooser;
-    private MyMenubar menuBar;
+    private Menubar menuBar;
     private AlgebraInput algebraInput;
     private JPanel centerPanel;   
 
@@ -530,7 +533,7 @@ public class Application implements	KeyEventDispatcher {
     	if (menuBar == null)
     		return 0;
     	else
-    		return menuBar.getHeight();
+    		return ((JMenuBar)menuBar).getHeight();
     }
     
     public int getAlgebraInputHeight() {
@@ -1893,7 +1896,7 @@ public class Application implements	KeyEventDispatcher {
     	return currentFile;
     }
     
-    private void setCurrentFile(File file) {
+    public void setCurrentFile(File file) {
         currentFile = file;
         if (currentFile != null) {
             currentPath = currentFile.getParentFile();            
@@ -2078,9 +2081,9 @@ public class Application implements	KeyEventDispatcher {
         if (showMenuBar) {
         	initMenubar();        	
 	        if (isApplet) 
-	        	applet.setJMenuBar(menuBar);
+	        	applet.setJMenuBar((JMenuBar)menuBar);
 	        else 
-	        	frame.setJMenuBar(menuBar);
+	        	frame.setJMenuBar((JMenuBar)menuBar);
         }
         
         if (appToolbarPanel != null) appToolbarPanel.initToolbar();              
@@ -2332,11 +2335,19 @@ public class Application implements	KeyEventDispatcher {
     	showMenuBar = flag;    	
     }
     
-    private void initMenubar() {
+    public void initMenubar() {
     	if (menuBar == null) {
-    		menuBar = new MyMenubar(this);    	    		
+    		//menuBar = new MyMenubar(this);    	    		
     	}  
     	menuBar.initMenubar();
+    }
+    
+    public Menubar getMenuBar() {
+    	return menuBar;
+    }
+    
+    public void setMenubar(Menubar newMenuBar) {
+    	menuBar = newMenuBar;
     }
     
     public void setShowToolBar(boolean toolbar, boolean help) {

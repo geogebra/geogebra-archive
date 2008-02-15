@@ -59,7 +59,7 @@ import netscape.javascript.JSObject;
  * Applet interface of GeoGebra.
  * @author  Markus Hohenwarter
  */
-public class GeoGebraApplet extends JApplet {
+public abstract class GeoGebraApplet extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 	protected Application app;
@@ -156,19 +156,30 @@ public class GeoGebraApplet extends JApplet {
 			borderColor = Color.gray;
 		}
 
-		//	build application and open file		
+		//	build application and open file
+		/*
 		if (fileStr == null) {
-			app = new Application(null, this, undoActive);
+			app = new CustomApplication(null, this, undoActive);
 		} else {						
 			String[] args = { fileStr };
-			app = new Application(args, this, undoActive);
+			app = new CustomApplication(args, this, undoActive);
 		}
+		*/
 		
+		if (fileStr == null) {
+			app = buildApplication(null, undoActive);
+		} else {						
+			String[] args = { fileStr };
+			app = buildApplication(args, undoActive);
+		}
+
 		kernel = app.getKernel();
 		
-		initGUI();						
+		initGUI();
 	}
 
+	protected abstract Application buildApplication(String[] args, boolean ua);
+	
 	public void start() {
 		//	for some strange reason this is needed to get the right font size		
 		//showApplet();
