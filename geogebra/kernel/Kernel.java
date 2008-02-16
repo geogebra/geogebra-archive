@@ -1845,6 +1845,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Mode[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Mode(String label, GeoList list) {
+		AlgoMode algo = new AlgoMode(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Reverse[list]
 	 * Michael Borcherds
 	 */

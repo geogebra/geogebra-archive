@@ -8,18 +8,16 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /*
- * Mean[ list ]
- * adapted from CmdSum by Michael Borcherds 2008-02-16
+ * Mode[ <List> ]
  */
-public class CmdMean extends CommandProcessor {
+public class CmdMode extends CommandProcessor {
 
-	public CmdMean(Kernel kernel) {
+	public CmdMode(Kernel kernel) {
 		super(kernel);
 	}
 
 	public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
-		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 
 		switch (n) {
@@ -27,7 +25,7 @@ public class CmdMean extends CommandProcessor {
 			arg = resArgs(c);
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
-						kernel.Mean(c.getLabel(),
+						kernel.Mode(c.getLabel(),
 						(GeoList) arg[0]) };
 				return ret;
 			} else
