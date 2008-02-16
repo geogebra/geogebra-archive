@@ -39,7 +39,7 @@ public class AlgoMean extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoListMin";
+        return "AlgoMean";
     }
 
     void setInputOutput(){

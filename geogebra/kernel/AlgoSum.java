@@ -39,7 +39,7 @@ public class AlgoSum extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoListMin";
+        return "AlgoSum";
     }
 
     void setInputOutput(){

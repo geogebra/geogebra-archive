@@ -1875,6 +1875,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Median[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Median(String label, GeoList list) {
+		AlgoMedian algo = new AlgoMedian(cons, label, list);
+		GeoNumeric num = algo.getMedian();
+		return num;
+	}
+	
+	/** 
 	 * Iteration[ f(x), x0, n ] 
 	 */
 	final public GeoNumeric Iteration(String label, GeoFunction f, NumberValue start,
