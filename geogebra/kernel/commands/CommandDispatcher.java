@@ -201,6 +201,7 @@ public class CommandDispatcher {
     	cmdTable.put("LCM", new CmdLCM(kernel));
     	cmdTable.put("GCD", new CmdGCD(kernel));
     	cmdTable.put("Sort", new CmdSort(kernel));
+    	cmdTable.put("Reverse", new CmdReverse(kernel));
     	cmdTable.put("SigmaXY", new CmdSigmaXY(kernel));
     	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
     	cmdTable.put("FitLineX", new CmdFitLineX(kernel));

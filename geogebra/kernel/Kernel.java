@@ -1845,6 +1845,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Reverse[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Reverse(String label, GeoList list) {
+		AlgoReverse algo = new AlgoReverse(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Iteration[ f(x), x0, n ] 
 	 */
 	final public GeoNumeric Iteration(String label, GeoFunction f, NumberValue start,
