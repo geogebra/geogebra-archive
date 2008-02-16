@@ -1860,8 +1860,18 @@ public class Kernel {
 	 */
 	final public GeoNumeric Sum(String label, GeoList list) {
 		AlgoSum algo = new AlgoSum(cons, label, list);
-		GeoNumeric sum = algo.getSum();
-		return sum;
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
+	/** 
+	 * Mean[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Mean(String label, GeoList list) {
+		AlgoMean algo = new AlgoMean(cons, label, list);
+		GeoNumeric num = algo.getMean();
+		return num;
 	}
 	
 	/** 
