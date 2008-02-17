@@ -207,6 +207,8 @@ public class EuclidianController implements MouseListener,
 	protected int DEFAULT_INITIAL_DELAY;
 	
 	protected boolean toggleModeChangedKernel = false;
+	
+	private boolean altDown=false;
 
 	/** Creates new EuclidianController */
 	public EuclidianController(Kernel kernel) {
@@ -378,6 +380,8 @@ public class EuclidianController implements MouseListener,
 	final public void mouseClicked(MouseEvent e) {	
 		ArrayList hits;
 		//GeoElement geo;
+		
+		altDown=e.isAltDown();
 		
 		if (mode != EuclidianView.MODE_ALGEBRA_INPUT)
 			view.requestFocusInWindow();
@@ -1169,6 +1173,9 @@ public class EuclidianController implements MouseListener,
 	final public void mouseReleased(MouseEvent e) {	
 		view.requestFocusInWindow();
 		setMouseLocation(e);
+		
+		altDown=e.isAltDown();
+		
 		transformCoords();
 		ArrayList hits = null;
 		GeoElement geo;
@@ -1407,6 +1414,8 @@ public class EuclidianController implements MouseListener,
 		setMouseLocation(e);
 		ArrayList hits = null;
 		boolean noHighlighting = false;
+		
+		altDown=e.isAltDown();
 		
 		if (hitResetIcon()) {
 			view.setToolTipText(app.getPlain("resetConstruction"));
@@ -1682,7 +1691,7 @@ public class EuclidianController implements MouseListener,
 		//  new text or image
 		case EuclidianView.MODE_TEXT:
 		case EuclidianView.MODE_IMAGE:
-			changedKernel = textImage(view.getOtherHits(hits, GeoImage.class, tempArrayList), mode);
+			changedKernel = textImage(view.getOtherHits(hits, GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
 			break;
 			
 		// new slider
@@ -3948,7 +3957,7 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 
-	final protected boolean textImage(ArrayList hits, int mode) {
+	final protected boolean textImage(ArrayList hits, int mode, boolean altDown) {
 		GeoPoint loc = null; // location
 
 		if (hits == null) {
@@ -3976,8 +3985,8 @@ public class EuclidianController implements MouseListener,
 					app.showTextCreationDialog(loc);
 					break;
 				
-				case EuclidianView.MODE_IMAGE:				
-					app.showImageCreationDialog(loc);
+				case EuclidianView.MODE_IMAGE:	
+				    app.loadImage(loc, altDown);
 					break;
 			}			
 			return true;

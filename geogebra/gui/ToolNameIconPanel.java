@@ -129,7 +129,7 @@ public class ToolNameIconPanel extends JPanel {
 		btIconFile.setText(app.getMenu("Icon") + " ...");
 		ActionListener ac = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String fileName = app.showImageFileChooser();
+				String fileName = app.getImage(false); // added false Michael Borcherds 2008-02-17
 				if (fileName != null) {
 					BufferedImage image = app.getExternalImage(fileName);
 					if (image.getWidth() != ICON_WIDTH || image.getHeight() != ICON_HEIGHT) {

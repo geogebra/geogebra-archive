@@ -78,6 +78,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.Toolkit;
+import java.awt.datatransfer.*;
+import java.io.*;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
@@ -1593,8 +1599,8 @@ public class Application implements	KeyEventDispatcher {
      * Creates a new image at the given location (real world coords).
      * @return whether a new image was create or not
      */   
-	public boolean showImageCreationDialog(GeoPoint loc) {		
-		String fileName = showImageFileChooser();
+	public boolean loadImage(GeoPoint loc, boolean fromClipboard) {		
+		String fileName = getImage(fromClipboard);
 		if (fileName == null) return false;						
 		
 		// create GeoImage object for this fileName
@@ -1606,8 +1612,7 @@ public class Application implements	KeyEventDispatcher {
         GeoImage.updateInstances();
 		return true;		
 	}
-	
-	
+
 	public Color showColorChooser(Color currentColor) {
 		// there seems to be a bug concerning ToolTips in JColorChooser 
 		// so we turn off ToolTips
@@ -1627,70 +1632,108 @@ public class Application implements	KeyEventDispatcher {
 	}
 	
 	/**
-	 * Shows a file open dialog to choose an image file.
+	 * Shows a file open dialog to choose an image file,
+	 * [or gets an image from the clipboard Michael Borcherds 2008-02-17]
 	 * Then the image file is loaded and stored in this
 	 * application's imageManager.
 	 * @return fileName of image stored in imageManager
 	 */
-	public String showImageFileChooser() {
-		initFileChooser();
-        fileChooser.setCurrentDirectory(currentImagePath);
-        MyFileFilter fileFilter = new MyFileFilter();
-        fileFilter.addExtension("jpg");
-        fileFilter.addExtension("png");
-        fileFilter.addExtension("gif");
-        fileFilter.addExtension("tif");
-        fileFilter.setDescription(getPlain("Image"));
-        fileChooser.resetChoosableFileFilters();
-        fileChooser.setFileFilter(fileFilter);    
-               
-        // add image previewto fileChooser, Philipp Weissenbacher
-        ImagePreview preview = new ImagePreview(fileChooser);
-        fileChooser.setAccessory(preview);
-        fileChooser.addPropertyChangeListener(preview);
+	public String getImage(boolean fromClipboard) {
 
-        File imageFile = null;
-        int returnVal = fileChooser.showOpenDialog(mainComp);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {             
-        	imageFile = fileChooser.getSelectedFile();   
-        	if (imageFile != null) {
-        		currentImagePath = imageFile.getParentFile();
-        		if (!isApplet) {
-        			GeoGebraPreferences.saveDefaultImagePath(currentImagePath);
-        		}
-        	}
-        }      
-        
-        // remove image preview in order to reset fileChooser
-        fileChooser.removePropertyChangeListener(preview);
-        fileChooser.setAccessory(null);
-        
-		if (imageFile == null) return null;				
-		
+		BufferedImage img = null;
+		String fileName = null;
 		try {
 			setWaitCursor();
-			
-			// get file name
-			String fileName = imageFile.getCanonicalPath();	
-			
-			// load image
-			BufferedImage img = ImageIO.read(imageFile);	
-			
-		    // Michael Borcherds 2007-12-10 START moved MD5 code from GeoImage to here
+
+			if (fromClipboard)
+			{
+				
+				Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+				Transferable transfer = clip.getContents(null);
+				
+				try{
+					if(transfer.isDataFlavorSupported(DataFlavor.imageFlavor)){
+						img = (BufferedImage)transfer.getTransferData(DataFlavor.imageFlavor);
+					}
+				} catch(UnsupportedFlavorException ufe){
+					showError("PasteImageFailed");
+					return null;
+					//ufe.printStackTrace();
+				} catch(IOException ioe){
+					showError("PasteImageFailed");
+					return null;
+					//ioe.printStackTrace();
+				}
+				
+				if (img==null)
+				{
+					showError("PasteImageFailed");
+					return null;	    	
+				}
+				
+				fileName="clipboard.png"; // extension determines what format it will be in ggb file
+			}
+			else
+			{
+				
+				
+				initFileChooser();
+				fileChooser.setCurrentDirectory(currentImagePath);
+				MyFileFilter fileFilter = new MyFileFilter();
+				fileFilter.addExtension("jpg");
+				fileFilter.addExtension("png");
+				fileFilter.addExtension("gif");
+				fileFilter.addExtension("tif");
+				fileFilter.setDescription(getPlain("Image"));
+				fileChooser.resetChoosableFileFilters();
+				fileChooser.setFileFilter(fileFilter);    
+				
+				// add image previewto fileChooser, Philipp Weissenbacher
+				ImagePreview preview = new ImagePreview(fileChooser);
+				fileChooser.setAccessory(preview);
+				fileChooser.addPropertyChangeListener(preview);
+
+				File imageFile = null;
+				int returnVal = fileChooser.showOpenDialog(mainComp);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {             
+					imageFile = fileChooser.getSelectedFile();   
+					if (imageFile != null) {
+						currentImagePath = imageFile.getParentFile();
+						if (!isApplet) {
+							GeoGebraPreferences.saveDefaultImagePath(currentImagePath);
+						}
+					}
+				}      
+				
+				// remove image preview in order to reset fileChooser
+				fileChooser.removePropertyChangeListener(preview);
+				fileChooser.setAccessory(null);
+				
+				if (imageFile == null) return null;				
+				
+				
+				
+				// get file name
+				fileName = imageFile.getCanonicalPath();	
+				
+				// load image
+				img = ImageIO.read(imageFile);	
+			}	
+			// Michael Borcherds 2007-12-10 START moved MD5 code from GeoImage to here
 			String zip_directory="";
 			try
 			{
-			  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			  if (img==null) System.out.println("image==null");
-			  ImageIO.write(img, "png", baos);		
-			  byte [] fileData= baos.toByteArray();
-			
-			  MessageDigest md;
-			  md = MessageDigest.getInstance("MD5");
-			  byte[] md5hash = new byte[32];
-			  md.update(fileData, 0, fileData.length);
-			  md5hash = md.digest();
-			  zip_directory=convertToHex(md5hash);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				if (img==null) System.out.println("image==null");
+				ImageIO.write(img, "png", baos);		
+				byte [] fileData= baos.toByteArray();
+				
+				MessageDigest md;
+				md = MessageDigest.getInstance("MD5");
+				byte[] md5hash = new byte[32];
+				md.update(fileData, 0, fileData.length);
+				md5hash = md.digest();
+				zip_directory=convertToHex(md5hash);
 			}
 			catch (Exception e)
 			{
@@ -1698,20 +1741,20 @@ public class Application implements	KeyEventDispatcher {
 				zip_directory="images";
 				//e.printStackTrace();
 			}
-				
+			
 			String fn=fileName;
 			int index = fileName.lastIndexOf(File.separator);
-		    if( index != -1 )
-		       fn = fn.substring( index+1,fn.length() ); // filename without path
-		    fn=Util.processFilename(fn);
-		    
-		    // filename will be of form "a04c62e6a065b47476607ac815d022cc\liar.gif"
-		    fileName=zip_directory+File.separator+fn;
+			if( index != -1 )
+			fn = fn.substring( index+1,fn.length() ); // filename without path
+			fn=Util.processFilename(fn);
+			
+			// filename will be of form "a04c62e6a065b47476607ac815d022cc\liar.gif"
+			fileName=zip_directory+File.separator+fn;
 
-		    // Michael Borcherds 2007-12-10 END
-		    
-		    
-		    // write and reload image to make sure we can save it
+			// Michael Borcherds 2007-12-10 END
+			
+			
+			// write and reload image to make sure we can save it
 			// without problems
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			myXMLio.writeImageToStream(os, fileName, img);
@@ -1722,19 +1765,19 @@ public class Application implements	KeyEventDispatcher {
 			img = ImageIO.read(is);
 			is.close();
 			os.close();
-						
+			
 			setDefaultCursor();
 			if (img == null) {
 				showError("LoadFileFailed");
 				return null;
 			}			
-									
+			
 			// make sure this filename is not taken yet
 			BufferedImage oldImg = imageManager.getExternalImage(fileName);			
 			if (oldImg != null) {								
 				// image with this name exists already
 				if (oldImg.getWidth() == img.getWidth() &&
-					oldImg.getHeight() == img.getHeight()) {
+						oldImg.getHeight() == img.getHeight()) {
 					// same size and filename => we consider the images as equal
 					return fileName;
 				} else {
