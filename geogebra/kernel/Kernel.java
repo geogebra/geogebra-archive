@@ -1895,6 +1895,26 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Q1[list] lower quartile
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Q1(String label, GeoList list) {
+		AlgoQ1 algo = new AlgoQ1(cons, label, list);
+		GeoNumeric num = algo.getQ1();
+		return num;
+	}
+	
+	/** 
+	 * Q3[list] upper quartile
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Q3(String label, GeoList list) {
+		AlgoQ3 algo = new AlgoQ3(cons, label, list);
+		GeoNumeric num = algo.getQ3();
+		return num;
+	}
+	
+	/** 
 	 * Iteration[ f(x), x0, n ] 
 	 */
 	final public GeoNumeric Iteration(String label, GeoFunction f, NumberValue start,
