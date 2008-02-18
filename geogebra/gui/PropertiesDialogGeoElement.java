@@ -1197,6 +1197,11 @@ public class PropertiesDialogGeoElement
 				showNameValueComboBox =
 					showNameValueComboBox && temp.isLabelValueShowable();
 			}
+			
+			// change "Show Label:" to "Show Label" if there's no menu
+			// Michael Borcherds 2008-02-18
+			if (!showNameValueComboBox) showLabelCB.setText(app.getPlain("ShowLabel"));
+
 
 			//	set label visible checkbox
 			if (equalLabelVal) {
