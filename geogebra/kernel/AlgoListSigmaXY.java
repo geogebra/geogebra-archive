@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-
 
 /**
  * SigmaXY of a list.

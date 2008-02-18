@@ -3,11 +3,9 @@ package geogebra.cas.view;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+
 
 public class CASKeyController implements KeyListener {
 

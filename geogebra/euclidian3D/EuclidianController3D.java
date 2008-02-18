@@ -1,11 +1,8 @@
 package geogebra.euclidian3D;
 
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import geogebra.euclidian.EuclidianController;
-import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
 public class EuclidianController3D 

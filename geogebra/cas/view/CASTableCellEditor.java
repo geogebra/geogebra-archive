@@ -3,10 +3,7 @@ package geogebra.cas.view;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;

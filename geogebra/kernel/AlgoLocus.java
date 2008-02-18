@@ -13,8 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import geogebra.kernel.arithmetic.ExpressionNode;
-
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;

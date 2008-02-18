@@ -2,8 +2,6 @@ package geogebra.cas.view;
 
 import java.util.ArrayList;
 
-import javax.swing.tree.DefaultTreeModel;
-
 /**
  * @author James King
  * 

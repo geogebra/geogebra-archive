@@ -16,12 +16,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.security.MessageDigest;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
 
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,

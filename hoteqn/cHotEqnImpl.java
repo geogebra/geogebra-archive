@@ -261,9 +261,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.applet.Applet; // wenn Component von Applet aufgerufen wird.
-import java.net.URL;       // for image loading in beans
-import java.io.*;
-import java.util.StringTokenizer;
+
 
 public class cHotEqnImpl{
 

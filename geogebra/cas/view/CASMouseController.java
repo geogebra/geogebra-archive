@@ -1,9 +1,7 @@
 package geogebra.cas.view;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 public class CASMouseController extends java.awt.event.MouseAdapter {

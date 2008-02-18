@@ -3,8 +3,6 @@ package geogebra.cas.view;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class CASTableCellController implements KeyListener {
