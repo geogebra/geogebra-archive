@@ -231,13 +231,13 @@ public class DrawAngle extends Drawable {
 //			angSt = angSt - angExt;
 //		}
 
-		if (angle.angleStyle()==angle.ANGLE_ISCLOCKWISE)
+		if (angle.angleStyle()==GeoAngle.ANGLE_ISCLOCKWISE) 
 		{
 			angSt+=angExt;
 			angExt=2.0*Math.PI-angExt;
 		}
 		
-		if (angle.angleStyle()==angle.ANGLE_ISNOTREFLEX)
+		if (angle.angleStyle()==GeoAngle.ANGLE_ISNOTREFLEX)
 		{
 			if (angExt>Math.PI)
 			{
@@ -246,7 +246,7 @@ public class DrawAngle extends Drawable {
 			}
 		}
 		
-		if (angle.angleStyle()==angle.ANGLE_ISREFLEX)
+		if (angle.angleStyle()==GeoAngle.ANGLE_ISREFLEX)
 		{
 			if (angExt<Math.PI)
 			{
