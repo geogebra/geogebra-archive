@@ -1870,7 +1870,7 @@ public class Kernel {
 	 */
 	final public GeoNumeric Sum(String label, GeoList list) {
 		AlgoSum algo = new AlgoSum(cons, label, list);
-		GeoNumeric num = algo.getSum();
+		GeoNumeric num = algo.getResult();
 		return num;
 	}
 	
@@ -1880,7 +1880,37 @@ public class Kernel {
 	 */
 	final public GeoNumeric Mean(String label, GeoList list) {
 		AlgoMean algo = new AlgoMean(cons, label, list);
-		GeoNumeric num = algo.getMean();
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Variance[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Variance(String label, GeoList list) {
+		AlgoVariance algo = new AlgoVariance(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SD[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric StandardDeviation(String label, GeoList list) {
+		AlgoStandardDeviation algo = new AlgoStandardDeviation(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SigmaXX[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaXX(String label, GeoList list) {
+		AlgoSigmaXX algo = new AlgoSigmaXX(cons, label, list);
+		GeoNumeric num = algo.getResult();
 		return num;
 	}
 	

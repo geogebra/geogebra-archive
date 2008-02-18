@@ -1200,7 +1200,7 @@ public class PropertiesDialogGeoElement
 			
 			// change "Show Label:" to "Show Label" if there's no menu
 			// Michael Borcherds 2008-02-18
-			if (!showNameValueComboBox) showLabelCB.setText(app.getPlain("ShowLabel"));
+			if (!showNameValueComboBox) showLabelCB.setText(app.getPlain("ShowLabel")); else showLabelCB.setText(app.getPlain("ShowLabel") + ":");
 
 
 			//	set label visible checkbox
@@ -1220,7 +1220,7 @@ public class PropertiesDialogGeoElement
 
 			// locus in selection
 			labelModeCB.setVisible(showNameValueComboBox);
-			
+			System.out.println(showNameValueComboBox);
 			showLabelCB.addItemListener(this);
 			labelModeCB.addActionListener(this);
 			return this;

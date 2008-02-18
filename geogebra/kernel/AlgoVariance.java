@@ -13,20 +13,20 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 /**
- * Mean of a list
+ * Variance of a list
  * @author Michael Borcherds
  * @version 2008-02-18
  */
 
-public class AlgoMean extends AlgoStats1D {
+public class AlgoVariance extends AlgoStats1D {
 
 	private static final long serialVersionUID = 1L;
 
-    AlgoMean(Construction cons, String label, GeoList geoList) {
-        super(cons,label,geoList,AlgoStats1D.STATS_MEAN);
+    AlgoVariance(Construction cons, String label, GeoList geoList) {
+        super(cons,label,geoList,AlgoStats1D.STATS_VARIANCE);
     }
 
     protected String getClassName() {
-        return "AlgoMean";
+        return "AlgoVariance";
     }
 }
