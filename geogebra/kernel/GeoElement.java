@@ -213,6 +213,7 @@ public abstract class GeoElement
 	public static final int LABEL_NAME = 0;
 	public static final int LABEL_NAME_VALUE = 1;
 	public static final int LABEL_VALUE = 2;
+	public static final int LABEL_CAPTION = 3; // Michael Borcherds 2008-02-18
 
 	protected String label; // should only be used directly in subclasses
 	private String oldLabel; // see doRenameLabel
@@ -333,6 +334,10 @@ public abstract class GeoElement
 
 			case LABEL_VALUE :
 				labelMode = LABEL_VALUE;
+				break;
+				
+			case LABEL_CAPTION : // Michael Borcherds 2008-02-18
+				labelMode = LABEL_CAPTION;
 				break;
 
 			default :
@@ -1846,6 +1851,9 @@ public abstract class GeoElement
 
 			case LABEL_VALUE :
 				return toDefinedValueString();
+				
+			case LABEL_CAPTION: // Michael Borcherds 2008-02-18
+				return getCaption();
 				
 			default : // case LABEL_NAME:
 				return label;

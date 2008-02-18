@@ -1162,6 +1162,7 @@ public class PropertiesDialogGeoElement
 				app.getPlain("Name") + " & " + app.getPlain("Value"));
 			// index 1
 			labelModeCB.addItem(app.getPlain("Value")); // index 2
+			labelModeCB.addItem(app.getPlain("Caption")); // index 3 borcherds
 			labelModeCB.addActionListener(this);
 
 			// labelPanel with show checkbox
@@ -4569,7 +4570,7 @@ class NamePanel
 //		inputPanelDef.setVisible(showDefinition);
 		
 		// CAPTION
-		boolean showCaption = currentGeo.isGeoBoolean();
+		boolean showCaption = true; // borcherds was currentGeo.isGeoBoolean();
 		if (showCaption) {			
 			tfCaption.removeActionListener(this);
 			tfCaption.setText(getCaptionText(currentGeo));
