@@ -437,7 +437,11 @@ implements GeoElementSelectionListener {
 		MyComboBoxListener ac = new MyComboBoxListener() {
 			public void doActionPerformed(Object source) {				
 				GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
-				if (geo == null) return;
+				if (geo == null)
+				{
+					
+					return;
+				}
 				
 				listModel.addElement(geo);	
 				
@@ -614,6 +618,7 @@ class MyCellRenderer extends DefaultListCellRenderer {
         	else
         		setText(geo.getNameDescriptionHTML(true, true));
         }
+        else setText(" "); // Michael Borcherds 2008-02-18 bugfix: height is too small if no objects
         return this;
     }
 }
