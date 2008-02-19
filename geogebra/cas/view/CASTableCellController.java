@@ -34,6 +34,7 @@ public class CASTableCellController implements KeyListener {
 									new Object[] { "New", value });
 					
 					curCell.setLineUnHighlighted();
+					curCell.setInputFoucs();
 				} else {
 					JTextField ta = (JTextField) src;
 					// Get the input of the user
@@ -71,9 +72,9 @@ public class CASTableCellController implements KeyListener {
 
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
 				System.out.println("Focus should be set at the line above");
-				if (!curCell.isLineHighlighted()) {// Set Line of the previous
-					// row Highlighted; Set the
-					// focus on the line;
+				if (!curCell.isLineHighlighted()) {
+					// Set Line of the previous row Highlighted; 
+					// Set the focus on the line;
 					// curCell.setLineHighlighted();
 
 				} else {// Set the focus on the input text field
@@ -82,10 +83,13 @@ public class CASTableCellController implements KeyListener {
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				if (!curCell.isLineHighlighted()) {// Set Line Highlighted; Set
-					// the focus on the line;
+				if (!curCell.isLineHighlighted()) {
+					// Show the line;
+					// Set Line Highlighted; 
+					// Set the focus on the line;
 					System.out.println("Set the line highlighted");
 					curCell.setLineHighlighted();
+					curCell.setLineFoucs();
 
 				} else {// Set the focus on the input text field of the next row
 

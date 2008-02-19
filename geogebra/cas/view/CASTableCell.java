@@ -104,4 +104,8 @@ public class CASTableCell extends JPanel{
 		inputArea.requestFocus();
 	}
 	
+	public void setLineFoucs(){
+		BBorder.requestFocus();
+	}
+	
 }
