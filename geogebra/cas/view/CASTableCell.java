@@ -9,9 +9,11 @@ public class CASTableCell extends JPanel{
 	private JTextField	outputArea;
 	private CASBPanel	BBorder;
 	private CASTableCellController inputListener;
+	private CASTableCellMouseController inputMouseListener;
 	private String		input;
 	private String		output;
 	private JTable		consoleTable;
+	private	boolean		lineHighlighted;
 	
 	public CASTableCell(CASView view, JTable consoleTable) {
 		inputArea = new JTextField();
@@ -20,9 +22,12 @@ public class CASTableCell extends JPanel{
 		inputArea.setBorder(BorderFactory.createEmptyBorder());
 		outputArea.setBorder(BorderFactory.createEmptyBorder());
 		this.consoleTable = consoleTable;
+		lineHighlighted	=	false;
 		
 		inputListener =  new CASTableCellController(this, view);
 		inputArea.addKeyListener(inputListener);
+		inputMouseListener =  new CASTableCellMouseController(this, view);
+		inputArea.addMouseListener(inputMouseListener);
 		inputArea.setText(">>");
 		//outputArea.setText("<<"); 
 		
@@ -62,6 +67,18 @@ public class CASTableCell extends JPanel{
 		this.outputArea.setText("<<" + inValue);
 		this.output = inValue;
 	}
+
+	public void setLineUnHighlighted(){
+		lineHighlighted = false;
+	}
+	
+	public void setLineHighlighted(){
+		lineHighlighted = true;
+	}
+	
+	public boolean isLineHighlighted(){
+		return this.lineHighlighted;
+	}
 	
 	public String getInputCAS(){
 		return inputArea.getText();
@@ -83,8 +100,8 @@ public class CASTableCell extends JPanel{
 		return consoleTable;
 	}
 	
-	public void setInputCursor(){
-		this.inputArea.requestFocus();
+	public void setInputFoucs(){
+		inputArea.requestFocus();
 	}
 	
 }

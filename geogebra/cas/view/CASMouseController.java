@@ -69,6 +69,7 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 		System.out.println("Mouse Clicked at " + selectedRow + " "
 				+ selectedCol);
 	}
+	
 
 	/*
 	 * Function for the singe-click
@@ -82,7 +83,7 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 			return;
 		System.out.println("single click at"
 					+ rowI + "" + colI);
-		if (colI == CASPara.contCol){ //Jump to the input textfiled
+		if (colI == CASPara.contCol){ //Set the focus to the input textfiled
 			//CASTableCellValue src = (CASTableCellValue)((CASTableModel) consoleTable.getModel()).getValueAt(rowI);
 			//src
 		}

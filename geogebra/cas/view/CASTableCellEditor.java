@@ -29,6 +29,9 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 			panel.setOutput(((CASTableCellValue)value).getOutput());
 			//System.out.println("The render is " + value.getClass().getName());
 		}
+		
+		if (isSelected)
+			panel.setInputFoucs();
 		return panel;
 	}
 

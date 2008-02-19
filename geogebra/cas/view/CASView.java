@@ -147,6 +147,10 @@ public class CASView extends JComponent {
 		return cas;
 	}
 
+	public JTable getConsoleTable() {
+		return consoleTable;
+	}
+	
 	/**
 	 * Can be used by subclasses to customize the underlying JTable
 	 * 
