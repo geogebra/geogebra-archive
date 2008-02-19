@@ -1220,7 +1220,6 @@ public class PropertiesDialogGeoElement
 
 			// locus in selection
 			labelModeCB.setVisible(showNameValueComboBox);
-			System.out.println(showNameValueComboBox);
 			showLabelCB.addItemListener(this);
 			labelModeCB.addActionListener(this);
 			return this;

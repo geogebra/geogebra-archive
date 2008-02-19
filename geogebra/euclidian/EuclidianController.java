@@ -473,9 +473,9 @@ public class EuclidianController implements MouseListener,
 				)) 
 		{
 // Michael Borcherds 2007-12-08 BEGIN
-			// bugfix: couldn't select multiple points with Ctrl
+			// bugfix: couldn't select multiple objects with Ctrl
 			hits = view.getHits(mouseLoc);
-			if (hits != null && ((GeoElement) hits.get(0)).isGeoPoint())
+			if (hits != null) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
 			{
 				DONT_CLEAR_SELECTION=true;
 			}
