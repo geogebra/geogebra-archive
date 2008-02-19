@@ -1,5 +1,7 @@
 package geogebra.spreadsheet;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
@@ -11,8 +13,11 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.JButton;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -22,8 +27,11 @@ public class MyTable extends JTable
 
 	public static final int TABLE_CELL_WIDTH = 100;
 	public static final int TABLE_CELL_HEIGHT = 20;
-	public static final int DOT_SIZE = 5;
-	public static final int LINE_THICKNESS = 3;
+	public static final int DOT_SIZE = 7;
+	public static final int LINE_THICKNESS1 = 3;
+	public static final int LINE_THICKNESS2 = 2;
+	public static final Color SELECTED_BACKGROUND_COLOR = Color.GRAY;
+	public static final Color UNSELECTED_BACKGROUND_COLOR = Color.LIGHT_GRAY;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -39,9 +47,12 @@ public class MyTable extends JTable
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
-		// set cell size
+		// set cell size and column header
 		setRowHeight(TABLE_CELL_HEIGHT);
+		TableCellRenderer1 columnHeader = new TableCellRenderer1();
+		columnHeader.setPreferredSize(new Dimension(TABLE_CELL_WIDTH, TABLE_CELL_HEIGHT));
 		for (int i = 0; i < getColumnCount(); ++ i) {
+			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
 			getColumnModel().getColumn(i).setPreferredWidth(TABLE_CELL_WIDTH);
 		}
 		// add renderer & editor
@@ -74,9 +85,15 @@ public class MyTable extends JTable
 		// setup selection listener
 		getSelectionModel().addListSelectionListener(new ListSelectionListener1());
 		getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener2());
+		getColumnModel().getSelectionModel().addListSelectionListener(columnHeader);
 		// relative copy
 		relativeCopy = new RelativeCopy(this, kernel);
 		copyPasteCut = new CopyPasteCut(this, kernel);
+		// column header
+		this.getTableHeader().setFocusable(true);
+		this.getTableHeader().addMouseListener(new MouseListener2());
+		this.getTableHeader().addMouseMotionListener(new MouseMotionListener2());
+		this.getTableHeader().addKeyListener(new KeyListener2());
 	}
 
 	protected int Column = -1;
@@ -116,14 +133,14 @@ public class MyTable extends JTable
 	}
 	
 	protected Point getMinSelectionPixel() {
-		return getPixel(minSelectionColumn - 1, minSelectionRow - 1, true);
+		return getPixel(minSelectionColumn, minSelectionRow, true);
 	}
 	
 	protected Point getMaxSelectionPixel() {
 		return getPixel(maxSelectionColumn, maxSelectionRow, false);
 	}
 	
-	protected Point getIndexFromPixel(int x, int y) {
+	public Point getIndexFromPixel(int x, int y) {
 		if (x < 0 || y < 0) return null;
 		int indexX = -1;
 		int indexY = -1;
@@ -152,6 +169,9 @@ public class MyTable extends JTable
 	
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
+		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
+			return;
+		}
 		if (dragingToRow != -1 && dragingToColumn != -1) {
 			/*
 			System.out.println("minSelectionRow = " + minSelectionRow);
@@ -172,9 +192,9 @@ public class MyTable extends JTable
 				int y1 = (int)point1.getY();
 				int x2 = (int)point2.getX();
 				int y2 = (int)point2.getY();
-				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS);
-				graphics.fillRect(x1, y1, LINE_THICKNESS, y2 - y1);
-				graphics.fillRect(x1, y2 - LINE_THICKNESS, x2 - x1, LINE_THICKNESS);
+				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
+				graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
+				graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
 			}
 			else if (dragingToRow > maxSelectionRow) { // 4
 				Point point1 = getPixel(minSelectionColumn, maxSelectionRow + 1, true);
@@ -183,9 +203,9 @@ public class MyTable extends JTable
 				int y1 = (int)point1.getY();
 				int x2 = (int)point2.getX();
 				int y2 = (int)point2.getY();
-				graphics.fillRect(x1, y1, LINE_THICKNESS, y2 - y1);
-				graphics.fillRect(x1, y2 - LINE_THICKNESS, x2 - x1, LINE_THICKNESS);
-				graphics.fillRect(x2 - LINE_THICKNESS, y1, LINE_THICKNESS, y2 - y1);
+				graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
+				graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
+				graphics.fillRect(x2 - LINE_THICKNESS1, y1, LINE_THICKNESS1, y2 - y1);
 			}
 			else if (dragingToRow < minSelectionRow) { // 1
 				Point point1 = getPixel(minSelectionColumn, dragingToRow, true);
@@ -194,9 +214,9 @@ public class MyTable extends JTable
 				int y1 = (int)point1.getY();
 				int x2 = (int)point2.getX();
 				int y2 = (int)point2.getY();
-				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS);
-				graphics.fillRect(x1, y1, LINE_THICKNESS, y2 - y1);
-				graphics.fillRect(x2 - LINE_THICKNESS, y1, LINE_THICKNESS, y2 - y1);
+				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
+				graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
+				graphics.fillRect(x2 - LINE_THICKNESS1, y1, LINE_THICKNESS1, y2 - y1);
 			}
 			else if (dragingToColumn > maxSelectionColumn) { // 3
 				Point point1 = getPixel(maxSelectionColumn + 1, minSelectionRow, true);
@@ -205,9 +225,9 @@ public class MyTable extends JTable
 				int y1 = (int)point1.getY();
 				int x2 = (int)point2.getX();
 				int y2 = (int)point2.getY();
-				graphics.fillRect(x2 - LINE_THICKNESS, y1, LINE_THICKNESS, y2 - y1);
-				graphics.fillRect(x1, y2 - LINE_THICKNESS, x2 - x1, LINE_THICKNESS);
-				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS);
+				graphics.fillRect(x2 - LINE_THICKNESS1, y1, LINE_THICKNESS1, y2 - y1);
+				graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
+				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
 			}
 		}
 		Point pixel1 = getMaxSelectionPixel();
@@ -216,6 +236,19 @@ public class MyTable extends JTable
 			int x = (int)pixel1.getX() - (DOT_SIZE + 1) / 2;
 			int y = (int)pixel1.getY() - (DOT_SIZE + 1) / 2;
 			graphics.fillRect(x, y, DOT_SIZE, DOT_SIZE);
+		}
+		if (minSelectionRow != -1 && maxSelectionRow != -1 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+			Point min = this.getMinSelectionPixel();
+			Point max = this.getMaxSelectionPixel();
+			int x1 = (int)min.getX();
+			int y1 = (int)min.getY();
+			int x2 = (int)max.getX();
+			int y2 = (int)max.getY();
+			graphics.setColor(Color.BLUE);
+			graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
+			graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
+			graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1 - DOT_SIZE / 2 - 2);		
+			graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1 - DOT_SIZE / 2 - 2, LINE_THICKNESS2);		
 		}
 	}
 	
@@ -233,6 +266,11 @@ public class MyTable extends JTable
 		
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
+					setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+					setColumnSelectionAllowed(true);
+					setRowSelectionAllowed(true);
+				}
 				Point point1 = getMaxSelectionPixel();
 				if (point1 == null) return;
 				int x1 = e.getX();
@@ -398,7 +436,8 @@ public class MyTable extends JTable
 		
 	}
 	
-	protected boolean ctrlPressed = false;
+	public boolean ctrlPressed = false;
+	public boolean shiftPressed = false;
 
 	protected class KeyListener1 implements KeyListener 
 	{
@@ -410,6 +449,7 @@ public class MyTable extends JTable
 			int keyCode = e.getKeyCode();
 			//System.out.println(keyCode);
 			switch (keyCode) {
+			case 16 : shiftPressed = true; break;
 			case 17 : ctrlPressed = true; break;
 			case 67:
 			case 86:
@@ -445,6 +485,7 @@ public class MyTable extends JTable
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
+			case 16 : shiftPressed = false; break;
 			case 17 : ctrlPressed = false; break;
 			}
 		}
@@ -458,6 +499,10 @@ public class MyTable extends JTable
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionRow = selectionModel.getMinSelectionIndex(); 
 			maxSelectionRow = selectionModel.getMaxSelectionIndex();
+			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
+				minSelectionColumn = 0;
+				maxSelectionColumn = MyTable.this.getColumnCount() - 1;
+			}
 			selectionChanged();
 		}
 		
@@ -490,5 +535,144 @@ public class MyTable extends JTable
 		}
 		
 	}
+	
+	protected class TableCellRenderer1 extends JButton implements TableCellRenderer, ListSelectionListener
+	{
+		private static final long serialVersionUID = 1L;
 
+    	protected int minSelectionRow = -1;
+    	protected int maxSelectionRow = -1;
+    	protected boolean[] selected;
+    	
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
+			setText(value.toString());
+			if (minSelectionRow != -1 && maxSelectionRow != -1) {
+				if (colIndex >= minSelectionRow && colIndex <= maxSelectionRow &&
+						selected[colIndex]) {
+					setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+				}
+				else {
+					setBackground(MyTable.UNSELECTED_BACKGROUND_COLOR);
+				}
+			}
+			return this;			
+		}
+		
+		public void valueChanged(ListSelectionEvent e) {
+			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
+			minSelectionRow = selectionModel.getMinSelectionIndex();
+			maxSelectionRow = selectionModel.getMaxSelectionIndex();
+			selected = new boolean[getColumnCount()];
+			for (int i = 0; i < selected.length; ++ i) {
+				if (selectionModel.isSelectedIndex(i)) {
+					selected[i] = true;
+				}
+			}
+			getTableHeader().repaint();
+		}
+	}
+	
+	// for column header
+
+	protected int column0 = -1;
+
+	protected class MouseListener2 implements MouseListener
+	{
+		
+		public void mouseClicked(MouseEvent e) {
+		}
+		
+		public void mouseEntered(MouseEvent e) {
+		}
+		
+		public void mouseExited(MouseEvent e) {
+		}
+		
+		public void mousePressed(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			Point point = getIndexFromPixel(x, y);
+			if (point != null) {
+				if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
+						getColumnSelectionAllowed() == false) {
+					setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					setColumnSelectionAllowed(true);
+					setRowSelectionAllowed(false);
+				}
+				if (shiftPressed2) {
+					if (column0 != -1) {
+						int column = (int)point.getX();
+						setColumnSelectionInterval(column0, column);
+					}
+				}
+				else if (ctrlPressed2) {					
+					column0 = (int)point.getX();
+					addColumnSelectionInterval(column0, column0);
+				}
+				else {
+					column0 = (int)point.getX();
+					setColumnSelectionInterval(column0, column0);
+				}
+				repaint();
+			}
+		}
+		
+		public void mouseReleased(MouseEvent e)	{
+		}
+
+	}
+		
+	protected class MouseMotionListener2 implements MouseMotionListener
+	{
+		
+		public void mouseDragged(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			Point point = getIndexFromPixel(x, y);
+			if (point != null) {
+				if (ctrlPressed2) {
+					int column = (int)point.getX();
+					addColumnSelectionInterval(column0, column);
+					repaint();
+				}
+				else {
+					int column = (int)point.getX();
+					setColumnSelectionInterval(column, column);
+					repaint();
+				}
+			}
+		}
+		
+		public void mouseMoved(MouseEvent e) {
+		}
+		
+	}
+	
+	public boolean ctrlPressed2 = false;
+	public boolean shiftPressed2 = false;
+
+	protected class KeyListener2 implements KeyListener 
+	{
+		
+		public void keyTyped(KeyEvent e) {
+		}
+		
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			switch (keyCode) {
+			case 16 : shiftPressed2 = true; break;
+			case 17 : ctrlPressed2 = true; break;
+			}
+		}
+		
+		public void keyReleased(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			switch (keyCode) {
+			case 16 : shiftPressed2 = false; break;
+			case 17 : ctrlPressed2 = false; break;
+			}
+		}
+		
+	}
+		
 }

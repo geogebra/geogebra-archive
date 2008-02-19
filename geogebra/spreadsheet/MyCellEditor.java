@@ -38,6 +38,9 @@ public class MyCellEditor extends DefaultCellEditor {
 			else {
 				text = value.getCommandDescription();
 			}
+			if ((! value.isGeoText()) && text.indexOf("=") == -1) {
+				text = "=" + text;			
+			}
 		}
 		delegate.setValue(text);
 		editing = true;
@@ -69,7 +72,6 @@ public class MyCellEditor extends DefaultCellEditor {
 		try {
 			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
 		} catch (Exception ex) {
-			kernel.getApplication().showError(ex.getMessage());
 			// show GeoGebra error dialog
 			kernel.getApplication().showError(ex.getMessage());
 			
@@ -98,6 +100,7 @@ public class MyCellEditor extends DefaultCellEditor {
     		return null;
     	}
     	else if (oldValue == null) {
+    		String text0 = text;
     		int posEqual = text.indexOf('=');
     		// text like "= A1 + A2"
     		if (posEqual == 0) {
@@ -117,8 +120,18 @@ public class MyCellEditor extends DefaultCellEditor {
     			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
     		} catch (Exception e) {
     			// TODO: handle exception
-        		System.err.println("SPREADSHEET: input error: " + e.getMessage());        		
-        		throw e;
+        		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
+    			if (! text0.startsWith("=")) {
+        			text = name + "=\"" + text0 + "\"";
+       				newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+       				if (newValues[0].isGeoText()) {
+       					newValues[0].setEuclidianVisible(false);
+           				newValues[0].update();
+       				}
+    			}
+    			else {
+    				throw e;
+    			}
     		}
     		
     		if (newValues != null) {    
@@ -141,6 +154,7 @@ public class MyCellEditor extends DefaultCellEditor {
     		
     	}
         else { // value != null;
+    		String text0 = text;
         	if (text.startsWith("=")) {
         		text = text.substring(1);
         	} 
@@ -154,8 +168,18 @@ public class MyCellEditor extends DefaultCellEditor {
 	        	}
         	} catch (Exception e) {
         		// TODO: handle exception
-        		System.err.println("SPREADSHEET: input error: " + e.getMessage());
-        		throw e;
+        		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
+        		if (text0.startsWith("=") || text0.startsWith("\"")){
+        			throw e;
+        		} else {
+        			text = "\"" + text + "\"";
+    	        	if (oldValue.isIndependent()) {
+    	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
+    	        	}
+    	        	else {
+    	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
+    	        	}
+        		}
         	}
     		if (newValue != null) {
     			return newValue;    		
