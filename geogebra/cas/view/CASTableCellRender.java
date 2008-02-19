@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import java.awt.Component;
+import java.awt.Window;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -20,8 +21,9 @@ public class CASTableCellRender extends CASTableCell implements
 //			setSelectedIndex(((Integer) value).intValue());
 //		}
 		
+		
 		Object t= ((CASTableModel)table.getModel()).getValueAt(row); 
-		System.out.println("Row " + row + " Out-- " + ((CASTableCellValue)t).getOutput());
+
 		if (value instanceof CASTableCellValue){
 			//this.setInput(((String) value).toString());
 			System.out.println("Row: " + row);
@@ -29,6 +31,11 @@ public class CASTableCellRender extends CASTableCell implements
     		System.out.println(((CASTableCellValue)value).getOutput());
 			setInput(((CASTableCellValue)value).getCommand());
 			setOutput(((CASTableCellValue)value).getOutput());	
+		}
+		if (isSelected){
+			//Component mostRecentFocusOwner = Window.getMostRecentFocusOwner();
+			setInputFoucs();
+			setInputFoucs();
 		}
 		return this;
 	}	
