@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Point;
 import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -121,7 +122,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
     }
 
-    public static class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
+    public static class RowHeaderRenderer extends JButton implements ListCellRenderer, ListSelectionListener {
 	
     	private static final long serialVersionUID = 1L;
     	

@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -544,6 +545,9 @@ public class MyTable extends JTable
     	protected int maxSelectionRow = -1;
     	protected boolean[] selected;
     	
+    	public TableCellRenderer1() {
+    	}
+    	
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
@@ -598,6 +602,7 @@ public class MyTable extends JTable
 					setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					setColumnSelectionAllowed(true);
 					setRowSelectionAllowed(false);
+					getTableHeader().requestFocusInWindow();
 				}
 				if (shiftPressed2) {
 					if (column0 != -1) {
