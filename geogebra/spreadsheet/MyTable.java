@@ -10,8 +10,11 @@ import java.awt.event.KeyEvent ;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
+import javax.swing.BorderFactory;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.event.ListSelectionListener;
@@ -31,8 +34,8 @@ public class MyTable extends JTable
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
-	public static final Color SELECTED_BACKGROUND_COLOR = Color.GRAY;
-	public static final Color UNSELECTED_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+	public static final Color SELECTED_BACKGROUND_COLOR = new Color(200, 220, 240);
+	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.white;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -61,7 +64,7 @@ public class MyTable extends JTable
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 		// set selection colors
-		setSelectionBackground(new Color(200, 220, 240));
+		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
 		// setup mouse listeners
 		MouseListener[] mouseListeners = getMouseListeners();
@@ -537,15 +540,20 @@ public class MyTable extends JTable
 		
 	}
 	
-	protected class TableCellRenderer1 extends JButton implements TableCellRenderer, ListSelectionListener
+	protected class TableCellRenderer1 extends JLabel implements TableCellRenderer, ListSelectionListener
 	{
 		private static final long serialVersionUID = 1L;
 
     	protected int minSelectionRow = -1;
     	protected int maxSelectionRow = -1;
     	protected boolean[] selected;
+    	private Color defaultBackground;
     	
-    	public TableCellRenderer1() {
+    	public TableCellRenderer1() {    		
+    		super("", JLabel.CENTER);
+    		setOpaque(true);
+    		defaultBackground = getBackground();
+    		setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
     	}
     	
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
@@ -553,10 +561,10 @@ public class MyTable extends JTable
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
 				if (colIndex >= minSelectionRow && colIndex <= maxSelectionRow &&
 						selected[colIndex]) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
 				}
 				else {
-					setBackground(MyTable.UNSELECTED_BACKGROUND_COLOR);
+					setBackground(defaultBackground);				
 				}
 			}
 			return this;			

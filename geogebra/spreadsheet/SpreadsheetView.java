@@ -1,6 +1,7 @@
 
 package geogebra.spreadsheet;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import javax.swing.AbstractListModel;
@@ -122,7 +123,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
     }
 
-    public static class RowHeaderRenderer extends JButton implements ListCellRenderer, ListSelectionListener {
+    public static class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
 	
     	private static final long serialVersionUID = 1L;
     	
@@ -131,15 +132,20 @@ public class SpreadsheetView extends JScrollPane implements View
     	protected JTableHeader header;
     	protected JList rowHeader;
     	protected ListSelectionModel selectionModel;
+    	private Color defaultBackground;
 	
 		public RowHeaderRenderer(JTable table, JList rowHeader) {
+	 		super("", JLabel.CENTER);
+    		setOpaque(true);
+    		defaultBackground = getBackground();
+			
 			this.rowHeader = rowHeader;
 			header = table.getTableHeader() ;
-			setOpaque(true);
+//			setOpaque(true);
 			setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
-			setHorizontalAlignment(CENTER) ;
-			setForeground(header.getForeground()) ;
-			setBackground(header.getBackground());
+//			setHorizontalAlignment(CENTER) ;
+//			setForeground(header.getForeground()) ;
+//			setBackground(header.getBackground());
 			setFont(header.getFont());
 			table.getSelectionModel().addListSelectionListener(this);
 		}
@@ -149,14 +155,14 @@ public class SpreadsheetView extends JScrollPane implements View
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
 				if (index >= minSelectionRow && index <= maxSelectionRow &&
 						selectionModel.isSelectedIndex(index)) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
 				}
 				else {
-					setBackground(MyTable.UNSELECTED_BACKGROUND_COLOR);
+					setBackground(defaultBackground);
 				}
 			}
 			else {
-				setBackground(MyTable.UNSELECTED_BACKGROUND_COLOR);
+				setBackground(defaultBackground);
 			}
 			return this;
 		}
