@@ -44,15 +44,15 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 			else
 				panel.setOutputBlank();
 			
-			if(tempV.getOutputAreaInclude()){
+			if(!tempV.getOutputAreaInclude()){
 				panel.addOutputArea();
 			}
-			
+
 			//System.out.println("The render is " + value.getClass().getName());
 		}
 
-		if (isSelected)
-			panel.setInputFoucs();
+//		if (isSelected)
+//			panel.setInputFoucs();
 		
 		return panel;
 	}

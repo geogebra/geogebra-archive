@@ -35,7 +35,7 @@ public class CASTableCellRender extends CASTableCell implements
 				setInput(tempIn);
 			else{
 				System.out.println("Input Set Blank");
-				setOutputBlank();
+				setInputBlank();
 			}
 			
 			if(tempOut.compareTo("")>0)
@@ -50,15 +50,6 @@ public class CASTableCellRender extends CASTableCell implements
 				System.out.println("Output Area is added");
 				this.addOutputArea();
 			}
-		}
-		
-		if (isSelected){
-			//Component mostRecentFocusOwner = Window.getMostRecentFocusOwner();
-			setInputFoucs();
-		}
-		if	(hasFocus){
-			System.out.println("Row: " + row + " has focus");
-			setInputFoucs();
 		}
 		return this;
 	}	

@@ -161,7 +161,7 @@ public class CASView extends JComponent {
 
 		t.setShowGrid(true);
 		// Dynamically change the height of the table
-		//t.setRowHeight(22);
+		//t.setRowHeight(45);
 		t.setRowHeight(CASPara.originalHeight);
 		t.setBackground(Color.white);
 		// t.setDefaultRenderer(Object.class, new MyRenderer());
@@ -211,5 +211,7 @@ public class CASView extends JComponent {
 		// c.weighty = 1.0;
 		// panel.add(Box.createVerticalGlue(), c);
 	}
+
+
 
 }
