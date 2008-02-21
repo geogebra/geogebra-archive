@@ -19,10 +19,11 @@ public class CmdMedian extends CommandProcessor {
 	public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
-
+		arg = resArgs(c);
+		
 		switch (n) {
 		case 1:
-			arg = resArgs(c);
+
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
 						kernel.Median(c.getLabel(),
@@ -31,7 +32,13 @@ public class CmdMedian extends CommandProcessor {
 			} else
 				throw argErr(app, c.getName(), arg[0]);
 		
-		default:
+        default :
+            // try to create list of numbers
+       	 GeoList list = wrapInList(arg, GeoElement.GEO_CLASS_NUMERIC);
+            if (list != null) {
+           	 GeoElement[] ret = { kernel.Median(c.getLabel(), list)};
+                return ret;             	     	 
+            } 
 			throw argNumErr(app, c.getName(), n);
 		}
 	}
