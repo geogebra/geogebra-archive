@@ -173,6 +173,9 @@ public class CASView extends JComponent {
 		t.getColumn(t.getColumnName(CASPara.indexCol)).setMinWidth(30);
 		t.getColumn(t.getColumnName(CASPara.indexCol)).setMaxWidth(30);
 		t.sizeColumnsToFit(0);
+		t.setSurrendersFocusOnKeystroke(true);
+		//System.out.println("SurrendersFocusOn" + t.getSurrendersFocusOnKeystroke());
+		
 		
 		return t;
 	}

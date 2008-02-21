@@ -85,7 +85,7 @@ public class CASMouseController extends java.awt.event.MouseAdapter {
 					+ rowI + "" + colI);
 		if (colI == CASPara.contCol){ //Set the focus to the input textfiled
 			//CASTableCellValue src = (CASTableCellValue)((CASTableModel) consoleTable.getModel()).getValueAt(rowI);
-			//src
+			consoleTable.editCellAt(rowI, colI);
 		}
 	}
 

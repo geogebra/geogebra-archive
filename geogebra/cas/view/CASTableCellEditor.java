@@ -22,9 +22,9 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 			boolean isSelected, int row, int column) {
 		if (value instanceof CASTableCellValue){
 			//panel.setInput(((String) value).toString());
-			System.out.println("Row: " + row);
-    		System.out.println(((CASTableCellValue)value).getCommand());
-    		System.out.println(((CASTableCellValue)value).getOutput());
+			System.out.println("Editor - Row: " + row);
+    		//System.out.println(((CASTableCellValue)value).getCommand());
+    		//System.out.println(((CASTableCellValue)value).getOutput());
 			panel.setInput(((CASTableCellValue)value).getCommand());
 			panel.setOutput(((CASTableCellValue)value).getOutput());
 			//System.out.println("The render is " + value.getClass().getName());
@@ -32,6 +32,7 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 		
 		if (isSelected)
 			panel.setInputFoucs();
+		
 		return panel;
 	}
 

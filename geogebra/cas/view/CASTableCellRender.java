@@ -19,22 +19,23 @@ public class CASTableCellRender extends CASTableCell implements
 			int column) {
 //		if (value instanceof Integer) {
 //			setSelectedIndex(((Integer) value).intValue());
-//		}
-		
-		
-		Object t= ((CASTableModel)table.getModel()).getValueAt(row); 
+//		} 
 
 		if (value instanceof CASTableCellValue){
 			//this.setInput(((String) value).toString());
-			System.out.println("Row: " + row);
-    		System.out.println(((CASTableCellValue)value).getCommand());
-    		System.out.println(((CASTableCellValue)value).getOutput());
+			System.out.println("Rendering Row: " + row);
+    		//System.out.println(((CASTableCellValue)value).getCommand());
+    		//System.out.println(((CASTableCellValue)value).getOutput());
 			setInput(((CASTableCellValue)value).getCommand());
 			setOutput(((CASTableCellValue)value).getOutput());	
 		}
+		
 		if (isSelected){
 			//Component mostRecentFocusOwner = Window.getMostRecentFocusOwner();
 			setInputFoucs();
+		}
+		if	(hasFocus){
+			System.out.println("Row: " + row + " has focus");
 			setInputFoucs();
 		}
 		return this;
