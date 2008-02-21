@@ -32,7 +32,7 @@ public class CASTableCellController implements KeyListener {
 					((CASTableModel) view.getConsoleTable().getModel())
 							.insertRow((selectedRow >= 0 ? selectedRow : 0),
 									new Object[] { "New", value });
-					
+					//System.out.println("New Input = " + value.getCommand());
 					curCell.setLineUnHighlighted();
 					curCell.setInputFoucs();
 				} else {
@@ -55,10 +55,14 @@ public class CASTableCellController implements KeyListener {
 					// We enlarge the height of the selected row
 					int selectedRow = curCell.getConsoleTable()
 							.getSelectedRow();
-					curCell.getConsoleTable().setRowHeight(selectedRow, 45);
+					//curCell.addOutputArea();
+					CASTableCellValue newValue = new CASTableCellValue(inputText,
+							evaluation);
+					newValue.setOutputAreaInclude(true);
+					curCell.getConsoleTable().setRowHeight(selectedRow, CASPara.reactiveHeight);
 					((CASTableModel) curCell.getConsoleTable().getModel())
-							.setValueAt(new CASTableCellValue(inputText,
-									evaluation), selectedRow);
+							.setValueAt(newValue, selectedRow);
+					curCell.repaint();
 					// Set the cursor
 					// curCell.getConsoleTable().changeSelection(selectedRow, 1,
 					// true, true);

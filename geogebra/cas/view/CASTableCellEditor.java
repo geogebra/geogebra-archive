@@ -23,24 +23,39 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 		if (value instanceof CASTableCellValue){
 			//panel.setInput(((String) value).toString());
 			System.out.println("Editor - Row: " + row);
+			CASTableCellValue tempV = (CASTableCellValue)value;
     		//System.out.println(((CASTableCellValue)value).getCommand());
     		//System.out.println(((CASTableCellValue)value).getOutput());
-			panel.setInput(((CASTableCellValue)value).getCommand());
-			panel.setOutput(((CASTableCellValue)value).getOutput());
+			String tempIn = tempV.getCommand();
+			String tempOut = tempV.getOutput();
+			
+			if(isSelected)
+				panel.setInput(tempIn);
+
+//			if(tempIn.compareTo("")>0)
+//				panel.setInput(tempIn);
+//			else if(isSelected)
+//				panel.setInput("");
+//			else
+//				panel.setInputBlank();
+			
+			if(tempOut.compareTo("")>0)
+				panel.setOutput(tempOut);
+			else
+				panel.setOutputBlank();
+			
+			if(tempV.getOutputAreaInclude()){
+				panel.addOutputArea();
+			}
+			
 			//System.out.println("The render is " + value.getClass().getName());
 		}
-		
+
 		if (isSelected)
 			panel.setInputFoucs();
 		
 		return panel;
 	}
-
-//	public boolean stopCellEditing() {
-//		setCellEditorValue(new CASTableCellValue(panel.getInput(), panel.getInput()));
-//
-//		return super.stopCellEditing();
-//	}
 	
 	public Object getCellEditorValue() {
 		return value;

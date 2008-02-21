@@ -28,18 +28,41 @@ public class CASTableCell extends JPanel{
 		inputArea.addKeyListener(inputListener);
 		inputMouseListener =  new CASTableCellMouseController(this, view);
 		inputArea.addMouseListener(inputMouseListener);
-		inputArea.setText(">>");
-		//outputArea.setText("<<"); 
+		setInputBlank();
+		setOutputBlank(); 
 		
 		//this.setLayout(new GridLayout(2, 1));
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(inputArea);	
-		this.add(outputArea);
-		this.add(BBorder);
+		//this.add(outputArea);
+		//this.add(BBorder);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		return;
-	}			
+	}	
 
+	public void removeOutputArea(){
+		this.remove(outputArea);
+		this.repaint();
+	}	
+	
+	public void addOutputArea(){
+		this.remove(inputArea);
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.add(inputArea);
+		this.add(outputArea);
+		this.repaint();
+	}	
+	
+	public void removeBBorder(){
+		this.remove(BBorder);
+		this.repaint();
+	}
+
+	public void addBBorder(){
+		this.add(BBorder);
+		this.repaint();
+	}
+	
 	public void setInputA(String inValue){
 		this.inputArea.setText(">>" + inValue);
 	}
@@ -51,6 +74,11 @@ public class CASTableCell extends JPanel{
 	public void setInput(String inValue){
 		this.inputArea.setText(">>" + inValue);
 		this.input = inValue;
+	}
+	
+	public void setInputBlank(){
+		this.inputArea.setText("");
+		this.input="";
 	}
 	
 	public void setOutputA(String inValue){
@@ -66,6 +94,11 @@ public class CASTableCell extends JPanel{
 	public void setOutput(String inValue){
 		this.outputArea.setText("<<" + inValue);
 		this.output = inValue;
+	}
+	
+	public void setOutputBlank(){
+		this.outputArea.setText("");
+		this.output="";
 	}
 
 	public void setLineUnHighlighted(){

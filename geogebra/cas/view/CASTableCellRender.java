@@ -23,11 +23,33 @@ public class CASTableCellRender extends CASTableCell implements
 
 		if (value instanceof CASTableCellValue){
 			//this.setInput(((String) value).toString());
+			CASTableCellValue tempV = (CASTableCellValue)value;
 			System.out.println("Rendering Row: " + row);
-    		//System.out.println(((CASTableCellValue)value).getCommand());
-    		//System.out.println(((CASTableCellValue)value).getOutput());
-			setInput(((CASTableCellValue)value).getCommand());
-			setOutput(((CASTableCellValue)value).getOutput());	
+    		System.out.println("Input: " + tempV.getCommand());
+    		System.out.println("Output: " + tempV.getOutput());
+    		System.out.println(tempV.getOutputAreaInclude());
+			String tempIn = tempV.getCommand();
+			String tempOut = tempV.getOutput();
+			
+			if(tempIn.compareTo("")>0)
+				setInput(tempIn);
+			else{
+				System.out.println("Input Set Blank");
+				setOutputBlank();
+			}
+			
+			if(tempOut.compareTo("")>0)
+				setOutput(tempOut);
+			else{
+				System.out.println("Output Blank");
+				setOutputBlank();
+			}
+			
+			//Bug: I set the value to true, but why it is still false?
+			if(!tempV.getOutputAreaInclude()){
+				System.out.println("Output Area is added");
+				this.addOutputArea();
+			}
 		}
 		
 		if (isSelected){

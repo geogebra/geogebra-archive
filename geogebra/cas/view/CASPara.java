@@ -1,6 +1,6 @@
 package geogebra.cas.view;
 
-public class CASPara {
+public final class CASPara {
 	//For the table column
 	public	final static int indexCol = 0;
 	public	final static int contCol = 1;
