@@ -18,15 +18,15 @@ package geogebra.kernel;
  * @version 2008-02-18
  */
 
-public class AlgoListSigmaXY extends AlgoStats2D {
+public class AlgoListSYY extends AlgoStats2D {
 
 	private static final long serialVersionUID = 1L;
 
-    AlgoListSigmaXY(Construction cons, String label, GeoList geoListx) {
-        super(cons,label,geoListx,AlgoStats2D.STATS_SIGMAXY);
+    AlgoListSYY(Construction cons, String label, GeoList geoListx) {
+        super(cons,label,geoListx,AlgoStats2D.STATS_SYY);
     }
 
     protected String getClassName() {
-        return "AlgoListSigmaXY";
+        return "AlgoListSYY";
     }
 }

@@ -1770,7 +1770,77 @@ public class Kernel {
 	 */
 	final public GeoNumeric SigmaXY(String label, GeoList list) {
 		AlgoListSigmaXY algo = new AlgoListSigmaXY(cons, label, list);
-		GeoNumeric num = algo.getSigmaXY();
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Covariance[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Covariance(String label, GeoList list) {
+		AlgoListCovariance algo = new AlgoListCovariance(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SXX[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SXX(String label, GeoList list) {
+		AlgoListSXX algo = new AlgoListSXX(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SXY[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SXY(String label, GeoList list) {
+		AlgoListSXY algo = new AlgoListSXY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SYY[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SYY(String label, GeoList list) {
+		AlgoListSYY algo = new AlgoListSYY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * MeanX[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric MeanX(String label, GeoList list) {
+		AlgoListMeanX algo = new AlgoListMeanX(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * MeanY[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric MeanY(String label, GeoList list) {
+		AlgoListMeanY algo = new AlgoListMeanY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * PMCC[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric PMCC(String label, GeoList list) {
+		AlgoListPMCC algo = new AlgoListPMCC(cons, label, list);
+		GeoNumeric num = algo.getResult();
 		return num;
 	}
 	
@@ -1780,7 +1850,77 @@ public class Kernel {
 	 */
 	final public GeoNumeric SigmaXY(String label, GeoList listX, GeoList listY) {
 		AlgoDoubleListSigmaXY algo = new AlgoDoubleListSigmaXY(cons, label, listX, listY);
-		GeoNumeric num = algo.getSigmaXY();
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * MeanX[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaXX(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListMeanX algo = new AlgoDoubleListMeanX(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * MeanY[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric MeanY(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListMeanY algo = new AlgoDoubleListMeanY(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Covariance[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Covariance(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListCovariance algo = new AlgoDoubleListCovariance(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SXX[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SXX(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSXX algo = new AlgoDoubleListSXX(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SYY[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SYY(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSYY algo = new AlgoDoubleListSYY(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SXY[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SXY(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSXY algo = new AlgoDoubleListSXY(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * PMCC[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric PMCC(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListPMCC algo = new AlgoDoubleListPMCC(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
 		return num;
 	}
 	

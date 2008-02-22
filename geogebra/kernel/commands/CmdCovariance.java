@@ -6,9 +6,9 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
-public class CmdSigmaXY extends CommandProcessor {
+public class CmdCovariance extends CommandProcessor {
 
-	public CmdSigmaXY(Kernel kernel) {
+	public CmdCovariance(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -22,7 +22,7 @@ public class CmdSigmaXY extends CommandProcessor {
 			arg = resArgs(c);
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
-						kernel.SigmaXY(c.getLabel(),
+						kernel.Covariance(c.getLabel(),
 						(GeoList) arg[0]) };
 				return ret;
 			} else
@@ -34,7 +34,7 @@ public class CmdSigmaXY extends CommandProcessor {
 				(ok[1] = arg[1].isGeoList())) 
 			{
 				GeoElement[] ret = { 
-						kernel.SigmaXY(c.getLabel(),
+						kernel.Covariance(c.getLabel(),
 						(GeoList) arg[0], (GeoList) arg[1]) };
 				return ret;
 				
