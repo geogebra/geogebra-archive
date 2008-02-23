@@ -13,20 +13,20 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 /**
- * Mean of a list
+ * Sum of squares of y-coords of a list of Points
  * @author Michael Borcherds
  * @version 2008-02-23
  */
 
-public class AlgoDoubleListMeanY extends AlgoStats2D {
+public class AlgoListSigmaYY extends AlgoStats2D {
 
 	private static final long serialVersionUID = 1L;
 
-    AlgoDoubleListMeanY(Construction cons, String label, GeoList geoListx, GeoList geoListy) {
-        super(cons,label,geoListx,geoListy,AlgoStats2D.STATS_MEANY);
+    AlgoListSigmaYY(Construction cons, String label, GeoList geoListx) {
+        super(cons,label,geoListx,AlgoStats2D.STATS_SIGMAYY);
     }
 
     protected String getClassName() {
-        return "AlgoDoubleListMeanY";
+        return "AlgoListSigmaYY";
     }
 }

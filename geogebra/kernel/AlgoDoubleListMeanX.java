@@ -15,7 +15,7 @@ package geogebra.kernel;
 /**
  * Mean of a list
  * @author Michael Borcherds
- * @version 2008-02-18
+ * @version 2008-02-23
  */
 
 public class AlgoDoubleListMeanX extends AlgoStats2D {

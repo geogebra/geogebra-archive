@@ -10,9 +10,9 @@ import geogebra.kernel.arithmetic.Command;
  * SigmaXX[ list ]
  * adapted from CmdVariance by Michael Borcherds 2008-02-18
  */
-public class CmdSigmaXX extends CommandProcessor {
+public class CmdSigmaYY extends CommandProcessor {
 
-	public CmdSigmaXX(Kernel kernel) {
+	public CmdSigmaYY(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -25,7 +25,7 @@ public class CmdSigmaXX extends CommandProcessor {
 			arg = resArgs(c);
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
-						kernel.SigmaXX(c.getLabel(),
+						kernel.SigmaYY(c.getLabel(),
 						(GeoList) arg[0]) };
 				return ret;
 			} else
@@ -37,7 +37,7 @@ public class CmdSigmaXX extends CommandProcessor {
 				(arg[1].isGeoList())) 
 			{
 				GeoElement[] ret = { 
-						kernel.SigmaXX(c.getLabel(),
+						kernel.SigmaYY(c.getLabel(),
 						(GeoList) arg[0], (GeoList) arg[1]) };
 				return ret;
 			}

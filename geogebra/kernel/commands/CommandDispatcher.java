@@ -205,13 +205,14 @@ public class CommandDispatcher {
     	cmdTable.put("Mean", new CmdMean(kernel));
     	cmdTable.put("Variance", new CmdVariance(kernel));
     	cmdTable.put("SD", new CmdSD(kernel));
-    	cmdTable.put("SigmaXX", new CmdSigmaXX(kernel));
     	cmdTable.put("Median", new CmdMedian(kernel));
     	cmdTable.put("Q1", new CmdQ1(kernel));
     	cmdTable.put("Q3", new CmdQ3(kernel));
     	cmdTable.put("Mode", new CmdMode(kernel));
     	cmdTable.put("Reverse", new CmdReverse(kernel));
+    	cmdTable.put("SigmaXX", new CmdSigmaXX(kernel));
     	cmdTable.put("SigmaXY", new CmdSigmaXY(kernel));
+    	cmdTable.put("SigmaYY", new CmdSigmaYY(kernel));
     	cmdTable.put("Covariance", new CmdCovariance(kernel));
     	cmdTable.put("SXY", new CmdSXY(kernel));
     	cmdTable.put("SXX", new CmdSXX(kernel));

@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 /**
- * Mean of a list
+ * Mean of x-coords of a list of Points
  * @author Michael Borcherds
  * @version 2008-02-18
  */

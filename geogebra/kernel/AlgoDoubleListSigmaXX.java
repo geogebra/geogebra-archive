@@ -13,20 +13,20 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 /**
- * Mean of a list
+ * Sum of squares of a list
  * @author Michael Borcherds
  * @version 2008-02-23
  */
 
-public class AlgoDoubleListMeanY extends AlgoStats2D {
+public class AlgoDoubleListSigmaXX extends AlgoStats2D {
 
 	private static final long serialVersionUID = 1L;
 
-    AlgoDoubleListMeanY(Construction cons, String label, GeoList geoListx, GeoList geoListy) {
-        super(cons,label,geoListx,geoListy,AlgoStats2D.STATS_MEANY);
+    AlgoDoubleListSigmaXX(Construction cons, String label, GeoList geoListx, GeoList geoListy) {
+        super(cons,label,geoListx,geoListy,AlgoStats2D.STATS_SIGMAXX);
     }
 
     protected String getClassName() {
-        return "AlgoDoubleListMeanY";
+        return "AlgoDoubleListSigmaXX";
     }
 }

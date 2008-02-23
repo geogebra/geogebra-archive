@@ -13,9 +13,9 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 /**
- * Mean of a list
+ * PMCC of a list
  * @author Michael Borcherds
- * @version 2008-02-18
+ * @version 2008-02-23
  */
 
 public class AlgoDoubleListPMCC extends AlgoStats2D {

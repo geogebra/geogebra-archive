@@ -1775,6 +1775,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * SigmaYY[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaYY(String label, GeoList list) {
+		AlgoListSigmaYY algo = new AlgoListSigmaYY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * Covariance[list]
 	 * Michael Borcherds
 	 */
@@ -1855,10 +1865,30 @@ public class Kernel {
 	}
 	
 	/** 
-	 * MeanX[list,list]
+	 * SigmaXX[list,list]
 	 * Michael Borcherds
 	 */
 	final public GeoNumeric SigmaXX(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSigmaXX algo = new AlgoDoubleListSigmaXX(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SigmaYY[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SigmaYY(String label, GeoList listX, GeoList listY) {
+		AlgoDoubleListSigmaYY algo = new AlgoDoubleListSigmaYY(cons, label, listX, listY);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * MeanX[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric MeanX(String label, GeoList listX, GeoList listY) {
 		AlgoDoubleListMeanX algo = new AlgoDoubleListMeanX(cons, label, listX, listY);
 		GeoNumeric num = algo.getResult();
 		return num;
@@ -2049,8 +2079,18 @@ public class Kernel {
 	 * Michael Borcherds
 	 */
 	final public GeoNumeric SigmaXX(String label, GeoList list) {
-		AlgoSigmaXX algo = new AlgoSigmaXX(cons, label, list);
-		GeoNumeric num = algo.getResult();
+		GeoNumeric num;
+		GeoElement geo = list.get(0);
+		if (geo.isNumberValue())
+		{  // list of numbers
+			AlgoSigmaXX algo = new AlgoSigmaXX(cons, label, list);
+			num = algo.getResult();
+		}
+		else
+		{  // (probably) list of points
+			AlgoListSigmaXX algo = new AlgoListSigmaXX(cons, label, list);			
+			num = algo.getResult();
+		}
 		return num;
 	}
 	

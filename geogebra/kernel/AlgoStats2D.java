@@ -16,11 +16,12 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 
 /**
- * Mean, variance, sum, sum of squares, standard deviation of a list
+ * Mean, covariance, sum, sum of squares, etc 
+ * from two lists or a list of points
  * adapted from AlgoListMin
  * to replace AlgoMean, AlgoSum
  * @author Michael Borcherds
- * @version 2008-02-18
+ * @version 2008-02-23
  */
 
 public abstract class AlgoStats2D extends AlgoElement {
@@ -45,6 +46,8 @@ public abstract class AlgoStats2D extends AlgoElement {
     final static int STATS_SYY = 5;
     final static int STATS_SXY = 6;
     final static int STATS_PMCC = 7;
+    final static int STATS_SIGMAXX = 8;
+    final static int STATS_SIGMAYY = 9;
 
     
     AlgoStats2D(Construction cons, String label, GeoList geoListx, GeoList geoListy, int stat) {
@@ -177,6 +180,12 @@ public abstract class AlgoStats2D extends AlgoElement {
         	break;
         case  STATS_SIGMAXY:
         	result.setValue(sumxy);
+        	break;
+        case  STATS_SIGMAXX:
+        	result.setValue(sumxx);
+        	break;
+        case  STATS_SIGMAYY:
+        	result.setValue(sumyy);
         	break;
         case  STATS_SXX :
         	result.setValue(sumxx-sumx*sumx/sizex);
