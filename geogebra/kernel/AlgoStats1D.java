@@ -27,6 +27,7 @@ public abstract class AlgoStats1D extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
+    public GeoNumeric Truncate; //input	
     public GeoNumeric result; //output	
     
     private int stat;
@@ -42,9 +43,30 @@ public abstract class AlgoStats1D extends AlgoElement {
         this.geoList = geoList;
         this.stat=stat;
         
+        Truncate=null;
+        
         result = new GeoNumeric(cons);
 
         setInputOutput();
+        compute();
+        result.setLabel(label);
+    }
+
+    AlgoStats1D(Construction cons, String label, GeoList geoList, GeoNumeric Truncate, int stat) {
+        super(cons);
+        this.geoList = geoList;
+        this.stat=stat;
+        this.Truncate=Truncate;
+        
+        result = new GeoNumeric(cons);
+
+        input = new GeoElement[2];
+        input[0] = geoList;
+        input[1] = Truncate;
+
+        output = new GeoElement[1];
+        output[0] = result;
+        setDependencies(); // done by AlgoElement
         compute();
         result.setLabel(label);
     }
@@ -68,7 +90,21 @@ public abstract class AlgoStats1D extends AlgoElement {
     
 
     final void compute() {
+    	
+    	int truncate;
     	int size = geoList.size();
+
+    	if (Truncate!=null)
+    	{
+    		truncate=(int)Truncate.getDouble();
+    		if (truncate<1 || truncate>size)
+    		{
+        		result.setUndefined();
+        		return;
+    		}
+    		size=truncate; // truncate the list
+    	}
+    	
     	if (!geoList.isDefined() ||  size == 0) {
     		result.setUndefined();
     		return;

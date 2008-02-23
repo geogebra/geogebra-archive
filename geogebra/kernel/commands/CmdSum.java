@@ -3,6 +3,7 @@ package geogebra.kernel.commands;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
@@ -27,6 +28,14 @@ public class CmdSum extends CommandProcessor {
 				GeoElement[] ret = { 
 						kernel.Sum(c.getLabel(),
 						(GeoList) arg[0]) };
+				return ret;
+			} else
+				throw argErr(app, c.getName(), arg[0]);
+		case 2:
+			if (arg[0].isGeoList() && arg[1].isGeoNumeric()) {
+				GeoElement[] ret = { 
+						kernel.Sum(c.getLabel(),
+						(GeoList) arg[0], (GeoNumeric) arg[1]) };
 				return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);

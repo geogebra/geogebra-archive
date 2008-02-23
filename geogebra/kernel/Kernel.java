@@ -2045,6 +2045,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Sum[list,n]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Sum(String label, GeoList list, GeoNumeric n) {
+		AlgoSum algo = new AlgoSum(cons, label, list, n);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * Mean[list]
 	 * Michael Borcherds
 	 */
