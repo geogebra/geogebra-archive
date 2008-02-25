@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -46,6 +47,7 @@ public final class DrawText extends Drawable {
     private GeoPoint loc; // text location
     
     private sHotEqn eqn;
+    private Image eqnImage;
     private Dimension eqnSize;        
     
     /** Creates new DrawText */
@@ -115,12 +117,19 @@ public final class DrawText extends Drawable {
 			eqn.setForeground(geo.objColor);		
 			eqn.setBackground(view.getBackground());
 	
-			// set equation and get it's size
+//			// set equation 
+//			eqn.setEquation(labelDesc);
+//			
+//			// draw equation once to get it's image and size
+//			eqn.paintComponent(view.getTempGraphics2D());
+//			eqnImage = eqn.getImage();
+//			eqnSize = eqn.getSize();
+			
 			eqnSize = eqn.getSizeof(labelDesc);
 
 			// set bounding box of text component
 			labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
-			eqn.setBounds(labelRectangle);							
+			eqn.setBounds(labelRectangle);										
 		} 
 		else if (text.isNeedsUpdatedBoundingBox()) {
 			// ensure that bounding box gets updated by drawing text once
@@ -148,7 +157,8 @@ public final class DrawText extends Drawable {
         		g2.setPaint(geo.objColor);				
     			g2.setFont(textFont);    			
     			drawMultilineText(g2);   
-        	}
+        	} else
+        		//g2.drawImage(eqnImage, xLabel, yLabel, null);
 			  
 			// draw label rectangle
 			if (geo.doHighlighting()) {
