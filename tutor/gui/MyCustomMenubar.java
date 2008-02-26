@@ -1,4 +1,4 @@
-package tutor;
+package tutor.gui;
 
 import geogebra.Application;
 import geogebra.gui.Menubar;

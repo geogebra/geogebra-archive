@@ -19,6 +19,7 @@ package geogebra;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.FileDropTargetListener;
+import geogebra.gui.GeoGebraMenuBar;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.util.Util;
 
@@ -37,8 +38,6 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-
-import tutor.MyCustomMenubar;
 
 /**
  * GeoGebra's main window. 
@@ -266,7 +265,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		//GeoGebra wnd = buildGeoGebra();
 
 		Application app = new Application(args, wnd, true);
-		app.setMenubar(new MyCustomMenubar(app));
+		app.setMenubar(new GeoGebraMenuBar(app));
 		app.initMenubar();
 		
 		// init GUI
