@@ -34,6 +34,7 @@ import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ImagePreview;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
+import geogebra.gui.Menubar;
 import geogebra.gui.PropertiesDialogGeoElement;
 import geogebra.gui.PropertiesDialogGraphicsWindow;
 import geogebra.gui.RedefineInputHandler;
@@ -121,7 +122,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
-import tutor.Menubar;
 
 public class Application implements	KeyEventDispatcher {
 
