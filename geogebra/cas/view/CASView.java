@@ -1,7 +1,5 @@
 package geogebra.cas.view;
 
-import geogebra.cas.view.CASTableRenderer;
-
 import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
@@ -34,15 +32,9 @@ public class CASView extends JComponent {
 
 	private Application app;
 
-	private JTextField input, output;
-
 	private GeoGebraCAS cas;
 
-	private CASTableRenderer renderer;
-
 	private CASSession session;
-
-	private boolean showMenuBar = true;
 
 	private final int numOfRows = 25;
 
