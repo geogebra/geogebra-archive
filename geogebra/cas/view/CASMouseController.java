@@ -15,10 +15,6 @@ public class CASMouseController implements MouseListener {
 
 	private JTable consoleTable;
 
-	private boolean flag = false;// Judge whether there is a double-click
-
-	private int clickNum = 0;// Record the number of clicks
-
 	public CASMouseController(CASView view, CASSession session, JTable table) {
 		this.session = session;
 		this.view = view;
@@ -31,12 +27,11 @@ public class CASMouseController implements MouseListener {
 		colI = consoleTable.columnAtPoint(e.getPoint());
 		if (rowI <0 )
 			return;
-		System.out.println("single click at"
-					+ rowI + "" + colI);
+		System.out.println("single click at" + rowI + "" + colI);
 		if (colI == CASPara.contCol){ //Set the focus to the input textfiled
-			//CASTableCellValue src = (CASTableCellValue)((CASTableModel) consoleTable.getModel()).getValueAt(rowI);
 			consoleTable.editCellAt(rowI, colI);
-			Component clickedComponent = consoleTable.findComponentAt(e.getX(), e.getY());
+			//Get the deepest component at (X, Y)
+			Component clickedComponent = consoleTable.findComponentAt(e.getPoint());
 			clickedComponent.requestFocus();
 			System.out.println("clickedComponent: " + clickedComponent);
 		}
@@ -62,24 +57,4 @@ public class CASMouseController implements MouseListener {
 		// TODO Auto-generated method stub
 		
 	}
-
-	/*
-	 * Function for the double-click
-	 */
-//	public void mouseDoubleClicked(MouseEvent e) {
-//		// System.out.println("Doublc Clicked!");
-//		int rowI, colI;
-//		rowI = consoleTable.rowAtPoint(e.getPoint());// Get the row number
-//		colI = consoleTable.columnAtPoint(e.getPoint());
-//		if (rowI > -1)
-//			System.out.println("double click at"
-//					+ rowI + "" + colI);
-//
-//		if (colI == CASPara.indexCol){
-//			//Insert a new row
-//			CASTableCellValue value = new CASTableCellValue();
-//			((CASTableModel) consoleTable.getModel()).insertRow(
-//					(rowI >= 0 ? rowI : 0), new Object[]{ "New", value});
-//		}
-//	}
 }

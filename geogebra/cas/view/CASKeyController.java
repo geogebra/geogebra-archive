@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -48,36 +49,6 @@ public class CASKeyController implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		Object src = e.getSource();
-		System.out
-				.println("Mouse Clicked--------- " + src.getClass().getName());
-
-	}
-
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mousePressed(MouseEvent e) {
-		Object src = e.getSource();
-		System.out
-				.println("Mouse Pressed--------- " + src.getClass().getName());
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		Object src = e.getSource();
-		System.out.println("Mouse Released--------- "
-				+ src.getClass().getName());
 	}
 
 }

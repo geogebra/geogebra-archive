@@ -24,8 +24,6 @@ public class CASTableCellController implements KeyListener {
 			return;
 
 		boolean consumeEvent = false;
-		// System.out.println("Inside the cell");
-		// System.out.println(src.getClass().getName());
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_ENTER:
