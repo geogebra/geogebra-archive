@@ -19,7 +19,6 @@ package tutor;
  */
 
 import geogebra.Application;
-import geogebra.CustomApplication;
 import geogebra.GeoGebraApplet;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;

@@ -1,5 +1,8 @@
-package geogebra;
+package tutor;
 
+import geogebra.Application;
+import geogebra.GeoGebra;
+import geogebra.GeoGebraApplet;
 import geogebra.kernel.GeoElement;
 
 public class CustomApplication extends Application {
