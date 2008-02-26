@@ -14,8 +14,6 @@ public class CASTableCell extends JPanel {
 
 	private CASTableCellController inputListener;
 
-	private CASTableCellMouseController inputMouseListener;
-
 	private String input;
 
 	private String output;
@@ -35,12 +33,10 @@ public class CASTableCell extends JPanel {
 
 		inputListener = new CASTableCellController(this, view);
 		inputArea.addKeyListener(inputListener);
-		inputMouseListener = new CASTableCellMouseController(this, view);
-		inputArea.addMouseListener(inputMouseListener);
 		setInputBlank();
 		setOutputBlank();
 
-		// this.setLayout(new GridLayout(2, 1));
+		//Initially, there is only a input area in the cell panel
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(inputArea);
 		// this.add(outputArea);
@@ -56,7 +52,6 @@ public class CASTableCell extends JPanel {
 
 	public void addOutputArea() {
 		System.out.println("Add Output Area");
-
 		this.add(outputArea);
 		this.validate();
 	}
@@ -67,9 +62,6 @@ public class CASTableCell extends JPanel {
 	}
 
 	public int addBBorder() {
-		// this.remove(inputArea);
-		// this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		// this.add(inputArea);
 		int cellHeight = 0;
 		Component[] temp = this.getComponents();
 		switch (temp.length) {
@@ -86,14 +78,6 @@ public class CASTableCell extends JPanel {
 		return cellHeight;
 	}
 
-	public void setInputA(String inValue) {
-		this.inputArea.setText(">>" + inValue);
-	}
-
-	public void setInputS(String inValue) {
-		this.input = inValue;
-	}
-
 	public void setInput(String inValue) {
 		this.inputArea.setText(">>" + inValue);
 		this.input = inValue;
@@ -102,16 +86,6 @@ public class CASTableCell extends JPanel {
 	public void setInputBlank() {
 		this.inputArea.setText("");
 		this.input = "";
-	}
-
-	public void setOutputA(String inValue) {
-		// add outputarea
-		this.outputArea.setText("<<" + inValue);
-	}
-
-	public void setOutputS(String inValue) {
-		// add outputarea
-		this.output = inValue;
 	}
 
 	public void setOutput(String inValue) {
@@ -156,13 +130,4 @@ public class CASTableCell extends JPanel {
 	public JTable getConsoleTable() {
 		return consoleTable;
 	}
-
-	public void setInputFoucs() {
-		inputArea.requestFocus();
-	}
-
-	public void setLineFoucs() {
-		BBorder.requestFocus();
-	}
-
 }

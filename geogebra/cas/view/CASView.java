@@ -53,31 +53,7 @@ public class CASView extends JComponent {
 		session = new CASSession();
 		setLayout(new BorderLayout());
 
-		// input = new JTextField();
-
 		consoleTable = createTable(numOfRows);
-
-		// new JTable(new CASTableModel(session));
-
-		/*
-		 * //table.getModel().addTableModelListener(this); TableColumn console =
-		 * table.getColumnModel().getColumn(0); console.setMinWidth(384);
-		 * console.setCellRenderer(renderer); //JTable table = new JTable()
-		 * //table.setFillsViewportHeight(true); <-- I think this is only for >
-		 * 1.4.2 //JScrollPane sp= new JScrollPane(table); JScrollPane sp= new
-		 * JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-		 * JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		 * 
-		 * //table. // output = new JTextField(); //add(sp, BorderLayout.NORTH); //
-		 * add(input, BorderLayout.NORTH); add(sp, BorderLayout.CENTER); //
-		 * sp.add(table); // table.setValueAt(new String("test"), 0, 0);
-		 * 
-		 * //add(output, BorderLayout.SOUTH);
-		 *  // input.addActionListener(new ActionListener() { // // public void
-		 * actionPerformed(ActionEvent arg0) { // //String inputText =
-		 * input.getText(); // //String evalStr = cas.evaluateYACAS(inputText); //
-		 * //String evalStr = // //output.setText(evalStr); // } // // });
-		 */
 
 		//Set the property of the value column;
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellRenderer(
@@ -85,29 +61,6 @@ public class CASView extends JComponent {
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellEditor(
 				new CASTableCellEditor(new JTextField(), new CASTableCell(this,
 						consoleTable)));
-
-		// rowData[0] = new CASTableCell(this,consoleTable);
-		// tableModel.addRow(rowData);
-		// focus listenerr
-		// FocusListener fl = new FocusListener() {
-		// public void focusGained(FocusEvent e) {
-		// Object src = e.getSource();
-		//				
-		// if (src instanceof JTextArea) {
-		// JTextArea ta = (JTextArea) src;
-		// ta.setBorder(BorderFactory.createLineBorder(Color.red));
-		// }
-		// }
-		//
-		// public void focusLost(FocusEvent e) {
-		// Object src = e.getSource();
-		//				
-		// if (src instanceof JTextArea) {
-		// JTextArea ta = (JTextArea) src;
-		// ta.setBorder(null);
-		// }
-		// }
-		// };
 
 		// CAScontroller
 		CASKeyController casKeyCtrl = new CASKeyController(this, session, consoleTable);
@@ -121,26 +74,6 @@ public class CASView extends JComponent {
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
-		// create the cells of the table
-		// ArrayList jcomponents = new ArrayList();
-		// for (int i = 0; i < this.numOfRows; i++) {
-		// CASTableCell ta = new CASTableCell();
-		// JTextArea input = new JTextArea(1,1);
-		// input.append(">>");
-		// ta.setLineWrap(true);
-
-		// register focus listener with ta
-		// ta.addFocusListener(fl);
-
-		// register key listener
-		// ta.addKeyListener(casCtrl);
-
-		// jcomponents.add(ta);
-		// tableModel.setValueAt(ta, i);
-		// tableModel.setValueAt(input, i);
-		// }
-
-		// initSessionPanel(panel, jcomponents);
 	}
 
 	public GeoGebraCAS getCAS() {
@@ -160,8 +93,8 @@ public class CASView extends JComponent {
 		JTable t = new JTable();
 
 		t.setShowGrid(false);
+		
 		// Dynamically change the height of the table
-		//t.setRowHeight(45);
 		t.setRowHeight(CASPara.originalHeight);
 		t.setBackground(Color.white);
 		// t.setDefaultRenderer(Object.class, new MyRenderer());
@@ -175,8 +108,7 @@ public class CASView extends JComponent {
 		t.sizeColumnsToFit(0);
 		t.setSurrendersFocusOnKeystroke(true);
 		//System.out.println("SurrendersFocusOn" + t.getSurrendersFocusOnKeystroke());
-		
-		
+	
 		return t;
 	}
 
