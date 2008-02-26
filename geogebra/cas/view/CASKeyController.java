@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 
-
 public class CASKeyController implements KeyListener {
 
 	private CASSession session;
@@ -28,17 +27,26 @@ public class CASKeyController implements KeyListener {
 
 	public void keyPressed(KeyEvent e) {
 		Object src = e.getSource();
-		System.out.println("Key Pressed " + src.getClass().getName());
+		// System.out.println("Key Pressed " + src.getClass().getName());
+		int selectedRow = consoleTable.getSelectedRow();
+		int selectedCol = consoleTable.getSelectedColumn();
 
-		//Here we delete the chosen row when press DELETE at coloumn 1;
-		if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-			int selectedCol = consoleTable.getSelectedColumn();
-			if(selectedCol == CASPara.indexCol){
-				int selectedRow = consoleTable.getSelectedRow();
-				((CASTableModel)consoleTable.getModel()).removeRow(selectedRow);
+		System.out.println("Key Pressed "
+				+ (consoleTable.getCellRenderer(selectedRow, selectedCol))
+						.getClass().getName());
+		// Here we delete the chosen row when press DELETE at coloumn 1;
+
+		if (selectedCol == CASPara.indexCol) {
+			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+				{
+					((CASTableModel) consoleTable.getModel())
+							.removeRow(selectedRow);
+				}
 			}
+		}else{
+			
+			
 		}
-
 	}
 
 	public void keyReleased(KeyEvent e) {

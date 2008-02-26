@@ -25,11 +25,15 @@ public class CASTableCellController implements KeyListener {
 
 		boolean consumeEvent = false;
 
+		int selectedRow = view.getConsoleTable().getSelectedRow();
+		int selectedCol = view.getConsoleTable().getSelectedColumn();
+		CASTableCellRender ccurCell = (CASTableCellRender)view.getConsoleTable().getCellRenderer(selectedRow, selectedCol);
+		
+		
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_ENTER:
 			if (curCell.isLineHighlighted()) {
 				// Insert a new line here, and set the focus on the new line
-				int selectedRow = view.getConsoleTable().getSelectedRow();
 				CASTableCellValue newValue = new CASTableCellValue();
 				newValue.initialize();
 				((CASTableModel) view.getConsoleTable().getModel()).insertRow(
@@ -47,7 +51,6 @@ public class CASTableCellController implements KeyListener {
 				curCell.setInput(inputText);
 				curCell.setOutput(evaluation);
 				// We enlarge the height of the selected row
-				int selectedRow = curCell.getConsoleTable().getSelectedRow();
 
 				curCell.getConsoleTable().setRowHeight(selectedRow,
 						CASPara.inputOutputHeight);
@@ -81,7 +84,6 @@ public class CASTableCellController implements KeyListener {
 				// Show the line;
 				// Set Line Highlighted;
 				// Set the focus on the line;
-				int selectedRow = view.getConsoleTable().getSelectedRow();
 				System.out.println("Set the line highlighted");
 				curCell.setLineHighlighted();
 				curCell.getConsoleTable().setRowHeight(selectedRow,

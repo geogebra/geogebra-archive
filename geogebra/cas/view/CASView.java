@@ -135,7 +135,4 @@ public class CASView extends JComponent {
 		// c.weighty = 1.0;
 		// panel.add(Box.createVerticalGlue(), c);
 	}
-
-
-
 }
