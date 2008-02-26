@@ -20,6 +20,11 @@ public class CASTableCellValue {
 		BBorderInclude = false;
 	}
 	
+	public void initialize(){
+		outputAreaInclude = false;
+		BBorderInclude = false;
+	}
+	
 	public String getCommand(){
 		return	command;
 	}

@@ -31,28 +31,18 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 			
 			if(isSelected)
 				panel.setInput(tempIn);
-
-//			if(tempIn.compareTo("")>0)
-//				panel.setInput(tempIn);
-//			else if(isSelected)
-//				panel.setInput("");
-//			else
-//				panel.setInputBlank();
 			
 			if(tempOut.compareTo("")>0)
 				panel.setOutput(tempOut);
 			else
 				panel.setOutputBlank();
 			
-			if(!tempV.getOutputAreaInclude()){
+			if(tempV.getOutputAreaInclude()){
 				panel.addOutputArea();
 			}
 
 			//System.out.println("The render is " + value.getClass().getName());
 		}
-
-//		if (isSelected)
-//			panel.setInputFoucs();
 		
 		return panel;
 	}

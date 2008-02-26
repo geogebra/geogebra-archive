@@ -159,7 +159,7 @@ public class CASView extends JComponent {
 	protected JTable createTable(int rows) {
 		JTable t = new JTable();
 
-		t.setShowGrid(true);
+		t.setShowGrid(false);
 		// Dynamically change the height of the table
 		//t.setRowHeight(45);
 		t.setRowHeight(CASPara.originalHeight);
