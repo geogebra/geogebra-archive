@@ -11,5 +11,4 @@ public final class CASPara {
 	public	final static int inputLineHeight = 25;
 	public	final static int inputOutputHeight = 44;
 	public	final static int threeCompHeight = 45;
-	
 }
