@@ -27,13 +27,13 @@ public class CASMouseController implements MouseListener {
 		colI = consoleTable.columnAtPoint(e.getPoint());
 		if (rowI <0 )
 			return;
-		System.out.println("single click at" + rowI + "" + colI);
+		//System.out.println("single click at" + rowI + "" + colI);
 		if (colI == CASPara.contCol){ //Set the focus to the input textfiled
 			consoleTable.editCellAt(rowI, colI);
 			//Get the deepest component at (X, Y)
 			Component clickedComponent = consoleTable.findComponentAt(e.getPoint());
 			clickedComponent.requestFocus();
-			System.out.println("clickedComponent: " + clickedComponent);
+			//System.out.println("clickedComponent: " + clickedComponent);
 		}
 	}
 	

@@ -69,10 +69,10 @@ public class CASTableModel extends DefaultTableModel {
     	if(obj instanceof CASTableCellValue){
     		setValueAt(obj, row, CASPara.contCol);
     		fireTableCellUpdated(row, CASPara.contCol);
-    		System.out.println("Value Updated: ");
-    		System.out.println(((CASTableCellValue)obj).getCommand());
-    		System.out.println(((CASTableCellValue)obj).getOutput());
-    		System.out.println(((CASTableCellValue)obj).getOutputAreaInclude());
+    		//System.out.println("Value Updated: ");
+    		//System.out.println(((CASTableCellValue)obj).getCommand());
+    		//System.out.println(((CASTableCellValue)obj).getOutput());
+    		//System.out.println(((CASTableCellValue)obj).getOutputAreaInclude());
     	}
     }
 

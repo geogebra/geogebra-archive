@@ -21,6 +21,7 @@ public class CASTableCell extends JPanel {
 	private JTable consoleTable;
 
 	private boolean lineHighlighted;
+	private boolean outputAreaAdded;
 
 	public CASTableCell(CASView view, JTable consoleTable) {
 		inputArea = new JTextField();
@@ -30,6 +31,7 @@ public class CASTableCell extends JPanel {
 		outputArea.setBorder(BorderFactory.createEmptyBorder());
 		this.consoleTable = consoleTable;
 		lineHighlighted = false;
+		outputAreaAdded = false;
 
 		inputListener = new CASTableCellController(this, view);
 		inputArea.addKeyListener(inputListener);
@@ -47,12 +49,14 @@ public class CASTableCell extends JPanel {
 
 	public void removeOutputArea() {
 		this.remove(outputArea);
-		this.repaint();
+		outputAreaAdded = false;
+		this.validate();
 	}
 
 	public void addOutputArea() {
 		System.out.println("Add Output Area");
 		this.add(outputArea);
+		outputAreaAdded = true;
 		this.validate();
 	}
 
@@ -108,7 +112,7 @@ public class CASTableCell extends JPanel {
 	}
 
 	public boolean isLineHighlighted() {
-		return this.lineHighlighted;
+		return lineHighlighted;
 	}
 
 	public String getInputCAS() {
@@ -129,5 +133,9 @@ public class CASTableCell extends JPanel {
 
 	public JTable getConsoleTable() {
 		return consoleTable;
+	}
+
+	public boolean isOutputAreaAdded() {
+		return outputAreaAdded;
 	}
 }

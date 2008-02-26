@@ -40,7 +40,8 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 			if(tempV.getOutputAreaInclude()){
 				panel.addOutputArea();
 			}
-
+			
+			setCellEditorValue(value);
 			//System.out.println("The render is " + value.getClass().getName());
 		}
 		
@@ -60,9 +61,10 @@ public class CASTableCellEditor extends DefaultCellEditor implements TableCellEd
 	}
 	
 	public boolean stopCellEditing() {
-		
-		setCellEditorValue(new CASTableCellValue(panel.getInput(), panel.getOutput()));
-
+		CASTableCellValue temp = new CASTableCellValue(panel.getInput(), panel.getOutput());
+		temp.setOutputAreaInclude(panel.isOutputAreaAdded());
+		temp.setBBorderInclude(panel.isLineHighlighted());
+		setCellEditorValue(temp);
 		return super.stopCellEditing();
 	}
 }

@@ -21,6 +21,7 @@ public class CASTableCellRender extends CASTableCell implements
 			// System.out.println("Rendering Row: " + row);
 			// System.out.println("Input: " + tempV.getCommand());
 			// System.out.println("Output: " + tempV.getOutput());
+			// System.out.println("OutputArea: " + tempV.getOutputAreaInclude());
 			String tempIn = tempV.getCommand();
 			String tempOut = tempV.getOutput();
 
