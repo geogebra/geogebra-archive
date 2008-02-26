@@ -60,7 +60,7 @@ import java.util.Properties;
  * 
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: VectorGraphics.java,v 1.1 2008-02-25 21:18:10 murkle Exp $
+ * @version $Id: VectorGraphics.java,v 1.2 2008-02-26 20:56:50 murkle Exp $
  */
 public abstract class VectorGraphics extends Graphics2D implements
         VectorGraphicsConstants {
@@ -531,6 +531,9 @@ public abstract class VectorGraphics extends Graphics2D implements
     public abstract void setLineWidth(double width);
 
     public abstract void startExport();
+    
+    public abstract void startGroup(String group); // Michael Borcherds
+    public abstract void endGroup(String comment); // Michael Borcherds
 
     // STATIC stuff below
     public static VectorGraphics create(Graphics g) {

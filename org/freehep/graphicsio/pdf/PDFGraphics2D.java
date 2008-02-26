@@ -56,7 +56,7 @@ import org.freehep.util.UserProperties;
  * 
  * @author Simon Fischer
  * @author Mark Donszelmann
- * @version $Id: PDFGraphics2D.java,v 1.1 2008-02-25 21:17:16 murkle Exp $
+ * @version $Id: PDFGraphics2D.java,v 1.2 2008-02-26 20:56:49 murkle Exp $
  */
 public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		MultiPageDocument, FontUtilities.ShowString {
@@ -168,7 +168,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperties(newProperties);
 	}
 
-	public static final String version = "$Revision: 1.1 $";
+	public static final String version = "$Revision: 1.2 $";
 
 	private static final String PDF_VERSION = "1.4";
 
@@ -943,6 +943,14 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		// comments are ignored and disabled, because they confuse compressed
 		// streams
 	}
+
+    // Michael Borcherds 2008-02-26
+    public void startGroup(String s) {
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void endGroup(String s) {
+    }
 
 	public String toString() {
 		return "PDFGraphics2D";

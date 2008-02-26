@@ -76,11 +76,11 @@ import org.freehep.util.images.ImageUtilities;
  * Enhanced Metafile Format Graphics 2D driver.
  *
  * @author Mark Donszelmann
- * @version $Id: EMFGraphics2D.java,v 1.1 2008-02-25 21:17:26 murkle Exp $
+ * @version $Id: EMFGraphics2D.java,v 1.2 2008-02-26 20:56:51 murkle Exp $
  */
 public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
         EMFConstants {
-    public static final String version = "$Revision: 1.1 $";
+    public static final String version = "$Revision: 1.2 $";
 
     private EMFHandleManager handleManager;
 
@@ -624,6 +624,14 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
     public void writeComment(String comment) throws IOException {
         writeWarning(getClass() + ": writeComment(String) not implemented.");
         // Write out the comment.
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void startGroup(String s) {
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void endGroup(String s) {
     }
 
     public String toString() {

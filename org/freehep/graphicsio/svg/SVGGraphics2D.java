@@ -60,7 +60,7 @@ import org.freehep.xml.util.XMLWriter;
  * The current implementation is based on REC-SVG11-20030114
  *
  * @author Mark Donszelmann
- * @version $Id: SVGGraphics2D.java,v 1.1 2008-02-25 21:18:30 murkle Exp $
+ * @version $Id: SVGGraphics2D.java,v 1.2 2008-02-26 20:56:50 murkle Exp $
  */
 public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
@@ -143,7 +143,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         defaultProperties.setProperties(newProperties);
     }
 
-    public static final String version = "$Revision: 1.1 $";
+    public static final String version = "$Revision: 1.2 $";
 
     // current filename including path
     private String filename;
@@ -982,7 +982,18 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     }
 
     public void writeComment(String s) throws IOException {
+        System.out.println("<comment>");
         os.println("<!-- " + s + " -->");
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void startGroup(String s) {
+        os.println("<g id=\"" + s + "\">");
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void endGroup(String s)  {
+        os.println("</g><!-- " + s + " -->");
     }
 
     public String toString() {

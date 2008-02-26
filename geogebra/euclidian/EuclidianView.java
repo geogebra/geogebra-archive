@@ -76,6 +76,11 @@ import java.util.Locale;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
+
 /**
  * 
  * @author Markus Hohenwarter
@@ -1215,7 +1220,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			setAntialiasing(g2);		
 		
 		// draw equations, checkboxes and all geo objects
-		drawObjects(g2);			
+		drawLayers(g2,false); // Michael Borcherds 2008-02-26		 	
 
 		if (selectionRectangle != null) {
 			drawZoomRectangle(g2);
@@ -1331,7 +1336,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}
 
 			double scale = PRINTER_PIXEL_PER_CM / xscale * printingScale;
-			exportPaint(g2d, scale);
+			exportPaint(g2d, scale, false); // Michael Borcherds 2008-02-26 added false(=isVectorGraphics)
 
 			// clear page margins at bottom and right
 			double pagewidth = pageFormat.getWidth();
@@ -1362,7 +1367,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 *            set to true, no traces are drawn.
 	 * 
 	 */
-	public void exportPaint(Graphics2D g2d, double scale) {
+	public void exportPaint(Graphics2D g2d, double scale, boolean isVectorGraphics) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1387,7 +1392,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-		drawObjects(g2d);
+		drawLayers(g2d,isVectorGraphics); // Michael Borcherds 2008-02-26			
 	}		
 
 	/**
@@ -1416,7 +1421,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		int width = (int) Math.floor(getSelectedWidth() * scale);
 		int height = (int) Math.floor(getSelectedHeight() * scale);		
 		BufferedImage img = createBufferedImage(width, height);
-		exportPaint(img.createGraphics(), scale);
+		exportPaint(img.createGraphics(), scale, false); // Michael Borcherds 2008-02-26 added false
 		img.flush();
 		return img;
 	}
@@ -1458,7 +1463,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final protected void updateBackgroundImage() {
 		if (bgGraphics != null) {
 			clearBackground(bgGraphics);
-			bgImageList.drawAll(bgGraphics);
+			bgImageList.drawAll(bgGraphics,-1); // Michael Borcherds 2008-02-26 added -1 (ignore layer)
 
 			drawBackground(bgGraphics, false);
 		}
@@ -1836,58 +1841,70 @@ public class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 	
-	protected void drawObjects(Graphics2D g2) {		
+	protected void drawLayers(Graphics2D g2, boolean isVectorGraphics) {
+		int layer;
+		for (layer=0 ; layer<=app.getMaxLayer() ; layer++)
+		{
+			if (isVectorGraphics) ((VectorGraphics)g2).startGroup("layer "+layer);
+			drawObjects(g2,layer);
+			if (isVectorGraphics) ((VectorGraphics)g2).endGroup("layer "+layer);
+		}
+	}
+	protected void drawObjects(Graphics2D g2, int layer) {		
 		// draw images
-		drawImageList.drawAll(g2);
+		drawImageList.drawAll(g2, layer);
 		
 		// draw HotEquations
+		// TODO layers for HotEquations
 		paintChildren(g2);
 		
 		// draw Geometric objects
-		drawGeometricObjects(g2);
+		drawGeometricObjects(g2, layer);
 	}
+
 
 	/**
 	 * Draws all GeoElements except images.
 	 */
-	protected void drawGeometricObjects(Graphics2D g2) {	
+	protected void drawGeometricObjects(Graphics2D g2, int layer) {	
 
-		if (previewDrawable != null) {
+		if (previewDrawable != null &&
+				(layer == app.getMaxLayer() || layer == -1)) { // Michael Borcherds 2008-02-26 only draw once
 			previewDrawable.drawPreview(g2);
 		}		
 		
 		// draw lists of objects
-		drawListList.drawAll(g2);
+		drawListList.drawAll(g2, layer);
 
 		// draw polygons
-		drawPolygonList.drawAll(g2);
+		drawPolygonList.drawAll(g2, layer);
 
 		// draw conics
-		drawConicList.drawAll(g2);
+		drawConicList.drawAll(g2, layer);
 
 		// draw angles and numbers
-		drawNumericList.drawAll(g2);
+		drawNumericList.drawAll(g2, layer);
 
 		// draw functions
-		drawFunctionList.drawAll(g2);
+		drawFunctionList.drawAll(g2, layer);
 
 		// draw lines
-		drawLineList.drawAll(g2);
+		drawLineList.drawAll(g2, layer);
 
 		// draw segments
-		drawSegmentList.drawAll(g2);
+		drawSegmentList.drawAll(g2, layer);
 
 		// draw vectors
-		drawVectorList.drawAll(g2);
+		drawVectorList.drawAll(g2, layer);
 
 		// draw locus
-		drawLocusList.drawAll(g2);
+		drawLocusList.drawAll(g2, layer);
 
 		// draw points
-		drawPointList.drawAll(g2);
+		drawPointList.drawAll(g2, layer);
 
 		// draw text
-		drawTextList.drawAll(g2);
+		drawTextList.drawAll(g2, layer);
 		
 		// boolean are not drawn as they are JToggleButtons and children of the view
 	}

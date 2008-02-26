@@ -23,7 +23,7 @@ import org.freehep.graphics2d.VectorGraphics;
  * serves as an example to start the implementation for a new output format.
  *
  * @author Mark Donszelmann
- * @version $Id: DummyGraphics2D.java,v 1.1 2008-02-25 21:17:35 murkle Exp $
+ * @version $Id: DummyGraphics2D.java,v 1.2 2008-02-26 20:56:50 murkle Exp $
  */
 public class DummyGraphics2D extends AbstractVectorGraphicsIO {
     /*
@@ -313,6 +313,14 @@ public class DummyGraphics2D extends AbstractVectorGraphicsIO {
     public void writeComment(String comment) throws IOException {
         writeWarning(getClass() + ": writeComment(String) not implemented.");
         // Write out the comment.
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void startGroup(String s) {
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void endGroup(String s) {
     }
 
     public String toString() {

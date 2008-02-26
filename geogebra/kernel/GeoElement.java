@@ -231,6 +231,7 @@ public abstract class GeoElement
 	public Color selColor = objColor, 
 				 labelColor = objColor, 
 				 fillColor = objColor;
+	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationStep = 0.1;
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
@@ -451,6 +452,17 @@ public abstract class GeoElement
 
 	public Color getObjectColor() {
 		return objColor;
+	}
+
+	// Michael Borcherds 2008-02-23
+	public void setLayer(int layer){
+		this.layer=layer;
+		app.updateMaxLayer(layer);
+	}
+	
+	// Michael Borcherds 2008-02-23
+	public int getLayer(){
+		return layer;
 	}
 
 	public void setAlphaValue(float alpha) {
@@ -2201,6 +2213,15 @@ public abstract class GeoElement
 		sb.append(alphaValue);
 		sb.append("\"");
 		sb.append("/>\n");
+		
+		// layer
+		// Michael Borcherds 2008-02-26
+		if (layer != 0)
+		{
+			sb.append("\t<layer ");
+			sb.append("val=\""+layer+"\"");
+			sb.append("/>\n");
+		}
 
 		if (withLabelOffset &&
 			(labelOffsetX != 0 || labelOffsetY != 0)) {

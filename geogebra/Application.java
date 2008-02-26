@@ -303,6 +303,8 @@ public abstract class Application implements	KeyEventDispatcher {
     
     private ArrayList selectedGeos = new ArrayList();
     
+    private int maxLayer=0; // Michael Borcherds 2008-02-26
+    
     // command dictionary
     private LowerCaseDictionary commandDict;
 
@@ -1094,6 +1096,16 @@ public abstract class Application implements	KeyEventDispatcher {
         reverseLanguage = "zh".equals(lang);
         reverseNameDescription = "eu".equals(lang);
     }
+    
+    // Michael Borcherds 2008-02-23
+    public void updateMaxLayer(int layer) {
+    	if (layer>maxLayer) maxLayer=layer;
+    }    
+    
+    // Michael Borcherds 2008-02-23
+    public int getMaxLayer() {
+    	return maxLayer;
+    }    
     
     private String getLanguageFontName(Locale locale) throws Exception {
         String fontName = null;

@@ -536,6 +536,7 @@ public class PropertiesDialogGeoElement
 		private ShowObjectPanel showObjectPanel;		
 		private ColorPanel colorPanel;
 		private LabelPanel labelPanel;
+		private LayerPanel layerPanel; // Michael Borcherds 2008-02-26
 		private CoordPanel coordPanel;
 		private LineEqnPanel lineEqnPanel;
 		private ConicEqnPanel conicEqnPanel;
@@ -579,6 +580,7 @@ public class PropertiesDialogGeoElement
 			showObjectPanel = new ShowObjectPanel();
 			colorPanel = new ColorPanel(colChooser);
 			labelPanel = new LabelPanel();
+			layerPanel = new LayerPanel(); // Michael Borcherds 2008-02-26
 			coordPanel = new CoordPanel();
 			lineEqnPanel = new LineEqnPanel();
 			conicEqnPanel = new ConicEqnPanel();
@@ -731,6 +733,7 @@ public class PropertiesDialogGeoElement
 			// advanced tab
 			ArrayList advancedTabList = new ArrayList();
 			advancedTabList.add(showConditionPanel);	
+			advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
 					
@@ -1274,6 +1277,110 @@ public class PropertiesDialogGeoElement
 		}
 
 	} // LabelPanel
+
+	/*
+	 * panel with layers properties
+	 Michael Borcherds
+	 */
+	private class LayerPanel
+		extends JPanel
+		implements ItemListener, ActionListener , UpdateablePanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JComboBox layerModeCB;
+
+		public LayerPanel() {
+			setBorder(
+					BorderFactory.createTitledBorder(app.getMenu("Layer"))
+					);
+
+			// combo box for label mode: name or algebra
+			layerModeCB = new JComboBox();
+			layerModeCB.addItem(" 0"); 
+			layerModeCB.addItem(" 1"); 
+			layerModeCB.addItem(" 2"); 
+			layerModeCB.addItem(" 3"); 
+			layerModeCB.addItem(" 4"); 
+			layerModeCB.addItem(" 5"); 
+			layerModeCB.addItem(" 6"); 
+			layerModeCB.addItem(" 7"); 
+			layerModeCB.addItem(" 8"); 
+			layerModeCB.addItem(" 9"); 
+			layerModeCB.addActionListener(this);
+
+			// labelPanel with show checkbox
+			setLayout(new FlowLayout(FlowLayout.LEFT));
+			add(layerModeCB);			
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			layerModeCB.removeActionListener(this);
+
+			// check if properties have same values
+			GeoElement temp, geo0 = (GeoElement) geos[0];
+			boolean equalLayer = true;
+
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoElement) geos[i];
+				//	same label visible value
+				if (geo0.getLayer() != temp.getLayer())
+					equalLayer = false;
+			}
+			
+
+			if (equalLayer)
+				layerModeCB.setSelectedIndex(geo0.getLayer());
+			else
+				layerModeCB.setSelectedItem(null);
+
+			// locus in selection
+			layerModeCB.addActionListener(this);
+			return this;
+		}
+
+		// show everything but numbers (note: drawable angles are shown)
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (!geo.isEuclidianVisible()) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+
+		/**
+		 * listens to checkboxes and sets object and label visible state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+		}
+
+		/**
+		* action listener implementation for label mode combobox
+		*/
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			if (source == layerModeCB) {
+				GeoElement geo;
+				int layer = layerModeCB.getSelectedIndex();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.setLayer(layer);
+					geo.updateRepaint();
+				}
+			}
+		}
+
+	} // LayersPanel
 
 	/**
 	 * panel for trace

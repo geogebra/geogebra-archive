@@ -1142,8 +1142,11 @@ public class MyXMLHandler implements DocHandler {
                     ok = handleLabelOffset(attrs);
                     break;
         		  } else if (eName.equals("labelMode")) {
-                    ok = handleLabelMode(attrs);
-                    break;
+                      ok = handleLabelMode(attrs);
+                      break;
+        		  } else if (eName.equals("layer")) {
+                      ok = handleLayer(attrs);
+                      break;
         		  }
         		  
             case 'm':
@@ -1421,6 +1424,17 @@ public class MyXMLHandler implements DocHandler {
         try {
             GeoPoint p = (GeoPoint) geo;
             p.setPointSize(Integer.parseInt((String) attrs.get("val")));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }     
+            
+    // Michael Borcherds 2008-02-26
+    private boolean handleLayer(LinkedHashMap attrs) {
+
+        try {
+            geo.setLayer(Integer.parseInt((String) attrs.get("val")));
             return true;
         } catch (Exception e) {
             return false;

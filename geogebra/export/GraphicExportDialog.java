@@ -328,7 +328,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 					file, 0,0, pixelWidth, pixelHeight);		
 										
 	    	// draw to epsGraphics2D
-			ev.exportPaint(g, exportScale);
+			ev.exportPaint(g, exportScale, true); // Michael Borcherds 2008-02-26 added true
 			g.close();			
 			return true;						
 		} catch (Exception ex) {
@@ -351,8 +351,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return false;
 		try {					   
 			VectorGraphics g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
-		    g.startExport();			
-			app.getEuclidianView().exportPaint(g, exportScale);
+		    g.startExport();	
+			app.getEuclidianView().exportPaint(g, exportScale, true); // Michael Borcherds 2008-02-26 added true
 			g.endExport();								    		     		   		    		    			
 			
 			return true;
@@ -381,7 +381,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {					   
 			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 		    g.startExport();			
-			app.getEuclidianView().exportPaint(g, exportScale);
+			app.getEuclidianView().exportPaint(g, exportScale, true); // Michael Borcherds 2008-02-26 added true
 			g.endExport();								    		     		   		    		    			
 			
 			return true;
@@ -410,7 +410,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {						
 		    VectorGraphics g = new SVGGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 		    g.startExport();
-			app.getEuclidianView().exportPaint(g, exportScale);
+			app.getEuclidianView().exportPaint(g, exportScale, true);
 			g.endExport();	
 			return true;
 		} catch (Exception ex) {

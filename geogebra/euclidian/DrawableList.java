@@ -92,10 +92,11 @@ public class DrawableList {
 		}
 	}
 	
-	public final void drawAll(Graphics2D g2) {		
+	public final void drawAll(Graphics2D g2, int layer) {		
 		Link cur = head;
 		while (cur != null) {
-			cur.d.draw(g2);
+			if (cur.d.getGeoElement().layer==layer || layer==-1) // Michael Borcherds 2008-02-26
+				cur.d.draw(g2);
 			cur = cur.next;
 		}
 	}	

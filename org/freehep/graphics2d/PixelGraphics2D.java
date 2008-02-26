@@ -28,6 +28,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.print.PrinterGraphics;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.AttributedCharacterIterator;
@@ -39,7 +40,7 @@ import org.freehep.graphics2d.font.FontEncoder;
 /**
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: PixelGraphics2D.java,v 1.1 2008-02-25 21:18:11 murkle Exp $
+ * @version $Id: PixelGraphics2D.java,v 1.2 2008-02-26 20:56:50 murkle Exp $
  */
 public class PixelGraphics2D extends AbstractVectorGraphics {
 
@@ -161,6 +162,14 @@ public class PixelGraphics2D extends AbstractVectorGraphics {
     }
 
     public void printComment(String comment) {
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void startGroup(String s) {
+    }
+
+    // Michael Borcherds 2008-02-26
+    public void endGroup(String s) {
     }
 
     public Graphics create(double x, double y, double width, double height) {
