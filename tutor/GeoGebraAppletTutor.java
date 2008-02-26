@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import tutor.gui.MyCustomMenubar;
+import tutor.gui.TutorMenubar;
 import tutor.gui.TutorController;
 import tutor.gui.TutorView;
 import tutor.persistence.dao.http.factory.HttpDaoFactory;
@@ -45,8 +45,8 @@ public class GeoGebraAppletTutor extends GeoGebraApplet {
 
 	protected Application buildApplication(String[] args, boolean undoActive) {
 		
-		Application app = new CustomApplication(args, this, undoActive);
-		app.setMenubar(new MyCustomMenubar(app));
+		Application app = new TutorApplication(args, this, undoActive);
+		app.setMenubar(new TutorMenubar(app));
 		app.initMenubar();
 		
 		return app; 

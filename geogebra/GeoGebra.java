@@ -264,7 +264,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		
 		//GeoGebra wnd = buildGeoGebra();
 
-		Application app = new Application(args, wnd, true);
+		Application app = new GeoGebraApplication(args, wnd, true);
 		app.setMenubar(new GeoGebraMenuBar(app));
 		app.initMenubar();
 		

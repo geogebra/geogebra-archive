@@ -8,9 +8,9 @@ import geogebra.kernel.Kernel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MyCustomMenubar extends MenubarImpl implements Menubar, ActionListener {
+public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener {
 
-	public MyCustomMenubar(Application app) {
+	public TutorMenubar(Application app) {
 		super();
 		this.app = app;
 		kernel = app.getKernel();

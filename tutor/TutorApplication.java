@@ -5,13 +5,13 @@ import geogebra.GeoGebra;
 import geogebra.GeoGebraApplet;
 import geogebra.kernel.GeoElement;
 
-public class CustomApplication extends Application {
+public class TutorApplication extends Application {
 
-    public CustomApplication(String[] args, GeoGebra frame, boolean undoActive) {
+    public TutorApplication(String[] args, GeoGebra frame, boolean undoActive) {
         super(args, frame, undoActive);
     }
 
-    public CustomApplication(String[] args, GeoGebraApplet applet, boolean undoActive) {
+    public TutorApplication(String[] args, GeoGebraApplet applet, boolean undoActive) {
     	super(args, applet, undoActive);
     }
     

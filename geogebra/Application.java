@@ -123,7 +123,7 @@ import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
 
-public class Application implements	KeyEventDispatcher {
+public abstract class Application implements	KeyEventDispatcher {
 
     public static final String buildDate = "Januar 26, 2008";
 	
