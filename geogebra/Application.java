@@ -304,6 +304,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private ArrayList selectedGeos = new ArrayList();
     
     private int maxLayer=0; // Michael Borcherds 2008-02-26
+    public int maxAllowedLayer = 29; // maximum allowed layers
     
     // command dictionary
     private LowerCaseDictionary commandDict;
@@ -1097,9 +1098,10 @@ public abstract class Application implements	KeyEventDispatcher {
         reverseNameDescription = "eu".equals(lang);
     }
     
-    // Michael Borcherds 2008-02-23
+    // Michael Borcherds 2008-02-27
     public void updateMaxLayer(int layer) {
-    	if (layer>maxLayer) maxLayer=layer;
+    	if (layer > maxLayer) maxLayer=layer;
+    	if (maxLayer > maxAllowedLayer) maxLayer=maxAllowedLayer;
     }    
     
     // Michael Borcherds 2008-02-23

@@ -1299,16 +1299,9 @@ public class PropertiesDialogGeoElement
 
 			// combo box for label mode: name or algebra
 			layerModeCB = new JComboBox();
-			layerModeCB.addItem(" 0"); 
-			layerModeCB.addItem(" 1"); 
-			layerModeCB.addItem(" 2"); 
-			layerModeCB.addItem(" 3"); 
-			layerModeCB.addItem(" 4"); 
-			layerModeCB.addItem(" 5"); 
-			layerModeCB.addItem(" 6"); 
-			layerModeCB.addItem(" 7"); 
-			layerModeCB.addItem(" 8"); 
-			layerModeCB.addItem(" 9"); 
+			
+			for (int layer=0 ; layer<=app.maxAllowedLayer ; layer++) layerModeCB.addItem(" "+layer); 
+			
 			layerModeCB.addActionListener(this);
 
 			// labelPanel with show checkbox

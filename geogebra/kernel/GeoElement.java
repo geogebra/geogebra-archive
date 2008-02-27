@@ -454,10 +454,11 @@ public abstract class GeoElement
 		return objColor;
 	}
 
-	// Michael Borcherds 2008-02-23
+	// Michael Borcherds 2008-02-27
 	public void setLayer(int layer){
 		this.layer=layer;
-		app.updateMaxLayer(layer);
+		if (this.layer > app.maxAllowedLayer) this.layer = app.maxAllowedLayer;
+		app.updateMaxLayer(this.layer);
 	}
 	
 	// Michael Borcherds 2008-02-23
