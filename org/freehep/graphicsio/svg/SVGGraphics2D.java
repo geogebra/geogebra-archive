@@ -60,7 +60,7 @@ import org.freehep.xml.util.XMLWriter;
  * The current implementation is based on REC-SVG11-20030114
  *
  * @author Mark Donszelmann
- * @version $Id: SVGGraphics2D.java,v 1.2 2008-02-26 20:56:50 murkle Exp $
+ * @version $Id: SVGGraphics2D.java,v 1.3 2008-02-27 21:30:55 murkle Exp $
  */
 public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
@@ -143,7 +143,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         defaultProperties.setProperties(newProperties);
     }
 
-    public static final String version = "$Revision: 1.2 $";
+    public static final String version = "$Revision: 1.3 $";
 
     // current filename including path
     private String filename;
@@ -154,7 +154,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     // The private writer used for this file.
     private OutputStream ros;
 
-    private PrintWriter os;
+    protected PrintWriter os;
 
     // table for gradients
     Hashtable gradients = new Hashtable();
@@ -987,14 +987,14 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     }
 
     // Michael Borcherds 2008-02-26
-    public void startGroup(String s) {
-        os.println("<g id=\"" + s + "\">");
-    }
+    //public void startGroup(String s) {
+    //    os.println("<g id=\"" + s + "\">");
+    //}
 
     // Michael Borcherds 2008-02-26
-    public void endGroup(String s)  {
-        os.println("</g><!-- " + s + " -->");
-    }
+    //public void endGroup(String s)  {
+    //    os.println("</g><!-- " + s + " -->");
+    //}
 
     public String toString() {
         return "SVGGraphics2D";

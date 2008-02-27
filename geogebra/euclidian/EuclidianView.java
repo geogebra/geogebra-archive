@@ -1336,7 +1336,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}
 
 			double scale = PRINTER_PIXEL_PER_CM / xscale * printingScale;
-			exportPaint(g2d, scale, false); // Michael Borcherds 2008-02-26 added false(=isVectorGraphics)
+			exportPaint(g2d, scale, false); // Michael Borcherds 2008-02-26 added false(=isSVGExtensions)
 
 			// clear page margins at bottom and right
 			double pagewidth = pageFormat.getWidth();
@@ -1367,7 +1367,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 *            set to true, no traces are drawn.
 	 * 
 	 */
-	public void exportPaint(Graphics2D g2d, double scale, boolean isVectorGraphics) {
+	public void exportPaint(Graphics2D g2d, double scale, boolean isSVGExtensions) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1392,7 +1392,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-		drawLayers(g2d,isVectorGraphics); // Michael Borcherds 2008-02-26			
+		drawLayers(g2d,isSVGExtensions); // Michael Borcherds 2008-02-27			
 	}		
 
 	/**
@@ -1841,13 +1841,13 @@ public class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 	
-	protected void drawLayers(Graphics2D g2, boolean isVectorGraphics) {
+	protected void drawLayers(Graphics2D g2, boolean isSVGExtensions) {
 		int layer;
 		for (layer=0 ; layer<=app.getMaxLayer() ; layer++)
 		{
-			if (isVectorGraphics) ((VectorGraphics)g2).startGroup("layer "+layer);
+			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			drawObjects(g2,layer);
-			if (isVectorGraphics) ((VectorGraphics)g2).endGroup("layer "+layer);
+			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).endGroup("layer "+layer);
 		}
 	}
 	protected void drawObjects(Graphics2D g2, int layer) {		
@@ -1856,7 +1856,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 		
 		// draw HotEquations
 		// TODO layers for HotEquations
-		paintChildren(g2);
+		// all in layer 0 currently
+		// layer -1 means draw all
+		if (layer == 0 || layer == -1) paintChildren(g2);
 		
 		// draw Geometric objects
 		drawGeometricObjects(g2, layer);
