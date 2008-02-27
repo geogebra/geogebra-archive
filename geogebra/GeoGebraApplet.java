@@ -457,6 +457,46 @@ public abstract class GeoGebraApplet extends JApplet {
 	}
 	
 	/**
+	 * Sets the layer of the object with the given name in the geometry window.
+	 * Michael Borcherds 2008-02-27
+	 */
+	public synchronized void setLayer(String objName, int layer) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;		
+		geo.setLayer(layer);		
+		geo.updateRepaint();
+	}
+	
+	/**
+	 * Returns the layer of the object with the given name in the geometry window.
+	 * returns layer, or -1 if object doesn't exist
+	 * Michael Borcherds 2008-02-27
+	 */
+	public synchronized int getLayer(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		return geo.getLayer();		
+	}
+	
+	/**
+	 * Shows or hides a complete layer
+	 * Michael Borcherds 2008-02-27
+	 */
+	public synchronized void setLayerVisible(int layer, boolean visible) {
+		if (layer<0 || layer>app.getMaxLayer()) return;
+		String [] names = getObjNames();
+		for (int i=0 ; i < names.length ; i++)
+		{
+			GeoElement geo = kernel.lookupLabel(names[i]);
+			if (geo != null) if (geo.getLayer() == layer)
+			{
+				geo.setEuclidianVisible(visible);		
+				geo.updateRepaint();
+			}
+		}	
+	}
+
+	/**
 	 * Sets the fixed state of the object with the given name.
 	 */
 	public synchronized void setFixed(String objName, boolean flag) {
