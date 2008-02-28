@@ -2,7 +2,7 @@ package tutor;
 
 import geogebra.Application;
 import geogebra.GeoGebra;
-import geogebra.GeoGebraApplet;
+import geogebra.GeoGebraAppletBase;
 import geogebra.kernel.GeoElement;
 
 public class TutorApplication extends Application {
@@ -11,7 +11,7 @@ public class TutorApplication extends Application {
         super(args, frame, undoActive);
     }
 
-    public TutorApplication(String[] args, GeoGebraApplet applet, boolean undoActive) {
+    public TutorApplication(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
     	super(args, applet, undoActive);
     }
     

@@ -6,7 +6,7 @@ public class GeoGebraApplication extends Application {
         super(args, frame, undoActive);
     }
 
-    public GeoGebraApplication(String[] args, GeoGebraApplet applet, boolean undoActive) {
+    public GeoGebraApplication(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
     	super(args, applet, undoActive);
     }
 }

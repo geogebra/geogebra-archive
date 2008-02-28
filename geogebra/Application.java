@@ -230,7 +230,7 @@ public abstract class Application implements	KeyEventDispatcher {
     //private static Color COLOR_STATUS_BACKGROUND = new Color(240, 240, 240);
     
     private GeoGebra frame;
-    private GeoGebraApplet applet;
+    private GeoGebraAppletBase applet;
     private Component mainComp;
     private boolean isApplet = false;    
     private boolean showResetIcon = false;
@@ -313,11 +313,11 @@ public abstract class Application implements	KeyEventDispatcher {
         this(args, frame, null, undoActive);
     }
 
-    public Application(String[] args, GeoGebraApplet applet, boolean undoActive) {
+    public Application(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
     	this(args, null, applet, undoActive);
     }
     
-    private Application(String[] args, GeoGebra frame, GeoGebraApplet applet, boolean undoActive) {    	
+    private Application(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) {    	
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
@@ -843,7 +843,7 @@ public abstract class Application implements	KeyEventDispatcher {
         return kernel;
     }
     
-    public void setApplet(GeoGebraApplet applet) {
+    public void setApplet(GeoGebraAppletBase applet) {
     	isApplet = true;
     	this.applet = applet;
     	mainComp = applet;
@@ -897,7 +897,7 @@ public abstract class Application implements	KeyEventDispatcher {
         return isApplet;
     }
 
-    public GeoGebraApplet getApplet() {
+    public GeoGebraAppletBase getApplet() {
         return applet;
     }
     

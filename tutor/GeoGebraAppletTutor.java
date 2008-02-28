@@ -19,7 +19,7 @@ package tutor;
  */
 
 import geogebra.Application;
-import geogebra.GeoGebraApplet;
+import geogebra.GeoGebraAppletBase;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 
@@ -40,7 +40,7 @@ import tutor.persistence.dao.iface.StrategyDao;
  *
  * @author  Markus Hohenwarter
  */
-public class GeoGebraAppletTutor extends GeoGebraApplet {
+public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 
 
 	protected Application buildApplication(String[] args, boolean undoActive) {

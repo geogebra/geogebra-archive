@@ -59,7 +59,7 @@ import netscape.javascript.JSObject;
  * Applet interface of GeoGebra.
  * @author  Markus Hohenwarter
  */
-public abstract class GeoGebraApplet extends JApplet {
+public abstract class GeoGebraAppletBase extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 	protected Application app;
@@ -80,7 +80,7 @@ public abstract class GeoGebraApplet extends JApplet {
 	private JSObject browserWindow;
 
 	/** Creates a new instance of GeoGebraApplet */
-	public GeoGebraApplet() {}
+	public GeoGebraAppletBase() {}
 
 	public void init() {
 		try {
