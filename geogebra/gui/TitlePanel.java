@@ -12,7 +12,7 @@
 
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.kernel.Construction;
 
 import java.awt.BorderLayout;
@@ -51,7 +51,7 @@ public class TitlePanel extends JPanel {
 
 	private Construction cons;
 
-	public TitlePanel(GeoGebraApplicationBase app) {
+	public TitlePanel(Application app) {
 		cons = app.getKernel().getConstruction();
 
 		setLayout(new BorderLayout(5, 5));

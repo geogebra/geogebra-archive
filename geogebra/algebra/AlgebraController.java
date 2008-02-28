@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.algebra;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -39,7 +39,7 @@ public class AlgebraController
 	implements KeyListener, MouseListener, MouseMotionListener {
 	private Kernel kernel;
 	private Construction cons;
-	private GeoGebraApplicationBase app;
+	private Application app;
 	
 	private AlgebraView view;
 
@@ -57,7 +57,7 @@ public class AlgebraController
 		this.view = view;
 	}
 
-	GeoGebraApplicationBase getApplication() {
+	Application getApplication() {
 		return app;
 	}
 

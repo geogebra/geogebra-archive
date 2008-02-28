@@ -12,7 +12,7 @@
 
 package geogebra.export;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -54,11 +54,11 @@ public class GraphicSizePanel extends JPanel implements ActionListener,
 
     private boolean keepRatio;
 
-    public GraphicSizePanel(GeoGebraApplicationBase app, int width, int height) {
+    public GraphicSizePanel(Application app, int width, int height) {
 	this(app, width, height, true);
     }
 
-    public GraphicSizePanel(GeoGebraApplicationBase app, int width, int height,
+    public GraphicSizePanel(Application app, int width, int height,
 	    boolean keepRatio) {
 	//this.app = app;
 

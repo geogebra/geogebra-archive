@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.export;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.TitlePanel;
@@ -47,7 +47,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	        private GraphicSizePanel sizePanel;
 	        private boolean kernelChanged = false;
 	        private ConstructionProtocol prot;
-	        private GeoGebraApplicationBase app;
+	        private Application app;
 	        
 	        public ConstructionProtocolExportDialog(ConstructionProtocol prot) {
 	            super(prot.getApplication().getFrame(), true);
@@ -61,7 +61,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	            setResizable(false);
 	            setTitle(app.getMenu("Export") + ": " +
 	                                    app.getPlain("ConstructionProtocol") +
-	                                    " (" +  GeoGebraApplicationBase.FILE_EXT_HTML + ")");
+	                                    " (" +  Application.FILE_EXT_HTML + ")");
 	            
 	            JPanel cp = new JPanel(new BorderLayout(5,5));
 	            cp.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -205,7 +205,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                                                   boolean useColors) {    
 	            File file, pngFile = null;
 	            prot.setUseColors(useColors);
-	            file = app.showSaveDialog(GeoGebraApplicationBase.FILE_EXT_HTML, null,
+	            file = app.showSaveDialog(Application.FILE_EXT_HTML, null,
 	                   app.getPlain("html") + " " + app.getMenu("Files"));
 	            if (file == null) return;                       
 	            try {          
@@ -222,7 +222,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	              
 	               //  save image to PNG file
 	               if (img != null) {
-	                   pngFile = GeoGebraApplicationBase.addExtension(GeoGebraApplicationBase.removeExtension(file), "png");
+	                   pngFile = Application.addExtension(Application.removeExtension(file), "png");
 	                   ImageIO.write(img, "png", pngFile);
 	               } 
 	                               

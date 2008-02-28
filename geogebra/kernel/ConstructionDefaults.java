@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Color;
@@ -123,7 +123,7 @@ public class ConstructionDefaults {
 	private void createDefaultGeoElements() {
 		defaultGeoElements = new FastHashMapKeyless();		
 		
-		GeoGebraApplicationBase app = cons.getApplication();		
+		Application app = cons.getApplication();		
 		String strFree = " (" + app.getPlain("free") + ")";
 		String strDependent = " (" + app.getPlain("dependent") + ")";
 						
@@ -319,7 +319,7 @@ public class ConstructionDefaults {
 			geo.setAllVisualProperties(defaultGeo);					     
 
         // label visibility
-		GeoGebraApplicationBase app = cons.getApplication();
+		Application app = cons.getApplication();
 		int labelingStyle = app.getLabelingStyle();
 		
 		// automatic labelling: 

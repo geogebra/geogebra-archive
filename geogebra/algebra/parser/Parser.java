@@ -10,7 +10,7 @@ public class Parser implements ParserConstants {
 
     private Kernel kernel;
     private Construction cons;
-    private GeoGebraApplicationBase app;
+    private Application app;
 
     public Parser(Kernel kernel, Construction cons) {
          this ( new java.io.StringReader("") ); // dummy stream for parser initing

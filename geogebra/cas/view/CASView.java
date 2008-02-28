@@ -1,6 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
 
@@ -30,7 +30,7 @@ public class CASView extends JComponent {
 
 	private CASTableModel tableModel;
 
-	private GeoGebraApplicationBase app;
+	private Application app;
 
 	private GeoGebraCAS cas;
 
@@ -38,7 +38,7 @@ public class CASView extends JComponent {
 
 	private final int numOfRows = 25;
 
-	public CASView(GeoGebraApplicationBase app) {
+	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
 		cas = new GeoGebraCAS();

@@ -12,7 +12,7 @@
 
 package geogebra.export;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.InputPanel;
@@ -60,7 +60,7 @@ public class WorksheetExportDialog extends JDialog {
 	private static final int DEFAULT_APPLET_WIDTH = 600;
 	private static final int DEFAULT_APPLET_HEIGHT = 500;	
 
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private Kernel kernel;
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbShowResetIcon,
@@ -70,7 +70,7 @@ public class WorksheetExportDialog extends JDialog {
 	private boolean useWorksheet = true, kernelChanged = false;			
 	private JTabbedPane tabbedPane;
 
-	public WorksheetExportDialog(GeoGebraApplicationBase app) {
+	public WorksheetExportDialog(Application app) {
 		super(app.getFrame(), true);
 		this.app = app;
 		kernel = app.getKernel();
@@ -160,7 +160,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		setTitle(app.getMenu("Export") + ": "
 				+ app.getPlain("DynamicWorksheet") + " ("
-				+ GeoGebraApplicationBase.FILE_EXT_HTML + ")");
+				+ Application.FILE_EXT_HTML + ")");
 		setResizable(false);
 		centerOnScreen();
 	}
@@ -483,12 +483,12 @@ public class WorksheetExportDialog extends JDialog {
 	private void exportHTML() {
 		File htmlFile = null;
 
-		File currFile = GeoGebraApplicationBase.removeExtension(app.getCurrentFile());
+		File currFile = Application.removeExtension(app.getCurrentFile());
 		if (currFile != null)
-			htmlFile = GeoGebraApplicationBase
-					.addExtension(currFile, GeoGebraApplicationBase.FILE_EXT_HTML);
+			htmlFile = Application
+					.addExtension(currFile, Application.FILE_EXT_HTML);
 
-		htmlFile = app.showSaveDialog(GeoGebraApplicationBase.FILE_EXT_HTML, htmlFile, app
+		htmlFile = app.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
 				+ " " + app.getMenu("Files"));
 		if (htmlFile == null)
@@ -497,7 +497,7 @@ public class WorksheetExportDialog extends JDialog {
 		try {
 			// save construction file
 			// as file_worksheet.ggb
-			String ggbFileName = GeoGebraApplicationBase.removeExtension(htmlFile).getName()
+			String ggbFileName = Application.removeExtension(htmlFile).getName()
 					+ ".ggb";
 			final File ggbFile = new File(htmlFile.getParent(), ggbFileName);
 			app.getXMLio().writeGeoGebraFile(ggbFile);

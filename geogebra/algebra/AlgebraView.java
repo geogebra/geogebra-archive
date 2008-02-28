@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.algebra;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -59,7 +59,7 @@ public class AlgebraView extends JTree implements View {
 	
 	private ImageIcon iconShown, iconHidden;
 
-	private GeoGebraApplicationBase app; // parent appame
+	private Application app; // parent appame
 	private Kernel kernel;
 	private DefaultTreeModel model;
 	
@@ -581,7 +581,7 @@ public class AlgebraView extends JTree implements View {
 				setText(str);								
 				
 				if (geo.doHighlighting())				   
-					setBackground(GeoGebraApplicationBase.COLOR_SELECTION);
+					setBackground(Application.COLOR_SELECTION);
 				else 
 					setBackground(getBackgroundNonSelectionColor());
 								

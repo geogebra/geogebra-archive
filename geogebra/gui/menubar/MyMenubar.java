@@ -1,6 +1,6 @@
 package geogebra.gui.menubar;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.ConstructionProtocolNavigation;
@@ -83,11 +83,11 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 	//private JMenuItem miCloseAll;
 
-	private GeoGebraApplicationBase app;
+	private Application app;
 
 	private Kernel kernel;
 
-	public MyMenubar(GeoGebraApplicationBase app) {
+	public MyMenubar(Application app) {
 		this.app = app;
 		kernel = app.getKernel();
 	}
@@ -195,11 +195,11 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		
 		
 		// LAST FILES list
-		int size = GeoGebraApplicationBase.getFileListSize();
+		int size = Application.getFileListSize();
 		if (size > 0) {
 			menu.addSeparator();						
 			for (int i = 0; i < 4; i++) {
-				File file = GeoGebraApplicationBase.getFromFileList(i);
+				File file = Application.getFromFileList(i);
 				if (file != null) {										
 					mi = new JMenuItem(file.getName());
 					mi.setIcon(app.getImageIcon("geogebra.gif"));					
@@ -929,7 +929,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		exportGraphicAction = new AbstractAction(app.getPlain("DrawingPad") + " "
 				+ app.getPlain("as") + " " + app.getPlain("Picture") + " ("
-				+ GeoGebraApplicationBase.FILE_EXT_PNG + ", " + GeoGebraApplicationBase.FILE_EXT_EPS + ") ...", 
+				+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...", 
 				app.getImageIcon("image-x-generic.png")) {
 			private static final long serialVersionUID = 1L;
 
@@ -944,7 +944,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				  		    // JDialog d = new geogebra.export.GraphicExportDialog(app);   		
 				  		    Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
 				  		    Object[] args = new Object[] { app };
-				  		    Class [] types = new Class[] {GeoGebraApplicationBase.class};
+				  		    Class [] types = new Class[] {Application.class};
 				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
 				  	        JDialog d =  (JDialog) constructor.newInstance(args);  					    
 					      
@@ -972,7 +972,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
 		  		    Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
 		  		    Object[] args = new Object[] { app };
-		  		    Class [] types = new Class[] {GeoGebraApplicationBase.class};
+		  		    Class [] types = new Class[] {Application.class};
 		  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
 		  	        constructor.newInstance(args);  																
 				} catch (Exception ex) {
@@ -999,7 +999,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 
 		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheet") + " "
 				+ app.getPlain("as") + " " + app.getPlain("html") + " ("
-				+ GeoGebraApplicationBase.FILE_EXT_HTML + ") ...",
+				+ Application.FILE_EXT_HTML + ") ...",
 				app.getImageIcon("text-html.png")) {
 			private static final long serialVersionUID = 1L;
 
@@ -1014,7 +1014,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 				  		    // JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
 				  		    Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
 				  		    Object[] args = new Object[] { app };
-				  		    Class [] types = new Class[] {GeoGebraApplicationBase.class};
+				  		    Class [] types = new Class[] {Application.class};
 				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
 				  	        JDialog d =  (JDialog) constructor.newInstance(args); 
 														
@@ -1109,7 +1109,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				app.showURLinBrowser(GeoGebraApplicationBase.GEOGEBRA_WEBSITE);
+				app.showURLinBrowser(Application.GEOGEBRA_WEBSITE);
 			}
 		};		
 		
@@ -1118,7 +1118,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				BrowserLauncher.openURL(GeoGebraApplicationBase.GEOGEBRA_WEBSITE + "forum/");
+				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE + "forum/");
 			}
 		};	
 		
@@ -1127,7 +1127,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {	
-				String url = GeoGebraApplicationBase.GEOGEBRA_WEBSITE;
+				String url = Application.GEOGEBRA_WEBSITE;
 				if (app.getLocale().getLanguage().equals("de"))
 					url += "de/wiki/";
 				else
@@ -1140,7 +1140,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		updateActions();
 	}
 	
-	public static void showPrintPreview(final GeoGebraApplicationBase  app) {
+	public static void showPrintPreview(final Application  app) {
 		Thread runner = new Thread() {
 			public void run() {			
 				app.setWaitCursor();
@@ -1150,7 +1150,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		  		    // new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
 		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
 		  		    Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
-		  		    Class [] types = new Class[] {GeoGebraApplicationBase.class, Printable.class, int.class};
+		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
 		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
 		  	        constructor.newInstance(args); 										
 					
@@ -1164,14 +1164,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		runner.start();
 	}
 	
-	public static void showAboutDialog(final GeoGebraApplicationBase app) {
+	public static void showAboutDialog(final Application app) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
-		sb.append(GeoGebraApplicationBase.versionString);
+		sb.append(Application.versionString);
 		sb.append("</b><br>");
-		sb.append(GeoGebraApplicationBase.buildDate);
+		sb.append(Application.buildDate);
 
 		// license
 		String text = readTextFromJar("license_message.txt");
@@ -1251,7 +1251,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		JRadioButtonMenuItem mi;
 		for (int i = 0; i < size; i++) {
 			GeoGebra ggb = (GeoGebra) ggbInstances.get(i);
-			GeoGebraApplicationBase application = ggb.getApplication();
+			Application application = ggb.getApplication();
 
 			sb.setLength(0);
 			sb.append(i + 1);
@@ -1361,14 +1361,14 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 		menu.add(submenu1);
 		menu.add(submenu2);
 		
-		for (int i = 0; i < GeoGebraApplicationBase.supportedLocales.size(); i++) {						
-			Locale loc = (Locale)  GeoGebraApplicationBase.supportedLocales.get(i);
+		for (int i = 0; i < Application.supportedLocales.size(); i++) {						
+			Locale loc = (Locale)  Application.supportedLocales.get(i);
 			ggbLangCode = loc.getLanguage() + loc.getCountry()
 					+ loc.getVariant();
 
 			// enforce to show specialLanguageNames first
 			// because here getDisplayLanguage doesn't return a good result
-			String text = (String)  GeoGebraApplicationBase.specialLanguageNames.get(ggbLangCode);
+			String text = (String)  Application.specialLanguageNames.get(ggbLangCode);
 			if (text == null)
 				text = loc.getDisplayLanguage(Locale.ENGLISH);
 			mi = new JRadioButtonMenuItem(text);
@@ -1406,7 +1406,7 @@ public class MyMenubar extends JMenuBar implements ActionListener {
 	 // handle language changes
     private class LanguageActionListener implements ActionListener {                        
         public void actionPerformed(ActionEvent e) {
-        	app.setLanguage(GeoGebraApplicationBase.getLocale(e.getActionCommand()));        	
+        	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
         	GeoGebraPreferences.saveDefaultLocale(app.getLocale());
         }
     }

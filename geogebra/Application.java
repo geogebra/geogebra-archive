@@ -123,7 +123,7 @@ import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
 
-public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
+public abstract class Application implements	KeyEventDispatcher {
 
     public static final String buildDate = "Januar 26, 2008";
 	
@@ -309,15 +309,15 @@ public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
     // command dictionary
     private LowerCaseDictionary commandDict;
 
-    public GeoGebraApplicationBase(String[] args, GeoGebra frame, boolean undoActive) {
+    public Application(String[] args, GeoGebra frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
 
-    public GeoGebraApplicationBase(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
+    public Application(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
     	this(args, null, applet, undoActive);
     }
     
-    private GeoGebraApplicationBase(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) {    	
+    private Application(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) {    	
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
@@ -409,13 +409,13 @@ public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
 		
     }      
     
-    public static void openCAS(GeoGebraApplicationBase app) {
+    public static void openCAS(Application app) {
     	try {
     		// use reflection for
   		    // JComponent casView = new geogebra.cas.view.CASView(app);    		
   		    Class casViewClass = Class.forName("geogebra.cas.view.CASView");
   		    Object[] args = new Object[] { app };
-  		    Class [] types = new Class[] {GeoGebraApplicationBase.class};
+  		    Class [] types = new Class[] {Application.class};
   	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
   	        JComponent casView = (JComponent) constructor.newInstance(args);  	          	      
 			
@@ -434,13 +434,13 @@ public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
     }
 	private static JFrame spFrame= new JFrame();
     
-    public static void openSpreadsheet(GeoGebraApplicationBase app) {
+    public static void openSpreadsheet(Application app) {
     	try {
 	    	// use reflection for
   		    // JComponent sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10); 		
   		    Class SpreadsheetView = Class.forName("geogebra.spreadsheet.SpreadsheetView");
   		    Object[] args = new Object[] { app, new Integer(26), new Integer(100)};
-  		    Class [] types = new Class[] {GeoGebraApplicationBase.class, int.class, int.class};
+  		    Class [] types = new Class[] {Application.class, int.class, int.class};
   	        Constructor constructor = SpreadsheetView.getDeclaredConstructor(types); 	        
   	        JComponent sp = (JComponent) constructor.newInstance(args);  
   	         	
@@ -2815,8 +2815,8 @@ public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
             	file = fileChooser.getSelectedFile();
             	
             	// remove all special characters from HTML filename
-                if (fileExtension == GeoGebraApplicationBase.FILE_EXT_HTML) {    
-                	file = GeoGebraApplicationBase.removeExtension(file);
+                if (fileExtension == Application.FILE_EXT_HTML) {    
+                	file = Application.removeExtension(file);
                 	file = new File(file.getParent(), Util.keepOnlyLettersAndDigits(file.getName()));
                 }
                 
@@ -3433,7 +3433,7 @@ public abstract class GeoGebraApplicationBase implements	KeyEventDispatcher {
 	        if (applet != null) {
 	        	codebase =  applet.getCodeBase();
 	        } else {
-	         	String path = GeoGebraApplicationBase.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();	     	
+	         	String path = Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();	     	
 		    	if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from end	    
 		    		path = path.substring(0, path.length() - JAR_FILES[0].length());	    		    		    	
 		    	codebase = new URL(path);        

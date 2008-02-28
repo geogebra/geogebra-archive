@@ -1,6 +1,6 @@
 package geogebra.kernel.commands;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.algebra.parser.ParseException;
 import geogebra.algebra.parser.Parser;
@@ -44,7 +44,7 @@ public class AlgebraProcessor {
 	
 	private Kernel kernel;
 	private Construction cons;
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private Parser parser;
 	private CommandDispatcher cmdDispatcher;
 	

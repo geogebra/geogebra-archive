@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.View;
 import geogebra.algebra.parser.Parser;
@@ -91,7 +91,7 @@ public class Kernel {
 	private int viewCnt = 0;
 	
 	protected Construction cons;
-	protected GeoGebraApplicationBase app;	
+	protected Application app;	
 	private AlgebraProcessor algProcessor;
 	private EquationSolver eqnSolver;
 	private ExtremumFinder extrFinder;
@@ -102,7 +102,7 @@ public class Kernel {
 	private boolean continuous = false;
 	private MacroManager macroManager;
 				
-	public Kernel(GeoGebraApplicationBase app) {
+	public Kernel(Application app) {
 		this();
 		this.app = app;
 		cons = new Construction(this);			
@@ -145,7 +145,7 @@ public class Kernel {
     	cons.updateLocalAxesNames();
     }
 	
-	public GeoGebraApplicationBase getApplication() {
+	public Application getApplication() {
 		return app;
 	}		
 	

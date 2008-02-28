@@ -1,6 +1,6 @@
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.kernel.Kernel;
 
 import java.awt.event.ActionEvent;
@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 
 public class GeoGebraMenuBar extends MenubarImpl implements Menubar, ActionListener {
 
-	public GeoGebraMenuBar(GeoGebraApplicationBase app) {
+	public GeoGebraMenuBar(Application app) {
 		super();
 		this.app = app;
 		kernel = app.getKernel();

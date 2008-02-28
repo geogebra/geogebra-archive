@@ -12,7 +12,7 @@
 
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -116,7 +116,7 @@ public class GeoGebraPreferences {
     	// language
     	String strLocale = ggbPrefs.get(APP_LOCALE, null);
     	if (strLocale != null) 
-    		return GeoGebraApplicationBase.getLocale(strLocale);
+    		return Application.getLocale(strLocale);
     	else
     		return null;    	
     }
@@ -136,7 +136,7 @@ public class GeoGebraPreferences {
     	// load last four files
     	for (int i=4; i >= 1; i--) {	
     		File file = new File(ggbPrefs.get(APP_FILE_ + i, ""));
-    		GeoGebraApplicationBase.addToFileList(file);	    		
+    		Application.addToFileList(file);	    		
     	}				    	
     }  
     	
@@ -147,7 +147,7 @@ public class GeoGebraPreferences {
     	try {    		    		    		    	
 	    	// save last four files
 	    	for (int i=1; i <= 4; i++) {	    		
-	    		File file = GeoGebraApplicationBase.getFromFileList(i-1);
+	    		File file = Application.getFromFileList(i-1);
 	    		if (file != null)
 	    			ggbPrefs.put(APP_FILE_ + i, file.getCanonicalPath());
 	    		else
@@ -162,7 +162,7 @@ public class GeoGebraPreferences {
      * Inits factory default XML by taking the preferences XML of this
      * virign application    		
      */
-    public static void initDefaultXML(GeoGebraApplicationBase app) {    	    	
+    public static void initDefaultXML(Application app) {    	    	
     	if (XML_GGB_FACTORY_DEFAULT == null)
     		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML();    
     }
@@ -170,7 +170,7 @@ public class GeoGebraPreferences {
     /**
      * Saves preferences by taking the application's current values. 
      */
-    public static void saveXMLPreferences(GeoGebraApplicationBase app) {
+    public static void saveXMLPreferences(Application app) {
     	
     	
     	// preferences xml
@@ -296,7 +296,7 @@ public class GeoGebraPreferences {
      * This method clears the current construction in the application.
      * Note: the XML string used is the same as for ggb files. 
      */
-    public static void loadXMLPreferences(GeoGebraApplicationBase app) {  
+    public static void loadXMLPreferences(Application app) {  
     	app.setWaitCursor();  
     	
     	// load this preferences xml file in application

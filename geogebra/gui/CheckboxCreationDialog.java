@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
@@ -54,13 +54,13 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	private DefaultComboBoxModel comboModel;
 	
 	private Point location;
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private GeoBoolean geoBoolean;
 	
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public CheckboxCreationDialog(GeoGebraApplicationBase app, Point location, GeoBoolean geoBoolean) {	
+	public CheckboxCreationDialog(Application app, Point location, GeoBoolean geoBoolean) {	
 		super(app.getFrame(), false);
 		this.app = app;
 		this.location = location;

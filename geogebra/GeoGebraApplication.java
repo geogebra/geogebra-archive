@@ -1,6 +1,6 @@
 package geogebra;
 
-public class GeoGebraApplication extends GeoGebraApplicationBase {
+public class GeoGebraApplication extends Application {
 
     public GeoGebraApplication(String[] args, GeoGebra frame, boolean undoActive) {
         super(args, frame, undoActive);

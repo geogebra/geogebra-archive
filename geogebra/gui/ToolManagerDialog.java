@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 
 package geogebra.gui;
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -47,10 +47,10 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ToolManagerDialog extends javax.swing.JDialog {	
 			
-	private GeoGebraApplicationBase app;	
+	private Application app;	
 	private DefaultListModel toolsModel;
 	
-	public ToolManagerDialog(GeoGebraApplicationBase app) {
+	public ToolManagerDialog(Application app) {
 		super(app.getFrame());
 		setModal(true);
 		
@@ -147,7 +147,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		if (sel == null) return;	
 		
 		File file =
-			app.showSaveDialog(GeoGebraApplicationBase.FILE_EXT_GEOGEBRA_TOOL, null,
+			app.showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
 	                	app.getPlain("ApplicationName") + " " + app.getMenu("Tools"));
         if (file == null)
             return;

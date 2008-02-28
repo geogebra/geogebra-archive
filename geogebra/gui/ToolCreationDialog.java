@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
@@ -57,7 +57,7 @@ import javax.swing.event.ListDataListener;
 public class ToolCreationDialog extends javax.swing.JDialog
 implements GeoElementSelectionListener {
 			
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private JTabbedPane tabbedPane;		
 	private ToolNameIconPanel namePanel;	
 	
@@ -67,7 +67,7 @@ implements GeoElementSelectionListener {
 	
 	private Macro newTool;
 	
-	public ToolCreationDialog(GeoGebraApplicationBase app) {
+	public ToolCreationDialog(Application app) {
 		super(app.getFrame());
 		this.app = app;		
 		
@@ -419,7 +419,7 @@ implements GeoElementSelectionListener {
 	/** 
 	 * Creates a panel with a list to choose input/output objects of the new tool.
 	 */
-	public static JPanel createInputOutputPanel(GeoGebraApplicationBase app, 
+	public static JPanel createInputOutputPanel(Application app, 
 			final DefaultListModel listModel, final DefaultComboBoxModel cbModel,
 			boolean showUpDownButtons) 
 	{		
@@ -472,7 +472,7 @@ implements GeoElementSelectionListener {
 	 * @param listPanel
 	 * @param list
 	 */
-	public static JPanel createListUpDownRemovePanel(GeoGebraApplicationBase app, final JList list, final JComboBox cbAdd, 
+	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, 
 			boolean showRemoveButton, boolean showUpDownButtons) {
 		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
 		

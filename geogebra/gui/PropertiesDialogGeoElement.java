@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.View;
 import geogebra.algebra.AlgebraView;
@@ -119,7 +119,7 @@ public class PropertiesDialogGeoElement
 	private static final int MAX_COMBOBOX_ENTRIES = 200;	
 	
 	private static final long serialVersionUID = 1L;
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private Kernel kernel;
 	private JTreeGeoElements geoTree;
 	private JButton closeButton;
@@ -137,7 +137,7 @@ public class PropertiesDialogGeoElement
 	 * Creates new PropertiesDialog.
 	 * @param app: parent frame
 	 */
-	public PropertiesDialogGeoElement(GeoGebraApplicationBase app) {
+	public PropertiesDialogGeoElement(Application app) {
 		super(app.getFrame(), false);
 		this.app = app;
 		kernel = app.getKernel();	
@@ -4047,12 +4047,12 @@ class SliderPanel
 	private JCheckBox cbSliderFixed;
 	private JComboBox coSliderHorizontal;
 	
-	private GeoGebraApplicationBase app;
+	private Application app;
 	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 	private AnimationStepPanel stepPanel;
 	private Kernel kernel;
 
-	public SliderPanel(GeoGebraApplicationBase app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+	public SliderPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
 		this.app = app;
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
@@ -4305,7 +4305,7 @@ class AnimationStepPanel
 	
 	private Kernel kernel;
 
-	public AnimationStepPanel(GeoGebraApplicationBase app) {
+	public AnimationStepPanel(Application app) {
 		kernel = app.getKernel();
 		
 		// text field for animation step
@@ -4435,7 +4435,7 @@ class ShowConditionPanel
 	private Kernel kernel;
 	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 
-	public ShowConditionPanel(GeoGebraApplicationBase app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+	public ShowConditionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
 		
@@ -4563,9 +4563,9 @@ class NamePanel
 	private RenameInputHandler nameInputHandler;
 	private RedefineInputHandler defInputHandler;
 	private GeoElement currentGeo;	
-	private GeoGebraApplicationBase app;
+	private Application app;
 
-	public NamePanel(GeoGebraApplicationBase app) {	
+	public NamePanel(Application app) {	
 		this.app = app;
 		// NAME PANEL
 		nameInputHandler = new RenameInputHandler(app, null, false);

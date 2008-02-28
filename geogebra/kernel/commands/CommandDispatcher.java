@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.commands;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -28,7 +28,7 @@ public class CommandDispatcher {
     
 	private Kernel kernel;
     private Construction cons;
-    private GeoGebraApplicationBase app;
+    private Application app;
     
     // stores (String name, CommandProcessor cmdProc) pairs   
     private HashMap cmdTable;

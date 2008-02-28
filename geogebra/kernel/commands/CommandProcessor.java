@@ -14,7 +14,7 @@ package geogebra.kernel.commands;
 
 import java.util.ArrayList;
 
-import geogebra.GeoGebraApplicationBase;
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -48,7 +48,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 public abstract class CommandProcessor  {
 	    
-    GeoGebraApplicationBase app;
+    Application app;
     Kernel kernel;
     Construction cons;
 	private AlgebraProcessor algProcessor;
@@ -124,7 +124,7 @@ public abstract class CommandProcessor  {
     	    return arg;
     	}
 
-        final MyError argErr(GeoGebraApplicationBase app, String cmd, Object arg) {
+        final MyError argErr(Application app, String cmd, Object arg) {
            String localName = app.getCommand(cmd);
            StringBuffer sb = new StringBuffer();
            sb.append(app.getCommand("Command") + " " + localName + ":\n");
@@ -138,7 +138,7 @@ public abstract class CommandProcessor  {
        }
 
         final MyError argNumErr(
-           GeoGebraApplicationBase app,
+           Application app,
            String cmd,
            int argNumber) {
            StringBuffer sb = new StringBuffer();
@@ -149,7 +149,7 @@ public abstract class CommandProcessor  {
            return new MyError(app, sb.toString());
        }
 
-        final MyError chDepErr(GeoGebraApplicationBase app, GeoElement geo) {
+        final MyError chDepErr(Application app, GeoElement geo) {
            String[] strs = { "ChangeDependent", geo.getLongDescription()};
            return new MyError(app, strs);
        }
