@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -28,7 +28,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  */
 public class Relation extends java.lang.Object {
 
-    private Application app;
+    private GeoGebraApplicationBase app;
     private Kernel kernel;
     private Construction cons;
 

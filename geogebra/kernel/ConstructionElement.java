@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 
 import java.util.TreeSet;
 
@@ -21,7 +21,7 @@ implements Comparable {
 	
 	protected transient Construction cons; // parent construction of this element
 	protected transient Kernel kernel;      // parent kernel of this element
-	protected transient Application app;  // parent application of this element
+	protected transient GeoGebraApplicationBase app;  // parent application of this element
 	
 	private int constIndex = -1; // index in construction list 
 	

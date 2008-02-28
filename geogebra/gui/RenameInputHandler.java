@@ -1,6 +1,6 @@
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -10,14 +10,14 @@ public class RenameInputHandler implements InputHandler {
 
 	private boolean storeUndo;
 
-	private Application app;
+	private GeoGebraApplicationBase app;
 
 	private static String[] invalidFunctionNames = { "gamma", "x", "y", "abs",
 			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan", "acos",
 			"asin", "atan", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
 			"floor", "ceil", "round", "min", "max", "random" };
 
-	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
+	public RenameInputHandler(GeoGebraApplicationBase app, GeoElement geo, boolean storeUndo) {
 		this.app = app;
 		this.geo = geo;
 		this.storeUndo = storeUndo;

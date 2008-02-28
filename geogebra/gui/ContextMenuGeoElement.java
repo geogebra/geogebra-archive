@@ -13,7 +13,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -61,15 +61,15 @@ public class ContextMenuGeoElement extends JPopupMenu {
     private GeoConic conic;
     //private GeoNumeric numeric;
     //private Point location;
-    Application app;
+    GeoGebraApplicationBase app;
 
-    ContextMenuGeoElement(Application app) {
+    ContextMenuGeoElement(GeoGebraApplicationBase app) {
         this.app = app;     
         setBackground(bgColor);
     }
 
     /** Creates new MyPopupMenu for GeoElement*/
-    public ContextMenuGeoElement(Application app, GeoElement geo, Point location) {
+    public ContextMenuGeoElement(GeoGebraApplicationBase app, GeoElement geo, Point location) {
         this(app);
         this.geo = geo;
         //this.location = location;                               

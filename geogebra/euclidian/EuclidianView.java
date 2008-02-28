@@ -12,7 +12,7 @@
 
 package geogebra.euclidian;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.View;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoElement;
@@ -324,7 +324,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	int fontSize;
 
 	// member variables
-	protected Application app;
+	protected GeoGebraApplicationBase app;
 
 	protected Kernel kernel;
 
@@ -498,7 +498,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		updateRightAngleStyle(app.getLocale());
 	}
 	
-	public Application getApplication() {
+	public GeoGebraApplicationBase getApplication() {
 		return app;
 	}
 	

@@ -1,6 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.GeoElement;
 
 import javax.swing.JTable;
@@ -12,7 +12,7 @@ public class CASTableModel extends DefaultTableModel {
    
 	private JTable table;
     private boolean modified;
-    private Application app = null;
+    private GeoGebraApplicationBase app = null;
     GeoElement copyGeo= null;
 	
     public CASTableModel(CASSession session, JTable table)
@@ -24,7 +24,7 @@ public class CASTableModel extends DefaultTableModel {
     	this.session = session;
     }
 
-    public CASTableModel(JTable table, int numRows, CASSession session, Application app)
+    public CASTableModel(JTable table, int numRows, CASSession session, GeoGebraApplicationBase app)
     {
         super(numRows, CASPara.numOfCol);
         this.app = app;
@@ -41,7 +41,7 @@ public class CASTableModel extends DefaultTableModel {
         this.session = session;
     }   
     
-    public CASTableModel(JTable table, Object[] data, CASSession session, Application app)
+    public CASTableModel(JTable table, Object[] data, CASSession session, GeoGebraApplicationBase app)
     {
        this(table, data.length, session, app);
 

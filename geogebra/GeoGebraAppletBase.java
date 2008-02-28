@@ -62,7 +62,7 @@ import netscape.javascript.JSObject;
 public abstract class GeoGebraAppletBase extends JApplet {
 
 	private static final long serialVersionUID = 1L;
-	protected Application app;
+	protected GeoGebraApplicationBase app;
 	protected Kernel kernel;
 	private JButton btOpen;
 	private DoubleClickListener dcListener;
@@ -178,7 +178,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		initGUI();
 	}
 
-	protected abstract Application buildApplication(String[] args, boolean ua);
+	protected abstract GeoGebraApplicationBase buildApplication(String[] args, boolean ua);
 	
 	public void start() {
 		//	for some strange reason this is needed to get the right font size		
@@ -404,7 +404,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void reset() {
 		try {		
 			URL ggbURL = new URL(fileStr);
-			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(GeoGebraApplicationBase.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -429,7 +429,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 				strURL = getCodeBase() + strURL;
 			}		
 			URL ggbURL = new URL(strURL);				
-			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			app.loadXML(ggbURL, lowerCase.endsWith(GeoGebraApplicationBase.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();
 		} catch (Exception e) {
 			e.printStackTrace();

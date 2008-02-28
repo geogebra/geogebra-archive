@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -105,7 +105,7 @@ public final class DrawText extends Drawable {
 				eqn.setOpaque(false);	
 				//eqn.setFont(view.getFont());		
 				
-				eqn.setFontname(Application.STANDARD_FONT_NAME);
+				eqn.setFontname(GeoGebraApplicationBase.STANDARD_FONT_NAME);
 				setEqnFontSize();																												
 				view.add(eqn);					
 		}

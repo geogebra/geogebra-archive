@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -45,7 +45,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	private double playDelay = 2; // in seconds	 
 	private JPanel playPanel;
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private ConstructionProtocol prot;
 	private boolean showPlayButton = true, 
 					showConsProtButton = true;

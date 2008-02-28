@@ -1,7 +1,7 @@
 package geogebra.export;
 
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.euclidian.EuclidianView;
 
 import java.awt.FlowLayout;
@@ -35,7 +35,7 @@ public class PrintScalePanel extends JPanel {
 	private NumberFormat nf;
 	private ActionListener al; 
 
-	public PrintScalePanel(Application app, EuclidianView ev) {		
+	public PrintScalePanel(GeoGebraApplicationBase app, EuclidianView ev) {		
 		this.ev = ev;		
 		
 		nf = NumberFormat.getInstance(Locale.ENGLISH);

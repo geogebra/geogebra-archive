@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -36,7 +36,7 @@ public class AngleInputDialog extends InputDialog {
 	/**
 	 * Input Dialog for a GeoAngle object.
 	 */
-	public AngleInputDialog(Application app,  String message, String title, String initString,
+	public AngleInputDialog(GeoGebraApplicationBase app,  String message, String title, String initString,
 					boolean autoComplete, InputHandler handler, boolean modal) {	
 		super(app.getFrame(), modal);
 		this.app = app;

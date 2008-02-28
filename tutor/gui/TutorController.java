@@ -1,6 +1,6 @@
 package tutor.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.Kernel;
 
 import java.awt.event.MouseEvent;
@@ -8,7 +8,7 @@ import java.awt.event.MouseListener;
 
 public class TutorController implements MouseListener {
 
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private Kernel kernel;
 	private TutorView view;
 	
@@ -18,7 +18,7 @@ public class TutorController implements MouseListener {
 		this.app = kernel.getApplication();
 	}
 	
-	public Application getApp() {
+	public GeoGebraApplicationBase getApp() {
 		return app;
 	}
 
@@ -30,7 +30,7 @@ public class TutorController implements MouseListener {
 		return view;
 	}
 	
-	public void setApp(Application app) {
+	public void setApp(GeoGebraApplicationBase app) {
 		this.app = app;
 	}
 

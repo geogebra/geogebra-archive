@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.export;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.GeoGebraPreferences;
@@ -52,7 +52,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	
 	private static final long serialVersionUID = 1L;
 
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private JComboBox cbFormat, cbDPI;
 	private JLabel sizeLabel;
 	private JButton cancelButton;
@@ -67,7 +67,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private final int FORMAT_SVG = 3;
 	private final int FORMAT_EMF = 4;		
 
-	public GraphicExportDialog(Application app) {
+	public GraphicExportDialog(GeoGebraApplicationBase app) {
 		super(app.getFrame(), true);
 		this.app = app;
 
@@ -99,11 +99,11 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		// format list 
 		JPanel formatPanel = new JPanel(new FlowLayout(5));
 		String[] formats =
-					{ app.getPlain("png") + " (" + Application.FILE_EXT_PNG + ")",
-					  app.getPlain("pdf") + " (" + Application.FILE_EXT_PDF + ")",
-					  app.getPlain("eps") + " (" + Application.FILE_EXT_EPS + ")", 			
-					  app.getPlain("svg") + " (" + Application.FILE_EXT_SVG + ")",
-					  app.getPlain("emf") + " (" + Application.FILE_EXT_EMF + ")"};
+					{ app.getPlain("png") + " (" + GeoGebraApplicationBase.FILE_EXT_PNG + ")",
+					  app.getPlain("pdf") + " (" + GeoGebraApplicationBase.FILE_EXT_PDF + ")",
+					  app.getPlain("eps") + " (" + GeoGebraApplicationBase.FILE_EXT_EPS + ")", 			
+					  app.getPlain("svg") + " (" + GeoGebraApplicationBase.FILE_EXT_SVG + ")",
+					  app.getPlain("emf") + " (" + GeoGebraApplicationBase.FILE_EXT_EMF + ")"};
 		
 		cbFormat = new JComboBox(formats);
 		formatPanel.add(new JLabel(app.getPlain("Format") + ":"));
@@ -316,7 +316,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportEPS() {
 		File file =
 			app.showSaveDialog(
-				Application.FILE_EXT_EPS, null,
+				GeoGebraApplicationBase.FILE_EXT_EPS, null,
 				app.getPlain("eps") + " " + app.getMenu("Files"));
 		if (file == null)
 			return false;
@@ -344,7 +344,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportEMF() {
 		File file =
 			app.showSaveDialog(
-				Application.FILE_EXT_EMF, null,
+				GeoGebraApplicationBase.FILE_EXT_EMF, null,
 				app.getPlain("emf") + " " + app.getMenu("Files"));
 		
 		if (file == null)
@@ -373,7 +373,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportPDF() {
 		File file =
 			app.showSaveDialog(
-				Application.FILE_EXT_PDF, null,
+				GeoGebraApplicationBase.FILE_EXT_PDF, null,
 				app.getPlain("pdf") + " " + app.getMenu("Files"));
 		
 		if (file == null)
@@ -402,7 +402,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportSVG() {
 		File file =
 			app.showSaveDialog(
-				Application.FILE_EXT_SVG, null,
+				GeoGebraApplicationBase.FILE_EXT_SVG, null,
 				app.getPlain("svg") + " " + app.getMenu("Files"));
 		
 		if (file == null)
@@ -433,7 +433,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportPNG() {
 		File file =
 			app.showSaveDialog(
-				Application.FILE_EXT_PNG, null,
+				GeoGebraApplicationBase.FILE_EXT_PNG, null,
 				app.getPlain("png") + " " + app.getMenu("Files"));
 		if (file == null)
 			return false;

@@ -32,11 +32,11 @@ public class MyParseError extends MyError {
 	private static final long serialVersionUID = 1L;
 
 	/** Creates new MyError */
-    public MyParseError(Application app, String errorName) {        
+    public MyParseError(GeoGebraApplicationBase app, String errorName) {        
         super(app, errorName);
     }
     
-    public MyParseError(Application app, String [] str) {
+    public MyParseError(GeoGebraApplicationBase app, String [] str) {
         // set localized message        
         super(app, str);
     }        

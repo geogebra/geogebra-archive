@@ -52,7 +52,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 
 	private static ArrayList instances = new ArrayList();
 	private static GeoGebra activeInstance;
-	private Application app;
+	private GeoGebraApplicationBase app;
 	
 	// check if we are on a mac
 	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase().startsWith("mac");
@@ -63,11 +63,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	}
 	
 
-	public Application getApplication() {
+	public GeoGebraApplicationBase getApplication() {
 		return app;
 	}
 
-	public void setApplication(Application app) {
+	public void setApplication(GeoGebraApplicationBase app) {
 		this.app = app;
 	}
 
@@ -264,7 +264,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		
 		//GeoGebra wnd = buildGeoGebra();
 
-		Application app = new GeoGebraApplication(args, wnd, true);
+		GeoGebraApplicationBase app = new GeoGebraApplication(args, wnd, true);
 		app.setMenubar(new GeoGebraMenuBar(app));
 		app.initMenubar();
 		
@@ -295,7 +295,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 
 	public static void updateAllTitles() {
 		for (int i = 0; i < instances.size(); i++) {
-			Application app = ((GeoGebra) instances.get(i)).app;
+			GeoGebraApplicationBase app = ((GeoGebra) instances.get(i)).app;
 			app.updateTitle();
 		}
 	}
@@ -315,7 +315,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			String absPath = file.getCanonicalPath();
 			for (int i = 0; i < instances.size(); i++) {
 				GeoGebra inst = (GeoGebra) instances.get(i);
-				Application app = inst.app;
+				GeoGebraApplicationBase app = inst.app;
 	
 				File currFile = app.getCurrentFile();
 				if (currFile != null) {

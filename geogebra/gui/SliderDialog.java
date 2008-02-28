@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
@@ -49,7 +49,7 @@ public class SliderDialog extends JDialog
 	private InputPanel tfLabel;
 	private JPanel optionPane;
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private SliderPanel sliderPanel;
 	
 	private GeoElement geoResult;
@@ -60,7 +60,7 @@ public class SliderDialog extends JDialog
 	 * Creates a dialog to create a new GeoNumeric for a slider.
 	 * @param x, y: location of slider in screen coords
 	 */
-	public SliderDialog(Application app, int x, int y) {
+	public SliderDialog(GeoGebraApplicationBase app, int x, int y) {
 		super(app.getFrame(), true);
 		this.app = app;		
 		addWindowListener(this);

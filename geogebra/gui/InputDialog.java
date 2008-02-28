@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.GeoElementSelectionListener;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.kernel.GeoElement;
@@ -48,18 +48,18 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected JLabel msgLabel; 
 		
 	protected String initString;
-	protected Application app;
+	protected GeoGebraApplicationBase app;
 	protected InputHandler inputHandler;
 	
 	/**
 	 * Creates a non-modal standard input dialog.
 	 */
-	public InputDialog(Application app,  String message, String title, String initString,
+	public InputDialog(GeoGebraApplicationBase app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler) {
 		this(app, message,title, initString, autoComplete, handler, false, false);
 	}
 	
-	public InputDialog(Application app,  String message, String title, String initString,
+	public InputDialog(GeoGebraApplicationBase app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText) {
 		this(app.getFrame(), modal);
 		this.app = app;		

@@ -30,17 +30,17 @@ public class MyError extends java.lang.Error {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected Application app;
+	protected GeoGebraApplicationBase app;
     private String [] strs;
     
     /** Creates new MyError */
-    public MyError(Application app, String errorName) {
+    public MyError(GeoGebraApplicationBase app, String errorName) {
         // set localized message
         super(errorName);
         this.app = app;
     }
     
-    public MyError(Application app, String [] strs) {
+    public MyError(GeoGebraApplicationBase app, String [] strs) {
         this.app = app;
         // set localized message        
         this.strs = strs;

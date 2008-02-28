@@ -25,13 +25,13 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 	
 	public synchronized void handleQuit(com.apple.eawt.ApplicationEvent ev) {
 		// quit all frames
-		Application app = getGGBInstance().getApplication();					
+		GeoGebraApplicationBase app = getGGBInstance().getApplication();					
 		app.exitAll();	
 	}			
 						
 	public synchronized void handleAbout(com.apple.eawt.ApplicationEvent event) {
 		 event.setHandled(true);
-         Application app = getGGBInstance().getApplication();	
+         GeoGebraApplicationBase app = getGGBInstance().getApplication();	
          app.showAboutDialog();
      }
 
@@ -46,7 +46,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 			if (openFile.exists()) {
 				// get application instance
 				GeoGebra ggb = getGGBInstance();
-				Application app = ggb.getApplication();
+				GeoGebraApplicationBase app = ggb.getApplication();
 				
 				// open file 
 				File [] files = { openFile };

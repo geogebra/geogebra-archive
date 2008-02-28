@@ -1,6 +1,6 @@
 package tutor.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.gui.Menubar;
 import geogebra.gui.MenubarImpl;
 import geogebra.kernel.Kernel;
@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 
 public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener {
 
-	public TutorMenubar(Application app) {
+	public TutorMenubar(GeoGebraApplicationBase app) {
 		super();
 		this.app = app;
 		kernel = app.getKernel();

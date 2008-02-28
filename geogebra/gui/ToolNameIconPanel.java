@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.Macro;
 
 import java.awt.GridBagConstraints;
@@ -46,13 +46,13 @@ public class ToolNameIconPanel extends JPanel {
 	private String iconFileName;	
 	private JButton btIconFile;
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 
 	// tool manager updating
 	private ToolManagerDialog managerDialog;
 	private Macro macro;
 	
-	public ToolNameIconPanel(final Application app) {
+	public ToolNameIconPanel(final GeoGebraApplicationBase app) {
 		this.app = app;
 		
 		GridBagLayout namePanelLayout = new GridBagLayout();

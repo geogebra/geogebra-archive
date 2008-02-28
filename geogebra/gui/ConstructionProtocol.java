@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.View;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.Construction;
@@ -78,13 +78,13 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1152223555575098008L;
-	private static Color COLOR_STEP_HIGHLIGHT = Application.COLOR_SELECTION;
+	private static Color COLOR_STEP_HIGHLIGHT = GeoGebraApplicationBase.COLOR_SELECTION;
     private static Color COLOR_DRAG_HIGHLIGHT = new Color(250, 250, 200);
     private static Color COLOR_DROP_HIGHLIGHT = Color.lightGray;
 
     private JTable table;
     private ConstructionTableData data;    
-    private Application app;
+    private GeoGebraApplicationBase app;
     private Kernel kernel;
     
     private JMenuBar menuBar = new JMenuBar();
@@ -107,7 +107,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     private ArrayList navigationBars = new ArrayList();
     private ConstructionProtocolNavigation protNavBar; // navigation bar of protocol window
 
-    public ConstructionProtocol(Application app) {
+    public ConstructionProtocol(GeoGebraApplicationBase app) {
         super(app.getFrame());
 
         this.app = app;
@@ -186,7 +186,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         setBounds(x, y, d1.width, d1.height);                      
     }
     
-    public Application getApplication() {
+    public GeoGebraApplicationBase getApplication() {
         return app;
     }
     
@@ -318,7 +318,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                             //			PageFormat.PORTRAIT);
         		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
         		  		    Object[] args = new Object[] { app , ConstructionProtocol.this, new Integer(PageFormat.PORTRAIT)};
-        		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
+        		  		    Class [] types = new Class[] {GeoGebraApplicationBase.class, Printable.class, int.class};
         		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
         		  	        constructor.newInstance(args);
                     		   
@@ -338,7 +338,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                                                         app.getMenu("Export") + " " + 
                                                         app.getPlain("as") + " " +
                                                         app.getPlain("html") + 
-                                                        " (" + Application.FILE_EXT_HTML + ") ...");
+                                                        " (" + GeoGebraApplicationBase.FILE_EXT_HTML + ") ...");
         exportHTML.setIcon(app.getEmptyIcon());
         ActionListener lstHTML = new ActionListener() {
             public void actionPerformed(ActionEvent e) {

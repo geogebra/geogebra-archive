@@ -1,6 +1,6 @@
 package tutor.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.MyResourceBundle;
 import geogebra.View;
@@ -60,7 +60,7 @@ import tutor.persistence.dao.iface.StrategyDao;
 public class TutorView extends JPanel implements View  {
 	
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private Kernel kernel;
 	private MyXMLio xmlio;
 	private TutorController tutorController;

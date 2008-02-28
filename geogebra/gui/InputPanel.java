@@ -1,6 +1,6 @@
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -74,13 +74,13 @@ public class InputPanel extends JPanel {
 	private JTextComponent textComponent;	
 	private JComboBox cbSpecialChars, cbGreekLetters;
 	
-	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
+	public InputPanel(String initText, GeoGebraApplicationBase app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
 		atf.setAutoComplete(autoComplete);
 	}		
 	
-	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
+	public InputPanel(String initText, GeoGebraApplicationBase app, int rows, int columns, boolean showSpecialChars,
 						boolean showGreekLetters) {
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);

@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -153,7 +153,7 @@ public class Construction {
     	geoTable.remove(xAxisLocalName);
     	geoTable.remove(yAxisLocalName);
     	
-    	Application app = kernel.getApplication();
+    	GeoGebraApplicationBase app = kernel.getApplication();
     	xAxisLocalName = app.getPlain("xAxis");
     	yAxisLocalName = app.getPlain("yAxis");
     	geoTable.put(xAxisLocalName, xAxis);
@@ -165,7 +165,7 @@ public class Construction {
         return kernel;
     }
     
-    public Application getApplication() {
+    public GeoGebraApplicationBase getApplication() {
         return kernel.getApplication();
     }
     

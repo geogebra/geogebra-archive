@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.export;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.TitlePanel;
@@ -61,7 +61,7 @@ public class PrintPreview extends JDialog {
 	protected JCheckBox cbEVscalePanel;
 	protected JScrollPane ps;
 	protected PreviewContainer m_preview;
-	protected Application app;
+	protected GeoGebraApplicationBase app;
 	
 	protected boolean kernelChanged = false;
 	
@@ -71,11 +71,11 @@ public class PrintPreview extends JDialog {
 		tempGraphics = img.getGraphics(); 
 	}		
 
-	public PrintPreview(Application app, Printable target) {
+	public PrintPreview(GeoGebraApplicationBase app, Printable target) {
 		this(app, target, PageFormat.PORTRAIT);		
 	}
 
-	public PrintPreview(Application app, Printable target, int orientation) {
+	public PrintPreview(GeoGebraApplicationBase app, Printable target, int orientation) {
 		super(app.getFrame(), true);
 		this.app = app;
 		initPrintPreview(target, orientation);
@@ -362,10 +362,10 @@ public class PrintPreview extends JDialog {
 		if (width > 0 &&  height > 0) {
 			//	set margins				
 			paper.setImageableArea(
-					Application.PAGE_MARGIN_X, 
-					Application.PAGE_MARGIN_Y,
-					width  - 2 * Application.PAGE_MARGIN_X, 
-					height - 2 * Application.PAGE_MARGIN_Y);
+					GeoGebraApplicationBase.PAGE_MARGIN_X, 
+					GeoGebraApplicationBase.PAGE_MARGIN_Y,
+					width  - 2 * GeoGebraApplicationBase.PAGE_MARGIN_X, 
+					height - 2 * GeoGebraApplicationBase.PAGE_MARGIN_Y);
 			pageFormat.setPaper(paper);
 		}
 				

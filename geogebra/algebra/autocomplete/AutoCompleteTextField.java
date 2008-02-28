@@ -1,6 +1,6 @@
 
 package geogebra.algebra.autocomplete;
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
@@ -19,7 +19,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-    private Application app;
+    private GeoGebraApplicationBase app;
     private StringBuffer curWord;       
     private int curWordStart;
     
@@ -34,7 +34,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
    * A default model is created and the number of columns is 0.
    *
    */
-  public AutoCompleteTextField(int columns, Application app) {
+  public AutoCompleteTextField(int columns, GeoGebraApplicationBase app) {
     setColumns(columns);
     
 	this.app = app;

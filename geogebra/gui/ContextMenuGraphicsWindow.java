@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 
@@ -56,7 +56,7 @@ implements ActionListener {
     private ImageIcon iconZoom;
 
     /** Creates new ZoomMenu */
-    public ContextMenuGraphicsWindow(Application app, double px, double py) {  
+    public ContextMenuGraphicsWindow(GeoGebraApplicationBase app, double px, double py) {  
         super(app);      
         
         iconZoom      = app.getImageIcon("zoom16.gif");

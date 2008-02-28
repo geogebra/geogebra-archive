@@ -12,7 +12,7 @@
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -25,9 +25,9 @@ import java.io.File;
 
 public class FileDropTargetListener implements DropTargetListener {
 
-	private Application app;
+	private GeoGebraApplicationBase app;
 
-	public FileDropTargetListener(Application app) {
+	public FileDropTargetListener(GeoGebraApplicationBase app) {
 		this.app = app;
 	}
 
@@ -75,10 +75,10 @@ public class FileDropTargetListener implements DropTargetListener {
 							.getTransferData(dataFlavor);
 					File droppedFile = (File) fileList.get(0);
 					String lowerCase = droppedFile.getName().toLowerCase();
-					if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {						
+					if (lowerCase.endsWith(GeoGebraApplicationBase.FILE_EXT_GEOGEBRA)) {						
 						return droppedFile;
 					} 
-					else if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL)) {						
+					else if (lowerCase.endsWith(GeoGebraApplicationBase.FILE_EXT_GEOGEBRA_TOOL)) {						
 						return droppedFile;
 					}											
 				}			

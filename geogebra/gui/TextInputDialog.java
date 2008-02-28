@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
@@ -49,7 +49,7 @@ public class TextInputDialog extends InputDialog {
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
+	public TextInputDialog(GeoGebraApplicationBase app,  String title, GeoText text, GeoPoint startPoint,
 								int cols, int rows) {	
 		super(app.getFrame(), false);
 		this.app = app;

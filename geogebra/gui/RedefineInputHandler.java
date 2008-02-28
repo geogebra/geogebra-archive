@@ -1,16 +1,16 @@
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 
 public class RedefineInputHandler implements InputHandler {
 
 	private GeoElement geo;
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private String oldString; // Michael Borcherds 2007-12-31
 
-	public RedefineInputHandler(Application app, GeoElement geo, String oldString) {
+	public RedefineInputHandler(GeoGebraApplicationBase app, GeoElement geo, String oldString) {
 		this.geo = geo;
 		this.app = app;
 		this.oldString=oldString; // Michael Borcherds 2007-12-31

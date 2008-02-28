@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.algebra;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.algebra.autocomplete.LowerCaseDictionary;
 import geogebra.gui.InputPanel;
@@ -41,7 +41,7 @@ implements ActionListener, MouseListener, KeyListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 
 	private JLabel helpButton;
 	private JToggleButton inputButton;	
@@ -54,7 +54,7 @@ implements ActionListener, MouseListener, KeyListener
 	/**
 	 * creates new AlgebraInput
 	 */
-	public AlgebraInput(Application app) {		
+	public AlgebraInput(GeoGebraApplicationBase app) {		
 		this.app = app;		
 		 		
 		initGUI();

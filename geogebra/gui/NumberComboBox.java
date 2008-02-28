@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.kernel.Kernel;
 
 import java.awt.Dimension;
@@ -31,7 +31,7 @@ public class NumberComboBox extends JComboBox {
 	private NumberFormat nf;	
 	private Kernel kernel;
 	
-	public NumberComboBox(final Application app) {		
+	public NumberComboBox(final GeoGebraApplicationBase app) {		
 		kernel = app.getKernel();
 		
 		addItem("1"); //pi

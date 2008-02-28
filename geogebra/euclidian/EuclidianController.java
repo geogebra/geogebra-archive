@@ -18,7 +18,7 @@
 
 package geogebra.euclidian;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
@@ -107,7 +107,7 @@ public class EuclidianController implements MouseListener,
 	
 	protected static final int MOVE_BOOLEAN = 118; // for checkbox moving
 
-	protected Application app;
+	protected GeoGebraApplicationBase app;
 
 	protected Kernel kernel;
 
@@ -222,7 +222,7 @@ public class EuclidianController implements MouseListener,
 		tempNum = new MyDouble(kernel);
 	}
 
-	Application getApplication() {
+	GeoGebraApplicationBase getApplication() {
 		return app;
 	}
 

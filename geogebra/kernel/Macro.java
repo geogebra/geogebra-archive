@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.MyError;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.Util;
@@ -347,7 +347,7 @@ public class Macro {
     	// get the XML for all macro construction elements
     	StringBuffer macroConsXML = new StringBuffer(500);
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    	macroConsXML.append("<geogebra format=\"" + Application.XML_FILE_FORMAT  + "\">\n");
+    	macroConsXML.append("<geogebra format=\"" + GeoGebraApplicationBase.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
     	     	    	      	
     	Iterator it = macroConsElements.iterator();

@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.GeoGebraApplicationBase;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 
@@ -58,7 +58,7 @@ ItemListener, WindowListener {
 	//private static final int TEXT_FIELD_COLS = 6;
 	//private static int PREF_FIELD_WIDTH = 100;	
 	
-	private Application app;
+	private GeoGebraApplicationBase app;
 	private Kernel kernel;
 	private EuclidianView view;
 	private JButton closeButton, 
@@ -74,7 +74,7 @@ ItemListener, WindowListener {
 	 * Creates a new dialog for the properties of the euclidian view.
 	 * @param app: parent frame
 	 */
-	public PropertiesDialogGraphicsWindow(Application app, EuclidianView view) {
+	public PropertiesDialogGraphicsWindow(GeoGebraApplicationBase app, EuclidianView view) {
 		super(app.getFrame(), true);
 		this.app = app;		
 		this.view = view;
