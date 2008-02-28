@@ -1,8 +1,8 @@
 package tutor.gui;
 
 import geogebra.Application;
-import geogebra.gui.Menubar;
-import geogebra.gui.MenubarImpl;
+import geogebra.gui.menubar.Menubar;
+import geogebra.gui.menubar.MenubarImpl;
 import geogebra.kernel.Kernel;
 
 import java.awt.event.ActionEvent;

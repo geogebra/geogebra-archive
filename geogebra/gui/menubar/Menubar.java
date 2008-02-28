@@ -1,4 +1,4 @@
-package geogebra.gui;
+package geogebra.gui.menubar;
 
 public interface Menubar {
 	public void initMenubar();

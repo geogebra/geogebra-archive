@@ -19,8 +19,8 @@ package geogebra;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.GeoGebraMenuBar;
 import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.util.Util;
 
 import java.awt.Dimension;

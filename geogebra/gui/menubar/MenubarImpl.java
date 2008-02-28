@@ -1,4 +1,4 @@
-package geogebra.gui;
+package geogebra.gui.menubar;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
@@ -21,9 +21,10 @@ import java.util.Locale;
 import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.menubar.LoadFileListener;
-import geogebra.gui.menubar.MyMenubar;
-import geogebra.gui.menubar.RequestFocusListener;
+import geogebra.gui.ConstructionProtocolNavigation;
+import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.ToolCreationDialog;
+import geogebra.gui.ToolManagerDialog;
 
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
@@ -1437,7 +1438,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
     private static String readTextFromJar(String s) {
         StringBuffer sb = new StringBuffer();        
         try {
-          InputStream is = MyMenubar.class.getResourceAsStream(s);
+          InputStream is = Menubar.class.getResourceAsStream(s);
           BufferedReader br = new BufferedReader
              (new InputStreamReader(is));
           String thisLine;
@@ -1451,6 +1452,5 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
           }
           return sb.toString();
       }
-    
-
+  
 }

@@ -34,14 +34,14 @@ import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ImagePreview;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
-import geogebra.gui.Menubar;
 import geogebra.gui.PropertiesDialogGeoElement;
 import geogebra.gui.PropertiesDialogGraphicsWindow;
 import geogebra.gui.RedefineInputHandler;
 import geogebra.gui.RenameInputHandler;
 import geogebra.gui.SliderDialog;
 import geogebra.gui.TextInputDialog;
-import geogebra.gui.menubar.MyMenubar;
+import geogebra.gui.menubar.GeoGebraMenuBar;
+import geogebra.gui.menubar.Menubar;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
@@ -73,18 +73,17 @@ import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.Toolkit;
-import java.awt.datatransfer.*;
-import java.io.*;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
@@ -92,6 +91,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -724,11 +724,11 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     public void showAboutDialog() {
-    	MyMenubar.showAboutDialog(this);
+    	GeoGebraMenuBar.showAboutDialog(this);
     }
     
     public void showPrintPreview() {
-    	MyMenubar.showPrintPreview(this);
+    	GeoGebraMenuBar.showPrintPreview(this);
     }
 
     /**
@@ -2394,7 +2394,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
     public void initMenubar() {
     	if (menuBar == null) {
-    		//menuBar = new MyMenubar(this);    	    		
+    		menuBar = new GeoGebraMenuBar(this);    	    		
     	}  
     	menuBar.initMenubar();
     }

@@ -1,4 +1,4 @@
-package geogebra.gui;
+package geogebra.gui.menubar;
 
 import geogebra.Application;
 import geogebra.kernel.Kernel;
@@ -81,4 +81,6 @@ public class GeoGebraMenuBar extends MenubarImpl implements Menubar, ActionListe
 			app.setUnsaved();
 		}
 	}
+	
+	
 }
