@@ -427,6 +427,17 @@ public class EuclidianView extends JPanel implements View, Printable {
 	protected DrawableList drawNumericList = new DrawableList();
 	
 	protected DrawableList drawListList = new DrawableList();
+	
+	public DrawableList drawLayers[] = {new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList(),
+			new DrawableList(),new DrawableList(),new DrawableList()};
 
 	// on add: change resetLists()
 
@@ -458,6 +469,17 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 */
 	public EuclidianView(EuclidianController ec, boolean[] showAxes,
 			boolean showGrid) {
+		
+	
+		//for (int i=0 ; i <= app.maxAllowedLayer ; i++) drawLayers[i] = new DrawableList();
+		
+		//DrawableList test[] = {new DrawableList(),new DrawableList()};
+		
+		//drawLayers[0] = new DrawableList();
+		//drawLayers[1] = new DrawableList();
+
+		
+		
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
@@ -582,6 +604,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 		drawListList.clear();
 
 		bgImageList.clear();
+		
+		for (int i=0 ; i<=app.maxAllowedLayer ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
 	}
@@ -651,11 +675,19 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final void addBackgroundImage(DrawImage img) {
 		bgImageList.addUnique(img);
 		drawImageList.remove(img);
+
+		// Michael Borcherds 2008-02-29
+		int layer = img.getGeoElement().getLayer();
+		drawLayers[layer].remove(img);
 	}
 
 	final void removeBackgroundImage(DrawImage img) {
 		bgImageList.remove(img);
 		drawImageList.add(img);
+		
+		// Michael Borcherds 2008-02-29
+		int layer = img.getGeoElement().getLayer();
+		drawLayers[layer].add(img);
 	}
 
 	static public MyBasicStroke getDefaultStroke() {
@@ -1220,7 +1252,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			setAntialiasing(g2);		
 		
 		// draw equations, checkboxes and all geo objects
-		drawLayers(g2,false); // Michael Borcherds 2008-02-26		 	
+		drawAllLayers(g2); // Michael Borcherds 2008-02-26		 	
 
 		if (selectionRectangle != null) {
 			drawZoomRectangle(g2);
@@ -1336,7 +1368,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}
 
 			double scale = PRINTER_PIXEL_PER_CM / xscale * printingScale;
-			exportPaint(g2d, scale, false); // Michael Borcherds 2008-02-26 added false(=isSVGExtensions)
+			exportPaint(g2d, scale); 
 
 			// clear page margins at bottom and right
 			double pagewidth = pageFormat.getWidth();
@@ -1367,7 +1399,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 *            set to true, no traces are drawn.
 	 * 
 	 */
-	public void exportPaint(Graphics2D g2d, double scale, boolean isSVGExtensions) {
+	public void exportPaint(Graphics2D g2d, double scale) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1392,7 +1424,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-		drawLayers(g2d,isSVGExtensions); // Michael Borcherds 2008-02-27			
+		drawAllLayers(g2d); // Michael Borcherds 2008-02-27			
 	}		
 
 	/**
@@ -1421,7 +1453,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		int width = (int) Math.floor(getSelectedWidth() * scale);
 		int height = (int) Math.floor(getSelectedHeight() * scale);		
 		BufferedImage img = createBufferedImage(width, height);
-		exportPaint(img.createGraphics(), scale, false); // Michael Borcherds 2008-02-26 added false
+		exportPaint(img.createGraphics(), scale); 
 		img.flush();
 		return img;
 	}
@@ -1463,7 +1495,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final protected void updateBackgroundImage() {
 		if (bgGraphics != null) {
 			clearBackground(bgGraphics);
-			bgImageList.drawAll(bgGraphics,-1); // Michael Borcherds 2008-02-26 added -1 (ignore layer)
+			bgImageList.drawAll(bgGraphics); // Michael Borcherds 2008-02-26 added -1 (ignore layer)
 
 			drawBackground(bgGraphics, false);
 		}
@@ -1841,18 +1873,41 @@ public class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 	
-	protected void drawLayers(Graphics2D g2, boolean isSVGExtensions) {
+	// Michael Borcherds 2008-02-29
+	public void changeLayer(GeoElement geo, int oldlayer, int newlayer)
+	{
+		//System.out.println(drawLayers[oldlayer].size());
+		drawLayers[oldlayer].remove((Drawable) DrawableMap.get(geo));
+		//System.out.println(drawLayers[oldlayer].size());
+		drawLayers[newlayer].add((Drawable) DrawableMap.get(geo));
+		
+	}
+	
+	protected void drawAllLayers(Graphics2D g2) {
 		int layer;
+		if (previewDrawable != null ) {
+			previewDrawable.drawPreview(g2);
+		}		
+		
+		// draw HotEquations
+		// TODO layers for HotEquations
+		// all in layer 0 currently
+		paintChildren(g2);
+		
+		boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
+		
 		for (layer=0 ; layer<=app.getMaxLayer() ; layer++)
 		{
+			//if (g2.getClass().getName().endsWith("SVGExtensions")) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
-			drawObjects(g2,layer);
+			//drawObjects(g2,layer);
+			drawLayers[layer].drawAll(g2);
 			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).endGroup("layer "+layer);
 		}
 	}
 	protected void drawObjects(Graphics2D g2, int layer) {		
 		// draw images
-		drawImageList.drawAll(g2, layer);
+		drawImageList.drawAll(g2);
 		
 		// draw HotEquations
 		// TODO layers for HotEquations
@@ -1876,37 +1931,37 @@ public class EuclidianView extends JPanel implements View, Printable {
 		}		
 		
 		// draw lists of objects
-		drawListList.drawAll(g2, layer);
+		drawListList.drawAll(g2);
 
 		// draw polygons
-		drawPolygonList.drawAll(g2, layer);
+		drawPolygonList.drawAll(g2);
 
 		// draw conics
-		drawConicList.drawAll(g2, layer);
+		drawConicList.drawAll(g2);
 
 		// draw angles and numbers
-		drawNumericList.drawAll(g2, layer);
+		drawNumericList.drawAll(g2);
 
 		// draw functions
-		drawFunctionList.drawAll(g2, layer);
+		drawFunctionList.drawAll(g2);
 
 		// draw lines
-		drawLineList.drawAll(g2, layer);
+		drawLineList.drawAll(g2);
 
 		// draw segments
-		drawSegmentList.drawAll(g2, layer);
+		drawSegmentList.drawAll(g2);
 
 		// draw vectors
-		drawVectorList.drawAll(g2, layer);
+		drawVectorList.drawAll(g2);
 
 		// draw locus
-		drawLocusList.drawAll(g2, layer);
+		drawLocusList.drawAll(g2);
 
 		// draw points
-		drawPointList.drawAll(g2, layer);
+		drawPointList.drawAll(g2);
 
 		// draw text
-		drawTextList.drawAll(g2, layer);
+		drawTextList.drawAll(g2);
 		
 		// boolean are not drawn as they are JToggleButtons and children of the view
 	}
@@ -2400,6 +2455,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		if (d == null) return;
 		
 		GeoElement geo = d.getGeoElement();
+		int layer = geo.getLayer();
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_BOOLEAN:			
@@ -2483,6 +2539,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		if (d != null) {
 			allDrawableList.add(d);			
+			drawLayers[layer].add(d);
 		}
 	}
 	
@@ -2492,6 +2549,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 */
 	final public void remove(GeoElement geo) {
 		Drawable d = (Drawable) DrawableMap.get(geo);
+		int layer = geo.getLayer();
 
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
@@ -2564,6 +2622,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}
 
 			allDrawableList.remove(d);
+			drawLayers[layer].remove(d);
 			DrawableMap.remove(geo);
 			repaint();
 		}

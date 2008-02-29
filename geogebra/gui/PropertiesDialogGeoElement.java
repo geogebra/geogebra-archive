@@ -1165,7 +1165,7 @@ public class PropertiesDialogGeoElement
 				app.getPlain("Name") + " & " + app.getPlain("Value"));
 			// index 1
 			labelModeCB.addItem(app.getPlain("Value")); // index 2
-			labelModeCB.addItem(app.getPlain("Caption")); // index 3 borcherds
+			labelModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
 			labelModeCB.addActionListener(this);
 
 			// labelPanel with show checkbox
@@ -1291,11 +1291,11 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JComboBox layerModeCB;
+		private JLabel layerLabel;
 
 		public LayerPanel() {
-			setBorder(
-					BorderFactory.createTitledBorder(app.getMenu("Layer"))
-					);
+			layerLabel = new JLabel(app.getPlain("Layer") + ":");	
+			layerLabel.setLabelFor(layerModeCB);
 
 			// combo box for label mode: name or algebra
 			layerModeCB = new JComboBox();
@@ -1306,6 +1306,7 @@ public class PropertiesDialogGeoElement
 
 			// labelPanel with show checkbox
 			setLayout(new FlowLayout(FlowLayout.LEFT));
+			add(layerLabel);
 			add(layerModeCB);			
 		}
 
@@ -1343,7 +1344,7 @@ public class PropertiesDialogGeoElement
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isEuclidianVisible()) {
+				if (!geo.isEuclidianVisible() || geo.isBooleanValue()) {
 					geosOK = false;
 					break;
 				}

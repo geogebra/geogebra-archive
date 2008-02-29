@@ -158,7 +158,7 @@ public class EuclidianView3D
 		super.drawGeometricObjects(g2, -1); // -1 ignore layers TODO layers? Michael Borcherds 2008-02-26
 
 		// draw points
-		drawPoint3DList.drawAll(g2, -1); // -1 ignore layers TODO layers? Michael Borcherds 2008-02-26
+		drawPoint3DList.drawAll(g2); 
 
 	}
 	

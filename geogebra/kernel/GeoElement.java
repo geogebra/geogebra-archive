@@ -456,14 +456,59 @@ public abstract class GeoElement
 
 	// Michael Borcherds 2008-02-27
 	public void setLayer(int layer){
+		if (layer > app.maxAllowedLayer) layer = app.maxAllowedLayer;
+		app.updateMaxLayer(layer);
+		app.getEuclidianView().changeLayer(this,this.layer,layer);
 		this.layer=layer;
-		if (this.layer > app.maxAllowedLayer) this.layer = app.maxAllowedLayer;
-		app.updateMaxLayer(this.layer);
 	}
 	
 	// Michael Borcherds 2008-02-23
 	public int getLayer(){
 		return layer;
+	}
+	
+	// Michael Borcherds 2008-02-23	
+	public int getDrawingPriority()
+	{
+		switch (getGeoClassType())
+		{
+		case  GEO_CLASS_AXIS:
+			return 10;
+		case  GEO_CLASS_IMAGE:
+		case  GEO_CLASS_BOOLEAN:
+			return 20;
+		case  GEO_CLASS_TEXT:
+			return 30;
+		case  GEO_CLASS_LIST:
+			return 40;
+		case  GEO_CLASS_POLYGON :
+			return 50;
+		case  GEO_CLASS_CONIC:
+		case  GEO_CLASS_CONICPART:
+			return 70;
+		case  GEO_CLASS_ANGLE :
+		case  GEO_CLASS_NUMERIC:
+			return 80;
+		case  GEO_CLASS_FUNCTION:
+		case  GEO_CLASS_FUNCTIONCONDITIONAL:
+		case  GEO_CLASS_CURVE_CARTESIAN :
+		case  GEO_CLASS_CURVE_POLAR:
+			return 90;
+		case  GEO_CLASS_LINE:
+			return 100;
+		case  GEO_CLASS_RAY:
+		case  GEO_CLASS_SEGMENT:
+			return 110;
+		case  GEO_CLASS_VECTOR:
+			return 120;
+		case  GEO_CLASS_LOCUS:
+			return 130;
+		case  GEO_CLASS_POINT:
+			return 140;
+		default: // shouldn't occur
+			return 150;
+
+		}
 	}
 
 	public void setAlphaValue(float alpha) {

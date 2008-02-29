@@ -38,9 +38,40 @@ public class DrawableList {
 			tail = head;
 		}
 		else {
-			Link temp = new Link(d, null);
-			tail.next = temp;
-			tail = temp;
+
+			// Michael Borcherds 2008-02-29 BEGIN
+			// add in the list according to when we want it drawn
+			int priority = d.getGeoElement().getDrawingPriority();
+			
+			Link cur = head;
+			
+			while (cur.d.getGeoElement().getDrawingPriority()<=priority && !cur.equals(tail)) cur = cur.next;
+				
+			if (cur.equals(head))
+			{ // add at start of list
+				//System.out.println("start");
+				//Link temp 
+				Link temp2=head;
+				head= new Link(d, null);
+				head.next=temp2;
+			}
+			else if (cur.equals(tail))
+			{ // add at end
+				//System.out.println("end");
+				Link temp = new Link(d, null);
+				tail.next = temp;
+				tail = temp;				
+			}
+			else 
+			{ // add in middle
+				//System.out.println("middle");
+				Link temp = new Link(d, null);
+				temp.next=cur.next;
+				cur.next = temp;
+			}
+			// Michael Borcherds 2008-02-29 END
+		
+			
 		}		
 		size++;
 	}
@@ -92,10 +123,9 @@ public class DrawableList {
 		}
 	}
 	
-	public final void drawAll(Graphics2D g2, int layer) {		
+	public final void drawAll(Graphics2D g2) {		
 		Link cur = head;
 		while (cur != null) {
-			if (cur.d.getGeoElement().layer==layer || layer==-1) // Michael Borcherds 2008-02-26
 				cur.d.draw(g2);
 			cur = cur.next;
 		}
