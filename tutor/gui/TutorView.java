@@ -44,7 +44,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import tutor.DataBaseInterface;
 import tutor.io.StringOutputStream;
 import tutor.model.Annotation;
 import tutor.model.Justification;
