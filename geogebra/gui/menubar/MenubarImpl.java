@@ -51,32 +51,8 @@ import javax.swing.SwingUtilities;
 
 public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
-	/*
-	public static void showAboutDialog(Application app) {
-	}
-
-	public static void showPrintPreview(Application app) {
-	}
-
-	public void initMenubar() {
-	}
-	
-	public void updateMenubar() {
-	}
-
-	public void updateMenuFile() {
-	}
-
-	public void updateMenuWindow() {
-	}
-
-	public void updateSelection() {
-	}
-	*/
-	
-	
 	// Actions
-	private AbstractAction refreshAction,
+	protected AbstractAction refreshAction,
 			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
@@ -95,14 +71,14 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			savePreferencesAction, clearPreferencesAction,
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction;
 
-	private JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
+	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
 			cbShowConsProtNavigation, cbShowConsProtNavigationPlay,
 			cbShowConsProtNavigationOpenProt, cbShowAlgebraInput,
 			cbShowCmdList;
 
-	private JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
+	protected JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
 			menuContinuity, menuPointStyle, menuRightAngleStyle,
 			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools;
 
@@ -146,7 +122,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				.setSelected(app.isConsProtNavigationProtButtonVisible());
 		cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
 		cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
-	     	           	
+
+		/*
         updateMenuContinuity();
         updateMenuPointCapturing();
         updateMenuAngleUnit();
@@ -158,6 +135,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         
         updateActions();
         updateSelection();
+        */
 	}
 
 	public void updateMenuFile() {
@@ -259,11 +237,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		int pos;
 		removeAll();
 
+		
 		// File
 		menuFile = new JMenu(app.getMenu("File"));
 		updateMenuFile();	
 		add(menuFile);
-
+		
 		// Edit
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
@@ -548,13 +527,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		
 		// tools menu		
-		menuTools = new JMenu(app.getMenu("Tools"));
+		/*menuTools = new JMenu(app.getMenu("Tools"));
 		add(menuTools);
 		menuTools.add(showCreateToolsAction);
 		menuTools.add(showManageToolsAction);
 		menuTools.addSeparator();
 		menuTools.add(toolbarConfigAction);
-
+*/
 		if (!app.isApplet()) {
 			// windows menu
 			menuWindow = new JMenu(app.getMenu("Window"));
@@ -652,7 +631,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	}
 
-	private void initActions() {				
+	protected void initActions() {				
 		showAlgebraViewAction = new AbstractAction(app.getPlain("AlgebraWindow")) {
 			private static final long serialVersionUID = 1L;
 
@@ -1244,13 +1223,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		selectAllAction.setEnabled(!kernel.isEmpty());
 	}
 
-	private void setMenuShortCutAccelerator(JMenuItem mi, char acc) {
+	protected void setMenuShortCutAccelerator(JMenuItem mi, char acc) {
 		KeyStroke ks = KeyStroke.getKeyStroke(acc, 
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 		mi.setAccelerator(ks);
 	}
 	
-	private void setMenuShortCutShiftAccelerator(JMenuItem mi, char acc) {
+	protected void setMenuShortCutShiftAccelerator(JMenuItem mi, char acc) {
 		KeyStroke ks = KeyStroke.getKeyStroke(acc, 
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + Event.SHIFT_MASK);
 		mi.setAccelerator(ks);
@@ -1294,7 +1273,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 	}
 
-	private void updateMenuAngleUnit() {
+	protected void updateMenuAngleUnit() {
 		int pos;
 		if (kernel.getAngleUnit() == Kernel.ANGLE_DEGREE)
 			pos = 0;
@@ -1304,7 +1283,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				.setSelected(true);
 	}
 
-	private void updateMenuPointStyle() {
+	protected void updateMenuPointStyle() {
 		if (menuPointStyle == null) return;
 		
 		int pos = app.getEuclidianView().getPointStyle();
@@ -1313,7 +1292,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	}
 
 	// added by Lo�c BEGIN
-	private void updateMenuRightAngleStyle() {
+	protected void updateMenuRightAngleStyle() {
 		if (menuRightAngleStyle == null) return;
 		
 		int pos = app.getEuclidianView().getRightAngleStyle();
@@ -1323,7 +1302,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	// END
 
-	private void updateMenuCoordStyle() {
+	protected void updateMenuCoordStyle() {
 		if (menuCoordStyle == null) return;
 		
 		int pos = kernel.getCoordStyle();
@@ -1339,7 +1318,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				.setSelected(true);
 	}
 	
-	private void updateMenuPointCapturing() {
+	protected void updateMenuPointCapturing() {
 		if (menuPointCapturing == null) return;
 		
 		String pos = Integer.toString(app.getEuclidianView().getPointCapturingMode());
@@ -1354,7 +1333,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 	}
 
-	private void updateMenuDecimalPlaces() {
+	protected void updateMenuDecimalPlaces() {
 		if (menuDecimalPlaces == null) return;
 		
 		int pos = kernel.getPrintDecimals();
@@ -1365,7 +1344,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 	}
 
-	private void updateMenuContinuity() {
+	protected void updateMenuContinuity() {
 		int pos = kernel.isContinuous() ? 0 : 1;
 		try {
 			((JRadioButtonMenuItem) menuContinuity.getMenuComponent(pos))
@@ -1374,7 +1353,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 	}
 
-	private void addLanguageMenuItems(JMenu menu, ActionListener al) {
+	protected void addLanguageMenuItems(JMenu menu, ActionListener al) {
 		JRadioButtonMenuItem mi;
 		ButtonGroup bg = new ButtonGroup();
 		// String label;
@@ -1410,7 +1389,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 	}
 
-	private void addRadioButtonMenuItems(JMenu menu, ActionListener al,
+	protected void addRadioButtonMenuItems(JMenu menu, ActionListener al,
 			String[] items, String[] actionCommands, int selectedPos) {
 		JRadioButtonMenuItem mi;
 		ButtonGroup bg = new ButtonGroup();
@@ -1428,7 +1407,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	}
 	
 	 // handle language changes
-    private class LanguageActionListener implements ActionListener {                        
+    protected class LanguageActionListener implements ActionListener {
+    	
+    	public LanguageActionListener() {}
+    	
         public void actionPerformed(ActionEvent e) {
         	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
         	GeoGebraPreferences.saveDefaultLocale(app.getLocale());
