@@ -76,11 +76,6 @@ import java.util.Locale;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import org.freehep.graphics2d.VectorGraphics;
-import org.freehep.graphicsio.emf.EMFGraphics2D;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
-
 /**
  * 
  * @author Markus Hohenwarter
@@ -405,6 +400,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	
 	// Michael Borcherds 2008-03-01
 	public static final int MAX_LAYERS = 9;
+	private static int MAX_LAYER_USED = 0;
 	protected DrawableList drawLayers[]; 
 
 	// on add: change resetLists()
@@ -555,7 +551,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		allDrawableList.clear();
 		bgImageList.clear();
 		
-		for (int i=0 ; i<=MAX_LAYERS ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
+		for (int i=0 ; i<=MAX_LAYER_USED ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
 	}
@@ -1445,7 +1441,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final protected void updateBackgroundImage() {
 		if (bgGraphics != null) {
 			clearBackground(bgGraphics);
-			bgImageList.drawAll(bgGraphics); // Michael Borcherds 2008-02-26 added -1 (ignore layer)
+			bgImageList.drawAll(bgGraphics); 
 
 			drawBackground(bgGraphics, false);
 		}
@@ -1827,13 +1823,25 @@ public class EuclidianView extends JPanel implements View, Printable {
 	// Michael Borcherds 2008-02-29
 	public void changeLayer(GeoElement geo, int oldlayer, int newlayer)
 	{
+		updateMaxLayerUsed(newlayer);
 		//System.out.println(drawLayers[oldlayer].size());
 		drawLayers[oldlayer].remove((Drawable) DrawableMap.get(geo));
 		//System.out.println(drawLayers[oldlayer].size());
 		drawLayers[newlayer].add((Drawable) DrawableMap.get(geo));
 		
 	}
+	
+	public static void updateMaxLayerUsed(int layer)
+	{
+		if (layer > MAX_LAYERS) layer=MAX_LAYERS;
+		if (layer > MAX_LAYER_USED) MAX_LAYER_USED=layer;
+	}
 
+	public static int getMaxLayerUsed()
+	{
+		return MAX_LAYER_USED;
+	}
+	
 	// Michael Borcherds 2008-03-01
 	protected void drawObjects(Graphics2D g2) {
 		
@@ -1853,7 +1861,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
 		int layer;
 		
-		for (layer=0 ; layer<=MAX_LAYERS ; layer++)
+		for (layer=0 ; layer<=MAX_LAYER_USED ; layer++) // only draw layers we need
 		{
 			//if (g2.getClass().getName().endsWith("SVGExtensions")) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
