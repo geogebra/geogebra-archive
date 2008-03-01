@@ -302,10 +302,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
-    
-    private int maxLayer=0; // Michael Borcherds 2008-02-26
-    public int maxAllowedLayer = 29; // maximum allowed layers
-    
+     
     // command dictionary
     private LowerCaseDictionary commandDict;
 
@@ -1097,17 +1094,6 @@ public abstract class Application implements	KeyEventDispatcher {
         reverseLanguage = "zh".equals(lang);
         reverseNameDescription = "eu".equals(lang);
     }
-    
-    // Michael Borcherds 2008-02-27
-    public void updateMaxLayer(int layer) {
-    	if (layer > maxLayer) maxLayer=layer;
-    	if (maxLayer > maxAllowedLayer) maxLayer=maxAllowedLayer;
-    }    
-    
-    // Michael Borcherds 2008-02-23
-    public int getMaxLayer() {
-    	return maxLayer;
-    }    
     
     private String getLanguageFontName(Locale locale) throws Exception {
         String fontName = null;

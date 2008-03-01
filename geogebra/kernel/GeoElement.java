@@ -454,10 +454,9 @@ public abstract class GeoElement
 		return objColor;
 	}
 
-	// Michael Borcherds 2008-02-27
+	// Michael Borcherds 2008-03-01
 	public void setLayer(int layer){
-		if (layer > app.maxAllowedLayer) layer = app.maxAllowedLayer;
-		app.updateMaxLayer(layer);
+		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		app.getEuclidianView().changeLayer(this,this.layer,layer);
 		this.layer=layer;
 	}

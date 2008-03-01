@@ -402,42 +402,10 @@ public class EuclidianView extends JPanel implements View, Printable {
 	protected FastHashMapKeyless DrawableMap = new FastHashMapKeyless(500);
 
 	protected DrawableList allDrawableList = new DrawableList();
-
-	protected DrawableList drawBooleanList = new DrawableList();
-	protected DrawableList drawPointList = new DrawableList();
-
-	protected DrawableList drawLineList = new DrawableList();
-
-	protected DrawableList drawSegmentList = new DrawableList();
-
-	protected DrawableList drawVectorList = new DrawableList();
-
-	protected DrawableList drawConicList = new DrawableList();
-
-	protected DrawableList drawFunctionList = new DrawableList();
-
-	protected DrawableList drawTextList = new DrawableList();		
-
-	protected DrawableList drawImageList = new DrawableList();
-
-	protected DrawableList drawLocusList = new DrawableList();
-
-	protected DrawableList drawPolygonList = new DrawableList();
-
-	protected DrawableList drawNumericList = new DrawableList();
 	
-	protected DrawableList drawListList = new DrawableList();
-	
-	public DrawableList drawLayers[] = {new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList(),
-			new DrawableList(),new DrawableList(),new DrawableList()};
+	// Michael Borcherds 2008-03-01
+	public static final int MAX_LAYERS = 9;
+	protected DrawableList drawLayers[]; 
 
 	// on add: change resetLists()
 
@@ -470,16 +438,12 @@ public class EuclidianView extends JPanel implements View, Printable {
 	public EuclidianView(EuclidianController ec, boolean[] showAxes,
 			boolean showGrid) {
 		
+		// Michael Borcherds 2008-03-01
+		  drawLayers = new DrawableList[MAX_LAYERS+1];
+		  for (int k=0; k <= MAX_LAYERS ; k++) {
+		     drawLayers[k] = new DrawableList();
+		  }
 	
-		//for (int i=0 ; i <= app.maxAllowedLayer ; i++) drawLayers[i] = new DrawableList();
-		
-		//DrawableList test[] = {new DrawableList(),new DrawableList()};
-		
-		//drawLayers[0] = new DrawableList();
-		//drawLayers[1] = new DrawableList();
-
-		
-		
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
@@ -589,23 +553,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 	protected void resetLists() {
 		DrawableMap.clear();
 		allDrawableList.clear();
-		drawPointList.clear();
-		drawLineList.clear();
-		drawSegmentList.clear();
-		drawVectorList.clear();
-		drawConicList.clear();
-		drawFunctionList.clear();
-		drawTextList.clear();		
-		drawImageList.clear();
-		drawLocusList.clear();
-		drawPolygonList.clear();
-		drawNumericList.clear();
-		drawBooleanList.clear();
-		drawListList.clear();
-
 		bgImageList.clear();
 		
-		for (int i=0 ; i<=app.maxAllowedLayer ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
+		for (int i=0 ; i<=MAX_LAYERS ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
 	}
@@ -674,7 +624,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	// END
 	final void addBackgroundImage(DrawImage img) {
 		bgImageList.addUnique(img);
-		drawImageList.remove(img);
+		//drawImageList.remove(img);
 
 		// Michael Borcherds 2008-02-29
 		int layer = img.getGeoElement().getLayer();
@@ -683,7 +633,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	final void removeBackgroundImage(DrawImage img) {
 		bgImageList.remove(img);
-		drawImageList.add(img);
+		//drawImageList.add(img);
 		
 		// Michael Borcherds 2008-02-29
 		int layer = img.getGeoElement().getLayer();
@@ -1252,7 +1202,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			setAntialiasing(g2);		
 		
 		// draw equations, checkboxes and all geo objects
-		drawAllLayers(g2); // Michael Borcherds 2008-02-26		 	
+		drawObjects(g2);
 
 		if (selectionRectangle != null) {
 			drawZoomRectangle(g2);
@@ -1424,7 +1374,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-		drawAllLayers(g2d); // Michael Borcherds 2008-02-27			
+		drawObjects(g2d);	
 	}		
 
 	/**
@@ -1873,6 +1823,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
 	}
 	
+
 	// Michael Borcherds 2008-02-29
 	public void changeLayer(GeoElement geo, int oldlayer, int newlayer)
 	{
@@ -1882,21 +1833,27 @@ public class EuclidianView extends JPanel implements View, Printable {
 		drawLayers[newlayer].add((Drawable) DrawableMap.get(geo));
 		
 	}
-	
-	protected void drawAllLayers(Graphics2D g2) {
-		int layer;
+
+	// Michael Borcherds 2008-03-01
+	protected void drawObjects(Graphics2D g2) {
+		
+		// TODO layers for HotEquations
+		// all in layer 0 currently
+		paintChildren(g2);  // draws HotEquations and Checkboxes (booleans)
+		
+		drawGeometricObjects(g2);
+		
 		if (previewDrawable != null ) {
 			previewDrawable.drawPreview(g2);
 		}		
-		
-		// draw HotEquations
-		// TODO layers for HotEquations
-		// all in layer 0 currently
-		paintChildren(g2);
-		
+	}
+
+	// Michael Borcherds 2008-03-01
+	protected void drawGeometricObjects(Graphics2D g2) {	
 		boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
+		int layer;
 		
-		for (layer=0 ; layer<=app.getMaxLayer() ; layer++)
+		for (layer=0 ; layer<=MAX_LAYERS ; layer++)
 		{
 			//if (g2.getClass().getName().endsWith("SVGExtensions")) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
@@ -1905,6 +1862,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).endGroup("layer "+layer);
 		}
 	}
+	/*
 	protected void drawObjects(Graphics2D g2, int layer) {		
 		// draw images
 		drawImageList.drawAll(g2);
@@ -1917,12 +1875,12 @@ public class EuclidianView extends JPanel implements View, Printable {
 		
 		// draw Geometric objects
 		drawGeometricObjects(g2, layer);
-	}
+	} */
 
 
 	/**
 	 * Draws all GeoElements except images.
-	 */
+	 *
 	protected void drawGeometricObjects(Graphics2D g2, int layer) {	
 
 		if (previewDrawable != null &&
@@ -1964,7 +1922,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		drawTextList.drawAll(g2);
 		
 		// boolean are not drawn as they are JToggleButtons and children of the view
-	}
+	} */
 
 	// for use in AlgebraController
 	final public void mouseMovedOver(GeoElement geo) {
@@ -2459,35 +2417,35 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_BOOLEAN:			
-			drawBooleanList.add(d);
+			drawLayers[layer].add(d);
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:
-			drawPointList.add(d);
+			drawLayers[layer].add(d);
 			break;					
 
 		case GeoElement.GEO_CLASS_SEGMENT:
-			drawSegmentList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_RAY:
-			drawSegmentList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LINE:
-			drawLineList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_POLYGON:
-			drawPolygonList.add(d);					
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:
 			if (geo.isIndependent()) {				
-				drawNumericList.add(d);
+				drawLayers[layer].add(d);
 			} else {				
 				if (geo.isDrawable()) {					
-					drawNumericList.add(d);
+					drawLayers[layer].add(d);
 				} 
 				else 
 					d = null;
@@ -2495,51 +2453,50 @@ public class EuclidianView extends JPanel implements View, Printable {
 			break;
 
 		case GeoElement.GEO_CLASS_NUMERIC:			
-			drawNumericList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_VECTOR:			
-			drawVectorList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CONICPART:
-			drawConicList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CONIC:
-			drawConicList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_FUNCTION:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-			drawFunctionList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_TEXT:
-			drawTextList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_IMAGE:
 			if (!bgImageList.contains(d))
-				drawImageList.add(d);
+				drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LOCUS:
-			drawLocusList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-			drawFunctionList.add(d);
+			drawLayers[layer].add(d);
 			break;
 
 		case GeoElement.GEO_CLASS_LIST:
-			drawListList.add(d);			
+			drawLayers[layer].add(d);
 			break;
 		}
 
 		if (d != null) {
 			allDrawableList.add(d);			
-			drawLayers[layer].add(d);
 		}
 	}
 	
@@ -2554,75 +2511,75 @@ public class EuclidianView extends JPanel implements View, Printable {
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
 			case GeoElement.GEO_CLASS_BOOLEAN:
-				drawBooleanList.remove(d);
+				drawLayers[layer].remove(d);
 				// remove checkbox
 				((DrawBoolean) d).remove();
 				break;
 			
 			case GeoElement.GEO_CLASS_POINT:
-				drawPointList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_SEGMENT:
 			case GeoElement.GEO_CLASS_RAY:
-				drawSegmentList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_LINE:
-				drawLineList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_POLYGON:
-				drawPolygonList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_ANGLE:
 			case GeoElement.GEO_CLASS_NUMERIC:
-				drawNumericList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_VECTOR:
-				drawVectorList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_CONICPART:
-				drawConicList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_CONIC:
-				drawConicList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_FUNCTION:
 			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-				drawFunctionList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_TEXT:
-				drawTextList.remove(d);
+				drawLayers[layer].remove(d);
 				// remove HotEqn
 				((DrawText) d).remove();
 				break;
 
 			case GeoElement.GEO_CLASS_IMAGE:
-				drawImageList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_LOCUS:
-				drawLocusList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-				drawFunctionList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 
 			case GeoElement.GEO_CLASS_LIST:
-				drawListList.remove(d);
+				drawLayers[layer].remove(d);
 				break;
 			}
 
 			allDrawableList.remove(d);
-			drawLayers[layer].remove(d);
+
 			DrawableMap.remove(geo);
 			repaint();
 		}
