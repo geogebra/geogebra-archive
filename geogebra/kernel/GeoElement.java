@@ -186,6 +186,32 @@ public abstract class GeoElement
 			'\u03c8',
 			'\u03c9' };
 	
+	private static final char[] greekUpperCase =
+	{ // Michael Borcherds 2008-02-23
+	'\u0391',
+	'\u0392',
+	'\u0393',
+	'\u0394',
+	'\u0395',
+	'\u0396',
+	'\u0397',
+	'\u0398',
+	'\u0399',
+	'\u039a',
+	'\u039b',
+	'\u039c',
+	'\u039d',
+	'\u039e',
+	'\u039f',
+	'\u03a0',
+	'\u03a1',
+	'\u03a3',
+	'\u03a4',
+	'\u03a5',
+	'\u03a6',
+	'\u03a7',
+	'\u03a8',
+	'\u03a9'};
 	
 	// GeoElement types
 	public static final int GEO_CLASS_ANGLE = 10;
@@ -1225,7 +1251,11 @@ public abstract class GeoElement
 		char[] chars;
 
 		if (isGeoPoint()) {
-			chars = pointLabels;
+			// Michael Borcherds 2008-02-23
+			// use Greek upper case for labeling points if lenguage is Greek (el)
+			// TODO decide if we want this as an option, or just uncomment the next line
+			// if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else 
+				chars = pointLabels;
 		} else if (isGeoFunction()) {
 			chars = functionLabels;
 		} else if (isGeoLine()) {

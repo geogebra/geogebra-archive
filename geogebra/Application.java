@@ -1095,6 +1095,11 @@ public abstract class Application implements	KeyEventDispatcher {
         reverseNameDescription = "eu".equals(lang);
     }
     
+    // Michael Borcherds 2008-02-23
+    public boolean languageIs(Locale locale, String lang) {
+    	return locale.getLanguage().equals(lang);
+    }
+    
     private String getLanguageFontName(Locale locale) throws Exception {
         String fontName = null;
         //  chinese font
