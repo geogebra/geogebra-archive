@@ -400,8 +400,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	
 	// Michael Borcherds 2008-03-01
 	public static final int MAX_LAYERS = 9;
-	private static int MAX_LAYER_USED = 0;
-	protected DrawableList drawLayers[]; 
+	private int MAX_LAYER_USED = 0;
+	public DrawableList drawLayers[]; 
 
 	// on add: change resetLists()
 
@@ -1346,6 +1346,12 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
+		
+		exportPaintPre(g2d,scale);
+		drawObjects(g2d);			
+	}
+	
+	public void exportPaintPre(Graphics2D g2d, double scale) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1370,8 +1376,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 				RenderingHints.VALUE_RENDER_QUALITY);
 
 		setAntialiasing(g2d);
-		drawObjects(g2d);	
 	}		
+
 
 	/**
 	 * Tells if there are any traces in the background image.
@@ -1831,15 +1837,24 @@ public class EuclidianView extends JPanel implements View, Printable {
 		
 	}
 	
-	public static void updateMaxLayerUsed(int layer)
+	public void updateMaxLayerUsed(int layer)
 	{
 		if (layer > MAX_LAYERS) layer=MAX_LAYERS;
 		if (layer > MAX_LAYER_USED) MAX_LAYER_USED=layer;
 	}
 
-	public static int getMaxLayerUsed()
+	public int getMaxLayerUsed()
 	{
 		return MAX_LAYER_USED;
+	}
+	
+	// Michael Borcherds 2008-03-01
+	public void drawObjectsPre(Graphics2D g2) {
+		
+		// TODO layers for HotEquations
+		// all in layer 0 currently
+		paintChildren(g2);  // draws HotEquations and Checkboxes (booleans)
+		
 	}
 	
 	// Michael Borcherds 2008-03-01
@@ -1856,18 +1871,17 @@ public class EuclidianView extends JPanel implements View, Printable {
 		}		
 	}
 
+
 	// Michael Borcherds 2008-03-01
 	protected void drawGeometricObjects(Graphics2D g2) {	
-		boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
+		//boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
 		int layer;
 		
 		for (layer=0 ; layer<=MAX_LAYER_USED ; layer++) // only draw layers we need
 		{
-			//if (g2.getClass().getName().endsWith("SVGExtensions")) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
-			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
-			//drawObjects(g2,layer);
+			//if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			drawLayers[layer].drawAll(g2);
-			if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).endGroup("layer "+layer);
+			//if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).endGroup("layer "+layer);
 		}
 	}
 	/*

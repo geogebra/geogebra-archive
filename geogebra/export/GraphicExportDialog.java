@@ -408,13 +408,29 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {						
-		    // Michael Borcherds 2008-02-27
+		    // Michael Borcherds 2008-03-01
 			// added SVGExtensions to support grouped objects in layers
 			SVGExtensions g = new SVGExtensions(file, new Dimension(pixelWidth, pixelHeight));
 		    //VectorGraphics g = new SVGGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
+			
+			EuclidianView ev=app.getEuclidianView();
+			
 		    g.startExport();
-			app.getEuclidianView().exportPaint(g, exportScale);
+			ev.exportPaintPre(g, exportScale);
+			
+			g.startGroup("misc");
+			ev.drawObjectsPre(g);
+			g.endGroup("misc");
+			
+			for (int layer=0 ; layer<=ev.getMaxLayerUsed() ; layer++) //  draw only layers we need
+			{
+				g.startGroup("layer "+layer);
+				ev.drawLayers[layer].drawAll(g);
+				g.endGroup("layer "+layer);
+			}
+			
 			g.endExport();	
+			
 			return true;
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");
