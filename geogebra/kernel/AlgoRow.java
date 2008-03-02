@@ -13,12 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.MyDouble;
 
 
 /**
  * Turn a spreadsheet row into a list. Adapted from AlgoSort
  * @author Michael Borcherds
- * @version 09-01-2008
+ * @version 2008-03-02
  */
 
 public class AlgoRow extends AlgoElement {
@@ -26,7 +27,7 @@ public class AlgoRow extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private NumberValue startValue, n; // input
 	private GeoElement startValueGeo, nGeo;
-	private GeoElement cellGeo,cellGeoA1;
+	private GeoElement cellGeo;
     private GeoList outputList; //output	
 
     AlgoRow(Construction cons, String label, NumberValue startValue, NumberValue n) {
@@ -62,7 +63,9 @@ public class AlgoRow extends AlgoElement {
     }
 
     final void compute() {
-		if (startValue.getDouble()!=Math.floor(startValue.getDouble()) || n.getDouble()!=Math.floor(n.getDouble()))
+		if (startValue.getDouble()!=Math.floor(startValue.getDouble())
+				|| n.getDouble()!=Math.floor(n.getDouble())
+				|| startValue.getDouble()<1)
 		{
     		outputList.setUndefined();
     		return;
@@ -71,19 +74,19 @@ public class AlgoRow extends AlgoElement {
 		int row = (int)startValue.getDouble();
 		int columns = (int)n.getDouble();
 		
-		cellGeoA1 = kernel.lookupLabel(GeoElement.getSpreadsheetCellName(0, 0)); // A1
 		outputList.clear();
 		
 		for (int i=0 ; i<columns ; i++)
 		{   	
     	  try {
-			cellGeo = kernel.lookupLabel(GeoElement.getSpreadsheetCellName(i, row));
+			cellGeo = kernel.lookupLabel(GeoElement.getSpreadsheetCellName(i, row-1));
     	    outputList.add(cellGeo);
     	  }
     	  catch (Exception e)
     	  {
     		  outputList.remove(cellGeo);
-    		  outputList.add(cellGeoA1); // copies cell A1 TODO should be value 0
+    		  MyDouble zero= new MyDouble(kernel,0.0);
+    		  outputList.add(((NumberValue)zero).toGeoElement()); // copies cell A1 TODO should be value 0
     	  }
 		}
     }
