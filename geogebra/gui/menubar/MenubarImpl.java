@@ -260,6 +260,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			menu.addSeparator();
 		}
 		
+		// Michael Borcherds 2008-03-03 added to Edit menu
+		mi = menu.add(drawingPadToClipboardAction);
+		setMenuShortCutShiftAccelerator(mi, 'C');
+
 		if (app.letDelete()) {
 			mi = menu.add(deleteAction);
 			mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));	
