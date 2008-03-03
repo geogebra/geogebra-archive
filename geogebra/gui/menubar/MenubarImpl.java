@@ -69,7 +69,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			exportPSTricksAction,
 			showCreateToolsAction, showManageToolsAction,
 			savePreferencesAction, clearPreferencesAction,
-			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction;
+			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction,
+			selectCurrentLayerAction; // Michael Borcherds 2008-03-03
 
 	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
@@ -123,7 +124,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
 		cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
 
-		/*
+		// Michael Borcherds 2008-03-03 BEGIN put these back in
         updateMenuContinuity();
         updateMenuPointCapturing();
         updateMenuAngleUnit();
@@ -135,7 +136,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         
         updateActions();
         updateSelection();
-        */
+		// Michael Borcherds 2008-03-03 END
+                
 	}
 
 	public void updateMenuFile() {
@@ -266,6 +268,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		mi = menu.add(selectAllAction);
 		setMenuShortCutAccelerator(mi, 'A');
+		
+		mi = menu.add(selectCurrentLayerAction);
+		setMenuShortCutAccelerator(mi, 'L');
+		
 		menu.addSeparator();
 
 		mi = menu.add(propertiesAction);
@@ -1087,7 +1093,18 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				app.selectAll();
+				app.selectAll(-1); // Michael Borcherds 2008-03-03 pass "-1" to select all
+			}
+		};			
+		
+		selectCurrentLayerAction = new AbstractAction(app.getMenu("SelectCurrentLayer"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				
+				int layer = getSelectedLayer();
+				if (layer !=-1) app.selectAll(layer); // select all objects in layer
 			}
 		};			
 		
@@ -1141,6 +1158,23 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};	
 				
 		updateActions();
+	}
+	/* Michael Borcherds 2008-03-03
+	 * return -1 if nothing selected
+	 * return -2 if objects from more than one layer selected
+	 * return layer number if objects from exactly one layer are selected
+	 */	
+	private int getSelectedLayer() { 
+		Object [] geos = app.getSelectedGeos().toArray();
+		if (geos.length == 0) return -1; // return -1 if nothing selected
+		
+		int layer = ((GeoElement)geos[0]).getLayer();
+		
+		for (int i=1; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];
+			if (geo.getLayer() != layer) return -2; // return -2 if more than one layer selected
+		}
+		return layer;
 	}
 	
 	public static void showPrintPreview(final Application  app) {
@@ -1214,8 +1248,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	}
 	
 	public void updateSelection() {		
-		boolean haveSelection = !app.getSelectedGeos().isEmpty();
-		deleteAction.setEnabled(haveSelection);
+		// Michael Borcherds 2008-03-03 BEGIN
+		//boolean haveSelection = !app.getSelectedGeos().isEmpty();
+		//deleteAction.setEnabled(haveSelection);
+		int layer = getSelectedLayer();
+		deleteAction.setEnabled(layer != -1); // -1 means nothing selected, -2 means different layers selected
+		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0); // exactly one layer selected
+		// Michael Borcherds 2008-03-03 END
 	}
 
 	private void updateActions() {		

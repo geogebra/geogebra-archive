@@ -3470,13 +3470,17 @@ public abstract class Application implements	KeyEventDispatcher {
         updateSelection();   	    
     }
     
-    final public void selectAll() {    
+    /* Michael Borcherds 2008-03-03
+     * modified to select all of a layer
+    * pass layer==-1 to select all objects
+    */
+    final public void selectAll(int layer) {    
     	clearSelectedGeos(false);
     	
     	Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();    	
     	while (it.hasNext()) {    		
         	GeoElement geo = (GeoElement) it.next();
-        	addSelectedGeo(geo, false);
+        	if (layer == -1 || geo.getLayer() == layer) addSelectedGeo(geo, false);
     	}
         kernel.notifyRepaint();
         updateSelection();
