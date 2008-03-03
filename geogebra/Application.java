@@ -302,7 +302,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
-     
+
     // command dictionary
     private LowerCaseDictionary commandDict;
 
