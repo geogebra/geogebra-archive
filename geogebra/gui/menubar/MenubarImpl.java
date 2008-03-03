@@ -1297,6 +1297,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			sb.setLength(0);
 			sb.append(i + 1);
+			if (application != null) // Michael Borcherds 2008-03-03 bugfix
 			if (application.getCurrentFile() != null) {
 				sb.append(" ");
 				sb.append(application.getCurrentFile().getName());
