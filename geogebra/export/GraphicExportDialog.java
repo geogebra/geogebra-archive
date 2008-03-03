@@ -179,7 +179,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 				setVisible(false);
 			}
 		});
-		JButton exportButton = new JButton(app.getMenu("Export"));
+		JButton exportButton = new JButton(app.getMenu("Save"));
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				Thread runner = new Thread() {
@@ -214,7 +214,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 				runner.start();
 			}
 		});
-		JButton exportClipboardButton = new JButton(app.getMenu("ExportToClipboard"));
+		JButton exportClipboardButton = new JButton(app.getMenu("Clipboard"));
 		exportClipboardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				Thread runner = new Thread() {
