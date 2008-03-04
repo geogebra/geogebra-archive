@@ -2015,6 +2015,36 @@ public class Kernel {
 	}
 	
 	/** 
+	 * First[list,n]
+	 * Michael Borcherds
+	 */
+	final public GeoList First(String label, GeoList list, GeoNumeric n) {
+		AlgoFirst algo = new AlgoFirst(cons, label, list, n);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Last[list,n]
+	 * Michael Borcherds
+	 */
+	final public GeoList Last(String label, GeoList list, GeoNumeric n) {
+		AlgoLast algo = new AlgoLast(cons, label, list, n);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Take[list,m,n]
+	 * Michael Borcherds
+	 */
+	final public GeoList Take(String label, GeoList list, GeoNumeric m, GeoNumeric n) {
+		AlgoTake algo = new AlgoTake(cons, label, list, m, n);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Mode[list]
 	 * Michael Borcherds
 	 */
