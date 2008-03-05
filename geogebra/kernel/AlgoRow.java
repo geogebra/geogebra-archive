@@ -74,6 +74,7 @@ public class AlgoRow extends AlgoElement {
 		int row = (int)startValue.getDouble();
 		int columns = (int)n.getDouble();
 		
+    	outputList.setDefined(true);
 		outputList.clear();
 		
 		for (int i=0 ; i<columns ; i++)
