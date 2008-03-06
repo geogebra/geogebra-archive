@@ -2055,6 +2055,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Defined[object]
+	 * Michael Borcherds
+	 */
+	final public GeoBoolean Defined(String label, GeoElement geo) {
+		AlgoDefined algo = new AlgoDefined(cons, label, geo);
+		GeoBoolean result = algo.getResult();
+		return result;
+	}
+	
+	/** 
 	 * Mode[list]
 	 * Michael Borcherds
 	 */
