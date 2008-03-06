@@ -418,37 +418,37 @@ public class WorksheetExportDialog extends JDialog {
 		// framePossible (double click opens GeoGebra window)
 		sb.append("\t<param name=\"framePossible\" value=\"");
 		sb.append(cbShowFrame.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 		
 		// showResetIcon
 		sb.append("\t<param name=\"showResetIcon\" value=\"");
 		sb.append(cbShowResetIcon.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 			
 		// enable right click
 		sb.append("\t<param name=\"enableRightClick\" value=\"");
 		sb.append(cbEnableRightClick.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 		
 		// showMenuBar
 		sb.append("\t<param name=\"showMenuBar\" value=\"");
 		sb.append(cbShowMenuBar.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 		
 		// showToolBar
 		sb.append("\t<param name=\"showToolBar\" value=\"");
 		sb.append(cbShowToolBar.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 					
 		// showToolBarHelp
 		sb.append("\t<param name=\"showToolBarHelp\" value=\"");
 		sb.append(cbShowToolBarHelp.isSelected());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 		
 		// showAlgebraInput
 		sb.append("\t<param name=\"showAlgebraInput\" value=\"");
 		sb.append(cbShowInputField.isSelected());
-		sb.append("\">\n");	
+		sb.append("\"/>\n");	
 	}
 
 	public void setVisible(boolean flag) {
@@ -553,8 +553,13 @@ public class WorksheetExportDialog extends JDialog {
 
 		// width for table
 		int pageWidth = Math.max(appletWidth, DEFAULT_HTML_PAGE_WIDTH);
+		
+		// xhtml header
+		// Michael Borcherds 2008-03-06
+		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
+		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
 
-		sb.append("<html>\n");
 		sb.append("<head>\n");
 		sb.append("<title>");
 		Construction cons = kernel.getConstruction();
@@ -567,11 +572,10 @@ public class WorksheetExportDialog extends JDialog {
 				+ app.getPlain("DynamicWorksheet")));
 		sb.append("</title>\n");
 		// charset
-		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html;
-		// charset=utf-8\">\n");
-		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html;
-		// charset=iso-8859-1\">\n");
-		sb.append("<meta name=\"generator\" content=\"GeoGebra\">\n");
+		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html charset=utf-8\"/>\n");
+		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html charset=iso-8859-1\"/>\n");
+		
+		sb.append("<meta name=\"generator\" content=\"GeoGebra\"/>\n");
 		String css = app.getSetting("cssDynamicWorksheet");
 		if (css != null) {
 			sb.append(css);
@@ -619,14 +623,14 @@ public class WorksheetExportDialog extends JDialog {
 		// parameters
 		sb.append("\t<param name=\"filename\" value=\"");
 		sb.append(ggbFile.getName());
-		sb.append("\">\n");
+		sb.append("\"/>\n");
 
 		if (useWorksheet) {
 			appendAppletParameters(sb);			
 		} else {// button type
-			sb.append("\t<param name=\"type\" value=\"button\">\n");
+			sb.append("\t<param name=\"type\" value=\"button\"/>\n");
 			// white background
-			sb.append("\t<param name=\"bgcolor\" value=\"#FFFFFF\">\n");
+			sb.append("\t<param name=\"bgcolor\" value=\"#FFFFFF\"/>\n");
 		}
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
