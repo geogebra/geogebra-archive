@@ -2045,6 +2045,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Clean[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Clean(String label, GeoList list) {
+		AlgoClean algo = new AlgoClean(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Mode[list]
 	 * Michael Borcherds
 	 */
