@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.math.BigDecimal;
+
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -73,7 +75,7 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
         
         double x[] = new double[n];
         double y[] = new double[n];
-        double z;
+        double xy[] = new double[2];
         
         // copy inputList into two arrays
         for (int i=0 ; i<n ; i++)
@@ -81,9 +83,9 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
       	  GeoElement geo = inputList.get(i); 
    		  if (geo.isGeoPoint()) {
        		GeoPoint listElement = (GeoPoint) inputList.getCached(i); 
-   			z=listElement.getZ();
-       		x[i]=listElement.getX()/z;
-   			y[i]=listElement.getY()/z;
+       		listElement.getInhomCoords(xy);
+       		x[i]=xy[0];
+   			y[i]=xy[1];
   		  }
    		  else
    		  {
@@ -106,7 +108,9 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
    		// calculate the coefficients
         double cof[] = new double[n];
    		try {
-   		  polcoe(x,y,n,cof);
+   		  if (n<15) polcoe(x,y,n,cof);
+			 // Michael Borcherds 2008-03-09 added polcoeBig
+   		  else polcoeBig(x,y,n,cof);
    		}
    		catch (Exception e)
    		{
@@ -140,8 +144,11 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 			 if (Double.isNaN(coeff) || Double.isInfinite(coeff)) {
 					 return null;
 			 }
-			 else if (kernel.isZero(coeff)) 
-			 	continue; // this part vanished
+			 // Michael Borcherds 2008-03-09
+			 // removed these two lines to make Polynomial[] work better
+			 // leading coefficient can be eg E-30
+			 //			 else if (kernel.isZero(coeff)) 
+			 //			 	continue; // this part vanished
 			 				
 			boolean negativeCoeff = coeff < 0; 					
 			
@@ -242,6 +249,50 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
         b=s[k]+x[j]*b;
       }
     }
+  
+  }
+    
+    private void polcoeBig(double xx[], double yy[], int n, double coff[])
+//  Given arrays x[0..n-1] and y[0..n-1] containing a tabulated function yi
+// = f(xi), this routine
+//  returns an array of coefficients cof[0..n], such that yi = Sigma cofj.xj
+// adapted from Numerical Recipes chap 3.5
+    {
+        BigDecimal x[] = new BigDecimal[n];    	
+        BigDecimal y[] = new BigDecimal[n];    	
+        BigDecimal cof[] = new BigDecimal[n];    	
+        BigDecimal s[] = new BigDecimal[n];    	
+        int k,j,i;
+        BigDecimal minusone = new BigDecimal(-1.0);
+        BigDecimal phi,ff,b;
+        for (i=0;i<n;i++)
+        {
+        	x[i]=new BigDecimal(xx[i]);
+        	y[i]=new BigDecimal(yy[i]);
+        }
+        //double s[] = new double[n];
+    for (i=0;i<n;i++) s[i]=cof[i]=new BigDecimal(0.0);
+    s[n-1] = x[0].multiply(minusone);
+    for (i=1 ; i<n ; i++) { 
+	    for (j=n-1-i ; j<n-1 ; j++) s[j] = s[j].subtract(x[i].multiply(s[j+1]));
+      s[n-1] = s[n-1].subtract(x[i]);
+    }
+    for (j=0 ; j<n ; j++) {
+      phi=new BigDecimal(n);
+      for (k=n-1 ; k>0 ; k--) 
+      {
+        BigDecimal kk = new BigDecimal(k);
+    	  phi=(kk.multiply(s[k])).add(x[j].multiply(phi)); 
+      }
+      ff=y[j].divide(phi,BigDecimal.ROUND_HALF_UP);
+      b= new BigDecimal(1.0); 
+      for (k=n-1 ; k>=0 ; k--) {
+        cof[k] = cof[k].add(b.multiply(ff));
+        b=s[k].add(x[j].multiply(b));
+      }
+    }
+    
+    for (i=0;i<n;i++) coff[i]=cof[i].doubleValue();
   
   }
 
