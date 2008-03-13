@@ -40,9 +40,8 @@ public class CASKeyController implements KeyListener {
 							.removeRow(selectedRow);
 				}
 			}
-		}else{
-			
-			
+		} else {
+
 		}
 	}
 

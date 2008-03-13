@@ -3,26 +3,26 @@ package geogebra.cas.view;
 public class CASTableCellValue {
 	private String	command;
 	private String	output;
-	private boolean	outputAreaInclude;
-	private boolean	BBorderInclude;
+	private boolean	isOutputVisible;
+	private boolean	isLineBorderVisible;
 	
 	public CASTableCellValue(){
 		command = new String("");
 		output = new String("");
-		outputAreaInclude = false;
-		BBorderInclude = false;
+		isOutputVisible = false;
+		isLineBorderVisible = false;
 	}
 	
 	public CASTableCellValue(String inCom, String inOut){
 		command = new String(inCom);
 		output = new String(inOut);
-		outputAreaInclude = false;
-		BBorderInclude = false;
+		isOutputVisible = false;
+		isLineBorderVisible = false;
 	}
 	
 	public void initialize(){
-		outputAreaInclude = false;
-		BBorderInclude = false;
+		isOutputVisible = false;
+		isLineBorderVisible = false;
 	}
 	
 	public String getCommand(){
@@ -33,12 +33,12 @@ public class CASTableCellValue {
 		return	output;
 	}
 	
-	public boolean getOutputAreaInclude( ){
-		return outputAreaInclude;
+	public boolean isOutputVisible( ){
+		return isOutputVisible;
 	}
 	
-	public boolean getBBorderInclude( ){
-		return BBorderInclude;
+	public boolean isLineBorderVisible( ){
+		return isLineBorderVisible;
 	}
 	
 	public void setCommand(String inValue){
@@ -50,10 +50,10 @@ public class CASTableCellValue {
 	}
 	
 	public void setOutputAreaInclude(boolean inV){
-		outputAreaInclude = inV;
+		isOutputVisible = inV;
 	}
 	
-	public void setBBorderInclude(boolean inV){
-		BBorderInclude = inV;
+	public void setLineBorderVisible(boolean inV){
+		isLineBorderVisible = inV;
 	}
 }

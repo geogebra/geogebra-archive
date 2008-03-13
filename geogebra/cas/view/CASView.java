@@ -36,7 +36,7 @@ public class CASView extends JComponent {
 
 	private CASSession session;
 
-	private final int numOfRows = 25;
+	private final int numOfRows = 1;
 
 	public CASView(Application app) {
 		kernel = app.getKernel();
@@ -50,10 +50,14 @@ public class CASView extends JComponent {
 		//Set the property of the value column;
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellRenderer(
 				new CASTableCellRender(this, consoleTable));
+		
+//		CASTableCell editorTableCell = new CASTableCell(this,consoleTable);		
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellEditor(
-				new CASTableCellEditor(new JTextField(), new CASTableCell(this,
-						consoleTable)));
-
+				new CASTableCellEditor(this, consoleTable));
+//		CASTableCellController inputListener = new CASTableCellController(editorTableCell, this);
+//		editorTableCell.getInputArea().addKeyListener(inputListener);
+//		editorTableCell.getBBorder().addKeyListener(inputListener);
+		
 		// CAScontroller
 		CASKeyController casKeyCtrl = new CASKeyController(this, session, consoleTable);
 		CASMouseController casMouseCtrl = new CASMouseController(this, session, consoleTable);

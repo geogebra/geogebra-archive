@@ -31,7 +31,7 @@ public class CASTableModel extends DefaultTableModel {
         
         for(int i=0; i<numRows; i++){
         	CASTableCellValue value = new CASTableCellValue();
-        	setValueAt(value, i, CASPara.contCol);
+        	super.setValueAt(value, i, CASPara.contCol);
         	fireTableCellUpdated(i, CASPara.contCol);
         }
         
@@ -48,7 +48,7 @@ public class CASTableModel extends DefaultTableModel {
        /* load the data */
        for (int i = 0; i < data.length; i++)
        {
-             setValueAt(data[i], i);
+             super.setValueAt(data[i], i, CASPara.contCol);
        }
 
        // initialize state to unmodified and file to untitled
@@ -63,28 +63,28 @@ public class CASTableModel extends DefaultTableModel {
         return lbl;
     }
     
-    /*Used to set value of a geoelement in a cell in the CASView*/
-    public void setValueAt(Object obj, int row)
-    {
-    	if(obj instanceof CASTableCellValue){
-    		setValueAt(obj, row, CASPara.contCol);
-    		fireTableCellUpdated(row, CASPara.contCol);
-    		//System.out.println("Value Updated: ");
-    		//System.out.println(((CASTableCellValue)obj).getCommand());
-    		//System.out.println(((CASTableCellValue)obj).getOutput());
-    		//System.out.println(((CASTableCellValue)obj).getOutputAreaInclude());
-    	}
-    }
+//    /*Used to set value of a geoelement in a cell in the CASView*/
+//    public void setValueAt(Object obj, int row)
+//    {
+//    	if(obj instanceof CASTableCellValue){
+//    		setValueAt(obj, row, CASPara.contCol);
+//    		fireTableCellUpdated(row, CASPara.contCol);
+//    		//System.out.println("Value Updated: ");
+//    		//System.out.println(((CASTableCellValue)obj).getCommand());
+//    		//System.out.println(((CASTableCellValue)obj).getOutput());
+//    		//System.out.println(((CASTableCellValue)obj).getOutputAreaInclude());
+//    	}
+//    }
 
-    public Object getValueAt(int row) {
-        Object obj = super.getValueAt(row, CASPara.contCol);
-        if( !(obj instanceof CASTableCellValue ))
-        {
-        	System.out.println("Getting a non-CASTableCellValue"); 
-        	System.out.println(obj.getClass().getName());
-        }
-        return obj;
-    }
+//    public Object getValueAt(int row) {
+//        Object obj = super.getValueAt(row, CASPara.contCol);
+//        if( !(obj instanceof CASTableCellValue ))
+//        {
+//        	System.out.println("Getting a non-CASTableCellValue"); 
+//        	System.out.println(obj.getClass().getName());
+//        }
+//        return obj;
+//    }
 
     /*
      * Don't need to implement this method unless your table's

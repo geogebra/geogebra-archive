@@ -1,74 +1,77 @@
 package geogebra.cas.view;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.*;
 
 public class CASTableCell extends JPanel {
+	// implements FocusListener {
 
-	private JTextField inputArea;
+	// Components in a cell
+	private CASInputPanel inputPanel;
 
-	private JTextField outputArea;
+	private CASOutputPanel outputPanel;
 
-	private CASBPanel BBorder;
-
-	private CASTableCellController inputListener;
-
-	private String input;
-
-	private String output;
+	private CASLinePanel linePanel;
 
 	private JTable consoleTable;
 
-	private boolean lineHighlighted;
+	private boolean lineVisiable;
 
-	private boolean outputAreaAdded;
+	private boolean outputFieldVisiable;
 
 	public CASTableCell(CASView view, JTable consoleTable) {
-		inputArea = new JTextField();
-		outputArea = new JTextField();
-		BBorder = new CASBPanel();
-		inputArea.setBorder(BorderFactory.createEmptyBorder());
-		outputArea.setBorder(BorderFactory.createEmptyBorder());
+		// TODO: remove
+		// System.out.println("created new CASTableCell");
+
+		inputPanel = new CASInputPanel();
+		outputPanel = new CASOutputPanel();
+		linePanel = new CASLinePanel();
+
 		this.consoleTable = consoleTable;
-		lineHighlighted = false;
-		outputAreaAdded = false;
+		lineVisiable = false;
+		outputFieldVisiable = false;
 
-		inputListener = new CASTableCellController(this, view);
-		inputArea.addKeyListener(inputListener);
-		setInputBlank();
-		setOutputBlank();
-
-		// Initially, there is only a input area in the cell panel
+		this.setInput("");
+		this.setOutput("");
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.add(inputArea);
-		// this.add(outputArea);
-		// this.add(BBorder);
+
+		this.add(inputPanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
+		this.setBackground(Color.white);
+		// addFocusListener(this);
 		return;
 	}
 
-	public void removeOutputArea() {
-		if (outputAreaAdded) {
-			this.remove(outputArea);
-			outputAreaAdded = false;
+	
+	
+	public void removeOutputPanel() {
+		if (outputFieldVisiable) {
+			this.remove(outputPanel);
+			outputFieldVisiable = false;
 			this.validate();
 		}
 	}
 
-	public void addOutputArea() {
-		if (!outputAreaAdded) {
-			System.out.println("Add Output Area");
-			this.add(outputArea);
-			outputAreaAdded = true;
+	public void addOutputPanel() {
+		if (!outputFieldVisiable) {
+			//System.out.println("Add Output panel");
+			this.add(outputPanel);
+			outputFieldVisiable = true;
 			this.validate();
 		}
 	}
 
-	public int removeBBorder() {
-		this.remove(BBorder);
-		this.validate();
+	public int removeLinePanel() {
+		this.remove(linePanel);
 		
+		// TODO: check this
+		//this.validate();
+		SwingUtilities.updateComponentTreeUI(this);	
+
 		int cellHeight = 0;
 		Component[] temp = this.getComponents();
 		switch (temp.length) {
@@ -79,11 +82,12 @@ public class CASTableCell extends JPanel {
 			cellHeight = CASPara.inputOutputHeight;
 			break;
 		}
-		
-		return cellHeight;	
+
+		lineVisiable = false;
+		return cellHeight;
 	}
 
-	public int addBBorder() {
+	public int addLinePanel() {
 		int cellHeight = 0;
 		Component[] temp = this.getComponents();
 		switch (temp.length) {
@@ -95,80 +99,90 @@ public class CASTableCell extends JPanel {
 			break;
 
 		}
-		this.add(BBorder);
+		this.add(linePanel);
 		this.validate();
+		lineVisiable = true;
 		return cellHeight;
 	}
 
 	public void setInput(String inValue) {
-		this.inputArea.setText(">>" + inValue);
-		this.input = inValue;
-	}
-
-	public void setInputBlank() {
-		this.inputArea.setText("");
-		this.input = "";
+		this.inputPanel.setInput(inValue);
 	}
 
 	public void setOutput(String inValue) {
-		this.outputArea.setText("<<" + inValue);
-		this.output = inValue;
-		this.addOutputArea();
-	}
-
-	public void setOutputBlank() {
-		this.outputArea.setText("");
-		this.output = "";
-		this.removeOutputArea();
+		this.outputPanel.setOutput(inValue);
+		if (inValue == "")
+			this.removeOutputPanel();
+		else
+			this.addOutputPanel();
 	}
 
 	/*
-	 * Function: set the line unhighlighted,
-	 * and return a proper cell height
+	 * Function: set the line unhighlighted, and return a proper cell height
 	 */
-	public int setLineUnHighlighted() {
-		lineHighlighted = false;
-		return this.removeBBorder();
+	public int setLineInvisiable() {
+		lineVisiable = false;
+		return this.removeLinePanel();
 	}
 
-	public void setLineHighlighted() {
-		lineHighlighted = true;
-	}
-
-	public boolean isLineHighlighted() {
-		return lineHighlighted;
-	}
-
-	public String getInputCAS() {
-		return inputArea.getText();
+	public boolean isLineVisiable() {
+		return lineVisiable;
 	}
 
 	public String getInput() {
-		return input;
-	}
-
-	public String getOutputCAS() {
-		return outputArea.getText();
+		return inputPanel.getInput();
 	}
 
 	public String getOutput() {
-		return output;
+		return outputPanel.getOutput();
 	}
 
 	public JTable getConsoleTable() {
 		return consoleTable;
 	}
 
-	public boolean isOutputAreaAdded() {
-		return outputAreaAdded;
+	public boolean isOutputPanelAdded() {
+		return outputFieldVisiable;
 	}
 
-	public void setInputAreaFocus() {
-		inputArea.requestFocus();
-		inputArea.setCaretPosition(inputArea.getText().length());
+	public void setInputAreaFocused() {
+		inputPanel.setInputAreaFocused();
+		(inputPanel.getInputArea()).setCaretPosition(inputPanel.getInput()
+				.length());
 	}
 
-	public void setBBorderFocus() {
-		BBorder.requestFocus();
+	public void setLineBorderFocus() {
+		linePanel.requestFocus();
+	}
+
+	// public void focusGained(FocusEvent arg0) {
+	// // TODO: remove
+	// System.out.println("focus gained " + this);
+	//		
+	// setInputAreaFocus();
+	// }
+	//
+	// public void focusLost(FocusEvent arg0) {
+	// // TODO Auto-generated method stub
+	// // TODO: remove
+	// System.out.println("focus lost " + this);
+	// }
+
+	public CASLinePanel getLinePanel() {
+		return linePanel;
+	}
+
+	public JTextField getInputArea() {
+		return inputPanel.getInputArea();
+	}
+
+	public CASTableModel getTableModel() {
+		return (CASTableModel) consoleTable.getModel();
+	}
+
+
+
+	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
+		this.outputFieldVisiable = outputFieldVisiable;
 	}
 }

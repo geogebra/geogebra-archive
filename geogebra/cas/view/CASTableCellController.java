@@ -3,6 +3,7 @@ package geogebra.cas.view;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -20,21 +21,55 @@ public class CASTableCellController implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		Object src = e.getSource();
-		if (!(src instanceof JTextField))
-			return;
+		if (src == curCell.getInputArea())
+			handleKeyPressedInputTextField(e);
+
+		if (src == curCell.getLinePanel())
+			handleKeyPressedLinePanel(e);
+	}
+
+	private void handleKeyPressedLinePanel(KeyEvent e) {
 
 		boolean consumeEvent = false;
 
-		int selectedRow = view.getConsoleTable().getSelectedRow();
-		int selectedCol = view.getConsoleTable().getSelectedColumn();
-		CASTableModel tableModel = (CASTableModel) view.getConsoleTable()
-				.getModel();
-		CASTableCellEditor ccurCell = (CASTableCellEditor) view
-				.getConsoleTable().getCellEditor(selectedRow, selectedCol);
+		JTable table = view.getConsoleTable();
+		CASTableModel tableModel = (CASTableModel) table.getModel();
+		int selectedRow = table.getSelectedRow();
+		int selectedCol = table.getSelectedColumn();
+		
+		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(selectedRow, selectedCol);
 
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_ENTER:
-			if (curCell.isLineHighlighted()) {
+		case KeyEvent.VK_UP:
+			// System.out.println("Focus should be set at the line above");
+			if (!curCell.isLineVisiable()) {
+				// Set Line of the previous row Highlighted;
+				// Set the focus on the line;
+				// curCell.setLineHighlighted();
+
+			} else {// Set the focus on the input text field
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				curCell.setInputAreaFocused();
+			}
+			consumeEvent = true;
+			break;
+
+		case KeyEvent.VK_DOWN:
+			if (curCell.isLineVisiable()) {// Set the focus on the input
+												// text field of the next row
+				table.changeSelection(selectedRow + 1, selectedCol, false,
+						false);
+				// table.editCellAt(selectedRow+1, selectedCol);
+				System.out.println("Key donw changed selection: "
+						+ table.getSelectedRow() + " "
+						+ table.getSelectedColumn());
+			}
+			consumeEvent = true;
+			break;
+
+		default:
+			System.out.println("Press Enter at the Line Panel");
+			if (curCell.isLineVisiable()) {
 				// Insert a new line here, and set the focus on the new line
 				CASTableCellValue newValue = new CASTableCellValue();
 				// Here it has to be selectedRow+1. Otherwise there is a bug
@@ -43,69 +78,90 @@ public class CASTableCellController implements KeyListener {
 				// nothing to show.
 				tableModel.insertRow(selectedRow + 1, new Object[] { "New",
 						newValue });
-				// tableModel.fireTableCellUpdated(newRow, CASPara.contCol);
-				//System.out.println("newValue = " + newValue.getOutputAreaInclude());
 
-				curCell.getConsoleTable().setRowHeight(selectedRow,
-						curCell.setLineUnHighlighted());
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				// System.out.println("Set the line UNhighlighted");
-				curCell.setInputAreaFocus();
-			} else {
-				JTextField ta = (JTextField) src;
-				// Get the input of the user
-				String inputText = (ta.getText().substring(2)).trim();
-				// Evaluate the input with Yacas, which is too slow
-				String evaluation = view.getCAS().evaluateYACAS(inputText);
-				curCell.setInput(inputText);
-				curCell.setOutput(evaluation);
-				// We enlarge the height of the selected row
-
-				curCell.getConsoleTable().setRowHeight(selectedRow,
-						CASPara.inputOutputHeight);
-				curCell.addOutputArea();
-				CASTableCellValue newValue = new CASTableCellValue(inputText,
-						evaluation);
-				newValue.setOutputAreaInclude(true);
-				tableModel.setValueAt(newValue, selectedRow);
-
-				// update the cell appearance
-				SwingUtilities.updateComponentTreeUI(curCell);
-				curCell.setInputAreaFocus();
+				curCell.setInputAreaFocused();
 			}
 			consumeEvent = true;
 			break;
+		}
 
-		case KeyEvent.VK_UP:
-			//System.out.println("Focus should be set at the line above");
-			if (!curCell.isLineHighlighted()) {
+		// consume keyboard event so the table
+		// does not process it again
+		if (consumeEvent)
+			e.consume();
+	}
+
+	private void handleKeyPressedInputTextField(KeyEvent e) {
+
+		boolean consumeEvent = false;
+
+		JTable table = view.getConsoleTable();
+		CASTableModel tableModel = (CASTableModel) table.getModel();
+		int selectedRow = table.getSelectedRow();
+		int selectedCol = table.getSelectedColumn();
+		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(selectedRow, selectedCol);
+
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_ENTER:
+			// Get the input from the user interface
+			String inputText = curCell.getInput();
+			
+			// Evaluate the input with Yacas, which is too slow
+			String evaluation = view.getCAS().evaluateYACAS(inputText);
+			
+			// Set the value into the table
+			curValue.setCommand(inputText);
+			curValue.setOutput(evaluation);
+			curCell.setInput(inputText);
+			curCell.setOutput(evaluation);
+			
+			// We enlarge the height of the selected row
+			table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
+//			CASTableCellValue newValue = new CASTableCellValue(inputText,
+//					evaluation);
+			curValue.setOutputAreaInclude(true);
+			//tableModel.setValueAt(curValue, selectedRow, CASPara.contCol);
+			table.setValueAt(curValue, selectedRow, CASPara.contCol);
+			
+			CASTableCellValue newValue = (CASTableCellValue)tableModel.getValueAt(selectedRow, selectedCol);
+			System.out.println(selectedRow + " Value Updated: " + newValue.getCommand() + newValue.getOutput());
+			
+			// update the cell appearance
+			SwingUtilities.updateComponentTreeUI(curCell);
+			//table.repaint();
+			curCell.setInputAreaFocused();
+			
+			consumeEvent = true;
+			break;
+
+		case KeyEvent.VK_UP:			
+			// System.out.println("Focus should be set at the line above");
+			if (!curValue.isLineBorderVisible() && selectedRow > 0) {
 				// Set Line of the previous row Highlighted;
-				// Set the focus on the line;
-				// curCell.setLineHighlighted();
-
-			} else {// Set the focus on the input text field
-				curCell.getConsoleTable().setRowHeight(selectedRow,
-						curCell.setLineUnHighlighted());
-				curCell.setInputAreaFocus();
-			}
+				// Set the focus on the previous row
+				CASTableCellValue prevValue = (CASTableCellValue) tableModel.getValueAt(selectedRow-1, selectedCol);
+				prevValue.setLineBorderVisible(true);
+				tableModel.setValueAt(prevValue, selectedRow-1, selectedCol);
+				
+				// TODO: remove
+				System.out.println("up pressed from input field, go to row " + (selectedRow-1));
+			} 
 			consumeEvent = true;
 			break;
 
 		case KeyEvent.VK_DOWN:
-			if (!curCell.isLineHighlighted()) {
-				curCell.setLineHighlighted();
-				curCell.getConsoleTable().setRowHeight(selectedRow,
-						curCell.addBBorder());
-				SwingUtilities.updateComponentTreeUI(curCell);
-				// curCell.setBBorderFocus();
-			} else {// Set the focus on the input text field of the next row
+			if(!curCell.isLineVisiable()){
+			// if (!curValue.isLineBorderVisible()) {
+				
+				//curValue.setLineBorderVisible(true);
+				table.setRowHeight(selectedRow, curCell.addLinePanel());
 
+				SwingUtilities.updateComponentTreeUI(curCell);
+				curCell.setLineBorderFocus();
 			}
 			consumeEvent = true;
-			break;
-
-		default:
-			if (curCell.isLineHighlighted())
-				consumeEvent = true;
 			break;
 		}
 

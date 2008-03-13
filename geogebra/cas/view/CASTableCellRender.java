@@ -18,34 +18,24 @@ public class CASTableCellRender extends CASTableCell implements
 
 		if (value instanceof CASTableCellValue) {
 			CASTableCellValue tempV = (CASTableCellValue) value;
-			//System.out.println("Rendering Row: " + row);
-			// System.out.println("Input: " + tempV.getCommand());
-			// System.out.println("Output: " + tempV.getOutput());
-			// System.out.println("OutputArea: " + tempV.getOutputAreaInclude());
+//			System.out.println("Rendering Row: " + row);
+//			System.out.println("Input: " + tempV.getCommand());
+//			System.out.println("Output: " + tempV.getOutput());
+			// System.out.println("OutputArea: " +
+			// tempV.getOutputAreaInclude());
+			// tempV.isBBorderVisible();
 			String tempIn = tempV.getCommand();
 			String tempOut = tempV.getOutput();
-
-			if (tempIn.compareTo("") > 0)
-				setInput(tempIn);
-			else {
-				// System.out.println("Input Set Blank");
-				setInputBlank();
-			}
-
-			if (tempOut.compareTo("") > 0){
-				setOutput(tempOut);
-			}
-			else {
-				// System.out.println("Output Blank");
-				setOutputBlank();
-			}
+			
+			setInput(tempIn);
+			setOutput(tempOut);
 
 			// Bug: I set the value to true, but why it is still false?
-//			if (tempV.getOutputAreaInclude()) {
-//				System.out.println("Rendering Row: " + row);
-//				System.out.println("Render: Output Area is added " + row);
-//				this.addOutputArea();
-//			}
+			// if (tempV.getOutputAreaInclude()) {
+			// System.out.println("Rendering Row: " + row);
+			// System.out.println("Render: Output Area is added " + row);
+			// this.addOutputArea();
+			// }
 		}
 		return this;
 	}
