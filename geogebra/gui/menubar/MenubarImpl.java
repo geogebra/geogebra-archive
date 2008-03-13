@@ -1261,7 +1261,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// Michael Borcherds 2008-03-03 END
 	}
 
-	private void updateActions() {		
+	protected void updateActions() {		
 		propertiesAction.setEnabled(!kernel.isEmpty());
 		selectAllAction.setEnabled(!kernel.isEmpty());
 	}
@@ -1323,8 +1323,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			pos = 0;
 		else
 			pos = 1;
+		if (menuAngleUnit != null) {
 		((JRadioButtonMenuItem) menuAngleUnit.getMenuComponent(pos))
 				.setSelected(true);
+		}
 	}
 
 	protected void updateMenuPointStyle() {
@@ -1354,7 +1356,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				.setSelected(true);
 	}
 	
-	private void updateMenuLabeling() {
+	protected void updateMenuLabeling() {
 		if (menuLabeling == null) return;
 		
 		int pos = app.getLabelingStyle();
