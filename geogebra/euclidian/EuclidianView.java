@@ -265,6 +265,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	public static final int MODE_REGULAR_POLYGON = 51;
 	
 	public static final int MODE_SHOW_HIDE_CHECKBOX = 52;
+	
+	public static final int MODE_COMPASSES = 53;  		// Michael Borcherds 2008-03-13
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
@@ -3298,6 +3300,10 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 			return "Circle3";
+
+		// Michael Borcherds 2008-03-13
+		case EuclidianView.MODE_COMPASSES:
+			return "Compasses";
 
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 			return "Conic5";

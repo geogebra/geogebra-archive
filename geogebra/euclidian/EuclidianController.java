@@ -520,11 +520,11 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_ANGULAR_BISECTOR:
 		case EuclidianView.MODE_TANGENTS:		
 		case EuclidianView.MODE_POLAR_DIAMETER:
+		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
 			hits = view.getHits(mouseLoc);
 			createNewPoint(hits, false, true, true);
 			break;		
 				
-			
 		case EuclidianView.MODE_ANGLE:
 			hits = view.getTopHits(mouseLoc);
  		 	// check if we got a polygon
@@ -1753,6 +1753,11 @@ public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
 			changedKernel = showCheckBox(hits);
+			break;
+
+			// Michael Borcherds 2008-03-13	
+		case EuclidianView.MODE_COMPASSES:
+			changedKernel = compasses(hits);
 			break;
 
 		default:
@@ -3706,6 +3711,33 @@ public class EuclidianController implements MouseListener,
 			kernel.Segment(null, points[0], num);
 			return true;
 		}
+		return false;
+	}	
+	
+	// Michael Borcherds 2008-03-13	
+	final protected boolean compasses(ArrayList hits) {
+		if (hits == null)
+			return false;
+			
+		addSelectedPoint(hits, 3, true);
+		addSelectedSegment(hits, 1, false);
+		
+		if (selPoints() == 3) {
+										
+			GeoPoint[] points = getSelectedPoints();		
+			kernel.Circle(null, points[0], points[1], points[2],true);
+			return true;
+		}
+		if (selPoints() == 1 && selSegments() == 1) {
+										
+			GeoPoint[] points = getSelectedPoints();		
+			GeoSegment[] segment = getSelectedSegments();		
+			kernel.Circle(null, points[0], segment[0].getEndPoint(), segment[0].getStartPoint(),true);
+			return true;
+		}
+		
+		
+
 		return false;
 	}	
 	

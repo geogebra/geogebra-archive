@@ -23,6 +23,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 /**
  *
  * @author  Markus
+ * added TYPE_TWO_POINTS Michael Borcherds 2008-03-13	
  * @version 
  */
 public class AlgoCirclePointRadius extends AlgoElement {
@@ -31,36 +32,75 @@ public class AlgoCirclePointRadius extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPoint M; // input
+	private GeoPoint M, B, C; // input
     private NumberValue r; // input
     private GeoElement rgeo;
-    private GeoConic circle; // output         
+    private GeoConic circle; // output    
+    
+    private int type;
+    final static int TYPE_RADIUS=0;
+    final static int TYPE_TWO_POINTS=1;
 
     AlgoCirclePointRadius(
-        Construction cons,
-        String label,
-        GeoPoint M,
-        NumberValue r) {
-    	
-        this(cons, M, r);
-        circle.setLabel(label);
-    }
+            Construction cons,
+            String label,
+            GeoPoint M,
+            NumberValue r) {
+        	
+            this(cons, M, r);
+            circle.setLabel(label);
+        }
+        
+    AlgoCirclePointRadius(
+            Construction cons,
+            String label,
+            GeoPoint M,
+            GeoPoint B,
+            GeoPoint C) {
+        	
+            this(cons, M, B, C);
+            circle.setLabel(label);
+        }
+        
+    AlgoCirclePointRadius(
+            Construction cons,
+            GeoPoint M,
+            NumberValue r) {
+        	
+            super(cons);
+            
+            type=TYPE_RADIUS;
+            
+            this.M = M;
+            this.r = r;
+            rgeo = r.toGeoElement();
+            circle = new GeoConic(cons);
+            
+            setInputOutput(); // for AlgoElement
+
+            compute();            
+        }
     
     AlgoCirclePointRadius(
-        Construction cons,
-        GeoPoint M,
-        NumberValue r) {
-    	
-        super(cons);
-        this.M = M;
-        this.r = r;
-        rgeo = r.toGeoElement();
-        circle = new GeoConic(cons);
-        
-        setInputOutput(); // for AlgoElement
+            Construction cons,
+            GeoPoint M,
+            GeoPoint B,
+            GeoPoint C) {
+        	
+            super(cons);
+            
+            type=TYPE_TWO_POINTS;
+  
+            
+            this.M = M;
+            this.B = B;
+            this.C = C;
+            circle = new GeoConic(cons);
+            
+            setInputOutput(); // for AlgoElement
 
-        compute();            
-    }
+            compute();            
+        }
 
     protected String getClassName() {
         return "AlgoCirclePointRadius";
@@ -68,9 +108,19 @@ public class AlgoCirclePointRadius extends AlgoElement {
 
     // for AlgoElement
     void setInputOutput() {
-        input = new GeoElement[2];
-        input[0] = M;
-        input[1] = rgeo;
+        switch (type) {
+        case TYPE_RADIUS:
+            input = new GeoElement[2];
+            input[0] = M;
+            input[1] = rgeo;
+        	break;
+        case TYPE_TWO_POINTS:
+            input = new GeoElement[3];
+            input[0] = M;
+            input[1] = B;
+            input[2] = C;
+        	break;
+        }
 
         output = new GeoElement[1];
         output[0] = circle;
@@ -86,7 +136,14 @@ public class AlgoCirclePointRadius extends AlgoElement {
 
     // compute circle with midpoint M and radius r
     final void compute() {
-        circle.setCircle(M, r.getDouble());
+        switch (type) {
+        case TYPE_RADIUS:
+        	circle.setCircle(M, r.getDouble());
+        	break;
+        case TYPE_TWO_POINTS:
+            circle.setCircle(M, B, C);
+        	break;
+        }
     }
 
     final public String toString() {
@@ -106,7 +163,15 @@ public class AlgoCirclePointRadius extends AlgoElement {
         sb.append(' ');
         sb.append(app.getPlain("Radius"));
         sb.append(' ');
-        sb.append(rgeo.getLabel());
+        switch (type) {
+        case TYPE_RADIUS:
+            sb.append(rgeo.getLabel());
+        	break;
+        case TYPE_TWO_POINTS:
+            sb.append(B.getLabel());
+            sb.append(C.getLabel());
+        	break;
+        }
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("of"));

@@ -837,6 +837,34 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}
 
 	/**
+	 * makes this conic a circle with midpoint M and radius BC
+	 *  Michael Borcherds 2008-03-13	
+	 */
+	final public void setCircle(GeoPoint M, GeoPoint B, GeoPoint C) {
+		defined = M.isDefined() && !M.isInfinite() &&
+		B.isDefined() && !B.isInfinite() &&
+		C.isDefined() && !C.isInfinite(); 
+		
+		double coordsB[] = new double[2], coordsC[]= new double[2];
+		B.getInhomCoords(coordsB);
+		C.getInhomCoords(coordsC);
+		
+		double r=Math.sqrt((coordsB[0]-coordsC[0])*(coordsB[0]-coordsC[0])+(coordsB[1]-coordsC[1])*(coordsB[1]-coordsC[1]));
+		// check radius
+		if (kernel.isZero(r)) {
+			r = 0;
+		} 
+		else if (r < 0) {
+			defined = false;
+		}					
+
+		if (defined) {
+			setCircleMatrix(M, r);
+			setAffineTransform();
+		} 		
+	}
+
+	/**
 	 * makes this conic a circle with midpoint M through Point P
 	 */
 	final public void setCircle(GeoPoint M, GeoPoint P) {

@@ -2449,6 +2449,22 @@ public class Kernel {
 	}
 
 	/** 
+	 * circle with midpoint M and radius r
+	 */
+	final public GeoConic Circle(
+		String label,
+		GeoPoint A,
+		GeoPoint B,
+		GeoPoint C, boolean dummy) {
+		AlgoCirclePointRadius algo = new AlgoCirclePointRadius(cons, label, A,B,C);
+		GeoConic circle = algo.getCircle();
+		circle.setToSpecific();
+		circle.update();
+		notifyUpdate(circle);
+		return circle;
+	}
+
+	/** 
 	 * circle with midpoint M through point P
 	 */
 	final public GeoConic Circle(String label, GeoPoint M, GeoPoint P) {
