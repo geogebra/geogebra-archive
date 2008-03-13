@@ -428,6 +428,16 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 		}
 	}
 	
+	private void addWindowMenu() {
+		
+		if (!app.isApplet()) {
+			// windows menu
+			menuWindow = new JMenu(app.getMenu("Window"));
+			updateMenuWindow();
+			add(menuWindow);
+		}
+	}
+	
 	public void initMenubar() {
 		initActions();
 		
@@ -437,29 +447,71 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 		removeAll();
 
 		// File menu
-		addFileMenu();
+		//addFileMenu();
 		
 		// Edit menu
-		addEditMenu();
+		//addEditMenu();
 		
 		// View Menu
-		addViewMenu();
+		//addViewMenu();
 		
 		// Tools menu
-		addToolsMenu();
+		//addToolsMenu();
 
-		if (!app.isApplet()) {
-			// windows menu
-			menuWindow = new JMenu(app.getMenu("Window"));
-			updateMenuWindow();
-			add(menuWindow);
-		}
+		//addWindowMenu();
 
-		addOptionsMenu();
+		//addOptionsMenu();
 		
-		addHelpMenu();
+		//addHelpMenu();
 		
 		updateMenubar();
 	}
 
+	public void updateMenubar() {	
+		EuclidianView ev = app.getEuclidianView();
+		if (cbShowAxes!=null) cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+	    if (cbShowGrid!=null) cbShowGrid.setSelected(ev.getShowGrid());
+	    
+	    if (cbShowAlgebraView!=null) cbShowAlgebraView.setSelected(app.showAlgebraView());
+	    if (cbShowSpreadsheet!=null) cbShowSpreadsheet.setSelected(app.showSpreadsheet());     // Michael Borcherds 2008-01-14
+        if (cbShowAlgebraInput!=null) cbShowAlgebraInput.setSelected(app.showAlgebraInput());
+        if (cbShowAuxiliaryObjects!=null) cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
+
+		boolean showAlgebraView = app.showAlgebraView();
+		if (cbShowAlgebraView!=null) cbShowAlgebraView.setSelected(showAlgebraView);
+		if (cbShowSpreadsheet!=null) cbShowAuxiliaryObjects.setVisible(showAlgebraView);
+		if (cbShowAuxiliaryObjects!=null) cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
+
+		if (cbHorizontalSplit!=null) cbHorizontalSplit.setVisible(showAlgebraView);
+		if (cbHorizontalSplit!=null) cbHorizontalSplit.setSelected(app.isHorizontalSplit());
+		
+		if (cbShowAlgebraInput!=null) cbShowAlgebraInput.setSelected(app.showAlgebraInput());
+		if (cbShowCmdList!=null) cbShowCmdList.setSelected(app.showCmdList());
+		if (cbShowCmdList!=null) cbShowCmdList.setVisible(app.showAlgebraInput());		
+			
+		
+		if (cbShowConsProtNavigation!=null) cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());				
+		if (cbShowConsProtNavigationPlay!=null) cbShowConsProtNavigationPlay
+				.setSelected(app.isConsProtNavigationPlayButtonVisible());
+		if (cbShowConsProtNavigationOpenProt!=null) cbShowConsProtNavigationOpenProt
+				.setSelected(app.isConsProtNavigationProtButtonVisible());
+		if (cbShowConsProtNavigationPlay!=null) cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
+		if (cbShowConsProtNavigationOpenProt!=null) cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
+
+		// Michael Borcherds 2008-03-03 BEGIN put these back in
+        updateMenuContinuity();
+        updateMenuPointCapturing();
+        updateMenuAngleUnit();
+        updateMenuDecimalPlaces();
+        updateMenuPointStyle();
+        updateMenuRightAngleStyle();
+        updateMenuCoordStyle();	
+        updateMenuLabeling();        
+        
+        updateActions();
+        updateSelection();
+		// Michael Borcherds 2008-03-03 END
+                
+	}
+	
 }

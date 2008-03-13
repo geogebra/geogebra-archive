@@ -13,6 +13,7 @@
 	</path>
 	
 	<target name="clean">
+		<delete dir="${dist.dir}" />
 		<delete dir="${build.dir}"/>
 	</target>
 	
@@ -32,6 +33,7 @@
     			<include name="*.jar"/>
     			<include name="**/*.png"/>
     			<include name="**/*.gif"/>
+    			<include name="**/*.jpg"/>
     		</fileset>
     	</copy>
     </target>
@@ -40,15 +42,25 @@
 		<mkdir dir="${dist.dir}"/>
 		<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
 			basedir="${build.dir}"
-			includes="**/*.class, *.jar, **/*.png, **/*.gif"/>
+			includes="**/*.class, *.jar, **/*.png, **/*.gif, **/*.jpg"/>
 	</target>
 	
 	<target name="sign" depends="compress">
+		
+		<!--
 		<signjar keystore="keystore.ks"
 			jar="${dist.dir}/geogebra_unsigned.jar"
 			signedjar="${dist.dir}/geogebra.jar"
 			alias="myalias"
 			storepass="mypassword" />
+		-->
+		
+		<signjar keystore="UABKeyStore"
+			jar="${dist.dir}/geogebra_unsigned.jar"
+			signedjar="${dist.dir}/geogebra.jar"
+			alias="UABKeyEntry"
+			storepass="geogebratutor" />
+		
 	</target>
 
 </project>
