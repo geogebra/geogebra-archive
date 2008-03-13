@@ -1333,6 +1333,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		if (menuPointStyle == null) return;
 		
 		int pos = app.getEuclidianView().getPointStyle();
+		if (pos == 1) pos=2; else if (pos == 2) pos=1; // bugfix swap 2 and 1 Michael Borcherds 2008-03-13
 		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos))
 				.setSelected(true);
 	}
