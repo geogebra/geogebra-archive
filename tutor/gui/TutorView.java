@@ -72,15 +72,15 @@ public class TutorView extends JPanel implements View  {
 	private String alumne;
 	private String problema;
 
-	private static final int STUDENT = 0;
-	private static final int TUTOR = 1;
-	private static final int GRAPHICAL_INFO = 2;
-	private static final int SENTENCE = 3;
-	private static final int ARGUMENT = 4;
-	private static final String studentName = "Eloi";
-	private static final String tutorName = "Fortuny";
-	private static final String LN = System.getProperty("line.separator");
-	private static final String WELCOME = "Welcome!!!"+LN;
+	public static final int STUDENT = 0;
+	public static final int TUTOR = 1;
+	public static final int GRAPHICAL_INFO = 2;
+	public static final int SENTENCE = 3;
+	public static final int ARGUMENT = 4;
+	public static final String studentName = "Eloi";
+	public static final String tutorName = "Fortuny";
+	public static final String LN = System.getProperty("line.separator");
+	public static final String WELCOME = "Welcome!!!"+LN;
 	
 	private JComboBox justificationCombo;
 	private JTextField commentField = new JTextField(70);
@@ -204,133 +204,51 @@ public class TutorView extends JPanel implements View  {
 	public void createGUI() {
 		
 		resultArea.setBackground(Color.WHITE);
+        resultArea.setText(WELCOME);
+        resultArea.setEditable(false);
 
 		justificationCombo = new JComboBox(getJustifications());
-		justificationCombo.addActionListener(new ActionListener() {
-    		public void actionPerformed( ActionEvent evt ) {
-    			JComboBox cb = (JComboBox) evt.getSource();
-    	        String just = (String)cb.getSelectedItem();    			
-    	        printTextArea(just, ARGUMENT);
-    		}});
+		justificationCombo.addActionListener(tutorController);
 	
-		
-	        resultArea.setText(WELCOME);
-	        resultArea.setEditable(false);
-	        commentField.setEditable(true);
-	        commentField.setEnabled(true);
-	        
-	
-	        JScrollPane scrollingArea = new JScrollPane(resultArea);
-	        
-	        //resultArea.setSize(300,600);
-	        //scrollingArea.setSize(300,600);
-	        
-	        //... Get the content pane, set layout, add to center
-	        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-	        
-	        //setLayout(new FlowLayout());
-	        add(scrollingArea);
-	        //scrollingArea.setSize(200,400);
-	        //add(Box.createVerticalGlue());  
+        commentField.setEditable(true);
+        commentField.setEnabled(true);
+        commentField.addActionListener(tutorController);
+        
+        JScrollPane scrollingArea = new JScrollPane(resultArea);
+        
+        //resultArea.setSize(300,600);
+        //scrollingArea.setSize(300,600);
+        
+        //... Get the content pane, set layout, add to center
+        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+        
+        //setLayout(new FlowLayout());
+        add(scrollingArea);
+        //scrollingArea.setSize(200,400);
+        //add(Box.createVerticalGlue());  
 
-	        add(new JLabel("Comments:",SwingConstants.LEFT));
-	       // commentField.setMaximumSize(commentField.getPreferredSize());
-	        
-	        commentField.addActionListener(new ActionListener() {
-	        		public void actionPerformed( ActionEvent evt ) {
-	        			processCommentField();
-	        		}
-	        }
-	        );
-	        
-	        this.botoNou = new JButton("Nou");
-	        this.botoGuardar = new JButton("Guardar");
-	        
-	        botoNou.addActionListener(new ActionListener() {
-        		public void actionPerformed( ActionEvent evt ) {
-        			//
-        			System.out.println("Nou");
-        			//app.setUnsaved();
-        			app.deleteAllGeoElements();
-        			
-        		}
-	        });
-	        
-	        botoGuardar.addActionListener(new ActionListener() {
-        		public void actionPerformed( ActionEvent evt ) {
-
-        			System.out.println("Guardar");
-        			System.out.println(app.getXML());
-        			
-        			//String url = "http://localhost/agentgeom/continguts/problemes/upload_file.php";
-        			String url = "http://158.109.2.26/edumat/agentgeom/continguts/problemes/upload_file.php";
-        			
-        			System.out.println("1111111111111");
-        			
-        			StringOutputStream sos = new StringOutputStream();
-        			File fileOut = null;
-        			
-        			System.out.println("222222222222222");
-        			
-        			try {
-        				fileOut = File.createTempFile("tempfile",".tmp");
-        				System.out.println(fileOut.getAbsolutePath());
-        				
-						FileOutputStream fos = new FileOutputStream(fileOut);
-						app.getXMLio().writeGeoGebraFile(fos);
-						
-						HttpParam param = new HttpParam();
-						param.setName("fitxer");
-						param.setValue(fileOut);
-						
-						HttpParam pIdProblema = new HttpParam();
-						pIdProblema.setName("id_problem");
-						pIdProblema.setValue("1");
-						
-						HttpParam pIdStudent = new HttpParam();
-						pIdStudent.setName("id_student");
-						pIdStudent.setValue("2");
-						
-						List params = new ArrayList();
-						params.add(param);
-						params.add(pIdStudent);
-						params.add(pIdProblema);
-
-						HttpMultiPartFileUpload mpfu = new HttpMultiPartFileUpload();
-						
-						mpfu.send(url, params);
-					}
-        			catch (IOException e) {
-						e.printStackTrace();
-					}
-        			catch (Exception e) {
-						e.printStackTrace();
-					}
-        			catch (Throwable t) {
-        				t.printStackTrace();
-        			}
-        		}
-	        });
-	        
-	        add(botoNou);
-	        add(botoGuardar);
-	        
-	        add(commentField);
-	        //add( new JTextArea(3, 70));
-	        //add( new JTextArea(3, 70));
-	        add(justificationCombo);
-	        //add( new JTextArea(3, 70));
-	        
-	        
-	        try {
-	        	for (int i=0; i<20; i++)
-	        		doc.insertString(doc.getLength(), ""+LN, null);
-	        }catch (Throwable t) {}
-	        
-	        
+        add(new JLabel("Comments:",SwingConstants.LEFT));
+        // commentField.setMaximumSize(commentField.getPreferredSize());
+        
+        botoNou = new JButton("Nou");
+        botoNou.addActionListener(tutorController);
+        
+        botoGuardar = new JButton("Guardar");
+        botoGuardar.addActionListener(tutorController);
+        
+        add(botoNou);
+        add(botoGuardar);
+        
+        add(commentField);
+        add(justificationCombo);
+        
+        try {
+        	for (int i=0; i<20; i++)
+        		doc.insertString(doc.getLength(), ""+LN, null);
+        }catch (Throwable t) {}
 	}
 	
-	private void processCommentField(){
+	public void processCommentField(){
 		
 		//String strSel = (String) justificationCombo.getSelectedItem();
 		//int selectedUser = Integer.parseInt(strSel);
@@ -402,7 +320,7 @@ public class TutorView extends JPanel implements View  {
 	/*
 	 * Print text into Tutor Dialogue area.
 	 */
-	private void printTextArea(String text, int user)
+	public void printTextArea(String text, int user)
 	{
 		switch(user) {
 		
@@ -678,6 +596,118 @@ public class TutorView extends JPanel implements View  {
 
 	public void setProblema(String problema) {
 		this.problema = problema;
+	}
+
+	public Application getApp() {
+		return app;
+	}
+
+	public void setApp(Application app) {
+		this.app = app;
+	}
+
+	public Kernel getKernel() {
+		return kernel;
+	}
+
+	public void setKernel(Kernel kernel) {
+		this.kernel = kernel;
+	}
+
+	public JComboBox getJustificationCombo() {
+		return justificationCombo;
+	}
+
+	public void setJustificationCombo(JComboBox justificationCombo) {
+		this.justificationCombo = justificationCombo;
+	}
+
+	public JTextField getCommentField() {
+		return commentField;
+	}
+
+	public void setCommentField(JTextField commentField) {
+		this.commentField = commentField;
+	}
+
+	public StyleContext getStyleContext() {
+		return styleContext;
+	}
+
+	public void setStyleContext(StyleContext styleContext) {
+		this.styleContext = styleContext;
+	}
+
+	public StyledDocument getDoc() {
+		return doc;
+	}
+
+	public void setDoc(StyledDocument doc) {
+		this.doc = doc;
+	}
+
+	public JTextPane getResultArea() {
+		return resultArea;
+	}
+
+	public void setResultArea(JTextPane resultArea) {
+		this.resultArea = resultArea;
+	}
+
+	public DefaultListModel getListModel() {
+		return listModel;
+	}
+
+	public void setListModel(DefaultListModel listModel) {
+		this.listModel = listModel;
+	}
+
+	public JList getResArea() {
+		return resArea;
+	}
+
+	public void setResArea(JList resArea) {
+		this.resArea = resArea;
+	}
+
+	public JButton getBotoNou() {
+		return botoNou;
+	}
+
+	public void setBotoNou(JButton botoNou) {
+		this.botoNou = botoNou;
+	}
+
+	public JButton getBotoGuardar() {
+		return botoGuardar;
+	}
+
+	public void setBotoGuardar(JButton botoGuardar) {
+		this.botoGuardar = botoGuardar;
+	}
+
+	public long getLineCounter() {
+		return lineCounter;
+	}
+
+	public void setLineCounter(long lineCounter) {
+		this.lineCounter = lineCounter;
+	}
+
+	public ResourceBundle getTutorResources() {
+		return tutorResources;
+	}
+
+	public void setTutorResources(ResourceBundle tutorResources) {
+		this.tutorResources = tutorResources;
+	}
+
+	public List getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(List annotations) {
+		this.annotations = annotations;
 	}
 }
 
