@@ -2450,14 +2450,19 @@ public class Kernel {
 
 	/** 
 	 * circle with midpoint M and radius BC
-	 * Michael Borcherds 2008-03-13
+	 * Michael Borcherds 2008-03-14
 	 */
 	final public GeoConic Circle(
+			// this is actually a macro
 		String label,
 		GeoPoint A,
 		GeoPoint B,
 		GeoPoint C, boolean dummy) {
-		AlgoCirclePointRadius algo = new AlgoCirclePointRadius(cons, label, A,B,C);
+
+		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, B, C, null);
+		cons.removeFromConstructionList(algoSegment);
+		
+		AlgoCirclePointRadius algo = new AlgoCirclePointRadius(cons, label, A, algoSegment.getSegment(),true);
 		GeoConic circle = algo.getCircle();
 		circle.setToSpecific();
 		circle.update();

@@ -40,6 +40,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
     private int type;
     final static int TYPE_RADIUS=0;
     final static int TYPE_TWO_POINTS=1;
+    final static int TYPE_SEGMENT=2;
 
     AlgoCirclePointRadius(
             Construction cons,
@@ -59,6 +60,16 @@ public class AlgoCirclePointRadius extends AlgoElement {
             GeoPoint C) {
         	
             this(cons, M, B, C);
+            circle.setLabel(label);
+        }
+        
+    AlgoCirclePointRadius(
+            Construction cons,
+            String label,
+            GeoPoint M,
+            GeoSegment segment, boolean dummy) {
+        	
+            this(cons, M, segment, dummy);
             circle.setLabel(label);
         }
         
@@ -101,6 +112,25 @@ public class AlgoCirclePointRadius extends AlgoElement {
 
             compute();            
         }
+    AlgoCirclePointRadius(
+            Construction cons,
+            GeoPoint M,
+            GeoSegment rgeo, boolean dummy) {
+        	
+            super(cons);
+            
+            type=TYPE_SEGMENT;
+  
+            
+            this.M = M;
+            this.rgeo=rgeo;
+            
+            circle = new GeoConic(cons);
+            
+            setInputOutput(); // for AlgoElement
+
+            compute();            
+        }
 
     protected String getClassName() {
         return "AlgoCirclePointRadius";
@@ -119,6 +149,11 @@ public class AlgoCirclePointRadius extends AlgoElement {
             input[0] = M;
             input[1] = B;
             input[2] = C;
+        	break;
+        case TYPE_SEGMENT:
+            input = new GeoElement[2];
+            input[0] = M;
+            input[1] = rgeo;
         	break;
         }
 
@@ -143,6 +178,9 @@ public class AlgoCirclePointRadius extends AlgoElement {
         case TYPE_TWO_POINTS:
             circle.setCircle(M, B, C);
         	break;
+        case TYPE_SEGMENT:
+            circle.setCircle(M, (GeoSegment)rgeo);
+        	break;
         }
     }
 
@@ -165,6 +203,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
         sb.append(' ');
         switch (type) {
         case TYPE_RADIUS:
+        case TYPE_SEGMENT:
             sb.append(rgeo.getLabel());
         	break;
         case TYPE_TWO_POINTS:

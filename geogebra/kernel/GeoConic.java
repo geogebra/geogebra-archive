@@ -862,6 +862,30 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}
 
 	/**
+	 * makes this conic a circle with midpoint M and radius geoSegment
+	 *  Michael Borcherds 2008-03-13	
+	 */
+	final public void setCircle(GeoPoint M, GeoSegment geoSegment) {
+		defined = M.isDefined() && !M.isInfinite() &&
+		geoSegment.isDefined(); 
+		
+		double r=geoSegment.getLength();
+		
+		// check radius
+		if (kernel.isZero(r)) {
+			r = 0;
+		} 
+		else if (r < 0) {
+			defined = false;
+		}					
+
+		if (defined) {
+			setCircleMatrix(M, r);
+			setAffineTransform();
+		} 		
+	}
+
+	/**
 	 * makes this conic a circle with midpoint M through Point P
 	 */
 	final public void setCircle(GeoPoint M, GeoPoint P) {
