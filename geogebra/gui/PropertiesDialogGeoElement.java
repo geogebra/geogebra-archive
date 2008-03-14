@@ -1023,6 +1023,8 @@ public class PropertiesDialogGeoElement
 			
 			setLayout(new BorderLayout());			
 			add(tabs[0], BorderLayout.NORTH);		
+			//add(tabs[1], BorderLayout.EAST);	// HSV color chooser	
+			add(tabs[2], BorderLayout.SOUTH);	 // Michael Borcherds 2008-03-14 enter/display RGB colors	
 			
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			p.add(new JLabel(app.getMenu("Preview") + ": "));
