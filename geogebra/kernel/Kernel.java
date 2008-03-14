@@ -2449,7 +2449,8 @@ public class Kernel {
 	}
 
 	/** 
-	 * circle with midpoint M and radius r
+	 * circle with midpoint M and radius BC
+	 * Michael Borcherds 2008-03-13
 	 */
 	final public GeoConic Circle(
 		String label,

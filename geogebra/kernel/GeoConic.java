@@ -845,11 +845,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		B.isDefined() && !B.isInfinite() &&
 		C.isDefined() && !C.isInfinite(); 
 		
-		double coordsB[] = new double[2], coordsC[]= new double[2];
-		B.getInhomCoords(coordsB);
-		C.getInhomCoords(coordsC);
+		double r=B.distance(C);
 		
-		double r=Math.sqrt((coordsB[0]-coordsC[0])*(coordsB[0]-coordsC[0])+(coordsB[1]-coordsC[1])*(coordsB[1]-coordsC[1]));
 		// check radius
 		if (kernel.isZero(r)) {
 			r = 0;
