@@ -138,11 +138,11 @@ public class CASTableCellController implements KeyListener {
 
 		case KeyEvent.VK_UP:			
 			// System.out.println("Focus should be set at the line above");
-			if (!curValue.isLineBorderVisible() && selectedRow > 0) {
+			if (!curCell.isLineVisiable() && selectedRow > 0) {
 				// Set Line of the previous row Highlighted;
 				// Set the focus on the previous row
 				CASTableCellValue prevValue = (CASTableCellValue) tableModel.getValueAt(selectedRow-1, selectedCol);
-				prevValue.setLineBorderVisible(true);
+				//prevValue.setLineBorderVisible(true);
 				tableModel.setValueAt(prevValue, selectedRow-1, selectedCol);
 				
 				// TODO: remove

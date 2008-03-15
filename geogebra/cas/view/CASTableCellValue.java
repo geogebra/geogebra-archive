@@ -4,25 +4,25 @@ public class CASTableCellValue {
 	private String	command;
 	private String	output;
 	private boolean	isOutputVisible;
-	private boolean	isLineBorderVisible;
+	//private boolean	isLineBorderVisible;
 	
 	public CASTableCellValue(){
 		command = new String("");
 		output = new String("");
 		isOutputVisible = false;
-		isLineBorderVisible = false;
+		//isLineBorderVisible = false;
 	}
 	
 	public CASTableCellValue(String inCom, String inOut){
 		command = new String(inCom);
 		output = new String(inOut);
 		isOutputVisible = false;
-		isLineBorderVisible = false;
+		//isLineBorderVisible = false;
 	}
 	
 	public void initialize(){
 		isOutputVisible = false;
-		isLineBorderVisible = false;
+		//isLineBorderVisible = false;
 	}
 	
 	public String getCommand(){
@@ -37,9 +37,9 @@ public class CASTableCellValue {
 		return isOutputVisible;
 	}
 	
-	public boolean isLineBorderVisible( ){
-		return isLineBorderVisible;
-	}
+//	public boolean isLineBorderVisible( ){
+//		return isLineBorderVisible;
+//	}
 	
 	public void setCommand(String inValue){
 		command = inValue;
@@ -53,7 +53,7 @@ public class CASTableCellValue {
 		isOutputVisible = inV;
 	}
 	
-	public void setLineBorderVisible(boolean inV){
-		isLineBorderVisible = inV;
-	}
+//	public void setLineBorderVisible(boolean inV){
+//		isLineBorderVisible = inV;
+//	}
 }

@@ -36,9 +36,10 @@ public class CASMouseController implements MouseListener {
 			//Component clickedComponent = consoleTable.findComponentAt(e.getPoint());
 			//Component clickedCell = consoleTable.getComponentAt(e.getPoint());
 			CASTableCell clickedCell = (CASTableCell)consoleTable.getComponentAt(e.getPoint());
+			System.out.println("clickedComponent: " + (clickedCell.getComponents()).length);
 			clickedCell.setLineInvisiable();
 			clickedCell.setInputAreaFocused();
-			System.out.println("clickedComponent: " + clickedCell);
+			
 		}
 	}
 	
