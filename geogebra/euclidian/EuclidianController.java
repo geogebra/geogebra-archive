@@ -3738,7 +3738,7 @@ public class EuclidianController implements MouseListener,
 										
 			GeoPoint[] points = getSelectedPoints();		
 			GeoSegment[] segment = getSelectedSegments();		
-			kernel.Circle(null, points[0], segment[0].getEndPoint(), segment[0].getStartPoint(),true);
+			kernel.Circle(null, points[0], segment[0]);
 			return true;
 		}
 
