@@ -50,6 +50,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1021,15 +1022,65 @@ public class PropertiesDialogGeoElement
 			previewPanel = new PreviewPanel();					
 			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
 			
-			setLayout(new BorderLayout());			
-			add(tabs[0], BorderLayout.NORTH);		
-			//add(tabs[1], BorderLayout.EAST);	// HSV color chooser	
-			add(tabs[2], BorderLayout.SOUTH);	 // Michael Borcherds 2008-03-14 enter/display RGB colors	
+			setLayout(new BorderLayout());		
 			
-			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			p.add(new JLabel(app.getMenu("Preview") + ": "));
-			p.add(previewPanel);
-			add(p, BorderLayout.CENTER);
+			
+			/*
+			JTabbedPane colorTabs = new JTabbedPane();				
+			ArrayList colorTabList = new ArrayList();			
+			colorTabList.add(tabs[0]);	
+			colorTabList.add(tabs[2]);			
+			//TabPanel colorTab = new TabPanel(app.getPlain("Text"), colorTabList);
+			colorTabs.add(colorTabList);
+			colorTabList*/
+			
+			// Michael Borcherds 2008-03-14
+			// added RGB in a new tab
+			// and moved preview underneath
+			JTabbedPane colorTabbedPane = new JTabbedPane();
+			colorTabbedPane.addTab( app.getMenu("Swatches"), tabs[0] );
+			//colorTabbedPane.addTab( app.getMenu("HSB"), tabs[1] );
+			colorTabbedPane.addTab( app.getMenu("RGB"), tabs[2] );
+			colorTabbedPane.setSelectedIndex(0);
+			JPanel p = new JPanel();
+			
+			// create grid with one column
+			p.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.fill = GridBagConstraints.NONE;
+			c.anchor = GridBagConstraints.NORTHWEST;
+			c.weightx = 0.0;
+			c.weighty = 0.0;
+			
+			c.gridx = 0;
+			c.gridy = 0;			
+			c.gridwidth = 4;
+			p.add(colorTabbedPane, c);
+			
+			c.gridx = 0;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.insets = new Insets(10,0,0,0);  //top padding
+			p.add(new JLabel(app.getMenu("Preview") + ": "), c);
+								
+			c.gridx = 1;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			p.add(previewPanel, c);
+										
+			c.weighty = 1.0;
+			p.add(Box.createVerticalGlue(), c);
+		
+
+		
+			//add(tabs[0], BorderLayout.NORTH);		
+			//add(tabs[1], BorderLayout.EAST);	// HSV color chooser	
+			//add(tabs[2], BorderLayout.SOUTH);	 // Michael Borcherds 2008-03-14 enter/display RGB colors	
+		
+			//p.add( colorTabbedPane);			
+			//p.add(new JLabel(app.getMenu("Preview") + ": "));
+			//p.add(previewPanel);
+			add(p);
 			
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the 	
