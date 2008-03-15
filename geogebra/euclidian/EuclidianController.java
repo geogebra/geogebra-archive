@@ -520,6 +520,10 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_ANGULAR_BISECTOR:
 		case EuclidianView.MODE_TANGENTS:		
 		case EuclidianView.MODE_POLAR_DIAMETER:
+			hits = view.getHits(mouseLoc);
+			createNewPoint(hits, false, true, true);
+			break;		
+				
 		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
 			hits = view.getHits(mouseLoc);
 			createNewPoint(hits, false, true, true);
@@ -3714,20 +3718,22 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}	
 	
-	// Michael Borcherds 2008-03-13	
+	// Michael Borcherds 2008-03-14	
 	final protected boolean compasses(ArrayList hits) {
 		if (hits == null)
 			return false;
-			
-		addSelectedPoint(hits, 3, true);
-		addSelectedSegment(hits, 1, false);
 		
-		if (selPoints() == 3) {
-										
+		boolean hitPoint = (addSelectedPoint(hits, 3, false) != 0);
+		if (!hitPoint && selPoints() != 2 ) {
+			addSelectedSegment(hits, 1, false);
+		}
+			
+		if (selPoints() == 3) {										
 			GeoPoint[] points = getSelectedPoints();		
 			kernel.Circle(null, points[0], points[1], points[2],true);
 			return true;
 		}
+		
 		if (selPoints() == 1 && selSegments() == 1) {
 										
 			GeoPoint[] points = getSelectedPoints();		
@@ -3735,8 +3741,6 @@ public class EuclidianController implements MouseListener,
 			kernel.Circle(null, points[0], segment[0].getEndPoint(), segment[0].getStartPoint(),true);
 			return true;
 		}
-		
-		
 
 		return false;
 	}	
