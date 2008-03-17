@@ -185,4 +185,5 @@ public class CASTableCell extends JPanel {
 	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
 		this.outputFieldVisiable = outputFieldVisiable;
 	}
+
 }

@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -57,12 +58,21 @@ public class CASTableCellController implements KeyListener {
 		case KeyEvent.VK_DOWN:
 			if (curCell.isLineVisiable()) {// Set the focus on the input
 												// text field of the next row
-				table.changeSelection(selectedRow + 1, selectedCol, false,
-						false);
-				// table.editCellAt(selectedRow+1, selectedCol);
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				//table.editCellAt(selectedRow+1, selectedCol);
 				System.out.println("Key donw changed selection: "
 						+ table.getSelectedRow() + " "
 						+ table.getSelectedColumn());
+				
+				//Todo: Test for setting focus at the next row. 
+				table.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
+				table.setColumnSelectionInterval(selectedCol, selectedCol);
+				Point p = table.getLocationOnScreen();
+				int rowI = table.rowAtPoint(p);// Get the row number
+				int colI = table.columnAtPoint(p);
+				
+				System.out.println("setCellFocus: " + (selectedRow + 1) + ", " + selectedCol);
+				System.out.println("setCell: " + rowI + ", " + colI);
 			}
 			consumeEvent = true;
 			break;
