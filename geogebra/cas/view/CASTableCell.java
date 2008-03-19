@@ -43,6 +43,10 @@ public class CASTableCell extends JPanel {
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
 		// addFocusListener(this);
+		
+//		EditorFocusListener l = new EditorFocusListener();
+//		this.addFocusListener(l);
+		
 		return;
 	}
 

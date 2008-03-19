@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -37,18 +39,15 @@ public class CASTableCellController implements KeyListener {
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
 		int selectedCol = table.getSelectedColumn();
-		
-		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(selectedRow, selectedCol);
+
+		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
+				selectedRow, selectedCol);
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			// System.out.println("Focus should be set at the line above");
-			if (!curCell.isLineVisiable()) {
-				// Set Line of the previous row Highlighted;
-				// Set the focus on the line;
-				// curCell.setLineHighlighted();
-
-			} else {// Set the focus on the input text field
+			if (curCell.isLineVisiable()) {
+				// Set the focus on the input text field
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				curCell.setInputAreaFocused();
 			}
@@ -57,30 +56,59 @@ public class CASTableCellController implements KeyListener {
 
 		case KeyEvent.VK_DOWN:
 			if (curCell.isLineVisiable()) {// Set the focus on the input
-												// text field of the next row
+				// Set the value into the table before the focus go to the next
+				// row
+				String inputText = curCell.getInput();
+				curValue.setCommand(inputText);
+				curCell.setInput(inputText);
+
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				//table.editCellAt(selectedRow+1, selectedCol);
+				// table.editCellAt(selectedRow+1, selectedCol);
 				System.out.println("Key donw changed selection: "
 						+ table.getSelectedRow() + " "
 						+ table.getSelectedColumn());
-				
-				//Todo: Test for setting focus at the next row. 
-				table.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
-				table.setColumnSelectionInterval(selectedCol, selectedCol);
-				Point p = table.getLocationOnScreen();
-				int rowI = table.rowAtPoint(p);// Get the row number
-				int colI = table.columnAtPoint(p);
-				
-				System.out.println("setCellFocus: " + (selectedRow + 1) + ", " + selectedCol);
-				System.out.println("setCell: " + rowI + ", " + colI);
+
+				System.out.println("editCell: " + table.getEditingRow()
+						+ table.getEditingColumn() + table.getRowCount());
+
+				if (selectedRow < (table.getRowCount() - 1)) {
+					CASTableCellValue value = (CASTableCellValue) tableModel
+							.getValueAt(selectedRow + 1, selectedCol);
+
+					table.changeSelection(selectedRow + 1, selectedCol, false,
+							false);
+					table.editCellAt(selectedRow + 1, selectedCol);
+					((Component) ((CASTableCellEditor) table.getCellEditor(
+							selectedRow + 1, selectedCol))
+							.getTableCellEditorComponent(table, value, true,
+									selectedRow + 1, selectedCol))
+							.requestFocus();
+
+				} else { // Insert a new row
+					CASTableCellValue newValue = new CASTableCellValue();
+					tableModel.insertRow(selectedRow + 1, new Object[] { "New",
+							newValue });
+					table
+							.setRowHeight(selectedRow, curCell
+									.setLineInvisiable());
+					table.changeSelection(selectedRow + 1, selectedCol, false,
+							false);
+					table.editCellAt(selectedRow + 1, selectedCol);
+					((Component) ((CASTableCellEditor) table.getCellEditor(
+							selectedRow + 1, selectedCol))
+							.getTableCellEditorComponent(table, newValue, true,
+									selectedRow + 1, selectedCol))
+							.requestFocus();
+				}
 			}
+
 			consumeEvent = true;
 			break;
 
 		default:
 			System.out.println("Press Enter at the Line Panel");
 			if (curCell.isLineVisiable()) {
-				// Insert a new line here, and set the focus on the new line
+				// Insert a new line here
 				CASTableCellValue newValue = new CASTableCellValue();
 				// Here it has to be selectedRow+1. Otherwise there is a bug
 				// because of celleditor: Everytime the stopediting is fired, a
@@ -88,10 +116,17 @@ public class CASTableCellController implements KeyListener {
 				// nothing to show.
 				tableModel.insertRow(selectedRow + 1, new Object[] { "New",
 						newValue });
-
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				// System.out.println("Set the line UNhighlighted");
-				curCell.setInputAreaFocused();
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+
+				// set the focus on the new line
+				table.changeSelection(selectedRow + 1, selectedCol, false,
+						false);
+				table.editCellAt(selectedRow + 1, selectedCol);
+				((Component) ((CASTableCellEditor) table.getCellEditor(
+						selectedRow + 1, selectedCol))
+						.getTableCellEditorComponent(table, newValue, true,
+								selectedRow + 1, selectedCol)).requestFocus();
 			}
 			consumeEvent = true;
 			break;
@@ -111,63 +146,75 @@ public class CASTableCellController implements KeyListener {
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
 		int selectedCol = table.getSelectedColumn();
-		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(selectedRow, selectedCol);
+		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
+				selectedRow, selectedCol);
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_ENTER:
 			// Get the input from the user interface
 			String inputText = curCell.getInput();
-			
 			// Evaluate the input with Yacas, which is too slow
 			String evaluation = view.getCAS().evaluateYACAS(inputText);
-			
+
 			// Set the value into the table
 			curValue.setCommand(inputText);
 			curValue.setOutput(evaluation);
 			curCell.setInput(inputText);
 			curCell.setOutput(evaluation);
-			
+
 			// We enlarge the height of the selected row
 			table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
-//			CASTableCellValue newValue = new CASTableCellValue(inputText,
-//					evaluation);
+			// CASTableCellValue newValue = new CASTableCellValue(inputText,
+			// evaluation);
 			curValue.setOutputAreaInclude(true);
-			//tableModel.setValueAt(curValue, selectedRow, CASPara.contCol);
+			// tableModel.setValueAt(curValue, selectedRow, CASPara.contCol);
 			table.setValueAt(curValue, selectedRow, CASPara.contCol);
-			
-			CASTableCellValue newValue = (CASTableCellValue)tableModel.getValueAt(selectedRow, selectedCol);
-			System.out.println(selectedRow + " Value Updated: " + newValue.getCommand() + newValue.getOutput());
-			
+
+			CASTableCellValue newValue = (CASTableCellValue) tableModel
+					.getValueAt(selectedRow, selectedCol);
+			System.out.println(selectedRow + " Value Updated: "
+					+ newValue.getCommand() + newValue.getOutput());
+
 			// update the cell appearance
 			SwingUtilities.updateComponentTreeUI(curCell);
-			//table.repaint();
+			// table.repaint();
 			curCell.setInputAreaFocused();
-			
+
 			consumeEvent = true;
 			break;
 
-		case KeyEvent.VK_UP:			
+		case KeyEvent.VK_UP:
 			// System.out.println("Focus should be set at the line above");
-			if (!curCell.isLineVisiable() && selectedRow > 0) {
-				// Set Line of the previous row Highlighted;
-				// Set the focus on the previous row
-				CASTableCellValue prevValue = (CASTableCellValue) tableModel.getValueAt(selectedRow-1, selectedCol);
-				//prevValue.setLineBorderVisible(true);
-				tableModel.setValueAt(prevValue, selectedRow-1, selectedCol);
+			if (!curCell.isLineVisiable()) {
+				curValue.setCommand(curCell.getInput());
+				curCell.setInput(curCell.getInput());
 				
-				// TODO: remove
-				System.out.println("up pressed from input field, go to row " + (selectedRow-1));
-			} 
+				// Set Line of the previous row Highlighted;
+				// Set the focus on the line;
+				// curCell.setLineHighlighted();
+				if (selectedRow >= 1) {
+					CASTableCellValue value = (CASTableCellValue) tableModel
+							.getValueAt(selectedRow - 1, selectedCol);
+
+					table.changeSelection(selectedRow - 1, selectedCol, false,
+							false);
+					table.editCellAt(selectedRow - 1, selectedCol);
+					CASTableCell temp = ((CASTableCell) ((CASTableCellEditor) table
+							.getCellEditor(selectedRow - 1, selectedCol))
+							.getTableCellEditorComponent(table, value, true,
+									selectedRow - 1, selectedCol));
+					table.setRowHeight(selectedRow - 1, temp.addLinePanel());
+					SwingUtilities.updateComponentTreeUI(temp);
+					temp.setLineBorderFocus();
+
+				}
+			}
 			consumeEvent = true;
 			break;
 
 		case KeyEvent.VK_DOWN:
-			if(!curCell.isLineVisiable()){
-			// if (!curValue.isLineBorderVisible()) {
-				
-				//curValue.setLineBorderVisible(true);
+			if (!curCell.isLineVisiable()) {
 				table.setRowHeight(selectedRow, curCell.addLinePanel());
-
 				SwingUtilities.updateComponentTreeUI(curCell);
 				curCell.setLineBorderFocus();
 			}

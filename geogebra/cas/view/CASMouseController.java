@@ -27,7 +27,7 @@ public class CASMouseController implements MouseListener {
 		colI = consoleTable.columnAtPoint(e.getPoint());
 		if (rowI <0 )
 			return;
-		//System.out.println("single click at" + rowI + "" + colI);
+		System.out.println("single click at" + rowI + "" + colI);
 		if (colI == CASPara.contCol){ //Set the focus to the input textfiled
 			consoleTable.changeSelection(rowI, colI, false, false);
 			consoleTable.editCellAt(rowI, colI);
@@ -35,6 +35,7 @@ public class CASMouseController implements MouseListener {
 			//Get the deepest component at (X, Y)
 			//Component clickedComponent = consoleTable.findComponentAt(e.getPoint());
 			//Component clickedCell = consoleTable.getComponentAt(e.getPoint());
+			
 			CASTableCell clickedCell = (CASTableCell)consoleTable.getComponentAt(e.getPoint());
 			System.out.println("clickedComponent: " + (clickedCell.getComponents()).length);
 			clickedCell.setLineInvisiable();

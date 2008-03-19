@@ -87,7 +87,7 @@ public class CASView extends JComponent {
 	 */
 	protected JTable createTable(int rows) {
 		JTable t = new JTable();
-
+		
 		t.setShowGrid(false);
 		
 		// Dynamically change the height of the table
@@ -105,6 +105,10 @@ public class CASView extends JComponent {
 		t.setSurrendersFocusOnKeystroke(true);
 		//System.out.println("SurrendersFocusOn" + t.getSurrendersFocusOnKeystroke());
 	
+		//TODO: test the keylistener
+//		CASKeyController l = new CASKeyController(this, this.session, t);
+//		t.addKeyListener(l);
+		
 		return t;
 	}
 

@@ -35,14 +35,12 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 				view);
 		this.getInputArea().addKeyListener(inputListener);
 		this.getLinePanel().addKeyListener(inputListener);
+		
+		EditorFocusListener l = new EditorFocusListener(this);
+		this.addFocusListener(l);
 
 		table = consoleTable;
 	}
-
-	// public CASTableCellEditor(JTextField textField, CASTableCell panel) {
-	// //super(textField);
-	// this.panel = panel;
-	// }
 
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
@@ -127,5 +125,15 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	public boolean shouldSelectCell(EventObject anEvent) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("I got the focus");
+	}
+
+	public void focusLost(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
