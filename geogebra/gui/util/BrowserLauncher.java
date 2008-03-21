@@ -54,7 +54,22 @@ public static void openURL(String url) {
         openURL.invoke(null, new Object[] {url});
         }
      else if (GeoGebra.WINDOWS) // Michael Borcherds 2008-03-21
-        Runtime.getRuntime().exec("rundll32.exe url.dll,FileProtocolHandler " + url);
+     {
+//    	 Michael Borcherds 2008-03-21 BEGIN
+    	 // replace file:/c:/Program Files/etc
+    	 // by    file:///c:\Program Files\etc
+    	 if (url.indexOf("file:") == 0) // local URL
+    	 {
+    		  url = url.replaceAll("file:///","");    // remove file:/// from the start
+    		  url = url.replaceAll("file:/","");      // remove file:/ from the start
+    		  
+    		  url = url.replaceAll("[/\\\\]+", "\\" + "\\");  // replace slashes with backslashes
+    		  
+    		  url = "file:///"+url; // put "file:///" back in
+    	 }
+//    	 Michael Borcherds 2008-03-21 END
+    	 Runtime.getRuntime().exec("rundll32.exe url.dll,FileProtocolHandler " + url);
+     }
      else { //assume Unix or Linux
         String[] browsers = {
            "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape" };

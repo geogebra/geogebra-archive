@@ -30,6 +30,7 @@ import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.util.Util;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -1210,7 +1211,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
-		sb.append(Application.versionString);
+		sb.append(Application.versionString+" (Java "+Util.getJavaVersion()+")"); // Michael Borcherds 2008-03-21 added java version
 		sb.append("</b><br>");
 		sb.append(Application.buildDate);
 
