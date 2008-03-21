@@ -56,6 +56,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	
 	// check if we are on a mac
 	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase().startsWith("mac");
+	public static boolean WINDOWS = System.getProperty("os.name").toLowerCase().startsWith("windows"); // Michael Borcherds 2008-03-21
 
 	public GeoGebra() {
 		instances.add(this);

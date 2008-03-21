@@ -12,6 +12,7 @@ package geogebra.gui.util;
 /////////////////////////////////////////////////////////
 
 import geogebra.util.Util;
+import geogebra.GeoGebra;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -44,15 +45,15 @@ public static void openURL(String url) {
   }
 
   // older Java version 
-  String osName = System.getProperty("os.name");
+  //String osName = System.getProperty("os.name");
   try {
-     if (osName.startsWith("Mac OS")) {
+     if (GeoGebra.MAC_OS) { // Michael Borcherds 2008-03-21
         Class fileMgr = Class.forName("com.apple.eio.FileManager");
         Method openURL = fileMgr.getDeclaredMethod("openURL",
            new Class[] {String.class});
         openURL.invoke(null, new Object[] {url});
         }
-     else if (osName.startsWith("Windows"))
+     else if (GeoGebra.WINDOWS) // Michael Borcherds 2008-03-21
         Runtime.getRuntime().exec("rundll32.exe url.dll,FileProtocolHandler " + url);
      else { //assume Unix or Linux
         String[] browsers = {
