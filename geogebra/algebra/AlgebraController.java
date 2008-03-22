@@ -74,6 +74,14 @@ public class AlgebraController
 		// we open the rename dialog when a letter is typed
 		
 		char ch = event.getKeyChar();
+		
+		// Michael Borcherds 2008-03-22 give focus to input bar if <enter> pressed
+		if (ch == '\n')
+		{
+			app.getAlgebraInput().setFocus(); 
+			return;
+		}
+		
 		if (!Character.isLetter(ch) || 
 			 event.isMetaDown() ||
 			 event.isAltDown() ||
