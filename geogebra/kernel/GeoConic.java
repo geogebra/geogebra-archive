@@ -123,7 +123,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
     	return GEO_CLASS_CONIC;
     }
 	
-	protected String getTypeString() {      
+	protected String getTypeString() { 
 		switch (type) {
 			case GeoConic.CONIC_CIRCLE: 
 				return "Circle";
@@ -268,6 +268,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public boolean isElliptic() {
 		return (type == CONIC_CIRCLE || type == CONIC_ELLIPSE);
 	}*/
+
+	/**
+	 * returns true if this conic is a circle 
+	 * Michael Borcherds 2008-03-23
+	 * @return
+	 */
+	public boolean isCircle() {
+		return (type == CONIC_CIRCLE);
+	}
 
 	final public void setToSpecific() {
 		setToStringMode(EQUATION_SPECIFIC);

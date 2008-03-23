@@ -268,6 +268,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	
 	public static final int MODE_COMPASSES = 53;  		// Michael Borcherds 2008-03-13
 
+	public static final int MODE_MIRROR_AT_CIRCLE = 54; // Michael Borcherds 2008-03-23
+
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
 	public static final int POINT_CAPTURING_OFF = 0;
@@ -3361,6 +3363,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		case EuclidianView.MODE_MIRROR_AT_LINE:
 			return "MirrorAtLine";
+
+		case EuclidianView.MODE_MIRROR_AT_CIRCLE:
+			return "MirrorAtCircle";
 
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
 			return "TranslateByVector";

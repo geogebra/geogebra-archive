@@ -486,6 +486,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" ");
         sb.append(EuclidianView.MODE_MIRROR_AT_POINT);
         sb.append(" ");
+        sb.append(EuclidianView.MODE_MIRROR_AT_CIRCLE);
+        sb.append(" ");
         sb.append(EuclidianView.MODE_ROTATE_BY_ANGLE);
         sb.append(" ");
         sb.append(EuclidianView.MODE_TRANSLATE_BY_VECTOR);

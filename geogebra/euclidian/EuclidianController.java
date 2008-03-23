@@ -1006,6 +1006,7 @@ public class EuclidianController implements MouseListener,
 			case EuclidianView.MODE_DILATE_FROM_POINT:	
 			case EuclidianView.MODE_MIRROR_AT_POINT:
 			case EuclidianView.MODE_MIRROR_AT_LINE:
+			case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			case EuclidianView.MODE_ROTATE_BY_ANGLE:
 				return true;
 				
@@ -1250,6 +1251,7 @@ public class EuclidianController implements MouseListener,
 				case EuclidianView.MODE_DILATE_FROM_POINT:	
 				case EuclidianView.MODE_MIRROR_AT_POINT:
 				case EuclidianView.MODE_MIRROR_AT_LINE:
+				case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 				case EuclidianView.MODE_ROTATE_BY_ANGLE:
 					hits = view.getHits(mouseLoc);
 					if (hits == null) { 
@@ -1378,6 +1380,7 @@ public class EuclidianController implements MouseListener,
 				
 			case EuclidianView.MODE_MIRROR_AT_POINT:	
 			case EuclidianView.MODE_MIRROR_AT_LINE:
+			case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 				processSelectionRectangleForTransformations(hits, Mirrorable.class);									
 				break;
 				
@@ -1709,6 +1712,10 @@ public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_MIRROR_AT_LINE:
 			changedKernel = mirrorAtLine(view.getTopHits(hits));
+			break;
+			
+		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+			changedKernel = mirrorAtCircle(view.getTopHits(hits));
 			break;
 			
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
@@ -3527,6 +3534,37 @@ public class EuclidianController implements MouseListener,
 				return true;
 			}	
 		}				
+		return false;
+	}
+	
+	
+	// Michael Borcherds 2008-03-23
+	final protected boolean mirrorAtCircle(ArrayList hits) {
+		if (hits == null)
+			return false;
+		
+		
+		// remove conics that aren't circles
+		for (int i=0 ; i<hits.size(); i++)
+		{
+		GeoElement geo = (GeoElement) hits.get(i);
+		if (geo.isGeoConic())
+			if (!((GeoConic)geo).isCircle()) hits.remove(i);
+		}
+		
+		addSelectedConic(hits, 1, false);
+		
+		addSelectedPoint(hits, 1, false);
+
+		if (selConics() == 1 && selPoints() == 1) {
+			GeoConic[] conics = getSelectedConics();
+			GeoPoint[] points = getSelectedPoints();
+			//if (((GeoConic)conics[0]).getTypeString()!="Circle") return false;
+			if (!((GeoConic)conics[0]).isCircle()) return false;
+			kernel.Mirror(null, points[0], conics[0]);
+			return true;
+			
+		} 
 		return false;
 	}
 	
