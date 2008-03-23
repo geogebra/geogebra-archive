@@ -391,6 +391,15 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	}
 
 	/**
+	 * Evaluates the given string as if it was entered into Yacas's 
+	 * input text field. 	 
+	 */
+	public synchronized String evalYacas(String cmdString) {
+		return 	kernel.evaluateYACASRaw(cmdString);
+
+	}
+
+	/**
 	 * Turns showing of error dialogs on (true) or (off). 
 	 * Note: this is especially useful together with evalCommand().
 	 */
@@ -495,6 +504,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			}
 		}	
 	}
+	
+	
 
 	/**
 	 * Sets the fixed state of the object with the given name.
