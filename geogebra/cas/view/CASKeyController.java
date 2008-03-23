@@ -13,9 +13,9 @@ public class CASKeyController implements KeyListener {
 
 	private CASView view;
 
-	private JTable consoleTable;
+	private CASTable consoleTable;
 
-	public CASKeyController(CASView view, CASSession session, JTable table) {
+	public CASKeyController(CASView view, CASSession session, CASTable table) {
 		this.session = session;
 		this.view = view;
 		this.consoleTable = table;
@@ -36,8 +36,7 @@ public class CASKeyController implements KeyListener {
 		if (selectedCol == CASPara.indexCol) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 				{
-					((CASTableModel) consoleTable.getModel())
-							.removeRow(selectedRow);
+					consoleTable.deleteRow(selectedRow);
 				}
 			}
 		} else {

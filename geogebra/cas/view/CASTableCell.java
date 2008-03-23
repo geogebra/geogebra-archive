@@ -24,8 +24,6 @@ public class CASTableCell extends JPanel {
 	private boolean outputFieldVisiable;
 
 	public CASTableCell(CASView view, JTable consoleTable) {
-		// TODO: remove
-		// System.out.println("created new CASTableCell");
 
 		inputPanel = new CASInputPanel();
 		outputPanel = new CASOutputPanel();
@@ -42,10 +40,6 @@ public class CASTableCell extends JPanel {
 		this.add(inputPanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
-		// addFocusListener(this);
-		
-//		EditorFocusListener l = new EditorFocusListener();
-//		this.addFocusListener(l);
 		
 		return;
 	}
@@ -159,19 +153,6 @@ public class CASTableCell extends JPanel {
 		linePanel.requestFocus();
 	}
 
-	// public void focusGained(FocusEvent arg0) {
-	// // TODO: remove
-	// System.out.println("focus gained " + this);
-	//		
-	// setInputAreaFocus();
-	// }
-	//
-	// public void focusLost(FocusEvent arg0) {
-	// // TODO Auto-generated method stub
-	// // TODO: remove
-	// System.out.println("focus lost " + this);
-	// }
-
 	public CASLinePanel getLinePanel() {
 		return linePanel;
 	}
@@ -183,8 +164,6 @@ public class CASTableCell extends JPanel {
 	public CASTableModel getTableModel() {
 		return (CASTableModel) consoleTable.getModel();
 	}
-
-
 
 	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
 		this.outputFieldVisiable = outputFieldVisiable;

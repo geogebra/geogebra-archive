@@ -35,7 +35,7 @@ public class CASTableCellController implements KeyListener {
 
 		boolean consumeEvent = false;
 
-		JTable table = view.getConsoleTable();
+		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
 		int selectedCol = table.getSelectedColumn();
@@ -56,11 +56,7 @@ public class CASTableCellController implements KeyListener {
 
 		case KeyEvent.VK_DOWN:
 			if (curCell.isLineVisiable()) {// Set the focus on the input
-				// Set the value into the table before the focus go to the next
-				// row
-				String inputText = curCell.getInput();
-				curValue.setCommand(inputText);
-				curCell.setInput(inputText);
+				saveInput(curValue);
 
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				// table.editCellAt(selectedRow+1, selectedCol);
@@ -68,65 +64,46 @@ public class CASTableCellController implements KeyListener {
 						+ table.getSelectedRow() + " "
 						+ table.getSelectedColumn());
 
-				System.out.println("editCell: " + table.getEditingRow()
-						+ table.getEditingColumn() + table.getRowCount());
-
 				if (selectedRow < (table.getRowCount() - 1)) {
-					CASTableCellValue value = (CASTableCellValue) tableModel
-							.getValueAt(selectedRow + 1, selectedCol);
+					table.setFocusAtRow(selectedRow + 1, selectedCol);
 
-					table.changeSelection(selectedRow + 1, selectedCol, false,
-							false);
-					table.editCellAt(selectedRow + 1, selectedCol);
-					((Component) ((CASTableCellEditor) table.getCellEditor(
-							selectedRow + 1, selectedCol))
-							.getTableCellEditorComponent(table, value, true,
-									selectedRow + 1, selectedCol))
-							.requestFocus();
-
-				} else { // Insert a new row
-					CASTableCellValue newValue = new CASTableCellValue();
-					tableModel.insertRow(selectedRow + 1, new Object[] { "New",
-							newValue });
-					table
-							.setRowHeight(selectedRow, curCell
-									.setLineInvisiable());
-					table.changeSelection(selectedRow + 1, selectedCol, false,
-							false);
-					table.editCellAt(selectedRow + 1, selectedCol);
-					((Component) ((CASTableCellEditor) table.getCellEditor(
-							selectedRow + 1, selectedCol))
-							.getTableCellEditorComponent(table, newValue, true,
-									selectedRow + 1, selectedCol))
-							.requestFocus();
+				} else{
+					// Insert a new row
+					table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+					if(curCell.isOutputPanelAdded())
+						table.insertRow(selectedRow, selectedCol);
+					else
+						curCell.setInputAreaFocused();
 				}
 			}
 
 			consumeEvent = true;
 			break;
 
-		default:
+		case KeyEvent.VK_ENTER:
 			System.out.println("Press Enter at the Line Panel");
 			if (curCell.isLineVisiable()) {
+				saveInput(curValue);
 				// Insert a new line here
-				CASTableCellValue newValue = new CASTableCellValue();
-				// Here it has to be selectedRow+1. Otherwise there is a bug
-				// because of celleditor: Everytime the stopediting is fired, a
-				// value is stored into the Jtable. Otherwise, render has
-				// nothing to show.
-				tableModel.insertRow(selectedRow + 1, new Object[] { "New",
-						newValue });
-				// System.out.println("Set the line UNhighlighted");
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-
-				// set the focus on the new line
-				table.changeSelection(selectedRow + 1, selectedCol, false,
-						false);
-				table.editCellAt(selectedRow + 1, selectedCol);
-				((Component) ((CASTableCellEditor) table.getCellEditor(
-						selectedRow + 1, selectedCol))
-						.getTableCellEditorComponent(table, newValue, true,
-								selectedRow + 1, selectedCol)).requestFocus();
+				if(curCell.isOutputPanelAdded())
+					table.insertRow(selectedRow, selectedCol);
+				else
+					curCell.setInputAreaFocused();
+			}
+			consumeEvent = true;
+			break;			
+			
+		default:  //Other Keys
+			System.out.println("Press Enter at the Line Panel");
+			if (curCell.isLineVisiable()) {
+				saveInput(curValue);
+				// Insert a new line here
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				if(curCell.isOutputPanelAdded())
+					table.insertRow(selectedRow, selectedCol);
+				else
+					curCell.setInputAreaFocused();
 			}
 			consumeEvent = true;
 			break;
@@ -142,7 +119,7 @@ public class CASTableCellController implements KeyListener {
 
 		boolean consumeEvent = false;
 
-		JTable table = view.getConsoleTable();
+		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
 		int selectedCol = table.getSelectedColumn();
@@ -157,15 +134,12 @@ public class CASTableCellController implements KeyListener {
 			String evaluation = view.getCAS().evaluateYACAS(inputText);
 
 			// Set the value into the table
-			curValue.setCommand(inputText);
+			saveInput(curValue);
 			curValue.setOutput(evaluation);
-			curCell.setInput(inputText);
 			curCell.setOutput(evaluation);
 
 			// We enlarge the height of the selected row
 			table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
-			// CASTableCellValue newValue = new CASTableCellValue(inputText,
-			// evaluation);
 			curValue.setOutputAreaInclude(true);
 			// tableModel.setValueAt(curValue, selectedRow, CASPara.contCol);
 			table.setValueAt(curValue, selectedRow, CASPara.contCol);
@@ -177,36 +151,24 @@ public class CASTableCellController implements KeyListener {
 
 			// update the cell appearance
 			SwingUtilities.updateComponentTreeUI(curCell);
-			// table.repaint();
-			curCell.setInputAreaFocused();
 
+			if (selectedRow < (table.getRowCount() - 1)) {
+				table.setFocusAtRow(selectedRow + 1, selectedCol);
+			} else{
+				// Insert a new row
+				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				table.insertRow(selectedRow, selectedCol);
+			}
 			consumeEvent = true;
 			break;
 
 		case KeyEvent.VK_UP:
 			// System.out.println("Focus should be set at the line above");
 			if (!curCell.isLineVisiable()) {
-				curValue.setCommand(curCell.getInput());
-				curCell.setInput(curCell.getInput());
-				
-				// Set Line of the previous row Highlighted;
-				// Set the focus on the line;
-				// curCell.setLineHighlighted();
+				saveInput(curValue);
+
 				if (selectedRow >= 1) {
-					CASTableCellValue value = (CASTableCellValue) tableModel
-							.getValueAt(selectedRow - 1, selectedCol);
-
-					table.changeSelection(selectedRow - 1, selectedCol, false,
-							false);
-					table.editCellAt(selectedRow - 1, selectedCol);
-					CASTableCell temp = ((CASTableCell) ((CASTableCellEditor) table
-							.getCellEditor(selectedRow - 1, selectedCol))
-							.getTableCellEditorComponent(table, value, true,
-									selectedRow - 1, selectedCol));
-					table.setRowHeight(selectedRow - 1, temp.addLinePanel());
-					SwingUtilities.updateComponentTreeUI(temp);
-					temp.setLineBorderFocus();
-
+					table.setFocusAtRowLinePanel(selectedRow - 1, selectedCol);
 				}
 			}
 			consumeEvent = true;
@@ -226,6 +188,15 @@ public class CASTableCellController implements KeyListener {
 		// does not process it again
 		if (consumeEvent)
 			e.consume();
+	}
+
+	/*
+	 * Function: Save the input value from the view into the table
+	 */
+	public void saveInput(CASTableCellValue curValue) {
+		String inputText = curCell.getInput();
+		curValue.setCommand(inputText);
+		curCell.setInput(inputText);
 	}
 
 	public void keyReleased(KeyEvent arg0) {

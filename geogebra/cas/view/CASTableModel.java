@@ -62,29 +62,6 @@ public class CASTableModel extends DefaultTableModel {
         lbl = String.valueOf(row + 1);
         return lbl;
     }
-    
-//    /*Used to set value of a geoelement in a cell in the CASView*/
-//    public void setValueAt(Object obj, int row)
-//    {
-//    	if(obj instanceof CASTableCellValue){
-//    		setValueAt(obj, row, CASPara.contCol);
-//    		fireTableCellUpdated(row, CASPara.contCol);
-//    		//System.out.println("Value Updated: ");
-//    		//System.out.println(((CASTableCellValue)obj).getCommand());
-//    		//System.out.println(((CASTableCellValue)obj).getOutput());
-//    		//System.out.println(((CASTableCellValue)obj).getOutputAreaInclude());
-//    	}
-//    }
-
-//    public Object getValueAt(int row) {
-//        Object obj = super.getValueAt(row, CASPara.contCol);
-//        if( !(obj instanceof CASTableCellValue ))
-//        {
-//        	System.out.println("Getting a non-CASTableCellValue"); 
-//        	System.out.println(obj.getClass().getName());
-//        }
-//        return obj;
-//    }
 
     /*
      * Don't need to implement this method unless your table's

@@ -26,7 +26,7 @@ public class CASView extends JComponent {
 
 	private Kernel kernel;
 
-	private JTable consoleTable;
+	private CASTable consoleTable;
 
 	private CASTableModel tableModel;
 
@@ -45,18 +45,15 @@ public class CASView extends JComponent {
 		session = new CASSession();
 		setLayout(new BorderLayout());
 
-		consoleTable = createTable(numOfRows);
+		consoleTable = new CASTable();
+		consoleTable.initializeTable(numOfRows, session, app);
 
 		//Set the property of the value column;
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellRenderer(
 				new CASTableCellRender(this, consoleTable));
-		
-//		CASTableCell editorTableCell = new CASTableCell(this,consoleTable);		
+			
 		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellEditor(
 				new CASTableCellEditor(this, consoleTable));
-//		CASTableCellController inputListener = new CASTableCellController(editorTableCell, this);
-//		editorTableCell.getInputArea().addKeyListener(inputListener);
-//		editorTableCell.getBBorder().addKeyListener(inputListener);
 		
 		// CAScontroller
 		CASKeyController casKeyCtrl = new CASKeyController(this, session, consoleTable);
@@ -76,43 +73,9 @@ public class CASView extends JComponent {
 		return cas;
 	}
 
-	public JTable getConsoleTable() {
+	public CASTable getConsoleTable() {
 		return consoleTable;
 	}
-	
-	/**
-	 * Can be used by subclasses to customize the underlying JTable
-	 * 
-	 * @return The JTable to be used by the CAS
-	 */
-	protected JTable createTable(int rows) {
-		JTable t = new JTable();
-		
-		t.setShowGrid(false);
-		
-		// Dynamically change the height of the table
-		t.setRowHeight(CASPara.originalHeight);
-		t.setBackground(Color.white);
-		// t.setDefaultRenderer(Object.class, new MyRenderer());
-
-		tableModel = new CASTableModel(consoleTable, rows, session, app);
-		t.setModel(tableModel);
-		
-		//Set the width of the index column;
-		t.getColumn(t.getColumnName(CASPara.indexCol)).setMinWidth(30);
-		t.getColumn(t.getColumnName(CASPara.indexCol)).setMaxWidth(30);
-		t.sizeColumnsToFit(0);
-		t.setSurrendersFocusOnKeystroke(true);
-		//System.out.println("SurrendersFocusOn" + t.getSurrendersFocusOnKeystroke());
-	
-		//TODO: test the keylistener
-//		CASKeyController l = new CASKeyController(this, this.session, t);
-//		t.addKeyListener(l);
-		
-		return t;
-	}
-
-
 
 	/**
 	 * Inits a panel to hold all components given in the list jcomponents.
