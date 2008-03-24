@@ -20,6 +20,13 @@ public class CASTableCellValue {
 		//isLineBorderVisible = false;
 	}
 	
+	public CASTableCellValue(String inCom){
+		command = new String(inCom);
+		output = new String("");
+		isOutputVisible = false;
+		//isLineBorderVisible = false;
+	}
+	
 	public void initialize(){
 		isOutputVisible = false;
 		//isLineBorderVisible = false;

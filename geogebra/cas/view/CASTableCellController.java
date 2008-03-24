@@ -42,7 +42,7 @@ public class CASTableCellController implements KeyListener {
 
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
-
+		
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			// System.out.println("Focus should be set at the line above");
@@ -70,7 +70,7 @@ public class CASTableCellController implements KeyListener {
 				} else{
 					// Insert a new row
 					table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-					if(curCell.isOutputPanelAdded())
+					if(curCell.getInput().length()!=0)
 						table.insertRow(selectedRow, selectedCol);
 					else
 						curCell.setInputAreaFocused();
@@ -86,7 +86,7 @@ public class CASTableCellController implements KeyListener {
 				saveInput(curValue);
 				// Insert a new line here
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				if(curCell.isOutputPanelAdded())
+				if(curCell.getInput().length()!=0)
 					table.insertRow(selectedRow, selectedCol);
 				else
 					curCell.setInputAreaFocused();
@@ -100,8 +100,8 @@ public class CASTableCellController implements KeyListener {
 				saveInput(curValue);
 				// Insert a new line here
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				if(curCell.isOutputPanelAdded())
-					table.insertRow(selectedRow, selectedCol);
+				if(curCell.getInput().length()!=0)
+					table.insertRow(selectedRow, selectedCol, e.getKeyChar());
 				else
 					curCell.setInputAreaFocused();
 			}

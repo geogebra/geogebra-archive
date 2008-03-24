@@ -56,6 +56,20 @@ public class CASTable extends JTable {
 				selectedCol)).getTableCellEditorComponent(this, newValue, true,
 				selectedRow + 1, selectedCol)).requestFocus();
 	}
+	
+	public void insertRow(int selectedRow, int selectedCol, char c) {
+		char[] in = new char[1];
+		in[0] = c;
+		CASTableCellValue newValue = new CASTableCellValue(new String(in));
+		tableModel.insertRow(selectedRow + 1, new Object[] { "New", newValue });
+		changeSelection(selectedRow + 1, selectedCol, false, false);
+		editCellAt(selectedRow + 1, selectedCol);
+		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
+				selectedCol)).getTableCellEditorComponent(this, newValue, true,
+				selectedRow + 1, selectedCol)).requestFocus();
+		
+		
+	}
 
 	/*
 	 * Function: Delete a rolw, and set the focus at the right position
