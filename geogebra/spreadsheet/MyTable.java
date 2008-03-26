@@ -297,6 +297,13 @@ public class MyTable extends JTable
 					}	
 				}
 			}
+			else if (e.getButton() == MouseEvent.BUTTON3) {
+				int x1 = e.getX();
+				int y1 = e.getY();
+				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
+					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1);
+				}
+			}
 		}
 		
 		public void mouseReleased(MouseEvent e)	 {
@@ -544,8 +551,6 @@ public class MyTable extends JTable
 	{
 		private static final long serialVersionUID = 1L;
 
-    	protected int minSelectionRow = -1;
-    	protected int maxSelectionRow = -1;
     	protected boolean[] selected;
     	private Color defaultBackground;
     	
@@ -558,8 +563,8 @@ public class MyTable extends JTable
     	
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
-			if (minSelectionRow != -1 && maxSelectionRow != -1) {
-				if (colIndex >= minSelectionRow && colIndex <= maxSelectionRow &&
+			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
+				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn &&
 						selected[colIndex]) {
 					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
 				}
@@ -572,8 +577,8 @@ public class MyTable extends JTable
 		
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
-			minSelectionRow = selectionModel.getMinSelectionIndex();
-			maxSelectionRow = selectionModel.getMaxSelectionIndex();
+			minSelectionColumn = selectionModel.getMinSelectionIndex();
+			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
 			selected = new boolean[getColumnCount()];
 			for (int i = 0; i < selected.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
@@ -603,30 +608,37 @@ public class MyTable extends JTable
 		public void mousePressed(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
-			Point point = getIndexFromPixel(x, y);
-			if (point != null) {
-				if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
-						getColumnSelectionAllowed() == false) {
-					setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					setColumnSelectionAllowed(true);
-					setRowSelectionAllowed(false);
-					getTableHeader().requestFocusInWindow();
-				}
-				if (shiftPressed2) {
-					if (column0 != -1) {
-						int column = (int)point.getX();
-						setColumnSelectionInterval(column0, column);
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				Point point = getIndexFromPixel(x, y);
+				if (point != null) {
+					if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
+							getColumnSelectionAllowed() == false) {
+						setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						setColumnSelectionAllowed(true);
+						setRowSelectionAllowed(false);
+						getTableHeader().requestFocusInWindow();
 					}
+					if (shiftPressed2) {
+						if (column0 != -1) {
+							int column = (int)point.getX();
+							setColumnSelectionInterval(column0, column);
+						}
+					}
+					else if (ctrlPressed2) {					
+						column0 = (int)point.getX();
+						addColumnSelectionInterval(column0, column0);
+					}
+					else {
+						column0 = (int)point.getX();
+						setColumnSelectionInterval(column0, column0);
+					}
+					repaint();
 				}
-				else if (ctrlPressed2) {					
-					column0 = (int)point.getX();
-					addColumnSelectionInterval(column0, column0);
+			}
+			else if (e.getButton() == MouseEvent.BUTTON3) {
+				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 25, x, y);
 				}
-				else {
-					column0 = (int)point.getX();
-					setColumnSelectionInterval(column0, column0);
-				}
-				repaint();
 			}
 		}
 		
@@ -639,21 +651,6 @@ public class MyTable extends JTable
 	{
 		
 		public void mouseDragged(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
-			Point point = getIndexFromPixel(x, y);
-			if (point != null) {
-				if (ctrlPressed2) {
-					int column = (int)point.getX();
-					addColumnSelectionInterval(column0, column);
-					repaint();
-				}
-				else {
-					int column = (int)point.getX();
-					setColumnSelectionInterval(column, column);
-					repaint();
-				}
-			}
 		}
 		
 		public void mouseMoved(MouseEvent e) {
@@ -675,6 +672,30 @@ public class MyTable extends JTable
 			switch (keyCode) {
 			case 16 : shiftPressed2 = true; break;
 			case 17 : ctrlPressed2 = true; break;
+			case 67 : // control + c
+				System.out.println(minSelectionColumn);
+				System.out.println(maxSelectionColumn);
+				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+				}
+				e.consume();
+				break;
+			case 86 : // control + v
+				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, 99);
+				}
+				e.consume();
+				break;				
+			case 88 : // control + x
+				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+				}
+				e.consume();
+				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);
+				break;
+			case 127 : // delete
+				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);
+				break;
 			}
 		}
 		

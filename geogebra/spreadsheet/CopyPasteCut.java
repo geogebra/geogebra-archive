@@ -35,6 +35,11 @@ public class CopyPasteCut {
 			}
 			buf += "\r\n";
 		}
+		System.out.println(column1);
+		System.out.println(row1);
+		System.out.println(column2);
+		System.out.println(row2);
+		System.out.println(buf);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Clipboard clipboard = toolkit.getSystemClipboard();
 		StringSelection stringSelection = new StringSelection(buf);
@@ -49,31 +54,40 @@ public class CopyPasteCut {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
-				kernel.getApplication().showError(ex.getMessage());
+				//kernel.getApplication().showError(ex.getMessage());
 				kernel.getApplication().showError(ex.getMessage());
 				//Util.handleException(table, ex);
 			}
 		}
 		if (buf != null) {
-			String[] lines = buf.split("\\r*\\n");
+			String[] lines = buf.split("\\r*\\n", -1);
 			String[][] data = new String[lines.length][];
 			for (int i = 0; i < lines.length; ++ i) {
-				data[i] = lines[i].split("\\s+");
+				data[i] = lines[i].split("\\s", -1);
 			}
 			try {
 				for (int row = row1; row < row1 + data.length; ++ row) {
 					int iy = row - row1;
 					for (int column = column1; column < column1 + data[iy].length; ++ column) {
 						int ix = column - column1;
-						GeoElement value0 = RelativeCopy.getValue(table, column, row);
-						GeoElement value = MyCellEditor.prepareAddingValueToTable(kernel, table, data[iy][ix], value0, column, row);
-						table.setValueAt(value, row, column);
+						data[iy][ix] = data[iy][ix].trim();
+						if (data[iy][ix].length() == 0) {
+							GeoElement value0 = RelativeCopy.getValue(table, column, row);
+							if (value0 != null) {
+								//System.out.println(value0.toValueString());
+								MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column, row);
+							}	
+						}
+						else {
+							GeoElement value0 = RelativeCopy.getValue(table, column, row);
+							GeoElement value = MyCellEditor.prepareAddingValueToTable(kernel, table, data[iy][ix], value0, column, row);
+							table.setValueAt(value, row, column);
+						}
 					}
 				}
 			} catch (Exception ex) {
 				kernel.getApplication().showError(ex.getMessage());
-				//Util.handleException(table, ex);
-				kernel.getApplication().showError(ex.getMessage());
+				Util.handleException(table, ex);
 			}
 		}
 	}

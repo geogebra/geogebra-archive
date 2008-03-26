@@ -48,6 +48,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		MyListModel listModel = new MyListModel(tableModel.getRowCount());
 		JList rowHeader = new JList(listModel);
 		rowHeader.setFocusable(true);
+		rowHeader.setAutoscrolls(false);
 		rowHeader.addMouseListener(new MouseListener1());
 		rowHeader.addMouseMotionListener(new MouseMotionListener1());
 		rowHeader.addKeyListener(new KeyListener1());
@@ -123,12 +124,13 @@ public class SpreadsheetView extends JScrollPane implements View
 		
     }
 
-    public static class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
+	protected int minSelectionRow = -1;
+	protected int maxSelectionRow = -1;
+
+	public class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
 	
     	private static final long serialVersionUID = 1L;
     	
-    	protected int minSelectionRow = -1;
-    	protected int maxSelectionRow = -1;
     	protected JTableHeader header;
     	protected JList rowHeader;
     	protected ListSelectionModel selectionModel;
@@ -193,29 +195,36 @@ public class SpreadsheetView extends JScrollPane implements View
 		public void mousePressed(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
-			Point point = table.getIndexFromPixel(x, y);
-			if (point != null) {
-				if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
-						table.getColumnSelectionAllowed() == true) {
-					table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					table.setColumnSelectionAllowed(false);
-					table.setRowSelectionAllowed(true);
-				}
-				if (shiftPressed) {
-					if (row0 != -1) {
-						int row = (int)point.getY();
-						table.setRowSelectionInterval(row0, row);
+			if (e.getButton() == MouseEvent.BUTTON1) {			
+				Point point = table.getIndexFromPixel(x, y);
+				if (point != null) {
+					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
+							table.getColumnSelectionAllowed() == true) {
+						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						table.setColumnSelectionAllowed(false);
+						table.setRowSelectionAllowed(true);
 					}
+					if (shiftPressed) {
+						if (row0 != -1) {
+							int row = (int)point.getY();
+							table.setRowSelectionInterval(row0, row);
+						}
+					}
+					else if (ctrlPressed) {					
+						row0 = (int)point.getY();
+						table.addRowSelectionInterval(row0, row0);
+					}
+					else {
+						row0 = (int)point.getY();
+						table.setRowSelectionInterval(row0, row0);
+					}
+					table.repaint();
 				}
-				else if (ctrlPressed) {					
-					row0 = (int)point.getY();
-					table.addRowSelectionInterval(row0, row0);
+			}
+			else if (e.getButton() == MouseEvent.BUTTON3) {
+				if (minSelectionRow != -1 && maxSelectionRow != -1) {
+					ContextMenu.showPopupMenu(table, e.getComponent(), 0, minSelectionRow, 25, maxSelectionRow, x, y);
 				}
-				else {
-					row0 = (int)point.getY();
-					table.setRowSelectionInterval(row0, row0);
-				}
-				table.repaint();
 			}
 		}
 		
@@ -228,19 +237,21 @@ public class SpreadsheetView extends JScrollPane implements View
 	{
 		
 		public void mouseDragged(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
-			Point point = table.getIndexFromPixel(x, y);
-			if (point != null) {
-				if (ctrlPressed) {
-					int row = (int)point.getY();
-					table.addRowSelectionInterval(row0, row);
-					table.repaint();
-				}
-				else {
-					int row = (int)point.getY();
-					table.setRowSelectionInterval(row0, row);
-					table.repaint();
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				int x = e.getX();
+				int y = e.getY();
+				Point point = table.getIndexFromPixel(x, y);
+				if (point != null) {
+					if (ctrlPressed) {
+						int row = (int)point.getY();
+						table.addRowSelectionInterval(row0, row);
+						table.repaint();
+					}
+					else {
+						int row = (int)point.getY();
+						table.setRowSelectionInterval(row0, row);
+						table.repaint();
+					}
 				}
 			}
 		}
@@ -261,9 +272,32 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
+			//System.out.println(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = true; break;
 			case 17 : ctrlPressed = true; break;
+			case 67 : // control + c
+				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+				}
+				e.consume();
+				break;
+			case 86 : // control + v
+				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+					table.copyPasteCut.paste(0, minSelectionRow, 25, maxSelectionRow);
+				}
+				e.consume();
+				break;				
+			case 88 : // control + x
+				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+				}
+				e.consume();
+				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);
+				break;
+			case 127 : // delete
+				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);
+				break;
 			}
 		}
 		
