@@ -1283,6 +1283,31 @@ public abstract class Application implements	KeyEventDispatcher {
         }
     }
     
+    // Michael Borcherds 2008-03-25
+    // replace "%0" by arg0
+    final public String getPlain(String key,String arg0) {
+    	String[] ss={arg0};
+    	return getPlain(key,ss);
+    }
+    
+    // Michael Borcherds 2008-03-25
+    // replace "%0" by arg0, "%1" by arg1
+    final public String getPlain(String key,String arg0, String arg1) {
+    	String[] ss={arg0,arg1};
+    	return getPlain(key,ss);
+    }
+    
+    // Michael Borcherds 2008-03-25
+    // replace "%0" by args[0], "%1" by args[1], etc
+    final public String getPlain(String key,String[] args) {
+    	String ret = getPlain(key);
+  	
+    	for (int i=0 ; i<args.length ; i++)
+    	    ret=ret.replaceAll("%"+i,args[i]);
+
+    	return ret;
+    }
+    
     final public String getMenu(String key) {
     	if (rbmenu == null) 
     		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
@@ -1514,6 +1539,22 @@ public abstract class Application implements	KeyEventDispatcher {
 		geo.updateRepaint();
     	
     	InputHandler handler = new RenameInputHandler(this, geo, storeUndo);
+    	
+    	
+    	// Michael Borcherds 2008-03-25
+    	// a Chinese friendly version
+        InputDialog id =
+            new InputDialog(
+                this,
+                 "<html>" + 
+                 getPlain("NewNameForA",geo.getNameDescription()) + // eg New name for <b>Segment a</b>
+                 "</html>",
+                getPlain("Rename"),
+                initText,
+                false,
+                handler, true, selectInitText);        
+    	
+    	/*
         InputDialog id =
             new InputDialog(
                 this,
@@ -1526,7 +1567,8 @@ public abstract class Application implements	KeyEventDispatcher {
                 getPlain("Rename"),
                 initText,
                 false,
-                handler, true, selectInitText);                       
+                handler, true, selectInitText);        */
+    	
         id.setVisible(true);              
     }
     

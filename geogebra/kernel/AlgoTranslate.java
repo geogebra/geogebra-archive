@@ -79,21 +79,10 @@ public class AlgoTranslate extends AlgoTransformation {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("TranslationOf"));
-        sb.append(" ");
-        sb.append(inGeo.getLabel());
-        sb.append(' ');
-        }
-        sb.append(app.getPlain("by"));
-        sb.append(' ');
-        sb.append(v.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-        sb.append(' ');
-        sb.append(inGeo.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("TranslationOf"));
-        }
+
+        // Michael Borcherds 2008-03-24 simplified code!
+        sb.append(app.getPlain("TranslationOfAbyB",inGeo.getLabel(),v.getLabel()));
+        
         return sb.toString();
     }
 }

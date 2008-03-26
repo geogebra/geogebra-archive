@@ -90,6 +90,11 @@ public class AlgoRotatePoint extends AlgoTransformation {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-25
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("ArotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel()));
+
+        /*
         sb.append(Ageo.getLabel());
         sb.append(' ');
         if (!app.isReverseLanguage()) { //FKH 20040906
@@ -108,7 +113,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
             sb.append(angleGeo.getLabel());
             sb.append(' ');
             sb.append(app.getPlain("rotatedByAngle"));
-        }
+        }*/
         return sb.toString();
     }
 }
