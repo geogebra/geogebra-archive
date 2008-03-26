@@ -2727,6 +2727,9 @@ public abstract class Application implements	KeyEventDispatcher {
         	return helpURL;
         }
     	
+        
+        /* Michael Borcherds 2008-03-26
+         * removed and replaced with dummy help files which redirect
         // try to get help for current language
         String  language = locale.getLanguage();     
         helpURL = getHelpURL(language);
@@ -2742,6 +2745,7 @@ public abstract class Application implements	KeyEventDispatcher {
             	return helpURL;
             }
         }
+        */
                 
         // last attempt: try to get English help 
         helpURL = getHelpURL("en");
