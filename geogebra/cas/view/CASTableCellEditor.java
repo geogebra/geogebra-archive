@@ -24,10 +24,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 
 	private CASTableCellValue cellValue;
 
-//	private int row;
-//
-//	private int col;
-
 	public CASTableCellEditor(CASView view, JTable consoleTable) {
 		super(view, consoleTable);
 
@@ -48,9 +44,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 			this.setLineInvisiable(); // Initialize the editor display without
 										// line panle
 
-//			this.row = row;
-//			this.col = column;
-			// panel.setInput(((String) value).toString());
 			cellValue = (CASTableCellValue) value;
 			System.out.println("Editor - Row: " + row);
 			System.out.println(cellValue.getCommand());
@@ -73,11 +66,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 				this.removeOutputPanel();
 			}
 
-			// if(cellValue.isLineBorderVisible()){
-			// this.addLinePanel();
-			// System.out.println("Line is added at " + row);
-			// }
-
 			SwingUtilities.updateComponentTreeUI(this);
 		}
 		return this;
@@ -95,14 +83,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		cellValue.setCommand(this.getInput());
 		cellValue.setOutput(this.getOutput());
 		
-		
-//		CASTableCellValue temp = new CASTableCellValue(cellValue.getCommand(),
-//				cellValue.getOutput());
-//		temp.setOutputAreaInclude(cellValue.isOutputVisible());
-//		// temp.setLineBorderVisible(cellValue.isLineBorderVisible());
-//		table.setValueAt(temp, row, col);
-//		setCellEditorValue(temp);
-//		System.out.println("Stop editting at row" + row);
 		return true;
 	}
 
@@ -130,18 +110,4 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		// TODO Auto-generated method stub
 		return true;
 	}
-
-	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("I got the focus");
-	}
-
-	public void focusLost(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-//	public int getRow() {
-//		return row;
-//	}
 }

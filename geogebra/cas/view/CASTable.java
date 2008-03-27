@@ -57,7 +57,7 @@ public class CASTable extends JTable {
 				selectedCol)).getTableCellEditorComponent(this, newValue, true,
 				selectedRow + 1, selectedCol)).requestFocus();
 	}
-	
+
 	public void insertRow(int selectedRow, int selectedCol, char c) {
 		char[] in = new char[1];
 		in[0] = c;
@@ -68,33 +68,32 @@ public class CASTable extends JTable {
 		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
 				selectedCol)).getTableCellEditorComponent(this, newValue, true,
 				selectedRow + 1, selectedCol)).requestFocus();
-		
-		
+
 	}
 
 	/*
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
-		//TODO: Test this part
-//		CASTableCellEditor dce = (CASTableCellEditor )this.getCellEditor();
-//		if (dce != null) {
-//			System.out.println("dce stop editting");
-//			dce.stopCellEditing();
-//		}
-		
-//		tableModel.removeRow(row);
-//		int delRow = getSelectedRow();
-//		if (delRow > -1) {
-//			CASTableCellEditor dce = (CASTableCellEditor)getCellEditor();
-//			if (dce != null) dce.stopCellEditing();	
-//		}
+		// TODO: Test this part
+		// CASTableCellEditor dce = (CASTableCellEditor )this.getCellEditor();
+		// if (dce != null) {
+		// System.out.println("dce stop editting");
+		// dce.stopCellEditing();
+		// }
+
+		// tableModel.removeRow(row);
+		// int delRow = getSelectedRow();
+		// if (delRow > -1) {
+		// CASTableCellEditor dce = (CASTableCellEditor)getCellEditor();
+		// if (dce != null) dce.stopCellEditing();
+		// }
 		tableModel.removeRow(row);
-		this.repaint();	//Update the table
-		if(tableModel.getRowCount()==0)
+		this.repaint(); // Update the table
+		if (tableModel.getRowCount() == 0)
 			insertRow(-1, CASPara.contCol);
 		else
-			setFocusAtRow( row, CASPara.contCol);
+			setFocusAtRow(row, CASPara.contCol);
 	}
 
 	/*
@@ -106,7 +105,7 @@ public class CASTable extends JTable {
 				editRow, editCol);
 
 		changeSelection(editRow, editCol, false, false);
-		//What happens to this line?????
+		// What happens to this line?????
 		editCellAt(editRow, editCol);
 		((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
 				.getTableCellEditorComponent(this, value, true, editRow,
