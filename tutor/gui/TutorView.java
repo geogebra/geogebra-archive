@@ -236,8 +236,8 @@ public class TutorView extends JPanel implements View  {
         botoGuardar = new JButton("Guardar");
         botoGuardar.addActionListener(tutorController);
         
-        add(botoNou);
-        add(botoGuardar);
+        //add(botoNou);
+        //add(botoGuardar);
         
         add(commentField);
         add(justificationCombo);
