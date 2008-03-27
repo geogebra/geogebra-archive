@@ -30,12 +30,6 @@ public class CASTableCellRender extends CASTableCell implements
 			setInput(tempIn);
 			setOutput(tempOut);
 
-			// Bug: I set the value to true, but why it is still false?
-			// if (tempV.getOutputAreaInclude()) {
-			// System.out.println("Rendering Row: " + row);
-			// System.out.println("Render: Output Area is added " + row);
-			// this.addOutputArea();
-			// }
 		}
 		return this;
 	}

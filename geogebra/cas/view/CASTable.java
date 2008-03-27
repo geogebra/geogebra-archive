@@ -105,7 +105,6 @@ public class CASTable extends JTable {
 				editRow, editCol);
 
 		changeSelection(editRow, editCol, false, false);
-		// What happens to this line?????
 		editCellAt(editRow, editCol);
 		((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
 				.getTableCellEditorComponent(this, value, true, editRow,
