@@ -108,8 +108,6 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		
 		//tutorView.initDataModel();
 		tutorView.createGUI();
-		
-		
 	}
 	
 	protected void initGUI(String p, String s) {

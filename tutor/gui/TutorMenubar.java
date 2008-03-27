@@ -3,18 +3,41 @@ package tutor.gui;
 import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ConstructionProtocolNavigation;
+import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.ToolCreationDialog;
+import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.menubar.Menubar;
 import geogebra.gui.menubar.MenubarImpl;
+import geogebra.gui.util.BrowserLauncher;
+import geogebra.gui.util.ImageSelection;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import tutor.io.StringOutputStream;
+import tutor.net.util.HttpMultiPartFileUpload;
+import tutor.net.util.HttpParam;
 
 public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener {
 
@@ -447,7 +470,7 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 		removeAll();
 
 		// File menu
-		//addFileMenu();
+		addFileMenu();
 		
 		// Edit menu
 		//addEditMenu();
@@ -467,6 +490,580 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 		updateMenubar();
 	}
 
+	protected void initActions() {				
+		showAlgebraViewAction = new AbstractAction(app.getPlain("AlgebraWindow")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowAlgebraView(!app.showAlgebraView());
+				app.updateCenterPanel(true);
+			}
+		};
+
+	    // Michael Borcherds 2008-01-14
+		showSpreadsheetAction = new AbstractAction(app.getPlain("Spreadsheet")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowSpreadsheet(!app.showSpreadsheet());
+				//app.updateCenterPanel(true);
+			}
+		};
+
+		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowAlgebraInput(!app.showAlgebraInput());
+				app.updateContentPane();
+			}
+		};
+
+		showCmdListAction = new AbstractAction(app.getMenu("CmdList"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowCmdList(!app.showCmdList());
+				if (app.getAlgebraInput() != null)
+					SwingUtilities.updateComponentTreeUI(app.getAlgebraInput());
+			}
+		};
+
+		horizontalSplitAction = new AbstractAction(app.getPlain("HorizontalSplit")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setHorizontalSplit(!app.isHorizontalSplit());
+				app.updateCenterPanel(true);
+			}
+		};
+
+		showAuxiliaryObjectsAction = new AbstractAction(
+				app.getPlain("AuxiliaryObjects")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowAuxiliaryObjects(!app.showAuxiliaryObjects());
+				app.setUnsaved();				
+			}
+		};
+
+		showConsProtNavigationAction = new AbstractAction(
+				app.getPlain("ConstructionProtocolNavigation"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setShowConstructionProtocolNavigation(!app.showConsProtNavigation());
+				app.setUnsaved();	
+				app.updateCenterPanel(true);
+			}
+		};
+
+		showConsProtNavigationPlayAction = new AbstractAction(
+				app.getPlain("PlayButton")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				ConstructionProtocolNavigation cpn =
+					app.getConstructionProtocolNavigation();
+				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
+				cpn.initGUI();
+				SwingUtilities.updateComponentTreeUI(cpn);
+				app.setUnsaved();
+			}
+		};
+
+		showConsProtNavigationOpenProtAction = new AbstractAction(
+				app.getPlain("ConstructionProtocolButton")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				ConstructionProtocolNavigation cpn =
+					app.getConstructionProtocolNavigation();
+				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
+				cpn.initGUI();
+				SwingUtilities.updateComponentTreeUI(cpn);
+				app.setUnsaved();
+			}
+		};
+
+		deleteAll = new AbstractAction(app.getMenu("New"),
+				app.getEmptyIcon()) {				
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.deleteAllGeoElements();
+			}
+		};
+
+		newWindowAction = new AbstractAction(app.getMenu("NewWindow"),
+				app.getImageIcon("document-new.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+		    		public void run() {   
+		    			app.setWaitCursor();
+		    			GeoGebra.createNewWindow(null);		    		
+		    			app.setDefaultCursor();
+		    		}
+		    	};
+		    	runner.start();				
+			}
+		};
+
+		propertiesAction = new AbstractAction(app.getPlain("Properties") + " ...",
+				app.getImageIcon("document-properties.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.showPropertiesDialog();
+			}
+		};
+
+		constProtocolAction = new AbstractAction(
+				app.getPlain("ConstructionProtocol") + " ...",
+				app.getImageIcon("table.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.showConstructionProtocol();
+					}
+				};
+				runner.start();
+			}
+		};
+
+		drawingPadPropAction = new AbstractAction(app.getPlain("DrawingPad")
+				+ " ...", app.getImageIcon("document-properties.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.showDrawingPadPropertiesDialog();
+			}
+		};
+
+		toolbarConfigAction = new AbstractAction(app.getMenu("Toolbar.Customize")
+				+ " ...", app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.showToolbarConfigDialog();
+			}
+		};
+
+		saveAction = new AbstractAction(app.getMenu("Save"),
+				app.getImageIcon("document-save.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				//app.save();
+				
+				System.out.println("Guardar");
+				System.out.println(app.getXML());
+				
+				//String url = "http://localhost/agentgeom/continguts/problemes/upload_file.php";
+				String url = "http://158.109.2.26/edumat/agentgeom/continguts/problemes/upload_file.php";
+				
+				System.out.println("1111111111111");
+				
+				StringOutputStream sos = new StringOutputStream();
+				File fileOut = null;
+				
+				System.out.println("222222222222222");
+				
+				try {
+					fileOut = File.createTempFile("tempfile",".tmp");
+					System.out.println(fileOut.getAbsolutePath());
+					
+					FileOutputStream fos = new FileOutputStream(fileOut);
+					app.getXMLio().writeGeoGebraFile(fos);
+					
+					HttpParam param = new HttpParam();
+					param.setName("fitxer");
+					param.setValue(fileOut);
+					
+					HttpParam pIdProblema = new HttpParam();
+					pIdProblema.setName("id_problem");
+					pIdProblema.setValue("1");
+					
+					HttpParam pIdStudent = new HttpParam();
+					pIdStudent.setName("id_student");
+					pIdStudent.setValue("2");
+					
+					List params = new ArrayList();
+					params.add(param);
+					params.add(pIdStudent);
+					params.add(pIdProblema);
+
+					HttpMultiPartFileUpload mpfu = new HttpMultiPartFileUpload();
+					
+					mpfu.send(url, params);
+				}
+				catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+		};
+
+		saveAsAction = new AbstractAction(app.getMenu("SaveAs") + " ...",
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.saveAs();
+			}
+		};
+
+		/*
+		printProtocolAction = new AbstractAction(
+				app.getPlain("ConstructionProtocol") + " ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						ConstructionProtocol constProtocol = app.getConstructionProtocol();
+						if (constProtocol == null) {
+							constProtocol = new ConstructionProtocol(app);
+						}
+						constProtocol.initProtocol();
+						
+						try {
+							new PrintPreview(app, constProtocol, PageFormat.PORTRAIT);
+                    	} catch (Exception e) {
+                    		System.err.println("Print preview not available");
+                    	}
+					}
+				};
+				runner.start();
+			}
+		};
+*/
+		
+		printEuclidianViewAction = new AbstractAction(app.getPlain("DrawingPad")
+				+ " ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				showPrintPreview(app);
+			}
+		};
+
+		exitAction = new AbstractAction(app.getMenu("Close"), app.getImageIcon("exit.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.exit();
+			}
+		};
+
+		exitAllAction = new AbstractAction(app.getMenu("CloseAll"), app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.exitAll();
+			}
+		};
+
+		loadAction = new AbstractAction(app.getMenu("Load") + " ...",
+				app.getImageIcon("document-open.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.openFile();
+			}
+		};
+
+		
+
+		refreshAction = new AbstractAction(app.getMenu("Refresh"),
+				app.getImageIcon("view-refresh.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.refreshViews();
+			}
+		};
+
+		drawingPadToClipboardAction = new AbstractAction(
+				app.getMenu("DrawingPadToClipboard"),
+				app.getImageIcon("edit-copy.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				app.clearSelectedGeos();
+				
+				Thread runner = new Thread() {
+					public void run() {		
+						app.setWaitCursor();
+						// copy drawing pad to the system clipboard
+						Image img = app.getEuclidianView().getExportImage(1d);
+						ImageSelection imgSel = new ImageSelection(img);
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
+						app.setDefaultCursor();
+					}
+				};
+				runner.start();						    			    								
+			}
+		};
+
+		helpAction = new AbstractAction(app.getMenu("Help"),
+				app.getImageIcon("help.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.openHelp();
+					}
+				};
+				runner.start();
+			}
+		};
+
+		/*
+		 * updateAction = new AbstractAction(getMenu("Update"), getEmptyIcon()) {
+		 * private static final long serialVersionUID = 1L; public void
+		 * actionPerformed(ActionEvent e) { Thread runner = new Thread() {
+		 * public void run() { updateGeoGebra(); } }; runner.start(); } };
+		 */
+
+		exportGraphicAction = new AbstractAction(app.getPlain("DrawingPad") + " "
+				+ app.getPlain("as") + " " + app.getPlain("Picture") + " ("
+				+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...", 
+				app.getImageIcon("image-x-generic.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.setWaitCursor();
+						try {							
+					    	app.clearSelectedGeos();
+					    	
+					    	// use reflection for
+				  		    // JDialog d = new geogebra.export.GraphicExportDialog(app);   		
+				  		    Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
+				  		    Object[] args = new Object[] { app };
+				  		    Class [] types = new Class[] {Application.class};
+				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        JDialog d =  (JDialog) constructor.newInstance(args);  					    
+					      
+					        d.setVisible(true);
+					       
+						} catch (Exception e) {
+							System.err.println("GraphicExportDialog not available");
+						}
+						app.setDefaultCursor();
+					}
+				};
+				runner.start();
+			}
+		};
+		
+		
+		exportPSTricksAction = new AbstractAction(app.getPlain("DrawingPad") + " "
+				+ app.getPlain("as") + " PSTricks ...", 
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {				
+				try {		
+					// use reflection for
+		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
+		  		    Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
+		  		    Object[] args = new Object[] { app };
+		  		    Class [] types = new Class[] {Application.class};
+		  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+		  	        constructor.newInstance(args);  																
+				} catch (Exception ex) {
+					System.err.println("GeoGebraToPstricks not available");
+				}	
+			}
+		};
+		
+		/*
+		htmlCPAction = new AbstractAction(app.getPlain("ConstructionProtocol")
+				+ " " + app.getPlain("as") + " " + app.getPlain("html") + " ("
+				+ Application.FILE_EXT_HTML + ") ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.exportConstructionProtocolHTML();
+					}
+				};
+				runner.start();
+			}
+		};*/
+
+		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheet") + " "
+				+ app.getPlain("as") + " " + app.getPlain("html") + " ("
+				+ Application.FILE_EXT_HTML + ") ...",
+				app.getImageIcon("text-html.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.setWaitCursor();
+						try {
+							app.clearSelectedGeos();
+							
+							// use reflection for
+				  		    // JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
+				  		    Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
+				  		    Object[] args = new Object[] { app };
+				  		    Class [] types = new Class[] {Application.class};
+				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        JDialog d =  (JDialog) constructor.newInstance(args); 
+														
+							d.setVisible(true);
+						} catch (Exception e) {
+							System.err.println("WorksheetExportDialog not available");
+							e.printStackTrace();
+						}
+						app.setDefaultCursor();
+					}
+				};
+				runner.start();
+			}
+		};
+
+		showCreateToolsAction = new AbstractAction(app.getMenu("Tool.CreateNew")
+				+ " ...", app.getImageIcon("tool.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				ToolCreationDialog tcd = new ToolCreationDialog(
+						app);
+				tcd.setVisible(true);
+			}
+		};
+
+		showManageToolsAction = new AbstractAction(app.getMenu("Tool.Manage")
+				+ " ...", app.getImageIcon("document-properties.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				ToolManagerDialog tmd = new ToolManagerDialog(app);
+				tmd.setVisible(true);
+			}
+		};
+
+		infoAction = new AbstractAction(app.getMenu("About") + " / "
+				+ app.getMenu("License"), app.getImageIcon("info.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				showAboutDialog(app);
+			}
+		};			
+		
+		
+		savePreferencesAction = new AbstractAction(app.getMenu("Settings.Save"),
+				app.getImageIcon("document-save.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				GeoGebraPreferences.saveXMLPreferences(app);				
+			}
+		};
+		
+		clearPreferencesAction = new AbstractAction(app.getMenu("Settings.ResetDefault"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.clearPreferences();				
+			}
+		};
+		
+		selectAllAction = new AbstractAction(app.getMenu("SelectAll"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				app.selectAll(-1); // Michael Borcherds 2008-03-03 pass "-1" to select all
+			}
+		};			
+		
+		selectCurrentLayerAction = new AbstractAction(app.getMenu("SelectCurrentLayer"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				
+				int layer = getSelectedLayer();
+				if (layer !=-1) app.selectAll(layer); // select all objects in layer
+			}
+		};			
+		
+		deleteAction = new AbstractAction(app.getPlain("Delete"), 
+				app.getImageIcon("delete_small.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				if (app.letDelete()) {
+					Object [] geos = app.getSelectedGeos().toArray();
+					for (int i=0; i < geos.length; i++) {
+						GeoElement geo = (GeoElement) geos[i];
+						geo.remove();
+					}
+					app.storeUndoInfo();
+				}
+			}
+		};		
+		
+		websiteAction  = new AbstractAction("www.geogebra.org", 
+							new ImageIcon(app.getInternalImage("geogebra.gif"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				app.showURLinBrowser(Application.GEOGEBRA_WEBSITE);
+			}
+		};		
+		
+		forumAction  = new AbstractAction("GeoGebra Forum", 
+				new ImageIcon(app.getInternalImage("users.png"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				BrowserLauncher.openURL(Application.GEOGEBRA_WEBSITE + "forum/");
+			}
+		};	
+		
+		wikiAction  = new AbstractAction("GeoGebraWiki", 
+				new ImageIcon(app.getInternalImage("wiki.jpg"))) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {	
+				String url = Application.GEOGEBRA_WEBSITE;
+				if (app.getLocale().getLanguage().equals("de"))
+					url += "de/wiki/";
+				else
+					url += "en/wiki/";
+					
+				BrowserLauncher.openURL(url);				
+			}
+		};	
+				
+		updateActions();
+	}
+	
 	public void updateMenubar() {	
 		EuclidianView ev = app.getEuclidianView();
 		if (cbShowAxes!=null) cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
