@@ -19,7 +19,9 @@ public class EditorFocusListener implements FocusListener{
 
 	public void focusLost(FocusEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		//System.out.println("Focus Lost " + editor.getRow());
+//		if ()
+		editor.stopCellEditing();		
 	}
 
 }

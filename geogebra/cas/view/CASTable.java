@@ -34,6 +34,7 @@ public class CASTable extends JTable {
 
 		tableModel = new CASTableModel(this, rows, session, app);
 		this.setModel(tableModel);
+		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		// Set the width of the index column;
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
@@ -75,9 +76,25 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
+		//TODO: Test this part
+//		CASTableCellEditor dce = (CASTableCellEditor )this.getCellEditor();
+//		if (dce != null) {
+//			System.out.println("dce stop editting");
+//			dce.stopCellEditing();
+//		}
+		
+//		tableModel.removeRow(row);
+//		int delRow = getSelectedRow();
+//		if (delRow > -1) {
+//			CASTableCellEditor dce = (CASTableCellEditor)getCellEditor();
+//			if (dce != null) dce.stopCellEditing();	
+//		}
 		tableModel.removeRow(row);
+		this.repaint();	//Update the table
 		if(tableModel.getRowCount()==0)
 			insertRow(-1, CASPara.contCol);
+		else
+			setFocusAtRow( row, CASPara.contCol);
 	}
 
 	/*
@@ -89,6 +106,7 @@ public class CASTable extends JTable {
 				editRow, editCol);
 
 		changeSelection(editRow, editCol, false, false);
+		//What happens to this line?????
 		editCellAt(editRow, editCol);
 		((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
 				.getTableCellEditorComponent(this, value, true, editRow,

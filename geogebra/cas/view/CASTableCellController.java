@@ -38,11 +38,11 @@ public class CASTableCellController implements KeyListener {
 		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
-		int selectedCol = table.getSelectedColumn();
+		int selectedCol = CASPara.contCol;	//table.getSelectedColumn();
 
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
-		
+
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			// System.out.println("Focus should be set at the line above");
@@ -67,10 +67,12 @@ public class CASTableCellController implements KeyListener {
 				if (selectedRow < (table.getRowCount() - 1)) {
 					table.setFocusAtRow(selectedRow + 1, selectedCol);
 
-				} else{
+				} else {
 					// Insert a new row
-					table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-					if(curCell.getInput().length()!=0)
+					table
+							.setRowHeight(selectedRow, curCell
+									.setLineInvisiable());
+					if (curCell.getInput().length() != 0)
 						table.insertRow(selectedRow, selectedCol);
 					else
 						curCell.setInputAreaFocused();
@@ -86,21 +88,21 @@ public class CASTableCellController implements KeyListener {
 				saveInput(curValue);
 				// Insert a new line here
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				if(curCell.getInput().length()!=0)
+				if (curCell.getInput().length() != 0)
 					table.insertRow(selectedRow, selectedCol);
 				else
 					curCell.setInputAreaFocused();
 			}
 			consumeEvent = true;
-			break;			
-			
-		default:  //Other Keys
+			break;
+
+		default: // Other Keys
 			System.out.println("Press Enter at the Line Panel");
 			if (curCell.isLineVisiable()) {
 				saveInput(curValue);
 				// Insert a new line here
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				if(curCell.getInput().length()!=0)
+				if (curCell.getInput().length() != 0)
 					table.insertRow(selectedRow, selectedCol, e.getKeyChar());
 				else
 					curCell.setInputAreaFocused();
@@ -122,7 +124,7 @@ public class CASTableCellController implements KeyListener {
 		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
-		int selectedCol = table.getSelectedColumn();
+		int selectedCol = CASPara.contCol; //table.getSelectedColumn();	
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
 
@@ -130,34 +132,40 @@ public class CASTableCellController implements KeyListener {
 		case KeyEvent.VK_ENTER:
 			// Get the input from the user interface
 			String inputText = curCell.getInput();
-			// Evaluate the input with Yacas, which is too slow
-			String evaluation = view.getCAS().evaluateYACAS(inputText);
 
-			// Set the value into the table
-			saveInput(curValue);
-			curValue.setOutput(evaluation);
-			curCell.setOutput(evaluation);
+			if (inputText.length() != 0) {
+				// Evaluate the input with Yacas, which is too slow
+				String evaluation = view.getCAS().evaluateYACAS(inputText);
 
-			// We enlarge the height of the selected row
-			table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
-			curValue.setOutputAreaInclude(true);
-			// tableModel.setValueAt(curValue, selectedRow, CASPara.contCol);
-			table.setValueAt(curValue, selectedRow, CASPara.contCol);
+				// Set the value into the table
+				saveInput(curValue);
+				curValue.setOutput(evaluation);
+				curCell.setOutput(evaluation);
 
-			CASTableCellValue newValue = (CASTableCellValue) tableModel
-					.getValueAt(selectedRow, selectedCol);
-			System.out.println(selectedRow + " Value Updated: "
-					+ newValue.getCommand() + newValue.getOutput());
+				// We enlarge the height of the selected row
+				table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
+				curValue.setOutputAreaInclude(true);
+				// tableModel.setValueAt(curValue, selectedRow,
+				// CASPara.contCol);
+				table.setValueAt(curValue, selectedRow, CASPara.contCol);
 
-			// update the cell appearance
-			SwingUtilities.updateComponentTreeUI(curCell);
+				CASTableCellValue newValue = (CASTableCellValue) tableModel
+						.getValueAt(selectedRow, selectedCol);
+				System.out.println(selectedRow + " Value Updated: "
+						+ newValue.getCommand() + newValue.getOutput());
 
-			if (selectedRow < (table.getRowCount() - 1)) {
-				table.setFocusAtRow(selectedRow + 1, selectedCol);
-			} else{
-				// Insert a new row
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
-				table.insertRow(selectedRow, selectedCol);
+				// update the cell appearance
+				SwingUtilities.updateComponentTreeUI(curCell);
+
+				if (selectedRow < (table.getRowCount() - 1)) {
+					table.setFocusAtRow(selectedRow + 1, selectedCol);
+				} else {
+					// Insert a new row
+					table
+							.setRowHeight(selectedRow, curCell
+									.setLineInvisiable());
+					table.insertRow(selectedRow, selectedCol);
+				}
 			}
 			consumeEvent = true;
 			break;

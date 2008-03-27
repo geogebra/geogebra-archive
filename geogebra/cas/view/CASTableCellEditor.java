@@ -24,9 +24,9 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 
 	private CASTableCellValue cellValue;
 
-	private int row;
-
-	private int col;
+//	private int row;
+//
+//	private int col;
 
 	public CASTableCellEditor(CASView view, JTable consoleTable) {
 		super(view, consoleTable);
@@ -48,23 +48,22 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 			this.setLineInvisiable(); // Initialize the editor display without
 										// line panle
 
-			this.row = row;
-			this.col = column;
+//			this.row = row;
+//			this.col = column;
 			// panel.setInput(((String) value).toString());
 			cellValue = (CASTableCellValue) value;
-			System.out.println("Editor - Row: " + row
-					+ cellValue.isOutputVisible());
+			System.out.println("Editor - Row: " + row);
 			System.out.println(cellValue.getCommand());
 			System.out.println(cellValue.getOutput());
 			String tempIn = cellValue.getCommand();
 			String tempOut = cellValue.getOutput();
 
 			Component[] temp = this.getComponents();
-			System.out.println("We have componets: " + temp.length);
-			System.out.println("Output: " + tempOut.length());
-			for (int i = 0; i < temp.length; i++) {
-				System.out.println("componets: " + temp[i]);
-			}
+//			System.out.println("We have componets: " + temp.length);
+//			System.out.println("Output: " + tempOut.length());
+//			for (int i = 0; i < temp.length; i++) {
+//				System.out.println("componets: " + temp[i]);
+//			}
 
 			this.setInput(tempIn);
 			this.setOutput(tempOut);
@@ -93,12 +92,17 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	}
 
 	public boolean stopCellEditing() {
-		CASTableCellValue temp = new CASTableCellValue(cellValue.getCommand(),
-				cellValue.getOutput());
-		temp.setOutputAreaInclude(cellValue.isOutputVisible());
-		// temp.setLineBorderVisible(cellValue.isLineBorderVisible());
-		table.setValueAt(temp, row, col);
-		setCellEditorValue(temp);
+		cellValue.setCommand(this.getInput());
+		cellValue.setOutput(this.getOutput());
+		
+		
+//		CASTableCellValue temp = new CASTableCellValue(cellValue.getCommand(),
+//				cellValue.getOutput());
+//		temp.setOutputAreaInclude(cellValue.isOutputVisible());
+//		// temp.setLineBorderVisible(cellValue.isLineBorderVisible());
+//		table.setValueAt(temp, row, col);
+//		setCellEditorValue(temp);
+//		System.out.println("Stop editting at row" + row);
 		return true;
 	}
 
@@ -136,4 +140,8 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		// TODO Auto-generated method stub
 		
 	}
+
+//	public int getRow() {
+//		return row;
+//	}
 }
