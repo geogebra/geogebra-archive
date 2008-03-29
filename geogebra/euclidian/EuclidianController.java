@@ -2075,7 +2075,8 @@ public class EuclidianController implements MouseListener,
 		// calc real world coords
 		calcRWcoords();
 		
-		if (moveMode == MOVE_NUMERIC) return; // Michael Borcherds 2008-03-24 bugfix: don't want grid on
+		if (mode == EuclidianView.MODE_MOVE && 
+			moveMode == MOVE_NUMERIC) return; // Michael Borcherds 2008-03-24 bugfix: don't want grid on
 
 		//	point capturing to grid
 		double pointCapturingPercentage = 1;
