@@ -256,7 +256,7 @@ public abstract class Application implements	KeyEventDispatcher {
         showGridAction,
         undoAction, redoAction;
 
-    private PropertiesDialogGeoElement propDialog;
+    protected PropertiesDialogGeoElement propDialog;
     private ConstructionProtocol constProtocol;
     private ConstructionProtocolNavigation constProtocolNavigation;
     private ImageManager imageManager;
@@ -282,7 +282,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean isErrorDialogsActive = true;
 
     private static LinkedList fileList = new LinkedList();
-    private File currentPath, currentImagePath, currentFile = null;
+    protected File currentPath, currentImagePath, currentFile = null;
     private boolean isSaved = true;    
     private int appFontSize;
     public Font boldFont, plainFont, smallFont;
