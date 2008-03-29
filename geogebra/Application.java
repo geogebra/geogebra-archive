@@ -1547,7 +1547,7 @@ public abstract class Application implements	KeyEventDispatcher {
             new InputDialog(
                 this,
                  "<html>" + 
-                 getPlain("NewNameForA",geo.getNameDescription()) + // eg New name for <b>Segment a</b>
+                 getPlain("NewNameForA","<b>"+geo.getNameDescription()+"</b>") + // eg New name for <b>Segment a</b>
                  "</html>",
                 getPlain("Rename"),
                 initText,
