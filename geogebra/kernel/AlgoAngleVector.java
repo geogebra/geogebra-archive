@@ -66,6 +66,11 @@ public class AlgoAngleVector extends AlgoElement {
 
     public final String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("AngleOfA",vec.getLabel()));
+
+        /*
         if (app.isReverseLanguage()) {
             sb.append(vec.getLabel());
             sb.append(' ');
@@ -78,7 +83,8 @@ public class AlgoAngleVector extends AlgoElement {
             sb.append(app.getPlain("of"));
             sb.append(' ');
             sb.append(vec.getLabel());
-        }
+        }*/
+        
         return sb.toString();
     }
 }

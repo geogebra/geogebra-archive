@@ -93,6 +93,11 @@ public class AlgoDirectrix extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("DirectrixOfA",c.getLabel()));
+
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("DirectrixOf"));
             sb.append(' ');
@@ -101,7 +106,8 @@ public class AlgoDirectrix extends AlgoElement {
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("DirectrixOf"));
-        }
+        }*/
+        
         return sb.toString();
     }
 }

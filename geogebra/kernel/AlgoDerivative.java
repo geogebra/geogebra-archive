@@ -107,6 +107,14 @@ public class AlgoDerivative extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();   
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        if (order != null)
+        	sb.append(app.getPlain("AthDerivativeOfB",orderGeo.getLabel(),fgeo.getLabel()));
+        else
+        	sb.append(app.getPlain("DerivativeOfA",fgeo.getLabel()));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             if (order != null) {
                 sb.append(orderGeo.getLabel());
@@ -127,7 +135,8 @@ public class AlgoDerivative extends AlgoElement {
                 sb.append(". ");
             }
             sb.append(app.getPlain("Derivative"));
-        }
+        } */
+        
         if (!fgeo.isIndependent()) { // show the symbolic representation too
             sb.append(": ");
             sb.append(ggeo.getLabel());
@@ -135,7 +144,8 @@ public class AlgoDerivative extends AlgoElement {
             sb.append(g.getVarString());
             sb.append(")= ");
     		sb.append(g.toSymbolicString());            
-        }
+        } 
+        
         return sb.toString();
     }
 

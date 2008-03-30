@@ -55,6 +55,11 @@ public class AlgoCentroidPolygon extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("CentroidOfA",p.getLabel()));
+
+        /*
         if(app.isReverseLanguage()){//FKH 20040906
           sb.append(p.getLabel());
           sb.append(' ');
@@ -63,7 +68,7 @@ public class AlgoCentroidPolygon extends AlgoElement {
         sb.append(app.getPlain("CentroidOf"));
         sb.append(' ');
         sb.append(p.getLabel());        
-        }
+        }*/
         
         return sb.toString();
     }

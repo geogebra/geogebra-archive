@@ -89,6 +89,12 @@ public class AlgoCircleTwoPoints extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("CircleThroughAwithCenterB",P.getLabel(),M.getLabel()));
+
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("Circle"));
             sb.append(' ');
@@ -106,7 +112,7 @@ public class AlgoCircleTwoPoints extends AlgoElement {
             sb.append(' ');
             sb.append(app.getPlain("of"));
             sb.append(app.getPlain("Circle"));
-        }
+        } */
 
         return sb.toString();
     }

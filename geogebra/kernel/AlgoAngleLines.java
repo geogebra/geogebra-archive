@@ -87,6 +87,11 @@ public class AlgoAngleLines extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("AngleBetweenAB",g.getLabel(),h.getLabel()));
+        
+        /*
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(g.getLabel());
             sb.append(", ");
@@ -99,7 +104,7 @@ public class AlgoAngleLines extends AlgoElement {
             sb.append(g.getLabel());
             sb.append(", ");
             sb.append(h.getLabel());
-        }
+        }*/
 
         return sb.toString();
     }

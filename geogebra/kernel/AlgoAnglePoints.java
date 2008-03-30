@@ -155,6 +155,16 @@ public class AlgoAnglePoints extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        if (algoAnglePoly != null) 
+            sb.append(app.getPlain("AngleBetweenABCofD",A.getLabel(),B.getLabel(),C.getLabel(),algoAnglePoly.getPolygon().getNameDescription()));
+        else
+           	sb.append(app.getPlain("AngleBetweenABC",A.getLabel(),B.getLabel(),C.getLabel()));
+
+        
+        /*
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(A.getLabel());
             sb.append(", ");
@@ -185,7 +195,8 @@ public class AlgoAnglePoints extends AlgoElement {
                 sb.append(' ');
                 sb.append(algoAnglePoly.getPolygon().getNameDescription());
             }
-        }
+        } */
+        
         return sb.toString();
     }
 }

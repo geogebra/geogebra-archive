@@ -71,6 +71,12 @@ public class AlgoAngleConic extends AlgoElement {
 
     public final String toString() {
         StringBuffer sb = new StringBuffer();
+
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("AngleOfA",c.getLabel()));
+
+        /*
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(c.getLabel());
             sb.append(' ');
@@ -83,7 +89,8 @@ public class AlgoAngleConic extends AlgoElement {
             sb.append(app.getPlain("of"));
             sb.append(' ');
             sb.append(c.getLabel());
-        }
+        }*/
+        
         return sb.toString();
     }
 }

@@ -135,6 +135,12 @@ public class AlgoCirclePointRadius extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("CircleWithCenterAandRadiusB",M.getLabel(),rgeo.getLabel()));
+
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("Circle"));
             sb.append(' ');
@@ -154,7 +160,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
             sb.append(' ');
             sb.append(app.getPlain("of"));
             sb.append(app.getPlain("Circle"));
-        }
+        }*/
 
         return sb.toString();
     }

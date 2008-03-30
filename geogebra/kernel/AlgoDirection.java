@@ -87,6 +87,11 @@ public class AlgoDirection extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("DirectionOfA",g.getLabel()));
+
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("DirectionOf"));
             sb.append(' ');
@@ -95,7 +100,8 @@ public class AlgoDirection extends AlgoElement {
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("DirectionOf"));
-        }
+        }*/
+        
         return sb.toString();
     }
 }

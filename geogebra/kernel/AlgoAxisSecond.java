@@ -85,6 +85,11 @@ public class AlgoAxisSecond extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("SecondAxisOfA",c.getLabel()));
+        
+        /*
         if(app.isReverseLanguage()){//FKH 20040906
           sb.append(c.getLabel());
           sb.append(' ');
@@ -93,7 +98,7 @@ public class AlgoAxisSecond extends AlgoElement {
         sb.append(app.getPlain("SecondAxisOf"));        
         sb.append(' ');
         sb.append(c.getLabel());
-        }
+        }*/
         
         return sb.toString();
     }

@@ -1297,6 +1297,27 @@ public abstract class Application implements	KeyEventDispatcher {
     	return getPlain(key,ss);
     }
     
+    // Michael Borcherds 2008-03-30
+    // replace "%0" by arg0, "%1" by arg1, "%2" by arg2
+    final public String getPlain(String key,String arg0, String arg1, String arg2) {
+    	String[] ss={arg0,arg1,arg2};
+    	return getPlain(key,ss);
+    }
+    
+    // Michael Borcherds 2008-03-30
+    // replace "%0" by arg0, "%1" by arg1, "%2" by arg2, "%3" by arg3
+    final public String getPlain(String key,String arg0, String arg1, String arg2, String arg3) {
+    	String[] ss={arg0,arg1,arg2,arg3};
+    	return getPlain(key,ss);
+    }
+    
+    // Michael Borcherds 2008-03-30
+    // replace "%0" by arg0, "%1" by arg1, "%2" by arg2, "%3" by arg3, "%4" by arg4
+    final public String getPlain(String key,String arg0, String arg1, String arg2, String arg3, String arg4) {
+    	String[] ss={arg0,arg1,arg2,arg3,arg4};
+    	return getPlain(key,ss);
+    }
+    
     // Michael Borcherds 2008-03-25
     // replace "%0" by args[0], "%1" by args[1], etc
     final public String getPlain(String key,String[] args) {

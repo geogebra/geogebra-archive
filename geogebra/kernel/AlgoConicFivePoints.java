@@ -142,6 +142,11 @@ public class AlgoConicFivePoints extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("ConicThroughABCDE",P[0].getLabel(),P[1].getLabel(),P[2].getLabel(),P[3].getLabel(),P[4].getLabel()));
+
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("Conic"));
             sb.append(' ');
@@ -157,7 +162,7 @@ public class AlgoConicFivePoints extends AlgoElement {
             sb.append(' ');
             sb.append(app.getPlain("of"));
             sb.append(app.getPlain("Conic"));
-        }
+        }*/
 
         return sb.toString();
     }
