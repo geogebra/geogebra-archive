@@ -18,6 +18,7 @@
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.MyError;
 import geogebra.kernel.Kernel;
 
 import java.util.ArrayList;
@@ -35,9 +36,9 @@ import java.util.HashSet;
 public class MyList extends ValidExpression implements ListValue {
 
 	private Kernel kernel;
-	
+
 	// list for list elements
-	private ArrayList listElements;	
+	private ArrayList listElements;
 
 	public MyList(Kernel kernel) {
 		this(kernel, 20);
@@ -51,90 +52,133 @@ public class MyList extends ValidExpression implements ListValue {
 	public void addListElement(ExpressionNode arg) {
 		listElements.add(arg);
 	}
+		
+	/**
+	 * Applies an operation to this list using the given value:
+	 * <this> <operation> <value>.
+	 * 
+	 * @param operation: int value like ExpressionNode.MULTIPLY
+	 * @param value: value that should be applied to this list using the given operation
+	 * @author Markus Hohenwarter	 
+	 */
+	final public void applyRight(int operation, ExpressionValue value) {
+		apply(operation, value, true);
+	}
 	
-	// Michael Borcherds 2008-02-02
-	public void multiply(MyList list)
-	{
-		if (size()!=list.size())
-		{
-			// return empty list if sizes don't match
+	/**
+	 * Applies an operation to this list using the given value:
+	 * <value> <operation> <this>.
+	 * 
+	 * @param operation: int value like ExpressionNode.MULTIPLY
+	 * @param value: value that should be applied to this list using the given operation
+	 * @author Markus Hohenwarter	 
+	 */
+	final public void applyLeft(int operation, ExpressionValue value) {
+		apply(operation, value, false);
+	}		
+		
+	/**
+	 * Applies an operation to this list using the given value.
+	 * 
+	 * @param operation: int value like ExpressionNode.MULTIPLY
+	 * @param value: value that should be applied to this list using the given operation
+	 * @param right: true for <this> <operation> <value>, false for <value> <operation> <this>
+	 * @author Markus Hohenwarter	 
+	 */
+	private void apply(int operation, ExpressionValue value, boolean right) {
+		int size = size();
+				
+//	
+//		if (!right) 
+//			System.out.println("apply: " + value + " < op: " + operation + " > " + this);
+//		else
+//			System.out.println("apply: " + this + " < op: " + operation + " > " + value);
+		
+		
+		// expression value is list		
+		MyList valueList = value.isListValue() ? ((ListValue) value).getMyList() : null;		
+		
+		// return empty list if sizes don't match
+		if (size == 0 || (valueList != null && size != valueList.size())) 
+		{			
 			listElements.clear();
 			return;
 		}
 		
-		for (int i=0 ; i<size() ; i++)
-		{
-			ExpressionNode exp =  (ExpressionNode) listElements.get(i);
-			ExpressionNode exp2 =  (ExpressionNode) list.getListElement(i);
-			if (exp.isNumberValue() && exp2.isNumberValue()) {
-				NumberValue num=(NumberValue) exp.evaluate();
-				NumberValue num2=(NumberValue) exp2.evaluate();
-				//NumberValue num2=(NumberValue) exp2; TODO doesn't work...
-				MyDouble d1=num.getNumber();
-				MyDouble d2=num2.getNumber();
-				MyDouble.mult(d2,d1,d1);
-				num=(NumberValue)d1;
-				listElements.set(i,(kernel.convertNumberValueToExpressionNode(num)));
-			}
-			else
-			{
-				// return empty list if any of the elements aren't numbers
-				listElements.clear();
-				return;				
-			}
-		}
-	}
-
-	// Michael Borcherds 2008-02-02
-	public void multiply(NumberValue num2)
-	{
+		// temp ExpressionNode to do evaluation of single elements
+		ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionNode) listElements.get(0));
+		tempNode.setOperation(operation);
 		
-		MyDouble d2=num2.getNumber();
-		for (int i=0 ; i<size() ; i++)
-		{
-			ExpressionNode exp =  (ExpressionNode) listElements.get(i);
-			if (exp.isNumberValue()) {
-				NumberValue num=(NumberValue) exp.evaluate();
-				//NumberValue num=(NumberValue) exp; TODO doesn't work...
-				MyDouble d1=num.getNumber();
-				MyDouble.mult(d2,d1,d1);
-				num=(NumberValue)d1;
-				listElements.set(i,(kernel.convertNumberValueToExpressionNode(num)));
-			}
-			else
-			{
-				// return empty list if any of the elements aren't numbers
+		for (int i = 0; i < size; i++) {	
+			try {				
+				// singleValue to apply to i-th element of this list
+				ExpressionValue singleValue = valueList == null ? value : valueList.getListElement(i);								
+				
+				// apply operation using singleValue
+				if (right) {
+					// this operation value
+					tempNode.setLeft((ExpressionNode) listElements.get(i));
+					tempNode.setRight(singleValue);
+				} else {
+					// value operation this					
+					tempNode.setLeft(singleValue);
+					tempNode.setRight((ExpressionNode) listElements.get(i));
+				}
+				
+				// evaluate operation
+				ExpressionValue operationResult = tempNode.evaluate(); 
+				
+				
+			//	System.out.println("        tempNode : " + tempNode + ", result: " + operationResult);
+			
+				
+				// set listElement to operation result
+				if (!operationResult.isExpressionNode()) {
+					operationResult = new ExpressionNode(kernel, operationResult); 
+				}
+				listElements.set(i, (ExpressionNode) operationResult);
+			} 
+			catch (MyError err) {
+				// TODO: remove
+				System.err.println(err.getLocalizedMessage());
+				
+				// return empty list if any of the elements aren't numbers			
 				listElements.clear();
-				return;				
-			}
+				return;
+			}							
 		}
+		
+		
+//		System.out.println("   gives : " + this);
+	
 	}
 
-    // Michael Borcherds 2008-02-04
+
+	// Michael Borcherds 2008-02-04
 	// adapted from GeoList
-	public String toString() {		                               		
-        StringBuffer sbBuildValueString = new StringBuffer();
-        sbBuildValueString.append("{");
+	public String toString() {
+		StringBuffer sbBuildValueString = new StringBuffer();
+		sbBuildValueString.append("{");
 
-        // first (n-1) elements
-        int lastIndex = listElements.size()-1;
-        if (lastIndex > -1) {
- 	       for (int i=0; i < lastIndex; i++) {
- 	    	  ExpressionNode exp =  (ExpressionNode) listElements.get(i);
- 	    	   sbBuildValueString.append(exp.toString()); // .toOutputValueString());
- 	    	   sbBuildValueString.append(", ");
- 	       }
- 	
- 	       // last element
- 	      ExpressionNode exp =  (ExpressionNode) listElements.get(lastIndex);
- 		   sbBuildValueString.append(exp.toString());
-        }
- 	
-        sbBuildValueString.append("}");
-        return sbBuildValueString.toString();   	
-     }
+		// first (n-1) elements
+		int lastIndex = listElements.size() - 1;
+		if (lastIndex > -1) {
+			for (int i = 0; i < lastIndex; i++) {
+				ExpressionNode exp = (ExpressionNode) listElements.get(i);
+				sbBuildValueString.append(exp.toString()); // .toOutputValueString());
+				sbBuildValueString.append(", ");
+			}
 
-    public int size() {
+			// last element
+			ExpressionNode exp = (ExpressionNode) listElements.get(lastIndex);
+			sbBuildValueString.append(exp.toString());
+		}
+
+		sbBuildValueString.append("}");
+		return sbBuildValueString.toString();
+	}
+
+	public int size() {
 		return listElements.size();
 	}
 
@@ -150,8 +194,7 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 
 	/*
-	 * public String toString() {
-	 *  }
+	 * public String toString() { }
 	 */
 
 	public ExpressionValue evaluate() {
@@ -194,7 +237,8 @@ public class MyList extends ValidExpression implements ListValue {
 		MyList c = new MyList(kernel, size());
 
 		for (int i = 0; i < size; i++) {
-			c.addListElement(((ExpressionNode) listElements.get(i)).getCopy(kernel));
+			c.addListElement(((ExpressionNode) listElements.get(i))
+					.getCopy(kernel));
 		}
 		return c;
 	}
@@ -237,6 +281,12 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 
 	public MyList getMyList() {
-		return this;
+		if (isInTree()) {
+			// used in expression node tree: be careful
+			return (MyList) deepCopy(kernel);
+		} else {
+			// not used anywhere: reuse this object
+			return this;
+		}		
 	}
 }

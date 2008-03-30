@@ -116,7 +116,7 @@ implements ExpressionValue {
     
     private Application app;
     private Kernel kernel;
-    ExpressionValue left, right; 
+    private ExpressionValue left, right; 
     int operation = -100;
     public boolean forceVector = false, forcePoint = false;
     
@@ -131,11 +131,11 @@ implements ExpressionValue {
         app = kernel.getApplication();
         
         this.operation = operation;         
-        this.left = left;
+        setLeft(left);
         if (right != null) {
-            this.right = right;        
+            setRight(right);        
         } else { // set dummy value
-            this.right = new MyDouble(kernel, 0.0d);
+        	setRight(new MyDouble(kernel, 0.0d));
         }     
     }           
     
@@ -145,7 +145,7 @@ implements ExpressionValue {
         this.kernel = kernel;
         app = kernel.getApplication();
               
-        left = leaf;
+        setLeft(leaf);
         this.leaf = true;
     }
     
@@ -157,8 +157,8 @@ implements ExpressionValue {
         
         leaf = node.leaf;
         operation = node.operation;
-        left = node.left;
-        right = node.right;
+        setLeft(node.left);
+        setRight(node.right);
     }
     
     public Kernel getKernel() {
@@ -183,6 +183,7 @@ implements ExpressionValue {
     
     final public void setLeft(ExpressionValue l) {
         left = l;
+        left.setInTree(true);        
     }
     
     public ExpressionNode getLeftTree() {       
@@ -198,6 +199,8 @@ implements ExpressionValue {
     
     final public void setRight(ExpressionValue r) {
         right = r;
+        right.setInTree(true);
+        leaf = false;      
     }
     
     public ExpressionNode getRightTree() {
@@ -312,7 +315,7 @@ implements ExpressionValue {
                 node.simplifyConstants();
         }             
     }
-    
+       
      /**
      * interface ExpressionValue implementation
      */         
@@ -327,8 +330,23 @@ implements ExpressionValue {
         Polynomial poly;
                         
         lt = left.evaluate(); // left tree
-        rt = right.evaluate(); // right tree                        
-    
+        rt = right.evaluate(); // right tree      
+        
+        // handle list operations first       
+        if (lt.isListValue()) {        	
+        	MyList myList = ((ListValue) lt).getMyList();
+        	// list lt operation rt
+        	myList.applyRight(operation, rt);
+        	return myList;
+        }
+        else if (rt.isListValue()) {
+        	MyList myList = ((ListValue) rt).getMyList();
+        	// lt operation list rt
+        	myList.applyLeft(operation, lt);
+        	return myList;
+        }
+        	 
+        // NON-List operations
         switch (operation) {
             /*
         case NO_OPERATION:                      
@@ -535,7 +553,10 @@ implements ExpressionValue {
                 poly.add((Polynomial)rt);                
                 return poly;
             }           
-            else {             	
+            else {    
+            	// TODO: remove: 
+            	System.out.println("left: " + left.getClass() + ", right: " + right.getClass());
+            	
                 String [] str = { "IllegalAddition", lt.toString(), "+",  rt.toString() };
                 throw new MyError(app, str);
             }
@@ -578,13 +599,7 @@ implements ExpressionValue {
                     vec = ((VectorValue)rt).getVector();                
                     GeoVec2D.mult(vec, ((NumberValue)lt).getDouble(), vec);
                     return vec;
-                }
-                // number * list Michael Borcherds 2008-02-02
-          	    else if (rt.isListValue()) {             	
-    			    MyList myList = ((ListValue) rt).getMyList();
-    			    myList.multiply(((NumberValue) lt));
-    			    return myList;
-            	}            	  
+                }                        	  
                 else {    
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
@@ -609,35 +624,13 @@ implements ExpressionValue {
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
                 }
-            }
+            }                            
             // polynomial * polynomial
             else if (lt.isPolynomialInstance() && rt.isPolynomialInstance()) { 
                 poly = new Polynomial(kernel, (Polynomial)lt);
                 poly.multiply((Polynomial)rt);                
                 return poly;
-            }         
-            // list * ...
-            // Michael Borcherds 2008-02-02
-            else if (lt.isListValue())
-            	{
-            	  // list * list
-            	  if (rt.isListValue()) {             	
-    			    MyList myList = ((ListValue) lt).getMyList();
-    			    myList.multiply(((ListValue) rt).getMyList());
-    			    return myList;
-            	  }
-            	  // list * number
-            	  else if (rt.isNumberValue()) {             	
-      			    MyList myList = ((ListValue) lt).getMyList();
-      			    myList.multiply(((NumberValue) rt));
-      			    return myList;
-              	  }            	  
-            	  else {    
-                      String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
-                      throw new MyError(app, str);    
-                  }
-            		  
-            }         
+            }   
             else {    
                 String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                 throw new MyError(app, str);    
@@ -1716,7 +1709,21 @@ implements ExpressionValue {
     public void forcePoint() {
         // this expression should be considered as a vector, not a point
         forcePoint = true;
-    }           
+    }         
+    
+    /** 
+     * Returns whether this tree has any operations
+     */
+    final public boolean hasOperations() {   
+        if (leaf) {
+        	if (left.isExpressionNode()) {
+        		((ExpressionNode)left).hasOperations();
+        	} else
+        		return false;
+        }        	
+        
+        return (right != null);        	             
+    }       
     
     /** 
      * Returns all GeoElement objects in the subtree 

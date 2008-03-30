@@ -22,7 +22,7 @@ import java.util.Iterator;
 /**
   * An Polynomial is a list of Terms
   */  
-public class Polynomial implements Serializable, ExpressionValue {        
+public class Polynomial extends ValidExpression implements Serializable, ExpressionValue {        
 	
 	private static final long serialVersionUID = 1L;
     
@@ -458,15 +458,7 @@ public class Polynomial implements Serializable, ExpressionValue {
     
     final public boolean isExpressionNode() {
         return false;
-    }
-    
-    final public boolean isVariable() {
-        return false;
-    }   
-     
-    final public boolean isGeoElement() {
-       return false;
-    }
+    }       
     
     public boolean isListValue() {
         return false;

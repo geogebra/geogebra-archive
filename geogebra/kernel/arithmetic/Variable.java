@@ -30,7 +30,7 @@ import java.util.HashSet;
  * @author  Markus Hohenwarter
  * @version 
  */
-public class Variable implements ExpressionValue {
+public class Variable extends ValidExpression implements ExpressionValue {
 
     private String name;
     private Kernel kernel;
@@ -120,10 +120,6 @@ public class Variable implements ExpressionValue {
 	final public boolean isVariable() {
 		return true;
 	}   
-	 
-	final public boolean isGeoElement() {
-	   return false;
-	}
 	
     public boolean isListValue() {
         return false;

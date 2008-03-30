@@ -197,6 +197,15 @@ implements EuclidianViewAlgo {
     }
     
     /**
+     * Sets the array of all GeoNumeric objects that
+     * are need to be randomized. This is needed when there an
+     * algorithm needs a random number that is not one of it's input objects.
+     */
+    void setRandomInputNumbers(GeoNumeric [] randNumbers) {
+    	randomInputNumbers = randNumbers;    		
+    }
+    
+    /**
      * Sets the array of random input numbers (GeoNumeric objects with
      * isUsedForRandom() returns true). Those numbers will be set using
      * Math.random() every time before the algorithm is updated. 

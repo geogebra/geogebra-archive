@@ -21,6 +21,7 @@ import java.util.Vector;
 public abstract class ValidExpression {                
         
     private Vector labels;
+    private boolean inTree; // used by ExpressionNode
             
     public void addLabel(String label) {  
     	initLabels();
@@ -87,9 +88,17 @@ public abstract class ValidExpression {
 		}
 	}
 	
-	final public boolean isVariable() {
+	public boolean isVariable() {
 		return false;
 	}   
+	
+	final public boolean isInTree() {
+		return inTree;
+	}
+	
+	final public void setInTree(boolean flag) {
+		inTree = flag;
+	}
 	 
 	final public boolean isGeoElement() {
 	   return false;

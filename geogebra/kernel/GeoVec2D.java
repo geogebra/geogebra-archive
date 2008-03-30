@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 
 import java.util.HashSet;
@@ -29,7 +30,7 @@ import java.util.HashSet;
  * @author  Markus
  * @version 
  */
-final public class GeoVec2D // extends GeoElement
+final public class GeoVec2D extends ValidExpression
 implements VectorValue {        
 
     public double x = Double.NaN;
@@ -421,20 +422,11 @@ implements VectorValue {
 	 
 	 final public boolean isExpressionNode() {
 		 return false;
-	 }
-	 
-	 final public boolean isVariable() {
-		 return false;
-	 }   
+	 }	 	 
 	 
     public boolean isListValue() {
         return false;
     }
-
-	 
-	 final public boolean isGeoElement() {
-	 	return false;
-	 }
 	 
 	 final public boolean contains(ExpressionValue ev) {
 		 return ev == this;

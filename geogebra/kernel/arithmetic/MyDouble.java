@@ -30,7 +30,7 @@ import java.util.HashSet;
  * @author  Markus Hohenwarter
  * @version 
  */
-public class MyDouble // extends ValidExpression 
+public class MyDouble  extends ValidExpression 
 implements NumberValue {
 
     private double val;
@@ -227,7 +227,13 @@ implements NumberValue {
      * interface NumberValue
      */    
     final public MyDouble getNumber() {
-        return new MyDouble(this);
+    	if (isInTree()) {
+			// used in expression node tree: be careful
+    		 return new MyDouble(this);
+		} else {
+			// not used anywhere: reuse this object
+			return this;
+		}	      
     }
     
     
@@ -281,17 +287,12 @@ implements NumberValue {
 		return false;
 	}
 	
-	 final public boolean isVariable() {
-        return false;
-    }
-	 
+ 
 	public boolean isListValue() {
 	    return false;
 	}	
      
-    final public boolean isGeoElement() {
-       return false;
-    }
+
 	
 	final public boolean contains(ExpressionValue ev) {
 		return ev == this;

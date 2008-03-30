@@ -1106,6 +1106,16 @@ public class Kernel {
 		}		
 	}
 	
+	/**
+	 * Creates a dependent list object with the given label, 
+	 * e.g. {3, 2, 1} + {a, b, 2}	 
+	 */
+	final public GeoList ListExpression(String label, ExpressionNode root) {
+		AlgoDependentListExpression algo =
+			new AlgoDependentListExpression(cons, label, root);		
+		return algo.getList();
+	}
+	
 	/********************
 	 * ALGORITHMIC PART *
 	 ********************/

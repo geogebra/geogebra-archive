@@ -21,7 +21,7 @@ import java.util.HashSet;
  * @see ExpressionNode.evaluate()
  * @author Markus Hohenwarter
  */
-public class MyBoolean implements BooleanValue {
+public class MyBoolean extends ValidExpression implements BooleanValue {
     
     private boolean value;
     
@@ -91,15 +91,7 @@ public class MyBoolean implements BooleanValue {
     final public boolean isExpressionNode() {
         return false;
     } 
-    
-    final public boolean isVariable() {
-        return false;
-    }   
-     
-    final public boolean isGeoElement() {
-       return false;
-    }
-    
+  
     public boolean isListValue() {
         return false;
     }

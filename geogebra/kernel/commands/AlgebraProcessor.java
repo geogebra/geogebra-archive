@@ -638,7 +638,7 @@ public class AlgebraProcessor {
 		if (eval.isGeoElement()) {
 			GeoElement[] ret = {(GeoElement) eval };
 			return ret;
-		}
+		}		
 		else if (eval.isNumberValue())
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
@@ -646,7 +646,7 @@ public class AlgebraProcessor {
 		else if (eval.isListValue()) {
 			MyList myList = ((ListValue) eval).getMyList();
 			myList.setLabel(n.getLabel());
-			return processList(myList);	
+			return processList(n, myList);	
 		} else if (eval.isTextValue())
 			return processText(n, eval);
 		else if (eval.isBooleanValue())
@@ -682,33 +682,46 @@ public class AlgebraProcessor {
 		return ret;
 	}
 	
-	private GeoElement [] processList(MyList myList) {		
-		String label = myList.getLabel();				
-		
-		// PROCESS list items to generate a list of geoElements		
-		ArrayList geoElements = new ArrayList();
-		boolean isIndependent = true;
-		
-		// make sure we don't create any labels for the list elements
-		boolean oldMacroMode = cons.isSuppressLabelsActive();
-		cons.setSuppressLabelCreation(true);
-		
-		int size = myList.size();
-		for (int i=0; i < size; i++) {
-			GeoElement [] results = processExpressionNode((ExpressionNode) myList.getListElement(i));						
-			GeoElement geo = results[0];
-			
-			// we only take one resulting object			
-			geoElements.add(geo);
-					
-			if (results[0].isLabelSet() || !results[0].isIndependent())
-				isIndependent = false;			
-		}		
-		cons.setSuppressLabelCreation(oldMacroMode);
-		
-		// CREATE GeoList object
+	private GeoElement [] processList(ExpressionNode n, MyList evalList) {		
+		String label = evalList.getLabel();		
+				
 		GeoElement[] ret = new GeoElement[1];
-		ret[0] = kernel.List(label, geoElements, isIndependent);
+		
+		// no operations or no variables are present, e.g.
+		// { a, b, 7 } or  { 2, 3, 5 } + {1, 2, 4}
+		if (!n.hasOperations() || n.isConstant()) {
+			
+			// PROCESS list items to generate a list of geoElements		
+			ArrayList geoElements = new ArrayList();
+			boolean isIndependent = true;
+							
+			// make sure we don't create any labels for the list elements
+			boolean oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			
+			int size = evalList.size();
+			for (int i=0; i < size; i++) {
+				GeoElement [] results = processExpressionNode((ExpressionNode) evalList.getListElement(i));						
+				GeoElement geo = results[0];
+				
+				// we only take one resulting object			
+				geoElements.add(geo);
+						
+				if (results[0].isLabelSet() || !results[0].isIndependent())
+					isIndependent = false;			
+			}		
+			cons.setSuppressLabelCreation(oldMacroMode);
+			
+			// Create GeoList object			
+			ret[0] = kernel.List(label, geoElements, isIndependent);			
+		}
+		
+		// operations and variables are present
+		// e.g. {3, 2, 1} + {a, b, 2}
+		else {			
+			ret[0] = kernel.ListExpression(label, n);			
+		}
+		
 		return ret;
 	}
 

@@ -30,6 +30,6 @@ public interface ListValue extends ExpressionValue {
 	 * Returns a MyList object. 
 	 */
 	public MyList getMyList();
-	
+		
 }
 

@@ -39,6 +39,8 @@ public interface ExpressionValue {
 	public boolean isExpressionNode();
 	public boolean isGeoElement();
 	public boolean isVariable();
+	public boolean isInTree(); // used in ExpressionNode tree
+	public void setInTree(boolean flag);
 	public boolean contains(ExpressionValue ev);
 	public ExpressionValue deepCopy(Kernel kernel);
     public ExpressionValue evaluate();

@@ -21,7 +21,7 @@ import java.util.HashSet;
  * @see ExpressionNode.evaluate()
  * @author Markus Hohenwarter
  */
-public class MyStringBuffer implements TextValue {
+public class MyStringBuffer extends ValidExpression implements TextValue {
     
     private StringBuffer sb;
     
@@ -103,15 +103,7 @@ public class MyStringBuffer implements TextValue {
     
     final public boolean isExpressionNode() {
         return false;
-    } 
-    
-    final public boolean isVariable() {
-        return false;
-    }   
-     
-    final public boolean isGeoElement() {
-       return false;
-    }
+    }       
     
     public boolean isListValue() {
         return false;

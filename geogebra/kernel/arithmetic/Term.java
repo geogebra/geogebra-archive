@@ -112,14 +112,14 @@ public class Term implements Comparable, Serializable {
 			else {
                 if (b.isExpressionNode()) {
                     ExpressionNode ben = (ExpressionNode) b;   
-                    if (ben.left.isConstant()) {
+                    if (ben.getLeft().isConstant()) {
                         switch (ben.operation) {
                             // a + (b.left + b.right) = (a + b.left) + b.right
                             case ExpressionNode.PLUS:                             
-                                return add(add(a, ben.left), ben.right);        
+                                return add(add(a, ben.getLeft()), ben.getRight());        
                             // a + (b.left - b.right) = (a + b.left) - b.right
                             case ExpressionNode.MINUS:                
-                                return sub( add(a, ben.left), ben.right );            
+                                return sub( add(a, ben.getLeft()), ben.getRight() );            
                         }            
                     }
                 } // else                
@@ -197,14 +197,14 @@ public class Term implements Comparable, Serializable {
 			else {
                  if (b instanceof ExpressionNode) {
                     ExpressionNode ben = (ExpressionNode) b;  
-                    if (ben.left.isConstant()) {
+                    if (ben.getLeft().isConstant()) {
                         switch (ben.operation) {
                             // a * (b.left * b.right) = (a * b.left) * b.right
                             case ExpressionNode.MULTIPLY:                
-                                return multiply(multiply(a, ben.left), ben.right);                                            
+                                return multiply(multiply(a, ben.getLeft()), ben.getRight());                                            
                             // a * (b.left / b.right) = (a * b.left) / b.right
                             case ExpressionNode.DIVIDE:                
-                                return divide(multiply(a, ben.left), ben.right);                                            
+                                return divide(multiply(a, ben.getLeft()), ben.getRight());                                            
                         }
                     }
                 }
@@ -247,7 +247,7 @@ public class Term implements Comparable, Serializable {
                     switch (ben.operation) {
                         // a / (b.left / b.right) = (a / b.left) * b.right                            
                         case ExpressionNode.DIVIDE:                
-                            return multiply(divide(a, ben.left), ben.right);            
+                            return multiply(divide(a, ben.getLeft()), ben.getRight());            
                     }                    
                 }                
                 return new ExpressionNode(kernel, a, ExpressionNode.DIVIDE, b);  

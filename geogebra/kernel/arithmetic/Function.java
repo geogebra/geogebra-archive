@@ -334,7 +334,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         // make sure that expression object is changed!
         // this is needed to know that the expression has changed
         if (expression.isLeaf() && expression.getLeft().isExpressionNode()) {
-        	expression = new ExpressionNode( (ExpressionNode) expression.left);
+        	expression = new ExpressionNode( (ExpressionNode) expression.getLeft());
         } else {
         	 expression = new ExpressionNode(expression);
         }
@@ -602,8 +602,8 @@ implements ExpressionValue, RealRootFunction, Functional {
             ExpressionNode node = (ExpressionNode) ev;
             switch (node.operation) {
                 case ExpressionNode.MULTIPLY:
-                    return addPolynomialFactors(node.left, l, symbolic, rootFindingSimplification) && 
-                                addPolynomialFactors(node.right, l, symbolic, rootFindingSimplification);
+                    return addPolynomialFactors(node.getLeft(), l, symbolic, rootFindingSimplification) && 
+                                addPolynomialFactors(node.getRight(), l, symbolic, rootFindingSimplification);
                     
             // try some simplifications of factors for root finding                                
                 case ExpressionNode.POWER:
@@ -612,16 +612,16 @@ implements ExpressionValue, RealRootFunction, Functional {
                 	
               	  	// divide: x in denominator: no polynomial
                 	// power: x in exponent: no polynomial
-                	if (node.right.contains(fVar))
+                	if (node.getRight().contains(fVar))
 						return false;
 
                     // power: 
                     // symbolic: non-zero constants in exponent may be omitted   
                     // numeric: non-zero values in exponent may be omitted
-                    if (!symbolic || node.right.isConstant()) {
+                    if (!symbolic || node.getRight().isConstant()) {
                     	double rightVal;
                     	try {
-                    		rightVal = ((NumberValue) node.right.evaluate()).getDouble();           
+                    		rightVal = ((NumberValue) node.getRight().evaluate()).getDouble();           
                     	} catch (Exception e) {
                     		e.printStackTrace();
                     		return false;
@@ -632,7 +632,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 				return addPolynomialFactors(new MyDouble(kernel, 1), l, symbolic, rootFindingSimplification);
                 			else if (rightVal > 0) 
                 				// left ^ right = 0  <=>  left = 0     for right > 0
-                				return addPolynomialFactors(node.left, l, symbolic, rootFindingSimplification);       
+                				return addPolynomialFactors(node.getLeft(), l, symbolic, rootFindingSimplification);       
                 		}                				
             			else { // division            				               				                			    
                     		if (kernel.isZero(rightVal))
@@ -640,7 +640,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                					return false;
 							else
 								// left / right = 0  <=>  left = 0     for right != null
-                    			return addPolynomialFactors(node.left, l, symbolic, rootFindingSimplification);
+                    			return addPolynomialFactors(node.getLeft(), l, symbolic, rootFindingSimplification);
             			}
                     }                   
                     break;                                                             
@@ -651,7 +651,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 	if (!rootFindingSimplification) break;
                 	
                     // these functions can be omitted as f(x) = 0 iff x = 0         
-                    return addPolynomialFactors(node.left, l, symbolic, rootFindingSimplification);                                              
+                    return addPolynomialFactors(node.getLeft(), l, symbolic, rootFindingSimplification);                                              
             }           
         }
         

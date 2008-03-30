@@ -281,6 +281,8 @@ public abstract class GeoElement
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
 	private boolean strLabelTextOrHTMLUpdate = true;
 	private boolean strLaTeXneedsUpdate = true;	
+	
+	private boolean inTree = false; // flag to show whether used by ExpressionNode
 
 	// line thickness and line type: s	
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
@@ -2712,4 +2714,11 @@ public abstract class GeoElement
 		this.isAlgoMacroOutput = isAlgoMacroOutput;
 	}
 
+	final public boolean isInTree() {
+		return inTree;
+	}
+	
+	final public void setInTree(boolean flag) {
+		inTree = flag;
+	}
 }
