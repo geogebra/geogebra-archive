@@ -70,11 +70,10 @@ public class AlgoFitLineY extends AlgoElement {
         {
    		 GeoElement geo = geoList.get(i); 
  		 if (geo.isGeoPoint()) {
- 			double x=((GeoPoint)geo).getX();
- 			double y=((GeoPoint)geo).getY();
- 			double z=((GeoPoint)geo).getZ();
- 			x=x/z;
- 			y=y/z;
+ 			double xy[] = new double[2];
+ 			((GeoPoint)geo).getInhomCoords(xy);
+ 			double x=xy[0];
+ 			double y=xy[1];
   			sigmax+=x;
   			sigmay+=y;
   			sigmaxx+=x*x;
