@@ -80,6 +80,11 @@ public class AlgoOrthoVectorVector extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("VectorPerpendicularToA",v.getLabel()));
+        
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
              sb.append(app.getPlain("OrthogonalVectorOf"));
              sb.append(' ');
@@ -88,7 +93,9 @@ public class AlgoOrthoVectorVector extends AlgoElement {
          if(app.isReverseLanguage()){//FKH 20040906
              sb.append(' ');
              sb.append(app.getPlain("OrthogonalVectorOf"));
-         }
+         }*/
+        
+
         return sb.toString();
     }
 }

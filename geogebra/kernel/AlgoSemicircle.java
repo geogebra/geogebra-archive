@@ -103,6 +103,11 @@ public class AlgoSemicircle extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("SemicircleThroughAandB",A.getLabel(),B.getLabel()));
+        
+        /*
         if (!app.isReverseLanguage()) { 
             sb.append(app.getPlain("Semicircle"));
             sb.append(' ');
@@ -118,7 +123,9 @@ public class AlgoSemicircle extends AlgoElement {
             sb.append(' ');
             sb.append(app.getPlain("of"));
             sb.append(app.getPlain("Semicircle"));
-        }
+        }*/
+        
+
 
         return sb.toString();
     }

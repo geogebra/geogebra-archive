@@ -107,6 +107,11 @@ public class AlgoRootInterval extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("RootOfAonIntervalBC",f.getLabel(),aGeo.getLabel(),bGeo.getLabel()));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("Root"));
             sb.append(' ');
@@ -126,7 +131,9 @@ public class AlgoRootInterval extends AlgoElement {
             sb.append(app.getPlain("of"));
             sb.append(' ');
             sb.append(app.getPlain("Root"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

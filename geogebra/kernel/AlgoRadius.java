@@ -70,6 +70,11 @@ public class AlgoRadius extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("RadiusOfA",c.getLabel()));
+        
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
                 sb.append(app.getPlain("RadiusOf"));
                 sb.append(' ');
@@ -78,7 +83,9 @@ public class AlgoRadius extends AlgoElement {
          if(app.isReverseLanguage()){//FKH 20040906
              sb.append(' ');
              sb.append(app.getPlain("RadiusOf"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

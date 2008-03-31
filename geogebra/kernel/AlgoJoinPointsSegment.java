@@ -134,6 +134,11 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription()));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getCommand("Segment"));
             sb.append('[');
@@ -160,7 +165,9 @@ public class AlgoJoinPointsSegment extends AlgoElement {
             sb.append(", ");
             sb.append(Q.getLabel());
             sb.append(']');
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

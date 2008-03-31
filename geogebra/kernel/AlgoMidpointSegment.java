@@ -94,6 +94,11 @@ public class AlgoMidpointSegment extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("MidpointOfA",segment.getLabel()));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("MidpointOf"));
             sb.append(" ");
@@ -102,7 +107,9 @@ public class AlgoMidpointSegment extends AlgoElement {
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(" ");
             sb.append(app.getPlain("MidpointOf"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

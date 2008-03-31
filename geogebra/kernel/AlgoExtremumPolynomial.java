@@ -70,7 +70,12 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
-        if (!app.isReverseLanguage()) { //FKH 20040906
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("ExtremumOfA",f.getLabel()));
+        
+        /*
+         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("Extremum"));
             sb.append(' ');
             sb.append(app.getPlain("of"));
@@ -82,7 +87,9 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
             sb.append(app.getPlain("of"));
             sb.append(' ');
             sb.append(app.getPlain("Extremum"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 

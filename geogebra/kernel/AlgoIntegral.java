@@ -61,6 +61,11 @@ public class AlgoIntegral extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("IntegralOfA",f.getLabel()));
+        
+        /*
          if(!app.isReverseLanguage()){//FKH 20040906
             sb.append(app.getPlain("Integral"));
             sb.append(' ');
@@ -73,13 +78,16 @@ public class AlgoIntegral extends AlgoElement {
             sb.append(app.getPlain("of"));
             sb.append(' ');
             sb.append(app.getPlain("Integral"));
-        }
+        }*/
+        
         if (!f.isIndependent()) { // show the symbolic representation too
             sb.append(": ");
             sb.append(g.getLabel());
             sb.append("(x) = ");
             sb.append(g.toSymbolicString());
         }
+        
+
         return sb.toString();
     }
 

@@ -83,6 +83,11 @@ public class AlgoLinePointLine extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("LineThroughAParallelToB",P.getLabel(),l.getLabel()));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("LineThrough"));
             sb.append(" ");
@@ -97,7 +102,9 @@ public class AlgoLinePointLine extends AlgoElement {
             sb.append(app.getPlain("LineThrough"));
             sb.append(" ");
             sb.append(P.getLabel());
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

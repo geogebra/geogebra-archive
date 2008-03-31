@@ -81,6 +81,11 @@ public class AlgoLineBisector extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("LineBisectorAB",A.getLabel(),B.getLabel()));
+        
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
         sb.append(app.getPlain("LineBisector"));
         sb.append(' ');
@@ -91,7 +96,9 @@ public class AlgoLineBisector extends AlgoElement {
         if(app.isReverseLanguage()){//FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("LineBisector"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

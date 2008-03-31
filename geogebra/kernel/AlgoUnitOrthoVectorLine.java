@@ -82,6 +82,11 @@ public class AlgoUnitOrthoVectorLine extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("UnitVectorPerpendicularToA",g.getLabel()));
+        
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
         sb.append(app.getPlain("UnitOrthogonalVectorOf"));
         sb.append(' ');
@@ -90,7 +95,9 @@ public class AlgoUnitOrthoVectorLine extends AlgoElement {
         if(app.isReverseLanguage()){//FKH 20040906
         sb.append(' ');
         sb.append(app.getPlain("UnitOrthogonalVectorOf"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }

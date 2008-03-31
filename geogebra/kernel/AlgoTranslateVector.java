@@ -79,6 +79,11 @@ public class AlgoTranslateVector extends AlgoElement {
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("TranslationOfAtoB",v.getLabel(),A.getLabel()));
+
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
         sb.append(app.getPlain("TranslationOf"));
         sb.append(' ');
@@ -93,7 +98,8 @@ public class AlgoTranslateVector extends AlgoElement {
         sb.append(v.getLabel());
         sb.append(' ');
         sb.append(app.getPlain("TranslationOf"));
-        }
+        }*/
+        
         return sb.toString();
     }
 }

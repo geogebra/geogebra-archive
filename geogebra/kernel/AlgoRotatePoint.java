@@ -92,7 +92,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
 
         // Michael Borcherds 2008-03-25
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("ArotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel()));
+        sb.append(app.getPlain("ARotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel()));
 
         /*
         sb.append(Ageo.getLabel());

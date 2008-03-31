@@ -121,6 +121,11 @@ public class AlgoFunctionInterval extends AlgoElement {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("FunctionAonIntervalBC",f.getLabel(),ageo.getLabel(),bgeo.getLabel()));
+        
+        /*
         if(!app.isReverseLanguage()){//FKH 20040906
         sb.append(app.getPlain("Function"));        
         sb.append(' ');
@@ -139,7 +144,9 @@ public class AlgoFunctionInterval extends AlgoElement {
             sb.append(' ');
             sb.append(f.getLabel());
             sb.append(' ');
-        }
+        }*/
+        
+
         return sb.toString();
     }
 

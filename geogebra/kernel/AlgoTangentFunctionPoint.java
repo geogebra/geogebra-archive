@@ -108,6 +108,11 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
 
     public final String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-30
+        // simplified to allow better Chinese translation
+        sb.append(app.getPlain("TangentToAatBCD",f.getLabel(),"x = x(",P.getLabel(),")"));
+        
+        /*
         if (!app.isReverseLanguage()) { //FKH 20040906
             sb.append(app.getPlain("TangentLine"));
             sb.append(' ');
@@ -123,7 +128,9 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         if (app.isReverseLanguage()) { //FKH 20040906
             sb.append(' ');
             sb.append(app.getPlain("TangentLine"));
-        }
+        }*/
+        
+
         return sb.toString();
     }
 }
