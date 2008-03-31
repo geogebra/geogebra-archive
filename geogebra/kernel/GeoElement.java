@@ -1857,6 +1857,10 @@ public abstract class GeoElement
 			return getNameDescriptionHTML(colored, addHTMLtag);
 		else {
 			sbLongDescHTML.setLength(0);
+			
+			String label = getLabel();
+			String typeString = translatedTypeString();			
+			
 			// html string	
 			if (addHTMLtag)
 				sbLongDescHTML.append("<html>");
@@ -1864,7 +1868,7 @@ public abstract class GeoElement
 			boolean reverseOrder = app.isReverseNameDescriptionLanguage();		
 			if (!reverseOrder) {
 				//	standard order: "point A"
-				sbLongDescHTML.append(translatedTypeString());				
+				sbLongDescHTML.append(typeString);				
 				sbLongDescHTML.append(' ');
 			}				
 						
@@ -1873,14 +1877,14 @@ public abstract class GeoElement
 				sbLongDescHTML.append(Util.toHexString(labelColor));
 				sbLongDescHTML.append("\">");
 			}
-			sbLongDescHTML.append(indicesToHTML(getLabel(), false));
+			sbLongDescHTML.append(indicesToHTML(label, false));
 			if (colored)
 				sbLongDescHTML.append("</font></b>");
 			
 			if (reverseOrder) {
 				// reverse order: "A point"				
 				sbLongDescHTML.append(' ');
-				sbLongDescHTML.append(translatedTypeString());								
+				sbLongDescHTML.append(typeString);								
 			}
 
 			// add dependency information
@@ -2125,18 +2129,21 @@ public abstract class GeoElement
 		*/
 	public String getNameDescription() {
 		sbNameDescription.setLength(0);
+		
+		String label = getLabel();
+		String typeString = translatedTypeString();
 						
 		if (app.isReverseNameDescriptionLanguage()) {
 			//	reverse order: "A point"
-			sbNameDescription.append(getLabel());				
+			sbNameDescription.append(label);				
 			sbNameDescription.append(' ');			
-			sbNameDescription.append(translatedTypeString());			
+			sbNameDescription.append(typeString);			
 		}	
 		else {
 			// standard order: "point A"
-			sbNameDescription.append(translatedTypeString());				
+			sbNameDescription.append(typeString);				
 			sbNameDescription.append(' ');
-			sbNameDescription.append(getLabel());
+			sbNameDescription.append(label);
 		}
 				
 		return sbNameDescription.toString();
@@ -2179,11 +2186,14 @@ public abstract class GeoElement
 		sbNameDescriptionHTML.setLength(0);
 		if (addHTMLtag)
 			sbNameDescriptionHTML.append("<html>");
+		
+		String label = getLabel();
+		String typeString = translatedTypeString();					
 			
 		boolean reverseOrder = app.isReverseNameDescriptionLanguage();		
 		if (!reverseOrder) {
 			//	standard order: "point A"
-			sbNameDescriptionHTML.append(translatedTypeString());				
+			sbNameDescriptionHTML.append(typeString);				
 			sbNameDescriptionHTML.append(' ');
 		}						
 		
@@ -2192,14 +2202,14 @@ public abstract class GeoElement
 			sbNameDescriptionHTML.append(Util.toHexString(objColor));
 			sbNameDescriptionHTML.append("\">");
 		}
-		sbNameDescriptionHTML.append(indicesToHTML(getLabel(), false));
+		sbNameDescriptionHTML.append(indicesToHTML(label, false));
 		if (colored)
 			sbNameDescriptionHTML.append("</font></b>");
 		
 		if (reverseOrder) {
 			//	reverse order: "A point"
 			sbNameDescriptionHTML.append(' ');
-			sbNameDescriptionHTML.append(translatedTypeString());							
+			sbNameDescriptionHTML.append(typeString);							
 		}
 		
 		if (addHTMLtag)
