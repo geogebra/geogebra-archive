@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -784,9 +785,20 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				
 				GeoGebraAppletTutor ggbat = (GeoGebraAppletTutor)app.getApplet();
 				ggbat.getProblem();
 				ggbat.getStudent();
+				String context = ggbat.getTutorView().getStrategyFilesURL();
+				
+				//String file = strategy.getFile();
+				/*
+				String strUrl = context + "/" + file;
+				strategy.setUrl(strUrl);
+				URL strategyUrl = new URL(strategy.getUrl());
+				
+				ggbat.getTutorView().getConstruction();
+				*/
 			}
 		};
 

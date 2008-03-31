@@ -516,7 +516,7 @@ public class TutorView extends JPanel implements View  {
 		
 	}
 
-	 private Construction getConstruction(URL url) throws Exception
+	 public Construction getConstruction(URL url) throws Exception
 	 {		 
 	    	// build macro construction
 		 
