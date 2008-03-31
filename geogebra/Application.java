@@ -1076,11 +1076,13 @@ public abstract class Application implements	KeyEventDispatcher {
         System.gc();
     }
     
+    
+    /* removed Michael Borcherds 2008-03-31
     private boolean reverseLanguage = false; //FKH 20040822    
     final public boolean isReverseLanguage() { //FKH 20041010
         // for Chinese
         return reverseLanguage;
-    }
+    }*/
     
     // for basque you have to say "A point" instead of "point A"
     private boolean reverseNameDescription = false;
@@ -1091,7 +1093,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
     private void updateReverseLanguage(Locale locale) {
     	String lang = locale.getLanguage();
-        reverseLanguage = "zh".equals(lang);
+        //reverseLanguage = "zh".equals(lang); removed Michael Borcherds 2008-03-31
         reverseNameDescription = "eu".equals(lang);
     }
     
