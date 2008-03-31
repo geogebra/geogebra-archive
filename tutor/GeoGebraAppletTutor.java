@@ -83,7 +83,7 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		
 		if (problem == null) problem = "7";
 		if (student == null)  student = "1";
-		
+		//http://antalya.uab.es/edumat/agentgeom/
 		if (protocol == null) protocol = "http";
 		if (ip == null) ip = "192.168.1.4";
 		if (port == null) port = "80";
@@ -108,6 +108,8 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		
 		//tutorView.initDataModel();
 		tutorView.createGUI();
+		
+		
 	}
 	
 	protected void initGUI(String p, String s) {

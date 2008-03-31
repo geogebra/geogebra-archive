@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import tutor.GeoGebraAppletTutor;
 import tutor.io.StringOutputStream;
 import tutor.net.util.HttpMultiPartFileUpload;
 import tutor.net.util.HttpParam;
@@ -473,7 +475,7 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 		addFileMenu();
 		
 		// Edit menu
-		//addEditMenu();
+		addEditMenu();
 		
 		// View Menu
 		//addViewMenu();
@@ -483,7 +485,7 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 
 		//addWindowMenu();
 
-		//addOptionsMenu();
+		addOptionsMenu();
 		
 		//addHelpMenu();
 		
@@ -782,7 +784,9 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.openFile();
+				GeoGebraAppletTutor ggbat = (GeoGebraAppletTutor)app.getApplet();
+				ggbat.getProblem();
+				ggbat.getStudent();
 			}
 		};
 
@@ -1111,4 +1115,92 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
                 
 	}
 	
+	public void updateMenuFile() {
+		if (menuFile == null) return;
+		
+		menuFile.removeAll();
+		
+		JMenu menu = menuFile;
+		JMenuItem mi;
+		
+		if (!app.isApplet()) {
+			// "New" in application: new window
+			mi = new JMenuItem(newWindowAction);	
+			setMenuShortCutAccelerator(mi, 'N');
+			menu.add(mi);
+		}			
+		
+		// "New": reset 
+		mi = menu.add(deleteAll);	
+		
+		mi = menu.add(loadAction);
+		setMenuShortCutAccelerator(mi, 'O'); // open
+		menu.addSeparator();
+		mi = menu.add(saveAction);
+		setMenuShortCutAccelerator(mi, 'S');
+		
+		//mi = menu.add(saveAsAction);	
+		//setMenuShortCutShiftAccelerator(mi, 'S');
+		
+		menu.addSeparator();
+		
+		mi = menu.add(printEuclidianViewAction);
+		mi.setText(app.getMenu("PrintPreview"));
+		mi.setIcon(app.getImageIcon("document-print-preview.png"));
+		setMenuShortCutAccelerator(mi, 'P');
+				
+		// export
+		JMenu submenu = new JMenu(app.getMenu("Export"));
+		submenu.setIcon(app.getEmptyIcon());
+		menu.add(submenu);
+		mi = submenu.add(exportWorksheet);
+		setMenuShortCutShiftAccelerator(mi, 'W');
+		
+		submenu.addSeparator();
+		//submenu.add(htmlCPAction);
+		mi = submenu.add(exportGraphicAction);
+		setMenuShortCutShiftAccelerator(mi, 'P');
+		
+		mi = submenu.add(exportPSTricksAction);
+		setMenuShortCutShiftAccelerator(mi, 'T');
+		
+		mi = submenu.add(drawingPadToClipboardAction);
+		setMenuShortCutShiftAccelerator(mi, 'C');
+				
+		// DONE HERE WHEN APPLET
+		if (app.isApplet()) return;
+		
+		
+		// LAST FILES list
+		/*int size = Application.getFileListSize();
+		if (size > 0) {
+			menu.addSeparator();						
+			for (int i = 0; i < 4; i++) {
+				File file = Application.getFromFileList(i);
+				if (file != null) {										
+					mi = new JMenuItem(file.getName());
+					mi.setIcon(app.getImageIcon("geogebra.gif"));					
+					ActionListener al = new LoadFileListener(app, file);
+					mi.addActionListener(al);
+					menu.add(mi);
+				}
+			}						
+		}*/
+		
+		// close
+		menu.addSeparator();
+		mi = menu.add(exitAction);
+		if (GeoGebra.MAC_OS) {
+			setMenuShortCutAccelerator(mi, 'W');
+		} else {
+			// Alt + F4
+			KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK);
+			mi.setAccelerator(ks);
+		}
+
+		// close all		
+		if (GeoGebra.getInstanceCount() > 1) {								
+			menu.add(exitAllAction);
+		}
+	}
 }
