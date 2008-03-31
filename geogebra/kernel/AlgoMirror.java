@@ -108,11 +108,16 @@ public class AlgoMirror extends AlgoTransformation {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
         
+        // Michael Borcherds 2008-03-31
+        // simplified to allow better translation
+        sb.append(app.getPlain("AMirroredAtB",geoIn.getLabel(),mirror.getLabel()));
+
+        /*
         sb.append(geoIn.getLabel());
         sb.append(' ');        
         sb.append(app.getPlain("mirroredAt"));
         sb.append(' ');
-        sb.append(mirror.getLabel());   
+        sb.append(mirror.getLabel());   */
         
         return sb.toString();
     }

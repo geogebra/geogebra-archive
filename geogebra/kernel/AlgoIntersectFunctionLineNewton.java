@@ -115,6 +115,11 @@ public class AlgoIntersectFunctionLineNewton extends AlgoRootNewton {
 
     final public String toString() {
         StringBuffer sb = new StringBuffer();
+        // Michael Borcherds 2008-03-31
+        // simplified to allow better translation
+        sb.append(app.getPlain("IntersectionPointOfABWithInitialValueC",input[0].getLabel(),input[1].getLabel(),startPoint.getLabel()));
+
+        /*
         sb.append(app.getPlain("IntersectionPointOf"));
         sb.append(" ");
         sb.append(input[0].getLabel());
@@ -123,7 +128,7 @@ public class AlgoIntersectFunctionLineNewton extends AlgoRootNewton {
         sb.append(' ');
         sb.append(app.getPlain("withStartValue"));
         sb.append(' ');
-        sb.append(startPoint.getLabel());
+        sb.append(startPoint.getLabel());*/
         
         return sb.toString();
     }   

@@ -60,11 +60,16 @@ public class AlgoPointVector extends AlgoElement {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
         
+        // Michael Borcherds 2008-03-31
+        // simplified to allow better translation
+        sb.append(app.getPlain("PointAplusB",input[0].getLabel(),input[1].getLabel()));
+
+        /*
         sb.append(app.getPlain("Point"));
         sb.append(' ');
         sb.append(input[0].getLabel());
         sb.append(" + ");
-        sb.append(input[1].getLabel());
+        sb.append(input[1].getLabel());*/
         
         return sb.toString();
     }
