@@ -92,6 +92,7 @@ public class AlgoVector extends AlgoElement {
         }
     }       
     
+    /* removed Michael Borcherds 2008-04-01 was being used, but not necessary
     public final String toString() {
         StringBuffer sb = new StringBuffer();
         
@@ -105,8 +106,8 @@ public class AlgoVector extends AlgoElement {
         sb.append(P.getLabel());
         sb.append(", ");
         sb.append(Q.getLabel());
-        sb.append("]");      */
+        sb.append("]");      
         
         return sb.toString();
-    }
+    }*/
 }

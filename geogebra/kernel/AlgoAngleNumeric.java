@@ -64,18 +64,19 @@ public class AlgoAngleNumeric extends AlgoElement {
         angle.setValue(num.value);       
     }
     
+    /* removed Michael Borcherds 2008-04-01 was being used, but not necessary
     public final String toString() {
         StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
-        sb.append(app.getPlain("Angle[A]",num.getLabel()));
+        sb.append(app.getPlain("Angle[A]xx",num.getLabel()));
 
         /*
         sb.append(app.getCommand("Angle"));        
         sb.append('[');
         sb.append(num.getLabel());  
-        sb.append(']');        */
+        sb.append(']');        
         
         return sb.toString();
-    }
+    }*/
 }
