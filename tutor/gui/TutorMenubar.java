@@ -787,9 +787,17 @@ public class TutorMenubar extends MenubarImpl implements Menubar, ActionListener
 			public void actionPerformed(ActionEvent e) {
 				
 				GeoGebraAppletTutor ggbat = (GeoGebraAppletTutor)app.getApplet();
-				ggbat.getProblem();
-				ggbat.getStudent();
+				String problem = ggbat.getProblem();
+				String student = ggbat.getStudent();
 				String context = ggbat.getTutorView().getStrategyFilesURL();
+				
+				context = "http://158.109.2.26/edumat/agentgeom/continguts/problemes";
+				context += "/repository/problems";
+				context += "/"+problem+"/"+student;
+				context += "/123456789.ggb";
+				
+				System.out.println(context);
+				ggbat.openFile(context);
 				
 				//String file = strategy.getFile();
 				/*

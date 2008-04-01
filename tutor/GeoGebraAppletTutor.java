@@ -112,6 +112,10 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		
 	}
 	
+	protected void initGUI() {
+		initGUI(problem, student);
+	}
+	
 	protected void initGUI(String p, String s) {
 		// TODO: build user interface of applet in here	
 	
@@ -131,6 +135,8 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		getContentPane().add(splitPane);
 		
 		splitPane.setDividerLocation(800);
+		
+		if (tutorView != null) tutorView.createGUI();
 	}
 
 	protected void initDataModel() {

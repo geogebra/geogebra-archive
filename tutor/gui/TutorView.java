@@ -192,11 +192,11 @@ public class TutorView extends JPanel implements View  {
 			a.add("");
 		
 			//JustificationDao dao = new HttpJustificationDao();
-			List justs = justificationDao.findProblemJustifications(new Long(7));
+			/*List justs = justificationDao.findProblemJustifications(new Long(7));
 			for (Iterator it = justs.iterator(); it.hasNext();) {
 				Justification j = (Justification) it.next();
 				a.add(j.getDescription());
-			}
+			}*/
 			
 			return a;
 	}
