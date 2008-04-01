@@ -301,27 +301,27 @@ public final class DrawLine extends Drawable implements Previewable {
         if (isVisible) {        	
             if (geo.doHighlighting()) {
                 // draw line              
-                g2.setPaint(geo.selColor);
+                g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);                              
             }
             
             // draw line              
-            g2.setPaint(geo.objColor);
+            g2.setPaint(geo.getObjectColor());
             g2.setStroke(objStroke);            
 			g2.draw(line);              
 
             // label
             if (labelVisible) {
 				g2.setFont(view.fontLine);
-				g2.setColor(geo.labelColor);
+				g2.setColor(geo.getLabelColor());
 				drawLabel(g2);
             }                            
         }
     }
         
 	final void drawTrace(Graphics2D g2) {
-		g2.setPaint(geo.objColor);
+		g2.setPaint(geo.getObjectColor());
 		g2.setStroke(objStroke);  
 		g2.draw(line);
 	}

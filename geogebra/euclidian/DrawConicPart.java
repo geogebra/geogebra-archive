@@ -202,22 +202,22 @@ implements Previewable {
         	switch (draw_type) {
         		case DRAW_TYPE_ELLIPSE:
 					if (geo.alphaValue > 0.0f) {
-						g2.setColor(geo.fillColor);
+						g2.setColor(geo.getFillColor());
 						g2.fill(shape);
 					}	
 					
 		            if (geo.doHighlighting()) {
-		                g2.setPaint(geo.selColor);
+		                g2.setPaint(geo.getSelColor());
 		                g2.setStroke(selStroke);            
 		                g2.draw(shape);       
 		            }
 		            
-		            g2.setPaint(geo.objColor);             
+		            g2.setPaint(geo.getObjectColor());             
 		            g2.setStroke(objStroke);            
 					g2.draw(shape);            
 		                        
 		            if (labelVisible) {
-						g2.setPaint(geo.labelColor);
+						g2.setPaint(geo.getLabelColor());
 						g2.setFont(view.fontLine);
 						drawLabel(g2);
 		            }		
@@ -238,7 +238,7 @@ implements Previewable {
 	final void drawTrace(Graphics2D g2) {
 		switch (draw_type) {
 			case DRAW_TYPE_ELLIPSE:
-				g2.setPaint(geo.objColor);
+				g2.setPaint(geo.getObjectColor());
 				g2.setStroke(objStroke);  
 				g2.draw(shape);
 				break;

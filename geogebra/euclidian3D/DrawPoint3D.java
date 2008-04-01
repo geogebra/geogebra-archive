@@ -150,14 +150,14 @@ public final class DrawPoint3D extends Drawable3D {
     final public void draw(Graphics2D g2) {   
         if (isVisible) { 
         	if (geo.doHighlighting()) {           
-    		 	g2.setPaint(geo.selColor);		
+    		 	g2.setPaint(geo.getSelColor());		
     		 	g2.fill(circleSel);  
             }
         	        	
             switch (view3D.getPointStyle()) {
             	case EuclidianView3D.POINT_STYLE_CROSS:            		                     
              		// draw cross like: X     
-                    g2.setPaint(geo.objColor);
+                    g2.setPaint(geo.getObjectColor());
                     g2.setStroke(crossStrokes[pointSize]);            
                     g2.draw(line1);                              
                     g2.draw(line2);             		
@@ -165,7 +165,7 @@ public final class DrawPoint3D extends Drawable3D {
             		
             	case EuclidianView3D.POINT_STYLE_CIRCLE:
             		// draw a circle            		
-        			g2.setPaint(geo.objColor);	
+        			g2.setPaint(geo.getObjectColor());	
         			g2.setStroke(crossStrokes[pointSize]);
         			g2.draw(circle);  										                                                               		
            		break;
@@ -173,7 +173,7 @@ public final class DrawPoint3D extends Drawable3D {
            		// case Euclidianview3D.POINT_STYLE_CIRCLE:
             	default:
             		// draw a dot            			
-        			g2.setPaint(geo.objColor);	
+        			g2.setPaint(geo.getObjectColor());	
         			g2.fill(circle);  										           
                     
                     // black stroke        	
@@ -186,14 +186,14 @@ public final class DrawPoint3D extends Drawable3D {
             // label   
             if (labelVisible) {
 				g2.setFont(view3D.fontPoint);
-				g2.setPaint(geo.labelColor);
+				g2.setPaint(geo.getLabelColor());
 				drawLabel(g2);			
             }                         
         }
     }
     
     final void drawTrace(Graphics2D g2) {
-    	g2.setPaint(geo.objColor);
+    	g2.setPaint(geo.getObjectColor());
     	
 		switch (view3D.getPointStyle()) {
 	     	case EuclidianView3D.POINT_STYLE_CIRCLE:

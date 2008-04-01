@@ -157,17 +157,17 @@ implements Previewable {
     final public void draw(Graphics2D g2) {
         if (isVisible) {			
             if (geo.doHighlighting()) {
-                g2.setPaint(ray.selColor);
+                g2.setPaint(ray.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
             
-            g2.setPaint(ray.objColor);             
+            g2.setPaint(ray.getObjectColor());             
             g2.setStroke(objStroke);            
 			g2.draw(line);            
                         
             if (labelVisible) {
-				g2.setPaint(ray.labelColor);
+				g2.setPaint(ray.getLabelColor());
 				g2.setFont(view.fontLine);
 				drawLabel(g2);
             }			
@@ -175,7 +175,7 @@ implements Previewable {
     }
     
     final public void drawTrace(Graphics2D g2) {
-		g2.setPaint(geo.objColor);
+		g2.setPaint(geo.getObjectColor());
 		g2.setStroke(objStroke);  
 		g2.draw(line);
     }

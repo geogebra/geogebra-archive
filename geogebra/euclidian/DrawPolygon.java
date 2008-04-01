@@ -105,18 +105,18 @@ implements Previewable {
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
         	if (poly.alphaValue > 0.0f) {
-				g2.setPaint(poly.fillColor);                       
+				g2.setPaint(poly.getFillColor());                       
 				g2.fill(gp);  				
         	}
 					  
             if (geo.doHighlighting()) {
-                g2.setPaint(poly.selColor);
+                g2.setPaint(poly.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(gp);                
             }            
             
             if (labelVisible) {
-				g2.setPaint(poly.labelColor);
+				g2.setPaint(poly.getLabelColor());
 				g2.setFont(view.fontPoint);
 				drawLabel(g2);
             }			

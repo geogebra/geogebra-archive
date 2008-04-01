@@ -255,12 +255,12 @@ implements Previewable {
 	final public void draw(Graphics2D g2) {
         if (isVisible) {		        	
             if (geo.doHighlighting()) {
-                g2.setPaint(s.selColor);
+                g2.setPaint(s.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
             
-            g2.setPaint(s.objColor);             
+            g2.setPaint(s.getObjectColor());             
             g2.setStroke(objStroke);            
 			g2.draw(line);
 
@@ -310,7 +310,7 @@ implements Previewable {
 			//END
 
 			if (labelVisible) {
-				g2.setPaint(s.labelColor);
+				g2.setPaint(s.getLabelColor());
 				g2.setFont(view.fontLine);
 				drawLabel(g2);
             }
@@ -318,7 +318,7 @@ implements Previewable {
     }
     
 	final void drawTrace(Graphics2D g2) {
-		g2.setPaint(geo.objColor);
+		g2.setPaint(geo.getObjectColor());
 		g2.setStroke(objStroke);  
 		g2.draw(line);
 	}

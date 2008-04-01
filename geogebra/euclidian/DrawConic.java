@@ -232,8 +232,8 @@ final public class DrawConic extends Drawable implements Previewable {
             //drawPoint.font = view.fontConic;            
         }
         point.copyLabel(conic);	
-        point.objColor = conic.objColor;
-        point.labelColor = conic.labelColor;
+        point.setObjColor(conic.getObjectColor());
+        point.setLabelColor(conic.getLabelColor());
         point.pointSize = conic.lineThickness;
         drawPoint.update();   
     }
@@ -252,8 +252,8 @@ final public class DrawConic extends Drawable implements Previewable {
         }
         for (i=0; i < 2; i++) {
 			lines[i].copyLabel(conic);					
-			lines[i].objColor = conic.objColor;					
-			lines[i].labelColor = conic.labelColor;	
+			lines[i].setObjColor(conic.getObjectColor());					
+			lines[i].setLabelColor(conic.getLabelColor());	
 			lines[i].lineThickness = conic.lineThickness;
 			lines[i].lineType = conic.lineType;		
 			drawLines[i].update();			
@@ -624,7 +624,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	final public void draw(Graphics2D g2) {
         if (!isVisible) return;                
         
-        g2.setColor(conic.objColor);        		
+        g2.setColor(conic.getObjectColor());        		
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
                 drawPoint.draw(g2);
@@ -641,46 +641,46 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
 				if (conic.alphaValue > 0.0f) {
-					g2.setColor(conic.fillColor);
+					g2.setColor(conic.getFillColor());
 					g2.fill(shape);
 					if (arcFiller != null) 
 						Drawable.fillGeneralPath(arcFiller, g2);
 				}			                                               
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
-                    g2.setColor(conic.selColor);
+                    g2.setColor(conic.getSelColor());
                     g2.draw(shape);		
                 }                  
                 g2.setStroke(objStroke);
-                g2.setColor(conic.objColor);				
+                g2.setColor(conic.getObjectColor());				
                 g2.draw(shape);    
                 if (labelVisible) {
 					g2.setFont(view.fontConic); 
-					g2.setColor(conic.labelColor);                   
+					g2.setColor(conic.getLabelColor());                   
 					drawLabel(g2);                                                               
                 }                
                 break;            
             
            case GeoConic.CONIC_HYPERBOLA:               		          
 				if (conic.alphaValue > 0.0f) {
-					g2.setColor(conic.fillColor);
+					g2.setColor(conic.getFillColor());
 					if (hypLeftOnScreen) hypLeft.fill(g2);                                                
 					if (hypRightOnScreen) hypRight.fill(g2); 
 				}	
 				if (geo.doHighlighting()) {
 					 g2.setStroke(selStroke);
-					 g2.setColor(conic.selColor);					
+					 g2.setColor(conic.getSelColor());					
 					 if (hypLeftOnScreen) hypLeft.draw(g2);                                                
 					 if (hypRightOnScreen) hypRight.draw(g2); 				
 				 }  
 				 g2.setStroke(objStroke);
-				 g2.setColor(conic.objColor);				 
+				 g2.setColor(conic.getObjectColor());				 
 				 if (hypLeftOnScreen) hypLeft.draw(g2);                                                
 				 if (hypRightOnScreen) hypRight.draw(g2); 
 				             
 				 if (labelVisible) {
 					 g2.setFont(view.fontConic); 
-					 g2.setColor(conic.labelColor);                   
+					 g2.setColor(conic.getLabelColor());                   
 					 drawLabel(g2);                                                                     
 				 }                            
                 break;      
@@ -688,7 +688,7 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
 	final public void drawTrace(Graphics2D g2) {             
-        g2.setColor(conic.objColor);
+        g2.setColor(conic.getObjectColor());
 		switch (type) {
 			case GeoConic.CONIC_SINGLE_POINT:                         
 				drawPoint.drawTrace(g2);
@@ -705,13 +705,13 @@ final public class DrawConic extends Drawable implements Previewable {
 			case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 			                                                  
 				g2.setStroke(objStroke);
-				g2.setColor(conic.objColor);				
+				g2.setColor(conic.getObjectColor());				
 				g2.draw(shape);    				            
 				break;            
             
 		   case GeoConic.CONIC_HYPERBOLA:     
 				 g2.setStroke(objStroke);
-				 g2.setColor(conic.objColor);				 
+				 g2.setColor(conic.getObjectColor());				 
 				 hypLeft.draw(g2);                                                
 				 hypRight.draw(g2); 				  
 				break;      

@@ -575,7 +575,7 @@ public class AlgebraView extends JTree implements View {
 				GeoElement geo = (GeoElement) ob;										
 				
 				setFont(app.boldFont);
-				setForeground(geo.labelColor);
+				setForeground(geo.getLabelColor());
 				String str = geo.getAlgebraDescriptionTextOrHTML();
 				//String str = geo.getAlgebraDescription();
 				setText(str);								

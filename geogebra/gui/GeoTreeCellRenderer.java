@@ -70,7 +70,7 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 			}			
 			
 			setFont(app.boldFont);
-			setForeground(geo.labelColor);			
+			setForeground(geo.getLabelColor());			
 			setText(geo.getLabelTextOrHTML());		
 			
 			if (geo.doHighlighting())				   

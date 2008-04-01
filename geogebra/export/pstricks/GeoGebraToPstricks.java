@@ -284,8 +284,8 @@ public class GeoGebraToPstricks implements ActionListener {
 				GeoConic geo=(GeoConic)g;
 				GeoPoint point = geo.getSinglePoint();
 				point.copyLabel(geo);
-				point.objColor = geo.objColor;
-				point.labelColor = geo.labelColor;
+				point.setObjColor(geo.getObjectColor());
+				point.setLabelColor(geo.getLabelColor());
 				point.pointSize = geo.lineThickness;
 				point.setLabelOffset(geo.labelOffsetX,geo.labelOffsetY);
 				DrawPoint drawPoint = new DrawPoint(euclidianView, point);
@@ -299,8 +299,8 @@ public class GeoGebraToPstricks implements ActionListener {
 				DrawLine[] drawLines = new DrawLine[2];
 				for (int i=0; i < 2; i++) {
 					lines[i].copyLabel(geo);					
-					lines[i].objColor = geo.objColor;					
-					lines[i].labelColor = geo.labelColor;	
+					lines[i].setObjColor(geo.getObjectColor());					
+					lines[i].setLabelColor(geo.getLabelColor());	
 					lines[i].lineThickness = geo.lineThickness;
 					lines[i].lineType = geo.lineType;
 				}
@@ -735,7 +735,7 @@ public class GeoGebraToPstricks implements ActionListener {
     	}
         // create point for slider
         GeoPoint geoPoint = new GeoPoint(construction);
-        geoPoint.objColor=geo.getObjectColor();
+        geoPoint.setObjColor(geo.getObjectColor());
         String label="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
         geoPoint.setLabel(label);
     	double param =  (value - min) / (max - min);

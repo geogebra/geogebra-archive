@@ -114,7 +114,7 @@ public final class DrawText extends Drawable {
 			
 		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
-			eqn.setForeground(geo.objColor);		
+			eqn.setForeground(geo.getObjectColor());		
 			eqn.setBackground(view.getBackground());
 	
 //			// set equation 
@@ -154,7 +154,7 @@ public final class DrawText extends Drawable {
 		// LaTeX formulas are drawn as hotEqns. 
 		// They are Swing components and children of the view   
         	if (!isLaTeX) {
-        		g2.setPaint(geo.objColor);				
+        		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
     			drawMultilineText(g2);   
         	} else

@@ -567,6 +567,7 @@ public class PropertiesDialogGeoElement
 		private BackgroundImagePanel bgImagePanel;
 		private AbsoluteScreenLocationPanel absScreenLocPanel;	
 		private ShowConditionPanel showConditionPanel;
+		private ColorFunctionPanel colorFunctionPanel;
 		
 		private JTabbedPane tabs;
 
@@ -609,7 +610,8 @@ public class PropertiesDialogGeoElement
 			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-			showConditionPanel = new ShowConditionPanel(app, this); 						
+			showConditionPanel = new ShowConditionPanel(app, this); 
+			colorFunctionPanel = new ColorFunctionPanel(app, this);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -734,6 +736,7 @@ public class PropertiesDialogGeoElement
 			// advanced tab
 			ArrayList advancedTabList = new ArrayList();
 			advancedTabList.add(showConditionPanel);	
+			advancedTabList.add(colorFunctionPanel);	
 			advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
@@ -4559,7 +4562,7 @@ class ShowConditionPanel
 	}
 
 	private void doActionPerformed() {
-		GeoBoolean cond;			
+		GeoBoolean cond;
 		String strCond = tfCondition.getText();
 		if (strCond == null || strCond.trim().length() == 0) {
 			cond = null;
@@ -4590,6 +4593,168 @@ class ShowConditionPanel
 		// request focus
 		if (requestFocus)
 			tfCondition.requestFocus();
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		doActionPerformed();
+	}
+}
+
+/**
+ * panel for condition to show object
+ * @author Michael Borcherds 2008-04-01
+ */
+class ColorFunctionPanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	private JTextField tfRed, tfGreen, tfBlue;
+	private JLabel nameLabelR,nameLabelG,nameLabelB;
+	
+	private Kernel kernel;
+	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
+
+	public ColorFunctionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+		kernel = app.getKernel();
+		this.propPanel = propPanel;
+		
+		// textfield for animation step
+		setBorder(
+				BorderFactory.createTitledBorder(app.getMenu("Colors"))
+				);
+		
+		// non auto complete input panel
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 10, false, false);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 10, false, false);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 10, false, false);
+		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
+		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
+		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
+		
+		tfRed.addActionListener(this);
+		tfRed.addFocusListener(this);
+		tfGreen.addActionListener(this);
+		tfGreen.addFocusListener(this);
+		tfBlue.addActionListener(this);
+		tfBlue.addFocusListener(this);
+		
+		nameLabelR = new JLabel(app.getPlain("Red") + ":");	
+		nameLabelR.setLabelFor(inputPanelR);
+		nameLabelG = new JLabel(app.getPlain("Green") + ":");	
+		nameLabelG.setLabelFor(inputPanelR);
+		nameLabelB = new JLabel(app.getPlain("Blue") + ":");	
+		nameLabelB.setLabelFor(inputPanelR);
+
+		// put it all together
+		setLayout(new FlowLayout(FlowLayout.LEFT));
+		add(nameLabelR);		
+		add(inputPanelR);
+		add(nameLabelG);		
+		add(inputPanelG);
+		add(nameLabelB);		
+		add(inputPanelB);
+	}
+
+	public JPanel update(Object[] geos) {
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		tfRed.removeActionListener(this);
+		tfGreen.removeActionListener(this);
+		tfBlue.removeActionListener(this);
+
+		// take condition of first geo
+		String strCond = "";
+		GeoElement geo0 = (GeoElement) geos[0];	
+		GeoBoolean cond = geo0.getShowObjectCondition();
+		if (cond != null) {
+			strCond = cond.getLabelOrCommandDescription();
+		}	
+		
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			cond = geo.getShowObjectCondition();
+			if (cond != null) {
+				String strCondGeo = cond.getLabelOrCommandDescription();
+				if (!strCond.equals(strCondGeo))
+					strCond = "";
+			}	
+		}		
+		//TODO
+		//tfCondition.setText(strCond);
+		//tfCondition.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			if (!geo.isEuclidianShowable())
+				return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == tfRed || e.getSource() == tfGreen || e.getSource() == tfBlue)
+			doActionPerformed();
+	}
+
+	private void doActionPerformed() {
+		GeoNumeric num = null;
+		String strRed = tfRed.getText();
+		String strGreen = tfGreen.getText();
+		String strBlue = tfBlue.getText();
+		if ((strRed == null || strRed.trim().length() == 0) &&
+			(strGreen == null || strGreen.trim().length() == 0) &&
+			(strBlue == null || strBlue.trim().length() == 0)) {
+			num = null;
+		} else {
+			if (strRed == null || strRed.trim().length() == 0) strRed="0";
+			if (strGreen == null || strGreen.trim().length() == 0) strGreen="0";
+			if (strBlue == null || strBlue.trim().length() == 0) strBlue="0";
+			//cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
+			num = kernel.getAlgebraProcessor().evaluateToNumeric(strRed + "+256*("+strGreen+")+256*256*("+strBlue+")");
+			System.out.println("val="+num.getValue());
+		}
+				
+		// set condition
+		boolean requestFocus = false;
+		try {
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				//geo.setShowObjectCondition(cond);				
+				geo.setColorFunction(num);				
+			}	
+			
+		} catch (CircularDefinitionException e) {
+			tfRed.setText("");
+			tfGreen.setText("");
+			tfBlue.setText("");
+			kernel.getApplication().showError("CircularDefinition");
+			requestFocus = true;			
+		}	
+		
+		if (num != null)
+			num.updateRepaint();		
+		
+		// to update "showObject" as well
+		propPanel.updateSelection(geos);
+		
+		// request focus
+		if (requestFocus)
+			tfRed.requestFocus();
 	}
 
 	public void focusGained(FocusEvent arg0) {

@@ -91,20 +91,20 @@ public final class DrawLocus extends Drawable {
     	if (isVisible) {    			    	
             if (geo.doHighlighting()) {
                 // draw locus              
-                g2.setPaint(geo.selColor);
+                g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);
                 Drawable.drawGeneralPath(gp, g2);
             }      
         	
             // draw locus         
-            g2.setPaint(geo.objColor);
+            g2.setPaint(geo.getObjectColor());
             g2.setStroke(objStroke);
             Drawable.drawGeneralPath(gp, g2);
                         
             // label
             if (labelVisible) {
 				g2.setFont(view.fontLine);
-				g2.setColor(geo.labelColor);
+				g2.setColor(geo.getLabelColor());
 				drawLabel(g2);
             }                        
         }

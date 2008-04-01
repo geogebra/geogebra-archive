@@ -161,19 +161,19 @@ public class DrawVector extends Drawable implements Previewable {
         	}
         	
             if (geo.doHighlighting()) {
-                g2.setPaint(v.selColor);
+                g2.setPaint(v.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
             
-            g2.setPaint(v.objColor);
+            g2.setPaint(v.getObjectColor());
 			g2.setStroke(objStroke);  
 			g2.draw(line);              
             g2.fill(gp);
                                               
             if (labelVisible) {
 				g2.setFont(view.fontVector);
-				g2.setPaint(v.labelColor);
+				g2.setPaint(v.getLabelColor());
 				drawLabel(g2);
             }            
         }
@@ -181,7 +181,7 @@ public class DrawVector extends Drawable implements Previewable {
     
     
 	final void drawTrace(Graphics2D g2) {
-		g2.setPaint(v.objColor);
+		g2.setPaint(v.getObjectColor());
 		g2.setStroke(objStroke);  
 		g2.draw(line);  
 		g2.fill(gp);       

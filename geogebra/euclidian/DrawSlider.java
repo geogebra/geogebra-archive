@@ -122,7 +122,7 @@ public class DrawSlider extends Drawable {
     final public void draw(Graphics2D g2) {
         if (isVisible) {                        
         	// horizontal line
-            g2.setPaint(geo.objColor);             
+            g2.setPaint(geo.getObjectColor());             
             g2.setStroke(objStroke); 
             g2.draw(line);                 
                 

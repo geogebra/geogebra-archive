@@ -721,7 +721,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
             RowData rd = data.getRow(row);
             int index = rd.geo.getConstructionIndex();  
             if (useColors) 
-            	comp.setForeground(rd.geo.objColor);
+            	comp.setForeground(rd.geo.getObjectColor());
             else
             	comp.setForeground(Color.black); 
             
@@ -1027,7 +1027,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         private Color getColorAt(int nRow, int nCol) {
             try {
                 if (useColors) 
-                    return ((RowData) rowList.get(nRow)).geo.objColor;
+                    return ((RowData) rowList.get(nRow)).geo.getObjectColor();
                 else
                     return Color.black;
             } catch (Exception e) {

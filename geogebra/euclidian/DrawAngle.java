@@ -469,17 +469,17 @@ public class DrawAngle extends Drawable {
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
 			if (angle.alphaValue > 0.0f) {
-				g2.setPaint(angle.fillColor);
+				g2.setPaint(angle.getFillColor());
 				g2.fill(shape);
 			}
 
 			if (geo.doHighlighting()) {
-				g2.setPaint(angle.selColor);
+				g2.setPaint(angle.getSelColor());
 				g2.setStroke(selStroke);
 				g2.draw(shape);
 			}
 
-			g2.setPaint(angle.objColor);
+			g2.setPaint(angle.getObjectColor());
 			g2.setStroke(objStroke);
 			g2.draw(shape);
 			
@@ -536,7 +536,7 @@ public class DrawAngle extends Drawable {
 			}
 			
 			if (labelVisible) {
-				g2.setPaint(angle.labelColor);
+				g2.setPaint(angle.getLabelColor());
 				g2.setFont(view.fontAngle);
 				drawLabel(g2);
 			}

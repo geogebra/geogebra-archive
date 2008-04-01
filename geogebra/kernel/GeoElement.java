@@ -253,10 +253,10 @@ public abstract class GeoElement
 	private boolean fixed = false;
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
-	public Color objColor = Color.black;
-	public Color selColor = objColor, 
-				 labelColor = objColor, 
-				 fillColor = objColor;
+	private Color objColor = Color.black;
+	private Color selColor = objColor;
+	private Color labelColor = objColor; 
+	private Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationStep = 0.1;
 	public float alphaValue = 0.0f;
@@ -269,6 +269,9 @@ public abstract class GeoElement
 	
 	// condition to show object
 	private GeoBoolean condShowObject;
+	
+	// function to determine color
+	private GeoNumeric colFunction;
 	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
@@ -478,8 +481,54 @@ public abstract class GeoElement
 		return isColorSet;
 	}
 
+	// Michael Borcherds 2008-04-01
+	public Color getSelColor() {
+		if (colFunction == null) return selColor;	
+		else return RGBtoColor((int)colFunction.getValue(),100);
+	}
+	
+	// Michael Borcherds 2008-04-01
+	public Color getFillColor() {
+		if (colFunction == null) return fillColor;	
+		else return RGBtoColor((int)colFunction.getValue(),alphaValue);
+	}
+	
+	// Michael Borcherds 2008-04-01
+	private Color RGBtoColor(int RGB, float alpha2) {
+
+		if (alpha2 > 1f) alpha2 = 1f;
+		if (alpha2 < 0f) alpha2 = 0f;
+		
+		int alpha = (int)(alpha2*255f);
+		
+		if (RGB < 0) return new Color(0,0,0,alpha);
+		if (RGB > 0xFFFFFF) return new Color(255,255,255,alpha);
+	
+		int red=RGB % 256;
+		RGB = RGB / 256;
+		int green = RGB % 256;
+		int blue = RGB / 256;
+		System.out.println("RGBtoColor"+alpha+" "+red+" "+green+" "+blue);
+		
+		return new Color(red,green,blue,alpha) ; //
+	}
+	
+	
+	// Michael Borcherds 2008-04-01
+	public Color getLabelColor() {
+		if (colFunction == null) return labelColor;	
+		else return getObjectColor();
+	}
+
+	// Michael Borcherds 2008-04-01
+	public void setLabelColor(Color color) {
+		labelColor = color;
+	}
+		
+	// Michael Borcherds 2008-04-01
 	public Color getObjectColor() {
-		return objColor;
+		if (colFunction == null) return objColor;
+		else return RGBtoColor((int)colFunction.getValue(),255);
 	}
 
 	// Michael Borcherds 2008-03-01
@@ -2636,6 +2685,38 @@ public abstract class GeoElement
 	public final void removeCondition(GeoBoolean bool) {
 		if (condShowObject == bool)
 			condShowObject = null;
+	}
+	
+	public final GeoNumeric getColorFunction() {
+		System.out.println("getColorFunction");
+		return colFunction;
+	}
+
+	public final void setColorFunction(GeoNumeric col) 
+	throws CircularDefinitionException {
+		System.out.println("setColorFunction"+col.getValue());
+		// check for circular definition
+		if (this == col || isParentOf(col))
+			throw new CircularDefinitionException();	
+		
+		// unregister old condition
+		if (colFunction != null) {
+			colFunction.unregisterConditionListener(this);
+		}
+		
+		// set new condition
+		colFunction = col;
+		
+		// register new condition
+		if (colFunction != null) {
+			colFunction.registerConditionListener(this);
+		}		
+	}
+	
+	public final void removeColorFunction(GeoNumeric col) {
+		System.out.println("removeColorFunction");
+		if (colFunction == col)
+			colFunction = null;
 	}
 	
 	
