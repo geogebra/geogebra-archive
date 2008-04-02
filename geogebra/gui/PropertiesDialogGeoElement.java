@@ -1028,16 +1028,7 @@ public class PropertiesDialogGeoElement
 			
 			setLayout(new BorderLayout());		
 			
-			
 			/*
-			JTabbedPane colorTabs = new JTabbedPane();				
-			ArrayList colorTabList = new ArrayList();			
-			colorTabList.add(tabs[0]);	
-			colorTabList.add(tabs[2]);			
-			//TabPanel colorTab = new TabPanel(app.getPlain("Text"), colorTabList);
-			colorTabs.add(colorTabList);
-			colorTabList*/
-			
 			// Michael Borcherds 2008-03-14
 			// added RGB in a new tab
 			// and moved preview underneath
@@ -1074,17 +1065,16 @@ public class PropertiesDialogGeoElement
 										
 			c.weighty = 1.0;
 			p.add(Box.createVerticalGlue(), c);
+		*/
+	
 		
-
-		
-			//add(tabs[0], BorderLayout.NORTH);		
-			//add(tabs[1], BorderLayout.EAST);	// HSV color chooser	
-			//add(tabs[2], BorderLayout.SOUTH);	 // Michael Borcherds 2008-03-14 enter/display RGB colors	
-		
-			//p.add( colorTabbedPane);			
-			//p.add(new JLabel(app.getMenu("Preview") + ": "));
-			//p.add(previewPanel);
-			add(p);
+			setLayout(new BorderLayout());			
+			add(tabs[0], BorderLayout.NORTH);		
+			
+			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			p.add(new JLabel(app.getMenu("Preview") + ": "));
+			p.add(previewPanel);
+			add(p, BorderLayout.CENTER);
 			
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the 	
@@ -4627,13 +4617,13 @@ class ColorFunctionPanel
 		
 		// textfield for animation step
 		setBorder(
-				BorderFactory.createTitledBorder(app.getMenu("Colors"))
+				BorderFactory.createTitledBorder(app.getMenu("DynamicColors"))
 				);
 		
 		// non auto complete input panel
-		InputPanel inputPanelR = new InputPanel(null, app, 1, 10, false, false);
-		InputPanel inputPanelG = new InputPanel(null, app, 1, 10, false, false);
-		InputPanel inputPanelB = new InputPanel(null, app, 1, 10, false, false);
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 7, false, false);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 7, false, false);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 7, false, false);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
@@ -4645,11 +4635,11 @@ class ColorFunctionPanel
 		tfBlue.addActionListener(this);
 		tfBlue.addFocusListener(this);
 		
-		nameLabelR = new JLabel(app.getPlain("Red") + ":");	
+		nameLabelR = new JLabel(app.getMenu("Red") + ":");	
 		nameLabelR.setLabelFor(inputPanelR);
-		nameLabelG = new JLabel(app.getPlain("Green") + ":");	
+		nameLabelG = new JLabel(app.getMenu("Green") + ":");	
 		nameLabelG.setLabelFor(inputPanelR);
-		nameLabelB = new JLabel(app.getPlain("Blue") + ":");	
+		nameLabelB = new JLabel(app.getMenu("Blue") + ":");	
 		nameLabelB.setLabelFor(inputPanelR);
 
 		// put it all together
@@ -4672,25 +4662,36 @@ class ColorFunctionPanel
 		tfBlue.removeActionListener(this);
 
 		// take condition of first geo
-		String strCond = "";
+		String strRed = "";
+		String strGreen = "";
+		String strBlue = "";
 		GeoElement geo0 = (GeoElement) geos[0];	
-		GeoBoolean cond = geo0.getShowObjectCondition();
-		if (cond != null) {
-			strCond = cond.getLabelOrCommandDescription();
+		GeoList colorList = geo0.getColorFunction();
+		if (colorList != null) {
+			strRed = colorList.get(0).getLabelOrCommandDescription();
+			strGreen = colorList.get(1).getLabelOrCommandDescription();
+			strBlue = colorList.get(2).getLabelOrCommandDescription();
 		}	
 		
 		for (int i=0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];	
-			cond = geo.getShowObjectCondition();
-			if (cond != null) {
-				String strCondGeo = cond.getLabelOrCommandDescription();
-				if (!strCond.equals(strCondGeo))
-					strCond = "";
+			GeoList colorListTemp = geo.getColorFunction();
+			if (colorListTemp != null) {
+				String strRedTemp = colorListTemp.get(0).getLabelOrCommandDescription();
+				String strGreenTemp = colorListTemp.get(1).getLabelOrCommandDescription();
+				String strBlueTemp = colorListTemp.get(2).getLabelOrCommandDescription();
+				if (!strRed.equals(strRedTemp)) strRed = "";
+				if (!strGreen.equals(strGreenTemp)) strGreen = "";
+				if (!strBlue.equals(strBlueTemp)) strBlue = "";
 			}	
 		}		
-		//TODO
-		//tfCondition.setText(strCond);
-		//tfCondition.addActionListener(this);
+
+		tfRed.setText(strRed);
+		tfRed.addActionListener(this);
+		tfGreen.setText(strGreen);
+		tfGreen.addActionListener(this);
+		tfBlue.setText(strBlue);
+		tfBlue.addActionListener(this);
 		return this;
 	}
 
@@ -4731,10 +4732,10 @@ class ColorFunctionPanel
 			//num = kernel.getAlgebraProcessor().evaluateToNumeric(strRed + "+256*("+strGreen+")+256*256*("+strBlue+")");
 			list = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+"}");
 			//System.out.println("val="+num.getValue());
-			System.out.println("list?"+list.isGeoList());
-			System.out.println("numeric0?"+list.get(0).isGeoNumeric());
-			System.out.println("numeric1?"+list.get(1).isGeoNumeric());
-			System.out.println("numeric2?"+list.get(2).isGeoNumeric());
+			//System.out.println("list?"+list.isGeoList());
+			//System.out.println("numeric0?"+list.get(0).isGeoNumeric());
+			//System.out.println("numeric1?"+list.get(1).isGeoNumeric());
+			//System.out.println("numeric2?"+list.get(2).isGeoNumeric());
 
 		}
 				
