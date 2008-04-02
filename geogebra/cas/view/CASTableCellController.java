@@ -161,8 +161,7 @@ public class CASTableCellController implements KeyListener {
 					table.setFocusAtRow(selectedRow + 1, selectedCol);
 				} else {
 					// Insert a new row
-					table
-							.setRowHeight(selectedRow, curCell
+					table.setRowHeight(selectedRow, curCell
 									.setLineInvisiable());
 					table.insertRow(selectedRow, selectedCol);
 				}
@@ -177,6 +176,9 @@ public class CASTableCellController implements KeyListener {
 
 				if (selectedRow >= 1) {
 					table.setFocusAtRowLinePanel(selectedRow - 1, selectedCol);
+				}else{
+					table.insertRow(-1, CASPara.contCol);
+					//System.out.println("This is the first row");
 				}
 			}
 			consumeEvent = true;

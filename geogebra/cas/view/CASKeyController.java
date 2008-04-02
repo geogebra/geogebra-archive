@@ -28,19 +28,20 @@ public class CASKeyController implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		Object src = e.getSource();
 		System.out.println("Key Pressed " + src.getClass().getName());
-		int selectedRow = consoleTable.getSelectedRow();
+		int[] selectedRowArray = consoleTable.getSelectedRows();
 		int selectedCol = consoleTable.getSelectedColumn();
-
+		
 		// Here we delete the chosen row when press DELETE at coloumn 1;
 		if (selectedCol == CASPara.indexCol) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-				{
-					//e.consume();
-					consoleTable.deleteRow(selectedRow);
-				}
-			}
+				// e.consume();
+				System.out.println("selectedRowArray: "
+						+ selectedRowArray.length);
+				consoleTable.deleteRow(selectedRowArray[0]);
+			} else
+				e.consume();
 		} else {
-			//e.consume();
+			e.consume();
 		}
 	}
 

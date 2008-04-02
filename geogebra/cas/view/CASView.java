@@ -42,6 +42,7 @@ public class CASView extends JComponent {
 		kernel = app.getKernel();
 		this.app = app;
 		cas = new GeoGebraCAS();
+		cas.evaluateYACAS("4");
 		session = new CASSession();
 		setLayout(new BorderLayout());
 

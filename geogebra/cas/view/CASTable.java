@@ -50,7 +50,7 @@ public class CASTable extends JTable {
 	public void insertRow(int selectedRow, int selectedCol) {
 
 		CASTableCellValue newValue = new CASTableCellValue();
-		tableModel.insertRow(selectedRow + 1, new Object[] { "New", newValue });
+		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
 		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
@@ -62,7 +62,7 @@ public class CASTable extends JTable {
 		char[] in = new char[1];
 		in[0] = c;
 		CASTableCellValue newValue = new CASTableCellValue(new String(in));
-		tableModel.insertRow(selectedRow + 1, new Object[] { "New", newValue });
+		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
 		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,

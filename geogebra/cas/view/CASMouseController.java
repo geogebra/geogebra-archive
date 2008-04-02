@@ -45,10 +45,10 @@ public class CASMouseController implements MouseListener {
 			clickedCell.setLineInvisiable();
 			clickedCell.setInputAreaFocused();
 		} else {// To get the focus from the last edited cell
-			consoleTable.changeSelection(rowI, colI, false, false);
-			Component clickedCell = consoleTable.getComponentAt(e.getPoint());
-			System.out.println("clickedComponent: " + clickedCell);
-			clickedCell.requestFocus();
+//			consoleTable.changeSelection(rowI, colI, false, false);
+//			Component clickedCell = consoleTable.getComponentAt(e.getPoint());
+//			System.out.println("clickedComponent: " + clickedCell);
+//			clickedCell.requestFocus();
 		}
 
 	}
