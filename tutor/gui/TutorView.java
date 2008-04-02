@@ -12,13 +12,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,12 +41,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import tutor.io.StringOutputStream;
 import tutor.model.Annotation;
-import tutor.model.Justification;
 import tutor.model.Strategy;
-import tutor.net.util.HttpMultiPartFileUpload;
-import tutor.net.util.HttpParam;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
 
@@ -213,34 +206,28 @@ public class TutorView extends JPanel implements View  {
         commentField.setEditable(true);
         commentField.setEnabled(true);
         commentField.addActionListener(tutorController);
-        
+
+        JPanel topPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
+
         JScrollPane scrollingArea = new JScrollPane(resultArea);
+        scrollingArea.setPreferredSize(new Dimension(250, 380));
         
-        //resultArea.setSize(300,600);
-        //scrollingArea.setSize(300,600);
+        
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.PAGE_AXIS));
+        topPanel.add(scrollingArea);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
         
         //... Get the content pane, set layout, add to center
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         
-        //setLayout(new FlowLayout());
-        add(scrollingArea);
-        //scrollingArea.setSize(200,400);
-        //add(Box.createVerticalGlue());  
-
-        add(new JLabel("Comments:",SwingConstants.LEFT));
-        // commentField.setMaximumSize(commentField.getPreferredSize());
+        add(topPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
         
-        botoNou = new JButton("Nou");
-        botoNou.addActionListener(tutorController);
+        bottomPanel.add(new JLabel("Comments:",SwingConstants.LEFT));
         
-        botoGuardar = new JButton("Guardar");
-        botoGuardar.addActionListener(tutorController);
-        
-        //add(botoNou);
-        //add(botoGuardar);
-        
-        add(commentField);
-        add(justificationCombo);
+        bottomPanel.add(commentField);
+        bottomPanel.add(justificationCombo);
         
         try {
         	for (int i=0; i<20; i++)

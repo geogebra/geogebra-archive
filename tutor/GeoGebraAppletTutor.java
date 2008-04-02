@@ -107,7 +107,7 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		tutorView.setStrategyDao(strategyDao);
 		
 		//tutorView.initDataModel();
-		tutorView.createGUI();
+		//tutorView.createGUI();
 		
 		
 	}
