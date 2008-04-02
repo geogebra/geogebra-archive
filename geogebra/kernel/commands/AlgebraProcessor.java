@@ -11,6 +11,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -247,19 +248,19 @@ public class AlgebraProcessor {
 	}
 
 	/**
-	 * Parses given String str and tries to evaluate it to a GeoNumeric object.
+	 * Parses given String str and tries to evaluate it to a List object.
 	 * Returns null if something went wrong.
-	 * Michael Borcherds 2008-04-01
+	 * Michael Borcherds 2008-04-02
 	 */
-	public GeoNumeric evaluateToNumeric(String str) {
+	public GeoList evaluateToList(String str) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
-		GeoNumeric num = null;
+		GeoList list = null;
 		try {
 			ValidExpression ve = parser.parse(str);		
 			GeoElement [] temp = processValidExpression(ve);
-			num = (GeoNumeric) temp[0];
+			list = (GeoList) temp[0];
 		} catch (CircularDefinitionException e) {
 			System.err.println("CircularDefinition");
 			app.showError("CircularDefinition");
@@ -275,7 +276,7 @@ public class AlgebraProcessor {
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
-		return num;
+		return list;
 	}
 
 	/**

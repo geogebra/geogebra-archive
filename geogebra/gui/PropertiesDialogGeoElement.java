@@ -26,6 +26,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
@@ -4712,21 +4713,29 @@ class ColorFunctionPanel
 	}
 
 	private void doActionPerformed() {
-		GeoNumeric num = null;
+		//GeoNumeric num = null;
+		GeoList list = null;
 		String strRed = tfRed.getText();
 		String strGreen = tfGreen.getText();
 		String strBlue = tfBlue.getText();
 		if ((strRed == null || strRed.trim().length() == 0) &&
 			(strGreen == null || strGreen.trim().length() == 0) &&
 			(strBlue == null || strBlue.trim().length() == 0)) {
-			num = null;
+			//num = null;
+			list=null;
 		} else {
 			if (strRed == null || strRed.trim().length() == 0) strRed="0";
 			if (strGreen == null || strGreen.trim().length() == 0) strGreen="0";
 			if (strBlue == null || strBlue.trim().length() == 0) strBlue="0";
 			//cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
-			num = kernel.getAlgebraProcessor().evaluateToNumeric(strRed + "+256*("+strGreen+")+256*256*("+strBlue+")");
-			System.out.println("val="+num.getValue());
+			//num = kernel.getAlgebraProcessor().evaluateToNumeric(strRed + "+256*("+strGreen+")+256*256*("+strBlue+")");
+			list = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+"}");
+			//System.out.println("val="+num.getValue());
+			System.out.println("list?"+list.isGeoList());
+			System.out.println("numeric0?"+list.get(0).isGeoNumeric());
+			System.out.println("numeric1?"+list.get(1).isGeoNumeric());
+			System.out.println("numeric2?"+list.get(2).isGeoNumeric());
+
 		}
 				
 		// set condition
@@ -4735,7 +4744,7 @@ class ColorFunctionPanel
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				//geo.setShowObjectCondition(cond);				
-				geo.setColorFunction(num);				
+				geo.setColorFunction(list);				
 			}	
 			
 		} catch (CircularDefinitionException e) {
@@ -4746,8 +4755,8 @@ class ColorFunctionPanel
 			requestFocus = true;			
 		}	
 		
-		if (num != null)
-			num.updateRepaint();		
+		if (list != null)
+			list.updateRepaint();		
 		
 		// to update "showObject" as well
 		propPanel.updateSelection(geos);

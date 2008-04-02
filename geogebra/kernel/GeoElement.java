@@ -271,7 +271,7 @@ public abstract class GeoElement
 	private GeoBoolean condShowObject;
 	
 	// function to determine color
-	private GeoNumeric colFunction;
+	private GeoList colFunction; // { GeoNumeric red, GeoNumeric Green, GeoNumeric Blue }
 	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
@@ -480,39 +480,42 @@ public abstract class GeoElement
 	public boolean isColorSet() {
 		return isColorSet;
 	}
-
-	// Michael Borcherds 2008-04-01
-	public Color getSelColor() {
-		if (colFunction == null) return selColor;	
-		else return RGBtoColor((int)colFunction.getValue(),100);
-	}
 	
-	// Michael Borcherds 2008-04-01
-	public Color getFillColor() {
-		if (colFunction == null) return fillColor;	
-		else return RGBtoColor((int)colFunction.getValue(),alphaValue);
-	}
-	
-	// Michael Borcherds 2008-04-01
-	private Color RGBtoColor(int RGB, float alpha2) {
-
+	// Michael Borcherds 2008-04-02
+	private Color getRGBFromList(float alpha2)
+	{
 		if (alpha2 > 1f) alpha2 = 1f;
 		if (alpha2 < 0f) alpha2 = 0f;
 		
 		int alpha = (int)(alpha2*255f);
-		
-		if (RGB < 0) return new Color(0,0,0,alpha);
-		if (RGB > 0xFFFFFF) return new Color(255,255,255,alpha);
-	
-		int red=RGB % 256;
-		RGB = RGB / 256;
-		int green = RGB % 256;
-		int blue = RGB / 256;
-		System.out.println("RGBtoColor"+alpha+" "+red+" "+green+" "+blue);
-		
-		return new Color(red,green,blue,alpha) ; //
+		return getRGBFromList(alpha);
 	}
 	
+	// Michael Borcherds 2008-04-02
+	private Color getRGBFromList(int alpha)	{
+		
+		if (alpha > 255) alpha = 255;
+		if (alpha < 0) alpha = 0;
+
+		int red = (int)((GeoNumeric)(colFunction.get(0))).getValue();
+		int green = (int)((GeoNumeric)(colFunction.get(1))).getValue();
+		int blue = (int)((GeoNumeric)(colFunction.get(2))).getValue();
+		return new Color(red, green, blue, alpha);		
+	}
+
+	// Michael Borcherds 2008-04-02
+	public Color getSelColor() {
+		if (colFunction == null) return selColor;	
+		//else return RGBtoColor((int)colFunction.getValue(),100);
+		else return getRGBFromList(100);
+	}
+	
+	// Michael Borcherds 2008-04-02
+	public Color getFillColor() {
+		if (colFunction == null) return fillColor;	
+		//else return RGBtoColor((int)colFunction.getValue(),alphaValue);
+		else return getRGBFromList(alphaValue);
+	}
 	
 	// Michael Borcherds 2008-04-01
 	public Color getLabelColor() {
@@ -525,10 +528,11 @@ public abstract class GeoElement
 		labelColor = color;
 	}
 		
-	// Michael Borcherds 2008-04-01
+	// Michael Borcherds 2008-04-02
 	public Color getObjectColor() {
 		if (colFunction == null) return objColor;
-		else return RGBtoColor((int)colFunction.getValue(),255);
+		//else return RGBtoColor((int)colFunction.getValue(),255);
+		else return getRGBFromList(255);
 	}
 
 	// Michael Borcherds 2008-03-01
@@ -2687,14 +2691,14 @@ public abstract class GeoElement
 			condShowObject = null;
 	}
 	
-	public final GeoNumeric getColorFunction() {
+	public final GeoList getColorFunction() {
 		System.out.println("getColorFunction");
 		return colFunction;
 	}
 
-	public final void setColorFunction(GeoNumeric col) 
+	public final void setColorFunction(GeoList col) 
 	throws CircularDefinitionException {
-		System.out.println("setColorFunction"+col.getValue());
+		//System.out.println("setColorFunction"+col.getValue());
 		// check for circular definition
 		if (this == col || isParentOf(col))
 			throw new CircularDefinitionException();	
@@ -2713,7 +2717,7 @@ public abstract class GeoElement
 		}		
 	}
 	
-	public final void removeColorFunction(GeoNumeric col) {
+	public final void removeColorFunction(GeoList col) {
 		System.out.println("removeColorFunction");
 		if (colFunction == col)
 			colFunction = null;

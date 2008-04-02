@@ -49,8 +49,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	private boolean isDrawable = false;
 	private boolean isUsedForRandom = false;
 	
-	private ArrayList condListenersShowObject;
-
 	private int slopeTriangleSize = 1;
 
 	// for slider	
@@ -611,62 +609,4 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		this.isUsedForRandom = isUsedForRandom;
 	}
 	
-	
-	/**
-	 * Registers geo as a listener for updates
-	 * of this boolean object. If this object is
-	 * updated it calls geo.updateConditions()
-	 * @param geo
-	 */
-	public void registerConditionListener(GeoElement geo) {
-		if (condListenersShowObject == null)
-			condListenersShowObject = new ArrayList();
-		condListenersShowObject.add(geo);
-	}
-	
-	public void unregisterConditionListener(GeoElement geo) {
-		if (condListenersShowObject != null) {
-			condListenersShowObject.remove(geo);
-		}
-	}
-	
-
-	/**
-	 * Calls super.update() and update() for all registered condition listener geos.	
-	 * 	// Michael Borcherds 2008-04-01 
-	 */
-	public void update() {  	
-		super.update();
-		// update all registered locatables (they have this point as start point)
-		if (condListenersShowObject != null) {
-			System.out.println("GeoNumeric update listeners");
-			for (int i=0; i < condListenersShowObject.size(); i++) {
-				GeoElement geo = (GeoElement) condListenersShowObject.get(i);		
-				//kernel.notifyUpdate(geo);
-				geo.toGeoElement().updateCascade();
-			}		
-		}
-	}
-	/**
-	 * Tells conidition listeners that their condition is removed
-	 * and calls super.remove()
-	 * 	// Michael Borcherds 2008-04-01
-	 */
-	protected void doRemove() {
-		if (condListenersShowObject != null) {
-			// copy conditionListeners into array
-			Object [] geos = condListenersShowObject.toArray();	
-			condListenersShowObject.clear();
-			
-			// tell all condition listeners 
-			for (int i=0; i < geos.length; i++) {		
-				GeoElement geo = (GeoElement) geos[i];
-				geo.removeColorFunction(this);				
-				kernel.notifyUpdate(geo);			
-			}			
-		}
-		
-		super.doRemove();
-	}
-
 }
