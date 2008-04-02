@@ -2362,6 +2362,23 @@ public abstract class GeoElement
 		sb.append(" alpha=\"");
 		sb.append(alphaValue);
 		sb.append("\"");
+		
+		if (colFunction!=null)
+		{
+			sb.append(" dynamicr=\"");
+			sb.append(colFunction.get(0).getLabelOrCommandDescription());
+			sb.append("\"");
+			sb.append(" dynamicg=\"");
+			sb.append(colFunction.get(1).getLabelOrCommandDescription());
+			sb.append("\"");
+			sb.append(" dynamicb=\"");
+			sb.append(colFunction.get(2).getLabelOrCommandDescription());
+			sb.append("\"");
+			
+		}
+		
+		
+		
 		sb.append("/>\n");
 		
 		// layer

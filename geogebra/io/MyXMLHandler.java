@@ -1227,6 +1227,29 @@ public class MyXMLHandler implements DocHandler {
         if (col == null) return false;
         geo.setObjColor(col);
         
+        // Dynamic colors
+        // Michael Borcherds 2008-04-02
+        String red = "";
+        String green = "";
+        String blue = "";
+        red = (String)attrs.get("dynamicr");
+        green = (String)attrs.get("dynamicg");
+        blue = (String)attrs.get("dynamicb");
+        
+        if (red != null && green != null && blue != null) try
+        {
+            if ( !red.equals("") || !green.equals("") || !blue.equals("") )
+            {
+            	if (red.equals("")) red = "0";
+            	if (green.equals("")) green = "0";
+            	if (blue.equals("")) blue = "0";
+            	
+            	geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red + ","+green+","+blue+"}"));
+            }
+        } catch (Exception e) { System.err.println("Error loading Dynamic Colors"); }
+        
+        
+        
         String alpha = (String) attrs.get("alpha");
         if (alpha != null) 
         	geo.setAlphaValue(Float.parseFloat(alpha));        
