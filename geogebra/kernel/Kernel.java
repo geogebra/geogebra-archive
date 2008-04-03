@@ -3591,6 +3591,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * multiply out brackets
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoFunction Expand(String label, GeoFunction func) {		
+		AlgoExpand algo = new AlgoExpand(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(
