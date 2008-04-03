@@ -3600,6 +3600,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Factorize
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoFunction Factorize(String label, GeoFunction func) {		
+		AlgoFactorize algo = new AlgoFactorize(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(

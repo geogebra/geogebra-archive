@@ -6,9 +6,9 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
-class CmdExpand extends CommandProcessor {
+class CmdFactorize extends CommandProcessor {
 	
-	public CmdExpand (Kernel kernel) {
+	public CmdFactorize (Kernel kernel) {
 		super(kernel);
 	}
 	
@@ -23,7 +23,7 @@ final public GeoElement[] process(Command c) throws MyError {
              if (ok[0] = (arg[0] .isGeoFunctionable())) {
                  GeoElement[] ret =
                      {
-                          kernel.Expand(
+                          kernel.Factorize (
                              c.getLabel(), (GeoFunction)arg[0])};
                  return ret;                
              }                        

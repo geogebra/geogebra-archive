@@ -230,6 +230,7 @@ public class CommandDispatcher {
     	cmdTable.put("RandomNormal", new CmdRandomNormal(kernel));
     	cmdTable.put("InverseNormal", new CmdInverseNormal(kernel));
     	cmdTable.put("Expand", new CmdExpand(kernel));
+    	cmdTable.put("Factorize", new CmdFactorize(kernel));
     	cmdTable.put("Row", new CmdRow(kernel));
     	cmdTable.put("Element", new CmdElement(kernel));
     	cmdTable.put("Iteration", new CmdIteration(kernel));
