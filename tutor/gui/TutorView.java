@@ -42,6 +42,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import tutor.model.Annotation;
+import tutor.model.Justification;
 import tutor.model.Strategy;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
@@ -158,6 +159,12 @@ public class TutorView extends JPanel implements View  {
 			}
 		}
 		
+		Vector justs = getJustifications();
+		for (Iterator it = justs.iterator(); it.hasNext();) {
+			String j = (String) it.next();
+			justificationCombo.addItem(j);
+		}
+		
 		/*
 		 if (strategies != null) 
 		 //PROCEED STRATEGIES FILES
@@ -185,11 +192,11 @@ public class TutorView extends JPanel implements View  {
 			a.add("");
 		
 			//JustificationDao dao = new HttpJustificationDao();
-			/*List justs = justificationDao.findProblemJustifications(new Long(7));
+			List justs = justificationDao.findProblemJustifications(new Long(7));
 			for (Iterator it = justs.iterator(); it.hasNext();) {
 				Justification j = (Justification) it.next();
 				a.add(j.getDescription());
-			}*/
+			}
 			
 			return a;
 	}
@@ -200,7 +207,8 @@ public class TutorView extends JPanel implements View  {
         resultArea.setText(WELCOME);
         resultArea.setEditable(false);
 
-		justificationCombo = new JComboBox(getJustifications());
+		//justificationCombo = new JComboBox(getJustifications());
+        justificationCombo = new JComboBox();
 		justificationCombo.addActionListener(tutorController);
 	
         commentField.setEditable(true);
@@ -211,7 +219,7 @@ public class TutorView extends JPanel implements View  {
         JPanel bottomPanel = new JPanel();
 
         JScrollPane scrollingArea = new JScrollPane(resultArea);
-        scrollingArea.setPreferredSize(new Dimension(250, 380));
+        scrollingArea.setPreferredSize(new Dimension(50, 380));
         
         
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.PAGE_AXIS));
