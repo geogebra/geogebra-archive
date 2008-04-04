@@ -79,7 +79,7 @@ public class AlgoFactorize extends AlgoElement {
 
 		if (yacasError) // Yacas error
 		{
-			g=f; // set to input ie leave unchanged
+			g.set(f); // set to input ie leave unchanged
 		}
 		else
 		{
