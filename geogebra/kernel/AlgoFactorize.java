@@ -83,7 +83,7 @@ public class AlgoFactorize extends AlgoElement {
 		}
 		else
 		{
-			g = kernel.getAlgebraProcessor().evaluateToFunction(functionOut);			
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));			
 		}
 		
 		g.setDefined(true);	

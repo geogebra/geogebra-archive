@@ -75,7 +75,7 @@ public class AlgoExpand extends AlgoElement {
 		
 		System.out.println("Expand output:"+function);
 		
-		g = kernel.getAlgebraProcessor().evaluateToFunction(function);
+		g.set(kernel.getAlgebraProcessor().evaluateToFunction(function));
 		
 		g.setDefined(true);	
 		
