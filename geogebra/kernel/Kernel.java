@@ -3591,10 +3591,10 @@ public class Kernel {
 	}
 	
 	/**
-	 * multiply out brackets
-	 * Michael Borcherds 2008-04-04
+	 * Expand function expression
+	 * @author Michael Borcherds 2008-04-04
 	 */
-	final public GeoFunction Expand(String label, GeoFunction func) {		
+	final public GeoElement Expand(String label, GeoFunction func) {		
 		AlgoExpand algo = new AlgoExpand(cons, label, func);
 		return algo.getResult();			
 	}
