@@ -109,7 +109,7 @@ public final class MyMath {
 				factorialTable[4] = 24.0; }						
 
 	// logarithm of gamma function of xx
-	private static double gammln(double xx) {
+	public static double gammln(double xx) {
 		double x,y,tmp,ser;
 		int j;
 

@@ -1987,6 +1987,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Binomial[n,r]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Binomial(String label, NumberValue a, NumberValue b) {
+		AlgoBinomial algo = new AlgoBinomial(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * RandomNormal[mean,variance]
 	 * Michael Borcherds
 	 */
