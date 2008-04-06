@@ -16,7 +16,6 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Construction;
 
 import geogebra.kernel.arithmetic.NumberValue;

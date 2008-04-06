@@ -16,7 +16,6 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Construction;
 
@@ -159,21 +158,4 @@ public class AlgoMode extends AlgoElement {
     	listElement.setValue(value);
     }    
 
-    private void setListElement(int index, String value) {
-    	GeoText listElement;
-    	if (index < outputList.getCacheSize()) {
-    		// use existing list element
-    		listElement = (GeoText) outputList.getCached(index);    	
-    	} else {
-    		// create a new list element
-    		listElement = new GeoText(cons);
-    		listElement.setParentAlgorithm(this);
-    		listElement.setConstructionDefaults();
-    		listElement.setUseVisualDefaults(false);	    		
-    	}
-    	
-    	outputList.add(listElement);
-    	listElement.setTextString(value);
-    }    
-    
 }

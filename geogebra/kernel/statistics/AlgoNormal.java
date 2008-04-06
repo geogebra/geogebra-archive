@@ -10,12 +10,16 @@ the Free Software Foundation.
 
 */
 
-package geogebra.kernel;
+package geogebra.kernel.statistics;
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
- * InverseNormal
+ * Normal
  * @author Michael Borcherds
  * @version 20-01-2008
  */
@@ -26,7 +30,7 @@ public class AlgoNormal extends AlgoElement {
 	private NumberValue a,b,c; //input
     private GeoNumeric num; //output	
 
-    AlgoNormal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
+    public AlgoNormal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
         super(cons);
         this.a = a;
         this.b = b;
@@ -54,7 +58,7 @@ public class AlgoNormal extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoNumeric getResult() {
+    public GeoNumeric getResult() {
         return num;
     }
 

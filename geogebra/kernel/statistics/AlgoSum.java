@@ -12,11 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Construction;
 
 /**

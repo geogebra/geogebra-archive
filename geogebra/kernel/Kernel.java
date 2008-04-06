@@ -1997,11 +1997,21 @@ public class Kernel {
 	}
 	
 	/** 
-	 * RandomNormal[mean,variance,x]
+	 * InverseNormal[mean,variance,x]
 	 * Michael Borcherds
 	 */
 	final public GeoNumeric InverseNormal(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoInverseNormal algo = new AlgoInverseNormal(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Normal[mean,variance,x]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Normal(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoNormal algo = new AlgoNormal(cons, label, a, b, c);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
