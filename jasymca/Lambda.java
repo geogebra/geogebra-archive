@@ -158,7 +158,7 @@ class UserFunction extends LambdaAlgebraic{
 			}
 		}
 		this.fname = fname;
-		this.env = env;
+		Lambda.env = env; // changed to static reference Michael Borcherds 2008-04-06
 	}
 
 	Zahl f(Zahl x) throws JasymcaException{ 

@@ -27,7 +27,7 @@ public class TutorController implements MouseListener, ActionListener {
 			
 			JComboBox cb = (JComboBox) e.getSource();
 	        String just = (String)cb.getSelectedItem();    			
-	        view.printTextArea(just, view.ARGUMENT);
+	        view.printTextArea(just, TutorView.ARGUMENT); // changed to static reference Michael Borcherds 2008-04-06
 		}
 		else if (e.getSource().equals(view.getCommentField())) {
 			

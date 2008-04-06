@@ -58,7 +58,7 @@ public class FunctionVariable extends Variable{
 			Object prefix = Lisp.change( Lisp.compile_rule(diffrule),
 						Lisp.list(Lisp.cons("x", arg)) );
 			// Multiply with diff(arg)
-			return ((Algebraic)Jasymca.evalPrefix(prefix,true,la.env)).mult(arg.deriv(x));
+			return ((Algebraic)Jasymca.evalPrefix(prefix,true,Lambda.env)).mult(arg.deriv(x)); // changed to static reference Michael Borcherds 2008-04-06
 		}catch(ParseException p){
 			throw new JasymcaException(p.toString());
 		}
