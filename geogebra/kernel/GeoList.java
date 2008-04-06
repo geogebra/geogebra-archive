@@ -443,8 +443,8 @@ public class GeoList extends GeoElement implements ListValue {
 				System.out.println("GeoList update listeners");
 				for (int i=0; i < condListenersShowObject.size(); i++) {
 					GeoElement geo = (GeoElement) condListenersShowObject.get(i);		
-					//kernel.notifyUpdate(geo);
-					geo.toGeoElement().updateCascade();
+					kernel.notifyUpdate(geo);
+					//geo.toGeoElement().updateCascade();
 				}		
 			}
 		}
