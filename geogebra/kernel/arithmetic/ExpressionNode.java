@@ -36,7 +36,7 @@ import java.util.Iterator;
 
 
 /**
- *
+ * Tree node for expressions like "3*a - b/5"
  * @author  Markus
  * @version 
  */
@@ -693,25 +693,38 @@ implements ExpressionValue {
             	
             	// special case: left side is negative and 
             	// right side is a fraction a/b with a and b integers
+            	// x^(a/b) := (x^a)^(1/b)
             	if (base < 0 && right.isExpressionNode()) {            		
             		ExpressionNode node = (ExpressionNode) right;
             		if (node.operation == DIVIDE) {
             			// check if we have a/b with a and b integers
-            			double a = ((NumberValue) node.left.evaluate()).getDouble();
-            			if (kernel.isInteger(a)) {
+            			double a = ((NumberValue) node.left.evaluate()).getDouble();            			            		
+            			if (kernel.isInteger(a)) {            				
             				double b = ((NumberValue) node.right.evaluate()).getDouble();                 			
-                			if (kernel.isInteger(b)) {  
-                				boolean oddNumber = ((long) b) % 2 == 1;
-                				if (oddNumber) {
-                					// (-3)^(1/3) = -(3^(1/3))
-                					num.set(-Math.pow(-base, a/b));
-                				} else {             		
-                					// (-3)^(1/2) = undefined
-                					num.set(Double.NaN);
-                				}
+                			if (b == 0)
+                				// (x^a)^(1/0)
+                				num.set(Double.NaN);            				
+                			else if (kernel.isInteger(b)) { 
+                				// we will now evaluate (x^a)^(1/b) instead of x^(a/b)                				
+                				// set base = x^a
+                				if (a != 1.0) base = Math.pow(base, a);             						            						
+            					if (base > 0) {             						
+            						// base > 0 => base^(1/b) is no problem
+            						num.set(Math.pow(base, 1/b));            						
+            					}           
+            					else { // base < 0            				
+	                				boolean oddB = ((long) b) % 2 == 1;
+	                				if (oddB) {      	 
+	            						// base < 0 and b odd: (base)^(1/b) = -(-base^(1/b)) 
+	            						num.set(-Math.pow(-base, 1/b));	                					
+	                				} else {             		
+	                					// base < 0 and b even: (base)^(1/b) = undefined 
+	                					num.set(Double.NaN);
+	                				}
+            					}
                 				return num;
                 			}
-            			}
+            			}            	
             		}
             	}
             	

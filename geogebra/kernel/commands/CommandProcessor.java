@@ -2734,8 +2734,8 @@ final public GeoElement[] process(Command c) throws MyError {
 /*
  * Translate[ <GeoPoint>, <GeoVector> ] Translate[ <GeoLine>, <GeoVector> ]
  * Translate[ <GeoConic>, <GeoVector> ] Translate[ <GeoFunction>, <GeoVector> ]
- * Translate[ <GeoVector>, <GeoPoint> ] // set start point Translate[
- * <GeoPolygon>, <GeoVector> ]
+ * Translate[ <GeoVector>, <GeoPoint> ] // set start point 
+ * Translate[ <GeoPolygon>, <GeoVector> ]
  *  
  */
 class CmdTranslate extends CommandProcessor {
