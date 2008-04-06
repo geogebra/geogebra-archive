@@ -50,7 +50,7 @@ public class AlgoDependentList extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
     	// create input array from listItems array-list
     	// and fill the geoList with these objects
     	int size = listItems.size();
@@ -84,7 +84,7 @@ public class AlgoDependentList extends AlgoElement {
     	return geoList; 
     }       
     
-    final void compute() {	    	
+    protected final void compute() {	    	
     	geoList.clear();
     	for (int i=0; i < input.length; i++) {    
     		// add input and its siblings to the list

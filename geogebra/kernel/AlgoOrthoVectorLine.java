@@ -62,7 +62,7 @@ public class AlgoOrthoVectorLine extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];        
         input[0] = g;
         
@@ -75,7 +75,7 @@ public class AlgoOrthoVectorLine extends AlgoElement {
     GeoLine getg() { return g; }
     
     // line through P normal to v
-    final void compute() {        
+    protected final void compute() {        
         n.x = g.x;
         n.y = g.y;        
     }   

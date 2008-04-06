@@ -64,7 +64,7 @@ public class AlgoDependentLine extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = equation.getGeoElementVariables();         
         
         output = new GeoElement[1];        
@@ -75,7 +75,7 @@ public class AlgoDependentLine extends AlgoElement {
     public GeoLine getLine() { return g; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {  
+    protected final void compute() {  
     	try {
 	        g.x = ((NumberValue) ev[0].evaluate()).getDouble();
 	        g.y = ((NumberValue) ev[1].evaluate()).getDouble();

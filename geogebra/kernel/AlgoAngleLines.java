@@ -50,7 +50,7 @@ public class AlgoAngleLines extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = g;
         input[1] = h;
@@ -72,7 +72,7 @@ public class AlgoAngleLines extends AlgoElement {
 
     // calc angle between lines g and h
     // use normalvectors (gx, gy), (hx, hy)
-    final void compute() {
+    protected final void compute() {
      	// |v| * |w| * sin(alpha) = det(v, w)
     	// cos(alpha) = v . w / (|v| * |w|)
     	// tan(alpha) = sin(alpha) / cos(alpha)

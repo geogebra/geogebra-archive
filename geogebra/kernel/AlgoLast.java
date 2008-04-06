@@ -43,7 +43,7 @@ public class AlgoLast extends AlgoElement {
         return "AlgoLast";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = inputList;
         input[1] = n;
@@ -57,7 +57,7 @@ public class AlgoLast extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	size = inputList.size();
     	int outsize=(int)n.getDouble();

@@ -34,7 +34,7 @@ implements EuclidianViewAlgo {
 	 
     private static ResourceBundle rbalgo2command;
     
-    GeoElement[] input, output;
+    protected GeoElement[] input, output;
     private GeoElement [] efficientInput;
     
     // numbers among input objects of algorithm that are used within random()
@@ -60,10 +60,10 @@ implements EuclidianViewAlgo {
     }
     
     // in setInputOutput() the member vars input and output are set
-    abstract void setInputOutput();
+    abstract protected  void setInputOutput();
 
     // in compute() the output ist derived from the input
-    abstract void compute();       
+    abstract protected void compute();       
 
     /**
      * Inits this algorithm for the near-to-relationship. This
@@ -137,7 +137,7 @@ implements EuclidianViewAlgo {
      *  the using algo does).
      * @see setInputOutput()
      */
-    final void setDependencies() {       	      	      	
+    final protected void setDependencies() {       	      	      	
         // dependents on input
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);            
@@ -201,7 +201,7 @@ implements EuclidianViewAlgo {
      * are need to be randomized. This is needed when there an
      * algorithm needs a random number that is not one of it's input objects.
      */
-    void setRandomInputNumbers(GeoNumeric [] randNumbers) {
+    protected void setRandomInputNumbers(GeoNumeric [] randNumbers) {
     	randomInputNumbers = randNumbers;    		
     }
     

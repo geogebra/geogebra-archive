@@ -72,7 +72,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     }        
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
     	input = new GeoElement[3];
 		input[0] = A;
 		input[1] = B;
@@ -124,7 +124,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     /**
      * Computes points of regular polygon
      */
-    final void compute() {      
+    protected final void compute() {      
     	// check points and number
     	double nd = num.getDouble();
     	if (Double.isNaN(nd)) nd = 2;

@@ -51,7 +51,7 @@ public class AlgoDependentText extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
         output = new GeoElement[1];        
@@ -62,7 +62,7 @@ public class AlgoDependentText extends AlgoElement {
     public GeoText getGeoText() { return text; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {	
+    protected final void compute() {	
     	int oldPrintDecimals = kernel.getPrintDecimals();
     	kernel.setPrintDecimals(text.getPrintDecimals());
     	

@@ -60,7 +60,7 @@ public class AlgoMidpointSegment extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = segment;        
 
@@ -74,7 +74,7 @@ public class AlgoMidpointSegment extends AlgoElement {
     }
 
     // calc midpoint
-    final void compute() {
+    protected final void compute() {
         boolean pInf = P.isInfinite();
         boolean qInf = Q.isInfinite();
 

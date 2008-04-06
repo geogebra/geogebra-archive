@@ -43,7 +43,7 @@ implements EuclidianViewAlgo {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = img;        
         input[1] = number.toGeoElement();
@@ -55,7 +55,7 @@ implements EuclidianViewAlgo {
          
     GeoPoint getCorner() { return corner; }        
     
-    final void compute() {         	
+    protected final void compute() {         	
 		img.calculateCornerPoint(corner, (int) number.getDouble());	    	
     }
     

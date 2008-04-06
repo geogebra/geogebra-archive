@@ -39,7 +39,7 @@ public class AlgoMod extends AlgoTwoNumFunction {
     }       
     
     // calc area of conic c 
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double mod = a.getDouble() % b.getDouble();
     		num.setValue(mod);

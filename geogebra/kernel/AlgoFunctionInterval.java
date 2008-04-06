@@ -57,7 +57,7 @@ public class AlgoFunctionInterval extends AlgoElement {
     }   
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = f;
         input[1] = ageo;
@@ -72,7 +72,7 @@ public class AlgoFunctionInterval extends AlgoElement {
         return g;
     }
     
-    final void compute() {  
+    protected final void compute() {  
         if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined())) 
             g.setUndefined();
                

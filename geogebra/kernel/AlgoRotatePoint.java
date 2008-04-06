@@ -66,7 +66,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
     }
 
     // for AlgoElement
-    void setInputOutput() {    	
+    protected void setInputOutput() {    	
         input = new GeoElement[3];
         input[0] = Ageo;
         input[1] = angleGeo;
@@ -82,7 +82,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
     }
 
     // calc rotated point
-    final void compute() {
+    protected final void compute() {
         Bgeo.set(Ageo);
         B.rotate(angle, Q);
     }

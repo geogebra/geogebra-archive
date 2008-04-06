@@ -62,7 +62,7 @@ public class AlgoUnitVectorLine extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];        
         input[0] = g;
         
@@ -75,7 +75,7 @@ public class AlgoUnitVectorLine extends AlgoElement {
     GeoLine getg() { return g; }
     
     // line through P normal to v
-    final void compute() {        
+    protected final void compute() {        
         length = GeoVec2D.length(g.x, g.y);
         u.x = g.y / length;
         u.y = -g.x / length;        

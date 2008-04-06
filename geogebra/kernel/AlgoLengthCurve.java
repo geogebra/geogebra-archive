@@ -43,7 +43,7 @@ public class AlgoLengthCurve extends AlgoElement {
         return "AlgoLengthCurve";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = c;
         input[1] = t0;
@@ -58,7 +58,7 @@ public class AlgoLengthCurve extends AlgoElement {
         return length;
     }
 
-    final void compute() {
+    protected final void compute() {
     	double a = t0.getValue();
     	double b = t1.getValue();
 

@@ -49,7 +49,7 @@ public class AlgoSlope extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = g;
 
@@ -66,7 +66,7 @@ public class AlgoSlope extends AlgoElement {
     }
 
     // direction vector of g
-    final void compute() {
+    protected final void compute() {
         if (g.isDefined())
             slope.setValue(-g.x / g.y);
         else

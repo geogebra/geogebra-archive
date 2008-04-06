@@ -40,7 +40,7 @@ public class AlgoListLCM extends AlgoElement {
         return "AlgoListLCM";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = geoList;
 
@@ -53,7 +53,7 @@ public class AlgoListLCM extends AlgoElement {
         return num;
     }
 
-    final void compute() {
+    protected final void compute() {
     	int size = geoList.size();
     	if (!geoList.isDefined() ||  size == 0) {
     		num.setUndefined();

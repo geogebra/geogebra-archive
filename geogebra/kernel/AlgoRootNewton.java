@@ -65,7 +65,7 @@ public class AlgoRootNewton extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = f;
         input[1] = startGeo;
@@ -81,7 +81,7 @@ public class AlgoRootNewton extends AlgoElement {
         return rootPoint;
     }
 
-    void compute() {
+    protected void compute() {
         if (!(f.isDefined() && startGeo.isDefined())) {
             rootPoint.setUndefined();
         } else {

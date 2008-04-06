@@ -55,7 +55,7 @@ public class AlgoDistancePointLine extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = g;
@@ -76,7 +76,7 @@ public class AlgoDistancePointLine extends AlgoElement {
     }
 
     // calc length of vector v   
-    final void compute() {
+    protected final void compute() {
         dist.setValue(g.distance(P));
     }
 

@@ -37,7 +37,7 @@ public class AlgoMin extends AlgoTwoNumFunction {
     }
     
     // calc area of conic c 
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double min = Math.min(a.getDouble(), b.getDouble());
     		num.setValue(min);

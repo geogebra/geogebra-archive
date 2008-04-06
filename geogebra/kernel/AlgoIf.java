@@ -58,7 +58,7 @@ public class AlgoIf extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
     	if (elseGeo != null)
     		input = new GeoElement[3];
     	else
@@ -76,7 +76,7 @@ public class AlgoIf extends AlgoElement {
     public GeoElement getGeoElement() { return result; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {	 
+    protected final void compute() {	 
     	try {
 	    	if (condition.getBoolean()) {
 	    		result.set(ifGeo);

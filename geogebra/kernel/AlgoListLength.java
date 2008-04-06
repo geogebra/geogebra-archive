@@ -40,7 +40,7 @@ public class AlgoListLength extends AlgoElement {
         return "AlgoListLength";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = geoList;
 
@@ -53,7 +53,7 @@ public class AlgoListLength extends AlgoElement {
         return length;
     }
 
-    final void compute() {
+    protected final void compute() {
     	if (geoList.isDefined())
     		length.setValue(geoList.size());
     	else 

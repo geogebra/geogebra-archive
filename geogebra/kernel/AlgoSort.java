@@ -44,7 +44,7 @@ public class AlgoSort extends AlgoElement {
         return "AlgoSort";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = inputList;
 
@@ -57,7 +57,7 @@ public class AlgoSort extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	size = inputList.size();
     	if (!inputList.isDefined() ||  size == 0) {

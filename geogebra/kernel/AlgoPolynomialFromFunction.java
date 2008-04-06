@@ -47,7 +47,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = f;
 
@@ -61,7 +61,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
     }
 
 //  ON CHANGE: similar code is in AlgoTaylorSeries
-    final void compute() {       
+    protected final void compute() {       
         if (!f.isDefined()) {
         	g.setUndefined();
         	return;

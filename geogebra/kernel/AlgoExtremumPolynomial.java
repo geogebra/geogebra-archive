@@ -51,7 +51,7 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         return super.getRootPoints();
     }
 
-    final void compute() {
+    protected final void compute() {
         if (f.isDefined()) {
             // TODO: remove
             //System.out.println("*** extremum of " + f);

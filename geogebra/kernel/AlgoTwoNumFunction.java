@@ -30,7 +30,7 @@ public abstract class AlgoTwoNumFunction extends AlgoElement {
 	protected NumberValue a, b;  // input
     protected GeoNumeric num;     // output           
         
-    AlgoTwoNumFunction(Construction cons, String label, NumberValue a, NumberValue b) {       
+    protected AlgoTwoNumFunction(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons); 
       this.a = a;
       this.b = b;
@@ -46,7 +46,7 @@ public abstract class AlgoTwoNumFunction extends AlgoElement {
     abstract protected String getClassName();
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input =  new GeoElement[2];
         input[0] = a.toGeoElement();
         input[1] = b.toGeoElement();
@@ -56,7 +56,7 @@ public abstract class AlgoTwoNumFunction extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }    
     
-    GeoNumeric getResult() { return num; }        
+    protected GeoNumeric getResult() { return num; }        
 
-    abstract void compute();     
+    abstract protected void compute();     
 }

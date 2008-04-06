@@ -66,7 +66,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = f;
@@ -90,7 +90,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
     }
 
     // calc tangent at x=a
-    final void compute() {
+    protected final void compute() {
         if (!(f.isDefined() && P.isDefined() && deriv.isDefined())) {
             tangent.setUndefined();
             return;

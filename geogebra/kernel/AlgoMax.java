@@ -34,7 +34,7 @@ public class AlgoMax extends AlgoTwoNumFunction {
         return "AlgoMax";
     }
       
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double max = Math.max(a.getDouble(), b.getDouble());
     		num.setValue(max);

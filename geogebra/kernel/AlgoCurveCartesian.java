@@ -74,7 +74,7 @@ public class AlgoCurveCartesian extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = new GeoElement[5];
         input[0] = xcoord.toGeoElement();
         input[1] = ycoord.toGeoElement();
@@ -89,7 +89,7 @@ public class AlgoCurveCartesian extends AlgoElement {
     
     public GeoCurveCartesian getCurve() { return curve; }        
     
-    final void compute() {    
+    protected final void compute() {    
     	// the coord-functions don't have to be updated,
     	// so we only set the interval
     	curve.setInterval(from.getDouble(), to.getDouble());

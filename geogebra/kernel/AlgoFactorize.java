@@ -39,7 +39,7 @@ public class AlgoFactorize extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = f;
 
@@ -52,7 +52,7 @@ public class AlgoFactorize extends AlgoElement {
         return g;
     }
 
-    final void compute() {       
+    protected final void compute() {       
         if (!f.isDefined()) {
         	g.setUndefined();
         	return;

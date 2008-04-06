@@ -154,7 +154,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     }
     
     // calc intersections of conic c and line g
-    final void compute() {  
+    protected final void compute() {  
         // g is defined as tangent of c
         if (isTangent) {
             P[0].setCoords(tangentPoint);

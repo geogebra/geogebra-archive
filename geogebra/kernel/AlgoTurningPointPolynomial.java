@@ -37,7 +37,7 @@ public class AlgoTurningPointPolynomial extends AlgoRootsPolynomial {
         return super.getRootPoints();
     }
     
-    final void compute() {              
+    protected final void compute() {              
         if (f.isDefined()) {
             yValFunction = f.getFunction();                                                                    
             

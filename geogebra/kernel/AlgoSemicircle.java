@@ -64,7 +64,7 @@ public class AlgoSemicircle extends AlgoElement {
 	}
 
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = A;      
         input[1] = B;    
@@ -87,7 +87,7 @@ public class AlgoSemicircle extends AlgoElement {
     	return B;
     }    
     
-    void compute() {
+    protected void compute() {
     	if (!conic.isDefined()) {
     		conicPart.setUndefined();
     		return;

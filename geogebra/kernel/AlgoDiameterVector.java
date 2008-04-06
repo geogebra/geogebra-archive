@@ -56,7 +56,7 @@ public class AlgoDiameterVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = v;
         input[1] = c;
@@ -77,7 +77,7 @@ public class AlgoDiameterVector extends AlgoElement {
     }
 
     // calc diameter line of v relativ to c
-    final void compute() {
+    protected final void compute() {
         c.diameterLine(v, diameter);
     }
 

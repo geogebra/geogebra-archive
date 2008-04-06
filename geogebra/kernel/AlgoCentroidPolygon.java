@@ -37,7 +37,7 @@ public class AlgoCentroidPolygon extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = p;        
         
@@ -49,7 +49,7 @@ public class AlgoCentroidPolygon extends AlgoElement {
     GeoPolygon getPolygon() { return p; }
     GeoPoint getPoint() { return centroid; }    
         
-    final void compute() {
+    protected final void compute() {
         p.calcCentroid(centroid);
     }
     

@@ -45,7 +45,7 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = A;
         input[1] = f;
@@ -60,7 +60,7 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     	return circle;
     }
 
-    final void compute() {
+    protected final void compute() {
     	double radius = 1/Math.abs(curv.getValue());
     	double r2 = radius*radius;
     	double x = r2 * v.x;

@@ -68,7 +68,7 @@ public class AlgoDependentConic extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = equation.getGeoElementVariables();  
         
         output = new GeoElement[1];        
@@ -79,7 +79,7 @@ public class AlgoDependentConic extends AlgoElement {
     public GeoConic getConic() { return conic; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {   
+    protected final void compute() {   
     	try {
 	        conic.setCoeffs( 
 	                ((NumberValue) ev[0].evaluate()).getDouble(),

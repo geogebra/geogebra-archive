@@ -52,7 +52,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
         output = new GeoElement[1];        
@@ -65,7 +65,7 @@ public class AlgoDependentListExpression extends AlgoElement {
     ExpressionNode getExpression() { return root; }
     
     // evaluate the current value of the arithmetic tree
-    final void compute() {    
+    protected final void compute() {    
     	
     	// TODO: before eval
     	System.out.println("before eval: " + root);

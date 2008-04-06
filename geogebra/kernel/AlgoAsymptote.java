@@ -91,7 +91,7 @@ public class AlgoAsymptote extends AlgoElement {
     }
 
     // calc asymptotes
-    final void compute() {
+    protected final void compute() {
         // only hyperbolas have asymptotes
         switch (c.type) {
             case GeoConic.CONIC_HYPERBOLA :

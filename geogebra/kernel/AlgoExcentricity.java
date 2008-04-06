@@ -47,7 +47,7 @@ public class AlgoExcentricity extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;
 
@@ -64,7 +64,7 @@ public class AlgoExcentricity extends AlgoElement {
     }
 
     // set excentricity
-    final void compute() {
+    protected final void compute() {
         switch (c.type) {
             case GeoConic.CONIC_CIRCLE :
                 num.setValue(0.0);

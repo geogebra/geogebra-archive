@@ -29,7 +29,7 @@ public class AlgoLCM extends AlgoTwoNumFunction {
         return "AlgoLCM";
     }
       
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		if (a.getDouble()==Math.floor(a.getDouble()) && b.getDouble()==Math.floor(b.getDouble()))
     		{       // TODO what shall we do with numbers larger than 2^57?

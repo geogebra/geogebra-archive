@@ -62,7 +62,7 @@ public class AlgoUnitOrthoVectorVector extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];        
         input[0] = v;
         
@@ -75,7 +75,7 @@ public class AlgoUnitOrthoVectorVector extends AlgoElement {
     GeoVector getv() { return v; }
     
     // line through P normal to v
-    final void compute() {        
+    protected final void compute() {        
         length = GeoVec2D.length(v.x, v.y);
         n.x = -v.y / length;
         n.y = v.x / length;        

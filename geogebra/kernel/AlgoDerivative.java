@@ -70,7 +70,7 @@ public class AlgoDerivative extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         int length = (order == null) ? 1 : 2;
         input = new GeoElement[length];
         input[0] = fgeo;
@@ -86,7 +86,7 @@ public class AlgoDerivative extends AlgoElement {
         return ggeo;
     }
 
-    final void compute() {
+    protected final void compute() {
         if (!fgeo.isDefined()) {
             ggeo.setUndefined();
             return;

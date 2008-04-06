@@ -66,7 +66,7 @@ public class AlgoIntegralFunctions extends AlgoElement {
 	}
 
 	// for AlgoElement
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[4];
 		input[0] = f;
 		input[1] = g;
@@ -98,7 +98,7 @@ public class AlgoIntegralFunctions extends AlgoElement {
 		return b;
 	}
 	
-	final void compute() {	
+	protected final void compute() {	
 		if (!f.isDefined() || !g.isDefined() || !ageo.isDefined() || !bgeo.isDefined()) {
 			n.setUndefined();
 			return;

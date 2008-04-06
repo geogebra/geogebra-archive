@@ -83,11 +83,11 @@ public class AlgoMacro extends AlgoElement {
 		return macro.getCommandName();
 	}
     
-    void setInputOutput() {    	             
+	protected void setInputOutput() {    	             
         setDependencies();
     }             
         
-    final void compute() {	
+    protected final void compute() {	
     	try {
     		
     		// set macro geos to algo geos state

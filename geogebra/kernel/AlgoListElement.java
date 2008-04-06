@@ -59,7 +59,7 @@ public class AlgoListElement extends AlgoElement {
         return "AlgoListElement";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = geoList;
         input[1] = numGeo;
@@ -73,7 +73,7 @@ public class AlgoListElement extends AlgoElement {
         return element;
     }
 
-    final void compute() {
+    protected final void compute() {
     	if (!numGeo.isDefined() || !geoList.isDefined()) {
         	element.setUndefined();
     		return;

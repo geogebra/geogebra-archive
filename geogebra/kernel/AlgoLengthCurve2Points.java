@@ -43,7 +43,7 @@ public class AlgoLengthCurve2Points extends AlgoElement {
         return "AlgoLengthCurve2Points";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = c;
         input[1] = A;
@@ -58,7 +58,7 @@ public class AlgoLengthCurve2Points extends AlgoElement {
         return length;
     }
 
-    final void compute() {
+    protected final void compute() {
     	double a = c.getClosestParameter(A,c.getMinParameter());
     	double b = c.getClosestParameter(B,c.getMinParameter());
 

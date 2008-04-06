@@ -56,7 +56,7 @@ public class AlgoDependentVector extends AlgoElement {
 	}
 	
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();  
         
         output = new GeoElement[1];        
@@ -67,7 +67,7 @@ public class AlgoDependentVector extends AlgoElement {
     public GeoVector getVector() { return v; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {   
+    protected final void compute() {   
     	try {
 	        temp = ((VectorValue) root.evaluate()).getVector();
 	        v.x = temp.x;

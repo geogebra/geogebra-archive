@@ -46,7 +46,7 @@ public class AlgoAngleNumeric extends AlgoElement {
     }
         
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = num;        
         
@@ -59,7 +59,7 @@ public class AlgoAngleNumeric extends AlgoElement {
     GeoNumeric getNumber() { return num; }        
     
     // compute conic's angle
-    final void compute() {                
+    protected final void compute() {                
         // copy number to angle
         angle.setValue(num.value);       
     }

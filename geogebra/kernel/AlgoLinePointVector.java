@@ -57,7 +57,7 @@ public class AlgoLinePointVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = v;
@@ -78,7 +78,7 @@ public class AlgoLinePointVector extends AlgoElement {
     }
 
     // calc the line g through P and Q    
-    final void compute() {
+    protected final void compute() {
         // g = cross(P, v)
         GeoVec3D.lineThroughPointVector(P, v, g);
     }

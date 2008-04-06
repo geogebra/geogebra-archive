@@ -38,7 +38,7 @@ public class AlgoDiv extends AlgoTwoNumFunction {
     }        
     
     // calc area of conic c 
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double fraction = a.getDouble() / b.getDouble();
     		double integer = Math.round(fraction);	

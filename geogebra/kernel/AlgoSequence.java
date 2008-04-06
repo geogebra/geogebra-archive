@@ -84,7 +84,7 @@ public class AlgoSequence extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
     	int len = var_step == null ? 4 : 5;
         input = new GeoElement[len];
         input[0] = expression;
@@ -104,7 +104,7 @@ public class AlgoSequence extends AlgoElement {
         return list;
     }      
     
-    final void compute() {    	
+    protected final void compute() {    	
     	for (int i=1; i < input.length; i++) {
     		if (!input[i].isDefined()) {
        			list.setUndefined();

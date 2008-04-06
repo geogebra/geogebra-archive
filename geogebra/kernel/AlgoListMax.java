@@ -42,7 +42,7 @@ public class AlgoListMax extends AlgoElement {
         return "AlgoListMax";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = geoList;
 
@@ -55,7 +55,7 @@ public class AlgoListMax extends AlgoElement {
         return max;
     }
 
-    final void compute() {
+    protected final void compute() {
     	int size = geoList.size();
     	if (!geoList.isDefined() ||  size == 0) {
     		max.setUndefined();

@@ -63,7 +63,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 	}
 
 	// for AlgoElement
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[2];
 		input[0] = A;
 		input[1] = f;
@@ -78,7 +78,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		return v;
 	}
 
-	final void compute() {
+	protected final void compute() {
 		try {			
 			double t, t4, x, y, evals, tvalue;
 

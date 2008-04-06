@@ -43,7 +43,7 @@ public class AlgoNormal extends AlgoElement {
         return "AlgoNormal";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = a.toGeoElement();
         input[1] = b.toGeoElement();
@@ -58,7 +58,7 @@ public class AlgoNormal extends AlgoElement {
         return num;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	
     	if (input[0].isDefined() && input[1].isDefined()) {

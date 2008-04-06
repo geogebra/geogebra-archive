@@ -31,7 +31,7 @@ public class AlgoCrossRatio extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[4];
         input[0] = A;
         input[1] = B;
@@ -47,7 +47,7 @@ public class AlgoCrossRatio extends AlgoElement {
         return M;
     }
 
-    final void compute() {
+    protected final void compute() {
         //Check if the points are aligned
     	if ( !(A.equals(D)) && !(B.equals(C)) 
         	 && GeoPoint.collinear(B, C, D) && GeoPoint.collinear(A, C, D) ) {

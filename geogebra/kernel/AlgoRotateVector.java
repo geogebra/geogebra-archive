@@ -56,7 +56,7 @@ public class AlgoRotateVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = A;
         input[1] = angle;
@@ -77,7 +77,7 @@ public class AlgoRotateVector extends AlgoElement {
     }
 
     // calc rotated Vector
-    final void compute() {
+    protected final void compute() {
         B.setCoords(A);
         B.rotate(angle);
     }

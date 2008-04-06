@@ -59,7 +59,7 @@ public class AlgoEllipseFociLength extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = A;
         input[1] = B;
@@ -81,7 +81,7 @@ public class AlgoEllipseFociLength extends AlgoElement {
     }
 
     // compute ellipse with foci A, B and length of half axis a
-    final void compute() {
+    protected final void compute() {
         ellipse.setEllipseHyperbola(A, B, a.getDouble());
     }
 

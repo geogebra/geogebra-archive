@@ -82,7 +82,7 @@ public class AlgoTangentPoint extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = c;
@@ -144,7 +144,7 @@ public class AlgoTangentPoint extends AlgoElement {
     }
 
     // calc tangents
-    final void compute() {
+    protected final void compute() {
         // degenerates should not have any tangents
         if (c.isDegenerate()) {
             tangents[0].setUndefined();

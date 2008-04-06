@@ -43,7 +43,7 @@ public class AlgoAnglePolygon extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = poly;
 
@@ -90,7 +90,7 @@ public class AlgoAnglePolygon extends AlgoElement {
     // so nothing has to be done here
     void update() {}
 
-    final void compute() {}
+    protected final void compute() {}
 
     public void remove() {
         // clear algoAnglePoly in all algos to avoid null pointer exception

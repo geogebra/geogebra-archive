@@ -66,7 +66,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
 	}
 
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = A;      
         input[1] = B;
@@ -78,7 +78,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
         setDependencies();
     }
     
-    void compute() {
+    protected void compute() {
     	if (!conic.isDefined()) {
     		conicPart.setUndefined();
     		return;

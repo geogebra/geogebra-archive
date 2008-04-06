@@ -68,7 +68,7 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = ngeo;
         input[1] = f;
@@ -86,7 +86,7 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
     }
 
     // calc tangent at x=a
-    final void compute() {
+    protected final void compute() {
         double a = n.getDouble();
         if (!f.isDefined() || !deriv.isDefined() || Double.isInfinite(a) || Double.NaN == a) {
             tangent.setUndefined();

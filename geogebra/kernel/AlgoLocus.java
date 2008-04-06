@@ -137,7 +137,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
     	// it is inefficient to have Q and P as input
     	// let's take all independent parents of Q
     	// and the path as input
@@ -266,7 +266,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
       }             
 
     // compute locus line
-    final void compute() {
+    protected final void compute() {
     	if (!P.isDefined() || macroCons == null) {    		
     		locus.setUndefined();
     		return;

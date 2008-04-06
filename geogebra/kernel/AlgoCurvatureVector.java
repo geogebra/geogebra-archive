@@ -56,7 +56,7 @@ public class AlgoCurvatureVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = A;
         input[1] = f;
@@ -71,7 +71,7 @@ public class AlgoCurvatureVector extends AlgoElement {
     	return v;
     }
 
-    final void compute() {
+    protected final void compute() {
     	try {
 	       double f1eval = f1.evaluate(A.inhomX);
 	       double f2eval = f2.evaluate(A.inhomX);

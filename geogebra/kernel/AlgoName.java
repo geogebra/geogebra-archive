@@ -47,7 +47,7 @@ public class AlgoName extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = geo;
         
@@ -59,7 +59,7 @@ public class AlgoName extends AlgoElement {
     public GeoText getGeoText() { return text; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {    	
+    protected final void compute() {    	
     	text.setTextString(geo.getLabel());	    	
     }         
 }

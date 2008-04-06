@@ -82,7 +82,7 @@ public class AlgoVertex extends AlgoElement {
     GeoConic getConic() { return c; }
     GeoPoint [] getVertex() { return vertex; }    
         
-    final void compute() {  
+    protected final void compute() {  
         switch (c.type) {
             case GeoConic.CONIC_CIRCLE:                                      
             case GeoConic.CONIC_ELLIPSE:

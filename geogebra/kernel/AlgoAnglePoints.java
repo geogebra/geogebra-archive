@@ -82,7 +82,7 @@ public class AlgoAnglePoints extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = A;
         input[1] = B;
@@ -122,7 +122,7 @@ public class AlgoAnglePoints extends AlgoElement {
 
     // calc angle between vectors A-B and C-B    
     // angle in range [0, pi]
-    final void compute() {
+    protected final void compute() {
         if (!A.isFinite() || !B.isFinite() || !C.isFinite()) {
             angle.setUndefined(); // undefined
             return;

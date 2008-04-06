@@ -52,7 +52,7 @@ public class AlgoJoinPointsRay extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = Q;
@@ -67,7 +67,7 @@ public class AlgoJoinPointsRay extends AlgoElement {
     GeoPoint getQ() { return Q; }
     
     // calc the line g through P and Q    
-    final void compute() {
+    protected final void compute() {
         // g = P v Q  <=>  g_n : n = P x Q
         // g = cross(P, Q)
         GeoVec3D.lineThroughPoints(P, Q, ray);        

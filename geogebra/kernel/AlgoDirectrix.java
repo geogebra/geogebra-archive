@@ -58,7 +58,7 @@ public class AlgoDirectrix extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;
 
@@ -75,7 +75,7 @@ public class AlgoDirectrix extends AlgoElement {
     }
 
     // calc axes
-    final void compute() {
+    protected final void compute() {
         // only parabola has directrix
         if (c.type == GeoConic.CONIC_PARABOLA) {
             // directrix has direction of second eigenvector

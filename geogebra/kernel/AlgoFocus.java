@@ -72,7 +72,7 @@ public class AlgoFocus extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;        
         
@@ -83,7 +83,7 @@ public class AlgoFocus extends AlgoElement {
     GeoConic getConic() { return c; }
     GeoPoint [] getFocus() { return focus; }    
         
-    final void compute() {  
+    protected final void compute() {  
         switch (c.type) {
             case GeoConic.CONIC_CIRCLE:
                 focus[0].setCoords(b.x, b.y, 1.0);

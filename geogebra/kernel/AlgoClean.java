@@ -40,7 +40,7 @@ public class AlgoClean extends AlgoElement {
         return "AlgoClean";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = inputList;
 
@@ -53,7 +53,7 @@ public class AlgoClean extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	size = inputList.size();
     	

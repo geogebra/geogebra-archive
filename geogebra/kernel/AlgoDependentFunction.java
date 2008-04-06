@@ -66,7 +66,7 @@ public class AlgoDependentFunction extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = fun.getGeoElementVariables();
 
         output = new GeoElement[1];
@@ -78,7 +78,7 @@ public class AlgoDependentFunction extends AlgoElement {
         return f;
     }
 
-    final void compute() {
+    protected final void compute() {
         // evaluation of function will be done in view (see geogebra.euclidian.DrawFunction)
         
         // check if function is defined

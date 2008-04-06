@@ -59,7 +59,7 @@ public class AlgoTranslate extends AlgoTransformation {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = inGeo;        
         input[1] = v;        
@@ -72,7 +72,7 @@ public class AlgoTranslate extends AlgoTransformation {
     GeoElement getResult() { return outGeo; }
         
     // calc translated point
-    final void compute() {      
+    protected final void compute() {      
         outGeo.set(inGeo);
         out.translate(v);
     }       

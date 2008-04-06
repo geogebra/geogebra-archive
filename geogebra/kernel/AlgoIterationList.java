@@ -49,7 +49,7 @@ public class AlgoIterationList extends AlgoElement {
         return "AlgoIterationList";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = f;
         input[1] = startValueGeo;
@@ -64,7 +64,7 @@ public class AlgoIterationList extends AlgoElement {
         return list;
     }
 
-    final void compute() {
+    protected final void compute() {
     	list.setDefined(true);
     	for (int i=0; i < input.length; i++) {
     		if (!input[i].isDefined()) {

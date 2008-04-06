@@ -80,7 +80,7 @@ public class AlgoOrthoLinePointLine extends AlgoElement {
     }
 
     // calc the line g through P and normal to l   
-    final void compute() {
+    protected final void compute() {
         GeoVec3D.cross(P, l.x, l.y, 0.0, g);
     }
 

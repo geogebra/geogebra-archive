@@ -93,7 +93,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = A;
         input[1] = B;
@@ -118,7 +118,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
     }
 
     // compute circle through A, B, C
-    final void compute() {
+    protected final void compute() {
         // A, B or C undefined
         if (!A.isFinite() || !B.isFinite() || !C.isFinite()) {
             circle.setUndefined();

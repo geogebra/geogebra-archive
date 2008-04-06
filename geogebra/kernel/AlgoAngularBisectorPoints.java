@@ -67,7 +67,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = A;
         input[1] = B;
@@ -91,7 +91,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
         return C;
     }
 
-    final void compute() {
+    protected final void compute() {
         boolean infiniteB = B.isInfinite();
 
         // compute lines g = B v A, h = B v C                       

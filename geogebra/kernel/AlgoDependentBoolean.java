@@ -46,7 +46,7 @@ public class AlgoDependentBoolean extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
         output = new GeoElement[1];        
@@ -57,7 +57,7 @@ public class AlgoDependentBoolean extends AlgoElement {
     public GeoBoolean getGeoBoolean() { return bool; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {	
+    protected final void compute() {	
     	try {
     		bool.setValue(((MyBoolean) root.evaluate()).getBoolean());
     	} catch (Exception e) {

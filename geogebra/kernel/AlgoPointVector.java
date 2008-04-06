@@ -41,7 +41,7 @@ public class AlgoPointVector extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = v;
@@ -53,7 +53,7 @@ public class AlgoPointVector extends AlgoElement {
     
     GeoPoint getQ() { return Q; }
     
-    final void compute() {
+    protected final void compute() {
         Q.setCoords(P.inhomX + v.x, P.inhomY + v.y, 1.0);
     }   
     

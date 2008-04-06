@@ -57,7 +57,7 @@ public class AlgoDependentNumber extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
         output = new GeoElement[1];        
@@ -70,7 +70,7 @@ public class AlgoDependentNumber extends AlgoElement {
     ExpressionNode getExpression() { return root; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {    
+    protected final void compute() {    
     	try {
 	        number.setValue((MyDouble) root.evaluate());
 	    } catch (Exception e) {

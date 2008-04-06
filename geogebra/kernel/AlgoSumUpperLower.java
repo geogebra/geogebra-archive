@@ -84,7 +84,7 @@ implements EuclidianViewAlgo {
 	abstract protected String getClassName();
 
 	// for AlgoElement
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[4];
 		input[0] = f;
 		input[1] = ageo;
@@ -128,7 +128,7 @@ implements EuclidianViewAlgo {
 		return b;
 	}
 	
-	final void compute() {	
+	protected final void compute() {	
 		if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined() 
 				&& ngeo.isDefined())) 
 			sum.setUndefined();

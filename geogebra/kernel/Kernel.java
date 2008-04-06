@@ -29,6 +29,8 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
+import geogebra.kernel.statistics.*;
+import geogebra.kernel.statistics.AlgoVariance;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

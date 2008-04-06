@@ -46,7 +46,7 @@ public class AlgoCenterConic extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;
 
@@ -62,7 +62,7 @@ public class AlgoCenterConic extends AlgoElement {
         return midpoint;
     }
 
-    final void compute() {
+    protected final void compute() {
         if (!c.isDefined()) {
             midpoint.setUndefined();
             return;

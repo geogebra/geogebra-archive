@@ -57,7 +57,7 @@ public class AlgoUnitVectorVector extends AlgoElement {
     }   
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];        
         input[0] = v;
         
@@ -74,7 +74,7 @@ public class AlgoUnitVectorVector extends AlgoElement {
     GeoVector getv() { return v; }
     
     // unit vector of v
-    final void compute() {
+    protected final void compute() {
         length = GeoVec2D.length(v.x, v.y);        
         u.x = v.x / length;
         u.y = v.y / length;

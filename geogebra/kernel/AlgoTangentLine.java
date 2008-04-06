@@ -139,7 +139,7 @@ public class AlgoTangentLine extends AlgoElement {
     }
     
     // calc tangents parallel to g
-    final void compute() {               
+    protected final void compute() {               
         // degenerates should not have any tangents
         if (c.isDegenerate()) {
             tangents[0].setUndefined();

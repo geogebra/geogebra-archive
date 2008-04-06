@@ -67,7 +67,7 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];
         input[0] = conic;      
         input[1] = startPoint;
@@ -79,7 +79,7 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
         setDependencies();
     }
     
-    final void compute() {
+    protected final void compute() {
     	// the temp points P and Q should lie on the conic
     	P.setCoords(startPoint);
     	conic.pointChanged(P);

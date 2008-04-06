@@ -134,7 +134,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     }
 	
 	 // calc intersections of conics A and B
-    final void compute() {   
+	protected final void compute() {   
     	// check if conics A and B are defined	   
    	   	if (!(A.isDefined() && B.isDefined())) {
    	   		for (int i=0; i < P.length; i++) {

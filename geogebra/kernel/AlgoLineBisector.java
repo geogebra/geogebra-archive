@@ -46,7 +46,7 @@ public class AlgoLineBisector extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = A;
         input[1] = B;
@@ -64,7 +64,7 @@ public class AlgoLineBisector extends AlgoElement {
     }
     
     // line through P normal to v
-    final void compute() { 
+    protected final void compute() { 
         // get inhomogenous coords
         ax = A.inhomX;
         ay = A.inhomY;

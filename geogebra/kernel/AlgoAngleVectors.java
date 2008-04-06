@@ -45,7 +45,7 @@ public class AlgoAngleVectors extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = v;
         input[1] = w;
@@ -68,7 +68,7 @@ public class AlgoAngleVectors extends AlgoElement {
     // calc angle between vectors v and w
     // angle in range [0, 2pi) 
     // use normalvector to 
-    final void compute() {    	    	    	
+    protected final void compute() {    	    	    	
     	// |v| * |w| * sin(alpha) = det(v, w)
     	// cos(alpha) = v . w / (|v| * |w|)
     	// tan(alpha) = sin(alpha) / cos(alpha)

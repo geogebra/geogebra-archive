@@ -53,7 +53,7 @@ public class AlgoPolarLine extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = c;
@@ -68,7 +68,7 @@ public class AlgoPolarLine extends AlgoElement {
     GeoLine getLine() { return polar; }
     
     // calc polar line of P relativ to c
-    final void compute() {     
+    protected final void compute() {     
         c.polarLine(P, polar);
     }
     

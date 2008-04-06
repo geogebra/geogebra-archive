@@ -40,7 +40,7 @@ public class AlgoDefined extends AlgoElement {
         return "AlgoDefined";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = inputGeo;
 
@@ -53,7 +53,7 @@ public class AlgoDefined extends AlgoElement {
         return outputBoolean;
     }
 
-    final void compute() {
+    protected final void compute() {
         outputBoolean.setValue(inputGeo.isDefined());
     }
   

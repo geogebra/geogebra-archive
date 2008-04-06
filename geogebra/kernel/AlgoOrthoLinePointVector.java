@@ -54,7 +54,7 @@ public class AlgoOrthoLinePointVector extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = v;
@@ -69,7 +69,7 @@ public class AlgoOrthoLinePointVector extends AlgoElement {
     GeoVector getv() { return v; }
     
     // line through P normal to v
-    final void compute() {           
+    protected final void compute() {           
         GeoVec3D.cross(P, -v.y, v.x, 0.0, g);
     }   
     

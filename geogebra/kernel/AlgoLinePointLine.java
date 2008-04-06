@@ -55,7 +55,7 @@ public class AlgoLinePointLine extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = P;
         input[1] = l;
@@ -76,7 +76,7 @@ public class AlgoLinePointLine extends AlgoElement {
     }
 
     // calc the line g through P and parallel to l   
-    final void compute() {
+    protected final void compute() {
         // homogenous:
         GeoVec3D.cross(P, l.y, -l.x, 0.0, g);
     }

@@ -104,7 +104,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = M;
         input[1] = rgeo;
@@ -121,7 +121,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
     }
 
     // compute circle with midpoint M and radius r
-    final void compute() {
+    protected final void compute() {
         switch (type) {
         case TYPE_RADIUS:
         	circle.setCircle(M, r.getDouble());

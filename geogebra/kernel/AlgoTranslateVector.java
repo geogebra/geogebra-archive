@@ -58,7 +58,7 @@ public class AlgoTranslateVector extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = A;        
         input[1] = v;        
@@ -73,7 +73,7 @@ public class AlgoTranslateVector extends AlgoElement {
     GeoVector getTranslatedVector() { return w; }
         
     // simply copy v
-    final void compute() {
+    protected final void compute() {
         w.setCoords(v);        
     }       
     

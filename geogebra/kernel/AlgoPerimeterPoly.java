@@ -44,7 +44,7 @@ public class AlgoPerimeterPoly extends AlgoElement {
 		return "AlgoPerimeterPoly";
 	}
 
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[1];
 		input[0] = polygon;
 
@@ -56,7 +56,7 @@ public class AlgoPerimeterPoly extends AlgoElement {
 	/**
 	 * Compute circumference by adding up the length of it's segemnts.
 	 */
-	final void compute() {
+	protected final void compute() {
 		GeoSegment[] segment = polygon.getSegments();
 		double length = 0;
 		for (int i = 0; i < segment.length; i++) {

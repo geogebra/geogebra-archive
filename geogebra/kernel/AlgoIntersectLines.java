@@ -51,7 +51,7 @@ public class AlgoIntersectLines extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = g;
         input[1] = h;
@@ -72,7 +72,7 @@ public class AlgoIntersectLines extends AlgoElement {
     }
 
     // calc intersection S of lines g, h
-    final void compute() {   	
+    protected final void compute() {   	
         GeoVec3D.cross(g, h, S); 
               
         // test the intersection point

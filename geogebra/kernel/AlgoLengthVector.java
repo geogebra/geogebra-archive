@@ -51,7 +51,7 @@ public class AlgoLengthVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = v;
 
@@ -68,7 +68,7 @@ public class AlgoLengthVector extends AlgoElement {
     }
 
     // calc length of vector v   
-    final void compute() {
+    protected final void compute() {
     	v.getInhomCoords(coords);
         num.setValue(GeoVec2D.length(coords[0], coords[1]));
     }

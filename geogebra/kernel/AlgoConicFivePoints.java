@@ -65,7 +65,7 @@ public class AlgoConicFivePoints extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = P;
 
         output = new GeoElement[1];
@@ -82,7 +82,7 @@ public class AlgoConicFivePoints extends AlgoElement {
 
     // compute conic through five points P[0] ... P[4]
     // with Pl�cker � method
-    final void compute() {
+    protected final void compute() {
         // compute lines P0 P1, P2 P3, 
         //               P0 P2, P1 P3
         GeoVec3D.cross(P[0], P[1], line[0]);

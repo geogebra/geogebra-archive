@@ -81,7 +81,7 @@ public class AlgoPolygon extends AlgoElement {
     
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
     	if (geoList != null) {
     		// list as input
     		input = new GeoElement[1];
@@ -124,7 +124,7 @@ public class AlgoPolygon extends AlgoElement {
     	return points;
     }
         
-    final void compute() { 
+    protected final void compute() { 
     	if (geoList != null) {
     		updatePointArray(geoList);
     	}

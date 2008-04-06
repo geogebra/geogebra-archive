@@ -42,7 +42,7 @@ public class AlgoPointOnPath extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = path.toGeoElement();
 
@@ -58,7 +58,7 @@ public class AlgoPointOnPath extends AlgoElement {
         return path;
     }
 
-    final void compute() {
+    protected final void compute() {
     	if (input[0].isDefined()) {	    	
 	        path.pathChanged(P);
 	        P.updateCoords();

@@ -61,7 +61,7 @@ public class AlgoCircleTwoPoints extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = M;
         input[1] = P;
@@ -82,7 +82,7 @@ public class AlgoCircleTwoPoints extends AlgoElement {
     }
 
     // compute circle with midpoint M and radius r
-    final void compute() {
+    protected final void compute() {
         circle.setCircle(M, P);
     }
 

@@ -50,7 +50,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
 		return "AlgoCircumferenceConic";
 	}
 
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[1];
 		input[0] = conic;
 
@@ -70,7 +70,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
 	 * 
 	 * For all other cases circumference is undefined.
 	 */
-	final void compute() {
+	protected final void compute() {
     	if (!conic.isDefined())
     		circum.setUndefined();
     	

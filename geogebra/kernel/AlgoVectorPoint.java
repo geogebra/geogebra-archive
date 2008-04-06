@@ -51,7 +51,7 @@ public class AlgoVectorPoint extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = P;
         
@@ -64,7 +64,7 @@ public class AlgoVectorPoint extends AlgoElement {
     public GeoPoint getP() { return P; }    
     
     // calc vector OP   
-    final void compute() {                
+    protected final void compute() {                
         if (P.isFinite()) {                    
             v.x = P.inhomX;
             v.y = P.inhomY;        

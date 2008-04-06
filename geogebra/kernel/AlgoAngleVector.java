@@ -40,7 +40,7 @@ public class AlgoAngleVector extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = vec;
 
@@ -57,7 +57,7 @@ public class AlgoAngleVector extends AlgoElement {
     	return vec;
     }
         
-    final void compute() {  
+    protected final void compute() {  
     	vec.getInhomCoords(coords);
         angle.setValue(
         		Math.atan2(coords[1], coords[0])

@@ -51,7 +51,7 @@ public class AlgoParabolaPointLine extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = F;
         input[1] = l;
@@ -66,7 +66,7 @@ public class AlgoParabolaPointLine extends AlgoElement {
     GeoLine getLine() { return l; }
     
     // compute parabola with focus F and line l
-    final void compute() {                           
+    protected final void compute() {                           
         parabola.setParabola(F, l);
     }   
     

@@ -46,7 +46,7 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = inputList;
 
@@ -60,7 +60,7 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
     }
 
 //  ON CHANGE: similar code is in AlgoTaylorSeries
-    final void compute() {       
+    protected final void compute() {       
         if (!inputList.isDefined()) {
         	g.setUndefined();
         	return;

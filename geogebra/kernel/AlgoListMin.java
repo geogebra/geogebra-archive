@@ -42,7 +42,7 @@ public class AlgoListMin extends AlgoElement {
         return "AlgoListMin";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = geoList;
 
@@ -55,7 +55,7 @@ public class AlgoListMin extends AlgoElement {
         return min;
     }
 
-    final void compute() {
+    protected final void compute() {
     	int size = geoList.size();
     	if (!geoList.isDefined() ||  size == 0) {
     		min.setUndefined();

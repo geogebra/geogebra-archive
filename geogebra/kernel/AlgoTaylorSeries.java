@@ -65,7 +65,7 @@ public class AlgoTaylorSeries extends AlgoElement {
 	}	
 
 	// for AlgoElement
-	void setInputOutput() {
+	protected void setInputOutput() {
 		input = new GeoElement[3];		
 		input[0] = f;
 		input[1] = ageo;
@@ -81,7 +81,7 @@ public class AlgoTaylorSeries extends AlgoElement {
 	}
 	
 	// ON CHANGE: similiar code is in AlgoPolynomialForFunction
-	final void compute() {
+	protected final void compute() {
 		if (!f.isDefined() || !ageo.isDefined() || !ngeo.isDefined()) {
 			g.setUndefined();
 			return;

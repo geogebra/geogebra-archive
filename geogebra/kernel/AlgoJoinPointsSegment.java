@@ -65,7 +65,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
     	GeoElement [] efficientInput = new GeoElement[2];
     	efficientInput[0] = P;
     	efficientInput[1] = Q;
@@ -104,7 +104,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     }
 
     // calc the line g through P and Q    
-    final void compute() {
+    protected final void compute() {
         // g = P v Q  <=>  g_n : n = P x Q
         // g = cross(P, Q)
     	GeoVec3D.lineThroughPoints(P, Q, s);      	    

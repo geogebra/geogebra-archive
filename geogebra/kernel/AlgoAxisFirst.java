@@ -59,7 +59,7 @@ public class AlgoAxisFirst extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;        
         
@@ -72,7 +72,7 @@ public class AlgoAxisFirst extends AlgoElement {
     GeoConic getConic() { return c; }        
     
     // calc axes
-    final void compute() {                        
+    protected final void compute() {                        
         // axes are lines with directions of eigenvectors
         // through midpoint b        
         

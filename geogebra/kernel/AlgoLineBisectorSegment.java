@@ -43,7 +43,7 @@ public class AlgoLineBisectorSegment extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = s;        
         
@@ -57,7 +57,7 @@ public class AlgoLineBisectorSegment extends AlgoElement {
     
     
     // line through P normal to v
-    final void compute() { 
+    protected final void compute() { 
     	 GeoPoint A = s.getStartPoint();     
     	 GeoPoint B = s.getEndPoint();
     	

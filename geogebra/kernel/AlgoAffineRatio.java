@@ -30,7 +30,7 @@ public class AlgoAffineRatio extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = A;
         input[1] = B;
@@ -45,7 +45,7 @@ public class AlgoAffineRatio extends AlgoElement {
         return M;
     }
 
-    final void compute() {
+    protected final void compute() {
         //Check if the points are aligned
         if (GeoPoint.collinear(A, B, C)){
         	if (B.equals(C)) {

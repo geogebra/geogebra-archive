@@ -43,7 +43,7 @@ public class AlgoAreaPoints extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = P;
         
         output = new GeoElement[1];        
@@ -56,7 +56,7 @@ public class AlgoAreaPoints extends AlgoElement {
     
     // calc area of polygon P[0], ..., P[n]  
     // angle in range [0, pi]
-    final void compute() {      
+    protected final void compute() {      
         area.setValue(GeoPolygon.calcArea(P)); 
     }       
     

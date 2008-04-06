@@ -110,7 +110,7 @@ public class AlgoAngularBisectorLines extends AlgoElement {
     	return true;
     }
 
-    final void compute() {
+    protected final void compute() {
         // calc intersection B of g and h
         GeoVec3D.cross(g, h, B);
         infiniteB = B.isInfinite();

@@ -67,7 +67,7 @@ public class AlgoDilate extends AlgoTransformation {
     }
 
     // for AlgoElement
-    void setInputOutput() {    	
+    protected void setInputOutput() {    	
         input = new GeoElement[3];
         input[0] = Ageo;
         input[1] = rgeo;
@@ -83,7 +83,7 @@ public class AlgoDilate extends AlgoTransformation {
     }
 
     // calc rotated point
-    final void compute() {
+    protected final void compute() {
         Bgeo.set(Ageo);
         B.dilate(r, S);
     }

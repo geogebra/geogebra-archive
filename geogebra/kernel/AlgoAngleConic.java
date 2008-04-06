@@ -47,7 +47,7 @@ public class AlgoAngleConic extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;
 
@@ -64,7 +64,7 @@ public class AlgoAngleConic extends AlgoElement {
     }
 
     // compute conic's angle
-    final void compute() {
+    protected final void compute() {
         // take a look at first eigenvector
         angle.setValue(Math.atan2(c.eigenvec[0].y, c.eigenvec[0].x));
     }

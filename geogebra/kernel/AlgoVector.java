@@ -70,7 +70,7 @@ public class AlgoVector extends AlgoElement {
     public GeoPoint getQ() { return Q; }
     
     // calc the line g through P and Q    
-    final void compute() {
+    protected final void compute() {
         if (Q.isFinite() && P.isFinite()) {        
             v.x = Q.inhomX - P.inhomX;
             v.y = Q.inhomY - P.inhomY;             

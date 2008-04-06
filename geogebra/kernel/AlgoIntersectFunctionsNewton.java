@@ -53,7 +53,7 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[3];      
         input[0] = f;               
         input[1] = g;
@@ -64,7 +64,7 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
         setDependencies();                  
     }
       
-    final void compute() {      
+    protected final void compute() {      
         if (!(f.isDefined() && g.isDefined() && startPoint.isDefined())) {        	
             rootPoint.setUndefined();
         } else {

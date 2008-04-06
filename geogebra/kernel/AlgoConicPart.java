@@ -50,7 +50,7 @@ public abstract class AlgoConicPart extends AlgoElement {
         return conicPart;
     }
    
-    void compute() {    	    	
+    protected void compute() {    	    	
     	conicPart.set(conic);
     	conicPart.setParameters(startParam.getDouble(), endParam.getDouble(), true);
     }

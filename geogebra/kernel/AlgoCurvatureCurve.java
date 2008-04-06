@@ -39,7 +39,7 @@ public class AlgoCurvatureCurve extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = A;
         input[1] = f;
@@ -53,7 +53,7 @@ public class AlgoCurvatureCurve extends AlgoElement {
         return K;
     }
 
-    final void compute() {
+    protected final void compute() {
     	if (f.isDefined()) {	    	
 	    	double t = f.getClosestParameter(A, f.getMinParameter());	    		        
 	        K.setValue( f.evaluateCurvature(t) );

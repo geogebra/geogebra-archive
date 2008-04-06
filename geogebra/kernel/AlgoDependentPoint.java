@@ -55,7 +55,7 @@ public class AlgoDependentPoint extends AlgoElement {
 	}
 	
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
         input = root.getGeoElementVariables();  
         
         output = new GeoElement[1];        
@@ -66,7 +66,7 @@ public class AlgoDependentPoint extends AlgoElement {
     public GeoPoint getPoint() { return P; }
     
     // calc the current value of the arithmetic tree
-    final void compute() {   
+    protected final void compute() {   
     	try {
 	        temp = ((VectorValue) root.evaluate()).getVector();
 	        if (Double.isInfinite(temp.x) || Double.isInfinite(temp.y)) {

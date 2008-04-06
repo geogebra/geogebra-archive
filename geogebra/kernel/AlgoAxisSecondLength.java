@@ -48,7 +48,7 @@ public class AlgoAxisSecondLength extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;        
         
@@ -61,7 +61,7 @@ public class AlgoAxisSecondLength extends AlgoElement {
     GeoConic getConic() { return c; }        
     
     // set excentricity
-    final void compute() {  
+    protected final void compute() {  
         switch (c.type) {
             case GeoConic.CONIC_CIRCLE:                               
             case GeoConic.CONIC_HYPERBOLA:

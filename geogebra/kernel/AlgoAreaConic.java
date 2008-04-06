@@ -48,7 +48,7 @@ public class AlgoAreaConic extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input =  new GeoElement[1];
         input[0] = conic;
         
@@ -60,7 +60,7 @@ public class AlgoAreaConic extends AlgoElement {
     GeoNumeric getArea() { return area; }        
     
     // calc area of conic c 
-    final void compute() {  
+    protected final void compute() {  
     	if (!conic.isDefined()) {
     		area.setUndefined();
     		return;

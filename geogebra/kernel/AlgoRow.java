@@ -48,7 +48,7 @@ public class AlgoRow extends AlgoElement {
         return "AlgoRow";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = startValueGeo;
         input[1] = nGeo;
@@ -62,7 +62,7 @@ public class AlgoRow extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
 		if (startValue.getDouble()!=Math.floor(startValue.getDouble())
 				|| n.getDouble()!=Math.floor(n.getDouble())
 				|| startValue.getDouble()<1)

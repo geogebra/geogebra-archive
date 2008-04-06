@@ -88,7 +88,7 @@ public class AlgoAxes extends AlgoElement {
     }
 
     // calc axes
-    final void compute() {
+    protected final void compute() {
         // axes are lines with directions of eigenvectors
         // through midpoint b        
 

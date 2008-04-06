@@ -48,7 +48,7 @@ public class AlgoRadius extends AlgoElement {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;        
         
@@ -61,7 +61,7 @@ public class AlgoRadius extends AlgoElement {
     GeoConic getConic() { return c; }        
     
     // set parameter of parabola
-    final void compute() {        
+    protected final void compute() {        
         if (c.type == GeoConic.CONIC_CIRCLE)
             num.setValue(c.halfAxes[0]);
         else 

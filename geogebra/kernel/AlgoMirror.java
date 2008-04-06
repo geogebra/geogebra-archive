@@ -80,7 +80,7 @@ public class AlgoMirror extends AlgoTransformation {
     }
     
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = geoIn; 
         input[1] = mirror;
@@ -94,7 +94,7 @@ public class AlgoMirror extends AlgoTransformation {
     	return geoOut; 
     }       
 
-    final void compute() {
+    protected final void compute() {
         geoOut.set(geoIn);
         
         if (mirror == mirrorLine)

@@ -63,7 +63,7 @@ public class AlgoDirection extends AlgoElement {
     }
 
     // for AlgoElement
-    void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = g;
 
@@ -80,7 +80,7 @@ public class AlgoDirection extends AlgoElement {
     }
 
     // direction vector of g
-    final void compute() {
+    protected final void compute() {
         v.x = g.y;
         v.y = -g.x;
     }

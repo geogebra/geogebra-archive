@@ -47,7 +47,7 @@ public class AlgoLengthFunction extends AlgoElement {
         return "AlgoLengthFunction";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = f;
         input[1] = A;
@@ -62,7 +62,7 @@ public class AlgoLengthFunction extends AlgoElement {
         return length;
     }
 
-    final void compute() {
+    protected final void compute() {
     	double a = A.value;
     	double b = B.value;
     	

@@ -44,7 +44,7 @@ public class AlgoTake extends AlgoElement {
         return "AlgoTake";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[3];
         input[0] = inputList;
         input[1] = m;
@@ -59,7 +59,7 @@ public class AlgoTake extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	size = inputList.size();
     	int start=(int)m.getDouble();

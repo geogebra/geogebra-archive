@@ -43,7 +43,7 @@ public class AlgoFirst extends AlgoElement {
         return "AlgoFirst";
     }
 
-    void setInputOutput(){
+    protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = inputList;
         input[1] = n;
@@ -57,7 +57,7 @@ public class AlgoFirst extends AlgoElement {
         return outputList;
     }
 
-    final void compute() {
+    protected final void compute() {
     	
     	size = inputList.size();
     	int outsize=(int)n.getDouble();

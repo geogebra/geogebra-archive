@@ -58,7 +58,7 @@ public class AlgoIfFunction extends AlgoElement {
 	}
     
     // for AlgoElement
-    void setInputOutput() {
+	protected void setInputOutput() {
     	if (elseFun != null)
     		input = new GeoElement[3];
     	else
@@ -75,7 +75,7 @@ public class AlgoIfFunction extends AlgoElement {
     
     public GeoFunction getGeoFunction() { return result; }
        
-    final void compute() {
+    protected final void compute() {
     	for (int i=0; i < input.length; i++) {
     		if (!input[i].isDefined())
     			result.setUndefined();
