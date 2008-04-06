@@ -4741,20 +4741,21 @@ class ColorFunctionPanel
 				
 		// set condition
 		boolean requestFocus = false;
-		try {
+		//try {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				//geo.setShowObjectCondition(cond);				
 				geo.setColorFunction(list);				
 			}	
 			
-		} catch (CircularDefinitionException e) {
+		/*} catch (CircularDefinitionException e) {
+			
 			tfRed.setText("");
 			tfGreen.setText("");
 			tfBlue.setText("");
 			kernel.getApplication().showError("CircularDefinition");
 			requestFocus = true;			
-		}	
+		}	*/
 		
 		if (list != null)
 			list.updateRepaint();		

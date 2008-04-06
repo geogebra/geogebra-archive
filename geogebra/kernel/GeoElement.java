@@ -497,10 +497,20 @@ public abstract class GeoElement
 		if (alpha > 255) alpha = 255;
 		if (alpha < 0) alpha = 0;
 
-		int red = (int)((GeoNumeric)(colFunction.get(0))).getValue();
-		int green = (int)((GeoNumeric)(colFunction.get(1))).getValue();
-		int blue = (int)((GeoNumeric)(colFunction.get(2))).getValue();
+		double redD = ((GeoNumeric)(colFunction.get(0))).getValue();
+		double greenD = ((GeoNumeric)(colFunction.get(1))).getValue();
+		double blueD = ((GeoNumeric)(colFunction.get(2))).getValue();
 		
+		// make sure the colors are between 0 and 1
+		redD = redD - Math.floor(redD);
+		greenD = greenD - Math.floor(greenD);
+		blueD = blueD - Math.floor(blueD);
+		
+		System.out.println("red"+redD+"green"+greenD+"blue"+blueD);
+		
+		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);		
+
+		/*
 		if (red < 0) red = 0;
 		if (red > 255) red = 255;
 		
@@ -510,7 +520,7 @@ public abstract class GeoElement
 		if (blue < 0) blue = 0;
 		if (blue > 255) blue = 255;	
 		
-		return new Color(red, green, blue, alpha);		
+		return new Color(red, green, blue, alpha);		*/
 	}
 
 	// Michael Borcherds 2008-04-02
@@ -2724,11 +2734,13 @@ public abstract class GeoElement
 	}
 
 	public final void setColorFunction(GeoList col) 
-	throws CircularDefinitionException {
+	//throws CircularDefinitionException 
+	{
 		//System.out.println("setColorFunction"+col.getValue());
-		// check for circular definition
-		if (this == col || isParentOf(col))
-			throw new CircularDefinitionException();	
+		
+		// check for circular definition (not needed)
+		//if (this == col || isParentOf(col))
+		//	throw new CircularDefinitionException();	
 		
 		// unregister old condition
 		if (colFunction != null) {
