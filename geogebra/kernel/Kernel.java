@@ -2755,6 +2755,20 @@ public class Kernel {
 	}
 
 	/** 
+	 * ellipse with foci A, B passing thorugh C
+	 * Michael Borcherds 2008-04-06
+	 */
+	final public GeoConic Ellipse(
+		String label,
+		GeoPoint A,
+		GeoPoint B,
+		GeoPoint C) {
+		AlgoEllipseFociPoint algo = new AlgoEllipseFociPoint(cons, label, A, B, C);
+		GeoConic ellipse = algo.getEllipse();
+		return ellipse;
+	}
+
+	/** 
 	 * hyperbola with foci A, B and length of first half axis a
 	 */
 	final public GeoConic Hyperbola(
