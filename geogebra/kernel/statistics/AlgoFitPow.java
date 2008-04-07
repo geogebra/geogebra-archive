@@ -80,6 +80,7 @@ public class AlgoFitPow extends AlgoElement{
                 ExpressionNode node=new ExpressionNode(kernel,A,ExpressionNode.MULTIPLY,expr);
                 Function f=new Function(node,X);
                 geofunction.setFunction(f); 
+                geofunction.setDefined(true);
             }else{
                 geofunction.setUndefined();
                 return;  

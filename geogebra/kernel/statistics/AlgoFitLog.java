@@ -81,6 +81,7 @@ public class AlgoFitLog extends AlgoElement{
                 ExpressionNode node=new ExpressionNode(kernel,A,ExpressionNode.PLUS,expr);
                 Function f=new Function(node,X);
                 geofunction.setFunction(f); 
+                geofunction.setDefined(true);
             }else{
                 geofunction.setUndefined();
                 return;  
