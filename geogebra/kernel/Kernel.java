@@ -1994,11 +1994,11 @@ public class Kernel {
 		GeoFunction function = algo.getFitPoly();
 		return function;
 	}
-/*
+
 	/** 
 	 * FitExp[list of coords]
 	 * Hans-Petter Ulven
-	 *
+	 */
 	final public GeoFunction FitExp(String label, GeoList list) {
 		AlgoFitExp algo = new AlgoFitExp(cons, label, list);
 		GeoFunction function = algo.getFitExp();
@@ -2008,7 +2008,7 @@ public class Kernel {
 	/** 
 	 * FitLog[list of coords]
 	 * Hans-Petter Ulven
-	 *
+	 */
 	final public GeoFunction FitLog(String label, GeoList list) {
 		AlgoFitLog algo = new AlgoFitLog(cons, label, list);
 		GeoFunction function = algo.getFitLog();
@@ -2017,13 +2017,13 @@ public class Kernel {
 	/** 
 	 * FitPow[list of coords]
 	 * Hans-Petter Ulven
-	 *
+	 */
 	final public GeoFunction FitPow(String label, GeoList list) {
 		AlgoFitPow algo = new AlgoFitPow(cons, label, list);
 		GeoFunction function = algo.getFitPow();
 		return function;
 	}
-*/
+
 	/** 
 	 * Binomial[n,r]
 	 * Michael Borcherds

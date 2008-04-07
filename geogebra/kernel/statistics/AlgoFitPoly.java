@@ -13,14 +13,13 @@ the Free Software Foundation.
 */
 
 
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoPolynomialFromCoordinates;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.RegressionMath;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Construction;
 
 
 /** 
@@ -115,7 +114,7 @@ public class AlgoFitPoly extends AlgoElement{
                 geofunction.setUndefined();
                 return;  
             }else{
-                geofunction.setFunction(AlgoPolynomialFromCoordinates.buildPolyFunctionExpression(cons.getKernel(),cof));
+                geofunction.setFunction(geogebra.kernel.AlgoPolynomialFromCoordinates.buildPolyFunctionExpression(cons.getKernel(),cof));
             }//if error in regression   
         }//if error in parameters
     }//compute()

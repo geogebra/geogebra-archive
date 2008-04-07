@@ -228,9 +228,9 @@ public class CommandDispatcher {
     	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
     	cmdTable.put("FitLineX", new CmdFitLineX(kernel));
     	cmdTable.put("FitPoly", new CmdFitPoly(kernel));
-    	//cmdTable.put("FitExp", new CmdFitExp(kernel));
-    	//cmdTable.put("FitLog", new CmdFitLog(kernel));
-    	//cmdTable.put("FitPow", new CmdFitPow(kernel));
+    	cmdTable.put("FitExp", new CmdFitExp(kernel));
+    	cmdTable.put("FitLog", new CmdFitLog(kernel));
+    	cmdTable.put("FitPow", new CmdFitPow(kernel));
         cmdTable.put("RandomNormal", new CmdRandomNormal(kernel));
     	cmdTable.put("Normal", new CmdNormal(kernel));
     	cmdTable.put("Binomial", new CmdBinomial(kernel));
