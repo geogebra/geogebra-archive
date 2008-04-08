@@ -136,7 +136,11 @@ public class AlgoJoinPointsSegment extends AlgoElement {
 
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription()));
+        if (poly!=null)
+            sb.append(app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription()));
+        else
+            sb.append(app.getPlain("SegmentAB",P.getLabel(),Q.getLabel()));
+        	
         
         /*
         if (!app.isReverseLanguage()) { //FKH 20040906

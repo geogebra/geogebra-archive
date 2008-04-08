@@ -296,6 +296,8 @@ public class EuclidianController implements MouseListener,
 
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
 			previewDrawable = new DrawConic(view, mode, selectedPoints);
 			break;
 			
@@ -502,6 +504,8 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
 		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
@@ -1649,6 +1653,8 @@ public class EuclidianController implements MouseListener,
 
 		// new circle (3 points)
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
 		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
@@ -2679,6 +2685,14 @@ public class EuclidianController implements MouseListener,
 			switch (mode) {
 			case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 				kernel.Circle(null, points[0], points[1], points[2]);
+				break;
+				
+			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+				kernel.Ellipse(null, points[0], points[1], points[2]);
+				break;
+				
+			case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+				kernel.Hyperbola(null, points[0], points[1], points[2]);
 				break;
 				
 			case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:

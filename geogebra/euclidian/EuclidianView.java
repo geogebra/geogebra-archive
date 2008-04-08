@@ -270,6 +270,10 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	public static final int MODE_MIRROR_AT_CIRCLE = 54; // Michael Borcherds 2008-03-23
 
+	public static final int MODE_ELLIPSE_THREE_POINTS = 55; // Michael Borcherds 2008-04-06
+
+	public static final int MODE_HYPERBOLA_THREE_POINTS = 56; // Michael Borcherds 2008-04-06
+
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
 	public static final int POINT_CAPTURING_OFF = 0;
@@ -3302,6 +3306,12 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 			return "Circle3";
+
+		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+			return "Ellipse3";
+
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+			return "Hyperbola3";
 
 		// Michael Borcherds 2008-03-13
 		case EuclidianView.MODE_COMPASSES:

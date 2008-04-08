@@ -446,7 +446,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" ");
         sb.append(EuclidianView.MODE_REGULAR_POLYGON ); 
        
-        // circles, arcs, conics
+        // circles, arcs
         sb.append(" | ");       
         sb.append(EuclidianView.MODE_CIRCLE_TWO_POINTS);
         sb.append(" ");
@@ -465,7 +465,13 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);
         sb.append(" ");
         sb.append(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
-        sb.append(" , ");
+        
+        // conics
+        sb.append(" | ");
+        sb.append(EuclidianView.MODE_ELLIPSE_THREE_POINTS);   
+        sb.append(" ");            
+        sb.append(EuclidianView.MODE_HYPERBOLA_THREE_POINTS);   
+        sb.append(" ");            
         sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);
             
         // measurements
