@@ -1,4 +1,4 @@
-package tutor;
+package tutor.gui.applet;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -10,6 +10,7 @@ import geogebra.Application;
 import geogebra.GeoGebraAppletBase;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
+import tutor.TeacherApplication;
 import tutor.gui.TeacherController;
 import tutor.gui.TeacherMenubar;
 import tutor.gui.TeacherView;

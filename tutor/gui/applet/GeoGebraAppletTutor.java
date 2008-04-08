@@ -10,7 +10,7 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 */
 
-package tutor;
+package tutor.gui.applet;
 
 /*
  * GeoGebraApplet.java
@@ -29,6 +29,7 @@ import java.util.GregorianCalendar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import tutor.TutorApplication;
 import tutor.gui.TutorMenubar;
 import tutor.gui.TutorController;
 import tutor.gui.TutorView;

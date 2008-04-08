@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import tutor.GeoGebraAppletTutor;
+import tutor.gui.applet.GeoGebraAppletTutor;
 import tutor.io.StringOutputStream;
 import tutor.net.util.HttpMultiPartFileUpload;
 import tutor.net.util.HttpParam;
