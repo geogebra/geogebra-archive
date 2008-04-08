@@ -1,27 +1,4 @@
-/* 
-GeoGebra - Dynamic Geometry and Algebra
-Copyright Markus Hohenwarter, http://www.geogebra.at
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation; either version 2 of the License, or 
-(at your option) any later version.
-*/
-
 package tutor;
-
-/*
- * GeoGebraApplet.java
- *
- * Created on 23. J�nner 2003, 22:37
- */
-
-import geogebra.Application;
-import geogebra.GeoGebraAppletBase;
-import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionElement;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -29,23 +6,25 @@ import java.util.GregorianCalendar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import tutor.gui.TutorMenubar;
+import geogebra.Application;
+import geogebra.GeoGebraAppletBase;
+import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
+import tutor.gui.TeacherController;
+import tutor.gui.TeacherMenubar;
+import tutor.gui.TeacherView;
 import tutor.gui.TutorController;
 import tutor.gui.TutorView;
 import tutor.persistence.dao.http.factory.HttpDaoFactory;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
 
-/**
- *
- * @author  Markus Hohenwarter
- */
-public class GeoGebraAppletTutor extends GeoGebraAppletBase {
+public class GeoGebraAppletTeacher extends GeoGebraAppletBase {
 
 	private String problem = null;
 	private String student = null;
-	private TutorView tutorView;
-	private TutorController tutorController = null;
+	private TeacherView teacherView;
+	private TeacherController teacherController = null;
 	
 	private HttpDaoFactory httpDaoFactory;
 
@@ -57,15 +36,15 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 	
 	protected Application buildApplication(String[] args, boolean undoActive) {
 		
-		Application app = new TutorApplication(args, this, undoActive);
-		app.setMenubar(new TutorMenubar(app));
+		Application app = new TeacherApplication(args, this, undoActive);
+		app.setMenubar(new TeacherMenubar(app));
 		app.initMenubar();
 		
 		return app; 
 	}
-
-	public GeoGebraAppletTutor() {}
 	
+	public GeoGebraAppletTeacher() {}
+
 	public void init() 
 	{
 		super.init();
@@ -83,17 +62,17 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		
 		httpDaoFactory = new HttpDaoFactory(protocol, ip, port, context);
 		
-		tutorView.setStrategyFilesURL(protocol+"://"+ip+":"+port+"/"+strategyFilesContext);
+		teacherView.setStrategyFilesURL(protocol+"://"+ip+":"+port+"/"+strategyFilesContext);
 		
 		JustificationDao justificationDao =
 			(JustificationDao) httpDaoFactory.getDao(JustificationDao.class);
 		StrategyDao strategyDao =
 			(StrategyDao) httpDaoFactory.getDao(StrategyDao.class);
 		
-		tutorView.setJustificationDao(justificationDao);
-		tutorView.setStrategyDao(strategyDao);
+		teacherView.setJustificationDao(justificationDao);
+		teacherView.setStrategyDao(strategyDao);
 		
-		tutorView.initDataModel();
+		teacherView.initDataModel();
 	}
 	
 	protected void initGUI() {
@@ -102,21 +81,21 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 	
 	protected void initGUI(String p, String s) {
 
-		tutorController = new TutorController(app.getKernel());
-		app.getEuclidianView().addMouseListener(tutorController);
+		teacherController = new TeacherController(app.getKernel());
+		app.getEuclidianView().addMouseListener(teacherController);
 
-		tutorView = new TutorView(p,s, tutorController);
+		teacherView = new TeacherView(p,s, teacherController);
 
-		kernel.attach(tutorView); // register view  
+		kernel.attach(teacherView); // register view  
 		
 		JPanel geogebraPanel = createGeoGebraAppletPanel();
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				geogebraPanel, tutorView);
+				geogebraPanel, teacherView);
 
 		getContentPane().add(splitPane);
 		splitPane.setDividerLocation(800);
 		
-		if (tutorView != null) tutorView.createGUI();
+		if (teacherView != null) teacherView.createGUI();
 	}
 
 	protected void initDataModel() {
@@ -160,12 +139,12 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		this.student = student;
 	}
 
-	public TutorView getTutorView() {
-		return tutorView;
+	public TeacherView getTutorView() {
+		return teacherView;
 	}
 
-	public void setTutorView(TutorView tutorView) {
-		this.tutorView = tutorView;
+	public void setTutorView(TeacherView teacherView) {
+		this.teacherView = teacherView;
 	}
 	
 	public static void main(String[] args) throws Throwable {
@@ -174,4 +153,5 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		cal.getTime();
 	}
 			
+
 }

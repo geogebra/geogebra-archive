@@ -19,11 +19,11 @@ import tutor.io.StringOutputStream;
 import tutor.net.util.HttpMultiPartFileUpload;
 import tutor.net.util.HttpParam;
 
-public class TutorController implements MouseListener, ActionListener {
+public class TeacherController implements MouseListener, ActionListener {
 
 	private Application app;
 	private Kernel kernel;
-	private TutorView view;
+	private TeacherView view;
 
 	public void actionPerformed(ActionEvent e) {
 		
@@ -31,7 +31,7 @@ public class TutorController implements MouseListener, ActionListener {
 			
 			JComboBox cb = (JComboBox) e.getSource();
 	        String just = (String)cb.getSelectedItem();    			
-	        view.printTextArea(just, TutorView.ARGUMENT); // changed to static reference Michael Borcherds 2008-04-06
+	        view.printTextArea(just, TeacherView.ARGUMENT); // changed to static reference Michael Borcherds 2008-04-06
 		}
 		else if (e.getSource().equals(view.getCommentField())) {
 			
@@ -98,7 +98,7 @@ public class TutorController implements MouseListener, ActionListener {
 		}
 	}
 
-	public TutorController(Kernel kernel) {
+	public TeacherController(Kernel kernel) {
 		this.kernel = kernel;
 		this.app = kernel.getApplication();
 	}
@@ -111,7 +111,7 @@ public class TutorController implements MouseListener, ActionListener {
 		return kernel;
 	}
 
-	public TutorView getView() {
+	public TeacherView getView() {
 		return view;
 	}
 	
@@ -123,7 +123,7 @@ public class TutorController implements MouseListener, ActionListener {
 		this.kernel = kernel;
 	}
 
-	public void setView(TutorView view) {
+	public void setView(TeacherView view) {
 		this.view = view;
 	}
 	
@@ -144,4 +144,5 @@ public class TutorController implements MouseListener, ActionListener {
 
 	public void mouseReleased(MouseEvent e) {
 	}
+
 }
