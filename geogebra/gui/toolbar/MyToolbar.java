@@ -473,7 +473,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_HYPERBOLA_THREE_POINTS);   
         sb.append(" ");            
         sb.append(EuclidianView.MODE_PARABOLA);   
-        sb.append(" ");            
+        sb.append(" , ");            
         sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);
             
         // measurements
