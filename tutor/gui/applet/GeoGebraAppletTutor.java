@@ -30,8 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import tutor.TutorApplication;
-import tutor.gui.TutorMenubar;
 import tutor.gui.TutorController;
+import tutor.gui.TutorMenubar;
 import tutor.gui.TutorView;
 import tutor.persistence.dao.http.factory.HttpDaoFactory;
 import tutor.persistence.dao.iface.JustificationDao;

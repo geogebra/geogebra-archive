@@ -1,21 +1,20 @@
 package tutor.gui.applet;
 
+import geogebra.Application;
+import geogebra.GeoGebraAppletBase;
+import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import geogebra.Application;
-import geogebra.GeoGebraAppletBase;
-import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionElement;
 import tutor.TeacherApplication;
 import tutor.gui.TeacherController;
 import tutor.gui.TeacherMenubar;
 import tutor.gui.TeacherView;
-import tutor.gui.TutorController;
-import tutor.gui.TutorView;
 import tutor.persistence.dao.http.factory.HttpDaoFactory;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
