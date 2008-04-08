@@ -274,6 +274,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	public static final int MODE_HYPERBOLA_THREE_POINTS = 56; // Michael Borcherds 2008-04-06
 
+	public static final int MODE_PARABOLA = 57; // Michael Borcherds 2008-04-06
+
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
 	public static final int POINT_CAPTURING_OFF = 0;
@@ -3309,6 +3311,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 			return "Ellipse3";
+
+		case EuclidianView.MODE_PARABOLA:
+			return "Parabola";
 
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
 			return "Hyperbola3";

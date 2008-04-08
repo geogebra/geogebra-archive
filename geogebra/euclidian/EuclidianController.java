@@ -519,6 +519,7 @@ public class EuclidianController implements MouseListener,
 			break;
 		
 		case EuclidianView.MODE_PARALLEL:
+		case EuclidianView.MODE_PARABOLA: // Michael Borcherds 2008-04-08
 		case EuclidianView.MODE_ORTHOGONAL:
 		case EuclidianView.MODE_LINE_BISECTOR:
 		case EuclidianView.MODE_ANGULAR_BISECTOR:
@@ -1625,6 +1626,11 @@ public class EuclidianController implements MouseListener,
 			changedKernel = parallel(hits);
 			break;
 
+			// Michael Borcherds 2008-04-08
+		case EuclidianView.MODE_PARABOLA:
+			changedKernel = parabola(hits);
+			break;
+
 		// new line through point orthogonal to vector or line
 		case EuclidianView.MODE_ORTHOGONAL:
 			changedKernel = orthogonal(hits);
@@ -2539,6 +2545,31 @@ public class EuclidianController implements MouseListener,
 				GeoLine[] lines = getSelectedLines();
 				// create new line
 				kernel.Line(null, points[0], lines[0]);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// get point and line 
+	// create parabola (focus and directrix)
+	// Michael Borcherds 2008-04-08
+	final protected boolean parabola(ArrayList hits) {
+		if (hits == null)
+			return false;
+
+		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
+		if (!hitPoint) {
+				addSelectedLine(hits, 1, false);
+		}
+
+		if (selPoints() == 1) {
+			if (selLines() == 1) {
+				// fetch selected point and line
+				GeoPoint[] points = getSelectedPoints();
+				GeoLine[] lines = getSelectedLines();
+				// create new parabola
+				kernel.Parabola(null, points[0], lines[0]);
 				return true;
 			}
 		}
