@@ -2783,6 +2783,21 @@ public class Kernel {
 	}
 
 	/** 
+	 * hyperbola with foci A, B passing thorugh C
+	 * Michael Borcherds 2008-04-06
+	 */
+	final public GeoConic Hyperbola(
+		String label,
+		GeoPoint A,
+		GeoPoint B,
+		GeoPoint C) {
+		AlgoHyperbolaFociPoint algo =
+			new AlgoHyperbolaFociPoint(cons, label, A, B, C);
+		GeoConic hyperbola = algo.getHyperbola();
+		return hyperbola;
+	}
+
+	/** 
 	 * conic through five points
 	 */
 	final public GeoConic Conic(String label, GeoPoint[] points) {

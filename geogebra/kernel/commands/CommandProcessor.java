@@ -1952,17 +1952,28 @@ final public GeoElement[] process(Command c) throws MyError {
         case 3 :
             arg = resArgs(c);
             if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isGeoPoint()))
-                && (ok[2] = (arg[2] .isNumberValue()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Hyperbola(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoPoint) arg[1],
-                            (NumberValue) arg[2])};
-                return ret;
-            } else {
+                    && (ok[1] = (arg[1] .isGeoPoint()))
+                    && (ok[2] = (arg[2] .isNumberValue()))) {
+                    GeoElement[] ret =
+                        {
+                             kernel.Hyperbola(
+                                c.getLabel(),
+                                (GeoPoint) arg[0],
+                                (GeoPoint) arg[1],
+                                (NumberValue) arg[2])};
+                    return ret;
+                } else if ((ok[0] = (arg[0] .isGeoPoint()))
+                            && (ok[1] = (arg[1] .isGeoPoint()))
+                            && (ok[2] = (arg[2] .isGeoPoint()))) {
+                            GeoElement[] ret =
+                                {
+                                     kernel.Hyperbola(
+                                        c.getLabel(),
+                                        (GeoPoint) arg[0],
+                                        (GeoPoint) arg[1],
+                                        (GeoPoint) arg[2])};
+                            return ret;
+                        } else {
                 if (!ok[0])
                     throw argErr(app, "Hyperbola", arg[0]);
                 else
