@@ -938,12 +938,16 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						
 						String str=app.getStringFromClipboard();
 						
+						// split on newlines commas and tabs 
+						String strs[] = str.split("[\n,\t]");
 						
-						//kernel.getAlgebraProcessor().processAlgebraCommand("(4,3)", false);
-						//kernel.getAlgebraProcessor().processAlgebraCommand("(4,6)", false);
-						//kernel.getAlgebraProcessor().processAlgebraCommand(str, false);
-												
-						app.setDefaultCursor();
+						for (int i=0 ; i<strs.length ; i+=2)
+						{
+							String command = "("+strs[i]+","+strs[i+1]+")"; // eg (3,4)
+							kernel.getAlgebraProcessor().processAlgebraCommand(command, false);							
+						}
+						
+					app.setDefaultCursor();
 					}
 				};
 				runner.start();						    			    								
