@@ -54,7 +54,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	// Actions
 	protected AbstractAction refreshAction,
-			drawingPadToClipboardAction, deleteAll, newWindowAction,
+			CSVFromClipboardAction, drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
 			showSpreadsheetAction,     // Michael Borcherds 2008-01-14
@@ -265,6 +265,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(drawingPadToClipboardAction);
 		setMenuShortCutShiftAccelerator(mi, 'C');
 
+		mi = menu.add(CSVFromClipboardAction);
+		setMenuShortCutAccelerator(mi, 'V');
+				
 		if (app.letDelete()) {
 			mi = menu.add(deleteAction);
 			mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));	
@@ -905,7 +908,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {			
 				app.clearSelectedGeos();
-				
+            	
 				Thread runner = new Thread() {
 					public void run() {		
 						app.setWaitCursor();
@@ -913,6 +916,33 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						Image img = app.getEuclidianView().getExportImage(1d);
 						ImageSelection imgSel = new ImageSelection(img);
 						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
+						app.setDefaultCursor();
+					}
+				};
+				runner.start();						    			    								
+			}
+		};
+
+		
+		// Michael Borcherds 2008-04-09
+		CSVFromClipboardAction = new AbstractAction(
+				app.getMenu("CSVFromClipboard"),
+				app.getImageIcon("edit-copy.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+            	          	 				
+				Thread runner = new Thread() {
+					public void run() {		
+						app.setWaitCursor();
+						
+						String str=app.getStringFromClipboard();
+						
+						
+						//kernel.getAlgebraProcessor().processAlgebraCommand("(4,3)", false);
+						//kernel.getAlgebraProcessor().processAlgebraCommand("(4,6)", false);
+						//kernel.getAlgebraProcessor().processAlgebraCommand(str, false);
+												
 						app.setDefaultCursor();
 					}
 				};

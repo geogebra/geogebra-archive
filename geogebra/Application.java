@@ -93,6 +93,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -1702,6 +1703,49 @@ public abstract class Application implements	KeyEventDispatcher {
 	}
 	
 	/**
+	 * gets String from clipboard
+	 * Michael Borcherds 2008-04-09
+	 */
+	public String getStringFromClipboard()
+	{
+    String selection = null;
+    
+	Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+	Transferable transfer = clip.getContents(null);
+	
+    try {
+	if (transfer.isDataFlavorSupported(DataFlavor.stringFlavor))
+	  selection = (String)transfer.getTransferData(DataFlavor.stringFlavor);
+	else if (transfer.isDataFlavorSupported(DataFlavor.plainTextFlavor))
+	  {
+	    StringBuffer sbuf = new StringBuffer();
+	    InputStreamReader reader;
+	    char readBuf[] = new char[1024*64];
+	    int numChars;
+ 	  
+	    reader = new InputStreamReader 
+	      ((InputStream) 
+	    		 transfer.getTransferData(DataFlavor.plainTextFlavor), "UNICODE");
+ 	  
+	    while (true)
+	      {
+		numChars = reader.read(readBuf);
+		if (numChars == -1)
+		  break;
+		sbuf.append(readBuf, 0, numChars);
+	      }
+ 	  
+	    selection = new String(sbuf);
+	  }
+      }
+    catch (Exception e)
+      {
+      }
+    
+    return selection;
+	}
+	
+	/**
 	 * Shows a file open dialog to choose an image file,
 	 * [or gets an image from the clipboard Michael Borcherds 2008-02-17]
 	 * Then the image file is loaded and stored in this
@@ -1720,6 +1764,14 @@ public abstract class Application implements	KeyEventDispatcher {
 				
 				Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 				Transferable transfer = clip.getContents(null);
+		          
+				/*
+				if(transfer.isDataFlavorSupported(DataFlavor.plainTextFlavor)){
+					String str = (Text)transfer.getTransferData(DataFlavor.plainTextFlavor);
+					DataFlavor.getReaderForText(transfer)
+					System.out.println("str"+str);
+				} else System.out.println("notxt");
+				*/
 				
 				try{
 					if(transfer.isDataFlavorSupported(DataFlavor.imageFlavor)){
