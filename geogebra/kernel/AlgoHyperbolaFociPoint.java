@@ -35,21 +35,29 @@ public class AlgoHyperbolaFociPoint extends AlgoElement {
     private GeoConic hyperbola; // output             
 
     AlgoHyperbolaFociPoint(
-        Construction cons,
-        String label,
-        GeoPoint A,
-        GeoPoint B,
-        GeoPoint C) {
-        super(cons);
-        this.A = A;
-        this.B = B;
-        this.C = C;
-        hyperbola = new GeoConic(cons);
-        setInputOutput(); // for AlgoElement
+            Construction cons,
+            String label,
+            GeoPoint A,
+            GeoPoint B,
+            GeoPoint C) {
+    		this(cons, A, B, C);
+            hyperbola.setLabel(label);
+        }
 
-        compute();
-        hyperbola.setLabel(label);
-    }
+    public AlgoHyperbolaFociPoint(
+            Construction cons,
+            GeoPoint A,
+            GeoPoint B,
+            GeoPoint C) {
+            super(cons);
+            this.A = A;
+            this.B = B;
+            this.C = C;
+            hyperbola = new GeoConic(cons);
+            setInputOutput(); // for AlgoElement
+
+            compute();
+        }
 
     protected String getClassName() {
         return "AlgoHyperbolaFociPoint";
@@ -67,7 +75,7 @@ public class AlgoHyperbolaFociPoint extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoConic getHyperbola() {
+    public GeoConic getHyperbola() {
         return hyperbola;
     }
     GeoPoint getFocus1() {

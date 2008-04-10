@@ -20,6 +20,8 @@ package geogebra.euclidian;
 
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
+import geogebra.kernel.AlgoEllipseFociPoint;
+import geogebra.kernel.AlgoHyperbolaFociPoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -796,6 +798,24 @@ final public class DrawConic extends Drawable implements Previewable {
 						previewTempPoints[2]);
 				cons.removeFromConstructionList(algo2);				
 				initConic(algo2.getCircle());
+				break;		
+				
+			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+				AlgoEllipseFociPoint algo3 = new AlgoEllipseFociPoint(cons,
+						previewTempPoints[0], 
+						previewTempPoints[1],
+						previewTempPoints[2]);
+				cons.removeFromConstructionList(algo3);				
+				initConic(algo3.getEllipse());
+				break;												
+				
+			case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+				AlgoHyperbolaFociPoint algo4 = new AlgoHyperbolaFociPoint(cons,
+						previewTempPoints[0], 
+						previewTempPoints[1],
+						previewTempPoints[2]);
+				cons.removeFromConstructionList(algo4);				
+				initConic(algo4.getHyperbola());
 				break;												
 		}		
 		

@@ -37,21 +37,29 @@ public class AlgoEllipseFociPoint extends AlgoElement {
     private GeoConic ellipse; // output             
 
     AlgoEllipseFociPoint(
-        Construction cons,
-        String label,
-        GeoPoint A,
-        GeoPoint B,
-        GeoPoint C) {
-        super(cons);
-        this.A = A;
-        this.B = B;
-        this.C = C;
-        ellipse = new GeoConic(cons);
-        setInputOutput(); // for AlgoElement
+            Construction cons,
+            String label,
+            GeoPoint A,
+            GeoPoint B,
+            GeoPoint C) {
+        	this(cons, A, B, C);
+            ellipse.setLabel(label);
+        }
 
-        compute();
-        ellipse.setLabel(label);
-    }
+    public AlgoEllipseFociPoint(
+            Construction cons,
+            GeoPoint A,
+            GeoPoint B,
+            GeoPoint C) {
+            super(cons);
+            this.A = A;
+            this.B = B;
+            this.C = C;
+            ellipse = new GeoConic(cons);
+            setInputOutput(); // for AlgoElement
+
+            compute();
+        }
 
     protected String getClassName() {
         return "AlgoEllipseFociPoint";
@@ -69,7 +77,7 @@ public class AlgoEllipseFociPoint extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoConic getEllipse() {
+    public GeoConic getEllipse() {
         return ellipse;
     }
     GeoPoint getFocus1() {
