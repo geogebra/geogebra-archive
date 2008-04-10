@@ -937,16 +937,55 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						app.setWaitCursor();
 						
 						String str=app.getStringFromClipboard();
+						String lf = "\n"; // doesn't work: System.getProperty("line.separator");
 						
-						// split on newlines commas and tabs 
-						String strs[] = str.split("[\n,\t]");
+						// split input at linefeed
+						String strs[] = str.split(lf);
 						
-						for (int i=0 ; i<strs.length/2 ; i++)
+						strs[0]=strs[0].trim();
+						while (strs[0].indexOf("  ")>-1) strs[0]=strs[0].replaceAll("  ", " ");
+						//System.out.println("strs[0]"+strs[0]);
+						
+						String sep = null;
+						
+						if      (strs[0].split("\t").length > 1) sep="\t"; // tab separated
+						else if (strs[0].split(" ").length > 1) sep=" "; // space separated
+						else if (strs[0].split(";").length > 1) sep=";"; // semicolon separated
+						else if (strs[0].split(",").length > 1) sep=","; // comma separated
+						
+						//System.out.println("sep"+sep);
+						
+						if (sep != null) for (int i=0 ; i<strs.length ; i++)
 						{
-							String command = "("+strs[i*2]+","+strs[i*2+1]+")"; // eg (3,4)
-							kernel.getAlgebraProcessor().processAlgebraCommand(command, false);							
+							//System.out.println("XXX"+strs[i]+"XXX");
+							
+							//strs[i]=removeWhitespace(strs[i]);
+							strs[i]=strs[i].trim();
+							while (strs[i].indexOf("  ")>-1) strs[i]=strs[i].replaceAll("  ", " ");
+							
+							
+							if (!strs[i].equals(""))
+							{
+								String tempStr[] = strs[i].split(sep);
+								
+								String list="{";
+								for (int j=0 ; j < tempStr.length ; j++)
+								{
+									tempStr[j]=tempStr[j].trim();
+									if (tempStr[j].equals("")) tempStr[j] = "0";		
+									
+									tempStr[j]=tempStr[j].replace(',', '.'); // decimal comma -> decimal point
+									
+									//System.out.println("YYY"+tempStr[j]+"YYY");
+									kernel.getAlgebraProcessor().processAlgebraCommand(tempStr[j], false);
+									list += tempStr[j];
+									if (j == tempStr.length-1) list+="}"; else list+=",";
+									//System.out.println("XXX"+list+"XXX");
+								}
+								kernel.getAlgebraProcessor().processAlgebraCommand(list, false);
+							}
 						}
-						
+				
 					app.setDefaultCursor();
 					}
 				};
