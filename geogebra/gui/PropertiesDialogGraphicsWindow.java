@@ -31,6 +31,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.NumberFormat;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -41,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -63,7 +66,7 @@ ItemListener, WindowListener {
 	private EuclidianView view;
 	private JButton closeButton, 
 	        btBackgroundColor, btAxesColor, btGridColor;
-	private JCheckBox cbShowAxes, cbShowGrid, cbGridManualTick;
+	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
 	private JComboBox cbAxesStyle, cbGridStyle;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
@@ -217,8 +220,13 @@ ItemListener, WindowListener {
 		JPanel firstPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));		 
 		gridPanel.add(firstPanel, BorderLayout.NORTH);
         cbShowGrid = new JCheckBox(app.getMenu("Grid"));  
-        cbShowGrid.addActionListener(this);
+        cbShowGrid.addActionListener(this);        
         firstPanel.add(cbShowGrid, BorderLayout.NORTH); 
+        
+        cbBoldGrid = new JCheckBox(app.getMenu("Bold"));  
+        cbBoldGrid.addActionListener(this);
+        firstPanel.add(cbBoldGrid, BorderLayout.NORTH); 
+        
         firstPanel.add(Box.createRigidArea(new Dimension(10,0))); 
                
         // second line: color, line style combo
@@ -258,15 +266,16 @@ ItemListener, WindowListener {
 		cbGridStyle.setRenderer(renderer);
 		cbGridStyle.addActionListener(this);
 		label = new JLabel(app.getPlain("LineStyle") + ":");
-		label.setLabelFor(cbGridStyle);
+		label.setLabelFor(cbGridStyle);	
 		
-		JPanel thirdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));  	     
+		JPanel thirdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 1,1));  	     
 		thirdPanel.add(label);
 		thirdPanel.add(cbGridStyle);
-		
+
 		JPanel centerPanel = new JPanel(new BorderLayout());
 		centerPanel.add(secondPanel, BorderLayout.NORTH);
 		centerPanel.add(thirdPanel, BorderLayout.CENTER);
+		//centerPanel.add(fourthPanel, BorderLayout.AFTER_LAST_LINE);
 		gridPanel.add(centerPanel, BorderLayout.CENTER);		
         
         return gridPanel;
@@ -284,6 +293,11 @@ ItemListener, WindowListener {
         cbShowGrid.removeActionListener(this);
         cbShowGrid.setSelected(view.getShowGrid()); 
         cbShowGrid.addActionListener(this);
+        
+//      Michael Borcherds 2008-04-11
+        cbBoldGrid.removeActionListener(this);
+        cbBoldGrid.setSelected(view.getGridIsBold()); 
+        cbBoldGrid.addActionListener(this);
         
         cbAxesStyle.removeActionListener(this);
         cbAxesStyle.setSelectedIndex(view.getAxesLineStyle());
@@ -360,6 +374,9 @@ ItemListener, WindowListener {
 		}
 		else if (source == cbShowGrid) {
 			view.showGrid(cbShowGrid.isSelected());			
+		}
+		else if (source == cbBoldGrid) {
+			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
 		}
 		else if (source == cbAxesStyle) {
 			view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());

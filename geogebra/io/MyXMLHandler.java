@@ -423,6 +423,7 @@ public class MyXMLHandler implements DocHandler {
         	}
             
             ev.showGrid(parseBoolean((String) attrs.get("grid")));
+    		ev.setGridIsBold(parseBoolean((String) attrs.get("gridIsBold"))); // Michael Borcherds 2008-04-11
             
             String str = (String) attrs.get("pointCapturing");
             if (str != null) {

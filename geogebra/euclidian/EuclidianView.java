@@ -397,6 +397,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	double[] gridDistances = { 2, 2 };
 
 	protected int gridLineStyle, axesLineType;
+	
+	protected boolean gridIsBold=false; // Michael Borcherds 2008-04-11
 
 	// colors: axes, grid, background
 	protected Color axesColor, gridColor, bgColor;
@@ -2711,6 +2713,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 		sb.append(showAxes[0] || showAxes[1]);
 		sb.append("\" grid=\"");		
 		sb.append(showGrid);
+		sb.append("\" gridIsBold=\"");	// 
+		sb.append(gridIsBold);			// Michael Borcherds 2008-04-11
 		sb.append("\" pointCapturing=\"");
 		sb.append(pointCapturingMode);
 		sb.append("\" pointStyle=\"");
@@ -3183,6 +3187,21 @@ public class EuclidianView extends JPanel implements View, Printable {
 		return gridColor;
 	}
 
+//	 Michael Borcherds 2008-04-11
+	public boolean getGridIsBold() {
+		return gridIsBold;
+	}
+	
+//	 Michael Borcherds 2008-04-11
+	public void setGridIsBold(boolean gridIsBold ) {
+		if (this.gridIsBold == gridIsBold) return;
+		
+		this.gridIsBold=gridIsBold;
+		setGridLineStyle(gridLineStyle);
+		
+		updateBackgroundImage();
+	}
+
 	public void setGridColor(Color gridColor) {
 		if (gridColor != null)
 			this.gridColor = gridColor;
@@ -3213,7 +3232,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	public void setGridLineStyle(int gridLineStyle) {
 		this.gridLineStyle = gridLineStyle;
-		gridStroke = getStroke(1f, gridLineStyle);
+		gridStroke = getStroke(gridIsBold?2f:1f, gridLineStyle); // Michael Borcherds 2008-04-11 added gridisbold
 	}
 
 	public int getAxesLineStyle() {
