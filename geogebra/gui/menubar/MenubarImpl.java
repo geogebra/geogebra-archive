@@ -942,12 +942,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						// split input at linefeed
 						String strs[] = str.split(lf);
 						
+						// Remove Whitespace
 						strs[0]=strs[0].trim();
 						while (strs[0].indexOf("  ")>-1) strs[0]=strs[0].replaceAll("  ", " ");
-						//System.out.println("strs[0]"+strs[0]);
 						
-						String sep = null;
+						String sep = null, value;
 						
+						// check if data is comma tab, space, semicolon or comma (CSV) separated
 						if      (strs[0].split("\t").length > 1) sep="\t"; // tab separated
 						else if (strs[0].split(" ").length > 1) sep=" "; // space separated
 						else if (strs[0].split(";").length > 1) sep=";"; // semicolon separated
@@ -961,7 +962,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						{
 							//System.out.println("XXX"+strs[i]+"XXX");
 							
-							//strs[i]=removeWhitespace(strs[i]);
+							// Remove Whitespace
 							strs[row]=strs[row].trim();
 							while (strs[row].indexOf("  ")>-1) strs[row]=strs[row].replaceAll("  ", " ");
 							
@@ -973,14 +974,17 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 								String coords="(";
 								for (int col=0 ; col < tempStr.length ; col++)
 								{
-									tempStr[col]=tempStr[col].trim();
-									if (tempStr[col].equals("")) tempStr[col] = "0";		
+									value = tempStr[col].trim();
+									if (value.equals("")) value = "0";		
 									
-									tempStr[col]=tempStr[col].replace(',', '.'); // decimal comma -> decimal point
+									value = value.replace(',', '.'); // decimal comma -> decimal point
 									
-									String command = GeoElement.getSpreadsheetCellName(col,row)+"="+tempStr[col];
+									try { Double.parseDouble(value); } // check if input is a valid number
+									catch (Exception e) { value = "0"; } // set to zero
+									
+									String command = GeoElement.getSpreadsheetCellName(col,row) + "=" + value;
 									kernel.getAlgebraProcessor().processAlgebraCommand(command, false);
-									coords += GeoElement.getSpreadsheetCellName(col,row); //tempStr[col];
+									coords += GeoElement.getSpreadsheetCellName(col,row);
 									if (col == tempStr.length-1) coords +=")"; else coords +=",";
 									//System.out.println("XXX"+list+"XXX");
 								}
@@ -992,6 +996,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 									// TODO 3D coords?
 							}
 						}
+						
 						if (list.lastIndexOf(",") == list.length()-1) // list contains at least one pair of coords
 						{
 							list = list.substring(0,list.length()-1); 	// remove last comma
