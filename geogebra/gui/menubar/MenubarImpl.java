@@ -54,7 +54,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	// Actions
 	protected AbstractAction refreshAction,
-			CSVFromClipboardAction, drawingPadToClipboardAction, deleteAll, newWindowAction,
+			DataFromClipboardAction, drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
 			showSpreadsheetAction,     // Michael Borcherds 2008-01-14
@@ -265,7 +265,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(drawingPadToClipboardAction);
 		setMenuShortCutShiftAccelerator(mi, 'C');
 
-		mi = menu.add(CSVFromClipboardAction);
+		mi = menu.add(DataFromClipboardAction);
 		setMenuShortCutAccelerator(mi, 'V');
 				
 		if (app.letDelete()) {
@@ -925,8 +925,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 		
 		// Michael Borcherds 2008-04-09
-		CSVFromClipboardAction = new AbstractAction(
-				app.getMenu("CSVFromClipboard"),
+		DataFromClipboardAction = new AbstractAction(
+				app.getMenu("PasteDataFromClipboard"),
 				app.getImageIcon("edit-copy.png")) {
 			private static final long serialVersionUID = 1L;
 
@@ -955,35 +955,49 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						
 						//System.out.println("sep"+sep);
 						
-						if (sep != null) for (int i=0 ; i<strs.length ; i++)
+						String list = "{";
+						
+						if (sep != null) for (int row=0 ; row<strs.length ; row++)
 						{
 							//System.out.println("XXX"+strs[i]+"XXX");
 							
 							//strs[i]=removeWhitespace(strs[i]);
-							strs[i]=strs[i].trim();
-							while (strs[i].indexOf("  ")>-1) strs[i]=strs[i].replaceAll("  ", " ");
+							strs[row]=strs[row].trim();
+							while (strs[row].indexOf("  ")>-1) strs[row]=strs[row].replaceAll("  ", " ");
 							
 							
-							if (!strs[i].equals(""))
+							if (!strs[row].equals(""))
 							{
-								String tempStr[] = strs[i].split(sep);
+								String tempStr[] = strs[row].split(sep);
 								
-								String list="{";
-								for (int j=0 ; j < tempStr.length ; j++)
+								String coords="(";
+								for (int col=0 ; col < tempStr.length ; col++)
 								{
-									tempStr[j]=tempStr[j].trim();
-									if (tempStr[j].equals("")) tempStr[j] = "0";		
+									tempStr[col]=tempStr[col].trim();
+									if (tempStr[col].equals("")) tempStr[col] = "0";		
 									
-									tempStr[j]=tempStr[j].replace(',', '.'); // decimal comma -> decimal point
+									tempStr[col]=tempStr[col].replace(',', '.'); // decimal comma -> decimal point
 									
-									//System.out.println("YYY"+tempStr[j]+"YYY");
-									kernel.getAlgebraProcessor().processAlgebraCommand(tempStr[j], false);
-									list += tempStr[j];
-									if (j == tempStr.length-1) list+="}"; else list+=",";
+									String command = GeoElement.getSpreadsheetCellName(col,row)+"="+tempStr[col];
+									kernel.getAlgebraProcessor().processAlgebraCommand(command, false);
+									coords += GeoElement.getSpreadsheetCellName(col,row); //tempStr[col];
+									if (col == tempStr.length-1) coords +=")"; else coords +=",";
 									//System.out.println("XXX"+list+"XXX");
 								}
-								kernel.getAlgebraProcessor().processAlgebraCommand(list, false);
+								if (tempStr.length == 2) // 2D coords
+								{
+									//kernel.getAlgebraProcessor().processAlgebraCommand(coords, false);
+									list = list + coords + ",";
+								}
+									// TODO 3D coords?
 							}
+						}
+						if (list.lastIndexOf(",") == list.length()-1) // list contains at least one pair of coords
+						{
+							list = list.substring(0,list.length()-1); 	// remove last comma
+							list = list + "}"; 							// close list
+							
+							kernel.getAlgebraProcessor().processAlgebraCommand(list, false);							
 						}
 				
 					app.setDefaultCursor();
