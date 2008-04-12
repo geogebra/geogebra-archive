@@ -512,6 +512,10 @@ public class GeoList extends GeoElement implements ListValue {
 			{
 				if (!((GeoSegment)geoA).equals((GeoSegment)geoB)) return false; 
 			}
+			else if (geoA.isGeoList() && geoB.isGeoList()) 
+			{
+				if (!((GeoList)geoA).equals((GeoList)geoB)) return false; 
+			}
 			else if (!geoA.equals(geoB)) return false;
 		}
 		
