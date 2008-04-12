@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -469,5 +470,54 @@ public class GeoList extends GeoElement implements ListValue {
 			
 			super.doRemove();
 		}
+		/**
+		 * return wheter this list equals list list 
+		 * Michael Borcherds 2008-04-12
+		 */
+		final public boolean equals(GeoList list) {
+		// check sizes
+		if (geoList.size() != list.size()) return false;
+		
+		// check each element
+		for (int i=0 ; i<list.geoList.size() ; i++)
+		{
+			GeoElement geoA=(GeoElement)geoList.get(i);
+			GeoElement geoB=list.get(i);
+			
+			if (geoA.isGeoNumeric() && geoB.isGeoNumeric()) 
+			{
+				if (!((GeoNumeric)geoA).equals((GeoNumeric)geoB)) return false; 
+			}
+			else if (geoA.isGeoConicPart() && geoB.isGeoConicPart()) 
+			{
+				if (!((GeoConicPart)geoA).equals((GeoConicPart)geoB)) return false; 
+			}
+			else if (geoA.isGeoConic() && geoB.isGeoConic()) 
+			{
+				if (!((GeoConic)geoA).equals((GeoConic)geoB)) return false; 
+			}
+			else if (geoA.isGeoAngle() && geoB.isGeoAngle()) 
+			{
+				if (!((GeoAngle)geoA).equals((GeoAngle)geoB)) return false; 
+			}
+			else if (geoA.isGeoPoint() && geoB.isGeoPoint()) 
+			{
+				if (!((GeoPoint)geoA).equals((GeoPoint)geoB)) return false; 
+			}
+			else if (geoA.isGeoPolygon() && geoB.isGeoPolygon()) 
+			{
+				if (!((GeoPolygon)geoA).equals((GeoPolygon)geoB)) return false; 
+			}
+			else if (geoA.isGeoSegment() && geoB.isGeoSegment()) 
+			{
+				if (!((GeoSegment)geoA).equals((GeoSegment)geoB)) return false; 
+			}
+			else if (!geoA.equals(geoB)) return false;
+		}
+		
+		// all list elements equal
+		return true;
+		}
+
     		
 }

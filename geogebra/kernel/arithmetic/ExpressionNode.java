@@ -28,6 +28,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 
@@ -331,22 +332,22 @@ implements ExpressionValue {
                         
         lt = left.evaluate(); // left tree
         rt = right.evaluate(); // right tree      
-        
+
         // handle list operations first       
-        if (lt.isListValue()) {        	
+        if (lt.isListValue() && operation != EQUAL_BOOLEAN) {  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
         	MyList myList = ((ListValue) lt).getMyList();
         	// list lt operation rt
         	myList.applyRight(operation, rt);
         	return myList;
         }
-        else if (rt.isListValue()) {
+        else if (rt.isListValue() && operation != EQUAL_BOOLEAN) { // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
         	MyList myList = ((ListValue) rt).getMyList();
         	// lt operation list rt
         	myList.applyLeft(operation, lt);
         	return myList;
         }
-        	 
-        // NON-List operations
+       	 
+        // NON-List operations (apart from EQUAL_BOOLEAN)
         switch (operation) {
             /*
         case NO_OPERATION:                      
@@ -1379,6 +1380,9 @@ implements ExpressionValue {
     		}
     		else if (geo1.isGeoVector() && geo2.isGeoVector()) {
     			return new MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2));
+    		}
+    		else if (geo1.isGeoList() && geo2.isGeoList()) { // Michael Borcherds 2008-04-12
+    			return new MyBoolean(((GeoList)geo1).equals((GeoList) geo2));
     		}
     	}      
     	
