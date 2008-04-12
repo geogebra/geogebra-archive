@@ -300,7 +300,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	protected static BasicStroke defAxesStroke = new BasicStroke(1.0f,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
-	protected static BasicStroke boldAxesStroke = new BasicStroke(1.8f,
+	protected static BasicStroke boldAxesStroke = new BasicStroke(2.0f, // changed from 1.8f (same as bold grid) Michael Borcherds 2008-04-12
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	// axes and grid stroke
