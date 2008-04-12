@@ -22,26 +22,16 @@ import geogebra.kernel.arithmetic.NumberValue;
  * FitLog[<List of points>]
  * 
  * @author Hans-Petter Ulven
- * @version 07.04.08
+ * @version 12.04.08
  */
-public class CmdFitLog extends CommandProcessor{
+public class CmdFitLog extends CmdOneListFunction{
 
     public CmdFitLog(Kernel kernel) {super(kernel);}
     
-    public GeoElement[] process(Command c) throws MyError {
-        int n=c.getArgumentNumber();
-        GeoElement[] arg;
-        switch(n) {
-            case 1: arg=resArgs(c);
-                    if( (arg[0].isGeoList()) ){ 
-                        GeoElement[] ret={kernel.FitLog(c.getLabel(),(GeoList)arg[0])};
-                        return ret;
-                    }else{
-                        throw argErr(app,c.getName(),arg[0]);
-                    }//if arg[0] is GeoList 
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitLog(a, b);
+	}
 
-           default: throw argNumErr(app,c.getName(),n);
-        }//switch(number of arguments)
-    }//process(Command) 
 }// class CmdFitLog
 

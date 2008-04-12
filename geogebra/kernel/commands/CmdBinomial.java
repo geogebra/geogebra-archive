@@ -14,7 +14,7 @@ public class CmdBinomial extends CmdTwoNumFunction {
 		super(kernel);
 	}
 
-	protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
 	{
 		return kernel.Binomial(a, b, c);
 	}

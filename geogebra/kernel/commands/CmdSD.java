@@ -10,36 +10,16 @@ import geogebra.kernel.arithmetic.Command;
  * SD[ list ]
  * adapted from CmdVariance by Michael Borcherds 2008-02-18
  */
-public class CmdSD extends CommandProcessor {
+public class CmdSD extends CmdOneListFunction {
 
 	public CmdSD(Kernel kernel) {
 		super(kernel);
 	}
 
-	public GeoElement[] process(Command c) throws MyError {
-		int n = c.getArgumentNumber();
-		GeoElement[] arg;
-		arg = resArgs(c);
-
-		switch (n) {
-		case 1:
-			if (arg[0].isGeoList()) {
-				GeoElement[] ret = { 
-						kernel.StandardDeviation(c.getLabel(),
-						(GeoList) arg[0]) };
-				return ret;
-			} else
-				throw argErr(app, c.getName(), arg[0]);
-		
-		default:
-            // try to create list of numbers
-	       	 GeoList list = wrapInList(arg, GeoElement.GEO_CLASS_NUMERIC);
-	            if (list != null) {
-	           	 GeoElement[] ret = { kernel.StandardDeviation(c.getLabel(), list)};
-	                return ret;             	     	 
-	            } 
-			throw argNumErr(app, c.getName(), n);
-		}
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.StandardDeviation(a, b);
 	}
+
 
 }

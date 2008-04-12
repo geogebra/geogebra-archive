@@ -10,35 +10,23 @@ under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.Command;
 
 /** 
  * FitExp[<List of points>]
  * 
  * @author Hans-Petter Ulven
- * @version 06.04.08
+ * @version 12.04.08
  */
-public class CmdFitExp extends CommandProcessor{
+public class CmdFitExp extends CmdOneListFunction{
 
     public CmdFitExp(Kernel kernel) {super(kernel);}
     
-    public GeoElement[] process(Command c) throws MyError {
-        int n=c.getArgumentNumber();
-        GeoElement[] arg;
-        switch(n) {
-            case 1: arg=resArgs(c);
-                    if( (arg[0].isGeoList()) ){ 
-                        GeoElement[] ret={kernel.FitExp(c.getLabel(),(GeoList)arg[0])};
-                        return ret;
-                    }else{
-                        throw argErr(app,c.getName(),arg[0]);
-                    }//if arg[0] is GeoList 
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitExp(a, b);
+	}
 
-           default: throw argNumErr(app,c.getName(),n);
-        }//switch(number of arguments)
-    }//process(Command) 
 }// class CmdFitExp

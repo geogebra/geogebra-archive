@@ -24,23 +24,13 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author Hans-Petter Ulven
  * @version 07.04.08
  */
-public class CmdFitPow extends CommandProcessor{
+public class CmdFitPow extends CmdOneListFunction{
 
     public CmdFitPow(Kernel kernel) {super(kernel);}
     
-    public GeoElement[] process(Command c) throws MyError {
-        int n=c.getArgumentNumber();
-        GeoElement[] arg;
-        switch(n) {
-            case 1: arg=resArgs(c);
-                    if( (arg[0].isGeoList()) ){
-                        GeoElement[] ret={kernel.FitPow(c.getLabel(),(GeoList)arg[0])};
-                        return ret;
-                    }else{
-                        throw argErr(app,c.getName(),arg[0]);
-                    }//if arg[0] is GeoList 
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitPow(a, b);
+	}
 
-           default: throw argNumErr(app,c.getName(),n);
-        }//switch(number of arguments)
-    }//process(Command) 
 }// class CmdFitPow
