@@ -42,3 +42,87 @@ public abstract class CmdTwoNumFunction extends CommandProcessor {
 	
     abstract protected GeoElement doCommand(String a, NumberValue b, NumberValue c);     
 }
+
+/*
+ * Binomial[ <Number>, <Number> ]
+ * Michael Borcherds 2008-04-12
+ */
+class CmdBinomial extends CmdTwoNumFunction {
+
+	public CmdBinomial(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.Binomial(a, b, c);
+	}
+}
+
+/*
+ * Div[ <Number>, <Number> ]
+ */
+class CmdDiv extends CmdTwoNumFunction {
+
+	public CmdDiv(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.Div(a, b, c);
+	}
+
+}
+
+/*
+ * Mod[ <Number>, <Number> ]
+ */
+class CmdMod extends CmdTwoNumFunction {
+
+	public CmdMod(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.Mod(a, b, c);
+	}
+}
+
+/*
+ * RandomNormal[ <Number>, <Number> ]
+ */
+class CmdRandomNormal extends CmdTwoNumFunction {
+
+	public CmdRandomNormal(Kernel kernel) {
+		super(kernel);
+	}
+
+	protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.RandomNormal(a, b, c);
+	}
+
+}
+
+/*
+ * Row[ <Number>, <Number> ]
+ * Row[ <Number> ]
+ */
+class CmdRow extends CmdTwoNumFunction {
+
+	public CmdRow(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.Row(a, b, c);
+	}
+
+
+}
+
+
+

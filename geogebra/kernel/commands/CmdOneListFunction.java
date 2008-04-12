@@ -48,3 +48,254 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 	
     abstract protected GeoElement doCommand(String a, GeoList b);     
 }
+
+/** 
+ * FitExp[<List of points>]
+ * 
+ * @author Hans-Petter Ulven
+ * @version 12.04.08
+ */
+class CmdFitExp extends CmdOneListFunction{
+
+    public CmdFitExp(Kernel kernel) {super(kernel);}
+    
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitExp(a, b);
+	}
+
+}// class CmdFitExp
+
+/*
+ * 
+ * FitLineX[list of points]
+ * adapted from CmdLcm by Michael Borcherds 2008-01-14
+ */
+class CmdFitLineX extends CmdOneListFunction {
+
+	public CmdFitLineX(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitLineX(a, b);
+	}
+
+
+}
+
+/*
+ * 
+ * FitLineY[list of points]
+ * adapted from CmdLcm by Michael Borcherds 2008-01-14
+ */
+class CmdFitLineY extends CmdOneListFunction {
+
+	public CmdFitLineY(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitLineY(a, b);
+	}
+
+}
+
+/** 
+ * FitLog[<List of points>]
+ * 
+ * @author Hans-Petter Ulven
+ * @version 12.04.08
+ */
+
+class CmdFitLog extends CmdOneListFunction{
+
+    public CmdFitLog(Kernel kernel) {super(kernel);}
+    
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitLog(a, b);
+	}
+
+}// class CmdFitLog
+
+/** 
+ * FitPow[<List of points>]
+ * 
+ * @author Hans-Petter Ulven
+ * @version 07.04.08
+ */
+class CmdFitPow extends CmdOneListFunction{
+
+    public CmdFitPow(Kernel kernel) {super(kernel);}
+    
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitPow(a, b);
+	}
+
+}// class CmdFitPow
+
+/*
+ * Mean[ list ]
+ *  Michael Borcherds 2008-04-12
+ */
+class CmdMean extends CmdOneListFunction {
+
+	public CmdMean(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Mean(a, b);
+	}
+
+}
+
+/*
+ * Sum[ list ]
+ * adapted from CmdLcm by Michael Borcherds 2008-02-16
+ */
+class CmdMedian extends CmdOneListFunction {
+
+	public CmdMedian(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Median(a, b);
+	}
+
+
+}
+
+/*
+ * Mode[ <List> ]
+ */
+class CmdMode extends CmdOneListFunction {
+
+	public CmdMode(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Mode(a, b);
+	}
+
+}
+
+/*
+ * Sum[ list ]
+ * adapted from CmdLcm by Michael Borcherds 2008-02-16
+ */
+class CmdQ1 extends CmdOneListFunction {
+
+	public CmdQ1(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Q1(a, b);
+	}
+
+
+}
+
+/*
+ * Sum[ list ]
+ * adapted from CmdLcm by Michael Borcherds 2008-02-16
+ */
+class CmdQ3 extends CmdOneListFunction {
+
+	public CmdQ3(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Q3(a, b);
+	}
+
+
+}
+
+/*
+ * Reverse[ <List> ]
+ * Michael Borcherds 2008-02-16
+ */
+class CmdReverse extends CmdOneListFunction {
+
+	public CmdReverse(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Reverse(a, b);
+	}
+
+
+}
+
+/*
+ * SD[ list ]
+ * adapted from CmdVariance by Michael Borcherds 2008-02-18
+ */
+class CmdSD extends CmdOneListFunction {
+
+	public CmdSD(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.StandardDeviation(a, b);
+	}
+
+
+}
+
+/*
+ * Sort[ <List> ]
+ */
+class CmdSort extends CmdOneListFunction {
+
+	public CmdSort(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Sort(a, b);
+	}
+
+
+}
+
+/*
+ * Variance[ list ]
+ * adapted from CmdSum by Michael Borcherds 2008-02-16
+ */
+class CmdVariance extends CmdOneListFunction {
+
+	public CmdVariance(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Variance(a, b);
+	}
+
+
+}
+
+
+
+
