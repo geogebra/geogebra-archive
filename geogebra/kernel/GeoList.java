@@ -471,7 +471,7 @@ public class GeoList extends GeoElement implements ListValue {
 			super.doRemove();
 		}
 		/**
-		 * return wheter this list equals list list 
+		 * return whether this list equals GeoList list 
 		 * Michael Borcherds 2008-04-12
 		 */
 		final public boolean equals(GeoList list) {
