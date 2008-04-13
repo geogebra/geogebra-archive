@@ -22,6 +22,12 @@ public class HttpDaoFactory {
 	private String PORT = "";
 	private String CONTEXT = "edumat/agentgeom/ws/wstestlist.php";
 	
+	private String QUERY_CONTEXT = "edumat/agentgeom/ws/wstestlist.php";
+	private String FILE_TRANSFER_CONTEXT = "edumat/agentgeom/continguts/problemes";
+	
+	//  http://158.109.2.26/edumat/agentgeom/continguts/problemes/upload_file.php
+	//  http://158.109.2.26/edumat/agentgeom/continguts/problemes
+	
 	public HttpDaoFactory(String protocol, String ip, String port, String context) {
 		PROTOCOL = protocol;
 		IP = ip;
