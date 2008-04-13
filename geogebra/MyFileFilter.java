@@ -186,7 +186,7 @@ public class MyFileFilter extends FileFilter {
 		if(extensions != null) {
 		    fullDescription += "." + (String) extensions.nextElement();
 		    while (extensions.hasMoreElements()) {
-			fullDescription += ", " + (String) extensions.nextElement();
+			fullDescription += ", ." + (String) extensions.nextElement();
 		    }
 		}
 		fullDescription += ")";
