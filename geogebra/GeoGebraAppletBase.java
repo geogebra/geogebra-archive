@@ -81,6 +81,9 @@ public abstract class GeoGebraAppletBase extends JApplet {
 
 	/** Creates a new instance of GeoGebraApplet */
 	public GeoGebraAppletBase() {}
+	
+	private boolean javascriptLoadFile=false, javascriptReset=false;
+	private String javascriptLoadFileName="";
 
 	public void init() {
 		try {
@@ -175,7 +178,47 @@ public abstract class GeoGebraAppletBase extends JApplet {
 
 		kernel = app.getKernel();
 		
-		initGUI();
+		initGUI();		
+		
+    	Thread runner = new Thread() {
+		public void run(){
+		    while(javascriptLoadFile || javascriptReset){
+		 
+		    	if (javascriptReset)
+		    	{
+		    		try {		
+		    			URL ggbURL = new URL(fileStr);
+		    			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+		    			reinitGUI();	
+		    		} catch (Exception e) {
+		    			e.printStackTrace();
+		    		} 	
+		    	}
+		    	
+		    	if (javascriptLoadFile)
+		    	{
+		    		try {
+						String lowerCase = javascriptLoadFileName.toLowerCase();
+						if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
+							javascriptLoadFileName = getCodeBase() + javascriptLoadFileName;
+						}		
+						URL ggbURL = new URL(javascriptLoadFileName);				
+						app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+						reinitGUI();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		    	}
+		    	
+		    	javascriptLoadFile=false;
+		    	javascriptReset=false;
+		 
+		    }
+	    	
+		}
+		 
+		};
+		runner.start();
 	}
 
 	protected abstract Application buildApplication(String[] args, boolean ua);
@@ -411,13 +454,16 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Resets the initial construction (given in filename parameter) of this applet.	 
 	 */
 	public synchronized void reset() {
+		
+		javascriptReset=true; // send message to thread to avoid security issues
+		/*
 		try {		
 			URL ggbURL = new URL(fileStr);
 			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();	
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 					
+		} 			*/		
 	}
 	
 	/**
@@ -432,6 +478,12 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Loads a construction from a  file (given URL).	 
 	 */
 	public synchronized void openFile(String strURL) {
+		
+		javascriptLoadFileName=strURL;
+		javascriptLoadFile=true;
+		
+		/*
+		
 		try {
 			String lowerCase = strURL.toLowerCase();
 			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
@@ -442,7 +494,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			reinitGUI();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}		*/
 	}
 	
 	/*
