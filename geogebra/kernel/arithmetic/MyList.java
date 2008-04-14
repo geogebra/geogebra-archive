@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.MyError;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.GeoList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -88,15 +89,104 @@ public class MyList extends ValidExpression implements ListValue {
 	private void apply(int operation, ExpressionValue value, boolean right) {
 		int size = size();
 				
-//	
-//		if (!right) 
-//			System.out.println("apply: " + value + " < op: " + operation + " > " + this);
-//		else
-//			System.out.println("apply: " + this + " < op: " + operation + " > " + value);
+	
+		if (!right) 
+			System.out.println("apply: " + value + " < op: " + operation + " > " + this);
+		else
+			System.out.println("apply: " + this + " < op: " + operation + " > " + value);
 		
 		
 		// expression value is list		
 		MyList valueList = value.isListValue() ? ((ListValue) value).getMyList() : null;		
+		
+		// Michael Borcherds 2008-04-14 BEGIN
+//		 check for matrix multiplication eg {{1,3,5},{2,4,6}}*{{11,14},{12,15},{13,16}}
+		try{
+		if (operation == ExpressionNode.MULTIPLY && valueList != null) 
+		{ 
+			MyList LHlist,RHlist;
+			
+			if (!right) {LHlist=valueList; RHlist=(MyList)this.deepCopy(kernel);} else {RHlist=valueList; LHlist=(MyList)this.deepCopy(kernel);}
+			
+			int LHcols = LHlist.size(), LHrows=0;
+			int RHcols = RHlist.size(), RHrows=0;
+			System.out.println("LHcols"+LHcols);
+			System.out.println("RHcols"+RHcols);
+			
+			boolean isMatrix=true;
+			
+			System.out.println("MULT LISTS"+size);
+			
+			// check LHlist is a matrix
+			ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
+			if ( singleValue.isListValue() ){
+				LHrows=((ListValue)singleValue).getMyList().size();
+				System.out.println("LHrows"+LHrows);
+				if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
+				{
+					System.out.println(i);
+					singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
+					System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					if ( singleValue.isListValue() ){
+						if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
+					}
+					else isMatrix=false;
+				}
+			}
+			else isMatrix = false;
+
+			// check RHlist is a matrix
+			singleValue=((ExpressionValue)RHlist.getListElement(0)).evaluate();
+			if ( singleValue.isListValue() ){
+				RHrows=((ListValue)singleValue).getMyList().size();
+				System.out.println("RHrows"+RHrows);
+				if (RHcols>1) for (int i=1 ; i<RHcols ; i++) // check all vectors same length
+				{
+					System.out.println(i);
+					singleValue=((ExpressionValue)RHlist.getListElement(i)).evaluate();
+					System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					if ( singleValue.isListValue() ){
+						if (((ListValue)singleValue).getMyList().size()!=RHrows) isMatrix=false;				
+					}
+					else isMatrix=false;
+				}
+			}
+			else isMatrix = false;
+			
+			if (LHcols != RHrows) isMatrix=false; // incompatible matrices
+			
+			//System.out.println("isMatrix="+isMatrix);		
+			
+			if (isMatrix)
+			{
+				listElements.clear();
+				for (int col=0 ; col < RHcols ; col++)
+				{
+					MyList col1 = new MyList(kernel);
+					for (int row=0 ; row < LHrows ; row++)
+					{
+						double cellValue=0;
+						for (int i=0 ; i<LHcols ; i++)
+						{
+							//System.out.println(getCell(LHlist,i,row).getDouble());
+							//System.out.println(getCell(RHlist,col,i).getDouble());
+							cellValue+=getCell(LHlist,i,row).getDouble()*getCell(RHlist,col,i).getDouble();
+							}
+						//System.out.println("cellValue"+cellValue);
+						MyDouble doub = new MyDouble(kernel,cellValue);
+						ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionValue)doub); 			
+						col1.addListElement(tempNode);
+					}
+					ExpressionNode col1a = new ExpressionNode(kernel, col1); 
+					listElements.add(col1a);
+				}
+			}			
+			if (isMatrix) return; // finished matrix multiplication successfully
+		}
+		}
+		catch (Exception e) { } // not valid matrices
+		// Michael Borcherds 2008-04-14 END
+
 		
 		// return empty list if sizes don't match
 		if (size == 0 || (valueList != null && size != valueList.size())) 
@@ -108,6 +198,7 @@ public class MyList extends ValidExpression implements ListValue {
 		// temp ExpressionNode to do evaluation of single elements
 		ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionNode) listElements.get(0));
 		tempNode.setOperation(operation);
+		
 		
 		for (int i = 0; i < size; i++) {	
 			try {				
@@ -151,6 +242,22 @@ public class MyList extends ValidExpression implements ListValue {
 		
 //		System.out.println("   gives : " + this);
 	
+	}
+	
+//	 Michael Borcherds 2008-04-14 
+private static MyDouble getCell(MyList list, int col, int row)
+	{
+		ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
+		if ( singleValue.isListValue() ){
+			ExpressionValue cell = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
+			if (cell.isNumberValue())
+			{
+				NumberValue cellValue=(NumberValue)cell;
+				MyDouble cellDouble = (MyDouble)cellValue;
+				return cellDouble; 
+			}		
+		}		
+		return null;
 	}
 
 
