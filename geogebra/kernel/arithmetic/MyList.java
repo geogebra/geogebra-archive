@@ -101,7 +101,7 @@ public class MyList extends ValidExpression implements ListValue {
 		
 		// Michael Borcherds 2008-04-14 BEGIN
 //		 check for matrix multiplication eg {{1,3,5},{2,4,6}}*{{11,14},{12,15},{13,16}}
-		try{
+		//try{
 		if (operation == ExpressionNode.MULTIPLY && valueList != null) 
 		{ 
 			MyList LHlist,RHlist;
@@ -110,23 +110,23 @@ public class MyList extends ValidExpression implements ListValue {
 			
 			int LHcols = LHlist.size(), LHrows=0;
 			int RHcols = RHlist.size(), RHrows=0;
-			System.out.println("LHcols"+LHcols);
-			System.out.println("RHcols"+RHcols);
+			//System.out.println("LHcols"+LHcols);
+			//System.out.println("RHcols"+RHcols);
 			
 			boolean isMatrix=true;
 			
-			System.out.println("MULT LISTS"+size);
+			//System.out.println("MULT LISTS"+size);
 			
 			// check LHlist is a matrix
 			ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
 			if ( singleValue.isListValue() ){
 				LHrows=((ListValue)singleValue).getMyList().size();
-				System.out.println("LHrows"+LHrows);
+				//System.out.println("LHrows"+LHrows);
 				if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
 				{
-					System.out.println(i);
+					//System.out.println(i);
 					singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
-					System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					//System.out.println("size"+((ListValue)singleValue).getMyList().size());
 					if ( singleValue.isListValue() ){
 						if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
 					}
@@ -139,12 +139,12 @@ public class MyList extends ValidExpression implements ListValue {
 			singleValue=((ExpressionValue)RHlist.getListElement(0)).evaluate();
 			if ( singleValue.isListValue() ){
 				RHrows=((ListValue)singleValue).getMyList().size();
-				System.out.println("RHrows"+RHrows);
+				//System.out.println("RHrows"+RHrows);
 				if (RHcols>1) for (int i=1 ; i<RHcols ; i++) // check all vectors same length
 				{
-					System.out.println(i);
+					//System.out.println(i);
 					singleValue=((ExpressionValue)RHlist.getListElement(i)).evaluate();
-					System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					//System.out.println("size"+((ListValue)singleValue).getMyList().size());
 					if ( singleValue.isListValue() ){
 						if (((ListValue)singleValue).getMyList().size()!=RHrows) isMatrix=false;				
 					}
@@ -155,7 +155,10 @@ public class MyList extends ValidExpression implements ListValue {
 			
 			if (LHcols != RHrows) isMatrix=false; // incompatible matrices
 			
-			//System.out.println("isMatrix="+isMatrix);		
+			System.out.println("isMatrix="+isMatrix);		
+
+			ExpressionNode totalNode;
+			ExpressionNode tempNode; 
 			
 			if (isMatrix)
 			{
@@ -165,26 +168,39 @@ public class MyList extends ValidExpression implements ListValue {
 					MyList col1 = new MyList(kernel);
 					for (int row=0 ; row < LHrows ; row++)
 					{
-						double cellValue=0;
+						ExpressionValue totalVal = new ExpressionNode(kernel, new MyDouble(kernel,0.0d));
 						for (int i=0 ; i<LHcols ; i++)
 						{
-							//System.out.println(getCell(LHlist,i,row).getDouble());
-							//System.out.println(getCell(RHlist,col,i).getDouble());
-							cellValue+=getCell(LHlist,i,row).getDouble()*getCell(RHlist,col,i).getDouble();
-							}
-						//System.out.println("cellValue"+cellValue);
-						MyDouble doub = new MyDouble(kernel,cellValue);
-						ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionValue)doub); 			
+							ExpressionValue leftV=getCell(LHlist,i,row);
+							ExpressionValue rightV=getCell(RHlist,col,i);							
+							tempNode = new ExpressionNode(kernel,leftV,ExpressionNode.MULTIPLY,rightV);
+									
+							// multiply two cells...
+							ExpressionValue operationResult = tempNode.evaluate(); 	
+		
+							totalNode = new ExpressionNode(kernel,totalVal,ExpressionNode.PLUS,operationResult);
+							//totalNode.setLeft(operationResult);
+							//totalNode.setRight(totalVal);
+							//totalNode.setOperation(ExpressionNode.PLUS);
+							
+							// ...then add the result to a running total
+							totalVal = totalNode.evaluate();	
+						
+						}
+						tempNode = new ExpressionNode(kernel, totalVal); 			
 						col1.addListElement(tempNode);
 					}
 					ExpressionNode col1a = new ExpressionNode(kernel, col1); 
 					listElements.add(col1a);
+					
 				}
 			}			
+			System.out.println(toString());
 			if (isMatrix) return; // finished matrix multiplication successfully
+			return;
 		}
-		}
-		catch (Exception e) { } // not valid matrices
+		//}
+		//catch (Exception e) { } // not valid matrices
 		// Michael Borcherds 2008-04-14 END
 
 		
@@ -244,21 +260,33 @@ public class MyList extends ValidExpression implements ListValue {
 	
 	}
 	
-//	 Michael Borcherds 2008-04-14 
-private static MyDouble getCell(MyList list, int col, int row)
-	{
-		ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
-		if ( singleValue.isListValue() ){
-			ExpressionValue cell = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
-			if (cell.isNumberValue())
-			{
-				NumberValue cellValue=(NumberValue)cell;
-				MyDouble cellDouble = (MyDouble)cellValue;
-				return cellDouble; 
+//	 Michael Borcherds 2008-04-15
+	private static ExpressionValue getCell(MyList list, int col, int row)
+		{
+			ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
+			if ( singleValue.isListValue() ){
+				ExpressionValue ret = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
+				if (ret.isListValue()) System.out.println("isList*********");
+				return ret;
 			}		
-		}		
-		return null;
-	}
+			return null;
+		}
+/*
+//	 Michael Borcherds 2008-04-14 
+	private static MyDouble getCell(MyList list, int col, int row)
+		{
+			ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
+			if ( singleValue.isListValue() ){
+				ExpressionValue cell = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
+				if (cell.isNumberValue())
+				{
+					NumberValue cellValue=(NumberValue)cell;
+					MyDouble cellDouble = (MyDouble)cellValue;
+					return cellDouble; 
+				}		
+			}		
+			return null;
+		}*/
 
 
 	// Michael Borcherds 2008-02-04
