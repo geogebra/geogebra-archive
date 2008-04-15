@@ -235,7 +235,7 @@ public class MyTable extends JTable
 			}
 		}
 		Point pixel1 = getMaxSelectionPixel();
-		if (pixel1 != null) {
+		if (pixel1 != null && ! editor.isEditing()) {
 			graphics.setColor(Color.BLUE);
 			int x = (int)pixel1.getX() - (DOT_SIZE + 1) / 2;
 			int y = (int)pixel1.getY() - (DOT_SIZE + 1) / 2;
@@ -249,10 +249,22 @@ public class MyTable extends JTable
 			int x2 = (int)max.getX();
 			int y2 = (int)max.getY();
 			graphics.setColor(Color.BLUE);
-			graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
-			graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
-			graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1 - DOT_SIZE / 2 - 2);		
-			graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1 - DOT_SIZE / 2 - 2, LINE_THICKNESS2);		
+			if (! editor.isEditing()) {
+				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
+				graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
+				graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1 - DOT_SIZE / 2 - 2);		
+				graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1 - DOT_SIZE / 2 - 2, LINE_THICKNESS2);
+			}
+			else {
+				x1 -= LINE_THICKNESS2;
+				x2 += LINE_THICKNESS2 - 1;
+				y1 -= LINE_THICKNESS2;
+				y2 += LINE_THICKNESS2 - 1;
+				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
+				graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
+				graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1);		
+				graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1, LINE_THICKNESS2);
+			}
 		}
 	}
 	
@@ -454,6 +466,8 @@ public class MyTable extends JTable
 	{
 		
 		public void keyTyped(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			//System.out.println(keyCode);
 		}
 		
 		public void keyPressed(KeyEvent e) {
@@ -464,23 +478,33 @@ public class MyTable extends JTable
 			case 17 : ctrlPressed = true; break;
 			case 67:
 			case 86:
+			case 88:
 			case 127:
 				if (! editor.isEditing()) {
 					e.consume();
-					if (keyCode == 67) {
-						copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-					}
-					else if (keyCode == 86) {
-						copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-					}
-					else if (keyCode == 88) {
-						copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-					}
-					else {
-						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					if (ctrlPressed) {
+						if (keyCode == 67) {
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, shiftPressed);
+						}
+						else if (keyCode == 86) {
+							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						}
+						else if (keyCode == 88) {
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, shiftPressed);
+							copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						}
+						else {
+							copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						}
 					}
 					return;
+				}
+				break;
+			case 27:
+				//System.out.println(editor.isEditing());
+				if (editor.isEditing()) {
+					editor.undoEdit();
+					e.setKeyCode(10);
 				}
 				break;
 			}
@@ -495,9 +519,16 @@ public class MyTable extends JTable
 		
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
+			//System.out.println(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = false; break;
 			case 17 : ctrlPressed = false; break;
+			case 27:
+				if (editor.isEditing()) {
+					editor.undoEdit();
+					editor.editing = false;
+				}
+				break;
 			}
 		}
 		
@@ -564,8 +595,7 @@ public class MyTable extends JTable
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
 			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn &&
-						selected[colIndex]) {
+				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selected != null && selected[colIndex]) {
 					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
 				}
 				else {
@@ -673,10 +703,10 @@ public class MyTable extends JTable
 			case 16 : shiftPressed2 = true; break;
 			case 17 : ctrlPressed2 = true; break;
 			case 67 : // control + c
-				System.out.println(minSelectionColumn);
-				System.out.println(maxSelectionColumn);
+				//System.out.println(minSelectionColumn);
+				//System.out.println(maxSelectionColumn);
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99, shiftPressed2);
 				}
 				e.consume();
 				break;
@@ -688,7 +718,7 @@ public class MyTable extends JTable
 				break;				
 			case 88 : // control + x
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99, shiftPressed2);
 				}
 				e.consume();
 				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);

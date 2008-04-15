@@ -182,8 +182,7 @@ public class RelativeCopy {
 		GeoElement[][] values = new GeoElement[x2 - x1 + 1][y2 - y1 + 1];
 		for (int y = y1; y <= y2; ++ y) {
 			for (int x = x1; x <= x2; ++ x) {
-				int x0 = table.convertColumnIndexToModel(x);
-				values[x - x1][y - y1] = getValue(table, x0, y);
+				values[x - x1][y - y1] = getValue(table, x, y);
 			}			
 		}
 		return values;
@@ -191,6 +190,7 @@ public class RelativeCopy {
 	
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
+		column = table.convertColumnIndexToModel(column);
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
 	

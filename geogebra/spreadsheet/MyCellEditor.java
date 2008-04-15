@@ -18,7 +18,7 @@ public class MyCellEditor extends DefaultCellEditor {
 	protected MyTable table;
 	protected int column; 
 	protected int row; 
-	protected boolean editing = false; 
+	public boolean editing = false; 
 
     public MyCellEditor(Kernel kernel0) {
 		super(new JTextField());
@@ -44,6 +44,7 @@ public class MyCellEditor extends DefaultCellEditor {
 		}
 		delegate.setValue(text);
 		editing = true;
+		table.repaint();
 		return getComponent();
     }
 	
@@ -68,6 +69,7 @@ public class MyCellEditor extends DefaultCellEditor {
     }
 
 	public boolean stopCellEditing() {
+		//System.out.println("stopCellEditing()");
 		String text = (String)delegate.getCellEditorValue();
 		try {
 			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
@@ -79,7 +81,24 @@ public class MyCellEditor extends DefaultCellEditor {
 			return false;
 		}
 		editing = false;
+		// TODO: add undo point here
 		return super.stopCellEditing();
+	}
+	
+	public void undoEdit() {
+		String text = "";
+		if (value != null) {
+			if (value.isChangeable()) {
+				text = value.toValueString();
+			}
+			else {
+				text = value.getCommandDescription();
+			}
+			if ((! value.isGeoText()) && text.indexOf("=") == -1) {
+				text = "=" + text;			
+			}
+		}
+		delegate.setValue(text);
 	}
 	
 	// also used in RelativeCopy.java
@@ -123,7 +142,7 @@ public class MyCellEditor extends DefaultCellEditor {
         		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
     			if (! text0.startsWith("=")) {
         			text = name + "=\"" + text0 + "\"";
-       				newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+       				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
        				if (newValues[0].isGeoText()) {
        					newValues[0].setEuclidianVisible(false);
            				newValues[0].update();

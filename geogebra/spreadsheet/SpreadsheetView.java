@@ -39,8 +39,6 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public SpreadsheetView(Application app, int columns, int rows) {
 		Kernel kernel = app.getKernel();
-		kernel.notifyAddAll(this);
-		kernel.attach(this);
 		// table
 		tableModel = new MyTableModel(rows, columns);
 		table = new MyTable(tableModel, kernel);
@@ -58,6 +56,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
+		//
+		kernel.notifyAddAll(this);
+		kernel.attach(this);
 	}
 	
 	public void add(GeoElement geo) {
@@ -237,21 +238,19 @@ public class SpreadsheetView extends JScrollPane implements View
 	{
 		
 		public void mouseDragged(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				int x = e.getX();
-				int y = e.getY();
-				Point point = table.getIndexFromPixel(x, y);
-				if (point != null) {
-					if (ctrlPressed) {
-						int row = (int)point.getY();
-						table.addRowSelectionInterval(row0, row);
-						table.repaint();
-					}
-					else {
-						int row = (int)point.getY();
-						table.setRowSelectionInterval(row0, row);
-						table.repaint();
-					}
+			int x = e.getX();
+			int y = e.getY();
+			Point point = table.getIndexFromPixel(x, y);
+			if (point != null) {
+				if (ctrlPressed) {
+					int row = (int)point.getY();
+					table.addRowSelectionInterval(row0, row);
+					table.repaint();
+				}
+				else {
+					int row = (int)point.getY();
+					table.setRowSelectionInterval(row0, row);
+					table.repaint();
 				}
 			}
 		}
@@ -278,7 +277,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			case 17 : ctrlPressed = true; break;
 			case 67 : // control + c
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow, shiftPressed);
 				}
 				e.consume();
 				break;
@@ -290,7 +289,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				break;				
 			case 88 : // control + x
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow, shiftPressed);
 				}
 				e.consume();
 				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);
