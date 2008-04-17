@@ -61,20 +61,26 @@ public class RelativeCopy {
 	public void doCopyHorizontal(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
 		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
 		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
-		for (int x = x1; x <= x2; ++ x) {
-			int ix = x - x1;
-			if (values1[ix][0] == null) {
-				throw new NullPointerException("Relative copy: Source cannot be empty.");
+		//if (checkDependency(values1, values2)) {
+		//	throw new RuntimeException("Relative copy: Source is dependent on destination.");			
+		//}
+		/*
+		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
+		for (int i = 0; i < values2.length; ++ i) {
+			for (int j = 0; j < values2[i].length; ++ j) {
+				if (values2[i][j] != null) {
+					values2[i][j].remove();
+					values2[i][j] = null;
+				}
 			}
 		}
-		if (checkDependency(values1, values2)) {
-			throw new RuntimeException("Relative copy: Source is dependent on destination.");			
-		}
+		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
+		/**/
 		for (int x = x1; x <= x2; ++ x) {
 			int ix = x - x1;
 			for (int y = dy1; y <= dy2; ++ y) {
 				int iy = y - dy1;
-				doCopy0(values1[ix][0], values2[ix][iy], 0, y - sy);
+				doCopy0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
 			}
 		}
 	}
@@ -82,25 +88,40 @@ public class RelativeCopy {
 	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
 		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
-		for (int y = y1; y <= y2; ++ y) {
-			int iy = y - y1;
-			if (values1[0][iy] == null) {
-				throw new NullPointerException("Relative copy: Source cannot be empty.");
+		//if (checkDependency(values1, values2)) {
+		//	throw new RuntimeException("Relative copy: Source is dependent on destination.");			
+		//}
+		/*
+		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
+		for (int i = 0; i < values2.length; ++ i) {
+			for (int j = 0; j < values2[i].length; ++ j) {
+				if (values2[i][j] != null) {
+					values2[i][j].remove();
+					values2[i][j] = null;
+				}
 			}
+			
 		}
-		if (checkDependency(values1, values2)) {
-			throw new RuntimeException("Relative copy: Source is dependent on destination.");			
-		}
+		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
+		/**/
 		for (int y = y1; y <= y2; ++ y) {
 			int iy = y - y1;
 			for (int x = dx1; x <= dx2; ++ x) {
 				int ix = x - dx1;
-				doCopy0(values1[0][iy], values2[ix][iy], x - sx, 0);
+				doCopy0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
 			}
 		}
 	}
 	
-	protected void doCopy0(GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
+	public static void doCopy0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
+		if (value == null) {
+			if (oldValue != null) {
+				int column = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
+				int row = GeoElement.getSpreadsheetRow(oldValue.getLabel());
+				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column, row);
+			}
+			return;
+		}
 		String text = null;
 		if (value.isChangeable()) {
 			text = value.toValueString();
@@ -128,10 +149,12 @@ public class RelativeCopy {
 		int column = GeoElement.getSpreadsheetColumn(value.getLabel());
 		int row = GeoElement.getSpreadsheetRow(value.getLabel());
 		//System.out.println("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column + dx, row + dy);
-		table.setValueAt(value2, row + dy, column + dx);
+		int column3 = table.convertColumnIndexToView(column) + dx;
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column3, row + dy);
+		table.setValueAt(value2, row + dy, column3);
 	}
 	
+	/*
 	// return true if any of elems1 is dependent on any of elems
 	// preposition: every elems1 is not null.
 	public static boolean checkDependency(GeoElement[][] elems1, GeoElement[][] elems2) {
@@ -158,7 +181,7 @@ public class RelativeCopy {
 	// return true if elem1 is dependent on elem2
 	// preposition: elem is not null
 	public static boolean checkDependency(GeoElement elem1, GeoElement elem2) {
-		if (elem2 == null) return false;
+		if (elem1 == null || elem2 == null) return false;
 		GeoElement[] elems = getDependentObjects(elem1);
 		if (elems.length == 0) return false;
         int column = GeoElement.getSpreadsheetColumn(elem2.getLabel());
@@ -171,6 +194,7 @@ public class RelativeCopy {
 		}
 		return false;
 	}
+	/**/
 	
 	public static GeoElement[] getDependentObjects(GeoElement geo) {
 		if (geo.isIndependent()) return new GeoElement[0];
@@ -191,6 +215,9 @@ public class RelativeCopy {
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
 		column = table.convertColumnIndexToModel(column);
+		//System.out.println("column=" + column);
+		if (row < 0 || row >= 100) return null;
+		if (column < 0 || column >= 26) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
 	

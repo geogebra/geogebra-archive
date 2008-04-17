@@ -31,6 +31,8 @@ import javax.swing.ListSelectionModel;
 
 public class SpreadsheetView extends JScrollPane implements View
 {
+
+	public static final int ROW_HEADER_WIDTH = 27;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -50,7 +52,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		rowHeader.addMouseListener(new MouseListener1());
 		rowHeader.addMouseMotionListener(new MouseMotionListener1());
 		rowHeader.addKeyListener(new KeyListener1());
-		rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
+		//rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
+		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table, rowHeader));
 		// put the table and the row header list into a scroll plane
@@ -211,10 +214,10 @@ public class SpreadsheetView extends JScrollPane implements View
 							table.setRowSelectionInterval(row0, row);
 						}
 					}
-					else if (ctrlPressed) {					
-						row0 = (int)point.getY();
-						table.addRowSelectionInterval(row0, row0);
-					}
+					//else if (ctrlPressed) {					
+					//	row0 = (int)point.getY();
+					//	table.addRowSelectionInterval(row0, row0);
+					//}
 					else {
 						row0 = (int)point.getY();
 						table.setRowSelectionInterval(row0, row0);
@@ -224,7 +227,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					ContextMenu.showPopupMenu(table, e.getComponent(), 0, minSelectionRow, 25, maxSelectionRow, x, y);
+					ContextMenuRow.showPopupMenu2(table, e.getComponent(), 0, minSelectionRow, 25, maxSelectionRow, x, y);
 				}
 			}
 		}
@@ -242,16 +245,9 @@ public class SpreadsheetView extends JScrollPane implements View
 			int y = e.getY();
 			Point point = table.getIndexFromPixel(x, y);
 			if (point != null) {
-				if (ctrlPressed) {
-					int row = (int)point.getY();
-					table.addRowSelectionInterval(row0, row);
-					table.repaint();
-				}
-				else {
-					int row = (int)point.getY();
-					table.setRowSelectionInterval(row0, row);
-					table.repaint();
-				}
+				int row = (int)point.getY();
+				table.setRowSelectionInterval(row0, row);
+				table.repaint();
 			}
 		}
 		
@@ -277,7 +273,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			case 17 : ctrlPressed = true; break;
 			case 67 : // control + c
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow, shiftPressed);
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
 				}
 				e.consume();
 				break;
@@ -289,7 +285,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				break;				
 			case 88 : // control + x
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow, shiftPressed);
+					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
 				}
 				e.consume();
 				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);

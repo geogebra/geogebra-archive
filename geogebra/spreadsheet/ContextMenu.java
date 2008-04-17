@@ -21,9 +21,8 @@ public class ContextMenu
 	protected static int column1 = -1;
 	protected static int column2 = -1;
 	
-	protected static void initMenu(Application app) {
-		if (menu != null) return;
-		menu = new JPopupMenu();
+	protected static JPopupMenu initMenu(Application app) {
+		JPopupMenu menu = new JPopupMenu();
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
    	 	JMenuItem item1 = new JMenuItem("Copy");
    	 	item1.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
@@ -40,11 +39,12 @@ public class ContextMenu
    	 	item3.setBackground(bgColor);
    	 	item3.addActionListener(new ActionListener3());   	 	
    	 	menu.add(item3);
-   	 	JMenuItem item4 = new JMenuItem("Delete");
+   	 	JMenuItem item4 = new JMenuItem("Clear selection");
    	 	item4.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item4.setBackground(bgColor);
    	 	item4.addActionListener(new ActionListener4());   	 	
    	 	menu.add(item4);
+   	 	return menu;
 	}
 	
 	public static class ActionListener1 implements ActionListener
@@ -75,11 +75,19 @@ public class ContextMenu
  			table.copyPasteCut.delete(column1, row1, column2, row2);
  		}
 	}
+	
+	public static class ActionListener5 implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 		}
+	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
 		table = table0;
 		Application app = table.kernel.getApplication();
-		initMenu(app);		
+		if (menu == null) {
+			menu = initMenu(app);		
+		}
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;

@@ -29,7 +29,7 @@ import geogebra.kernel.Kernel;
 public class MyTable extends JTable
 {
 
-	public static final int TABLE_CELL_WIDTH = 100;
+	public static final int TABLE_CELL_WIDTH = 70;
 	public static final int TABLE_CELL_HEIGHT = 20;
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
@@ -44,6 +44,7 @@ public class MyTable extends JTable
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
 	protected KeyListener[] defaultKeyListeners;
+	protected TableCellRenderer1 columnHeader;
 
 	public MyTable(MyTableModel tableModel, Kernel kernel0) {
 		super(tableModel);
@@ -53,7 +54,7 @@ public class MyTable extends JTable
 		setCellSelectionEnabled(true);
 		// set cell size and column header
 		setRowHeight(TABLE_CELL_HEIGHT);
-		TableCellRenderer1 columnHeader = new TableCellRenderer1();
+		columnHeader = new TableCellRenderer1();
 		columnHeader.setPreferredSize(new Dimension(TABLE_CELL_WIDTH, TABLE_CELL_HEIGHT));
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
@@ -98,6 +99,8 @@ public class MyTable extends JTable
 		this.getTableHeader().addMouseListener(new MouseListener2());
 		this.getTableHeader().addMouseMotionListener(new MouseMotionListener2());
 		this.getTableHeader().addKeyListener(new KeyListener2());
+		//
+		this.getTableHeader().setReorderingAllowed(false);
 	}
 
 	protected int Column = -1;
@@ -272,6 +275,12 @@ public class MyTable extends JTable
 	{
 		
 		public void mouseClicked(MouseEvent e) {
+			if (editor.isEditing()) {
+				String text = editor.getEditingValue();
+				if (text.startsWith("=")) {
+					e.consume();					
+				}	
+			}
 		}
 		
 		public void mouseEntered(MouseEvent e) {
@@ -294,11 +303,7 @@ public class MyTable extends JTable
 				int x2 = (int)point1.getX();
 				int y2 = (int)point1.getY();
 				int range = DOT_SIZE / 2;
-				if (x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range && y1 <= y2 + range) {
-					isDragingDot = true;
-					e.consume();
-				}
-				else if (editor.isEditing()) {
+				if (editor.isEditing()) {
 					String text = editor.getEditingValue();
 					if (text.startsWith("=")) {
 						e.consume();					
@@ -307,6 +312,10 @@ public class MyTable extends JTable
 						int row = (int)point.getY();
 						editor.addLabel(column, row);
 					}	
+				}
+				else if (x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range && y1 <= y2 + range) {
+					isDragingDot = true;
+					e.consume();
 				}
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -319,6 +328,12 @@ public class MyTable extends JTable
 		}
 		
 		public void mouseReleased(MouseEvent e)	 {
+			if (editor.isEditing()) {
+				String text = editor.getEditingValue();
+				if (text.startsWith("=")) {
+					e.consume();					
+				}	
+			}
 			if (isDragingDot) {
 				if (dragingToColumn == -1 || dragingToRow == -1) return;
 				int x1 = -1;
@@ -354,10 +369,10 @@ public class MyTable extends JTable
 				}
 				boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
 				if (succ) {
-					minSelectionColumn = -1;
-					minSelectionRow = -1;
-					maxSelectionColumn = -1;
-					maxSelectionRow = -1;
+				//	minSelectionColumn = -1;
+				//	minSelectionRow = -1;
+				//	maxSelectionColumn = -1;
+				//	maxSelectionRow = -1;
 				}
 				isDragingDot = false;
 				dragingToRow = -1;
@@ -372,6 +387,10 @@ public class MyTable extends JTable
 	{
 		
 		public void mouseDragged(MouseEvent e) {
+			if (editor.isEditing()) {
+				e.consume();
+				return;
+			}
 			if (isDragingDot) {
 				e.consume();
 				int x = e.getX();
@@ -484,18 +503,19 @@ public class MyTable extends JTable
 					e.consume();
 					if (ctrlPressed) {
 						if (keyCode == 67) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, shiftPressed);
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
 						else if (keyCode == 86) {
 							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
 						else if (keyCode == 88) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, shiftPressed);
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 							copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
-						else {
-							copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-						}
+					}
+					if (keyCode == 127) {
+						//System.out.println("deleting...");
+						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 					}
 					return;
 				}
@@ -566,6 +586,10 @@ public class MyTable extends JTable
 	{
 
 		private static final long serialVersionUID = 1L;
+		
+		public MyCellRenderer() {
+			this.setHorizontalAlignment(JLabel.TRAILING);
+		}
 		
 		public void setValue(Object value) {
 			if (value == null) {
@@ -654,10 +678,10 @@ public class MyTable extends JTable
 							setColumnSelectionInterval(column0, column);
 						}
 					}
-					else if (ctrlPressed2) {					
-						column0 = (int)point.getX();
-						addColumnSelectionInterval(column0, column0);
-					}
+					//else if (ctrlPressed2) {					
+					//	column0 = (int)point.getX();
+					//	addColumnSelectionInterval(column0, column0);
+					//}
 					else {
 						column0 = (int)point.getX();
 						setColumnSelectionInterval(column0, column0);
@@ -667,7 +691,7 @@ public class MyTable extends JTable
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 25, x, y);
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 25, x, y);
 				}
 			}
 		}
@@ -681,6 +705,14 @@ public class MyTable extends JTable
 	{
 		
 		public void mouseDragged(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			Point point = getIndexFromPixel(x, y);
+			if (point != null) {
+				int column = (int)point.getX();
+				setColumnSelectionInterval(column0, column);
+				repaint();
+			}
 		}
 		
 		public void mouseMoved(MouseEvent e) {
@@ -706,7 +738,7 @@ public class MyTable extends JTable
 				//System.out.println(minSelectionColumn);
 				//System.out.println(maxSelectionColumn);
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99, shiftPressed2);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
 				}
 				e.consume();
 				break;
@@ -718,7 +750,7 @@ public class MyTable extends JTable
 				break;				
 			case 88 : // control + x
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99, shiftPressed2);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
 				}
 				e.consume();
 				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);
