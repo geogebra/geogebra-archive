@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
+	<classpathentry exported="true" kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
 	<classpathentry kind="lib" path="dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="commons-codec-1.3.jar"/>
@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="openide-lookup-1.9-patched-1.0.jar"/>
+	<classpathentry kind="lib" path="bsh-2.0b4.jar"/>
+	<classpathentry kind="lib" path="bsscript.jar"/>
+	<classpathentry kind="lib" path="plugins.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

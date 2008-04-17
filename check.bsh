@@ -1,0 +1,30 @@
+/*	check.bsh
+ *	"Assert" -test function
+ */
+
+/* Tests double against the right value */
+public void check(String msg,double d,double right) {
+	print("---------------------------------------------------------------------------------");
+	if(java.lang.Math.abs(d-right)<1E-10) {
+		print(msg+" passed: "+d);
+	}else{
+		print(msg+" failed:   "+d+"   (expected: "+right+")");
+	}//if
+	print("---------------------------------------------------------------------------------");
+}//check(String,double,double)
+
+/* API nor finished, so let's make a getValue(name):double  */
+
+public double getValue(String name) {
+	cons=api.getConstruction();
+	o=cons.lookupLabel(name);
+	return o.getValue();
+}//getValue(String):double
+
+/* And isTrue(name):double */
+public double isTrue(String name){
+	cons=api.getConstruction();
+	o=cons.lookupLabel(name);
+	b=o.getBoolean();
+	if(b){return 1.0d;} else{return 0.0d;}
+}//isTrue(String)

@@ -1,0 +1,76 @@
+/*****************************************
+ *  list_test.bsh:
+ *
+ *  Script to test list operations in Ggb
+ *****************************************/
+
+n=50;			//Length of list
+
+//Biglist:
+Big="Big={";
+
+for(i=1;i<=n;i++) {
+	Big+=""+i;
+	if(i<n){Big+=",";}
+}//for
+Big+="}";
+
+print(Big);
+
+api.evalCommand(Big);
+
+/// --- right values --- ///
+sumx2=(1.0d+n)*(2*n+1)*n/6.0d;
+sum=(1.0d+n)*n/2;
+
+/// ---  L+M, sum[L] --- ///
+
+api.evalCommand("res=Big+Big");
+
+api.evalCommand("sum=Sum[res]");
+
+check("Testing sum and addition:",getValue("sum"),2*sum);
+
+/// --- L*5, L-M, sum[L] --- ///
+
+api.evalCommand("M=Big*5");
+api.evalCommand("res=Big-M");
+api.evalCommand("sum=Sum[res]");
+check("Testing mult, diff and sum",getValue("sum"),sum*(-4));
+
+/// --- L*5, sum[L] --- ///
+
+api.evalCommand("res=Big*5");
+api.evalCommand("sum=Sum[res]");
+check("Testing multiplication and sum",getValue("sum"),sum*5);
+
+/// --- L^2 L*L --- ///
+
+api.evalCommand("res=Big*Big");
+api.evalCommand("res2=Big^2");
+api.evalCommand("b=res==res2");
+check("Testing multiplication and squaring",isTrue("b"),1.0d);
+api.evalCommand("sum=Sum[res]");
+check("Testing multiplication and squaring",getValue("sum"),sumx2);
+
+/// --- 1/L --- ///
+
+api.evalCommand("res=1/Big");
+api.evalCommand("res2=1/res");
+api.evalCommand("b=Big==res2");
+check("Testing inversion",isTrue("b"),1.0d);
+
+/// --- mean, --- ///
+api.evalCommand("m=Mean[Big]");
+check("Testing mean",getValue("m"),(1.0d+n)/2);
+
+
+/// --- L==M ---///
+api.evalCommand("b=Big==Big");
+check("Testing equality",isTrue("b"),1.0d);
+
+// other list operations...
+
+// clean, first,last,take, mean and statistics...
+
+// . . .

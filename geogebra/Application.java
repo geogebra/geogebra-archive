@@ -61,6 +61,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.Util;
+import geogebra.plugin.PluginManager;
+import geogebra.plugin.GgbAPI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -307,6 +309,10 @@ public abstract class Application implements	KeyEventDispatcher {
     // command dictionary
     private LowerCaseDictionary commandDict;
 
+    // plugins H-P Ulven
+    private GgbAPI              ggbapi=         null;
+    private PluginManager       pluginmanager=  null;   
+    
     public Application(String[] args, GeoGebra frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
@@ -405,6 +411,13 @@ public abstract class Application implements	KeyEventDispatcher {
 		//Mathieu Blossier - place for code to test 3D packages	
 		
 		
+		
+		// H-P Ulven 2008-04-16
+		// plugins
+	    // Last in constructor, has to be sure everything else is in place:
+	        ggbapi=          new GgbAPI(this);    
+	        pluginmanager=   new PluginManager(this);
+	     		
     }      
     
     public static void openCAS(Application app) {
@@ -3930,6 +3943,17 @@ public abstract class Application implements	KeyEventDispatcher {
 	public final void setShiftDragZoomEnabled(boolean shiftDragZoomEnabled) {
 		this.shiftDragZoomEnabled = shiftDragZoomEnabled;
 	}
+	
+    /** PluginManager gets API with this */
+	//	 H-P Ulven 2008-04-16
+    public GgbAPI getGgbApi(){return this.ggbapi;}		
+
+    
+    /** MenuBarImpl gets pluginmenu from Application with this */
+	// H-P Ulven 2008-04-16
+    public javax.swing.JMenu  getPluginMenu(){
+        return pluginmanager.getPluginMenu();
+    }//getPluginMenu()
 	
 	
 }

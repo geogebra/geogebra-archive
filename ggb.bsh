@@ -1,0 +1,14 @@
+/*************************************
+*  BeanShell Script used in
+*  BS_Script PlugLet
+*************************************/
+	print("ggb.bsh script started...");
+
+	/// --- Definitions --- ///
+
+	source("check.bsh");		//def of check routine
+
+
+	source("list_test.bsh");	//run test script
+
+	print("ggb.bsh finished...");
