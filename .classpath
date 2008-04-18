@@ -11,7 +11,5 @@
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="openide-lookup-1.9-patched-1.0.jar"/>
-	<classpathentry kind="lib" path="bsscript.jar"/>
-	<classpathentry kind="lib" path="plugins.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
