@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
@@ -59,7 +60,13 @@ public class MyXMLio {
     
     // All xml output is zipped. The created zip archive contains
     // an entry named XML_FILE_MACRO for the macros 
-    final private static String XML_FILE_MACRO = "geogebra_macro.xml";  
+    final private static String XML_FILE_MACRO = "geogebra_macro.xml"; 
+    
+    // All xml output is zipped. The created zip archive *may* contain
+    // an entry named XML_FILE_THUMBNAIL for the construction
+    final private static String XML_FILE_THUMBNAIL = "geogebra_thumbnail.png";  
+    final private static double THUMBNAIL_PIXELS_X = 160.0; // max no of horizontal pixels
+    final private static double THUMBNAIL_PIXELS_Y = 120.0; // max no of vertical pixels
     
     // Use the default (non-validating) parser
     //private static XMLReaderFactory factory;
@@ -242,6 +249,9 @@ public class MyXMLio {
         // write construction images
         writeConstructionImages(kernel.getConstruction(), zip);
         
+        // write construction images
+        writeThumbnail(kernel.getConstruction(), zip);
+        
         // save macros
         if (kernel.hasMacros()) {
         	// get all registered macros from kernel
@@ -322,6 +332,24 @@ public class MyXMLio {
     		if (img != null) 	       
     			writeImageToZip(zip, fileName, img);
 	    }    	    	
+    }
+    
+    /** 
+     * Writes thumbnail to zip.
+     * Michael Borcherds 2008-04-18
+     */
+    private void writeThumbnail(Construction cons, ZipOutputStream zip) throws IOException {    	
+    		
+    		EuclidianView ev = app.getEuclidianView(); 
+    		
+    		// max 128 pixels either way
+    		double exportScale=Math.min(THUMBNAIL_PIXELS_X/ev.getSelectedWidth(),THUMBNAIL_PIXELS_Y/ev.getSelectedHeight());
+    		
+				BufferedImage img =
+					app.getEuclidianView().getExportImage(exportScale);			
+    		if (img != null) 	       
+    			writeImageToZip(zip, XML_FILE_THUMBNAIL, img);
+	    	
     }
     
     /** 
