@@ -179,41 +179,25 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		kernel = app.getKernel();
 		
 		initGUI();		
-		
+ 
+		// Michael Borcherds 2008-04-20
+		// code to allow JavaScript methods reset() and openFile() to access files
+		// even if the code is untrusted
     	Thread runner = new Thread() {
 		public void run(){
-		    while(javascriptLoadFile || javascriptReset){
-		 
-		    	if (javascriptReset)
-		    	{
-		    		try {		
-		    			URL ggbURL = new URL(fileStr);
-		    			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
-		    			reinitGUI();	
-		    		} catch (Exception e) {
-		    			e.printStackTrace();
-		    		} 	
-		    	}
-		    	
-		    	if (javascriptLoadFile)
-		    	{
-		    		try {
-						String lowerCase = javascriptLoadFileName.toLowerCase();
-						if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
-							javascriptLoadFileName = getCodeBase() + javascriptLoadFileName;
-						}		
-						URL ggbURL = new URL(javascriptLoadFileName);				
-						app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
-						reinitGUI();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-		    	}
-		    	
-		    	javascriptLoadFile=false;
-		    	javascriptReset=false;
-		 
-		    }
+			while (true) {
+				try {Thread.sleep(200);} catch(Exception e) {}
+			
+				//System.out.println("thread");
+			    	if (javascriptReset) resetNoThread();
+			    	
+			    	if (javascriptLoadFile) openFileNoThread(javascriptLoadFileName);
+			    	
+			    	javascriptLoadFile=false;
+			    	javascriptReset=false;
+			 
+			    }
+			
 	    	
 		}
 		 
@@ -451,7 +435,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	}
 	
 	/**
-	 * Resets the initial construction (given in filename parameter) of this applet.	 
+	 * Resets the initial construction (given in filename parameter) of this applet.	
+	 * ...but the actual code is in a thread to avoid JavaScript security issues 
 	 */
 	public synchronized void reset() {
 		
@@ -467,6 +452,20 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	}
 	
 	/**
+	 * Resets the initial construction (given in filename parameter) of this applet.	 
+	 */
+	public synchronized void resetNoThread() {
+		
+		try {		
+			URL ggbURL = new URL(fileStr);
+			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			reinitGUI();	
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 					
+	}
+	
+	/**
 	 * Refreshs all views. Note: clears traces in
 	 * geometry window.
 	 */
@@ -475,7 +474,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	}
 			
 	/**
-	 * Loads a construction from a  file (given URL).	 
+	 * Loads a construction from a  file (given URL).	
+	 * ...but the actual code is in a thread to avoid JavaScript security issues  
 	 */
 	public synchronized void openFile(String strURL) {
 		
@@ -495,6 +495,24 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		*/
+	}
+	
+	/**
+	 * Loads a construction from a  file (given URL).	
+	 */
+	public synchronized void openFileNoThread(String strURL) {
+		
+		try {
+			String lowerCase = strURL.toLowerCase();
+			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
+				strURL = getCodeBase() + strURL;
+			}		
+			URL ggbURL = new URL(strURL);				
+			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			reinitGUI();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	/*

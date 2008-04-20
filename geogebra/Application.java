@@ -128,7 +128,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "Januar 26, 2008";
+    public static final String buildDate = "April 19, 2008";
 	
     public static final String versionString = "3.1 Pre-Release";    
     public static final String XML_FILE_FORMAT = "3.0";    
@@ -873,7 +873,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
     public void reset() {    	
     	if (applet != null)
-    		applet.reset();
+    		applet.resetNoThread();
     	else if (currentFile != null)
     		loadFile(currentFile, false);   
     	else
