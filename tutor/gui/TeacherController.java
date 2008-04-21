@@ -36,12 +36,13 @@ public class TeacherController implements MouseListener, ActionListener {
 		else if (e.getSource().equals(view.getCommentField())) {
 			
 			view.processCommentField();
-		}
+		}/*
 		else if (e.getSource().equals(view.getBotoNou())) {
 			
 			System.out.println("Nou");
 			app.deleteAllGeoElements();			
 		}
+		
 		else if (e.getSource().equals(view.getBotoGuardar())) {
 			
 			System.out.println("Guardar");
@@ -96,6 +97,7 @@ public class TeacherController implements MouseListener, ActionListener {
 			}
 
 		}
+		*/
 	}
 
 	public TeacherController(Kernel kernel) {

@@ -12,10 +12,12 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,17 +25,23 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
@@ -78,13 +86,15 @@ public class TeacherView extends JPanel implements View  {
 	private StyleContext styleContext = new StyleContext();
 	private StyledDocument doc = new DefaultStyledDocument(styleContext);
 	private JTextPane resultArea = new JTextPane(doc);
-	private DefaultListModel listModel = new DefaultListModel(); 
-	private JList resArea = new JList();
 	
-    private JButton botoNou;
-    private JButton botoGuardar;
+	private JTable table;
+    private JTextField missatge;
+    private JComboBox justificacions;
+    ButtonColumn buttonColumn;
+    
+    AbstractTableModel model;
 
-	private List strategies;
+    private List strategies;
 
 	private long lineCounter = 0;
 	private ResourceBundle teacherResources;
@@ -159,7 +169,8 @@ public class TeacherView extends JPanel implements View  {
 		Vector justs = getJustifications();
 		for (Iterator it = justs.iterator(); it.hasNext();) {
 			String j = (String) it.next();
-			justificationCombo.addItem(j);
+			//justificationCombo.addItem(j);
+			justificacions.addItem(j);
 		}
 		
 		/*
@@ -199,7 +210,7 @@ public class TeacherView extends JPanel implements View  {
 	}
 	
 	public void createGUI() {
-		
+		/*
 		resultArea.setBackground(Color.WHITE);
         resultArea.setText(WELCOME);
         resultArea.setEditable(false);
@@ -211,33 +222,42 @@ public class TeacherView extends JPanel implements View  {
         commentField.setEditable(true);
         commentField.setEnabled(true);
         commentField.addActionListener(teacherController);
-
-        JPanel topPanel = new JPanel();
-        JPanel bottomPanel = new JPanel();
-
-        JScrollPane scrollingArea = new JScrollPane(resultArea);
-        scrollingArea.setPreferredSize(new Dimension(50, 380));
-        
-        
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.PAGE_AXIS));
-        topPanel.add(scrollingArea);
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
-        
-        //... Get the content pane, set layout, add to center
-        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-        
-        add(topPanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
-        
-        bottomPanel.add(new JLabel("Comments:",SwingConstants.LEFT));
-        
-        bottomPanel.add(commentField);
-        bottomPanel.add(justificationCombo);
+*/
+        createTecharPanel();
         
         try {
         	for (int i=0; i<20; i++)
         		doc.insertString(doc.getLength(), ""+LN, null);
         }catch (Throwable t) {}
+	}
+	
+	private void createTecharPanel() {
+		
+		JPanel techerPanel = new JPanel();
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		model = new MyTableModel();
+        table = new JTable(model);
+        table.setPreferredScrollableViewportSize(new Dimension(350, 200));
+
+        table.getSelectionModel().addListSelectionListener(new RowListener());
+        table.getColumnModel().getSelectionModel().
+            addListSelectionListener(new ColumnListener());
+        
+        techerPanel.add(new JScrollPane(table));
+
+        techerPanel.add(new JLabel("Missatge"));
+        missatge = new JTextField(30);
+        missatge.setSize(20,5);
+        techerPanel.add(missatge);
+        
+        techerPanel.add(new JLabel("Justificacio"));
+        justificacions = new JComboBox();
+        techerPanel.add(justificacions);
+
+        add(techerPanel);
+        
+        buttonColumn = new ButtonColumn(table, 2);
 	}
 	
 	public void processCommentField(){
@@ -646,22 +666,7 @@ public class TeacherView extends JPanel implements View  {
 		this.resultArea = resultArea;
 	}
 
-	public DefaultListModel getListModel() {
-		return listModel;
-	}
-
-	public void setListModel(DefaultListModel listModel) {
-		this.listModel = listModel;
-	}
-
-	public JList getResArea() {
-		return resArea;
-	}
-
-	public void setResArea(JList resArea) {
-		this.resArea = resArea;
-	}
-
+	/*
 	public JButton getBotoNou() {
 		return botoNou;
 	}
@@ -677,7 +682,7 @@ public class TeacherView extends JPanel implements View  {
 	public void setBotoGuardar(JButton botoGuardar) {
 		this.botoGuardar = botoGuardar;
 	}
-
+*/
 	public long getLineCounter() {
 		return lineCounter;
 	}
@@ -701,5 +706,152 @@ public class TeacherView extends JPanel implements View  {
 	public void setAnnotations(List annotations) {
 		this.annotations = annotations;
 	}
+
+    private class RowListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent event) {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
+            //output.append("ROW SELECTION EVENT. ");
+            //outputSelection();
+        	int i = table.getSelectionModel().getLeadSelectionIndex();
+        	String str = (String) model.getValueAt(i, 0);
+        	System.out.println(str);
+        	missatge.setText(str);
+        }
+    }
+
+    private class ColumnListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent event) {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
+            //output.append("COLUMN SELECTION EVENT. ");
+            //outputSelection();
+        }
+    }
+
+    class MyTableModel extends AbstractTableModel {
+        private String[] columnNames = {"accio", "", ""};
+        private Object[][] data = {
+            {"Mary", "", "X"},
+            {"Alison", "", "X"},
+            {"Kathy", "", "X"},
+            {"Sharon", "", "X"},
+            {"Philip", "", "X"},
+        };
+
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return data.length;
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+            return data[row][col];
+        }
+
+        /*
+         * JTable uses this method to determine the default renderer/
+         * editor for each cell.  If we didn't implement this method,
+         * then the last column would contain text ("true"/"false"),
+         * rather than a check box.
+         */
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * editable.
+         */
+        public boolean isCellEditable(int row, int col) {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            if (col < 2) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * data can change.
+         */
+        public void setValueAt(Object value, int row, int col) {
+            data[row][col] = value;
+            fireTableCellUpdated(row, col);
+        }
+
+    }
+
+    class ButtonColumn extends AbstractCellEditor
+    implements TableCellRenderer, TableCellEditor, ActionListener {
+
+    	JTable table;
+    	JButton renderButton;
+    	JButton editButton;
+    	String text;
+
+    	public ButtonColumn(JTable table, int column)
+    	{
+    		super();
+    		this.table = table;
+    		renderButton = new JButton();
+
+    		editButton = new JButton();
+    		editButton.setFocusPainted( false );
+    		editButton.addActionListener( this );
+
+    		TableColumnModel columnModel = table.getColumnModel();
+    		columnModel.getColumn(column).setCellRenderer( this );
+    		columnModel.getColumn(column).setCellEditor( this );
+    	}
+    	
+    	public Component getTableCellRendererComponent(
+    			JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+    	{
+    		if (isSelected)
+    		{
+    			renderButton.setForeground(table.getSelectionForeground());
+    			renderButton.setBackground(table.getSelectionBackground());
+    		}
+    		else
+    		{
+    			renderButton.setForeground(table.getForeground());
+    			renderButton.setBackground(UIManager.getColor("Button.background"));
+    		}
+
+    		renderButton.setSize(10, 10);
+    		renderButton.setText( (value == null) ? "" : value.toString() );
+    		return renderButton;
+    	}
+
+    	public Component getTableCellEditorComponent(
+    			JTable table, Object value, boolean isSelected, int row, int column)
+    	{
+    		text = (value == null) ? "" : value.toString();
+    		editButton.setText( text );
+    		return editButton;
+    	}
+
+    	public Object getCellEditorValue()
+    	{
+    		return text;
+    	}
+
+    	public void actionPerformed(ActionEvent e)
+    	{
+    		fireEditingStopped();
+    		System.out.println( "Action: " + e.getActionCommand() );
+    	}
+    }
 
 }
