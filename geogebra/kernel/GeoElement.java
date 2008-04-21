@@ -28,6 +28,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  *
@@ -1174,6 +1177,7 @@ public abstract class GeoElement
 	        return ret;
 	    }
 	 
+	/*
 	 public static int getSpreadsheetColumn( String str)
 	    {// TODO rewrite to cope with more than 26 columns
 	        int ret = -1;
@@ -1208,8 +1212,25 @@ public abstract class GeoElement
         }
         return ret;
     }
+    */
+	
+	public static final Pattern pattern = Pattern.compile("\\$?([A-Z])\\$?([0-9]+)");
 
-	private void doRenameLabel(String newLabel) {
+	public static int getSpreadsheetColumn(String str) {
+		Matcher matcher = pattern.matcher(str);
+		if (! matcher.matches()) return -1;
+		String s = matcher.group(1);
+		return s.charAt(0) - 'A';
+	}
+	    
+	public static int getSpreadsheetRow(String str) {
+		Matcher matcher = pattern.matcher(str);
+		if (! matcher.matches()) return -1;
+		String s = matcher.group(2);
+		return Integer.parseInt(s) - 1;
+	}
+	
+	 private void doRenameLabel(String newLabel) {
 		if (newLabel == null || newLabel.equals(label)) 
 			return;
 		
