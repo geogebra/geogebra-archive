@@ -63,6 +63,7 @@ import geogebra.util.ImageManager;
 import geogebra.util.Util;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.GgbAPI;
+import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -240,6 +241,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
+    private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -274,7 +276,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
-    private boolean showSpreadsheet = false;
+    private boolean showSpreadsheet = true;
     private boolean showCAS = false;
     private boolean printScaleString = false;
     private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;    
@@ -300,8 +302,11 @@ public abstract class Application implements	KeyEventDispatcher {
     private JPanel centerPanel;   
 
     private JSplitPane sp;
+    private JSplitPane sp2;
     private int initSplitDividerLocationHOR = 250; // init value
-    private int initSplitDividerLocationVER = 400; // init value
+    private int initSplitDividerLocationVER = 100; // init value
+    private int initSplitDividerLocationHOR2 = 350; // init value
+    private int initSplitDividerLocationVER2 = 300; // init value
     private boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
@@ -367,6 +372,9 @@ public abstract class Application implements	KeyEventDispatcher {
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
     	algebraView = new AlgebraView(algebraController);
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
+    	
+    	// init spreadsheet view
+    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -398,10 +406,11 @@ public abstract class Application implements	KeyEventDispatcher {
 				.addKeyEventDispatcher(this);	
 		
 		
-		// TODO: remove spreadsheet and CAS testing
+		/*/ TODO: remove spreadsheet and CAS testing
 		if (showSpreadsheet) {			
 			openSpreadsheet(this);
 		}
+		*/
 		
 		// TODO: remove spreadsheet and CAS testing
 		if (showCAS) {
@@ -445,6 +454,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 	private static JFrame spFrame= new JFrame();
     
+	/*
     public static void openSpreadsheet(Application app) {
     	try {
 	    	// use reflection for
@@ -466,6 +476,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			e.printStackTrace();
 		}
     }
+    */
 
     // Michael Borcherds 2008-01-14
     public static void closeSpreadsheet() {
@@ -604,6 +615,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     private void updateContentPane(boolean updateComponentTreeUI) {
+    	
         if (INITING)
             return;        
         
@@ -673,7 +685,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     public void updateCenterPanel(boolean updateUI) {
-    	centerPanel.removeAll();
+        centerPanel.removeAll();
     	
     	JPanel eup = new JPanel(new BorderLayout());
         eup.setBackground(Color.white);
@@ -685,24 +697,46 @@ public abstract class Application implements	KeyEventDispatcher {
        		     createMatteBorder(1, 0, 0, 0, Color.gray));
         }                    
         
+        JComponent cp2 = null;
+        if (showSpreadsheet) {
+            if (horizontalSplit) {
+                sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                        eup, spreadsheetView);
+                sp2.setDividerLocation(initSplitDividerLocationHOR2);                
+            }               
+            else {
+                sp2 =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                                             eup, spreadsheetView);
+                sp2.setDividerLocation(initSplitDividerLocationVER2);
+            }               
+            sp2.addPropertyChangeListener("dividerLocation",
+                        new DividerChangeListener2());
+            cp2 = sp2;
+        }
+        else {
+        	cp2 = eup;
+        }
+
+        JComponent cp1 = null;
         if (showAlgebraView) {        	     
             if (horizontalSplit) {
                 sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                        new JScrollPane(algebraView), eup);
+                                        new JScrollPane(algebraView), cp2);
                 sp.setDividerLocation(initSplitDividerLocationHOR);                
             }               
             else {
                 sp =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                             eup, new JScrollPane(algebraView));
+                                             new JScrollPane(algebraView), cp2);
                 sp.setDividerLocation(initSplitDividerLocationVER);
             }               
             sp.addPropertyChangeListener("dividerLocation",
-                        new DividerChangeListener());                                       
-            
-            centerPanel.add(sp, BorderLayout.CENTER);
-        } else {           
-            centerPanel.add(eup, BorderLayout.CENTER);
+                        new DividerChangeListener());   
+            cp1 = sp;
         }
+        else {
+        	cp1 = cp2;
+        }
+        centerPanel.add(cp1, BorderLayout.CENTER);
         
         // border of euclidianPanel        
         int eupTopBorder = !showAlgebraView && showToolBar ? 1 : 0;
@@ -782,6 +816,9 @@ public abstract class Application implements	KeyEventDispatcher {
     				}
     				else if (optionName.equals("showAlgebraWindow")) {    					
     					showAlgebraView = !optionValue.equals("false"); 
+    				}    				
+    				else if (optionName.equals("showSpreadsheet")) {    					
+    					this.showSpreadsheet = !optionValue.equals("false"); 
     				}    				
     				else if (optionName.equals("showAxes")) {    					
     					showAxes[0] = !optionValue.equals("false");
@@ -2370,6 +2407,14 @@ public abstract class Application implements	KeyEventDispatcher {
         initSplitDividerLocationVER = loc;          
     }
     
+    public void setSplitDividerLocationHOR2(int loc) {       
+        initSplitDividerLocationHOR2 = loc;              
+    }
+    
+    public void setSplitDividerLocationVER2(int loc) {       
+        initSplitDividerLocationVER2 = loc;          
+    }
+    
     public void setHorizontalSplit(boolean flag) {
         if (flag == horizontalSplit) return;                
         
@@ -2403,7 +2448,26 @@ public abstract class Application implements	KeyEventDispatcher {
         isSaved = false;        
     }
  
-    // Michael Borcherds 2008-01-14
+    public void setShowSpreadsheet(boolean flag) {
+        if (showSpreadsheet == flag) return;
+        
+        showSpreadsheet = flag;
+        /*
+        if (showSpreadsheet) {        	
+        	spreadsheetView.attachView();    		        	
+        	spreadsheetView.setShowAuxiliaryObjects(showAuxiliaryObjects);
+        }         
+        else {
+        	spreadsheetView.detachView();
+        }
+        */   
+            
+        updateMenubar();            
+        isSaved = false; 
+        //System.out.println("showSpreadsheet=" + showSpreadsheet);
+    }
+ 
+    /*/ Michael Borcherds 2008-01-14
     public void setShowSpreadsheet(boolean flag) {
         if (showSpreadsheet == flag) return;
         
@@ -2419,6 +2483,7 @@ public abstract class Application implements	KeyEventDispatcher {
         updateMenubar();            
         isSaved = false;        
     }
+    */
        
     final public boolean showAlgebraView() {
         return showAlgebraView;
@@ -3481,6 +3546,10 @@ public abstract class Application implements	KeyEventDispatcher {
             sb.append(initSplitDividerLocationHOR);
             sb.append("\" locVertical=\"");
             sb.append(initSplitDividerLocationVER);                     
+            sb.append(" loc2=\"");
+            sb.append(initSplitDividerLocationHOR2);
+            sb.append("\" locVertical2=\"");
+            sb.append(initSplitDividerLocationVER2);                     
             sb.append("\" horizontal=\"");
             sb.append(sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT);
             sb.append("\"/>\n");
@@ -3710,7 +3779,24 @@ public abstract class Application implements	KeyEventDispatcher {
         }
     }
       
-    
+    // remember split divider location
+    private class DividerChangeListener2 implements PropertyChangeListener {                     
+        public void propertyChange(PropertyChangeEvent e) {
+            Number value = (Number) e.getNewValue();
+            int newDivLoc = value.intValue();
+            if (sp2.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
+                initSplitDividerLocationHOR2 = newDivLoc;
+            else 
+                initSplitDividerLocationVER2 = newDivLoc;
+            isSaved = false;
+
+            if (applet != null)
+                SwingUtilities.updateComponentTreeUI(applet);
+            if (frame != null)                   
+                SwingUtilities.updateComponentTreeUI(frame);
+        }
+    }
+         
     /* Event dispatching */
     private GlassPaneListener glassPaneListener;
     
