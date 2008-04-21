@@ -665,7 +665,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				app.setShowSpreadsheet(!app.showSpreadsheet());
-				//app.updateCenterPanel(true);
+				app.updateCenterPanel(true);
 			}
 		};
 
