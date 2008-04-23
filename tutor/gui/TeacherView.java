@@ -39,6 +39,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -92,7 +93,7 @@ public class TeacherView extends JPanel implements View  {
     private JComboBox justificacions;
     ButtonColumn buttonColumn;
     
-    AbstractTableModel model;
+    DefaultTableModel model;
 
     private List strategies;
 
@@ -236,7 +237,7 @@ public class TeacherView extends JPanel implements View  {
 		JPanel techerPanel = new JPanel();
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		model = new MyTableModel();
+		model = new DefaultTableModel(0,3);
         table = new JTable(model);
         table.setPreferredScrollableViewportSize(new Dimension(350, 200));
 
@@ -265,10 +266,10 @@ public class TeacherView extends JPanel implements View  {
 		//String strSel = (String) justificationCombo.getSelectedItem();
 		//int selectedUser = Integer.parseInt(strSel);
 		
-		printTextArea(commentField.getText(), SENTENCE);
+		//printTextArea(commentField.getText(), SENTENCE);
 		
 		//System.out.println(strSel);
-		commentField.setText("");
+		//commentField.setText("");
 		//System.out.println(commentField.getText());
 	}
 	
@@ -290,7 +291,12 @@ public class TeacherView extends JPanel implements View  {
 		//if (geo.getObjectType()  )
 		
 		printTextArea(objectToDialogue(geo), GRAPHICAL_INFO);
-		commentField.requestFocus();
+		//commentField.requestFocus();
+		model.addRow(new Object[]{objectToDialogue(geo), "", ""});
+		//model.setValueAt(aValue, row, column)
+		
+		
+		
 		
 	}
 	/*
@@ -731,14 +737,10 @@ public class TeacherView extends JPanel implements View  {
         }
     }
 
-    class MyTableModel extends AbstractTableModel {
+    class MyTableModel extends DefaultTableModel {
         private String[] columnNames = {"accio", "", ""};
         private Object[][] data = {
-            {"Mary", "", "X"},
-            {"Alison", "", "X"},
-            {"Kathy", "", "X"},
-            {"Sharon", "", "X"},
-            {"Philip", "", "X"},
+            {"","",""}, {"","",""}
         };
 
         public int getColumnCount() {
