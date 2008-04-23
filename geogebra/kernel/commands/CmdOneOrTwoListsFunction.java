@@ -103,12 +103,12 @@ class CmdSYY extends CmdOneOrTwoListsFunction {
 
 	final protected GeoElement doCommand(String a, GeoList b)
 	{
-		return kernel.PMCC(a, b);
+		return kernel.SYY(a, b);
 	}
 
 	final protected GeoElement doCommand(String a, GeoList b, GeoList c)
 	{
-		return kernel.PMCC(a, b, c);
+		return kernel.SYY(a, b, c);
 	}
 
 }
