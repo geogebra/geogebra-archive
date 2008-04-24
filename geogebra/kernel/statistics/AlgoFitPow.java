@@ -31,7 +31,7 @@ import geogebra.kernel.Construction;
  * Adapted from AlgoFitLine and AlgoPolynomialFromCoordinates
  * (Borcherds)
  * @author Hans-Petter Ulven
- * @version 06.04.08
+ * @version 24.04.08
  */
 public class AlgoFitPow extends AlgoElement{
 
@@ -65,7 +65,7 @@ public class AlgoFitPow extends AlgoElement{
         int size=geolist.size();
         boolean regok=true;
         double a,b;
-        if(!geolist.isDefined() || (size<1) ) {
+        if(!geolist.isDefined() || (size<2) ) {	//24.04.08: 2
             geofunction.setUndefined();
             return;
         }else{

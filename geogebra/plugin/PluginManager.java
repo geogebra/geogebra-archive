@@ -33,7 +33,7 @@ import java.net.URL;
 <li>getPluginMenu():JMenu                               //Menubar<-Application<-PluginManager
 </ul>
 @author      H-P Ulven
-@version     17.04.08
+@version     24.04.08
 */
 public class PluginManager implements ActionListener{       //Listens on PluginMenu
  
@@ -67,8 +67,12 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     }//PluginManager()
     
     /** Returns pluginmenu. Called from Application */
-    public JMenu getPluginMenu(){
-        return pluginmenu;
+    public JMenu getPluginMenu(){	//24.04.08: check if empty menu
+    	if(pluginmenu.getMenuComponentCount()>0){
+    		return pluginmenu;
+    	}else{
+    		return null;
+    	}//if no menuitems
     }//getPluginMenu()
     
     ///// ----- Private ----- /////   

@@ -27,7 +27,7 @@ import geogebra.kernel.Construction;
  * Adapted from AlgoFitLine and AlgoPolynomialFromCoordinates
  * (Borcherds)
  * @author Hans-Petter Ulven
- * @version 06.04.08
+ * @version 24.04.08
  */
 public class AlgoFitPoly extends AlgoElement{
 
@@ -66,12 +66,21 @@ public class AlgoFitPoly extends AlgoElement{
         int par;
         boolean regok=true;
         double[] cof=null;
-        if(!geolist.isDefined() || (size<1) ) {
+        par=(int)Math.round(degree.getDouble());
+        if(!geolist.isDefined() || (size<2) || (par>=size) ) {   //24.04.08: size<2 or par>=size
             geofunction.setUndefined();
             return;
         }else{
-            par=(int)Math.round(degree.getDouble());
+            
             switch(par){
+            case RegressionMath.LINEAR:          //24.04.08: moved up linear case from default
+            	   	regok=RegressionMath.doLinear(geolist);
+            	   	if(regok){
+            	   		cof=new double[2];
+            	   		cof[0]=RegressionMath.getP1();
+            	   		cof[1]=RegressionMath.getP2();
+            	   	}//else: ->
+            	   	break;
                 case RegressionMath.QUAD:   
                     regok=RegressionMath.doQuad(geolist);
                     if(regok){
@@ -102,13 +111,7 @@ public class AlgoFitPoly extends AlgoElement{
                         cof[4]=RegressionMath.getP5();
                     }//else: ->
                     break;
-                default: RegressionMath.doLinear(geolist);
-                    regok=RegressionMath.doLinear(geolist);
-                    if(regok){
-                        cof=new double[2];
-                        cof[0]=RegressionMath.getP1();
-                        cof[1]=RegressionMath.getP2();
-                    }//else: ->
+                default:regok=false;   //24.04.08:  Only 1<=degree<=4
             }//switch
             if(!regok){
                 geofunction.setUndefined();

@@ -32,7 +32,7 @@ import geogebra.kernel.Construction;
  * Adapted from AlgoFitLine and AlgoPolynomialFromCoordinates
  * (Borcherds)
  * @author Hans-Petter Ulven
- * @version 06.04.08
+ * @version 24.04.08
  */
 public class AlgoFitExp extends AlgoElement{
 
@@ -66,7 +66,7 @@ public class AlgoFitExp extends AlgoElement{
         int size=geolist.size();
         boolean regok=true;
         double a,b;
-        if(!geolist.isDefined() || (size<1) ) {
+        if(!geolist.isDefined() || (size<2) ) {	//24.04.08:2
             geofunction.setUndefined();
             return;
         }else{
@@ -76,10 +76,10 @@ public class AlgoFitExp extends AlgoElement{
                 b=RegressionMath.getP2();
                 MyDouble A=new MyDouble(kernel,a);
                 MyDouble B=new MyDouble(kernel,b);
-                MyDouble E=new MyDouble(kernel,Math.E);
+                //24.04.08: not: MyDouble E=new MyDouble(kernel,Math.E);
                 FunctionVariable X=new FunctionVariable(kernel);
                 ExpressionValue expr=new ExpressionNode(kernel,B,ExpressionNode.MULTIPLY,X);
-                expr=new ExpressionNode(kernel,E,ExpressionNode.POWER,expr);
+                expr=new ExpressionNode(kernel,expr,ExpressionNode.EXP,null);        //24.04.08: changed 2.71..to "e" with the null trick!
                 ExpressionNode node=new ExpressionNode(kernel,A,ExpressionNode.MULTIPLY,expr);
                 Function f=new Function(node,X);
                 geofunction.setFunction(f);

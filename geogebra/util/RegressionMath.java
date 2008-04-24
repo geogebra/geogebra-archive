@@ -27,7 +27,7 @@ the Free Software Foundation.
  * 
  * 
  * @author Hans-Petter Ulven
- * @version 05.04.08
+ * @version 24.04.08
  *
  *<ul><b>--- Interface: ---</b>
  *<li>RegressionMath(GeoList)
@@ -42,7 +42,7 @@ the Free Software Foundation.
 
 public final  class RegressionMath {
 
-    private final static boolean    DEBUG   =   true;       //!Comment out before distribution!
+    private final static boolean    DEBUG   =   false;       //24.04.08: false for release
     public final static int         LINEAR  =   1,
                                     QUAD    =   2,
                                     CUBIC   =   3,
@@ -458,38 +458,7 @@ public final  class RegressionMath {
     
     /// --- DEBUG --- ///        !!! Remember to comment out calls before distribution !!!
 
-    /** main() - Just for testing */
-    public final static void main(String[] args){
-        RegressionMath.debug(RegressionMath.info());
-
-    }//main
-    
-    private static      String      nl=         System.getProperty("line.separator");
-
-    /** toString() - Just for testing */
-    public final static String info() {
-        return 
-            "SumX = "+sigmax+"  SumX2 = "+sigmax2+"  SumX3 = "+sigmax3+"  SumX4 = "+sigmax4+"  SumX5 = "+sigmax5+nl+
-            "SumY = "+sigmay+"  SumY2 = "+sigmay2+nl+
-            "SumXY = "+sigmaxy+"  SumX2Y = "+sigmax2y+"  SumX3Y = "+sigmax3y+"  SumX4y = "+sigmax4y+nl+
-            "p1 = "+p1+nl+
-            "p2 = "+p2+nl+            
-            "p3 = "+p3+nl+        
-            "p4 = "+p4+nl+            
-            "p5 = "+p5+nl+            
-            "r  = "+r
-        ;
-    }//info
-  
-    /** debug(Sting msg) - Just for testing */
-    private final static void debug(String s) {
-        if(DEBUG) {
-            System.out.print("\nRegressionMath:   ");
-            System.out.println(s);
-        }//if()
-    }//debug()
-    
-    /// --- END --- ///
+//24.04.08 removed testing routines for release
             
 }// class RegressionMath
 
