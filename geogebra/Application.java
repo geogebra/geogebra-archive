@@ -3546,7 +3546,7 @@ public abstract class Application implements	KeyEventDispatcher {
             sb.append(initSplitDividerLocationHOR);
             sb.append("\" locVertical=\"");
             sb.append(initSplitDividerLocationVER);                     
-            sb.append(" loc2=\"");
+            sb.append("\" loc2=\""); // bugfix Michael Borcherds 2008-04-24 added \" at start
             sb.append(initSplitDividerLocationHOR2);
             sb.append("\" locVertical2=\"");
             sb.append(initSplitDividerLocationVER2);                     
