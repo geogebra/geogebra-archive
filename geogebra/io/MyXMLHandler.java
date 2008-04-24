@@ -218,7 +218,8 @@ public class MyXMLHandler implements DocHandler {
                         if (ggbFileFormat > FORMAT) {
                         	app.showMessage(app.getError("FileFormatNewer")
                                     + ": "
-                                    + ggbFileFormat);
+                                    //+ ggbFileFormat);
+                                    + attrs.get("format")); // Michael Borcherds 2008-04-24 changed to avoid 3.0999999999987
                             
                         	/*
                         	throw new MyError(app, 
