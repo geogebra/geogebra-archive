@@ -63,7 +63,7 @@ import geogebra.util.ImageManager;
 import geogebra.util.Util;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.GgbAPI;
-import geogebra.spreadsheet.SpreadsheetView;
+//import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -129,10 +129,10 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "April 19, 2008";
+    public static final String buildDate = "April 24, 2008";
 	
-    public static final String versionString = "3.1 Pre-Release";    
-    public static final String XML_FILE_FORMAT = "3.0";    
+    public static final String versionString = "3.1.0.0";    
+    public static final String XML_FILE_FORMAT = "3.01";    
   
     // GeoGebra jar files    
     public static final String [] JAR_FILES = 
@@ -241,7 +241,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
-    private SpreadsheetView spreadsheetView;
+//    private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -374,7 +374,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+//    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -698,7 +698,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
-        if (showSpreadsheet) {
+/*        if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         eup, spreadsheetView);
@@ -713,9 +713,9 @@ public abstract class Application implements	KeyEventDispatcher {
                         new DividerChangeListener2());
             cp2 = sp2;
         }
-        else {
+        else {*/
         	cp2 = eup;
-        }
+     //   }
 
         JComponent cp1 = null;
         if (showAlgebraView) {        	     
