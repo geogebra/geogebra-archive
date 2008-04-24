@@ -7,17 +7,15 @@ LICENSE
   free of charge for non-commercial purposes 
   (see conditions and details below).  
 
-DEVELOPMENT
- Creator of GeoGebra, Project Leader
-  * Markus Hohenwarter
- Developers
-  * Markus Hohenwarter (Univ. Salzburg, FAU): since 2001
-  * Yves Kreis (University of Luxembourg): since 2005
- Contributions by
-  * Loïc Le Coq (France): 2006
-  * Joan Carles Naranjo, Victor Franco, Eloi Puertas (Univ. of Barcelona): 2007
-  * Philipp Weissenbacher (Austria): 2007
-  * Michael Borcherds (UK): 2007
+DEVELOPERS
+  * Markus Hohenwarter, (Boca Raton, USA): project leader since 2001
+  * Yves Kreis (Luxembourg): since 2005
+  * Michael Borcherds (Birmingham, UK): since 2007
+  * Hans-Petter Ulven (Trondheim, Norway): since 2008
+
+Contributions by Loïc Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco,
+  Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
+  Amy Varkey (Boca Raton,USA 2007)
   
 TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
@@ -25,7 +23,8 @@ TRANSLATIONS
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
   * Catalan: Jorge Sánchez, Jaume Bartrolí, Pep Bujosa, Antoni Gomà, 
       Roser Sebastián (Spain)
-  * Chinese: Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
+  * Chinese (Traditional): Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
+  * Chinese (Simplified): Chen Xing (China)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
   * Danish: Steen Groðe (Denmark)
@@ -40,19 +39,21 @@ TRANSLATIONS
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hebrew: Guy Hed (Israel)
-  * Hungarian: Sulik Szabolcs, Zsuzsanna Papp-Varga (Hungary)
+  * Hungarian: Sulik Szabolcs (Hungary)
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi, Simona Riva (Italy)
   * Japanese: Akihito Wachi (Japan)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
   * Norwegian: Sigbjørn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
-  * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek (Poland)
+  * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
       Luciana de Lima, Araújo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes, António Ribeiro (Portugal)
+  * Russian: Anatoly Scherbakov (Russia)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba (Slovakia)
   * Slovenian: Stanislav Senveter (Slovenia)
+  * Swedish: Jonas Enlund (Sweden)
   * Spanish: Liliana Saidon (Argentina)
   * Turkish: Erol Karakirik (Turkey)
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
@@ -71,9 +72,9 @@ GRANTS
      
 SUPPORT 
   * Department of Mathematics, University of Salzburg 
-     hosting the GeoGebra Website
+     hosting the GeoGebra Website     
   * Faculty LSHASE, University of Luxembourg
-     providing the multi-platform software deployment solution
+     providing the multi-platform software deployment solution      
   
 SOFTWARE
   * Jasymca, http://webuser.hs-furtwangen.de/~dersch
