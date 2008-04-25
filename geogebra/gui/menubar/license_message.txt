@@ -15,7 +15,7 @@ DEVELOPERS
 
 Contributions by Loïc Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco,
   Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
-  Amy Varkey (Boca Raton,USA 2007)
+  Amy Varkey (Boca Raton, USA 2007); Cong Liu, Quan Yuan (Boca Raton, USA 2008)
   
 TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)

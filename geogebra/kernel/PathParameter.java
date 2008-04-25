@@ -31,7 +31,7 @@ public class PathParameter {
 		branch = 0;
 	}
 	
-	public void set(PathParameter pp) {
+	final public void set(PathParameter pp) {
 		t = pp.t;
 		branch = pp.branch;
 		pathType = pp.pathType;

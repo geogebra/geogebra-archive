@@ -692,35 +692,42 @@ implements ExpressionValue {
             		return exponent.exp();
             	}
             	
-            	// special case: left side is negative and 
+				// special case: left side is negative and 
             	// right side is a fraction a/b with a and b integers
             	// x^(a/b) := (x^a)^(1/b)
             	if (base < 0 && right.isExpressionNode()) {            		
             		ExpressionNode node = (ExpressionNode) right;
             		if (node.operation == DIVIDE) {
             			// check if we have a/b with a and b integers
-            			double a = ((NumberValue) node.left.evaluate()).getDouble();            			            		
-            			if (kernel.isInteger(a)) {            				
+            			double a = ((NumberValue) node.left.evaluate()).getDouble(); 
+            			long al = Math.round(a);
+            			if (kernel.isEqual(a, al)) { // a is integer         				
             				double b = ((NumberValue) node.right.evaluate()).getDouble();                 			
-                			if (b == 0)
+            				long bl = Math.round(b);
+            				if (b == 0)
                 				// (x^a)^(1/0)
                 				num.set(Double.NaN);            				
-                			else if (kernel.isInteger(b)) { 
+                			else if (kernel.isEqual(b, bl)) { // b is integer
+                				// divide through greatest common divisor of a and b
+                				long gcd = Kernel.gcd(al, bl);
+                				al = al / gcd;
+                				bl = bl / gcd;
+                				
                 				// we will now evaluate (x^a)^(1/b) instead of x^(a/b)                				
                 				// set base = x^a
-                				if (a != 1.0) base = Math.pow(base, a);             						            						
+                				if (al != 1) base = Math.pow(base, al);             						            						
             					if (base > 0) {             						
             						// base > 0 => base^(1/b) is no problem
-            						num.set(Math.pow(base, 1/b));            						
+            						num.set(Math.pow(base, 1d/bl));            						
             					}           
             					else { // base < 0            				
-	                				boolean oddB = ((long) b) % 2 == 1;
+	                				boolean oddB = Math.abs(bl) % 2 == 1;
 	                				if (oddB) {      	 
 	            						// base < 0 and b odd: (base)^(1/b) = -(-base^(1/b)) 
-	            						num.set(-Math.pow(-base, 1/b));	                					
-	                				} else {             		
-	                					// base < 0 and b even: (base)^(1/b) = undefined 
-	                					num.set(Double.NaN);
+	            						num.set(-Math.pow(-base, 1d/bl));	                					
+	                				} else {         	                					
+	                					// base < 0 and a & b even: (base)^(1/b) = undefined 
+	                					num.set(Double.NaN);	                				
 	                				}
             					}
                 				return num;

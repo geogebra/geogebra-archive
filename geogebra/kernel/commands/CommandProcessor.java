@@ -3729,7 +3729,7 @@ final public  GeoElement[] process(Command c) throws MyError {
             arg = resArgs(c);
             if (ok[0] = (arg[0].isPath())) {
                 GeoElement[] ret =
-                    { kernel.Point(c.getLabel(), (Path) arg[0], 0, 0)};
+                    { kernel.Point(c.getLabel(), (Path) arg[0])};
                 return ret;
             } else
 				throw argErr(app, "Point", arg[0]);

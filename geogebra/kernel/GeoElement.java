@@ -189,6 +189,7 @@ public abstract class GeoElement
 			'\u03c8',
 			'\u03c9' };
 	
+	/*
 	private static final char[] greekUpperCase =
 	{ // Michael Borcherds 2008-02-23
 	'\u0391',
@@ -215,6 +216,7 @@ public abstract class GeoElement
 	'\u03a7',
 	'\u03a8',
 	'\u03a9'};
+	*/
 	
 	// GeoElement types
 	public static final int GEO_CLASS_ANGLE = 10;
@@ -787,7 +789,9 @@ public abstract class GeoElement
 	}
 
 	public void setFixed(boolean flag) {
-		if (isFixable())
+		if (!flag)
+			fixed = flag;
+		else if (isFixable())
 			fixed = flag;
 	}
 
@@ -864,11 +868,15 @@ public abstract class GeoElement
 		return algebraVisible;
 	}
 
-	abstract protected boolean showInAlgebraView();
-	abstract protected boolean showInEuclidianView();
+	protected abstract boolean showInAlgebraView();
+	protected abstract boolean showInEuclidianView();
 	
 	final public boolean isEuclidianShowable() {
 		return showInEuclidianView();
+	}
+	
+	final public boolean isAlgebraShowable() {
+		return showInAlgebraView();
 	}
 
 	public void setParentAlgorithm(AlgoElement algorithm) {
@@ -924,8 +932,29 @@ public abstract class GeoElement
 		return isChangeable();
 	}
 	
-	public boolean hasOnlyMoveableInputPoints() {
-		return containsOnlyMoveableAndVisibleGeos(getFreeInputPoints());
+	/**
+	 * Returns whether this (dependent) GeoElement has input points that can be 
+	 * moved in Euclidian View.
+	 * @return
+	 */
+	public boolean hasMoveableInputPoints() {
+		// allow only moving of segments and polygons
+		switch (getGeoClassType()) {		
+			case GEO_CLASS_CONIC:
+			case GEO_CLASS_CONICPART:
+			case GEO_CLASS_IMAGE:
+			case GEO_CLASS_LINE:
+			case GEO_CLASS_RAY:
+			case GEO_CLASS_SEGMENT:
+			case GEO_CLASS_TEXT:
+			case GEO_CLASS_VECTOR:
+				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());
+				
+			case GEO_CLASS_POLYGON:
+				return containsOnlyMoveableGeos(getFreeInputPoints());
+		
+		}		
+		return false;
 	}
 	
 	/**
@@ -938,13 +967,20 @@ public abstract class GeoElement
 			return algoParent.getFreeInputPoints();		
 	}
 	
-	private static boolean containsOnlyMoveableAndVisibleGeos(ArrayList geos) {
+final public boolean hasOnlyFreeInputPoints() {
+		if (algoParent == null) 
+			return false;
+		else
+			return algoParent.getFreeInputPoints().size() == algoParent.input.length;	
+	}
+	
+	private static boolean containsOnlyMoveableGeos(ArrayList geos) {
 		if (geos == null || geos.size() == 0)
 			return false;
 				
 		for (int i=0; i < geos.size(); i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
-    		if (!geo.isEuclidianVisible() || !geo.isMoveable())
+    		if (!geo.isMoveable())
     			return false;
     	}
 		return true;

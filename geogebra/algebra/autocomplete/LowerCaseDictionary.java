@@ -9,8 +9,6 @@ import java.util.TreeSet;
  * is based upon the TreeSet collection class to provide quick lookups and
  * default sorting.
  * All lookups are case insensitive!
- * 
- * @author Matt Welsh (matt@matt-welsh.com), Markus Hohenwarter
  */
 public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictionary {
 	

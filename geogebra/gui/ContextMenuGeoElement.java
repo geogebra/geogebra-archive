@@ -391,7 +391,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             //  trace
             if (geo.isTraceable()) {            	
                 cbItem = new JCheckBoxMenuItem( app.getPlain("TraceOn"));
-                cbItem.setIcon(app.getEmptyIcon());
+                cbItem.setIcon(app.getImageIcon("trace_on.gif"));
                 cbItem.setSelected(((Traceable) geo).getTrace());
                 cbItem.addActionListener(new ActionListener() {
                 	public void actionPerformed(ActionEvent e) {
@@ -403,36 +403,51 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 addItem(cbItem);            	
             }  
             
+            // AUXILIARY OBJECT
+            
+            if (app.showAlgebraView() &&
+            		geo.isAlgebraShowable()) {
+                
+                // show object
+            	cbItem = new JCheckBoxMenuItem( app.getPlain("AuxiliaryObject"));
+                cbItem.setIcon(app.getImageIcon("aux_folder.gif"));
+            	cbItem.setSelected(geo.isAuxiliaryObject());
+                cbItem.addActionListener(new ActionListener() {
+            		public void actionPerformed(ActionEvent e) {
+                        geo.setAuxiliaryObject(!geo.isAuxiliaryObject());
+                        geo.updateRepaint();
+                        app.storeUndoInfo();
+                    }        	
+            	});
+                addItem(cbItem);                      
+            }                                                           
+            
+            //  fix object
+            if (geo.isFixable() && (geo.isGeoText() || geo.isGeoImage())) {            	
+                cbItem = new JCheckBoxMenuItem( app.getPlain("FixObject"));
+                cbItem.setIcon(app.getEmptyIcon());
+                cbItem.setSelected(geo.isFixed());
+                cbItem.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                        geo.setFixed(!geo.isFixed());
+                        geo.updateRepaint();
+                        app.storeUndoInfo();
+                    }       	
+            	});
+                addItem(cbItem);            	
+            }  
+            
             // text position
             if (geo.isGeoText()) {
             	addTextItems();
             }
+            
         	addSeparator();
         }
         
       
         
-        // AUXILIARY OBJECT
-        /*
-        if (app.showAlgebraView() &&
-        	!(geo.isTextValue() || geo.isGeoImage())) {
-            
-            // show object
-        	JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem( app.getPlain("AuxiliaryObject"));
-            cbItem.setSelected(geo.isAuxiliaryObject());
-            cbItem.addActionListener(new ActionListener() {
-        		public void actionPerformed(ActionEvent e) {
-                    geo.setAuxiliaryObject(!geo.isAuxiliaryObject());
-                    geo.updateRepaint();
-                    app.storeUndoInfo();
-                }        	
-        	});
-            addItem(cbItem);                      
-        }
-        */
-        
-   
-        
+          
       
         /*
         // EDIT in AlgebraView

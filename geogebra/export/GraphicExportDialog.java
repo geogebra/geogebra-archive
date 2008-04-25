@@ -463,12 +463,14 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			
 			return true;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			
 			return false;
 		} catch (Error ex) {
+			ex.printStackTrace();
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			
 			return false;
 		} 
 	}

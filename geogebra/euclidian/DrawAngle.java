@@ -231,7 +231,7 @@ public class DrawAngle extends Drawable {
 //			angSt = angSt - angExt;
 //		}
 
-		if (angle.angleStyle()==GeoAngle.ANGLE_ISCLOCKWISE) 
+		if (angle.angleStyle()==GeoAngle.ANGLE_ISCLOCKWISE) 	
 		{
 			angSt+=angExt;
 			angExt=2.0*Math.PI-angExt;

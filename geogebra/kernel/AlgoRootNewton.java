@@ -72,9 +72,7 @@ public class AlgoRootNewton extends AlgoElement {
                 
         output = new GeoPoint[1];
         output[0] = rootPoint;
-        setDependencies();
-        
-        kernel.registerEuclidianViewAlgo(this);
+        setDependencies();       
     }
 
     public GeoPoint getRootPoint() {

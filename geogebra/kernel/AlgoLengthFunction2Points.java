@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.kernel.integration.GaussQuadIntegration;
 import geogebra.kernel.roots.RealRootFunction;
 
 /**
@@ -17,7 +16,6 @@ public class AlgoLengthFunction2Points extends AlgoElement {
 	private GeoFunction f, f1;//f1 is f'(x)
     private GeoNumeric length; //output
     private RealRootFunction lengthFunction; //is T = sqrt(1+(f')^2)
-    private GaussQuadIntegration gauss;
     	
 	AlgoLengthFunction2Points(Construction cons, String label, GeoFunction f, GeoPoint A, GeoPoint B) {
         super(cons);
@@ -31,7 +29,6 @@ public class AlgoLengthFunction2Points extends AlgoElement {
         this.f1 = (GeoFunction) algo.getDerivative();
         
     	lengthFunction = new LengthFunction();
-		gauss = new GaussQuadIntegration(5);
         
 		cons.removeFromConstructionList(algo);
 	    setInputOutput();
@@ -62,11 +59,8 @@ public class AlgoLengthFunction2Points extends AlgoElement {
     	double a = A.inhomX;
     	double b = B.inhomX;
 
-    	if (a <= b)
-    		length.setValue(gauss.integrate(lengthFunction, a, b));
-    	else
-			//length.setValue(-gauss.integrate(lengthFunction, b, a));
-    	    length.setValue(gauss.integrate(lengthFunction, b, a));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthFunction, a, b));
+		length.setValue(lenVal);	
     }
     
     /**

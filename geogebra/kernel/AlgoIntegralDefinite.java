@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.GaussQuadIntegration;
+import geogebra.kernel.roots.RealRootFunction;
 
 /**
  * Integral of a function (GeoFunction)
@@ -37,7 +38,7 @@ public class AlgoIntegralDefinite extends AlgoElement {
     private static final int FIRST_ORDER = 5;
     private static final int SECOND_ORDER = 7;
     private static final double ACCURACY = Kernel.MIN_PRECISION;   
-    private GaussQuadIntegration firstGauss, secondGauss;
+    private static GaussQuadIntegration firstGauss, secondGauss;
 
     public AlgoIntegralDefinite(
         Construction cons,
@@ -133,19 +134,12 @@ public class AlgoIntegralDefinite extends AlgoElement {
 	            n.setValue(val);	        
 	            if (n.isDefined()) return;
 	        }
-        }
-
-        
-        // init GaussQuad classes for numerical integration
-        if (firstGauss == null) {
-            firstGauss = new GaussQuadIntegration(FIRST_ORDER);
-            secondGauss = new GaussQuadIntegration(SECOND_ORDER);
-        }
+        }                
 
         // numerical integration
        // max_error = ACCURACY; // current maximum error
         //maxstep = 0;              
-        double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit, 0, ACCURACY);
+        double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit);
         n.setValue(integral);
               
         /*
@@ -154,16 +148,26 @@ public class AlgoIntegralDefinite extends AlgoElement {
         */
     }
     //  private int maxstep;
+    
+    public static double adaptiveGaussQuad(RealRootFunction fun, double a, double b) {
+    	return adaptiveGaussQuad(fun, a, b, 0, ACCURACY);
+    }    		
 
     // adaptive GaussQuad integration:
     // take bisection step if difference between two GaussQuad orders is too big
-    private double adaptiveGaussQuad(
-        Function fun,
+    private static double adaptiveGaussQuad(
+    	RealRootFunction fun,
         double a,
         double b,
         int step,
         double maxError) 
     {
+    	// init GaussQuad classes for numerical integration
+        if (firstGauss == null) {
+            firstGauss = new GaussQuadIntegration(FIRST_ORDER);
+            secondGauss = new GaussQuadIntegration(SECOND_ORDER);
+        }
+    	
         double firstSum = firstGauss.integrate(fun, a, b);
         double secondSum = secondGauss.integrate(fun, a, b);
         double error = Math.abs(firstSum - secondSum);

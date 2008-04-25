@@ -69,7 +69,12 @@ public class DrawSlope extends Drawable {
             }
         
             // get point on line g
-            g.getInhomPointOnLine(coords);                       
+            g.getInhomPointOnLine(coords);              
+            if (g.getStartPoint() == null) {
+            	// get point on y-axis and line g
+            	coords[0] = 0.0d;
+            	coords[1] = -g.z / g.y;
+            }
             view.toScreenCoords(coords);
             
             // draw slope triangle       

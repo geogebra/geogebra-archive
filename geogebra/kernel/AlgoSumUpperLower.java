@@ -78,8 +78,12 @@ implements EuclidianViewAlgo {
 	
 	final public void euclidianViewUpdate() {
 		xVisibleWidth = kernel.getXmax() - kernel.getXmin();
-		super.update();
+		super.euclidianViewUpdate();
 	}
+	
+	final public boolean wantsEuclidianViewUpdate() {
+    	return true;
+    }
 	
 	abstract protected String getClassName();
 

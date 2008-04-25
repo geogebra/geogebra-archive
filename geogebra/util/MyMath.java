@@ -23,7 +23,7 @@ public final class MyMath {
 	
 	public static final double LOG10 = Math.log(10);
 	public static final double LOG2 = Math.log(2);
-	public static final double ONE_THIRD = 1d / 3d;
+	public static final double ONE_THIRD = 1/3;
 
 
 	/**
@@ -69,7 +69,7 @@ public final class MyMath {
 
 	final public static double atanh(double a) {		  
 		return Math.log((1.0 + a)/(1.0 - a)) * 0.5;
-	}
+	}		
 	
 	final public static double gamma(double x) {		
 //		 Michael Borcherds 2007-10-15 BEGIN added case for x<0 otherwise no results in 3rd quadrant

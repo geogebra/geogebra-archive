@@ -29,8 +29,7 @@ import java.util.TreeSet;
  * @author  Markus
  * @version 
  */
-public abstract class AlgoElement extends ConstructionElement 
-implements EuclidianViewAlgo {
+public abstract class AlgoElement extends ConstructionElement implements EuclidianViewAlgo {
 	 
     private static ResourceBundle rbalgo2command;
     
@@ -42,6 +41,7 @@ implements EuclidianViewAlgo {
     
     private boolean isPrintedInXML = true;
     private boolean stopUpdateCascade = false;
+    private boolean wantsEuclidianUpdate = false;
     
     public AlgoElement(Construction c) {
         super(c);                       
@@ -105,7 +105,7 @@ implements EuclidianViewAlgo {
         }           
         
 //        endTime = System.currentTimeMillis(); 
-//        updateTime += (endTime - startTime );                
+//        updateTime += (endTime - startTime );           
     }              
     
     /**
@@ -232,7 +232,7 @@ implements EuclidianViewAlgo {
            // every algorithm with an image as output
            // should be notified about view changes
            if (output[i].isGeoImage())
-        	   kernel.registerEuclidianViewAlgo(this);
+        	   wantsEuclidianUpdate = true;
            
            //  make sure that every output has same construction as this algorithm
            // this is important for macro constructions that have input geos from
@@ -241,17 +241,17 @@ implements EuclidianViewAlgo {
            	output[i].setConstruction(cons);             
        }   
    }
-   
-    
+       
     public void euclidianViewUpdate() {
-    	compute();
+    	update();
+    }
+    
+    public boolean wantsEuclidianViewUpdate() {
+    	return wantsEuclidianUpdate;
     }
        
     public void remove() {      
-        cons.removeFromConstructionList(this);
-        
-        if (this instanceof EuclidianViewAlgo)
-        	kernel.unregisterEuclidianViewAlgo(this);
+        cons.removeFromConstructionList(this);        
                         
         // delete dependent objects        
         for (int i = 0; i < output.length; i++) {

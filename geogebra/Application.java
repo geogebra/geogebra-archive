@@ -139,7 +139,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	{ "geogebra.jar",  
     	  "geogebra_properties.jar",
     //	  "geogebra_cas.jar",
-    	  "geogebra_export.jar"
+    	  "geogebra_export.jar"    	  
     	};
  
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
@@ -156,7 +156,8 @@ public abstract class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("bg") );          	// Bulgarian
     	supportedLocales.add( new Locale("ca") );           // Catalan
         // supportedLocales.add( new Locale("zh") );          	// Chinese (Simplified)
-        supportedLocales.add( new Locale("zh","TW") );      // Chinese (Traditional)
+        supportedLocales.add( new Locale("zh","CN") );      // Chinese (Simplified)
+    	supportedLocales.add( new Locale("zh","TW") );      // Chinese (Traditional)        
         supportedLocales.add( new Locale("hr") );          	// Croatian
     	supportedLocales.add( new Locale("cz") );          	// Czeck
     	supportedLocales.add( new Locale("da") );     	 	// Danish   
@@ -172,7 +173,8 @@ public abstract class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("el") );            // Greek   
         supportedLocales.add( new Locale("iw") );            // Hebrew
         supportedLocales.add( new Locale("hu") );          	// Hungarian
-        supportedLocales.add( new Locale("it") );     		 	// Italian
+        supportedLocales.add( new Locale("it") ); 
+        supportedLocales.add( new Locale("ja") );    		 	// Italian
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
         supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
         supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
@@ -180,9 +182,11 @@ public abstract class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("pl") );     		// Polish
         supportedLocales.add( new Locale("pt", "BR") );     // Portugese (Brazil)
         supportedLocales.add( new Locale("pt", "PT") );     // Portuguese (Portugal)        
+        supportedLocales.add( new Locale("ru") );          	// Russian
         supportedLocales.add( new Locale("sr") );           	// Serbian
         supportedLocales.add( new Locale("sk") );          	// Slovakian  
         supportedLocales.add( new Locale("sl") );           	// Slovenian
+        supportedLocales.add( new Locale("sv") );          	// Swedish
         supportedLocales.add( new Locale("es") );          	// Spanish   
         supportedLocales.add( new Locale("tr") );          	// Turkish
         supportedLocales.add( new Locale("vi") );          	// Vietnamese
@@ -202,13 +206,15 @@ public abstract class Application implements	KeyEventDispatcher {
     	specialLanguageNames.put("cz", "Czech");
     	specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
     	specialLanguageNames.put("ptPT", "Portuguese (Portugal)");    
-    	// specialLanguageNames.put("zh", "Chinese (Simplified)"); 
+    	specialLanguageNames.put("zhCN", "Chinese (Simplified)"); 
     	specialLanguageNames.put("zhTW", "Chinese (Traditional)" ); 
     }
         
     public static final Color COLOR_SELECTION = new Color(225, 225, 245);
-    public static final String STANDARD_FONT_NAME = "SansSerif";  
-
+    public static final String STANDARD_FONT_NAME = "SansSerif";
+    public static final String STANDARD_CHINESE_FONT_NAME = "\u00cb\u00ce\u00cc\u00e5";  
+    public static final int MIN_FONT_SIZE = 10;
+    
     // file extension string
     public static final String FILE_EXT_GEOGEBRA = "ggb";
     public static final String FILE_EXT_GEOGEBRA_TOOL = "ggt";
@@ -1155,31 +1161,54 @@ public abstract class Application implements	KeyEventDispatcher {
     
     private String getLanguageFontName(Locale locale) throws Exception {
         String fontName = null;
-        //  chinese font
-        if ("zh".equals(locale.getLanguage())) { // CHINESE
-            fontName = getChineseFontName();    
+        
+        String lang = locale.getLanguage();
+        
+        if ("zh".equals(lang)) { // CHINESE 
+        	char testChar = '\u984F';// last CJK unified ideograph in unicode alphabet
+        	if (testFontCanDisplay(STANDARD_CHINESE_FONT_NAME, testChar))
+        		fontName = STANDARD_CHINESE_FONT_NAME;
+        	else
+        		fontName = getFontCanDisplay(testChar);    
+        } 
+        else if ("ja".equals(lang)) { // JAPANESE
+            fontName = getFontCanDisplay('\uff9d');    // Katakana letter N
         } 
         // standard font
         if (fontName == null) fontName = STANDARD_FONT_NAME;
+        if (fontName == null) 
+        	fontName = STANDARD_FONT_NAME;
+                       
+        //System.out.println("font: " + fontName);
+        
         return fontName;
     }
     
-    private String getChineseFontName() throws Exception {
-        String chinesesample = "\u4e00";
-        if (plainFont != null && plainFont.canDisplayUpTo(chinesesample) == -1)
+    private String getFontCanDisplay(char unicodeChar) throws Exception {
+    	if (plainFont == null) {
+    		plainFont = new Font(STANDARD_FONT_NAME, Font.PLAIN, 12);
+    	}    	
+        if (plainFont.canDisplay(unicodeChar))
 			return plainFont.getFontName();
         
         // Determine which fonts support Chinese here ...
         Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         //int fontcount = 0;
-        for (int j = 0; j < allfonts.length; j++) {
-            if (allfonts[j].canDisplayUpTo(chinesesample) == -1)
+        for (int j = 0; j < allfonts.length; j++) {            
+            if (allfonts[j].canDisplay(unicodeChar))
 				return allfonts[j].getFontName();
         }
         throw new Exception("Sorry, there is no font available on your computer\nthat could display Chinese characters.");
     }
+    
+    private static boolean testFontCanDisplay(String fontName, char unicodeChar) {
+    	Font testFont = new Font(fontName, Font.PLAIN, 12);
+    	return testFont != null && testFont.canDisplay(unicodeChar);    	
+    }
 
     public void setLocale(Locale locale) {    
+        Locale oldLocale = currentLocale;
+        
         // only allow special locales due to some weird server
         // problems with the naming of the property files   
         currentLocale = getClosestSupportedLocale(locale);                     
@@ -1187,17 +1216,22 @@ public abstract class Application implements	KeyEventDispatcher {
         
         // update font for new language (needed for e.g. chinese)
         try {
-            String fontName = getLanguageFontName(locale);
+            String fontName = getLanguageFontName(currentLocale);
+            
             if (fontName != FONT_NAME) {
                 FONT_NAME = fontName;
-                resetFonts();
+                resetFonts();       
             }
         }        
         catch (Exception e) {
         	e.printStackTrace();
             showError(e.getMessage());
-            locale = currentLocale;
+            
+            // go back to previous locale
+            currentLocale = oldLocale;
+            updateResourceBundles();
         }                   	
+        
         updateReverseLanguage(locale);
     }
     
@@ -2879,8 +2913,7 @@ public abstract class Application implements	KeyEventDispatcher {
         if (helpURL != null) {        	
         	return helpURL;
         }
-    	
-        
+    	       
         /* Michael Borcherds 2008-03-26
          * removed and replaced with dummy help files which redirect
         // try to get help for current language
@@ -3425,6 +3458,9 @@ public abstract class Application implements	KeyEventDispatcher {
             	isSaved = true;
             	setCurrentFile(null);             
             }    		
+    		
+    		// command list may have changed due to macros
+    		updateCommandDictionary();
             return true;
         } catch (MyError err) {
             setCurrentFile(null);

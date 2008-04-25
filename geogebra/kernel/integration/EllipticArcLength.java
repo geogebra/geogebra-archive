@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.integration;
 
+import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.roots.RealRootFunction;
@@ -38,10 +39,10 @@ public class EllipticArcLength {
 	 */
 	public double compute(double a, double b) {
 		if (a <= b)
-			return gauss.integrate(arcLengthFunction, a, b);
+			return AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, a, b);
 		else
-			return gauss.integrate(arcLengthFunction, 0, Kernel.PI_2)
-				 - gauss.integrate(arcLengthFunction, b, a);
+			return AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, 0, Kernel.PI_2)
+				 - AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, b, a);
 		
 	}
 	

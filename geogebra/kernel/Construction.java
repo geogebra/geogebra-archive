@@ -434,11 +434,38 @@ public class Construction {
     	// update all algorithms
         int size = algoList.size();
         for (int i = 0; i < size; ++i) {        	        	
-       	AlgoElement algo = (AlgoElement)algoList.get(i);   
+        	AlgoElement algo = (AlgoElement)algoList.get(i);   
             algo.update();                         	
         }  
     }
     
+    final boolean updateAllEuclidianViewAlgorithms() {
+    	 boolean didUpdate = false;
+    	 
+    	// update all algorithms
+        int size = algoList.size();
+        for (int i = 0; i < size; ++i) {        	        	
+        	AlgoElement algo = (AlgoElement)algoList.get(i);   
+        	if (algo.wantsEuclidianViewUpdate()) {
+        		algo.euclidianViewUpdate();     
+        		didUpdate = true;
+            	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
+        	}
+        }  
+        
+        return didUpdate;
+    }
+    
+    final boolean wantsEuclidianViewUpdate() {     	
+       int size = algoList.size();
+       for (int i = 0; i < size; ++i) {        	        	
+       		AlgoElement algo = (AlgoElement)algoList.get(i);   
+       		if (algo.wantsEuclidianViewUpdate()) 
+       			return true;       	
+       }  
+       
+       return false;
+   }
     
     /**
      * Build a set with all algorithms of this construction (in topological order). 

@@ -56,7 +56,11 @@ public class AlgoDependentList extends AlgoElement {
     	int size = listItems.size();
         input = new GeoElement[size];
     	for (int i=0; i < size; i++) {
-    		input[i] = (GeoElement) listItems.get(i);    		
+    		input[i] = (GeoElement) listItems.get(i);    
+    		
+    		if (!input[i].isLabelSet()) {
+    			input[i].labelWanted = false;
+    		}
     	}          
         
         output = new GeoElement[1];        
@@ -94,12 +98,14 @@ public class AlgoDependentList extends AlgoElement {
     		if (algo != null && algo.hasSingleOutputType()) {
     			// all siblings have same type: add them all
     			for (int k=0; k < algo.output.length; k++) {
-    				geoList.add(algo.output[k]);
+    				if (algo.output[k].isDefined())
+    					geoList.add(algo.output[k]);
     			}    			
     		} else {
     			// independent or mixed sibling types:
     			// add only this element
-    			geoList.add(input[i]);
+    			if (input[i].isDefined())					
+    				geoList.add(input[i]);
     		}
     	}
     }   

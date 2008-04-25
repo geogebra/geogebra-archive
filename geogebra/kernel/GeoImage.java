@@ -16,7 +16,12 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.security.MessageDigest;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
 
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,
@@ -328,7 +333,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		return label;
 	}	
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return false;
 	}
 
@@ -364,9 +369,11 @@ implements Locateable, AbsoluteScreenLocateable,
 		return !hasAbsoluteScreenLocation && hasAbsoluteLocation && isChangeable();
 	}
 	
-	
+	/**
+	 * Returns wheter this image can be fixed.
+	 */	
 	public boolean isFixable() {
-		return false; // Michael Borcherds 2007-12-09
+		return (hasAbsoluteScreenLocation || hasAbsoluteLocation) && isIndependent();
 	}
 	
 	public boolean isFillable() {
@@ -396,12 +403,9 @@ implements Locateable, AbsoluteScreenLocateable,
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   	protected String getXMLtags() {   	
-	   	StringBuffer sb = new StringBuffer();
-	   		   		   	
-	   	sb.append(getXMLvisualTags());
-	   	sb.append(getBreakpointXML());
-		
+	protected String getXMLtags() {   	
+	   	StringBuffer sb = new StringBuffer();	   		   		   	
+			   	
 	   	// name of image file
 		sb.append("\t<file name=\"");
 // Michael Borcherds 2007-12-10 this line restored (not needed now MD5 code put in the correct place)
@@ -415,7 +419,7 @@ implements Locateable, AbsoluteScreenLocateable,
 
 		// locateion of image
 		if (hasAbsoluteScreenLocation) {
-			sb.append(getXMLabsScreenLoc());
+			sb.append(getXMLabsScreenLoc());			
 		} 
 		else {
 			// store location of corners		
@@ -425,7 +429,11 @@ implements Locateable, AbsoluteScreenLocateable,
 				}
 			}
 		}
-
+		
+//	   	sb.append(getXMLvisualTags());
+//	   	sb.append(getBreakpointXML());
+		sb.append(super.getXMLtags());
+			
 	   return sb.toString();   
    	}
    	

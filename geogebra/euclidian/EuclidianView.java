@@ -1003,16 +1003,16 @@ public class EuclidianView extends JPanel implements View, Printable {
 		scaleRatio = yscale / xscale;
 		invXscale = 1.0d / xscale;
 		invYscale = 1.0d / yscale;
-
-		// real world values
-		setRealWorldBounds();
-
+	
 		// set transform for my coord system:
 		// ( xscale 0 xZero )
 		// ( 0 -yscale yZero )
 		// ( 0 0 1 )
 		coordTransform.setTransform(xscale, 0.0d, 0.0d, -yscale, xZero, yZero);
 
+		// real world values
+		setRealWorldBounds();
+		
 		// if (drawMode == DRAW_MODE_BACKGROUND_IMAGE)
 		if (repaint) {
 			updateBackgroundImage();
@@ -1054,13 +1054,13 @@ public class EuclidianView extends JPanel implements View, Printable {
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
 		ymin = (yZero - height) * invYscale;
-
-		// tell kernel
-		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
-
+		
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
+		
+		// tell kernel
+		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
 	}
 
 	protected void calcPrintingScale() {
@@ -2155,7 +2155,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			geo = (GeoElement) hits.get(i);
 			switch (test) {
 			case TEST_MOVEABLE:
-				if (geo.isMoveable() || geo.hasOnlyMoveableInputPoints())
+				if (geo.isMoveable() || (!geo.isGeoPoint() && geo.hasMoveableInputPoints()))
 					moveableList.add(geo);
 				break;
 

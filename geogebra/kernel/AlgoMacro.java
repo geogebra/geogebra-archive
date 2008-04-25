@@ -26,7 +26,8 @@ import java.util.ArrayList;
  * @author  Markus
  * @version 
  */
-public class AlgoMacro extends AlgoElement {
+public class AlgoMacro extends AlgoElement 
+implements EuclidianViewAlgo {
 
 	private static final long serialVersionUID = 1L;	
 	
@@ -75,7 +76,7 @@ public class AlgoMacro extends AlgoElement {
     	super.remove();    	
     }           
     
-	protected String getClassName() {
+    protected String getClassName() {
 		return "AlgoMacro";
 	}
 	
@@ -85,16 +86,31 @@ public class AlgoMacro extends AlgoElement {
     
 	protected void setInputOutput() {    	             
         setDependencies();
-    }             
-        
-    protected final void compute() {	
-    	try {
-    		
+    }       
+    
+    
+
+	final public boolean wantsEuclidianViewUpdate() {
+		return macro.wantsEuclidianViewUpdate();
+	}
+	
+	public void euclidianViewUpdate() {
+    	// TODO: AlgoMacro.euclidianViewUpdate: make more efficient
+		// I can't figure out at the moment why a simple update() doesn't 
+		// do the trick to update locus lines in macros when the view
+		// size has changed, Markus 2008-03-13
+		
+		input[0].updateCascade();		
+		update();
+    }   
+           	
+    final protected void compute() {
+    	try {    		
     		// set macro geos to algo geos state
     		setMacroConstructionState();
-    			
-    		// update all algorithms of macro-construction
-    		macro.updateAllAlgorithms();      
+
+			// update all algorithms of macro-construction
+			macro.getMacroConstruction().updateAllAlgorithms();      	
        
     		// set algo geos to macro geos state   
     		getMacroConstructionState();
@@ -141,8 +157,8 @@ public class AlgoMacro extends AlgoElement {
 	 * Sets algo geos to the current state of macro geos.	 
 	 */
 	final void getMacroConstructionState() {	
-		// for efficiency: instead of macroOutputAndReferencedGeos and lookups in macroToAlgoMap 
-		// we use two arrays with corresponding macro and algo geos
+		// for efficiency: instead of lookups in macroToAlgoMap 
+		// we use an array list algoOutputAndReferencedGeos with corresponding macro and algo geos
 		int size = macroOutputAndReferencedGeos.size();
 		for (int i=0; i < size; i++) {	
 			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
@@ -282,6 +298,10 @@ public class AlgoMacro extends AlgoElement {
 				initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
 				break;	
 				
+			case GeoElement.GEO_CLASS_POLYGON:
+				initPolygon((GeoPolygon) macroGeo, (GeoPolygon) algoGeo);
+				break;					
+				
 			case GeoElement.GEO_CLASS_CONIC:
 				initConic((GeoConic) macroGeo, (GeoConic) algoGeo);
 				break;
@@ -358,7 +378,7 @@ public class AlgoMacro extends AlgoElement {
 	/**
 	 * Makes sure that the points and segments of poly are
 	 * in its construction.
-	 *
+	 */
 	private void initPolygon(GeoPolygon macroPoly, GeoPolygon poly) {								
 		// points
 		GeoPoint [] macroPolyPoints = macroPoly.getPoints();
@@ -368,16 +388,18 @@ public class AlgoMacro extends AlgoElement {
 		}
 		poly.setPoints(polyPoints);
 		
-		// segments
-		GeoSegment [] macroPolySegments = macroPoly.getSegments();
-		GeoSegment [] polySegments = new GeoSegment[macroPolySegments.length];										
-		for (int i=0; i < macroPolySegments.length; i++) {
-			polySegments[i] = (GeoSegment) getAlgoGeo( macroPolySegments[i] );	
-			initLine(macroPolySegments[i], polySegments[i]);
-		}
-		poly.setSegments(polySegments);									
+
+//		// segments
+//		GeoSegment [] macroPolySegments = macroPoly.getSegments();
+//		GeoSegment [] polySegments = new GeoSegment[macroPolySegments.length];										
+//		for (int i=0; i < macroPolySegments.length; i++) {
+//			polySegments[i] = (GeoSegment) getAlgoGeo( macroPolySegments[i] );	
+//			initLine(macroPolySegments[i], polySegments[i]);
+//		}
+//		poly.setSegments(polySegments);
+										
 	} 
-	*/
+	
 	
 	/**
 	 * Makes sure that all referenced GeoElements of geoList are
@@ -436,7 +458,6 @@ public class AlgoMacro extends AlgoElement {
 			replaceReferencedMacroObjects((ExpressionNode) right);
 		}		
 	}
-	
-	
+
     
 }

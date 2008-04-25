@@ -82,7 +82,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
        		// mode label       		
            	modeNameLabel = new JLabel();             	
 
-           	toolbarHelpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 5));
+           	toolbarHelpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 
+           			Math.max(0, 5 + 12 -app.getFontSize()))); // vertical gap
            	//leftPanel.add(Box.createRigidArea(new Dimension(5,5)));
            	toolbarHelpPanel.add(modeNameLabel);
            	add(toolbarHelpPanel, BorderLayout.CENTER);

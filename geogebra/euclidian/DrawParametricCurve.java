@@ -24,32 +24,50 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
 /**
- * Draws graph of parametric curves and functions
+ * Draws graphs of parametric curves and functions
  * @author  Markus Hohenwarter
  */
 public class DrawParametricCurve extends Drawable {	
 	
 	// maximum distance between two plot points in pixels
-	private static final int MAX_PIXEL_DISTANCE = 3; // pixels		
+	private static final int MAX_PIXEL_DISTANCE = 5; // pixels		
 	private static final int HUGE_PIXEL_DISTANCE = 32; // pixels	
 	
+	// minimum distance between two curve plot points in pixels
+	private static final double MIN_PIXEL_DISTANCE = 1; // pixels	
+	
+	// min distance between two evaluation positions in pixel
+	// e.g. needed for sin(1/x) to keep the number of points down around 0
+	private static final double MIN_X_PIXEL_DISTANCE = 0.05; // pixels
+	
 	// maximum angle between two line segments
-	private static final double MAX_BEND = 0.087488; // = tan(5 degrees)
+	//private static final double MAX_BEND = 0.087488; // = tan(5 degrees)
+	private static final double MAX_BEND = 0.17; // = tan(10 degrees)
+	
 
 	// maximum number of iterations (max number of plot points = 2^MAX_DEPTH)
-	private static final int MAX_DEPTH = 14;
+	private static final int MAX_DEPTH = 32;
+	
+	// minimum and maximum number of positions evaluated at curve
+	private static final int MIN_EVALUATIONS = 10;
+	private static final int MAX_EVALUATIONS = 50000;	
+	private static final int MAX_POINTS = 20000;
+	private static long countEvaluations = 0;
 
 	// clipping area around screen: pixel-width of border on every side 	
 	private static final int SCREEN_CLIP_BORDER = 200; 
 	
 	// if the curve is undefined at both endpoints, we break
 	// the parameter interval up into smaller intervals
-	private static final int MAX_INTERVAL_DEPTH = 8;		
+	private static final int MAX_INTERVAL_DEPTH = 8;
+	
+	// the curve is broken into this many intervals to plot it
+	private static final int SPLIT_INTERVALS = 30;
    
     private ParametricCurve curve;        
 	private GeneralPath gp = new GeneralPath();
     private boolean isVisible, labelVisible;   
-    private static int pointsCount = 0;
+    private static int countPoints = 0;
    
     public DrawParametricCurve(EuclidianView view, ParametricCurve curve) {
     	this.view = view;
@@ -129,7 +147,8 @@ public class DrawParametricCurve extends Drawable {
 			boolean calcLabelPos, 
 			boolean moveToAllowed) 
     {     	
-    	pointsCount = 0;  
+    	countPoints = 0; 
+    	countEvaluations = 0;
     	Point labelPoint = null;	    	
     	
 		// Curves with undefined start and end points
@@ -141,18 +160,21 @@ public class DrawParametricCurve extends Drawable {
 		boolean p2def = p2.isDefined();
 		
 		// CLOSED CURVE
-		if (p1def && p2def && tooCloseOnScreen(view, p1, p2)) {								
+		if (p1def && p2def && tooCloseOnScreen(view, p1, p2)) {		
 			labelPoint = plotClosedCurve(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed, p1);					
 		} 
 		
 		// STANDARD CASE
 		else {			
-			labelPoint = plotInterval(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed);									
+			labelPoint = splitAndPlotInterval(SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
+	 	   
+			//labelPoint = plotInterval(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed);									
 		} 
-											
-//		System.out.println("*** CURVE plot: " + curve);
-		//System.out.println("plot points: " + pointsCount );	
 		
+//		System.out.println("*** CURVE plot: " + curve);
+//		System.out.println("   plot points: " + countPoints );	
+//		System.out.println("   evaluations: " + countEvaluations );	
+			
 		return labelPoint;
     }
     
@@ -190,19 +212,21 @@ public class DrawParametricCurve extends Drawable {
     	double splitParam = 0;
     	boolean tooClose = true;		
     	int tries = 0;        
-    	while (tooClose && tries < 10) {
+    	while (tooClose && tries < 5) {
     		// random split parameter
     		double rand = 0.4 + Math.random() * 0.2; // [0.4, 0.6]
     		splitParam = t1 +  rand * (t2-t1);    		
     		GeoVec2D splitPoint = curve.evaluateCurve(splitParam);    	
-    		tooClose = tooCloseOnScreen(view, p1, splitPoint);
+    		tooClose = tooCloseOnScreen(view, p1, splitPoint);	
     		tries++;
     	}
     	
     	if (tooClose) {
-        	// we could not find a split parameter and give up
-    		return null;    		
-    	} else {
+        	// we could not find a split parameter, DESPERATE MODE:
+    		// split interval into SPLIT_INTERVALS 
+    		return splitAndPlotInterval(SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
+    	} 
+    	else {
     		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
     		Point labelPoint1 = plotInterval(curve, t1, splitParam, depth + 1, view, gp, 
 					calcLabelPos, moveToAllowed);		
@@ -217,45 +241,34 @@ public class DrawParametricCurve extends Drawable {
     }
     
     /**
-     * Plots a curve where both endpoints are undefined. This is done
-     * by splitting up the parameter interval into DESPERATE_MODE_INTERVALS many
-     * intervals and plotting these intervals if at least one of their endpoints
-     * is defined. 
-     *
-    private static Point plotDesperateMode(ParametricCurve curve,
+     * Plots a curve by splitting up the parameter interval into 
+     * n intervals.
+     */
+    private static Point splitAndPlotInterval(int n, ParametricCurve curve,
 			double t1, double t2, EuclidianView view, 
 			GeneralPath gp,
 			boolean calcLabelPos, 
-			boolean moveToAllowed,
-			GeoVec2D p1, GeoVec2D p2) 
+			boolean moveToAllowed) 
     {
+    	    
+    //	System.out.println("split intervals: " + n);
+    	
     	Point labelPoint = null;
     	
     	//  plot all intervals					
-		double intervalWidth = (t2 - t1) / DESPERATE_MODE_INTERVALS;
+		double intervalWidth = (t2 - t1) / n;
 		t2 = t1 + intervalWidth;
-		for (int i=0; i < DESPERATE_MODE_INTERVALS; i++) {				
-			p2 = curve.evaluateCurve(t2);
-
-			// only plot this interval if at least one border is defined
-			if (p1.isDefined() || p2.isDefined()) {	
-				try {
-					Point p = plotInterval(curve, t1, t2, minInterval, view, gp, 
-										calcLabelPos && labelPoint == null, moveToAllowed);									
-					if (labelPoint == null)
-						labelPoint = p;
-				}
-				catch (Exception e) {
-					// curve was undefined in interval					
-				}
-			}
-			
+		for (int i=0; i < n; i++) {							
+			Point p = plotInterval(curve, t1, t2, 1, view, gp, 
+					calcLabelPos && labelPoint == null, moveToAllowed);									
+			if (labelPoint == null)
+				labelPoint = p;
+						
 			t1 = t2;
 			t2 = t1 + intervalWidth;	
-			p1 = p2;
 		}			
 		return labelPoint;
-    } */
+    }
     
     /**
      * Draws a parametric curve (x(t), y(t)) for t in [t1, t2]. 
@@ -271,7 +284,8 @@ public class DrawParametricCurve extends Drawable {
 								boolean calcLabelPos, 
 								boolean moveToAllowed) 
 	 { 		
-		// plot interval for t in [t1, t2]
+		 	
+	    // plot interval for t in [t1, t2]
 		// If we run into a problem, i.e. an undefined point f(t), we bisect
 		// the interval and plot both intervals [left, (left + right)/2] and [(left + right)/2, right]
 		// see catch block
@@ -279,6 +293,7 @@ public class DrawParametricCurve extends Drawable {
 		boolean moveToFirstPoint = moveToAllowed;			
 		boolean needLabelPos = calcLabelPos;
 		Point labelPoint = null;
+		//double intervalLength = Math.abs(t1-t2);
 		    	
 		// The following algorithm by John Gillam avoids multiple
 		// evaluations of the curve for the same parameter value t
@@ -343,20 +358,24 @@ public class DrawParametricCurve extends Drawable {
 		int depth=0;
 		t = t1;
 		double left = t1;
-		
-		long counter = 0;	
-		boolean distTooLarge;
+				
+		boolean distTooLarge;		
 		boolean distVeryLarge;
 		boolean angleTooLarge;
 		
 		do {		
 			// distance from last point too large
 			distTooLarge = checkDistance(xdiff, ydiff);
-			
+		
 			// angle between line segments too large
 			angleTooLarge = checkAngle(slope, prevSlope);
 			
-			while (depth < MAX_DEPTH &&  ( distTooLarge || angleTooLarge )) {										
+			// make sure we have at least MIN_EVALUATIONS points: counter < 10
+			while ( 
+					countEvaluations < MAX_EVALUATIONS && countPoints < MAX_POINTS && 
+					depth < MAX_DEPTH &&  
+					(distTooLarge || angleTooLarge || countEvaluations < MIN_EVALUATIONS ) ) 
+			{										
 				// push stacks
 				dyadicStack[top]=i; 
 				depthStack[top]=depth;
@@ -368,7 +387,9 @@ public class DrawParametricCurve extends Drawable {
 				t=t1+i*divisors[depth];  // t=t1+(t2-t1)*(i/2^depth)										
 				
 				// evaluate curve for parameter t
-				curve.evaluateCurve(t, eval);									
+				curve.evaluateCurve(t, eval);		
+				countEvaluations++;
+			
 				if (Double.isNaN(eval[0]) || Double.isNaN(eval[1])) {
 					// t gave us an undefined value
 					// check if this is a singularity or if we need to split our entire interval
@@ -391,7 +412,7 @@ public class DrawParametricCurve extends Drawable {
 						// System.out.println("Curve undefined at t = " + t);					
 						return plotProblemInterval(curve, left, t2, 
 								intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
-					} else {
+					} else {						
 						//System.out.println("singularity at: " + t);
 					}
 				}							
@@ -401,21 +422,30 @@ public class DrawParametricCurve extends Drawable {
 				y=eval[1]; // yEval(t);	
 				xdiff = x - x0;
 				ydiff = y - y0;
-				slope = ydiff / xdiff;								
-				
-				// stop at very small pixel distance		
-				if (Math.abs(xdiff) < 1 && Math.abs(ydiff) < 1) {
-					distTooLarge = false;						
-					break;
-				}
+				slope = ydiff / xdiff;		
+						
+				// stop at very small pixel distance
+				if (curve.isFunctionInX()) {
+					// function in x,  e.g. important for sin(1/x)
+					if (Math.abs(xdiff) < MIN_X_PIXEL_DISTANCE)
+					{						
+						break;
+					}					
+				} else {
+					// cartesian curve
+					if (Math.abs(xdiff) < MIN_PIXEL_DISTANCE && 
+						Math.abs(ydiff) < MIN_PIXEL_DISTANCE) 
+					{						
+						distTooLarge = false;						
+						break;
+					}
+				}				
 				
 				// distance from last point too large
 				distTooLarge = checkDistance(xdiff, ydiff);
 				
 				// angle between line segments too large
-				angleTooLarge = checkAngle(slope, prevSlope);
-				
-				counter++;
+				angleTooLarge = checkAngle(slope, prevSlope);							
 			}											
 			
 			// drawLine(x0,y0,x,y)
@@ -531,7 +561,8 @@ public class DrawParametricCurve extends Drawable {
 				GeneralPath gp,
 				boolean calcLabelPos, 
 				boolean moveToAllowed, Point labelPoint, double [] eval) 
-	 {
+	 {		
+		 		
 		// stop recursion for too many intervals
 		if (intervalDepth > MAX_INTERVAL_DEPTH) {	
 			return labelPoint;
@@ -610,7 +641,7 @@ public class DrawParametricCurve extends Drawable {
 	  * Calls gp.lineTo(x, y) only if the current point
 	  * is not already at this position.
 	  */
-	 public static void lineTo(GeneralPath gp, double x, double y) {		
+	 public static void lineTo(GeneralPath gp, double x, double y) {			 		 
 		 drawTo(gp, x, y, true);
 	 }
 
@@ -628,12 +659,22 @@ public class DrawParametricCurve extends Drawable {
 		{
 			if (lineTo)
 				gp.lineTo((float) x, (float) y);				
-			else
+			else {
 				gp.moveTo((float) x, (float) y);
+				
+				
+			}
+				
 			
-			pointsCount++;
+			countPoints++;
 		}				
 	 }
+	 
+//	 private boolean distanceSmall(double x, double y) {
+//		 Point2D point = gp.getCurrentPoint();		 
+//		 return Math.abs(point.getX() - x) > 1 || 
+//		 		Math.abs(point.getY() - y) > 1;
+//	 }
 		
 	/*
 	 * The algorithm in plotInterval() is based on an algorithm by John Gillam.

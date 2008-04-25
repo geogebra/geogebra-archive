@@ -1,13 +1,15 @@
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.MyStringBuffer;
+import geogebra.kernel.arithmetic.TextValue;
 import geogebra.util.Util;
 
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 
 public class GeoText extends GeoElement
-implements Locateable, AbsoluteScreenLocateable {
+implements Locateable, AbsoluteScreenLocateable, TextValue {
 	
 	/**
 	 * 

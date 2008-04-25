@@ -17,7 +17,6 @@ public class AlgoLengthCurve2Points extends AlgoElement {
 	private GeoCurveCartesian c, c1; //c1 is c'(x)
     private GeoNumeric length; //output
 	private RealRootFunction lengthCurve; //is T = sqrt(a'(t)^2+b'(t)^2)
-	private GaussQuadIntegration gauss;
 
     AlgoLengthCurve2Points(Construction cons, String label, GeoCurveCartesian c, GeoPoint A, GeoPoint B) {
         super(cons);
@@ -31,7 +30,6 @@ public class AlgoLengthCurve2Points extends AlgoElement {
         this.c1 = (GeoCurveCartesian) algo.getDerivative();
 
         lengthCurve = new LengthCurve();
-		gauss = new GaussQuadIntegration(5);
 
         cons.removeFromConstructionList(algo);
         setInputOutput();
@@ -62,12 +60,8 @@ public class AlgoLengthCurve2Points extends AlgoElement {
     	double a = c.getClosestParameter(A,c.getMinParameter());
     	double b = c.getClosestParameter(B,c.getMinParameter());
 
-		if (a <= b)
-			length.setValue(gauss.integrate(lengthCurve, a, b));
-		else
-			length.setValue(-gauss.integrate(lengthCurve, b, a));
-			//length.setValue(gauss.integrate(lengthCurve, f.getMinParameter(),f.getMaxParameter() )
-			//	 - gauss.integrate(lengthCurve, b, a));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthCurve, a, b));
+		length.setValue(lenVal);	
     }
 
     /**

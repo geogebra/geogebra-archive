@@ -58,6 +58,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     // intersection points at the end of compute()
     private boolean isLimitedPathSituation;              
     private boolean possibleSpecialCase = false;
+    private int specialCasePointOnCircleIndex = 0; // index of point on line and conic
     
     protected String getClassName() {
         return "AlgoIntersectLineConic";
@@ -145,7 +146,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     final void initForNearToRelationship() {   
     	if (isTangent) return;
     	    	
-    	isPermutationNeeded = true; // for non-continous intersections    	
+    	isPermutationNeeded = true; // for non-continuous intersections    	
     	for (int i=0; i < P.length; i++) {        	 	
     	 	 age[i] = 0; 
              isQonPath[i] = true;
@@ -210,21 +211,40 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     		    
     	// calc new intersection points Q
         intersect(c, g, Q);    
-                          
-	    // pointOnConic should be first intersection point
-        P[0].setCoords(pointOnConic);
+        
+        // pointOnConic should be first intersection point
+        // Note: if the first intersection point was already set when a file
+        //       was loaded, then we need to make sure that we don't lose this information
+        int firstIndex = specialCasePointOnCircleIndex;
+        int secondIndex = (firstIndex + 1) % 2;
+                
+        if (firstIntersection && didSetIntersectionPoint(firstIndex)) {           
+        	if (!P[firstIndex].equals(pointOnConic)) {
+            	// pointOnConic is NOT equal to the loaded intersection point:
+        		// we need to swap the indices
+        		int temp = firstIndex;
+        		firstIndex = secondIndex;
+        		secondIndex = temp;
+        		
+        		specialCasePointOnCircleIndex = firstIndex;        		     
+        	}  
+        	firstIntersection = false;
+        } 
+        
+        // pointOnConic should be first intersection point
+        P[firstIndex].setCoords(pointOnConic);        
         
         // the other intersection point should be the second one
         boolean didSetP1 = false;
         for (int i=0; i < 2; i++) {  
-	   		if (!Q[i].equals(P[0])) {
-	   			P[1].setCoords(Q[i]);
+	   		if (!Q[i].equals(P[firstIndex])) {
+	   			P[secondIndex].setCoords(Q[i]);
 	   			didSetP1 = true;
 	   			break;
 	   		}
 	    }   
-        if (!didSetP1) 
-        	P[1].setCoords(pointOnConic); 
+        if (!didSetP1) // this happens when both intersection points are equal
+        	P[secondIndex].setCoords(pointOnConic); 
 	   	 
 	   	if (isLimitedPathSituation) {
 	   		// make sure the points are on a limited path
@@ -232,10 +252,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	   			if (!pointLiesOnBothPaths(P[i]))
 	   				P[i].setUndefined();    			          
 	   	    }     	 
-	   	}
-	   	 
-	   	//System.out.println("line-conic special case: took point " + pointOnConic);
-	   	
+	   	}	   	
+                          
 	   	return true;
     }
     

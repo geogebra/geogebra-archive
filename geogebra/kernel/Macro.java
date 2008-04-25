@@ -91,14 +91,7 @@ public class Macro {
 	public Construction getMacroConstruction() {
 		return macroCons;
 	}		
-	
-	/**
-	 * Updates all algorithms of the macro construction.	
-	 */	
-	final public void updateAllAlgorithms() {
-		macroCons.updateAllAlgorithms();		
-	}
-	
+
 	public void initMacro(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
 		this.macroCons = macroCons;
 		//this.macroConsXML = macroCons.getConstructionXML();
@@ -413,11 +406,11 @@ public class Macro {
 			
 	
 	public void registerAlgorithm(AlgoMacro algoMacro) {						
-		usingAlgos.add(algoMacro);	
+		usingAlgos.add(algoMacro);			
 	}
 	
 	public void unregisterAlgorithm(AlgoMacro algoMacro) {
-		usingAlgos.remove(algoMacro);		
+		usingAlgos.remove(algoMacro);			
 	}		
 	
 	/**
@@ -590,5 +583,16 @@ public class Macro {
 	public ArrayList getUsedMacros() {
 		return macroCons.getUsedMacros();
 	}
-		  
+	
+	
+	final public boolean wantsEuclidianViewUpdate() {
+		if (wantsEuclidianViewUpdateFirstTime) {
+			wantsEuclidianViewUpdateFirstTime = false;
+			wantsEuclidianViewUpdate = macroCons.wantsEuclidianViewUpdate();
+		}
+		
+		return wantsEuclidianViewUpdate;
+	}
+	private boolean wantsEuclidianViewUpdate;
+	private boolean wantsEuclidianViewUpdateFirstTime = true;			  
 }

@@ -26,6 +26,7 @@ public interface ParametricCurve extends Traceable {
 	GeoVec2D evaluateCurve(double t);	
 
 	double evaluateCurvature(double t);	
+	boolean isFunctionInX();
     
 	GeoElement toGeoElement();
 }

@@ -42,11 +42,21 @@ public class AlgoListElement extends AlgoElement {
         
         int initIndex = Math.max(0, (int) Math.round( num.getDouble() ) - 1);
                
-        // init return element as copy of first list element
+        // init return element as copy of initIndex list element
         if (geoList.size() > initIndex) {
-        	// create copy of first GeoElement in list
+        	// create copy of initIndex GeoElement in list
         	element = geoList.get(initIndex).copyInternal(cons);
-        } else {
+        } 
+        
+        // if not enough elements in list:
+        // init return element as copy of first list element
+        else if (geoList.size() > 0) {
+        	// create copy of first GeoElement in list
+        	element = geoList.get(0).copyInternal(cons);        
+        } 
+
+        // desperate case: empty list
+        else {        	        	        	
         	element = new GeoNumeric(cons);
         }      
 

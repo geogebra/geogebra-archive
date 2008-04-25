@@ -1,4 +1,3 @@
-
 package geogebra.algebra.autocomplete;
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
@@ -53,7 +52,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
    * @param dict The dictionary that will be used for the autocomplete lookups.
    */
   public void setDictionary(AutoCompleteDictionary dict) {
-    this.dict = dict;
+    this.dict = dict;   
   }
 
   /**

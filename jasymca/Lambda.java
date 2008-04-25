@@ -730,7 +730,13 @@ class LambdaSQRT extends LambdaAlgebraic{
 			s = cons(cons("c",X.coef[0]),s);
 			Object prefix = change( compile_rule(intrule2), s);
 			Algebraic r = (Algebraic)Jasymca.evalPrefix(prefix,true, env);
-			return new SqrtExpand().f_exakt(r);
+			// BEGIN Markus Hohenwarter 2008-03-14
+			// removed sqrt expand: don't want simplification of sqrt(x^2) -> x here
+			// because abs(x) := sqrt(x^2)
+			//return new SqrtExpand().f_exakt(r);
+			return r;
+			// END Markus Hohenwarter 2008-03014
+
 		}catch(ParseException e){
 				throw new JasymcaException("Error integrating function");
 		}

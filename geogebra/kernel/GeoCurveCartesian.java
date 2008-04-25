@@ -492,4 +492,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	public String getVarString() {	
 		return funX.getFunctionVariable().toString();
 	}
+	
+	final public boolean isFunctionInX() {		
+		return false;
+	}
 }

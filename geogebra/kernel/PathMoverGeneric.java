@@ -33,8 +33,12 @@ public class PathMoverGeneric implements PathMover {
 	}
 	
 	public void init(GeoPoint p) {
-		start_param = p.pathParameter.t; 							
-				
+		init(p.pathParameter.t); 	
+	}
+	
+	public void init(double param) {
+		start_param = param; 	
+											
 		min_param = path.getMinParameter();
 		max_param = path.getMaxParameter();		
 		
@@ -55,7 +59,7 @@ public class PathMoverGeneric implements PathMover {
 				max_param  =  1 - OPEN_BORDER_OFFSET;	
 				
 				// transform start parameter to be in (-1, 1)
-				start_param = inverseInfFunction(start_param);
+				start_param = inverseInfFunction(start_param);				
 			}
 			else { 
 				// (-infinite, max_param]
@@ -81,12 +85,13 @@ public class PathMoverGeneric implements PathMover {
 			}
 			else { 
 				// [min_param, max_param]
-				mode = BOUNDS_FIXED;											
+				mode = BOUNDS_FIXED;					
 			}
 		}
-				
-		param_extent = max_param - min_param;
+						
+		param_extent = max_param - min_param;		
 		start_paramUP = start_param + param_extent;
+
 		init_step_width = INIT_STEP_WIDTH;
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
@@ -106,6 +111,9 @@ public class PathMoverGeneric implements PathMover {
 		step_width = init_step_width;		
 	}
 	
+	public void getCurrentPosition(GeoPoint p) {
+		calcPoint(p);
+	}
 	
 	public boolean getNext(GeoPoint p) {													
 		//  check if we are in our interval
@@ -118,35 +126,52 @@ public class PathMoverGeneric implements PathMover {
 			curr_param = min_param;	
 			lineTo = path.isClosedPath();
 			maxBorderSet = false;
-		//	step_width = init_step_width;
-			
 		} 
 		else if (minBorderSet) {
 			curr_param = max_param;	
 			lineTo = path.isClosedPath();
 			minBorderSet = false;		
-		//	step_width = init_step_width;
-			
 		} 
+		
 		// STANDARD CASE
 		else {
-			curr_param += step_width;
+			double new_param = curr_param + step_width;				
 			
-			if (curr_param >= max_param) {
-				curr_param = max_param;	
-				maxBorderSet = true;				
-				//System.out.println("set MAX Border: " + curr_param);
+			// new_param too big
+			if (new_param >= max_param) {
+				// slow down by making smaller steps
+				while (new_param >= max_param && smallerStep()) {				
+					 new_param = curr_param + step_width;	
+				} 
+					
+				// max border reached
+				if (new_param >= max_param) {
+					new_param = max_param;
+					maxBorderSet = true;					
+				}							
 			} 	
+			
+			// new_param too small
 			else if (curr_param <= min_param) {
-				curr_param = min_param;	
-				minBorderSet = true;				
-				//System.out.println("set MIN Border: " + curr_param);
-			}
+				// slow down by making smaller steps
+				while (new_param <= min_param && smallerStep()) {
+					 new_param = curr_param + step_width;						
+				} 
+					
+				// min border reached
+				if (new_param <= min_param) {
+					new_param = min_param;
+					minBorderSet = true;					
+				}		
+			}		
+			
+			// set parameter
+			curr_param = new_param;	
 		}					
-
-		calcPoint(p);
-			    
-       // System.out.println("* get next: " + curr_param + ", " +  p);      			
+		
+		// calculate point for current parameter
+		calcPoint(p);		
+		
 		return lineTo;
 	}
 	
@@ -177,18 +202,30 @@ public class PathMoverGeneric implements PathMover {
 	
 	public boolean hasNext() {		
 		// check if we pass the start parameter
-		// from last_param to the next parameter curr_param							
-		double next_param = curr_param + step_width;
-		
+		// from last_param to the next parameter curr_param										
 		boolean hasNext;
-		if (posOrientation)
-			hasNext = !(curr_param < start_param && next_param >= start_param
-				|| curr_param < start_paramUP && next_param >= start_paramUP);
-		else
-			hasNext = !(curr_param > start_param && next_param <= start_param
-				|| curr_param > start_paramUP && next_param <= start_paramUP);								
+		
+		// slow down by making smaller steps
+		do {
+			double next_param = curr_param + step_width;	
+			if (posOrientation) {
+				hasNext = !(curr_param < start_param && next_param >= start_param
+					|| curr_param < start_paramUP && next_param >= start_paramUP);
+			} else {
+				hasNext = !(curr_param > start_param && next_param <= start_param
+					|| curr_param > start_paramUP && next_param <= start_paramUP);
+			}
+							
+//			if (!hasNext) {				 	
+//				 System.out.println("hasNext(): slow down: " + step_width);
+//			} 
+		} while (!hasNext && smallerStep());
 					
 		return hasNext;
+	}
+	
+	public double getCurrentParameter() {
+		return curr_param;
 	}
 	
 	public void changeOrientation() {
@@ -209,15 +246,23 @@ public class PathMoverGeneric implements PathMover {
 		return changeStep(step_width * STEP_INCREASE_FACTOR);
 	}
 	
+	final public boolean setStep(double step) {
+		return changeStep(step);
+	}
+	
+	final public double getStep() {
+		return step_width;
+	}
+	
 	private boolean changeStep(double new_step) {
 		double abs_new_step = Math.abs(new_step);		
 		
 		if (abs_new_step > max_step_width) {
-			step_width = (new_step >= 0 ? max_step_width : -max_step_width);
+			step_width = (new_step >= 0 ? max_step_width : -max_step_width);						
 			return false;
 		} 
 		else if (abs_new_step < MIN_STEP_WIDTH) {
-			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);			
+			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);	
 			return false;
 		} 
 		else {
@@ -226,7 +271,7 @@ public class PathMoverGeneric implements PathMover {
 		}	
 	}
 
-	final public void stepBack() {
+	final public void stepBack() {			
 		curr_param = last_param;		
 	}
 	

@@ -11,6 +11,7 @@ package geogebra.gui.util;
 // Public Domain Software -- Free to Use as You Like  //
 /////////////////////////////////////////////////////////
 
+import geogebra.GeoGebra;
 import geogebra.util.Util;
 import geogebra.GeoGebra;
 

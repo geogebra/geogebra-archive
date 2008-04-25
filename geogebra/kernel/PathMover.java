@@ -17,14 +17,14 @@ public interface PathMover {
 	public static final int MIN_STEPS = 32;
 	public static final int DEFAULT_STEPS = 128;
 	public static final double STEP_DECREASE_FACTOR = 0.5;
-	public static final double STEP_INCREASE_FACTOR = 4;
+	public static final double STEP_INCREASE_FACTOR = 1.5;
 	
 	public static final double INIT_STEP_WIDTH = 1E-2;
 	public static final double MIN_STEP_WIDTH = 1E-8;
 	
 	public static final double OPEN_BORDER_OFFSET = 1E-5;	
 	
-	public static final int MAX_POINTS = 5000;
+	public static final int MAX_POINTS = 10000;
 	
 	/**
 	 * Inits the path mover using a point p on the path
@@ -32,6 +32,17 @@ public interface PathMover {
 	 * Note: the path parameter of p may be changed here!
 	 */
 	public void init(GeoPoint p);	
+	
+	/**
+	 * Inits the path mover using a path parameter on the path
+	 * and sets the orientation to positive.
+	 */
+	public void init(double param);	
+	
+	/**
+	 * Sets point p to the current position on the path
+	 */
+	public void getCurrentPosition(GeoPoint p);
 	
 	/**
 	 * Sets point p to the next position on the path
@@ -53,7 +64,8 @@ public interface PathMover {
 	 */
 	public void resetStartParameter();
 	
-
+	public double getCurrentParameter();
+	
 	/**
 	 * Changes the orientation of moving along the
 	 * path.
@@ -75,6 +87,16 @@ public interface PathMover {
 	 * Increases the step width. Returns whether this was possible.	 
 	 */
 	public boolean biggerStep();
+	
+	/**
+	 * Set step width. Returns whether this was possible.	 
+	 */
+	public boolean setStep(double step);
+	
+	/**
+	 * Get step width.	 	 
+	 */
+	public double getStep();
 	
 	/**
 	 * Goes back one step.

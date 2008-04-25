@@ -95,7 +95,7 @@ public class AlgoHyperbolaFociPoint extends AlgoElement {
 		C.getInhomCoords(xyC);
 		
 		double length = Math.sqrt((xyA[0]-xyC[0])*(xyA[0]-xyC[0])+(xyA[1]-xyC[1])*(xyA[1]-xyC[1])) -
-		Math.sqrt((xyB[0]-xyC[0])*(xyB[0]-xyC[0])+(xyB[1]-xyC[1])*(xyB[1]-xyC[1]));
+		Math.sqrt((xyB[0]-xyC[0])*(xyB[0]-xyC[0])+(xyB[1]-xyC[1])*(xyB[1]-xyC[1]));		
 		
 		length = Math.abs(length);
     	
@@ -103,10 +103,6 @@ public class AlgoHyperbolaFociPoint extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append(app.getPlain("HyperbolaWithFociABPassingThroughC",A.getLabel(),B.getLabel(),C.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("HyperbolaWithFociABPassingThroughC",A.getLabel(),B.getLabel(),C.getLabel());               
     }
 }

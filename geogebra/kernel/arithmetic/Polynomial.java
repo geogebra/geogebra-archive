@@ -375,7 +375,7 @@ public class Polynomial extends ValidExpression implements Serializable, Express
                                 
         for (int i=0; i < size; i++) {        
             termStr = ((Term)terms.get(i)).toString();   
-            if (termStr != null) {            
+            if (termStr != null && termStr.length() > 0) {            
                 if (first) {
                     sb.append(termStr);
                     first = false;

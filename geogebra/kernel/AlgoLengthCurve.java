@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.kernel.integration.GaussQuadIntegration;
 import geogebra.kernel.roots.RealRootFunction;
 
 /**
@@ -16,8 +15,7 @@ public class AlgoLengthCurve extends AlgoElement {
 	private GeoNumeric t0, t1; //input
 	private GeoCurveCartesian c, c1; //c1 is c'(x)
     private GeoNumeric length; //output
-	private RealRootFunction lengthCurve; //is T = sqrt(a'(t)^2+b'(t)^2)
-	private GaussQuadIntegration gauss;
+	private RealRootFunction lengthCurve; //is T = sqrt(a'(t)^2+b'(t)^2)	
 
     AlgoLengthCurve(Construction cons, String label, GeoCurveCartesian c, GeoNumeric t0, GeoNumeric t1) {
         super(cons);
@@ -30,8 +28,7 @@ public class AlgoLengthCurve extends AlgoElement {
         AlgoDerivative algo = new AlgoDerivative(cons, c, null);
         this.c1 = (GeoCurveCartesian) algo.getDerivative();
 
-        lengthCurve = new LengthCurve();
-		gauss = new GaussQuadIntegration(5);
+        lengthCurve = new LengthCurve();		
 
         cons.removeFromConstructionList(algo);
         setInputOutput();
@@ -62,12 +59,8 @@ public class AlgoLengthCurve extends AlgoElement {
     	double a = t0.getValue();
     	double b = t1.getValue();
 
-		if (a <= b)
-			length.setValue(gauss.integrate(lengthCurve, a, b));
-		else
-			length.setValue(-gauss.integrate(lengthCurve, b, a));
-			//length.setValue(gauss.integrate(lengthCurve, f.getMinParameter(),f.getMaxParameter() )
-			//	 - gauss.integrate(lengthCurve, b, a));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthCurve, a, b));
+		length.setValue(lenVal);		
     }
 
     /**

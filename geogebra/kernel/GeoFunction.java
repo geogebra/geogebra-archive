@@ -573,6 +573,10 @@ GeoDeriveable, ParametricCurve {
 		return varStr;
 	}
 
+	final public boolean isFunctionInX() {		
+		return true;
+	}
+	
 	/*
 	public final GeoFunctionConditional getParentCondFun() {
 		return parentCondFun;

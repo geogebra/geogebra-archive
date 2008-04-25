@@ -49,6 +49,7 @@ public class MacroManager {
 		macroList.clear();
 	}
 	
+	
 
 	/**
 	 * Sets the command name of a macro.
@@ -89,6 +90,34 @@ public class MacroManager {
 	 */
 	public ArrayList getAllMacros() {
 		return macroList;
+	}
+	
+	/**
+	 * Updates all macros that need to be 
+	 */
+	final void notifyEuclidianViewAlgos() {		
+		// save selected macros
+		for (int i=0; i < macroList.size(); i++) {			
+			Macro macro = (Macro) macroList.get(i);
+			if (macro.wantsEuclidianViewUpdate()) {
+				// System.out.println("update macro: " + macro);				
+				macro.getMacroConstruction().updateAllEuclidianViewAlgorithms();				
+			}
+		}	
+	}
+	
+	/**
+	 * Returns whether there are macros that want to be updated
+	 * when the Euclidian view is changed.
+	 */
+	final boolean wantsEuclidianViewUpdate() {				
+		for (int i=0; i < macroList.size(); i++) {			
+			Macro macro = (Macro) macroList.get(i);
+			if (macro.wantsEuclidianViewUpdate()) {
+				return true;				
+			}
+		}	
+		return false;
 	}
 	
 	/**

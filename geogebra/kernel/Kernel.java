@@ -49,7 +49,8 @@ public class Kernel {
 	
 	 // style of point/vector coordinates
     public static final int COORD_STYLE_DEFAULT = 0;		// A = (3, 2)  and 	B = (3; 90°)
-	public static final int COORD_STYLE_AUSTRIAN = 1;		// A(3|2)  		and	B(3; 90°)
+	public static final int COORD_STYLE_AUSTRIAN = 1;		// A(3|2)  	   and	B(3; 90°)
+	public static final int COORD_STYLE_FRENCH = 2;			// A: (3, 2)   and	B: (3; 90°)
 	private int coordStyle = 0;
 
 	// STATIC
@@ -1297,6 +1298,27 @@ public class Kernel {
 	final public GeoPoint Point(String label, Path path, double x, double y) {
 		AlgoPointOnPath algo = new AlgoPointOnPath(cons, label, path, x, y);
 		GeoPoint p = algo.getP();        
+		return p;
+	}
+	
+	/** Point anywhere on path with    */
+	final public GeoPoint Point(String label, Path path) {						
+		// try (0,0)
+		AlgoPointOnPath algo = new AlgoPointOnPath(cons, label, path, 0, 0);
+		GeoPoint p = algo.getP(); 
+		
+		// try (1,0) 
+		if (!p.isDefined()) {
+			p.setCoords(1,0,1);
+			algo.update();
+		}
+		
+		// try (random(),0)
+		if (!p.isDefined()) {
+			p.setCoords(Math.random(),0,1);
+			algo.update();
+		}
+				
 		return p;
 	}
 	
@@ -2750,7 +2772,7 @@ public class Kernel {
 		GeoPoint B,
 		NumberValue a) {
 		AlgoEllipseFociLength algo = new AlgoEllipseFociLength(cons, label, A, B, a);
-		GeoConic ellipse = algo.getEllipse();
+		GeoConic ellipse = algo.getConic();
 		return ellipse;
 	}
 
@@ -2778,7 +2800,7 @@ public class Kernel {
 		NumberValue a) {
 		AlgoHyperbolaFociLength algo =
 			new AlgoHyperbolaFociLength(cons, label, A, B, a);
-		GeoConic hyperbola = algo.getHyperbola();
+		GeoConic hyperbola = algo.getConic();
 		return hyperbola;
 	}
 
@@ -4497,14 +4519,14 @@ public class Kernel {
 	/**
 	 * greatest common divisor
 	 */
-	final static int gcd(int m, int n) {
+	final public static long gcd(long m, long n) {
 		// Return the GCD of positive integers m and n.
 		if (m == 0 || n == 0)
 			return Math.max(Math.abs(m), Math.abs(n));
 
-		int p = m, q = n;
+		long p = m, q = n;
 		while (p % q != 0) {
-			int r = p % q;
+			long r = p % q;
 			p = q;
 			q = r;
 		}
@@ -4514,8 +4536,8 @@ public class Kernel {
 	/**
 	 * compute greatest common divisor of given longs
 	 */
-	final static int gcd(int[] numbers) {
-		int gcd = numbers[0];
+	final static long gcd(long[] numbers) {
+		long gcd = numbers[0];
 		for (int i = 0; i < numbers.length; i++) {
 			gcd = gcd(numbers[i], gcd);
 		}
