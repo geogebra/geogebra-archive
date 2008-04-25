@@ -18,13 +18,13 @@ import geogebra.kernel.arithmetic.ExpressionNode;
  * 
  * @author Michael Borcherds
  */
-public class AlgoFactorize extends AlgoElement {
+public class AlgoFactor extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
     private GeoFunction g; // output         
    
-    public AlgoFactorize(Construction cons, String label, GeoFunction f) {
+    public AlgoFactor(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
@@ -35,7 +35,7 @@ public class AlgoFactorize extends AlgoElement {
     }
     
     protected String getClassName() {
-        return "AlgoFactorize";
+        return "AlgoFactor";
     }
     
     // for AlgoElement
@@ -65,8 +65,8 @@ public class AlgoFactorize extends AlgoElement {
 
 		String functionOut = kernel.evaluateYACASRaw("Factor("+functionIn+")");
 		
-		System.out.println("Factorize input:"+functionIn);
-		System.out.println("Factorize output:"+functionOut);
+		//System.out.println("Factorize input:"+functionIn);
+		//System.out.println("Factorize output:"+functionOut);
 		
 		boolean yacasError=false;
 		

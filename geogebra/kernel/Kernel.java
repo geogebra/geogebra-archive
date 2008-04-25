@@ -3711,11 +3711,11 @@ public class Kernel {
 	}
 	
 	/**
-	 * Factorize
+	 * Factor
 	 * Michael Borcherds 2008-04-04
 	 */
-	final public GeoFunction Factorize(String label, GeoFunction func) {		
-		AlgoFactorize algo = new AlgoFactorize(cons, label, func);
+	final public GeoFunction Factor(String label, GeoFunction func) {		
+		AlgoFactor algo = new AlgoFactor(cons, label, func);
 		return algo.getResult();			
 	}
 	
