@@ -63,7 +63,7 @@ import geogebra.util.ImageManager;
 import geogebra.util.Util;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.GgbAPI;
-//import geogebra.spreadsheet.SpreadsheetView;
+import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -247,7 +247,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
-//    private SpreadsheetView spreadsheetView;
+    private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -380,7 +380,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-//    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -411,13 +411,7 @@ public abstract class Application implements	KeyEventDispatcher {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);	
 		
-		
-		/*/ TODO: remove spreadsheet and CAS testing
-		if (showSpreadsheet) {			
-			openSpreadsheet(this);
-		}
-		*/
-		
+
 		// TODO: remove spreadsheet and CAS testing
 		if (showCAS) {
 			openCAS(this);
@@ -455,40 +449,6 @@ public abstract class Application implements	KeyEventDispatcher {
 	        spFrame.setVisible(true);
 	        
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    }
-	private static JFrame spFrame= new JFrame();
-    
-	/*
-    public static void openSpreadsheet(Application app) {
-    	try {
-	    	// use reflection for
-  		    // JComponent sp = new geogebra.spreadsheet.SpreadsheetView(app, 10, 10); 		
-  		    Class SpreadsheetView = Class.forName("geogebra.spreadsheet.SpreadsheetView");
-  		    Object[] args = new Object[] { app, new Integer(26), new Integer(100)};
-  		    Class [] types = new Class[] {Application.class, int.class, int.class};
-  	        Constructor constructor = SpreadsheetView.getDeclaredConstructor(types); 	        
-  	        JComponent sp = (JComponent) constructor.newInstance(args);  
-  	         	
-	        Container contentPane = spFrame.getContentPane();
-	        contentPane.setLayout(new BorderLayout());
-	        contentPane.add(sp, BorderLayout.CENTER);
-	        spFrame.setResizable(true);
-	        spFrame.setTitle("GeoGebra Spreadsheet");
-	        spFrame.pack();
-	        spFrame.setVisible(true);
-    	} catch (Exception e) {
-			e.printStackTrace();
-		}
-    }
-    */
-
-    // Michael Borcherds 2008-01-14
-    public static void closeSpreadsheet() {
-    	try {
-	        spFrame.setVisible(false);
-    	} catch (Exception e) {
 			e.printStackTrace();
 		}
     }
@@ -704,7 +664,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
-/*        if (showSpreadsheet) {
+        if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         eup, spreadsheetView);
@@ -719,9 +679,9 @@ public abstract class Application implements	KeyEventDispatcher {
                         new DividerChangeListener2());
             cp2 = sp2;
         }
-        else {*/
+        else {
         	cp2 = eup;
-     //   }
+        }
 
         JComponent cp1 = null;
         if (showAlgebraView) {        	     
@@ -832,11 +792,6 @@ public abstract class Application implements	KeyEventDispatcher {
     				}
     				else if (optionName.equals("showGrid")) {    					
     					showGrid = !optionValue.equals("false");    					
-    				}
-    				
-    				// TODO: remove spreadsheet parameter, introduced only for testing
-    				else if (optionName.equals("showSpreadsheet")) {    					
-    					showSpreadsheet = !optionValue.equals("false");    					
     				}
     				
     				// TODO: remove spreadsheet parameter, introduced only for testing
@@ -2501,24 +2456,6 @@ public abstract class Application implements	KeyEventDispatcher {
         //System.out.println("showSpreadsheet=" + showSpreadsheet);
     }
  
-    /*/ Michael Borcherds 2008-01-14
-    public void setShowSpreadsheet(boolean flag) {
-        if (showSpreadsheet == flag) return;
-        
-        showSpreadsheet = flag;
-        if (showSpreadsheet) {        	
-    		openSpreadsheet(this);
-        }         
-        else {
-    		closeSpreadsheet();
-
-        }                
-            
-        updateMenubar();            
-        isSaved = false;        
-    }
-    */
-       
     final public boolean showAlgebraView() {
         return showAlgebraView;
     }        
