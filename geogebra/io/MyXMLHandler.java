@@ -759,6 +759,10 @@ public class MyXMLHandler implements DocHandler {
             boolean showAlgebraView = parseBoolean((String) attrs.get("algebraView"));
             app.setShowAlgebraView(showAlgebraView);    
             
+            // Michael Borcherds 2008-04-25
+            boolean ShowSpreadsheet = parseBoolean((String) attrs.get("spreadsheetView"));
+            app.setShowSpreadsheet(ShowSpreadsheet);    
+            
             String str = (String) attrs.get("auxiliaryObjects");
             boolean auxiliaryObjects = (str != null && str.equals("true"));
             app.setShowAuxiliaryObjects(auxiliaryObjects);

@@ -3504,7 +3504,12 @@ public abstract class Application implements	KeyEventDispatcher {
 
         sb.append("\t<show");
         sb.append(" algebraView=\"");
-        sb.append(showAlgebraView);     
+        sb.append(showAlgebraView);   
+        
+        // Michael Borcherds 2008-04-25
+        sb.append("\" spreadsheetView=\"");
+        sb.append(showSpreadsheet);     
+        
         sb.append("\" auxiliaryObjects=\"");
         sb.append(showAuxiliaryObjects);
         sb.append("\" algebraInput=\"");
