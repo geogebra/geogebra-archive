@@ -541,13 +541,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		
 		// tools menu		
-		/*menuTools = new JMenu(app.getMenu("Tools"));
+		menuTools = new JMenu(app.getMenu("Tools"));
 		add(menuTools);
 		menuTools.add(showCreateToolsAction);
 		menuTools.add(showManageToolsAction);
 		menuTools.addSeparator();
 		menuTools.add(toolbarConfigAction);
-*/
+
 		if (!app.isApplet()) {
 			// windows menu
 			menuWindow = new JMenu(app.getMenu("Window"));
