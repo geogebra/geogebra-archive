@@ -23,7 +23,7 @@ public final class MyMath {
 	
 	public static final double LOG10 = Math.log(10);
 	public static final double LOG2 = Math.log(2);
-	public static final double ONE_THIRD = 1/3;
+	public static final double ONE_THIRD = 1d / 3d;
 
 
 	/**
