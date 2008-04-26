@@ -197,7 +197,6 @@ public class MyList extends ValidExpression implements ListValue {
 			}			
 			System.out.println(toString());
 			if (isMatrix) return; // finished matrix multiplication successfully
-			return;
 		}
 		//}
 		//catch (Exception e) { } // not valid matrices
