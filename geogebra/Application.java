@@ -107,6 +107,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -634,7 +635,7 @@ public abstract class Application implements	KeyEventDispatcher {
         	 // NORTH: Toolbar       
         	panel.add(appToolbarPanel, BorderLayout.NORTH);        	
         }           
-    
+
         // updateCenterPanel
         updateCenterPanel(false);
         panel.add(centerPanel, BorderLayout.CENTER);                
@@ -3150,24 +3151,92 @@ public abstract class Application implements	KeyEventDispatcher {
 	        // update GUI                
 	        if (euclidianView.hasPreferredSize()) {
 	        	
+
+	        	
 	        	// Michael Borcherds 2008-04-27 BEGIN
 	        	// Scale drawing pad down if it doesn't fit on the screen
-	        	// TODO move objects with absolute screen position (sliders and text)
-	        	int toolbarHeight=139; // GeoGebra toolbar height // TODO how do you calculate this?
+       	
+	        	
+	        	// calculate total width of everything in window except EuclidianView
+	        	int algebraWidth= showAlgebraView ? algebraView.getWidth() : 0;
+	        	int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getWidth() : 0;
+	        	int furnitureWidth = algebraWidth + spreadsheetWidth;
+	        	
+	        	// calculate total height of everything in window except EuclidianView
+	        	int toolbarHeight= showToolBar ? getToolBarHeight() : 0; 
+	        	int inputbarHeight = showAlgebraInput ? getAlgebraInputHeight() : 0; 
+	            int menubarHeight = showMenuBar ? getMenuBarHeight() : 0; 
+	            int titlebarHeight = 100; // TODO how do we calculate this?
+	            int furnitureHeight = toolbarHeight + inputbarHeight + menubarHeight + titlebarHeight;
+	            
+	            
 	        	double height=euclidianView.getPreferredSize().height;
 	        	double width=euclidianView.getPreferredSize().width;
+	        	
 	    		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    		Rectangle screenSize = env.getMaximumWindowBounds(); // takes Windows toolbar (etc) into account
-	    		if (width > screenSize.width || 
-	    				height > screenSize.height-toolbarHeight) {
+	    		
+	    		// fake smaller screen for testing
+	    		//screenSize.width=1024; screenSize.height=768;
+
+	    		
+	    		if (width > screenSize.width - furnitureWidth || 
+	    				height > screenSize.height-furnitureHeight) {
 	    			
 	    			double xscale=euclidianView.getXscale();
 	    			double yscale=euclidianView.getYscale();
 	    			double xZero=euclidianView.getXZero();
 	    			double yZero=euclidianView.getYZero();
-	    			double scale_down=Math.max(width / screenSize.width,height / (screenSize.height-toolbarHeight));
+	    			double scale_down=Math.max(width / (screenSize.width - furnitureWidth),height / (screenSize.height-furnitureHeight));
 	    			euclidianView.setCoordSystem(xZero/scale_down, yZero/scale_down, xscale/scale_down, yscale/scale_down, false);
 	    		}
+	    		
+	    		
+	    		// now check all absolute objects are still on screen
+	    		Construction cons = kernel.getConstruction();
+	    		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
+  		
+  				
+	    		int i=0; 
+	    		Iterator it = geoSet.iterator();
+	    		while (it.hasNext()) { // iterate through all objects
+	    			GeoElement geo = (GeoElement) it.next();
+	    			
+	    			
+	    			if (geo.isGeoText()) if (((GeoText)geo).isAbsoluteScreenLocActive()) 
+	    			{
+	    				GeoText geoText = (GeoText)geo;
+	    				boolean fixed = geoText.isFixed();
+
+	    				int x=geoText.getAbsoluteScreenLocX();
+	    				int y=geoText.getAbsoluteScreenLocY();
+	    				
+	    				geoText.setFixed(false);
+	    				if (x>screenSize.width) geoText.setAbsoluteScreenLoc(x=screenSize.width-furnitureWidth-100,y);
+	    				if (y>screenSize.height) geoText.setAbsoluteScreenLoc(x,y=screenSize.height-furnitureHeight);
+	    				geoText.setFixed(fixed);
+	    			}
+	    			if (geo.isGeoNumeric()) if (((GeoNumeric)geo).isAbsoluteScreenLocActive())
+	    			{
+	    				GeoNumeric geoNum = (GeoNumeric)geo;
+	    				boolean fixed = geoNum.isSliderFixed();
+	    				
+	    			    int x=geoNum.getAbsoluteScreenLocX();
+	    				int y=geoNum.getAbsoluteScreenLocY();
+	    				
+	    				int sliderWidth=20, sliderHeight=20;
+	    				if (geoNum.isSliderHorizontal()) sliderWidth=(int)geoNum.getSliderWidth(); //else sliderHeight=(int)geoNum.getSliderWidth();
+	    				geoNum.setSliderFixed(false);
+	    		    				
+	    				if (x+sliderWidth > screenSize.width) geoNum.setAbsoluteScreenLoc(x=screenSize.width-sliderWidth-furnitureWidth,y);
+	    				if (y+sliderHeight > screenSize.height) geoNum.setAbsoluteScreenLoc(x,y=screenSize.height-sliderHeight-furnitureHeight);
+	    				geoNum.setSliderFixed(fixed);
+	    			}
+	    			
+	    			i++;
+	    		}
+	
+   		
 	        	// Michael Borcherds 2007-04-27 END
 	    		
 	            // update GUI: size of euclidian view was set
