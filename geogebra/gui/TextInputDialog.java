@@ -367,10 +367,14 @@ public class TextInputDialog extends InputDialog {
                     if (startPoint.isLabelSet()) {
                     	  try { t.setStartPoint(startPoint); }catch(Exception e){};                          
                     } else {
+                    	
+//                    	// Michael Borcherds 2008-04-27 changed to RealWorld not absolute
                     	// startpoint contains mouse coords
-                    	t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
-                    			euclidianView.toScreenCoordY(startPoint.inhomY));
-                    	t.setAbsoluteScreenLocActive(true);
+                    	//t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
+                    	//		euclidianView.toScreenCoordY(startPoint.inhomY));
+                    	//t.setAbsoluteScreenLocActive(true); 
+                    	t.setRealWorldLoc(startPoint.inhomX, startPoint.inhomY);
+                    	t.setAbsoluteScreenLocActive(false); 
                     }
                     t.updateRepaint();
                     app.storeUndoInfo();                    
