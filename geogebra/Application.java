@@ -87,6 +87,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
@@ -3148,6 +3149,27 @@ public abstract class Application implements	KeyEventDispatcher {
         } else {	        
 	        // update GUI                
 	        if (euclidianView.hasPreferredSize()) {
+	        	
+	        	// Michael Borcherds 2008-04-27 BEGIN
+	        	// Scale drawing pad down if it doesn't fit on the screen
+	        	// TODO move objects with absolute screen position (sliders and text)
+	        	int toolbarHeight=139; // GeoGebra toolbar height // TODO how do you calculate this?
+	        	double height=euclidianView.getPreferredSize().height;
+	        	double width=euclidianView.getPreferredSize().width;
+	    		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    		Rectangle screenSize = env.getMaximumWindowBounds(); // takes Windows toolbar (etc) into account
+	    		if (width > screenSize.width || 
+	    				height > screenSize.height-toolbarHeight) {
+	    			
+	    			double xscale=euclidianView.getXscale();
+	    			double yscale=euclidianView.getYscale();
+	    			double xZero=euclidianView.getXZero();
+	    			double yZero=euclidianView.getYZero();
+	    			double scale_down=Math.max(width / screenSize.width,height / (screenSize.height-toolbarHeight));
+	    			euclidianView.setCoordSystem(xZero/scale_down, yZero/scale_down, xscale/scale_down, yscale/scale_down, false);
+	    		}
+	        	// Michael Borcherds 2007-04-27 END
+	    		
 	            // update GUI: size of euclidian view was set
 	        	updateContentPaneAndSize();                              
 	        } else {
