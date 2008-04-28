@@ -283,6 +283,11 @@ public class EuclidianView extends JPanel implements View, Printable {
 	public static final int POINT_CAPTURING_ON_GRID = 2;
 	public static final int POINT_CAPTURING_AUTOMATIC = 3;
 	
+//	 Michael Borcherds 2008-04-28 
+	private int gridType = 0;
+	public static final int GRID_CARTESIAN = 0;
+	public static final int GRID_ISOMETRIC = 1;
+	
 
 	// zoom rectangle colors
 	protected static final Color colZoomRectangle = new Color(200, 200, 230);
@@ -594,6 +599,20 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 */
 	public void setPointCapturing(int mode) {
 		pointCapturingMode = mode;
+	}
+
+	/**
+	 * Returns grid type.
+	 */
+	final public int getGridType() {
+		return gridType;
+	}
+
+	/**
+	 * Set grid type.
+	 */
+	public void setGridType(int type) {
+		gridType = type;
 	}
 
 	/**
@@ -1782,6 +1801,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 		g2.setColor(gridColor);
 		g2.setStroke(gridStroke);
 
+		
+		switch (gridType) {
+		case GRID_CARTESIAN:
 		// vertical grid lines
 		double tickStep = xscale * gridDistances[0];
 		double start = xZero % tickStep;
@@ -1805,6 +1827,46 @@ public class EuclidianView extends JPanel implements View, Printable {
 			g2.draw(tempLine);
 			pix = start + j * tickStep;			
 		}						
+		break;
+		
+		case GRID_ISOMETRIC:
+			double tickStepX = xscale * gridDistances[0] * Math.sqrt(3.0);
+			double startX = xZero % (tickStepX);
+			double startX2 = xZero % (tickStepX/2);
+			double tickStepY = yscale * gridDistances[0];
+			double startY = yZero % tickStepY;
+			
+			// vertical
+			pix = startX2;
+			for (int j=0; pix <= width; j++) {
+				tempLine.setLine(pix, 0, pix, height);
+				g2.draw(tempLine);
+				pix = startX2 + j * tickStepX/2.0;			
+			}		
+			
+			
+			int kk = (int)(height * Math.sqrt(3.0) / tickStepX)+3;
+			
+			// positive gradient
+			pix = startX + -(kk+1) * tickStepX;			
+			for (int j=-kk; pix <= width; j+=1) {
+				tempLine.setLine(pix, startY-tickStepY, pix + (height+tickStepY) * Math.sqrt(3), startY-tickStepY + height+tickStepY);
+				g2.draw(tempLine);
+				pix = startX + j * tickStepX;			
+			}						
+			
+			// negative gradient
+			pix = startX;
+			for (int j=0; pix <= width + (height+tickStepY) * Math.sqrt(3.0); j+=1) 
+			//for (int j=0; j<=kk; j+=1)
+			{
+				tempLine.setLine(pix, startY-tickStepY, pix - (height+tickStepY) * Math.sqrt(3), startY-tickStepY + height+tickStepY);
+				g2.draw(tempLine);
+				pix = startX + j * tickStepX;			
+			}						
+		
+			break;
+		}
 	}
 
 	final protected void drawMouseCoords(Graphics2D g2) {

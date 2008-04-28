@@ -2101,6 +2101,54 @@ public class EuclidianController implements MouseListener,
 			
 			case EuclidianView.POINT_CAPTURING_ON_GRID:
 				
+				switch (view.getGridType()) {
+				case EuclidianView.GRID_ISOMETRIC:
+					
+				// isometric Michael Borcherds 2008-04-28
+				// iso grid is effectively two rectangular grids overlayed (offset)
+				// so first we decide which one we're on (oddOrEvenRow)
+				// then compress the grid by a scale factor of root3 horizontally to make it square.
+				
+				double root3=Math.sqrt(3.0);
+				double isoGrid=view.gridDistances[0];
+				int oddOrEvenRow = (int)Math.round(2.0*Math.abs(yRW - Kernel.roundToScale(yRW, isoGrid))/isoGrid);
+				
+				//System.out.println(oddOrEvenRow);
+				
+				if (oddOrEvenRow == 0)
+				{
+					// X = (x, y) ... next grid point
+					double x = Kernel.roundToScale(xRW/root3, isoGrid);
+					double y = Kernel.roundToScale(yRW, isoGrid);
+					// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
+					double a = Math.abs(x - xRW/root3);
+					double b = Math.abs(y - yRW);
+					if (a < isoGrid * pointCapturingPercentage
+						&& b < isoGrid *  pointCapturingPercentage) {
+						xRW = x*root3;
+						yRW = y;
+					}
+					
+				}
+				else
+				{
+					// X = (x, y) ... next grid point
+					double x = Kernel.roundToScale(xRW/root3- view.gridDistances[0]/2, isoGrid);
+					double y = Kernel.roundToScale(yRW- isoGrid/2, isoGrid);
+					// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
+					double a = Math.abs(x - (xRW/root3- isoGrid/2));
+					double b = Math.abs(y - (yRW-isoGrid/2));
+					if (a < isoGrid * pointCapturingPercentage
+						&& b < isoGrid *  pointCapturingPercentage) {
+						xRW = (x+ isoGrid/2)*root3;
+						yRW = y+ isoGrid/2;
+					}
+					
+				}
+				break;
+				
+				case EuclidianView.GRID_CARTESIAN:
+				
 				// X = (x, y) ... next grid point
 				double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
 				double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
@@ -2111,6 +2159,8 @@ public class EuclidianController implements MouseListener,
 					&& b < view.gridDistances[1] *  pointCapturingPercentage) {
 					xRW = x;
 					yRW = y;
+				}
+				break;
 				}
 			
 			default:
