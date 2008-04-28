@@ -1845,22 +1845,22 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}		
 			
 			// extra lines needed because it's diagonal
-			int extra = (int)(height * Math.sqrt(3.0) / tickStepX)+3;
+			int extra = (int)(height*xscale/yscale * Math.sqrt(3.0) / tickStepX)+3;
 			
 			// positive gradient
 			pix = startX + -(extra+1) * tickStepX;			
 			for (int j=-extra; pix <= width; j+=1) {
-				tempLine.setLine(pix, startY-tickStepY, pix + (height+tickStepY) * Math.sqrt(3), startY-tickStepY + height+tickStepY);
+				tempLine.setLine(pix, startY-tickStepY, pix + (height+tickStepY) * Math.sqrt(3)*xscale/yscale, startY-tickStepY + height+tickStepY);
 				g2.draw(tempLine);
 				pix = startX + j * tickStepX;			
 			}						
 			
 			// negative gradient
 			pix = startX;
-			for (int j=0; pix <= width + (height+tickStepY) * Math.sqrt(3.0); j+=1) 
+			for (int j=0; pix <= width + (height*xscale/yscale+tickStepY) * Math.sqrt(3.0); j+=1) 
 			//for (int j=0; j<=kk; j+=1)
 			{
-				tempLine.setLine(pix, startY-tickStepY, pix - (height+tickStepY) * Math.sqrt(3), startY-tickStepY + height+tickStepY);
+				tempLine.setLine(pix, startY-tickStepY, pix - (height+tickStepY) * Math.sqrt(3)*xscale/yscale, startY-tickStepY + height+tickStepY);
 				g2.draw(tempLine);
 				pix = startX + j * tickStepX;			
 			}						

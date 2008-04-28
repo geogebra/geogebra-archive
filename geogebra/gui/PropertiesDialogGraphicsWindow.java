@@ -229,7 +229,7 @@ ItemListener, WindowListener {
         
         cbIsometric = new JCheckBox(app.getMenu("Isometric"));  
         cbIsometric.addActionListener(this);
-        //firstPanel.add(cbIsometric, BorderLayout.NORTH); 
+        firstPanel.add(cbIsometric, BorderLayout.NORTH); 
         
         firstPanel.add(Box.createRigidArea(new Dimension(10,0))); 
                
