@@ -284,9 +284,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 	public static final int POINT_CAPTURING_AUTOMATIC = 3;
 	
 //	 Michael Borcherds 2008-04-28 
-	private int gridType = 0;
 	public static final int GRID_CARTESIAN = 0;
 	public static final int GRID_ISOMETRIC = 1;
+	private int gridType = GRID_CARTESIAN;
 	
 
 	// zoom rectangle colors
@@ -1844,12 +1844,12 @@ public class EuclidianView extends JPanel implements View, Printable {
 				pix = startX2 + j * tickStepX/2.0;			
 			}		
 			
-			
-			int kk = (int)(height * Math.sqrt(3.0) / tickStepX)+3;
+			// extra lines needed because it's diagonal
+			int extra = (int)(height * Math.sqrt(3.0) / tickStepX)+3;
 			
 			// positive gradient
-			pix = startX + -(kk+1) * tickStepX;			
-			for (int j=-kk; pix <= width; j+=1) {
+			pix = startX + -(extra+1) * tickStepX;			
+			for (int j=-extra; pix <= width; j+=1) {
 				tempLine.setLine(pix, startY-tickStepY, pix + (height+tickStepY) * Math.sqrt(3), startY-tickStepY + height+tickStepY);
 				g2.draw(tempLine);
 				pix = startX + j * tickStepX;			

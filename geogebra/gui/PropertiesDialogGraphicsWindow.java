@@ -66,7 +66,7 @@ ItemListener, WindowListener {
 	private EuclidianView view;
 	private JButton closeButton, 
 	        btBackgroundColor, btAxesColor, btGridColor;
-	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
+	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbIsometric, cbGridManualTick;
 	private JComboBox cbAxesStyle, cbGridStyle;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
@@ -227,6 +227,10 @@ ItemListener, WindowListener {
         cbBoldGrid.addActionListener(this);
         firstPanel.add(cbBoldGrid, BorderLayout.NORTH); 
         
+        cbIsometric = new JCheckBox(app.getMenu("Isometric"));  
+        cbIsometric.addActionListener(this);
+        firstPanel.add(cbIsometric, BorderLayout.NORTH); 
+        
         firstPanel.add(Box.createRigidArea(new Dimension(10,0))); 
                
         // second line: color, line style combo
@@ -298,6 +302,11 @@ ItemListener, WindowListener {
         cbBoldGrid.removeActionListener(this);
         cbBoldGrid.setSelected(view.getGridIsBold()); 
         cbBoldGrid.addActionListener(this);
+        
+//      Michael Borcherds 2008-04-28
+        cbIsometric.removeActionListener(this);
+        cbIsometric.setSelected(view.getGridType()==EuclidianView.GRID_ISOMETRIC); 
+        cbIsometric.addActionListener(this);
         
         cbAxesStyle.removeActionListener(this);
         cbAxesStyle.setSelectedIndex(view.getAxesLineStyle());
@@ -377,6 +386,9 @@ ItemListener, WindowListener {
 		}
 		else if (source == cbBoldGrid) {
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
+		}
+		else if (source == cbIsometric) {
+			view.setGridType(cbIsometric.isSelected() ? EuclidianView.GRID_ISOMETRIC : EuclidianView.GRID_CARTESIAN);	// Michael Borcherds 2008-04-28		
 		}
 		else if (source == cbAxesStyle) {
 			view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
