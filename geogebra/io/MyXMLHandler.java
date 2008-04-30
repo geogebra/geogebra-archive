@@ -373,7 +373,6 @@ public class MyXMLHandler implements DocHandler {
                     ok = handleGridColor(ev, attrs);
                     break;
                 } 
-        		
         	case 'l':
         		if (eName.equals("lineStyle")) {
                     ok = handleLineStyle(ev, attrs);
@@ -424,7 +423,15 @@ public class MyXMLHandler implements DocHandler {
         	}
             
             ev.showGrid(parseBoolean((String) attrs.get("grid")));
-    		ev.setGridIsBold(parseBoolean((String) attrs.get("gridIsBold"))); // Michael Borcherds 2008-04-11
+
+            try{
+    		  ev.setGridIsBold(parseBoolean((String) attrs.get("gridIsBold"))); // Michael Borcherds 2008-04-11
+            } catch (Exception e) {}
+            
+            try {
+    		  ev.setGridType(Integer.parseInt((String) attrs.get("gridType")));  // Michael Borcherds 2008-04-30
+            } catch (Exception e) {}
+    	    
             
             String str = (String) attrs.get("pointCapturing");
             if (str != null) {
@@ -510,6 +517,7 @@ public class MyXMLHandler implements DocHandler {
     		dists[0] = Double.parseDouble((String) attrs.get("distX"));
     		dists[1] = Double.parseDouble((String) attrs.get("distY"));
     		ev.setGridDistances(dists);
+    		
     		return true;	
     	} catch (Exception e) {
     		return false;

@@ -2783,6 +2783,11 @@ public class EuclidianView extends JPanel implements View, Printable {
 		sb.append(pointStyle);
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(rightAngleStyle);
+
+		sb.append("\" gridType=\"");
+		sb.append(getGridType()); //		 cartesian/isometric
+
+
 		sb.append("\"/>\n");
 
 		// background color
