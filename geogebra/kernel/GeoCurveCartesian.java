@@ -496,4 +496,15 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	final public boolean isFunctionInX() {		
 		return false;
 	}
+	// Michael Borcherds 2008-04-30
+    final public boolean equals(GeoLocus loc) {                     
+    	return false;
+    }
+    
+    // Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoCurveCartesian()) return equals((GeoCurveCartesian)geo); else return false;
+	}
+
 }

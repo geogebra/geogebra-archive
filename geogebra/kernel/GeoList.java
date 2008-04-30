@@ -484,6 +484,8 @@ public class GeoList extends GeoElement implements ListValue {
 			GeoElement geoA=(GeoElement)geoList.get(i);
 			GeoElement geoB=list.get(i);
 			
+			if (!geoA.isEqual(geoB)) return false;
+			/*
 			if (geoA.isGeoNumeric() && geoB.isGeoNumeric()) 
 			{
 				if (!((GeoNumeric)geoA).equals((GeoNumeric)geoB)) return false; 
@@ -516,12 +518,23 @@ public class GeoList extends GeoElement implements ListValue {
 			{
 				if (!((GeoList)geoA).equals((GeoList)geoB)) return false; 
 			}
-			else if (!geoA.equals(geoB)) return false;
+			else if (!geoA.equals(geoB)) return false;*/
 		}
 		
 		// all list elements equal
 		return true;
 		}
+		// Michael Borcherds 2008-04-30
+	    final public boolean equals(GeoLocus loc) {                     
+	    	return false;
+	    }
+	    
+	    // Michael Borcherds 2008-04-30
+		final public boolean isEqual(GeoElement geo) {
+			// return false if it's a different type, otherwise use equals() method
+			if (geo.isGeoList()) return equals((GeoList)geo); else return false;
+		}
+
 
     		
 }

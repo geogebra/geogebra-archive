@@ -3174,6 +3174,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	        	double width=euclidianView.getPreferredSize().width;
 	        	
 	    		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    		
 	    		Rectangle screenSize = env.getMaximumWindowBounds(); // takes Windows toolbar (etc) into account
 	    		
 	    		// fake smaller screen for testing

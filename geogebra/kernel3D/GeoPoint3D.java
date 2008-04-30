@@ -746,9 +746,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		return false;
 	}
 	
+    // Michael Borcherds 2008-04-30
+	final public boolean isGeoPoint3D() {
+		return true;
+	}
+	
 	void showUndefinedInAlgebraView(boolean flag) {
 		showUndefinedInAlgebraView = flag;
 	}
+    // Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoPoint3D()) return equals((GeoPoint3D)geo); else return false;
+	}
+
 
 	
 }

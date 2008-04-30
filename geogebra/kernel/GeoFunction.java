@@ -585,4 +585,11 @@ GeoDeriveable, ParametricCurve {
 	public final void setParentCondFun(GeoFunctionConditional parentCondFun) {
 		this.parentCondFun = parentCondFun;
 	}*/
+	
+    // Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoFunction()) return equals((GeoFunction)geo); else return false;
+	}
+
 }

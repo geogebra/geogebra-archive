@@ -235,6 +235,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return kernel.isEqual(value, n.value);
 	}
 
+	// Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoNumeric()) return equals((GeoNumeric)geo); else return false;
+	}
+
 	public void setValue(double x) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			

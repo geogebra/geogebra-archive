@@ -257,6 +257,12 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
         return linDep(g);                 
     }
     
+	// Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoLine()) return equals((GeoLine)geo); else return false;
+	}
+
     /**
      * yields true if this line is defined as a tangent of conic c
      */

@@ -389,6 +389,12 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	   return kernel.isEqual(getArea(), p.getArea());                	                  
    }
    
+	// Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoPolygon()) return equals((GeoPolygon)geo); else return false;
+	}
+
    public void setEuclidianVisible(boolean visible) {
 		super.setEuclidianVisible(visible);
 		if (segments != null) {

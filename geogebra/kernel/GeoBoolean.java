@@ -302,4 +302,11 @@ AbsoluteScreenLocateable {
 		this.checkboxFixed = checkboxFixed;
 	}
 	
+    // Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoBoolean()) return equals((GeoBoolean)geo); else return false;
+	}
+
+	
 }

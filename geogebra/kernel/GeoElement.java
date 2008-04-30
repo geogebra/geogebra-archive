@@ -2661,6 +2661,10 @@ final public boolean hasOnlyFreeInputPoints() {
 		return false;
 	}
 	
+	public boolean isGeoPoint3D() {
+		return false;
+	}
+	
 	public boolean isGeoPolygon() {
 		return false;
 	}
@@ -2912,4 +2916,6 @@ final public boolean hasOnlyFreeInputPoints() {
 	final public void setInTree(boolean flag) {
 		inTree = flag;
 	}
+	
+	protected abstract boolean isEqual(GeoElement Geo);
 }

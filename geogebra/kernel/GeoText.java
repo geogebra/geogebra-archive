@@ -556,4 +556,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	public final void setNeedsUpdatedBoundingBox(boolean needsUpdatedBoundingBox) {
 		this.needsUpdatedBoundingBox = needsUpdatedBoundingBox;
 	}
+
+	// Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoText()) return equals((GeoText)geo); else return false;
+	}
+
 }
