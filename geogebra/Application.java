@@ -3158,15 +3158,15 @@ public abstract class Application implements	KeyEventDispatcher {
        	
 	        	
 	        	// calculate total width of everything in window except EuclidianView
-	        	int algebraWidth= showAlgebraView ? algebraView.getWidth() : 0;
-	        	int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getWidth() : 0;
+	        	int algebraWidth= showAlgebraView ? algebraView.getPreferredSize().width : 0;
+	        	int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getPreferredSize().width : 0;
 	        	int furnitureWidth = algebraWidth + spreadsheetWidth;
 	        	
 	        	// calculate total height of everything in window except EuclidianView
 	        	int toolbarHeight= showToolBar ? getToolBarHeight() : 0; 
 	        	int inputbarHeight = showAlgebraInput ? getAlgebraInputHeight() : 0; 
 	            int menubarHeight = showMenuBar ? getMenuBarHeight() : 0; 
-	            int titlebarHeight = 100; // TODO how do we calculate this?
+	            int titlebarHeight = 30; // TODO how do we calculate this?
 	            int furnitureHeight = toolbarHeight + inputbarHeight + menubarHeight + titlebarHeight;
 	            
 	            
@@ -3179,9 +3179,19 @@ public abstract class Application implements	KeyEventDispatcher {
 	    		// fake smaller screen for testing
 	    		//screenSize.width=1024; screenSize.height=768;
 
+	    		//System.out.println(width);
+	    		//System.out.println(screenSize.width - furnitureWidth);
+	    		//System.out.println(screenSize.width );
+	    		//System.out.println(height);
+	    		//System.out.println(screenSize.height-furnitureHeight);
+	    		//System.out.println(screenSize.height);
 	    		
 	    		if (width > screenSize.width - furnitureWidth || 
 	    				height > screenSize.height-furnitureHeight) {
+	    			
+	    			// close algebra and spreadsheet views
+	    			setShowAlgebraView(false);
+	    			setShowSpreadsheet(false);
 	    			
 	    			double xscale=euclidianView.getXscale();
 	    			double yscale=euclidianView.getYscale();
