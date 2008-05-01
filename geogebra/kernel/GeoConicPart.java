@@ -131,7 +131,13 @@ implements LimitedPath, NumberValue {
 	/**
 	 * Returns wheter c is equal to this conic part
 	 */
-	final public boolean equals(GeoConicPart c) {
+	// Michael Borcherds 2008-05-01
+	final public boolean isEqual(GeoElement geo) {
+		
+		if (!geo.isGeoConicPart()) return false;
+		
+		GeoConicPart c = (GeoConicPart)geo;
+		
 		return 
 			posOrientation == c.posOrientation &&
 			conic_part_type == c.conic_part_type &&		

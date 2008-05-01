@@ -253,14 +253,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
      * Yields true if the coefficients of this line are linear dependent on
      * those of line g.
      */
-    final public boolean equals(GeoLine g) {                     
-        return linDep(g);                 
-    }
-    
 	// Michael Borcherds 2008-04-30
-	final public boolean isEqual(GeoElement geo) {
+	public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoLine()) return equals((GeoLine)geo); else return false;
+		if (geo.isGeoLine()) return linDep((GeoLine)geo); else return false;
 	}
 
     /**

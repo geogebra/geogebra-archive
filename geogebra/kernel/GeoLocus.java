@@ -227,7 +227,9 @@ public class GeoLocus extends GeoElement implements Path {
     // Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoLocus()) return equals((GeoLocus)geo); else return false;
+		return false;
+		// TODO?
+		//if (geo.isGeoLocus()) return xxx else return false;
 	}
 
 }

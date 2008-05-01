@@ -262,17 +262,17 @@ implements Path, VectorValue, Locateable, Rotateable {
      * Yields true if the coordinates of this vector are equal to
      * those of vector v. Infinite points are checked for linear dependency.
      */
-    final public boolean equals(GeoVector v) {        
+	// Michael Borcherds 2008-05-01
+    final public boolean isEqual(GeoElement geo) {        
+    	
+    	if (geo.isGeoVector()) return false;
+    	
+    	GeoVector v = (GeoVector)geo;
+    	
         if (!(isFinite() && v.isFinite())) return false;                                        
         else return kernel.isEqual(x, v.x) && kernel.isEqual(y, v.y);                                            
     }
     
-	// Michael Borcherds 2008-04-30
-	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoVector()) return equals((GeoVector)geo); else return false;
-	}
-
     
 /***********************************************************
  * MOVEMENTS

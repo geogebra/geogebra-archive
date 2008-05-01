@@ -283,7 +283,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
      * Yields true if the inhomogenous coordinates of this point are equal to
      * those of point P. Infinite points are checked for linear dependency.
      */
-    final public boolean equals(GeoPoint P) {        
+	// Michael Borcherds 2008-04-30
+    final public boolean isEqual(GeoElement geo) {
+    	
+    	if (!geo.isGeoPoint()) return false;
+    	
+    	GeoPoint P = (GeoPoint)geo;
+    	
         if (!(isDefined() && P.isDefined())) return false;                        
         
         // both finite
@@ -295,12 +301,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		else return false;                        
     }
         
-	// Michael Borcherds 2008-04-30
-	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoPoint()) return equals((GeoPoint)geo); else return false;
-	}
-
     /** 
      * Writes (x/z, y/z) to res.
      */

@@ -474,7 +474,12 @@ public class GeoList extends GeoElement implements ListValue {
 		 * return whether this list equals GeoList list 
 		 * Michael Borcherds 2008-04-12
 		 */
-		final public boolean equals(GeoList list) {
+		final public boolean isEqual(GeoElement geo) {
+			
+		if (!geo.isGeoList()) return false;
+		
+		GeoList list = (GeoList)geo;
+		
 		// check sizes
 		if (geoList.size() != list.size()) return false;
 		
@@ -524,17 +529,6 @@ public class GeoList extends GeoElement implements ListValue {
 		// all list elements equal
 		return true;
 		}
-		// Michael Borcherds 2008-04-30
-	    final public boolean equals(GeoLocus loc) {                     
-	    	return false;
-	    }
-	    
-	    // Michael Borcherds 2008-04-30
-		final public boolean isEqual(GeoElement geo) {
-			// return false if it's a different type, otherwise use equals() method
-			if (geo.isGeoList()) return equals((GeoList)geo); else return false;
-		}
-
 
     		
 }

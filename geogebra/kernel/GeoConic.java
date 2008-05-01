@@ -1874,7 +1874,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * return wheter this conic represents the same conic as c 
 	 * (this = lambda * c).
 	 */
-	final public boolean equals(GeoConic c) {
+	public boolean isEqual(GeoElement geo) {
+
+		if (!geo.isGeoConic()) return false;
+		
+		GeoConic c = (GeoConic)geo;
 		double[] B = c.matrix;
 
 		double lambda = 0.0;
@@ -1903,12 +1907,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				break;
 		}
 		return equal;
-	}
-
-    // Michael Borcherds 2008-04-30
-	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoConic()) return equals((GeoConic)geo); else return false;
 	}
 
 	/**

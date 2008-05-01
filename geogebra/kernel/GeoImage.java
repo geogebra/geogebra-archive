@@ -733,8 +733,18 @@ implements Locateable, AbsoluteScreenLocateable,
 
 	// Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoImage()) return equals((GeoImage)geo); else return false;
+		// return false if it's a different type
+		if (!geo.isGeoImage()) return false;
+
+		// check sizes
+		if (((GeoImage)geo).pixelWidth != this.pixelWidth) return false;
+		if (((GeoImage)geo).pixelHeight != this.pixelHeight) return false;
+		
+		String md5A=this.fileName.substring(0, this.fileName.indexOf(File.separator));
+		String md5B=((GeoImage)geo).fileName.substring(0, ((GeoImage)geo).fileName.indexOf(File.separator));
+		// MD5 checksums equal, so images almost certainly identical
+		if (md5A.equals(md5B)) return true;
+		return false;
 	}
 
 }
