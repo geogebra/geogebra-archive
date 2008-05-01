@@ -1372,10 +1372,17 @@ implements ExpressionValue {
     	else if (lt.isBooleanValue() && rt.isBooleanValue())
 			return new MyBoolean(
 					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
-				);        				
+				);      
+    	
     	else if (lt.isGeoElement() && rt.isGeoElement()) {
     		GeoElement geo1 = (GeoElement) lt;
     		GeoElement geo2 = (GeoElement) rt;
+    		
+    		// Michael Borcherds 2008-05-01
+    		// replaced following code with one line:
+    		return new MyBoolean(geo1.isEqual(geo2));
+    		
+    		/*
     		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
     			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
     		}
@@ -1390,7 +1397,7 @@ implements ExpressionValue {
     		}
     		else if (geo1.isGeoList() && geo2.isGeoList()) { // Michael Borcherds 2008-04-12
     			return new MyBoolean(((GeoList)geo1).equals((GeoList) geo2));
-    		}
+    		}*/
     	}      
     	
     	return null;
