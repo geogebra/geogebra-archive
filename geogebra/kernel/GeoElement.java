@@ -506,10 +506,23 @@ public abstract class GeoElement
 		double greenD = ((GeoNumeric)(colFunction.get(1))).getValue();
 		double blueD = ((GeoNumeric)(colFunction.get(2))).getValue();
 		
+		//double epsilon = 0.000001; // 1 - floor(1) = 0 but we want 1.
+		
 		// make sure the colors are between 0 and 1
-		redD = redD - Math.floor(redD);
-		greenD = greenD - Math.floor(greenD);
-		blueD = blueD - Math.floor(blueD);
+		redD = redD/2 - Math.floor(redD/2);
+		greenD = greenD/2 - Math.floor(greenD/2);
+		blueD = blueD/2 - Math.floor(blueD/2);
+		
+		
+		// step function so
+		// [0,1] -> [0,1]
+		// [1,2] -> [1,0]
+		// [2,3] -> [0,1]
+		// [3,4] -> [1,0]
+		// [4,5] -> [0,1] etc
+		if (redD>0.5) redD=2*(1-redD); else redD=2*redD;
+		if (greenD>0.5) greenD=2*(1-greenD); else greenD=2*greenD;
+		if (blueD>0.5) blueD=2*(1-blueD); else blueD=2*blueD;
 		
 		System.out.println("red"+redD+"green"+greenD+"blue"+blueD);
 		
