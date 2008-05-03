@@ -674,6 +674,23 @@ public abstract class GeoElement
 		}
 	}
 	
+	/**
+	 * Sets all non visual values from given GeoElement. 
+	 * Michael Borcherds
+	 * 2008-05-03
+	 */
+	public void setNonVisualProperties(GeoElement geo) {
+		// TODO doesn't work
+		//setLayer(geo.getLayer());
+
+		// copy color function
+		setColorFunction(geo.getColorFunction());
+		
+		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
+		try { setShowObjectCondition(geo.getShowObjectCondition());}
+		catch (Exception e) {}
+	}
+
 	public void setVisualStyle(GeoElement geo) {
 		// label style
 		labelVisible = geo.labelVisible;
