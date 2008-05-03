@@ -2933,12 +2933,13 @@ final public boolean hasOnlyFreeInputPoints() {
 	// Michael Borcherds 2008-04-30
 	public abstract boolean isEqual(GeoElement Geo);
 	
+	/*
 	// Michael Borcherds 2008-05-01
 	final public boolean equals(Object obj) {
 	     if (obj instanceof GeoElement) {
 	        return isEqual((GeoElement) obj);
 	     }
 	     else return false;
-	}
+	}*/
 
 }
