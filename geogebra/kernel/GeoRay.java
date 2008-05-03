@@ -254,5 +254,12 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	public boolean isGeoRay() {
 		return true;
 	}
+    // Michael Borcherds 2008-04-30
+	final public boolean isEqual(GeoElement geo) {
+		// return false if it's a different type, otherwise use equals() method
+		return false;
+		// TODO?
+		//if (geo.isGeoLocus()) return xxx else return false;
+	}
 	
 }
