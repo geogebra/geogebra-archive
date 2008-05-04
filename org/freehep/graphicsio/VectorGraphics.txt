@@ -1,3 +1,0 @@
-For information on the VectorGraphics package see:
-
-http://java.freehep.org/vectorgraphics
