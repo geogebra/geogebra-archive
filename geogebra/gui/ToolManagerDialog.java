@@ -94,7 +94,15 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		if (sel == null) return;	
 					
 		// ARE YOU SURE ?
-		int returnVal =
+    	// Michael Borcherds 2008-05-04
+    	Object[] options = { app.getMenu("DeleteTool"), app.getMenu("DontDeleteTool") };
+    	int	returnVal=    
+		JOptionPane.showOptionDialog(this, app.getMenu("Tool.DeleteQuestion"), app.getPlain("Question"),
+         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+         null, options, options[1]);     
+    	if (returnVal == 1 ) return;
+    	
+/*		int returnVal =
             JOptionPane.showConfirmDialog(
                 this,
                 app.getMenu("Tool.DeleteQuestion"),
@@ -102,7 +110,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
         if (returnVal == JOptionPane.NO_OPTION ) 
-        	return;	       	        				
+        	return;	       	    */    				
 		
         boolean didDeletion = false;
 		boolean changeToolBar = false;

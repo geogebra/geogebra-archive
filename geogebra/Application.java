@@ -2995,7 +2995,7 @@ public abstract class Application implements	KeyEventDispatcher {
                     	// Michael Borcherds 2008-05-04
                     	Object[] options = { getMenu("Overwrite")+" "+file.getName(), getMenu("DontOverwrite") };
                     	int	n=    
-                		JOptionPane.showOptionDialog(mainComp, "", getPlain("OverwriteFile"),
+                		JOptionPane.showOptionDialog(mainComp, getPlain("OverwriteFile"), getPlain("Question"),
                          JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                          null, options, options[1]);     
                     	
