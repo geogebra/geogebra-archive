@@ -46,7 +46,7 @@ import org.freehep.graphicsio.raw.RawImageWriteParam;
  * Generic class for generating bitmap outputs from an image.
  *
  * @author Mark Donszelmann
- * @version $Id: ImageGraphics2D.java,v 1.3 2008-05-04 12:15:45 murkle Exp $
+ * @version $Id: ImageGraphics2D.java,v 1.4 2008-05-04 18:26:21 murkle Exp $
  */
 public class ImageGraphics2D extends PixelGraphics2D {
 
@@ -450,8 +450,13 @@ public class ImageGraphics2D extends PixelGraphics2D {
     }
 
     public static ImageWriter getPreferredImageWriter(String format) {
-        return (ImageWriter)getImageWriters(ImageIO
-                .getImageWritersByFormatName(format)).first();
+       Iterator xx=ImageIO.getImageWritersByFormatName(format);
+       System.out.println(format+" "+xx.hasNext());
+       SortedSet yy = getImageWriters(xx);
+       Object zz=yy.first();
+       return (ImageWriter)zz;
+    	//return (ImageWriter)getImageWriters(ImageIO
+        //        .getImageWritersByFormatName(format)).first();
     }
 
     public static ImageWriter getPreferredImageWriterForMIMEType(String mimeType) {
