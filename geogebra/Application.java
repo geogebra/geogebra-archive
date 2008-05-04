@@ -3321,23 +3321,32 @@ public abstract class Application implements	KeyEventDispatcher {
     	
     	// use null component for iconified frame
     	Component comp = frame != null && !frame.isIconified() ? frame : null;
-    	
+
+    	int returnVal;
+    	Object[] options = { getMenu("Saveandexit"), getMenu("Exitwithoutsaving"), getMenu("DontExit") };
+    		returnVal=    
+    			JOptionPane.showOptionDialog(comp, getMenu("Areyousure"), getMenu("ExitGeoGebra"),
+             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+
+             null, options, options[0]);     
+
+/*    	
         int returnVal =
             JOptionPane.showConfirmDialog(
             		comp,
                 getMenu("SaveCurrentFileQuestion"),
                 getPlain("ApplicationName") + " - " + getPlain("Question"),
                 JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.QUESTION_MESSAGE);*/
 
         switch (returnVal) {
-            case JOptionPane.YES_OPTION :
+            case 0 :
                 return save();
 
-            case JOptionPane.NO_OPTION :
+            case 1 :
                 return true;
 
-            default : // case JOptionPane.CANCEL_OPTION:
+            default : 
                 return false;
         }
     }
