@@ -2991,7 +2991,18 @@ public abstract class Application implements	KeyEventDispatcher {
                                                 
                 if (file.exists()) {
                     // ask overwrite question
-                    int n =
+                   
+                    	// Michael Borcherds 2008-05-04
+                    	Object[] options = { getMenu("Overwrite")+" "+file.getName(), getMenu("DontOverwrite") };
+                    	int	n=    
+                		JOptionPane.showOptionDialog(mainComp, "", getPlain("OverwriteFile"),
+                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                         null, options, options[1]);     
+                    	
+                    	done = (n==0);
+                    	
+                    	/*
+                    	 * int n =
                         JOptionPane.showConfirmDialog(
                             mainComp,
                             getPlain("OverwriteFile")
@@ -3000,7 +3011,7 @@ public abstract class Application implements	KeyEventDispatcher {
                             getPlain("Question"),
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
-                    done = (n == JOptionPane.YES_OPTION);
+                    done = (n == JOptionPane.YES_OPTION);*/
                 } else {
                     done = true;
                 }
@@ -3322,9 +3333,10 @@ public abstract class Application implements	KeyEventDispatcher {
     	// use null component for iconified frame
     	Component comp = frame != null && !frame.isIconified() ? frame : null;
 
-    	int returnVal;
+
+    	// Michael Borcherds 2008-05-04
     	Object[] options = { getMenu("Saveandexit"), getMenu("Exitwithoutsaving"), getMenu("DontExit") };
-    		returnVal=    
+    	int	returnVal=    
     			JOptionPane.showOptionDialog(comp, getMenu("Areyousure"), getMenu("ExitGeoGebra"),
              JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 
