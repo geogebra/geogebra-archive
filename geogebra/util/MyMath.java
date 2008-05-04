@@ -71,12 +71,16 @@ public final class MyMath {
 		return Math.log((1.0 + a)/(1.0 - a)) * 0.5;
 	}		
 	
-	final public static double gamma(double x) {		
-//		 Michael Borcherds 2007-10-15 BEGIN added case for x<0 otherwise no results in 3rd quadrant
+	final public static double gamma(double x, Kernel kernel) {		
+
+		// Michael Borcherds 2008-05-04
+		 if (x <= 0 && kernel.isEqual( x, Math.round( x ) )) return Double.NaN; // negative integers
+
+		 //		 Michael Borcherds 2007-10-15 BEGIN added case for x<0 otherwise no results in 3rd quadrant
 		if (x>=0) 
 			return Math.exp(gammln(x));
 		else
-			return -Math.PI/(x*gamma(-x)*Math.sin(Math.PI*x));
+			return -Math.PI/(x*gamma(-x, kernel)*Math.sin(Math.PI*x));
 // Michael Borcherds 2007-10-15 END
 	}
 	
@@ -86,7 +90,10 @@ public final class MyMath {
 	 * For x < 0 Double.NaN is returned.
 	 */	
 	final public static double factorial(double x) {			
-		// big x or floating point x is computed using gamma function
+
+		if (x < 0) return Double.NaN; // bugfix Michael Borcherds 2008-05-04
+
+		  // big x or floating point x is computed using gamma function
 		if (x < 0 || x > 32 || x - Math.floor(x) > 1E-10) 
 			// exp of log(gamma(x+1)) 
 			return Math.exp(gammln(x+1.0));				

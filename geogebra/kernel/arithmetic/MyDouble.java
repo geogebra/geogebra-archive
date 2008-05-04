@@ -213,7 +213,7 @@ implements NumberValue {
 	}
 	
 	final public MyDouble gamma() {
-		val = MyMath.gamma(val);
+		val = MyMath.gamma(val, kernel);
 		isAngle = false;
 		return this;
 	}	
