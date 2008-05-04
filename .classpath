@@ -11,14 +11,5 @@
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="openide-lookup-1.9-patched-1.0.jar"/>
-	<classpathentry kind="lib" path="freehep-export-2.1.1.jar"/>
-	<classpathentry kind="lib" path="freehep-graphics2d-2.1.1.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-2.1.1.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-emf-2.1.1.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-pdf-2.1.1.jar"/>
-	<classpathentry kind="lib" path="freehep-graphicsio-svg-2.1.1-patch_protected_PrintWriter_os.jar"/>
-	<classpathentry kind="lib" path="freehep-io-2.0.2.jar"/>
-	<classpathentry kind="lib" path="freehep-util-2.0.2.jar"/>
-	<classpathentry kind="lib" path="freehep-xml-2.1.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
