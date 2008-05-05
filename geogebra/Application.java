@@ -131,9 +131,9 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "April 25, 2008";
+    public static final String buildDate = "May 5, 2008";
 	
-    public static final String versionString = "3.1.0.0";    
+    public static final String versionString = "3.1.1.0";    
     public static final String XML_FILE_FORMAT = "3.01";    
   
     // GeoGebra jar files    
@@ -347,6 +347,10 @@ public abstract class Application implements	KeyEventDispatcher {
     	            JOptionPane.PLAIN_MESSAGE);
     		}
     	}*/     	
+    	
+    	// Michael Borcherds 2008-05-05
+    	// added to help debug applets
+    	System.out.println("GeoGebra "+versionString+" "+buildDate);
     		
 		isApplet = applet != null;
 		if (frame != null) {
