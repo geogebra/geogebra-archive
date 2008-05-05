@@ -7,6 +7,9 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import javax.swing.JTable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.LinkedList;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -118,12 +121,29 @@ public class CopyPasteCut {
 			}
 		}
 	}
-
+	
+	protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
+	
 	public void pasteExternal(String buf, int column1, int row1) {
 		String[] lines = buf.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
-			data[i] = lines[i].split("\\s", -1);
+			LinkedList list = new LinkedList();
+			Matcher matcher = pattern.matcher(lines[i]);
+			int index = 0;
+			while (index != -1 && matcher.find(index)) {
+				index = matcher.end();
+				String data1 = matcher.group(2);
+				String data2 = matcher.group(3);
+				if (data1 != null) {
+					list.addLast(data1);
+				}
+				if (data2 != null) {
+					data2 = data2.trim();
+					list.addLast(data2);
+				}
+			}
+			data[i] = (String[])list.toArray(new String[0]);
 		}
 		try {
 			for (int row = row1; row < row1 + data.length; ++ row) {

@@ -5,6 +5,8 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.Component;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent ;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -23,6 +25,7 @@ public class MyCellEditor extends DefaultCellEditor {
     public MyCellEditor(Kernel kernel0) {
 		super(new JTextField());
 		kernel = kernel0;
+		getComponent().addKeyListener(new KeyListener4());
     }
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row0, int column0) {
@@ -45,19 +48,43 @@ public class MyCellEditor extends DefaultCellEditor {
 		delegate.setValue(text);
 		editing = true;
 		table.repaint();
-		return getComponent();
+		Component component = getComponent();
+		return component;
     }
+	
+	public class KeyListener4 implements KeyListener 
+	{
+		
+		public void keyTyped(KeyEvent e) {
+			int keyCode = e.getKeyChar();
+			if (keyCode == 27) {
+				fireEditingCanceled();
+				editing = false;
+			}
+		}
+		
+		public void keyPressed(KeyEvent e) {
+		}
+		
+		public void keyReleased(KeyEvent e) {
+		}
+		
+	}
 	
 	public boolean isEditing() {
 		return editing;
 	}
 	
 	public void addLabel(int column, int row) {
-		if (! editing) return;
 		column = table.convertColumnIndexToModel(column);
 		String name = table.getModel().getColumnName(column) + (row + 1);
+		addLabel(name);
+	}
+
+	public void addLabel(String label) {
+		if (! editing) return;
 		String text = (String)delegate.getCellEditorValue();
-		delegate.setValue(text + name);
+		delegate.setValue(text + label);
 	}
 
 	public String getEditingValue() {

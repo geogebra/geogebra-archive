@@ -40,6 +40,12 @@ public class SpreadsheetView extends JScrollPane implements View
 	protected MyTableModel tableModel;
 	
 	public SpreadsheetView(Application app, int columns, int rows) {
+		/*
+		JList table = new JList();
+		setViewportView(table);
+		table.setFocusable(true);
+		table.addKeyListener(new KeyListener0());
+		/**/
 		Kernel kernel = app.getKernel();
 		// table
 		tableModel = new MyTableModel(rows, columns);
@@ -62,6 +68,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		//
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
+		/**/
 	}
 	
 	public void add(GeoElement geo) {
@@ -267,7 +274,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			//System.out.println(keyCode);
+			System.out.println(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = true; break;
 			case 17 : ctrlPressed = true; break;
@@ -302,6 +309,26 @@ public class SpreadsheetView extends JScrollPane implements View
 			case 16 : shiftPressed = false; break;
 			case 17 : ctrlPressed = false; break;
 			}
+		}
+		
+	}
+		
+	protected static class KeyListener0 implements KeyListener 
+	{
+		
+		public void keyTyped(KeyEvent e) {
+			int keyCode = e.getKeyChar();
+			System.out.println("*** keyTyped:" + keyCode);
+		}
+		
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			System.out.println("*** keyPressed:" + keyCode);
+		}
+		
+		public void keyReleased(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			System.out.println("*** keyReleased:" + keyCode);
 		}
 		
 	}

@@ -167,6 +167,22 @@ public class RelativeCopy {
 		table.setValueAt(value2, row + dy, column3);
 	}
 	
+	/*
+	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row, GeoElement oldValue) throws Exception {
+		if (text == null) {
+			if (oldValue != null) {
+				int column2 = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
+				int row2 = GeoElement.getSpreadsheetRow(oldValue.getLabel());
+				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column2, row2);
+			}
+			return;
+		}
+		int column3 = table.convertColumnIndexToView(column);
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column3, row);
+		table.setValueAt(value2, row, column3);
+	}
+	*/
+	
 	public static String replaceAll(Pattern pattern, String text, String text1, String text2) {
 		String pre = "";
 		String post = text;

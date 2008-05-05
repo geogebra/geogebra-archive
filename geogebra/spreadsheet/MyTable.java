@@ -278,7 +278,15 @@ public class MyTable extends JTable
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();
 				if (text.startsWith("=")) {
-					e.consume();					
+					Point point = getIndexFromPixel(e.getX(), e.getY());
+					if (point != null) {
+						int column = (int)point.getX();
+						int row = (int)point.getY();
+						GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
+						if (geo != null) {
+							e.consume();
+						}
+					}
 				}	
 			}
 		}
@@ -306,11 +314,16 @@ public class MyTable extends JTable
 				if (editor.isEditing()) {
 					String text = editor.getEditingValue();
 					if (text.startsWith("=")) {
-						e.consume();					
 						Point point = getIndexFromPixel(e.getX(), e.getY());
-						int column = (int)point.getX();
-						int row = (int)point.getY();
-						editor.addLabel(column, row);
+						if (point != null) {
+							int column = (int)point.getX();
+							int row = (int)point.getY();
+							GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
+							if (geo != null) {
+								editor.addLabel(column, row);
+								e.consume();
+							}
+						}
 					}	
 				}
 				else if (x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range && y1 <= y2 + range) {
@@ -331,7 +344,15 @@ public class MyTable extends JTable
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();
 				if (text.startsWith("=")) {
-					e.consume();					
+					Point point = getIndexFromPixel(e.getX(), e.getY());
+					if (point != null) {
+						int column = (int)point.getX();
+						int row = (int)point.getY();
+						GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
+						if (geo != null) {
+							e.consume();
+						}
+					}
 				}	
 			}
 			if (isDragingDot) {
@@ -485,8 +506,16 @@ public class MyTable extends JTable
 	{
 		
 		public void keyTyped(KeyEvent e) {
-			int keyCode = e.getKeyCode();
+			int keyCode = e.getKeyChar();
 			//System.out.println(keyCode);
+			switch (keyCode) {
+			case 27:
+				if (editor.isEditing()) {
+					editor.undoEdit();
+					editor.editing = false;
+				}
+				break;
+			}
 		}
 		
 		public void keyPressed(KeyEvent e) {
@@ -601,6 +630,32 @@ public class MyTable extends JTable
 		}
 		
 	}
+
+	/*
+	protected class KeyListener4 implements KeyListener 
+	{
+		
+		public void keyTyped(KeyEvent e) {
+			int keyCode = e.getKeyChar();
+			int keyCode2 = e.getKeyCode();
+			System.out.println("getKeyChar=" + keyCode);
+			System.out.println("getKeyCode=" + keyCode2);
+			if (keyCode == 27) {
+				if (editor.isEditing()) {
+					editor.undoEdit();
+					editor.editing = false;
+				}
+			}
+		}
+		
+		public void keyPressed(KeyEvent e) {
+		}
+		
+		public void keyReleased(KeyEvent e) {
+		}
+		
+	}
+	/**/
 	
 	protected class TableCellRenderer1 extends JLabel implements TableCellRenderer, ListSelectionListener
 	{
@@ -691,7 +746,7 @@ public class MyTable extends JTable
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 25, x, y);
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 99, x, y);
 				}
 			}
 		}
