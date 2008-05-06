@@ -22,7 +22,7 @@ public class ContextMenuCol extends ContextMenu
    	 	item5.setBackground(bgColor);
    	 	item5.addActionListener(new ActionListener5());   	 	
    	 	menu.add(item5);
-   	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertLeft"));
+   	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertRight"));
    	 	item6.setBackground(bgColor);
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
