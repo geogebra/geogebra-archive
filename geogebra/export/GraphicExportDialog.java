@@ -326,16 +326,16 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 						
 		StringBuffer sb = new StringBuffer();
 		// cm size
-		double cmWidth = printingScale * (ev.getSelectedWidth() / ev.getXscale());
-		double cmHeight = printingScale * (ev.getSelectedHeight() / ev.getYscale());	
+		double cmWidth = printingScale * (ev.getExportWidth() / ev.getXscale());
+		double cmHeight = printingScale * (ev.getExportHeight() / ev.getYscale());	
 		sb.append(sizeLabelFormat.format(cmWidth));
 		sb.append(" x ");
 		sb.append(sizeLabelFormat.format(cmHeight));
 		sb.append(" cm");			
 		
 		// pixel size
-		pixelWidth = (int) Math.floor(ev.getSelectedWidth() * exportScale);
-		pixelHeight = (int) Math.floor(ev.getSelectedHeight() * exportScale);	
+		pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+		pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);	
 		sb.append(", ");
 		sb.append(pixelWidth);
 		sb.append(" x ");

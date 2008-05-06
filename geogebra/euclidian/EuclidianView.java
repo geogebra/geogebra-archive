@@ -1390,9 +1390,37 @@ public class EuclidianView extends JPanel implements View, Printable {
 			Rectangle rect = selectionRectangle;
 			g2d.setClip(0,0, rect.width, rect.height);
 			g2d.translate(-rect.x, -rect.y);					
+			System.out.println(rect.x+" "+rect.y+" "+rect.width+" "+rect.height);
 		} else {
+			// use points export_1 and export_2 to define corner
+			try {
+				Construction cons = kernel.getConstruction();
+				GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
+				GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+				double [] xy1 = new double[2];
+				double [] xy2 = new double[2];
+				export1.getInhomCoords(xy1);
+				export2.getInhomCoords(xy2);
+				double x1=xy1[0];
+				double x2=xy2[0];
+				double y1=xy1[1];
+				double y2=xy2[1];
+				x1 = x1 / invXscale + xZero;
+				y1 = yZero - y1 / invYscale;
+				x2 = x2 / invXscale + xZero;
+				y2 = yZero - y2 / invYscale;
+				int x=(int)Math.min(x1,x2);
+				int y=(int)Math.min(y1,y2);
+				int exportWidth=(int)Math.abs(x1-x2);
+				int exportHeight=(int)Math.abs(y1-y2);
+				
+				g2d.setClip(0,0,exportWidth,exportHeight);
+				g2d.translate(-x, -y);	
+			}
+			catch (Exception e) {			
 			// or take full euclidian view
 			g2d.setClip(0, 0, width, height);	
+			}
 		}											
 
 		// DRAWING
@@ -1433,8 +1461,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 * Returns image of drawing pad sized according to the given scale factor.
 	 */
 	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
-		int width = (int) Math.floor(getSelectedWidth() * scale);
-		int height = (int) Math.floor(getSelectedHeight() * scale);		
+		int width = (int) Math.floor(getExportWidth() * scale);
+		int height = (int) Math.floor(getExportHeight() * scale);		
 		BufferedImage img = createBufferedImage(width, height);
 		exportPaint(img.createGraphics(), scale); 
 		img.flush();
@@ -3534,6 +3562,50 @@ public class EuclidianView extends JPanel implements View, Printable {
 			return getHeight();
 		else
 			return selectionRectangle.height;
+	}		
+	
+	public int getExportWidth() {
+		if (selectionRectangle != null) return selectionRectangle.width;
+		try {
+			Construction cons = kernel.getConstruction();
+			GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
+			GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+			double [] xy1 = new double[2];
+			double [] xy2 = new double[2];
+			export1.getInhomCoords(xy1);
+			export2.getInhomCoords(xy2);
+			double x1=xy1[0];
+			double x2=xy2[0];
+			x1 = x1 / invXscale + xZero;
+			x2 = x2 / invXscale + xZero;
+			
+			return (int)Math.abs(x1-x2);
+		}		
+		catch (Exception e) {return getWidth();}
+
+			
+	}
+	
+	public int getExportHeight() {
+		if (selectionRectangle != null) return selectionRectangle.height;
+
+		try {
+			Construction cons = kernel.getConstruction();
+			GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
+			GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+			double [] xy1 = new double[2];
+			double [] xy2 = new double[2];
+			export1.getInhomCoords(xy1);
+			export2.getInhomCoords(xy2);
+			double y1=xy1[1];
+			double y2=xy2[1];
+			y1 = yZero - y1 / invYscale;
+			y2 = yZero - y2 / invYscale;
+
+			return (int)Math.abs(y1-y2);
+		}		
+		catch (Exception e) {return getHeight();}
+			
 	}		
 	
 	public Rectangle getSelectionRectangle() {
