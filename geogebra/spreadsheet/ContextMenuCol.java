@@ -18,16 +18,16 @@ public class ContextMenuCol extends ContextMenu
 	protected static JPopupMenu initMenu2(Application app) {
 		JPopupMenu menu = ContextMenu.initMenu(app);
 		menu.addSeparator();
-   	 	JMenuItem item5 = new JMenuItem("Insert 1 left");
+   	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertLeft"));
    	 	item5.setBackground(bgColor);
    	 	item5.addActionListener(new ActionListener5());   	 	
    	 	menu.add(item5);
-   	 	JMenuItem item6 = new JMenuItem("Insert 1 right");
+   	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertLeft"));
    	 	item6.setBackground(bgColor);
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
-   	 	JMenuItem item7 = new JMenuItem("Delete column");
+   	 	JMenuItem item7 = new JMenuItem(app.getMenu("DeleteColumn"));
    	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListener7());   	 	
    	 	menu.add(item7);

@@ -24,22 +24,22 @@ public class ContextMenu
 	protected static JPopupMenu initMenu(Application app) {
 		JPopupMenu menu = new JPopupMenu();
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
-   	 	JMenuItem item1 = new JMenuItem("Copy");
+   	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
    	 	item1.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item1.setBackground(bgColor);
    	 	item1.addActionListener(new ActionListener1());
    	 	menu.add(item1);
-   	 	JMenuItem item2 = new JMenuItem("Paste");
+   	 	JMenuItem item2 = new JMenuItem(app.getMenu("Paste"));
    	 	item2.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item2.setBackground(bgColor);
    	 	item2.addActionListener(new ActionListener2());   	 	
    	 	menu.add(item2);
-   	 	JMenuItem item3 = new JMenuItem("Cut");
+   	 	JMenuItem item3 = new JMenuItem(app.getMenu("Cut"));
    	 	item3.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item3.setBackground(bgColor);
    	 	item3.addActionListener(new ActionListener3());   	 	
    	 	menu.add(item3);
-   	 	JMenuItem item4 = new JMenuItem("Clear selection");
+   	 	JMenuItem item4 = new JMenuItem(app.getMenu("ClearSelection"));
    	 	item4.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item4.setBackground(bgColor);
    	 	item4.addActionListener(new ActionListener4());   	 	
