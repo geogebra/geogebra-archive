@@ -38,6 +38,7 @@ public class SpreadsheetView extends JScrollPane implements View
 
 	protected MyTable table;
 	protected MyTableModel tableModel;
+	public JList rowHeader;
 	
 	public SpreadsheetView(Application app, int columns, int rows) {
 		/*
@@ -51,8 +52,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		tableModel = new MyTableModel(rows, columns);
 		table = new MyTable(tableModel, kernel);
 		// row header list
-		MyListModel listModel = new MyListModel(tableModel.getRowCount());
-		JList rowHeader = new JList(listModel);
+		MyListModel listModel = new MyListModel(tableModel);
+		rowHeader = new JList(listModel);
 		rowHeader.setFocusable(true);
 		rowHeader.setAutoscrolls(false);
 		rowHeader.addMouseListener(new MouseListener1());
@@ -62,6 +63,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table, rowHeader));
+		table.setView(this);
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
@@ -115,22 +117,19 @@ public class SpreadsheetView extends JScrollPane implements View
 	public static class MyListModel extends AbstractListModel {
 		
 		private static final long serialVersionUID = 1L;
-
-		protected String[] headers;
 		
-		public MyListModel(int rows) {
-			headers = new String[rows];
-			for (int i = 0; i < headers.length; ++ i) {
-				headers[i] = "" + (i + 1);
-			}
+		protected MyTableModel model;
+
+		public MyListModel(MyTableModel model0) {
+			model = model0;
 		}
 		
 		public int getSize() {
-			return headers.length;
+			return model.getRowCount();
 		}
 		
 		public Object getElementAt(int index) {
-			return headers[index];
+			return "" + (index + 1);
 		}
 		
     }

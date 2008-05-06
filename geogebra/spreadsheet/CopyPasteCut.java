@@ -50,7 +50,9 @@ public class CopyPasteCut {
 					externalBuf += "\t";
 				}
 			}
-			externalBuf += "\r\n";
+			if (row != row2) {
+				externalBuf += "\r\n";
+			}
 		}
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Clipboard clipboard = toolkit.getSystemClipboard();
@@ -112,6 +114,10 @@ public class CopyPasteCut {
 			}
 		}
 		/**/
+		MyTableModel model = (MyTableModel)table.getModel();
+		if (model.rowCount < y4 + 1) {
+			model.rowCount = y4 + 1;
+		}
 		GeoElement[][] values1 = RelativeCopy.getValues(table, x1, y1, x2, y2);
 		for (int x = x1; x <= x2; ++ x) {
 			int ix = x - x1;
@@ -129,6 +135,9 @@ public class CopyPasteCut {
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
 			LinkedList list = new LinkedList();
+			if (lines[i].indexOf('\t') != -1) {
+				lines[i] = lines[i].replaceAll(",", ".");
+			}
 			Matcher matcher = pattern.matcher(lines[i]);
 			int index = 0;
 			while (index != -1 && matcher.find(index)) {
@@ -146,8 +155,12 @@ public class CopyPasteCut {
 			data[i] = (String[])list.toArray(new String[0]);
 		}
 		try {
+			MyTableModel model = (MyTableModel)table.getModel();
+			if (model.rowCount < row1 + data.length) {
+				model.rowCount = row1 + data.length;
+			}
 			for (int row = row1; row < row1 + data.length; ++ row) {
-				if (row < 0 || row >= 100) continue;
+				if (row < 0) continue;
 				int iy = row - row1;
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
 					if (column < 0 || column >= 26) continue;
@@ -168,6 +181,7 @@ public class CopyPasteCut {
 					}
 				}
 			}
+			table.getView().repaintView();
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
 			// Util.handleException(table, ex);
@@ -176,7 +190,7 @@ public class CopyPasteCut {
 
 	public void delete(int column1, int row1, int column2, int row2)  {
 		for (int column = column1; column <= column2; ++ column) {
-			int column3 = table.convertColumnIndexToModel(column);
+			//int column3 = table.convertColumnIndexToModel(column);
 			for (int row = row1; row <= row2; ++ row) {
 				GeoElement value0 = RelativeCopy.getValue(table, column, row);
 				if (value0 != null) {

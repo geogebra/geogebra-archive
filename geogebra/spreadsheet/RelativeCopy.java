@@ -262,7 +262,7 @@ public class RelativeCopy {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
 		column = table.convertColumnIndexToModel(column);
 		//System.out.println("column=" + column);
-		if (row < 0 || row >= 100) return null;
+		if (row < 0 || row >= tableModel.getRowCount()) return null;
 		if (column < 0 || column >= 26) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	

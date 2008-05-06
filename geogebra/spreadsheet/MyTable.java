@@ -20,7 +20,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import geogebra.kernel.GeoElement;
@@ -45,9 +44,12 @@ public class MyTable extends JTable
 	protected CopyPasteCut copyPasteCut;
 	protected KeyListener[] defaultKeyListeners;
 	protected TableCellRenderer1 columnHeader;
+	protected SpreadsheetView view;
+	protected MyTableModel tableModel;
 
 	public MyTable(MyTableModel tableModel, Kernel kernel0) {
 		super(tableModel);
+		this.tableModel = tableModel;
 		kernel = kernel0;
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -101,6 +103,14 @@ public class MyTable extends JTable
 		this.getTableHeader().addKeyListener(new KeyListener2());
 		//
 		this.getTableHeader().setReorderingAllowed(false);
+	}
+	
+	public void setView(SpreadsheetView view0) {
+		view = view0;		
+	}
+
+	public SpreadsheetView getView() {
+		return view;		
 	}
 
 	protected int Column = -1;
@@ -536,6 +546,7 @@ public class MyTable extends JTable
 						}
 						else if (keyCode == 86) {
 							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							getView().getRowHeader().revalidate();
 						}
 						else if (keyCode == 88) {
 							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
@@ -746,7 +757,7 @@ public class MyTable extends JTable
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, 99, x, y);
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y);
 				}
 			}
 		}
@@ -793,25 +804,26 @@ public class MyTable extends JTable
 				//System.out.println(minSelectionColumn);
 				//System.out.println(maxSelectionColumn);
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				}
 				e.consume();
 				break;
 			case 86 : // control + v
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, 99);
+					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				}
+				getView().getRowHeader().revalidate();
 				e.consume();
-				break;				
+				break;		
 			case 88 : // control + x
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, 99);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				}
 				e.consume();
-				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);
+				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				break;
 			case 127 : // delete
-				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, 99);
+				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				break;
 			}
 		}

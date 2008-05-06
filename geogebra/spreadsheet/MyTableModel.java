@@ -8,7 +8,12 @@ public class MyTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
 	
 	protected HashMap data;
+	public int rowCount = 100;
 	
+	public int getRowCount() {
+		return rowCount;
+	}
+
 	public MyTableModel(int rows, int columns) {
 		super(rows, columns);
 		data = new HashMap();

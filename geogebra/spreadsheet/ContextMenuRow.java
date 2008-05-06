@@ -37,8 +37,8 @@ public class ContextMenuRow extends ContextMenu
 	public static class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(0, 99, 25, 99);
- 			for (int y = 98; y >= row1; -- y) {
+ 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, 25, table.getModel().getColumnCount() - 1);
+ 			for (int y = table.getModel().getColumnCount() - 2; y >= row1; -- y) {
  				for (int x = 0; x < 26; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
@@ -55,8 +55,8 @@ public class ContextMenuRow extends ContextMenu
 	public static class ActionListener6 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(0, 99, 25, 99);
- 			for (int y = 98; y >= row2 + 1; -- y) {
+ 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, 25, table.getModel().getColumnCount() - 1);
+ 			for (int y = table.getModel().getColumnCount() - 2; y >= row2 + 1; -- y) {
  				for (int x = 0; x < 26; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
@@ -75,7 +75,7 @@ public class ContextMenuRow extends ContextMenu
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.delete(column1, row1, column2, row2);
  			int dy = row2 - row1 + 1;
- 			for (int y = row2 + 1; y < 100; ++ y) {
+ 			for (int y = row2 + 1; y < table.getModel().getColumnCount(); ++ y) {
  				for (int x = 0; x < 26; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;

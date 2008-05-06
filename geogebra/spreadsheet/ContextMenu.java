@@ -58,6 +58,7 @@ public class ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.paste(column1, row1, column2, row2);
+ 			table.getView().getRowHeader().revalidate(); 		
  		}
 	}
     	

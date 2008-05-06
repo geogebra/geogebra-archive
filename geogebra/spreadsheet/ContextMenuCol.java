@@ -37,9 +37,9 @@ public class ContextMenuCol extends ContextMenu
 	public static class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(25, 0, 25, 99);
+ 			table.copyPasteCut.delete(25, 0, 25, table.getModel().getRowCount() - 1);
  			for (int x = 24; x >= column1; -- x) {
- 				for (int y = 0; y < 100; ++ y) {
+ 				for (int y = 0; y < table.getModel().getColumnCount(); ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
@@ -55,9 +55,9 @@ public class ContextMenuCol extends ContextMenu
 	public static class ActionListener6 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(25, 0, 25, 99);
+ 			table.copyPasteCut.delete(25, 0, 25, table.getModel().getRowCount() - 1);
  			for (int x = 24; x >= column2 + 1; -- x) {
- 				for (int y = 0; y < 100; ++ y) {
+ 				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
@@ -76,7 +76,7 @@ public class ContextMenuCol extends ContextMenu
  			table.copyPasteCut.delete(column1, row1, column2, row2);
  			int dx = column2 - column1 + 1;
 			for (int x = column2 + 1; x < 26; ++ x) {
-				for (int y = 0; y < 100; ++ y) {
+				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
