@@ -32,7 +32,7 @@ public class RelativeCopy {
 							for (int y = dy2; y >= dy1; -- y) {
 								String d0 = "" + (char)('A' + x) + (y + 3);
 								String d1 = "" + (char)('A' + x) + (y + 2);
-								String text = "2*" + d0 + "-" + d1;
+								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
 						}
@@ -48,7 +48,7 @@ public class RelativeCopy {
 							for (int y = dy1; y <= dy2; ++ y) {
 								String d0 = "" + (char)('A' + x) + (y - 1);
 								String d1 = "" + (char)('A' + x) + (y);
-								String text = "2*" + d0 + "-" + d1;
+								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
 						}
@@ -66,7 +66,7 @@ public class RelativeCopy {
 							for (int x = dx2; x >= dx1; -- x) {
 								String d0 = "" + (char)('A' + x + 2) + (y + 1);
 								String d1 = "" + (char)('A' + x + 1) + (y + 1);
-								String text = "2*" + d0 + "-" + d1;
+								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
 						}
@@ -82,7 +82,7 @@ public class RelativeCopy {
 							for (int x = dx1; x <= dx2; ++ x) {
 								String d0 = "" + (char)('A' + x - 2) + (y + 1);
 								String d1 = "" + (char)('A' + x - 1) + (y + 1);
-								String text = "2*" + d0 + "-" + d1;
+								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
 						}
