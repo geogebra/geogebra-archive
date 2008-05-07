@@ -90,6 +90,7 @@ public class CopyPasteCut {
 	}
 
 	public void pasteInternal(int column1, int row1) throws Exception {
+		kernel.getApplication().setWaitCursor();
 		int width = internalBuf.length;
 		if (width == 0) return;
 		int height = internalBuf[0].length;
@@ -126,11 +127,13 @@ public class CopyPasteCut {
 				RelativeCopy.doCopy0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 			}
 		}
+		kernel.getApplication().setDefaultCursor();
 	}
 	
 	protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
 	
 	public void pasteExternal(String buf, int column1, int row1) {
+		kernel.getApplication().setWaitCursor();
 		String[] lines = buf.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
@@ -185,6 +188,8 @@ public class CopyPasteCut {
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
 			// Util.handleException(table, ex);
+		} finally {
+			kernel.getApplication().setDefaultCursor();
 		}
 	}
 

@@ -23,24 +23,73 @@ public class RelativeCopy {
 		// -|1|-
 		// 2|-|3
 		// -|4|-
+		kernel.getApplication().setWaitCursor();
 		try {
 			if (sx1 == dx1 && sx2 == dx2) {
 				if (dy2 < sy1) { // 1
-					doCopyHorizontal(sx1, sx2, sy1, dy1, dy2);
+					if (sy1 + 1 == sy2) {
+						for (int x = sx1; x <= sx2; ++ x) {
+							for (int y = dy2; y >= dy1; -- y) {
+								String d0 = "" + (char)('A' + x) + (y + 3);
+								String d1 = "" + (char)('A' + x) + (y + 2);
+								String text = "2*" + d0 + "-" + d1;
+								doCopy1(kernel, table, text, x, y);								
+							}
+						}
+					}
+					else {
+						doCopyHorizontal(sx1, sx2, sy1, dy1, dy2);
+					}
 					return true;
 				}
 				else if (dy1 > sy2) { // 4
-					doCopyHorizontal(sx1, sx2, sy2, dy1, dy2);
+					if (sy1 + 1 == sy2) {
+						for (int x = sx1; x <= sx2; ++ x) {
+							for (int y = dy1; y <= dy2; ++ y) {
+								String d0 = "" + (char)('A' + x) + (y - 1);
+								String d1 = "" + (char)('A' + x) + (y);
+								String text = "2*" + d0 + "-" + d1;
+								doCopy1(kernel, table, text, x, y);								
+							}
+						}
+					}
+					else {
+						doCopyHorizontal(sx1, sx2, sy2, dy1, dy2);
+					}
 					return true;
 				}
 			}
 			else if (sy1 == dy1 && sy2 == dy2) {
 				if (dx2 < sx1) { // 2
-					doCopyVertical(sy1, sy2, sx1, dx1, dx2);
+					if (sx1 + 1 == sx2) {
+						for (int y = sy1; y <= sy2; ++ y) {
+							for (int x = dx2; x >= dx1; -- x) {
+								String d0 = "" + (char)('A' + x + 2) + (y + 1);
+								String d1 = "" + (char)('A' + x + 1) + (y + 1);
+								String text = "2*" + d0 + "-" + d1;
+								doCopy1(kernel, table, text, x, y);								
+							}
+						}
+					}
+					else {
+						doCopyVertical(sy1, sy2, sx1, dx1, dx2);
+					}
 					return true;
 				}
 				else if (dx1 > sx2) { // 4
-					doCopyVertical(sy1, sy2, sx2, dx1, dx2);
+					if (sx1 + 1 == sx2) {
+						for (int y = sy1; y <= sy2; ++ y) {
+							for (int x = dx1; x <= dx2; ++ x) {
+								String d0 = "" + (char)('A' + x - 2) + (y + 1);
+								String d1 = "" + (char)('A' + x - 1) + (y + 1);
+								String text = "2*" + d0 + "-" + d1;
+								doCopy1(kernel, table, text, x, y);								
+							}
+						}
+					}
+					else {
+						doCopyVertical(sy1, sy2, sx2, dx1, dx2);
+					}
 					return true;
 				}			
 			}
@@ -57,6 +106,8 @@ public class RelativeCopy {
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
 			return false;
+		} finally {
+			kernel.getApplication().setDefaultCursor();
 		}
 	}
 	
@@ -167,21 +218,17 @@ public class RelativeCopy {
 		table.setValueAt(value2, row + dy, column3);
 	}
 	
-	/*
-	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row, GeoElement oldValue) throws Exception {
+	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row) throws Exception {
+		GeoElement oldValue = getValue(table, column, row);
 		if (text == null) {
 			if (oldValue != null) {
-				int column2 = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
-				int row2 = GeoElement.getSpreadsheetRow(oldValue.getLabel());
-				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column2, row2);
+				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column, row);
 			}
 			return;
 		}
-		int column3 = table.convertColumnIndexToView(column);
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column3, row);
-		table.setValueAt(value2, row, column3);
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column, row);
+		table.setValueAt(value2, row, column);
 	}
-	*/
 	
 	public static String replaceAll(Pattern pattern, String text, String text1, String text2) {
 		String pre = "";
