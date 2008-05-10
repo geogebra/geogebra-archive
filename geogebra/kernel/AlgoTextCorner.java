@@ -39,7 +39,9 @@ implements EuclidianViewAlgo {
         corner = new GeoPoint(cons);                
         setInputOutput(); // for AlgoElement                
         compute();              
-        corner.setLabel(label);                  
+        corner.setLabel(label);     
+        
+        kernel.registerEuclidianViewAlgo(this);
     }   
     
     protected String getClassName() {

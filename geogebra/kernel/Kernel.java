@@ -2752,6 +2752,14 @@ public class Kernel {
 	}
 
 	/** 
+	 * Corner of Drawing Pad Michael Borcherds 2008-05-10
+	 */
+	final public GeoPoint CornerOfDrawingPad(String label, NumberValue number) {
+		AlgoDrawingPadCorner algo = new AlgoDrawingPadCorner(cons, label, number);	
+		return algo.getCorner();
+	}
+
+	/** 
 	 * parabola with focus F and line l
 	 */
 	final public GeoConic Parabola(

@@ -1352,12 +1352,18 @@ final public GeoElement[] process(Command c) throws MyError {
 
     switch (n) {
     	// Vertex[ <GeoConic> ]
-        case 1 :
-            arg = resArgs(c);
-            if (ok[0] = (arg[0] .isGeoConic()))
-				return kernel.Vertex(c.getLabels(), (GeoConic) arg[0]);
-			else
-				throw argErr(app, c.getName(), arg[0]);
+    case 1 :
+        arg = resArgs(c);
+        if (ok[0] = (arg[0] .isGeoConic()))
+			return kernel.Vertex(c.getLabels(), (GeoConic) arg[0]);
+		else if (ok[0] = (arg[0] .isNumberValue()))
+		{
+            GeoElement[] ret =
+            { kernel.CornerOfDrawingPad(c.getLabel(), (NumberValue) arg[0]) };
+            return ret;
+		}
+		else
+			throw argErr(app, c.getName(), arg[0]);
 
         // Corner[ <Image>, <number> ]
         case 2 :
