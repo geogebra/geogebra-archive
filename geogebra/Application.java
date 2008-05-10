@@ -58,12 +58,12 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.plugin.GgbAPI;
+import geogebra.plugin.PluginManager;
+import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.Util;
-import geogebra.plugin.PluginManager;
-import geogebra.plugin.GgbAPI;
-import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -76,6 +76,7 @@ import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -87,7 +88,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
@@ -1716,7 +1716,10 @@ public abstract class Application implements	KeyEventDispatcher {
      * @return whether a new image was create or not
      */   
 	public boolean loadImage(GeoPoint loc, boolean fromClipboard) {		
-		String fileName = getImage(fromClipboard);
+		String fileName;
+		if (fromClipboard) fileName = getImageFromClipboard();
+		else fileName = getImageFromFile();
+		
 		if (fileName == null) return false;						
 		
 		// create GeoImage object for this fileName
@@ -1791,32 +1794,43 @@ public abstract class Application implements	KeyEventDispatcher {
 	}
 	
 	/**
-	 * Shows a file open dialog to choose an image file,
-	 * [or gets an image from the clipboard Michael Borcherds 2008-02-17]
-	 * Then the image file is loaded and stored in this
+	 * Downloads a bitmap from the URL and stores it in this
 	 * application's imageManager.
+	 * Michael Borcherds
 	 * @return fileName of image stored in imageManager
-	 */
-	public String getImage(boolean fromClipboard) {
+	 *
+	public String getImageFromURL(String url) {
+		try{
+			
+	 	 	 BufferedImage img=javax.imageio.ImageIO.read(new URL(url));
+	 	 	 return createImage(img, "bitmap.png");	
 
+	 	 }
+	 	 catch (Exception e) {return null;}
+	} */
+	
+	
+		/**
+		 * gets an image from the clipboard 
+		 * Then the image file is loaded and stored in this
+		 * application's imageManager.
+		 * Michael Borcherds 2008-05-10
+		 * @return fileName of image stored in imageManager
+		 */
+		public String getImageFromClipboard() {
+			
 		BufferedImage img = null;
 		String fileName = null;
 		try {
 			setWaitCursor();
 
-			if (fromClipboard)
+			
+			//if (fromClipboard)
 			{
 				
 				Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 				Transferable transfer = clip.getContents(null);
 		          
-				/*
-				if(transfer.isDataFlavorSupported(DataFlavor.plainTextFlavor)){
-					String str = (Text)transfer.getTransferData(DataFlavor.plainTextFlavor);
-					DataFlavor.getReaderForText(transfer)
-					System.out.println("str"+str);
-				} else System.out.println("notxt");
-				*/
 				
 				try{
 					if(transfer.isDataFlavorSupported(DataFlavor.imageFlavor)){
@@ -1840,7 +1854,30 @@ public abstract class Application implements	KeyEventDispatcher {
 				
 				fileName="clipboard.png"; // extension determines what format it will be in ggb file
 			}
-			else
+		} catch (Exception e) {
+			setDefaultCursor();
+			e.printStackTrace();
+			showError("PasteImageFailed");
+			return null;
+		}	
+		
+		return createImage(img, fileName);	
+		
+		}
+		
+		/**
+		 * Shows a file open dialog to choose an image file,
+		 * Then the image file is loaded and stored in this
+		 * application's imageManager.
+		 * @return fileName of image stored in imageManager
+		 */
+		public String getImageFromFile() {
+			
+		BufferedImage img = null;
+		String fileName = null;
+		try {
+			setWaitCursor();
+			//else
 			{
 				
 				
@@ -1886,6 +1923,27 @@ public abstract class Application implements	KeyEventDispatcher {
 				// load image
 				img = ImageIO.read(imageFile);	
 			}	
+		 	 	   
+			
+			return createImage(img, fileName);	
+			
+	} catch (Exception e) {
+		setDefaultCursor();
+		e.printStackTrace();
+		showError("LoadFileFailed");
+		return null;
+	}	
+	
+
+	
+	}
+	
+		/**
+		 * stores an image in the application's imageManager.
+		 * @return fileName of image stored in imageManager
+		 */
+		public String createImage(BufferedImage img, String fileName) {
+			try {
 			// Michael Borcherds 2007-12-10 START moved MD5 code from GeoImage to here
 			String zip_directory="";
 			try
