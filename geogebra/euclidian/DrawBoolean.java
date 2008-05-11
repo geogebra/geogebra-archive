@@ -289,6 +289,11 @@ public final class DrawBoolean extends Drawable {
 		
 		public CheckBoxIcon(int size)
 		{
+			setSize(size);
+		}
+		
+		public static void setSize(int size)
+		{
 			csize = (size == 13) ? 13 : 26; // allow only 13 or 26
 		}
 		
