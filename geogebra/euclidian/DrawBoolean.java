@@ -15,7 +15,9 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -23,8 +25,13 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.Serializable;
 
+import javax.swing.ButtonModel;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.UIManager;
+
 
 /**
  * Checkbox for free GeoBoolean object.
@@ -51,7 +58,7 @@ public final class DrawBoolean extends Drawable {
 		
 		// action listener for checkBox
 		cbl = new BooleanCheckBoxListener();
-		checkBox = new JCheckBox();	
+		checkBox = new JCheckBox(new CheckBoxIcon(13));
 		checkBox.addItemListener(cbl);
 		checkBox.addMouseListener(cbl);
 		checkBox.addMouseMotionListener(cbl);
@@ -189,6 +196,9 @@ public final class DrawBoolean extends Drawable {
 				prefSize.height);
 		checkBox.setBounds(labelRectangle);
 		
+		//checkBox.
+
+		
 		
 	}
 
@@ -243,5 +253,167 @@ public final class DrawBoolean extends Drawable {
 	final public void setGeoElement(GeoElement geo) {
 		this.geo = geo;
 	}
+	
+	private static class CheckBoxIcon implements  Icon, Serializable {
+		
+		// Michael Borcherds 2008-05-11
+		// adapted from http://www.java2s.com/Open-Source/Java-Document/6.0-JDK-Modules-com.sun.java/swing/com/sun/java/swing/plaf/windows/WindowsIconFactory.java.htm
+		// references to XPStyle removed
+		// option for double-size added
+		
+		/*
+         * Copyright 1998-2006 Sun Microsystems, Inc.  All Rights Reserved.
+         * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+         *
+         * This code is free software; you can redistribute it and/or modify it
+         * under the terms of the GNU General Public License version 2 only, as
+         * published by the Free Software Foundation.  Sun designates this
+         * particular file as subject to the "Classpath" exception as provided
+         * by Sun in the LICENSE file that accompanied this code.
+         *
+         * This code is distributed in the hope that it will be useful, but WITHOUT
+         * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+         * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+         * version 2 for more details (a copy is included in the LICENSE file that
+         * accompanied this code).
+         *
+         * You should have received a copy of the GNU General Public License version
+         * 2 along with this work; if not, write to the Free Software Foundation,
+         * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+         *
+         * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+         * CA 95054 USA or visit www.sun.com if you need additional information or
+         * have any questions.
+         */
+		static int csize = 13;
+		
+		public CheckBoxIcon(int size)
+		{
+			csize = (size == 13) ? 13 : 26; // allow only 13 or 26
+		}
+		
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            JCheckBox cb = (JCheckBox) c;
+            ButtonModel model = cb.getModel();
 
-}
+            {
+                // outer bevel
+                if (!cb.isBorderPaintedFlat()) {
+                    // Outer top/left
+                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.drawLine(x, y, x + (csize-2), y);
+                    g.drawLine(x, y + 1, x, y + (csize-2));
+
+                    // Outer bottom/right
+                    g
+                            .setColor(UIManager
+                                    .getColor("CheckBox.highlight"));
+                    g.drawLine(x + (csize-1), y, x + (csize-1), y + (csize-1));
+                    g.drawLine(x, y + (csize-1), x + (csize-2), y + (csize-1));
+
+                    // Inner top.left
+                    g.setColor(UIManager
+                            .getColor("CheckBox.darkShadow"));
+                    g.drawLine(x + 1, y + 1, x + (csize-3), y + 1);
+                    g.drawLine(x + 1, y + 2, x + 1, y + (csize-3));
+
+                    // Inner bottom/right
+                    g.setColor(UIManager.getColor("CheckBox.light"));
+                    g.drawLine(x + 1, y + (csize-2), x + (csize-2), y + (csize-2));
+                    g.drawLine(x + (csize-2), y + 1, x + (csize-2), y + (csize-3));
+
+                    // inside box 
+                    if ((model.isPressed() && model.isArmed())
+                            || !model.isEnabled()) {
+                        g.setColor(UIManager
+                                .getColor("CheckBox.background"));
+                    } else {
+                        g
+                                .setColor(UIManager
+                                        .getColor("CheckBox.interiorBackground"));
+                    }
+                    g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
+                } else {
+                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.drawRect(x + 1, y + 1, csize - 3, csize - 3);
+
+                    if ((model.isPressed() && model.isArmed())
+                            || !model.isEnabled()) {
+                        g.setColor(UIManager
+                                .getColor("CheckBox.background"));
+                    } else {
+                        g
+                                .setColor(UIManager
+                                        .getColor("CheckBox.interiorBackground"));
+                    }
+                    g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
+                }
+
+                if (model.isEnabled()) {
+                    g.setColor(UIManager
+                            .getColor("CheckBox.foreground"));
+                } else {
+                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                }
+
+                // paint check
+                
+                if (model.isSelected()) {
+                  if (csize == 13)
+                  {
+                	
+                	g.drawLine(x + 9, y + 3, x + 9, y + 3);
+                    g.drawLine(x + 8, y + 4, x + 9, y + 4);
+                    g.drawLine(x + 7, y + 5, x + 9, y + 5);
+                    g.drawLine(x + 6, y + 6, x + 8, y + 6);
+                    g.drawLine(x + 3, y + 7, x + 7, y + 7);
+                    g.drawLine(x + 4, y + 8, x + 6, y + 8);
+                    g.drawLine(x + 5, y + 9, x + 5, y + 9);
+                    g.drawLine(x + 3, y + 5, x + 3, y + 5);
+                    g.drawLine(x + 3, y + 6, x + 4, y + 6);
+                    
+                  }
+                  else
+                  { // csize == 26
+                    g.drawLine(x + 18, y +  6, x + 18, y +  6);
+                    g.drawLine(x + 17, y +  7, x + 18, y +  7);
+
+                    g.drawLine(x + 16, y +  8, x + 18, y +  8);
+                    g.drawLine(x + 15, y +  9, x + 18, y +  9);
+
+                    g.drawLine(x + 14, y + 10, x + 18, y + 10);
+                    g.drawLine(x + 13, y + 11, x + 17, y + 11);
+                    
+                    g.drawLine(x + 12, y + 12, x + 16, y + 12);
+                    g.drawLine(x + 11, y + 13, x + 15, y + 13);
+                    
+                    g.drawLine(x +  6, y + 14, x + 14, y + 14);
+                    g.drawLine(x +  7, y + 15, x + 13, y + 15);
+                    
+                    g.drawLine(x +  8, y + 16, x + 12, y + 16);
+                    g.drawLine(x +  9, y + 17, x + 11, y + 17);
+                    
+                    g.drawLine(x + 10, y + 18, x + 10, y + 18);
+                    
+                    g.drawLine(x +  6, y + 10, x +  6, y + 10);
+                    g.drawLine(x +  6, y + 11, x +  7, y + 11);
+                    
+                    g.drawLine(x +  6, y + 12, x +  8, y + 12);
+                    g.drawLine(x +  6, y + 13, x +  9, y + 13);
+                  }
+                }
+            }
+        }
+
+        public int getIconWidth() {
+     
+                return csize;
+           
+        }
+
+        public int getIconHeight() {
+                return csize;
+            
+        }
+    }
+	}
