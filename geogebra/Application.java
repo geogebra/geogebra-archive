@@ -1913,7 +1913,11 @@ public abstract class Application implements	KeyEventDispatcher {
 				fileChooser.removePropertyChangeListener(preview);
 				fileChooser.setAccessory(null);
 				
-				if (imageFile == null) return null;				
+				if (imageFile == null)
+				{
+					setDefaultCursor();
+					return null;				
+				}
 				
 				
 				
