@@ -93,6 +93,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	}
 	
 	final public void setTextString(String text) {
+		
+		// Michael Borcherds 2008-05-11
+		// remove trailing linefeeds (FreeHEP EMF export doesn't like them)
+		while (text.endsWith("\n") && text.length()>1) text=text.substring(0, text.length()-1);
+		
 		if (isLaTeX) {
 			//TODO: check greek letters of latex string
 			str = Util.toLaTeXString(text, false);
