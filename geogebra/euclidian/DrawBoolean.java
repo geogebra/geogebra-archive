@@ -58,7 +58,7 @@ public final class DrawBoolean extends Drawable {
 		
 		// action listener for checkBox
 		cbl = new BooleanCheckBoxListener();
-		checkBox = new JCheckBox(new CheckBoxIcon(13));
+		checkBox = new JCheckBox(new CheckBoxIcon(view.getBooleanSize()));
 		checkBox.addItemListener(cbl);
 		checkBox.addMouseListener(cbl);
 		checkBox.addMouseMotionListener(cbl);
@@ -254,7 +254,7 @@ public final class DrawBoolean extends Drawable {
 		this.geo = geo;
 	}
 	
-	private static class CheckBoxIcon implements  Icon, Serializable {
+	public static class CheckBoxIcon implements  Icon, Serializable {
 		
 		// Michael Borcherds 2008-05-11
 		// adapted from http://www.java2s.com/Open-Source/Java-Document/6.0-JDK-Modules-com.sun.java/swing/com/sun/java/swing/plaf/windows/WindowsIconFactory.java.htm
@@ -285,14 +285,9 @@ public final class DrawBoolean extends Drawable {
          * CA 95054 USA or visit www.sun.com if you need additional information or
          * have any questions.
          */
-		static int csize = 13;
+		int csize = 13;
 		
 		public CheckBoxIcon(int size)
-		{
-			setSize(size);
-		}
-		
-		public static void setSize(int size)
 		{
 			csize = (size == 13) ? 13 : 26; // allow only 13 or 26
 		}

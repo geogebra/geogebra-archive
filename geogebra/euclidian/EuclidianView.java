@@ -372,6 +372,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	// END
 
 	int pointStyle = POINT_STYLE_DOT;
+	
+	int booleanSize=13;
 
 	int mode = MODE_MOVE;
 
@@ -528,6 +530,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
 		pointStyle = POINT_STYLE_DOT;
+		
+		booleanSize=13; // Michael Borcherds 2008-05-12
 
 		// added by Loïc BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
@@ -613,6 +617,24 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 */
 	public void setGridType(int type) {
 		gridType = type;
+	}
+
+	
+//	 
+	/**
+	 * Sets the global size for checkboxes.
+	 * Michael Borcherds 2008-05-12
+	 */
+	public void setBooleanSize(int size) {
+
+		// only 13 and 26 currently allowed
+		booleanSize = (size == 13) ? 13 : 26;
+		
+		updateAllDrawables(true);
+	}
+
+	final public int getBooleanSize() {
+		return booleanSize;
 	}
 
 	/**
@@ -2811,6 +2833,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 		sb.append(pointStyle);
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(rightAngleStyle);
+		
+		sb.append("\" checkboxSize=\"");
+		sb.append(booleanSize); // Michael Borcherds 2008-05-12
 
 		sb.append("\" gridType=\"");
 		sb.append(getGridType()); //		 cartesian/isometric

@@ -360,6 +360,8 @@ public abstract class Application implements	KeyEventDispatcher {
 			mainComp = applet;
 		} 
 		
+		//geogebra.euclidian.DrawBoolean.CheckBoxIcon.setSize(13);
+
 		initCodeBase();		
 		handleOptionArgs(args); // note: the locale is set here too	     			
 		imageManager = new ImageManager(mainComp);				

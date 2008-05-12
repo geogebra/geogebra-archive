@@ -452,6 +452,12 @@ public class MyXMLHandler implements DocHandler {
             if (strPointStyle != null)
             	ev.setPointStyle(Integer.parseInt(strPointStyle));
             
+            // Michael Borcherds 2008-05-12
+            // size of checkbox
+            String strBooleanSize = (String) attrs.get("checkboxSize");
+            if (strBooleanSize != null)
+            	ev.setBooleanSize(Integer.parseInt(strBooleanSize));
+            
             // v3.0: appearance of right angle
             String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
             if (strRightAngleStyle == null)
