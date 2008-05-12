@@ -81,7 +81,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			cbShowCmdList;
 
 	protected JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
-			menuContinuity, menuPointStyle, menuRightAngleStyle,
+			menuContinuity, menuPointStyle, menuBooleanSize, menuRightAngleStyle,
 			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools;
 
 	//private JMenuItem miCloseAll;
@@ -131,6 +131,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         updateMenuAngleUnit();
         updateMenuDecimalPlaces();
         updateMenuPointStyle();
+        updateMenuBooleanSize(); // Michael Borcherds 2008-05-12
         updateMenuRightAngleStyle();
         updateMenuCoordStyle();	
         updateMenuLabeling();        
@@ -421,6 +422,24 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				strPointStyleAC, 0);
 		menu.add(menuPointStyle);
 		updateMenuPointStyle();
+
+		// checkboxsize
+		// Michael Borcherds 2008-05-12
+		menuBooleanSize = new JMenu(app.getMenu("CheckboxSize"));
+		menuBooleanSize.setIcon(app.getImageIcon("mode_point_16.gif"));
+		// dot, circle, cross
+		String[] strBooleanSize = { app.getMenu("CheckboxSize.Regular"), app.getMenu("CheckboxSize.Large") };
+		String[] strBooleanSizeAC = { "13", "26" };
+		ActionListener bsal = new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				int size = Integer.parseInt(ae.getActionCommand());
+				app.getEuclidianView().setBooleanSize(size);
+			}
+		};
+		addRadioButtonMenuItems(menuBooleanSize, bsal, strBooleanSize,
+				strBooleanSizeAC, 0);
+		menu.add(menuBooleanSize);
+		updateMenuBooleanSize();
 
 		// added by Lo�c BEGIN
 		// right angle style
@@ -1432,6 +1451,15 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		int pos = app.getEuclidianView().getPointStyle();
 		if (pos == 1) pos=2; else if (pos == 2) pos=1; // bugfix swap 2 and 1 Michael Borcherds 2008-03-13
 		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos))
+				.setSelected(true);
+	}
+
+	protected void updateMenuBooleanSize() {
+		if (menuBooleanSize == null) return;
+		
+		int size = app.getEuclidianView().getBooleanSize();
+		int pos = (size == 13) ? 0 : 1; // only 13 and 26 allowed
+		((JRadioButtonMenuItem) menuBooleanSize.getMenuComponent(pos))
 				.setSelected(true);
 	}
 

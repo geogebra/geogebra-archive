@@ -58,7 +58,7 @@ public final class DrawBoolean extends Drawable {
 		
 		// action listener for checkBox
 		cbl = new BooleanCheckBoxListener();
-		checkBox = new JCheckBox(new CheckBoxIcon(view.getBooleanSize()));
+		checkBox = new JCheckBox(new CheckBoxIcon(view));
 		checkBox.addItemListener(cbl);
 		checkBox.addMouseListener(cbl);
 		checkBox.addMouseMotionListener(cbl);
@@ -285,17 +285,21 @@ public final class DrawBoolean extends Drawable {
          * CA 95054 USA or visit www.sun.com if you need additional information or
          * have any questions.
          */
-		int csize = 13;
+		//int csize = 13;
 		
-		public CheckBoxIcon(int size)
+		EuclidianView ev;
+		
+		public CheckBoxIcon(EuclidianView ev)
 		{
-			csize = (size == 13) ? 13 : 26; // allow only 13 or 26
+			this.ev=ev;
 		}
 		
         public void paintIcon(Component c, Graphics g, int x, int y) {
             JCheckBox cb = (JCheckBox) c;
             ButtonModel model = cb.getModel();
 
+            int csize = ev.getBooleanSize();
+            
             {
                 // outer bevel
                 if (!cb.isBorderPaintedFlat()) {
@@ -407,12 +411,12 @@ public final class DrawBoolean extends Drawable {
 
         public int getIconWidth() {
      
-                return csize;
+                return ev.getBooleanSize();
            
         }
 
         public int getIconHeight() {
-                return csize;
+                return ev.getBooleanSize();
             
         }
     }
