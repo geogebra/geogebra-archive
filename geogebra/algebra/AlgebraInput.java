@@ -274,7 +274,11 @@ implements ActionListener, MouseListener, KeyListener
 		int keyCode = e.getKeyCode();    
 		if (keyCode == KeyEvent.VK_ENTER) {	
 			  String input = inputField.getText();					   
-			  if (input == null || input.length() == 0) return;
+			  if (input == null || input.length() == 0)
+			  {
+				  app.getEuclidianView().requestFocus(); // Michael Borcherds 2008-05-12
+				  return;
+			  }
 			  boolean success = null != 
 				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
 			  if (success) {						   
