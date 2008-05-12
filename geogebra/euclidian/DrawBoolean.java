@@ -386,24 +386,27 @@ public final class DrawBoolean extends Drawable {
                     g.drawLine(x + 15, y +  9, x + 18, y +  9);
 
                     g.drawLine(x + 14, y + 10, x + 18, y + 10);
-                    g.drawLine(x + 13, y + 11, x + 17, y + 11);
+                    g.drawLine(x + 13, y + 11, x + 18, y + 11);
                     
-                    g.drawLine(x + 12, y + 12, x + 16, y + 12);
-                    g.drawLine(x + 11, y + 13, x + 15, y + 13);
+                    g.drawLine(x + 12, y + 12, x + 17, y + 12);
+                    g.drawLine(x + 11, y + 13, x + 16, y + 13);
                     
-                    g.drawLine(x +  6, y + 14, x + 14, y + 14);
-                    g.drawLine(x +  7, y + 15, x + 13, y + 15);
+                    g.drawLine(x +  5, y + 14, x + 15, y + 14);
+                    g.drawLine(x +  6, y + 15, x + 14, y + 15);
                     
-                    g.drawLine(x +  8, y + 16, x + 12, y + 16);
-                    g.drawLine(x +  9, y + 17, x + 11, y + 17);
+                    g.drawLine(x +  7, y + 16, x + 13, y + 16);
+                    g.drawLine(x +  8, y + 17, x + 12, y + 17);
                     
-                    g.drawLine(x + 10, y + 18, x + 10, y + 18);
+                    g.drawLine(x + 9, y + 18, x + 11, y + 18);
+                    g.drawLine(x + 10, y + 19, x + 10, y + 19);
                     
-                    g.drawLine(x +  6, y + 10, x +  6, y + 10);
-                    g.drawLine(x +  6, y + 11, x +  7, y + 11);
+                    g.drawLine(x +  5, y + 9, x +  5, y + 9);
+                    g.drawLine(x +  5, y + 10, x +  6, y + 10);
                     
-                    g.drawLine(x +  6, y + 12, x +  8, y + 12);
-                    g.drawLine(x +  6, y + 13, x +  9, y + 13);
+                    g.drawLine(x +  5, y + 11, x +  7, y + 11);
+                    g.drawLine(x +  5, y + 12, x +  8, y + 12);
+                    
+                    g.drawLine(x +  5, y + 13, x +  9, y + 13);
                   }
                 }
             }
