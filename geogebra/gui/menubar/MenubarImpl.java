@@ -426,7 +426,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// checkboxsize
 		// Michael Borcherds 2008-05-12
 		menuBooleanSize = new JMenu(app.getMenu("CheckboxSize"));
-		menuBooleanSize.setIcon(app.getImageIcon("mode_point_16.gif"));
+		menuBooleanSize.setIcon(app.getImageIcon("checkbox16.gif"));
 		// dot, circle, cross
 		String[] strBooleanSize = { app.getMenu("CheckboxSize.Regular"), app.getMenu("CheckboxSize.Large") };
 		String[] strBooleanSizeAC = { "13", "26" };
