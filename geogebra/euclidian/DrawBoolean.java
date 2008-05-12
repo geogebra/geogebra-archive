@@ -366,6 +366,12 @@ public final class DrawBoolean extends Drawable {
                   if (csize == 13)
                   {
                 	
+                	  for (int i=5 ; i<=9 ; i++)
+                          g.drawLine(x+i, y+12-i, x+i, y+14-i);
+                	  
+                	  for (int i=3 ; i<=4 ; i++)
+                          g.drawLine(x+i, y+i+2, x+i, y+i+4);
+                	  /*
                 	g.drawLine(x + 9, y + 3, x + 9, y + 3);
                     g.drawLine(x + 8, y + 4, x + 9, y + 4);
                     g.drawLine(x + 7, y + 5, x + 9, y + 5);
@@ -374,11 +380,20 @@ public final class DrawBoolean extends Drawable {
                     g.drawLine(x + 4, y + 8, x + 6, y + 8);
                     g.drawLine(x + 5, y + 9, x + 5, y + 9);
                     g.drawLine(x + 3, y + 5, x + 3, y + 5);
-                    g.drawLine(x + 3, y + 6, x + 4, y + 6);
+                    g.drawLine(x + 3, y + 6, x + 4, y + 6);*/
                     
                   }
                   else
                   { // csize == 26
+                	  
+                	  for (int i=10 ; i<=18 ; i++)
+                          g.drawLine(x+i, y+24-i, x+i, y+29-i);
+                	  
+                	  for (int i=5 ; i<=9 ; i++)
+                          g.drawLine(x+i, y+i+4, x+i, y+i+9);
+                		  
+                		  
+                	/*	  
                     g.drawLine(x + 18, y +  6, x + 18, y +  6);
                     g.drawLine(x + 17, y +  7, x + 18, y +  7);
 
@@ -406,7 +421,7 @@ public final class DrawBoolean extends Drawable {
                     g.drawLine(x +  5, y + 11, x +  7, y + 11);
                     g.drawLine(x +  5, y + 12, x +  8, y + 12);
                     
-                    g.drawLine(x +  5, y + 13, x +  9, y + 13);
+                    g.drawLine(x +  5, y + 13, x +  9, y + 13);*/
                   }
                 }
             }
