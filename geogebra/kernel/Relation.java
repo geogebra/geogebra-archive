@@ -44,19 +44,11 @@ public class Relation extends java.lang.Object {
      * tangent of, ...)
      */
     final public String relation(GeoElement a, GeoElement b) {
-        // chek defined state
+        // check defined state
         if (!a.isDefined()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(a.getNameDescription());
-            sb.append(' ');
-            sb.append(app.getPlain("isNotDefined"));
-            return sb.toString();
+            return app.getPlain("AisNotDefined",a.getNameDescription());
         } else if (!b.isDefined()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(b.getNameDescription());
-            sb.append(' ');
-            sb.append(app.getPlain("isNotDefined"));
-            return sb.toString();
+            return app.getPlain("AisNotDefined",b.getNameDescription());
         }
 
         // decide what relation method can be used                                
@@ -85,15 +77,7 @@ public class Relation extends java.lang.Object {
 		else if (a instanceof NumberValue && b instanceof NumberValue)
 			return relation((NumberValue) a, (NumberValue) b);
 		else {
-            StringBuffer sb = new StringBuffer();
-            sb.append(a.getNameDescription());
-            sb.append(' ');
-            sb.append(app.getPlain("and"));
-            sb.append(' ');
-            sb.append(b.getNameDescription());
-            sb.append(' ');
-            sb.append(app.getPlain("comparedCannot"));
-            return sb.toString();
+           return app.getPlain("AandBcannotBeCompared",a.getNameDescription(),b.getNameDescription());
         }
     }
 
@@ -118,14 +102,16 @@ public class Relation extends java.lang.Object {
         StringBuffer sb = new StringBuffer();
         sb.append(equalityString(a, b, a.equals(b)));
         sb.append("\n");
-        sb.append(app.getPlain("Length"));
-        sb.append(": ");
-        sb.append(relation((NumberValue) a, (NumberValue) b));
+        //sb.append(app.getPlain("Length"));
+        //sb.append(": ");
+        //sb.append(relation((NumberValue) a, (NumberValue) b));
+    	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
+    	    sb.append(app.getPlain("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
+    	else
+        	sb.append(app.getPlain("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
         kernel.resetPrecision();
         return sb.toString();
     }
-
-   
 
     /**
      * description of the relation between two points A, B
@@ -259,12 +245,19 @@ public class Relation extends java.lang.Object {
         if (type == b.getConicPartType()) {
         	sb.append("\n");
 	        if (type == GeoConicPart.CONIC_PART_ARC) {
-	        	sb.append(app.getCommand("Length"));
+	        	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
+	        	    sb.append(app.getPlain("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
+	        	else
+		        	sb.append(app.getPlain("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
 	        } else {
-	        	sb.append(app.getCommand("Area"));
+	        	//sb.append(app.getCommand("Area"));
+	        	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
+	        	    sb.append(app.getPlain("AhasTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));
+	        	else
+		        	sb.append(app.getPlain("AdoesNothaveTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));	  
 	        }	        	
-	        sb.append(": ");
-	        sb.append(relation((NumberValue) a, (NumberValue) b));
+	        //sb.append(": ");
+	        //sb.append(relation((NumberValue) a, (NumberValue) b));
         }
         
         kernel.resetPrecision();
@@ -314,18 +307,10 @@ public class Relation extends java.lang.Object {
         GeoElement a,
         GeoElement b,
         boolean equal) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
-        sb.append(": ");
         if (equal)
-            sb.append(app.getPlain("equal"));
+            return app.getPlain("AandBareEqual",a.getNameDescription(),b.getNameDescription());
         else
-            sb.append(app.getPlain("unequal"));
-        return sb.toString();
+            return app.getPlain("AandBareNotEqual",a.getNameDescription(),b.getNameDescription());
     }
 
     // "Relation of a and b: linear dependent"
@@ -334,18 +319,10 @@ public class Relation extends java.lang.Object {
         GeoElement a,
         GeoElement b,
         boolean dependent) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
-        sb.append(": ");
         if (dependent)
-            sb.append(app.getPlain("linearDependent"));
+            return app.getPlain("AandBareLinearlyDependent",a.getNameDescription(),b.getNameDescription());
         else
-            sb.append(app.getPlain("linearIndependent"));
-        return sb.toString();
+            return app.getPlain("AandBareLinearlyIndependent",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a lies on b"
@@ -354,29 +331,15 @@ public class Relation extends java.lang.Object {
         GeoPoint a,
         GeoElement b,
         boolean incident) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
         if (incident)
-            sb.append(app.getPlain("liesOn"));
+            return app.getPlain("AliesOnB",a.getNameDescription(),b.getNameDescription());
         else
-            sb.append(app.getPlain("liesOnNot"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
-        return sb.toString();
+            return app.getPlain("AdoesNotLieOnB",a.getNameDescription(),b.getNameDescription());
     }
 
     // "Relation of a and b: parallel"    
     final private String parallelString(GeoLine a, GeoLine b) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
-        sb.append(": ");
-        sb.append(app.getPlain("parallel"));
-        return sb.toString();
+        return app.getPlain("AandBareParallel",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a intersects with b"
@@ -385,58 +348,52 @@ public class Relation extends java.lang.Object {
         GeoElement b,
         boolean intersects) {
         StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
+        // Michael Borcherds 2008-05-14
+        // updated for better translation
         if (intersects)
-            sb.append(app.getPlain("intersectsWith"));
+            sb.append(app.getPlain("AIntersectsWithB",a.getNameDescription(),b.getNameDescription()));
         else
-            sb.append(app.getPlain("intersectsWithNot"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
+            sb.append(app.getPlain("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription()));
         return sb.toString();
     }
 
     // e.g "a is tangent of b"
     // types are defined in AlgoIntersectLineConic
     final private String lineConicString(GeoLine a, GeoConic b, int type) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(a.getNameDescription());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(b.getNameDescription());
-        sb.append(": ");
-        
-        String strType;
+       
         switch (type) {
             case AlgoIntersectLineConic.INTERSECTION_PRODUCING_LINE :
-                strType = app.getPlain("producingLine");
-                break;
+                //strType = app.getPlain("producingLine");
+            	return app.getPlain("AisaProducingLineToB",a.getNameDescription(),b.getNameDescription());
+                //break;
 
             case AlgoIntersectLineConic.INTERSECTION_ASYMPTOTIC_LINE :
-                strType = app.getPlain("asymptoticLine");
-                break;
+                //strType = app.getPlain("asymptoticLine");
+            	return app.getPlain("AisAnAsymptoteToB",a.getNameDescription(),b.getNameDescription());
+                //break;
 
             case AlgoIntersectLineConic.INTERSECTION_MEETING_LINE :
-                strType = app.getPlain("meetingLine");
-                break;
+                //strType = app.getPlain("meetingLine");
+            	return app.getPlain("AintersectsWithBOnce",a.getNameDescription(),b.getNameDescription());
+                //break;
 
             case AlgoIntersectLineConic.INTERSECTION_TANGENT_LINE :
-                strType = app.getPlain("tangentLine");
-                break;
+                //strType = app.getPlain("tangentLine");
+            	return app.getPlain("AisaTangentToB",a.getNameDescription(),b.getNameDescription());
+                //break;
 
             case AlgoIntersectLineConic.INTERSECTION_SECANT_LINE :
-                strType = app.getPlain("secantLine");
-                break;
+                //strType = app.getPlain("secantLine");
+            	return app.getPlain("AintersectsWithBTwice",a.getNameDescription(),b.getNameDescription());
+                //break;
 
             default :
                 //case AlgoIntersectLineConic.INTERSECTION_PASSING_LINE:
-                strType = app.getPlain("passingLine");
-                break;
+                //strType = app.getPlain("passingLine");
+            	return app.getPlain("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription());
+                //break;
         }
 
-        sb.append(strType);
-        return sb.toString();
     }
 
 }
