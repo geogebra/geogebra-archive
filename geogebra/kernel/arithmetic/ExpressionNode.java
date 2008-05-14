@@ -2331,6 +2331,7 @@ implements ExpressionValue {
 /*
 // Michael Borcherds 2008-05-14
 // display powers over 6 as unicode superscript
+// TODO needs support in the parser too
 	        				 try {
 	        					 int i = Integer.parseInt(rightStr);
 	        					 String index="";
