@@ -2328,7 +2328,47 @@ implements ExpressionValue {
 	        			
 	        		default:
 	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
-                             if (rightStr.length() == 1) {
+/*
+// Michael Borcherds 2008-05-14
+// display powers over 6 as unicode superscript
+	        				 try {
+	        					 int i = Integer.parseInt(rightStr);
+	        					 String index="";
+	        					 if (i<0)
+	        					 {
+	        						 sb.append('\u207B'); // superscript minus sign
+	        						 i=-i;
+	        					 }
+	        					 
+	        					 if (i==0) sb.append('\u2070'); // zero     					 
+	        					 else while (i>0) {
+	        						 switch (i%10) {
+	                                case 0: index="\u2070"+index; break;
+	                                case 1: index="\u00b9"+index; break;
+	                                case 2: index="\u00b2"+index; break;
+	                                case 3: index="\u00b3"+index; break;
+	                                case 4: index="\u2074"+index; break;
+	                                case 5: index="\u2075"+index; break;
+	                                case 6: index="\u2076"+index; break;
+	                                case 7: index="\u2077"+index; break;
+	                                case 8: index="\u2078"+index; break;
+	                                case 9: index="\u2079"+index; break;
+	        						 
+	        						 }
+	        						 i=i/10;
+	        					 }
+	        					 
+	        					 sb.append(index);
+	        				 }
+	        				 catch (Exception e)
+	        				 {
+                                 sb.append('^'); 
+                                 sb.append(rightStr);	        					 
+	        				 }*/
+	        				 
+	        				 
+	        				 
+	        				 if (rightStr.length() == 1) {
                                  switch (rightStr.charAt(0)) {
                                      case '2': sb.append('\u00b2'); break;
                                      case '3': sb.append('\u00b3'); break;
