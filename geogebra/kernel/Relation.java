@@ -161,6 +161,8 @@ public class Relation extends java.lang.Object {
         } else {
             if (g.isParallel(h))
                 str = parallelString(g, h);
+            else if (g.isPerpendicular(h))
+                str = perpendicularString(g, h);
             else {
             	// check if intersection point really lies on both objects (e.g. segments)
             	GeoPoint tempPoint = new GeoPoint(g.cons);
@@ -340,6 +342,11 @@ public class Relation extends java.lang.Object {
     // "Relation of a and b: parallel"    
     final private String parallelString(GeoLine a, GeoLine b) {
         return app.getPlain("AandBareParallel",a.getNameDescription(),b.getNameDescription());
+    }
+
+    // Michael Borcherds 2008-05-15
+    final private String perpendicularString(GeoLine a, GeoLine b) {
+        return app.getPlain("AandBarePerpendicular",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a intersects with b"
