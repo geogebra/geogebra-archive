@@ -299,13 +299,13 @@ public class Construction {
             ceList.remove(ce);
             ce.setConstructionIndex(-1);
             --step;
-            updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
         } else { // pos > step
             ceList.remove(ce);
             ce.setConstructionIndex(-1);
         }        
                 
         updateConstructionIndex(pos);                
+        updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
     }
        
     /**
@@ -351,17 +351,16 @@ public class Construction {
                 // update construction step
                 if (fromIndex <= step && step < toIndex) {
                 	--step;
-                    updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15 
 
                     ce.notifyRemove();
                 }
                 else if (toIndex <= step && step < fromIndex) {
                 	++step;
-                    updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
 
                     ce.notifyAdd();
                 }                                                       
         }       
+        updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15 
         return change;
     }
     
@@ -552,7 +551,7 @@ public class Construction {
      * -1 shows an empty construction.
      */
     public void setStep(int s) {	
-    	System.out.println("setStep)");
+    	//System.out.println("setStep");
         if (s == step || s < -1 || s >= ceList.size())
 			return;
 

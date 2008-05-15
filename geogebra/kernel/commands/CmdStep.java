@@ -40,8 +40,8 @@ public class CmdStep extends CommandProcessor {
 				}
 			}
 			GeoElement[] ret3 = { 
-					//kernel.Step(c.getLabel(), arg[0] ) };
-			kernel.Step(c.getLabel() ) };
+					kernel.Step(c.getLabel(), arg[0] ) };
+			//kernel.Step(c.getLabel() ) };
 			return ret3;
 	
 		default:

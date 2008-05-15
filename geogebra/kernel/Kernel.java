@@ -1284,11 +1284,23 @@ public class Kernel {
 	}
 	
 	/** 
-	 * 
+	 * returns the current construction protocol step
+	 * Michael Borcherds 2008-05-15
 	 */
 	final public GeoNumeric Step(
 		String label) {
 		AlgoStep algo = new AlgoStep(cons, label);
+		GeoNumeric t = algo.getResult();
+		return t;
+	}
+	
+	/** 
+	 * returns  current construction protocol step for an object
+	 * Michael Borcherds 2008-05-15
+	 */
+	final public GeoNumeric Step(
+		String label, GeoElement geo) {
+		AlgoStepObject algo = new AlgoStepObject(cons, label, geo);
 		GeoNumeric t = algo.getResult();
 		return t;
 	}
