@@ -511,7 +511,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
             sb.append("[");
             // input
-            sb.append(input[0].getLabel());
+            if (input.length>0) sb.append(input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
             for (int i = 1; i < input.length; ++i) {
                 sb.append(", ");
                 sb.append(input[i].getLabel());
@@ -701,5 +701,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	final void setStopUpdateCascade(boolean stopUpdateCascade) {
 		this.stopUpdateCascade = stopUpdateCascade;
 	}
+	
+    public boolean wantsConstructionProtocolUpdate() {
+    	return false;
+    }
+    
 
 }

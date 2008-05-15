@@ -71,7 +71,7 @@ public class Construction {
 
     // current construction step (-1 ... ceList.size() - 1)
     // step == -1 shows empty construction
-    protected int step;
+    private int step;
     
     // in macro mode no new labels or construction elements
     // can be added
@@ -281,6 +281,8 @@ public class Construction {
         if (checkContains && ce.isInConstructionList()) return;
         
         ++step;
+        updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
+        
         ceList.add(step, ce);            
         updateConstructionIndex(step);                     
     }     
@@ -296,8 +298,8 @@ public class Construction {
         else if (pos <= step) {
             ceList.remove(ce);
             ce.setConstructionIndex(-1);
-            //setStep(step-1);
             --step;
+            updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
         } else { // pos > step
             ceList.remove(ce);
             ce.setConstructionIndex(-1);
@@ -348,11 +350,15 @@ public class Construction {
                 
                 // update construction step
                 if (fromIndex <= step && step < toIndex) {
-                    --step;
+                	--step;
+                    updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15 
+
                     ce.notifyRemove();
                 }
                 else if (toIndex <= step && step < fromIndex) {
-                    ++step;
+                	++step;
+                    updateAllConstructionProtocolAlgorithms(); // Michael Borcherds 2008-05-15
+
                     ce.notifyAdd();
                 }                                                       
         }       
@@ -440,22 +446,42 @@ public class Construction {
     }
     
     final boolean updateAllEuclidianViewAlgorithms() {
-    	 boolean didUpdate = false;
-    	 
-    	// update all algorithms
-        int size = algoList.size();
-        for (int i = 0; i < size; ++i) {        	        	
-        	AlgoElement algo = (AlgoElement)algoList.get(i);   
-        	if (algo.wantsEuclidianViewUpdate()) {
-        		algo.euclidianViewUpdate();     
-        		didUpdate = true;
-            	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
-        	}
-        }  
-        
-        return didUpdate;
-    }
-    
+   	 boolean didUpdate = false;
+   	 
+   	// update all algorithms
+       int size = algoList.size();
+       for (int i = 0; i < size; ++i) {        	        	
+       	AlgoElement algo = (AlgoElement)algoList.get(i);   
+       	if (algo.wantsEuclidianViewUpdate()) {
+       		algo.euclidianViewUpdate();     
+       		didUpdate = true;
+           	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
+       	}
+       }  
+       
+       return didUpdate;
+   }
+   
+    // Michael Borcherds 2008-05-15
+    final boolean updateAllConstructionProtocolAlgorithms() {
+   	 boolean didUpdate = false;
+   	//System.out.println("updateAllConstructionProtocolAlgorithms");
+   	// update all algorithms
+       int size = algoList.size();
+       for (int i = 0; i < size; ++i) {        	        	
+       	AlgoElement algo = (AlgoElement)algoList.get(i);   
+       	if (algo.wantsConstructionProtocolUpdate()) {
+       		algo.compute();     
+       		//algo.euclidianViewUpdate();   
+       		algo.getGeoElements()[0].updateCascade();
+       		didUpdate = true;
+           	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
+       	}
+       }  
+       
+       return didUpdate;
+   }
+   
     final boolean wantsEuclidianViewUpdate() {     	
        int size = algoList.size();
        for (int i = 0; i < size; ++i) {        	        	
@@ -526,23 +552,30 @@ public class Construction {
      * -1 shows an empty construction.
      */
     public void setStep(int s) {	
+    	System.out.println("setStep)");
         if (s == step || s < -1 || s >= ceList.size())
 			return;
 
-        kernel.setAllowVisibilitySideEffects(false);
-        
-        if (s < step) {
-            for (int i = s + 1; i <= step; ++i) {
-                 ((ConstructionElement) ceList.get(i)).notifyRemove();                                  
-            }
-        } else {
-            for (int i = step + 1; i <= s; ++i) {
-                 ((ConstructionElement) ceList.get(i)).notifyAdd();
-            }
-        }        
+        if (step != -1) // Michael Borcherds 2008-05-15
+        {
+            kernel.setAllowVisibilitySideEffects(false);
+            
+            if (s < step) {
+                for (int i = s + 1; i <= step; ++i) {
+                     ((ConstructionElement) ceList.get(i)).notifyRemove();                                  
+                }
+            } else {
+                for (int i = step + 1; i <= s; ++i) {
+                     ((ConstructionElement) ceList.get(i)).notifyAdd();
+                }
+            }        
+        }
         step = s;
         
         kernel.setAllowVisibilitySideEffects(true);
+        
+        // Michael Borcherds 2008-05-15
+        updateAllConstructionProtocolAlgorithms();
     }
 
     /**

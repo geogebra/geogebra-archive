@@ -1284,6 +1284,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * 
+	 */
+	final public GeoNumeric Step(
+		String label) {
+		AlgoStep algo = new AlgoStep(cons, label);
+		GeoNumeric t = algo.getResult();
+		return t;
+	}
+	
+	/** 
 	 * Text dependent on coefficients of arithmetic expressions with variables,
 	 * represented by trees. e.g. c = a & b
 	 */
