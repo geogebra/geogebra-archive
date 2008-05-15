@@ -364,7 +364,7 @@ public class Relation extends java.lang.Object {
         switch (type) {
             case AlgoIntersectLineConic.INTERSECTION_PRODUCING_LINE :
                 //strType = app.getPlain("producingLine");
-            	return app.getPlain("AisaProducingLineToB",a.getNameDescription(),b.getNameDescription());
+            	return app.getPlain("AisaDegenerateBranchOfB",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             case AlgoIntersectLineConic.INTERSECTION_ASYMPTOTIC_LINE :
