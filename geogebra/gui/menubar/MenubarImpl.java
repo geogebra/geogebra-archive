@@ -310,7 +310,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowSpreadsheet.setIcon(app.getEmptyIcon());
 		cbShowSpreadsheet.setSelected(app.showSpreadsheet());
 		setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
-		menu.add(cbShowSpreadsheet);
+		//menu.add(cbShowSpreadsheet);
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
