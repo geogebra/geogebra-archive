@@ -25,6 +25,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.Color;
 import java.io.Serializable;
 
 import javax.swing.ButtonModel;
@@ -260,6 +261,8 @@ public final class DrawBoolean extends Drawable {
 		// adapted from http://www.java2s.com/Open-Source/Java-Document/6.0-JDK-Modules-com.sun.java/swing/com/sun/java/swing/plaf/windows/WindowsIconFactory.java.htm
 		// references to XPStyle removed
 		// option for double-size added
+		// replaced UIManager.getColor() with numbers from:
+		// http://www.java2s.com/Tutorial/Java/0240__Swing/ListingUIDefaultProperties.htm
 		
 		/*
          * Copyright 1998-2006 Sun Microsystems, Inc.  All Rights Reserved.
@@ -304,60 +307,61 @@ public final class DrawBoolean extends Drawable {
                 // outer bevel
                 if (!cb.isBorderPaintedFlat()) {
                     // Outer top/left
-                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
                     g.drawLine(x, y, x + (csize-2), y);
                     g.drawLine(x, y + 1, x, y + (csize-2));
 
                     // Outer bottom/right
-                    g
-                            .setColor(UIManager
-                                    .getColor("CheckBox.highlight"));
+                    //g.setColor(UIManager.getColor("CheckBox.highlight"));
+                    g.setColor(new Color(255,255,255));
                     g.drawLine(x + (csize-1), y, x + (csize-1), y + (csize-1));
                     g.drawLine(x, y + (csize-1), x + (csize-2), y + (csize-1));
 
                     // Inner top.left
-                    g.setColor(UIManager
-                            .getColor("CheckBox.darkShadow"));
+                    //g.setColor(UIManager.getColor("CheckBox.darkShadow"));
+                    g.setColor(new Color(64,64,64));
                     g.drawLine(x + 1, y + 1, x + (csize-3), y + 1);
                     g.drawLine(x + 1, y + 2, x + 1, y + (csize-3));
 
                     // Inner bottom/right
-                    g.setColor(UIManager.getColor("CheckBox.light"));
+                    //g.setColor(UIManager.getColor("CheckBox.light"));
+                    g.setColor(new Color(212,208,200));
                     g.drawLine(x + 1, y + (csize-2), x + (csize-2), y + (csize-2));
                     g.drawLine(x + (csize-2), y + 1, x + (csize-2), y + (csize-3));
 
                     // inside box 
                     if ((model.isPressed() && model.isArmed())
                             || !model.isEnabled()) {
-                        g.setColor(UIManager
-                                .getColor("CheckBox.background"));
+                        //g.setColor(UIManager.getColor("CheckBox.background"));
+                        g.setColor(new Color(212,208,200));
                     } else {
-                        g
-                                .setColor(UIManager
-                                        .getColor("CheckBox.interiorBackground"));
+                        //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
+                        g.setColor(new Color(255,255,255));
                     }
                     g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
                 } else {
-                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
                     g.drawRect(x + 1, y + 1, csize - 3, csize - 3);
 
                     if ((model.isPressed() && model.isArmed())
                             || !model.isEnabled()) {
-                        g.setColor(UIManager
-                                .getColor("CheckBox.background"));
+                        //g.setColor(UIManager.getColor("CheckBox.background"));
+                        g.setColor(new Color(212,208,200));
                     } else {
-                        g
-                                .setColor(UIManager
-                                        .getColor("CheckBox.interiorBackground"));
+                        //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
+                        g.setColor(new Color(255,255,255));
                     }
                     g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
                 }
 
                 if (model.isEnabled()) {
-                    g.setColor(UIManager
-                            .getColor("CheckBox.foreground"));
+                    //g.setColor(UIManager.getColor("CheckBox.foreground"));
+                    g.setColor(new Color(0,0,0));
                 } else {
-                    g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
                 }
 
                 // paint check
