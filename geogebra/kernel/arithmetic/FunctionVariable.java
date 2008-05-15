@@ -40,4 +40,11 @@ public class FunctionVariable extends MyDouble {
 		return varStr;
 	}
 
+	/*
+     * interface NumberValue
+     */    
+    final public MyDouble getNumber() {    	
+		// used in expression node tree: be careful
+		 return new MyDouble(this);		      
+    }
 }

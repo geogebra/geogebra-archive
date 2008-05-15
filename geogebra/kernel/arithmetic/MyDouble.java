@@ -226,7 +226,7 @@ implements NumberValue {
     /*
      * interface NumberValue
      */    
-    final public MyDouble getNumber() {
+    public MyDouble getNumber() {
     	if (isInTree()) {
 			// used in expression node tree: be careful
     		 return new MyDouble(this);
