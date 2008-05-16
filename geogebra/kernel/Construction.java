@@ -477,8 +477,8 @@ public class Construction {
            	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
        	}
        	
-       	kernel.getApplication().getConstructionProtocol().update();
        }  
+       if (didUpdate) kernel.getApplication().getConstructionProtocol().update();
        
        return didUpdate;
    }
