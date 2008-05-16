@@ -298,6 +298,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
         data.updateAll();
     }
 
+    // Michael Borcherds 2008-05-15
+    public void update() {
+        data.updateAll();
+    }
+
     private void setMenuBar() {
         menuBar.removeAll();
 
