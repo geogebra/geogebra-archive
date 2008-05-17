@@ -298,6 +298,7 @@ private int GreekDescent[]                   = { 3, 3, 3, 3};
 // begin Markus Hohenwarter, Jan 2008
 // private static final int EmbedFontSizes[]    = { 9,11,14,16,22 }; // zugeordnete normale Fonts
 private static final int EmbedFontSizes[] = { 8,10,12,14,16,18 }; // zugeordnete normale Fonts
+private static final Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 // end Markus Hohenwarter, Jan 2008
 
 /* greek font embedding characteristic based on Helvetica
@@ -632,8 +633,13 @@ public Dimension getPreferredSizeImpl() {
 
 public Dimension getSizeofImpl(String equation) {
 	int border;
-	Image genImage=component.createImage(200,200);
-	Graphics g = genImage.getGraphics();
+	
+	// Markus Hohenwarter, May 2008
+	//Image genImage=component.createImage(200,200);		
+	//Graphics g = genImage.getGraphics();
+	Graphics g = g2Dtemp;
+	// Markus Hohenwarter, May 2008
+	
 	g.setFont(f1);
 	eqScan.setEquation(equation);
 	BoxC area = eqn(0,150, false, g, 1);

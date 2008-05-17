@@ -124,7 +124,7 @@ public final class DrawText extends Drawable {
 //			eqn.paintComponent(view.getTempGraphics2D());
 //			eqnImage = eqn.getImage();
 //			eqnSize = eqn.getSize();
-			
+				
 			eqnSize = eqn.getSizeof(labelDesc);
 
 			// set bounding box of text component

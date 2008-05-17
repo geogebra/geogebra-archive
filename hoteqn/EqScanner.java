@@ -330,6 +330,9 @@ private EqToken ScanNextToken() {
       case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': 
       case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': 
       case 'V': case 'W': case 'X': case 'Y': case 'Z': case '\'': case'@':
+      // Markus Hohenwarter, May 2008
+      case '%':
+     // Markus Hohenwarter, May 2008
               SBuffer.append(eqchar);
               advance();
               tag = false;
@@ -426,6 +429,8 @@ private EqToken ScanNextToken() {
                  case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
                  case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
                  case 'Y': case 'Z': 
+    
+                	 
                     SBuffer.append(eqchar);
                     advance();
                     break;
