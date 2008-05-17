@@ -681,7 +681,7 @@ public abstract class GeoElement
 	 */
 	public void setNonVisualProperties(GeoElement geo) {
 		// TODO doesn't work
-		//setLayer(geo.getLayer());
+		setLayer(geo.getLayer());
 
 		// copy color function
 		setColorFunction(geo.getColorFunction());

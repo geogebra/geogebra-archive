@@ -33,6 +33,8 @@ public class DrawableList {
 	 * Inserts d at the end of the list.
 	 */
 	public final void add(Drawable d) {		
+		if (d == null) return;
+		
 		if (head == null) {
 			head = new Link(d, null);
 			tail = head;
