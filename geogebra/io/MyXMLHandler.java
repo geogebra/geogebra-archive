@@ -108,6 +108,7 @@ public class MyXMLHandler implements DocHandler {
     // for setting the conditions at the end of the construction
     // (needed for GeoText and GeoVector)
     private LinkedList showObjectConditionList = new LinkedList();
+    private LinkedList dynamicColorList = new LinkedList();
     private class GeoExpPair {
         GeoElement geo;  
         String exp;       
@@ -137,6 +138,7 @@ public class MyXMLHandler implements DocHandler {
     private void reset() {
         startPointList.clear();
         showObjectConditionList.clear();
+        dynamicColorList.clear();
         consStep = -2;                
         
         mode = MODE_INVALID;
@@ -973,6 +975,7 @@ public class MyXMLHandler implements DocHandler {
                     // process start points at end of construction
                     processStartPointList(); 
                     processShowObjectConditionList();
+                    processDynamicColorList();
                     
                     if (kernel == origKernel) {
                     	mode = MODE_GEOGEBRA;
@@ -1264,7 +1267,10 @@ public class MyXMLHandler implements DocHandler {
             	if (green.equals("")) green = "0";
             	if (blue.equals("")) blue = "0";
             	
-            	geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red + ","+green+","+blue+"}"));
+            	//geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red + ","+green+","+blue+"}"));
+    			// need to to this at end of construction (dependencies!)
+            	dynamicColorList.add(new GeoExpPair(geo, "{"+red + ","+green+","+blue+"}"));                               
+
             }
         } catch (Exception e) { System.err.println("Error loading Dynamic Colors"); }
         
@@ -1890,6 +1896,24 @@ public class MyXMLHandler implements DocHandler {
             throw new MyError(app, "processShowObjectConditionList: " + e.toString());
         }
         showObjectConditionList.clear();
+    }
+    
+    // Michael Borcherds 2008-05-18
+    private void processDynamicColorList() {  
+        try {
+            Iterator it = dynamicColorList.iterator();
+            AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+            
+            while (it.hasNext()) {
+                GeoExpPair pair = (GeoExpPair) it.next();                                              
+                pair.geo.setColorFunction(algProc.evaluateToList(pair.exp));
+            }
+        } catch (Exception e) { 
+        	dynamicColorList.clear();
+            e.printStackTrace();
+            throw new MyError(app, "dynamicColorList: " + e.toString());
+        }
+        dynamicColorList.clear();
     }
     
        
