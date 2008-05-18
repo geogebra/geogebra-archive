@@ -60,7 +60,7 @@ import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
-//import geogebra.spreadsheet.SpreadsheetView;
+import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.Util;
@@ -131,9 +131,9 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "May 16, 2008";
+    public static final String buildDate = "May 18, 2008";
 	
-    public static final String versionString = "3.1.1.0";    
+    public static final String versionString = "3.1.2.0";    
     public static final String XML_FILE_FORMAT = "3.01";    
   
     // GeoGebra jar files    
@@ -249,7 +249,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
-    //private SpreadsheetView spreadsheetView;
+    private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -388,7 +388,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-    	//spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -672,7 +672,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
- /*       if (showSpreadsheet) {
+        if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         eup, spreadsheetView);
@@ -687,7 +687,7 @@ public abstract class Application implements	KeyEventDispatcher {
                         new DividerChangeListener2());
             cp2 = sp2;
         }
-        else */{
+        else {
         	cp2 = eup;
         }
 
