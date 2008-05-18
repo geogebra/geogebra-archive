@@ -1412,13 +1412,13 @@ public class EuclidianView extends JPanel implements View, Printable {
 			Rectangle rect = selectionRectangle;
 			g2d.setClip(0,0, rect.width, rect.height);
 			g2d.translate(-rect.x, -rect.y);					
-			System.out.println(rect.x+" "+rect.y+" "+rect.width+" "+rect.height);
+			//System.out.println(rect.x+" "+rect.y+" "+rect.width+" "+rect.height);
 		} else {
-			// use points export_1 and export_2 to define corner
+			// use points Export_1 and Export_2 to define corner
 			try {
 				Construction cons = kernel.getConstruction();
-				GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
-				GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+				GeoPoint export1=(GeoPoint)cons.lookupLabel("Export_1");	       
+				GeoPoint export2=(GeoPoint)cons.lookupLabel("Export_2");
 				double [] xy1 = new double[2];
 				double [] xy2 = new double[2];
 				export1.getInhomCoords(xy1);
