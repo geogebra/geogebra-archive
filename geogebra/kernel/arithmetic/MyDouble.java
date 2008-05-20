@@ -226,14 +226,19 @@ implements NumberValue {
     /*
      * interface NumberValue
      */    
-    public MyDouble getNumber() {
+    final public MyDouble getNumber() {
+    	return new MyDouble(this);
+    	
+    	/* Michael Borcherds 2008-05-20
+    	 * removed unstable optimisation
+    	 * fails for eg -2 sin(x) - 5 cos(x)
     	if (isInTree()) {
 			// used in expression node tree: be careful
     		 return new MyDouble(this);
 		} else {
 			// not used anywhere: reuse this object
 			return this;
-		}	      
+		}	      */
     }
     
     

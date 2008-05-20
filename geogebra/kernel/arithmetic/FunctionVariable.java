@@ -42,9 +42,11 @@ public class FunctionVariable extends MyDouble {
 
 	/*
      * interface NumberValue
+     * removed Michael Borcherds 2008-05-20
+     * (see MyDouble)
      */    
-    final public MyDouble getNumber() {    	
+    //final public MyDouble getNumber() {    	
 		// used in expression node tree: be careful
-		 return new MyDouble(this);		      
-    }
+	//	 return new MyDouble(this);		      
+    //}
 }
