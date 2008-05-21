@@ -131,7 +131,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "May 18, 2008";
+    public static final String buildDate = "May 21, 2008";
 	
     public static final String versionString = "3.1.2.0";    
     public static final String XML_FILE_FORMAT = "3.01";    
@@ -249,7 +249,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
-    private SpreadsheetView spreadsheetView;
+    //private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -388,7 +388,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+    	//spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -672,7 +672,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
-        if (showSpreadsheet) {
+        /*if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         eup, spreadsheetView);
@@ -687,7 +687,7 @@ public abstract class Application implements	KeyEventDispatcher {
                         new DividerChangeListener2());
             cp2 = sp2;
         }
-        else {
+        else */{
         	cp2 = eup;
         }
 
@@ -791,9 +791,9 @@ public abstract class Application implements	KeyEventDispatcher {
     				else if (optionName.equals("showAlgebraWindow")) {    					
     					showAlgebraView = !optionValue.equals("false"); 
     				}    				
-    				else if (optionName.equals("showSpreadsheet")) {    					
-    					this.showSpreadsheet = !optionValue.equals("false"); 
-    				}    				
+    				//else if (optionName.equals("showSpreadsheet")) {    					
+    				//	this.showSpreadsheet = !optionValue.equals("false"); 
+    				//}    				
     				else if (optionName.equals("showAxes")) {    					
     					showAxes[0] = !optionValue.equals("false");
     					showAxes[1] = showAxes[0];
@@ -2511,15 +2511,6 @@ public abstract class Application implements	KeyEventDispatcher {
         if (showSpreadsheet == flag) return;
         
         showSpreadsheet = flag;
-        /*
-        if (showSpreadsheet) {        	
-        	spreadsheetView.attachView();    		        	
-        	spreadsheetView.setShowAuxiliaryObjects(showAuxiliaryObjects);
-        }         
-        else {
-        	spreadsheetView.detachView();
-        }
-        */   
             
         updateMenubar();            
         isSaved = false; 
