@@ -134,7 +134,7 @@ public abstract class Application implements	KeyEventDispatcher {
     public static final String buildDate = "May 21, 2008";
 	
     public static final String versionString = "3.1.2.0";    
-    public static final String XML_FILE_FORMAT = "3.01";    
+    public static final String XML_FILE_FORMAT = "3.02";    
   
     // GeoGebra jar files    
     public static final String [] JAR_FILES = 
