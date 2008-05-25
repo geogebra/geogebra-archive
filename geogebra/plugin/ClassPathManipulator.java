@@ -19,9 +19,13 @@ import java.net.*;
  *  not nice, but it works...
  *  <ul>Interface:
  *  <li> addFile(String)
+ *  <li> addFile(File)
+ *  <li> addURL(URL)
  *  <li> getClassPath():String
  *  <li> listClassPath()
  *  </ul>
+    @author 	H-P Ulven
+    @version  	25.05.08
  */
 public final class ClassPathManipulator {
 
@@ -51,10 +55,14 @@ public static void addURL(URL u) {
         Method method = sysclass.getDeclaredMethod("addURL",parameter);
         method.setAccessible(true);
         method.invoke(sysloader,new Object[]{ u });
-    } catch (Throwable t) {
-        //throw new IOException("Error, could not add URL to system classloader");
-        System.out.println("Could not add URL "+u.toString()+" to ClassPath!");
-        t.printStackTrace();
+    } catch (NoSuchMethodException t){
+        System.out.println("ClassPathManipulator: addURL gives NoSuchMethodExcepton.");
+    }catch(IllegalAccessException e){
+        System.out.println("ClassPathManipulator: addURL gives IllegalAccesException.");
+    }catch(InvocationTargetException e){
+        System.out.println("ClassPathManipulator: addURL gives InvocationTargetException");
+    }catch(Throwable t){
+        System.out.println("ClassPathManipulator: addURL gives "+t.getMessage());
     }//end try catch
 }//addURL(URL)
 
@@ -77,40 +85,18 @@ public static String getClassPath() {
         for(int i=0;i<urls.length;i++){
             urlsstr+=urls[i].toString()+nl;
         }//for
-    } catch (Throwable t) {
-        //throw new IOException("Error, could not add URL to system classloader");
-        System.out.println("Could not get (some?/all?) URLs in Classpath!");
-        t.printStackTrace();
+    } catch (NoSuchMethodException t){
+        System.out.println("ClassPathManipulator: getURL gives NoSuchMethodExcepton.");
+    }catch(IllegalAccessException e){
+        System.out.println("ClassPathManipulator: getURL gives IllegalAccesException.");
+    }catch(InvocationTargetException e){
+        System.out.println("ClassPathManipulator: getURL gives InvocationTargetException");
+    }catch(Throwable t){
+        System.out.println("ClassPathManipulator: getURL gives "+t.getMessage());
     }//end try catch
     return urlsstr;
 }//getClassPath()
 
-/** main() - Only for testing of this class */
-public final static void main(String[] args){
-/*
-    Class c=null,c2=null;
-    Object o=null,o2=null;
-    ClassPathManipulator cph=new ClassPathManipulator();
-    cph.listClassPath();
-    cph.addFile("plugins.zip");
-    cph.listClassPath();
-    try{
-        c=Class.forName("plugins.Plugin_One");
-        c2=Class.forName("plugins.Plugin_Two");
-    }catch(ClassNotFoundException cnfe){
-        System.out.println("Class not found!");
-    }//try-catch
-    try{
-        o = c.newInstance();
-        o2=c2.newInstance();
-    }catch(Exception e) {
-        System.out.println("Could not instantiate "+o.toString());
-    }//try-catch
-    plugins.Plugin_One p=(plugins.Plugin_One)o;
-    plugins.Plugin_Two p2=(plugins.Plugin_Two)o2;
-    System.out.println(p.getMenuText());
-    System.out.println(p2.getMenuText());
-    */
-}//main()
+
  
 }//class ClassPathManipulator

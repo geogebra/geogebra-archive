@@ -13,27 +13,49 @@ package geogebra.plugin;
 
 /**
 <h3>PlugLetInterface - Interface for GeoGebra plugin modules </h3>
+<pre>
+    Should also implement the Singleton DP:
+    
+    <B>public static PlugLetIF getInstance(); </B>
+    
+    (Not given in interface below, as static is not allowed in interfaces.)
+</pre>
 @author     H-P Ulven
-@version    15.04.08
+@version    22.05.08
 */
 
 public interface PlugLetIF {
 
-	/** Should also implement the Singleton DP
-	 *	public static PlugLetIF getInstance();  
-	 * @return PlugLet instance (implementing this interface)
+	 /**
+     *For GeoGebra to get information from the PlugLet 
+     *  @return String  with menu text
      */
+    public String getMenuText();
+
+    /** Initializing when loaded by PluginManager
+     *  
+     *  @param GgbAPI api - The API the plugin can use
+     *  @param String args - The args given in plugin.properties
+     */
+    public void init(GgbAPI api,String args);
     
+    /** The method to run the plugin program
+     *  Called by choosing in menu.
+     */
+    public void execute();
     
-	/** The method to run the plugin program
-	 *  @param GgbAPI - The API the plugin can use
-	 */
-	public void execute(GgbAPI api);
-	
-	/** For GeoGebra to get information from the PlugLet 
-	 *  @return String  with menu text
-	 */
-	public String getMenuText();
-	
-	
+    /** For possible future use
+     *  More natural in Runnable/Threads 
+     */
+    public void start();
+
+    /** For possible future use
+     *  More natural in Runnable/Threads 
+     */
+    public void stop();
+    
+    /** For possible future use */
+    public void destroy();
+    
+
 }//interface PlugLetIF

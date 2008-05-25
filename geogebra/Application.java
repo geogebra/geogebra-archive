@@ -4190,16 +4190,25 @@ public abstract class Application implements	KeyEventDispatcher {
 		this.shiftDragZoomEnabled = shiftDragZoomEnabled;
 	}
 	
-    /** PluginManager gets API with this */
-	//	 H-P Ulven 2008-04-16
+    /** PluginManager gets API with this
+	    H-P Ulven 2008-04-16
+	*/
     public GgbAPI getGgbApi(){return this.ggbapi;}		
 
     
-    /** MenuBarImpl gets pluginmenu from Application with this */
-	// H-P Ulven 2008-04-16
+    /** MenuBarImpl gets pluginmenu from Application with this
+	    H-P Ulven 2008-04-16
+	     
+	*/
     public javax.swing.JMenu  getPluginMenu(){
         return pluginmanager.getPluginMenu();
     }//getPluginMenu()
 	
+    /*  GgbAPI needs this
+        H-P Ulven 2008-05-25
+    */
+    public PluginManager getPluginManager(){
+    	return pluginmanager;
+    }//getPluginManager()
 	
 }

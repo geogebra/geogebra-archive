@@ -14,6 +14,7 @@ import geogebra.Application;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.Construction;
+import geogebra.plugin.ClassPathManipulator;
 
 
 /** 
@@ -27,14 +28,14 @@ import geogebra.kernel.Construction;
 <li>getKernel()
 <li>getConstruction()
 <li>getAlgebraProcessor()
+<li>getPluginManager()
 <li>evalCommand(String)
 <li>and the rest of the methods from the Applet JavaScript/Java interface
 <li>...
 </ul>
 @author      H-P Ulven
-@version     11.04.08
+@version     25.5.08
 */
-
 
 public class GgbAPI {
 
@@ -43,6 +44,7 @@ public class GgbAPI {
     private Kernel              kernel=             null;
     private Construction        construction=       null;
     private AlgebraProcessor    algebraprocessor=   null;
+    private PluginManager       pluginmanager=      null;    
     ///// ----- Interface ----- /////
    
    /** Constructor:
@@ -54,6 +56,7 @@ public class GgbAPI {
         kernel=app.getKernel();
         algebraprocessor=kernel.getAlgebraProcessor();
         construction=kernel.getConstruction();
+        pluginmanager=app.getPluginManager();
     }//Constructor
     
     /** Returns reference to Application */
@@ -68,17 +71,29 @@ public class GgbAPI {
     /** Returns reference to AlgebraProcessor */
     public AlgebraProcessor getAlgebraProcessor(){return this.algebraprocessor;}
 
+    /** Returns reference to PluginManager */
+    public PluginManager getPluginManager() {
+    	if(pluginmanager==null){
+    		this.pluginmanager=app.getPluginManager();
+    	}//if not initialized
+    	return this.pluginmanager;
+    }//getPluginManager()
+
+    /** Returns reference to ClassPathManipulator*/
+    public ClassPathManipulator getClassPathManipulator(){
+        return null;//ClassPathManipulator;
+    }//getClassPathManipulator()
+    
     /** Executes a GeoGebra command */
     public void evalCommand(String cmd) {
         if(algebraprocessor!=null) {
-            //ggb.evalCommand(cmd);
             algebraprocessor.processAlgebraCommand(cmd, true);
         }else{
             System.out.println("Cannot find the GeoGebra AlgebraProcessor!");
         }//if ggb not null
     }//evalCommand(String)
     
-    /// --- and some others ... --- ///
+    /// --- and some others from applet interface ... --- ///
           
 }// class GgbAPI
 
