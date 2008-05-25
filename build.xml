@@ -34,7 +34,7 @@ also
 		<delete dir="${build.dir}"/>
 	</target>
 	
-    <target name="dist" depends="clean, compile, compress, sign">
+    <target name="dist" depends="clean, compile, compress, compress2, compress3, sign, sign2, sign3">
         <echo>
             Building geogebra_unsigned.jar file.
         </echo>
@@ -50,14 +50,11 @@ also
     			<exclude name="*.jar"/>
     			<include name="LICENSE.TXT"/>
     			<include name="**com/**"/>
+    			<include name="META-INF/**"/>
     			<include name="**/*.png"/>
     			<include name="**/*.gif"/>
     			<include name="**/*.jpg"/>
-    			<exclude name="*build.xml" />
-    			<exclude name="**org**"/>
-    			<exclude name="**tutor**"/>
-    			<exclude name="**export**"/>
-    			<exclude name="**/*.properties"/>
+    			<include name="**/*.properties"/>
     		</fileset>
     	</copy>
     </target>
@@ -67,14 +64,56 @@ also
 			<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
 			manifest="MANIFEST.MF"
 			basedir="${build.dir}"
-			includes="**/*.class, *.jar, **/*.png, **/*.gif, **/*.jpg, **/*.properties"/>
+			includes="**/*.class **/*.png, **/*.gif, **/*.jpg"
+			excludes="org/**, tutor/**, geogebra/export/**, *.jar, **/*.properties"
+			/>
+	</target>
+	
+	<target name="compress2" depends="compile" description="Compression target">
+		<mkdir dir="${dist.dir}"/>
+			<jar jarfile="${dist.dir}/geogebra_export_unsigned.jar"
+			manifest="MANIFEST.MF"
+			basedir="${build.dir}"
+			includes="META-INF/services/**, org/**, geogebra/export/**"
+			/>
+	</target>
+	
+	<target name="compress3" depends="compile" description="Compression target">
+		<mkdir dir="${dist.dir}"/>
+			<jar jarfile="${dist.dir}/geogebra_properties_unsigned.jar"
+			manifest="MANIFEST.MF"
+			basedir="${build.dir}"
+			includes="geogebra/properties/**"
+			excludes="org/**, tutor/**, geogebra/export/**, *.jar"
+			/>
 	</target>
 	
 	<target name="sign" depends="compress">
 		
-		<signjar keystore="c:\keystore"
+		<signjar keystore="../keystore"
 			jar="${dist.dir}/geogebra_unsigned.jar"
 			signedjar="${dist.dir}/geogebra.jar"
+			alias="mhohen"
+			storepass="mhohen" />
+	
+		
+	</target>
+	
+	<target name="sign2" depends="compress2">
+		
+		<signjar keystore="../keystore"
+			jar="${dist.dir}/geogebra_export_unsigned.jar"
+			signedjar="${dist.dir}/geogebra_export.jar"
+			alias="mhohen"
+			storepass="mhohen" />
+	
+		
+	</target>
+	<target name="sign3" depends="compress3">
+		
+		<signjar keystore="../keystore"
+			jar="${dist.dir}/geogebra_properties_unsigned.jar"
+			signedjar="${dist.dir}/geogebra_properties.jar"
 			alias="mhohen"
 			storepass="mhohen" />
 	
