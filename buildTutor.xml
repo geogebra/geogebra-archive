@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<project default="dist">
+	
+	<property name="src.dir" location="."/>
+	<property name="build.dir" location="build"/>
+	<property name="dist.dir"  location="dist"/>
+	
+	<path id="project.classpath">
+		<pathelement path="${java.class.path}"/>
+		<fileset dir=".">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="clean">
+		<delete dir="${dist.dir}" />
+		<delete dir="${build.dir}"/>
+	</target>
+	
+    <target name="dist" depends="compile, compress, sign">
+        <echo>
+            Building geogebra_unsigned.jar file.
+        </echo>
+    </target>
+  
+    <target name="compile" description="Compilation target">
+    	<mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}">
+			<classpath refid="project.classpath" />
+        </javac>
+    	<copy todir="${build.dir}">
+    		<fileset dir="${src.dir}">
+    			<include name="*.jar"/>
+    			<include name="**/*.png"/>
+    			<include name="**/*.gif"/>
+    			<include name="**/*.jpg"/>
+    			<include name="**/*.properties"/>
+    		</fileset>
+    	</copy>
+    </target>
+  
+	<target name="compress" depends="compile" description="Compression target">
+		<mkdir dir="${dist.dir}"/>
+		<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
+			basedir="${build.dir}"
+			includes="**/*.class, *.jar, **/*.png, **/*.gif, **/*.jpg, **/*.properties"/>
+	</target>
+	
+	<target name="sign" depends="compress">
+		
+		<!--
+		<signjar keystore="keystore.ks"
+			jar="${dist.dir}/geogebra_unsigned.jar"
+			signedjar="${dist.dir}/geogebra.jar"
+			alias="myalias"
+			storepass="mypassword" />
+		-->
+		
+		<signjar keystore="UABKeyStore"
+			jar="${dist.dir}/geogebra_unsigned.jar"
+			signedjar="${dist.dir}/geogebra.jar"
+			alias="UABKeyEntry"
+			storepass="geogebratutor" />
+		
+	</target>
+
+</project>

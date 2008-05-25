@@ -3396,7 +3396,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	// Michael Borcherds 2008-05-04
     	Object[] options = { getMenu("SaveAndClose"), getMenu("CloseWithoutSaving"), getMenu("DontClose") };
     	int	returnVal=    
-    			JOptionPane.showOptionDialog(comp, getMenu("AreYouSureFileNotSaved"), getMenu("CloseFile"),
+    			JOptionPane.showOptionDialog(comp, getMenu("DoYouWantToSaveYourChanges"), getMenu("CloseFile"),
              JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 
              null, options, options[0]);     

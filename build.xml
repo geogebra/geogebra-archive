@@ -1,9 +1,26 @@
 <?xml version="1.0" ?>
+<!--
+need to add tools.jar from jdk 1.4.2 into the runtime classpath of ANT (windows->preferences->ant->Runtime->add jars..)
+
+also
+1) remove all the installed JREs from the Window -> Preferences -> Java -> Installed JREs
+
+2) add a JRE with the path to root J2SDK folder (JRE home directory: C:\j2sdk1.4.2_17) with the (JRE name: j2re1.4.2_17).
+
+
+-->
 <project default="dist">
 	
 	<property name="src.dir" location="."/>
-	<property name="build.dir" location="build"/>
-	<property name="dist.dir"  location="dist"/>
+	<property name="build.dir" location="../build"/>
+	<property name="dist.dir"  location="../build"/>
+	<property name="dist_properties.dir"  location="../dist_properties"/>
+	<property name="dist_export.dir"  location="../dist_export"/>
+	
+	 <manifest file="MANIFEST.MF">
+	      <attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar"/>
+	      <attribute name="Main-Class" value="geogebra.gui.MyAppSplash"/>
+	  </manifest>	
 	
 	<path id="project.classpath">
 		<pathelement path="${java.class.path}"/>
@@ -17,7 +34,7 @@
 		<delete dir="${build.dir}"/>
 	</target>
 	
-    <target name="dist" depends="compile, compress, sign">
+    <target name="dist" depends="clean, compile, compress, sign">
         <echo>
             Building geogebra_unsigned.jar file.
         </echo>
@@ -30,37 +47,37 @@
         </javac>
     	<copy todir="${build.dir}">
     		<fileset dir="${src.dir}">
-    			<include name="*.jar"/>
+    			<exclude name="*.jar"/>
+    			<include name="LICENSE.TXT"/>
+    			<include name="**com/**"/>
     			<include name="**/*.png"/>
     			<include name="**/*.gif"/>
     			<include name="**/*.jpg"/>
-    			<include name="**/*.properties"/>
+    			<exclude name="*build.xml" />
+    			<exclude name="**org**"/>
+    			<exclude name="**tutor**"/>
+    			<exclude name="**export**"/>
+    			<exclude name="**/*.properties"/>
     		</fileset>
     	</copy>
     </target>
   
 	<target name="compress" depends="compile" description="Compression target">
 		<mkdir dir="${dist.dir}"/>
-		<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
+			<jar jarfile="${dist.dir}/geogebra_unsigned.jar"
+			manifest="MANIFEST.MF"
 			basedir="${build.dir}"
 			includes="**/*.class, *.jar, **/*.png, **/*.gif, **/*.jpg, **/*.properties"/>
 	</target>
 	
 	<target name="sign" depends="compress">
 		
-		<!--
-		<signjar keystore="keystore.ks"
+		<signjar keystore="c:\keystore"
 			jar="${dist.dir}/geogebra_unsigned.jar"
 			signedjar="${dist.dir}/geogebra.jar"
-			alias="myalias"
-			storepass="mypassword" />
-		-->
-		
-		<signjar keystore="UABKeyStore"
-			jar="${dist.dir}/geogebra_unsigned.jar"
-			signedjar="${dist.dir}/geogebra.jar"
-			alias="UABKeyEntry"
-			storepass="geogebratutor" />
+			alias="mhohen"
+			storepass="mhohen" />
+	
 		
 	</target>
 
