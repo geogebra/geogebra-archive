@@ -115,6 +115,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             menuitem=new JMenuItem(plugin.getMenuText()); //make menuitem
             menuitem.setName(cname);
             menuitem.addActionListener(this);
+            if(pluginmenu==null){pluginmenu=new JMenu("Plugins");}
             pluginmenu.add(menuitem);           //add to menu   
         }else{
            System.out.println("PluginManager could not reflect out plugin "+cname);
@@ -136,7 +137,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         PlugLetIF   plugin;         //object
         JMenuItem   menuitem=null;
         String      menutext=null;
-        pluginmenu=new JMenu("Plugins");
+        // not here, only if not empty in addPlugin: pluginmenu=new JMenu("Plugins");
         plugintable.clear();
         for(int i=0;i<lines.size();i++){    //for all lines in plugin.properties
             paths.clear();
