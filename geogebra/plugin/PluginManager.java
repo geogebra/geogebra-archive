@@ -80,6 +80,19 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         return this.cpm;
     }//getClassPathManipulator()
     
+    /** Add path for a plugin on the net to classpath */
+    public void addURL(String path){
+    	URL url=null;
+    	try{
+    		url=new URL(path);
+    		cpm.addURL(url);
+        }catch(MalformedURLException e) {
+            System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
+        }catch(Throwable e){
+            System.out.println("PluginManager.addPath: "+e.getMessage()+" for "+path);
+        }//try-catch   
+    }//addURL(String)
+    
     /** Add path for a plugin to classpath*/
     public void addPath(String path){
         File file=null;
