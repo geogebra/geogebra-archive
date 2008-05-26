@@ -249,7 +249,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private URL codebase;
 
     private AlgebraView algebraView;
-    //private SpreadsheetView spreadsheetView;
+    private SpreadsheetView spreadsheetView;
     private EuclidianView euclidianView;
     private Kernel kernel;
     private MyXMLio myXMLio;
@@ -388,7 +388,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-    	//spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -672,7 +672,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
-        /*if (showSpreadsheet) {
+        if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         eup, spreadsheetView);
@@ -687,7 +687,7 @@ public abstract class Application implements	KeyEventDispatcher {
                         new DividerChangeListener2());
             cp2 = sp2;
         }
-        else */{
+        else {
         	cp2 = eup;
         }
 
@@ -791,9 +791,9 @@ public abstract class Application implements	KeyEventDispatcher {
     				else if (optionName.equals("showAlgebraWindow")) {    					
     					showAlgebraView = !optionValue.equals("false"); 
     				}    				
-    				//else if (optionName.equals("showSpreadsheet")) {    					
-    				//	this.showSpreadsheet = !optionValue.equals("false"); 
-    				//}    				
+    				else if (optionName.equals("showSpreadsheet")) {    					
+    					this.showSpreadsheet = !optionValue.equals("false"); 
+    				}    				
     				else if (optionName.equals("showAxes")) {    					
     					showAxes[0] = !optionValue.equals("false");
     					showAxes[1] = showAxes[0];
@@ -3229,8 +3229,8 @@ public abstract class Application implements	KeyEventDispatcher {
 	        	
 	        	// calculate total width of everything in window except EuclidianView
 	        	int algebraWidth= showAlgebraView ? algebraView.getPreferredSize().width : 0;
-	        	//int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getPreferredSize().width : 0;
-	        	int furnitureWidth = algebraWidth + 0;//spreadsheetWidth;
+	        	int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getPreferredSize().width : 0;
+	        	int furnitureWidth = algebraWidth + spreadsheetWidth;
 	        	
 	        	// calculate total height of everything in window except EuclidianView
 	        	int toolbarHeight= showToolBar ? getToolBarHeight() : 0; 
