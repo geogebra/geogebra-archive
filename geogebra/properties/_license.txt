@@ -1,0 +1,38 @@
+GeoGebra Language Files License
+
+Copyright 2001-2007 Markus Hohenwarter, markus@geogebra.org
+
+All GeoGebra language files (*.properties files) are subject 
+to the following Creative Commons Attribution-NonCommercial-NoDerivs 3.0 
+License:
+
+You are free to copy, distribute and transmit GeoGebra language files 
+free of charge under the following conditions:
+ * Attribution. You must attribute the work
+     (i.e. by linking to http://www.geogebra.org/)
+ * NonCommercial. You may not use this work for commercial purposes 
+     without permission of Markus Hohenwarter (markus@geogebra.org).
+ * No Derivative Works. You may not alter, transform, or build upon 
+     this work.
+
+The Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
+can be found at: http://creativecommons.org/licenses/by-nc-nd/3.0/
+
+Translations
+ Translations of GeoGebra installers, language files or documentation 
+ files are only allowed with permission of their respective authors. 
+ Resulting translations are subject to the same copyright as the 
+ original work (i.e. copyright of the original authors and Creative 
+ Commons Attribution-NonCommercial-NoDerivs license). 
+ The translators have the right to be attributed by name and contact 
+ address in their translated work. Furthermore, translated GeoGebra 
+ documentation files may not be used for commercial purposes without 
+ permission of the original authors and the respective translators.
+
+***
+
+Note concerning GeoGebra GNU GPL source code license:
+
+GeoGebra's source code is licensed under GNU GPL and fully
+functional without these language files. The language files
+are a plugin for GeoGebra under the abovementioned CC license.

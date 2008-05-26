@@ -1331,7 +1331,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append(Application.buildDate);
 
 		// license
-		String text = readTextFromJar("license_message.txt");
+		String text = readTextFromJar("_license.txt");
 		JTextArea textArea = new JTextArea(21, 45);
 		JScrollPane scrollPane = new JScrollPane(textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,

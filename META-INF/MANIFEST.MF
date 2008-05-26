@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: geogebra_properties.jar geogebra_export.jar
-Main-Class: geogebra.gui.MyAppSplash
-
