@@ -4,7 +4,8 @@
 	
 	<property name="src.dir" location="."/>
 	<property name="build.dir" location="../build"/>
-			
+	<property name="temp.dir" location="../temp"/>		
+	
 	<target name="geogebra" 
 		    depends="clean, ggb-jar, ggb-export-jar, ggb-properties-jar">
 	  <echo>Building unsigned geogebra jar files</echo>
@@ -31,16 +32,19 @@
 					**/*.png, 
 					**/*.gif, 
 					**/*.jpg, 
-					geogebra/gui/**/_license.txt" 
+					geogebra/gui/**/_license.txt" 						
 			excludes="*.jar, 
 					geogebra/export/**, 
-					geogebra/properties/**, 
-					geogebra/spreadsheet/**,
+					geogebra/properties/**, 			  
 					geogebra/cas/view/**,
+					geogebra/euclidian3D/**,
+					geogebra/kernel3D/**,
 					org/freehep/**, 					  
 				    tutor/**,
-					META-INF/**"
+					META-INF/**"			
 		/>
+		<!-- exclude: 
+			geogebra/spreadsheet/** -->
 	</target>
 	
 	<target name="ggb-export-jar" depends="clean" description="create unsigned geogebra_export.jar">
