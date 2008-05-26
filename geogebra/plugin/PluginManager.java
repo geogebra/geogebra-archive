@@ -64,6 +64,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         }catch(IOException ioe){
             System.out.println("PluginManager could not find start directory!");
         }//try-catch
+        addPath(".");
         loadProperties();   
     }//PluginManager()
     
