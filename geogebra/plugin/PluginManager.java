@@ -98,8 +98,12 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         File file=null;
         URL  url=null;        
         try{
-            file=new File(path);
-            url=file.toURL();
+        	if(path.startsWith("http://")){	//url!
+        		url=new URL(path);
+        	}else{							//local file!
+        		file=new File(path);
+        		url=file.toURL();
+        	}
             cpm.addURL(url);
         }catch(MalformedURLException e) {
             System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
