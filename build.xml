@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date May 27, 2008
+   @date May 27, 2008 (v2)
 -->
 <project default="geogebra">
 	
@@ -92,6 +92,7 @@ office@geogebra.org
 			includes="geogebra/export/**, 
 					org/freehep/**, 
 					meta-inf/services/**"
+			excludes="**/*.java" 
 		/>
 	</target>
 	
@@ -151,9 +152,9 @@ office@geogebra.org
 	            
 		<!-- sign jars -->
 		<signjar keystore="${workspace.dir}/keystore" alias="mhohen" storepass="mhohen">
-		  <path>
+
 		    <fileset dir="${build.dir}" includes="**/*.jar" />
-		  </path>
+
 		</signjar>	
 	        
 		<!-- pack jars -->
