@@ -107,26 +107,6 @@ public class AlgoSemicircle extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("SemicircleThroughAandB",A.getLabel(),B.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { 
-            sb.append(app.getPlain("Semicircle"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("through"));
-        sb.append(' ');
-        sb.append(A.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(B.getLabel());
-        if (app.isReverseLanguage()) { 
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(app.getPlain("Semicircle"));
-        }*/
-        
-
-
         return sb.toString();
     }
 }

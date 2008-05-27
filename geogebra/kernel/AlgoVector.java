@@ -92,22 +92,4 @@ public class AlgoVector extends AlgoElement {
         }
     }       
     
-    /* removed Michael Borcherds 2008-04-01 was being used, but not necessary
-    public final String toString() {
-        StringBuffer sb = new StringBuffer();
-        
-        // Michael Borcherds 2008-03-31
-        // simplified to allow better translation
-        sb.append(app.getPlain("Vector[AB]",P.getLabel(),Q.getLabel()));
-
-        /*
-        sb.append(app.getCommand("Vector") );
-        sb.append("[");
-        sb.append(P.getLabel());
-        sb.append(", ");
-        sb.append(Q.getLabel());
-        sb.append("]");      
-        
-        return sb.toString();
-    }*/
 }

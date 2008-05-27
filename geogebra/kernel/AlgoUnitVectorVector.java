@@ -87,11 +87,6 @@ public class AlgoUnitVectorVector extends AlgoElement {
         // simplified to allow better translation
         sb.append(app.getPlain("UnitVectorOfA",v.getLabel()));
 
-        /*
-        sb.append(app.getPlain("UnitVectorOf"));
-        sb.append(' ');
-        sb.append(v.getLabel());        */
-        
         return sb.toString();
     }
 }
