@@ -1209,7 +1209,7 @@ public class PropertiesDialogGeoElement
 			labelModeCB = new JComboBox();
 			labelModeCB.addItem(app.getPlain("Name")); // index 0
 			labelModeCB.addItem(
-				app.getPlain("Name") + " & " + app.getPlain("Value"));
+				app.getPlain("NameAndValue"));
 			// index 1
 			labelModeCB.addItem(app.getPlain("Value")); // index 2
 			labelModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
