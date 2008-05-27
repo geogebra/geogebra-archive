@@ -63,6 +63,8 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
 //            System.out.println("startdir_nosp="+startdir_nosp);
         }catch(IOException ioe){
             System.out.println("PluginManager could not find start directory!");
+        }catch(Throwable t){	//27.05.08: To keep ggb from crashing from errors in plugin.properties or applet security problems
+        	System.out.println("Pluginmanager:"+t.toString());
         }//try-catch
         addPath(".");
         loadProperties();   
@@ -71,7 +73,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     /** Returns pluginmenu. Called from Application */
     public JMenu getPluginMenu(){
         if(pluginmenu==null){
-            this.installPlugins();         //to ma
+            this.installPlugins();         //
         }//if null
         return pluginmenu;
     }//getPluginMenu()
