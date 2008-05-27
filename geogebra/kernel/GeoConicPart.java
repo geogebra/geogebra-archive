@@ -212,7 +212,21 @@ implements LimitedPath, NumberValue {
 			case GeoConic.CONIC_PARALLEL_LINES:
 				if (conic_part_type == CONIC_PART_ARC && posOrientation) {
 				    // length of segment 
-				    value = lines[0].getStartPoint().distance(lines[0].getEndPoint());
+					// bugfix Michael Borcherds 2008-05-27
+					GeoPoint startPoint=lines[0].getStartPoint();
+					GeoPoint endPoint=lines[0].getEndPoint();
+				    if (startPoint!=null && endPoint!=null)
+				    {
+				    	value = startPoint.distance(endPoint);
+				    }
+				    else 
+				    {
+				    	value = Double.POSITIVE_INFINITY; 
+						value_defined = false;
+					    break;
+				    }
+//				  bugfix end
+
 				} else { //sector or two rays
 					value = Double.POSITIVE_INFINITY; // area or length of rays	
 				}
