@@ -125,18 +125,20 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         //String      menutext=null;        
                 
         // Reflect out class and install:    
-                                                                                    //cpm.listClassPath();
-                                                                                    
-                                                                                    debug("addPlugin: "+cname+","+args);
+                                                                                    debug("addPlugin: "+cname+","+args);                                                                            
         plugin=getPluginInstance(cname);   //reflect out an instance of plugin
         if(plugin!=null) {                                                          debug("plugin.getMenuText(): "+plugin.getMenuText());
-            plugin.init(app.getGgbApi(),args);  //new syntax
-            plugintable.put(cname,plugin);      //put in hashtable
-            menuitem=new JMenuItem(plugin.getMenuText()); //make menuitem
-            menuitem.setName(cname);
-            menuitem.addActionListener(this);
-            if(pluginmenu==null){pluginmenu=new JMenu("Plugins");}
-            pluginmenu.add(menuitem);           //add to menu   
+            try{
+            	plugin.init(app.getGgbApi(),args);  //new syntax
+            	plugintable.put(cname,plugin);      //put in hashtable
+            	menuitem=new JMenuItem(plugin.getMenuText()); //make menuitem
+            	menuitem.setName(cname);
+            	menuitem.addActionListener(this);
+            	if(pluginmenu==null){pluginmenu=new JMenu("Plugins");}
+            	pluginmenu.add(menuitem);           //add to menu
+            }catch(Throwable t){
+            	System.out.println("PluginManager.addPlugin: "+t.toString());
+            }//try-catch
         }else{
            System.out.println("PluginManager could not reflect out plugin "+cname);
         }//if plugin null
