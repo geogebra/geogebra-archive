@@ -3,15 +3,14 @@
 <!-- README: Building GeoGebra 
 
 This script builds unsigned GeoGebra jar files for testing purposes.
+Run this Ant script using JDK 1.5+ and note that GeoGebra itself 
+needs to be compiled using Java 1.4.2 
+
 If you want to include GeoGebra with e.g. Linux distributions or 
 other software, please see the license conditions below and contact 
 us at office@geogebra.org. We will try our best to provide installers
 for various platforms. However, we cannot provide our signature files
-to create signed jar files. Signed jar files are necessary for any 
-reasonable use of GeoGebra on the Internet (e.g. Java applets).
-
-RUN this Ant script using JDK 1.5+
-GeoGebra itself needs to be compiled using Java 1.4.2 
+to create signed jar files.
 
 LICENSE
 Please note that GeoGebra's source code is licensed under GNU GPL but 
@@ -20,6 +19,9 @@ geogebra_properties.jar are subject to a Creative Commons Attribution-
 NonCommercial-NoDerivs license (see LICENSE.txt). Thus, if you want to 
 include these language files with other software or use GeoGebra for 
 commercial purposes, you need to get our permission first.
+
+If you would like to contribute to GeoGebra in any way, please let us
+know. Your help is always welcome!
 
 The GeoGebra Team
 office@geogebra.org 
