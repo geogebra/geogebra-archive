@@ -28,6 +28,12 @@ office@geogebra.org
 
 -->
 
+
+<!--
+   GeoGebra build script
+   @author Markus Hohenwarter
+   @date May 27, 2008
+-->
 <project default="geogebra">
 	
 	<property name="src.dir" location="."/>
