@@ -245,8 +245,8 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	 */
 	public static void initMacSpecifics() {
 		try {
-			com.apple.eawt.Application app = new com.apple.eawt.Application();
-			app.addApplicationListener(new MacApplicationListener());
+			// init mac application listener
+			MacApplicationListener.initMacApplicationListener();
 	
 			//mac menu bar	
 		    //System.setProperty("com.apple.macos.useScreenMenuBar", "true"); 	

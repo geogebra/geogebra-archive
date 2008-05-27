@@ -1,32 +1,63 @@
 <?xml version="1.0" ?>
 
+<!-- README: Building GeoGebra 
+
+This script builds unsigned GeoGebra jar files for testing purposes.
+If you want to include GeoGebra with e.g. Linux distributions or 
+other software, please see the license conditions below and contact 
+us at office@geogebra.org. We will try our best to provide installers
+for various platforms. However, we cannot provide our signature files
+to create signed jar files. Signed jar files are necessary for any 
+reasonable use of GeoGebra on the Internet (e.g. Java applets).
+
+RUN this Ant script using JDK 1.5+
+GeoGebra itself needs to be compiled using Java 1.4.2 
+
+LICENSE
+Please note that GeoGebra's source code is licensed under GNU GPL but 
+all GeoGebra language files (geogebra/properties) bundled in the file
+geogebra_properties.jar are subject to a Creative Commons Attribution-
+NonCommercial-NoDerivs license (see LICENSE.txt). Thus, if you want to 
+include these language files with other software or use GeoGebra for 
+commercial purposes, you need to get our permission first.
+
+The GeoGebra Team
+office@geogebra.org 
+
+-->
+
 <project default="geogebra">
 	
 	<property name="src.dir" location="."/>
 	<property name="build.dir" location="../build"/>
-	<property name="temp.dir" location="../temp"/>		
-	
+	<property name="temp.dir" location="../build/temp"/>
+	<property name="workspace.dir" location="../"/>
+    			
+	<!-- main target -->
 	<target name="geogebra" 
-		    depends="clean, ggb-jar, ggb-export-jar, ggb-properties-jar">
-	  <echo>Building unsigned geogebra jar files</echo>
+		    depends="clean, ggb-jar-files, obfuscate-sign-pack">	  
 	</target>
 	
-	<manifest file="MANIFEST.MF">
+	<!-- create all jar files -->
+	<target name="ggb-jar-files" 
+			depends="ggb-jar, ggb-export-jar, ggb-properties-jar">
+	</target>
+	
+	<manifest file="manifest.mf">
 			<attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar"/>
 		    <attribute name="Main-Class" value="geogebra.gui.MyAppSplash"/>
 	</manifest>	
 	
 	<target name="clean">
 		<delete>
-		    <fileset dir="${build.dir}" includes="**/*.jar"/>
+		    <fileset dir="${build.dir}" includes="**/*.jar, **/*.jar.pack.gz"/>
 		</delete>
 		<mkdir dir="${build.dir}"/>
 	</target>
 	    
-	<!-- TODO: should com/applet/** be included in geogebra.jar file? -->
 	<target name="ggb-jar" depends="clean" description="create unsigned geogebra.jar">		
 		<jar jarfile="${build.dir}/geogebra.jar"
-			manifest="MANIFEST.MF"
+			manifest="manifest.mf"
 			basedir="${src.dir}"		   
 			includes="**/*.class, 
 					**/*.png, 
@@ -41,7 +72,7 @@
 					geogebra/kernel3D/**,
 					org/freehep/**, 					  
 				    tutor/**,
-					META-INF/**"			
+					meta-inf/**"			
 		/>
 		<!-- exclude: 
 			geogebra/spreadsheet/** -->
@@ -52,7 +83,7 @@
 			basedir="${src.dir}"
 			includes="geogebra/export/**, 
 					org/freehep/**, 
-					META-INF/services/**"
+					meta-inf/services/**"
 		/>
 	</target>
 	
@@ -62,29 +93,64 @@
 			includes="geogebra/properties/**"
 		/>
 	</target>
+				
+	
+	<!-- Define Proguard task -->
+	<taskdef 
+		resource="proguard/ant/task.properties" 
+		classpath="proguard38.jar" />
+	
+	<!-- Define pack200 task -->
+	<taskdef name="p200ant"
+	    classname="de.matthiasmann.p200ant.P200AntTask"
+	    classpath="P200Ant.jar"/>
+		
 
-<!--
-	<target name="sign" depends="ggb-jar" description="sign geogebra.jar">	
-		<signjar keystore="../keystore"
-			jar="${build.dir}/geogebra.jar"			
-			alias="mhohen"
-			storepass="mhohen" />
+	<!-- Obfuscate, sign and pack jar files -->
+	<target name="obfuscate-sign-pack" depends="ggb-jar-files">
+		<!-- check if java142-rt.jar file present -->
+	    <condition property="java142-rt.present">
+	    	<available file="${workspace.dir}/java142-rt.jar"/>
+	    </condition>
+		<antcall target="obfuscate"/>
+	    	
+		<!-- check if keystore file present -->
+		<condition property="keystore.present">
+			<available file="${workspace.dir}/keystore"/>
+		</condition>		
+		<antcall target="sign-pack"/>	
 	</target>
 	
-
-	<target name="sign2" depends="ggb-export-jar" description="sign geogebra_export.jar">
-		<signjar keystore="../keystore"
-			jar="${build.dir}/geogebra_export.jar"
-			alias="mhohen"
-			storepass="mhohen" />
+	<target name="obfuscate" if="java142-rt.present" description="obfuscate jar files">
+			<proguard configuration="build-ggb.pro"/>
+			<move todir="${build.dir}">
+			    <fileset dir="${temp.dir}">
+			      <include name="*.jar"/>
+			    </fileset>
+			</move>
+			<delete dir="${temp.dir}"/>
 	</target>
-	
-	<target name="sign3" depends="ggb-properties-jar" description="sign geogebra_properties.jar">		
-		<signjar keystore="../keystore"
-			jar="${build.dir}/geogebra_properties.jar"
-			alias="mhohen"
-			storepass="mhohen" />
+			
+	    
+	<target name="sign-pack" if="keystore.present" description="sign and pack jar files">	
+		<!-- repack jars -->
+	    <fileset id="jars2pack" dir="${build.dir}">
+	        <include name="**/*.jar"/>
+	    </fileset>	        
+	    <p200ant repack="true">
+	        <fileset refid="jars2pack"/>
+	    </p200ant>	   
+	            
+		<!-- sign jars -->
+		<signjar keystore="${workspace.dir}/keystore" alias="mhohen" storepass="mhohen">
+		  <path>
+		    <fileset dir="${build.dir}" includes="**/*.jar" />
+		  </path>
+		</signjar>	
+	        
+		<!-- pack jars -->
+	    <p200ant destdir="${build.dir}">
+	        <fileset refid="jars2pack"/>
+	    </p200ant>	    
 	</target>
-
-	-->
 </project>

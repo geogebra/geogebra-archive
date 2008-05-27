@@ -4,6 +4,11 @@ import java.io.File;
 
 public class MacApplicationListener implements com.apple.eawt.ApplicationListener  {
 	
+	public static void initMacApplicationListener() {
+		com.apple.eawt.Application app = new com.apple.eawt.Application();
+		app.addApplicationListener(new MacApplicationListener());
+	}
+	
 	/**
 	 * Gets active instance of GeoGebra window. This method waits
 	 * until an active instance was created by GeoGebra.main()
