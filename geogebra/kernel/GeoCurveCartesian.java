@@ -62,8 +62,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	}
 	
 	public String translatedTypeString() {
-		// TODO: add translation for "Curve" in plain.properties and remove this method
-		return app.getCommand("CurveCartesian");
+		return app.getPlain("Curve");
 	}
 	
     public int getGeoClassType() {
