@@ -79,18 +79,6 @@ public class AlgoLengthVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("LengthOfA",v.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("LengthOf"));
-            sb.append(" ");
-        }
-        sb.append(v.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("LengthOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

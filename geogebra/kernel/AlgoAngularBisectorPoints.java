@@ -213,21 +213,6 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleBisectorOfABC",A.getLabel(),B.getLabel(),C.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("AngularBisectorOf"));
-            sb.append(' ');
-        }
-        sb.append(A.getLabel());
-        sb.append(", ");
-        sb.append(B.getLabel());
-        sb.append(", ");
-        sb.append(C.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("AngularBisectorOf"));
-        }*/
-
         return sb.toString();
     }
 }

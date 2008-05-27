@@ -97,17 +97,6 @@ public class AlgoDirectrix extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("DirectrixOfA",c.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("DirectrixOf"));
-            sb.append(' ');
-        }
-        sb.append(c.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("DirectrixOf"));
-        }*/
-        
         return sb.toString();
     }
 }

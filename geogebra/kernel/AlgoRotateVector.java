@@ -88,20 +88,6 @@ public class AlgoRotateVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ARotatedByAngleB",A.getLabel(),angle.getLabel()));
         
-        /*
-        sb.append(A.getLabel());
-        sb.append(' ');
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("rotatedByAngle"));
-            sb.append(' ');
-        }
-        sb.append(angle.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("rotatedByAngle"));
-        }*/
-        
-
         return sb.toString();
     }
 }

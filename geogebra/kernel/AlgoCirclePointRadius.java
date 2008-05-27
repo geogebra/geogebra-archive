@@ -138,30 +138,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("CircleWithCenterAandRadiusB",M.getLabel(),rgeo.getLabel()));
-
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Circle"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("with"));
-        sb.append(' ');
-        sb.append(app.getPlain("Center"));
-        sb.append(' ');
-        sb.append(M.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(app.getPlain("Radius"));
-        sb.append(' ');
-        sb.append(rgeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(app.getPlain("Circle"));
-        }*/
-
         return sb.toString();
     }
 }

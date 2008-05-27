@@ -169,30 +169,6 @@ public class AlgoTangentLine extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("TangentToAParallelToB",c.getLabel(),g.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("TangentLine"));
-        sb.append(' ');
-        sb.append(app.getPlain("parallelTo"));
-        sb.append(' ');
-        sb.append(g.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("to"));
-        sb.append(' ');
-        sb.append(c.getLabel());
-        }else{
-           sb.append(app.getPlain("parallelTo"));
-           sb.append(' ');
-           sb.append(g.getLabel());
-           sb.append(' ');
-           sb.append(app.getPlain("to"));
-           sb.append(' ');
-           sb.append(c.getLabel());
-           sb.append(' ');
-           sb.append(app.getPlain("TangentLine"));
-        }*/
-        
-
         return sb.toString();
     }
 }

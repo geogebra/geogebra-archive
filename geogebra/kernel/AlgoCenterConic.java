@@ -89,17 +89,6 @@ public class AlgoCenterConic extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("CenterOfA",c.getLabel()));
 
-        /*
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(c.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("CenterOf"));
-        } else {
-            sb.append(app.getPlain("CenterOf"));
-            sb.append(' ');
-            sb.append(c.getLabel());
-        }*/
-
         return sb.toString();
     }
 }

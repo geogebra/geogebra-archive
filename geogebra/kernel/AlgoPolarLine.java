@@ -78,22 +78,6 @@ public class AlgoPolarLine extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("PolarLineOfARelativeToB",P.getLabel(),c.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-            sb.append(app.getPlain("PolarLineOf"));
-            sb.append(' ');
-         }
-        sb.append(P.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("relativeTo"));
-        sb.append(' ');
-        sb.append(c.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("PolarLineOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

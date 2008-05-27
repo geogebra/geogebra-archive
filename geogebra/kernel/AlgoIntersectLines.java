@@ -90,20 +90,6 @@ public class AlgoIntersectLines extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("IntersectionPointOfAB",g.getLabel(),h.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("IntersectionPointOf"));
-            sb.append(" ");
-        }
-        sb.append(g.getLabel());
-        sb.append(", ");
-        sb.append(h.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("IntersectionPointOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

@@ -114,29 +114,6 @@ public class AlgoDerivative extends AlgoElement {
         else
         	sb.append(app.getPlain("DerivativeOfA",fgeo.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            if (order != null) {
-                sb.append(orderGeo.getLabel());
-                sb.append(". ");
-            }
-            sb.append(app.getPlain("Derivative"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(fgeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            if (order != null) {
-                sb.append(orderGeo.getLabel());
-                sb.append(". ");
-            }
-            sb.append(app.getPlain("Derivative"));
-        } */
-        
         if (!fgeo.isIndependent()) { // show the symbolic representation too
             sb.append(": ");
             sb.append(ggeo.getLabel());

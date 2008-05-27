@@ -111,29 +111,6 @@ public class AlgoRootInterval extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("RootOfAonIntervalBC",f.getLabel(),aGeo.getLabel(),bGeo.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Root"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(f.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("onInterval"));
-        sb.append(" [");
-        sb.append(aGeo.getLabel());
-        sb.append(", ");
-        sb.append(bGeo.getLabel());
-        sb.append("]");
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Root"));
-        }*/
-        
-
         return sb.toString();
     }
 }

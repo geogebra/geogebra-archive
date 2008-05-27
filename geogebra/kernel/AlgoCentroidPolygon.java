@@ -59,17 +59,6 @@ public class AlgoCentroidPolygon extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("CentroidOfA",p.getLabel()));
 
-        /*
-        if(app.isReverseLanguage()){//FKH 20040906
-          sb.append(p.getLabel());
-          sb.append(' ');
-          sb.append(app.getPlain("CentroidOf"));
-        }else{
-        sb.append(app.getPlain("CentroidOf"));
-        sb.append(' ');
-        sb.append(p.getLabel());        
-        }*/
-        
         return sb.toString();
     }
 }

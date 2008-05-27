@@ -146,24 +146,6 @@ public class AlgoConicFivePoints extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ConicThroughABCDE",P[0].getLabel(),P[1].getLabel(),P[2].getLabel(),P[3].getLabel(),P[4].getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Conic"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("through"));
-        sb.append(' ');
-        sb.append(P[0].getLabel());
-        for (i = 1; i < 5; i++) {
-            sb.append(", ");
-            sb.append(P[i].getLabel());
-        }
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(app.getPlain("Conic"));
-        }*/
-
         return sb.toString();
     }
 }

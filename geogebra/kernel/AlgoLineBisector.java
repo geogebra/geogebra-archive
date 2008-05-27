@@ -85,20 +85,6 @@ public class AlgoLineBisector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("LineBisectorAB",A.getLabel(),B.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("LineBisector"));
-        sb.append(' ');
-        }
-        sb.append(A.getLabel());
-        sb.append(", ");
-        sb.append(B.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("LineBisector"));
-        }*/
-        
-
         return sb.toString();
     }
 }

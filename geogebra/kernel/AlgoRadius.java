@@ -74,18 +74,6 @@ public class AlgoRadius extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("RadiusOfA",c.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-                sb.append(app.getPlain("RadiusOf"));
-                sb.append(' ');
-         }
-         sb.append(c.getLabel());
-         if(app.isReverseLanguage()){//FKH 20040906
-             sb.append(' ');
-             sb.append(app.getPlain("RadiusOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

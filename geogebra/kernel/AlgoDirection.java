@@ -91,17 +91,6 @@ public class AlgoDirection extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("DirectionOfA",g.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("DirectionOf"));
-            sb.append(' ');
-        }
-        sb.append(g.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("DirectionOf"));
-        }*/
-        
         return sb.toString();
     }
 }

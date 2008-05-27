@@ -164,39 +164,7 @@ public class AlgoAnglePoints extends AlgoElement {
            	sb.append(app.getPlain("AngleBetweenABC",A.getLabel(),B.getLabel(),C.getLabel()));
 
         
-        /*
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(A.getLabel());
-            sb.append(", ");
-            sb.append(B.getLabel());
-            sb.append(", ");
-            sb.append(C.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("AngleBetween"));
-
-            if (algoAnglePoly != null) {
-                sb.append(' ');
-                sb.append(app.getPlain("of"));
-                sb.append(' ');
-                sb.append(algoAnglePoly.getPolygon().getNameDescription());
-            }
-
-        } else {
-            sb.append(app.getPlain("AngleBetween"));
-            sb.append(' ');
-            sb.append(A.getLabel());
-            sb.append(", ");
-            sb.append(B.getLabel());
-            sb.append(", ");
-            sb.append(C.getLabel());
-            if (algoAnglePoly != null) {
-                sb.append(' ');
-                sb.append(app.getPlain("of"));
-                sb.append(' ');
-                sb.append(algoAnglePoly.getPolygon().getNameDescription());
-            }
-        } */
-        
+       
         return sb.toString();
     }
 }

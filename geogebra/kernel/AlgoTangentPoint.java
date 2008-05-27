@@ -192,29 +192,6 @@ public class AlgoTangentPoint extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("TangentToAThroughB",c.getLabel(),P.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("TangentLine"));
-            sb.append(' ');
-            sb.append(app.getPlain("through"));
-            sb.append(' ');
-            sb.append(P.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("to"));
-            sb.append(' ');
-            sb.append(c.getLabel());
-        } else {
-            sb.append(app.getPlain("through"));
-            sb.append(' ');
-            sb.append(P.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("to"));
-            sb.append(' ');
-            sb.append(c.getLabel());
-            sb.append(app.getPlain("TangentLine"));
-        }*/
-        
-
         return sb.toString();
     }
 }

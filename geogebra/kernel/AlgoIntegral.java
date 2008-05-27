@@ -65,21 +65,6 @@ public class AlgoIntegral extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("IntegralOfA",f.getLabel()));
         
-        /*
-         if(!app.isReverseLanguage()){//FKH 20040906
-            sb.append(app.getPlain("Integral"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(f.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Integral"));
-        }*/
-        
         if (!f.isIndependent()) { // show the symbolic representation too
             sb.append(": ");
             sb.append(g.getLabel());

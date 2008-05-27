@@ -83,23 +83,6 @@ public class AlgoTranslateVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("TranslationOfAtoB",v.getLabel(),A.getLabel()));
 
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("TranslationOf"));
-        sb.append(' ');
-        sb.append(v.getLabel());
-        sb.append(' ');
-        }
-        sb.append(app.getPlain("to"));
-        sb.append(' ');
-        sb.append(A.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-        sb.append(' ');
-        sb.append(v.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("TranslationOf"));
-        }*/
-        
         return sb.toString();
     }
 }

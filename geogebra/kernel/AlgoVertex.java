@@ -133,17 +133,6 @@ public class AlgoVertex extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("VertexOfA",c.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("VertexOf"));
-        sb.append(' ');
-        }
-        sb.append(c.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-        sb.append(' ');
-        sb.append(app.getPlain("VertexOf"));
-        }*/
-        
         return sb.toString();
     }
 }

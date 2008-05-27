@@ -76,21 +76,7 @@ public class AlgoAngleConic extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleOfA",c.getLabel()));
 
-        /*
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(c.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Angle"));
-        } else {
-            sb.append(app.getPlain("Angle"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(c.getLabel());
-        }*/
-        
+   
         return sb.toString();
     }
 }

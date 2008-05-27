@@ -74,22 +74,6 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ExtremumOfA",f.getLabel()));
         
-        /*
-         if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Extremum"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(f.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Extremum"));
-        }*/
-        
-
         return sb.toString();
     }
 

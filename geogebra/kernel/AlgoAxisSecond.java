@@ -89,17 +89,6 @@ public class AlgoAxisSecond extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("SecondAxisOfA",c.getLabel()));
         
-        /*
-        if(app.isReverseLanguage()){//FKH 20040906
-          sb.append(c.getLabel());
-          sb.append(' ');
-          sb.append(app.getPlain("SecondAxisOf"));
-        }else{
-        sb.append(app.getPlain("SecondAxisOf"));        
-        sb.append(' ');
-        sb.append(c.getLabel());
-        }*/
-        
         return sb.toString();
     }
 }

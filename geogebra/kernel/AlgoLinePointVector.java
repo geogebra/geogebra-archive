@@ -89,24 +89,6 @@ public class AlgoLinePointVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("LineThroughAwithDirectionB",P.getLabel(),v.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("LineThrough"));
-            sb.append(" ");
-            sb.append(P.getLabel());
-            sb.append(" ");
-        }
-        sb.append(app.getPlain("withDirection"));
-        sb.append(" ");
-        sb.append(v.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(" ");
-            sb.append(app.getPlain("LineThrough"));
-            sb.append(" ");
-            sb.append(P.getLabel());
-        }*/
-        
-
         return sb.toString();
     }
 

@@ -79,18 +79,6 @@ public class AlgoSlope extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("SlopeOfA",g.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("SlopeOf"));
-            sb.append(' ');
-        }
-        sb.append(g.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("SlopeOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

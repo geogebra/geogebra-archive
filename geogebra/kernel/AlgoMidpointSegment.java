@@ -98,18 +98,6 @@ public class AlgoMidpointSegment extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("MidpointOfA",segment.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("MidpointOf"));
-            sb.append(" ");
-        }
-        sb.append(segment.getLabel());        
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(" ");
-            sb.append(app.getPlain("MidpointOf"));
-        }*/
-        
-
         return sb.toString();
     }
 }

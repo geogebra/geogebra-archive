@@ -230,24 +230,6 @@ public class AlgoCircleThreePoints extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("CircleThroughABC",A.getLabel(),B.getLabel(),C.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Circle"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("through"));
-        sb.append(' ');
-        sb.append(A.getLabel());
-        sb.append(", ");
-        sb.append(B.getLabel());
-        sb.append(", ");
-        sb.append(C.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(app.getPlain("Circle"));
-        }*/
-
         return sb.toString();
     }
 }

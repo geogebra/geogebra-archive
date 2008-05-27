@@ -89,17 +89,6 @@ public class AlgoAxisFirst extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("FirstAxisOfA",c.getLabel()));
 
-        /*
-        if(app.isReverseLanguage()){//FKH 20040906
-          sb.append(c.getLabel());
-          sb.append(' ');
-          sb.append(app.getPlain("FirstAxisOf"));
-        }else{
-        sb.append(app.getPlain("FirstAxisOf"));        
-        sb.append(' ');
-        sb.append(c.getLabel());
-        }*/
-        
         return sb.toString();
     }
 }

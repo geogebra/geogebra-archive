@@ -87,20 +87,6 @@ public class AlgoDiameterVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("DiameterOfAConjugateToB",c.getLabel(),v.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("DiameterLineOf"));
-            sb.append(' ');
-        }
-        sb.append(c.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("conjugateTo"));
-        sb.append(' ');
-        sb.append(v.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("DiameterLineOf"));
-        }*/
         return sb.toString();
     }
 }

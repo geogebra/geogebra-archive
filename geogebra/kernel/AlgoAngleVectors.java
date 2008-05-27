@@ -85,19 +85,6 @@ public class AlgoAngleVectors extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleBetweenAB",v.getLabel(),w.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("AngleBetween"));
-            sb.append(' ');
-        }
-        sb.append(v.getLabel());
-        sb.append(", ");
-        sb.append(w.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("AngleBetween"));
-        }*/
-
         return sb.toString();
     }
 }

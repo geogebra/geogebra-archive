@@ -94,26 +94,6 @@ public class AlgoCircleTwoPoints extends AlgoElement {
         sb.append(app.getPlain("CircleThroughAwithCenterB",P.getLabel(),M.getLabel()));
 
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Circle"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("with"));
-        sb.append(' ');
-        sb.append(app.getPlain("Center"));
-        sb.append(' ');
-        sb.append(M.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("through"));
-        sb.append(' ');
-        sb.append(P.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(app.getPlain("Circle"));
-        } */
-
         return sb.toString();
     }
 }

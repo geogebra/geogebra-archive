@@ -74,18 +74,6 @@ public class AlgoParabolaParameter extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ParameterOfA",c.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-             sb.append(app.getPlain("ParameterOf"));
-             sb.append(' ');
-        }
-        sb.append(c.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("ParameterOf"));
-         }*/
-        
-
         return sb.toString();
     }
 }

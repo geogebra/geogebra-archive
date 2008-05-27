@@ -80,16 +80,6 @@ public class AlgoAxisSecondLength extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("SecondAxisLengthOfA",c.getLabel()));
 
-        /*
-        if(app.isReverseLanguage()){//FKH 20040906
-          sb.append(c.getLabel());
-          sb.append(' ');
-          sb.append(app.getPlain("SecondAxisLengthOf"));
-        }else{
-        sb.append(app.getPlain("SecondAxisLengthOf"));        
-        sb.append(' ');
-        sb.append(c.getLabel());
-        }*/
         return sb.toString();
     }
 }

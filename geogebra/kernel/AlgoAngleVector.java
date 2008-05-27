@@ -70,21 +70,6 @@ public class AlgoAngleVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleOfA",vec.getLabel()));
 
-        /*
-        if (app.isReverseLanguage()) {
-            sb.append(vec.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Angle"));
-        } else {
-            sb.append(app.getPlain("Angle"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(vec.getLabel());
-        }*/
-        
         return sb.toString();
     }
 }

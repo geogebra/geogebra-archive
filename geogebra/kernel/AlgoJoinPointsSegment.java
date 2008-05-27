@@ -140,38 +140,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
             sb.append(app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription()));
         else
             sb.append(app.getPlain("SegmentAB",P.getLabel(),Q.getLabel()));
-        	
-        
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getCommand("Segment"));
-            sb.append('[');
-            sb.append(P.getLabel());
-            sb.append(", ");
-            sb.append(Q.getLabel());
-            sb.append(']');
-            if (poly != null) {
-                sb.append(' ');
-                sb.append(app.getPlain("of"));
-                sb.append(' ');
-                sb.append(poly.getNameDescription());
-            }
-        } else {
-            if (poly != null) {
-                sb.append(poly.getNameDescription());
-                sb.append(' ');
-                sb.append(app.getPlain("of"));
-                sb.append(' ');
-            }
-            sb.append(app.getCommand("Segment"));
-            sb.append('[');
-            sb.append(P.getLabel());
-            sb.append(", ");
-            sb.append(Q.getLabel());
-            sb.append(']');
-        }*/
-        
-
+      	
         return sb.toString();
     }
 }

@@ -73,18 +73,6 @@ public class AlgoPointOnPath extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("PointOnA",input[0].getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("PointOn"));
-            sb.append(' ');
-        }
-        sb.append(input[0].getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("PointOn"));
-        }*/
-        
-
         return sb.toString();
     }
 }

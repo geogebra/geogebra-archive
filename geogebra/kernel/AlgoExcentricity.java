@@ -86,17 +86,6 @@ public class AlgoExcentricity extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("EccentricityOfA",c.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("ExcentricityOf"));
-            sb.append(' ');
-        }
-        sb.append(c.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("ExcentricityOf"));
-        }*/
-        
         return sb.toString();
     }
 }

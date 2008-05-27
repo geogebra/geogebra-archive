@@ -197,30 +197,6 @@ public class AlgoIntegralDefinite extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Integral"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(f.getLabel());
-        sb.append("(x) ");
-        sb.append(app.getPlain("from"));
-        sb.append(' ');
-        sb.append(ageo.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("until"));
-        sb.append(' ');
-        sb.append(bgeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Integral"));
-        }*/
-        
-
         return sb.toString();
     }
 

@@ -125,28 +125,6 @@ public class AlgoFunctionInterval extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("FunctionAonIntervalBC",f.getLabel(),ageo.getLabel(),bgeo.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("Function"));        
-        sb.append(' ');
-        sb.append(f.getLabel());
-        sb.append(' ');
-        }
-        sb.append(app.getPlain("onInterval"));
-        sb.append(" [");
-        sb.append(ageo.getLabel());
-        sb.append(", ");
-        sb.append(bgeo.getLabel());
-        sb.append("]");
-         if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("Function"));
-            sb.append(' ');
-            sb.append(f.getLabel());
-            sb.append(' ');
-        }*/
-        
-
         return sb.toString();
     }
 

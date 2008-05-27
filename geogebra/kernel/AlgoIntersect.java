@@ -127,20 +127,6 @@ public abstract class AlgoIntersect extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("IntersectionPointOfAB",input[0].getLabel(),input[1].getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("IntersectionPointOf"));
-            sb.append(" ");
-        }
-        sb.append(input[0].getLabel());
-        sb.append(", ");
-        sb.append(input[1].getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(" ");
-            sb.append(app.getPlain("IntersectionPointOf"));
-        }*/
-        
-
         return sb.toString();
     }
 

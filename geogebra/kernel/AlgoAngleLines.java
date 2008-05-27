@@ -91,21 +91,6 @@ public class AlgoAngleLines extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleBetweenAB",g.getLabel(),h.getLabel()));
         
-        /*
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(g.getLabel());
-            sb.append(", ");
-            sb.append(h.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("AngleBetween"));
-        } else {
-            sb.append(app.getPlain("AngleBetween"));
-            sb.append(' ');
-            sb.append(g.getLabel());
-            sb.append(", ");
-            sb.append(h.getLabel());
-        }*/
-
         return sb.toString();
     }
 }

@@ -84,18 +84,6 @@ public class AlgoOrthoVectorVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("VectorPerpendicularToA",v.getLabel()));
         
-        /*
-        if(!app.isReverseLanguage()){//FKH 20040906
-             sb.append(app.getPlain("OrthogonalVectorOf"));
-             sb.append(' ');
-              }
-         sb.append(v.getLabel());
-         if(app.isReverseLanguage()){//FKH 20040906
-             sb.append(' ');
-             sb.append(app.getPlain("OrthogonalVectorOf"));
-         }*/
-        
-
         return sb.toString();
     }
 }

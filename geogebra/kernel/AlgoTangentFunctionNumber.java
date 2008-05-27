@@ -106,24 +106,6 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("TangentToAatBCD",f.getLabel(),"x = ",ngeo.getLabel(),""));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("TangentLine"));
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("to"));
-        sb.append(' ');
-        sb.append(f.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("in"));
-        sb.append(" x = ");
-        sb.append(ngeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("TangentLine"));
-        }*/
-        
-
         return sb.toString();
     }
 }

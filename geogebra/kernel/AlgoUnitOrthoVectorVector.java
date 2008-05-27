@@ -87,18 +87,6 @@ public class AlgoUnitOrthoVectorVector extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("UnitVectorPerpendicularToA",v.getLabel()));
         
-        /*
-         if(!app.isReverseLanguage()){//FKH 20040906
-        sb.append(app.getPlain("UnitOrthogonalVectorOf"));
-        sb.append(' ');
-        }
-        sb.append(v.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-        sb.append(' ');
-        sb.append(app.getPlain("UnitOrthogonalVectorOf"));
-        }*/
-        
-
        return sb.toString();
     }
 }

@@ -85,21 +85,6 @@ public class AlgoDistanceLineLine extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("DistanceOfAandB",g.getLabel(),h.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("DistanceOf"));
-            sb.append(' ');
-        }
-        sb.append(g.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(h.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("DistanceOf"));
-        }*/
-        
         return sb.toString();
     }
 }

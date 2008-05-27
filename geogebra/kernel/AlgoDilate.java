@@ -96,27 +96,6 @@ public class AlgoDilate extends AlgoTransformation {
         sb.append(app.getPlain("ADilatedByFactorBfromC",Ageo.getLabel(),rgeo.getLabel(),S.getLabel()));
 
         
-        /*
-        sb.append(Ageo.getLabel());
-        sb.append(' ');
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("dilatedByFactor"));
-            sb.append(' ');
-            sb.append(rgeo.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("from"));
-            sb.append(' ');
-            sb.append(S.getLabel());
-        } else {
-            sb.append(app.getPlain("from"));
-            sb.append(' ');
-            sb.append(S.getLabel());
-            sb.append(' ');
-            sb.append(rgeo.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("dilatedByFactor"));
-        }*/
-        
         return sb.toString();
     }
 }

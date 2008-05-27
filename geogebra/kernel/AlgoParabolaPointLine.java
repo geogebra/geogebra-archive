@@ -76,28 +76,6 @@ public class AlgoParabolaPointLine extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ParabolaWithFocusAandDirectrixB",F.getLabel(),l.getLabel()));
         
-        /*
-         if(!app.isReverseLanguage()){//FKH 20040906
-            sb.append(app.getPlain("Parabola"));
-            sb.append(' ');
-            sb.append(app.getPlain("with"));
-            sb.append(' ');
-         }
-        sb.append(app.getPlain("Focus"));
-        sb.append(' ');
-        sb.append(F.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(app.getPlain("Directrix"));
-        sb.append(' ');
-        sb.append(l.getLabel());
-        if(app.isReverseLanguage()){//FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("Parabola"));
-        }*/
-        
-
         return sb.toString();
     }
 }

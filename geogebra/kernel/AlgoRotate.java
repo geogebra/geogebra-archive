@@ -89,20 +89,6 @@ public class AlgoRotate extends AlgoTransformation {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("ARotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel()));
         
-        /*
-        sb.append(Ageo.getLabel());
-        sb.append(' ');
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("rotatedByAngle"));
-            sb.append(' ');
-        }
-        sb.append(angleGeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("rotatedByAngle"));
-        }*/
-        
-
         return sb.toString();
     }    
 }

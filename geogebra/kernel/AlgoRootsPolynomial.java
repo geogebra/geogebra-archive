@@ -534,22 +534,6 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("RootOfA",f.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Root"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-        }
-        sb.append(f.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Root"));
-        }*/
-        
-
         return sb.toString();
     }
 

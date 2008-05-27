@@ -266,19 +266,6 @@ public class AlgoAngularBisectorLines extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleBisectorOfAB",g.getLabel(),h.getLabel()));
 
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("AngularBisectorOf"));
-            sb.append(' ');
-        }
-        sb.append(g.getLabel());
-        sb.append(", ");
-        sb.append(h.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("AngularBisectorOf"));
-        }*/
-        
         return sb.toString();
     }
 }

@@ -85,21 +85,6 @@ public class AlgoDistancePoints extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("DistanceOfAandB",P.getLabel(),Q.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("DistanceOf"));
-            sb.append(' ');
-        }
-        sb.append(P.getLabel());
-        sb.append(' ');
-        sb.append(app.getPlain("and"));
-        sb.append(' ');
-        sb.append(Q.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(app.getPlain("DistanceOf"));
-        }*/
-        
         return sb.toString();
     }
 }

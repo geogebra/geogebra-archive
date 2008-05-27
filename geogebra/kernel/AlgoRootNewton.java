@@ -140,28 +140,6 @@ public class AlgoRootNewton extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("RootOfAWithInitialValueB",f.getLabel(),startGeo.getLabel()));
         
-        /*
-        if (!app.isReverseLanguage()) { //FKH 20040906
-            sb.append(app.getPlain("Root"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(f.getLabel());
-            sb.append(' ');
-        }
-        sb.append(app.getPlain("withStartValue"));
-        sb.append(' ');
-        sb.append(startGeo.getLabel());
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(' ');
-            sb.append(f.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Root"));
-        }*/
-        
-
         return sb.toString();
     }
 }

@@ -106,21 +106,6 @@ public class AlgoAnglePolygon extends AlgoElement {
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("AngleOfA",poly.getLabel()));
 
-        /*
-        if (app.isReverseLanguage()) { //FKH 20040906
-            sb.append(poly.getLabel());
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(app.getPlain("Angle"));
-        } else {
-            sb.append(app.getPlain("Angle"));
-            sb.append(' ');
-            sb.append(app.getPlain("of"));
-            sb.append(' ');
-            sb.append(poly.getLabel());
-        }*/
-        
         return sb.toString();
     }
 }
