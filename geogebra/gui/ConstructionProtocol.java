@@ -340,7 +340,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
         mFile.add(mPreviewP);
         
         JMenuItem exportHTML = new JMenuItem(
-                                                        app.getPlain("ExportAsWebpagehtml")+" ...");
+                                                        app.getPlain("ExportAsWebpage")+ " ("
+                                        				+ Application.FILE_EXT_HTML + ") ...");
 
         exportHTML.setIcon(app.getEmptyIcon());
         ActionListener lstHTML = new ActionListener() {

@@ -1056,9 +1056,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		 * public void run() { updateGeoGebra(); } }; runner.start(); } };
 		 */
 
-		exportGraphicAction = new AbstractAction(app.getPlain("DrawingPad") + " "
-				+ app.getPlain("as") + " " + app.getPlain("Picture") + " ("
-				+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...", 
+		exportGraphicAction = new AbstractAction(app.getPlain("DrawingPadAsPicture")
+				+ " ("	+ Application.FILE_EXT_PNG + ", " + Application.FILE_EXT_EPS + ") ...", 
 				app.getImageIcon("image-x-generic.png")) {
 			private static final long serialVersionUID = 1L;
 
@@ -1090,8 +1089,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};
 		
 		
-		exportPSTricksAction = new AbstractAction(app.getPlain("DrawingPad") + " "
-				+ app.getPlain("as") + " PSTricks ...", 
+		exportPSTricksAction = new AbstractAction(app.getPlain("DrawingPadAsPSTricks") + " ...", 
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
@@ -1110,24 +1108,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			}
 		};
 		
-		/*
-		htmlCPAction = new AbstractAction(app.getPlain("ConstructionProtocol")
-				+ " " + app.getPlain("as") + " " + app.getPlain("html") + " ("
-				+ Application.FILE_EXT_HTML + ") ...") {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {
-						app.exportConstructionProtocolHTML();
-					}
-				};
-				runner.start();
-			}
-		};*/
-
-		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheet") + " "
-				+ app.getPlain("as") + " " + app.getPlain("html") + " ("
+		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheetAsWebpage") + " ("
 				+ Application.FILE_EXT_HTML + ") ...",
 				app.getImageIcon("text-html.png")) {
 			private static final long serialVersionUID = 1L;
