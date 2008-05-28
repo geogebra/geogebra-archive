@@ -17,8 +17,6 @@
 -libraryjars ../JMathTeX-0.7pre.jar
 -libraryjars ../jdom-1.1.jar
 
--printmapping geogebra3130.map
-
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
 -outjars ../build/temp
