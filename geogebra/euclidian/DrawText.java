@@ -29,8 +29,8 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import be.ugent.caagt.jmathtex.TeXConstants;
-import be.ugent.caagt.jmathtex.TeXFormula;
+//import be.ugent.caagt.jmathtex.TeXConstants;
+//import be.ugent.caagt.jmathtex.TeXFormula;
 
 
 
