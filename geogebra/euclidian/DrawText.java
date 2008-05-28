@@ -26,6 +26,12 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.Icon;
+import javax.swing.JLabel;
+
+import be.ugent.caagt.jmathtex.TeXConstants;
+import be.ugent.caagt.jmathtex.TeXFormula;
+
 
 
 /**
@@ -159,6 +165,15 @@ public final class DrawText extends Drawable {
     			drawMultilineText(g2);   
         	} else
         		//g2.drawImage(eqnImage, xLabel, yLabel, null);
+
+        	/*
+        	 * TEST CODE FOR JMathTeX
+        	{
+        		TeXFormula formula = new TeXFormula(labelDesc);
+        		Icon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,fontSize);
+        		icon.paintIcon(new JLabel(), g2, xLabel, yLabel); // component can't be null
+        	}
+        	*/
 			  
 			// draw label rectangle
 			if (geo.doHighlighting()) {
