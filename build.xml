@@ -80,8 +80,8 @@ office@geogebra.org
 					geogebra/kernel3D/**,
 					org/freehep/**, 					  
 				    tutor/**,
-					meta-inf/**"			
-		/>
+					meta-inf/**,			
+			        **/*.java"		/>
 		<!-- exclude: 
 			geogebra/spreadsheet/** -->
 	</target>
@@ -100,6 +100,7 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_properties.jar"
 			basedir="${src.dir}"
 			includes="geogebra/properties/**"
+			excludes="**/*.java" 
 		/>
 	</target>
 				
@@ -107,7 +108,7 @@ office@geogebra.org
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="proguard38.jar" />
+		classpath="proguard42.jar" />
 	
 	<!-- Define pack200 task -->
 	<taskdef name="p200ant"
