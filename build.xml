@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date May 27, 2008 (v2)
+   @date May 28, 2008
 -->
 <project default="geogebra">
 	
