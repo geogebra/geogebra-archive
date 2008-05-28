@@ -1455,12 +1455,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     public void showHelp(String key) {
-        String text;
-        try {
-            text = rbplain.getString(key);
-        } catch (Exception e) {
-            text = key;
-        }
+        String text = getPlain(key); // Michael Borcherds changed to use getPlain() and removed try/catch
         JOptionPane.showConfirmDialog(
         		mainComp,
             text,
