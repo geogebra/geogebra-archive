@@ -13,6 +13,9 @@
 -allowaccessmodification
 -overloadaggressively
 
+#-printmapping geogebra3130.map
+-applymapping geogebra3130.map
+
 # Keep - Applications. Keep all application classes that have a main method.
 -keepclasseswithmembers public class * {
     public static void main(java.lang.String[]);
@@ -38,9 +41,12 @@
 # Plugin part
 ####
 
- -keep public class * {
-    public protected *;
- }
+# -keep public class * {
+#    public protected *;
+# }
+
+-keep class geogebra.plugin.PlugLetIF { <methods>; }
+-keep class geogebra.plugin.GgbAPI { <methods>; }
 
 # -keepclassmembernames class * {
 #    java.lang.Class class$(java.lang.String);
