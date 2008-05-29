@@ -48,7 +48,10 @@
 
 # Export classes called using reflection
 -keep class geogebra.export.* { <methods>; }
--keep class org.freehep.* { <methods>; }
+-keep class geogebra.export.pstricks.* { <methods>; }
+
+# see META-INF/services
+-keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 
 
 #####
