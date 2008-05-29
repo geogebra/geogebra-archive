@@ -41,18 +41,10 @@
 # Plugin part
 ####
 
-# -keep public class * {
-#    public protected *;
-# }
+ -keep public class * {
+    public protected *;
+ }
 
 -keep class geogebra.plugin.PlugLetIF { <methods>; }
 -keep class geogebra.plugin.GgbAPI { <methods>; }
 
-# -keepclassmembernames class * {
-#    java.lang.Class class$(java.lang.String);
-#    java.lang.Class class$(java.lang.String, boolean);
-# }
-
-# -keepclasseswithmembernames class * {
-#    native <methods>;
-# }
