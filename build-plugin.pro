@@ -51,9 +51,6 @@
 -keep class org.freehep.* { <methods>; }
 
 
--keep class geogebra.plugin.PlugLetIF { <methods>; }
--keep class geogebra.plugin.GgbAPI { <methods>; }
-
 #####
 # Plugin part
 ####
@@ -61,3 +58,41 @@
 # -keep public class * {
 #    public protected *;
 # }
+
+-keep class geogebra.plugin.PlugLetIF { <methods>; }
+-keep class geogebra.plugin.GgbAPI { <methods>; }
+
+-keep class geogebra.Application { <methods>; }
+-keep class geogebra.kernel.Construction { <methods>; }
+-keep class geogebra.kernel.ConstructionElement { <methods>; }
+-keep class geogebra.kernel.AlgoElement { <methods>; }
+-keep class geogebra.kernel.arithmetic.Equation { <methods>; }
+-keep class geogebra.kernel.arithmetic.ExpressionNode { <methods>; }
+-keep class geogebra.kernel.arithmetic.ExpressionValue { <methods>; }
+-keep class geogebra.kernel.arithmetic.Function { <methods>; }
+-keep class geogebra.kernel.arithmetic.NumberValue { <methods>; }
+-keep class geogebra.kernel.Dilateable { <methods>; }
+-keep class geogebra.kernel.GeoBoolean { <methods>; }
+-keep class geogebra.kernel.GeoConic { <methods>; }
+-keep class geogebra.kernel.GeoCurveCartesian { <methods>; }
+-keep class geogebra.kernel.GeoDeriveable { <methods>; }
+-keep class geogebra.kernel.GeoElement { <methods>; }
+-keep class geogebra.kernel.GeoFunction { <methods>; }
+-keep class geogebra.kernel.GeoImage { <methods>; }
+-keep class geogebra.kernel.GeoLine { <methods>; }
+-keep class geogebra.kernel.GeoList { <methods>; }
+-keep class geogebra.kernel.GeoNumeric { <methods>; }
+-keep class geogebra.kernel.GeoPoint { <methods>; }
+-keep class geogebra.kernel.GeoPolygon { <methods>; }
+-keep class geogebra.kernel.GeoSegment { <methods>; }
+-keep class geogebra.kernel.GeoText { <methods>; }
+-keep class geogebra.kernel.GeoVec3D { <methods>; }
+-keep class geogebra.kernel.GeoVector { <methods>; }
+-keep class geogebra.kernel.Kernel { <methods>; }
+-keep class geogebra.kernel.Macro { <methods>; }
+-keep class geogebra.kernel.Mirrorable { <methods>; }
+-keep class geogebra.kernel.Path { <methods>; }
+-keep class geogebra.kernel.PointRotateable { <methods>; }
+-keep class geogebra.kernel.Rotateable { <methods>; }
+-keep class geogebra.kernel.Translateable { <methods>; }
+-keep class org.freehep.graphics2d.TagString { <methods>; }
