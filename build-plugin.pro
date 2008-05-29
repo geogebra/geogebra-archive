@@ -53,6 +53,8 @@
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 
+# needed for _license.txt
+-keep class geogebra.gui.menubar.* { <methods>; }
 
 #####
 # Plugin part

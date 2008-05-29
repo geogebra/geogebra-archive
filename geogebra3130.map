@@ -2578,7 +2578,7 @@ geogebra.export.WorksheetExportDialog$7 -> geogebra.export.WorksheetExportDialog
     geogebra.export.WorksheetExportDialog this$0 -> a
     java.io.File val$HTMLfile -> a
     void run() -> run
-geogebra.export.epsgraphics.EpsDocument -> geogebra.export.b.c:
+geogebra.export.epsgraphics.EpsDocument -> geogebra.export.a.c:
     float minX -> a
     float minY -> b
     float maxX -> c
@@ -2596,8 +2596,8 @@ geogebra.export.epsgraphics.EpsDocument -> geogebra.export.b.c:
     void close() -> b
     boolean isClipSet() -> a
     void setClipSet(boolean) -> a
-geogebra.export.epsgraphics.EpsException -> geogebra.export.b.b:
-geogebra.export.epsgraphics.EpsGraphics2D -> geogebra.export.b.a:
+geogebra.export.epsgraphics.EpsException -> geogebra.export.a.b:
+geogebra.export.epsgraphics.EpsGraphics2D -> geogebra.export.a.a:
     java.awt.Color _color -> a
     java.awt.Color _backgroundColor -> b
     java.awt.Paint _paint -> a
@@ -2703,7 +2703,8 @@ geogebra.export.epsgraphics.EpsGraphics2D -> geogebra.export.b.a:
     java.lang.String toString() -> toString
     boolean hitClip(int,int,int,int) -> hitClip
     java.awt.Rectangle getClipBounds(java.awt.Rectangle) -> getClipBounds
-geogebra.export.pstricks.GeoGebraToPstricks -> geogebra.export.a.b:
+geogebra.export.pstricks.GeoGebraToPstricks -> geogebra.export.pstricks.GeoGebraToPstricks:
+    double PRECISION_XRANGE_FUNCTION -> a
     java.lang.StringBuffer code -> a
     java.lang.StringBuffer codePoint -> b
     java.lang.StringBuffer codePreamble -> c
@@ -2716,72 +2717,162 @@ geogebra.export.pstricks.GeoGebraToPstricks -> geogebra.export.a.b:
     geogebra.euclidian.EuclidianView euclidianView -> a
     geogebra.export.pstricks.PstricksPanel frame -> a
     java.util.HashMap CustomColor -> a
-    double xunit -> a
-    double yunit -> b
-    double xmin -> c
-    double xmax -> d
-    double ymin -> e
-    double ymax -> f
-    void createPstricks() -> a
-    void drawGeoElement(geogebra.kernel.GeoElement) -> a
-    void drawLocus(geogebra.kernel.GeoLocus) -> a
-    void drawSumUpperLower(geogebra.kernel.GeoNumeric) -> a
-    void drawIntegral(geogebra.kernel.GeoNumeric) -> b
-    void drawSlope(geogebra.kernel.GeoNumeric) -> c
-    void drawAngle(geogebra.kernel.GeoAngle) -> a
-    void drawArc(geogebra.kernel.GeoAngle,double[],double,double,double) -> a
-    void drawTick(geogebra.kernel.GeoAngle,double[],double) -> a
-    void markAngle(geogebra.kernel.GeoAngle,double,double[],double,double) -> a
-    void drawSlider(geogebra.kernel.GeoNumeric) -> d
-    void drawPolygon(geogebra.kernel.GeoPolygon) -> a
-    void drawText(geogebra.kernel.GeoText) -> a
-    void addText(java.lang.String,boolean,int,int,java.awt.Color) -> a
-    void drawGeoConicPart(geogebra.kernel.GeoConicPart) -> a
-    void drawFunction(geogebra.kernel.GeoFunction) -> a
-    java.lang.String killSpace(java.lang.String) -> a
-    void renameFunc(java.lang.StringBuffer,java.lang.String,java.lang.String) -> a
-    double maxDefinedValue(geogebra.kernel.arithmetic.Function,double,double) -> a
-    double firstDefinedValue(geogebra.kernel.arithmetic.Function,double,double) -> b
-    void drawGeoVector(geogebra.kernel.GeoVector) -> a
-    void drawCircle(geogebra.kernel.GeoConic) -> a
-    void drawGeoConic(geogebra.kernel.GeoConic) -> b
-    void drawGeoPoint(geogebra.kernel.GeoPoint) -> a
-    void drawGeoLine(geogebra.kernel.GeoLine) -> a
-    void drawGeoSegment(geogebra.kernel.GeoSegment) -> a
-    void drawLine(double,double,double,double,geogebra.kernel.GeoElement) -> a
-    void mark(double[],double[],int,geogebra.kernel.GeoElement) -> a
-    void drawGeoRay(geogebra.kernel.GeoRay) -> a
-    void initUnitAndVariable() -> b
-    void drawLabel(geogebra.kernel.GeoElement,geogebra.euclidian.Drawable) -> a
-    boolean isSinglePointConic(geogebra.kernel.GeoElement) -> a
-    boolean isDoubleLineConic(geogebra.kernel.GeoElement) -> b
-    boolean isEmpty(geogebra.kernel.GeoElement) -> c
-    void drawGrid() -> c
-    void drawAxis() -> d
-    void PointOptionCode(geogebra.kernel.GeoPoint) -> b
-    java.lang.String LineOptionCode(geogebra.kernel.GeoElement,boolean) -> a
-    void LinestyleCode(int,java.lang.StringBuffer) -> a
-    int resizePt(int) -> a
-    void ColorCode(java.awt.Color,java.lang.StringBuffer) -> a
-    java.lang.String createSuffix(int,int,int) -> a
+    double xunit -> b
+    double yunit -> c
+    double xmin -> d
+    double xmax -> e
+    double ymin -> f
+    double ymax -> g
+    geogebra.Application getApp() -> getApp
+    void initGui() -> initGui
+    void refreshEuclidianView() -> refreshEuclidianView
+    void setxmin(double) -> setxmin
+    void setxmax(double) -> setxmax
+    void setymin(double) -> setymin
+    void setymax(double) -> setymax
+    double getxmin() -> getxmin
+    double getxmax() -> getxmax
+    double getymin() -> getymin
+    double getymax() -> getymax
+    void setxunit(double) -> setxunit
+    void setyunit(double) -> setyunit
+    double getxunit() -> getxunit
+    double getyunit() -> getyunit
+    void createPstricks() -> createPstricks
+    void drawGeoElement(geogebra.kernel.GeoElement) -> drawGeoElement
+    void drawLocus(geogebra.kernel.GeoLocus) -> drawLocus
+    void drawSumUpperLower(geogebra.kernel.GeoNumeric) -> drawSumUpperLower
+    void drawIntegral(geogebra.kernel.GeoNumeric) -> drawIntegral
+    void drawSlope(geogebra.kernel.GeoNumeric) -> drawSlope
+    void drawAngle(geogebra.kernel.GeoAngle) -> drawAngle
+    void drawArc(geogebra.kernel.GeoAngle,double[],double,double,double) -> drawArc
+    void drawTick(geogebra.kernel.GeoAngle,double[],double) -> drawTick
+    void markAngle(geogebra.kernel.GeoAngle,double,double[],double,double) -> markAngle
+    void drawSlider(geogebra.kernel.GeoNumeric) -> drawSlider
+    void drawPolygon(geogebra.kernel.GeoPolygon) -> drawPolygon
+    void drawText(geogebra.kernel.GeoText) -> drawText
+    void addText(java.lang.String,boolean,int,int,java.awt.Color) -> addText
+    void drawGeoConicPart(geogebra.kernel.GeoConicPart) -> drawGeoConicPart
+    void drawFunction(geogebra.kernel.GeoFunction) -> drawFunction
+    java.lang.String killSpace(java.lang.String) -> killSpace
+    void renameFunc(java.lang.StringBuffer,java.lang.String,java.lang.String) -> renameFunc
+    double maxDefinedValue(geogebra.kernel.arithmetic.Function,double,double) -> maxDefinedValue
+    double firstDefinedValue(geogebra.kernel.arithmetic.Function,double,double) -> firstDefinedValue
+    void drawGeoVector(geogebra.kernel.GeoVector) -> drawGeoVector
+    void drawCircle(geogebra.kernel.GeoConic) -> drawCircle
+    void drawGeoConic(geogebra.kernel.GeoConic) -> drawGeoConic
+    void drawGeoPoint(geogebra.kernel.GeoPoint) -> drawGeoPoint
+    void drawGeoLine(geogebra.kernel.GeoLine) -> drawGeoLine
+    void drawGeoSegment(geogebra.kernel.GeoSegment) -> drawGeoSegment
+    void drawLine(double,double,double,double,geogebra.kernel.GeoElement) -> drawLine
+    void mark(double[],double[],int,geogebra.kernel.GeoElement) -> mark
+    void drawGeoRay(geogebra.kernel.GeoRay) -> drawGeoRay
+    void initUnitAndVariable() -> initUnitAndVariable
+    void drawLabel(geogebra.kernel.GeoElement,geogebra.euclidian.Drawable) -> drawLabel
+    boolean isSinglePointConic(geogebra.kernel.GeoElement) -> isSinglePointConic
+    boolean isDoubleLineConic(geogebra.kernel.GeoElement) -> isDoubleLineConic
+    boolean isEmpty(geogebra.kernel.GeoElement) -> isEmpty
+    void drawGrid() -> drawGrid
+    void drawAxis() -> drawAxis
+    void PointOptionCode(geogebra.kernel.GeoPoint) -> PointOptionCode
+    java.lang.String LineOptionCode(geogebra.kernel.GeoElement,boolean) -> LineOptionCode
+    void LinestyleCode(int,java.lang.StringBuffer) -> LinestyleCode
+    int resizePt(int) -> resizePt
+    void ColorCode(java.awt.Color,java.lang.StringBuffer) -> ColorCode
+    java.lang.String createSuffix(int,int,int) -> createSuffix
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    java.lang.String sci2dec(double) -> a
-geogebra.export.pstricks.PstricksPanel -> geogebra.export.a.c:
+    void refreshSelectionRectangle() -> refreshSelectionRectangle
+    java.lang.String sci2dec(double) -> sci2dec
+geogebra.export.pstricks.PstricksPanel -> geogebra.export.pstricks.PstricksPanel:
     geogebra.export.pstricks.TextValue textXUnit -> a
     geogebra.export.pstricks.TextValue textYUnit -> b
-    geogebra.export.pstricks.TextValue textheight -> c
+    geogebra.export.pstricks.TextValue textwidth -> c
+    geogebra.export.pstricks.TextValue textheight -> d
+    geogebra.export.pstricks.TextValue textXmin -> e
+    geogebra.export.pstricks.TextValue textXmax -> f
+    geogebra.export.pstricks.TextValue textYmin -> g
+    geogebra.export.pstricks.TextValue textYmax -> h
+    javax.swing.JLabel labelXUnit -> a
+    javax.swing.JLabel labelYUnit -> b
+    javax.swing.JLabel labelwidth -> c
+    javax.swing.JLabel labelheight -> d
+    javax.swing.JLabel labelXmin -> e
+    javax.swing.JLabel labelXmax -> f
+    javax.swing.JLabel labelYmin -> g
+    javax.swing.JLabel labelYmax -> h
+    javax.swing.JLabel labelFontSize -> i
+    java.lang.String[] msg -> a
     javax.swing.JComboBox comboFontSize -> a
+    javax.swing.JPanel panel -> a
+    javax.swing.JButton button -> a
+    javax.swing.JButton button_copy -> b
     javax.swing.JCheckBox jcb -> a
+    javax.swing.JScrollPane js -> a
     javax.swing.JTextArea textarea -> a
-    boolean getExportPointSymbol() -> a
-    double getXUnit() -> a
-    double getYUnit() -> b
-    double getLatexHeight() -> c
-    void write(java.lang.StringBuffer) -> a
-    int getFontSize() -> a
-geogebra.export.pstricks.TextValue -> geogebra.export.a.a:
+    geogebra.Application app -> a
+    double width -> a
+    double height -> b
+    void initGui() -> initGui
+    void centerOnScreen() -> centerOnScreen
+    boolean getExportPointSymbol() -> getExportPointSymbol
+    double getXUnit() -> getXUnit
+    double getYUnit() -> getYUnit
+    double getLatexHeight() -> getLatexHeight
+    void write(java.lang.StringBuffer) -> write
+    int getFontSize() -> getFontSize
+    geogebra.export.pstricks.TextValue access$0(geogebra.export.pstricks.PstricksPanel) -> access$0
+    double access$1(geogebra.export.pstricks.PstricksPanel) -> access$1
+    geogebra.export.pstricks.TextValue access$2(geogebra.export.pstricks.PstricksPanel) -> access$2
+    double access$3(geogebra.export.pstricks.PstricksPanel) -> access$3
+    geogebra.export.pstricks.TextValue access$4(geogebra.export.pstricks.PstricksPanel) -> access$4
+    geogebra.export.pstricks.TextValue access$5(geogebra.export.pstricks.PstricksPanel) -> access$5
+    void access$6(geogebra.export.pstricks.PstricksPanel,double) -> access$6
+    geogebra.export.pstricks.TextValue access$7(geogebra.export.pstricks.PstricksPanel) -> access$7
+    geogebra.export.pstricks.TextValue access$8(geogebra.export.pstricks.PstricksPanel) -> access$8
+    void access$9(geogebra.export.pstricks.PstricksPanel,double) -> access$9
+    geogebra.export.pstricks.TextValue access$10(geogebra.export.pstricks.PstricksPanel) -> access$10
+    geogebra.export.pstricks.TextValue access$11(geogebra.export.pstricks.PstricksPanel) -> access$11
+    javax.swing.JTextArea access$12(geogebra.export.pstricks.PstricksPanel) -> access$12
+geogebra.export.pstricks.PstricksPanel$1 -> geogebra.export.pstricks.PstricksPanel$1:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$2 -> geogebra.export.pstricks.PstricksPanel$2:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$3 -> geogebra.export.pstricks.PstricksPanel$3:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$4 -> geogebra.export.pstricks.PstricksPanel$4:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$5 -> geogebra.export.pstricks.PstricksPanel$5:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$6 -> geogebra.export.pstricks.PstricksPanel$6:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$7 -> geogebra.export.pstricks.PstricksPanel$7:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$8 -> geogebra.export.pstricks.PstricksPanel$8:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    geogebra.export.pstricks.GeoGebraToPstricks val$ggb2ps -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+geogebra.export.pstricks.PstricksPanel$9 -> geogebra.export.pstricks.PstricksPanel$9:
+    geogebra.export.pstricks.PstricksPanel this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+geogebra.export.pstricks.TextValue -> geogebra.export.pstricks.TextValue:
     boolean ALLOW_NEGATIVE -> a
-    double getValue() -> a
+    javax.swing.JFrame jf -> a
+    double getValue() -> getValue
+    void setValue(double) -> setValue
     void keyTyped(java.awt.event.KeyEvent) -> keyTyped
     void keyPressed(java.awt.event.KeyEvent) -> keyPressed
     void keyReleased(java.awt.event.KeyEvent) -> keyReleased
@@ -4024,19 +4115,19 @@ geogebra.gui.ToolNameIconPanel$4 -> geogebra.gui.z:
 geogebra.gui.UpdateablePanel -> geogebra.gui.U:
     javax.swing.JPanel update(java.lang.Object[]) -> a
     void setVisible(boolean) -> setVisible
-geogebra.gui.menubar.GeoGebraMenuBar -> geogebra.gui.a.T:
+geogebra.gui.menubar.GeoGebraMenuBar -> geogebra.gui.menubar.GeoGebraMenuBar:
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.LoadFileListener -> geogebra.gui.a.k:
+geogebra.gui.menubar.LoadFileListener -> geogebra.gui.menubar.LoadFileListener:
     geogebra.Application app -> a
     java.io.File file -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.Menubar -> geogebra.gui.a.af:
-    void initMenubar() -> c
-    void updateMenubar() -> a
-    void updateMenuFile() -> b
-    void updateMenuWindow() -> g
-    void updateSelection() -> e
-geogebra.gui.menubar.MenubarImpl -> geogebra.gui.a.ad:
+geogebra.gui.menubar.Menubar -> geogebra.gui.menubar.Menubar:
+    void initMenubar() -> initMenubar
+    void updateMenubar() -> updateMenubar
+    void updateMenuFile() -> updateMenuFile
+    void updateMenuWindow() -> updateMenuWindow
+    void updateSelection() -> updateSelection
+geogebra.gui.menubar.MenubarImpl -> geogebra.gui.menubar.MenubarImpl:
     javax.swing.AbstractAction refreshAction -> a
     javax.swing.AbstractAction DataFromClipboardAction -> b
     javax.swing.AbstractAction drawingPadToClipboardAction -> c
@@ -4104,212 +4195,213 @@ geogebra.gui.menubar.MenubarImpl -> geogebra.gui.a.ad:
     java.lang.Class class$0 -> a
     java.lang.Class class$1 -> b
     java.lang.Class class$3 -> c
-    void updateMenubar() -> a
-    void updateMenuFile() -> b
-    void initMenubar() -> c
-    void initActions() -> d
-    int getSelectedLayer() -> a
-    void showPrintPreview(geogebra.Application) -> a
-    void showAboutDialog(geogebra.Application) -> b
-    void updateSelection() -> e
-    void updateActions() -> f
-    void setMenuShortCutAccelerator(javax.swing.JMenuItem,char) -> a
-    void setMenuShortCutShiftAccelerator(javax.swing.JMenuItem,char) -> b
-    void updateMenuWindow() -> g
-    void updateMenuAngleUnit() -> h
-    void updateMenuPointStyle() -> i
-    void updateMenuBooleanSize() -> j
-    void updateMenuRightAngleStyle() -> k
-    void updateMenuCoordStyle() -> l
-    void updateMenuLabeling() -> m
-    void updateMenuPointCapturing() -> n
-    void updateMenuDecimalPlaces() -> o
-    void updateMenuContinuity() -> p
-    void addLanguageMenuItems(javax.swing.JMenu,java.awt.event.ActionListener) -> a
-    void addRadioButtonMenuItems(javax.swing.JMenu,java.awt.event.ActionListener,java.lang.String[],java.lang.String[],int) -> a
-    java.lang.String readTextFromJar(java.lang.String) -> a
-geogebra.gui.menubar.MenubarImpl$1 -> geogebra.gui.a.U:
+    void updateMenubar() -> updateMenubar
+    void updateMenuFile() -> updateMenuFile
+    void initMenubar() -> initMenubar
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+    void initActions() -> initActions
+    int getSelectedLayer() -> getSelectedLayer
+    void showPrintPreview(geogebra.Application) -> showPrintPreview
+    void showAboutDialog(geogebra.Application) -> showAboutDialog
+    void updateSelection() -> updateSelection
+    void updateActions() -> updateActions
+    void setMenuShortCutAccelerator(javax.swing.JMenuItem,char) -> setMenuShortCutAccelerator
+    void setMenuShortCutShiftAccelerator(javax.swing.JMenuItem,char) -> setMenuShortCutShiftAccelerator
+    void updateMenuWindow() -> updateMenuWindow
+    void updateMenuAngleUnit() -> updateMenuAngleUnit
+    void updateMenuPointStyle() -> updateMenuPointStyle
+    void updateMenuBooleanSize() -> updateMenuBooleanSize
+    void updateMenuRightAngleStyle() -> updateMenuRightAngleStyle
+    void updateMenuCoordStyle() -> updateMenuCoordStyle
+    void updateMenuLabeling() -> updateMenuLabeling
+    void updateMenuPointCapturing() -> updateMenuPointCapturing
+    void updateMenuDecimalPlaces() -> updateMenuDecimalPlaces
+    void updateMenuContinuity() -> updateMenuContinuity
+    void addLanguageMenuItems(javax.swing.JMenu,java.awt.event.ActionListener) -> addLanguageMenuItems
+    void addRadioButtonMenuItems(javax.swing.JMenu,java.awt.event.ActionListener,java.lang.String[],java.lang.String[],int) -> addRadioButtonMenuItems
+    java.lang.String readTextFromJar(java.lang.String) -> readTextFromJar
+geogebra.gui.menubar.MenubarImpl$1 -> geogebra.gui.menubar.MenubarImpl$1:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$10 -> geogebra.gui.a.x:
+geogebra.gui.menubar.MenubarImpl$10 -> geogebra.gui.menubar.MenubarImpl$10:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$11 -> geogebra.gui.a.t:
+geogebra.gui.menubar.MenubarImpl$11 -> geogebra.gui.menubar.MenubarImpl$11:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$12 -> geogebra.gui.a.u:
+geogebra.gui.menubar.MenubarImpl$12 -> geogebra.gui.menubar.MenubarImpl$12:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$13 -> geogebra.gui.a.v:
+geogebra.gui.menubar.MenubarImpl$13 -> geogebra.gui.menubar.MenubarImpl$13:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$14 -> geogebra.gui.a.w:
+geogebra.gui.menubar.MenubarImpl$14 -> geogebra.gui.menubar.MenubarImpl$14:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$15 -> geogebra.gui.a.q:
+geogebra.gui.menubar.MenubarImpl$15 -> geogebra.gui.menubar.MenubarImpl$15:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$15) -> a
-geogebra.gui.menubar.MenubarImpl$16 -> geogebra.gui.a.p:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$15) -> access$0
+geogebra.gui.menubar.MenubarImpl$16 -> geogebra.gui.menubar.MenubarImpl$16:
     geogebra.gui.menubar.MenubarImpl$15 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$17 -> geogebra.gui.a.s:
+geogebra.gui.menubar.MenubarImpl$17 -> geogebra.gui.menubar.MenubarImpl$17:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$18 -> geogebra.gui.a.r:
+geogebra.gui.menubar.MenubarImpl$18 -> geogebra.gui.menubar.MenubarImpl$18:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$18) -> a
-geogebra.gui.menubar.MenubarImpl$19 -> geogebra.gui.a.o:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$18) -> access$0
+geogebra.gui.menubar.MenubarImpl$19 -> geogebra.gui.menubar.MenubarImpl$19:
     geogebra.gui.menubar.MenubarImpl$18 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$2 -> geogebra.gui.a.V:
+geogebra.gui.menubar.MenubarImpl$2 -> geogebra.gui.menubar.MenubarImpl$2:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$20 -> geogebra.gui.a.C:
+geogebra.gui.menubar.MenubarImpl$20 -> geogebra.gui.menubar.MenubarImpl$20:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$21 -> geogebra.gui.a.D:
+geogebra.gui.menubar.MenubarImpl$21 -> geogebra.gui.menubar.MenubarImpl$21:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$22 -> geogebra.gui.a.G:
+geogebra.gui.menubar.MenubarImpl$22 -> geogebra.gui.menubar.MenubarImpl$22:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$23 -> geogebra.gui.a.H:
+geogebra.gui.menubar.MenubarImpl$23 -> geogebra.gui.menubar.MenubarImpl$23:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$24 -> geogebra.gui.a.E:
+geogebra.gui.menubar.MenubarImpl$24 -> geogebra.gui.menubar.MenubarImpl$24:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$25 -> geogebra.gui.a.F:
+geogebra.gui.menubar.MenubarImpl$25 -> geogebra.gui.menubar.MenubarImpl$25:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$26 -> geogebra.gui.a.B:
+geogebra.gui.menubar.MenubarImpl$26 -> geogebra.gui.menubar.MenubarImpl$26:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$27 -> geogebra.gui.a.A:
+geogebra.gui.menubar.MenubarImpl$27 -> geogebra.gui.menubar.MenubarImpl$27:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$28 -> geogebra.gui.a.z:
+geogebra.gui.menubar.MenubarImpl$28 -> geogebra.gui.menubar.MenubarImpl$28:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$29 -> geogebra.gui.a.y:
+geogebra.gui.menubar.MenubarImpl$29 -> geogebra.gui.menubar.MenubarImpl$29:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$29) -> a
-geogebra.gui.menubar.MenubarImpl$3 -> geogebra.gui.a.W:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$29) -> access$0
+geogebra.gui.menubar.MenubarImpl$3 -> geogebra.gui.menubar.MenubarImpl$3:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$30 -> geogebra.gui.a.L:
+geogebra.gui.menubar.MenubarImpl$30 -> geogebra.gui.menubar.MenubarImpl$30:
     geogebra.gui.menubar.MenubarImpl$29 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$31 -> geogebra.gui.a.M:
+geogebra.gui.menubar.MenubarImpl$31 -> geogebra.gui.menubar.MenubarImpl$31:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$31) -> a
-geogebra.gui.menubar.MenubarImpl$32 -> geogebra.gui.a.N:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$31) -> access$0
+geogebra.gui.menubar.MenubarImpl$32 -> geogebra.gui.menubar.MenubarImpl$32:
     geogebra.gui.menubar.MenubarImpl$31 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$33 -> geogebra.gui.a.O:
+geogebra.gui.menubar.MenubarImpl$33 -> geogebra.gui.menubar.MenubarImpl$33:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$33) -> a
-geogebra.gui.menubar.MenubarImpl$34 -> geogebra.gui.a.P:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$33) -> access$0
+geogebra.gui.menubar.MenubarImpl$34 -> geogebra.gui.menubar.MenubarImpl$34:
     geogebra.gui.menubar.MenubarImpl$33 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$35 -> geogebra.gui.a.Q:
+geogebra.gui.menubar.MenubarImpl$35 -> geogebra.gui.menubar.MenubarImpl$35:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$35) -> a
-geogebra.gui.menubar.MenubarImpl$36 -> geogebra.gui.a.R:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$35) -> access$0
+geogebra.gui.menubar.MenubarImpl$36 -> geogebra.gui.menubar.MenubarImpl$36:
     geogebra.gui.menubar.MenubarImpl$35 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$37 -> geogebra.gui.a.J:
+geogebra.gui.menubar.MenubarImpl$37 -> geogebra.gui.menubar.MenubarImpl$37:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$38 -> geogebra.gui.a.I:
+geogebra.gui.menubar.MenubarImpl$38 -> geogebra.gui.menubar.MenubarImpl$38:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$38) -> a
-geogebra.gui.menubar.MenubarImpl$39 -> geogebra.gui.a.K:
+    geogebra.gui.menubar.MenubarImpl access$0(geogebra.gui.menubar.MenubarImpl$38) -> access$0
+geogebra.gui.menubar.MenubarImpl$39 -> geogebra.gui.menubar.MenubarImpl$39:
     geogebra.gui.menubar.MenubarImpl$38 this$1 -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$4 -> geogebra.gui.a.X:
+geogebra.gui.menubar.MenubarImpl$4 -> geogebra.gui.menubar.MenubarImpl$4:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$40 -> geogebra.gui.a.j:
+geogebra.gui.menubar.MenubarImpl$40 -> geogebra.gui.menubar.MenubarImpl$40:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$41 -> geogebra.gui.a.i:
+geogebra.gui.menubar.MenubarImpl$41 -> geogebra.gui.menubar.MenubarImpl$41:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$42 -> geogebra.gui.a.h:
+geogebra.gui.menubar.MenubarImpl$42 -> geogebra.gui.menubar.MenubarImpl$42:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$43 -> geogebra.gui.a.g:
+geogebra.gui.menubar.MenubarImpl$43 -> geogebra.gui.menubar.MenubarImpl$43:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$44 -> geogebra.gui.a.f:
+geogebra.gui.menubar.MenubarImpl$44 -> geogebra.gui.menubar.MenubarImpl$44:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$45 -> geogebra.gui.a.e:
+geogebra.gui.menubar.MenubarImpl$45 -> geogebra.gui.menubar.MenubarImpl$45:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$46 -> geogebra.gui.a.d:
+geogebra.gui.menubar.MenubarImpl$46 -> geogebra.gui.menubar.MenubarImpl$46:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$47 -> geogebra.gui.a.c:
+geogebra.gui.menubar.MenubarImpl$47 -> geogebra.gui.menubar.MenubarImpl$47:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$48 -> geogebra.gui.a.a:
+geogebra.gui.menubar.MenubarImpl$48 -> geogebra.gui.menubar.MenubarImpl$48:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$49 -> geogebra.gui.a.b:
+geogebra.gui.menubar.MenubarImpl$49 -> geogebra.gui.menubar.MenubarImpl$49:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$5 -> geogebra.gui.a.Y:
+geogebra.gui.menubar.MenubarImpl$5 -> geogebra.gui.menubar.MenubarImpl$5:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$50 -> geogebra.gui.a.n:
+geogebra.gui.menubar.MenubarImpl$50 -> geogebra.gui.menubar.MenubarImpl$50:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$51 -> geogebra.gui.a.m:
+geogebra.gui.menubar.MenubarImpl$51 -> geogebra.gui.menubar.MenubarImpl$51:
     geogebra.Application val$app -> a
     void run() -> run
-geogebra.gui.menubar.MenubarImpl$52 -> geogebra.gui.a.l:
+geogebra.gui.menubar.MenubarImpl$52 -> geogebra.gui.menubar.MenubarImpl$52:
     javax.swing.JDialog val$dialog -> a
     geogebra.Application val$app -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$6 -> geogebra.gui.a.Z:
+geogebra.gui.menubar.MenubarImpl$6 -> geogebra.gui.menubar.MenubarImpl$6:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$7 -> geogebra.gui.a.aa:
+geogebra.gui.menubar.MenubarImpl$7 -> geogebra.gui.menubar.MenubarImpl$7:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$8 -> geogebra.gui.a.ab:
+geogebra.gui.menubar.MenubarImpl$8 -> geogebra.gui.menubar.MenubarImpl$8:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$9 -> geogebra.gui.a.ac:
+geogebra.gui.menubar.MenubarImpl$9 -> geogebra.gui.menubar.MenubarImpl$9:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.MenubarImpl$LanguageActionListener -> geogebra.gui.a.S:
+geogebra.gui.menubar.MenubarImpl$LanguageActionListener -> geogebra.gui.menubar.MenubarImpl$LanguageActionListener:
     geogebra.gui.menubar.MenubarImpl this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.menubar.RequestFocusListener -> geogebra.gui.a.ae:
+geogebra.gui.menubar.RequestFocusListener -> geogebra.gui.menubar.RequestFocusListener:
     javax.swing.JFrame frame -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.toolbar.ModeCellRenderer -> geogebra.gui.b.e:
+geogebra.gui.toolbar.ModeCellRenderer -> geogebra.gui.a.e:
     geogebra.Application app -> a
     java.awt.Component getTreeCellRendererComponent(javax.swing.JTree,java.lang.Object,boolean,boolean,boolean,int,boolean) -> getTreeCellRendererComponent
     java.awt.Component getListCellRendererComponent(javax.swing.JList,java.lang.Object,int,boolean,boolean) -> getListCellRendererComponent
     void handleRootNode(javax.swing.tree.DefaultMutableTreeNode) -> a
     void handleModeNode(int) -> a
     void handleSelection(boolean) -> a
-geogebra.gui.toolbar.ModeToggleButtonGroup -> geogebra.gui.b.h:
+geogebra.gui.toolbar.ModeToggleButtonGroup -> geogebra.gui.a.h:
     javax.swing.JPopupMenu activePopMenu -> a
     void setActivePopupMenu(javax.swing.JPopupMenu) -> a
     javax.swing.JPopupMenu getActivePopupMenu() -> a
-geogebra.gui.toolbar.ModeToggleMenu -> geogebra.gui.b.i:
+geogebra.gui.toolbar.ModeToggleMenu -> geogebra.gui.a.i:
     geogebra.gui.toolbar.ModeToggleButtonGroup bg -> a
     geogebra.gui.toolbar.MyJToggleButton tbutton -> a
     javax.swing.JPopupMenu popMenu -> a
@@ -4330,10 +4422,10 @@ geogebra.gui.toolbar.ModeToggleMenu -> geogebra.gui.b.i:
     void setMode(int) -> b
     void access$0(geogebra.gui.toolbar.ModeToggleMenu,javax.swing.JMenuItem) -> a
     geogebra.gui.toolbar.MyJToggleButton access$1(geogebra.gui.toolbar.ModeToggleMenu) -> a
-geogebra.gui.toolbar.ModeToggleMenu$MenuItemListener -> geogebra.gui.b.a:
+geogebra.gui.toolbar.ModeToggleMenu$MenuItemListener -> geogebra.gui.a.a:
     geogebra.gui.toolbar.ModeToggleMenu this$0 -> a
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.toolbar.MyJToggleButton -> geogebra.gui.b.g:
+geogebra.gui.toolbar.MyJToggleButton -> geogebra.gui.a.g:
     int BORDER -> a
     int iconWidth -> b
     int iconHeight -> c
@@ -4357,7 +4449,7 @@ geogebra.gui.toolbar.MyJToggleButton -> geogebra.gui.b.g:
     void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
     void mouseDragged(java.awt.event.MouseEvent) -> mouseDragged
     void mouseMoved(java.awt.event.MouseEvent) -> mouseMoved
-geogebra.gui.toolbar.MyToolbar -> geogebra.gui.b.j:
+geogebra.gui.toolbar.MyToolbar -> geogebra.gui.a.j:
     java.lang.Integer TOOLBAR_SEPARATOR -> a
     geogebra.Application app -> a
     java.util.ArrayList modeToggleMenus -> a
@@ -4380,20 +4472,20 @@ geogebra.gui.toolbar.MyToolbar -> geogebra.gui.b.j:
     void componentMoved(java.awt.event.ComponentEvent) -> componentMoved
     void componentResized(java.awt.event.ComponentEvent) -> componentResized
     void componentShown(java.awt.event.ComponentEvent) -> componentShown
-geogebra.gui.toolbar.ToolbarConfigDialog -> geogebra.gui.b.c:
+geogebra.gui.toolbar.ToolbarConfigDialog -> geogebra.gui.a.c:
     geogebra.Application app -> a
     geogebra.gui.toolbar.ToolbarConfigPanel confPanel -> a
     void apply() -> a
     javax.swing.JPanel createButtonPanel() -> a
     void access$0(geogebra.gui.toolbar.ToolbarConfigDialog) -> a
     geogebra.Application access$1(geogebra.gui.toolbar.ToolbarConfigDialog) -> a
-geogebra.gui.toolbar.ToolbarConfigDialog$1 -> geogebra.gui.b.d:
+geogebra.gui.toolbar.ToolbarConfigDialog$1 -> geogebra.gui.a.d:
     geogebra.gui.toolbar.ToolbarConfigDialog this$0 -> a
     javax.swing.JButton val$btApply -> a
     javax.swing.JButton val$btCancel -> b
     javax.swing.JButton val$btDefaultToolbar -> c
     void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
-geogebra.gui.toolbar.ToolbarConfigPanel -> geogebra.gui.b.b:
+geogebra.gui.toolbar.ToolbarConfigPanel -> geogebra.gui.a.b:
     javax.swing.JButton insertButton -> a
     javax.swing.JButton moveUpButton -> b
     javax.swing.JButton moveDownButton -> c
@@ -4414,25 +4506,25 @@ geogebra.gui.toolbar.ToolbarConfigPanel -> geogebra.gui.b.b:
     javax.swing.tree.DefaultMutableTreeNode generateRootNode(java.util.Vector) -> a
     void treeCollapsed(javax.swing.event.TreeExpansionEvent) -> treeCollapsed
     void treeExpanded(javax.swing.event.TreeExpansionEvent) -> treeExpanded
-geogebra.gui.toolbar.ToolbarConfigPanel$1 -> geogebra.gui.b.f:
+geogebra.gui.toolbar.ToolbarConfigPanel$1 -> geogebra.gui.a.f:
     geogebra.gui.toolbar.ToolbarConfigPanel this$0 -> a
     void setExpandedState(javax.swing.tree.TreePath,boolean) -> setExpandedState
-geogebra.gui.util.BrowserLauncher -> geogebra.gui.c.a:
+geogebra.gui.util.BrowserLauncher -> geogebra.gui.b.a:
     java.lang.Class class$0 -> a
     java.lang.Class class$1 -> b
     void openURL(java.lang.String) -> a
-geogebra.gui.util.FileTransferable -> geogebra.gui.c.b:
+geogebra.gui.util.FileTransferable -> geogebra.gui.b.b:
     java.awt.datatransfer.DataFlavor[] dataFlavors -> a
     java.util.List files -> a
     java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() -> getTransferDataFlavors
     boolean isDataFlavorSupported(java.awt.datatransfer.DataFlavor) -> isDataFlavorSupported
     java.lang.Object getTransferData(java.awt.datatransfer.DataFlavor) -> getTransferData
-geogebra.gui.util.ImageSelection -> geogebra.gui.c.c:
+geogebra.gui.util.ImageSelection -> geogebra.gui.b.c:
     java.awt.Image image -> a
     java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() -> getTransferDataFlavors
     boolean isDataFlavorSupported(java.awt.datatransfer.DataFlavor) -> isDataFlavorSupported
     java.lang.Object getTransferData(java.awt.datatransfer.DataFlavor) -> getTransferData
-geogebra.gui.util.SpringUtilities -> geogebra.gui.c.d:
+geogebra.gui.util.SpringUtilities -> geogebra.gui.b.d:
     javax.swing.SpringLayout$Constraints getConstraintsForCell(int,int,java.awt.Container,int) -> a
     void makeCompactGrid(java.awt.Container,int,int,int,int,int,int) -> a
 geogebra.io.DocHandler -> geogebra.d.g:
@@ -13150,7 +13242,7 @@ org.freehep.graphicsio.pdf.PDFWriter -> org.freehep.graphicsio.b.u:
     void close(org.freehep.graphicsio.pdf.PDFOutlineList) -> a
     org.freehep.graphicsio.pdf.PDFOutline openOutline(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void close(org.freehep.graphicsio.pdf.PDFOutline) -> a
-org.freehep.graphicsio.raw.RawImageWriteParam -> org.freehep.graphicsio.e.a:
+org.freehep.graphicsio.raw.RawImageWriteParam -> org.freehep.graphicsio.raw.b:
     java.lang.String rootKey -> d
     java.lang.String BACKGROUND -> a
     java.lang.String CODE -> b
@@ -13160,9 +13252,23 @@ org.freehep.graphicsio.raw.RawImageWriteParam -> org.freehep.graphicsio.e.a:
     int pad -> a
     java.lang.Class class$0 -> a
     javax.imageio.ImageWriteParam getWriteParam(java.util.Properties) -> a
+    java.awt.Color getBackground() -> a
     void setBackground(java.awt.Color) -> a
+    java.lang.String getCode() -> a
     void setCode(java.lang.String) -> a
+    int getPad() -> a
     void setPad(int) -> a
+org.freehep.graphicsio.raw.RawImageWriter -> org.freehep.graphicsio.raw.a:
+    void write(javax.imageio.metadata.IIOMetadata,javax.imageio.IIOImage,javax.imageio.ImageWriteParam) -> write
+    javax.imageio.metadata.IIOMetadata convertStreamMetadata(javax.imageio.metadata.IIOMetadata,javax.imageio.ImageWriteParam) -> convertStreamMetadata
+    javax.imageio.metadata.IIOMetadata convertImageMetadata(javax.imageio.metadata.IIOMetadata,javax.imageio.ImageTypeSpecifier,javax.imageio.ImageWriteParam) -> convertImageMetadata
+    javax.imageio.metadata.IIOMetadata getDefaultImageMetadata(javax.imageio.ImageTypeSpecifier,javax.imageio.ImageWriteParam) -> getDefaultImageMetadata
+    javax.imageio.metadata.IIOMetadata getDefaultStreamMetadata(javax.imageio.ImageWriteParam) -> getDefaultStreamMetadata
+    javax.imageio.ImageWriteParam getDefaultWriteParam() -> getDefaultWriteParam
+org.freehep.graphicsio.raw.RawImageWriterSpi -> org.freehep.graphicsio.raw.RawImageWriterSpi:
+    java.lang.String getDescription(java.util.Locale) -> getDescription
+    javax.imageio.ImageWriter createWriterInstance(java.lang.Object) -> createWriterInstance
+    boolean canEncodeImage(javax.imageio.ImageTypeSpecifier) -> canEncodeImage
 org.freehep.graphicsio.svg.SVGFontTable -> org.freehep.graphicsio.d.c:
     java.util.Hashtable glyphs -> a
     java.util.Properties replaceFonts -> a
@@ -13363,8 +13469,10 @@ org.freehep.util.Value -> org.freehep.util.c:
     java.lang.String getString() -> a
     java.lang.String toString() -> toString
 org.freehep.util.images.ImageUtilities -> org.freehep.util.a.a:
+    java.lang.Class class$0 -> a
     java.awt.image.RenderedImage createRenderedImage(java.awt.Image,java.awt.image.ImageObserver,java.awt.Color) -> a
     java.awt.image.BufferedImage createBufferedImage(java.awt.image.RenderedImage,java.awt.image.ImageObserver,java.awt.Color) -> a
+    byte[] getBytes(java.awt.image.RenderedImage,java.awt.Color,java.lang.String,int) -> a
 org.freehep.util.io.ASCII85InputStream -> org.freehep.util.io.ASCII85InputStream:
     boolean endReached -> a
     int[] b -> a
