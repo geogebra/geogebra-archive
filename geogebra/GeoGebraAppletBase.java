@@ -55,6 +55,8 @@ import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
 
+import geogebra.plugin.GgbAPI;		//Ulven 29.05.08
+
 /**
  * Applet interface of GeoGebra.
  * @author  Markus Hohenwarter
@@ -84,6 +86,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	
 	private boolean javascriptLoadFile=false, javascriptReset=false;
 	private String javascriptLoadFileName="";
+	private GgbAPI  ggbApi=null;					//Ulven 29.05.08
 
 	public void init() {
 		try {
@@ -177,6 +180,9 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		}
 
 		kernel = app.getKernel();
+		
+		/* Ulven 29.05.08 */
+		ggbApi=app.getGgbApi();			
 		
 		initGUI();		
  
@@ -366,21 +372,21 @@ public abstract class GeoGebraAppletBase extends JApplet {
 					
 
 	/* JAVA SCRIPT INTERFACE */
+	/* Rewritten by Ulven 29.05.08:
+	 * Moved method contents to GgbAPI
+	 * and put in redirections to GgbApi.
+	 * (Oneliners left as they are, nothing to gain...)
+	 * 
+	 * 
+	 * 
+	 */
 	
 	/**
 	 * Returns current construction as a ggb file in form of a byte array.
 	 * @return null if something went wrong 
 	 */
 	public synchronized byte [] getGGBfile() {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			app.getXMLio().writeGeoGebraFile(bos);
-			bos.flush();
-			return bos.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return ggbApi.getGGBfile();						//Ulven 29.05.08
 	}
 
 	/**
@@ -529,10 +535,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Shows or hides the object with the given name in the geometry window.
 	 */
 	public synchronized void setVisible(String objName, boolean visible) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.setEuclidianVisible(visible);
-		geo.updateRepaint();
+		ggbApi.setVisible(objName, visible);
 	}
 	
 	/**
@@ -540,10 +543,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized void setLayer(String objName, int layer) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.setLayer(layer);		
-		geo.updateRepaint();
+		ggbApi.setLayer(objName, layer);
+		
 	}
 	
 	/**
@@ -552,9 +553,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized int getLayer(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return -1;		
-		return geo.getLayer();		
+		return ggbApi.getLayer(objName);
 	}
 	
 	/**
@@ -562,17 +561,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized void setLayerVisible(int layer, boolean visible) {
-		if (layer<0 || layer > EuclidianView.MAX_LAYERS) return;
-		String [] names = getObjNames();
-		for (int i=0 ; i < names.length ; i++)
-		{
-			GeoElement geo = kernel.lookupLabel(names[i]);
-			if (geo != null) if (geo.getLayer() == layer)
-			{
-				geo.setEuclidianVisible(visible);		
-				geo.updateRepaint();
-			}
-		}	
+		ggbApi.setLayerVisible(layer,visible);
 	}
 	
 	
@@ -581,32 +570,21 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Sets the fixed state of the object with the given name.
 	 */
 	public synchronized void setFixed(String objName, boolean flag) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo != null && geo.isFixable()) {		
-			geo.setFixed(flag);
-			geo.updateRepaint();
-		}
+		ggbApi.setFixed(objName, flag);
 	}
 	
 	/**
 	 * Turns the trace of the object with the given name on or off.
 	 */
 	public synchronized void setTrace(String objName, boolean flag) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo != null && geo.isTraceable()) {		
-			((Traceable)geo).setTrace(flag);
-			geo.updateRepaint();
-		}
+		ggbApi.setTrace(objName, flag);
 	}
 	
 	/**
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelVisible(String objName, boolean visible) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.setLabelVisible(visible);		
-		geo.updateRepaint();
+		ggbApi.setLabelVisible(objName, visible);
 	}
 	
 	/**
@@ -614,31 +592,21 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Possible label styles are NAME = 0, NAME_VALUE = 1 and VALUE = 2.
 	 */
 	public synchronized void setLabelStyle(String objName, int style) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.setLabelMode(style);		
-		geo.updateRepaint();
+		ggbApi.setLabelStyle(objName, style);
 	}
 	
 	/**
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelMode(String objName, boolean visible) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.setLabelVisible(visible);
-		geo.updateRepaint();
+		ggbApi.setLabelMode(objName, visible);
 	}
 	
 	/**
 	 * Sets the color of the object with the given name.
 	 */
 	public synchronized void setColor(String objName, int red, int green, int blue) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		Color col = new Color(red, green, blue);		
-		geo.setObjColor(col);
-		geo.updateRepaint();
+		ggbApi.setColor(objName, red, green, blue);
 	}	
 	
 	/**
@@ -646,27 +614,21 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * starts with # and uses upper case letters, e.g. "#FF0000" for red.
 	 */
 	public synchronized String getColor(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return "";		
-		return "#" + geogebra.util.Util.toHexString(geo.getObjectColor());		
+		return ggbApi.getColor(objName);
 	}	
 	
 	/**
 	 * Deletes the object with the given name.
 	 */
-	public synchronized void deleteObject(String objName) {			
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;		
-		geo.remove();
-		kernel.notifyRepaint();
+	public synchronized void deleteObject(String objName) {		
+		ggbApi.deleteObject(objName);
 	}	
 	
 	/**
 	 * Returns true if the object with the given name exists.
 	 */
-	public synchronized boolean exists(String objName) {			
-		GeoElement geo = kernel.lookupLabel(objName);
-		return (geo != null);				
+	public synchronized boolean exists(String objName) {	
+		return ggbApi.exists(objName);
 	}	
 	
 	/**
@@ -674,38 +636,28 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * value at the moment.
 	 */
 	public synchronized boolean isDefined(String objName) {			
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) 
-			return false;
-		else
-			return geo.isDefined();
+		return ggbApi.isDefined(objName);
 	}	
 	
 	/**
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public synchronized String getValueString(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return "";		
-		return geo.getAlgebraDescription();
+		return ggbApi.getValueString(objName);
 	}
 	
 	/**
 	 * Returns the definition of the object with the given name as a string.
 	 */
 	public synchronized String getDefinitionString(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return "";		
-		return geo.getDefinitionDescription();
+		return ggbApi.getDefinitionString(objName);
 	}
 	
 	/**
 	 * Returns the command of the object with the given name as a string.
 	 */
-	public synchronized String getCommandString(String objName) {		
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return "";		
-		return geo.getCommandDescription();
+	public synchronized String getCommandString(String objName) {	
+		return ggbApi.getCommandString(objName);
 	}
 	
 	/**
@@ -713,15 +665,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * the object is not a point or a vector.
 	 */
 	public synchronized double getXcoord(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return 0;
-		
-		if (geo.isGeoPoint())
-			return ((GeoPoint) geo).inhomX;
-		else if (geo.isGeoVector())
-			return ((GeoVector) geo).x;
-		else
-			return 0;
+		return ggbApi.getXcoord(objName);
 	}
 	
 	/**
@@ -729,15 +673,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * the object is not a point or a vector.
 	 */
 	public synchronized double getYcoord(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return 0;
-		
-		if (geo.isGeoPoint())
-			return ((GeoPoint) geo).inhomY;
-		else if (geo.isGeoVector())
-			return ((GeoVector) geo).y;
-		else
-			return 0;
+		return ggbApi.getYcoord(objName);
 	}
 	
 	/**
@@ -745,17 +681,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * specified object is not a point or a vector, nothing happens.
 	 */
 	public synchronized void setCoords(String objName, double x, double y) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;
-		
-		if (geo.isGeoPoint()) {
-			((GeoPoint) geo).setCoords(x, y, 1);
-			geo.updateRepaint();
-		}
-		else if (geo.isGeoVector()) {
-			((GeoVector) geo).setCoords(x, y, 0);
-			geo.updateRepaint();
-		}
+		ggbApi.setCoords(objName,x,y);
 	}
 	
 	/**
@@ -763,12 +689,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * the object does not have a value.
 	 */
 	public synchronized double getValue(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);		
-		
-		if (geo != null && geo.isNumberValue())
-			return ((NumberValue) geo).getDouble();		
-		else
-			return 0;
+		return ggbApi.getValue(objName);
 	}
 	
 	/**
@@ -776,13 +697,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * specified object is not a number, nothing happens.
 	 */
 	public synchronized void setValue(String objName, double x) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;
-		
-		if (geo.isGeoNumeric()) {
-			((GeoNumeric) geo).setValue(x);
-			geo.updateRepaint();
-		}
+		ggbApi.setValue(objName,x);
 	}
 	
 	/**
@@ -819,72 +734,34 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		app.getEuclidianView().showGrid(flag);
 	}
 	
-	/*
-	 * Methods to get all object names of the construction 
-	 */
-	
-	private String [] objNames;
-	private int lastGeoElementsIteratorSize = 0;
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private String [] getObjNames() {
-		Construction cons = kernel.getConstruction();
-		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
-		int size = geoSet.size();
-		// don't build objNames if nothing changed
-		if (size == lastGeoElementsIteratorSize)
-			return objNames;		
-		
-		// build objNames array
-		lastGeoElementsIteratorSize = size;		
-		objNames = new String[size];
-				
-		int i=0; 
-		Iterator it = geoSet.iterator();
-		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
-			objNames[i] = geo.getLabel();
-			i++;
-		}
-		return objNames;
-	}
+
 	
 	/**
 	 * Returns an array with all object names.
 	 */
 	public synchronized String [] getAllObjectNames() {			
-		return getObjNames();
+		return ggbApi.getObjNames();
 	}	
 	
 	/**
 	 * Returns the number of objects in the construction.
 	 */
 	public synchronized int getObjectNumber() {					
-		return getObjNames().length;			
+		return ggbApi.getObjNames().length;			
 	}	
 	
 	/**
 	 * Returns the name of the n-th object of this construction.
 	 */
-	public synchronized String getObjectName(int i) {					
-		String [] names = getObjNames();
-					
-		try {
-			return names[i];
-		} catch (Exception e) {
-			return "";
-		}
+	public synchronized String getObjectName(int i) {	
+		return ggbApi.getObjectName(i);
 	}
 	
 	/**
 	 * Returns the type of the object with the given name as a string (e.g. point, line, circle, ...)
 	 */
 	public synchronized String getObjectType(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);
-		return (geo == null) ? "" : geo.getObjectType().toLowerCase();
+		return ggbApi.getObjectType(objName);
 	}
 	
 	/**
@@ -1165,7 +1042,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			}
 			*/
 			
-			lastGeoElementsIteratorSize = 0;
+			ggbApi.lastGeoElementsIteratorSize = 0;	//ulven 29.08.05: should have been a method...
 			updateListenerMap = null;			
 			if (clearListeners != null) {  				
 				notifyListeners(clearListeners, null);						
