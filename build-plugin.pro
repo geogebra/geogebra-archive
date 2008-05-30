@@ -47,14 +47,14 @@
 -keep class jasymca.Lambda* {}
 
 # Export classes called using reflection
--keep class geogebra.export.* { <methods>; }
--keep class geogebra.export.pstricks.* { <methods>; }
+-keep class geogebra.export.ConstructionProtocolExportDialog { <methods>; }
+-keep class geogebra.export.WorksheetExportDialog { <methods>; }
+-keep class geogebra.export.PrintPreview { <methods>; }
+-keep class geogebra.export.GraphicExportDialog { <methods>; }
+-keep class geogebra.export.pstricks.GeoGebraToPstricks { <methods>; }
 
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
-
-# needed for _license.txt
--keep class geogebra.gui.menubar.* { <methods>; }
 
 #####
 # Plugin part
