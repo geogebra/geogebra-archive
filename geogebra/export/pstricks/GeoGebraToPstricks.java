@@ -172,7 +172,7 @@ public class GeoGebraToPstricks implements ActionListener {
  		
     	codePreamble.append("\\documentclass[" +
     			frame.getFontSize()+"pt]{article}\n" +
-    			"\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n");
+    			"\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n\\pagestyle{empty}\n");
      	codeBeginDoc.append("\\begin{document}\n");
      	
     	// Draw Grid
