@@ -1272,6 +1272,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	protected void drawZoomRectangle(Graphics2D g2) {
 		g2.setColor(colZoomRectangleFill);
+		g2.setStroke(boldAxesStroke);
 		g2.fill(selectionRectangle);
 		g2.setColor(colZoomRectangle);
 		g2.draw(selectionRectangle);
