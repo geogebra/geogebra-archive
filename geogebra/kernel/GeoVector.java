@@ -265,7 +265,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 	// Michael Borcherds 2008-05-01
     final public boolean isEqual(GeoElement geo) {        
     	
-    	if (geo.isGeoVector()) return false;
+    	if (!geo.isGeoVector()) return false;
     	
     	GeoVector v = (GeoVector)geo;
     	
