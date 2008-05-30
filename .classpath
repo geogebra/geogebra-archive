@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="p200ant.jar"/>
 	<classpathentry kind="lib" path="proguard38.jar"/>
+	<classpathentry kind="lib" path="jdom-1.1.jar"/>
+	<classpathentry kind="lib" path="JMathTeX-0.7pre.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
