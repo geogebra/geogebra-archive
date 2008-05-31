@@ -324,7 +324,9 @@ public abstract class Application implements	KeyEventDispatcher {
 
     // plugins H-P Ulven
     private GgbAPI              ggbapi=         null;
-    private PluginManager       pluginmanager=  null;   
+    private PluginManager       pluginmanager=  null;  
+    
+    private JarManager       jarmanager=  null;   
     
     public Application(String[] args, GeoGebra frame, boolean undoActive) {
         this(args, frame, null, undoActive);
@@ -434,6 +436,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	    // Last in constructor, has to be sure everything else is in place:
 	        ggbapi=          new GgbAPI(this);    
 	        pluginmanager=   new PluginManager(this);
+	        jarmanager=      new JarManager(pluginmanager);
 	     		
     }      
     

@@ -52,7 +52,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     private String                  startdir=       null;
     private ArrayList               lines=          new ArrayList();
     private ClassPathManipulator    cpm=            new ClassPathManipulator();
-    public static boolean 			JSMATHTEX_PRESENT=false;
+//    public static boolean 			JSMATHTEX_PRESENT=false;
     
     ///// ----- Interface ----- /////
    
@@ -74,7 +74,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
 		// Michael Borcherds 2008-05-30
 		// add support for JMathTeX if the correct JARs are present
         // and we're running Java 1.5 or above
-        
+        /*
         ClassLoader loader=this.getClass().getClassLoader();
     	JSMATHTEX_PRESENT = ( (loader.getResourceAsStream("JMathTeX-0.7pre.jar")!=null)
                 && (loader.getResourceAsStream("jdom-1.1.jar")!=null)
@@ -93,7 +93,8 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
 				e.printStackTrace();
 				JSMATHTEX_PRESENT=false;
 			}
-		}
+		}*/
+        
     }//PluginManager()
     
     /** Returns pluginmenu. Called from Application */

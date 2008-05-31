@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.Application;
+import geogebra.JarManager;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -102,7 +103,7 @@ public final class DrawText extends Drawable {
 		}        
 		  				
 		// use hotEqn for LaTeX
-		if (isLaTeX && eqn == null && !PluginManager.JSMATHTEX_PRESENT) {
+		if (isLaTeX && eqn == null && !JarManager.JSMATHTEX_PRESENT) {
 				eqn = new sHotEqn();
 				eqn.setDoubleBuffered(false);
 				eqn.setEditable(false);	
@@ -122,7 +123,7 @@ public final class DrawText extends Drawable {
 		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
 			
-			if (PluginManager.JSMATHTEX_PRESENT)
+			if (JarManager.JSMATHTEX_PRESENT)
 			{
 				TeXFormula formula;
 				Icon icon;
@@ -187,7 +188,7 @@ public final class DrawText extends Drawable {
     			drawMultilineText(g2);   
         	} else 
         	{
-        		if (PluginManager.JSMATHTEX_PRESENT)
+        		if (JarManager.JSMATHTEX_PRESENT)
         		{//g2.drawImage(eqnImage, xLabel, yLabel, null);
            	 // TEST CODE FOR JMathTeX
     				TeXFormula formula;
@@ -275,7 +276,7 @@ public final class DrawText extends Drawable {
 	
 	private void setEqnFontSize() {		
 		
-		if (!PluginManager.JSMATHTEX_PRESENT)
+		if (!JarManager.JSMATHTEX_PRESENT)
 		{
 		// hot eqn may only have even font sizes from 10 to 28
 		int size = (fontSize / 2) * 2; 
