@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date May 31, 2008
+   @date Jun 1, 2008
 -->
 <project default="geogebra">
 	
@@ -58,7 +58,7 @@ office@geogebra.org
 	
 	<target name="clean">
 		<delete>
-		    <fileset dir="${build.dir}" includes="**/*.jar, **/*.jar.pack.gz"/>
+		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/*.jar.pack.gz"/>
 		</delete>
 		<mkdir dir="${build.dir}"/>
 	</target>
