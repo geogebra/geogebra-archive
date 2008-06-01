@@ -34,7 +34,7 @@ import geogebra.util.Util;
 </ul>
 </pre>
 @author      H-P Ulven
-@version     30.05.08
+@version     01.06.08
 */
 public class PluginManager implements ActionListener{       //Listens on PluginMenu
  
@@ -70,31 +70,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         }//try-catch
         addPath(".");
         loadProperties();   
-
-		// Michael Borcherds 2008-05-30
-		// add support for JMathTeX if the correct JARs are present
-        // and we're running Java 1.5 or above
-        /*
-        ClassLoader loader=this.getClass().getClassLoader();
-    	JSMATHTEX_PRESENT = ( (loader.getResourceAsStream("JMathTeX-0.7pre.jar")!=null)
-                && (loader.getResourceAsStream("jdom-1.1.jar")!=null)
-                && Util.getJavaVersion() >= 1.5);
-		debug("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
-
-		if (JSMATHTEX_PRESENT)
-		{
-			
-			try {
-				addPath("JMathTeX-0.7pre.jar");
-				addPath("jdom-1.1.jar");
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				JSMATHTEX_PRESENT=false;
-			}
-		}*/
-        
+       
     }//PluginManager()
     
     /** Returns pluginmenu. Called from Application */
