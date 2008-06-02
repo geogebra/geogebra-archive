@@ -321,7 +321,10 @@ private EqToken ScanNextToken() {
                 return new EqToken(EqToken.Paren,String.valueOf(eqchar));
       case '&': advance();
                 return new EqToken(EqToken.AndSym);
-
+                // Michael Borcherds 2008-06-02 START
+                // add support for unicode characters etc
+                // also removed "defualt:" at end
+/*
       case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': 
       case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': 
       case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
@@ -332,8 +335,9 @@ private EqToken ScanNextToken() {
       case 'V': case 'W': case 'X': case 'Y': case 'Z': case '\'': case'@':
       // Markus Hohenwarter, May 2008
       case '%':
-     // Markus Hohenwarter, May 2008
-      case '\u221e' : // Michael Borcherds June 2008 "infinity"
+     // Markus Hohenwarter, May 2008 */
+                default :
+                    // Michael Borcherds 2008-06-02 END
               SBuffer.append(eqchar);
               advance();
               tag = false;
@@ -565,9 +569,10 @@ private EqToken ScanNextToken() {
                 return new EqToken(EqToken.SUP);
       case '_': advance();
                 return new EqToken(EqToken.SUB);
-      default:  advance();
+      /* REMOVED Michael Borcherds 2008-06-02 replaced higher up
+         default:  advance();
                 System.out.println("Scanner invalid character: "+eqchar);
-                return new EqToken(EqToken.Invalid);
+                return new EqToken(EqToken.Invalid);*/
       } // end switch
    } // end while
    return new EqToken(EqToken.Null);
