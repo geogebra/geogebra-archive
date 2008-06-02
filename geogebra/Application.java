@@ -131,9 +131,9 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "May 29, 2008";
+    public static final String buildDate = "June 1, 2008";
 	
-    public static final String versionString = "3.1.3.0";    
+    public static final String versionString = "3.1.4.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
   
     // GeoGebra jar files    
@@ -3794,7 +3794,7 @@ public abstract class Application implements	KeyEventDispatcher {
     		e.printStackTrace();
     	}
         
-    	//System.out.println("codebase: " + codebase);
+    	System.out.println("codebase: " + codebase);
     }
     
     public PropertiesDialogGeoElement getPropDialog() {

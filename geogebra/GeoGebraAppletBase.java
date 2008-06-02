@@ -80,6 +80,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	private boolean showFrame = true;
 	private GeoGebra wnd;
 	private JSObject browserWindow;
+	public static URL codeBase=null;
+	//public static URL documentBase=null;
 
 	/** Creates a new instance of GeoGebraApplet */
 	public GeoGebraAppletBase() {}
@@ -89,6 +91,13 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	private GgbAPI  ggbApi=null;					//Ulven 29.05.08
 
 	public void init() {
+		
+		codeBase=this.getCodeBase();
+		//documentBase=this.getDocumentBase();
+		
+		System.out.println("codeBase="+codeBase);
+		//System.out.println("documentBase="+documentBase);
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {}

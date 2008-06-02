@@ -19,16 +19,21 @@ the Free Software Foundation.
 @version     2008-05-31
 */
 
+import geogebra.plugin.ClassPathManipulator;
 import geogebra.plugin.PluginManager;
 import geogebra.util.Util;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class JarManager {
 
     public static boolean 			JSMATHTEX_PRESENT=false;
-    //public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
+    public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
     //public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     private static PluginManager 	plugin=null;
-	
+    private String 					startdir=null;
 	
 	public JarManager(PluginManager plug) {
 		
@@ -36,12 +41,17 @@ public class JarManager {
 		if (plugin != null) return;
         plugin = plug;
 
+        try {
+        startdir=new File("").getCanonicalPath();
+        }
+        catch (Exception e) {startdir="";}
+        //ClassPathManipulator.listClassPath();
         // TODO these don't work in applets
         //addJarToPath("geogebra_properties.jar");
-        //addJarToPath("geogebra_export.jar");
+        addJarToPath("geogebra_export.jar");
 		
        
-        //GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar")
+        GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar");
         
         
 		// Michael Borcherds 2008-05-30
@@ -73,13 +83,65 @@ public class JarManager {
         if (plugin==null) return false;
 		ClassLoader loader=plugin.getClass().getClassLoader();
         
-        return (loader.getResourceAsStream(jar)!=null);
+		URL codeBase=GeoGebraAppletBase.codeBase;
+        if (codeBase!=null) jar = codeBase.toString() + jar;
+        
+        
+        //jar = "file:///C:/Personal/My%20Projects/JavaScript/testGeogebraApplets/geogebra_export.jar";
+        
+        boolean ret = (loader.getResourceAsStream(jar)!=null);
+        
+        System.out.println("jarPresent " + jar+" "+ret);
+        
+        return ret;
 		
 	}
 	
 	public static void addJarToPath(String jar)
 	{
         if (plugin==null) return;
-        plugin.addPath(jar);
+        
+		URL codeBase=GeoGebraAppletBase.codeBase;
+        if (codeBase!=null) jar = codeBase.toString() + jar;
+        System.out.println("addJarToPath " + jar);
+        
+        //addPath(jar);
+        ClassPathManipulator.addURL(addPathToJar(jar));
 	}
+    public static URL addPathToJar(String path){
+        File file=null;
+        URL  url=null;        
+        try{
+        	if(path.startsWith("http://")){	//url!
+                System.out.println("addPath1 "+path);
+        		url=new URL(path);
+        	}
+        	else if (path.startsWith("file:/")) { // local file in correct form
+                System.out.println("addPath2 "+path);
+        		url = new URL(path);
+        	}else{							//file without path!
+
+        		URL codeBase=GeoGebraAppletBase.codeBase;
+                if (codeBase!=null)
+                {
+                    System.out.println("addPath3"+path);
+                	url = new URL(codeBase.toString()+path); // running as applet
+                }
+                else
+                {
+                    System.out.println("addPath4"+path);
+                	file=new File(path);
+        		    url=file.toURL();
+                }
+        	}
+            System.out.println("addPath "+url.toString());
+        	return url;
+        }catch(MalformedURLException e) {
+            System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
+            return null;
+        }catch(Throwable e){
+            System.out.println("PluginManager.addPath: "+e.getMessage()+" for "+path);
+            return null;
+        }//try-catch        
+    }//addPath(String)
 }

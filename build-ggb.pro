@@ -16,7 +16,7 @@
 -overloadaggressively
 
 #-printmapping geogebra3130.map
--applymapping geogebra3130.map
+#-applymapping geogebra3130.map
 
 # Keep - Applications. Keep all application classes that have a main method.
 -keepclasseswithmembers public class * {
@@ -52,8 +52,12 @@
 #    public protected *;
 # }
 
+-keep class geogebra.gui.util.BrowserLauncher { <methods>; }
+
 -keep class geogebra.plugin.PlugLetIF { <methods>; }
 -keep class geogebra.plugin.GgbAPI { <methods>; }
+
+-keep class geogebra.MyFileFilter { <methods>; }
 
 -keep class geogebra.Application { <methods>; }
 -keep class geogebra.kernel.Construction { <methods>; }

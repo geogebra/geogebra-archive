@@ -11,15 +11,25 @@ package geogebra.plugin;
  
  */
 
-import java.util.*;
-import java.io.*;
-import java.net.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.lang.reflect.*;
-import geogebra.Application;   
-import geogebra.plugin.ClassPathManipulator;
-import geogebra.util.Util;
+import geogebra.Application;
+import geogebra.JarManager;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 
 /** 
@@ -34,41 +44,32 @@ import geogebra.util.Util;
 </ul>
 </pre>
 @author      H-P Ulven
-@version     01.06.08
+@version     03.06.08
 */
 public class PluginManager implements ActionListener{       //Listens on PluginMenu
  
     private final static boolean    DEBUG=          true;  
     private final static String     PLUGINFILE=     "plugin.properties";
-    private final static String		nl=				System.getProperty("line.separator");
+//    private final static String		nl=				System.getProperty("line.separator");
     
     
     ///// ----- Properties ----- /////
    
     private Hashtable               plugintable=    new Hashtable();        //1.4.2: Not generics :-\ String classname,pluginclass
-    private geogebra.GeoGebra       ggb=            null;
+//    private geogebra.GeoGebra       ggb=            null;
     private geogebra.Application    app=            null;
     private JMenu                   pluginmenu=     null;   //Make it here, let Application and Menubar get it
-    private String                  startdir=       null;
     private ArrayList               lines=          new ArrayList();
     private ClassPathManipulator    cpm=            new ClassPathManipulator();
-//    public static boolean 			JSMATHTEX_PRESENT=false;
     
     ///// ----- Interface ----- /////
    
    /** Constructor */
     public PluginManager(Application app) {
         this.app=app;               //ref to Ggb application
-        try{
-            startdir=new File("").getCanonicalPath();                   debug("startdir: "+startdir);
-//            startdir_nosp=startdir.replace(" ", "%20");      
-//            System.out.println("startdir_nosp="+startdir_nosp);
-        }catch(IOException ioe){
-            System.out.println("PluginManager could not find start directory!");
-        }catch(Throwable t){	//27.05.08: To keep ggb from crashing from errors in plugin.properties or applet security problems
-        	System.out.println("Pluginmanager:"+t.toString());
-        }//try-catch
-        addPath(".");
+
+        ClassPathManipulator.addURL(JarManager.addPathToJar("."));
+        
         loadProperties();   
        
     }//PluginManager()
@@ -91,7 +92,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     	URL url=null;
     	try{
     		url=new URL(path);
-    		cpm.addURL(url);
+    		ClassPathManipulator.addURL(url);
         }catch(MalformedURLException e) {
             System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
         }catch(Throwable e){
@@ -99,25 +100,6 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         }//try-catch   
     }//addURL(String)
     
-    /** Add path for a plugin to classpath*/
-    public void addPath(String path){
-        File file=null;
-        URL  url=null;        
-        try{
-        	if(path.startsWith("http://")){	//url!
-        		url=new URL(path);
-        	}else{							//local file!
-        		file=new File(path);
-        		url=file.toURL();
-        	}
-            cpm.addURL(url);
-        }catch(MalformedURLException e) {
-            System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
-        }catch(Throwable e){
-            System.out.println("PluginManager.addPath: "+e.getMessage()+" for "+path);
-        }//try-catch        
-    }//addPath(String)
-        
     /** Installs a plugin given classname and args
      *  (Public: Can be used in scripting and interactively.)
      */
@@ -221,7 +203,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         int n=paths.size();
         for(int i=0;i<n;i++) {
             path=(String)paths.get(i);
-            this.addPath(path);
+            ClassPathManipulator.addURL(JarManager.addPathToJar(path));
         }//for all paths         
     }//addPaths(ArrayList)    
 
@@ -255,6 +237,9 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     /** Loads properties from plugin.properties */
     private void loadProperties() {
         ClassLoader loader=this.getClass().getClassLoader();
+        
+        System.out.println("PluginManager.loadProperties "+PLUGINFILE);
+        
         InputStream is=loader.getResourceAsStream(PLUGINFILE);
         if(is==null){
             System.out.println("PluginManager cannot find "+PLUGINFILE);
