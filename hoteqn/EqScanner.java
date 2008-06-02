@@ -333,6 +333,7 @@ private EqToken ScanNextToken() {
       // Markus Hohenwarter, May 2008
       case '%':
      // Markus Hohenwarter, May 2008
+      case '\u221e' : // Michael Borcherds June 2008 "infinity"
               SBuffer.append(eqchar);
               advance();
               tag = false;
