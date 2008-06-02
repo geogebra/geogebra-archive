@@ -436,7 +436,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	    // Last in constructor, has to be sure everything else is in place:
 	        ggbapi=          new GgbAPI(this);    
 	        pluginmanager=   new PluginManager(this);
-	        jarmanager=      new JarManager(pluginmanager);
+	        jarmanager=      new JarManager(pluginmanager, this);
 	     		
     }      
     

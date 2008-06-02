@@ -33,13 +33,15 @@ public class JarManager {
     public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
     //public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     private static PluginManager 	plugin=null;
+    private static Application	 	app=null;
     private String 					startdir=null;
 	
-	public JarManager(PluginManager plug) {
+	public JarManager(PluginManager plug, Application app) {
 		
 		
-		if (plugin != null) return;
+
         plugin = plug;
+        this.app = app;
 
         try {
         startdir=new File("").getCanonicalPath();
@@ -83,7 +85,8 @@ public class JarManager {
         if (plugin==null) return false;
 		ClassLoader loader=plugin.getClass().getClassLoader();
         
-		URL codeBase=GeoGebraAppletBase.codeBase;
+		//URL codeBase=GeoGebraAppletBase.codeBase;
+		URL codeBase=getAppletCodeBase();
         if (codeBase!=null) jar = codeBase.toString() + jar;
         
         
@@ -101,13 +104,24 @@ public class JarManager {
 	{
         if (plugin==null) return;
         
-		URL codeBase=GeoGebraAppletBase.codeBase;
+		//URL codeBase=GeoGebraAppletBase.codeBase;
+		URL codeBase=getAppletCodeBase();
         if (codeBase!=null) jar = codeBase.toString() + jar;
         System.out.println("addJarToPath " + jar);
         
         //addPath(jar);
         ClassPathManipulator.addURL(addPathToJar(jar));
 	}
+	
+	private static URL getAppletCodeBase()
+	{
+		GeoGebraAppletBase applet;
+		applet = app.getApplet();
+		if (applet == null) return null;
+		return applet.getCodeBase();
+		
+	}
+	
     public static URL addPathToJar(String path){
         File file=null;
         URL  url=null;        
@@ -121,6 +135,7 @@ public class JarManager {
         		url = new URL(path);
         	}else{							//file without path!
 
+        		//URL codeBase=getAppletCodeBase();
         		URL codeBase=GeoGebraAppletBase.codeBase;
                 if (codeBase!=null)
                 {
