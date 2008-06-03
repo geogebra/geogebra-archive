@@ -712,6 +712,7 @@ public class MyTable extends JTable
 	// for column header
 
 	protected int column0 = -1;
+	protected boolean isResizing = false;
 
 	protected class MouseListener2 implements MouseListener
 	{
@@ -731,28 +732,35 @@ public class MyTable extends JTable
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				Point point = getIndexFromPixel(x, y);
 				if (point != null) {
-					if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
-							getColumnSelectionAllowed() == false) {
-						setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						setColumnSelectionAllowed(true);
-						setRowSelectionAllowed(false);
-						getTableHeader().requestFocusInWindow();
-					}
-					if (shiftPressed2) {
-						if (column0 != -1) {
-							int column = (int)point.getX();
-							setColumnSelectionInterval(column0, column);
+					Point point2 = getPixel((int)point.getX(), (int)point.getY(), true);
+					Point point3 = getPixel((int)point.getX(), (int)point.getY(), false);
+					int x2 = (int)point2.getX();
+					int x3 = (int)point3.getX();
+					isResizing = ! (x > x2 + 2 && x < x3 - 3);
+					if (! isResizing) {
+						if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
+								getColumnSelectionAllowed() == false) {
+							setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							setColumnSelectionAllowed(true);
+							setRowSelectionAllowed(false);
+							getTableHeader().requestFocusInWindow();
 						}
+						if (shiftPressed2) {
+							if (column0 != -1) {
+								int column = (int)point.getX();
+								setColumnSelectionInterval(column0, column);
+							}
+						}
+						//else if (ctrlPressed2) {					
+						//	column0 = (int)point.getX();
+						//	addColumnSelectionInterval(column0, column0);
+						//}
+						else {
+							column0 = (int)point.getX();
+							setColumnSelectionInterval(column0, column0);
+						}
+						repaint();
 					}
-					//else if (ctrlPressed2) {					
-					//	column0 = (int)point.getX();
-					//	addColumnSelectionInterval(column0, column0);
-					//}
-					else {
-						column0 = (int)point.getX();
-						setColumnSelectionInterval(column0, column0);
-					}
-					repaint();
 				}
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -763,6 +771,23 @@ public class MyTable extends JTable
 		}
 		
 		public void mouseReleased(MouseEvent e)	{
+			if (isResizing) {
+				int x = e.getX();
+				int y = e.getY();
+				Point point = getIndexFromPixel(x, y);
+				if (point == null) return;
+				Point point2 = getPixel((int)point.getX(), (int)point.getY(), false);
+				int column = (int)point.getX();
+				if (x < (int)point2.getX() - 3) {
+					-- column;
+				}
+				int width = getColumnModel().getColumn(column).getWidth();
+				int[] selected = getSelectedColumns();
+				if (selected == null) return;
+				for (int i = 0; i < selected.length; ++ i) {
+					getColumnModel().getColumn(selected[i]).setPreferredWidth(width);					
+				}
+			}
 		}
 
 	}
@@ -771,6 +796,7 @@ public class MyTable extends JTable
 	{
 		
 		public void mouseDragged(MouseEvent e) {
+			if (isResizing) return;
 			int x = e.getX();
 			int y = e.getY();
 			Point point = getIndexFromPixel(x, y);

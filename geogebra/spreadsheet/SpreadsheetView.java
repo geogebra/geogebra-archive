@@ -74,6 +74,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void add(GeoElement geo) {
+		//System.out.println("ADD");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(geo, location.y, location.x);
@@ -81,6 +82,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void remove(GeoElement geo) {
+		//System.out.println("REMOVE");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(null, location.y, location.x);
@@ -88,6 +90,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void rename(GeoElement geo) {
+		//System.out.println("RENAME");
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(null, location.y, location.x);
@@ -96,6 +99,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void update(GeoElement geo) {
+		//System.out.println("UPDATE");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 		}
