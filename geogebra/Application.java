@@ -430,13 +430,16 @@ public abstract class Application implements	KeyEventDispatcher {
 		//Mathieu Blossier - place for code to test 3D packages	
 		
 		
-        jarmanager=      new JarManager(this);
 		
 		// H-P Ulven 2008-04-16
 		// plugins
 	    // Last in constructor, has to be sure everything else is in place:
 	        ggbapi=          new GgbAPI(this);    
 	        pluginmanager=   new PluginManager(this);
+	        
+	    // Michael Borcherds 2008-06-03
+	    // this needs to go after PluginManager!
+	        jarmanager=      new JarManager(this);
 	     		
     }      
     
