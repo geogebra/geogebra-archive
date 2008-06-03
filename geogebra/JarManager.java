@@ -16,10 +16,11 @@ the Free Software Foundation.
 
 </pre>
 @author      Michael Borcherds
-@version     2008-05-31
+@version     2008-06-03
 */
 
 import geogebra.plugin.ClassPathManipulator;
+import geogebra.util.CopyURLToFile;
 import geogebra.util.Util;
 
 import java.io.File;
@@ -30,7 +31,9 @@ public class JarManager {
 
     public static boolean 			JSMATHTEX_PRESENT=false;
     public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
-    //public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
+    public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
+    public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
+    public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
     private static Application	 	app=null;
 	
 	public JarManager(Application app) {
@@ -42,10 +45,57 @@ public class JarManager {
         //ClassPathManipulator.listClassPath();
         // TODO these don't work in applets
         //addJarToPath("geogebra_properties.jar");
-        addJarToPath("geogebra_export.jar");
+        //addJarToPath("geogebra_export.jar");
 		
        
         GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar");
+        
+        String loadExport=null;
+        
+        if (GEOGEBRA_EXPORT_PRESENT){
+        	if (app.getApplet()==null){
+        		// might be running as webstart, copy jar to temporary folder
+            	if (copyJarToTempDir("geogebra_export.jar")) loadExport = System.getProperty("java.io.tmpdir") + "geogebra_export.jar";
+        		
+        	}
+        	else if (app.getApplet().showMenuBar) 
+        	{
+        		// running as applet with menu
+        		loadExport = "geogebra_export.jar";
+        	}
+        }
+        
+        if (loadExport != null)
+        {
+        		addJarToPath(loadExport);
+        		GEOGEBRA_EXPORT_LOADED=true;
+        }
+        
+
+        GEOGEBRA_PROPERTIES_PRESENT = jarPresent("geogebra_properties.jar");        
+        
+        String loadProperties=null;
+        
+        if (GEOGEBRA_PROPERTIES_PRESENT){
+        	if (app.getApplet()==null){
+        		// might be running as webstart, copy jar to temporary folder
+            	if (copyJarToTempDir("geogebra_properties.jar")) loadProperties = System.getProperty("java.io.tmpdir") + "geogebra_properties.jar";
+        		
+        	}
+        	else if (app.getApplet().showMenuBar || app.getApplet().showToolBar) 
+        	{
+        		// running as applet with menu
+        		loadProperties = "geogebra_properties.jar";
+        	}
+        }
+        
+        if (loadProperties != null)
+        {
+        		addJarToPath(loadProperties);
+        		GEOGEBRA_PROPERTIES_LOADED=true;
+        }
+        
+        
         
         
 		// Michael Borcherds 2008-05-30
@@ -128,6 +178,7 @@ public class JarManager {
 
         		//URL codeBase=getAppletCodeBase();
         		URL codeBase=GeoGebraAppletBase.codeBase;
+        		//URL codeBase=app.getAppletCodeBase();;
                 if (codeBase!=null)
                 {
                     System.out.println("addPath3"+path);
@@ -150,4 +201,21 @@ public class JarManager {
             return null;
         }//try-catch        
     }//addPath(String)
+    
+	private boolean copyJarToTempDir(String jar) {
+		try {		
+			String tempDir = System.getProperty("java.io.tmpdir"); 
+			
+			// copy jar files to tempDir
+				File dest = new File(tempDir, jar);
+				URL src = new URL(app.getCodeBase() + jar);
+				CopyURLToFile.copyURLToFile(src, dest);
+			System.out.println("copied "+jar+" to temp directory " + tempDir);
+				return true;
+			
+		} catch (Exception e) {		
+			System.err.println("copyJarToTempDir: " + e.getMessage());
+			return false;
+		}			
+	}
 }
