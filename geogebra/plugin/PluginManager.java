@@ -236,7 +236,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     
     /** Loads properties from plugin.properties */
     private void loadProperties() {
-        ClassLoader loader=this.getClass().getClassLoader();
+        ClassLoader loader=app.getClass().getClassLoader();
         
         System.out.println("PluginManager.loadProperties "+PLUGINFILE);
         

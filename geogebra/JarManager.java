@@ -20,7 +20,6 @@ the Free Software Foundation.
 */
 
 import geogebra.plugin.ClassPathManipulator;
-import geogebra.plugin.PluginManager;
 import geogebra.util.Util;
 
 import java.io.File;
@@ -32,21 +31,14 @@ public class JarManager {
     public static boolean 			JSMATHTEX_PRESENT=false;
     public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
     //public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
-    private static PluginManager 	plugin=null;
     private static Application	 	app=null;
-    private String 					startdir=null;
 	
-	public JarManager(PluginManager plug, Application app) {
+	public JarManager(Application app) {
 		
 		
 
-        plugin = plug;
         this.app = app;
 
-        try {
-        startdir=new File("").getCanonicalPath();
-        }
-        catch (Exception e) {startdir="";}
         //ClassPathManipulator.listClassPath();
         // TODO these don't work in applets
         //addJarToPath("geogebra_properties.jar");
@@ -82,8 +74,8 @@ public class JarManager {
 	
 	public static boolean jarPresent(String jar)
 	{
-        if (plugin==null) return false;
-		ClassLoader loader=plugin.getClass().getClassLoader();
+        //if (plugin==null) return false;
+		ClassLoader loader=app.getClass().getClassLoader();
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		URL codeBase=getAppletCodeBase();
@@ -102,7 +94,6 @@ public class JarManager {
 	
 	public static void addJarToPath(String jar)
 	{
-        if (plugin==null) return;
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		URL codeBase=getAppletCodeBase();
