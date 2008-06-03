@@ -784,6 +784,11 @@ public class MyTable extends JTable
 				int width = getColumnModel().getColumn(column).getWidth();
 				int[] selected = getSelectedColumns();
 				if (selected == null) return;
+				boolean in = false;
+				for (int i = 0; i < selected.length; ++ i) {
+					if (column == selected[i]) in = true;
+				}
+				if (! in) return;				
 				for (int i = 0; i < selected.length; ++ i) {
 					getColumnModel().getColumn(selected[i]).setPreferredWidth(width);					
 				}
