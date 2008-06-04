@@ -4,6 +4,7 @@ package geogebra.spreadsheet;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
+import java.util.Date;
 import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
 import javax.swing.JButton;
@@ -74,7 +75,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void add(GeoElement geo) {
-		//System.out.println("ADD");
+		System.out.println(new Date() + " ADD");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(geo, location.y, location.x);
@@ -82,7 +83,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void remove(GeoElement geo) {
-		//System.out.println("REMOVE");
+		System.out.println(new Date() + " REMOVE");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(null, location.y, location.x);
@@ -90,7 +91,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void rename(GeoElement geo) {
-		//System.out.println("RENAME");
+		System.out.println(new Date() + " RENAME");
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(null, location.y, location.x);
@@ -99,7 +100,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void update(GeoElement geo) {
-		//System.out.println("UPDATE");
+		System.out.println(new Date() + " UPDATE");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 		}
@@ -113,9 +114,18 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void reset() {
+		//System.out.println(new Date() + " RESET");
 	}
 	
 	public void clearView() {
+		System.out.println(new Date() + " CLEAR VIEW");
+		int rows = tableModel.getRowCount();
+		int columns = tableModel.getColumnCount();
+		for (int i = 0; i < columns; ++ i) {
+			for (int j = 0; j < rows; ++ j) {
+				tableModel.setValueAt(null, i, j);
+			}
+		}
 	}
 		
 	public static class MyListModel extends AbstractListModel {
