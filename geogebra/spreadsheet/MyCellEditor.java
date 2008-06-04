@@ -130,7 +130,7 @@ public class MyCellEditor extends DefaultCellEditor {
 	
 	// also used in RelativeCopy.java
 	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) throws Exception {
-		column = table.convertColumnIndexToModel(column);
+		//column = table.convertColumnIndexToModel(column);
 		String name = table.getModel().getColumnName(column) + (row + 1);
     	if (text != null) {
     		text = text.trim();

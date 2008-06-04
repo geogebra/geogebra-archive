@@ -37,9 +37,10 @@ public class ContextMenuRow extends ContextMenu
 	public static class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, 25, table.getModel().getColumnCount() - 1);
+ 			int columns = table.getModel().getColumnCount();
+ 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, columns - 1, table.getModel().getColumnCount() - 1);
  			for (int y = table.getModel().getColumnCount() - 2; y >= row1; -- y) {
- 				for (int x = 0; x < 26; ++ x) {
+ 				for (int x = 0; x < columns; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
@@ -55,9 +56,10 @@ public class ContextMenuRow extends ContextMenu
 	public static class ActionListener6 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, 25, table.getModel().getColumnCount() - 1);
+ 			int columns = table.getModel().getColumnCount();
+ 			table.copyPasteCut.delete(0, table.getModel().getColumnCount() - 1, columns - 1, table.getModel().getColumnCount() - 1);
  			for (int y = table.getModel().getColumnCount() - 2; y >= row2 + 1; -- y) {
- 				for (int x = 0; x < 26; ++ x) {
+ 				for (int x = 0; x < columns; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
@@ -73,10 +75,11 @@ public class ContextMenuRow extends ContextMenu
 	public static class ActionListener7 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
+ 			int columns = table.getModel().getColumnCount();
  			table.copyPasteCut.delete(column1, row1, column2, row2);
  			int dy = row2 - row1 + 1;
  			for (int y = row2 + 1; y < table.getModel().getColumnCount(); ++ y) {
- 				for (int x = 0; x < 26; ++ x) {
+ 				for (int x = 0; x < columns; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());

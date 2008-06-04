@@ -80,6 +80,7 @@ public class CopyPasteCut {
 			try {
 				pasteInternal(column1, row1);
 			} catch (Exception ex) {
+				ex.printStackTrace(System.out);
 				kernel.getApplication().showError(ex.getMessage());
 				// Util.handleException(table, ex);
 			}
@@ -117,7 +118,10 @@ public class CopyPasteCut {
 		/**/
 		MyTableModel model = (MyTableModel)table.getModel();
 		if (model.rowCount < y4 + 1) {
-			model.rowCount = y4 + 1;
+			model.setRowCount(y4 + 1);
+		}
+		if (model.columnCount < x4 + 1) {
+			model.setColumnCount(x4 + 1);
 		}
 		GeoElement[][] values1 = RelativeCopy.getValues(table, x1, y1, x2, y2);
 		for (int x = x1; x <= x2; ++ x) {
@@ -160,13 +164,16 @@ public class CopyPasteCut {
 		try {
 			MyTableModel model = (MyTableModel)table.getModel();
 			if (model.rowCount < row1 + data.length) {
-				model.rowCount = row1 + data.length;
+				model.setRowCount(row1 + data.length);
 			}
 			for (int row = row1; row < row1 + data.length; ++ row) {
 				if (row < 0) continue;
 				int iy = row - row1;
+				if (model.getColumnCount() < column1 + data[iy].length) {
+					model.setColumnCount(column1 + data[iy].length);						
+				}
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
-					if (column < 0 || column >= 26) continue;
+					if (column < 0) continue;
 					int ix = column - column1;
 					data[iy][ix] = data[iy][ix].trim();
 					if (data[iy][ix].length() == 0) {

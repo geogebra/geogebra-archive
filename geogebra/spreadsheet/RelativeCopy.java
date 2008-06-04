@@ -213,9 +213,10 @@ public class RelativeCopy {
 		int column = GeoElement.getSpreadsheetColumn(value.getLabel());
 		int row = GeoElement.getSpreadsheetRow(value.getLabel());
 		//System.out.println("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
-		int column3 = table.convertColumnIndexToView(column) + dx;
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column3, row + dy);
-		table.setValueAt(value2, row + dy, column3);
+		//int column3 = table.convertColumnIndexToView(column) + dx;
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column + dx, row + dy);
+		//System.out.println((row + dy) + "," + column);
+		table.setValueAt(value2, row + dy, column + dx);
 	}
 	
 	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row) throws Exception {
@@ -307,7 +308,7 @@ public class RelativeCopy {
 	
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
-		column = table.convertColumnIndexToModel(column);
+		//column = table.convertColumnIndexToModel(column);
 		//System.out.println("column=" + column);
 		if (row < 0 || row >= tableModel.getRowCount()) return null;
 		if (column < 0 || column >= 26) return null;

@@ -33,7 +33,7 @@ public class Cross extends JLabel
 			g.setColor(Color.RED);
 		}
 		else {
-			g.setColor(Color.DARK_GRAY);
+			g.setColor(Color.GRAY);
 		}
 		g.drawLine(0, 0, LENGTH, LENGTH);		
 		g.drawLine(1, 0, LENGTH, LENGTH - 1);		

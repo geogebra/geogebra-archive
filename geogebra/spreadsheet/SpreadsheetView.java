@@ -81,6 +81,12 @@ public class SpreadsheetView extends JScrollPane implements View
 		//System.out.println(new Date() + " ADD");
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
+			if (location.y >= tableModel.getRowCount()) {
+				tableModel.setRowCount(location.y + 1);				
+			}
+			if (location.x >= tableModel.getColumnCount()) {
+				tableModel.setColumnCount(location.x + 1);				
+			}
 			tableModel.setValueAt(geo, location.y, location.x);
 		}
 	}
@@ -97,6 +103,12 @@ public class SpreadsheetView extends JScrollPane implements View
 		//System.out.println(new Date() + " RENAME");
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
+			if (location.y >= tableModel.getRowCount()) {
+				tableModel.setRowCount(location.y + 1);				
+			}
+			if (location.x >= tableModel.getColumnCount()) {
+				tableModel.setColumnCount(location.x + 1);				
+			}
 			tableModel.setValueAt(null, location.y, location.x);
 		}
 		add(geo);
@@ -250,7 +262,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					ContextMenuRow.showPopupMenu2(table, e.getComponent(), 0, minSelectionRow, 25, maxSelectionRow, x, y);
+					ContextMenuRow.showPopupMenu2(table, e.getComponent(), 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, x, y);
 				}
 			}
 		}
@@ -296,25 +308,25 @@ public class SpreadsheetView extends JScrollPane implements View
 			case 17 : ctrlPressed = true; break;
 			case 67 : // control + c
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
 				break;
 			case 86 : // control + v
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.paste(0, minSelectionRow, 25, maxSelectionRow);
+					table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
 				break;				
 			case 88 : // control + x
 				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, 25, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
-				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);
+				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				break;
 			case 127 : // delete
-				table.copyPasteCut.delete(0, minSelectionRow, 25, maxSelectionRow);
+				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				break;
 			}
 		}

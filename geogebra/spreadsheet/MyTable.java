@@ -869,4 +869,8 @@ public class MyTable extends JTable
 		
 	}
 		
+    public int convertColumnIndexToModel(int viewColumnIndex) {
+    	return viewColumnIndex;    	
+    }
+   	
 }
