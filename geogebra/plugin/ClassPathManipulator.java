@@ -25,7 +25,7 @@ import java.net.*;
  *  <li> listClassPath()
  *  </ul>
     @author 	H-P Ulven
-    @version  	25.05.08
+    @version  	04.06.08
  */
 public final class ClassPathManipulator {
 
