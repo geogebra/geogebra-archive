@@ -77,7 +77,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	private boolean firstAppOpen = true;
 	Color bgColor, borderColor;
 	private String fileStr, customToolBar;	
-	private boolean showFrame = true;
+	public boolean showFrame = true;
 	private GeoGebra wnd;
 	private JSObject browserWindow;
 	public static URL codeBase=null;

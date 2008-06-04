@@ -16,7 +16,7 @@ the Free Software Foundation.
 
 </pre>
 @author      Michael Borcherds
-@version     2008-06-03
+@version     2008-06-04
 */
 
 import geogebra.plugin.ClassPathManipulator;
@@ -24,8 +24,15 @@ import geogebra.util.CopyURLToFile;
 import geogebra.util.Util;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.swing.Icon;
+import javax.swing.JDialog;
+
+import be.ugent.caagt.jmathtex.TeXConstants;
+import be.ugent.caagt.jmathtex.TeXFormula;
 
 public class JarManager {
 
@@ -68,9 +75,10 @@ public class JarManager {
         
         if (loadExport != null)
         {
-        		addJarToPath(loadExport);
+        		addJarToPath(loadExport, geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
         		GEOGEBRA_EXPORT_LOADED=true;
         }
+    	System.out.println("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
         
 
         GEOGEBRA_PROPERTIES_PRESENT = jarPresent("geogebra_properties.jar");        
@@ -83,18 +91,26 @@ public class JarManager {
             	if (copyJarToTempDir("geogebra_properties.jar")) loadProperties = System.getProperty("java.io.tmpdir") + "geogebra_properties.jar";
         		
         	}
-        	else if (app.getApplet().showMenuBar || app.getApplet().showToolBar) 
+        	else if (app.getApplet().showMenuBar || 
+        			app.getApplet().showToolBar ||
+        			app.getApplet().showAlgebraInput ||
+        			app.getApplet().enableRightClick ||
+        			app.getApplet().showFrame ||
+        			app.showAlgebraView() ||
+        			app.showSpreadsheet())
+
         	{
-        		// running as applet with menu
+        		// running as applet with possibility of translations needed
         		loadProperties = "geogebra_properties.jar";
         	}
         }
         
         if (loadProperties != null)
         {
-        		addJarToPath(loadProperties);
+        		addJarToPath(loadProperties, null);
         		GEOGEBRA_PROPERTIES_LOADED=true;
         }
+    	System.out.println("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
         
         
         
@@ -111,7 +127,8 @@ public class JarManager {
                 			&& jarPresent("jdom-1.1.jar")
                 			&& Util.getJavaVersion() >= 1.5);
 		System.out.println("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
-
+		
+		if (JSMATHTEX_PRESENT) {
     	if (app.getApplet()==null){
     		// might be running as webstart, copy jar to temporary folder
         	if (copyJarToTempDir("JMathTeX-0.7pre.jar")) loadJMathTeX = System.getProperty("java.io.tmpdir") + "JMathTeX-0.7pre.jar";
@@ -124,17 +141,45 @@ public class JarManager {
     		loadJMathTeX = "JMathTeX-0.7pre.jar";
     		loadJDom = "jdom-1.1.jar";
     	}
-    
+		}
     
     if (loadJMathTeX != null && loadJDom !=null)
     {
-		addJarToPath(loadJMathTeX);
-		addJarToPath(loadJDom);
+		addJarToPath(loadJMathTeX, null);
+		addJarToPath(loadJDom, null);
 		JSMATHTEX_LOADED=true;
     }
 	System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
 
-		
+	
+	
+	
+	// testing
+	
+/*
+		TeXFormula formula;
+		Icon icon;
+
+			formula = new TeXFormula("\\sqrt{x}");
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,12);
+			
+			System.out.println("iconheight"+icon.getIconHeight());
+try{
+  		    //JDialog d = new geogebra.export.GraphicExportDialog(app);   		
+  		    Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
+  		    Object[] args = new Object[] { app };
+  		    Class [] types = new Class[] {Application.class};
+  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+  	        JDialog d =  (JDialog) constructor.newInstance(args);  					    
+	      
+	        d.setVisible(true);
+} 
+catch (Exception e) {e.printStackTrace();}*/
+	
+	
+	
+	
+	
 		/*
 		if (JSMATHTEX_PRESENT)
 		{
@@ -172,7 +217,7 @@ public class JarManager {
 		
 	}
 	
-	public static void addJarToPath(String jar)
+	public static void addJarToPath(String jar, ClassLoader loader)
 	{
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
@@ -181,7 +226,7 @@ public class JarManager {
         System.out.println("addJarToPath " + jar);
         
         //addPath(jar);
-        ClassPathManipulator.addURL(addPathToJar(jar));
+        ClassPathManipulator.addURL(addPathToJar(jar), loader);
 	}
 	
 	private static URL getAppletCodeBase()
