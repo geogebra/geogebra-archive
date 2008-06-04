@@ -30,6 +30,7 @@ import java.net.URL;
 public class JarManager {
 
     public static boolean 			JSMATHTEX_PRESENT=false;
+    public static boolean 			JSMATHTEX_LOADED=false;
     public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
     public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
@@ -101,11 +102,40 @@ public class JarManager {
 		// Michael Borcherds 2008-05-30
 		// add support for JMathTeX if the correct JARs are present
         // and we're running Java 1.5 or above
+        
+        String loadJMathTeX = null;
+        String loadJDom = null;
+        
+        
     	JSMATHTEX_PRESENT =  ( jarPresent("JMathTeX-0.7pre.jar")
                 			&& jarPresent("jdom-1.1.jar")
                 			&& Util.getJavaVersion() >= 1.5);
 		System.out.println("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
 
+    	if (app.getApplet()==null){
+    		// might be running as webstart, copy jar to temporary folder
+        	if (copyJarToTempDir("JMathTeX-0.7pre.jar")) loadJMathTeX = System.getProperty("java.io.tmpdir") + "JMathTeX-0.7pre.jar";
+        	if (copyJarToTempDir("jdom-1.1.jar")) loadJDom = System.getProperty("java.io.tmpdir") + "jdom-1.1.jar";
+    		
+    	}
+    	else if (app.getApplet().showMenuBar || app.getApplet().showToolBar) 
+    	{
+    		// running as applet with menu
+    		loadJMathTeX = "JMathTeX-0.7pre.jar";
+    		loadJDom = "jdom-1.1.jar";
+    	}
+    
+    
+    if (loadJMathTeX != null && loadJDom !=null)
+    {
+		addJarToPath(loadJMathTeX);
+		addJarToPath(loadJDom);
+		JSMATHTEX_LOADED=true;
+    }
+	System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
+
+		
+		/*
 		if (JSMATHTEX_PRESENT)
 		{
 			
@@ -118,7 +148,7 @@ public class JarManager {
 				e.printStackTrace();
 				JSMATHTEX_PRESENT=false;
 			}
-		}
+		}*/
 
 	}
 	
