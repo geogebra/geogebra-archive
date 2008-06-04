@@ -1,5 +1,18 @@
 package geogebra.gui.menubar;
 
+import geogebra.Application;
+import geogebra.GeoGebra;
+import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ConstructionProtocolNavigation;
+import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.ToolCreationDialog;
+import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.util.BrowserLauncher;
+import geogebra.gui.util.ImageSelection;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
+import geogebra.util.Util;
+
 import java.awt.BorderLayout;
 import java.awt.Event;
 import java.awt.Image;
@@ -9,28 +22,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
-import java.awt.print.Printable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ConstructionProtocolNavigation;
-import geogebra.gui.GeoGebraPreferences;
-import geogebra.gui.ToolCreationDialog;
-import geogebra.gui.ToolManagerDialog;
-
-import geogebra.gui.util.BrowserLauncher;
-import geogebra.gui.util.ImageSelection;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.util.Util;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -1069,12 +1066,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					    	app.clearSelectedGeos();
 					    	
 					    	// use reflection for
-				  		    // JDialog d = new geogebra.export.GraphicExportDialog(app);   		
-				  		    Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
-				  		    Object[] args = new Object[] { app };
-				  		    Class [] types = new Class[] {Application.class};
-				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-				  	        JDialog d =  (JDialog) constructor.newInstance(args);  					    
+				  		    JDialog d = new geogebra.export.GraphicExportDialog(app);   		
+				  		    //Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
+				  		    //Object[] args = new Object[] { app };
+				  		    //Class [] types = new Class[] {Application.class};
+				  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        //JDialog d =  (JDialog) constructor.newInstance(args);  					    
 					      
 					        d.setVisible(true);
 					       
@@ -1097,11 +1094,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				try {		
 					// use reflection for
 		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
-		  		    Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
-		  		    Object[] args = new Object[] { app };
-		  		    Class [] types = new Class[] {Application.class};
-		  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-		  	        constructor.newInstance(args);  																
+		  		    //Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
+		  		    //Object[] args = new Object[] { app };
+		  		    //Class [] types = new Class[] {Application.class};
+		  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+		  	        //constructor.newInstance(args);  			
+		  	        new geogebra.export.pstricks.GeoGebraToPstricks(app);	
 				} catch (Exception ex) {
 					System.err.println("GeoGebraToPstricks not available");
 				}	
@@ -1122,11 +1120,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 							
 							// use reflection for
 				  		    // JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
-				  		    Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
-				  		    Object[] args = new Object[] { app };
-				  		    Class [] types = new Class[] {Application.class};
-				  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-				  	        JDialog d =  (JDialog) constructor.newInstance(args); 
+				  		    //Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
+				  		    //Object[] args = new Object[] { app };
+				  		    //Class [] types = new Class[] {Application.class};
+				  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+				  	        //JDialog d =  (JDialog) constructor.newInstance(args); 
+				  		    JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
 														
 							d.setVisible(true);
 						} catch (Exception e) {
@@ -1286,11 +1285,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				try {
 					// use reflection for
 		  		    // new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
-		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
-		  		    Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
-		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
-		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
-		  	        constructor.newInstance(args); 										
+		  		    //Class classObject = Class.forName("geogebra.export.PrintPreview");
+		  		    //Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
+		  		    //Class [] types = new Class[] {Application.class, Printable.class, int.class};
+		  	        //Constructor constructor = classObject.getDeclaredConstructor(types);   	        
+		  	        //constructor.newInstance(args); 										
+		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
 					
             	} catch (Exception e) {
             		System.err.println("Print preview not available");            		

@@ -68,7 +68,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     public PluginManager(Application app) {
         this.app=app;               //ref to Ggb application
 
-        ClassPathManipulator.addURL(JarManager.addPathToJar("."));
+        ClassPathManipulator.addURL(JarManager.addPathToJar("."), null);
         
         loadProperties();   
        
@@ -92,7 +92,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     	URL url=null;
     	try{
     		url=new URL(path);
-    		ClassPathManipulator.addURL(url);
+    		ClassPathManipulator.addURL(url, null);
         }catch(MalformedURLException e) {
             System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
         }catch(Throwable e){
@@ -203,7 +203,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
         int n=paths.size();
         for(int i=0;i<n;i++) {
             path=(String)paths.get(i);
-            ClassPathManipulator.addURL(JarManager.addPathToJar(path));
+            ClassPathManipulator.addURL(JarManager.addPathToJar(path), null);
         }//for all paths         
     }//addPaths(ArrayList)    
 

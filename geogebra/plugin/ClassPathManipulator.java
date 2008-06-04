@@ -40,16 +40,19 @@ public static void addFile(String s) {
 /** Adds a file given as File to the Classpath */
 public static void addFile(File f) {
     try{
-        addURL(f.toURL());   //System.out.println(f.toURL());
+        addURL(f.toURL(),null);   //System.out.println(f.toURL());
     }catch(MalformedURLException e){
         System.out.println("MalformedURLException for "+f.getName());
     }//try-catch
 }//addFile(File)
  
 /** Adds a URL to the Classpath */
-public static void addURL(URL u) {
+public static void addURL(URL u, ClassLoader loader) {
     Class[] parameter=new Class[] {URL.class};
-    URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    //URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    //URLClassLoader sysloader = (URLClassLoader)geogebra.gui.menubar.MenubarImpl.class.getClassLoader();
+    if (loader == null) loader = ClassLoader.getSystemClassLoader();
+    URLClassLoader sysloader = (URLClassLoader)loader;
     Class sysclass = URLClassLoader.class;
     try {
         Method method = sysclass.getDeclaredMethod("addURL",parameter);
