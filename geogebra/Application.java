@@ -312,9 +312,9 @@ public abstract class Application implements	KeyEventDispatcher {
     private JSplitPane sp;
     private JSplitPane sp2;
     private int initSplitDividerLocationHOR = 250; // init value
-    private int initSplitDividerLocationVER = 100; // init value
-    private int initSplitDividerLocationHOR2 = 350; // init value
-    private int initSplitDividerLocationVER2 = 300; // init value
+    private int initSplitDividerLocationVER = 300; // init value
+    private int initSplitDividerLocationHOR2 = 650; // init value
+    private int initSplitDividerLocationVER2 = 400; // init value
     private boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
@@ -678,6 +678,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }                    
         
         JComponent cp2 = null;
+        /*
         if (showSpreadsheet) {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -711,6 +712,45 @@ public abstract class Application implements	KeyEventDispatcher {
             }               
             sp.addPropertyChangeListener("dividerLocation",
                         new DividerChangeListener());   
+            cp1 = sp;
+        }
+        else {
+        	cp1 = cp2;
+        }
+        */
+        if (showAlgebraView) {
+            if (horizontalSplit) {
+                sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                		new JScrollPane(algebraView), eup);
+                sp2.setDividerLocation(initSplitDividerLocationHOR);                
+            }               
+            else {
+                sp2 =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                		eup, new JScrollPane(algebraView));
+                sp2.setDividerLocation(initSplitDividerLocationVER);
+            }               
+            sp2.addPropertyChangeListener("dividerLocation",
+                        new DividerChangeListener());
+            cp2 = sp2;
+        }
+        else {
+        	cp2 = eup;
+        }
+
+        JComponent cp1 = null;
+        if (showSpreadsheet) {        	     
+            if (horizontalSplit) {
+                sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                        cp2, spreadsheetView);
+                sp.setDividerLocation(initSplitDividerLocationHOR2);                
+            }               
+            else {
+                sp =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                                             cp2, spreadsheetView);
+                sp.setDividerLocation(initSplitDividerLocationVER2);
+            }               
+            sp.addPropertyChangeListener("dividerLocation",
+                        new DividerChangeListener2());   
             cp1 = sp;
         }
         else {
@@ -1470,8 +1510,8 @@ public abstract class Application implements	KeyEventDispatcher {
             JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void showError(String key) {       	
-    	showErrorDialog(getError(key));              
+    public void showError(String key) { 
+    	showErrorDialog(getError(key)); 
     }
 
     public void showError(MyError e) {   
@@ -2509,6 +2549,8 @@ public abstract class Application implements	KeyEventDispatcher {
     }
  
     public void setShowSpreadsheet(boolean flag) {
+    	//if (flag == false) throw new RuntimeException("Here");
+    	//System.out.println("setShowSpreadsheet " + flag);
         if (showSpreadsheet == flag) return;
         
         showSpreadsheet = flag;
