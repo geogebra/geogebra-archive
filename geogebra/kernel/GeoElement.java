@@ -1234,14 +1234,25 @@ final public boolean hasOnlyFreeInputPoints() {
 	}		
 	
 	// Michael Borcherds 2008-01-19 
-	public static String getSpreadsheetCellName( int i, int j)
-	    {
-	        if (i>25) return "A1"; // TODO rewrite to cope with more than 26 columns
-	        i+='A';
-	        j+=1;
-	        String ret = Character.toString((char)i)+j;
-	        return ret;
-	    }
+	//public static String getSpreadsheetCellName( int i, int j)
+	//    {
+	//        if (i>25) return "A1"; // TODO rewrite to cope with more than 26 columns
+	//        i+='A';
+	//        j+=1;
+	//        String ret = Character.toString((char)i)+j;
+	//        return ret;
+	//    }
+	// Cong Liu
+	public static String getSpreadsheetCellName(int i, int j) {
+		++ i;
+		++ j;
+		String col = "";
+		while (i > 0) {
+			col = (char)('A' + (i % 26) - 1) + col;
+			i /= 26;
+		}
+		return col + j;
+	}
 	 
 	/*
 	 public static int getSpreadsheetColumn( String str)
@@ -1280,15 +1291,25 @@ final public boolean hasOnlyFreeInputPoints() {
     }
     */
 	
-	public static final Pattern pattern = Pattern.compile("\\$?([A-Z])\\$?([0-9]+)");
+	// Cong Liu	
+	public static final Pattern pattern = Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
+	// Cong Liu	
 	public static int getSpreadsheetColumn(String str) {
 		Matcher matcher = pattern.matcher(str);
 		if (! matcher.matches()) return -1;
 		String s = matcher.group(1);
-		return s.charAt(0) - 'A';
+		int column = 0;
+		while (s.length() > 0) {
+			column *= 26;
+			column += s.charAt(0) - 'A' + 1;
+			s = s.substring(1);
+		}
+		//System.out.println(column);
+		return column - 1;
 	}
 	    
+	// Cong Liu	
 	public static int getSpreadsheetRow(String str) {
 		Matcher matcher = pattern.matcher(str);
 		if (! matcher.matches()) return -1;
