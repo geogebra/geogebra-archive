@@ -226,7 +226,8 @@ catch (Exception e) {e.printStackTrace();}*/
         System.out.println("addJarToPath " + jar);
         
         //addPath(jar);
-        ClassPathManipulator.addURL(addPathToJar(jar), loader);
+        //ClassPathManipulator.addURL(addPathToJar(jar), loader);
+        ClassPathManipulator.addURL(addPathToJar(jar));
 	}
 	
 	private static URL getAppletCodeBase()
