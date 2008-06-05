@@ -334,13 +334,15 @@ implements ExpressionValue {
         rt = right.evaluate(); // right tree      
 
         // handle list operations first       
-        if (lt.isListValue() && operation != EQUAL_BOOLEAN) {  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
-        	MyList myList = ((ListValue) lt).getMyList();
+        if (lt.isListValue() && operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+        	&& !rt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+        		MyList myList = ((ListValue) lt).getMyList();
         	// list lt operation rt
         	myList.applyRight(operation, rt);
         	return myList;
         }
-        else if (rt.isListValue() && operation != EQUAL_BOOLEAN) { // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+        else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+        	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	MyList myList = ((ListValue) rt).getMyList();
         	// lt operation list rt
         	myList.applyLeft(operation, lt);

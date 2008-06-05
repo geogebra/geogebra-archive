@@ -390,7 +390,7 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 
 	public String toValueString() {
-		return "MyList.toValueString()";
+		return toString(); // Michael Borcherds 2008-06-05
 		/*
 		 * int size = listElements.size(); for (int i=0; i < size; i++) {
 		 * ((ExpressionNode) listElements.get(i)).evaluate(); }
