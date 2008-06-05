@@ -131,7 +131,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "June 1, 2008";
+    public static final String buildDate = "June 5, 2008";
 	
     public static final String versionString = "3.1.4.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
@@ -3279,7 +3279,24 @@ public abstract class Application implements	KeyEventDispatcher {
 	        	int toolbarHeight= showToolBar ? getToolBarHeight() : 0; 
 	        	int inputbarHeight = showAlgebraInput ? getAlgebraInputHeight() : 0; 
 	            int menubarHeight = showMenuBar ? getMenuBarHeight() : 0; 
-	            int titlebarHeight = 30; // TODO how do we calculate this?
+	            //int titlebarHeight = 30; // TODO how do we calculate this?
+	            
+	            // calculate titlebar height
+	            // TODO is there a better way?
+	            // getFrame().getHeight() - getFrame().getContentPane().getHeight(); doesn't seem to give the right answer
+	            JFrame testFrame = new JFrame();
+	            JFrame testFrame2 = new JFrame();
+	            
+	            testFrame.setUndecorated(false);
+	            testFrame.setVisible(true);
+	            int height1 = testFrame.getHeight();
+	            testFrame.setVisible(false);
+	            testFrame2.setUndecorated(true);
+	            testFrame2.setVisible(true);
+	            int height2 = testFrame2.getHeight();
+	            testFrame2.setVisible(false);
+	            
+	            int titlebarHeight = height1 - height2 - 5;
 	            int furnitureHeight = toolbarHeight + inputbarHeight + menubarHeight + titlebarHeight;
 	            
 	            
