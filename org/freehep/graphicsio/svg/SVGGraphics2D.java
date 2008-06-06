@@ -60,7 +60,7 @@ import org.freehep.xml.util.XMLWriter;
  * The current implementation is based on REC-SVG11-20030114
  *
  * @author Mark Donszelmann
- * @version $Id: SVGGraphics2D.java,v 1.6 2008-05-04 12:29:26 murkle Exp $
+ * @version $Id: SVGGraphics2D.java,v 1.7 2008-06-06 21:01:05 murkle Exp $
  */
 public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
@@ -143,7 +143,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         defaultProperties.setProperties(newProperties);
     }
 
-    public static final String version = "$Revision: 1.6 $";
+    public static final String version = "$Revision: 1.7 $";
 
     // current filename including path
     private String filename;
@@ -267,7 +267,10 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         setBoundingBox();
         imageNumber = 0;
 
-        os.println("<?xml version=\"1.0\" standalone=\"no\"?>");
+        // Michael Borcherds 2008-06-06
+        // bugfix: added encoding="ISO-8859-1"
+        // as the date can contain accented characters eg június 6
+        os.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
         if (getProperty(VERSION).equals(VERSION_1_1)) {
             // no DTD anymore
         } else {
