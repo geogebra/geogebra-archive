@@ -16,7 +16,7 @@ the Free Software Foundation.
 
 </pre>
 @author      Michael Borcherds
-@version     2008-06-04
+@version     2008-06-08
 */
 
 import geogebra.plugin.ClassPathManipulator;
@@ -24,15 +24,9 @@ import geogebra.util.CopyURLToFile;
 import geogebra.util.Util;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.Icon;
-import javax.swing.JDialog;
-
-import be.ugent.caagt.jmathtex.TeXConstants;
-import be.ugent.caagt.jmathtex.TeXFormula;
 
 public class JarManager {
 
@@ -42,6 +36,7 @@ public class JarManager {
     public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
     public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
+    public static boolean 			IS_WEBSTART=false;
     private static Application	 	app=null;
 	
 	public JarManager(Application app) {
@@ -149,7 +144,31 @@ public class JarManager {
 		addJarToPath(loadJDom, null);
 		JSMATHTEX_LOADED=true;
     }
-	System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
+    
+    
+    String webstartCodebase=null;
+    
+    
+    try {
+        javax.jnlp.BasicService basicService = (javax.jnlp.BasicService)javax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
+        java.net.URL codeBaseURL = basicService.getCodeBase();
+        //URL url = new java.net.URL(codeBaseURL,"");
+        webstartCodebase=codeBaseURL.toString();
+        IS_WEBSTART=true;
+        System.out.println("JNLP codebase "+webstartCodebase);
+     } catch (javax.jnlp.UnavailableServiceException ex) {
+         IS_WEBSTART=false;
+        //ex.printStackTrace();
+     }		    
+     
+ 
+     // JMathTeX files specified in the JNLP file, don't need to add them to classpath
+     if (IS_WEBSTART) JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
+
+     
+     System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
+     
+     System.out.println("IS_WEBSTART="+IS_WEBSTART);
 
 	
 	
