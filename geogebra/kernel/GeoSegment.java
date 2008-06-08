@@ -166,7 +166,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
    final public boolean isEqual(GeoElement geo) {      
 	   if (!geo.isGeoSegment()) return false;
 	   GeoSegment s = (GeoSegment)geo;
-	   return startPoint.equals(s.startPoint) && endPoint.equals(s.endPoint);             	                  
+	   return startPoint.isEqual(s.startPoint) && endPoint.isEqual(s.endPoint);             	                  
    }
 	
    final public String toString() {

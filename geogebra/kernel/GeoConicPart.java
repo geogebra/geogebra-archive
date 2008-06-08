@@ -143,7 +143,7 @@ implements LimitedPath, NumberValue {
 			conic_part_type == c.conic_part_type &&		
 			kernel.isEqual(paramStart, c.paramStart) &&
 			kernel.isEqual(paramEnd, c.paramEnd) &&
-			super.equals(c);			 
+			super.isEqual(c);			 
 	}
 	
 	/** 
