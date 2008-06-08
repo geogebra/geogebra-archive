@@ -100,7 +100,7 @@ public class Relation extends java.lang.Object {
     final private String relation(GeoSegment a, GeoSegment b) {
         kernel.setMinPrecision();
         StringBuffer sb = new StringBuffer();
-        sb.append(equalityString(a, b, a.equals(b)));
+        sb.append(equalityString(a, b, a.isEqual(b)));
         sb.append("\n");
         //sb.append(app.getPlain("Length"));
         //sb.append(": ");
@@ -119,7 +119,7 @@ public class Relation extends java.lang.Object {
      */
     final private String relation(GeoPoint A, GeoPoint B) {
         kernel.setMinPrecision();
-        String str = equalityString(A, B, A.equals(B));
+        String str = equalityString(A, B, A.isEqual(B));
         kernel.resetPrecision();
         return str;
     }
@@ -131,7 +131,7 @@ public class Relation extends java.lang.Object {
     final private String relation(GeoVector a, GeoVector b) {
         String str;
         kernel.setMinPrecision();
-        if (a.equals(b)) {
+        if (a.isEqual(b)) {
             str = equalityString(a, b, true);
         } else {
             str = linDependencyString(a, b, a.linDep(b));
@@ -156,7 +156,7 @@ public class Relation extends java.lang.Object {
         String str;
         kernel.setMinPrecision();
         // check for equality
-        if (g.equals(h)) {
+        if (g.isEqual(h)) {
             str = equalityString(g, h, true);
         } else {
             if (g.isParallel(h))
@@ -241,7 +241,7 @@ public class Relation extends java.lang.Object {
     final private String relation(GeoConicPart a, GeoConicPart b) {
     	kernel.setMinPrecision();
         StringBuffer sb = new StringBuffer();
-        sb.append(equalityString(a, b, a.equals(b)));
+        sb.append(equalityString(a, b, a.isEqual(b)));
                 
         int type = a.getConicPartType();
         if (type == b.getConicPartType()) {
@@ -273,7 +273,7 @@ public class Relation extends java.lang.Object {
     final private String relation(GeoConic a, GeoConic b) {
         String str;
 
-        if (a.equals(b)) {
+        if (a.isEqual(b)) {
             str = equalityString(a, b, true);
         } else {
             // intersect conics
