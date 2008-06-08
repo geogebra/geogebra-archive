@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry excluding="javax/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="proguard38.jar"/>
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="JMathTeX-0.7pre.jar"/>
+	<classpathentry kind="lib" path="javax"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
