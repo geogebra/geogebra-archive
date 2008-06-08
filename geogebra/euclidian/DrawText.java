@@ -103,7 +103,7 @@ public final class DrawText extends Drawable {
 		}        
 		  				
 		// use hotEqn for LaTeX
-		if (isLaTeX && eqn == null && !JarManager.JSMATHTEX_PRESENT) {
+		if (isLaTeX && eqn == null && !JarManager.JSMATHTEX_LOADED) {
 				eqn = new sHotEqn();
 				eqn.setDoubleBuffered(false);
 				eqn.setEditable(false);	
@@ -123,7 +123,7 @@ public final class DrawText extends Drawable {
 		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
 			
-			if (JarManager.JSMATHTEX_PRESENT)
+			if (JarManager.JSMATHTEX_LOADED)
 			{
 				TeXFormula formula;
 				Icon icon;
@@ -188,7 +188,7 @@ public final class DrawText extends Drawable {
     			drawMultilineText(g2);   
         	} else 
         	{
-        		if (JarManager.JSMATHTEX_PRESENT)
+        		if (JarManager.JSMATHTEX_LOADED)
         		{//g2.drawImage(eqnImage, xLabel, yLabel, null);
            	 // TEST CODE FOR JMathTeX
     				TeXFormula formula;
@@ -276,7 +276,7 @@ public final class DrawText extends Drawable {
 	
 	private void setEqnFontSize() {		
 		
-		if (!JarManager.JSMATHTEX_PRESENT)
+		if (!JarManager.JSMATHTEX_LOADED)
 		{
 		// hot eqn may only have even font sizes from 10 to 28
 		int size = (fontSize / 2) * 2; 
