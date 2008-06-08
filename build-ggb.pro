@@ -1,7 +1,7 @@
 #
 # Proguard config file for GeoGebra
 #
-# May 29th 2008
+# June 8th 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
@@ -35,14 +35,20 @@
 -keep class jasymca.Lambda* {}
 
 # Export classes called using reflection
--keep class geogebra.export.ConstructionProtocolExportDialog { <methods>; }
--keep class geogebra.export.WorksheetExportDialog { <methods>; }
--keep class geogebra.export.PrintPreview { <methods>; }
--keep class geogebra.export.GraphicExportDialog { <methods>; }
--keep class geogebra.export.pstricks.GeoGebraToPstricks { <methods>; }
+#-keep class geogebra.export.ConstructionProtocolExportDialog { <methods>; }
+#-keep class geogebra.export.WorksheetExportDialog { <methods>; }
+#-keep class geogebra.export.PrintPreview { <methods>; }
+#-keep class geogebra.export.GraphicExportDialog { <methods>; }
+#-keep class geogebra.export.pstricks.GeoGebraToPstricks { <methods>; }
 
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
+
+# fudge to make _license.txt work (sporadic error)
+-keep class geogebra.gui.menubar.Menubar { <methods>; }
+
+# jnlp.jar (used to detect WebStart)
+-keep class javax.jnlp.* { <methods>; }
 
 #####
 # Plugin part
