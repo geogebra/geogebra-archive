@@ -100,7 +100,12 @@ public abstract class Drawable {
 		int lines = 0;				
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
-				
+
+		Font font = g2.getFont();
+		TextLayout layout;
+		FontRenderContext frc = g2.getFontRenderContext();
+		int xoffset = 0, yoffset = 0;
+
 		// no index in text
 		if (oldLabelDesc == labelDesc && !labelHasIndex) {		
 			// draw text line by line
@@ -110,6 +115,10 @@ public abstract class Drawable {
 				if (labelDesc.charAt(i) == '\n') {
 					//end of line reached: draw this line
 					g2.drawString(labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
+
+					layout = new TextLayout(labelDesc.substring(lineBegin, i), font, frc);
+					if (layout.getAdvance() > xoffset) xoffset = (int)layout.getAdvance();			
+					
 					lines++;
 					lineBegin = i + 1;					
 				}
@@ -117,7 +126,16 @@ public abstract class Drawable {
 			
 			float ypos = yLabel + lines * lineSpread;
 			g2.drawString(labelDesc.substring(lineBegin), xLabel, ypos);
-			labelRectangle.setLocation(xLabel, yLabel - fontSize);
+
+			layout = new TextLayout(labelDesc.substring(lineBegin), font, frc);
+			if (layout.getAdvance() > xoffset) xoffset = (int)layout.getAdvance();	
+			
+			// Michael Borcherds 2008-06-09
+			// changed setLocation to setBounds (bugfix)
+			// and added TextLayout stuff
+			//labelRectangle.setLocation(xLabel, yLabel - fontSize);
+			int height = (int) ( (lines +1)*lineSpread);
+			labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
 		} 
 		else { 			
 			// text with indices
@@ -127,7 +145,8 @@ public abstract class Drawable {
 			// draw text line by line
 			int lineBegin = 0;
 			int length = labelDesc.length();
-			int xoffset = 0, yoffset = 0;
+			xoffset = 0;
+			yoffset = 0;
 			for (int i=0; i < length-1; i++) {
 				if (labelDesc.charAt(i) == '\n') {
 					//end of line reached: draw this line
