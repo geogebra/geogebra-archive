@@ -1,7 +1,7 @@
 #
 # Proguard config file for GeoGebra
 #
-# June 8th 2008
+# June 9th 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
@@ -49,6 +49,9 @@
 
 # jnlp.jar (used to detect WebStart)
 -keep class javax.jnlp.* { <methods>; }
+
+# needed so that SymbolLoader can find Des12.gif etc
+-keep class hoteqn.SymbolLoader { <methods>; }
 
 #####
 # Plugin part
