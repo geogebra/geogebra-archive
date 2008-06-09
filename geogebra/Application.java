@@ -131,7 +131,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "June 5, 2008";
+    public static final String buildDate = "June 9, 2008";
 	
     public static final String versionString = "3.1.4.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
@@ -354,7 +354,8 @@ public abstract class Application implements	KeyEventDispatcher {
     	// added to help debug applets
     	System.out.println("GeoGebra "+versionString+" "+buildDate);
     		
-		isApplet = applet != null;
+
+	        isApplet = applet != null;
 		if (frame != null) {
 			mainComp = frame;
 		} 
@@ -374,6 +375,9 @@ public abstract class Application implements	KeyEventDispatcher {
 			// frame
 			setFrame(frame);			
 		}
+		
+	    // Michael Borcherds 2008-06-03
+	        jarmanager=      new JarManager(this);
 
         //  init kernel
         kernel = new Kernel(this);
@@ -437,9 +441,6 @@ public abstract class Application implements	KeyEventDispatcher {
 	        ggbapi=          new GgbAPI(this);    
 	        pluginmanager=   new PluginManager(this);
 	        
-	    // Michael Borcherds 2008-06-03
-	    // this needs to go after PluginManager!
-	        jarmanager=      new JarManager(this);
 	     		
     }      
     
