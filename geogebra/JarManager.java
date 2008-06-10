@@ -42,6 +42,7 @@ public class JarManager {
 	public JarManager(Application app) {
 		
 		
+        ClassPathManipulator.addURL(JarManager.addPathToJar("."), null);
 
         this.app = app;
 
