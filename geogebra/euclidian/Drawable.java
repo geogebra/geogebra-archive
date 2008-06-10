@@ -96,13 +96,21 @@ public abstract class Drawable {
 		}		
 	}			
 	
+	// Michael Borcherds 2008-06-10
+	final float textWidth(String str, Font font, FontRenderContext frc)
+	{
+		if (str.equals("")) return 0f;
+		TextLayout layout = new TextLayout(str , font, frc);
+		return layout.getAdvance();	
+		
+	}
+	
 	final void drawMultilineText(Graphics2D g2) {
 		int lines = 0;				
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
 
 		Font font = g2.getFont();
-		TextLayout layout;
 		FontRenderContext frc = g2.getFontRenderContext();
 		int xoffset = 0, yoffset = 0;
 
@@ -116,8 +124,8 @@ public abstract class Drawable {
 					//end of line reached: draw this line
 					g2.drawString(labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
 
-					layout = new TextLayout(labelDesc.substring(lineBegin, i), font, frc);
-					if (layout.getAdvance() > xoffset) xoffset = (int)layout.getAdvance();			
+					int width=(int)textWidth(labelDesc.substring(lineBegin, i), font, frc);
+					if (width > xoffset) xoffset = width;			
 					
 					lines++;
 					lineBegin = i + 1;					
@@ -127,12 +135,12 @@ public abstract class Drawable {
 			float ypos = yLabel + lines * lineSpread;
 			g2.drawString(labelDesc.substring(lineBegin), xLabel, ypos);
 
-			layout = new TextLayout(labelDesc.substring(lineBegin), font, frc);
-			if (layout.getAdvance() > xoffset) xoffset = (int)layout.getAdvance();	
+			int width=(int)textWidth(labelDesc.substring(lineBegin), font, frc);
+			if (width > xoffset) xoffset = width;			
 			
-			// Michael Borcherds 2008-06-09
+			// Michael Borcherds 2008-06-10
 			// changed setLocation to setBounds (bugfix)
-			// and added TextLayout stuff
+			// and added final float textWidth()
 			//labelRectangle.setLocation(xLabel, yLabel - fontSize);
 			int height = (int) ( (lines +1)*lineSpread);
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
