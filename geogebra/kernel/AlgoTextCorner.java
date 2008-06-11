@@ -42,6 +42,10 @@ implements EuclidianViewAlgo {
         corner.setLabel(label);     
         
         kernel.registerEuclidianViewAlgo(this);
+        
+        // force update of GeoText.boundingBox
+        txt.update();
+        corner.updateCascadeParentAlgo();
     }   
     
     protected String getClassName() {
