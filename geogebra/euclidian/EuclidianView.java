@@ -3647,6 +3647,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	}
 	
 	final public Graphics2D getTempGraphics2D() {
+		g2Dtemp.setFont(this.getFont()); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]
 		return g2Dtemp;
 	}
 }
