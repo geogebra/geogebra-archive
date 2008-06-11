@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Jun 8, 2008
+   @date Jun 11, 2008
 -->
 <project default="geogebra">
 	
@@ -73,6 +73,7 @@ office@geogebra.org
 					**/*.gif, 
 					javax/jnlp/**, 
 					**/*.jpg, 
+					yacas/**,
 					geogebra/kernel/**/algo2command.properties,						
 					geogebra/gui/**/_license.txt" 						
 			excludes="*.jar, 
