@@ -66,14 +66,22 @@ public class Relation extends java.lang.Object {
 			return relation((GeoConicPart) a, (GeoConicPart) b);
 		else if (a instanceof GeoConic && b instanceof GeoConic)
 			return relation((GeoConic) a, (GeoConic) b);
+        
+		else if (a instanceof GeoPoint && b instanceof GeoPolygon)
+			return relation((GeoPoint) a, (GeoPolygon) b);
+		else if (a instanceof GeoPolygon && b instanceof GeoPoint)
+			return relation((GeoPoint) b, (GeoPolygon) a);
+        
 		else if (a instanceof GeoPoint && b instanceof Path)
 			return relation((GeoPoint) a, (Path) b);
 		else if (a instanceof Path && b instanceof GeoPoint)
 			return relation((GeoPoint) b, (Path) a);
+        
 		else if (a instanceof GeoConic && b instanceof GeoLine)
 			return relation((GeoLine) b, (GeoConic) a);
 		else if (a instanceof GeoLine && b instanceof GeoConic)
 			return relation((GeoLine) a, (GeoConic) b);
+        
 		else if (a instanceof NumberValue && b instanceof NumberValue)
 			return relation((NumberValue) a, (NumberValue) b);
 		else {
@@ -138,6 +146,14 @@ public class Relation extends java.lang.Object {
         }
         kernel.resetPrecision();
         return str;
+    }
+
+    /**
+     * description of the relation between point A and a polygon
+     * ((not) on perimeter)
+     */
+    final private String relation(GeoPoint A, GeoPolygon p) {
+    	return incidencePerimeterString(A, p.toGeoElement(), p.isOnPath(A, Kernel.MIN_PRECISION));   
     }
 
     /**
@@ -337,6 +353,18 @@ public class Relation extends java.lang.Object {
             return app.getPlain("AliesOnB",a.getNameDescription(),b.getNameDescription());
         else
             return app.getPlain("AdoesNotLieOnB",a.getNameDescription(),b.getNameDescription());
+    }
+
+    // "a lies on the perimeter of b"
+    // "a does not lie on the perimeter of b"
+    final private String incidencePerimeterString(
+        GeoPoint a,
+        GeoElement b,
+        boolean incident) {
+        if (incident)
+            return app.getPlain("AliesOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
+        else
+            return app.getPlain("AdoesNotLieOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
     }
 
     // "Relation of a and b: parallel"    
