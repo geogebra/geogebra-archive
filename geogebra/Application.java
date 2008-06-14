@@ -3015,7 +3015,7 @@ public abstract class Application implements	KeyEventDispatcher {
      */
     public String getCreatedWithHTML() {
         StringBuffer sb = new StringBuffer();
-        sb.append(getPlain("CreatedWith"));
+        sb.append(Util.toHTMLString(getPlain("CreatedWith"))); // MRB 2008-06-14 added Util.toHTMLString
         sb.append(" ");
         sb.append("<a href=\"");
         sb.append(getPlain("ApplicationURL"));
