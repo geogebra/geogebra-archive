@@ -17,14 +17,12 @@ import geogebra.JarManager;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import geogebra.plugin.PluginManager;
 import hoteqn.sHotEqn;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -55,7 +53,7 @@ public final class DrawText extends Drawable {
     private GeoPoint loc; // text location
     
     private sHotEqn eqn;
-    private Image eqnImage;
+    //private Image eqnImage;
     private Dimension eqnSize;        
     
     /** Creates new DrawText */
@@ -101,7 +99,8 @@ public final class DrawText extends Drawable {
 			yLabel += text.labelOffsetY; 
 			
 		}        
-		  				
+		
+		/*
 		// use hotEqn for LaTeX
 		if (isLaTeX && eqn == null && !JarManager.JSMATHTEX_LOADED) {
 				eqn = new sHotEqn();
@@ -116,7 +115,7 @@ public final class DrawText extends Drawable {
 				eqn.setFontname(Application.STANDARD_FONT_NAME);
 				setEqnFontSize();																												
 				view.add(eqn);					
-		}
+		}*/
 		
 		updateFontSize();				
 			
@@ -142,8 +141,18 @@ public final class DrawText extends Drawable {
 			}
 			else
 			{
-			eqn.setForeground(geo.getObjectColor());		
-			eqn.setBackground(view.getBackground());
+				eqn = new sHotEqn();
+				eqn.setDoubleBuffered(false);
+				eqn.setEditable(false);	
+				eqn.removeMouseListener(eqn);
+				eqn.removeMouseMotionListener(eqn);				
+				eqn.setDebug(false);
+				eqn.setOpaque(false);	
+				
+				eqn.setFontname(Application.STANDARD_FONT_NAME);
+				setEqnFontSize();																												
+				eqn.setForeground(geo.getObjectColor());		
+				eqn.setBackground(view.getBackground());
 	
 //			// set equation 
 //			eqn.setEquation(labelDesc);
@@ -153,11 +162,11 @@ public final class DrawText extends Drawable {
 //			eqnImage = eqn.getImage();
 //			eqnSize = eqn.getSize();
 				
-			eqnSize = eqn.getSizeof(labelDesc);
+				eqnSize = eqn.getSizeof(labelDesc);
 
-			// set bounding box of text component
-			labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
-			eqn.setBounds(labelRectangle);		
+				// set bounding box of text component
+				labelRectangle.setBounds(xLabel, yLabel, eqnSize.width, eqnSize.height);										
+				eqn.setBounds(labelRectangle);		
 			}
 		} 
 		else if (text.isNeedsUpdatedBoundingBox()) {
@@ -180,31 +189,13 @@ public final class DrawText extends Drawable {
 
     final public void draw(Graphics2D g2) {   	   
         if (isVisible) {      
-		// LaTeX formulas are drawn as hotEqns. 
-		// They are Swing components and children of the view   
         	if (!isLaTeX) {
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
     			drawMultilineText(g2);   
         	} else 
         	{
-        		if (JarManager.JSMATHTEX_LOADED)
-        		{//g2.drawImage(eqnImage, xLabel, yLabel, null);
-           	 // TEST CODE FOR JMathTeX
-    				TeXFormula formula;
-    				Icon icon;
-    				try{
-    					formula = new TeXFormula(labelDesc);
-    					icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,fontSize);
-    				}
-    				catch (Exception e)
-    				{
-    					formula = new TeXFormula("LaTeXerror");
-    					icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,fontSize);
-    					
-    				}
-        		icon.paintIcon(new JLabel(), g2, xLabel, yLabel); // component can't be null
-        	}
+        		drawEquation(g2,xLabel,yLabel);
         	}
         	
 			  
@@ -217,7 +208,40 @@ public final class DrawText extends Drawable {
         }
     }
     
-	
+	final public void drawEquation(Graphics2D g2, int x, int y)
+	{
+		if (!JarManager.JSMATHTEX_LOADED)
+		{
+			eqn = new sHotEqn(labelDesc);
+			eqn.setDoubleBuffered(false);
+			eqn.setEditable(false);	
+			eqn.removeMouseListener(eqn);
+			eqn.removeMouseMotionListener(eqn);				
+			eqn.setDebug(false);
+			eqn.setOpaque(false);	
+			eqn.setFontname(Application.STANDARD_FONT_NAME);
+			setEqnFontSize();																												
+			eqn.paintComponent(g2,xLabel,yLabel);					
+		}
+		else
+		{
+   	 // TEST CODE FOR JMathTeX
+			TeXFormula formula;
+			Icon icon;
+			try{
+				formula = new TeXFormula(labelDesc);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,fontSize);
+			}
+			catch (Exception e)
+			{
+				formula = new TeXFormula("LaTeXerror");
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,fontSize);
+				
+			}
+			icon.paintIcon(new JLabel(), g2, x, y); // component can't be null
+		}
+
+	}
    
     /**
      * was this object clicked at? (mouse pointer
@@ -250,7 +274,7 @@ public final class DrawText extends Drawable {
      * Removes HotEqn from view again    
      */
 	final public void remove() {    	
-    	if (eqn != null) view.remove(eqn);
+    	//if (eqn != null) view.remove(eqn);
     }
 
 	final void updateFontSize() {	
@@ -267,7 +291,7 @@ public final class DrawText extends Drawable {
 			serifFont = newSerifFont;
 						
 			if (isLaTeX) {
-				setEqnFontSize();				
+				//setEqnFontSize();				
 			} else {				
 				textFont = new Font(serifFont ? "Serif" : "SansSerif", fontStyle, fontSize);				
 			}		
@@ -276,8 +300,6 @@ public final class DrawText extends Drawable {
 	
 	private void setEqnFontSize() {		
 		
-		if (!JarManager.JSMATHTEX_LOADED)
-		{
 		// hot eqn may only have even font sizes from 10 to 28
 		int size = (fontSize / 2) * 2; 
 		if (size < 10) 
@@ -288,7 +310,6 @@ public final class DrawText extends Drawable {
 		eqn.setFontname(serifFont ? "Serif" : "SansSerif");
 		eqn.setFontsizes(size, size - 2, size - 4, size - 6);
 		eqn.setFontStyle(fontStyle);
-		}
 		
 	}
 }

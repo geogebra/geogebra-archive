@@ -258,9 +258,12 @@ public void removeActionListener(ActionListener listener) {
        actionListener = AWTEventMulticaster.remove(actionListener, listener);}
 
 
+public synchronized void paintComponent (Graphics g, int x, int y) {	
+	   impl.generateImageImpl(g,x,y);
+	}  // paint
 public synchronized void paintComponent (Graphics g) {	
-   impl.paintImpl(g);
-}  // paint
+	   impl.generateImageImpl(g,0,0);
+	}  // paint
 
 }
 

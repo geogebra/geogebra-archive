@@ -269,8 +269,8 @@ private static final String  VERSION = "cHotEqn V 4.03 ";
 
 private Component component;
 
-private int       width          = 0;
-private int       height         = 0;
+//private int       width          = 0;
+//private int       height         = 0;
 private String    nameS          = null;
 private String    equation       = null;
 private String    Fontname       = "Helvetica";
@@ -380,7 +380,7 @@ public void setEquationImpl(String equation) {
     eqScan.setEquation(equation);
     drawn   = false;
     imageOK = false;
-    component.repaint();
+    //component.repaint();
 } 
 public String getEquationImpl() { return equation; }
 
@@ -488,7 +488,7 @@ public void setBackgroundImpl(Color BGColor) {
    this.BGColor = this.EnvColor = BGColor;
    drawn   = false;
    imageOK = false;
-   component.repaint();
+   //component.repaint();
 }
 public Color getBackgroundImpl() { return BGColor; }
 
@@ -496,7 +496,7 @@ public void setForegroundImpl(Color FGColor) {
    this.FGColor = FGColor;
    drawn   = false;
    imageOK = false;
-   component.repaint();
+   //component.repaint();
 }
 public Color getForegroundImpl() { return FGColor; }
 
@@ -504,7 +504,7 @@ public void setBorderColorImpl(Color BorderColor) {
    this.BorderColor = BorderColor;
     drawn           = false;
     imageOK         = false;
-    component.repaint();
+    //component.repaint();
 }
 public Color getBorderColorImpl() { return BorderColor; }
 
@@ -512,7 +512,7 @@ public void setBorderImpl(boolean borderB) {
     this.borderB = borderB;
     drawn        = false;
     imageOK      = false;
-    component.repaint();
+    //component.repaint();
 }
 public boolean isBorderImpl() { return borderB; }
 
@@ -520,7 +520,7 @@ public void setRoundRectBorderImpl(boolean roundRectBorderB) {
     this.roundRectBorderB = roundRectBorderB;
     drawn                 = false;
     imageOK               = false;
-    component.repaint();
+    //component.repaint();
 }
 public boolean isRoundRectBorderImpl() { return roundRectBorderB; }
 
@@ -533,7 +533,7 @@ public void setEnvColorImpl(Color EnvColor) {
    this.EnvColor = EnvColor;
     drawn           = false;
     imageOK         = false;
-    component.repaint();
+    //component.repaint();
 }
 public Color getEnvColorImpl() { return EnvColor; }
 
@@ -555,48 +555,6 @@ public String getSelectedAreaImpl() {
 
 //*************************  Eventhandler  *************************************
 public void processMouseEventImpl(MouseEvent ev) {
-
-  // bei CONTROL Taste Breite/Hoehe ausgeben  
-  if (ev.isControlDown()) { 
-     if (ev.getID() == MouseEvent.MOUSE_PRESSED && !ev.isMetaDown()) {
-        System.out.println(nameS+" (width,height) given=("+component.getSize().width+","+component.getSize().height
-                                 +") used=("+this.getPreferredSizeImpl().width+","+this.getPreferredSizeImpl().height+")");
-     }
-  }
-  else {
-		if (editableB) {			
-			if (ev.getID() == MouseEvent.MOUSE_PRESSED) {  
-				mouse1X = ev.getX();
-				mouse1Y = ev.getY();
-				mouse2X = 0;
-				mouse2Y = 0;
-				editModeRec = 5;
-				selectImage = null;
-				component.repaint();  // Markierung löschen
-			} 
-			else if (ev.getID() == MouseEvent.MOUSE_RELEASED) { 
-				if (editMode) {
-					Graphics g = component.getGraphics();
-					g.setFont(f1);
-					g.setColor(FGColor);
-					//g.drawLine(mouse1X,mouse1Y,mouse2X,mouse2Y);
-					eqScan.start();
-					BoxC area = eqn(xOFF, yOFF, true, g, 1); 
-					if (debug) printStatusImpl("selectedArea = "+eqScan.getSelectedArea(editModeCount1,editModeCount2));
-					ImageProducer filteredProd 
-						= new FilteredImageSource(bufferImage.getSource(),
-							new CropImageFilter(x0 ,y0 ,x1-x0 ,y1-y0 ));
-					ImageProducer filteredProd2 
-						= new FilteredImageSource(filteredProd, 
-							new ColorMaskFilter(Color.red,true));
-					selectImage = Toolkit.getDefaultToolkit().createImage(filteredProd2);
-					g.drawImage(selectImage,x0,y0, component);
-					//System.out.println("counts "+editModeCount1+" "+editModeCount2);
-					editMode = false;
-				} 
-			}
-		}
-  }
 } 
 
 public void processMouseMotionEventImpl(MouseEvent ev) {
@@ -609,8 +567,9 @@ public void processMouseMotionEventImpl(MouseEvent ev) {
 } // end processMouseMotionEvent 
 
 public Dimension getPreferredSizeImpl() {
-  if (width==0 & height==0) {
-    Graphics g = component.getGraphics();
+//  if (width==0 & height==0) 
+  {
+    Graphics g = g2Dtemp;
     if (g!=null) {  
           //System.out.println("getGraphics is not null");
           g.setFont(f1);
@@ -623,8 +582,8 @@ public Dimension getPreferredSizeImpl() {
           //System.out.println("getPref0... "+localWidth+" "+localHeight);
     }
   }
-  width  = localWidth;
-  height = localHeight;
+//  width  = localWidth;
+//  height = localHeight;
 
   if (localWidth<=1) return new Dimension(100,100); // zur Sicherheit
 
@@ -654,57 +613,16 @@ public synchronized void updateImpl (Graphics g) {
 // ******!!!! ist diese Methode überhaupt notwendig ?????*******
   if (drawn) return;
      imageOK = false;
-     paintImpl(g);  
+     generateImageImpl(g,0,0);  
 }
 
-private void draw_hourglass(Graphics g) {
-  g.setColor(Color.red);
-  int hm=height/2-10; int hp=hm+20;
-  int wm=width/2-5;   int wp=wm+10;
-  Polygon polygon = new Polygon();
-  polygon.addPoint(wm, hm);
-  polygon.addPoint(wp, hp);
-  polygon.addPoint(wm, hp);
-  polygon.addPoint(wp, hm);
-  g.fillPolygon(polygon); 
-}
 
-public synchronized void paintImpl (Graphics g) {
-   if (width!=component.getWidth() || height!=component.getHeight()) {
-      imageOK     = false;
-      bufferImage = null;
-      width  = component.getWidth();
-      height = component.getHeight();
-   }
-
-   if (!imageOK) {
-	   // begin Markus Hohenwarter, Jan 2008
-	   // commented draw hourglass:
-         //draw_hourglass(g);
-	   // end Markus Hohenwarter, Jan 2008
-
-      selectImage = null;
-
-      if (bufferImage == null) bufferImage=component.createImage(width,height);
-      Graphics bufferg = bufferImage.getGraphics();
-      
-      // begin Markus Hohenwarter, Jan 2008
-      // support antialiasing 
-      Graphics2D g2 = (Graphics2D) bufferg;
-      g2.setRenderingHints(((Graphics2D) g).getRenderingHints()); 
-      // end Markus Hohenwarter, Jan 2008
-      
-      generateImageImpl(bufferg);
-      bufferg.dispose();
-   }
-   g.drawImage(bufferImage,0,0,component);
-   if (selectImage!=null)    g.drawImage(selectImage,x0,y0,component);
-}  // paint
-
+/*
 //  fast version with one scan and double buffer
-private synchronized void generateImageImpl (Graphics g) {
+private synchronized void generateImageImpl (Graphics g, int x, int y) {
      BoxC area0 = new BoxC();
-     Image genImage=component.createImage(width,height+height);
+     //Image genImage=component.createImage(width,height+height);
+     Image genImage=new BufferedImage(width, height+height, BufferedImage.TYPE_INT_RGB);
      Graphics geng = genImage.getGraphics();
      
      // begin Markus Hohenwarter, Jan 2008
@@ -785,7 +703,7 @@ private synchronized void generateImageImpl (Graphics g) {
        case 2: yoff=height-border-area0.dy_neg-area0.dy_pos; break;
      }
      //System.out.println("nach 1. eqn");
-     g.drawImage(genImage,xoff,yoff,xoff+area0.dx,yoff+area0.dy_pos+area0.dy_neg+1,0,height-area0.dy_pos,area0.dx,height+area0.dy_neg+1 ,component);
+     g.drawImage(genImage,xoff+x,yoff+y,xoff+area0.dx+x,yoff+area0.dy_pos+area0.dy_neg+1+y,0,height-area0.dy_pos,area0.dx,height+area0.dy_neg+1 ,null);
      //System.out.println("nach 2. eqn");
      geng.dispose();
      if (toosmall) printStatusImpl("(width,height) given=("+width+","+height
@@ -796,13 +714,16 @@ private synchronized void generateImageImpl (Graphics g) {
      yOFF=yoff+area0.dy_pos;
      notify(); // notifiy that painting has been completed
 } // end generateImage
+*/
 
-/*  slower version with two scans
-private synchronized void generateImageImpl (Graphics g) {
+//  slower version with two scans
+public synchronized void generateImageImpl (Graphics g, int x, int y) {
      BoxC area  = new BoxC();
      BoxC area0 = new BoxC();
      g.setFont(f1);
      g.setColor(BGColor);
+     
+     /*
      g.fillRect(0,0,width,height);
      border=0;
      if (borderB && roundRectBorderB) {
@@ -820,6 +741,8 @@ private synchronized void generateImageImpl (Graphics g) {
          border=5;
        }
      }
+     */
+     
      g.setColor(FGColor);
 
      //FontMetrics fM  = g.getFontMetrics();
@@ -838,51 +761,51 @@ private synchronized void generateImageImpl (Graphics g) {
      //System.out.println("vor 1. eqn");
      eqScan.start();
      area0 = eqn(0,150, false, g, 1);
-     displayStatus(" ");
+     //displayStatus(" ");
      
      // set alignment
-     xpos=0; // left
-     if (halign.equals("center"))     xpos=1;
-     else if (halign.equals("right")) xpos=2;
+     //xpos=0; // left
+     //if (halign.equals("center"))     xpos=1;
+     //else if (halign.equals("right")) xpos=2;
            
-     ypos=0; // top      
-     if (valign.equals("middle"))      ypos=1;
-     else if (valign.equals("bottom")) ypos=2;
+     //ypos=0; // top      
+     //if (valign.equals("middle"))      ypos=1;
+     //else if (valign.equals("bottom")) ypos=2;
                   
      // Calculate actual size
      localWidth  = 1+area0.dx+2*border;
      localHeight = 1+area0.dy_pos+area0.dy_neg+2*border;
 
      // Test size and modify alignment if too small
-     boolean toosmall = false; 
-     if (localWidth > width)   {toosmall=true; xpos=0;}
-     if (localHeight > height) {toosmall=true; ypos=1;}
+     //boolean toosmall = false; 
+     //if (localWidth > width)   {toosmall=true; xpos=0;}
+     //if (localHeight > height) {toosmall=true; ypos=1;}
      // Calculate position
      int xoff=border;
      int yoff=area0.dy_pos+border; 
-     switch (xpos) {
-       case 0: break;
-       case 1: xoff=(width-area0.dx)/2; break;
-       case 2: xoff=width-border-area0.dx-1; break;
-     }
-     switch (ypos) {
-       case 0: break;
-       case 1: yoff=border+area0.dy_pos-(localHeight-height)/2; break;
-       case 2: yoff=height-border-area0.dy_neg-1; break;
-     }
+     //switch (xpos) {
+       //case 0: break;
+       //case 1: xoff=(width-area0.dx)/2; break;
+       //case 2: xoff=width-border-area0.dx-1; break;
+     //}
+     //switch (ypos) {
+       //case 0: break;
+       //case 1: yoff=border+area0.dy_pos-(localHeight-height)/2; break;
+       //case 2: yoff=height-border-area0.dy_neg-1; break;
+     //}
      //System.out.println("nach 1. eqn");
      eqScan.start();
-     area = eqn(xoff,yoff,true,g,1);
+     area = eqn(xoff+x,yoff+y,true,g,1);
      //System.out.println("nach 2. eqn"); 
-     if (toosmall) printStatus("(width,height) given=("+width+","+height
-                                   +") used=("+localWidth+","+localHeight+")");
+     //if (toosmall) printStatus("(width,height) given=("+width+","+height
+     //                              +") used=("+localWidth+","+localHeight+")");
      imageOK = true;
      drawn   = true;
      xOFF=xoff;
      yOFF=yoff;
      notify(); // notifiy that painting has been completed
 } // end generateImage
-*/
+
 
 //***********************************************************************
 //** Box-Class, die als Rückgabewert bei der Berechnung                **
@@ -2500,12 +2423,12 @@ private BoxC SYMBOP(int x, int y, boolean disp, Graphics g, int rec, boolean des
    // auch vollständig geladen ist.
    rec=Math.min(rec,GreekSize.length);
    Image image = getSymbol(g,rec);
-   int dx = image.getWidth(component);
+   int dx = image.getWidth(null);
    if (dx < 0) dx = fM.getMaxAdvance();    // default falls image fehlt
    if (disp) {
      int dy = 0;
      if (desc) dy = GreekDescent[rec-1];
-     g.drawImage(image,x,y-image.getHeight(component)+dy,component);
+     g.drawImage(image,x,y-image.getHeight(null)+dy,null);
    }
    //System.out.println(image.getWidth(this)+" "+image.getHeight(this));
    //if (disp) g.drawRect(x,y-dy_pos,dx,dy_pos+dy_neg);
@@ -2531,8 +2454,8 @@ private BoxC SYMBOLBIG(int x, int y, boolean disp, Graphics g, int rec){
    //System.out.println(" vor getSymbol");
    Image image = getSymbol(g,rec);
    //System.out.println(" nach getSymbol");
-   int im_dx  = dx = image.getWidth(component);
-   int h      = image.getHeight(component);
+   int im_dx  = dx = image.getWidth(null);
+   int h      = image.getHeight(null);
    if (h < 0) {
       h = 2*asc;      // default falls image fehlt
       im_dx  = dx = asc;
@@ -2567,7 +2490,7 @@ private BoxC SYMBOLBIG(int x, int y, boolean disp, Graphics g, int rec){
    // nur bei disp=true wird Scanner zurückgesetzt
    if (disp) {
       eqScan.set_count(count); 
-      g.drawImage(image,x+(dx-im_dx)/2,y-dy_pos_image,component);
+      g.drawImage(image,x+(dx-im_dx)/2,y-dy_pos_image,null);
       //g.drawRect(x,y-dy_pos,dx,dy_pos+dy_neg);
       // "SUB" 
       if (expect(EqToken.SUB)) 
