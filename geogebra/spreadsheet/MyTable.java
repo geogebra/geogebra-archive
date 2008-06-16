@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent ;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ListSelectionModel;
@@ -121,9 +122,59 @@ public class MyTable extends JTable
 	protected boolean isDragingDot = false;
 	protected int dragingToRow = -1;
 	protected int dragingToColumn = -1;
-		
+	
+	public void selectNone() {
+		selectionChangedNonResponsive = true;
+		this.clearSelection();
+		selectionChangedNonResponsive = false;
+	}
+	
+	protected boolean selectionChangedNonResponsive = false;
+	public long selectionTime = 0;
+			
 	protected void selectionChanged() {
-		repaint();
+		if (selectionChangedNonResponsive) return;
+		selectionTime = System.currentTimeMillis();
+		int[] cols = this.getSelectedColumns();
+		int[] rows = this.getSelectedRows();
+		ArrayList list = new ArrayList();
+		if (cols != null && rows != null) {
+			if (cols.length != 0 && rows.length != 0) {
+				for (int i = 0; i < cols.length; ++ i) {
+					for (int j = 0; j < rows.length; ++ j) {
+						GeoElement geo = RelativeCopy.getValue(this, cols[i], rows[j]);
+						if (geo != null) {
+							list.add(geo);							
+						}
+					}
+				}
+			}
+			else if (rows.length == 0) {
+				MyTableModel model = (MyTableModel)getModel();
+				for (int i = 0; i < cols.length; ++ i) {
+					for (int j = 0; j < model.rowCount; ++ j) {
+						GeoElement geo = RelativeCopy.getValue(this, cols[i], j);
+						if (geo != null) {
+							list.add(geo);							
+						}
+					}
+				}
+			}
+			else if (cols.length == 0) {
+				MyTableModel model = (MyTableModel)getModel();
+				for (int i = 0; i < model.columnCount; ++ i) {
+					for (int j = 0; j < rows.length; ++ j) {
+						GeoElement geo = RelativeCopy.getValue(this, i, rows[j]);
+						if (geo != null) {
+							list.add(geo);							
+						}
+					}
+				}
+			}
+		}
+		kernel.getApplication().setSelectedGeos(list);
+		kernel.getApplication().getAlgebraView().repaintView();
+		kernel.getApplication().getEuclidianView().repaintView();
 	}
 	
 	protected Point getPixel(int column, int row, boolean min) {
@@ -539,8 +590,8 @@ public class MyTable extends JTable
 			case 88:
 			case 127:
 				if (! editor.isEditing()) {
-					e.consume();
 					if (ctrlPressed) {
+						e.consume();
 						if (keyCode == 67) {
 							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
@@ -549,11 +600,11 @@ public class MyTable extends JTable
 							getView().getRowHeader().revalidate();
 						}
 						else if (keyCode == 88) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-							copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
 					}
 					if (keyCode == 127) {
+						e.consume();
 						//System.out.println("deleting...");
 						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 					}
@@ -609,7 +660,7 @@ public class MyTable extends JTable
 		}
 		
 	}
-	
+
 	protected class ListSelectionListener2 implements ListSelectionListener
 	{
 		
@@ -626,17 +677,28 @@ public class MyTable extends JTable
 	{
 
 		private static final long serialVersionUID = 1L;
+		private Color defaultBackground;
 		
 		public MyCellRenderer() {
 			this.setHorizontalAlignment(JLabel.TRAILING);
+			defaultBackground = getBackground();
 		}
 		
 		public void setValue(Object value) {
 			if (value == null) {
 				setText("");
+				this.setBackground(null);
 			}
 			else {
 				setText(((GeoElement)value).toValueString());
+				String label = ((GeoElement)value).getLabel();
+				if (SpreadsheetView.selectedElems.contains(label)) {
+					System.out.println(label);
+					this.setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+				}
+				else {
+					this.setBackground(defaultBackground);
+				}
 			}
 		}
 		
@@ -829,29 +891,28 @@ public class MyTable extends JTable
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			case 16 : shiftPressed2 = true; break;
+			//case 16 : shiftPressed2 = true; break;
 			case 17 : ctrlPressed2 = true; break;
 			case 67 : // control + c
 				//System.out.println(minSelectionColumn);
 				//System.out.println(maxSelectionColumn);
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					e.consume();
 				}
-				e.consume();
 				break;
 			case 86 : // control + v
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					getView().getRowHeader().revalidate();
+					e.consume();
 				}
-				getView().getRowHeader().revalidate();
-				e.consume();
 				break;		
 			case 88 : // control + x
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					e.consume();
 				}
-				e.consume();
-				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				break;
 			case 127 : // delete
 				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
@@ -862,7 +923,7 @@ public class MyTable extends JTable
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			case 16 : shiftPressed2 = false; break;
+			//case 16 : shiftPressed2 = false; break;
 			case 17 : ctrlPressed2 = false; break;
 			}
 		}

@@ -64,6 +64,12 @@ public class CopyPasteCut {
 		internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
 	}
 	
+	public void cut(int column1, int row1, int column2, int row2) {
+		copy(column1, row1, column2, row2);
+		externalBuf = null;
+		delete(column1, row1, column2, row2);	
+	}
+	
 	public void paste(int column1, int row1, int column2, int row2) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
@@ -85,7 +91,7 @@ public class CopyPasteCut {
 				// Util.handleException(table, ex);
 			}
 		}
-		else if (buf != null) {	
+		else if (buf != null) {
 			pasteExternal(buf, column1, row1);
 		}
 	}

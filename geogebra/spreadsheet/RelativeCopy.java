@@ -185,11 +185,16 @@ public class RelativeCopy {
 			text = value.getDefinitionDescription();
 		}
 		GeoElement[] dependents = getDependentObjects(value);
+		GeoElement[] dependents2 = new GeoElement[dependents.length + 1];
+		for (int i = 0; i < dependents.length; ++ i) {
+			dependents2[i] = dependents[i];			
+		}
+		dependents = dependents2;
+		dependents[dependents.length - 1] = value;
 		for (int i = 0; i < dependents.length; ++ i) {
 			String name = dependents[i].getLabel();
 			int column = GeoElement.getSpreadsheetColumn(name);
 			int row = GeoElement.getSpreadsheetRow(name);
-			//System.out.println(name + " " + column + " " + row);
 			if (column == -1 || row == -1) continue;
 			String column1 = "" + (char)('A' + column);
 			String row1 = "" + (row + 1);

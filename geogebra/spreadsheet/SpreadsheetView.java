@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
 import javax.swing.JButton;
@@ -40,14 +42,16 @@ public class SpreadsheetView extends JScrollPane implements View
 	protected MyTable table;
 	protected MyTableModel tableModel;
 	public JList rowHeader;
+	protected Application app;
 	
-	public SpreadsheetView(Application app, int columns, int rows) {
+	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
 		JList table = new JList();
 		setViewportView(table);
 		table.setFocusable(true);
 		table.addKeyListener(new KeyListener0());
 		/**/
+		app = app0;
 		Kernel kernel = app.getKernel();
 		// table
 		tableModel = new MyTableModel(rows, columns);
@@ -125,7 +129,19 @@ public class SpreadsheetView extends JScrollPane implements View
 		update(geo);
 	}
 	
+	public static HashSet selectedElems = new HashSet();
+	
 	public void repaintView() {
+		ArrayList elems = app.getSelectedGeos();
+		selectedElems.clear();
+		for (int i = 0; i < elems.size(); ++ i) {
+			GeoElement geo = (GeoElement)elems.get(i);
+			selectedElems.add(geo.getLabel());
+		}
+		if (System.currentTimeMillis() - table.selectionTime > 100) {
+			table.selectNone();
+		}
+		repaint();
 	}
 	
 	public void reset() {

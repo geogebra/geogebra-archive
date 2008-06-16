@@ -154,7 +154,9 @@ public class MyCellEditor extends DefaultCellEditor {
     		}
     		// text like "x^2 + y^2 = 25"
     		else if (posEqual > 0) {
-    			text = name + ":" + text;
+    			if (! text.startsWith(name)) {
+    				text = name + ":" + text;
+    			}
     		}
     		// no equal sign in input
     		else {

@@ -12,9 +12,7 @@ import geogebra.kernel.GeoElement;
 
 public class ContextMenuRow extends ContextMenu
 {
-	
-	protected static JPopupMenu menu2 = null;
-	
+		
 	protected static JPopupMenu initMenu2(Application app) {
 		JPopupMenu menu = ContextMenu.initMenu(app);
 		menu.addSeparator();
@@ -95,9 +93,7 @@ public class ContextMenuRow extends ContextMenu
 	public static void showPopupMenu2(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
 		table = table0;
 		Application app = table.kernel.getApplication();
-		if (menu2 == null) {
-			menu2 = initMenu2(app);		
-		}
+		JPopupMenu menu2 = initMenu2(app);		
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
