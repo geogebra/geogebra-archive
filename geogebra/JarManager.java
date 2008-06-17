@@ -16,7 +16,7 @@ the Free Software Foundation.
 
 </pre>
 @author      Michael Borcherds
-@version     2008-06-08
+@version     2008-06-15
 */
 
 import geogebra.plugin.ClassPathManipulator;
@@ -164,7 +164,7 @@ public class JarManager {
      
  
      // JMathTeX files specified in the JNLP file, don't need to add them to classpath
-     if (IS_WEBSTART) JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
+     //if (IS_WEBSTART) JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
 
      
      System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
