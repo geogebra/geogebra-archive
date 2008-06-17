@@ -759,7 +759,7 @@ public synchronized void generateImageImpl (Graphics g, int x, int y) {
 
      //imageH.clear();  // Image Cache leeren (nicht erforderlich)
      //System.out.println("vor 1. eqn");
-     eqScan.start();
+     //eqScan.start();
      area0 = eqn(0,150, false, g, 1);
      //displayStatus(" ");
      
