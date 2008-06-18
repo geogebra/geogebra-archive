@@ -358,6 +358,8 @@ public class MyTable extends JTable
 		public void mouseExited(MouseEvent e) {
 		}
 		
+		protected String name0;
+		
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
@@ -381,7 +383,9 @@ public class MyTable extends JTable
 							int row = (int)point.getY();
 							GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
 							if (geo != null) {
-								editor.addLabel(column, row);
+								String name = GeoElement.getSpreadsheetCellName(column, row);
+								name0 = name;
+								editor.addLabel(name);
 								e.consume();
 							}
 						}
@@ -402,67 +406,70 @@ public class MyTable extends JTable
 		}
 		
 		public void mouseReleased(MouseEvent e)	 {
-			if (editor.isEditing()) {
-				String text = editor.getEditingValue();
-				if (text.startsWith("=")) {
-					Point point = getIndexFromPixel(e.getX(), e.getY());
-					if (point != null) {
-						int column = (int)point.getX();
-						int row = (int)point.getY();
-						GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
-						if (geo != null) {
-							e.consume();
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (editor.isEditing()) {
+					String text = editor.getEditingValue();
+					if (text.startsWith("=")) {
+						Point point = getIndexFromPixel(e.getX(), e.getY());
+						if (point != null) {
+							int column = (int)point.getX();
+							int row = (int)point.getY();
+							GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
+							if (geo != null) {
+								String name = GeoElement.getSpreadsheetCellName(column, row);
+								editor.addLabel(":" + name);
+								e.consume();
+							}
 						}
+					}	
+				}
+				if (isDragingDot) {
+					if (dragingToColumn == -1 || dragingToRow == -1) return;
+					int x1 = -1;
+					int y1 = -1;
+					int x2 = -1;
+					int y2 = -1;
+					// -|1|-
+					// 2|-|3
+					// -|4|-
+					if (dragingToColumn < minSelectionColumn) { // 2
+						x1 = dragingToColumn;
+						y1 = minSelectionRow;
+						x2 = minSelectionColumn - 1;
+						y2 = maxSelectionRow;
 					}
-				}	
+					else if (dragingToRow > maxSelectionRow) { // 4
+						x1 = minSelectionColumn;
+						y1 = maxSelectionRow + 1;
+						x2 = maxSelectionColumn;
+						y2 = dragingToRow;
+					}
+					else if (dragingToRow < minSelectionRow) { // 1
+						x1 = minSelectionColumn;
+						y1 = dragingToRow;
+						x2 = maxSelectionColumn;
+						y2 = minSelectionRow - 1;
+					}
+					else if (dragingToColumn > maxSelectionColumn) { // 3
+						x1 = maxSelectionColumn + 1;
+						y1 = minSelectionRow;
+						x2 = dragingToColumn;
+						y2 = maxSelectionRow;
+					}
+					boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
+					if (succ) {
+					//	minSelectionColumn = -1;
+					//	minSelectionRow = -1;
+					//	maxSelectionColumn = -1;
+					//	maxSelectionRow = -1;
+					}
+					isDragingDot = false;
+					dragingToRow = -1;
+					dragingToColumn = -1;
+					repaint();
+				}
 			}
-			if (isDragingDot) {
-				if (dragingToColumn == -1 || dragingToRow == -1) return;
-				int x1 = -1;
-				int y1 = -1;
-				int x2 = -1;
-				int y2 = -1;
-				// -|1|-
-				// 2|-|3
-				// -|4|-
-				if (dragingToColumn < minSelectionColumn) { // 2
-					x1 = dragingToColumn;
-					y1 = minSelectionRow;
-					x2 = minSelectionColumn - 1;
-					y2 = maxSelectionRow;
-				}
-				else if (dragingToRow > maxSelectionRow) { // 4
-					x1 = minSelectionColumn;
-					y1 = maxSelectionRow + 1;
-					x2 = maxSelectionColumn;
-					y2 = dragingToRow;
-				}
-				else if (dragingToRow < minSelectionRow) { // 1
-					x1 = minSelectionColumn;
-					y1 = dragingToRow;
-					x2 = maxSelectionColumn;
-					y2 = minSelectionRow - 1;
-				}
-				else if (dragingToColumn > maxSelectionColumn) { // 3
-					x1 = maxSelectionColumn + 1;
-					y1 = minSelectionRow;
-					x2 = dragingToColumn;
-					y2 = maxSelectionRow;
-				}
-				boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
-				if (succ) {
-				//	minSelectionColumn = -1;
-				//	minSelectionRow = -1;
-				//	maxSelectionColumn = -1;
-				//	maxSelectionRow = -1;
-				}
-				isDragingDot = false;
-				dragingToRow = -1;
-				dragingToColumn = -1;
-				repaint();
-			}
-		}
-		
+		}		
 	}
 	
 	protected class MouseMotionListener1 implements MouseMotionListener
@@ -693,7 +700,7 @@ public class MyTable extends JTable
 				setText(((GeoElement)value).toValueString());
 				String label = ((GeoElement)value).getLabel();
 				if (SpreadsheetView.selectedElems.contains(label)) {
-					System.out.println(label);
+					//System.out.println(label);
 					this.setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
 				}
 				else {

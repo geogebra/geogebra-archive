@@ -29,6 +29,9 @@ public class RelativeCopy {
 				if (dy2 < sy1) { // 1
 					if (sy1 + 1 == sy2) {
 						for (int x = sx1; x <= sx2; ++ x) {
+							GeoElement v1 = getValue(table, x, sy1);
+							GeoElement v2 = getValue(table, x, sy2);
+							if (v1 == null || v2 == null) continue;
 							for (int y = dy2; y >= dy1; -- y) {
 								String d0 = "" + (char)('A' + x) + (y + 3);
 								String d1 = "" + (char)('A' + x) + (y + 2);
@@ -45,6 +48,9 @@ public class RelativeCopy {
 				else if (dy1 > sy2) { // 4
 					if (sy1 + 1 == sy2) {
 						for (int x = sx1; x <= sx2; ++ x) {
+							GeoElement v1 = getValue(table, x, sy1);
+							GeoElement v2 = getValue(table, x, sy2);
+							if (v1 == null || v2 == null) continue;
 							for (int y = dy1; y <= dy2; ++ y) {
 								String d0 = "" + (char)('A' + x) + (y - 1);
 								String d1 = "" + (char)('A' + x) + (y);
@@ -63,6 +69,9 @@ public class RelativeCopy {
 				if (dx2 < sx1) { // 2
 					if (sx1 + 1 == sx2) {
 						for (int y = sy1; y <= sy2; ++ y) {
+							GeoElement v1 = getValue(table, sx1, y);
+							GeoElement v2 = getValue(table, sx2, y);
+							if (v1 == null || v2 == null) continue;
 							for (int x = dx2; x >= dx1; -- x) {
 								String d0 = "" + (char)('A' + x + 2) + (y + 1);
 								String d1 = "" + (char)('A' + x + 1) + (y + 1);
@@ -79,6 +88,9 @@ public class RelativeCopy {
 				else if (dx1 > sx2) { // 4
 					if (sx1 + 1 == sx2) {
 						for (int y = sy1; y <= sy2; ++ y) {
+							GeoElement v1 = getValue(table, sx1, y);
+							GeoElement v2 = getValue(table, sx2, y);
+							if (v1 == null || v2 == null) continue;
 							for (int x = dx1; x <= dx2; ++ x) {
 								String d0 = "" + (char)('A' + x - 2) + (y + 1);
 								String d1 = "" + (char)('A' + x - 1) + (y + 1);
@@ -221,7 +233,9 @@ public class RelativeCopy {
 		//int column3 = table.convertColumnIndexToView(column) + dx;
 		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column + dx, row + dy);
 		//System.out.println((row + dy) + "," + column);
+		//System.out.println("isGeoFunction()=" + value2.isGeoFunction());
 		table.setValueAt(value2, row + dy, column + dx);
+		
 	}
 	
 	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row) throws Exception {

@@ -51,7 +51,7 @@ public class CopyPasteCut {
 				}
 			}
 			if (row != row2) {
-				externalBuf += "\r\n";
+				externalBuf += "\n";
 			}
 		}
 		Toolkit toolkit = Toolkit.getDefaultToolkit();

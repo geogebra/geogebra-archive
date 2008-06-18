@@ -220,7 +220,7 @@ public class MyCellEditor extends DefaultCellEditor {
         		if (text0.startsWith("=") || text0.startsWith("\"")){
         			throw e;
         		} else {
-        			text = "\"" + text + "\"";
+        			text = name + "=\"" + text0 + "\"";
     	        	if (oldValue.isIndependent()) {
     	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
     	        	}
