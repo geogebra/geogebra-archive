@@ -234,7 +234,10 @@ public class CopyPasteCut {
 	
 	public static String getNextListName() {
 		++ listNameCount;
-		return "L_" + listNameCount;
+		if (listNameCount < 10) {
+			return "L_" + listNameCount;		
+		}
+		return "L_{" + listNameCount + "}";
 	}
 	
 	public void createPointsAndAList(GeoElement[][] values) throws Exception {

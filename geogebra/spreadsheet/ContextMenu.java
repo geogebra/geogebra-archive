@@ -83,11 +83,14 @@ public class ContextMenu
  		}
 	}
 	
-	public static int nameCount = 0;
+	public static int pointNameCount = 0;
 	
 	public static String getNextPointName() {
-		++ nameCount;
-		return "P_" + nameCount;
+		++ pointNameCount;
+		if (pointNameCount < 10) {
+			return "P_" + pointNameCount;		
+		}
+		return "P_{" + pointNameCount + "}";
 	}
 	
 	public static class ActionListener5 implements ActionListener
