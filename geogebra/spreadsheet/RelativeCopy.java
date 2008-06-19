@@ -33,8 +33,12 @@ public class RelativeCopy {
 							GeoElement v2 = getValue(table, x, sy2);
 							if (v1 == null || v2 == null) continue;
 							for (int y = dy2; y >= dy1; -- y) {
-								String d0 = "" + (char)('A' + x) + (y + 3);
-								String d1 = "" + (char)('A' + x) + (y + 2);
+								GeoElement v3 = getValue(table, x, y + 2);
+								GeoElement v4 = getValue(table, x, y + 1);
+								String vs1 = v3.isGeoFunction() ? "(x)" : "";
+								String vs2 = v4.isGeoFunction() ? "(x)" : "";
+								String d0 = GeoElement.getSpreadsheetCellName(x, y + 2) + vs1;
+								String d1 = GeoElement.getSpreadsheetCellName(x, y + 1) + vs2;
 								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
@@ -52,8 +56,12 @@ public class RelativeCopy {
 							GeoElement v2 = getValue(table, x, sy2);
 							if (v1 == null || v2 == null) continue;
 							for (int y = dy1; y <= dy2; ++ y) {
-								String d0 = "" + (char)('A' + x) + (y - 1);
-								String d1 = "" + (char)('A' + x) + (y);
+								GeoElement v3 = getValue(table, x, y - 2);
+								GeoElement v4 = getValue(table, x, y - 1);
+								String vs1 = v3.isGeoFunction() ? "(x)" : "";
+								String vs2 = v4.isGeoFunction() ? "(x)" : "";
+								String d0 = GeoElement.getSpreadsheetCellName(x, y - 2) + vs1;
+								String d1 = GeoElement.getSpreadsheetCellName(x, y - 1) + vs2;
 								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
@@ -73,8 +81,12 @@ public class RelativeCopy {
 							GeoElement v2 = getValue(table, sx2, y);
 							if (v1 == null || v2 == null) continue;
 							for (int x = dx2; x >= dx1; -- x) {
-								String d0 = "" + (char)('A' + x + 2) + (y + 1);
-								String d1 = "" + (char)('A' + x + 1) + (y + 1);
+								GeoElement v3 = getValue(table, x + 2, y);
+								GeoElement v4 = getValue(table, x + 1, y);
+								String vs1 = v3.isGeoFunction() ? "(x)" : "";
+								String vs2 = v4.isGeoFunction() ? "(x)" : "";
+								String d0 = GeoElement.getSpreadsheetCellName(x + 2, y) + vs1;
+								String d1 = GeoElement.getSpreadsheetCellName(x + 1, y) + vs2;
 								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
@@ -92,8 +104,12 @@ public class RelativeCopy {
 							GeoElement v2 = getValue(table, sx2, y);
 							if (v1 == null || v2 == null) continue;
 							for (int x = dx1; x <= dx2; ++ x) {
-								String d0 = "" + (char)('A' + x - 2) + (y + 1);
-								String d1 = "" + (char)('A' + x - 1) + (y + 1);
+								GeoElement v3 = getValue(table, x - 2, y);
+								GeoElement v4 = getValue(table, x - 1, y);
+								String vs1 = v3.isGeoFunction() ? "(x)" : "";
+								String vs2 = v4.isGeoFunction() ? "(x)" : "";
+								String d0 = GeoElement.getSpreadsheetCellName(x - 2, y) + vs1;
+								String d1 = GeoElement.getSpreadsheetCellName(x - 1, y) + vs2;
 								String text = "2*" + d1 + "-" + d0;
 								doCopy1(kernel, table, text, x, y);								
 							}
@@ -214,6 +230,8 @@ public class RelativeCopy {
 			text = replaceAll(GeoElement.pattern, text, column1 + "$" + row1, "::" + column1 + "$" + row1);
 			text = replaceAll(GeoElement.pattern, text, column1 + row1, "::" + column1 + "::" + row1);
 		}
+		int column0 = GeoElement.getSpreadsheetColumn(value.getLabel());
+		int row0 = GeoElement.getSpreadsheetRow(value.getLabel());
 		for (int i = 0; i < dependents.length; ++ i) {
 			String name = dependents[i].getLabel();
 			int column = GeoElement.getSpreadsheetColumn(name);
@@ -227,14 +245,12 @@ public class RelativeCopy {
 			text = replaceAll(pattern2, text, "$" + column1 + "::" + row1, "$" + column1 + row2);
 			text = replaceAll(pattern2, text, "::" + column1 + "$" + row1, column2 + "$" + row1);
 		}
-		int column = GeoElement.getSpreadsheetColumn(value.getLabel());
-		int row = GeoElement.getSpreadsheetRow(value.getLabel());
 		//System.out.println("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
 		//int column3 = table.convertColumnIndexToView(column) + dx;
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column + dx, row + dy);
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column0 + dx, row0 + dy);
 		//System.out.println((row + dy) + "," + column);
 		//System.out.println("isGeoFunction()=" + value2.isGeoFunction());
-		table.setValueAt(value2, row + dy, column + dx);
+		table.setValueAt(value2, row0 + dy, column0 + dx);
 		return value2;
 		
 	}

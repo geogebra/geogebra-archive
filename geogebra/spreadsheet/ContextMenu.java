@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import geogebra.kernel.GeoElement;
+import java.util.LinkedList;
 
 public class ContextMenu
 {
@@ -83,7 +84,7 @@ public class ContextMenu
  		}
 	}
 	
-	public static int pointNameCount = 0;
+	protected static int pointNameCount = 0;
 	
 	public static String getNextPointName() {
 		++ pointNameCount;
@@ -93,9 +94,20 @@ public class ContextMenu
 		return "P_{" + pointNameCount + "}";
 	}
 	
+	protected static int listNameCount = 0;
+	
+	public static String getNextListName() {
+		++ listNameCount;
+		if (listNameCount < 10) {
+			return "L_" + listNameCount;		
+		}
+		return "L_{" + listNameCount + "}";
+	}
+	
 	public static class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
+ 			LinkedList list = new LinkedList();
  	   	 	if (row1 + 1 == row2) {
  	   	 		for (int i = column1; i <= column2; ++ i) {
  	   	 			GeoElement v1 = RelativeCopy.getValue(table, i, row1);
@@ -104,6 +116,7 @@ public class ContextMenu
  	   	 				String pointName = getNextPointName();
  	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
  	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+ 		   	 			list.addLast(pointName);
  	   	 			}
  	   	 		}
  	   	 	}
@@ -115,10 +128,22 @@ public class ContextMenu
  	   	 				String pointName = getNextPointName();
  	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
  	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+ 		   	 			list.addLast(pointName);
  	   	 			}
  	   	 		}
  	   	 	}
- 		}
+ 		   	 if (list.size() > 0) {
+ 		   		 String[] points = (String[])list.toArray(new String[0]);
+ 		   		 String listName = ContextMenu.getNextListName();
+ 		   		 String text = listName + "={";
+ 		   		 for (int i = 0; i < points.length; ++ i) {
+ 		   			text += points[i];
+ 		   			 if (i != points.length - 1) text += ",";
+ 		   		 }
+ 		   		text += "}";
+ 		   		table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+ 		   	 }
+		}
 	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {

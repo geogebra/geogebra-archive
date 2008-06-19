@@ -137,13 +137,17 @@ public class CopyPasteCut {
 				values2[ix][iy] = RelativeCopy.doCopy0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 			}
 		}
+		if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
+			createPointsAndAList1(values2);
+		}
 		if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
-			createPointsAndAList(values2);
+			createPointsAndAList2(values2);
 		}
 		kernel.getApplication().setDefaultCursor();
 	}
 	
-	protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
+	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
+	protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^\\t\\\"]+)");
 	
 	public void pasteExternal(String buf, int column1, int row1) {
 		kernel.getApplication().setWaitCursor();
@@ -151,9 +155,9 @@ public class CopyPasteCut {
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
 			LinkedList list = new LinkedList();
-			if (lines[i].indexOf('\t') != -1) {
-				lines[i] = lines[i].replaceAll(",", ".");
-			}
+			//if (lines[i].indexOf('\t') != -1) {
+			//	lines[i] = lines[i].replaceAll(",", ".");
+			//}
 			Matcher matcher = pattern.matcher(lines[i]);
 			int index = 0;
 			while (index != -1 && matcher.find(index)) {
@@ -202,8 +206,11 @@ public class CopyPasteCut {
 				}
 			}
 			table.getView().repaintView();
+			if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
+				createPointsAndAList1(values2);
+			}
 			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
-				createPointsAndAList(values2);
+				createPointsAndAList2(values2);
 			}
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
@@ -230,18 +237,7 @@ public class CopyPasteCut {
 		}
 	}
 	
-	public static int listNameCount = 0;
-	
-	public static String getNextListName() {
-		++ listNameCount;
-		if (listNameCount < 10) {
-			return "L_" + listNameCount;		
-		}
-		return "L_{" + listNameCount + "}";
-	}
-	
-	public void createPointsAndAList(GeoElement[][] values) throws Exception {
-		System.out.println("createPointsAndAList");
+	public void createPointsAndAList2(GeoElement[][] values) throws Exception {
 		LinkedList list = new LinkedList();
 		if (values.length == 2 && values[0].length > 0) {
 	   	 	for (int i = 0; i < values[0].length; ++ i) {
@@ -269,7 +265,7 @@ public class CopyPasteCut {
 	   	 }
 	   	 if (list.size() > 0) {
 	   		 String[] points = (String[])list.toArray(new String[0]);
-	   		 String listName = getNextListName();
+	   		 String listName = ContextMenu.getNextListName();
 	   		 String text = listName + "={";
 	   		 for (int i = 0; i < points.length; ++ i) {
 	   			text += points[i];
@@ -280,4 +276,34 @@ public class CopyPasteCut {
 	   	 }
 	}
 
+	public void createPointsAndAList1(GeoElement[][] values) throws Exception {
+		LinkedList list = new LinkedList();
+		if (values.length == 1 && values[0].length > 0) {
+	   	 	for (int i = 0; i < values[0].length; ++ i) {
+	   	 		GeoElement v1 = values[0][i];
+	   	 		if (v1 != null && v1.isGeoPoint()) {
+	   	 			list.addLast(v1.getLabel());
+	   	 		}
+	   	 	}
+	   	 }
+	   	 if (values.length > 0 && values[0].length == 1) {
+	   	 	for (int i = 0; i < values.length; ++ i) {
+	   	 		GeoElement v1 = values[i][0];
+	   	 		if (v1 != null && v1.isGeoPoint()) {
+	   	 			list.addLast(v1.getLabel());
+	   	 		}
+	   	 	}
+	   	 }
+	   	 if (list.size() > 0) {
+	   		 String[] points = (String[])list.toArray(new String[0]);
+	   		 String listName = ContextMenu.getNextListName();
+	   		 String text = listName + "={";
+	   		 for (int i = 0; i < points.length; ++ i) {
+	   			text += points[i];
+	   			 if (i != points.length - 1) text += ",";
+	   		 }
+	   		text += "}";
+	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 }
+	}
 }
