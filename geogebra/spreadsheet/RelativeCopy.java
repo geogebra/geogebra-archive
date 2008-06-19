@@ -180,14 +180,14 @@ public class RelativeCopy {
 	
 	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z])(::|\\$)([0-9]+)");
 
-	public static void doCopy0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
+	public static GeoElement doCopy0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
 		if (value == null) {
 			if (oldValue != null) {
 				int column = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
 				int row = GeoElement.getSpreadsheetRow(oldValue.getLabel());
 				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column, row);
 			}
-			return;
+			return null;
 		}
 		String text = null;
 		if (value.isChangeable()) {
@@ -235,6 +235,7 @@ public class RelativeCopy {
 		//System.out.println((row + dy) + "," + column);
 		//System.out.println("isGeoFunction()=" + value2.isGeoFunction());
 		table.setValueAt(value2, row + dy, column + dx);
+		return value2;
 		
 	}
 	

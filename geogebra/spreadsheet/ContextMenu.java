@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import geogebra.kernel.GeoElement;
 
 public class ContextMenu
 {
@@ -41,8 +42,15 @@ public class ContextMenu
    	 	JMenuItem item4 = new JMenuItem(app.getMenu("ClearSelection"));
    	 	item4.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	 	item4.setBackground(bgColor);
-   	 	item4.addActionListener(new ActionListener4());   	 	
+   	 	item4.addActionListener(new ActionListener4());
    	 	menu.add(item4);
+   	 	if (row1 + 1 == row2 || column1 + 1 == column2) {
+   	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("ConvertToCoordinates"));
+   	   	 	item5.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+   	   	 	item5.setBackground(bgColor);
+   	   	 	item5.addActionListener(new ActionListener5());
+   	   	 	menu.add(item5);
+   	 	}
    	 	return menu;
 	}
 	
@@ -75,20 +83,49 @@ public class ContextMenu
  		}
 	}
 	
+	public static int nameCount = 0;
+	
+	public static String getNextPointName() {
+		++ nameCount;
+		return "P_" + nameCount;
+	}
+	
 	public static class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
+ 	   	 	if (row1 + 1 == row2) {
+ 	   	 		for (int i = column1; i <= column2; ++ i) {
+ 	   	 			GeoElement v1 = RelativeCopy.getValue(table, i, row1);
+ 	   	 			GeoElement v2 = RelativeCopy.getValue(table, i, row2);
+ 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
+ 	   	 				String pointName = getNextPointName();
+ 	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
+ 	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+ 	   	 			}
+ 	   	 		}
+ 	   	 	}
+ 	   	 	if (column1 + 1 == column2) {
+ 	   	 		for (int i = row1; i <= row2; ++ i) {
+ 	   	 			GeoElement v1 = RelativeCopy.getValue(table, column1, i);
+ 	   	 			GeoElement v2 = RelativeCopy.getValue(table, column2, i);
+ 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
+ 	   	 				String pointName = getNextPointName();
+ 	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
+ 	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
+ 	   	 			}
+ 	   	 		}
+ 	   	 	}
  		}
 	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
 		table = table0;
-		Application app = table.kernel.getApplication();
-		JPopupMenu menu = initMenu(app);		
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;
+		Application app = table.kernel.getApplication();
+		JPopupMenu menu = initMenu(app);		
 		menu.show(comp, x, y);
 	}
 

@@ -134,8 +134,11 @@ public class CopyPasteCut {
 			int ix = x - x1;
 			for (int y = y1; y <= y2; ++ y) {
 				int iy = y - y1;
-				RelativeCopy.doCopy0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
+				values2[ix][iy] = RelativeCopy.doCopy0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 			}
+		}
+		if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
+			createPointsAndAList(values2);
 		}
 		kernel.getApplication().setDefaultCursor();
 	}
@@ -172,6 +175,7 @@ public class CopyPasteCut {
 			if (model.rowCount < row1 + data.length) {
 				model.setRowCount(row1 + data.length);
 			}
+			GeoElement[][] values2 = new GeoElement[data.length][data.length > 0 ? data[0].length : 0];
 			for (int row = row1; row < row1 + data.length; ++ row) {
 				if (row < 0) continue;
 				int iy = row - row1;
@@ -192,12 +196,15 @@ public class CopyPasteCut {
 					}
 					else {
 						GeoElement value0 = RelativeCopy.getValue(table, column, row);
-						GeoElement value = MyCellEditor.prepareAddingValueToTable(kernel, table, data[iy][ix], value0, column, row);
-						table.setValueAt(value, row, column);
+						values2[iy][ix] = MyCellEditor.prepareAddingValueToTable(kernel, table, data[iy][ix], value0, column, row);
+						table.setValueAt(values2[iy][ix], row, column);
 					}
 				}
 			}
 			table.getView().repaintView();
+			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
+				createPointsAndAList(values2);
+			}
 		} catch (Exception ex) {
 			kernel.getApplication().showError(ex.getMessage());
 			// Util.handleException(table, ex);
@@ -221,6 +228,53 @@ public class CopyPasteCut {
 				//}
 			}
 		}
+	}
+	
+	public static int listNameCount = 0;
+	
+	public static String getNextListName() {
+		++ listNameCount;
+		return "L_" + listNameCount;
+	}
+	
+	public void createPointsAndAList(GeoElement[][] values) throws Exception {
+		System.out.println("createPointsAndAList");
+		LinkedList list = new LinkedList();
+		if (values.length == 2 && values[0].length > 0) {
+	   	 	for (int i = 0; i < values[0].length; ++ i) {
+	   	 		GeoElement v1 = values[0][i];
+	   	 		GeoElement v2 = values[1][i];
+	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
+	   	 			String pointName = ContextMenu.getNextPointName();
+	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
+	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 			list.addLast(pointName);
+	   	 		}
+	   	 	}
+	   	 }
+	   	 if (values.length > 0 && values[0].length == 2) {
+	   	 	for (int i = 0; i < values.length; ++ i) {
+	   	 		GeoElement v1 = values[i][0];
+	   	 		GeoElement v2 = values[i][1];
+	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
+	   	 			String pointName = ContextMenu.getNextPointName();
+	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
+	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 			list.addLast(pointName);
+	   	 		}
+	   	 	}
+	   	 }
+	   	 if (list.size() > 0) {
+	   		 String[] points = (String[])list.toArray(new String[0]);
+	   		 String listName = getNextListName();
+	   		 String text = listName + "={";
+	   		 for (int i = 0; i < points.length; ++ i) {
+	   			text += points[i];
+	   			 if (i != points.length - 1) text += ",";
+	   		 }
+	   		text += "}";
+	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 }
 	}
 
 }

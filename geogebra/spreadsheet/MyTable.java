@@ -414,11 +414,15 @@ public class MyTable extends JTable
 						if (point != null) {
 							int column = (int)point.getX();
 							int row = (int)point.getY();
-							GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
-							if (geo != null) {
-								String name = GeoElement.getSpreadsheetCellName(column, row);
-								editor.addLabel(":" + name);
-								e.consume();
+							if (column != editor.column || row != editor.row) {
+								GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
+								if (geo != null) {
+									String name = GeoElement.getSpreadsheetCellName(column, row);
+									if (! name.equals(name0)) {
+										editor.addLabel(":" + name);
+									}
+									e.consume();
+								}
 							}
 						}
 					}	
