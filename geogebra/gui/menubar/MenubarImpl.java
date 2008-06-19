@@ -2,6 +2,7 @@ package geogebra.gui.menubar;
 
 import geogebra.Application;
 import geogebra.GeoGebra;
+import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.GeoGebraPreferences;
@@ -176,23 +177,26 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		setMenuShortCutAccelerator(mi, 'P');
 				
 		// export
-		JMenu submenu = new JMenu(app.getMenu("Export"));
-		submenu.setIcon(app.getEmptyIcon());
-		menu.add(submenu);
-		mi = submenu.add(exportWorksheet);
-		setMenuShortCutShiftAccelerator(mi, 'W');
+		if (JarManager.GEOGEBRA_EXPORT_LOADED) {
+			JMenu submenu = new JMenu(app.getMenu("Export"));
+			submenu.setIcon(app.getEmptyIcon());
+			menu.add(submenu);
+			mi = submenu.add(exportWorksheet);
+			setMenuShortCutShiftAccelerator(mi, 'W');
 		
-		submenu.addSeparator();
-		//submenu.add(htmlCPAction);
-		mi = submenu.add(exportGraphicAction);
-		setMenuShortCutShiftAccelerator(mi, 'P');
 		
-		mi = submenu.add(exportPSTricksAction);
-		setMenuShortCutShiftAccelerator(mi, 'T');
+			submenu.addSeparator();
+			//submenu.add(htmlCPAction);
+			mi = submenu.add(exportGraphicAction);
+			setMenuShortCutShiftAccelerator(mi, 'P');
 		
-		mi = submenu.add(drawingPadToClipboardAction);
-		setMenuShortCutShiftAccelerator(mi, 'C');
-				
+			mi = submenu.add(exportPSTricksAction);
+			setMenuShortCutShiftAccelerator(mi, 'T');
+			
+			mi = submenu.add(drawingPadToClipboardAction);
+			setMenuShortCutShiftAccelerator(mi, 'C');
+		}		
+		
 		// DONE HERE WHEN APPLET
 		if (app.isApplet()) return;
 		
