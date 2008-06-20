@@ -58,6 +58,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.modules.JarManager;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.spreadsheet.SpreadsheetView;
@@ -131,9 +132,9 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "June 9, 2008";
+    public static final String buildDate = "June 20, 2008";
 	
-    public static final String versionString = "3.1.4.0";    
+    public static final String versionString = "3.1.3.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
   
     // GeoGebra jar files    
@@ -280,7 +281,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean showAlgebraInput = true;
     private boolean showCmdList = true;    
     private boolean showToolBar = true;
-    private boolean showMenuBar = true;
+    public boolean showMenuBar = true;
     private boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
@@ -488,7 +489,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	};
     	runner.start();
     	
-    	
+    	/*
     	// Download jar files to temp directory in background
     	// this is done because Java WebStart uses strange jar file
     	// names in its cache. However, we need the GeoGebra jar files
@@ -504,7 +505,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	    			}	    				
     			}	    		    		
     	};
-    	runner2.start();
+    	runner2.start();*/
     }
     
 	private synchronized void initFileChooser() {
@@ -1369,6 +1370,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
 
     final public String getPlain(String key) {
+    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbplain == null) {
     		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
     	}
@@ -1427,6 +1429,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     final public String getMenu(String key) {
+    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbmenu == null) 
     		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
     	
@@ -1449,6 +1452,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     final public String getError(String key) {
+    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rberror == null) 
     		rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale);    	
         try {
@@ -1459,6 +1463,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     final public String getCommand(String key) {
+    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbcommand == null) 
     		initCommandResources();
     	
@@ -4177,9 +4182,11 @@ public abstract class Application implements	KeyEventDispatcher {
 
 	
 	/**
+	 * functionality moved to JarManager MRB 2008-06-20
+	 * 
 	 * Copies all jar files of this application to the 
 	 * temp directory
-	 */
+	 *
 	private void copyJarsToTempDir() {
 		try {		
 			String tempDir = System.getProperty("java.io.tmpdir"); 
@@ -4196,7 +4203,7 @@ public abstract class Application implements	KeyEventDispatcher {
 		} catch (Exception e) {		
 			System.err.println("copyJarsToTempDir: " + e.getMessage());
 		}			
-	}
+	}*/
 
 	
 	/**
