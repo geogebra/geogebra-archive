@@ -12,7 +12,8 @@ package geogebra.plugin;
  */
 
 import geogebra.Application;
-import geogebra.JarManager;
+import geogebra.modules.ClassPathManipulator;
+import geogebra.modules.JarManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

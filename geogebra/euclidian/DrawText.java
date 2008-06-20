@@ -13,10 +13,10 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.JarManager;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
+import geogebra.modules.JarManager;
 import hoteqn.sHotEqn;
 
 import java.awt.Color;

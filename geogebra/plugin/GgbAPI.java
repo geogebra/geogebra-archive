@@ -34,7 +34,7 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.Construction;
-import geogebra.plugin.ClassPathManipulator;
+import geogebra.modules.ClassPathManipulator;
 
 
 /** 
