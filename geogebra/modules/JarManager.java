@@ -37,8 +37,10 @@ public class JarManager {
     public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
     public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
-    public static boolean 			GEOGEBRA_YACAS_PRESENT=false;
-    public static boolean 			GEOGEBRA_YACAS_LOADED=false;
+    public static boolean 			GEOGEBRA_CAS_PRESENT=false;
+    public static boolean 			GEOGEBRA_CAS_LOADED=false;
+    //public static boolean 			GEOGEBRA_GUI_PRESENT=false;
+    //public static boolean 			GEOGEBRA_GUI_LOADED=false;
     //public static boolean 			GEOGEBRA_SPREADSHEET_PRESENT=false;
     //public static boolean 			GEOGEBRA_SPREADSHEET_LOADED=false;
     public static boolean 			IS_WEBSTART=false;
@@ -47,7 +49,8 @@ public class JarManager {
 	private static boolean MAINJAR_COPIED=false;
 	private static boolean EXPORTJAR_COPIED=false;
 	private static boolean PROPERTIESJAR_COPIED=false;
-	private static boolean YACASJAR_COPIED=false;
+	private static boolean CASJAR_COPIED=false;
+	//private static boolean GUIJAR_COPIED=false;
 	//private static boolean SPREADSHEETJAR_COPIED=false;
 	
 	//public static SpreadsheetView spreadsheetView;
@@ -69,15 +72,16 @@ public class JarManager {
     				Thread.sleep(10000);
     			} catch (Exception e) {}
 
-    			// Yacas can be called from JavaScript commands, so load just in case
-				addYacasJarToClassPath();
+    			// Cas can be called from JavaScript commands, so load just in case
+				addCasJarToClassPath();
 
     			
 	    			if (JarManager.app.showMenuBar) {    				
 	    				copyMainJarToTempDir();
 	    				copyExportJarToTempDir();
 	    				copyPropertiesJarToTempDir();
-	    				copyYacasJarToTempDir();
+	    				copyCasJarToTempDir();
+	    				//copyGuiJarToTempDir();
 	    				//copySpreadsheetJarToTempDir();
 	    			}	    				
     			}	    		    		
@@ -88,16 +92,26 @@ public class JarManager {
         
         
         
-        String webstartCodebase=null;
+        //String webstartCodebase=null;
+        
+        if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
+        		.toLowerCase().endsWith(".jar")) {
+        	System.out.println("not running from jar - set IS_WEBSTART=true");
+            IS_WEBSTART=true;
+        }
+        
         
         
         try {
-            javax.jnlp.BasicService basicService = (javax.jnlp.BasicService)javax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
-            java.net.URL codeBaseURL = basicService.getCodeBase();
-            //URL url = new java.net.URL(codeBaseURL,"");
-            webstartCodebase=codeBaseURL.toString();
-            IS_WEBSTART=true;
-            System.out.println("JNLP codebase "+webstartCodebase);
+        	if (!IS_WEBSTART)
+        	{
+        		javax.jnlp.BasicService basicService = (javax.jnlp.BasicService)javax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
+        		java.net.URL codeBaseURL = basicService.getCodeBase();
+        		//URL url = new java.net.URL(codeBaseURL,"");
+        		//webstartCodebase=codeBaseURL.toString();
+        		IS_WEBSTART=true;
+        		System.out.println("JNLP codebase "+codeBaseURL.toString());
+        	}
             // JMathTeX files specified in the JNLP file, don't need to add them to classpath
             // JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
             
@@ -106,8 +120,10 @@ public class JarManager {
             GEOGEBRA_EXPORT_LOADED=true;
             GEOGEBRA_PROPERTIES_PRESENT=true;
             GEOGEBRA_PROPERTIES_LOADED=true;
-            GEOGEBRA_YACAS_PRESENT=true;
-            GEOGEBRA_YACAS_LOADED=true;
+            GEOGEBRA_CAS_PRESENT=true;
+            GEOGEBRA_CAS_LOADED=true;
+            //GEOGEBRA_GUI_PRESENT=true;
+            //GEOGEBRA_GUI_LOADED=true;
             //GEOGEBRA_SPREADSHEET_PRESENT=true;
             //GEOGEBRA_SPREADSHEET_LOADED=true;
             // init spreadsheet view
@@ -122,8 +138,27 @@ public class JarManager {
          
          ClassPathManipulator.addURL(addPathToJar("."), null);
        
-         GEOGEBRA_YACAS_PRESENT = jarPresent("geogebra_yacas.jar");
-         //addYacasJarToClassPath();
+         GEOGEBRA_CAS_PRESENT = jarPresent("geogebra_cas.jar");
+         //addCasJarToClassPath();
+         
+         /*
+         GEOGEBRA_GUI_PRESENT = jarPresent("geogebra_gui.jar");
+         if (GEOGEBRA_GUI_PRESENT){
+         	if (app.getApplet()==null){
+         		addGuiJarToClassPath();
+             	//if (copyExportJarToTempDir()) loadExport = System.getProperty("java.io.tmpdir") + "geogebra_export.jar";
+         		
+         	}
+         	else if (app.getApplet().showMenuBar ||
+        			app.getApplet().enableRightClick ||
+        			app.getApplet().showFrame)
+
+         	{
+         		// running as applet with menu
+         		addGuiJarToClassPath();
+             	//loadExport = "geogebra_export.jar"; // fallback, shouldn't be needed
+         	}
+         }*/
          
          
          //GEOGEBRA_SPREADSHEET_PRESENT = jarPresent("geogebra_spreadsheet.jar");
@@ -361,13 +396,6 @@ public class JarManager {
 		return PROPERTIESJAR_COPIED;
 	}
 	
-	public static synchronized boolean copyYacasJarToTempDir()
-	{
-		if (YACASJAR_COPIED) return true;
-		YACASJAR_COPIED=copyJarToTempDir("geogebra_yacas.jar");
-		return YACASJAR_COPIED;
-	}
-	
 	public static synchronized boolean addPropertiesJarToClassPath()
 	{
 		if (IS_WEBSTART) return true;
@@ -408,25 +436,59 @@ public class JarManager {
 		return true;
 	}
 	
-	public static synchronized boolean addYacasJarToClassPath()
+	public static synchronized boolean copyCasJarToTempDir()
+	{
+		if (CASJAR_COPIED) return true;
+		CASJAR_COPIED=copyJarToTempDir("geogebra_cas.jar");
+		return CASJAR_COPIED;
+	}
+	
+	public static synchronized boolean addCasJarToClassPath()
 	{
 		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_YACAS_PRESENT) return false;
-		if (GEOGEBRA_YACAS_LOADED) return true;
+		if (!GEOGEBRA_CAS_PRESENT) return false;
+		if (GEOGEBRA_CAS_LOADED) return true;
 		if (app.getApplet()==null)
 		{
 			// not applet
-			if (!copyYacasJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_yacas.jar",null);
+			if (!copyCasJarToTempDir()) return false;
+			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_cas.jar",null);
 		}
 		else
 		{
 			// applet
-			addJarToPath("geogebra_yacas.jar",null);	
+			addJarToPath("geogebra_cas.jar",null);	
 		}
-		GEOGEBRA_YACAS_LOADED=true;
+		GEOGEBRA_CAS_LOADED=true;
 		return true;
 	}
+	/*
+	public static synchronized boolean copyGuiJarToTempDir()
+	{
+		if (GUIJAR_COPIED) return true;
+		GUIJAR_COPIED=copyJarToTempDir("geogebra_gui.jar");
+		return GUIJAR_COPIED;
+	}
+	
+	public static synchronized boolean addGuiJarToClassPath()
+	{
+		if (IS_WEBSTART) return true;
+		if (!GEOGEBRA_GUI_PRESENT) return false;
+		if (GEOGEBRA_GUI_LOADED) return true;
+		if (app.getApplet()==null)
+		{
+			// not applet
+			if (!copyGuiJarToTempDir()) return false;
+			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_gui.jar",null);
+		}
+		else
+		{
+			// applet
+			addJarToPath("geogebra_gui.jar",null);	
+		}
+		GEOGEBRA_GUI_LOADED=true;
+		return true;
+	}*/
 	
 	/*
 	public static synchronized boolean copySpreadsheetJarToTempDir()

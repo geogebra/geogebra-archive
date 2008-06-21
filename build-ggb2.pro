@@ -1,11 +1,12 @@
 #
 # Proguard config file for GeoGebra
 #
-# June 9th 2008
+# June 21st 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
--injars ../build/geogebra_yacas.jar
+-injars ../build/geogebra_cas.jar
+#-injars ../build/geogebra_gui.jar
 #-injars ../build/geogebra_spreadsheet.jar
 -outjars ../build/temp
 
@@ -56,8 +57,8 @@
 -keep class hoteqn.SymbolLoader { <methods>; }
 
 # temporary
-#-keep class geogebra.* { <methods>; }
-#-keep class geogebra.*.* { <methods>; }
+-keep class geogebra.* { <methods>; }
+-keep class geogebra.*.* { <methods>; }
 
 #####
 # Plugin part

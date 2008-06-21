@@ -67,7 +67,7 @@ public class GeoGebraCAS {
     final public String evaluateYACAS(String exp) {
     	//System.out.println("exp for YACAS: " + exp);
         
-    	if (!JarManager.addYacasJarToClassPath())
+    	if (!JarManager.addCasJarToClassPath())
     	{
 			System.err.println("Could not initialize YACAS Jar");
 			return null;    		
@@ -115,7 +115,7 @@ public class GeoGebraCAS {
     final public String evaluateYACASRaw(String exp) {
     	//System.out.println("exp for YACAS: " + exp);
         
-    	if (!JarManager.addYacasJarToClassPath())
+    	if (!JarManager.addCasJarToClassPath())
     	{
 			System.err.println("Could not initialize YACAS Jar");
 			return null;    		

@@ -141,9 +141,8 @@ public abstract class Application implements	KeyEventDispatcher {
     public static final String [] JAR_FILES = 
     	{ "geogebra.jar",  
     	  "geogebra_properties.jar",
-    //	  "geogebra_cas.jar",
+    	  "geogebra_cas.jar",
     	  "geogebra_export.jar",    	  
-    	  "geogebra_yacas.jar"    	  
     	};
  
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
@@ -1371,7 +1370,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
 
     final public String getPlain(String key) {
-    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
+    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbplain == null) {
     		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
     	}
@@ -1430,7 +1429,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     final public String getMenu(String key) {
-    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
+    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbmenu == null) 
     		rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
     	
@@ -1453,7 +1452,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     final public String getError(String key) {
-    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
+    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rberror == null) 
     		rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale);    	
         try {
@@ -1464,7 +1463,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     final public String getCommand(String key) {
-    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
+    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbcommand == null) 
     		initCommandResources();
     	
