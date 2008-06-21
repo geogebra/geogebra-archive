@@ -21,8 +21,8 @@ the Free Software Foundation.
 
 import geogebra.Application;
 import geogebra.GeoGebraAppletBase;
+import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
-import geogebra.util.Util;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -37,12 +37,20 @@ public class JarManager {
     public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
     public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
     public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
+    public static boolean 			GEOGEBRA_YACAS_PRESENT=false;
+    public static boolean 			GEOGEBRA_YACAS_LOADED=false;
+    //public static boolean 			GEOGEBRA_SPREADSHEET_PRESENT=false;
+    //public static boolean 			GEOGEBRA_SPREADSHEET_LOADED=false;
     public static boolean 			IS_WEBSTART=false;
     private static Application	 	app=null;
 	
 	private static boolean MAINJAR_COPIED=false;
 	private static boolean EXPORTJAR_COPIED=false;
 	private static boolean PROPERTIESJAR_COPIED=false;
+	private static boolean YACASJAR_COPIED=false;
+	//private static boolean SPREADSHEETJAR_COPIED=false;
+	
+	//public static SpreadsheetView spreadsheetView;
 
 	public JarManager(Application app) {
 		
@@ -60,10 +68,17 @@ public class JarManager {
     			try {
     				Thread.sleep(5000);
     			} catch (Exception e) {}
+
+    			// Yacas can be called from JavaScript commands, so load just in case
+				addYacasJarToClassPath();
+
+    			
 	    			if (JarManager.app.showMenuBar) {    				
 	    				copyMainJarToTempDir();
 	    				copyExportJarToTempDir();
 	    				copyPropertiesJarToTempDir();
+	    				copyYacasJarToTempDir();
+	    				//copySpreadsheetJarToTempDir();
 	    			}	    				
     			}	    		    		
     	};
@@ -91,6 +106,12 @@ public class JarManager {
             GEOGEBRA_EXPORT_LOADED=true;
             GEOGEBRA_PROPERTIES_PRESENT=true;
             GEOGEBRA_PROPERTIES_LOADED=true;
+            GEOGEBRA_YACAS_PRESENT=true;
+            GEOGEBRA_YACAS_LOADED=true;
+            //GEOGEBRA_SPREADSHEET_PRESENT=true;
+            //GEOGEBRA_SPREADSHEET_LOADED=true;
+            // init spreadsheet view
+         	//spreadsheetView = new SpreadsheetView(app, 26, 100);
             System.out.println("IS_WEBSTART="+IS_WEBSTART);
             return;
          } catch (javax.jnlp.UnavailableServiceException ex) {
@@ -101,7 +122,17 @@ public class JarManager {
          
          ClassPathManipulator.addURL(addPathToJar("."), null);
        
-        GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar");
+         GEOGEBRA_YACAS_PRESENT = jarPresent("geogebra_yacas.jar");
+         //addYacasJarToClassPath();
+         
+         
+         //GEOGEBRA_SPREADSHEET_PRESENT = jarPresent("geogebra_spreadsheet.jar");
+         //addSpreadsheetJarToClassPath();
+     	
+         
+         
+         
+         GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar");
         
         if (GEOGEBRA_EXPORT_PRESENT){
         	if (app.getApplet()==null){
@@ -291,7 +322,7 @@ public class JarManager {
         }//try-catch        
     }//addPath(String)
     
-	private boolean copyJarToTempDir(String jar) {
+    public static boolean copyJarToTempDir(String jar) {
 		try {		
 			String tempDir = System.getProperty("java.io.tmpdir"); 
 			
@@ -309,28 +340,35 @@ public class JarManager {
 	}
 	
 	
-	private synchronized boolean copyMainJarToTempDir()
+    public static synchronized boolean copyMainJarToTempDir()
 	{
 		if (MAINJAR_COPIED) return true;
 		MAINJAR_COPIED=copyJarToTempDir("geogebra.jar");
 		return MAINJAR_COPIED;
 	}
 	
-	private synchronized boolean copyExportJarToTempDir()
+	public static synchronized boolean copyExportJarToTempDir()
 	{
 		if (EXPORTJAR_COPIED) return true;
 		EXPORTJAR_COPIED=copyJarToTempDir("geogebra_export.jar");
 		return EXPORTJAR_COPIED;
 	}
 	
-	private synchronized boolean copyPropertiesJarToTempDir()
+	public static synchronized boolean copyPropertiesJarToTempDir()
 	{
 		if (PROPERTIESJAR_COPIED) return true;
 		PROPERTIESJAR_COPIED=copyJarToTempDir("geogebra_properties.jar");
 		return PROPERTIESJAR_COPIED;
 	}
 	
-	private synchronized boolean addPropertiesJarToClassPath()
+	public static synchronized boolean copyYacasJarToTempDir()
+	{
+		if (YACASJAR_COPIED) return true;
+		YACASJAR_COPIED=copyJarToTempDir("geogebra_yacas.jar");
+		return YACASJAR_COPIED;
+	}
+	
+	public static synchronized boolean addPropertiesJarToClassPath()
 	{
 		if (IS_WEBSTART) return true;
 		if (!GEOGEBRA_PROPERTIES_PRESENT) return false;
@@ -350,7 +388,7 @@ public class JarManager {
 		return true;
 	}
 	
-	private synchronized boolean addExportJarToClassPath()
+	public static synchronized boolean addExportJarToClassPath()
 	{
 		if (IS_WEBSTART) return true;
 		if (!GEOGEBRA_EXPORT_PRESENT) return false;
@@ -370,5 +408,64 @@ public class JarManager {
 		return true;
 	}
 	
+	public static synchronized boolean addYacasJarToClassPath()
+	{
+		if (IS_WEBSTART) return true;
+		if (!GEOGEBRA_YACAS_PRESENT) return false;
+		if (GEOGEBRA_YACAS_LOADED) return true;
+		if (app.getApplet()==null)
+		{
+			// not applet
+			if (!copyYacasJarToTempDir()) return false;
+			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_yacas.jar",null);
+		}
+		else
+		{
+			// applet
+			addJarToPath("geogebra_yacas.jar",null);	
+		}
+		GEOGEBRA_YACAS_LOADED=true;
+		return true;
+	}
 	
+	/*
+	public static synchronized boolean copySpreadsheetJarToTempDir()
+	{
+		if (SPREADSHEETJAR_COPIED) return true;
+		SPREADSHEETJAR_COPIED=copyJarToTempDir("geogebra_spreadsheet.jar");
+		return SPREADSHEETJAR_COPIED;
+	}
+	
+	public static synchronized boolean addSpreadsheetJarToClassPath()
+	{
+		if (IS_WEBSTART) return true;
+		if (!GEOGEBRA_SPREADSHEET_PRESENT) return false;
+		if (GEOGEBRA_SPREADSHEET_LOADED) return true;
+		if (app.getApplet()==null)
+		{
+			// not applet
+			if (!copySpreadsheetJarToTempDir()) return false;
+			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_spreadsheet.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
+		}
+		else
+		{
+			// applet
+			//addJarToPath("geogebra_spreadsheet.jar",null);	
+			
+			addJarToPath("geogebra_spreadsheet.jar",geogebra.Application.class.getClassLoader());	
+			//addJarToPath("geogebra_spreadsheet.jar",geogebra.gui.GeoGebraPreferences.class.getClassLoader());	
+			//addJarToPath("geogebra_spreadsheet.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());	
+		}
+		GEOGEBRA_SPREADSHEET_LOADED=true;
+        // init spreadsheet view
+     	//spreadsheetView = new SpreadsheetView(app, 26, 100);
+		return true;
+	}
+	
+	public static synchronized void initSpreadsheetView() {
+        // init spreadsheet view
+		if (spreadsheetView != null) return;
+     	spreadsheetView = new SpreadsheetView(app, 26, 100);
+		
+	}*/
 }

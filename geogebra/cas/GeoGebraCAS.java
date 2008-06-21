@@ -2,10 +2,12 @@ package geogebra.cas;
 
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.modules.JarManager;
 import jasymca.GeoGebraJasymca;
-import yacas.YacasInterpreter;
 
 import java.io.InputStream;
+
+import yacas.YacasInterpreter;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
@@ -65,6 +67,12 @@ public class GeoGebraCAS {
     final public String evaluateYACAS(String exp) {
     	//System.out.println("exp for YACAS: " + exp);
         
+    	if (!JarManager.addYacasJarToClassPath())
+    	{
+			System.err.println("Could not initialize YACAS Jar");
+			return null;    		
+    	}
+
     	if (yacas == null) {
     		try {
     			yacas = new YacasInterpreter();    
@@ -107,6 +115,12 @@ public class GeoGebraCAS {
     final public String evaluateYACASRaw(String exp) {
     	//System.out.println("exp for YACAS: " + exp);
         
+    	if (!JarManager.addYacasJarToClassPath())
+    	{
+			System.err.println("Could not initialize YACAS Jar");
+			return null;    		
+    	}
+    	
     	if (yacas == null) {
     		try {
     			yacas = new YacasInterpreter();    

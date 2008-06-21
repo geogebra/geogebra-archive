@@ -132,7 +132,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "June 20, 2008";
+    public static final String buildDate = "June 21, 2008";
 	
     public static final String versionString = "3.1.3.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
@@ -1370,7 +1370,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
 
     final public String getPlain(String key) {
-    	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
+    	//if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
     	if (rbplain == null) {
     		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
     	}
