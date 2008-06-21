@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="JMathTeX-0.7pre.jar"/>
 	<classpathentry kind="lib" path="javax"/>
+	<classpathentry kind="lib" path="jnlp.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
