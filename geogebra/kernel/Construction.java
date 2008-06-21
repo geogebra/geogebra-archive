@@ -699,20 +699,7 @@ public class Construction {
     }
     
     GeoElement geoTabelVarLookup(String label) {
-    	 GeoElement geo =  (GeoElement) geoTable.get(label); 
-    	 
-    	 // TODO: dollar sign support for spreadsheet 
-    	 /*
-         if (geo == null) {
-         	// in the spreadsheet we can have "$" signs for absolute
-         	// cell references like "$A$4"
-         	// remove all $ signs and try again
-         	if (label.indexOf('\u0024') > -1) {
-         		String strNoDollar = label.replaceAll("\u0024", "");             		
-         		geo = (GeoElement) geoTable.get(strNoDollar);         		
-         	}         	
-         } */
-         return geo;
+    	return (GeoElement) geoTable.get(label); 
     }
 
     /**
