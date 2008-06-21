@@ -59,15 +59,83 @@ public class Variable extends ValidExpression implements ExpressionValue {
     	return this;
     }   
     
-    public GeoElement resolve() {
+    /**
+     * Returns whether the name of this variable includes a "$" sign. This 
+     * is needed for handling of spreadsheet expressions with absolute references, e.g.
+     * "A$1" for the cell "A1".
+     */
+    public boolean nameHasDollarSign() {
+    	return name.indexOf('$') > -1;
+    }
+    
+    /**
+     * Looks up the name of this variable in the kernel and returns the 
+     * according GeoElement object.
+     */
+    private GeoElement resolve() {
         GeoElement geo = kernel.lookupLabel(name);
         
         if (geo != null)
-			return  geo;
-		else {
-            String [] str = { "UndefinedVariable", name };
-            throw new MyParseError(kernel.getApplication(), str);                 
-        }
+			return  geo;                            
+		        
+		/*
+		 * SPREADSHEET $ HANDLING
+		 * In the spreadsheet we may have variable names like
+		 * "A$1" for the "A1" to deal with absolute references.
+		 * Let's remove all "$" signs and try again. However, 
+		 * in this case we need to remember the used variable name
+		 * in order to display and save an expression like 
+		 * "B1 = A$1 + 2" correctly.
+		 */ 	
+        if (nameHasDollarSign()) {
+			StringBuffer labelWithout$ = new StringBuffer(name.length());
+			for (int i=0; i < name.length(); i++) {
+				char ch = name.charAt(i);
+				if (ch != '$')
+					labelWithout$.append(ch);
+			}
+
+			geo = kernel.lookupLabel(labelWithout$.toString());			
+			if (geo != null) {
+				// geo found for name that includes $ signs
+				return geo;
+			}
+        }			
+			
+        // if we get here we couldn't resolve this variable name as a GeoElement
+        String [] str = { "UndefinedVariable", name };
+        throw new MyParseError(kernel.getApplication(), str);                         
+    }
+    
+    /**
+     * Looks up the name of this variable in the kernel and returns the 
+     * according GeoElement object. For absolute spreadsheet reference names
+     * like A$1 or $A$1 a special ExpressionNode wrapper object is returned
+     * that preserves this special name for displaying of the expression.
+     */
+    final ExpressionValue resolveAsExpressionValue() {
+    	GeoElement geo = resolve();
+    	
+    	// spreadsheet dollar sign reference
+    	if (nameHasDollarSign()) {
+    		// row and/or column dollar sign present?
+    		boolean col$ = name.indexOf('$') == 0;
+    		boolean row$ = name.length() > 2 && name.indexOf('$', 2) >= 2;
+    		int operation = 0;
+    		if (row$ && col$)
+    			operation = ExpressionNode.$VAR_ROW_COL;    			 
+    		else if (row$)
+    			operation = ExpressionNode.$VAR_ROW;  
+    		else // if (col$)
+    			operation = ExpressionNode.$VAR_COL;  
+
+    		// build an expression node that wraps the resolved geo
+    		return new ExpressionNode(kernel, geo, operation, geo);    		
+    	} 
+    	// standard case: no dollar sign
+    	else {    		
+    		return geo;
+    	}
     }
     
     public HashSet getVariables() {

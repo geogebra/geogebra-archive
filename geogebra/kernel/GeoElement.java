@@ -1244,14 +1244,35 @@ final public boolean hasOnlyFreeInputPoints() {
 	//    }
 	// Cong Liu
 	public static String getSpreadsheetCellName(int i, int j) {
-		++ i;
-		++ j;
+		++j;
+		return getSpreadsheetColumnName(i) + j;
+	}
+		
+	public static String getSpreadsheetColumnName(int i) {
+		++ i;		
 		String col = "";
 		while (i > 0) {
 			col = (char)('A' + (i % 26) - 1) + col;
 			i /= 26;
 		}
-		return col + j;
+		return col;
+	}
+	
+	 /**
+     * Returns the spreadsheet reference name of this GeoElement using $ signs
+     * for absolute spreadsheet reference names
+     * like A$1 or $A$1.
+     */
+	public String getSpreadsheetLabelWithDollars(boolean col$, boolean row$) {
+		String colName = getSpreadsheetColumnName(spreadsheetCoords.x);
+		String rowName = Integer.toString(spreadsheetCoords.y + 1);
+		
+		StringBuffer sb = new StringBuffer(label.length() + 2);
+		if (col$) sb.append('$');
+		sb.append(colName);
+		if (row$) sb.append('$');
+		sb.append(rowName);			
+		return sb.toString();
 	}
 	 
 	/*
@@ -2840,8 +2861,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			condShowObject = null;
 	}
 	
-	public final GeoList getColorFunction() {
-		System.out.println("getColorFunction");
+	public final GeoList getColorFunction() {		
 		return colFunction;
 	}
 

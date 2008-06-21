@@ -22,13 +22,9 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
-import geogebra.kernel.GeoVector;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 
@@ -113,7 +109,12 @@ implements ExpressionValue {
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
-    public static final int DERIVATIVE = 110;    
+    public static final int DERIVATIVE = 110;   
+    
+    // spreadsheet absolute reference using $ signs
+    public static final int $VAR_ROW = 501;
+    public static final int $VAR_COL = 502;
+    public static final int $VAR_ROW_COL = 503;
     
     private Application app;
     private Kernel kernel;
@@ -261,24 +262,24 @@ implements ExpressionValue {
     }                  
     
     /**
-     * Replaces all ExpressionNodes in tree that are leafs by their leaf
+     * Replaces all ExpressionNodes in tree that are leafs (=wrappers) by their leaf
      * objects (of type ExpressionValue).
      */
     final private void simplifyLeafs() {         
         if (left.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) left;
-            if (node.leaf) 
-            	left = node.evaluate();
-            else 
-                node.simplifyLeafs();
+            if (node.leaf) {            	   
+            	left = node.left;
+            	simplifyLeafs();
+            }            
         }
         
         if (right != null && right.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) right;
-            if (node.leaf)             	
-            	right = node.evaluate();            	
-            else 
-                node.simplifyLeafs();
+            if (node.leaf) {             	            	         	
+            	right = node.left;
+            	simplifyLeafs();
+            }            
         }               
     }
     
@@ -362,6 +363,12 @@ implements ExpressionValue {
             else {                 
                 throw new MyError(app, "Unhandeled ExpressionNode entry: " + lt);
             }*/
+        
+        // spreadsheet reference: $A1, A$1, $A$1
+        case $VAR_ROW: 
+        case $VAR_COL:
+        case $VAR_ROW_COL:
+        	return lt;
     
         /*
          * BOOLEAN operations
@@ -557,9 +564,6 @@ implements ExpressionValue {
                 return poly;
             }           
             else {    
-            	// TODO: remove: 
-            	System.out.println("left: " + left.getClass() + ", right: " + right.getClass());
-            	
                 String [] str = { "IllegalAddition", lt.toString(), "+",  rt.toString() };
                 throw new MyError(app, str);
             }
@@ -1279,7 +1283,7 @@ implements ExpressionValue {
             else { 
                  String [] str = { "IllegalArgument", "y(", lt.toString(), ")" };
                 throw new MyError(app, str);
-            }
+            }                
        
         case FUNCTION:      
             // function(number)
@@ -1414,17 +1418,17 @@ implements ExpressionValue {
     	simplifyLeafs();
     }
     	
-    private void doResolveVariables() {
+    private void doResolveVariables() {    	    	
         // resolve left wing
     	if (left.isVariable()) {
-            left = ((Variable) left).resolve();                
+            left = ((Variable) left).resolveAsExpressionValue();                
         } else
         	left.resolveVariables();
     	
         // resolve right wing
         if (right != null) {
             if (right.isVariable()) {
-                right = ((Variable) right).resolve();
+                right = ((Variable) right).resolveAsExpressionValue();
             } 
             else
             	right.resolveVariables();
@@ -1957,7 +1961,7 @@ implements ExpressionValue {
      */
     final private String operationToString(String leftStr, String rightStr, 
     		boolean valueForm) {
-    	   
+
     	ExpressionValue leftEval;   
     	StringBuffer sb = new StringBuffer();
     	
@@ -2992,11 +2996,46 @@ implements ExpressionValue {
             		sb.append('\'');
                 break;
                 
+                
+            case $VAR_ROW: // e.g. A$1
+            	if (valueForm) {
+            		// GeoElement value
+            		sb.append(leftStr); 
+            	} else {
+            		// $ for row
+            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(false, true));            		         	
+            	}
+            	break;
+            	
+            case $VAR_COL: // e.g. $A1
+            
+            	
+            	if (valueForm) {
+            		// GeoElement value
+            		sb.append(leftStr); 
+            	} else {
+            		// $ for row
+            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(true, false));            		         	
+            	}            
+            	break;
+            	
+            case $VAR_ROW_COL: // e.g. $A$1
+            	if (valueForm) {
+            		// GeoElement value
+            		sb.append(leftStr); 
+            	} else {
+            		// $ for row
+            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(true, true));            		         	
+            	}
+            	break;
+                
             default:
                 sb.append("unhandled operation " + operation);
         }                
         return sb.toString();
     }
+    
+     
     
     
     // return operation number
