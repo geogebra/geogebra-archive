@@ -373,7 +373,7 @@ Command command():
    t = <LABEL>
     {   c = new Command(kernel, t.image, true );    } 
     "[" 
-        en = cmdexpression()  { c.addArgument( en ); }
+       ( en = cmdexpression()  { c.addArgument( en ); } )?
         ( "," en = cmdexpression() { c.addArgument( en ); } )*
     "]"
     { return c; }
