@@ -66,7 +66,7 @@ public class JarManager {
     	Thread runner = new Thread() {
     		public void run() {    	 
     			try {
-    				Thread.sleep(5000);
+    				Thread.sleep(10000);
     			} catch (Exception e) {}
 
     			// Yacas can be called from JavaScript commands, so load just in case

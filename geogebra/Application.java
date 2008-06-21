@@ -142,7 +142,8 @@ public abstract class Application implements	KeyEventDispatcher {
     	{ "geogebra.jar",  
     	  "geogebra_properties.jar",
     //	  "geogebra_cas.jar",
-    	  "geogebra_export.jar"    	  
+    	  "geogebra_export.jar",    	  
+    	  "geogebra_yacas.jar"    	  
     	};
  
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
