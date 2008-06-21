@@ -57,8 +57,8 @@
 -keep class hoteqn.SymbolLoader { <methods>; }
 
 # temporary
--keep class geogebra.* { <methods>; }
--keep class geogebra.*.* { <methods>; }
+#-keep class geogebra.* { <methods>; }
+#-keep class geogebra.*.* { <methods>; }
 
 #####
 # Plugin part
