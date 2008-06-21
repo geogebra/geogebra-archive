@@ -3008,8 +3008,6 @@ implements ExpressionValue {
             	break;
             	
             case $VAR_COL: // e.g. $A1
-            
-            	
             	if (valueForm) {
             		// GeoElement value
             		sb.append(leftStr); 

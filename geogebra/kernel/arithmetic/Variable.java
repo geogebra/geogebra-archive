@@ -82,10 +82,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
 		 * SPREADSHEET $ HANDLING
 		 * In the spreadsheet we may have variable names like
 		 * "A$1" for the "A1" to deal with absolute references.
-		 * Let's remove all "$" signs and try again. However, 
-		 * in this case we need to remember the used variable name
-		 * in order to display and save an expression like 
-		 * "B1 = A$1 + 2" correctly.
+		 * Let's remove all "$" signs and try again.
 		 */ 	
         if (nameHasDollarSign()) {
 			StringBuffer labelWithout$ = new StringBuffer(name.length());
@@ -120,7 +117,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
     	if (nameHasDollarSign()) {
     		// row and/or column dollar sign present?
     		boolean col$ = name.indexOf('$') == 0;
-    		boolean row$ = name.length() > 2 && name.indexOf('$', 2) >= 2;
+    		boolean row$ = name.length() > 2 && name.indexOf('$', 1) > -1;
     		int operation = 0;
     		if (row$ && col$)
     			operation = ExpressionNode.$VAR_ROW_COL;    			 
@@ -128,9 +125,9 @@ public class Variable extends ValidExpression implements ExpressionValue {
     			operation = ExpressionNode.$VAR_ROW;  
     		else // if (col$)
     			operation = ExpressionNode.$VAR_COL;  
-
+    
     		// build an expression node that wraps the resolved geo
-    		return new ExpressionNode(kernel, geo, operation, geo);    		
+    		return new ExpressionNode(kernel, geo, operation, null);    		
     	} 
     	// standard case: no dollar sign
     	else {    		
