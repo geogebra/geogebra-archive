@@ -55,7 +55,7 @@ import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
 
-import geogebra.plugin.GgbAPI;		//Ulven 29.05.08
+import geogebra.GgbAPI;		//Ulven 22.06.08. (not in geogebra.plugin.GgbAPI anymore)
 
 /**
  * Applet interface of GeoGebra.
