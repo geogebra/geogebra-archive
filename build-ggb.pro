@@ -64,7 +64,7 @@
 -keep class geogebra.gui.util.BrowserLauncher { <methods>; }
 
 -keep class geogebra.plugin.PlugLetIF { <methods>; }
--keep class geogebra.plugin.GgbAPI { <methods>; }
+-keep class geogebra.GgbAPI { <methods>; }
 
 -keep class geogebra.MyFileFilter { <methods>; }
 
