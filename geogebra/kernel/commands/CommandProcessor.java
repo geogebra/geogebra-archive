@@ -163,8 +163,9 @@ public abstract class CommandProcessor  {
          * @author Markus Hohenwarter
          * @date Jan 26, 2008
          */
-         GeoList wrapInList(GeoElement [] args, int type) {
-		     boolean correctType = true;		        
+         public static GeoList wrapInList(Kernel kernel, GeoElement [] args, int type) {
+		     Construction cons=kernel.getConstruction();
+        	 boolean correctType = true;		        
 		   	 ArrayList geoElementList = new ArrayList();
 		   	 for (int i=0; i < args.length; i++) {
 		   		 if (type < 0 || args[i].getGeoClassType() == type) 
@@ -3490,7 +3491,7 @@ final public GeoElement[] process(Command c) throws MyError {
          default :
         	 // Markus Hohenwarter 2008-01-26 BEGIN
              // try to create list of points
-        	 GeoList list = wrapInList(arg, GeoElement.GEO_CLASS_POINT);
+        	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_POINT);
              if (list != null) {
             	 GeoElement[] ret = { kernel.PolynomialFunction(c.getLabel(), list)};
                  return ret;             	     	 

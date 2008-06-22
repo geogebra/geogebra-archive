@@ -42,7 +42,7 @@ public class CmdSum extends CommandProcessor {
 		
 		default:
             // try to create list of numbers
-	       	 GeoList list = wrapInList(arg, GeoElement.GEO_CLASS_NUMERIC);
+	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_NUMERIC);
 	            if (list != null) {
 	           	 GeoElement[] ret = { kernel.Sum(c.getLabel(), list)};
 	                return ret;             	     	 

@@ -276,6 +276,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	public static final int MODE_PARABOLA = 57; // Michael Borcherds 2008-04-06
 
+	public static final int MODE_FITLINE = 58; // Michael Borcherds 2008-06-22
+
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
 	public static final int POINT_CAPTURING_OFF = 0;
@@ -3569,6 +3571,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 			
 		case MODE_SHOW_HIDE_CHECKBOX:
 			return "ShowCheckBox";
+			
+		case MODE_FITLINE:
+			return "FitLine";
 
 		default:
 			return "";

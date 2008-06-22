@@ -33,6 +33,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -1013,6 +1014,7 @@ public class EuclidianController implements MouseListener,
 			case EuclidianView.MODE_MIRROR_AT_LINE:
 			case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			case EuclidianView.MODE_ROTATE_BY_ANGLE:
+			case EuclidianView.MODE_FITLINE:
 				return true;
 				
 			// checkbox
@@ -1243,7 +1245,9 @@ public class EuclidianController implements MouseListener,
 			if (!TEMPORARY_MODE)
 // Michael Borcherds 2007-10-08
 			if (allowSelectionRectangle()) {
-				processSelectionRectangle();				
+				processSelectionRectangle(e);	
+				
+				
 				return;
 			}
 		} else {	
@@ -1264,6 +1268,7 @@ public class EuclidianController implements MouseListener,
 					}
 					changedKernel = POINT_CREATED;
 					break;
+					
 					
 				default:
 			}
@@ -1365,7 +1370,7 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// select all geos in selection rectangle 
-	protected void processSelectionRectangle() {		
+	protected void processSelectionRectangle(MouseEvent e) {		
 		clearSelections();
 		ArrayList hits = view.getHits(view.getSelectionRectangle());		
 				
@@ -1399,6 +1404,14 @@ public class EuclidianController implements MouseListener,
 				
 			case EuclidianView.MODE_DILATE_FROM_POINT:
 				processSelectionRectangleForTransformations(hits, Dilateable.class);									
+				break;	
+							
+			case EuclidianView.MODE_FITLINE:
+				processSelectionRectangleForTransformations(hits, GeoPoint.class);									
+					processMode(hits, e);
+				view.setSelectionRectangle(null);	
+
+				
 				break;	
 							
 			default:
@@ -1545,7 +1558,6 @@ public class EuclidianController implements MouseListener,
 	// process mode and return whether kernel was changed
 	final boolean processMode(ArrayList hits, MouseEvent e) {
 		boolean changedKernel = false;
-
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:
 			// move() is for highlighting and selecting
@@ -1740,6 +1752,10 @@ public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_DILATE_FROM_POINT:
 			changedKernel = dilateFromPoint(view.getTopHits(hits));
+			break;
+			
+		case EuclidianView.MODE_FITLINE:
+			changedKernel = fitLine(hits);
 			break;
 			
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
@@ -3828,6 +3844,63 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
+	
+	// get dilateable object, point and number
+	final protected boolean fitLinexx(ArrayList hits) {
+		if (hits == null)
+			return false;
+
+		// dilateable
+		int count = 0;
+		if (selGeos() == 0) {
+			ArrayList dilAbles = view.getHits(hits, Dilateable.class, tempArrayList);
+			count =	addSelectedGeo(dilAbles, 1, false);
+		}
+		
+//		 polygon
+		if (count == 0) {					
+			count = addSelectedPolygon(hits, 1, false);
+		}
+		
+		// dilation center
+		if (count == 0) {
+			addSelectedPoint(hits, 1, false);
+		}
+		
+		// we got the mirror point
+		if (selPoints() == 1) {		
+			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+														app.getPlain("Numeric"), null);			
+			if (num == null) {
+				view.resetMode();
+				return false;
+			}
+			
+			if (selPolygons() == 1) {
+				GeoPolygon[] polys = getSelectedPolygons();
+				GeoPoint[] points = getSelectedPoints();
+				kernel.Dilate(null,  polys[0], num, points[0]);
+				return true;
+			} 
+			else if (selGeos() > 0) {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoPoint point = getSelectedPoints()[0];					
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != point) {
+						if (geos[i] instanceof Dilateable)
+							kernel.Dilate(null,  (Dilateable) geos[i], num, point);
+						else if (geos[i].isGeoPolygon()) {
+							kernel.Dilate(null, (GeoPolygon) geos[i], num, point);
+						}
+					}
+				}		
+				return true;
+			}		
+		}
+		return false;
+	}
+	
 	// get point and number
 	final protected boolean segmentFixed(ArrayList hits) {
 		if (hits == null)
@@ -3853,6 +3926,28 @@ public class EuclidianController implements MouseListener,
 		}
 		return false;
 	}	
+
+
+	
+	final protected boolean fitLine(ArrayList hits) {
+
+
+		addSelectedPoint(hits, 300, true);
+
+		if (selPoints() > 1) 
+		{					
+			 GeoList list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,getSelectedPoints(), GeoElement.GEO_CLASS_POINT);
+		     if (list != null) {
+		    	 kernel.FitLineX(null, list);
+		         return true;             	     	 
+		     } 
+		}
+		return false;
+	}
+
+	
+	
+	
 	
 	// Michael Borcherds 2008-03-14	
 	final protected boolean compasses(ArrayList hits) {

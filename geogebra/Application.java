@@ -59,7 +59,7 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.modules.JarManager;
-import geogebra.GgbAPI;
+import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
@@ -103,6 +103,8 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -4278,5 +4280,23 @@ public abstract class Application implements	KeyEventDispatcher {
     public PluginManager getPluginManager(){
     	return pluginmanager;
     }//getPluginManager()
+    
+    // Michael Borcherds 2008-06-22
+    public static void debug(String s)
+    {
+        Throwable t = new Throwable();
+        StackTraceElement[] elements = t.getStackTrace();
+
+        //String calleeMethod = elements[0].getMethodName();
+        String callerMethodName = elements[1].getMethodName();
+        String callerClassName = elements[1].getClassName();
+
+        //System.out.println("CallerClassName=" + callerClassName + " , Caller method name: " + callerMethodName);
+        //System.out.println("Callee method name: " + calleeMethod);
+        
+        Calendar calendar = new GregorianCalendar();
+      
+        System.out.println(calendar.get(Calendar.MINUTE)+":"+calendar.get(Calendar.SECOND)+" "+s+" ["+callerClassName+"."+callerMethodName+"]");
+    }
 	
 }

@@ -21,12 +21,13 @@ the Free Software Foundation.
 
 import geogebra.Application;
 import geogebra.GeoGebraAppletBase;
-import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class JarManager {
@@ -96,7 +97,7 @@ public class JarManager {
         
         if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
         		.toLowerCase().endsWith(".jar")) {
-        	System.out.println("not running from jar - set IS_WEBSTART=true");
+        	app.debug("not running from jar - set IS_WEBSTART=true");
             IS_WEBSTART=true;
         }
         
@@ -110,7 +111,7 @@ public class JarManager {
         		//URL url = new java.net.URL(codeBaseURL,"");
         		//webstartCodebase=codeBaseURL.toString();
         		IS_WEBSTART=true;
-        		System.out.println("JNLP codebase "+codeBaseURL.toString());
+        		app.debug("JNLP codebase "+codeBaseURL.toString());
         	}
             // JMathTeX files specified in the JNLP file, don't need to add them to classpath
             // JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
@@ -128,11 +129,11 @@ public class JarManager {
             //GEOGEBRA_SPREADSHEET_LOADED=true;
             // init spreadsheet view
          	//spreadsheetView = new SpreadsheetView(app, 26, 100);
-            System.out.println("IS_WEBSTART="+IS_WEBSTART);
+            app.debug("IS_WEBSTART="+IS_WEBSTART);
             return;
          } catch (javax.jnlp.UnavailableServiceException ex) {
              IS_WEBSTART=false;
-             System.out.println("IS_WEBSTART="+IS_WEBSTART);
+             app.debug("IS_WEBSTART="+IS_WEBSTART);
             //ex.printStackTrace();
          }		    
          
@@ -189,7 +190,7 @@ public class JarManager {
         		addJarToPath(loadExport, geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
         		GEOGEBRA_EXPORT_LOADED=true;
         }*/
-    	System.out.println("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
+        app.debug("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
         
 
         GEOGEBRA_PROPERTIES_PRESENT = jarPresent("geogebra_properties.jar");        
@@ -222,7 +223,7 @@ public class JarManager {
         }
 	
         
-    	System.out.println("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
+        app.debug("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
         
         
         /*
@@ -291,7 +292,7 @@ public class JarManager {
         
         boolean ret = (loader.getResourceAsStream(jar)!=null);
         
-        System.out.println("jarPresent " + jar+" "+ret);
+        app.debug("jarPresent " + jar+" "+ret);
         
         return ret;
 		
@@ -303,7 +304,7 @@ public class JarManager {
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		URL codeBase=getAppletCodeBase();
         if (codeBase!=null) jar = codeBase.toString() + jar;
-        System.out.println("addJarToPath " + jar);
+        app.debug("addJarToPath " + jar);
         
         //addPath(jar);
         ClassPathManipulator.addURL(addPathToJar(jar), loader);       
@@ -323,11 +324,11 @@ public class JarManager {
         URL  url=null;        
         try{
         	if(path.startsWith("http://")){	//url!
-                System.out.println("addPath1 "+path);
+                //System.out.println("addPath1 "+path);
         		url=new URL(path);
         	}
         	else if (path.startsWith("file:/")) { // local file in correct form
-                System.out.println("addPath2 "+path);
+                //System.out.println("addPath2 "+path);
         		url = new URL(path);
         	}else{							//file without path!
 
@@ -336,17 +337,17 @@ public class JarManager {
         		//URL codeBase=app.getAppletCodeBase();;
                 if (codeBase!=null)
                 {
-                    System.out.println("addPath3"+path);
+                    //System.out.println("addPath3"+path);
                 	url = new URL(codeBase.toString()+path); // running as applet
                 }
                 else
                 {
-                    System.out.println("addPath4"+path);
+                    //System.out.println("addPath4"+path);
                 	file=new File(path);
         		    url=file.toURL();
                 }
         	}
-            System.out.println("addPath "+url.toString());
+        	app.debug("addPath "+url.toString());
         	return url;
         }catch(MalformedURLException e) {
             System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
@@ -365,11 +366,11 @@ public class JarManager {
 				File dest = new File(tempDir, jar);
 				URL src = new URL(app.getCodeBase() + jar);
 				CopyURLToFile.copyURLToFile(src, dest);
-			System.out.println("copied "+jar+" to temp directory " + tempDir);
+				app.debug("copied "+jar+" to temp directory " + tempDir);
 				return true;
 			
 		} catch (Exception e) {		
-			System.err.println("copyJarToTempDir: " + e.getMessage());
+			app.debug("copyJarToTempDir: " + e.getMessage());
 			return false;
 		}			
 	}
@@ -462,6 +463,8 @@ public class JarManager {
 		GEOGEBRA_CAS_LOADED=true;
 		return true;
 	}
+	
+	
 	/*
 	public static synchronized boolean copyGuiJarToTempDir()
 	{
