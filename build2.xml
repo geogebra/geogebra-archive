@@ -85,6 +85,7 @@ office@geogebra.org
 				    tutor/**,
 					meta-inf/**,	
 					yacas/**,
+					jasymca/**,
 					
 			        **/*.java"		/>
 		<!-- exclude: 
@@ -105,7 +106,8 @@ office@geogebra.org
 	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
-			includes="yacas/**"
+			includes="yacas/**,
+					  jasymca/**"
 			excludes="**/*.java" 
 		/>
 	</target>

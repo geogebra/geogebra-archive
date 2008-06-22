@@ -23,7 +23,14 @@ public class GeoGebraCAS {
     
     public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
-    	sbRemoveSpecial = new StringBuffer(80);  
+    	sbRemoveSpecial = new StringBuffer(80);
+    	
+    	if (!JarManager.addCasJarToClassPath())
+    	{
+			System.err.println("Could not initialize CAS Jar");
+			return;    		
+    	}
+    	
     	ggbJasymca = new GeoGebraJasymca();    
     }        
     
@@ -33,6 +40,13 @@ public class GeoGebraCAS {
      * @return result string, null possible
      */ 
     final public String evaluateJASYMCA(String exp) {    
+
+    	if (!JarManager.addCasJarToClassPath())
+    	{
+			System.err.println("Could not initialize CAS Jar");
+			return null;    		
+    	}
+
     	String result = ggbJasymca.evaluate(exp);      	
     	  
     	// to handle x(A) and x(B) they are converted
@@ -56,6 +70,13 @@ public class GeoGebraCAS {
      * ["0", "b", "3*a"]
      */
     final public String [] getPolynomialCoeffs(String jasymcaExp, String variable) {
+ 
+    	if (!JarManager.addCasJarToClassPath())
+    	{
+			System.err.println("Could not initialize CAS Jar");
+			return null;    		
+    	}
+
        return ggbJasymca.getPolynomialCoeffs(jasymcaExp, variable);
     } 
     
@@ -69,7 +90,7 @@ public class GeoGebraCAS {
         
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize YACAS Jar");
+			System.err.println("Could not initialize CAS Jar");
 			return null;    		
     	}
 
@@ -117,7 +138,7 @@ public class GeoGebraCAS {
         
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize YACAS Jar");
+			System.err.println("Could not initialize CAS Jar");
 			return null;    		
     	}
     	
@@ -384,7 +405,7 @@ public class GeoGebraCAS {
     }
     
     
-    
+    /*
     public static void main(String [] args) {
     
     	GeoGebraCAS cas = new GeoGebraCAS();
@@ -407,7 +428,7 @@ public class GeoGebraCAS {
 				System.out.println("\n"+e);
 			}
 		}            	
-    }
+    }*/
     
  
 	
