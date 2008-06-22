@@ -1,4 +1,7 @@
 package geogebra.plugin;
+
+import geogebra.GgbAPI;
+
 /* 
  GeoGebra - Dynamic Mathematics for Schools
  Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
@@ -21,7 +24,7 @@ package geogebra.plugin;
     (Not given in interface below, as static is not allowed in interfaces.)
 </pre>
 @author     H-P Ulven
-@version    22.05.08
+@version    29.05.08
 */
 
 public interface PlugLetIF {
@@ -57,5 +60,4 @@ public interface PlugLetIF {
     /** For possible future use */
     public void destroy();
     
-
 }//interface PlugLetIF
