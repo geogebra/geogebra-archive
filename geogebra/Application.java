@@ -59,7 +59,7 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.modules.JarManager;
-import geogebra.plugin.GgbAPI;
+import geogebra.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
