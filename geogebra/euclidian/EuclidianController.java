@@ -183,6 +183,8 @@ public class EuclidianController implements MouseListener,
 
 	protected ArrayList selectedGeos = new ArrayList();
 
+	protected ArrayList selectedLists = new ArrayList();
+
 	protected LinkedList highlightedGeos = new LinkedList();
 
 	protected boolean selectionPreview = false;
@@ -373,6 +375,7 @@ public class EuclidianController implements MouseListener,
 		clearSelection(selectedGeos);
 		clearSelection(selectedFunctions);		
 		clearSelection(selectedCurves);
+		clearSelection(selectedLists);
 		
 		app.clearSelectedGeos();
 		
@@ -3844,63 +3847,7 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	
-	// get dilateable object, point and number
-	final protected boolean fitLinexx(ArrayList hits) {
-		if (hits == null)
-			return false;
 
-		// dilateable
-		int count = 0;
-		if (selGeos() == 0) {
-			ArrayList dilAbles = view.getHits(hits, Dilateable.class, tempArrayList);
-			count =	addSelectedGeo(dilAbles, 1, false);
-		}
-		
-//		 polygon
-		if (count == 0) {					
-			count = addSelectedPolygon(hits, 1, false);
-		}
-		
-		// dilation center
-		if (count == 0) {
-			addSelectedPoint(hits, 1, false);
-		}
-		
-		// we got the mirror point
-		if (selPoints() == 1) {		
-			NumberValue num = app.showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
-														app.getPlain("Numeric"), null);			
-			if (num == null) {
-				view.resetMode();
-				return false;
-			}
-			
-			if (selPolygons() == 1) {
-				GeoPolygon[] polys = getSelectedPolygons();
-				GeoPoint[] points = getSelectedPoints();
-				kernel.Dilate(null,  polys[0], num, points[0]);
-				return true;
-			} 
-			else if (selGeos() > 0) {					
-				// mirror all selected geos
-				GeoElement [] geos = getSelectedGeos();
-				GeoPoint point = getSelectedPoints()[0];					
-				for (int i=0; i < geos.length; i++) {				
-					if (geos[i] != point) {
-						if (geos[i] instanceof Dilateable)
-							kernel.Dilate(null,  (Dilateable) geos[i], num, point);
-						else if (geos[i].isGeoPolygon()) {
-							kernel.Dilate(null, (GeoPolygon) geos[i], num, point);
-						}
-					}
-				}		
-				return true;
-			}		
-		}
-		return false;
-	}
-	
 	// get point and number
 	final protected boolean segmentFixed(ArrayList hits) {
 		if (hits == null)
@@ -3931,16 +3878,30 @@ public class EuclidianController implements MouseListener,
 	
 	final protected boolean fitLine(ArrayList hits) {
 
+		GeoList list;
+		
+		addSelectedList(hits,1,false);
+		
+		if (selLists() > 0)
+		{
+			list = getSelectedLists()[0];
+	     	if (list != null) {
+	    	 	kernel.FitLineX(null, list);
+	    	 	return true;   
+	     	}
+		}
+		else
+		{
+			addSelectedPoint(hits, 999, true);
 
-		addSelectedPoint(hits, 300, true);
-
-		if (selPoints() > 1) 
-		{					
-			 GeoList list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,getSelectedPoints(), GeoElement.GEO_CLASS_POINT);
-		     if (list != null) {
-		    	 kernel.FitLineX(null, list);
-		         return true;             	     	 
-		     } 
+			if (selPoints() > 1) 
+			{					
+			 	list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,getSelectedPoints(), GeoElement.GEO_CLASS_POINT);
+		     	if (list != null) {
+		    	 	kernel.FitLineX(null, list);
+		    	 	return true;             	     	 
+		     	} 
+			}
 		}
 		return false;
 	}
@@ -4308,6 +4269,15 @@ public class EuclidianController implements MouseListener,
 		return ret;
 	}
 	
+	final protected GeoList[] getSelectedLists() {				
+		GeoList[] ret = new GeoList[selectedLists.size()];
+		for (int i = 0; i < selectedLists.size(); i++) {		
+			ret[i] = (GeoList) selectedLists.get(i);
+		}
+		clearSelection(selectedLists);
+		return ret;
+	}
+	
 	final protected GeoPolygon[] getSelectedPolygons() {				
 		GeoPolygon[] ret = new GeoPolygon[selectedPolygons.size()];
 		for (int i = 0; i < selectedPolygons.size(); i++) {		
@@ -4451,12 +4421,21 @@ public class EuclidianController implements MouseListener,
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolygons, GeoPolygon.class);
 	}
 
+	final protected int addSelectedList(ArrayList hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLists, GeoList.class);
+	}
+
 	final int selGeos() {
 		return selectedGeos.size();
 	}
 
 	final int selPoints() {
 		return selectedPoints.size();
+	}
+	
+	final int selLists() {
+		return selectedLists.size();
 	}
 	
 	final int selPolygons() {
