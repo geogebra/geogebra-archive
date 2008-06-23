@@ -89,6 +89,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 	protected static final int MIN_HEIGHT = 50;
 	
 	protected static final String PI_STRING = "\u03c0";
+	
+	private static final String EXPORT1 = "Export_1"; // Points used to define corners for export (if they exist)
+	private static final String EXPORT2 = "Export_2";
 
 	// pixel per centimeter (at 72dpi)
 	protected static final double PRINTER_PIXEL_PER_CM = 72.0 / 2.54;
@@ -1420,8 +1423,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 			// use points Export_1 and Export_2 to define corner
 			try {
 				Construction cons = kernel.getConstruction();
-				GeoPoint export1=(GeoPoint)cons.lookupLabel("Export_1");	       
-				GeoPoint export2=(GeoPoint)cons.lookupLabel("Export_2");
+				GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
+				GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
 				double [] xy1 = new double[2];
 				double [] xy2 = new double[2];
 				export1.getInhomCoords(xy1);
@@ -3599,8 +3602,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 		if (selectionRectangle != null) return selectionRectangle.width;
 		try {
 			Construction cons = kernel.getConstruction();
-			GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
-			GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+			GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
+			GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
 			double [] xy2 = new double[2];
 			export1.getInhomCoords(xy1);
@@ -3622,8 +3625,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		try {
 			Construction cons = kernel.getConstruction();
-			GeoPoint export1=(GeoPoint)cons.lookupLabel("export_1");	       
-			GeoPoint export2=(GeoPoint)cons.lookupLabel("export_2");
+			GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
+			GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
 			double [] xy2 = new double[2];
 			export1.getInhomCoords(xy1);
