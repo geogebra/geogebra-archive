@@ -319,7 +319,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	public void mousePressed(MouseEvent e) {		
 		menu.setPopupVisible(popupTriangleClicked(e.getX(), e.getY()));
 		requestFocus();
-		doClick();		
+		//doClick();	removed to stop mode being selected when triangle clicked (for MODE_FITLINE)	
 	}
 
 	public void mouseReleased(MouseEvent arg0) {			
