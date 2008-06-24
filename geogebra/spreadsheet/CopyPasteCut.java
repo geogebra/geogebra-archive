@@ -154,34 +154,38 @@ public class CopyPasteCut {
 	}
 	
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
-	protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^\\t\\\"]+)");
+	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^\\t\\\"]+)");
+	protected static Pattern pattern = Pattern.compile("((\\\"([^\\\"]+)\\\")|([^,\\t\\\"\\(]+|\\([^)]+\\)))?(,|\\t|$)");
 	
-	public void pasteExternal(String buf, int column1, int row1) {
-		kernel.getApplication().setWaitCursor();
-		String[] lines = buf.split("\\r*\\n", -1);
+	public static String[][] parseData(String input) {
+		String[] lines = input.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
-			LinkedList list = new LinkedList();
-			//if (lines[i].indexOf('\t') != -1) {
-			//	lines[i] = lines[i].replaceAll(",", ".");
-			//}
 			Matcher matcher = pattern.matcher(lines[i]);
-			int index = 0;
-			while (index != -1 && matcher.find(index)) {
-				index = matcher.end();
-				String data1 = matcher.group(2);
-				String data2 = matcher.group(3);
+			LinkedList list = new LinkedList();
+			while (matcher.find()) {
+				String data1 = matcher.group(3);
+				String data2 = matcher.group(4);
 				if (data1 != null) {
 					list.addLast(data1);
 				}
-				if (data2 != null) {
+				else if (data2 != null) {
 					data2 = data2.trim();
 					list.addLast(data2);
+				}
+				else {
+					list.addLast("");
 				}
 			}
 			data[i] = (String[])list.toArray(new String[0]);
 		}
+		return data;		
+	}
+	
+	public void pasteExternal(String buf, int column1, int row1) {
+		kernel.getApplication().setWaitCursor();
 		try {
+			String[][] data = parseData(buf);
 			MyTableModel model = (MyTableModel)table.getModel();
 			if (model.rowCount < row1 + data.length) {
 				model.setRowCount(row1 + data.length);
@@ -220,8 +224,8 @@ public class CopyPasteCut {
 				createPointsAndAList2(values2);
 			}
 		} catch (Exception ex) {
-			kernel.getApplication().showError(ex.getMessage());
-			// Util.handleException(table, ex);
+			//kernel.getApplication().showError(ex.getMessage());
+			Util.handleException(table, ex);
 		} finally {
 			kernel.getApplication().setDefaultCursor();
 		}
