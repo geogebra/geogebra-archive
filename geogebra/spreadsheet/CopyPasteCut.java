@@ -130,20 +130,24 @@ public class CopyPasteCut {
 			model.setColumnCount(x4 + 1);
 		}
 		GeoElement[][] values1 = RelativeCopy.getValues(table, x1, y1, x2, y2);
-		for (int x = x1; x <= x2; ++ x) {
-			int ix = x - x1;
-			for (int y = y1; y <= y2; ++ y) {
-				int iy = y - y1;
-				values2[ix][iy] = RelativeCopy.doCopy0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
+		try {
+			for (int x = x1; x <= x2; ++ x) {
+				int ix = x - x1;
+				for (int y = y1; y <= y2; ++ y) {
+					int iy = y - y1;
+					values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
+				}
 			}
+			if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
+				createPointsAndAList1(values2);
+			}
+			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
+				createPointsAndAList2(values2);
+			}
+		} finally {
+			kernel.storeUndoInfo();
+			kernel.getApplication().setDefaultCursor();
 		}
-		if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
-			createPointsAndAList1(values2);
-		}
-		if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
-			createPointsAndAList2(values2);
-		}
-		kernel.getApplication().setDefaultCursor();
 	}
 	
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
@@ -200,7 +204,7 @@ public class CopyPasteCut {
 					}
 					else {
 						GeoElement value0 = RelativeCopy.getValue(table, column, row);
-						values2[iy][ix] = MyCellEditor.prepareAddingValueToTable(kernel, table, data[iy][ix], value0, column, row);
+						values2[iy][ix] = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, data[iy][ix], value0, column, row);
 						table.setValueAt(values2[iy][ix], row, column);
 					}
 				}
@@ -216,6 +220,7 @@ public class CopyPasteCut {
 			kernel.getApplication().showError(ex.getMessage());
 			// Util.handleException(table, ex);
 		} finally {
+			kernel.storeUndoInfo();
 			kernel.getApplication().setDefaultCursor();
 		}
 	}

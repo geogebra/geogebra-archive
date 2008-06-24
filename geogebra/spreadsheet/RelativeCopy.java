@@ -40,12 +40,12 @@ public class RelativeCopy {
 								String d0 = GeoElement.getSpreadsheetCellName(x, y + 2) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x, y + 1) + vs2;
 								String text = "2*" + d1 + "-" + d0;
-								doCopy1(kernel, table, text, x, y);								
+								doCopyNoStoringUndoInfo1(kernel, table, text, x, y);								
 							}
 						}
 					}
 					else {
-						doCopyHorizontal(sx1, sx2, sy1, dy1, dy2);
+						doCopyHorizontaldoCopyNoStoringUndoInfo0(sx1, sx2, sy1, dy1, dy2);
 					}
 					return true;
 				}
@@ -63,12 +63,12 @@ public class RelativeCopy {
 								String d0 = GeoElement.getSpreadsheetCellName(x, y - 2) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x, y - 1) + vs2;
 								String text = "2*" + d1 + "-" + d0;
-								doCopy1(kernel, table, text, x, y);								
+								doCopyNoStoringUndoInfo1(kernel, table, text, x, y);								
 							}
 						}
 					}
 					else {
-						doCopyHorizontal(sx1, sx2, sy2, dy1, dy2);
+						doCopyHorizontaldoCopyNoStoringUndoInfo0(sx1, sx2, sy2, dy1, dy2);						kernel.storeUndoInfo();
 					}
 					return true;
 				}
@@ -88,12 +88,12 @@ public class RelativeCopy {
 								String d0 = GeoElement.getSpreadsheetCellName(x + 2, y) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x + 1, y) + vs2;
 								String text = "2*" + d1 + "-" + d0;
-								doCopy1(kernel, table, text, x, y);								
+								doCopyNoStoringUndoInfo1(kernel, table, text, x, y);								
 							}
 						}
 					}
 					else {
-						doCopyVertical(sy1, sy2, sx1, dx1, dx2);
+						doCopyVerticaldoCopyNoStoringUndoInfo0(sy1, sy2, sx1, dx1, dx2);
 					}
 					return true;
 				}
@@ -111,12 +111,12 @@ public class RelativeCopy {
 								String d0 = GeoElement.getSpreadsheetCellName(x - 2, y) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x - 1, y) + vs2;
 								String text = "2*" + d1 + "-" + d0;
-								doCopy1(kernel, table, text, x, y);								
+								doCopyNoStoringUndoInfo1(kernel, table, text, x, y);								
 							}
 						}
 					}
 					else {
-						doCopyVertical(sy1, sy2, sx2, dx1, dx2);
+						doCopyVerticaldoCopyNoStoringUndoInfo0(sy1, sy2, sx2, dx1, dx2);
 					}
 					return true;
 				}			
@@ -135,11 +135,12 @@ public class RelativeCopy {
 			kernel.getApplication().showError(ex.getMessage());
 			return false;
 		} finally {
+			kernel.storeUndoInfo();
 			kernel.getApplication().setDefaultCursor();
 		}
 	}
 	
-	public void doCopyHorizontal(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
+	public void doCopyHorizontaldoCopyNoStoringUndoInfo0(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
 		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
 		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
 		//if (checkDependency(values1, values2)) {
@@ -161,12 +162,12 @@ public class RelativeCopy {
 			int ix = x - x1;
 			for (int y = dy1; y <= dy2; ++ y) {
 				int iy = y - dy1;
-				doCopy0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
+				doCopyNoStoringUndoInfo0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
 			}
 		}
 	}
 	
-	public void doCopyVertical(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
+	public void doCopyVerticaldoCopyNoStoringUndoInfo0(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
 		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
 		//if (checkDependency(values1, values2)) {
@@ -189,19 +190,19 @@ public class RelativeCopy {
 			int iy = y - y1;
 			for (int x = dx1; x <= dx2; ++ x) {
 				int ix = x - dx1;
-				doCopy0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
+				doCopyNoStoringUndoInfo0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
 			}
 		}
 	}
 	
 	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z])(::|\\$)([0-9]+)");
 
-	public static GeoElement doCopy0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
+	public static GeoElement doCopyNoStoringUndoInfo0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
 		if (value == null) {
 			if (oldValue != null) {
 				int column = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
 				int row = GeoElement.getSpreadsheetRow(oldValue.getLabel());
-				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column, row);
+				MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return null;
 		}
@@ -247,7 +248,7 @@ public class RelativeCopy {
 		}
 		//System.out.println("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
 		//int column3 = table.convertColumnIndexToView(column) + dx;
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column0 + dx, row0 + dy);
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
 		//System.out.println((row + dy) + "," + column);
 		//System.out.println("isGeoFunction()=" + value2.isGeoFunction());
 		table.setValueAt(value2, row0 + dy, column0 + dx);
@@ -255,15 +256,15 @@ public class RelativeCopy {
 		
 	}
 	
-	public static void doCopy1(Kernel kernel, MyTable table, String text, int column, int row) throws Exception {
+	public static void doCopyNoStoringUndoInfo1(Kernel kernel, MyTable table, String text, int column, int row) throws Exception {
 		GeoElement oldValue = getValue(table, column, row);
 		if (text == null) {
 			if (oldValue != null) {
-				MyCellEditor.prepareAddingValueToTable(kernel, table, null, oldValue, column, row);
+				MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return;
 		}
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTable(kernel, table, text, oldValue, column, row);
+		GeoElement value2 = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column, row);
 		table.setValueAt(value2, row, column);
 	}
 	

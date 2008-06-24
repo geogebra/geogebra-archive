@@ -99,7 +99,8 @@ public class MyCellEditor extends DefaultCellEditor {
 		//System.out.println("stopCellEditing()");
 		String text = (String)delegate.getCellEditorValue();
 		try {
-			value = prepareAddingValueToTable(kernel, table, text, value, column, row);
+			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
+			kernel.storeUndoInfo();
 		} catch (Exception ex) {
 			// show GeoGebra error dialog
 			kernel.getApplication().showError(ex.getMessage());
@@ -129,7 +130,7 @@ public class MyCellEditor extends DefaultCellEditor {
 	}
 	
 	// also used in RelativeCopy.java
-	public static GeoElement prepareAddingValueToTable(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) throws Exception {
+	public static GeoElement prepareAddingValueToTableNoStoringUndoInfo(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) throws Exception {
 		//column = table.convertColumnIndexToModel(column);
 		String name = table.getModel().getColumnName(column) + (row + 1);
     	if (text != null) {
@@ -165,13 +166,13 @@ public class MyCellEditor extends DefaultCellEditor {
     		
     		GeoElement[] newValues = null;
     		try {
-    			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+    			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
     		} catch (Exception e) {
     			// TODO: handle exception
         		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
     			if (! text0.startsWith("=")) {
         			text = name + "=\"" + text0 + "\"";
-       				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+       				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
        				if (newValues[0].isGeoText()) {
        					newValues[0].setEuclidianVisible(false);
            				newValues[0].update();

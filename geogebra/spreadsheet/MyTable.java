@@ -384,6 +384,7 @@ public class MyTable extends JTable
 							GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
 							if (geo != null) {
 								String name = GeoElement.getSpreadsheetCellName(column, row);
+								if (geo.isGeoFunction()) name += "(x)";
 								name0 = name;
 								editor.addLabel(name);
 								e.consume();
@@ -418,6 +419,7 @@ public class MyTable extends JTable
 								GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
 								if (geo != null) {
 									String name = GeoElement.getSpreadsheetCellName(column, row);
+									if (geo.isGeoFunction()) name += "(x)";
 									if (! name.equals(name0)) {
 										editor.addLabel(":" + name);
 									}
