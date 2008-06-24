@@ -239,11 +239,18 @@ public class EuclidianController implements MouseListener,
 
 	void setMode(int newMode) {
 		endOfMode(mode);
-// Michael Borcherds 2007-10-12
-//		app.clearSelectedGeos(false);
-		if (!TEMPORARY_MODE) app.clearSelectedGeos(false);
-//		 Michael Borcherds 2007-10-12
-		initNewMode(newMode);
+		
+		if (EuclidianView.usesSelectionRectangleAsInput(newMode))
+		{
+			initNewMode(newMode);
+			processSelectionRectangle(null);			
+		}
+		else
+		{
+			if (!TEMPORARY_MODE) app.clearSelectedGeos(false);
+			initNewMode(newMode);			
+		}
+		
 		kernel.notifyRepaint();
 	}
 	

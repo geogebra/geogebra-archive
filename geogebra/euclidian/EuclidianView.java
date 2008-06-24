@@ -2224,6 +2224,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final public ArrayList getHits(Rectangle rect) {
 		foundHits.clear();		
 		
+		if (rect == null) return foundHits;
+		
 		DrawableIterator it = allDrawableList.getIterator();
 		while (it.hasNext()) {
 			Drawable d = it.next();
@@ -3657,5 +3659,14 @@ public class EuclidianView extends JPanel implements View, Printable {
 	final public Graphics2D getTempGraphics2D() {
 		g2Dtemp.setFont(this.getFont()); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]
 		return g2Dtemp;
+	}
+	
+	final public static boolean usesSelectionRectangleAsInput(int mode)
+	{
+		switch (mode)
+		{
+		case MODE_FITLINE: return true;
+		default: return false;
+		}
 	}
 }
