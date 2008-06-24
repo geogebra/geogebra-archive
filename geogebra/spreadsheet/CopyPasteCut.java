@@ -161,6 +161,7 @@ public class CopyPasteCut {
 		String[] lines = input.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
+			lines[i] = lines[i].trim();
 			Matcher matcher = pattern.matcher(lines[i]);
 			LinkedList list = new LinkedList();
 			while (matcher.find()) {
@@ -177,6 +178,9 @@ public class CopyPasteCut {
 					list.addLast("");
 				}
 			}
+			if (list.size() > 0 && list.getLast().equals("")) {
+				list.removeLast();
+			}
 			data[i] = (String[])list.toArray(new String[0]);
 		}
 		return data;		
@@ -190,16 +194,20 @@ public class CopyPasteCut {
 			if (model.rowCount < row1 + data.length) {
 				model.setRowCount(row1 + data.length);
 			}
-			GeoElement[][] values2 = new GeoElement[data.length][data.length > 0 ? data[0].length : 0];
+			GeoElement[][] values2 = new GeoElement[data.length][];
+			int maxLen = -1;
 			for (int row = row1; row < row1 + data.length; ++ row) {
 				if (row < 0) continue;
 				int iy = row - row1;
+				values2[iy] = new GeoElement[data[iy].length];
+				if (maxLen < data[iy].length) maxLen = data[iy].length;
 				if (model.getColumnCount() < column1 + data[iy].length) {
 					model.setColumnCount(column1 + data[iy].length);						
 				}
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
 					if (column < 0) continue;
 					int ix = column - column1;
+					//System.out.println(iy + " " + ix + " [" + data[iy][ix] + "]");
 					data[iy][ix] = data[iy][ix].trim();
 					if (data[iy][ix].length() == 0) {
 						GeoElement value0 = RelativeCopy.getValue(table, column, row);
@@ -216,11 +224,12 @@ public class CopyPasteCut {
 					}
 				}
 			}
+			//System.out.println("maxLen=" + maxLen);
 			table.getView().repaintView();
-			if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
+			if (values2.length == 1 || maxLen == 1) {
 				createPointsAndAList1(values2);
 			}
-			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
+			if (values2.length == 2 || maxLen == 2) {
 				createPointsAndAList2(values2);
 			}
 		} catch (Exception ex) {
@@ -251,8 +260,8 @@ public class CopyPasteCut {
 	
 	public void createPointsAndAList2(GeoElement[][] values) throws Exception {
 		LinkedList list = new LinkedList();
-		if (values.length == 2 && values[0].length > 0) {
-	   	 	for (int i = 0; i < values[0].length; ++ i) {
+		if (values.length == 2) {
+	   	 	for (int i = 0; i < values[0].length && i < values[1].length; ++ i) {
 	   	 		GeoElement v1 = values[0][i];
 	   	 		GeoElement v2 = values[1][i];
 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
@@ -263,8 +272,9 @@ public class CopyPasteCut {
 	   	 		}
 	   	 	}
 	   	 }
-	   	 if (values.length > 0 && values[0].length == 2) {
+	   	 if (values.length > 0) {
 	   	 	for (int i = 0; i < values.length; ++ i) {
+	   	 		if (values[i].length != 2) continue;
 	   	 		GeoElement v1 = values[i][0];
 	   	 		GeoElement v2 = values[i][1];
 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
