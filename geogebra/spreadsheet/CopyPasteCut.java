@@ -94,6 +94,10 @@ public class CopyPasteCut {
 		else if (buf != null) {
 			pasteExternal(buf, column1, row1);
 		}
+		else {
+			return;
+		}
+		kernel.storeUndoInfo();
 	}
 
 	public void pasteInternal(int column1, int row1) throws Exception {
@@ -145,7 +149,6 @@ public class CopyPasteCut {
 				createPointsAndAList2(values2);
 			}
 		} finally {
-			kernel.storeUndoInfo();
 			kernel.getApplication().setDefaultCursor();
 		}
 	}
@@ -220,7 +223,6 @@ public class CopyPasteCut {
 			kernel.getApplication().showError(ex.getMessage());
 			// Util.handleException(table, ex);
 		} finally {
-			kernel.storeUndoInfo();
 			kernel.getApplication().setDefaultCursor();
 		}
 	}
@@ -240,6 +242,7 @@ public class CopyPasteCut {
 				//}
 			}
 		}
+		kernel.storeUndoInfo();
 	}
 	
 	public void createPointsAndAList2(GeoElement[][] values) throws Exception {
@@ -251,7 +254,7 @@ public class CopyPasteCut {
 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
 	   	 			String pointName = ContextMenu.getNextPointName();
 	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
-	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
 	   	 			list.addLast(pointName);
 	   	 		}
 	   	 	}
@@ -263,7 +266,7 @@ public class CopyPasteCut {
 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
 	   	 			String pointName = ContextMenu.getNextPointName();
 	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
-	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
 	   	 			list.addLast(pointName);
 	   	 		}
 	   	 	}
@@ -277,7 +280,7 @@ public class CopyPasteCut {
 	   			 if (i != points.length - 1) text += ",";
 	   		 }
 	   		text += "}";
-	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
 	   	 }
 	}
 
@@ -308,7 +311,7 @@ public class CopyPasteCut {
 	   			 if (i != points.length - 1) text += ",";
 	   		 }
 	   		text += "}";
-	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, true);
+	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
 	   	 }
 	}
 }
