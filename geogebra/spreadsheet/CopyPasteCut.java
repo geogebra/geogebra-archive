@@ -155,24 +155,37 @@ public class CopyPasteCut {
 	
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^\\t\\\"]+)");
-	protected static Pattern pattern = Pattern.compile("((\\\"([^\\\"]+)\\\")|([^,\\t\\\"\\(]+|\\([^)]+\\)))?(,|\\t|$)");
+	protected static Pattern pattern1 = Pattern.compile("((\\\"([^\\\"]+)\\\")|([^\\t\\\"\\(]+)|(\\([^)]+\\)))?(\\t|$)");
+	protected static Pattern pattern2 = Pattern.compile("((\\\"([^\\\"]+)\\\")|([^,\\\"\\(]+)|(\\([^)]+\\)))?(,|$)");
 	
 	public static String[][] parseData(String input) {
 		String[] lines = input.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
 			lines[i] = lines[i].trim();
-			Matcher matcher = pattern.matcher(lines[i]);
+			Matcher matcher = null;
+			if (lines[i].indexOf('\t') != -1) {
+				matcher = pattern1.matcher(lines[i]);
+			}
+			else {
+				matcher = pattern2.matcher(lines[i]);
+			}
 			LinkedList list = new LinkedList();
 			while (matcher.find()) {
 				String data1 = matcher.group(3);
 				String data2 = matcher.group(4);
+				String data3 = matcher.group(5);
 				if (data1 != null) {
 					list.addLast(data1);
 				}
 				else if (data2 != null) {
 					data2 = data2.trim();
+					data2 = data2.replaceAll(",", ".");
 					list.addLast(data2);
+				}
+				else if (data3 != null) {
+					data3 = data3.trim();
+					list.addLast(data3);
 				}
 				else {
 					list.addLast("");
@@ -233,8 +246,8 @@ public class CopyPasteCut {
 				createPointsAndAList2(values2);
 			}
 		} catch (Exception ex) {
-			//kernel.getApplication().showError(ex.getMessage());
-			Util.handleException(table, ex);
+			kernel.getApplication().showError(ex.getMessage());
+			//Util.handleException(table, ex);
 		} finally {
 			kernel.getApplication().setDefaultCursor();
 		}
