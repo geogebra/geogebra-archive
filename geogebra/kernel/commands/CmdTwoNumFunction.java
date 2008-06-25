@@ -106,23 +106,6 @@ class CmdRandomNormal extends CmdTwoNumFunction {
 
 }
 
-/*
- * Row[ <Number>, <Number> ]
- * Row[ <Number> ]
- */
-class CmdRow extends CmdTwoNumFunction {
-
-	public CmdRow(Kernel kernel) {
-		super(kernel);
-	}
-
-	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
-	{
-		return kernel.Row(a, b, c);
-	}
-
-
-}
 
 
 

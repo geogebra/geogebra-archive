@@ -2089,16 +2089,6 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Row[number,number]
-	 * Michael Borcherds
-	 */
-	final public GeoList Row(String label, NumberValue a, NumberValue b) {
-		AlgoRow algo = new AlgoRow(cons, label, a, b);
-		GeoList list = algo.getResult();
-		return list;
-	}
-	
-	/** 
 	 * Sort[list]
 	 * Michael Borcherds
 	 */
