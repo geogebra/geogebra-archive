@@ -1940,26 +1940,6 @@ public class Kernel {
 	}
 	
 	/** 
-	 * MeanX[list,list]
-	 * Michael Borcherds
-	 */
-	final public GeoNumeric MeanX(String label, GeoList listX, GeoList listY) {
-		AlgoDoubleListMeanX algo = new AlgoDoubleListMeanX(cons, label, listX, listY);
-		GeoNumeric num = algo.getResult();
-		return num;
-	}
-	
-	/** 
-	 * MeanY[list,list]
-	 * Michael Borcherds
-	 */
-	final public GeoNumeric MeanY(String label, GeoList listX, GeoList listY) {
-		AlgoDoubleListMeanY algo = new AlgoDoubleListMeanY(cons, label, listX, listY);
-		GeoNumeric num = algo.getResult();
-		return num;
-	}
-	
-	/** 
 	 * Covariance[list,list]
 	 * Michael Borcherds
 	 */
