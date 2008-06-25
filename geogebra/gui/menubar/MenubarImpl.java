@@ -52,7 +52,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	// Actions
 	protected AbstractAction refreshAction,
-			DataFromClipboardAction, drawingPadToClipboardAction, deleteAll, newWindowAction,
+			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
 			showSpreadsheetAction,     // Michael Borcherds 2008-01-14
@@ -267,8 +267,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(drawingPadToClipboardAction);
 		setMenuShortCutShiftAccelerator(mi, 'C');
 
-		mi = menu.add(DataFromClipboardAction);
-		setMenuShortCutAccelerator(mi, 'V');
+		//mi = menu.add(DataFromClipboardAction);
+		//setMenuShortCutAccelerator(mi, 'V');
 				
 		if (app.letDelete()) {
 			mi = menu.add(deleteAction);
@@ -947,7 +947,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			}
 		};
 
-		
+		/*
 		// Michael Borcherds 2008-04-09
 		DataFromClipboardAction = new AbstractAction(
 				app.getMenu("PasteDataFromClipboard"),
@@ -1034,7 +1034,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				};
 				runner.start();						    			    								
 			}
-		};
+		};*/
 
 		helpAction = new AbstractAction(app.getMenu("Help"),
 				app.getImageIcon("help.png")) {
