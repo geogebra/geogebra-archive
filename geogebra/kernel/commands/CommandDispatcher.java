@@ -232,7 +232,7 @@ public class CommandDispatcher {
     	cmdTable.put("FitLog", new CmdFitLog(kernel));
     	cmdTable.put("FitPow", new CmdFitPow(kernel));
         cmdTable.put("RandomNormal", new CmdRandomNormal(kernel));
-        cmdTable.put("Step", new CmdStep(kernel));
+        cmdTable.put("ConstructionStep", new CmdConstructionStep(kernel));
         cmdTable.put("Normal", new CmdNormal(kernel));
     	cmdTable.put("Binomial", new CmdBinomial(kernel));
     	cmdTable.put("InverseNormal", new CmdInverseNormal(kernel));

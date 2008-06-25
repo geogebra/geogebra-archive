@@ -24,14 +24,14 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoStep extends AlgoElement {
+public class AlgoConstructionStep extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	//private GeoElement geo;  // input
     protected GeoNumeric num;     // output          
     //private Construction cons;
         
-    public AlgoStep(Construction cons, String label) {
+    public AlgoConstructionStep(Construction cons, String label) {
     	super(cons);
     	//this.cons=cons;
         //this.geo = geo;  
@@ -46,7 +46,7 @@ public class AlgoStep extends AlgoElement {
    }   
     
 	protected String getClassName() {
-		return "AlgoStep";
+		return "AlgoConstructionStep";
 	}
     
     // for AlgoElement

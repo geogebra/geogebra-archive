@@ -11,9 +11,9 @@ import geogebra.kernel.arithmetic.Command;
  * Michael Borcherds
  * 2008-03-06
  */
-public class CmdStep extends CommandProcessor {
+public class CmdConstructionStep extends CommandProcessor {
 
-	public CmdStep(Kernel kernel) {
+	public CmdConstructionStep(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -26,12 +26,12 @@ public class CmdStep extends CommandProcessor {
 		case 0:
 
 			GeoElement[] ret = { 
-					kernel.Step(c.getLabel() ) };
+					kernel.ConstructionStep(c.getLabel() ) };
 			return ret;
 	
 		case 1:
 			GeoElement[] ret3 = { 
-					kernel.Step(c.getLabel(), arg[0] ) };
+					kernel.ConstructionStep(c.getLabel(), arg[0] ) };
 			//kernel.Step(c.getLabel() ) };
 			return ret3;
 	
