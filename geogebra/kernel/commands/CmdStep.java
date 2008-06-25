@@ -30,15 +30,6 @@ public class CmdStep extends CommandProcessor {
 			return ret;
 	
 		case 1:
-			if (arg[0].isGeoNumeric())
-			{
-				GeoNumeric num=(GeoNumeric)arg[0];
-				if (num.getDouble()==-1)
-				{
-					GeoElement[] ret2 = { kernel.Step(c.getLabel() ) };
-					return ret2;
-				}
-			}
 			GeoElement[] ret3 = { 
 					kernel.Step(c.getLabel(), arg[0] ) };
 			//kernel.Step(c.getLabel() ) };
