@@ -46,7 +46,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
 	private Path path;
-	PathParameter pathParameter;
+	private PathParameter pathParameter;
         
     // temp
     public double inhomX, inhomY;
@@ -58,8 +58,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     private ArrayList locateableList;         
     
     public GeoPoint(Construction c) { 
-    	super(c); 
-    	pathParameter = new PathParameter();
+    	super(c);     	
     	setUndefined(); 
     }
   
@@ -67,16 +66,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
      * Creates new GeoPoint 
      */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
-        super(c, x, y, z); // GeoVec3D constructor  
-        pathParameter = new PathParameter();
+        super(c, x, y, z); // GeoVec3D constructor          
         setLabel(label);
     }
     
     public GeoPoint(Construction c, Path path) {
 		super(c);
-		this.path = path;
-		pathParameter = new PathParameter();
+		this.path = path;	
 	}
+    
+    final public PathParameter getPathParameter() {
+    	if (pathParameter == null)
+    		pathParameter = new PathParameter();
+    	return pathParameter;
+    }
     
 	protected String getClassName() {
 		return "GeoPoint";
@@ -91,16 +94,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     }
     
     public GeoPoint(GeoPoint point) {
-    	super(point.cons);
-    	pathParameter = new PathParameter();
+    	super(point.cons);    	
         set(point);        
     }
     
     
     public void set(GeoElement geo) { 
     	if (geo.isGeoPoint()) {
-	    	GeoPoint p = (GeoPoint) geo;        
-	    	pathParameter.set(p.pathParameter);
+	    	GeoPoint p = (GeoPoint) geo;  
+	    	if (p.pathParameter != null) {
+	    		pathParameter = getPathParameter();
+		    	pathParameter.set(p.pathParameter);
+	    	}
 	    	setCoords(p.x, p.y, p.z);     
     	}
     	else if (geo.isGeoVector()) {
@@ -150,15 +155,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 	
 	public void addToPathParameter(double a) {
+		PathParameter pathParameter = getPathParameter();
 		pathParameter.t += a;
-		
-		// update point relative to path
-		path.pathChanged(this);
-		updateCoords();
-	}
-	
-	public void initPathParameter(PathParameter pp) {
-		pathParameter = pp;		
 		
 		// update point relative to path
 		path.pathChanged(this);
@@ -211,7 +209,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		// so updateCoords() is called afterwards
 		if (path != null) {
 			// remember path parameter for undefined case
-			tempPathParameter.set(pathParameter);
+			PathParameter tempPathParameter = getTempPathparameter();
+			tempPathParameter.set(getPathParameter());
 			path.pointChanged(this);
 		}
 			
@@ -220,11 +219,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		updateCoords();  
 		
 		// undefined and on path: remember old path parameter
-		if (!(isDefined || path == null)) {
+		if (!isDefined && path != null) {
+			PathParameter pathParameter = getPathParameter();
+			PathParameter tempPathParameter = getTempPathparameter();
 			pathParameter.set(tempPathParameter);
 		}				
 	}  
-	private PathParameter tempPathParameter = new PathParameter();
+	
+	private PathParameter tempPathParameter;
+	private PathParameter getTempPathparameter() {
+		if (tempPathParameter == null) {
+			tempPathParameter = new PathParameter();
+		}
+		return tempPathParameter;
+	}
 	
 	final public void updateCoords() {
 		// infinite point

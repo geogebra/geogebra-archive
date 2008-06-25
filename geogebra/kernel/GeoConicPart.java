@@ -308,7 +308,9 @@ implements LimitedPath, NumberValue {
 		
 		// remember the old values
 		double px = P.x, py = P.y, pz = P.z;
-		tempPP.set(P.pathParameter);
+		PathParameter tempPP = getTempPathParameter();
+		PathParameter pPP = P.getPathParameter();
+		tempPP.set(pPP);
 		
 		switch (type) {
 			case CONIC_CIRCLE:
@@ -323,26 +325,31 @@ implements LimitedPath, NumberValue {
 					lines[0].pointChanged(P);
 				} else {
 					// two rays: no point should lie on them
-					P.pathParameter.t = -1;
+					P.getPathParameter().t = -1;
 				}
 			break;
 
 			default:
-				P.pathParameter.t = -1;
+				pPP.t = -1;
 				//System.err.println("GeoConicPart.isIncident: unsupported conic part for conic type: " + type);
 		}					
 		
-		boolean result = 	P.pathParameter.t >= -eps && 
-							P.pathParameter.t <= 1 + eps;
+		boolean result = 	pPP.t >= -eps && 
+							pPP.t <= 1 + eps;
 		
 		// restore old values
 		P.x = px; P.y = py; P.z = pz;
-		P.pathParameter.set(tempPP);
+		pPP.set(tempPP);
 		
 		return result;
 	}
-	private PathParameter tempPP = new PathParameter();
-	  
+	
+	private PathParameter tempPP;
+	private PathParameter getTempPathParameter() {
+		if (tempPP == null)
+			tempPP = new PathParameter();
+		return tempPP;
+	}
 	
 	/*
 	 * Path Interface implementation
@@ -353,7 +360,8 @@ implements LimitedPath, NumberValue {
 	}
 	
 	public void pointChanged(GeoPoint P) {
-		P.pathParameter.pathType = type;
+		PathParameter pp = P.getPathParameter(); 
+		pp.pathType = type;
 		
 		switch (type) {
 			case CONIC_CIRCLE:
@@ -369,12 +377,12 @@ implements LimitedPath, NumberValue {
 					lines[0].pointChanged(P);
 					
 					// make sure we don't get outside [0,1]
-					if (P.pathParameter.t < 0) {
-						P.pathParameter.t = 0;
+					if (pp.t < 0) {
+						pp.t = 0;
 						pathChanged(P);
 					}
-					else if (P.pathParameter.t > 1) {
-						P.pathParameter.t = 1;
+					else if (pp.t > 1) {
+						pp.t = 1;
 						pathChanged(P);
 					}
 				} else {
@@ -387,20 +395,23 @@ implements LimitedPath, NumberValue {
 			break;
 
 			default:
-				P.pathParameter.t = Double.NaN;
+				pp.t = Double.NaN;
 				//System.err.println("GeoConicPart.pointChanged(): unsupported conic part for conic type: " + type);
 		}		
 	}
 	
 	private void setEllipseParameter(GeoPoint P) {
 		// let GeoConic do the work
-		super.pointChanged(P);
-
+		super.pointChanged(P);		
+		
 		// now transform parameter t from [paramStart, paramEnd] to [0, 1]
-		if (P.pathParameter.t < 0) P.pathParameter.t += Kernel.PI_2;
-		double t = P.pathParameter.t - paramStart;
-		if (t < 0) t += Kernel.PI_2;
-		P.pathParameter.t = t / paramExtent;	
+		PathParameter pp = P.getPathParameter();
+		if (pp.t < 0)
+			pp.t += Kernel.PI_2;
+		double t = pp.t - paramStart;
+		if (t < 0) 
+			t += Kernel.PI_2;
+		pp.t = t / paramExtent;	
 	}
 	
 	private void clipEllipseParameter(GeoPoint P) {
@@ -411,31 +422,33 @@ implements LimitedPath, NumberValue {
 		// handle [1, 2pi/paramExtent]:
 		// take 0 for parameter > (1 + 2pi/paramExtent)/2
 		// else take 1
-		if (P.pathParameter.t > 0.5 + Math.PI/paramExtent) {
+		PathParameter pp = P.getPathParameter();
+		if (pp.t > 0.5 + Math.PI/paramExtent) {
 			if (posOrientation)
-				P.pathParameter.t = 0;
+				pp.t = 0;
 			else
-				P.pathParameter.t = 1;
+				pp.t = 1;
 			pathChanged(P);
 		}
-		else if (P.pathParameter.t > 1) {
+		else if (pp.t > 1) {
 			if (posOrientation)
-				P.pathParameter.t = 1;
+				pp.t = 1;
 			else
-				P.pathParameter.t = 0;
+				pp.t = 0;
 			pathChanged(P);
 		}
 		else if (!posOrientation) {
-			P.pathParameter.t = 1.0 - P.pathParameter.t;
+			pp.t = 1.0 - pp.t;
 		}	
 	}
 	
 	public void pathChanged(GeoPoint P) {	
-		if (P.pathParameter.t < 0.0) {
-			P.pathParameter.t = 0;
+		PathParameter pp = P.getPathParameter();
+		if (pp.t < 0.0) {
+			pp.t = 0;
 		} 
-		else if (P.pathParameter.t > 1.0) {
-			P.pathParameter.t = 1;
+		else if (pp.t > 1.0) {
+			pp.t = 1;
 		}
 		
 		// handle conic types	
@@ -444,15 +457,15 @@ implements LimitedPath, NumberValue {
 			case CONIC_ELLIPSE:	
 				// if type of path changed (other conic) then we
 				// have to recalc the parameter with pointChanged()
-				if (P.pathParameter.pathType != type) {					
+				if (pp.pathType != type) {					
 					pointChanged(P);
 					return;
 				}		
 				
 				// calc Point on conic using this parameter (in eigenvector space)
 				double t = posOrientation ?
-						P.pathParameter.t:
-						1.0 - P.pathParameter.t;
+						pp.t:
+						1.0 - pp.t;
 				double angle = paramStart + t * paramExtent;
 				P.x = halfAxes[0] * Math.cos(angle);	
 				P.y = halfAxes[1] * Math.sin(angle);
@@ -466,7 +479,7 @@ implements LimitedPath, NumberValue {
 				if (posOrientation) { // segment
 					// if type of path changed (other conic) then we
 					// have to recalc the parameter with pointChanged()
-					if (P.pathParameter.pathType != type) {					
+					if (pp.pathType != type) {					
 						pointChanged(P);						
 					}	else {
 						lines[0].pathChanged(P);

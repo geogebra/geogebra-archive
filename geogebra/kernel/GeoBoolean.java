@@ -182,13 +182,20 @@ AbsoluteScreenLocateable {
 	}
 	
 	final public String toString() {
+		StringBuffer sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(20);
+	
+	private StringBuffer sbToString;
+	private StringBuffer getSbToString() {
+		if (sbToString == null)
+			sbToString = new StringBuffer();
+		return sbToString;
+	}
 
 	/**
 	 * interface BooleanValue

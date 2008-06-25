@@ -33,7 +33,8 @@ public class PathMoverGeneric implements PathMover {
 	}
 	
 	public void init(GeoPoint p) {
-		init(p.pathParameter.t); 	
+		PathParameter pp = p.getPathParameter();
+		init(pp.t); 	
 	}
 	
 	public void init(double param) {
@@ -195,7 +196,8 @@ public class PathMoverGeneric implements PathMover {
 				param = Double.NaN;
 		}
 		
-		p.pathParameter.t = param;
+		PathParameter pp = p.getPathParameter();
+		pp.t = param;
 		path.pathChanged(p);
 		p.updateCoords();
 	}

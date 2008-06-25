@@ -284,8 +284,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	 */	 
 	public void pointChanged(GeoPoint P) {								
 		// get closest parameter position on curve
-		double t = getClosestParameter(P, P.pathParameter.t);
-		P.pathParameter.t = t;
+		PathParameter pp = P.getPathParameter();
+		double t = getClosestParameter(P, pp.t);
+		pp.t = t;
 		pathChanged(P);	
 	}
 	
@@ -294,7 +295,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 			return true;
 			
 		// get closest parameter position on curve
-		double t = getClosestParameter(P, P.pathParameter.t);
+		PathParameter pp = P.getPathParameter();
+		double t = getClosestParameter(P, pp.t);
 		boolean onPath =
 			Math.abs(funX.evaluate(t) - P.inhomX) <= eps &&
 			Math.abs(funY.evaluate(t) - P.inhomY) <= eps;				
@@ -302,14 +304,15 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	}
 
 	public void pathChanged(GeoPoint P) {
-		if (P.pathParameter.t < startParam)
-			P.pathParameter.t = startParam;
-		else if (P.pathParameter.t > endParam)
-			P.pathParameter.t = endParam;
+		PathParameter pp = P.getPathParameter();
+		if (pp.t < startParam)
+			pp.t = startParam;
+		else if (pp.t > endParam)
+			pp.t = endParam;
 		
 		// calc point for given parameter
-		P.x = funX.evaluate(P.pathParameter.t);
-		P.y = funY.evaluate(P.pathParameter.t);
+		P.x = funX.evaluate(pp.t);
+		P.y = funY.evaluate(pp.t);
 		P.z = 1.0;		
 	}
 	
@@ -330,7 +333,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		// check if P is on this curve and has the right path parameter already
     	if (P.getPath() == this) { 
     		// point A is on curve c, take its parameter
-    		double pathParam = P.pathParameter.t;
+    		PathParameter pp = P.getPathParameter();
+    		double pathParam = pp.t;
     		if (distFun.evaluate(pathParam) < Kernel.MIN_PRECISION * Kernel.MIN_PRECISION)
     			return pathParam;   
     			

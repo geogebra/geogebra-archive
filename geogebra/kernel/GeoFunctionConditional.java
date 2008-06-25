@@ -303,7 +303,8 @@ public class GeoFunctionConditional extends GeoFunction {
 		
 		// set path parameter for compatibility with
 		// PathMoverGeneric
-		P.pathParameter.t = P.x;
+		PathParameter pp = P.getPathParameter();
+		pp.t = P.x;
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {

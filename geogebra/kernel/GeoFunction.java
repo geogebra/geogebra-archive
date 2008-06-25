@@ -424,7 +424,8 @@ GeoDeriveable, ParametricCurve {
 		
 		// set path parameter for compatibility with
 		// PathMoverGeneric
-		P.pathParameter.t = P.x;
+		PathParameter pp = P.getPathParameter();
+		pp.t = P.x;
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
@@ -436,7 +437,8 @@ GeoDeriveable, ParametricCurve {
 	}
 
 	public void pathChanged(GeoPoint P) {
-		P.x = P.pathParameter.t;
+		PathParameter pp = P.getPathParameter();
+		P.x = pp.t;
 		pointChanged(P);
 	}
 	

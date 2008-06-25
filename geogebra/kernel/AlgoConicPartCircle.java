@@ -108,7 +108,7 @@ public class AlgoConicPartCircle extends AlgoConicPart {
     	
     	// now take the parameters from the temp points
     	conicPart.set(conic);    	    	    	    	
-    	conicPart.setParameters(P.pathParameter.t, Q.pathParameter.t, true);
+    	conicPart.setParameters(P.getPathParameter().t, Q.getPathParameter().t, true);
     }
     
 }

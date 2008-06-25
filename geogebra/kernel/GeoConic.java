@@ -71,7 +71,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	int type; // of conic
 	double[] matrix = new double[6]; // flat matrix A
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
-	private AffineTransform transform = new AffineTransform();
+	private AffineTransform transform;
 	public boolean trace;
 
 	// (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
@@ -209,8 +209,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		toStringMode = co.toStringMode;
 		type = co.type;
 		for (int i = 0; i < 6; i++)
-			matrix[i] = co.matrix[i]; // flat matrix A          
-		transform.setTransform(co.transform);
+			matrix[i] = co.matrix[i]; // flat matrix A   
+		
+		if (co.transform != null) {
+			AffineTransform transform = getAffineTransform();
+			transform.setTransform(co.transform);
+		}
+		
 		eigenvec[0].setCoords(co.eigenvec[0]);
 		eigenvec[1].setCoords(co.eigenvec[1]);
 		b.setCoords(co.b);
@@ -483,14 +488,21 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 * in implicit mode: a x\u00b2 + b xy + c y\u00b2 + d x + e y + f = 0. 
 	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
 	 */
-	public String toString() {		
+	public String toString() {	
+		StringBuffer sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");
 		sbToString.append(buildValueString()); 
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(80);
+		
+	private StringBuffer sbToString;
+	private StringBuffer getSbToString() {
+		if (sbToString == null)
+			sbToString = new StringBuffer(80);
+		return sbToString;
+	}
 	
 	public String toValueString() {
 		return buildValueString().toString();	
@@ -668,6 +680,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN);
 		}
 	}
+	
+	// TODO: continue 
 	private StringBuffer sbToValueString = new StringBuffer(80);
 
 /*
@@ -713,6 +727,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	}
 
 	final public AffineTransform getAffineTransform() {
+		if (transform == null)
+			transform = new AffineTransform();
 		return transform;
 	}
 
@@ -720,6 +736,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		/*      ( v1x   v2x     bx )
 		 *      ( v1y   v2y     by )
 		 *      (  0     0      1  )   */
+		AffineTransform transform = getAffineTransform();
 		transform.setTransform(
 			eigenvec[0].x,
 			eigenvec[0].y,
@@ -2041,8 +2058,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	 
 	public void pointChanged(GeoPoint P) {
 		double px, py;		
-		P.pathParameter.pathType = type;
-		P.pathParameter.branch = -1;
+		PathParameter pp = P.getPathParameter();
+		pp.pathType = type;
+		pp.branch = -1;
 			
 		switch (type) {
 			case CONIC_EMPTY:
@@ -2061,16 +2079,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			case CONIC_PARALLEL_LINES:
 				if (lines[0].distanceHom(P) <= lines[1].distanceHom(P)) {
 					lines[0].pointChanged(P);
-					P.pathParameter.branch = 0;
+					pp.branch = 0;
 				} else {
 					lines[1].pointChanged(P);
-					P.pathParameter.branch = 1;					
+					pp.branch = 1;					
 				}
 			break;
 			
 			case CONIC_DOUBLE_LINE:
 				lines[0].pointChanged(P);
-				P.pathParameter.branch = 0;
+				pp.branch = 0;
 			break;
 			
 			case CONIC_CIRCLE:
@@ -2084,11 +2102,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				
 				// relation between the internal parameter t and the angle theta:
 				// t = atan(a/b tan(theta)) where tan(theta) = py / px
-				P.pathParameter.t = Math.atan2(halfAxes[0]*py, halfAxes[1]*px);
+				pp.t = Math.atan2(halfAxes[0]*py, halfAxes[1]*px);
 
 				// calc Point on conic using this parameter
-				P.x = halfAxes[0] * Math.cos(P.pathParameter.t);	
-				P.y = halfAxes[1] * Math.sin(P.pathParameter.t);
+				P.x = halfAxes[0] * Math.cos(pp.t);	
+				P.y = halfAxes[1] * Math.sin(pp.t);
 				P.z = 1.0;
 				
 				//	transform back to real world coord system
@@ -2104,15 +2122,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				py = P.y / P.z;
 				
 				// keep py				
-				P.pathParameter.t = MyMath.asinh(py / halfAxes[1]);
-				P.x = halfAxes[0] * MyMath.cosh(P.pathParameter.t);	
+				pp.t = MyMath.asinh(py / halfAxes[1]);
+				P.x = halfAxes[0] * MyMath.cosh(pp.t);	
 				P.y = py;
 				P.z = 1.0;
 				if (px < 0) {										
-					P.pathParameter.branch = 1;
+					pp.branch = 1;
 					P.x = -P.x;
 				} else {									
-					P.pathParameter.branch = 0;
+					pp.branch = 0;
 				}
 					
 				//	transform back to real world coord system
@@ -2125,8 +2143,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 				
 				// keep py
 				py = P.y / P.z;
-				P.pathParameter.t = py / p;
-				P.x = p * P.pathParameter.t  * P.pathParameter.t  / 2.0;
+				pp.t = py / p;
+				P.x = p * pp.t  * pp.t  / 2.0;
 				P.y = py;
 				P.z = 1.0; 									
 				
@@ -2139,7 +2157,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public void pathChanged(GeoPoint P) {
 		// if type of path changed (other conic) then we
 		// have to recalc the parameter with pointChanged()
-		if (P.pathParameter.pathType != type) {
+		PathParameter pp = P.getPathParameter();
+		if (pp.pathType != type) {
 			pointChanged(P);
 			return;
 		}
@@ -2159,7 +2178,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			
 			case CONIC_INTERSECTING_LINES:
 			case CONIC_PARALLEL_LINES:
-				if (P.pathParameter.branch == 0) {
+				if (pp.branch == 0) {
 					lines[0].pathChanged(P);					 
 				} else {
 					lines[1].pathChanged(P);										
@@ -2172,15 +2191,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			
 			case CONIC_CIRCLE:	
 				//	calc Point on conic using this parameter (in eigenvector space)
-				 P.x = b.x + halfAxes[0] * Math.cos(P.pathParameter.t);	
-				 P.y = b.y + halfAxes[0] * Math.sin(P.pathParameter.t);
+				 P.x = b.x + halfAxes[0] * Math.cos(pp.t);	
+				 P.y = b.y + halfAxes[0] * Math.sin(pp.t);
 				 P.z = 1.0;										
 			break;
 			
 			case CONIC_ELLIPSE:												
 				// calc Point on conic using this parameter (in eigenvector space)
-				P.x = halfAxes[0] * Math.cos(P.pathParameter.t);	
-				P.y = halfAxes[1] * Math.sin(P.pathParameter.t);
+				P.x = halfAxes[0] * Math.cos(pp.t);	
+				P.y = halfAxes[1] * Math.sin(pp.t);
 				P.z = 1.0;
 				
 				//	transform to real world coord system
@@ -2188,18 +2207,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			break;			
 			
 			case CONIC_HYPERBOLA:																									
-				P.x = halfAxes[0] * MyMath.cosh(P.pathParameter.t);
-				P.y = halfAxes[1] * MyMath.sinh(P.pathParameter.t);
+				P.x = halfAxes[0] * MyMath.cosh(pp.t);
+				P.y = halfAxes[1] * MyMath.sinh(pp.t);
 				P.z = 1.0;				
-				if (P.pathParameter.branch == 1) P.x = -P.x;
+				if (pp.branch == 1) P.x = -P.x;
 						
 				//	transform back to real world coord system
 				coordsEVtoRW(P);													
 			break;																			
 			
 			case CONIC_PARABOLA:
-				P.y = p * P.pathParameter.t;				
-				P.x = P.y * P.pathParameter.t  / 2.0;				
+				P.y = p * pp.t;				
+				P.x = P.y * pp.t  / 2.0;				
 				P.z = 1.0;				
 				
 				//	transform back to real world coord system

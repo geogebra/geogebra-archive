@@ -546,12 +546,13 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		// parameter is between 0 and segment.length,
 		// i.e. floor(parameter) gives the segment index
 		
-		P.pathParameter.t = P.pathParameter.t % segments.length;
-		if (P.pathParameter.t < 0) 
-			P.pathParameter.t += segments.length;
-		int index = (int) Math.floor(P.pathParameter.t) ;		
+		PathParameter pp = P.getPathParameter();
+		pp.t = pp.t % segments.length;
+		if (pp.t < 0) 
+			pp.t += segments.length;
+		int index = (int) Math.floor(pp.t) ;		
 		GeoSegment seg = segments[index];
-		double segParameter = P.pathParameter.t - index;
+		double segParameter = pp.t - index;
 		
 		// calc point for given parameter
 		P.x = seg.startPoint.inhomX + segParameter * seg.y;
@@ -566,6 +567,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		double resx=0, resy=0, resz=0, param=0;
 		
 		// find closest point on each segment
+		PathParameter pp = P.getPathParameter();
 		for (int i=0; i < segments.length; i++) {
 			P.x = qx;
 			P.y = qy;
@@ -581,14 +583,14 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 				resx = P.x;
 				resy = P.y;
 				resz = P.z;
-				param = i + P.pathParameter.t;
+				param = i + pp.t;
 			}
 		}				
 			
 		P.x = resx;
 		P.y = resy;
 		P.z = resz;
-		P.pathParameter.t = param;	
+		pp.t = param;	
 	}	
 
 }

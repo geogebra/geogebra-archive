@@ -209,14 +209,16 @@ public class GeoLocus extends GeoElement implements Path {
 	public void pointChanged(GeoPoint P) {
 		// find closest point on path
 		MyPoint closestPoint = getClosestPoint(P);
+		
+		PathParameter pp = P.getPathParameter();
 		if (closestPoint != null) {
 			P.x = closestPoint.x;
 			P.y = closestPoint.y;
 			P.z = 1.0;
-			P.pathParameter.t = closestPointIndex;			
+			pp.t = closestPointIndex;			
 		}		
 		else {
-			P.pathParameter.t = Double.NaN;
+			pp.t = Double.NaN;
 		}		
 	}
 	

@@ -24,8 +24,9 @@ public class PathMoverLocus extends PathMoverGeneric {
 	}
 	
 	protected void calcPoint(GeoPoint p) {
-		double param = curr_param;			
-		p.pathParameter.t = param;
+		double param = curr_param;		
+		PathParameter pp = p.getPathParameter();
+		pp.t = param;
 		
 		// PATH MOVER CHANGED PARAMETER (see PathMoverGeneric.calcPoint())
 		// get points left and right of path parameter				

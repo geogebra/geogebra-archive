@@ -35,10 +35,6 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     
     //  enable negative sign of first coefficient in implicit equations
 	private static boolean KEEP_LEADING_SIGN = true;
-    
-    // temp
-    private double [] P = new double[2],                       			 
-                      			 g = new double[3];	 
     private static final String [] vars = { "x", "y" };
     
     public GeoLine(Construction c) { 
@@ -46,7 +42,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     	setMode( GeoLine.EQUATION_IMPLICIT );
     }
     
-    /** Creates new GeoPoint */     
+    /** Creates new GeoLine */     
     public GeoLine(Construction cons, String label, double a, double b, double c) {
         super(cons, a, b, c);	// GeoVec3D constructor                 
         setMode( GeoLine.EQUATION_IMPLICIT );
@@ -105,7 +101,68 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 			// STANDARD CASE: finite point			
 			return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps * simplelength;
 		}
-	}
+	}		  
+	
+    /**
+     * Returns whether this point lies on this line, segment or ray.     
+     */
+    final public boolean isOnPath(GeoPoint P, double eps) {  
+    	if (P.getPath() == this)
+			return true;
+    	
+    	// check if P lies on line first
+    	if (!isOnFullLine(P, eps))
+    		return false;    	
+    	
+    	// for a line we are done here: the point is on the line
+    	// for rays and segments we need to continue
+    	int classType = getGeoClassType();
+    	if (classType == GEO_CLASS_LINE)
+    		return true;
+    	
+    	// idea: calculate path parameter and check
+		// if it is in [0, 1] for a segment or greater than 0 for a ray
+		
+		// remember the old point coordinates
+		double px = P.x, py = P.y, pz = P.z;
+		PathParameter tempPP = getTempPathParameter();
+		PathParameter pp = P.getPathParameter();
+		tempPP.set(pp);
+
+		pointChanged(P);		
+		
+		boolean result;
+		switch (classType) {
+			case GEO_CLASS_SEGMENT:
+				// segment: parameter in [0,1]
+				result =   pp.t >= -eps && 
+							pp.t <= 1 + eps;
+				break;
+				
+			case GEO_CLASS_RAY:
+				// ray: parameter > 0
+				result =   pp.t >= -eps; 
+				break;
+				
+			default:
+				// line: any parameter
+				result = true;
+		}
+	
+		// restore old values
+		P.x = px; P.y = py; P.z = pz;
+		pp.set(tempPP);
+		
+		return result;
+    }
+    
+    private PathParameter tempPP;
+    private PathParameter getTempPathParameter() {
+    	if (tempPP == null) 
+    		tempPP = new PathParameter();
+    	return tempPP;
+    }
+    
     
     /** returns true if this line and g are parallel */
     final public boolean isParallel(GeoLine g) {        
@@ -432,20 +489,31 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
     }            
     
     /** output depends on mode: PARAMETRIC or EQUATION */
-    public String toString() {       
+    public String toString() {    
+    	StringBuffer sbToString = getSbToString();
     	sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");         
 		sbToString.append(buildValueString());
 		return sbToString.toString();   
     }
-	StringBuffer sbToString = new StringBuffer(50);   
+    
+	private StringBuffer sbToString;
+	private StringBuffer getSbToString() {
+		if (sbToString == null)
+			sbToString = new StringBuffer(50);
+		return sbToString;
+	}
+	
 	
 	public String toValueString() {
 		return buildValueString().toString();
 	}
     
-    private StringBuffer buildValueString() {		                               		 
+    private StringBuffer buildValueString() {		
+        double [] P = new double[2];                       			 
+        double [] g = new double[3];	 
+    	
        	switch (toStringMode) {     
             case EQUATION_EXPLICIT:   ///EQUATION    
                 g[0] = x;
@@ -455,6 +523,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
             
             case PARAMETRIC:       				                  
 				  	getInhomPointOnLine(P); // point
+				  	StringBuffer sbBuildValueString = getSbBuildValueString();
 					sbBuildValueString.setLength(0);			                  
 					sbBuildValueString.append("X = (");
 					sbBuildValueString.append(kernel.format(P[0]));
@@ -479,10 +548,18 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
                     return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN);
         }    	    	
     }        
-	private StringBuffer sbBuildValueString = new StringBuffer(50);     
+    
+	private StringBuffer sbBuildValueString = new StringBuffer(50);
+	private StringBuffer getSbBuildValueString() {
+		if (sbBuildValueString == null)
+			sbBuildValueString = new StringBuffer(50);
+		return sbBuildValueString;
+	}
     
     /** left hand side as String : ax + by + c */
     final public StringBuffer toStringLHS() {		  
+        double [] g = new double[3];	
+        
         if (isDefined()) {
 			g[0] = x;
 			g[1] = y;
@@ -491,7 +568,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
         } else
 			return sbToStringLHS;                           	                   	               
     }
-	private StringBuffer sbToStringLHS = new StringBuffer("\u221E");     
+	private static StringBuffer sbToStringLHS = new StringBuffer("\u221E");     
  
     /**
      * returns all class-specific xml tags for saveXML
@@ -543,11 +620,12 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 						
 		// set path parameter
 		if (startPoint != null) {
+			PathParameter pp = P.getPathParameter();
 			if (Math.abs(x) <= Math.abs(y)) {	
-				P.pathParameter.t = (startPoint.z * P.x - startPoint.x) / (y * startPoint.z);								
+				pp.t = (startPoint.z * P.x - startPoint.x) / (y * startPoint.z);								
 			} 
 			else {		
-				P.pathParameter.t = (startPoint.y - startPoint.z * P.y) / (x * startPoint.z);			
+				pp.t = (startPoint.y - startPoint.z * P.y) / (x * startPoint.z);			
 			}
 		}		
 	}				
@@ -555,20 +633,14 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 	public void pathChanged(GeoPoint P) {
 		// calc point for given parameter
 		if (startPoint != null) {
-			P.x = startPoint.inhomX + P.pathParameter.t * y;
-			P.y = startPoint.inhomY - P.pathParameter.t * x;
+			PathParameter pp = P.getPathParameter();
+			P.x = startPoint.inhomX + pp.t * y;
+			P.y = startPoint.inhomY - pp.t * x;
 			P.z = 1.0;		
 		} else  {
 			pointChanged(P);		
 		}
 	}
-	
-    public boolean isOnPath(GeoPoint P, double eps) {
-    	if (P.getPath() == this)
-			return true;
-    	
-    	return isOnFullLine(P, eps);
-    }
     
 	public boolean isPath() {
 		return true;
@@ -615,7 +687,8 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 			// p is a point on the line ;-)
 			moverStartPoint.set(p);
 			moverStartPoint.setConstruction(p.cons);
-			p.pathParameter.t = 0;												
+			PathParameter pp = p.getPathParameter();
+			pp.t = 0;												
 			start_param = 0; 								
 			
 			min_param = -1 + PathMover.OPEN_BORDER_OFFSET;
@@ -635,9 +708,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 		}							
 		
 		protected void calcPoint(GeoPoint p) {
-			p.pathParameter.t = PathMoverGeneric.infFunction(curr_param);	
-			p.x = moverStartPoint.inhomX + p.pathParameter.t * y;
-			p.y = moverStartPoint.inhomY - p.pathParameter.t * x;
+			PathParameter pp = p.getPathParameter();
+			pp.t = PathMoverGeneric.infFunction(curr_param);	
+			p.x = moverStartPoint.inhomX + pp.t * y;
+			p.y = moverStartPoint.inhomY - pp.t * x;
 			p.z = 1.0;	
 			p.updateCoords();
 		}

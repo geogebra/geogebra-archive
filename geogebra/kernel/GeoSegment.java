@@ -249,37 +249,6 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
     }
 
 	
-    /** returns true if P lies on this segment */
-    public boolean isOnPath(GeoPoint P, double eps) {  
-    	if (P.getPath() == this)
-			return true;
-    	
-    	// check if P lies on line first
-    	if (!isOnFullLine(P, eps))
-    		return false;
-    	
-    	// idea: calculate path parameter and check
-		//       if it is in [0, 1]
-		
-		// remember the old values
-		double px = P.x, py = P.y, pz = P.z;
-		tempPP.set(P.pathParameter);
-
-		super.pointChanged(P);		
-		
-		boolean result = 	P.pathParameter.t >= -eps && 
-							P.pathParameter.t <= 1 + eps;
-	
-		// restore old values
-		P.x = px; P.y = py; P.z = pz;
-		P.pathParameter.set(tempPP);
-		
-		return result;
-    }
-    private PathParameter tempPP = new PathParameter();
-    
-
-	
 	/* 
 	 * Path interface
 	 */	 
@@ -288,30 +257,32 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 			
 		// ensure that the point doesn't get outside the segment
 		// i.e. ensure 0 <= t <= 1 
-		if (P.pathParameter.t < 0.0) {
+		PathParameter pp = P.getPathParameter();
+		if (pp.t < 0.0) {
 			P.x = startPoint.x;
 			P.y = startPoint.y;
 			P.z = startPoint.z; 
-			P.pathParameter.t = 0.0;
-		} else if  (P.pathParameter.t > 1.0) {
+			pp.t = 0.0;
+		} else if  (pp.t > 1.0) {
 			P.x = endPoint.x;
 			P.y = endPoint.y;
 			P.z = endPoint.z; 
-			P.pathParameter.t = 1.0;
+			pp.t = 1.0;
 		}
 	}
 
 	public void pathChanged(GeoPoint P) {
-		if (P.pathParameter.t < 0.0) {
-			P.pathParameter.t = 0;
+		PathParameter pp = P.getPathParameter();
+		if (pp.t < 0.0) {
+			pp.t = 0;
 		} 
-		else if (P.pathParameter.t > 1.0) {
-			P.pathParameter.t = 1;
+		else if (pp.t > 1.0) {
+			pp.t = 1;
 		}
 		
 		// calc point for given parameter
-		P.x = startPoint.inhomX + P.pathParameter.t * y;
-		P.y = startPoint.inhomY - P.pathParameter.t * x;
+		P.x = startPoint.inhomX + pp.t * y;
+		P.y = startPoint.inhomY - pp.t * x;
 		P.z = 1.0;		
 	}
 	

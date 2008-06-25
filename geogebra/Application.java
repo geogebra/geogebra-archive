@@ -1939,6 +1939,7 @@ public abstract class Application implements	KeyEventDispatcher {
 				fileFilter.addExtension("png");
 				fileFilter.addExtension("gif");
 				fileFilter.addExtension("tif");
+				fileFilter.addExtension("bmp");
 				fileFilter.setDescription(getPlain("Image"));
 				fileChooser.resetChoosableFileFilters();
 				fileChooser.setFileFilter(fileFilter);    
