@@ -524,7 +524,7 @@ public abstract class GeoElement
 		if (greenD>0.5) greenD=2*(1-greenD); else greenD=2*greenD;
 		if (blueD>0.5) blueD=2*(1-blueD); else blueD=2*blueD;
 		
-		System.out.println("red"+redD+"green"+greenD+"blue"+blueD);
+		//System.out.println("red"+redD+"green"+greenD+"blue"+blueD);
 		
 		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);		
 
@@ -680,7 +680,7 @@ public abstract class GeoElement
 	 * 2008-05-03
 	 */
 	public void setNonVisualProperties(GeoElement geo) {
-		// TODO doesn't work
+		
 		setLayer(geo.getLayer());
 
 		// copy color function
@@ -2889,7 +2889,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	public final void removeColorFunction(GeoList col) {
-		System.out.println("removeColorFunction");
+		//System.out.println("removeColorFunction");
 		if (colFunction == col)
 			colFunction = null;
 	}
