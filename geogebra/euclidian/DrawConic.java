@@ -688,6 +688,27 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;      
         }
     }
+	
+	/**
+	 * Returns the bounding box of this Drawable in screen coordinates. 
+	 * @return null when this Drawable is infinite or undefined	 
+	 */
+	final public Rectangle getBounds() {	
+		if (!geo.isDefined())
+			return null;
+		
+		switch (type) {
+	        case GeoConic.CONIC_SINGLE_POINT:                         
+	            return drawPoint.getBounds();              
+	                                         
+	        case GeoConic.CONIC_CIRCLE:  
+	        case GeoConic.CONIC_ELLIPSE:     
+	        	return shape.getBounds();
+	        	
+	        default:
+	        	return null;        
+        }		
+	}
     
 	final public void drawTrace(Graphics2D g2) {             
         g2.setColor(conic.getObjectColor());

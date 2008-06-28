@@ -142,7 +142,26 @@ public final class DrawList extends Drawable {
     	return size > 0;
     }
     
-    
+    /**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {
+		Rectangle result = null;
+		
+		int size = drawables.size();
+		for (int i=0; i < size; i++) {    		
+			Drawable d = (Drawable) drawables.get(i);
+			Rectangle bb = d.getBounds();
+			if (bb != null) {
+				if (result == null) 
+					result = new Rectangle();
+				// add bounding box of list element
+				result.add(bb);
+			}			   		
+    	}        		
+    	
+		return result;
+	}        
     
     final public GeoElement getGeoElement() {
         return geo;

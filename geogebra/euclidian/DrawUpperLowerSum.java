@@ -163,4 +163,14 @@ public class DrawUpperLowerSum extends Drawable {
     public void setGeoElement(GeoElement geo) {
         this.geo = geo;
     }
+    
+    /**
+	 * Returns the bounding box of this Drawable in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined())
+			return null;
+		else 
+			return gp.getBounds();	
+	}
 }

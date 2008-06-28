@@ -15,7 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.roots.RealRootFunction;
 
 
-public interface ParametricCurve extends Traceable {
+public interface ParametricCurve extends Traceable, Path {
 	double getMinParameter(); 
 	double getMaxParameter();	
 	

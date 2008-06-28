@@ -46,7 +46,6 @@ public final class DrawPoint extends Drawable {
 	private Ellipse2D.Double circle = new Ellipse2D.Double();
 	private Ellipse2D.Double circleSel = new Ellipse2D.Double();
 	private Line2D.Double line1, line2;// for cross	
-    private double [] coords = new double[2];
     
     private static BasicStroke borderStroke = EuclidianView.getDefaultStroke();
     private static BasicStroke [] crossStrokes = new BasicStroke[10];
@@ -57,7 +56,7 @@ public final class DrawPoint extends Drawable {
         this.P = P;
         geo = P;
         
-        crossStrokes[1] = new BasicStroke(1f);
+        //crossStrokes[1] = new BasicStroke(1f);
 
         update();
     }
@@ -68,15 +67,8 @@ public final class DrawPoint extends Drawable {
 		labelVisible = geo.isLabelVisible();
         		
         // compute lower left corner of bounding box
-        P.getInhomCoords(coords);     
-        
-        // point outside screen?
-        if (coords[0] > view.xmax || coords[0] < view.xmin
-        	|| coords[1] > view.ymax || coords[1] < view.ymin)  
-        {
-        	isVisible = false;
-        	return;	
-        }
+	    double [] coords = new double[2];
+        P.getInhomCoords(coords);                   
         
         // convert to screen
 		view.toScreenCoords(coords);						
@@ -142,6 +134,13 @@ public final class DrawPoint extends Drawable {
 			yLabel = (int)  Math.round(yUL - pointSize);    
 			addLabelOffset();           
 		}    
+		
+		// point outside screen?
+        if (coords[0] > view.xmax || coords[0] < view.xmin
+        	|| coords[1] > view.ymax || coords[1] < view.ymin)  
+        {
+        	isVisible = false;        		
+        }
     }
 
     final public void draw(Graphics2D g2) {   
@@ -215,6 +214,14 @@ public final class DrawPoint extends Drawable {
     final public boolean isInside(Rectangle rect) {
     	return rect.contains(circleSel.getBounds());  
     }
+    
+    /**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {				
+		// return selection circle's bounding box
+		return circleSel.getBounds();		
+	}
     
     final public GeoElement getGeoElement() {
         return geo;

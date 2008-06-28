@@ -75,7 +75,15 @@ public abstract class Drawable {
 	
 	void updateFontSize() {
 		//	this enforces reiniting of labelRectangle in drawLabel()
-		labelHasIndex = true; 
+		labelHasIndex = true;				
+	}
+	
+	/**
+	 * Returns the bounding box of this Drawable in screen coordinates. 
+	 * @return null when this Drawable is infinite or undefined	 
+	 */
+	public Rectangle getBounds() {		
+		return null;	
 	}
 	
 	final protected void drawLabel(Graphics2D g2) {

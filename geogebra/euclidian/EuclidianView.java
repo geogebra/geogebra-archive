@@ -625,6 +625,27 @@ public class EuclidianView extends JPanel implements View, Printable {
 	}
 
 	
+	/**
+	 * Returns the bounding box of all Drawable objects in this view in screen coordinates.	 
+	 */
+	public Rectangle getBounds() {
+		Rectangle result = null;
+		
+		DrawableIterator it = allDrawableList.getIterator();
+		while (it.hasNext()) {    		
+			Drawable d = it.next();
+			Rectangle bb = d.getBounds();
+			if (bb != null) {
+				if (result == null) 
+					result = new Rectangle();
+				// add bounding box of list element
+				result.add(bb);
+			}			   		
+    	}        		
+    	
+		return result;
+	}    
+	
 //	 
 	/**
 	 * Sets the global size for checkboxes.

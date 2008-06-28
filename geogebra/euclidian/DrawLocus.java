@@ -139,6 +139,16 @@ public final class DrawLocus extends Drawable {
     final public void setGeoElement(GeoElement geo) {
         this.geo = geo;
     } 
+    
+	/**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined() || !locus.isClosedPath())
+			return null;
+		else 
+			return gp.getBounds();	
+	}
 
 }
 

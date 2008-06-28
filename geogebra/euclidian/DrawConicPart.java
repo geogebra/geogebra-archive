@@ -234,6 +234,25 @@ implements Previewable {
         	}
         }
     }
+	
+	/**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined())
+			return null;
+		
+		switch (draw_type) {
+			case DRAW_TYPE_ELLIPSE:
+				return shape.getBounds();		            
+		
+			case DRAW_TYPE_SEGMENT:
+				return drawSegment.getBounds();			
+			
+			default:
+				return null;
+		}	
+	}
     
 	final void drawTrace(Graphics2D g2) {
 		switch (draw_type) {

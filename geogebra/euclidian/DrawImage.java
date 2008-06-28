@@ -263,6 +263,16 @@ public final class DrawImage extends Drawable {
     }   
     
     /**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined())
+			return null;
+		else 
+			return boundingBox;		
+	}
+    
+    /**
      * Returns false     
      */ 
 	public boolean hitLabel(int x, int y) {

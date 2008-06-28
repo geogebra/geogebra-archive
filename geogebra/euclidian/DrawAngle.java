@@ -147,8 +147,10 @@ public class DrawAngle extends Drawable {
 
 	final public void update() {
 		isVisible = geo.isEuclidianVisible();
-		if (!isVisible)
+		if (!isVisible) {
+			shape = null;
 			return;
+		}
 		labelVisible = geo.isLabelVisible();
 		updateStrokes(angle);
 
@@ -580,6 +582,17 @@ public class DrawAngle extends Drawable {
 
 	public void setGeoElement(GeoElement geo) {
 		this.geo = geo;
+	}
+	
+	/**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined() || shape == null)
+			return null;
+		
+		// return selection circle's bounding box
+		return shape.getBounds();		
 	}
 
 }

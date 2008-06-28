@@ -118,6 +118,16 @@ public class DrawIntegral extends Drawable {
 	final public boolean isInside(Rectangle rect) {  
     	return false;   
     }
+	
+	/**
+	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined())
+			return null;
+		else 
+			return gp.getBounds();	
+	}
     
     public GeoElement getGeoElement() {
         return geo;
