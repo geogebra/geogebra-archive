@@ -136,8 +136,8 @@ public final class DrawPoint extends Drawable {
 		}    
 		
 		// point outside screen?
-        if (coords[0] > view.xmax || coords[0] < view.xmin
-        	|| coords[1] > view.ymax || coords[1] < view.ymin)  
+        if (coords[0] > view.width || coords[0] < 0
+        	|| coords[1] > view.height || coords[1] < 0)  
         {
         	isVisible = false;        		
         }
