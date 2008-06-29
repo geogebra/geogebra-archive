@@ -130,58 +130,71 @@ public abstract class Drawable {
 		//System.out.println(labelDesc.split("\\$")[0]+"xxx"+labelDesc.split("\\$")[1]+"xxx"+labelDesc.split("\\$")[2]+"xxx"+labelDesc.split("\\$")[3]+"xxx");
 		// line1$ \sqrt{ line2 }$line3$ \frac{ line }{4 }$ 
 		
-		String[] strings=labelDesc.split("\\$");
-		boolean latex=false;
-		if (labelDesc.indexOf('$') == -1) latex=true; // just latex
-		
 		boolean lastLine;
 		
 		Dimension dim;
-
-		for (int j=0 ; j<strings.length ; j++)
+		
+		String[] lines=labelDesc.split("\n");
+		for (int k=0 ; k<lines.length ; k++)
 		{
-			//if (j==0) firstLine=true; else firstLine=false;
-			if (j==strings.length-1) lastLine=true; else lastLine=false;
-			
-			//System.out.println(j+strings[j]);
-			g2.setFont(font);
 
-			if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+			String[] strings=lines[k].split("\\$");
+
+			boolean latex=false;
+			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
 			{
-				//System.out.println("strings["+j+"]=XXX"+strings[j]+"XXX"+strings[j].length());
-				if (latex)
-				{
-					//if (!firstLine) height += lineSpace;
-					
-					dim = drawEquation(g2,xLabel,(int)(yLabel + height), strings[j], fontSize, serifFont, fontStyle);
-					int width=dim.width;
-					if (width > xoffset) xoffset = width;		
-			
-					height += dim.height;
-					//if (!lastLine) height += lineSpace;
-					//System.out.println(dim);
-				}
-				else
-				{
-					height += lineSpread;
-					
-					g2.drawString(strings[j], xLabel, yLabel + height);			
-					int width=(int)textWidth(strings[j], font, frc);
-					if (width > xoffset) xoffset = width;		
-			
-				}
-				if (!lastLine) height += lineSpace;
+				latex=true; // just latex
+				//System.out.println("just latex");
 			}
-			
-			latex=!latex;
-			
 
+			for (int j=0 ; j<strings.length ; j++)
+			{
+				//if (j==0) firstLine=true; else firstLine=false;
+				if (k==lines.length-1 && j==strings.length-1) lastLine=true; else lastLine=false;
+				
+				//System.out.println(j+strings[j]);
+				g2.setFont(font);
+
+				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+				{
+					//System.out.println("strings["+j+"]=XXX"+strings[j]+"XXX"+strings[j].length());
+					if (latex)
+					{
+						//if (!firstLine) height += lineSpace;
+						
+						dim = drawEquation(g2,xLabel,(int)(yLabel + height), strings[j], fontSize, serifFont, fontStyle);
+						int width=dim.width;
+						if (width > xoffset) xoffset = width;		
+						
+						height += dim.height;
+						//if (!lastLine) height += lineSpace;
+						//System.out.println(dim);
+					}
+					else
+					{
+						height += lineSpread;
+						
+						Point p = drawIndexedString(g2, strings[j], xLabel, yLabel + height);
+
+						if (p.x > xoffset) xoffset = p.x;		
+						if (p.y > lineSpread) height += p.y - lineSpread;
+						
+					}
+					//if (!lastLine)
+					height += lineSpace;
+				}
+				latex=!latex;
+				//System.out.println(latex);
+				
+				
+
+			}
 		}
 		labelRectangle.setBounds(xLabel, yLabel, xoffset, (int)height);
 		
-		g2.setFont(font);
+		//g2.setFont(font);
 	}	
-	
+
 	// returns a string consisting of n consecutive "str"s
 	final private String str(String str, int n)
 	{
