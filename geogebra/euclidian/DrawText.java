@@ -118,7 +118,7 @@ public final class DrawText extends Drawable {
 		}*/
 		
 		updateFontSize();				
-			
+			/*
 		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
 			
@@ -172,9 +172,16 @@ public final class DrawText extends Drawable {
 		else if (text.isNeedsUpdatedBoundingBox()) {
 			// ensure that bounding box gets updated by drawing text once
 			drawMultilineText(view.getTempGraphics2D());	
-		}
+		}*/
+		
+		
 		
 		if (text.isNeedsUpdatedBoundingBox()) {
+			
+			// ensure that bounding box gets updated by drawing text once
+			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), serifFont, fontStyle);
+			else drawMultilineText(view.getTempGraphics2D());	
+			
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
 			double xRW = view.toRealWorldCoordX(labelRectangle.x);
 			double yRW = view.toRealWorldCoordY(labelRectangle.y);		
@@ -210,7 +217,7 @@ public final class DrawText extends Drawable {
 			}   
         }
     }
-    
+    /*
 	final public void drawEquation(Graphics2D g2, int x, int y)
 	{
 		if (!JarManager.JSMATHTEX_LOADED)
@@ -244,7 +251,7 @@ public final class DrawText extends Drawable {
 			icon.paintIcon(new JLabel(), g2, x, y); // component can't be null
 		}
 
-	}
+	}*/
    
     /**
      * was this object clicked at? (mouse pointer
@@ -293,11 +300,11 @@ public final class DrawText extends Drawable {
 			fontStyle = newFontStyle;
 			serifFont = newSerifFont;
 						
-			if (isLaTeX) {
-				//setEqnFontSize();				
-			} else {				
+			//if (isLaTeX) {
+			//	//setEqnFontSize();				
+			//} else {				
 				textFont = new Font(serifFont ? "Serif" : "SansSerif", fontStyle, fontSize);				
-			}		
+			//}		
 		}			
 	}
 	

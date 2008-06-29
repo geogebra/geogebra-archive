@@ -130,7 +130,7 @@ public abstract class Drawable {
 		//System.out.println(labelDesc.split("\\$")[0]+"xxx"+labelDesc.split("\\$")[1]+"xxx"+labelDesc.split("\\$")[2]+"xxx"+labelDesc.split("\\$")[3]+"xxx");
 		// line1$ \sqrt{ line2 }$line3$ \frac{ line }{4 }$ 
 		
-		boolean lastLine;
+		//boolean lastLine;
 		
 		Dimension dim;
 		
@@ -150,10 +150,10 @@ public abstract class Drawable {
 			for (int j=0 ; j<strings.length ; j++)
 			{
 				//if (j==0) firstLine=true; else firstLine=false;
-				if (k==lines.length-1 && j==strings.length-1) lastLine=true; else lastLine=false;
+				//if (k==lines.length-1 && j==strings.length-1) lastLine=true; else lastLine=false;
 				
 				//System.out.println(j+strings[j]);
-				g2.setFont(font);
+				//g2.setFont(font);
 
 				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
 				{
