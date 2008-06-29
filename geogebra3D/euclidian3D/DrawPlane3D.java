@@ -13,8 +13,8 @@ import javax.vecmath.Matrix4d;
 
 
 
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
 
 
 

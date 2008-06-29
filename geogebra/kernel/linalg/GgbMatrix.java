@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra3D.kernel3D.Linalg;
+package geogebra.kernel.linalg;
 
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Matrix4d;

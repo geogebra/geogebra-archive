@@ -12,8 +12,8 @@ import javax.vecmath.Vector3d;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 
 

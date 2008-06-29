@@ -24,8 +24,8 @@ package geogebra3D;
 import java.awt.Color;
 
 import geogebra.kernel.*;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.*;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 
 

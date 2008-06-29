@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra3D.kernel3D.Linalg.GgbVector;
+import geogebra.kernel.linalg.GgbVector;
 
 public class GeoSegment3D extends GeoCoordSys1D {
 	

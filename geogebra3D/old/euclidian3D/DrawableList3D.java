@@ -5,9 +5,9 @@ import java.awt.Shape;
 
 import geogebra.euclidian.DrawableList;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 
 public class DrawableList3D extends DrawableList {

@@ -23,7 +23,7 @@ package geogebra3D.kernel3D;
 import geogebra.euclidian.EuclidianView;
 
 import geogebra.kernel.*;
-import geogebra3D.kernel3D.Linalg.GgbVector;
+import geogebra.kernel.linalg.GgbVector;
 
 import java.util.ArrayList;
 

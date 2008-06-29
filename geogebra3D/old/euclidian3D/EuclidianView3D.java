@@ -5,11 +5,11 @@ import java.awt.Graphics2D;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 
 public class EuclidianView3D 

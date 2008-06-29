@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 
 public class GeoCoordSys1D extends GeoCoordSys {
 	

@@ -11,9 +11,9 @@ import javax.vecmath.Color3f;
 
 
 
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 
 

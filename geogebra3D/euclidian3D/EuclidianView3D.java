@@ -4,12 +4,12 @@ package geogebra3D.euclidian3D;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;

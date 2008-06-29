@@ -2,7 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix;
 
 public class GeoCoordSys extends GeoElement3D{
 

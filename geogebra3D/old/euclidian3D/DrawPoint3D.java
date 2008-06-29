@@ -19,8 +19,8 @@ the Free Software Foundation.
 package geogebra3D.old.euclidian3D;
 
 
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 //import geogebra.euclidian.*;
 
 import java.awt.BasicStroke;

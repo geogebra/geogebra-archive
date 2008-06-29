@@ -1,9 +1,9 @@
 package geogebra3D.old.euclidian3D;
 
 
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.Linalg.GgbMatrix;
-import geogebra3D.kernel3D.Linalg.GgbVector;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

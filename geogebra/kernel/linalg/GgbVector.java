@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra3D.kernel3D.Linalg;
+package geogebra.kernel.linalg;
 
 
 
