@@ -52,7 +52,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 
 	private static ArrayList instances = new ArrayList();
 	private static GeoGebra activeInstance;
-	private Application app;
+	protected Application app;
 	
 	// check if we are on a mac
 	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase().startsWith("mac");

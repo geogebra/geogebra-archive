@@ -251,10 +251,10 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean showResetIcon = false;
     private URL codebase;
 
-    private AlgebraView algebraView;
+    protected AlgebraView algebraView;
     private SpreadsheetView spreadsheetView;
-    private EuclidianView euclidianView;
-    private Kernel kernel;
+    protected EuclidianView euclidianView;
+    protected Kernel kernel;
     private MyXMLio myXMLio;
 
     private AlgebraController algebraController;
@@ -274,17 +274,17 @@ public abstract class Application implements	KeyEventDispatcher {
 
     protected PropertiesDialogGeoElement propDialog;
     private ConstructionProtocol constProtocol;
-    private ConstructionProtocolNavigation constProtocolNavigation;
+    protected ConstructionProtocolNavigation constProtocolNavigation;
     private ImageManager imageManager;
 
     private boolean INITING = false;
-    private boolean showAlgebraView = true; 
+    protected boolean showAlgebraView = true; 
     private boolean showAuxiliaryObjects = false;
     private boolean showAlgebraInput = true;
     private boolean showCmdList = true;    
-    private boolean showToolBar = true;
+    protected boolean showToolBar = true;
     public boolean showMenuBar = true;
-    private boolean showConsProtNavigation = false;
+    protected boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
     private boolean showSpreadsheet = true;
@@ -310,15 +310,15 @@ public abstract class Application implements	KeyEventDispatcher {
     private JFileChooser fileChooser;
     private Menubar menuBar;
     private AlgebraInput algebraInput;
-    private JPanel centerPanel;   
+    protected JPanel centerPanel;   
 
-    private JSplitPane sp;
+    protected JSplitPane sp;
     private JSplitPane sp2;
-    private int initSplitDividerLocationHOR = 250; // init value
-    private int initSplitDividerLocationVER = 300; // init value
+    protected int initSplitDividerLocationHOR = 250; // init value
+    protected int initSplitDividerLocationVER = 300; // init value
     private int initSplitDividerLocationHOR2 = 650; // init value
     private int initSplitDividerLocationVER2 = 400; // init value
-    private boolean horizontalSplit = true; // 
+    protected boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
 
@@ -339,7 +339,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	this(args, null, applet, undoActive);
     }
     
-    private Application(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) {    	
+    protected Application(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) {    	
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
@@ -625,7 +625,7 @@ public abstract class Application implements	KeyEventDispatcher {
         System.gc();                                
     }     
     
-    private void updateComponentTreeUI() {
+    protected void updateComponentTreeUI() {
     	if (frame == null)
         	SwingUtilities.updateComponentTreeUI(applet);
         else
@@ -3991,7 +3991,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     // remember split divider location
-    private class DividerChangeListener implements PropertyChangeListener {                     
+    public class DividerChangeListener implements PropertyChangeListener {                     
         public void propertyChange(PropertyChangeEvent e) {
             Number value = (Number) e.getNewValue();
             int newDivLoc = value.intValue();
