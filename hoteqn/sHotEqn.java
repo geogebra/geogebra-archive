@@ -248,6 +248,10 @@ public Dimension getSizeof(String equation) {
 	return impl.getSizeofImpl(equation);
 }
 
+public Dimension getSize() {
+	return impl.getSizeImpl();
+}
+
 public Dimension getMinimumSize() { return impl.getMinimumSizeImpl();}
 
 public void addActionListener(ActionListener listener) {

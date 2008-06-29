@@ -290,14 +290,16 @@ private Font f4 = new Font(Fontname,Font.PLAIN, 10);
 
 private static final float mk = 2.0f;     // Umschaltfaktor für Klammerndarstellung (font,zeichnen)
 
-private static final int GreekFontSizes[]    = { 8,10,12,14,18 }; // vorhandene GreekFonts
-private static final int GreekFontDescents[] = { 2, 3, 4, 5, 6 }; // vorhandene GreekFonts Descents
+//private static final int GreekFontSizes[]    = { 8,10,12,14,18 }; // vorhandene GreekFonts
+private static final int GreekFontSizes[]    = {8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28};
+//private static final int GreekFontDescents[] = { 2, 3, 4, 5, 6 }; // vorhandene GreekFonts Descents
+private static final int GreekFontDescents[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 private int GreekSize[]                      = {14,12,10, 8};
 private int GreekDescent[]                   = { 3, 3, 3, 3};
 
 // begin Markus Hohenwarter, Jan 2008
 // private static final int EmbedFontSizes[]    = { 9,11,14,16,22 }; // zugeordnete normale Fonts
-private static final int EmbedFontSizes[] = { 8,10,12,14,16,18 }; // zugeordnete normale Fonts
+private static final int EmbedFontSizes[] = { 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28 }; // zugeordnete normale Fonts
 private static final Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 // end Markus Hohenwarter, Jan 2008
 
@@ -461,6 +463,7 @@ public void setFontsizesImpl(int gsize1, int gsize2, int gsize3, int gsize4) {
    GreekSize[3]=0;
 
    // Fontgrößen für alle Zeichen und die Griechischen Symbole und Sonderzeichen
+   // Font sizes for all characters and the Greek symbols and special characters
    for (int i=0; i<GreekFontSizes.length; i++){
        if (gsize1 == GreekFontSizes[i]) {GreekSize[0]=gsize1;GreekDescent[0]=GreekFontDescents[i];size1=EmbedFontSizes[i];}
        if (gsize2 == GreekFontSizes[i]) {GreekSize[1]=gsize2;GreekDescent[1]=GreekFontDescents[i];size2=EmbedFontSizes[i];}
@@ -469,12 +472,14 @@ public void setFontsizesImpl(int gsize1, int gsize2, int gsize3, int gsize4) {
    }
 
    // wenn keine passende Fontgröße gefunden, größt mögliche Fonts wählen
+   //if no suitable font size found, choose largest fonts possible
    if (GreekSize[0]==0) {GreekSize[0]=GreekFontSizes[GreekFontSizes.length-1];GreekDescent[0]=GreekFontDescents[GreekFontDescents.length-1];size1=EmbedFontSizes[EmbedFontSizes.length-1];}
    if (GreekSize[1]==0) {GreekSize[1]=GreekSize[0];GreekDescent[1]=GreekDescent[0];size2=size1;}
    if (GreekSize[2]==0) {GreekSize[2]=GreekSize[1];GreekDescent[2]=GreekDescent[1];size3=size2;} 
    if (GreekSize[3]==0) {GreekSize[3]=GreekSize[2];GreekDescent[3]=GreekDescent[2];size4=size3;}
 
    // Fonts für die Darstellung 
+   // Fonts for the presentation
    f1  = new Font(Fontname,Font.PLAIN,size1);   
    f2  = new Font(Fontname,Font.PLAIN,size2);
    f3  = new Font(Fontname,Font.PLAIN,size3);
@@ -805,6 +810,10 @@ public synchronized void generateImageImpl (Graphics g, int x, int y) {
      yOFF=yoff;
      notify(); // notifiy that painting has been completed
 } // end generateImage
+
+public Dimension getSizeImpl() {
+	return new Dimension(localWidth, localHeight);
+}
 
 
 //***********************************************************************
