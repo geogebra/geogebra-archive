@@ -18,9 +18,12 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import hoteqn.sHotEqn;
 
 import java.awt.BasicStroke;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -111,6 +114,118 @@ public abstract class Drawable {
 		TextLayout layout = new TextLayout(str , font, frc);
 		return layout.getAdvance();	
 		
+	}
+	
+	final void drawMultilineLaTeX(Graphics2D g2, boolean serifFont, int fontStyle) {
+		
+		int fontSize = g2.getFont().getSize();
+		float lineSpread = fontSize * 1.0f;
+		float lineSpace = fontSize * 0.5f;
+
+		Font font = g2.getFont();
+		FontRenderContext frc = g2.getFontRenderContext();
+		int xoffset = 0;
+		float height=0;
+		
+		//System.out.println(labelDesc.split("\\$")[0]+"xxx"+labelDesc.split("\\$")[1]+"xxx"+labelDesc.split("\\$")[2]+"xxx"+labelDesc.split("\\$")[3]+"xxx");
+		// line1$ \sqrt{ line2 }$line3$ \frac{ line }{4 }$ 
+		
+		String[] strings=labelDesc.split("\\$");
+		boolean latex=false;
+		if (labelDesc.indexOf('$') == -1) latex=true; // just latex
+		
+		boolean lastLine;
+		
+		Dimension dim;
+
+		for (int j=0 ; j<strings.length ; j++)
+		{
+			//if (j==0) firstLine=true; else firstLine=false;
+			if (j==strings.length-1) lastLine=true; else lastLine=false;
+			
+			//System.out.println(j+strings[j]);
+			g2.setFont(font);
+
+			if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+			{
+				//System.out.println("strings["+j+"]=XXX"+strings[j]+"XXX"+strings[j].length());
+				if (latex)
+				{
+					//if (!firstLine) height += lineSpace;
+					
+					dim = drawEquation(g2,xLabel,(int)(yLabel + height), strings[j], fontSize, serifFont, fontStyle);
+					int width=dim.width;
+					if (width > xoffset) xoffset = width;		
+			
+					height += dim.height;
+					//if (!lastLine) height += lineSpace;
+					//System.out.println(dim);
+				}
+				else
+				{
+					height += lineSpread;
+					
+					g2.drawString(strings[j], xLabel, yLabel + height);			
+					int width=(int)textWidth(strings[j], font, frc);
+					if (width > xoffset) xoffset = width;		
+			
+				}
+				if (!lastLine) height += lineSpace;
+			}
+			
+			latex=!latex;
+			
+
+		}
+		labelRectangle.setBounds(xLabel, yLabel, xoffset, (int)height);
+		
+		g2.setFont(font);
+	}	
+	
+	// returns a string consisting of n consecutive "str"s
+	final private String str(String str, int n)
+	{
+		if (n==0) return "";
+		
+		String ret="";
+		for (int i=0 ; i<n ; i++) ret+=str;
+		return ret;
+	}
+	
+	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, int fontSize, boolean serifFont, int fontStyle)
+	{
+		Dimension dim;
+			sHotEqn eqn = new sHotEqn(text);
+			//System.out.println(eqn.getSize());
+			eqn.setDoubleBuffered(false);
+			eqn.setEditable(false);	
+			eqn.removeMouseListener(eqn);
+			eqn.removeMouseMotionListener(eqn);				
+			eqn.setDebug(false);
+			eqn.setOpaque(false);	
+			eqn.setFontname(Application.STANDARD_FONT_NAME);
+
+			//setEqnFontSize();																												
+			int size = (fontSize / 2) * 2; 
+			if (size < 10) 
+				size = 10;
+			else if (size > 28) 
+				size = 28;
+			
+			eqn.setFontname(serifFont ? "Serif" : "SansSerif");
+			eqn.setFontsizes(size, size - 2, size - 4, size - 6);
+			eqn.setFontStyle(fontStyle);
+
+			
+			
+			
+			//eqn.paintComponent(g2Dtemp,0,0);		
+			//dim=eqn.getSizeof(text);
+			eqn.paintComponent(g2,x,y);		
+			dim=eqn.getSize();
+			
+			//System.out.println(size);
+			return dim;
 	}
 	
 	final void drawMultilineText(Graphics2D g2) {

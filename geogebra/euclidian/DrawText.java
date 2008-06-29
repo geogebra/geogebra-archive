@@ -195,7 +195,10 @@ public final class DrawText extends Drawable {
     			drawMultilineText(g2);   
         	} else 
         	{
-        		drawEquation(g2,xLabel,yLabel);
+        		g2.setPaint(geo.getObjectColor());				
+    			g2.setFont(textFont);    			
+    			drawMultilineLaTeX(g2, serifFont, fontStyle);   
+        		//drawEquation(g2,xLabel,yLabel);
         	}
         	
 			  

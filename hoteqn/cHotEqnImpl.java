@@ -289,7 +289,7 @@ private Font f3 = new Font(Fontname,Font.PLAIN, 11);
 private Font f4 = new Font(Fontname,Font.PLAIN, 10);
 
 private static final float mk = 2.0f;     // Umschaltfaktor für Klammerndarstellung (font,zeichnen)
-
+//begin Markus Hohenwarter, Jun 2008
 //private static final int GreekFontSizes[]    = { 8,10,12,14,18 }; // vorhandene GreekFonts
 private static final int GreekFontSizes[]    = {8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28};
 //private static final int GreekFontDescents[] = { 2, 3, 4, 5, 6 }; // vorhandene GreekFonts Descents
@@ -297,11 +297,11 @@ private static final int GreekFontDescents[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
 private int GreekSize[]                      = {14,12,10, 8};
 private int GreekDescent[]                   = { 3, 3, 3, 3};
 
-// begin Markus Hohenwarter, Jan 2008
+
 // private static final int EmbedFontSizes[]    = { 9,11,14,16,22 }; // zugeordnete normale Fonts
 private static final int EmbedFontSizes[] = { 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28 }; // zugeordnete normale Fonts
 private static final Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
-// end Markus Hohenwarter, Jan 2008
+// end Markus Hohenwarter, Jun 2008
 
 /* greek font embedding characteristic based on Helvetica
 
