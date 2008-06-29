@@ -16,7 +16,7 @@ the Free Software Foundation.
  * Created on 30. August 2001, 17:10
  */
 
-package geogebra.kernel3D;
+package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement; 
@@ -36,6 +36,8 @@ public abstract class GeoElement3D
 	
 	// GeoElement types
 	public static final int GEO_CLASS_POINT3D = 1130;
+	public static final int GEO_CLASS_SEGMENT3D = 1131;
+	public static final int GEO_CLASS_PLANE3D = 1132;
 
 	
 	/********************************************************/

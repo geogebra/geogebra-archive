@@ -16,47 +16,60 @@ the Free Software Foundation.
  * Created on 31. August 2001, 11:22
  */
 
-package geogebra.kernel3D;
+package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.Kernel;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Traceable;
+import geogebra3D.kernel3D.Linalg.GgbMatrix;
+import geogebra3D.kernel3D.Linalg.GgbVector;
 
 /**
  *
  * @author  Markus + Mathieu
  * @version 
  */
-public abstract class GeoVec4D extends GeoElement3D 
+public abstract class GeoVec extends GeoElement3D //TODO extends GeoElement
 implements Traceable {
        
-    public double x, y, z, w = Double.NaN;
+    public GgbVector v;
 	public boolean trace;	 
     
-    public GeoVec4D(Construction c) {super(c);}  
-    
-    /** Creates new GeoVec4D with coordinates (x,y,z,w) and label */
-    public GeoVec4D(Construction c, double x, double y, double z, double w) {    	
-    	super(c);    	
-       setCoords(x, y, z, w);
+	
+    public GeoVec(Construction c) {super(c);}  
+
+    public GeoVec(Construction c, int n) {
+    	this(c);
+    	v = new GgbVector(n);
+    }  
+
+    /** Creates new GeoVec with coordinates coords[] and label */
+    public GeoVec(Construction c, double[] coords) {    	
+    	super(c); 
+    	
+    	v = new GgbVector(coords);
+    	v.set(Double.NaN);
     }                 
     
     /** Copy constructor */
-    public GeoVec4D(Construction c, GeoVec4D v) {   
+    public GeoVec(Construction c, GeoVec vec) {   
     	super(c); 	
-        set(v);
+        set(vec);
     }
     
-//    public GeoElement copy() {
-//        return new GeoVec4D(this.cons, this);        
-//    }
+    /*
+    public GeoElement copy() {
+        return new GeoVec(this.cons, this);        
+    }
+    */
     
     public boolean isDefined() {
-    	return (!(Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z) || Double.isNaN(w)));        
+    	return v.isDefined();        
     }
     
-    public void setUndefined() {     
-    	setCoords(Double.NaN, Double.NaN, Double.NaN, Double.NaN);        
+    public void setUndefined() {  
+    	if (v!=null)
+    		v.set(Double.NaN);       
     }       
     
     protected boolean showInEuclidianView() {     
@@ -69,55 +82,61 @@ implements Traceable {
     	return true;
     }        
     
-    public void set(GeoElement3D geo) {    
-        GeoVec4D v = (GeoVec4D) geo;        
-        setCoords(v.x, v.y, v.z, v.w);        
+    public void set(GeoElement geo) {    
+        GeoVec vec = (GeoVec) geo;        
+        setCoords(vec.v);        
     }         
     
-	public abstract void setCoords(double x, double y, double z, double w);
-	public abstract void setCoords(GeoVec4D v) ;
-   
+	public void setCoords(GgbVector v0){
+		v.set(v0);
+	}
+	
+	public void setCoords(double[] vals){
+		v.set(vals);
+	}
+	
+	//	TODO cast on add, mul methods in GgbVector
+	public void setCoords(GgbMatrix v0){		
+		v.set(v0);		
+	}
+	public void setCoords(GeoVec vec){
+		v.set(vec.v);
+	}
+
+
+	/*
     final public double getX() { return x; }
     final public double getY() { return y; }
     final public double getZ() { return z; } 
     final public double getW() { return w; } 
-    final public void getCoords(double[] ret) {
-        ret[0] = x;
-        ret[1] = y;
-        ret[2] = z;        
-        ret[3] = w;        
+    */
+    final public GgbVector getCoords() {
+    	return v;
     }             
 
     /** 
      * Writes x and y and z to the array res.
      */
+    /*
     public void getInhomCoords(double [] res) {       
         res[0] = x;
         res[1] = y;                                
         res[2] = z;                                
     }
+    */
     
-    // TODO: polar to spherical 
-    // POLAR or CARTESIAN mode    
-    final public boolean isPolar() { return toStringMode == Kernel.COORD_POLAR; }
-    public int getMode() { return toStringMode;  }
-    public void setMode(int mode ) {
-        toStringMode = mode;
-    }        
-    
-    public void setPolar() { toStringMode = Kernel.COORD_POLAR; }
-    public void setCartesian() { toStringMode = Kernel.COORD_CARTESIAN; }
     
     /** Yields true if the coordinates of this vector are equal to
      * those of vector v. 
      */
-    final public boolean equals(GeoVec4D v) {
+    final public boolean equals(GeoVec vec) {
     
         kernel.setMinPrecision();
-        boolean ret =  kernel.isEqual(x, v.x) && 
-								kernel.isEqual(y, v.y) && 
-								kernel.isEqual(z, v.z) && 
-								kernel.isEqual(w, v.w);                      
+        
+        boolean ret = true;
+        
+        for(int i=1;(i<=v.getLength())&&(ret);i++)
+        	ret = ret && kernel.isEqual(v.get(i), vec.v.get(i));             
         kernel.resetPrecision();
         return ret;
     }
@@ -148,7 +167,10 @@ implements Traceable {
     }*/
     
     final public boolean isZero() {
-        return kernel.isZero(x) && kernel.isZero(y) && kernel.isZero(z) && kernel.isZero(w);
+    	boolean ret = true;
+        for(int i=1;(i<=v.getLength())&&(ret);i++)
+        	ret = ret && kernel.isZero(v.get(i));             
+        return ret;
     }
     
      /** Calculates the cross product of this vector and vector v.
@@ -252,14 +274,14 @@ implements Traceable {
     
      /** Calculates the inner product of this vector and vector v.
      */
-    final public double inner(GeoVec4D v) {
-        return x * v.x + y * v.y + z * v.z + w * v.w;
+    final public double inner(GeoVec vec) {
+        return v.dotproduct(vec.v);
     }
     
     /** Changes orientation of this vector. v is changed to -v.    
      */
     final public void changeSign() {
-        setCoords(-x, -y, -z, -w);        
+        setCoords(v.mul(-1.0));        
     }
     
     /** returns -v
@@ -276,8 +298,8 @@ implements Traceable {
 //    }    
         
     /** c = a + b */
-    final public static void add(GeoVec4D a, GeoVec4D b, GeoVec4D c) {                
-        c.setCoords(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);    
+    final public static void add(GeoVec a, GeoVec b, GeoVec c) {                
+        c.setCoords(a.v.add(b.v));    
     }
     
      /** returns this - a */
@@ -288,20 +310,17 @@ implements Traceable {
 //    }
     
     /** c = a - b */
-    final public static void sub(GeoVec4D a, GeoVec4D b, GeoVec4D c) {
-		c.setCoords(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);         
+    final public static void sub(GeoVec a, GeoVec b, GeoVec c) {
+    	c.setCoords(a.v.add(b.v.mul(-1.0)));           
     }       
     
     public String toString() {
 		sbToString.setLength(0);
-		sbToString.append('(');
-		sbToString.append(x);
-		sbToString.append(", ");
-		sbToString.append(y);
-		sbToString.append(", ");
-		sbToString.append(z);
-		sbToString.append(", ");
-		sbToString.append(w);
+        for(int i=1;i<=v.getLength();i++){
+        	sbToString.append('(');
+        	sbToString.append(v.get(i));
+        	sbToString.append(", ");
+        }
 		sbToString.append(')');
         return sbToString.toString();
     }
@@ -314,11 +333,11 @@ implements Traceable {
         StringBuffer sb = new StringBuffer();
         //TODO sb.append(super.getXMLtags());
         
+        
         sb.append("\t<coords");
-                sb.append(" x=\"" + x + "\"");
-                sb.append(" y=\"" + y + "\"");
-                sb.append(" z=\"" + z + "\"");
-                sb.append(" w=\"" + w + "\"");
+        for(int i=1;i<=v.getLength();i++){
+        	sb.append(" x"+i+"=\"" + v.get(i) + "\"");
+        }
         sb.append("/>\n");
         
         return sb.toString();
