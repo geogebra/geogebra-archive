@@ -120,79 +120,94 @@ public abstract class Drawable {
 		
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.0f;
-		float lineSpace = fontSize * 0.5f;
 
-		Font font = g2.getFont();
-		FontRenderContext frc = g2.getFontRenderContext();
-		int xoffset = 0;
+		int maxhOffset=0;
 		float height=0;
-		
-		//System.out.println(labelDesc.split("\\$")[0]+"xxx"+labelDesc.split("\\$")[1]+"xxx"+labelDesc.split("\\$")[2]+"xxx"+labelDesc.split("\\$")[3]+"xxx");
-		// line1$ \sqrt{ line2 }$line3$ \frac{ line }{4 }$ 
-		
-		//boolean lastLine;
 		
 		Dimension dim;
 		
 		String[] lines=labelDesc.split("\n");
+		
+		
 		for (int k=0 ; k<lines.length ; k++)
 		{
 
 			String[] strings=lines[k].split("\\$");
+			int heights[] = new int[strings.length];
 
 			boolean latex=false;
+			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
+			{
+				latex=true; // just latex
+			}
+
+			int maxHeight=0;
+			// calculate heights of each element
+			for (int j=0 ; j<strings.length ; j++)
+			{
+
+				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+				{
+					if (latex)
+					{						
+						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], fontSize, serifFont, fontStyle);
+						//dim = sHotEqn.getSizeof(strings[j]);
+						//widths[j] = dim.width;				
+						System.out.println("dim.width"+dim.width);
+						heights[j] = dim.height;
+					}
+					else
+					{
+						heights[j] = (int)lineSpread; //p.y;		
+					}
+				}
+				else
+				{
+					heights[j]=0;
+				}
+				latex=!latex;
+				if (heights[j] > maxHeight) maxHeight=heights[j];
+
+			}
+			
+			System.out.println("maxHeight"+maxHeight);
+			
+			int hOffset=0;
+			
+			latex=false;
 			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
 			{
 				latex=true; // just latex
 				//System.out.println("just latex");
 			}
 
+			// draw elements
 			for (int j=0 ; j<strings.length ; j++)
 			{
-				//if (j==0) firstLine=true; else firstLine=false;
-				//if (k==lines.length-1 && j==strings.length-1) lastLine=true; else lastLine=false;
-				
-				//System.out.println(j+strings[j]);
-				//g2.setFont(font);
 
 				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
 				{
-					//System.out.println("strings["+j+"]=XXX"+strings[j]+"XXX"+strings[j].length());
+					
+					int vOffset = (maxHeight - heights[j] )/2; // vertical centering
+					
 					if (latex)
 					{
-						//if (!firstLine) height += lineSpace;
 						
-						dim = drawEquation(g2,xLabel,(int)(yLabel + height), strings[j], fontSize, serifFont, fontStyle);
-						int width=dim.width;
-						if (width > xoffset) xoffset = width;		
-						
-						height += dim.height;
-						//if (!lastLine) height += lineSpace;
-						//System.out.println(dim);
+						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], fontSize, serifFont, fontStyle);
+						hOffset+=dim.width;
 					}
 					else
-					{
-						height += lineSpread;
-						
-						Point p = drawIndexedString(g2, strings[j], xLabel, yLabel + height);
-
-						if (p.x > xoffset) xoffset = p.x;		
-						if (p.y > lineSpread) height += p.y - lineSpread;
-						
+					{				
+						Point p = drawIndexedString(g2, strings[j], xLabel + hOffset, yLabel + height + vOffset + lineSpread);
+						hOffset+=p.x;
 					}
-					//if (!lastLine)
-					height += lineSpace;
 				}
 				latex=!latex;
-				//System.out.println(latex);
-				
-				
-
 			}
+			if (hOffset > maxhOffset) maxhOffset = hOffset;
+			height += maxHeight;
 		}
-		labelRectangle.setBounds(xLabel, yLabel, xoffset, (int)height);
-		
-		//g2.setFont(font);
+		labelRectangle.setBounds(xLabel, yLabel, maxhOffset, (int)height);
 	}	
 
 	// returns a string consisting of n consecutive "str"s
