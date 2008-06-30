@@ -120,6 +120,7 @@ public abstract class Drawable {
 		
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.0f;
+		float lineSpace = fontSize * 0.5f;
 
 		int maxhOffset=0;
 		float height=0;
@@ -153,7 +154,6 @@ public abstract class Drawable {
 						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], fontSize, serifFont, fontStyle);
 						//dim = sHotEqn.getSizeof(strings[j]);
 						//widths[j] = dim.width;				
-						System.out.println("dim.width"+dim.width);
 						heights[j] = dim.height;
 					}
 					else
@@ -170,7 +170,7 @@ public abstract class Drawable {
 
 			}
 			
-			System.out.println("maxHeight"+maxHeight);
+			if (k!=0) maxHeight += lineSpace;
 			
 			int hOffset=0;
 			
