@@ -1,6 +1,8 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.kernel.Kernel;
+import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Point;
@@ -23,6 +25,9 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	protected Point mouseLoc = new Point();
 	protected Point startLoc = new Point();
+	
+	//picking
+	protected GgbVector pickPoint;
 	
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
@@ -96,7 +101,8 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Raccord de méthode auto-généré
+		
+		view.repaint();
 		
 	}
 
@@ -125,16 +131,44 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		handleMouseDragged(true);	
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Raccord de méthode auto-généré
-		
+	public void mouseMoved(MouseEvent e) {
+		setMouseLocation(e);
+		pick();
+		view.repaint();
+	}
+
+	
+	/** pick object under the mouse */
+	public void pick(){
+		//System.out.println("mouse=("+mouseLoc.x+","+mouseLoc.y+")");
+		pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
+		view.doPick(pickPoint);
 	}
 
 
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		

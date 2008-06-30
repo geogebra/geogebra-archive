@@ -198,26 +198,7 @@ public class GgbMatrix
 		
 	}
 	
-	/*
-	public double get(int i, int j){
-		if ((i<1)||(j<1)){
-			return Double.NaN;
-		}else{
-			if (!transpose){
-				if ((i>rows)||(j>columns)){
-					return Double.NaN;
-				}else{
-					return val[(i-1)*columns+(j-1)];
-				}
-			}else{
-				if ((j>rows)||(i>columns)){
-					return Double.NaN;
-				}else{
-					return val[(j-1)*columns+(i-1)];
-				}				
-			}
-		}
-	}*/
+
 	
 	/** sets m(V,j), rows=V.getLength() */
 	public void set(GgbVector V, int j){
@@ -243,29 +224,7 @@ public class GgbMatrix
 			val[(j-1)*columns+(i-1)]=val0;
 		}
 	}
-	/*
-	public boolean set(int i, int j, double val0){
-		if ((i<1)||(j<1)){
-			return false;
-		}else{
-			if (!transpose){
-				if ((i>rows)||(j>columns)){
-					return false;
-				}else{
-					val[(i-1)*columns+(j-1)]=val0;
-					return true;
-				}
-			}else{
-				if ((j>rows)||(i>columns)){
-					return false;
-				}else{
-					val[(j-1)*columns+(i-1)]=val0;
-					return true;
-				}				
-			}
-		}
-	}
-	*/
+
 	
 	/** sets all values to val0 */
 	public void set(double val0){
@@ -355,6 +314,10 @@ public class GgbMatrix
 		
 	}
 	
+	
+	
+	
+	
 	/** for Java3D */
 	public void getTransform3D(Transform3D t3d){
 		
@@ -364,6 +327,22 @@ public class GgbMatrix
 		t3d.set(m4d);		
 		
 	}
+	
+	public GgbMatrix(Transform3D t3d){
+		
+		this(4,4);
+		Matrix4d m4d = new Matrix4d();
+		t3d.get(m4d);
+		for(int i=1;i<=4;i++)
+			for(int j=1;j<=4;j++)
+				this.set(i,j, m4d.getElement(i-1, j-1));
+				
+		
+	}
+	
+	
+	
+	
 	
 	/** returns if one value equals NaN */
 	public boolean isDefined(){

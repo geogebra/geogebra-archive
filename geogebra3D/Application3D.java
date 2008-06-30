@@ -67,11 +67,15 @@ public abstract class Application3D extends Application{
         //test.testRepere();
         //test.testSegmentSegment();
         
-        //euclidianView3D.setCoordSystem(300.0, 300.0, 150.0, 150.0);
-        //euclidianView3D.setRotXY(0,0,true);
-        euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+
+        
+        
         euclidianView3D.setZZero(-3.0);
-        //euclidianView3D.repaint();
+        euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+        
+        //euclidianView3D.setZZero(0.0);
+        //euclidianView3D.setRotXY(0,0,true);
+        
        	
 		
     }      

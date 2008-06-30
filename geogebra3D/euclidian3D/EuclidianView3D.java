@@ -12,6 +12,7 @@ import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -19,6 +20,7 @@ import java.awt.print.PrinterException;
 
 import javax.media.j3d.GraphicsContext3D;
 import javax.swing.JPanel;
+
 
 
 
@@ -48,8 +50,12 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private GgbMatrix m = GgbMatrix.Identity(4); 
 	double a = 0.0;
 	double b = 0.0; //angles
-
 	
+	
+
+	//picking
+	//TODO get eye real position
+	GgbVector eye = new GgbVector(new double[] {0.0,0.0,2.4});
 	
 	
 	
@@ -80,6 +86,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		//init orientation
 		//setRotXY(Math.PI/6f,0.0,true);
+		
 		
 	}
 	
@@ -258,6 +265,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		gc.setBufferOverride(true);
 		gc.clear();
 		drawList3D.drawAll(gc);
+		
 
 		canvas3D.swap();
 		
@@ -265,6 +273,46 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		//super.repaint();
 		//System.out.println("paint");
 	}
+	
+	
+	
+	
+	//////////////////////////////////////
+	// picking
+	
+	public GgbVector getPickPoint(int x, int y){			
+		
+		
+		Dimension d = new Dimension();
+		this.getSize(d);
+		
+		if (d!=null){
+			//System.out.println("Dimension = "+d.width+" x "+d.height);
+			double w = (double) d.width/2;
+			double h = (double) d.height/2;
+			
+			GgbVector ret = new GgbVector(
+					new double[] {
+							((double) (x-w)/w),
+							((double) (-y+h)/w),
+							0});
+			
+			return ret;
+		}else
+			return null;
+		
+		
+	}
+	
+	public void doPick(GgbVector pickPoint){
+		drawList3D.doPick(pickPoint);
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

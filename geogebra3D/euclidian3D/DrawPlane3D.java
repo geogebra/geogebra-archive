@@ -14,6 +14,7 @@ import javax.vecmath.Matrix4d;
 
 
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 
@@ -88,6 +89,7 @@ public class DrawPlane3D extends Drawable3D {
 	
 	public void draw(GraphicsContext3D gc){}
 	public void drawHidden(GraphicsContext3D gc){}
+	public void drawPicked(GraphicsContext3D gc){};
 	
 	public void drawTransp(GraphicsContext3D gc){
 		//System.out.println("draw");
@@ -103,6 +105,15 @@ public class DrawPlane3D extends Drawable3D {
     	gc.draw(geomTransp);
 		
 	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void isPicked(GgbVector pickLine){};
 	
 
 	

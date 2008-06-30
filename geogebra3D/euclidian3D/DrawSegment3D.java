@@ -101,6 +101,10 @@ public class DrawSegment3D extends Drawable3D {
 	
 	public void drawTransp(GraphicsContext3D gc){}
 	public void drawHiding(GraphicsContext3D gc){}
+	public void drawPicked(GraphicsContext3D gc){};
+	
+	
+	public void isPicked(GgbVector pickLine){};
 	
 
 }
