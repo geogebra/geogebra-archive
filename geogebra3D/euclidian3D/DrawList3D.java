@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -123,11 +124,17 @@ public class DrawList3D extends LinkedList{
 	////////////////////////////////////////
 	// picking
 	
-	public void doPick(GgbVector pickPoint){
+	public ArrayList doPick(GgbVector pickPoint, boolean list){
+		
+		ArrayList hits = new ArrayList();
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
-			d.isPicked(pickPoint);
+			if (d.isPicked(pickPoint))
+				if (list)
+					hits.add(d.getGeoElement());
 		}
+		
+		return hits;
 		
 	}
 	

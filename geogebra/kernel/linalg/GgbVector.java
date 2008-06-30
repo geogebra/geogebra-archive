@@ -225,9 +225,13 @@ public class GgbVector
 	public GgbVector getCoordsLast1(){
 		GgbVector result=new GgbVector(getLength());
 		int i;
-		for (i=1;i<=getLength();i++){
-			result.set(i,get(i)/get(getLength()));
-		}
+		double lastCoord = get(getLength());
+		if (lastCoord!=0.0)
+			for (i=1;i<=getLength();i++){
+				result.set(i,get(i)/lastCoord);
+			}
+		else
+			result.set(this);
 		return result;
 	}
 	

@@ -106,7 +106,7 @@ public class DrawPoint3D extends Drawable3D{
 	}	
 	
 	public void drawPicked(GraphicsContext3D gc){
-		if (isPicked){
+		if (geo.doHighlighting()){
 			gc.setModelTransform(t3dPicked);
 			gc.draw(geomPicked);
 		}
@@ -117,12 +117,15 @@ public class DrawPoint3D extends Drawable3D{
 	
 	
 	
-	public void isPicked(GgbVector pickPoint){
+	public boolean isPicked(GgbVector pickPoint){
 		if (coords.subVector(1,3).distLine(view3D.eye,pickPoint.subVector(1,3).sub(view3D.eye))<=radius){
 			//System.out.println("picked = "+P.getLabel());
-			isPicked = true;
-		}else
-			isPicked = false;
+			geo.setHighlighted(true);
+			return true;
+		}else{
+			geo.setHighlighted(false);
+			return false;
+		}
 	};
 
 }

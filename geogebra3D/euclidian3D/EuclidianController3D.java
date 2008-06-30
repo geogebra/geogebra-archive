@@ -1,9 +1,11 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -17,6 +19,18 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	static final boolean DEBUG = false; //conditionnal compilation
 	
 	
+	
+	
+	protected static final int MOVE_NONE = 101;
+	protected static final int MOVE_POINT = 102;
+	protected static final int MOVE_VIEW = 106;
+	
+	
+	protected int moveMode = MOVE_NONE;
+	
+	protected GeoElement3D objSelected = null;
+	
+	
 	protected EuclidianView3D view;
 	protected Kernel kernel;
 	
@@ -28,6 +42,9 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	//picking
 	protected GgbVector pickPoint;
+	
+	//moving
+	protected GgbVector Vn = new GgbVector(new double[] {0.0,0.0,1.0,0.0});
 	
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
@@ -67,12 +84,36 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	public void mousePressed(MouseEvent e) {
 		
-		setMouseLocation(e);		
-		if(DEBUG){System.out.println("mousePressed");}
-		aOld = view.a;
-		bOld = view.b;	
-		startLoc.x = mouseLoc.x;
-		startLoc.y = mouseLoc.y;
+		setMouseLocation(e);	
+		moveMode = MOVE_NONE;
+		
+		if (e.isShiftDown() || e.isControlDown() || e.isMetaDown()) {
+			moveMode = MOVE_VIEW;	
+			if(DEBUG){System.out.println("mousePressed");}
+			aOld = view.a;
+			bOld = view.b;	
+			startLoc.x = mouseLoc.x;
+			startLoc.y = mouseLoc.y;	
+			
+		} else {
+			
+			if (objSelected!=null)
+				objSelected.setSelected(false);
+			pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
+			view.doPick(pickPoint,true);
+			if (!view.hits.isEmpty()){
+				objSelected = (GeoElement3D) view.hits.get(0);		
+				objSelected.setSelected(true);
+				System.out.println("selected = "+objSelected.getLabel());
+				moveMode = MOVE_POINT;
+			}
+			view.repaint();
+			
+		}
+		
+		
+	
+
 	
 	}	
 	
@@ -81,12 +122,56 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		
 		//TODO view.setMoveCursor();
 		
-		if(DEBUG){System.out.println("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
-		double dx = (double) mouseLoc.x - startLoc.x;
-		double dy = (double) mouseLoc.y - startLoc.y;
-		//if(DEBUG){System.out.println("dx*ANGLE_SCALE="+dx*ANGLE_SCALE);}
-		view.setRotXY(aOld+dx*ANGLE_SCALE,bOld+dy*ANGLE_SCALE,true);
+		// moveMode was set in mousePressed()
+		switch (moveMode) {
+		case MOVE_POINT:
+			movePoint(repaint);
+			break;
+
+		case MOVE_VIEW:
+			if (repaint) {
+				if(DEBUG){System.out.println("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
+				double dx = (double) mouseLoc.x - startLoc.x;
+				double dy = (double) mouseLoc.y - startLoc.y;
+				view.setRotXY(aOld+dx*ANGLE_SCALE,bOld+dy*ANGLE_SCALE,true);
+			}
+			break;	
+			
+		default: // do nothing
 		
+		}
+
+		
+	}
+	
+	
+	
+	protected void movePoint(boolean repaint){
+		
+		if (objSelected!=null){
+			//System.out.println("movePoint");
+			GeoPoint3D p = (GeoPoint3D) objSelected;
+			GgbVector o1 = p.getCoords(); view.toScreenCoords3D(o1);
+			GgbVector o2 = view.eye.copyVector(); //view.toScreenCoords3D(o1);
+			GgbVector v1 = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
+			GgbVector v = v1.copyVector(); //view.toScreenCoords3D(v);			
+			GgbVector Vn2 = Vn.copyVector(); //view.toScreenCoords3D(Vn2);
+			
+			System.out.println("v1 = ");v1.SystemPrint();
+			System.out.println("v = ");v.SystemPrint();
+			System.out.println("Vn2 = ");Vn2.SystemPrint();
+			
+			double l = (o1.sub(o2)).dotproduct(Vn2)/(v.dotproduct(Vn2));
+			
+			System.out.println("lambda = "+l);
+			GgbVector p1 = (view.eye.add(v1.mul(l))).getColumn(1);
+			view.toSceneCoords3D(p1);
+			p.setCoords(p1);
+						
+		}
+		
+		if (repaint)
+			view.repaint();
 	}
 
 

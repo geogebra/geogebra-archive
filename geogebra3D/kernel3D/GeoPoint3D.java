@@ -97,137 +97,32 @@ final public class GeoPoint3D extends GeoVec4D {
         set(point);        
     }
     
-    // TODO
-    public void set(GeoElement geo) { }
-    /*
-    	if (geo.isGeoPoint()) {
-	    	GeoPoint3D p = (GeoPoint3D) geo;        
-	    	pathParameter.set(p.pathParameter);
-	    	setCoords(p.x, p.y, p.z);     
-    	}
-    	else if (geo.isGeoVector()) {
-    		GeoVector v = (GeoVector) geo; 
-    		setCoords(v.x, v.y, 1d);   
-    	}
-    }
-    */ 
+
     
     
     public GeoElement copy() {
         return new GeoPoint3D(this);        
     }                 
        
-    /*
-	void initSetLabelVisible() {
-		setLabelVisible(true);
-	}*/
 	
-	/**
-	 * @param i
-	 */
-	public void setPointSize(int i) {
-		pointSize = i;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getPointSize() {
-		return pointSize;
-	}   
-	
-	public boolean isChangeable() {
-		return !isFixed() && (isPointOnPath() || isIndependent());   
-	}	 
-	
-	final public boolean isPointOnPath() {
-		return path != null;
-	}
-	
-	public boolean hasPath() {
-		return path != null;
-	}
-	
-	public Path getPath() {
-		return path;
-	}
-	
-	public void addToPathParameter(double a) {
-		pathParameter.setT(pathParameter.getT()+a);
-		
-		// update point relative to path
-		//TODO path.pathChanged(this);
-		updateCoords();
-	}
-	
-	public void initPathParameter(PathParameter pp) {
-		pathParameter = pp;		
-		
-		// update point relative to path
-		//TODO path.pathChanged(this);
-		updateCoords();
-	}
-	
-	/**
-	 * Returns true if this point's path is a circle or ellipse 	 
-	 *
-	public boolean hasAnglePathParameter() {
-		return (path != null) && 
-					(path instanceof GeoConic) &&
-					(((GeoConic)path).isElliptic());		
-	}*/
-    
-    final public boolean isInfinite() {
-       return isInfinite;  
-    }
-    
-    final public boolean isFinite() {
-       return isDefined && !isInfinite;
-    }
-    
-    final public boolean showInEuclidianView() {               
-    	return isDefined && !isInfinite;
-    }    
-    
-    protected final boolean showInAlgebraView() {
-        // intersection points
-        return isDefined || showUndefinedInAlgebraView;
-    }   
-    
-	final public boolean isDefined() { 
-		return isDefined;        
-	}     
-	
-	final public boolean isFixable() {
-		return path != null || super.isFixable();
-	}		
     
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
 	 */
 	final public void setCoords(double x, double y, double z, double w) {
 		
-		//double[] coords = {x,y,z,w};		
-		//super.setCoords(coords);
 		super.setCoords(new double[] {x,y,z,w});
-		// update point on path: this may change coords
-		// so updateCoords() is called afterwards
+
 		if (path != null) {
-			// remember path parameter for undefined case
-			tempPathParameter.set(pathParameter);
-			//TODO path.pointChanged(this);
+			//TODO 
 		}
 			
 		// this avoids multiple computation of inhomogenous coords;
 		// see for example distance()
 		updateCoords();  
 		
-		// undefined and on path: remember old path parameter
-		if (!(isDefined || path == null)) {
-			pathParameter.set(tempPathParameter);
-		}				
 	}  
-	private PathParameter tempPathParameter = new PathParameter();
+
 	
 	final public void updateCoords() {
 		// infinite point
@@ -344,6 +239,12 @@ final public class GeoPoint3D extends GeoVec4D {
 	private StringBuffer sbBuildValueString = new StringBuffer(50);   
      
     
+	public boolean isInfinite(){
+		return false;
+	}
+	
+	
+	
     final public String toValueString() {
     	return buildValueString().toString();	
     }

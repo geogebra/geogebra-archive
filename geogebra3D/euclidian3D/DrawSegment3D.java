@@ -104,7 +104,7 @@ public class DrawSegment3D extends Drawable3D {
 	public void drawPicked(GraphicsContext3D gc){};
 	
 	
-	public void isPicked(GgbVector pickLine){};
+	public boolean isPicked(GgbVector pickLine){ return false; };
 	
 
 }

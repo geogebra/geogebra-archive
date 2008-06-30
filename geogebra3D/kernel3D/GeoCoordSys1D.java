@@ -1,10 +1,13 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Path;
+import geogebra.kernel.PathMover;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public class GeoCoordSys1D extends GeoCoordSys {
+public class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
 	GgbVector Vn1 = new GgbVector(3);
 	GgbVector Vn2 = new GgbVector(3); //orthogonal vectors
@@ -55,11 +58,32 @@ public class GeoCoordSys1D extends GeoCoordSys {
 	/** returns the point at position lambda on the coord sys */
 	public GgbVector getPoint(double lambda){
 		GgbVector v=new GgbVector(new double[] {lambda,1});
-		GgbVector r=M.mul(v);
-		//System.out.println("__LINE__");
+		GgbVector r=M.mul(v);		
 		//r.SystemPrint();
 		return r;
 		//return new GeoPoint3D(getConstruction(), "M", r);
+	}
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////
+	// Path 3D
+	public void pointChanged(GeoPoint3D P) {
+		//project P on line
+		GgbVector P1 = P.getInhomCoords().projectLine(M.getColumn(2), M.getColumn(1));
+		
 	}
 	
 }

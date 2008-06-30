@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.ArrayList;
 
 import javax.media.j3d.GraphicsContext3D;
 import javax.swing.JPanel;
@@ -48,6 +49,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	//matrix for changing coordinate system
 	private GgbMatrix m = GgbMatrix.Identity(4); 
+	private GgbMatrix mInv = GgbMatrix.Identity(4);
 	double a = 0.0;
 	double b = 0.0; //angles
 	
@@ -55,7 +57,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 
 	//picking
 	//TODO get eye real position
-	GgbVector eye = new GgbVector(new double[] {0.0,0.0,2.4});
+	GgbVector eye = new GgbVector(new double[] {0.0,0.0,2.4,1.0});
+	ArrayList hits = new ArrayList(); //objects picked
 	
 	
 	
@@ -177,18 +180,32 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	 * @param inOut:
 	 *            input and output array with x, y, z, w coords (
 	 */
-	final public void toScreenCoords3D(GgbVector vInOut) {
-		
-		GgbVector v1 = vInOut.getCoordsLast1();
-		vInOut.set(m.mul(v1));
-		
+	final public void toScreenCoords3D(GgbVector vInOut) {	
+		changeCoords(m,vInOut);		
 	}
 	
-	final public void toScreenCoords3D(GgbMatrix mInOut) {
-		
+	final public void toScreenCoords3D(GgbMatrix mInOut) {		
+		changeCoords(m,mInOut);			
+	}
+	
+	
+	final public void toSceneCoords3D(GgbVector vInOut) {	
+		changeCoords(mInv,vInOut);		
+	}
+	
+	final public void toSceneCoords3D(GgbMatrix mInOut) {		
+		changeCoords(mInv,mInOut);			
+	}
+	
+	
+	final private void changeCoords(GgbMatrix mat, GgbVector vInOut){
+		GgbVector v1 = vInOut.getCoordsLast1();
+		vInOut.set(mat.mul(v1));		
+	}
+
+	final private void changeCoords(GgbMatrix mat, GgbMatrix mInOut){	
 		GgbMatrix m1 = mInOut.copy();
-		mInOut.set(m.mul(m1));
-		
+		mInOut.set(mat.mul(m1));		
 	}
 	
 	
@@ -211,6 +228,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		GgbMatrix m5 = GgbMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
 		m = m5.mul(m3.mul(m4));	
+		
+		mInv = m.inverse();
 		
 		//System.out.println("m = "); m.SystemPrint();
 		
@@ -295,7 +314,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 					new double[] {
 							((double) (x-w)/w),
 							((double) (-y+h)/w),
-							0});
+							0, 1.0});
 			
 			return ret;
 		}else
@@ -305,7 +324,14 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	}
 	
 	public void doPick(GgbVector pickPoint){
-		drawList3D.doPick(pickPoint);
+		doPick(pickPoint,false);
+	}
+
+	public void doPick(GgbVector pickPoint, boolean list){
+		if (list)
+			hits = drawList3D.doPick(pickPoint,true);
+		else
+			drawList3D.doPick(pickPoint,false);
 	}
 	
 	
