@@ -56,7 +56,7 @@ import org.freehep.util.UserProperties;
  * 
  * @author Simon Fischer
  * @author Mark Donszelmann
- * @version $Id: PDFGraphics2D.java,v 1.4 2008-05-04 12:31:14 murkle Exp $
+ * @version $Id: PDFGraphics2D.java,v 1.5 2008-06-30 21:13:02 murkle Exp $
  */
 public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		MultiPageDocument, FontUtilities.ShowString {
@@ -143,7 +143,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 				.getMargins(PageConstants.SMALL));
 		defaultProperties.setProperty(ORIENTATION, PageConstants.PORTRAIT);
 		defaultProperties.setProperty(FIT_TO_PAGE, true);
-		defaultProperties.setProperty(EMBED_FONTS, false);
+		defaultProperties.setProperty(EMBED_FONTS, true);
 		defaultProperties.setProperty(EMBED_FONTS_AS,
 				FontConstants.EMBED_FONTS_TYPE3);
 		defaultProperties.setProperty(THUMBNAILS, defaultProperties
@@ -157,7 +157,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperty(KEYWORDS, "");
 
 		defaultProperties.setProperty(CLIP, true);
-		defaultProperties.setProperty(TEXT_AS_SHAPES, true);
+		defaultProperties.setProperty(TEXT_AS_SHAPES, false);
 	}
 
 	public static Properties getDefaultProperties() {
@@ -168,7 +168,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperties(newProperties);
 	}
 
-	public static final String version = "$Revision: 1.4 $";
+	public static final String version = "$Revision: 1.5 $";
 
 	private static final String PDF_VERSION = "1.4";
 
