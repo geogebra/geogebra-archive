@@ -16,8 +16,8 @@ import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.GeoGebraPreferences;
-import geogebra.gui.util.ImageSelection;
 import geogebra.gui.util.FileTransferable;
+import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyImageIO;
 import geogebra.util.Util;
 
@@ -25,12 +25,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.awt.Toolkit; // Michael Borcherds 2008-03-02
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -46,6 +46,8 @@ import javax.swing.JPanel;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
+import org.freehep.util.UserProperties;
 //import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 
@@ -454,6 +456,12 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {					   
+			// make sure text is exported as text (not shapes)
+			UserProperties props=(UserProperties)PDFGraphics2D.getDefaultProperties();			
+			props.setProperty(PDFGraphics2D.EMBED_FONTS, true);
+			props.setProperty(PDFGraphics2D.TEXT_AS_SHAPES, false);			
+			PDFGraphics2D.setDefaultProperties(props);
+
 			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 		    g.startExport();			
 			app.getEuclidianView().exportPaint(g, exportScale); 
@@ -495,11 +503,20 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		
 		if (file == null)
 			return false;
-		try {						
-		    // Michael Borcherds 2008-03-01
+		try {	
+			
+			// make sure text is exported as text (not shapes)
+			UserProperties props=(UserProperties)SVGGraphics2D.getDefaultProperties();			
+			props.setProperty(SVGGraphics2D.EMBED_FONTS, true);
+			props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);			
+			SVGGraphics2D.setDefaultProperties(props);
+
+			// Michael Borcherds 2008-03-01
 			// added SVGExtensions to support grouped objects in layers
 			SVGExtensions g = new SVGExtensions(file, new Dimension(pixelWidth, pixelHeight));
 		    //VectorGraphics g = new SVGGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
+			
+
 			
 			EuclidianView ev=app.getEuclidianView();
 			
