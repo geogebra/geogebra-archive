@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.FontConstants;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
@@ -456,10 +457,13 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {					   
-			// make sure text is exported as text (not shapes)
+			// make sure text is exported as shapes (not text)
+			// shapes: better representation
+			// text: smaller file size, but some unicode symbols don't export eg Upsilon 
 			UserProperties props=(UserProperties)PDFGraphics2D.getDefaultProperties();			
-			props.setProperty(PDFGraphics2D.EMBED_FONTS, true);
-			props.setProperty(PDFGraphics2D.TEXT_AS_SHAPES, false);			
+			props.setProperty(PDFGraphics2D.EMBED_FONTS, false);
+			//props.setProperty(PDFGraphics2D.EMBED_FONTS_AS, FontConstants.EMBED_FONTS_TYPE1);
+			props.setProperty(PDFGraphics2D.TEXT_AS_SHAPES, true);			
 			PDFGraphics2D.setDefaultProperties(props);
 
 			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
@@ -505,10 +509,12 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return false;
 		try {	
 			
-			// make sure text is exported as text (not shapes)
+			// make sure text is exported as shapes (not text)
+			// shapes: better representation
+			// text: smaller file size, but some unicode symbols don't export eg Upsilon 
 			UserProperties props=(UserProperties)SVGGraphics2D.getDefaultProperties();			
-			props.setProperty(SVGGraphics2D.EMBED_FONTS, true);
-			props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);			
+			props.setProperty(SVGGraphics2D.EMBED_FONTS, false);
+			props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, true);			
 			SVGGraphics2D.setDefaultProperties(props);
 
 			// Michael Borcherds 2008-03-01
