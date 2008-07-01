@@ -127,6 +127,13 @@ public abstract class Drawable {
 		
 		Dimension dim;
 		
+		labelDesc=labelDesc.replaceAll("\\$\\$", "\\$"); // replace $$ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\[", "\\$");// replace \[ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\]", "\\$");// replace \] with $
+		labelDesc=labelDesc.replaceAll("\\\\\\(", "\\$");// replace \{ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\)", "\\$");// replace \) with $
+		
+		
 		String[] lines=labelDesc.split("\n");
 		
 		
