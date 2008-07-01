@@ -694,7 +694,6 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("square")) return new EqToken(EqToken.Id,"\u25a1");
              if (SBufferString.equals("surd")) return new EqToken(EqToken.Id,"\u221a");
              if (SBufferString.equals("top")) return new EqToken(EqToken.Id,"\u22a4");
-             if (SBufferString.equals("triangle")) return new EqToken(EqToken.Id,"\u25b5");
              if (SBufferString.equals("triangledown")) return new EqToken(EqToken.Id,"\u25bf");
              if (SBufferString.equals("varnothing")) return new EqToken(EqToken.Id,"\u2205");
              if (SBufferString.equals("aleph")) return new EqToken(EqToken.Id,"\u2135");
@@ -941,7 +940,6 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("delta")) return new EqToken(EqToken.Id,"\u03b4");
              if (SBufferString.equals("Delta")) return new EqToken(EqToken.Id,"\u0394");
              if (SBufferString.equals("digamma")) return new EqToken(EqToken.Id,"\u03dd");
-             if (SBufferString.equals("epsilon")) return new EqToken(EqToken.Id,"\u03f5");
              if (SBufferString.equals("eta")) return new EqToken(EqToken.Id,"\u03b7");
              if (SBufferString.equals("gamma")) return new EqToken(EqToken.Id,"\u03b3");
              if (SBufferString.equals("Gamma")) return new EqToken(EqToken.Id,"\u0393");
@@ -967,7 +965,6 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("Theta")) return new EqToken(EqToken.Id,"\u0398");
              if (SBufferString.equals("upsilon")) return new EqToken(EqToken.Id,"\u03c5");
              if (SBufferString.equals("Upsilon")) return new EqToken(EqToken.Id,"\u03d2");
-             if (SBufferString.equals("varepsilon")) return new EqToken(EqToken.Id,"\u03b5");
              if (SBufferString.equals("varkappa")) return new EqToken(EqToken.Id,"\u03f0");
              if (SBufferString.equals("varphi")) return new EqToken(EqToken.Id,"\u03d5");
              if (SBufferString.equals("varpi")) return new EqToken(EqToken.Id,"\u03d6");
@@ -988,48 +985,16 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("dotsm")) return new EqToken(EqToken.Id,"\u22c5\u22c5\u22c5");
              if (SBufferString.equals("dotso")) return new EqToken(EqToken.Id,"\u2026");
              if (SBufferString.equals("ddots")) return new EqToken(EqToken.Id,"\u22f1");
-             if (SBufferString.equals("alpha")) return new EqToken(EqToken.Id,"\u03b1");
-             if (SBufferString.equals("beta")) return new EqToken(EqToken.Id,"\u03b2");
-             if (SBufferString.equals("chi")) return new EqToken(EqToken.Id,"\u03c7");
-             if (SBufferString.equals("delta")) return new EqToken(EqToken.Id,"\u03b4");
-             if (SBufferString.equals("Delta")) return new EqToken(EqToken.Id,"\u0394");
-             if (SBufferString.equals("digamma")) return new EqToken(EqToken.Id,"\u03dd");
-             if (SBufferString.equals("epsilon")) return new EqToken(EqToken.Id,"\u03f5");
-             if (SBufferString.equals("eta")) return new EqToken(EqToken.Id,"\u03b7");
-             if (SBufferString.equals("gamma")) return new EqToken(EqToken.Id,"\u03b3");
-             if (SBufferString.equals("Gamma")) return new EqToken(EqToken.Id,"\u0393");
-             if (SBufferString.equals("iota")) return new EqToken(EqToken.Id,"\u03b9");
-             if (SBufferString.equals("kappa")) return new EqToken(EqToken.Id,"\u03ba");
-             if (SBufferString.equals("lambda")) return new EqToken(EqToken.Id,"\u03bb");
-             if (SBufferString.equals("Lambda")) return new EqToken(EqToken.Id,"\u039b");
-             if (SBufferString.equals("mu")) return new EqToken(EqToken.Id,"\u03bc");
-             if (SBufferString.equals("nu")) return new EqToken(EqToken.Id,"\u03bd");
-             if (SBufferString.equals("omega")) return new EqToken(EqToken.Id,"\u03c9");
-             if (SBufferString.equals("Omega")) return new EqToken(EqToken.Id,"\u03a9");
-             if (SBufferString.equals("phi")) return new EqToken(EqToken.Id,"\u03c6");
-             if (SBufferString.equals("Phi")) return new EqToken(EqToken.Id,"\u03a6");
-             if (SBufferString.equals("pi")) return new EqToken(EqToken.Id,"\u03c0");
-             if (SBufferString.equals("Pi")) return new EqToken(EqToken.Id,"\u03a0");
-             if (SBufferString.equals("psi")) return new EqToken(EqToken.Id,"\u03c8");
-             if (SBufferString.equals("Psi")) return new EqToken(EqToken.Id,"\u03a8");
-             if (SBufferString.equals("rho")) return new EqToken(EqToken.Id,"\u03c1");
-             if (SBufferString.equals("sigma")) return new EqToken(EqToken.Id,"\u03c3");
-             if (SBufferString.equals("Sigma")) return new EqToken(EqToken.Id,"\u03a3");
-             if (SBufferString.equals("tau")) return new EqToken(EqToken.Id,"\u03c4");
-             if (SBufferString.equals("theta")) return new EqToken(EqToken.Id,"\u03b8");
-             if (SBufferString.equals("Theta")) return new EqToken(EqToken.Id,"\u0398");
-             if (SBufferString.equals("upsilon")) return new EqToken(EqToken.Id,"\u03c5");
-             if (SBufferString.equals("Upsilon")) return new EqToken(EqToken.Id,"\u03d2");
              if (SBufferString.equals("varepsilon")) return new EqToken(EqToken.Id,"\u03b5");
-             if (SBufferString.equals("varkappa")) return new EqToken(EqToken.Id,"\u03f0");
-             if (SBufferString.equals("varphi")) return new EqToken(EqToken.Id,"\u03d5");
-             if (SBufferString.equals("varpi")) return new EqToken(EqToken.Id,"\u03d6");
-             if (SBufferString.equals("varrho")) return new EqToken(EqToken.Id,"\u03f1");
-             if (SBufferString.equals("varsigma")) return new EqToken(EqToken.Id,"\u03c2");
-             if (SBufferString.equals("vartheta")) return new EqToken(EqToken.Id,"\u03d1");
-             if (SBufferString.equals("xi")) return new EqToken(EqToken.Id,"\u03be");
-             if (SBufferString.equals("Xi")) return new EqToken(EqToken.Id,"\u039e");
-             if (SBufferString.equals("zeta")) return new EqToken(EqToken.Id,"\u03b6");            
+             
+             // TODO doesn't seem to be in standard font?
+             //if (SBufferString.equals("triangle")) return new EqToken(EqToken.Id,"\u25b5");
+             //if (SBufferString.equals("epsilon")) return new EqToken(EqToken.Id,"\u03f5");
+
+             
+             // TODO how do we get java to use 5 digit unicode?? supported font ???
+             //if (SBufferString.equals("imath")) return new EqToken(EqToken.Id,"\u1d6a4");            
+             //if (SBufferString.equals("jmath")) return new EqToken(EqToken.Id,"\u1d6a5");            
              
              if ((" alpha delta epsilon iota kappa lambda nu omega pi sigma theta tau upsilon varepsilon varpi vartheta"
                  +" pm mp times div cdot cdots ldots ast star amalg cap cup uplus sqcap sqcup vee wedge wr circ bullet diamond lhd rhd oslash odot Box bigtriangleup triangleleft triangleright oplus ominus otimes"
