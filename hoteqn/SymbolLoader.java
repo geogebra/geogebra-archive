@@ -64,8 +64,22 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 	}
 	//System.out.println(fontsizes[k]);
 	if (imageSources[k] == null) { 			
-		imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontsize+".gif",  app);
-		String desname = "Des"+fontsize+".gif";
+   	// original:
+		//imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontsize+".gif",  app);
+		//String desname = "Des"+fontsize+".gif";
+     	
+    	// added and changed    	
+    	int fontSize = Integer.parseInt(fontsize);
+    	if (fontSize == 16)
+    		fontSize = 14;
+    	else if (fontSize > 18)
+    		fontSize = 18;           	        	 
+		imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontSize+".gif",  app);
+        String desname = "Des" + fontSize + ".gif";
+
+		
+		
+		
 		BufferedInputStream istream = null;
 		// load font descriptors
 		try {
