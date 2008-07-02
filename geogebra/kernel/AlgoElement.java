@@ -164,6 +164,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // input is standardInput
         input = standardInput;
         this.efficientInput = efficientInput;
+        
         initRandomInputNumbers();
         setOutputDependencies();
         cons.addToAlgorithmList(this); 
@@ -477,7 +478,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }
     
 
-
+  
     public String getAlgebraDescription() {
         StringBuffer sb = new StringBuffer();
         

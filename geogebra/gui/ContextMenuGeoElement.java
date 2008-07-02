@@ -486,7 +486,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         */
         
         // Rename      
-        if (app.letRename())  {    
+        if (app.letRename() && geo.isRenameable())  {    
             addAction(new AbstractAction(
                     app.getPlain("Rename"),
                     app.getImageIcon("rename.png")) {

@@ -191,7 +191,7 @@ TOKEN : {
 }   
 
 TOKEN : { 
-	<SPREADSHEET_LABEL: ([A-Z]|[a-z])+([0-9])+ > // e.g. B12
+	<SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
 |
    < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
@@ -1042,14 +1042,19 @@ ExpressionNode numVecVariable():
     }
 |
 	// spreadsheet range like A1:B2
+	LOOKAHEAD (3)
 	c = <SPREADSHEET_LABEL> ":" c2 = <SPREADSHEET_LABEL>
 	{
+		// build command CellRange[ startCell, endCell ]
 		ExpressionNode startCell = new ExpressionNode(kernel, new Variable(kernel, c.image));
 		ExpressionNode endCell = new ExpressionNode(kernel, new Variable(kernel, c2.image));
-		 c = new Command(kernel, "CellRange", true ); 
+		Command cmd = new Command(kernel, "CellRange", false ); // don't translate name
+		cmd.addArgument(startCell);
+		cmd.addArgument(endCell);
+		return new ExpressionNode(kernel, cmd);
 	}
 |
-    c = <LABEL>
+    (c = <SPREADSHEET_LABEL> | c = <LABEL>)
     {   
     	// standard case for variable
         return new ExpressionNode(kernel, new Variable(kernel, c.image));

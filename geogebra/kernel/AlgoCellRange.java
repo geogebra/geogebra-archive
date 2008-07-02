@@ -27,6 +27,7 @@ public class AlgoCellRange extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;		
     private GeoList geoList;     // output list of range    
+    private GeoElement startCell, endCell; // input cells
     private String toStringOutput;
            
     /**
@@ -35,7 +36,9 @@ public class AlgoCellRange extends AlgoElement {
      * @param endCell: e.g. B2
      */
     public AlgoCellRange(Construction cons, String label, GeoElement startCell, GeoElement endCell) {    	    
-    	super(cons);    	    
+    	super(cons);    
+    	this.startCell = startCell;
+    	this.endCell = endCell;
     	
     	// create output object
         geoList = new GeoList(cons);
@@ -72,17 +75,24 @@ public class AlgoCellRange extends AlgoElement {
         
 	// for AlgoElement
 	protected void setInputOutput() {
-    	// create input array from listItems array-list
-    	// and fill the geoList with these objects
+		// standard input: start and end cell
+		// needed for XML saving only
+        GeoElement [] standardInput = new GeoElement[2];
+        standardInput[0] = startCell;
+        standardInput[1] = endCell;
+		
+		// efficient input: all list elements in range
+    	// used for updating of dependent algorithms
     	int size = geoList.size();
-        input = new GeoElement[size];
+    	 GeoElement [] actualInput = new GeoElement[size];
     	for (int i=0; i < size; i++) {
-    		input[i] = (GeoElement) geoList.get(i);    		
+    		actualInput[i] = (GeoElement) geoList.get(i);    		
     	}          
         
         output = new GeoElement[1];        
-        output[0] = geoList;        
-        setDependencies(); // done by AlgoElement
+        output[0] = geoList;  
+        
+        setEfficientDependencies(standardInput, actualInput);
     }    
     
     /**
@@ -129,10 +139,7 @@ public class AlgoCellRange extends AlgoElement {
     			// make sure that this cell object cannot be renamed by the user
     			// renaming would move the object outside of our range
     			geo.addCellRangeUser();
-    			
-        			// TODO: remove
-    				System.out.println("cell added: " + cellLabel + ", " + geo);
-    		}    		
+       		}    		
     	}    	
     }        
     
@@ -144,6 +151,10 @@ public class AlgoCellRange extends AlgoElement {
     protected final void compute() {    	    	
     	// nothing to do in compute
     }   
+    
+    final public String getCommandDescription() {
+    	return toString();
+    }
     
     final public String toString() {
     	return toStringOutput;

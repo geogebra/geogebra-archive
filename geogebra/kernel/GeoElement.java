@@ -1072,16 +1072,20 @@ final public boolean hasOnlyFreeInputPoints() {
     		--cellRangeUsers;
     }
     
+    public boolean isRenameable() {
+    	// don't allow renaming when this object is used in 
+		// cell ranges, see AlgoCellRange
+    	return cellRangeUsers == 0;
+    }
+    
 	/**
 	 * renames this GeoElement to newLabel.
 	 * @param newLabel
 	 * @return true if label was changed
 	 * @throws MyError: if new label is already in use
 	 */
-	public boolean rename(String newLabel) {
-		// don't allow renaming when this object is used in 
-		// cell ranges, see AlgoCellRange
-		if (cellRangeUsers > 0)
+	public boolean rename(String newLabel) {		
+		if (!isRenameable())
 			return false;
 		
 		if (newLabel == null)
