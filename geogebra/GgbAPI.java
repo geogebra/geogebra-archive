@@ -386,7 +386,10 @@ public class GgbAPI {
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) 
 			return false;
-		else
+		
+		if (geo.isGeoPoint()) {
+			return geo.isDefined() && !((GeoPoint) geo).isInfinite();
+		} else		
 			return geo.isDefined();
 	}	
 	
