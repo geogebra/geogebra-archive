@@ -149,25 +149,19 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	protected void movePoint(boolean repaint){
 		
 		if (objSelected!=null){
-			//System.out.println("movePoint");
+			//computes intersection between (p,Vn) plane and (eye,pickPoint) line
 			GeoPoint3D p = (GeoPoint3D) objSelected;
-			GgbVector o1 = p.getCoords(); view.toScreenCoords3D(o1);
-			GgbVector o2 = view.eye.copyVector(); //view.toScreenCoords3D(o1);
-			GgbVector v1 = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
-			GgbVector v = v1.copyVector(); //view.toScreenCoords3D(v);			
-			GgbVector Vn2 = Vn.copyVector(); //view.toScreenCoords3D(Vn2);
+			GgbVector o1 = p.getCoords(); 
 			
-			/*
-			System.out.println("v1 = ");v1.SystemPrint();
-			System.out.println("v = ");v.SystemPrint();
-			System.out.println("Vn2 = ");Vn2.SystemPrint();
-			*/
+			GgbVector o2 = view.eye.copyVector(); 
+			view.toSceneCoords3D(o2);
 			
-			double l = (o1.sub(o2)).dotproduct(Vn2)/(v.dotproduct(Vn2));
+			GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
+			view.toSceneCoords3D(v);	
 			
-			//System.out.println("lambda = "+l);
-			GgbVector p1 = (view.eye.add(v1.mul(l))).getColumn(1);
-			view.toSceneCoords3D(p1);
+			double l = (o1.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
+			
+			GgbVector p1 = (o2.add(v.mul(l))).getColumn(1);
 			p.setCoords(p1);
 						
 		}
@@ -205,7 +199,8 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Raccord de méthode auto-généré
+		
+		moveMode = MOVE_NONE;
 		
 	}
 
@@ -260,11 +255,34 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		
 		double r = e.getWheelRotation();
-		//System.out.println("mouseWheelMoved : "+r);
+
+		switch (moveMode) {
+		case MOVE_VIEW:
+		default:
+			view.setZZero(view.getZZero()+ r/10.0);
+			view.updateMatrix();
+			view.repaint();
+			break;
+
+		case MOVE_POINT:
+			if (objSelected!=null){
+				//p = p + r*z
+				GeoPoint3D p = (GeoPoint3D) objSelected;
+				GgbVector p1 = p.getCoords(); 
+				p1.set(3,p1.get(3)-r*0.1);
+				p.setCoords(p1);
+				view.repaint();
+				//TODO move mouse pointer
+			}
+			break;	
+			
 		
-		view.setZZero(view.getZZero()+ r/10.0);
-		view.updateMatrix();
-		view.repaint();
+		
+		}
+	
+		
+		
+
 	}
 	
 	
