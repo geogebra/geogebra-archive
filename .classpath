@@ -13,7 +13,9 @@
 	<classpathentry kind="lib" path="proguard38.jar"/>
 	<classpathentry kind="lib" path="jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="JMathTeX-0.7pre.jar"/>
-	<classpathentry kind="lib" path="javax"/>
 	<classpathentry kind="lib" path="jnlp.jar"/>
+	<classpathentry kind="lib" path="j3dcore.jar"/>
+	<classpathentry kind="lib" path="vecmath.jar"/>
+	<classpathentry kind="lib" path="j3dutils.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

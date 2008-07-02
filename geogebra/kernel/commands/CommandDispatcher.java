@@ -242,9 +242,10 @@ public class CommandDispatcher {
     	cmdTable.put("Iteration", new CmdIteration(kernel));
     	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	
-    	cmdTable.put("Name", new CmdName(kernel));    	
+    	cmdTable.put("Name", new CmdName(kernel));
     	
-    	
+    	// cell range for spreadsheet like A1:A5
+    	cmdTable.put("CellRange", new CmdCellRange(kernel));    	
     }
 
 

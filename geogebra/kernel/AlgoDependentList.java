@@ -15,8 +15,9 @@ package geogebra.kernel;
 import java.util.ArrayList;
 
 /**
+ *  Algorithm that takes a list of GeoElement objects to build a Geolist with them.
  *
- * @author  Markus
+ * @author  Markus Hohenwarter
  * @version 
  */
 public class AlgoDependentList extends AlgoElement {
@@ -33,6 +34,11 @@ public class AlgoDependentList extends AlgoElement {
      * @param listItems: list of GeoElement objects
      */
     public AlgoDependentList(Construction cons, String label, ArrayList listItems) {
+    	this (cons, listItems);
+    	geoList.setLabel(label);
+    }
+    
+    AlgoDependentList(Construction cons, ArrayList listItems) {
     	super(cons);
     	this.listItems = listItems;
     	       
@@ -41,8 +47,7 @@ public class AlgoDependentList extends AlgoElement {
     	setInputOutput(); 
         
         // compute value of dependent number
-        compute();      
-        geoList.setLabel(label);
+        compute();              
     }   
     
 	protected String getClassName() {

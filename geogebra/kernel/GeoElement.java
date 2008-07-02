@@ -271,6 +271,7 @@ public abstract class GeoElement
 
 	// spreadsheet specific properties
 	private Point spreadsheetCoords, oldSpreadsheetCoords;	 
+	private int cellRangeUsers = 0; // number of AlgoCellRange using this cell: don't allow renaming when greater 0
 	
 	// condition to show object
 	private GeoBoolean condShowObject;
@@ -1062,6 +1063,15 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * Hashtable: String (label) -> GeoElement 
 	 ********************************************************/
 
+    public void addCellRangeUser() {
+    	++cellRangeUsers;
+    }
+    
+    public void removeCellRangeUser() {
+    	if (cellRangeUsers > 0)
+    		--cellRangeUsers;
+    }
+    
 	/**
 	 * renames this GeoElement to newLabel.
 	 * @param newLabel
@@ -1069,6 +1079,11 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * @throws MyError: if new label is already in use
 	 */
 	public boolean rename(String newLabel) {
+		// don't allow renaming when this object is used in 
+		// cell ranges, see AlgoCellRange
+		if (cellRangeUsers > 0)
+			return false;
+		
 		if (newLabel == null)
 			return false;
 		newLabel = newLabel.trim();
@@ -1669,8 +1684,9 @@ final public boolean hasOnlyFreeInputPoints() {
 	/**
 	 * add algorithm to dependency list of this GeoElement
 	 */
-	final void addAlgorithm(AlgoElement algorithm) {		
-		algorithmList.add(algorithm);
+	final void addAlgorithm(AlgoElement algorithm) {	
+		if (!algorithmList.contains(algorithm))
+			algorithmList.add(algorithm);
 		addToUpdateSets(algorithm);
 	}
 	
@@ -1681,7 +1697,8 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * not be updated.
 	 */
 	final void addToAlgorithmListOnly(AlgoElement algorithm) {
-		algorithmList.add(algorithm);
+		if (!algorithmList.contains(algorithm))
+			algorithmList.add(algorithm);		
 	}
 	
 	/**

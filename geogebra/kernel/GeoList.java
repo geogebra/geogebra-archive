@@ -10,12 +10,6 @@ the Free Software Foundation.
 
 */
 
-/*
- * GeoLine.java
- *
- * Created on 30. August 2001, 17:39
- */
-
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;

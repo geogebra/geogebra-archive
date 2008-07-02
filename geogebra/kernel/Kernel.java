@@ -1118,6 +1118,16 @@ public class Kernel {
 		return algo.getList();
 	}
 	
+	/**
+	 * Creates a list object for a range of cells in the spreadsheet. 
+	 * e.g. A1:B2
+	 */
+	final public GeoList CellRange(String label, GeoElement startCell, GeoElement endCell) {
+		AlgoCellRange algo =
+			new AlgoCellRange(cons, label, startCell, endCell);		
+		return algo.getList();
+	}
+	
 	/********************
 	 * ALGORITHMIC PART *
 	 ********************/

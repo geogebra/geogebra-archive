@@ -190,7 +190,9 @@ TOKEN : {
 >
 }   
 
-TOKEN : {  
+TOKEN : { 
+	<SPREADSHEET_LABEL: ([A-Z]|[a-z])+([0-9])+ > // e.g. B12
+|
    < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
  |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}" ) )  >  
@@ -1026,7 +1028,7 @@ ExpressionValue list():
 ExpressionNode numVecVariable():
 {
     GeoElement geo;
-    Token c;
+    Token c, c2;
 }
 {
     c = <VARX>  
@@ -1038,6 +1040,14 @@ ExpressionNode numVecVariable():
     {
         return new ExpressionNode(kernel, new Polynomial(kernel, c.image));
     }
+|
+	// spreadsheet range like A1:B2
+	c = <SPREADSHEET_LABEL> ":" c2 = <SPREADSHEET_LABEL>
+	{
+		ExpressionNode startCell = new ExpressionNode(kernel, new Variable(kernel, c.image));
+		ExpressionNode endCell = new ExpressionNode(kernel, new Variable(kernel, c2.image));
+		 c = new Command(kernel, "CellRange", true ); 
+	}
 |
     c = <LABEL>
     {   
