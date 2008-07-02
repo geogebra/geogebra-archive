@@ -104,7 +104,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			if (!view.hits.isEmpty()){
 				objSelected = (GeoElement3D) view.hits.get(0);		
 				objSelected.setSelected(true);
-				System.out.println("selected = "+objSelected.getLabel());
+				//System.out.println("selected = "+objSelected.getLabel());
 				moveMode = MOVE_POINT;
 			}
 			view.repaint();
@@ -157,13 +157,15 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			GgbVector v = v1.copyVector(); //view.toScreenCoords3D(v);			
 			GgbVector Vn2 = Vn.copyVector(); //view.toScreenCoords3D(Vn2);
 			
+			/*
 			System.out.println("v1 = ");v1.SystemPrint();
 			System.out.println("v = ");v.SystemPrint();
 			System.out.println("Vn2 = ");Vn2.SystemPrint();
+			*/
 			
 			double l = (o1.sub(o2)).dotproduct(Vn2)/(v.dotproduct(Vn2));
 			
-			System.out.println("lambda = "+l);
+			//System.out.println("lambda = "+l);
 			GgbVector p1 = (view.eye.add(v1.mul(l))).getColumn(1);
 			view.toSceneCoords3D(p1);
 			p.setCoords(p1);
