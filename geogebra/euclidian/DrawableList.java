@@ -50,16 +50,24 @@ public class DrawableList {
 			while (cur.d.getGeoElement().getDrawingPriority()<=priority && !cur.equals(tail)) cur = cur.next;
 				
 			if (cur.equals(head))
-			{ // add at start of list
-				//System.out.println("start");
-				//Link temp 
-				Link temp2=head;
-				head= new Link(d, null);
-				head.next=temp2;
+			{ 
+				if (cur.d.getGeoElement().getDrawingPriority()<=priority)
+				{// add at end (list size=1)
+				
+					Link temp = new Link(d, null);
+					tail.next = temp;
+					tail = temp;				
+				}
+				else
+				{ // add at start of list
+					Link temp2=head;
+					head= new Link(d, null);
+					head.next=temp2;
+				}
 			}
 			else if (cur.equals(tail))
 			{ // add at end
-				//System.out.println("end");
+				System.out.println("end");
 				Link temp = new Link(d, null);
 				tail.next = temp;
 				tail = temp;				
