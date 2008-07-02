@@ -240,6 +240,20 @@ public class MyTable extends JTable
 		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 			return;
 		}
+		if (isDragging2) {
+			Point point1 = getPixel(minColumn2, minRow2, true);
+			Point point2 = getPixel(maxColumn2, maxRow2, false);
+			int x1 = (int)point1.getX();
+			int y1 = (int)point1.getY();
+			int x2 = (int)point2.getX();
+			int y2 = (int)point2.getY();
+			graphics.setColor(Color.GRAY);
+			System.out.println(x1 + "," + y1 + "," + x2 + "," + y2);
+			graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
+			graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
+			graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
+			graphics.fillRect(x2 - LINE_THICKNESS1, y1, LINE_THICKNESS1, y2 - y1);
+		}
 		if (dragingToRow != -1 && dragingToColumn != -1) {
 			/*
 			System.out.println("minSelectionRow = " + minSelectionRow);
@@ -332,6 +346,14 @@ public class MyTable extends JTable
 		}
 	}
 	
+	protected String name0;
+	protected String prefix0;
+	protected boolean isDragging2 = false;
+	protected int minColumn2 = -1;
+	protected int maxColumn2 = -1;
+	protected int minRow2 = -1;
+	protected int maxRow2 = -1;
+	
 	protected class MouseListener1 implements MouseListener
 	{
 		
@@ -349,6 +371,10 @@ public class MyTable extends JTable
 						}
 					}
 				}	
+				name0 = null;
+				prefix0 = null;
+				isDragging2 = false;
+				repaint();
 			}
 		}
 		
@@ -357,8 +383,6 @@ public class MyTable extends JTable
 		
 		public void mouseExited(MouseEvent e) {
 		}
-		
-		protected String name0;
 		
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1) {
@@ -386,8 +410,15 @@ public class MyTable extends JTable
 								String name = GeoElement.getSpreadsheetCellName(column, row);
 								if (geo.isGeoFunction()) name += "(x)";
 								name0 = name;
+								prefix0 = text;
+								isDragging2 = true;
+								minColumn2 = column;
+								maxColumn2 = column;
+								minRow2 = row;
+								maxRow2 = row;
 								editor.addLabel(name);
 								e.consume();
+								repaint();
 							}
 						}
 					}	
@@ -421,13 +452,17 @@ public class MyTable extends JTable
 									String name = GeoElement.getSpreadsheetCellName(column, row);
 									if (geo.isGeoFunction()) name += "(x)";
 									if (! name.equals(name0)) {
-										editor.addLabel(":" + name);
+										//editor.addLabel(":" + name);
 									}
 									e.consume();
 								}
 							}
 						}
-					}	
+					}
+					name0 = null;
+					prefix0 = null;
+					isDragging2 = false;
+					repaint();
 				}
 				if (isDragingDot) {
 					if (dragingToColumn == -1 || dragingToRow == -1) return;
@@ -483,6 +518,35 @@ public class MyTable extends JTable
 		
 		public void mouseDragged(MouseEvent e) {
 			if (editor.isEditing()) {
+				Point point = getIndexFromPixel(e.getX(), e.getY());
+				if (point != null) {
+					int column2 = (int)point.getX();
+					int row2 = (int)point.getY();
+					int column1 = GeoElement.getSpreadsheetColumn(name0);
+					int row1 = GeoElement.getSpreadsheetRow(name0);
+					if (column1 > column2) {
+						int temp = column1;
+						column1 = column2;
+						column2 = temp;
+					}
+					if (row1 > row2) {
+						int temp = row1;
+						row1 = row2;
+						row2 = temp;
+					}
+					String name1 = GeoElement.getSpreadsheetCellName(column1, row1);
+					String name2 = GeoElement.getSpreadsheetCellName(column2, row2);
+					if (! name1.equals(name2)) {
+						name1 += ":" + name2;
+					}
+					name1 = prefix0 + name1;
+					editor.setLabel(name1);
+					minColumn2 = column1;
+					maxColumn2 = column2;
+					minRow2 = row1;
+					maxRow2 = row2;
+					repaint();
+				}
 				e.consume();
 				return;
 			}

@@ -41,8 +41,14 @@ public class MyCellEditor extends DefaultCellEditor {
 			else {
 				text = value.getCommandDescription();
 			}
-			if ((! value.isGeoText()) && text.indexOf("=") == -1) {
-				text = "=" + text;			
+			int index = text.indexOf("=");
+			if ((! value.isGeoText())) {
+				if (index == -1) {
+					text = "=" + text;			
+				}
+				if (index > 0) {
+					text = text.substring(index - 1).trim();
+				}
 			}
 		}
 		delegate.setValue(text);
@@ -87,6 +93,11 @@ public class MyCellEditor extends DefaultCellEditor {
 		delegate.setValue(text + label);
 	}
 
+	public void setLabel(String text) {
+		if (! editing) return;
+		delegate.setValue(text);
+	}
+
 	public String getEditingValue() {
 		return (String)delegate.getCellEditorValue();
 	}
@@ -129,6 +140,87 @@ public class MyCellEditor extends DefaultCellEditor {
 		delegate.setValue(text);
 	}
 	
+	private static GeoElement prepareNewValue(Kernel kernel, String name, String text) throws Exception {
+		String text0 = text;
+		int posEqual = text.indexOf('=');
+		// text like "= A1 + A2"
+		if (posEqual == 0) {
+			text = name + text;
+		}
+		// text like "x^2 + y^2 = 25"
+		else if (posEqual > 0) {
+			if (! text.startsWith(name)) {
+				text = name + ":" + text;
+			}
+		}
+		// no equal sign in input
+		else {
+			text = name + "=" + text;
+		}
+		
+		GeoElement[] newValues = null;
+		try {
+			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+		} catch (Exception e) {
+			// TODO: handle exception
+    		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
+			if (! text0.startsWith("=")) {
+    			text = name + "=\"" + text0 + "\"";
+   				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+   				if (newValues[0].isGeoText()) {
+   					newValues[0].setEuclidianVisible(false);
+       				newValues[0].update();
+   				}
+			}
+			else {
+				throw e;
+			}
+		}
+		return newValues[0];
+	}
+	
+	private static GeoElement updateOldValue(Kernel kernel, GeoElement oldValue, String name, String text) throws Exception {
+		String text0 = text;
+    	if (text.startsWith("=")) {
+    		text = text.substring(1);
+    	} 
+    	GeoElement newValue = null;
+    	try {
+        	if (oldValue.isIndependent()) {
+        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
+        		// !!!problem here to be solved.
+        		//System.out.println(">> " + newValue.toValueString());
+        	}
+        	else {
+        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
+        	}
+        	newValue.setConstructionDefaults();
+        	//System.out.println("GeoClassType = " + newValue.getGeoClassType());
+        	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
+        		newValue.setVisualStyle(oldValue);	        		
+        	}
+        	else {
+        		kernel.getApplication().refreshViews();
+        	}
+    	} catch (Throwable e) {
+    		// TODO: handle exception
+    		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
+    		//System.err.println("text0 = " + text0);
+    		if (text0.startsWith("=") || text0.startsWith("\"")){
+    			throw new Exception(e);
+    		} else {
+    			if (! oldValue.hasChildren()) {
+	    			oldValue.remove();
+	    			prepareNewValue(kernel, name, text0);
+    			}
+    			else {
+        			throw new Exception(e);
+    			}
+    		}
+    	}
+		return newValue;    		
+	}
+	
 	// also used in RelativeCopy.java
 	public static GeoElement prepareAddingValueToTableNoStoringUndoInfo(Kernel kernel, MyTable table, String text, GeoElement oldValue, int column, int row) throws Exception {
 		//column = table.convertColumnIndexToModel(column);
@@ -142,105 +234,15 @@ public class MyCellEditor extends DefaultCellEditor {
     	if (text == null) {
     		if (oldValue != null) {
     			oldValue.remove();
-    			oldValue = null;
     		}
     		return null;
     	}
     	else if (oldValue == null) {
-    		String text0 = text;
-    		int posEqual = text.indexOf('=');
-    		// text like "= A1 + A2"
-    		if (posEqual == 0) {
-    			text = name + text;
-    		}
-    		// text like "x^2 + y^2 = 25"
-    		else if (posEqual > 0) {
-    			if (! text.startsWith(name)) {
-    				text = name + ":" + text;
-    			}
-    		}
-    		// no equal sign in input
-    		else {
-    			text = name + "=" + text;
-    		}
-    		
-    		GeoElement[] newValues = null;
-    		try {
-    			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-    		} catch (Exception e) {
-    			// TODO: handle exception
-        		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
-    			if (! text0.startsWith("=")) {
-        			text = name + "=\"" + text0 + "\"";
-       				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-       				if (newValues[0].isGeoText()) {
-       					newValues[0].setEuclidianVisible(false);
-           				newValues[0].update();
-       				}
-    			}
-    			else {
-    				throw e;
-    			}
-    		}
-    		
-    		if (newValues != null) {    
-    			return newValues[0];
-    		} 
-    		
-    		// TODO: 
-    		// make input text if input is not recognized like in Excel    		
-//    		else {    
-//        		
-//        		text = name + "\"" + text + "\"";
-//        		newValues = kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
-//        		
-//        		value = newValues[0];
-//    			if (value.isGeoText()) {
-//    				value.setEuclidianVisible(false);
-//    				value.update();
-//    			}
-//        	}
-    		
-    	}
+    		return prepareNewValue(kernel, name, text);
+     	}
         else { // value != null;
-    		String text0 = text;
-        	if (text.startsWith("=")) {
-        		text = text.substring(1);
-        	} 
-        	GeoElement newValue = null;
-        	try {
-	        	if (oldValue.isIndependent()) {
-	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
-	        	}
-	        	else {
-	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
-	        	}
-        	} catch (Exception e) {
-        		// TODO: handle exception
-        		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
-        		if (text0.startsWith("=") || text0.startsWith("\"")){
-        			throw e;
-        		} else {
-        			text = name + "=\"" + text0 + "\"";
-    	        	if (oldValue.isIndependent()) {
-    	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
-    	        	}
-    	        	else {
-    	        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
-    	        	}
-        		}
-        	}
-    		if (newValue != null) {
-    			return newValue;    		
-    		}   
-    		// TODO: make text changeable too
-//    		else if (value.isGeoText()) {
-//        		if
-////        		text = "\"" + text + "\"";
-////        	}
-        	
+        	return updateOldValue(kernel, oldValue, name, text);        	
         }
-    	throw new RuntimeException("Error state.");
     }
 
 }
