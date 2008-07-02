@@ -134,7 +134,7 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "June 25, 2008";
+    public static final String buildDate = "July 02, 2008";
 	
     public static final String versionString = "3.1.3.0";    
     public static final String XML_FILE_FORMAT = "3.02";    

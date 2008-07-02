@@ -38,13 +38,13 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.freehep.graphics2d.VectorGraphics;
-import org.freehep.graphicsio.FontConstants;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
@@ -67,6 +67,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private double exportScale;
 	private int pixelWidth, pixelHeight;
 	private NumberFormat sizeLabelFormat;
+	
+	private boolean textAsShapes=true;
 	
 	private final int FORMAT_PNG = 0;
 	private final int FORMAT_PDF = 1;
@@ -149,13 +151,31 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			}		
 		});	
 		
+		
+		final JCheckBox textAsShapesCB = new JCheckBox(app.getPlain("ExportTextAsShapes"),textAsShapes);
+		
+		if  (cbFormat.getSelectedIndex()==FORMAT_SVG || cbFormat.getSelectedIndex()==FORMAT_PDF)
+			textAsShapesCB.setEnabled(false);
+		else
+			textAsShapesCB.setEnabled(true);
+				
+		textAsShapesCB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textAsShapes=textAsShapesCB.isSelected();
+			}					
+		});
+		dpiPanel.add(textAsShapesCB);
+		
 		cbFormat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				textAsShapesCB.setEnabled(false);
 				switch (cbFormat.getSelectedIndex()) {
-					case FORMAT_EPS:
 					case FORMAT_SVG:
-					case FORMAT_EMF:
 					case FORMAT_PDF:
+						textAsShapesCB.setEnabled(true);
+						// no break!!
+					case FORMAT_EPS:
+					case FORMAT_EMF:
 						cbDPI.setSelectedItem("72");
 						cbDPI.setEnabled(false);						
 						break;											
@@ -457,13 +477,13 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {					   
-			// make sure text is exported as shapes (not text)
+			// export text as shapes or plaintext
 			// shapes: better representation
 			// text: smaller file size, but some unicode symbols don't export eg Upsilon 
 			UserProperties props=(UserProperties)PDFGraphics2D.getDefaultProperties();			
-			props.setProperty(PDFGraphics2D.EMBED_FONTS, false);
+			props.setProperty(PDFGraphics2D.EMBED_FONTS, !textAsShapes);
 			//props.setProperty(PDFGraphics2D.EMBED_FONTS_AS, FontConstants.EMBED_FONTS_TYPE1);
-			props.setProperty(PDFGraphics2D.TEXT_AS_SHAPES, true);			
+			props.setProperty(PDFGraphics2D.TEXT_AS_SHAPES, textAsShapes);			
 			PDFGraphics2D.setDefaultProperties(props);
 
 			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
@@ -509,12 +529,12 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return false;
 		try {	
 			
-			// make sure text is exported as shapes (not text)
+			// export text as shapes or plaintext
 			// shapes: better representation
 			// text: smaller file size, but some unicode symbols don't export eg Upsilon 
 			UserProperties props=(UserProperties)SVGGraphics2D.getDefaultProperties();			
-			props.setProperty(SVGGraphics2D.EMBED_FONTS, false);
-			props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, true);			
+			props.setProperty(SVGGraphics2D.EMBED_FONTS, !textAsShapes);
+			props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, textAsShapes);			
 			SVGGraphics2D.setDefaultProperties(props);
 
 			// Michael Borcherds 2008-03-01
