@@ -186,14 +186,15 @@ public class MyCellEditor extends DefaultCellEditor {
     	} 
     	GeoElement newValue = null;
     	try {
-        	if (oldValue.isIndependent()) {
-        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
-        		// !!!problem here to be solved.
-        		//System.out.println(">> " + newValue.toValueString());
-        	}
-        	else {
+//        	if (oldValue.isIndependent()) {
+//        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
+//        		// !!!problem here to be solved.
+//        		//System.out.println(">> " + newValue.toValueString());
+//        	}
+//        	else {
+    			// always redefine objects in spreadsheet
         		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
-        	}
+    //    	}
         	newValue.setConstructionDefaults();
         	//System.out.println("GeoClassType = " + newValue.getGeoClassType());
         	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
@@ -209,7 +210,7 @@ public class MyCellEditor extends DefaultCellEditor {
     		if (text0.startsWith("=") || text0.startsWith("\"")){
     			throw new Exception(e);
     		} else {
-    			if (! oldValue.hasChildren()) {
+    			if (!oldValue.hasChildren()) {
 	    			oldValue.remove();
 	    			prepareNewValue(kernel, name, text0);
     			}

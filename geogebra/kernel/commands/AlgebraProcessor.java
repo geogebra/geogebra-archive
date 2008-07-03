@@ -494,14 +494,28 @@ public class AlgebraProcessor {
 			// redefine
 			else {
 				try {
-				
+
 //					System.out.println("replace: " + replaceable);
-//					System.out.println("     by: " + ret[0]);
+//					System.out.println("     by: " + ret[0]);			
 					
-					cons.replace(replaceable, ret[0]);
-					// now all objects have changed
-					// get the new object with same label as our result
-					ret[0] = cons.lookupLabel(ret[0].getLabel());
+					// SPECIAL CASE: set value
+					// new and old object are both independent and have same type:
+					// simply assign value and don't redefine
+					if (replaceable.isIndependent() && ret[0].isIndependent() &&
+							replaceable.getGeoClassType() == ret[0].getGeoClassType()) 
+					{
+						replaceable.set(ret[0]);
+						replaceable.updateRepaint();
+						ret[0] = replaceable;										
+					}
+					
+					// STANDARD CASE: REDFINED 
+					else {									
+						cons.replace(replaceable, ret[0]);
+						// now all objects have changed
+						// get the new object with same label as our result
+						ret[0] = cons.lookupLabel(ret[0].getLabel());						
+					}
 				} catch (CircularDefinitionException e) {
 					throw e;
 				} catch (Exception e) {

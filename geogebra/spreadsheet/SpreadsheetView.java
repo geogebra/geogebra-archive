@@ -82,7 +82,10 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void add(GeoElement geo) {
-		//System.out.println(new Date() + " ADD");
+		// TODO: remove
+		System.out.println(new Date() + " ADD: " + geo);
+		
+		
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			if (location.y >= tableModel.getRowCount()) {
@@ -96,7 +99,9 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void remove(GeoElement geo) {
-		//System.out.println(new Date() + " REMOVE");
+		// TODO: remove	
+		System.out.println(new Date() + " REMOVE: " + geo);
+				
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			tableModel.setValueAt(null, location.y, location.x);
