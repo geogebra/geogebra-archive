@@ -4022,9 +4022,10 @@ public abstract class Application implements	KeyEventDispatcher {
                 SwingUtilities.updateComponentTreeUI(applet);
           
             // TODO: update layout of screen after split pane has changed
+             // for Java 1.4.2
             
-            if (frame != null)                   
-                SwingUtilities.updateComponentTreeUI(frame);
+          //  if (frame != null)                   
+           //     SwingUtilities.updateComponentTreeUI(frame);
           
         }
     }
