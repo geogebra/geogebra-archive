@@ -75,10 +75,11 @@ public class SpreadsheetView extends JScrollPane implements View
 		//
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
-		/**/
+		///
 		Cross cross = new Cross(app);
 		this.add(cross);
 		cross.setBounds(5, 5, 5 + Cross.LENGTH, 5 + Cross.LENGTH);
+		/**/
 	}
 	
 	public void add(GeoElement geo) {
@@ -123,13 +124,6 @@ public class SpreadsheetView extends JScrollPane implements View
 		add(geo);
 	}
 	
-	public void update(GeoElement geo) {
-		//System.out.println(new Date() + " UPDATE");
-		Point location = geo.getSpreadsheetCoords();
-		if (location != null) {
-		}
-	}
-
 	public void updateAuxiliaryObject(GeoElement geo) {
 		update(geo);
 	}
@@ -147,10 +141,6 @@ public class SpreadsheetView extends JScrollPane implements View
 			table.selectNone();
 		}
 		repaint();
-	}
-	
-	public void reset() {
-		//System.out.println(new Date() + " RESET");
 	}
 	
 	public void clearView() {
@@ -381,5 +371,30 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 		
 	}
+	/**/
 		
+	public void reset() {
+	}	
+	public void update(GeoElement geo) {
+	}	
+	
+	/*
+	public void add(GeoElement geo) {
+	}
+	public void remove(GeoElement geo) {
+	}	
+	public void rename(GeoElement geo) {
+	}	
+	public void updateAuxiliaryObject(GeoElement geo) {
+	}	
+	public void repaintView() {
+	}
+	public void clearView() {
+	}
+	
+	/**/
+		
+	
 }
+		
+

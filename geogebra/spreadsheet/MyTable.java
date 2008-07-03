@@ -248,7 +248,7 @@ public class MyTable extends JTable
 			int x2 = (int)point2.getX();
 			int y2 = (int)point2.getY();
 			graphics.setColor(Color.GRAY);
-			System.out.println(x1 + "," + y1 + "," + x2 + "," + y2);
+			//System.out.println(x1 + "," + y1 + "," + x2 + "," + y2);
 			graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
 			graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
 			graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
@@ -447,15 +447,7 @@ public class MyTable extends JTable
 							int column = (int)point.getX();
 							int row = (int)point.getY();
 							if (column != editor.column || row != editor.row) {
-								GeoElement geo = RelativeCopy.getValue(MyTable.this, column, row);
-								if (geo != null) {
-									String name = GeoElement.getSpreadsheetCellName(column, row);
-									if (geo.isGeoFunction()) name += "(x)";
-									if (! name.equals(name0)) {
-										//editor.addLabel(":" + name);
-									}
-									e.consume();
-								}
+								e.consume();
 							}
 						}
 					}

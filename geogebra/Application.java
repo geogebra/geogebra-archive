@@ -874,6 +874,7 @@ public abstract class Application implements	KeyEventDispatcher {
       *  @return true if a file was loaded successfully
       */
     private boolean handleFileArg(String[] args) {
+    
         if (args == null || args.length < 1)
             return false;
         
@@ -898,7 +899,7 @@ public abstract class Application implements	KeyEventDispatcher {
             	
                 URL url = new URL(fileArgument);                   
                 success = loadXML(url, isMacroFile);              
-                updateContentPane();                          
+                updateContentPane(true);              
             } else {                       	
                 File f = new File(fileArgument);
                 f = f.getCanonicalFile();                
