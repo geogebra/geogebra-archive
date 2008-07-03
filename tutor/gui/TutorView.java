@@ -14,8 +14,10 @@ import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,9 +43,11 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import tutor.business.TutorFacade;
 import tutor.model.Annotation;
 import tutor.model.Justification;
 import tutor.model.Strategy;
+import tutor.model.TutorConstruction;
 import tutor.persistence.dao.iface.JustificationDao;
 import tutor.persistence.dao.iface.StrategyDao;
 
@@ -96,6 +100,14 @@ public class TutorView extends JPanel implements View  {
 	
 	String strategyFilesURL;
 	
+	// AlbertV STARTS
+	//TODO: m'agradaria fer tutorFacade static, però a GeoGebraAppletTutor es crida 2 vegades a initGUI (la propia i la de la base), 
+	//i llavors es fan 2 instancies de TutorView
+	//i llavors l'event add o remove es duplica cada vegada i els calculs de numeros de punts i linies no surten
+	private TutorFacade tutorFacade;
+	private static List tutorConstructionStrategies = new ArrayList();
+	// AlbertV ENDS
+	
 	public String getStrategyFilesURL() {
 		return strategyFilesURL;
 	}
@@ -127,6 +139,20 @@ public class TutorView extends JPanel implements View  {
 		this.problema = problema;
 		this.alumne = alumne;
 		tc.setView(this);
+		
+		// AlbertV STARTS
+		this.tutorFacade = new TutorFacade();
+
+		try {
+			tutorConstructionStrategies = tutorFacade.loadStrategies(this.getApp());
+		} catch (FileNotFoundException e) {
+			app.showError(app.getError("Strategy GGB file Load Failed") 
+					+ "\n" + e.getMessage());
+		}
+		catch (Exception e) {
+			app.showError(e.getMessage());
+		}
+		// AlbertV ENDS
 	}
 	
 	public void initDataModel() {
@@ -135,29 +161,31 @@ public class TutorView extends JPanel implements View  {
 		//strategies = this.dbi.retrieveStrategies(problema);
 		//StrategyDao strategiesDao = new HttpStrategyDao();
 		
-		strategies = strategyDao.findStrategiesByProblemId(new Long(problema));
-
-		//String context = "http://antalya.uab.es/edumat/agentgeom/problemes";
-		String context = strategyFilesURL;
+// 14/4/8 HO COMENTO PQ EL problema ES NULL I DONA CASQUE
 		
-		for (Iterator it = strategies.iterator(); it.hasNext();) {
-			Strategy strategy = (Strategy) it.next();
-			try {
-				
-				String file = strategy.getFile();
-				String strUrl = context + "/" + file;
-				strategy.setUrl(strUrl);
-				URL strategyUrl = new URL(strategy.getUrl());
-				System.out.println(strategyUrl);
-				Construction construction = getConstruction(strategyUrl);
-				strategy.setConstruction(construction);
-			}
-			catch (Exception e) {
-				System.out.println(e);
-				app.showError(app.getError("Strategies Loading Process Failed. ") 
-						+ "\n" + e.getMessage());
-			}
-		}
+//		strategies = strategyDao.findStrategiesByProblemId(new Long(problema));
+//
+//		//String context = "http://antalya.uab.es/edumat/agentgeom/problemes";
+//		String context = strategyFilesURL;
+//		
+//		for (Iterator it = strategies.iterator(); it.hasNext();) {
+//			Strategy strategy = (Strategy) it.next();
+//			try {
+//				
+//				String file = strategy.getFile();
+//				String strUrl = context + "/" + file;
+//				strategy.setUrl(strUrl);
+//				URL strategyUrl = new URL(strategy.getUrl());
+//				System.out.println(strategyUrl);
+//				Construction construction = getConstruction(strategyUrl);
+//				strategy.setConstruction(construction);
+//			}
+//			catch (Exception e) {
+//				System.out.println(e);
+//				app.showError(app.getError("Strategies Loading Process Failed. ") 
+//						+ "\n" + e.getMessage());
+//			}
+//		}
 		
 		Vector justs = getJustifications();
 		for (Iterator it = justs.iterator(); it.hasNext();) {
@@ -184,6 +212,8 @@ public class TutorView extends JPanel implements View  {
 				}
 			}
 		 */
+		
+
 	}
 	
 	public Vector getJustifications() {
@@ -254,9 +284,7 @@ public class TutorView extends JPanel implements View  {
 		commentField.setText("");
 		//System.out.println(commentField.getText());
 	}
-	
-	
-	
+
 	public void add(GeoElement geo) {		
 		//Every GeoElement gets here.
 		Construction c = geo.getConstruction();
@@ -271,11 +299,25 @@ public class TutorView extends JPanel implements View  {
 		//System.out.println(t);
 		//System.out.println(c.getXML());
 		//if (geo.getObjectType()  )
+
+		// AlbertV STARTS
+		String tutor_message = tutorFacade.add(geo, tutorConstructionStrategies);
+		printTextArea(tutor_message, TUTOR);
+		// AlbertV ENDS
 		
 		printTextArea(objectToDialogue(geo), GRAPHICAL_INFO);
 		commentField.requestFocus();
 		
 	}
+	
+	public void remove(GeoElement geo) {
+		// AlbertV STARTS
+		String tutor_message = tutorFacade.remove(geo, tutorConstructionStrategies);
+		printTextArea(tutor_message, TUTOR);
+		// AlbertV EN
+
+	}
+	
 	/*
 	 * Method to pass GeoElement to Diaologue text
 	 */
@@ -471,12 +513,7 @@ public class TutorView extends JPanel implements View  {
 	}
 
 	public void clearView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void remove(GeoElement geo) {
-		// TODO Auto-generated method stub
+		System.out.println("clearView!!!!!!!!!!");
 
 	}
 

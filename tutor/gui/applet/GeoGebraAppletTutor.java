@@ -80,7 +80,10 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 		context = getParameter("context");
 		strategyFilesContext = getParameter("strategyFilesContext");
 		
-		initGUI(problem, student);
+		//TODO: m'agradaria fer tutorFacade static, però a GeoGebraAppletTutor es crida 2 vegades a initGUI (la propia i la de la base), 
+		//i llavors es fan 2 instancies de TutorView
+		//i llavors l'event add o remove es duplica cada vegada i els calculs de numeros de punts i linies no surten		
+//		initGUI(problem, student);
 		
 		httpDaoFactory = new HttpDaoFactory(protocol, ip, port, context);
 		
