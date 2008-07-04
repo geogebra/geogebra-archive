@@ -43,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
@@ -123,7 +124,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		// panel with fields to enter
 		// scale of image, dpi and
 		// width and height of picture	
-		JPanel p = new JPanel();
+		final JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));		
 				
 		// scale 
@@ -137,13 +138,17 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		p.add(psp);
 		
 		// dpi combo box
-		JPanel dpiPanel = new JPanel(new FlowLayout(5));
+		final JPanel dpiPanel = new JPanel(new FlowLayout(5));
 	
 		String [] dpiStr =  {"72", "96", "150", "300", "600"};
 		cbDPI = new JComboBox(dpiStr);
 		cbDPI.setSelectedItem("300");			
-		dpiPanel.add(new JLabel(app.getPlain("ResolutionInDPI") + ":"));
-		dpiPanel.add(cbDPI);
+		final JLabel resolutionInDPILabel=new JLabel(app.getPlain("ResolutionInDPI") + ":");
+		if  (cbFormat.getSelectedIndex()==FORMAT_PNG)
+		{
+			dpiPanel.add(resolutionInDPILabel);
+			dpiPanel.add(cbDPI);
+		}
 		p.add(dpiPanel);
 		cbDPI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {							
@@ -153,37 +158,50 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		
 		
 		final JCheckBox textAsShapesCB = new JCheckBox(app.getPlain("ExportTextAsShapes"),textAsShapes);
+		dpiPanel.add(textAsShapesCB);
 		
 		if  (cbFormat.getSelectedIndex()==FORMAT_SVG || cbFormat.getSelectedIndex()==FORMAT_PDF)
-			textAsShapesCB.setEnabled(false);
-		else
-			textAsShapesCB.setEnabled(true);
+			dpiPanel.add(textAsShapesCB);
+
 				
 		textAsShapesCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				textAsShapes=textAsShapesCB.isSelected();
 			}					
 		});
-		dpiPanel.add(textAsShapesCB);
 		
 		cbFormat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				textAsShapesCB.setEnabled(false);
 				switch (cbFormat.getSelectedIndex()) {
 					case FORMAT_SVG:
+						dpiPanel.remove(resolutionInDPILabel);
+						dpiPanel.remove(cbDPI);						
+						dpiPanel.add(textAsShapesCB);
+						break;
 					case FORMAT_PDF:
-						textAsShapesCB.setEnabled(true);
-						// no break!!
+						dpiPanel.remove(resolutionInDPILabel);
+						dpiPanel.remove(cbDPI);
+						dpiPanel.add(textAsShapesCB);
+						break;
 					case FORMAT_EPS:
+						dpiPanel.remove(resolutionInDPILabel);
+						dpiPanel.remove(cbDPI);
+						dpiPanel.remove(textAsShapesCB);
+						break;
 					case FORMAT_EMF:
-						cbDPI.setSelectedItem("72");
-						cbDPI.setEnabled(false);						
-						break;											
-					
-					default:
+						dpiPanel.remove(resolutionInDPILabel);
+						dpiPanel.remove(cbDPI);
+						dpiPanel.remove(textAsShapesCB);
+						break;
+					default: // PNG
+						dpiPanel.add(resolutionInDPILabel);
+						dpiPanel.add(cbDPI);
+						dpiPanel.remove(textAsShapesCB);
 						cbDPI.setSelectedItem("300");
-						cbDPI.setEnabled(true);						
+						cbDPI.setEnabled(true);	
+						break;
 				}
+				SwingUtilities.updateComponentTreeUI(p);
 			}			
 		});
 							
