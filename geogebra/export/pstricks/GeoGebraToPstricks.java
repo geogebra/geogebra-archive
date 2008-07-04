@@ -211,10 +211,10 @@ public class GeoGebraToPstricks implements ActionListener {
 			codeBeginPic.insert(0,formatFont+"\n");
 			code.append("}\n");
 		}*/
-		code.insert(0,codeFilledObject);
-		code.insert(0,codeBeginPic);
-        code.insert(0,codeBeginDoc);		
-        code.insert(0,codePreamble);
+		code.insert(0,codeFilledObject+"");
+		code.insert(0,codeBeginPic+"");
+        code.insert(0,codeBeginDoc+"");		
+        code.insert(0,codePreamble+"");
 		code.append("\\end{document}");		
 		frame.write(code);
 	}	
