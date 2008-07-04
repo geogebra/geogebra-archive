@@ -432,7 +432,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 	}
 	
 	public boolean isOnPath(GeoPoint P, double eps) {
-		if (pathSegment == null) updatePathSegment();
+		updatePathSegment(); // Michael Borcherds 2008-06-10 bugfix
 		return pathSegment.isOnPath(P, eps);
 	}
 	
