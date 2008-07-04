@@ -263,29 +263,29 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
         BigDecimal cof[] = new BigDecimal[n];    	
         BigDecimal s[] = new BigDecimal[n];    	
         int k,j,i;
-        BigDecimal minusone = new BigDecimal(-1.0);
+        BigDecimal minusone = new BigDecimal(-1.0d);
         BigDecimal phi,ff,b;
         for (i=0;i<n;i++)
         {
-        	x[i]=new BigDecimal(xx[i]);
-        	y[i]=new BigDecimal(yy[i]);
+        	x[i]=new BigDecimal((double)xx[i]);
+        	y[i]=new BigDecimal((double)yy[i]);
         }
         //double s[] = new double[n];
-    for (i=0;i<n;i++) s[i]=cof[i]=new BigDecimal(0.0);
+    for (i=0;i<n;i++) s[i]=cof[i]=new BigDecimal(0.0d);
     s[n-1] = x[0].multiply(minusone);
     for (i=1 ; i<n ; i++) { 
 	    for (j=n-1-i ; j<n-1 ; j++) s[j] = s[j].subtract(x[i].multiply(s[j+1]));
       s[n-1] = s[n-1].subtract(x[i]);
     }
     for (j=0 ; j<n ; j++) {
-      phi=new BigDecimal(n);
+      phi=new BigDecimal((double)n);
       for (k=n-1 ; k>0 ; k--) 
       {
-        BigDecimal kk = new BigDecimal(k);
+        BigDecimal kk = new BigDecimal((double)k);
     	  phi=(kk.multiply(s[k])).add(x[j].multiply(phi)); 
       }
       ff=y[j].divide(phi,BigDecimal.ROUND_HALF_UP);
-      b= new BigDecimal(1.0); 
+      b= new BigDecimal(1.0d); 
       for (k=n-1 ; k>=0 ; k--) {
         cof[k] = cof[k].add(b.multiply(ff));
         b=s[k].add(x[j].multiply(b));
