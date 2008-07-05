@@ -1,10 +1,13 @@
 #
 # Proguard config file for GeoGebra
 #
-# June 9th 2008
+# June 21st 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
+-injars ../build/geogebra_cas.jar
+#-injars ../build/geogebra_gui.jar
+#-injars ../build/geogebra_spreadsheet.jar
 -outjars ../build/temp
 
 -libraryjars ../java142-rt.jar
@@ -15,7 +18,7 @@
 -allowaccessmodification
 -overloadaggressively
 
-#-printmapping geogebra3130.map
+#-printmapping geogebra3140.map
 #-applymapping geogebra3130.map
 
 # Keep - Applications. Keep all application classes that have a main method.
@@ -52,6 +55,10 @@
 
 # needed so that SymbolLoader can find Des12.gif etc
 -keep class hoteqn.SymbolLoader { <methods>; }
+
+# temporary
+#-keep class geogebra.* { <methods>; }
+#-keep class geogebra.*.* { <methods>; }
 
 #####
 # Plugin part

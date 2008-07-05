@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Jun 11, 2008
+   @date Jul 5, 2008
 -->
 <project default="geogebra">
 	
@@ -48,12 +48,12 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-export-jar, ggb-properties-jar">
+			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar">
 	</target>
 	
 	<manifest file="manifest.mf">
-		<!--			<attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar"/> -->
-		    <attribute name="Main-Class" value="geogebra.gui.MyAppSplash"/>
+		<!-- 	<attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar geogebra_cas.jar"/> 	-->	    
+		<attribute name="Main-Class" value="geogebra.gui.MyAppSplash"/>
 	</manifest>	
 	
 	<target name="clean">
@@ -73,8 +73,7 @@ office@geogebra.org
 					**/*.gif, 
 					javax/jnlp/**, 
 					**/*.jpg, 
-					yacas/**,
-					geogebra/kernel/**/algo2command.properties,						
+					geogebra/kernel/**/algo2command.properties,	
 					geogebra/gui/**/_license.txt" 						
 			excludes="*.jar, 
 					geogebra/export/**, 
@@ -82,12 +81,17 @@ office@geogebra.org
 					geogebra/cas/view/**,
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
+					geogebra3D/**,
 					org/freehep/**, 					  
 				    tutor/**,
-					meta-inf/**,			
+					meta-inf/**,	
+					yacas/**,
+					jasymca/**,
+					
 			        **/*.java"		/>
 		<!-- exclude: 
-			geogebra/spreadsheet/** -->
+			geogebra/spreadsheet/** 
+			geogebra/gui/** -->
 	</target>
 	
 	<target name="ggb-export-jar" depends="clean" description="create unsigned geogebra_export.jar">
@@ -99,6 +103,24 @@ office@geogebra.org
 			excludes="**/*.java" 
 		/>
 	</target>
+	
+	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
+		<jar jarfile="${build.dir}/geogebra_cas.jar"
+			basedir="${src.dir}"
+			includes="yacas/**,
+					  jasymca/**"
+			excludes="**/*.java" 
+		/>
+	</target>
+	
+	<!--
+	<target name="ggb-gui-jar" depends="clean" description="create unsigned geogebra_gui.jar">
+		<jar jarfile="${build.dir}/geogebra_gui.jar"
+			basedir="${src.dir}"
+			includes="geogebra/gui/**"
+			excludes="**/*.java" 
+		/>
+	</target> -->
 	
 	<target name="ggb-properties-jar" depends="clean" description="create unsigned geogebra_properties.jar">
 		<jar jarfile="${build.dir}/geogebra_properties.jar"
