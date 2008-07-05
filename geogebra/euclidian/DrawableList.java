@@ -67,7 +67,7 @@ public class DrawableList {
 			}
 			else if (cur.equals(tail))
 			{ // add at end
-				System.out.println("end");
+				//System.out.println("end");
 				Link temp = new Link(d, null);
 				tail.next = temp;
 				tail = temp;				
