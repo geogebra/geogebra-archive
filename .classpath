@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="javax/" kind="src" path=""/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_06"/>
 	<classpathentry exported="true" kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
 	<classpathentry kind="lib" path="dom4j-1.6.1.jar"/>
