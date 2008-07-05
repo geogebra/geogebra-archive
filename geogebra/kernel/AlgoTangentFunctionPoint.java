@@ -110,7 +110,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("TangentToAatBCD",f.getLabel(),"x = x(",P.getLabel(),")"));
+        sb.append(app.getPlain("TangentToAatB",f.getLabel(),"x = x("+P.getLabel()+")"));
         
         return sb.toString();
     }
