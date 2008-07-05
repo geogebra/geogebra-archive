@@ -435,7 +435,7 @@ public class GeoList extends GeoElement implements ListValue {
 			super.update();
 			// update all registered locatables (they have this point as start point)
 			if (condListenersShowObject != null) {
-				System.out.println("GeoList update listeners");
+				//System.out.println("GeoList update listeners");
 				for (int i=0; i < condListenersShowObject.size(); i++) {
 					GeoElement geo = (GeoElement) condListenersShowObject.get(i);		
 					kernel.notifyUpdate(geo);
