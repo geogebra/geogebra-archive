@@ -179,7 +179,7 @@ public final class DrawText extends Drawable {
 		if (text.isNeedsUpdatedBoundingBox()) {
 			
 			// ensure that bounding box gets updated by drawing text once
-			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), serifFont, fontStyle);
+			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), serifFont, fontStyle, geo.getObjectColor(),view.getBackground());
 			else drawMultilineText(view.getTempGraphics2D());	
 			
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
@@ -204,7 +204,7 @@ public final class DrawText extends Drawable {
         	{
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
-    			drawMultilineLaTeX(g2, serifFont, fontStyle);   
+    			drawMultilineLaTeX(g2, serifFont, fontStyle, geo.getObjectColor(),view.getBackground());   
         		//drawEquation(g2,xLabel,yLabel);
         	}
         	

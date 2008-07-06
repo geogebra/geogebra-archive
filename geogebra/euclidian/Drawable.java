@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import hoteqn.sHotEqn;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -116,7 +117,7 @@ public abstract class Drawable {
 		
 	}
 	
-	final void drawMultilineLaTeX(Graphics2D g2, boolean serifFont, int fontStyle) {
+	final void drawMultilineLaTeX(Graphics2D g2, boolean serifFont, int fontStyle, Color fgColor, Color bgColor) {
 		
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.0f;
@@ -158,7 +159,7 @@ public abstract class Drawable {
 				{
 					if (latex)
 					{						
-						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], fontSize, serifFont, fontStyle);
+						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], fontSize, serifFont, fontStyle, fgColor, bgColor);
 						//dim = sHotEqn.getSizeof(strings[j]);
 						//widths[j] = dim.width;				
 						heights[j] = dim.height;
@@ -200,7 +201,7 @@ public abstract class Drawable {
 					if (latex)
 					{
 						
-						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], fontSize, serifFont, fontStyle);
+						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], fontSize, serifFont, fontStyle, fgColor, bgColor);
 						hOffset+=dim.width;
 					}
 					else
@@ -227,7 +228,7 @@ public abstract class Drawable {
 		return ret;
 	}
 	
-	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, int fontSize, boolean serifFont, int fontStyle)
+	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, int fontSize, boolean serifFont, int fontStyle, Color fgColor, Color bgColor)
 	{
 		Dimension dim;
 			sHotEqn eqn = new sHotEqn(text);
@@ -252,7 +253,9 @@ public abstract class Drawable {
 			eqn.setFontStyle(fontStyle);
 
 			
-			
+			eqn.setForeground(fgColor);		
+			eqn.setBackground(bgColor);
+		
 			
 			//eqn.paintComponent(g2Dtemp,0,0);		
 			//dim=eqn.getSizeof(text);
