@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="j3dcore.jar"/>
 	<classpathentry kind="lib" path="vecmath.jar"/>
 	<classpathentry kind="lib" path="j3dutils.jar"/>
+	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
