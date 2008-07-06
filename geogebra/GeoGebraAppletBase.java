@@ -81,7 +81,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public boolean showFrame = true;
 	private GeoGebra wnd;
 	private JSObject browserWindow;
-	public static URL codeBase=null;
+	//public static URL codeBase=null;
 	//public static URL documentBase=null;
 
 	/** Creates a new instance of GeoGebraApplet */
@@ -93,10 +93,10 @@ public abstract class GeoGebraAppletBase extends JApplet {
 
 	public void init() {
 		
-		codeBase=this.getCodeBase();
+		//codeBase=this.getCodeBase();
 		//documentBase=this.getDocumentBase();
 		
-		System.out.println("codeBase="+codeBase);
+		//System.out.println("codeBase="+codeBase);
 		//System.out.println("documentBase="+documentBase);
 		
 		try {

@@ -51,6 +51,8 @@ public class JarManager {
 	private static boolean EXPORTJAR_COPIED=false;
 	private static boolean PROPERTIESJAR_COPIED=false;
 	private static boolean CASJAR_COPIED=false;
+	
+	private static URL appletCodeBase=null;
 	//private static boolean GUIJAR_COPIED=false;
 	//private static boolean SPREADSHEETJAR_COPIED=false;
 	
@@ -136,6 +138,12 @@ public class JarManager {
              app.debug("IS_WEBSTART="+IS_WEBSTART);
             //ex.printStackTrace();
          }		    
+         
+ 		// get applet codebase
+         // NB applet.getCodeBase() doesn't work (returns base of HTML)
+ 		appletCodeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
+ 		System.out.println("appletCodeBase="+appletCodeBase);
+
          
          ClassPathManipulator.addURL(addPathToJar("."), null);
        
@@ -284,8 +292,8 @@ public class JarManager {
 		ClassLoader loader=app.getClass().getClassLoader();
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
-		URL codeBase=getAppletCodeBase();
-        if (codeBase!=null) jar = codeBase.toString() + jar;
+		//URL codeBase=getAppletCodeBase();
+        if (appletCodeBase!=null) jar = appletCodeBase.toString() + jar;
         
         
         //jar = "file:///C:/Personal/My%20Projects/JavaScript/testGeogebraApplets/geogebra_export.jar";
@@ -302,14 +310,15 @@ public class JarManager {
 	{
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
-		URL codeBase=getAppletCodeBase();
-        if (codeBase!=null) jar = codeBase.toString() + jar;
+		//URL codeBase=getAppletCodeBase();
+        if (appletCodeBase!=null) jar = appletCodeBase.toString() + jar;
         app.debug("addJarToPath " + jar);
         
         //addPath(jar);
         ClassPathManipulator.addURL(addPathToJar(jar), loader);       
 	}
 	
+	/*
 	private static URL getAppletCodeBase()
 	{
 		GeoGebraAppletBase applet;
@@ -317,7 +326,7 @@ public class JarManager {
 		if (applet == null) return null;
 		return applet.getCodeBase();
 		
-	}
+	}*/
 	
     public static URL addPathToJar(String path){
         File file=null;
@@ -332,13 +341,15 @@ public class JarManager {
         		url = new URL(path);
         	}else{							//file without path!
 
-        		//URL codeBase=getAppletCodeBase();
-        		URL codeBase=GeoGebraAppletBase.codeBase;
-        		//URL codeBase=app.getAppletCodeBase();;
-                if (codeBase!=null)
+        		//URL codeBase=GeoGebraAppletBase.codeBase; doesn't work, returns base of HTML
+        		
+        		// get applet codebase
+        		//URL codeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
+        		
+                if (appletCodeBase!=null)
                 {
                     //System.out.println("addPath3"+path);
-                	url = new URL(codeBase.toString()+path); // running as applet
+                	url = new URL(appletCodeBase.toString()+path); // running as applet
                 }
                 else
                 {
