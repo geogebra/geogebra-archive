@@ -1,7 +1,6 @@
 package tutor.business.services;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 import tutor.model.TutorElement;
 
@@ -62,7 +61,7 @@ class TutorElementComparatorService {
 		// en aquest cas es fa la mitja entre 3? cada angle val igual, no?
 		float res = ( resAnglesEq90.floatValue() + resAnglesGt90.floatValue() + resAnglesLt90.floatValue()) / 3 ;
 		
-		return Float.valueOf(res); 
+		return new Float(res); 
 	}
 	
 	/**
@@ -73,12 +72,12 @@ class TutorElementComparatorService {
 	private static Float divide(final int strategy_descriptor, final int actual_descriptor) {
 		//TODO: investigar pq el primer dia ho vaig solucionar amb el DECIMAL32, i al dia seguent vaig haver de fer aixo
 		if(strategy_descriptor == 0) {
-			return Float.valueOf(0); 
+			return new Float(0); 
 		}
 		
 		BigDecimal strategy = new BigDecimal(strategy_descriptor);
 		BigDecimal actual = new BigDecimal(actual_descriptor);
-		return Float.valueOf(actual.divide(strategy, MathContext.DECIMAL32).floatValue());
+		return new Float(actual.divide(strategy, BigDecimal.ROUND_CEILING).floatValue());
 	}
 
 }

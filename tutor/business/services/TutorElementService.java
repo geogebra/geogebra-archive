@@ -47,37 +47,37 @@ public class TutorElementService implements TutorConstants {
 
 		// operating a point
 		if (element instanceof GeoPoint) {
-			logger.fine("it's a " + element.getClass().getSimpleName() +
+			logger.fine("it's a " + element.getClass().getName() +
 					" with label " + ((GeoElement)element).getLabel());
 			operateGeoPoint(tutorElement, operation);
 		}
 		// operating a line
 		else if (element instanceof GeoLine) {
-			logger.fine("it's a " + element.getClass().getSimpleName() + 
+			logger.fine("it's a " + element.getClass().getName() + 
 					" with label " + ((GeoElement)element).getLabel());
 			operateGeoLine(tutorElement, operation);
 		}
 		// operating a GeoAngle
 		else if (element instanceof GeoAngle) {
-			logger.fine("It's a " + element.getClass().getSimpleName() + 
+			logger.fine("It's a " + element.getClass().getName() + 
 					" with label " + ((GeoElement)element).getLabel());
 			operateGeoAngle((GeoAngle) element, tutorElement, operation);
 		}
 		// operating a GeoPolygon
 		else if (element instanceof GeoPolygon) {
-			logger.fine("It's a " + element.getClass().getSimpleName() +
+			logger.fine("It's a " + element.getClass().getName() +
 					" with " + ((GeoPolygon)element).getPoints().length + " ponits" +
 					" with label " + ((GeoElement)element).getLabel());
 			operateGeoPolygon((GeoPolygon) element, tutorElement, operation);
 		}
 		// operating an AlgoElement
 		else if (element instanceof AlgoElement) {
-			logger.fine("It's an " + element.getClass().getSimpleName() + 
+			logger.fine("It's an " + element.getClass().getName() + 
 					" with " + element.getGeoElements().length + " elements");
 			operateAlgoElement((AlgoElement) element, tutorElement, operation);
 		}
 		else {
-			logger.fine("it's Nothing Known! ... it's a " + element.getClass().getSimpleName());
+			logger.fine("it's Nothing Known! ... it's a " + element.getClass().getName());
 		}
 	}
 

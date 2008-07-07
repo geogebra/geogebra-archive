@@ -116,7 +116,7 @@ public class TutorResultService implements TutorConstants {
 		
 		//TODO: posar pesos i fer formula
 		float score = ( linesScore.floatValue() + resPoints.floatValue() + resAngles.floatValue()) / NUM_DESCRIPTORS ;
-		result.setScore(Float.valueOf(score));
+		result.setScore(new Float(score));
 		
 		// path to this strategy file
 		result.setGgbPath(strategy_construction.getGgbPath());

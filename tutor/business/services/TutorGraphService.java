@@ -40,13 +40,13 @@ public class TutorGraphService {
 	 * son compatibles les dues opcions?
 	 */
 	public static void operate(final ConstructionElement element, TutorGraph graph) {
-		logger.fine("************ Graph :: it's a " + element.getClass().getSimpleName() + " ************");
+		logger.fine("************ Graph :: it's a " + element.getClass().getName() + " ************");
 		
 		// opcio b) 
 		// 19/5/8 --> R&D which ParentAlgorithm this element has? ... mostly none!!?? only at the end o a command?
 		if(element instanceof GeoElement) {
 			if(((GeoElement)element).getParentAlgorithm() != null) {
-				logger.fine("Graph :: has ParentAlgorithm --> " + ((GeoElement)element).getParentAlgorithm().getClass().getSimpleName());				
+				logger.fine("Graph :: has ParentAlgorithm --> " + ((GeoElement)element).getParentAlgorithm().getClass().getName());				
 				operateParentAlgorithm(((GeoElement)element).getParentAlgorithm(), graph);
 			}
 			else {
@@ -108,17 +108,17 @@ public class TutorGraphService {
 		if (geoElement1 instanceof GeoPoint) {
 			GeoPoint point1 = (GeoPoint) geoElement1;
 		}
-		logger.fine("Graph :: isAlgoPoints geoElement1 it's a " + geoElement1.getClass().getSimpleName());
+		logger.fine("Graph :: isAlgoPoints geoElement1 it's a " + geoElement1.getClass().getName());
 		
 		GeoElement geoElement2 = element.getInput()[1];
 		if (geoElement2 instanceof GeoPoint) {
 			GeoPoint point2 = (GeoPoint) geoElement2;
 		}
-		logger.fine("Graph :: isAlgoPoints geoElement2 it's a " + geoElement2.getClass().getSimpleName());
+		logger.fine("Graph :: isAlgoPoints geoElement2 it's a " + geoElement2.getClass().getName());
 		
 		// el punt resultany
 		GeoElement geoElement3 = element.getOutput()[0];
-		logger.fine("Graph :: isAlgoPoints geoElement3 it's a " + geoElement3.getClass().getSimpleName());
+		logger.fine("Graph :: isAlgoPoints geoElement3 it's a " + geoElement3.getClass().getName());
 	}
 	
 	/**
