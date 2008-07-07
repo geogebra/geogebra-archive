@@ -103,11 +103,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
 		boolean showAlgebraView = app.showAlgebraView();
+		boolean showSpreadsheetView = app.showSpreadsheet();
 		cbShowAlgebraView.setSelected(showAlgebraView);
 		cbShowAuxiliaryObjects.setVisible(showAlgebraView);
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
-		cbHorizontalSplit.setVisible(showAlgebraView);
+		cbHorizontalSplit.setVisible(showAlgebraView || showSpreadsheetView);
 		cbHorizontalSplit.setSelected(app.isHorizontalSplit());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
