@@ -268,9 +268,18 @@ public class TutorFacade implements TutorConstants {
 		File folder = new File(PATH_TO_GGB);
 		String[] files = folder.list();
 		for(int i = 0; i<folder.list().length; i++) {
-			String thestring = path + File.separator + files[i].toString();
-			strings.add(thestring);
+			String thefile = files[i].toString();
+			if(isGeogebraFile(thefile)) {
+				String thestring = path + File.separator + thefile;
+				strings.add(thestring);
+			}
 		}
 		return (String[]) strings.toArray(new String[]{});
+	}
+	
+	private static boolean isGeogebraFile(String path) {
+		int dot = path.lastIndexOf('.');
+		String extension = path.substring(dot + 1);
+		return Application.FILE_EXT_GEOGEBRA.equalsIgnoreCase(extension);
 	}
 }
