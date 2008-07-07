@@ -23,6 +23,7 @@ import geogebra.MyError;
 import geogebra.algebra.parser.Parser;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.ConstructionProtocolNavigation;
+import geogebra.gui.GeoGebraPreferences;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -213,11 +214,11 @@ public class MyXMLHandler implements DocHandler {
                 //  is this a geogebra file?    
                 if (eName.equals("geogebra")) {
                     mode = MODE_GEOGEBRA;
-                    // check file format version    
+                    // check file format version   
                     try {
                         ggbFileFormat =
                             Float.parseFloat((String) attrs.get("format"));
-                        if (ggbFileFormat > FORMAT) {
+                        if (ggbFileFormat > FORMAT && !GeoGebraPreferences.supressFileFormatNewerError) {
                         	app.showMessage(app.getError("FileFormatNewer")
                                     + ": "
                                     //+ ggbFileFormat);

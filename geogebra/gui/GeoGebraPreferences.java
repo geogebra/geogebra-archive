@@ -29,6 +29,8 @@ public class GeoGebraPreferences {
 	
 	public static final String AUTHOR = "author";
 	
+    public static boolean supressFileFormatNewerError = false;
+	
 	// worksheet export dialog
 	public static final String EXPORT_WS_RIGHT_CLICK = "export_ws_right_click";
 	public static final String EXPORT_WS_RESET_ICON = "export_ws_reset_icon";
@@ -299,6 +301,8 @@ public class GeoGebraPreferences {
     public static void loadXMLPreferences(Application app) {  
     	app.setWaitCursor();  
     	
+    	supressFileFormatNewerError=true;
+    	
     	// load this preferences xml file in application
     	try {    		      		    	    
     		// load tools from ggt file (byte array)
@@ -315,6 +319,7 @@ public class GeoGebraPreferences {
     		e.printStackTrace();
     	}    	
     	
+    	supressFileFormatNewerError=false;
     	app.setDefaultCursor();
     }
     
