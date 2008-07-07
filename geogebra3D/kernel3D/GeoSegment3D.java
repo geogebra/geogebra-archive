@@ -7,7 +7,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	
 	/** creates a segment linking p1 to p2*/
 	public GeoSegment3D(Construction c, GeoPoint3D p1, GeoPoint3D p2){
-		this(c,p1.v,p2.v);
+		super(c,p1,p2);
 	}
 	
 	/** creates a segment linking v1 to v2*/

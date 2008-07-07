@@ -88,7 +88,7 @@ final public class GeoPoint3D extends GeoVec4D {
 	}
     
     public int getGeoClassType() {
-    	return GEO_CLASS_POINT3D; //TODO GEO_CLASS_POINT3D
+    	return GEO_CLASS_POINT3D;  
     }
     
     public GeoPoint3D(GeoPoint3D point) {

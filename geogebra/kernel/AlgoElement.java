@@ -150,7 +150,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
    
     
-    final void setEfficientDependencies(GeoElement [] standardInput, GeoElement [] efficientInput) {   	
+    protected final void setEfficientDependencies(GeoElement [] standardInput, GeoElement [] efficientInput) {   	
     	// dependens on standardInput
         for (int i = 0; i < standardInput.length; i++) {
         	standardInput[i].addToAlgorithmListOnly(this);            

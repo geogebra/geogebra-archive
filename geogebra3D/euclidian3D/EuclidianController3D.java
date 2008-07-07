@@ -29,6 +29,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	protected int moveMode = MOVE_NONE;
 	
 	protected GeoElement3D objSelected = null;
+	protected GeoPoint3D movedGeoPoint3D = null;
 	
 	
 	protected EuclidianView3D view;
@@ -107,9 +108,12 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 				objSelected = (GeoElement3D) view.hits.get(0);		
 				objSelected.setSelected(true);
 				//System.out.println("selected = "+objSelected.getLabel());
-				moveMode = MOVE_POINT;
-				GeoPoint3D p = (GeoPoint3D) objSelected;
-				startLoc3D = p.getCoords().copyVector(); 
+				
+				if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
+					moveMode = MOVE_POINT;
+					movedGeoPoint3D = (GeoPoint3D) objSelected;
+					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
+				}
 			}
 			view.repaint();
 			
@@ -152,27 +156,29 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	protected void movePoint(boolean repaint){
 		
-		if (objSelected!=null){
-			//computes intersection between (p,Vn) plane and (eye,pickPoint) line
-			GeoPoint3D p = (GeoPoint3D) objSelected;//TODO verify that objSelected is a point
-			//GgbVector o1 = p.getCoords(); 
 			
-			GgbVector o2 = view.eye.copyVector(); 
-			view.toSceneCoords3D(o2);
-			
-			GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
-			view.toSceneCoords3D(v);	
-			
-			double l = (startLoc3D.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
-			
-			mouseLoc3D = (o2.add(v.mul(l))).getColumn(1);
-			p.translate(mouseLoc3D.sub(startLoc3D));
-			startLoc3D = mouseLoc3D.copyVector();
+		GgbVector o2 = view.eye.copyVector(); 
+		view.toSceneCoords3D(o2);
+
+		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
+		view.toSceneCoords3D(v);	
+
+		double l = (startLoc3D.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
+
+		mouseLoc3D = (o2.add(v.mul(l))).getColumn(1);
+		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
+		startLoc3D = mouseLoc3D.copyVector();
 						
-		}
 		
-		if (repaint)
+		
+		if (repaint){
+			//objSelected.updateRepaint(); //TODO modify updateRepaint()
+			objSelected.updateCascade();
 			view.repaint();
+		}else
+			objSelected.updateCascade();		
+		
+		
 	}
 
 
@@ -270,15 +276,16 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			break;
 
 		case MOVE_POINT:
-			if (objSelected!=null){
-				//p = p + r*z
-				GeoPoint3D p = (GeoPoint3D) objSelected;
-				GgbVector p1 = p.getCoords(); 
-				p1.set(3,p1.get(3)-r*0.1);
-				p.setCoords(p1);
-				view.repaint();
-				//TODO move mouse pointer
-			}
+			//p = p + r*z			
+			GgbVector p1 = movedGeoPoint3D.getCoords(); 
+			p1.set(3,p1.get(3)-r*0.1);
+			movedGeoPoint3D.setCoords(p1);
+			
+
+			//objSelected.updateRepaint(); //TODO modify updateRepaint()
+			objSelected.updateCascade();
+			view.repaint();
+
 			break;	
 			
 		

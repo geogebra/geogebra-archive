@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import java.awt.Color;
+
 
 import geogebra.kernel.*;
 import geogebra.kernel.linalg.GgbVector;
@@ -52,6 +52,18 @@ public class Kernel3D
 		s.setLabel(label);
 		return s;
 	}
+	
+	/** Segment3D label linking points P1 and P2   */
+	final public GeoSegment3D Segment3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+		AlgoJoinPoints3DSegment algo = new AlgoJoinPoints3DSegment(cons, label, P1, P2);
+		GeoSegment3D s = algo.getSegment();
+		/*
+		GeoSegment3D s=new GeoSegment3D(cons,P1,P2);
+		s.setLabel(label);
+		*/
+		return s;
+	}	
+	
 	
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
