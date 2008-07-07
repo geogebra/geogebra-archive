@@ -102,28 +102,26 @@ implements Traceable {
 	public void setCoords(GeoVec vec){
 		v.set(vec.v);
 	}
+	
+	
+	public void translate(GgbVector v0){
+		
+		GgbVector v1 = v.add(v0).getColumn(1);
+		setCoords(v1);
+		
+	}
 
 
-	/*
-    final public double getX() { return x; }
-    final public double getY() { return y; }
-    final public double getZ() { return z; } 
-    final public double getW() { return w; } 
-    */
+
+	
+	
+	
     final public GgbVector getCoords() {
     	return v;
     }             
 
-    /** 
-     * Writes x and y and z to the array res.
-     */
-    /*
-    public void getInhomCoords(double [] res) {       
-        res[0] = x;
-        res[1] = y;                                
-        res[2] = z;                                
-    }
-    */
+
+    
     
     
     /** Yields true if the coordinates of this vector are equal to
@@ -141,6 +139,10 @@ implements Traceable {
         return ret;
     }
     
+    
+    
+    
+    
 	public boolean isTraceable() {
 		return true;
 	}
@@ -153,18 +155,7 @@ implements Traceable {
 		return trace;
 	}
     
-    /** Yields true if this vector and v are linear dependent 
-     * This is done by calculating the cross product
-     * of this vector an v: this lin.dep. v <=> this.cross(v) = nullvector.
-     */
-	// TODO : update
-	/* 
-    final public boolean linDep(GeoVec4D v) {
-        // v lin.dep this  <=>  cross(v,w) = o            
-        return kernel.isEqual(y * v.z, z * v.y)
-			&& kernel.isEqual(z * v.x, x * v.z) 
-			&& kernel.isEqual(x * v.y, y * v.x);       
-    }*/
+
     
     final public boolean isZero() {
     	boolean ret = true;
@@ -173,146 +164,11 @@ implements Traceable {
         return ret;
     }
     
-     /** Calculates the cross product of this vector and vector v.
-     * The result ist returned as a new GeoVec3D.
-     */
-//    final public GeoVec3D cross(GeoVec3D v) {         
-//       GeoVec3D res = new GeoVec3D(v.cons);
-//       cross(this, v, res);
-//       return res;
-//    }
+
     
-    /** Calculates the cross product of vectors u and v.
-     * The result is stored in w.
-     */
-    // TODO : update
-    /*
-    final public static void cross(GeoVec4D u, GeoVec4D v, GeoVec4D w) {                
-        w.setCoords( u.y * v.z - u.z * v.y, 
-        					 u.z * v.x - u.x * v.z,  
-        					 u.x * v.y - u.y * v.x );              
-    } 
-    */ 
     
-    /** Calculates the line through the points A and B.
-     * The result is stored in g.
-     */
-    // TODO : update
-    /*
-    final public static void lineThroughPoints(GeoPoint A, GeoPoint B, GeoLine g) {
-    	// note: this could be done simply using cross(A, B, g)
-    	// but we want to avoid large coefficients in the line
-    	// and we want AB to be the direction vector of the line
-    	
-    	if (!(A.isDefined() && B.isDefined())) {
-    		g.setUndefined();
-    		return;
-    	}
-    	
-    	if (A.isInfinite()) {// A is direction
-    		if (B.isInfinite()) { 
-				// g is undefined
-			    g.setUndefined();
-			} else { 
-				// through point B
-				g.setCoords(A.y , 
-		    			    -A.x,
-						    A.x * B.inhomY - A.y * B.inhomX);
-			}
-    	}
-    	else { // through point A
-			if (B.isInfinite()) { 
-				// B is direction
-			    g.setCoords(-B.y, 
-	    			        B.x,
-					        A.inhomX * B.y - A.inhomY * B.x);
-			} else { 
-				// through point B
-				g.setCoords(A.inhomY - B.inhomY, 
-		    			   B.inhomX - A.inhomX,
-						   A.inhomX * B.inhomY - A.inhomY * B.inhomX);
-			}
-    	}            
-    }  
     
-    */
     
-    /** Calculates the line through the point A with direction v.
-     * The result is stored in g.
-     */
-    // TODO : update
-    /*
-    final public static void lineThroughPointVector(GeoPoint A, GeoVec4D v, GeoLine g) {
-    	// note: this could be done simply using cross(A, v, g)
-    	// but we want to avoid large coefficients in the line
-    	// and we want v to be the direction vector of the line
-    	
-    	if (A.isInfinite()) {// A is direction
-			g.setUndefined();
-    	}
-    	else { // through point A
-			// v is direction
-		    g.setCoords(-v.y, 
-    			        v.x,
-				        A.inhomX * v.y - A.inhomY * v.x);
-    	}        
-    }  
-    */
-    
-    /** Calculates the cross product of vectors u and v.
-     * The result is stored in w.
-     */
-    // TODO : update
-    /*
-    final public static void cross(GeoVec4D u, 
-                                   double vx, double vy, double vz, GeoVec4D w) {
-		w.setCoords( u.y * vz - u.z * vy, 
-							 u.z * vx - u.x * vz,  
-							 u.x * vy - u.y * vx );                                 
-    }
-    */
-    
-     /** Calculates the inner product of this vector and vector v.
-     */
-    final public double inner(GeoVec vec) {
-        return v.dotproduct(vec.v);
-    }
-    
-    /** Changes orientation of this vector. v is changed to -v.    
-     */
-    final public void changeSign() {
-        setCoords(v.mul(-1.0));        
-    }
-    
-    /** returns -v
-     */
-//    final public GeoVec3D getNegVec() {
-//        return new GeoVec3D(cons, -x, -y, -z);        
-//    }
-    
-    /** returns this + a */
-//    final public GeoVec3D add(GeoVec3D a) {
-//        GeoVec3D res = new GeoVec3D(cons);
-//        add(this, a, res);
-//        return res;
-//    }    
-        
-    /** c = a + b */
-    final public static void add(GeoVec a, GeoVec b, GeoVec c) {                
-        c.setCoords(a.v.add(b.v));    
-    }
-    
-     /** returns this - a */
-//    final public GeoVec3D sub(GeoVec3D a) {
-//        GeoVec3D res = new GeoVec3D(cons);
-//        sub(this, a, res);
-//        return res;
-//    }
-    
-    /** c = a - b */
-    final public static void sub(GeoVec a, GeoVec b, GeoVec c) {
-    	c.setCoords(a.v.add(b.v.mul(-1.0)));           
-    }       
     
     public String toString() {
 		sbToString.setLength(0);
@@ -324,6 +180,13 @@ implements Traceable {
 		sbToString.append(')');
         return sbToString.toString();
     }
+    
+    
+    
+    
+    
+    
+    
 	private StringBuffer sbToString = new StringBuffer(50);
 	
     /**

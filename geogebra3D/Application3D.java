@@ -33,7 +33,7 @@ public abstract class Application3D extends Application{
     private EuclidianView3D euclidianView3D;
     private EuclidianController3D euclidianController3D;        
     private JSplitPane sp3D;
-    private int initSplitDividerLocationHOR3D = 250; // init value
+    private int initSplitDividerLocationHOR3D = 50; // init value
     private boolean show3DView = true; 
 
 

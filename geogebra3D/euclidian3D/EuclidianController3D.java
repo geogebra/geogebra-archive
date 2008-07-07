@@ -40,6 +40,8 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	protected Point mouseLoc = new Point();
 	protected Point startLoc = new Point();
 	
+	protected GgbVector mouseLoc3D, startLoc3D;
+	
 	//picking
 	protected GgbVector pickPoint;
 	
@@ -106,6 +108,8 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 				objSelected.setSelected(true);
 				//System.out.println("selected = "+objSelected.getLabel());
 				moveMode = MOVE_POINT;
+				GeoPoint3D p = (GeoPoint3D) objSelected;
+				startLoc3D = p.getCoords().copyVector(); 
 			}
 			view.repaint();
 			
@@ -150,8 +154,8 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		
 		if (objSelected!=null){
 			//computes intersection between (p,Vn) plane and (eye,pickPoint) line
-			GeoPoint3D p = (GeoPoint3D) objSelected;
-			GgbVector o1 = p.getCoords(); 
+			GeoPoint3D p = (GeoPoint3D) objSelected;//TODO verify that objSelected is a point
+			//GgbVector o1 = p.getCoords(); 
 			
 			GgbVector o2 = view.eye.copyVector(); 
 			view.toSceneCoords3D(o2);
@@ -159,10 +163,11 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
 			view.toSceneCoords3D(v);	
 			
-			double l = (o1.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
+			double l = (startLoc3D.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
 			
-			GgbVector p1 = (o2.add(v.mul(l))).getColumn(1);
-			p.setCoords(p1);
+			mouseLoc3D = (o2.add(v.mul(l))).getColumn(1);
+			p.translate(mouseLoc3D.sub(startLoc3D));
+			startLoc3D = mouseLoc3D.copyVector();
 						
 		}
 		
