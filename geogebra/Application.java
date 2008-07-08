@@ -654,7 +654,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }           
 
         // updateCenterPanel
-        updateCenterPanel(false);
+        updateCenterPanel(true);
         panel.add(centerPanel, BorderLayout.CENTER);                
         
         // SOUTH: inputField       

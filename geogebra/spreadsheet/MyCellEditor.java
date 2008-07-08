@@ -5,6 +5,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent ;
 
@@ -26,6 +27,7 @@ public class MyCellEditor extends DefaultCellEditor {
 		super(new JTextField());
 		kernel = kernel0;
 		getComponent().addKeyListener(new KeyListener4());
+		getComponent().setFont(new Font("dialog", 0, 12));
     }
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row0, int column0) {

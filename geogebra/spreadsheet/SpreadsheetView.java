@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent ;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.Font;
 
 import geogebra.Application;
 import geogebra.View;
@@ -198,7 +199,7 @@ public class SpreadsheetView extends JScrollPane implements View
 //			setHorizontalAlignment(CENTER) ;
 //			setForeground(header.getForeground()) ;
 //			setBackground(header.getBackground());
-			setFont(header.getFont());
+			setFont(new Font("dialog", 0, 12));
 			table.getSelectionModel().addListSelectionListener(this);
 		}
 	

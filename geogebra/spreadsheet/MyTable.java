@@ -3,6 +3,7 @@ package geogebra.spreadsheet;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
@@ -751,6 +752,7 @@ public class MyTable extends JTable
 		public MyCellRenderer() {
 			this.setHorizontalAlignment(JLabel.TRAILING);
 			defaultBackground = getBackground();
+			setFont(new Font("dialog", 0, 12));
 		}
 		
 		public void setValue(Object value) {
@@ -759,7 +761,10 @@ public class MyTable extends JTable
 				this.setBackground(null);
 			}
 			else {
-				setText(((GeoElement)value).toValueString());
+				setFont(new Font("dialog", 1, 12));
+				String text = ((GeoElement)value).toValueString();
+				setText(text);
+				this.setForeground(((GeoElement)value).getObjectColor());
 				String label = ((GeoElement)value).getLabel();
 				if (SpreadsheetView.selectedElems.contains(label)) {
 					//System.out.println(label);
@@ -811,6 +816,7 @@ public class MyTable extends JTable
     		setOpaque(true);
     		defaultBackground = getBackground();
     		setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
+			setFont(new Font("dialog", 0, 12));
     	}
     	
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
