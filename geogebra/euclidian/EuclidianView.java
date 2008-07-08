@@ -637,7 +637,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			Rectangle bb = d.getBounds();
 			if (bb != null) {
 				if (result == null) 
-					result = new Rectangle();
+					result = new Rectangle(bb); // changed () to (bb) bugfix, otherwise top-left of screen is always included
 				// add bounding box of list element
 				result.add(bb);
 			}			   		
@@ -2981,6 +2981,26 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	protected MyAxesRatioZoomer axesRatioZoomer;
 
+	public final void setViewShowAllObjects(boolean storeUndo) {
+
+		
+		Rectangle rect=getBounds();
+
+		double x0RW=toRealWorldCoordX(rect.getMinX());
+		double x1RW=toRealWorldCoordX(rect.getMaxX());
+		double y0RW=toRealWorldCoordY(rect.getMaxY());
+		double y1RW=toRealWorldCoordY(rect.getMinY());
+		
+		double xScale = this.width/(x1RW-x0RW);
+		double yScale = this.height/(y1RW-y0RW);
+		
+		setCoordSystem(-x0RW*xScale,y1RW*yScale ,xScale,yScale);
+
+		app.updateContentPaneAndSize();
+		if (storeUndo)
+			app.storeUndoInfo();
+	}
+	
 	public final void setStandardView(boolean storeUndo) {
 		if (scaleRatio != 1.0) {
 			// set axes ratio back to 1

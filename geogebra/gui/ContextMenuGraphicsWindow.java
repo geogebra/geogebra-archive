@@ -104,6 +104,13 @@ implements ActionListener {
         miStandardView.setBackground(bgColor);
         add(miStandardView);
         
+        JMenuItem miShowAllObjectsView = new JMenuItem(app.getPlain("ShowAllObjects"));
+        miShowAllObjectsView.setIcon(app.getEmptyIcon());
+        miShowAllObjectsView.setActionCommand("showAllObjects");
+        miShowAllObjectsView.addActionListener(this);
+        miShowAllObjectsView.setBackground(bgColor);
+        add(miShowAllObjectsView);
+        
         addSeparator();          
         
         JMenuItem miProperties = new JMenuItem(app.getPlain("Properties"));
@@ -120,6 +127,9 @@ implements ActionListener {
     	if (cmd.equals("standardView")) {
             app.setStandardView();        
         }
+    	else if (cmd.equals("showAllObjects")) {
+    		app.setViewShowAllObjects();
+    	}
     	else if (cmd.equals("properties")) {
     		app.showDrawingPadPropertiesDialog();
     	}
