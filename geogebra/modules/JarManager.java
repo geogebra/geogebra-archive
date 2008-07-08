@@ -53,6 +53,12 @@ public class JarManager {
 	private static boolean CASJAR_COPIED=false;
 	
 	private static URL appletCodeBase=null;
+
+	private final static String tempDirNoSep=System.getProperty("java.io.tmpdir");
+	// MacOS doesn't seem to add the "/"
+	private final static String tempDir	=	tempDirNoSep.endsWith(File.separator) ?
+											tempDirNoSep : tempDirNoSep+File.separator;
+	
 	//private static boolean GUIJAR_COPIED=false;
 	//private static boolean SPREADSHEETJAR_COPIED=false;
 	
@@ -63,6 +69,8 @@ public class JarManager {
 		
 
         this.app = app;
+        
+        app.debug("java.io.tmpdir = "+tempDir);
 
     	// Download jar files to temp directory in background
     	// this is done because Java WebStart uses strange jar file
@@ -371,7 +379,6 @@ public class JarManager {
     
     public static boolean copyJarToTempDir(String jar) {
 		try {		
-			String tempDir = System.getProperty("java.io.tmpdir"); 
 			
 			// copy jar files to tempDir
 				File dest = new File(tempDir, jar);
@@ -417,7 +424,7 @@ public class JarManager {
 		{
 			// not applet
 			if (!copyPropertiesJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_properties.jar",null);
+			addJarToPath(tempDir + "geogebra_properties.jar",null);
 		}
 		else
 		{
@@ -437,7 +444,7 @@ public class JarManager {
 		{
 			// not applet
 			if (!copyExportJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_export.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
+			addJarToPath(tempDir + "geogebra_export.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
 		}
 		else
 		{
@@ -464,7 +471,7 @@ public class JarManager {
 		{
 			// not applet
 			if (!copyCasJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_cas.jar",null);
+			addJarToPath(tempDir + "geogebra_cas.jar",null);
 		}
 		else
 		{
