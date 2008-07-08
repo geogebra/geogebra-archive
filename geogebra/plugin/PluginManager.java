@@ -45,7 +45,7 @@ import javax.swing.JMenuItem;
 </ul>
 </pre>
 @author      H-P Ulven
-@version     03.06.08
+@version     08.07.08
 */
 public class PluginManager implements ActionListener{       //Listens on PluginMenu
  
@@ -248,9 +248,14 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
             try{
+            	String firstLine=br.readLine();
+            if (firstLine.toLowerCase().startsWith("# geogebra plugin properties")) { // check first line
                 while((line=br.readLine())!=null) {            
                 lines.add(line);                //debug(line);
             }//while lines
+            } else {
+            	Application.debug("Not a valid properties file");
+            }//if br
         }catch(IOException ioe){
             System.out.println("PluginManager: IOException reading "+PLUGINFILE);
         }//try-catch
