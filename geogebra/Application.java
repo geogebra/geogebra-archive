@@ -134,9 +134,11 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-    public static final String buildDate = "July 6, 2008";
 	
-    public static final String versionString = "3.1.5.0";    
+	public static final boolean disableSpreadsheet=false;
+    public static final String buildDate = "July 8, 2008";
+	
+    public static final String versionString = "3.1.6.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
   
     // GeoGebra jar files    
@@ -398,7 +400,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
-    	spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
+    	if (!disableSpreadsheet) spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
         
         // load file on startup and set fonts
@@ -745,7 +747,7 @@ public abstract class Application implements	KeyEventDispatcher {
         }
 
         JComponent cp1 = null;
-        if (showSpreadsheet) {        	     
+        if (showSpreadsheet && !disableSpreadsheet) {        	     
             if (horizontalSplit) {
                 sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         cp2, spreadsheetView);
@@ -2566,6 +2568,9 @@ public abstract class Application implements	KeyEventDispatcher {
     public void setShowSpreadsheet(boolean flag) {
     	//if (flag == false) throw new RuntimeException("Here");
     	//System.out.println("setShowSpreadsheet " + flag);
+    	
+    	if (disableSpreadsheet) return;
+    	
         if (showSpreadsheet == flag) return;
         
         showSpreadsheet = flag;
