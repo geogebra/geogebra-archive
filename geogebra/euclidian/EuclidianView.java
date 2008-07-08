@@ -643,6 +643,10 @@ public class EuclidianView extends JPanel implements View, Printable {
 			}			   		
     	}        		
     	
+		// Cong Liu
+		if (result == null) {
+			result = new Rectangle(0,0,0,0);
+		}
 		return result;
 	}    
 	
