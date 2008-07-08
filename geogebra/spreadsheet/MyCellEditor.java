@@ -26,8 +26,10 @@ public class MyCellEditor extends DefaultCellEditor {
     public MyCellEditor(Kernel kernel0) {
 		super(new JTextField());
 		kernel = kernel0;
-		getComponent().addKeyListener(new KeyListener4());
-		getComponent().setFont(new Font("dialog", 0, 12));
+		Component component = getComponent();
+		component.addKeyListener(new KeyListener4());
+		if (component.getFont().getSize() == 0)
+			component.setFont(new Font("dialog", 0, 12));
     }
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row0, int column0) {

@@ -199,7 +199,8 @@ public class SpreadsheetView extends JScrollPane implements View
 //			setHorizontalAlignment(CENTER) ;
 //			setForeground(header.getForeground()) ;
 //			setBackground(header.getBackground());
-			setFont(new Font("dialog", 0, 12));
+			if (getFont().getSize() == 0)
+				setFont(new Font("dialog", 0, 12));
 			table.getSelectionModel().addListSelectionListener(this);
 		}
 	

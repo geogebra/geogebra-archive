@@ -752,7 +752,8 @@ public class MyTable extends JTable
 		public MyCellRenderer() {
 			this.setHorizontalAlignment(JLabel.TRAILING);
 			defaultBackground = getBackground();
-			setFont(new Font("dialog", 0, 12));
+			if (getFont().getSize() == 0) 
+				setFont(new Font("dialog", 0, 12));
 		}
 		
 		public void setValue(Object value) {
@@ -761,7 +762,8 @@ public class MyTable extends JTable
 				this.setBackground(null);
 			}
 			else {
-				setFont(new Font("dialog", 1, 12));
+				if (getFont().getSize() == 0) 
+					setFont(new Font("dialog", 1, 12));
 				String text = ((GeoElement)value).toValueString();
 				setText(text);
 				this.setForeground(((GeoElement)value).getObjectColor());
