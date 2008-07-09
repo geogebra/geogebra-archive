@@ -21,14 +21,14 @@ final public  GeoElement[] process(Command c) throws MyError {
     int n = c.getArgumentNumber();
     boolean[] ok = new boolean[n];
  
-    // create local variable at position 2 and resolve arguments
-    GeoElement[] arg = resArgsLocalNumVar(c, 2);      
-    
     switch (n) {
     	// Curve[ <x-coord expression>,  <y-coord expression>, <number-var>, <from>, <to> ] 
     	// Note: x and y coords are numbers dependent on number-var
     	case 5 :
-            if ((ok[0] = arg[0].isNumberValue())
+    	    // create local variable at position 2 and resolve arguments
+    	    GeoElement[] arg = resArgsLocalNumVar(c, 2);      
+
+    	    if ((ok[0] = arg[0].isNumberValue())
             	 && (ok[1] = arg[1].isNumberValue())
                	 && (ok[2] = arg[2].isGeoNumeric())
                	 && (ok[3] = arg[3].isNumberValue())
@@ -50,7 +50,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                }                   	  
 
         default :
-            throw argNumErr(app, c.getLabel(), n);
+            throw argNumErr(app, "CurveCartesian", n);
     }
 }
 }
