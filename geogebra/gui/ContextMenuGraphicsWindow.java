@@ -104,12 +104,12 @@ implements ActionListener {
         miStandardView.setBackground(bgColor);
         add(miStandardView);
         
-        JMenuItem miShowAllObjectsView = new JMenuItem(app.getPlain("ShowAllObjects"));
-        miShowAllObjectsView.setIcon(app.getEmptyIcon());
-        miShowAllObjectsView.setActionCommand("showAllObjects");
-        miShowAllObjectsView.addActionListener(this);
-        miShowAllObjectsView.setBackground(bgColor);
-        add(miShowAllObjectsView);
+        JMenuItem miShowAllFiniteObjectsView = new JMenuItem(app.getPlain("ShowAllFiniteObjects"));
+        miShowAllFiniteObjectsView.setIcon(app.getEmptyIcon());
+        miShowAllFiniteObjectsView.setActionCommand("showAllFiniteObjects");
+        miShowAllFiniteObjectsView.addActionListener(this);
+        miShowAllFiniteObjectsView.setBackground(bgColor);
+        add(miShowAllFiniteObjectsView);
         
         addSeparator();          
         
@@ -127,8 +127,8 @@ implements ActionListener {
     	if (cmd.equals("standardView")) {
             app.setStandardView();        
         }
-    	else if (cmd.equals("showAllObjects")) {
-    		app.setViewShowAllObjects();
+    	else if (cmd.equals("showAllFiniteObjects")) {
+    		app.setViewShowAllFiniteObjects();
     	}
     	else if (cmd.equals("properties")) {
     		app.showDrawingPadPropertiesDialog();

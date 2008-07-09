@@ -1092,8 +1092,8 @@ public abstract class Application implements	KeyEventDispatcher {
         euclidianView.setStandardView(true);
     }
 
-    public final void setViewShowAllObjects() {
-        euclidianView.setViewShowAllObjects(true);
+    public final void setViewShowAllFiniteObjects() {
+        euclidianView.setViewShowAllFiniteObjects(true);
     }
 
     /**********************************************************

@@ -2981,22 +2981,22 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	protected MyAxesRatioZoomer axesRatioZoomer;
 
-	public final void setViewShowAllObjects(boolean storeUndo) {
-
-		
+	public final void setViewShowAllFiniteObjects(boolean storeUndo) {
+	
 		Rectangle rect=getBounds();
-
+		
 		double x0RW=toRealWorldCoordX(rect.getMinX());
 		double x1RW=toRealWorldCoordX(rect.getMaxX());
 		double y0RW=toRealWorldCoordY(rect.getMaxY());
 		double y1RW=toRealWorldCoordY(rect.getMinY());
 		
-		double xScale = this.width/(x1RW-x0RW);
-		double yScale = this.height/(y1RW-y0RW);
+		setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
 		
-		setCoordSystem(-x0RW*xScale,y1RW*yScale ,xScale,yScale);
-
-		app.updateContentPaneAndSize();
+		//double xScale = this.width/(x1RW-x0RW);
+		//double yScale = this.height/(y1RW-y0RW);
+		
+		//setCoordSystem(-x0RW*xScale,y1RW*yScale ,xScale,yScale);
+		updateSize();
 		if (storeUndo)
 			app.storeUndoInfo();
 	}
