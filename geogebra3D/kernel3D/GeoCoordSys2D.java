@@ -31,6 +31,15 @@ public class GeoCoordSys2D extends GeoCoordSys {
 		return m;
 	}
 	
+	
+	
+	/** returns the point at position l1, l2 on the coord sys */
+	public GgbVector getPoint(double l1, double l2){
+		GgbVector v=new GgbVector(new double[] {l1,l2,1});
+		GgbVector r=M.mul(v);		
+		return r;
+	}	
+	
 
 	
 }

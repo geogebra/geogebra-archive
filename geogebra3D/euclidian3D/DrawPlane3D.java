@@ -54,7 +54,8 @@ public class DrawPlane3D extends Drawable3D {
 		
 
 		
-		GgbMatrix mc = P.getMatrixCompleted(); 
+		//GgbMatrix mc = P.getMatrixCompleted(); 
+		GgbMatrix mc = P.getDrawingMatrix(); 
 		view3D.toScreenCoords3D(mc);
 		
 		Matrix4d m4d = new Matrix4d();
