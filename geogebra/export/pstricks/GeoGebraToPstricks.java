@@ -19,6 +19,7 @@ import geogebra.kernel.AlgoAngleVector;
 import geogebra.kernel.AlgoAngleVectors;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
+import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoSumUpperLower;
 import geogebra.kernel.Construction;
@@ -265,6 +266,10 @@ public class GeoGebraToPstricks implements ActionListener {
                 drawIntegral((GeoNumeric) g);  
                 drawLabel(g,null);
             } 
+            else if (algo instanceof AlgoIntegralFunctions){
+            	drawIntegralFunctions((GeoNumeric) g);
+            	drawLabel(g,null);
+            }
             else if (algo instanceof AlgoSumUpperLower) {
               drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
@@ -369,6 +374,53 @@ public class GeoGebraToPstricks implements ActionListener {
         	codeFilledObject.append(")\n");
         }
     }
+    private void drawIntegralFunctions(GeoNumeric geo){
+// command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,g(b))\pstplot{b}{a}{g(x)} \lineto(a,f(a))\closepath} 
+   	AlgoIntegralFunctions algo = (AlgoIntegralFunctions) geo.getParentAlgorithm();
+	// function f
+	GeoFunction f = algo.getF();
+	// function g
+	GeoFunction g = algo.getG();
+	// double a and b
+	double a=algo.getA().getDouble();
+	double b=algo.getB().getDouble();
+	// String output for a and b
+	String sa = kernel.format(a);
+    String sb = kernel.format(b);
+    // String Expression of f and g
+    String valueF=f.toValueString();
+	valueF=killSpace(Util.toLaTeXString(valueF,true));
+    String valueG=g.toValueString();
+	valueG=killSpace(Util.toLaTeXString(valueG,true));
+	// String expressions for f(a) and g(b) 
+	String fa=kernel.format(f.evaluate(a));
+	String gb=kernel.format(g.evaluate(b));
+	
+	codeFilledObject.append("\\pscustom");
+	codeFilledObject.append(LineOptionCode(geo,true));
+	codeFilledObject.append("{\\psplot{");
+	codeFilledObject.append(sa);
+	codeFilledObject.append("}{");
+	codeFilledObject.append(sb);
+	codeFilledObject.append("}{");
+	codeFilledObject.append(valueF);
+	codeFilledObject.append("}\\lineto(");
+	codeFilledObject.append(sb);
+	codeFilledObject.append(",");
+	codeFilledObject.append(gb);
+	codeFilledObject.append(")\\psplot{");
+	codeFilledObject.append(sb);
+	codeFilledObject.append("}{");
+	codeFilledObject.append(sa);
+	codeFilledObject.append("}{");
+	codeFilledObject.append(valueG);
+	codeFilledObject.append("}\\lineto(");
+	codeFilledObject.append(sa);
+	codeFilledObject.append(",");
+	codeFilledObject.append(fa);
+	codeFilledObject.append(")\\closepath}\n");
+    }
+    
     private void drawIntegral(GeoNumeric geo){
 // command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,0)\lineto(a,0)\closepath} 
     	AlgoIntegralDefinite algo = (AlgoIntegralDefinite) geo.getParentAlgorithm();
