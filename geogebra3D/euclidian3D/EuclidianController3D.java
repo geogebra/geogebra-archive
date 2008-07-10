@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.kernel.GeoElement;
+
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -47,7 +47,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	protected GgbVector pickPoint;
 	
 	//moving
-	protected GgbVector Vn = new GgbVector(new double[] {0.0,0.0,1.0,0.0});
+	protected GgbVector v1, v2, vn;// = new GgbVector(new double[] {0.0,0.0,1.0,0.0});
 	
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
@@ -113,6 +113,12 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 					moveMode = MOVE_POINT;
 					movedGeoPoint3D = (GeoPoint3D) objSelected;
 					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
+					
+					v1=view.vx;
+					v2=view.vy;
+					vn=view.vz;
+					
+					view.setMovingPlane(startLoc3D,v1,v2,0f,0f,1f);
 				}
 			}
 			view.repaint();
@@ -163,7 +169,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
 		view.toSceneCoords3D(v);	
 
-		double l = (startLoc3D.sub(o2)).dotproduct(Vn)/(v.dotproduct(Vn));
+		double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
 
 		mouseLoc3D = (o2.add(v.mul(l))).getColumn(1);
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
@@ -174,6 +180,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		if (repaint){
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
+			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 			view.repaint();
 		}else
 			objSelected.updateCascade();		
@@ -211,6 +218,19 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 	public void mouseReleased(MouseEvent arg0) {
 		
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+		default:
+			break;
+
+		case MOVE_POINT:
+			view.setMovingPlaneVisible(false);
+			view.repaint();
+			break;	
+		
+		}
+
 		moveMode = MOVE_NONE;
 		
 	}
@@ -284,6 +304,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
+			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 			view.repaint();
 
 			break;	

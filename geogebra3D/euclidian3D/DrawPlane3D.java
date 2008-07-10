@@ -93,17 +93,19 @@ public class DrawPlane3D extends Drawable3D {
 	public void drawPicked(GraphicsContext3D gc){};
 	
 	public void drawTransp(GraphicsContext3D gc){
-		//System.out.println("draw");
-    	gc.setModelTransform(t3d);
-    	gc.setAppearance(appTransp);
-    	gc.draw(geomTransp);
+		if(isVisible){
+			gc.setModelTransform(t3d);
+			gc.setAppearance(appTransp);
+			gc.draw(geomTransp);
+		}
 		
 	}
 	
 	public void drawHiding(GraphicsContext3D gc){
-		//System.out.println("draw");
-    	gc.setModelTransform(t3d);    	
-    	gc.draw(geomTransp);
+		if(isVisible){
+			gc.setModelTransform(t3d);    	
+			gc.draw(geomTransp);
+		}
 		
 	}	
 	

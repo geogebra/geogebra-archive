@@ -65,9 +65,19 @@ public class Test3D{
 		P=kernel3D.Point3D(s,x,y,z);
 		P.setObjColor(new Color(x,y,z));
 		P.setLabelVisible(false);
-		cons.addToConstructionList(P,false);	
+		//cons.addToConstructionList(P,false);	
 		return P;
 	}
+	
+	private GeoPoint3D testPoint(float x, float y, float z){
+		String s="";
+		GeoPoint3D P=null;
+		s="M3d";
+		P=kernel3D.Point3D(s,x,y,z);
+		P.setObjColor(new Color(0f,0f,1f));
+		P.setLabelVisible(false);		
+		return P;
+	}	
 	
 	public void testRepere(){
 		
@@ -215,19 +225,19 @@ public class Test3D{
 		int i;
 		
 		GeoPoint3D[] P1 = new GeoPoint3D[4];				
-		P1[0] = testPoint(0,0,0,  0f,0f,0f);
-		P1[1] = testPoint(1,0,0,  1f,0f,0f);
-		P1[2] = testPoint(1,1,0,  1f,1f,0f);
-		P1[3] = testPoint(0,1,0,  0f,1f,0f);
+		P1[0] = testPoint(0f,0f,0f);
+		P1[1] = testPoint(1f,0f,0f);
+		P1[2] = testPoint(1f,1f,0f);
+		P1[3] = testPoint(0f,1f,0f);
 		
 		for(i=0;i<4;i++)
 			kernel3D.Segment3D("segment",P1[i],P1[(i+1)%4]);
 
 		GeoPoint3D[] P2 = new GeoPoint3D[4];				
-		P2[0] = testPoint(0,0,1,  0f,0f,1f);
-		P2[1] = testPoint(1,0,1,  1f,0f,1f);
-		P2[2] = testPoint(1,1,1,  1f,1f,1f);
-		P2[3] = testPoint(0,1,1,  0f,1f,1f);
+		P2[0] = testPoint(0f,0f,1f);
+		P2[1] = testPoint(1f,0f,1f);
+		P2[2] = testPoint(1f,1f,1f);
+		P2[3] = testPoint(0f,1f,1f);
 		
 		for(i=0;i<4;i++)
 			kernel3D.Segment3D("segment",P2[i],P2[(i+1)%4]);

@@ -10,8 +10,10 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
@@ -36,6 +38,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 
 	
 	private Kernel kernel;
+	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
 	protected EuclidianCanvas3D canvas3D;
 	
@@ -61,6 +64,14 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	ArrayList hits = new ArrayList(); //objects picked
 	
 	
+	//base vectors for moving a point
+	public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
+	public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
+	public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	
+	protected GeoPlane3D movingPlane;
+	
+	
 	
 	public EuclidianView3D(EuclidianController3D ec){
 		
@@ -69,6 +80,10 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		this.euclidianController3D = ec;
 		this.kernel = ec.getKernel();
 		euclidianController3D.setView(this);
+		
+		// TODO cast kernel to kernel3D
+		kernel3D=new Kernel3D();
+		kernel3D.setConstruction(kernel.getConstruction());
 		
 		
 		canvas3D = new EuclidianCanvas3D();
@@ -89,6 +104,17 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		//init orientation
 		//setRotXY(Math.PI/6f,0.0,true);
+		
+		//init moving objects
+		movingPlane=kernel3D.Plane3D("movingPlane",
+				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
+				vx,
+				vy);
+		movingPlane.setObjColor(new Color(0f,0f,1f));
+		movingPlane.setAlgebraVisible(false); //TODO make it works
+		movingPlane.setLabelVisible(false);
+		setMovingPlaneVisible(false);
+		//cons.addToConstructionList(p, false);
 		
 		
 	}
@@ -236,6 +262,22 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	}
 
 	
+	public void setRotXY(double a, double b, boolean repaint){
+		
+		this.a = a;
+		this.b = b;
+		
+		updateMatrix();
+		
+		if (repaint) {			
+			repaint();
+		}
+		
+	}
+
+	
+	
+	
 
 	//TODO interaction
 	public double getXZero() { return XZero; }
@@ -258,18 +300,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	
-	public void setRotXY(double a, double b, boolean repaint){
-		
-		this.a = a;
-		this.b = b;
-		
-		updateMatrix();
-		
-		if (repaint) {			
-			repaint();
-		}
-		
-	}
 	
 	
 	
@@ -294,7 +324,27 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	}
 	
 	
+	//////////////////////////////////////
+	// moving objects
+	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2, float r, float g, float b){
+		
+		setMovingPlane(o, v1, v2);
+		movingPlane.setObjColor(new Color(r,g,b));
+		setMovingPlaneVisible(true);
+		
+	}
+
+	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2){
+		
+		movingPlane.setCoord(o, v1, v2);
+		
+	}
 	
+	
+	public void setMovingPlaneVisible(boolean val){
+		movingPlane.setEuclidianVisible(val);
+		
+	}
 	
 	//////////////////////////////////////
 	// picking
@@ -333,6 +383,11 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		else
 			drawList3D.doPick(pickPoint,false);
 	}
+	
+	
+	
+	
+	
 	
 	
 	

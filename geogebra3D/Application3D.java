@@ -62,7 +62,7 @@ public abstract class Application3D extends Application{
         //test.test1(1);
         //test.testSegment(0,0,0,1,1,1);test.testSegment(0.3333,-0.25,-0.25,0.3333,1.25,1.25);test.testSegment(0.6667,-0.25,-0.25,0.6667,1.25,1.25);
         //test.testPlane();
-        test.testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
+        //test.testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
         test.testAlgo();
 
         
