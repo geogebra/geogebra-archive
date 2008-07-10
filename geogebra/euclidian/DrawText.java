@@ -327,7 +327,7 @@ public final class DrawText extends Drawable {
 	 * Returns the bounding box of this Drawable in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined())
+		if (!geo.isDefined() || ((GeoText)geo).isAbsoluteScreenLocActive())
 			return null;
 		else 
 			return labelRectangle;	
