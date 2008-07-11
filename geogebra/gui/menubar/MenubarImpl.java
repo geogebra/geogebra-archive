@@ -1315,7 +1315,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
-		sb.append(Application.versionString+" (Java "+Util.getJavaVersion()+")"); // Michael Borcherds 2008-03-21 added java version
+		sb.append(Application.versionString+" (Java "+System.getProperty("java.version")+")"); // Michael Borcherds 2008-03-21 added java version
 		sb.append("</b><br>");
 		sb.append(Application.buildDate);
 

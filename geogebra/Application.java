@@ -358,7 +358,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	
     	// Michael Borcherds 2008-05-05
     	// added to help debug applets
-    	System.out.println("GeoGebra "+versionString+" "+buildDate);
+    	System.out.println("GeoGebra "+versionString+" "+buildDate+" Java "+System.getProperty("java.version"));
     		
 
 	        isApplet = applet != null;
