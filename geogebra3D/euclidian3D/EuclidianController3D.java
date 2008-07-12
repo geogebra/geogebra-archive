@@ -7,16 +7,22 @@ import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-public class EuclidianController3D implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class EuclidianController3D 
+implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
-	static final boolean DEBUG = false; //conditionnal compilation
+	static final boolean DEBUG = true; //conditionnal compilation
 	
 	
 	
@@ -27,6 +33,17 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	
 	protected int moveMode = MOVE_NONE;
+	
+	
+	
+	protected boolean keyCtrlDown = false;
+	protected boolean keyAltDown = false;
+	
+	
+	
+	
+	
+	
 	
 	protected GeoElement3D objSelected = null;
 	protected GeoPoint3D movedGeoPoint3D = null;
@@ -140,6 +157,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 		switch (moveMode) {
 		case MOVE_POINT:
 			movePoint(repaint);
+			System.out.println("movePoint  -- "+moveMode);
 			break;
 
 		case MOVE_VIEW:
@@ -151,7 +169,9 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			}
 			break;	
 			
+		case MOVE_NONE:
 		default: // do nothing
+			break;
 		
 		}
 
@@ -171,7 +191,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 		double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
 
-		mouseLoc3D = (o2.add(v.mul(l))).getColumn(1);
+		mouseLoc3D = (o2.add(v.mul(l))).v();
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
 						
@@ -199,8 +219,14 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 
 
-	public void mouseEntered(MouseEvent arg0) {
-		
+	public void mouseEntered(MouseEvent mouseEvent) {
+		Component component = mouseEvent.getComponent();
+	    if (!component.hasFocus()) {
+	      component.requestFocusInWindow();
+	    }
+	    
+	    
+	    
 		view.repaint();
 		
 	}
@@ -256,6 +282,7 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 
 
 	public void mouseMoved(MouseEvent e) {
+		//System.out.println("mouseMoved");
 		setMouseLocation(e);
 		pick();
 		view.repaint();
@@ -296,17 +323,32 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 			break;
 
 		case MOVE_POINT:
-			//p = p + r*z			
-			GgbVector p1 = movedGeoPoint3D.getCoords(); 
-			p1.set(3,p1.get(3)-r*0.1);
+			//p = p + r*vn			
+			GgbVector p1 = movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)).v(); 
 			movedGeoPoint3D.setCoords(p1);
+			
+			//mouse follows the point
+			/*
+			try {
+				moveMode = MOVE_NONE;
+				System.out.println("moveMode = "+moveMode);
+		        Robot robot = new Robot();
+		        GgbVector p = p1.copyVector();
+		        view.toScreenCoords3D(p);
+		        GgbVector v = view.getScreenCoords(p);
+		        Component component = e.getComponent();
+		        Point point = component.getLocationOnScreen();
+		        System.out.println("location = "+point.x+","+point.y);
+		        robot.mouseMove((int) v.get(1) + point.x, (int) v.get(2) + point.y);
+		    } catch(AWTException awte) {}
+		    */
 			
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
 			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 			view.repaint();
-
+			moveMode = MOVE_POINT;
 			break;	
 			
 		
@@ -322,17 +364,178 @@ public class EuclidianController3D implements MouseListener, MouseMotionListener
 	
 	final protected void setMouseLocation(MouseEvent e) {
 		mouseLoc = e.getPoint();
+
+	}
+
+
+
+	
+	
+	
+	
+	/////////////////////////////////////////////////
+	// keylistener
+
+	public void keyPressed(KeyEvent e) {
 		
-		/*
-		if (mouseLoc.x < 0)
-			mouseLoc.x = 0;		
-		else if (mouseLoc.x > view.width)
-			mouseLoc.x = view.width;
-		if (mouseLoc.y < 0)
-			mouseLoc.y = 0;
-		else if (mouseLoc.y > view.height)
-			mouseLoc.y = view.height;
-		*/
+		switch(e.getKeyCode()){
+		case KeyEvent.VK_SHIFT:
+			System.out.println("shift pressed");
+			break;
+		case KeyEvent.VK_CONTROL:
+			//System.out.println("ctrl pressed");
+			keyCtrlPressed();
+			break;
+		case KeyEvent.VK_ALT:
+			//System.out.println("alt pressed");
+			keyAltPressed();
+			break;
+		default:
+				break;
+		}
+		
+	}
+	
+	
+
+	
+
+
+	public void keyReleased(KeyEvent e) {
+		
+		switch(e.getKeyCode()){
+		case KeyEvent.VK_SHIFT:
+			System.out.println("shift released");
+			break;
+		case KeyEvent.VK_CONTROL:
+			//System.out.println("ctrl released");
+			keyCtrlReleased();
+			break;
+		case KeyEvent.VK_ALT:
+			//System.out.println("alt released");
+			keyAltReleased();
+			break;
+		default:
+				break;
+		}
+	}
+
+
+	
+	
+	
+	
+	public void keyCtrlPressed(){
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+			break;
+
+		case MOVE_POINT:			
+			v1=view.vy;
+			v2=view.vz;
+			vn=view.vx;
+			
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,1f,0f,0f);
+			view.repaint();
+			break;	
+			
+		case MOVE_NONE:
+		default:
+			break;
+		
+		}
+		
+	}
+	
+	
+	
+	public void keyAltPressed(){
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+			break;
+
+		case MOVE_POINT:			
+			v1=view.vz;
+			v2=view.vx;
+			vn=view.vy;
+			
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,1f,0f);
+			view.repaint();
+			break;	
+			
+		case MOVE_NONE:
+		default:
+			break;
+		
+		}
+		
+	}
+
+	
+	public void keyCtrlReleased(){
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+			break;
+
+		case MOVE_POINT:			
+			v1=view.vx;
+			v2=view.vy;
+			vn=view.vz;
+			
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,0f,1f);
+			view.repaint();
+			break;	
+			
+		case MOVE_NONE:
+		default:
+			break;
+		
+		}
+		
+	}
+	
+	public void keyAltReleased(){
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+			break;
+
+		case MOVE_POINT:			
+			v1=view.vx;
+			v2=view.vy;
+			vn=view.vz;
+			
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,0f,1f);
+			view.repaint();
+			break;	
+			
+		case MOVE_NONE:
+		default:
+			break;
+		
+		}
+		
+	}
+	
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Raccord de méthode auto-généré
+		
 	}
 	
 	

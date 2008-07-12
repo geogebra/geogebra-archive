@@ -198,6 +198,11 @@ public class GgbMatrix
 		
 	}
 	
+	/** transform matrix to vector (assuming a (n,1) matrix) */
+	public GgbVector v(){
+		return getColumn(1);
+	}
+	
 
 	
 	/** sets m(V,j), rows=V.getLength() */

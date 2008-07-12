@@ -66,10 +66,15 @@ public class DrawPlane3D extends Drawable3D {
 		
 		
 		
-		appTransp.setMaterial(new Material(new Color3f(0,0,0), 
-				new Color3f(0,0,0), 
-				new Color3f(geo.getObjectColor()), 
-				new Color3f(1, 1, 1), 15));
+		appTransp.setMaterial(new Material(
+				new Color3f(0,0,0), //ambient
+				new Color3f(geo.getObjectColor()), //emmisive
+				//new Color3f(0,0,0), 
+				new Color3f(geo.getObjectColor()), //diffuse
+				//new Color3f(1, 1, 1),
+				new Color3f(0, 0, 0), //specular
+				//new Color3f(geo.getObjectColor()),
+				15));  //shininess
 		
 		//TODO use object transparency
 		float transp = 0.75f;

@@ -100,7 +100,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		canvas3D.addMouseMotionListener(euclidianController3D);
 		canvas3D.addMouseListener(euclidianController3D);
 		canvas3D.addMouseWheelListener(euclidianController3D);
-		
+		canvas3D.addKeyListener(euclidianController3D);
+		canvas3D.setFocusable(true);
 		
 		//init orientation
 		//setRotXY(Math.PI/6f,0.0,true);
@@ -346,9 +347,40 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 	}
 	
+	
+
+	
+	
+	
+	
+	
+	
 	//////////////////////////////////////
 	// picking
 	
+	/** v 3D physical coords -> 2D screen coords */
+	public GgbVector getScreenCoords(GgbVector v){
+	
+		GgbVector p;
+		
+		double l = - eye.get(3)/(v.get(3)-eye.get(3));		
+		p = eye.add(  v.sub(eye).mul(l)).v();
+		p.SystemPrint();
+		
+		Dimension d = new Dimension();
+		this.getSize(d);
+		double w = (double) d.width/2;
+		double h = (double) d.height/2;
+		GgbVector ret = new GgbVector(new double[] {
+				w*(p.get(1)+1),
+				h - w*p.get(2)
+			});
+		//ret.SystemPrint();
+		return ret;
+		
+	}
+	
+	/** (x,y) 2D screen coords -> 3D physical coords */
 	public GgbVector getPickPoint(int x, int y){			
 		
 		
