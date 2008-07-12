@@ -29,6 +29,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected static final int MOVE_NONE = 101;
 	protected static final int MOVE_POINT = 102;
+	protected static final int MOVE_POINT_WHEEL = 3102;
 	protected static final int MOVE_VIEW = 106;
 	
 	
@@ -157,7 +158,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		switch (moveMode) {
 		case MOVE_POINT:
 			movePoint(repaint);
-			System.out.println("movePoint  -- "+moveMode);
+			//System.out.println("movePoint  -- "+moveMode);
+			break;
+		
+		case MOVE_POINT_WHEEL:
+			moveMode = MOVE_POINT;
 			break;
 
 		case MOVE_VIEW:
@@ -323,34 +328,36 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 
 		case MOVE_POINT:
+		case MOVE_POINT_WHEEL:
 			//p = p + r*vn			
 			GgbVector p1 = movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)).v(); 
 			movedGeoPoint3D.setCoords(p1);
 			
 			//mouse follows the point
-			/*
+			
 			try {
-				moveMode = MOVE_NONE;
-				System.out.println("moveMode = "+moveMode);
+				moveMode = MOVE_POINT_WHEEL;
+				//System.out.println("moveMode = "+moveMode);
 		        Robot robot = new Robot();
 		        GgbVector p = p1.copyVector();
 		        view.toScreenCoords3D(p);
 		        GgbVector v = view.getScreenCoords(p);
 		        Component component = e.getComponent();
 		        Point point = component.getLocationOnScreen();
-		        System.out.println("location = "+point.x+","+point.y);
+		        //System.out.println("location = "+point.x+","+point.y);
 		        robot.mouseMove((int) v.get(1) + point.x, (int) v.get(2) + point.y);
+		        
+		        startLoc3D = p1.copyVector();
 		    } catch(AWTException awte) {}
-		    */
+		    
 			
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
 			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 			view.repaint();
-			moveMode = MOVE_POINT;
+			//moveMode = MOVE_POINT;
 			break;	
-			
 		
 		
 		}
