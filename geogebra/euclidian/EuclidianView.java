@@ -2990,12 +2990,23 @@ public class EuclidianView extends JPanel implements View, Printable {
 		double y0RW=toRealWorldCoordY(rect.getMaxY());
 		double y1RW=toRealWorldCoordY(rect.getMinY());
 		
-		setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
 		
+		// don't want objects at edge
+		double factor=0.03d;
+		double xGap=(x1RW-x0RW)*factor;
+		double yGap=(y1RW-y0RW)*factor;
+		
+		x0RW-=xGap;
+		x1RW+=xGap;
+		y0RW-=yGap;
+		y1RW+=xGap;
+		
+		setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
+
 		//double xScale = this.width/(x1RW-x0RW);
 		//double yScale = this.height/(y1RW-y0RW);
-		
 		//setCoordSystem(-x0RW*xScale,y1RW*yScale ,xScale,yScale);
+		
 		updateSize();
 		if (storeUndo)
 			app.storeUndoInfo();
