@@ -365,7 +365,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		double l = - eye.get(3)/(v.get(3)-eye.get(3));		
 		p = eye.add(  v.sub(eye).mul(l)).v();
-		p.SystemPrint();
+		//p.SystemPrint();
 		
 		Dimension d = new Dimension();
 		this.getSize(d);

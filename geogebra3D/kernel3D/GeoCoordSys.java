@@ -8,6 +8,8 @@ public class GeoCoordSys extends GeoElement3D{
 
 
 	GgbMatrix M;
+	
+	GgbMatrix matrixCompleted = new GgbMatrix(4,4);
 
 	
 	public GeoCoordSys(Construction c) {

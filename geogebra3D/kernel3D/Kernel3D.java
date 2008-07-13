@@ -68,7 +68,8 @@ public class Kernel3D
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
 	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
-		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2,2,-2,2);
+		//GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-1.5,1.5,-1.5,1.5);
+		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
 		p.setLabel(label);
 		return p;
 	}	

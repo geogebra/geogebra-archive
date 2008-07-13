@@ -22,7 +22,7 @@ import java.awt.event.MouseWheelListener;
 public class EuclidianController3D 
 implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
-	static final boolean DEBUG = true; //conditionnal compilation
+	static final boolean DEBUG = false; //conditionnal compilation
 	
 	
 	
@@ -36,10 +36,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected int moveMode = MOVE_NONE;
 	
 	
-	
+	/*
 	protected boolean keyCtrlDown = false;
 	protected boolean keyAltDown = false;
-	
+	*/
 	
 	
 	
@@ -187,28 +187,27 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected void movePoint(boolean repaint){
 		
-			
+		//projecting eye on movingPlane thru pickPoint direction	
 		GgbVector o2 = view.eye.copyVector(); 
 		view.toSceneCoords3D(o2);
 
 		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
 		view.toSceneCoords3D(v);	
-
-		double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
-
-		mouseLoc3D = (o2.add(v.mul(l))).v();
+		
+		double l2 = o2.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v).get(3);
+		//double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
+		//System.out.println("l  = "+l); System.out.println("l2 = "+l2);
+		
+		mouseLoc3D = (o2.add(v.mul(l2))).v();
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
-						
 		
+		//TODO modify objSelected.updateRepaint()
+		objSelected.updateCascade();
+		view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 		
-		if (repaint){
-			//objSelected.updateRepaint(); //TODO modify updateRepaint()
-			objSelected.updateCascade();
-			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
+		if (repaint)
 			view.repaint();
-		}else
-			objSelected.updateCascade();		
 		
 		
 	}

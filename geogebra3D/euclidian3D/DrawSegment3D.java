@@ -33,7 +33,7 @@ public class DrawSegment3D extends Drawable3D {
 		
         //creating 3D object	
         t3d = new Transform3D();
-        geomNormal = Drawable3D.createCylinder(0.03f, 1f, 10, 1f); //TODO beware of euclidianView3D scale 
+        geomNormal = Drawable3D.createCylinder(0.02f, 1f, 10, 1f); //TODO beware of euclidianView3D scale 
         appNormal = new Appearance();
         
         
@@ -64,7 +64,7 @@ public class DrawSegment3D extends Drawable3D {
 				new Color3f(1, 1, 1), 15));
 		
 		
-		dashLength = 0.1f/((float) S.getLength()); //TODO use object property
+		dashLength = 0.08f/((float) S.getLength()); //TODO use object property
 
        
 	}

@@ -6,8 +6,8 @@ import geogebra.kernel.linalg.GgbVector;
 
 public class GeoCoordSys1D extends GeoCoordSys {
 	
-	GgbVector Vn1 = new GgbVector(3);
-	GgbVector Vn2 = new GgbVector(3); //orthogonal vectors
+	GgbVector Vn1 = new GgbVector(4);
+	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
 
 	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
 		super(c);

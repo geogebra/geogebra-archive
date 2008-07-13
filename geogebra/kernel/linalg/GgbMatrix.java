@@ -479,6 +479,19 @@ public class GgbMatrix
 		
 	}
 	
+	
+	///////////////////////////////////////////////////:
+	//more linear operations 
+	/** returns ret that makes this * ret = v */
+	public GgbVector solve(GgbVector v){
+		GgbVector ret;
+		GgbMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
+		ret = mInv.mul(v);		
+		return ret;
+	}
+	
+	
+	
 	///////////////////////////////////////////////////:
 	//testing the package
 	public static synchronized void main(String[] args) {		

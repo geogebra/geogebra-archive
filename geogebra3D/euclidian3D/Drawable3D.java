@@ -51,17 +51,18 @@ public abstract class Drawable3D {
 	boolean labelVisible;
 	
 	
-	/** returns appearance for transparent parts */
-	protected Appearance getAppTransp(){
+	/** returns appearance for transparent parts with (or without) back faces */
+	protected Appearance getAppTransp(boolean drawBackFaces){
 		
 		Appearance appTransp = new Appearance();
 		
-	    //no culling for back faces
-	    PolygonAttributes pa = new PolygonAttributes();
-		pa.setCullFace(PolygonAttributes.CULL_NONE );
-		pa.setBackFaceNormalFlip(true);		
-		appTransp.setPolygonAttributes(pa);	
-		
+		if (drawBackFaces){
+			//no culling for back faces
+			PolygonAttributes pa = new PolygonAttributes();
+			pa.setCullFace(PolygonAttributes.CULL_NONE );
+			pa.setBackFaceNormalFlip(true);		
+			appTransp.setPolygonAttributes(pa);	
+		}
 		return appTransp;
 		
 	}
@@ -144,7 +145,9 @@ public abstract class Drawable3D {
     
     
     
-    
+    static final public Geometry createCylinder(int nbFaces){
+    	return createCylinder(0.03f, 1f, 10, 1f); //TODO radius = 1
+    }
     
     
 	

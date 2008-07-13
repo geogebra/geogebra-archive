@@ -179,6 +179,29 @@ public class GgbVector
 		return HM.norm();
 	}
 	
+	/** returns this projected on the plane (third vector used for direction) 
+	 *  result GgbVector (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	 */
+	public GgbVector projectPlane(GgbMatrix m){
+		GgbVector ret;
+		
+		ret = m.solve(this);
+		ret.set(3,-ret.get(3));
+		
+		return ret;
+		
+	}
+	
+	public GgbVector projectPlaneThruV(GgbMatrix m, GgbVector v){
+		//GgbVector ret;
+		
+		GgbMatrix m1 = new GgbMatrix(4,4);
+		m1.set(new GgbVector[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
+		
+		return projectPlane(m1);
+		
+	}	
+	
 	/** returns the projection of this on the 3D-line represented by the matrix [V O] */
 	public GgbVector projectLine(GgbVector O, GgbVector V){
 		

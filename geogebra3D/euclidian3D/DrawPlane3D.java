@@ -29,6 +29,8 @@ public class DrawPlane3D extends Drawable3D {
 	Geometry geomTransp;
 	Appearance appTransp;
 	
+	Geometry gridGeom;
+	Appearance gridApp;
 	
 	public DrawPlane3D(EuclidianView3D view, GeoPlane3D p){
 		this.P=p;
@@ -39,8 +41,11 @@ public class DrawPlane3D extends Drawable3D {
         //creating 3D object	
         t3d = new Transform3D();
         geomTransp = Drawable3D.createQuad(); //TODO beware of euclidianView3D scale 
-        appTransp = getAppTransp();
-		
+        appTransp = getAppTransp(true);
+        
+        gridGeom = Drawable3D.createCylinder(0.01f, 1f, 10, 1f); //TODO use object property
+        gridApp = getAppTransp(false);
+        
 		update();
 	}
 	
@@ -86,7 +91,13 @@ public class DrawPlane3D extends Drawable3D {
 		appTransp.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST,transp));
 		
 		
-
+		gridApp.setMaterial(new Material(
+				new Color3f(0,0,0), //ambient
+				new Color3f(geo.getObjectColor()), //emmisive
+				new Color3f(geo.getObjectColor()), //diffuse
+				new Color3f(0, 0, 0), //specular
+				15));  //shininess
+		gridApp.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST,0.5f));
        
 	}
 	
@@ -99,9 +110,33 @@ public class DrawPlane3D extends Drawable3D {
 	
 	public void drawTransp(GraphicsContext3D gc){
 		if(isVisible){
-			gc.setModelTransform(t3d);
 			gc.setAppearance(appTransp);
+			
+			gc.setModelTransform(t3d);			
 			gc.draw(geomTransp);
+			
+			//grid
+			GgbMatrix mc;
+			Transform3D t;			
+			gc.setAppearance(gridApp);
+			
+			for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
+				mc = P.getDrawingXMatrix(x); 
+				view3D.toScreenCoords3D(mc);
+				t = new Transform3D();
+				mc.getTransform3D(t);
+				gc.setModelTransform(t);			
+				gc.draw(gridGeom);
+			}
+			
+			for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
+				mc = P.getDrawingYMatrix(y); 
+				view3D.toScreenCoords3D(mc);
+				t = new Transform3D();
+				mc.getTransform3D(t);
+				gc.setModelTransform(t);			
+				gc.draw(gridGeom);
+			}
 		}
 		
 	}
