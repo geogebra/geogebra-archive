@@ -1547,18 +1547,18 @@ final public boolean hasOnlyFreeInputPoints() {
 						
 			if (q > 0) {
 				// don't use indices
-				sbDefaultLabel.append(q);
-				/*
+				//sbDefaultLabel.append(q);
+				
 				// q as index
 				if (q < 10) {
-					label.append('_');
-					label.append(q);
+					sbDefaultLabel.append('_');
+					sbDefaultLabel.append(q);
 				} else {
-					label.append("_{");
-					label.append(q);
-					label.append('}');
+					sbDefaultLabel.append("_{");
+					sbDefaultLabel.append(q);
+					sbDefaultLabel.append('}');
 				}
-				*/
+				
 			}
 			counter++;					
 		}
