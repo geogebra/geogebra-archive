@@ -212,6 +212,8 @@ public class EuclidianController implements MouseListener,
 	protected boolean toggleModeChangedKernel = false;
 	
 	private boolean altDown=false;
+	
+	private static String defaultRotateAngle = "45\u00b0"; // 45 degrees
 
 	/** Creates new EuclidianController */
 	public EuclidianController(Kernel kernel) {
@@ -3766,8 +3768,14 @@ public class EuclidianController implements MouseListener,
 		// we got the rotation center point
 		if (selPoints() == 1 && selGeos() > 0) {					
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
-														app.getPlain("Angle"), "45\u00b0");
+														app.getPlain("Angle"), defaultRotateAngle);
 			NumberValue num = (NumberValue) ob[0];											
+			AngleInputDialog dialog=(AngleInputDialog) ob[1];
+			String angleText = dialog.getText();
+			
+			// keep angle entered if it ends with 'degrees'
+			if (angleText.endsWith("\u00b0") && dialog.success==true) defaultRotateAngle = angleText;
+			else defaultRotateAngle = "45"+"\u00b0";
 			
 			if (num == null) {
 				view.resetMode();

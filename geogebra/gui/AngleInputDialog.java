@@ -12,6 +12,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianController;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,8 @@ public class AngleInputDialog extends InputDialog {
 	private static final long serialVersionUID = 1L;
 
 	protected JRadioButton rbCounterClockWise, rbClockWise; 	
+	
+	public boolean success = true;
 	
 	/**
 	 * Input Dialog for a GeoAngle object.
@@ -71,8 +74,10 @@ public class AngleInputDialog extends InputDialog {
 		Object source = e.getSource();
 		
 		boolean finished = false;
+		success=true;
 		try {
-			if (source == btApply || source == inputPanel.getTextComponent()) {
+		
+				if (source == btApply || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();
 				
 				// negative orientation ?
@@ -82,10 +87,12 @@ public class AngleInputDialog extends InputDialog {
 				
 				finished = inputHandler.processInput(inputText);
 			} else if (source == btCancel) {
-				finished = true;
+				finished = true;		
+				success=false;
 			}
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
+			success=false;
 		}
 		setVisible(!finished);
 	}
