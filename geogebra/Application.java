@@ -3014,7 +3014,8 @@ public abstract class Application implements	KeyEventDispatcher {
         String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
         
         if (GeoGebra.MAC_OS) {
-        	strFile = codebase.getPath().substring(0, codebase.getPath().lastIndexOf("/Java/")) + "/Help/" + strFile;
+        	int i = codebase.getPath().lastIndexOf("/Java/");
+        	if (i > -1) strFile = codebase.getPath().substring(0, i) + "/Help/" + strFile;
         }
         
         try {
