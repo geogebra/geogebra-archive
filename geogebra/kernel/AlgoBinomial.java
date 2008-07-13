@@ -94,12 +94,13 @@ public class AlgoBinomial extends AlgoTwoNumFunction {
 	}*/
 
     private double Binom(double n, double r) {
+		double INFINITY=Double.POSITIVE_INFINITY;
     	try {
+    		if (n==0d && r==0d) return 1d;
     		if (r > n/2) r = n - r;
-    		if (n<1 || r<0 || n<r) return 0;
-    		if (Math.floor(n)!=n || Math.floor(r)!=r) return 0;
+    		if (n<1d || r<0d || n<r) return 0d;
+    		if (Math.floor(n)!=n || Math.floor(r)!=r) return 0d;
 	    
-    		double INFINITY=Double.POSITIVE_INFINITY;
     		double ncr=BinomLog(n,r);
     		if (ncr==INFINITY) return INFINITY; // check to stop needless slow calculations
 
@@ -113,7 +114,7 @@ public class AlgoBinomial extends AlgoTwoNumFunction {
     		return BinomBig(n,r);
     	}
     	catch (Exception e) {
-    		return Double.POSITIVE_INFINITY;
+    		return INFINITY;
     	}
 	    
     }
