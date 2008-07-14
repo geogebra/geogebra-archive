@@ -28,7 +28,7 @@
 -allowaccessmodification
 -overloadaggressively
 
--applymapping geogebra3130.map
+-applymapping geogebra3180.map
 
 # Keep - Applications. Keep all application classes that have a main method.
 -keepclasseswithmembers public class * {
