@@ -138,7 +138,7 @@ office@geogebra.org
 	<!-- Define pack200 task -->
 	<taskdef name="p200ant"
 	    classname="de.matthiasmann.p200ant.P200AntTask"
-	    classpath="P200Ant.jar"/>
+	    classpath="P200Ant_java5only.jar"/>
 		
 
 	<!-- Obfuscate, sign and pack jar files -->
