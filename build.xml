@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Jul 5, 2008
+   @date Jul 14, 2008
 -->
 <project default="geogebra">
 	
@@ -51,7 +51,7 @@ office@geogebra.org
 			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar">
 	</target>
 	
-	<manifest file="manifest.mf">
+	<manifest file="../manifest.mf">
 		<!-- 	<attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar geogebra_cas.jar"/> 	-->	    
 		<attribute name="Main-Class" value="geogebra.gui.MyAppSplash"/>
 	</manifest>	
@@ -66,7 +66,7 @@ office@geogebra.org
 	<target name="ggb-jar" depends="clean" description="create unsigned geogebra.jar">		
 
 		<jar jarfile="${build.dir}/geogebra.jar"
-			manifest="manifest.mf"
+			manifest="../manifest.mf"
 			basedir="${src.dir}"		   
 			includes="**/*.class, 
 					**/*.png, 

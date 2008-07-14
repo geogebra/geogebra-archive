@@ -18,8 +18,8 @@
 -allowaccessmodification
 -overloadaggressively
 
-#-printmapping geogebra3140.map
-#-applymapping geogebra3130.map
+#-printmapping geogebra3180.map
+-applymapping geogebra3180.map
 
 # Keep - Applications. Keep all application classes that have a main method.
 -keepclasseswithmembers public class * {
