@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -135,8 +136,29 @@ public class AlgoDependentListExpression extends AlgoElement {
 				// add point to list
 				list.add(geo);	
 			}
-		}    			        
-	    
+			// needed for matrix multiplication 
+			// eg {{1,3,5},{2,4,6}}*{{11,14},{12,15},{13,a}}
+			else if (element instanceof MyList) {
+				MyList myList2 = (MyList)element;
+				GeoList list2 = new GeoList(cons);
+				list2.clear();
+				for (int j=0 ; j < myList2.size() ; j++)
+				{
+				
+					ExpressionNode en = myList2.getListElement(j);
+					ExpressionValue ev = en.evaluate();
+					
+					if (ev instanceof MyDouble) {
+						GeoNumeric geo2 = new GeoNumeric(cons);
+						geo2.setValue((MyDouble)ev);
+						list2.add(geo2);
+					}
+					
+				}
+				
+				list.add(list2);
+			}
+		}
     }   
     
     final public String toString() {
