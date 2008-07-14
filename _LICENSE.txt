@@ -1,4 +1,4 @@
-GeoGebra - Dynamic Mathematics for Schools 
+GeoGebra - Dynamic Mathematics for Everyone 
 Copyright 2001-2008 GeoGebra Inc.
 http://www.geogebra.org/
 

@@ -1,5 +1,5 @@
-GeoGebra - Dynamic Mathematics for Schools
-Copyright 2001-2007 GeoGebra Inc.
+GeoGebra - Dynamic Mathematics for Everyone
+Copyright 2001-2008 GeoGebra Inc.
 http://www.geogebra.org/
 
 IMPORTANT NOTE concerning LICENSES
@@ -13,7 +13,7 @@ on and see the file LICENSE.txt
 
 Libraries and Plug-In Licenses
 * GeoGebra Language Files (geogebra.properties folder)
-   Copyright 2001-2007 GeoGebra Inc.
+   Copyright 2001-2008 GeoGebra Inc.
    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
    http://creativecommons.org/licenses/by-nc-nd/3.0/
 * Jasymca, http://webuser.hs-furtwangen.de/~dersch/,  GNU GPL v2 (or later)
