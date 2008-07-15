@@ -128,20 +128,22 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 		PathParameter tempPP = getTempPathParameter();
 		PathParameter pp = P.getPathParameter();
 		tempPP.set(pp);
-
-		pointChanged(P);		
+		
+		// make sure we use point changed for a line to get parameters on 
+		// the entire line when this is a segment or ray
+		doPointChanged(P);		
 		
 		boolean result;
 		switch (classType) {
 			case GEO_CLASS_SEGMENT:
 				// segment: parameter in [0,1]
 				result =   pp.t >= -eps && 
-							pp.t <= 1 + eps;
+							pp.t <= 1 + eps;				
 				break;
 				
 			case GEO_CLASS_RAY:
 				// ray: parameter > 0
-				result =   pp.t >= -eps; 
+				result =   pp.t >= -eps;					
 				break;
 				
 			default:
@@ -608,6 +610,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 	}
 	 
 	public void pointChanged(GeoPoint P) {
+		doPointChanged(P);
+	}
+		
+	private void doPointChanged(GeoPoint P) {
 		// project P on line
 		double px = P.x/P.z;
 		double py = P.y/P.z;

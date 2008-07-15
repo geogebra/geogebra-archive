@@ -15,7 +15,6 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
-import geogebra.kernel.GeoNumeric;
 import geogebra.util.Util;
 
 import java.awt.Color;

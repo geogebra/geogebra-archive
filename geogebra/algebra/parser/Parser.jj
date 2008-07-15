@@ -1,6 +1,6 @@
 /* 
-GeoGebra - Dynamic Geometry and Algebra
-Copyright Markus Hohenwarter, http://www.geogebra.at
+GeoGebra - Dynamic Mathematics for Everyone
+Copyright Markus Hohenwarter, http://www.geogebra.org
 
 This file is part of GeoGebra.
 
@@ -191,9 +191,9 @@ TOKEN : {
 }   
 
 TOKEN : { 
-	<SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
-|
-   < LABEL: <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)* >
+ <SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
+   |
+   < LABEL:  <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)*>
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
  |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}" ) )  >  
  | < #LETTER:  // unicode letters
@@ -216,8 +216,7 @@ TOKEN : {
         "\ufe80"-"\ufefc",		// Arabic
         "\uff66"-"\uff9d",		// Katakana
         "\uffa1"-"\uffdc"		// Hangul
-       ]
->
+       ] >
 }
  
 
@@ -372,7 +371,7 @@ Command command():
     ExpressionNode en;
 }
 {   
-   t = <LABEL>
+    ( t = <SPREADSHEET_LABEL> | t = <LABEL>)
     {   c = new Command(kernel, t.image, true );    } 
     "[" 
        ( en = cmdexpression()  { c.addArgument( en ); } )?
