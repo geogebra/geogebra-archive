@@ -752,8 +752,13 @@ public class MyTable extends JTable
 		public MyCellRenderer() {
 			this.setHorizontalAlignment(JLabel.TRAILING);
 			defaultBackground = getBackground();
-			if (getFont().getSize() == 0) 
-				setFont(new Font("dialog", 0, 12));
+			if (getFont().getSize() == 0) {
+				Font font1 = kernel.getApplication().getPlainFont();
+				if (font1 == null || font1.getSize() == 0) {
+					font1 = new Font("dialog", 0, 12);
+				}
+				setFont(font1);				
+			}
 		}
 		
 		public void setValue(Object value) {
@@ -762,8 +767,13 @@ public class MyTable extends JTable
 				this.setBackground(null);
 			}
 			else {
-				if (getFont().getSize() == 0) 
-					setFont(new Font("dialog", 1, 12));
+				if (getFont().getSize() == 0) {
+					Font font1 = kernel.getApplication().getPlainFont();
+					if (font1 == null || font1.getSize() == 0) {
+						font1 = new Font("dialog", 0, 12);
+					}
+					setFont(font1);	
+				}
 				String text = ((GeoElement)value).toValueString();
 				setText(text);
 				this.setForeground(((GeoElement)value).getObjectColor());
@@ -818,7 +828,14 @@ public class MyTable extends JTable
     		setOpaque(true);
     		defaultBackground = getBackground();
     		setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
-			setFont(new Font("dialog", 0, 12));
+			Font font1 = getFont(); 
+			if (font1 == null || font1.getSize() == 0) {
+				kernel.getApplication().getPlainFont();
+				if (font1 == null || font1.getSize() == 0) {
+					font1 = new Font("dialog", 0, 12);
+				}
+			}
+			setFont(font1);
     	}
     	
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {

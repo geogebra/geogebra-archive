@@ -28,8 +28,14 @@ public class MyCellEditor extends DefaultCellEditor {
 		kernel = kernel0;
 		Component component = getComponent();
 		component.addKeyListener(new KeyListener4());
-		if (component.getFont().getSize() == 0)
-			component.setFont(new Font("dialog", 0, 12));
+		if (component.getFont().getSize() == 0) {
+			Font font1 = kernel.getApplication().getPlainFont();
+			if (font1 == null || font1.getSize() == 0) {
+				font1 = new Font("dialog", 0, 12);
+			}
+			component.setFont(font1);
+
+		}
     }
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0, boolean isSelected, int row0, int column0) {
