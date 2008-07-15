@@ -2981,35 +2981,61 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	protected MyAxesRatioZoomer axesRatioZoomer;
 
-	public final void setViewShowAllFiniteObjects(boolean storeUndo) {
-	
+	public final void setViewShowAllObjects(boolean storeUndo) {
+		
 		Rectangle rect=getBounds();
 		
 		double x0RW=toRealWorldCoordX(rect.getMinX());
 		double x1RW=toRealWorldCoordX(rect.getMaxX());
 		double y0RW=toRealWorldCoordY(rect.getMaxY());
-		double y1RW=toRealWorldCoordY(rect.getMinY());
-		
+		double y1RW=toRealWorldCoordY(rect.getMinY());		
 		
 		// don't want objects at edge
 		double factor=0.03d;
 		double xGap=(x1RW-x0RW)*factor;
 		double yGap=(y1RW-y0RW)*factor;
 		
-		x0RW-=xGap;
-		x1RW+=xGap;
-		y0RW-=yGap;
-		y1RW+=xGap;
+		final double x0RW2 = x0RW-xGap;
+		final double x1RW2 = x1RW+xGap;
+		final double y0RW2 = y0RW-yGap;
+		final double y1RW2 = y1RW+xGap;
 		
-		setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
+		//setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
 
-		//double xScale = this.width/(x1RW-x0RW);
-		//double yScale = this.height/(y1RW-y0RW);
-		//setCoordSystem(-x0RW*xScale,y1RW*yScale ,xScale,yScale);
+		double xScale = this.width/(x1RW2-x0RW2);
+		double yScale = this.height/(y1RW2-y0RW2);
+		final double scale = Math.min(xScale,yScale);
+		//setCoordSystem(-x0RW2*xScale,y1RW2*yScale ,scale,scale);
 		
-		updateSize();
+
+		if (scaleRatio != 1.0) {
+			// set axes ratio back to 1
+			if (axesRatioZoomer == null)
+				axesRatioZoomer = new MyAxesRatioZoomer();
+			axesRatioZoomer.init(1, false);
+
+			Thread waiter = new Thread() {
+				public void run() {
+					// wait until zoomer has finished
+					axesRatioZoomer.startAnimation();
+					while (axesRatioZoomer.isRunning()) {
+						try {
+							Thread.sleep(100);
+						} catch (Exception e) {
+						}
+					}
+					// set the xscale and axes origin
+					setAnimatedCoordSystem(-x0RW2*scale, y1RW2*scale, scale, 15, false);
+				}
+			};
+			waiter.start();
+		} else {
+			// set the xscale and axes origin
+			setAnimatedCoordSystem(-x0RW2*scale, y1RW2*scale, scale, 15, false);
+		}
 		if (storeUndo)
 			app.storeUndoInfo();
+
 	}
 	
 	public final void setStandardView(boolean storeUndo) {

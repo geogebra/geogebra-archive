@@ -96,20 +96,21 @@ implements ActionListener {
         addAxesRatioItems(yaxisMenu);
         add(yaxisMenu);                        
        
+        addSeparator(); 
         
+        JMenuItem miShowAllObjectsView = new JMenuItem(app.getPlain("ShowAllObjects"));
+        miShowAllObjectsView.setIcon(app.getEmptyIcon());
+        miShowAllObjectsView.setActionCommand("showAllObjects");
+        miShowAllObjectsView.addActionListener(this);
+        miShowAllObjectsView.setBackground(bgColor);
+        add(miShowAllObjectsView);                
+
         JMenuItem miStandardView = new JMenuItem(app.getPlain("StandardView"));
         miStandardView.setIcon(app.getEmptyIcon());
         miStandardView.setActionCommand("standardView");
         miStandardView.addActionListener(this);
         miStandardView.setBackground(bgColor);
         add(miStandardView);
-        
-        JMenuItem miShowAllFiniteObjectsView = new JMenuItem(app.getPlain("ShowAllFiniteObjects"));
-        miShowAllFiniteObjectsView.setIcon(app.getEmptyIcon());
-        miShowAllFiniteObjectsView.setActionCommand("showAllFiniteObjects");
-        miShowAllFiniteObjectsView.addActionListener(this);
-        miShowAllFiniteObjectsView.setBackground(bgColor);
-        add(miShowAllFiniteObjectsView);
         
         addSeparator();          
         
@@ -127,8 +128,8 @@ implements ActionListener {
     	if (cmd.equals("standardView")) {
             app.setStandardView();        
         }
-    	else if (cmd.equals("showAllFiniteObjects")) {
-    		app.setViewShowAllFiniteObjects();
+    	else if (cmd.equals("showAllObjects")) {
+    		app.setViewShowAllObjects();
     	}
     	else if (cmd.equals("properties")) {
     		app.showDrawingPadPropertiesDialog();

@@ -136,7 +136,7 @@ public abstract class Application implements	KeyEventDispatcher {
 
 	
 	public static final boolean disableSpreadsheet=false;
-    public static final String buildDate = "July 10, 2008";
+    public static final String buildDate = "July 15, 2008";
 	
     public static final String versionString = "3.1.7.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
@@ -1092,8 +1092,8 @@ public abstract class Application implements	KeyEventDispatcher {
         euclidianView.setStandardView(true);
     }
 
-    public final void setViewShowAllFiniteObjects() {
-        euclidianView.setViewShowAllFiniteObjects(true);
+    public final void setViewShowAllObjects() {
+        euclidianView.setViewShowAllObjects(true);
     }
 
     /**********************************************************
@@ -4313,6 +4313,22 @@ public abstract class Application implements	KeyEventDispatcher {
         Calendar calendar = new GregorianCalendar();
       
         System.out.println(calendar.get(Calendar.MINUTE)+":"+calendar.get(Calendar.SECOND)+" "+s+" ["+callerClassName+"."+callerMethodName+"]");
+    }
+    
+    // Michael Borcherds 2008-06-22
+    public static void printStacktrace(String message)
+    {
+        try {
+
+            throw new Exception(message);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+    
     }
 	
 }
