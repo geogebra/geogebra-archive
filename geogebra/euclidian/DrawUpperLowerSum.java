@@ -168,7 +168,7 @@ public class DrawUpperLowerSum extends Drawable {
 	 * Returns the bounding box of this Drawable in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined())
+		if (!geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return gp.getBounds();	

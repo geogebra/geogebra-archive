@@ -146,6 +146,9 @@ public final class DrawList extends Drawable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {
+		
+		if (!geo.isEuclidianVisible()) return null;
+
 		Rectangle result = null;
 		
 		int size = drawables.size();

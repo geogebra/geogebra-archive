@@ -220,7 +220,10 @@ public final class DrawPoint extends Drawable {
 	 */
 	final public Rectangle getBounds() {				
 		// return selection circle's bounding box
-		return circleSel.getBounds();		
+		if (!geo.isEuclidianVisible())
+			return null;
+		else 
+			return circleSel.getBounds();		
 	}
     
     final public GeoElement getGeoElement() {

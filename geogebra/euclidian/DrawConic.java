@@ -694,7 +694,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	 * @return null when this Drawable is infinite or undefined	 
 	 */
 	final public Rectangle getBounds() {	
-		if (!geo.isDefined())
+		if (!geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		
 		switch (type) {

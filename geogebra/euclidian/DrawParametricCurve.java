@@ -849,7 +849,7 @@ public class DrawParametricCurve extends Drawable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined() || !curve.isClosedPath())
+		if (!geo.isDefined() || !curve.isClosedPath() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return gp.getBounds();	

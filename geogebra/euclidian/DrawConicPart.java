@@ -239,7 +239,7 @@ implements Previewable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined())
+		if (!geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		
 		switch (draw_type) {

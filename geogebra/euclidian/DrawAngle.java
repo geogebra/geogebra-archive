@@ -588,7 +588,7 @@ public class DrawAngle extends Drawable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined() || shape == null)
+		if (!geo.isDefined() || shape == null || !geo.isEuclidianVisible())
 			return null;
 		
 		// return selection circle's bounding box

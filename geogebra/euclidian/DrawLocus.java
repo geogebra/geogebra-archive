@@ -144,7 +144,7 @@ public final class DrawLocus extends Drawable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined() || !locus.isClosedPath())
+		if (!geo.isDefined() || !locus.isClosedPath() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return gp.getBounds();	

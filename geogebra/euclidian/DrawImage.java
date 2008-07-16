@@ -266,7 +266,7 @@ public final class DrawImage extends Drawable {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined())
+		if (!geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return boundingBox;		
