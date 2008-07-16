@@ -185,12 +185,16 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			mi = submenu.add(exportWorksheet);
 			setMenuShortCutShiftAccelerator(mi, 'W');
 		
-		
 			submenu.addSeparator();
 			//submenu.add(htmlCPAction);
 			mi = submenu.add(exportGraphicAction);
 			setMenuShortCutShiftAccelerator(mi, 'P');
+			
+			mi = submenu.add(drawingPadToClipboardAction);
+			setMenuShortCutShiftAccelerator(mi, 'C');
 		
+			
+			submenu.addSeparator();
 			mi = submenu.add(exportPSTricksAction);
 			setMenuShortCutShiftAccelerator(mi, 'T');
 			
@@ -198,8 +202,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			mi = submenu.add(exportPgfAction);
 			//End
 			
-			mi = submenu.add(drawingPadToClipboardAction);
-			setMenuShortCutShiftAccelerator(mi, 'C');
+			
 		}		
 		
 		// DONE HERE WHEN APPLET
