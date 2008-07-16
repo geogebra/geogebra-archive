@@ -1,12 +1,5 @@
-/*
-This file is part of GeoGebra.
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 package geogebra.export.pstricks;
+
 import geogebra.Application;
 import geogebra.euclidian.DrawAngle;
 import geogebra.euclidian.DrawPoint;
@@ -44,78 +37,19 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.FontMetrics;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-/**
- * @author Le Coq loïc
- */
 
-public class GeoGebraToPstricks extends GeoGebraExport {
-	public GeoGebraToPstricks(Application app) {
+public class GeoGebraToPgf extends GeoGebraExport {
+    public GeoGebraToPgf(Application app) {
     	super(app);
-
     }
-    protected void createFrame(){
-    	frame=new PstricksFrame(this);
-    }
-    
-    //Functions added to access and modify xmin, xmax, ymin and ymax
-    //When xmin,xmax,ymin or ymax are changed
-    //the selected area is reported accodingly on the euclidianView.
-    //This is not visible, on the view, but one may expect that when
-    //the selection rectangle is changed it is displayed on the view.
-    //This may be implemented by changing the class EuclidianView.
-    //Furthermore the definition of a class EuclidianView listerner 
-    //which this class would implement would be desirable so that 
-    //when the selection is modified by the mouse, this is reported
-    //to the values xmin, xmax, ymin and ymax of instances of this class.
-    
-    private void refreshEuclidianView(){
-    	int x=euclidianView.toScreenCoordX(xmin);
-    	int y=euclidianView.toScreenCoordY(ymin);
-    	int width=euclidianView.toScreenCoordX(xmax)-x;
-    	int height=euclidianView.toScreenCoordY(ymax)-y;
-    	Rectangle r= new Rectangle(x,y,width,height);
-    	this.euclidianView.setSelectionRectangle(r);
-    }
-    public void setxmin(double xmin){
-    	this.xmin=xmin;
-    	this.refreshEuclidianView();
-    }
-    public void setxmax(double xmax){
-    	this.xmax=xmax;
-    	this.refreshEuclidianView();
-    }
-    public void setymin(double ymin){
-    	this.ymin=ymin;
-    	this.refreshEuclidianView();
-    }
-    public void setymax(double ymax){
-    	this.ymax=ymax;
-    	this.refreshEuclidianView();
-    }
-    public double getxmin(){return this.xmin;}
-    public double getxmax(){return this.xmax;}
-    public double getymin(){return this.ymin;}
-    public double getymax(){return this.ymax;}
-    //end changes.
-    //
-    //Adding edition and reading function for xunit and yunit
-    //to make the PstricksPanel be only a view of GeoGebraToPstricks
-    public void setxunit(double xunit){this.xunit=xunit;}
-    public void setyunit(double yunit){this.yunit=yunit;}
-    public double getxunit(){return this.xunit;}
-    public double getyunit(){return this.yunit;}
-    //end addition
-   
-	 
-    public void generateAllCode() {
  
+    public void generateAllCode() {
     	// init unit variables
     	try{	
     		xunit=frame.getXUnit();
@@ -124,7 +58,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	catch(NullPointerException e2){
     		xunit=1;yunit=1;
     	}
-//    	scaleratio=yunit/xunit;
     	// Initialize new StringBuffer for Pstricks code
     	// and CustomColor
     	code=new StringBuffer();
@@ -132,35 +65,19 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	codePreamble=new StringBuffer();
     	codeFilledObject=new StringBuffer();
 		codeBeginDoc=new StringBuffer();
-		codeBeginPic=new StringBuffer();
 		CustomColor=new HashMap();
  		
     	codePreamble.append("\\documentclass[" +
     			frame.getFontSize()+"pt]{article}\n" +
-    			"\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n\\pagestyle{empty}\n");
+    			"\\usepackage{pgf,tikz}\n\\pagestyle{empty}\n");
      	codeBeginDoc.append("\\begin{document}\n");
      	
     	// Draw Grid
 		if (euclidianView.getShowGrid()) drawGrid();
-		else {
-			initUnitAndVariable();
-			// Environment pspicture
-			codeBeginPic.append("\\begin{pspicture*}(");
-			codeBeginPic.append(kernel.format(xmin));
-			codeBeginPic.append(",");
-			codeBeginPic.append(kernel.format(ymin));
-			codeBeginPic.append(")(");
-			codeBeginPic.append(kernel.format(xmax));
-			codeBeginPic.append(",");
-			codeBeginPic.append(kernel.format(ymax));
-			codeBeginPic.append(")\n");
-		}
-		
+
 		// Draw axis
 		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
 			drawAxis();
-		
-
 		
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/
@@ -172,20 +89,24 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment pspicture
-		code.append("\\end{pspicture*}\n");
+		code.append("\\end{tikzpicture}\n");
 /*		String formatFont=resizeFont(app.getFontSize());
 		if (null!=formatFont){
 			codeBeginPic.insert(0,formatFont+"\n");
 			code.append("}\n");
 		}*/
+		codeBeginDoc.append("\\begin{tikzpicture}[x=");
+		codeBeginDoc.append(xunit);
+		codeBeginDoc.append("cm,y=");
+		codeBeginDoc.append(yunit);
+		codeBeginDoc.append("cm]\n");
 		code.insert(0,codeFilledObject+"");
-		code.insert(0,codeBeginPic+"");
-        code.insert(0,codeBeginDoc+"");		
+		code.insert(0,codeBeginDoc+"");		
         code.insert(0,codePreamble+"");
 		code.append("\\end{document}");		
 		frame.write(code);
-	}	
-
+	}	    	
+    
     protected void drawLocus(GeoLocus g){
     	ArrayList ll=g.getMyPointList();
     	Iterator it=ll.iterator();
@@ -525,7 +446,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
 
     }
-    protected void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
+    private void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
 		code.append("\\parametricplot");
 		code.append(LineOptionCode(geo,false));
 		code.append("{");
@@ -543,7 +464,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("}\n");
 
     }
-	protected void drawTick(GeoAngle geo,double[] vertex,double angle){
+	private void drawTick(GeoAngle geo,double[] vertex,double angle){
 		angle=-angle;
 		double radius=geo.getArcSize();
 		double diff= 2.5 + geo.lineThickness / 4d;
@@ -659,7 +580,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	drawGeoPoint(geoPoint);
     	drawLabel(geoPoint,drawPoint);
     	
-    	//draw Line dor Slider
+    	//draw Line or Slider
     	code.append("\\psline");
     	code.append(LineOptionCode(geo,true));
     	code.append("(");
@@ -1184,20 +1105,28 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		}	
 	}
 	
+	/**
+	 * This will generate the Tikz code to draw the GeoPoint gp 
+	 * into the StringBuffer PointCode
+	 * @param gp The choosen GeoPoint
+	 */
+		
 	protected void drawGeoPoint(GeoPoint gp){
 		if (frame.getExportPointSymbol()){
 			double x=gp.getX();
 			double y=gp.getY();
 			double z=gp.getZ();
 			x=x/z;
-			y=y/z;
-			codePoint.append("\\psdots");
-			PointOptionCode(gp);
-			codePoint.append("(");
-			codePoint.append(kernel.format(x));
-			codePoint.append(",");
-			codePoint.append(kernel.format(y));
-			codePoint.append(")\n");
+			y=y/z;		
+			Color dotcolor=gp.getObjectColor();
+			double dotsize=gp.getPointSize();
+			codePoint.append("\\fill [color=");
+			ColorCode(dotcolor,codePoint);
+			codePoint.append("] ");
+			writePoint(x,y,codePoint);
+			codePoint.append(" circle (");
+			codePoint.append(dotsize/2);
+			codePoint.append("pt);\n");
 		}
 	}
 	protected void drawGeoLine(GeoLine geo){
@@ -1235,6 +1164,12 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(")\n");
 		}
 	}
+	/**
+	 * This will generate the Tikz code to draw the GeoSegment geo 
+	 * into the StringBuffer code
+	 * @param geo The choosen GeoPoint
+	 */
+	
 	protected void drawGeoSegment(GeoSegment geo){
 		double[] A=new double[2];
 		double[] B=new double[2];
@@ -1242,21 +1177,12 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		GeoPoint pointEnd=geo.getEndPoint();
 		pointStart.getInhomCoords(A);
 		pointEnd.getInhomCoords(B);
-		String x1=kernel.format(A[0]);
-		String y1=kernel.format(A[1]);
-		String x2=kernel.format(B[0]);
-		String y2=kernel.format(B[1]);
-		code.append("\\psline");
+		code.append("\\draw ");
 		code.append(LineOptionCode(geo,true));
-		code.append("(");
-		code.append(x1);
-		code.append(",");
-		code.append(y1);
-		code.append(")(");
-		code.append(x2);
-		code.append(",");
-		code.append(y2);
-		code.append(")\n");
+		writePoint(A[0],A[1],code);
+		code.append("-- ");
+		writePoint(B[0],B[1],code);
+		code.append(";\n");
 		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) mark(A,B,deco,geo);
 	}
@@ -1537,137 +1463,118 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				yLabel=euclidianView.toRealWorldCoordY(Math.round(yLabel));
 				
 				Color geocolor=geo.getObjectColor();
-				codePoint.append("\\rput[bl](");
-				codePoint.append(kernel.format(xLabel));
-				codePoint.append(",");
-				codePoint.append(kernel.format(yLabel));
-				codePoint.append("){");
-				if (!geocolor.equals(Color.BLACK)){
-					codePoint.append("\\");
-					ColorCode(geocolor,codePoint);
-					codePoint.append("{");
-				}
+				codePoint.append("\\draw[color=");
+				ColorCode(geocolor,codePoint);
+				codePoint.append("] ");
+				writePoint(xLabel,yLabel,codePoint);
+				codePoint.append("node[anchor=south west]{");
 				codePoint.append(name);
-				if (!geocolor.equals(Color.BLACK)){
-					codePoint.append("}");
-				}
-				codePoint.append("}\n");
-			}		
-		}	
+				codePoint.append("};\n");
+		}
+	}
 
 	
 	
     // Draw the grid 
 	private void drawGrid(){
-		Color GridCol=euclidianView.getGridColor();
+		Color gridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
-		int GridLine=euclidianView.getGridLineStyle();
-
-		// Set Units for grid
-		codeBeginPic.append("\\psset{xunit=");
-//		System.out.println(GridDist[0]*xunit);
-		codeBeginPic.append(sci2dec(GridDist[0]*xunit));
-		codeBeginPic.append("cm,yunit=");
-		codeBeginPic.append(sci2dec(GridDist[1]*yunit));
-		codeBeginPic.append("cm}\n");
-		
-		// environment pspicture
-		codeBeginPic.append("\\begin{pspicture*}(");
-		codeBeginPic.append(kernel.format(xmin/GridDist[0]));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymin/GridDist[1]));
-		codeBeginPic.append(")(");
-		codeBeginPic.append(kernel.format(xmax/GridDist[0]));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymax/GridDist[1]));
-		codeBeginPic.append(")\n");
-		
-		// Draw Grid
-		codeBeginPic.append("\\psgrid[subgriddiv=0,gridlabels=0,gridcolor=");
-		ColorCode(GridCol,codeBeginPic);
-		codeBeginPic.append("](0,0)(");
-		codeBeginPic.append(kernel.format(xmin/GridDist[0]));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymin/GridDist[1]));
-		codeBeginPic.append(")(");
-		codeBeginPic.append(kernel.format(xmax/GridDist[0]));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymax/GridDist[1]));
-		codeBeginPic.append(")\n");
-		
-
-		
-		// Set units for the pspicture
-		initUnitAndVariable();
-/*		code.append("\\psset{xunit=");
-		code.append(xunit);
-		code.append("cm,yunit=");
-		code.append(yunit);
-		code.append("cm}\n");*/
-
+		int gridLine=euclidianView.getGridLineStyle();
+		code.append("\\draw [color=");
+		ColorCode(gridCol,code);
+		code.append(",");
+		LinestyleCode(gridLine,code);
+		code.append(", xstep=");
+		code.append(sci2dec(GridDist[0]*xunit));
+		code.append("cm,ystep=");
+		code.append(sci2dec(GridDist[1]*yunit));
+		code.append("cm] ");
+		writePoint(xmin,ymin,code);
+		code.append(" grid ");
+		writePoint(xmax,ymax,code);
+		code.append(";\n");
 	}
 	
-	// Draw Axis
+
 	private void drawAxis(){
-		boolean xAxis=euclidianView.getShowXaxis();
-		boolean yAxis=euclidianView.getShowYaxis();
-//		\psaxes[Dx=5,Dy=0.5]{->}(0,0)(-10.5,-0.4)(10.5,1.2)
-		double Dx=euclidianView.getAxesNumberingDistances()[0];
-		double Dy=euclidianView.getAxesNumberingDistances()[1];
-		codeBeginPic.append("\\psaxes[xAxis=");
-		codeBeginPic.append(xAxis);
-		codeBeginPic.append(",yAxis=");
-		codeBeginPic.append(yAxis);
-		codeBeginPic.append(',');
-		boolean bx=euclidianView.getShowAxesNumbers()[0];
-		boolean by=euclidianView.getShowAxesNumbers()[1];
-		if (!bx&&!by) codeBeginPic.append("labels=none,");
-		else if (bx&&!by) codeBeginPic.append("labels=x,");
-		else if (!bx&&by) codeBeginPic.append("labels=y,");
-		codeBeginPic.append("Dx=");
-		codeBeginPic.append(kernel.format(Dx));
-		codeBeginPic.append(",Dy=");
-		codeBeginPic.append(kernel.format(Dy));
-		codeBeginPic.append(",ticksize=-2pt 0,subticks=2");
-		codeBeginPic.append("]{-");
-		if (euclidianView.getAxesLineStyle()==EuclidianView.AXES_LINE_TYPE_ARROW)
-		codeBeginPic.append(">");
-		codeBeginPic.append("}(0,0)(");
-		codeBeginPic.append(kernel.format(xmin));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymin));
-		codeBeginPic.append(")(");
-		codeBeginPic.append(kernel.format(xmax));
-		codeBeginPic.append(",");
-		codeBeginPic.append(kernel.format(ymax));
-		codeBeginPic.append(")\n");
-	}
-	private void PointOptionCode(GeoPoint geo){
-		Color dotcolor=geo.getObjectColor();
-		int dotsize=geo.getPointSize();
-		boolean coma=false;
-		boolean bracket=false;
-		if (dotsize!=EuclidianView.DEFAULT_POINT_SIZE){
-			// coma needed
-			coma=true;
-			// bracket needed
-			bracket=true;
-			codePoint.append("[dotsize=");
-			codePoint.append(dotsize);
-			codePoint.append("pt 0");
-		}
-		if (!dotcolor.equals(Color.BLACK)){
-			if (coma) codePoint.append(",");
-			if (!bracket) codePoint.append("[");
-			bracket=true;
-			codePoint.append("linecolor=");
-			ColorCode(dotcolor,codePoint);
-		}
-		if (bracket) codePoint.append("]");
+		Color color=euclidianView.getAxesColor();
+		// Drawing X Axis
+		boolean showAxis=euclidianView.getShowXaxis();
+		double spaceTick=euclidianView.getAxesNumberingDistances()[0];
+		boolean showNumbers=euclidianView.getShowAxesNumbers()[0];		
+		int tickStyle=euclidianView.getAxesTickStyles()[0];
 
-	
-	
+		if (showAxis){
+			code.append("\\draw[->,color=");
+			ColorCode(color,code);
+			code.append("] ");
+			writePoint(xmin,0,code);
+			code.append(" -- ");
+			writePoint(xmax,0,code);
+			code.append(";\n");
+			int x1=(int)(xmin/spaceTick);
+			double xstart=x1*spaceTick;
+			StringBuffer tmp=new StringBuffer();
+			while(xstart<xmax){
+				if (Math.abs(xstart)>0.1) tmp.append(kernel.format(xstart));
+				xstart+=spaceTick;
+				if (xstart<xmax&&Math.abs(xstart)>0.1) tmp.append(",");
+			}
+			code.append("\\foreach \\x in {");
+			code.append(tmp);
+			code.append("}\n");
+			code.append("\\draw[shift={(\\x,0)},color=");
+			ColorCode(color,code);
+			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	code.append("] (0pt,2pt) -- (0pt,-2pt)");
+			else code.append("] (0pt,-2pt)");
+			if (showNumbers) code.append("node[below] {\\x};\n");
+		}
+		// Drawing Y Axis
+		showAxis=euclidianView.getShowYaxis();
+		spaceTick=euclidianView.getAxesNumberingDistances()[1];
+		showNumbers=euclidianView.getShowAxesNumbers()[1];
+		tickStyle=resizePt(euclidianView.getAxesTickStyles()[1]);
+		if (showAxis){
+			code.append("\\draw[->,color=");
+			ColorCode(color,code);
+			code.append("] ");
+			writePoint(0,ymin,code);
+			code.append(" -- ");
+			writePoint(0,ymax,code);
+			code.append(";\n");
+			int y1=(int)(ymin/spaceTick);
+			double ystart=y1*spaceTick;
+			StringBuffer tmp=new StringBuffer();
+			while(ystart<ymax){
+				if (Math.abs(ystart)>0.1) tmp.append(kernel.format(ystart));
+				ystart+=spaceTick;
+				if (ystart<ymax&&Math.abs(ystart)>0.1) tmp.append(",");
+			}
+			code.append("\\foreach \\y in {");
+			code.append(tmp);
+			code.append("}\n");
+			code.append("\\draw[shift={(0,\\y)},color=");
+			ColorCode(color,code);
+			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	code.append("] (2pt,0pt) -- (-2pt,0pt)");
+			else code.append("] (-2pt,0pt)");
+			if (showNumbers) code.append("node[left] {\\y};\n");
+		}
+		// Origin
+		if (euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1]){
+			code.append("\\draw[color=");
+			ColorCode(color,code);
+			code.append("] (0pt,-10pt) node[right] {0};");
+		}
 	}
+	private void writePoint(double x, double y,StringBuffer sb){
+		sb.append("(");
+		sb.append(kernel.format(x));
+		sb.append(",");
+		sb.append(kernel.format(y));
+		sb.append(")");
+	}
+	
+	
 	private String LineOptionCode(GeoElement geo,boolean transparency){
 		StringBuffer sb=new StringBuffer(); 
 		Color linecolor=geo.getObjectColor();
@@ -1681,7 +1588,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		coma=true;
 		// bracket needed
 		bracket=true;
-		sb.append("[linewidth=");
+		sb.append("[line width=");
 		sb.append(kernel.format(linethickness/2.0*0.8));
 		sb.append("pt");
 	}
@@ -1697,7 +1604,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		else coma=true;
 		if (!bracket) sb.append("[");
 		bracket=true;
-		sb.append("linecolor=");
+		sb.append("color=");
 		ColorCode(linecolor,sb);
 	}
 	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
@@ -1710,154 +1617,81 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		sb.append(",fillstyle=solid,opacity=");
 		sb.append(geo.getAlphaValue());
 	}
-	if (bracket) sb.append("]");
+	if (bracket) sb.append("] ");
 	return new String(sb);
 	}
-	// Append the linestyle to PSTricks code
+/**
+ * Append the line style parameters to the StringBuffer sb
+ */
 	private void LinestyleCode(int linestyle,StringBuffer sb){
 		switch(linestyle){
 			case EuclidianView.LINE_TYPE_DOTTED:
-				sb.append("linestyle=dotted");
+				sb.append("dotted");
 			break;
 			case EuclidianView.LINE_TYPE_DASHED_SHORT:
-//				sb.append("linestyle=dashed,dash=4pt 4pt");
-				sb.append("linestyle=dashed,dash=");
+//				sb.append("dash pattern=off 4pt on 4pt");
+				sb.append("dash pattern=on ");
 				int size=resizePt(4);
 				sb.append(size);
-				sb.append("pt ");
+				sb.append("pt off ");
 				sb.append(size);
 				sb.append("pt");
 			break;
 			case EuclidianView.LINE_TYPE_DASHED_LONG:
-//				sb.append("linestyle=dashed,dash=8pt 8pt");
-				sb.append("linestyle=dashed,dash=");
-				size=resizePt(8);
-				sb.append(size);
-				sb.append("pt ");
-				sb.append(size);
+//				sb.append("dash pattern=off 8pt on 8pt");
+				sb.append("dash pattern=on ");
+				int size8=resizePt(8);
+				sb.append(size8);
+				sb.append("pt off ");
+				sb.append(size8);
 				sb.append("pt");
 			break;
 			case EuclidianView.LINE_TYPE_DASHED_DOTTED:
-//				sb.append("linestyle=dashed,dash=1pt 4pt 8pt 4pt");
-				sb.append("linestyle=dashed,dash=");
+//				sb.append("dash pattern=on 1 pt off 4pt on 8pt off 4 pt");
+				sb.append("dash pattern=on ");
 				int size1=resizePt(1);
-				int size2=resizePt(4);
-				int size3=resizePt(8);
+				int size4=resizePt(4);
+				size8=resizePt(8);
 				sb.append(size1);
-				sb.append("pt ");
-				sb.append(size2);
-				sb.append("pt ");
-				sb.append(size3);
-				sb.append("pt ");
-				sb.append(size2);
-				sb.append("pt ");
+				sb.append("pt off ");
+				sb.append(size4);
+				sb.append("pt on ");
+				sb.append(size8 );
+				sb.append("pt off ");
+				sb.append(4);
+				sb.append("pt");
 			break;
-		}
-	}
-	// Append the name color to StringBuffer sb 
-	public void ColorCode(Color c,StringBuffer sb){
-	//	final String suffix="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		if (c.equals(Color.BLACK)) sb.append("black");
-		else if (c.equals(Color.DARK_GRAY)) sb.append("darkgray");
-		else if (c.equals(Color.GRAY)) sb.append("gray");
-		else if (c.equals(Color.LIGHT_GRAY)) sb.append("lightgray");
-		else if (c.equals(Color.WHITE)) sb.append("white");
-		else if (c.equals(Color.RED)) sb.append("red");
-		else if (c.equals(Color.GREEN)) sb.append("green");
-		else if (c.equals(Color.BLUE)) sb.append("blue");
-		else if (c.equals(Color.CYAN)) sb.append("cyan");
-		else if (c.equals(Color.MAGENTA)) sb.append("magenta");
-		else if (c.equals(Color.YELLOW)) sb.append("yellow");
-		else {
-			String colorname="";
-			if (CustomColor.containsKey(c)){
-				colorname=CustomColor.get(c).toString();
-			}
-			else {
-				int red=c.getRed();
-				int green=c.getGreen();
-				int blue=c.getBlue();
-				colorname=createCustomColor((int)red,(int)green,(int)blue);
-				codeBeginDoc.append("\\newrgbcolor{"+colorname+"}{"
-						+kernel.format(red/255d)+" "
-						+kernel.format(green/255d)+" "
-						+kernel.format(blue/255d)+"}\n");
-				CustomColor.put(c,colorname);
-			}
-			sb.append(colorname);
 		}
 	}
 
-/*	// Resize text 
-	// Keep the ratio between font size and picture height
-	private String resizeFont(int fontSize){
-		int latexFont=frame.getFontSize();
-		double height_geogebra=euclidianView.getHeight()/30;
-		double height_latex=frame.getLatexHeight();
-		double ratio=height_latex/height_geogebra;
-		int theoric_size=(int)Math.round(ratio*fontSize);
-		String st=null;
-		switch(latexFont){
-			case 10:
-				if (theoric_size<=5) st="\\tiny{";
-				else if (theoric_size<=7) st="\\scriptsize{";
-				else if (theoric_size<=8) st="\\footnotesize{";
-				else if (theoric_size<=9) st="\\small{";
-				else if (theoric_size<=10) ;
-				else if (theoric_size<=12) st="\\large{";
-				else if (theoric_size<=14) st="\\Large{";
-				else if (theoric_size<=17) st="\\LARGE{";
-				else if (theoric_size<=20) st="\\huge{";
-				else  st="\\Huge{";
-			break;
-			case 11:
-				if (theoric_size<=6) st="\\tiny{";
-				else if (theoric_size<=8) st="\\scriptsize{";
-				else if (theoric_size<=9) st="\\footnotesize{";
-				else if (theoric_size<=10) st="\\small{";
-				else if (theoric_size<=11) ;
-				else if (theoric_size<=12) st="\\large{";
-				else if (theoric_size<=14) st="\\Large{";
-				else if (theoric_size<=17) st="\\LARGE{";
-				else if (theoric_size<=20) st="\\huge{";
-				else  st="\\Huge{";
-			break;
-			case 12:
-				if (theoric_size<=6) st="\\tiny{";
-				else if (theoric_size<=8) st="\\scriptsize{";
-				else if (theoric_size<=10) st="\\footnotesize{";
-				else if (theoric_size<=11) st="\\small{";
-				else if (theoric_size<=12) ;
-				else if (theoric_size<=14) st="\\large{";
-				else if (theoric_size<=17) st="\\Large{";
-				else if (theoric_size<=20) st="\\LARGE{";
-				else if (theoric_size<=25) st="\\huge{";
-				else  st="\\Huge{";
-			break;
+/**
+ * 	Append the name color to StringBuffer sb
+ * It will create a custom color, if this color hasn't be defined yet
+ * @param c The Choosen color
+ * @param sb  The stringbuffer where the color has to be added
+ */
+	public void ColorCode(Color c,StringBuffer sb){
+		if (c.equals(Color.BLACK)) {sb.append("black");return;}
+		String colorname="";
+		if (CustomColor.containsKey(c)){
+			colorname=CustomColor.get(c).toString();
 		}
-		return st;
-	}*/
-/*	private void defineTransparency(){
-		String str="\\makeatletter\n\\define@key[psset]{}{transpalpha}{\\pst@checknum{#1}\\pstranspalpha}\n"+
-		"\\psset{transpalpha=1}\n"+
-		"\\def\\psfs@transp{%\n"+
-		"  \\addto@pscode{/Normal .setblendmode \\pstranspalpha .setshapealpha }%\n"+
-		"  \\psfs@solid}\n";
-		if (!transparency) codePreamble.append(str);
-		transparency=true;
+		else {
+			int red=c.getRed();
+			int green=c.getGreen();
+			int blue=c.getBlue();
+			colorname=createCustomColor((int)red,(int)green,(int)blue);
+			// Example: \definecolor{orange}{rgb}{1,0.5,0}
+			codeBeginDoc.append("\\definecolor{"+colorname+"}{rgb}{"
+					+kernel.format(red/255d)+","
+					+kernel.format(green/255d)+","
+					+kernel.format(blue/255d)+"}\n");
+			CustomColor.put(c,colorname);
+		}
+		sb.append(colorname);
 	}
-	*/
-	
-	
-	// refresh the selection rectangle when values change in TextField
-	public void refreshSelectionRectangle(){
-		int x1=euclidianView.toScreenCoordX(xmin);
-		int x2=euclidianView.toScreenCoordX(xmax);
-		int y1=euclidianView.toScreenCoordY(ymin);
-		int y2=euclidianView.toScreenCoordY(ymax);
-		Rectangle rec=new Rectangle(x1,y2,x2-x1,y1-y2);
-	//		System.out.println(x1+" "+x2+" "+y1+" "+y2);
-		euclidianView.setSelectionRectangle(rec);
-		euclidianView.repaint();
-	}
+
+protected void createFrame() {
+	frame=new PgfFrame(this);
+}
 }

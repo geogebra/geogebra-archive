@@ -1,7 +1,5 @@
 package geogebra.export.pstricks;
 
-import geogebra.Application;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,7 +11,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,88 +19,12 @@ import javax.swing.JTextArea;
 /**
  * @author Le Coq Loïc
  */
-public class PstricksPanel extends JFrame{
+public class PstricksFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
-	//addition of the textValues and Jlabels for xmin,xmax,ymin and ymax
-	private TextValue textXUnit,textYUnit,textwidth,textheight,
-		textXmin,textXmax, textYmin,textYmax;
-	private JLabel labelXUnit,labelYUnit,labelwidth,labelheight,labelXmin,
-		labelXmax,labelYmin,labelYmax,labelFontSize;
-	//end changes
-	final String[] msg={"10 pt","11 pt","12 pt"};
-	private JComboBox comboFontSize;
-	private JPanel panel;
-	private JButton button,button_copy;
-	private JCheckBox jcb;
-	private JScrollPane js;
-	private JTextArea textarea;
-	private Application app;
-	//all the necessary parameters are in gg2ps and are read
-	//and modified directly there
-	private double width,height;
-	//end changes
-	//changes of the constructor to accomodate the use of the new parameters
-	public PstricksPanel(final GeoGebraToPstricks ggb2ps){
-		this.app=ggb2ps.getApp();
-		//changes start here
-		width=ggb2ps.getxmax()-ggb2ps.getxmin();
-		height=ggb2ps.getymax()-ggb2ps.getymin();
-		//they stop here
-		setTitle(app.getPlain("TitleExportPstricks"));
-		textXUnit=new TextValue(this,String.valueOf(ggb2ps.getxunit()),false){
-			private static final long serialVersionUID = 1L;
-
-			public void keyReleased(KeyEvent e){
-				try{
-					double value = getValue();
-					ggb2ps.setxunit(value);
-					textwidth.setValue(value*width);
-				}
-				catch(NumberFormatException e1){
-				}
-			}
-		
-		};
-		textYUnit=new TextValue(this,String.valueOf(ggb2ps.getyunit()),false){
-			private static final long serialVersionUID = 1L;
-
-			public void keyReleased(KeyEvent e){
-				try{
-					double value=getValue();
-					ggb2ps.setyunit(value);
-					textheight.setValue(value*height);
-				}
-				catch(NumberFormatException e1){
-				}
-			}
-		
-		};
-		textwidth=new TextValue(this,String.valueOf(width),false){
-			private static final long serialVersionUID = 1L;
-
-			public void keyReleased(KeyEvent e){
-				try{
-					double value = getValue()/width;
-					ggb2ps.setxunit(value);
-					textXUnit.setValue(value);
-				}
-				catch(NumberFormatException e1){}
-			}
-		
-		};
-		textheight=new TextValue(this,String.valueOf(height),false){
-			private static final long serialVersionUID = 1L;
-
-			public void keyReleased(KeyEvent e){
-				try{
-					double value = getValue()/height;
-					ggb2ps.setyunit(value);
-					textYUnit.setValue(value);
-				}
-				catch(NumberFormatException e1){}
-			}
-		
-		};
+	private TextValue textXmin,textXmax, textYmin,textYmax;
+	private JLabel labelXmin,labelXmax,labelYmin,labelYmax;
+	public PstricksFrame(final GeoGebraToPstricks ggb2pst){
+		super(ggb2pst,"GeneratePstricks");
 		//definition of the behaviour of the textValues corresponding
 		//to xmin, xmax, ymin and ymax.
 		//Explaination for xs:
@@ -111,15 +32,15 @@ public class PstricksPanel extends JFrame{
 		//to be sure that everything is allright even though xmin is set
 		//to a higher value than xmax
 		//then the width is changed.
-		textXmin=new TextValue(this,String.valueOf(ggb2ps.getxmin()),true){
+		textXmin=new TextValue(this,String.valueOf(ggb2pst.getXmin()),true){
 			private static final long serialVersionUID = 1L;
 			public void keyReleased(KeyEvent e){
 				try{
-					double xmax = ggb2ps.getxmax();
+					double xmax = ggb2pst.getXmax();
 					double m=getValue();
 					if(m>xmax){
-						ggb2ps.setxmax(m);
-						ggb2ps.setxmin(xmax);
+						ggb2pst.setXmax(m);
+						ggb2pst.setXmin(xmax);
 						width=m-xmax;
 						int pos=getCaretPosition();
 						textXmin.setValue(xmax);
@@ -128,26 +49,26 @@ public class PstricksPanel extends JFrame{
 						textXmax.requestFocus();
 					}
 					else{
-						ggb2ps.setxmin(m);
+						ggb2pst.setXmin(m);
 						width=xmax-m;
 					}
-					textwidth.setValue(width*ggb2ps.getxunit());
-					ggb2ps.refreshSelectionRectangle();
+					textwidth.setValue(width*ggb2pst.getXunit());
+					ggb2pst.refreshSelectionRectangle();
 				}
 				catch(NumberFormatException e1){}
 			}
 			
 			
 		};
-		textXmax=new TextValue(this,String.valueOf(ggb2ps.getxmax()),true){
+		textXmax=new TextValue(this,String.valueOf(ggb2pst.getxmax()),true){
 			private static final long serialVersionUID = 1L;
 			public void keyReleased(KeyEvent e){
 				try{
-					double xmin = ggb2ps.getxmin();
+					double xmin = ggb2pst.getxmin();
 					double m=getValue();
 					if(m<xmin){
-						ggb2ps.setxmin(m);
-						ggb2ps.setxmax(xmin);
+						ggb2pst.setxmin(m);
+						ggb2pst.setxmax(xmin);
 						width=xmin-m;
 						int pos=getCaretPosition();
 						textXmin.setValue(m);
@@ -156,24 +77,24 @@ public class PstricksPanel extends JFrame{
 						textXmin.requestFocus();
 					}
 					else{
-						ggb2ps.setxmax(m);
+						ggb2pst.setxmax(m);
 						width=m-xmin;
 					}
-					textwidth.setValue(width*ggb2ps.getxunit());
-					ggb2ps.refreshSelectionRectangle();
+					textwidth.setValue(width*ggb2pst.getxunit());
+					ggb2pst.refreshSelectionRectangle();
 				}
 				catch(NumberFormatException e1){}
 			}
 		};
-		textYmin=new TextValue(this,String.valueOf(ggb2ps.getymin()),true){
+		textYmin=new TextValue(this,String.valueOf(ggb2pst.getymin()),true){
 			private static final long serialVersionUID = 1L;
 			public void keyReleased(KeyEvent e){
 				try{
-					double ymax = ggb2ps.getymax();
+					double ymax = ggb2pst.getymax();
 					double m=getValue();
 					if(m>ymax){
-						ggb2ps.setymax(m);
-						ggb2ps.setymin(ymax);
+						ggb2pst.setymax(m);
+						ggb2pst.setymin(ymax);
 						height=m-ymax;
 						int pos=getCaretPosition();
 						textYmin.setValue(ymax);
@@ -183,24 +104,24 @@ public class PstricksPanel extends JFrame{
 
 					}
 					else{
-						ggb2ps.setymin(m);
+						ggb2pst.setymin(m);
 						height=ymax-m;
 					}
-					textheight.setValue(height*ggb2ps.getyunit());
-					ggb2ps.refreshSelectionRectangle();
+					textheight.setValue(height*ggb2pst.getyunit());
+					ggb2pst.refreshSelectionRectangle();
 				}
 				catch(NumberFormatException e1){}
 			}
 		};
-		textYmax=new TextValue(this,String.valueOf(ggb2ps.getymax()),true){
+		textYmax=new TextValue(this,String.valueOf(ggb2pst.getymax()),true){
 			private static final long serialVersionUID = 1L;
 			public void keyReleased(KeyEvent e){
 				try{
-					double ymin = ggb2ps.getymin();
+					double ymin = ggb2pst.getymin();
 					double m=getValue();
 					if(m<ymin){
-						ggb2ps.setymin(m);
-						ggb2ps.setymax(ymin);
+						ggb2pst.setymin(m);
+						ggb2pst.setymax(ymin);
 						height=ymin-m;
 						int pos=getCaretPosition();
 						textYmin.setValue(m);
@@ -209,46 +130,25 @@ public class PstricksPanel extends JFrame{
 						textYmin.requestFocus();
 					}
 					else{
-						ggb2ps.setymax(m);
+						ggb2pst.setymax(m);
 						height=m-ymin;
 					}
-					textheight.setValue(height*ggb2ps.getyunit());
-					ggb2ps.refreshSelectionRectangle();
+					textheight.setValue(height*ggb2pst.getyunit());
+					ggb2pst.refreshSelectionRectangle();
 				}
 				catch(NumberFormatException e1){}
 			}
 		};
-		//,textXmax, textYmin,textYmax;
-		panel=new JPanel();
-		button=new JButton(app.getPlain("GeneratePstricks"));
-		button_copy=new JButton(app.getPlain("CopyToClipboard"));
-		labelXUnit=new JLabel(app.getPlain("XUnits"));
-		labelYUnit=new JLabel(app.getPlain("YUnits"));
-		labelwidth=new JLabel(app.getPlain("PictureWidth"));
-		labelheight=new JLabel(app.getPlain("PictureHeight"));
-		labelXmin=new JLabel(app.getPlain("xmin"));
-		labelXmax=new JLabel(app.getPlain("xmax"));
-		labelYmin=new JLabel(app.getPlain("ymin"));
-		labelYmax=new JLabel(app.getPlain("ymax"));
-		labelFontSize=new JLabel(app.getPlain("LatexFontSize"));
-		jcb=new JCheckBox(app.getPlain("DisplayPointSymbol"));
-		comboFontSize=new JComboBox(msg);
-		jcb.setSelected(true);
-		button.addActionListener(ggb2ps);
-		button_copy.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-					textarea.copy();
-				}
-		});
-		js=new JScrollPane();
-		textarea=new JTextArea();
 		initGui();
-		
 	}
-	//I changed this method so as to diplay the field correctly.
-	private void initGui(){ 
+	protected void initGui(){ 
+		setTitle(app.getPlain("TitleExportPstricks"));
+		labelXmin=new JLabel(app.getPlain("xmin"));
+ 		labelXmax=new JLabel(app.getPlain("xmax"));
+ 		labelYmin=new JLabel(app.getPlain("ymin"));
+ 		labelYmax=new JLabel(app.getPlain("ymax"));
+
 		js.getViewport().add(textarea);
-		
 		panel.setLayout(new GridBagLayout());
 		panel.add(labelXUnit, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
@@ -322,48 +222,4 @@ public class PstricksPanel extends JFrame{
 	}
 	//end changes.
 	
-	private void centerOnScreen() {
-		//	center on screen
-		pack();				
-		setLocationRelativeTo(app.getFrame());
-	}
-	
-	public boolean getExportPointSymbol(){
-		return jcb.isSelected();
-	}
-	public double getXUnit(){
-		double d;
-		try{
-			d=textXUnit.getValue();	
-		}
-		catch(NumberFormatException e){d=1;}
-		return d;
-	}
-	public double getYUnit()throws NumberFormatException{
-		double d;
-		try{
-			d=textYUnit.getValue();	
-		}
-		catch(NumberFormatException e){d=1;}
-		return d;
-	}
-	public double getLatexHeight(){
-		return textheight.getValue();
-	}
-	public void write(StringBuffer sb){
-		textarea.setText(new String(sb));
-		textarea.selectAll();
-	}
-	public int getFontSize(){
-		switch(comboFontSize.getSelectedIndex()){
-			case 0:
-				return 10;
-			case 1:
-				return 11;
-			case 2:
-				return 12;
-		}
-		return 10;
-	}
-
 }

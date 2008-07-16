@@ -65,7 +65,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			exitAction, exitAllAction, helpAction,
 			// updateAction,
 			infoAction, exportGraphicAction, exportWorksheet,
-			exportPSTricksAction,
+			exportPSTricksAction,exportPgfAction,
 			showCreateToolsAction, showManageToolsAction,
 			savePreferencesAction, clearPreferencesAction,
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction,
@@ -193,6 +193,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 			mi = submenu.add(exportPSTricksAction);
 			setMenuShortCutShiftAccelerator(mi, 'T');
+			
+			// Added by Loïc Le Coq
+			mi = submenu.add(exportPgfAction);
+			//End
 			
 			mi = submenu.add(drawingPadToClipboardAction);
 			setMenuShortCutShiftAccelerator(mi, 'C');
@@ -1113,6 +1117,28 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				}	
 			}
 		};
+		// Added By Loïc Le Coq
+		exportPgfAction = new AbstractAction(app.getPlain("DrawingPadAsPGF") + " ...", 
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {				
+				try {		
+					// use reflection for
+		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
+		  		    //Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
+		  		    //Object[] args = new Object[] { app };
+		  		    //Class [] types = new Class[] {Application.class};
+		  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+		  	        //constructor.newInstance(args);  			
+		  	        new geogebra.export.pstricks.GeoGebraToPgf(app);	
+				} catch (Exception ex) {
+					System.err.println("GeoGebraToPGF not available");
+				}	
+			}
+		};
+		
+		//End
 		
 		exportWorksheet = new AbstractAction(app.getPlain("DynamicWorksheetAsWebpage") + " ("
 				+ Application.FILE_EXT_HTML + ") ...",
