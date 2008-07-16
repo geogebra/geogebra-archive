@@ -24,6 +24,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import java.awt.event.*;
@@ -310,10 +311,10 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawGeoConic(GeoConic geo);
 	abstract protected void drawGeoConicPart(GeoConicPart geo);
 	abstract protected void drawLabel(GeoElement geo,Drawable drawGeo);
-	
 	abstract protected void drawFunction(GeoFunction geo);
 	abstract protected void drawText(GeoText geo);
 	abstract protected void drawLocus(GeoLocus geo);
+	abstract protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo);
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
 
@@ -400,5 +401,181 @@ public abstract class GeoGebraExport implements ActionListener{
 	protected void setYunit(double yunit) {
 		this.yunit = yunit;
 	}
-
+	/**
+	 * This method draws decoration on segment using abstract method drawLine
+	 * @param A First Point
+	 * @param B Second Point
+	 * @param deco Decoration type
+	 * @param geo GeoElement
+	 */
+	
+	protected void mark(double[] A, double[] B,int deco,GeoElement geo){
+		// calc midpoint (midX, midY) and perpendicular vector (nx, ny)
+		euclidianView.toScreenCoords(A);
+		euclidianView.toScreenCoords(B);					
+		double midX = (A[0] + B[0])/ 2.0;
+		double midY = (A[1] + B[1])/ 2.0;			
+		double nx = A[1] - B[1]; 			
+		double ny = B[0] - A[0];		
+		double nLength = GeoVec2D.length(nx, ny);			
+		// tick spacing and length.
+		double tickSpacing = 2.5 + geo.lineThickness/2d;
+		double tickLength =  tickSpacing + 1;	
+//		 Michael Borcherds 20071006 start
+		double arrowlength = 1.5;
+//		 Michael Borcherds 20071006 end
+		double vx, vy, factor,x1,x2,y1,y2;
+		switch(deco){
+		case GeoElement.DECORATION_SEGMENT_ONE_TICK:
+			factor = tickLength / nLength;
+			nx *= factor/xunit;
+			ny *= factor/yunit;
+			x1=euclidianView.toRealWorldCoordX(midX - nx);
+			y1=euclidianView.toRealWorldCoordY(midY - ny);
+			x2=euclidianView.toRealWorldCoordX(midX + nx);
+			y2=euclidianView.toRealWorldCoordY(midY + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
+	 		// vector (vx, vy) to get 2 points around midpoint		
+	 		factor = tickSpacing / (2 * nLength);		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
+	 		// vector (vx, vy) to get 2 points around midpoint				 		
+	 		factor = tickSpacing / nLength;		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
+	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
+	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+// Michael Borcherds 20071006 start
+		case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
+	 		// vector (vx, vy) to get 2 points around midpoint		
+	 		factor = tickSpacing / (2 * nLength);		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
+			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(-ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
+	 		// vector (vx, vy) to get 2 points around midpoint		
+	 		factor = tickSpacing / (2 * nLength);		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy);
+			x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(nx + vx));
+			y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(-ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+			
+	 		x1=euclidianView.toRealWorldCoordX(midX);
+	 		y1=euclidianView.toRealWorldCoordY(midY);
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*(nx + vx));
+			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX);
+	 		y1=euclidianView.toRealWorldCoordY(midY);
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(-ny + vy));
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+	 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
+	 		// vector (vx, vy) to get 2 points around midpoint				 		
+	 		factor = tickSpacing / nLength;		
+	 		vx = -ny * factor;
+	 		vy =  nx * factor;	
+	 		// use perpendicular vector to set ticks			 		
+	 		factor = tickLength / nLength;
+			nx *= factor;
+			ny *= factor;
+	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
+			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(-ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+			
+	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*vx + arrowlength*(nx + vx));
+			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*vx + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(-ny + vy));
+	 		drawLine(x1,y1,x2,y2,geo);
+			
+	 		x1=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx + arrowlength*(nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy + arrowlength*(ny + vy));
+	 		drawLine(x1,y1,x2,y2,geo);
+	 		x1=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx);
+	 		y1=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy);
+	 		x2=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx + arrowlength*(-nx + vx));
+	 		y2=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy + arrowlength*(-ny + vy));	
+	 		drawLine(x1,y1,x2,y2,geo);
+	 	break;
+//	  Michael Borcherds 20071006 end
+	 }
+	}
 }

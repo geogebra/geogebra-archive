@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class GeoGebraToPgf extends GeoGebraExport {
+	private StringBuffer codeFunction;
     public GeoGebraToPgf(Application app) {
     	super(app);
     }
@@ -61,6 +62,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	// Initialize new StringBuffer for Pstricks code
     	// and CustomColor
     	code=new StringBuffer();
+    	codeFunction=new StringBuffer();
     	codePoint=new StringBuffer();
     	codePreamble=new StringBuffer();
     	codeFilledObject=new StringBuffer();
@@ -71,6 +73,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
     			frame.getFontSize()+"pt]{article}\n" +
     			"\\usepackage{pgf,tikz}\n\\pagestyle{empty}\n");
      	codeBeginDoc.append("\\begin{document}\n");
+     	codeFunction.append("\\begin{scope}\n\\clip");
+     	writePoint(xmin,ymin,codeFunction);
+     	codeFunction.append(" rectangle ");
+     	writePoint(xmax,ymax,codeFunction);
+     	codeFunction.append(";\n");
+     	
      	
     	// Draw Grid
 		if (euclidianView.getShowGrid()) drawGrid();
@@ -86,6 +94,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
         	GeoElement g = (GeoElement) it.next();
            	drawGeoElement(g);
         }
+        // Add Code for Functions
+        codeFunction.append("\\end{scope}\n");
+        code.append(codeFunction);
+        
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment pspicture
@@ -1129,40 +1141,45 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codePoint.append("pt);\n");
 		}
 	}
+	/**
+	 * Generate the PGF/tikZ code to draw an infinite line
+	 */
+	
 	protected void drawGeoLine(GeoLine geo){
-		double x=geo.getX();
-		double y=geo.getY();
-		double z=geo.getZ();
-		if (y!=0)code.append("\\psplot");
-		else code.append("\\psline");
-		code.append(LineOptionCode(geo,true));
-		if (y!=0){	
-			code.append("{");
-			code.append(kernel.format(xmin));
-			code.append("}{");
-			code.append(kernel.format(xmax));
-			code.append("}{(-");
-			code.append(kernel.format(z));
-			code.append("-");
-			code.append(kernel.format(x));
-			code.append("*x)/");
-			String tmpy=kernel.format(y);
-			if (Double.parseDouble(tmpy)!=0) code.append(tmpy);
-			else code.append(y);
-			code.append("}\n");			
+		double a=geo.getX();
+		double b=geo.getY();
+		double c=geo.getZ();
+		if (b!=0){
+			codeFunction.append("\\draw ");
+			String option=LineOptionCode(geo,true);
+			int index=option.lastIndexOf("]");
+			if (index!=-1) {option=option.substring(0,index);
+				codeFunction.append(option);
+				codeFunction.append(",domain=");
+			}
+			else codeFunction.append("[domain=");
+			codeFunction.append(kernel.format(xmin));
+			codeFunction.append(":");
+			codeFunction.append(kernel.format(xmax));
+			codeFunction.append("] plot(\\x,{(-");
+			codeFunction.append(kernel.format(c));
+			codeFunction.append("-");
+			codeFunction.append(kernel.format(a));
+			codeFunction.append("*\\x)/");
+			String tmpy=kernel.format(b);
+			if (Double.parseDouble(tmpy)!=0) codeFunction.append(tmpy);
+			else codeFunction.append(b);
+			codeFunction.append("});\n");			
 		}
-		else {
-				String s=kernel.format(-z/x);
-				code.append("(");
-				code.append(s);
-				code.append(",");
-				code.append(kernel.format(ymin));
-				code.append(")(");
-				code.append(s);
-				code.append(",");
-				code.append(kernel.format(ymax));
-				code.append(")\n");
+		else if (b==0){
+			code.append("\\draw ");
+			code.append(LineOptionCode(geo,true));
+			writePoint(-c/a,ymin,code);
+			code.append(" -- ");
+			writePoint(-c/a,ymax,code);
+			code.append(";\n");
 		}
+		
 	}
 	/**
 	 * This will generate the Tikz code to draw the GeoSegment geo 
@@ -1186,243 +1203,63 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) mark(A,B,deco,geo);
 	}
-	private void drawLine(double x1,double y1,double x2,double y2,GeoElement geo){
-		String sx1=kernel.format(x1);
-		String sy1=kernel.format(y1);
-		String sx2=kernel.format(x2);
-		String sy2=kernel.format(y2);
-		code.append("\\psline");
+	protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo){	
+		code.append("\\draw ");
 		code.append(LineOptionCode(geo,true));
-		code.append("(");
-		code.append(sx1);
-		code.append(",");
-		code.append(sy1);
-		code.append(")(");
-		code.append(sx2);
-		code.append(",");
-		code.append(sy2);
-		code.append(")\n");
-		
+		writePoint(x1,y1,code);
+		code.append(" -- ");
+		writePoint(x2,y2,code);
+		code.append(";\n");
 	}
-	private void mark(double[] A, double[] B,int deco,GeoElement geo){
-		// calc midpoint (midX, midY) and perpendicular vector (nx, ny)
-		euclidianView.toScreenCoords(A);
-		euclidianView.toScreenCoords(B);					
-		double midX = (A[0] + B[0])/ 2.0;
-		double midY = (A[1] + B[1])/ 2.0;			
-		double nx = A[1] - B[1]; 			
-		double ny = B[0] - A[0];		
-		double nLength = GeoVec2D.length(nx, ny);			
-		// tick spacing and length.
-		double tickSpacing = 2.5 + geo.lineThickness/2d;
-		double tickLength =  tickSpacing + 1;	
-//		 Michael Borcherds 20071006 start
-		double arrowlength = 1.5;
-//		 Michael Borcherds 20071006 end
-		double vx, vy, factor,x1,x2,y1,y2;
-		switch(deco){
-		case GeoElement.DECORATION_SEGMENT_ONE_TICK:
-			factor = tickLength / nLength;
-			nx *= factor/xunit;
-			ny *= factor/yunit;
-			x1=euclidianView.toRealWorldCoordX(midX - nx);
-			y1=euclidianView.toRealWorldCoordY(midY - ny);
-			x2=euclidianView.toRealWorldCoordX(midX + nx);
-			y2=euclidianView.toRealWorldCoordY(midY + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-	 	case GeoElement.DECORATION_SEGMENT_TWO_TICKS:
-	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
-	 		vx = -ny * factor;
-	 		vy =  nx * factor;	
-	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / nLength;
-			nx *= factor;
-			ny *= factor;
-	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
-	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
-	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
-	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
-	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
-	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-	 	case GeoElement.DECORATION_SEGMENT_THREE_TICKS:
-	 		// vector (vx, vy) to get 2 points around midpoint				 		
-	 		factor = tickSpacing / nLength;		
-	 		vx = -ny * factor;
-	 		vy =  nx * factor;	
-	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / nLength;
-			nx *= factor;
-			ny *= factor;
-	 		x1=euclidianView.toRealWorldCoordX(midX + vx - nx);
-	 		x2=euclidianView.toRealWorldCoordX(midX + vx + nx);
-	 		y1=euclidianView.toRealWorldCoordY(midY + vy - ny);
-	 		y2=euclidianView.toRealWorldCoordY(midY + vy + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - nx);
-	 		x2=euclidianView.toRealWorldCoordX(midX + nx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - ny);
-	 		y2=euclidianView.toRealWorldCoordY(midY + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - vx - nx);
-	 		x2=euclidianView.toRealWorldCoordX(midX - vx + nx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - vy - ny);
-	 		y2=euclidianView.toRealWorldCoordY(midY - vy + ny);
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-// Michael Borcherds 20071006 start
-		case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
-	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
-	 		vx = -ny * factor;
-	 		vy =  nx * factor;	
-	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / nLength;
-			nx *= factor;
-			ny *= factor;
-	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
-			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
-			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(-ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-	 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
-	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
-	 		vx = -ny * factor;
-	 		vy =  nx * factor;	
-	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / nLength;
-			nx *= factor;
-			ny *= factor;
-	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - 2*arrowlength*vy);
-			x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(nx + vx));
-			y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX - 2*arrowlength*vx + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY - 2*arrowlength*vy + arrowlength*(-ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-			
-	 		x1=euclidianView.toRealWorldCoordX(midX);
-	 		y1=euclidianView.toRealWorldCoordY(midY);
-	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*(nx + vx));
-			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX);
-	 		y1=euclidianView.toRealWorldCoordY(midY);
-	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY + arrowlength*(-ny + vy));
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-	 	case GeoElement.DECORATION_SEGMENT_THREE_ARROWS:
-	 		// vector (vx, vy) to get 2 points around midpoint				 		
-	 		factor = tickSpacing / nLength;		
-	 		vx = -ny * factor;
-	 		vy =  nx * factor;	
-	 		// use perpendicular vector to set ticks			 		
-	 		factor = tickLength / nLength;
-			nx *= factor;
-			ny *= factor;
-	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordX(midY - arrowlength*vy);
-			x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(nx + vx));
-			y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX - arrowlength*vx + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY - arrowlength*vy + arrowlength*(-ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-			
-	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordY(midX + arrowlength*vx + arrowlength*(nx + vx));
-			y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX + arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY + arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX + arrowlength*vx + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY + arrowlength*vy + arrowlength*(-ny + vy));
-	 		drawLine(x1,y1,x2,y2,geo);
-			
-	 		x1=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx + arrowlength*(nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy + arrowlength*(ny + vy));
-	 		drawLine(x1,y1,x2,y2,geo);
-	 		x1=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx);
-	 		y1=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy);
-	 		x2=euclidianView.toRealWorldCoordX(midX - 3*arrowlength*vx + arrowlength*(-nx + vx));
-	 		y2=euclidianView.toRealWorldCoordY(midY - 3*arrowlength*vy + arrowlength*(-ny + vy));	
-	 		drawLine(x1,y1,x2,y2,geo);
-	 	break;
-//	  Michael Borcherds 20071006 end
-	 }
-	}
+
 	protected void drawGeoRay(GeoRay geo){
 		GeoPoint pointStart=geo.getStartPoint();
-		
-		
 		double x1=pointStart.getX();
 		double z1=pointStart.getZ();
 		x1=x1/z1;
-		String y1=kernel.format(pointStart.getY()/z1);
-		
-		double x=geo.getX();
-		double y=geo.getY();
-		double z=geo.getZ();
+		double y1=pointStart.getY()/z1;
+		double a=geo.getX();
+		double b=geo.getY();
+		double c=geo.getZ();
 
-		if (y!=0)code.append("\\psplot");
-		else code.append("\\psline");
-		code.append(LineOptionCode(geo,true));
 		double inf=xmin,sup=xmax;
-		if (y>0){
+		if (b>0){
 			inf=x1;
 		}
 		else {
 			sup=x1;
 		}
-		if (y!=0){	
-			code.append("{");
-			code.append(kernel.format(inf));
-			code.append("}{");
-			code.append(kernel.format(sup));
-			code.append("}{(-");
-			code.append(kernel.format(z));
-			code.append("-");
-			code.append(kernel.format(x));
-			code.append("*x)/");
-			String tmpy=kernel.format(y);
-			if (Double.parseDouble(tmpy)!=0) code.append(tmpy);
-			else code.append(y);
-			code.append("}\n");			
+		if (b!=0){
+			codeFunction.append("\\draw ");
+			String option=LineOptionCode(geo,true);
+			int index=option.lastIndexOf("]");
+			if (index!=-1) {option=option.substring(0,index);
+				codeFunction.append(option);
+				codeFunction.append(",domain=");
+			}
+			else codeFunction.append("[domain=");
+			codeFunction.append(inf);
+			codeFunction.append(":");
+			codeFunction.append(sup);
+			codeFunction.append("] plot(\\x,{(-");
+			codeFunction.append(kernel.format(c));
+			codeFunction.append("-");
+			codeFunction.append(kernel.format(a));
+			codeFunction.append("*\\x)/");
+			String tmpy=kernel.format(b);
+			if (Double.parseDouble(tmpy)!=0) codeFunction.append(tmpy);
+			else codeFunction.append(b);
+			codeFunction.append("});\n");			
 		}
-		else {
-				if (-x>0) sup=ymax;
-				else sup=ymin;
-				code.append("(");
-				code.append(kernel.format(x1));
-				code.append(",");
-				code.append(y1);
-				code.append(")(");
-				code.append(kernel.format(x1));
-				code.append(",");
-				code.append(kernel.format(sup));
-				code.append(")\n");
+		else if (b==0){
+			if (a<0) sup=ymax;
+			else sup=ymin;
+			code.append("\\draw ");
+			code.append(LineOptionCode(geo,true));
+			writePoint(x1,y1,code);
+			code.append(" -- ");
+			writePoint(x1,sup,code);
+			code.append(";\n");
 		}
 	}
     
@@ -1451,8 +1288,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		codeBeginPic.append(kernel.format(EuclidianView.DEFAULT_LINE_THICKNESS/2*0.8));
 		codeBeginPic.append("pt,arrowsize=3pt 2,arrowinset=0.25}\n");
     }
-    
-	// if label is Visible, draw it
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
 		if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
@@ -1473,9 +1308,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 	}
 
+	/**
+	 * Generate the PGF/TikZ code for the Grid
+	 */
 	
-	
-    // Draw the grid 
 	private void drawGrid(){
 		Color gridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
@@ -1494,7 +1330,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		writePoint(xmax,ymax,code);
 		code.append(";\n");
 	}
-	
+	/**
+	 * Generate the PGF/TikZ code for Axis drawing
+	 */
 
 	private void drawAxis(){
 		Color color=euclidianView.getAxesColor();
@@ -1566,6 +1404,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			code.append("] (0pt,-10pt) node[right] {0};");
 		}
 	}
+	/**
+	 * A util method adds point coordinates to a StringBuffer
+	 * @param x X point
+	 * @param y Y Point
+	 * @param sb The Stringbuffer code
+	 */
 	private void writePoint(double x, double y,StringBuffer sb){
 		sb.append("(");
 		sb.append(kernel.format(x));
@@ -1573,7 +1417,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		sb.append(kernel.format(y));
 		sb.append(")");
 	}
-	
 	
 	private String LineOptionCode(GeoElement geo,boolean transparency){
 		StringBuffer sb=new StringBuffer(); 
