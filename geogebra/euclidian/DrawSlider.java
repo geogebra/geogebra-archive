@@ -20,6 +20,7 @@ import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -163,7 +164,7 @@ public class DrawSlider extends Drawable {
 	 * Returns the bounding box of this Drawable in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined() || !geo.isEuclidianVisible())
+		if (!geo.isDefined() || ((GeoNumeric)geo).isAbsoluteScreenLocActive() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return line.getBounds();	
