@@ -34,7 +34,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -56,6 +55,7 @@ import java.util.StringTokenizer;
  */
 
 public class GeoGebraToPstricks extends GeoGebraExport {
+	private StringBuffer codeBeginPic;
 	public GeoGebraToPstricks(Application app) {
     	super(app);
 
@@ -1392,7 +1392,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	private void drawGrid(){
 		Color GridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
-		int GridLine=euclidianView.getGridLineStyle();
+//		int GridLine=euclidianView.getGridLineStyle();
 
 		// Set Units for grid
 		codeBeginPic.append("\\psset{xunit=");

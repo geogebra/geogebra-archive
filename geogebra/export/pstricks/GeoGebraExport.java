@@ -29,14 +29,13 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import java.awt.event.*;
 
-import javax.swing.JFrame;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
 public abstract class GeoGebraExport implements ActionListener{
 	protected final double PRECISION_XRANGE_FUNCTION=0.00001;
-	protected StringBuffer code,codePoint,codePreamble,codeFilledObject,codeBeginDoc,codeBeginPic;
+	protected StringBuffer code,codePoint,codePreamble,codeFilledObject,codeBeginDoc;
 	protected Application app;
     protected Kernel kernel;
     protected Construction construction;
