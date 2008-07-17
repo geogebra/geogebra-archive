@@ -16,6 +16,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -92,7 +93,7 @@ public class DrawSlider extends Drawable {
         	
         	// horiztonal slider
         	if (horizontal) {        	
-        		geoPoint.setCoords(coordsRW[0] + widthRW * param, coordsRW[1], 1.0);  	        		        	
+        		geoPoint.setCoords(coordsRW[0] + widthRW * param, coordsRW[1], 1.0);  	
 	        	drawPoint.update();      	        	
 	        	if (labelVisible) {
 	        		drawPoint.xLabel -= 15;
@@ -158,5 +159,14 @@ public class DrawSlider extends Drawable {
     public void setGeoElement(GeoElement geo) {
         this.geo = geo;
     }
+    /**
+	 * Returns the bounding box of this Drawable in screen coordinates.	 
+	 */
+	final public Rectangle getBounds() {		
+		if (!geo.isDefined() || !geo.isEuclidianVisible())
+			return null;
+		else 
+			return line.getBounds();	
+	}
     
 }
