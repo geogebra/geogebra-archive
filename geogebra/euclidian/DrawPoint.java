@@ -86,7 +86,7 @@ public final class DrawPoint extends Drawable {
 
     	
     	// Florian Sonner 2008-07-17
-    	int pointStyle = ((GeoPoint)geo).getPointStyle();
+    	int pointStyle = P.getPointStyle();
     	
     	if(pointStyle == -1)
     		pointStyle = view.pointStyle;
@@ -158,7 +158,7 @@ public final class DrawPoint extends Drawable {
             }
         	
         	// Florian Sonner 2008-07-17
-        	int pointStyle = ((GeoPoint)geo).getPointStyle();
+        	int pointStyle = P.getPointStyle();
         	
         	if(pointStyle == -1)
         		pointStyle = view.pointStyle;
@@ -205,7 +205,7 @@ public final class DrawPoint extends Drawable {
     	g2.setPaint(geo.getObjectColor());
     	
     	// Florian Sonner 2008-07-17
-    	int pointStyle = ((GeoPoint)geo).getPointStyle();
+    	int pointStyle = P.getPointStyle();
     	
     	if(pointStyle == -1)
     		pointStyle = view.pointStyle;
