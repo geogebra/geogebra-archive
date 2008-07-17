@@ -45,6 +45,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
+	/**
+	 * The individual style of this point. If the value is -1, the
+	 * global point style is used.
+	 */
+	private int pointStyle = -1; // Florian Sonner 2008-07-17
+	
 	private Path path;
 	private PathParameter pathParameter;
         
@@ -136,7 +142,34 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	 */
 	public int getPointSize() {
 		return pointSize;
-	}   
+	}
+	
+	/**
+	 * @author Florian Sonner
+	 * @version 2008-07-17
+	 */
+	public int getPointStyle() {
+		return pointStyle;
+	}
+	
+	/**
+	 * @author Florian Sonner
+	 * @version 2008-07-17
+	 * @param int style the new style to use
+	 */
+	public void setPointStyle(int style) {switch (style) {
+		// TODO: Remove violation of the DRY principle (EucledianView.setPointStyle)
+	
+		case 0:
+		case 1:
+		case 2:
+			pointStyle = style;
+			break;
+	
+		default:
+			pointStyle = -1;
+		}
+	}
 	
 	public boolean isChangeable() {
 		return !isFixed() && (isPointOnPath() || isIndependent());   
@@ -609,6 +642,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		// point size
 		sb.append("\t<pointSize val=\"");
 			sb.append(pointSize);
+		sb.append("\"/>\n");
+		
+    
+		// point style, Florian Sonner 2008-07-17
+		sb.append("\t<pointStyle val=\"");
+			sb.append(pointStyle);
 		sb.append("\"/>\n");
             
         return sb.toString();   

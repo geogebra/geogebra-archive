@@ -83,8 +83,15 @@ public final class DrawPoint extends Drawable {
          		
         double xUL = coords[0] - pointSize;
         double yUL = coords[1] - pointSize;   
-        
-        switch (view.pointStyle) {	       		        
+
+    	
+    	// Florian Sonner 2008-07-17
+    	int pointStyle = ((GeoPoint)geo).getPointStyle();
+    	
+    	if(pointStyle == -1)
+    		pointStyle = view.pointStyle;
+    	
+        switch (pointStyle) {	       		        
         	case EuclidianView.POINT_STYLE_CROSS:        		
         	    double xR = coords[0] + pointSize;        		
         		double yB = coords[1] + pointSize;
@@ -149,8 +156,14 @@ public final class DrawPoint extends Drawable {
     		 	g2.setPaint(geo.getSelColor());		
     		 	g2.fill(circleSel);  
             }
-        	        	
-            switch (view.pointStyle) {
+        	
+        	// Florian Sonner 2008-07-17
+        	int pointStyle = ((GeoPoint)geo).getPointStyle();
+        	
+        	if(pointStyle == -1)
+        		pointStyle = view.pointStyle;
+        	
+            switch (pointStyle) {
             	case EuclidianView.POINT_STYLE_CROSS:            		                     
              		// draw cross like: X     
                     g2.setPaint(geo.getObjectColor());
@@ -191,7 +204,13 @@ public final class DrawPoint extends Drawable {
     final void drawTrace(Graphics2D g2) {
     	g2.setPaint(geo.getObjectColor());
     	
-		switch (view.pointStyle) {
+    	// Florian Sonner 2008-07-17
+    	int pointStyle = ((GeoPoint)geo).getPointStyle();
+    	
+    	if(pointStyle == -1)
+    		pointStyle = view.pointStyle;
+    	
+		switch (pointStyle) {
 	     	case EuclidianView.POINT_STYLE_CIRCLE:
 	 			g2.setStroke(crossStrokes[pointSize]);
 	 			g2.draw(circle);  										                                                               		

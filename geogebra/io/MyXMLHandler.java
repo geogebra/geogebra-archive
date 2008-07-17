@@ -1194,6 +1194,12 @@ public class MyXMLHandler implements DocHandler {
                     ok = handlePointSize(attrs);
                     break;
                 }
+        		
+        		// Florian Sonner 2008-07-17
+        		else if(eName.equals("pointStyle")) {
+        			ok = handlePointStyle(attrs);
+        			break;
+        		}
         		/* should not be needed
         		else if (eName.equals("pathParameter")) {
                     ok = handlePathParameter(attrs);
@@ -1474,6 +1480,23 @@ public class MyXMLHandler implements DocHandler {
         try {
             GeoPoint p = (GeoPoint) geo;
             p.setPointSize(Integer.parseInt((String) attrs.get("val")));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }         
+
+    // Florian Sonner 2008-07-17
+    private boolean handlePointStyle(LinkedHashMap attrs) {
+        if (!(geo.isGeoPoint())) {
+            System.err.println(
+                "wrong element type for <pointStyle>: " + geo.getClass());
+            return false;
+        }
+
+        try {
+            GeoPoint p = (GeoPoint) geo;
+            p.setPointStyle(Integer.parseInt((String) attrs.get("val")));
             return true;
         } catch (Exception e) {
             return false;

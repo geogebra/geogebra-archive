@@ -78,6 +78,7 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -86,6 +87,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -543,6 +545,7 @@ public class PropertiesDialogGeoElement
 		private LineEqnPanel lineEqnPanel;
 		private ConicEqnPanel conicEqnPanel;
 		private PointSizePanel pointSizePanel;
+		private PointStylePanel pointStylePanel; // Florian Sonner 2008-07-17
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
@@ -588,6 +591,7 @@ public class PropertiesDialogGeoElement
 			lineEqnPanel = new LineEqnPanel();
 			conicEqnPanel = new ConicEqnPanel();
 			pointSizePanel = new PointSizePanel();
+			pointStylePanel = new PointStylePanel(); // Florian Sonner 2008-07-12
 			textOptionsPanel = new TextOptionsPanel();
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
@@ -698,7 +702,8 @@ public class PropertiesDialogGeoElement
 			// style tab
 			ArrayList styleTabList = new ArrayList();
 			styleTabList.add(slopeTriangleSizePanel);
-			styleTabList.add(pointSizePanel);	
+			styleTabList.add(pointSizePanel);
+			styleTabList.add(pointStylePanel); // Florian Sonner 2008-07-17
 			styleTabList.add(lineStylePanel);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
@@ -2813,6 +2818,81 @@ public class PropertiesDialogGeoElement
 					point.setPointSize(size);
 					point.updateRepaint();
 				}
+			}
+		}
+	}
+
+	/**
+	 * panel to change the point style
+	 * @author Florian Sonner
+	 * @version 2008-07-17
+	 */
+	private class PointStylePanel extends JPanel implements UpdateablePanel, ActionListener {
+		private static final long serialVersionUID = 1L;
+		private Object[] geos;
+		private JRadioButton[] buttons;
+		
+		public PointStylePanel() {
+			ButtonGroup buttonGroup = new ButtonGroup();
+			
+			String[] strPointStyle = { app.getPlain("Default"), "\u25cf", "\u25cb", "\u2716" };
+			String[] strPointStyleAC = { "-1", "0", "2", "1" };
+			buttons = new JRadioButton[strPointStyle.length];
+			
+			for(int i = 0; i < strPointStyle.length; ++i) {
+				buttons[i] = new JRadioButton(strPointStyle[i]);
+				buttons[i].setActionCommand(strPointStyleAC[i]);
+				buttons[i].addActionListener(this);
+				
+				if(!strPointStyleAC[i].equals("-1"))
+					buttons[i].setFont(app.getSmallFont());
+				
+				buttonGroup.add(buttons[i]);
+				add(buttons[i]);
+			}		
+			
+			setBorder(BorderFactory.createTitledBorder(app.getMenu("PointStyle") ));					
+		}
+
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+
+			this.geos = geos;
+
+			//	set value to first point's style 
+			GeoPoint geo0 = (GeoPoint) geos[0];
+
+			for(int i = 0; i < buttons.length; ++i) {
+				if(Integer.parseInt(buttons[i].getActionCommand()) == geo0.getPointStyle())
+					buttons[i].setSelected(true);
+				else
+					buttons[i].setSelected(false);
+			}
+			
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof GeoPoint)) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			int style = Integer.parseInt(e.getActionCommand());
+			
+			GeoPoint point;
+			for (int i = 0; i < geos.length; i++) {
+				point = (GeoPoint) geos[i];
+				point.setPointStyle(style);
+				point.updateRepaint();
 			}
 		}
 	}

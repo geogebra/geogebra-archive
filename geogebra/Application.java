@@ -136,9 +136,9 @@ public abstract class Application implements	KeyEventDispatcher {
 
 	
 	public static final boolean disableSpreadsheet=false;
-    public static final String buildDate = "July 15, 2008";
+    public static final String buildDate = "July 17, 2008";
 	
-    public static final String versionString = "3.1.7.0";    
+    public static final String versionString = "3.1.8.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
   
     // GeoGebra jar files    

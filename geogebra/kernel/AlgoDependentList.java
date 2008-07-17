@@ -117,12 +117,15 @@ public class AlgoDependentList extends AlgoElement {
     
     final public String toString() {
     	StringBuffer sb = new StringBuffer();
-    	sb.append("{");    	    
-    	for (int i=0; i < input.length - 1; i++) {
-    		sb.append(input[i].getLabel());
-    		sb.append(", ");
-    	}    	
-    	sb.append(input[input.length-1].getLabel());
+    	sb.append("{");
+    	
+    	if(input.length > 0) { // Florian Sonner 2008-07-12
+	    	for (int i=0; i < input.length - 1; i++) {
+	    		sb.append(input[i].getLabel());
+	    		sb.append(", ");
+	    	}    	
+	    	sb.append(input[input.length-1].getLabel());
+    	}
     	sb.append("}");    		    	    	
         return sb.toString();
     }        
