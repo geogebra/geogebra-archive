@@ -762,48 +762,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			code.append("}}\n");	
 		}
 	}
-	private void addText(String st,boolean isLatex,int style,int size,Color geocolor){
-		if (isLatex)code.append("$");
-		switch(style){
-			case 1:
-				if (isLatex) code.append("\\mathbf{");
-				else code.append("\\textbf{");
-			break;
-			case 2:
-				if (isLatex) code.append("\\mathit{");
-				else code.append("\\textit{");
-			break;
-			case 3:
-				if (isLatex) code.append("\\mathit{\\mathbf{");
-				else code.append("\\textit{\\textbf{");
-			break;
-		}
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("\\");
-			ColorCode(geocolor,code);
-			code.append("{");
-		}
-/*
-		if (size!=app.getFontSize()) {
-			String formatFont=resizeFont(size);
-			if (null!=formatFont) code.append(formatFont);
-		}*/
-		code.append(st);
-//		if (size!=app.getFontSize()) code.append("}");
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("}");
-		}
-		switch(style){
-			case 1:
-			case 2:
-				code.append("}");
-				break;
-			case 3:
-				code.append("}}");
-				break;
-		}
-		if (isLatex)code.append("$");
-	}
 	
 	protected void drawGeoConicPart(GeoConicPart geo){
 		double x=geo.getTranslationVector().getX();
@@ -1586,7 +1544,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		}
 	}
 	// Append the name color to StringBuffer sb 
-	public void ColorCode(Color c,StringBuffer sb){
+	protected void ColorCode(Color c,StringBuffer sb){
 	//	final String suffix="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		if (c.equals(Color.BLACK)) sb.append("black");
 		else if (c.equals(Color.DARK_GRAY)) sb.append("darkgray");

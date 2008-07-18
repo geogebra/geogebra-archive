@@ -29,6 +29,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import java.awt.event.*;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -316,7 +317,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo);
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
-
+	abstract protected void ColorCode(Color color, StringBuffer sb);
 	/**
 	 * @return the xmin
 	 */
@@ -577,4 +578,47 @@ public abstract class GeoGebraExport implements ActionListener{
 //	  Michael Borcherds 20071006 end
 	 }
 	}
+	protected void addText(String st,boolean isLatex,int style,int size,Color geocolor){
+		if (isLatex)code.append("$");
+		switch(style){
+			case 1:
+				if (isLatex) code.append("\\mathbf{");
+				else code.append("\\textbf{");
+			break;
+			case 2:
+				if (isLatex) code.append("\\mathit{");
+				else code.append("\\textit{");
+			break;
+			case 3:
+				if (isLatex) code.append("\\mathit{\\mathbf{");
+				else code.append("\\textit{\\textbf{");
+			break;
+		}
+		if (!geocolor.equals(Color.BLACK)){
+			code.append("\\");
+			ColorCode(geocolor,code);
+			code.append("{");
+		}
+/*
+		if (size!=app.getFontSize()) {
+			String formatFont=resizeFont(size);
+			if (null!=formatFont) code.append(formatFont);
+		}*/
+		code.append(st);
+//		if (size!=app.getFontSize()) code.append("}");
+		if (!geocolor.equals(Color.BLACK)){
+			code.append("}");
+		}
+		switch(style){
+			case 1:
+			case 2:
+				code.append("}");
+				break;
+			case 3:
+				code.append("}}");
+				break;
+		}
+		if (isLatex)code.append("$");
+	}
+	
 }

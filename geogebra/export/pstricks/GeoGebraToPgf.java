@@ -586,19 +586,18 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	drawLabel(geoPoint,drawPoint);
     	
     	//draw Line or Slider
-    	code.append("\\psline");
-    	code.append(LineOptionCode(geo,true));
-    	code.append("(");
-    	code.append(kernel.format(x));
-    	code.append(",");
-    	code.append(kernel.format(y));
-    	code.append(")(");
+    	code.append("\\draw");
+    	String s=LineOptionCode(geo,true);
+    	if (s.length()!=0){
+    		s="["+s+"] ";
+        	code.append(s);
+    	}
+    	writePoint(x,y,code);
+    	code.append(" -- ");
     	if (horizontal) x+=width;
     	else y+=width;
-    	code.append(kernel.format(x));
-    	code.append(",");
-    	code.append(kernel.format(y));
-    	code.append(")\n");    	
+    	writePoint(x,y,code);
+    	code.append(";\n");    	
     }
     
     
@@ -606,8 +605,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	// command: \pspolygon[par](x0,y0)....(xn,yn)
     	float alpha=geo.getAlphaValue();
     	if (alpha==0.0f) return;
-    	codeFilledObject.append("\\pspolygon");
-    	codeFilledObject.append(LineOptionCode(geo,true));
+    	codeFilledObject.append("\\draw");
+    	String s=LineOptionCode(geo,true);
+    	if (s.length()!=0){
+    		s="["+s+"] ";
+    		codeFilledObject.append(s);
+    	}
     	GeoPoint [] points = geo.getPoints();	
     	for (int i=0;i<points.length;i++){
     		double x=points[i].getX();
@@ -615,13 +618,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
     		double z=points[i].getZ();
      		x=x/z;
     		y=y/z;
-     		codeFilledObject.append("(");
-    		codeFilledObject.append(kernel.format(x));
-    		codeFilledObject.append(",");
-    		codeFilledObject.append(kernel.format(y));
-    		codeFilledObject.append(")");
+    		writePoint(x,y,codeFilledObject);
+    		codeFilledObject.append(" -- ");
     	}
-    	codeFilledObject.append("\n");	
+    	codeFilledObject.append("cycle;\n");	
     }
     
 	protected void drawText(GeoText geo){
@@ -656,13 +656,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		int id=st.indexOf("\n");
 		// One line
 		if (id==-1){
-			code.append("\\rput[tl](");
-			code.append(kernel.format(x));
-			code.append(",");
-			code.append(kernel.format(y));
-			code.append("){");
+			code.append("\\draw ");
+			writePoint(x,y,code);
+			code.append("node[anchor=north west]{");
 			addText(st,isLatex,style,size,geocolor);
-			code.append("}\n");
+			code.append("};\n");
 		}
 		// MultiLine
 		else {
@@ -677,123 +675,68 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				sb.append(line);
 				if (stk.hasMoreTokens()) sb.append(" \\\\ ");
 			}
-			code.append("\\rput[lt](");
-			code.append(kernel.format(x));
-			code.append(",");
-			code.append(kernel.format(y));
-			code.append("){\\parbox{");
+			code.append("\\draw ");
+			writePoint(x,y,code);
+			code.append("node[anchor=north west]{");
+			code.append("\\parbox{");
 			code.append(kernel.format(width*(xmax-xmin)*xunit/euclidianView.getWidth()+1));
 			code.append(" cm}{");
-			addText(new String(sb),isLatex,style,size,geocolor);
-			code.append("}}\n");	
+			addText(new String(sb),isLatex,style,size,geocolor);			
+			code.append("}};\n");			
 		}
 	}
-	private void addText(String st,boolean isLatex,int style,int size,Color geocolor){
-		if (isLatex)code.append("$");
-		switch(style){
-			case 1:
-				if (isLatex) code.append("\\mathbf{");
-				else code.append("\\textbf{");
-			break;
-			case 2:
-				if (isLatex) code.append("\\mathit{");
-				else code.append("\\textit{");
-			break;
-			case 3:
-				if (isLatex) code.append("\\mathit{\\mathbf{");
-				else code.append("\\textit{\\textbf{");
-			break;
-		}
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("\\");
-			ColorCode(geocolor,code);
-			code.append("{");
-		}
-/*
-		if (size!=app.getFontSize()) {
-			String formatFont=resizeFont(size);
-			if (null!=formatFont) code.append(formatFont);
-		}*/
-		code.append(st);
-//		if (size!=app.getFontSize()) code.append("}");
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("}");
-		}
-		switch(style){
-			case 1:
-			case 2:
-				code.append("}");
-				break;
-			case 3:
-				code.append("}}");
-				break;
-		}
-		if (isLatex)code.append("$");
-	}
-	
+
 	protected void drawGeoConicPart(GeoConicPart geo){
 		double x=geo.getTranslationVector().getX();
 		double y=geo.getTranslationVector().getY();
 		double r=geo.getHalfAxes()[0];
 		double startAngle=geo.getParameterStart();
 		double endAngle=geo.getParameterEnd();
-		if (xunit==yunit){
-			startAngle=Math.toDegrees(startAngle);
-			endAngle=Math.toDegrees(endAngle);
-		//	Sector command:   \pswedge*[par](x0,y0){radius}{angle1}{angle2}
-		//	 Arc command:	\psarc*[par]{arrows}(x,y){radius}{angleA}{angleB}
-			if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
-				code.append("\\pswedge");
-			}
-			else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
-				code.append("\\psarc");
-			}
-			code.append(LineOptionCode(geo,true));
-			code.append("(");
-			code.append(kernel.format(x));
-			code.append(",");
-			code.append(kernel.format(y));
-			code.append("){");
-			code.append(kernel.format(r*xunit));
-			code.append("}{");
-			code.append(kernel.format(startAngle));
-			code.append("}{");
-			code.append(kernel.format(endAngle));
-			code.append("}\n");
-		}	
-		else {
-//Sector command: \pscustom[options]{\parametricplot{startAngle}{endAngle}{x+r*cos(t),y+r*sin(t)}\lineto(x,y)\closepath}
-			if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
-				code.append("\\pscustom");
-				code.append(LineOptionCode(geo,true));
-				code.append("{\\parametricplot{");
-			}
-			else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
-				code.append("\\parametricplot");
-				code.append(LineOptionCode(geo,true));
-				code.append("{");
-			}
-			code.append(startAngle);
-			code.append("}{");
-			code.append(endAngle);
-			code.append("}{");
-			code.append(kernel.format(r));
-			code.append("*cos(t)+");
-			code.append(kernel.format(x));
-			code.append("|");
-			code.append(kernel.format(r));
-			code.append("*sin(t)+");
-			code.append(kernel.format(y));
-			code.append("}");
-			if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){				
-				code.append("\\lineto(");
-				code.append(kernel.format(x));
-				code.append(",");
-				code.append(kernel.format(y));
-				code.append(")\\closepath}");
-			}
-			code.append("\n");
+		startAngle=Math.toDegrees(startAngle);
+		endAngle=Math.toDegrees(endAngle);
+		if (startAngle>endAngle){
+			startAngle=startAngle-360;
 		}
+		//	Sector command:   \draw[shift={(x0,y0)},par] (0,0) -- (startAngle:radius) arc (angleStart:EndAngle:radius) -- cycle
+		//	 Arc command:	\draw[shift={(x0,y0)},par] (startAngle:radius) arc (startAngle:endAngle:radius)
+		code.append("\\draw [shift={");
+		writePoint(x,y,code);
+		code.append("}");
+		String s=LineOptionCode(geo,true);
+		if (s.length()!=0){
+			s=","+s+"] ";
+			code.append(s);
+		}
+		else code.append("]");
+		if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
+			code.append(" (0,0) -- (");
+			code.append(kernel.format(startAngle));
+			code.append(":");
+			
+			
+			code.append(kernel.format(r*xunit));
+			code.append(") arc (");
+			code.append(kernel.format(startAngle));
+			code.append(":");
+			code.append(kernel.format(endAngle));
+			code.append(":");
+			code.append(kernel.format(r*xunit));
+			code.append(") -- cycle ;\n");
+		}
+		else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
+			code.append(" (");
+			code.append(kernel.format(startAngle));
+			code.append(":");
+			code.append(kernel.format(r*xunit));
+			code.append(") arc (");
+			code.append(kernel.format(startAngle));
+			code.append(":");
+			code.append(kernel.format(endAngle));
+			code.append(":");
+			code.append(kernel.format(r*xunit));
+			code.append(");\n");
+		}
+			
 	}
 	protected void drawFunction(GeoFunction geo){
 		Function f=geo.getFunction();
@@ -1505,9 +1448,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
 		if (coma) sb.append(",");
 		else coma=true;
-		sb.append("fillcolor=");
+		sb.append("fill=");
 		ColorCode(linecolor,sb);
-		sb.append(",fillstyle=solid,opacity=");
+		sb.append(",fill opacity=");
 		sb.append(geo.getAlphaValue());
 	}
 	return new String(sb);
@@ -1562,7 +1505,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  * @param c The Choosen color
  * @param sb  The stringbuffer where the color has to be added
  */
-	public void ColorCode(Color c,StringBuffer sb){
+	protected void ColorCode(Color c,StringBuffer sb){
 		if (c.equals(Color.BLACK)) {sb.append("black");return;}
 		String colorname="";
 		if (CustomColor.containsKey(c)){
