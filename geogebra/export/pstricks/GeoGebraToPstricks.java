@@ -499,7 +499,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(",");
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
-		// draw the dot if angle= 90� and decoration=dot
+		// draw the dot if angle= 90 and decoration=dot
 		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
 			double diameter = geo.lineThickness/euclidianView.getXscale();
 			double radius = arcSize/euclidianView.getXscale()/1.7;
@@ -525,6 +525,32 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
 
     }
+    protected void drawArrowArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r, boolean anticlockwise){
+    	// The arrow head goes away from the line.
+    	// Arrow Winset=0.25, see PStricks spec for arrows
+    	double arrowHeight=(geo.lineThickness*0.8+3)*1.4*3/4;
+    	double angle=Math.asin(arrowHeight/2/euclidianView.getXscale()/ r);
+    	angEnd=angEnd-angle;
+    	code.append("\\psellipticarc");
+    	code.append(LineOptionCode(geo,false));
+		if (anticlockwise)	code.append("{->}(");
+		else  code.append("{<-}(");
+		code.append(kernel.format(vertex[0]));
+		code.append(",");
+		code.append(kernel.format(vertex[1]));
+		code.append(")(");
+		code.append(kernel.format(r));
+		code.append(",");
+		code.append(kernel.format(r));
+		code.append("){");
+		code.append(kernel.format(Math.toDegrees(angSt)));
+		code.append("}{");
+		code.append(kernel.format(Math.toDegrees(angEnd)));
+		code.append("}\n");
+    }
+    
+    
+    
     protected void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
 		code.append("\\parametricplot");
 		code.append(LineOptionCode(geo,false));
@@ -565,59 +591,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 
 		
 	}
-    private void markAngle(GeoAngle geo,double r, double[] vertex,double  angSt,double angEnd){
-    	double rdiff;
-    	switch(geo.decorationType){
-    		case GeoElement.DECORATION_ANGLE_TWO_ARCS:
-    			rdiff = 4 + geo.lineThickness/2d;
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
-    			rdiff = 4 + geo.lineThickness/2d;
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_ONE_TICK:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);
-    			drawTick(geo,vertex,(angSt+angEnd)/2);
-    			
-    		break;
-    		case GeoElement.DECORATION_ANGLE_TWO_TICKS:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);	
-    			double angleTick[] =new double[2];
-    			angleTick[0]=(2*angSt+3*angEnd)/5;
-    			angleTick[1]=(3*angSt+2*angEnd)/5;
-				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
-					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
-					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
-				}
-
-    			drawTick(geo,vertex,angleTick[0]);
-    			drawTick(geo,vertex,angleTick[1]);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_THREE_TICKS:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);
-    			angleTick=new double[2];
-    			angleTick[0]=(5*angSt+3*angEnd)/8;
-    			angleTick[1]=(3*angSt+5*angEnd)/8;
-				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
-					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
-					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
-				}
-    			drawTick(geo,vertex,(angSt+angEnd)/2);
-    			drawTick(geo,vertex,angleTick[0]);
-    			drawTick(geo,vertex,angleTick[1]);
-    		break;
-    	}
-    }
     protected void drawSlider(GeoNumeric geo){
     	boolean horizontal=geo.isSliderHorizontal();
     	double max=geo.getIntervalMax();

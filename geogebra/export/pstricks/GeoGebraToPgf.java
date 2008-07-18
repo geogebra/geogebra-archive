@@ -236,45 +236,29 @@ public class GeoGebraToPgf extends GeoGebraExport {
         float x = (float) coords[0];
         float y = (float) coords[1];
         float xright=x+slopeTriangleSize;
-    	codeFilledObject.append("\\pspolygon");
-    	codeFilledObject.append(LineOptionCode(geo,true));
-    	codeFilledObject.append("(");
-		codeFilledObject.append(kernel.format(x));
-		codeFilledObject.append(",");
-		codeFilledObject.append(kernel.format(y));
-		codeFilledObject.append(")");
-		codeFilledObject.append("(");
-		codeFilledObject.append(kernel.format(xright));
-		codeFilledObject.append(",");
-		codeFilledObject.append(kernel.format(y));
-		codeFilledObject.append(")");
-		codeFilledObject.append("(");
-		codeFilledObject.append(kernel.format(xright));
-		codeFilledObject.append(",");
-		codeFilledObject.append(kernel.format(y+rwHeight));
-		codeFilledObject.append(")");
-    	codeFilledObject.append("\n");	
+    	codeFilledObject.append("\\draw");
+    	String s=LineOptionCode(geo,true);
+    	if (s.length()!=0){
+    		codeFilledObject.append("["+s+"] ");
+    	}
+    	writePoint(x,y,codeFilledObject);
+    	codeFilledObject.append(" -- ");
+    	writePoint(xright,y,codeFilledObject);
+    	codeFilledObject.append(" -- ");
+    	writePoint(xright,y+rwHeight,codeFilledObject);
+    	codeFilledObject.append(";\n");	
         // draw Label
     	float xLabelHor = (x + xright) /2;
         float yLabelHor = y -(float)(
         		(euclidianView.getFont().getSize() + 2)/euclidianView.getYscale());
 		Color geocolor=geo.getObjectColor();
-		codePoint.append("\\rput[bl](");
-		codePoint.append(kernel.format(xLabelHor));
-		codePoint.append(",");
-		codePoint.append(kernel.format(yLabelHor));
-		codePoint.append("){");
-		if (!geocolor.equals(Color.BLACK)){
-			codePoint.append("\\");
-			ColorCode(geocolor,codePoint);
-			codePoint.append("{");
-		}
+		codePoint.append("\\draw[color=");
+		ColorCode(geocolor,codePoint);
+		codePoint.append("] ");
+		writePoint(xLabelHor,yLabelHor,codePoint);
+		codePoint.append(" node[anchor=south west]{");
 		codePoint.append(slopeTriangleSize);
-		if (!geocolor.equals(Color.BLACK)){
-			codePoint.append("}");
-		}
-		codePoint.append("}\n");	
-
+		codePoint.append("};\n");
     }
     protected void drawAngle(GeoAngle geo){
     	int arcSize=geo.getArcSize();
@@ -377,7 +361,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 
 		angExt+=angSt;
 		double r = arcSize /euclidianView.getXscale();
-		// if angle=90� and decoration=little square
+		// if angle=90 and decoration=little square
         if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
         	r=r/Math.sqrt(2);
         	double[] x=new double[8];
@@ -390,42 +374,45 @@ public class GeoGebraToPgf extends GeoGebraExport {
         	x[6]=m[0];
         	x[7]=m[1];
         	
-          	// command: \pspolygon[par](x0,y0)....(xn,yn)
-        	codeFilledObject.append("\\pspolygon");
-        	codeFilledObject.append(LineOptionCode(geo,true));
-        	for (int i=0;i<4;i++){
-         		codeFilledObject.append("(");
-        		codeFilledObject.append(kernel.format(x[2*i]));
-        		codeFilledObject.append(",");
-        		codeFilledObject.append(kernel.format(x[2*i+1]));
-        		codeFilledObject.append(")");
+        	codeFilledObject.append("\\draw");
+        	String s=LineOptionCode(geo,true);
+        	if (s.length()!=0){
+            	codeFilledObject.append("["+s+"] ");        		
         	}
-        	codeFilledObject.append("\n");	
+        	for (int i=0;i<4;i++){
+        		writePoint(x[2*i],x[2*i+1],codeFilledObject);
+        		codeFilledObject.append(" -- ");
+        	}
+        	codeFilledObject.append("cycle; \n");	
         }
         // draw arc for the angle
         else {	
        	// set arc in real world coords
-		code.append("\\pscustom");
-		code.append(LineOptionCode(geo,true));
-		code.append("{\\parametricplot{");
-		code.append(angSt);
-		code.append("}{");
-		code.append(angExt);
-		code.append("}{");
-		code.append(kernel.format(r));
-		code.append("*cos(t)+");
-		code.append(kernel.format(m[0]));
-		code.append("|");
-		code.append(kernel.format(r));
-		code.append("*sin(t)+");
-		code.append(kernel.format(m[1]));
-		code.append("}");
-		code.append("\\lineto(");
-		code.append(kernel.format(m[0]));
-		code.append(",");
-		code.append(kernel.format(m[1]));
-		code.append(")\\closepath}\n");
-		// draw the dot if angle= 90� and decoration=dot
+        	double angStDeg=Math.toDegrees(angSt)%360;
+        	double angEndDeg=Math.toDegrees(angExt)%360;
+        	if (angStDeg>angEndDeg) angStDeg=angStDeg-360;
+        	
+        	codeFilledObject.append("\\draw [shift={");
+        	writePoint(m[0],m[1],codeFilledObject);
+        	codeFilledObject.append("}");
+        	String s=LineOptionCode(geo,true);    	
+        	if (s.length()!=0){
+        		codeFilledObject.append(","+s+"] ");    		
+        	}
+        	else codeFilledObject.append("] ");
+        	codeFilledObject.append("(0,0) -- (");
+        	codeFilledObject.append(kernel.format(angStDeg));
+        	codeFilledObject.append(":");
+    		codeFilledObject.append(kernel.format(r));
+    		codeFilledObject.append(") arc (");
+    		codeFilledObject.append(kernel.format(angStDeg));
+        	codeFilledObject.append(":");
+    		codeFilledObject.append(kernel.format(angEndDeg));
+        	codeFilledObject.append(":");
+    		codeFilledObject.append(kernel.format(r));
+        	codeFilledObject.append(") -- cycle;\n");
+
+		// draw the dot if angle= 90 and decoration=dot
 		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
 			double diameter = geo.lineThickness/euclidianView.getXscale();
 			double radius = arcSize/euclidianView.getXscale()/1.7;
@@ -433,43 +420,72 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			double x1=m[0] + radius * Math.cos(labelAngle);
 			double x2 = m[1] + radius * Math.sin(labelAngle);
 			// draw an ellipse
-			// command:  \psellipse(0,0)(20.81,-10.81)}
-				code.append("\\psellipse*");
-				code.append(LineOptionCode(geo,true));
-				code.append("(");
-				code.append(kernel.format(x1));
-				code.append(",");
-				code.append(kernel.format(x2));
-				code.append(")(");
-				code.append(kernel.format(diameter));
-				code.append(",");
-				code.append(kernel.format(diameter));
-				code.append(")\n");
+			// command:  \draw (0,0) circle diameter
+				code.append("\\fill");
+				s=LineOptionCode(geo,true);
+				if (s.length()!=0) code.append("["+s+"] ");
+				writePoint(x1,x2,code);
+				code.append(" circle ");
+				code.append(kernel.format(diameter/2));
+				code.append(";\n");
 			}
         }
    		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
 
     }
-    private void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
-		code.append("\\parametricplot");
-		code.append(LineOptionCode(geo,false));
-		code.append("{");
-		code.append(angSt);
-		code.append("}{");
-		code.append(angEnd);
-		code.append("}{");
+    protected void drawArrowArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r, boolean anticlockwise){
+      	double angStDeg=Math.toDegrees(angSt)%360;
+    	double angEndDeg=Math.toDegrees(angEnd)%360;
+    	if (angStDeg>angEndDeg) angStDeg-=360;
+    	code.append("\\draw [shift={");
+    	writePoint(vertex[0],vertex[1],code);
+    	code.append("},-");
+    	if (anticlockwise) code.append(">");
+    	else code.append("<");
+    	String s=LineOptionCode(geo,false);    	
+    	if (s.length()!=0){
+    		code.append(","+s+"] ");    		
+    	}
+    	else code.append("] ");
+    	code.append("(");
+    	code.append(kernel.format(angStDeg));
+       	code.append(":");    	
 		code.append(kernel.format(r));
-		code.append("*cos(t)+");
-		code.append(kernel.format(vertex[0]));
-		code.append("|");
+		code.append(") arc (");
+		code.append(kernel.format(angStDeg));
+       	code.append(":");    	
+		code.append(kernel.format(angEndDeg));
+       	code.append(":");    	
 		code.append(kernel.format(r));
-		code.append("*sin(t)+");
-		code.append(kernel.format(vertex[1]));
-		code.append("}\n");
-
+		code.append(");\n");
+        }
+    
+    protected void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
+    	double angStDeg=Math.toDegrees(angSt)%360;
+    	double angEndDeg=Math.toDegrees(angEnd)%360;
+    	if (angStDeg>angEndDeg) angStDeg-=360;
+    	code.append("\\draw [shift={");
+    	writePoint(vertex[0],vertex[1],code);
+    	code.append("}");
+    	String s=LineOptionCode(geo,false);    	
+    	if (s.length()!=0){
+    		code.append(","+s+"] ");    		
+    	}
+    	else code.append("] ");
+    	code.append("(");
+    	code.append(kernel.format(angStDeg));
+       	code.append(":");    	
+		code.append(kernel.format(r));
+		code.append(") arc (");
+		code.append(kernel.format(angStDeg));
+       	code.append(":");    	
+		code.append(kernel.format(angEndDeg));
+       	code.append(":");    	
+		code.append(kernel.format(r));
+		code.append(");\n");
     }
-	private void drawTick(GeoAngle geo,double[] vertex,double angle){
+	protected void drawTick(GeoAngle geo,double[] vertex,double angle){
 		angle=-angle;
 		double radius=geo.getArcSize();
 		double diff= 2.5 + geo.lineThickness / 4d;
@@ -477,73 +493,16 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		double x2=euclidianView.toRealWorldCoordX(vertex[0]+(radius+diff)*Math.cos(angle));
 		double y1=euclidianView.toRealWorldCoordY(vertex[1]+(radius-diff)*Math.sin(angle)*euclidianView.getScaleRatio());
 		double y2=euclidianView.toRealWorldCoordY(vertex[1]+(radius+diff)*Math.sin(angle)*euclidianView.getScaleRatio());
-		code.append("\\psline");
-		code.append(LineOptionCode(geo,false));
-		code.append("(");
-		code.append(kernel.format(x1));
-		code.append(",");
-		code.append(kernel.format(y1));
-		code.append(")(");
-		code.append(kernel.format(x2));
-		code.append(",");
-		code.append(kernel.format(y2));
-		code.append(")\n");
-
-		
-	}
-    private void markAngle(GeoAngle geo,double r, double[] vertex,double  angSt,double angEnd){
-    	double rdiff;
-    	switch(geo.decorationType){
-    		case GeoElement.DECORATION_ANGLE_TWO_ARCS:
-    			rdiff = 4 + geo.lineThickness/2d;
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_THREE_ARCS:
-    			rdiff = 4 + geo.lineThickness/2d;
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			r-=rdiff/euclidianView.getXscale();
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_ONE_TICK:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);
-    			drawTick(geo,vertex,(angSt+angEnd)/2);
-    			
-    		break;
-    		case GeoElement.DECORATION_ANGLE_TWO_TICKS:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);	
-    			double angleTick[] =new double[2];
-    			angleTick[0]=(2*angSt+3*angEnd)/5;
-    			angleTick[1]=(3*angSt+2*angEnd)/5;
-				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
-					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
-					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
-				}
-
-    			drawTick(geo,vertex,angleTick[0]);
-    			drawTick(geo,vertex,angleTick[1]);
-    		break;
-    		case GeoElement.DECORATION_ANGLE_THREE_TICKS:
-    			drawArc(geo,vertex,angSt,angEnd,r);
-    			euclidianView.toScreenCoords(vertex);
-    			angleTick=new double[2];
-    			angleTick[0]=(5*angSt+3*angEnd)/8;
-    			angleTick[1]=(3*angSt+5*angEnd)/8;
-				if (Math.abs(angleTick[1]-angleTick[0])>DrawAngle.MAX_TICK_DISTANCE){
-					angleTick[0]=(angSt+angEnd)/2-DrawAngle.MAX_TICK_DISTANCE/2;
-					angleTick[1]=(angSt+angEnd)/2+DrawAngle.MAX_TICK_DISTANCE/2;
-				}
-    			drawTick(geo,vertex,(angSt+angEnd)/2);
-    			drawTick(geo,vertex,angleTick[0]);
-    			drawTick(geo,vertex,angleTick[1]);
-    		break;
+		code.append("\\draw");
+	   	String s=LineOptionCode(geo,false);    	
+    	if (s.length()!=0){
+    		code.append("["+s+"] ");    		
     	}
-    }
+    	writePoint(x1,y1,code);
+		code.append(" -- ");
+    	writePoint(x2,y2,code);
+		code.append(";\n");
+	}
     protected void drawSlider(GeoNumeric geo){
     	boolean horizontal=geo.isSliderHorizontal();
     	double max=geo.getIntervalMax();
@@ -1292,6 +1251,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
 		if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
+				if (name.indexOf("°")!=-1){
+					name=name.replaceAll("°", "\\\\textrm{\\\\degre}");
+					if (codePreamble.indexOf("\\degre")==-1)
+						codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
+					}
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
 				double xLabel=drawGeo.getxLabel();
 				double yLabel=drawGeo.getyLabel();
