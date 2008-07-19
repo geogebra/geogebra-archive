@@ -71,18 +71,23 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	codePreamble.append("\\documentclass[" +
     			frame.getFontSize()+"pt]{article}\n" +
     			"\\usepackage{pgf,tikz}\n\\usetikzlibrary{arrows}\n\\pagestyle{empty}\n");
-     	codeBeginDoc.append("\\begin{document}\n");
+		codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
+		codeBeginDoc.append(xunit);
+		codeBeginDoc.append("cm,y=");
+		codeBeginDoc.append(yunit);
+		codeBeginDoc.append("cm]\n");
+    	
     	// Draw Grid
 		if (euclidianView.getShowGrid()) drawGrid();
 		// Draw axis
 		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
 			drawAxis();
 		// Clipping
-     	code.append("\\clip");
-     	writePoint(xmin,ymin,code);
-     	code.append(" rectangle ");
-     	writePoint(xmax,ymax,code);
-     	code.append(";\n");
+     	codeFilledObject.append("\\clip");
+     	writePoint(xmin,ymin,codeFilledObject);
+     	codeFilledObject.append(" rectangle ");
+     	writePoint(xmax,ymax,codeFilledObject);
+     	codeFilledObject.append(";\n");
 
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/
@@ -100,11 +105,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeBeginPic.insert(0,formatFont+"\n");
 			code.append("}\n");
 		}*/
-		codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
-		codeBeginDoc.append(xunit);
-		codeBeginDoc.append("cm,y=");
-		codeBeginDoc.append(yunit);
-		codeBeginDoc.append("cm]\n");
+		
+     	codeBeginDoc.insert(0,"\\begin{document}\n");
+		
 		code.insert(0,codeFilledObject+"");
 		code.insert(0,codeBeginDoc+"");		
         code.insert(0,codePreamble+"");
@@ -138,88 +141,159 @@ public class GeoGebraToPgf extends GeoGebraExport {
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
         for (int i=0;i<n;i++){
-        	codeFilledObject.append("\\psframe");
-        	codeFilledObject.append(LineOptionCode(geo,true));
-        	codeFilledObject.append("(");
-        	codeFilledObject.append(kernel.format(x[i]));
-        	codeFilledObject.append(",0)(");
-        	codeFilledObject.append(kernel.format(x[i]+step));
-        	codeFilledObject.append(",");
-        	codeFilledObject.append(kernel.format(y[i]));
-        	codeFilledObject.append(")\n");
+        	
+        	codeFilledObject.append("\\draw");
+        	String s=LineOptionCode(geo,true);
+        	if (s.length()!=0) codeFilledObject.append("["+s+"] ");
+        	writePoint(x[i],0,codeFilledObject);
+        	codeFilledObject.append(" rectangle ");
+        	writePoint(x[i]+step,y[i],codeFilledObject);
+        	codeFilledObject.append(";\n");
         }
     }
     protected void drawIntegralFunctions(GeoNumeric geo){
-// command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,g(b))\pstplot{b}{a}{g(x)} \lineto(a,f(a))\closepath} 
+// command: \draw[option]{[domain=a:b,samples=..] plot(\x,{f(\x)}) }--(b,g(b)) -- {[domain=b:a,samples=..] plot(\x,{g(\x)}) }--(a,f(a)) --cycle; 
    	AlgoIntegralFunctions algo = (AlgoIntegralFunctions) geo.getParentAlgorithm();
-	// function f
+
+	// function f	
 	GeoFunction f = algo.getF();
 	// function g
 	GeoFunction g = algo.getG();
-	// double a and b
-	double a=algo.getA().getDouble();
-	double b=algo.getB().getDouble();
-	// String output for a and b
-	String sa = kernel.format(a);
-    String sb = kernel.format(b);
-    // String Expression of f and g
-    String valueF=f.toValueString();
-	valueF=killSpace(Util.toLaTeXString(valueF,true));
-    String valueG=g.toValueString();
-	valueG=killSpace(Util.toLaTeXString(valueG,true));
-	// String expressions for f(a) and g(b) 
-	String fa=kernel.format(f.evaluate(a));
-	String gb=kernel.format(g.evaluate(b));
+
+	// between a and b
+	double a = algo.getA().getDouble();
+    double b = algo.getB().getDouble();
+
+	// values for f(a) and g(b) 
+	double fa=f.evaluate(a);
+	double gb=g.evaluate(b);
 	
-	codeFilledObject.append("\\pscustom");
-	codeFilledObject.append(LineOptionCode(geo,true));
-	codeFilledObject.append("{\\psplot{");
-	codeFilledObject.append(sa);
-	codeFilledObject.append("}{");
-	codeFilledObject.append(sb);
-	codeFilledObject.append("}{");
-	codeFilledObject.append(valueF);
-	codeFilledObject.append("}\\lineto(");
-	codeFilledObject.append(sb);
-	codeFilledObject.append(",");
-	codeFilledObject.append(gb);
-	codeFilledObject.append(")\\psplot{");
-	codeFilledObject.append(sb);
-	codeFilledObject.append("}{");
-	codeFilledObject.append(sa);
-	codeFilledObject.append("}{");
-	codeFilledObject.append(valueG);
-	codeFilledObject.append("}\\lineto(");
-	codeFilledObject.append(sa);
-	codeFilledObject.append(",");
-	codeFilledObject.append(fa);
-	codeFilledObject.append(")\\closepath}\n");
+    String value=f.toValueString();
+	value=killSpace(Util.toLaTeXString(value,true));
+	boolean plotWithGnuplot=warningFunc(value,"tan(")||warningFunc(value,"cosh(")||warningFunc(value,"acosh(")
+					||warningFunc(value,"asinh(")||warningFunc(value,"atanh(")||warningFunc(value,"sinh(")
+					|| warningFunc(value,"tanh(");
+	codeFilledObject.append("\\draw");
+	String s=LineOptionCode(geo,true);
+	if (s.length()!=0){
+		codeFilledObject.append("["+s+"] ");
+	}
+	codeFilledObject.append("{");
+	if (plotWithGnuplot){
+			codeFilledObject.append(" plot[raw gnuplot, id=func");
+			codeFilledObject.append(functionIdentifier);
+			functionIdentifier++;
+			codeFilledObject.append("] function{set samples 100; set xrange [");
+			codeFilledObject.append(a);
+			codeFilledObject.append(":");
+			codeFilledObject.append(b);
+			codeFilledObject.append("]; plot ");
+			codeFilledObject.append(value);
+			codeFilledObject.append("}");
+		}
+		else {
+			codeFilledObject.append("[");
+			codeFilledObject.append("smooth,samples=50,domain=");
+			codeFilledObject.append(a);
+			codeFilledObject.append(":");
+			codeFilledObject.append(b);
+			codeFilledObject.append("] plot");
+			codeFilledObject.append("(\\x,{");
+			value=replaceX(value);
+			codeFilledObject.append(value);
+			codeFilledObject.append("})");
+		}
+	codeFilledObject.append("} -- ");
+	writePoint(b,gb,codeFilledObject);
+	codeFilledObject.append(" -- {");
+    value=g.toValueString();
+	value=killSpace(Util.toLaTeXString(value,true));
+	plotWithGnuplot=warningFunc(value,"tan(")||warningFunc(value,"cosh(")||warningFunc(value,"acosh(")
+					||warningFunc(value,"asinh(")||warningFunc(value,"atanh(")||warningFunc(value,"sinh(")
+					|| warningFunc(value,"tanh(");
+	if (plotWithGnuplot){
+			codeFilledObject.append(" plot[raw gnuplot, id=func");
+			codeFilledObject.append(functionIdentifier);
+			functionIdentifier++;
+			codeFilledObject.append("] function{set samples 100; set xrange [");
+			codeFilledObject.append(b);
+			codeFilledObject.append(":");
+			codeFilledObject.append(a);
+			codeFilledObject.append("]; plot ");
+			codeFilledObject.append(value);
+			codeFilledObject.append("}");
+		}
+		else {
+			codeFilledObject.append("[");
+			codeFilledObject.append("smooth,samples=50,domain=");
+			codeFilledObject.append(b);
+			codeFilledObject.append(":");
+			codeFilledObject.append(a);
+			codeFilledObject.append("] plot");
+			codeFilledObject.append("(\\x,{");
+			value=replaceX(value);
+			codeFilledObject.append(value);
+			codeFilledObject.append("})");
+		}
+	codeFilledObject.append("} -- ");
+	writePoint(a,fa,codeFilledObject);
+	codeFilledObject.append(" -- cycle;\n");
     }
     
     protected void drawIntegral(GeoNumeric geo){
-// command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,0)\lineto(a,0)\closepath} 
+// command: \plot[option] plot[domain]{\pstplot{a}{b}{f(x)}\lineto(b,0)\lineto(a,0)\closepath} 
     	AlgoIntegralDefinite algo = (AlgoIntegralDefinite) geo.getParentAlgorithm();
     	// function f
     	GeoFunction f = algo.getFunction();
     	// between a and b
-    	String a = kernel.format(algo.getA().getDouble());
-        String b = kernel.format(algo.getB().getDouble());    
-    	String value=f.toValueString();
-    	value=killSpace(Util.toLaTeXString(value,true));
-    	codeFilledObject.append("\\pscustom");
-    	codeFilledObject.append(LineOptionCode(geo,true));
-    	codeFilledObject.append("{\\psplot{");
-    	codeFilledObject.append(a);
-    	codeFilledObject.append("}{");
-    	codeFilledObject.append(b);
-    	codeFilledObject.append("}{");
-    	codeFilledObject.append(value);
-    	codeFilledObject.append("}\\lineto(");
-    	codeFilledObject.append(b);
-    	codeFilledObject.append(",0)\\lineto(");
-    	codeFilledObject.append(a);
-    	codeFilledObject.append(",0)\\closepath}\n");
+    	double a = algo.getA().getDouble();
+        double b = algo.getB().getDouble();
+		String value=f.toValueString();
+		value=killSpace(Util.toLaTeXString(value,true));
+		boolean plotWithGnuplot=warningFunc(value,"tan(")||warningFunc(value,"cosh(")||warningFunc(value,"acosh(")
+						||warningFunc(value,"asinh(")||warningFunc(value,"atanh(")||warningFunc(value,"sinh(")
+						|| warningFunc(value,"tanh(");
 
+			codeFilledObject.append("\\draw");
+			String s=LineOptionCode(geo,true);
+			if (s.length()!=0){
+				codeFilledObject.append("[");
+				codeFilledObject.append(s);
+			}
+			
+			if (plotWithGnuplot){
+				if (s.length()!=0){
+					codeFilledObject.append("]");
+				}
+				codeFilledObject.append(" plot[raw gnuplot, id=func");
+				codeFilledObject.append(functionIdentifier);
+				functionIdentifier++;
+				codeFilledObject.append("] function{set samples 100; set xrange [");
+				codeFilledObject.append(a);
+				codeFilledObject.append(":");
+				codeFilledObject.append(b);
+				codeFilledObject.append("]; plot ");
+				codeFilledObject.append(value);
+				codeFilledObject.append("}");
+			}
+			else {
+				if (s.length()!=0) codeFilledObject.append(", ");
+				else codeFilledObject.append("[");
+				codeFilledObject.append("smooth,samples=50,domain=");
+				codeFilledObject.append(a);
+				codeFilledObject.append(":");
+				codeFilledObject.append(b);
+				codeFilledObject.append("] plot");
+				codeFilledObject.append("(\\x,{");
+				value=replaceX(value);
+				codeFilledObject.append(value);
+				codeFilledObject.append("})");
+			}
+    	codeFilledObject.append(" -- ");
+    	writePoint(b,0,codeFilledObject);
+    	codeFilledObject.append(" -- ");
+    	writePoint(a,0,codeFilledObject);
+    	codeFilledObject.append(" -- cycle;\n");
     }
     protected void drawSlope(GeoNumeric geo){
        	int slopeTriangleSize = geo.getSlopeTriangleSize();
@@ -697,7 +771,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 			
 	}
-	protected void drawFunction(GeoFunction geo){
+	private void drawFunction(GeoFunction geo,StringBuffer sb){
 		Function f=geo.getFunction();
 		if (null==f) return;
 		String value=f.toValueString();
@@ -719,45 +793,51 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			if (xrangemin==b) break;
 			xrangemax=maxDefinedValue(f,xrangemin,b);
 //			System.out.println("xrangemax "+xrangemax);
-			code.append("\\draw");
+			sb.append("\\draw");
 			String s=LineOptionCode(geo,true);
 			if (s.length()!=0){
-				code.append("[");
-				code.append(s);
+				sb.append("[");
+				sb.append(s);
 			}
 			
 			if (plotWithGnuplot){
 
 				if (s.length()!=0){
-					code.append("]");
+					sb.append("]");
 				}
-				code.append(" plot[raw gnuplot, id=func");
-				code.append(functionIdentifier);
+				sb.append(" plot[raw gnuplot, id=func");
+				sb.append(functionIdentifier);
 				functionIdentifier++;
-				code.append("] function{set samples 100; set xrange [");
-				code.append(xrangemin+0.1);
-				code.append(":");
-				code.append(xrangemax-0.1);
-				code.append("]; plot ");
-				code.append(value);
-				code.append("};\n");
+				sb.append("] function{set samples 100; set xrange [");
+				sb.append(xrangemin+0.1);
+				sb.append(":");
+				sb.append(xrangemax-0.1);
+				sb.append("]; plot ");
+				sb.append(value);
+				sb.append("};\n");
 			}
 			else {
-				if (s.length()!=0) code.append(", ");
-				else code.append("[");
-				code.append("smooth,samples=50,domain=");
-				code.append(xrangemin);
-				code.append(":");
-				code.append(xrangemax);
-				code.append("] plot");
-				code.append("(\\x,{");
+				if (s.length()!=0) sb.append(", ");
+				else sb.append("[");
+				sb.append("smooth,samples=100,domain=");
+				sb.append(xrangemin);
+				sb.append(":");
+				sb.append(xrangemax);
+				sb.append("] plot");
+				sb.append("(\\x,{");
 				value=replaceX(value);
-				code.append(value);
-				code.append("});\n");
+				sb.append(value);
+				sb.append("});\n");
 			}
 			xrangemax+=PRECISION_XRANGE_FUNCTION;
 			a=xrangemax;
 		}
+		
+		
+	}
+	
+	protected void drawFunction(GeoFunction geo){
+		drawFunction(geo,code);
 	}
 	/**
 	 * This method replace the letter "x" by "\\x"
@@ -1281,19 +1361,19 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		Color gridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
 		int gridLine=euclidianView.getGridLineStyle();
-		code.append("\\draw [color=");
-		ColorCode(gridCol,code);
-		code.append(",");
-		LinestyleCode(gridLine,code);
-		code.append(", xstep=");
-		code.append(sci2dec(GridDist[0]*xunit));
-		code.append("cm,ystep=");
-		code.append(sci2dec(GridDist[1]*yunit));
-		code.append("cm] ");
-		writePoint(xmin,ymin,code);
-		code.append(" grid ");
-		writePoint(xmax,ymax,code);
-		code.append(";\n");
+		codeBeginDoc.append("\\draw [color=");
+		ColorCode(gridCol,codeBeginDoc);
+		codeBeginDoc.append(",");
+		LinestyleCode(gridLine,codeBeginDoc);
+		codeBeginDoc.append(", xstep=");
+		codeBeginDoc.append(sci2dec(GridDist[0]*xunit));
+		codeBeginDoc.append("cm,ystep=");
+		codeBeginDoc.append(sci2dec(GridDist[1]*yunit));
+		codeBeginDoc.append("cm] ");
+		writePoint(xmin,ymin,codeBeginDoc);
+		codeBeginDoc.append(" grid ");
+		writePoint(xmax,ymax,codeBeginDoc);
+		codeBeginDoc.append(";\n");
 	}
 	/**
 	 * Generate the PGF/TikZ code for Axis drawing
@@ -1308,13 +1388,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		int tickStyle=euclidianView.getAxesTickStyles()[0];
 
 		if (showAxis){
-			code.append("\\draw[->,color=");
-			ColorCode(color,code);
-			code.append("] ");
-			writePoint(xmin,0,code);
-			code.append(" -- ");
-			writePoint(xmax,0,code);
-			code.append(";\n");
+			codeBeginDoc.append("\\draw[->,color=");
+			ColorCode(color,codeBeginDoc);
+			codeBeginDoc.append("] ");
+			writePoint(xmin,0,codeBeginDoc);
+			codeBeginDoc.append(" -- ");
+			writePoint(xmax,0,codeBeginDoc);
+			codeBeginDoc.append(";\n");
 			int x1=(int)(xmin/spaceTick);
 			double xstart=x1*spaceTick;
 			StringBuffer tmp=new StringBuffer();
@@ -1323,14 +1403,14 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				xstart+=spaceTick;
 				if (xstart<xmax&&Math.abs(xstart)>0.1) tmp.append(",");
 			}
-			code.append("\\foreach \\x in {");
-			code.append(tmp);
-			code.append("}\n");
-			code.append("\\draw[shift={(\\x,0)},color=");
-			ColorCode(color,code);
-			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	code.append("] (0pt,2pt) -- (0pt,-2pt)");
-			else code.append("] (0pt,-2pt)");
-			if (showNumbers) code.append("node[below] {\\x};\n");
+			codeBeginDoc.append("\\foreach \\x in {");
+			codeBeginDoc.append(tmp);
+			codeBeginDoc.append("}\n");
+			codeBeginDoc.append("\\draw[shift={(\\x,0)},color=");
+			ColorCode(color,codeBeginDoc);
+			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (0pt,2pt) -- (0pt,-2pt)");
+			else codeBeginDoc.append("] (0pt,-2pt)");
+			if (showNumbers) codeBeginDoc.append("node[below] {\\x};\n");
 		}
 		// Drawing Y Axis
 		showAxis=euclidianView.getShowYaxis();
@@ -1338,13 +1418,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		showNumbers=euclidianView.getShowAxesNumbers()[1];
 		tickStyle=resizePt(euclidianView.getAxesTickStyles()[1]);
 		if (showAxis){
-			code.append("\\draw[->,color=");
-			ColorCode(color,code);
-			code.append("] ");
-			writePoint(0,ymin,code);
-			code.append(" -- ");
-			writePoint(0,ymax,code);
-			code.append(";\n");
+			codeBeginDoc.append("\\draw[->,color=");
+			ColorCode(color,codeBeginDoc);
+			codeBeginDoc.append("] ");
+			writePoint(0,ymin,codeBeginDoc);
+			codeBeginDoc.append(" -- ");
+			writePoint(0,ymax,codeBeginDoc);
+			codeBeginDoc.append(";\n");
 			int y1=(int)(ymin/spaceTick);
 			double ystart=y1*spaceTick;
 			StringBuffer tmp=new StringBuffer();
@@ -1353,20 +1433,20 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				ystart+=spaceTick;
 				if (ystart<ymax&&Math.abs(ystart)>0.1) tmp.append(",");
 			}
-			code.append("\\foreach \\y in {");
-			code.append(tmp);
-			code.append("}\n");
-			code.append("\\draw[shift={(0,\\y)},color=");
-			ColorCode(color,code);
-			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	code.append("] (2pt,0pt) -- (-2pt,0pt)");
-			else code.append("] (-2pt,0pt)");
-			if (showNumbers) code.append("node[left] {\\y};\n");
+			codeBeginDoc.append("\\foreach \\y in {");
+			codeBeginDoc.append(tmp);
+			codeBeginDoc.append("}\n");
+			codeBeginDoc.append("\\draw[shift={(0,\\y)},color=");
+			ColorCode(color,codeBeginDoc);
+			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (2pt,0pt) -- (-2pt,0pt)");
+			else codeBeginDoc.append("] (-2pt,0pt)");
+			if (showNumbers) codeBeginDoc.append("node[left] {\\y};\n");
 		}
 		// Origin
 		if (euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1]){
-			code.append("\\draw[color=");
-			ColorCode(color,code);
-			code.append("] (0pt,-10pt) node[right] {0};\n");
+			codeBeginDoc.append("\\draw[color=");
+			ColorCode(color,codeBeginDoc);
+			codeBeginDoc.append("] (0pt,-10pt) node[right] {0};\n");
 		}
 	}
 	/**
@@ -1481,7 +1561,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			int blue=c.getBlue();
 			colorname=createCustomColor((int)red,(int)green,(int)blue);
 			// Example: \definecolor{orange}{rgb}{1,0.5,0}
-			codeBeginDoc.append("\\definecolor{"+colorname+"}{rgb}{"
+			codeBeginDoc.insert(0,"\\definecolor{"+colorname+"}{rgb}{"
 					+kernel.format(red/255d)+","
 					+kernel.format(green/255d)+","
 					+kernel.format(blue/255d)+"}\n");
