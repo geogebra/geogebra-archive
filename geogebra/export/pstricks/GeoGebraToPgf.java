@@ -45,12 +45,17 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class GeoGebraToPgf extends GeoGebraExport {
+	private static final int FORMAT_LATEX=0;
+	private static final int FORMAT_PLAIN_TEX=1;
+	private static final int FORMAT_CONTEXT=2;
+	private int format=0;
 	private int functionIdentifier=0;
 	public GeoGebraToPgf(Application app) {
     	super(app);
     }
  
     public void generateAllCode() {
+    	format=((PgfFrame)frame).getFormat();
     	// init unit variables
     	try{	
     		xunit=frame.getXUnit();
@@ -67,16 +72,39 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	codeFilledObject=new StringBuffer();
 		codeBeginDoc=new StringBuffer();
 		CustomColor=new HashMap();
- 		
-    	codePreamble.append("\\documentclass[" +
-    			frame.getFontSize()+"pt]{article}\n" +
-    			"\\usepackage{pgf,tikz}\n\\usetikzlibrary{arrows}\n\\pagestyle{empty}\n");
-		codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
-		codeBeginDoc.append(xunit);
-		codeBeginDoc.append("cm,y=");
-		codeBeginDoc.append(yunit);
-		codeBeginDoc.append("cm]\n");
-    	
+ 		if (format==GeoGebraToPgf.FORMAT_LATEX){
+ 	    	codePreamble.append("\\documentclass[" +
+ 	    			frame.getFontSize()+"pt]{article}\n" +
+ 	    			"\\usepackage{pgf,tikz}\n\\usetikzlibrary{arrows}\n\\pagestyle{empty}\n");
+ 			codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
+ 			codeBeginDoc.append(xunit);
+ 			codeBeginDoc.append("cm,y=");
+ 			codeBeginDoc.append(yunit);
+ 			codeBeginDoc.append("cm]\n"); 			
+ 		}
+ 		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
+ 	    	codePreamble.append("\\input pgf.tex\n\\input tikz.tex\n");
+ 	    	codePreamble.append("\\usetikzlibrary{arrows}\n");
+ 	    	codePreamble.append("\\baselineskip=");
+ 	    	codePreamble.append(frame.getFontSize());
+ 	    	codePreamble.append("pt\n\\hsize=6.3truein\n\\vsize=8.7truein\n");
+
+ 	    	codeBeginDoc.append("\\tikzpicture[>=triangle 45,x=");
+ 			codeBeginDoc.append(xunit);
+ 			codeBeginDoc.append("cm,y=");
+ 			codeBeginDoc.append(yunit);
+ 			codeBeginDoc.append("cm]\n"); 		
+ 		}
+ 		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
+ 			codePreamble.append("\\usemodule[tikz]\n\\usemodule[tikz]\n");
+ 			codePreamble.append("\\usetikzlibrary[arrows]\n");
+
+ 	    	codeBeginDoc.append("\\starttikzpicture[>=triangle 45,x=");
+ 			codeBeginDoc.append(xunit);
+ 			codeBeginDoc.append("cm,y=");
+ 			codeBeginDoc.append(yunit);
+ 			codeBeginDoc.append("cm]\n");
+ 		}
     	// Draw Grid
 		if (euclidianView.getShowGrid()) drawGrid();
 		// Draw axis
@@ -99,39 +127,46 @@ public class GeoGebraToPgf extends GeoGebraExport {
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment tikzpicture
-		code.append("\\end{tikzpicture}\n");
+ 		if (format==GeoGebraToPgf.FORMAT_LATEX){
+ 	        code.append("\\end{tikzpicture}\n\\end{document}");
+ 	     	codeBeginDoc.insert(0,"\\begin{document}\n");
+ 		}
+ 		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
+ 	        code.append("\\endtikzpicture.\n\\bye\n");
+ 	        
+ 		}
+ 		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
+ 			code.append("\\stoptikzpicture.\n\\stoptext");
+ 	     	codeBeginDoc.insert(0,"\\starttext\n");
+ 		}
 /*		String formatFont=resizeFont(app.getFontSize());
 		if (null!=formatFont){
 			codeBeginPic.insert(0,formatFont+"\n");
 			code.append("}\n");
 		}*/
-		
-     	codeBeginDoc.insert(0,"\\begin{document}\n");
-		
 		code.insert(0,codeFilledObject+"");
 		code.insert(0,codeBeginDoc+"");		
         code.insert(0,codePreamble+"");
-		code.append("\\end{document}");		
 		frame.write(code);
 	}	    	
     
     protected void drawLocus(GeoLocus g){
     	ArrayList ll=g.getMyPointList();
     	Iterator it=ll.iterator();
-    	code.append("\\pscustom{");
+    	code.append("\\draw");
+    	boolean first=true;
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
-    		String x=kernel.format(mp.x);
-    		String y=kernel.format(mp.y);
+    		double x=mp.x;
+    		double y=mp.y;
     		boolean b=mp.lineTo;
-    		if (b) code.append("\\lineto(");
-    		else code.append("\\moveto(");
-    		code.append(x);
-    		code.append(",");
-    		code.append(y);
-    		code.append(")\n");
+    		if (x>xmin&&x<xmax&&y>ymin&&y<ymax){
+    			if (b&&!first) code.append(" -- ");
+    			else if (first) first=false;
+    			writePoint(x,y,code);
+    		}
     	}
-		code.append("}\n");
+		code.append(";\n");
     }
     
     protected void drawSumUpperLower(GeoNumeric geo){

@@ -14,13 +14,16 @@ import javax.swing.JTextArea;
 
 public class PgfFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
-	final String[] compiler={"Latex","Context"};
-	private JComboBox comboCompiler;
+	private JLabel labelFormat;
+	final String[] format={"LaTeX","Plain TeX","ConTeXt"};
+	private JComboBox comboFormat;
 	public PgfFrame(final GeoGebraToPgf ggb2pgf){
 		super(ggb2pgf,"GeneratePgf");
 		initGui();
 	}
-	protected void initGui(){ 
+	protected void initGui(){
+		comboFormat=new JComboBox(format);
+		labelFormat=new JLabel(app.getPlain("FormatExportPgf"));
 		js.getViewport().add(textarea);
 		setTitle(app.getPlain("TitleExportPgf"));
 		panel.setLayout(new GridBagLayout());
@@ -47,22 +50,28 @@ public class PgfFrame extends ExportFrame{
 		panel.add(textheight, new GridBagConstraints(3, 1, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelFontSize, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0,
+		panel.add(labelFontSize, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(comboFontSize, new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0,
+		panel.add(comboFontSize, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(jcb, new GridBagConstraints(2, 4, 2, 1, 1.0, 1.0,
+		panel.add(jcb, new GridBagConstraints(2, 2, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0,
+		panel.add(labelFormat, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button_copy, new GridBagConstraints(3, 5, 1, 1, 1.0, 1.0,
+		panel.add(comboFormat, new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(js, new GridBagConstraints(0, 6, 4, 5, 1.0, 1.0,
+		panel.add(button, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(button_copy, new GridBagConstraints(3, 4, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(js, new GridBagConstraints(0, 5, 4, 5, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 				5, 5, 5, 5), 0, 0));
 		textXUnit.setPreferredSize(new Dimension(110,textXUnit.getFont().getSize()+6));
@@ -71,5 +80,8 @@ public class PgfFrame extends ExportFrame{
 		getContentPane().add(panel);
 		centerOnScreen();
 		setVisible(true);
+	}
+	protected int getFormat(){
+		return comboFormat.getSelectedIndex();
 	}
 }

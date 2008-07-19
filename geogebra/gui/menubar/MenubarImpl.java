@@ -1121,7 +1121,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			}
 		};
 		// Added By Loïc Le Coq
-		exportPgfAction = new AbstractAction(app.getPlain("DrawingPadAsPGF") + " ...", 
+		exportPgfAction = new AbstractAction(app.getPlain("DrawingPagAsPGF") + " ...", 
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
