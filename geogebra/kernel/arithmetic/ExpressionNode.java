@@ -335,13 +335,29 @@ implements ExpressionValue {
         rt = right.evaluate(); // right tree      
 
         // handle list operations first       
-        if (lt.isListValue() && operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
-        	&& !rt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
-        		MyList myList = ((ListValue) lt).getMyList();
-        	// list lt operation rt
-        	myList.applyRight(operation, rt);
-        	return myList;
+        // matrix * vector
+        
+        if (lt.isListValue() && operation == MULTIPLY  
+            	&& rt.isVectorValue()) { 
+            	MyList myList = ((ListValue) lt).getMyList();
+            	if (myList.isMatrix() && myList.getMatrixRows() == 2 && myList.getMatrixCols() == 2)
+            	{
+            		GeoVec2D myVec = ((VectorValue) rt).getVector();
+            		myVec.multiplyMatrix(myList);
+            		
+            		return myVec;
+            		
+            		//app.debug(rt.getClass()+"");
+            		//return myList.multiplyVector(((VectorValue)rt).getVector());
+            	}
         }
+        if (lt.isListValue() && operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+            	&& !rt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+            	MyList myList = ((ListValue) lt).getMyList();
+            	// list lt operation rt
+            	myList.applyRight(operation, rt);
+            	return myList;
+            }
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
         	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	MyList myList = ((ListValue) rt).getMyList();

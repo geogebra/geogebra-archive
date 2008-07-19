@@ -19,8 +19,8 @@
 package geogebra.kernel.arithmetic;
 
 import geogebra.MyError;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.GeoList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,6 +37,10 @@ import java.util.HashSet;
 public class MyList extends ValidExpression implements ListValue {
 
 	private Kernel kernel;
+	private int matrixRows = -1;
+	private int matrixCols = -1;
+
+	
 
 	// list for list elements
 	private ArrayList listElements;
@@ -52,6 +56,7 @@ public class MyList extends ValidExpression implements ListValue {
 
 	public void addListElement(ExpressionNode arg) {
 		listElements.add(arg);
+		matrixRows = -1; // 
 	}
 		
 	/**
@@ -77,7 +82,7 @@ public class MyList extends ValidExpression implements ListValue {
 	final public void applyLeft(int operation, ExpressionValue value) {
 		apply(operation, value, false);
 	}		
-		
+	
 	/**
 	 * Applies an operation to this list using the given value.
 	 * 
@@ -108,6 +113,13 @@ public class MyList extends ValidExpression implements ListValue {
 			
 			if (!right) {LHlist=valueList; RHlist=(MyList)this.deepCopy(kernel);} else {RHlist=valueList; LHlist=(MyList)this.deepCopy(kernel);}
 			
+			boolean isMatrix = (LHlist.isMatrix() && RHlist.isMatrix());
+			int LHcols = LHlist.getMatrixCols(), LHrows=LHlist.getMatrixRows();
+			int RHcols = RHlist.getMatrixCols();//, RHrows=RHlist.getMatrixRows();
+			
+
+			
+			/*
 			int LHcols = LHlist.size(), LHrows=0;
 			int RHcols = RHlist.size(), RHrows=0;
 			//System.out.println("LHcols"+LHcols);
@@ -156,7 +168,7 @@ public class MyList extends ValidExpression implements ListValue {
 			if (LHcols != RHrows) isMatrix=false; // incompatible matrices
 			
 			System.out.println("isMatrix="+isMatrix);		
-
+*/
 			ExpressionNode totalNode;
 			ExpressionNode tempNode; 
 			
@@ -259,13 +271,87 @@ public class MyList extends ValidExpression implements ListValue {
 	
 	}
 	
+	public int getMatrixRows()
+	{
+		// check if already calculated
+		if (matrixRows != -1 && matrixCols != -1) return matrixRows;
+		
+		isMatrix(); // do calculation
+		
+		return matrixRows;
+		
+	}
+	
+	public int getMatrixCols()
+	{
+		// check if already calculated
+		if (matrixRows != -1 && matrixCols != -1) return matrixCols;
+		
+		isMatrix(); // do calculation
+		
+		return matrixCols;
+		
+	}
+	
+	public boolean isMatrix()
+	{
+	   	return isMatrix(this);
+	}
+	
+	private boolean isMatrix(MyList LHlist)
+	{
+		// check if already calculated
+		if (matrixRows != -1 && matrixCols != -1) return true;
+		
+		
+		boolean isMatrix=true;
+		
+		int LHcols = LHlist.size(), LHrows=0;
+		
+		//System.out.println("MULT LISTS"+size);
+		
+		// check LHlist is a matrix
+		ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
+		if ( singleValue.isListValue() ){
+			LHrows=((ListValue)singleValue).getMyList().size();
+			//System.out.println("LHrows"+LHrows);
+			if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
+			{
+				//System.out.println(i);
+				singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
+				//System.out.println("size"+((ListValue)singleValue).getMyList().size());
+				if ( singleValue.isListValue() ){
+					if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
+				}
+				else isMatrix=false;
+			}
+		}
+		else isMatrix = false;
+
+		System.out.println("isMatrix="+isMatrix);	
+		
+		if (isMatrix)
+		{
+			matrixCols=LHcols;
+			matrixRows=LHrows;
+		}
+		else
+		{
+			matrixCols=0;
+		 	matrixRows=0;		
+		}
+		
+		return isMatrix;
+		
+	}
+	
 //	 Michael Borcherds 2008-04-15
-	private static ExpressionValue getCell(MyList list, int col, int row)
+	public static ExpressionValue getCell(MyList list, int col, int row)
 		{
 			ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
 			if ( singleValue.isListValue() ){
 				ExpressionValue ret = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
-				if (ret.isListValue()) System.out.println("isList*********");
+				//if (ret.isListValue()) System.out.println("isList*********");
 				return ret;
 			}		
 			return null;

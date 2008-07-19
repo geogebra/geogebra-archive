@@ -20,6 +20,8 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 
@@ -430,5 +432,23 @@ implements VectorValue {
 	 
 	 final public boolean contains(ExpressionValue ev) {
 		 return ev == this;
+	 }
+	 
+	 public void multiplyMatrix(MyList list)
+	 {
+			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) return;
+		 
+			double a,b,c,d,x1,y1;
+			
+			a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+			b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+			c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+			d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+	 
+			x1 = a*x + b*y;
+			y1 = c*x + d*y;
+			x=x1;
+			y=y1;
+			return;
 	 }
 }
