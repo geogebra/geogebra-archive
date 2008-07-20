@@ -230,7 +230,8 @@ public abstract class Application implements	KeyEventDispatcher {
     public static final String FILE_EXT_PDF = "pdf";
     public static final String FILE_EXT_EMF = "emf";
     public static final String FILE_EXT_SVG = "svg";
-    public static final String FILE_EXT_HTML = "html";    
+    public static final String FILE_EXT_HTML = "html";  
+    public static final String FILE_EXT_TEX = "tex";
        	
     // page margin in cm
     public static final double PAGE_MARGIN_X = 1.8 * 72 / 2.54;

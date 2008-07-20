@@ -22,6 +22,7 @@ public class PgfFrame extends ExportFrame{
 		initGui();
 	}
 	protected void initGui(){
+
 		comboFormat=new JComboBox(format);
 		labelFormat=new JLabel(app.getPlain("FormatExportPgf"));
 		js.getViewport().add(textarea);
@@ -68,10 +69,13 @@ public class PgfFrame extends ExportFrame{
 		panel.add(button, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
+		panel.add(buttonSave, new GridBagConstraints(2, 4, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
 		panel.add(button_copy, new GridBagConstraints(3, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(js, new GridBagConstraints(0, 5, 4, 5, 1.0, 1.0,
+		panel.add(js, new GridBagConstraints(0, 5, 4, 5, 1.0, 15.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 				5, 5, 5, 5), 0, 0));
 		textXUnit.setPreferredSize(new Dimension(110,textXUnit.getFont().getSize()+6));

@@ -5,15 +5,25 @@ import geogebra.Application;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.io.OutputStreamWriter;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
+
 abstract public class ExportFrame extends JFrame{
 	protected TextValue textXUnit,textYUnit,textwidth,textheight;
 	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize;
@@ -26,6 +36,8 @@ abstract public class ExportFrame extends JFrame{
 	protected JTextArea textarea;
 	protected Application app;
 	protected double width,height;
+	protected JButton buttonSave;
+	protected File currentFile=null;
 	public ExportFrame(final GeoGebraExport ggb,String action){
 		this.app=ggb.getApp();
 		width=ggb.getXmax()-ggb.getXmin();
@@ -103,8 +115,31 @@ abstract public class ExportFrame extends JFrame{
 		});
 		js=new JScrollPane();
 		textarea=new JTextArea();
-
-		
+		buttonSave=new JButton(app.getMenu("SaveAs"));
+		buttonSave.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+		        currentFile =
+		            app.showSaveDialog(
+		                Application.FILE_EXT_TEX, currentFile,
+		                "TeX " + app.getMenu("Files"));
+		        if (currentFile == null)
+		            return;
+		        else {
+		        	try{
+		        		FileOutputStream f = new FileOutputStream(currentFile);
+		        		BufferedOutputStream b = new BufferedOutputStream(f);	
+		        		OutputStreamWriter osw = new  OutputStreamWriter(b,  "UTF8");
+		        		osw.write(textarea.getText());
+		        		osw.close();
+		        		b.close();
+		        		f.close();
+		        	}
+		        	catch(FileNotFoundException e1){}
+		        	catch(UnsupportedEncodingException e2){}
+		        	catch(IOException e3){}
+		        }
+			}
+		});
 	}
 	protected void centerOnScreen() {
 		//	center on screen
@@ -149,4 +184,5 @@ abstract public class ExportFrame extends JFrame{
 		}
 		return 10;
 	}
+
 }

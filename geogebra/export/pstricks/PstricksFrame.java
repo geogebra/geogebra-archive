@@ -168,7 +168,8 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(textYUnit, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelheight, new GridBagConstraints(2, 1, 1, 1, 1.0, 1.0,				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+		panel.add(labelheight, new GridBagConstraints(2, 1, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(textheight, new GridBagConstraints(3, 1, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
@@ -179,7 +180,8 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(textXmin, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelXmax, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0,				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+		panel.add(labelXmax, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(textXmax, new GridBagConstraints(3, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
@@ -190,13 +192,14 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(textYmin, new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelYmax, new GridBagConstraints(2, 3, 1, 1, 1.0, 1.0,				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+		panel.add(labelYmax, new GridBagConstraints(2, 3, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(textYmax, new GridBagConstraints(3, 3, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(labelFontSize, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(comboFontSize, new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
@@ -207,10 +210,13 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(button, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
+		panel.add(buttonSave, new GridBagConstraints(2, 5, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
 		panel.add(button_copy, new GridBagConstraints(3, 5, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(js, new GridBagConstraints(0, 6, 4, 5, 1.0, 1.0,
+		panel.add(js, new GridBagConstraints(0, 6, 4, 5, 1.0, 20.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 				5, 5, 5, 5), 0, 0));
 		textXUnit.setPreferredSize(new Dimension(110,textXUnit.getFont().getSize()+6));
