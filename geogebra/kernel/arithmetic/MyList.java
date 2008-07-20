@@ -19,7 +19,6 @@
 package geogebra.kernel.arithmetic;
 
 import geogebra.MyError;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 
 import java.util.ArrayList;
@@ -37,8 +36,8 @@ import java.util.HashSet;
 public class MyList extends ValidExpression implements ListValue {
 
 	private Kernel kernel;
-	private int matrixRows = -1;
-	private int matrixCols = -1;
+	private int matrixRows = -1;  // -1 means not calculated, 0 means not a matrix
+	private int matrixCols = -1;  //
 
 	
 
@@ -56,7 +55,8 @@ public class MyList extends ValidExpression implements ListValue {
 
 	public void addListElement(ExpressionNode arg) {
 		listElements.add(arg);
-		matrixRows = -1; // 
+		matrixRows=-1; // reset
+		matrixCols=-1;
 	}
 		
 	/**
@@ -208,12 +208,18 @@ public class MyList extends ValidExpression implements ListValue {
 				}
 			}			
 			System.out.println(toString());
-			if (isMatrix) return; // finished matrix multiplication successfully
+			if (isMatrix){
+				matrixRows=-1; // reset
+				matrixCols=-1;
+				return; // finished matrix multiplication successfully
+			}
 		}
 		//}
 		//catch (Exception e) { } // not valid matrices
 		// Michael Borcherds 2008-04-14 END
 
+		matrixRows=-1; // reset
+		matrixCols=-1;
 		
 		// return empty list if sizes don't match
 		if (size == 0 || (valueList != null && size != valueList.size())) 
@@ -271,6 +277,11 @@ public class MyList extends ValidExpression implements ListValue {
 	
 	}
 	
+	/**
+	 * returns 0 if not a matrix
+	 * 
+	 * @author Michael Borcherds
+	 */
 	public int getMatrixRows()
 	{
 		// check if already calculated
@@ -282,6 +293,11 @@ public class MyList extends ValidExpression implements ListValue {
 		
 	}
 	
+	/**
+	 * returns 0 if not a matrix
+	 * 
+	 * @author Michael Borcherds
+	 */
 	public int getMatrixCols()
 	{
 		// check if already calculated
@@ -301,7 +317,7 @@ public class MyList extends ValidExpression implements ListValue {
 	private boolean isMatrix(MyList LHlist)
 	{
 		// check if already calculated
-		if (matrixRows != -1 && matrixCols != -1) return true;
+		if (matrixRows > 0 && matrixCols > 0) return true;
 		
 		
 		boolean isMatrix=true;
