@@ -334,22 +334,32 @@ implements ExpressionValue {
         lt = left.evaluate(); // left tree
         rt = right.evaluate(); // right tree      
 
-        // handle list operations first       
-        // matrix * vector
+        // handle list operations first 
         
+        // matrix * 2D vector   
         if (lt.isListValue() && operation == MULTIPLY  
             	&& rt.isVectorValue()) { 
             	MyList myList = ((ListValue) lt).getMyList();
-            	if (myList.isMatrix() && myList.getMatrixRows() == 2 && myList.getMatrixCols() == 2)
+            	boolean isMatrix = myList.isMatrix();
+            	int rows = myList.getMatrixRows();
+            	int cols = myList.getMatrixCols();
+            	if (isMatrix && rows == 2 && cols == 2)
             	{
             		GeoVec2D myVec = ((VectorValue) rt).getVector();
+            		// 2x2 matrix
             		myVec.multiplyMatrix(myList);
             		
             		return myVec;
-            		
-            		//app.debug(rt.getClass()+"");
-            		//return myList.multiplyVector(((VectorValue)rt).getVector());
             	}
+            	else if (isMatrix && rows == 3 && cols == 3)
+            	{
+            		GeoVec2D myVec = ((VectorValue) rt).getVector();
+            		// 3x3 matrix, assume it's affine
+            		myVec.multiplyMatrixAffine(myList);
+            		app.debug("3x3");
+            		return myVec;
+            	}
+
         }
         if (lt.isListValue() && operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
             	&& !rt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
@@ -366,7 +376,7 @@ implements ExpressionValue {
         	return myList;
         }
        	 
-        // NON-List operations (apart from EQUAL_BOOLEAN)
+        // NON-List operations (apart from EQUAL_BOOLEAN and list + text)
         switch (operation) {
             /*
         case NO_OPERATION:                      

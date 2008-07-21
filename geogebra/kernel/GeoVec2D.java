@@ -434,6 +434,10 @@ implements VectorValue {
 		 return ev == this;
 	 }
 	 
+	 /** multiplies 2D vector by a 2x2 matrix
+	  * 
+	  * @param 2x2 matrix
+	  */
 	 public void multiplyMatrix(MyList list)
 	 {
 			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) return;
@@ -447,6 +451,32 @@ implements VectorValue {
 	 
 			x1 = a*x + b*y;
 			y1 = c*x + d*y;
+			x=x1;
+			y=y1;
+			return;
+	 }
+	 
+	 /** multiplies 2D vector by a 3x3 affine matrix
+	  *  a b c
+	  *  d e f
+	  *  0 0 1 (not checked)
+	  * @param 2x2 matrix
+	  */
+	 public void multiplyMatrixAffine(MyList list)
+	 {
+			if (list.getMatrixCols() != 3 || list.getMatrixRows() != 3) return;
+		 
+			double a,b,c,d,e,f,x1,y1;
+			
+			a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+			b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+			c = ((NumberValue)(MyList.getCell(list,2,0).evaluate())).getDouble();
+			d = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+			e = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+			f = ((NumberValue)(MyList.getCell(list,2,1).evaluate())).getDouble();
+	 
+			x1 = a*x + b*y + c;
+			y1 = d*x + e*y + f;
 			x=x1;
 			y=y1;
 			return;
