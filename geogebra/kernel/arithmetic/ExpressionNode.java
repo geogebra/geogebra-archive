@@ -356,7 +356,6 @@ implements ExpressionValue {
             		GeoVec2D myVec = ((VectorValue) rt).getVector();
             		// 3x3 matrix, assume it's affine
             		myVec.multiplyMatrixAffine(myList);
-            		app.debug("3x3");
             		return myVec;
             	}
 
