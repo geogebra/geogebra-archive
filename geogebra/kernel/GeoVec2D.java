@@ -460,7 +460,7 @@ implements VectorValue {
 	  *  a b c
 	  *  d e f
 	  *  0 0 1 (not checked)
-	  * @param 2x2 matrix
+	  * @param 3x3 matrix
 	  */
 	 public void multiplyMatrixAffine(MyList list)
 	 {
