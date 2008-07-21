@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.JLabel;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -35,7 +36,7 @@ public class MyTable extends JTable
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
-	public static final Color SELECTED_BACKGROUND_COLOR = new Color(200, 220, 240);
+	public static final Color SELECTED_BACKGROUND_COLOR = Application.COLOR_SELECTION;
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.white;
 	
 	private static final long serialVersionUID = 1L;
@@ -105,6 +106,7 @@ public class MyTable extends JTable
 		this.getTableHeader().addKeyListener(new KeyListener2());
 		//
 		this.getTableHeader().setReorderingAllowed(false);
+		setAutoCreateColumnsFromModel(false);
 	}
 	
 	public void setView(SpreadsheetView view0) {
@@ -767,18 +769,18 @@ public class MyTable extends JTable
 				this.setBackground(null);
 			}
 			else {
-				if (getFont().getSize() == 0) {
-					Font font1 = kernel.getApplication().getPlainFont();
-					if (font1 == null || font1.getSize() == 0) {
-						font1 = new Font("dialog", 0, 12);
-					}
-					setFont(font1);	
+				GeoElement geo = (GeoElement)value;
+				setFont(kernel.getApplication().boldFont);
+				setForeground(geo.getLabelColor());
+				
+				String text = geo.toValueString();
+				if (geo.hasIndexLabel()) {
+					text = GeoElement.indicesToHTML(text, false);				
 				}
-				String text = ((GeoElement)value).toValueString();
 				setText(text);
-				this.setForeground(((GeoElement)value).getObjectColor());
+				this.setForeground(geo.getObjectColor());
 				String label = ((GeoElement)value).getLabel();
-				if (SpreadsheetView.selectedElems.contains(label)) {
+				if (SpreadsheetView.selectedElems.contains(label) || geo.doHighlighting()) {
 					//System.out.println(label);
 					this.setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
 				}
@@ -841,7 +843,7 @@ public class MyTable extends JTable
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
 			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selected != null && selected[colIndex]) {
+				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selected != null && selected.length > colIndex && selected[colIndex]) {
 					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
 				}
 				else {
@@ -907,10 +909,10 @@ public class MyTable extends JTable
 								setColumnSelectionInterval(column0, column);
 							}
 						}
-						//else if (ctrlPressed2) {					
-						//	column0 = (int)point.getX();
-						//	addColumnSelectionInterval(column0, column0);
-						//}
+						else if (ctrlPressed2) {					
+							column0 = (int)point.getX();
+							addColumnSelectionInterval(column0, column0);
+						}
 						else {
 							column0 = (int)point.getX();
 							setColumnSelectionInterval(column0, column0);
@@ -985,7 +987,7 @@ public class MyTable extends JTable
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			//case 16 : shiftPressed2 = true; break;
+			case 16 : shiftPressed2 = true; break;
 			case 17 : ctrlPressed2 = true; break;
 			case 67 : // control + c
 				//System.out.println(minSelectionColumn);
@@ -1017,7 +1019,7 @@ public class MyTable extends JTable
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			//case 16 : shiftPressed2 = false; break;
+			case 16 : shiftPressed2 = false; break;
 			case 17 : ctrlPressed2 = false; break;
 			}
 		}

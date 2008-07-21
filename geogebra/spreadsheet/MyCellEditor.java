@@ -171,6 +171,9 @@ public class MyCellEditor extends DefaultCellEditor {
 		GeoElement[] newValues = null;
 		try {
 			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			for (int i = 0; i < newValues.length; ++ i) {
+				newValues[i].setAuxiliaryObject(newValues[i].isGeoNumeric());
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
     		//System.err.println("SPREADSHEET: input error: " + e.getMessage());

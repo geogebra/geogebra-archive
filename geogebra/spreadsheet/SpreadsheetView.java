@@ -57,6 +57,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		// table
 		tableModel = new MyTableModel(rows, columns);
 		table = new MyTable(tableModel, kernel);
+		tableModel.setTable(table);
 		// row header list
 		MyListModel listModel = new MyListModel(tableModel);
 		rowHeader = new JList(listModel);
@@ -85,7 +86,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void add(GeoElement geo) {
 		// TODO: remove
-		System.out.println(new Date() + " ADD: " + geo);
+		//System.out.println(new Date() + " ADD: " + geo);
 		
 		
 		Point location = geo.getSpreadsheetCoords();
@@ -102,7 +103,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void remove(GeoElement geo) {
 		// TODO: remove	
-		System.out.println(new Date() + " REMOVE: " + geo);
+		//System.out.println(new Date() + " REMOVE: " + geo);
 				
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
@@ -267,10 +268,10 @@ public class SpreadsheetView extends JScrollPane implements View
 							table.setRowSelectionInterval(row0, row);
 						}
 					}
-					//else if (ctrlPressed) {					
-					//	row0 = (int)point.getY();
-					//	table.addRowSelectionInterval(row0, row0);
-					//}
+					else if (ctrlPressed) {					
+						row0 = (int)point.getY();
+						table.addRowSelectionInterval(row0, row0);
+					}
 					else {
 						row0 = (int)point.getY();
 						table.setRowSelectionInterval(row0, row0);
@@ -320,7 +321,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			System.out.println(keyCode);
+			//System.out.println(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = true; break;
 			case 17 : ctrlPressed = true; break;
@@ -364,17 +365,17 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
-			System.out.println("*** keyTyped:" + keyCode);
+			//System.out.println("*** keyTyped:" + keyCode);
 		}
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			System.out.println("*** keyPressed:" + keyCode);
+			//System.out.println("*** keyPressed:" + keyCode);
 		}
 		
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			System.out.println("*** keyReleased:" + keyCode);
+			//System.out.println("*** keyReleased:" + keyCode);
 		}
 		
 	}

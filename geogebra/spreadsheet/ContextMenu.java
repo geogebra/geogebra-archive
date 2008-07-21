@@ -45,7 +45,7 @@ public class ContextMenu
    	 	item4.setBackground(bgColor);
    	 	item4.addActionListener(new ActionListener4());
    	 	menu.add(item4);
-   	 	if (row1 + 1 == row2 || column1 + 1 == column2) {
+   	 	if (column1 + 1 <= column2) {
    	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("ConvertToCoordinates"));
    	   	 	item5.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	   	 	item5.setBackground(bgColor);
@@ -108,41 +108,40 @@ public class ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			LinkedList list = new LinkedList();
- 	   	 	if (row1 + 1 == row2) {
- 	   	 		for (int i = column1; i <= column2; ++ i) {
- 	   	 			GeoElement v1 = RelativeCopy.getValue(table, i, row1);
- 	   	 			GeoElement v2 = RelativeCopy.getValue(table, i, row2);
- 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
- 	   	 				String pointName = getNextPointName();
- 	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
- 	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
- 		   	 			list.addLast(pointName);
- 	   	 			}
- 	   	 		}
- 	   	 	}
- 	   	 	if (column1 + 1 == column2) {
- 	   	 		for (int i = row1; i <= row2; ++ i) {
- 	   	 			GeoElement v1 = RelativeCopy.getValue(table, column1, i);
- 	   	 			GeoElement v2 = RelativeCopy.getValue(table, column2, i);
- 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
- 	   	 				String pointName = getNextPointName();
- 	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
- 	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
- 		   	 			list.addLast(pointName);
- 	   	 			}
- 	   	 		}
- 	   	 	}
- 		   	 if (list.size() > 0) {
- 		   		 String[] points = (String[])list.toArray(new String[0]);
- 		   		 String listName = ContextMenu.getNextListName();
- 		   		 String text = listName + "={";
- 		   		 for (int i = 0; i < points.length; ++ i) {
- 		   			text += points[i];
- 		   			 if (i != points.length - 1) text += ",";
- 		   		 }
- 		   		text += "}";
- 		   		table.kernel.getAlgebraProcessor().processAlgebraCommand(text, true);
- 		   	 }
+ 			try {
+	 			for (int j = column1 + 1; j <= column2; ++ j) {
+	  	   	 		for (int i = row1; i <= row2; ++ i) {
+	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, column1, i);
+	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
+	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
+	 	   	 				String pointName = getNextPointName();
+	 	   	 				String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
+	 	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	 		   	 			list.addLast(pointName);
+	 	   	 			}
+	 	   	 		}
+	 			}
+	
+	 			if (list.size() > 0) {
+	 				String[] points = (String[])list.toArray(new String[0]);
+	 				String listName = ContextMenu.getNextListName();
+	 				String text = listName + "={";
+	 				for (int i = 0; i < points.length; ++ i) {
+	 					text += points[i];
+	 					if (i != points.length - 1) text += ",";
+	 				}
+	 				text += "}";
+	 				GeoElement[] values = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	 				for (int i = 0; i < values.length; ++ i) {
+	 					values[i].setAuxiliaryObject(true);
+	 				}
+	 			}
+ 			} catch (Exception ex) {
+ 				// Just abort the process
+ 			} finally {
+ 				table.kernel.storeUndoInfo();
+ 			}
+
 		}
 	}
     	
