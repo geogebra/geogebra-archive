@@ -122,6 +122,22 @@ public class GgbAPI {
     
     /// --- 29.05.08 Ulven: --- ///
     
+	/**
+	 * waits for GgbApi to be initialised in Application.
+	 * (JarManager causes a slowdown there)
+	 */
+    public void waitForGgbApiInit()
+    {
+    	while (app.getGgbApi() == null){
+    		try {
+    			Thread.sleep(100); // wait until GgbApi is initialised
+    		}
+    		catch (Exception e) {}
+    		
+    	}
+
+    }
+    
     
     ///* JAVA SCRIPT INTERFACE */
 	
@@ -130,6 +146,7 @@ public class GgbAPI {
 	 * @return null if something went wrong 
 	 */
 	public synchronized byte [] getGGBfile() {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			app.getXMLio().writeGeoGebraFile(bos);
@@ -145,6 +162,7 @@ public class GgbAPI {
 	 * Returns current construction in XML format. May be used for saving.
 	 */
 	public synchronized String getXML() {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		return app.getXML();
 	}
 	
@@ -152,6 +170,7 @@ public class GgbAPI {
 	 * Opens construction given in XML format. May be used for loading constructions.
 	 */
 	public synchronized void setXML(String xml) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.setXML(xml, true);
 	}
 	
@@ -160,6 +179,7 @@ public class GgbAPI {
 	 * Note: the construction is NOT cleared before evaluating the XML string. 	 
 	 */
 	public synchronized void evalXML(String xmlString) {		
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.setXML(xmlString, false);
 	}
 
@@ -169,6 +189,7 @@ public class GgbAPI {
 	 * input text field. 	 
 	 */
 	public synchronized boolean evalCommand(String cmdString) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement [] result = kernel.getAlgebraProcessor().
 								processAlgebraCommand(cmdString, false);
 		// return success
@@ -180,6 +201,7 @@ public class GgbAPI {
 	 * input text field. 	 
 	 */
 	public synchronized String evalYacas(String cmdString) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		return 	kernel.evaluateYACASRaw(cmdString);
 
 	}
@@ -189,6 +211,7 @@ public class GgbAPI {
 	 * Note: this is especially useful together with evalCommand().
 	 */
 	public synchronized void setErrorDialogsActive(boolean flag) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.setErrorDialogsActive(flag);
 	}
 	
@@ -197,6 +220,7 @@ public class GgbAPI {
 	 * ...but the actual code is in a thread to avoid JavaScript security issues 
 	 */
 	public synchronized void reset() {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		
 		//rewrite in this context
 	}
@@ -208,6 +232,7 @@ public class GgbAPI {
 	 * geometry window.
 	 */
 	public synchronized void refreshViews() {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.refreshViews();		 				
 	}
 			
@@ -216,6 +241,7 @@ public class GgbAPI {
 	 * ...but the actual code is in a thread to avoid JavaScript security issues  
 	 */
 	public synchronized void openFile(String strURL) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		
 		System.out.println("todo: rewrite in this context");
 		
@@ -238,6 +264,7 @@ public class GgbAPI {
 	 * Shows or hides the object with the given name in the geometry window.
 	 */
 	public synchronized void setVisible(String objName, boolean visible) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.setEuclidianVisible(visible);
@@ -249,6 +276,7 @@ public class GgbAPI {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized void setLayer(String objName, int layer) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.setLayer(layer);		
@@ -261,6 +289,7 @@ public class GgbAPI {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized int getLayer(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return -1;		
 		return geo.getLayer();		
@@ -271,6 +300,7 @@ public class GgbAPI {
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized void setLayerVisible(int layer, boolean visible) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		if (layer<0 || layer > EuclidianView.MAX_LAYERS) return;
 		String [] names = getObjNames();
 		for (int i=0 ; i < names.length ; i++)
@@ -290,6 +320,7 @@ public class GgbAPI {
 	 * Sets the fixed state of the object with the given name.
 	 */
 	public synchronized void setFixed(String objName, boolean flag) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo != null && geo.isFixable()) {		
 			geo.setFixed(flag);
@@ -301,6 +332,7 @@ public class GgbAPI {
 	 * Turns the trace of the object with the given name on or off.
 	 */
 	public synchronized void setTrace(String objName, boolean flag) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo != null && geo.isTraceable()) {		
 			((Traceable)geo).setTrace(flag);
@@ -312,6 +344,7 @@ public class GgbAPI {
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelVisible(String objName, boolean visible) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.setLabelVisible(visible);		
@@ -323,6 +356,7 @@ public class GgbAPI {
 	 * Possible label styles are NAME = 0, NAME_VALUE = 1 and VALUE = 2.
 	 */
 	public synchronized void setLabelStyle(String objName, int style) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.setLabelMode(style);		
@@ -333,6 +367,7 @@ public class GgbAPI {
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelMode(String objName, boolean visible) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.setLabelVisible(visible);
@@ -343,6 +378,7 @@ public class GgbAPI {
 	 * Sets the color of the object with the given name.
 	 */
 	public synchronized void setColor(String objName, int red, int green, int blue) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		Color col = new Color(red, green, blue);		
@@ -355,6 +391,7 @@ public class GgbAPI {
 	 * starts with # and uses upper case letters, e.g. "#FF0000" for red.
 	 */
 	public synchronized String getColor(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
 		return "#" + geogebra.util.Util.toHexString(geo.getObjectColor());		
@@ -364,6 +401,7 @@ public class GgbAPI {
 	 * Deletes the object with the given name.
 	 */
 	public synchronized void deleteObject(String objName) {			
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;		
 		geo.remove();
@@ -374,6 +412,7 @@ public class GgbAPI {
 	 * Returns true if the object with the given name exists.
 	 */
 	public synchronized boolean exists(String objName) {			
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		return (geo != null);				
 	}	
@@ -383,6 +422,7 @@ public class GgbAPI {
 	 * value at the moment.
 	 */
 	public synchronized boolean isDefined(String objName) {			
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) 
 			return false;
@@ -397,6 +437,7 @@ public class GgbAPI {
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public synchronized String getValueString(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
 		return geo.getAlgebraDescription();
@@ -406,6 +447,7 @@ public class GgbAPI {
 	 * Returns the definition of the object with the given name as a string.
 	 */
 	public synchronized String getDefinitionString(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
 		return geo.getDefinitionDescription();
@@ -415,6 +457,7 @@ public class GgbAPI {
 	 * Returns the command of the object with the given name as a string.
 	 */
 	public synchronized String getCommandString(String objName) {		
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
 		return geo.getCommandDescription();
@@ -425,6 +468,7 @@ public class GgbAPI {
 	 * the object is not a point or a vector.
 	 */
 	public synchronized double getXcoord(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return 0;
 		
@@ -441,6 +485,7 @@ public class GgbAPI {
 	 * the object is not a point or a vector.
 	 */
 	public synchronized double getYcoord(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return 0;
 		
@@ -457,6 +502,7 @@ public class GgbAPI {
 	 * specified object is not a point or a vector, nothing happens.
 	 */
 	public synchronized void setCoords(String objName, double x, double y) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;
 		
@@ -475,6 +521,7 @@ public class GgbAPI {
 	 * the object does not have a value.
 	 */
 	public synchronized double getValue(String objName) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);		
 		
 		if (geo != null && geo.isNumberValue())
@@ -488,6 +535,7 @@ public class GgbAPI {
 	 * specified object is not a number, nothing happens.
 	 */
 	public synchronized void setValue(String objName, double x) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;
 		
@@ -501,6 +549,7 @@ public class GgbAPI {
 	 * Turns the repainting of all views on or off.
 	 */
 	public synchronized void setRepaintingActive(boolean flag) {		
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		//System.out.println("set repainting: " + flag);
 		kernel.setNotifyRepaintActive(flag);
 	}	
@@ -514,6 +563,7 @@ public class GgbAPI {
 	 * Sets the Cartesian coordinate system in the graphics window.
 	 */
 	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.getEuclidianView().setRealWorldCoordSystem(xmin, xmax, ymin, ymax);
 	}
 	
@@ -521,6 +571,7 @@ public class GgbAPI {
 	 * Shows or hides the x- and y-axis of the coordinate system in the graphics window.
 	 */
 	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {		
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.getEuclidianView().showAxes(xVisible, yVisible);
 	}	
 	
@@ -528,6 +579,7 @@ public class GgbAPI {
 	 * Shows or hides the coordinate grid in the graphics window.
 	 */
 	public synchronized void setGridVisible(boolean flag) {		
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		app.getEuclidianView().showGrid(flag);
 	}
 	
@@ -543,6 +595,7 @@ public class GgbAPI {
 	 * @return
 	 */
 	public String [] getObjNames() {			//ulven 29.05.08: Had to change to public, used by applet
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 
 		Construction cons = kernel.getConstruction();
 		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
@@ -570,6 +623,7 @@ public class GgbAPI {
 	 * Returns an array with all object names.
 	 */
 	public synchronized String [] getAllObjectNames() {			
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		return getObjNames();
 	}	
 	
@@ -577,6 +631,7 @@ public class GgbAPI {
 	 * Returns the number of objects in the construction.
 	 */
 	public synchronized int getObjectNumber() {					
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		return getObjNames().length;			
 	}	
 	
@@ -584,6 +639,7 @@ public class GgbAPI {
 	 * Returns the name of the n-th object of this construction.
 	 */
 	public synchronized String getObjectName(int i) {					
+		waitForGgbApiInit(); // must be at the start of all JavaScript methods
 		String [] names = getObjNames();
 					
 		try {
