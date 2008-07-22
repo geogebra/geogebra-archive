@@ -484,8 +484,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
     		GeoVec2D midpoint=c.getTranslationVector();
     		double a=midpoint.x;
     		double b=midpoint.y;
-    		double sf=r*r/((x-a)*(x-a)+(y-b)*(y-b));
-            setCoords( a+sf*(x-a), b+sf*(y-b) ,1.0);
+    		double sf=r*r/((inhomX-a)*(inhomX-a)+(inhomY-b)*(inhomY-b));
+            setCoords( a+sf*(inhomX-a), b+sf*(inhomY-b) ,1.0);
     	}
     	else
     	{
