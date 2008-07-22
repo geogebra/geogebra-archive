@@ -2512,7 +2512,8 @@ public abstract class Application implements	KeyEventDispatcher {
 		else {	    
 	    	// standard case
 			String modeText = EuclidianView.getModeText(mode);
-			String iconName = "mode_" + modeText.toLowerCase() + "_32.gif";
+			// bugfix for Turkish locale added Locale.US
+			String iconName = "mode_" + modeText.toLowerCase(Locale.US) + "_32.gif";
 			icon = getImageIcon(iconName, border);						
 			if (icon == null) {
 				System.err.println("icon missing for mode " + modeText + " (" + mode + ")");			
