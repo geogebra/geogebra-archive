@@ -55,7 +55,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     }
  
     public void generateAllCode() {
-    	format=((PgfFrame)frame).getFormat();
+       	format=((PgfFrame)frame).getFormat();
     	// init unit variables
     	try{	
     		xunit=frame.getXUnit();
@@ -223,6 +223,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append(":");
 			codeFilledObject.append(b);
 			codeFilledObject.append("]; plot ");
+			value=value.replaceAll("\\^", "**");
 			codeFilledObject.append(value);
 			codeFilledObject.append("}");
 		}
@@ -240,14 +241,14 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 	codeFilledObject.append("} -- ");
 	writePoint(b,gb,codeFilledObject);
-	codeFilledObject.append(" -- {");
+	codeFilledObject.append(" {");
     value=g.toValueString();
 	value=killSpace(Util.toLaTeXString(value,true));
 	plotWithGnuplot=warningFunc(value,"tan(")||warningFunc(value,"cosh(")||warningFunc(value,"acosh(")
 					||warningFunc(value,"asinh(")||warningFunc(value,"atanh(")||warningFunc(value,"sinh(")
 					|| warningFunc(value,"tanh(");
 	if (plotWithGnuplot){
-			codeFilledObject.append(" plot[raw gnuplot, id=func");
+			codeFilledObject.append("-- plot[raw gnuplot, id=func");
 			codeFilledObject.append(functionIdentifier);
 			functionIdentifier++;
 			codeFilledObject.append("] function{set samples 100; set xrange [");
@@ -255,6 +256,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append(":");
 			codeFilledObject.append(a);
 			codeFilledObject.append("]; plot ");
+			value=value.replaceAll("\\^", "**");
 			codeFilledObject.append(value);
 			codeFilledObject.append("}");
 		}
@@ -264,7 +266,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append(b);
 			codeFilledObject.append(":");
 			codeFilledObject.append(a);
-			codeFilledObject.append("] plot");
+			codeFilledObject.append("] -- plot");
 			codeFilledObject.append("(\\x,{");
 			value=replaceX(value);
 			codeFilledObject.append(value);
@@ -308,6 +310,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeFilledObject.append(":");
 				codeFilledObject.append(b);
 				codeFilledObject.append("]; plot ");
+				value=value.replaceAll("\\^", "**");
 				codeFilledObject.append(value);
 				codeFilledObject.append("}");
 			}
@@ -848,6 +851,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				sb.append(":");
 				sb.append(xrangemax-0.1);
 				sb.append("]; plot ");
+				value=value.replaceAll("\\^", "**");
 				sb.append(value);
 				sb.append("};\n");
 			}
@@ -880,6 +884,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	 */
 	private String replaceX(String name){
 		StringBuffer sb=new StringBuffer(name);
+		// If the expression starts with minus -
+		// Insert a "0" (Bug from TikZ /PGF)
+		if (name.startsWith("-")) sb.insert(0,"0");
 		int i=0;
 		while(i<sb.length()){
 			char before='1';
