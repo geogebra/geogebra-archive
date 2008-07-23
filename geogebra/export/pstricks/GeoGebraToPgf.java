@@ -1,7 +1,6 @@
 package geogebra.export.pstricks;
 
 import geogebra.Application;
-import geogebra.euclidian.DrawAngle;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
@@ -27,7 +26,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -235,7 +233,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append(b);
 			codeFilledObject.append("] plot");
 			codeFilledObject.append("(\\x,{");
-			value=replaceX(value);
+			value=replaceX(value,"\\x");
 			codeFilledObject.append(value);
 			codeFilledObject.append("})");
 		}
@@ -251,11 +249,17 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append("-- plot[raw gnuplot, id=func");
 			codeFilledObject.append(functionIdentifier);
 			functionIdentifier++;
-			codeFilledObject.append("] function{set samples 100; set xrange [");
-			codeFilledObject.append(b);
-			codeFilledObject.append(":");
+			
+			codeFilledObject.append("] function{set parametric ; set samples 100; set trange [");
 			codeFilledObject.append(a);
+			codeFilledObject.append(":");
+			codeFilledObject.append(b);
 			codeFilledObject.append("]; plot ");
+			String variable=kernel.format(b+a)+"-t";	
+			
+			codeFilledObject.append(variable);
+			codeFilledObject.append(",");
+			value=replaceX(value, variable);
 			value=value.replaceAll("\\^", "**");
 			codeFilledObject.append(value);
 			codeFilledObject.append("}");
@@ -268,7 +272,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeFilledObject.append(a);
 			codeFilledObject.append("] -- plot");
 			codeFilledObject.append("(\\x,{");
-			value=replaceX(value);
+			value=replaceX(value,"\\x");
 			codeFilledObject.append(value);
 			codeFilledObject.append("})");
 		}
@@ -323,7 +327,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeFilledObject.append(b);
 				codeFilledObject.append("] plot");
 				codeFilledObject.append("(\\x,{");
-				value=replaceX(value);
+				value=replaceX(value,"\\x");
 				codeFilledObject.append(value);
 				codeFilledObject.append("})");
 			}
@@ -864,7 +868,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				sb.append(xrangemax);
 				sb.append("] plot");
 				sb.append("(\\x,{");
-				value=replaceX(value);
+				value=replaceX(value,"\\x");
 				sb.append(value);
 				sb.append("});\n");
 			}
@@ -879,10 +883,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		drawFunction(geo,code);
 	}
 	/**
-	 * This method replace the letter "x" by "\\x"
+	 * This method replace the letter "x" by the String substitute
 	 * @param name The function
 	 */
-	private String replaceX(String name){
+	private String replaceX(String name,String substitute){
 		StringBuffer sb=new StringBuffer(name);
 		// If the expression starts with minus -
 		// Insert a "0" (Bug from TikZ /PGF)
@@ -902,8 +906,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				int id1="1234567890^ +-*/%()\t".indexOf(after);
 				int id2="1234567890^ +-*/%()\t".indexOf(before);			
 				if (id1!=-1&&id2!=-1){
-					sb.insert(i, "\\");
-					i++;
+					sb.deleteCharAt(i);
+					sb.insert(i, substitute);
+					i+=substitute.length()-1;
 				}				
 			}
 			i++;
@@ -1428,7 +1433,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		double spaceTick=euclidianView.getAxesNumberingDistances()[0];
 		boolean showNumbers=euclidianView.getShowAxesNumbers()[0];		
 		int tickStyle=euclidianView.getAxesTickStyles()[0];
-
+		codeBeginDoc.append("\\begin{scriptsize}\n");
 		if (showAxis){
 			codeBeginDoc.append("\\draw[->,color=");
 			ColorCode(color,codeBeginDoc);
@@ -1490,6 +1495,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			ColorCode(color,codeBeginDoc);
 			codeBeginDoc.append("] (0pt,-10pt) node[right] {0};\n");
 		}
+		codeBeginDoc.append("\\end{scriptsize}\n");
 	}
 	/**
 	 * A util method adds point coordinates to a StringBuffer
