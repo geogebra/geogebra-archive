@@ -4490,7 +4490,7 @@ public abstract class Application implements	KeyEventDispatcher {
     		}
         }
         private String getFileNameMAC(String fileName) {
-			if (System.getProperty("java.version").startsWith("1.4")) {
+			if (System.getProperty("java.version").startsWith("1.4") && fileChooser.getUI() instanceof AquaFileChooserUI) {
 				AquaFileChooserUI ui = (AquaFileChooserUI) fileChooser.getUI();
     			return ui.getFileName();
 			} else if (!System.getProperty("java.version").startsWith("1.4") && fileChooser.getUI() instanceof CUIAquaFileChooser) {
