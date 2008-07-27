@@ -113,9 +113,24 @@ implements Comparable {
 	
 	/**
 	 * Returns XML representation of this object.
+	 * GeoGebra File Format.
 	 * @return xml String
 	 */
     public abstract String getXML();
+    
+	/**
+	 * Returns XML representation of this element.
+	 * Intergeo File Format. (Yves Kreis)
+	 * @return xml String
+	 */
+    public abstract String getI2Gelement();
+    
+	/**
+	 * Returns XML representation of this constraint.
+	 * Intergeo File Format. (Yves Kreis)
+	 * @return xml String
+	 */
+    public abstract String getI2Gconstraint();
     
 	/**
 	  * Removes this object from the current construction.	 

@@ -277,6 +277,10 @@ public class QDParser {
 					case '-': 
 						if (sb.toString().equals("!-")) { 
 							mode = COMMENT;
+				    	// Added for Intergeo File Format (Yves Kreis) -->
+						} else {
+							sb.append((char) c);
+				    	// <-- Added for Intergeo File Format (Yves Kreis)
 						}
 						break;		
 						

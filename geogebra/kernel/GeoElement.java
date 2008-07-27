@@ -2451,6 +2451,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	
 	/**
 	 * save object in xml format
+	 * GeoGebra File Format
 	 */
 	public String getXML() {
 		String type = getXMLtypeString();
@@ -2476,7 +2477,38 @@ final public boolean hasOnlyFreeInputPoints() {
 		return sb.toString();
 	}
 	
-	final String getAuxiliaryXML() {
+	/**
+	 * save object in xml format
+	 * Intergeo File Format (Yves Kreis)
+	 */
+	public String getI2Gelement() {
+		String type = getXMLtypeString();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("\t\t<");
+		sb.append(type);
+		sb.append(" id=\"");
+		sb.append(Util.encodeXML(label));		
+		sb.append("\">\n");
+
+		sb.append(getI2Gtags());
+		
+		sb.append("\t\t</");
+		sb.append(type);
+		sb.append(">\n");
+
+		return sb.toString();
+	}
+	
+	/**
+	 * save constraint in xml format
+	 * Intergeo File Format (Yves Kreis)
+	 */
+    public String getI2Gconstraint() {
+    	return "";
+    }
+
+    final String getAuxiliaryXML() {
 		if (auxiliaryObject) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("\t<auxiliary val=\"");
@@ -2613,6 +2645,7 @@ final public boolean hasOnlyFreeInputPoints() {
 
 	/**
 	 * returns all class-specific xml tags for getXML
+	 * GeoGebra File Format
 	 */
 	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
@@ -2622,6 +2655,14 @@ final public boolean hasOnlyFreeInputPoints() {
 		sb.append(getAuxiliaryXML());
 		sb.append(getBreakpointXML());		
 		return sb.toString();
+	}
+
+	/**
+	 * returns all class-specific xml tags for getXML
+	 * Intergeo File Format (Yves Kreis)
+	 */
+	protected String getI2Gtags() {
+		return "";
 	}
 
 	/**

@@ -74,6 +74,7 @@ office@geogebra.org
 					javax/jnlp/**, 
 					**/*.jpg, 
 					geogebra/kernel/**/algo2command.properties,	
+					geogebra/kernel/**/algo2command4i2g.properties,	
 					geogebra/gui/**/_license.txt" 						
 			excludes="*.jar, 
 					geogebra/export/**, 

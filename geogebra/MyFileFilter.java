@@ -142,7 +142,10 @@ public class MyFileFilter extends FileFilter {
 	    String filename = f.getName();
 	    int i = filename.lastIndexOf('.');
 	    if(i>0 && i<filename.length()-1)
-			return filename.substring(i+1).toLowerCase();;
+	       	// Modified for Intergeo File Format (Yves Kreis) -->
+//			return filename.substring(i+1).toLowerCase();;
+			return filename.substring(i+1).toLowerCase();
+		   	// <-- Modified for Intergeo File Format (Yves Kreis)
 	}
 	return null;
     }
@@ -163,6 +166,11 @@ public class MyFileFilter extends FileFilter {
 	if(filters == null) {
 	    filters = new Hashtable(5);
 	}
+   	// Added for Intergeo File Format (Yves Kreis) -->
+	if (extension.indexOf(".") > -1) {
+		extension = extension.substring(0, extension.lastIndexOf("."));
+	}
+   	// <-- Added for Intergeo File Format (Yves Kreis)
 	filters.put(extension.toLowerCase(), this);
 	fullDescription = null;
     }
@@ -239,6 +247,20 @@ public class MyFileFilter extends FileFilter {
      */
     public boolean isExtensionListInDescription() {
 	return useExtensionsInDescription;
+    }
+    
+    /**
+     * Returns the first extension contained in the extension list.
+     * 
+     * Added for Intergeo File Format (Yves Kreis)
+     */
+    public String getExtension() {
+    	Enumeration keys = filters.keys();
+    	if (keys.hasMoreElements()) {
+    		return (String) keys.nextElement();
+    	} else {
+    		return "";
+    	}
     }
 }
 

@@ -4586,9 +4586,18 @@ public class Kernel {
 
 	/**
 	 * Returns current construction in XML format.
+	 * GeoGebra File Format.
 	 */
 	public String getConstructionXML() {
 		return cons.getXML();
+	}
+	
+	/**
+	 * Returns current construction in XML format.
+	 * Intergeo File Format. (Yves Kreis)
+	 */
+	public String getConstructionI2G() {
+		return cons.getI2G();
 	}
 	
 	public boolean isTranslateCommandName() {

@@ -282,6 +282,7 @@ implements Traceable {
 	
     /**
      * returns all class-specific xml tags for saveXML
+     * Geogebra File Format
      */
     protected String getXMLtags() {
         StringBuffer sb = new StringBuffer();
@@ -292,6 +293,23 @@ implements Traceable {
                 sb.append(" y=\"" + y + "\"");
                 sb.append(" z=\"" + z + "\"");
         sb.append("/>\n");
+        
+        return sb.toString();
+    }
+
+    /**
+     * returns all class-specific xml tags for saveXML
+     * Intergeo File Format (Yves Kreis)
+     */
+    protected String getI2Gtags() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(super.getI2Gtags());
+
+        sb.append("\t\t\t<homogeneous_coordinates>\n");
+        		sb.append("\t\t\t\t<double>" + x + "</double>\n");
+        		sb.append("\t\t\t\t<double>" + y + "</double>\n");
+        		sb.append("\t\t\t\t<double>" + z + "</double>\n");
+        sb.append("\t\t\t</homogeneous_coordinates>\n");
         
         return sb.toString();
     }

@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
+// Added for Intergeo File Format (Yves Kreis) -->
+import java.util.MissingResourceException;
+// <-- Added for Intergeo File Format (Yves Kreis)
+
 /**
  *
  * @author  Markus
@@ -32,6 +36,9 @@ import java.util.TreeSet;
 public abstract class AlgoElement extends ConstructionElement implements EuclidianViewAlgo {
 	 
     private static ResourceBundle rbalgo2command;
+	// Added for Intergeo File Format (Yves Kreis) -->
+	private static ResourceBundle rbalgo2command4i2g;
+	// <-- Added for Intergeo File Format (Yves Kreis)
     
     protected GeoElement[] input, output;
     private GeoElement [] efficientInput;
@@ -58,6 +65,23 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	// translate algorithm class name to internal command name
     	return rbalgo2command.getString(classname);
     }
+    
+	// Added for Intergeo File Format (Yves Kreis) -->
+    private String getCommandString4I2G(String classname) {
+        // init rbalgo2command4i2g if needed
+        // for translation of Algo-classname to command name
+        if (rbalgo2command4i2g == null) {
+        	rbalgo2command4i2g = app.initAlgo2CommandBundle4I2G();
+        }
+            	
+    	// translate algorithm class name to internal command name
+        try {
+        	return rbalgo2command4i2g.getString(classname);
+        } catch (MissingResourceException e) {
+        	return classname;
+        }
+    }
+	// <-- Added for Intergeo File Format (Yves Kreis)
     
     // in setInputOutput() the member vars input and output are set
     abstract protected  void setInputOutput();
@@ -524,6 +548,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
     /**
      * translate class name to internal command name
+     * GeoGebra File Format
      */
     String getCommandName() {
         String cmdname, classname;
@@ -542,7 +567,28 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }   
 
     /**
+     * translate class name to internal command name
+     * Intergeo File Format (Yves Kreis)
+     */
+    String getCommandName4I2G() {
+        String cmdname, classname;
+        // get class name
+        //classname = this.getClass().toString();
+        //classname = classname.substring(classname.lastIndexOf('.') + 1);
+        classname = getClassName();
+        // dependent algorithm is an "Expression"
+        if (classname.startsWith("AlgoDependent")) {
+            cmdname = "expression";
+        } else {
+            // translate algorithm class name to internal command name
+            cmdname = getCommandString4I2G(classname);
+        }
+        return cmdname;
+    }   
+
+    /**
      * Returns this algorithm and it's output objects (GeoElement) in XML format.
+     * GeoGebra File Format.
      */
     final public String getXML() {
     	return getXML(true);
@@ -580,6 +626,75 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		            }
 		        }
 	        }            
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        kernel.setMaximumFractionDigits(oldDigits);
+        kernel.setTranslateCommandName(oldValue);
+        
+        return sb.toString();
+    }
+
+    /**
+     * Returns this algorithm's output objects (GeoElement) in XML format.
+     * Intergeo File Format. (Yves Kreis)
+     */
+    final public String getI2Gelement() {
+        // this is needed for helper commands like 
+        // intersect for single intersection points
+        if (!isPrintedInXML) return ""; 
+        
+        // USE INTERNAL COMMAND NAMES IN EXPRESSION        
+        boolean oldValue = kernel.isTranslateCommandName();
+        kernel.setTranslateCommandName(false);             
+        int oldDigits = kernel.getMaximumFractionDigits();
+        kernel.setMaximumFractionDigits(50);
+        
+        StringBuffer sb = new StringBuffer();
+        
+        try {
+	        // output               
+	        GeoElement geo;                   
+	        for (int i = 0; i < output.length; i++) {
+	            geo = output[i];
+	            // save only GeoElements that have a valid label
+	            if (geo.isLabelSet()) {
+	                sb.append(geo.getI2Gelement());
+	            }
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        kernel.setMaximumFractionDigits(oldDigits);
+        kernel.setTranslateCommandName(oldValue);
+        
+        return sb.toString();
+    }
+
+    /**
+     * Returns this algorithm in XML format.
+     * Intergeo File Format. (Yves Kreis)
+     */
+    final public String getI2Gconstraint() {
+        // this is needed for helper commands like 
+        // intersect for single intersection points
+        if (!isPrintedInXML) return ""; 
+        
+        // USE INTERNAL COMMAND NAMES IN EXPRESSION        
+        boolean oldValue = kernel.isTranslateCommandName();
+        kernel.setTranslateCommandName(false);             
+        int oldDigits = kernel.getMaximumFractionDigits();
+        kernel.setMaximumFractionDigits(50);
+        
+        StringBuffer sb = new StringBuffer();
+        
+        try {
+	        // command
+	        String cmdname = getCommandName4I2G();
+	        if (!cmdname.equals("expression"))
+	            sb.append(getCmdI2G(cmdname));
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -674,7 +789,44 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         sb.append("</command>\n");      
         return sb.toString();
     }
-    
+
+    // standard command has cmdname, output, input
+	// Added for Intergeo File Format (Yves Kreis) -->
+    private String getCmdI2G(String cmdname) {      
+        StringBuffer sb = new StringBuffer();
+        sb.append("\t\t<" + cmdname + ">\n");
+
+        String type;
+
+        // add output information    
+        if (output != null) {
+            for (int i = 0; i < output.length; i++) {
+            	type = getXMLtypeString(output[i]);
+                sb.append("\t\t\t<" + type + " out=\"true\">");
+                sb.append(Util.encodeXML(output[i].getLabel()));
+                sb.append("</" + type + ">\n");
+            }
+        }
+        
+        // add input information
+        if (input != null) {
+            for (int i = 0; i < input.length; i++) {
+            	type = getXMLtypeString(input[i]);
+                sb.append("\t\t\t<" + type + ">");
+                sb.append(Util.encodeXML(input[i].getLabel()));                 
+                sb.append("</" + type + ">\n");
+            }
+        } 
+        
+        sb.append("\t\t</" + cmdname + ">\n");
+        return sb.toString();
+    }
+
+	final public String getXMLtypeString(GeoElement geo) {		
+		return geo.getClassName().substring(3).toLowerCase();
+	}
+	// <-- Added for Intergeo File Format (Yves Kreis)
+
     /**
      * Sets whether the output of this command should
      * be labeled. This setting is used for getXML().

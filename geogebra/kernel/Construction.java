@@ -935,6 +935,7 @@ public class Construction {
 
     /**
      * Returns this construction in XML format.
+     * GeoGebra File Format.
      */
     public String getXML() {    	       	
         StringBuffer sb = new StringBuffer();
@@ -970,6 +971,23 @@ public class Construction {
         return sb.toString();
     }
     
+    /**
+     * Returns this construction in XML format.
+     * Intergeo File Format. (Yves Kreis)
+     */
+    public String getI2G() {    	       	
+        StringBuffer sb = new StringBuffer();
+
+        // construction XML
+        sb.append(getConstructionI2G());        
+                         
+        return sb.toString();
+    }
+    
+    /**
+     * Returns this construction in XML format.
+     * GeoGebra File Format.
+     */
     public String getConstructionXML() {
     	StringBuffer sb = new StringBuffer(500);
     	
@@ -1006,6 +1024,54 @@ public class Construction {
 	            ce = (ConstructionElement) ceList.get(i);
 	            sb.append(ce.getXML());
 	        }       
+	        
+	        sb.append("</construction>\n");	        
+        } catch (Exception e) {
+	        e.printStackTrace();
+	    }  
+        
+        // restore old kernel settings
+        kernel.setPrintDecimals(oldDecimals);
+        kernel.setCoordStyle(oldCoordStlye);   
+        kernel.setCASPrintForm(oldPrintForm);
+        
+        return sb.toString();
+    }
+
+    /**
+     * Returns this construction in XML format.
+     * Intergeo File Format. (Yves Kreis)
+     */
+    public String getConstructionI2G() {
+    	StringBuffer sb = new StringBuffer(500);
+    	
+    	// change kernel settings temporarily
+    	int oldCoordStlye = kernel.getCoordStyle();
+    	int oldDecimals = kernel.getPrintDecimals();
+    	int oldPrintForm = kernel.getCASPrintForm();        
+        kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
+        kernel.setPrintDecimals(50);
+        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+        
+        try {
+        	sb.append("<construction>\n");
+	        
+	        ConstructionElement ce;
+	        int size = ceList.size();
+
+	        sb.append("\t<elements>\n");
+	        for (int i = 0; i < size; ++i) {
+	            ce = (ConstructionElement) ceList.get(i);
+	            sb.append(ce.getI2Gelement());
+	        }       
+	        sb.append("\t</elements>\n");
+	        
+	        sb.append("\t<constraints>\n");
+	        for (int i = 0; i < size; ++i) {
+	            ce = (ConstructionElement) ceList.get(i);
+	            sb.append(ce.getI2Gconstraint());
+	        }       
+	        sb.append("\t</constraints>\n");
 	        
 	        sb.append("</construction>\n");	        
         } catch (Exception e) {
