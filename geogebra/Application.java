@@ -133,7 +133,7 @@ import javax.swing.plaf.FontUIResource;
 //Added for Intergeo File Format (Yves Kreis) -->
 import javax.swing.plaf.basic.BasicFileChooserUI;
 
-//import apple.laf.CUIAquaFileChooser;
+import apple.laf.CUIAquaFileChooser;
 //<-- Added for Intergeo File Format (Yves Kreis)
 
 public abstract class Application implements	KeyEventDispatcher {
@@ -4477,20 +4477,17 @@ public abstract class Application implements	KeyEventDispatcher {
     			if (fileChooser.getSelectedFile() != null) {
     				fileName = fileChooser.getSelectedFile().getName();
     			}
-    			/*
     			if (GeoGebra.MAC_OS) {
     				fileName = getFileNameMAC(fileName);
     			} else {
-    			*/
     				fileName = getFileName(fileName);
-    			//}
+    			}
     			if (fileName != null && fileName.indexOf(".") > -1) {
     				fileName = fileName.substring(0, fileName.lastIndexOf(".")) + "." + ((MyFileFilter) fileChooser.getFileFilter()).getExtension();
     				fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), fileName));
     			}
     		}
         }
-        /*
         private String getFileNameMAC(String fileName) {
     		if (fileChooser.getUI() instanceof CUIAquaFileChooser) {
     			CUIAquaFileChooser ui = (CUIAquaFileChooser) fileChooser.getUI();
@@ -4500,7 +4497,6 @@ public abstract class Application implements	KeyEventDispatcher {
     		}
     		return fileName;
         }
-        */
         private String getFileName(String fileName) {
     		if (fileChooser.getUI() instanceof BasicFileChooserUI) {
     			BasicFileChooserUI ui = (BasicFileChooserUI) fileChooser.getUI();

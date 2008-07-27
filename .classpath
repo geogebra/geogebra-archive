@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="laf.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
