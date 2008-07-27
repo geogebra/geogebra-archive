@@ -2179,6 +2179,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Product[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Product(String label, GeoList list) {
+		AlgoProduct algo = new AlgoProduct(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * Sum[list]
 	 * Michael Borcherds
 	 */

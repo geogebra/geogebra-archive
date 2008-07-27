@@ -43,6 +43,7 @@ public abstract class AlgoStats1D extends AlgoElement {
     final static int STATS_SIGMAX = 2;
     final static int STATS_SIGMAXX = 3;
     final static int STATS_SD = 4;
+    final static int STATS_PRODUCT = 5;
     
     public AlgoStats1D(Construction cons, String label, GeoList geoList, int stat) {
         super(cons);
@@ -118,6 +119,7 @@ public abstract class AlgoStats1D extends AlgoElement {
     	
     	double sumVal = 0;
     	double sumSquares = 0;
+    	double product = 1;
     	double val;
     	for (int i=0; i < size; i++) {
     		GeoElement geo = geoList.get(i);
@@ -126,6 +128,7 @@ public abstract class AlgoStats1D extends AlgoElement {
     			val=num.getDouble();
     			sumVal += val;
     			sumSquares += val*val;
+    			product *= val;
     		} else {
         		result.setUndefined();
     			return;
@@ -153,6 +156,9 @@ public abstract class AlgoStats1D extends AlgoElement {
         	break;
         case STATS_SIGMAXX:
         	result.setValue(sumSquares);
+        	break;
+        case STATS_PRODUCT:
+        	result.setValue(product);
         	break;
         }
     }

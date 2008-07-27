@@ -207,6 +207,7 @@ public class CommandDispatcher {
     	cmdTable.put("Clean", new CmdClean(kernel));
     	cmdTable.put("Defined", new CmdDefined(kernel));
     	cmdTable.put("Sum", new CmdSum(kernel));
+    	cmdTable.put("Product", new CmdProduct(kernel));
     	cmdTable.put("Mean", new CmdMean(kernel));
     	cmdTable.put("Variance", new CmdVariance(kernel));
     	cmdTable.put("SD", new CmdSD(kernel));
