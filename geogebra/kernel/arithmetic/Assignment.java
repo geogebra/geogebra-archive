@@ -20,6 +20,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.Application;
+
 /**
  *
  * @author  Markus
@@ -31,7 +33,10 @@ public class Assignment extends ValidExpression {
     
     /** Creates Assignment     */
     public Assignment(String variable) {
-       var = variable;   
+       var = variable;  
+       
+       // TODO: remove
+       Application.debug("new assignment object: " + variable);
     }
        
     final public String getVariable() { return var; }

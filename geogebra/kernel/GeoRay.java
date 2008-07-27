@@ -209,9 +209,12 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			cons.removeFromConstructionList(transformedLine.getParentAlgorithm());
 									
 			// get direction of transformed line
+			boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
 			AlgoDirection algoDir = new AlgoDirection(cons, transformedLine);
 			cons.removeFromConstructionList(algoDir);
 			GeoVector direction = algoDir.getVector();
+			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
 			
 			// ray through transformed point with direction of transformed line
 			GeoElement [] geos = {kernel.Ray(label, points[0], direction), points[0], direction};

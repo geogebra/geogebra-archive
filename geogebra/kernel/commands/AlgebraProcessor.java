@@ -156,10 +156,6 @@ public class AlgebraProcessor {
 		// parse command string
 		try {
 			ve = parser.parse(cmd);
-			
-			//System.out.println("parsed valid exp: " + ve);
-			//System.out.println("  " + ve.getClass());
-			
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
@@ -504,7 +500,7 @@ public class AlgebraProcessor {
 					if (replaceable.isIndependent() && ret[0].isIndependent() &&
 							replaceable.getGeoClassType() == ret[0].getGeoClassType()) 
 					{
-						replaceable.set(ret[0]);
+						replaceable.set(ret[0]);						
 						replaceable.updateRepaint();
 						ret[0] = replaceable;										
 					}

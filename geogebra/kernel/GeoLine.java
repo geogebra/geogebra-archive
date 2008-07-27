@@ -455,7 +455,12 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
         double yqy = y * qy;
         z += (xqx + yqy) + (yqy - xqx) * cos - (x*qy + y*qx) * sin;        
         x = x0;  
-        y = y0;        
+        y = y0;       
+        
+        // change orientation
+        x = -x;
+        y = -y;
+        z = -z;
     }        
             
     /***********************************************************/

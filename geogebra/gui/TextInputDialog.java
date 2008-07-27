@@ -208,9 +208,11 @@ public class TextInputDialog extends InputDialog {
 				isLaTeX = cbLaTeX.isSelected();
 				
 				boolean finished = inputHandler.processInput(inputText);	
-				if (isShowing()) {				
+				if (isShowing()) {	
+					// text dialog window is used and open
 					setVisible(!finished);
-				} else {			
+				} else {		
+					// text input field embedded in properties window
 					text.setLaTeX(isLaTeX, true);
 					setGeoText(text);
 				}
@@ -386,7 +388,8 @@ public class TextInputDialog extends InputDialog {
             // change existing text
             try {           
                 text.setLaTeX(isLaTeX, true);
-                GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);
+                GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
+                
                 app.doAfterRedefine(newText);
                 return newText != null;
 			} catch (Exception e) {

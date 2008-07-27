@@ -191,9 +191,12 @@ TOKEN : {
 }   
 
 TOKEN : { 
- <SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
-   |
-   < LABEL:  <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)*>
+ 	// labels for cells in the spreadsheet
+ 	<SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
+ |
+ 	// standard case: labels for GeoElements and command names
+   < LABEL:  
+    <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)*>
  // |  < #INDEX:  "_" (  <CHAR>  | ("{" (<CHAR>)+ "}") )  >  
  |  < #INDEX:  "_" (  <CHAR>  | ("{" (~["}"])+ "}" ) )  >  
  | < #LETTER:  // unicode letters
@@ -217,6 +220,7 @@ TOKEN : {
         "\uff66"-"\uff9d",		// Katakana
         "\uffa1"-"\uffdc"		// Hangul
        ] >
+       
 }
  
 
@@ -262,8 +266,8 @@ String label():
 {     
     Token t;
 }
-{          
-        t = <LABEL> 
+{         	  
+       ( t = <SPREADSHEET_LABEL> |  t = <LABEL> )
         {  return t.image;   }
 }
                           
@@ -288,7 +292,7 @@ ValidExpression buildValidExpression() :
      (  
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
-    |            
+//    |            
         LOOKAHEAD(2147483647)
          [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      
      | 
@@ -354,7 +358,7 @@ Assignment assignment():
     Token t;
 }
 {          
-        t = <LABEL> 
+        (t = <SPREADSHEET_LABEL> | t = <LABEL>) 
         {  
         return new Assignment(t.image);   }
 }
@@ -371,7 +375,7 @@ Command command():
     ExpressionNode en;
 }
 {   
-    ( t = <SPREADSHEET_LABEL> | t = <LABEL>)
+    (t = <SPREADSHEET_LABEL> | t = <LABEL>)
     {   c = new Command(kernel, t.image, true );    } 
     "[" 
        ( en = cmdexpression()  { c.addArgument( en ); } )?
@@ -1053,7 +1057,7 @@ ExpressionNode numVecVariable():
 		return new ExpressionNode(kernel, cmd);
 	}
 |
-    (c = <SPREADSHEET_LABEL> | c = <LABEL>)
+    ( c = <SPREADSHEET_LABEL> | c = <LABEL> )
     {   
     	// standard case for variable
         return new ExpressionNode(kernel, new Variable(kernel, c.image));

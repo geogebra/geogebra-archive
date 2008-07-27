@@ -59,8 +59,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	public void set(GeoElement geo) {
 		GeoText gt = (GeoText) geo;
 		str = gt.str;
-		isLaTeX = gt.isLaTeX;
-		
+						
 		// macro output: don't set start point
 		if (cons != geo.cons && isAlgoMacroOutput()) 
 			return;
@@ -79,6 +78,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		catch (CircularDefinitionException e) {
 			System.err.println("set GeoText: CircularDefinitionException");
 		}		
+		
+		//setLaTeX(gt.isLaTeX, true);
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -396,9 +397,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		
 		// start point of text
 		if (geo instanceof GeoText) {
-			GeoText text = (GeoText) geo;			
-			isLaTeX = text.isLaTeX;				
+			GeoText text = (GeoText) geo;									
 			setSameLocation(text);
+			setLaTeX(text.isLaTeX, true);
 		}		
 	}	
 	
@@ -423,10 +424,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 
 	public void setLaTeX(boolean b, boolean updateParentAlgo) {
 		isLaTeX = b;
-		
+
 		if (updateParentAlgo) {
 			updateCascadeParentAlgo();
-		}
+		}			
 	}		
 
 	public void setAbsoluteScreenLoc(int x, int y) {
