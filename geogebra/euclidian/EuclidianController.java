@@ -2079,8 +2079,10 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	protected void moveMultipleObjects(boolean repaint) {		
-		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec);				
+		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);		
+		
+		// move all selected geos
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec);									
 		
 		if (repaint)
 			kernel.notifyRepaint();	

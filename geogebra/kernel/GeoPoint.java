@@ -148,7 +148,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	 * @author Florian Sonner
 	 * @version 2008-07-17
 	 */
-	public int getPointStyle() {
+	final public int getPointStyle() {
 		return pointStyle;
 	}
 	

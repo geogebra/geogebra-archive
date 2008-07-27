@@ -2962,6 +2962,10 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * (xPixel, yPixel) in screen coordinates.	 
 	 */
 	public static void moveObjects(ArrayList geos, GeoVector rwTransVec) {
+		// TODO: take all independent input objects and build a common updateSet
+		// then update all their algos, don't do updateCascade() in moveObject()
+		
+		
 		for (int i=0; i < geos.size(); i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			geo.moveObject(rwTransVec);		
