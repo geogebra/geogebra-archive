@@ -23,6 +23,7 @@ package jasymca;
 /*------------------------------------------------------------*/
 
 import java.util.Hashtable;
+import java.util.Locale;
 
 // Environment for variables and functions
 // Stored by name, case-insensitive
@@ -39,7 +40,7 @@ public class Environment extends Hashtable{
 	
 	// Store Variable	
 	public void putValue(String var, Object x){
-		var 		= var.toUpperCase();
+		var 		= var.toUpperCase(Locale.US);
 		// Way to cancel variables
 		if(x.equals(NULL)){
 			remove(var);
@@ -50,7 +51,7 @@ public class Environment extends Hashtable{
 
 	// Value of Variable var	
 	public Object getValue(String var){
-		var 		= var.toUpperCase();
+		var 		= var.toUpperCase(Locale.US);
 		Object r 	= get(var);
 
 		/* COMMENTED by Markus Hohenwarter, July 23, 2007:
@@ -74,7 +75,7 @@ public class Environment extends Hashtable{
 
 	// Get numeric constant
 	public Zahl getnum(String var){
-		var 		= var.toUpperCase();
+		var 		= var.toUpperCase(Locale.US);
 		Object r 	= get(var);
 		if(r instanceof Zahl)
 			return (Zahl)r;

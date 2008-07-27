@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Vector;
 
 
@@ -62,7 +63,7 @@ abstract class LambdaAlgebraic extends Lambda{
 		Algebraic arg = ((Algebraic)car(x)).reduce();
 		if(arg instanceof Unexakt) return f((Zahl)arg);
 		return FunctionVariable.create(
-				getClass().getName().substring("jasymca.Lambda".length()).toLowerCase(), arg);
+				getClass().getName().substring("jasymca.Lambda".length()).toLowerCase(Locale.US), arg);
 	}	
 	Zahl f(Zahl x) throws JasymcaException{ return x;}
 	
@@ -567,7 +568,7 @@ class LambdaRAT extends LambdaAlgebraic{
 		if(arg instanceof Unexakt) return f((Zahl)arg);
 		if(arg instanceof Exakt)   return arg;
 		return FunctionVariable.create(
-				getClass().getName().substring("jasymca.Lambda".length()).toLowerCase(), arg);
+				getClass().getName().substring("jasymca.Lambda".length()).toLowerCase(Locale.US), arg);
 	}	
 	Algebraic f_exakt(Algebraic x) throws JasymcaException{ 
 		if(x instanceof Zahl) return (Zahl)x.rat();		
