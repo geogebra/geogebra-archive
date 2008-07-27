@@ -140,7 +140,7 @@ import apple.laf.CUIAquaFileChooser;
 public abstract class Application implements	KeyEventDispatcher {
 
 	
-	public static final boolean disableSpreadsheet = true;
+	public static final boolean disableSpreadsheet = false;
     public static final String buildDate = "July 27, 2008";
 	
     public static final String versionString = "3.1.9.0";    
