@@ -1139,6 +1139,7 @@ public class PropertiesDialogGeoElement
 				col = null;				
 			}
 			previewPanel.setForeground(col);
+			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
 			return this;
 		}
 
@@ -1151,6 +1152,7 @@ public class PropertiesDialogGeoElement
 			
 			// update preview panel
 			previewPanel.setForeground(col);
+			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
 
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
