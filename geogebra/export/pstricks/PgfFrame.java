@@ -4,25 +4,23 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class PgfFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
 	private JLabel labelFormat;
 	final String[] format={"LaTeX","Plain TeX","ConTeXt"};
 	private JComboBox comboFormat;
+	private JCheckBox forceGnuplot;
 	public PgfFrame(final GeoGebraToPgf ggb2pgf){
 		super(ggb2pgf,"GeneratePgf");
 		initGui();
 	}
 	protected void initGui(){
-
+		forceGnuplot=new JCheckBox(app.getPlain("ForceGnuplotPgf"));
+		forceGnuplot.setSelected(false);
 		comboFormat=new JComboBox(format);
 		labelFormat=new JLabel(app.getPlain("FormatExportPgf"));
 		js.getViewport().add(textarea);
@@ -57,13 +55,17 @@ public class PgfFrame extends ExportFrame{
 		panel.add(comboFontSize, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(jcb, new GridBagConstraints(2, 2, 2, 1, 1.0, 1.0,
+
+		panel.add(labelFormat, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelFormat, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0,
+		panel.add(comboFormat, new GridBagConstraints(3, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(comboFormat, new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0,
+		panel.add(forceGnuplot, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(jcb, new GridBagConstraints(2, 3, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(button, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0,
@@ -87,5 +89,8 @@ public class PgfFrame extends ExportFrame{
 	}
 	protected int getFormat(){
 		return comboFormat.getSelectedIndex();
+	}
+	protected boolean getGnuplot(){
+		return forceGnuplot.isSelected();
 	}
 }

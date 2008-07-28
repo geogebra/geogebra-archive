@@ -48,12 +48,14 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	private static final int FORMAT_CONTEXT=2;
 	private int format=0;
 	private int functionIdentifier=0;
+	private boolean forceGnuplot=false;
 	public GeoGebraToPgf(Application app) {
     	super(app);
     }
  
     public void generateAllCode() {
        	format=((PgfFrame)frame).getFormat();
+       	forceGnuplot=((PgfFrame)frame).getGnuplot();
     	// init unit variables
     	try{	
     		xunit=frame.getXUnit();
@@ -963,6 +965,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	 * @param name The Function unsupported
 	 */
 	private boolean warningFunc(String sb,String nameFunc){
+		if (forceGnuplot) return true;
 		int ind=sb.indexOf(nameFunc);
 		if (ind!=-1){
 			codePreamble.append("% <<<<<<<WARNING>>>>>>>\n");

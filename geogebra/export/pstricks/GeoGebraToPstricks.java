@@ -8,7 +8,6 @@ the Free Software Foundation.
 
 package geogebra.export.pstricks;
 import geogebra.Application;
-import geogebra.euclidian.DrawAngle;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
