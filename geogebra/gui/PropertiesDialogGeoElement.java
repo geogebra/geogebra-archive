@@ -1134,12 +1134,13 @@ public class PropertiesDialogGeoElement
 			// set colorButton's color to object color
 			Color col;
 			if (equalObjColor) {
-				col = geo0.getObjectColor();				
+				col = geo0.getObjectColor();
+				previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());		
 			} else {
-				col = null;				
+				col = null;
+				previewPanel.setToolTipText("");
 			}
 			previewPanel.setForeground(col);
-			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
 			return this;
 		}
 
