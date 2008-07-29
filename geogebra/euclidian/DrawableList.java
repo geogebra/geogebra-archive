@@ -43,17 +43,22 @@ public class DrawableList {
 
 			// Michael Borcherds 2008-02-29 BEGIN
 			// add in the list according to when we want it drawn
-			int priority = d.getGeoElement().getDrawingPriority();
-			
+			long priority = d.getGeoElement().getDrawingPriority();			
 			Link cur = head;
+			Link last = head;
+		
+			int count=0;
 			
-			while (cur.d.getGeoElement().getDrawingPriority()<=priority && !cur.equals(tail)) cur = cur.next;
-				
+			while ((cur.d.getGeoElement().getDrawingPriority() < priority) && !cur.equals(tail)) {
+					last = cur;
+				cur = cur.next;
+				count++;
+			}
+			
 			if (cur.equals(head))
-			{ 
-				if (cur.d.getGeoElement().getDrawingPriority()<=priority)
-				{// add at end (list size=1)
-				
+			{ 				
+				if (cur.d.getGeoElement().getDrawingPriority() < priority)
+				{// add at end (list size=1)						
 					Link temp = new Link(d, null);
 					tail.next = temp;
 					tail = temp;				
@@ -67,17 +72,20 @@ public class DrawableList {
 			}
 			else if (cur.equals(tail))
 			{ // add at end
-				//System.out.println("end");
 				Link temp = new Link(d, null);
 				tail.next = temp;
 				tail = temp;				
 			}
 			else 
 			{ // add in middle
-				//System.out.println("middle");
+				//System.out.println("middle");	
+				//Link temp = new Link(d, null);
+				//temp.next=cur.next;
+				//cur.next = temp;
+				
 				Link temp = new Link(d, null);
-				temp.next=cur.next;
-				cur.next = temp;
+				temp.next=last.next;
+				last.next = temp;
 			}
 			// Michael Borcherds 2008-02-29 END
 		
