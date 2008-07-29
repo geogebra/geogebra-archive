@@ -91,7 +91,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	 */
 	private void deleteTools(JList toolList, DefaultListModel listModel) {		
 		Object [] sel = toolList.getSelectedValues();				
-		if (sel == null) return;	
+		if (sel == null || sel.length == 0) return;	
 					
 		// ARE YOU SURE ?
     	// Michael Borcherds 2008-05-04
@@ -152,7 +152,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	 */
 	private void saveTools(JList toolList) {
 		Object [] sel = toolList.getSelectedValues();				
-		if (sel == null) return;	
+		if (sel == null || sel.length == 0) return;		
 		
 		File file =
 			app.showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
