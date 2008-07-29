@@ -587,47 +587,55 @@ public abstract class GeoElement
 	}
 	
 	// Michael Borcherds 2008-02-23	
-	public int getDrawingPriority()
+	public long getDrawingPriority()
 	{
+		
+		long typePriority;
+		
 		switch (getGeoClassType())
 		{
 		case  GEO_CLASS_AXIS:
-			return 10;
+			typePriority = 10; break;
 		case  GEO_CLASS_IMAGE:
 		case  GEO_CLASS_BOOLEAN:
-			return 20;
+			typePriority = 20; break;
 		case  GEO_CLASS_TEXT:
-			return 30;
+			typePriority = 30; break;
 		case  GEO_CLASS_LIST:
-			return 40;
+			typePriority = 40; break;
 		case  GEO_CLASS_POLYGON :
-			return 50;
+			typePriority = 50; break;
 		case  GEO_CLASS_CONIC:
 		case  GEO_CLASS_CONICPART:
-			return 70;
+			typePriority = 70; break;
 		case  GEO_CLASS_ANGLE :
 		case  GEO_CLASS_NUMERIC:
-			return 80;
+			typePriority = 80; break;
 		case  GEO_CLASS_FUNCTION:
 		case  GEO_CLASS_FUNCTIONCONDITIONAL:
 		case  GEO_CLASS_CURVE_CARTESIAN :
 		case  GEO_CLASS_CURVE_POLAR:
-			return 90;
+			typePriority = 90; break;
 		case  GEO_CLASS_LINE:
-			return 100;
+			typePriority = 100; break;
 		case  GEO_CLASS_RAY:
 		case  GEO_CLASS_SEGMENT:
-			return 110;
+			typePriority = 110; break;
 		case  GEO_CLASS_VECTOR:
-			return 120;
+			typePriority = 120; break;
 		case  GEO_CLASS_LOCUS:
-			return 130;
+			typePriority = 130; break;
 		case  GEO_CLASS_POINT:
-			return 140;
+			typePriority = 140; break;
 		default: // shouldn't occur
-			return 150;
-
+			typePriority = 150;
 		}
+		
+		// priority = 100 000 000
+		 long ret = (long) (typePriority * 10E9 + getConstructionIndex());
+		 
+		 //app.debug("priority: " + ret + ", " + this);
+		 return ret;
 	}
 
 	public void setAlphaValue(float alpha) {
