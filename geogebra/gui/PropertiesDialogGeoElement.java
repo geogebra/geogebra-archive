@@ -26,9 +26,9 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
@@ -51,7 +51,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -4751,18 +4750,18 @@ class ColorFunctionPanel
 		GeoElement geo0 = (GeoElement) geos[0];	
 		GeoList colorList = geo0.getColorFunction();
 		if (colorList != null) {
-			strRed = colorList.get(0).getLabelOrCommandDescription();
-			strGreen = colorList.get(1).getLabelOrCommandDescription();
-			strBlue = colorList.get(2).getLabelOrCommandDescription();
+			strRed = colorList.get(0).getLabel();
+			strGreen = colorList.get(1).getLabel();
+			strBlue = colorList.get(2).getLabel();
 		}	
 		
 		for (int i=0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];	
 			GeoList colorListTemp = geo.getColorFunction();
 			if (colorListTemp != null) {
-				String strRedTemp = colorListTemp.get(0).getLabelOrCommandDescription();
-				String strGreenTemp = colorListTemp.get(1).getLabelOrCommandDescription();
-				String strBlueTemp = colorListTemp.get(2).getLabelOrCommandDescription();
+				String strRedTemp = colorListTemp.get(0).getLabel();
+				String strGreenTemp = colorListTemp.get(1).getLabel();
+				String strBlueTemp = colorListTemp.get(2).getLabel();
 				if (!strRed.equals(strRedTemp)) strRed = "";
 				if (!strGreen.equals(strGreenTemp)) strGreen = "";
 				if (!strBlue.equals(strBlueTemp)) strBlue = "";
@@ -4797,7 +4796,6 @@ class ColorFunctionPanel
 	}
 
 	private void doActionPerformed() {
-		//GeoNumeric num = null;
 		GeoList list = null;
 		String strRed = tfRed.getText();
 		String strGreen = tfGreen.getText();
@@ -4811,15 +4809,8 @@ class ColorFunctionPanel
 			if (strRed == null || strRed.trim().length() == 0) strRed="0";
 			if (strGreen == null || strGreen.trim().length() == 0) strGreen="0";
 			if (strBlue == null || strBlue.trim().length() == 0) strBlue="0";
-			//cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
-			//num = kernel.getAlgebraProcessor().evaluateToNumeric(strRed + "+256*("+strGreen+")+256*256*("+strBlue+")");
+	
 			list = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+"}");
-			//System.out.println("val="+num.getValue());
-			//System.out.println("list?"+list.isGeoList());
-			//System.out.println("numeric0?"+list.get(0).isGeoNumeric());
-			//System.out.println("numeric1?"+list.get(1).isGeoNumeric());
-			//System.out.println("numeric2?"+list.get(2).isGeoNumeric());
-
 		}
 				
 		// set condition
@@ -4827,19 +4818,10 @@ class ColorFunctionPanel
 		//try {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				//geo.setShowObjectCondition(cond);				
 				geo.setColorFunction(list);				
 			}	
 			
-		/*} catch (CircularDefinitionException e) {
-			
-			tfRed.setText("");
-			tfGreen.setText("");
-			tfBlue.setText("");
-			kernel.getApplication().showError("CircularDefinition");
-			requestFocus = true;			
-		}	*/
-		
+	
 		if (list != null)
 			list.updateRepaint();		
 		
