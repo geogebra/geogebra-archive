@@ -346,6 +346,7 @@ public class EuclidianController implements MouseListener,
 			break;
 			
 		case EuclidianView.MODE_MOVE_ROTATE:
+		case EuclidianView.MODE_COMPASSES:
 			rotationCenter = null; // this will be the active geo template
 			break;
 			
@@ -3928,6 +3929,7 @@ public class EuclidianController implements MouseListener,
 	
 	
 	// Michael Borcherds 2008-03-14	
+	// Markus 2008-07-30: added support for two identical input points (center *2 and point on edge)
 	final protected boolean compasses(ArrayList hits) {
 		if (hits == null)
 			return false;
@@ -3936,18 +3938,24 @@ public class EuclidianController implements MouseListener,
 		if (!hitPoint && selPoints() != 2 ) {
 			addSelectedSegment(hits, 1, false);
 		}
+		
+		// need center point for circle
+		if (rotationCenter == null && selPoints() == 1) {
+			// get center of point and clear points
+			rotationCenter = getSelectedPoints()[0];
+			app.addSelectedGeo(rotationCenter, true);		
+		}
 			
-		if (selPoints() == 3) {										
+		// three points: center, distance between two points
+		if (rotationCenter != null && selPoints() == 2) {										
 			GeoPoint[] points = getSelectedPoints();		
-			kernel.Circle(null, points[0], points[1], points[2],true);
+			kernel.Circle(null, rotationCenter, points[0], points[1],true);
 			return true;
 		}
-		
-		if (selPoints() == 1 && selSegments() == 1) {
-										
-			GeoPoint[] points = getSelectedPoints();		
+		// center point and segment
+		else if (rotationCenter != null && selSegments() == 1) {				
 			GeoSegment[] segment = getSelectedSegments();		
-			kernel.Circle(null, points[0], segment[0]);
+			kernel.Circle(null, rotationCenter, segment[0]);
 			return true;
 		}
 
