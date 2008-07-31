@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.algebra;
 
 import geogebra.Application;
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -291,25 +292,11 @@ public class AlgebraController
 			kernelChanged = false;
 		}
 		
-		// RIGHT CLICK
-		if (e.isPopupTrigger() || e.isMetaDown()) {
-			GeoElement geo = AlgebraView.getGeoElementForLocation(view, e.getX(), e.getY());
-			
-			if (!app.containsSelectedGeo(geo)) {
-				app.clearSelectedGeos();					
-			}
-														
-			// single selection: popup menu
-			if (app.selectedGeosSize() < 2) {				
-				app.showPopupMenu(geo, view, e.getPoint());						
-			} 
-			// multiple selection: properties dialog
-			else {														
-				app.showPropertiesDialog(app.getSelectedGeos());	
-			}								
-		}
+		boolean rightClick = Application.isRightClick(e);
+		
+		
 		// LEFT CLICK
-		else {
+		if (!rightClick) {
 			int x = e.getX();
 			int y = e.getY();		
 			if (view.hitClosingCross(x, y)) {			
@@ -330,18 +317,7 @@ public class AlgebraController
 					if (geo != null) {
 						view.startEditing(geo);						
 					}
-				} else if (clicks == 1) {
-					if (geo == null)
-						app.clearSelectedGeos();
-					else {						
-						if (e.isControlDown()) {
-							app.toggleSelectedGeo(geo); 													
-						} else {							
-							app.clearSelectedGeos();
-							app.addSelectedGeo(geo);
-						}		
-					}					
-				}										
+				} 										
 			} else {
 				if (geo == null) {				
 					app.clearSelectedGeos();
@@ -354,9 +330,53 @@ public class AlgebraController
 		}
 	}
 
-	public void mousePressed(java.awt.event.MouseEvent e) {}
+	public void mousePressed(java.awt.event.MouseEvent e) {
+		
+		boolean rightClick = Application.isRightClick(e);
+		
+		// RIGHT CLICK
+		if (rightClick) {
+			GeoElement geo = AlgebraView.getGeoElementForLocation(view, e.getX(), e.getY());
+			
+			if (!app.containsSelectedGeo(geo)) {
+				app.clearSelectedGeos();					
+			}
+														
+			// single selection: popup menu
+			if (app.selectedGeosSize() < 2) {				
+				app.showPopupMenu(geo, view, e.getPoint());						
+			} 
+			// multiple selection: properties dialog
+			else {														
+				app.showPropertiesDialog(app.getSelectedGeos());	
+			}								
+		}
+		
+		// left click
+		else {
+			int x = e.getX();
+			int y = e.getY();	
+			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);			
+			EuclidianView ev = app.getEuclidianView();
+			if (ev.getMode() == EuclidianView.MODE_MOVE) {		
+				if (geo == null)
+					app.clearSelectedGeos();
+				else {						
+					if (Application.isControlDown(e)) {
+						app.toggleSelectedGeo(geo); 													
+					} else {							
+						app.clearSelectedGeos();
+						app.addSelectedGeo(geo);
+					}		
+				}	
+			}
+		}
+		
+	}
 
-	public void mouseReleased(java.awt.event.MouseEvent e) {}
+	public void mouseReleased(java.awt.event.MouseEvent e) {
+
+	}
 
 	public void mouseEntered(java.awt.event.MouseEvent p1) {
 		view.setClosingCrossHighlighted(false);

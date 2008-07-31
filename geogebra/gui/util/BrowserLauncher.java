@@ -11,6 +11,7 @@ package geogebra.gui.util;
 // Public Domain Software -- Free to Use as You Like  //
 /////////////////////////////////////////////////////////
 
+import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.util.Util;
 import geogebra.GeoGebra;
@@ -48,13 +49,13 @@ public static void openURL(String url) {
   // older Java version 
   //String osName = System.getProperty("os.name");
   try {
-     if (GeoGebra.MAC_OS) { // Michael Borcherds 2008-03-21
+     if (Application.MAC_OS) { // Michael Borcherds 2008-03-21
         Class fileMgr = Class.forName("com.apple.eio.FileManager");
         Method openURL = fileMgr.getDeclaredMethod("openURL",
            new Class[] {String.class});
         openURL.invoke(null, new Object[] {url});
         }
-     else if (GeoGebra.WINDOWS) // Michael Borcherds 2008-03-21
+     else if (Application.WINDOWS) // Michael Borcherds 2008-03-21
      {
 //    	 Michael Borcherds 2008-03-21 BEGIN
     	 // replace file:/c:/Program Files/etc

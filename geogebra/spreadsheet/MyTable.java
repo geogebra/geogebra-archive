@@ -25,6 +25,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.JLabel;
 
 import geogebra.Application;
+import geogebra.GeoGebra;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -107,6 +108,13 @@ public class MyTable extends JTable
 		//
 		this.getTableHeader().setReorderingAllowed(false);
 		setAutoCreateColumnsFromModel(false);
+				
+		// visual appearance
+		setShowGrid(true);
+		setGridColor(Color.gray);
+		
+		// editing
+		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); 
 	}
 	
 	public void setView(SpreadsheetView view0) {
@@ -387,8 +395,10 @@ public class MyTable extends JTable
 		public void mouseExited(MouseEvent e) {
 		}
 		
-		public void mousePressed(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
+		public void mousePressed(MouseEvent e) {			
+			boolean rightClick = Application.isRightClick(e);
+			
+			if (!rightClick) {
 				if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 					setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 					setColumnSelectionAllowed(true);
@@ -431,17 +441,13 @@ public class MyTable extends JTable
 					e.consume();
 				}
 			}
-			else if (e.getButton() == MouseEvent.BUTTON3) {
-				int x1 = e.getX();
-				int y1 = e.getY();
-				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
-					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1);
-				}
-			}
+			
 		}
 		
 		public void mouseReleased(MouseEvent e)	 {
-			if (e.getButton() == MouseEvent.BUTTON1) {
+			boolean rightClick = Application.isRightClick(e);			
+			
+			if (!rightClick) {
 				if (editor.isEditing()) {
 					String text = editor.getEditingValue();
 					if (text.startsWith("=")) {
@@ -505,7 +511,16 @@ public class MyTable extends JTable
 					repaint();
 				}
 			}
+			// RIGHT CLICK
+			else if (rightClick) {
+				int x1 = e.getX();
+				int y1 = e.getY();
+				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
+					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1);
+				}
+			}
 		}		
+		
 	}
 	
 	protected class MouseMotionListener1 implements MouseMotionListener
@@ -639,43 +654,48 @@ public class MyTable extends JTable
 	{
 		
 		public void keyTyped(KeyEvent e) {
-			int keyCode = e.getKeyChar();
-			//System.out.println(keyCode);
-			switch (keyCode) {
-			case 27:
-				if (editor.isEditing()) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				if (editor.isEditing()) {							
 					editor.undoEdit();
+					//editor.cancelCellEditing();
+					//editor.stopCellEditing();
+										
 					editor.editing = false;
+					//e.consume();
+					//requestFocusInWindow(false);				   
 				}
-				break;
-			}
+			}			
 		}
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
+			
+			boolean shiftDown = e.isShiftDown();
+			boolean ctrlDown = Application.isControlDown(e);
+			
 			//System.out.println(keyCode);
 			switch (keyCode) {
-			case 16 : shiftPressed = true; break;
-			case 17 : ctrlPressed = true; break;
-			case 67:
-			case 86:
-			case 88:
-			case 127:
+			case KeyEvent.VK_C:
+			case KeyEvent.VK_V:
+			case KeyEvent.VK_X:
+			case KeyEvent.VK_DELETE:
+			case KeyEvent.VK_BACK_SPACE:
 				if (! editor.isEditing()) {
 					if (ctrlPressed) {
 						e.consume();
-						if (keyCode == 67) {
+						if (keyCode == KeyEvent.VK_C) {
 							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
-						else if (keyCode == 86) {
+						else if (keyCode == KeyEvent.VK_V) {
 							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 							getView().getRowHeader().revalidate();
 						}
-						else if (keyCode == 88) {
+						else if (keyCode == KeyEvent.VK_X) {
 							copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 						}
 					}
-					if (keyCode == 127) {
+					if (keyCode == KeyEvent.VK_DELETE ||
+						keyCode == KeyEvent.VK_BACK_SPACE) {
 						e.consume();
 						//System.out.println("deleting...");
 						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
@@ -683,36 +703,30 @@ public class MyTable extends JTable
 					return;
 				}
 				break;
-			case 27:
-				//System.out.println(editor.isEditing());
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					e.setKeyCode(10);
-				}
-				break;
+			
+				
+				
+						
 			}
+			
+				
+			// arrow keys
 			if (keyCode >= 37 && keyCode <= 40) {
-				if (editor.isEditing())	return;			
+				if (editor.isEditing())	{					
+					return;			
+				}
 			}
+			
+			/*
 			for (int i = 0; i < defaultKeyListeners.length; ++ i) {
 				if (e.isConsumed()) break;
 				defaultKeyListeners[i].keyPressed(e);			
 			}
+			*/
 		}
 		
 		public void keyReleased(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			//System.out.println(keyCode);
-			switch (keyCode) {
-			case 16 : shiftPressed = false; break;
-			case 17 : ctrlPressed = false; break;
-			case 27:
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					editor.editing = false;
-				}
-				break;
-			}
+			
 		}
 		
 	}
@@ -887,7 +901,12 @@ public class MyTable extends JTable
 		public void mousePressed(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
-			if (e.getButton() == MouseEvent.BUTTON1) {
+			
+			boolean metaDown = Application.isControlDown(e);
+			boolean shiftDown = e.isShiftDown();			
+			boolean rightClick = Application.isRightClick(e);
+
+			if (!rightClick) {
 				Point point = getIndexFromPixel(x, y);
 				if (point != null) {
 					Point point2 = getPixel((int)point.getX(), (int)point.getY(), true);
@@ -903,13 +922,13 @@ public class MyTable extends JTable
 							setRowSelectionAllowed(false);
 							getTableHeader().requestFocusInWindow();
 						}
-						if (shiftPressed2) {
+						if (shiftDown) {
 							if (column0 != -1) {
 								int column = (int)point.getX();
 								setColumnSelectionInterval(column0, column);
 							}
 						}
-						else if (ctrlPressed2) {					
+						else if (metaDown) {					
 							column0 = (int)point.getX();
 							addColumnSelectionInterval(column0, column0);
 						}
@@ -921,15 +940,21 @@ public class MyTable extends JTable
 					}
 				}
 			}
-			else if (e.getButton() == MouseEvent.BUTTON3) {
-				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y);
-				}
-			}
+			
 		}
 		
 		public void mouseReleased(MouseEvent e)	{
-			if (isResizing) {
+			boolean rightClick = Application.isRightClick(e);
+			
+			if (rightClick) {
+				int x = e.getX();
+				int y = e.getY();
+			
+				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y);
+				}
+			}			
+			else if (isResizing) {
 				int x = e.getX();
 				int y = e.getY();
 				Point point = getIndexFromPixel(x, y);
@@ -975,53 +1000,50 @@ public class MyTable extends JTable
 		
 	}
 	
-	public boolean ctrlPressed2 = false;
-	public boolean shiftPressed2 = false;
 
 	protected class KeyListener2 implements KeyListener 
 	{
 		
+
 		public void keyTyped(KeyEvent e) {
 		}
 		
 		public void keyPressed(KeyEvent e) {
+		
+			boolean metaDown = Application.isControlDown(e);
+			
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			case 16 : shiftPressed2 = true; break;
-			case 17 : ctrlPressed2 = true; break;
-			case 67 : // control + c
+			case KeyEvent.VK_C : // control + c
 				//System.out.println(minSelectionColumn);
 				//System.out.println(maxSelectionColumn);
-				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 					e.consume();
 				}
 				break;
-			case 86 : // control + v
-				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+			case KeyEvent.VK_V : // control + v
+				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 					getView().getRowHeader().revalidate();
 					e.consume();
 				}
 				break;		
-			case 88 : // control + x
-				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
+			case KeyEvent.VK_X : // control + x
+				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 					e.consume();
 				}
 				break;
-			case 127 : // delete
+			case KeyEvent.VK_BACK_SPACE : // delete
+			case KeyEvent.VK_DELETE : // delete
 				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 				break;
 			}
 		}
 		
 		public void keyReleased(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			switch (keyCode) {
-			case 16 : shiftPressed2 = false; break;
-			case 17 : ctrlPressed2 = false; break;
-			}
+		
 		}
 		
 	}

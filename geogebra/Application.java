@@ -59,7 +59,6 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.modules.JarManager;
-import geogebra.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.CopyURLToFile;
@@ -85,7 +84,9 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -130,20 +131,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
-//Added for Intergeo File Format (Yves Kreis) -->
 import javax.swing.plaf.basic.BasicFileChooserUI;
 
 import apple.laf.AquaFileChooserUI;
 import apple.laf.CUIAquaFileChooser;
-//<-- Added for Intergeo File Format (Yves Kreis)
 
 public abstract class Application implements	KeyEventDispatcher {
 
 	
 	public static final boolean disableSpreadsheet = false;
-    public static final String buildDate = "July 27, 2008";
+    public static final String buildDate = "July 31, 2008";
 	
-    public static final String versionString = "3.1.9.0";    
+    public static final String versionString = "3.1.10.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
     public static final String I2G_FILE_FORMAT = "Alpha";    
@@ -3042,7 +3041,7 @@ public abstract class Application implements	KeyEventDispatcher {
         String strFile = "docu" + languageISOcode + "/index.html";
         String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
         
-        if (GeoGebra.MAC_OS) {
+        if (MAC_OS) {
         	int i = codebase.getPath().lastIndexOf("/Java/");
         	if (i > -1) strFile = codebase.getPath().substring(0, i) + "/Help/" + strFile;
         }
@@ -4466,6 +4465,24 @@ public abstract class Application implements	KeyEventDispatcher {
 
     
     }
+    
+    
+	// check if we are on a mac
+	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase(Locale.US).startsWith("mac");
+	public static boolean WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).startsWith("windows"); // Michael Borcherds 2008-03-21
+    
+    public static boolean isControlDown(InputEvent e) {
+		return (MAC_OS && e.isMetaDown())  // Mac: meta down for multiple selection
+				|| 
+				(!MAC_OS && e.isControlDown()); // non-Mac: Ctrl down for multiple selection
+	}
+	
+	public static boolean isRightClick(MouseEvent e) {
+		return e.isPopupTrigger() || 
+				(MAC_OS && e.isControlDown())  // Mac: ctrl click = right click 
+				||
+				(!MAC_OS && e.isMetaDown());  // non-Mac: right click = meta click
+	}
 	
 	// Added for Intergeo File Format (Yves Kreis) -->
 	/*
@@ -4478,7 +4495,7 @@ public abstract class Application implements	KeyEventDispatcher {
     			if (fileChooser.getSelectedFile() != null) {
     				fileName = fileChooser.getSelectedFile().getName();
     			}
-    			if (GeoGebra.MAC_OS) {
+    			if (MAC_OS) {
     				fileName = getFileNameMAC(fileName);
     			} else {
     				fileName = getFileName(fileName);

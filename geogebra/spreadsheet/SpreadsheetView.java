@@ -1,42 +1,39 @@
 
 package geogebra.spreadsheet;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.HashSet;
-import javax.swing.AbstractListModel;
-import javax.swing.ListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.UIManager;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent ;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.Font;
-
 import geogebra.Application;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.spreadsheet.MyTable.ListSelectionListener1;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import javax.swing.AbstractListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
 
 public class SpreadsheetView extends JScrollPane implements View
 {
 
-	public static final int ROW_HEADER_WIDTH = 27;
+	public static final int ROW_HEADER_WIDTH = 30;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -250,10 +247,16 @@ public class SpreadsheetView extends JScrollPane implements View
 		public void mouseExited(MouseEvent e) {
 		}
 		
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {						
+			boolean shiftPressed = e.isShiftDown();	
+			boolean metaDown = Application.isControlDown(e);							
+			boolean rightClick = Application.isRightClick(e);
+					
 			int x = e.getX();
 			int y = e.getY();
-			if (e.getButton() == MouseEvent.BUTTON1) {			
+			
+			// left click
+			if (!rightClick) {								
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
@@ -268,7 +271,7 @@ public class SpreadsheetView extends JScrollPane implements View
 							table.setRowSelectionInterval(row0, row);
 						}
 					}
-					else if (ctrlPressed) {					
+					else if (metaDown) {					
 						row0 = (int)point.getY();
 						table.addRowSelectionInterval(row0, row0);
 					}
@@ -278,15 +281,18 @@ public class SpreadsheetView extends JScrollPane implements View
 					}
 					table.repaint();
 				}
-			}
-			else if (e.getButton() == MouseEvent.BUTTON3) {
+			}	
+			// RIGHT CLICK
+			else {				
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
 					ContextMenuRow.showPopupMenu2(table, e.getComponent(), 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, x, y);
-				}
+				}			
 			}
 		}
 		
 		public void mouseReleased(MouseEvent e)	{
+			
+			
 		}
 
 	}
@@ -309,10 +315,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 		
 	}
-	
-	public boolean ctrlPressed = false;
-	public boolean shiftPressed = false;
-
+		
 	protected class KeyListener1 implements KeyListener 
 	{
 		
@@ -321,64 +324,45 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
+			
+			boolean metaDown = Application.isControlDown(e);				
+			
 			//System.out.println(keyCode);
-			switch (keyCode) {
-			case 16 : shiftPressed = true; break;
-			case 17 : ctrlPressed = true; break;
-			case 67 : // control + c
-				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+			switch (keyCode) {				
+			case KeyEvent.VK_C : // control + c
+				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
 				break;
-			case 86 : // control + v
-				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+			case KeyEvent.VK_V : // control + v
+				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
 				break;				
-			case 88 : // control + x
-				if (ctrlPressed && minSelectionRow != -1 && maxSelectionRow != -1) {
+			case KeyEvent.VK_X : // control + x
+				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				}
 				e.consume();
 				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				break;
-			case 127 : // delete
+				
+			case KeyEvent.VK_DELETE : // delete
+			case KeyEvent.VK_BACK_SPACE : // delete on MAC
 				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				break;
 			}
 		}
 		
 		public void keyReleased(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			switch (keyCode) {
-			case 16 : shiftPressed = false; break;
-			case 17 : ctrlPressed = false; break;
-			}
+			
 		}
 		
 	}
 		
-	protected static class KeyListener0 implements KeyListener 
-	{
-		
-		public void keyTyped(KeyEvent e) {
-			int keyCode = e.getKeyChar();
-			//System.out.println("*** keyTyped:" + keyCode);
-		}
-		
-		public void keyPressed(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			//System.out.println("*** keyPressed:" + keyCode);
-		}
-		
-		public void keyReleased(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			//System.out.println("*** keyReleased:" + keyCode);
-		}
-		
-	}
+
 	/**/
 		
 	public void reset() {

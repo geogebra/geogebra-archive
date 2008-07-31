@@ -101,7 +101,7 @@ public class ContextMenuCol extends ContextMenu
 		row1 = row01;
 		row2 = row02;
 		Application app = table.kernel.getApplication();
-		JPopupMenu menu2 = initMenu2(app);		
+		JPopupMenu menu2 = initMenu2(app);				
 		menu2.show(comp, x, y);
 	}
 

@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.GeoGebra;
 import geogebra.View;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.Construction;
@@ -523,7 +524,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                     return;
 
                 // right click
-                if (e.isPopupTrigger() || e.isMetaDown()) {
+                if (Application.isRightClick(e)) {
                     GeoElement geo = data.getGeoElement(row);
                     app.showPopupMenu(geo, table, origin);
                 } else { // left click     

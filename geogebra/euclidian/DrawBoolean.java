@@ -12,6 +12,8 @@
 
 package geogebra.euclidian;
 
+import geogebra.Application;
+import geogebra.GeoGebra;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 
@@ -128,7 +130,7 @@ public final class DrawBoolean extends Drawable {
 		}
 
 		public void mouseReleased(MouseEvent e) {	
-			if (!dragging && !e.isMetaDown() && !e.isPopupTrigger()
+			if (!dragging && !e.isMetaDown() && !Application.isRightClick(e) && !e.isControlDown()
 					&& view.getMode() == EuclidianView.MODE_MOVE) 
 			{
 				// handle LEFT CLICK

@@ -189,8 +189,6 @@ public class EuclidianController implements MouseListener,
 
 	protected boolean selectionPreview = false;
 
-	protected boolean RIGHT_CLICK = false;
-
 	protected boolean TEMPORARY_MODE = false; // changed from QUICK_TRANSLATEVIEW Michael Borcherds 2007-10-08
 
 	protected boolean DONT_CLEAR_SELECTION = false; // Michael Borcherds 2007-12-08
@@ -402,7 +400,7 @@ public class EuclidianController implements MouseListener,
 		if (mode != EuclidianView.MODE_ALGEBRA_INPUT)
 			view.requestFocusInWindow();
 		
-		if (RIGHT_CLICK) return;
+		if (Application.isRightClick(e)) return;
 		setMouseLocation(e);		
 		
 		switch (mode) {
@@ -412,9 +410,7 @@ public class EuclidianController implements MouseListener,
 				// handle selection click
 				if (mode == EuclidianView.MODE_MOVE) {			
 					handleSelectClick(view.getTopHits(mouseLoc), 
-							e.isControlDown() || 
-							e.isShiftDown() || 
-							e.isMetaDown());
+							Application.isControlDown(e));
 				}
 				break;
 			
@@ -476,8 +472,7 @@ public class EuclidianController implements MouseListener,
 			return;
 		}
 
-		if (e.isPopupTrigger() || e.isMetaDown()) {
-			RIGHT_CLICK = true;				
+		if (Application.isRightClick(e)) {			
 			return;
 		} 
 		else if (
@@ -485,7 +480,7 @@ public class EuclidianController implements MouseListener,
 				(
 					e.isShiftDown() // All Platforms: Shift key
 					|| 
-					e.isControlDown() // old Windows key: Ctrl key 
+					e.isControlDown() && Application.WINDOWS // old Windows key: Ctrl key 
 				)) 
 		{
 // Michael Borcherds 2007-12-08 BEGIN
@@ -500,7 +495,6 @@ public class EuclidianController implements MouseListener,
 			oldMode = mode; // remember current mode	
 			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
 		} 		
-		RIGHT_CLICK = false;
 
 		switch (mode) {
 		// create new point at mouse location
@@ -928,7 +922,7 @@ public class EuclidianController implements MouseListener,
 			DRAGGING_OCCURED = true;			
 
 // Michael Borcherds 2007-10-07 allow right mouse button to drag points
-			if (RIGHT_CLICK)
+			if (Application.isRightClick(e))
 				if (view.getHits(mouseLoc, true)!=null) 
 				{
 					TEMPORARY_MODE = true;
@@ -952,10 +946,10 @@ public class EuclidianController implements MouseListener,
 
 		// zoom rectangle (right drag) or selection rectangle (left drag)
 // Michael Borcherds 2007-10-07 allow dragging with right mouse button
-		if (((RIGHT_CLICK) || allowSelectionRectangle()) && !TEMPORARY_MODE) {
+		if (((Application.isRightClick(e)) || allowSelectionRectangle()) && !TEMPORARY_MODE) {
 //			 Michael Borcherds 2007-10-07 
 			// set zoom rectangle's size
-			updateSelectionRectangle(RIGHT_CLICK);
+			updateSelectionRectangle(Application.isRightClick(e));
 			view.repaint();
 			return;
 		}		
@@ -1211,7 +1205,7 @@ public class EuclidianController implements MouseListener,
 		}
 				
 // Michael Borcherds 2007-10-08 allow drag with right mouse button
-		if (RIGHT_CLICK && !TEMPORARY_MODE)
+		if (Application.isRightClick(e) && !TEMPORARY_MODE)
 		{						
 			if (processZoomRectangle()) return;
 			if (!app.isRightClickEnabled()) return;
@@ -1598,7 +1592,7 @@ public class EuclidianController implements MouseListener,
 
 		// copy geo to algebra input
 		case EuclidianView.MODE_ALGEBRA_INPUT:
-			boolean addToSelection = e != null && e.isControlDown();
+			boolean addToSelection = e != null && (Application.isControlDown(e));
 			geoElementSelected(view.getTopHits(hits), addToSelection);
 			break;
 

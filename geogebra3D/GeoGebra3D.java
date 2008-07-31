@@ -54,7 +54,7 @@ public class GeoGebra3D extends GeoGebra
 			return;
 		}
 		    	
-     	if (MAC_OS) 
+     	if (Application.MAC_OS) 
     		initMacSpecifics();
 				
     	// set system look and feel

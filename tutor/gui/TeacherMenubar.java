@@ -135,7 +135,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			mi = menu.add(app.getUndoAction());
 			setMenuShortCutAccelerator(mi, 'Z');
 			mi = menu.add(app.getRedoAction());
-			if (GeoGebra.MAC_OS)
+			if (Application.MAC_OS)
 				// Command-Shift-Z
 				setMenuShortCutShiftAccelerator(mi, 'Z');
 			else
@@ -1209,7 +1209,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 		// close
 		menu.addSeparator();
 		mi = menu.add(exitAction);
-		if (GeoGebra.MAC_OS) {
+		if (Application.MAC_OS) {
 			setMenuShortCutAccelerator(mi, 'W');
 		} else {
 			// Alt + F4

@@ -228,7 +228,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// close
 		menu.addSeparator();
 		mi = menu.add(exitAction);
-		if (GeoGebra.MAC_OS) {
+		if (Application.MAC_OS) {
 			setMenuShortCutAccelerator(mi, 'W');
 		} else {
 			// Alt + F4
@@ -262,7 +262,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			mi = menu.add(app.getUndoAction());
 			setMenuShortCutAccelerator(mi, 'Z');
 			mi = menu.add(app.getRedoAction());
-			if (GeoGebra.MAC_OS)
+			if (Application.MAC_OS)
 				// Command-Shift-Z
 				setMenuShortCutShiftAccelerator(mi, 'Z');
 			else
@@ -280,7 +280,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				
 		if (app.letDelete()) {
 			mi = menu.add(deleteAction);
-			mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));	
+		
+			if (Application.MAC_OS) {
+				mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0));							
+			} else {				
+				mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+			}	
 		}
 		menu.addSeparator();
 		
