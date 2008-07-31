@@ -4496,10 +4496,7 @@ public abstract class Application implements	KeyEventDispatcher {
     				fileName = fileChooser.getSelectedFile().getName();
     			}
     			if (MAC_OS) {
-    				//fileName = getFileNameMAC(fileName);
-    				// TODO: Yves, check what's going on here
-    				// saving doesn't work on Mac OS 10.4.9 with Java 1.5
-    				fileName = getFileName(fileName);
+    				fileName = getFileNameMAC(fileName);
     			} else {
     				fileName = getFileName(fileName);
     			}
@@ -4509,13 +4506,11 @@ public abstract class Application implements	KeyEventDispatcher {
     			}
     		}
         }
-        
-        /*
         private String getFileNameMAC(String fileName) {
-			if (System.getProperty("java.version").startsWith("1.4") && fileChooser.getUI() instanceof AquaFileChooserUI) {
+			if (fileChooser.getUI() instanceof AquaFileChooserUI) {
 				AquaFileChooserUI ui = (AquaFileChooserUI) fileChooser.getUI();
     			return ui.getFileName();
-			} else if (!System.getProperty("java.version").startsWith("1.4") && fileChooser.getUI() instanceof CUIAquaFileChooser) {
+			} else if (fileChooser.getUI() instanceof CUIAquaFileChooser) {
     			CUIAquaFileChooser ui = (CUIAquaFileChooser) fileChooser.getUI();
     			return ui.getFileName();
     		} else if (fileName == null) {
@@ -4523,8 +4518,6 @@ public abstract class Application implements	KeyEventDispatcher {
     		}
     		return fileName;
         }
-        */
-        
         private String getFileName(String fileName) {
     		if (fileChooser.getUI() instanceof BasicFileChooserUI) {
     			BasicFileChooserUI ui = (BasicFileChooserUI) fileChooser.getUI();
