@@ -19,6 +19,15 @@ import java.util.TreeSet;
 public abstract class ConstructionElement 
 implements Comparable {
 	
+	// Added for Intergeo File Format (Yves Kreis) -->
+	// writes the <elements> part
+    public static final int ELEMENTS = 0;
+	// writes the <constraints> part
+    public static final int CONSTRAINTS = 1;
+    // writes the <display> part
+    public static final int DISPLAY = 2;
+	// <-- Added for Intergeo File Format (Yves Kreis)
+    
 	protected transient Construction cons; // parent construction of this element
 	protected transient Kernel kernel;      // parent kernel of this element
 	protected transient Application app;  // parent application of this element
@@ -119,19 +128,12 @@ implements Comparable {
     public abstract String getXML();
     
 	/**
-	 * Returns XML representation of this element.
+	 * Returns I2G representation of this object.
 	 * Intergeo File Format. (Yves Kreis)
 	 * @return xml String
 	 */
-    public abstract String getI2Gelement();
-    
-	/**
-	 * Returns XML representation of this constraint.
-	 * Intergeo File Format. (Yves Kreis)
-	 * @return xml String
-	 */
-    public abstract String getI2Gconstraint();
-    
+    public abstract String getI2G(int mode);
+        
 	/**
 	  * Removes this object from the current construction.	 
 	  */

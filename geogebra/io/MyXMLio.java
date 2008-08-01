@@ -321,7 +321,7 @@ public class MyXMLio {
     
     /**
      * Creates a zipped file containing the construction 
-     * saved in xml format.
+     * saved in xml and i2g format plus all external images.
      * Intergeo File Format (Yves Kreis)
      */
     public void writeIntergeoFile(OutputStream os) throws IOException {
@@ -562,7 +562,7 @@ public class MyXMLio {
     }
     
     /**
-     * Returns XML representation of construction.
+     * Returns I2G representation of construction.
      * Intergeo File Format. (Yves Kreis)
      */ 
     public String getFullI2G() {    	    	
@@ -571,8 +571,20 @@ public class MyXMLio {
         
         sb.append("<!--\n\tIntergeo File Format Version " + Application.I2G_FILE_FORMAT + "\n\twritten by " + app.getPlain("ApplicationName") + " " + Application.versionString + " (" + Application.buildDate + ")\n-->\n");
         
+    	sb.append("<construction>\n");
+        
         // save construction
         sb.append(kernel.getConstructionI2G());  
+        
+        StringBuffer display = new StringBuffer();
+        display.append(kernel.getDisplayI2G());
+        if (!display.toString().equals("")) {
+            sb.append("\t<display>\n");
+            sb.append(display.toString());
+            sb.append("\t</display>\n");
+        }
+        
+        sb.append("</construction>\n");	        
         
         return sb.toString();            
     }

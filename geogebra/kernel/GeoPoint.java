@@ -654,17 +654,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         return sb.toString();   
     }
     
-    /**
-     * returns all class-specific xml tags for saveXML
-     * Intergeo File Format (Yves Kreis)
-     */
-    protected String getI2Gtags() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(super.getI2Gtags()); 
-
-        return sb.toString();   
-    }
-    
     public String getStartPointXML() {
     	StringBuffer sb = new StringBuffer();    	
 		sb.append("\t<startPoint ");

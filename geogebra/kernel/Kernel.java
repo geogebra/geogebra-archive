@@ -4603,11 +4603,14 @@ public class Kernel {
 	}
 	
 	/**
-	 * Returns current construction in XML format.
+	 * Returns current construction in I2G format.
 	 * Intergeo File Format. (Yves Kreis)
 	 */
 	public String getConstructionI2G() {
-		return cons.getI2G();
+		return cons.getI2G(Construction.CONSTRUCTION);
+	}
+	public String getDisplayI2G() {
+		return cons.getI2G(Construction.DISPLAY);
 	}
 	
 	public boolean isTranslateCommandName() {

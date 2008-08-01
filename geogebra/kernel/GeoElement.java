@@ -2486,36 +2486,60 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	/**
-	 * save object in xml format
+	 * save object in i2g format
 	 * Intergeo File Format (Yves Kreis)
 	 */
-	public String getI2Gelement() {
+	public String getI2G(int mode) {
 		String type = getXMLtypeString();
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("\t\t<");
-		sb.append(type);
-		sb.append(" id=\"");
-		sb.append(Util.encodeXML(label));		
-		sb.append("\">\n");
-
-		sb.append(getI2Gtags());
 		
-		sb.append("\t\t</");
-		sb.append(type);
-		sb.append(">\n");
+		if (mode == CONSTRAINTS) {
+			if (isIndependent() || isPointOnPath()) {
+				sb.append("\t\t<free_");
+				sb.append(type);
+				sb.append(">\n");
 
+				sb.append("\t\t\t<");
+				sb.append(type);
+				sb.append(" out=\"true\">");
+				sb.append(Util.encodeXML(label));		
+				sb.append("</");
+				sb.append(type);
+				sb.append(">\n");
+
+				sb.append("\t\t</free_");
+				sb.append(type);
+				sb.append(">\n");
+			}
+		} else {
+			sb.append("\t\t<");
+			sb.append(type);
+			sb.append(" id=\"");
+			sb.append(Util.encodeXML(label));		
+			sb.append("\">\n");
+			
+			if (mode == ELEMENTS) {
+				sb.append(getI2Gtags());
+			} else if (mode == DISPLAY) {
+				// caption text
+				if (caption != null && caption.length() > 0 && !caption.equals(label)) {
+					sb.append("\t\t\t<label>");
+					sb.append(Util.encodeXML(caption));
+					sb.append("</label>\n");
+				} else {
+					return "";
+				}
+			}
+
+			sb.append("\t\t</");
+			sb.append(type);
+			sb.append(">\n");
+		}
+		
 		return sb.toString();
 	}
 	
-	/**
-	 * save constraint in xml format
-	 * Intergeo File Format (Yves Kreis)
-	 */
-    public String getI2Gconstraint() {
-    	return "";
-    }
-
     final String getAuxiliaryXML() {
 		if (auxiliaryObject) {
 			StringBuffer sb = new StringBuffer();
@@ -2666,7 +2690,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 
 	/**
-	 * returns all class-specific xml tags for getXML
+	 * returns all class-specific i2g tags for getI2G
 	 * Intergeo File Format (Yves Kreis)
 	 */
 	protected String getI2Gtags() {

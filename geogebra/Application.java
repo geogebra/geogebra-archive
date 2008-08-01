@@ -145,7 +145,7 @@ public abstract class Application implements	KeyEventDispatcher {
     public static final String versionString = "3.1.10.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
-    public static final String I2G_FILE_FORMAT = "Alpha";    
+    public static final String I2G_FILE_FORMAT = "1.00.20080731";    
 	// <-- Added for Intergeo File Format (Yves Kreis)
   
     // GeoGebra jar files    
@@ -255,7 +255,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private static final String RB_SETTINGS = "export/settings";
     private static final String RB_ALGO2COMMAND = "kernel/algo2command";    
 	// Added for Intergeo File Format (Yves Kreis) -->
-    private static final String RB_ALGO2COMMAND4I2G = "kernel/algo2command4i2g";    
+    private static final String RB_ALGO2INTERGEO = "kernel/algo2intergeo";    
 	// <-- Added for Intergeo File Format (Yves Kreis)
 
     //private static Color COLOR_STATUS_BACKGROUND = new Color(240, 240, 240);
@@ -1322,8 +1322,8 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
 	// Added for Intergeo File Format (Yves Kreis) -->
-    public ResourceBundle initAlgo2CommandBundle4I2G() {    	
-		return MyResourceBundle.loadSingleBundleFile(RB_ALGO2COMMAND4I2G);
+    public ResourceBundle initAlgo2IntergeoBundle() {    	
+		return MyResourceBundle.loadSingleBundleFile(RB_ALGO2INTERGEO);
     }
 	// <-- Added for Intergeo File Format (Yves Kreis)
 

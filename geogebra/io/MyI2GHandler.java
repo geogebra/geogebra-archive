@@ -27,6 +27,7 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.complex.Complex;
 
 import java.util.LinkedHashMap;
 
@@ -41,22 +42,37 @@ public class MyI2GHandler implements DocHandler {
 
 	private static final int MODE_INVALID = -1;
     private static final int MODE_CONSTRUCTION = 1;
-    private static final int MODE_ELEMENTS = 100;
-    private static final int MODE_HOMOGENEOUS_COORDINATES = 110;
-    private static final int MODE_HOMOGENEOUS_COORDINATES_DOUBLE = 111;
-    private static final int MODE_CONSTRAINTS = 200;
-    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 210;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 211;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 212;
-    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 220;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 221;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 222;
-    private static final int MODE_LINE_THROUGH_TWO_POINTS = 230;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 231;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 232;
-    private static final int MODE_POINT_INTERSECTION_OF_LINES = 240;
-//	private static final int MODE_POINT_INTERSECTION_OF_LINES_OUTPUT = 241;
-//	private static final int MODE_POINT_INTERSECTION_OF_LINES_INPUT = 242;
+    private static final int MODE_ELEMENTS = 1000;
+    private static final int MODE_COORDINATES = 1100;
+    private static final int MODE_COORDINATES_REAL_DOUBLE = 1101;
+    private static final int MODE_COORDINATES_COMPLEX = 1110;
+    private static final int MODE_COORDINATES_COMPLEX_DOUBLE = 1111;
+    private static final int MODE_CONSTRAINTS = 2000;
+    private static final int MODE_FREE = 2100;
+//	private static final int MODE_FREE_OUTPUT = 2101;
+    private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS = 2200;
+//	private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS_OUTPUT = 2201;
+//	private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS_INPUT = 2202;
+    private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES = 2210;
+//	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_OUTPUT = 2211;
+//	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_INPUT = 2212;
+    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 2220;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 2221;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 2222;
+    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 2230;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 2231;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 2232;
+    private static final int MODE_LINE_THROUGH_TWO_POINTS = 2240;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2241;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2242;
+    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2300;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2301;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2302;
+    private static final int MODE_POINT_ON_LINE = 2310;
+//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2311;
+//	private static final int MODE_POINT_ON_LINE_INPUT = 2312;
+    private static final int MODE_DISPLAY = 3000;
+    private static final int MODE_LABEL = 3100;
 
     private int mode;
     private int subMode;
@@ -71,8 +87,9 @@ public class MyI2GHandler implements DocHandler {
     private Construction cons, origCons;
     private Parser parser, origParser;    
 
-    // to parse homogeneous coordinates
-    private double [] coords;
+    // to parse homogeneous/euclidean/polar coordinates
+    private int coord;
+    private Complex [] coords;
     // to parse labels of output/input arguments in commands
     private String label;
     // to store the last type while processing constraints
@@ -88,9 +105,6 @@ public class MyI2GHandler implements DocHandler {
 
         mode = MODE_INVALID;
         subMode = MODE_INVALID;
-        
-        coords = new double[] { Double.NaN , Double.NaN, Double.NaN };
-        lastType = "";
     }
 
     private void reset() {
@@ -98,9 +112,6 @@ public class MyI2GHandler implements DocHandler {
 		
         mode = MODE_INVALID;
         subMode = MODE_INVALID;
-        
-        coords = new double[] { Double.NaN , Double.NaN, Double.NaN };
-        lastType = "";
     }
 
     private void initKernelVars() {
@@ -137,6 +148,10 @@ debug("startElement", eName);
         	case MODE_CONSTRAINTS :
         		startConstraints(eName, attrs);
         		break;
+        		
+        	case MODE_DISPLAY :
+        		startDisplay(eName, attrs);
+        		break;
             
             case MODE_INVALID :
                 //  is this an intergeo file?    
@@ -160,6 +175,10 @@ debug("startElement", eName);
     		case MODE_CONSTRAINTS :
     			textConstraints(str);
     			break;
+    			
+    		case MODE_DISPLAY :
+    			textDisplay(str);
+    			break;
     	}
     }
     
@@ -178,6 +197,10 @@ debug("endElement", eName);
         		
         	case MODE_CONSTRAINTS :
         		endConstraints(eName);
+        		break;
+        		
+        	case MODE_DISPLAY :
+        		endDisplay(eName);
         		break;
         }
     }
@@ -199,6 +222,8 @@ debug("startConstruction", eName);
             mode = MODE_ELEMENTS;
         } else if (eName.equals("constraints")) {
             mode = MODE_CONSTRAINTS;           
+        } else if (eName.equals("display")) {
+            mode = MODE_DISPLAY;           
         } else {
             System.err.println("unknown tag in <construction>: " + eName);
         }
@@ -221,6 +246,12 @@ debug("endConstruction", eName);
 debug("startElements", eName);
     	switch (subMode) {
     		case MODE_INVALID :
+    			// TODO -> extend to further objects
+    			if (!eName.equals("point") && !eName.equals("line")) {
+            		System.err.println("unknown tag in <elements>: " + eName);
+            		break;
+    			}
+    			
     	        String label = (String) attrs.get("id");
     	        if (label == null) {
     	            System.err.println("attribute id missing in <" + eName + ">");
@@ -238,29 +269,77 @@ debug("startElements", eName);
 	        	geo = Kernel.createGeoElement(cons, eName);        	
 	        	geo.setLoadedLabel(label);	 
     	        subMode = MODE_ELEMENTS;
+    	        cmdName = eName;
                 break;
                 
     		case MODE_ELEMENTS :
+    			String [] tags;
+    			if (cmdName.equals("point")) {
+    				tags = new String[] { "homogeneous_coordinates", "cartesian_coordinates", "polar_coordinates" };
+    			} else {
+    				tags = new String[] { "homogeneous_coordinates" };
+    			}
+    			int i;
+    			for (i = 0; i < tags.length; i++) {
+    				if (eName.equals(tags[i])) {
+    					break;
+    				}
+    			}
+    			if (i >= tags.length) {
+            		System.err.println("unknown tag in <" + geo.getXMLtypeString() + ">: " + eName);
+            		break;
+    			} else if (!(geo instanceof GeoVec3D)) {
+		            System.err.println("wrong element type for coordinates: " + geo.getXMLtypeString());
+		            break;
+		        }
+    			
         		if (eName.equals("homogeneous_coordinates")) {
-    		        if (!(geo instanceof GeoVec3D)) {
-    		            System.err.println("wrong element type for coordinates: " + geo.getXMLtypeString());
-    		            break;
-    		        }
-   		        	subMode = MODE_HOMOGENEOUS_COORDINATES;
-        		} else {
-            		System.err.println("unknown tag in <" + geo.getXMLtypeString() + ">: " + eName);        	
+        			coord = 0;
+    		        coords = new Complex[] { Complex.NaN , Complex.NaN, Complex.NaN };
+        		} else if (eName.equals("cartesian_coordinates") || eName.equals("polar_coordinates")) {
+        			coord = 0;
+    		        coords = new Complex[] { Complex.NaN, Complex.NaN };
         		}
+	        	subMode = MODE_COORDINATES;
+		        cmdName = eName;
         		break;
         		
-    		case MODE_HOMOGENEOUS_COORDINATES :
+    		case MODE_COORDINATES :
         		if (eName.equals("double")) {
-                    subMode = MODE_HOMOGENEOUS_COORDINATES_DOUBLE;
+                    subMode = MODE_COORDINATES_REAL_DOUBLE;
+        		} else if (cmdName.equals("homogeneous_coordinates") && eName.equals("complex")) {
+        			subMode = MODE_COORDINATES_COMPLEX;
         		} else {
-            		System.err.println("unknown tag in <homogeneous_coordinates>: " + eName);        	
+            		System.err.println("unknown tag in <" + cmdName + ">: " + eName);
+            		break;
+        		}
+    			if (coord >= coords.length) {
+    				break;
+    			}
+    			for (coord = 0; coord < coords.length; coord++) {
+    				if (Complex.isNaN(coords[coord])) {
+    					break;
+    				}
+    			}
+    			if (coord >= coords.length) {
+        			String tag = "<double>";
+        			if (cmdName.equals("homogeneous_coordinates")) {
+        				tag = "<double> or <complex>";
+        			}
+    				System.err.println("more than " + coords.length + " " + tag + " specified for <" + cmdName + ">");
+    			}
+        		break;
+
+    		case MODE_COORDINATES_COMPLEX :
+        		if (eName.equals("double")) {
+                    subMode = MODE_COORDINATES_COMPLEX_DOUBLE;
+        		} else {
+            		System.err.println("unknown tag in <complex>: " + eName);
         		}
         		break;
 
-    		case MODE_HOMOGENEOUS_COORDINATES_DOUBLE :
+    		case MODE_COORDINATES_REAL_DOUBLE :
+    		case MODE_COORDINATES_COMPLEX_DOUBLE :
         		System.err.println("unknown tag in <double>: " + eName);        	
         		break;
     	}
@@ -269,22 +348,23 @@ debug("startElements", eName);
     private void textElements(String str) {
 //debug("textElements", str);
     	switch (subMode) {
-    		case MODE_HOMOGENEOUS_COORDINATES_DOUBLE :
+    		case MODE_COORDINATES_REAL_DOUBLE :
+    		case MODE_COORDINATES_COMPLEX_DOUBLE :
 debug("textElements", str);
-    			int i;
-    			for (i = 0; i < coords.length; i++) {
-    				if (Double.isNaN(coords[i])) {
-    					break;
-    				}
-    			}
-    			if (i < coords.length) {
+    			if (coord < coords.length) {
     		        try {
-    		        	coords[i] = Double.parseDouble(str);
+    		        	if (subMode == MODE_COORDINATES_REAL_DOUBLE) {
+    		        		coords[coord] = new Complex(Double.parseDouble(str), 0);
+    		        	} else if (Double.isNaN(coords[coord].getReal())) {
+    		        		coords[coord] = new Complex(Double.parseDouble(str), Double.NaN);
+    		        	} else if (Double.isNaN(coords[coord].getImag())) {
+    		        		coords[coord].setImag(Double.parseDouble(str));
+    		        	} else {
+            				System.err.println("more than 2 <double> specified for <complex>");
+    		        	}
     		        } catch (Exception e) {
     		        	System.err.println("could not parse double: " + str);
     		        }
-    			} else {
-    				System.err.println("more than 3 <double> specified for <homogeneous_coordinates>");
     			}
     			break;
     	}
@@ -294,44 +374,76 @@ debug("textElements", str);
 debug("endElements", eName);
     	switch (subMode) {
     		case MODE_INVALID :
-    			if (eName.equals("elements")) {
-    				mode = MODE_CONSTRUCTION;
-    			} else {
+    			if (!eName.equals("elements")) {
     				System.err.println("invalid closing tag </" + eName + "> instead of </elements>");
     			}
+				mode = MODE_CONSTRUCTION;
     			break;
 
     		case MODE_ELEMENTS :
-    			if (eName.equals(geo.getXMLtypeString())) {
-    				geo = null;
-    				subMode = MODE_INVALID;
-    			} else {
+    			if (!eName.equals(geo.getXMLtypeString())) {
     				System.err.println("invalid closing tag </" + eName + "> instead of </" + geo.getXMLtypeString() + ">");
     			}
+				subMode = MODE_INVALID;
     			break;
     			
-    		case MODE_HOMOGENEOUS_COORDINATES :
-    			if (eName.equals("homogeneous_coordinates")) {
-    				if (Double.isNaN(coords[2])) {
-    					System.err.println("only 2 <double> specified for <" + eName + ">");
-    				}
-    		        coords = new double[] { Double.NaN , Double.NaN, Double.NaN };
-    				subMode = MODE_ELEMENTS;
-    			} else {
-    				System.err.println("invalid closing tag </" + eName + "> instead of </homogeneous_coordinates>");
+    		case MODE_COORDINATES :
+				if (Complex.isNaN(coords[coords.length - 1])) {
+        			String tag = "<double>";
+        			if (cmdName.equals("homogeneous_coordinates")) {
+        				tag = "<double> or <complex>";
+        			}
+					System.err.println("only " + (coords.length - 1) + " " + tag + " specified for <" + eName + ">");
+				} else {
+			        GeoVec3D v = (GeoVec3D) geo;
+					if (coords.length == 3) {
+						if (!coords[2].isReal()) {
+							coords[0] = Complex.over(coords[0], coords[2], new Complex());
+							coords[1] = Complex.over(coords[1], coords[2], new Complex());
+							coords[2] = Complex.over(coords[2], coords[2], new Complex());
+						}
+			            if (coords[0].isReal() && coords[1].isReal() && coords[2].isReal()) {
+							v.setCoords(coords[0].getReal(), coords[1].getReal(), coords[2].getReal());
+			            } else {
+			            	System.err.println("could not import complex coordinates");
+			            }
+			        } else if (coords.length == 2) {
+			        	if (cmdName.equals("cartesian_coordinates")) {
+					            v.setCoords(coords[0].getReal(), coords[1].getReal(), 1);
+			        	} else if (cmdName.equals("polar_coordinates")) {
+					            v.setCoords(coords[0].getReal() * Math.cos( coords[1].getReal() ), coords[0].getReal() * Math.sin( coords[1].getReal() ), 1);
+					            v.setPolar();
+			        	}
+			        }
+				}
+    			if (!eName.equals(cmdName)) {
+    				System.err.println("invalid closing tag </" + eName + "> instead of </" + cmdName + ">");
     			}
+				subMode = MODE_ELEMENTS;
     			break;
     			
-    		case MODE_HOMOGENEOUS_COORDINATES_DOUBLE :
-    			if (eName.equals("double")) {
-    				if (!Double.isNaN(coords[2])) {
-        		        GeoVec3D v = (GeoVec3D) geo;
-       		            v.setCoords(coords[0], coords[1], coords[2]);
-    		        }
-    				subMode = MODE_HOMOGENEOUS_COORDINATES;
-    			} else {
+    		case MODE_COORDINATES_COMPLEX :
+				if (coord < coords.length && Complex.isNaN(coords[coord])) {
+					if (Double.isNaN(coords[coord].getReal())) {
+						coords[coord] = new Complex();
+    					System.err.println("no <double> specified for <complex>");
+					} else if (Double.isNaN(coords[coord].getImag())) {
+						coords[coord].setImag(0);
+    					System.err.println("only 1 <double> specified for <complex>");
+					}
+				}
+    			if (!eName.equals("complex")) {
+    				System.err.println("invalid closing tag </" + eName + "> instead of </complex>");
+    			}
+    			subMode = MODE_COORDINATES;
+    			break;
+    			
+    		case MODE_COORDINATES_REAL_DOUBLE :
+    		case MODE_COORDINATES_COMPLEX_DOUBLE :
+    			if (!eName.equals("double")) {
     				System.err.println("invalid closing tag </" + eName + "> instead of </double>");
     			}
+    			subMode = subMode - 1;
     			break;
     	}
     }
@@ -345,7 +457,16 @@ debug("startConstraints", eName);
     		case MODE_INVALID :
     			String name;
 
-    			if (eName.equals("line_parallel_to_line_through_point")) {
+    			if (eName.startsWith("free_")) {
+    				name = "Free";
+    				subMode = MODE_FREE;
+    			} else if (eName.equals("angular_bisector_of_three_points")) {
+        			name = "AngularBisector";
+        			subMode = MODE_ANGULAR_BISECTOR_OF_THREE_POINTS;
+    			} else if (eName.equals("angular_bisectors_of_two_lines")) {
+        			name = "AngularBisector";
+        			subMode = MODE_ANGULAR_BISECTORS_OF_TWO_LINES;
+    			} else if (eName.equals("line_parallel_to_line_through_point")) {
         			name = "OrthogonalLine";
         			subMode = MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT;
     			} else if (eName.equals("line_perpendicular_to_line_through_point")) {
@@ -354,9 +475,12 @@ debug("startConstraints", eName);
     			} else if (eName.equals("line_through_two_points")) {
         			name = "Line";
         			subMode = MODE_LINE_THROUGH_TWO_POINTS;
-    			} else if (eName.equals("point_intersection_of_lines")) {
+    			} else if (eName.equals("point_intersection_of_two_lines")) {
     				name = "Intersect";
-    				subMode = MODE_POINT_INTERSECTION_OF_LINES;
+    				subMode = MODE_POINT_INTERSECTION_OF_TWO_LINES;
+    			} else if (eName.equals("point_on_line")) {
+    				name = "Point";
+    				subMode = MODE_POINT_ON_LINE;
         		} else {
             		System.err.println("unknown tag in <constraints>: " + eName);        	
             		break;
@@ -364,6 +488,18 @@ debug("startConstraints", eName);
 
     			cmd = new Command(kernel, name, false); // do not translate name
     			cmdName = eName;
+    			break;
+    			
+    		case MODE_FREE :
+				handleConstraintsStart(eName, attrs, cmdName.substring(5), 1, new String[] {}, new int[] {});
+    			break;
+    			    			
+    		case MODE_ANGULAR_BISECTOR_OF_THREE_POINTS :
+    			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "point" }, new int[] { 3 });
+    			break;
+    			
+    		case MODE_ANGULAR_BISECTORS_OF_TWO_LINES :
+    			handleConstraintsStart(eName, attrs, "line", 2, new String[] { "line" }, new int[] { 2 });
     			break;
     			
     		case MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT :
@@ -378,8 +514,12 @@ debug("startConstraints", eName);
     			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "point" }, new int[] { 2 });
     			break;
     			
-    		case MODE_POINT_INTERSECTION_OF_LINES :
+    		case MODE_POINT_INTERSECTION_OF_TWO_LINES :
     			handleConstraintsStart(eName, attrs, "point", 1, new String[] { "line" }, new int[] { 2 });
+    			break;
+
+    		case MODE_POINT_ON_LINE :
+    			handleConstraintsStart(eName, attrs, "point", 1, new String[] { "line" }, new int[] { 1 });
     			break;
 
     		default:
@@ -393,7 +533,6 @@ debug("startConstraints", eName);
 debug("textConstraints", str);
 			// subMode == xxx_OUTPUT || subMode == xxx_INPUT
     		label = str;
-    		return;
     	}
     }
     
@@ -401,22 +540,37 @@ debug("textConstraints", str);
 debug("endConstraints", eName);
 		switch (subMode) {
 			case MODE_INVALID :
-    			if (eName.equals("constraints")) {
-    				mode = MODE_CONSTRUCTION;
-    			} else {
+    			if (!eName.equals("constraints")) {
     				System.err.println("invalid closing tag </" + eName + "> instead of </constraints>");
     			}
+				mode = MODE_CONSTRUCTION;
     			break;
+				
+			case MODE_FREE :
+				handleConstraintsEnd(eName, 1, 0);
+				break;
+				
+			case MODE_POINT_ON_LINE :
+				handleConstraintsEnd(eName, 1, 1);
+				break;
 				
 			case MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT :
 			case MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT :
 			case MODE_LINE_THROUGH_TWO_POINTS :
-			case MODE_POINT_INTERSECTION_OF_LINES :
+			case MODE_POINT_INTERSECTION_OF_TWO_LINES :
 				handleConstraintsEnd(eName, 1, 2);
 				break;
 				
+			case MODE_ANGULAR_BISECTOR_OF_THREE_POINTS :
+				handleConstraintsEnd(eName, 1, 3);
+				break;
+				
+			case MODE_ANGULAR_BISECTORS_OF_TWO_LINES :
+				handleConstraintsEnd(eName, 2, 2);
+				break;
+				
 			default:
-				if (subMode > MODE_CONSTRAINTS) {
+				if (subMode > MODE_CONSTRAINTS && subMode < MODE_DISPLAY) {
 					switch (subMode % 10) {
 						case 1 :
 							// subMode == xxx_OUTPUT
@@ -429,21 +583,22 @@ debug("endConstraints", eName);
 							break;
 							
 						default:
-				    		System.err.println("call of handleConstraints with invalid arguments :-(");
+				    		System.err.println("unknown subMode, this should never happen! :-(");
 					}
 				}
 		}
     }
     
     private void handleConstraintsStart(String eName, LinkedHashMap attrs, String outputType, int outputQuantity, String[] inputType, int[] inputQuantity) {
-    	// test can be removed in final version
-    	if (inputType.length < 1 || inputQuantity.length < 1 || inputType.length != inputQuantity.length) {
-    		System.err.println("call of handleConstraintsStart with invalid arguments :-(");
+    	if (inputType.length != inputQuantity.length) {
+    		System.err.println("call of handleConstraintsStart with invalid arguments, this should never happen :-(");
     		return;
     	}
     	
+    	label = null;
+    	
     	if (eName.equals(outputType)) {
-    		if (outputType.equals(inputType[0])) {
+    		if (inputType.length > 0 && outputType.equals(inputType[0])) {
     			if ("true".equals((String) attrs.get("out"))) {
     				if (cmd.labelCount() >= outputQuantity) {
         				System.err.println("more than " + outputQuantity + " <" + eName + " out=\"true\"> specified for <" + cmdName + ">");
@@ -502,27 +657,33 @@ debug("endConstraints", eName);
     }
     
     private void handleConstraintsEnd(String eName, int outputQuantity, int inputQuantity) {
-		if (eName.equals(cmdName)) {
-			if (cmd.labelCount() < outputQuantity) {
-				System.err.println("not enough output elements specified for <" + cmdName + ">");
-				return;
+    	boolean error = false;
+		
+		if (cmd.labelCount() < outputQuantity) {
+			error = true;
+			System.err.println("not enough output elements specified for <" + cmdName + ">");
+		} else if (cmd.labelCount() > outputQuantity) {
+			error = true;
+			System.err.println("too many output elements specified for <" + cmdName + ">");
+		}
+		if (cmd.getArgumentNumber() < inputQuantity) {
+			error = true;
+			System.err.println("not enough input elements specified for <" + cmdName + ">");
+		} else if (cmd.getArgumentNumber() > inputQuantity) {
+			error = true;
+			System.err.println("too many input elements specified for <" + cmdName + ">");
+		}
+		
+		if (error) {
+			// do not process the command, the number of input/output arguments does not match
+		} else if (cmd.getName().equals("Free")) {
+			if (label != null) {
+				GeoElement geo = cons.lookupLabel(label);
+				if (!geo.isIndependent() && !geo.isPointOnPath()) {
+					System.err.println(lastType + " " + label + " is not free");
+				}
 			}
-			if (cmd.labelCount() > outputQuantity) {
-				System.err.println("too many output elements specified for <" + cmdName + ">");
-				return;
-			}
-			if (cmd.getArgumentNumber() < inputQuantity) {
-				System.err.println("not enough input elements specified for <" + cmdName + ">");
-				return;
-			}
-			if (cmd.getArgumentNumber() > inputQuantity) {
-				System.err.println("too many input elements specified for <" + cmdName + ">");
-				return;
-			}
-			
-			subMode = MODE_INVALID;
-			lastType = "";
-			
+		} else {
 			String [] labels = cmd.getLabels();
 			GeoElement [] loadedGeo = new GeoElement[labels.length];
 			for (int i = 0; i < labels.length; i++) {
@@ -537,14 +698,17 @@ debug("endConstraints", eName);
 				outputGeo[i].setLoadedLabel(labels[i]);
 				outputGeo[i].set(loadedGeo[i]);
 			}
-		} else {
+		}
+		
+		if (!eName.equals(cmdName)) {
 			System.err.println("invalid closing tag </" + eName + "> instead of </" + cmdName + ">");
 		}
+		subMode = MODE_INVALID;
     }
     
     private void handleConstraintsOutput(String eName) {
 		if (handleConstraintsOutputInput(eName, subMode - 1)) {
-            cmd.addLabel(label);
+			cmd.addLabel(label);
 		}
     }
     
@@ -555,24 +719,120 @@ debug("endConstraints", eName);
     }
     
     private boolean handleConstraintsOutputInput(String eName, int newMode) {
-		if (eName.equals(lastType)) {
-	        geo = cons.lookupLabel(label);
-	        if (geo == null) {        
-	        	System.err.println("an element with id \"" + label + "\" does not exist");
-	        	return false;
-	        }
-	        if (!geo.getXMLtypeString().equals(lastType)) {
-	        	System.err.println("the element with id \"" + label + "\" is not a " + lastType);
-	        	return false;
-	        }
-	        subMode = newMode;
-		} else {
+    	boolean ok = true;
+    	
+    	if (label == null) {
+    		ok = false;
+    		System.err.println("no id specified for " + lastType);
+    	} else {
+            geo = cons.lookupLabel(label);
+            if (geo == null) {
+            	ok = false;
+            	System.err.println("an element with id \"" + label + "\" does not exist");
+            } else if (!geo.getXMLtypeString().equals(lastType)) {
+            	ok = false;
+            	System.err.println("the element with id \"" + label + "\" is not a " + lastType);
+            }
+    	}
+		if (!eName.equals(lastType)) {
+			ok = false;
 			System.err.println("invalid closing tag </" + eName + "> instead of </" + lastType + ">");
-			return false;
 		}
-        return true;
+        subMode = newMode;
+        return ok;
     }
 
+    //====================================
+    // <display>    
+    //====================================
+    private void startDisplay(String eName, LinkedHashMap attrs) {
+debug("startDisplay", eName);
+		switch (subMode) {
+			case MODE_INVALID :
+    			// TODO -> extend to further objects
+    			if (!eName.equals("point") && !eName.equals("line")) {
+            		System.err.println("unknown tag in <elements>: " + eName);
+            		break;
+    			}
+    			
+    	        String label = (String) attrs.get("id");
+    	        if (label == null) {
+    	            System.err.println("attribute id missing in <" + eName + ">");
+    	            break;
+    	        }
+    	        
+    	        // does a geo element with this label exist?
+    	        geo = cons.lookupLabel(label);
+    	        if (geo == null) {        
+    	        	System.err.println("an element with id \"" + label + "\" does not exist");
+    	        	break;
+    	        }
+    	        
+    			subMode = MODE_DISPLAY;
+    			cmdName = eName;
+				break;
+				
+			case MODE_DISPLAY :
+				if (eName.equals("label")) {
+					label = null;
+					subMode = MODE_LABEL;
+				} else {
+            		System.err.println("unknown tag in <" + cmdName + ">: " + eName);
+				}
+				break;
+				
+			case MODE_LABEL :
+        		System.err.println("unknown tag in <label>: " + eName);        	
+        		break;
+		}
+    }
+    
+    private void textDisplay(String str) {
+//debug("textElements", str);
+    	switch (subMode) {
+    		case MODE_LABEL :
+debug("textElements", str);
+				label = str;
+    			break;
+    	}
+    }
+    
+    private void endDisplay(String eName) {
+debug("endDisplay", eName);
+		switch (subMode) {
+			case MODE_INVALID :
+				if (!eName.equals("display")) {
+					System.err.println("invalid closing tag </" + eName + "> instead of </display>");
+				}
+				mode = MODE_CONSTRUCTION;
+				break;
+			
+			case MODE_DISPLAY :
+    			if (!eName.equals(cmdName)) {
+    				System.err.println("invalid closing tag </" + eName + "> instead of </" + cmdName + ">");
+    			}
+		        subMode = MODE_INVALID;
+				break;
+				
+			case MODE_LABEL :
+				if (label == null) {
+		    		System.err.println("no label specified for " + geo.getXMLtypeString());
+				} else {
+    		    	try {        	
+    		        	geo.setCaption(label);
+    		        	geo.setLabelMode(GeoElement.LABEL_CAPTION);
+    		        } catch (Exception e) {
+    		        	System.err.println("could not set label " + label + " for " + geo.getXMLtypeString());
+    		        }	
+				}
+    			if (!eName.equals("label")) {
+    				System.err.println("invalid closing tag </" + eName + "> instead of </label>");
+    			}
+		        subMode = MODE_DISPLAY;
+				break;
+		}
+    }
+    
     //====================================
     // debugging    
     //====================================
@@ -587,16 +847,16 @@ debug("endConstraints", eName);
         	}
         	System.out.print(" : ");
         	if (mode == MODE_INVALID) {
-        		System.out.print(" ");
-        	} else if (mode == MODE_CONSTRUCTION) {
         		System.out.print("  ");
+        	} else if (mode == MODE_CONSTRUCTION) {
+        		System.out.print("   ");
         	}
         	System.out.print(mode);
         	System.out.print(" : ");
         	if (subMode == MODE_INVALID) {
-        		System.out.print(" ");
-        	} else if (subMode == MODE_CONSTRUCTION) {
         		System.out.print("  ");
+        	} else if (subMode == MODE_CONSTRUCTION) {
+        		System.out.print("   ");
         	}
         	System.out.print(subMode);
         	if (!"".equals(eName)) {

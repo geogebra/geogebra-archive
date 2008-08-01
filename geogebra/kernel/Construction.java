@@ -40,6 +40,13 @@ import java.util.TreeSet;
  */
 public class Construction {		
     
+	// Added for Intergeo File Format (Yves Kreis) -->
+	// writes the <elements> and the <constraints> part
+    public static final int CONSTRUCTION = 0;
+    // writes the <display> part with the <display> tag
+    public static final int DISPLAY = 1;
+	// <-- Added for Intergeo File Format (Yves Kreis)
+	
     private String title, author, date;
     // text for dynamic worksheets: 0 .. above, 1 .. below
     private String [] worksheetText = new String[2];
@@ -972,14 +979,14 @@ public class Construction {
     }
     
     /**
-     * Returns this construction in XML format.
+     * Returns this construction in I2G format.
      * Intergeo File Format. (Yves Kreis)
      */
-    public String getI2G() {    	       	
+    public String getI2G(int mode) {    	       	
         StringBuffer sb = new StringBuffer();
 
-        // construction XML
-        sb.append(getConstructionI2G());        
+        // construction I2G
+        sb.append(getConstructionI2G(mode));        
                          
         return sb.toString();
     }
@@ -1039,10 +1046,10 @@ public class Construction {
     }
 
     /**
-     * Returns this construction in XML format.
+     * Returns this construction in I2G format.
      * Intergeo File Format. (Yves Kreis)
      */
-    public String getConstructionI2G() {
+    public String getConstructionI2G(int mode) {
     	StringBuffer sb = new StringBuffer(500);
     	
     	// change kernel settings temporarily
@@ -1054,26 +1061,29 @@ public class Construction {
         kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         
         try {
-        	sb.append("<construction>\n");
-	        
 	        ConstructionElement ce;
 	        int size = ceList.size();
 
-	        sb.append("\t<elements>\n");
-	        for (int i = 0; i < size; ++i) {
-	            ce = (ConstructionElement) ceList.get(i);
-	            sb.append(ce.getI2Gelement());
-	        }       
-	        sb.append("\t</elements>\n");
-	        
-	        sb.append("\t<constraints>\n");
-	        for (int i = 0; i < size; ++i) {
-	            ce = (ConstructionElement) ceList.get(i);
-	            sb.append(ce.getI2Gconstraint());
-	        }       
-	        sb.append("\t</constraints>\n");
-	        
-	        sb.append("</construction>\n");	        
+	        if (mode == CONSTRUCTION) {
+		        sb.append("\t<elements>\n");
+		        for (int i = 0; i < size; ++i) {
+		            ce = (ConstructionElement) ceList.get(i);
+		            sb.append(ce.getI2G(ConstructionElement.ELEMENTS));
+		        }       
+		        sb.append("\t</elements>\n");
+		        
+		        sb.append("\t<constraints>\n");
+		        for (int i = 0; i < size; ++i) {
+		            ce = (ConstructionElement) ceList.get(i);
+		            sb.append(ce.getI2G(ConstructionElement.CONSTRAINTS));
+		        }       
+		        sb.append("\t</constraints>\n");
+	        } else if (mode == DISPLAY){
+		        for (int i = 0; i < size; ++i) {
+		            ce = (ConstructionElement) ceList.get(i);
+		            sb.append(ce.getI2G(ConstructionElement.DISPLAY));
+		        }       
+	        }
         } catch (Exception e) {
 	        e.printStackTrace();
 	    }  

@@ -44,6 +44,9 @@ final public class Complex{
 	// SOME USEFUL NUMBERS
 	public static final Complex plusJay = new Complex(0, 1);
 	public static final Complex minusJay = new Complex(0, -1);
+	// Added for Intergeo File Format (Yves Kreis) -->
+	public static final Complex NaN = new Complex(Double.NaN, Double.NaN);
+	// <-- Added for Intergeo File Format (Yves Kreis)
 
 /*********************************************************/
 
@@ -443,5 +446,12 @@ final public class Complex{
         public static Complex zero() {
         	return new Complex();
         }
+        
+        // Returns true if the Complex number is set to Double.NaN (i.e. its real OR imaginary part)
+    	// Added for Intergeo File Format (Yves Kreis) -->
+        public static boolean isNaN(Complex c) {
+        	return (Double.isNaN(c.real) || Double.isNaN(c.imag));
+        }
+    	// <-- Added for Intergeo File Format (Yves Kreis)
       
 }

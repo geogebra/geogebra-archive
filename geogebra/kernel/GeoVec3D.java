@@ -298,7 +298,7 @@ implements Traceable {
     }
 
     /**
-     * returns all class-specific xml tags for saveXML
+     * returns all class-specific i2g tags for saveI2G
      * Intergeo File Format (Yves Kreis)
      */
     protected String getI2Gtags() {
