@@ -1,4 +1,4 @@
-GeoGebra - Dynamic Mathematics for Schools
+GeoGebra - Dynamic Mathematics for Everyone
 Copyright 2001-2008 GeoGebra Inc.
 http://www.geogebra.org/
   
@@ -8,13 +8,13 @@ LICENSE
   (see conditions and details below).  
 
 DEVELOPERS
-  * Markus Hohenwarter, (Boca Raton, USA): project leader since 2001
-  * Yves Kreis (Luxembourg): since 2005
-  * Michael Borcherds (Birmingham, UK): since 2007
+  * Markus Hohenwarter (Austria & USA): Project leader, since 2001
+  * Michael Borcherds (UK): Chief developer, since 2007
+  * Yves Kreis (Luxembourg): Developer, since 2005
 
-Contributions by Loïc Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco,
+Contributions by Loic Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco, 
   Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
-  Amy Varkey (Boca Raton, USA 2007); Cong Liu, Quan Yuan (Boca Raton, USA 2008);
+  Amy Varkey (Boca Raton, USA 2007); Cong Liu, Quan Yuan (Boca Raton, USA 2008);  
   Hans-Petter Ulven (Norway 2008); Florian Sonner (Germany 2008)
   
 TRANSLATIONS
@@ -27,7 +27,7 @@ TRANSLATIONS
   * Chinese (Simplified): Chen Xing (China)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
-  * Danish: Steen Groðe (Denmark)
+  * Danish: Steen Grode (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
   * English: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg),
       Michael Borcherds (Great Britain)
@@ -43,11 +43,11 @@ TRANSLATIONS
   * Italian: Enrico Pontorno, Alessandra Tomasi, Palmira Ronchi, Simona Riva (Italy)
   * Japanese: Akihito Wachi (Japan)
   * Macedonian: Linda Fahlberg-Stojanovska (FYR Macedonia)
-  * Norwegian: Sigbjørn Hals (Norway)
+  * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya (Iran)
   * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
-      Luciana de Lima, Araújo Freitas, Alana Souza de Olivieira (Brazil)
+      Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes, António Ribeiro (Portugal)
   * Russian: Anatoly Scherbakov (Russia)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
@@ -64,7 +64,7 @@ GRANTS
   * University of Luxembourg
      01/2007 to 12/2009: GeoGebra for Primary School 
   * US National Science Foundation
-     08/2006 to 07/2009: 2 Supplements for http://smgem.mspnet.org  
+     08/2006 to 07/2009: Supplements for http://smgem.mspnet.org  
   * Austrian Federal Ministry for Education, Science and Culture
      01/2006 to 12/2007: GeoGebra for Austrian Schools
   * Austrian Academy of Sciences
