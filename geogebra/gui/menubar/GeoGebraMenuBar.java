@@ -46,11 +46,15 @@ public class GeoGebraMenuBar extends MenubarImpl implements Menubar, ActionListe
 			}
 			;
 		}
-
+		
 		// decimal places
 		else if (cmd.endsWith("decimals")) {
 			try {
-				kernel.setPrintDecimals(Integer.parseInt(cmd.substring(0, 1)));
+				String decStr = cmd.substring(0,2).trim();							
+				int decimals = Integer.parseInt(decStr);
+				app.debug("decimals " + decimals);
+				
+				kernel.setPrintDecimals(decimals);
 				kernel.updateConstruction();
 				app.setUnsaved();
 			} catch (Exception e) {

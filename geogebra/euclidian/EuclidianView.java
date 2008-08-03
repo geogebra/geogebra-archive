@@ -1256,6 +1256,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 	}
 
 	final public void paint(Graphics g) {
+		if (!kernel.isNotifyRepaintActive()) 
+			return;
+		
 		Graphics2D g2 = (Graphics2D) g;
 
 		g2.setRenderingHints(defRenderingHints);

@@ -403,9 +403,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// decimal places
 		menuDecimalPlaces = new JMenu(app.getMenu("DecimalPlaces"));
 		menuDecimalPlaces.setIcon(app.getEmptyIcon());
-		String[] strDecimalSpaces = { "0", "1", "2", "3", "4", "5" };
-		String[] strDecimalSpacesAC = { "0 decimals", "1 decimals",
-				"2 decimals", "3 decimals", "4 decimals", "5 decimals" };
+		int max_dec = 15;
+		String[] strDecimalSpaces = new String[max_dec + 1];
+		String[] strDecimalSpacesAC = new String[max_dec + 1];
+		for (int i=0; i <= max_dec; i++){ 
+			strDecimalSpaces[i] = Integer.toString(i);
+			strDecimalSpacesAC[i] = i + " decimals";
+		}
 		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this, strDecimalSpaces,
 				strDecimalSpacesAC, 0);
 		menu.add(menuDecimalPlaces);
@@ -610,79 +614,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		add(menu);
 		
 		updateMenubar();
-	}
-
-	/***************************************************************************
-	 * ActionListener
-	 **************************************************************************/
-
-	public void actionPerformed(ActionEvent event) {
-		String cmd = event.getActionCommand();
-		
-		// change angle unit
-		if (cmd.equals("Degree")) {
-			kernel.setAngleUnit(Kernel.ANGLE_DEGREE);
-			kernel.updateConstruction();
-			app.setUnsaved();
-		} else if (cmd.equals("Radiant")) {
-			kernel.setAngleUnit(Kernel.ANGLE_RADIANT);
-			kernel.updateConstruction();
-			app.setUnsaved();
-		}
-
-		// change graphics quality
-		else if (cmd.equals("LowQuality")) {
-			app.getEuclidianView().setAntialiasing(false);
-		} else if (cmd.equals("HighQuality")) {
-			app.getEuclidianView().setAntialiasing(true);
-		}
-
-		// font size
-		else if (cmd.endsWith("pt")) {
-			try {
-				app.setFontSize(Integer.parseInt(cmd.substring(0, 2)));
-				app.setUnsaved();
-				System.gc();
-			} catch (Exception e) {
-				app.showError(e.toString());
-			}
-			;
-		}
-
-		// decimal places
-		else if (cmd.endsWith("decimals")) {
-			try {
-				kernel.setPrintDecimals(Integer.parseInt(cmd.substring(0, 1)));
-				kernel.updateConstruction();
-				app.setUnsaved();
-			} catch (Exception e) {
-				app.showError(e.toString());
-			}			
-		}
-
-		// Point capturing
-		else if (cmd.endsWith("PointCapturing")) {
-			int mode = Integer.parseInt(cmd.substring(0, 1));
-			app.getEuclidianView().setPointCapturing(mode);
-			app.setUnsaved();
-		}
-
-		// Continuity
-		else if (cmd.endsWith("Continuity")) {
-			boolean state = cmd.startsWith("true");
-			kernel.setContinuous(state);
-			kernel.updateConstruction();
-			app.setUnsaved();
-		}
-		
-		
-		// Labeling
-		else if (cmd.endsWith("labeling")) {
-			int style = Integer.parseInt(cmd.substring(0, 1));
-			app.setLabelingStyle(style);
-			app.setUnsaved();
-		}
-
 	}
 
 	protected void initActions() {				

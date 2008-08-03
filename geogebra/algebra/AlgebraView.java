@@ -207,10 +207,13 @@ public class AlgebraView extends JTree implements View {
 	}
 	
 	final public void paint(Graphics g) { 	 
-		// draw a cross in the upper right corner 
-		// to close the algebra view
+		if (!kernel.isNotifyRepaintActive()) 
+			return;
+				
 		super.paint(g);
 				
+		// draw a cross in the upper right corner 
+		// to close the algebra view
 		if (!app.isApplet())
 			drawClosingCross((Graphics2D) g);
 	}		

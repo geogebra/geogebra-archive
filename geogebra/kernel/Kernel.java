@@ -850,7 +850,7 @@ public class Kernel {
 	public boolean isNotifyViewsActive() {
 		return notifyViewsActive && !viewReiniting;
 	}
-	
+		
 	private boolean notifyRepaint = true;
 		
 	public void setNotifyRepaintActive(boolean flag) {
@@ -861,7 +861,7 @@ public class Kernel {
 		}
 	}
 		
-	public boolean isNotifyRepaintActive() {
+	final public boolean isNotifyRepaintActive() {
 		return notifyRepaint;
 	}
 	

@@ -715,7 +715,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 */
 	public synchronized void setRepaintingActive(boolean flag) {		
 		//System.out.println("set repainting: " + flag);
-		kernel.setNotifyRepaintActive(flag);
+		ggbApi.setRepaintingActive(flag);
 	}	
 	
 

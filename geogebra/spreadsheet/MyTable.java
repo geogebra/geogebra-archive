@@ -184,8 +184,7 @@ public class MyTable extends JTable
 			}
 		}
 		kernel.getApplication().setSelectedGeos(list);
-		kernel.getApplication().getAlgebraView().repaintView();
-		kernel.getApplication().getEuclidianView().repaintView();
+		//kernel.notifyRepaint();
 	}
 	
 	protected Point getPixel(int column, int row, boolean min) {
