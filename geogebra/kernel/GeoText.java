@@ -18,7 +18,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	private String str; 	
 	private GeoPoint startPoint; // location of Text on screen
 	private boolean isLaTeX; // text is a LaTeX formula
-	
+	private boolean removeLinefeedsNextTime = false; // remove linefeeds when loading old files	
 	// corners of the text Michael Borcherds 2007-11-26, see AlgoTextCorner
 	private Rectangle2D boundingBox; 
 	private boolean needsUpdatedBoundingBox = false;
@@ -59,7 +59,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	public void set(GeoElement geo) {
 		GeoText gt = (GeoText) geo;
 		str = gt.str;
-						
+
 		// macro output: don't set start point
 		if (cons != geo.cons && isAlgoMacroOutput()) 
 			return;
@@ -105,6 +105,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		} else {
 			str = text;
 		}		
+		
+		if (removeLinefeedsNextTime) 
+		{
+			str = str.replaceAll("[\r\n]", "");
+			removeLinefeedsNextTime = false;
+		}
 	}
 	
 	final public String getTextString() {
@@ -399,7 +405,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		if (geo instanceof GeoText) {
 			GeoText text = (GeoText) geo;									
 			setSameLocation(text);
-			setLaTeX(text.isLaTeX, true);
+			setLaTeX(text.isLaTeX, true, false);
 		}		
 	}	
 	
@@ -422,8 +428,16 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		return isLaTeX;
 	}
 
-	public void setLaTeX(boolean b, boolean updateParentAlgo) {
+	public void setLaTeX(boolean b, boolean updateParentAlgo, boolean removeLineFeeds) {
 		isLaTeX = b;
+		
+		// remove linefeeds if from an older file format as they are now recognised as linefeeds
+		// and we want old files to display as they used to
+		if (isLaTeX && removeLineFeeds)
+		{
+			str = str.replaceAll("[\r\n]", ""); // doesn't seem to do anything
+			removeLinefeedsNextTime = true;		// so we need this too
+		}
 
 		if (updateParentAlgo) {
 			updateCascadeParentAlgo();

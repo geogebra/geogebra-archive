@@ -213,7 +213,7 @@ public class TextInputDialog extends InputDialog {
 					setVisible(!finished);
 				} else {		
 					// text input field embedded in properties window
-					text.setLaTeX(isLaTeX, true);
+					text.setLaTeX(isLaTeX, true, false);
 					setGeoText(text);
 				}
 			} 
@@ -364,7 +364,7 @@ public class TextInputDialog extends InputDialog {
                 	kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
                 if (ret != null && ret[0].isTextValue()) {
                     GeoText t = (GeoText) ret[0];
-                    t.setLaTeX(isLaTeX, true);                 
+                    t.setLaTeX(isLaTeX, true, false);                 
                     
                     if (startPoint.isLabelSet()) {
                     	  try { t.setStartPoint(startPoint); }catch(Exception e){};                          
@@ -387,7 +387,7 @@ public class TextInputDialog extends InputDialog {
                     
             // change existing text
             try {           
-                text.setLaTeX(isLaTeX, true);
+                text.setLaTeX(isLaTeX, true, false);
                 GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
                 
                 app.doAfterRedefine(newText);
