@@ -140,7 +140,7 @@ TOKEN :  {
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
-  | < COMPLEXMULTIPLY: ("\u2297") >
+  | < COMPLEXMULTIPLY: "\u2297" >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
@@ -296,7 +296,7 @@ ValidExpression buildValidExpression() :
      (  
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
-//    |            
+    |            
         LOOKAHEAD(2147483647)
          [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      
      | 

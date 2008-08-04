@@ -29,7 +29,7 @@ TRANSLATIONS
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
   * Danish: Steen Grode (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat (Belgium)
-  * English: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg),
+  * English: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg),
       Michael Borcherds (Great Britain)
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
