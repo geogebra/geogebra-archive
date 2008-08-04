@@ -21,64 +21,68 @@ public interface ParserConstants {
   int PLUS = 19;
   int MINUS = 20;
   int MULTIPLY = 21;
-  int DIVIDE = 22;
-  int POWER = 23;
-  int FACTORIAL = 24;
-  int UNDEFINED = 25;
-  int SQUARED = 26;
-  int CUBED = 27;
-  int POWER4 = 28;
-  int POWER5 = 29;
-  int POWER6 = 30;
-  int PI = 31;
-  int E = 32;
-  int DEGREE = 33;
-  int INFINITY = 34;
-  int RAD = 35;
-  int DERIVATIVE = 36;
-  int TRUE = 37;
-  int FALSE = 38;
-  int VARX = 39;
-  int VARY = 40;
-  int PARAMETRICVAR = 41;
-  int FLOAT = 42;
-  int EFLOAT = 43;
-  int INTEGER = 44;
-  int DIGIT = 45;
-  int SPREADSHEET_LABEL = 46;
-  int LABEL = 47;
-  int INDEX = 48;
-  int LETTER = 49;
-  int X_FUNC = 50;
-  int Y_FUNC = 51;
-  int COS_FUNC = 52;
-  int SIN_FUNC = 53;
-  int TAN_FUNC = 54;
-  int ACOS_FUNC = 55;
-  int ASIN_FUNC = 56;
-  int ATAN_FUNC = 57;
-  int COSH_FUNC = 58;
-  int SINH_FUNC = 59;
-  int TANH_FUNC = 60;
-  int ACOSH_FUNC = 61;
-  int ASINH_FUNC = 62;
-  int ATANH_FUNC = 63;
-  int EXP_FUNC = 64;
-  int LOG_FUNC = 65;
-  int LD_FUNC = 66;
-  int LG_FUNC = 67;
-  int SQRT_FUNC = 68;
-  int CBRT_FUNC = 69;
-  int ABS_FUNC = 70;
-  int SGN_FUNC = 71;
-  int FLOOR_FUNC = 72;
-  int CEIL_FUNC = 73;
-  int ROUND_FUNC = 74;
-  int GAMMA_FUNC = 75;
-  int RANDOM_FUNC = 76;
-  int FUNCTION_LABEL = 77;
-  int TEXT = 78;
-  int CHAR = 79;
+  int COMPLEXMULTIPLY = 22;
+  int DIVIDE = 23;
+  int POWER = 24;
+  int FACTORIAL = 25;
+  int UNDEFINED = 26;
+  int SQUARED = 27;
+  int CUBED = 28;
+  int POWER4 = 29;
+  int POWER5 = 30;
+  int POWER6 = 31;
+  int POWER7 = 32;
+  int POWER8 = 33;
+  int POWER9 = 34;
+  int PI = 35;
+  int E = 36;
+  int DEGREE = 37;
+  int INFINITY = 38;
+  int RAD = 39;
+  int DERIVATIVE = 40;
+  int TRUE = 41;
+  int FALSE = 42;
+  int VARX = 43;
+  int VARY = 44;
+  int PARAMETRICVAR = 45;
+  int FLOAT = 46;
+  int EFLOAT = 47;
+  int INTEGER = 48;
+  int DIGIT = 49;
+  int SPREADSHEET_LABEL = 50;
+  int LABEL = 51;
+  int INDEX = 52;
+  int LETTER = 53;
+  int X_FUNC = 54;
+  int Y_FUNC = 55;
+  int COS_FUNC = 56;
+  int SIN_FUNC = 57;
+  int TAN_FUNC = 58;
+  int ACOS_FUNC = 59;
+  int ASIN_FUNC = 60;
+  int ATAN_FUNC = 61;
+  int COSH_FUNC = 62;
+  int SINH_FUNC = 63;
+  int TANH_FUNC = 64;
+  int ACOSH_FUNC = 65;
+  int ASINH_FUNC = 66;
+  int ATANH_FUNC = 67;
+  int EXP_FUNC = 68;
+  int LOG_FUNC = 69;
+  int LD_FUNC = 70;
+  int LG_FUNC = 71;
+  int SQRT_FUNC = 72;
+  int CBRT_FUNC = 73;
+  int ABS_FUNC = 74;
+  int SGN_FUNC = 75;
+  int FLOOR_FUNC = 76;
+  int CEIL_FUNC = 77;
+  int ROUND_FUNC = 78;
+  int GAMMA_FUNC = 79;
+  int RANDOM_FUNC = 80;
+  int FUNCTION_LABEL = 81;
+  int TEXT = 82;
+  int CHAR = 83;
 
   int DEFAULT = 0;
 
@@ -105,6 +109,7 @@ public interface ParserConstants {
     "\"+\"",
     "<MINUS>",
     "<MULTIPLY>",
+    "\"\\u2297\"",
     "\"/\"",
     "\"^\"",
     "\"!\"",
@@ -114,6 +119,9 @@ public interface ParserConstants {
     "\"\\u2074\"",
     "\"\\u2075\"",
     "\"\\u2076\"",
+    "\"\\u2077\"",
+    "\"\\u2078\"",
+    "\"\\u2079\"",
     "<PI>",
     "\"\\u212f\"",
     "\"\\u00b0\"",

@@ -140,6 +140,7 @@ TOKEN :  {
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
+  | < COMPLEXMULTIPLY: ("\u2297") >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
@@ -149,6 +150,9 @@ TOKEN :  {
   | < POWER4:   "\u2074" >
   | < POWER5:   "\u2075" >
   | < POWER6:   "\u2076" >
+  | < POWER7:   "\u2077" >
+  | < POWER8:   "\u2078" >
+  | < POWER9:   "\u2079" >
   | < PI:       ( "pi" | "Pi" | "\u03c0") >
   | < E:        "\u212f" >  
   | < DEGREE:   "\u00b0" >
@@ -783,12 +787,14 @@ ExpressionNode enterm():
 {
     ret = enunary()           
     (                 
-     ( x = <MULTIPLY> | x = <DIVIDE> ) f = enunary() 
+     ( x = <MULTIPLY> | x = <DIVIDE> | x = <COMPLEXMULTIPLY> ) f = enunary() 
         {
             if (x.kind == MULTIPLY) {
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);  
-            } else {
+            } else if (x.kind == DIVIDE){
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.DIVIDE, f);  
+            } else {
+                ret = new ExpressionNode(kernel, ret, ExpressionNode.COMPLEXMULTIPLY, f);  
             }
         }
      |
@@ -865,6 +871,24 @@ ExpressionNode enpower():
        	{            
             return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
             			 new MyDouble(kernel, 6));                  
+	     } 
+    |
+    	<POWER7>
+       	{            
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            			 new MyDouble(kernel, 7));                  
+	     } 
+    |
+    	<POWER8>
+       	{            
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            			 new MyDouble(kernel, 8));                  
+	     } 
+    |
+    	<POWER9>
+       	{            
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            			 new MyDouble(kernel, 9));                  
 	     } 
     |
     	(LOOKAHEAD(<POWER>) <POWER> f = enunary()

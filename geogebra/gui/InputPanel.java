@@ -27,6 +27,7 @@ public class InputPanel extends JPanel {
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
 		"\u221e", // infinity
+		ExpressionNode.strCOMPLEXMULTIPLY, //  "\u2297", // complex multiply (circled times)
 		"sqrt(x)",
 		"cbrt(x)",
 		"abs(x)",

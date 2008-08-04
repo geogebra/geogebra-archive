@@ -71,6 +71,7 @@ implements ExpressionValue {
     public static final String strNOT_EQUAL = "\u2260";
     public static final String strPARALLEL = "\u2225";
     public static final String strPERPENDICULAR = "\u22a5";
+    public static final String strCOMPLEXMULTIPLY = "\u2297";
         
     // arithmetic
     public static final int PLUS = 0;
@@ -106,6 +107,7 @@ implements ExpressionValue {
     public static final int LOG2 = 30; 
     public static final int CBRT = 31;   
     public static final int RANDOM = 32;
+    public static final int COMPLEXMULTIPLY = 33;
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
@@ -703,6 +705,17 @@ implements ExpressionValue {
             else if (lt.isVectorValue() && rt.isVectorValue()) { 
                     vec = ((VectorValue)lt).getVector();
                     GeoVec2D.complexDivide(vec, ((VectorValue)rt).getVector(), vec);                                         
+                    return vec;
+                    
+            }                
+            else { 
+                String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
+                throw new MyError(app, str);
+            }
+        case COMPLEXMULTIPLY:
+            if (lt.isVectorValue() && rt.isVectorValue()) { 
+                    vec = ((VectorValue)lt).getVector();
+                    GeoVec2D.complexMultiply(vec, ((VectorValue)rt).getVector(), vec);                                         
                     return vec;
                     
             }                
@@ -2166,9 +2179,9 @@ implements ExpressionValue {
                 break;
                
            case PERPENDICULAR:
-        	 	sb.append(leftStr);
-        	 	sb.append(' ');
-        	 	switch (STRING_TYPE) {
+       	 	sb.append(leftStr);
+       	 	sb.append(' ');
+       	 	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
 		      			sb.append("\\perp");
 		      			break;
@@ -2176,10 +2189,25 @@ implements ExpressionValue {
 		      		default:
 		      			sb.append(strPERPENDICULAR);        		
 		      	}   
-        	 	sb.append(' ');
-                sb.append(rightStr);
-                break;
-        
+       	 	sb.append(' ');
+               sb.append(rightStr);
+               break;
+       
+           case COMPLEXMULTIPLY:
+       	 	sb.append(leftStr);
+       	 	sb.append(' ');
+       	 	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\times");
+		      			break;
+		      		
+		      		default:
+		      			sb.append(strCOMPLEXMULTIPLY);        		
+		      	}   
+       	 	sb.append(' ');
+               sb.append(rightStr);
+               break;
+       
             case PLUS:          
               	// we need parantheses around right text
             	// if right is not a leaf expression or
@@ -2361,7 +2389,7 @@ implements ExpressionValue {
 	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
 /*
 // Michael Borcherds 2008-05-14
-// display powers over 6 as unicode superscript
+// display powers over 9 as unicode superscript
 // TODO needs support in the parser too
 	        				 try {
 	        					 int i = Integer.parseInt(rightStr);
@@ -2407,6 +2435,9 @@ implements ExpressionValue {
                                      case '4': sb.append('\u2074'); break;
                                      case '5': sb.append('\u2075'); break;
                                      case '6': sb.append('\u2076'); break;
+                                     case '7': sb.append('\u2077'); break;
+                                     case '8': sb.append('\u2078'); break;
+                                     case '9': sb.append('\u2079'); break;
                                      default: 
                                                  sb.append('^'); 
                                                  sb.append(rightStr);
