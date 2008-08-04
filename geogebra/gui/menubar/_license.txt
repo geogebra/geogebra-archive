@@ -21,8 +21,8 @@ TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
-  * Catalan: Jorge Sánchez, Jaume Bartrolí, Pep Bujosa, Antoni Gomà, 
-      Roser Sebastián (Spain)
+  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, 
+      Roser Sebastian (Spain)
   * Chinese (Traditional): Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
   * Chinese (Simplified): Chen Xing (China)
   * Croatian: Sime Suljic, Ela Rac (Croatia)
@@ -34,7 +34,7 @@ TRANSLATIONS
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: Noel Lambert (France)
-  * Galician: Jesús García Otero (Spain)  
+  * Galician: Jesus Garcia Otero (Spain)  
   * German: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg)
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
@@ -48,7 +48,7 @@ TRANSLATIONS
   * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
       Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
-  * Portuguese (Portugal): Jorge Geraldes, António Ribeiro (Portugal)
+  * Portuguese (Portugal): Jorge Geraldes, Antonio Ribeiro (Portugal)
   * Russian: Anatoly Scherbakov (Russia)
   * Serbian: Djordje and Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba (Slovakia)
