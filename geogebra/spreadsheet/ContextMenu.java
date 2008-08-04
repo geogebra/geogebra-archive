@@ -21,6 +21,7 @@ public class ContextMenu
 	protected static int row2 = -1;
 	protected static int column1 = -1;
 	protected static int column2 = -1;
+	protected static boolean[] selected = null;
 	
 	protected static JPopupMenu initMenu(Application app) {
 		JPopupMenu menu = new JPopupMenu();
@@ -109,9 +110,17 @@ public class ContextMenu
  		public void actionPerformed(ActionEvent e) {
  			LinkedList list = new LinkedList();
  			try {
-	 			for (int j = column1 + 1; j <= column2; ++ j) {
+ 				int xColumn = -1;
+	 			for (int j = column1; j <= column2; ++ j) {
+	 				if (! selected[j]) {
+	 					continue;
+	 				}
+	 				if (xColumn == -1) {
+	 					xColumn = j;
+	 					continue;
+	 				}
 	  	   	 		for (int i = row1; i <= row2; ++ i) {
-	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, column1, i);
+	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, xColumn, i);
 	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
 	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
 	 	   	 				String pointName = getNextPointName();
@@ -145,12 +154,13 @@ public class ContextMenu
 		}
 	}
     	
-	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
+	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
 		table = table0;
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;
+		selected = selected0;
 		Application app = table.kernel.getApplication();
 		JPopupMenu menu = initMenu(app);		
 		menu.show(comp, x, y);
