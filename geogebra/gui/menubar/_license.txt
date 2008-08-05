@@ -35,7 +35,7 @@ TRANSLATIONS
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: Noel Lambert (France)
   * Galician: Jesus Garcia Otero (Spain)  
-  * German: Markus Hohenwarter, Judith Preiner (Austria), Yves Kreis (Luxembourg)
+  * German: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg)
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hebrew: Guy Hed (Israel)
