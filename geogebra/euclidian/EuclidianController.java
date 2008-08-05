@@ -3944,12 +3944,14 @@ public class EuclidianController implements MouseListener,
 		if (rotationCenter != null && selPoints() == 2) {										
 			GeoPoint[] points = getSelectedPoints();		
 			kernel.Circle(null, rotationCenter, points[0], points[1],true);
+			rotationCenter = null;
 			return true;
 		}
 		// center point and segment
 		else if (rotationCenter != null && selSegments() == 1) {				
 			GeoSegment[] segment = getSelectedSegments();		
 			kernel.Circle(null, rotationCenter, segment[0]);
+			rotationCenter = null;
 			return true;
 		}
 
