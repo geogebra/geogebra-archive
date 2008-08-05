@@ -138,11 +138,13 @@ import apple.laf.CUIAquaFileChooser;
 
 public abstract class Application implements	KeyEventDispatcher {
 
-	
+	// Added for Intergeo File Format (Yves Kreis) -->
+	public static final boolean disableI2G = false;
+	// <-- Added for Intergeo File Format (Yves Kreis)
 	public static final boolean disableSpreadsheet = false;
     public static final String buildDate = "July 31, 2008";
 	
-    public static final String versionString = "3.1.10.0";    
+    public static final String versionString = "3.1.11.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
     public static final String I2G_FILE_FORMAT = "1.00.20080731";    
@@ -3089,12 +3091,21 @@ public abstract class Application implements	KeyEventDispatcher {
 
     public boolean saveAs() {
     	// Added for Intergeo File Format (Yves Kreis) -->
-    	String[] fileExtensions = { 
-    			FILE_EXT_GEOGEBRA , 
-    			FILE_EXT_INTERGEO };
-    	String[] fileDescriptions = {
-    			getPlain("ApplicationName") + " " + getMenu("Files") ,
-    			"Intergeo " + getMenu("Files") + " [Version " + I2G_FILE_FORMAT + "]" };
+    	String[] fileExtensions;
+    	String[] fileDescriptions;
+    	if (disableI2G) {
+        	fileExtensions = new String [] { 
+        		FILE_EXT_GEOGEBRA };
+        	fileDescriptions = new String [] {
+        		getPlain("ApplicationName") + " " + getMenu("Files") };
+    	} else {
+        	fileExtensions = new String [] { 
+        		FILE_EXT_GEOGEBRA , 
+        		FILE_EXT_INTERGEO };
+        	fileDescriptions = new String [] {
+        		getPlain("ApplicationName") + " " + getMenu("Files") ,
+        		"Intergeo " + getMenu("Files") + " [Version " + I2G_FILE_FORMAT + "]" };
+    	}
     	// <-- Added for Intergeo File Format (Yves Kreis)
         File file =
             showSaveDialog(
@@ -3303,17 +3314,22 @@ public abstract class Application implements	KeyEventDispatcher {
 	        fileFilter.setDescription(
 	            getPlain("ApplicationName") + " " + getMenu("Files"));
 	        fileChooser.resetChoosableFileFilters();
-        	// Added for Intergeo File Format (Yves Kreis & Ingo Schandeler) -->
+        	// Modified for Intergeo File Format (Yves Kreis & Ingo Schandeler) -->
 	        fileChooser.addChoosableFileFilter(fileFilter);
 	        
 	        // Intergeo File Filter
-	        MyFileFilter i2gFileFilter = new MyFileFilter();
-	        i2gFileFilter.addExtension(FILE_EXT_INTERGEO);
-	        i2gFileFilter.setDescription(
-	        	"Intergeo " + getMenu("Files") + " [Version " + I2G_FILE_FORMAT + "]");
-	        fileChooser.addChoosableFileFilter(i2gFileFilter);
-        	// <-- Added for Intergeo File Format (Yves Kreis & Ingo Schandeler)
-	        fileChooser.setFileFilter(fileFilter);
+	        if (!disableI2G) {
+		        MyFileFilter i2gFileFilter = new MyFileFilter();
+		        i2gFileFilter.addExtension(FILE_EXT_INTERGEO);
+		        i2gFileFilter.setDescription(
+		        	"Intergeo " + getMenu("Files") + " [Version " + I2G_FILE_FORMAT + "]");
+		        fileChooser.addChoosableFileFilter(i2gFileFilter);
+	        }
+//	        fileChooser.setFileFilter(fileFilter);
+	    	if (disableI2G || oldCurrentFile == null || getExtension(oldCurrentFile).equals(FILE_EXT_GEOGEBRA) || getExtension(oldCurrentFile).equals(FILE_EXT_GEOGEBRA_TOOL)) {
+		        fileChooser.setFileFilter(fileFilter);
+	    	}
+        	// <-- Modified for Intergeo File Format (Yves Kreis & Ingo Schandeler)
 	
 	        int returnVal = fileChooser.showOpenDialog(mainComp);		        
 	        

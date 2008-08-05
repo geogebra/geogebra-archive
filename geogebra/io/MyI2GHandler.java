@@ -23,7 +23,10 @@ import geogebra.MyError;
 import geogebra.algebra.parser.Parser;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -56,21 +59,30 @@ public class MyI2GHandler implements DocHandler {
     private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES = 2210;
 //	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_OUTPUT = 2211;
 //	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_INPUT = 2212;
-    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 2220;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 2221;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 2222;
-    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 2230;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 2231;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 2232;
-    private static final int MODE_LINE_THROUGH_TWO_POINTS = 2240;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2241;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2242;
-    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2300;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2301;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2302;
-    private static final int MODE_POINT_ON_LINE = 2310;
-//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2311;
-//	private static final int MODE_POINT_ON_LINE_INPUT = 2312;
+    private static final int MODE_LINE_PARALLEL_TO_LINE = 2300;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_OUTPUT = 2301;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_INPUT = 2302;
+    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 2310;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 2311;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 2312;
+    private static final int MODE_LINE_PERPENDICULAR_TO_LINE = 2320;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_OUTPUT = 2321;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_INPUT = 2322;
+    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 2330;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 2331;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 2332;
+    private static final int MODE_LINE_THROUGH_POINT = 2340;
+//	private static final int MODE_LINE_THROUGH_POINT_OUTPUT = 2341;
+//	private static final int MODE_LINE_THROUGH_POINT_INPUT = 2342;
+    private static final int MODE_LINE_THROUGH_TWO_POINTS = 2350;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2351;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2352;
+    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2400;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2401;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2402;
+    private static final int MODE_POINT_ON_LINE = 2410;
+//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2411;
+//	private static final int MODE_POINT_ON_LINE_INPUT = 2412;
     private static final int MODE_DISPLAY = 3000;
     private static final int MODE_LABEL = 3100;
 
@@ -275,7 +287,7 @@ debug("startElements", eName);
     		case MODE_ELEMENTS :
     			String [] tags;
     			if (cmdName.equals("point")) {
-    				tags = new String[] { "homogeneous_coordinates", "cartesian_coordinates", "polar_coordinates" };
+    				tags = new String[] { "homogeneous_coordinates", "euclidean_coordinates", "polar_coordinates" };
     			} else {
     				tags = new String[] { "homogeneous_coordinates" };
     			}
@@ -296,7 +308,7 @@ debug("startElements", eName);
         		if (eName.equals("homogeneous_coordinates")) {
         			coord = 0;
     		        coords = new Complex[] { Complex.NaN , Complex.NaN, Complex.NaN };
-        		} else if (eName.equals("cartesian_coordinates") || eName.equals("polar_coordinates")) {
+        		} else if (eName.equals("euclidean_coordinates") || eName.equals("polar_coordinates")) {
         			coord = 0;
     		        coords = new Complex[] { Complex.NaN, Complex.NaN };
         		}
@@ -408,11 +420,13 @@ debug("endElements", eName);
 			            	System.err.println("could not import complex coordinates");
 			            }
 			        } else if (coords.length == 2) {
-			        	if (cmdName.equals("cartesian_coordinates")) {
+			        	if (cmdName.equals("euclidean_coordinates")) {
 					            v.setCoords(coords[0].getReal(), coords[1].getReal(), 1);
 			        	} else if (cmdName.equals("polar_coordinates")) {
 					            v.setCoords(coords[0].getReal() * Math.cos( coords[1].getReal() ), coords[0].getReal() * Math.sin( coords[1].getReal() ), 1);
+					            // TODO -> do not modify point/kernel mode when these settings are stored in the file format
 					            v.setPolar();
+					            kernel.setAngleUnit(Kernel.ANGLE_RADIANT);
 			        	}
 			        }
 				}
@@ -466,12 +480,21 @@ debug("startConstraints", eName);
     			} else if (eName.equals("angular_bisectors_of_two_lines")) {
         			name = "AngularBisector";
         			subMode = MODE_ANGULAR_BISECTORS_OF_TWO_LINES;
-    			} else if (eName.equals("line_parallel_to_line_through_point")) {
-        			name = "OrthogonalLine";
-        			subMode = MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT;
-    			} else if (eName.equals("line_perpendicular_to_line_through_point")) {
+    			} else if (eName.equals("line_parallel_to_line")) {
         			name = "Line";
+        			subMode = MODE_LINE_PARALLEL_TO_LINE;
+    			} else if (eName.equals("line_parallel_to_line_through_point")) {
+        			name = "Line";
+        			subMode = MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT;
+    			} else if (eName.equals("line_perpendicular_to_line")) {
+        			name = "OrthogonalLine";
+        			subMode = MODE_LINE_PERPENDICULAR_TO_LINE;
+    			} else if (eName.equals("line_perpendicular_to_line_through_point")) {
+        			name = "OrthogonalLine";
         			subMode = MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT;
+    			} else if (eName.equals("line_through_point")) {
+        			name = "Line";
+        			subMode = MODE_LINE_THROUGH_POINT;
     			} else if (eName.equals("line_through_two_points")) {
         			name = "Line";
         			subMode = MODE_LINE_THROUGH_TWO_POINTS;
@@ -502,12 +525,24 @@ debug("startConstraints", eName);
     			handleConstraintsStart(eName, attrs, "line", 2, new String[] { "line" }, new int[] { 2 });
     			break;
     			
+    		case MODE_LINE_PARALLEL_TO_LINE :
+    			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "line" }, new int[] { 1 });
+    			break;
+    			
     		case MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT :
     			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "line", "point"}, new int[] { 1, 1 });
     			break;
     			
+    		case MODE_LINE_PERPENDICULAR_TO_LINE :
+    			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "line" }, new int[] { 1 });
+    			break;
+    			
     		case MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT :
     			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "line", "point"}, new int[] { 1, 1 });
+    			break;
+    			
+    		case MODE_LINE_THROUGH_POINT :
+    			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "point" }, new int[] { 1 });
     			break;
     			
     		case MODE_LINE_THROUGH_TWO_POINTS :
@@ -554,6 +589,28 @@ debug("endConstraints", eName);
 				handleConstraintsEnd(eName, 1, 1);
 				break;
 				
+			case MODE_LINE_PARALLEL_TO_LINE :
+			case MODE_LINE_PERPENDICULAR_TO_LINE :
+				handleConstraintsEnd(eName, 1, 1, false);
+				break;
+				
+			case MODE_LINE_THROUGH_POINT :
+				if (cmd.labelCount() == 1 && 
+					cmd.getArgumentNumber() == 1 && 
+					cons.lookupLabel(cmd.getLabel(0)) instanceof GeoLine && 
+					cmd.getArgument(0).getLeft() instanceof GeoPoint) {
+						try {
+							GeoLine geoLine = (GeoLine) cons.lookupLabel(cmd.getLabel(0));
+							GeoVector geoVector = new GeoVector(cons, null, geoLine.y, -geoLine.x, 0);
+							geoVector.setStartPoint((GeoPoint) cmd.getArgument(0).getLeft());
+							cmd.addArgument(new ExpressionNode(kernel, geoVector));
+						} catch (Exception e) {
+							// This should never happen
+				            e.printStackTrace();
+						}
+				} else {
+					System.err.println("could not generate vector for <" + eName + ">");
+				}
 			case MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT :
 			case MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT :
 			case MODE_LINE_THROUGH_TWO_POINTS :
@@ -657,8 +714,12 @@ debug("endConstraints", eName);
     }
     
     private void handleConstraintsEnd(String eName, int outputQuantity, int inputQuantity) {
+    	handleConstraintsEnd(eName, outputQuantity, inputQuantity, true);
+    }
+    
+    private void handleConstraintsEnd(String eName, int outputQuantity, int inputQuantity, boolean processCommand) {
     	boolean error = false;
-		
+    	
 		if (cmd.labelCount() < outputQuantity) {
 			error = true;
 			System.err.println("not enough output elements specified for <" + cmdName + ">");
@@ -674,7 +735,10 @@ debug("endConstraints", eName);
 			System.err.println("too many input elements specified for <" + cmdName + ">");
 		}
 		
-		if (error) {
+		if (!processCommand) {
+			// do not process the command, the constraint is not supported
+			System.err.println("ignoring constraint <" + cmdName + ">, GeoGebra does not support it");
+		} else if (error) {
 			// do not process the command, the number of input/output arguments does not match
 		} else if (cmd.getName().equals("Free")) {
 			if (label != null) {
