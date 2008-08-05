@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import geogebra.kernel.GeoElement;
-import geogebra.spreadsheet.ContextMenu.ActionListener5;
 
 public class ContextMenuCol extends ContextMenu
 {
@@ -94,12 +93,13 @@ public class ContextMenuCol extends ContextMenu
  		}
 	}
 	    		
-	public static void showPopupMenu2(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
+	public static void showPopupMenu2(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
 		table = table0;
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;
+		selected = selected0;
 		Application app = table.kernel.getApplication();
 		JPopupMenu menu2 = initMenu2(app);				
 		menu2.show(comp, x, y);

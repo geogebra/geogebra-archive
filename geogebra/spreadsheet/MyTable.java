@@ -729,6 +729,12 @@ public class MyTable extends JTable
 				minSelectionColumn = 0;
 				maxSelectionColumn = MyTable.this.getColumnCount() - 1;
 			}
+			selected = new boolean[getColumnCount()];
+			for (int i = 0; i < selected.length; ++ i) {
+				if (selectionModel.isSelectedIndex(i)) {
+					selected[i] = true;
+				}
+			}
 			selectionChanged();
 		}
 		
@@ -741,6 +747,12 @@ public class MyTable extends JTable
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
 			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
+			selected = new boolean[getColumnCount()];
+			for (int i = 0; i < selected.length; ++ i) {
+				if (selectionModel.isSelectedIndex(i)) {
+					selected[i] = true;
+				}
+			}
 			selectionChanged();
 		}
 		
@@ -923,7 +935,7 @@ public class MyTable extends JTable
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y);
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y, selected);
 				}
 			}
 		}

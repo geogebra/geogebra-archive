@@ -50,7 +50,7 @@ public class ContextMenu
    	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("ConvertToCoordinates"));
    	   	 	item5.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	   	 	item5.setBackground(bgColor);
-   	   	 	item5.addActionListener(new ActionListener5());
+   	   	 	item5.addActionListener(new ActionListener51());
    	   	 	menu.add(item5);
    	 	}
    	 	return menu;
@@ -105,9 +105,11 @@ public class ContextMenu
 		return "L_{" + listNameCount + "}";
 	}
 	
-	public static class ActionListener5 implements ActionListener
+	public static class ActionListener51 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
+ 			System.out.println("ActionListener5 " + column1 + " - " + column2);
+ 			if (selected == null) throw new RuntimeException("error state");
  			LinkedList list = new LinkedList();
  			try {
  				int xColumn = -1;
@@ -155,11 +157,18 @@ public class ContextMenu
 	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
+		//System.out.println("showPopupMenu <<<<<<<<<<<<<<<<<<<");
 		table = table0;
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;
+		if (selected0 == null) {
+			throw new RuntimeException("error state");
+		}
+		else {
+			//System.out.println("Correct !!!!!!!!!!!!!!!!!!!!");
+		}
 		selected = selected0;
 		Application app = table.kernel.getApplication();
 		JPopupMenu menu = initMenu(app);		
