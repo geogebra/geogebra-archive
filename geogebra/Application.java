@@ -142,7 +142,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	public static final boolean disableI2G = false;
 	// <-- Added for Intergeo File Format (Yves Kreis)
 	public static final boolean disableSpreadsheet = false;
-    public static final String buildDate = "July 31, 2008";
+    public static final String buildDate = "August 5, 2008";
 	
     public static final String versionString = "3.1.11.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
