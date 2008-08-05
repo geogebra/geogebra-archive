@@ -4812,10 +4812,15 @@ class ColorFunctionPanel
 	
 			list = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+"}");
 		}
+		
 				
 		// set condition
 		boolean requestFocus = false;
 		//try {
+		if (list != null)								//
+		if (((list.get(0) instanceof GeoNumeric)) && 	// bugfix, enter "x" for a color 
+			((list.get(1) instanceof GeoNumeric)) &&	//
+			((list.get(2) instanceof GeoNumeric)) )		//
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				geo.setColorFunction(list);				
