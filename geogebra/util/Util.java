@@ -527,9 +527,7 @@ public class Util extends Object {
     	StringBuffer sb = new StringBuffer();
 		for (int i=0; i < length ; i++) {
 			char c = name.charAt(i);
-			if (Character.isDigit(c) ||  // 0 - 9
-				(65 <= c && c <= 90 ) || // A - Z
-				(97 <= c && c <= 122 ) || // a - z
+			if (Character.isLetterOrDigit(c) ||
 				c == '.' || // Michael Borcherds 2007-11-23
 				c == '_')  // underscore
 			{
@@ -537,7 +535,7 @@ public class Util extends Object {
 			}
 			else
 			{
-				sb.append("_"); // Michael Borcherds 2007-11-23
+				sb.append('_'); // Michael Borcherds 2007-11-23
 			}
 		}
 		
