@@ -142,9 +142,9 @@ public abstract class Application implements	KeyEventDispatcher {
 	public static final boolean disableI2G = false;
 	// <-- Added for Intergeo File Format (Yves Kreis)
 	public static final boolean disableSpreadsheet = false;
-    public static final String buildDate = "August 5, 2008";
+    public static final String buildDate = "August 6, 2008";
 	
-    public static final String versionString = "3.1.11.0";    
+    public static final String versionString = "3.1.13.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
     public static final String I2G_FILE_FORMAT = "1.00.20080731";    
@@ -3448,7 +3448,8 @@ public abstract class Application implements	KeyEventDispatcher {
 	        	
 	        	// calculate total width of everything in window except EuclidianView
 	        	int algebraWidth= showAlgebraView ? algebraView.getPreferredSize().width : 0;
-	        	int spreadsheetWidth= showSpreadsheet ? spreadsheetView.getPreferredSize().width : 0;
+	        	int spreadsheetWidth=0;
+	        	if (!disableSpreadsheet) spreadsheetWidth = showSpreadsheet ? spreadsheetView.getPreferredSize().width : 0;
 	        	int furnitureWidth = algebraWidth + spreadsheetWidth;
 	        	
 	        	// calculate total height of everything in window except EuclidianView
