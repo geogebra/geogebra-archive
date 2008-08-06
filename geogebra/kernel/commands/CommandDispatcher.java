@@ -249,7 +249,10 @@ public class CommandDispatcher {
     	cmdTable.put("CellRange", new CmdCellRange(kernel));  
     	
     	cmdTable.put("Row", new CmdRow(kernel));    	
-    	cmdTable.put("Column", new CmdColumn(kernel));    	
+    	cmdTable.put("Column", new CmdColumn(kernel));  
+    	
+    	cmdTable.put("toString", new CmdtoString(kernel));    	
+    	cmdTable.put("toLaTeX", new CmdtoLaTeX(kernel));    	
     }
 
 

@@ -1294,6 +1294,28 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Name of geo.
+	 */
+	final public GeoText toLaTeX(
+		String label,
+		GeoElement geo) {
+		AlgotoLaTeX algo = new AlgotoLaTeX(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Name of geo.
+	 */
+	final public GeoText toString(
+		String label,
+		GeoElement geo) {
+		AlgotoString algo = new AlgotoString(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
 	 * Row of geo.
 	 */
 	final public GeoNumeric Row(
