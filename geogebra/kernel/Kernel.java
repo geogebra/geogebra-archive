@@ -1294,7 +1294,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Name of geo.
+	 * toLaTeX of geo.
 	 */
 	final public GeoText toLaTeX(
 		String label,
@@ -1305,7 +1305,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Name of geo.
+	 * toString of geo.
 	 */
 	final public GeoText toString(
 		String label,
@@ -1333,6 +1333,17 @@ public class Kernel {
 		String label,
 		GeoElement geo) {
 		AlgoColumn algo = new AlgoColumn(cons, label, geo);
+		GeoNumeric ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * ToNumber
+	 */
+	final public GeoNumeric ToNumber(
+		String label,
+		GeoText geo) {
+		AlgoToNumber algo = new AlgoToNumber(cons, label, geo);
 		GeoNumeric ret = algo.getResult();
 		return ret;
 	}
