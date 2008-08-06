@@ -25,7 +25,7 @@ public class ContextMenuRow extends ContextMenu
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
-   	 	JMenuItem item7 = new JMenuItem(app.getMenu("DeleteRow"));
+   	 	JMenuItem item7 = new JMenuItem(app.getMenu("ClearRow"));
    	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListener7());   	 	
    	 	menu.add(item7);

@@ -25,7 +25,7 @@ public class ContextMenuCol extends ContextMenu
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
-   	 	JMenuItem item7 = new JMenuItem(app.getMenu("DeleteColumn"));
+   	 	JMenuItem item7 = new JMenuItem(app.getMenu("ClearColumn"));
    	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListener7());   	 	
    	 	menu.add(item7);
