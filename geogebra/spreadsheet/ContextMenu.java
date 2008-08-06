@@ -47,7 +47,7 @@ public class ContextMenu
    	 	item4.addActionListener(new ActionListener4());
    	 	menu.add(item4);
    	 	if (column1 + 1 <= column2) {
-   	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("ConvertToCoordinates"));
+   	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
    	   	 	item5.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
    	   	 	item5.setBackground(bgColor);
    	   	 	item5.addActionListener(new ActionListener51());
