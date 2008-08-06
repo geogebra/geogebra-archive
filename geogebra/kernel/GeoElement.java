@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2454,7 +2455,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 *******************************************************/
 
 	final public String getXMLtypeString() {		
-		return getClassName().substring(3).toLowerCase();
+		return getClassName().substring(3).toLowerCase(Locale.US);
 	}
 	
 	/**

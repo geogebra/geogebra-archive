@@ -6,6 +6,7 @@ import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 
 import org.freehep.graphics2d.font.CharTable;
@@ -16,7 +17,7 @@ import org.freehep.graphics2d.font.Lookup;
  * A table to remember which fonts were used while writing a document.
  * 
  * @author Simon Fischer
- * @version $Id: FontTable.java,v 1.3 2008-05-04 12:28:56 murkle Exp $
+ * @version $Id: FontTable.java,v 1.4 2008-08-06 19:23:28 murkle Exp $
  */
 public abstract class FontTable {
 
@@ -189,24 +190,24 @@ public abstract class FontTable {
         // Java font names could end with ".plain" ".bold"
         // and ".italic". We have to convert this to an
         // attribute first
-        if (family.toLowerCase().endsWith(".bold")) {
+        if (family.toLowerCase(Locale.US).endsWith(".bold")) {
             attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
             // cut the ".bold"
-            int pos = family.toLowerCase().indexOf(".bold");
+            int pos = family.toLowerCase(Locale.US).indexOf(".bold");
             family = family.substring(0, pos);
-        } else if (family.toLowerCase().endsWith(".italic")) {
+        } else if (family.toLowerCase(Locale.US).endsWith(".italic")) {
             attributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
             // cut the ".italic"
-            int pos = family.toLowerCase().indexOf(".italic");
+            int pos = family.toLowerCase(Locale.US).indexOf(".italic");
             family = family.substring(0, pos);
-        } else if (family.toLowerCase().endsWith(".plain")) {
+        } else if (family.toLowerCase(Locale.US).endsWith(".plain")) {
             // cut the ".plain"
-            int pos = family.toLowerCase().indexOf(".plain");
+            int pos = family.toLowerCase(Locale.US).indexOf(".plain");
             family = family.substring(0, pos);
         }
 
         // first character up
-        family = family.substring(0, 1).toUpperCase() + family.substring(1, family.length());
+        family = family.substring(0, 1).toUpperCase(Locale.US) + family.substring(1, family.length());
         attributes.put(TextAttribute.FAMILY, family);
     }
 
@@ -219,7 +220,7 @@ public abstract class FontTable {
     }
 
     private CharTable getEncodingTable(Font font) {
-        String fontname = font.getName().toLowerCase();
+        String fontname = font.getName().toLowerCase(Locale.US);
         if (fontname.indexOf("symbol") >= 0)
             return Lookup.getInstance().getTable("Symbol");
         if (fontname.indexOf("zapfdingbats") >= 0)

@@ -41,6 +41,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -507,7 +508,7 @@ public class MyXMLio {
 		try {
         	// try to write image using the format of the filename extension
         	int pos = fileName.lastIndexOf('.');
-        	String ext = fileName.substring(pos+1).toLowerCase();      
+        	String ext = fileName.substring(pos+1).toLowerCase(Locale.US);      
         	if (ext.equals("jpg") || ext.equals("jpeg"))
         		ext = "JPG";
         	else 

@@ -4,6 +4,7 @@ package org.freehep.graphicsio.pdf;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.freehep.graphics2d.font.CharTable;
 import org.freehep.graphicsio.font.FontIncluder;
@@ -76,7 +77,7 @@ public class PDFFontIncluder extends FontIncluder {
     }
 
     public static boolean isStandardFont(Font font) {
-        String fontName = font.getName().toLowerCase();
+        String fontName = font.getName().toLowerCase(Locale.US);
         return (fontName.indexOf("helvetica") >= 0)
                 || (fontName.indexOf("times") >= 0)
                 || (fontName.indexOf("courier") >= 0)
@@ -86,7 +87,7 @@ public class PDFFontIncluder extends FontIncluder {
 
     /** Returns the index of the standard font according to STANDARD_FONT. */
     private static int getFontBaseIndex(Font font) {
-        String fontName = font.getName().toLowerCase();
+        String fontName = font.getName().toLowerCase(Locale.US);
         if (fontName.indexOf("helvetica") >= 0) {
             return HELVETICA;
         } else if (fontName.indexOf("times") >= 0) {

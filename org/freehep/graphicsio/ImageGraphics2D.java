@@ -10,18 +10,19 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -36,29 +37,29 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.freehep.graphics2d.PixelGraphics2D;
+import org.freehep.graphicsio.raw.RawImageWriteParam;
 import org.freehep.util.UserProperties;
+import org.freehep.util.images.ImageUtilities;
 import org.freehep.util.io.ASCII85OutputStream;
 import org.freehep.util.io.FlateOutputStream;
-import org.freehep.util.images.ImageUtilities;
-import org.freehep.graphicsio.raw.RawImageWriteParam;
 
 /**
  * Generic class for generating bitmap outputs from an image.
  *
  * @author Mark Donszelmann
- * @version $Id: ImageGraphics2D.java,v 1.5 2008-05-04 18:27:05 murkle Exp $
+ * @version $Id: ImageGraphics2D.java,v 1.6 2008-08-06 19:23:18 murkle Exp $
  */
 public class ImageGraphics2D extends PixelGraphics2D {
 
     private final static String alwaysCompressedFormats[] = {
-        ImageConstants.JPG.toLowerCase(),
-        ImageConstants.JPEG.toLowerCase(),
-        ImageConstants.GIF.toLowerCase()};
+        ImageConstants.JPG.toLowerCase(Locale.US),
+        ImageConstants.JPEG.toLowerCase(Locale.US),
+        ImageConstants.GIF.toLowerCase(Locale.US)};
 
     private final static String nonTransparentFormats[] = {
-        ImageConstants.JPG.toLowerCase(),
-        ImageConstants.JPEG.toLowerCase(),
-        ImageConstants.PPM.toLowerCase()};
+        ImageConstants.JPG.toLowerCase(Locale.US),
+        ImageConstants.JPEG.toLowerCase(Locale.US),
+        ImageConstants.PPM.toLowerCase(Locale.US)};
 
     public static final String rootKey = "org.freehep.graphicsio";
 
@@ -490,7 +491,7 @@ public class ImageGraphics2D extends PixelGraphics2D {
 
     public static BufferedImage readImage(String format, InputStream is)
             throws IOException {
-        Iterator iterator = ImageIO.getImageReadersByFormatName(format.toLowerCase());
+        Iterator iterator = ImageIO.getImageReadersByFormatName(format.toLowerCase(Locale.US));
         if (!iterator.hasNext()) {
             throw new IOException(ImageGraphics2D.class
                     + ": No reader for format '" + format + "'.");
@@ -511,12 +512,12 @@ public class ImageGraphics2D extends PixelGraphics2D {
         // the format always needs to be compressed... GIF and JPG are among of
         // them.
         return !Arrays.asList(alwaysCompressedFormats).contains(
-                format.toLowerCase());
+                format.toLowerCase(Locale.US));
     }
 
     public static boolean canWriteTransparent(String format) {
         return !Arrays.asList(nonTransparentFormats).contains(
-                format.toLowerCase());
+                format.toLowerCase(Locale.US));
     }
 
     /**
@@ -567,7 +568,7 @@ public class ImageGraphics2D extends PixelGraphics2D {
         }
 
         // write image into the stream
-        ImageGraphics2D.writeImage(image, format.toLowerCase(), props, os);
+        ImageGraphics2D.writeImage(image, format.toLowerCase(Locale.US), props, os);
         os.close();
 
         // return reulting bytes from stream

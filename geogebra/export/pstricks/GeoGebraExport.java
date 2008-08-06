@@ -28,11 +28,13 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import java.awt.event.*;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 public abstract class GeoGebraExport implements ActionListener{
@@ -92,7 +94,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	 * @return The resulting String
 	 */	
 	protected String sci2dec(double d){
-		String s=String.valueOf(d).toLowerCase();
+		String s=String.valueOf(d).toLowerCase(Locale.US);
 		StringTokenizer st=new StringTokenizer(s,"e");
 		StringBuffer number;
 		if (st.countTokens()==1) return s;

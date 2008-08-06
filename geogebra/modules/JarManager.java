@@ -20,14 +20,12 @@ the Free Software Foundation.
 */
 
 import geogebra.Application;
-import geogebra.GeoGebraAppletBase;
 import geogebra.util.CopyURLToFile;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class JarManager {
@@ -106,7 +104,7 @@ public class JarManager {
         //String webstartCodebase=null;
         
         if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
-        		.toLowerCase().endsWith(".jar")) {
+        		.toLowerCase(Locale.US).endsWith(".jar")) {
         	app.debug("not running from jar - set IS_WEBSTART=true");
             IS_WEBSTART=true;
         }

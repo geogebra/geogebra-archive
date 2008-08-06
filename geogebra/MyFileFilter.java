@@ -16,6 +16,7 @@ package geogebra;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -143,8 +144,8 @@ public class MyFileFilter extends FileFilter {
 	    int i = filename.lastIndexOf('.');
 	    if(i>0 && i<filename.length()-1)
 	       	// Modified for Intergeo File Format (Yves Kreis) -->
-//			return filename.substring(i+1).toLowerCase();;
-			return filename.substring(i+1).toLowerCase();
+//			return filename.substring(i+1).toLowerCase(Locale.US);;
+			return filename.substring(i+1).toLowerCase(Locale.US);
 		   	// <-- Modified for Intergeo File Format (Yves Kreis)
 	}
 	return null;
@@ -171,7 +172,7 @@ public class MyFileFilter extends FileFilter {
 		extension = extension.substring(0, extension.lastIndexOf("."));
 	}
    	// <-- Added for Intergeo File Format (Yves Kreis)
-	filters.put(extension.toLowerCase(), this);
+	filters.put(extension.toLowerCase(Locale.US), this);
 	fullDescription = null;
     }
 

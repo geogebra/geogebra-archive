@@ -1,6 +1,7 @@
 package geogebra.algebra.autocomplete;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,7 +23,7 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
    * @param s The string to add to the dictionary.
    */
   public void addEntry(String s) {
-  	String lowerCase = s.toLowerCase();
+  	String lowerCase = s.toLowerCase(Locale.US);
   	put(lowerCase, s);
   	
   	// store lowerCase in tree
@@ -37,7 +38,7 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
    *         be removed.
    */
   public boolean removeEntry(String s) {
-  	String lowerCase = s.toLowerCase();
+  	String lowerCase = s.toLowerCase(Locale.US);
   	remove(lowerCase);
     return treeSet.remove(lowerCase);
   }
@@ -59,7 +60,7 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     if(curr == null || "".equals(curr))
 		return null;
     
-    String currLowerCase = curr.toLowerCase();
+    String currLowerCase = curr.toLowerCase(Locale.US);
     try {
       SortedSet tailSet = treeSet.tailSet(currLowerCase);
       if(tailSet != null) {

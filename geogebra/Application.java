@@ -917,7 +917,7 @@ public abstract class Application implements	KeyEventDispatcher {
         
         try {             	
         	boolean success;      
-        	String lowerCase = fileArgument.toLowerCase();
+        	String lowerCase = fileArgument.toLowerCase(Locale.US);
         	boolean isMacroFile = lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
             if (lowerCase.startsWith("http") || 
             	lowerCase.startsWith("file")) {         
@@ -1377,7 +1377,7 @@ public abstract class Application implements	KeyEventDispatcher {
             	 if (local != null) {
             		 local = local.trim();
 	             	 // case is ignored in translating local command names to internal names! 
-	                 translateCommandTable.put(local.toLowerCase(), internal);                
+	                 translateCommandTable.put(local.toLowerCase(Locale.US), internal);                
 	                 commandDict.addEntry(local);
             	 }
              }
@@ -1529,7 +1529,7 @@ public abstract class Application implements	KeyEventDispatcher {
     		initCommandResources();
     	    		    	
         // note: lookup lower case of command name!
-        Object value = translateCommandTable.get(localname.toLowerCase());
+        Object value = translateCommandTable.get(localname.toLowerCase(Locale.US));
               
         String ret;
         if (value == null) 
@@ -3292,7 +3292,7 @@ public abstract class Application implements	KeyEventDispatcher {
         if (dotPos <= 0 || dotPos == fileName.length()-1)
 			return "";
 		else
-			return fileName.substring(dotPos+1).toLowerCase(); // Michael Borcherds 2008-02-06 added .toLowerCase()
+			return fileName.substring(dotPos+1).toLowerCase(Locale.US); // Michael Borcherds 2008-02-06 added .toLowerCase(Locale.US)
    }
 
     public void openFile() {    	      	
@@ -3379,7 +3379,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	            } 
 		        
         		if (file.exists()) {	        			
-        			if (FILE_EXT_GEOGEBRA_TOOL.equals(getExtension(file).toLowerCase())) {	        			
+        			if (FILE_EXT_GEOGEBRA_TOOL.equals(getExtension(file).toLowerCase(Locale.US))) {	        			
         				// load macro file
         				loadFile(file, true); 
         			} 	        			

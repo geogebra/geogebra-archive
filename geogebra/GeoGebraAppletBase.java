@@ -460,7 +460,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		/*
 		try {		
 			URL ggbURL = new URL(fileStr);
-			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			app.loadXML(ggbURL, fileStr.toLowerCase(Locale.US).endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -474,7 +474,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		
 		try {		
 			URL ggbURL = new URL(fileStr);
-			app.loadXML(ggbURL, fileStr.toLowerCase().endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+			app.loadXML(ggbURL, fileStr.toLowerCase(Locale.US).endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -501,7 +501,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		/*
 		
 		try {
-			String lowerCase = strURL.toLowerCase();
+			String lowerCase = strURL.toLowerCase(Locale.US);
 			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
 				strURL = getCodeBase() + strURL;
 			}		
@@ -519,7 +519,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void openFileNoThread(String strURL) {
 		
 		try {
-			String lowerCase = strURL.toLowerCase();
+			String lowerCase = strURL.toLowerCase(Locale.US);
 			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
 				strURL = getCodeBase() + strURL;
 			}		

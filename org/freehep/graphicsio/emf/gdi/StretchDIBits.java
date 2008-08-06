@@ -3,18 +3,19 @@ package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Locale;
 
-import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.ImageConstants;
+import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.emf.EMFConstants;
+import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.util.io.NoCloseOutputStream;
 
 /**
@@ -23,7 +24,7 @@ import org.freehep.util.io.NoCloseOutputStream;
  * WINGDI.H file of visual C++.
  * 
  * @author Mark Donszelmann
- * @version $Id: StretchDIBits.java,v 1.3 2008-05-04 12:18:47 murkle Exp $
+ * @version $Id: StretchDIBits.java,v 1.4 2008-08-06 19:23:24 murkle Exp $
  */
 public class StretchDIBits extends EMFTag implements EMFConstants {
 
@@ -122,7 +123,7 @@ public class StretchDIBits extends EMFTag implements EMFConstants {
 
         ImageGraphics2D.writeImage(
             (RenderedImage) image,
-            ImageConstants.RAW.toLowerCase(),
+            ImageConstants.RAW.toLowerCase(Locale.US),
             ImageGraphics2D.getRAWProperties(bkg, "BGR"),
             new NoCloseOutputStream(emf));
         // emf.writeImage(image, bkg, "BGR", 1);

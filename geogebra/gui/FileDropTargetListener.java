@@ -22,6 +22,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.util.Locale;
 
 public class FileDropTargetListener implements DropTargetListener {
 
@@ -74,7 +75,7 @@ public class FileDropTargetListener implements DropTargetListener {
 					java.util.List fileList = (java.util.List) transferable
 							.getTransferData(dataFlavor);
 					File droppedFile = (File) fileList.get(0);
-					String lowerCase = droppedFile.getName().toLowerCase();
+					String lowerCase = droppedFile.getName().toLowerCase(Locale.US);
 					if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {						
 						return droppedFile;
 					} 

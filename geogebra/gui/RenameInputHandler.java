@@ -5,6 +5,8 @@ import geogebra.MyError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
+import java.util.Locale;
+
 public class RenameInputHandler implements InputHandler {
 	private GeoElement geo;
 
@@ -69,7 +71,7 @@ public class RenameInputHandler implements InputHandler {
 	private boolean checkName(GeoElement geo, String name) {
 		if (name == null) return true;
 		
-		name = name.toLowerCase();
+		name = name.toLowerCase(Locale.US);
 		if (geo.isGeoFunction()) {
 			for (int i = 0; i < invalidFunctionNames.length; i++) {
 				if (invalidFunctionNames[i].equals(name))

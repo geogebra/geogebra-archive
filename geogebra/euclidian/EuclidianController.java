@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import javax.swing.ToolTipManager;
 
@@ -3080,7 +3081,7 @@ public class EuclidianController implements MouseListener,
 			// text			
 			GeoText text = createDynamicText(app.getCommand("Circumference"), circumFerence, e.getPoint());			
 			if (conic.isLabelSet()) {
-				circumFerence.setLabel(removeUnderscores(app.getCommand("Circumference").toLowerCase() + conic.getLabel()));							
+				circumFerence.setLabel(removeUnderscores(app.getCommand("Circumference").toLowerCase(Locale.US) + conic.getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
 			}			
 			return true;
@@ -3096,7 +3097,7 @@ public class EuclidianController implements MouseListener,
 									perimeter, e.getPoint());
 			
 			if (poly[0].isLabelSet()) {
-				perimeter.setLabel(removeUnderscores(app.getCommand("Perimeter").toLowerCase() + poly[0].getLabel()));							
+				perimeter.setLabel(removeUnderscores(app.getCommand("Perimeter").toLowerCase(Locale.US) + poly[0].getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + poly[0].getLabel()));				
 			} 
 			return true;
@@ -3115,7 +3116,7 @@ public class EuclidianController implements MouseListener,
 			String strText = "";
 			boolean useLabels = geoA.isLabelSet() && geoB.isLabelSet();
 			if (useLabels) {		
-				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase() + geoA.getLabel() + geoB.getLabel()));
+				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase(Locale.US) + geoA.getLabel() + geoB.getLabel()));
 				strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
 							+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
 							+ length.getLabel();			
@@ -3125,7 +3126,7 @@ public class EuclidianController implements MouseListener,
 				geoB.updateRepaint();
 			}
 			else {
-				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase()));					
+				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase(Locale.US)));					
 				strText = "\"\"" + length.getLabel();
 			}
 							
@@ -3198,7 +3199,7 @@ public class EuclidianController implements MouseListener,
 			// text			
 			GeoText text = createDynamicText(app.getCommand("Area"), area, e.getPoint());			
 			if (conic.isLabelSet()) {					
-				area.setLabel(removeUnderscores(app.getCommand("Area").toLowerCase() + conic.getLabel()));							
+				area.setLabel(removeUnderscores(app.getCommand("Area").toLowerCase(Locale.US) + conic.getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
 			}			
 			return true;

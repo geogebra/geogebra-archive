@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,7 +25,7 @@ import org.freehep.graphicsio.font.FontTable;
  * in <text> tags.
  *
  * @author Steffen Greiffenberg
- * @version $Id: SVGFontTable.java,v 1.3 2008-05-04 12:29:29 murkle Exp $
+ * @version $Id: SVGFontTable.java,v 1.4 2008-08-06 19:23:27 murkle Exp $
  */
 public class SVGFontTable {
 
@@ -280,7 +281,7 @@ public class SVGFontTable {
 
         // get replaced font family name (Yes it's right, not the name!)
         String family = replaceFonts.getProperty(
-            ((String) attributes.get(TextAttribute.FAMILY)).toLowerCase());
+            ((String) attributes.get(TextAttribute.FAMILY)).toLowerCase(Locale.US));
         if (family == null) {
             family = (String) attributes.get(TextAttribute.FAMILY);
         }

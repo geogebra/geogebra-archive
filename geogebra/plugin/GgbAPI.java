@@ -10,21 +10,9 @@ package geogebra.plugin;
  the Free Software Foundation.
  
  */
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-//import java.net.URL;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
-
-//import netscape.javascript.JSObject;
 import geogebra.Application;
-//import geogebra.View;
-//import geogebra.setChangeListener;
-//import geogebra.GeoGebraAppletBase.JavaToJavaScriptView;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -33,8 +21,14 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.kernel.Construction;
 import geogebra.modules.ClassPathManipulator;
+
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.TreeSet;
 
 
 /** 
@@ -595,7 +589,7 @@ public class GgbAPI {
 	 */
 	public synchronized String getObjectType(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		return (geo == null) ? "" : geo.getObjectType().toLowerCase();
+		return (geo == null) ? "" : geo.getObjectType().toLowerCase(Locale.US);
 	}
 	
 	/**

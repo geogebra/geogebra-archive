@@ -21,12 +21,10 @@ package geogebra.kernel;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
-
-// Added for Intergeo File Format (Yves Kreis) -->
-import java.util.MissingResourceException;
-// <-- Added for Intergeo File Format (Yves Kreis)
 
 /**
  *
@@ -801,7 +799,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }
 
 	final public String getXMLtypeString(GeoElement geo) {		
-		return geo.getClassName().substring(3).toLowerCase();
+		return geo.getClassName().substring(3).toLowerCase(Locale.US);
 	}
 	// <-- Added for Intergeo File Format (Yves Kreis)
 

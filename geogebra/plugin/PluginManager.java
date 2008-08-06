@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -249,7 +250,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             String line;
             try{
             	String firstLine=br.readLine();
-            if (firstLine.toLowerCase().startsWith("# geogebra plugin properties")) { // check first line
+            if (firstLine.toLowerCase(Locale.US).startsWith("# geogebra plugin properties")) { // check first line
                 while((line=br.readLine())!=null) {            
                 lines.add(line);                //debug(line);
             }//while lines

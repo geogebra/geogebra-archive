@@ -19,6 +19,7 @@ import geogebra.util.MyMath;
 
 import java.awt.Color;
 import java.util.HashSet;
+import java.util.Locale;
 
 /**
  * Polygon through given points
@@ -169,7 +170,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
         if (!p.isLabelSet() || p.getLabel() == null) 
         	s.setLabel(null);
         else 
-        	s.setLabel(p.getLabel().toLowerCase());
+        	s.setLabel(p.getLabel().toLowerCase(Locale.US));
     }
 	
     /**

@@ -27,6 +27,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -60,7 +61,7 @@ import java.util.Properties;
  * 
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: VectorGraphics.java,v 1.5 2008-05-04 12:13:31 murkle Exp $
+ * @version $Id: VectorGraphics.java,v 1.6 2008-08-06 19:23:19 murkle Exp $
  */
 public abstract class VectorGraphics extends Graphics2D implements
         VectorGraphicsConstants {
@@ -569,12 +570,12 @@ public abstract class VectorGraphics extends Graphics2D implements
     }
 
     public static int getTextAlignment(String name) {
-        Integer i = (Integer) alignments.get(name.toLowerCase());
+        Integer i = (Integer) alignments.get(name.toLowerCase(Locale.US));
         return (i != null) ? i.intValue() : TEXT_CENTER;
     }
 
     public static int getSymbol(String name) {
-        Integer i = (Integer) symbols.get(name.toLowerCase());
+        Integer i = (Integer) symbols.get(name.toLowerCase(Locale.US));
         return (i != null) ? i.intValue() : SYMBOL_PLUS;
     }
 
