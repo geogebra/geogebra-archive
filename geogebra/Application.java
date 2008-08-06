@@ -4464,7 +4464,14 @@ public abstract class Application implements	KeyEventDispatcher {
         
         Calendar calendar = new GregorianCalendar();
       
-        System.out.println(calendar.get(Calendar.MINUTE)+":"+calendar.get(Calendar.SECOND)+" "+s+" ["+callerClassName+"."+callerMethodName+"]");
+        int min = calendar.get(Calendar.MINUTE);
+        String minS = (min < 10) ? "0" + min : "" + min;
+        
+        int sec = calendar.get(Calendar.SECOND);
+        String secS = (sec < 10) ? "0" + sec : "" + sec;
+        
+        System.out.println("****Message from ["+callerClassName+"."+callerMethodName+"] at " + calendar.get(Calendar.HOUR)+":"+minS+":"+secS);
+        System.out.println("****" + s + "****\n");
     }
     
     // Michael Borcherds 2008-06-22
