@@ -1294,6 +1294,28 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Row of geo.
+	 */
+	final public GeoNumeric Row(
+		String label,
+		GeoElement geo) {
+		AlgoRow algo = new AlgoRow(cons, label, geo);
+		GeoNumeric ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Column of geo.
+	 */
+	final public GeoNumeric Column(
+		String label,
+		GeoElement geo) {
+		AlgoColumn algo = new AlgoColumn(cons, label, geo);
+		GeoNumeric ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * returns the current construction protocol step
 	 * Michael Borcherds 2008-05-15
 	 */

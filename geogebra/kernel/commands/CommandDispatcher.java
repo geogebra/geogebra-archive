@@ -246,7 +246,10 @@ public class CommandDispatcher {
     	cmdTable.put("Name", new CmdName(kernel));
     	
     	// cell range for spreadsheet like A1:A5
-    	cmdTable.put("CellRange", new CmdCellRange(kernel));    	
+    	cmdTable.put("CellRange", new CmdCellRange(kernel));  
+    	
+    	cmdTable.put("Row", new CmdRow(kernel));    	
+    	cmdTable.put("Column", new CmdColumn(kernel));    	
     }
 
 
