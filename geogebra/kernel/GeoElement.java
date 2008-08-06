@@ -343,6 +343,11 @@ public abstract class GeoElement
 		
 		// new elements become breakpoints if only breakpoints are shown
 		//isConsProtBreakpoint = cons.showOnlyBreakpoints();
+		
+		// ensure all new objects are in the top layer
+		EuclidianView ev =c.getApplication().getEuclidianView();
+		if (ev != null)
+			layer = ev.getMaxLayerUsed();
 	}
 
 	/* *******************************************************/	
@@ -2608,13 +2613,10 @@ final public boolean hasOnlyFreeInputPoints() {
 		
 		// layer
 		// Michael Borcherds 2008-02-26
-		if (layer != 0)
-		{
-			sb.append("\t<layer ");
-			sb.append("val=\""+layer+"\"");
-			sb.append("/>\n");
-		}
-
+		sb.append("\t<layer ");
+		sb.append("val=\""+layer+"\"");
+		sb.append("/>\n");
+		
 		if (withLabelOffset &&
 			(labelOffsetX != 0 || labelOffsetY != 0)) {
 			sb.append("\t<labelOffset");
