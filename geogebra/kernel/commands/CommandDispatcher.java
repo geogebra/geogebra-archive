@@ -256,7 +256,10 @@ public class CommandDispatcher {
     	
     	cmdTable.put("ToNumber", new CmdToNumber(kernel));    	
     	cmdTable.put("ToNumbers", new CmdToNumbers(kernel));    	
-    	cmdTable.put("ToText", new CmdToText(kernel));    	
+    	cmdTable.put("ToText", new CmdToText(kernel));    
+    	
+    	cmdTable.put("BarChart", new CmdBarChart(kernel));    	
+    	cmdTable.put("Histogram", new CmdHistogram(kernel));    	
     }
 
 

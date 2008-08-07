@@ -1680,6 +1680,26 @@ public class Kernel {
 	}
 	
 	/** 
+	 * BarChart
+	 */
+	final public GeoNumeric BarChart(String label, 
+					NumberValue a, NumberValue b, GeoList list) {
+		AlgoBarChart algo = new AlgoBarChart(cons, label, a, b, list);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
+	 * BarChart
+	 */
+	final public GeoNumeric Histogram(String label, 
+					NumberValue a, NumberValue b, GeoList list1, GeoList list2) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, a, b, list1, list2);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
 	 * UpperSum of function f 
 	 */
 	final public GeoNumeric UpperSum(String label, GeoFunction f, 

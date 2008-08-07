@@ -3410,6 +3410,81 @@ final public    GeoElement[] process(Command c) throws MyError {
 }
 
 /*
+ * BarChart[ <Number>, <Number>, <List> ]
+ */
+class CmdBarChart extends CommandProcessor {
+	
+	public CmdBarChart (Kernel kernel) {
+		super(kernel);
+	}
+	
+final public    GeoElement[] process(Command c) throws MyError {
+    int n = c.getArgumentNumber();
+    boolean[] ok = new boolean[n];
+    GeoElement[] arg;
+
+    switch (n) {
+        case 3 :
+            arg = resArgs(c);
+            if ((ok[0] = (arg[0] .isNumberValue()))
+                && (ok[1] = (arg[1] .isNumberValue()))
+                && (ok[2] = (arg[2] .isGeoList()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.BarChart(
+                            c.getLabel(),
+                            (NumberValue) arg[0],
+                            (NumberValue) arg[1],
+                            (GeoList)arg[2])};
+                return ret;
+            } else
+				throw argErr(app, c.getName(), null);
+
+        default :
+            throw argNumErr(app, c.getName(), n);
+    }
+}
+}
+/*
+ * Histogram[ <Number>, <Number>, <List>, <List> ]
+ */
+class CmdHistogram extends CommandProcessor {
+	
+	public CmdHistogram (Kernel kernel) {
+		super(kernel);
+	}
+	
+final public    GeoElement[] process(Command c) throws MyError {
+    int n = c.getArgumentNumber();
+    boolean[] ok = new boolean[n];
+    GeoElement[] arg;
+
+    switch (n) {
+        case 4 :
+            arg = resArgs(c);
+            if ((ok[0] = (arg[0] .isNumberValue()))
+                && (ok[1] = (arg[1] .isNumberValue()))
+                && (ok[2] = (arg[2] .isGeoList()))
+                && (ok[3] = (arg[3] .isGeoList()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.Histogram(
+                            c.getLabel(),
+                            (NumberValue) arg[0],
+                            (NumberValue) arg[1],
+                            (GeoList)arg[2],
+                			(GeoList)arg[3])};
+                return ret;
+            } else
+				throw argErr(app, c.getName(), null);
+
+        default :
+            throw argNumErr(app, c.getName(), n);
+    }
+}
+}
+
+/*
  * LowerSum[ <GeoFunction>, <Number>, <Number>, <Number> ]
  */
 class CmdLowerSum extends CommandProcessor {
