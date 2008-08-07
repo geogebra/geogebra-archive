@@ -7,9 +7,9 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
 
-public class CmdToNumber extends CommandProcessor {
+public class CmdToNumbers extends CommandProcessor {
 
-	public CmdToNumber(Kernel kernel) {
+	public CmdToNumbers(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -23,7 +23,7 @@ public class CmdToNumber extends CommandProcessor {
 
 			if (arg[0].isGeoText()) {
 				GeoElement[] ret = { 
-						kernel.ToNumber(c.getLabel(),
+						kernel.ToNumbers(c.getLabel(),
 						(GeoText) arg[0] ) };
 				return ret;
 			} else

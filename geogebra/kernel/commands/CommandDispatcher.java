@@ -255,6 +255,8 @@ public class CommandDispatcher {
     	cmdTable.put("toLaTeX", new CmdtoLaTeX(kernel));    
     	
     	cmdTable.put("ToNumber", new CmdToNumber(kernel));    	
+    	cmdTable.put("ToNumbers", new CmdToNumbers(kernel));    	
+    	cmdTable.put("ToText", new CmdToText(kernel));    	
     }
 
 

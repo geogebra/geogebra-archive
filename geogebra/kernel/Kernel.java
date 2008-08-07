@@ -1349,6 +1349,37 @@ public class Kernel {
 	}
 	
 	/** 
+	 * ToNumbers
+	 */
+	final public GeoList ToNumbers(
+		String label,
+		GeoText geo) {
+		AlgoToNumbers algo = new AlgoToNumbers(cons, label, geo);
+		GeoList ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * ToText(number)
+	 */
+	final public GeoText ToText(String label, NumberValue a) {
+		AlgoToText algo = new AlgoToText(cons, label, a);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	/** 
+	 * ToText(list)
+	 */
+	final public GeoText ToText(
+		String label,
+		GeoList geo) {
+		AlgoToTextList algo = new AlgoToTextList(cons, label, geo);
+		GeoText ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * returns the current construction protocol step
 	 * Michael Borcherds 2008-05-15
 	 */
