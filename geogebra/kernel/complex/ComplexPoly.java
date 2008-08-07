@@ -190,8 +190,8 @@ public class ComplexPoly{
         // Calculate the roots (real or complex) of a polynomial (real or complex)
         public Complex[] roots(boolean polish, Complex estx){
                 if(deg==0)
-					// System.out.println("degree of the polynomial is zero in the method ComplexPoly.roots");
-                   // System.out.println("null returned");
+					// Application.debug("degree of the polynomial is zero in the method ComplexPoly.roots");
+                   // Application.debug("null returned");
                     return null;
 
                 // check for zero roots
@@ -336,8 +336,8 @@ public class ComplexPoly{
                 // exceeded maximum allowed iterations
                 root.set(estx);
                
-               // System.out.println("Maximum number of iterations exceeded in laguerre: " + niter);
-               // System.out.println("root returned at this point");
+               // Application.debug("Maximum number of iterations exceeded in laguerre: " + niter);
+               // Application.debug("root returned at this point");
                return root;
         }
 

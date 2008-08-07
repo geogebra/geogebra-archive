@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.Application;
+
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -13,13 +15,13 @@ public class EditorFocusListener implements FocusListener{
 	
 	public void focusGained(FocusEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println("Focus Gained ");
+		Application.debug("Focus Gained ");
 		editor.setInputAreaFocused();
 	}
 
 	public void focusLost(FocusEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println("Focus Lost ");
+		Application.debug("Focus Lost ");
 //		if ()
 		editor.setLineInvisiable();
 		editor.stopCellEditing();		

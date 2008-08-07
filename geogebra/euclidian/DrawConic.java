@@ -503,11 +503,11 @@ final public class DrawConic extends Drawable implements Previewable {
 		 // hyperbola is visible on screen	
 		 step = Math.sqrt((x0 - a) / (x0 + a)) / (points - 1);		               		    
 		 
-//		 System.out.println("n: " + n);
-//		System.out.println("POINTS: " + points);
-//		 System.out.println("x0   = " + x0);                
-//		 System.out.println("a     = " + a);
-//		 System.out.println("step = " + step + "\n");		
+//		 Application.debug("n: " + n);
+//		Application.debug("POINTS: " + points);
+//		 Application.debug("x0   = " + x0);                
+//		 Application.debug("a     = " + a);
+//		 Application.debug("step = " + step + "\n");		
 
         // build Polyline of parametric hyperbola
         // hyp(t) = 1/(1-t�) {a(1+t�), 2bt}, 0 <= t < 1

@@ -13,6 +13,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+import geogebra.Application;
+
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -211,7 +213,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         	String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements);  
         	
         	// TODO: remove
-        	//System.out.println(locusConsXML);
+        	//Application.debug(locusConsXML);
         	
     		macroKernel.loadXML(locusConsXML);
     	
@@ -237,12 +239,12 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		macroCons = null;
     	}    
     	   
-//    	//System.out.println("P: " + P + ", kernel class: " + P.kernel.getClass());
-//    	System.out.println("Pcopy: " + Pcopy  + ", kernel class: " + Pcopy.kernel.getClass());
-//    	//System.out.println("P == Pcopy: " + (P == Pcopy));
-//    	//System.out.println("Q: " + Q  + ", kernel class: " + Q.kernel.getClass());
-//    	System.out.println("Qcopy: " + Qcopy  + ", kernel class: " + Qcopy.kernel.getClass());
-//    	//System.out.println("Q == Qcopy: " + (Q == Qcopy));
+//    	//Application.debug("P: " + P + ", kernel class: " + P.kernel.getClass());
+//    	Application.debug("Pcopy: " + Pcopy  + ", kernel class: " + Pcopy.kernel.getClass());
+//    	//Application.debug("P == Pcopy: " + (P == Pcopy));
+//    	//Application.debug("Q: " + Q  + ", kernel class: " + Q.kernel.getClass());
+//    	Application.debug("Qcopy: " + Qcopy  + ", kernel class: " + Qcopy.kernel.getClass());
+//    	//Application.debug("Q == Qcopy: " + (Q == Qcopy));
     }
     
     private void resetMacroConstruction() {
@@ -259,7 +261,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 		  				geoCopy.set(geoOrig);	  				
 		  				geoCopy.update();      	      			 
 		  			} catch (Exception e) {
-		  				System.err.println("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
+		  				Application.debug("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
 		  			}
 	      		}
       		}
@@ -292,9 +294,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
       	macroCons.updateConstruction(); // update all algorithms of the macro construction	         	
     	Pcopy.updateCascade();   
     	        	
-//    	System.out.println("*** compute ***");
-//    	System.out.println("init P: " + Pcopy);
-//    	System.out.println("init Q: " + Qcopy); 
+//    	Application.debug("*** compute ***");
+//    	Application.debug("init P: " + Pcopy);
+//    	Application.debug("init Q: " + Qcopy); 
     		
     	// remember the start positions of Pcopy and Qcopy
     	PstartPos.set(Pcopy);
@@ -351,7 +353,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	do {    		    		
     		boolean finishedRun = false;    		    		
     		
-        //	System.out.println("RUN " + runs);
+        //	Application.debug("RUN " + runs);
     		
 	        while ( !finishedRun && 
 	        		 pointCount <= PathMover.MAX_POINTS && 
@@ -365,7 +367,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        	boolean lineTo = pathMover.getNext(Pcopy);		       			
 	        	
 	        	// TODO: remove    		
-	        	//System.out.println("   while " + whileLoops + ", Pcopy: " + Pcopy);
+	        	//Application.debug("   while " + whileLoops + ", Pcopy: " + Pcopy);
 	        	
 	        	
 	        	// TODO: check
@@ -379,21 +381,21 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       		      	        
 	       	 // PRINT MACRO CONSTRUCTION STATE   
 //	          	Iterator it = macroCons.getGeoElementsIterator();
-//	          	System.out.println("*** locus macro construction state ***");
+//	          	Application.debug("*** locus macro construction state ***");
 //	          	while (it.hasNext()) {	          	
-//	    	      		System.out.println(it.next());			    	      		
+//	    	      		Application.debug(it.next());			    	      		
 //	          	}
 	        
 	          	
 //	        	GeoSegment a = (GeoSegment) macroKernel.lookupLabel("a");
-//	        	System.out.println("a: from " + a.getStartPoint() + "(" + a.getStartPoint().getConstruction() + ") to "
+//	        	Application.debug("a: from " + a.getStartPoint() + "(" + a.getStartPoint().getConstruction() + ") to "
 //	        			+ a.getEndPoint() + "(" + a.getEndPoint().getConstruction() + ")");
 	       
 	       		
 	        	// TODO: check
 	       		// if it takes too much time to calculate a single step, we stop
 	       		if (updateTime > MAX_TIME_FOR_ONE_STEP) {
-	       			System.err.println("AlgoLocus: max time exceeded " + updateTime);	       			
+	       			Application.debug("AlgoLocus: max time exceeded " + updateTime);	       			
 	       			maxTimeExceeded = true;	 
 	       			return;
 	       		}
@@ -425,7 +427,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	       		       		long ut = System.currentTimeMillis() - st;	
 	       					
 	       					if (ut > MAX_TIME_FOR_ONE_STEP) {
-	       		       			System.err.println("AlgoLocus: max time exceeded  " + updateTime);	       		       				       		       			 
+	       		       			Application.debug("AlgoLocus: max time exceeded  " + updateTime);	       		       				       		       			 
 	       		       			maxTimeExceeded = true;
 	       		       			return;
 	       		       		}	       
@@ -445,7 +447,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 		       		}
 	       			// PARAMETER jump: !lineTo
 	       			else {	       			
-	       			//	System.out.println("parameter jump: " + pathMover.getCurrentParameter());
+	       			//	Application.debug("parameter jump: " + pathMover.getCurrentParameter());
 	       				insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));	
 	       			}
 	       		}
@@ -467,7 +469,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        // change orientation of pathMove to get other side of start position too
 	        if (maxTimeExceeded) {
 	        	// TODO: remove
-	        	System.out.println("AlgoLocus: max time exceeded");
+	        	Application.debug("AlgoLocus: max time exceeded");
 	        	
 	        	return;	        
 	        } 
@@ -478,10 +480,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 				Pcopy.updateCascade();	               	    	       		       	   		   		       	       							
 				insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));							
 		    				
-//	    		 System.out.println("run: " + runs);
-//	    		 System.out.println("pointCount: " + pointCount);
-//		       	 System.out.println("  startPos: " + QstartPos); 
-//		       	 System.out.println("  Qcopy: " + Qcopy);
+//	    		 Application.debug("run: " + runs);
+//	    		 Application.debug("pointCount: " + pointCount);
+//		       	 Application.debug("  startPos: " + QstartPos); 
+//		       	 Application.debug("  Qcopy: " + Qcopy);
 	    		 	        
 	    		// we are finished with all runs
 	    		// if we got back to the start position of Qcopy
@@ -496,8 +498,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        runs++;	        	 
         } while (runs < max_runs);
     	
-//    	System.out.println("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
-//    	System.out.println("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
+//    	Application.debug("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
+//    	Application.debug("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
     	
     }
     
@@ -507,7 +509,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	pointCount++;
     	
     	
-    //	System.out.println("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
+    //	Application.debug("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
     	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
@@ -589,7 +591,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		sleeper = new Thread() {
         		public void run() {
         			// TODO: remove
-            		System.out.println("sleeper: start");
+            		Application.debug("sleeper: start");
         			try {
         				sleep(MAX_TIME_FOR_ONE_STEP);
         			} catch (Exception e) {    				
@@ -597,7 +599,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         			
         			if (Updater.this.isAlive()) {
         				// TODO: remove
-        				System.out.println("updater: suspend (TOOK TOO LONG)");
+        				Application.debug("updater: suspend (TOOK TOO LONG)");
         				Updater.this.interrupt();
         			}
         		}
@@ -612,11 +614,11 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		sleeper.start();
     		
     		// TODO: remove
-    		System.out.println("updater: start");
+    		Application.debug("updater: start");
     		geo.updateCascade();    		
     		
-    		System.out.println("updater: finished");
-    		System.out.println("sleeper: suspend");
+    		Application.debug("updater: finished");
+    		Application.debug("sleeper: suspend");
     		sleeper.suspend();    		
     	}    
     	    	

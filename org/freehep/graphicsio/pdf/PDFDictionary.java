@@ -1,5 +1,7 @@
 package org.freehep.graphicsio.pdf;
 
+import geogebra.Application;
+
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -9,7 +11,7 @@ import java.util.Calendar;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFDictionary.java,v 1.3 2008-05-04 12:31:34 murkle Exp $
+ * @version $Id: PDFDictionary.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDFDictionary implements PDFConstants {
 
@@ -50,49 +52,49 @@ public class PDFDictionary implements PDFConstants {
 
     public void entry(String key, String string) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " (" + PDFUtil.escape(string) + ")");
     }
 
     public void entry(String key, PDFName name) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + name);
     }
 
     public void entry(String key, int number) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + number);
     }
 
     public void entry(String key, double number) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + PDFUtil.fixedPrecision(number));
     }
 
     public void entry(String key, boolean bool) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + (bool ? "true" : "false"));
     }
 
     public void entry(String key, PDFRef ref) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + ref);
     }
 
     public void entry(String key, Calendar date) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.println("/" + key + " " + PDFUtil.date(date));
     }
 
     public void entry(String key, Object[] objs) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.print("/" + key + " [");
         for (int i = 0; i < objs.length; i++) {
             if (i != 0)
@@ -105,7 +107,7 @@ public class PDFDictionary implements PDFConstants {
 
     public void entry(String key, int[] numbers) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.print("/" + key + " [");
         for (int i = 0; i < numbers.length; i++) {
             if (i != 0)
@@ -118,7 +120,7 @@ public class PDFDictionary implements PDFConstants {
 
     public void entry(String key, double[] numbers) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.print("/" + key + " [");
         for (int i = 0; i < numbers.length; i++) {
             if (i != 0)
@@ -131,7 +133,7 @@ public class PDFDictionary implements PDFConstants {
 
     public void entry(String key, boolean[] bool) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         out.print("/" + key + " [");
         for (int i = 0; i < bool.length; i++) {
             if (i != 0)
@@ -144,7 +146,7 @@ public class PDFDictionary implements PDFConstants {
 
     public PDFDictionary openDictionary(String name) throws IOException {
         if (!ok)
-            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
+            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");

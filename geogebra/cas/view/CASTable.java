@@ -78,7 +78,7 @@ public class CASTable extends JTable {
 		// TODO: Test this part
 		// CASTableCellEditor dce = (CASTableCellEditor )this.getCellEditor();
 		// if (dce != null) {
-		// System.out.println("dce stop editting");
+		// Application.debug("dce stop editting");
 		// dce.stopCellEditing();
 		// }
 

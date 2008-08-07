@@ -140,7 +140,7 @@ public class AlgoTaylorSeries extends AlgoElement {
 				}
 				coeff = deriv.evaluate(ad);
 				 
-				// System.out.println("coeff(" + k + ") = " + coeff);
+				// Application.debug("coeff(" + k + ") = " + coeff);
 				 
 				 if (Double.isNaN(coeff) || Double.isInfinite(coeff)) {
 						 g.setUndefined();

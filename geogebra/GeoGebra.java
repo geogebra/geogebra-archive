@@ -157,7 +157,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			catch (Exception e)
 			{
 				// do nothing
-				System.err.println("updateSize: pack() failed");
+				Application.debug("updateSize: pack() failed");
 			}
 //			 Michael Borcherds 2007-12-08 END
 			frameSize = getSize();
@@ -217,7 +217,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		try {							
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			System.err.println(e);
+			Application.debug(e+"");
 		}	
     	    
 		// load list of previously used files
@@ -248,7 +248,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		    //System.setProperty("com.apple.macos.useScreenMenuBar", "true"); 	
 		    System.setProperty("apple.laf.useScreenMenuBar", "true"); 	
 		} catch (Exception e) {
-			System.err.println(e);
+			Application.debug(e+"");
 		}
 	}
 	

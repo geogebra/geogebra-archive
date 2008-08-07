@@ -147,7 +147,7 @@ implements ExpressionValue {
              if (geos != null && geos.length == 1) {
                 evalGeo = geos[0]; 
              } else {
-                System.err.println("invalid command evaluation: " + name);
+                Application.debug("invalid command evaluation: " + name);
                 throw new MyError(app, app.getError("InvalidInput") + ":\n" + this);                                                                 
              }          
         }                       

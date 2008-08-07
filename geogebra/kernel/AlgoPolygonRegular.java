@@ -111,11 +111,11 @@ public class AlgoPolygonRegular extends AlgoElement {
         }                
         
         
-//    	System.out.println("*** OUTPUT ****************");
+//    	Application.debug("*** OUTPUT ****************");
 //        for (int i=0; i < output.length; i++) {
-//			System.out.println(" " + i + ": " + output[i].getLongDescription());		     	        	     	
+//			Application.debug(" " + i + ": " + output[i].getLongDescription());		     	        	     	
 //		} 
-//    	System.out.println("*****************");
+//    	Application.debug("*****************");
         
     }
     

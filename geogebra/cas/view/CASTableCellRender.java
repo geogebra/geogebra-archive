@@ -18,10 +18,10 @@ public class CASTableCellRender extends CASTableCell implements
 
 		if (value instanceof CASTableCellValue) {
 			CASTableCellValue tempV = (CASTableCellValue) value;
-//			System.out.println("Rendering Row: " + row);
-//			System.out.println("Input: " + tempV.getCommand());
-//			System.out.println("Output: " + tempV.getOutput());
-			// System.out.println("OutputArea: " +
+//			Application.debug("Rendering Row: " + row);
+//			Application.debug("Input: " + tempV.getCommand());
+//			Application.debug("Output: " + tempV.getOutput());
+			// Application.debug("OutputArea: " +
 			// tempV.getOutputAreaInclude());
 			// tempV.isBBorderVisible();
 			String tempIn = tempV.getCommand();

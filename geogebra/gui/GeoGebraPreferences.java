@@ -185,7 +185,7 @@ public class GeoGebraPreferences {
     	try {
     		ggbPrefs.flush();
     	} catch (Exception e) {
-    		System.err.println(e);
+    		Application.debug(e+"");
     	}
     }
     
@@ -333,7 +333,7 @@ public class GeoGebraPreferences {
     		ggbPrefs.clear();    		
     		ggbPrefs.flush();
     	} catch (Exception e) {
-    		System.err.println(e);
+    		Application.debug(e+"");
     	}
     }
     	     	 

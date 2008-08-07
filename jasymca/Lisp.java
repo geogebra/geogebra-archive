@@ -1,4 +1,6 @@
 package jasymca;
+
+import geogebra.Application;
 /* Jasymca	-	- Symbolic Calculator for Mobile Devices
    This version is written for J2ME, CLDC 1.1,  MIDP 2, JSR 75
    or J2SE
@@ -26,7 +28,7 @@ package jasymca;
 // A little bit of Lisp
 public class Lisp{
 	static final boolean debug = false;
-	static void p(String s) { if (debug) System.out.println(s); }
+	static void p(String s) { if (debug) Application.debug(s); }
 
 	// Basic Lisp/Scheme functions, mostly adapted from Norvigs JScheme (www.norvig.org)
 	// Amazingly, it is possible to code Scheme programs in Java with few changes
@@ -515,7 +517,7 @@ public class Lisp{
 					e.printStackTrace();
 				}
 				
-				System.out.println("Illegal expression: "+expr);
+				Application.debug("Illegal expression: "+expr);
 				return null;
 		}
 	}

@@ -76,7 +76,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 			}
 		}
 		catch (CircularDefinitionException e) {
-			System.err.println("set GeoText: CircularDefinitionException");
+			Application.debug("set GeoText: CircularDefinitionException");
 		}		
 		
 		//setLaTeX(gt.isLaTeX, true);

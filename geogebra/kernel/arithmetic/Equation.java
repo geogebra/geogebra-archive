@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -105,7 +106,7 @@ public class Equation extends ValidExpression {
             NumberValue nv = (NumberValue) ev;
             return nv.getDouble();
         } catch (Exception e) {
-            System.out.println("getCoeffValue("+variables+") failed:" + e);
+            Application.debug("getCoeffValue("+variables+") failed:" + e);
             return Double.NaN;
         }
     }

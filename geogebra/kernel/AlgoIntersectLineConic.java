@@ -348,7 +348,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     	for (int i=0; i < permutation.length; i++) {
     		System.out.print(permutation[i] + " ");
     	}
-    	System.out.println();
+    	Application.debug();
         */
         
         // make sure interesection points lie on limited paths
@@ -431,7 +431,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     	
         // intersection failed
         if (!ok) {     
-            //System.err.println("INTERSECT LINE CONIC FAILED: epsilon = " + epsilon);
+            //Application.debug("INTERSECT LINE CONIC FAILED: epsilon = " + epsilon);
             for (int i=0; i < 2; i++) sol[i].setUndefined();                      
         }    
         return ret;

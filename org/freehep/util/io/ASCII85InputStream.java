@@ -1,6 +1,8 @@
 // Copyright 2001, FreeHEP.
 package org.freehep.util.io;
 
+import geogebra.Application;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,7 @@ import java.io.InputStream;
  * the correct read(byte[], int, int) method is used.
  * 
  * @author Mark Donszelmann
- * @version $Id: ASCII85InputStream.java,v 1.3 2008-05-04 12:21:56 murkle Exp $
+ * @version $Id: ASCII85InputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
  */
 public class ASCII85InputStream extends InputStream implements ASCII85 {
 
@@ -141,7 +143,7 @@ public class ASCII85InputStream extends InputStream implements ASCII85 {
      */
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.err.println("Usage: ASCII85InputStream filename");
+            Application.debug("Usage: ASCII85InputStream filename");
             System.exit(1);
         }
         ASCII85InputStream in = new ASCII85InputStream(new FileInputStream(args[0]));

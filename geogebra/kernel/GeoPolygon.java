@@ -80,16 +80,16 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		updateSegments();
 		
 //		if (points != null) {
-//		System.out.println("*** " + this + " *****************");
-//        System.out.println("POINTS: " + points.length);
+//		Application.debug("*** " + this + " *****************");
+//        Application.debug("POINTS: " + points.length);
 //        for (int i=0; i < points.length; i++) {
-//			System.out.println(" " + i + ": " + points[i]);		     	        	     	
+//			Application.debug(" " + i + ": " + points[i]);		     	        	     	
 //		}   
-//        System.out.println("SEGMENTS: " + segments.length);
+//        Application.debug("SEGMENTS: " + segments.length);
 //        for (int i=0; i < segments.length; i++) {
-//			System.out.println(" " + i + ": " + segments[i]);		     	        	     	
+//			Application.debug(" " + i + ": " + segments[i]);		     	        	     	
 //		}  
-//        System.out.println("********************");
+//        Application.debug("********************");
 //		}
 	}        
 
@@ -100,11 +100,11 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
      * @param labels
      */
     public void initLabels(String [] labels) {     	
-    	// System.out.println("INIT LABELS");
+    	// Application.debug("INIT LABELS");
     	
     	// label polygon
     	if (labels == null || labels.length == 0) {    		
-        	// System.out.println("no labels given");
+        	// Application.debug("no labels given");
         	
              setLabel(null);
              if (segments != null) {
@@ -123,7 +123,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     		// additional labels for the polygon's segments
     		// poly + segments + points - 2 for AlgoPolygonRegular
     		if (labels.length == 1 + segments.length + points.length - 2) {
-    			//System.out.println("labels for segments and points");
+    			//Application.debug("labels for segments and points");
     			
 	            int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
@@ -137,7 +137,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
     		// additional labels for the polygon's segments
     		// poly + segments for AlgoPolygon
     		else if (labels.length == 1 + segments.length) {
-    			//System.out.println("labels for segments");
+    			//Application.debug("labels for segments");
     			
             	int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
@@ -146,7 +146,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 	        } 
     		
 	        else { 
-	        	//System.out.println("label for polygon (autoset segment labels)");     	
+	        	//Application.debug("label for polygon (autoset segment labels)");     	
 	        	defaultSegmentLabels();
 	        }
     	}    	        

@@ -64,7 +64,7 @@ public class DrawPoint3D extends Drawable3D{
 		view3D.toScreenCoords3D(coords);
 		//coords.SystemPrint();
 		
-		//System.out.println("coords ="); coords.SystemPrint();
+		//Application.debug("coords ="); coords.SystemPrint();
 		
 		
 		t3d.set(new Vector3d(new double[] {coords.get(1), coords.get(2), coords.get(3)} ));
@@ -86,7 +86,7 @@ public class DrawPoint3D extends Drawable3D{
 	
 	
 	public void draw(GraphicsContext3D gc){
-		//System.out.println("draw");
+		//Application.debug("draw");
 
 
     	gc.setModelTransform(t3d);
@@ -96,7 +96,7 @@ public class DrawPoint3D extends Drawable3D{
 	}
 	
 	public void drawHidden(GraphicsContext3D gc){
-		//System.out.println("draw");
+		//Application.debug("draw");
 
 
     	gc.setModelTransform(t3d);
@@ -119,7 +119,7 @@ public class DrawPoint3D extends Drawable3D{
 	
 	public boolean isPicked(GgbVector pickPoint){
 		if (coords.subVector(1,3).distLine(view3D.eye,pickPoint.subVector(1,3).sub(view3D.eye))<=radius){
-			//System.out.println("picked = "+P.getLabel());
+			//Application.debug("picked = "+P.getLabel());
 			geo.setHighlighted(true);
 			return true;
 		}else{

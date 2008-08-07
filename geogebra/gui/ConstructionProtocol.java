@@ -329,7 +329,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         		  	        constructor.newInstance(args);
                     		   
                     	} catch (Exception e) {
-                    		System.err.println("Print preview not available");
+                    		Application.debug("Print preview not available");
                     	}   
                     	app.setDefaultCursor();
                     }
@@ -1532,7 +1532,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     		
     		d.setVisible(true);    		    
     	} catch (Exception e) {
-    		System.err.println("ConstructionProtocolExportDialog (html) is not available");
+    		Application.debug("ConstructionProtocolExportDialog (html) is not available");
     	}
     	app.setDefaultCursor();
     }

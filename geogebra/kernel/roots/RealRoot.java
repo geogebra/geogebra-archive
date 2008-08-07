@@ -190,8 +190,8 @@ public class RealRoot{
 	        }
             iterN++;
             if(iterN>iterMax){
-                //System.out.println("brent: maximum number of iterations exceeded - root at this point returned");
-                //System.out.println("Last mid-point difference = "+diff+", tolerance = " + tol);
+                //Application.debug("brent: maximum number of iterations exceeded - root at this point returned");
+                //Application.debug("Last mid-point difference = "+diff+", tolerance = " + tol);
                 root = mid;
                 testConv = false;
             }
@@ -273,8 +273,8 @@ public class RealRoot{
             diff = Math.abs(mid-lastMid);
             iterN++;
             if(iterN>iterMax){
-                //System.out.println("bisect: maximum number of iterations exceeded - root at this point returned");
-                //System.out.println("Last mid-point difference = "+diff+", tolerance = " + tol);
+                //Application.debug("bisect: maximum number of iterations exceeded - root at this point returned");
+                //Application.debug("Last mid-point difference = "+diff+", tolerance = " + tol);
                 root = mid;
                 testConv = false;
             }
@@ -351,8 +351,8 @@ public class RealRoot{
             diff = Math.abs(mid-lastMid);
             iterN++;
             if(iterN>iterMax){
-                //System.out.println("falsePosition: maximum number of iterations exceeded - root at this point returned");
-                //System.out.println("Last mid-point difference = "+diff+", tolerance = " + tol);
+                //Application.debug("falsePosition: maximum number of iterations exceeded - root at this point returned");
+                //Application.debug("Last mid-point difference = "+diff+", tolerance = " + tol);
                 root = mid;
                 testConv = false;
             }
@@ -481,8 +481,8 @@ public class RealRoot{
 	        }
             iterN++;
             if(iterN>iterMax){
-                //System.out.println("bisectNetonRaphson: maximum number of iterations exceeded - root at this point returned");
-                //System.out.println("Last mid-point difference = "+diff+", tolerance = " + tol);
+                //Application.debug("bisectNetonRaphson: maximum number of iterations exceeded - root at this point returned");
+                //Application.debug("Last mid-point difference = "+diff+", tolerance = " + tol);
                 root = mid;
                 testConv = false;
             }
@@ -528,8 +528,8 @@ public class RealRoot{
             }
             iterN++;
             if(iterN>iterMax){
-                //System.out.println("newtonRaphson: maximum number of iterations exceeded - root at this point returned");
-                //System.out.println("Last mid-point difference = "+diff+", tolerance = " + tol);
+                //Application.debug("newtonRaphson: maximum number of iterations exceeded - root at this point returned");
+                //Application.debug("Last mid-point difference = "+diff+", tolerance = " + tol);
                 root = x;
                 testConv = false;
             }

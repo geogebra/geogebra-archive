@@ -1,6 +1,8 @@
 // Copyright 2000-2007, FreeHEP
 package org.freehep.graphicsio;
 
+import geogebra.Application;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -54,7 +56,7 @@ import org.freehep.util.images.ImageUtilities;
  * @author Charles Loomis
  * @author Mark Donszelmann
  * @author Steffen Greiffenberg
- * @version $Id: AbstractVectorGraphicsIO.java,v 1.3 2008-05-04 12:15:50 murkle Exp $
+ * @version $Id: AbstractVectorGraphicsIO.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
  */
 public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
 
@@ -807,7 +809,7 @@ s     *
 	    	writeTransform(deltaTransform);
     	} catch (NoninvertibleTransformException e) {
     		// ignored...
-    		System.err.println("Warning: (ignored) Could not invert matrix: "+oldTransform);
+    		Application.debug("Warning: (ignored) Could not invert matrix: "+oldTransform);
     	}
     }
 
@@ -1347,7 +1349,7 @@ s     *
      */
     protected void writeWarning(String warning) {
         if (isProperty(EMIT_WARNINGS)) {
-            System.err.println(warning);
+            Application.debug(warning);
         }
     }
 
@@ -1360,7 +1362,7 @@ s     *
         throw new RuntimeException(exception);
         // FIXME decide what we should do
         /*
-         * if (isProperty(EMIT_ERRORS)) { System.err.println(exception);
+         * if (isProperty(EMIT_ERRORS)) { Application.debug(exception);
          * exception.printStackTrace(System.err); }
          */
     }

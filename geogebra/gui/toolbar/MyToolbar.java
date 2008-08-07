@@ -293,7 +293,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	try {
 	    	toolbarVec = createToolBarVec(app.getToolBarDefinition());
 	    } catch (Exception e) {
-			System.err.println("invalid toolbar string: " + app.getToolBarDefinition());
+			Application.debug("invalid toolbar string: " + app.getToolBarDefinition());
 			toolbarVec = createToolBarVec(getDefaultToolbarString());
 		}
  
@@ -549,7 +549,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         	}             	                	        	
         }            
         
-        //System.out.println("defToolbar: " + sb);
+        //Application.debug("defToolbar: " + sb);
         
         return sb.toString();
     }

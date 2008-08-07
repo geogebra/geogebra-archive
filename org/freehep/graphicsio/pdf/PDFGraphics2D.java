@@ -56,7 +56,7 @@ import org.freehep.util.UserProperties;
  * 
  * @author Simon Fischer
  * @author Mark Donszelmann
- * @version $Id: PDFGraphics2D.java,v 1.5 2008-06-30 21:13:02 murkle Exp $
+ * @version $Id: PDFGraphics2D.java,v 1.6 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		MultiPageDocument, FontUtilities.ShowString {
@@ -168,7 +168,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperties(newProperties);
 	}
 
-	public static final String version = "$Revision: 1.5 $";
+	public static final String version = "$Revision: 1.6 $";
 
 	private static final String PDF_VERSION = "1.4";
 
@@ -884,7 +884,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 
 	protected void writePaint(Color c) throws IOException {
 		float[] cc = c.getRGBComponents(null);
-		// System.out.println("alpha = "+cc[3]);
+		// Application.debug("alpha = "+cc[3]);
 		Float alpha = new Float(cc[3]);
 		String alphaName = (String) extGStates.get(alpha);
 		if (alphaName == null) {

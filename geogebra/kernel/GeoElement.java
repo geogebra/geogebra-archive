@@ -531,7 +531,7 @@ public abstract class GeoElement
 		if (greenD>0.5) greenD=2*(1-greenD); else greenD=2*greenD;
 		if (blueD>0.5) blueD=2*(1-blueD); else blueD=2*blueD;
 		
-		//System.out.println("red"+redD+"green"+greenD+"blue"+blueD);
+		//Application.debug("red"+redD+"green"+greenD+"blue"+blueD);
 		
 		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);		
 
@@ -640,7 +640,7 @@ public abstract class GeoElement
 		// priority = 100 000 000
 		 long ret = (long) (typePriority * 10E9 + getConstructionIndex());
 		 
-		 //app.debug("priority: " + ret + ", " + this);
+		 //Application.debug("priority: " + ret + ", " + this);
 		 return ret;
 	}
 
@@ -1219,7 +1219,7 @@ final public boolean hasOnlyFreeInputPoints() {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("SET LABEL: " + label + ", type: " + this.getTypeString());
+			Application.debug("SET LABEL: " + label + ", type: " + this.getTypeString());
 		}
 		*/	
 				
@@ -1263,7 +1263,7 @@ final public boolean hasOnlyFreeInputPoints() {
     	}
 		
 		
-		//System.out.println("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
+		//Application.debug("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
 	}		
 	
 	// Michael Borcherds 2008-01-19 
@@ -1359,7 +1359,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			column += s.charAt(0) - 'A' + 1;
 			s = s.substring(1);
 		}
-		//System.out.println(column);
+		//Application.debug(column);
 		return column - 1;
 	}
 	    
@@ -1383,7 +1383,7 @@ final public boolean hasOnlyFreeInputPoints() {
 				e.printStackTrace();
 			}
 		} else {
-			System.err.println("RENAME: old: " + label + ", new: " + newLabel + ", type: " + this.getTypeString());
+			Application.debug("RENAME: old: " + label + ", new: " + newLabel + ", type: " + this.getTypeString());
 		}
 		*/
 		
@@ -1658,28 +1658,28 @@ final public boolean hasOnlyFreeInputPoints() {
 	final public void notifyAdd() {
 		kernel.notifyAdd(this);
 
-		//		System.out.println("add " + label);
+		//		Application.debug("add " + label);
 		// printUpdateSets();
 	}
 
 	final public void notifyRemove() {
 		kernel.notifyRemove(this);
 		
-		//System.out.println("remove " + label);
+		//Application.debug("remove " + label);
 		//printUpdateSets();
 	}
 	
 	final public void notifyUpdate() {
 		kernel.notifyUpdate(this);
 
-		//	System.out.println("update " + label);
+		//	Application.debug("update " + label);
 		//	printUpdateSets();
 	}
 	
 	final public void notifyUpdateAuxiliaryObject() {
 		kernel.notifyUpdateAuxiliaryObject(this);
 
-		//		System.out.println("add " + label);
+		//		Application.debug("add " + label);
 		//	printUpdateSets();
 	}
 
@@ -1689,7 +1689,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		Iterator itList = cons.getAllGeoElementsIterator();
 		while (itList.hasNext()) {
 			GeoElement geo = (GeoElement) itList.next();		
-			System.out.println(geo.label + ": " + geo.algoUpdateSet.toString());			
+			Application.debug(geo.label + ": " + geo.algoUpdateSet.toString());			
 		}    	    	
 	}
 	*/
@@ -1760,7 +1760,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * remove algorithm from update sets  up the construction graph
 	 */
 	private void removeFromUpdateSets(AlgoElement algorithm) {
-		//	System.out.println(label + " remove from updateSet: " + algorithm.getCommandDescription());
+		//	Application.debug(label + " remove from updateSet: " + algorithm.getCommandDescription());
 		if (algoUpdateSet.remove(algorithm)) {
 			//	propagate up the graph				
 			if (algoParent != null) {
@@ -1928,7 +1928,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			if (input[i].isChildOf(geo))
 				return true;
 			
-			//System.out.println(input[i].getLabel() + " isChildOf: " + geo.getLabel());
+			//Application.debug(input[i].getLabel() + " isChildOf: " + geo.getLabel());
 		}
 		return false;
 	}
@@ -2965,7 +2965,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	public final void setColorFunction(GeoList col) 
 	//throws CircularDefinitionException 
 	{
-		//System.out.println("setColorFunction"+col.getValue());
+		//Application.debug("setColorFunction"+col.getValue());
 		
 		// check for circular definition (not needed)
 		//if (this == col || isParentOf(col))
@@ -2986,7 +2986,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	public final void removeColorFunction(GeoList col) {
-		//System.out.println("removeColorFunction");
+		//Application.debug("removeColorFunction");
 		if (colFunction == col)
 			colFunction = null;
 	}

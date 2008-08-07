@@ -203,7 +203,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
             bisector.y =  wv.x;
             bisector.z = - (B.inhomX * bisector.x + B.inhomY * bisector.y);
         }
-        //System.out.println("bisector = (" + bisector.x + ", " + bisector.y + ", " + bisector.z + ")\n");
+        //Application.debug("bisector = (" + bisector.x + ", " + bisector.y + ", " + bisector.z + ")\n");
     }
 
     final public String toString() {

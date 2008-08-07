@@ -269,7 +269,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         
       setText(sb.toString());
          
-      //System.out.println("set selection: " + caretPos + ", " + end);
+      //Application.debug("set selection: " + caretPos + ", " + end);
           
       
       //setSelectionEnd(caretPos + cmdTail.length());

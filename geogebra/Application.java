@@ -366,7 +366,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	/*
     	if (args != null) {
     		for (int i=0; i < args.length; i++) {
-    			System.out.println("argument " + i + ": " + args[i]);
+    			Application.debug("argument " + i + ": " + args[i]);
     			JOptionPane.showConfirmDialog(
     	        		null,
     	        		"argument " + i + ": " + args[i], 
@@ -378,7 +378,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	
     	// Michael Borcherds 2008-05-05
     	// added to help debug applets
-    	System.out.println("GeoGebra "+versionString+" "+buildDate+" Java "+System.getProperty("java.version"));
+    	Application.debug("GeoGebra "+versionString+" "+buildDate+" Java "+System.getProperty("java.version"));
     		
 
 	        isApplet = applet != null;
@@ -849,7 +849,7 @@ public abstract class Application implements	KeyEventDispatcher {
     				
     				if (optionName.equals("help")) {
     			    	// help message
-    			    	System.out.println(
+    			    	Application.debug(
     			    				"Usage: java -jar geogebra.jar [OPTION] [FILE]\n" + 
     								"Start GeoGebra with the specified OPTIONs and open the given FILE.\n" +
     								"  --help\t\tprint this message\n" +
@@ -862,8 +862,8 @@ public abstract class Application implements	KeyEventDispatcher {
     				else if (optionName.equals("language")) {
     					initLocale = getLocale(optionValue);
     					
-    					//System.out.println("lanugage option: " + optionValue);
-    					//System.out.println("locale: " + initLocale);
+    					//Application.debug("lanugage option: " + optionValue);
+    					//Application.debug("locale: " + initLocale);
     				}
     				else if (optionName.equals("showAlgebraInput")) {
     					showAlgebraInput = !optionValue.equals("false"); 
@@ -1227,7 +1227,7 @@ public abstract class Application implements	KeyEventDispatcher {
         if (fontName == null) 
         	fontName = STANDARD_FONT_NAME;
                        
-        //System.out.println("font: " + fontName);
+        //Application.debug("font: " + fontName);
         
         return fontName;
     }
@@ -1345,7 +1345,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     private void initCommandResources() {    	    
-    	//System.out.println("init command resources");    	
+    	//Application.debug("init command resources");    	
         rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);    
         
         // build Hashtable for translation of commands from
@@ -1371,7 +1371,7 @@ public abstract class Application implements	KeyEventDispatcher {
          Iterator it = kernel.getAlgebraProcessor().getCmdNameIterator();
          while (it.hasNext()) {            
              String internal = (String) it.next();
-             //System.out.println(internal);
+             //Application.debug(internal);
              if (!internal.endsWith("Syntax") && !internal.equals("Command") ) {
             	 String local = rbcommand.getString((String) internal);
             	 if (local != null) {
@@ -2046,7 +2046,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			try
 			{
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				if (img==null) System.out.println("image==null");
+				if (img==null) Application.debug("image==null");
 				ImageIO.write(img, "png", baos);		
 				byte [] fileData= baos.toByteArray();
 				
@@ -2059,7 +2059,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			}
 			catch (Exception e)
 			{
-				System.err.println("MD5 Error");
+				Application.debug("MD5 Error");
 				zip_directory="images";
 				//e.printStackTrace();
 			}
@@ -2504,7 +2504,7 @@ public abstract class Application implements	KeyEventDispatcher {
 					modeText = macro.getCommandName();
 				return modeText;
 			} catch (Exception e) {				
-				System.err.println("Application.getModeText(): macro does not exist: ID = " + macroID);				
+				Application.debug("Application.getModeText(): macro does not exist: ID = " + macroID);				
 				//e.printStackTrace();
 				return "";
 			}    		
@@ -2533,7 +2533,7 @@ public abstract class Application implements	KeyEventDispatcher {
 					// use image as icon
 					icon = new ImageIcon(ImageManager.addBorder(img, border));				
 			} catch (Exception e) {
-				System.err.println("macro does not exist: ID = " + macroID);
+				Application.debug("macro does not exist: ID = " + macroID);
 				return null;
 			}    		
 		}
@@ -2544,7 +2544,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			String iconName = "mode_" + modeText.toLowerCase(Locale.US) + "_32.gif";
 			icon = getImageIcon(iconName, border);						
 			if (icon == null) {
-				System.err.println("icon missing for mode " + modeText + " (" + mode + ")");			
+				Application.debug("icon missing for mode " + modeText + " (" + mode + ")");			
 			}			
 		}			
 		return icon;
@@ -2601,7 +2601,7 @@ public abstract class Application implements	KeyEventDispatcher {
  
     public void setShowSpreadsheet(boolean flag) {
     	//if (flag == false) throw new RuntimeException("Here");
-    	//System.out.println("setShowSpreadsheet " + flag);
+    	//Application.debug("setShowSpreadsheet " + flag);
     	
     	if (disableSpreadsheet) return;
     	
@@ -2611,7 +2611,7 @@ public abstract class Application implements	KeyEventDispatcher {
             
         updateMenubar();            
         isSaved = false; 
-        //System.out.println("showSpreadsheet=" + showSpreadsheet);
+        //Application.debug("showSpreadsheet=" + showSpreadsheet);
     }
  
     final public boolean showAlgebraView() {
@@ -2797,7 +2797,7 @@ public abstract class Application implements	KeyEventDispatcher {
     
     public void removeFromToolbarDefinition(int mode) {    	
     	if (strCustomToolbarDefinition != null) {    		
-    		//System.out.println("before: " + strCustomToolbarDefinition + ",  delete " + mode);
+    		//Application.debug("before: " + strCustomToolbarDefinition + ",  delete " + mode);
     		
     		strCustomToolbarDefinition = 
     			strCustomToolbarDefinition.replaceAll(Integer.toString(mode), "");
@@ -2811,7 +2811,7 @@ public abstract class Application implements	KeyEventDispatcher {
     			}
     		}
 
-    		//System.out.println("after: " + strCustomToolbarDefinition);
+    		//Application.debug("after: " + strCustomToolbarDefinition);
     	}    	
     }
     
@@ -2979,7 +2979,7 @@ public abstract class Application implements	KeyEventDispatcher {
         } catch (MyError e) {           
             showError(e);
         } catch (Exception e) {           
-            System.err.println(
+            Application.debug(
                 "openHelp error: " + e.toString() + e.getMessage());
             showError(e.getMessage());
         }
@@ -3487,12 +3487,12 @@ public abstract class Application implements	KeyEventDispatcher {
 	    		// fake smaller screen for testing
 	    		//screenSize.width=1024; screenSize.height=768;
 
-	    		//System.out.println(width);
-	    		//System.out.println(screenSize.width - furnitureWidth);
-	    		//System.out.println(screenSize.width );
-	    		//System.out.println(height);
-	    		//System.out.println(screenSize.height-furnitureHeight);
-	    		//System.out.println(screenSize.height);
+	    		//Application.debug(width);
+	    		//Application.debug(screenSize.width - furnitureWidth);
+	    		//Application.debug(screenSize.width );
+	    		//Application.debug(height);
+	    		//Application.debug(screenSize.height-furnitureHeight);
+	    		//Application.debug(screenSize.height);
 	    		
 	    		if (width > screenSize.width - furnitureWidth || 
 	    				height > screenSize.height-furnitureHeight) {
@@ -4033,7 +4033,7 @@ public abstract class Application implements	KeyEventDispatcher {
     		e.printStackTrace();
     	}
         
-    	System.out.println("codebase: " + codebase);
+    	Application.debug("codebase: " + codebase);
     }
     
     public PropertiesDialogGeoElement getPropDialog() {
@@ -4368,10 +4368,10 @@ public abstract class Application implements	KeyEventDispatcher {
 				CopyURLToFile.copyURLToFile(src, dest);
 			}
 			
-			//System.out.println("copied geogebra jar files to temp directory " + tempDir);
+			//Application.debug("copied geogebra jar files to temp directory " + tempDir);
 			
 		} catch (Exception e) {		
-			System.err.println("copyJarsToTempDir: " + e.getMessage());
+			Application.debug("copyJarsToTempDir: " + e.getMessage());
 		}			
 	}*/
 
@@ -4388,8 +4388,8 @@ public abstract class Application implements	KeyEventDispatcher {
 		URL srcDir;			
 		File tempJarFile = new File(tempDir, JAR_FILES[0]);			
 		
-//		System.out.println("temp jar file: " + tempJarFile);
-//		System.out.println("   exists " + tempJarFile.exists());	
+//		Application.debug("temp jar file: " + tempJarFile);
+//		Application.debug("   exists " + tempJarFile.exists());	
 		
 		if (tempJarFile.exists()) {
 			// try to copy from temp dir 
@@ -4409,7 +4409,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			CopyURLToFile.copyURLToFile(src, dest);
 		}
 
-//		System.out.println("copied geogebra jar files from " + srcDir + " to " + destDir);	
+//		Application.debug("copied geogebra jar files from " + srcDir + " to " + destDir);	
 	}
 
 	public final boolean isErrorDialogsActive() {
@@ -4459,8 +4459,8 @@ public abstract class Application implements	KeyEventDispatcher {
         String callerMethodName = elements[1].getMethodName();
         String callerClassName = elements[1].getClassName();
 
-        //System.out.println("CallerClassName=" + callerClassName + " , Caller method name: " + callerMethodName);
-        //System.out.println("Callee method name: " + calleeMethod);
+        //Application.debug("CallerClassName=" + callerClassName + " , Caller method name: " + callerMethodName);
+        //Application.debug("Callee method name: " + calleeMethod);
         
         Calendar calendar = new GregorianCalendar();
       
@@ -4470,8 +4470,8 @@ public abstract class Application implements	KeyEventDispatcher {
         int sec = calendar.get(Calendar.SECOND);
         String secS = (sec < 10) ? "0" + sec : "" + sec;
         
-        System.out.println("****Message from ["+callerClassName+"."+callerMethodName+"] at " + calendar.get(Calendar.HOUR)+":"+minS+":"+secS);
-        System.out.println("****" + s + "****\n");
+        System . out . println("****Message from ["+callerClassName+"."+callerMethodName+"] at " + calendar.get(Calendar.HOUR)+":"+minS+":"+secS);
+        System . out . println("****" + s + "****\n");
     }
     
     // Michael Borcherds 2008-06-22
@@ -4538,7 +4538,7 @@ public abstract class Application implements	KeyEventDispatcher {
     			CUIAquaFileChooser ui = (CUIAquaFileChooser) fileChooser.getUI();
     			return ui.getFileName();
     		} else if (fileName == null) {
-    			System.err.println("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
+    			Application.debug("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
     		}
     		return fileName;
         }
@@ -4547,7 +4547,7 @@ public abstract class Application implements	KeyEventDispatcher {
     			BasicFileChooserUI ui = (BasicFileChooserUI) fileChooser.getUI();
     			return ui.getFileName();
     		} else if (fileName == null) {
-    			System.err.println("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
+    			Application.debug("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
     		}
         	return fileName;
         }

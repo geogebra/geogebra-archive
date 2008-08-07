@@ -100,7 +100,7 @@ public class MacroManager {
 		for (int i=0; i < macroList.size(); i++) {			
 			Macro macro = (Macro) macroList.get(i);
 			if (macro.wantsEuclidianViewUpdate()) {
-				// System.out.println("update macro: " + macro);				
+				// Application.debug("update macro: " + macro);				
 				macro.getMacroConstruction().updateAllEuclidianViewAlgorithms();				
 			}
 		}	

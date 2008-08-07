@@ -96,9 +96,9 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     		url=new URL(path);
     		ClassPathManipulator.addURL(url, null);
         }catch(MalformedURLException e) {
-            System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
+            Application.debug("PluginManager.addPath: MalformedURLExcepton for "+path);
         }catch(Throwable e){
-            System.out.println("PluginManager.addPath: "+e.getMessage()+" for "+path);
+            Application.debug("PluginManager.addPath: "+e.getMessage()+" for "+path);
         }//try-catch   
     }//addURL(String)
     
@@ -124,10 +124,10 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             	if(pluginmenu==null){pluginmenu=new JMenu("Plugins");}
             	pluginmenu.add(menuitem);           //add to menu
             }catch(Throwable t){
-            	System.out.println("PluginManager.addPlugin: "+t.toString());
+            	Application.debug("PluginManager.addPlugin: "+t.toString());
             }//try-catch
         }else{
-           System.out.println("PluginManager could not reflect out plugin "+cname);
+           Application.debug("PluginManager could not reflect out plugin "+cname);
         }//if plugin null
     }//addPlugin(cname,patharray[],args)
     
@@ -195,7 +195,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             //plugin.execute(app.getGgbApi());
             plugin.execute();
         }else{
-            System.out.println("No PlugLetIF called "+name+"in plugintable!");
+            Application.debug("No PlugLetIF called "+name+"in plugintable!");
         }//if-else
     }//actionPerformed(ActionEvent)
     
@@ -225,13 +225,13 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             Object   o   =   get.invoke(c,emptyobj);
             pluglet= (PlugLetIF)o;
         } catch (NoSuchMethodException t){
-            System.out.println("PluginManager: "+method+" gives NoSuchMethodExcepton.");
+            Application.debug("PluginManager: "+method+" gives NoSuchMethodExcepton.");
         }catch(IllegalAccessException e){
-            System.out.println("PluginManager: "+method+" gives IllegalAccesException.");
+            Application.debug("PluginManager: "+method+" gives IllegalAccesException.");
         }catch(InvocationTargetException e){
-            System.out.println("PluginManager: "+method+" gives InvocationTargetException");
+            Application.debug("PluginManager: "+method+" gives InvocationTargetException");
         }catch(Throwable t){
-            System.out.println("PluginManager: "+method+" gives "+t.toString());
+            Application.debug("PluginManager: "+method+" gives "+t.toString());
         }//end try catch            
         return pluglet;
     }//getPluginInstance()
@@ -240,11 +240,11 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     private void loadProperties() {
         ClassLoader loader=app.getClass().getClassLoader();
         
-        System.out.println("PluginManager.loadProperties "+PLUGINFILE);
+        Application.debug("PluginManager.loadProperties "+PLUGINFILE);
         
         InputStream is=loader.getResourceAsStream(PLUGINFILE);
         if(is==null){
-            System.out.println("PluginManager cannot find "+PLUGINFILE);
+            Application.debug("PluginManager cannot find "+PLUGINFILE);
         }else{
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
@@ -258,7 +258,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
             	Application.debug("Not a valid properties file");
             }//if br
         }catch(IOException ioe){
-            System.out.println("PluginManager: IOException reading "+PLUGINFILE);
+            Application.debug("PluginManager: IOException reading "+PLUGINFILE);
         }//try-catch
         }//if is
     }//loadProperties();    
@@ -267,7 +267,7 @@ public class PluginManager implements ActionListener{       //Listens on PluginM
     private final static void debug(String s) {
         if(DEBUG) {
             System.out.print("\nPluginManager:   ");
-            System.out.println(s);
+            Application.debug(s);
         }//if()
     }//debug()
     

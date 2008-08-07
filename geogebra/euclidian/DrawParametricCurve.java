@@ -171,9 +171,9 @@ public class DrawParametricCurve extends Drawable {
 			//labelPoint = plotInterval(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed);									
 		} 
 		
-//		System.out.println("*** CURVE plot: " + curve);
-//		System.out.println("   plot points: " + countPoints );	
-//		System.out.println("   evaluations: " + countEvaluations );	
+//		Application.debug("*** CURVE plot: " + curve);
+//		Application.debug("   plot points: " + countPoints );	
+//		Application.debug("   evaluations: " + countEvaluations );	
 			
 		return labelPoint;
     }
@@ -251,7 +251,7 @@ public class DrawParametricCurve extends Drawable {
 			boolean moveToAllowed) 
     {
     	    
-    //	System.out.println("split intervals: " + n);
+    //	Application.debug("split intervals: " + n);
     	
     	Point labelPoint = null;
     	
@@ -305,7 +305,7 @@ public class DrawParametricCurve extends Drawable {
 		// evaluate for t1
 		curve.evaluateCurve(t1, eval);				
 		if (Double.isNaN(eval[0]) || Double.isNaN(eval[1])) {
-			// System.out.println("Curve undefined at t = " + t1);			
+			// Application.debug("Curve undefined at t = " + t1);			
 			return plotProblemInterval(curve, t1, t2, 
 					intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 		}	
@@ -325,7 +325,7 @@ public class DrawParametricCurve extends Drawable {
 		// evaluate for t2
 		curve.evaluateCurve(t2, eval);
 		if (Double.isNaN(eval[0]) || Double.isNaN(eval[1])) {
-			// System.out.println("Curve undefined at t = " + t2);
+			// Application.debug("Curve undefined at t = " + t2);
 			return plotProblemInterval(curve, t1, t2, 
 					intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 		}	
@@ -409,11 +409,11 @@ public class DrawParametricCurve extends Drawable {
 					
 					// split interval: f(t+eps) or f(t-eps) not defined
 					if (!singularity) {					
-						// System.out.println("Curve undefined at t = " + t);					
+						// Application.debug("Curve undefined at t = " + t);					
 						return plotProblemInterval(curve, left, t2, 
 								intervalDepth, view, gp, calcLabelPos, moveToAllowed, labelPoint, eval);
 					} else {						
-						//System.out.println("singularity at: " + t);
+						//Application.debug("singularity at: " + t);
 					}
 				}							
 										
@@ -527,7 +527,7 @@ public class DrawParametricCurve extends Drawable {
 			t=t1+i*divisors[depth];
 		} while (top !=0);	
 				
-		//System.out.println("curve evaluations: " + counter);
+		//Application.debug("curve evaluations: " + counter);
 		
 		return labelPoint;						
 	 }	 

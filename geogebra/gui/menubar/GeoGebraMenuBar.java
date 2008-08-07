@@ -52,7 +52,7 @@ public class GeoGebraMenuBar extends MenubarImpl implements Menubar, ActionListe
 			try {
 				String decStr = cmd.substring(0,2).trim();							
 				int decimals = Integer.parseInt(decStr);
-				app.debug("decimals " + decimals);
+				Application.debug("decimals " + decimals);
 				
 				kernel.setPrintDecimals(decimals);
 				kernel.updateConstruction();

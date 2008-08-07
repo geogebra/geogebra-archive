@@ -17,7 +17,7 @@ import java.util.Vector;
  * An implementation for images and paint would be possible.
  * 
  * @author Simon Fischer
- * @version $Id: PDFRedundanceTracker.java,v 1.3 2008-05-04 12:31:45 murkle Exp $
+ * @version $Id: PDFRedundanceTracker.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDFRedundanceTracker {
 
@@ -100,7 +100,7 @@ public class PDFRedundanceTracker {
             Entry entry = (Entry) i.next();
             if (!entry.written) {
                 try {
-                    // System.out.println("PDFRT: Writing: " + entry.object);
+                    // Application.debug("PDFRT: Writing: " + entry.object);
                     entry.writer
                             .writeObject(entry.object, entry.reference, pdf);
                     entry.written = true;

@@ -833,10 +833,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		double xrangemax=a,xrangemin=a;
 		while (xrangemax<b){
 			xrangemin=firstDefinedValue(f,a,b);
-//			System.out.println("xrangemin "+xrangemin);
+//			Application.debug("xrangemin "+xrangemin);
 			if (xrangemin==b) break;
 			xrangemax=maxDefinedValue(f,xrangemin,b);
-//			System.out.println("xrangemax "+xrangemax);
+//			Application.debug("xrangemax "+xrangemax);
 			sb.append("\\draw");
 			String s=LineOptionCode(geo,true);
 			if (s.length()!=0){

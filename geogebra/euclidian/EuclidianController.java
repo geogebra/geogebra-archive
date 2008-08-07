@@ -980,7 +980,7 @@ public class EuclidianController implements MouseListener,
 				int mx = mouseLoc.x;
 				int my = mouseLoc.y;
 
-				// System.out.println("BIG drag dist: " + Math.sqrt(distsq) + ", steps: " + steps  );
+				// Application.debug("BIG drag dist: " + Math.sqrt(distsq) + ", steps: " + steps  );
 				for (int i=1; i <= steps; i++) {			
 					mouseLoc.x = (int) Math.round(lastMouseLoc.x + i * dx);
 					mouseLoc.y = (int) Math.round(lastMouseLoc.y + i * dy);
@@ -2139,7 +2139,7 @@ public class EuclidianController implements MouseListener,
 				double isoGrid=view.gridDistances[0];
 				int oddOrEvenRow = (int)Math.round(2.0*Math.abs(yRW - Kernel.roundToScale(yRW, isoGrid))/isoGrid);
 				
-				//System.out.println(oddOrEvenRow);
+				//Application.debug(oddOrEvenRow);
 				
 				if (oddOrEvenRow == 0)
 				{
@@ -4164,7 +4164,7 @@ public class EuclidianController implements MouseListener,
 			}			
 		}
 										
-		//System.out.println("index: " + index + ", needed type: " + macroInput[index]);
+		//Application.debug("index: " + index + ", needed type: " + macroInput[index]);
 		
 		// do we have everything we need?
 		if (selGeos() == macroInput.length) {						

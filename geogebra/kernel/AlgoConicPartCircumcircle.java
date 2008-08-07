@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
+
 /**
  * Circle arc or sector defined by three points.
  */
@@ -96,7 +98,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
 		    
 		    default:
 		    	// this should not happen
-		    	System.err.println("AlgoCirclePartPoints: unexpected conic type: " + conicPart.type);
+		    	Application.debug("AlgoCirclePartPoints: unexpected conic type: " + conicPart.type);
 		    	conicPart.setUndefined();
     	}	
     }

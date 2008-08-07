@@ -18,6 +18,8 @@
 
 package geogebra.util;
 
+import geogebra.Application;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -69,7 +71,7 @@ public class Util extends Object {
      is.close();
      in.close();
      } catch (Exception exc) {
-     System.err.println(
+     Application.debug(
      "deep copy of " + ob + " failed:\n" + exc.toString());
      }
      return ret;
@@ -102,7 +104,7 @@ public class Util extends Object {
 	    con.setRequestMethod("HEAD");
 	    return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
 	} catch (Exception e) {
-	    System.err.println("Exception: existsHttpURL: " + url);
+	    Application.debug("Exception: existsHttpURL: " + url);
 	    return false;
 	}
     }

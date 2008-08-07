@@ -229,7 +229,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
 	   	    }     	 
 	   	}	   		   	
 	   	
-	   	//System.out.println("circle-circle special case: took point " + pointOnConic);	   	
+	   	//Application.debug("circle-circle special case: took point " + pointOnConic);	   	
 	   	return true;
     }
     
@@ -362,7 +362,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	for (int i=0; i < permutation.length; i++) {
     		System.out.print(permutation[i] + " ");
     	}
-    	System.out.println();
+    	Application.debug();
     	*/  
         
         // 	make sure interesection points lie on limited paths
@@ -433,7 +433,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	boolean ret = (count == 2 && P[index[0]].equals(P[index[1]]));
     	
     	//if (ret)
-    	//	System.out.println("Singularity at " + P[index[0]]);    	
+    	//	Application.debug("Singularity at " + P[index[0]]);    	
     	
     	return ret;
     }
@@ -485,7 +485,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         
         // did not find intersections
         if (!ok) {
-            //System.err.println("INTERSECTING CONICS FAILED (epsilon = " + epsilon/10.0 + ")");        
+            //Application.debug("INTERSECTING CONICS FAILED (epsilon = " + epsilon/10.0 + ")");        
             // INTERSECTION FAILED
             for (i=0; i < points.length; i++) points[i].setUndefined();                                       
         }
@@ -510,9 +510,9 @@ public class AlgoIntersectConics extends AlgoIntersect {
 				case GeoConic.CONIC_EMPTY: 
 					// this shouldn't happen: try it with doubleline conic
 					degConic.enforceDoubleLine();					
-					//System.err.println("intersectWithDegenerate: empty degenerate conic, try double line");	
+					//Application.debug("intersectWithDegenerate: empty degenerate conic, try double line");	
 					//degConic.setToSpecific();
-					//System.err.println("degConic: " + degConic);
+					//Application.debug("degConic: " + degConic);
 					
                 case GeoConic.CONIC_DOUBLE_LINE:                    
                     AlgoIntersectLineConic.intersectLineConic(degConic.lines[0], conic, points);
@@ -521,7 +521,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
                     return;
                     
                 case GeoConic.CONIC_SINGLE_POINT:                                        
-                    //System.err.println("intersectConics: single point: " + p);                    
+                    //Application.debug("intersectConics: single point: " + p);                    
                     points[0].setCoords(degConic.getSinglePoint());                    
                     points[1].setUndefined();
                     points[2].setUndefined();
@@ -531,12 +531,12 @@ public class AlgoIntersectConics extends AlgoIntersect {
         }   
                 
         // something went wrong: no intersections
-        //System.err.println("intersectWithDegenerate: undefined degenerate conic, type:  " + degConic.type);
+        //Application.debug("intersectWithDegenerate: undefined degenerate conic, type:  " + degConic.type);
         for (int i=0; i < 4; i++) points[i].setUndefined();                   
         		
-        //System.err.println("intersect conics: invalid degerate conic type: " + degConic.getTypeString());
+        //Application.debug("intersect conics: invalid degerate conic type: " + degConic.getTypeString());
         // for (int i=0; i < 6; i++) 
-        //    System.out.println(" A[" + i + "] = " +degConic.A[i]);
+        //    Application.debug(" A[" + i + "] = " +degConic.A[i]);
     }
     
     /**
@@ -649,7 +649,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
                   + flatB[4] * (2.0 * flatB[3] * flatB[5] - flatB[1] * flatB[4]) 
                   - flatB[0] * flatB[5] * flatB[5];                                                  
               
-      // System.out.println(eqn[3] + " x^3 + " + eqn[2] + " x^2 + " 
+      // Application.debug(eqn[3] + " x^3 + " + eqn[2] + " x^2 + " 
       //                  + eqn[1] + " x + "  + eqn[0] );
         
        // solve cubic equation and sort solutions       
@@ -658,7 +658,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	   Arrays.sort(sol, 0, solnr);       
 
        // for (i=0;i<solnr;i++) {
-       //    System.out.println("sol[" + i + "] = " + sol[i]);
+       //    Application.debug("sol[" + i + "] = " + sol[i]);
        // }
        
        /*              
@@ -697,7 +697,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
       
         // change equation from {0, 1, 2, 3} to {3, 2, 1, 0}
         // i.e. intersect(A,B) = intersect(B,A)                	
-    	//System.out.println("CHANGE EQUATION");   
+    	//Application.debug("CHANGE EQUATION");   
     	
         double temp = eqn[0];
         eqn[0] = eqn[3];
@@ -721,7 +721,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
  		   degConic.setDegenerateMatrixFromArray(flatDeg);
 			   		   
 		   //degConic.update();
-		   //System.out.println("degenerate found (2): " + degConic.getTypeString());				   				   			   
+		   //Application.debug("degenerate found (2): " + degConic.getTypeString());				   				   			   
 		   
 		    // try first conic
         	intersectWithDegenerate(A, degConic, points);
@@ -734,7 +734,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         		return true;			   	               
  	   }
             
-        //System.out.println("no solutions found");
+        //Application.debug("no solutions found");
         //degConic.setUndefined();
         return false;
     }
@@ -840,7 +840,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
                 
         /*
         for (i=0; i < D.length; i++) {
-            System.out.println("D[" + i + "] = " + D[i] +
+            Application.debug("D[" + i + "] = " + D[i] +
             "   Q[" + i + "] = " + Q[i]);
         }        
         
@@ -851,9 +851,9 @@ public class AlgoIntersectConics extends AlgoIntersect {
                         // set all distances to Q[j] to max+1
                         System.out.print(table[i][j] + "\t");            
                 }
-                System.out.println();                
+                Application.debug();                
             }        
-        System.out.println();                
+        Application.debug();                
          */
     }
     
@@ -890,7 +890,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         	}        	
     	}    	    
     	
-    	//System.out.println(pointList.toString());
+    	//Application.debug(pointList.toString());
     	//System.out.flush();
    
     	PointPair pair;    	

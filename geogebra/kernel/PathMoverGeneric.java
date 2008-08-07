@@ -99,10 +99,10 @@ public class PathMoverGeneric implements PathMover {
 		resetStartParameter();
 		
 
-//		System.out.println("init Path mover");
-//		System.out.println("  min_param : " + min_param);
-//		System.out.println("  max_param : " + max_param);
-//		System.out.println("  start_param : " + start_param);
+//		Application.debug("init Path mover");
+//		Application.debug("  min_param : " + min_param);
+//		Application.debug("  max_param : " + max_param);
+//		Application.debug("  start_param : " + start_param);
 	
 	}		
 	
@@ -219,7 +219,7 @@ public class PathMoverGeneric implements PathMover {
 			}
 							
 //			if (!hasNext) {				 	
-//				 System.out.println("hasNext(): slow down: " + step_width);
+//				 Application.debug("hasNext(): slow down: " + step_width);
 //			} 
 		} while (!hasNext && smallerStep());
 					

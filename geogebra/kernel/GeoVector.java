@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -114,7 +115,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 			}
 		}
 		catch (CircularDefinitionException e) {
-			System.err.println("set GeoVector: CircularDefinitionException");
+			Application.debug("set GeoVector: CircularDefinitionException");
 		}		
 	}
     

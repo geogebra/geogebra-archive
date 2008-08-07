@@ -63,7 +63,7 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
 		} while (rsq >= 1.0 || rsq == 0.0); // keep going until they are in the
 											// unit circle
 		fac = Math.sqrt(-2.0 * Math.log(rsq) / rsq);
-		// System.out.println("randomNormal="+(v1*fac));
+		// Application.debug("randomNormal="+(v1*fac));
 		return v1 * fac * sd + mean;
 
 	}

@@ -1,6 +1,8 @@
 // Copyright 2000-2005 FreeHEP
 package org.freehep.graphicsio.pdf;
 
+import geogebra.Application;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
@@ -11,7 +13,7 @@ import java.util.Vector;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDF.java,v 1.3 2008-05-04 12:31:12 murkle Exp $
+ * @version $Id: PDF.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDF {
 
@@ -87,7 +89,7 @@ public class PDF {
                         + linkFormat.format(0) + " n\r\n");
             } else {
                 PDFRef ref = (PDFRef) refsByNumber.get(i);
-                System.err.println("PDFWriter: PDFRef '" + ref.getName()
+                Application.debug("PDFWriter: PDFRef '" + ref.getName()
                         + "' is used but not defined.");
             }
         }

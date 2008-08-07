@@ -222,7 +222,7 @@ implements ExpressionValue {
     
     /** copy the whole tree structure except leafs */
     public ExpressionNode getCopy(Kernel kernel) {
-        //System.out.println("getCopy() input: " + this);   
+        //Application.debug("getCopy() input: " + this);   
         ExpressionNode newNode = null;
         ExpressionValue lev = null, rev = null;                
         
@@ -239,7 +239,7 @@ implements ExpressionValue {
         // set member vars that are not set by constructors
         newNode.forceVector = forceVector;
         newNode.forcePoint = forcePoint;
-        //System.out.println("getCopy() output: " + newNode);   
+        //Application.debug("getCopy() output: " + newNode);   
         return newNode;
     }        
     
@@ -248,7 +248,7 @@ implements ExpressionValue {
         if (ev == null) return null;
         
         ExpressionValue ret = null;        
-        //System.out.println("copy ExpressionValue input: " + ev);        
+        //Application.debug("copy ExpressionValue input: " + ev);        
         if (ev.isExpressionNode()) {
         	ExpressionNode en = (ExpressionNode) ev;
             ret = en.getCopy(kernel); 
@@ -259,7 +259,7 @@ implements ExpressionValue {
         } else {            
             ret = ev;                        
         }           
-        //System.out.println("copy ExpressionValue output: " + ev);        
+        //Application.debug("copy ExpressionValue output: " + ev);        
         return ret;        
     }                  
     
@@ -825,7 +825,7 @@ implements ExpressionValue {
                 }
             }                
             else { 
-                System.err.println("power: lt :" + lt.getClass() + ", rt: " + rt.getClass());
+                Application.debug("power: lt :" + lt.getClass() + ", rt: " + rt.getClass());
                 String [] str = { "IllegalExponent", lt.toString(), "^", rt.toString() };
                 throw new MyError(app, str);
             }
@@ -1341,7 +1341,7 @@ implements ExpressionValue {
                        );                   
             }     
             else { 
-                //System.out.println("lt: " + lt.getClass() + " rt: " + rt.getClass());
+                //Application.debug("lt: " + lt.getClass() + " rt: " + rt.getClass());
                  String [] str = { "IllegalArgument", rt.toString() };
                 throw new MyError(app, str);
             }
@@ -1364,13 +1364,13 @@ implements ExpressionValue {
                        );                   
             }     
             else { 
-                //System.out.println("lt: " + lt.getClass() + " rt: " + rt.getClass());
+                //Application.debug("lt: " + lt.getClass() + " rt: " + rt.getClass());
                  String [] str = { "IllegalArgument", rt.toString() };
                 throw new MyError(app, str);
             }            
             
         case DERIVATIVE:
-        //System.out.println("DERIVATIVE called");
+        //Application.debug("DERIVATIVE called");
             // derivative(function, order)
             if (rt.isNumberValue()) {            	
             	return ((Functional)lt).

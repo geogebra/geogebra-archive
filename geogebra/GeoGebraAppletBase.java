@@ -96,8 +96,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		//codeBase=this.getCodeBase();
 		//documentBase=this.getDocumentBase();
 		
-		//System.out.println("codeBase="+codeBase);
-		//System.out.println("documentBase="+documentBase);
+		//Application.debug("codeBase="+codeBase);
+		//Application.debug("documentBase="+documentBase);
 		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -204,7 +204,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			while (true) {
 				try {Thread.sleep(200);} catch(Exception e) {}
 			
-				//System.out.println("thread");
+				//Application.debug("thread");
 			    	if (javascriptReset) resetNoThread();
 			    	
 			    	if (javascriptLoadFile) openFileNoThread(javascriptLoadFileName);
@@ -714,7 +714,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	 * Turns the repainting of all views on or off.
 	 */
 	public synchronized void setRepaintingActive(boolean flag) {		
-		//System.out.println("set repainting: " + flag);
+		//Application.debug("set repainting: " + flag);
 		ggbApi.setRepaintingActive(flag);
 	}	
 	
@@ -809,7 +809,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			addListeners = new ArrayList();			
 		}		
 		addListeners.add(JSFunctionName);				
-		System.out.println("registerAddListener: " + JSFunctionName);
+		Application.debug("registerAddListener: " + JSFunctionName);
 	}
 	
 	/**
@@ -819,7 +819,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void unregisterAddListener(String JSFunctionName) {
 		if (addListeners != null) {
 			addListeners.remove(JSFunctionName);
-			System.out.println("unregisterAddListener: " + JSFunctionName);
+			Application.debug("unregisterAddListener: " + JSFunctionName);
 		}	
 	}	
 	
@@ -840,7 +840,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			removeListeners = new ArrayList();			
 		}		
 		removeListeners.add(JSFunctionName);				
-		System.out.println("registerRemoveListener: " + JSFunctionName);
+		Application.debug("registerRemoveListener: " + JSFunctionName);
 	}
 	
 	/**
@@ -850,7 +850,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void unregisterRemoveListener(String JSFunctionName) {
 		if (removeListeners != null) {
 			removeListeners.remove(JSFunctionName);
-			System.out.println("unregisterRemoveListener: " + JSFunctionName);
+			Application.debug("unregisterRemoveListener: " + JSFunctionName);
 		}	
 	}	
 	
@@ -871,7 +871,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			clearListeners = new ArrayList();			
 		}		
 		clearListeners.add(JSFunctionName);				
-		System.out.println("registerClearListener: " + JSFunctionName);
+		Application.debug("registerClearListener: " + JSFunctionName);
 	}
 	
 	/**
@@ -881,7 +881,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void unregisterClearListener(String JSFunctionName) {
 		if (clearListeners != null) {
 			clearListeners.remove(JSFunctionName);
-			System.out.println("unregisterClearListener: " + JSFunctionName);
+			Application.debug("unregisterClearListener: " + JSFunctionName);
 		}	
 	}	
 	
@@ -902,7 +902,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			renameListeners = new ArrayList();			
 		}		
 		renameListeners.add(JSFunctionName);				
-		System.out.println("registerRenameListener: " + JSFunctionName);
+		Application.debug("registerRenameListener: " + JSFunctionName);
 	}
 	
 	/**
@@ -912,7 +912,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void unregisterRenameListener(String JSFunctionName) {
 		if (renameListeners != null) {
 			renameListeners.remove(JSFunctionName);
-			System.out.println("unregisterRenameListener: " + JSFunctionName);
+			Application.debug("unregisterRenameListener: " + JSFunctionName);
 		}	
 	}	
 	
@@ -933,7 +933,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			updateListeners = new ArrayList();			
 		}		
 		updateListeners.add(JSFunctionName);				
-		System.out.println("registerUpdateListener: " + JSFunctionName);
+		Application.debug("registerUpdateListener: " + JSFunctionName);
 	}
 	
 	/**
@@ -943,7 +943,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void unregisterUpdateListener(String JSFunctionName) {
 		if (updateListeners != null) {
 			updateListeners.remove(JSFunctionName);
-			System.out.println("unregisterUpdateListener: " + JSFunctionName);
+			Application.debug("unregisterUpdateListener: " + JSFunctionName);
 		}	
 	}	
 	
@@ -976,7 +976,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		
 		// add map entry
 		updateListenerMap.put(geo, JSFunctionName);		
-		System.out.println("registerUpdateListener: object: " + objName + ", function: " + JSFunctionName);
+		Application.debug("registerUpdateListener: object: " + objName + ", function: " + JSFunctionName);
 	}
 	
 	/**
@@ -988,7 +988,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			GeoElement geo = kernel.lookupLabel(objName);
 			if (geo != null) {
 				updateListenerMap.remove(geo);
-				System.out.println("unregisterUpdateListener for object: " + objName);
+				Application.debug("unregisterUpdateListener for object: " + objName);
 			}
 		}
 	}				
@@ -1124,13 +1124,13 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			try {							
 				browserWindow = JSObject.getWindow(this);
 			} catch (Exception e) {							
-				System.err.println("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
+				Application.debug("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
 			}    			
 		}
 	}
 	
 	private void callJavaScript(String jsFunction, Object [] args) {		
-		//System.out.println("callJavaScript: " + jsFunction);		
+		//Application.debug("callJavaScript: " + jsFunction);		
 		
 		try {			
 			if (browserWindow != null)

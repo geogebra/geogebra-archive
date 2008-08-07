@@ -65,8 +65,8 @@ public class AlgoFactor extends AlgoElement {
 
 		String functionOut = kernel.evaluateYACASRaw("Factor("+functionIn+")");
 		
-		//System.out.println("Factorize input:"+functionIn);
-		//System.out.println("Factorize output:"+functionOut);
+		//Application.debug("Factorize input:"+functionIn);
+		//Application.debug("Factorize output:"+functionOut);
 		
 		boolean yacasError=false;
 		

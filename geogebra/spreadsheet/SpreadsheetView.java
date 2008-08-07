@@ -83,7 +83,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void add(GeoElement geo) {
 		// TODO: remove
-		//System.out.println(new Date() + " ADD: " + geo);
+		//Application.debug(new Date() + " ADD: " + geo);
 		
 		
 		Point location = geo.getSpreadsheetCoords();
@@ -100,7 +100,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void remove(GeoElement geo) {
 		// TODO: remove	
-		//System.out.println(new Date() + " REMOVE: " + geo);
+		//Application.debug(new Date() + " REMOVE: " + geo);
 				
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
@@ -109,7 +109,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void rename(GeoElement geo) {
-		//System.out.println(new Date() + " RENAME");
+		//Application.debug(new Date() + " RENAME");
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
 			if (location.y >= tableModel.getRowCount()) {
@@ -143,7 +143,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void clearView() {
-		//System.out.println(new Date() + " CLEAR VIEW");
+		//Application.debug(new Date() + " CLEAR VIEW");
 		int rows = tableModel.getRowCount();
 		int columns = tableModel.getColumnCount();
 		for (int i = 0; i < columns; ++ i) {
@@ -327,7 +327,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			
 			boolean metaDown = Application.isControlDown(e);				
 			
-			//System.out.println(keyCode);
+			//Application.debug(keyCode);
 			switch (keyCode) {				
 			case KeyEvent.VK_C : // control + c
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {

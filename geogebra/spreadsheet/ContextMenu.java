@@ -108,7 +108,7 @@ public class ContextMenu
 	public static class ActionListener51 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			System.out.println("ActionListener5 " + column1 + " - " + column2);
+ 			Application.debug("ActionListener5 " + column1 + " - " + column2);
  			if (selected == null) throw new RuntimeException("error state");
  			LinkedList list = new LinkedList();
  			try {
@@ -157,7 +157,7 @@ public class ContextMenu
 	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
-		//System.out.println("showPopupMenu <<<<<<<<<<<<<<<<<<<");
+		//Application.debug("showPopupMenu <<<<<<<<<<<<<<<<<<<");
 		table = table0;
 		column1 = column01;
 		column2 = column02;
@@ -167,7 +167,7 @@ public class ContextMenu
 			throw new RuntimeException("error state");
 		}
 		else {
-			//System.out.println("Correct !!!!!!!!!!!!!!!!!!!!");
+			//Application.debug("Correct !!!!!!!!!!!!!!!!!!!!");
 		}
 		selected = selected0;
 		Application app = table.kernel.getApplication();

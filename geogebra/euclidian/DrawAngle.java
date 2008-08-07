@@ -205,7 +205,7 @@ public class DrawAngle extends Drawable {
 		default:
 			/*
 			 * if (vertex == null) {
-			 * System.err.println(Util.toHTMLString("vertex null for: " + geo + ",
+			 * Application.debug(Util.toHTMLString("vertex null for: " + geo + ",
 			 * parent: " + geo.getParentAlgorithm().getCommandDescription())); }
 			 */
 			return;

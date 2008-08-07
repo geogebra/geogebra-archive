@@ -47,20 +47,20 @@ public class Cross extends JLabel
 	{
 		
 		public void mouseClicked(MouseEvent e) {
-			//System.out.println("mouseClicked");
+			//Application.debug("mouseClicked");
 			app.setShowSpreadsheet(false);
 			app.updateCenterPanel(true);
 			isMouseOver = false;
 		}
 		
 		public void mouseEntered(MouseEvent e) {
-			//System.out.println("mouseEntered");
+			//Application.debug("mouseEntered");
 			isMouseOver = true;
 			repaint();
 		}
 		
 		public void mouseExited(MouseEvent e) {
-			//System.out.println("mouseExited");
+			//Application.debug("mouseExited");
 			isMouseOver = false;
 			repaint();
 		}

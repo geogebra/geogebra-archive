@@ -1,16 +1,25 @@
 // Copyright 2003, FreeHEP.
 package org.freehep.util;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import geogebra.Application;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class does the same as sun.misc.Service, which may become public
  * in some java or javax package at some point. See Sun BUG# 4640520.
  *
  * @author Mark Donszelmann
- * @version $Id: Service.java,v 1.3 2008-05-04 12:22:39 murkle Exp $
+ * @version $Id: Service.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
  */
 public class Service {
 
@@ -27,13 +36,13 @@ public class Service {
     	                           ClassLoader.getSystemResources(name) :
     	                           loader.getResources(name);
         } catch (IOException ioe) {
-            System.err.println("Service: cannot load "+name);
+            Application.debug("Service: cannot load "+name);
             return classList;
         }
 
         while (services.hasMoreElements()) {
             URL url = (URL)services.nextElement();
-//            System.out.println(url);
+//            Application.debug(url);
             InputStream input = null;
             BufferedReader reader = null;
             try {
@@ -53,13 +62,13 @@ public class Service {
 	                line = reader.readLine();
                 }
             } catch (IOException ioe) {
-                System.err.println("Service: problem with: "+url);
+                Application.debug("Service: problem with: "+url);
             } finally {
                 try {
                     if (input != null) input.close();
                     if (reader != null) reader.close();
                 } catch (IOException ioe2) {
-                    System.err.println("Service: problem with: "+url);
+                    Application.debug("Service: problem with: "+url);
                 }
             }
         }
@@ -70,15 +79,15 @@ public class Service {
             try {
                 classList.add(Class.forName(className, true, loader).newInstance());
             } catch (ClassNotFoundException e) {
-                System.err.println("Service: cannot find class: "+className);
+                Application.debug("Service: cannot find class: "+className);
             } catch (InstantiationException e) {
-                System.err.println("Service: cannot instantiate: "+className);
+                Application.debug("Service: cannot instantiate: "+className);
             } catch (IllegalAccessException e) {
-                System.err.println("Service: illegal access to: "+className);
+                Application.debug("Service: illegal access to: "+className);
             } catch (NoClassDefFoundError e) {
-                System.err.println("Service: "+e+" for "+className);
+                Application.debug("Service: "+e+" for "+className);
             } catch (Exception e) {
-                System.err.println("Service: exception for: "+className+" "+e);
+                Application.debug("Service: exception for: "+className+" "+e);
             }
         }
 	    return classList;

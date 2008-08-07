@@ -10,7 +10,7 @@ import java.io.OutputStream;
  * 
  * @author Mark Donszelmann
  * @author Charles Loomis
- * @version $Id: BitOutputStream.java,v 1.3 2008-05-04 12:21:58 murkle Exp $
+ * @version $Id: BitOutputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
  */
 public class BitOutputStream extends CompressableOutputStream implements
         FinishableOutputStream {
@@ -32,7 +32,7 @@ public class BitOutputStream extends CompressableOutputStream implements
     }
 
     public void write(int b) throws IOException {
-        // System.out.println(Integer.toHexString(b));
+        // Application.debug(Integer.toHexString(b));
         super.write(b);
     }
 

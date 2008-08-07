@@ -109,7 +109,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		isDrawable = flag;
 		
 		if (isDrawable && kernel.isNotifyViewsActive() && kernel.isAllowVisibilitySideEffects() ) {
-			//System.out.println("side effect for: " + this);
+			//Application.debug("side effect for: " + this);
 			setEuclidianVisible(true);
 		}						
 	}

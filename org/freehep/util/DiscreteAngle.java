@@ -1,6 +1,8 @@
 // Copyright 2003, SLAC, Stanford, U.S.A.
 package org.freehep.util;
 
+import geogebra.Application;
+
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -17,7 +19,7 @@ import java.util.TreeSet;
  * wants to draw under certain angles only.
  *
  * @author Mark Donszelmann
- * @version $Id: DiscreteAngle.java,v 1.3 2008-05-04 12:22:40 murkle Exp $
+ * @version $Id: DiscreteAngle.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
  */
 public class DiscreteAngle {
 
@@ -99,16 +101,16 @@ public class DiscreteAngle {
         da.addAngle(10);
         da.addAngle(190);
 
-        System.out.println("  0 results in "+da.getAngle(  0));
-        System.out.println("  1 results in "+da.getAngle(  1));
-        System.out.println("  5 results in "+da.getAngle(  5));
-        System.out.println(" 80 results in "+da.getAngle( 80));
-        System.out.println(" 90 results in "+da.getAngle( 90));
-        System.out.println("170 results in "+da.getAngle(170));
-        System.out.println("185 results in "+da.getAngle(185));
-        System.out.println("186 results in "+da.getAngle(186));
-        System.out.println("231 results in "+da.getAngle(231));
-        System.out.println("359 results in "+da.getAngle(359));
+        Application.debug("  0 results in "+da.getAngle(  0));
+        Application.debug("  1 results in "+da.getAngle(  1));
+        Application.debug("  5 results in "+da.getAngle(  5));
+        Application.debug(" 80 results in "+da.getAngle( 80));
+        Application.debug(" 90 results in "+da.getAngle( 90));
+        Application.debug("170 results in "+da.getAngle(170));
+        Application.debug("185 results in "+da.getAngle(185));
+        Application.debug("186 results in "+da.getAngle(186));
+        Application.debug("231 results in "+da.getAngle(231));
+        Application.debug("359 results in "+da.getAngle(359));
 
     }
 }

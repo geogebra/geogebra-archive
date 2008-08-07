@@ -3501,7 +3501,7 @@ class MathCommands
       String str;
       str = orig.substring(0,from);
       str = str + replace.substring(1,replace.length()-1);
-//System.out.println("from="+from+replace.length()-2);
+//Application.debug("from="+from+replace.length()-2);
       str = str + orig.substring(from+replace.length()-2,orig.length());
       RESULT(aEnvironment, aStackTop).Set(LispAtom.New(aEnvironment,str));
     }
@@ -3714,10 +3714,10 @@ class MathCommands
       
       int i=2;
       int max = (int)(1+Math.sqrt(n));
-//System.out.println("n = "+n+" max = "+max);
+//Application.debug("n = "+n+" max = "+max);
       while (i<=max && result == 1)
       {
-      //System.out.println(""+n+"%"+i+" = "+(n%i));
+      //Application.debug(""+n+"%"+i+" = "+(n%i));
         if ((n%i) == 0)
           result = 0;
         i++;

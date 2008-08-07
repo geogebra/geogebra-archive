@@ -10,9 +10,14 @@ package geogebra.modules;
  the Free Software Foundation.
  
  */
-import java.lang.reflect.*;
-import java.io.*;
-import java.net.*;
+import geogebra.Application;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 /** 
  *  <h3>Class to manipulate Classpath</h3>
  *  Hack: Use reflection to overcome protected modifiers,
@@ -40,9 +45,9 @@ public static void addFile(String s) {
 /** Adds a file given as File to the Classpath */
 public static void addFile(File f) {
     try{
-        addURL(f.toURL(),null);   //System.out.println(f.toURL());
+        addURL(f.toURL(),null);   //Application.debug(f.toURL());
     }catch(MalformedURLException e){
-        System.out.println("MalformedURLException for "+f.getName());
+        Application.debug("MalformedURLException for "+f.getName());
     }//try-catch
 }//addFile(File)
  
@@ -59,19 +64,19 @@ public static void addURL(URL u, ClassLoader loader) {
         method.setAccessible(true);
         method.invoke(sysloader,new Object[]{ u });
     } catch (NoSuchMethodException t){
-        System.out.println("ClassPathManipulator: addURL gives NoSuchMethodExcepton.");
+        Application.debug("ClassPathManipulator: addURL gives NoSuchMethodExcepton.");
     }catch(IllegalAccessException e){
-        System.out.println("ClassPathManipulator: addURL gives IllegalAccesException.");
+        Application.debug("ClassPathManipulator: addURL gives IllegalAccesException.");
     }catch(InvocationTargetException e){
-        System.out.println("ClassPathManipulator: addURL gives InvocationTargetException");
+        Application.debug("ClassPathManipulator: addURL gives InvocationTargetException");
     }catch(Throwable t){
-        System.out.println("ClassPathManipulator: addURL gives "+t.getMessage());
+        Application.debug("ClassPathManipulator: addURL gives "+t.getMessage());
     }//end try catch
 }//addURL(URL)
 
 /** Lists the URLs int the Classpath */
 public static void listClassPath() {
-    System.out.println(getClassPath());
+    Application.debug(getClassPath());
 }//listClassPath()
 
 public static String getClassPath() {
@@ -89,13 +94,13 @@ public static String getClassPath() {
             urlsstr+=urls[i].toString()+nl;
         }//for
     } catch (NoSuchMethodException t){
-        System.out.println("ClassPathManipulator: getURL gives NoSuchMethodExcepton.");
+        Application.debug("ClassPathManipulator: getURL gives NoSuchMethodExcepton.");
     }catch(IllegalAccessException e){
-        System.out.println("ClassPathManipulator: getURL gives IllegalAccesException.");
+        Application.debug("ClassPathManipulator: getURL gives IllegalAccesException.");
     }catch(InvocationTargetException e){
-        System.out.println("ClassPathManipulator: getURL gives InvocationTargetException");
+        Application.debug("ClassPathManipulator: getURL gives InvocationTargetException");
     }catch(Throwable t){
-        System.out.println("ClassPathManipulator: getURL gives "+t.getMessage());
+        Application.debug("ClassPathManipulator: getURL gives "+t.getMessage());
     }//end try catch
     return urlsstr;
 }//getClassPath()

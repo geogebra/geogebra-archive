@@ -713,7 +713,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 	  	        }                       
 	  	        return polyFun; 
         	} catch (Exception e) {
-        		System.err.println("error in buildPolyFunction:");
+        		Application.debug("error in buildPolyFunction:");
         		e.printStackTrace();
         		return null;
         	}
@@ -735,7 +735,7 @@ implements ExpressionValue, RealRootFunction, Functional {
              return null;
          } 
          catch (Error e) {
-            System.err.println("error in evaluateToExpressionNode: " + str);
+            Application.debug("error in evaluateToExpressionNode: " + str);
             e.printStackTrace();
              return null;
          }

@@ -425,7 +425,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return true;						
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		}
 	}		
@@ -464,11 +464,11 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return true;
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} catch (Error ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} 
 	}
@@ -584,11 +584,11 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return true;
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} catch (Error ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} 
 	}		
@@ -626,11 +626,11 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return true;
 		} catch (Exception ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} catch (Error ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		} 
 	}
@@ -656,7 +656,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return true;
 		} catch (IOException ex) {
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 			return false;
 		}
 	}*/

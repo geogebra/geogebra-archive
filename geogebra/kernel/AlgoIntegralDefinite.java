@@ -143,8 +143,8 @@ public class AlgoIntegralDefinite extends AlgoElement {
         n.setValue(integral);
               
         /*
-        System.out.println("***\nsteps: " + maxstep);                   
-        System.out.println("max_error: " + max_error);
+        Application.debug("***\nsteps: " + maxstep);                   
+        Application.debug("max_error: " + max_error);
         */
     }
     //  private int maxstep;
@@ -186,7 +186,7 @@ public class AlgoIntegralDefinite extends AlgoElement {
                     return left + adaptiveGaussQuad(fun, mid, b, s, err);
             } else
 				//  if we get here then the accuracy could not be reached
-                //System.out.println("MAX_STEP reached: no integral found: " + a + ", " + b + ", err: " + error);
+                //Application.debug("MAX_STEP reached: no integral found: " + a + ", " + b + ", err: " + error);
                 return Double.NaN;
         }
     }

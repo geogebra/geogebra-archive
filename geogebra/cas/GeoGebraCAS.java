@@ -1,6 +1,7 @@
 package geogebra.cas;
 
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.modules.JarManager;
 import jasymca.GeoGebraJasymca;
@@ -27,7 +28,7 @@ public class GeoGebraCAS {
     	
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize CAS Jar");
+			Application.debug("Could not initialize CAS Jar");
 			return;    		
     	}
     	
@@ -43,7 +44,7 @@ public class GeoGebraCAS {
 
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize CAS Jar");
+			Application.debug("Could not initialize CAS Jar");
 			return null;    		
     	}
 
@@ -54,8 +55,8 @@ public class GeoGebraCAS {
     	// we need to convert them back here
     	result = insertSpecialChars(result);
     	
-//    	System.out.println("exp for JASYMCA: " + exp);  
-//    	System.out.println("         result: " + result);  
+//    	Application.debug("exp for JASYMCA: " + exp);  
+//    	Application.debug("         result: " + result);  
     	        
         return result;
     }
@@ -73,7 +74,7 @@ public class GeoGebraCAS {
  
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize CAS Jar");
+			Application.debug("Could not initialize CAS Jar");
 			return null;    		
     	}
 
@@ -86,11 +87,11 @@ public class GeoGebraCAS {
      * @return result string (null possible)
      */
     final public String evaluateYACAS(String exp) {
-    	//System.out.println("exp for YACAS: " + exp);
+    	//Application.debug("exp for YACAS: " + exp);
         
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize CAS Jar");
+			Application.debug("Could not initialize CAS Jar");
 			return null;    		
     	}
 
@@ -98,7 +99,7 @@ public class GeoGebraCAS {
     		try {
     			yacas = new YacasInterpreter();    
     		} catch (Exception e) {
-    			System.err.println("Could not initialize YACAS");
+    			Application.debug("Could not initialize YACAS");
     			return null;
     		}
     	}
@@ -112,9 +113,9 @@ public class GeoGebraCAS {
            
         	result = yacas.Evaluate(myExp);
         	
-        	//System.out.println("   result: " + result);
-        	//System.out.println("   result (special chars): " + insertSpecialChars(result));
-        	//System.out.println("  result: " + result);
+        	//Application.debug("   result: " + result);
+        	//Application.debug("   result (special chars): " + insertSpecialChars(result));
+        	//Application.debug("  result: " + result);
             return insertSpecialChars(result);
             
         } catch (Error err) {
@@ -134,11 +135,11 @@ public class GeoGebraCAS {
      * @return result string (null possible)
      */
     final public String evaluateYACASRaw(String exp) {
-    	//System.out.println("exp for YACAS: " + exp);
+    	//Application.debug("exp for YACAS: " + exp);
         
     	if (!JarManager.addCasJarToClassPath())
     	{
-			System.err.println("Could not initialize CAS Jar");
+			Application.debug("Could not initialize CAS Jar");
 			return null;    		
     	}
     	
@@ -146,7 +147,7 @@ public class GeoGebraCAS {
     		try {
     			yacas = new YacasInterpreter();    
     		} catch (Exception e) {
-    			System.err.println("Could not initialize YACAS");
+    			Application.debug("Could not initialize YACAS");
     			return null;
     		}
     	}
@@ -176,7 +177,7 @@ public class GeoGebraCAS {
      * @return result string (null possible)
      *
     final public String evaluateJSCL(String exp) {
-    	//System.out.println("exp for JSCL: " + exp);
+    	//Application.debug("exp for JSCL: " + exp);
         
         try {
         	String result;
@@ -192,7 +193,7 @@ public class GeoGebraCAS {
                 
             Generic out = in.expand();
                         
-        	//System.out.println("   expand: " + out);
+        	//Application.debug("   expand: " + out);
           
             if (out.isPolynomial(xVar)) {
                 // build polynomial
@@ -203,8 +204,8 @@ public class GeoGebraCAS {
                 result =  out.toString();
             }  
                        
-        	//System.out.println("   result: " + result);
-        	//System.out.println("   result (special chars): " + insertSpecialChars(result));
+        	//Application.debug("   result: " + result);
+        	//Application.debug("   result (special chars): " + insertSpecialChars(result));
         	
             result = out.toString();
             return insertSpecialChars(result);
@@ -259,19 +260,19 @@ public class GeoGebraCAS {
             // but it does recognize x^2 * 1/4, so we replace every "/" by "*1/"
             String noDivExp = removeSpecialChars(exp.replaceAll("/", "*1/"));         
             
-            //System.out.println("getPolynomialCoeffs for " + exp);
-            //System.out.println("noDivExp " + noDivExp);   
+            //Application.debug("getPolynomialCoeffs for " + exp);
+            //Application.debug("noDivExp " + noDivExp);   
           
             Generic jsclExp = Expression.valueOf(noDivExp).expand();                                         
            
-            //System.out.println("   expand: " + jsclExp);
-            //System.out.println("   isPolynomial(x): " + jsclExp.isPolynomial(xVar));  
+            //Application.debug("   expand: " + jsclExp);
+            //Application.debug("   isPolynomial(x): " + jsclExp.isPolynomial(xVar));  
             
             // check if we have a polynomial
             if (!jsclExp.isPolynomial(xVar)) {
             	// try to simplify
             	jsclExp =  jsclExp.simplify();
-            	 //System.out.println("   simplify: " + jsclExp);
+            	 //Application.debug("   simplify: " + jsclExp);
             	if (!jsclExp.isPolynomial(xVar)) 
             		return null;
             }
@@ -289,8 +290,8 @@ public class GeoGebraCAS {
             	else
             		return null;                                               
               
-                //System.out.println("   coeff " + i + ": " + coeffs[i]);
-                //System.out.println("   is constant: " + p.get(i).isConstant(xVar));                 
+                //Application.debug("   coeff " + i + ": " + coeffs[i]);
+                //Application.debug("   is constant: " + p.get(i).isConstant(xVar));                 
             }
             
             return coeffs;                      
@@ -410,22 +411,22 @@ public class GeoGebraCAS {
     
     	GeoGebraCAS cas = new GeoGebraCAS();
       
-    	System.out.println("GGBCAS");
+    	Application.debug("GGBCAS");
     	
 //      Read/eval/print loop
         int i=1;
 		while(true){
-			System.out.println( "(In"+i+") ");				// Prompt
+			Application.debug( "(In"+i+") ");				// Prompt
 			try{
 				String line 		= readLine(System.in);
 				//String result = yacas.Evaluate(line);
 				
 				String result = cas.evaluateJASYMCA(line);
 	      
-				System.out.println( "(Out"+i+")     "+result );
+				Application.debug( "(Out"+i+")     "+result );
 				i++;
 			}catch(Exception e){
-				System.out.println("\n"+e);
+				Application.debug("\n"+e);
 			}
 		}            	
     }*/

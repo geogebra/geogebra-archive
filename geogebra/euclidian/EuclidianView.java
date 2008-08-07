@@ -856,7 +856,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				} catch (Exception exc) {
 					// Catch exceptions so that we don't try to set a null
 					// cursor
-					System.err.println("Unable to create custom cursor.");
+					Application.debug("Unable to create custom cursor.");
 				}
 			}
 		}
@@ -1443,7 +1443,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			Rectangle rect = selectionRectangle;
 			g2d.setClip(0,0, rect.width, rect.height);
 			g2d.translate(-rect.x, -rect.y);					
-			//System.out.println(rect.x+" "+rect.y+" "+rect.width+" "+rect.height);
+			//Application.debug(rect.x+" "+rect.y+" "+rect.width+" "+rect.height);
 		} else {
 			// use points Export_1 and Export_2 to define corner
 			try {
@@ -1530,13 +1530,13 @@ public class EuclidianView extends JPanel implements View, Printable {
 			System.gc();
 			img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		} catch (OutOfMemoryError e) {
-			System.err.println(e.getMessage() + ": BufferedImage.TYPE_INT_RGB");
+			Application.debug(e.getMessage() + ": BufferedImage.TYPE_INT_RGB");
 			try {
 				System.gc();
 				img = new BufferedImage(width, height,
 						BufferedImage.TYPE_3BYTE_BGR);
 			} catch (OutOfMemoryError e2) {
-				System.err.println(e2.getMessage()
+				Application.debug(e2.getMessage()
 						+ ": BufferedImage.TYPE_3BYTE_BGR");
 				System.gc();
 				img = new BufferedImage(width, height,
@@ -1985,9 +1985,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 	public void changeLayer(GeoElement geo, int oldlayer, int newlayer)
 	{
 		updateMaxLayerUsed(newlayer);
-		//System.out.println(drawLayers[oldlayer].size());
+		//Application.debug(drawLayers[oldlayer].size());
 		drawLayers[oldlayer].remove((Drawable) DrawableMap.get(geo));
-		//System.out.println(drawLayers[oldlayer].size());
+		//Application.debug(drawLayers[oldlayer].size());
 		drawLayers[newlayer].add((Drawable) DrawableMap.get(geo));
 		
 	}

@@ -5,14 +5,18 @@
  */
 
 package org.freehep.xml.util;
-import org.xml.sax.*;
+import geogebra.Application;
+
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * A simple SAXErrorHandler. Reports errors to System.err and keeps track
  * of the most severe error. Can be configured to throw exceptions when errors
  * more severe than a certain LEVEL are encountered
  * @author  tonyj
- * @version $Id: SAXErrorHandler.java,v 1.3 2008-05-04 12:20:44 murkle Exp $
+ * @version $Id: SAXErrorHandler.java,v 1.4 2008-08-07 18:34:06 murkle Exp $
  */
 public class SAXErrorHandler implements ErrorHandler
 {
@@ -60,7 +64,7 @@ public class SAXErrorHandler implements ErrorHandler
         else 
         {
             message.append(": "+exception);
-            System.err.println(message); 
+            Application.debug(message+""); 
         }
         
     }

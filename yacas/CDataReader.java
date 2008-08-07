@@ -19,7 +19,7 @@ class CDataReader
       in = new DataInputStream(source.openStream());
       mark = in.readLine();
 //      while(null != (aLine = in.readLine()))
-//        System.out.println(aLine);
+//        Application.debug(aLine);
     }
     catch(Exception e) 
     {
@@ -27,7 +27,7 @@ class CDataReader
 //       e.printStackTrace();
     }
 
-//System.out.println("File type: "+mark+" version "+dataFormatVersion);
+//Application.debug("File type: "+mark+" version "+dataFormatVersion);
     if (in != null)
       return 1;
     return 0;

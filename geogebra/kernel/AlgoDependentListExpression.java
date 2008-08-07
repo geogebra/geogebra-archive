@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -69,14 +70,14 @@ public class AlgoDependentListExpression extends AlgoElement {
     protected final void compute() {    
     	
     	// TODO: before eval
-    	System.out.println("before eval: " + root);
+    	Application.debug("before eval: " + root);
     	
     	
 		// get resulting list of ExpressionNodes		    	
     	MyList myList = (MyList) root.evaluate();
 		
     	// TODO: before eval
-    	System.out.println("after eval: " + root);
+    	Application.debug("after eval: " + root);
     	
     	
 		int evalListSize = myList.size();

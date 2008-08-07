@@ -1,5 +1,7 @@
 package yacas;
 
+import geogebra.Application;
+
 
 public class CYacas
 {
@@ -14,7 +16,7 @@ public class CYacas
     catch (Exception e)
     {
        e.printStackTrace();
-      System.out.println(e.toString());
+      Application.debug(e.toString());
     }
   }
   public String Evaluate(String input)
@@ -94,7 +96,7 @@ public class CYacas
     catch (Exception e)
     {
 //      e.printStackTrace();
-      System.out.println(e.toString());
+      Application.debug(e.toString());
       iError = e.toString();
     }
     return rs;

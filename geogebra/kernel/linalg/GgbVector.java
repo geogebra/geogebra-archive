@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
+import geogebra.Application;
+
 
 
 
@@ -53,7 +55,7 @@ public class GgbVector
 
 	/** sets v to vals0 */
 	public void set(double[] vals0){
-		//System.out.println("-------------vals0.length = "+vals0.length);
+		//Application.debug("-------------vals0.length = "+vals0.length);
 		for (int i=0;i<vals0.length;i++)
 			set(i+1,vals0[i]);
 		
@@ -271,7 +273,7 @@ public class GgbVector
 		v1.set(1,3.0);
 		v1.set(2,4.0);
 		
-		System.out.println("v1.v1 = "+v1.dotproduct(v1));
+		Application.debug("v1.v1 = "+v1.dotproduct(v1));
 		
 		
 	}

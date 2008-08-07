@@ -117,7 +117,7 @@ public class MyCellEditor extends DefaultCellEditor {
     }
 
 	public boolean stopCellEditing() {
-		//System.out.println("stopCellEditing()");
+		//Application.debug("stopCellEditing()");
 		String text = (String)delegate.getCellEditorValue();
 		try {
 			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
@@ -176,7 +176,7 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-    		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
+    		//Application.debug("SPREADSHEET: input error: " + e.getMessage());
 			if (! text0.startsWith("=")) {
     			text = name + "=\"" + text0 + "\"";
    				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
@@ -202,14 +202,14 @@ public class MyCellEditor extends DefaultCellEditor {
 //        	if (oldValue.isIndependent()) {
 //        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
 //        		// !!!problem here to be solved.
-//        		//System.out.println(">> " + newValue.toValueString());
+//        		//Application.debug(">> " + newValue.toValueString());
 //        	}
 //        	else {
     			// always redefine objects in spreadsheet
         		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
     //    	}
         	newValue.setConstructionDefaults();
-        	//System.out.println("GeoClassType = " + newValue.getGeoClassType());
+        	//Application.debug("GeoClassType = " + newValue.getGeoClassType());
         	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
         		newValue.setVisualStyle(oldValue);	        		
         	}
@@ -218,8 +218,8 @@ public class MyCellEditor extends DefaultCellEditor {
         	}
     	} catch (Throwable e) {
     		// TODO: handle exception
-    		//System.err.println("SPREADSHEET: input error: " + e.getMessage());
-    		//System.err.println("text0 = " + text0);
+    		//Application.debug("SPREADSHEET: input error: " + e.getMessage());
+    		//Application.debug("text0 = " + text0);
     		if (text0.startsWith("=") || text0.startsWith("\"")){
     			throw new Exception(e);
     		} else {

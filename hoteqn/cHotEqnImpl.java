@@ -256,11 +256,21 @@ package hoteqn;
 // package bHotEqn;  // for Bean-compilation to avoid double filenames
 
 //import atp.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
-import java.applet.Applet; // wenn Component von Applet aufgerufen wird.
+import geogebra.Application;
+
+import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.Hashtable;
 
 
 public class cHotEqnImpl{
@@ -372,7 +382,7 @@ public cHotEqnImpl(Component c, String equation, Applet app, String nameS) {
    symbolLoader   = new SymbolLoader();      // Fontlader
    tracker        = new MediaTracker(component);  // Mediatracker fuer Images
    eqScan         = new EqScanner(equation); // Scanner zur Erkennung der Token
-   // System.out.println(VERSION+nameS);
+   // Application.debug(VERSION+nameS);
 }
 
 //*************************  Public Methods ***********************************
@@ -387,7 +397,7 @@ public void setEquationImpl(String equation) {
 public String getEquationImpl() { return equation; }
 
 public void printStatusImpl( String s) {
-   if (debug) System.out.println(nameS + " " + s);
+   if (debug) Application.debug(nameS + " " + s);
 }
 
 private void displayStatus( String s) {
@@ -485,8 +495,8 @@ public void setFontsizesImpl(int gsize1, int gsize2, int gsize3, int gsize4) {
    f3  = new Font(Fontname,Font.PLAIN,size3);
    f4  = new Font(Fontname,Font.PLAIN,size4);
 
-//System.out.println("gsize= "+gsize1+" "+gsize2+" "+gsize3+" "+gsize4);
-//System.out.println("size= "+size1+" "+size2+" "+size3+" "+size4);
+//Application.debug("gsize= "+gsize1+" "+gsize2+" "+gsize3+" "+gsize4);
+//Application.debug("size= "+size1+" "+size2+" "+size3+" "+size4);
 }
  
 public void setBackgroundImpl(Color BGColor) {
@@ -576,7 +586,7 @@ public Dimension getPreferredSizeImpl() {
   {
     Graphics g = g2Dtemp;
     if (g!=null) {  
-          //System.out.println("getGraphics is not null");
+          //Application.debug("getGraphics is not null");
           g.setFont(f1);
      	  eqScan.start();
           BoxC area = eqn(0,150, false, g, 1);
@@ -584,7 +594,7 @@ public Dimension getPreferredSizeImpl() {
           else border = 0;
           localWidth  = 1+area.dx+2*border;
           localHeight = 1+area.dy_pos+area.dy_neg+2*border;
-          //System.out.println("getPref0... "+localWidth+" "+localHeight);
+          //Application.debug("getPref0... "+localWidth+" "+localHeight);
     }
   }
 //  width  = localWidth;
@@ -660,19 +670,19 @@ private synchronized void generateImageImpl (Graphics g, int x, int y) {
      geng.setColor(FGColor);
 
      //FontMetrics fM  = g.getFontMetrics();
-     //System.out.println("getAscent     = "+fM.getAscent()      );
-     //System.out.println("getDescent    = "+fM.getDescent()     );
-     //System.out.println("getHeight     = "+fM.getHeight()      );
-     //System.out.println("getLeading    = "+fM.getLeading()     );
-     //System.out.println("getMaxAdvance = "+fM.getMaxAdvance()  );
-     //System.out.println("getMaxAscent  = "+fM.getMaxAscent()   );
-     //System.out.println("getMaxDecent  = "+fM.getMaxDecent()   );
-     //System.out.println("getMaxDescent = "+fM.getMaxDescent()  );
+     //Application.debug("getAscent     = "+fM.getAscent()      );
+     //Application.debug("getDescent    = "+fM.getDescent()     );
+     //Application.debug("getHeight     = "+fM.getHeight()      );
+     //Application.debug("getLeading    = "+fM.getLeading()     );
+     //Application.debug("getMaxAdvance = "+fM.getMaxAdvance()  );
+     //Application.debug("getMaxAscent  = "+fM.getMaxAscent()   );
+     //Application.debug("getMaxDecent  = "+fM.getMaxDecent()   );
+     //Application.debug("getMaxDescent = "+fM.getMaxDescent()  );
    
      // Scanner zurücksetzen & Gleichung in d. Mitte d. Fensters 
 
      //imageH.clear();  // Image Cache leeren (nicht erforderlich)
-     //System.out.println("vor 1. eqn");
+     //Application.debug("vor 1. eqn");
      eqScan.start();
      area0 = eqn(0,height, true, geng, 1);
      displayStatus(" ");
@@ -707,9 +717,9 @@ private synchronized void generateImageImpl (Graphics g, int x, int y) {
        case 1: yoff=border-(localHeight-height)/2; break;
        case 2: yoff=height-border-area0.dy_neg-area0.dy_pos; break;
      }
-     //System.out.println("nach 1. eqn");
+     //Application.debug("nach 1. eqn");
      g.drawImage(genImage,xoff+x,yoff+y,xoff+area0.dx+x,yoff+area0.dy_pos+area0.dy_neg+1+y,0,height-area0.dy_pos,area0.dx,height+area0.dy_neg+1 ,null);
-     //System.out.println("nach 2. eqn");
+     //Application.debug("nach 2. eqn");
      geng.dispose();
      if (toosmall) printStatusImpl("(width,height) given=("+width+","+height
                                    +") used=("+localWidth+","+localHeight+")");
@@ -751,19 +761,19 @@ public synchronized void generateImageImpl (Graphics g, int x, int y) {
      g.setColor(FGColor);
 
      //FontMetrics fM  = g.getFontMetrics();
-     //System.out.println("getAscent     = "+fM.getAscent()      );
-     //System.out.println("getDescent    = "+fM.getDescent()     );
-     //System.out.println("getHeight     = "+fM.getHeight()      );
-     //System.out.println("getLeading    = "+fM.getLeading()     );
-     //System.out.println("getMaxAdvance = "+fM.getMaxAdvance()  );
-     //System.out.println("getMaxAscent  = "+fM.getMaxAscent()   );
-     //System.out.println("getMaxDecent  = "+fM.getMaxDecent()   );
-     //System.out.println("getMaxDescent = "+fM.getMaxDescent()  );
+     //Application.debug("getAscent     = "+fM.getAscent()      );
+     //Application.debug("getDescent    = "+fM.getDescent()     );
+     //Application.debug("getHeight     = "+fM.getHeight()      );
+     //Application.debug("getLeading    = "+fM.getLeading()     );
+     //Application.debug("getMaxAdvance = "+fM.getMaxAdvance()  );
+     //Application.debug("getMaxAscent  = "+fM.getMaxAscent()   );
+     //Application.debug("getMaxDecent  = "+fM.getMaxDecent()   );
+     //Application.debug("getMaxDescent = "+fM.getMaxDescent()  );
    
      // Scanner zurücksetzen & Gleichung in d. Mitte d. Fensters 
 
      //imageH.clear();  // Image Cache leeren (nicht erforderlich)
-     //System.out.println("vor 1. eqn");
+     //Application.debug("vor 1. eqn");
      //eqScan.start();
      area0 = eqn(0,150, false, g, 1);
      //displayStatus(" ");
@@ -798,10 +808,10 @@ public synchronized void generateImageImpl (Graphics g, int x, int y) {
        //case 1: yoff=border+area0.dy_pos-(localHeight-height)/2; break;
        //case 2: yoff=height-border-area0.dy_neg-1; break;
      //}
-     //System.out.println("nach 1. eqn");
+     //Application.debug("nach 1. eqn");
      eqScan.start();
      area = eqn(xoff+x,yoff+y,true,g,1);
-     //System.out.println("nach 2. eqn"); 
+     //Application.debug("nach 2. eqn"); 
      //if (toosmall) printStatus("(width,height) given=("+width+","+height
      //                              +") used=("+localWidth+","+localHeight+")");
      imageOK = true;
@@ -873,7 +883,7 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 
      Space_flag = false; 
      //System.out.print (eqTok.typ);
-	 //if ( disp) System.out.println("Token ="+eqTok.typ);
+	 //if ( disp) Application.debug("Token ="+eqTok.typ);
 	 editModeCountLEFT = editModeCount;
      eqToktyp = eqTok.typ;
      //eqTokstringS = eqTok.stringS;
@@ -885,7 +895,7 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
      case EqToken.EndSym:
      case EqToken.RIGHT:
                if (editModeFind && disp) { 
-				  //System.out.println("RighteditModeCount ="+editModeCount);
+				  //Application.debug("RighteditModeCount ="+editModeCount);
                   if (editModeCount > editModeCount2) editModeCount2 = editModeCount;
                   if (editModeCount < editModeCount1) editModeCount1 = editModeCount;
                }
@@ -1005,13 +1015,13 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 
 	if (disp)  {
 		if (editMode)  {
-			//System.out.println("x+boxReturn.dx = "+(x+boxReturn.dx)+" mouse1X = "+mouse1X+" x+boxReturn.dx+box.dx ="+(x+boxReturn.dx+box.dx));
+			//Application.debug("x+boxReturn.dx = "+(x+boxReturn.dx)+" mouse1X = "+mouse1X+" x+boxReturn.dx+box.dx ="+(x+boxReturn.dx+box.dx));
 			if (!editModeFind) {
 				if ( x+boxReturn.dx    <= mouse1X                    &&  
 					 mouse1X           <= (x+boxReturn.dx+box.dx)    && 
 					 (y-box.dy_pos)    <= mouse1Y                    && 
 					 mouse1Y           <= (y+box.dy_neg) ) {
-					//System.out.println("Anfang token "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
+					//Application.debug("Anfang token "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
 					x0 = x1 = mouse1X;
 					y0 = y1 = mouse1Y;
 					editModeFind   = true;
@@ -1024,7 +1034,7 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 					 mouse2X           <= (x+boxReturn.dx+box.dx)    && 
 					 (y-box.dy_pos)    <= mouse2Y                    && 
 					 mouse2Y           <= (y+box.dy_neg) ) {
-					//System.out.println("Anfang2token "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
+					//Application.debug("Anfang2token "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
 					x0 = x1 = mouse2X;
 					y0 = y1 = mouse2Y;
 					editModeFind = true;
@@ -1038,9 +1048,9 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 					mouse1Y    = dummyY;
 				}
 			}
-			//System.out.println("Token ="+eqToktyp+" editModeFind ="+editModeFind+" editModeFindLEFT ="+editModeFindLEFT);
+			//Application.debug("Token ="+eqToktyp+" editModeFind ="+editModeFind+" editModeFindLEFT ="+editModeFindLEFT);
 			if (editModeFind) {
-				//System.out.println("Mitte token  "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec+" "+editModeCount1+" "+editModeCount2);
+				//Application.debug("Mitte token  "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec+" "+editModeCount1+" "+editModeCount2);
 				x0 = Math.min(x0, x + boxReturn.dx);
 				x1 = Math.max(x1, x + boxReturn.dx + box.dx);
 				y0 = Math.min(y0, y - box.dy_pos);
@@ -1060,30 +1070,30 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 						if (editModeCountLEFT > editModeCount2) editModeCount2 = editModeCountLEFT;
 						if (editModeCountLEFT < editModeCount1) editModeCount1 = editModeCountLEFT;
 						editModeCount = eqScan.get_count();
-						//System.out.println("MBOX/FBOX/LEFT handling");
+						//Application.debug("MBOX/FBOX/LEFT handling");
 				} // end switch
 				if (editModeCount > editModeCount2) editModeCount2 = editModeCount;
 				if (editModeCount < editModeCount1) editModeCount1 = editModeCount;
-				//System.out.println("editModeCount1 "+editModeCount1);
-				//System.out.println("editModeCount2 "+editModeCount2);
+				//Application.debug("editModeCount1 "+editModeCount1);
+				//Application.debug("editModeCount2 "+editModeCount2);
 				if ( x+boxReturn.dx    <= mouse2X                    &&  
 				     mouse2X           <= (x+boxReturn.dx+box.dx)    && 
 				     (y-box.dy_pos)    <= mouse2Y                    && 
 				     mouse2Y           <= (y+box.dy_neg)  ) {
-					//System.out.println("Ende token   "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
+					//Application.debug("Ende token   "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec);
 					//g.setColor(Color.red);
 					//g.drawRect(x0, y0, x1-x0, y1-y0);
 					//g.setColor(FGColor);
 					if (editModeRec == rec) {
 						editMode     = false;
 						editModeFind = false;
-						//System.out.println("editModeCount "+editModeCount);
+						//Application.debug("editModeCount "+editModeCount);
 					}
 				}
 			} // end editModeFind
 		} // end editMode
 		if (editModeFindLEFT) {
-			//System.out.println("find LEFT token  "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec+" "+editModeCount1+" "+editModeCount2);
+			//Application.debug("find LEFT token  "+eqToktyp+" "+eqTokstringS+" "+rec+" "+editModeRec+" "+editModeCount1+" "+editModeCount2);
 			x0 = Math.min(x0, x + boxReturn.dx);
 			x1 = Math.max(x1, x + boxReturn.dx + box.dx);
 			y0 = Math.min(y0, y - box.dy_pos);
@@ -1101,12 +1111,12 @@ private BoxC eqn(int x, int y, boolean disp, Graphics g, int rec, boolean Standa
 				if (editModeCountLEFT > editModeCount2) editModeCount2 = editModeCountLEFT;
 				if (editModeCountLEFT < editModeCount1) editModeCount1 = editModeCountLEFT;
 				editModeCount = eqScan.get_count();
-				//System.out.println("MBOX/FBOX/LEFT handling");
+				//Application.debug("MBOX/FBOX/LEFT handling");
 			} // end switch
 			if (editModeCount > editModeCount2) editModeCount2 = editModeCount;
 			if (editModeCount < editModeCount1) editModeCount1 = editModeCount;
-			//System.out.println("editModeCount1 "+editModeCount1);
-			//System.out.println("editModeCount2 "+editModeCount2);
+			//Application.debug("editModeCount1 "+editModeCount1);
+			//Application.debug("editModeCount2 "+editModeCount2);
 			editModeFindLEFT = false;
 		} // end editModeFindLEFT
 	} // end disp
@@ -1329,7 +1339,7 @@ private BoxC BEGIN(int x, int y, boolean disp, Graphics g, int rec) {
       while (token.typ != EqToken.EndSym) {
          StringBuffer SBuffer = new StringBuffer(token.stringS); 
          for (int z=0; z<SBuffer.length(); z++){
-           // System.out.println("z= "+z+"  String="+SBuffer.charAt(z));
+           // Application.debug("z= "+z+"  String="+SBuffer.charAt(z));
            switch (SBuffer.charAt(z)) {
             case 'l':
                format[i] = 1;  
@@ -1366,7 +1376,7 @@ private BoxC BEGIN(int x, int y, boolean disp, Graphics g, int rec) {
                    while (token.typ != EqToken.EndSym) {
                       StringBuffer SBuffer2 = new StringBuffer(token.stringS); 
                       for (int zzz=0; zzz<SBuffer2.length(); zzz++){
-                         //System.out.println("zzz= "+zzz+"  String="+SBuffer2.charAt(zzz));
+                         //Application.debug("zzz= "+zzz+"  String="+SBuffer2.charAt(zzz));
                          switch (SBuffer2.charAt(zzz)) {
                          case 'l':
                             format[i] = 1;  
@@ -1418,7 +1428,7 @@ private BoxC BEGIN(int x, int y, boolean disp, Graphics g, int rec) {
    }
 
    // Ausgabe des Format Arrays
-   //if (disp) for (int z=0; z<i+2 ; z++) System.out.println("format "+format[z]);
+   //if (disp) for (int z=0; z<i+2 ; z++) Application.debug("format "+format[z]);
 
 
    // nur bei disp=true muß Scanner später zurückgesetzt werden
@@ -1648,7 +1658,7 @@ private BoxC FRAC(int x, int y, boolean disp, Graphics g, int rec, boolean frac_
 
    // nur bei disp=true wird Scanner zurückgesetzt
    if (disp) {
-       //System.out.println("Parser: FRAC: set_count = "+count);
+       //Application.debug("Parser: FRAC: set_count = "+count);
        eqScan.set_count(count); 
 
       //g.drawRect(x,y-dy_pos,dx,dy_pos+dy_neg);
@@ -2410,16 +2420,16 @@ private Image getSymbol(Graphics g, int rec){
       catch (InterruptedException e) {};
       if (tracker.isErrorID(i))  displayStatus("Error loading "+eqTok.stringS);
       else {
-        //System.out.println("put"+key);
+        //Application.debug("put"+key);
         imageH.put(key,image);
-        //System.out.println("putted"+key);
+        //Application.debug("putted"+key);
       }
       //displayStatus(eqTok.stringS+" is loaded");
-      //System.out.println(image.getWidth(this)+" "+image.getHeight(this)+" "+tracker.isErrorAny()+" "+g.getColor()+" "+i+" "+img);
+      //Application.debug(image.getWidth(this)+" "+image.getHeight(this)+" "+tracker.isErrorAny()+" "+g.getColor()+" "+i+" "+img);
       return image;
    }
    else {
-      //System.out.println("get"+key);
+      //Application.debug("get"+key);
       return (Image)(imageH.get(key)); // retrieve from cache
    }
 } // end getSymbol
@@ -2439,7 +2449,7 @@ private BoxC SYMBOP(int x, int y, boolean disp, Graphics g, int rec, boolean des
      if (desc) dy = GreekDescent[rec-1];
      g.drawImage(image,x,y-image.getHeight(null)+dy,null);
    }
-   //System.out.println(image.getWidth(this)+" "+image.getHeight(this));
+   //Application.debug(image.getWidth(this)+" "+image.getHeight(this));
    //if (disp) g.drawRect(x,y-dy_pos,dx,dy_pos+dy_neg);
    return new BoxC(dx,fM.getHeight()-fM.getDescent(),fM.getDescent());  
 } // end SYMBOP
@@ -2460,9 +2470,9 @@ private BoxC SYMBOLBIG(int x, int y, boolean disp, Graphics g, int rec){
    // Benutzung des MediaTrackers, damit das Bild zum Anzeigezeitpunkt
    // auch vollständig geladen ist.
    rec=Math.min(rec,GreekSize.length);
-   //System.out.println(" vor getSymbol");
+   //Application.debug(" vor getSymbol");
    Image image = getSymbol(g,rec);
-   //System.out.println(" nach getSymbol");
+   //Application.debug(" nach getSymbol");
    int im_dx  = dx = image.getWidth(null);
    int h      = image.getHeight(null);
    if (h < 0) {

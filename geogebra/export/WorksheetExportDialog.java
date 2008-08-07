@@ -520,7 +520,7 @@ public class WorksheetExportDialog extends JDialog {
 		    			app.showURLinBrowser(HTMLfile.toURL());
 	    			} catch (Exception ex) {			
 	    				app.showError("SaveFileFailed");
-	    				System.err.println(ex.toString());
+	    				Application.debug(ex.toString());
 	    			} 
 	    		}
 			};
@@ -528,7 +528,7 @@ public class WorksheetExportDialog extends JDialog {
 						
 		} catch (Exception ex) {			
 			app.showError("SaveFileFailed");
-			System.err.println(ex.toString());
+			Application.debug(ex.toString());
 		} 
 	}
 

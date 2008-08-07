@@ -1,6 +1,8 @@
 // Copyright 2007 FreeHEP
 package org.freehep.graphicsio.emf;
 
+import geogebra.Application;
+
 import java.applet.Applet;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,7 +12,7 @@ import java.net.URL;
  * Applet to render EMF files on any platform in a browser.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFApplet.java,v 1.3 2008-05-04 12:16:29 murkle Exp $
+ * @version $Id: EMFApplet.java,v 1.4 2008-08-07 18:34:04 murkle Exp $
  */
 public class EMFApplet extends Applet {
 
@@ -18,7 +20,7 @@ public class EMFApplet extends Applet {
     
     public void init() {
         super.init();
-        System.err.println("init");
+        Application.debug("init");
         try {
             URL url = new URL("file:/Users/duns/svn/freehep/vectorgraphics/freehep-graphicsio-emf/TestOffset.emf");
             EMFInputStream is = new EMFInputStream(url.openStream());
@@ -27,32 +29,32 @@ public class EMFApplet extends Applet {
             panel.setRenderer(renderer);
             add(panel);
         } catch (MalformedURLException mfue) {
-            System.err.println("URL Malformed "+mfue);
+            Application.debug("URL Malformed "+mfue);
         } catch (IOException ioe) {
-            System.err.println("IO Exception "+ioe);
+            Application.debug("IO Exception "+ioe);
         }
     }
 
     public void start() {
         super.start();
-        System.err.println("start");
+        Application.debug("start");
 //        repaint();
     }
 
     public void stop() {
         super.stop();
-        System.err.println("stop");
+        Application.debug("stop");
     }
 
     public void destroy() {
         super.destroy();
-        System.err.println("destroy");
+        Application.debug("destroy");
     }
 
     /*
     public void paintComponents(Graphics g) {
         super.paintComponents(g);
-        System.err.println("paint");
+        Application.debug("paint");
         renderer.paint((Graphics2D)g);
     }
     */

@@ -217,7 +217,7 @@ public final class DrawBoolean extends Drawable {
 				g2.setPaint(Color.lightGray);
 				g2.draw(labelRectangle);
 				
-				System.out.println("highlight drawn");
+				Application.debug("highlight drawn");
 				checkBox.setBorder(BorderFactory.createEtchedBorder());
 			}				
 		}

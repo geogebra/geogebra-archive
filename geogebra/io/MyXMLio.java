@@ -152,7 +152,7 @@ public class MyXMLio {
         			BufferedImage img = ImageIO.read(zip);        			
         			app.addExternalImage(name, img);
         		} catch (IOException e) {
-        			System.err.println("readZipFromURL: image could not be loaded: " + name);
+        			Application.debug("readZipFromURL: image could not be loaded: " + name);
         			e.printStackTrace();
         		}
         	}
@@ -515,12 +515,12 @@ public class MyXMLio {
         		ext = "PNG";	        	
         	ImageIO.write(img, ext, os);          		
 		} catch (Exception e) {    	
-			System.err.println(e.getMessage());
+			Application.debug(e.getMessage());
 			try {
 				//	if this did not work save image as png
 				ImageIO.write(img, "png", os);    
 			} catch (Exception ex) {
-				System.err.println(ex.getMessage());
+				Application.debug(ex.getMessage());
 				return;	
 			}   
 		}		
@@ -643,9 +643,9 @@ public class MyXMLio {
         
 
        /*
-        System.out.println("*******************");
-        System.out.println(sb.toString());
-        System.out.println("*******************");
+        Application.debug("*******************");
+        Application.debug(sb.toString());
+        Application.debug("*******************");
         */
         
         return sb.toString();            
@@ -656,7 +656,7 @@ public class MyXMLio {
     public static void main(String [] args) {
     	String [] formats = ImageIO.getWriterFormatNames();
     	for (int i=0; i < formats.length; i++) {
-    		System.out.println(formats[i]);
+    		Application.debug(formats[i]);
     	}
     }*/
 }

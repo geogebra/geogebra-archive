@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.Application;
 import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -157,22 +158,22 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 				switch (geo.getGeoClassType()) {
 				
 				case GeoElement3D.GEO_CLASS_POINT3D:
-					if(DEBUG){System.out.println("GEO_CLASS_POINT3D");}
+					if(DEBUG){Application.debug("GEO_CLASS_POINT3D");}
 					d = new DrawPoint3D(this, (GeoPoint3D) geo);
-					if(DEBUG){System.out.println("new DrawPoint3D");}
+					if(DEBUG){Application.debug("new DrawPoint3D");}
 					break;									
 								
 				case GeoElement3D.GEO_CLASS_SEGMENT3D:
-					if(DEBUG){System.out.println("GEO_CLASS_SEGMENT3D");}
+					if(DEBUG){Application.debug("GEO_CLASS_SEGMENT3D");}
 					d = new DrawSegment3D(this, (GeoSegment3D) geo);
-					//System.out.println("new DrawPoint3D");
+					//Application.debug("new DrawPoint3D");
 					break;									
 				
 
 				case GeoElement3D.GEO_CLASS_PLANE3D:
-					if(DEBUG){System.out.println("GEO_CLASS_PLANE3D");}
+					if(DEBUG){Application.debug("GEO_CLASS_PLANE3D");}
 					d = new DrawPlane3D(this, (GeoPlane3D) geo);
-					//System.out.println("new DrawPoint3D");
+					//Application.debug("new DrawPoint3D");
 					break;									
 				}
 
@@ -258,7 +259,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		mInv = m.inverse();
 		
-		//System.out.println("m = "); m.SystemPrint();
+		//Application.debug("m = "); m.SystemPrint();
 		
 	}
 
@@ -321,7 +322,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		//super.paint(g);
 		//super.repaint();
-		//System.out.println("paint");
+		//Application.debug("paint");
 	}
 	
 	
@@ -388,7 +389,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		this.getSize(d);
 		
 		if (d!=null){
-			//System.out.println("Dimension = "+d.width+" x "+d.height);
+			//Application.debug("Dimension = "+d.width+" x "+d.height);
 			double w = (double) d.width/2;
 			double h = (double) d.height/2;
 			

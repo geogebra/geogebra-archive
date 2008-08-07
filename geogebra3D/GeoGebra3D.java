@@ -17,14 +17,15 @@
  */
 package geogebra3D;
 
-import java.awt.dnd.DropTarget;
-
 import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.util.Util;
+
+import java.awt.dnd.DropTarget;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -61,7 +62,7 @@ public class GeoGebra3D extends GeoGebra
 		try {							
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			System.err.println(e);
+			Application.debug(e+"");
 		}	
     	    
 		// load list of previously used files

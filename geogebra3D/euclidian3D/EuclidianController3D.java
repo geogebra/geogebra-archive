@@ -1,9 +1,9 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.Application;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbVector;
-import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
@@ -86,7 +86,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	void setView(EuclidianView3D view) {
 		this.view = view;
-		//System.out.println("setView -> 3D");
+		//Application.debug("setView -> 3D");
 	}
 	
 	
@@ -110,7 +110,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		if (e.isShiftDown() || e.isControlDown() || e.isMetaDown()) {
 			moveMode = MOVE_VIEW;	
-			if(DEBUG){System.out.println("mousePressed");}
+			if(DEBUG){Application.debug("mousePressed");}
 			aOld = view.a;
 			bOld = view.b;	
 			startLoc.x = mouseLoc.x;
@@ -125,7 +125,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			if (!view.hits.isEmpty()){
 				objSelected = (GeoElement3D) view.hits.get(0);		
 				objSelected.setSelected(true);
-				//System.out.println("selected = "+objSelected.getLabel());
+				//Application.debug("selected = "+objSelected.getLabel());
 				
 				if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
 					moveMode = MOVE_POINT;
@@ -158,7 +158,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		switch (moveMode) {
 		case MOVE_POINT:
 			movePoint(repaint);
-			//System.out.println("movePoint  -- "+moveMode);
+			//Application.debug("movePoint  -- "+moveMode);
 			break;
 		
 		case MOVE_POINT_WHEEL:
@@ -167,7 +167,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		case MOVE_VIEW:
 			if (repaint) {
-				if(DEBUG){System.out.println("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
+				if(DEBUG){Application.debug("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
 				double dx = (double) mouseLoc.x - startLoc.x;
 				double dy = (double) mouseLoc.y - startLoc.y;
 				view.setRotXY(aOld+dx*ANGLE_SCALE,bOld+dy*ANGLE_SCALE,true);
@@ -196,7 +196,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		double l2 = o2.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v).get(3);
 		//double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
-		//System.out.println("l  = "+l); System.out.println("l2 = "+l2);
+		//Application.debug("l  = "+l); Application.debug("l2 = "+l2);
 		
 		mouseLoc3D = (o2.add(v.mul(l2))).v();
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
@@ -216,7 +216,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 	public void mouseClicked(MouseEvent arg0) {
-		if(DEBUG){System.out.println("mouseClicked");}
+		if(DEBUG){Application.debug("mouseClicked");}
 		
 	}
 
@@ -269,7 +269,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 	public void mouseDragged(MouseEvent e) {
-		if(DEBUG){System.out.println("mouseDragged");}
+		if(DEBUG){Application.debug("mouseDragged");}
 		setMouseLocation(e);
 		handleMouseDragged(true);	
 	}
@@ -286,7 +286,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 	public void mouseMoved(MouseEvent e) {
-		//System.out.println("mouseMoved");
+		//Application.debug("mouseMoved");
 		setMouseLocation(e);
 		pick();
 		view.repaint();
@@ -295,7 +295,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	/** pick object under the mouse */
 	public void pick(){
-		//System.out.println("mouse=("+mouseLoc.x+","+mouseLoc.y+")");
+		//Application.debug("mouse=("+mouseLoc.x+","+mouseLoc.y+")");
 		pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 		view.doPick(pickPoint);
 	}
@@ -336,14 +336,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			try {
 				moveMode = MOVE_POINT_WHEEL;
-				//System.out.println("moveMode = "+moveMode);
+				//Application.debug("moveMode = "+moveMode);
 		        Robot robot = new Robot();
 		        GgbVector p = p1.copyVector();
 		        view.toScreenCoords3D(p);
 		        GgbVector v = view.getScreenCoords(p);
 		        Component component = e.getComponent();
 		        Point point = component.getLocationOnScreen();
-		        //System.out.println("location = "+point.x+","+point.y);
+		        //Application.debug("location = "+point.x+","+point.y);
 		        robot.mouseMove((int) v.get(1) + point.x, (int) v.get(2) + point.y);
 		        
 		        startLoc3D = p1.copyVector();
@@ -386,14 +386,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_SHIFT:
-			System.out.println("shift pressed");
+			Application.debug("shift pressed");
 			break;
 		case KeyEvent.VK_CONTROL:
-			//System.out.println("ctrl pressed");
+			//Application.debug("ctrl pressed");
 			keyCtrlPressed();
 			break;
 		case KeyEvent.VK_ALT:
-			//System.out.println("alt pressed");
+			//Application.debug("alt pressed");
 			keyAltPressed();
 			break;
 		default:
@@ -411,14 +411,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_SHIFT:
-			System.out.println("shift released");
+			Application.debug("shift released");
 			break;
 		case KeyEvent.VK_CONTROL:
-			//System.out.println("ctrl released");
+			//Application.debug("ctrl released");
 			keyCtrlReleased();
 			break;
 		case KeyEvent.VK_ALT:
-			//System.out.println("alt released");
+			//Application.debug("alt released");
 			keyAltReleased();
 			break;
 		default:

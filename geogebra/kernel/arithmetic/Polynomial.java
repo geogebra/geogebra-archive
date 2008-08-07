@@ -43,11 +43,11 @@ public class Polynomial extends ValidExpression implements Serializable, Express
        
     public Polynomial(Kernel kernel, Polynomial poly) {   
         this(kernel);
-        //System.out.println("poly copy constructor input: " + poly);        
+        //Application.debug("poly copy constructor input: " + poly);        
         for (int i=0; i < poly.length(); i++) {
             append(new Term( (Term) poly.terms.get(i) ));
         }
-        //System.out.println("poly copy constructor output: " + this);        
+        //Application.debug("poly copy constructor output: " + this);        
     }
     
     public ExpressionValue deepCopy(Kernel kernel) {
@@ -292,7 +292,7 @@ public class Polynomial extends ValidExpression implements Serializable, Express
      * changes the Polynomial to { (4,"xxy"), (10,"xy"), (-84.0,"xx") }
      */
     void simplify() {        
-        //System.out.println("simplify " + this);
+        //Application.debug("simplify " + this);
         ArrayList list;        
         Object [] t;
         Term ti, tj;
@@ -334,7 +334,7 @@ public class Polynomial extends ValidExpression implements Serializable, Express
         // sort the list
         //java.util.Collections.sort( list );
         terms = list;
-        //System.out.println("simplified to " + this);
+        //Application.debug("simplified to " + this);
     }   
 
     boolean contains(String var) {        

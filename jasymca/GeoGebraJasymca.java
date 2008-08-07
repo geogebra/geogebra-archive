@@ -1,5 +1,7 @@
 package jasymca;
 
+import geogebra.Application;
+
 
 
 public class GeoGebraJasymca extends Jasymca {
@@ -14,7 +16,7 @@ public class GeoGebraJasymca extends Jasymca {
 			eval("floor(x):=round(x-1/2)");
 			eval("ceil(x):=round(x+1/2)");						
 		} catch(Exception e) {
-			System.err.println("GeoGebraJasymca: " + e.getMessage());
+			Application.debug("GeoGebraJasymca: " + e.getMessage());
 			
 			//e.printStackTrace();
 		}		
@@ -26,7 +28,7 @@ public class GeoGebraJasymca extends Jasymca {
 	
 			return formatExpression(result);
 		} catch(Exception e) {
-			System.err.println("GeoGebraJasymca: " + e.getMessage());
+			Application.debug("GeoGebraJasymca: " + e.getMessage());
 
 			//e.printStackTrace();
 			return null;
@@ -48,7 +50,7 @@ public class GeoGebraJasymca extends Jasymca {
 			sb.append("expand(");
 			sb.append(exp);
 			sb.append(')');		
-	    	//System.out.println("exp for JASYMCA: " + sb.toString());  
+	    	//Application.debug("exp for JASYMCA: " + sb.toString());  
 
 			// expand expression
 			Object result = eval(sb.toString());
@@ -71,13 +73,13 @@ public class GeoGebraJasymca extends Jasymca {
 	            String [] coeffs = new String[deg+1];
 	            for (int i=0; i <= deg; i++) {         	
 	            	coeffs[i] = poly.coef[i].toString();         	
-	            	//System.out.println("   coeff " + i + ": " + coeffs[i] + ", class: " + poly.coef[i].getClass());    	                                                                         
+	            	//Application.debug("   coeff " + i + ": " + coeffs[i] + ", class: " + poly.coef[i].getClass());    	                                                                         
 	            }	            
 	            return coeffs;  
 			}
 			
 		} catch(Exception e) {
-			System.err.println("GeoGebraJasymca: " + e.getMessage());
+			Application.debug("GeoGebraJasymca: " + e.getMessage());
 			//e.printStackTrace();
 		}
 		
@@ -92,8 +94,8 @@ public class GeoGebraJasymca extends Jasymca {
 			
 			for (int i=0; i < commands.length; i++) {
 				String result = cas.evaluate(commands[i]);
-				//System.out.println("command: " + commands[i]);
-				//System.out.println("result: " + result);        	        
+				//Application.debug("command: " + commands[i]);
+				//Application.debug("result: " + result);        	        
 			}
 		    	
 	  } 

@@ -146,14 +146,14 @@ public class ImageManager {
 				try {
 				   tracker.waitForAll();
 				} catch (InterruptedException e) {
-				   System.err.println("Interrupted while loading Image: " + name);
+				   Application.debug("Interrupted while loading Image: " + name);
 				}
 				tracker.removeImage(img);
 			}			   
 		 } catch (Exception e) {
-		 	System.err.println(e.toString());
+		 	Application.debug(e.toString());
 		 }
-		 if (img == null) System.out.println("Image " + name + " not found");
+		 if (img == null) Application.debug("Image " + name + " not found");
 		 return img;
 	}	  
 

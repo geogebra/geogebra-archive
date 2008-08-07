@@ -25,6 +25,8 @@ This file is part of the HotEqn package.
 
 package hoteqn;
 
+import geogebra.Application;
+
 import java.applet.Applet;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -62,7 +64,7 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 		if (fontsizes[++k].equals(fontsize)) loop=false;
 		if (k==4) loop=false;
 	}
-	//System.out.println(fontsizes[k]);
+	//Application.debug(fontsizes[k]);
 	if (imageSources[k] == null) { 			
    	// original:
 		//imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontsize+".gif",  app);
@@ -85,9 +87,9 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 		try {
 			if (kLocalFonts) {
 				InputStream ip = getClass().getResourceAsStream(desname);
-				//System.out.println("ip");
+				//Application.debug("ip");
 				istream = new BufferedInputStream(getClass().getResourceAsStream(desname));
-				//System.out.println("nlocal");
+				//Application.debug("nlocal");
 			} else {
 				//Try loading external Font files in component/applet/bean specific manner
 				if (!appletB & !beanB) {
@@ -96,7 +98,7 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 				} else if (appletB) { 
 					// applet code
 					istream = new BufferedInputStream((new URL(app.getCodeBase(), desname)).openStream());
-					//System.out.println("file");
+					//Application.debug("file");
 				} else {
 					// bean code
 					// beanB==true
@@ -115,7 +117,7 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 		}	
 		catch(Exception	exf)
 		{
-			System.out.println(exf.toString());
+			Application.debug(exf.toString());
 			imageSources[k] = null;
 		}
 	}
@@ -168,9 +170,9 @@ ImageProducer getLocalImageSource(String resourceName) {
     // as the relative path to the image file from the directory where
     // SymbolLoader.class is.
     InputStream imageStream = getClass().getResourceAsStream(resourceName);
-    int numBytes = imageStream.available();//System.out.println(numBytes);
+    int numBytes = imageStream.available();//Application.debug(numBytes);
     byte[] imageBytes = new byte[numBytes];
-	//System.out.println(numBytes);
+	//Application.debug(numBytes);
     // Note: If all bytes are immediately available, the while loop just
     // executes once and could be replaced by the line:
     // imageStream.read(imageBytes,0,numBytes);
@@ -185,7 +187,7 @@ ImageProducer getLocalImageSource(String resourceName) {
         numBytes = imageStream.available(); //Amount left to read
         int totalBytes = alreadyRead + numBytes; //total bytes needed to
                                                  //store everything we know about
-		//System.out.println("+"+numBytes);
+		//Application.debug("+"+numBytes);
         if((totalBytes) > imageBytes.length) {  //haven't yet allocated enough space
           byte[] tempImageBytes= (byte[]) imageBytes.clone();
           imageBytes = new byte[totalBytes];
@@ -257,9 +259,9 @@ ImageProducer getLocalImageSource(String resourceName) {
     // as the relative path to the image file from the directory where
     // SymbolLoader.class is.
     InputStream imageStream = getClass().getResourceAsStream(resourceName);
-    int numBytes = imageStream.available();//System.out.println(numBytes);
+    int numBytes = imageStream.available();//Application.debug(numBytes);
     byte[] imageBytes = new byte[numBytes];
-//System.out.println(numBytes);
+//Application.debug(numBytes);
     // Note: If all bytes are immediately available, the while loop just
     // executes once and could be replaced by the line:
     // imageStream.read(imageBytes,0,numBytes);
@@ -274,7 +276,7 @@ ImageProducer getLocalImageSource(String resourceName) {
         numBytes = imageStream.available(); //Amount left to read
         int totalBytes = alreadyRead + numBytes; //total bytes needed to
                                                  //store everything we know about
-//System.out.println("+"+numBytes);
+//Application.debug("+"+numBytes);
         if((totalBytes) > imageBytes.length) {  //haven't yet allocated enough space
           byte[] tempImageBytes= (byte[]) imageBytes.clone();
           imageBytes = new byte[totalBytes];

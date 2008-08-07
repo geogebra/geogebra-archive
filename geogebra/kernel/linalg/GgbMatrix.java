@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
+import geogebra.Application;
+
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Matrix4d;
 
@@ -313,7 +315,7 @@ public class GgbMatrix
 			for(int j=1;j<=getColumns();j++){
 				s=s+"  "+get(i,j);
 			}
-			System.out.println(s);
+			Application.debug(s);
 		}
 		
 		
@@ -501,7 +503,7 @@ public class GgbMatrix
 		m1.set(3, 1, 4.0);
 		m1.set(3, 2, 3.0);
 		m1.transpose();
-		System.out.println("m1");
+		Application.debug("m1");
 		m1.SystemPrint();
 		
 		GgbMatrix m2 = new GgbMatrix(3,4);
@@ -512,28 +514,28 @@ public class GgbMatrix
 		m2.set(2, 4, 3.0);
 		m2.set(3, 4, 1.0);
 		m2.set(3, 2, -1.0);
-		System.out.println("m2");		
+		Application.debug("m2");		
 		m2.SystemPrint();
 		
 
 		GgbMatrix m4 = m1.add(m2);
-		System.out.println("m4");
+		Application.debug("m4");
 		m4.SystemPrint();
 
 		GgbMatrix m5 = m1.mul(m2);
-		System.out.println("m5");
+		Application.debug("m5");
 		m5.SystemPrint();
 		
-		System.out.println("subMatrix");
+		Application.debug("subMatrix");
 		m5.subMatrix(2,3).SystemPrint();
 		
 		m1.set(1, 2, -2.0);m1.set(3, 1, -9.0);m1.set(3, 2, -8.0);
-		System.out.println("m1");
+		Application.debug("m1");
 		m1.SystemPrint();
-		System.out.println("det m1 = "+m1.det());
+		Application.debug("det m1 = "+m1.det());
 		
 		
-		System.out.println("inverse");
+		Application.debug("inverse");
 		GgbMatrix m4inv = m4.inverse();
 		m4inv.SystemPrint();
 		m4.mul(m4inv).SystemPrint();

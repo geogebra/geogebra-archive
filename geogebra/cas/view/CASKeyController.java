@@ -1,11 +1,9 @@
 package geogebra.cas.view;
 
-import java.awt.Component;
+import geogebra.Application;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JTable;
 
 public class CASKeyController implements KeyListener {
 
@@ -27,7 +25,7 @@ public class CASKeyController implements KeyListener {
 
 	public void keyPressed(KeyEvent e) {
 		Object src = e.getSource();
-		System.out.println("Key Pressed " + src.getClass().getName());
+		Application.debug("Key Pressed " + src.getClass().getName());
 		int[] selectedRowArray = consoleTable.getSelectedRows();
 		int selectedCol = consoleTable.getSelectedColumn();
 		
@@ -35,7 +33,7 @@ public class CASKeyController implements KeyListener {
 		if (selectedCol == CASPara.indexCol) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 				// e.consume();
-				System.out.println("selectedRowArray: "
+				Application.debug("selectedRowArray: "
 						+ selectedRowArray.length);
 				consoleTable.deleteRow(selectedRowArray[0]);
 			} else

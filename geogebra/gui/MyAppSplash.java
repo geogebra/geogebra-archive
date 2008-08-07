@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui;
  
 
+import geogebra.Application;
 import geogebra.GeoGebra;
 
 import java.awt.Frame;
@@ -39,7 +40,7 @@ public class MyAppSplash extends Object {
                 Toolkit.getDefaultToolkit().createImage(imageURL)
             );
         } else {
-            System.err.println("Splash image not found");
+            Application.debug("Splash image not found");
         }
         try {        	
         	// create and open first GeoGebra window

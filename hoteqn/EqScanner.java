@@ -69,7 +69,9 @@ package hoteqn;
 //package bHotEqn;
 
 //import atp.*;
-import java.util.*;
+import geogebra.Application;
+
+import java.util.Vector;
 
 class EqScanner {
    private String    equation;                           // Gleichung als String
@@ -128,7 +130,7 @@ public void setEquation(String equation) {
       if (selectB && (countT == selectCount1 )) collectB=true;
       TokenV.addElement(ScanNextToken());
       if (selectB && (countT == selectCount2 )) collectB=false;
-      //System.out.println("scanNextToken "+((EqToken)TokenV.lastElement()).stringS);
+      //Application.debug("scanNextToken "+((EqToken)TokenV.lastElement()).stringS);
    }
    countT = -1;
 
@@ -1017,7 +1019,7 @@ private EqToken ScanNextToken() {
          default :
                    tag = true;
                    advance();
-                   System.out.println("Scanner invalid tag: \\"+SBuffer.toString());
+                   Application.debug("Scanner invalid tag: \\"+SBuffer.toString());
                    return new EqToken(EqToken.Invalid);
          } // end switch \command (all backslash commands)
 
@@ -1028,7 +1030,7 @@ private EqToken ScanNextToken() {
                 return new EqToken(EqToken.SUB);
       /* REMOVED Michael Borcherds 2008-06-02 replaced higher up
          default:  advance();
-                System.out.println("Scanner invalid character: "+eqchar);
+                Application.debug("Scanner invalid character: "+eqchar);
                 return new EqToken(EqToken.Invalid);*/
       } // end switch
    } // end while

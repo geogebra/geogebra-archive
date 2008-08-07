@@ -461,7 +461,7 @@ public class Construction {
        	if (algo.wantsEuclidianViewUpdate()) {
        		algo.euclidianViewUpdate();     
        		didUpdate = true;
-           	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
+           	//Application.debug("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
        	}
        }  
        
@@ -471,7 +471,7 @@ public class Construction {
     // Michael Borcherds 2008-05-15
     final boolean updateAllConstructionProtocolAlgorithms() {
    	 boolean didUpdate = false;
-   	//System.out.println("updateAllConstructionProtocolAlgorithms");
+   	//Application.debug("updateAllConstructionProtocolAlgorithms");
    	// update all algorithms
        int size = algoList.size();
        for (int i = 0; i < size; ++i) {        	        	
@@ -481,7 +481,7 @@ public class Construction {
        		//algo.euclidianViewUpdate();   
        		algo.getGeoElements()[0].updateCascade();
        		didUpdate = true;
-           	//System.out.println("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
+           	//Application.debug("  update algo: " + algo + " , kernel " + algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());            	
        	}
        	
        }  
@@ -560,7 +560,7 @@ public class Construction {
      * -1 shows an empty construction.
      */
     public void setStep(int s) {	
-    	//System.out.println("setStep");
+    	//Application.debug("setStep");
         if (s == step || s < -1 || s >= ceList.size())
 			return;
 
@@ -632,12 +632,12 @@ public class Construction {
     	
     	
     	 /*      
-        System.out.println("*** geoSet order (add " + geo + ") ***");
+        Application.debug("*** geoSet order (add " + geo + ") ***");
         Iterator it = geoSet.iterator();
       
         while (it.hasNext()) {
         	GeoElement g = (GeoElement) it.next();
-        	System.out.println(g.getConstructionIndex() + ": " + g);
+        	Application.debug(g.getConstructionIndex() + ": " + g);
         }
         */
     }
@@ -659,12 +659,12 @@ public class Construction {
     		typeSet.remove(geo);    		    	
 
    	 /*
-       System.out.println("*** geoSet order (remove " + geo + ") ***");
+       Application.debug("*** geoSet order (remove " + geo + ") ***");
        Iterator it = geoSet.iterator();
        int i = 0;
        while (it.hasNext()) {
        	GeoElement g = (GeoElement) it.next();
-       	System.out.println(g.getConstructionIndex() + ": " + g);
+       	Application.debug(g.getConstructionIndex() + ": " + g);
        }
        */
     }
@@ -836,8 +836,8 @@ public class Construction {
             a = (oldGeoAlgo == null) ? oldGeo.getXML() : oldGeoAlgo.getXML();
             b = (newGeoAlgo == null) ? newGeo.getXML() : newGeoAlgo.getXML();              
 
-//            System.out.println("oldGeo: " + oldGeo + ", algo: " + oldGeoAlgo);
-//            System.out.println("newGeo: " + newGeo + ", algo: " + newGeoAlgo);
+//            Application.debug("oldGeo: " + oldGeo + ", algo: " + oldGeoAlgo);
+//            Application.debug("newGeo: " + newGeo + ", algo: " + newGeoAlgo);
         }
         
         // restore old kernel settings
@@ -897,14 +897,14 @@ public class Construction {
     private void doReplace(String consXML, String oldXML, String newXML) throws Exception {             
         // try to process the new construction
         try {           	
-//            System.out.println("***");
-//            System.out.println("old XML:\n" + oldXML);
-//            System.out.println("new XML:\n" + newXML);  
+//            Application.debug("***");
+//            Application.debug("old XML:\n" + oldXML);
+//            Application.debug("new XML:\n" + newXML);  
             
             //  replace Strings: oldXML by newXML in consXML            
             int pos = consXML.indexOf(oldXML);
             if (pos < 0) {
-                System.err.println("replace failed: oldXML string not found:\n"+ oldXML);
+                Application.debug("replace failed: oldXML string not found:\n"+ oldXML);
                 throw new MyError(getApplication(), "ReplaceFailed");
             }           
             StringBuffer newConsXML = new StringBuffer();
@@ -912,25 +912,25 @@ public class Construction {
             newConsXML.append(newXML);
             newConsXML.append(consXML.substring(pos + oldXML.length()));                
    
-//            System.out.println("***");
-//            System.out.println("cons XML:\n" + consXML);
-//            System.out.println("***");      
-//            System.out.println("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
-//            System.out.println("***");
-//            System.out.println("new XML:\n" + newConsXML);
-//            System.out.println("***");
+//            Application.debug("***");
+//            Application.debug("cons XML:\n" + consXML);
+//            Application.debug("***");      
+//            Application.debug("*** REPLACE ***\n" + oldXML + "*** BY ***\n" + newXML);
+//            Application.debug("***");
+//            Application.debug("new XML:\n" + newConsXML);
+//            Application.debug("***");
            
             undoManager.processXML(newConsXML.toString());
             kernel.notifyReset();
             kernel.updateConstruction();              
         } 
         catch (MyError e) {
-            System.err.println("replace failed");
+            Application.debug("replace failed");
             restoreCurrentUndoInfo();
             throw e;
         }
         catch (Exception e) {
-            System.err.println("replace failed"); //+ e.getMessage());
+            Application.debug("replace failed"); //+ e.getMessage());
             restoreCurrentUndoInfo();
             throw e;
         }       

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.AlgoSumUpperLower;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -119,7 +120,7 @@ public class DrawUpperLowerSum extends Drawable {
 	                g2.draw(gp);           
 	            } 
         	} catch (Exception e) {
-        		System.err.println(e.getMessage());
+        		Application.debug(e.getMessage());
         	}
             
         	if (sum.getFillColor().getAlpha() > 0) {
@@ -127,7 +128,7 @@ public class DrawUpperLowerSum extends Drawable {
 	            	g2.setPaint(sum.getFillColor());                                  
 					g2.fill(gp);    
 				} catch (Exception e) {
-					System.err.println(e.getMessage());
+					Application.debug(e.getMessage());
 				}   
         	}
 			
@@ -136,7 +137,7 @@ public class DrawUpperLowerSum extends Drawable {
 				g2.setStroke(objStroke);                                   
 				g2.draw(gp);   
 			} catch (Exception e) {
-				System.err.println(e.getMessage());
+				Application.debug(e.getMessage());
 			}    
 			
             if (labelVisible) {

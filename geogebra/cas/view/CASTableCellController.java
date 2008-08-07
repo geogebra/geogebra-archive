@@ -1,13 +1,10 @@
 package geogebra.cas.view;
 
-import java.awt.Component;
-import java.awt.KeyboardFocusManager;
-import java.awt.Point;
+import geogebra.Application;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 public class CASTableCellController implements KeyListener {
@@ -45,7 +42,7 @@ public class CASTableCellController implements KeyListener {
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
-			// System.out.println("Focus should be set at the line above");
+			// Application.debug("Focus should be set at the line above");
 			if (curCell.isLineVisiable()) {
 				// Set the focus on the input text field
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
@@ -60,7 +57,7 @@ public class CASTableCellController implements KeyListener {
 
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				// table.editCellAt(selectedRow+1, selectedCol);
-				System.out.println("Key donw changed selection: "
+				Application.debug("Key donw changed selection: "
 						+ table.getSelectedRow() + " "
 						+ table.getSelectedColumn());
 
@@ -83,7 +80,7 @@ public class CASTableCellController implements KeyListener {
 			break;
 
 		case KeyEvent.VK_ENTER:
-			System.out.println("Press Enter at the Line Panel");
+			Application.debug("Press Enter at the Line Panel");
 			if (curCell.isLineVisiable()) {
 				saveInput(curValue);
 				// Insert a new line here
@@ -97,7 +94,7 @@ public class CASTableCellController implements KeyListener {
 			break;
 
 		default: // Other Keys
-			System.out.println("Press Enter at the Line Panel");
+			Application.debug("Press Enter at the Line Panel");
 			if (curCell.isLineVisiable()) {
 				saveInput(curValue);
 				// Insert a new line here
@@ -151,7 +148,7 @@ public class CASTableCellController implements KeyListener {
 
 				CASTableCellValue newValue = (CASTableCellValue) tableModel
 						.getValueAt(selectedRow, selectedCol);
-				System.out.println(selectedRow + " Value Updated: "
+				Application.debug(selectedRow + " Value Updated: "
 						+ newValue.getCommand() + newValue.getOutput());
 
 				// update the cell appearance
@@ -170,7 +167,7 @@ public class CASTableCellController implements KeyListener {
 			break;
 
 		case KeyEvent.VK_UP:
-			// System.out.println("Focus should be set at the line above");
+			// Application.debug("Focus should be set at the line above");
 			if (!curCell.isLineVisiable()) {
 				saveInput(curValue);
 
@@ -178,7 +175,7 @@ public class CASTableCellController implements KeyListener {
 					table.setFocusAtRowLinePanel(selectedRow - 1, selectedCol);
 				}else{
 					table.insertRow(-1, CASPara.contCol);
-					//System.out.println("This is the first row");
+					//Application.debug("This is the first row");
 				}
 			}
 			consumeEvent = true;

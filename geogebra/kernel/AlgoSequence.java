@@ -66,11 +66,11 @@ public class AlgoSequence extends AlgoElement {
     	expressionParentAlgo = expression.getParentAlgorithm();
     	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
     	       
-//    	System.out.println("expression: " + expression);
-//   	System.out.println("  parent algo: " + expression.getParentAlgorithm());
-//    //	System.out.println("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
-//    	System.out.println("  variable: " + var);
-//    	System.out.println("  expIsGeoFunction: " + expIsGeoFunction);
+//    	Application.debug("expression: " + expression);
+//   	Application.debug("  parent algo: " + expression.getParentAlgorithm());
+//    //	Application.debug("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
+//    	Application.debug("  variable: " + var);
+//    	Application.debug("  expIsGeoFunction: " + expIsGeoFunction);
     	
     	list = new GeoList(cons);       
         setInputOutput(); // for AlgoElement

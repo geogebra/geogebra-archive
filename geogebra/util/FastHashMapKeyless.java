@@ -129,7 +129,7 @@ public final class FastHashMapKeyless extends AbstractMap
 	}
 	int mask = size - 1;
 	//	size = (tempsize > MINIMUM_SIZE) ? tempsize : MINIMUM_SIZE;
-	//	System.out.println(size);
+	//	Application.debug(size);
 	mask_ = mask;
 	limit_ = (int)(size*_loadFactor);
 	fillFactor_ = _loadFactor;

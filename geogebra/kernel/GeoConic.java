@@ -1415,8 +1415,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		}		
 		setAffineTransform();		
 		
-		// System.out.println("conic: " + this.getLabel() + " type " + getTypeString() );
-		// System.out.println("           detS: " + (A0A1 - A3A3));
+		// Application.debug("conic: " + this.getLabel() + " type " + getTypeString() );
+		// Application.debug("           detS: " + (A0A1 - A3A3));
 	}
 
 	/*************************************
@@ -1492,7 +1492,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		if (singlePoint == null)
 			singlePoint = new GeoPoint(cons);
 		singlePoint.setCoords(b.x, b.y, 1.0d);
-		//System.out.println("singlePoint : " + b);
+		//Application.debug("singlePoint : " + b);
 	}
 
 	final private void intersectingLines(double[] mu) {
@@ -1528,7 +1528,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		lines[index].x = nx;
 		lines[index].y = ny;
 		lines[index].z = - (nx * b.x + ny * b.y);
-		//System.out.println("intersectingLines: " + lines[0] + ", " + lines[1]);
+		//Application.debug("intersectingLines: " + lines[0] + ", " + lines[1]);
 	}
 
 	final private void ellipse(double[] mu) {
@@ -1551,7 +1551,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			halfAxes[0] = Math.sqrt(1.0d / mu[0]);
 			halfAxes[1] = halfAxes[0];
 			excent = 0.0d;
-			//System.out.println("circle: M = " + b + ", r = " + halfAxes[0]);    
+			//Application.debug("circle: M = " + b + ", r = " + halfAxes[0]);    
 		} else { // elipse
 			type = GeoConic.CONIC_ELLIPSE;
 			mu[0] = 1.0d / mu[0];
@@ -1561,10 +1561,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			excent = Math.sqrt(mu[0] - mu[1]);
 
 			/*
-			System.out.println("Ellipse");            
-			System.out.println("a : " + halfAxes[0]);
-			System.out.println("b : " + halfAxes[1]);
-			System.out.println("e : " + excent);                                  
+			Application.debug("Ellipse");            
+			Application.debug("a : " + halfAxes[0]);
+			Application.debug("b : " + halfAxes[1]);
+			Application.debug("e : " + excent);                                  
 			*/
 		}
 	}
@@ -1591,16 +1591,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		excent = Math.sqrt(mu[0] + mu[1]);
 
 		/*
-		System.out.println("Hyperbola");            
-		System.out.println("a : " + halfAxes[0]);
-		System.out.println("b : " + halfAxes[1]);
-		System.out.println("e : " + excent);                  
+		Application.debug("Hyperbola");            
+		Application.debug("a : " + halfAxes[0]);
+		Application.debug("b : " + halfAxes[1]);
+		Application.debug("e : " + excent);                  
 		 */
 	}
 
 	final private void empty() {
 		type = GeoConic.CONIC_EMPTY;
-		// System.out.println("empty conic");
+		// Application.debug("empty conic");
 	}
 
 	/*************************************
@@ -1693,7 +1693,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		lines[1].x = lines[0].x;
 		lines[1].y = lines[0].y;
 		lines[1].z = lines[0].z;
-		//System.out.println("double line : " + lines[0]);
+		//Application.debug("double line : " + lines[0]);
 	}
 	
 	final public void enforceDoubleLine() {
@@ -1753,8 +1753,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 			lines[0].z = -temp1 - mu[0];
 			lines[1].z = temp2;
 		}
-		// System.out.println("parallel lines : " + lines[0] + ", " + lines[1]);
-		// System.out.println("coeff : " + mu[0]);
+		// Application.debug("parallel lines : " + lines[0] + ", " + lines[1]);
+		// Application.debug("coeff : " + mu[0]);
 	}
 
 	final private void parabola() {
@@ -1777,9 +1777,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 		}
 
 		/*
-		System.out.println("parabola");
-		System.out.println("Vertex: " + b);
-		System.out.println("p = " + p);
+		Application.debug("parabola");
+		Application.debug("Vertex: " + b);
+		Application.debug("p = " + p);
 		*/
 	}
 	

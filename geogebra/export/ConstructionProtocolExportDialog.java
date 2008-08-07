@@ -232,7 +232,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                 fw.close();                
 	            } catch (IOException ex) {
 	                app.showError("SaveFileFailed");
-	                System.err.println(ex.toString());                      
+	                Application.debug(ex.toString());                      
 	            }
 	        }
 	        

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -116,7 +117,7 @@ implements EuclidianViewAlgo {
     		getMacroConstructionState();
     		
     	} catch (Exception e) {
-    		System.err.println("AlgoMacro compute():\n");
+    		Application.debug("AlgoMacro compute():\n");
     		e.printStackTrace();
     		for (int i=0; i < output.length; i++) {
     			output[i].setUndefined();
@@ -148,7 +149,7 @@ implements EuclidianViewAlgo {
 		for (int i=0; i < macroInput.length; i++) {   
 			macroInput[i].set(input[i]);				
 					
-			//System.out.println("SET INPUT object: " + input[i] + " => " + macroInput[i]);
+			//Application.debug("SET INPUT object: " + input[i] + " => " + macroInput[i]);
     	}		
 	}
 
@@ -173,7 +174,7 @@ implements EuclidianViewAlgo {
 //			GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);							
 //			algoGeo.set(macroGeo);	
 //			
-//			System.out.println("RESULT from macro: " + macroGeo + " => " + algoGeo);
+//			Application.debug("RESULT from macro: " + macroGeo + " => " + algoGeo);
 //	
 //		}
 	}
@@ -367,11 +368,11 @@ implements EuclidianViewAlgo {
 				GeoPoint point = (GeoPoint) getAlgoGeo(macroStartPoints[i]);
 				locateable.initStartPoint(point, i);
 				
-				//System.out.println("set start point: " + locateable + " => " + point + "(" + point.cons +")");
+				//Application.debug("set start point: " + locateable + " => " + point + "(" + point.cons +")");
 				
 			}	
 		} catch (Exception e) {
-			System.err.println("AlgoMacro.initLocateable:\n" + e.getStackTrace());
+			Application.debug("AlgoMacro.initLocateable:\n" + e.getStackTrace());
 		}
 	}		
 	

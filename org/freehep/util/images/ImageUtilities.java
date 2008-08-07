@@ -1,6 +1,8 @@
 // Copyright 2001-2007, FreeHEP.
 package org.freehep.util.images;
 
+import geogebra.Application;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,7 +16,7 @@ import java.awt.image.RenderedImage;
 
 /**
  * @author Mark Donszelmann
- * @version $Id: ImageUtilities.java,v 1.3 2008-05-04 12:23:18 murkle Exp $
+ * @version $Id: ImageUtilities.java,v 1.4 2008-08-07 18:34:08 murkle Exp $
  */
 public class ImageUtilities {
 
@@ -135,7 +137,7 @@ public class ImageUtilities {
                             break;
 
                         default:
-                            System.err.println(ImageUtilities.class.getClass()+": Invalid code in '"+code+"'");
+                            Application.debug(ImageUtilities.class.getClass()+": Invalid code in '"+code+"'");
                             break;
                     }
                     index++;

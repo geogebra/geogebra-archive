@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author Mark Donszelmann
  * @author Ian Graham - added popBufferBytes() for use by CGMOutputStream
- * @version $Id: ByteCountOutputStream.java,v 1.3 2008-05-04 12:21:56 murkle Exp $
+ * @version $Id: ByteCountOutputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
  */
 public class ByteCountOutputStream extends ByteOrderOutputStream {
 
@@ -39,7 +39,7 @@ public class ByteCountOutputStream extends ByteOrderOutputStream {
     }
 
     public void write(int b) throws IOException {
-        // System.out.println(Integer.toHexString(b)+" "+index);
+        // Application.debug(Integer.toHexString(b)+" "+index);
         // original stream
         if (currentBuffer == -1) {
             super.write(b);

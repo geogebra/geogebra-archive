@@ -21,7 +21,7 @@ public class YacasInterpreter {
         yacas = new CYacas(new StringOutput(new StringBuffer()));
        // boolean scripts_found = loadScripts();
         
-       // if (!scripts_found) System.err.println("Yacas error: Unable to load scripts.zip");
+       // if (!scripts_found) Application.debug("Yacas error: Unable to load scripts.zip");
         yacas.Evaluate("Load(\"yacasinit.ys\");");
         
     }
@@ -39,8 +39,8 @@ public class YacasInterpreter {
         String detect = detectURL.getPath(); // file:/home/av/src/lib/scripts.zip!/yacasinit.ys
         String archive = detect.substring(0, detect.lastIndexOf('!')); // file:/home/av/src/lib/scripts.zip            
         
-        //  System.out.println("path: " + detect);
-        //  System.out.println("archive: " + archive);            	    	    
+        //  Application.debug("path: " + detect);
+        //  Application.debug("archive: " + archive);            	    	    
       
     	
         java.util.zip.ZipFile z = null;
@@ -48,7 +48,7 @@ public class YacasInterpreter {
         	// Markus Hohenwarter, use static path
             z = new java.util.zip.ZipFile(new java.io.File("/net/sf/yacas/scripts.zip"));
         } catch (Exception e) {
-            System.err.println(e.toString());
+            Application.debug(e.toString());
             return false;
         }
         

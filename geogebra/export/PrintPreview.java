@@ -114,7 +114,7 @@ public class PrintPreview extends JDialog {
 							setVisible(false);
 						} catch (PrinterException ex) {
 							ex.printStackTrace();
-							System.err.println("Printing error: " + ex.toString());
+							Application.debug("Printing error: " + ex.toString());
 						}
 					}
 				};
@@ -336,7 +336,7 @@ public class PrintPreview extends JDialog {
 		pageFormat.setOrientation(m_orientation);
 	
 		if (pageFormat.getWidth() == 0 ||  pageFormat.getHeight() == 0) {
-			System.err.println("Unable to determine default page size");
+			Application.debug("Unable to determine default page size");
 			return;
 		}
 		
@@ -395,7 +395,7 @@ public class PrintPreview extends JDialog {
 			PageFormat pageFormat = getDefaultPageFormat();
 			pageFormat.setOrientation(m_orientation);
 			if (pageFormat.getHeight() == 0 || pageFormat.getWidth() == 0) {
-				System.err.println("Unable to determine default page size");
+				Application.debug("Unable to determine default page size");
 				return;
 			}		
 			PagePreview pp = new PagePreview(m_target, pageFormat, comps.length);

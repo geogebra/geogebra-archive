@@ -1,6 +1,8 @@
 // Copyright 2001 freehep
 package org.freehep.graphicsio.pdf;
 
+import geogebra.Application;
+
 import java.awt.GradientPaint;
 import java.awt.Paint;
 import java.awt.TexturePaint;
@@ -20,7 +22,7 @@ import java.util.ListIterator;
  * yet (ps calculation)
  * 
  * @author Simon Fischer
- * @version $Id: PDFPaintDelayQueue.java,v 1.3 2008-05-04 12:31:27 murkle Exp $
+ * @version $Id: PDFPaintDelayQueue.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDFPaintDelayQueue {
 
@@ -92,7 +94,7 @@ public class PDFPaintDelayQueue {
                 } else if (e.paint instanceof TexturePaint) {
                     addTexturePaint(e);
                 } else {
-                    System.err.println("PDFWriter: Paint of class '"
+                    Application.debug("PDFWriter: Paint of class '"
                             + e.paint.getClass() + "' not supported.");
                     // FIXME, we could write a color here, to keep the file
                     // valid.

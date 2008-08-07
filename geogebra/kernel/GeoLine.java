@@ -710,9 +710,9 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 			posOrientation = true; 								
 			
 			/*
-			System.out.println("init_step_width: " + init_step_width);
-			System.out.println("MAX_STEP_WIDTH: " + MAX_STEP_WIDTH);
-			System.out.println("MIN_STEP_WIDTH: " + MIN_STEP_WIDTH);
+			Application.debug("init_step_width: " + init_step_width);
+			Application.debug("MAX_STEP_WIDTH: " + MAX_STEP_WIDTH);
+			Application.debug("MIN_STEP_WIDTH: " + MIN_STEP_WIDTH);
 			*/
 			
 			resetStartParameter();

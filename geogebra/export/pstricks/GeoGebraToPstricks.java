@@ -813,10 +813,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		double xrangemax=a,xrangemin=a;
 		while (xrangemax<b){
 			xrangemin=firstDefinedValue(f,a,b);
-//			System.out.println("xrangemin "+xrangemin);
+//			Application.debug("xrangemin "+xrangemin);
 			if (xrangemin==b) break;
 			xrangemax=maxDefinedValue(f,xrangemin,b);
-//			System.out.println("xrangemax "+xrangemax);
+//			Application.debug("xrangemax "+xrangemax);
 			code.append("\\psplot");
 			code.append(LineOptionCode(geo,true));
 			int index=code.lastIndexOf("]");
@@ -1326,7 +1326,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 
 		// Set Units for grid
 		codeBeginPic.append("\\psset{xunit=");
-//		System.out.println(GridDist[0]*xunit);
+//		Application.debug(GridDist[0]*xunit);
 		codeBeginPic.append(sci2dec(GridDist[0]*xunit));
 		codeBeginPic.append("cm,yunit=");
 		codeBeginPic.append(sci2dec(GridDist[1]*yunit));
@@ -1617,7 +1617,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		int y1=euclidianView.toScreenCoordY(ymin);
 		int y2=euclidianView.toScreenCoordY(ymax);
 		Rectangle rec=new Rectangle(x1,y2,x2-x1,y1-y2);
-	//		System.out.println(x1+" "+x2+" "+y1+" "+y2);
+	//		Application.debug(x1+" "+x2+" "+y1+" "+y2);
 		euclidianView.setSelectionRectangle(rec);
 		euclidianView.repaint();
 	}

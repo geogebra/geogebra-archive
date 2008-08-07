@@ -68,7 +68,7 @@ public class AlgoConstructionStep extends AlgoElement {
     protected final void compute() {  
     	//double step=cons.getApplication().getConstructionProtocol().getCurrentStepNumber();
     	double step=kernel.getConstructionStep();
-    	//System.out.println("compute"+step+" "+kernel.getConstructionStep());
+    	//Application.debug("compute"+step+" "+kernel.getConstructionStep());
     	num.setValue(step+1);
     	//num.setValue(cons.getStep());
     }         

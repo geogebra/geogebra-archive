@@ -68,7 +68,7 @@ public class JarManager {
 
         this.app = app;
         
-        app.debug("java.io.tmpdir = "+tempDir);
+        Application.debug("java.io.tmpdir = "+tempDir);
 
     	// Download jar files to temp directory in background
     	// this is done because Java WebStart uses strange jar file
@@ -105,7 +105,7 @@ public class JarManager {
         
         if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
         		.toLowerCase(Locale.US).endsWith(".jar")) {
-        	app.debug("not running from jar - set IS_WEBSTART=true");
+        	Application.debug("not running from jar - set IS_WEBSTART=true");
             IS_WEBSTART=true;
         }
         
@@ -119,7 +119,7 @@ public class JarManager {
         		//URL url = new java.net.URL(codeBaseURL,"");
         		//webstartCodebase=codeBaseURL.toString();
         		IS_WEBSTART=true;
-        		app.debug("JNLP codebase "+codeBaseURL.toString());
+        		Application.debug("JNLP codebase "+codeBaseURL.toString());
         	}
             // JMathTeX files specified in the JNLP file, don't need to add them to classpath
             // JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
@@ -137,18 +137,18 @@ public class JarManager {
             //GEOGEBRA_SPREADSHEET_LOADED=true;
             // init spreadsheet view
          	//spreadsheetView = new SpreadsheetView(app, 26, 100);
-            app.debug("IS_WEBSTART="+IS_WEBSTART);
+            Application.debug("IS_WEBSTART="+IS_WEBSTART);
             return;
          } catch (javax.jnlp.UnavailableServiceException ex) {
              IS_WEBSTART=false;
-             app.debug("IS_WEBSTART="+IS_WEBSTART);
+             Application.debug("IS_WEBSTART="+IS_WEBSTART);
             //ex.printStackTrace();
          }		    
          
  		// get applet codebase
          // NB applet.getCodeBase() doesn't work (returns base of HTML)
  		appletCodeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
- 		System.out.println("appletCodeBase="+appletCodeBase);
+ 		Application.debug("appletCodeBase="+appletCodeBase);
 
          
          ClassPathManipulator.addURL(addPathToJar("."), null);
@@ -204,7 +204,7 @@ public class JarManager {
         		addJarToPath(loadExport, geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
         		GEOGEBRA_EXPORT_LOADED=true;
         }*/
-        app.debug("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
+        Application.debug("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
         
 
         GEOGEBRA_PROPERTIES_PRESENT = jarPresent("geogebra_properties.jar");        
@@ -237,7 +237,7 @@ public class JarManager {
         }
 	
         
-        app.debug("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
+        Application.debug("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
         
         
         /*
@@ -253,7 +253,7 @@ public class JarManager {
     	JSMATHTEX_PRESENT =  ( jarPresent("JMathTeX-0.7pre.jar")
                 			&& jarPresent("jdom-1.1.jar")
                 			&& Util.getJavaVersion() >= 1.5);
-		System.out.println("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
+		Application.debug("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
 		
 		if (JSMATHTEX_PRESENT) {
     	if (app.getApplet()==null){
@@ -277,7 +277,7 @@ public class JarManager {
 		JSMATHTEX_LOADED=true;
     }
      
-     System.out.println("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
+     Application.debug("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
      */
 
 	
@@ -306,7 +306,7 @@ public class JarManager {
         
         boolean ret = (loader.getResourceAsStream(jar)!=null);
         
-        app.debug("jarPresent " + jar+" "+ret);
+        Application.debug("jarPresent " + jar+" "+ret);
         
         return ret;
 		
@@ -318,7 +318,7 @@ public class JarManager {
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		//URL codeBase=getAppletCodeBase();
         if (appletCodeBase!=null) jar = appletCodeBase.toString() + jar;
-        app.debug("addJarToPath " + jar);
+        Application.debug("addJarToPath " + jar);
         
         //addPath(jar);
         ClassPathManipulator.addURL(addPathToJar(jar), loader);       
@@ -339,11 +339,11 @@ public class JarManager {
         URL  url=null;        
         try{
         	if(path.startsWith("http://")){	//url!
-                //System.out.println("addPath1 "+path);
+                //Application.debug("addPath1 "+path);
         		url=new URL(path);
         	}
         	else if (path.startsWith("file:/")) { // local file in correct form
-                //System.out.println("addPath2 "+path);
+                //Application.debug("addPath2 "+path);
         		url = new URL(path);
         	}else{							//file without path!
 
@@ -354,23 +354,23 @@ public class JarManager {
         		
                 if (appletCodeBase!=null)
                 {
-                    //System.out.println("addPath3"+path);
+                    //Application.debug("addPath3"+path);
                 	url = new URL(appletCodeBase.toString()+path); // running as applet
                 }
                 else
                 {
-                    //System.out.println("addPath4"+path);
+                    //Application.debug("addPath4"+path);
                 	file=new File(path);
         		    url=file.toURL();
                 }
         	}
-        	app.debug("addPath "+url.toString());
+        	Application.debug("addPath "+url.toString());
         	return url;
         }catch(MalformedURLException e) {
-            System.out.println("PluginManager.addPath: MalformedURLExcepton for "+path);
+            Application.debug("PluginManager.addPath: MalformedURLExcepton for "+path);
             return null;
         }catch(Throwable e){
-            System.out.println("PluginManager.addPath: "+e.getMessage()+" for "+path);
+            Application.debug("PluginManager.addPath: "+e.getMessage()+" for "+path);
             return null;
         }//try-catch        
     }//addPath(String)
@@ -382,11 +382,11 @@ public class JarManager {
 				File dest = new File(tempDir, jar);
 				URL src = new URL(app.getCodeBase() + jar);
 				CopyURLToFile.copyURLToFile(src, dest);
-				app.debug("copied "+jar+" to temp directory " + tempDir);
+				Application.debug("copied "+jar+" to temp directory " + tempDir);
 				return true;
 			
 		} catch (Exception e) {		
-			app.debug("copyJarToTempDir: " + e.getMessage());
+			Application.debug("copyJarToTempDir: " + e.getMessage());
 			return false;
 		}			
 	}

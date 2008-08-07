@@ -13,11 +13,11 @@ class InputStatus
 	{
 	  iFileName = aPreviousStatus.iFileName;
 	  iLineNumber = aPreviousStatus.iLineNumber;
-//System.out.println("InputStatus construct to "+iFileName);
+//Application.debug("InputStatus construct to "+iFileName);
 	}
   public void SetTo(String aFileName)
 	{
-//System.out.println("InputStatus set to "+aFileName);
+//Application.debug("InputStatus set to "+aFileName);
 	  iFileName = aFileName;
     iLineNumber = 1;
 	}
@@ -26,7 +26,7 @@ class InputStatus
 	  iFileName = aPreviousStatus.iFileName;
 	  iLineNumber = aPreviousStatus.iLineNumber;
 
-//System.out.println("InputStatus restore to "+iFileName);
+//Application.debug("InputStatus restore to "+iFileName);
 
 	}
   public int LineNumber()

@@ -1,6 +1,8 @@
 // Copyright 2000-2007 FreeHEP
 package org.freehep.graphicsio.svg;
 
+import geogebra.Application;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -60,7 +62,7 @@ import org.freehep.xml.util.XMLWriter;
  * The current implementation is based on REC-SVG11-20030114
  *
  * @author Mark Donszelmann
- * @version $Id: SVGGraphics2D.java,v 1.8 2008-06-30 21:08:43 murkle Exp $
+ * @version $Id: SVGGraphics2D.java,v 1.9 2008-08-07 18:33:55 murkle Exp $
  */
 public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
@@ -143,7 +145,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         defaultProperties.setProperties(newProperties);
     }
 
-    public static final String version = "$Revision: 1.8 $";
+    public static final String version = "$Revision: 1.9 $";
 
     // current filename including path
     private String filename;
@@ -986,7 +988,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     }
 
     public void writeComment(String s) throws IOException {
-        System.out.println("<comment>");
+        Application.debug("<comment>");
         os.println("<!-- " + s + " -->");
     }
 

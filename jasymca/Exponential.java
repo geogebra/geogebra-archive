@@ -22,6 +22,8 @@ package jasymca;
 
 /*------------------------------------------------------------*/
 
+import geogebra.Application;
+
 import java.util.Vector;
 
 public class Exponential extends Polynomial{
@@ -50,7 +52,7 @@ public class Exponential extends Polynomial{
 		this.exp_b  = ((Polynomial)((FunctionVariable)this.var).arg).coef[1];
 		
 		// TODO: remove
-		System.out.println("poly: " + x + " to exponential: " + this);
+		Application.debug("poly: " + x + " to exponential: " + this);
 	}
 	
 	// return x as exponential if it fits

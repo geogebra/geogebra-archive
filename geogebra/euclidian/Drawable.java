@@ -186,7 +186,7 @@ public abstract class Drawable {
 			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
 			{
 				latex=true; // just latex
-				//System.out.println("just latex");
+				//Application.debug("just latex");
 			}
 
 			// draw elements
@@ -232,7 +232,7 @@ public abstract class Drawable {
 	{
 		Dimension dim;
 			sHotEqn eqn = new sHotEqn(text);
-			//System.out.println(eqn.getSize());
+			//Application.debug(eqn.getSize());
 			eqn.setDoubleBuffered(false);
 			eqn.setEditable(false);	
 			eqn.removeMouseListener(eqn);
@@ -262,7 +262,7 @@ public abstract class Drawable {
 			eqn.paintComponent(g2,x,y);		
 			dim=eqn.getSize();
 			
-			//System.out.println(size);
+			//Application.debug(size);
 			return dim;
 	}
 	

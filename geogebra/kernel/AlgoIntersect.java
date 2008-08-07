@@ -108,9 +108,9 @@ public abstract class AlgoIntersect extends AlgoElement {
 			}
 		}
 		
-//		System.out.println("SET INTERSECTION POINT");	
+//		Application.debug("SET INTERSECTION POINT");	
 //		for (int i=0; i < points.length; i++) {
-//			System.out.println("    point " + i + ": " + points[i] + ", defPoint " + defpoints[i]);										
+//			Application.debug("    point " + i + ": " + points[i] + ", defPoint " + defpoints[i]);										
 //		}						
     }
     

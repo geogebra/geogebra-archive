@@ -116,7 +116,7 @@ public class AlgebraController
 	 */
 	public boolean keyPressedConsumed(KeyEvent event) {
 		//Object src = event.getSource();
-		//System.out.println("source: " + src);
+		//Application.debug("source: " + src);
 		//if (src != view) return;					
 		
 		boolean consumed = false;

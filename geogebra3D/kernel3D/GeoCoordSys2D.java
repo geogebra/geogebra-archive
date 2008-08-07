@@ -47,10 +47,10 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	/** returns the point at position l1, l2 on the coord sys */
 	public GgbVector getPoint(double l1, double l2){
 		GgbVector v=new GgbVector(new double[] {l1,l2,1});
-		//System.out.println("v ="); v.SystemPrint();
+		//Application.debug("v ="); v.SystemPrint();
 		GgbVector r=M.mul(v);	
-		//System.out.println("M ="); M.SystemPrint();
-		//System.out.println("r ="); r.SystemPrint();
+		//Application.debug("M ="); M.SystemPrint();
+		//Application.debug("r ="); r.SystemPrint();
 		return r;
 	}	
 	
@@ -69,7 +69,7 @@ public class GeoCoordSys2D extends GeoCoordSys {
 		//c.SystemPrint();
 		x0 = c.get(1); y0 = c.get(2);
 		gridOriginProjected.set(getPoint(x0,y0));
-		//System.out.println("c = "+c.get(1)+","+c.get(2)+" -- gridOriginProjected ="); gridOriginProjected.SystemPrint();
+		//Application.debug("c = "+c.get(1)+","+c.get(2)+" -- gridOriginProjected ="); gridOriginProjected.SystemPrint();
 	}
 	
 	

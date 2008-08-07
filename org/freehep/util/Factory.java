@@ -1,14 +1,20 @@
 // Copyright 2000-2004, FreeHEP.
 package org.freehep.util;
 
-import java.io.*;
-import java.util.*;
+import geogebra.Application;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 /**
  * Methods to use factories (a la JAXP).
  *
  * @author Mark Donszelmann
- * @version $Id: Factory.java,v 1.3 2008-05-04 12:22:23 murkle Exp $
+ * @version $Id: Factory.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
  */
 public class Factory {
 
@@ -103,11 +109,11 @@ public class Factory {
     public static Object loadFactory(String name, String file, String defaultImplementation) {
         String factoryName = findFactory(name, file, defaultImplementation);
         try {
-            System.out.println("Loading factory: "+factoryName);
+            Application.debug("Loading factory: "+factoryName);
             Class factoryClass = Class.forName(factoryName);
             return factoryClass.newInstance();
         } catch (Exception e) {
-            System.err.println("Unable to load factory: "+factoryName);
+            Application.debug("Unable to load factory: "+factoryName);
             e.printStackTrace();
         }
         return null;

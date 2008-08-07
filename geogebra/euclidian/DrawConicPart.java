@@ -120,7 +120,7 @@ implements Previewable {
 					break;
 					
 				default:
-					//System.err.println("DrawConicPart: unsupported conic type: " + conicPart.getType());
+					//Application.debug("DrawConicPart: unsupported conic type: " + conicPart.getType());
 					isVisible = false;
 					return;
 			}

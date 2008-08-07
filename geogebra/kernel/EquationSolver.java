@@ -382,10 +382,10 @@ public class EquationSolver {
 		double estx = 0;		
 		try {
 			estx = rootPolisher.newtonRaphson(polyFunc, LAGUERRE_START);	
-			System.out.println("newton estx: " + estx);
+			Application.debug("newton estx: " + estx);
 			if (Double.isNaN(estx)) {
 				estx = LAGUERRE_START;
-				System.out.println("corrected estx: " + estx);
+				Application.debug("corrected estx: " + estx);
 			}
 		} catch (Exception e) {}
 		*/			
@@ -400,7 +400,7 @@ public class EquationSolver {
 		double [] val;		
 				
 		for (int i=0; i < complexRoots.length; i++) {
-			// System.out.println("complexRoot[" + i + "] = " + complexRoots[i]);	
+			// Application.debug("complexRoot[" + i + "] = " + complexRoots[i]);	
 			
 			// let's polish all complex roots to get all real roots
 			// take (a + b) as a real start value for the complex root (a + ib)			
@@ -410,7 +410,7 @@ public class EquationSolver {
 			try {
 				if (Math.abs(val[1]) > 0.1) {	// f'(root) big enough for Mr. Newton
 					polish = rootPolisher.newtonRaphson(polyFunc, root);
-					// System.out.println("Polish newtonRaphson: " + polish);	
+					// Application.debug("Polish newtonRaphson: " + polish);	
 				} else {					
 					// check if root is bounded in intervall [root-eps, root+eps]
 					double f_left = polyFunc.evaluate(root - BISECT_EPS);
@@ -419,23 +419,23 @@ public class EquationSolver {
 					if (bounded) {						
 						//	small f'(root): don't go too fare from our laguerre root !	
 						polish = rootPolisher.bisectNewtonRaphson(polyFunc, root - BISECT_EPS, root + BISECT_EPS);
-						// System.out.println("Polish bisectNewtonRaphson: " + polish);
+						// Application.debug("Polish bisectNewtonRaphson: " + polish);
 					} else {
 						// the root is not bounded: give Mr. Newton a chance
 						polish = rootPolisher.newtonRaphson(polyFunc, root);
-						// System.out.println("Polish newtonRaphson: " + polish);
+						// Application.debug("Polish newtonRaphson: " + polish);
 					}					
 				}
 				root = polish;
-				// System.out.println("polished function successfully: " + root);
+				// Application.debug("polished function successfully: " + root);
 			} catch (Exception e) {
-				// System.out.println("Polish FAILED: ");
+				// Application.debug("Polish FAILED: ");
 				// polishing failed: maybe we have an extremum here
 				// try to find a local extremum
 				try {					
 					polish = rootPolisher.bisectNewtonRaphson(derivFunc, root - 0.1, root + 0.1);	
 					root = polish;
-					// System.out.println("    find extremum successfull: " + root);
+					// Application.debug("    find extremum successfull: " + root);
 				} catch (Exception ex) {
 				}
 			}
@@ -452,11 +452,11 @@ public class EquationSolver {
 				success = error < LAGUERRE_EPS * slope;
 			
 			if (success) {
-				// System.out.println("FOUND ROOT: " + root);
+				// Application.debug("FOUND ROOT: " + root);
 				eqn[realRoots] = root;
 				realRoots++;
 			} else {
-				 //System.out.println("no root: " + root + ", error " + error);
+				 //Application.debug("no root: " + root + ", error " + error);
 			}
 		}			
 		return realRoots;
@@ -475,7 +475,7 @@ public class EquationSolver {
 //			if (temp > max) max = temp;
 //		}
 //		if (max > MAX_POLYNOMIAL_COEFFICIENT) {
-//			System.out.println("changed coefficients");
+//			Application.debug("changed coefficients");
 //			double factor = MAX_POLYNOMIAL_COEFFICIENT/max;
 //			for (int i=0; i < eqn.length; i++) {
 //				eqn[i] *= factor;

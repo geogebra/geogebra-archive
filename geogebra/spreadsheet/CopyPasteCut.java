@@ -106,7 +106,7 @@ public class CopyPasteCut {
 		if (width == 0) return;
 		int height = internalBuf[0].length;
 		if (height == 0) return;
-		//System.out.println("height=" + height);
+		//Application.debug("height=" + height);
 		int x1 = bufColumn;
 		int y1 = bufRow;
 		int x2 = bufColumn + width - 1;
@@ -220,12 +220,12 @@ public class CopyPasteCut {
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
 					if (column < 0) continue;
 					int ix = column - column1;
-					//System.out.println(iy + " " + ix + " [" + data[iy][ix] + "]");
+					//Application.debug(iy + " " + ix + " [" + data[iy][ix] + "]");
 					data[iy][ix] = data[iy][ix].trim();
 					if (data[iy][ix].length() == 0) {
 						GeoElement value0 = RelativeCopy.getValue(table, column, row);
 						if (value0 != null) {
-							//System.out.println(value0.toValueString());
+							//Application.debug(value0.toValueString());
 							//MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column, row);
 							value0.remove();
 						}	
@@ -238,7 +238,7 @@ public class CopyPasteCut {
 					}
 				}
 			}
-			//System.out.println("maxLen=" + maxLen);
+			//Application.debug("maxLen=" + maxLen);
 			table.getView().repaintView();
 			if (values2.length == 1 || maxLen == 1) {
 				createPointsAndAList1(values2);
@@ -265,7 +265,7 @@ public class CopyPasteCut {
 				//try {
 				//	MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column3, row);
 				//} catch (Exception e) {
-				//	System.err.println("spreadsheet.delete: " + e.getMessage());
+				//	Application.debug("spreadsheet.delete: " + e.getMessage());
 				//}
 			}
 		}

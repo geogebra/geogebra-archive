@@ -1,5 +1,7 @@
 package yacas;
 
+import geogebra.Application;
+
 
 class LispAtom extends LispObject
 {
@@ -29,7 +31,7 @@ class LispAtom extends LispObject
     public LispObject SetExtraInfo(LispPtr aData)
 	{
 	  //TODO FIXME
-	  System.out.println("NOT YET IMPLEMENTED!!!");
+	  Application.debug("NOT YET IMPLEMENTED!!!");
 /*
 		LispObject result = new LispAnnotatedObject<LispAtom>(this);
 		result->SetExtraInfo(aData);

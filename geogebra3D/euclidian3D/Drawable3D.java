@@ -183,7 +183,7 @@ public abstract class Drawable3D {
 		float x = 0;
 		float x2;
 		for (int j=0; j<nbPointilles; j++){
-			//System.out.println("y= "+y);
+			//Application.debug("y= "+y);
 			for (i=0; i<nbFaces; i++){
 				x2=x+pointLength;
 				if (x2>length) x2=length;

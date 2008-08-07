@@ -11,7 +11,7 @@ import java.util.Stack;
  * only straight lines.
  * 
  * @author Mark Donszelmann
- * @version $Id: CubicToLinePathConstructor.java,v 1.3 2008-05-04 12:15:59 murkle Exp $
+ * @version $Id: CubicToLinePathConstructor.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
  */
 public abstract class CubicToLinePathConstructor extends
         QuadToCubicPathConstructor {
@@ -32,7 +32,7 @@ public abstract class CubicToLinePathConstructor extends
         // ControlSets are written at the end
         Stack/*<ControlSet>*/ controls = new Stack/*<ControlSet>*/();
 
-        // System.out.println("Cubic "+x1+" "+y1+" "+x2+" "+y2+" "+x3+" "+y3);
+        // Application.debug("Cubic "+x1+" "+y1+" "+x2+" "+y2+" "+x3+" "+y3);
         Point2D p0 = new Point2D.Double(currentX, currentY);
         Point2D p1 = new Point2D.Double(x1, y1);
         Point2D p2 = new Point2D.Double(x2, y2);
@@ -66,11 +66,11 @@ public abstract class CubicToLinePathConstructor extends
         }*/
 
         // write out control sets
-        // System.out.println(k);
+        // Application.debug(k);
         while (!controls.empty()) {
             Point2D p = ((ControlSet)controls.pop()).getPoint();
             line(p.getX(), p.getY());
-            // System.out.println(control2.getPoint());
+            // Application.debug(control2.getPoint());
         }
 
         // store currentX and currentY

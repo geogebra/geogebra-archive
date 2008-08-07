@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  * used in situations in which redrawing the contents of the panel is expensive.
  * 
  * @author Mark Donszelmann
- * @version $Id: BufferedPanel.java,v 1.3 2008-05-04 12:13:27 murkle Exp $
+ * @version $Id: BufferedPanel.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
  */
 public class BufferedPanel extends JPanel implements java.io.Serializable {
 
@@ -134,7 +134,7 @@ public class BufferedPanel extends JPanel implements java.io.Serializable {
 
 
         /* boolean done = */ g.drawImage(offScreenImage, 0, 0, this);
-        // System.err.println("CopyImage "+done+" took:
+        // Application.debug("CopyImage "+done+" took:
         // "+(System.currentTimeMillis()-t0)+" ms.");
     }
 

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 /**
  * Try to expand the given GeoFunction's expression
@@ -93,12 +94,12 @@ public class AlgoExpand extends AlgoElement {
  						geo.getFunction().toString();
  			kernel.setCASPrintForm(oldCASPrintForm);   
  			 		
- 		//	System.out.println("expand: " + geoDef);
+ 		//	Application.debug("expand: " + geoDef);
  			
  			// expand definition
  			String geoDefExpanded = kernel.evaluateJASYMCA("Expand("+geoDef+")");
  			 	         		
- 			//System.out.println("expanded: " + geoDefExpanded);
+ 			//Application.debug("expanded: " + geoDefExpanded);
  			
  	        /*
  	        // Yacas version
@@ -112,10 +113,10 @@ public class AlgoExpand extends AlgoElement {
  			cons.setSuppressLabelCreation(oldSuppressLabels);
     	 } 
     	 catch (Error e) {
-          	System.err.println("expand error: " + e.getMessage());          	
+          	Application.debug("expand error: " + e.getMessage());          	
           }
          catch (Exception e) {
-         	System.err.println("expand error: " + e.getMessage());         	
+         	Application.debug("expand error: " + e.getMessage());         	
          }
  		
          // return resulting geo

@@ -120,12 +120,12 @@ public class Macro {
 		for (int i=0; i < macroInputLabels.length; i++) {    		
 			macroInput[i] = macroCons.lookupLabel(macroInputLabels[i]);  
 			macroInput[i].setFixed(false);						
-			//System.out.println("macroInput[" + i + "] = " + macroInput[i]);
+			//Application.debug("macroInput[" + i + "] = " + macroInput[i]);
     	}
 		
     	for (int i=0; i < macroOutputLabels.length; i++) {    		
     		macroOutput[i] = macroCons.lookupLabel(macroOutputLabels[i]);            		    		    		    	
-			//System.out.println("macroOutput[" + i + "] = " + macroOutput[i]);
+			//Application.debug("macroOutput[" + i + "] = " + macroOutput[i]);
     	}         		
 	}
 	
@@ -359,10 +359,10 @@ public class Macro {
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
     	   
-//    	System.out.println("*** Macro XML BEGIN ***");
-//    	System.out.println(macroConsXML);
+//    	Application.debug("*** Macro XML BEGIN ***");
+//    	Application.debug(macroConsXML);
 //    	System.out.flush();
-//    	System.out.println("*** Macro XML END ***"); 
+//    	Application.debug("*** Macro XML END ***"); 
     	
     	 // restore old kernel settings
         kernel.setPrintDecimals(oldDecimals);
@@ -392,7 +392,7 @@ public class Macro {
     	} 
     	catch (MyError e) {  
     		String msg = e.getLocalizedMessage();
-    		System.err.println(msg);
+    		Application.debug(msg);
     		e.printStackTrace(); 
     		throw new Exception(msg);
     	}    	

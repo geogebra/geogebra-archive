@@ -246,11 +246,11 @@ public class RelativeCopy {
 			text = replaceAll(pattern2, text, "$" + column1 + "::" + row1, "$" + column1 + row2);
 			text = replaceAll(pattern2, text, "::" + column1 + "$" + row1, column2 + "$" + row1);
 		}
-		//System.out.println("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
+		//Application.debug("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
 		//int column3 = table.convertColumnIndexToView(column) + dx;
 		GeoElement value2 = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
-		//System.out.println((row + dy) + "," + column);
-		//System.out.println("isGeoFunction()=" + value2.isGeoFunction());
+		//Application.debug((row + dy) + "," + column);
+		//Application.debug("isGeoFunction()=" + value2.isGeoFunction());
 		table.setValueAt(value2, row0 + dy, column0 + dx);
 		return value2;
 		
@@ -346,7 +346,7 @@ public class RelativeCopy {
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		MyTableModel tableModel = (MyTableModel)table.getModel();
 		//column = table.convertColumnIndexToModel(column);
-		//System.out.println("column=" + column);
+		//Application.debug("column=" + column);
 		if (row < 0 || row >= tableModel.getRowCount()) return null;
 		if (column < 0 || column >= 26) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);

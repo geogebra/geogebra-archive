@@ -1,6 +1,8 @@
 // Copyright 2001, FreeHEP.
 package org.freehep.util.io;
 
+import geogebra.Application;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,7 +16,7 @@ import java.io.InputStream;
  * 
  * @author Mark Donszelmann
  * @author Charles Loomis
- * @version $Id: ByteCountInputStream.java,v 1.3 2008-05-04 12:21:31 murkle Exp $
+ * @version $Id: ByteCountInputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
  */
 public class ByteCountInputStream extends ByteOrderInputStream {
 
@@ -98,7 +100,7 @@ public class ByteCountInputStream extends ByteOrderInputStream {
             if (len > 0) {
                 return readByte(len);
             } else if (len < 0) {
-                System.err.println("ByteCountInputStream: Internal Error");
+                Application.debug("ByteCountInputStream: Internal Error");
             }
             index--;
         }

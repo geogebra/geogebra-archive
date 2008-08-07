@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.io.MyXMLio;
 
 import java.io.ByteArrayInputStream;
@@ -120,7 +121,7 @@ public class UndoManager {
 			}							      							
 		} 
 		catch (Exception e) {		
-			System.err.println("storeUndoInfo: " + e.toString());
+			Application.debug("storeUndoInfo: " + e.toString());
 			e.printStackTrace();
 		}                
 	}
@@ -139,7 +140,7 @@ public class UndoManager {
 			bs.close();                        
 		} 
 		catch (Exception e) {
-			System.err.println("setUndoInfo: " + e.toString());
+			Application.debug("setUndoInfo: " + e.toString());
 			e.printStackTrace();      
 		}   
 	} 		       

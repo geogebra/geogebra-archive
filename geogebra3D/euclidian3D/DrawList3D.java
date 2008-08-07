@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.Application;
 import geogebra.kernel.linalg.GgbVector;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class DrawList3D extends LinkedList{
 	/** update all 3D objects */
 	public void updateAll(){
 		
-		if(DEBUG){System.out.println("updateAll");}
+		if(DEBUG){Application.debug("updateAll");}
 		
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
@@ -77,7 +77,7 @@ public class DrawList3D extends LinkedList{
 	/** draw all 3D objects */
 	public void drawAll(GraphicsContext3D gc){
 		
-		if(DEBUG){System.out.println("updateAll");}
+		if(DEBUG){Application.debug("updateAll");}
 		
 
 		//drawing hidden parts

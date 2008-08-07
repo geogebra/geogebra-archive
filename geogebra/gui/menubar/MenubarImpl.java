@@ -818,7 +818,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						try {
 							new PrintPreview(app, constProtocol, PageFormat.PORTRAIT);
                     	} catch (Exception e) {
-                    		System.err.println("Print preview not available");
+                    		Application.debug("Print preview not available");
                     	}
 					}
 				};
@@ -925,13 +925,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						else if (strs[0].split(";").length > 1) sep=";"; // semicolon separated
 						else if (strs[0].split(",").length > 1) sep=","; // comma separated
 						
-						//System.out.println("sep"+sep);
+						//Application.debug("sep"+sep);
 						
 						String list = "{";
 						
 						if (sep != null) for (int row=0 ; row<strs.length ; row++)
 						{
-							//System.out.println("XXX"+strs[i]+"XXX");
+							//Application.debug("XXX"+strs[i]+"XXX");
 							
 							// Remove Whitespace
 							strs[row]=strs[row].trim();
@@ -957,7 +957,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 									kernel.getAlgebraProcessor().processAlgebraCommand(command, false);
 									coords += GeoElement.getSpreadsheetCellName(col,row);
 									if (col == tempStr.length-1) coords +=")"; else coords +=",";
-									//System.out.println("XXX"+list+"XXX");
+									//Application.debug("XXX"+list+"XXX");
 								}
 								if (tempStr.length == 2) // 2D coords
 								{
@@ -1027,7 +1027,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					        d.setVisible(true);
 					       
 						} catch (Exception e) {
-							System.err.println("GraphicExportDialog not available");
+							Application.debug("GraphicExportDialog not available");
 						}
 						app.setDefaultCursor();
 					}
@@ -1052,7 +1052,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  	        //constructor.newInstance(args);  			
 		  	        new geogebra.export.pstricks.GeoGebraToPstricks(app);	
 				} catch (Exception ex) {
-					System.err.println("GeoGebraToPstricks not available");
+					Application.debug("GeoGebraToPstricks not available");
 				}	
 			}
 		};
@@ -1072,7 +1072,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  	        //constructor.newInstance(args);  			
 		  	        new geogebra.export.pstricks.GeoGebraToPgf(app);	
 				} catch (Exception ex) {
-					System.err.println("GeoGebraToPGF not available");
+					Application.debug("GeoGebraToPGF not available");
 				}	
 			}
 		};
@@ -1102,7 +1102,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 														
 							d.setVisible(true);
 						} catch (Exception e) {
-							System.err.println("WorksheetExportDialog not available");
+							Application.debug("WorksheetExportDialog not available");
 							e.printStackTrace();
 						}
 						app.setDefaultCursor();
@@ -1266,7 +1266,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
 					
             	} catch (Exception e) {
-            		System.err.println("Print preview not available");            		
+            		Application.debug("Print preview not available");            		
             	}	
             	
             	app.setDefaultCursor();

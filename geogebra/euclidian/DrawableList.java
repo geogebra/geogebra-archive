@@ -78,7 +78,7 @@ public class DrawableList {
 			}
 			else 
 			{ // add in middle
-				//System.out.println("middle");	
+				//Application.debug("middle");	
 				//Link temp = new Link(d, null);
 				//temp.next=cur.next;
 				//cur.next = temp;

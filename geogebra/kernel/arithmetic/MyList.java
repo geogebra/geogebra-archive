@@ -18,6 +18,7 @@
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.Kernel;
 
@@ -96,9 +97,9 @@ public class MyList extends ValidExpression implements ListValue {
 				
 	
 		if (!right) 
-			System.out.println("apply: " + value + " < op: " + operation + " > " + this);
+			Application.debug("apply: " + value + " < op: " + operation + " > " + this);
 		else
-			System.out.println("apply: " + this + " < op: " + operation + " > " + value);
+			Application.debug("apply: " + this + " < op: " + operation + " > " + value);
 		
 		
 		// expression value is list		
@@ -122,23 +123,23 @@ public class MyList extends ValidExpression implements ListValue {
 			/*
 			int LHcols = LHlist.size(), LHrows=0;
 			int RHcols = RHlist.size(), RHrows=0;
-			//System.out.println("LHcols"+LHcols);
-			//System.out.println("RHcols"+RHcols);
+			//Application.debug("LHcols"+LHcols);
+			//Application.debug("RHcols"+RHcols);
 			
 			boolean isMatrix=true;
 			
-			//System.out.println("MULT LISTS"+size);
+			//Application.debug("MULT LISTS"+size);
 			
 			// check LHlist is a matrix
 			ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
 			if ( singleValue.isListValue() ){
 				LHrows=((ListValue)singleValue).getMyList().size();
-				//System.out.println("LHrows"+LHrows);
+				//Application.debug("LHrows"+LHrows);
 				if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
 				{
-					//System.out.println(i);
+					//Application.debug(i);
 					singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
-					//System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					//Application.debug("size"+((ListValue)singleValue).getMyList().size());
 					if ( singleValue.isListValue() ){
 						if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
 					}
@@ -151,12 +152,12 @@ public class MyList extends ValidExpression implements ListValue {
 			singleValue=((ExpressionValue)RHlist.getListElement(0)).evaluate();
 			if ( singleValue.isListValue() ){
 				RHrows=((ListValue)singleValue).getMyList().size();
-				//System.out.println("RHrows"+RHrows);
+				//Application.debug("RHrows"+RHrows);
 				if (RHcols>1) for (int i=1 ; i<RHcols ; i++) // check all vectors same length
 				{
-					//System.out.println(i);
+					//Application.debug(i);
 					singleValue=((ExpressionValue)RHlist.getListElement(i)).evaluate();
-					//System.out.println("size"+((ListValue)singleValue).getMyList().size());
+					//Application.debug("size"+((ListValue)singleValue).getMyList().size());
 					if ( singleValue.isListValue() ){
 						if (((ListValue)singleValue).getMyList().size()!=RHrows) isMatrix=false;				
 					}
@@ -167,7 +168,7 @@ public class MyList extends ValidExpression implements ListValue {
 			
 			if (LHcols != RHrows) isMatrix=false; // incompatible matrices
 			
-			System.out.println("isMatrix="+isMatrix);		
+			Application.debug("isMatrix="+isMatrix);		
 */
 			ExpressionNode totalNode;
 			ExpressionNode tempNode; 
@@ -207,7 +208,7 @@ public class MyList extends ValidExpression implements ListValue {
 					
 				}
 			}			
-			System.out.println(toString());
+			Application.debug(toString());
 			if (isMatrix){
 				matrixRows=-1; // reset
 				matrixCols=-1;
@@ -253,7 +254,7 @@ public class MyList extends ValidExpression implements ListValue {
 				ExpressionValue operationResult = tempNode.evaluate(); 
 				
 				
-			//	System.out.println("        tempNode : " + tempNode + ", result: " + operationResult);
+			//	Application.debug("        tempNode : " + tempNode + ", result: " + operationResult);
 			
 				
 				// set listElement to operation result
@@ -264,7 +265,7 @@ public class MyList extends ValidExpression implements ListValue {
 			} 
 			catch (MyError err) {
 				// TODO: remove
-				System.err.println(err.getLocalizedMessage());
+				Application.debug(err.getLocalizedMessage());
 				
 				// return empty list if any of the elements aren't numbers			
 				listElements.clear();
@@ -273,7 +274,7 @@ public class MyList extends ValidExpression implements ListValue {
 		}
 		
 		
-//		System.out.println("   gives : " + this);
+//		Application.debug("   gives : " + this);
 	
 	}
 	
@@ -324,18 +325,18 @@ public class MyList extends ValidExpression implements ListValue {
 		
 		int LHcols = LHlist.size(), LHrows=0;
 		
-		//System.out.println("MULT LISTS"+size);
+		//Application.debug("MULT LISTS"+size);
 		
 		// check LHlist is a matrix
 		ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
 		if ( singleValue.isListValue() ){
 			LHrows=((ListValue)singleValue).getMyList().size();
-			//System.out.println("LHrows"+LHrows);
+			//Application.debug("LHrows"+LHrows);
 			if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
 			{
-				//System.out.println(i);
+				//Application.debug(i);
 				singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
-				//System.out.println("size"+((ListValue)singleValue).getMyList().size());
+				//Application.debug("size"+((ListValue)singleValue).getMyList().size());
 				if ( singleValue.isListValue() ){
 					if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
 				}
@@ -344,7 +345,7 @@ public class MyList extends ValidExpression implements ListValue {
 		}
 		else isMatrix = false;
 
-		System.out.println("isMatrix="+isMatrix);	
+		Application.debug("isMatrix="+isMatrix);	
 		
 		if (isMatrix)
 		{
@@ -367,7 +368,7 @@ public class MyList extends ValidExpression implements ListValue {
 			ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
 			if ( singleValue.isListValue() ){
 				ExpressionValue ret = (((ListValue)singleValue).getMyList().getListElement(row)).evaluate();
-				//if (ret.isListValue()) System.out.println("isList*********");
+				//if (ret.isListValue()) Application.debug("isList*********");
 				return ret;
 			}		
 			return null;

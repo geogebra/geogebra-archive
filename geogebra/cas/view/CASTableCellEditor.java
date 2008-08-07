@@ -1,15 +1,10 @@
 package geogebra.cas.view;
 
+import geogebra.Application;
+
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
 import java.util.EventObject;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
@@ -45,17 +40,17 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 										// line panle
 
 			cellValue = (CASTableCellValue) value;
-			System.out.println("Editor - Row: " + row);
-			System.out.println(cellValue.getCommand());
-			System.out.println(cellValue.getOutput());
+			Application.debug("Editor - Row: " + row);
+			Application.debug(cellValue.getCommand());
+			Application.debug(cellValue.getOutput());
 			String tempIn = cellValue.getCommand();
 			String tempOut = cellValue.getOutput();
 
 			Component[] temp = this.getComponents();
-//			System.out.println("We have componets: " + temp.length);
-//			System.out.println("Output: " + tempOut.length());
+//			Application.debug("We have componets: " + temp.length);
+//			Application.debug("Output: " + tempOut.length());
 //			for (int i = 0; i < temp.length; i++) {
-//				System.out.println("componets: " + temp[i]);
+//				Application.debug("componets: " + temp[i]);
 //			}
 
 			this.setInput(tempIn);

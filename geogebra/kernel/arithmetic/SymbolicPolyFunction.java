@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.Application;
+
 
 /**
  * Class for polynomials with ExpressionValues as coefficients.
@@ -70,11 +72,11 @@ public class SymbolicPolyFunction extends PolyFunction {
 			 }
 			 return true;
 		} catch (Exception e) {
-			System.err.println("updateCoeffValues: ");
+			Application.debug("updateCoeffValues: ");
 			e.printStackTrace();
 			return false;
 		}	catch (Error err) {
-			System.err.println("updateCoeffValues: ");
+			Application.debug("updateCoeffValues: ");
 			err.printStackTrace();
 			return false;
 		}

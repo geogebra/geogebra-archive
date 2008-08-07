@@ -109,7 +109,7 @@ public class GgbAPI {
         if(algebraprocessor!=null) {
             algebraprocessor.processAlgebraCommand(cmd, true);
         }else{
-            System.out.println("Cannot find the GeoGebra AlgebraProcessor!");
+            Application.debug("Cannot find the GeoGebra AlgebraProcessor!");
         }//if ggb not null
     }//evalCommand(String)
     */
@@ -211,7 +211,7 @@ public class GgbAPI {
 	 */
 	public synchronized void openFile(String strURL) {
 		
-		System.out.println("todo: rewrite in this context");
+		Application.debug("todo: rewrite in this context");
 		
 
 	}
@@ -492,7 +492,7 @@ public class GgbAPI {
 	 * Turns the repainting of all views on or off.
 	 */
 	public synchronized void setRepaintingActive(boolean flag) {		
-		//System.out.println("set repainting: " + flag);
+		//Application.debug("set repainting: " + flag);
 		kernel.setNotifyRepaintActive(flag);
 	}	
 	

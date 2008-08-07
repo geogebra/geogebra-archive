@@ -108,8 +108,8 @@ public class TestPureImmediate3d extends Frame implements WindowListener, Runnab
         /*
         GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
         template.setStencilSize(8);        
-        System.out.println("stencil size = "+template.getStencilSize());
-        System.out.println("depth size = "+template.getDepthSize());
+        Application.debug("stencil size = "+template.getStencilSize());
+        Application.debug("depth size = "+template.getDepthSize());
         
         GraphicsConfiguration gcfg =
             GraphicsEnvironment.getLocalGraphicsEnvironment().
@@ -398,7 +398,7 @@ public class TestPureImmediate3d extends Frame implements WindowListener, Runnab
 		float x = -length/2;
 		float x2;
 		for (int j=0; j<nbPointilles; j++){
-			//System.out.println("y= "+y);
+			//Application.debug("y= "+y);
 			for (i=0; i<nbFaces; i++){
 				x2=x+pointLength;
 				if (x2>length) x2=length;

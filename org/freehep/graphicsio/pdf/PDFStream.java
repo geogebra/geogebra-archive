@@ -1,6 +1,8 @@
 // Copyright 2000-2007, FreeHEP
 package org.freehep.graphicsio.pdf;
 
+import geogebra.Application;
+
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -26,7 +28,7 @@ import org.freehep.util.io.FlateOutputStream;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFStream.java,v 1.3 2008-05-04 12:31:11 murkle Exp $
+ * @version $Id: PDFStream.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
  */
 public class PDFStream extends PDFDictionary implements PDFConstants {
 
@@ -122,7 +124,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
                 } else if (filters[i].equals("DCT")) {
                     os[i] = os[i + 1];
                 } else {
-                    System.err.println("PDFWriter: unknown stream format: "
+                    Application.debug("PDFWriter: unknown stream format: "
                             + filters[i]);
                 }
             }
@@ -159,7 +161,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
         object.close();
         
         if (gStates > 0) {
-            System.err.println("PDFStream: unbalanced saves()/restores(), too many saves: "+gStates);
+            Application.debug("PDFStream: unbalanced saves()/restores(), too many saves: "+gStates);
         }
     }
 
@@ -200,7 +202,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
 
     public void restore() throws IOException {
         if (gStates <= 0) {
-            System.err.println("PDFStream: unbalanced saves()/restores(), too many restores");
+            Application.debug("PDFStream: unbalanced saves()/restores(), too many restores");
         }
         gStates--;
         println("Q");
@@ -363,7 +365,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
 
     public void beginText() throws IOException {
         if (textOpen)
-            System.err.println("PDFStream: nested beginText() not allowed.");
+            Application.debug("PDFStream: nested beginText() not allowed.");
         println("BT");
         textOpen = true;
     }

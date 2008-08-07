@@ -1,5 +1,7 @@
 package yacas;
 
+import geogebra.Application;
+
 
 
 class LispStandard
@@ -528,7 +530,7 @@ class LispStandard
     	String fileName = "/yacas/scripts/" + aFileName;    	
     	java.net.URL url = LispStandard.class.getResource(fileName); 
     	if (url == null) {
-    		System.err.println("Yacas: File not found: " + fileName);
+    		Application.debug("Yacas: File not found: " + fileName);
     		return null;
     	}
     	

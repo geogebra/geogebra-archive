@@ -7,7 +7,7 @@ import java.util.Vector;
 
 /**
  * @author Mark Donszelmann
- * @version $Id: PolylinePathConstructor.java,v 1.3 2008-05-04 12:15:42 murkle Exp $
+ * @version $Id: PolylinePathConstructor.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
  */
 public abstract class PolylinePathConstructor extends
         CubicToLinePathConstructor {
@@ -35,7 +35,7 @@ public abstract class PolylinePathConstructor extends
     }
 
     public void line(double x, double y) throws IOException {
-        // System.out.println("Line "+x+" "+y);
+        // Application.debug("Line "+x+" "+y);
         polyline.add(new Point2D.Double(x, y));
         super.line(x, y);
     }

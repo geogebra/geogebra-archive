@@ -673,7 +673,7 @@ public class Kernel {
 	 * *******************************************************/
 
 	public void attach(View view) {							
-	//	System.out.println("ATTACH " + view + ", notifyActive: " + notifyViewsActive);			
+	//	Application.debug("ATTACH " + view + ", notifyActive: " + notifyViewsActive);			
 		if (!notifyViewsActive) {			
 			viewCnt = oldViewCnt;
 		}
@@ -697,7 +697,7 @@ public class Kernel {
 		for (int i = 0; i < viewCnt; i++) {
 			System.out.print(views[i] + ", ");
 		}
-		System.out.println();
+		Application.debug();
 		*/
 		
 		if (!notifyViewsActive) {
@@ -707,7 +707,7 @@ public class Kernel {
 	}
 
 	public void detach(View view) {    
-		// System.out.println("detach " + view);
+		// Application.debug("detach " + view);
 		
 		if (!notifyViewsActive) {
 			viewCnt = oldViewCnt;
@@ -736,7 +736,7 @@ public class Kernel {
 		for (int i = 0; i < viewCnt; i++) {
 			System.out.print(views[i] + ", ");
 		}
-		System.out.println();		
+		Application.debug();		
 		*/
 		
 		if (!notifyViewsActive) {
@@ -812,13 +812,13 @@ public class Kernel {
 	}
 	
 	public void setNotifyViewsActive(boolean flag) {	
-		//System.out.println("setNotifyViews: " + flag);
+		//Application.debug("setNotifyViews: " + flag);
 		
 		if (flag != notifyViewsActive) {
 			notifyViewsActive = flag;
 			
 			if (flag) {
-				//System.out.println("Activate VIEWS");				
+				//Application.debug("Activate VIEWS");				
 				viewReiniting = true;
 				
 				// "attach" views again
@@ -836,7 +836,7 @@ public class Kernel {
 				viewReiniting = false;
 			} 
 			else {
-				//System.out.println("Deactivate VIEWS");
+				//Application.debug("Deactivate VIEWS");
 
 				// "detach" views
 				notifyClearView();				
@@ -1149,7 +1149,7 @@ public class Kernel {
 	/*	}
 		else {
 			// incompatible types
-			System.out.println("if incompatible: " + geoIf + ", " + geoElse);
+			Application.debug("if incompatible: " + geoIf + ", " + geoElse);
 			return null;
 		}	*/			
 	}

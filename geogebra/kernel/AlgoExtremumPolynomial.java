@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
+
 import java.util.Iterator;
 
 
@@ -35,11 +37,11 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         
         
         // TODO: remove
-       // System.out.println("AlgoExtremumPolynomial: " + f + ", " + f.cons);
+       // Application.debug("AlgoExtremumPolynomial: " + f + ", " + f.cons);
         Iterator it = f.getVariables().iterator();
         while (it.hasNext()) {
         	GeoElement var = (GeoElement) it.next();
-        	System.out.println("  " + var + ", " + var.cons );
+        	Application.debug("  " + var + ", " + var.cons );
         }
     }
 
@@ -54,7 +56,7 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
     protected final void compute() {
         if (f.isDefined()) {
             // TODO: remove
-            //System.out.println("*** extremum of " + f);
+            //Application.debug("*** extremum of " + f);
                     	
             yValFunction = f.getFunction();       
             

@@ -56,7 +56,7 @@ public class CASTableCell extends JPanel {
 
 	public void addOutputPanel() {
 		if (!outputFieldVisiable) {
-			//System.out.println("Add Output panel");
+			//Application.debug("Add Output panel");
 			this.add(outputPanel);
 			outputFieldVisiable = true;
 			this.validate();

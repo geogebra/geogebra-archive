@@ -41,6 +41,8 @@ package org.freehep.graphicsio.png;
  * @author M.Donszelmann
  */
 
+import geogebra.Application;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.ImageObserver;
@@ -554,11 +556,11 @@ public class PNGEncoder extends Object implements ImageObserver {
                 try {
                     pg.grabPixels();
                 } catch (Exception e) {
-                    System.err.println("interrupted waiting for pixels!");
+                    Application.debug("interrupted waiting for pixels!");
                     return false;
                 }
                 if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-                    System.err.println("image fetch aborted or errored");
+                    Application.debug("image fetch aborted or errored");
                     return false;
                 }
 
@@ -626,7 +628,7 @@ public class PNGEncoder extends Object implements ImageObserver {
             scrunch.finish();
             return true;
         } catch (IOException e) {
-            System.err.println(e.toString());
+            Application.debug(e.toString());
             return false;
         }
     }

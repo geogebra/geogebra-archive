@@ -1,6 +1,8 @@
 // Copyright 2001-2004 FreeHEP
 package org.freehep.graphicsio;
 
+import geogebra.Application;
+
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
@@ -20,7 +22,7 @@ import java.io.IOException;
  * bezier_draw_cubic.as ==========================
  * 
  * @author Mark Donszelmann
- * @version $Id: CubicToQuadPathConstructor.java,v 1.3 2008-05-04 12:15:42 murkle Exp $
+ * @version $Id: CubicToQuadPathConstructor.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
  */
 public abstract class CubicToQuadPathConstructor extends
         AbstractPathConstructor {
@@ -130,7 +132,7 @@ public abstract class CubicToQuadPathConstructor extends
         }
 
         public void quad(double x1, double y1, double x2, double y2) {
-            System.out.println("Quad: (" + currentX + ", " + currentY + ") ("
+            Application.debug("Quad: (" + currentX + ", " + currentY + ") ("
                     + x1 + ", " + y1 + ") (" + x2 + ", " + y2 + ")");
             currentX = x2;
             currentY = y2;

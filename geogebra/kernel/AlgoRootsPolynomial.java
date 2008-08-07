@@ -377,8 +377,8 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         	while (Math.abs(rightEval = f.evaluate(right)) < DELTA && count++ < 100)
         		right = right + DELTA;
 
-        	//System.out.println("leftEval: " + leftEval + ", left: " + left);
-        	//System.out.println("rightEval: " + rightEval + ", right: " + right);
+        	//Application.debug("leftEval: " + leftEval + ", left: " + left);
+        	//Application.debug("rightEval: " + rightEval + ", right: " + right);
         	
         	// check if the second derivative changed its sign here
         	signUnChanged = leftEval * rightEval > 0;
@@ -422,7 +422,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
 
         // now set the new values of the roots
         for (int i = 0; i < number; i++) {
-           // System.out.println("root[" + i + "] = " + roots[i]);  
+           // Application.debug("root[" + i + "] = " + roots[i]);  
             if (yValFunction == null) {
             	// check if defined
             	//if (Double.isNaN(f.evaluate(roots[i]))) 
@@ -436,7 +436,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
                     1.0);
                 
              // TODO: remove
-              //  System.out.println("   " + rootPoints[i]);
+              //  Application.debug("   " + rootPoints[i]);
                 
             }
         }

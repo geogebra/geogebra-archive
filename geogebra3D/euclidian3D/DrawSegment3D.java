@@ -73,7 +73,7 @@ public class DrawSegment3D extends Drawable3D {
 
 	
 	public void draw(GraphicsContext3D gc){
-		//System.out.println("draw");
+		//Application.debug("draw");
     	gc.setModelTransform(t3d);
     	gc.setAppearance(appNormal);
     	gc.draw(geomNormal);

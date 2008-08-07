@@ -252,7 +252,7 @@ public class MyTable extends JTable
 			int x2 = (int)point2.getX();
 			int y2 = (int)point2.getY();
 			graphics.setColor(Color.GRAY);
-			//System.out.println(x1 + "," + y1 + "," + x2 + "," + y2);
+			//Application.debug(x1 + "," + y1 + "," + x2 + "," + y2);
 			graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
 			graphics.fillRect(x1, y1, LINE_THICKNESS1, y2 - y1);
 			graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
@@ -260,12 +260,12 @@ public class MyTable extends JTable
 		}
 		if (dragingToRow != -1 && dragingToColumn != -1) {
 			/*
-			System.out.println("minSelectionRow = " + minSelectionRow);
-			System.out.println("minSelectionColumn = " + minSelectionColumn);
-			System.out.println("maxSelectionRow = " + maxSelectionRow);
-			System.out.println("maxSelectionColumn = " + maxSelectionColumn);
-			System.out.println("dragingToRow = " + dragingToRow);
-			System.out.println("dragingToColumn = " + dragingToColumn);
+			Application.debug("minSelectionRow = " + minSelectionRow);
+			Application.debug("minSelectionColumn = " + minSelectionColumn);
+			Application.debug("maxSelectionRow = " + maxSelectionRow);
+			Application.debug("maxSelectionColumn = " + maxSelectionColumn);
+			Application.debug("dragingToRow = " + dragingToRow);
+			Application.debug("dragingToColumn = " + dragingToColumn);
 			/**/
 			// -|1|-
 			// 2|-|3
@@ -641,7 +641,7 @@ public class MyTable extends JTable
 		
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
-			//System.out.println(keyCode);
+			//Application.debug(keyCode);
 			switch (keyCode) {
 			case 27:
 				if (editor.isEditing()) {
@@ -654,7 +654,7 @@ public class MyTable extends JTable
 		
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			//System.out.println(keyCode);
+			//Application.debug(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = true; break;
 			case 17 : ctrlPressed = true; break;
@@ -678,14 +678,14 @@ public class MyTable extends JTable
 					}
 					if (keyCode == 127) {
 						e.consume();
-						//System.out.println("deleting...");
+						//Application.debug("deleting...");
 						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
 					}
 					return;
 				}
 				break;
 			case 27:
-				//System.out.println(editor.isEditing());
+				//Application.debug(editor.isEditing());
 				if (editor.isEditing()) {
 					editor.undoEdit();
 					e.setKeyCode(10);
@@ -703,7 +703,7 @@ public class MyTable extends JTable
 		
 		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			//System.out.println(keyCode);
+			//Application.debug(keyCode);
 			switch (keyCode) {
 			case 16 : shiftPressed = false; break;
 			case 17 : ctrlPressed = false; break;
@@ -794,7 +794,7 @@ public class MyTable extends JTable
 				this.setForeground(geo.getObjectColor());
 				String label = ((GeoElement)value).getLabel();
 				if (SpreadsheetView.selectedElems.contains(label) || geo.doHighlighting()) {
-					//System.out.println(label);
+					//Application.debug(label);
 					this.setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
 				}
 				else {
@@ -812,8 +812,8 @@ public class MyTable extends JTable
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
 			int keyCode2 = e.getKeyCode();
-			System.out.println("getKeyChar=" + keyCode);
-			System.out.println("getKeyCode=" + keyCode2);
+			Application.debug("getKeyChar=" + keyCode);
+			Application.debug("getKeyCode=" + keyCode2);
 			if (keyCode == 27) {
 				if (editor.isEditing()) {
 					editor.undoEdit();
@@ -1002,8 +1002,8 @@ public class MyTable extends JTable
 			case 16 : shiftPressed2 = true; break;
 			case 17 : ctrlPressed2 = true; break;
 			case 67 : // control + c
-				//System.out.println(minSelectionColumn);
-				//System.out.println(maxSelectionColumn);
+				//Application.debug(minSelectionColumn);
+				//Application.debug(maxSelectionColumn);
 				if (ctrlPressed2 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
 					e.consume();

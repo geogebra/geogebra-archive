@@ -21,7 +21,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 				Thread.sleep(100);			
 				wnd = GeoGebra.getActiveInstance();	
 			} catch (Exception e) {
-				System.err.println("MacApplicationListener.getGGBInstance(): " + e.getMessage());
+				Application.debug("MacApplicationListener.getGGBInstance(): " + e.getMessage());
 				wnd = null;
 			}
 		}
@@ -41,7 +41,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
      }
 
 	public synchronized void handleOpenFile(com.apple.eawt.ApplicationEvent ev) {	
-		System.out.println("handleOpenFile event, filename: " + ev.getFilename());
+		Application.debug("handleOpenFile event, filename: " + ev.getFilename());
 		
 		// open file			
 		String fileName = ev.getFilename();		
@@ -66,14 +66,14 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 	}
 	
 	public synchronized void handlePrintFile(com.apple.eawt.ApplicationEvent event) {
-		System.out.println("handlePrintFile event, filename: " + event.getFilename());
+		Application.debug("handlePrintFile event, filename: " + event.getFilename());
 		
 		handleOpenFile(event);
 		getGGBInstance().getApplication().showPrintPreview();
 	}
 
 	public synchronized void handleOpenApplication(com.apple.eawt.ApplicationEvent ev) {
-		System.out.println("handleOpenApplication event, filename: " + ev.getFilename());
+		Application.debug("handleOpenApplication event, filename: " + ev.getFilename());
 		
 		// open file			
 		String fileName = ev.getFilename();		
@@ -87,11 +87,11 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 	}
 
 	public synchronized void handlePreferences(com.apple.eawt.ApplicationEvent arg0) {
-		System.out.println("handlePreferences event, filename: " + arg0.getFilename());
+		Application.debug("handlePreferences event, filename: " + arg0.getFilename());
 	}
 
 	public synchronized void handleReOpenApplication(com.apple.eawt.ApplicationEvent arg0) {
-		System.out.println("handleReOpenApplication event, filename: " + arg0.getFilename());
+		Application.debug("handleReOpenApplication event, filename: " + arg0.getFilename());
 	}
 		
 	

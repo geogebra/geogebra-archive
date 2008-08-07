@@ -235,7 +235,7 @@ implements LimitedPath, NumberValue {
 			
 			default:
 				value_defined = false;
-				//System.err.println("GeoConicPart: unsupported conic part for conic type: " + type);
+				//Application.debug("GeoConicPart: unsupported conic part for conic type: " + type);
 		}		
 			
 	}
@@ -331,7 +331,7 @@ implements LimitedPath, NumberValue {
 
 			default:
 				pPP.t = -1;
-				//System.err.println("GeoConicPart.isIncident: unsupported conic part for conic type: " + type);
+				//Application.debug("GeoConicPart.isIncident: unsupported conic part for conic type: " + type);
 		}					
 		
 		boolean result = 	pPP.t >= -eps && 
@@ -396,7 +396,7 @@ implements LimitedPath, NumberValue {
 
 			default:
 				pp.t = Double.NaN;
-				//System.err.println("GeoConicPart.pointChanged(): unsupported conic part for conic type: " + type);
+				//Application.debug("GeoConicPart.pointChanged(): unsupported conic part for conic type: " + type);
 		}		
 	}
 	
@@ -494,7 +494,7 @@ implements LimitedPath, NumberValue {
 			break;
 
 			default:
-				//System.err.println("GeoConicPart.pathChanged(): unsupported conic part for conic type: " + type);
+				//Application.debug("GeoConicPart.pathChanged(): unsupported conic part for conic type: " + type);
 		}
 	}
 	

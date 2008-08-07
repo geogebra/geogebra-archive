@@ -121,7 +121,7 @@ public class AlgebraProcessor {
 				throw new MyError(app, str);
 			}
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			throw new Exception("CircularDefinition");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,7 +177,7 @@ public class AlgebraProcessor {
 			e.printStackTrace();
 			throw new Exception(e.getLocalizedMessage());
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			throw new Exception("CircularDefinition");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -226,7 +226,7 @@ public class AlgebraProcessor {
 			GeoElement [] temp = processValidExpression(ve);
 			bool = (GeoBoolean) temp[0];
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -258,7 +258,7 @@ public class AlgebraProcessor {
 			GeoElement [] temp = processValidExpression(ve);
 			list = (GeoList) temp[0];
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -290,7 +290,7 @@ public class AlgebraProcessor {
 			GeoElement [] temp = processValidExpression(ve);
 			func = (GeoFunction) temp[0];
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -327,7 +327,7 @@ public class AlgebraProcessor {
 			 temp = processValidExpression(ve);
 			 p = (GeoPoint) temp[0];
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -359,7 +359,7 @@ public class AlgebraProcessor {
 			temp = processValidExpression(ve);
 			text = (GeoText) temp[0];
 		} catch (CircularDefinitionException e) {
-			System.err.println("CircularDefinition");
+			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -491,8 +491,8 @@ public class AlgebraProcessor {
 			else {
 				try {
 
-//					System.out.println("replace: " + replaceable);
-//					System.out.println("     by: " + ret[0]);			
+//					Application.debug("replace: " + replaceable);
+//					Application.debug("     by: " + ret[0]);			
 					
 					// SPECIAL CASE: set value
 					// new and old object are both independent and have same type:
@@ -546,8 +546,8 @@ public class AlgebraProcessor {
 	}
 
 	private GeoElement[] processEquation(Equation equ) throws MyError {
-		//System.out.println("EQUATION: " + equ);        
-		//System.out.println("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
+		//Application.debug("EQUATION: " + equ);        
+		//Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		try {
 			equ.initEquation();
 			
@@ -729,7 +729,7 @@ public class AlgebraProcessor {
 		else if (eval instanceof Function) {
 			return processFunction((Function) eval);			
 		} else {
-			System.err.println(
+			Application.debug(
 				"Unhandled ExpressionNode: " + eval + ", " + eval.getClass());
 			return null;
 		}
