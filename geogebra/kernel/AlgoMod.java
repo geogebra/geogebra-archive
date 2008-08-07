@@ -42,6 +42,9 @@ public class AlgoMod extends AlgoTwoNumFunction {
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double mod = a.getDouble() % b.getDouble();
+    		
+    		if (mod < 0) mod += b.getDouble(); // bugfix Michael Borcherds 2008-08-07
+    		
     		num.setValue(mod);
     	} else
     		num.setUndefined();
