@@ -27,43 +27,64 @@ public class ContextMenu
 		JPopupMenu menu = new JPopupMenu();
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
    	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
-   	 	item1.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+   	 	item1.setIcon(app.getImageIcon("edit-copy.png"));
    	 	item1.setBackground(bgColor);
-   	 	item1.addActionListener(new ActionListener1());
+   	 	item1.addActionListener(new ActionListenerCopy());
    	 	menu.add(item1);
    	 	JMenuItem item2 = new JMenuItem(app.getMenu("Paste"));
-   	 	item2.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+   	 	item2.setIcon(app.getImageIcon("edit-paste.png"));
    	 	item2.setBackground(bgColor);
-   	 	item2.addActionListener(new ActionListener2());   	 	
+   	 	item2.addActionListener(new ActionListenerPaste());   	 	
    	 	menu.add(item2);
    	 	JMenuItem item3 = new JMenuItem(app.getMenu("Cut"));
-   	 	item3.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+   	 	item3.setIcon(app.getImageIcon("edit-cut.png"));
    	 	item3.setBackground(bgColor);
-   	 	item3.addActionListener(new ActionListener3());   	 	
+   	 	item3.addActionListener(new ActionListenerCut());   	 	
    	 	menu.add(item3);
    	 	JMenuItem item4 = new JMenuItem(app.getMenu("ClearSelection"));
-   	 	item4.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+   	 	item4.setIcon(app.getImageIcon("edit-clear.png"));
    	 	item4.setBackground(bgColor);
-   	 	item4.addActionListener(new ActionListener4());
+   	 	item4.addActionListener(new ActionListenerClear());
    	 	menu.add(item4);
-   	 	if (column1 + 1 <= column2) {
-   	   	 	JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
-   	   	 	item5.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
+
+	 		menu.addSeparator();
+
+	 		if (column1 + 1 <= column2) {
+   	 		
+   	 		JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
+   	   	 	item5.setIcon(app.getEmptyIcon());
    	   	 	item5.setBackground(bgColor);
-   	   	 	item5.addActionListener(new ActionListener51());
+   	   	 	item5.addActionListener(new ActionListenerCreatePoints());
    	   	 	menu.add(item5);
-   	 	}
+	 		}   	   	 	
+   	   	 	
+	 		if (column1 !=-1 && column2 !=-1 && row1 != -1 && row2 != -1) {
+	   	   	 	JMenuItem item6 = new JMenuItem(app.getMenu("CreateMatrix"));
+	   	   	 	item6.setIcon(app.getEmptyIcon());
+	   	   	 	item6.setBackground(bgColor);
+	   	   	 	item6.addActionListener(new ActionListenerCreateMatrix());
+	   	   	 	menu.add(item6);
+	 		}
+   	   	 	
+	 		if (column1 == column2 || row1 == row2) {
+	   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
+	   	   	 	item7.setIcon(app.getEmptyIcon());
+	   	   	 	item7.setBackground(bgColor);
+	   	   	 	item7.addActionListener(new ActionListenerCreateList());
+	   	   	 	menu.add(item7);
+	 		}
+
    	 	return menu;
 	}
 	
-	public static class ActionListener1 implements ActionListener
+	public static class ActionListenerCopy implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.copy(column1, row1, column2, row2);
  		}
 	}
     	
-	public static class ActionListener2 implements ActionListener
+	public static class ActionListenerPaste implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.paste(column1, row1, column2, row2);
@@ -71,14 +92,14 @@ public class ContextMenu
  		}
 	}
     	
-	public static class ActionListener3 implements ActionListener
+	public static class ActionListenerCut implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.cut(column1, row1, column2, row2);
  		}
 	}
     	
-	public static class ActionListener4 implements ActionListener
+	public static class ActionListenerClear implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			table.copyPasteCut.delete(column1, row1, column2, row2);
@@ -95,6 +116,16 @@ public class ContextMenu
 		return "P_{" + pointNameCount + "}";
 	}
 	
+	protected static int matrixNameCount = 0;
+	
+	public static String getNextMatrixName() {
+		++ matrixNameCount;
+		if (matrixNameCount < 10) {
+			return "matrix_" + matrixNameCount;		
+		}
+		return "matrix_{" + matrixNameCount + "}";
+	}
+	
 	protected static int listNameCount = 0;
 	
 	public static String getNextListName() {
@@ -105,10 +136,10 @@ public class ContextMenu
 		return "L_{" + listNameCount + "}";
 	}
 	
-	public static class ActionListener51 implements ActionListener
+	public static class ActionListenerCreatePoints implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			Application.debug("ActionListener5 " + column1 + " - " + column2);
+ 			Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			if (selected == null) throw new RuntimeException("error state");
  			LinkedList list = new LinkedList();
  			try {
@@ -154,6 +185,100 @@ public class ContextMenu
  			}
 
 		}
+	}
+	
+	public static class ActionListenerCreateMatrix implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			Application.debug("CreateMatrix " + column1 + " - " + column2+"   "+row1+" - "+row2);
+ 			if (selected == null) throw new RuntimeException("error state");
+ 			String text="";
+ 			try {
+ 		 			text=getNextMatrixName()+" = {";
+ 					for (int j = column1; j <= column2; ++ j) {
+ 						if (! selected[j])  continue; 	
+ 						String row = "{";
+		  	   	 		for (int i = row1; i <= row2; ++ i) {
+		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
+		 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+		 	   	 				row += v2.getLabel() + ",";
+		 	   	 			}
+		 	   	 		}
+		  	   	 		row = removeComma(row);
+		  	   	 		text += row +"}" + ",";
+ 					}
+ 					
+	  	   	 		text = removeComma(text)+ "}";
+ 					
+ 					Application.debug(text);
+   	 				table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+
+	
+ 			} catch (Exception ex) {
+ 				Application.debug("creating matrix failed "+text);
+ 			} finally {
+ 				table.kernel.storeUndoInfo();
+ 			}
+
+		}
+	}
+	
+	public static class ActionListenerCreateList implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			Application.debug("CreateList " + column1 + " - " + column2+"   "+row1+" - "+row2);
+ 			String text="";
+ 			try {
+	 			if (row1 == row2)
+	 			{
+			 			text=getNextListName()+" = {";
+	 					for (int j = column1; j <= column2; ++ j) {
+			 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, row1);
+			 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+			 	   	 				text += v2.getLabel() + ",";
+			 	   	 			}
+	 					}
+	 					
+		  	   	 		text = removeComma(text)+ "}";
+	 					
+	 					Application.debug(text);
+	   	 				table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	 				
+	 			}
+	 			else if (column1 == column2)
+	 			{
+		 			text=getNextListName()+" = {";
+						for (int j = row1; j <= row2; ++ j) {
+		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, column1, j);
+		 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+		 	   	 				text += v2.getLabel() + ",";
+		 	   	 			}
+						}
+						
+	  	   	 		text = removeComma(text)+ "}";
+						
+						Application.debug(text);
+		 				table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	 				
+	 			}
+	 			else
+	 			{
+	 				Application.debug("creating list failed "+text);				
+	 			}
+ 			
+ 			} catch (Exception ex) {
+ 				Application.debug("creating list failed with exception "+text);
+ 			} finally {
+ 				table.kernel.storeUndoInfo();
+ 			}
+
+		}
+	}
+	
+	private static String removeComma(String s)
+	{
+		if (s.endsWith(",")) s = s.substring(0,s.length()-1); 	
+		return s;
 	}
     	
 	public static void showPopupMenu(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
