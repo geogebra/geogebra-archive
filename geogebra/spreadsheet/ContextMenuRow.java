@@ -17,15 +17,20 @@ public class ContextMenuRow extends ContextMenu
 		JPopupMenu menu = ContextMenu.initMenu(app);
 		menu.addSeparator();
    	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertAbove"));
+	   	item5.setIcon(app.getEmptyIcon());
    	 	item5.setBackground(bgColor);
    	 	item5.addActionListener(new ActionListener5());   	 	
    	 	menu.add(item5);
    	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertBelow"));
+	   	item6.setIcon(app.getEmptyIcon());
    	 	item6.setBackground(bgColor);
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
-   	 	JMenuItem item7 = new JMenuItem(app.getMenu("ClearRow"));
+   	 	JMenuItem item7;
+   	 	if (row1 == row2) item7 = new JMenuItem(app.getMenu("ClearRow"));
+   	 	else item7 = new JMenuItem(app.getMenu("ClearRows"));
+	   	item7.setIcon(app.getEmptyIcon());
    	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListener7());   	 	
    	 	menu.add(item7);
@@ -92,12 +97,12 @@ public class ContextMenuRow extends ContextMenu
 	    	
 	public static void showPopupMenu2(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y) {
 		table = table0;
-		Application app = table.kernel.getApplication();
-		JPopupMenu menu2 = initMenu2(app);		
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;
+		Application app = table.kernel.getApplication();
+		JPopupMenu menu2 = initMenu2(app);		
 		menu2.show(comp, x, y);
 	}
 
