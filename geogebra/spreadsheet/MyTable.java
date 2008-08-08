@@ -729,12 +729,15 @@ public class MyTable extends JTable
 				minSelectionColumn = 0;
 				maxSelectionColumn = MyTable.this.getColumnCount() - 1;
 			}
+			/* removed Michael Borcherds 2008-08-08
+			 * causes a bug when multiple rows are selected
 			selected = new boolean[getColumnCount()];
 			for (int i = 0; i < selected.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
 					selected[i] = true;
 				}
 			}
+			*/
 			selectionChanged();
 		}
 		
