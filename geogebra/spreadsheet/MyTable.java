@@ -37,7 +37,7 @@ public class MyTable extends JTable
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
 	public static final Color SELECTED_BACKGROUND_COLOR = Application.COLOR_SELECTION;
-	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.white;
+	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,185,210);
 	
 	private static final long serialVersionUID = 1L;
 	
