@@ -720,7 +720,7 @@ implements ExpressionValue {
                     
             }                
             else { 
-                String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
+                String [] str = { "IllegalComplexMultiplication", lt.toString(), strCOMPLEXMULTIPLY, rt.toString() };
                 throw new MyError(app, str);
             }
                                                
