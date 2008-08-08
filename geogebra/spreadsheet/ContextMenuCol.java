@@ -18,12 +18,10 @@ public class ContextMenuCol extends ContextMenu
 		menu.addSeparator();
    	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertLeft"));
 	   	item5.setIcon(app.getEmptyIcon());
-   	 	item5.setBackground(bgColor);
    	 	item5.addActionListener(new ActionListener5());   	 	
    	 	menu.add(item5);
    	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertRight"));
 	   	item6.setIcon(app.getEmptyIcon());
-   	 	item6.setBackground(bgColor);
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
@@ -31,7 +29,6 @@ public class ContextMenuCol extends ContextMenu
    	 	if (column1 == column2) item7 = new JMenuItem(app.getMenu("ClearColumn"));
    	 	else item7 = new JMenuItem(app.getMenu("ClearColumns"));
 	   	item7.setIcon(app.getEmptyIcon());
-   	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListenerClearColumns());   	 	
    	 	menu.add(item7);
    	 	return menu;

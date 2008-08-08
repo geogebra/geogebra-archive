@@ -28,22 +28,18 @@ public class ContextMenu
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
    	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
    	 	item1.setIcon(app.getImageIcon("edit-copy.png"));
-   	 	item1.setBackground(bgColor);
    	 	item1.addActionListener(new ActionListenerCopy());
    	 	menu.add(item1);
    	 	JMenuItem item2 = new JMenuItem(app.getMenu("Paste"));
    	 	item2.setIcon(app.getImageIcon("edit-paste.png"));
-   	 	item2.setBackground(bgColor);
    	 	item2.addActionListener(new ActionListenerPaste());   	 	
    	 	menu.add(item2);
    	 	JMenuItem item3 = new JMenuItem(app.getMenu("Cut"));
    	 	item3.setIcon(app.getImageIcon("edit-cut.png"));
-   	 	item3.setBackground(bgColor);
    	 	item3.addActionListener(new ActionListenerCut());   	 	
    	 	menu.add(item3);
    	 	JMenuItem item4 = new JMenuItem(app.getMenu("ClearSelection"));
    	 	item4.setIcon(app.getImageIcon("edit-clear.png"));
-   	 	item4.setBackground(bgColor);
    	 	item4.addActionListener(new ActionListenerClear());
    	 	menu.add(item4);
 
@@ -53,7 +49,6 @@ public class ContextMenu
    	 		
    	 		JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
    	   	 	item5.setIcon(app.getEmptyIcon());
-   	   	 	item5.setBackground(bgColor);
    	   	 	item5.addActionListener(new ActionListenerCreatePoints());
    	   	 	menu.add(item5);
 	 		}   	   	 	
@@ -61,7 +56,6 @@ public class ContextMenu
 	 		if (column1 !=-1 && column2 !=-1 && row1 != -1 && row2 != -1) {
 	   	   	 	JMenuItem item6 = new JMenuItem(app.getMenu("CreateMatrix"));
 	   	   	 	item6.setIcon(app.getEmptyIcon());
-	   	   	 	item6.setBackground(bgColor);
 	   	   	 	item6.addActionListener(new ActionListenerCreateMatrix());
 	   	   	 	menu.add(item6);
 	 		}
@@ -69,7 +63,6 @@ public class ContextMenu
 	 		if (column1 == column2 || row1 == row2) {
 	   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
 	   	   	 	item7.setIcon(app.getEmptyIcon());
-	   	   	 	item7.setBackground(bgColor);
 	   	   	 	item7.addActionListener(new ActionListenerCreateList());
 	   	   	 	menu.add(item7);
 	 		}

@@ -18,12 +18,10 @@ public class ContextMenuRow extends ContextMenu
 		menu.addSeparator();
    	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertAbove"));
 	   	item5.setIcon(app.getEmptyIcon());
-   	 	item5.setBackground(bgColor);
    	 	item5.addActionListener(new ActionListener5());   	 	
    	 	menu.add(item5);
    	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertBelow"));
 	   	item6.setIcon(app.getEmptyIcon());
-   	 	item6.setBackground(bgColor);
    	 	item6.addActionListener(new ActionListener6());   	 	
    	 	menu.add(item6);
 		menu.addSeparator();
@@ -31,7 +29,6 @@ public class ContextMenuRow extends ContextMenu
    	 	if (row1 == row2) item7 = new JMenuItem(app.getMenu("ClearRow"));
    	 	else item7 = new JMenuItem(app.getMenu("ClearRows"));
 	   	item7.setIcon(app.getEmptyIcon());
-   	 	item7.setBackground(bgColor);
    	 	item7.addActionListener(new ActionListener7());   	 	
    	 	menu.add(item7);
    	 	return menu;
