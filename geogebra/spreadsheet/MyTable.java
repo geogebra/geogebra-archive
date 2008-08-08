@@ -125,7 +125,7 @@ public class MyTable extends JTable
 	protected boolean isDragingDot = false;
 	protected int dragingToRow = -1;
 	protected int dragingToColumn = -1;
-	public boolean[] selected;
+	public boolean[] selectedColumns;
 	
 	public void selectNone() {
 		selectionChangedNonResponsive = true;
@@ -436,7 +436,7 @@ public class MyTable extends JTable
 				int x1 = e.getX();
 				int y1 = e.getY();
 				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
-					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, selected);
+					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, new boolean[0]);
 				}
 			}
 		}
@@ -750,10 +750,10 @@ public class MyTable extends JTable
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
 			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
-			selected = new boolean[getColumnCount()];
-			for (int i = 0; i < selected.length; ++ i) {
+			selectedColumns = new boolean[getColumnCount()];
+			for (int i = 0; i < selectedColumns.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
-					selected[i] = true;
+					selectedColumns[i] = true;
 				}
 			}
 			selectionChanged();
@@ -858,7 +858,7 @@ public class MyTable extends JTable
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
 			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selected != null && selected.length > colIndex && selected[colIndex]) {
+				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selectedColumns != null && selectedColumns.length > colIndex && selectedColumns[colIndex]) {
 					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
 				}
 				else {
@@ -872,10 +872,10 @@ public class MyTable extends JTable
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex();
 			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
-			selected = new boolean[getColumnCount()];
-			for (int i = 0; i < selected.length; ++ i) {
+			selectedColumns = new boolean[getColumnCount()];
+			for (int i = 0; i < selectedColumns.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
-					selected[i] = true;
+					selectedColumns[i] = true;
 				}
 			}
 			getTableHeader().repaint();
@@ -938,7 +938,7 @@ public class MyTable extends JTable
 			}
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y, selected);
+					ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y, selectedColumns);
 				}
 			}
 		}

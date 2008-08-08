@@ -138,7 +138,7 @@ public class ContextMenu
  			try {
  				int xColumn = -1;
 	 			for (int j = column1; j <= column2; ++ j) {
-	 				if (! selected[j]) {
+	 				if (selected.length > j && ! selected[j]) {
 	 					continue;
 	 				}
 	 				if (xColumn == -1) {
@@ -189,7 +189,7 @@ public class ContextMenu
  			try {
  		 			text=getNextMatrixName()+" = {";
  					for (int j = column1; j <= column2; ++ j) {
- 						if (! selected[j])  continue; 	
+ 						if (selected.length > j && ! selected[j])  continue; 	
  						String row = "{";
 		  	   	 		for (int i = row1; i <= row2; ++ i) {
 		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
