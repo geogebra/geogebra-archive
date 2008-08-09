@@ -86,7 +86,7 @@ public class ContextMenu
 	public static class ActionListenerCopy implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.copy(column1, row1, column2, row2);
+ 			table.copyPasteCut.copy(column1, row1, column2, row2, false);
  		}
 	}
     	

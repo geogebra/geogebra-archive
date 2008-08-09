@@ -1,18 +1,20 @@
 
 package geogebra.spreadsheet;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.DataFlavor;
-import javax.swing.JTable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.LinkedList;
-
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JTable;
 
 public class CopyPasteCut {
 	
@@ -29,7 +31,7 @@ public class CopyPasteCut {
 		kernel = kernel0;	
 	}
 	
-	public void copy(int column1, int row1, int column2, int row2) {
+	public void copy(int column1, int row1, int column2, int row2, boolean skipInternalCopy) {
 		// external
 		externalBuf = "";
 		for (int row = row1; row <= row2; ++ row) {
@@ -58,15 +60,23 @@ public class CopyPasteCut {
 		Clipboard clipboard = toolkit.getSystemClipboard();
 		StringSelection stringSelection = new StringSelection(externalBuf);
 		clipboard.setContents(stringSelection, null);
+		
 		// internal
-		bufColumn = column1;
-		bufRow = row1;
-		internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
+		Application.debug(""+skipInternalCopy);
+		if (skipInternalCopy) {
+			internalBuf = null;
+		}
+		else
+		{
+			bufColumn = column1;
+			bufRow = row1;
+			internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
+		}
 	}
 	
 	public void cut(int column1, int row1, int column2, int row2) {
-		copy(column1, row1, column2, row2);
-		externalBuf = null;
+		copy(column1, row1, column2, row2, false);
+		//externalBuf = null;
 		delete(column1, row1, column2, row2);	
 	}
 	
@@ -82,7 +92,8 @@ public class CopyPasteCut {
 				// Util.handleException(table, ex);
 			}
 		}
-		if (buf != null && externalBuf != null && buf.equals(externalBuf)) {
+		Application.debug((buf != null)+" "+(externalBuf != null)+" "+(buf.equals(externalBuf)));
+		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
 				pasteInternal(column1, row1);
 			} catch (Exception ex) {
@@ -148,7 +159,12 @@ public class CopyPasteCut {
 			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
 				createPointsAndAList2(values2);
 			}
-		} finally {
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		 finally {
 			kernel.getApplication().setDefaultCursor();
 		}
 	}

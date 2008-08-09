@@ -670,6 +670,7 @@ public class MyTable extends JTable
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
             boolean shiftDown = e.isShiftDown(); 	 
+            boolean altDown = e.isAltDown(); 	 
             boolean ctrlDown = Application.isControlDown(e); 	 
 			//Application.debug(keyCode+"");
 			switch (keyCode) {
@@ -682,7 +683,7 @@ public class MyTable extends JTable
 					if (ctrlDown) {
 						e.consume();
 						if (keyCode == KeyEvent.VK_C) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
 						}
 						else if (keyCode == KeyEvent.VK_V) {
 							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
@@ -1018,13 +1019,14 @@ public class MyTable extends JTable
 		public void keyPressed(KeyEvent e) {
 			//Application.debug("keypressed");
 			 boolean metaDown = Application.isControlDown(e);
+			 boolean altDown = e.isAltDown();
 			 int keyCode = e.getKeyCode();
 			switch (keyCode) {
 			case KeyEvent.VK_C : // control + c
 				//Application.debug(minSelectionColumn);
 				//Application.debug(maxSelectionColumn);
 				if (metaDown  && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, altDown);
 					e.consume();
 				}
 				break;

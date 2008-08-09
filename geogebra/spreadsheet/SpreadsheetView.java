@@ -326,12 +326,13 @@ public class SpreadsheetView extends JScrollPane implements View
 			int keyCode = e.getKeyCode();
 			
 			boolean metaDown = Application.isControlDown(e);				
+			boolean altDown = e.isAltDown();				
 			
 			//Application.debug(keyCode);
 			switch (keyCode) {				
 			case KeyEvent.VK_C : // control + c
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
 				}
 				e.consume();
 				break;
@@ -343,7 +344,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				break;				
 			case KeyEvent.VK_X : // control + x
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
 				}
 				e.consume();
 				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
