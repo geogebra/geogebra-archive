@@ -46,7 +46,7 @@ public class ContextMenu
    	 	item4.addActionListener(new ActionListenerClear());
    	 	menu.add(item4);
 
-	 		menu.addSeparator();
+	 	menu.addSeparator();
 
 	 		if (column1 + 1 <= column2) {
    	 		
@@ -69,7 +69,17 @@ public class ContextMenu
 	   	   	 	item7.addActionListener(new ActionListenerCreateList());
 	   	   	 	menu.add(item7);
 	 		}
+	 		
+	 		if (app.selectedGeosSize() > 0) {
 
+			 	menu.addSeparator();
+	
+			 	JMenuItem item8 = new JMenuItem(app.getMenu("Properties")+"...");
+		   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
+		   	 	item8.addActionListener(new ActionListenerProperties());
+		   	 	menu.add(item8);
+	 		}
+		 	
    	 	return menu;
 	}
 	
@@ -222,6 +232,13 @@ public class ContextMenu
  			}
 
 		}
+	}
+	
+	public static class ActionListenerProperties implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			app.showPropertiesDialog();	
+ 		}
 	}
 	
 	public static class ActionListenerCreateList implements ActionListener
