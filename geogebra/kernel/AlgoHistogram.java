@@ -22,8 +22,8 @@ public class AlgoHistogram extends AlgoSumUpperLower {
 	private static final long serialVersionUID = 1L;
 
 	public AlgoHistogram(Construction cons, String label,
-								   NumberValue a, NumberValue b, GeoList list1, GeoList list2) {
-		super(cons, label, a, b, list1, list2);		
+								   GeoList list1, GeoList list2) {
+		super(cons, label, list1, list2);		
 	}
 	
 	protected String getClassName() {

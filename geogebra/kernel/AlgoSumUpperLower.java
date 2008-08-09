@@ -60,7 +60,7 @@ implements EuclidianViewAlgo {
 	private double STEP;
 	private double [] yval; // y value (= min) in interval 0 <= i < N
 	private double [] leftBorder; // leftBorder (x val) of interval 0 <= i < N
-	private double [] widths;
+	//private double [] widths;
 	
 	private ExtremumFinder extrFinder;
 		
@@ -112,7 +112,7 @@ implements EuclidianViewAlgo {
 		
 			// HISTOGRAM
 			public AlgoSumUpperLower(Construction cons, String label,  
-					   NumberValue a, NumberValue b, GeoList list1, GeoList list2) {
+					   GeoList list1, GeoList list2) {
 		
 		super(cons);
 		
@@ -120,12 +120,9 @@ implements EuclidianViewAlgo {
 		
 		extrFinder = cons.getExtremumFinder();
 		
-		this.a = a;
-		this.b = b;			
+
 		this.list1 = list1;
 		this.list2 = list2;
-		ageo = a.toGeoElement();
-		bgeo = b.toGeoElement();
 		
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
@@ -165,11 +162,9 @@ implements EuclidianViewAlgo {
 			input[2] = list1;		
 			break;
 		case TYPE_HISTOGRAM:
-			input = new GeoElement[4];
-			input[0] = ageo;
-			input[1] = bgeo;
-			input[2] = list1;		
-			input[3] = list2;		
+			input = new GeoElement[2];
+			input[0] = list1;		
+			input[1] = list2;		
 			break;
 
 		}
@@ -404,8 +399,7 @@ implements EuclidianViewAlgo {
 			break;
 			
 		case TYPE_HISTOGRAM:
-			if (!(ageo.isDefined() && bgeo.isDefined() 
-					&& list1.isDefined() && list2.isDefined())) 
+			if (!list1.isDefined() || !list2.isDefined()) 
 			{
 				sum.setUndefined();
 				return;
@@ -413,68 +407,48 @@ implements EuclidianViewAlgo {
 			
 			N = list1.size();
 			
-			if (N != list2.size())
+			if (N < 2 || N-1 != list2.size())
 			{
 				sum.setUndefined();
 				return;
 			}
 							
-			ad = a.getDouble();
-			bd = b.getDouble();		 
-			 
-			ints = list1.size();
-			if (ints < 1) {
-				sum.setUndefined();
-				return;
-			} else if (ints > MAX_RECTANGLES) {
-				N = MAX_RECTANGLES;
-			} else {
-				N = (int) Math.round(ints);
-			}	
+		 
 
 			if (yval == null || yval.length < N) {
 				yval = new double[N];
 				leftBorder = new double[N];
-				widths = new double[N];
 			}				
 			
-			double width = 0;
-			for (int i=0; i < N; i++) {
-				GeoElement geo = list2.get(i);
-				if (geo.isGeoNumeric())	widths[i] = ((GeoNumeric)geo).getDouble(); 
+			//cumSum = 0;
+			for (int i=0; i < N-1; i++) {
+				
+				GeoElement geo = list1.get(i);
+				if (i == 0) {
+					if (geo.isNumberValue()) a = (NumberValue)geo;
+					else { sum.setUndefined(); return; }
+				}
+				//if (i == N-1) b = (NumberValue)geo;
+				if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
 				else { sum.setUndefined(); return; }
-				width += widths[i];
-			}
-
-
-			
-			
-			leftBorder[0] = ad;
-			GeoElement geo = list1.get(0);
-			if (geo.isGeoNumeric())	yval[0] = ((GeoNumeric)geo).getDouble(); 
-			else yval[0]=0;
-			
-			cumSum = 0;
-			Application.debug(cumSum+"");
-			
-			for (int i=1; i < N; i++) {
 				
-				double scaledWidth = widths[i-1]*(bd - ad)/width;
-				
-				leftBorder[i] = (leftBorder[i-1]) + scaledWidth; 
-				
-				geo = list1.get(i);
+				geo = list2.get(i);
 				if (geo.isGeoNumeric())	yval[i] = ((GeoNumeric)geo).getDouble(); 
-				else yval[i]=0;
+				else { sum.setUndefined(); return; }
 				
-				cumSum += yval[i-1] * scaledWidth;
-				Application.debug(cumSum+"");
-				
+				//if (i != 0) cumSum += leftBorder[i] * yval[i];
 			}
 			
-			cumSum += yval[N-1] * widths[N-1]*(bd - ad)/width;
-			 
-							
+			yval[N-1] = yval[N-2];
+			
+			GeoElement geo = list1.get(N-1);
+			if (geo.isNumberValue()) b = (NumberValue)geo;
+			else { sum.setUndefined(); return; }
+			leftBorder[N-1] = ((GeoNumeric)geo).getDouble(); 
+
+
+			cumSum = 0;
+			for (int i=1; i < N; i++) cumSum += (leftBorder[i] - leftBorder[i-1]) * yval[i-1];
 			
 			// area of rectangles				
 			sum.setValue(cumSum);	
@@ -491,6 +465,15 @@ implements EuclidianViewAlgo {
 		switch (type)
 		{
 		case TYPE_TRAPEZOIDALSUM:
+			return true;
+		default :
+			return false;
+		}
+	}
+	public boolean isHistogram() {
+		switch (type)
+		{
+		case TYPE_HISTOGRAM:
 			return true;
 		default :
 			return false;

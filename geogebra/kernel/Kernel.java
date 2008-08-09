@@ -1693,8 +1693,8 @@ public class Kernel {
 	 * BarChart
 	 */
 	final public GeoNumeric Histogram(String label, 
-					NumberValue a, NumberValue b, GeoList list1, GeoList list2) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, a, b, list1, list2);
+					GeoList list1, GeoList list2) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}

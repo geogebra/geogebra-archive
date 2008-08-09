@@ -36,6 +36,7 @@ public class DrawUpperLowerSum extends Drawable {
     private GeneralPath gp = new GeneralPath();
     private double [] coords = new double[2];
     private boolean trapeziums;
+    private boolean histogram;
    
     public DrawUpperLowerSum(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
@@ -46,6 +47,7 @@ public class DrawUpperLowerSum extends Drawable {
     	
     	algo = (AlgoSumUpperLower) n.getParentAlgorithm();    	
 		this.trapeziums = algo.useTrapeziums();
+		this.histogram = algo.isHistogram();
         a = algo.getA();
         b = algo.getB();    
         update();
@@ -110,7 +112,9 @@ public class DrawUpperLowerSum extends Drawable {
 			gp.lineTo(bx, y); // last bar: top
 		}
 		
-		gp.lineTo(bx, y0);// last bar: right
+		if (histogram) gp.moveTo(bx, y0);
+		else gp.lineTo(bx, y0);// last bar: right
+		
 		gp.lineTo(ax, y0);// all bars, along bottom		
 		
 		// gp on screen?		

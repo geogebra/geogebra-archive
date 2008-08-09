@@ -3446,7 +3446,7 @@ final public    GeoElement[] process(Command c) throws MyError {
 }
 }
 /*
- * Histogram[ <Number>, <Number>, <List>, <List> ]
+ * Histogram[ <List>, <List> ]
  */
 class CmdHistogram extends CommandProcessor {
 	
@@ -3460,20 +3460,16 @@ final public    GeoElement[] process(Command c) throws MyError {
     GeoElement[] arg;
 
     switch (n) {
-        case 4 :
+        case 2 :
             arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isNumberValue()))
-                && (ok[1] = (arg[1] .isNumberValue()))
-                && (ok[2] = (arg[2] .isGeoList()))
-                && (ok[3] = (arg[3] .isGeoList()))) {
+            if ((ok[0] = (arg[0] .isGeoList()))
+                && (ok[1] = (arg[1] .isGeoList()))) {
                 GeoElement[] ret =
                     {
                          kernel.Histogram(
-                            c.getLabel(),
-                            (NumberValue) arg[0],
-                            (NumberValue) arg[1],
-                            (GeoList)arg[2],
-                			(GeoList)arg[3])};
+                            c.getLabel(),                      
+                            (GeoList)arg[0],
+                			(GeoList)arg[1])};
                 return ret;
             } else
 				throw argErr(app, c.getName(), null);
