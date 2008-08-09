@@ -23,7 +23,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * Superclass for lower/upper sum of function f in interval [a, b] with
  * n intervals
  */
-public abstract class AlgoSumUpperLower extends AlgoElement
+public abstract class AlgoFunctionAreaSums extends AlgoElement
 implements EuclidianViewAlgo {
 	
 	// largest possible number of rectangles
@@ -64,7 +64,7 @@ implements EuclidianViewAlgo {
 	
 	private ExtremumFinder extrFinder;
 		
-	public AlgoSumUpperLower(Construction cons, String label, GeoFunction f, 
+	public AlgoFunctionAreaSums(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n,
 								   int type) {
 		
@@ -89,7 +89,7 @@ implements EuclidianViewAlgo {
 	}
 	
 	// BARCHART
-			public AlgoSumUpperLower(Construction cons, String label,  
+			public AlgoFunctionAreaSums(Construction cons, String label,  
 					   NumberValue a, NumberValue b, GeoList list1) {
 		
 		super(cons);
@@ -111,7 +111,7 @@ implements EuclidianViewAlgo {
 		}
 		
 			// HISTOGRAM
-			public AlgoSumUpperLower(Construction cons, String label,  
+			public AlgoFunctionAreaSums(Construction cons, String label,  
 					   GeoList list1, GeoList list2) {
 		
 		super(cons);

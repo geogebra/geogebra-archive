@@ -19,7 +19,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
-import geogebra.kernel.AlgoSumUpperLower;
+import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
@@ -2514,7 +2514,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 				d = new DrawIntegral(this, (GeoNumeric) geo);
 			} else if (algo instanceof AlgoIntegralFunctions) {
 				d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
-			} else if (algo instanceof AlgoSumUpperLower) {
+			} else if (algo instanceof AlgoFunctionAreaSums) {
 				d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
 			}
 			if (d != null) {

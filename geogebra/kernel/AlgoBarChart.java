@@ -14,7 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
 
-public class AlgoBarChart extends AlgoSumUpperLower {
+public class AlgoBarChart extends AlgoFunctionAreaSums {
 		
 	/**
 	 * 

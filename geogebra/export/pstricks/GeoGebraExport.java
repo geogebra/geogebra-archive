@@ -10,7 +10,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
-import geogebra.kernel.AlgoSumUpperLower;
+import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
@@ -201,7 +201,7 @@ public abstract class GeoGebraExport implements ActionListener{
             	drawIntegralFunctions((GeoNumeric) g);
             	drawLabel(g,null);
             }
-            else if (algo instanceof AlgoSumUpperLower) {
+            else if (algo instanceof AlgoFunctionAreaSums) {
               drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
             }

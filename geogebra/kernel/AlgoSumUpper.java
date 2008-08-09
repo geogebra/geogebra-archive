@@ -19,7 +19,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * upper sum of function f in interval [a, b] with
  * n intervals
  */
-public class AlgoSumUpper extends AlgoSumUpperLower {
+public class AlgoSumUpper extends AlgoFunctionAreaSums {
 		
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class AlgoSumUpper extends AlgoSumUpperLower {
 
 	public AlgoSumUpper(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n) {
-		super(cons, label, f, a, b, n, AlgoSumUpperLower.TYPE_UPPERSUM);		
+		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_UPPERSUM);		
 	}
 	
 	protected String getClassName() {

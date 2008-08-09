@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.kernel.AlgoSumUpperLower;
+import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -32,7 +32,7 @@ public class DrawUpperLowerSum extends Drawable {
     private NumberValue a, b; // interval borders
 
     boolean isVisible, labelVisible;     
-    private AlgoSumUpperLower algo;   
+    private AlgoFunctionAreaSums algo;   
     private GeneralPath gp = new GeneralPath();
     private double [] coords = new double[2];
     private boolean trapeziums;
@@ -45,7 +45,7 @@ public class DrawUpperLowerSum extends Drawable {
 		
 		n.setDrawable(true);
     	
-    	algo = (AlgoSumUpperLower) n.getParentAlgorithm();    	
+    	algo = (AlgoFunctionAreaSums) n.getParentAlgorithm();    	
 		this.trapeziums = algo.useTrapeziums();
 		this.histogram = algo.isHistogram();
         a = algo.getA();

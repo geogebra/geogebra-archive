@@ -12,7 +12,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
-import geogebra.kernel.AlgoSumUpperLower;
+import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
@@ -170,7 +170,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     }
     
     protected void drawSumUpperLower(GeoNumeric geo){
-    	AlgoSumUpperLower algo = (AlgoSumUpperLower)geo.getParentAlgorithm();
+    	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
         double step=algo.getStep();
         double[] y=algo.getValues();
