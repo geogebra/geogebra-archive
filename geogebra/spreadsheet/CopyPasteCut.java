@@ -62,7 +62,6 @@ public class CopyPasteCut {
 		clipboard.setContents(stringSelection, null);
 		
 		// internal
-		Application.debug(""+skipInternalCopy);
 		if (skipInternalCopy) {
 			internalBuf = null;
 		}
@@ -92,7 +91,6 @@ public class CopyPasteCut {
 				// Util.handleException(table, ex);
 			}
 		}
-		Application.debug((buf != null)+" "+(externalBuf != null)+" "+(buf.equals(externalBuf)));
 		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
 				pasteInternal(column1, row1);
