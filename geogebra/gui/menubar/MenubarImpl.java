@@ -689,7 +689,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};
 
 		showConsProtNavigationPlayAction = new AbstractAction(
-				app.getPlain("PlayButton")) {
+				app.getPlain("PlayButton"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -703,7 +704,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};
 
 		showConsProtNavigationOpenProtAction = new AbstractAction(
-				app.getPlain("ConstructionProtocolButton")) {
+				app.getPlain("ConstructionProtocolButton"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
