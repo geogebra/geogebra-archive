@@ -19,20 +19,20 @@ import geogebra.kernel.arithmetic.NumberValue;
  * upper sum of function f in interval [a, b] with
  * n intervals
  */
-public class AlgoSumUpper extends AlgoSumUpperLower {
+public class AlgoSumTrapezoidal extends AlgoSumUpperLower {
 		
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AlgoSumUpper(Construction cons, String label, GeoFunction f, 
+	public AlgoSumTrapezoidal(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n) {
-		super(cons, label, f, a, b, n, AlgoSumUpperLower.TYPE_UPPERSUM);		
+		super(cons, label, f, a, b, n, AlgoSumUpperLower.TYPE_TRAPEZOIDALSUM);		
 	}
 	
 	protected String getClassName() {
-		return "AlgoSumUpper";
+		return "AlgoSumTrapezoidal";
 	}
 	
 }

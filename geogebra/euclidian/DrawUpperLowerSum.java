@@ -35,6 +35,7 @@ public class DrawUpperLowerSum extends Drawable {
     private AlgoSumUpperLower algo;   
     private GeneralPath gp = new GeneralPath();
     private double [] coords = new double[2];
+    private boolean trapeziums;
    
     public DrawUpperLowerSum(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
@@ -44,6 +45,7 @@ public class DrawUpperLowerSum extends Drawable {
 		n.setDrawable(true);
     	
     	algo = (AlgoSumUpperLower) n.getParentAlgorithm();    	
+		this.trapeziums = algo.useTrapeziums();
         a = algo.getA();
         b = algo.getB();    
         update();
@@ -79,23 +81,37 @@ public class DrawUpperLowerSum extends Drawable {
 			view.toScreenCoords(coords);
 			
 			// avoid too big y values
-			if (coords[1] < 0) {
+			if (coords[1] < 0 && !trapeziums) {
 				coords[1] = -1;
-			} else if (coords[1] > view.height) {
+			} else if (coords[1] > view.height && !trapeziums) {
 				coords[1] = view.height + 1;
 			}
 			
 			x = (float) coords[0];			
-			gp.lineTo(x, y);
-			gp.lineTo(x, y0);
+			
+			if (trapeziums) gp.lineTo(x, (float)coords[1]); // top
+			else gp.lineTo(x, y); // top
+			
+			gp.lineTo(x, y0); // RHS
 			gp.moveTo(x, y);
 			y = (float) coords[1];
 			gp.moveTo(x, y0);
 			gp.lineTo(x, y);			 								
 		} 	
-		gp.lineTo(bx, y);
-		gp.lineTo(bx, y0);
-		gp.lineTo(ax, y0);		
+		if (trapeziums)
+		{
+			coords[0] = leftBorder[N];						
+			coords[1] = yval[N];
+			view.toScreenCoords(coords);
+			gp.lineTo(bx, (float) coords[1]); // last bar: top
+		}
+		else
+		{
+			gp.lineTo(bx, y); // last bar: top
+		}
+		
+		gp.lineTo(bx, y0);// last bar: right
+		gp.lineTo(ax, y0);// all bars, along bottom		
 		
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				

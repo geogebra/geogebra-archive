@@ -1710,6 +1710,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * TrapezoidalSum of function f 
+	 */
+	final public GeoNumeric TrapezoidalSum(String label, GeoFunction f, 
+					NumberValue a, NumberValue b, NumberValue n) {
+		AlgoSumTrapezoidal algo = new AlgoSumTrapezoidal(cons, label, f, a, b, n);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}	
+
+	/** 
 	 * LowerSum of function f 
 	 */
 	final public GeoNumeric LowerSum(String label, GeoFunction f, 

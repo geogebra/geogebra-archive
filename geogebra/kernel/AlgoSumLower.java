@@ -28,7 +28,7 @@ public class AlgoSumLower extends AlgoSumUpperLower {
 
 	public AlgoSumLower(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n) {
-		super(cons, label, f, a, b, n, false);		
+		super(cons, label, f, a, b, n, AlgoSumUpperLower.TYPE_LOWERSUM);		
 	}
 	
 	protected String getClassName() {

@@ -41,10 +41,11 @@ implements EuclidianViewAlgo {
 	private static double xVisibleWidth = 10;
 	
 	private int type;
-	private static final int TYPE_UPPERLOWERSUM = 0;
-	private static final int TYPE_BARCHART = 1;
-	private static final int TYPE_HISTOGRAM = 2;
-	
+	public static final int TYPE_UPPERSUM = 0;
+	public static final int TYPE_LOWERSUM = 1;
+	public static final int TYPE_BARCHART = 2;
+	public static final int TYPE_HISTOGRAM = 3;
+	public static final int TYPE_TRAPEZOIDALSUM = 4;
 	
 	// tolerance for parabolic interpolation
 	private static final double TOLERANCE = 1E-7;
@@ -54,7 +55,6 @@ implements EuclidianViewAlgo {
 	private GeoList list1, list2; // input
 	private GeoElement ageo, bgeo, ngeo;
 	private GeoNumeric  sum; // output sum    
-	private boolean upperSum;
 	
 	private int N; 	
 	private double STEP;
@@ -66,11 +66,11 @@ implements EuclidianViewAlgo {
 		
 	public AlgoSumUpperLower(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n,
-								   boolean upperSum) {
+								   int type) {
 		
 		super(cons);
 		
-		type = TYPE_UPPERLOWERSUM;
+		this.type = type;
 		
 		extrFinder = cons.getExtremumFinder();
 		
@@ -78,7 +78,6 @@ implements EuclidianViewAlgo {
 		this.a = a;
 		this.b = b;			
 		this.n = n;
-		this.upperSum = upperSum;
 		ageo = a.toGeoElement();
 		bgeo = b.toGeoElement();
 		ngeo = n.toGeoElement();
@@ -150,7 +149,9 @@ implements EuclidianViewAlgo {
 		
 		switch (type)
 		{
-		case TYPE_UPPERLOWERSUM:
+		case TYPE_UPPERSUM:
+		case TYPE_LOWERSUM:
+		case TYPE_TRAPEZOIDALSUM:
 			input = new GeoElement[4];
 			input[0] = f;
 			input[1] = ageo;
@@ -213,8 +214,9 @@ implements EuclidianViewAlgo {
 		
 		switch (type)
 		{
-		case TYPE_UPPERLOWERSUM:
-
+		case TYPE_LOWERSUM:
+		case TYPE_UPPERSUM:
+			
 			if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined() 
 					&& ngeo.isDefined())) 
 				sum.setUndefined();
@@ -236,11 +238,11 @@ implements EuclidianViewAlgo {
 			
 			// calc minimum in every interval		
 			if (yval == null || yval.length < N) {
-				yval = new double[N];
-				leftBorder = new double[N];
+				yval = new double[N]; 			
+				leftBorder = new double[N];		
 			}				
 			RealRootFunction fmin = fun;
-			if (upperSum) fmin = new NegativeRealRootFunction(fun); // use -f to find maximum		
+			if (type == TYPE_UPPERSUM) fmin = new NegativeRealRootFunction(fun); // use -f to find maximum		
 			
 			double cumSum = 0;
 			double left, right, min;			 	
@@ -248,7 +250,7 @@ implements EuclidianViewAlgo {
 			double subStep = xVisibleWidth / VIEW_STEPS;	
 			boolean doSubSamples = Math.abs(STEP) > subStep;	
 			boolean positiveStep = 	STEP >= 0; 		
-			for (int i=0; i < N; i++) {
+			for (int i=0; i < N ; i++) { 
 				leftBorder[i] = ad + i * STEP;	
 				
 				if (positiveStep) {		
@@ -292,7 +294,7 @@ implements EuclidianViewAlgo {
 				if (y > min) y = min;						 
 				
 				//	store min/max
-				if (upperSum) y = -y;	
+				if (type == TYPE_UPPERSUM) y = -y;	
 				yval[i] = y; 
 		
 				// add to sum
@@ -300,6 +302,54 @@ implements EuclidianViewAlgo {
 			}							
 			
 			// calc area of rectangles				
+			sum.setValue(cumSum * STEP);	
+			break;
+
+		case TYPE_TRAPEZOIDALSUM:
+
+			if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined() 
+					&& ngeo.isDefined())) 
+				sum.setUndefined();
+					
+			fun = f.getRealRootFunctionY();				
+			ad = a.getDouble();
+			bd = b.getDouble();		 
+			 
+			ints = n.getDouble();		
+			if (ints < 1) {
+				sum.setUndefined();
+				return;
+			} else if (ints > MAX_RECTANGLES) {
+				N = MAX_RECTANGLES;
+			} else {
+				N = (int) Math.round(ints);
+			}
+			STEP = (bd - ad) / N;	 		
+			
+
+			
+			// calc minimum in every interval		
+			if (yval == null || yval.length < N+1) {// N+1 for trapezoids
+				yval = new double[N+1]; 			// N+1 for trapezoids
+				leftBorder = new double[N+1];		// N+1 for trapezoids
+			}				
+
+		
+			cumSum = 0;
+			
+			for (int i=0; i < N+1 ; i++) { // N+1 for trapezoids
+				leftBorder[i] = ad + i * STEP;	
+				
+
+				yval[i] = fun.evaluate(leftBorder[i]);
+	
+				cumSum += yval[i];	
+			}							
+			
+			// calc area of rectangles	
+			
+			cumSum-=(yval[0] + yval[N])/2;
+			//for (int i=0; i < N+1 ; i++) cumSum += yval[i];
 			sum.setValue(cumSum * STEP);	
 			break;
 			
@@ -436,5 +486,14 @@ implements EuclidianViewAlgo {
 	public String toString() {
 		return getCommandDescription();
 	}
-
+	
+	public boolean useTrapeziums() {
+		switch (type)
+		{
+		case TYPE_TRAPEZOIDALSUM:
+			return true;
+		default :
+			return false;
+		}
+	}
 }

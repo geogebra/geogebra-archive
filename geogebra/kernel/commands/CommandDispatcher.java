@@ -259,7 +259,9 @@ public class CommandDispatcher {
     	cmdTable.put("ToText", new CmdToText(kernel));    
     	
     	cmdTable.put("BarChart", new CmdBarChart(kernel));    	
-    	cmdTable.put("Histogram", new CmdHistogram(kernel));    	
+    	cmdTable.put("Histogram", new CmdHistogram(kernel));   
+    	cmdTable.put("TrapezoidalSum", new CmdTrapezoidalSum(kernel));   
+    	
     }
 
 
