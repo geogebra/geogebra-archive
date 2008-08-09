@@ -48,6 +48,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -123,6 +124,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
         table.setRowSelectionAllowed(true);
         table.setGridColor(Color.lightGray);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        
+        
 
         // header
         JTableHeader header = table.getTableHeader();
@@ -771,9 +774,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		public HeaderRenderer() {
             setOpaque(true);
-            setForeground(UIManager.getColor("TableHeader.foreground"));
-            setBackground(UIManager.getColor("TableHeader.background"));
-            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            //setForeground(UIManager.getColor("TableHeader.foreground"));
+            //setBackground(UIManager.getColor("TableHeader.background"));
+            //setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            // better for Macs?
+            setForeground(Color.black);
+            setBackground(new Color(212,208,200));
+            setBorder(BorderFactory.createBevelBorder(0));
+          		    
         }
 
         public Component getTableCellRendererComponent(
