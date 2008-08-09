@@ -23,7 +23,10 @@ public class ContextMenu
 	protected static int column2 = -1;
 	protected static boolean[] selected = null;
 	
-	protected static JPopupMenu initMenu(Application app) {
+	private static Application app;
+	
+	protected static JPopupMenu initMenu(Application app2) {
+		app=app2;
 		JPopupMenu menu = new JPopupMenu();
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
    	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
@@ -193,8 +196,12 @@ public class ContextMenu
  						String row = "{";
 		  	   	 		for (int i = row1; i <= row2; ++ i) {
 		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
-		 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+		 	   	 			if (v2 != null) {
 		 	   	 				row += v2.getLabel() + ",";
+		 	   	 			}
+		 	   	 			else {
+		 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(j,i)));
+		 	   		 	   	 	return;
 		 	   	 			}
 		 	   	 		}
 		  	   	 		row = removeComma(row);
@@ -209,6 +216,7 @@ public class ContextMenu
 	
  			} catch (Exception ex) {
  				Application.debug("creating matrix failed "+text);
+ 				ex.printStackTrace();
  			} finally {
  				table.kernel.storeUndoInfo();
  			}
@@ -227,10 +235,14 @@ public class ContextMenu
 			 			text=getNextListName()+" = {";
 	 					for (int j = column1; j <= column2; ++ j) {
 			 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, row1);
-			 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+			 	   	 			if (v2 != null) {
 			 	   	 				text += v2.getLabel() + ",";
 			 	   	 			}
-	 					}
+			 	   	 			else {
+			 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(j,row1)));
+			 	   		 	   	 	return;
+			 	   	 			}
+				}
 	 					
 		  	   	 		text = removeComma(text)+ "}";
 	 					
@@ -243,8 +255,12 @@ public class ContextMenu
 		 			text=getNextListName()+" = {";
 						for (int j = row1; j <= row2; ++ j) {
 		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, column1, j);
-		 	   	 			if (v2 != null &&  v2.isGeoNumeric()) {
+		 	   	 			if (v2 != null) {
 		 	   	 				text += v2.getLabel() + ",";
+		 	   	 			}
+		 	   	 			else {
+		 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(column1,j)));
+		 	   		 	   	 	return;
 		 	   	 			}
 						}
 						

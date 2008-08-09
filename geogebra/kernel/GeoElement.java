@@ -1276,9 +1276,9 @@ final public boolean hasOnlyFreeInputPoints() {
 	//        return ret;
 	//    }
 	// Cong Liu
-	public static String getSpreadsheetCellName(int i, int j) {
-		++j;
-		return getSpreadsheetColumnName(i) + j;
+	public static String getSpreadsheetCellName(int column, int row) {
+		++row;
+		return getSpreadsheetColumnName(column) + row;
 	}
 		
 	public static String getSpreadsheetColumnName(int i) {

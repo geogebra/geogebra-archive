@@ -1567,7 +1567,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	showErrorDialog(e.getLocalizedMessage());
     }
     
-    private void showErrorDialog(String msg) {
+    public void showErrorDialog(String msg) {
     	if (!isErrorDialogsActive) return;
     	
     	 JOptionPane.showConfirmDialog(
