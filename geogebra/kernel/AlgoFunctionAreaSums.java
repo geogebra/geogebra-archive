@@ -420,7 +420,6 @@ implements EuclidianViewAlgo {
 				leftBorder = new double[N];
 			}				
 			
-			//cumSum = 0;
 			for (int i=0; i < N-1; i++) {
 				
 				GeoElement geo = list1.get(i);
@@ -428,7 +427,6 @@ implements EuclidianViewAlgo {
 					if (geo.isNumberValue()) a = (NumberValue)geo;
 					else { sum.setUndefined(); return; }
 				}
-				//if (i == N-1) b = (NumberValue)geo;
 				if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
 				else { sum.setUndefined(); return; }
 				
@@ -436,7 +434,6 @@ implements EuclidianViewAlgo {
 				if (geo.isGeoNumeric())	yval[i] = ((GeoNumeric)geo).getDouble(); 
 				else { sum.setUndefined(); return; }
 				
-				//if (i != 0) cumSum += leftBorder[i] * yval[i];
 			}
 			
 			yval[N-1] = yval[N-2];
