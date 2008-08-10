@@ -334,7 +334,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
 		cbShowAuxiliaryObjects.setSelected(app.getAlgebraView() == null
 				|| app.getAlgebraView().showAuxiliaryObjects());
-		cbShowAuxiliaryObjects.setEnabled(app.showAlgebraView());
 		menu.add(cbShowAuxiliaryObjects);
 
 		cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);				
