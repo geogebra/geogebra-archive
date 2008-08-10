@@ -121,6 +121,7 @@ public class RelativeCopy {
 					return true;
 				}			
 			}
+			
 			String msg = 
 				"sx1 = " + sx1 + "\r\n" +
 				"sy1 = " + sy1 + "\r\n" +
@@ -130,9 +131,10 @@ public class RelativeCopy {
 				"dy1 = " + dy1 + "\r\n" +
 				"dx2 = " + dx2 + "\r\n" +
 				"dy2 = " + dy2 + "\r\n";
-			throw new RuntimeException("Error state:\r\n" + msg);
+			throw new RuntimeException("Error from RelativeCopy.doCopy:\r\n" + msg);
 		} catch (Exception ex) {
-			kernel.getApplication().showError(ex.getMessage());
+			//kernel.getApplication().showError(ex.getMessage());
+			ex.printStackTrace();
 			return false;
 		} finally {
 			kernel.storeUndoInfo();

@@ -87,7 +87,8 @@ public class CopyPasteCut {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
-				kernel.getApplication().showError(ex.getMessage());
+				ex.printStackTrace();
+				//kernel.getApplication().showError(ex.getMessage());
 				// Util.handleException(table, ex);
 			}
 		}
@@ -96,7 +97,8 @@ public class CopyPasteCut {
 				pasteInternal(column1, row1);
 			} catch (Exception ex) {
 				ex.printStackTrace(System.out);
-				kernel.getApplication().showError(ex.getMessage());
+				//kernel.getApplication().showError(ex.getMessage());
+				pasteExternal(buf, column1, row1);
 				// Util.handleException(table, ex);
 			}
 		}
@@ -261,8 +263,9 @@ public class CopyPasteCut {
 				createPointsAndAList2(values2);
 			}
 		} catch (Exception ex) {
-			kernel.getApplication().showError(ex.getMessage());
+			//kernel.getApplication().showError(ex.getMessage());
 			//Util.handleException(table, ex);
+			ex.printStackTrace();
 		} finally {
 			kernel.getApplication().setDefaultCursor();
 		}

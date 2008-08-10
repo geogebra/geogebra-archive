@@ -124,8 +124,8 @@ public class MyCellEditor extends DefaultCellEditor {
 			kernel.storeUndoInfo();
 		} catch (Exception ex) {
 			// show GeoGebra error dialog
-			kernel.getApplication().showError(ex.getMessage());
-			
+			//kernel.getApplication().showError(ex.getMessage());
+			ex.printStackTrace();
 			//Util.handleException(table, ex);
 			return false;
 		}
