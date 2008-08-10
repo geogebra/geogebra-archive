@@ -555,6 +555,9 @@ public class MyXMLio {
         // save euclidianView settings
         sb.append(app.getEuclidianView().getXML());  
         
+        // save spreadsheetView settings
+        if (!app.disableSpreadsheet) sb.append(app.getSpreadsheetView().getXML());  
+        
         // save construction
         sb.append(kernel.getConstructionXML());  
         

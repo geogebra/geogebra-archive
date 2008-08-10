@@ -333,10 +333,10 @@ public abstract class Application implements	KeyEventDispatcher {
     protected JSplitPane sp;
     private JSplitPane sp2;
     private DividerChangeListener spChangeListener;
-    protected int initSplitDividerLocationHOR = 250; // init value
-    protected int initSplitDividerLocationVER = 300; // init value
-    private int initSplitDividerLocationHOR2 = 650; // init value
-    private int initSplitDividerLocationVER2 = 400; // init value
+    protected int initSplitDividerLocationHOR2 = 250; // init value
+    protected int initSplitDividerLocationVER2 = 300; // init value
+    protected int initSplitDividerLocationHOR = 650; // init value
+    protected int initSplitDividerLocationVER = 400; // init value
     protected boolean horizontalSplit = true; // 
     
     private ArrayList selectedGeos = new ArrayList();
@@ -752,12 +752,12 @@ public abstract class Application implements	KeyEventDispatcher {
             if (horizontalSplit) {
                 sp2 =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 		new JScrollPane(algebraView), eup);
-                sp2.setDividerLocation(initSplitDividerLocationHOR);                
+                sp2.setDividerLocation(initSplitDividerLocationHOR2);                
             }               
             else {
                 sp2 =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 		eup, new JScrollPane(algebraView));
-                sp2.setDividerLocation(initSplitDividerLocationVER);
+                sp2.setDividerLocation(initSplitDividerLocationVER2);
             }          
             
             if (spChangeListener == null)
@@ -774,12 +774,12 @@ public abstract class Application implements	KeyEventDispatcher {
             if (horizontalSplit) {
                 sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         cp2, spreadsheetView);
-                sp.setDividerLocation(initSplitDividerLocationHOR2);                
+                sp.setDividerLocation(initSplitDividerLocationHOR);                
             }               
             else {
                 sp =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                              cp2, spreadsheetView);
-                sp.setDividerLocation(initSplitDividerLocationVER2);
+                sp.setDividerLocation(initSplitDividerLocationVER);
             }      
             
             if (spChangeListener == null)
@@ -1009,6 +1009,10 @@ public abstract class Application implements	KeyEventDispatcher {
 
     public EuclidianView getEuclidianView() {
         return euclidianView;
+    }
+
+    public SpreadsheetView getSpreadsheetView() {
+        return spreadsheetView;
     }
 
     public AlgebraView getAlgebraView() {    	
@@ -2551,19 +2555,23 @@ public abstract class Application implements	KeyEventDispatcher {
     }
 
     public void setSplitDividerLocationHOR(int loc) {       
-        initSplitDividerLocationHOR = loc;              
+        initSplitDividerLocationHOR = loc;   
+        //debug(loc+"");
     }
     
     public void setSplitDividerLocationVER(int loc) {       
         initSplitDividerLocationVER = loc;          
+        //debug(loc+"");
     }
     
     public void setSplitDividerLocationHOR2(int loc) {       
         initSplitDividerLocationHOR2 = loc;              
+        //debug(loc+"");
     }
     
     public void setSplitDividerLocationVER2(int loc) {       
         initSplitDividerLocationVER2 = loc;          
+        //debug(loc+"");
     }
     
     public void setHorizontalSplit(boolean flag) {
@@ -4167,17 +4175,17 @@ public abstract class Application implements	KeyEventDispatcher {
         	// first split pane
         	if (e.getSource() == sp) {        		           
 	            if (sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-	                initSplitDividerLocationHOR = newDivLoc;
+               	 	setSplitDividerLocationHOR(newDivLoc);
 	            else 
-	                initSplitDividerLocationVER = newDivLoc;
+               	 	setSplitDividerLocationVER(newDivLoc);
 	            isSaved = false;
         	} 
         	// second split pane
         	else if (e.getSource() == sp2){        		                
                  if (sp2.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-                     initSplitDividerLocationHOR2 = newDivLoc;
+                	 setSplitDividerLocationHOR2(newDivLoc);
                  else 
-                     initSplitDividerLocationVER2 = newDivLoc;
+                	 setSplitDividerLocationVER2(newDivLoc);
                  isSaved = false;                                  
         	}
 

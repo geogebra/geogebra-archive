@@ -46,6 +46,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -70,6 +71,7 @@ public class MyXMLHandler implements DocHandler {
     private static final int MODE_GEOGEBRA = 1;
     private static final int MODE_MACRO = 50;
     private static final int MODE_EUCLIDIAN_VIEW = 100;
+    private static final int MODE_SPREADSHEET_VIEW = 150;
     private static final int MODE_KERNEL = 200;
     private static final int MODE_CONSTRUCTION = 300;
     private static final int MODE_CONST_GEO_ELEMENT = 301;
@@ -194,6 +196,10 @@ public class MyXMLHandler implements DocHandler {
                 startEuclidianViewElement(eName, attrs);
                 break;
 
+            case MODE_SPREADSHEET_VIEW :
+                startSpreadsheetViewElement(eName, attrs);
+                break;
+
             case MODE_KERNEL :
                 startKernelElement(eName, attrs);
                 break;
@@ -262,11 +268,16 @@ public class MyXMLHandler implements DocHandler {
         throws SAXException {
         //String eName = qName;
         switch (mode) {
-            case MODE_EUCLIDIAN_VIEW :
-                if (eName.equals("euclidianView"))
-                    mode = MODE_GEOGEBRA;
-                break;
-
+	        case MODE_EUCLIDIAN_VIEW :
+	            if (eName.equals("euclidianView"))
+	                mode = MODE_GEOGEBRA;
+	            break;
+	
+	        case MODE_SPREADSHEET_VIEW :
+	            if (eName.equals("spreadsheetView"))
+	                mode = MODE_GEOGEBRA;
+	            break;
+	
             case MODE_KERNEL :
                 if (eName.equals("kernel"))
                     mode = MODE_GEOGEBRA;
@@ -304,6 +315,8 @@ public class MyXMLHandler implements DocHandler {
             mode = MODE_EUCLIDIAN_VIEW;
         } else if (eName.equals("kernel")) {
             mode = MODE_KERNEL;           
+        } else if (eName.equals("spreadsheetView")) {
+            mode = MODE_SPREADSHEET_VIEW;           
         } else if (eName.equals("gui")) {
             mode = MODE_GUI;
         } else if (eName.equals("macro")) {
@@ -396,6 +409,28 @@ public class MyXMLHandler implements DocHandler {
             Application.debug("error in <euclidianView>: " + eName);
     }
 
+    // ====================================
+    //   <SpreadsheetView>    
+    //  ====================================
+    private void startSpreadsheetViewElement(String eName, LinkedHashMap attrs) {
+        boolean ok = true;
+        SpreadsheetView ev = app.getSpreadsheetView();
+        
+        switch (eName.charAt(0)) {
+        	case 's':
+        		if (eName.equals("size")) {
+                    ok = handleSpreadsheetSize(ev, attrs);
+                    break;
+                }
+        		
+        	default:
+        		Application.debug("unknown tag in <spreadsheetView>: " + eName);
+        }                       
+           
+        if (!ok)
+            Application.debug("error in <spreadsheetView>: " + eName);
+    }
+
     private boolean handleCoordSystem(EuclidianView ev, LinkedHashMap attrs) {
         try {
             double xZero = Double.parseDouble((String) attrs.get("xZero"));
@@ -482,6 +517,19 @@ public class MyXMLHandler implements DocHandler {
     		int width = Integer.parseInt((String) attrs.get("width"));
     		int height = Integer.parseInt((String) attrs.get("height"));    		    		
     		ev.setPreferredSize(new Dimension(width, height));    		
+    		return true;	
+    	} catch (Exception e) {
+    		return false;
+    	}  
+    }
+    
+    private boolean handleSpreadsheetSize(SpreadsheetView spreadsheet, LinkedHashMap attrs) {
+    	if (app.isApplet()) return true;
+    	
+    	try {    		
+    		int width = Integer.parseInt((String) attrs.get("width"));
+    		int height = Integer.parseInt((String) attrs.get("height"));    		    		
+    		spreadsheet.setPreferredSize(new Dimension(width, height));    		
     		return true;	
     	} catch (Exception e) {
     		return false;
@@ -830,6 +878,18 @@ public class MyXMLHandler implements DocHandler {
                 app.setSplitDividerLocationVER(locVert);        
             }
             
+            String strLoc2 = (String) attrs.get("loc2");
+            if (strLoc2 != null) {
+                int loc2 = Integer.parseInt(strLoc2);
+                app.setSplitDividerLocationHOR2(loc2);        
+            }
+            
+            String strLocVert2 = (String) attrs.get("locVertical2");
+            if (strLocVert2 != null) {
+                int locVert2 = Integer.parseInt(strLocVert2);
+                app.setSplitDividerLocationVER2(locVert2);        
+            }
+
             String strHorizontal = (String) attrs.get("horizontal");
             boolean hor = !"false".equals(strHorizontal);
             app.setHorizontalSplit(hor);
