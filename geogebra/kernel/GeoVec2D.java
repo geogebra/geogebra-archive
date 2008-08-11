@@ -274,6 +274,24 @@ implements VectorValue {
         c.y = a.y + b.y;
     }
     
+    /** (xc,yc) = (xa + b , yx)  ie complex + real */
+    final public static void add(GeoVec2D a, NumberValue b, GeoVec2D c) {                                       
+        c.x = a.x + b.getDouble();
+        c.y = a.y;
+    }
+    
+    /** (xc,yc) = (b - xa, -yx)  ie real - complex */
+    final public static void sub(NumberValue b, GeoVec2D a, GeoVec2D c) {                                       
+        c.x = b.getDouble() - a.x;
+        c.y = -a.y;
+    }
+    
+    /** (xc,yc) = (xa - b , yx)  ie complex - real */
+    final public static void sub(GeoVec2D a, NumberValue b, GeoVec2D c) {                                       
+        c.x = a.x - b.getDouble();
+        c.y = a.y;
+    }
+    
      /** returns this - a */
     final public GeoVec2D sub(GeoVec2D a) {
         GeoVec2D res = new GeoVec2D(kernel, 0,0);

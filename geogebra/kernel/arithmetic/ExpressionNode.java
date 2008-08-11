@@ -555,6 +555,18 @@ implements ExpressionValue {
                 GeoVec2D.add(vec, ((VectorValue)rt).getVector(), vec);                                         
                 return vec;
             }     
+            // vector + number (for complex addition)
+            else if (lt.isVectorValue() && rt.isNumberValue()) { 
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.add(vec, ((NumberValue)rt) , vec);                                         
+                return vec;
+            }     
+            // number + vector (for complex addition)
+            else if (lt.isNumberValue() && rt.isVectorValue()) { 
+                vec = ((VectorValue)rt).getVector();
+                GeoVec2D.add(vec, ((NumberValue)lt) , vec);                                         
+                return vec;
+            }     
             // text concatenation (left)
             else if (lt.isTextValue()) { 
                 msb = ((TextValue)lt).getText();
@@ -608,6 +620,18 @@ implements ExpressionValue {
                 GeoVec2D.sub(vec, ((VectorValue)rt).getVector(), vec);                                         
                 return vec;
             }
+            // vector - number (for complex subtraction)
+            else if (lt.isVectorValue() && rt.isNumberValue()) { 
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.sub(vec, ((NumberValue)rt), vec);                                         
+                return vec;
+            }     
+            // number - vector (for complex subtraction)
+            else if (lt.isNumberValue() && rt.isVectorValue()) { 
+                vec = ((VectorValue)rt).getVector();
+                GeoVec2D.sub(((NumberValue)lt), vec, vec);                                         
+                return vec;
+            }     
             // polynomial - polynomial
             else if (lt.isPolynomialInstance() && rt.isPolynomialInstance()) {                 
                 poly = new Polynomial(kernel, (Polynomial)lt);
