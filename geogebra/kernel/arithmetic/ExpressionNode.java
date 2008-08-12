@@ -732,16 +732,35 @@ implements ExpressionValue {
                     return vec;
                     
             }                
+            // number / vector (complex division Michael Borcherds 2007-12-09)
+            else if (lt.isNumberValue() && rt.isVectorValue()) { 
+                	vec = ((VectorValue)rt).getVector(); // just to initialise vec
+                    GeoVec2D.complexDivide( (NumberValue)lt, ((VectorValue)rt).getVector(), vec);                                         
+                    return vec;
+                    
+            }                
             else { 
                 String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
                 throw new MyError(app, str);
             }
         case COMPLEXMULTIPLY:
             if (lt.isVectorValue() && rt.isVectorValue()) { 
-                    vec = ((VectorValue)lt).getVector();
-                    GeoVec2D.complexMultiply(vec, ((VectorValue)rt).getVector(), vec);                                         
-                    return vec;
-                    
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.complexMultiply(vec, ((VectorValue)rt).getVector(), vec);                                         
+                return vec;
+                
+            }                
+            else if (lt.isNumberValue() && rt.isVectorValue()) { 
+                vec = ((VectorValue)rt).getVector();
+                GeoVec2D.complexMultiply(vec, (NumberValue)lt, vec);                                         
+                return vec;
+                
+            }                
+            else if (rt.isNumberValue() && lt.isVectorValue()) { 
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.complexMultiply(vec, (NumberValue)rt, vec);                                         
+                return vec;
+                
             }                
             else { 
                 String [] str = { "IllegalComplexMultiplication", lt.toString(), strCOMPLEXMULTIPLY, rt.toString() };
