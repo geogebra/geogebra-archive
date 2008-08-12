@@ -65,8 +65,18 @@ public class AlgoToYacasString extends AlgoElement {
     protected final void compute() {    
     	int tempCASPrintForm = kernel.getCASPrintForm();
     	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_YACAS);
-    	//Application.debug(geo.getCommandDescription());
-    	text.setTextString(geo.getCommandDescription());	    	
+    	String geoDef="";
+    	if (geo.isGeoFunction()) {
+     	// get current definition of geo
+    		GeoFunction geoFun = (GeoFunction)geo;
+     		geoDef = geoFun.isIndependent() ? 
+     				geoFun.toValueString() :
+     				geoFun.getFunction().toString();
+    	}
+    	else
+    		geoDef = geo.getCommandDescription();
+    	
+    	text.setTextString(geoDef);	    	
     	kernel.setCASPrintForm(tempCASPrintForm);
     }         
 }

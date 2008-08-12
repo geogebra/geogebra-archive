@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
+
 
 /**
  * Returns the name of a GeoElement as a GeoText.
@@ -59,7 +61,21 @@ public class AlgotoString extends AlgoElement {
     public GeoText getGeoText() { return text; }
     
     // calc the current value of the arithmetic tree
-    protected final void compute() {    	
-    	text.setTextString(geo.getCommandDescription());	    	
+    protected final void compute() {    
+    	int tempCASPrintForm = kernel.getCASPrintForm();
+    	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
+    	String geoDef="";
+    	if (geo.isGeoFunction()) {
+     	// get current definition of geo
+    		GeoFunction geoFun = (GeoFunction)geo;
+     		geoDef = geoFun.isIndependent() ? 
+     				geoFun.toValueString() :
+     				geoFun.getFunction().toString();
+    	}
+    	else
+    		geoDef = geo.getCommandDescription();
+    	
+    	text.setTextString(geoDef);	    	
+    	kernel.setCASPrintForm(tempCASPrintForm);
     }         
 }

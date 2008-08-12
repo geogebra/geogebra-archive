@@ -60,8 +60,6 @@ public class AlgoEval extends AlgoElement {
     protected final void compute() {    
 		GeoElement [] result = kernel.getAlgebraProcessor().
 		processAlgebraCommand(text.getTextString(), false);
-		// return success
-		//bool.setValue(result != null);
 		
 		list.clear();
 		if (result.length > 0)

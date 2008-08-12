@@ -1464,8 +1464,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 				y2 = yZero - y2 / invYscale;
 				int x=(int)Math.min(x1,x2);
 				int y=(int)Math.min(y1,y2);
-				int exportWidth=(int)Math.abs(x1-x2);
-				int exportHeight=(int)Math.abs(y1-y2);
+				int exportWidth=(int)Math.abs(x1-x2) + 2;
+				int exportHeight=(int)Math.abs(y1-y2) + 2;
 				
 				g2d.setClip(0,0,exportWidth,exportHeight);
 				g2d.translate(-x, -y);	
@@ -3697,7 +3697,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			x1 = x1 / invXscale + xZero;
 			x2 = x2 / invXscale + xZero;
 			
-			return (int)Math.abs(x1-x2);
+			return (int)Math.abs(x1-x2) + 2;
 		}		
 		catch (Exception e) {return getWidth();}
 
@@ -3720,7 +3720,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 			y1 = yZero - y1 / invYscale;
 			y2 = yZero - y2 / invYscale;
 
-			return (int)Math.abs(y1-y2);
+			return (int)Math.abs(y1-y2) + 2;
 		}		
 		catch (Exception e) {return getHeight();}
 			
