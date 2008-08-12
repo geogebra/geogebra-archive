@@ -2980,40 +2980,20 @@ public abstract class Application implements	KeyEventDispatcher {
     	}
     } */
 
-    public void showWexbHelp(String cmd) {
-        try {
-        	// TODO convert uppersum to UpperSum
-        	
-        	
-        	
-        	// URL like http://www.geogebra.org/help/docuen/topics/UpperSum.html
-            URL helpURL = new URL("http://www.geogebra.org/help/docu"+currentLocale.toString()+"/topics/"+cmd+".html");
-            showURLinBrowser(helpURL);
-        } catch (MyError e) {           
-            showError(e);
-        } catch (Exception e) {           
-            Application.debug(
-                "openHelp error: " + e.toString() + e.getMessage());
-            showError(e.getMessage());
-        }
-    }    
-    
     public void openHelp(String command) {
+    	String internalCmd = null;
     	
     	if (command != null)
         try { // convert eg uppersum to UpperSum
-         	String internalCmd = translateCommand(command);
+         	internalCmd = translateCommand(command);
             String command2 = getCommand(internalCmd);
             if (command2 != null && command2 != "")
             	command = command2;
         }
         catch (Exception e) {}
         
-        try{
-    	
-        	
-        	
-        	URL helpURL = getHelpURL(currentLocale, command);
+        try{   	
+        	URL helpURL = getHelpURL(currentLocale, command, internalCmd);
             showURLinBrowser(helpURL);
         } catch (MyError e) {           
             showError(e);
@@ -3041,10 +3021,10 @@ public abstract class Application implements	KeyEventDispatcher {
       //  }
     }
 
-    private URL getHelpURL(Locale locale, String command) throws Exception {
+    private URL getHelpURL(Locale locale, String command, String intCommand) throws Exception {
     	 // try to get help for current locale (language + country + variant)
         URL helpURL = getHelpURL(locale.toString(), command);
-        debug(helpURL+"");
+
         if (helpURL != null) {        	
         	return helpURL;
         }
@@ -3069,7 +3049,7 @@ public abstract class Application implements	KeyEventDispatcher {
         */
                 
         // last attempt: try to get English help 
-        helpURL = getHelpURL("en", command);
+        helpURL = getHelpURL("en", intCommand);
         if (helpURL != null) {        	
         	return helpURL;
         }
@@ -3087,14 +3067,11 @@ public abstract class Application implements	KeyEventDispatcher {
     	}
     	else
     	{ // TEST CODE
+    		// URL like http://www.geogebra.org/help/docuen/topics/UpperSum.html
     		strFile = "docu" + languageISOcode + "/topics/" + command + ".html";
     	}
 		String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;  
 		
-		debug(strFile);
-		debug(strURL);
-		
-
 		if (MAC_OS) {
         	int i = codebase.getPath().lastIndexOf("/Java/");
         	if (i > -1) strFile = codebase.getPath().substring(0, i) + "/Help/" + strFile;
