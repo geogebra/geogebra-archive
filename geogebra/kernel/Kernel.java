@@ -1294,6 +1294,39 @@ public class Kernel {
 	}
 	
 	/** 
+	 * ToYacasString[] of geo.
+	 */
+	final public GeoText ToYacasString(
+		String label,
+		GeoElement geo) {
+		AlgoToYacasString algo = new AlgoToYacasString(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * EvalYacas[] of string.
+	 */
+	final public GeoText EvalYacas(
+		String label,
+		GeoText text) {
+		AlgoEvalYacas algo = new AlgoEvalYacas(cons, label, text);
+		GeoText t = algo.getResult();
+		return t;
+	}
+	
+	/** 
+	 * Eval[] of string.
+	 */
+	final public GeoElement Eval(
+		String label,
+		GeoText text) {
+		AlgoEval algo = new AlgoEval(cons, label, text);
+		GeoElement t = algo.getResult();
+		return t;
+	}
+	
+	/** 
 	 * toLaTeX of geo.
 	 */
 	final public GeoText toLaTeX(
