@@ -991,7 +991,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.openHelp();
+						app.openHelp(null);
 					}
 				};
 				runner.start();

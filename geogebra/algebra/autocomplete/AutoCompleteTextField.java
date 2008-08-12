@@ -142,7 +142,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
      
             case KeyEvent.VK_F1:
                 updateCurrentWord();
-                showCommandHelp();
+                showCommandHelp(false);
+                break;          
+
+            case KeyEvent.VK_F4:
+                updateCurrentWord();
+                showCommandHelp(true);
                 break;          
 
             default:                                
@@ -350,7 +355,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
      /**
       * shows dialog with syntax info for current command
       */
-     private void showCommandHelp() {   
+     private void showCommandHelp(boolean goToWebManual) {   
          // show help for current command (current word)
          String cmd = getCurrentWord();
          String help = getCmdSyntax(cmd);
@@ -370,9 +375,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         
          // show help if available
          if (help != null) {
-             app.showHelp(help);
+        	 if (goToWebManual) app.openHelp(cmd); // TEST CODE
+        	 else app.showHelp(help); // ORIGINAL CODE
          } else {
-             app.openHelp();
+             app.openHelp(null);
          }
      }
 

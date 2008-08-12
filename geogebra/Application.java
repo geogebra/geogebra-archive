@@ -2980,9 +2980,40 @@ public abstract class Application implements	KeyEventDispatcher {
     	}
     } */
 
-    public void openHelp() {
+    public void showWexbHelp(String cmd) {
         try {
-            URL helpURL = getHelpURL(currentLocale);
+        	// TODO convert uppersum to UpperSum
+        	
+        	
+        	
+        	// URL like http://www.geogebra.org/help/docuen/topics/UpperSum.html
+            URL helpURL = new URL("http://www.geogebra.org/help/docu"+currentLocale.toString()+"/topics/"+cmd+".html");
+            showURLinBrowser(helpURL);
+        } catch (MyError e) {           
+            showError(e);
+        } catch (Exception e) {           
+            Application.debug(
+                "openHelp error: " + e.toString() + e.getMessage());
+            showError(e.getMessage());
+        }
+    }    
+    
+    public void openHelp(String command) {
+    	
+    	if (command != null)
+        try { // convert eg uppersum to UpperSum
+         	String internalCmd = translateCommand(command);
+            String command2 = getCommand(internalCmd);
+            if (command2 != null && command2 != "")
+            	command = command2;
+        }
+        catch (Exception e) {}
+        
+        try{
+    	
+        	
+        	
+        	URL helpURL = getHelpURL(currentLocale, command);
             showURLinBrowser(helpURL);
         } catch (MyError e) {           
             showError(e);
@@ -3010,9 +3041,10 @@ public abstract class Application implements	KeyEventDispatcher {
       //  }
     }
 
-    private URL getHelpURL(Locale locale) throws Exception {
+    private URL getHelpURL(Locale locale, String command) throws Exception {
     	 // try to get help for current locale (language + country + variant)
-        URL helpURL = getHelpURL(locale.toString());
+        URL helpURL = getHelpURL(locale.toString(), command);
+        debug(helpURL+"");
         if (helpURL != null) {        	
         	return helpURL;
         }
@@ -3037,7 +3069,7 @@ public abstract class Application implements	KeyEventDispatcher {
         */
                 
         // last attempt: try to get English help 
-        helpURL = getHelpURL("en");
+        helpURL = getHelpURL("en", command);
         if (helpURL != null) {        	
         	return helpURL;
         }
@@ -3046,12 +3078,24 @@ public abstract class Application implements	KeyEventDispatcher {
         throw new Exception("HelpNotFound");
     }
     
-    private URL getHelpURL(String languageISOcode)  {
+    private URL getHelpURL(String languageISOcode, String command)  {
     	// try to get help for given language
-        String strFile = "docu" + languageISOcode + "/index.html";
-        String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;
-        
-        if (MAC_OS) {
+    	String strFile;
+    	if (command == null)
+    	{ // ORIGINAL CODE
+    		strFile = "docu" + languageISOcode + "/index.html";
+    	}
+    	else
+    	{ // TEST CODE
+    		strFile = "docu" + languageISOcode + "/topics/" + command + ".html";
+    	}
+		String strURL = GEOGEBRA_WEBSITE + "help/" + strFile;  
+		
+		debug(strFile);
+		debug(strURL);
+		
+
+		if (MAC_OS) {
         	int i = codebase.getPath().lastIndexOf("/Java/");
         	if (i > -1) strFile = codebase.getPath().substring(0, i) + "/Help/" + strFile;
         }

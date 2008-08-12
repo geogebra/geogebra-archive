@@ -849,7 +849,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.openHelp();
+						app.openHelp(null);
 					}
 				};
 				runner.start();
