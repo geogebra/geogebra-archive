@@ -46,6 +46,7 @@ implements EuclidianViewAlgo {
 	public static final int TYPE_BARCHART = 2;
 	public static final int TYPE_HISTOGRAM = 3;
 	public static final int TYPE_TRAPEZOIDALSUM = 4;
+	public static final int TYPE_BOXPLOT = 5;
 	
 	// tolerance for parabolic interpolation
 	private static final double TOLERANCE = 1E-7;
@@ -129,6 +130,30 @@ implements EuclidianViewAlgo {
 		compute();
 		sum.setLabel(label);
 		}
+			
+			
+			// BOXPLOT
+			public AlgoFunctionAreaSums(Construction cons, String label,  
+					   GeoList list1, NumberValue a) {
+		
+		super(cons);
+		
+		type = TYPE_BOXPLOT;
+		
+		extrFinder = cons.getExtremumFinder();
+		
+
+		this.list1 = list1;
+		this.a=a;
+		ageo = a.toGeoElement();
+		bgeo = a.toGeoElement(); // dummy
+
+		
+		sum = new GeoNumeric(cons); // output
+		setInputOutput(); // for AlgoElement	
+		compute();
+		sum.setLabel(label);
+		}
 
 	final public void euclidianViewUpdate() {
 		xVisibleWidth = kernel.getXmax() - kernel.getXmin();
@@ -165,6 +190,11 @@ implements EuclidianViewAlgo {
 			input = new GeoElement[2];
 			input[0] = list1;		
 			input[1] = list2;		
+			break;
+		case TYPE_BOXPLOT:
+			input = new GeoElement[2];
+			input[0] = ageo;		
+			input[1] = list1;		
 			break;
 
 		}
@@ -451,8 +481,50 @@ implements EuclidianViewAlgo {
 			sum.setValue(cumSum);	
 				
 			break;
-		}
+	case TYPE_BOXPLOT:
+	if (!list1.isDefined()) 
+	{
+		sum.setUndefined();
+		return;
 	}
+	
+	N = list1.size();
+	
+	if (N != 5)
+	{
+		sum.setUndefined();
+		return;
+	}
+					
+ 
+
+	if (yval == null || yval.length < N) {
+		yval = new double[N];
+		leftBorder = new double[N];
+	}				
+	
+	for (int i=0; i < N; i++) {
+		
+		geo = list1.get(i);
+		if (i == 0) {
+			if (geo.isNumberValue()) b = (NumberValue)geo; // dummy value, not used
+			else { sum.setUndefined(); return; }
+		}
+		if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
+		else { sum.setUndefined(); return; }
+		
+		yval[i] = 1.0; 
+		
+		
+	}
+
+	cumSum = 0;
+	
+	sum.setValue(cumSum);	
+		
+	break;
+}
+}
 	
 	public String toString() {
 		return getCommandDescription();
@@ -471,6 +543,15 @@ implements EuclidianViewAlgo {
 		switch (type)
 		{
 		case TYPE_HISTOGRAM:
+			return true;
+		default :
+			return false;
+		}
+	}
+	public boolean isBoxPlot() {
+		switch (type)
+		{
+		case TYPE_BOXPLOT:
 			return true;
 		default :
 			return false;

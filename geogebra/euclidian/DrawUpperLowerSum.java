@@ -37,6 +37,7 @@ public class DrawUpperLowerSum extends Drawable {
     private double [] coords = new double[2];
     private boolean trapeziums;
     private boolean histogram;
+    private boolean boxplot;
    
     public DrawUpperLowerSum(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
@@ -48,6 +49,7 @@ public class DrawUpperLowerSum extends Drawable {
     	algo = (AlgoFunctionAreaSums) n.getParentAlgorithm();    	
 		this.trapeziums = algo.useTrapeziums();
 		this.histogram = algo.isHistogram();
+		this.boxplot = algo.isBoxPlot();
         a = algo.getA();
         b = algo.getB();    
         update();
@@ -58,6 +60,12 @@ public class DrawUpperLowerSum extends Drawable {
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(sum);
+		
+		if (boxplot)
+		{
+			updateBoxPlot();
+			return;
+		}
 		
 		// init gp
 		gp.reset();
@@ -130,7 +138,111 @@ public class DrawUpperLowerSum extends Drawable {
 			addLabelOffset();
 		}
     }
+
+    private void updateBoxPlot()
+    {
+		// init gp
+		gp.reset();
+		double aRW = a.getDouble();
+		double bRW = b.getDouble();
+
+		int ax = view.toScreenCoordY(aRW);
+		int bx = view.toScreenCoordX(bRW);
+				
+		// plot upper/lower sum rectangles
+		double [] leftBorder = algo.getLeftBorders();
+		
+		coords[0] = leftBorder[0];						
+		coords[1] = -1 + aRW;
+		view.toScreenCoords(coords);
+		gp.moveTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[0];						
+		coords[1] = 1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[0];						
+		coords[1] = 0 + aRW;
+		view.toScreenCoords(coords);
+		gp.moveTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[1];						
+		coords[1] = 0 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[1];						
+		coords[1] = 1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[3];						
+		coords[1] = 1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[3];						
+		coords[1] = -1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[1];						
+		coords[1] = -1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[1];						
+		coords[1] = 0 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[3];						
+		coords[1] = 0 + aRW;
+		view.toScreenCoords(coords);
+		gp.moveTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[4];						
+		coords[1] = 0 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[4];						
+		coords[1] = 1 + aRW;
+		view.toScreenCoords(coords);
+		gp.moveTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[4];						
+		coords[1] = -1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[2];						
+		coords[1] = 1 + aRW;
+		view.toScreenCoords(coords);
+		gp.moveTo((float)coords[0], (float)coords[1]);
+			
+		coords[0] = leftBorder[2];						
+		coords[1] = -1 + aRW;
+		view.toScreenCoords(coords);
+		gp.lineTo((float)coords[0], (float)coords[1]);
+			
+
+		// gp on screen?		
+		if (!gp.intersects(0,0, view.width, view.height)) {				
+			isVisible = false;
+			return;
+		}		
+
+		if (labelVisible) {
+			xLabel = (ax + bx) / 2 - 6;
+			yLabel = (int) view.yZero - view.fontSize;
+			labelDesc = geo.getLabelDescription();
+			addLabelOffset();
+		}
     
+
+    }
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
         	try {

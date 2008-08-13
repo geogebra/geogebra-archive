@@ -3446,6 +3446,40 @@ final public    GeoElement[] process(Command c) throws MyError {
 }
 }
 /*
+ * BarChart[ <Number>, <Number>, <List> ]
+ */
+class CmdBoxPlot extends CommandProcessor {
+	
+	public CmdBoxPlot (Kernel kernel) {
+		super(kernel);
+	}
+	
+final public    GeoElement[] process(Command c) throws MyError {
+    int n = c.getArgumentNumber();
+    boolean[] ok = new boolean[n];
+    GeoElement[] arg;
+
+   switch (n) {
+        case 2 :
+            arg = resArgs(c);
+            if ((ok[0] = (arg[0] .isNumberValue()))
+                && (ok[1] = (arg[1] .isGeoList()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.BoxPlot(
+                            c.getLabel(),
+                            (NumberValue) arg[0],
+                            (GeoList)arg[1])};
+                return ret;
+            } else
+				throw argErr(app, c.getName(), null);
+
+        default :
+            throw argNumErr(app, c.getName(), n);
+    }
+}
+}
+/*
  * Histogram[ <List>, <List> ]
  */
 class CmdHistogram extends CommandProcessor {
