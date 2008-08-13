@@ -887,6 +887,10 @@ public class AlgebraProcessor {
 	    	// then we use the Euler number    	
 	    	if ("e".equals(rightVar)) {	    		
 	    		geoRight = new GeoNumeric(cons,  Math.E);
+				//special case: label "i" and no GeoElement exists with this name
+		    	// then we use (0,1) ie sqrt(-1)	
+	    	} else if ("i".equals(rightVar)) {
+	    		geoRight = new GeoPoint(cons, "i", 0.0d, 1.0d, 1.0d);
 	    	} else {
 				String[] str = { "UndefinedVariable", rightVar };
 				throw new MyError(app, str);

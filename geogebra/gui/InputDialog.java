@@ -66,7 +66,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		inputHandler = handler;
 		this.initString = initString;			
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText);
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText, false);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
 		
@@ -83,12 +83,12 @@ public class InputDialog extends JDialog implements ActionListener,
 	}
 	
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows,
-			boolean specialChars, boolean greekLetters, boolean selectInitText) {
+			boolean specialChars, boolean greekLetters, boolean selectInitText, boolean showDisplayChars) {
 		setTitle(title);
 		setResizable(false);		
 
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters);	
+		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters, showDisplayChars );	
 				
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {

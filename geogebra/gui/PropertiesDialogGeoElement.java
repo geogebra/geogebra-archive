@@ -4703,9 +4703,9 @@ class ColorFunctionPanel
 				);
 		
 		// non auto complete input panel
-		InputPanel inputPanelR = new InputPanel(null, app, 1, 7, false, false);
-		InputPanel inputPanelG = new InputPanel(null, app, 1, 7, false, false);
-		InputPanel inputPanelB = new InputPanel(null, app, 1, 7, false, false);
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 7, false, false, false);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 7, false, false, false);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 7, false, false, false);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
@@ -4871,7 +4871,7 @@ class NamePanel
 		nameInputHandler = new RenameInputHandler(app, null, false);
 		
 		// non auto complete input panel
-		inputPanelName = new InputPanel(null, app, 1, 10, false, true);
+		inputPanelName = new InputPanel(null, app, 1, 10, false, true, false);
 		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
 		tfName.setAutoComplete(false);		
 		tfName.addActionListener(this);
@@ -4883,14 +4883,14 @@ class NamePanel
 //		 Michael Borcherds 2007-12-31 END
 	
 		// definition field: non auto complete input panel
-		inputPanelDef = new InputPanel(null, app, 1, 20, true, true);
+		inputPanelDef = new InputPanel(null, app, 1, 20, true, true, false);
 		tfDefinition = (AutoCompleteTextField) inputPanelDef.getTextComponent();
 		tfDefinition.setAutoComplete(false);		
 		tfDefinition.addActionListener(this);
 		tfDefinition.addFocusListener(this);
 
 		// caption field: non auto complete input panel
-		inputPanelCap = new InputPanel(null, app, 1, 20, true, true);
+		inputPanelCap = new InputPanel(null, app, 1, 20, true, true, false);
 		tfCaption = (AutoCompleteTextField) inputPanelCap.getTextComponent();
 		tfCaption.setAutoComplete(false);		
 		tfCaption.addActionListener(this);

@@ -20,9 +20,16 @@ public class InputPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static String [] specialChars = { 	
-		"\u00b0", // degree	
-		"\u00b2",  // exponents ^2 
+	private final static String [] displayChars = { 	
+		"\u2245", // congruent	
+		"\u2261",  // equivalent
+		"\u2221",  // angle
+		"\u2206"  // triangle
+	};
+		
+		private final static String [] specialChars = { 	
+			"\u00b0", // degree	
+			"\u00b2",  // exponents ^2 
 		"\u00b3",  // exponents ^3 
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
@@ -59,7 +66,7 @@ public class InputPanel extends JPanel {
 		"\u03c9"
 	};
 	
-	public static String [] greekUpperCase = {
+	public final static String [] greekUpperCase = {
 		"\u0393", // Gamma
 		"\u0394", // Delta
 		"\u0398", // Theta
@@ -76,13 +83,13 @@ public class InputPanel extends JPanel {
 	private JComboBox cbSpecialChars, cbGreekLetters;
 	
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
-		this(initText, app, 1, columns, true, true);
+		this(initText, app, 1, columns, true, true, false);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
 		atf.setAutoComplete(autoComplete);
 	}		
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
-						boolean showGreekLetters) {
+						boolean showGreekLetters, boolean showDisplayChars) {
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);
 		else
@@ -100,6 +107,11 @@ public class InputPanel extends JPanel {
 			cbSpecialChars.addItem(specialChars[i]);
 		}
 		
+		if (showDisplayChars)
+			for (int i=0; i < displayChars.length; i++) {
+				cbSpecialChars.addItem(displayChars[i]);
+			}
+
 		// set up greek letter combo box
 		for (int i=0; i < greekLowerCase.length; i++) {
 			cbGreekLetters.addItem(greekLowerCase[i]);
