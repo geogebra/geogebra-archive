@@ -308,6 +308,38 @@ public class AlgebraProcessor {
 	}
 
 	/**
+	 * Parses given String str and tries to evaluate it to a GeoNumeric
+	 * Returns null if something went wrong.
+	 * Michael Borcherds 2008-08-13
+	 */
+	public GeoNumeric evaluateToNumeric(String str) {
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+
+		GeoNumeric func = null;
+		try {
+			ValidExpression ve = parser.parse(str);		
+			GeoElement [] temp = processValidExpression(ve);
+			func = (GeoNumeric) temp[0];
+		} catch (CircularDefinitionException e) {
+			Application.debug("CircularDefinition");
+			app.showError("CircularDefinition");
+		} catch (Exception e) {		
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} catch (MyError e) {
+			e.printStackTrace();
+			app.showError(e);
+		} catch (Error e) {
+			e.printStackTrace();
+			app.showError("InvalidInput");
+		} 
+		
+		cons.setSuppressLabelCreation(oldMacroMode);
+		return func;
+	}
+
+	/**
 	 * Parses given String str and tries to evaluate it to a GeoPoint.
 	 * Returns null if something went wrong.
 	 */

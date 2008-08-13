@@ -3,6 +3,7 @@ package geogebra.kernel.commands;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
@@ -25,6 +26,13 @@ final public GeoElement[] process(Command c) throws MyError {
                      {
                           kernel.Factor (
                              c.getLabel(), (GeoFunction)arg[0])};
+                 return ret;                
+             }                        
+             else if (ok[0] = (arg[0] .isGeoNumeric())) {
+                 GeoElement[] ret =
+                     {
+                          kernel.Factor (
+                             c.getLabel(), (GeoNumeric)arg[0])};
                  return ret;                
              }                        
               else
