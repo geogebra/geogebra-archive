@@ -56,8 +56,9 @@ ItemListener, WindowListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static String PI_STR = "\u03c0";
-		
+	private static final String PI_STR = "\u03c0";
+	private static final String DEGREE_STR = "\u00b0";
+	
 	//private static final int TEXT_FIELD_COLS = 6;
 	//private static int PREF_FIELD_WIDTH = 100;	
 	
@@ -524,6 +525,7 @@ ItemListener, WindowListener {
 			cbTickStyle.setEditable(false);
 		
 			cbUnitLabel.addItem(null);
+			cbUnitLabel.addItem(DEGREE_STR); // degrees			
 			cbUnitLabel.addItem(PI_STR); // pi				
 			cbUnitLabel.addItem("mm");
 			cbUnitLabel.addItem("cm");
