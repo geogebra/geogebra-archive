@@ -1,13 +1,15 @@
 
 package geogebra.spreadsheet;
 
-import geogebra.kernel.Kernel;
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 
-import javax.swing.JTable;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JTable;
 
 public class RelativeCopy {
 
@@ -213,7 +215,7 @@ public class RelativeCopy {
 			text = value.toValueString();
 		}
 		else {
-			text = value.getDefinitionDescription();
+			text = value.getCommandDescription(); //bugfix was .getDefinitionDescription();
 		}
 		GeoElement[] dependents = getDependentObjects(value);
 		GeoElement[] dependents2 = new GeoElement[dependents.length + 1];
