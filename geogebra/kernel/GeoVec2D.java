@@ -24,6 +24,7 @@ import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.complex.Complex;
 
 import java.util.HashSet;
 
@@ -317,26 +318,42 @@ implements VectorValue {
     }    
    
     /** c = a / b Michael Borcherds 2007-12-09 
-     * TODO rewrite
+     * 
      * */
     final public static void complexDivide(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
     	// NB temporary variables *crucial*: a and c can be the same variable
-    	double x1=a.x,y1=a.y,x2=b.x,y2=b.y;
+    	//double x1=a.x,y1=a.y,x2=b.x,y2=b.y;
     	// complex division
-      c.x = (x1 * x2 + y1 * y2)/(x2 * x2 + y2 * b.y);
-      c.y = (y1 * x2 - x1 * y2)/(x2 * x2 + y2 * b.y);
+      //c.x = (x1 * x2 + y1 * y2)/(x2 * x2 + y2 * b.y);
+      //c.y = (y1 * x2 - x1 * y2)/(x2 * x2 + y2 * b.y);
+      
+      Complex out = new Complex();
+      
+      Complex.over(new Complex(a.x, a.y), new Complex(b.x, b.y), out);
+      
+      c.x = out.getReal();
+      c.y = out.getImag();
+      
     }
     
     /** c = a / b Michael Borcherds 2008-08-12 
-     * TODO rewrite
+     * 
      * */
     final public static void complexDivide(NumberValue a, GeoVec2D b, GeoVec2D c) {                                       
     	// NB temporary variables *crucial*: a and c can be the same variable
-    	double x1=a.getDouble(), x2 = b.x, y2 = b.y;
+    	//double x1=a.getDouble(), x2 = b.x, y2 = b.y;
     	// complex division
-      c.x = (x1 * x2 )/(x2 * x2 + y2 * b.y);
-      c.y = ( - x1 * y2)/(x2 * x2 + y2 * b.y);
-    }
+      //c.x = (x1 * x2 )/(x2 * x2 + y2 * b.y);
+      //c.y = ( - x1 * y2)/(x2 * x2 + y2 * b.y);
+
+    
+      Complex out = new Complex();
+      
+      Complex.over(a.getDouble(), new Complex(b.x, b.y), out);
+      
+      c.x = out.getReal();
+      c.y = out.getImag();
+}
     
     /** c = a * b Michael Borcherds 2007-12-09 */
     final public static void complexMultiply(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
