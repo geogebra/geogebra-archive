@@ -1723,7 +1723,17 @@ public class Kernel {
 	}
 	
 	/** 
-	 * BarChart
+	 * BoxPlot
+	 */
+	final public GeoNumeric BoxPlot(String label, 
+					NumberValue a, GeoList list) {
+		AlgoBoxPlot algo = new AlgoBoxPlot(cons, label, a, list);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
+	 * Histogram
 	 */
 	final public GeoNumeric Histogram(String label, 
 					GeoList list1, GeoList list2) {
@@ -3885,6 +3895,15 @@ public class Kernel {
 	 */
 	final public GeoFunction Factor(String label, GeoFunction func) {		
 		AlgoFactor algo = new AlgoFactor(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
+	 * Factor
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoNumeric Factor(String label, GeoNumeric func) {		
+		AlgoFactorNumeric algo = new AlgoFactorNumeric(cons, label, func);
 		return algo.getResult();			
 	}
 	
