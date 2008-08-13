@@ -36,7 +36,7 @@ public class Assignment extends ValidExpression {
        var = variable;  
        
        // TODO: remove
-       Application.debug("new assignment object: " + variable);
+       //Application.debug("new assignment object: " + variable);
     }
        
     final public String getVariable() { return var; }
