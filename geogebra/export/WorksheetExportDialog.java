@@ -496,8 +496,8 @@ public class WorksheetExportDialog extends JDialog {
 		
 		try {
 			// save construction file
-			// as file_worksheet.ggb
-			String ggbFileName = Application.removeExtension(htmlFile).getName()
+			// as worksheet_file.ggb
+			String ggbFileName = "worksheet_"+Application.removeExtension(htmlFile).getName()
 					+ ".ggb";
 			final File ggbFile = new File(htmlFile.getParent(), ggbFileName);
 			app.getXMLio().writeGeoGebraFile(ggbFile);
