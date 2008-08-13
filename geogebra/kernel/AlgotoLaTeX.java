@@ -62,9 +62,11 @@ public class AlgotoLaTeX extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {    
+    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX));
+    	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();
     	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_LATEX);
     	text.setTextString(geo.getCommandDescription());	    	
-    	kernel.setCASPrintForm(tempCASPrintForm);
+    	kernel.setCASPrintForm(tempCASPrintForm);*/
     }         
 }

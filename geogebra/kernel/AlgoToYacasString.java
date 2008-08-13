@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 
@@ -63,6 +62,10 @@ public class AlgoToYacasString extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {    
+    	
+    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_YACAS));
+    	
+    	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();
     	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_YACAS);
     	String geoDef="";
@@ -77,6 +80,6 @@ public class AlgoToYacasString extends AlgoElement {
     		geoDef = geo.getCommandDescription();
     	
     	text.setTextString(geoDef);	    	
-    	kernel.setCASPrintForm(tempCASPrintForm);
+    	kernel.setCASPrintForm(tempCASPrintForm);*/
     }         
 }

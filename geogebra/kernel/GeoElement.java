@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 
@@ -3092,13 +3093,34 @@ final public boolean hasOnlyFreeInputPoints() {
 	// Michael Borcherds 2008-04-30
 	public abstract boolean isEqual(GeoElement Geo);
 	
-	/*
-	// Michael Borcherds 2008-05-01
-	final public boolean equals(Object obj) {
-	     if (obj instanceof GeoElement) {
-	        return isEqual((GeoElement) obj);
-	     }
-	     else return false;
-	}*/
+	/**
+	 * String getFormulaString(int)
+	 * returns a string representing the formula of the GeoElement in the following formats:
+	 * getFormulaString(ExpressionNode.STRING_TYPE_YACAS) eg Sqrt(x)
+	 * getFormulaString(ExpressionNode.STRING_TYPE_LATEX) eg \sqrt(x)
+	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA) eg sqrt(x)
+	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA_XML)
+	 * getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA)
+	 */
+	public String getFormulaString(int ExpressionNodetype)
+	{
+		int tempCASPrintForm = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(ExpressionNodetype);
+		String ret="";
+		if (this.isGeoFunction()) {
+			GeoFunction geoFun = (GeoFunction)this;
+	 		ret = geoFun.isIndependent() ? 
+	 				geoFun.toValueString() :
+	 				geoFun.getFunction().toString();
+		}
+		else
+		{
+			ret = this.getCommandDescription();
+		}
+		
+		kernel.setCASPrintForm(tempCASPrintForm);
+		return ret;
+	}
+         
 
 }

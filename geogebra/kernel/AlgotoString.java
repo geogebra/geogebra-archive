@@ -62,6 +62,8 @@ public class AlgotoString extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {    
+    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA));
+    	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();
     	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
     	String geoDef="";
@@ -76,6 +78,6 @@ public class AlgotoString extends AlgoElement {
     		geoDef = geo.getCommandDescription();
     	
     	text.setTextString(geoDef);	    	
-    	kernel.setCASPrintForm(tempCASPrintForm);
+    	kernel.setCASPrintForm(tempCASPrintForm);*/
     }         
 }
