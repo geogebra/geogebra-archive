@@ -47,7 +47,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
-						doCopyHorizontaldoCopyNoStoringUndoInfo0(sx1, sx2, sy1, dy1, dy2);
+						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy1, dy1, dy2);
 					}
 					return true;
 				}
@@ -70,7 +70,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
-						doCopyHorizontaldoCopyNoStoringUndoInfo0(sx1, sx2, sy2, dy1, dy2);						kernel.storeUndoInfo();
+						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy2, dy1, dy2);						kernel.storeUndoInfo();
 					}
 					return true;
 				}
@@ -95,7 +95,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
-						doCopyVerticaldoCopyNoStoringUndoInfo0(sy1, sy2, sx1, dx1, dx2);
+						doCopyHorizontalNoStoringUndoInfo1(sy1, sy2, sx1, dx1, dx2);
 					}
 					return true;
 				}
@@ -118,7 +118,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
-						doCopyVerticaldoCopyNoStoringUndoInfo0(sy1, sy2, sx2, dx1, dx2);
+						doCopyHorizontalNoStoringUndoInfo1(sy1, sy2, sx2, dx1, dx2);
 					}
 					return true;
 				}			
@@ -144,60 +144,30 @@ public class RelativeCopy {
 		}
 	}
 	
-	public void doCopyHorizontaldoCopyNoStoringUndoInfo0(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
+	public void doCopyVerticalNoStoringUndoInfo1(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
 		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
 		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
-		//if (checkDependency(values1, values2)) {
-		//	throw new RuntimeException("Relative copy: Source is dependent on destination.");			
-		//}
-		/*
-		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
-		for (int i = 0; i < values2.length; ++ i) {
-			for (int j = 0; j < values2[i].length; ++ j) {
-				if (values2[i][j] != null) {
-					values2[i][j].remove();
-					values2[i][j] = null;
-				}
-			}
-		}
-		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
-		/**/
-		for (int x = x1; x <= x2; ++ x) {
-			int ix = x - x1;
-			for (int y = dy1; y <= dy2; ++ y) {
-				int iy = y - dy1;
+		for (int y = dy1; y <= dy2; ++ y) {
+			int iy = y - dy1;
+			for (int x = x1; x <= x2; ++ x) {
+				int ix = x - x1;
 				doCopyNoStoringUndoInfo0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
 			}
 		}
 	}
 	
-	public void doCopyVerticaldoCopyNoStoringUndoInfo0(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
+	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
 		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
-		//if (checkDependency(values1, values2)) {
-		//	throw new RuntimeException("Relative copy: Source is dependent on destination.");			
-		//}
-		/*
-		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
-		for (int i = 0; i < values2.length; ++ i) {
-			for (int j = 0; j < values2[i].length; ++ j) {
-				if (values2[i][j] != null) {
-					values2[i][j].remove();
-					values2[i][j] = null;
-				}
-			}
-			
-		}
-		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
-		/**/
-		for (int y = y1; y <= y2; ++ y) {
-			int iy = y - y1;
-			for (int x = dx1; x <= dx2; ++ x) {
-				int ix = x - dx1;
+		for (int x = dx1; x <= dx2; ++ x) {
+			int ix = x - dx1;
+			for (int y = y1; y <= y2; ++ y) {
+				int iy = y - y1;
 				doCopyNoStoringUndoInfo0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
 			}
 		}
 	}
+	
 	
 	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z])(::|\\$)([0-9]+)");
 
