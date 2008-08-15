@@ -97,8 +97,6 @@ implements EuclidianViewAlgo {
 		
 		type = TYPE_BARCHART;
 		
-		extrFinder = cons.getExtremumFinder();
-		
 		this.a = a;
 		this.b = b;			
 		this.list1 = list1;
@@ -119,9 +117,6 @@ implements EuclidianViewAlgo {
 		
 		type = TYPE_HISTOGRAM;
 		
-		extrFinder = cons.getExtremumFinder();
-		
-
 		this.list1 = list1;
 		this.list2 = list2;
 		
@@ -134,22 +129,21 @@ implements EuclidianViewAlgo {
 			
 			// BOXPLOT
 			public AlgoFunctionAreaSums(Construction cons, String label,  
-					   GeoList list1, NumberValue a) {
+					   GeoList list1, NumberValue a, NumberValue b) {
 		
 		super(cons);
 		
 		type = TYPE_BOXPLOT;
 		
-		extrFinder = cons.getExtremumFinder();
-		
-
 		this.list1 = list1;
 		this.a=a;
+		this.b=b;
 		ageo = a.toGeoElement();
-		bgeo = a.toGeoElement(); // dummy
+		bgeo = b.toGeoElement(); 
 
 		
 		sum = new GeoNumeric(cons); // output
+		//sum.setLabelVisible(false);
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
@@ -192,9 +186,10 @@ implements EuclidianViewAlgo {
 			input[1] = list2;		
 			break;
 		case TYPE_BOXPLOT:
-			input = new GeoElement[2];
+			input = new GeoElement[3];
 			input[0] = ageo;		
-			input[1] = list1;		
+			input[1] = bgeo;		
+			input[2] = list1;		
 			break;
 
 		}
@@ -506,21 +501,19 @@ implements EuclidianViewAlgo {
 	for (int i=0; i < N; i++) {
 		
 		geo = list1.get(i);
-		if (i == 0) {
-			if (geo.isNumberValue()) b = (NumberValue)geo; // dummy value, not used
-			else { sum.setUndefined(); return; }
-		}
+		//if (i == 0) {
+		//	if (geo.isNumberValue()) b = (NumberValue)geo; // dummy value, not used
+		//	else { sum.setUndefined(); return; }
+		//}
 		if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
 		else { sum.setUndefined(); return; }
 		
-		yval[i] = 1.0; 
+		yval[i] = 1.0; // dummy value
 		
 		
 	}
 
-	cumSum = 0;
-	
-	sum.setValue(cumSum);	
+	sum.setValue(leftBorder[2]);	 // median
 		
 	break;
 }

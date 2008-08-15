@@ -1726,8 +1726,8 @@ public class Kernel {
 	 * BoxPlot
 	 */
 	final public GeoNumeric BoxPlot(String label, 
-					NumberValue a, GeoList list) {
-		AlgoBoxPlot algo = new AlgoBoxPlot(cons, label, a, list);
+			NumberValue a, NumberValue b, GeoList list) {
+		AlgoBoxPlot algo = new AlgoBoxPlot(cons, label, a, b, list);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}

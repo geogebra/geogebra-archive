@@ -22,8 +22,8 @@ public class AlgoBoxPlot extends AlgoFunctionAreaSums {
 	private static final long serialVersionUID = 1L;
 
 	public AlgoBoxPlot(Construction cons, String label,
-								   NumberValue a, GeoList list1) {
-		super(cons, label,  list1, a);		
+			NumberValue a, NumberValue b, GeoList list1) {
+		super(cons, label,  list1, a, b);		
 	}
 	
 	protected String getClassName() {

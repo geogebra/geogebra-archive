@@ -3460,20 +3460,39 @@ final public    GeoElement[] process(Command c) throws MyError {
     GeoElement[] arg;
 
    switch (n) {
-        case 2 :
+        case 3 :
             arg = resArgs(c);
             if ((ok[0] = (arg[0] .isNumberValue()))
-                && (ok[1] = (arg[1] .isGeoList()))) {
+                    && (ok[1] = (arg[1] .isNumberValue()))
+                && (ok[2] = (arg[2] .isGeoList()))) {
                 GeoElement[] ret =
                     {
                          kernel.BoxPlot(
                             c.getLabel(),
                             (NumberValue) arg[0],
-                            (GeoList)arg[1])};
+                            (NumberValue) arg[1],
+                            (GeoList)arg[2])};
                 return ret;
             } else
 				throw argErr(app, c.getName(), null);
 
+        case 7:
+            arg = resArgs(c);
+            if ((ok[0] = (arg[0] .isNumberValue()))
+                    && (ok[1] = (arg[1] .isNumberValue()))) {
+            // try to create list of numbers
+	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_NUMERIC);
+	            if (list != null) {
+	            	list .remove(0);
+	            	list .remove(0); // remove first two items
+	            
+	           	 	GeoElement[] ret = { kernel.BoxPlot(c.getLabel(), (NumberValue) arg[0],
+                         (NumberValue) arg[1], list)};
+	                return ret;  
+	            }
+            }
+	            // else continue:
+	                
         default :
             throw argNumErr(app, c.getName(), n);
     }
