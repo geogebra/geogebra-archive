@@ -305,6 +305,7 @@ public abstract class Application implements	KeyEventDispatcher {
     protected boolean showConsProtNavigation = false;
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
+    private boolean antialiasing = true;
     private boolean showSpreadsheet = true;
     private boolean showCAS = false;
     private boolean printScaleString = false;
@@ -416,7 +417,8 @@ public abstract class Application implements	KeyEventDispatcher {
         algebraController = new AlgebraController(kernel);
         euclidianController = new EuclidianController(kernel);
         euclidianView = new EuclidianView(euclidianController, showAxes, showGrid);  
-    	algebraView = new AlgebraView(algebraController);
+        euclidianView.setAntialiasing(antialiasing);
+        algebraView = new AlgebraView(algebraController);
     	algebraView.setDropTarget(new DropTarget(algebraView, new FileDropTargetListener(this)));
     	
     	// init spreadsheet view
@@ -880,6 +882,9 @@ public abstract class Application implements	KeyEventDispatcher {
     				}
     				else if (optionName.equals("showGrid")) {    					
     					showGrid = !optionValue.equals("false");    					
+    				}
+    				else if (optionName.equals("antiAliasing")) {
+    					antialiasing = !optionValue.equals("false");
     				}
     				
     				// TODO: remove spreadsheet parameter, introduced only for testing
