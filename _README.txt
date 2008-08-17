@@ -21,4 +21,5 @@ Libraries and Plug-In Licenses
 * FreeHEP Java Libraries, http://java.freehep.org, GNU LGPL v2.1
 * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics, GNU GPL v2 (or later)
 * HotEqn, http://freemind.sourceforge.net/HotEqn/, GNU GPL v3
+* Michael T. Flanagan's Java library, http://www.ee.ucl.ac.uk/~mflanaga/java/, non-commercial
 * Tango Icon Gallery, http://tango.freedesktop.org, CC-BY-SA 2.5

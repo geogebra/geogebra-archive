@@ -58,7 +58,7 @@ TRANSLATIONS
   * Turkish: Erol Karakirik (Turkey)
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
    
-GRANTS
+PROJECTS
   * University of Luxembourg et. al., co-funded by the Community programme eContentplus
      09/2007 to 09/2010: Interoperable Interactive Geometry for Europe (Intergeo)
   * University of Luxembourg
@@ -82,6 +82,7 @@ SOFTWARE
   * FreeHEP Java Libraries, http://java.freehep.org
   * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
+  * Michael T. Flanagan's Java library, http://www.ee.ucl.ac.uk/~mflanaga/java/ 
   * Tango Icon Gallery, http://tango.freedesktop.org
   
 ----------------------------------------------------------------------
