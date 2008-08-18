@@ -52,10 +52,12 @@ public class JarManager {
 	
 	private static URL appletCodeBase=null;
 
-	private final static String tempDirNoSep=System.getProperty("java.io.tmpdir");
+	//private final static String tempDirNoSep=System.getProperty("java.io.tmpdir");
 	// MacOS doesn't seem to add the "/"
-	private final static String tempDir	=	tempDirNoSep.endsWith(File.separator) ?
-											tempDirNoSep : tempDirNoSep+File.separator;
+	//private final static String tempDir	=	tempDirNoSep.endsWith(File.separator) ?
+	//										tempDirNoSep : tempDirNoSep+File.separator;
+	
+	private static String tempDir = Application.getTempDir();
 	
 	//private static boolean GUIJAR_COPIED=false;
 	//private static boolean SPREADSHEETJAR_COPIED=false;
@@ -68,7 +70,7 @@ public class JarManager {
 
         this.app = app;
         
-        Application.debug("java.io.tmpdir = "+tempDir);
+        //Application.debug("java.io.tmpdir = "+tempDir);
 
     	// Download jar files to temp directory in background
     	// this is done because Java WebStart uses strange jar file

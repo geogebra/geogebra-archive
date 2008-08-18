@@ -110,6 +110,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
@@ -4408,6 +4409,41 @@ public abstract class Application implements	KeyEventDispatcher {
 			Application.debug("copyJarsToTempDir: " + e.getMessage());
 		}			
 	}*/
+	
+	private static String tempDir = null;
+	
+	public static synchronized String getTempDir() {
+		if (tempDir == null) {
+			Random generator = new Random();
+			int rand = generator.nextInt();
+			if (rand < 0) rand *= -1;
+			tempDir = System.getProperty("java.io.tmpdir");
+			
+			// Mac OS doesn't add "/"
+			if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
+			
+			// add random folder name (problems on some systems with write access if another instance of GeoGebra is running
+			tempDir += "geogebra" + rand + File.separator;
+			
+			
+			try {
+				// create folder
+				new File(tempDir).mkdirs();
+			}
+			catch (Exception e)
+			{
+				tempDir = System.getProperty("java.io.tmpdir");
+				
+				// Mac OS doesn't add "/"
+				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
+				
+			}
+			
+			debug("Temporary folder: "+tempDir);
+		}
+		
+		return tempDir;
+	}
 
 	
 	/**
@@ -4417,7 +4453,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	 */
 	public void copyJarsTo(String destDir, boolean copyExportJAR) throws Exception {
 		// try to copy from temp dir
-		String tempDir = System.getProperty("java.io.tmpdir"); 
+		String tempDir = getTempDir(); 
 		
 		URL srcDir;			
 		File tempJarFile = new File(tempDir, JAR_FILES[0]);			
