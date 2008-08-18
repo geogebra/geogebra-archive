@@ -376,7 +376,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	            JOptionPane.DEFAULT_OPTION,
     	            JOptionPane.PLAIN_MESSAGE);
     		}
-    	}*/     	
+    	}*/     
     	
     	// Michael Borcherds 2008-05-05
     	// added to help debug applets
@@ -4417,26 +4417,22 @@ public abstract class Application implements	KeyEventDispatcher {
 			Random generator = new Random();
 			int rand = generator.nextInt();
 			if (rand < 0) rand *= -1;
-			tempDir = System.getProperty("java.io.tmpdir");
+			String baseDir = System.getProperty("java.io.tmpdir");
 			
 			// Mac OS doesn't add "/"
-			if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
+			if (!baseDir.endsWith(File.separator)) baseDir += File.separator;
 			
 			// add random folder name (problems on some systems with write access if another instance of GeoGebra is running
-			tempDir += "geogebra" + rand + File.separator;
+			tempDir = baseDir + "geogebra" + rand + File.separator;
 			
 			
 			try {
 				// create folder
-				new File(tempDir).mkdirs();
+				if (!(new File(tempDir)).mkdirs()) tempDir = baseDir;
 			}
 			catch (Exception e)
 			{
-				tempDir = System.getProperty("java.io.tmpdir");
-				
-				// Mac OS doesn't add "/"
-				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
-				
+				tempDir = baseDir;
 			}
 			
 			debug("Temporary folder: "+tempDir);
@@ -4623,4 +4619,5 @@ public abstract class Application implements	KeyEventDispatcher {
         }
     }
 	// <-- Added for Intergeo File Format (Yves Kreis)
+    
 }
