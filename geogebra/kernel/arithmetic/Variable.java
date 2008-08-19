@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.MyParseError;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 
 import java.util.HashSet;
@@ -98,6 +99,13 @@ public class Variable extends ValidExpression implements ExpressionValue {
 				return geo;
 			}
         }			
+        
+        // if referring to variable "i" that is undefined, create it
+        if (name.equals("i")) {
+    		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
+    		((GeoPoint)geo).setFixed(true);   
+    		return geo;
+        }
 			
         // if we get here we couldn't resolve this variable name as a GeoElement
         String [] str = { "UndefinedVariable", name };
