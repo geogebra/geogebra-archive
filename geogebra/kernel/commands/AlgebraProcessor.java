@@ -923,6 +923,7 @@ public class AlgebraProcessor {
 		    	// then we use (0,1) ie sqrt(-1)	
 	    	} else if ("i".equals(rightVar)) {
 	    		geoRight = new GeoPoint(cons, "i", 0.0d, 1.0d, 1.0d);
+	    		((GeoPoint)geoRight).setFixed(true);
 	    	} else {
 				String[] str = { "UndefinedVariable", rightVar };
 				throw new MyError(app, str);
