@@ -3480,11 +3480,12 @@ final public    GeoElement[] process(Command c) throws MyError {
             arg = resArgs(c);
             if ((ok[0] = (arg[0] .isNumberValue()))
                     && (ok[1] = (arg[1] .isNumberValue()))) {
-            // try to create list of numbers
-	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_NUMERIC);
+            // try to create list of numbers of 3rd - 8th elements
+                GeoElement[] arg2 = new GeoElement[5];
+                for (int i = 2 ; i < 7 ; i++) arg2[i-2] = arg[i];
+
+	       	 GeoList list = wrapInList(kernel, arg2, GeoElement.GEO_CLASS_NUMERIC);
 	            if (list != null) {
-	            	list .remove(0);
-	            	list .remove(0); // remove first two items
 	            
 	           	 	GeoElement[] ret = { kernel.BoxPlot(c.getLabel(), (NumberValue) arg[0],
                          (NumberValue) arg[1], list)};
