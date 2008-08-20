@@ -412,6 +412,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			firstVec[1] = 0;
 
 		}
+    	tempPoint.remove(); // Michael Borcherds 2008-08-20
+    	
 		double angSt = Math.atan2(firstVec[1], firstVec[0]);
 
 // Michael Borcherds 2007-10-21 BEGIN
@@ -630,6 +632,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	}
     	drawGeoPoint(geoPoint);
     	drawLabel(geoPoint,drawPoint);
+    	
+    	geoPoint.remove(); // Michael Borcherds 2008-08-20
     	
     	//draw Line dor Slider
     	code.append("\\psline");
