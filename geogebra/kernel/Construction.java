@@ -697,7 +697,7 @@ public class Construction {
         GeoElement geo = geoTabelVarLookup(label);
         if (geo == null)
         {
-            // if referring to variable "i" that is undefined, create it
+            // if referring to variable "i" (complex) that is undefined, create it
             if (label.equals("i")) {
         		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
         		((GeoPoint)geo).setFixed(true);   
@@ -705,7 +705,7 @@ public class Construction {
         		return geo;
             }
     			
-            // if referring to variable "e" that is undefined, create it
+            // if referring to variable "e" (Euler no) that is undefined, create it
             else if (label.equals("e")) {
         		geo =  new GeoNumeric(kernel.getConstruction(), "e", Math.E);
         		((GeoNumeric)geo).setFixed(true);   
