@@ -700,8 +700,10 @@ public class Construction {
             // if referring to variable "i" (complex) that is undefined, create it
             if (label.equals("i")) {
         		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
-        		((GeoPoint)geo).setFixed(true);   
-        		//((GeoPoint)geo).setEuclidianVisible(false);   
+        		GeoPoint point = (GeoPoint) geo;
+        		point.setFixed(true);
+        		point.setEuclidianVisible(false);
+        		point.updateRepaint();
         		return geo;
             }
     			
