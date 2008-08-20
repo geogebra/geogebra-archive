@@ -101,6 +101,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
 			}
         }			
         
+        /* moved to Construction.lookupLabel()
         // if referring to variable "i" that is undefined, create it
         if (name.equals("i")) {
     		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
@@ -112,7 +113,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
         else if (name.equals("e")) {
     		geo =  new GeoNumeric(kernel.getConstruction(), "e", Math.E);
     		return geo;
-        }
+        }*/
 			
         // if we get here we couldn't resolve this variable name as a GeoElement
         String [] str = { "UndefinedVariable", name };
