@@ -76,7 +76,7 @@ public class AlgoSequence extends AlgoElement {
         setInputOutput(); // for AlgoElement
                             
         compute();
-        list.setLabel(label);        
+        if (label != null) list.setLabel(label);        
     }
 
     protected String getClassName() {

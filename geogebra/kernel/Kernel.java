@@ -1176,7 +1176,7 @@ public class Kernel {
 			NumberValue from, NumberValue to, NumberValue step) {
 		
 			AlgoSequence algo = new AlgoSequence(cons, label, expression, localVar, from, to, step);
-			return algo.getOutput();				
+			return algo.getOutput();	
 	}	
 	
 	/** 
@@ -1713,11 +1713,26 @@ public class Kernel {
 	}
 	
 	/** 
-	 * BarChart
+	 * BarChart	
 	 */
 	final public GeoNumeric BarChart(String label, 
 					NumberValue a, NumberValue b, GeoList list) {
 		AlgoBarChart algo = new AlgoBarChart(cons, label, a, b, list);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
+	 * BarChart	
+	 */
+	final public GeoNumeric BarChart(String label, 
+					NumberValue a, NumberValue b, GeoElement expression, GeoNumeric localVar, 
+					NumberValue from, NumberValue to, NumberValue step) {
+		
+		AlgoSequence seq = new AlgoSequence(cons, null, expression, localVar, from, to, step);
+		cons.removeFromConstructionList(seq);
+		
+		AlgoBarChart algo = new AlgoBarChart(cons, label, a, b, (GeoList)seq.getOutput()[0]);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}

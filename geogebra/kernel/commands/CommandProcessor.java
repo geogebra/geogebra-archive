@@ -3424,21 +3424,69 @@ final public    GeoElement[] process(Command c) throws MyError {
     GeoElement[] arg;
 
     switch (n) {
-        case 3 :
-            arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isNumberValue()))
-                && (ok[1] = (arg[1] .isNumberValue()))
-                && (ok[2] = (arg[2] .isGeoList()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.BarChart(
-                            c.getLabel(),
-                            (NumberValue) arg[0],
-                            (NumberValue) arg[1],
-                            (GeoList)arg[2])};
-                return ret;
-            } else
-				throw argErr(app, c.getName(), null);
+    case 3 :
+        arg = resArgs(c);
+        if ((ok[0] = (arg[0] .isNumberValue()))
+            && (ok[1] = (arg[1] .isNumberValue()))
+            && (ok[2] = (arg[2] .isGeoList()))) {
+            GeoElement[] ret =
+                {
+                     kernel.BarChart(
+                        c.getLabel(),
+                        (NumberValue) arg[0],
+                        (NumberValue) arg[1],
+                        (GeoList)arg[2])};
+            return ret;
+        } else
+			throw argErr(app, c.getName(), null);
+    case 6 :
+        // create local variable at position 3 and resolve arguments
+        arg = resArgsLocalNumVar(c, 3);      
+        if ((ok[0] = (arg[0] .isNumberValue()))
+            && (ok[1] = (arg[1] .isNumberValue()))
+            && ((ok[2] = arg[2].isGeoElement()))
+               	 && (ok[3] = arg[3].isGeoNumeric())
+               	 && (ok[4] = arg[4].isNumberValue())
+               	 && (ok[5] = arg[5].isNumberValue())) {
+            GeoElement[] ret =
+                {
+                     kernel.BarChart(
+                        c.getLabel(),
+                        (NumberValue) arg[0],
+                        (NumberValue) arg[1],
+                        arg[2],
+                        (GeoNumeric) arg[3],
+                        (NumberValue) arg[4],
+                        (NumberValue) arg[5],
+                        null)};
+            return ret;
+        } else
+			throw argErr(app, c.getName(), null);
+
+    case 7 :
+        // create local variable at position 3 and resolve arguments
+        arg = resArgsLocalNumVar(c, 3);      
+        if ((ok[0] = (arg[0] .isNumberValue()))
+            && (ok[1] = (arg[1] .isNumberValue()))
+            && ((ok[2] = arg[2].isGeoElement()))
+               	 && (ok[3] = arg[3].isGeoNumeric())
+               	 && (ok[4] = arg[4].isNumberValue())
+               	 && (ok[5] = arg[5].isNumberValue())
+               	 && (ok[6] = arg[6].isNumberValue())) {
+            GeoElement[] ret =
+                {
+                     kernel.BarChart(
+                        c.getLabel(),
+                        (NumberValue) arg[0],
+                        (NumberValue) arg[1],
+                        arg[2],
+                        (GeoNumeric) arg[3],
+                        (NumberValue) arg[4],
+                        (NumberValue) arg[5],
+                        (NumberValue) arg[6])};
+            return ret;
+        } else
+			throw argErr(app, c.getName(), null);
 
         default :
             throw argNumErr(app, c.getName(), n);
