@@ -51,6 +51,22 @@ public class AlgoSequence extends AlgoElement {
      */
     AlgoSequence(Construction cons, String label, GeoElement expression, GeoNumeric var, 
     		NumberValue var_from, NumberValue var_to, NumberValue var_step) {
+              
+        this(cons, expression, var, var_from, var_to, var_step);
+        list.setLabel(label);        
+    }
+
+    /**
+     * Creates a new algorithm to create a sequence of objects that form a list.
+     * @param cons
+     * @param expression
+     * @param var
+     * @param var_from
+     * @param var_to
+     * @param var_step
+     */
+    AlgoSequence(Construction cons, GeoElement expression, GeoNumeric var, 
+    		NumberValue var_from, NumberValue var_to, NumberValue var_step) {
         super(cons);
                 
         this.expression = expression;
@@ -76,7 +92,7 @@ public class AlgoSequence extends AlgoElement {
         setInputOutput(); // for AlgoElement
                             
         compute();
-        if (label != null) list.setLabel(label);        
+    
     }
 
     protected String getClassName() {
