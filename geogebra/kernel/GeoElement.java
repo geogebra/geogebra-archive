@@ -1346,6 +1346,14 @@ final public boolean hasOnlyFreeInputPoints() {
     }
     */
 	
+	// Michael Borcherds
+	public static boolean isSpreadsheetLabel(String str) {
+		Matcher matcher = pattern.matcher(str);
+		if (matcher.matches()) return true;
+		else return false;
+		
+	}
+	
 	// Cong Liu	
 	public static final Pattern pattern = Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
