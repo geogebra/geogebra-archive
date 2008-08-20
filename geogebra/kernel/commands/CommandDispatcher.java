@@ -256,7 +256,7 @@ public class CommandDispatcher {
     	cmdTable.put("ToYacasString", new CmdToYacasString(kernel));  
     	
     	cmdTable.put("EvalYacas", new CmdEvalYacas(kernel));    
-    	cmdTable.put("Eval", new CmdEval(kernel));    
+    	//cmdTable.put("Eval", new CmdEval(kernel));    
     	
     	cmdTable.put("ToNumber", new CmdToNumber(kernel));    	
     	cmdTable.put("ToNumbers", new CmdToNumbers(kernel));    	
