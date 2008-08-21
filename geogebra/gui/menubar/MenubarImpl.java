@@ -165,7 +165,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(saveAction);
 		setMenuShortCutAccelerator(mi, 'S');
 		mi = menu.add(saveAsAction);	
-		setMenuShortCutShiftAccelerator(mi, 'S');
+		// now assigned to spreadsheet: setMenuShortCutShiftAccelerator(mi, 'S');
 		menu.addSeparator();
 //		submenu = new JMenu(app.getMenu("PrintPreview"));
 //		submenu.setIcon(app.getImageIcon("document-print-preview.png"));
