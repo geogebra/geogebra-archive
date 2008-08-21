@@ -1729,7 +1729,7 @@ public class Kernel {
 					NumberValue a, NumberValue b, GeoElement expression, GeoNumeric localVar, 
 					NumberValue from, NumberValue to, NumberValue step) {
 		
-		AlgoSequence seq = new AlgoSequence(cons, null, expression, localVar, from, to, step);
+		AlgoSequence seq = new AlgoSequence(cons, expression, localVar, from, to, step);
 		cons.removeFromConstructionList(seq);
 		
 		AlgoBarChart algo = new AlgoBarChart(cons, label, a, b, (GeoList)seq.getOutput()[0]);
