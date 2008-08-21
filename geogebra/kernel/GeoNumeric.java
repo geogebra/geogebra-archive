@@ -97,6 +97,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return new GeoNumeric(cons, value);
 	}
 	
+	 public void setZero() {
+	    	setValue(0);
+	}
+	
 	public boolean isDrawable() {		
 		return isDrawable || (isIndependent() && isLabelSet());		
 	}

@@ -542,7 +542,7 @@ public class AlgebraProcessor {
 						cons.replace(replaceable, ret[0]);
 						// now all objects have changed
 						// get the new object with same label as our result
-						ret[0] = cons.lookupLabel(ret[0].getLabel());						
+						ret[0] = cons.lookupLabel(ret[0].getLabel(), false);						
 					}
 				} catch (CircularDefinitionException e) {
 					throw e;
@@ -912,22 +912,10 @@ public class AlgebraProcessor {
 		String rightVar = a.getVariable();
 		GeoElement[] ret = new GeoElement[1];
 
-		GeoElement geoRight = cons.lookupLabel(rightVar);
-		if (geoRight == null) {
-			
-			//special case: label "e" and no GeoElement exists with this name
-	    	// then we use the Euler number    	
-	    	if ("e".equals(rightVar)) {	    		
-	    		geoRight = new GeoNumeric(cons,  Math.E);
-				//special case: label "i" and no GeoElement exists with this name
-		    	// then we use (0,1) ie sqrt(-1)	
-	    	} else if ("i".equals(rightVar)) {
-	    		geoRight = new GeoPoint(cons, "i", 0.0d, 1.0d, 1.0d);
-	    		((GeoPoint)geoRight).setFixed(true);
-	    	} else {
+		GeoElement geoRight = cons.lookupLabel(rightVar, true);
+		if (geoRight == null) {						
 				String[] str = { "UndefinedVariable", rightVar };
-				throw new MyError(app, str);
-	    	}
+				throw new MyError(app, str);	    	
 		}
 		// don't allow copying of dependent functions
 		else if (
@@ -942,7 +930,7 @@ public class AlgebraProcessor {
 		}
 		// lefVar exists
 		else {
-			GeoElement geoLeft = cons.lookupLabel(leftVar);
+			GeoElement geoLeft = cons.lookupLabel(leftVar, false);
 			if (geoLeft == null) { // create kernel object and copy values
 				geoLeft = geoRight.copy();
 				geoLeft.setLabel(leftVar);

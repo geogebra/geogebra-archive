@@ -81,6 +81,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		this.path = path;	
 	}
     
+    public void setZero() {
+    	setCoords(0,0,1);
+    }
+    
     final public PathParameter getPathParameter() {
     	if (pathParameter == null)
     		pathParameter = new PathParameter();

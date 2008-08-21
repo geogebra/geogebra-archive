@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.MyParseError;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -75,7 +76,10 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * according GeoElement object.
      */
     private GeoElement resolve() {
-        GeoElement geo = kernel.lookupLabel(name);
+    	Construction cons = kernel.getConstruction();
+    	
+    	// allow autocreation of elements
+        GeoElement geo = cons.lookupLabel(name, true);
         
         if (geo != null)
 			return  geo;                            
@@ -94,7 +98,8 @@ public class Variable extends ValidExpression implements ExpressionValue {
 					labelWithout$.append(ch);
 			}
 
-			geo = kernel.lookupLabel(labelWithout$.toString());			
+			// allow autocreation of elements
+	        geo = cons.lookupLabel(labelWithout$.toString(), true);				
 			if (geo != null) {
 				// geo found for name that includes $ signs
 				return geo;

@@ -461,6 +461,13 @@ public abstract class GeoElement
 	public abstract String toValueString();	
 	
 	/**
+	 * Sets this object to zero (number = 0, points = (0,0), etc.)
+	 */
+	public void setZero() {
+		
+	}
+	
+	/**
 	 * Returns a value string that is saveable in an XML file.
 	 * Note: this is needed for texts that need to be quoted
 	 * in lists and as command arguments.
@@ -1292,6 +1299,13 @@ final public boolean hasOnlyFreeInputPoints() {
 		return col;
 	}
 	
+	public static String getSpreadsheetColumnName(String label) {
+		Matcher matcher = spreadsheetPattern.matcher(label);
+		if (! matcher.matches()) return null;
+		return matcher.group(1);
+	}
+	
+	
 	 /**
      * Returns the spreadsheet reference name of this GeoElement using $ signs
      * for absolute spreadsheet reference names
@@ -1348,18 +1362,17 @@ final public boolean hasOnlyFreeInputPoints() {
 	
 	// Michael Borcherds
 	public static boolean isSpreadsheetLabel(String str) {
-		Matcher matcher = pattern.matcher(str);
+		Matcher matcher = spreadsheetPattern.matcher(str);
 		if (matcher.matches()) return true;
-		else return false;
-		
+		else return false;		
 	}
 	
 	// Cong Liu	
-	public static final Pattern pattern = Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
+	public static final Pattern spreadsheetPattern = Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
 	// Cong Liu	
 	public static int getSpreadsheetColumn(String str) {
-		Matcher matcher = pattern.matcher(str);
+		Matcher matcher = spreadsheetPattern.matcher(str);
 		if (! matcher.matches()) return -1;
 		String s = matcher.group(1);
 		int column = 0;
@@ -1374,7 +1387,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	    
 	// Cong Liu	
 	public static int getSpreadsheetRow(String str) {
-		Matcher matcher = pattern.matcher(str);
+		Matcher matcher = spreadsheetPattern.matcher(str);
 		if (! matcher.matches()) return -1;
 		String s = matcher.group(2);
 		return Integer.parseInt(s) - 1;

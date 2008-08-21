@@ -126,7 +126,10 @@ public class Kernel {
     	return algProcessor;
     }
 	
-	
+	/**
+     * Returns a GeoElement for the given label. 
+     * @return may return null
+     */
 	public GeoElement lookupLabel(String label) {		
 		return cons.lookupLabel(label);
 	}

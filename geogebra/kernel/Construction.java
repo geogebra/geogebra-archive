@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 
 /**
  * A Construction consists of a construction list with objects of type 
@@ -683,7 +684,17 @@ public class Construction {
      * construction index 0 to step are available.
      * @return may return null
      */
-     public GeoElement lookupLabel(String label) {    	          	
+    public GeoElement lookupLabel(String label) {    
+    	return lookupLabel(label, false);
+    }
+    
+    /**
+     * Returns a GeoElement for the given label. Note: only geos with
+     * construction index 0 to step are available.
+     * @param allowAutoCreate: true = allow automatic creation of missing labels (e.g. for spreadsheet)
+     * @return may return null
+     */
+     public GeoElement lookupLabel(String label, boolean allowAutoCreate) {    	          	
         if (label == null)
             return null;
         
@@ -695,26 +706,11 @@ public class Construction {
                 
         // global var handling        
         GeoElement geo = geoTabelVarLookup(label);
-        if (geo == null)
-        {
-            // if referring to variable "i" (complex) that is undefined, create it
-            if (label.equals("i")) {
-        		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
-        		GeoPoint point = (GeoPoint) geo;
-        		point.setFixed(true);
-        		point.setEuclidianVisible(false);
-        		point.updateRepaint();
-        		return geo;
-            }
-    			
-            // if referring to variable "e" (Euler no) that is undefined, create it
-            else if (label.equals("e")) {
-        		geo =  new GeoNumeric(kernel.getConstruction(), "e", Math.E);
-        		((GeoNumeric)geo).setFixed(true);   
-        		return geo;
-            }	
-            
-        	return null;
+        if (geo == null) {  
+        	if (allowAutoCreate)
+        		return autoCreateGeoElement(label);
+        	else
+        		return null;
         }
         
         //  check if geo is available for current step
@@ -723,6 +719,63 @@ public class Construction {
 		else
 			return null;           
     }
+     
+     /**
+      * Automatically creates a GeoElement object for a certain label
+      * that is not yet used in the geoTable of this construction. This is done
+      * for e.g. point i = (0,1), number e = Math.E, empty spreadsheet cells
+      *  
+      * @param label
+      * @return
+      */
+     private GeoElement autoCreateGeoElement(String label) {    	 
+    	 
+    	// if referring to variable "i" (complex) that is undefined, create it
+         if (label.equals("i")) {
+        	GeoPoint point = new GeoPoint(this, "i", 0.0d, 1.0d, 1.0d);
+     		point.setFixed(true);
+     		point.setEuclidianVisible(false);
+     		point.updateRepaint();
+     		return point;
+         }
+ 			
+         // if referring to variable "e" (Euler no) that is undefined, create it
+         else if (label.equals("e")) {
+        	GeoNumeric number =  new GeoNumeric(this, "e", Math.E);
+     		number.setFixed(true);   
+     		return number;
+         }
+         
+         // for missing spreadsheet cells, create object of same type as above         
+         Matcher cellNameMatcher = GeoElement.spreadsheetPattern.matcher(label);
+         if (cellNameMatcher.matches()) {        	
+         	String col = cellNameMatcher.group(1);
+         	int row = Integer.parseInt(cellNameMatcher.group(2));
+         	
+         	Application.printStacktrace("autocreate MATCH " + col + ", " + row);
+         	
+         	// try to get neighbouring cell for object type
+            // look above
+         	GeoElement neighbourCell = geoTabelVarLookup(col + (row-1)); 
+         	if (neighbourCell == null) // look below 
+         		neighbourCell = geoTabelVarLookup(col + (row+1));
+         
+         	// found neighbouring cell: create geo of same type
+         	if (neighbourCell != null) {         		         		
+         		GeoElement geo = neighbourCell.copy();
+         		geo.setZero();
+         		geo.setLabel(label);         		
+         		return geo;
+         	}
+         	// no neighbouring cell: create number with value 0
+         	else {         		         		
+         		GeoNumeric number =  new GeoNumeric(this, label, 0d);         		         	
+         		return number;
+         	}         		         		         		         	         	         
+         }
+         
+         return null;
+     }
     
     GeoElement geoTabelVarLookup(String label) {
     	return (GeoElement) geoTable.get(label); 
