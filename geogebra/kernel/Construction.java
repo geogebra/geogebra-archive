@@ -752,8 +752,6 @@ public class Construction {
          	String col = cellNameMatcher.group(1);
          	int row = Integer.parseInt(cellNameMatcher.group(2));
          	
-         	Application.printStacktrace("autocreate MATCH " + col + ", " + row);
-         	
          	// try to get neighbouring cell for object type
             // look above
          	GeoElement neighbourCell = geoTabelVarLookup(col + (row-1)); 
