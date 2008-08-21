@@ -762,12 +762,14 @@ public class Construction {
          	if (neighbourCell != null) {         		         		
          		GeoElement geo = neighbourCell.copy();
          		geo.setZero();
-         		geo.setLabel(label);         		
+         		geo.setAuxiliaryObject(true);
+         		geo.setLabel(label);                		
          		return geo;
          	}
          	// no neighbouring cell: create number with value 0
          	else {         		         		
          		GeoNumeric number =  new GeoNumeric(this, label, 0d);         		         	
+         		number.setAuxiliaryObject(true);
          		return number;
          	}         		         		         		         	         	         
          }
