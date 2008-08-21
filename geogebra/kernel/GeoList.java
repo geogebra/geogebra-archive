@@ -522,6 +522,9 @@ public class GeoList extends GeoElement implements ListValue {
 		// all list elements equal
 		return true;
 		}
+		public void setZero() {
+			geoList.clear();
+		}
 
     		
 }

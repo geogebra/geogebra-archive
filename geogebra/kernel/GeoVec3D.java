@@ -325,5 +325,10 @@ implements Traceable {
 	public boolean isPolynomialInstance() {
 		return false;
 	}   
+	public void setZero() {
+		x=0;
+		y=0;
+		z=0;
+	}
     
 }

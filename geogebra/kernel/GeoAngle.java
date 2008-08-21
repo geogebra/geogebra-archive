@@ -46,7 +46,7 @@ public final class GeoAngle extends GeoNumeric {
 	private boolean emphasizeRightAngle = true;
 	
 // Michael Borcherds 2007-10-20
-	private double raw_value;
+	private double rawValue;
 	
 	final public static int ANGLE_ISANTICLOCKWISE = 0; // old allowReflexAngle=true
 	
@@ -139,7 +139,7 @@ public final class GeoAngle extends GeoNumeric {
     	// limit to [0, 2pi]
 		double angVal = kernel.convertToAngleValue(val);
 		
-		raw_value=angVal;
+		rawValue=angVal;
 		
 		// if needed: change angle
 		if (angleStyle==ANGLE_ISCLOCKWISE) angVal=2.0*Math.PI-angVal;
@@ -251,7 +251,7 @@ public final class GeoAngle extends GeoNumeric {
     	AlgoElement algoParent = getParentAlgorithm();    	
     	if (algoParent == null)
 //    		setValue(value);
-			setValue(raw_value);
+			setValue(rawValue);
     	else 
     		algoParent.update();
 		}	
@@ -277,7 +277,7 @@ public final class GeoAngle extends GeoNumeric {
     }*/
 	
 	final public double getRawAngle() {
-		return raw_value;
+		return rawValue;
 	}
     
     final public int angleStyle() {
@@ -377,5 +377,8 @@ public final class GeoAngle extends GeoNumeric {
 
 	public void setEmphasizeRightAngle(boolean emphasizeRightAngle) {
 		this.emphasizeRightAngle = emphasizeRightAngle;
+	}
+	public void setZero() {
+		rawValue = 0;
 	}
 }

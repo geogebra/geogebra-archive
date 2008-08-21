@@ -2317,5 +2317,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	public boolean isGeoConic() {
 		return true;
 	}
+	
+	public void setZero() {
+		setCoeffs(1,0,1,0,0,0);
+	}
 
 }

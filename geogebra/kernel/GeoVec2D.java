@@ -534,4 +534,8 @@ implements VectorValue {
 			y=y1;
 			return;
 	 }
+		public void setZero() {
+			x=0;
+			y=0;
+		}
 }
