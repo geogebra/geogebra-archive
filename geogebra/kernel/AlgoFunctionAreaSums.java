@@ -57,6 +57,7 @@ implements EuclidianViewAlgo {
 	private GeoElement ageo, bgeo, ngeo;
 	private GeoNumeric  sum; // output sum    
 	
+	
 	private int N; 	
 	private double STEP;
 	private double [] yval; // y value (= min) in interval 0 <= i < N
@@ -231,6 +232,8 @@ implements EuclidianViewAlgo {
 	}
 	
 	protected final void compute() {	
+		
+		GeoElement geo; // temporary variable	
 		
 		switch (type)
 		{
@@ -408,7 +411,7 @@ implements EuclidianViewAlgo {
 			for (int i=0; i < N; i++) {
 				leftBorder[i] = ad + i * STEP;	
 				
-				GeoElement geo = list1.get(i);
+				geo = list1.get(i);
 				if (geo.isGeoNumeric())	yval[i] = ((GeoNumeric)geo).getDouble(); 
 				else yval[i]=0;
 				
@@ -432,49 +435,113 @@ implements EuclidianViewAlgo {
 			
 			N = list1.size();
 			
-			if (N < 2 || N-1 != list2.size())
+			if (N < 2)
 			{
 				sum.setUndefined();
 				return;
 			}
 							
-		 
-
-			if (yval == null || yval.length < N) {
-				yval = new double[N];
-				leftBorder = new double[N];
-			}				
-			
-			for (int i=0; i < N-1; i++) {
+			if (N-1 != list2.size())
+			{ // list2 contains raw data
+				// eg Histogram[{1,1.5,2,4},{1.0,1.1,1.1,1.2,1.7,1.7,1.8,2.2,2.5,4.0}]
 				
-				GeoElement geo = list1.get(i);
-				if (i == 0) {
-					if (geo.isNumberValue()) a = (NumberValue)geo;
+				if (yval == null || yval.length < N) {
+					yval = new double[N];
+					leftBorder = new double[N];
+				}				
+				
+				// fill in class boundaries
+				for (int i=0; i < N-1; i++) {
+					
+					geo = list1.get(i);
+					if (i == 0) {
+						if (geo.isNumberValue()) a = (NumberValue)geo;
+						else { sum.setUndefined(); return; }
+					}
+					if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
 					else { sum.setUndefined(); return; }
+					
 				}
-				if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
+							
+				geo = list1.get(N-1);
+				if (geo.isNumberValue()) b = (NumberValue)geo;
 				else { sum.setUndefined(); return; }
+				leftBorder[N-1] = ((GeoNumeric)geo).getDouble(); 
 				
-				geo = list2.get(i);
-				if (geo.isGeoNumeric())	yval[i] = ((GeoNumeric)geo).getDouble(); 
-				else { sum.setUndefined(); return; }
+				// zero frequencies
+				for (int i=0; i < N; i++) yval[i] = 0; 	
+	
+				// work out frequencies in each class
+				double datum;
 				
+				for (int i=0; i < list2.size() ; i++) {
+					geo = list2.get(i);
+					if (geo.isGeoNumeric())	datum = ((GeoNumeric)geo).getDouble(); 
+					else { sum.setUndefined(); return; }
+					
+					// if datum is outside the range, set undefined
+					if (datum < leftBorder[0] || datum > leftBorder[N-1] ) { sum.setUndefined(); return; }
+					
+					// check which class this datum is in
+					for (int j=1; j < N; j++) {
+						//System.out.println("checking "+leftBorder[j]);
+						if (datum <= leftBorder[j]) 
+						{
+							//System.out.println(datum+" "+j);
+							yval[j-1]++;
+							break;
+						}
+					}
+					
+				}
+				
+			
+				// turn frequencies into frequency densities
+				for (int i=1; i < N; i++) yval[i-1] /= (leftBorder[i] - leftBorder[i-1]);
+				
+				// area of rectangles = total frequency				
+				sum.setValue(list2.size());	
+
 			}
-			
-			yval[N-1] = yval[N-2];
-			
-			GeoElement geo = list1.get(N-1);
-			if (geo.isNumberValue()) b = (NumberValue)geo;
-			else { sum.setUndefined(); return; }
-			leftBorder[N-1] = ((GeoNumeric)geo).getDouble(); 
-
-
-			cumSum = 0;
-			for (int i=1; i < N; i++) cumSum += (leftBorder[i] - leftBorder[i-1]) * yval[i-1];
-			
-			// area of rectangles				
-			sum.setValue(cumSum);	
+			else
+			{ // list2 contains the heights
+	
+				if (yval == null || yval.length < N) {
+					yval = new double[N];
+					leftBorder = new double[N];
+				}				
 				
+				for (int i=0; i < N-1; i++) {
+					
+					geo = list1.get(i);
+					if (i == 0) {
+						if (geo.isNumberValue()) a = (NumberValue)geo;
+						else { sum.setUndefined(); return; }
+					}
+					if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
+					else { sum.setUndefined(); return; }
+					
+					geo = list2.get(i);
+					if (geo.isGeoNumeric())	yval[i] = ((GeoNumeric)geo).getDouble(); 
+					else { sum.setUndefined(); return; }
+					
+				}
+				
+				yval[N-1] = yval[N-2];
+				
+				geo = list1.get(N-1);
+				if (geo.isNumberValue()) b = (NumberValue)geo;
+				else { sum.setUndefined(); return; }
+				leftBorder[N-1] = ((GeoNumeric)geo).getDouble(); 
+	
+				cumSum = 0;
+				for (int i=1; i < N; i++) cumSum += (leftBorder[i] - leftBorder[i-1]) * yval[i-1];
+				
+				// area of rectangles				
+				sum.setValue(cumSum);	
+			}	
+			
+
 			break;
 	case TYPE_BOXPLOT:
 	if (!list1.isDefined()) 
