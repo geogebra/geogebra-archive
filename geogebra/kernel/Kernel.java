@@ -1170,6 +1170,18 @@ public class Kernel {
 	}	
 	
 	/** 
+	 * If-then-else construct for functions. 
+	 *  example: If[ x < 2, x^2, x + 2 ]
+	 */
+	final public GeoNumeric CountIf(String label, 
+			GeoFunction boolFun,
+			GeoList list) {
+		
+		AlgoCountIf algo = new AlgoCountIf(cons, label, boolFun, list);
+		return algo.getResult();
+	}	
+	
+	/** 
 	 * Sequence command:
  	 * Sequence[ <expression>, <number-var>, <from>, <to>, <step> ]  
  	 * @return array with GeoList object and its list items
