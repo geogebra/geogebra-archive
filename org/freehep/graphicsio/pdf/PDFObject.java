@@ -9,7 +9,7 @@ import java.io.IOException;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFObject.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
+ * @version $Id: PDFObject.java,v 1.5 2008-08-22 21:18:29 murkle Exp $
  */
 public class PDFObject implements PDFConstants {
 
@@ -65,8 +65,7 @@ public class PDFObject implements PDFConstants {
         if (!ok)
             Application.debug("PDFWriter error: 'PDFDictionary' was closed");
         if (open != null)
-            System.err
-                    .println("PDFWriter error: '" + open + "' was not closed");
+        	Application.debug("PDFWriter error: '" + open + "' was not closed");
         open = "PDFDictionary";
         PDFDictionary dictionary = new PDFDictionary(pdf, out, this);
         return dictionary;

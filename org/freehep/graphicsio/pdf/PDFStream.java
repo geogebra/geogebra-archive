@@ -28,7 +28,7 @@ import org.freehep.util.io.FlateOutputStream;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFStream.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
+ * @version $Id: PDFStream.java,v 1.5 2008-08-22 21:18:29 murkle Exp $
  */
 public class PDFStream extends PDFDictionary implements PDFConstants {
 
@@ -50,8 +50,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
         this.name = name;
         object = parent;
         if (object == null)
-            System.err
-                    .println("PDFWriter: 'PDFStream' cannot have a null parent");
+        	Application.debug("PDFWriter: 'PDFStream' cannot have a null parent");
         // first write the dictionary
         dictionaryOpen = true;
         this.encode = encode;

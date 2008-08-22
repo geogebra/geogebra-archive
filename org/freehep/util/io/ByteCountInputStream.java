@@ -16,7 +16,7 @@ import java.io.InputStream;
  * 
  * @author Mark Donszelmann
  * @author Charles Loomis
- * @version $Id: ByteCountInputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
+ * @version $Id: ByteCountInputStream.java,v 1.5 2008-08-22 21:18:34 murkle Exp $
  */
 public class ByteCountInputStream extends ByteOrderInputStream {
 
@@ -66,16 +66,14 @@ public class ByteCountInputStream extends ByteOrderInputStream {
      */
     public void pushBuffer(int len) {
         if (index >= size.length - 1) {
-            System.err
-                    .println("ByteCountInputStream: trying to push more buffers than stackDepth: "
+        	Application.debug("ByteCountInputStream: trying to push more buffers than stackDepth: "
                             + size.length);
             return;
         }
 
         if (index >= 0) {
             if (size[index] < len) {
-                System.err
-                        .println("ByteCountInputStream: trying to set a length: "
+            	Application.debug("ByteCountInputStream: trying to set a length: "
                                 + len
                                 + ", longer than the underlying buffer: "
                                 + size[index]);

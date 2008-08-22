@@ -11,7 +11,7 @@ import java.util.Calendar;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFDictionary.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
+ * @version $Id: PDFDictionary.java,v 1.5 2008-08-22 21:18:29 murkle Exp $
  */
 public class PDFDictionary implements PDFConstants {
 
@@ -41,8 +41,7 @@ public class PDFDictionary implements PDFConstants {
 
     void close() throws IOException {
         if (open != null)
-            System.err
-                    .println("PDFWriter error: '" + open + "' was not closed");
+        	Application.debug("PDFWriter error: '" + open + "' was not closed");
         out.outdent();
         out.println(">>");
         if (object != null)

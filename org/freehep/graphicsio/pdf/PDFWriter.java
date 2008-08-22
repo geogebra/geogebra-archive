@@ -1,6 +1,8 @@
 // Copyright 2000-2005 FreeHEP
 package org.freehep.graphicsio.pdf;
 
+import geogebra.Application;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -14,7 +16,7 @@ import java.io.OutputStream;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFWriter.java,v 1.3 2008-05-04 12:31:32 murkle Exp $
+ * @version $Id: PDFWriter.java,v 1.4 2008-08-22 21:18:29 murkle Exp $
  */
 public class PDFWriter extends PDF implements PDFConstants {
 
@@ -77,8 +79,7 @@ public class PDFWriter extends PDF implements PDFConstants {
     public PDFObject openObject(String name) throws IOException {
         // FIXME: check if name was already written!
         if (open != null)
-            System.err
-                    .println("PDFWriter error: '" + open + "' was not closed");
+        	Application.debug("PDFWriter error: '" + open + "' was not closed");
         open = "PDFObject: " + name;
 
         PDFRef ref = ref(name);
