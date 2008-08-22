@@ -1,10 +1,9 @@
 
 package geogebra.spreadsheet;
 
-import geogebra.Application;
+import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 
 import java.awt.Component;
@@ -170,15 +169,17 @@ public class MyCellEditor extends DefaultCellEditor {
 		// no equal sign in input
 		else {
 			// check if input is a function in x
-			ValidExpression ve = kernel.getParser().parse(text);	
-			GeoElement [] temp = kernel.getAlgebraProcessor().processValidExpression(ve);
-			
-			if (temp[0].isGeoFunction())
-				text = name + "(x)=" + text;
-			else
-				text = name + "=" + text;
-			
-			temp[0].remove();
+			try {
+				ValidExpression ve = kernel.getParser().parse(text);	
+				GeoElement [] temp = kernel.getAlgebraProcessor().processValidExpression(ve);
+				
+				if (temp[0].isGeoFunction())
+					text = name + "(x)=" + text;
+				else
+					text = name + "=" + text;
+				
+				temp[0].remove();
+			} catch (MyError e) { text = name + "=" + text; }
 		}
 		
 		GeoElement[] newValues = null;
