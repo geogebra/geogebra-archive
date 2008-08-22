@@ -70,7 +70,9 @@ public class TextInputDialog extends InputDialog {
 		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
 		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
 		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
-		cbLaTeXshortcuts.addItem(" "); 	// space
+		cbLaTeXshortcuts.addItem(" "); 													// 7 space
+		cbLaTeXshortcuts.addItem(app.getPlain("2x2Matrix")); 							// 8 2x2 matrix
+		cbLaTeXshortcuts.addItem(app.getPlain("3x3Matrix")); 							// 9 3x3 matrix
 		cbLaTeXshortcuts.setFocusable(false);		
 		cbLaTeXshortcuts.setEnabled(isLaTeX);	
 		ComboBoxListener cbl = new ComboBoxListener();
@@ -139,6 +141,14 @@ public class TextInputDialog extends InputDialog {
 						
 					case 7: // space
 						insertString(" \\; ");						
+						break;
+						
+					case 8: // 2x2 matrix
+						insertString("\\left(\\begin{array} a & b \\\\ c & d \\\\ \\end{array}\\right)");						
+						break;
+						
+					case 9: // 3x3 matrix
+						insertString("\\left(\\begin{array} a & b & c \\\\ d & e & f \\\\ g & h & i \\\\ \\end{array}\\right)");						
 						break;
 						
 					default:
