@@ -737,4 +737,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable {
 				return !(curr_param > 0 && (curr_param + step_width) <= 0);									
 		}					
 	}
+	
+    public void setZero() {
+    	setCoords(0, 1, 0);
+    }
+    
+
 }

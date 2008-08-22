@@ -355,4 +355,8 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		return true;
 	}	
 	
+    public void setZero() {
+    	setCoords(0, 1, 0);
+    }
+	
 }
