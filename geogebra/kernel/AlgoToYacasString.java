@@ -63,7 +63,7 @@ public class AlgoToYacasString extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {    
     	
-    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_YACAS));
+    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, false));
     	
     	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();

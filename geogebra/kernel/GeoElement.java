@@ -18,9 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 
@@ -3115,7 +3115,9 @@ final public boolean hasOnlyFreeInputPoints() {
 	public abstract boolean isEqual(GeoElement Geo);
 	
 	/**
-	 * String getFormulaString(int)
+	 * String getFormulaString(int, boolean substituteNumbers)
+	 * substituteNumbers determines (for a function) whether you want
+	 * "2*x^2" or "a*x^2"
 	 * returns a string representing the formula of the GeoElement in the following formats:
 	 * getFormulaString(ExpressionNode.STRING_TYPE_YACAS) eg Sqrt(x)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_LATEX) eg \sqrt(x)
@@ -3123,16 +3125,17 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA_XML)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA)
 	 */
-	public String getFormulaString(int ExpressionNodetype)
+	public String getFormulaString(int ExpressionNodetype, boolean substituteNumbers)
 	{
 		int tempCASPrintForm = kernel.getCASPrintForm();
 		kernel.setCASPrintForm(ExpressionNodetype);
 		String ret="";
 		if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
-	 		ret = geoFun.isIndependent() ? 
-	 				geoFun.toValueString() :
-	 				geoFun.getFunction().toString();
+			if (substituteNumbers) ret = geoFun.getAlgebraDescription();
+			else ret = geoFun.isIndependent() ? 
+	 				   geoFun.toValueString() :
+	 				   geoFun.getFunction().toString();
 		}
 		else
 		{

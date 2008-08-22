@@ -61,12 +61,12 @@ public class AlgoFactor extends AlgoElement {
                 
         
         // Yacas version
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS);
+	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, true);
 
         /*
 		String functionIn = f.getFunction().
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
-		Application.debug(functionIn);
+		//Application.debug(functionIn);
 
 		String functionOut = kernel.evaluateYACASRaw("Factor("+functionIn+")");
 		
@@ -89,8 +89,7 @@ public class AlgoFactor extends AlgoElement {
 		}
 		else
 		{
-			Application.debug(functionOut);
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));			
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));					
 		}
 		
 		g.setDefined(true);	

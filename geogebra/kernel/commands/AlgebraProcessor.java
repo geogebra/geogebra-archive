@@ -292,6 +292,9 @@ public class AlgebraProcessor {
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
+		} catch (ClassCastException e) {
+			// if str is a constant, we get a GeoNumeric not a GeoFunction
+			func = evaluateToFunction(str + " + 0 x");
 		} catch (Exception e) {		
 			e.printStackTrace();
 			app.showError("InvalidInput");

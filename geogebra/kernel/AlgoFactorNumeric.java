@@ -60,7 +60,7 @@ public class AlgoFactorNumeric extends AlgoElement {
                 
         
         // Yacas version
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS);
+	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, false);
 
         /*
 		String functionIn = f.getFunction().

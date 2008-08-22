@@ -86,7 +86,7 @@ public class AlgoExpand extends AlgoElement {
     	 try {     		
     		// get geo definition String
     		 
-    	    String geoDef = geo.getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA);
+    	    String geoDef = geo.getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA, false);
 /*
     		 
          	int oldCASPrintForm = kernel.getCASPrintForm();
