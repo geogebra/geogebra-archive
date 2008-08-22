@@ -288,13 +288,19 @@ public class AlgebraProcessor {
 		try {
 			ValidExpression ve = parser.parse(str);		
 			GeoElement [] temp = processValidExpression(ve);
-			func = (GeoFunction) temp[0];
+			
+			if (temp[0].isGeoFunction())
+				func = (GeoFunction) temp[0];
+			else if (temp[0].isGeoNumeric())
+				func = evaluateToFunction(str + " + 0 x");
+			else app.showError("InvalidInput");
+			
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
-		} catch (ClassCastException e) {
+/*		} catch (ClassCastException e) {
 			// if str is a constant, we get a GeoNumeric not a GeoFunction
-			func = evaluateToFunction(str + " + 0 x");
+			func = evaluateToFunction(str + " + 0 x");*/
 		} catch (Exception e) {		
 			e.printStackTrace();
 			app.showError("InvalidInput");
