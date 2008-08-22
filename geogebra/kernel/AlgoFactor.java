@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 /**
  * Try to expand the given function 
@@ -65,6 +66,7 @@ public class AlgoFactor extends AlgoElement {
         /*
 		String functionIn = f.getFunction().
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
+		Application.debug(functionIn);
 
 		String functionOut = kernel.evaluateYACASRaw("Factor("+functionIn+")");
 		
@@ -76,7 +78,8 @@ public class AlgoFactor extends AlgoElement {
 		if (functionOut.length()==0) yacasError=true; // Yacas error
 		
 		if (functionOut.length()>7)
-			if (functionOut.substring(0,7).equals("Factor(")) // Yacas error
+			if (functionOut.startsWith("Factor(") || // Yacas error
+			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
 				yacasError=true;
 			
 
@@ -86,6 +89,7 @@ public class AlgoFactor extends AlgoElement {
 		}
 		else
 		{
+			Application.debug(functionOut);
 			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));			
 		}
 		
