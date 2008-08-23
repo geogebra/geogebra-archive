@@ -37,7 +37,7 @@ public class DrawList3D extends LinkedList{
 		hidingApp = new Appearance();		
 	    RenderingAttributes ra = new RenderingAttributes();
 	    ra.setRasterOpEnable(true);
-	    ra.setRasterOp(RenderingAttributes.ROP_NOOP); //don't draw it
+	    ra.setRasterOp(RenderingAttributes.NEVER); //don't draw it
 	    hidingApp.setRenderingAttributes(ra);			    	    
 	    PolygonAttributes pa = new PolygonAttributes();
 		pa.setCullFace(PolygonAttributes.CULL_NONE ); //no culling for back faces

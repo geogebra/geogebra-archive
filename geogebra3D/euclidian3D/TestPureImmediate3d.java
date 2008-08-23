@@ -221,7 +221,7 @@ public class TestPureImmediate3d extends Frame implements WindowListener, Runnab
 	    //parties cachantes
 	    RenderingAttributes raZB = new RenderingAttributes();
 	    raZB.setRasterOpEnable(true);
-	    raZB.setRasterOp(RenderingAttributes.ROP_NOOP); //don't draw it
+	    raZB.setRasterOp(RenderingAttributes.NEVER); //don't draw it
 	    Appearance zApp = new Appearance();
 	    zApp.setRenderingAttributes(raZB);
 	    
