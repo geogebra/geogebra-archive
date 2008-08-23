@@ -228,11 +228,16 @@ public abstract class Application implements	KeyEventDispatcher {
     }
         
     public static final Color COLOR_SELECTION = new Color(225, 225, 245);
-    public static final String STANDARD_FONT_NAME = "SansSerif";
-    public static final String STANDARD_CHINESE_FONT_NAME = "\u00cb\u00ce\u00cc\u00e5";  
+   
+    // Font settings     
+    private static final String STANDARD_FONT_NAME_SANS_SERIF = "SansSerif";
+    private static final String STANDARD_FONT_NAME_SERIF = "Serif";       
     public static final int MIN_FONT_SIZE = 10;
+    private String appFontNameSansSerif = "SansSerif";
+    private String appFontNameSerif = "Serif"; 
     
-    // file extension string
+   
+	// file extension string
     public static final String FILE_EXT_GEOGEBRA = "ggb";
     // Added for Intergeo File Format (Yves Kreis) -->
     public static final String FILE_EXT_INTERGEO = "i2g";
@@ -322,8 +327,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean isSaved = true;    
     private int appFontSize;
     public Font boldFont, plainFont, smallFont;
-    private String FONT_NAME = STANDARD_FONT_NAME;
-    
+     
     private String strCustomToolbarDefinition;
     private MyToolbar appToolbarPanel;     
     
@@ -1217,46 +1221,71 @@ public abstract class Application implements	KeyEventDispatcher {
     	return locale.getLanguage().equals(lang);
     }
     
-    private String getLanguageFontName(Locale locale) throws Exception {
-        String fontName = null;
+    /**
+     * Sets the application's fonts for the current language. 
+     * The user interface of certain languages like Chinese or Hebrew looks better with special fonts.     
+     */
+    private void getLanguageFontName(Locale locale) throws Exception {
+       String lang = locale.getLanguage();
+       
+       // new font names for language
+       String fontNameSansSerif = null;
+       String fontNameSerif = null;
+       
+       // CHINESE 
+       if ("zh".equals(lang)) { 
+    	   // last CJK unified ideograph in unicode alphabet
+    	   char testCharacater = '\u984F';    	    
+    	   fontNameSansSerif = getFontCanDisplay("\u00cb\u00ce\u00cc\u00e5", testCharacater); 
+    	   fontNameSerif = getFontCanDisplay("\u00cb\u00ce\u00cc\u00e5", testCharacater); 
+       } 
+       // HEBREW
+       else if ("iw".equals(lang)) {
+    	   // Katakana letter N
+    	   char testCharacater = '\uff9d';    	   
+    	   fontNameSansSerif = getFontCanDisplay("Times New Roman", testCharacater); 
+    	   fontNameSerif = getFontCanDisplay("Arial", testCharacater); 
+       } 
+       // JAPANESE
+       else if ("ja".equals(lang)) {
+    	   // Katakana letter N
+    	   char testCharacater = '\uff9d';    	   
+    	   fontNameSansSerif = getFontCanDisplay("", testCharacater); 
+    	   fontNameSerif = getFontCanDisplay("", testCharacater); 
+       } 
+       
+                             
+       // make sure we have sans serif and serif fonts
+       if (fontNameSansSerif == null) fontNameSansSerif = STANDARD_FONT_NAME_SANS_SERIF;        
+       if (fontNameSerif == null) fontNameSerif = STANDARD_FONT_NAME_SERIF;
+              
+        // update application fonts if changed
+        if (fontNameSerif != appFontNameSerif || fontNameSansSerif != appFontNameSansSerif) {
+        	appFontNameSerif = fontNameSerif;
+        	appFontNameSansSerif = fontNameSansSerif;
+            resetFonts();       
+        }
         
-        String lang = locale.getLanguage();
-        
-        if ("zh".equals(lang)) { // CHINESE 
-        	char testChar = '\u984F';// last CJK unified ideograph in unicode alphabet
-        	if (testFontCanDisplay(STANDARD_CHINESE_FONT_NAME, testChar))
-        		fontName = STANDARD_CHINESE_FONT_NAME;
-        	else
-        		fontName = getFontCanDisplay(testChar);    
-        } 
-        else if ("ja".equals(lang)) { // JAPANESE
-            fontName = getFontCanDisplay('\uff9d');    // Katakana letter N
-        } 
-        // standard font
-        if (fontName == null) fontName = STANDARD_FONT_NAME;
-        if (fontName == null) 
-        	fontName = STANDARD_FONT_NAME;
-                       
-        //Application.debug("font: " + fontName);
-        
-        return fontName;
+        // TODO: remove
+        Application.debug("sans: " + appFontNameSansSerif + ", serif: " + appFontNameSerif);        
+
     }
     
-    private String getFontCanDisplay(char unicodeChar) throws Exception {
-    	if (plainFont == null) {
-    		plainFont = new Font(STANDARD_FONT_NAME, Font.PLAIN, 12);
-    	}    	
-        if (plainFont.canDisplay(unicodeChar))
-			return plainFont.getFontName();
+    /**
+     * Tries to find a font that can display the given unicode character. Starts with standardFontName first.
+     */
+    private String getFontCanDisplay(String standardFontName, char unicodeChar) throws Exception {
+    	// try standard font
+    	if (testFontCanDisplay(standardFontName, unicodeChar))
+    		return standardFontName;        
         
-        // Determine which fonts support Chinese here ...
-        Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-        //int fontcount = 0;
+        // Determine which fonts support the character unicodeChar
+        Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();      
         for (int j = 0; j < allfonts.length; j++) {            
             if (allfonts[j].canDisplay(unicodeChar))
 				return allfonts[j].getFontName();
         }
-        throw new Exception("Sorry, there is no font available on your computer\nthat could display Chinese characters.");
+        throw new Exception("Sorry, there is no font for this language available on your computer.");
     }
     
     private static boolean testFontCanDisplay(String fontName, char unicodeChar) {
@@ -1274,12 +1303,7 @@ public abstract class Application implements	KeyEventDispatcher {
         
         // update font for new language (needed for e.g. chinese)
         try {
-            String fontName = getLanguageFontName(currentLocale);
-            
-            if (fontName != FONT_NAME) {
-                FONT_NAME = fontName;
-                resetFonts();       
-            }
+            getLanguageFontName(currentLocale);            
         }        
         catch (Exception e) {
         	e.printStackTrace();
@@ -2390,9 +2414,9 @@ public abstract class Application implements	KeyEventDispatcher {
     private void setLAFFontSize() {
         int size = appFontSize;
         // create similar font with the specified size      
-        FontUIResource plain = new FontUIResource(FONT_NAME, Font.PLAIN, size);
+        FontUIResource plain = new FontUIResource(appFontNameSansSerif, Font.PLAIN, size);
         plainFont = plain;      
-        smallFont = new FontUIResource(FONT_NAME, Font.PLAIN, size - 2);
+        smallFont = new FontUIResource(appFontNameSansSerif, Font.PLAIN, size - 2);
         boldFont = plainFont.deriveFont(Font.BOLD);
 
         // Dialog
@@ -4619,5 +4643,13 @@ public abstract class Application implements	KeyEventDispatcher {
         }
     }
 	// <-- Added for Intergeo File Format (Yves Kreis)
+    
+    public final String getAppFontNameSansSerif() {
+		return appFontNameSansSerif;
+	}
+
+	public final String getAppFontNameSerif() {
+		return appFontNameSerif;
+	}
     
 }

@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import geogebra.modules.JarManager;
 import hoteqn.sHotEqn;
 
 import java.awt.Color;
@@ -25,12 +24,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-
-import be.ugent.caagt.jmathtex.TeXConstants;
-import be.ugent.caagt.jmathtex.TeXFormula;
 
 
 
@@ -45,16 +38,16 @@ public final class DrawText extends Drawable {
 	//private static final int SELECTION_OFFSET = SELECTION_DIAMETER_ADD / 2;
 	       
     private GeoText text;    
-    boolean isVisible, isLaTeX;  
-    private boolean serifFont = false;
+    boolean isVisible, isLaTeX;     
     private int fontSize = -1;
     private int fontStyle = -1;
+    private boolean serifFont;
     private Font textFont;
     private GeoPoint loc; // text location
     
     private sHotEqn eqn;
     //private Image eqnImage;
-    private Dimension eqnSize;        
+    private Dimension eqnSize;
     
     /** Creates new DrawText */
     public DrawText(EuclidianView view, GeoText text) {      
@@ -179,7 +172,7 @@ public final class DrawText extends Drawable {
 		if (text.isNeedsUpdatedBoundingBox()) {
 			
 			// ensure that bounding box gets updated by drawing text once
-			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), serifFont, fontStyle, geo.getObjectColor(),view.getBackground());
+			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), textFont, geo.getObjectColor(),view.getBackground());
 			else drawMultilineText(view.getTempGraphics2D());	
 			
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
@@ -204,7 +197,7 @@ public final class DrawText extends Drawable {
         	{
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
-    			drawMultilineLaTeX(g2, serifFont, fontStyle, geo.getObjectColor(),view.getBackground());   
+    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());   
         		//drawEquation(g2,xLabel,yLabel);
         	}
         	
@@ -303,11 +296,14 @@ public final class DrawText extends Drawable {
 			//if (isLaTeX) {
 			//	//setEqnFontSize();				
 			//} else {				
-				textFont = new Font(serifFont ? "Serif" : "SansSerif", fontStyle, fontSize);				
+				Application app = view.getApplication();
+				String fontName = serifFont ? app.getAppFontNameSerif() : app.getAppFontNameSansSerif();
+				textFont = new Font(fontName, fontStyle, fontSize);				
 			//}		
 		}			
 	}
 	
+	/*
 	private void setEqnFontSize() {		
 		
 		// hot eqn may only have even font sizes from 10 to 28
@@ -322,6 +318,7 @@ public final class DrawText extends Drawable {
 		eqn.setFontStyle(fontStyle);
 		
 	}
+	*/
 	
     /**
 	 * Returns the bounding box of this Drawable in screen coordinates.	 

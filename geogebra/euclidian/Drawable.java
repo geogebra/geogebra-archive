@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import hoteqn.sHotEqn;
 
@@ -117,7 +116,7 @@ public abstract class Drawable {
 		
 	}
 	
-	final void drawMultilineLaTeX(Graphics2D g2, boolean serifFont, int fontStyle, Color fgColor, Color bgColor) {
+	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
 		
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.0f;
@@ -159,7 +158,7 @@ public abstract class Drawable {
 				{
 					if (latex)
 					{						
-						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], fontSize, serifFont, fontStyle, fgColor, bgColor);
+						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], font, fgColor, bgColor);
 						//dim = sHotEqn.getSizeof(strings[j]);
 						//widths[j] = dim.width;				
 						heights[j] = dim.height;
@@ -201,7 +200,7 @@ public abstract class Drawable {
 					if (latex)
 					{
 						
-						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], fontSize, serifFont, fontStyle, fgColor, bgColor);
+						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], font, fgColor, bgColor);
 						hOffset+=dim.width;
 					}
 					else
@@ -228,7 +227,7 @@ public abstract class Drawable {
 		return ret;
 	}
 	
-	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, int fontSize, boolean serifFont, int fontStyle, Color fgColor, Color bgColor)
+	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		Dimension dim;
 			sHotEqn eqn = new sHotEqn(text);
@@ -238,19 +237,18 @@ public abstract class Drawable {
 			eqn.removeMouseListener(eqn);
 			eqn.removeMouseMotionListener(eqn);				
 			eqn.setDebug(false);
-			eqn.setOpaque(false);	
-			eqn.setFontname(Application.STANDARD_FONT_NAME);
+			eqn.setOpaque(false);				
 
 			//setEqnFontSize();																												
-			int size = (fontSize / 2) * 2; 
+			int size = (font.getSize() / 2) * 2; 
 			if (size < 10) 
 				size = 10;
 			else if (size > 28) 
 				size = 28;
 			
-			eqn.setFontname(serifFont ? "Serif" : "SansSerif");
+			eqn.setFontname(font.getName());
 			eqn.setFontsizes(size, size - 2, size - 4, size - 6);
-			eqn.setFontStyle(fontStyle);
+			eqn.setFontStyle(font.getStyle());
 
 			
 			eqn.setForeground(fgColor);		
