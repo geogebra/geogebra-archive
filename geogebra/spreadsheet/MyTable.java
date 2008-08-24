@@ -25,6 +25,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.JLabel;
 
 import geogebra.Application;
+import geogebra.algebra.AlgebraView;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -645,7 +647,23 @@ public class MyTable extends JTable
 			}
 		}
 		
+		/**
+		 *  Shows tool tip description of geo on mouse over
+		 */
 		public void mouseMoved(MouseEvent e) {
+			if (isEditing())
+				return;
+						
+			// get GeoElement at mouse location
+	        int row = rowAtPoint(e.getPoint());
+	        int col = columnAtPoint(e.getPoint());
+	        GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
+	        	     
+	        // set tooltip with geo's description
+	        if (geo != null) {
+				setToolTipText(geo.getLongDescriptionHTML(true, true));				
+			} else
+				setToolTipText(null);	
 		}
 		
 	}
@@ -791,7 +809,7 @@ public class MyTable extends JTable
 		public void setValue(Object value) {
 			if (value == null) {
 				setText("");
-				this.setBackground(null);
+				this.setBackground(null);				
 			}
 			else {
 				GeoElement geo = (GeoElement)value;
@@ -811,7 +829,7 @@ public class MyTable extends JTable
 				}
 				else {
 					this.setBackground(defaultBackground);
-				}
+				}										
 			}
 		}
 		
@@ -1008,6 +1026,7 @@ public class MyTable extends JTable
 		}
 		
 	}
+	
 	
 
 	protected class KeyListener2 implements KeyListener 
