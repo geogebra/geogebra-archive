@@ -36,10 +36,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected int moveMode = MOVE_NONE;
 	
 	
-	/*
-	protected boolean keyCtrlDown = false;
-	protected boolean keyAltDown = false;
-	*/
+	
+	//protected boolean keyCtrlDown = false;
+	//protected boolean keyAltDown = false;
+	
 	
 	
 	
@@ -57,6 +57,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	protected Point mouseLoc = new Point();
+	protected Point mouseLocOld = new Point();
 	protected Point startLoc = new Point();
 	
 	protected GgbVector mouseLoc3D, startLoc3D;
@@ -64,9 +65,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	//picking
 	protected GgbVector pickPoint;
 	
-	//moving
-	protected GgbVector v1, v2, vn;// = new GgbVector(new double[] {0.0,0.0,1.0,0.0});
-	
+	//moving plane	
+	protected int movingPlane = 0;
+	static protected int MOVING_PLANE_NB = 3;
+	protected GgbVector[] v1list = {EuclidianView3D.vx,EuclidianView3D.vy,EuclidianView3D.vz};
+	protected GgbVector[] v2list = {EuclidianView3D.vy,EuclidianView3D.vz,EuclidianView3D.vx};
+	protected GgbVector[] vnlist = {EuclidianView3D.vz,EuclidianView3D.vx,EuclidianView3D.vy};
+	protected float[] movingPlaneRlist = {0f,1f,0f};
+	protected float[] movingPlaneGlist = {0f,0f,1f};
+	protected float[] movingPlaneBlist = {1f,0f,0f};
+
+	protected GgbVector v1=v1list[movingPlane];
+	protected GgbVector v2=v2list[movingPlane];
+	protected GgbVector vn=vnlist[movingPlane];
+	protected float movingPlaneR=movingPlaneRlist[movingPlane];
+	protected float movingPlaneG=movingPlaneGlist[movingPlane];
+	protected float movingPlaneB=movingPlaneBlist[movingPlane];
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
 	final double ANGLE_SCALE = 2*Math.PI/300f;
@@ -131,12 +145,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					moveMode = MOVE_POINT;
 					movedGeoPoint3D = (GeoPoint3D) objSelected;
 					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
-					
-					v1=view.vx;
-					v2=view.vy;
-					vn=view.vz;
-					
-					view.setMovingPlane(startLoc3D,v1,v2,0f,0f,1f);
+										
+					view.setMovingPlane(startLoc3D,v1,v2,movingPlaneR,movingPlaneG,movingPlaneB);					
 				}
 			}
 			view.repaint();
@@ -188,17 +198,32 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected void movePoint(boolean repaint){
 		
 		//projecting eye on movingPlane thru pickPoint direction	
-		GgbVector o2 = view.eye.copyVector(); 
-		view.toSceneCoords3D(o2);
-
-		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); 
+		GgbVector o = view.eye.copyVector(); 
+		view.toSceneCoords3D(o);
+		
+		//getting current pick point and direction eye-to-pick point 
+		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); //supposes that point is under the mouse pointer
+				
+		/*
+		Application.debug("mouseLoc    = "+mouseLoc.x+","+mouseLoc.y
+						 +"\nmouseLocOld = "+mouseLocOld.x+","+mouseLocOld.y);
+		GgbVector p1 = movedGeoPoint3D.getCoords().copyVector();
+		view.toScreenCoords3D(p1);
+		GgbVector p2 = view.getScreenCoords(p1);
+		Application.debug("point on screen = "+p2.get(1)+","+p2.get(2));
+		GgbVector v = (view.getPickPoint(((int) p2.get(1))+mouseLoc.x-mouseLocOld.x,
+										 ((int) p2.get(2))+mouseLoc.y-mouseLocOld.y))
+											.sub(view.eye);
+		*/
+		
+		
 		view.toSceneCoords3D(v);	
 		
-		double l2 = o2.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v).get(3);
-		//double l = (startLoc3D.sub(o2)).dotproduct(vn)/(v.dotproduct(vn));
-		//Application.debug("l  = "+l); Application.debug("l2 = "+l2);
+		//getting new position of the point
+		double l = o.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v).get(3);
 		
-		mouseLoc3D = (o2.add(v.mul(l2))).v();
+		
+		mouseLoc3D = (o.add(v.mul(l))).v();
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
 		
@@ -328,9 +353,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		case MOVE_POINT:
 		case MOVE_POINT_WHEEL:
+			
 			//p = p + r*vn			
 			GgbVector p1 = movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)).v(); 
 			movedGeoPoint3D.setCoords(p1);
+			
+			
 			
 			//mouse follows the point
 			
@@ -356,6 +384,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
 			view.repaint();
 			//moveMode = MOVE_POINT;
+			
+			
 			break;	
 		
 		
@@ -369,6 +399,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	final protected void setMouseLocation(MouseEvent e) {
+		mouseLocOld = (Point) mouseLoc.clone();
 		mouseLoc = e.getPoint();
 
 	}
@@ -394,7 +425,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 		case KeyEvent.VK_ALT:
 			//Application.debug("alt pressed");
-			keyAltPressed();
+			//keyAltPressed();
 			break;
 		default:
 				break;
@@ -419,7 +450,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 		case KeyEvent.VK_ALT:
 			//Application.debug("alt released");
-			keyAltReleased();
+			//keyAltReleased();
 			break;
 		default:
 				break;
@@ -437,13 +468,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		case MOVE_VIEW:
 			break;
 
-		case MOVE_POINT:			
-			v1=view.vy;
-			v2=view.vz;
-			vn=view.vx;
-			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,1f,0f,0f);
-			view.repaint();
+		case MOVE_POINT:	
 			break;	
 			
 		case MOVE_NONE:
@@ -454,8 +479,39 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 	}
 	
+	public void keyCtrlReleased(){
+		
+		switch (moveMode) {
+		case MOVE_VIEW:
+			break;
+
+		case MOVE_POINT:			
+			movingPlane++;
+			if (movingPlane==MOVING_PLANE_NB)
+				movingPlane = 0;
+			v1=v1list[movingPlane];
+			v2=v2list[movingPlane];
+			vn=vnlist[movingPlane];
+			movingPlaneR=movingPlaneRlist[movingPlane];
+			movingPlaneG=movingPlaneGlist[movingPlane];
+			movingPlaneB=movingPlaneBlist[movingPlane];			
+			
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,movingPlaneR,movingPlaneG,movingPlaneB);
+			view.repaint();
+			break;	
+			
+		case MOVE_NONE:
+		default:
+			break;
+		
+		}
+		
+	}
+
 	
 	
+	
+	/*
 	public void keyAltPressed(){
 		
 		switch (moveMode) {
@@ -478,30 +534,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		}
 		
 	}
+	
 
 	
-	public void keyCtrlReleased(){
-		
-		switch (moveMode) {
-		case MOVE_VIEW:
-			break;
-
-		case MOVE_POINT:			
-			v1=view.vx;
-			v2=view.vy;
-			vn=view.vz;
-			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,0f,1f);
-			view.repaint();
-			break;	
-			
-		case MOVE_NONE:
-		default:
-			break;
-		
-		}
-		
-	}
 	
 	public void keyAltReleased(){
 		
@@ -525,6 +560,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		}
 		
 	}
+	
+	*/
 	
 
 

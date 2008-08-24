@@ -66,9 +66,9 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	//base vectors for moving a point
-	public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
-	public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
-	public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
+	static public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
+	static public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
 	protected GeoPlane3D movingPlane;
 	
