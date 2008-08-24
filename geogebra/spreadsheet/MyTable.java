@@ -1,34 +1,30 @@
 package geogebra.spreadsheet;
 
+import geogebra.Application;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
+
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Color;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent ;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.ListSelectionModel;
-import javax.swing.JTable;
-import javax.swing.UIManager;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.JLabel;
-
-import geogebra.Application;
-import geogebra.algebra.AlgebraView;
-import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 public class MyTable extends JTable
 {
@@ -442,11 +438,14 @@ public class MyTable extends JTable
 					e.consume();
 				}
 			}
-			else if (e.getButton() == MouseEvent.BUTTON3) {
-				int x1 = e.getX();
-				int y1 = e.getY();
+             
+            // RIGHT CLICK: show context menu
+			else {
+				if (!kernel.getApplication().letShowPopupMenu()) return;    	
+		    			      		        		       
 				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
-					ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, new boolean[0]);
+					ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 		}
@@ -518,14 +517,7 @@ public class MyTable extends JTable
 					repaint();
 				}
 			}
-             // RIGHT CLICK 	 
-             else if (rightClick) { 	 
-                     int x1 = e.getX(); 	 
-                     int y1 = e.getY(); 	 
-                     if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) { 	 
-                             ContextMenu.showPopupMenu(MyTable.this, e.getComponent(), minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, selectedColumns); 	 
-                     } 	 
-             }		}		
+       	}		
 	}
 	
 	protected class MouseMotionListener1 implements MouseMotionListener
@@ -974,12 +966,12 @@ public class MyTable extends JTable
 			boolean rightClick = Application.isRightClick(e); 	 
 		  	 
             if (rightClick) { 	 
-                    int x = e.getX(); 	 
-                    int y = e.getY(); 	 
-
-				if (minSelectionColumn != -1 && maxSelectionColumn != -1) { 	                                
-				ContextMenuCol.showPopupMenu2(MyTable.this, e.getComponent(), minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, x, y, selectedColumns);
-				}
+					if (!kernel.getApplication().letShowPopupMenu()) return;    	
+       		       
+					if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
+						ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+				        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+					}				
 			}
 			else if (isResizing) {				
 				int x = e.getX();

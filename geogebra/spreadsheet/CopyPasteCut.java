@@ -291,41 +291,62 @@ public class CopyPasteCut {
 	
 	public void createPointsAndAList2(GeoElement[][] values) throws Exception {
 		LinkedList list = new LinkedList();
+		
+		/* 
+		 * Markus Hohenwarter, 2008-08-24, I think this is not needed...
+		 * 
 		if (values.length == 2) {
 	   	 	for (int i = 0; i < values[0].length && i < values[1].length; ++ i) {
 	   	 		GeoElement v1 = values[0][i];
 	   	 		GeoElement v2 = values[1][i];
 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
-	   	 			String pointName = ContextMenu.getNextPointName();
-	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
-	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   	 			String text = "(" + v1.getLabel() + "," + v2.getLabel() + ")";
+	   	 			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   	 			
+	   	 			// set label P_1, P_2, etc.
+	   	 		    String pointName = geos[0].getIndexLabel("P");
+	   	 		    geos[0].setLabel(pointName);
+	   	 		    
 	   	 			list.addLast(pointName);
 	   	 		}
 	   	 	}
 	   	 }
+	   	 */
+		
+		// create points
 	   	 if (values.length > 0) {
 	   	 	for (int i = 0; i < values.length; ++ i) {
 	   	 		if (values[i].length != 2) continue;
 	   	 		GeoElement v1 = values[i][0];
 	   	 		GeoElement v2 = values[i][1];
-	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
-	   	 			String pointName = ContextMenu.getNextPointName();
-	   	 			String text = pointName + "=(" + v1.getLabel() + "," + v2.getLabel() + ")";
-	   	 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-	   	 			list.addLast(pointName);
+	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	   	 			
+	   	 			String text = "(" + v1.getLabel() + "," + v2.getLabel() + ")";
+	   	 			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   	 			
+	   	 			// set label P_1, P_2, etc.
+	   	 		    String pointName = geos[0].getIndexLabel("P");
+	   	 		    geos[0].setLabel(pointName);
+	   	 			
+	   	 			list.addLast(geos[0].getLabel());
 	   	 		}
 	   	 	}
 	   	 }
+	   	 
+	   	 // create list of points
 	   	 if (list.size() > 0) {
-	   		 String[] points = (String[])list.toArray(new String[0]);
-	   		 String listName = ContextMenu.getNextListName();
-	   		 String text = listName + "={";
+	   		 String[] points = (String[])list.toArray(new String[0]);	   		
+	   		 String text = "{";
 	   		 for (int i = 0; i < points.length; ++ i) {
 	   			text += points[i];
 	   			 if (i != points.length - 1) text += ",";
 	   		 }
 	   		text += "}";
-	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   		
+	   		GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   		
+	   		// set list name
+ 		    String listName = geos[0].getIndexLabel("L");
+ 		    geos[0].setLabel(listName);
 	   	 }
 	}
 
@@ -347,16 +368,20 @@ public class CopyPasteCut {
 	   	 		}
 	   	 	}
 	   	 }
+	   	 
 	   	 if (list.size() > 0) {
-	   		 String[] points = (String[])list.toArray(new String[0]);
-	   		 String listName = ContextMenu.getNextListName();
-	   		 String text = listName + "={";
+	   		 String[] points = (String[])list.toArray(new String[0]);	   		 
+	   		 String text = "={";
 	   		 for (int i = 0; i < points.length; ++ i) {
 	   			text += points[i];
 	   			 if (i != points.length - 1) text += ",";
 	   		 }
 	   		text += "}";
-	   		table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   		GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	   		
+	   		// set list name
+ 		    String listName = geos[0].getIndexLabel("L");
+ 		    geos[0].setLabel(listName);
 	   	 }
 	}
 }

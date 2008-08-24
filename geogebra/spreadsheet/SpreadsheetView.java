@@ -283,10 +283,14 @@ public class SpreadsheetView extends JScrollPane implements View
 				}
 			}	
 			// RIGHT CLICK
-			else {				
+			else {	
+				if (!app.letShowPopupMenu()) return;    	
+    		       
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					ContextMenuRow.showPopupMenu2(table, e.getComponent(), 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, x, y);
-				}			
+					ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}	
+						
 			}
 		}
 		

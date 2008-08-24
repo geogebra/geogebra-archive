@@ -1,40 +1,44 @@
 
 package geogebra.spreadsheet;
 
-import geogebra.Application;
-import java.awt.Color;
-import java.awt.Component;
+import geogebra.kernel.GeoElement;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import geogebra.kernel.GeoElement;
 
 public class ContextMenuCol extends ContextMenu
 {
 		
-	protected static JPopupMenu initMenu2(Application app) {
-		JPopupMenu menu = ContextMenu.initMenu(app);
-		menu.addSeparator();
+	private static final long serialVersionUID = 9049753346127061012L;
+
+	public ContextMenuCol(MyTable table0, int column01, int row01, int column02, int row02) {
+		super(table0, column01, row01, column02, row02);		
+	}
+
+	protected void initMenu() {
+		//super.initMenu();		
+		//addSeparator();
+		
    	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertLeft"));
 	   	item5.setIcon(app.getEmptyIcon());
    	 	item5.addActionListener(new ActionListener5());   	 	
-   	 	menu.add(item5);
+   	 	add(item5);
    	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertRight"));
 	   	item6.setIcon(app.getEmptyIcon());
    	 	item6.addActionListener(new ActionListener6());   	 	
-   	 	menu.add(item6);
-		menu.addSeparator();
+   	 	add(item6);
+		addSeparator();
 		JMenuItem item7;
    	 	if (column1 == column2) item7 = new JMenuItem(app.getMenu("ClearColumn"));
    	 	else item7 = new JMenuItem(app.getMenu("ClearColumns"));
 	   	item7.setIcon(app.getEmptyIcon());
    	 	item7.addActionListener(new ActionListenerClearColumns());   	 	
-   	 	menu.add(item7);
-   	 	return menu;
+   	 	add(item7);   	 	
 	}
 	
-	public static class ActionListener5 implements ActionListener
+	private class ActionListener5 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
@@ -53,7 +57,7 @@ public class ContextMenuCol extends ContextMenu
  		}
 	}
 	
-	public static class ActionListener6 implements ActionListener
+	private class ActionListener6 implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
@@ -72,7 +76,7 @@ public class ContextMenuCol extends ContextMenu
  		}
 	}
 	
-	public static class ActionListenerClearColumns implements ActionListener
+	private class ActionListenerClearColumns implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
@@ -95,16 +99,5 @@ public class ContextMenuCol extends ContextMenu
  		}
 	}
 	    		
-	public static void showPopupMenu2(MyTable table0, Component comp, int column01, int row01, int column02, int row02, int x, int y, boolean[] selected0) {
-		table = table0;
-		column1 = column01;
-		column2 = column02;
-		row1 = row01;
-		row2 = row02;
-		selected = selected0;
-		Application app = table.kernel.getApplication();
-		JPopupMenu menu2 = initMenu2(app);				
-		menu2.show(comp, x, y);
-	}
 
 }
