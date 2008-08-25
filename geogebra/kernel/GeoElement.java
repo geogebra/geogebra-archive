@@ -2148,8 +2148,16 @@ final public boolean hasOnlyFreeInputPoints() {
 
 			// add dependency information
 			if (algoParent != null) {
-				sbLongDescHTML.append(": ");
+				// Guy Hed, 25.8.2008
+				// In order to present the text cottectly in Hebrew and Arabic:
+				boolean rightToLeft = app.isRightToLeftReadingOrder(); 
+				if (rightToLeft) 
+					sbLongDescHTML.append("\u200f: \u200e"); 
+				else
+					sbLongDescHTML.append(": ");
 				sbLongDescHTML.append(indicesToHTML(algoParent.toString(), false));
+				if (rightToLeft) 
+					sbLongDescHTML.append("\u200e"); 
 			}
 			if (addHTMLtag)
 				sbLongDescHTML.append("</html>");

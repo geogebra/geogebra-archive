@@ -1210,10 +1210,21 @@ public abstract class Application implements	KeyEventDispatcher {
         return reverseNameDescription;
     }
     
+    //  For Hebrew and Arabic. Guy Hed, 25.8.2008
+    private boolean rightToLeftReadingOrder = false;
+    final public boolean isRightToLeftReadingOrder() { 
+    	return rightToLeftReadingOrder;
+    }
+
     private void updateReverseLanguage(Locale locale) {
     	String lang = locale.getLanguage();
         //reverseLanguage = "zh".equals(lang); removed Michael Borcherds 2008-03-31
         reverseNameDescription = "eu".equals(lang);
+               
+        // Guy Hed, 25.8.2008
+        rightToLeftReadingOrder = ( "iw".equals(lang) || "ar".equals(lang) );
+        // Another option:
+        // rightToLeftReadingOrder = (Character.getDirectionality(getPlain("Algebra").charAt(1)) == Character.DIRECTIONALITY_RIGHT_TO_LEFT);
     }
     
     // Michael Borcherds 2008-02-23
@@ -1241,10 +1252,11 @@ public abstract class Application implements	KeyEventDispatcher {
        } 
        // HEBREW
        else if ("iw".equals(lang)) {
-    	   // Katakana letter N
-    	   char testCharacater = '\uff9d';    	   
-    	   fontNameSansSerif = getFontCanDisplay("Times New Roman", testCharacater); 
-    	   fontNameSerif = getFontCanDisplay("Arial", testCharacater); 
+    	   // Hebrew letter "tav"
+    	   char testCharacater = '\u05ea';  	   
+    	   fontNameSansSerif = getFontCanDisplay("Arial", testCharacater); 
+    	   fontNameSerif = getFontCanDisplay("Times New Roman", testCharacater); 
+    	   // Guy Hed, 25.8.2008 - rearranged fonts and changed test character.
        } 
        // JAPANESE
        else if ("ja".equals(lang)) {
