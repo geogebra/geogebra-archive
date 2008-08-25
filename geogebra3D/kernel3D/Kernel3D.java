@@ -14,7 +14,9 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.kernel.*;
+
+import geogebra.kernel.Construction;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbVector;
 
 
