@@ -35,7 +35,7 @@ public class CASTableCellController implements KeyListener {
 		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
-		int selectedCol = CASPara.contCol;	//table.getSelectedColumn();
+		int selectedCol = CASPara.contCol; // table.getSelectedColumn();
 
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
@@ -121,48 +121,88 @@ public class CASTableCellController implements KeyListener {
 		CASTable table = view.getConsoleTable();
 		CASTableModel tableModel = (CASTableModel) table.getModel();
 		int selectedRow = table.getSelectedRow();
-		int selectedCol = CASPara.contCol; //table.getSelectedColumn();	
+		int selectedCol = CASPara.contCol; // table.getSelectedColumn();
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_ENTER:
-			// Get the input from the user interface
-			String inputText = curCell.getInput();
+//<<<<<<< CASTableCellController.java
+			if (e.isShiftDown()) {  //key SHIFT is down 
+				// Get the input from the user interface
+				String inputText = curCell.getInput();
 
-			if (inputText.length() != 0) {
-				// Evaluate the input with Yacas, which is too slow
-				String evaluation = view.getCAS().evaluateYACAS(inputText);
+				if (inputText.length() != 0) {
+					// Evaluate the input with Yacas, which is too slow
+					String evaluation = view.getCAS().evaluateYACAS(inputText);
 
-				// Set the value into the table
-				saveInput(curValue);
-				curValue.setOutput(evaluation);
-				curCell.setOutput(evaluation);
+					// Set the value into the table
+					saveInput(curValue);
+					curValue.setOutput(evaluation);
+					curCell.setOutput(evaluation);
 
-				// We enlarge the height of the selected row
-				table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
-				curValue.setOutputAreaInclude(true);
-				// tableModel.setValueAt(curValue, selectedRow,
-				// CASPara.contCol);
-				table.setValueAt(curValue, selectedRow, CASPara.contCol);
+					// We enlarge the height of the selected row
+					table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
+					curValue.setOutputAreaInclude(true);
+					// tableModel.setValueAt(curValue, selectedRow,
+					// CASPara.contCol);
+					table.setValueAt(curValue, selectedRow, CASPara.contCol);
 
-				CASTableCellValue newValue = (CASTableCellValue) tableModel
-						.getValueAt(selectedRow, selectedCol);
-				Application.debug(selectedRow + " Value Updated: "
-						+ newValue.getCommand() + newValue.getOutput());
+					CASTableCellValue newValue = (CASTableCellValue) tableModel
+							.getValueAt(selectedRow, selectedCol);
+					System.out.println(selectedRow + " Value Updated: "
+							+ newValue.getCommand() + newValue.getOutput());
 
-				// update the cell appearance
-				SwingUtilities.updateComponentTreeUI(curCell);
+					// update the cell appearance
+					SwingUtilities.updateComponentTreeUI(curCell);
 
-				if (selectedRow < (table.getRowCount() - 1)) {
-					table.setFocusAtRow(selectedRow + 1, selectedCol);
-				} else {
-					// Insert a new row
-					table.setRowHeight(selectedRow, curCell
-									.setLineInvisiable());
-					table.insertRow(selectedRow, selectedCol);
+					if (selectedRow < (table.getRowCount() - 1)) {
+						table.setFocusAtRow(selectedRow + 1, selectedCol);
+					} else {
+						// Insert a new row
+						table.setRowHeight(selectedRow, curCell
+								.setLineInvisiable());
+						table.insertRow(selectedRow, selectedCol);
+					}
+//=======
+//			// Get the input from the user interface
+//			String inputText = curCell.getInput();
+//
+//			if (inputText.length() != 0) {
+//				// Evaluate the input with Yacas, which is too slow
+//				String evaluation = view.getCAS().evaluateYACAS(inputText);
+//
+//				// Set the value into the table
+//				saveInput(curValue);
+//				curValue.setOutput(evaluation);
+//				curCell.setOutput(evaluation);
+//
+//				// We enlarge the height of the selected row
+//				table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
+//				curValue.setOutputAreaInclude(true);
+//				// tableModel.setValueAt(curValue, selectedRow,
+//				// CASPara.contCol);
+//				table.setValueAt(curValue, selectedRow, CASPara.contCol);
+//
+//				CASTableCellValue newValue = (CASTableCellValue) tableModel
+//						.getValueAt(selectedRow, selectedCol);
+//				Application.debug(selectedRow + " Value Updated: "
+//						+ newValue.getCommand() + newValue.getOutput());
+//
+//				// update the cell appearance
+//				SwingUtilities.updateComponentTreeUI(curCell);
+//
+//				if (selectedRow < (table.getRowCount() - 1)) {
+//					table.setFocusAtRow(selectedRow + 1, selectedCol);
+//				} else {
+//					// Insert a new row
+//					table.setRowHeight(selectedRow, curCell
+//									.setLineInvisiable());
+//					table.insertRow(selectedRow, selectedCol);
+//>>>>>>> 1.25
 				}
 			}
+
 			consumeEvent = true;
 			break;
 
@@ -173,14 +213,17 @@ public class CASTableCellController implements KeyListener {
 
 				if (selectedRow >= 1) {
 					table.setFocusAtRowLinePanel(selectedRow - 1, selectedCol);
-				}else{
+				} else {
 					table.insertRow(-1, CASPara.contCol);
-					//Application.debug("This is the first row");
+//<<<<<<< CASTableCellController.java
+//					// System.out.println("This is the first row");
+//=======
+//					//Application.debug("This is the first row");
+//>>>>>>> 1.25
 				}
 			}
 			consumeEvent = true;
 			break;
-
 		case KeyEvent.VK_DOWN:
 			if (!curCell.isLineVisiable()) {
 				table.setRowHeight(selectedRow, curCell.addLinePanel());

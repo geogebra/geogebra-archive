@@ -28,7 +28,7 @@ public class CASKeyController implements KeyListener {
 		Application.debug("Key Pressed " + src.getClass().getName());
 		int[] selectedRowArray = consoleTable.getSelectedRows();
 		int selectedCol = consoleTable.getSelectedColumn();
-		
+
 		// Here we delete the chosen row when press DELETE at coloumn 1;
 		if (selectedCol == CASPara.indexCol) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -36,11 +36,17 @@ public class CASKeyController implements KeyListener {
 				Application.debug("selectedRowArray: "
 						+ selectedRowArray.length);
 				consoleTable.deleteRow(selectedRowArray[0]);
-			} else
+			} else {
+				System.out.println(e.getKeyChar());
+				System.out.println("selectedRowArray: "
+						+ selectedRowArray.length);
+				System.out.println("selectedCol: " + selectedCol);
 				e.consume();
+			}
 		} else {
 			e.consume();
 		}
+//		e.consume();
 	}
 
 	public void keyReleased(KeyEvent e) {

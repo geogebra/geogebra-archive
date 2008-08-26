@@ -69,7 +69,7 @@ public class CASTableModel extends DefaultTableModel {
      */
     public boolean isCellEditable(int row, int col) {
     	if(col == CASPara.indexCol)
-    		return false;
+    		return true; //It is supposed to be false
     	else
     		return true;
     }

@@ -39,7 +39,8 @@ public class CASTable extends JTable {
 		// Set the width of the index column;
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
-		this.sizeColumnsToFit(0);
+		
+		//this.sizeColumnsToFit(0);
 		this.setSurrendersFocusOnKeystroke(true);
 	}
 
