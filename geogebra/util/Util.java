@@ -566,7 +566,7 @@ public class Util extends Object {
 					c == '/' ||
 					c == '\\' ||
 					c == '?' ||
-					c == '£' || // seems to turn into 'ú' inside zips
+					c == '\u00a3' || // seems to turn into 'ú' inside zips
 					c == '|' )
 			{
 				sb.append("_");
