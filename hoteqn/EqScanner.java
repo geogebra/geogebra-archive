@@ -448,7 +448,7 @@ private EqToken ScanNextToken() {
               }
              SBufferString=SBuffer.toString();
              if (SBufferString.equals("acute"))
-                  return new EqToken(EqToken.ACCENT,"´"); 
+                  return new EqToken(EqToken.ACCENT, "\u2019"); //  "´" 
              if (SBufferString.equals("array"))
                    return new EqToken(EqToken.ARRAY);
              if (SBufferString.equals("bar"))

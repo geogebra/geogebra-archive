@@ -1165,7 +1165,7 @@ private BoxC ACCENT(int x, int y, boolean disp, Graphics g, int rec) {
       if (accentS.equals(".") | accentS.equals("..")) {
          g.drawString(accentS,x+d_dx,y-fM.getAscent());
          }
-      else if (accentS.equals("´") | accentS.equals("`")) {
+      else if (accentS.equals("\u2019") | accentS.equals("\u0060")) {  //  "´"   "`"
          g.drawString(accentS,x+d_dx,y-(int)(fM.getAscent()/3));
          }
       else g.drawString(accentS,x+d_dx,y-(int)(fM.getAscent()*2/3));
