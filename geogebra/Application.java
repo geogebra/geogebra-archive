@@ -856,14 +856,17 @@ public abstract class Application implements	KeyEventDispatcher {
     				
     				if (optionName.equals("help")) {
     			    	// help message
-    			    	Application.debug(
+    			    	System.out.println(
     			    				"Usage: java -jar geogebra.jar [OPTION] [FILE]\n" + 
     								"Start GeoGebra with the specified OPTIONs and open the given FILE.\n" +
     								"  --help\t\tprint this message\n" +
 									"  --language=LANGUGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n" +
     								"  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n" +
 									"  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n" +
-									"  --showAxes=BOOLEAN\tshow/hide coordinate axes"     								    								
+									"  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n" +
+									"  --showCAS=BOOLEAN\tshow/hide CAS window\n" +
+									"  --showAxes=BOOLEAN\tshow/hide coordinate axes"  +
+									"  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off"  									
     							);
     				}
     				else if (optionName.equals("language")) {
@@ -879,8 +882,11 @@ public abstract class Application implements	KeyEventDispatcher {
     					showAlgebraView = !optionValue.equals("false"); 
     				}    				
     				else if (optionName.equals("showSpreadsheet")) {    					
-    					this.showSpreadsheet = !optionValue.equals("false"); 
+    					showSpreadsheet = !optionValue.equals("false"); 
     				}    				
+    				else if (optionName.equals("showCAS")) {    					
+    					showCAS = !optionValue.equals("false");    					
+    				}
     				else if (optionName.equals("showAxes")) {    					
     					showAxes[0] = !optionValue.equals("false");
     					showAxes[1] = showAxes[0];
@@ -890,12 +896,7 @@ public abstract class Application implements	KeyEventDispatcher {
     				}
     				else if (optionName.equals("antiAliasing")) {
     					antialiasing = !optionValue.equals("false");
-    				}
-    				
-    				// TODO: remove spreadsheet parameter, introduced only for testing
-    				else if (optionName.equals("showCAS")) {    					
-    					showCAS = !optionValue.equals("false");    					
-    				}
+    				}    		
     			}
     		}
     	}
@@ -4572,8 +4573,20 @@ public abstract class Application implements	KeyEventDispatcher {
         int sec = calendar.get(Calendar.SECOND);
         String secS = (sec < 10) ? "0" + sec : "" + sec;
         
-        System . out . println("****Message from ["+callerClassName+"."+callerMethodName+"] at " + calendar.get(Calendar.HOUR)+":"+minS+":"+secS);
-        System . out . println("****" + s + "****\n");
+        String srcStr = "["+callerClassName+"."+callerMethodName+"] at " + calendar.get(Calendar.HOUR)+":"+minS+":"+secS;
+        
+        // multi line message
+        if (s.indexOf("\n") > -1) {
+        	System . out . println("*** BEGIN Message from " + srcStr);        
+            System . out . println(s);
+        	System . out . println("*** END Message from " + srcStr + "\n");
+        } 
+        // one line message
+        else {
+        	System . out . println("*** Message from " + srcStr);        
+            System . out . println("  " + s + "\n");
+        }
+        
     }
     
     // Michael Borcherds 2008-06-22

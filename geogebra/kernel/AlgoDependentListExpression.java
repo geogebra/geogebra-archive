@@ -151,7 +151,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 					
 					if (ev instanceof MyDouble) {
 						GeoNumeric geo2 = new GeoNumeric(cons);
-						geo2.setValue((MyDouble)ev);
+						geo2.setValue(((NumberValue)ev).getDouble());
 						list2.add(geo2);
 					}
 					

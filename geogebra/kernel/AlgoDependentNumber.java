@@ -18,8 +18,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  *
@@ -72,8 +74,14 @@ public class AlgoDependentNumber extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {    
     	try {
-	        number.setValue((MyDouble) root.evaluate());
+    		NumberValue nv = (NumberValue) root.evaluate();
+	        number.setValue(nv.getDouble());
 	    } catch (Exception e) {
+	    	
+	    	// TODO: remove
+	    	e.printStackTrace();
+	    	
+	    	
 	    	number.setUndefined();
 		}
     }   

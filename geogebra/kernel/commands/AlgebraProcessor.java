@@ -442,6 +442,10 @@ public class AlgebraProcessor {
 		boolean redefineIndependent)
 		throws MyError, Exception {
 		
+		// TODO: remove
+		Application.debug("expression: " + ve + ", class: " + ve.getClass());
+		
+		
 		// check for existing labels		
 		String[] labels = ve.getLabels();
 		GeoElement replaceable = null;
@@ -501,10 +505,12 @@ public class AlgebraProcessor {
 				ret = processParametric((Parametric) ve);
 			}
 	
-			// Assignment: variable
-			else if (ve instanceof Assignment) {
-				ret = processAssignment((Assignment) ve);
-			} else
+//			// Assignment: variable
+//			else if (ve instanceof Assignment) {
+//				ret = processAssignment((Assignment) ve);
+//			} 
+			
+			else
 				throw new MyError(app, "Unhandled ValidExpression : " + ve);
 		}
 		finally {
@@ -738,6 +744,7 @@ public class AlgebraProcessor {
 	}
 
 	GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {
+		
 			
 		// command is leaf: process command
 		if (n.isLeaf() && n.getLeft() instanceof Command) {
@@ -751,8 +758,13 @@ public class AlgebraProcessor {
 		ExpressionValue eval = n.evaluate();		
 
 		// leaf: just return the existing object
-		if (eval.isGeoElement()) {
+		// TODO: check getLabel() == null
+		if (eval.isGeoElement() && n.getLabel() == null) {
 			GeoElement[] ret = {(GeoElement) eval };
+			
+			// TODO: remove
+			Application.debug("GEOELEMENT: expressionnode eval: " + eval + ", class: " + eval.getClass());
+
 			return ret;
 		}		
 		else if (eval.isNumberValue())
@@ -916,45 +928,39 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	private GeoElement[] processAssignment(Assignment a) throws MyError {
-		String leftVar = a.getLabel();
-		String rightVar = a.getVariable();
-		GeoElement[] ret = new GeoElement[1];
-
-		GeoElement geoRight = cons.lookupLabel(rightVar, true);
-		if (geoRight == null) {						
-				String[] str = { "UndefinedVariable", rightVar };
-				throw new MyError(app, str);	    	
-		}
-		// don't allow copying of dependent functions
-		else if (
-			geoRight instanceof GeoFunction && !geoRight.isIndependent()) {
-			String[] str = { "IllegalAssignment", rightVar };
-			throw new MyError(app, str);
-		}
-
-		// no lhs specified: just return rhs
-		if (leftVar == null) {
-			ret[0] = geoRight;		
-		}
-		// lefVar exists
-		else {
-			GeoElement geoLeft = cons.lookupLabel(leftVar, false);
-			if (geoLeft == null) { // create kernel object and copy values
-				geoLeft = geoRight.copy();
-				geoLeft.setLabel(leftVar);
-				ret[0] = geoLeft;
-			} else { // overwrite
-				ret[0] = geoRight;
-			}
-		}
-		
-		if (ret[0] != null && !ret[0].isLabelSet()) {
-			ret[0].setLabel(null);
-		}
-		
-		return ret;
-	}
+//	/**
+//	 * Processes assignments, i.e. input of the form leftVar = geoRight where geoRight is an existing GeoElement.
+//	 */
+//	private GeoElement[] processAssignment(String leftVar, GeoElement geoRight) throws MyError {		
+//		GeoElement[] ret = new GeoElement[1];
+//
+//		// don't allow copying of dependent functions
+//		
+//		/*
+//		if (
+//			geoRight instanceof GeoFunction && !geoRight.isIndependent()) {
+//			String[] str = { "IllegalAssignment", rightVar };
+//			throw new MyError(app, str);
+//		}
+//		*/
+//
+//		
+//		GeoElement geoLeft = cons.lookupLabel(leftVar, false);
+//		if (geoLeft == null) { // create kernel object and copy values
+//			geoLeft = geoRight.copy();
+//			geoLeft.setLabel(leftVar);
+//			ret[0] = geoLeft;
+//		} else { // overwrite
+//			ret[0] = geoRight;
+//		}
+//		
+//		
+//		if (ret[0] != null && !ret[0].isLabelSet()) {
+//			ret[0].setLabel(null);
+//		}
+//		
+//		return ret;
+//	}
 	
 
 }

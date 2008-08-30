@@ -296,9 +296,7 @@ ValidExpression buildValidExpression() :
      (  
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
-    |            
-        LOOKAHEAD(2147483647)
-         [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      
+//    |            //        LOOKAHEAD(2147483647)//        // [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      //        l = <LABEL> "=" ve = assignment()   ( <EOL> | <EOF> )
      | 
         LOOKAHEAD(2147483647)
          l = <LABEL> ":"               
@@ -356,16 +354,7 @@ ValidExpression buildValidExpression() :
 }
 
 
-// single variable assignment (not expressionnode !!!)  
-Assignment assignment():
-{     
-    Token t;
-}
-{          
-        (t = <SPREADSHEET_LABEL> | t = <LABEL>) 
-        {  
-        return new Assignment(t.image);   }
-}
+//// single variable assignment (not expressionnode !!!)  //Assignment assignment()://{     //    Token t;//}//{          //        (t = <SPREADSHEET_LABEL> | t = <LABEL>) //        {  //        return new Assignment(t.image);   }//}
 
 
 

@@ -250,11 +250,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		}						
 		else		 
 			value = x;
-	}
-
-	final public void setValue(MyDouble x) {
-		setValue(x.getDouble());
-	}
+	}	
 
 	final public double getValue() {
 		return value;

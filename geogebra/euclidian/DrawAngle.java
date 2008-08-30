@@ -233,29 +233,28 @@ public class DrawAngle extends Drawable {
 //			angSt = angSt - angExt;
 //		}
 
-		if (angle.angleStyle()==GeoAngle.ANGLE_ISCLOCKWISE) 	
-		{
-			angSt+=angExt;
-			angExt=2.0*Math.PI-angExt;
-		}
-		
-		if (angle.angleStyle()==GeoAngle.ANGLE_ISNOTREFLEX)
-		{
-			if (angExt>Math.PI)
-			{
+		switch (angle.angleStyle()) {
+			case GeoAngle.ANGLE_ISCLOCKWISE:
 				angSt+=angExt;
 				angExt=2.0*Math.PI-angExt;
-			}
-		}
-		
-		if (angle.angleStyle()==GeoAngle.ANGLE_ISREFLEX)
-		{
-			if (angExt<Math.PI)
-			{
-				angSt+=angExt;
-				angExt=2.0*Math.PI-angExt;
-			}
-		}
+				break;
+				
+			case GeoAngle.ANGLE_ISNOTREFLEX:
+				if (angExt>Math.PI)
+				{
+					angSt+=angExt;
+					angExt=2.0*Math.PI-angExt;
+				}
+				break;
+				
+			case GeoAngle.ANGLE_ISREFLEX:
+				if (angExt<Math.PI)
+				{
+					angSt+=angExt;
+					angExt=2.0*Math.PI-angExt;
+				}
+				break;
+		}		
 		// Michael Borcherds 2007-11-19 END
 
 		double as = Math.toDegrees(angSt);
