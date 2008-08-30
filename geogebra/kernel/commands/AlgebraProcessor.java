@@ -11,8 +11,8 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -20,7 +20,6 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.Assignment;
 import geogebra.kernel.arithmetic.BooleanValue;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.Equation;
@@ -743,9 +742,7 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {
-		
-			
+	GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
 		// command is leaf: process command
 		if (n.isLeaf() && n.getLeft() instanceof Command) {
 			Command c = (Command) n.getLeft();
@@ -757,14 +754,9 @@ public class AlgebraProcessor {
 		n.resolveVariables();			
 		ExpressionValue eval = n.evaluate();		
 
-		// leaf: just return the existing object
-		// TODO: check getLabel() == null
+		// leaf (no new label specified): just return the existing GeoElement
 		if (eval.isGeoElement() && n.getLabel() == null) {
 			GeoElement[] ret = {(GeoElement) eval };
-			
-			// TODO: remove
-			Application.debug("GEOELEMENT: expressionnode eval: " + eval + ", class: " + eval.getClass());
-
 			return ret;
 		}		
 		else if (eval.isNumberValue())
@@ -781,7 +773,8 @@ public class AlgebraProcessor {
 			return processBoolean(n, eval);
 		else if (eval instanceof Function) {
 			return processFunction((Function) eval);			
-		} else {
+		} 
+		else {			
 			Application.debug(
 				"Unhandled ExpressionNode: " + eval + ", " + eval.getClass());
 			return null;

@@ -16,7 +16,7 @@ the Free Software Foundation; either version 2 of the License, or
  * <BR> <BR>
  * This class provides a static function to  
  * parse a String and return an appropriate ValidExpression.
- * Direct subclasses of ValidExpression are: Assignment (single variable),
+ * Direct subclasses of ValidExpression are: 
  * Command, Equation (in x, y), Parametric, Vector (for cartesian and polar points),
  * ExpressionNode (for number or vector arithmetic expressions)
  *
@@ -278,7 +278,7 @@ String label():
  
 
 /**
- * validexpression =    <LABEL> = assignment() |        // assignment of any type (possibly not numeric)
+ * validexpression =    
  *                  labellist() = command() |           // e.g. {A,B} = Intersect[c, g]
  *                      <LABEL> : parametric() |        // e.g. X = (3,2) + t (2,1)              
  *                      <LABEL> = expression()      // arithmetic expression of floats, vectors and vars
@@ -296,7 +296,6 @@ ValidExpression buildValidExpression() :
      (  
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
-//    |            //        LOOKAHEAD(2147483647)//        // [LOOKAHEAD(2147483647) l = <LABEL> "="] ve = assignment()    ( <EOL> | <EOF> )      //        l = <LABEL> "=" ve = assignment()   ( <EOL> | <EOF> )
      | 
         LOOKAHEAD(2147483647)
          l = <LABEL> ":"               
@@ -352,11 +351,6 @@ ValidExpression buildValidExpression() :
         return ve;
     }    
 }
-
-
-//// single variable assignment (not expressionnode !!!)  //Assignment assignment()://{     //    Token t;//}//{          //        (t = <SPREADSHEET_LABEL> | t = <LABEL>) //        {  //        return new Assignment(t.image);   }//}
-
-
 
 /**
  * command =     <LABEL> [ argument (, argument)* ]  

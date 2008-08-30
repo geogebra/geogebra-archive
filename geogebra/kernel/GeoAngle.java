@@ -30,9 +30,6 @@ import geogebra.kernel.arithmetic.MyDouble;
  */
 public final class GeoAngle extends GeoNumeric {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public int arcSize = EuclidianView.DEFAULT_ANGLE_SIZE;
