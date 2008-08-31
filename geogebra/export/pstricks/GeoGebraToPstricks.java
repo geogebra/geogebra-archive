@@ -1410,6 +1410,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	private void PointOptionCode(GeoPoint geo){
 		Color dotcolor=geo.getObjectColor();
 		int dotsize=geo.getPointSize();
+		int dotstyle=geo.getPointStyle();
 		boolean coma=false;
 		boolean bracket=false;
 		if (dotsize!=EuclidianView.DEFAULT_POINT_SIZE){
@@ -1420,6 +1421,24 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append("[dotsize=");
 			codePoint.append(dotsize);
 			codePoint.append("pt 0");
+		}
+		if(dotstyle != -1) { // Florian Sonner 2008-08-31
+			if (coma) codePoint.append(",");
+			if (!bracket) codePoint.append("[");
+			coma = true;
+			bracket = true;
+			codePoint.append("dotstyle=");
+			switch(dotstyle){
+				case EuclidianView.POINT_STYLE_CIRCLE:
+					codePoint.append("o");
+				break;
+				case EuclidianView.POINT_STYLE_CROSS:
+					codePoint.append("+");
+				break;
+				case EuclidianView.POINT_STYLE_DOT:
+					codePoint.append("*");
+				break;
+			}
 		}
 		if (!dotcolor.equals(Color.BLACK)){
 			if (coma) codePoint.append(",");
