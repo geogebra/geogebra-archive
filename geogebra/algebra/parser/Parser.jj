@@ -294,19 +294,21 @@ ValidExpression buildValidExpression() :
 } 
 {         
      (  
+        // f(x) =  x^2 + 3	
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
-     | 
-        LOOKAHEAD(2147483647)
-         (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"               
-        ( 
-          ve = parametric()      // h: X = (3,2) + t (5,1)
-          |          
-           LOOKAHEAD(2147483647)
-          ve = equation()        // g: 3x + y = 7 
-          |           
-          ve = expression()   // special case "A: (3,2)" should become a point                
-        )                                   
+     |             
+        // h: X = (3,2) + t (5,1)
+      	LOOKAHEAD(2147483647) 
+      	l = <SPREADSHEET_LABEL> ":"  ve = parametric()      
+     |     
+        // g: 3x + y = 7 
+        LOOKAHEAD(2147483647)      
+        l = <SPREADSHEET_LABEL>  ":"  ve = equation()        
+    |          
+        // special case "A: (3,2)" should become a point                                      
+    	LOOKAHEAD(2147483647)  
+        l = <LABEL> ":"  ve = expression()   
     |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)

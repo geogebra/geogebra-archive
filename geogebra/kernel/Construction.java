@@ -769,23 +769,31 @@ public class Construction {
 			if (neighbourCell == null) // look below
 				neighbourCell = geoTabelVarLookup(col + (row + 1));
 
-			// found neighbouring cell: create geo of same type
-			if (neighbourCell != null) {
-				GeoElement geo = neighbourCell.copy();
-				geo.setZero();
-				geo.setAuxiliaryObject(true);
-				geo.setLabel(label);
-				return geo;
-			}
-			// no neighbouring cell: create number with value 0
-			else {
-				GeoNumeric number = new GeoNumeric(this, label, 0d);
-				number.setAuxiliaryObject(true);
-				return number;
-			}
+			return createSpreadsheetGeoElement(neighbourCell, label);
 		}	
 
 		return null;
+	}
+	
+	/**
+	 * Creates a new GeoElement for the spreadsheet of same type as neighbourCell with
+	 * the given label. 	 
+	 */
+	final public GeoElement createSpreadsheetGeoElement(GeoElement neighbourCell, String label) {
+		// found neighbouring cell: create geo of same type
+		if (neighbourCell != null) {
+			GeoElement geo = neighbourCell.copy();
+			geo.setZero();
+			geo.setAuxiliaryObject(true);
+			geo.setLabel(label);
+			return geo;
+		}
+		// no neighbouring cell: create number with value 0
+		else {
+			GeoNumeric number = new GeoNumeric(this, label, 0d);
+			number.setAuxiliaryObject(true);
+			return number;
+		}
 	}
 
 	GeoElement geoTabelVarLookup(String label) {

@@ -24,7 +24,10 @@ public class AlgoDependentList extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;	
 	private ArrayList listItems; //input GeoElements
-    private GeoList geoList;     // output            
+    private GeoList geoList;     // output    
+    
+    // spreadsheet cell range, e.g. A1:B5
+    private boolean isCellRange = false;
         
     /**
      * Creates a new algorithm that takes a list of GeoElements to build a Geolist with 
@@ -34,11 +37,11 @@ public class AlgoDependentList extends AlgoElement {
      * @param listItems: list of GeoElement objects
      */
     public AlgoDependentList(Construction cons, String label, ArrayList listItems) {
-    	this (cons, listItems);
+    	this (cons, listItems, false);
     	geoList.setLabel(label);
     }
     
-    AlgoDependentList(Construction cons, ArrayList listItems) {
+    AlgoDependentList(Construction cons, ArrayList listItems, boolean isCellRange) {
     	super(cons);
     	this.listItems = listItems;
     	       

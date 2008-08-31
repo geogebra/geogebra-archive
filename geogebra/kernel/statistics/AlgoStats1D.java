@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
+import geogebra.Application;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -46,17 +47,7 @@ public abstract class AlgoStats1D extends AlgoElement {
     final static int STATS_PRODUCT = 5;
     
     public AlgoStats1D(Construction cons, String label, GeoList geoList, int stat) {
-        super(cons);
-        this.geoList = geoList;
-        this.stat=stat;
-        
-        Truncate=null;
-        
-        result = new GeoNumeric(cons);
-
-        setInputOutput();
-        compute();
-        result.setLabel(label);
+        this(cons, label, geoList, null, stat);
     }
 
     AlgoStats1D(Construction cons, String label, GeoList geoList, GeoNumeric Truncate, int stat) {
@@ -67,13 +58,7 @@ public abstract class AlgoStats1D extends AlgoElement {
         
         result = new GeoNumeric(cons);
 
-        input = new GeoElement[2];
-        input[0] = geoList;
-        input[1] = Truncate;
-
-        output = new GeoElement[1];
-        output[0] = result;
-        setDependencies(); // done by AlgoElement
+        setInputOutput();
         compute();
         result.setLabel(label);
     }
@@ -83,8 +68,15 @@ public abstract class AlgoStats1D extends AlgoElement {
     }
 
     protected void setInputOutput(){
-        input = new GeoElement[1];
-        input[0] = geoList;
+    	if (Truncate == null) {
+	        input = new GeoElement[1];
+	        input[0] = geoList;
+    	}
+    	else {
+    		 input = new GeoElement[2];
+             input[0] = geoList;
+             input[1] = Truncate;
+    	}
 
         output = new GeoElement[1];
         output[0] = result;
@@ -97,6 +89,9 @@ public abstract class AlgoStats1D extends AlgoElement {
     
 
     protected final void compute() {
+    	
+    	// TODO: remove
+    	Application.debug("compute: " + geoList);
     	
     	int truncate;
     	int size = geoList.size();

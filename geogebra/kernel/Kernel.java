@@ -1297,6 +1297,15 @@ public class Kernel {
 		return t;
 	}
 	
+	
+	/** 
+	 * Creates a dependent copy of origGeo with label
+	 */
+	final public GeoElement DependentGeoCopy(String label, GeoElement origGeo) {
+		AlgoDependentGeoCopy algo = new AlgoDependentGeoCopy(cons, label, origGeo);
+		return algo.getGeo();
+	}
+	
 	/** 
 	 * Name of geo.
 	 */

@@ -38,25 +38,15 @@ public class AlgoCellRange extends AlgoElement {
     public AlgoCellRange(Construction cons, String label, GeoElement startCell, GeoElement endCell) {    	    
     	super(cons);    
     	this.startCell = startCell;
-    	this.endCell = endCell;
+    	this.endCell = endCell;    	            	    	    
     	
-    	// create output object
-        geoList = new GeoList(cons);
-    	    	
-    	// get range: cell coordinates of range in spreadsheet
-    	Point startCoords = startCell.getSpreadsheetCoords();
-    	Point endCoords = endCell.getSpreadsheetCoords();
-    	toStringOutput = startCell.getLabel() + ":" + endCell.getLabel();
-    	
-    	// build the geoList
-    	initCellRangeList(startCoords, endCoords);       
-        
         setInputOutput(); 
+              
         geoList.setLabel(label);    	
     }   
     
 	protected String getClassName() {
-		return "AlgoCellRange";
+		return "Expression";
 	}
 	
 	public void remove() {      
@@ -75,24 +65,33 @@ public class AlgoCellRange extends AlgoElement {
         
 	// for AlgoElement
 	protected void setInputOutput() {
-		// standard input: start and end cell
-		// needed for XML saving only
-        GeoElement [] standardInput = new GeoElement[2];
-        standardInput[0] = startCell;
-        standardInput[1] = endCell;
+		// get range: cell coordinates of range in spreadsheet
+    	Point startCoords = startCell.getSpreadsheetCoords();
+    	Point endCoords = endCell.getSpreadsheetCoords();
+    	toStringOutput = startCell.getLabel() + ":" + endCell.getLabel();
+    	
+    	// build list with cells in range
+    	ArrayList listItems = initCellRangeList(startCoords, endCoords);   
+    	
+    	// create dependent geoList for cells in range
+    	AlgoDependentList algo = new AlgoDependentList(cons, listItems, true);
+    	cons.removeFromConstructionList(algo);
+        geoList = algo.getGeoList();
 		
-		// efficient input: all list elements in range
-    	// used for updating of dependent algorithms
-    	int size = geoList.size();
-    	 GeoElement [] actualInput = new GeoElement[size];
-    	for (int i=0; i < size; i++) {
-    		actualInput[i] = (GeoElement) geoList.get(i);    		
-    	}          
-        
+		
+		// input: start and end cell
+		// needed for XML saving only
+        input = algo.input;
+		
         output = new GeoElement[1];        
         output[0] = geoList;  
         
-        setEfficientDependencies(standardInput, actualInput);
+        setDependencies();    
+        
+//        // change input now for XML saving    
+//        input = new GeoElement[2]; 
+//        input[0] = startCell;
+//      	input[1] = endCell; 	        
     }    
     
     /**
@@ -103,13 +102,13 @@ public class AlgoCellRange extends AlgoElement {
      * @param startCoords
      * @param endCoords
      */
-    private void initCellRangeList(Point startCoords, Point endCoords) {   
+    private ArrayList initCellRangeList(Point startCoords, Point endCoords) { 
+    	ArrayList listItems = new ArrayList();
    	
     	// check if we have valid spreadsheet coordinates
     	boolean validRange = startCoords != null && endCoords != null;
-    	if (!validRange) {
-    		geoList.setUndefined();
-    		return;
+    	if (!validRange) {    		
+    		return listItems;
     	}    		
     	
     	// min and max column and row of range
@@ -125,22 +124,21 @@ public class AlgoCellRange extends AlgoElement {
     			String cellLabel = GeoElement.getSpreadsheetCellName(colIndex, rowIndex);    			
     			GeoElement geo = kernel.lookupLabel(cellLabel);
     			
-    			// don't allow missing objects in range: 
-    			// this algorithm cannot detect when a new object is missing in its range    			
+    			// create missing object in cell range
     			if (geo == null) {
-    				clearGeoList();
-    				geoList.setUndefined();
-    				return;
+    				geo = cons.createSpreadsheetGeoElement(startCell, cellLabel);    				
     			}
     			
     			// we got the cell object, add it to the list
-    			geoList.add(geo);
+    			listItems.add(geo);
     			
     			// make sure that this cell object cannot be renamed by the user
     			// renaming would move the object outside of our range
     			geo.addCellRangeUser();
        		}    		
-    	}    	
+    	}    
+    	
+    	return listItems; 
     }        
     
     public GeoList getList() { 
@@ -149,11 +147,11 @@ public class AlgoCellRange extends AlgoElement {
     
         
     protected final void compute() {    	    	
-    	// nothing to do in compute
+    	// nothing to do in compute, update is simply passed on to dependent algos
     }   
     
     final public String getCommandDescription() {
-    	return toString();
+    	return toStringOutput;
     }
     
     final public String toString() {

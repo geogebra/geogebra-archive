@@ -442,7 +442,7 @@ public class AlgebraProcessor {
 		throws MyError, Exception {
 		
 		// TODO: remove
-		Application.debug("ve:  " + ve + ", class: " + ve.getClass());
+		Application.debug("ve: " + ve + ", class: " + ve.getClass());
 		
 		// check for existing labels		
 		String[] labels = ve.getLabels();
@@ -783,11 +783,17 @@ public class AlgebraProcessor {
 		else if (eval instanceof Function) {
 			return processFunction((Function) eval);			
 		} 
-		else {			
-			Application.debug(
+		
+		// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
+		// create a copy of A1
+		else if (eval.isGeoElement()){			
+			return processGeoCopy(n.getLabel(), (GeoElement) eval);
+		}		
+		
+		// if we get here, nothing worked
+		Application.debug(
 				"Unhandled ExpressionNode: " + eval + ", " + eval.getClass());
-			return null;
-		}
+		return null;
 	}
 
 	private GeoElement[] processNumber(
@@ -927,6 +933,15 @@ public class AlgebraProcessor {
 			ret[0].setMode(Kernel.COORD_POLAR);
 			ret[0].updateRepaint();
 		} 
+		return ret;
+	}
+	
+	/** 
+	 * Creates a dependent copy of origGeo with label
+	 */
+	private GeoElement[] processGeoCopy(String copyLabel, GeoElement origGeo) {
+		GeoElement[] ret = new GeoElement[1];
+		ret[0] = kernel.DependentGeoCopy(copyLabel, origGeo);		
 		return ret;
 	}
 
