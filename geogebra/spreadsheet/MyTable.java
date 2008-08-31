@@ -526,7 +526,7 @@ public class MyTable extends JTable
 		public void mouseDragged(MouseEvent e) {
 			if (editor.isEditing()) {
 				Point point = getIndexFromPixel(e.getX(), e.getY());
-				if (point != null) {
+				if (point != null && name0 != null) {
 					int column2 = (int)point.getX();
 					int row2 = (int)point.getY();
 					int column1 = GeoElement.getSpreadsheetColumn(name0);

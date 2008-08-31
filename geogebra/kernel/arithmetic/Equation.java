@@ -14,6 +14,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -59,9 +60,20 @@ public class Equation extends ValidExpression {
         
         if (!valid)            
 			throw new MyError(kernel.getApplication(), "InvalidEquation");              
-        
-        // resolve variables
-        lhs.resolveVariables();
+           
+        // resolve variables in lhs         
+        if (lhs.isLeaf() && lhs.getLeft().isVariable()) {
+        	// avoid auto creation of GeoElement when lhs is a single variable
+            // e.g. A4 = x^2
+        	Variable leftVar = (Variable) lhs.getLeft();
+        	lhs.setLeft(leftVar.resolve(false)); // don't allow auto creation of variables
+        } 
+        else {
+        	// standard case for lhs
+        	lhs.resolveVariables();
+        }
+     
+        // resolve variables in rhs
         rhs.resolveVariables();
         
      // build normal form polynomial        

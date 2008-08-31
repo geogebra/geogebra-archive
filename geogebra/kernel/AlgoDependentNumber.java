@@ -18,9 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -77,11 +75,6 @@ public class AlgoDependentNumber extends AlgoElement {
     		NumberValue nv = (NumberValue) root.evaluate();
 	        number.setValue(nv.getDouble());
 	    } catch (Exception e) {
-	    	
-	    	// TODO: remove
-	    	e.printStackTrace();
-	    	
-	    	
 	    	number.setUndefined();
 		}
     }   

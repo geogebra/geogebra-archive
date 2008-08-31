@@ -1497,7 +1497,7 @@ implements ExpressionValue {
     public void resolveVariables() {   
     	doResolveVariables();
     	simplifyLeafs();
-    }
+    }       
     	
     private void doResolveVariables() {    	    	
         // resolve left wing

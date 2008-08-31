@@ -76,10 +76,18 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * according GeoElement object.
      */
     private GeoElement resolve() {
+    	return resolve(true);
+    }
+    	
+	 /**
+     * Looks up the name of this variable in the kernel and returns the 
+     * according GeoElement object.
+     */
+    GeoElement resolve(boolean allowAutoCreateGeoElement) {
     	Construction cons = kernel.getConstruction();
     	
     	// allow autocreation of elements
-        GeoElement geo = cons.lookupLabel(name, true);
+        GeoElement geo = cons.lookupLabel(name, allowAutoCreateGeoElement);
         
         if (geo != null)
 			return  geo;                            
@@ -99,7 +107,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
 			}
 
 			// allow autocreation of elements
-	        geo = cons.lookupLabel(labelWithout$.toString(), true);				
+	        geo = cons.lookupLabel(labelWithout$.toString(), allowAutoCreateGeoElement);				
 			if (geo != null) {
 				// geo found for name that includes $ signs
 				return geo;

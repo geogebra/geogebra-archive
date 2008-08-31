@@ -258,7 +258,7 @@ TOKEN: {
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  > 
-| 	< FUNCTION_LABEL: <LABEL> "(" >
+| 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL>) "(" >
 }
 
  TOKEN : {
@@ -298,7 +298,7 @@ ValidExpression buildValidExpression() :
         ve = functionExpressionnode()          
      | 
         LOOKAHEAD(2147483647)
-         l = <LABEL> ":"               
+         (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"               
         ( 
           ve = parametric()      // h: X = (3,2) + t (5,1)
           |          
@@ -381,20 +381,20 @@ Vector labellist():
 }
 {
 (( 
-    "{" t = <LABEL> 
+    "{" (t=<SPREADSHEET_LABEL> | t=<LABEL>) 
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," t = <LABEL> { labels.add(t.image); } )*
+     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)  { labels.add(t.image); } )*
     "}" 
 )
     |    
 ( 
-    t = <LABEL> 
+    (t=<SPREADSHEET_LABEL> | t=<LABEL>)  
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," t = <LABEL> { labels.add(t.image); } )*
+     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)  { labels.add(t.image); } )*
 ))
      { return labels; }
 }
