@@ -77,7 +77,7 @@ public class ContextMenu extends JPopupMenu
 	   	   	 	add(item6);
 	 		}
    	   	 	
-	 		if (column1 == column2 || row1 == row2) {
+	 		if ((column1 == column2 && column1 !=-1) || (row1 == row2 && row1 != -1)) {
 	   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
 	   	   	 	item7.setIcon(app.getEmptyIcon());
 	   	   	 	item7.addActionListener(new ActionListenerCreateList());
@@ -186,12 +186,12 @@ public class ContextMenu extends JPopupMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			Application.debug("CreateMatrix " + column1 + " - " + column2+"   "+row1+" - "+row2);
- 			if (selected == null) throw new RuntimeException("error state");
+ 			//if (selected == null) throw new RuntimeException("error state");
  			String text="";
  			try {
  		 			text="{";
  					for (int j = column1; j <= column2; ++ j) {
- 						if (selected.length > j && ! selected[j])  continue; 	
+ 						//if (selected.length > j && ! selected[j])  continue; 	
  						String row = "{";
 		  	   	 		for (int i = row1; i <= row2; ++ i) {
 		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
