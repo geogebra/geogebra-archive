@@ -58,11 +58,7 @@ public class AlgoDependentGeoCopy extends AlgoElement {
     }   
     
     final public String toString() {
-        // was defined as e.g.  c = a & b
-        StringBuffer sb = new StringBuffer();
-        sb.append(copyGeo.getLabel());
-        sb.append(" = ");
-        sb.append(origGeo.getLabel());
-        return sb.toString();
+    	// expression is only label of original geo
+    	return origGeo.getLabel();
     }
 }
