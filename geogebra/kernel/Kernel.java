@@ -69,6 +69,26 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
+	
+	/* Significant figures
+	 * 
+	 * How to do:
+	 * 
+	 * private ScientificFormat sf;
+	 * sf = new ScientificFormat(5, 20, false);
+	 * String s = sf.format(double)
+	 * 
+	 * need to address:
+	 * 
+	 * PRINT_PRECISION 
+	 * setPrintDecimals()
+	 * getPrintDecimals()
+	 * getMaximumFractionDigits()
+	 * setMaximumFractionDigits()
+	 * 
+	 * how to determine whether to use nf or sf
+	 */
+	
 	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
 	
@@ -366,10 +386,10 @@ public class Kernel {
 		
 	/**
 	 * returns 10^(-PrintDecimals)
-	 */
+	 *
 	final public double getPrintPrecision() {
 		return PRINT_PRECISION;
-	}
+	} */
 	
 	final public int getCoordStyle() {
 		return coordStyle;
