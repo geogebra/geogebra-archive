@@ -42,7 +42,7 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
+ 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
  			for (int x = columns - 2; x >= column1; -- x) {
  				for (int y = 0; y < table.getModel().getColumnCount(); ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
@@ -52,8 +52,12 @@ public class ContextMenuCol extends ContextMenu
  					column += 1;
  					String newLabel = "" + (char)('A' + column) + (row + 1);
  					geo.setLabel(newLabel);
+ 					succ = true;
  				}
  			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
  		}
 	}
 	
@@ -61,7 +65,7 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
+ 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
  			for (int x = columns - 2; x >= column2 + 1; -- x) {
  				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
@@ -71,8 +75,12 @@ public class ContextMenuCol extends ContextMenu
  					column += 1;
  					String newLabel = "" + (char)('A' + column) + (row + 1);
  					geo.setLabel(newLabel);
+ 					succ = true;
  				}
  			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
  		}
 	}
 	
@@ -80,7 +88,7 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			table.copyPasteCut.delete(column1, row1, column2, row2);
+ 			boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
  			int dx = column2 - column1 + 1;
 			for (int x = column2 + 1; x < columns; ++ x) {
 				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
@@ -94,8 +102,12 @@ public class ContextMenuCol extends ContextMenu
  					String newLabel = "" + (char)('A' + column) + (row + 1);
  					//System.out.print(" " + newLabel + " ");
  					geo.setLabel(newLabel);
+ 					succ = true;
  				}
  			}
+			
+			if (succ)
+ 				app.storeUndoInfo();
  		}
 	}
 	    		

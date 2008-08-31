@@ -105,7 +105,8 @@ public class ContextMenu extends JPopupMenu
 	public class ActionListenerPaste implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.paste(column1, row1, column2, row2);
+ 			boolean succ = table.copyPasteCut.paste(column1, row1, column2, row2);
+ 			if (succ) app.storeUndoInfo();
  			table.getView().getRowHeader().revalidate(); 		
  		}
 	}
@@ -113,14 +114,16 @@ public class ContextMenu extends JPopupMenu
 	public class ActionListenerCut implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.cut(column1, row1, column2, row2);
+ 			boolean succ = table.copyPasteCut.cut(column1, row1, column2, row2);
+ 			if (succ) app.storeUndoInfo();
  		}
 	}
     	
 	public class ActionListenerClear implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.copyPasteCut.delete(column1, row1, column2, row2);
+ 			boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
+ 			if (succ) app.storeUndoInfo();
  		}
 	}
 	
@@ -173,12 +176,11 @@ public class ContextMenu extends JPopupMenu
 	 					values[i].setAuxiliaryObject(true);
 	 				}
 	 			}
+	 			
+	 			app.storeUndoInfo();
  			} catch (Exception ex) {
  				// Just abort the process
- 			} finally {
- 				table.kernel.storeUndoInfo();
- 			}
-
+ 			} 
 		}
 	}
 	
@@ -215,12 +217,12 @@ public class ContextMenu extends JPopupMenu
 	   	 		    String matrixName = geos[0].getIndexLabel("matrix");
 	   	 		    geos[0].setLabel(matrixName);
 	
- 			} catch (Exception ex) {
+	   	 		app.storeUndoInfo();
+ 			} 
+ 			catch (Exception ex) {
  				Application.debug("creating matrix failed "+text);
  				ex.printStackTrace();
- 			} finally {
- 				table.kernel.storeUndoInfo();
- 			}
+ 			} 
 
 		}
 	}
@@ -286,15 +288,15 @@ public class ContextMenu extends JPopupMenu
 	 			}
 	 			else
 	 			{
-	 				Application.debug("creating list failed "+text);				
+	 				Application.debug("creating list failed "+text);	
+	 				return;
 	 			}
  			
- 			} catch (Exception ex) {
+	 			app.storeUndoInfo();
+ 			} 
+ 			catch (Exception ex) {
  				Application.debug("creating list failed with exception "+text);
- 			} finally {
- 				table.kernel.storeUndoInfo();
- 			}
-
+ 			} 
 		}
 	}
 	

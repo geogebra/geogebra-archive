@@ -655,8 +655,9 @@ public class Kernel {
 	}
 	
 	public void storeUndoInfo() {
-		if (undoActive)
+		if (undoActive) {
 			cons.storeUndoInfo();
+		}
 	}
 
 	public void restoreCurrentUndoInfo() {

@@ -3956,7 +3956,7 @@ public abstract class Application implements	KeyEventDispatcher {
         return isSaved;
     }
 
-    public void storeUndoInfo() { 
+    public void storeUndoInfo() {    	
     	if (undoActive) { 	    
 			kernel.storeUndoInfo();
 			updateMenubar();

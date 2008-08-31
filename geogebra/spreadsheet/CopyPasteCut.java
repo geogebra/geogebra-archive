@@ -19,6 +19,7 @@ import javax.swing.JTable;
 public class CopyPasteCut {
 	
 	protected Kernel kernel;
+	protected Application app;
 	protected MyTable table;
 	
 	protected String externalBuf;
@@ -29,6 +30,7 @@ public class CopyPasteCut {
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		kernel = kernel0;	
+		app = kernel.getApplication();
 	}
 	
 	public void copy(int column1, int row1, int column2, int row2, boolean skipInternalCopy) {
@@ -73,50 +75,54 @@ public class CopyPasteCut {
 		}
 	}
 	
-	public void cut(int column1, int row1, int column2, int row2) {
+	public boolean cut(int column1, int row1, int column2, int row2) {
 		copy(column1, row1, column2, row2, false);
 		//externalBuf = null;
-		delete(column1, row1, column2, row2);	
+		return delete(column1, row1, column2, row2);	
 	}
 	
-	public void paste(int column1, int row1, int column2, int row2) {
+	public boolean paste(int column1, int row1, int column2, int row2) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
 		String buf = null;
+		boolean succ = false;
+		
 		if ((contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				//kernel.getApplication().showError(ex.getMessage());
+				//app.showError(ex.getMessage());
 				// Util.handleException(table, ex);
 			}
 		}
+		
 		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
-				pasteInternal(column1, row1);
+				succ = pasteInternal(column1, row1);
 			} catch (Exception ex) {
 				ex.printStackTrace(System.out);
-				//kernel.getApplication().showError(ex.getMessage());
+				//app.showError(ex.getMessage());
 				pasteExternal(buf, column1, row1);
 				// Util.handleException(table, ex);
 			}
 		}
 		else if (buf != null) {
-			pasteExternal(buf, column1, row1);
+			succ = pasteExternal(buf, column1, row1);
 		}
-		else {
-			return;
-		}
-		kernel.storeUndoInfo();
+		
+		return succ;
 	}
 
-	public void pasteInternal(int column1, int row1) throws Exception {
-		kernel.getApplication().setWaitCursor();
+	public boolean pasteInternal(int column1, int row1) throws Exception {		
 		int width = internalBuf.length;
-		if (width == 0) return;
+		if (width == 0) return false;
 		int height = internalBuf[0].length;
-		if (height == 0) return;
+		if (height == 0) return false;
+		
+		app.setWaitCursor();
+		boolean succ = false; 
+		
 		//Application.debug("height=" + height);
 		int x1 = bufColumn;
 		int y1 = bufRow;
@@ -159,14 +165,18 @@ public class CopyPasteCut {
 			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
 				createPointsAndAList2(values2);
 			}
+			
+			succ = true;
 		}
 		catch (Exception e)
-		{
-			e.printStackTrace();
+		{			
+			e.printStackTrace();	
 		}
 		 finally {
-			kernel.getApplication().setDefaultCursor();
+			 app.setDefaultCursor();
 		}
+		 
+		 return succ;
 	}
 	
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
@@ -215,8 +225,10 @@ public class CopyPasteCut {
 		return data;		
 	}
 	
-	public void pasteExternal(String buf, int column1, int row1) {
-		kernel.getApplication().setWaitCursor();
+	public boolean pasteExternal(String buf, int column1, int row1) {
+		app.setWaitCursor();
+		boolean succ = false;
+		
 		try {
 			String[][] data = parseData(buf);
 			MyTableModel model = (MyTableModel)table.getModel();
@@ -262,22 +274,28 @@ public class CopyPasteCut {
 			if (values2.length == 2 || maxLen == 2) {
 				createPointsAndAList2(values2);
 			}
+			
+			succ = true;
 		} catch (Exception ex) {
-			//kernel.getApplication().showError(ex.getMessage());
+			//app.showError(ex.getMessage());
 			//Util.handleException(table, ex);
 			ex.printStackTrace();
 		} finally {
-			kernel.getApplication().setDefaultCursor();
+			app.setDefaultCursor();
 		}
+		
+		return succ;
 	}
 
-	public void delete(int column1, int row1, int column2, int row2)  {
+	public boolean delete(int column1, int row1, int column2, int row2)  {
+		boolean succ = false;
 		for (int column = column1; column <= column2; ++ column) {
 			//int column3 = table.convertColumnIndexToModel(column);
 			for (int row = row1; row <= row2; ++ row) {
 				GeoElement value0 = RelativeCopy.getValue(table, column, row);
 				if (value0 != null) {
 					value0.remove();
+					succ = true;
 				}
 				//try {
 				//	MyCellEditor.prepareAddingValueToTable(kernel, table, null, value0, column3, row);
@@ -286,7 +304,7 @@ public class CopyPasteCut {
 				//}
 			}
 		}
-		kernel.storeUndoInfo();
+		return succ;
 	}
 	
 	public void createPointsAndAList2(GeoElement[][] values) throws Exception {

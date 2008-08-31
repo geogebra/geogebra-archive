@@ -75,7 +75,7 @@ public class AlgebraProcessor {
 			boolean redefineIndependent) {
 						
 			try {
-				return changeGeoElementNoExceptionHandling(geo, newValue, redefineIndependent);
+				return changeGeoElementNoExceptionHandling(geo, newValue, redefineIndependent, true);
 			} catch (Exception e) {
 				app.showError(e.getMessage());
 				return null;
@@ -86,7 +86,7 @@ public class AlgebraProcessor {
 	 * for AlgebraView changes in the tree selection and redefine dialog
 	 * @return changed geo
 	 */
-	public GeoElement changeGeoElementNoExceptionHandling(GeoElement geo, String newValue, boolean redefineIndependent) 
+	public GeoElement changeGeoElementNoExceptionHandling(GeoElement geo, String newValue, boolean redefineIndependent, boolean storeUndoInfo) 
 	throws Exception {
 		String oldLabel, newLabel;
 		ValidExpression ve;
@@ -105,15 +105,16 @@ public class AlgebraProcessor {
 			if (newLabel.equals(oldLabel)) {
 				// try to overwrite                
 				result = processValidExpression(ve, redefineIndependent);
-				if (result != null)
+				if (result != null && storeUndoInfo)
 					app.storeUndoInfo();
 				return result[0];
 			} else if (cons.isFreeLabel(newLabel)) {
 				ve.setLabel(oldLabel);
 				// rename to oldLabel to enable overwriting
 				result = processValidExpression(ve, redefineIndependent);
-				result[0].setLabel(newLabel); // now we rename				
-				app.storeUndoInfo();
+				result[0].setLabel(newLabel); // now we rename	
+				if (storeUndoInfo)
+					app.storeUndoInfo();
 				return result[0];
 			} else {
 				String str[] = { "NameUsed", newLabel };
@@ -148,7 +149,9 @@ public class AlgebraProcessor {
 		}	
 	}
 	
-	public GeoElement[] processAlgebraCommandNoExceptionHandling(String cmd, boolean storeUndo) 
+	public GeoElement[] processAlgebraCommandNoExceptionHandling(
+			String cmd, 
+			boolean storeUndo) 
 	throws Exception {
 		ValidExpression ve;
 
@@ -436,14 +439,11 @@ public class AlgebraProcessor {
 	 * @throws MyError
 	 * @throws Exception
 	 */
-	private GeoElement[] processValidExpression(
+	public GeoElement[] processValidExpression(
 		ValidExpression ve,
 		boolean redefineIndependent)
 		throws MyError, Exception {
-		
-		// TODO: remove
-		Application.debug("ve: " + ve + ", class: " + ve.getClass());
-		
+	
 		// check for existing labels		
 		String[] labels = ve.getLabels();
 		GeoElement replaceable = null;

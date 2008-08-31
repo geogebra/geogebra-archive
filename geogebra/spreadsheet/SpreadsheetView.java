@@ -342,7 +342,9 @@ public class SpreadsheetView extends JScrollPane implements View
 				break;
 			case KeyEvent.VK_V : // control + v
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+					boolean storeUndo = table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+					if (storeUndo)
+		 				app.storeUndoInfo();
 				}
 				e.consume();
 				break;				
@@ -351,12 +353,16 @@ public class SpreadsheetView extends JScrollPane implements View
 					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
 				}
 				e.consume();
-				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+				boolean storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+				if (storeUndo)
+	 				app.storeUndoInfo();
 				break;
 				
 			case KeyEvent.VK_DELETE : // delete
 			case KeyEvent.VK_BACK_SPACE : // delete on MAC
-				table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+				storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+				if (storeUndo)
+	 				app.storeUndoInfo();
 				break;
 			}
 		}

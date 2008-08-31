@@ -70,7 +70,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
-						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy2, dy1, dy2);						kernel.storeUndoInfo();
+						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy2, dy1, dy2);												
 					}
 					return true;
 				}
@@ -138,8 +138,7 @@ public class RelativeCopy {
 			//kernel.getApplication().showError(ex.getMessage());
 			ex.printStackTrace();
 			return false;
-		} finally {
-			kernel.storeUndoInfo();
+		} finally {		
 			kernel.getApplication().setDefaultCursor();
 		}
 	}

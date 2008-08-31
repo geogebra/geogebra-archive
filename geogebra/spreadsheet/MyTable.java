@@ -40,6 +40,7 @@ public class MyTable extends JTable
 	private static final long serialVersionUID = 1L;
 	
 	protected Kernel kernel;
+	protected Application app;
 	protected MyCellEditor editor;
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
@@ -52,6 +53,7 @@ public class MyTable extends JTable
 		super(tableModel);
 		this.tableModel = tableModel;
 		kernel = kernel0;
+		app = kernel.getApplication();
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
@@ -506,10 +508,11 @@ public class MyTable extends JTable
 					}
 					boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
 					if (succ) {
+						app.storeUndoInfo();
 					//	minSelectionColumn = -1;
 					//	minSelectionRow = -1;
 					//	maxSelectionColumn = -1;
-					//	maxSelectionRow = -1;
+					//	maxSelectionRow = -1;						
 					}
 					isDragingDot = false;
 					dragingToRow = -1;
@@ -681,45 +684,55 @@ public class MyTable extends JTable
 			int keyCode = e.getKeyCode();
             boolean shiftDown = e.isShiftDown(); 	 
             boolean altDown = e.isAltDown(); 	 
-            boolean ctrlDown = Application.isControlDown(e); 	 
+            boolean ctrlDown = Application.isControlDown(e); 	                    
+            
 			//Application.debug(keyCode+"");
 			switch (keyCode) {
-			case KeyEvent.VK_C: 	                         
-			case KeyEvent.VK_V: 	                        
-			case KeyEvent.VK_X: 	                         
-			case KeyEvent.VK_DELETE: 	                         
-			case KeyEvent.VK_BACK_SPACE:
-				if (! editor.isEditing()) {
-					if (ctrlDown) {
-						e.consume();
-						if (keyCode == KeyEvent.VK_C) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
+				case KeyEvent.VK_C: 	                         
+				case KeyEvent.VK_V: 	                        
+				case KeyEvent.VK_X: 	                         
+				case KeyEvent.VK_DELETE: 	                         
+				case KeyEvent.VK_BACK_SPACE:
+					if (! editor.isEditing()) {
+						if (ctrlDown) {
+							e.consume();
+												
+							if (keyCode == KeyEvent.VK_C) {
+								copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
+							}
+							else if (keyCode == KeyEvent.VK_V) {
+								boolean storeUndo = copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+								getView().getRowHeader().revalidate();
+								if (storeUndo)
+					 				app.storeUndoInfo();
+							}
+							else if (keyCode == KeyEvent.VK_X) {
+								boolean storeUndo = copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+								if (storeUndo)
+					 				app.storeUndoInfo();
+							}
 						}
-						else if (keyCode == KeyEvent.VK_V) {
-							copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-							getView().getRowHeader().revalidate();
+						if (keyCode == KeyEvent.VK_DELETE || 	                                         
+								keyCode == KeyEvent.VK_BACK_SPACE) {
+							e.consume();
+							//Application.debug("deleting...");
+							boolean storeUndo = copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							if (storeUndo)
+				 				app.storeUndoInfo();
 						}
-						else if (keyCode == KeyEvent.VK_X) {
-							copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-						}
+						return;
 					}
-					if (keyCode == KeyEvent.VK_DELETE || 	                                         
-							keyCode == KeyEvent.VK_BACK_SPACE) {
-						e.consume();
-						//Application.debug("deleting...");
-						copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					break;
+					
+				case 27:
+					//Application.debug(editor.isEditing());
+					if (editor.isEditing()) {
+						editor.undoEdit();
+						e.setKeyCode(10);
 					}
-					return;
-				}
-				break;
-			case 27:
-				//Application.debug(editor.isEditing());
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					e.setKeyCode(10);
-				}
-				break;
+					break;
 			}
+			
 			if (keyCode >= 37 && keyCode <= 40) {
 				if (editor.isEditing())	return;			
 			}
@@ -1033,6 +1046,7 @@ public class MyTable extends JTable
 			 boolean altDown = e.isAltDown();
 			 int keyCode = e.getKeyCode();
 			switch (keyCode) {
+			
 			case KeyEvent.VK_C : // control + c
 				//Application.debug(minSelectionColumn);
 				//Application.debug(maxSelectionColumn);
@@ -1041,22 +1055,31 @@ public class MyTable extends JTable
 					e.consume();
 				}
 				break;
+				
 			case KeyEvent.VK_V : // control + v
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					boolean storeUndo = copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);					
+					if (storeUndo)
+		 				app.storeUndoInfo();
 					getView().getRowHeader().revalidate();
 					e.consume();
 				}
 				break;		
+				
 			case KeyEvent.VK_X : // control + x
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					boolean storeUndo = copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					if (storeUndo)
+		 				app.storeUndoInfo();
 					e.consume();
 				}
 				break;
+				
 			case KeyEvent.VK_BACK_SPACE : // delete
 			case KeyEvent.VK_DELETE : // delete
-				copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+				boolean storeUndo = copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+				if (storeUndo)
+	 				app.storeUndoInfo();
 				break;
 			}
 		}

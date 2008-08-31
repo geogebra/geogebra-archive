@@ -1,6 +1,7 @@
 
 package geogebra.spreadsheet;
 
+import geogebra.Application;
 import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -20,6 +21,7 @@ public class MyCellEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1L;
 
 	protected Kernel kernel;
+	protected Application app; 
 	protected GeoElement value;
 	protected MyTable table;
 	protected int column; 
@@ -29,6 +31,7 @@ public class MyCellEditor extends DefaultCellEditor {
     public MyCellEditor(Kernel kernel0) {
 		super(new JTextField());
 		kernel = kernel0;
+		app = kernel.getApplication();
 		Component component = getComponent();
 		component.addKeyListener(new KeyListener4());
 		if (component.getFont().getSize() == 0) {
@@ -123,8 +126,8 @@ public class MyCellEditor extends DefaultCellEditor {
 		//Application.debug("stopCellEditing()");
 		String text = (String)delegate.getCellEditorValue();
 		try {
-			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
-			kernel.storeUndoInfo();
+			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);	
+			app.storeUndoInfo();
 		} catch (Exception ex) {
 			// show GeoGebra error dialog
 			//kernel.getApplication().showError(ex.getMessage());
@@ -171,7 +174,8 @@ public class MyCellEditor extends DefaultCellEditor {
 			// check if input is a function in x
 			try {
 				ValidExpression ve = kernel.getParser().parse(text);	
-				GeoElement [] temp = kernel.getAlgebraProcessor().processValidExpression(ve);
+				// redefine independent
+				GeoElement [] temp = kernel.getAlgebraProcessor().processValidExpression(ve, true);
 				
 				if (temp[0].isGeoFunction())
 					text = name + "(x)=" + text;
@@ -213,15 +217,9 @@ public class MyCellEditor extends DefaultCellEditor {
     	} 
     	GeoElement newValue = null;
     	try {
-//        	if (oldValue.isIndependent()) {
-//        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, false);
-//        		// !!!problem here to be solved.
-//        		//Application.debug(">> " + newValue.toValueString());
-//        	}
-//        	else {
-    			// always redefine objects in spreadsheet
-        		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true);
-    //    	}
+			// always redefine objects in spreadsheet, don't store undo info here
+    		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true, false);
+
         	newValue.setConstructionDefaults();
         	//Application.debug("GeoClassType = " + newValue.getGeoClassType());
         	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
@@ -230,8 +228,8 @@ public class MyCellEditor extends DefaultCellEditor {
         	else {
         		kernel.getApplication().refreshViews();
         	}
-    	} catch (Throwable e) {
-    		// TODO: handle exception
+    	} 
+    	catch (Throwable e) {
     		//Application.debug("SPREADSHEET: input error: " + e.getMessage());
     		//Application.debug("text0 = " + text0);
     		if (text0.startsWith("=") || text0.startsWith("\"")){
