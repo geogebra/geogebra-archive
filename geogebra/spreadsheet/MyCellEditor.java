@@ -62,9 +62,9 @@ public class MyCellEditor extends DefaultCellEditor {
 				if (index == -1) {
 					text = "=" + text;			
 				}
-				if (index > 0) {
-					text = text.substring(index - 1).trim();
-				}
+//				if (index > 0) {
+//					text = text.substring(index - 1).trim();
+//				}
 			}
 		}
 		delegate.setValue(text);
@@ -221,6 +221,8 @@ public class MyCellEditor extends DefaultCellEditor {
     		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true, false);
 
         	newValue.setConstructionDefaults();
+        	if (oldValue.isAuxiliaryObject()) newValue.setAuxiliaryObject(true);
+        	
         	//Application.debug("GeoClassType = " + newValue.getGeoClassType());
         	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
         		newValue.setVisualStyle(oldValue);	        		

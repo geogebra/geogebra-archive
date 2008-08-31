@@ -670,7 +670,7 @@ public class AlgebraView extends JTree implements View {
 			selectedNode.setUserObject(selectedGeoElement);
 			
 			// change this GeoElement in the Kernel                  
-			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, false);			
+			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, true);			
 			if (geo != null) {				
 				selectedGeoElement = geo;
 				selectedNode.setUserObject(selectedGeoElement);
