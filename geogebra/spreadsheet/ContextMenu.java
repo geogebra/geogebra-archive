@@ -139,10 +139,10 @@ public class ContextMenu extends JPopupMenu
  			LinkedList list = new LinkedList();
  			MyTableModel model = (MyTableModel)table.getModel();
  			
-			String s="columnsSelected ";
-				for (int i=0 ; i<selectedColumns.length ; i++)
-					if (selectedColumns[i]) s=s+"1"; else s=s+"0";
-				Application.debug(s);
+			//String s="columnsSelected ";
+			//	for (int i=0 ; i<selectedColumns.length ; i++)
+			//		if (selectedColumns[i]) s=s+"1"; else s=s+"0";
+			//	Application.debug(s);
 				
  			try {
  				
