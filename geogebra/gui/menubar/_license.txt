@@ -34,7 +34,7 @@ TRANSLATIONS
   * Estonian: Jane Albre (Estonia)
   * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
   * French: Noel Lambert (France)
-  * Galician: Jesus Garcia Otero (Spain)  
+  * Galician: Jesus Garcia Otero, Irene Arias Lopez (Spain) 
   * German: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg)
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
