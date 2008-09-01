@@ -416,8 +416,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			strDecimalSpaces[i] = Integer.toString(i);
 			strDecimalSpacesAC[i] = i + " decimals";
 		}*/
-		String[] strDecimalSpaces = new String[12];
-		String[] strDecimalSpacesAC = new String[12];
+		String[] strDecimalSpaces = new String[13];
+		String[] strDecimalSpacesAC = new String[13];
 		strDecimalSpaces[0]   = app.getPlain("ADecimalPlaces","0");
 		strDecimalSpacesAC[0] = "0 decimals";
 		strDecimalSpaces[1]   = app.getPlain("ADecimalPlaces","1");
@@ -434,14 +434,16 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		strDecimalSpacesAC[6] = "10 decimals";
 		strDecimalSpaces[7]   = app.getPlain("ADecimalPlaces","15");
 		strDecimalSpacesAC[7] = "15 decimals";
-		strDecimalSpaces[8]   = app.getPlain("ASignificantFigures","3");
-		strDecimalSpacesAC[8] = "3 figures";
-		strDecimalSpaces[9]   = app.getPlain("ASignificantFigures","5");
-		strDecimalSpacesAC[9] = "5 figures";
-		strDecimalSpaces[10]   = app.getPlain("ASignificantFigures","10");
-		strDecimalSpacesAC[10] = "10 figures";
-		strDecimalSpaces[11]   = app.getPlain("ASignificantFigures","15");
-		strDecimalSpacesAC[11] = "15 figures";
+		strDecimalSpaces[8]   = "---"; // separator
+		strDecimalSpacesAC[8] = "";
+		strDecimalSpaces[9]   = app.getPlain("ASignificantFigures","3");
+		strDecimalSpacesAC[9] = "3 figures";
+		strDecimalSpaces[10]   = app.getPlain("ASignificantFigures","5");
+		strDecimalSpacesAC[10] = "5 figures";
+		strDecimalSpaces[11]   = app.getPlain("ASignificantFigures","10");
+		strDecimalSpacesAC[11] = "10 figures";
+		strDecimalSpaces[12]   = app.getPlain("ASignificantFigures","15");
+		strDecimalSpacesAC[12] = "15 figures";
 		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this, strDecimalSpaces,
 				strDecimalSpacesAC, 0);
 		menu.add(menuDecimalPlaces);
@@ -1525,10 +1527,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		if (kernel.useSignificantFigures) {
 			int sf = kernel.getPrintFigures();
 			switch (sf) {
-			default : pos = 8; break; // 3 sf
-			case 5  : pos = 9; break;
-			case 10 : pos = 10; break;
-			case 15 : pos = 11; break;
+			default : pos = 9; break; // 3 sf
+			case 5  : pos = 10; break;
+			case 10 : pos = 11; break;
+			case 15 : pos = 12; break;
 			}	
 		}
 		else
@@ -1601,13 +1603,19 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// String label;
 
 		for (int i = 0; i < items.length; i++) {
-			mi = new JRadioButtonMenuItem(app.getMenu(items[i]));
-			if (i == selectedPos)
-				mi.setSelected(true);
-			mi.setActionCommand(actionCommands[i]);
-			mi.addActionListener(al);
-			bg.add(mi);
-			menu.add(mi);
+			if (items[i] == "---") {
+				menu.addSeparator();
+			}
+			else
+			{
+				mi = new JRadioButtonMenuItem(app.getMenu(items[i]));
+				if (i == selectedPos)
+					mi.setSelected(true);
+				mi.setActionCommand(actionCommands[i]);
+				mi.addActionListener(al);
+				bg.add(mi);
+				menu.add(mi);
+			}
 		}
 	}
 	
