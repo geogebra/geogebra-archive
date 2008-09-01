@@ -389,12 +389,10 @@ public class Kernel {
 	}
 	
 	final public int getMaximumFractionDigits() {
-		Application.debug("");
 		return nf.getMaximumFractionDigits();
 	}
 
 	final public void setMaximumFractionDigits(int digits) {
-		Application.debug("");
 		useSignificantFigures = false;
 		nf.setMaximumFractionDigits(digits);
 	}
@@ -420,7 +418,6 @@ public class Kernel {
 	}
 
 	final public void setPrintDecimals(int decimals) {
-		Application.debug("");
 		if (decimals >= 0 && decimals != nf.getMaximumFractionDigits()) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
@@ -429,12 +426,10 @@ public class Kernel {
 	}
 	
 	final public int getPrintDecimals() {
-		Application.debug("");
 		return nf.getMaximumFractionDigits();
 	}
 		
 	final public void setPrintFigures(int figures) {
-		Application.debug("");
 		if (figures >= 0 && figures != sf.getSigDigits()) {
 			useSignificantFigures = true;
 			sf.setSigDigits(figures);
