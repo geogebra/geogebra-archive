@@ -68,7 +68,9 @@ import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.util.ScientificFormat;
 
+import java.text.FieldPosition;
 import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -4826,15 +4828,19 @@ public class Kernel {
 		
 		if (x > 0.0d) {
 			sbFormatSigned.append("+ ");
-			sbFormatSigned.append( useSignificantFigures ? sf.format(x) : nf.format(x));
+			sbFormatSigned.append( useCurrentNumberFormat(x));
 			return sbFormatSigned;
 		} else {
 			sbFormatSigned.append("- ");
-			sbFormatSigned.append( useSignificantFigures ? sf.format(-x) : nf.format(-x));
+			sbFormatSigned.append( useCurrentNumberFormat(-x));
 			return sbFormatSigned;
 		}
 	}
 	private StringBuffer sbFormatSigned = new StringBuffer(40);
+	
+	private String useCurrentNumberFormat(double x) {
+		return useSignificantFigures ? sf.format(-x) : nf.format(-x);
+	}
 	
 
 	final public StringBuffer formatAngle(double phi) {
@@ -4852,7 +4858,7 @@ public class Kernel {
 			else {
 				phi = Math.toDegrees(phi);
 				if (phi < 0) phi += 360;				
-				sbFormatAngle.append(useSignificantFigures ? sf.format(phi) : nf.format(phi));
+				sbFormatAngle.append(useCurrentNumberFormat(phi));
 				sbFormatAngle.append('\u00b0');
 				return sbFormatAngle;
 			}
@@ -4862,7 +4868,7 @@ public class Kernel {
 				return sbFormatAngle;
 			}
 			else {				
-				sbFormatAngle.append(useSignificantFigures ? sf.format(phi) : nf.format(phi));
+				sbFormatAngle.append(useCurrentNumberFormat(phi));
 				sbFormatAngle.append(" rad");
 				return sbFormatAngle;
 			}
@@ -4989,4 +4995,6 @@ public class Kernel {
 	public boolean isMacroKernel() {
 		return false;
 	}
+	
+	
 }
