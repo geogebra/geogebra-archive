@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -28,6 +27,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -1873,21 +1873,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		return ret;
 	}
 	
-	/**
-	 * Returns all children (of type GeoElement) that depend on this object.
-	 *
-	public Set getAllChildren() {
-		HashSet set = new HashSet(3 * algoUpdateSet.getSize());
-		Iterator it = algoUpdateSet.getIterator();
-		while (it.hasNext()) {
-			AlgoElement algo = (AlgoElement) it.next();
-			for (int i = 0; i < algo.output.length; i++) {
-				// this is wrong, isn't it?     set.add(algo.output[i]);					
-			}			
-		}
-		return set;
-	}*/
-
+	
 	/**
 	 * Returns all predecessors (of type GeoElement) that this object depends on.
 	 * The predecessors are sorted topologically.
@@ -1930,6 +1916,17 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	/**
+	 * Returns whether geo depends on this object.
+	 */
+	public boolean isParentOf(GeoElement geo) {
+		if (geo == null)
+			return false;
+		else
+			return geo.isChildOf(this);
+	}
+
+	
+	/**
 	 * Returns whether this object is parent of other geos.
 	 */
 	public boolean hasChildren() {
@@ -1954,17 +1951,24 @@ final public boolean hasOnlyFreeInputPoints() {
 		}
 		return false;
 	}
-
+	
 	/**
-	 * Returns whether geo depends on this object.
+	 * Returns all children (of type GeoElement) that depend on this object.
 	 */
-	public boolean isParentOf(GeoElement geo) {
-		if (geo == null)
-			return false;
-		else
-			return geo.isChildOf(this);
+	public TreeSet getAllChildren() {
+		TreeSet set = new TreeSet();
+		Iterator it = algoUpdateSet.getIterator();
+		while (it.hasNext()) {
+			AlgoElement algo = (AlgoElement) it.next();
+			for (int i = 0; i < algo.output.length; i++) {
+				set.add(algo.output[i]);					
+			}			
+		}
+		return set;
 	}
 
+
+	
 	/*
 	* implementation of abstract methods from ConstructionElement
 	*/
