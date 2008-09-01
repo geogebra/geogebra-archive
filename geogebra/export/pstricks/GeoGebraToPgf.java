@@ -441,6 +441,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			firstVec[1] = 0;
 
 		}
+     	// Fix bug with Slider
+     	tempPoint.remove(); 
+     	/////////////////
+     	
 		double angSt = Math.atan2(firstVec[1], firstVec[0]);
 
 // Michael Borcherds 2007-10-21 BEGIN
@@ -661,7 +665,8 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	}
     	drawGeoPoint(geoPoint);
     	drawLabel(geoPoint,drawPoint);
-    	
+    	// Bug fixed with Slider
+    	geoPoint.remove(); 
     	//draw Line or Slider
     	code.append("\\draw");
     	String s=LineOptionCode(geo,true);
