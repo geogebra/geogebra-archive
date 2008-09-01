@@ -112,6 +112,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -4153,6 +4154,30 @@ public abstract class Application implements	KeyEventDispatcher {
     	while (it.hasNext()) {    		
         	GeoElement geo = (GeoElement) it.next();
         	if (layer == -1 || geo.getLayer() == layer) addSelectedGeo(geo, false);
+    	}
+        kernel.notifyRepaint();
+        updateSelection();
+    }
+    
+    final public void selectAllPredecessors() {    
+      	
+    	for (int i = 0 ; i < selectedGeos.size() ; i++ ) {    		
+        	GeoElement geo = (GeoElement) selectedGeos.get(i);
+        	TreeSet tree = geo.getAllPredecessors();
+        	Iterator it2 = tree.iterator();
+        	while (it2.hasNext()) addSelectedGeo((GeoElement) it2.next(), false);
+    	}
+        kernel.notifyRepaint();
+        updateSelection();
+    }
+    
+    final public void selectAllDescendents() {    
+      	
+    	for (int i = 0 ; i < selectedGeos.size() ; i++ ) {    		
+        	GeoElement geo = (GeoElement) selectedGeos.get(i);
+        	Set tree = geo.getAllChildren();
+        	Iterator it2 = tree.iterator();
+        	while (it2.hasNext()) addSelectedGeo((GeoElement) it2.next(), false);
     	}
         kernel.notifyRepaint();
         updateSelection();

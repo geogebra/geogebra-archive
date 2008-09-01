@@ -69,8 +69,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			showCreateToolsAction, showManageToolsAction,
 			savePreferencesAction, clearPreferencesAction,
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction,
-			selectCurrentLayerAction; // Michael Borcherds 2008-03-03
-
+			selectCurrentLayerAction, // Michael Borcherds 2008-03-03
+			selectAllDescendentsAction, selectAllAncestorsAction;
+			
 	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
 			cbShowAuxiliaryObjects, cbHorizontalSplit,
@@ -294,6 +295,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		mi = menu.add(selectCurrentLayerAction);
 		setMenuShortCutAccelerator(mi, 'L');
+		
+		mi = menu.add(selectAllDescendentsAction);
+		setMenuShortCutShiftAccelerator(mi, 'P');
+		
+		mi = menu.add(selectAllAncestorsAction);
+		setMenuShortCutAccelerator(mi, 'P');
 		
 		menu.addSeparator();
 
@@ -1205,6 +1212,28 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				
 				int layer = getSelectedLayer();
 				if (layer !=-1) app.selectAll(layer); // select all objects in layer
+				
+			}
+		};			
+		
+		selectAllAncestorsAction = new AbstractAction(app.getMenu("SelectAncestors"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+
+				
+				app.selectAllPredecessors();
+			}
+		};			
+		
+		selectAllDescendentsAction = new AbstractAction(app.getMenu("SelectDescendents"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				
+				app.selectAllDescendents();
 			}
 		};			
 		
@@ -1356,6 +1385,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		deleteAction.setEnabled(layer != -1); // -1 means nothing selected, -2 means different layers selected
 		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0); // exactly one layer selected
 		// Michael Borcherds 2008-03-03 END
+		boolean haveSelection = !app.getSelectedGeos().isEmpty();
+		selectAllDescendentsAction.setEnabled(haveSelection);
+		selectAllAncestorsAction.setEnabled(haveSelection);
 	}
 
 	protected void updateActions() {		
