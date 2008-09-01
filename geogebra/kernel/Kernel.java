@@ -66,13 +66,13 @@ import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
+import geogebra.util.ScientificFormat;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.freehep.util.ScientificFormat;
 
 public class Kernel {
 

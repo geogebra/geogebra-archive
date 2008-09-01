@@ -1,5 +1,7 @@
 package org.freehep.util;
 
+import geogebra.util.ScientificFormat;
+
 /**
  * A class that encapsulates a value and its error.
  * Primarily for use with ScientificFormat
@@ -8,7 +10,7 @@ package org.freehep.util;
  *
  * @author Tony Johnson
  * @author Mark Donszelmann
- * @version $Id: DoubleWithError.java,v 1.3 2008-05-04 12:22:24 murkle Exp $
+ * @version $Id: DoubleWithError.java,v 1.4 2008-09-01 14:39:45 murkle Exp $
  */
 public class DoubleWithError
 {
@@ -83,9 +85,9 @@ public class DoubleWithError
         }
     }
     // Not private because used by scientific format
-    final static char plusorminus = '\u00b1';
-    final static char plus = '+';
-    final static char minus = '-';
+    final static public char plusorminus = '\u00b1';
+    final static public char plus = '+';
+    final static public char minus = '-';
     private double value;
     
     private double error;

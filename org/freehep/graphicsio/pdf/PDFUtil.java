@@ -1,10 +1,11 @@
 // Copyright 2004, FreeHEP.
 package org.freehep.graphicsio.pdf;
 
+import geogebra.util.ScientificFormat;
+
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
-import org.freehep.util.ScientificFormat;
 
 /**
  * Utility functions for the PDFWriter. This class handles escaping of strings,
@@ -12,7 +13,7 @@ import org.freehep.util.ScientificFormat;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFUtil.java,v 1.3 2008-05-04 12:31:22 murkle Exp $
+ * @version $Id: PDFUtil.java,v 1.4 2008-09-01 14:39:47 murkle Exp $
  */
 public class PDFUtil implements PDFConstants {
 

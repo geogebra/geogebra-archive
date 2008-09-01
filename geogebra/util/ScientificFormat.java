@@ -1,4 +1,4 @@
-package org.freehep.util;
+package geogebra.util;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -6,6 +6,8 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 import java.util.Locale;
+
+import org.freehep.util.DoubleWithError;
 
 
 /**
@@ -19,7 +21,7 @@ import java.util.Locale;
  *
  * @author Paul Spence
  * @author Mark Donszelmann
- * @version $Id: ScientificFormat.java,v 1.3 2008-05-04 12:22:20 murkle Exp $
+ * @version $Id: ScientificFormat.java,v 1.1 2008-09-01 14:39:46 murkle Exp $
  */
 
 public class ScientificFormat extends Format
