@@ -1277,7 +1277,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				codeBeginPic.append("o");
 			break;
 			case EuclidianView.POINT_STYLE_CROSS:
-				codeBeginPic.append("+");
+				codeBeginPic.append("x");
 			break;
 			case EuclidianView.POINT_STYLE_DOT:
 				codeBeginPic.append("*");
@@ -1433,7 +1433,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 					codePoint.append("o");
 				break;
 				case EuclidianView.POINT_STYLE_CROSS:
-					codePoint.append("+");
+					codePoint.append("x");
 				break;
 				case EuclidianView.POINT_STYLE_DOT:
 					codePoint.append("*");

@@ -1243,16 +1243,50 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			double y=gp.getY();
 			double z=gp.getZ();
 			x=x/z;
-			y=y/z;		
+			y=y/z;
 			Color dotcolor=gp.getObjectColor();
 			double dotsize=gp.getPointSize();
-			codePoint.append("\\fill [color=");
-			ColorCode(dotcolor,codePoint);
-			codePoint.append("] ");
-			writePoint(x,y,codePoint);
-			codePoint.append(" circle (");
-			codePoint.append(dotsize/2);
-			codePoint.append("pt);\n");
+			int dotstyle=gp.getPointStyle();
+			if (dotstyle==-1) dotstyle=euclidianView.getPointStyle();
+			if (dotstyle==EuclidianView.POINT_STYLE_DOT){
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append(" circle (");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt);\n");				
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_CIRCLE){
+				codePoint.append("\\draw [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append(" circle (");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt);\n");				
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_CROSS){
+				codePoint.append("\\draw [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append("-- ++(-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt) -- ++(");
+				codePoint.append(dotsize);
+				codePoint.append("pt,");
+				codePoint.append(dotsize);
+				codePoint.append("pt) ++(-");
+				codePoint.append(dotsize);
+				codePoint.append("pt,0) -- ++(");
+				codePoint.append(dotsize);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize);
+				codePoint.append("pt);\n");
+			} 
 		}
 	}
 	/**
