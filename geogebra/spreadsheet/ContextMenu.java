@@ -184,7 +184,8 @@ public class ContextMenu extends JPopupMenu
 	 	   	 				// set label P_1, P_2, etc.
 	 		   	 		    String pointName = geos[0].getIndexLabel("P");
 	 		   	 		    geos[0].setLabel(pointName);
-	 		   	 			list.addLast(pointName);
+	 		   	 		    geos[0].setAuxiliaryObject(true);
+	 		   	 		    list.addLast(pointName);
 	 	   	 			}
 	 	   	 		}
 
@@ -215,7 +216,8 @@ public class ContextMenu extends JPopupMenu
 	 	   	 				// set label P_1, P_2, etc.
 	 		   	 		    String pointName = geos[0].getIndexLabel("P");
 	 		   	 		    geos[0].setLabel(pointName);
-	 		   	 			list.addLast(pointName);
+	 		   	 		    geos[0].setAuxiliaryObject(true);
+	 		   	 		    list.addLast(pointName);
 	 	   	 			}
 	 	   	 		}
  					
@@ -244,6 +246,7 @@ public class ContextMenu extends JPopupMenu
 	 	   	 				// set label P_1, P_2, etc.
 	 		   	 		    String pointName = geos[0].getIndexLabel("P");
 	 		   	 		    geos[0].setLabel(pointName);
+	 		   	 		    geos[0].setAuxiliaryObject(true);
 	 		   	 			list.addLast(pointName);
 	 	   	 			}
 	 	   	 		}
@@ -284,14 +287,16 @@ public class ContextMenu extends JPopupMenu
 	 					if (i != points.length - 1) text.append(",");
 	 				}
 	 				text.append("}");
+	 				Application.debug(text.toString());
 	 				GeoElement[] values = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
 	 				// set list label 
 		   	 		String listName = values[0].getIndexLabel("L");
 		   	 		values[0].setLabel(listName);
 	 				
-	 				for (int i = 0; i < values.length; ++ i) {
-	 					values[i].setAuxiliaryObject(true);
-	 				}
+		   	 		// DON'T want the list to be auxiliary
+	 				//for (int i = 0; i < values.length; ++ i) {
+	 				//	values[i].setAuxiliaryObject(true);
+	 				//}
 	 			}
 	 			
 	 			app.storeUndoInfo();
