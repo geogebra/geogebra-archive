@@ -61,6 +61,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.modules.JarManager;
 import geogebra.plugin.PluginManager;
 import geogebra.spreadsheet.SpreadsheetView;
+import geogebra.cas.view.CASView;
 import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.Util;
@@ -279,6 +280,7 @@ public abstract class Application implements	KeyEventDispatcher {
     protected AlgebraView algebraView;
     private SpreadsheetView spreadsheetView;
     protected EuclidianView euclidianView;
+    private CASView casView;
     protected Kernel kernel;
     private MyXMLio myXMLio;
 
@@ -430,6 +432,11 @@ public abstract class Application implements	KeyEventDispatcher {
     	// init spreadsheet view
     	if (!disableSpreadsheet) spreadsheetView = new SpreadsheetView(kernel.getApplication(), 26, 100);
    
+		// TODO: remove spreadsheet and CAS testing
+		if (showCAS) {
+			casView = new CASView(kernel.getApplication());
+			openCAS(casView);
+		}
         
         // load file on startup and set fonts
         //  INITING:    to avoid multiple calls of setLabels() and updateContentPane()
@@ -459,12 +466,6 @@ public abstract class Application implements	KeyEventDispatcher {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);	
 		
-
-		// TODO: remove spreadsheet and CAS testing
-		if (showCAS) {
-			openCAS(this);
-		}
-		
 		//Mathieu Blossier - place for code to test 3D packages	
 		
 		
@@ -478,16 +479,18 @@ public abstract class Application implements	KeyEventDispatcher {
 	     		
     }      
     
-    public static void openCAS(Application app) {
+    public static void openCAS(CASView casView) {
     	try {
     		// use reflection for
   		    // JComponent casView = new geogebra.cas.view.CASView(app);    		
-  		    Class casViewClass = Class.forName("geogebra.cas.view.CASView");
-  		    Object[] args = new Object[] { app };
-  		    Class [] types = new Class[] {Application.class};
-  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-  	        JComponent casView = (JComponent) constructor.newInstance(args);  	          	      
-			
+    		
+//  		    Class casViewClass = Class.forName("geogebra.cas.view.CASView");
+//  		    Object[] args = new Object[] { app };
+//  		    Class [] types = new Class[] {Application.class};
+//  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+//  	        JComponent casView = (JComponent) constructor.newInstance(args);  	          	      
+  	        
+  	        
 			JFrame spFrame = new JFrame();
 	        Container contentPane = spFrame.getContentPane();
 	        contentPane.setLayout(new BorderLayout());
@@ -1027,6 +1030,10 @@ public abstract class Application implements	KeyEventDispatcher {
         return spreadsheetView;
     }
 
+	public CASView getCasView() {
+		return casView;
+	}
+	
     public AlgebraView getAlgebraView() {    	
         return algebraView;
     }

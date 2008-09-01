@@ -34,7 +34,7 @@ public class CASTable extends JTable {
 
 		tableModel = new CASTableModel(this, rows, session, app);
 		this.setModel(tableModel);
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
 		// Set the width of the index column;
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);

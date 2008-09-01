@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
+import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
@@ -28,8 +29,6 @@ public class CASView extends JComponent {
 
 	private CASTable consoleTable;
 
-	private CASTableModel tableModel;
-
 	private Application app;
 
 	private GeoGebraCAS cas;
@@ -49,25 +48,29 @@ public class CASView extends JComponent {
 		consoleTable = new CASTable();
 		consoleTable.initializeTable(numOfRows, session, app);
 
-		//Set the property of the value column;
-		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellRenderer(
-				new CASTableCellRender(this, consoleTable));
-			
-		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol)).setCellEditor(
-				new CASTableCellEditor(this, consoleTable));
-		
+		// Set the property of the value column;
+		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol))
+				.setCellRenderer(new CASTableCellRender(this, consoleTable));
+
+		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol))
+				.setCellEditor(new CASTableCellEditor(this, consoleTable));
+
 		// CAScontroller
-		CASKeyController casKeyCtrl = new CASKeyController(this, session, consoleTable);
-		CASMouseController casMouseCtrl = new CASMouseController(this, session, consoleTable);
+		CASKeyController casKeyCtrl = new CASKeyController(this, session,
+				consoleTable);
+		CASMouseController casMouseCtrl = new CASMouseController(this, session,
+				consoleTable);
 		consoleTable.addKeyListener(casKeyCtrl);
 		consoleTable.addMouseListener(casMouseCtrl);
-		
+
 		// init the scroll panel
 		JScrollPane scrollPane = new JScrollPane(consoleTable,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
+		
+		
 	}
 
 	public GeoGebraCAS getCAS() {
@@ -106,5 +109,52 @@ public class CASView extends JComponent {
 		//		
 		// c.weighty = 1.0;
 		// panel.add(Box.createVerticalGlue(), c);
+	}
+
+	/**
+	 * returns settings in XML format
+	 */
+	public String getGUIXML() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<casView>\n");
+
+		int width = getWidth(); // getPreferredSize().width;
+		int height = getHeight(); // getPreferredSize().height;
+
+		// if (width > MIN_WIDTH && height > MIN_HEIGHT)
+		{
+			sb.append("\t<size ");
+			sb.append(" width=\"");
+			sb.append(width);
+			sb.append("\"");
+			sb.append(" height=\"");
+			sb.append(height);
+			sb.append("\"");
+			sb.append("/>\n");
+		}
+
+		sb.append("</casView>\n");
+		return sb.toString();
+	}
+
+	public String getSessionXML() {
+		
+		CASTableModel tableModel = (CASTableModel) consoleTable.getModel();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("<casSession>\n");
+
+		//get the number of pairs in the view
+		int numOfRows = tableModel.getRowCount();
+		
+		//get the content of each pair in the table with a loop
+		//append the content to the string sb
+		for (int i = 0; i < numOfRows; ++i) {
+			CASTableCellValue temp = (CASTableCellValue)tableModel.getValueAt(i, CASPara.contCol);
+			sb.append(temp.getXML());
+		}
+		
+		sb.append("</casSession>\n");
+		return sb.toString();
 	}
 }
