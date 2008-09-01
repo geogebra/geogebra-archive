@@ -70,7 +70,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			savePreferencesAction, clearPreferencesAction,
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction,
 			selectCurrentLayerAction, // Michael Borcherds 2008-03-03
-			selectAllDescendentsAction, selectAllAncestorsAction;
+			selectAllDescendantsAction, selectAllAncestorsAction;
 			
 	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
 	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
@@ -296,7 +296,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(selectCurrentLayerAction);
 		setMenuShortCutAccelerator(mi, 'L');
 		
-		mi = menu.add(selectAllDescendentsAction);
+		mi = menu.add(selectAllDescendantsAction);
 		setMenuShortCutShiftAccelerator(mi, 'P');
 		
 		mi = menu.add(selectAllAncestorsAction);
@@ -1227,13 +1227,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			}
 		};			
 		
-		selectAllDescendentsAction = new AbstractAction(app.getMenu("SelectDescendents"),
+		selectAllDescendantsAction = new AbstractAction(app.getMenu("SelectDescendents"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
 				
-				app.selectAllDescendents();
+				app.selectAllDescendants();
 			}
 		};			
 		
@@ -1386,7 +1386,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0); // exactly one layer selected
 		// Michael Borcherds 2008-03-03 END
 		boolean haveSelection = !app.getSelectedGeos().isEmpty();
-		selectAllDescendentsAction.setEnabled(haveSelection);
+		selectAllDescendantsAction.setEnabled(haveSelection);
 		selectAllAncestorsAction.setEnabled(haveSelection);
 	}
 

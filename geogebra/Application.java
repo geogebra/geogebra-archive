@@ -4171,7 +4171,7 @@ public abstract class Application implements	KeyEventDispatcher {
         updateSelection();
     }
     
-    final public void selectAllDescendents() {    
+    final public void selectAllDescendants() {    
       	
     	for (int i = 0 ; i < selectedGeos.size() ; i++ ) {    		
         	GeoElement geo = (GeoElement) selectedGeos.get(i);
