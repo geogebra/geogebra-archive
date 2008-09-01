@@ -389,10 +389,12 @@ public class Kernel {
 	}
 	
 	final public int getMaximumFractionDigits() {
+		Application.debug("");
 		return nf.getMaximumFractionDigits();
 	}
 
 	final public void setMaximumFractionDigits(int digits) {
+		Application.debug("");
 		useSignificantFigures = false;
 		nf.setMaximumFractionDigits(digits);
 	}
@@ -418,6 +420,7 @@ public class Kernel {
 	}
 
 	final public void setPrintDecimals(int decimals) {
+		Application.debug("");
 		if (decimals >= 0 && decimals != nf.getMaximumFractionDigits()) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
@@ -426,30 +429,44 @@ public class Kernel {
 	}
 	
 	final public int getPrintDecimals() {
+		Application.debug("");
 		return nf.getMaximumFractionDigits();
 	}
 		
 	final public void setPrintFigures(int figures) {
+		Application.debug("");
 		if (figures >= 0 && figures != sf.getSigDigits()) {
 			useSignificantFigures = true;
 			sf.setSigDigits(figures);
 		}
 	}
 	
+	private int temporaryMaximumPrintAccuracyCount = 0;
+	
 	final public void setTemporaryMaximumPrintAccuracy()
 	{
-		tempUseSignificantFigures = useSignificantFigures;
-		tempNoOfSignificantFigures = sf.getSigDigits();
-		tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		temporaryMaximumPrintAccuracyCount ++;
+		
+		if (temporaryMaximumPrintAccuracyCount == 1)
+		{
+			tempUseSignificantFigures = useSignificantFigures;
+			tempNoOfSignificantFigures = sf.getSigDigits();
+			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		}
 		useSignificantFigures = true;
 		sf.setMaxWidth(309);
 	}
 	
 	final public void setTemporaryMaximumFractionDigits(int digits)
 	{
-		tempUseSignificantFigures = useSignificantFigures;
-		tempNoOfSignificantFigures = sf.getSigDigits();
-		tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		temporaryMaximumPrintAccuracyCount ++;
+		
+		if (temporaryMaximumPrintAccuracyCount == 1)
+		{
+			tempUseSignificantFigures = useSignificantFigures;
+			tempNoOfSignificantFigures = sf.getSigDigits();
+			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		}
 		nf.setMaximumFractionDigits(digits);
 		useSignificantFigures = false;
 	}
@@ -457,6 +474,9 @@ public class Kernel {
 	
 	final public void restorePrintAccuracy()
 	{
+		temporaryMaximumPrintAccuracyCount --;
+		if (temporaryMaximumPrintAccuracyCount != 0) return;
+		
 		useSignificantFigures = tempUseSignificantFigures;
 		sf.setSigDigits(tempNoOfSignificantFigures);
 		sf.setMaxWidth(16);
