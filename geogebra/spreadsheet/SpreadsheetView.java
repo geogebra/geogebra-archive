@@ -287,7 +287,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				if (!app.letShowPopupMenu()) return;    	
     		       
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
+					ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
 			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}	
 						

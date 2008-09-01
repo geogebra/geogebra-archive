@@ -13,8 +13,8 @@ public class ContextMenuCol extends ContextMenu
 		
 	private static final long serialVersionUID = 9049753346127061012L;
 
-	public ContextMenuCol(MyTable table0, int column01, int row01, int column02, int row02) {
-		super(table0, column01, row01, column02, row02);		
+	public ContextMenuCol(MyTable table0, int column01, int row01, int column02, int row02, boolean[] selected0) {
+		super(table0, column01, row01, column02, row02, selected0);		
 	}
 
 	protected void initMenu() {

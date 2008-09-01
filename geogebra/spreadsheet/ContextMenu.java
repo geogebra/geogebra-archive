@@ -24,17 +24,18 @@ public class ContextMenu extends JPopupMenu
 	protected int row2 = -1;
 	protected int column1 = -1;
 	protected int column2 = -1;
-	protected boolean[] selected = null;
+	protected boolean[] selectedColumns = null;
 	
 	protected Application app;
 	
-	public ContextMenu(MyTable table0, int column01, int row01, int column02, int row02) {
+	public ContextMenu(MyTable table0, int column01, int row01, int column02, int row02, boolean[] selected0) {
 		//Application.debug("showPopupMenu <<<<<<<<<<<<<<<<<<<");
 		table = table0;
 		column1 = column01;
 		column2 = column02;
 		row1 = row01;
 		row2 = row02;		
+		selectedColumns = selected0;
 		app = table.kernel.getApplication();
 		
 		initMenu();			
@@ -133,14 +134,129 @@ public class ContextMenu extends JPopupMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
- 			if (selected == null) throw new RuntimeException("error state");
+ 			//if (selected == null) throw new RuntimeException("error state");
+ 			StringBuffer text = new StringBuffer();
  			LinkedList list = new LinkedList();
+ 			MyTableModel model = (MyTableModel)table.getModel();
+ 			
+			String s="columnsSelected ";
+				for (int i=0 ; i<selectedColumns.length ; i++)
+					if (selectedColumns[i]) s=s+"1"; else s=s+"0";
+				Application.debug(s);
+				
  			try {
+ 				
+ 				if (row1 == -1 && row2 == -1)
+ 				{
+ 					Application.debug("multiple columns selected");
+ 					int r1 = 0;
+ 					int r2 = model.getRowCount();
+ 					
+ 					int c1=-1, c2=-1;
+ 					for (int i=0 ; i<selectedColumns.length ; i++)
+ 					{
+ 						if (selectedColumns[i])
+ 						{
+ 							if (c1 == -1) 
+ 								c1=i;
+ 							else if (c2 == -1)
+ 							{
+ 								c2=i;
+ 								break;
+ 							}
+ 						}
+ 					}
+ 		 			Application.debug(c1 + " - " + c2+"   "+r1+" - "+r2);
+ 					
+	  	   	 		for (int i = r1; i <= r2; ++ i) {
+	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, c1, i);
+	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, c2, i);
+	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
+	 	   	 				
+	 	   	 				text.setLength(0);
+	 	   	 				text.append("(");
+	 	   	 				text.append(v1.getLabel());
+	 	   	 				text.append(",");
+	 	   	 				text.append(v2.getLabel());
+	 	   	 				text.append(")");
+	 	   	 				
+	 	   	 				GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
+	 	   	 				// set label P_1, P_2, etc.
+	 		   	 		    String pointName = geos[0].getIndexLabel("P");
+	 		   	 		    geos[0].setLabel(pointName);
+	 		   	 			list.addLast(pointName);
+	 	   	 			}
+	 	   	 		}
+
+ 					
+ 				}
+ 				
+ 				else if (column2 - column1 == 1)
+ 				{
+ 					Application.debug("adjacent columns selected");
+ 					int r1 = row1;
+ 					int r2 = row2;
+ 					int c1 = column1;
+ 					int c2 = column2;
+ 					
+	  	   	 		for (int i = r1; i <= r2; ++ i) {
+	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, c1, i);
+	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, c2, i);
+	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
+	 	   	 				
+	 	   	 				text.setLength(0);
+	 	   	 				text.append("(");
+	 	   	 				text.append(v1.getLabel());
+	 	   	 				text.append(",");
+	 	   	 				text.append(v2.getLabel());
+	 	   	 				text.append(")");
+	 	   	 				
+	 	   	 				GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
+	 	   	 				// set label P_1, P_2, etc.
+	 		   	 		    String pointName = geos[0].getIndexLabel("P");
+	 		   	 		    geos[0].setLabel(pointName);
+	 		   	 			list.addLast(pointName);
+	 	   	 			}
+	 	   	 		}
+ 					
+ 				}
+ 				else if (row2 - row1 == 1)
+ 				{
+ 					Application.debug("adjacent rows selected");
+ 					int r1 = row1;
+ 					int r2 = row2;
+ 					int c1 = column1;
+ 					int c2 = column2;
+ 					
+	  	   	 		for (int i = c1; i <= c2; ++ i) {
+	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, i, r1);
+	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, i, r2);
+	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
+	 	   	 				
+	 	   	 				text.setLength(0);
+	 	   	 				text.append("(");
+	 	   	 				text.append(v1.getLabel());
+	 	   	 				text.append(",");
+	 	   	 				text.append(v2.getLabel());
+	 	   	 				text.append(")");
+	 	   	 				
+	 	   	 				GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
+	 	   	 				// set label P_1, P_2, etc.
+	 		   	 		    String pointName = geos[0].getIndexLabel("P");
+	 		   	 		    geos[0].setLabel(pointName);
+	 		   	 			list.addLast(pointName);
+	 	   	 			}
+	 	   	 		}
+ 					
+ 				}
+ 				
+ 				
+ 				/*
  				int xColumn = -1;
 	 			for (int j = column1; j <= column2; ++ j) {
-	 				if (selected.length > j && ! selected[j]) {
-	 					continue;
-	 				}
+	 				//if (selected.length > j && ! selected[j]) {
+	 				//	continue;
+	 				//}
 	 				if (xColumn == -1) {
 	 					xColumn = j;
 	 					continue;
@@ -157,17 +273,18 @@ public class ContextMenu extends JPopupMenu
 	 		   	 			list.addLast(pointName);
 	 	   	 			}
 	 	   	 		}
-	 			}
+	 			}*/
 	
 	 			if (list.size() > 0) {
-	 				String[] points = (String[])list.toArray(new String[0]);	 				
-	 				String text = "{";
+	 				String[] points = (String[])list.toArray(new String[0]);
+	 				text.setLength(0);
+	 				text.append("{");
 	 				for (int i = 0; i < points.length; ++ i) {
-	 					text += points[i];
-	 					if (i != points.length - 1) text += ",";
+	 					text.append(points[i]);
+	 					if (i != points.length - 1) text.append(",");
 	 				}
-	 				text += "}";
-	 				GeoElement[] values = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	 				text.append("}");
+	 				GeoElement[] values = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
 	 				// set list label 
 		   	 		String listName = values[0].getIndexLabel("L");
 		   	 		values[0].setLabel(listName);
@@ -238,19 +355,27 @@ public class ContextMenu extends JPopupMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			Application.debug("CreateList " + column1 + " - " + column2+"   "+row1+" - "+row2);
+ 			
+ 			MyTableModel model = (MyTableModel)table.getModel();
+ 			int r1 = (row1 == -1 ? 0 : row1);
+ 			int r2 = (row2 == -1 ? model.getRowCount() : row2);
+ 			
+ 			int c1 = (column1 == -1 ? 0 : column1);
+ 			int c2 = (column2 == -1 ? model.getColumnCount() : column2);
+ 			
  			String text="";
  			try {
-	 			if (row1 == row2)
+	 			if (r1 == r2)
 	 			{
 			 			text="{";
-	 					for (int j = column1; j <= column2; ++ j) {
-			 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, row1);
+	 					for (int j = c1; j <= c2; ++ j) {
+			 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, r1);
 			 	   	 			if (v2 != null) {
 			 	   	 				text += v2.getLabel() + ",";
 			 	   	 			}
 			 	   	 			else {
-			 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(j,row1)));
-			 	   		 	   	 	return;
+			 	    				//app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(j,row1)));
+			 	   		 	   	 	//return;
 			 	   	 			}
 				}
 	 					
@@ -263,17 +388,17 @@ public class ContextMenu extends JPopupMenu
 		   	 		    String listName = geos[0].getIndexLabel("L");
 		   	 		    geos[0].setLabel(listName);	 				
 	 			}
-	 			else if (column1 == column2)
+	 			else if (c1 == c2)
 	 			{
 		 			text="{";
-						for (int j = row1; j <= row2; ++ j) {
-		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, column1, j);
+						for (int j = r1; j <= r2; ++ j) {
+		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, c1, j);
 		 	   	 			if (v2 != null) {
 		 	   	 				text += v2.getLabel() + ",";
 		 	   	 			}
 		 	   	 			else {
-		 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(column1,j)));
-		 	   		 	   	 	return;
+		 	    				//app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(column1,j)));
+		 	   		 	   	 	//return;
 		 	   	 			}
 						}
 						

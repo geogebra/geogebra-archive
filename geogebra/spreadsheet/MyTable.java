@@ -446,7 +446,7 @@ public class MyTable extends JTable
 				if (!kernel.getApplication().letShowPopupMenu()) return;    	
 		    			      		        		       
 				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
-					ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+					ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
 			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -982,7 +982,7 @@ public class MyTable extends JTable
 					if (!kernel.getApplication().letShowPopupMenu()) return;    	
        		       
 					if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-						ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
 				        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 					}				
 			}
