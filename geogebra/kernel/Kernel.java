@@ -4826,7 +4826,7 @@ public class Kernel {
 		
 		if (x > 0.0d) {
 			sbFormatSigned.append("+ ");
-			sbFormatSigned.append( useSignificantFigures ? sf.format(-x) : nf.format(x));
+			sbFormatSigned.append( useSignificantFigures ? sf.format(x) : nf.format(x));
 			return sbFormatSigned;
 		} else {
 			sbFormatSigned.append("- ");
