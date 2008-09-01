@@ -297,10 +297,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		setMenuShortCutAccelerator(mi, 'L');
 		
 		mi = menu.add(selectAllDescendantsAction);
-		setMenuShortCutShiftAccelerator(mi, 'P');
+		setMenuShortCutShiftAccelerator(mi, 'Q');
 		
 		mi = menu.add(selectAllAncestorsAction);
-		setMenuShortCutAccelerator(mi, 'P');
+		setMenuShortCutAccelerator(mi, 'Q');
 		
 		menu.addSeparator();
 
@@ -1229,7 +1229,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			}
 		};			
 		
-		selectAllDescendantsAction = new AbstractAction(app.getMenu("SelectDescendents"),
+		selectAllDescendantsAction = new AbstractAction(app.getMenu("SelectDescendants"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
