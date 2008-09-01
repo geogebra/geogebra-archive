@@ -1050,12 +1050,21 @@ public class Construction {
 		sb.append("\t<continuous val=\"");
 		sb.append(kernel.isContinuous());
 		sb.append("\"/>\n");
-
-		// decimal places
-		sb.append("\t<decimals val=\"");
-		sb.append(kernel.getPrintDecimals());
-		sb.append("\"/>\n");
-
+		
+		if (kernel.useSignificantFigures) {
+			// significant figures
+			sb.append("\t<significantfigures val=\"");
+			sb.append(kernel.getPrintFigures());
+			sb.append("\"/>\n");			
+		}
+		else
+		{
+			// decimal places
+			sb.append("\t<decimals val=\"");
+			sb.append(kernel.getPrintDecimals());
+			sb.append("\"/>\n");
+		}
+		
 		// angle unit
 		sb.append("\t<angleUnit val=\"");
 		sb.append(angleUnit == Kernel.ANGLE_RADIANT ? "radiant" : "degree");
@@ -1095,10 +1104,13 @@ public class Construction {
 
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
-		int oldDecimals = kernel.getPrintDecimals();
 		int oldPrintForm = kernel.getCASPrintForm();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
-		kernel.setPrintDecimals(50);
+		
+		//int oldDecimals = kernel.getPrintDecimals();
+		//kernel.setPrintDecimals(50);
+		kernel.setTemporaryMaximumPrintAccuracy();
+		
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 
 		try {
@@ -1133,7 +1145,9 @@ public class Construction {
 		}
 
 		// restore old kernel settings
-		kernel.setPrintDecimals(oldDecimals);
+		//kernel.setPrintDecimals(oldDecimals);
+		kernel.restorePrintAccuracy();
+		
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 

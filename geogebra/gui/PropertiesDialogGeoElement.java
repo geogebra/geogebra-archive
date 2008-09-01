@@ -4281,8 +4281,9 @@ class SliderPanel
 		}
 
 		// set values
-		int oldDigits = kernel.getMaximumFractionDigits();
-		kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		//int oldDigits = kernel.getMaximumFractionDigits();
+		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
 			if (onlyAngles)
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());
@@ -4306,8 +4307,10 @@ class SliderPanel
 		} else {
 			tfMax.setText("");
 		}
-		kernel.setMaximumFractionDigits(oldDigits);
 		
+		//kernel.setMaximumFractionDigits(oldDigits);
+		kernel.restorePrintAccuracy();
+
 		if (equalSliderFixed)
 			cbSliderFixed.setSelected(num0.isSliderFixed());
 		
@@ -4481,9 +4484,11 @@ class AnimationStepPanel
 		}
 
 		// set trace visible checkbox
-		int oldDigits = kernel.getMaximumFractionDigits();
-		kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-		if (equalStep)
+		//int oldDigits = kernel.getMaximumFractionDigits();
+		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+
+        if (equalStep)
 			if (onlyAngles)
 				tfAnimStep.setText(
 					kernel.formatAngle(geo0.getAnimationStep()).toString());
@@ -4491,7 +4496,9 @@ class AnimationStepPanel
 				tfAnimStep.setText(kernel.format(geo0.getAnimationStep()));
 		else
 			tfAnimStep.setText("");
-		kernel.setMaximumFractionDigits(oldDigits);
+        
+		//kernel.setMaximumFractionDigits(oldDigits);
+        kernel.restorePrintAccuracy();
 
 		tfAnimStep.addActionListener(this);
 		return this;

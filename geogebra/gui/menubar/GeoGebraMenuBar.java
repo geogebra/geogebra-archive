@@ -62,6 +62,21 @@ public class GeoGebraMenuBar extends MenubarImpl implements Menubar, ActionListe
 			}			
 		}
 
+		// significant figures
+		else if (cmd.endsWith("figures")) {
+			try {
+				String decStr = cmd.substring(0,2).trim();							
+				int figures = Integer.parseInt(decStr);
+				Application.debug("figures " + figures);
+				
+				kernel.setPrintFigures(figures);
+				kernel.updateConstruction();
+				app.setUnsaved();
+			} catch (Exception e) {
+				app.showError(e.toString());
+			}			
+		}
+
 		// Point capturing
 		else if (cmd.endsWith("PointCapturing")) {
 			int mode = Integer.parseInt(cmd.substring(0, 1));

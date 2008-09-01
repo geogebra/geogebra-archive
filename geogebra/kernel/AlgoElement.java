@@ -603,8 +603,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);             
-        int oldDigits = kernel.getMaximumFractionDigits();
-        kernel.setMaximumFractionDigits(50);
+        
+        //int oldDigits = kernel.getMaximumFractionDigits();
+        //kernel.setMaximumFractionDigits(50);
+        kernel.setTemporaryMaximumPrintAccuracy();
         
         StringBuffer sb = new StringBuffer();
         
@@ -631,7 +633,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        kernel.setMaximumFractionDigits(oldDigits);
+        //kernel.setMaximumFractionDigits(oldDigits);
+        kernel.restorePrintAccuracy();
+        
         kernel.setTranslateCommandName(oldValue);
         
         return sb.toString();
@@ -649,8 +653,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);             
-        int oldDigits = kernel.getMaximumFractionDigits();
-        kernel.setMaximumFractionDigits(50);
+        
+        //int oldDigits = kernel.getMaximumFractionDigits();       
+        //kernel.setMaximumFractionDigits(50);
+        kernel.setTemporaryMaximumPrintAccuracy();
         
         StringBuffer sb = new StringBuffer();
         
@@ -675,7 +681,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        kernel.setMaximumFractionDigits(oldDigits);
+        //kernel.setMaximumFractionDigits(oldDigits);
+        kernel.restorePrintAccuracy();
+        
         kernel.setTranslateCommandName(oldValue);
         
         return sb.toString();

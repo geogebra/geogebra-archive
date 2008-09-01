@@ -1890,14 +1890,19 @@ implements ExpressionValue {
      * @param STRING_TYPE: e.g. ExpressionNode.STRING_TYPE_JASYMCA
      */
     final public String getCASstring(int STRING_TYPE, boolean symbolic) {
-        int oldDigits = kernel.getMaximumFractionDigits();
         int oldPrintForm = kernel.getCASPrintForm();
-        kernel.setMaximumFractionDigits(50);       
+        
+        //int oldDigits = kernel.getMaximumFractionDigits();
+        //kernel.setMaximumFractionDigits(50);       
+        kernel.setTemporaryMaximumPrintAccuracy();
+        
         kernel.setCASPrintForm(STRING_TYPE);
         
         String ret = printCASstring(symbolic);
         
-        kernel.setMaximumFractionDigits(oldDigits);
+        //kernel.setMaximumFractionDigits(oldDigits);
+        kernel.restorePrintAccuracy();
+        
         kernel.setCASPrintForm(oldPrintForm);
         return ret;
     }

@@ -400,15 +400,37 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		updateMenuAngleUnit();
 
 		// decimal places
-		menuDecimalPlaces = new JMenu(app.getMenu("DecimalPlaces"));
+		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
 		menuDecimalPlaces.setIcon(app.getEmptyIcon());
-		int max_dec = 15;
+		/*int max_dec = 15;
 		String[] strDecimalSpaces = new String[max_dec + 1];
 		String[] strDecimalSpacesAC = new String[max_dec + 1];
 		for (int i=0; i <= max_dec; i++){ 
 			strDecimalSpaces[i] = Integer.toString(i);
 			strDecimalSpacesAC[i] = i + " decimals";
-		}
+		}*/
+		String[] strDecimalSpaces = new String[10];
+		String[] strDecimalSpacesAC = new String[10];
+		strDecimalSpaces[0]   = app.getPlain("ADecimalPlaces","0");
+		strDecimalSpacesAC[0] = "0 decimals";
+		strDecimalSpaces[1]   = app.getPlain("ADecimalPlaces","1");
+		strDecimalSpacesAC[1] = "1 decimals";
+		strDecimalSpaces[2]   = app.getPlain("ADecimalPlaces","2");
+		strDecimalSpacesAC[2] = "2 decimals";
+		strDecimalSpaces[3]   = app.getPlain("ADecimalPlaces","3");
+		strDecimalSpacesAC[3] = "3 decimals";
+		strDecimalSpaces[4]   = app.getPlain("ADecimalPlaces","4");
+		strDecimalSpacesAC[4] = "4 decimals";
+		strDecimalSpaces[5]   = app.getPlain("ADecimalPlaces","5");
+		strDecimalSpacesAC[5] = "5 decimals";
+		strDecimalSpaces[6]   = app.getPlain("ASignificantFigures","3");
+		strDecimalSpacesAC[6] = "3 figures";
+		strDecimalSpaces[7]   = app.getPlain("ASignificantFigures","5");
+		strDecimalSpacesAC[7] = "5 figures";
+		strDecimalSpaces[8]   = app.getPlain("ASignificantFigures","10");
+		strDecimalSpacesAC[8] = "10 figures";
+		strDecimalSpaces[9]   = app.getPlain("ASignificantFigures","15");
+		strDecimalSpacesAC[9] = "15 figures";
 		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this, strDecimalSpaces,
 				strDecimalSpacesAC, 0);
 		menu.add(menuDecimalPlaces);
@@ -1462,13 +1484,28 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	protected void updateMenuDecimalPlaces() {
 		if (menuDecimalPlaces == null) return;
+		int pos;
 		
-		int pos = kernel.getPrintDecimals();
+		if (kernel.useSignificantFigures) {
+			int sf = kernel.getPrintFigures();
+			switch (sf) {
+			default : pos = 6; break; // 3 sf
+			case 5  : pos = 7; break;
+			case 10 : pos = 8; break;
+			case 15 : pos = 9; break;
+			}	
+		}
+		else
+		{
+			pos = kernel.getPrintDecimals();
+		}
+
 		try {
 			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
 					.setSelected(true);
 		} catch (Exception e) {
 		}
+
 	}
 
 	protected void updateMenuContinuity() {

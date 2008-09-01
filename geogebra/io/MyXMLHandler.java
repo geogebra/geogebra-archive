@@ -656,8 +656,11 @@ public class MyXMLHandler implements DocHandler {
             handleKernelContinuous(attrs);
         } 
         else  if (eName.equals("decimals")) {
-             handleKernelDecimals(attrs);
-        } 
+            handleKernelDecimals(attrs);
+       } 
+        else  if (eName.equals("significantfigures")) {
+            handleKernelFigures(attrs);
+       } 
         else
             Application.debug("unknown tag in <kernel>: " + eName);
     }
@@ -690,6 +693,15 @@ public class MyXMLHandler implements DocHandler {
     private boolean handleKernelDecimals(LinkedHashMap attrs) {
         try {
             kernel.setPrintDecimals(Integer.parseInt((String) attrs.get("val")));                                   
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    private boolean handleKernelFigures(LinkedHashMap attrs) {
+        try {
+            kernel.setPrintFigures(Integer.parseInt((String) attrs.get("val")));                                   
             return true;
         } catch (Exception e) {
             return false;

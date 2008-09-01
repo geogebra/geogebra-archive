@@ -29,12 +29,50 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
-import geogebra.kernel.statistics.*;
+import geogebra.kernel.statistics.AlgoDoubleListCovariance;
+import geogebra.kernel.statistics.AlgoDoubleListPMCC;
+import geogebra.kernel.statistics.AlgoDoubleListSXX;
+import geogebra.kernel.statistics.AlgoDoubleListSXY;
+import geogebra.kernel.statistics.AlgoDoubleListSYY;
+import geogebra.kernel.statistics.AlgoDoubleListSigmaXX;
+import geogebra.kernel.statistics.AlgoDoubleListSigmaXY;
+import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
+import geogebra.kernel.statistics.AlgoFitExp;
+import geogebra.kernel.statistics.AlgoFitLineX;
+import geogebra.kernel.statistics.AlgoFitLineY;
+import geogebra.kernel.statistics.AlgoFitLog;
+import geogebra.kernel.statistics.AlgoFitPoly;
+import geogebra.kernel.statistics.AlgoFitPow;
+import geogebra.kernel.statistics.AlgoInverseNormal;
+import geogebra.kernel.statistics.AlgoListCovariance;
+import geogebra.kernel.statistics.AlgoListMeanX;
+import geogebra.kernel.statistics.AlgoListMeanY;
+import geogebra.kernel.statistics.AlgoListPMCC;
+import geogebra.kernel.statistics.AlgoListSXX;
+import geogebra.kernel.statistics.AlgoListSXY;
+import geogebra.kernel.statistics.AlgoListSYY;
+import geogebra.kernel.statistics.AlgoListSigmaXX;
+import geogebra.kernel.statistics.AlgoListSigmaXY;
+import geogebra.kernel.statistics.AlgoListSigmaYY;
+import geogebra.kernel.statistics.AlgoMean;
+import geogebra.kernel.statistics.AlgoMedian;
+import geogebra.kernel.statistics.AlgoMode;
+import geogebra.kernel.statistics.AlgoNormal;
+import geogebra.kernel.statistics.AlgoProduct;
+import geogebra.kernel.statistics.AlgoQ1;
+import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.kernel.statistics.AlgoRandomNormal;
+import geogebra.kernel.statistics.AlgoSigmaXX;
+import geogebra.kernel.statistics.AlgoStandardDeviation;
+import geogebra.kernel.statistics.AlgoSum;
+import geogebra.kernel.statistics.AlgoVariance;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+
+import org.freehep.util.ScientificFormat;
 
 public class Kernel {
 
@@ -69,7 +107,11 @@ public class Kernel {
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
-	
+	private ScientificFormat sf;
+	public boolean useSignificantFigures = true;
+	private boolean tempUseSignificantFigures = true;
+	private int tempNoOfSignificantFigures = 3;
+	private int tempNoOfDecimalPlaces = 2;
 	/* Significant figures
 	 * 
 	 * How to do:
@@ -133,6 +175,7 @@ public class Kernel {
 	public Kernel() {
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setGroupingUsed(false);
+		sf = new ScientificFormat(5, 16, false);
 		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 	}
 	
@@ -350,6 +393,7 @@ public class Kernel {
 	}
 
 	final public void setMaximumFractionDigits(int digits) {
+		useSignificantFigures = false;
 		nf.setMaximumFractionDigits(digits);
 	}
 	
@@ -375,6 +419,7 @@ public class Kernel {
 
 	final public void setPrintDecimals(int decimals) {
 		if (decimals >= 0 && decimals != nf.getMaximumFractionDigits()) {
+			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
 			PRINT_PRECISION = Math.pow(10, -decimals);
 		}
@@ -382,6 +427,48 @@ public class Kernel {
 	
 	final public int getPrintDecimals() {
 		return nf.getMaximumFractionDigits();
+	}
+		
+	final public void setPrintFigures(int figures) {
+		if (figures >= 0 && figures != sf.getSigDigits()) {
+			useSignificantFigures = true;
+			sf.setSigDigits(figures);
+		}
+	}
+	
+	final public void setTemporaryMaximumPrintAccuracy()
+	{
+		tempUseSignificantFigures = useSignificantFigures;
+		tempNoOfSignificantFigures = sf.getSigDigits();
+		tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		useSignificantFigures = true;
+		sf.setMaxWidth(309);
+	}
+	
+	final public void setTemporaryMaximumFractionDigits(int digits)
+	{
+		tempUseSignificantFigures = useSignificantFigures;
+		tempNoOfSignificantFigures = sf.getSigDigits();
+		tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		nf.setMaximumFractionDigits(digits);
+		useSignificantFigures = false;
+	}
+	
+	
+	final public void restorePrintAccuracy()
+	{
+		useSignificantFigures = tempUseSignificantFigures;
+		sf.setSigDigits(tempNoOfSignificantFigures);
+		sf.setMaxWidth(16);
+		nf.setMaximumFractionDigits(tempNoOfDecimalPlaces);
+	}
+	
+	/*
+	 * returns number of significant digits, or -1 if using decimal places
+	 */
+	final public int getPrintFigures() {
+		if (!useSignificantFigures) return -1;
+		return sf.getSigDigits();
 	}
 		
 	/**
@@ -4436,7 +4523,7 @@ public class Kernel {
 				abs = temp[i];
 			}
 
-			if (abs >= PRINT_PRECISION) {
+			if (abs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildImplicitVarPart.append(sign);
 				sbBuildImplicitVarPart.append(formatCoeff(abs));
 				sbBuildImplicitVarPart.append(vars[i]);
@@ -4468,7 +4555,7 @@ public class Kernel {
 
 		// add constant coeff
 		double coeff = temp[vars.length];
-		if (Math.abs(coeff) >= PRINT_PRECISION) {
+		if (Math.abs(coeff) >= PRINT_PRECISION || useSignificantFigures) {
 			sbBuildLHS.append(' ');
 			sbBuildLHS.append(sign(coeff));
 			sbBuildLHS.append(' ');
@@ -4494,8 +4581,7 @@ public class Kernel {
 		for (i = 0; i < numbers.length; i++) {
 			if (i != pos
 				&& // except y� coefficient                
-			Math.abs(numbers[i])
-					>= PRINT_PRECISION) {
+				(Math.abs(numbers[i]) >= PRINT_PRECISION || useSignificantFigures)) {
 				leadingNonZero = i;
 				break;
 			}
@@ -4525,7 +4611,7 @@ public class Kernel {
 				if (i != pos) {
 					d = -numbers[i] / q;
 					dabs = Math.abs(d);
-					if (dabs >= PRINT_PRECISION) {
+					if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 						sbBuildExplicitConicEquation.append(' ');
 						sbBuildExplicitConicEquation.append(sign(d));
 						sbBuildExplicitConicEquation.append(' ');
@@ -4538,7 +4624,7 @@ public class Kernel {
 			// constant coeff
 			d = -numbers[i] / q;
 			dabs = Math.abs(d);
-			if (dabs >= PRINT_PRECISION) {
+			if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildExplicitConicEquation.append(' ');
 				sbBuildExplicitConicEquation.append(sign(d));
 				sbBuildExplicitConicEquation.append(' ');
@@ -4572,14 +4658,14 @@ public class Kernel {
 		// x coeff
 		d = -numbers[0] / q;
 		dabs = Math.abs(d);
-		if (dabs >= PRINT_PRECISION) {
+		if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 			sbBuildExplicitLineEquation.append(formatCoeff(d));
 			sbBuildExplicitLineEquation.append("x");
 
 			// constant            
 			d = -numbers[2] / q;
 			dabs = Math.abs(d);
-			if (dabs >= PRINT_PRECISION) {
+			if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildExplicitLineEquation.append(' ');
 				sbBuildExplicitLineEquation.append(sign(d));
 				sbBuildExplicitLineEquation.append(' ');
@@ -4614,12 +4700,24 @@ public class Kernel {
 
 	final public String format(double x) {
 		if (Double.isNaN(x))
-			return "?";		
+			return "?";	
+		else if (useSignificantFigures) 
+			return  formatSF(x);
 		// ZERO
 		else if (-MIN_PRECISION < x && x < MIN_PRECISION)
 			return "0";					
 		else
-			return nf.format(x);				
+			return nf.format(x); // 	useSignificantFigures=false			
+	}
+	
+	/*
+	 * makes sure .123 is returned as 0.123
+	 */
+	final private String formatSF(double x) {
+		String s = sf.format(Math.abs(x));
+		if (s.startsWith(".")) s = "0" + s;
+		if (x < 0) s = "-" + s;
+		return s;
 	}
 	
 	final public String formatPiE(double x, NumberFormat nf) {
@@ -4713,11 +4811,11 @@ public class Kernel {
 		
 		if (x > 0.0d) {
 			sbFormatSigned.append("+ ");
-			sbFormatSigned.append(nf.format(x));
+			sbFormatSigned.append( useSignificantFigures ? sf.format(-x) : nf.format(x));
 			return sbFormatSigned;
 		} else {
 			sbFormatSigned.append("- ");
-			sbFormatSigned.append(nf.format(-x));
+			sbFormatSigned.append( useSignificantFigures ? sf.format(-x) : nf.format(-x));
 			return sbFormatSigned;
 		}
 	}
@@ -4739,7 +4837,7 @@ public class Kernel {
 			else {
 				phi = Math.toDegrees(phi);
 				if (phi < 0) phi += 360;				
-				sbFormatAngle.append(nf.format(phi));
+				sbFormatAngle.append(useSignificantFigures ? sf.format(phi) : nf.format(phi));
 				sbFormatAngle.append('\u00b0');
 				return sbFormatAngle;
 			}
@@ -4749,7 +4847,7 @@ public class Kernel {
 				return sbFormatAngle;
 			}
 			else {				
-				sbFormatAngle.append(nf.format(phi));
+				sbFormatAngle.append(useSignificantFigures ? sf.format(phi) : nf.format(phi));
 				sbFormatAngle.append(" rad");
 				return sbFormatAngle;
 			}
