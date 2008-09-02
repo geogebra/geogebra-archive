@@ -69,7 +69,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	private JButton btOpen;
 	private DoubleClickListener dcListener;
 	private EuclidianView ev;
-	private boolean showOpenButton, undoActive;
+	public boolean showOpenButton, undoActive;
 	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
 	public boolean enableRightClick = true;
 	boolean enableShiftDragZoom = true;

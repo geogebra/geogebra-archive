@@ -223,6 +223,7 @@ public class JarManager {
         			app.getApplet().showToolBar ||
         			app.getApplet().showAlgebraInput ||
         			app.getApplet().enableRightClick ||
+        			app.getApplet().showOpenButton ||
         			app.getApplet().showFrame)
         			//app.showAlgebraView() ||
         			//app.showSpreadsheet())
