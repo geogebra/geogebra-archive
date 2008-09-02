@@ -3019,9 +3019,9 @@ final public boolean hasOnlyFreeInputPoints() {
 		}		
 	}
 	
-	public final void removeColorFunction(GeoList col) {
+	public final void removeColorFunction() {
 		//Application.debug("removeColorFunction");
-		if (colFunction == col)
+		//if (colFunction == col)
 			colFunction = null;
 	}
 	

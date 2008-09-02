@@ -456,7 +456,7 @@ public class GeoList extends GeoElement implements ListValue {
 				// tell all condition listeners 
 				for (int i=0; i < geos.length; i++) {		
 					GeoElement geo = (GeoElement) geos[i];
-					geo.removeColorFunction(this);				
+					geo.removeColorFunction();				
 					kernel.notifyUpdate(geo);			
 				}			
 			}
