@@ -75,11 +75,11 @@ office@geogebra.org
 					**/*.jpg, 
 					geogebra/kernel/**/algo2command.properties,	
 					geogebra/kernel/**/algo2command4i2g.properties,	
-					geogebra/gui/**/_license.txt" 						
+					geogebra/gui/**/_license.txt,
+			 		geogebra/cas/view/**" 						
 			excludes="*.jar, 
 					geogebra/export/**, 
 					geogebra/properties/**, 			  
-					geogebra/cas/view/**,
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
 					geogebra3D/**,
