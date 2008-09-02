@@ -97,7 +97,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  		}
  		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
  			codePreamble.append("\\setupbodyfont["+frame.getFontSize()+"pt]\n");
- 			codePreamble.append("\\usemodule[tikz]\n\\usemodule[tikz]\n");
+ 			codePreamble.append("\\usemodule[tikz]\n\\usemodule[pgf]\n");
  			codePreamble.append("\\usetikzlibrary[arrows]\n\\setuppagenumbering[location=]\n");
  			
  	    	codeBeginDoc.append("\\starttikzpicture[>=triangle 45,x=");
