@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
+import geogebra.cas.view.CASView;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -585,8 +586,11 @@ public class MyXMLio {
 		// save cas view seeting and cas session
 		// like the spreadsheet, we need a variable in the app in the future,
 		// but now I just save it.
-		sb.append(app.getCasView().getGUIXML());
-		sb.append(app.getCasView().getSessionXML());
+		CASView casView = app.getCasView();
+		if (casView != null) {
+			sb.append(app.getCasView().getGUIXML());
+			sb.append(app.getCasView().getSessionXML());
+		}
 
 		// save construction
 		sb.append(kernel.getConstructionXML());
