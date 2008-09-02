@@ -4695,6 +4695,7 @@ class ColorFunctionPanel
 	
 	private Object[] geos; // currently selected geos
 	private JTextField tfRed, tfGreen, tfBlue;
+	private JButton btRemove;
 	private JLabel nameLabelR,nameLabelG,nameLabelB;
 	
 	private Kernel kernel;
@@ -4730,6 +4731,21 @@ class ColorFunctionPanel
 		nameLabelG.setLabelFor(inputPanelR);
 		nameLabelB = new JLabel(app.getMenu("Blue") + ":");	
 		nameLabelB.setLabelFor(inputPanelR);
+		
+		btRemove = new JButton("\u2718");
+		btRemove.setToolTipText(app.getPlain("Remove"));
+		btRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i=0; i < geos.length; i++) {
+					GeoElement geo = (GeoElement) geos[i];	
+					geo.removeColorFunction();
+					geo.updateRepaint();
+				}
+				tfRed.setText("");
+				tfGreen.setText("");
+				tfBlue.setText("");
+			}
+		});
 
 		// put it all together
 		setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -4739,6 +4755,7 @@ class ColorFunctionPanel
 		add(inputPanelG);
 		add(nameLabelB);		
 		add(inputPanelB);
+		add(btRemove);
 	}
 
 	public JPanel update(Object[] geos) {
@@ -4749,6 +4766,7 @@ class ColorFunctionPanel
 		tfRed.removeActionListener(this);
 		tfGreen.removeActionListener(this);
 		tfBlue.removeActionListener(this);
+		btRemove.removeActionListener(this);
 
 		// take condition of first geo
 		String strRed = "";
