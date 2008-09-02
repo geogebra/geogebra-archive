@@ -96,9 +96,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
  			codeBeginDoc.append("cm]\n"); 		
  		}
  		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
+ 			codePreamble.append("\\setupbodyfont["+frame.getFontSize()+"pt]\n");
  			codePreamble.append("\\usemodule[tikz]\n\\usemodule[tikz]\n");
- 			codePreamble.append("\\usetikzlibrary[arrows]\n");
-
+ 			codePreamble.append("\\usetikzlibrary[arrows]\n\\setuppagenumbering[location=]\n");
+ 			
  	    	codeBeginDoc.append("\\starttikzpicture[>=triangle 45,x=");
  			codeBeginDoc.append(xunit);
  			codeBeginDoc.append("cm,y=");
@@ -1475,7 +1476,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		double spaceTick=euclidianView.getAxesNumberingDistances()[0];
 		boolean showNumbers=euclidianView.getShowAxesNumbers()[0];		
 		int tickStyle=euclidianView.getAxesTickStyles()[0];
-		codeBeginDoc.append("\\begin{scriptsize}\n");
 		if (showAxis){
 			codeBeginDoc.append("\\draw[->,color=");
 			ColorCode(color,codeBeginDoc);
@@ -1499,7 +1499,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			ColorCode(color,codeBeginDoc);
 			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (0pt,2pt) -- (0pt,-2pt)");
 			else codeBeginDoc.append("] (0pt,-2pt)");
-			if (showNumbers) codeBeginDoc.append("node[below] {\\x};\n");
+			if (showNumbers) {
+				codeBeginDoc.append("node[below] {");
+				codeBeginDoc.append(footnotesize("\\x"));
+				codeBeginDoc.append("};\n");
+			}
 		}
 		// Drawing Y Axis
 		showAxis=euclidianView.getShowYaxis();
@@ -1529,16 +1533,32 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			ColorCode(color,codeBeginDoc);
 			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (2pt,0pt) -- (-2pt,0pt)");
 			else codeBeginDoc.append("] (-2pt,0pt)");
-			if (showNumbers) codeBeginDoc.append("node[left] {\\y};\n");
+			if (showNumbers) {
+				codeBeginDoc.append("node[left] {");
+				codeBeginDoc.append(footnotesize("\\y"));
+				codeBeginDoc.append("};\n");
+			}
 		}
 		// Origin
 		if (euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1]){
 			codeBeginDoc.append("\\draw[color=");
 			ColorCode(color,codeBeginDoc);
-			codeBeginDoc.append("] (0pt,-10pt) node[right] {0};\n");
+			// append the origin
+			codeBeginDoc.append("] (0pt,-10pt) node[right] {");
+			codeBeginDoc.append(footnotesize("0"));
+			codeBeginDoc.append("};\n");
 		}
-		codeBeginDoc.append("\\end{scriptsize}\n");
 	}
+	
+	private String footnotesize(String s){
+		if (format==GeoGebraToPgf.FORMAT_LATEX)	return "\\footnotesize "+s;
+		else if (format==GeoGebraToPgf.FORMAT_CONTEXT) return "\\tfx "+s;  
+		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX) return s;
+		return s;
+		
+	}
+	
+	
 	/**
 	 * A util method adds point coordinates to a StringBuffer
 	 * @param x X point
