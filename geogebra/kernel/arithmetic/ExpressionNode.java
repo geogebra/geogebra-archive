@@ -3107,7 +3107,12 @@ implements ExpressionValue {
             		sb.append(leftStr); 
             	} else {
             		// $ for row
-            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(false, true));            		         	
+            		GeoElement geo = (GeoElement)left;
+            		if (geo.getSpreadsheetCoords() != null) {
+            			sb.append(geo.getSpreadsheetLabelWithDollars(false, true));	
+            		} else {
+            			sb.append(leftStr); 
+            		} 
             	}
             	break;
             	
@@ -3115,9 +3120,14 @@ implements ExpressionValue {
             	if (valueForm) {
             		// GeoElement value
             		sb.append(leftStr); 
-            	} else {
+            	} else {            	
             		// $ for row
-            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(true, false));            		         	
+            		GeoElement geo = (GeoElement)left;
+            		if (geo.getSpreadsheetCoords() != null) {
+            			sb.append(geo.getSpreadsheetLabelWithDollars(true, false));	
+            		} else {
+            			sb.append(leftStr); 
+            		} 
             	}            
             	break;
             	
@@ -3127,7 +3137,12 @@ implements ExpressionValue {
             		sb.append(leftStr); 
             	} else {
             		// $ for row
-            		sb.append(((GeoElement)left).getSpreadsheetLabelWithDollars(true, true));            		         	
+            		GeoElement geo = (GeoElement)left;
+            		if (geo.getSpreadsheetCoords() != null) {
+            			sb.append(geo.getSpreadsheetLabelWithDollars(true, true));	
+            		} else {
+            			sb.append(leftStr); 
+            		}            		            		         
             	}
             	break;
                 

@@ -769,6 +769,7 @@ public class Construction {
 			if (neighbourCell == null) // look below
 				neighbourCell = geoTabelVarLookup(col + (row + 1));
 
+			label = col + row;			
 			return createSpreadsheetGeoElement(neighbourCell, label);
 		}	
 
