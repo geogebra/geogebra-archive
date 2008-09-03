@@ -429,6 +429,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	}
 
 	public void setLaTeX(boolean b, boolean updateParentAlgo, boolean removeLineFeeds) {
+		if (b == isLaTeX) return;
+		
 		isLaTeX = b;
 		
 		// remove linefeeds if from an older file format as they are now recognised as linefeeds
