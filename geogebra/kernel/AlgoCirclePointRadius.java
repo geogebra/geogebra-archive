@@ -61,7 +61,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
             circle.setLabel(label);
         }
         
-    AlgoCirclePointRadius(
+    public AlgoCirclePointRadius(
             Construction cons,
             GeoPoint M,
             NumberValue r) {
@@ -113,7 +113,7 @@ public class AlgoCirclePointRadius extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoConic getCircle() {
+    public GeoConic getCircle() {
         return circle;
     }
     GeoPoint getM() {

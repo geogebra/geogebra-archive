@@ -308,8 +308,13 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
 			previewDrawable = new DrawConic(view, mode, selectedPoints);
+			break;
+			
+	    // preview for compass: radius first
+		case EuclidianView.MODE_COMPASSES:
+			previewDrawable = new DrawConic(view, mode, selectedPoints, selectedSegments);
 			break;
 			
 		// preview for arcs and sectors
@@ -344,8 +349,7 @@ public class EuclidianController implements MouseListener,
 			movedGeoElement = null; // this will be the active geo template
 			break;
 			
-		case EuclidianView.MODE_MOVE_ROTATE:
-		case EuclidianView.MODE_COMPASSES:
+		case EuclidianView.MODE_MOVE_ROTATE:		
 			rotationCenter = null; // this will be the active geo template
 			break;
 			
@@ -3929,33 +3933,63 @@ public class EuclidianController implements MouseListener,
 		if (hits == null)
 			return false;
 		
-		boolean hitPoint = (addSelectedPoint(hits, 3, false) != 0);
+		// we already have two points that define the radius
+		if (selPoints() == 2) {			
+			GeoPoint [] points = new GeoPoint[2];
+			points[0] = (GeoPoint) selectedPoints.get(0);
+			points[1] = (GeoPoint) selectedPoints.get(1);
+			
+			// check for centerPoint
+			GeoPoint centerPoint = (GeoPoint) chooseGeo(hits, GeoPoint.class);
+			
+			if (centerPoint != null) {
+				if (selectionPreview) {
+					// highlight the center point
+					tempArrayList.clear();
+					tempArrayList.add(centerPoint);
+					addToHighlightedList(selectedPoints, tempArrayList, 3);
+					return false;
+				}
+				else {
+					// three points: center, distance between two points		
+					kernel.Circle(null, centerPoint, points[0], points[1],true);
+					clearSelections();
+					return true;
+				}
+			}
+		} 
+		
+		// we already have a segment that defines the radius
+		else if (selSegments() == 1) {
+			GeoSegment segment =  (GeoSegment) selectedSegments.get(0);
+
+			// check for centerPoint
+			GeoPoint centerPoint = (GeoPoint) chooseGeo(hits, GeoPoint.class);
+			
+			if (centerPoint != null) {	
+				if (selectionPreview) {
+					// highlight the center point
+					tempArrayList.clear();
+					tempArrayList.add(centerPoint);
+					addToHighlightedList(selectedPoints, tempArrayList, 3);
+					return false;
+				}
+				else {
+					// center point and segment
+					kernel.Circle(null, centerPoint, segment);
+					clearSelections();
+					return true;
+				}
+			}
+		}
+		
+		
+		// don't have radius yet: need two points or segment		
+		boolean hitPoint = (addSelectedPoint(hits, 2, false) != 0);
 		if (!hitPoint && selPoints() != 2 ) {
 			addSelectedSegment(hits, 1, false);
 		}
-		
-		// need center point for circle
-		if (rotationCenter == null && selPoints() == 1) {
-			// get center of point and clear points
-			rotationCenter = getSelectedPoints()[0];
-			app.addSelectedGeo(rotationCenter, true);		
-		}
 			
-		// three points: center, distance between two points
-		if (rotationCenter != null && selPoints() == 2) {										
-			GeoPoint[] points = getSelectedPoints();		
-			kernel.Circle(null, rotationCenter, points[0], points[1],true);
-			rotationCenter = null;
-			return true;
-		}
-		// center point and segment
-		else if (rotationCenter != null && selSegments() == 1) {				
-			GeoSegment[] segment = getSelectedSegments();		
-			kernel.Circle(null, rotationCenter, segment[0]);
-			rotationCenter = null;
-			return true;
-		}
-
 		return false;
 	}	
 	
@@ -4572,13 +4606,14 @@ public class EuclidianController implements MouseListener,
 		return ret;
 	}
 
-	/*
-	//	show dialog to choose one object out of hits[] that is an instance of
-	// specified class
-	// (note: subclasses are included)
-	final protected GeoElement chooseGeo(ArrayList hits, Class geoclass) {
+	/**
+	 * Shows dialog to choose one object out of hits[] that is an instance of
+	   specified class (note: subclasses are included)
+	 * 
+	 */
+	private GeoElement chooseGeo(ArrayList hits, Class geoclass) {
 		return chooseGeo(view.getHits(hits, geoclass, tempArrayList));
-	}*/
+	}
 
 	final protected GeoElement chooseGeo(ArrayList geos) {
 		if (geos == null)

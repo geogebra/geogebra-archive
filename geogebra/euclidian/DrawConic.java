@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoEllipseFociPoint;
@@ -26,7 +27,9 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 
 import java.awt.Graphics2D;
@@ -107,8 +110,9 @@ final public class DrawConic extends Drawable implements Previewable {
     private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
-	private ArrayList prevPoints;      
+	private ArrayList prevPoints, prevSegments; 
 	private GeoPoint [] previewTempPoints;  
+	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
     
     /** Creates new DrawVector */
@@ -146,6 +150,25 @@ final public class DrawConic extends Drawable implements Previewable {
 		
 		initPreview();
 	} 
+	
+	/**
+	 * Creates a new DrawConic for preview of a compass circle (radius or segment first, then center point) 
+	 */
+	DrawConic(EuclidianView view, int mode, ArrayList points, ArrayList segments) {
+		this.view = view; 
+		prevPoints = points;
+		prevSegments = segments;
+		previewMode = mode;
+		
+		Construction cons = view.getKernel().getConstruction();
+		previewTempRadius = new GeoNumeric(cons);
+		previewTempPoints = new GeoPoint[1];
+		previewTempPoints[0] = new GeoPoint(cons);
+		
+		initPreview();
+	} 
+	
+	
 
 	final public void update() {
         isVisible = geo.isEuclidianVisible();
@@ -801,9 +824,10 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     private void initPreview() {
-		//	init the conicPart for preview			
-		Construction cons = previewTempPoints[0].getConstruction();		
-		switch (previewMode) {
+		//	init the conic for preview			    	
+		Construction cons = previewTempPoints[0].getConstruction();
+		
+		switch (previewMode) {			
 			case EuclidianView.MODE_CIRCLE_TWO_POINTS:			
 				AlgoCircleTwoPoints algo = new AlgoCircleTwoPoints(cons, 
 						previewTempPoints[0], 
@@ -837,7 +861,15 @@ final public class DrawConic extends Drawable implements Previewable {
 						previewTempPoints[2]);
 				cons.removeFromConstructionList(algo4);				
 				initConic(algo4.getHyperbola());
-				break;												
+				break;	
+				
+			case EuclidianView.MODE_COMPASSES:			
+				AlgoCirclePointRadius algo5 = new AlgoCirclePointRadius(cons, 
+						previewTempPoints[0], 
+						previewTempRadius);
+				cons.removeFromConstructionList(algo5);				
+				initConic(algo5.getCircle());
+				break;
 		}		
 		
 		if (conic != null) 
@@ -845,14 +877,35 @@ final public class DrawConic extends Drawable implements Previewable {
 	}
     
     // preview of circle with midpoint through a second point
-	final public void updatePreview() {				
-		isVisible = conic != null && prevPoints.size() == neededPrevPoints;
-		if (isVisible) {
-			for (int i=0; i < prevPoints.size(); i++) {
-				previewTempPoints[i].setCoords((GeoPoint) prevPoints.get(i));					
-			}						
-			previewTempPoints[0].updateCascade();			
-		}				                                            				
+	final public void updatePreview() {		
+		// compass: set radius of preview circle
+		if (previewMode == EuclidianView.MODE_COMPASSES) {
+			// two points or one segment selected to define radius
+			isVisible = conic != null && (prevPoints.size() == 2 || prevSegments.size() == 1);
+			if (isVisible) {
+				if (prevPoints.size() == 2) {
+					GeoPoint p1 = (GeoPoint) prevPoints.get(0);
+					GeoPoint p2 = (GeoPoint) prevPoints.get(1);
+					previewTempRadius.setValue(p1.distance(p2));
+				}
+				else if (prevSegments.size() == 1) {
+					GeoSegment seg = (GeoSegment) prevSegments.get(0);
+					previewTempRadius.setValue(seg.getLength());
+				}								
+				previewTempRadius.updateCascade();
+			}			
+		}
+		
+		// all other conic preview modes: use points to define preview conic
+		else {		
+			isVisible = conic != null && prevPoints.size() == neededPrevPoints;
+			if (isVisible) {
+				for (int i=0; i < prevPoints.size(); i++) {
+					previewTempPoints[i].setCoords((GeoPoint) prevPoints.get(i));					
+				}						
+				previewTempPoints[0].updateCascade();			
+			}	
+		}
 	}
 	
 	final public void updateMousePos(int x, int y) {		
