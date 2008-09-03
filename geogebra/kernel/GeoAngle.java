@@ -207,7 +207,7 @@ public final class GeoAngle extends GeoNumeric {
 
 	public GeoElement copy() {
 		GeoAngle angle = new GeoAngle(cons);
-		angle.setValue(value);
+		angle.setValue(rawValue);
 		return angle;
 	}
 
@@ -350,7 +350,7 @@ public final class GeoAngle extends GeoNumeric {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("\t<value val=\"");
-		sb.append(value);
+		sb.append(rawValue);
 		sb.append("\"/>\n");
 
 		// if angle is drawable then we need to save visual options too
