@@ -12,10 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.NumberValue;
-
-import java.util.Arrays;
+import java.util.*;
 
 
 /**
@@ -71,8 +69,7 @@ public class AlgoSort extends AlgoElement {
     }
     
     final void sortStrings() {
-    	// Sort[{"pears","apples","figs"}]
-    	//Application.printStacktrace("");
+    	
       String[] sortList = new String[size];
         
       // copy inputList into an array
@@ -98,9 +95,7 @@ public class AlgoSort extends AlgoElement {
         outputList.clear();
  	    for (int i=0 ; i<size ; i++)
  	    {
- 	    	GeoText text = new GeoText(cons);
- 	    	text.setTextString(sortList[i]);
- 	    	outputList.add(text);
+     	   setListElement(i, sortList[i]);
         }      
     }
     
@@ -154,4 +149,21 @@ public class AlgoSort extends AlgoElement {
     	listElement.setValue(value);
     }    
 
+    private void setListElement(int index, String value) {
+    	GeoText listElement;
+    	if (index < outputList.getCacheSize()) {
+    		// use existing list element
+    		listElement = (GeoText) outputList.getCached(index);    	
+    	} else {
+    		// create a new list element
+    		listElement = new GeoText(cons);
+    		listElement.setParentAlgorithm(this);
+    		listElement.setConstructionDefaults();
+    		listElement.setUseVisualDefaults(false);	    		
+    	}
+    	
+    	outputList.add(listElement);
+    	listElement.setTextString(value);
+    }    
+    
 }
