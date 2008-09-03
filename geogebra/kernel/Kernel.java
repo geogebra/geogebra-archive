@@ -4647,6 +4647,9 @@ public class Kernel {
 				sbBuildExplicitConicEquation.append(' ');
 				sbBuildExplicitConicEquation.append(format(dabs));
 			}
+			
+			Application.debug(sbBuildExplicitConicEquation.toString());
+			
 			return sbBuildExplicitConicEquation;
 		}
 	}
@@ -4839,7 +4842,7 @@ public class Kernel {
 	private StringBuffer sbFormatSigned = new StringBuffer(40);
 	
 	private String useCurrentNumberFormat(double x) {
-		return useSignificantFigures ? sf.format(-x) : nf.format(-x);
+		return useSignificantFigures ? formatSF(x) : nf.format(x);
 	}
 	
 
