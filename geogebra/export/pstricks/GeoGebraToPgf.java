@@ -83,6 +83,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  			codeBeginDoc.append("cm]\n"); 			
  		}
  		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
+ 			codePreamble.append("%Uncomment next line if XeTeX is used\n%\\def\\pgfsysdriver{pgfsys-xetex.def}\n\n");
  	    	codePreamble.append("\\input pgf.tex\n\\input tikz.tex\n");
  	    	codePreamble.append("\\usetikzlibrary{arrows}\n");
  	    	codePreamble.append("\\baselineskip=");
