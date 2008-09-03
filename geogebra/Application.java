@@ -145,9 +145,9 @@ public abstract class Application implements	KeyEventDispatcher {
 	public static final boolean disableI2G = false;
 	// <-- Added for Intergeo File Format (Yves Kreis)
 	public static final boolean disableSpreadsheet = false;
-    public static final String buildDate = "September 2, 2008";
+    public static final String buildDate = "September 3, 2008";
 	
-    public static final String versionString = "3.1.25.0";    
+    public static final String versionString = "3.1.26.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
     public static final String I2G_FILE_FORMAT = "1.00.20080731";    
@@ -189,11 +189,12 @@ public abstract class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("gl") );           // Galician
         supportedLocales.add( new Locale("de") );          	// German   
     	supportedLocales.add( new Locale("de", "AT") ); 	// German (Austria)
-        supportedLocales.add( new Locale("el") );            // Greek   
+        supportedLocales.add( new Locale("el") );            // Greek
         supportedLocales.add( new Locale("iw") );            // Hebrew
         supportedLocales.add( new Locale("hu") );          	// Hungarian
+        supportedLocales.add( new Locale("is") );            // Icelandic
         supportedLocales.add( new Locale("it") ); 			// Italian
-        supportedLocales.add( new Locale("ja") );    		 	
+        supportedLocales.add( new Locale("ja") );    		// Japanese 	
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
         supportedLocales.add( new Locale("no", "NO") );     	 // Norwegian (Bokmal)
         supportedLocales.add( new Locale("no", "NO", "NY") );  // Norwegian (Nynorsk)
