@@ -420,7 +420,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		String[] strDecimalSpacesAC = new String[13];
 		strDecimalSpaces[0]   = app.getPlain("ADecimalPlaces","0");
 		strDecimalSpacesAC[0] = "0 decimals";
-		strDecimalSpaces[1]   = app.getPlain("ADecimalPlaces","1");
+		strDecimalSpaces[1]   = app.getPlain("ADecimalPlace","1");
 		strDecimalSpacesAC[1] = "1 decimals";
 		strDecimalSpaces[2]   = app.getPlain("ADecimalPlaces","2");
 		strDecimalSpacesAC[2] = "2 decimals";
