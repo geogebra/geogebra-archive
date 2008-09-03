@@ -28,6 +28,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	private int fontStyle = Font.PLAIN;
 	private int fontSize = 0; // size relative to default font size
 	private int printDecimals = -1;
+	private int printFigures = -1;
+	public boolean useSignificantFigures = false;
 	
 	// for absolute screen location
 	boolean hasAbsoluteScreenLocation = false;
@@ -91,6 +93,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		fontStyle = text.fontStyle;
 		fontSize = text.fontSize;
 		printDecimals = text.printDecimals;	
+		printFigures = text.printFigures;	
+		useSignificantFigures = text.useSignificantFigures;
 	}
 	
 	final public void setTextString(String text) {
@@ -356,9 +360,16 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		}
 		
 		// print decimals
-		if (printDecimals >= 0) {
+		if (printDecimals >= 0 && !useSignificantFigures) {
 			sb.append("\t<decimals val=\"");
 			sb.append(printDecimals);
+			sb.append("\"/>\n");
+		}
+						
+		// print significant figures
+		if (printFigures >= 0 && useSignificantFigures) {
+			sb.append("\t<significantfigures val=\"");
+			sb.append(printFigures);
 			sb.append("\"/>\n");
 		}
 						
@@ -524,10 +535,25 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	final public int getPrintDecimals() {
 		return printDecimals;
 	}
+	final public int getPrintFigures() {
+		Application.debug(printFigures+"");
+		return printFigures;
+	}
 	public void setPrintDecimals(int printDecimals) {		
 		AlgoElement algo = getParentAlgorithm();
 		if (algo != null) {
 			this.printDecimals = printDecimals;
+			printFigures = -1;
+			useSignificantFigures = false;
+			algo.update();
+		}			
+	}
+	public void setPrintFigures(int printFigures) {		
+		AlgoElement algo = getParentAlgorithm();
+		if (algo != null) {
+			this.printFigures = printFigures;
+			printDecimals = -1;
+			useSignificantFigures = true;
 			algo.update();
 		}			
 	}

@@ -438,6 +438,30 @@ public class Kernel {
 		}
 	}
 	
+	final public void setTemporaryPrintFigures(int figures) {
+		temporaryMaximumPrintAccuracyCount ++;
+		
+		if (temporaryMaximumPrintAccuracyCount == 1)
+		{
+			tempUseSignificantFigures = useSignificantFigures;
+			tempNoOfSignificantFigures = sf.getSigDigits();
+			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		}
+		setPrintFigures(figures);
+	}
+	
+	final public void setTemporaryPrintDecimals(int decimals) {
+		temporaryMaximumPrintAccuracyCount ++;
+		
+		if (temporaryMaximumPrintAccuracyCount == 1)
+		{
+			tempUseSignificantFigures = useSignificantFigures;
+			tempNoOfSignificantFigures = sf.getSigDigits();
+			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
+		}
+		setPrintDecimals(decimals);
+	}
+	
 	private int temporaryMaximumPrintAccuracyCount = 0;
 	
 	final public void setTemporaryMaximumPrintAccuracy()
@@ -471,7 +495,7 @@ public class Kernel {
 	
 	final public void restorePrintAccuracy()
 	{
-		temporaryMaximumPrintAccuracyCount --;
+	    temporaryMaximumPrintAccuracyCount --;
 		if (temporaryMaximumPrintAccuracyCount != 0) return;
 		
 		useSignificantFigures = tempUseSignificantFigures;

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 /**
@@ -63,8 +64,12 @@ public class AlgoDependentText extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {	
-    	int oldPrintDecimals = kernel.getPrintDecimals();
-    	kernel.setPrintDecimals(text.getPrintDecimals());
+    	//int oldPrintDecimals = kernel.getPrintDecimals();
+    	//kernel.setPrintDecimals(text.getPrintDecimals());
+    	if (text.useSignificantFigures)
+    		kernel.setTemporaryPrintFigures(text.getPrintFigures());
+    	else
+    		kernel.setTemporaryPrintDecimals(text.getPrintDecimals());
     	
     	try {    	
 	    	boolean latex = text.isLaTeX();
@@ -82,7 +87,8 @@ public class AlgoDependentText extends AlgoElement {
 	    	text.setUndefined();
 	    }
 	    
-	    kernel.setPrintDecimals(oldPrintDecimals);
+	    //kernel.setPrintDecimals(oldPrintDecimals);
+	    kernel.restorePrintAccuracy();
     }   
     
     final public String toString() {

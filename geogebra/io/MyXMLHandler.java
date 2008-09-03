@@ -1524,6 +1524,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("slopeTriangleSize")) {
 				ok = handleSlopeTriangleSize(attrs);
 				break;
+			} else if (eName.equals("significantfigures")) {
+				ok = handleTextFigures(attrs);
+				break;
 			}
 
 		case 't':
@@ -2007,6 +2010,22 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			GeoText text = (GeoText) geo;
 			text.setPrintDecimals(Integer.parseInt((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleTextFigures(LinkedHashMap attrs) {
+		if (!(geo.isGeoText())) {
+			Application.debug("wrong element type for <decimals>: "
+					+ geo.getClass());
+			return false;
+		}
+
+		try {
+			GeoText text = (GeoText) geo;
+			text.setPrintFigures(Integer.parseInt((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;
