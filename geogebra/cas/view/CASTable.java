@@ -39,8 +39,8 @@ public class CASTable extends JTable {
 		// Set the width of the index column;
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
 		this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
-		
-		//this.sizeColumnsToFit(0);
+
+		// this.sizeColumnsToFit(0);
 		this.setSurrendersFocusOnKeystroke(true);
 	}
 
@@ -59,6 +59,22 @@ public class CASTable extends JTable {
 				selectedRow + 1, selectedCol)).requestFocus();
 	}
 
+	public void insertRow(CASTableCellValue newValue) {
+
+		// CASTableCellValue newValue = new CASTableCellValue();
+		int rowNum = tableModel.getRowCount();
+		// insert the row before
+		tableModel.insertRow(rowNum - 1, new Object[] { newValue, "load" });
+		// changeSelection(selectedRow + 1, selectedCol, false, false);
+		// editCellAt(selectedRow + 1, selectedCol);
+		// ((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
+		// selectedCol)).getTableCellEditorComponent(this, newValue, true,
+		// selectedRow + 1, selectedCol)).requestFocus();
+		// Enlarge the cell hight
+		if(newValue.isOutputVisible())
+			this.setRowHeight(rowNum - 1, CASPara.inputOutputHeight);
+	}
+
 	public void insertRow(int selectedRow, int selectedCol, char c) {
 		char[] in = new char[1];
 		in[0] = c;
@@ -70,6 +86,20 @@ public class CASTable extends JTable {
 				selectedCol)).getTableCellEditorComponent(this, newValue, true,
 				selectedRow + 1, selectedCol)).requestFocus();
 
+	}
+
+	/*
+	 * Function: Delete a rolw, and set the focus at the right position
+	 */
+	public void deleteAllRow() {
+		int row = tableModel.getRowCount();
+
+		for (int i = row - 1; i >= 0; i--)
+			tableModel.removeRow(i);
+		this.repaint();
+		
+		if (tableModel.getRowCount() == 0)
+			insertRow(-1, CASPara.contCol);
 	}
 
 	/*

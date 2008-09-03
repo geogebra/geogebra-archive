@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Window;
 
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 
 public class CASTableCellRender extends CASTableCell implements
@@ -29,7 +30,6 @@ public class CASTableCellRender extends CASTableCell implements
 			
 			setInput(tempIn);
 			setOutput(tempOut);
-
 		}
 		return this;
 	}
