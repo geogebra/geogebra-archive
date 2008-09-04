@@ -714,18 +714,46 @@ public class Construction {
 
 		// global var handling
 		GeoElement geo = geoTabelVarLookup(label);
-		if (geo == null) {
-			if (allowAutoCreate)
-				return autoCreateGeoElement(label);
+
+		// STANDARD CASE: variable name found
+		if (geo != null) {
+			// check if geo is available for current step
+			if (geo.isAvailableAtConstructionStep(step))
+				return geo;
 			else
 				return null;
 		}
+		
+		// DESPARATE CASE: variable name not found
+						
+		/*
+		 * SPREADSHEET $ HANDLING
+		 * In the spreadsheet we may have variable names like
+		 * "A$1" for the "A1" to deal with absolute references.
+		 * Let's remove all "$" signs from label and try again.
+		 */ 	
+        if (label.indexOf('$') > -1) {
+			StringBuffer labelWithout$ = new StringBuffer(label.length());
+			for (int i=0; i < label.length(); i++) {
+				char ch = label.charAt(i);
+				if (ch != '$')
+					labelWithout$.append(ch);
+			}
 
-		// check if geo is available for current step
-		if (geo.isAvailableAtConstructionStep(step))
-			return geo;
+			// allow autocreation of elements
+	        geo = lookupLabel(labelWithout$.toString(), allowAutoCreate);				
+			if (geo != null) {
+				// geo found for name that includes $ signs
+				return geo;
+			}
+        }			
+        
+        // if we get here, nothing worked: 
+        // possibly auto-create new GeoElement with that name			
+		if (allowAutoCreate)
+			return autoCreateGeoElement(label);
 		else
-			return null;
+			return null;			
 	}	
 
 	/**

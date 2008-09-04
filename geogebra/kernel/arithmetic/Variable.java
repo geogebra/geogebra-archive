@@ -21,8 +21,6 @@ package geogebra.kernel.arithmetic;
 import geogebra.MyParseError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 
 import java.util.HashSet;
@@ -62,15 +60,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
     	return this;
     }   
     
-    /**
-     * Returns whether the name of this variable includes a "$" sign. This 
-     * is needed for handling of spreadsheet expressions with absolute references, e.g.
-     * "A$1" for the cell "A1".
-     */
-    public boolean nameHasDollarSign() {
-    	return name.indexOf('$') > -1;
-    }
-    
+   
     /**
      * Looks up the name of this variable in the kernel and returns the 
      * according GeoElement object.
@@ -86,47 +76,10 @@ public class Variable extends ValidExpression implements ExpressionValue {
     GeoElement resolve(boolean allowAutoCreateGeoElement) {
     	Construction cons = kernel.getConstruction();
     	
-    	// allow autocreation of elements
-        GeoElement geo = cons.lookupLabel(name, allowAutoCreateGeoElement);
-        
+    	// lookup variable name, create missing variables automatically if allowed
+        GeoElement geo = cons.lookupLabel(name, allowAutoCreateGeoElement);        
         if (geo != null)
-			return  geo;                            
-		        
-		/*
-		 * SPREADSHEET $ HANDLING
-		 * In the spreadsheet we may have variable names like
-		 * "A$1" for the "A1" to deal with absolute references.
-		 * Let's remove all "$" signs and try again.
-		 */ 	
-        if (nameHasDollarSign()) {
-			StringBuffer labelWithout$ = new StringBuffer(name.length());
-			for (int i=0; i < name.length(); i++) {
-				char ch = name.charAt(i);
-				if (ch != '$')
-					labelWithout$.append(ch);
-			}
-
-			// allow autocreation of elements
-	        geo = cons.lookupLabel(labelWithout$.toString(), allowAutoCreateGeoElement);				
-			if (geo != null) {
-				// geo found for name that includes $ signs
-				return geo;
-			}
-        }			
-        
-        /* moved to Construction.lookupLabel()
-        // if referring to variable "i" that is undefined, create it
-        if (name.equals("i")) {
-    		geo = new GeoPoint(kernel.getConstruction(), "i", 0.0d, 1.0d, 1.0d);
-    		((GeoPoint)geo).setFixed(true);   
-    		return geo;
-        }
-			
-        // if referring to variable "e" that is undefined, create it
-        else if (name.equals("e")) {
-    		geo =  new GeoNumeric(kernel.getConstruction(), "e", Math.E);
-    		return geo;
-        }*/
+			return  geo;                            		        		
 			
         // if we get here we couldn't resolve this variable name as a GeoElement
         String [] str = { "UndefinedVariable", name };
@@ -143,7 +96,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
     	GeoElement geo = resolve();
     	
     	// spreadsheet dollar sign reference
-    	if (nameHasDollarSign()) {
+    	if (name.indexOf('$') > -1) {
     		// row and/or column dollar sign present?
     		boolean col$ = name.indexOf('$') == 0;
     		boolean row$ = name.length() > 2 && name.indexOf('$', 1) > -1;
