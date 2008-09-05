@@ -220,11 +220,14 @@ public abstract class Drawable {
 	// returns a string consisting of n consecutive "str"s
 	final private String str(String str, int n)
 	{
-		if (n==0) return "";
-		
-		String ret="";
-		for (int i=0 ; i<n ; i++) ret+=str;
-		return ret;
+		if (n == 0) return "";
+		else if (n == 1) return str;
+		else {
+			StringBuffer ret = new StringBuffer();
+			
+			for (int i=0 ; i<n ; i++) ret.append(str);
+			return ret.toString();
+		}
 	}
 	
 	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
