@@ -98,6 +98,7 @@ public class Kernel {
 	final public static int ANGLE_DEGREE = 2;
 	final public static int COORD_CARTESIAN = 3;
 	final public static int COORD_POLAR = 4;	 
+	final public static int COORD_COMPLEX = 5;	 
 	final public static String EULER_STRING = "\u212f"; // "\u0435";
 	final public static String PI_STRING = "\u03c0";	
 	final public static double PI_2 = 2.0 * Math.PI;

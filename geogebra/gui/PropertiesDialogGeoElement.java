@@ -2380,6 +2380,7 @@ public class PropertiesDialogGeoElement
 			coordCB = new JComboBox();
 			coordCB.addItem(app.getPlain("CartesianCoords")); // index 0
 			coordCB.addItem(app.getPlain("PolarCoords")); // index 1
+			coordCB.addItem(app.getPlain("ComplexNumber")); // index 2
 			coordCB.addActionListener(this);
 
 			setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -2398,11 +2399,14 @@ public class PropertiesDialogGeoElement
 			//	check if properties have same values
 			GeoVec3D temp, geo0 = (GeoVec3D) geos[0];
 			boolean equalMode = true;
+			boolean allPoints = geo0 instanceof GeoPoint;
 			for (int i = 1; i < geos.length; i++) {
 				temp = (GeoVec3D) geos[i];
 				// same mode?
 				if (geo0.getMode() != temp.getMode())
 					equalMode = false;
+				if (!(temp instanceof GeoPoint))
+					allPoints = false;
 			}
 
 			int mode;
@@ -2417,6 +2421,10 @@ public class PropertiesDialogGeoElement
 				case Kernel.COORD_POLAR :
 					coordCB.setSelectedIndex(1);
 					break;
+				case Kernel.COORD_COMPLEX :
+					if (allPoints) coordCB.setSelectedIndex(2);
+					else coordCB.setSelectedItem(null);
+					break;
 				default :
 					coordCB.setSelectedItem(null);
 			}
@@ -2427,13 +2435,18 @@ public class PropertiesDialogGeoElement
 
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
+			boolean allPoints = true;
 			for (int i = 0; i < geos.length; i++) {
 				if (!(geos[i] instanceof GeoPoint
 					|| geos[i] instanceof GeoVector)) {
 					geosOK = false;
-					break;
 				}
+				if (!(geos[i] instanceof GeoPoint)) allPoints = false;
 			}
+			
+			// remove ComplexNumber option if any vectors are in list
+			if (!allPoints && coordCB.getItemCount() == 3) coordCB.removeItemAt(2);
+			
 			return geosOK;
 		}
 
@@ -2458,6 +2471,16 @@ public class PropertiesDialogGeoElement
 							geo = (GeoVec3D) geos[i];
 							geo.setMode(Kernel.COORD_POLAR);
 							geo.updateRepaint();
+						}
+						break;
+					case 2 : // Kernel.COMPLEX					
+						for (int i = 0; i < geos.length; i++) {
+							geo = (GeoVec3D) geos[i];
+							if (geo instanceof GeoPoint) {
+								geo.setMode(Kernel.COORD_COMPLEX);
+								geo.updateRepaint();
+							}
+							else coordCB.setSelectedItem(null);
 						}
 						break;
 				}

@@ -567,15 +567,24 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			return sbBuildValueString;
     	}
     				
-		sbBuildValueString.append('(');    
         switch (toStringMode) {
-            case Kernel.COORD_POLAR:                                            
-				sbBuildValueString.append(kernel.format(GeoVec2D.length(inhomX, inhomY)));
-				sbBuildValueString.append("; ");
-				sbBuildValueString.append(kernel.formatAngle(Math.atan2(inhomY, inhomX)));
-                break;                                
-                            
-            default: // CARTESIAN                
+        case Kernel.COORD_POLAR:                                            
+    		sbBuildValueString.append('(');    
+			sbBuildValueString.append(kernel.format(GeoVec2D.length(inhomX, inhomY)));
+			sbBuildValueString.append("; ");
+			sbBuildValueString.append(kernel.formatAngle(Math.atan2(inhomY, inhomX)));
+			sbBuildValueString.append(')');
+            break;                                
+                        
+        case Kernel.COORD_COMPLEX:                                            
+			sbBuildValueString.append(kernel.format(inhomX));
+			sbBuildValueString.append(" ");
+			sbBuildValueString.append(kernel.formatSigned(inhomY));
+			sbBuildValueString.append("i");
+            break;                                
+                        
+           default: // CARTESIAN                
+       			sbBuildValueString.append('(');    
 				sbBuildValueString.append(kernel.format(inhomX));
 				switch (kernel.getCoordStyle()) {
 					case Kernel.COORD_STYLE_AUSTRIAN:
@@ -586,8 +595,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 						sbBuildValueString.append(", ");												
 				}
 				sbBuildValueString.append(kernel.format(inhomY));                                
+				sbBuildValueString.append(')');
         }        
-		sbBuildValueString.append(')');
 		return sbBuildValueString;
     }
 	private StringBuffer sbBuildValueString = new StringBuffer(50);   
