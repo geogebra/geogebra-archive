@@ -26,6 +26,8 @@ import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.MyBoolean;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -68,9 +70,7 @@ import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.util.ScientificFormat;
 
-import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -112,9 +112,12 @@ public class Kernel {
 	private NumberFormat nf;
 	private ScientificFormat sf;
 	public boolean useSignificantFigures = true;
-	private boolean tempUseSignificantFigures = true;
-	private int tempNoOfSignificantFigures = 3;
-	private int tempNoOfDecimalPlaces = 2;
+	
+	// used to store info when rounding is temporarily changed
+	private ArrayList useSignificantFiguresList = new ArrayList();
+	private ArrayList noOfSignificantFiguresList = new ArrayList();
+	private ArrayList noOfDecimalPlacesList = new ArrayList();
+	
 	/* Significant figures
 	 * 
 	 * How to do:
@@ -421,7 +424,7 @@ public class Kernel {
 	}
 
 	final public void setPrintDecimals(int decimals) {
-		if (decimals >= 0 && decimals != nf.getMaximumFractionDigits()) {
+		if (decimals >= 0) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
 			PRINT_PRECISION = Math.pow(10, -decimals);
@@ -433,76 +436,74 @@ public class Kernel {
 	}
 		
 	final public void setPrintFigures(int figures) {
-		if (figures >= 0 && figures != sf.getSigDigits()) {
+		if (figures >= 0) {
 			useSignificantFigures = true;
 			sf.setSigDigits(figures);
 		}
 	}
 	
 	final public void setTemporaryPrintFigures(int figures) {
-		temporaryMaximumPrintAccuracyCount ++;
+
+		storeTemporaryRoundingInfoInList();		
 		
-		if (temporaryMaximumPrintAccuracyCount == 1)
-		{
-			tempUseSignificantFigures = useSignificantFigures;
-			tempNoOfSignificantFigures = sf.getSigDigits();
-			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
-		}
 		setPrintFigures(figures);
 	}
 	
 	final public void setTemporaryPrintDecimals(int decimals) {
-		temporaryMaximumPrintAccuracyCount ++;
 		
-		if (temporaryMaximumPrintAccuracyCount == 1)
-		{
-			tempUseSignificantFigures = useSignificantFigures;
-			tempNoOfSignificantFigures = sf.getSigDigits();
-			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
-		}
+		storeTemporaryRoundingInfoInList();
+		
 		setPrintDecimals(decimals);
 	}
 	
-	private int temporaryMaximumPrintAccuracyCount = 0;
 	
 	final public void setTemporaryMaximumPrintAccuracy()
 	{
-		temporaryMaximumPrintAccuracyCount ++;
+		storeTemporaryRoundingInfoInList();
 		
-		if (temporaryMaximumPrintAccuracyCount == 1)
-		{
-			tempUseSignificantFigures = useSignificantFigures;
-			tempNoOfSignificantFigures = sf.getSigDigits();
-			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
-		}
 		useSignificantFigures = true;
 		sf.setMaxWidth(309);
 	}
 	
 	final public void setTemporaryMaximumFractionDigits(int digits)
 	{
-		temporaryMaximumPrintAccuracyCount ++;
+		storeTemporaryRoundingInfoInList();
 		
-		if (temporaryMaximumPrintAccuracyCount == 1)
-		{
-			tempUseSignificantFigures = useSignificantFigures;
-			tempNoOfSignificantFigures = sf.getSigDigits();
-			tempNoOfDecimalPlaces = nf.getMaximumFractionDigits();
-		}
 		nf.setMaximumFractionDigits(digits);
 		useSignificantFigures = false;
 	}
 	
 	
+	/*
+	 * stores information about the current no of decimal places/sig figures used
+	 * for when it is (temporarily changed)
+	 * needs to be in a list as it can be nested
+	 */
+	private void storeTemporaryRoundingInfoInList()
+	{
+		useSignificantFiguresList.add(new MyBoolean(useSignificantFigures));
+		noOfSignificantFiguresList.add(new MyDouble(this,(double)(sf.getSigDigits())));	
+		noOfDecimalPlacesList.add(new MyDouble(this,(double)(nf.getMaximumFractionDigits())));	
+	}
+	
+	
 	final public void restorePrintAccuracy()
 	{
-	    temporaryMaximumPrintAccuracyCount --;
-		if (temporaryMaximumPrintAccuracyCount != 0) return;
 		
-		useSignificantFigures = tempUseSignificantFigures;
-		sf.setSigDigits(tempNoOfSignificantFigures);
+		useSignificantFigures = ((MyBoolean)(useSignificantFiguresList.get(useSignificantFiguresList.size()-1))).getBoolean();
+		useSignificantFiguresList.remove(useSignificantFiguresList.size()-1);
+		
+		if (useSignificantFigures)
+			sf.setSigDigits((int)((MyDouble)(noOfSignificantFiguresList.get(noOfSignificantFiguresList.size()-1))).getDouble());
+		else
+			nf.setMaximumFractionDigits((int)((MyDouble)(noOfDecimalPlacesList.get(noOfSignificantFiguresList.size()-1))).getDouble());
+		
+		noOfSignificantFiguresList.remove(noOfSignificantFiguresList.size()-1);
+		noOfDecimalPlacesList.remove(noOfDecimalPlacesList.size()-1);
+
 		sf.setMaxWidth(16);
-		nf.setMaximumFractionDigits(tempNoOfDecimalPlaces);
+		
+		//Application.debug("list size"+noOfSignificantFiguresList.size());
 	}
 	
 	/*
@@ -4673,7 +4674,7 @@ public class Kernel {
 				sbBuildExplicitConicEquation.append(format(dabs));
 			}
 			
-			Application.debug(sbBuildExplicitConicEquation.toString());
+			//Application.debug(sbBuildExplicitConicEquation.toString());
 			
 			return sbBuildExplicitConicEquation;
 		}

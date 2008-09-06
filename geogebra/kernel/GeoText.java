@@ -536,7 +536,6 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		return printDecimals;
 	}
 	final public int getPrintFigures() {
-		Application.debug(printFigures+"");
 		return printFigures;
 	}
 	public void setPrintDecimals(int printDecimals) {		
