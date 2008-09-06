@@ -416,36 +416,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			strDecimalSpaces[i] = Integer.toString(i);
 			strDecimalSpacesAC[i] = i + " decimals";
 		}*/
-		String[] strDecimalSpaces = new String[13];
-		String[] strDecimalSpacesAC = new String[13];
-		strDecimalSpaces[0]   = app.getPlain("ADecimalPlaces","0");
-		strDecimalSpacesAC[0] = "0 decimals";
-		strDecimalSpaces[1]   = app.getPlain("ADecimalPlace","1");
-		strDecimalSpacesAC[1] = "1 decimals";
-		strDecimalSpaces[2]   = app.getPlain("ADecimalPlaces","2");
-		strDecimalSpacesAC[2] = "2 decimals";
-		strDecimalSpaces[3]   = app.getPlain("ADecimalPlaces","3");
-		strDecimalSpacesAC[3] = "3 decimals";
-		strDecimalSpaces[4]   = app.getPlain("ADecimalPlaces","4");
-		strDecimalSpacesAC[4] = "4 decimals";
-		strDecimalSpaces[5]   = app.getPlain("ADecimalPlaces","5");
-		strDecimalSpacesAC[5] = "5 decimals";
-		strDecimalSpaces[6]   = app.getPlain("ADecimalPlaces","10");
-		strDecimalSpacesAC[6] = "10 decimals";
-		strDecimalSpaces[7]   = app.getPlain("ADecimalPlaces","15");
-		strDecimalSpacesAC[7] = "15 decimals";
-		strDecimalSpaces[8]   = "---"; // separator
-		strDecimalSpacesAC[8] = "";
-		strDecimalSpaces[9]   = app.getPlain("ASignificantFigures","3");
-		strDecimalSpacesAC[9] = "3 figures";
-		strDecimalSpaces[10]   = app.getPlain("ASignificantFigures","5");
-		strDecimalSpacesAC[10] = "5 figures";
-		strDecimalSpaces[11]   = app.getPlain("ASignificantFigures","10");
-		strDecimalSpacesAC[11] = "10 figures";
-		strDecimalSpaces[12]   = app.getPlain("ASignificantFigures","15");
-		strDecimalSpacesAC[12] = "15 figures";
+		String[] strDecimalSpaces = app.getRoundingMenu();
+
 		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this, strDecimalSpaces,
-				strDecimalSpacesAC, 0);
+				Application.strDecimalSpacesAC, 0);
 		menu.add(menuDecimalPlaces);
 		updateMenuDecimalPlaces();
 
@@ -1522,24 +1496,19 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	protected void updateMenuDecimalPlaces() {
 		if (menuDecimalPlaces == null) return;
-		int pos;
+		int pos = -1;
 		
 		if (kernel.useSignificantFigures) {
-			int sf = kernel.getPrintFigures();
-			switch (sf) {
-			default : pos = 9; break; // 3 sf
-			case 5  : pos = 10; break;
-			case 10 : pos = 11; break;
-			case 15 : pos = 12; break;
-			}	
+			int figures = kernel.getPrintFigures();
+			if (figures > 0 && figures < app.figuresLookup.length)
+				pos = app.figuresLookup[figures];
 		}
 		else
 		{
-			int dp = kernel.getPrintDecimals();
+			int decimals = kernel.getPrintDecimals();
 			
-			if (dp == 10) pos = 6;
-			else if (dp == 15) pos =7;
-			else pos = dp;
+			if (decimals > 0 && decimals < app.decimalsLookup.length)
+				pos = app.decimalsLookup[decimals];
 			
 		}
 

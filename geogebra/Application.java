@@ -4708,5 +4708,47 @@ public abstract class Application implements	KeyEventDispatcher {
 	public final String getAppFontNameSerif() {
 		return appFontNameSerif;
 	}
-    
+	
+	// used by PropertyDialogGeoElement and MenuBarImpl
+	// for the Rounding Menus
+	final public static int roundingMenuLookup[] = {0,1,2,3,4,5,10,15,-1,3,5,10,15};
+	final public static int decimalsLookup[] = {0 ,1 ,2 ,3 , 4, 5,-1,-1,-1,-1, 6,-1,-1,-1,-1, 7};
+	final public static int figuresLookup[] =  {-1,-1,-1,9 ,-1,10,-1,-1,-1,-1,11,-1,-1,-1,-1,12};
+	
+	public String[] getRoundingMenu()
+	{              
+		String[] strDecimalSpaces = {
+			getPlain("ADecimalPlaces","0"),
+			getPlain("ADecimalPlace","1"),
+			getPlain("ADecimalPlaces","2"),
+			getPlain("ADecimalPlaces","3"),
+			getPlain("ADecimalPlaces","4"),
+			getPlain("ADecimalPlaces","5"),
+			getPlain("ADecimalPlaces","10"),
+			getPlain("ADecimalPlaces","15"),
+			"---", // separator
+			getPlain("ASignificantFigures","3"),
+			getPlain("ASignificantFigures","5"),
+			getPlain("ASignificantFigures","10"),
+			getPlain("ASignificantFigures","15")};
+
+		return strDecimalSpaces;
+	}
+	
+	final public static String[] strDecimalSpacesAC = {
+			"0 decimals",
+			"1 decimals",
+			"2 decimals",
+			"3 decimals",
+			"4 decimals",
+			"5 decimals",
+			"10 decimals",
+			"15 decimals",
+			"",
+			"3 figures",
+			"5 figures",
+			"10 figures",
+			"15 figures"};
+
+	// Rounding Menus end
 }

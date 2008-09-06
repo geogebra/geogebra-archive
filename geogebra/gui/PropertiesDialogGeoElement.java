@@ -2940,6 +2940,7 @@ public class PropertiesDialogGeoElement
 		private JPanel secondLine;
 		private boolean secondLineVisible = false;
 
+		
 		public TextOptionsPanel() {	
 			// font: serif, sans serif
 			String [] fonts = { "Sans Serif", "Serif" };
@@ -2963,21 +2964,8 @@ public class PropertiesDialogGeoElement
 			btItalic.addActionListener(this);		
 			
 			// decimal places			
-			String[] strDecimalSpaces = new String[13];
-			strDecimalSpaces[0]   = app.getPlain("ADecimalPlaces","0");
-			strDecimalSpaces[1]   = app.getPlain("ADecimalPlace","1");
-			strDecimalSpaces[2]   = app.getPlain("ADecimalPlaces","2");
-			strDecimalSpaces[3]   = app.getPlain("ADecimalPlaces","3");
-			strDecimalSpaces[4]   = app.getPlain("ADecimalPlaces","4");
-			strDecimalSpaces[5]   = app.getPlain("ADecimalPlaces","5");
-			strDecimalSpaces[6]   = app.getPlain("ADecimalPlaces","10");
-			strDecimalSpaces[7]   = app.getPlain("ADecimalPlaces","15");
-			strDecimalSpaces[8]   = "---"; // separator
-			strDecimalSpaces[9]   = app.getPlain("ASignificantFigures","3");
-			strDecimalSpaces[10]   = app.getPlain("ASignificantFigures","5");
-			strDecimalSpaces[11]   = app.getPlain("ASignificantFigures","10");
-			strDecimalSpaces[12]   = app.getPlain("ASignificantFigures","15");
-		    cbDecimalPlaces = new JComboBox(strDecimalSpaces);
+			
+		    cbDecimalPlaces = new JComboBox(app.getRoundingMenu());
 		    cbDecimalPlaces.addActionListener(this);
 
 			// font, size
@@ -3020,14 +3008,12 @@ public class PropertiesDialogGeoElement
 			int selItem = -1;
 			
 			int decimals = geo0.getPrintDecimals();
-			int decimalsLookup[] = {0 ,1 ,2 ,3 , 4, 5,-1,-1,-1,-1, 6,-1,-1,-1,-1, 7};
-			if (decimals > 0 && decimals < decimalsLookup.length && !geo0.useSignificantFigures)
-				selItem = decimalsLookup[decimals];
+			if (decimals > 0 && decimals < Application.decimalsLookup.length && !geo0.useSignificantFigures)
+				selItem = Application.decimalsLookup[decimals];
 
 			int figures = geo0.getPrintFigures();
-			int figuresLookup[] =  {-1,-1,-1,9 ,-1,10,-1,-1,-1,-1,11,-1,-1,-1,-1,12};
-			if (figures > 0 && figures < figuresLookup.length && geo0.useSignificantFigures)
-				selItem = figuresLookup[figures];
+			if (figures > 0 && figures < Application.figuresLookup.length && geo0.useSignificantFigures)
+				selItem = Application.figuresLookup[figures];
 			
 			cbDecimalPlaces.setSelectedIndex(selItem);
 			
@@ -3093,7 +3079,6 @@ public class PropertiesDialogGeoElement
 			else if (source == cbDecimalPlaces) {
 				int decimals = cbDecimalPlaces.getSelectedIndex();
 				//Application.debug(decimals+"");
-				final int roundingMenuLookup[] = {0,1,2,3,4,5,10,15,-1,3,5,10,15};
 				//Application.debug(roundingMenuLookup[decimals]+"");
 				GeoText text;
 				for (int i = 0; i < geos.length; i++) {
@@ -3101,12 +3086,12 @@ public class PropertiesDialogGeoElement
 					if (decimals < 8) // decimal places
 					{
 						//Application.debug("decimals"+roundingMenuLookup[decimals]+"");
-						text.setPrintDecimals(roundingMenuLookup[decimals]);
+						text.setPrintDecimals(Application.roundingMenuLookup[decimals]);
 					}
 					else // significant figures
 					{
 						//Application.debug("figures"+roundingMenuLookup[decimals]+"");
-						text.setPrintFigures(roundingMenuLookup[decimals]);
+						text.setPrintFigures(Application.roundingMenuLookup[decimals]);
 					}
 					text.updateRepaint();
 				}
