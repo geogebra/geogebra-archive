@@ -85,17 +85,20 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.ListCellRenderer;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -2964,8 +2967,9 @@ public class PropertiesDialogGeoElement
 			btItalic.addActionListener(this);		
 			
 			// decimal places			
-			
+			ComboBoxRenderer renderer = new ComboBoxRenderer();
 		    cbDecimalPlaces = new JComboBox(app.getRoundingMenu());
+		    cbDecimalPlaces.setRenderer(renderer);
 		    cbDecimalPlaces.addActionListener(this);
 
 			// font, size
@@ -2989,6 +2993,34 @@ public class PropertiesDialogGeoElement
 			secondLineVisible = true;
 		}
 
+		class ComboBoxRenderer extends JLabel implements ListCellRenderer {
+		    JSeparator separator;
+
+		    public ComboBoxRenderer() {
+		      setOpaque(true);
+		      setBorder(new EmptyBorder(1, 1, 1, 1));
+		      separator = new JSeparator(JSeparator.HORIZONTAL);
+		    }
+
+		    public Component getListCellRendererComponent(JList list, Object value,
+		        int index, boolean isSelected, boolean cellHasFocus) {
+		      String str = (value == null) ? "" : value.toString();
+		      if ("---".equals(str)) {
+		        return separator;
+		      }
+		      if (isSelected) {
+		        setBackground(list.getSelectionBackground());
+		        setForeground(list.getSelectionForeground());
+		      } else {
+		        setBackground(list.getBackground());
+		        setForeground(list.getForeground());
+		      }
+		      setFont(list.getFont());
+		      setText(str);
+		      return this;
+		    }
+		  }
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
