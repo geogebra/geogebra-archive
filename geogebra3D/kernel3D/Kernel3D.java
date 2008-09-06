@@ -50,7 +50,7 @@ public class Kernel3D
 	
 	/** Segment3D label linking points v1 and v2   */
 	final public GeoSegment3D Segment3D(String label, GgbVector v1, GgbVector v2){
-		GeoSegment3D s=new GeoSegment3D(cons,v1,v2);
+		GeoSegment3D s = new GeoSegment3D(cons,v1,v2);
 		s.setLabel(label);
 		return s;
 	}

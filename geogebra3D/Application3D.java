@@ -64,13 +64,14 @@ public abstract class Application3D extends Application{
         //test.testPlane();
         //test.testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
         test.testAlgo();
+        test.testRepere();
 
         
 
         
         
-        euclidianView3D.setZZero(-3.0);
-        euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+        euclidianView3D.setZZero(-7.0);
+        euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
         
         //euclidianView3D.setZZero(0.0);
         //euclidianView3D.setRotXY(0,0,true);

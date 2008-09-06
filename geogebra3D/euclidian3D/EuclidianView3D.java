@@ -328,17 +328,36 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	//////////////////////////////////////
 	// moving objects
-	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2, float r, float g, float b){
+	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2, GgbVector v3, float r, float g, float b){
 		
-		setMovingPlane(o, v1, v2);
+		setMovingPlane(o, v1, v2, v3);
 		movingPlane.setObjColor(new Color(r,g,b));
 		setMovingPlaneVisible(true);
 		
-	}
-
-	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2){
+		//TODO remove
+		//setMovingPlaneCorners(0,0,-2,-2);
 		
-		movingPlane.setCoord(o, v1, v2);
+	}
+	
+
+	public void setMovingPlane(GgbVector o, GgbVector v1, GgbVector v2, GgbVector v3){
+		
+		//projects origin on plane (o,v1,v2)
+		GgbVector origin = new GgbVector(4);
+		origin.set(4, 1);
+
+		GgbMatrix m1 = new GgbMatrix(4,4);
+		m1.set(new GgbVector[] {v1, v2, new GgbVector(4), o});
+		
+
+		GgbVector project = origin.projectPlaneThruV(m1, v3);
+		//o.SystemPrint();
+		
+		movingPlane.setCoord(origin.add(v3.mul(project.get(3))).v(), v1, v2);
+		
+		
+		//sets corners to origin and o
+		setMovingPlaneCorners(0, 0, -project.get(1), -project.get(2));
 		
 	}
 	
@@ -347,6 +366,13 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		movingPlane.setEuclidianVisible(val);
 		
 	}
+	
+	public void setMovingPlaneCorners(double x1, double  y1, double  x2, double  y2){
+		
+		movingPlane.setGridCorners(x1,y1,x2,y2);
+		
+	}
+	
 	
 	
 

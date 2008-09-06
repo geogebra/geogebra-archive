@@ -81,10 +81,35 @@ public class Test3D{
 	
 	public void testRepere(){
 		
+		/*
 		testPoint(0,0,0,0,0,0);
-		testPoint(1,0,0,1,0,0);testSegment(0,0,0,1,0,0);
-		testPoint(0,1,0,0,1,0);testSegment(0,0,0,0,1,0);
-		testPoint(0,0,1,0,0,1);testSegment(0,0,0,0,0,1);
+		testPoint(1,0,0,1,0,0);
+		testPoint(0,1,0,0,1,0);
+		testPoint(0,0,1,0,0,1);
+		*/
+		
+		/*
+		testSegment(0,0,0,1,0,0);
+		testSegment(0,0,0,0,1,0);
+		testSegment(0,0,0,0,0,1);
+		*/
+		
+		GeoSegment3D s=null;
+		
+		s=kernel3D.Segment3D("axeX3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{5,0,0,1}));
+		s.setObjColor(new Color(1f,0f,0f));
+		s.setLineThickness(1);
+		cons.addToConstructionList(s, false);
+		
+		s=kernel3D.Segment3D("axeY3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{0,5,0,1}));
+		s.setObjColor(new Color(0f,1f,0f));
+		s.setLineThickness(1);
+		cons.addToConstructionList(s, false);
+		
+		s=kernel3D.Segment3D("axeZ3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{0,0,5,1}));
+		s.setObjColor(new Color(0f,0f,1f));
+		s.setLineThickness(1);
+		cons.addToConstructionList(s, false);
 		
 	}
 	

@@ -33,7 +33,7 @@ public class DrawSegment3D extends Drawable3D {
 		
         //creating 3D object	
         t3d = new Transform3D();
-        geomNormal = Drawable3D.createCylinder(0.02f, 1f, 10, 1f); //TODO beware of euclidianView3D scale 
+        geomNormal = Drawable3D.createCylinder(0.01f, 1f, 10, 1f); //TODO beware of euclidianView3D scale 
         appNormal = new Appearance();
         
         

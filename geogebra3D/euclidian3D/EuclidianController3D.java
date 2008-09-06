@@ -146,7 +146,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					movedGeoPoint3D = (GeoPoint3D) objSelected;
 					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 										
-					view.setMovingPlane(startLoc3D,v1,v2,movingPlaneR,movingPlaneG,movingPlaneB);					
+					view.setMovingPlane(startLoc3D,v1,v2,vn,movingPlaneR,movingPlaneG,movingPlaneB);
+					
 				}
 			}
 			view.repaint();
@@ -220,16 +221,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		view.toSceneCoords3D(v);	
 		
 		//getting new position of the point
-		double l = o.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v).get(3);
+		GgbVector project = o.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v);
 		
 		
-		mouseLoc3D = (o.add(v.mul(l))).v();
+		mouseLoc3D = (o.add(v.mul(project.get(3)))).v();
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
 		
 		//TODO modify objSelected.updateRepaint()
 		objSelected.updateCascade();
-		view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
+		view.setMovingPlaneCorners(0, 0, project.get(1), project.get(2));
 		
 		if (repaint)
 			view.repaint();
@@ -381,7 +382,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
-			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2);
+			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
 			view.repaint();
 			//moveMode = MOVE_POINT;
 			
@@ -496,7 +497,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			movingPlaneG=movingPlaneGlist[movingPlane];
 			movingPlaneB=movingPlaneBlist[movingPlane];			
 			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,movingPlaneR,movingPlaneG,movingPlaneB);
+			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,vn,movingPlaneR,movingPlaneG,movingPlaneB);
 			view.repaint();
 			break;	
 			

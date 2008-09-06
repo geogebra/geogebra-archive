@@ -57,6 +57,26 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	///////////////////////////////////
 	// grid
+	
+	/** sets corners of the grid */
+	public void setGridCorners(double x1, double  y1, double  x2, double  y2){
+		if (x1<x2){
+			this.xmin = x1;
+			this.xmax = x2;
+		}else{
+			this.xmin = x2;
+			this.xmax = x1;
+		}
+		if (y1<y2){
+			this.ymin = y1;
+			this.ymax = y2;
+		}else{
+			this.ymin = y2;
+			this.ymax = y1;
+		}
+	
+	}
+	
 	/** returns a matrix for drawing a segment, equation x=l (y=ymin..ymax) */
 	public GgbMatrix getDrawingXMatrix(double l){
 		GgbMatrix m = new GgbMatrix(4,4);
