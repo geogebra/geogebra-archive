@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -205,6 +206,9 @@ public class AlgoSequence extends AlgoElement {
 				list.add(listElement);	
 				
 				currentVal += step;
+				if (kernel.isInteger(currentVal)) {
+					currentVal = Math.round(currentVal);
+				}
 				i++;
 	    	}
     	}
@@ -267,6 +271,9 @@ public class AlgoSequence extends AlgoElement {
 			listElement.update();
 			
 			currentVal += step;
+			if (kernel.isInteger(currentVal)) {
+				currentVal = Math.round(currentVal);
+			}
 			i++;
 		}    	      
     }       
@@ -281,9 +288,19 @@ public class AlgoSequence extends AlgoElement {
     		    	   
     	// update var's algorithms until we reach expression 
     	if (expressionParentAlgo != null) {
-    		this.setStopUpdateCascade(true);
-    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
-    		this.setStopUpdateCascade(false);
+    		int depAlgosSize = var.getAlgoUpdateSet().getSize();
+    		
+    		// update all dependent algorithms of the local variable var
+    		if (depAlgosSize > 1) {
+	    		this.setStopUpdateCascade(true);
+	    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+	    		this.setStopUpdateCascade(false);
+    		}
+    		// no dependent algorithms: make sure that random numbers are updated (e.g. random())
+    		// so we update the expression in any case
+    		else {
+    			expressionParentAlgo.update();    			
+    		}
 		}
     }
     

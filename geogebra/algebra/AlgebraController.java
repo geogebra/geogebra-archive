@@ -243,6 +243,7 @@ public class AlgebraController
 				}
 			} 
 			
+			// update random algorithms
 			if (!geo.isIndependent()) {
 				if (geo.getParentAlgorithm().updateRandomAlgorithm())
 					geo.updateRepaint();				

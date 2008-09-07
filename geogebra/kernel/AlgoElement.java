@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -202,7 +203,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         for (int i = 0; i < input.length; i++) {
             if (input[i].isGeoNumeric()) {
             	GeoNumeric num = (GeoNumeric) input[i];
-            	if (num.isUsedForRandom()) {
+            	if (num.isUsedForRandom()) {            		
             		if (randNumList == null)
             			randNumList = new ArrayList();
             		randNumList.add(num);            		
@@ -217,6 +218,14 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         		randomInputNumbers[i] = (GeoNumeric) randNumList.get(i);
         	}
         }        
+        
+     // TODO: remove
+        if (randomInputNumbers != null) {
+        	Application.printStacktrace("" + randomInputNumbers);
+        	for (int i = 0; i < randomInputNumbers.length; i++) {
+        		System.out.println(randomInputNumbers[i]);
+        	}
+        }
     }
     
     /**
@@ -225,7 +234,13 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * algorithm needs a random number that is not one of it's input objects.
      */
     protected void setRandomInputNumbers(GeoNumeric [] randNumbers) {
-    	randomInputNumbers = randNumbers;    		
+    	randomInputNumbers = randNumbers;   
+    	
+    	// TODO: remove
+    	 if (randomInputNumbers != null)
+    		 Application.printStacktrace("" + randomInputNumbers);
+    	
+
     }
     
     /**
