@@ -353,6 +353,7 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("casSession")) {
 				// process start points at end of construction
 				processCellPairList();
+				mode = MODE_GEOGEBRA;
 			}
 			break;
 
