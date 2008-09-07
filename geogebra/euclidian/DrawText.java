@@ -47,7 +47,7 @@ public final class DrawText extends Drawable {
     
     private sHotEqn eqn;
     //private Image eqnImage;
-    private Dimension eqnSize;
+    private  Rectangle2D rect2;
     
     /** Creates new DrawText */
     public DrawText(EuclidianView view, GeoText text) {      
@@ -178,10 +178,13 @@ public final class DrawText extends Drawable {
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
 			double xRW = view.toRealWorldCoordX(labelRectangle.x);
 			double yRW = view.toRealWorldCoordY(labelRectangle.y);		
-			Rectangle2D rect2=new Rectangle2D.Double(
-					xRW, yRW,				                                 
-					view.toRealWorldCoordX(labelRectangle.x+labelRectangle.width)-xRW,
-					view.toRealWorldCoordY(labelRectangle.y+labelRectangle.height)-yRW);		                                 
+			
+			if (rect2 == null) {
+				rect2 = new Rectangle2D.Double();
+			}
+			rect2.setRect(xRW, yRW,
+					labelRectangle.width * view.invXscale,
+					-labelRectangle.height * view.invYscale);					                               
 			text.setBoundingBox(rect2);
 			// Michael Borcherds 2007-11-26 END
 		}

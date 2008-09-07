@@ -14,6 +14,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public class AlgoTextCorner extends AlgoElement 
@@ -67,6 +68,9 @@ implements EuclidianViewAlgo {
     
     protected final void compute() {         	
 		txt.calculateCornerPoint(corner, (int) number.getDouble());	    	
+		
+		// TODO: remove
+		Application.debug("compute AlgoTextCorner: " + corner);
     }    	
     
     final public boolean wantsEuclidianViewUpdate() {
