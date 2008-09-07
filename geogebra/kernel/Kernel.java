@@ -379,7 +379,7 @@ public class Kernel {
 	}
 	private ArrayList euclidianViewAlgos = new ArrayList();
 	
-	private void notifyEuclidianViewAlgos() {
+	public void notifyEuclidianViewAlgos() {
 		int size = euclidianViewAlgos.size();
 		for (int i=0; i < size; i++) {
 			((EuclidianViewAlgo) euclidianViewAlgos.get(i)).euclidianViewUpdate();
@@ -985,8 +985,7 @@ public class Kernel {
 					notifyAdd(geo);									
 				}			
 				//app.setMoveMode();
-				notifyReset();
-				
+				notifyReset();			
 				viewReiniting = false;
 			} 
 			else {

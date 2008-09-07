@@ -100,12 +100,10 @@ implements EuclidianViewAlgo {
     }
     
     public final void euclidianViewUpdate() {
-
     	compute();
 
-//    	 update output:
-
-    	 corner.updateCascade();    
+    	// update output:
+    	corner.updateCascade();    
     }
     
     final public String toString() {

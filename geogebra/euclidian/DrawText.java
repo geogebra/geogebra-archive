@@ -19,11 +19,9 @@ import geogebra.kernel.GeoText;
 import hoteqn.sHotEqn;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 
 
@@ -47,7 +45,8 @@ public final class DrawText extends Drawable {
     
     private sHotEqn eqn;
     //private Image eqnImage;
-    private  Rectangle2D rect2;
+    private int oldXpos, oldYpos;
+    private boolean needsBoundingBoxOld;
     
     /** Creates new DrawText */
     public DrawText(EuclidianView view, GeoText text) {      
@@ -67,9 +66,14 @@ public final class DrawText extends Drawable {
         if (!isVisible) return;          
         
         String newText = text.getTextString();
-       // boolean textChanged = labelDesc == null || !labelDesc.equals(newText);
+        boolean textChanged = labelDesc == null || 
+        	!labelDesc.equals(newText) || 
+        	isLaTeX != text.isLaTeX() ||
+        	text.isNeedsUpdatedBoundingBox() != needsBoundingBoxOld;
 		labelDesc = newText;
-		isLaTeX = text.isLaTeX();			
+		isLaTeX = text.isLaTeX();	
+		needsBoundingBoxOld = text.isNeedsUpdatedBoundingBox();
+				
         		
         // compute location of text		
 		if (text.isAbsoluteScreenLocActive()) {
@@ -93,6 +97,10 @@ public final class DrawText extends Drawable {
 			
 		}        
 		
+		boolean positionChanged = xLabel != oldXpos || yLabel != oldYpos;
+		oldXpos = xLabel;
+		oldYpos = yLabel;
+		
 		/*
 		// use hotEqn for LaTeX
 		if (isLaTeX && eqn == null && !JarManager.JSMATHTEX_LOADED) {
@@ -110,7 +118,7 @@ public final class DrawText extends Drawable {
 				view.add(eqn);					
 		}*/
 		
-		updateFontSize();				
+		boolean fontChanged = doUpdateFontSize();				
 			/*
 		// avoid unnecessary updates of LaTeX equation
 		if (isLaTeX) {
@@ -169,28 +177,31 @@ public final class DrawText extends Drawable {
 		
 		
 		
-		if (text.isNeedsUpdatedBoundingBox()) {
-			
+		if (text.isNeedsUpdatedBoundingBox() && 
+			(textChanged || positionChanged || fontChanged )) 
+		{									
 			// ensure that bounding box gets updated by drawing text once
-			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(), textFont, geo.getObjectColor(),view.getBackground());
-			else drawMultilineText(view.getTempGraphics2D());	
+			if (isLaTeX) 
+				drawMultilineLaTeX(view.getTempGraphics2D(), textFont, geo.getObjectColor(),view.getBackground());
+			else 
+				drawMultilineText(view.getTempGraphics2D());	
 			
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
 			double xRW = view.toRealWorldCoordX(labelRectangle.x);
 			double yRW = view.toRealWorldCoordY(labelRectangle.y);		
-			
-			if (rect2 == null) {
-				rect2 = new Rectangle2D.Double();
-			}
-			rect2.setRect(xRW, yRW,
+						
+			text.setBoundingBox(xRW, yRW,
 					labelRectangle.width * view.invXscale,
-					-labelRectangle.height * view.invYscale);					                               
-			text.setBoundingBox(rect2);
-			// Michael Borcherds 2007-11-26 END
+					-labelRectangle.height * view.invYscale);	
+			
+	    	// TODO: remove
+	    	Application.debug("UPDATE  text & draw " + geo + ", invXscale " + view.invXscale);
+	    
+	    	
 		}
     }
 
-    final public void draw(Graphics2D g2) {   	   
+    final public void draw(Graphics2D g2) { 
         if (isVisible) {      
         	if (!isLaTeX) {
         		g2.setPaint(geo.getObjectColor());				
@@ -210,7 +221,7 @@ public final class DrawText extends Drawable {
 				g2.setStroke(objStroke);
 				g2.setPaint(Color.lightGray);		
 				g2.draw(labelRectangle);         
-			}   
+			}   							
         }
     }
     /*
@@ -283,7 +294,12 @@ public final class DrawText extends Drawable {
     	//if (eqn != null) view.remove(eqn);
     }
 
+
 	final void updateFontSize() {	
+		doUpdateFontSize();
+	}
+	
+	private boolean doUpdateFontSize() {
 		// text's font size is relative to the global font size
 		int newFontSize = view.fontSize + text.getFontSize();		
 		int newFontStyle = text.getFontStyle();	
@@ -302,8 +318,11 @@ public final class DrawText extends Drawable {
 				Application app = view.getApplication();
 				String fontName = serifFont ? app.getAppFontNameSerif() : app.getAppFontNameSansSerif();
 				textFont = new Font(fontName, fontStyle, fontSize);				
-			//}		
+			//}	
+				return true;
 		}			
+		
+		return false;
 	}
 	
 	/*

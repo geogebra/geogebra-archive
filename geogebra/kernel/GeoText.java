@@ -208,6 +208,18 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	public int getMode() {
 		return 0;
 	}
+	
+	public void update() {
+		Application.debug("UPDATE GeoText: " + this);
+		
+		super.update();
+		
+		
+//		if (needsUpdatedBoundingBox) {
+//			kernel.notifyUpdate(this);
+//		}
+				
+	}
 
 	/**
 	 * always returns true
@@ -591,9 +603,14 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		}	
 	}
 	
-	public void setBoundingBox(Rectangle2D rect)
-	{ // Michael Borcherds 2007-11-26
-		boundingBox=rect;
+	public void setBoundingBox(double x, double y, double w, double h) 
+	{ 
+		boolean firstTime = boundingBox == null;
+		if (firstTime) {
+			boundingBox = new Rectangle2D.Double();
+		}
+		
+		boundingBox.setRect(x, y, w, h);
 	}
 
 	public final boolean isNeedsUpdatedBoundingBox() {

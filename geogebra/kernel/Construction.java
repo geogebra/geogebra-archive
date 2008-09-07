@@ -443,12 +443,12 @@ public class Construction {
 				ce.update();
 			}
 		}
-
+		
 		// init and update all algorithms
 		size = algoList.size();
 		for (int i = 0; i < size; ++i) {
 			AlgoElement algo = (AlgoElement) algoList.get(i);
-			algo.initForNearToRelationship();
+			algo.initForNearToRelationship();			
 			algo.update();
 		}
 	}

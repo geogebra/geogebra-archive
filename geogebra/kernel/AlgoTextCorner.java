@@ -14,15 +14,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public class AlgoTextCorner extends AlgoElement 
 implements EuclidianViewAlgo {
-    
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private GeoText txt;  // input
     private GeoPoint corner;     // output    
@@ -36,17 +32,13 @@ implements EuclidianViewAlgo {
         // make sure bounding box of text is kept up to date
         // so we can use it in compute()
         txt.setNeedsUpdatedBoundingBox(true);
-                
+
         corner = new GeoPoint(cons);                
         setInputOutput(); // for AlgoElement                
         compute();              
         corner.setLabel(label);     
         
         kernel.registerEuclidianViewAlgo(this);
-        
-        // force update of GeoText.boundingBox
-        txt.update();
-        corner.updateCascadeParentAlgo();
     }   
     
     protected String getClassName() {
@@ -66,12 +58,21 @@ implements EuclidianViewAlgo {
          
     GeoPoint getCorner() { return corner; }        
     
-    protected final void compute() {         	
+    protected final void compute() {  
+    	// determine bounding box size here
 		txt.calculateCornerPoint(corner, (int) number.getDouble());	    	
-		
-		// TODO: remove
-		Application.debug("compute AlgoTextCorner: " + corner);
-    }    	
+    }    	   
+    
+    public void euclidianViewUpdate() {
+    	// update text to update it's bounding box
+    	kernel.notifyUpdate(txt);
+    	
+    	// now compute()
+    	compute();
+    	
+    	// update corner and all dependent elements
+    	corner.updateCascade(); 
+    }
     
     final public boolean wantsEuclidianViewUpdate() {
     	return true;

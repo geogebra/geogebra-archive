@@ -3642,7 +3642,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	        } else {
 	        	updateContentPane();
 	        }
-        }
+        }            
         
 		return success;               
     }

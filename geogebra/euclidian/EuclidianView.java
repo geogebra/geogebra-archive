@@ -447,7 +447,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 	
 	// temp image
 	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
-
+	public Graphics2D lastGraphics2D;
+	
 	protected StringBuffer sb = new StringBuffer();
 
 	protected Cursor defaultCursor;
@@ -783,6 +784,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		fontConic = fontPoint;
 		fontCoords = fontPoint.deriveFont(Font.PLAIN, fontSize - 2);
 		fontAxes = fontCoords;
+			
 		updateDrawableFontSize();
 	}
 
@@ -1074,7 +1076,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		scaleRatio = yscale / xscale;
 		invXscale = 1.0d / xscale;
 		invYscale = 1.0d / yscale;
-	
+		
 		// set transform for my coord system:
 		// ( xscale 0 xZero )
 		// ( 0 -yscale yZero )
@@ -1103,8 +1105,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		GraphicsConfiguration gc = getGraphicsConfiguration();
 		if (gc != null) {
-			bgImage = gc.createCompatibleImage(width, height);
-			bgGraphics = bgImage.createGraphics();
+			bgImage = gc.createCompatibleImage(width, height);			
+			bgGraphics = bgImage.createGraphics();			
 			if (antiAliasing) {
 				setAntialiasing(bgGraphics);
 			}
@@ -1257,6 +1259,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	final public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		lastGraphics2D = g2;
 
 		g2.setRenderingHints(defRenderingHints);
 		// g2.setClip(0, 0, width, height);
@@ -2554,11 +2557,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		case GeoElement.GEO_CLASS_TEXT:
 			GeoText text = (GeoText) geo;
-			d = new DrawText(this, text);
-			// we may need to propagate the update of the bounding box of the text
-			if (text.isNeedsUpdatedBoundingBox()) {
-				text.updateCascade();
-			}			
+			d = new DrawText(this, text);				
 			break;
 
 		case GeoElement.GEO_CLASS_IMAGE:
@@ -2964,6 +2963,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 			zoomer = new MyZoomer();
 		zoomer.init(px, py, zoomFactor, steps, storeUndo);
 		zoomer.startAnimation();
+		
+		
 	}
 
 	protected MyZoomer zoomer;
@@ -3155,6 +3156,11 @@ public class EuclidianView extends JPanel implements View, Printable {
 			factor = newScale / oldScale;
 			setCoordSystem(px + dx * factor, py + dy * factor, newScale,
 					newScale * scaleRatio);
+			
+			//TODO: check
+//			repaintView();
+//			updateAllDrawables(true);
+					
 			if (storeUndo)
 				app.storeUndoInfo();
 		}
@@ -3739,7 +3745,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	}
 	
 	final public Graphics2D getTempGraphics2D() {
-		g2Dtemp.setFont(this.getFont()); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]
+		g2Dtemp.setFont(this.getFont()); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]		
 		return g2Dtemp;
 	}
 	
