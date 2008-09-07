@@ -138,7 +138,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	        
  		}
  		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
- 			code.append("\\stoptikzpicture.\n\\stoptext");
+ 			code.append("\\stoptikzpicture\n\\stoptext");
  	     	codeBeginDoc.insert(0,"\\starttext\n");
  		}
 /*		String formatFont=resizeFont(app.getFontSize());
@@ -1672,11 +1672,21 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			int blue=c.getBlue();
 			colorname=createCustomColor((int)red,(int)green,(int)blue);
 			// Example: \definecolor{orange}{rgb}{1,0.5,0}
-			codeBeginDoc.insert(0,"\\definecolor{"+colorname+"}{rgb}{"
+			if (format==GeoGebraToPgf.FORMAT_LATEX||format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
+				codeBeginDoc.insert(0,"\\definecolor{"+colorname+"}{rgb}{"
 					+kernel.format(red/255d)+","
 					+kernel.format(green/255d)+","
 					+kernel.format(blue/255d)+"}\n");
-			CustomColor.put(c,colorname);
+				CustomColor.put(c,colorname);
+			}
+			else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
+				codeBeginDoc.insert(0,"\\definecolor["+colorname+"][r="
+						+kernel.format(red/255d)+",g="
+						+kernel.format(green/255d)+",b="
+						+kernel.format(blue/255d)+"]\n");
+					CustomColor.put(c,colorname);
+				
+			}
 		}
 		sb.append(colorname);
 	}
