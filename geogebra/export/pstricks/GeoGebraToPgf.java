@@ -134,7 +134,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	     	codeBeginDoc.insert(0,"\\begin{document}\n");
  		}
  		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
- 	        code.append("\\endtikzpicture.\n\\bye\n");
+ 	        code.append("\\endtikzpicture\n\\bye\n");
  	        
  		}
  		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
