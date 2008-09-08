@@ -36,6 +36,11 @@ public class AlgoQ3 extends AlgoElement {
     private int size;
 
     public AlgoQ3(Construction cons, String label, GeoList inputList) {
+    	this(cons, inputList);
+        Q3.setLabel(label);
+    }
+
+    public AlgoQ3(Construction cons, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -43,7 +48,6 @@ public class AlgoQ3 extends AlgoElement {
 
         setInputOutput();
         compute();
-        Q3.setLabel(label);
     }
 
     protected String getClassName() {

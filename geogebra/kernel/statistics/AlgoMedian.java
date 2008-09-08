@@ -36,6 +36,11 @@ public class AlgoMedian extends AlgoElement {
     private int size;
 
     public AlgoMedian(Construction cons, String label, GeoList inputList) {
+    	this(cons, inputList);
+        median.setLabel(label);
+    }
+
+    public AlgoMedian(Construction cons, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -43,7 +48,6 @@ public class AlgoMedian extends AlgoElement {
 
         setInputOutput();
         compute();
-        median.setLabel(label);
     }
 
     protected String getClassName() {

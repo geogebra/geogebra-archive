@@ -28,6 +28,12 @@ public class AlgoListMin extends AlgoElement {
     private GeoNumeric min; //output	
 
     AlgoListMin(Construction cons, String label, GeoList geoList) {
+        this(cons, geoList);
+        
+        min.setLabel(label);
+    }
+
+    AlgoListMin(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                
@@ -35,7 +41,6 @@ public class AlgoListMin extends AlgoElement {
 
         setInputOutput();
         compute();
-        min.setLabel(label);
     }
 
     protected String getClassName() {

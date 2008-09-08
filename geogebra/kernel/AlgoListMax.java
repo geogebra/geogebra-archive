@@ -28,6 +28,11 @@ public class AlgoListMax extends AlgoElement {
     private GeoNumeric max; //output	
 
     AlgoListMax(Construction cons, String label, GeoList geoList) {
+    	this(cons, geoList);
+        max.setLabel(label);
+    }
+
+    AlgoListMax(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                
@@ -35,7 +40,6 @@ public class AlgoListMax extends AlgoElement {
 
         setInputOutput();
         compute();
-        max.setLabel(label);
     }
 
     protected String getClassName() {
