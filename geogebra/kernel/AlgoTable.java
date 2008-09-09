@@ -73,7 +73,13 @@ public class AlgoTable extends AlgoElement {
     	
     	for (int i=0; i < size; i++) {
     		GeoElement geo = geoList.get(i);
-    		sb.append(geo.toLaTeXString(true));
+    		if (geo instanceof GeoList)
+    		{ // if list, remove start and end {}
+    			String str = geo.toLaTeXString(false);
+    			sb.append(str.substring(1, str.length()-1));
+    		}
+    		else
+    			sb.append(geo.toLaTeXString(false));
     		sb.append(" \\\\ "); // newline in LaTeX ie \\
     	}   
     	
