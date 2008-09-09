@@ -345,6 +345,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
     		final GeoText geoText = (GeoText) geo;
     		 // show object
         	JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem(app.getPlain("AbsoluteScreenLocation"));
+        	cbItem.setIcon(app.getEmptyIcon());
             cbItem.setSelected(geoText.isAbsoluteScreenLocActive());
             cbItem.addActionListener(new ActionListener() {
         		public void actionPerformed(ActionEvent e) {
