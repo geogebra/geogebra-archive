@@ -2577,6 +2577,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Table[list]
+	 * Michael Borcherds
+	 */
+	final public GeoText Table(String label, GeoList list) {
+		AlgoTable algo = new AlgoTable(cons, label, list);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	/** 
 	 * Sum[list,n]
 	 * Michael Borcherds
 	 */

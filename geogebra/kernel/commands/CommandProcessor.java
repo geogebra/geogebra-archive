@@ -4356,5 +4356,34 @@ class CmdOsculatingCircle extends CommandProcessor {
 * Victor Franco Espino 11-02-2007: End command's processors for new commands
 */
 
+class CmdTable extends CommandProcessor {
+	public CmdTable(Kernel kernel) {
+		super(kernel);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       
+       switch (n) {
+         case 1 :
+           arg = resArgs(c);
+           if ( (ok[0] = (arg[0].isGeoList()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.Table(
+                           c.getLabel(),
+                           (GeoList) arg[0])};
+               return ret;
+           } else {
+                   throw argErr(app, c.getName(), arg[0]);
+           }
+
+       default :
+           throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
 
 
