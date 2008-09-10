@@ -89,7 +89,7 @@ public class ContextMenu extends JPopupMenu
 
 			 	addSeparator();
 	
-			 	JMenuItem item8 = new JMenuItem(app.getMenu("Properties")+"...");
+			 	JMenuItem item8 = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...");
 		   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
 		   	 	item8.addActionListener(new ActionListenerProperties());
 		   	 	add(item8);
