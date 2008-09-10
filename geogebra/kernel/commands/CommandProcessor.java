@@ -4365,10 +4365,10 @@ class CmdTable extends CommandProcessor {
        int n = c.getArgumentNumber();
        boolean[] ok = new boolean[n];
        GeoElement[] arg;
+       arg = resArgs(c);
        
        switch (n) {
          case 1 :
-           arg = resArgs(c);
            if ( (ok[0] = (arg[0].isGeoList()) ) ){
                GeoElement[] ret =
                    {
@@ -4380,8 +4380,14 @@ class CmdTable extends CommandProcessor {
                    throw argErr(app, c.getName(), arg[0]);
            }
 
-       default :
-           throw argNumErr(app, c.getName(), n);
+         default :
+             // try to create list of numbers
+        	 GeoList list = wrapInList(kernel, arg, -1);
+             if (list != null) {
+            	 GeoElement[] ret = { kernel.Table(c.getLabel(), list)};
+                 return ret;             	     	 
+             } 
+ 			throw argNumErr(app, c.getName(), n);
        }
 	}
 }
