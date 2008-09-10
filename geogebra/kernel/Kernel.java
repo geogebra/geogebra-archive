@@ -1468,6 +1468,28 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Object from name
+	 */
+	final public GeoElement Object(
+		String label,
+		GeoText text) {
+		AlgoObject algo = new AlgoObject(cons, label, text);
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * ColumnName[]
+	 */
+	final public GeoText ColumnName(
+		String label,
+		GeoElement geo) {
+		AlgoColumnName algo = new AlgoColumnName(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
 	 * ToYacasString[] of geo.
 	 */
 	final public GeoText ToYacasString(

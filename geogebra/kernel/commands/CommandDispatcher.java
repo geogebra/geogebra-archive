@@ -269,7 +269,10 @@ public class CommandDispatcher {
     	
     	cmdTable.put("CountIf", new CmdCountIf(kernel));   
     	
-    	cmdTable.put("Table", new CmdTable(kernel));   
+    	cmdTable.put("Table", new CmdTable(kernel)); 
+    	
+    	cmdTable.put("Object", new CmdObject(kernel));   
+    	cmdTable.put("ColumnName", new CmdColumnName(kernel));   
     	
     }
 

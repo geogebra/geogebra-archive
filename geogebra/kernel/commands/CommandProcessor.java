@@ -4392,4 +4392,60 @@ class CmdTable extends CommandProcessor {
 	}
 }
 
+class CmdObject extends CommandProcessor {
+	public CmdObject(Kernel kernel) {
+		super(kernel);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       arg = resArgs(c);
+       
+       switch (n) {
+         case 1 :
+           if ( (ok[0] = (arg[0].isGeoText()) ) ){
+               GeoElement[] ret =
+                   {
+                        kernel.Object(
+                           c.getLabel(),
+                           (GeoText) arg[0])};
+               return ret;
+           } else {
+                   throw argErr(app, c.getName(), arg[0]);
+           }
+
+         default :
+			throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
+
+
+class CmdColumnName extends CommandProcessor {
+	public CmdColumnName(Kernel kernel) {
+		super(kernel);
+	}
+	
+	public GeoElement[] process(Command c) throws MyError {
+       int n = c.getArgumentNumber();
+       boolean[] ok = new boolean[n];
+       GeoElement[] arg;
+       arg = resArgs(c);
+       
+       switch (n) {
+         case 1 :
+               GeoElement[] ret =
+                   {
+                        kernel.ColumnName(
+                           c.getLabel(),
+                            arg[0])};
+               return ret;
+
+         default :
+			throw argNumErr(app, c.getName(), n);
+       }
+	}
+}
 
