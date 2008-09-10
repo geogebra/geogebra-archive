@@ -588,6 +588,7 @@ implements EuclidianViewAlgo {
 			
 			// list1 = rawData
 			if (tempList == null) tempList = new GeoList(cons);
+			tempList.clear();
 			AlgoListMin min2 = new AlgoListMin(cons,list1);
 			cons.removeFromConstructionList(min2);
 			tempList.add(min2.getMin());
