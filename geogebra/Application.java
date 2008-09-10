@@ -1219,6 +1219,18 @@ public abstract class Application implements	KeyEventDispatcher {
         return reverseNameDescription;
     }
     
+    /*
+     * in French, zero is singular, eg
+     *    0 décimale
+     * rather than
+     *    0 decimal places
+     */
+    public boolean isZeroPlural(Locale locale) {
+    	String lang = locale.getLanguage();
+    	if (lang.startsWith("fr")) return false;
+    	return true;   
+    }
+    
     //  For Hebrew and Arabic. Guy Hed, 25.8.2008
     private boolean rightToLeftReadingOrder = false;
     final public boolean isRightToLeftReadingOrder() { 
@@ -4731,6 +4743,9 @@ public abstract class Application implements	KeyEventDispatcher {
 			getPlain("ASignificantFigures","5"),
 			getPlain("ASignificantFigures","10"),
 			getPlain("ASignificantFigures","15")};
+		
+		// zero is singular in eg French
+		if (!isZeroPlural(getLocale())) strDecimalSpaces[0] = getPlain("ADecimalPlace","0");
 
 		return strDecimalSpaces;
 	}
