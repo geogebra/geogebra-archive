@@ -51,6 +51,7 @@ public class JarManager {
 	private static boolean CASJAR_COPIED=false;
 	
 	private static URL appletCodeBase=null;
+	private static String appletCodeBaseStr=null;
 
 	//private final static String tempDirNoSep=System.getProperty("java.io.tmpdir");
 	// MacOS doesn't seem to add the "/"
@@ -151,7 +152,17 @@ public class JarManager {
          // NB applet.getCodeBase() doesn't work (returns base of HTML)
  		appletCodeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
  		Application.debug("appletCodeBase="+appletCodeBase);
+ 		
+ 		if (appletCodeBase != null)
+ 		{
+ 			appletCodeBaseStr = appletCodeBase.toString();
+ 			
+ 			// if it's a local path, put spaces back in
+ 			if (appletCodeBaseStr.startsWith("file:"))
+ 				appletCodeBaseStr = appletCodeBaseStr.replaceAll("%20", " ");
+ 		}
 
+ 		Application.debug("appletCodeBaseStr="+appletCodeBaseStr);
          
          ClassPathManipulator.addURL(addPathToJar("."), null);
        
@@ -302,7 +313,9 @@ public class JarManager {
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		//URL codeBase=getAppletCodeBase();
-        if (appletCodeBase!=null) jar = appletCodeBase.toString() + jar;
+        if (appletCodeBaseStr != null){       	
+        	jar = appletCodeBaseStr + jar;
+        }
         
         
         //jar = "file:///C:/Personal/My%20Projects/JavaScript/testGeogebraApplets/geogebra_export.jar";
@@ -320,7 +333,7 @@ public class JarManager {
         
 		//URL codeBase=GeoGebraAppletBase.codeBase;
 		//URL codeBase=getAppletCodeBase();
-        if (appletCodeBase!=null) jar = appletCodeBase.toString() + jar;
+        if (appletCodeBaseStr != null) jar = appletCodeBaseStr + jar;
         Application.debug("addJarToPath " + jar);
         
         //addPath(jar);
