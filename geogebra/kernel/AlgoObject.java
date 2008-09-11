@@ -46,9 +46,11 @@ public class AlgoObject extends AlgoElement {
 	protected void setInputOutput() {
         input = new GeoElement[1];
         input[0] = text;
+        //input[1] = kernel.lookupLabel(text.getTextString());
         
         output = new GeoElement[1];        
         output[0] = geo;        
+        //kernel.lookupLabel("A3").addAlgorithm(this);
         setDependencies(); // done by AlgoElement
     }    
     

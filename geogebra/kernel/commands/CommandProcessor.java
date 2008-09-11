@@ -4449,3 +4449,167 @@ class CmdColumnName extends CommandProcessor {
 	}
 }
 
+class CmdAppend extends CommandProcessor {
+
+	public CmdAppend(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 2:
+
+			if (arg[0].isGeoList() ) {
+				GeoElement[] ret = { 
+						kernel.Append(c.getLabel(),
+						(GeoList) arg[0], arg[1] ) };
+				return ret;
+			} else if (arg[1].isGeoList() ) {
+				GeoElement[] ret = { 
+						kernel.Append(c.getLabel(),
+						 arg[0], (GeoList)arg[1] ) };
+				return ret;
+			} else
+
+				throw argErr(app, c.getName(), arg[0]);
+		
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+class CmdJoin extends CommandProcessor {
+
+	public CmdJoin(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+	    boolean[] ok = new boolean[n];
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 2:
+			
+			ok[0] = arg[0].isGeoList();
+			ok[1] = arg[1].isGeoList();
+
+			if (ok[0] && ok[1] ) {
+				GeoElement[] ret = { 
+						kernel.Join(c.getLabel(),
+						(GeoList) arg[0], (GeoList)arg[1] ) };
+				return ret;
+			} else
+
+	               if (!ok[0])
+	                   throw argErr(app, c.getName(), arg[0]);
+	               else
+	                   throw argErr(app, c.getName(), arg[1]);
+		
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+class CmdUnion extends CommandProcessor {
+
+	public CmdUnion(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 2:
+
+			if (arg[0].isGeoList() && arg[1].isGeoList() ) {
+				GeoElement[] ret = { 
+						kernel.Union(c.getLabel(),
+						(GeoList) arg[0], (GeoList)arg[1] ) };
+				return ret;
+			} else
+
+				throw argErr(app, c.getName(), arg[0]);
+		
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+class CmdIntersection extends CommandProcessor {
+
+	public CmdIntersection(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 2:
+
+			if (arg[0].isGeoList() && arg[1].isGeoList() ) {
+				GeoElement[] ret = { 
+						kernel.Intersection(c.getLabel(),
+						(GeoList) arg[0], (GeoList)arg[1] ) };
+				return ret;
+			} else
+
+				throw argErr(app, c.getName(), arg[0]);
+		
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+class CmdInsert extends CommandProcessor {
+
+	public CmdInsert(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 3:
+
+			if (arg[0].isGeoList() && arg[1].isGeoList() && arg[2].isGeoNumeric()) {
+				GeoElement[] ret = { 
+						kernel.Insert(c.getLabel(),
+						(GeoList) arg[0], (GeoList)arg[1], (GeoNumeric)arg[2] ) };
+				return ret;
+			} else
+
+				throw argErr(app, c.getName(), arg[0]);
+		
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+
+

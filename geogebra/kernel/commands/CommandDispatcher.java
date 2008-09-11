@@ -274,6 +274,12 @@ public class CommandDispatcher {
     	cmdTable.put("Object", new CmdObject(kernel));   
     	cmdTable.put("ColumnName", new CmdColumnName(kernel));   
     	
+    	cmdTable.put("Append", new CmdAppend(kernel));   
+    	cmdTable.put("Join", new CmdJoin(kernel));   
+    	cmdTable.put("Insert", new CmdInsert(kernel));   
+    	cmdTable.put("Union", new CmdUnion(kernel));   
+    	cmdTable.put("Intersection", new CmdIntersection(kernel));   
+    	
     }
 
 

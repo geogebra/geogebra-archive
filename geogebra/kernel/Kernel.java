@@ -2539,6 +2539,66 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Append[list,object]
+	 * Michael Borcherds
+	 */
+	final public GeoList Append(String label, GeoList list, GeoElement geo) {
+		AlgoAppend algo = new AlgoAppend(cons, label, list, geo);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Append[object,list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Append(String label, GeoElement geo, GeoList list) {
+		AlgoAppend algo = new AlgoAppend(cons, label, geo, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Join[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Join(String label, GeoList list, GeoList list1) {
+		AlgoJoin algo = new AlgoJoin(cons, label, list, list1);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Union[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Union(String label, GeoList list, GeoList list1) {
+		AlgoUnion algo = new AlgoUnion(cons, label, list, list1);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Intersection[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Intersection(String label, GeoList list, GeoList list1) {
+		AlgoIntersection algo = new AlgoIntersection(cons, label, list, list1);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Insert[list,list,n]
+	 * Michael Borcherds
+	 */
+	final public GeoList Insert(String label, GeoList list, GeoList list1, GeoNumeric n) {
+		AlgoInsert algo = new AlgoInsert(cons, label, list, list1, n);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Clean[list]
 	 * Michael Borcherds
 	 */
