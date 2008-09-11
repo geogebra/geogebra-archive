@@ -11,6 +11,12 @@ import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
+import geogebra.kernel.AlgoSumTrapezoidal;
+import geogebra.kernel.AlgoSumUpper;
+import geogebra.kernel.AlgoBarChart;
+import geogebra.kernel.AlgoHistogram;
+import geogebra.kernel.AlgoSumLower;
+import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
@@ -202,7 +208,21 @@ public abstract class GeoGebraExport implements ActionListener{
             	drawLabel(g,null);
             }
             else if (algo instanceof AlgoFunctionAreaSums) {
-              drawSumUpperLower((GeoNumeric)g);
+            	// Trapezoidal Sum
+            	if (algo instanceof AlgoSumTrapezoidal)
+            		drawSumTrapezoidal((GeoNumeric)g);
+            	// BoxPlot
+            	else if (algo instanceof AlgoBoxPlot)
+            		drawBoxPlot((GeoNumeric)g);
+            	// Histogram
+            	else if (algo instanceof AlgoHistogram)
+            		drawHistogram((GeoNumeric)g);
+            	// Bar Chart
+            	else if (algo instanceof AlgoBarChart)
+            		drawBarChart((GeoNumeric)g);
+            	// Lower or Upper Sum
+            	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower) 
+            				drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
             }
         }
@@ -309,6 +329,10 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawIntegral(GeoNumeric geo);
 	abstract protected void drawIntegralFunctions(GeoNumeric geo);
 	abstract protected void drawSumUpperLower(GeoNumeric geo);
+	abstract protected void drawSumTrapezoidal(GeoNumeric geo);
+	abstract protected void drawBoxPlot(GeoNumeric geo);
+	abstract protected void drawBarChart(GeoNumeric geo);
+	abstract protected void drawHistogram(GeoNumeric geo);
 	abstract protected void drawAngle(GeoAngle geo);
 	abstract protected void drawGeoVector(GeoVector geo);
 	abstract protected void drawGeoConic(GeoConic geo);

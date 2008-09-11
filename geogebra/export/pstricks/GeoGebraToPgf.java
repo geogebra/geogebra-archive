@@ -13,6 +13,9 @@ import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
+import geogebra.kernel.AlgoBarChart;
+import geogebra.kernel.AlgoHistogram;
+import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
@@ -170,15 +173,46 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	}
 		code.append(";\n");
     }
+    protected void drawBoxPlot(GeoNumeric geo){
+    	AlgoBoxPlot algo=((AlgoBoxPlot)geo.getParentAlgorithm());
+    	double y=algo.getA().getDouble();
+    	double height=algo.getB().getDouble();
+    	double [] d=algo.getValues();
+    	for (int i=0;i<d.length;i++){
+    		System.out.println(d[i]);
+    	}
+    }
+    protected void drawBarChart(GeoNumeric geo){}
+    protected void drawHistogram(GeoNumeric geo){}
     
+    protected void drawSumTrapezoidal(GeoNumeric geo){
+       	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
+    	int n=algo.getIntervals();
+        double[] y=algo.getValues();
+        double[] x=algo.getLeftBorders();
+        // Trapezoidal sum
+    	for (int i=0;i<n;i++){
+    		
+        	codeFilledObject.append("\\draw");
+        	String s=LineOptionCode(geo,true);
+        	if (s.length()!=0) codeFilledObject.append("["+s+"] ");
+        	writePoint(x[i],0,codeFilledObject);
+        	codeFilledObject.append(" -- ");
+        	writePoint(x[i+1],0,codeFilledObject);
+        	codeFilledObject.append(" -- ");
+        	writePoint(x[i+1],y[i+1],codeFilledObject);
+        	codeFilledObject.append(" -- ");
+        	writePoint(x[i],y[i],codeFilledObject);
+        	codeFilledObject.append(" -- cycle;\n");
+      	}        
+    }
     protected void drawSumUpperLower(GeoNumeric geo){
     	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
         double step=algo.getStep();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
-        for (int i=0;i<n;i++){
-        	
+        for (int i=0;i<n;i++){     	
         	codeFilledObject.append("\\draw");
         	String s=LineOptionCode(geo,true);
         	if (s.length()!=0) codeFilledObject.append("["+s+"] ");

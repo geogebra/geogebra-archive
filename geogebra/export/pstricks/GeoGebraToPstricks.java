@@ -18,7 +18,9 @@ import geogebra.kernel.AlgoAngleVectors;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
-import geogebra.kernel.AlgoSumTrapezoidal;
+import geogebra.kernel.AlgoBarChart;
+import geogebra.kernel.AlgoHistogram;
+import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.GeoAngle;
@@ -205,36 +207,42 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("}\n");
     }
     
+    protected void drawBoxPlot(GeoNumeric geo){}
+    protected void drawBarChart(GeoNumeric geo){}
+    protected void drawHistogram(GeoNumeric geo){}
+    
+    protected void drawSumTrapezoidal(GeoNumeric geo){
+       	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
+    	int n=algo.getIntervals();
+        double step=algo.getStep();
+        double[] y=algo.getValues();
+        double[] x=algo.getLeftBorders();
+       	for (int i=0;i<n;i++){
+    		codeFilledObject.append("\\pspolygon");
+    		codeFilledObject.append(LineOptionCode(geo,true));
+    		codeFilledObject.append("(");
+    		codeFilledObject.append(kernel.format(x[i]));
+    		codeFilledObject.append(",0)(");
+    		codeFilledObject.append(kernel.format(x[i+1]));
+    		codeFilledObject.append(",0)(");
+    		codeFilledObject.append(kernel.format(x[i+1]));
+    		codeFilledObject.append(",");
+    		codeFilledObject.append(kernel.format(y[i+1]));
+    		codeFilledObject.append(")(");
+    		codeFilledObject.append(kernel.format(x[i]));
+    		codeFilledObject.append(",");
+    		codeFilledObject.append(kernel.format(y[i]));
+    		codeFilledObject.append(")\n");
+    	}       
+    }
+    
     protected void drawSumUpperLower(GeoNumeric geo){
     	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
         double step=algo.getStep();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
-
-        if (algo instanceof AlgoSumTrapezoidal){
-            // Trapezoidal sum
-        	for (int i=0;i<n;i++){
-        		codeFilledObject.append("\\pspolygon");
-        		codeFilledObject.append(LineOptionCode(geo,true));
-        		codeFilledObject.append("(");
-        		codeFilledObject.append(kernel.format(x[i]));
-        		codeFilledObject.append(",0)(");
-        		codeFilledObject.append(kernel.format(x[i+1]));
-        		codeFilledObject.append(",0)(");
-        		codeFilledObject.append(kernel.format(x[i+1]));
-        		codeFilledObject.append(",");
-        		codeFilledObject.append(kernel.format(y[i+1]));
-        		codeFilledObject.append(")(");
-        		codeFilledObject.append(kernel.format(x[i]));
-        		codeFilledObject.append(",");
-        		codeFilledObject.append(kernel.format(y[i]));
-        		codeFilledObject.append(")\n");
-        	}
-        }
-        else{
-        	// Lower or Upper sum
-        	for (int i=0;i<n;i++){
+       	for (int i=0;i<n;i++){
         		codeFilledObject.append("\\psframe");
         		codeFilledObject.append(LineOptionCode(geo,true));
         		codeFilledObject.append("(");
@@ -244,7 +252,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         		codeFilledObject.append(",");
         		codeFilledObject.append(kernel.format(y[i]));
         		codeFilledObject.append(")\n");
-        	}
         }
     }
     protected void drawIntegralFunctions(GeoNumeric geo){
