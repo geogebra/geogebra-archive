@@ -18,6 +18,7 @@ import geogebra.kernel.AlgoAngleVectors;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
+import geogebra.kernel.AlgoSumTrapezoidal;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.GeoAngle;
@@ -210,16 +211,40 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         double step=algo.getStep();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
-        for (int i=0;i<n;i++){
-        	codeFilledObject.append("\\psframe");
-        	codeFilledObject.append(LineOptionCode(geo,true));
-        	codeFilledObject.append("(");
-        	codeFilledObject.append(kernel.format(x[i]));
-        	codeFilledObject.append(",0)(");
-        	codeFilledObject.append(kernel.format(x[i]+step));
-        	codeFilledObject.append(",");
-        	codeFilledObject.append(kernel.format(y[i]));
-        	codeFilledObject.append(")\n");
+
+        if (algo instanceof AlgoSumTrapezoidal){
+            // Trapezoidal sum
+        	for (int i=0;i<n;i++){
+        		codeFilledObject.append("\\pspolygon");
+        		codeFilledObject.append(LineOptionCode(geo,true));
+        		codeFilledObject.append("(");
+        		codeFilledObject.append(kernel.format(x[i]));
+        		codeFilledObject.append(",0)(");
+        		codeFilledObject.append(kernel.format(x[i+1]));
+        		codeFilledObject.append(",0)(");
+        		codeFilledObject.append(kernel.format(x[i+1]));
+        		codeFilledObject.append(",");
+        		codeFilledObject.append(kernel.format(y[i+1]));
+        		codeFilledObject.append(")(");
+        		codeFilledObject.append(kernel.format(x[i]));
+        		codeFilledObject.append(",");
+        		codeFilledObject.append(kernel.format(y[i]));
+        		codeFilledObject.append(")\n");
+        	}
+        }
+        else{
+        	// Lower or Upper sum
+        	for (int i=0;i<n;i++){
+        		codeFilledObject.append("\\psframe");
+        		codeFilledObject.append(LineOptionCode(geo,true));
+        		codeFilledObject.append("(");
+        		codeFilledObject.append(kernel.format(x[i]));
+        		codeFilledObject.append(",0)(");
+        		codeFilledObject.append(kernel.format(x[i]+step));
+        		codeFilledObject.append(",");
+        		codeFilledObject.append(kernel.format(y[i]));
+        		codeFilledObject.append(")\n");
+        	}
         }
     }
     protected void drawIntegralFunctions(GeoNumeric geo){

@@ -376,7 +376,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		ColorCode(geocolor,codePoint);
 		codePoint.append("] ");
 		writePoint(xLabelHor,yLabelHor,codePoint);
-		codePoint.append(" node[anchor=south west]{");
+		codePoint.append(" node[anchor=south west] {");
 		codePoint.append(slopeTriangleSize);
 		codePoint.append("};\n");
     }
@@ -742,7 +742,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		if (id==-1){
 			code.append("\\draw ");
 			writePoint(x,y,code);
-			code.append("node[anchor=north west]{");
+			code.append(" node[anchor=north west] {");
 			addText(st,isLatex,style,size,geocolor);
 			code.append("};\n");
 		}
@@ -761,7 +761,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			}
 			code.append("\\draw ");
 			writePoint(x,y,code);
-			code.append("node[anchor=north west]{");
+			code.append(" node[anchor=north west] {");
 			code.append("\\parbox{");
 			code.append(kernel.format(width*(xmax-xmin)*xunit/euclidianView.getWidth()+1));
 			code.append(" cm}{");
@@ -1438,7 +1438,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				ColorCode(geocolor,codePoint);
 				codePoint.append("] ");
 				writePoint(xLabel,yLabel,codePoint);
-				codePoint.append("node[anchor=south west]{");
+				codePoint.append(" node[anchor=south west] {");
 				codePoint.append(name);
 				codePoint.append("};\n");
 		}
@@ -1501,7 +1501,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (0pt,2pt) -- (0pt,-2pt)");
 			else codeBeginDoc.append("] (0pt,-2pt)");
 			if (showNumbers) {
-				codeBeginDoc.append("node[below] {");
+				codeBeginDoc.append(" node[below] {");
 				codeBeginDoc.append(footnotesize("\\x"));
 				codeBeginDoc.append("};\n");
 			}
@@ -1535,7 +1535,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			if (tickStyle!=EuclidianView.AXES_TICK_STYLE_NONE)	codeBeginDoc.append("] (2pt,0pt) -- (-2pt,0pt)");
 			else codeBeginDoc.append("] (-2pt,0pt)");
 			if (showNumbers) {
-				codeBeginDoc.append("node[left] {");
+				codeBeginDoc.append(" node[left] {");
 				codeBeginDoc.append(footnotesize("\\y"));
 				codeBeginDoc.append("};\n");
 			}
