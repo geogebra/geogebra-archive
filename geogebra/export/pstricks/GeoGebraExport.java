@@ -219,7 +219,7 @@ public abstract class GeoGebraExport implements ActionListener{
             		drawHistogram((GeoNumeric)g);
             	// Bar Chart
             	else if (algo instanceof AlgoBarChart)
-            		drawBarChart((GeoNumeric)g);
+            		drawHistogram((GeoNumeric)g);
             	// Lower or Upper Sum
             	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower) 
             				drawSumUpperLower((GeoNumeric)g);
@@ -331,7 +331,6 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawSumUpperLower(GeoNumeric geo);
 	abstract protected void drawSumTrapezoidal(GeoNumeric geo);
 	abstract protected void drawBoxPlot(GeoNumeric geo);
-	abstract protected void drawBarChart(GeoNumeric geo);
 	abstract protected void drawHistogram(GeoNumeric geo);
 	abstract protected void drawAngle(GeoAngle geo);
 	abstract protected void drawGeoVector(GeoVector geo);

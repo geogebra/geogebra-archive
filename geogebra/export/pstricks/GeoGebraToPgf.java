@@ -177,13 +177,63 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	AlgoBoxPlot algo=((AlgoBoxPlot)geo.getParentAlgorithm());
     	double y=algo.getA().getDouble();
     	double height=algo.getB().getDouble();
-    	double [] d=algo.getValues();
-    	for (int i=0;i<d.length;i++){
-    		System.out.println(d[i]);
-    	}
+    	double [] lf=algo.getLeftBorders();
+    	double min=lf[0];
+    	double q1=lf[1];
+    	double med=lf[2];
+    	double q3=lf[3];
+    	double max=lf[4];
+		codeFilledObject.append("\\draw ");
+		String s=LineOptionCode(geo,true);
+		if (s.length()!=0) s="["+s+"] ";
+		codeFilledObject.append(s);
+		// Min vertical bar
+		writePoint(min,y-height,codeFilledObject);
+		codeFilledObject.append("-- ");
+		writePoint(min,y+height,codeFilledObject);
+		codeFilledObject.append(" ");
+		// Max vertical bar
+		writePoint(max,y-height,codeFilledObject);
+		codeFilledObject.append("-- ");
+		writePoint(max,y+height,codeFilledObject);
+		codeFilledObject.append(" ");
+		// Med vertical bar
+		writePoint(med,y-height,codeFilledObject);
+		codeFilledObject.append("-- ");
+		writePoint(med,y+height,codeFilledObject);
+		// Min-q1 horizontal
+		codeFilledObject.append(" ");
+		writePoint(min,y,codeFilledObject);
+		codeFilledObject.append("-- ");
+		writePoint(q1,y,codeFilledObject);
+		// q3-max
+		codeFilledObject.append(" ");
+		writePoint(q3,y,codeFilledObject);
+		codeFilledObject.append("-- ");
+		writePoint(max,y,codeFilledObject);
+		codeFilledObject.append(";\n");
+		// Rectangle q1-q3
+    	codeFilledObject.append("\\draw");
+    	if (s.length()!=0) codeFilledObject.append(s);
+    	writePoint(q1,y-height,codeFilledObject);
+    	codeFilledObject.append(" rectangle ");
+    	writePoint(q3,y+height,codeFilledObject);
+    	codeFilledObject.append(";\n");
     }
-    protected void drawBarChart(GeoNumeric geo){}
-    protected void drawHistogram(GeoNumeric geo){}
+    protected void drawHistogram(GeoNumeric geo){
+    	AlgoFunctionAreaSums algo=(AlgoFunctionAreaSums)geo.getParentAlgorithm();
+        double[] y=algo.getValues();
+        double[] x=algo.getLeftBorders();
+        for (int i=0;i<x.length-1;i++){
+          	codeFilledObject.append("\\draw");
+        	String s=LineOptionCode(geo,true);
+        	if (s.length()!=0) codeFilledObject.append("["+s+"] ");
+        	writePoint(x[i],0,codeFilledObject);
+        	codeFilledObject.append(" rectangle ");
+        	writePoint(x[i+1],y[i],codeFilledObject);
+        	codeFilledObject.append(";\n");
+        }        
+    }
     
     protected void drawSumTrapezoidal(GeoNumeric geo){
        	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
