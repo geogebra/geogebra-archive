@@ -144,9 +144,9 @@ public abstract class Application implements	KeyEventDispatcher {
 	public static final boolean disableI2G = false;
 	// <-- Added for Intergeo File Format (Yves Kreis)
 	public static final boolean disableSpreadsheet = false;
-    public static final String buildDate = "September 11, 2008";
+    public static final String buildDate = "September 14, 2008";
 	
-    public static final String versionString = "3.1.35.0";    
+    public static final String versionString = "3.1.36.0";    
     public static final String XML_FILE_FORMAT = "3.02";    
 	// Added for Intergeo File Format (Yves Kreis) -->
     public static final String I2G_FILE_FORMAT = "1.00.20080731";    
@@ -4655,16 +4655,60 @@ public abstract class Application implements	KeyEventDispatcher {
 	public static boolean WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).startsWith("windows"); // Michael Borcherds 2008-03-21
     
     public static boolean isControlDown(InputEvent e) {
-		return (MAC_OS && e.isMetaDown())  // Mac: meta down for multiple selection
+    	
+    	/*
+		debug("isMetaDown = "+e.isMetaDown());
+		debug("isControlDown = "+e.isControlDown());
+		debug("isShiftDown = "+e.isShiftDown());
+		debug("isAltDown = "+e.isAltDown());
+		debug("isAltGrDown = "+e.isAltGraphDown());
+		debug("fakeRightClick = "+fakeRightClick);
+		*/
+    	
+		if (fakeRightClick) return false;
+
+		boolean ret =  (MAC_OS && e.isMetaDown())  // Mac: meta down for multiple selection
 				|| 
 				(!MAC_OS && e.isControlDown()); // non-Mac: Ctrl down for multiple selection
+		
+		//debug("isPopupTrigger = "+e.isPopupTrigger());
+		//debug("ret = " + ret);
+		return ret;
+		//return e.isControlDown();
 	}
+    
+    private static boolean fakeRightClick = false;
 	
 	public static boolean isRightClick(MouseEvent e) {
-		return e.isPopupTrigger() || 
+		
+		// right-click returns isMetaDown on MAC_OS
+		// so we want to return true for isMetaDown
+		// if it occurred first at the same time as
+		// a popup trigger
+		if (MAC_OS && !e.isMetaDown()) fakeRightClick=false;
+		
+		if (MAC_OS && e.isPopupTrigger() && e.isMetaDown()) fakeRightClick = true;
+		
+		/*
+		debug("isMetaDown = "+e.isMetaDown());
+		debug("isControlDown = "+e.isControlDown());
+		debug("isShiftDown = "+e.isShiftDown());
+		debug("isAltDown = "+e.isAltDown());
+		debug("isAltGrDown = "+e.isAltGraphDown());
+		debug("isPopupTrigger = "+e.isPopupTrigger());
+		debug("fakeRightClick = "+fakeRightClick); */
+		
+		if (fakeRightClick) return true;
+		
+		boolean ret = 
+			//e.isPopupTrigger() || 
 				(MAC_OS && e.isControlDown())  // Mac: ctrl click = right click 
 				||
 				(!MAC_OS && e.isMetaDown());  // non-Mac: right click = meta click
+
+		//debug("ret = " + ret);
+		return ret;
+		//return e.isMetaDown();
 	}
 	
 	// Added for Intergeo File Format (Yves Kreis) -->
