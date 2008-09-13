@@ -654,6 +654,10 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	protected void handleMousePressedForMoveMode(MouseEvent e) {
+		
+		// fix for meta-click to work on Mac
+		if (Application.MAC_OS && Application.isControlDown(e)) return;
+
 		// move label?
 		GeoElement geo = view.getLabelHit(mouseLoc);
 		if (geo != null) {
