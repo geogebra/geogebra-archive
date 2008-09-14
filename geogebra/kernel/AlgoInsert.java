@@ -65,7 +65,7 @@ public class AlgoInsert extends AlgoElement {
     	
     	insertPoint = (int)n.getDouble();
    	
-    	if (!inputList.isDefined() || !inputList2.isDefined() || insertPoint < 0 || insertPoint > size) {
+    	if (!inputList.isDefined() || !inputList2.isDefined() || insertPoint < 0 || insertPoint > size2) {
     		outputList.setUndefined();
     		return;
     	} 
@@ -76,10 +76,11 @@ public class AlgoInsert extends AlgoElement {
         for (int i = 0 ; i < insertPoint ; i++)
     		outputList.add(inputList2.get(i).copy());
     	
-        for (int i = 0 ; i < size2 ; i++)
+        for (int i = 0 ; i < size ; i++)
     		outputList.add(inputList.get(i).copy());
         
-        for (int i = insertPoint ; i < size ; i++)
+        if (insertPoint < size2)
+        for (int i = insertPoint ; i < size2 ; i++)
     		outputList.add(inputList2.get(i).copy());
     	
     	
