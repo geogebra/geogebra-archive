@@ -3757,4 +3757,27 @@ public class EuclidianView extends JPanel implements View, Printable {
 		default: return false;
 		}
 	}
+	
+	private int nextTraceColumn = -1;
+	public String getNextTraceColumn() {
+		nextTraceColumn ++;
+		if (nextTraceColumn > 25) nextTraceColumn=0;
+		return GeoElement.getSpreadsheetColumnName(nextTraceColumn);
+	}
+	
+	private int traceRow = 0;
+	public int getTraceRow()
+	{
+		return traceRow;
+	}
+	
+	public void resetTraceRow() {
+		//Application.debug("resetTraceRow");
+		traceRow = 0;
+	}
+	
+	public void incrementTraceRow() {
+		//Application.debug("incrementTraceRow");
+		traceRow++;
+	}
 }

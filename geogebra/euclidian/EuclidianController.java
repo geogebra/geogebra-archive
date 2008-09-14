@@ -655,6 +655,8 @@ public class EuclidianController implements MouseListener,
 	
 	protected void handleMousePressedForMoveMode(MouseEvent e) {
 		
+		view.resetTraceRow(); // for trace/spreadsheet
+		
 		// fix for meta-click to work on Mac
 		if (Application.MAC_OS && Application.isControlDown(e)) return;
 
@@ -1058,6 +1060,9 @@ public class EuclidianController implements MouseListener,
 				break;
 				
 			case MOVE_POINT:
+				
+				view.incrementTraceRow(); // for spreadsheet/trace
+				
 				movePoint(repaint);
 				break;
 	
@@ -1199,6 +1204,9 @@ public class EuclidianController implements MouseListener,
 	}
 
 	final public void mouseReleased(MouseEvent e) {	
+		
+		view.resetTraceRow(); // for trace/spreadsheet
+		
 		view.requestFocusInWindow();
 		setMouseLocation(e);
 		
@@ -1452,6 +1460,7 @@ public class EuclidianController implements MouseListener,
 	}
 
 	final public void mouseMoved(MouseEvent e) {
+		
 		setMouseLocation(e);
 		ArrayList hits = null;
 		boolean noHighlighting = false;

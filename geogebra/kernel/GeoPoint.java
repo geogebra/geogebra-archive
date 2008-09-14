@@ -791,4 +791,17 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 
 	
+	private String traceColumn1 = "";
+	private String traceColumn2 = "";
+	
+	public String getTraceColumn1() {
+		if (traceColumn1.equals("")) traceColumn1 = kernel.getApplication().getEuclidianView().getNextTraceColumn();
+		return traceColumn1;
+	}
+		
+	public String getTraceColumn2() {
+		if (traceColumn2.equals("")) traceColumn2 = kernel.getApplication().getEuclidianView().getNextTraceColumn();
+		return traceColumn2;
+	}
+		
 }

@@ -18,7 +18,9 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 
 import java.awt.BasicStroke;
@@ -203,6 +205,40 @@ public final class DrawPoint extends Drawable {
     
     final void drawTrace(Graphics2D g2) {
     	g2.setPaint(geo.getObjectColor());
+    	
+
+    	double [] coords = new double[2];
+    	P.getInhomCoords(coords);
+    	StringBuffer command = new StringBuffer();
+    	
+    	String row = view.getTraceRow() + "";
+    	
+    	// x coord
+    	command.append(P.getTraceColumn1());
+    	command.append(row);
+    	command.append("=");
+    	command.append(coords[0]);
+    	//Application.debug(command.toString());
+    	try {
+				GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+	   	 		    geos[0].setAuxiliaryObject(true);
+    	}
+    	catch (Exception e) {}
+    	
+    	// y coord
+    	command.setLength(0);
+    	command.append(P.getTraceColumn2());
+    	command.append(row);
+    	command.append("=");
+    	command.append(coords[1]);
+    	try {
+				GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+	   	 		    geos[0].setAuxiliaryObject(true);
+    	}
+    	catch (Exception e) {}
+    	
+    	// maybe quicker, would have to delete A5 etc first, lose any decendants?
+    	//GeoNumeric num = new GeoNumeric(view.getKernel().getConstruction(),"A5",33);
     	
     	// Florian Sonner 2008-07-17
     	int pointStyle = P.getPointStyle();
