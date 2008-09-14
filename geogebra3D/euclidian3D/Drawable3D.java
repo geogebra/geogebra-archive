@@ -223,8 +223,23 @@ public abstract class Drawable3D {
 	}
 	
 	
+	static final public Geometry createTriangle(){
+		
+		TriangleArray ret = new TriangleArray(3,TriangleArray.COORDINATES|TriangleArray.NORMALS);
+		
+		Vector3f v = new Vector3f(0f,0f,1f);
+		
+		ret.setCoordinate(0,new Point3f(0,0,0)); ret.setNormal(0,v);
+		ret.setCoordinate(1,new Point3f(1f,0,0)); ret.setNormal(1,v);
+		ret.setCoordinate(2,new Point3f(0,1f,0)); ret.setNormal(2,v);
+		
+	
+		return ret;
+	}	
 	
 	
+	
+	//TODO create BOTH hemispheres
 	static final public Geometry createSphere(int nbMeridians, int nbParallels){
 		
 		TriangleArray ret = new TriangleArray(nbMeridians*nbParallels*2*3,TriangleArray.COORDINATES|TriangleArray.NORMALS);

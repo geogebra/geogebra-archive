@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
@@ -19,6 +20,12 @@ public class GeoCoordSys2D extends GeoCoordSys {
 		M=new GgbMatrix(4,3);
 		setCoord(O,V1,V2);		
 	}
+
+	public GeoCoordSys2D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J){
+		super(c);
+		M=new GgbMatrix(4,3);
+		setCoord(O,I,J);		
+	}
 	
 	
 	/** set the matrix to [V1 V2 O] */
@@ -30,16 +37,35 @@ public class GeoCoordSys2D extends GeoCoordSys {
 		
 		matrixCompleted.set(new GgbVector[] {M.getColumn(1),M.getColumn(2),Vn,M.getColumn(3)});
 		//matrixCompleted.SystemPrint();
+		//Application.debug("matrixCompleted");
 		
 		if (gridOrigin!=null)
 			updateGridOriginProjected();
 		
 	}
 	
+	/** set coords to origin O and vectors (I-O) and (J-O) */
+	public void setCoord(GeoPoint3D O, GeoPoint3D I, GeoPoint3D J){
+		//Application.debug("setCoord -- Points");
+		GgbVector vO = O.getCoords();
+		GgbVector vI = I.getCoords();
+		GgbVector vJ = J.getCoords();
+		setCoord(vO,vI.sub(vO),vJ.sub(vO));
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public GgbMatrix getMatrixCompleted(){
 		//GgbMatrix m = new GgbMatrix(4,4);
 		//m.set(new GgbVector[] {M.getColumn(1),M.getColumn(2),Vn,M.getColumn(3)});
-		return matrixCompleted;
+		return matrixCompleted.copy();
 	}
 	
 	

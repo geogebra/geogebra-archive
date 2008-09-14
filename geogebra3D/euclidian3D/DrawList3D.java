@@ -25,7 +25,7 @@ public class DrawList3D extends LinkedList{
 	private static final long serialVersionUID = 6015533177388934376L;
 	
 	
-	static final boolean DEBUG = false; //conditionnal compilation
+	static final boolean DEBUG = true; //conditionnal compilation
 	
 	
 	Appearance hidingApp, pickedApp;
@@ -77,7 +77,7 @@ public class DrawList3D extends LinkedList{
 	/** draw all 3D objects */
 	public void drawAll(GraphicsContext3D gc){
 		
-		if(DEBUG){Application.debug("updateAll");}
+		if(DEBUG){Application.debug("drawAll");}
 		
 
 		//drawing hidden parts

@@ -245,6 +245,40 @@ public class Test3D{
 	}
 	
 	
+	public void testAlgoPyramide(){
+		
+		int i;
+		
+		GeoPoint3D[] P1 = new GeoPoint3D[3];				
+		P1[0] = testPoint(0f,0f,0f);
+		P1[1] = testPoint(1f,0f,0f);
+		P1[2] = testPoint(0f,1f,0f);
+		//P1[3] = testPoint(0f,1f,0f);
+		
+		for(i=0;i<3;i++)
+			kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
+
+		GeoPoint3D P2;				
+		P2 = testPoint(0f,0f,1f);
+
+		for(i=0;i<3;i++)
+			kernel3D.Segment3D("segment",P1[i],P2);
+		
+		GeoTriangle3D t;
+		Color c = new Color(0.5f,0.2f,0.1f);
+		t=kernel3D.Triangle3D("triangle",P2,P1[1],P1[2]);
+		t.setObjColor(c);
+		t=kernel3D.Triangle3D("triangle",P2,P1[2],P1[0]);
+		t.setObjColor(c);
+		t=kernel3D.Triangle3D("triangle",P2,P1[1],P1[0]);
+		t.setObjColor(c);
+		t=kernel3D.Triangle3D("triangle",P1[1],P1[2],P1[0]);
+		t.setObjColor(c);
+
+		
+	}
+	
+
 	public void testAlgo(){
 		
 		int i;
@@ -273,7 +307,6 @@ public class Test3D{
 		
 	}
 	
-
 	
 	
 

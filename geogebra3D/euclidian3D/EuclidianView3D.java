@@ -11,6 +11,7 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
+import geogebra3D.kernel3D.GeoTriangle3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
@@ -35,7 +36,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private static final long serialVersionUID = -8414195993686838278L;
 	
 	
-	static final boolean DEBUG = false; //conditionnal compilation
+	static final boolean DEBUG = true; //conditionnal compilation
 
 	
 	private Kernel kernel;
@@ -173,6 +174,13 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 				case GeoElement3D.GEO_CLASS_PLANE3D:
 					if(DEBUG){Application.debug("GEO_CLASS_PLANE3D");}
 					d = new DrawPlane3D(this, (GeoPlane3D) geo);
+					//Application.debug("new DrawPoint3D");
+					break;									
+				
+
+				case GeoElement3D.GEO_CLASS_TRIANGLE3D:
+					if(DEBUG){Application.debug("GEO_CLASS_TRIANGLE3D");}
+					d = new DrawTriangle3D(this, (GeoTriangle3D) geo);
 					//Application.debug("new DrawPoint3D");
 					break;									
 				}

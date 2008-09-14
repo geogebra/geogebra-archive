@@ -65,6 +65,13 @@ public class Kernel3D
 		*/
 		return s;
 	}	
+
+	/** Triangle3D label linking points P1 and P2 and P3  */
+	final public GeoTriangle3D Triangle3D(String label, GeoPoint3D P1, GeoPoint3D P2, GeoPoint3D P3){
+		AlgoJoinPoints3DTriangle algo = new AlgoJoinPoints3DTriangle(cons, label, P1, P2, P3);
+		GeoTriangle3D t = algo.getTriangle();
+		return t;
+	}	
 	
 	
 	
