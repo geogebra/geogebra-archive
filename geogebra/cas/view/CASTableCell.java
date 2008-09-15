@@ -31,7 +31,7 @@ public class CASTableCell extends JPanel {
 
 		this.consoleTable = consoleTable;
 		lineVisiable = false;
-		outputFieldVisiable = false;
+		outputFieldVisiable = true;
 
 		this.setInput("");
 		this.setOutput("");
@@ -40,6 +40,8 @@ public class CASTableCell extends JPanel {
 		this.add(inputPanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
+		outputPanel.setBackground(Color.lightGray);
+		linePanel.setBackground(Color.lightGray);
 		
 		return;
 	}
@@ -109,7 +111,8 @@ public class CASTableCell extends JPanel {
 
 	public void setOutput(String inValue) {
 		this.outputPanel.setOutput(inValue);
-		if (inValue == "")
+		String empty = new String("");
+		if (empty.compareTo(inValue)==0)
 			this.removeOutputPanel();
 		else
 			this.addOutputPanel();
