@@ -76,11 +76,19 @@ public class AlgebraController
 		
 		char ch = event.getKeyChar();
 		
+		
 		// Michael Borcherds 2008-03-22 give focus to input bar if <enter> pressed
-		if (ch == '\n')
+		if (ch == KeyEvent.VK_ENTER)
 		{
 			app.getAlgebraInput().setFocus(); 
 			return;
+		}
+		
+		// we want both of these to work on Mac and Windows
+		// although only one is displayed as a shortcut in the Edit menu
+		if (ch == KeyEvent.VK_DELETE || ch == KeyEvent.VK_BACK_SPACE)
+		{
+			app.deleteSelectedObjects();			
 		}
 		
 		if (!Character.isLetter(ch) || 

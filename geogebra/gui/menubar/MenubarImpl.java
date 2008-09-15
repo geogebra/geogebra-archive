@@ -1217,15 +1217,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				app.getImageIcon("delete_small.gif")) {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e) {			
-				if (app.letDelete()) {
-					Object [] geos = app.getSelectedGeos().toArray();
-					for (int i=0; i < geos.length; i++) {
-						GeoElement geo = (GeoElement) geos[i];
-						geo.remove();
-					}
-					app.storeUndoInfo();
-				}
+			public void actionPerformed(ActionEvent e) {	
+				app.deleteSelectedObjects();
 			}
 		};		
 		

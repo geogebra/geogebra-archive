@@ -4810,4 +4810,17 @@ public abstract class Application implements	KeyEventDispatcher {
 			"15 figures"};
 
 	// Rounding Menus end
+	
+	public void deleteSelectedObjects()
+	{
+		if (letDelete()) {
+			Object [] geos = getSelectedGeos().toArray();
+			for (int i=0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				geo.remove();
+			}
+			storeUndoInfo();
+		}
+
+	}
 }
