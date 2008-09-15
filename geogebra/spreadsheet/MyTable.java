@@ -689,7 +689,7 @@ public class MyTable extends JTable
             
 			Application.debug(keyCode+"");
 			switch (keyCode) {
-				case 157: //MAC_OS Meta
+				case KeyEvent.VK_META: //MAC_OS Meta
 				e.consume(); // (maybe) stops editing start
 				break;
 				case KeyEvent.VK_C: 	                         
