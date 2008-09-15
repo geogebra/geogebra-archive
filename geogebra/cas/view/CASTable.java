@@ -17,6 +17,7 @@ import javax.swing.*;
 public class CASTable extends JTable {
 
 	private CASTableModel tableModel;
+	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,185,210);
 
 	public CASTable() {
 		super();
@@ -37,8 +38,8 @@ public class CASTable extends JTable {
 		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
 		// Set the width of the index column;
-		this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
-		this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
+		//this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
+		//this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
 
 		// this.sizeColumnsToFit(0);
 		this.setSurrendersFocusOnKeystroke(true);
@@ -106,19 +107,6 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
-		// TODO: Test this part
-		// CASTableCellEditor dce = (CASTableCellEditor )this.getCellEditor();
-		// if (dce != null) {
-		// Application.debug("dce stop editting");
-		// dce.stopCellEditing();
-		// }
-
-		// tableModel.removeRow(row);
-		// int delRow = getSelectedRow();
-		// if (delRow > -1) {
-		// CASTableCellEditor dce = (CASTableCellEditor)getCellEditor();
-		// if (dce != null) dce.stopCellEditing();
-		// }
 		tableModel.removeRow(row);
 		this.repaint(); // Update the table
 		if (tableModel.getRowCount() == 0)

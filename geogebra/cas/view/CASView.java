@@ -7,13 +7,24 @@ import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.util.ArrayList;
 
+import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
 
 /**
  * A class which will give the view of the CAS
@@ -29,6 +40,10 @@ public class CASView extends JComponent {
 
 	private CASTable consoleTable;
 
+	public JList rowHeader;
+
+	public static final int ROW_HEADER_WIDTH = 30;
+
 	private Application app;
 
 	private GeoGebraCAS cas;
@@ -43,17 +58,54 @@ public class CASView extends JComponent {
 		cas = new GeoGebraCAS();
 		cas.evaluateYACAS("4");
 		session = new CASSession();
-		setLayout(new BorderLayout());
 
+		createCASTable();
+		createRowHeader();
+
+		// init the scroll panel
+		JScrollPane scrollPane = new JScrollPane(
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		// put the table and the row header list into a scroll plane
+		scrollPane.setRowHeaderView(rowHeader);
+		scrollPane.setViewportView(consoleTable);
+
+		// put the scrollpanel in the component
+		setLayout(new BorderLayout());
+		add(scrollPane, BorderLayout.CENTER);
+		
+		this.setBackground(Color.WHITE);
+	}
+
+	private void createRowHeader() {
+		// Set the row header
+		CASListModel listModel = new CASListModel((CASTableModel) consoleTable
+				.getModel());
+		rowHeader = new JList(listModel);
+		rowHeader.setFocusable(true);
+		rowHeader.setAutoscrolls(false);
+		// rowHeader.addMouseListener(new MouseListener1());
+		// rowHeader.addMouseMotionListener(new MouseMotionListener1());
+		// rowHeader.addKeyListener(new KeyListener1());
+		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
+		rowHeader.setFixedCellHeight(consoleTable.getRowHeight()); // +
+		// table.getRowMargin();
+		rowHeader
+				.setCellRenderer(new RowHeaderRenderer(consoleTable, rowHeader));
+		// table.setView(this);
+	}
+
+	private void createCASTable() {
 		consoleTable = new CASTable();
 		consoleTable.initializeTable(numOfRows, session, app);
 
 		// Set the property of the value column;
-		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol))
+		consoleTable.getColumnModel().getColumn(CASPara.contCol)
 				.setCellRenderer(new CASTableCellRender(this, consoleTable));
-
-		consoleTable.getColumn(consoleTable.getColumnName(CASPara.contCol))
-				.setCellEditor(new CASTableCellEditor(this, consoleTable));
+		consoleTable.getColumnModel().getColumn(CASPara.contCol).setCellEditor(
+				new CASTableCellEditor(this, consoleTable));
+		consoleTable.getColumnModel().getColumn(CASPara.contCol)
+				.setHeaderValue("");
 
 		// CAScontroller
 		CASKeyController casKeyCtrl = new CASKeyController(this, session,
@@ -62,15 +114,87 @@ public class CASView extends JComponent {
 				consoleTable);
 		consoleTable.addKeyListener(casKeyCtrl);
 		consoleTable.addMouseListener(casMouseCtrl);
+	}
 
-		// init the scroll panel
-		JScrollPane scrollPane = new JScrollPane(consoleTable,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		setLayout(new BorderLayout());
-		add(scrollPane, BorderLayout.CENTER);
-		
-		
+	public static class CASListModel extends AbstractListModel {
+
+		private static final long serialVersionUID = 1L;
+
+		protected CASTableModel model;
+
+		public CASListModel(CASTableModel model0) {
+			model = model0;
+		}
+
+		public int getSize() {
+			return model.getRowCount();
+		}
+
+		public Object getElementAt(int index) {
+			return "" + (index + 1);
+		}
+
+	}
+
+	protected int minSelectionRow = -1;
+	protected int maxSelectionRow = -1;
+
+	public class RowHeaderRenderer extends JLabel implements ListCellRenderer,
+			ListSelectionListener {
+
+		private static final long serialVersionUID = 1L;
+
+		protected JTableHeader header;
+		protected JList rowHeader;
+		protected ListSelectionModel selectionModel;
+		private Color defaultBackground;
+
+		public RowHeaderRenderer(CASTable table, JList rowHeader) {
+			super("", JLabel.CENTER);
+			setOpaque(true);
+			defaultBackground = getBackground();
+
+			this.rowHeader = rowHeader;
+			header = table.getTableHeader();
+			// setOpaque(true);
+			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+			// setHorizontalAlignment(CENTER) ;
+			// setForeground(header.getForeground()) ;
+			// setBackground(header.getBackground());
+			if (getFont().getSize() == 0) {
+				Font font1 = app.getPlainFont();
+				if (font1 == null || font1.getSize() == 0) {
+					font1 = new Font("dialog", 0, 12);
+				}
+				setFont(font1);
+			}
+			// TODO: add a Listener
+			// table.getSelectionModel().addListSelectionListener(this);
+		}
+
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			setText((value == null) ? "" : value.toString());
+			if (minSelectionRow != -1 && maxSelectionRow != -1) {
+				if (index >= minSelectionRow && index <= maxSelectionRow
+						&& selectionModel.isSelectedIndex(index)) {
+					setBackground(CASTable.SELECTED_BACKGROUND_COLOR_HEADER);
+				} else {
+					setBackground(defaultBackground);
+				}
+			} else {
+				setBackground(defaultBackground);
+			}
+			return this;
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			selectionModel = (ListSelectionModel) e.getSource();
+			minSelectionRow = selectionModel.getMinSelectionIndex();
+			maxSelectionRow = selectionModel.getMaxSelectionIndex();
+			rowHeader.repaint();
+		}
+
 	}
 
 	public GeoGebraCAS getCAS() {
@@ -79,36 +203,6 @@ public class CASView extends JComponent {
 
 	public CASTable getConsoleTable() {
 		return consoleTable;
-	}
-
-	/**
-	 * Inits a panel to hold all components given in the list jcomponents.
-	 * 
-	 * @param panel
-	 * @param jcomponents
-	 */
-	private void initSessionPanel(JPanel panel, ArrayList jcomponents) {
-		// panel.removeAll();
-
-		// // create grid with one column
-		// panel.setLayout(new GridBagLayout());
-		// GridBagConstraints c = new GridBagConstraints();
-		// c.fill = GridBagConstraints.HORIZONTAL;
-		// c.anchor = GridBagConstraints.NORTHWEST;
-		// c.weightx = 1.0;
-		// c.weighty = 0;
-		//		
-		//		
-		// for (int i = 0; i < jcomponents.size(); i++) {
-		// JComponent p = (JComponent) jcomponents.get(i);
-		// c.gridx = 0;
-		// c.gridy = i;
-		//								
-		// panel.add(p, c);
-		// }
-		//		
-		// c.weighty = 1.0;
-		// panel.add(Box.createVerticalGlue(), c);
 	}
 
 	/**
@@ -138,22 +232,23 @@ public class CASView extends JComponent {
 	}
 
 	public String getSessionXML() {
-		
+
 		CASTableModel tableModel = (CASTableModel) consoleTable.getModel();
-		
+
 		StringBuffer sb = new StringBuffer();
 		sb.append("<casSession>\n");
 
-		//get the number of pairs in the view
+		// get the number of pairs in the view
 		int numOfRows = tableModel.getRowCount();
-		
-		//get the content of each pair in the table with a loop
-		//append the content to the string sb
+
+		// get the content of each pair in the table with a loop
+		// append the content to the string sb
 		for (int i = 0; i < numOfRows; ++i) {
-			CASTableCellValue temp = (CASTableCellValue)tableModel.getValueAt(i, CASPara.contCol);
+			CASTableCellValue temp = (CASTableCellValue) tableModel.getValueAt(
+					i, CASPara.contCol);
 			sb.append(temp.getXML());
 		}
-		
+
 		sb.append("</casSession>\n");
 		return sb.toString();
 	}

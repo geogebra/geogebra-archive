@@ -5,7 +5,7 @@ public final class CASPara {
 	public	final static int indexCol = 1;
 	public	final static int contCol = 0;
 	//public	final static int bracketCol = 2;
-	public	final static int numOfCol = 2;
+	public	final static int numOfCol = 1;
 	
 	//For adjust the cell height
 	public	final static int originalHeight = 22;

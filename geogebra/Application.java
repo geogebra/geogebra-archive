@@ -495,6 +495,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	        Container contentPane = spFrame.getContentPane();
 	        contentPane.setLayout(new BorderLayout());
 	        contentPane.add(casView, BorderLayout.CENTER);
+	        spFrame.setBackground(Color.white);
 	        spFrame.setResizable(true);
 	        spFrame.setTitle("GeoGebra CAS");
 	        spFrame.pack();
