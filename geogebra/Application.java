@@ -480,17 +480,7 @@ public abstract class Application implements	KeyEventDispatcher {
     }      
     
     public static void openCAS(CASView casView) {
-    	try {
-    		// use reflection for
-  		    // JComponent casView = new geogebra.cas.view.CASView(app);    		
-    		
-//  		    Class casViewClass = Class.forName("geogebra.cas.view.CASView");
-//  		    Object[] args = new Object[] { app };
-//  		    Class [] types = new Class[] {Application.class};
-//  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-//  	        JComponent casView = (JComponent) constructor.newInstance(args);  	          	      
-  	        
-  	        
+    	try {  	        
 			JFrame spFrame = new JFrame();
 	        Container contentPane = spFrame.getContentPane();
 	        contentPane.setLayout(new BorderLayout());
