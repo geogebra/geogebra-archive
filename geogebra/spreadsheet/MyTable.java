@@ -684,9 +684,10 @@ public class MyTable extends JTable
 			int keyCode = e.getKeyCode();
             boolean shiftDown = e.isShiftDown(); 	 
             boolean altDown = e.isAltDown(); 	 
-            boolean ctrlDown = Application.isControlDown(e); 	                    
+            boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
+							|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
             
-			//Application.debug(keyCode+"");
+			Application.debug(keyCode+"");
 			switch (keyCode) {
 				case KeyEvent.VK_C: 	                         
 				case KeyEvent.VK_V: 	                        
