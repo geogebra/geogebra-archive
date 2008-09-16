@@ -86,9 +86,9 @@ public class DrawPoint3D extends Drawable3D{
 	
 	
 	public void draw(GraphicsContext3D gc){
-		//Application.debug("draw");
-
-
+		if(!geo.isEuclidianVisible())
+			return;
+ 
     	gc.setModelTransform(t3d);
     	gc.setAppearance(appNormal);
     	gc.draw(geomNormal);
@@ -96,8 +96,9 @@ public class DrawPoint3D extends Drawable3D{
 	}
 	
 	public void drawHidden(GraphicsContext3D gc){
-		//Application.debug("draw");
-
+		if(!geo.isEuclidianVisible())
+			return;
+ 
 
     	gc.setModelTransform(t3d);
     	gc.setAppearance(appNormal);
@@ -106,6 +107,9 @@ public class DrawPoint3D extends Drawable3D{
 	}	
 	
 	public void drawPicked(GraphicsContext3D gc){
+		if(!geo.isEuclidianVisible())
+			return;
+ 		
 		if (geo.doHighlighting()){
 			gc.setModelTransform(t3dPicked);
 			gc.draw(geomPicked);

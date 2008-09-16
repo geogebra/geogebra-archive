@@ -182,19 +182,24 @@ public class GgbVector
 	}
 	
 	/** returns this projected on the plane (third vector used for direction) 
-	 *  result GgbVector (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	 *  result two GgbVectors, the point and (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
 	 */
-	public GgbVector projectPlane(GgbMatrix m){
-		GgbVector ret;
+	public GgbVector[] projectPlane(GgbMatrix m){
+		GgbVector ret1, ret2;
 		
-		ret = m.solve(this);
-		ret.set(3,-ret.get(3));
+		ret1 = m.solve(this);
+		ret1.set(3,-ret1.get(3));
 		
-		return ret;
+		ret2 = this.add(m.getColumn(3).mul(ret1.get(3))).v();
+		
+		return new GgbVector[] {ret2,ret1};
 		
 	}
 	
-	public GgbVector projectPlaneThruV(GgbMatrix m, GgbVector v){
+	/** returns this projected on the plane with vector v used for direction 
+	 *  result GgbVector (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	 */	
+	public GgbVector[] projectPlaneThruV(GgbMatrix m, GgbVector v){
 		//GgbVector ret;
 		
 		GgbMatrix m1 = new GgbMatrix(4,4);
@@ -203,6 +208,12 @@ public class GgbVector
 		return projectPlane(m1);
 		
 	}	
+	
+	
+	
+	
+	
+	
 	
 	/** returns the projection of this on the 3D-line represented by the matrix [V O] */
 	public GgbVector projectLine(GgbVector O, GgbVector V){

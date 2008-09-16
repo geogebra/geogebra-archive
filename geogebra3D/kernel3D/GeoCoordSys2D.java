@@ -91,7 +91,7 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	}
 	
 	public void updateGridOriginProjected(){
-		GgbVector c = gridOrigin.projectPlane(matrixCompleted);
+		GgbVector c = gridOrigin.projectPlane(matrixCompleted)[1];
 		//c.SystemPrint();
 		x0 = c.get(1); y0 = c.get(2);
 		gridOriginProjected.set(getPoint(x0,y0));

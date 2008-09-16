@@ -3,11 +3,13 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Application;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Robot;
@@ -68,19 +70,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	//moving plane	
 	protected int movingPlane = 0;
 	static protected int MOVING_PLANE_NB = 3;
+	protected GgbVector origin = new GgbVector(new double[] {0,0,0,1});
 	protected GgbVector[] v1list = {EuclidianView3D.vx,EuclidianView3D.vy,EuclidianView3D.vz};
 	protected GgbVector[] v2list = {EuclidianView3D.vy,EuclidianView3D.vz,EuclidianView3D.vx};
 	protected GgbVector[] vnlist = {EuclidianView3D.vz,EuclidianView3D.vx,EuclidianView3D.vy};
-	protected float[] movingPlaneRlist = {0f,1f,0f};
-	protected float[] movingPlaneGlist = {0f,0f,1f};
-	protected float[] movingPlaneBlist = {1f,0f,0f};
+	protected Color[] movingColorlist = {new Color(0f,0f,1f),new Color(1f,0f,0f),new Color(0f,1f,0f)};
 
 	protected GgbVector v1=v1list[movingPlane];
 	protected GgbVector v2=v2list[movingPlane];
 	protected GgbVector vn=vnlist[movingPlane];
-	protected float movingPlaneR=movingPlaneRlist[movingPlane];
-	protected float movingPlaneG=movingPlaneGlist[movingPlane];
-	protected float movingPlaneB=movingPlaneBlist[movingPlane];
+	protected Color movingColor=movingColorlist[movingPlane];
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
 	final double ANGLE_SCALE = 2*Math.PI/300f;
@@ -146,7 +145,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					movedGeoPoint3D = (GeoPoint3D) objSelected;
 					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 										
-					view.setMovingPlane(startLoc3D,v1,v2,vn,movingPlaneR,movingPlaneG,movingPlaneB);
+					view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
+					view.setMovingColor(movingColor);
 					
 				}
 			}
@@ -221,16 +221,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		view.toSceneCoords3D(v);	
 		
 		//getting new position of the point
-		GgbVector project = o.projectPlaneThruV(view.movingPlane.getMatrixCompleted(), v);
+		GgbMatrix plane = view.movingPlane.getMatrixCompleted();
+		
+		GgbVector originOld = plane.getColumn(4);
+		plane.set(movedGeoPoint3D.getCoords(), 4);
+		GgbVector originProjected = originOld.projectPlane(plane)[0];
+		plane.set(originProjected, 4);
+		 
+		GgbVector[] project = o.projectPlaneThruV(plane, v);
 		
 		
-		mouseLoc3D = (o.add(v.mul(project.get(3)))).v();
+		mouseLoc3D = project[0];
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
 		
 		//TODO modify objSelected.updateRepaint()
 		objSelected.updateCascade();
-		view.setMovingPlaneCorners(0, 0, project.get(1), project.get(2));
+		view.setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
+		view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
 		
 		if (repaint)
 			view.repaint();
@@ -281,7 +289,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 
 		case MOVE_POINT:
-			view.setMovingPlaneVisible(false);
+			view.setMovingVisible(false);
 			view.repaint();
 			break;	
 		
@@ -358,6 +366,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			//p = p + r*vn			
 			GgbVector p1 = movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)).v(); 
 			movedGeoPoint3D.setCoords(p1);
+			view.setMovingPoint(p1);
 			
 			
 			
@@ -382,7 +391,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
-			view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
+			//view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
 			view.repaint();
 			//moveMode = MOVE_POINT;
 			
@@ -493,11 +502,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			v1=v1list[movingPlane];
 			v2=v2list[movingPlane];
 			vn=vnlist[movingPlane];
-			movingPlaneR=movingPlaneRlist[movingPlane];
-			movingPlaneG=movingPlaneGlist[movingPlane];
-			movingPlaneB=movingPlaneBlist[movingPlane];			
+			movingColor=movingColorlist[movingPlane];
+					
 			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,vn,movingPlaneR,movingPlaneG,movingPlaneB);
+			view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
+			view.setMovingColor(movingColor);
 			view.repaint();
 			break;	
 			
