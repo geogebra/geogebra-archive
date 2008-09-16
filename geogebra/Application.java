@@ -315,7 +315,7 @@ public abstract class Application implements	KeyEventDispatcher {
     private boolean [] showAxes = {true, true};
     private boolean showGrid = false;
     private boolean antialiasing = true;
-    private boolean showSpreadsheet = true;
+    private boolean showSpreadsheet = !disableSpreadsheet;
     private boolean showCAS = false;
     private boolean printScaleString = false;
     private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;    
