@@ -2427,7 +2427,6 @@ public class PropertiesDialogGeoElement
 				case Kernel.COORD_COMPLEX :
 					if (allPoints && coordCB.getItemCount() > 2) coordCB.setSelectedIndex(2);
 					else coordCB.setSelectedItem(null);
-					Application.debug(coordCB.getItemCount()+"");
 					break;
 				default :
 					coordCB.setSelectedItem(null);
