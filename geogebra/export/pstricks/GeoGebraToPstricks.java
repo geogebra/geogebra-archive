@@ -18,8 +18,6 @@ import geogebra.kernel.AlgoAngleVectors;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
-import geogebra.kernel.AlgoBarChart;
-import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
@@ -260,7 +258,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     protected void drawSumTrapezoidal(GeoNumeric geo){
        	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
-        double step=algo.getStep();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
        	for (int i=0;i<n;i++){

@@ -13,8 +13,6 @@ import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
-import geogebra.kernel.AlgoBarChart;
-import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
