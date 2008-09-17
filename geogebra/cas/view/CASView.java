@@ -91,7 +91,7 @@ public class CASView extends JComponent {
 		// rowHeader.addMouseMotionListener(new MouseMotionListener1());
 		// rowHeader.addKeyListener(new KeyListener1());
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
-		rowHeader.setFixedCellHeight(consoleTable.getRowHeight()); // +
+		//rowHeader.setFixedCellHeight(consoleTable.getRowHeight()); // +
 		// table.getRowMargin();
 		rowHeader
 				.setCellRenderer(new RowHeaderRenderer(consoleTable, rowHeader));
@@ -172,7 +172,7 @@ public class CASView extends JComponent {
 				setFont(font1);
 			}
 			// TODO: add a Listener
-			// table.getSelectionModel().addListSelectionListener(this);
+			table.getSelectionModel().addListSelectionListener(this);
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,
