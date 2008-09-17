@@ -1241,7 +1241,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};	
 		
 		wikiAction  = new AbstractAction("GeoGebraWiki", 
-				new ImageIcon(app.getInternalImage("wiki.jpg"))) {
+				new ImageIcon(app.getInternalImage("wiki.png"))) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {	
