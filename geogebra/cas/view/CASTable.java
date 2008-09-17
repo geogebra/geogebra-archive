@@ -4,6 +4,7 @@
 package geogebra.cas.view;
 
 import geogebra.Application;
+import geogebra.kernel.Kernel;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -17,10 +18,17 @@ import javax.swing.*;
 public class CASTable extends JTable {
 
 	private CASTableModel tableModel;
+	protected Kernel kernel;
+	protected Application app;
+	
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,185,210);
 
-	public CASTable() {
+	public CASTable(Application app) {
 		super();
+		
+		this.app = app;
+		this.kernel = this.app.getKernel();
+		
 	}
 
 	/*

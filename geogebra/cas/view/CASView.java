@@ -9,6 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
@@ -73,7 +76,7 @@ public class CASView extends JComponent {
 		// put the scrollpanel in the component
 		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
-		
+
 		this.setBackground(Color.WHITE);
 	}
 
@@ -84,7 +87,7 @@ public class CASView extends JComponent {
 		rowHeader = new JList(listModel);
 		rowHeader.setFocusable(true);
 		rowHeader.setAutoscrolls(false);
-		// rowHeader.addMouseListener(new MouseListener1());
+		rowHeader.addMouseListener(new RowHeaderMouseListener());
 		// rowHeader.addMouseMotionListener(new MouseMotionListener1());
 		// rowHeader.addKeyListener(new KeyListener1());
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
@@ -96,7 +99,7 @@ public class CASView extends JComponent {
 	}
 
 	private void createCASTable() {
-		consoleTable = new CASTable();
+		consoleTable = new CASTable(app);
 		consoleTable.initializeTable(numOfRows, session, app);
 
 		// Set the property of the value column;
@@ -193,6 +196,53 @@ public class CASView extends JComponent {
 			minSelectionRow = selectionModel.getMinSelectionIndex();
 			maxSelectionRow = selectionModel.getMaxSelectionIndex();
 			rowHeader.repaint();
+		}
+
+	}
+
+	// Listener for RowHeader
+	protected class RowHeaderMouseListener implements MouseListener {
+
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
+
+		public void mousePressed(MouseEvent e) {
+			boolean shiftPressed = e.isShiftDown();
+			boolean metaDown = Application.isControlDown(e);
+			boolean rightClick = Application.isRightClick(e);
+
+			int x = e.getX();
+			int y = e.getY();
+
+			// left click
+			if (!rightClick) {
+				System.out.println("Left click on Pixel " + x + " " + y);
+			}
+			// RIGHT CLICK
+			else {
+				if (!app.letShowPopupMenu())
+					return;
+
+				// if (minSelectionRow != -1 && maxSelectionRow != -1)
+				{
+					CASContextMenuRow popupMenu = new CASContextMenuRow(
+							consoleTable, 0, minSelectionRow, consoleTable
+									.getModel().getColumnCount() - 1,
+							maxSelectionRow, new boolean[0]);
+					popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+
 		}
 
 	}
