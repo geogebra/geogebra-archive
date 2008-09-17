@@ -24,6 +24,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -158,7 +159,13 @@ public abstract class GeoGebraExport implements ActionListener{
 	 * @param g GeoElement g
 	 */
     protected void drawGeoElement(GeoElement g){
-    	if (g.isEuclidianVisible()) {
+    	if (g.isGeoList()){
+    		GeoList geo=((GeoList)g);
+    		for (int i=0;i<geo.size();i++){
+    			drawGeoElement(geo.get(i));
+    		}
+    	}
+    	else if (g.isEuclidianVisible()) {
     		if (g.isGeoPoint()){
 				drawGeoPoint((GeoPoint)g);
 				drawLabel(g,null);
