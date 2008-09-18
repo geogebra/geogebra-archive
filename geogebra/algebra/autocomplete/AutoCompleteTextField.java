@@ -108,7 +108,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         
         // MacOS: cmd-C does a cut rather than a copy, so do it ourselves
         case KeyEvent.VK_C:
-        	if (Application.MAC_OS) {
+        	if (Application.MAC_OS && Application.isControlDown(e)) {
 	            int start = getSelectionStart();
 	            int end = getSelectionEnd();        
 	            
