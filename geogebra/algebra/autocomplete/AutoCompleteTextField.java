@@ -5,6 +5,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -100,7 +103,46 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
     public void keyPressed(KeyEvent e) {        
         int keyCode = e.getKeyCode();    
+        Application.debug(keyCode+"");
         switch (keyCode) {
+        
+        // MacOS: cmd-C does a cut rather than a copy, so do it ourselves
+        case KeyEvent.VK_C:
+        	if (Application.MAC_OS) {
+	            int start = getSelectionStart();
+	            int end = getSelectionEnd();        
+	            
+	            if (start != end) {
+	                String textToCopy = getText().substring(start, end);
+		    		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		    		Clipboard clipboard = toolkit.getSystemClipboard();
+		    		StringSelection stringSelection = new StringSelection(textToCopy);
+		    		clipboard.setContents(stringSelection, null);
+	            }
+	        	e.consume();
+        	}
+            break;
+            
+            /*
+             * this code works, but doesn't seem to be needed on Mac
+        case KeyEvent.VK_V:
+            start = getSelectionStart();
+            end = getSelectionEnd();        
+            String stringToPaste = app.getStringFromClipboard();
+            if (stringToPaste.length() != 0) {
+                  int pos = getCaretPosition();
+                  String oldText = getText();
+                  StringBuffer sb = new StringBuffer();
+                  sb.append(oldText.substring(0, start));
+                  sb.append(stringToPaste);
+                  sb.append(oldText.substring(end));            
+                  setText(sb.toString());
+                  setCaretPosition(pos + stringToPaste.length());
+            }
+        	e.consume();
+        break;*/
+        
+        
             // process input
             case KeyEvent.VK_ENTER:                             
                 // processEnterKey accepts a selection if there is one 
