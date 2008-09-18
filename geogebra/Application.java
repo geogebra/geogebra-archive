@@ -1064,7 +1064,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	return currentSelectionListener;
     }
     
-    public void setAglebraInputMode() {        
+    public void setAlgebraInputMode() {        
         setMode(EuclidianView.MODE_ALGEBRA_INPUT);
     }       
 

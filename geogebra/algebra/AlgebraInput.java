@@ -230,7 +230,7 @@ implements ActionListener, MouseListener, KeyListener
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == inputField) {		
 			if (e.getClickCount() == 2) {
-				app.setAglebraInputMode();
+				app.setAlgebraInputMode();
 				inputField.requestFocus();
 			}
 		}
@@ -249,7 +249,7 @@ implements ActionListener, MouseListener, KeyListener
 		if (src == inputButton) {	
 			if (!inputButton.isSelected()) {
 				inputButton.setSelected(true);
-				app.setAglebraInputMode();
+				app.setAlgebraInputMode();
 				inputField.requestFocusInWindow();
 			} else {
 				inputButton.setSelected(false);
