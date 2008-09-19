@@ -10,10 +10,7 @@ import java.awt.geom.Rectangle2D;
 
 public class GeoText extends GeoElement
 implements Locateable, AbsoluteScreenLocateable, TextValue {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private String str; 	
 	private GeoPoint startPoint; // location of Text on screen
@@ -210,8 +207,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	}
 	
 	public void update() {
-		Application.debug("UPDATE GeoText: " + this);
-		
+
 		super.update();
 		
 		

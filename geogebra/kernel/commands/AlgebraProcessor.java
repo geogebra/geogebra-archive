@@ -2,8 +2,6 @@ package geogebra.kernel.commands;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.algebra.parser.ParseException;
-import geogebra.algebra.parser.Parser;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -36,6 +34,8 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.parser.ParseException;
+import geogebra.kernel.parser.Parser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -153,9 +153,8 @@ public class AlgebraProcessor {
 			String cmd, 
 			boolean storeUndo) 
 	throws Exception {
-		ValidExpression ve;
-
-		// parse command string
+		ValidExpression ve;					
+		
 		try {
 			ve = parser.parse(cmd);
 		} catch (ParseException e) {
@@ -537,11 +536,7 @@ public class AlgebraProcessor {
 			}
 			// redefine
 			else {
-				try {
-
-//					Application.debug("replace: " + replaceable);
-//					Application.debug("     by: " + ret[0]);			
-					
+				try {							
 					// SPECIAL CASE: set value
 					// new and old object are both independent and have same type:
 					// simply assign value and don't redefine
@@ -571,6 +566,7 @@ public class AlgebraProcessor {
 				}
 			}
 		}
+			
 		return ret;
 	}
 
@@ -764,11 +760,29 @@ public class AlgebraProcessor {
 		ExpressionValue eval = n.evaluate();		
 
 		// leaf (no new label specified): just return the existing GeoElement
-		if (eval.isGeoElement() && n.getLabel() == null) {
-			GeoElement[] ret = {(GeoElement) eval };
-			return ret;
+		if (eval.isGeoElement() &&  n.getLabel() == null) 
+		{
+			// take care of spreadsheet $ names: don't loose the wrapper ExpressionNode here
+			// check if we have a Variable 
+			ExpressionNode myNode = n;
+			if (myNode.isLeaf()) myNode = myNode.getLeftTree();
+			switch (myNode.getOperation()) {
+				case ExpressionNode.$VAR_COL:
+				case ExpressionNode.$VAR_ROW:
+				case ExpressionNode.$VAR_ROW_COL:
+					// don't do anything here: we need to keep the wrapper ExpressionNode
+					// and must not return the GeoElement here				
+					break;
+					
+				default:
+					// return the GeoElement
+					GeoElement[] ret = {(GeoElement) eval };
+					return ret;
+			}			
 		}		
-		else if (eval.isNumberValue())
+		
+		
+		if (eval.isNumberValue())
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
 			return processPointVector(n, eval);	
@@ -776,7 +790,8 @@ public class AlgebraProcessor {
 			MyList myList = ((ListValue) eval).getMyList();
 			myList.setLabel(n.getLabel());
 			return processList(n, myList);	
-		} else if (eval.isTextValue())
+		} 
+		else if (eval.isTextValue())
 			return processText(n, eval);
 		else if (eval.isBooleanValue())
 			return processBoolean(n, eval);
@@ -786,7 +801,7 @@ public class AlgebraProcessor {
 		
 		// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
 		// create a copy of A1
-		else if (eval.isGeoElement()){			
+		else if (eval.isGeoElement() && n.getLabel() != null) {		
 			return processGeoCopy(n.getLabel(), (GeoElement) eval);
 		}		
 		

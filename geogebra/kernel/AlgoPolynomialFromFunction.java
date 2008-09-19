@@ -12,11 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.algebra.parser.Parser;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.parser.Parser;
 
 /**
  * Try to expand the given function to a polynomial.

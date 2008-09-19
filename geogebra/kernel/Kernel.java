@@ -21,7 +21,6 @@ package geogebra.kernel;
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.View;
-import geogebra.algebra.parser.Parser;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -31,6 +30,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
+import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoDoubleListCovariance;
 import geogebra.kernel.statistics.AlgoDoubleListPMCC;
 import geogebra.kernel.statistics.AlgoDoubleListSXX;
@@ -68,6 +68,7 @@ import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
+import geogebra.modules.JarManager;
 import geogebra.util.ScientificFormat;
 
 import java.text.NumberFormat;
@@ -293,8 +294,13 @@ public class Kernel {
 	
 	public synchronized void initCAS() {
 		// TODO: use reflection to load CAS from separate jar file
-		if (ggbCAS == null) {
-			ggbCAS = new GeoGebraCAS();
+		if (ggbCAS == null) {			
+	    	if (!JarManager.addCasJarToClassPath()) {
+				Application.debug("Could not initialize CAS Jar");
+				return;    		
+	    	}	    				
+			
+			ggbCAS = new geogebra.cas.GeoGebraCAS();
 		}			
 	}
 	/**

@@ -1,4 +1,4 @@
-package geogebra.gui;
+package geogebra.algebra;
 
 import geogebra.Application;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;

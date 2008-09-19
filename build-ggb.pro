@@ -6,7 +6,7 @@
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
-#-injars ../build/geogebra_gui.jar
+-injars ../build/geogebra_gui.jar
 #-injars ../build/geogebra_spreadsheet.jar
 -outjars ../build/temp
 
@@ -54,7 +54,7 @@
 -keep class javax.jnlp.* { <methods>; }
 
 # needed so that SymbolLoader can find Des12.gif etc
--keep class hoteqn.SymbolLoader { <methods>; }
+-keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
 # temporary
 #-keep class geogebra.* { <methods>; }

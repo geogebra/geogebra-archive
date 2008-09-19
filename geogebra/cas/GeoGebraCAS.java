@@ -4,11 +4,13 @@ package geogebra.cas;
 import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.modules.JarManager;
+
 import jasymca.GeoGebraJasymca;
 
 import java.io.InputStream;
 
 import yacas.YacasInterpreter;
+
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
@@ -25,13 +27,7 @@ public class GeoGebraCAS {
     public GeoGebraCAS() {    	    	    		     	  
     	sbInsertSpecial = new StringBuffer(80);
     	sbRemoveSpecial = new StringBuffer(80);
-    	
-    	if (!JarManager.addCasJarToClassPath())
-    	{
-			Application.debug("Could not initialize CAS Jar");
-			return;    		
-    	}
-    	
+    
     	ggbJasymca = new GeoGebraJasymca();    
     }        
     
@@ -41,12 +37,6 @@ public class GeoGebraCAS {
      * @return result string, null possible
      */ 
     final public String evaluateJASYMCA(String exp) {    
-
-    	if (!JarManager.addCasJarToClassPath())
-    	{
-			Application.debug("Could not initialize CAS Jar");
-			return null;    		
-    	}
 
     	String result = ggbJasymca.evaluate(exp);      	
     	  

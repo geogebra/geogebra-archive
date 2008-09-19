@@ -18,8 +18,9 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
-import hoteqn.sHotEqn;
+import geogebra.modules.JarManager;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -230,17 +231,26 @@ public abstract class Drawable {
 		}
 	}
 	
+	private geogebra.gui.hoteqn.sHotEqn eqn;
+	
 	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		Dimension dim;
-			sHotEqn eqn = new sHotEqn(text);
+		if (eqn == null) {
+			if (!JarManager.addGuiJarToClassPath()) {
+				Application.debug("Could not initialize GUI jar file");
+				return new Dimension(0,0);    		
+	    	}	
+			
+			eqn = new geogebra.gui.hoteqn.sHotEqn(text);
 			//Application.debug(eqn.getSize());
 			eqn.setDoubleBuffered(false);
 			eqn.setEditable(false);	
 			eqn.removeMouseListener(eqn);
 			eqn.removeMouseMotionListener(eqn);				
 			eqn.setDebug(false);
-			eqn.setOpaque(false);				
+			eqn.setOpaque(false);
+		}
 
 			//setEqnFontSize();																												
 			int size = (font.getSize() / 2) * 2; 

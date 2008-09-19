@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
+import geogebra.algebra.InputPanel;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.kernel.GeoElement;
 

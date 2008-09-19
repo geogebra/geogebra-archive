@@ -2,10 +2,8 @@
 package geogebra.spreadsheet;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ValidExpression;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -136,7 +134,6 @@ public class MyCellEditor extends DefaultCellEditor {
 			return false;
 		}
 		editing = false;
-		// TODO: add undo point here
 		return super.stopCellEditing();
 	}
 	
@@ -156,56 +153,36 @@ public class MyCellEditor extends DefaultCellEditor {
 		delegate.setValue(text);
 	}
 	
-	private static GeoElement prepareNewValue(Kernel kernel, String name, String text) throws Exception {
-		String text0 = text;
-		int posEqual = text.indexOf('=');
-		// text like "= A1 + A2"
-		if (posEqual == 0) {
-			text = name + text;
-		}
-		// text like "x^2 + y^2 = 25"
-		else if (posEqual > 0) {
-			if (! text.startsWith(name)) {
-				text = name + ":" + text;
-			}
-		}
-		// no equal sign in input
-		else {
-			// check if input is a function in x
-			try {
-				ValidExpression ve = kernel.getParser().parse(text);	
-				// redefine independent
-				GeoElement [] temp = kernel.getAlgebraProcessor().processValidExpression(ve, true);
-				
-				if (temp[0].isGeoFunction())
-					text = name + "(x)=" + text;
-				else
-					text = name + "=" + text;
-				
-				temp[0].remove();
-			} catch (MyError e) { text = name + "=" + text; }
+	private static GeoElement prepareNewValue(Kernel kernel, String name, String text) throws Exception {	
+		if (text == null) return null;
+		
+		// remove leading equal sign, e.g. "= A1 + A2"
+		if (text.startsWith("=")) {
+			text = text.substring(1);
 		}
 		
+		
+		// no equal sign in input
 		GeoElement[] newValues = null;
 		try {
+			// check if input is the name of an existing variable
+			if (kernel.lookupLabel(text) != null) {
+				// make sure we copy this existing geo by providing the new cell name in the beginning
+				text = name + " = " + text;
+			}
+			
+			// evaluate input text
 			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-			for (int i = 0; i < newValues.length; ++ i) {
-				newValues[i].setAuxiliaryObject(newValues[i].isGeoNumeric());
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-    		//Application.debug("SPREADSHEET: input error: " + e.getMessage());
-			if (! text0.startsWith("=")) {
-    			text = name + "=\"" + text0 + "\"";
-   				newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-   				if (newValues[0].isGeoText()) {
-   					newValues[0].setEuclidianVisible(false);
-       				newValues[0].update();
-   				}
-			}
-			else {
-				throw e;
-			}
+			newValues[0].setLabel(name);
+			newValues[0].setAuxiliaryObject(true);	
+		} 
+		catch (Exception e) {
+			// create text if something went wrong
+			text = "\"" + text + "\"";
+			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			newValues[0].setLabel(name);
+			newValues[0].setEuclidianVisible(false);
+			newValues[0].update();	
 		}
 		return newValues[0];
 	}
@@ -219,8 +196,7 @@ public class MyCellEditor extends DefaultCellEditor {
     	try {
 			// always redefine objects in spreadsheet, don't store undo info here
     		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true, false);
-
-        	newValue.setConstructionDefaults();
+    		newValue.setConstructionDefaults();
         	if (oldValue.isAuxiliaryObject()) newValue.setAuxiliaryObject(true);
         	
         	//Application.debug("GeoClassType = " + newValue.getGeoClassType());
@@ -239,7 +215,9 @@ public class MyCellEditor extends DefaultCellEditor {
     		} else {
     			if (!oldValue.hasChildren()) {
 	    			oldValue.remove();
-	    			prepareNewValue(kernel, name, text0);
+	    			
+	    			// add input as text
+	    			newValue = prepareNewValue(kernel, name, "\"" + text0 + "\"");
     			}
     			else {
         			throw new Exception(e);
@@ -259,6 +237,7 @@ public class MyCellEditor extends DefaultCellEditor {
     			text = null;
     		}
     	}
+    	
     	if (text == null) {
     		if (oldValue != null) {
     			oldValue.remove();

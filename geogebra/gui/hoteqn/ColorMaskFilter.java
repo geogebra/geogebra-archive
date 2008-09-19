@@ -1,4 +1,4 @@
-package hoteqn;
+package geogebra.gui.hoteqn;
 
 import java.awt.Color;
 import java.awt.image.RGBImageFilter;

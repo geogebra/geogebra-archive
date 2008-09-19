@@ -19,7 +19,6 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.gui.AngleInputDialog;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -3785,7 +3784,7 @@ public class EuclidianController implements MouseListener,
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), defaultRotateAngle);
 			NumberValue num = (NumberValue) ob[0];											
-			AngleInputDialog dialog=(AngleInputDialog) ob[1];
+			geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
 			String angleText = dialog.getText();
 			
 			// keep angle entered if it ends with 'degrees'
@@ -4024,7 +4023,7 @@ public class EuclidianController implements MouseListener,
 			Object [] ob = app.showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
-			AngleInputDialog aDialog = (AngleInputDialog) ob[1]; 			
+			geogebra.gui.AngleInputDialog aDialog = (geogebra.gui.AngleInputDialog) ob[1]; 			
 			
 			if (num == null) {
 				view.resetMode();

@@ -687,7 +687,6 @@ public class MyTable extends JTable
             boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
 							|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
             
-			Application.debug(keyCode+"");
 			switch (keyCode) {
 				case KeyEvent.VK_META: //MAC_OS Meta
 				e.consume(); // (maybe) stops editing start

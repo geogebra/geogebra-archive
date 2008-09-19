@@ -20,7 +20,6 @@ package geogebra.io;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.algebra.parser.Parser;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -31,6 +30,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.complex.Complex;
+import geogebra.kernel.parser.Parser;
 
 import java.util.LinkedHashMap;
 

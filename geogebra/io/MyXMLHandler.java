@@ -20,10 +20,11 @@ package geogebra.io;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.algebra.parser.Parser;
+import geogebra.cas.view.CASPara;
+import geogebra.cas.view.CASTable;
+import geogebra.cas.view.CASTableCellValue;
+import geogebra.cas.view.CASView;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ConstructionProtocolNavigation;
-import geogebra.gui.GeoGebraPreferences;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -46,11 +47,8 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.parser.Parser;
 import geogebra.spreadsheet.SpreadsheetView;
-import geogebra.cas.view.CASPara;
-import geogebra.cas.view.CASTable;
-import geogebra.cas.view.CASTableCellValue;
-import geogebra.cas.view.CASView;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -158,7 +156,7 @@ public class MyXMLHandler implements DocHandler {
 		mode = MODE_INVALID;
 		constMode = MODE_CONSTRUCTION;
 
-		casSessionMode = this.MODE_CAS_SESSION;
+		casSessionMode = MODE_CAS_SESSION;
 	}
 
 	private void reset() {
@@ -254,19 +252,10 @@ public class MyXMLHandler implements DocHandler {
 				try {
 					ggbFileFormat = Float.parseFloat((String) attrs
 							.get("format"));
-					if (ggbFileFormat > FORMAT
-							&& !GeoGebraPreferences.supressFileFormatNewerError) {
-						app.showMessage(app.getError("FileFormatNewer") + ": "
-						// + ggbFileFormat);
+									
+					if (ggbFileFormat > FORMAT) {
+						System.err.println(app.getError("FileFormatNewer") + ": "
 								+ attrs.get("format")); // Michael Borcherds
-						// 2008-04-24 changed to
-						// avoid 3.0999999999987
-
-						/*
-						 * throw new MyError(app,
-						 * app.getError("FileFormatNewer") + ": " +
-						 * ggbFileFormat);
-						 */
 					}
 
 					// fileFormat dependent settings for downward compatibility
@@ -954,17 +943,16 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			boolean playButton = parseBoolean((String) attrs.get("playButton"));
 			boolean protButton = parseBoolean((String) attrs.get("protButton"));
-			ConstructionProtocolNavigation cpn = app
-					.getConstructionProtocolNavigation();
-			cpn.setPlayButtonVisible(playButton);
-			cpn.setConsProtButtonVisible(protButton);
+						
+			app.getConstructionProtocolNavigation().setPlayButtonVisible(playButton);
+			app.getConstructionProtocolNavigation().setConsProtButtonVisible(protButton);
 
 			boolean show = parseBoolean((String) attrs.get("show"));
 			app.setShowConstructionProtocolNavigation(show);
 
 			double playDelay = Double.parseDouble((String) attrs
 					.get("playDelay"));
-			cpn.setPlayDelay(playDelay);
+			app.getConstructionProtocolNavigation().setPlayDelay(playDelay);
 
 			// construction step: handled at end of parsing
 			String strConsStep = (String) attrs.get("consStep");
@@ -2419,8 +2407,9 @@ public class MyXMLHandler implements DocHandler {
 				// as this could be some weird name that can't be parsed
 				// e.g. "1/2_{a,b}" could be a label name
 				geo = cons.lookupLabel(arg);
-				if (geo != null) {
-					// arg is a label
+			
+				// arg is a label and does not conatin $ signs (e.g. $A1 in spreadsheet)
+				if (geo != null && arg.indexOf('$') < 0) {
 					en = new ExpressionNode(kernel, geo);
 				} else {
 					// parse argument expressions

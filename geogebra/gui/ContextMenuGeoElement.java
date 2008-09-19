@@ -14,6 +14,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.algebra.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -46,10 +47,7 @@ import javax.swing.JPopupMenu;
  * @version 
  */
 public class ContextMenuGeoElement extends JPopupMenu {
-    
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	final static Color bgColor = Color.white;
     final static Color fgColor = Color.black;
@@ -422,7 +420,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             
             // AUXILIARY OBJECT
             
-            if (app.showAlgebraView() &&
+            if (app.showAlgebraView() && app.showAuxiliaryObjects() && 
             		geo.isAlgebraShowable()) {
                 
                 // show object
@@ -478,29 +476,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
                     app.startEditing(geo);
                 }
             });
-        }             
+        }    
+        */                                    
         
-        
-        
-        // EDIT: copy to input field       
-        if (app.showAlgebraInput() && !geo.isGeoImage()) {
-            addAction(new AbstractAction(
-                app.getMenu("InputField"),
-                app.getImageIcon("edit.png")) {
-
-					private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent e) {                    
-                    AlgebraInput ai = app.getAlgebraInput();
-                    if (ai != null) {
-                    	ai.clear();                  
-                    	ai.insertString(geo.toString());
-                    	ai.setFocus();
-                    }
-                }
-            });
-        }
-        */
         
         // Rename      
         if (app.letRename() && geo.isRenameable())  {    
@@ -530,6 +508,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             });
         }      
         
+        /*
         // REDEFINE    
         else if (app.letRedefine() && geo.isRedefineable()) {     
                 addAction(new AbstractAction(
@@ -542,6 +521,26 @@ public class ContextMenuGeoElement extends JPopupMenu {
                                 app.showRedefineDialog(geo);
                             }
                         });         
+        }
+        */
+        
+        // EDIT: copy to input field       
+        else if (app.showAlgebraInput() && !geo.isGeoImage()) {
+            addAction(new AbstractAction(
+                app.getMenu("InputField"),
+                app.getImageIcon("edit.png")) {
+
+					private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {                    
+                    AlgebraInput ai = app.getAlgebraInput();
+                    if (ai != null) {
+                    	ai.clear();                  
+                    	ai.insertString(geo.toString());
+                    	ai.setFocus();
+                    }
+                }
+            });
         }
         
                  

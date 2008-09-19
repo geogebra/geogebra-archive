@@ -16,6 +16,7 @@ import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.View;
 import geogebra.algebra.AlgebraView;
+import geogebra.algebra.InputPanel;
 import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.SpringUtilities;

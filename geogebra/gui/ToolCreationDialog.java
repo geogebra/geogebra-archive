@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
+import geogebra.algebra.MyComboBoxListener;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;

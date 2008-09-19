@@ -38,8 +38,8 @@ public class JarManager {
     public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
     public static boolean 			GEOGEBRA_CAS_PRESENT=false;
     public static boolean 			GEOGEBRA_CAS_LOADED=false;
-    //public static boolean 			GEOGEBRA_GUI_PRESENT=false;
-    //public static boolean 			GEOGEBRA_GUI_LOADED=false;
+    public static boolean 			GEOGEBRA_GUI_PRESENT=false;
+    public static boolean 			GEOGEBRA_GUI_LOADED=false;
     //public static boolean 			GEOGEBRA_SPREADSHEET_PRESENT=false;
     //public static boolean 			GEOGEBRA_SPREADSHEET_LOADED=false;
     public static boolean 			IS_WEBSTART=false;
@@ -60,7 +60,7 @@ public class JarManager {
 	
 	private static String tempDir = Application.getTempDir();
 	
-	//private static boolean GUIJAR_COPIED=false;
+	private static boolean GUIJAR_COPIED=false;
 	//private static boolean SPREADSHEETJAR_COPIED=false;
 	
 	//public static SpreadsheetView spreadsheetView;
@@ -93,7 +93,7 @@ public class JarManager {
 	    				copyExportJarToTempDir();
 	    				copyPropertiesJarToTempDir();
 	    				copyCasJarToTempDir();
-	    				//copyGuiJarToTempDir();
+	    				copyGuiJarToTempDir();
 	    				//copySpreadsheetJarToTempDir();
 	    			}	    				
     			}	    		    		
@@ -134,8 +134,8 @@ public class JarManager {
             GEOGEBRA_PROPERTIES_LOADED=true;
             GEOGEBRA_CAS_PRESENT=true;
             GEOGEBRA_CAS_LOADED=true;
-            //GEOGEBRA_GUI_PRESENT=true;
-            //GEOGEBRA_GUI_LOADED=true;
+            GEOGEBRA_GUI_PRESENT=true;
+            GEOGEBRA_GUI_LOADED=true;
             //GEOGEBRA_SPREADSHEET_PRESENT=true;
             //GEOGEBRA_SPREADSHEET_LOADED=true;
             // init spreadsheet view
@@ -169,7 +169,7 @@ public class JarManager {
          GEOGEBRA_CAS_PRESENT = jarPresent("geogebra_cas.jar");
          //addCasJarToClassPath();
          
-         /*
+         
          GEOGEBRA_GUI_PRESENT = jarPresent("geogebra_gui.jar");
          if (GEOGEBRA_GUI_PRESENT){
          	if (app.getApplet()==null){
@@ -186,7 +186,7 @@ public class JarManager {
          		addGuiJarToClassPath();
              	//loadExport = "geogebra_export.jar"; // fallback, shouldn't be needed
          	}
-         }*/
+         }
          
          
          //GEOGEBRA_SPREADSHEET_PRESENT = jarPresent("geogebra_spreadsheet.jar");
@@ -391,7 +391,10 @@ public class JarManager {
         }//try-catch        
     }//addPath(String)
     
-    public static boolean copyJarToTempDir(String jar) {
+
+    	
+
+    private static boolean copyJarToTempDir(String jar) {
 		try {		
 			
 			// copy jar files to tempDir
@@ -399,6 +402,9 @@ public class JarManager {
 				URL src = new URL(app.getCodeBase() + jar);
 				CopyURLToFile.copyURLToFile(src, dest);
 				Application.debug("copied "+jar+" to temp directory " + tempDir);
+				
+		
+								
 				return true;
 			
 		} catch (Exception e) {		
@@ -497,7 +503,7 @@ public class JarManager {
 	}
 	
 	
-	/*
+	
 	public static synchronized boolean copyGuiJarToTempDir()
 	{
 		if (GUIJAR_COPIED) return true;
@@ -523,7 +529,7 @@ public class JarManager {
 		}
 		GEOGEBRA_GUI_LOADED=true;
 		return true;
-	}*/
+	}
 	
 	/*
 	public static synchronized boolean copySpreadsheetJarToTempDir()

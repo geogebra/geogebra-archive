@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra.gui;
+package geogebra;
 
 /*
  * Copyright (c) 1999-2003 Werner Randelshofer

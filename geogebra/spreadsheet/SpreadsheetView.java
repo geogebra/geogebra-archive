@@ -15,7 +15,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.AbstractListModel;
@@ -75,14 +74,15 @@ public class SpreadsheetView extends JScrollPane implements View
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
 		///
-		Cross cross = new Cross(app);
-		this.add(cross);
-		cross.setBounds(5, 5, 5 + Cross.LENGTH, 5 + Cross.LENGTH);
+		if (!app.isApplet()) {
+			Cross cross = new Cross(app);
+			this.add(cross);
+			cross.setBounds(5, 5, 5 + Cross.LENGTH, 5 + Cross.LENGTH);
+		}
 		/**/
 	}
 	
-	public void add(GeoElement geo) {
-		// TODO: remove
+	public void add(GeoElement geo) {	
 		//Application.debug(new Date() + " ADD: " + geo);
 		
 		
@@ -99,7 +99,6 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void remove(GeoElement geo) {
-		// TODO: remove	
 		//Application.debug(new Date() + " REMOVE: " + geo);
 				
 		Point location = geo.getSpreadsheetCoords();
@@ -123,13 +122,17 @@ public class SpreadsheetView extends JScrollPane implements View
 		add(geo);
 	}
 	
-	public void updateAuxiliaryObject(GeoElement geo) {
-		update(geo);
+	public void updateAuxiliaryObject(GeoElement geo) {		
 	}
 	
 	public static HashSet selectedElems = new HashSet();
 	
 	public void repaintView() {
+		/*
+		 * Markus Hohenwarter 2008-09-18
+		 *   The following code is extremely slow and a very bad performance bottleneck.
+		 *   If this needs to be done, then definitely NOT in repaintView()
+		 * 
 		ArrayList elems = app.getSelectedGeos();
 		selectedElems.clear();
 		for (int i = 0; i < elems.size(); ++ i) {
@@ -139,7 +142,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		if (System.currentTimeMillis() - table.selectionTime > 100) {
 			table.selectNone();
 		}
-		repaint();
+		*/
+		
+		repaint();		
 	}
 	
 	public void clearView() {
@@ -378,6 +383,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 	public void reset() {
 	}	
+	
 	public void update(GeoElement geo) {
 	}	
 	

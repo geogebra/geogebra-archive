@@ -18,9 +18,6 @@
 package geogebra;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.GeoGebraPreferences;
-import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
@@ -85,7 +82,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	}
 	
 	public Locale getLocale() {				
-		Locale defLocale = GeoGebraPreferences.getDefaultLocale();		
+		Locale defLocale = geogebra.gui.GeoGebraPreferences.getDefaultLocale();		
 		
 		if (defLocale == null)
 			return super.getLocale();
@@ -122,7 +119,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			if (!isShowing()) return;
 			
 			instances.remove(this);
-			GeoGebraPreferences.saveFileList();
+			geogebra.gui.GeoGebraPreferences.saveFileList();
 			
 			if (instances.size() == 0) {			
 				super.setVisible(false);
@@ -221,7 +218,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		}	
     	    
 		// load list of previously used files
-		GeoGebraPreferences.loadFileList();
+		geogebra.gui.GeoGebraPreferences.loadFileList();
 		
 		// create first window and show it
 		
@@ -262,13 +259,13 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		//GeoGebra wnd = buildGeoGebra();
 
 		Application app = new GeoGebraApplication(args, wnd, true);
-		app.setMenubar(new GeoGebraMenuBar(app));
+		app.setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
 		app.initMenubar();
 		
 		// init GUI
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
-		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
+		wnd.setDropTarget(new DropTarget(wnd, new geogebra.gui.FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
 		
 		updateAllTitles();

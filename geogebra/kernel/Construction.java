@@ -921,11 +921,12 @@ public class Construction {
 		String a, b; // a = old string, b = new string
 
 		// change kernel settings temporarily
+		
+		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
-		int oldDecimals = kernel.getPrintDecimals();
 		int oldPrintForm = kernel.getCASPrintForm();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
-		kernel.setPrintDecimals(50);
+		kernel.setTemporaryMaximumPrintAccuracy();		
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 
 		// set label to get replaceable XML
@@ -961,7 +962,7 @@ public class Construction {
 		}
 
 		// restore old kernel settings
-		kernel.setPrintDecimals(oldDecimals);
+		kernel.restorePrintAccuracy();
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 
@@ -1030,8 +1031,7 @@ public class Construction {
 			// replace Strings: oldXML by newXML in consXML
 			int pos = consXML.indexOf(oldXML);
 			if (pos < 0) {
-				Application.debug("replace failed: oldXML string not found:\n"
-						+ oldXML);
+				Application.debug("replace failed: oldXML string not found:\n" + oldXML);
 				throw new MyError(getApplication(), "ReplaceFailed");
 			}
 			StringBuffer newConsXML = new StringBuffer();
@@ -1135,11 +1135,7 @@ public class Construction {
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
-		
-		//int oldDecimals = kernel.getPrintDecimals();
-		//kernel.setPrintDecimals(50);
-		kernel.setTemporaryMaximumPrintAccuracy();
-		
+		kernel.setTemporaryMaximumPrintAccuracy();		
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 
 		try {
@@ -1173,10 +1169,7 @@ public class Construction {
 			e.printStackTrace();
 		}
 
-		// restore old kernel settings
-		//kernel.setPrintDecimals(oldDecimals);
-		kernel.restorePrintAccuracy();
-		
+		kernel.restorePrintAccuracy();		
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 

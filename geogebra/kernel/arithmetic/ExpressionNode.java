@@ -150,7 +150,7 @@ implements ExpressionValue {
         app = kernel.getApplication();
               
         setLeft(leaf);
-        this.leaf = true;
+        this.leaf = true;        
     }
     
     // copy constructor: NO deep copy of subtrees is done here!
@@ -169,7 +169,7 @@ implements ExpressionValue {
         return kernel;
     }
     
-    public int getOperation() {
+    final public int getOperation() {
         return operation;
     }
     

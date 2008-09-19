@@ -390,7 +390,7 @@ public abstract class Application implements	KeyEventDispatcher {
     	Application.debug("GeoGebra "+versionString+" "+buildDate+" Java "+System.getProperty("java.version"));
     		
 
-	        isApplet = applet != null;
+	    isApplet = applet != null;
 		if (frame != null) {
 			mainComp = frame;
 		} 
@@ -399,6 +399,8 @@ public abstract class Application implements	KeyEventDispatcher {
 		} 
 		
 		//geogebra.euclidian.DrawBoolean.CheckBoxIcon.setSize(13);
+		 // Michael Borcherds 2008-06-03
+        jarmanager=      new JarManager(this);
 
 		initCodeBase();		
 		handleOptionArgs(args); // note: the locale is set here too	     			
@@ -411,8 +413,7 @@ public abstract class Application implements	KeyEventDispatcher {
 			setFrame(frame);			
 		}
 		
-	    // Michael Borcherds 2008-06-03
-	        jarmanager=      new JarManager(this);
+	   
 
         //  init kernel
         kernel = new Kernel(this);
@@ -1519,15 +1520,28 @@ public abstract class Application implements	KeyEventDispatcher {
     }
     
     // Michael Borcherds 2008-03-25
+    // Markus Hohenwarter 2008-09-18
     // replace "%0" by args[0], "%1" by args[1], etc
     final public String getPlain(String key,String[] args) {
-    	String ret = getPlain(key);
-  	
-    	for (int i=0 ; i<args.length ; i++)
-    	    ret=ret.replaceAll("%"+i,args[i]);
+    	String str = getPlain(key);
+    	
+    	sbPlain.setLength(0);
+    	for (int i=0; i < str.length(); i++) {
+    		char ch = str.charAt(i);
+    		if (ch == '%') {
+    			// get number after %
+    			i++;
+    			int pos = str.charAt(i) - '0';
+    			sbPlain.append(args[pos]);
+    		}
+    		else {
+    			sbPlain.append(ch);
+    		}
+    	}        
 
-    	return ret;
+    	return sbPlain.toString();
     }
+    private StringBuffer sbPlain = new StringBuffer();
     
     final public String getMenu(String key) {
     	if (!JarManager.GEOGEBRA_PROPERTIES_LOADED) return key; // jar file not present
@@ -2731,7 +2745,7 @@ public abstract class Application implements	KeyEventDispatcher {
 	 	return showConsProtNavigation;
 	 }
 	 
-	 public ConstructionProtocolNavigation getConstructionProtocolNavigation() { 
+	 public geogebra.gui.ConstructionProtocolNavigation getConstructionProtocolNavigation() { 
 	 	if (constProtocolNavigation == null) {
 	 		constProtocolNavigation = new ConstructionProtocolNavigation(getConstructionProtocol());
 	 	} else {	 		

@@ -10,11 +10,9 @@ the Free Software Foundation.
 
 */
 
-package geogebra.gui;
+package geogebra;
  
 
-import geogebra.Application;
-import geogebra.GeoGebra;
 
 import java.awt.Frame;
 import java.awt.Toolkit;
@@ -34,7 +32,7 @@ import java.net.URL;
 public class MyAppSplash extends Object {
     public static void main(String[] args) {    	
         Frame splashFrame = null;
-        URL imageURL = MyAppSplash.class.getResource("/geogebra/gui/images/splash.png");
+        URL imageURL = MyAppSplash.class.getResource("/geogebra/splash.png");
         if (imageURL != null) {
             splashFrame = SplashWindow.splash(
                 Toolkit.getDefaultToolkit().createImage(imageURL)

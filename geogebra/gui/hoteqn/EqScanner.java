@@ -64,7 +64,7 @@ This file is part of the HotEqn package.
 *                                                                            *
 *****************************************************************************/
 
-package hoteqn;
+package geogebra.gui.hoteqn;
 
 //package bHotEqn;
 

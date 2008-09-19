@@ -1435,7 +1435,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * e.g. labelPrefix = "F", geos.length = 2 sets geo[0].setLabel("F_1")
 	 * and geo[0].setLabel("F_2")
 	 */
-	static void setLabels(String labelPrefix, GeoElement[] geos) {
+	public static void setLabels(String labelPrefix, GeoElement[] geos) {
 		if (geos == null) return; 
 		
 		int visible = 0;

@@ -251,7 +251,7 @@ This file is part of the HotEqn package.
 
 // **** localWidth u. localHeight nur bei getPreferredSize() zurückgeben
 
-package hoteqn;
+package geogebra.gui.hoteqn;
 
 // package bHotEqn;  // for Bean-compilation to avoid double filenames
 

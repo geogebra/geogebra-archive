@@ -23,7 +23,7 @@ This file is part of the HotEqn package.
 ******************************************************************************/
 
 
-package hoteqn;
+package geogebra.gui.hoteqn;
 
 import geogebra.Application;
 

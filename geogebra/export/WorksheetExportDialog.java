@@ -13,9 +13,9 @@
 package geogebra.export;
 
 import geogebra.Application;
+import geogebra.algebra.InputPanel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GeoGebraPreferences;
-import geogebra.gui.InputPanel;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;

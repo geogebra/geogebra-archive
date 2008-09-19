@@ -16,7 +16,6 @@ import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import hoteqn.sHotEqn;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -43,7 +42,6 @@ public final class DrawText extends Drawable {
     private Font textFont;
     private GeoPoint loc; // text location
     
-    private sHotEqn eqn;
     //private Image eqnImage;
     private int oldXpos, oldYpos;
     private boolean needsBoundingBoxOld;
@@ -61,8 +59,6 @@ public final class DrawText extends Drawable {
     
     final public void update() {       
         isVisible = geo.isEuclidianVisible();       				 
-        if (eqn != null)
-    		eqn.setVisible(isVisible);
         if (!isVisible) return;          
         
         String newText = text.getTextString();

@@ -37,7 +37,7 @@ This file is part of the HotEqn package.
 *                                                                            *
 *****************************************************************************/
 
-package hoteqn;
+package geogebra.gui.hoteqn;
 
 class EqToken {
   public  int     typ;      // type of token
