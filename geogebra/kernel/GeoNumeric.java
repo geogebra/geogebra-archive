@@ -18,6 +18,8 @@
 
 package geogebra.kernel;
 
+import geogebra.Application;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -610,4 +612,35 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		this.isUsedForRandom = isUsedForRandom;
 	}
 	
+	public void update() {  	
+		super.update();
+    	if (this == cons.getKernel().getApplication().getEuclidianView().getEuclidianController().recordObject) 
+    	{
+    		EuclidianView view = kernel.getApplication().getEuclidianView();
+            // record to spreadsheet tool
+        	if (this == view.getEuclidianController().recordObject) {
+    	    	StringBuffer command = new StringBuffer();
+    	    	
+    	    	String row = view.getTraceRow() + "";
+    	    	
+    	    	command.append(getTraceColumn());
+    	    	command.append(row);
+    	    	command.append("=");
+    	    	command.append(getValue());
+    	    	//Application.debug(command.toString());
+    	    	try {
+    					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+    		   	 		    geos[0].setAuxiliaryObject(true);
+    	    	}
+    	    	catch (Exception e) {}
+
+        	}
+        }
+    }
+	private String traceColumn = "";
+	
+	public String getTraceColumn() {
+		if (traceColumn.equals("")) traceColumn = kernel.getApplication().getEuclidianView().getNextTraceColumn();
+		return traceColumn;
+	}
 }

@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -720,7 +721,40 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 				Locateable loc = (Locateable) locateableList.get(i);
 				loc.toGeoElement().updateCascade();													
 			}		
-		}			
+		}		
+		EuclidianView view = kernel.getApplication().getEuclidianView();
+        // record to spreadsheet tool
+    	if (this == view.getEuclidianController().recordObject) {
+	    	double [] coords = new double[2];
+	    	getInhomCoords(coords);
+	    	StringBuffer command = new StringBuffer();
+	    	
+	    	String row = view.getTraceRow() + "";
+	    	
+	    	// x coord
+	    	command.append(getTraceColumn1());
+	    	command.append(row);
+	    	command.append("=");
+	    	command.append(coords[0]);
+	    	//Application.debug(command.toString());
+	    	try {
+					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+		   	 		    geos[0].setAuxiliaryObject(true);
+	    	}
+	    	catch (Exception e) {}
+	    	
+	    	// y coord
+	    	command.setLength(0);
+	    	command.append(getTraceColumn2());
+	    	command.append(row);
+	    	command.append("=");
+	    	command.append(coords[1]);
+	    	try {
+					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+		   	 		    geos[0].setAuxiliaryObject(true);
+	    	}
+	    	catch (Exception e) {}
+    	}    	
 	}
 	
 	

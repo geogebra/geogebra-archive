@@ -281,6 +281,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 	public static final int MODE_FITLINE = 58; // Michael Borcherds 2008-06-22
 
+	public static final int MODE_RECORD_TO_SPREADSHEET = 59; // Michael Borcherds 2008-06-22
+
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 	
 	public static final int POINT_CAPTURING_OFF = 0;
@@ -593,7 +595,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 * //kernel.notifyRemoveAll(this); }
 	 */
 
-	Kernel getKernel() {
+	public Kernel getKernel() {
 		return kernel;
 	}
 
@@ -2186,6 +2188,31 @@ public class EuclidianView extends JPanel implements View, Printable {
 		return hits;
 	}
 
+	final public ArrayList getPointVectorNumericHits(Point p) {
+		foundHits.clear();
+
+		DrawableIterator it = allDrawableList.getIterator();
+		while (it.hasNext()) {
+			Drawable d = it.next();
+			if (d.hit(p.x, p.y) || d.hitLabel(p.x, p.y)) {
+				GeoElement geo = d.getGeoElement();
+				Application.debug(geo.getClass()+"XXXXXXXXXXXXXX");
+				if (geo.isEuclidianVisible()){
+					if (
+							//geo.isGeoNumeric() ||
+							 geo.isGeoVector()
+							|| geo.isGeoPoint()) 
+					{
+						foundHits.add(geo);
+						Application.debug("YYYYYYYYYYYYYYYYYY");
+					}
+				}
+			}
+		}
+
+		return foundHits;
+	}
+	
 	/**
 	 * returns array of GeoElements whose visual representation is at screen
 	 * coords (x,y). order: points, vectors, lines, conics
@@ -2243,6 +2270,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		return foundHits;
 	}
+	
 	protected ArrayList foundHits = new ArrayList();
 	
 	/**
@@ -2382,6 +2410,24 @@ public class EuclidianView extends JPanel implements View, Printable {
 			boolean success = geoclass.isInstance(hits.get(i));
 			if (other)
 				success = !success;
+			if (success)
+				result.add(hits.get(i));
+		}
+		return result.size() == 0 ? null : result;
+	}
+
+	/**
+	 * Stores all GeoElements of type GeoPoint, GeoVector, GeoNumeric to result list.
+	 * 
+	 */
+	final protected ArrayList getRecordableHits(ArrayList hits, ArrayList result) {
+		if (hits == null)
+			return null;
+
+		result.clear();
+		for (int i = 0; i < hits.size(); ++i) {
+			GeoElement hit = (GeoElement)hits.get(i);
+			boolean success = (hit.isGeoPoint() || hit.isGeoVector() || hit.isGeoNumeric());
 			if (success)
 				result.add(hits.get(i));
 		}
@@ -3667,6 +3713,9 @@ public class EuclidianView extends JPanel implements View, Printable {
 			
 		case MODE_FITLINE:
 			return "FitLine";
+
+		case MODE_RECORD_TO_SPREADSHEET:
+			return "RecordToSpreadsheet";
 
 		default:
 			return "";
