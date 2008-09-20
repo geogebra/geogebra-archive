@@ -164,11 +164,13 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/
-        Iterator it = construction.getGeoSetConstructionOrder().iterator();  	 
-        while (it.hasNext()) {
-        	GeoElement g = (GeoElement) it.next();
-           	drawGeoElement(g);
-        }
+     	Object [] geos =
+     		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
+     	for (int i=0;i<geos.length;i++){
+        	GeoElement g = (GeoElement)(geos[i]);
+           	drawGeoElement(g);     		
+     	}
+		
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment pspicture

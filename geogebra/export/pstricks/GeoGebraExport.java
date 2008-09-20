@@ -200,11 +200,12 @@ public abstract class GeoGebraExport implements ActionListener{
             AlgoElement algo = g.getParentAlgorithm();
             if (algo == null) {
             	// indpendent number may be shown as slider
-        		drawSlider((GeoNumeric)g);
+            	drawSlider((GeoNumeric)g);
             }
             else if (algo instanceof AlgoSlope) {
             	drawSlope((GeoNumeric)g);
             	drawLabel(g,null);
+
             }       
             else if (algo instanceof AlgoIntegralDefinite) {
                 drawIntegral((GeoNumeric) g);  

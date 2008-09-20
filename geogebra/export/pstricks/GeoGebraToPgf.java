@@ -121,12 +121,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
      	codeFilledObject.append(";\n");
 
 /*		 get all objects from construction
- *   	 and "draw" them by creating pstricks code*/
-        Iterator it = construction.getGeoSetConstructionOrder().iterator();  	 
-        while (it.hasNext()) {
-        	GeoElement g = (GeoElement) it.next();
-           	drawGeoElement(g);
-        }
+ *   	 and "draw" them by creating PGF code*/
+     	Object [] geos =
+     		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
+     	for (int i=0;i<geos.length;i++){
+        	GeoElement g = (GeoElement)(geos[i]);
+           	drawGeoElement(g);     		
+     	}
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment tikzpicture
@@ -717,7 +718,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	double width=geo.getSliderWidth();
     	double x=geo.getSliderX();
     	double y=geo.getSliderY();
-    	
     	// start point of horizontal line for slider
     	if (geo.isAbsoluteScreenLocActive()) {
     		x = euclidianView.toRealWorldCoordX(x);
@@ -751,6 +751,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	drawLabel(geoPoint,drawPoint);
     	// Bug fixed with Slider
     	geoPoint.remove(); 
+
     	//draw Line or Slider
     	code.append("\\draw");
     	String s=LineOptionCode(geo,true);
