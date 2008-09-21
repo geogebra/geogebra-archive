@@ -36,7 +36,7 @@ GeoDeriveable, ParametricCurve {
 	
 	private Function fun;		
 	protected boolean isDefined = true;
-	public boolean trace;	
+	public boolean trace, spreadsheetTrace;	
 	private String varStr = "x";
 	
 	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
@@ -501,6 +501,14 @@ GeoDeriveable, ParametricCurve {
 		this.trace = trace;	
 	}   
 
+	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
+		this.spreadsheetTrace = spreadsheetTrace;
+	}
+
+	public boolean getSpreadsheetTrace() {
+		return spreadsheetTrace;
+	}
+	
 	
 	
 	public GeoFunction getGeoFunction() {

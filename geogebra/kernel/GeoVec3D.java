@@ -27,7 +27,7 @@ public abstract class GeoVec3D extends GeoElement
 implements Traceable {
        
     public double x, y, z = Double.NaN;
-	public boolean trace;	 
+	public boolean trace, spreadsheetTrace;		 
     
     public GeoVec3D(Construction c) {super(c);}  
     
@@ -124,6 +124,14 @@ implements Traceable {
 		return trace;
 	}
     
+	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
+		this.spreadsheetTrace = spreadsheetTrace;
+	}
+
+	public boolean getSpreadsheetTrace() {
+		return spreadsheetTrace;
+	}
+	
     /** Yields true if this vector and v are linear dependent 
      * This is done by calculating the cross product
      * of this vector an v: this lin.dep. v <=> this.cross(v) = nullvector.

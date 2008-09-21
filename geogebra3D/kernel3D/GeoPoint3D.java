@@ -254,6 +254,12 @@ final public class GeoPoint3D extends GeoVec4D {
 		return false;
 	}       
 
+	public boolean getSpreadsheetTrace() {
+		return false;
+	}
+    
+	public void setSpreadsheetTrace(boolean trace) {
+	}
     
 	
 }

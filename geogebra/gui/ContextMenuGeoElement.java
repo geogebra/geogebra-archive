@@ -418,6 +418,21 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 addItem(cbItem);            	
             }  
             
+            //  trace to spreadsheet
+            if (geo.isGeoPoint() && app.showSpreadsheet()) {            	
+                cbItem = new JCheckBoxMenuItem( app.getPlain("TraceToSpreadsheet"));
+                cbItem.setIcon(app.getImageIcon("trace_on.gif"));
+                cbItem.setSelected(((Traceable) geo).getSpreadsheetTrace());
+                cbItem.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                        ((Traceable) geo).setSpreadsheetTrace(!((Traceable) geo).getSpreadsheetTrace());
+                        geo.updateRepaint();
+                        app.storeUndoInfo();
+                    }       	
+            	});
+                addItem(cbItem);            	
+            }  
+            
             // AUXILIARY OBJECT
             
             if (app.showAlgebraView() && app.showAuxiliaryObjects() && 

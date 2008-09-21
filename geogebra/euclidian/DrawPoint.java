@@ -125,6 +125,8 @@ public final class DrawPoint extends Drawable {
         circleSel.setFrame(xUL - SELECTION_OFFSET, 
 				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
+        if (P.spreadsheetTrace) drawSpreadsheetTrace();
+        
 		// draw trace
 		if (P.trace) {
 			isTracing = true;
@@ -203,9 +205,7 @@ public final class DrawPoint extends Drawable {
         }
     }
     
-    final void drawTrace(Graphics2D g2) {
-    	g2.setPaint(geo.getObjectColor());
-    	
+    final void drawSpreadsheetTrace() {
     	// copy trace coords into Spreadsheet if it's visible
     	if (view.getApplication().showSpreadsheet()) {
 	    	double [] coords = new double[2];
@@ -241,6 +241,11 @@ public final class DrawPoint extends Drawable {
 	    	// maybe quicker, would have to delete A5 etc first, lose any decendants?
 	    	//GeoNumeric num = new GeoNumeric(view.getKernel().getConstruction(),"A5",33);
     	}
+    }
+    
+    final void drawTrace(Graphics2D g2) {
+    	g2.setPaint(geo.getObjectColor());
+    	
     	
     	// Florian Sonner 2008-07-17
     	int pointStyle = P.getPointStyle();

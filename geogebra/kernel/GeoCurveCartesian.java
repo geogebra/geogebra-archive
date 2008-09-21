@@ -34,7 +34,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 	private double startParam, endParam;
 	private boolean isDefined = true;
 	private boolean isClosedPath;
-	private boolean trace = false;	
+	private boolean trace = false, spreadsheetTrace = false;	
 //	Victor Franco Espino 25-04-2007
 	/*
 	 * Parameter in dialog box for adjust color of curvature
@@ -438,6 +438,14 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
 		return trace;
 	}
 
+	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
+		this.spreadsheetTrace = spreadsheetTrace;
+	}
+
+	public boolean getSpreadsheetTrace() {
+		return spreadsheetTrace;
+	}
+	
 	public void setTrace(boolean trace) {
 		this.trace = trace;	
 	}   	

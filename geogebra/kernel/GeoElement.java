@@ -2677,6 +2677,14 @@ final public boolean hasOnlyFreeInputPoints() {
 			}
 		}
 		
+		// trace to spreadsheet on or off
+		if (isTraceable()) {
+			Traceable t = (Traceable) this;
+			if (t.getTrace()) {
+				sb.append("\t<spreadsheetTrace val=\"true\"/>\n");
+			}
+		}
+		
 		// decoration type
 		if (decorationType != DECORATION_NONE) {
 			sb.append("\t<decoration");		
