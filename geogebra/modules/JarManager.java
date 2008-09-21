@@ -142,7 +142,7 @@ public class JarManager {
          	//spreadsheetView = new SpreadsheetView(app, 26, 100);
             Application.debug("IS_WEBSTART="+IS_WEBSTART);
             return;
-         } catch (javax.jnlp.UnavailableServiceException ex) {
+         } catch (Exception ex) {
              IS_WEBSTART=false;
              Application.debug("IS_WEBSTART="+IS_WEBSTART);
             //ex.printStackTrace();

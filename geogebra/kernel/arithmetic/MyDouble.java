@@ -121,17 +121,21 @@ implements NumberValue {
     
     /** c = pow(a,b) */
     final public static void pow(MyDouble a, MyDouble b, MyDouble c) {
-    	if (a.val == 0d && b.val == 0d) 
-    		c.val = Double.NaN;
-    	else {
-    		// check for integer value in exponent
-    		//double bint = Math.round(b.val);
-    		//if (b.kernel.isEqual(b.val, bint))
-    		//	c.val = Math.pow(a.val, bint);
-    		//else
-    			c.val = Math.pow(a.val, b.val);
-    	}
-    		
+//    	if (b.val == 0d) {
+//    		if (a.val < 0d)
+//    			c.val = -1;
+//    		else
+//    			c.val = 1;    		
+//    	} else {
+//    		// check for integer value in exponent
+//    		//double bint = Math.round(b.val);
+//    		//if (b.kernel.isEqual(b.val, bint))
+//    		//	c.val = Math.pow(a.val, bint);
+//    		//else
+//    		c.val = Math.pow(a.val, b.val); 	
+//    	}
+//    	
+    	c.val = Math.pow(a.val, b.val);    		
         c.isAngle = a.isAngle && !b.isAngle;
     }
 
