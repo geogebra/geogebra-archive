@@ -101,7 +101,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -4500,16 +4502,30 @@ public abstract class Application implements	KeyEventDispatcher {
 	
 	public static synchronized String getTempDir() {
 		if (tempDir == null) {
-			Random generator = new Random();
-			int rand = generator.nextInt();
-			if (rand < 0) rand *= -1;
 			String baseDir = System.getProperty("java.io.tmpdir");
 			
 			// Mac OS doesn't add "/"
 			if (!baseDir.endsWith(File.separator)) baseDir += File.separator;
 			
-			// add random folder name (problems on some systems with write access if another instance of GeoGebra is running
-			tempDir = baseDir + "geogebra" + rand + File.separator;
+		    try {
+				// add IP address to folder name (problems on some systems with write access if another instance of GeoGebra is running
+		        InetAddress addr = InetAddress.getLocalHost();
+		    
+		        // Get IP Address
+		        byte[] ipAddr = addr.getAddress();
+		        
+				tempDir = baseDir + "geogebra" + convertToHex(ipAddr) + File.separator;
+
+		    } catch (Exception e) {
+				// add random folder name instead
+				Random generator = new Random();
+				int rand = generator.nextInt();
+				if (rand < 0) rand *= -1;
+				
+				tempDir = baseDir + "geogebra" + rand + File.separator;
+		    }
+
+			
 			
 			
 			try {
