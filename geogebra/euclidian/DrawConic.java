@@ -230,8 +230,6 @@ final public class DrawConic extends Drawable implements Previewable {
 	            break;            
         }
         
-        if (conic.spreadsheetTrace) drawSpreadsheetTrace();
-        
 		// draw trace
 		if (conic.trace) {
 			isTracing = true;

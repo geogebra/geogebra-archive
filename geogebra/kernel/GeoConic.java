@@ -72,7 +72,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 	double[] matrix = new double[6]; // flat matrix A
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
 	private AffineTransform transform;
-	public boolean trace, spreadsheetTrace;	
+	public boolean trace;	
 
 	// (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
 	// (eigenvecX, eigenvecY) is not a unit vector
@@ -167,14 +167,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable  {
 
 	public boolean getTrace() {
 		return trace;
-	}
-	
-	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
-		this.spreadsheetTrace = spreadsheetTrace;
-	}
-
-	public boolean getSpreadsheetTrace() {
-		return spreadsheetTrace;
 	}
 	
 	public boolean isPath() {
