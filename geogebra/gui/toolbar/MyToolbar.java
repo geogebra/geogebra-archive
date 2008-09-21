@@ -402,6 +402,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_MOVE);        
         sb.append(" ");
         sb.append(EuclidianView.MODE_MOVE_ROTATE);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_RECORD_TO_SPREADSHEET);
                                
         // points   
         sb.append(" || ");
