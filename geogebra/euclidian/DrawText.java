@@ -191,7 +191,7 @@ public final class DrawText extends Drawable {
 					-labelRectangle.height * view.invYscale);	
 			
 	    	// TODO: remove
-	    	Application.debug("UPDATE  text & draw " + geo + ", invXscale " + view.invXscale);
+	    	//Application.debug("UPDATE  text & draw " + geo + ", invXscale " + view.invXscale);
 	    
 	    	
 		}
@@ -199,16 +199,15 @@ public final class DrawText extends Drawable {
 
     final public void draw(Graphics2D g2) { 
         if (isVisible) {      
-        	if (!isLaTeX) {
+        	if (isLaTeX) {
+        		g2.setPaint(geo.getObjectColor());				
+    			g2.setFont(textFont);    			
+    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());       
+        	} 
+        	else {
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
     			drawMultilineText(g2);   
-        	} else 
-        	{
-        		g2.setPaint(geo.getObjectColor());				
-    			g2.setFont(textFont);    			
-    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());   
-        		//drawEquation(g2,xLabel,yLabel);
         	}
         	
 			  

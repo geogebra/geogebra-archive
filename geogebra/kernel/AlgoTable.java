@@ -12,14 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
 
-
-/**
- * Maximum value of a list.
- * @author Michael Borcherds
- * @version 2008-09-09
- */
 
 public class AlgoTable extends AlgoElement {
 
@@ -73,7 +66,7 @@ public class AlgoTable extends AlgoElement {
     	
     	for (int i=0; i < size; i++) {
     		GeoElement geo = geoList.get(i);
-    		if (geo instanceof GeoList)
+    		if (geo.isGeoList())
     		{ // if list, remove start and end {}
     			String str = geo.toLaTeXString(false);
     			sb.append(str.substring(1, str.length()-1));
