@@ -4,6 +4,7 @@
 package geogebra.cas.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -33,13 +34,15 @@ public class CASOutputPanel extends JPanel{
         c.fill = GridBagConstraints.BOTH;
         gridbag.setConstraints(outputSign, c);
         this.add(outputSign);
-		//this.add(outputSign);
 		outputSign.setBackground(Color.white);
 		
 		c.gridwidth = GridBagConstraints.REMAINDER; //end row
 		c.weightx=1;
 		c.fill = GridBagConstraints.BOTH;
 		gridbag.setConstraints(outputArea, c);
+		this.add(Box.createRigidArea(new Dimension(5, 2)));
+		
+		outputArea.setForeground(Color.gray);
 		this.add(outputArea);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);	

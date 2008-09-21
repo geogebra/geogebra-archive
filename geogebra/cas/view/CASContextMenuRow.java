@@ -1,6 +1,8 @@
 package geogebra.cas.view;
 
 import geogebra.Application;
+import geogebra.kernel.GeoElement;
+import geogebra.spreadsheet.RelativeCopy;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -55,9 +57,9 @@ public class CASContextMenuRow extends JPopupMenu
 		addSeparator();
 		JMenuItem item7;
 		if (row1 == row2)
-			item7 = new JMenuItem(app.getMenu("ClearRow"));
+			item7 = new JMenuItem(app.getMenu("DeleteRow"));
 		else
-			item7 = new JMenuItem(app.getMenu("ClearRows"));
+			item7 = new JMenuItem(app.getMenu("DeleteRows"));
 		item7.setIcon(app.getEmptyIcon());
 		item7.addActionListener(new ActionListenerClear());
 		add(item7);
@@ -67,21 +69,29 @@ public class CASContextMenuRow extends JPopupMenu
 	private class ActionListenerInsertAbove implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int columns = table.getModel().getColumnCount();
-			System.out.println("InsertAbove Action Performed");
+			System.out.println("InsertAbove Action Performed " + (row1-1));
+			
+			table.insertRow(row1-1, 0);
 		}
 	}
 
 	private class ActionListenerInsertBelow implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int columns = table.getModel().getColumnCount();
-			System.out.println("InsertBelow Action Performed");
+			System.out.println("InsertBelow Action Performed " + row1);
+			table.insertRow(row1, 0);
 		}
 	}
 
 	private class ActionListenerClear implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int columns = table.getModel().getColumnCount();
 			System.out.println("Clear Action Performed");
+			
+			for (int row = row1; row <= row2; ++ row) {
+				table.deleteRow(row);
+				System.out.println("Delete Action Performed " + row);
+			}
+			
 		}
 	}
 

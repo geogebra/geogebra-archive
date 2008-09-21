@@ -5,6 +5,8 @@
 package geogebra.cas.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.*;
 
 public class CASInputPanel extends JPanel{
@@ -19,6 +21,7 @@ public class CASInputPanel extends JPanel{
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(inputSign);
 		inputSign.setBackground(Color.white);
+		this.add(Box.createRigidArea(new Dimension(5, 2)));
 		this.add(inputArea);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);

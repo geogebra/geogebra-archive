@@ -40,8 +40,6 @@ public class CASTableCell extends JPanel {
 		this.add(inputPanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
-		outputPanel.setBackground(Color.lightGray);
-		linePanel.setBackground(Color.lightGray);
 		
 		return;
 	}

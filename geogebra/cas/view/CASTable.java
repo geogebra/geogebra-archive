@@ -8,6 +8,7 @@ import geogebra.kernel.Kernel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
 
 import javax.swing.*;
 
@@ -152,5 +153,56 @@ public class CASTable extends JTable {
 				true, editRow, editCol));
 		setRowHeight(editRow, temp.addLinePanel());
 		temp.setLineBorderFocus();
+	}
+	
+	public Point getIndexFromPixel(int x, int y) {
+		if (x < 0 || y < 0) return null;
+		int indexX = -1;
+		int indexY = -1;
+		for (int i = 0; i < getColumnCount(); ++ i) {
+			Point point = getPixel(i, 0, false);
+			if (x < point.getX()) {
+				indexX = i;
+				break;
+			}
+		}
+		if (indexX == -1) {
+			return null;
+		}
+		for (int i = 0; i < getRowCount(); ++ i) {
+			Point point = getPixel(0, i, false);
+			if (y < point.getY()) {
+				indexY = i;
+				break;
+			}
+		}
+		if (indexY == -1) {
+			return null;
+		}
+		return new Point(indexX, indexY);
+	}
+	
+	protected Point getPixel(int column, int row, boolean min) {
+		if (column < 0 || row < 0) {
+			return null;
+		}
+		if (min && column == 0 && row == 0) {
+			return new Point(0, 0);
+		}
+		int x = 0;
+		int y = 0;
+		if (! min) {
+			++ column;
+			++ row;
+		}
+		for (int i = 0; i < column; ++ i) {
+			x += getColumnModel().getColumn(i).getWidth();
+		}
+		int rowHeight;
+		for (int i = 0; i < row; ++ i) {
+			rowHeight = getRowHeight(i);
+			y += rowHeight;
+		}
+		return new Point(x, y);
 	}
 }
