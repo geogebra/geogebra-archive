@@ -253,6 +253,21 @@ public class ContextMenuGeoElement extends JPopupMenu {
             };
             addAction(action);
         }
+        if (mode != Kernel.COORD_COMPLEX) {
+            action = new AbstractAction(app.getPlain("ComplexNumber")) {
+                /**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {
+					vector.setMode(Kernel.COORD_COMPLEX);
+					vector.updateRepaint();
+                    app.storeUndoInfo();
+                }
+            };
+            addAction(action);
+        }
     }
 
     private void addConicItems() {

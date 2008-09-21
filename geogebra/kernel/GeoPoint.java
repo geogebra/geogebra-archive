@@ -646,9 +646,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
         	       
         // polar or cartesian coords
         switch(toStringMode) {
-            case Kernel.COORD_POLAR:
-                sb.append("\t<coordStyle style=\"polar\"/>\n");
-                break;
+        case Kernel.COORD_POLAR:
+            sb.append("\t<coordStyle style=\"polar\"/>\n");
+            break;
+
+        case Kernel.COORD_COMPLEX:
+            sb.append("\t<coordStyle style=\"complex\"/>\n");
+            break;
 
             default:
                 sb.append("\t<coordStyle style=\"cartesian\"/>\n");

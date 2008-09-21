@@ -99,6 +99,7 @@ implements Traceable {
     
     public void setPolar() { toStringMode = Kernel.COORD_POLAR; }
     public void setCartesian() { toStringMode = Kernel.COORD_CARTESIAN; }
+    public void setComplex() { toStringMode = Kernel.COORD_COMPLEX; }
     
     /** Yields true if the coordinates of this vector are equal to
      * those of vector v. 

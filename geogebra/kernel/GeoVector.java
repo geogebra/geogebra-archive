@@ -310,15 +310,24 @@ implements Path, VectorValue, Locateable, Rotateable {
 	
 	private StringBuffer buildValueString() {
 		sbBuildValueString.setLength(0);
-		sbBuildValueString.append("(");		
 		switch (toStringMode) {
-			case Kernel.COORD_POLAR:                	
-			sbBuildValueString.append(kernel.format(GeoVec2D.length(x, y)));
-			sbBuildValueString.append("; ");
-			sbBuildValueString.append(kernel.formatAngle(Math.atan2(y, x)));
-				break;
-                    
+		case Kernel.COORD_POLAR:                	
+			sbBuildValueString.append("(");		
+		sbBuildValueString.append(kernel.format(GeoVec2D.length(x, y)));
+		sbBuildValueString.append("; ");
+		sbBuildValueString.append(kernel.formatAngle(Math.atan2(y, x)));
+		sbBuildValueString.append(")");
+			break;
+                
+		case Kernel.COORD_COMPLEX:              	
+			sbBuildValueString.append(kernel.format(x));
+			sbBuildValueString.append(" ");
+			sbBuildValueString.append(kernel.formatSigned(y));
+			sbBuildValueString.append("i");
+            break;                                
+                
 			default: // CARTESIAN
+				sbBuildValueString.append("(");		
 			sbBuildValueString.append(kernel.format(x));
 			switch (kernel.getCoordStyle()) {
 				case Kernel.COORD_STYLE_AUSTRIAN:
@@ -329,9 +338,9 @@ implements Path, VectorValue, Locateable, Rotateable {
 					sbBuildValueString.append(", ");												
 			}
 			sbBuildValueString.append(kernel.format(y));
+			sbBuildValueString.append(")");
 				break;       
 		}
-		sbBuildValueString.append(")");
 		return sbBuildValueString;
 	}
 	private StringBuffer sbBuildValueString = new StringBuffer(50); 
@@ -379,6 +388,10 @@ implements Path, VectorValue, Locateable, Rotateable {
 			 case Kernel.COORD_POLAR:
 				 sb.append("\t<coordStyle style=\"polar\"/>\n");
 				 break;
+
+		        case Kernel.COORD_COMPLEX:
+		            sb.append("\t<coordStyle style=\"complex\"/>\n");
+		            break;
 
 			 default:
 				 sb.append("\t<coordStyle style=\"cartesian\"/>\n");

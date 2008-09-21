@@ -1700,6 +1700,8 @@ public class MyXMLHandler implements DocHandler {
 			v.setCartesian();
 		} else if (style.equals("polar")) {
 			v.setPolar();
+		} else if (style.equals("complex")) {
+			v.setComplex();
 		} else {
 			Application.debug("unknown style in <coordStyle>: " + style);
 			return false;
