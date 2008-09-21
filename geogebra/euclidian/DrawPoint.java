@@ -70,7 +70,7 @@ public final class DrawPoint extends Drawable {
         		
         // compute lower left corner of bounding box
 	    double [] coords = new double[2];
-        P.getInhomCoords(coords);                   
+        P.getInhomCoords(coords);                    
         
         // convert to screen
 		view.toScreenCoords(coords);						

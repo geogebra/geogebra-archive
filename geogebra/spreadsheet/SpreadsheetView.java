@@ -103,22 +103,21 @@ public class SpreadsheetView extends JScrollPane implements View
 				
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
-			tableModel.setValueAt(null, location.y, location.x);
+			doRemove(geo, location.y, location.x);
 		}
+	}
+	
+	private void doRemove(GeoElement geo, int row, int col) {
+		tableModel.setValueAt(null, row, col);
 	}
 	
 	public void rename(GeoElement geo) {
 		//Application.debug(new Date() + " RENAME");
 		Point location = geo.getOldSpreadsheetCoords();
 		if (location != null) {
-			if (location.y >= tableModel.getRowCount()) {
-				tableModel.setRowCount(location.y + 1);				
-			}
-			if (location.x >= tableModel.getColumnCount()) {
-				tableModel.setColumnCount(location.x + 1);				
-			}
-			tableModel.setValueAt(null, location.y, location.x);
+			doRemove(geo, location.y, location.x);
 		}
+
 		add(geo);
 	}
 	
