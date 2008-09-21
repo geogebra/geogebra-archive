@@ -1516,6 +1516,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("significantfigures")) {
 				ok = handleTextFigures(attrs);
 				break;
+			} else if (eName.equals("spreadsheetTrace")) {
+				ok = handleSpreadsheetTrace(attrs);
+				break;
 			}
 
 		case 't':
@@ -1919,6 +1922,22 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			Traceable t = (Traceable) geo;
 			t.setTrace(parseBoolean((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleSpreadsheetTrace(LinkedHashMap attrs) {
+		if (!(geo instanceof GeoPoint)) {
+			Application.debug("wrong element type for <trace>: "
+					+ geo.getClass());
+			return false;
+		}
+
+		try {
+			GeoPoint p = (GeoPoint) geo;
+			p.setSpreadsheetTrace(parseBoolean((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;

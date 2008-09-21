@@ -695,6 +695,10 @@ public abstract class GeoElement
 		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
 		}
+		
+		if (isGeoPoint() && geo.isGeoPoint()) {
+			((GeoPoint) this).setSpreadsheetTrace(((GeoPoint) geo).getSpreadsheetTrace());
+		}
 	}
 	
 	/**
@@ -2678,9 +2682,9 @@ final public boolean hasOnlyFreeInputPoints() {
 		}
 		
 		// trace to spreadsheet on or off
-		if (isTraceable()) {
-			Traceable t = (Traceable) this;
-			if (t.getTrace()) {
+		if (isGeoPoint()) {
+			GeoPoint p = (GeoPoint) this;
+			if (p.getSpreadsheetTrace()) {
 				sb.append("\t<spreadsheetTrace val=\"true\"/>\n");
 			}
 		}
