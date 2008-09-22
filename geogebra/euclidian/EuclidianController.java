@@ -2051,7 +2051,6 @@ public class EuclidianController implements MouseListener,
 	final protected void moveNumeric(boolean repaint) {
 		double min = movedGeoNumeric.getIntervalMin();
 		double max = movedGeoNumeric.getIntervalMax();
-		
 		double param;
 		if (movedGeoNumeric.isSliderHorizontal()) {
 			if (movedGeoNumeric.isAbsoluteScreenLocActive()) {				
@@ -2386,7 +2385,6 @@ public class EuclidianController implements MouseListener,
 		GeoElement geo;
 		ArrayList hits;
 		
-		Application.debug("handleMousePressedForRecordToSpreadsheetMode");
 		ArrayList pointHits = view.getHits(mouseLoc, GeoPoint.class, tempArrayList);
 		ArrayList vectorHits = view.getHits(mouseLoc, GeoVector.class, tempArrayList2);
 		ArrayList numberHits = view.getHits(mouseLoc, GeoNumeric.class, tempArrayList3);
@@ -2395,22 +2393,14 @@ public class EuclidianController implements MouseListener,
 		if (recordObject == null) {
 			if (pointHits != null) {
 				recordObject = (GeoPoint)pointHits.get(0);
-				Application.debug(recordObject.getClass()+"xxx");
 				//app.addSelectedGeo(recordObject);
 				recordObject.setSelected(true);
-				moveMode = MOVE_NONE;
-				movedGeoPoint = null;
-				movedGeoNumeric = null;
-				view.resetTraceRow();
+				resetSpreadsheetRecording();
 			} else if (vectorHits != null) {
 				recordObject = (GeoVector)vectorHits.get(0);
-				Application.debug(recordObject.getClass()+"xxx");
 				//app.addSelectedGeo(recordObject);
 				recordObject.setSelected(true);
-				moveMode = MOVE_NONE;
-				movedGeoPoint = null;
-				movedGeoNumeric = null;
-				view.resetTraceRow();
+				resetSpreadsheetRecording();
 			}
 		}
 		else {	// recordObject != null
@@ -2420,15 +2410,14 @@ public class EuclidianController implements MouseListener,
 					// if you drag a point at the end of a vector, we don't want to deselect the vector:
 			(!recordObject.isGeoVector() || (recordObject.isGeoVector() && noPointsIn(hits)))		
 			) {
-				app.removeSelectedGeo(recordObject);
+				//app.removeSelectedGeo(recordObject);
 				recordObject.setSelected(false);
 				recordObject = null;
-				Application.debug("recordObject = null;");
 				moveMode = MOVE_NONE;
 				return;
 			}
 							
-			moveModeSelectionHandled = true;
+			//moveModeSelectionHandled = true;
 			
 			if (movedGeoPoint != null) movedGeoPoint.setSelected(false);
 			if (movedGeoNumeric != null) movedGeoNumeric.setSelected(false);
@@ -2448,11 +2437,13 @@ public class EuclidianController implements MouseListener,
 			{
 				movedGeoNumeric.setSelected(true);
 				moveMode = MOVE_NUMERIC;
+				startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
 			}
 			else if (numberHits != null) {
 				movedGeoNumeric = (GeoNumeric)numberHits.get(0);
 				movedGeoNumeric.setSelected(true);
 				moveMode = MOVE_NUMERIC;
+				startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
 			}
 			else {
 				moveMode = MOVE_NONE;
@@ -2472,9 +2463,6 @@ public class EuclidianController implements MouseListener,
 	final protected boolean record(ArrayList hits) {
 		if (hits == null)
 			return false;
-		
-		Application.debug("hits.size = "+hits.size()+"   selGeos ="+selGeos());
-		
 		
 		// check how many interesting hits we have
 		if (!selectionPreview && hits.size() > 2 - selGeos()) {
@@ -2513,29 +2501,17 @@ public class EuclidianController implements MouseListener,
 			if (selPoints() == 1) {
 				GeoPoint[] points = getSelectedPoints();
 				recordObject = points[0];
-				Application.debug(recordObject.getClass()+"");
-				moveMode = MOVE_NONE;
-				movedGeoPoint = null;
-				movedGeoNumeric = null;
-				view.resetTraceRow();
+				resetSpreadsheetRecording();
 			}
 			else if (selNumbers() == 1) {
 				GeoNumeric[] nums = getSelectedNumbers();
 				recordObject = nums[0];
-				Application.debug(recordObject.getClass()+"");
-				moveMode = MOVE_NONE;
-				movedGeoPoint = null;
-				movedGeoNumeric = null;
-				view.resetTraceRow();
+				resetSpreadsheetRecording();
 			}
 			else if (selVectors() == 1) {
 				GeoVector[] vecs = getSelectedVectors();
 				recordObject = vecs[0];
-				Application.debug(recordObject.getClass()+"");
-				moveMode = MOVE_NONE;
-				movedGeoPoint = null;
-				movedGeoNumeric = null;
-				view.resetTraceRow();
+				resetSpreadsheetRecording();
 			}
 			if (recordObject != null) recordObject.setSelected(true);
 			//return true;
@@ -2544,37 +2520,25 @@ public class EuclidianController implements MouseListener,
 			{
 				GeoPoint[] points = getSelectedPoints();
 				if (points[0] == recordObject) {
-					Application.debug("recordObject = null;");
 					recordObject.setSelected(false);
 					recordObject = null;
-					moveMode = MOVE_NONE;
-					movedGeoPoint = null;
-					movedGeoNumeric = null;
-					view.resetTraceRow();
+					resetSpreadsheetRecording();
 				}
 			}
 			else if (selNumbers() == 1) {
 				GeoNumeric[] nums = getSelectedNumbers();
 				if (recordObject == nums[0]) {
-					Application.debug("recordObject = null;");
 					recordObject.setSelected(false);
 					recordObject = null;
-					moveMode = MOVE_NONE;
-					movedGeoPoint = null;
-					movedGeoNumeric = null;
-					view.resetTraceRow();
+					resetSpreadsheetRecording();
 				}
 			}
 			else if (selVectors() == 1) {
 				GeoVector[] vecs = getSelectedVectors();
 				if (recordObject == vecs[0]) {
-					Application.debug("recordObject = null;");
 					recordObject.setSelected(false);
 					recordObject = null;
-					moveMode = MOVE_NONE;
-					movedGeoPoint = null;
-					movedGeoNumeric = null;
-					view.resetTraceRow();
+					resetSpreadsheetRecording();
 				}
 			}
 			if (recordObject != null) recordObject.setSelected(true);
@@ -2586,6 +2550,13 @@ public class EuclidianController implements MouseListener,
 			return false;
 
 		return false;
+	}
+	
+	private void resetSpreadsheetRecording() {
+		moveMode = MOVE_NONE;
+		movedGeoPoint = null;
+		movedGeoNumeric = null;
+		view.resetTraceRow();		
 	}
 
 	//	get two points and create line through them
