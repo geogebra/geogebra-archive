@@ -2196,7 +2196,6 @@ public class EuclidianView extends JPanel implements View, Printable {
 			Drawable d = it.next();
 			if (d.hit(p.x, p.y) || d.hitLabel(p.x, p.y)) {
 				GeoElement geo = d.getGeoElement();
-				Application.debug(geo.getClass()+"XXXXXXXXXXXXXX");
 				if (geo.isEuclidianVisible()){
 					if (
 							//geo.isGeoNumeric() ||
@@ -2204,7 +2203,6 @@ public class EuclidianView extends JPanel implements View, Printable {
 							|| geo.isGeoPoint()) 
 					{
 						foundHits.add(geo);
-						Application.debug("YYYYYYYYYYYYYYYYYY");
 					}
 				}
 			}
