@@ -237,13 +237,12 @@ public abstract class Drawable {
 	{
 		Dimension dim;
 		if (eqn == null) {
-			//if (!JarManager.addGuiJarToClassPath()) {
-			//	Application.debug("Could not initialize GUI jar file");
-			//	return new Dimension(0,0);    		
-	    	//}	
+			if (!JarManager.addGuiJarToClassPath()) {
+				Application.debug("Could not initialize GUI jar file");
+				return new Dimension(0,0);    		
+	    	}	
 			
 			eqn = new geogebra.gui.hoteqn.sHotEqn(text);
-		
 			//Application.debug(eqn.getSize());
 			eqn.setDoubleBuffered(false);
 			eqn.setEditable(false);	
@@ -256,7 +255,7 @@ public abstract class Drawable {
 		{
 			eqn.setEquation(text);
 		}
-		
+
 			//setEqnFontSize();																												
 			int size = (font.getSize() / 2) * 2; 
 			if (size < 10) 
