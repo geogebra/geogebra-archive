@@ -62,7 +62,7 @@ public class AlgoTable extends AlgoElement {
     	}
     	
     	sb.setLength(0);
-    	sb.append("\\begin{tabular}{r}");
+    	sb.append("\\begin{tabular}{l}");
     	
     	for (int i=0; i < size; i++) {
     		GeoElement geo = geoList.get(i);
