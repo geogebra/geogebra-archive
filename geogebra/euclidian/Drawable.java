@@ -19,7 +19,11 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.Application;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVector;
 import geogebra.modules.JarManager;
 
 import java.awt.BasicStroke;
@@ -512,6 +516,121 @@ public abstract class Drawable {
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
 		g2.fill(shape);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
+	}
+	
+	private StringBuffer command = new StringBuffer();
+	public void recordToSpreadsheet(GeoElement geo) {
+        // record to spreadsheet tool
+    	if (geo == view.getEuclidianController().recordObject) {
+    		String row;
+    		String col;
+	    	double[] coords = new double[2];
+    		switch (geo.getGeoClassType()) {
+    		
+    		case GeoElement.GEO_CLASS_NUMERIC:
+    			
+    			GeoNumeric number = (GeoNumeric)geo;
+
+    	            // record to spreadsheet tool
+    	    	    	
+    	    	    	col = number.getTraceColumn1(); // must be called before getTraceRow()
+    	    	    	row = number.getTraceRow() + "";
+    	    	    	
+    	    	    	command.setLength(0);
+    	    	    	command.append(col);
+    	    	    	command.append(row);
+    	    	    	command.append("=");
+    	    	    	command.append(number.getValue());
+    	    	    	//Application.debug(command.toString());
+    	    	    	try {
+    	    					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+    	    		   	 		    geos[0].setAuxiliaryObject(true);
+    	    	    	}
+    	    	    	catch (Exception e) {}
+
+    	        
+    	        
+    			
+    			break;
+    			
+    		case GeoElement.GEO_CLASS_POINT:
+    		
+    		GeoPoint P = (GeoPoint)geo;
+	    	P.getInhomCoords(coords);
+	    	
+	    	col = P.getTraceColumn1(); // call before getTraceRow()
+	    	row = P.getTraceRow() + "";
+	    	
+	    	Construction cons = view.getKernel().getConstruction();
+	    	
+	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+	    	traceCell.setAuxiliaryObject(true);
+	    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
+	    	traceCell2.setAuxiliaryObject(true);
+	    	/*
+	    	// x coord
+	    	command.setLength(0);
+	    	command.append(P.getTraceColumn1());
+	    	command.append(row);
+	    	command.append("=");
+	    	command.append(coords[0]);
+	    	//Application.debug(command.toString());
+	    	try {
+					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+		   	 		    geos[0].setAuxiliaryObject(true);
+	    	}
+	    	catch (Exception e) {}
+	    	
+	    	// y coord
+	    	command.setLength(0);
+	    	command.append(P.getTraceColumn2());
+	    	command.append(row);
+	    	command.append("=");
+	    	command.append(coords[1]);
+	    	try {
+					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+		   	 		    geos[0].setAuxiliaryObject(true);
+	    	}
+	    	catch (Exception e) {}*/
+	    	break;
+	    	
+    		case GeoElement.GEO_CLASS_VECTOR:
+    	        // record to spreadsheet tool
+    			GeoVector vector = (GeoVector)geo;
+
+
+    		    	vector.getInhomCoords(coords);
+    		    	col = vector.getTraceColumn1();
+    		    	row = vector.getTraceRow() + "";
+    		    	
+    		    	// x coord
+    		    	command.setLength(0);
+    		    	command.append(col);
+    		    	command.append(row);
+    		    	command.append("=");
+    		    	command.append(coords[0]);
+    		    	//Application.debug(command.toString());
+    		    	try {
+    						GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+    			   	 		    geos[0].setAuxiliaryObject(true);
+    		    	}
+    		    	catch (Exception e) {}
+    		    	
+    		    	// y coord
+    		    	command.setLength(0);
+    		    	command.append(vector.getTraceColumn2());
+    		    	command.append(row);
+    		    	command.append("=");
+    		    	command.append(coords[1]);
+    		    	try {
+    						GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
+    			   	 		    geos[0].setAuxiliaryObject(true);
+    		    	}
+    		    	catch (Exception e) {}
+    	    	 	    			
+    			break;
+    		}
+    	}    	
 	}
 
 }

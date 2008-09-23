@@ -109,7 +109,11 @@ public class DrawVector extends Drawable implements Previewable {
 			xLabel = (int) ((x1 + x2)/ 2.0 + vy);
 			yLabel = (int) ((y1 + y2)/ 2.0 - vx);
 			addLabelOffset();   
-		}        		
+		}    
+		
+		if (v == view.getEuclidianController().recordObject)
+		    recordToSpreadsheet(v);
+
 		
 		// draw trace
 		// a vector is a Locateable and it might

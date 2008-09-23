@@ -671,7 +671,7 @@ public class EuclidianController implements MouseListener,
 	
 	protected void handleMousePressedForMoveMode(MouseEvent e) {
 		
-		view.resetTraceRow(); // for trace/spreadsheet
+		//view.resetTraceRow(); // for trace/spreadsheet
 		
 		// fix for meta-click to work on Mac
 		if (Application.MAC_OS && Application.isControlDown(e)) return;
@@ -1077,7 +1077,7 @@ public class EuclidianController implements MouseListener,
 				
 			case MOVE_POINT:
 				
-				view.incrementTraceRow(); // for spreadsheet/trace
+				//view.incrementTraceRow(); // for spreadsheet/trace
 				
 				movePoint(repaint);
 				break;
@@ -1115,7 +1115,7 @@ public class EuclidianController implements MouseListener,
 				break;
 				
 			case MOVE_NUMERIC:
-				view.incrementTraceRow(); // for spreadsheet/trace
+				//view.incrementTraceRow(); // for spreadsheet/trace
 
 				moveNumeric(repaint);
 				break;
@@ -1223,9 +1223,15 @@ public class EuclidianController implements MouseListener,
 
 	final public void mouseReleased(MouseEvent e) {	
 		
-		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
-		if (movedGeoPoint != null) movedGeoPoint.setSelected(false);
-		if (movedGeoNumeric != null) movedGeoNumeric.setSelected(false);
+		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
+		if (movedGeoPoint != null){
+			movedGeoPoint.setSelected(false);
+			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoPoint.resetTraceColumns();
+		}
+		if (movedGeoNumeric != null) {
+			movedGeoNumeric.setSelected(false);
+			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoNumeric.resetTraceColumns();
+		}
 		
 		view.requestFocusInWindow();
 		setMouseLocation(e);
@@ -2554,9 +2560,10 @@ public class EuclidianController implements MouseListener,
 	
 	private void resetSpreadsheetRecording() {
 		moveMode = MOVE_NONE;
+		if (recordObject != null) recordObject.resetTraceColumns();
 		movedGeoPoint = null;
 		movedGeoNumeric = null;
-		view.resetTraceRow();		
+		//view.resetTraceRow();		
 	}
 
 	//	get two points and create line through them

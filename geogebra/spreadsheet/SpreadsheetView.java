@@ -41,6 +41,12 @@ public class SpreadsheetView extends JScrollPane implements View
 	public JList rowHeader;
 	protected Application app;
 	
+	private static int MAX_COLUMNS = 10000; // TODO make sure this is actually used
+	private static int MAX_ROWS = 10000; // TODO make sure this is actually used
+	
+	private int highestUsedColumn = -1; // for trace
+	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
+	
 	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
 		JList table = new JList();
@@ -79,7 +85,29 @@ public class SpreadsheetView extends JScrollPane implements View
 			this.add(cross);
 			cross.setBounds(5, 5, 5 + Cross.LENGTH, 5 + Cross.LENGTH);
 		}
+	}
 		/**/
+	
+	public int getHighestUsedColumn() {
+		return highestUsedColumn;
+	}
+	
+	public int getTraceRow(int column) {
+		if (column < 0 || column >= MAX_COLUMNS) return -1;
+		traceRow[column]++;
+		return (int)traceRow[column];
+	}
+	
+	public void resetTraceRow(int column) {
+		if (column < 0 || column >= MAX_COLUMNS) return;
+		traceRow[column] = 0;
+	}
+	
+	/* used to "reserve" a column
+	 * 
+	 */
+	public void incrementHighestUsedColumn() {
+		highestUsedColumn++;
 	}
 	
 	public void add(GeoElement geo) {	
@@ -88,6 +116,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
+			
+			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
+			
 			if (location.y >= tableModel.getRowCount()) {
 				tableModel.setRowCount(location.y + 1);				
 			}
@@ -96,6 +127,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 			tableModel.setValueAt(geo, location.y, location.x);
 		}
+		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
 	
 	public void remove(GeoElement geo) {
@@ -109,6 +141,28 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	private void doRemove(GeoElement geo, int row, int col) {
 		tableModel.setValueAt(null, row, col);
+		if (col <= highestUsedColumn) checkColumnEmpty(highestUsedColumn);
+		//Application.debug("highestUsedColumn="+highestUsedColumn);
+	}
+	
+	private void checkColumnEmpty(int col) {
+		
+		if (col == -1) return; // end recursion
+		
+		// check if this was the last cell used in this column
+		boolean columnNotEmpty = false;
+		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
+			if (tableModel.getValueAt(r, col) != null) {
+				// column not empty
+				columnNotEmpty = true;
+				break;
+			}
+		}
+		if (!columnNotEmpty) {
+			highestUsedColumn--;
+			checkColumnEmpty(highestUsedColumn);
+		}
+		
 	}
 	
 	public void rename(GeoElement geo) {

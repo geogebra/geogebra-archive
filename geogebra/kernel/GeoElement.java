@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -3169,6 +3170,42 @@ final public boolean hasOnlyFreeInputPoints() {
 		kernel.setCASPrintForm(tempCASPrintForm);
 		return ret;
 	}
-         
+
+	private int traceColumn1 = -1;
+	private int traceColumn2 = -1;
+	
+	public void resetTraceColumns() {
+		traceColumn1 = -1;
+		traceColumn2 = -1;		
+	}
+	
+	public String getTraceColumn1() {
+		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		if (sv != null && traceColumn1 == -1) {
+			traceColumn1 = (sv.getHighestUsedColumn() + 1);
+			sv.incrementHighestUsedColumn(); // reserve column
+		}
+		return GeoElement.getSpreadsheetColumnName(traceColumn1);
+	}
+		
+	public String getTraceColumn2() {
+		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		if (sv != null && traceColumn2 == -1) {
+			traceColumn2 = (sv.getHighestUsedColumn() + 1);
+			sv.incrementHighestUsedColumn(); // reserve column
+		}
+		return GeoElement.getSpreadsheetColumnName(traceColumn2);
+	}
+	
+	public int getTraceRow() {
+		if (traceColumn1 == -1) return -1;
+		
+		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		if (sv == null) return -1;
+		
+		return sv.getTraceRow(traceColumn1);
+	}
+		
+
 
 }

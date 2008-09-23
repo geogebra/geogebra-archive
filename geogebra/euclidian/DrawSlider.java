@@ -119,6 +119,10 @@ public class DrawSlider extends Drawable {
                                      
             updateStrokes(number);                
         }
+        
+		if (number == view.getEuclidianController().recordObject)
+		    recordToSpreadsheet(number);
+
     }
     
     final public void draw(Graphics2D g2) {

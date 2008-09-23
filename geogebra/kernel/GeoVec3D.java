@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.spreadsheet.SpreadsheetView;
+
 /**
  *
  * @author  Markus
@@ -127,6 +129,8 @@ implements Traceable {
     
 	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
 		this.spreadsheetTrace = spreadsheetTrace;
+		
+		if (spreadsheetTrace) resetTraceColumns();
 	}
 
 	public boolean getSpreadsheetTrace() {

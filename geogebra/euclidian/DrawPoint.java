@@ -127,6 +127,10 @@ public final class DrawPoint extends Drawable {
 		
         if (P.spreadsheetTrace) drawSpreadsheetTrace();
         
+		if (P == view.getEuclidianController().recordObject)
+		    recordToSpreadsheet(P);
+
+        
 		// draw trace
 		if (P.trace) {
 			isTracing = true;
@@ -204,18 +208,20 @@ public final class DrawPoint extends Drawable {
             }                         
         }
     }
+	private double [] coords = new double[2];
+	private StringBuffer command = new StringBuffer();
     
     final void drawSpreadsheetTrace() {
     	// copy trace coords into Spreadsheet if it's visible
     	if (view.getApplication().showSpreadsheet()) {
-	    	double [] coords = new double[2];
 	    	P.getInhomCoords(coords);
-	    	StringBuffer command = new StringBuffer();
+
 	    	
-	    	String row = view.getTraceRow() + "";
 	    	
 	    	// x coord
+	    	command.setLength(0);
 	    	command.append(P.getTraceColumn1());
+	    	String row = P.getTraceRow() + ""; // must call getTraceRow after getTraceColumn
 	    	command.append(row);
 	    	command.append("=");
 	    	command.append(coords[0]);
@@ -237,6 +243,8 @@ public final class DrawPoint extends Drawable {
 		   	 		    geos[0].setAuxiliaryObject(true);
 	    	}
 	    	catch (Exception e) {}
+	    	
+	    	//Application.debug(P.getTraceColumn1()+" "+P.getTraceColumn2());
 	    	
 	    	// maybe quicker, would have to delete A5 etc first, lose any decendants?
 	    	//GeoNumeric num = new GeoNumeric(view.getKernel().getConstruction(),"A5",33);

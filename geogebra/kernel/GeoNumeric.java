@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.spreadsheet.SpreadsheetView;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -621,9 +622,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
         	if (this == view.getEuclidianController().recordObject) {
     	    	StringBuffer command = new StringBuffer();
     	    	
-    	    	String row = view.getTraceRow() + "";
+    	    	String col = getTraceColumn1(); // must be called before getTraceRow()
+    	    	String row = getTraceRow() + "";
     	    	
-    	    	command.append(getTraceColumn());
+    	    	command.append(col);
     	    	command.append(row);
     	    	command.append("=");
     	    	command.append(getValue());
@@ -637,10 +639,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
         	}
         }
     }
-	private String traceColumn = "";
 	
-	public String getTraceColumn() {
-		if (traceColumn.equals("")) traceColumn = kernel.getApplication().getEuclidianView().getNextTraceColumn();
-		return traceColumn;
-	}
+
+
 }
