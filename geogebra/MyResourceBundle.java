@@ -81,16 +81,20 @@ public class MyResourceBundle extends PropertyResourceBundle {
 	}
 	
     public  static MyResourceBundle loadSingleBundleFile(String name) {    	    	
-    	//Application.debug("loadBundle: " + name);
+    	// TODO: remove
+    	Application.debug("loadBundle: " + name);
+    	
     	try {    		        	    		    		
     		String fileName = name + ".properties";
     		InputStream in = MyResourceBundle.class.getResourceAsStream(fileName);    		
     		    		
-    		//Application.debug("SUCCESS loadBundle : " + name);
+    		// TODO: remove
+    		Application.debug("SUCCESS loadBundle : " + name);
 			return new MyResourceBundle(in);
     	}
 		catch (Exception e) {			
-			//Application.debug("Exception: could not load bundle: " + name);
+			// TODO: remove
+			Application.debug("Exception: could not load bundle: " + name);
 			//e.printStackTrace();
 			return null;
 		}

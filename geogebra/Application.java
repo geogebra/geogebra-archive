@@ -175,7 +175,6 @@ public abstract class Application implements	KeyEventDispatcher {
     	supportedLocales.add( new Locale("bs") );          	// Bosnian
     	supportedLocales.add( new Locale("bg") );          	// Bulgarian
     	supportedLocales.add( new Locale("ca") );           // Catalan
-        // supportedLocales.add( new Locale("zh") );          	// Chinese (Simplified)
         supportedLocales.add( new Locale("zh","CN") );      // Chinese (Simplified)
     	supportedLocales.add( new Locale("zh","TW") );      // Chinese (Traditional)        
         supportedLocales.add( new Locale("hr") );          	// Croatian
@@ -194,6 +193,7 @@ public abstract class Application implements	KeyEventDispatcher {
         supportedLocales.add( new Locale("iw") );            // Hebrew
         supportedLocales.add( new Locale("hu") );          	// Hungarian
         supportedLocales.add( new Locale("is") );            // Icelandic
+        supportedLocales.add( new Locale("in") );            // Indonesian
         supportedLocales.add( new Locale("it") ); 			// Italian
         supportedLocales.add( new Locale("ja") );    		// Japanese 	
         supportedLocales.add( new Locale("mk") );     		 	// Macedonian      
@@ -1293,8 +1293,7 @@ public abstract class Application implements	KeyEventDispatcher {
             resetFonts();       
         }
         
-        // TODO: remove
-        Application.debug("sans: " + appFontNameSansSerif + ", serif: " + appFontNameSerif);        
+        //Application.debug("sans: " + appFontNameSansSerif + ", serif: " + appFontNameSerif);        
 
     }
     

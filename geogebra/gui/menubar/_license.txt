@@ -9,7 +9,7 @@ LICENSE
 
 DEVELOPERS
   * Markus Hohenwarter (Austria & USA): Project leader, since 2001
-  * Michael Borcherds (UK): Chief developer, since 2007
+  * Michael Borcherds (UK): Lead developer, since 2007
   * Yves Kreis (Luxembourg): Developer, since 2005
 
 Contributions by Loic Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco, 
