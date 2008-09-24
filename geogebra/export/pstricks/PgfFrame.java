@@ -49,37 +49,71 @@ public class PgfFrame extends ExportFrame{
 		panel.add(textheight, new GridBagConstraints(3, 1, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(labelFontSize, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0,
+		
+		//////////////////////////////////
+		panel.add(labelXmin, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(textXmin, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(comboFontSize, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0,
+		panel.add(labelXmax, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(textXmax, new GridBagConstraints(3, 2, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(labelYmin, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(textYmin, new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(labelYmax, new GridBagConstraints(2, 3, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(textYmax, new GridBagConstraints(3, 3, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));		
+		
+		
+		panel.add(labelFontSize, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(comboFontSize, new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
 
-		panel.add(labelFormat, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0,
+		panel.add(labelFormat, new GridBagConstraints(2, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(comboFormat, new GridBagConstraints(3, 2, 1, 1, 1.0, 1.0,
+		panel.add(comboFormat, new GridBagConstraints(3, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(forceGnuplot, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0,
+		panel.add(forceGnuplot, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(jcb, new GridBagConstraints(2, 3, 2, 1, 1.0, 1.0,
+		panel.add(jcb, new GridBagConstraints(2, 5, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0,
+		panel.add(button, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(buttonSave, new GridBagConstraints(2, 4, 1, 1, 1.0, 1.0,
+		panel.add(buttonSave, new GridBagConstraints(2, 6, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button_copy, new GridBagConstraints(3, 4, 1, 1, 1.0, 1.0,
+		panel.add(button_copy, new GridBagConstraints(3, 6, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(js, new GridBagConstraints(0, 5, 4, 5, 1.0, 15.0,
+
+
+		/////////////////////////////////
+		panel.add(js, new GridBagConstraints(0, 7, 4, 5, 1.0, 15.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
-				5, 5, 5, 5), 0, 0));
+				5, 5, 5, 5), 0, 0));		
+		
+		
+		
 		textXUnit.setPreferredSize(new Dimension(110,textXUnit.getFont().getSize()+6));
 		textYUnit.setPreferredSize(new Dimension(110,textYUnit.getFont().getSize()+6));
 		js.setPreferredSize(new Dimension(400,400));

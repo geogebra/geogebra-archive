@@ -63,56 +63,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     protected void createFrame(){
     	frame=new PstricksFrame(this);
     }
-    
-    //Functions added to access and modify xmin, xmax, ymin and ymax
-    //When xmin,xmax,ymin or ymax are changed
-    //the selected area is reported accodingly on the euclidianView.
-    //This is not visible, on the view, but one may expect that when
-    //the selection rectangle is changed it is displayed on the view.
-    //This may be implemented by changing the class EuclidianView.
-    //Furthermore the definition of a class EuclidianView listerner 
-    //which this class would implement would be desirable so that 
-    //when the selection is modified by the mouse, this is reported
-    //to the values xmin, xmax, ymin and ymax of instances of this class.
-    
-    private void refreshEuclidianView(){
-    	int x=euclidianView.toScreenCoordX(xmin);
-    	int y=euclidianView.toScreenCoordY(ymin);
-    	int width=euclidianView.toScreenCoordX(xmax)-x;
-    	int height=euclidianView.toScreenCoordY(ymax)-y;
-    	Rectangle r= new Rectangle(x,y,width,height);
-    	this.euclidianView.setSelectionRectangle(r);
-    }
-    public void setxmin(double xmin){
-    	this.xmin=xmin;
-    	this.refreshEuclidianView();
-    }
-    public void setxmax(double xmax){
-    	this.xmax=xmax;
-    	this.refreshEuclidianView();
-    }
-    public void setymin(double ymin){
-    	this.ymin=ymin;
-    	this.refreshEuclidianView();
-    }
-    public void setymax(double ymax){
-    	this.ymax=ymax;
-    	this.refreshEuclidianView();
-    }
-    public double getxmin(){return this.xmin;}
-    public double getxmax(){return this.xmax;}
-    public double getymin(){return this.ymin;}
-    public double getymax(){return this.ymax;}
-    //end changes.
-    //
-    //Adding edition and reading function for xunit and yunit
-    //to make the PstricksPanel be only a view of GeoGebraToPstricks
-    public void setxunit(double xunit){this.xunit=xunit;}
-    public void setyunit(double yunit){this.yunit=yunit;}
-    public double getxunit(){return this.xunit;}
-    public double getyunit(){return this.yunit;}
-    //end addition
-   
+  
 	 
     public void generateAllCode() {
  
@@ -1710,15 +1661,5 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	*/
 	
 	
-	// refresh the selection rectangle when values change in TextField
-	public void refreshSelectionRectangle(){
-		int x1=euclidianView.toScreenCoordX(xmin);
-		int x2=euclidianView.toScreenCoordX(xmax);
-		int y1=euclidianView.toScreenCoordY(ymin);
-		int y2=euclidianView.toScreenCoordY(ymax);
-		Rectangle rec=new Rectangle(x1,y2,x2-x1,y1-y2);
-	//		Application.debug(x1+" "+x2+" "+y1+" "+y2);
-		euclidianView.setSelectionRectangle(rec);
-		euclidianView.repaint();
-	}
+
 }

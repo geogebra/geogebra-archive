@@ -65,6 +65,48 @@ public abstract class GeoGebraExport implements ActionListener{
     public Application getApp(){
     	return app;
     }
+    //Functions added to access and modify xmin, xmax, ymin and ymax
+    //When xmin,xmax,ymin or ymax are changed
+    //the selected area is reported accodingly on the euclidianView.
+    //This is not visible, on the view, but one may expect that when
+    //the selection rectangle is changed it is displayed on the view.
+    //This may be implemented by changing the class EuclidianView.
+    //Furthermore the definition of a class EuclidianView listerner 
+    //which this class would implement would be desirable so that 
+    //when the selection is modified by the mouse, this is reported
+    //to the values xmin, xmax, ymin and ymax of instances of this class.
+	// refresh the selection rectangle when values change in TextField
+	public void refreshSelectionRectangle(){
+		int x1=euclidianView.toScreenCoordX(xmin);
+		int x2=euclidianView.toScreenCoordX(xmax);
+		int y1=euclidianView.toScreenCoordY(ymin);
+		int y2=euclidianView.toScreenCoordY(ymax);
+		Rectangle rec=new Rectangle(x1,y2,x2-x1,y1-y2);
+	//		Application.debug(x1+" "+x2+" "+y1+" "+y2);
+		euclidianView.setSelectionRectangle(rec);
+		euclidianView.repaint();
+	}
+    
+    protected void setxmin(double xmin){
+    	this.xmin=xmin;
+    	this.refreshSelectionRectangle();
+    }
+    protected void setxmax(double xmax){
+    	this.xmax=xmax;
+    	this.refreshSelectionRectangle();
+    }
+    protected void setymin(double ymin){
+    	this.ymin=ymin;
+    	this.refreshSelectionRectangle();
+    }
+    protected void setymax(double ymax){
+    	this.ymax=ymax;
+    	this.refreshSelectionRectangle();
+    }
+    protected double getxmin(){return this.xmin;}
+    protected double getxmax(){return this.xmax;}
+    protected double getymin(){return this.ymin;}
+    protected double getymax(){return this.ymax;}
     /**
      * Initialize Gui JFrame
      */

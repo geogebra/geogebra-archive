@@ -26,6 +26,8 @@ import javax.swing.JTextArea;
 abstract public class ExportFrame extends JFrame{
 	protected TextValue textXUnit,textYUnit,textwidth,textheight;
 	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize;
+	protected TextValue textXmin,textXmax, textYmin,textYmax;
+	protected JLabel labelXmin,labelXmax,labelYmin,labelYmax;
 	final String[] msg={"10 pt","11 pt","12 pt"};
 	protected JComboBox comboFontSize;
 	protected JPanel panel;
@@ -36,7 +38,15 @@ abstract public class ExportFrame extends JFrame{
 	protected Application app;
 	protected double width,height;
 	protected JButton buttonSave;
+	
 	protected File currentFile=null;
+	//definition of the behaviour of the textValues corresponding
+	//to xmin, xmax, ymin and ymax.
+	//Explaination for xs:
+	//if xmin is changed, then both xmin and xmax are changed
+	//to be sure that everything is allright even though xmin is set
+	//to a higher value than xmax
+	//then the width is changed.
 	public ExportFrame(final GeoGebraExport ggb,String action){
 		this.app=ggb.getApp();
 		width=ggb.getXmax()-ggb.getXmin();
@@ -95,6 +105,113 @@ abstract public class ExportFrame extends JFrame{
 			}
 		
 		};
+		textXmin=new TextValue(this,String.valueOf(ggb.getXmin()),true){
+			private static final long serialVersionUID = 1L;
+			public void keyReleased(KeyEvent e){
+				try{
+					double xmax = ggb.getXmax();
+					double m=getValue();
+					if(m>xmax){
+						ggb.setXmax(m);
+						ggb.setXmin(xmax);
+						width=m-xmax;
+						int pos=getCaretPosition();
+						textXmin.setValue(xmax);
+						textXmax.setValue(m);
+						textXmax.setCaretPosition(pos);
+						textXmax.requestFocus();
+					}
+					else{
+						ggb.setXmin(m);
+						width=xmax-m;
+					}
+					textwidth.setValue(width*ggb.getXunit());
+					ggb.refreshSelectionRectangle();
+				}
+				catch(NumberFormatException e1){}
+			}
+			
+			
+		};
+		textXmax=new TextValue(this,String.valueOf(ggb.getxmax()),true){
+			private static final long serialVersionUID = 1L;
+			public void keyReleased(KeyEvent e){
+				try{
+					double xmin = ggb.getxmin();
+					double m=getValue();
+					if(m<xmin){
+						ggb.setxmin(m);
+						ggb.setxmax(xmin);
+						width=xmin-m;
+						int pos=getCaretPosition();
+						textXmin.setValue(m);
+						textXmax.setValue(xmin);
+						textXmin.setCaretPosition(pos);
+						textXmin.requestFocus();
+					}
+					else{
+						ggb.setxmax(m);
+						width=m-xmin;
+					}
+					textwidth.setValue(width*ggb.xunit);
+					ggb.refreshSelectionRectangle();
+				}
+				catch(NumberFormatException e1){}
+			}
+		};
+		textYmin=new TextValue(this,String.valueOf(ggb.getymin()),true){
+			private static final long serialVersionUID = 1L;
+			public void keyReleased(KeyEvent e){
+				try{
+					double ymax = ggb.getymax();
+					double m=getValue();
+					if(m>ymax){
+						ggb.setymax(m);
+						ggb.setymin(ymax);
+						height=m-ymax;
+						int pos=getCaretPosition();
+						textYmin.setValue(ymax);
+						textYmax.setValue(m);
+						textYmax.setCaretPosition(pos);
+						textYmax.requestFocus();
+
+					}
+					else{
+						ggb.setymin(m);
+						height=ymax-m;
+					}
+					textheight.setValue(height*ggb.yunit);
+					ggb.refreshSelectionRectangle();
+				}
+				catch(NumberFormatException e1){}
+			}
+		};
+		textYmax=new TextValue(this,String.valueOf(ggb.getymax()),true){
+			private static final long serialVersionUID = 1L;
+			public void keyReleased(KeyEvent e){
+				try{
+					double ymin = ggb.getymin();
+					double m=getValue();
+					if(m<ymin){
+						ggb.setymin(m);
+						ggb.setymax(ymin);
+						height=ymin-m;
+						int pos=getCaretPosition();
+						textYmin.setValue(m);
+						textYmax.setValue(ymin);
+						textYmin.setCaretPosition(pos);
+						textYmin.requestFocus();
+					}
+					else{
+						ggb.setymax(m);
+						height=m-ymin;
+					}
+					textheight.setValue(height*ggb.yunit);
+					ggb.refreshSelectionRectangle();
+				}
+				catch(NumberFormatException e1){}
+			}
+		};
 		panel=new JPanel();
 		button=new JButton(app.getPlain(action));
 		button_copy=new JButton(app.getPlain("CopyToClipboard"));
@@ -103,6 +220,10 @@ abstract public class ExportFrame extends JFrame{
 		labelwidth=new JLabel(app.getPlain("PictureWidth"));
 		labelheight=new JLabel(app.getPlain("PictureHeight"));
 		labelFontSize=new JLabel(app.getPlain("LatexFontSize"));
+		labelXmin=new JLabel(app.getPlain("xmin"));
+ 		labelXmax=new JLabel(app.getPlain("xmax"));
+ 		labelYmin=new JLabel(app.getPlain("ymin"));
+ 		labelYmax=new JLabel(app.getPlain("ymax"));
 		jcb=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		comboFontSize=new JComboBox(msg);
 		jcb.setSelected(true);
