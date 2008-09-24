@@ -125,7 +125,7 @@ public final class DrawPoint extends Drawable {
         circleSel.setFrame(xUL - SELECTION_OFFSET, 
 				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
-        if (P.spreadsheetTrace) drawSpreadsheetTrace();
+        if (P.spreadsheetTrace) recordToSpreadsheet(P); 
         
 		if (P == view.getEuclidianController().recordObject)
 		    recordToSpreadsheet(P);
@@ -207,48 +207,6 @@ public final class DrawPoint extends Drawable {
 				drawLabel(g2);			
             }                         
         }
-    }
-	private double [] coords = new double[2];
-	private StringBuffer command = new StringBuffer();
-    
-    final void drawSpreadsheetTrace() {
-    	// copy trace coords into Spreadsheet if it's visible
-    	if (view.getApplication().showSpreadsheet()) {
-	    	P.getInhomCoords(coords);
-
-	    	
-	    	
-	    	// x coord
-	    	command.setLength(0);
-	    	command.append(P.getTraceColumn1());
-	    	String row = P.getTraceRow() + ""; // must call getTraceRow after getTraceColumn
-	    	command.append(row);
-	    	command.append("=");
-	    	command.append(coords[0]);
-	    	//Application.debug(command.toString());
-	    	try {
-					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-		   	 		    geos[0].setAuxiliaryObject(true);
-	    	}
-	    	catch (Exception e) {}
-	    	
-	    	// y coord
-	    	command.setLength(0);
-	    	command.append(P.getTraceColumn2());
-	    	command.append(row);
-	    	command.append("=");
-	    	command.append(coords[1]);
-	    	try {
-					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-		   	 		    geos[0].setAuxiliaryObject(true);
-	    	}
-	    	catch (Exception e) {}
-	    	
-	    	//Application.debug(P.getTraceColumn1()+" "+P.getTraceColumn2());
-	    	
-	    	// maybe quicker, would have to delete A5 etc first, lose any decendants?
-	    	//GeoNumeric num = new GeoNumeric(view.getKernel().getConstruction(),"A5",33);
-    	}
     }
     
     final void drawTrace(Graphics2D g2) {

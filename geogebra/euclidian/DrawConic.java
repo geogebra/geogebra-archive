@@ -733,11 +733,6 @@ final public class DrawConic extends Drawable implements Previewable {
         }		
 	}
     
-	final public void drawSpreadsheetTrace() {             
-		if (type == GeoConic.CONIC_SINGLE_POINT)                       
-				drawPoint.drawSpreadsheetTrace();
-	}
-	
 	final public void drawTrace(Graphics2D g2) {             
 	    g2.setColor(conic.getObjectColor());
 		switch (type) {
