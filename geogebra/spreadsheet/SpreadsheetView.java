@@ -41,8 +41,8 @@ public class SpreadsheetView extends JScrollPane implements View
 	public JList rowHeader;
 	protected Application app;
 	
-	private static int MAX_COLUMNS = 10000; // TODO make sure this is actually used
-	private static int MAX_ROWS = 10000; // TODO make sure this is actually used
+	private static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
+	private static int MAX_ROWS = 9999; // TODO make sure this is actually used
 	
 	private int highestUsedColumn = -1; // for trace
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
@@ -115,7 +115,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		
 		Point location = geo.getSpreadsheetCoords();
-		if (location != null) {
+		if (location != null && location.x < MAX_COLUMNS && location.y < MAX_ROWS) {
 			
 			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
 			
