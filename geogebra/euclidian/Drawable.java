@@ -557,7 +557,7 @@ public abstract class Drawable {
     			break;
     			
     		case GeoElement.GEO_CLASS_POINT:
-    	    	Application.debug("GEO_CLASS_POINT");   		
+    	    	//Application.debug("GEO_CLASS_POINT");   		
     		GeoPoint P = (GeoPoint)geo;
 	    	P.getInhomCoords(coords);
 	    	
@@ -570,7 +570,7 @@ public abstract class Drawable {
 	    	traceCell.setAuxiliaryObject(true);
 	    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
 	    	traceCell2.setAuxiliaryObject(true);
-	    	Application.debug(traceCell2.toString());
+	    	//Application.debug(traceCell2.toString());
 	    	/*
 	    	// x coord
 	    	command.setLength(0);
