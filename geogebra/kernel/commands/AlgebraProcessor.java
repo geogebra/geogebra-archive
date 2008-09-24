@@ -449,7 +449,7 @@ public class AlgebraProcessor {
 		if (labels != null && labels.length > 0) {
 			boolean firstTime = true;
 			for (int i = 0; i < labels.length; i++) {
-				GeoElement geo = cons.lookupLabel(labels[i]);
+				GeoElement geo = kernel.lookupLabel(labels[i]);
 				if (geo != null) {
 					if (geo.isFixed()) {
 						String[] strs =
@@ -553,7 +553,7 @@ public class AlgebraProcessor {
 						cons.replace(replaceable, ret[0]);
 						// now all objects have changed
 						// get the new object with same label as our result
-						ret[0] = cons.lookupLabel(ret[0].getLabel(), false);						
+						ret[0] = kernel.lookupLabel(ret[0].getLabel(), false);						
 					}
 				} catch (CircularDefinitionException e) {
 					throw e;

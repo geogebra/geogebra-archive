@@ -688,7 +688,7 @@ public class Construction {
 	 * 
 	 * @return may return null
 	 */
-	public GeoElement lookupLabel(String label) {
+	GeoElement lookupLabel(String label) {
 		return lookupLabel(label, false);
 	}
 
@@ -701,7 +701,7 @@ public class Construction {
 	 *            spreadsheet)
 	 * @return may return null
 	 */
-	public GeoElement lookupLabel(String label, boolean allowAutoCreate) {
+	GeoElement lookupLabel(String label, boolean allowAutoCreate) {
 		if (label == null)
 			return null;
 

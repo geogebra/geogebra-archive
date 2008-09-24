@@ -200,8 +200,12 @@ public class Kernel {
      * Returns a GeoElement for the given label. 
      * @return may return null
      */
-	public GeoElement lookupLabel(String label) {		
-		return cons.lookupLabel(label);
+	final public GeoElement lookupLabel(String label) {		
+		return lookupLabel(label, false);
+	}
+	
+	final public GeoElement lookupLabel(String label, boolean autoCreate) {		
+		return cons.lookupLabel(label, autoCreate);
 	}
 	
 	final public GeoAxis getXAxis() {

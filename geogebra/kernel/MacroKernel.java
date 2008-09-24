@@ -53,11 +53,7 @@ public class MacroKernel extends Kernel  {
 	 */
 	public void loadXML(String xmlString) throws Exception {
 		macroCons.loadXML(xmlString);
-	}
-	
-	final public GeoElement lookupLabel(String label) {
-		return macroCons.lookupLabel(label);
-	}
+	}	
 
 	final double getXmax() {
 		return parentKernel.getXmax();

@@ -56,8 +56,8 @@ class MacroConstruction extends Construction {
      * construction index is ignored here. If no geo is found for
      * the specified label a lookup is made in the parent construction.
      * @return may return null
-     */
-    final public GeoElement lookupLabel(String label) {
+     */      	    	   
+    final GeoElement lookupLabel(String label, boolean autoCreate) {
     	if (label == null) return null;
     	
     	// local var handling
@@ -70,7 +70,7 @@ class MacroConstruction extends Construction {
         GeoElement geo = geoTabelVarLookup(label);
         if (geo == null && globalVariableLookup && !isReservedLabel(label)) {
         	// try parent construction        	
-        	 geo =  parentCons.geoTabelVarLookup(label);      
+        	 geo =  parentCons.lookupLabel(label, autoCreate);      
         }
         return geo;                   
     }

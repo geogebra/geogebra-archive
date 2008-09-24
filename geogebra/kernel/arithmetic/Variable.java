@@ -73,11 +73,9 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * Looks up the name of this variable in the kernel and returns the 
      * according GeoElement object.
      */
-    GeoElement resolve(boolean allowAutoCreateGeoElement) {
-    	Construction cons = kernel.getConstruction();
-    	
+    GeoElement resolve(boolean allowAutoCreateGeoElement) {    	
     	// lookup variable name, create missing variables automatically if allowed
-        GeoElement geo = cons.lookupLabel(name, allowAutoCreateGeoElement);        
+        GeoElement geo = kernel.lookupLabel(name, allowAutoCreateGeoElement);    	
         if (geo != null)
 			return  geo;                            		        		
 			

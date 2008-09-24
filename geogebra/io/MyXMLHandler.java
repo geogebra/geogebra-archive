@@ -1325,7 +1325,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 		// does a geo element with this label exist?
-		geo = cons.lookupLabel(label);
+		geo = kernel.lookupLabel(label);
 
 		if (geo == null) {
 			geo = Kernel.createGeoElement(cons, type);
@@ -2427,7 +2427,7 @@ public class MyXMLHandler implements DocHandler {
 				// for downward compatibility: lookup label first
 				// as this could be some weird name that can't be parsed
 				// e.g. "1/2_{a,b}" could be a label name
-				geo = cons.lookupLabel(arg);
+				geo = kernel.lookupLabel(arg);
 			
 				// arg is a label and does not conatin $ signs (e.g. $A1 in spreadsheet)
 				if (geo != null && arg.indexOf('$') < 0) {

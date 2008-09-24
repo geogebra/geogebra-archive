@@ -271,7 +271,7 @@ debug("startElements", eName);
     	        }
 
     	        // does a geo element with this label exist?
-    	        geo = cons.lookupLabel(label);
+    	        geo = kernel.lookupLabel(label);
     	        if (geo != null) {        
     	        	geo = null;
     	        	Application.debug("an element with id \"" + label + "\" already exists");
@@ -597,10 +597,10 @@ debug("endConstraints", eName);
 			case MODE_LINE_THROUGH_POINT :
 				if (cmd.labelCount() == 1 && 
 					cmd.getArgumentNumber() == 1 && 
-					cons.lookupLabel(cmd.getLabel(0)) instanceof GeoLine && 
+					kernel.lookupLabel(cmd.getLabel(0)) instanceof GeoLine && 
 					cmd.getArgument(0).getLeft() instanceof GeoPoint) {
 						try {
-							GeoLine geoLine = (GeoLine) cons.lookupLabel(cmd.getLabel(0));
+							GeoLine geoLine = (GeoLine) kernel.lookupLabel(cmd.getLabel(0));
 							GeoVector geoVector = new GeoVector(cons, null, geoLine.y, -geoLine.x, 0);
 							geoVector.setStartPoint((GeoPoint) cmd.getArgument(0).getLeft());
 							cmd.addArgument(new ExpressionNode(kernel, geoVector));
@@ -742,7 +742,7 @@ debug("endConstraints", eName);
 			// do not process the command, the number of input/output arguments does not match
 		} else if (cmd.getName().equals("Free")) {
 			if (label != null) {
-				GeoElement geo = cons.lookupLabel(label);
+				GeoElement geo = kernel.lookupLabel(label);
 				if (!geo.isIndependent() && !geo.isPointOnPath()) {
 					Application.debug(lastType + " " + label + " is not free");
 				}
@@ -751,7 +751,7 @@ debug("endConstraints", eName);
 			String [] labels = cmd.getLabels();
 			GeoElement [] loadedGeo = new GeoElement[labels.length];
 			for (int i = 0; i < labels.length; i++) {
-				loadedGeo[i] = cons.lookupLabel(labels[i]);
+				loadedGeo[i] = kernel.lookupLabel(labels[i]);
 				loadedGeo[i].remove();
 			}
 			GeoElement [] outputGeo = kernel.getAlgebraProcessor().processCommand(cmd, true);
@@ -789,7 +789,7 @@ debug("endConstraints", eName);
     		ok = false;
     		Application.debug("no id specified for " + lastType);
     	} else {
-            geo = cons.lookupLabel(label);
+            geo = kernel.lookupLabel(label);
             if (geo == null) {
             	ok = false;
             	Application.debug("an element with id \"" + label + "\" does not exist");
@@ -826,7 +826,7 @@ debug("startDisplay", eName);
     	        }
     	        
     	        // does a geo element with this label exist?
-    	        geo = cons.lookupLabel(label);
+    	        geo = kernel.lookupLabel(label);
     	        if (geo == null) {        
     	        	Application.debug("an element with id \"" + label + "\" does not exist");
     	        	break;

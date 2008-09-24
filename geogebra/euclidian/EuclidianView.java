@@ -1453,8 +1453,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 			// use points Export_1 and Export_2 to define corner
 			try {
 				Construction cons = kernel.getConstruction();
-				GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
-				GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
+				GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
+				GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 				double [] xy1 = new double[2];
 				double [] xy2 = new double[2];
 				export1.getInhomCoords(xy1);
@@ -3739,8 +3739,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 		if (selectionRectangle != null) return selectionRectangle.width;
 		try {
 			Construction cons = kernel.getConstruction();
-			GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
-			GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
+			GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
+			GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
 			double [] xy2 = new double[2];
 			export1.getInhomCoords(xy1);
@@ -3762,8 +3762,8 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		try {
 			Construction cons = kernel.getConstruction();
-			GeoPoint export1=(GeoPoint)cons.lookupLabel(EXPORT1);	       
-			GeoPoint export2=(GeoPoint)cons.lookupLabel(EXPORT2);
+			GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
+			GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
 			double [] xy2 = new double[2];
 			export1.getInhomCoords(xy1);

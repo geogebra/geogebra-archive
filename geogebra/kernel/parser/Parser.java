@@ -1558,7 +1558,7 @@ ValidExpression  functionOrCommand():
                 int index = funcName.length()-1;
                 GeoElement geo = null;
                 while (index >= 0) {
-                        geo = cons.lookupLabel(funcName.substring(0, index+1));
+                        geo = kernel.lookupLabel(funcName.substring(0, index+1));
                         if (geo != null) break;
                         if (c.image.charAt(index) == '\'') {
                                 order++;
