@@ -41,6 +41,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	public JList rowHeader;
 	protected Application app;
 	
+	// if these are increased above 32000, you need to change traceRow to an int[]
 	private static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
 	private static int MAX_ROWS = 9999; // TODO make sure this is actually used
 	
