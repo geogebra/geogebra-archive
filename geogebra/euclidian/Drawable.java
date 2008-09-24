@@ -524,78 +524,40 @@ public abstract class Drawable {
 	public void recordToSpreadsheet(GeoElement geo) {
         // record to spreadsheet tool & trace to spreadsheet
     	//if (geo == view.getEuclidianController().recordObject)
+    	Construction cons = view.getKernel().getConstruction();
     	{
     		String row;
     		String col;
 	    	
     		switch (geo.getGeoClassType()) {
     		
+    		/* TODO: use this, rather than the code in GeoNumeric.update()
     		case GeoElement.GEO_CLASS_NUMERIC:
     			
     			GeoNumeric number = (GeoNumeric)geo;
-
-    	            // record to spreadsheet tool
-    	    	    	
-    	    	    	col = number.getTraceColumn1(); // must be called before getTraceRow()
-    	    	    	row = number.getTraceRow() + "";
-    	    	    	
-    	    	    	command.setLength(0);
-    	    	    	command.append(col);
-    	    	    	command.append(row);
-    	    	    	command.append("=");
-    	    	    	command.append(number.getValue());
-    	    	    	//Application.debug(command.toString());
-    	    	    	try {
-    	    					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-    	    		   	 		    geos[0].setAuxiliaryObject(true);
-    	    	    	}
-    	    	    	catch (Exception e) {}
-
-    	        
-    	        
+    		    	
+		    	col = number.getTraceColumn1(); // must be called before getTraceRow()
+		    	row = number.getTraceRow() + "";
+		    	
+		    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,number.getValue());
+		    	traceCell.setAuxiliaryObject(true);
+    	    	}
     			
-    			break;
+    			break;*/
     			
     		case GeoElement.GEO_CLASS_POINT:
     	    	//Application.debug("GEO_CLASS_POINT");   		
-    		GeoPoint P = (GeoPoint)geo;
-	    	P.getInhomCoords(coords);
-	    	
-	    	col = P.getTraceColumn1(); // call before getTraceRow()
-	    	row = P.getTraceRow() + "";
-	    	
-	    	Construction cons = view.getKernel().getConstruction();
-	    	
-	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
-	    	traceCell.setAuxiliaryObject(true);
-	    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
-	    	traceCell2.setAuxiliaryObject(true);
-	    	//Application.debug(traceCell2.toString());
-	    	/*
-	    	// x coord
-	    	command.setLength(0);
-	    	command.append(P.getTraceColumn1());
-	    	command.append(row);
-	    	command.append("=");
-	    	command.append(coords[0]);
-	    	//Application.debug(command.toString());
-	    	try {
-					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-		   	 		    geos[0].setAuxiliaryObject(true);
-	    	}
-	    	catch (Exception e) {}
-	    	
-	    	// y coord
-	    	command.setLength(0);
-	    	command.append(P.getTraceColumn2());
-	    	command.append(row);
-	    	command.append("=");
-	    	command.append(coords[1]);
-	    	try {
-					GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-		   	 		    geos[0].setAuxiliaryObject(true);
-	    	}
-	    	catch (Exception e) {}*/
+	    		GeoPoint P = (GeoPoint)geo;
+		    	P.getInhomCoords(coords);
+		    	
+		    	col = P.getTraceColumn1(); // call before getTraceRow()
+		    	row = P.getTraceRow() + "";
+		    	
+		    	
+		    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+		    	traceCell.setAuxiliaryObject(true);
+		    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
+		    	traceCell2.setAuxiliaryObject(true);
 	    	break;
 	    	
     		case GeoElement.GEO_CLASS_VECTOR:
@@ -603,34 +565,14 @@ public abstract class Drawable {
     			GeoVector vector = (GeoVector)geo;
 
 
-    		    	vector.getInhomCoords(coords);
-    		    	col = vector.getTraceColumn1();
-    		    	row = vector.getTraceRow() + "";
-    		    	
-    		    	// x coord
-    		    	command.setLength(0);
-    		    	command.append(col);
-    		    	command.append(row);
-    		    	command.append("=");
-    		    	command.append(coords[0]);
-    		    	//Application.debug(command.toString());
-    		    	try {
-    						GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-    			   	 		    geos[0].setAuxiliaryObject(true);
-    		    	}
-    		    	catch (Exception e) {}
-    		    	
-    		    	// y coord
-    		    	command.setLength(0);
-    		    	command.append(vector.getTraceColumn2());
-    		    	command.append(row);
-    		    	command.append("=");
-    		    	command.append(coords[1]);
-    		    	try {
-    						GeoElement [] geos = view.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command.toString(), false);
-    			   	 		    geos[0].setAuxiliaryObject(true);
-    		    	}
-    		    	catch (Exception e) {}
+		    	vector.getInhomCoords(coords);
+		    	col = vector.getTraceColumn1();
+		    	row = vector.getTraceRow() + "";
+		    	
+		    	traceCell = new GeoNumeric(cons,col+row,coords[0]);
+		    	traceCell.setAuxiliaryObject(true);
+		    	traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
+		    	traceCell2.setAuxiliaryObject(true);
     	    	 	    			
     			break;
     		}
