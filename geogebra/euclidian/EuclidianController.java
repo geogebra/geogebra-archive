@@ -438,7 +438,8 @@ public class EuclidianController implements MouseListener,
 				app.clearSelectedGeos();
 				hits = view.getTopHits(mouseLoc);
 				if (hits != null)
-					app.showPropertiesDialog(hits);
+					//app.showPropertiesDialog(hits);
+					app.showRedefineDialog((GeoElement)hits.get(0));
 				break;
 			}
 			break;
