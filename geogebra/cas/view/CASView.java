@@ -11,6 +11,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -94,9 +96,13 @@ public class CASView extends JComponent {
 
 		rowHeaderTable.setEnabled(false);
 
+		rowHeaderTable.setFocusable(true);
+
 		rowHeaderTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		rowHeaderTable.addMouseListener(new RowHeaderMouseListener());
+
+		rowHeaderTable.addKeyListener(new RowHeaderKeyListener());
 
 		rowHeaderTable.getColumnModel().getColumn(0).setPreferredWidth(
 				ROW_HEADER_WIDTH);
@@ -170,66 +176,101 @@ public class CASView extends JComponent {
 	protected int minSelectionRow = -1;
 	protected int maxSelectionRow = -1;
 
-//	This part is to implement rowheader with JList
-//	public class RowHeaderRenderer extends JLabel implements ListCellRenderer,
-//			ListSelectionListener {
-//
-//		private static final long serialVersionUID = 1L;
-//
-//		protected JTableHeader header;
-//		protected JList rowHeader;
-//		protected ListSelectionModel selectionModel;
-//		private Color defaultBackground;
-//
-//		public RowHeaderRenderer(CASTable table, JList rowHeader) {
-//			super("", JLabel.CENTER);
-//			setOpaque(true);
-//			defaultBackground = getBackground();
-//
-//			this.rowHeader = rowHeader;
-//			header = table.getTableHeader();
-//			// setOpaque(true);
-//			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-//			// setHorizontalAlignment(CENTER) ;
-//			// setForeground(header.getForeground()) ;
-//			// setBackground(header.getBackground());
-//			if (getFont().getSize() == 0) {
-//				Font font1 = app.getPlainFont();
-//				if (font1 == null || font1.getSize() == 0) {
-//					font1 = new Font("dialog", 0, 12);
-//				}
-//				setFont(font1);
-//			}
-//			// TODO: add a Listener
-//			table.getSelectionModel().addListSelectionListener(this);
-//		}
-//
-//		public Component getListCellRendererComponent(JList list, Object value,
-//				int index, boolean isSelected, boolean cellHasFocus) {
-//			setText((value == null) ? "" : value.toString());
-//			if (minSelectionRow != -1 && maxSelectionRow != -1) {
-//				if (index >= minSelectionRow && index <= maxSelectionRow
-//						&& selectionModel.isSelectedIndex(index)) {
-//					setBackground(CASTable.SELECTED_BACKGROUND_COLOR_HEADER);
-//				} else {
-//					setBackground(defaultBackground);
-//				}
-//			} else {
-//				setBackground(defaultBackground);
-//			}
-//			return this;
-//		}
-//
-//		public void valueChanged(ListSelectionEvent e) {
-//			selectionModel = (ListSelectionModel) e.getSource();
-//			minSelectionRow = selectionModel.getMinSelectionIndex();
-//			maxSelectionRow = selectionModel.getMaxSelectionIndex();
-//			rowHeader.repaint();
-//		}
-//
-//	}
+	// This part is to implement rowheader with JList
+	// public class RowHeaderRenderer extends JLabel implements
+	// ListCellRenderer,
+	// ListSelectionListener {
+	//
+	// private static final long serialVersionUID = 1L;
+	//
+	// protected JTableHeader header;
+	// protected JList rowHeader;
+	// protected ListSelectionModel selectionModel;
+	// private Color defaultBackground;
+	//
+	// public RowHeaderRenderer(CASTable table, JList rowHeader) {
+	// super("", JLabel.CENTER);
+	// setOpaque(true);
+	// defaultBackground = getBackground();
+	//
+	// this.rowHeader = rowHeader;
+	// header = table.getTableHeader();
+	// // setOpaque(true);
+	// setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+	// // setHorizontalAlignment(CENTER) ;
+	// // setForeground(header.getForeground()) ;
+	// // setBackground(header.getBackground());
+	// if (getFont().getSize() == 0) {
+	// Font font1 = app.getPlainFont();
+	// if (font1 == null || font1.getSize() == 0) {
+	// font1 = new Font("dialog", 0, 12);
+	// }
+	// setFont(font1);
+	// }
+	// // TODO: add a Listener
+	// table.getSelectionModel().addListSelectionListener(this);
+	// }
+	//
+	// public Component getListCellRendererComponent(JList list, Object value,
+	// int index, boolean isSelected, boolean cellHasFocus) {
+	// setText((value == null) ? "" : value.toString());
+	// if (minSelectionRow != -1 && maxSelectionRow != -1) {
+	// if (index >= minSelectionRow && index <= maxSelectionRow
+	// && selectionModel.isSelectedIndex(index)) {
+	// setBackground(CASTable.SELECTED_BACKGROUND_COLOR_HEADER);
+	// } else {
+	// setBackground(defaultBackground);
+	// }
+	// } else {
+	// setBackground(defaultBackground);
+	// }
+	// return this;
+	// }
+	//
+	// public void valueChanged(ListSelectionEvent e) {
+	// selectionModel = (ListSelectionModel) e.getSource();
+	// minSelectionRow = selectionModel.getMinSelectionIndex();
+	// maxSelectionRow = selectionModel.getMaxSelectionIndex();
+	// rowHeader.repaint();
+	// }
+	//
+	// }
 
 	protected int row0 = -1;
+
+	// Key Listener for RowHeader
+	protected class RowHeaderKeyListener implements KeyListener {
+
+		public void keyTyped(KeyEvent e) {
+		}
+
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+
+			boolean metaDown = Application.isControlDown(e);
+			boolean altDown = e.isAltDown();
+
+			System.out.println("Key pressed on rowheader");
+			// Application.debug(keyCode);
+			switch (keyCode) {
+
+			case KeyEvent.VK_DELETE: // delete
+			case KeyEvent.VK_BACK_SPACE: // delete on MAC
+				if (minSelectionRow != -1 && maxSelectionRow != -1) {
+					for (int row = minSelectionRow; row <= maxSelectionRow; ++row) {
+						consoleTable.deleteRow(row);
+					}
+				}
+				System.out.println("Key Delete or BackSpace Action Performed ");
+				break;
+			}
+		}
+
+		public void keyReleased(KeyEvent e) {
+
+		}
+
+	}
 
 	// Listener for RowHeader
 	protected class RowHeaderMouseListener implements MouseListener {
@@ -250,6 +291,8 @@ public class CASView extends JComponent {
 
 			int x = e.getX();
 			int y = e.getY();
+
+			// rowHeaderTable.requestFocus();
 
 			// left click
 			if (!rightClick) {
@@ -289,8 +332,15 @@ public class CASView extends JComponent {
 				if (!app.letShowPopupMenu())
 					return;
 
-				if (minSelectionRow != -1 && maxSelectionRow != -1)
-				{
+				Point point = consoleTable.getIndexFromPixel(x, y);
+				if (point != null) {
+					int row0 = (int) point.getY();
+					
+					if(!consoleTable.isRowSelected(row0))  // This row is already selected
+						consoleTable.setRowSelectionInterval(row0, row0);
+				}
+				
+				if (minSelectionRow != -1 && maxSelectionRow != -1) {
 					CASContextMenuRow popupMenu = new CASContextMenuRow(
 							consoleTable, 0, minSelectionRow, consoleTable
 									.getModel().getColumnCount() - 1,
@@ -315,14 +365,14 @@ public class CASView extends JComponent {
 		JTable reftable;
 		protected JTableHeader header;
 		protected ListSelectionModel selectionModel;
-		
+
 		public RowHeaderTableRenderer(JTable reftable)
 
 		{
 
 			this.reftable = reftable;
-			header = reftable.getTableHeader() ;
-			
+			header = reftable.getTableHeader();
+
 			reftable.getSelectionModel().addListSelectionListener(this);
 		}
 
