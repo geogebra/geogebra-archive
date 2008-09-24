@@ -557,7 +557,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         // EDIT: copy to input field       
         else if (app.showAlgebraInput() && !geo.isGeoImage()) {
             addAction(new AbstractAction(
-                app.getMenu("InputField"),
+                app.getMenu("CopyToInputBar"),
                 app.getImageIcon("edit.png")) {
 
 					private static final long serialVersionUID = 1L;

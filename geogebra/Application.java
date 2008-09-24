@@ -1786,7 +1786,7 @@ public abstract class Application implements	KeyEventDispatcher {
                 getPlain("Rename"),
                 initText,
                 false,
-                handler, true, selectInitText);        
+                handler, true, selectInitText, null);        
     	
     	/*
         InputDialog id =
@@ -1852,7 +1852,8 @@ public abstract class Application implements	KeyEventDispatcher {
                 getPlain("Redefine"),
                 str,
                 true,
-                handler);  
+                handler,
+                geo);  
         id.showSpecialCharacters(true);
         id.setVisible(true);     
         id.selectText();            
@@ -2285,7 +2286,7 @@ public abstract class Application implements	KeyEventDispatcher {
 		cons.setSuppressLabelCreation(true);
 		
 		NumberInputHandler handler = new NumberInputHandler();
-		InputDialog id = new InputDialog(this,  message, title, initText, false, handler, true, false);       
+		InputDialog id = new InputDialog(this,  message, title, initText, false, handler, true, false, null);       
         id.setVisible(true); 
         
         cons.setSuppressLabelCreation(oldVal);

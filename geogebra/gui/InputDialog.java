@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -43,7 +44,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
-	protected JButton btApply, btCancel;
+	protected JButton btApply, btCancel, btProperties;
 	private JPanel optionPane, btPanel;
 	protected GeoElementSelectionListener sl;
 	protected JLabel msgLabel; 
@@ -52,18 +53,26 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected Application app;
 	protected InputHandler inputHandler;
 	
+	private GeoElement geo;
+	
 	/**
 	 * Creates a non-modal standard input dialog.
 	 */
 	public InputDialog(Application app,  String message, String title, String initString,
-			boolean autoComplete, InputHandler handler) {
-		this(app, message,title, initString, autoComplete, handler, false, false);
+			boolean autoComplete, InputHandler handler, GeoElement geo) {
+		this(app, message,title, initString, autoComplete, handler, false, false, geo);
 	}
 	
 	public InputDialog(Application app,  String message, String title, String initString,
-			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText) {
+			boolean autoComplete, InputHandler handler) {
+		this(app, message,title, initString, autoComplete, handler, false, false, null);
+	}
+	
+	public InputDialog(Application app,  String message, String title, String initString,
+			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo) {
 		this(app.getFrame(), modal);
-		this.app = app;		
+		this.app = app;	
+		this.geo = geo;
 		inputHandler = handler;
 		this.initString = initString;			
 
@@ -106,13 +115,18 @@ public class InputDialog extends JDialog implements ActionListener,
 		}			
 		
 		// buttons
+		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		btProperties = new JButton(app.getPlain("Properties")+"...");
+		btProperties.setActionCommand("OpenProperties");
+		btProperties.addActionListener(this);
+		btPanel.add(btProperties);
+		
 		btApply = new JButton(app.getPlain("Apply"));
 		btApply.setActionCommand("Apply");
 		btApply.addActionListener(this);
 		btCancel = new JButton(app.getPlain("Cancel"));
 		btCancel.setActionCommand("Cancel");
 		btCancel.addActionListener(this);
-		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		btPanel.add(btApply);
 		btPanel.add(btCancel);
 	
@@ -174,19 +188,27 @@ public class InputDialog extends JDialog implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
-		boolean finished = false;
+		//boolean finished = false;
 		try {
 			if (source == btApply || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();				
-				finished = inputHandler.processInput(inputText);
+				setVisible(!inputHandler.processInput(inputText));
 			} else if (source == btCancel) {
-				finished = true;
+				setVisible(false);
+			} else if (source == btProperties && geo != null) {
+				setVisible(false);
+            	tempArrayList.clear();
+            	tempArrayList.add(geo);
+                app.showPropertiesDialog(tempArrayList);
+                
 			}
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
+			setVisible(false);
 		}
-		setVisible(!finished);
+		//setVisible(!finished);
 	}
+    private ArrayList tempArrayList = new ArrayList();
 	
 	public String getText() {
 		return inputPanel.getText();
