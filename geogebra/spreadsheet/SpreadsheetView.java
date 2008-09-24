@@ -95,8 +95,12 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public int getTraceRow(int column) {
 		if (column < 0 || column >= MAX_COLUMNS) return -1;
-		traceRow[column]++;
 		return (int)traceRow[column];
+	}
+	
+	public void incrementTraceRow(int column) {
+		if (column < 0 || column >= MAX_COLUMNS) return;
+		traceRow[column]++;
 	}
 	
 	public void resetTraceRow(int column) {

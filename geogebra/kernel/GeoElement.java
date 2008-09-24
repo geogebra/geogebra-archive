@@ -3173,6 +3173,8 @@ final public boolean hasOnlyFreeInputPoints() {
 
 	private int traceColumn1 = -1;
 	private int traceColumn2 = -1;
+	private double lastTrace1 = Math.random();
+	private double lastTrace2 = Math.random();
 	
 	public void resetTraceColumns() {
 		traceColumn1 = -1;
@@ -3206,6 +3208,30 @@ final public boolean hasOnlyFreeInputPoints() {
 		return sv.getTraceRow(traceColumn1);
 	}
 		
+	public void incrementTraceRow() {
+		if (traceColumn1 == -1) return;
+		
+		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		if (sv == null) return;
+		
+		sv.incrementTraceRow(traceColumn1);
+	}
+		
+	public double getLastTrace1() {
+		return lastTrace1;
+	}
+
+	public double getLastTrace2() {
+		return lastTrace2;
+	}
+	
+	public void setLastTrace1(double val) {
+		lastTrace1 = val;
+	}
+
+	public void setLastTrace2(double val) {
+		lastTrace2 = val;
+	}
 
 
 }

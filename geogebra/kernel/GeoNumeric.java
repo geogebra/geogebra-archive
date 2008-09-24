@@ -619,14 +619,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		
 		// TODO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
 		EuclidianView view = kernel.getApplication().getEuclidianView();
+		double val = getValue();
         // record to spreadsheet tool
-    	if (this == view.getEuclidianController().recordObject) {
+    	if (this == view.getEuclidianController().recordObject
+    			&& this.getLastTrace1() != val) {
 	    	
 	    	String col = getTraceColumn1(); // must be called before getTraceRow()
 	    	String row = getTraceRow() + "";
 	    	
-	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,getValue());
+	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,val);
 	    	traceCell.setAuxiliaryObject(true);
+	    	
+	    	setLastTrace1(val);
+	    	incrementTraceRow();
     	}
     }
 	

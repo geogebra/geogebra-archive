@@ -553,11 +553,16 @@ public abstract class Drawable {
 		    	col = P.getTraceColumn1(); // call before getTraceRow()
 		    	row = P.getTraceRow() + "";
 		    	
-		    	
-		    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
-		    	traceCell.setAuxiliaryObject(true);
-		    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
-		    	traceCell2.setAuxiliaryObject(true);
+		    	if (P.getLastTrace1() != coords[0] && P.getLastTrace2() != coords[1]) {
+			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+			    	traceCell.setAuxiliaryObject(true);
+			    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
+			    	traceCell2.setAuxiliaryObject(true);
+			    	
+			    	P.setLastTrace1(coords[0]);
+			    	P.setLastTrace2(coords[1]);
+			    	P.incrementTraceRow();
+		    	}
 	    	break;
 	    	
     		case GeoElement.GEO_CLASS_VECTOR:
@@ -569,10 +574,16 @@ public abstract class Drawable {
 		    	col = vector.getTraceColumn1();
 		    	row = vector.getTraceRow() + "";
 		    	
-		    	traceCell = new GeoNumeric(cons,col+row,coords[0]);
-		    	traceCell.setAuxiliaryObject(true);
-		    	traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
-		    	traceCell2.setAuxiliaryObject(true);
+		    	if (vector.getLastTrace1() != coords[0] && vector.getLastTrace2() != coords[1]) {
+			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+			    	traceCell.setAuxiliaryObject(true);
+			    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
+			    	traceCell2.setAuxiliaryObject(true);
+			    	
+			    	vector.setLastTrace1(coords[0]);
+			    	vector.setLastTrace2(coords[1]);
+			    	vector.incrementTraceRow();
+		    	}
     	    	 	    			
     			break;
     		}
