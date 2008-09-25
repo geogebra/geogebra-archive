@@ -1588,6 +1588,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append(footnotesize("\\x"));
 				codeBeginDoc.append("};\n");
 			}
+			else codeBeginDoc.append(";\n");
 		}
 		// Drawing Y Axis
 		showAxis=euclidianView.getShowYaxis();
@@ -1622,6 +1623,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append(footnotesize("\\y"));
 				codeBeginDoc.append("};\n");
 			}
+			else codeBeginDoc.append(";\n");
 		}
 		// Origin
 		if (euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1]){
