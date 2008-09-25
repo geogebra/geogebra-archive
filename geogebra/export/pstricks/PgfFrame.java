@@ -22,7 +22,7 @@ public class PgfFrame extends ExportFrame{
 		forceGnuplot=new JCheckBox(app.getPlain("ForceGnuplotPgf"));
 		forceGnuplot.setSelected(false);
 		comboFormat=new JComboBox(format);
-		labelFormat=new JLabel(app.getPlain("FormatExportPgf"));
+		labelFormat=new JLabel(app.getPlain("Format"));
 		js.getViewport().add(textarea);
 		setTitle(app.getPlain("TitleExportPgf"));
 		panel.setLayout(new GridBagLayout());
