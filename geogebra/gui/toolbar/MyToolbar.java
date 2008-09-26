@@ -442,6 +442,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_TANGENTS);
         sb.append(" ");
         sb.append(EuclidianView.MODE_POLAR_DIAMETER);
+        sb.append(" , ");
+        sb.append(EuclidianView.MODE_FITLINE);
         sb.append(" , ");       
         sb.append(EuclidianView.MODE_LOCUS ); 
          
@@ -506,8 +508,6 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
         sb.append(" ");
         sb.append(EuclidianView.MODE_DILATE_FROM_POINT);
-        sb.append(" ");
-        sb.append(EuclidianView.MODE_FITLINE);
        
         // dialogs
         sb.append(" | ");
