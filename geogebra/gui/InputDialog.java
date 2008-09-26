@@ -45,7 +45,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
 	protected JButton btApply, btCancel, btProperties, btOK;
-	private JPanel optionPane, btPanel;
+	private JPanel optionPane, buttonsPanel, btPanel, btPanel2;
 	protected GeoElementSelectionListener sl;
 	protected JLabel msgLabel; 
 		
@@ -116,13 +116,14 @@ public class InputDialog extends JDialog implements ActionListener,
 		}			
 		
 		// buttons
-		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		
 		if (showProperties) {
+			btPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			btProperties = new JButton(app.getPlain("Properties")+"...");
 			btProperties.setActionCommand("OpenProperties");
 			btProperties.addActionListener(this);
-			btPanel.add(btProperties);
+			btPanel2.add(btProperties);
 		}
 		
 		//if (showOK) 
@@ -147,9 +148,12 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
+		buttonsPanel = new JPanel(new BorderLayout(5,5));
 		msgLabel = new JLabel(message);
 		optionPane.add(msgLabel, BorderLayout.NORTH);	
-		optionPane.add(btPanel, BorderLayout.SOUTH);	
+		if (btPanel2 != null) buttonsPanel.add(btPanel2, BorderLayout.WEST);	
+		buttonsPanel.add(btPanel, BorderLayout.EAST);	
+		optionPane.add(buttonsPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		//Make this dialog display it.
