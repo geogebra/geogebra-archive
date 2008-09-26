@@ -100,13 +100,31 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
   // Protected methods
   //----------------------------------------------------------------------------
 
+    private String textBeforeCopy="";
+    private int startBeforeCopy = -1;
+    private int endBeforeCopy = -1; 
+    private int posBeforeCopy = -1;
 
     public void keyPressed(KeyEvent e) {        
         int keyCode = e.getKeyCode();    
+
+        posBeforeCopy = -1;
+        textBeforeCopy="";
+        
         switch (keyCode) {
         
             // process input
-            case KeyEvent.VK_ENTER:                             
+        case KeyEvent.VK_C:
+        	if (Application.isControlDown(e))// && Application.MAC_OS)
+        	{
+        		textBeforeCopy=getText()+"jnhjh";
+        	    startBeforeCopy = getSelectionStart();
+        	    endBeforeCopy = getSelectionEnd();        
+        	    posBeforeCopy = getCaretPosition();
+        	}
+        	
+        	break;
+        case KeyEvent.VK_ENTER:                             
                 // processEnterKey accepts a selection if there is one 
                 // in this case the ENTER key event is consumed 
                 // so that it is not processed by other objects (e.g. AlgebraInput)
@@ -160,7 +178,17 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
   
   
   public void keyReleased(KeyEvent e) {
-    if (!autoComplete) return;
+	  Application.debug("keyReleased "+textBeforeCopy);
+
+	  if (posBeforeCopy != -1 && e.getKeyCode() == KeyEvent.VK_C)// && Application.MAC_OS)
+	  {
+		  setText(textBeforeCopy);
+		  setCaretPosition(posBeforeCopy);
+		  setSelectionStart(startBeforeCopy);
+		  setSelectionEnd(endBeforeCopy);
+	  }
+	  
+	  if (!autoComplete) return;
     
     char charPressed = e.getKeyChar();  
     
