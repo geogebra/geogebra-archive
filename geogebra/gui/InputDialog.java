@@ -117,42 +117,40 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		// buttons
 		btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		
-		if (showProperties) {
-			btPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			btProperties = new JButton(app.getPlain("Properties")+"...");
-			btProperties.setActionCommand("OpenProperties");
-			btProperties.addActionListener(this);
-			btPanel2.add(btProperties);
-		}
-		
-		//if (showOK) 
-		{
-			btOK = new JButton(app.getPlain("OK"));
-			btOK.setActionCommand("OK");
-			btOK.addActionListener(this);
-			btPanel.add(btOK);
-		}
-
+		btPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		btProperties = new JButton(app.getPlain("Properties")+"...");
+		btProperties.setActionCommand("OpenProperties");
+		btProperties.addActionListener(this);
+		btOK = new JButton(app.getPlain("OK"));
+		btOK.setActionCommand("OK");
+		btOK.addActionListener(this);
 		btCancel = new JButton(app.getPlain("Cancel"));
 		btCancel.setActionCommand("Cancel");
 		btCancel.addActionListener(this);
-		btPanel.add(btCancel);
+		btApply = new JButton(app.getPlain("Apply"));
+		btApply.setActionCommand("Apply");
+		btApply.addActionListener(this);
 		
-		if (showApply) {
-			btApply = new JButton(app.getPlain("Apply"));
-			btApply.setActionCommand("Apply");
-			btApply.addActionListener(this);
-			btPanel.add(btApply);
-		}
 		
-		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
 		buttonsPanel = new JPanel(new BorderLayout(5,5));
 		msgLabel = new JLabel(message);
+		
+		if (showProperties) {
+			btPanel2.add(btProperties);
+			buttonsPanel.add(btPanel2, BorderLayout.EAST);	
+			buttonsPanel.add(btPanel, BorderLayout.WEST);	
+		}
+		else
+		{
+			buttonsPanel.add(btPanel, BorderLayout.EAST);	
+		}
+		
+		btPanel.add(btOK);
+		btPanel.add(btCancel);		
+		if (showApply) btPanel.add(btApply);
+		
 		optionPane.add(msgLabel, BorderLayout.NORTH);	
-		if (btPanel2 != null) buttonsPanel.add(btPanel2, BorderLayout.WEST);	
-		buttonsPanel.add(btPanel, BorderLayout.EAST);	
 		optionPane.add(buttonsPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 

@@ -96,10 +96,6 @@ public class InputPanel extends JPanel {
 		else
 			textComponent = new AutoCompleteTextField(columns, app);		
 		
-		// TODO add app.getLargeFont();
-		Font font1 = app.getPlainFont();
-		textComponent.setFont(new Font(font1.getFontName(), 0, font1.getSize() + 4));
-		
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new JComboBox();
 		cbGreekLetters  = new JComboBox();		
