@@ -44,7 +44,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
-	protected JButton btApply, btCancel, btProperties;
+	protected JButton btApply, btCancel, btProperties, btOK;
 	private JPanel optionPane, btPanel;
 	protected GeoElementSelectionListener sl;
 	protected JLabel msgLabel; 
@@ -76,7 +76,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		inputHandler = handler;
 		this.initString = initString;			
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText, false);
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText, false, geo!=null, geo!=null);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
 		
@@ -93,10 +93,11 @@ public class InputDialog extends JDialog implements ActionListener,
 	}
 	
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows,
-			boolean specialChars, boolean greekLetters, boolean selectInitText, boolean showDisplayChars) {
+			boolean specialChars, boolean greekLetters, boolean selectInitText, boolean showDisplayChars,
+			boolean showProperties, boolean showApply) {
 		setTitle(title);
 		setResizable(false);		
-
+		
 		//Create components to be displayed
 		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters, showDisplayChars );	
 				
@@ -116,20 +117,34 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		// buttons
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		btProperties = new JButton(app.getPlain("Properties")+"...");
-		btProperties.setActionCommand("OpenProperties");
-		btProperties.addActionListener(this);
-		btPanel.add(btProperties);
 		
-		btApply = new JButton(app.getPlain("Apply"));
-		btApply.setActionCommand("Apply");
-		btApply.addActionListener(this);
+		if (showProperties) {
+			btProperties = new JButton(app.getPlain("Properties")+"...");
+			btProperties.setActionCommand("OpenProperties");
+			btProperties.addActionListener(this);
+			btPanel.add(btProperties);
+		}
+		
+		//if (showOK) 
+		{
+			btOK = new JButton(app.getPlain("OK"));
+			btOK.setActionCommand("OK");
+			btOK.addActionListener(this);
+			btPanel.add(btOK);
+		}
+
 		btCancel = new JButton(app.getPlain("Cancel"));
 		btCancel.setActionCommand("Cancel");
 		btCancel.addActionListener(this);
-		btPanel.add(btApply);
 		btPanel.add(btCancel);
-	
+		
+		if (showApply) {
+			btApply = new JButton(app.getPlain("Apply"));
+			btApply.setActionCommand("Apply");
+			btApply.addActionListener(this);
+			btPanel.add(btApply);
+		}
+		
 		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
 		msgLabel = new JLabel(message);
@@ -190,9 +205,12 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		//boolean finished = false;
 		try {
-			if (source == btApply || source == inputPanel.getTextComponent()) {
+			if (source == btOK || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();				
 				setVisible(!inputHandler.processInput(inputText));
+			} else if (source == btApply) {
+				inputText = inputPanel.getText();				
+				inputHandler.processInput(inputText);
 			} else if (source == btCancel) {
 				setVisible(false);
 			} else if (source == btProperties && geo != null) {

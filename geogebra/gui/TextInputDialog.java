@@ -80,7 +80,7 @@ public class TextInputDialog extends InputDialog {
 		cbLaTeXshortcuts.addActionListener(cbl);
 		cbLaTeXshortcuts.addMouseListener(cbl);
 				
-		createGUI(title, "", false, cols, rows, true, true, false, true);		
+		createGUI(title, "", false, cols, rows, true, true, false, true, false, false);		
 		
 		// init dialog using text
 		setGeoText(text);
@@ -184,7 +184,7 @@ public class TextInputDialog extends InputDialog {
             isLaTeX = text.isLaTeX();
         }           
         
-        msgLabel.setText(descString);
+        //msgLabel.setText(descString);
         inputPanel.setText(initString);
         cbLaTeX.setSelected(isLaTeX);
         cbLaTeXshortcuts.setEnabled(isLaTeX);
@@ -214,7 +214,7 @@ public class TextInputDialog extends InputDialog {
 		Object source = e.getSource();
 		
 		try {
-			if (source == btApply || source == inputPanel.getTextComponent()) {
+			if (source == btOK || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
 				
