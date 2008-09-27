@@ -1,4 +1,4 @@
-package geogebra.algebra.autocomplete;
+package geogebra.gui.inputbar;
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;

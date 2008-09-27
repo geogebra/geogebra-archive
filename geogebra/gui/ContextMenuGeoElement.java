@@ -14,7 +14,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.algebra.autocomplete.AlgebraInput;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;

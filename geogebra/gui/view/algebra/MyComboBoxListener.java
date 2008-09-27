@@ -1,4 +1,4 @@
-package geogebra.algebra;
+package geogebra.gui.view.algebra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

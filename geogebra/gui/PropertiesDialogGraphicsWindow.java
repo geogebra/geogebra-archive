@@ -13,8 +13,8 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.algebra.InputPanel;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;

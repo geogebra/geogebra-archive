@@ -16,7 +16,7 @@ the Free Software Foundation.
  * Created on 05. September 2001, 09:11
  */
 
-package geogebra.algebra;
+package geogebra.gui.view.algebra;
 
 import geogebra.Application;
 import geogebra.GeoGebra;

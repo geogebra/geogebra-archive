@@ -13,9 +13,9 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
-import geogebra.algebra.InputPanel;
-import geogebra.algebra.autocomplete.AutoCompleteTextField;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;

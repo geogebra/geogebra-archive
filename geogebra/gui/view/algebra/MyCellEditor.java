@@ -1,7 +1,7 @@
 /**
  * 
  */
-package geogebra.algebra;
+package geogebra.gui.view.algebra;
 
 import geogebra.kernel.GeoElement;
 

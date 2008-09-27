@@ -10,10 +10,10 @@ the Free Software Foundation.
 
 */
 
-package geogebra.algebra.autocomplete;
+package geogebra.gui.inputbar;
 
 import geogebra.Application;
-import geogebra.algebra.InputPanel;
+import geogebra.gui.view.algebra.InputPanel;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;

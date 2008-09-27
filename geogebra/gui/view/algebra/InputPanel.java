@@ -1,7 +1,7 @@
-package geogebra.algebra;
+package geogebra.gui.view.algebra;
 
 import geogebra.Application;
-import geogebra.algebra.autocomplete.AutoCompleteTextField;
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
