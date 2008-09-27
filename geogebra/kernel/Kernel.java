@@ -2662,10 +2662,20 @@ public class Kernel {
 	 * Sum[list]
 	 * Michael Borcherds
 	 */
-	final public GeoNumeric Sum(String label, GeoList list) {
+	final public GeoElement Sum(String label, GeoList list) {
 		AlgoSum algo = new AlgoSum(cons, label, list);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Sum[list of functions]
+	 * Michael Borcherds
+	 */
+	final public GeoElement SumFunctions(String label, GeoList list) {
+		AlgoSumFunctions algo = new AlgoSumFunctions(cons, label, list);
+		GeoElement ret = algo.getResult();
+		return ret;
 	}
 	
 	/** 
@@ -2682,10 +2692,10 @@ public class Kernel {
 	 * Sum[list,n]
 	 * Michael Borcherds
 	 */
-	final public GeoNumeric Sum(String label, GeoList list, GeoNumeric n) {
+	final public GeoElement Sum(String label, GeoList list, GeoNumeric n) {
 		AlgoSum algo = new AlgoSum(cons, label, list, n);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoElement ret = algo.getResult();
+		return ret;
 	}
 	
 	/** 

@@ -25,10 +25,23 @@ public class CmdSum extends CommandProcessor {
 		switch (n) {
 		case 1:
 			if (arg[0].isGeoList()) {
-				GeoElement[] ret = { 
-						kernel.Sum(c.getLabel(),
-						(GeoList) arg[0]) };
-				return ret;
+				GeoList list = (GeoList)arg[0];
+				GeoElement element0 = list.get(0);
+				if (element0.isGeoNumeric()) {
+					GeoElement[] ret = { 
+							kernel.Sum(c.getLabel(),
+							list) };
+					return ret;
+				}
+				else if (element0.isGeoFunction()) {
+					GeoElement[] ret = { 
+							kernel.SumFunctions(c.getLabel(),
+							list) };
+					return ret;
+				}
+				else {
+					throw argErr(app, c.getName(), arg[0]);
+				}
 			} else
 				throw argErr(app, c.getName(), arg[0]);
 		case 2:
