@@ -32,19 +32,36 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Jul 14, 2008
+   @date Sep 27, 2008
 -->
 <project default="geogebra">
 	
 	<property name="src.dir" location="."/>
+	<property name="propertiessrc.dir" location="./geogebra/properties"/>
+	<property name="propertiestemp.dir" location="../build/tempproperties"/>
 	<property name="build.dir" location="../build"/>
 	<property name="temp.dir" location="../build/temp"/>
 	<property name="workspace.dir" location="../"/>
     			
 	<!-- main target -->
 	<target name="geogebra" 
-		    depends="clean, ggb-jar-files, obfuscate-sign-pack">	  
+		    depends="clean, stripComments, ggb-jar-files, obfuscate-sign-pack">	  
 	</target>
+	
+	<target name="stripComments">
+		   <copy todir="${propertiestemp.dir}">
+		      <fileset dir="${propertiessrc.dir}">
+	            <include name="*" />
+		      </fileset>
+	        <filterchain>
+	            <trim/>
+	           <striplinecomments>
+	              <comment value="#"/>
+	           </striplinecomments>
+	        </filterchain>
+	    </copy>
+	</target>
+
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
@@ -57,10 +74,14 @@ office@geogebra.org
 	</manifest>	
 	
 	<target name="clean">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${propertiestemp.dir}"/>
 		<delete>
 		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/*.jar.pack.gz"/>
 		</delete>
-		<mkdir dir="${build.dir}"/>
+		<delete>
+		    <fileset dir="${propertiestemp.dir}" includes="**/*"/>
+		</delete>
 	</target>
 	    
 	<target name="ggb-jar" depends="clean" description="create unsigned geogebra.jar">		
@@ -127,10 +148,10 @@ office@geogebra.org
 		/>
 	</target>
 	
-	<target name="ggb-properties-jar" depends="clean" description="create unsigned geogebra_properties.jar">
+	<target name="ggb-properties-jar" depends="clean, stripComments" description="create unsigned geogebra_properties.jar">
 		<jar jarfile="${build.dir}/geogebra_properties.jar"
-			basedir="${src.dir}"
-			includes="geogebra/properties/*.properties"			 
+			basedir="${propertiestemp.dir}"
+			includes="**/*"			 
 		/>
 	</target>
 				
