@@ -239,7 +239,7 @@ abstract public class ExportFrame extends JFrame{
 		buttonSave.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 		        currentFile =
-		            app.showSaveDialog(
+		            app.getApplicationGUImanager().showSaveDialog(
 		                Application.FILE_EXT_TEX, currentFile,
 		                "TeX " + app.getMenu("Files"));
 		        if (currentFile == null)

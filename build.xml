@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Sep 27, 2008
 -->
-<project default="geogebra">
+<project default="geogebra-no-obfuscation">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
@@ -45,7 +45,12 @@ office@geogebra.org
     			
 	<!-- main target -->
 	<target name="geogebra" 
-		    depends="clean, stripComments, ggb-jar-files, obfuscate-sign-pack">	  
+		depends="clean, ggb-jar-files, obfuscate-sign-pack">	  
+	</target>
+	
+	<!-- main target -->
+	<target name="geogebra-no-obfuscation" 
+		depends="clean, ggb-jar-files, sign-pack-only">	  
 	</target>
 	
 	<target name="stripComments">
@@ -174,6 +179,16 @@ office@geogebra.org
 	    	<available file="${workspace.dir}/java142-rt.jar"/>
 	    </condition>
 		<antcall target="obfuscate"/>
+	    	
+		<!-- check if keystore file present -->
+		<condition property="keystore.present">
+			<available file="${workspace.dir}/keystore"/>
+		</condition>		
+		<antcall target="sign-pack"/>	
+	</target>
+	
+	<!-- Sign and pack jar files without obfuscation -->
+	<target name="sign-pack-only" depends="ggb-jar-files">			
 	    	
 		<!-- check if keystore file present -->
 		<condition property="keystore.present">

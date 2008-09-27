@@ -12,6 +12,7 @@
 
 package geogebra.gui;
 
+
 import geogebra.Application;
 
 import java.io.ByteArrayOutputStream;
@@ -42,7 +43,7 @@ public class GeoGebraPreferences {
 	// picture export dialog
 	public static final String EXPORT_PIC_FORMAT = "export_pic_format";
 	public static final String EXPORT_PIC_DPI = "export_pic_dpi";
-	// public static final String EXPORT_PIC_SCALE = "export_pic_scale";
+	// public  final String EXPORT_PIC_SCALE = "export_pic_scale";
 	
 	// print preview dialog
 	public static final String PRINT_ORIENTATION = "print_orientation";
@@ -50,25 +51,34 @@ public class GeoGebraPreferences {
 	
 	
 	 // preferences node name for GeoGebra 	 
-	 private static Preferences ggbPrefs;
-	 static {
+	 private  Preferences ggbPrefs;
+	  {
 		 ggbPrefs = Preferences.userRoot().node("/geogebra");
 	 }	 
-	 private static String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
+	 private  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
      
     // special preference keys
-	private static final String XML_USER_PREFERENCES = "xml_user_preferences";	
-	private static final String TOOLS_FILE_GGT = "tools_file_ggt";	
-	private static final String APP_LOCALE = "app_locale";	
-	private static final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
-	private static final String APP_FILE_ = "app_file_";		
+	private  final String XML_USER_PREFERENCES = "xml_user_preferences";	
+	private  final String TOOLS_FILE_GGT = "tools_file_ggt";	
+	private  final String APP_LOCALE = "app_locale";	
+	private  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
+	private  final String APP_FILE_ = "app_file_";		
 		
 	
-	public static String loadPreference(String key, String defaultValue) {
+	private static GeoGebraPreferences singleton;
+	
+	public static GeoGebraPreferences getInstance() {
+		if (singleton == null)
+			singleton = new GeoGebraPreferences();
+		return singleton;
+	}
+	
+	
+	public  String loadPreference(String key, String defaultValue) {
 		return ggbPrefs.get(key, defaultValue);
 	}
 	
-	public static void savePreference(String key, String value) {
+	public  void savePreference(String key, String value) {
 		if (key != null && value != null)
 			ggbPrefs.put(key, value);
 	}
@@ -77,7 +87,7 @@ public class GeoGebraPreferences {
 	/**
      * Returns the path of the first file in the file list 
      */
-    public static File getDefaultFilePath() {      	    	
+    public  File getDefaultFilePath() {      	    	
     	File file = new File(ggbPrefs.get(APP_FILE_ + "1", ""));
     	if (file.exists())
     		return file.getParentFile();
@@ -88,7 +98,7 @@ public class GeoGebraPreferences {
     /**
      * Returns the default image path
      */
-    public static File getDefaultImagePath() {      	
+    public  File getDefaultImagePath() {      	
     	// image path
 		String pathName = ggbPrefs.get(APP_CURRENT_IMAGE_PATH, null);
 		if (pathName != null)
@@ -100,7 +110,7 @@ public class GeoGebraPreferences {
     /**
      * Saves the currently set locale.
      */
-    public static void saveDefaultImagePath(File imgPath) {    
+    public  void saveDefaultImagePath(File imgPath) {    
     	try {
     		if (imgPath != null)
     			ggbPrefs.put(APP_CURRENT_IMAGE_PATH, imgPath.getCanonicalPath());
@@ -112,7 +122,7 @@ public class GeoGebraPreferences {
     /**
      * Returns the default locale
      */
-    public static Locale getDefaultLocale() {      	
+    public  Locale getDefaultLocale() {      	
     	// language
     	String strLocale = ggbPrefs.get(APP_LOCALE, null);
     	if (strLocale != null) 
@@ -124,7 +134,7 @@ public class GeoGebraPreferences {
     /**
      * Saves the currently set locale.
      */
-    public static void saveDefaultLocale(Locale locale) {    
+    public  void saveDefaultLocale(Locale locale) {    
     	// save locale (language)
     	ggbPrefs.put(APP_LOCALE, locale.toString());
     }
@@ -132,7 +142,7 @@ public class GeoGebraPreferences {
     /**
      * Loads the names of the four last used files from the preferences backing store.
      */
-    public static void loadFileList() {
+    public  void loadFileList() {
     	// load last four files
     	for (int i=4; i >= 1; i--) {	
     		File file = new File(ggbPrefs.get(APP_FILE_ + i, ""));
@@ -143,7 +153,7 @@ public class GeoGebraPreferences {
     /**
      * Saves the names of the four last used files.
      */
-    public static void saveFileList() {
+    public  void saveFileList() {
     	try {    		    		    		    	
 	    	// save last four files
 	    	for (int i=1; i <= 4; i++) {	    		
@@ -162,7 +172,7 @@ public class GeoGebraPreferences {
      * Inits factory default XML by taking the preferences XML of this
      * virign application    		
      */
-    public static void initDefaultXML(Application app) {    	    	
+    public  void initDefaultXML(Application app) {    	    	
     	if (XML_GGB_FACTORY_DEFAULT == null)
     		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML();    
     }
@@ -170,7 +180,7 @@ public class GeoGebraPreferences {
     /**
      * Saves preferences by taking the application's current values. 
      */
-    public static void saveXMLPreferences(Application app) {
+    public  void saveXMLPreferences(Application app) {
     	
     	
     	// preferences xml
@@ -191,7 +201,7 @@ public class GeoGebraPreferences {
      * Breaks up byte array value into pieces and calls prefs.putByteArray(prefs, key+k, piece_k)
      * for every piece.
      */
-    private static void putByteArray(Preferences prefs, String key, byte [] value) {
+    private  void putByteArray(Preferences prefs, String key, byte [] value) {
     	// byte array must not be longer than 3/4 of max value length
     	int max_length = (int) Math.floor(Preferences.MAX_VALUE_LENGTH * 0.75);
     	
@@ -254,7 +264,7 @@ public class GeoGebraPreferences {
      * Breaks up byte array value into pieces and calls prefs.putByteArray(prefs, key+k, piece_k)
      * for every piece.
      */
-    private static byte [] getByteArray(Preferences prefs, String key, byte [] def) {    	    	
+    private  byte [] getByteArray(Preferences prefs, String key, byte [] def) {    	    	
     	byte [] ret = ggbPrefs.getByteArray(key, null);
     	    
     	if (ret != null) {
@@ -296,7 +306,7 @@ public class GeoGebraPreferences {
      * This method clears the current construction in the application.
      * Note: the XML string used is the same as for ggb files. 
      */
-    public static void loadXMLPreferences(Application app) {  
+    public  void loadXMLPreferences(Application app) {  
     	app.setWaitCursor();  
     	
     	// load this preferences xml file in application
@@ -323,7 +333,7 @@ public class GeoGebraPreferences {
     /**
      * Clears all user preferences.   
      */
-    public static void clearPreferences() {
+    public  void clearPreferences() {
     	try {
     		ggbPrefs.clear();    		
     		ggbPrefs.flush();

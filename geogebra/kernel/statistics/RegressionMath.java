@@ -1,4 +1,4 @@
-package geogebra.util;
+package geogebra.kernel.statistics;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoElement;
@@ -20,8 +20,7 @@ the Free Software Foundation.
  *
  * RegressionMath is a library of sums, determinants and parameter calculations
  * used by the FitXxx[GeoList]:GeoFunction commands.
- * 
- * Made as a static class. ("Singleton") 
+ *  
  * Might be problems if callers are running in separate threads.
  * Is this a problem?
  * 
@@ -42,7 +41,7 @@ the Free Software Foundation.
 
 public final  class RegressionMath {
 
-    private final static boolean    DEBUG   =   false;       //24.04.08: false for release
+    private final  boolean    DEBUG   =   false;       //24.04.08: false for release
     public final static int         LINEAR  =   1,
                                     QUAD    =   2,
                                     CUBIC   =   3,
@@ -54,40 +53,41 @@ public final  class RegressionMath {
     
 
     /// --- Properties --- ///
-    private static  boolean error   =   false;
-    private static  int     regtype =   LINEAR;                     //Default
-    private static  double  r,                                      //Reg-coeff
+    private   boolean error   =   false;
+    private   int     regtype =   LINEAR;                     //Default
+    private   double  r,                                      //Reg-coeff
                             p1,p2,p3,p4,p5,                         //Parameters
                             sigmax,sigmax2,sigmax3,sigmax4,         //Sums of x,x^2,...
                             sigmax5,sigmax6,sigmax7,sigmax8,
                             sigmay,sigmay2,
                             sigmaxy,sigmax2y,sigmax3y,sigmax4y;
-    private static  GeoList geolist;           
-    private static  double[] xlist;
-    private static  double[] ylist;
-    private static  int     size;
+    private   GeoList geolist;           
+    private   double[] xlist;
+    private   double[] ylist;
+    private   int     size;
 
 
+    
    
     /// --- Interface --- ///
     /** Constructor not needed */
-    private RegressionMath() {  //private: Safety measure to avoid wrong use
+    public RegressionMath() {  //private: Safety measure to avoid wrong use
     }//Constructor
     
-    public static final double getP1()   {return p1; }
-    public static final double getP2()   {return p2; }    
-    public static final double getP3()   {return p3; }    
-    public static final double getP4()   {return p4; }    
-    public static final double getP5()   {return p5; }    
-    public static final double getR()    {return r;  }
-    public static final double getSigmaX() {return sigmax;}
-    public static final double getSigmaX2() {return sigmax2;}
-    public static final double getSigmaY() {return sigmay;}
-    public static final double getSigmaY2() {return sigmay2;}
-    public static final double getSigmaXy() {return sigmaxy;}    
+    public  final double getP1()   {return p1; }
+    public  final double getP2()   {return p2; }    
+    public  final double getP3()   {return p3; }    
+    public  final double getP4()   {return p4; }    
+    public  final double getP5()   {return p5; }    
+    public  final double getR()    {return r;  }
+    public  final double getSigmaX() {return sigmax;}
+    public  final double getSigmaX2() {return sigmax2;}
+    public  final double getSigmaY() {return sigmay;}
+    public  final double getSigmaY2() {return sigmay2;}
+    public  final double getSigmaXy() {return sigmaxy;}    
     
     
-    public static final boolean doLinear(GeoList gl) {
+    public  final boolean doLinear(GeoList gl) {
         error=false;
         geolist=gl;
         size=geolist.size();
@@ -107,7 +107,7 @@ public final  class RegressionMath {
         }//if-else
     }//doLinearReg(GeoList)
     
-    public static final boolean doQuad(GeoList gl) {
+    public  final boolean doQuad(GeoList gl) {
         error=false;
         geolist=gl;
         size=geolist.size();
@@ -143,7 +143,7 @@ public final  class RegressionMath {
         }//if-else
     }//doQuad(Geolist)
     
-    public static final boolean doCubic(GeoList gl) {
+    public  final boolean doCubic(GeoList gl) {
         error=false;
         geolist=gl;
         size=geolist.size();
@@ -189,7 +189,7 @@ public final  class RegressionMath {
         }//if-else
     }//doCubic(Geolist)
     
-    public static final boolean doQuart(GeoList gl) {
+    public  final boolean doQuart(GeoList gl) {
         error=false;
         geolist=gl;
         size=geolist.size();
@@ -246,7 +246,7 @@ public final  class RegressionMath {
         }//if-else
     }//doQuart(Geolist)
     
-    public static final boolean doExp(GeoList gl) {
+    public  final boolean doExp(GeoList gl) {
         error=false;
         geolist=gl;
         double y=0.0d;
@@ -278,7 +278,7 @@ public final  class RegressionMath {
         }//if-else
     }//doExp(GeoList)    
 
-    public static final boolean doLog(GeoList gl) {
+    public  final boolean doLog(GeoList gl) {
         error=false;
         geolist=gl;
         double x=0.0d;
@@ -309,7 +309,7 @@ public final  class RegressionMath {
         }//if-else
     }//doLog(GeoList)    
 
-    public static final boolean doPow(GeoList gl) {
+    public  final boolean doPow(GeoList gl) {
         error=false;
         geolist=gl;
         double x,y;
@@ -343,18 +343,18 @@ public final  class RegressionMath {
     }//doPow(GeoList)    
     
     
-    public  static final double det22(double a11,    double a12,     
+    public   final double det22(double a11,    double a12,     
                                       double a21,    double a22){
             return a11*a22-a21*a12;
     }//det22()
     
-    private static final double det33(double a11,    double a12,     double a13, 
+    private  final double det33(double a11,    double a12,     double a13, 
                                       double a21,    double a22,     double a23,
                                       double a31,    double a32,     double a33) {
         return a11*(a22*a33-a32*a23)-a12*(a21*a33-a31*a23)+a13*(a21*a32-a31*a22);
     }//det33()
     
-    private static final double det44(
+    private  final double det44(
         double a11,     double a12,     double a13,     double a14,
         double a21,     double a22,     double a23,     double a24,
         double a31,     double a32,     double a33,     double a34,
@@ -369,7 +369,7 @@ public final  class RegressionMath {
         a22*a31*a14*a43 - a22*a14*a41*a33 - a31*a14*a23*a42 + a14*a23*a32*a41;
     }//det44()
     
-    private static final double det55(
+    private  final double det55(
         double a11,     double a12,     double a13,     double a14,     double a15,
         double a21,     double a22,     double a23,     double a24,     double a25,
         double a31,     double a32,     double a33,     double a34,     double a35,
@@ -406,7 +406,7 @@ public final  class RegressionMath {
     /// --- Private --- ///
 
     /* Do whatever sums neccessary */
-    private final static void doSums(int degree) {   //do whatever sums neccessary
+    private final  void doSums(int degree) {   //do whatever sums neccessary
         double x,y,xx,xy;
         sigmax=sigmax2=sigmax3=sigmax4=sigmax5=sigmax6=sigmax7=sigmax8=
         sigmaxy=sigmax2y=sigmax3y=sigmax4y=
@@ -426,7 +426,7 @@ public final  class RegressionMath {
     }//doSums(degree)
 
     /* Get points to local array */
-    private final static void getPoints(){
+    private final  void getPoints(){
         double x,y;
         double xy[]=new double[2];
         GeoElement geoelement;
@@ -445,7 +445,7 @@ public final  class RegressionMath {
     }//getPoints()
     
     //Correllation coefficient in linear case (and psudo for exp,log, pow)
-    private final static double corrCoeff(){
+    private final  double corrCoeff(){
         double cc;
         double n=(size*sigmax2-sigmax*sigmax)*(size*sigmay2-sigmay*sigmay); 
         if((n-0.0d)<1.0E-15d){            //udef...

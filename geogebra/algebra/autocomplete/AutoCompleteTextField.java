@@ -3,6 +3,7 @@ import geogebra.Application;
 import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
+import geogebra.util.AutoCompleteDictionary;
 
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -396,10 +397,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         
          // show help if available
          if (help != null) {
-        	 if (goToWebManual) app.openHelp(cmd); // TEST CODE
+        	 if (goToWebManual) app.getApplicationGUImanager().openHelp(cmd); // TEST CODE
         	 else app.showHelp(help); // ORIGINAL CODE
          } else {
-             app.openHelp(null);
+             app.getApplicationGUImanager().openHelp(null);
          }
      }
 

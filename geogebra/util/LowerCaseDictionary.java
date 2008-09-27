@@ -1,4 +1,5 @@
-package geogebra.algebra.autocomplete;
+package geogebra.util;
+
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;

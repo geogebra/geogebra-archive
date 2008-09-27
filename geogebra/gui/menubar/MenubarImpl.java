@@ -3,16 +3,14 @@ package geogebra.gui.menubar;
 import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ConstructionProtocolNavigation;
-import geogebra.gui.GeoGebraPreferences;
+import geogebra.gui.ApplicationGUImanager;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
+import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.modules.JarManager;
-import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
@@ -49,6 +47,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 public abstract class MenubarImpl extends JMenuBar implements Menubar {
+
+	private static final long serialVersionUID = 1736020764918189176L;
 
 	// Actions
 	protected AbstractAction refreshAction,
@@ -99,12 +99,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	    cbShowGrid.setSelected(ev.getShowGrid());
 	    
 	    cbShowAlgebraView.setSelected(app.showAlgebraView());
-	    cbShowSpreadsheet.setSelected(app.showSpreadsheet());     // Michael Borcherds 2008-01-14
+	    cbShowSpreadsheet.setSelected(app.showSpreadsheetView());     // Michael Borcherds 2008-01-14
         cbShowAlgebraInput.setSelected(app.showAlgebraInput());
         cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
 		boolean showAlgebraView = app.showAlgebraView();
-		boolean showSpreadsheetView = app.showSpreadsheet();
+		boolean showSpreadsheetView = app.showSpreadsheetView();
 		cbShowAlgebraView.setSelected(showAlgebraView);
 		cbShowAuxiliaryObjects.setVisible(showAlgebraView);
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
@@ -117,11 +117,16 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowCmdList.setVisible(app.showAlgebraInput());		
 			
 		
-		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());				
-		cbShowConsProtNavigationPlay
-				.setSelected(app.isConsProtNavigationPlayButtonVisible());
-		cbShowConsProtNavigationOpenProt
-				.setSelected(app.isConsProtNavigationProtButtonVisible());
+		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());		
+		
+		ApplicationGUImanager guiMan = (ApplicationGUImanager) app.getApplicationGUImanager();
+		if (guiMan != null) {
+			cbShowConsProtNavigationPlay
+					.setSelected(guiMan.isConsProtNavigationPlayButtonVisible());
+			cbShowConsProtNavigationOpenProt
+					.setSelected(guiMan.isConsProtNavigationProtButtonVisible());
+		}
+			
 		cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
 		cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
 
@@ -179,7 +184,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		setMenuShortCutAccelerator(mi, 'P');
 				
 		// export
-		if (JarManager.GEOGEBRA_EXPORT_LOADED) {
+		if (app.loadExportJar()) {
 			JMenu submenu = new JMenu(app.getMenu("Export"));
 			submenu.setIcon(app.getEmptyIcon());
 			menu.add(submenu);
@@ -201,9 +206,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			
 			// Added by Loïc Le Coq
 			mi = submenu.add(exportPgfAction);
-			//End
-			
-			
+			//End						
 		}		
 		
 		// DONE HERE WHEN APPLET
@@ -260,9 +263,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// Edit
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
-			mi = menu.add(app.getUndoAction());
+			mi = menu.add(app.getApplicationGUImanager().getUndoAction());
 			setMenuShortCutAccelerator(mi, 'Z');
-			mi = menu.add(app.getRedoAction());
+			mi = menu.add(app.getApplicationGUImanager().getRedoAction());
 			if (Application.MAC_OS)
 				// Command-Shift-Z
 				setMenuShortCutShiftAccelerator(mi, 'Z');
@@ -310,12 +313,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 		// View
 		menu = new JMenu(app.getMenu("View"));
-		cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());		
+		cbShowAxes = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowAxesAction());		
 		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 				&& app.getEuclidianView().getShowYaxis());
 		menu.add(cbShowAxes);
 
-		cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
+		cbShowGrid = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowGridAction());
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
 		menu.addSeparator();
@@ -329,18 +332,15 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	    // Michael Borcherds 2008-01-14
 		cbShowSpreadsheet = new JCheckBoxMenuItem(showSpreadsheetAction);		
 		cbShowSpreadsheet.setIcon(app.getEmptyIcon());
-		cbShowSpreadsheet.setSelected(app.showSpreadsheet());
-		if (!Application.disableSpreadsheet)
-		{
-			setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
-			menu.add(cbShowSpreadsheet);
-		}
+		cbShowSpreadsheet.setSelected(app.showSpreadsheetView());	
+		setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
+		menu.add(cbShowSpreadsheet);		
 		
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
 		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
-		cbShowAuxiliaryObjects.setSelected(app.getAlgebraView() == null
-				|| app.getAlgebraView().showAuxiliaryObjects());
+		cbShowAuxiliaryObjects.setSelected(app.getApplicationGUImanager().getAlgebraView() == null
+				|| app.getApplicationGUImanager().getAlgebraView().showAuxiliaryObjects());
 		menu.add(cbShowAuxiliaryObjects);
 
 		cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);				
@@ -639,7 +639,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowSpreadsheet(!app.showSpreadsheet());
+				app.setShowSpreadsheetView(!app.showSpreadsheetView());
 				app.updateCenterPanel(true);
 			}
 		};
@@ -660,8 +660,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				app.setShowCmdList(!app.showCmdList());
-				if (app.getAlgebraInput() != null)
-					SwingUtilities.updateComponentTreeUI(app.getAlgebraInput());
+				if (app.getApplicationGUImanager().getAlgebraInput() != null)
+					SwingUtilities.updateComponentTreeUI(app.getApplicationGUImanager().getAlgebraInput());
 			}
 		};
 
@@ -703,7 +703,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getConstructionProtocolNavigation();
+					app.getApplicationGUImanager().getConstructionProtocolNavigation();
 				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -718,7 +718,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getConstructionProtocolNavigation();
+					app.getApplicationGUImanager().getConstructionProtocolNavigation();
 				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -756,7 +756,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showPropertiesDialog();
+				app.getApplicationGUImanager().showPropertiesDialog();
 			}
 		};
 
@@ -768,7 +768,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.showConstructionProtocol();
+						app.getApplicationGUImanager().showConstructionProtocol();
 					}
 				};
 				runner.start();
@@ -780,7 +780,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showDrawingPadPropertiesDialog();
+				app.getApplicationGUImanager().showDrawingPadPropertiesDialog();
 			}
 		};
 
@@ -789,7 +789,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showToolbarConfigDialog();
+				app.getApplicationGUImanager().showToolbarConfigDialog();
 			}
 		};
 
@@ -798,7 +798,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.save();
+				app.getApplicationGUImanager().save();
 			}
 		};
 
@@ -807,7 +807,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.saveAs();
+				app.getApplicationGUImanager().saveAs();
 			}
 		};
 
@@ -867,7 +867,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.openFile();
+				app.getApplicationGUImanager().openFile();
 			}
 		};
 
@@ -941,7 +941,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						
 						if (sep != null) for (int row=0 ; row<strs.length ; row++)
 						{
-							//Application.debug("XXX"+strs[i]+"XXX");
+							//Application.debug("XX"+strs[i]+"XX");
 							
 							// Remove Whitespace
 							strs[row]=strs[row].trim();
@@ -967,14 +967,14 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 									kernel.getAlgebraProcessor().processAlgebraCommand(command, false);
 									coords += GeoElement.getSpreadsheetCellName(col,row);
 									if (col == tempStr.length-1) coords +=")"; else coords +=",";
-									//Application.debug("XXX"+list+"XXX");
+									//Application.debug("XX"+list+"XX");
 								}
 								if (tempStr.length == 2) // 2D coords
 								{
 									//kernel.getAlgebraProcessor().processAlgebraCommand(coords, false);
 									list = list + coords + ",";
 								}
-									// TODO 3D coords?
+									
 							}
 						}
 						
@@ -1000,7 +1000,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.openHelp(null);
+						app.getApplicationGUImanager().openHelp(null);
 					}
 				};
 				runner.start();
@@ -1027,6 +1027,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					    	app.clearSelectedGeos();
 					    	
 					    	// use reflection for
+					    	app.loadExportJar();
 				  		    JDialog d = new geogebra.export.GraphicExportDialog(app);   		
 				  		    //Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
 				  		    //Object[] args = new Object[] { app };
@@ -1052,14 +1053,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {				
-				try {		
-					// use reflection for
-		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
-		  		    //Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
-		  		    //Object[] args = new Object[] { app };
-		  		    //Class [] types = new Class[] {Application.class};
-		  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-		  	        //constructor.newInstance(args);  			
+				try {				
+					app.loadExportJar();
 		  	        new geogebra.export.pstricks.GeoGebraToPstricks(app);	
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPstricks not available");
@@ -1072,14 +1067,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {				
-				try {		
-					// use reflection for
-		  		    // new geogebra.export.pstricks.GeoGebraToPstricks(app);			
-		  		    //Class casViewClass = Class.forName("geogebra.export.pstricks.GeoGebraToPstricks");
-		  		    //Object[] args = new Object[] { app };
-		  		    //Class [] types = new Class[] {Application.class};
-		  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-		  	        //constructor.newInstance(args);  			
+				try {	
+					app.loadExportJar();
 		  	        new geogebra.export.pstricks.GeoGebraToPgf(app);	
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
@@ -1101,13 +1090,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						try {
 							app.clearSelectedGeos();
 							
-							// use reflection for
-				  		    // JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
-				  		    //Class casViewClass = Class.forName("geogebra.export.WorksheetExportDialog");
-				  		    //Object[] args = new Object[] { app };
-				  		    //Class [] types = new Class[] {Application.class};
-				  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-				  	        //JDialog d =  (JDialog) constructor.newInstance(args); 
+							app.loadExportJar();
 				  		    JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
 														
 							d.setVisible(true);
@@ -1158,7 +1141,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.saveXMLPreferences(app);				
+				app.getApplicationGUImanager().getPreferences().saveXMLPreferences(app);				
 			}
 		};
 		
@@ -1167,7 +1150,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.clearPreferences();				
+				app.getApplicationGUImanager().getPreferences().clearPreferences();				
 			}
 		};
 		
@@ -1227,7 +1210,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				app.showURLinBrowser(Application.GEOGEBRA_WEBSITE);
+				app.getApplicationGUImanager().showURLinBrowser(Application.GEOGEBRA_WEBSITE);
 			}
 		};		
 		
@@ -1287,7 +1270,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  		    //Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
 		  		    //Class [] types = new Class[] {Application.class, Printable.class, int.class};
 		  	        //Constructor constructor = classObject.getDeclaredConstructor(types);   	        
-		  	        //constructor.newInstance(args); 										
+		  	        //constructor.newInstance(args); 
+					app.loadExportJar();
 		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
 					
             	} catch (Exception e) {
@@ -1493,15 +1477,15 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		if (kernel.useSignificantFigures) {
 			int figures = kernel.getPrintFigures();
-			if (figures > 0 && figures < app.figuresLookup.length)
-				pos = app.figuresLookup[figures];
+			if (figures > 0 && figures < Application.figuresLookup.length)
+				pos = Application.figuresLookup[figures];
 		}
 		else
 		{
 			int decimals = kernel.getPrintDecimals();
 			
-			if (decimals > 0 && decimals < app.decimalsLookup.length)
-				pos = app.decimalsLookup[decimals];
+			if (decimals > 0 && decimals < Application.decimalsLookup.length)
+				pos = Application.decimalsLookup[decimals];
 			
 		}
 
@@ -1588,7 +1572,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
     	
         public void actionPerformed(ActionEvent e) {
         	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
-        	GeoGebraPreferences.saveDefaultLocale(app.getLocale());
+        	app.getApplicationGUImanager().getPreferences().saveDefaultLocale(app.getLocale());
         }
     }
     

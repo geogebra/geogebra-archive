@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
-import geogebra.cas.view.CASView;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -213,7 +212,12 @@ public class MyXMLio {
 		}
 
 		if (clearConstruction) {
-			app.setToolBarDefinition(null);
+			// clear toolbar definition
+			if (app.hasApplicationGUImanager()) {
+				app.getApplicationGUImanager().setToolBarDefinition(null);
+			}
+
+			// clear construction
 			kernel.clearConstruction();
 		}
 
@@ -232,13 +236,15 @@ public class MyXMLio {
 		}
 
 		// handle construction step stored in XMLhandler
-		if (!isGGTFile && app.showConsProtNavigation() & oldVal) // do this
-																	// only if
-																	// the views
-																	// are
-																	// active
-			app.getConstructionProtocol().setConstructionStep(
-					handler.getConsStep());
+		// do this only if the construction protocol navigation is showing	
+		if (!isGGTFile && oldVal &&
+				app.showConsProtNavigation() && 
+				app.hasApplicationGUImanager()) 
+		{
+				app.getApplicationGUImanager().getConstructionProtocol().
+					setConstructionStep(handler.getConsStep());
+		}
+		
 	}
 
 	/**
@@ -574,23 +580,7 @@ public class MyXMLio {
 						+ "\">\n");
 
 		// save gui settings
-		sb.append(app.getUserInterfaceXML());
-
-		// save euclidianView settings
-		sb.append(app.getEuclidianView().getXML());
-
-		// save spreadsheetView settings
-		if (!app.disableSpreadsheet)
-			sb.append(app.getSpreadsheetView().getXML());
-
-		// save cas view seeting and cas session
-		// like the spreadsheet, we need a variable in the app in the future,
-		// but now I just save it.
-		CASView casView = app.getCasView();
-		if (casView != null) {
-			sb.append(app.getCasView().getGUIXML());
-			sb.append(app.getCasView().getSessionXML());
-		}
+		sb.append(app.getCompleteUserInterfaceXML());		
 
 		// save construction
 		sb.append(kernel.getConstructionXML());
@@ -642,10 +632,7 @@ public class MyXMLio {
 						+ "\">\n");
 
 		// save gui settings
-		sb.append(app.getUserInterfaceXML());
-
-		// save euclidianView settings
-		sb.append(app.getEuclidianView().getXML());
+		sb.append(app.getCompleteUserInterfaceXML());		
 
 		sb.append("</geogebra>");
 		return sb.toString();
@@ -689,7 +676,7 @@ public class MyXMLio {
 
 		// save cas session
 		if (app.getCasView() != null)
-			sb.append(app.getCasView().getSessionXML());
+			sb.append(((geogebra.cas.view.CASView) app.getCasView()).getSessionXML());
 
 		sb.append("</geogebra>");
 

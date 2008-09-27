@@ -14,7 +14,6 @@ the Free Software Foundation.
 
 
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.RegressionMath;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoFunction;
@@ -71,44 +70,44 @@ public class AlgoFitPoly extends AlgoElement{
             geofunction.setUndefined();
             return;
         }else{
-            
+        	RegressionMath regMath = kernel.getRegressionMath();
             switch(par){
             case RegressionMath.LINEAR:          //24.04.08: moved up linear case from default
-            	   	regok=RegressionMath.doLinear(geolist);
+            	   	regok=regMath.doLinear(geolist);
             	   	if(regok){
             	   		cof=new double[2];
-            	   		cof[0]=RegressionMath.getP1();
-            	   		cof[1]=RegressionMath.getP2();
+            	   		cof[0]=regMath.getP1();
+            	   		cof[1]=regMath.getP2();
             	   	}//else: ->
             	   	break;
                 case RegressionMath.QUAD:   
-                    regok=RegressionMath.doQuad(geolist);
+                    regok=regMath.doQuad(geolist);
                     if(regok){
                         cof=new double[3];
-                        cof[0]=RegressionMath.getP1();
-                        cof[1]=RegressionMath.getP2();
-                        cof[2]=RegressionMath.getP3();
+                        cof[0]=regMath.getP1();
+                        cof[1]=regMath.getP2();
+                        cof[2]=regMath.getP3();
                     }//else: ->                   
                     break;
                 case RegressionMath.CUBIC:
-                    regok=RegressionMath.doCubic(geolist);
+                    regok=regMath.doCubic(geolist);
                     if(regok){           
                         cof=new double[4];
-                        cof[0]=RegressionMath.getP1();
-                        cof[1]=RegressionMath.getP2();
-                        cof[2]=RegressionMath.getP3();
-                        cof[3]=RegressionMath.getP4();                        
+                        cof[0]=regMath.getP1();
+                        cof[1]=regMath.getP2();
+                        cof[2]=regMath.getP3();
+                        cof[3]=regMath.getP4();                        
                     }//else: ->
                     break;
                 case RegressionMath.QUART:  
-                    regok=RegressionMath.doQuart(geolist);
+                    regok=regMath.doQuart(geolist);
                     if(regok){
                         cof=new double[5];
-                        cof[0]=RegressionMath.getP1();
-                        cof[1]=RegressionMath.getP2();
-                        cof[2]=RegressionMath.getP3();
-                        cof[3]=RegressionMath.getP4();
-                        cof[4]=RegressionMath.getP5();
+                        cof[0]=regMath.getP1();
+                        cof[1]=regMath.getP2();
+                        cof[2]=regMath.getP3();
+                        cof[3]=regMath.getP4();
+                        cof[4]=regMath.getP5();
                     }//else: ->
                     break;
                 default:regok=false;   //24.04.08:  Only 1<=degree<=4

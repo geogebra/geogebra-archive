@@ -34,7 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 public class MyToolbar extends JPanel implements ComponentListener{
-	
+
+	private static final long serialVersionUID = 8983050697241236851L;
+
 	public static final Integer TOOLBAR_SEPARATOR = new Integer(-1);
 
 	private Application app;
@@ -75,8 +77,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         leftPanel.add(tb);      
         add(leftPanel, BorderLayout.WEST); 
                   
-        if (app.getAlgebraInput() != null)        	
-        	bg.add(app.getAlgebraInput().getInputButton());                                 
+        if (app.showAlgebraInput() )        	
+        	bg.add(app.getApplicationGUImanager().getAlgebraInput().getInputButton());                                 
        
        	if (showToolBarHelp) {       
        		// mode label       		
@@ -93,13 +95,13 @@ public class MyToolbar extends JPanel implements ComponentListener{
         if (app.isUndoActive()) {
 	        // undo part                  	   
 	        JPanel undoPanel = new JPanel(new BorderLayout(0,0)); 
-	        MySmallJButton button = new MySmallJButton(app.getUndoAction(), 7); 	
+	        MySmallJButton button = new MySmallJButton(app.getApplicationGUImanager().getUndoAction(), 7); 	
 	        String text = app.getMenu("Undo");
 	        button.setText(null);
 	        button.setToolTipText(text);                     
 	        undoPanel.add(button, BorderLayout.NORTH);
 	        
-	        button = new MySmallJButton(app.getRedoAction(), 7);         	        
+	        button = new MySmallJButton(app.getApplicationGUImanager().getRedoAction(), 7);         	        
 	        text = app.getMenu("Redo");
 	        button.setText(null);
 	        button.setToolTipText(text);        
@@ -291,9 +293,9 @@ public class MyToolbar extends JPanel implements ComponentListener{
     private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {  
     	Vector toolbarVec;
     	try {
-	    	toolbarVec = createToolBarVec(app.getToolBarDefinition());
+	    	toolbarVec = createToolBarVec(app.getApplicationGUImanager().getToolBarDefinition());
 	    } catch (Exception e) {
-			Application.debug("invalid toolbar string: " + app.getToolBarDefinition());
+			Application.debug("invalid toolbar string: " + app.getApplicationGUImanager().getToolBarDefinition());
 			toolbarVec = createToolBarVec(getDefaultToolbarString());
 		}
  
@@ -401,11 +403,9 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	// move
         sb.append(EuclidianView.MODE_MOVE);        
         sb.append(" ");
-        sb.append(EuclidianView.MODE_MOVE_ROTATE);
-        if (!Application.disableSpreadsheet) {
-        	sb.append(" ");
-        	sb.append(EuclidianView.MODE_RECORD_TO_SPREADSHEET);
-        }                       
+        sb.append(EuclidianView.MODE_MOVE_ROTATE);       
+    	sb.append(" ");
+    	sb.append(EuclidianView.MODE_RECORD_TO_SPREADSHEET);                      
         
         // points   
         sb.append(" || ");

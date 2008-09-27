@@ -21,7 +21,6 @@ package geogebra.kernel;
 import geogebra.Application;
 import geogebra.MyError;
 import geogebra.View;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
@@ -68,7 +67,7 @@ import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
-import geogebra.modules.JarManager;
+import geogebra.kernel.statistics.RegressionMath;
 import geogebra.util.ScientificFormat;
 
 import java.text.NumberFormat;
@@ -165,9 +164,10 @@ public class Kernel {
 	protected Application app;	
 	private AlgebraProcessor algProcessor;
 	private EquationSolver eqnSolver;
+	private RegressionMath regMath;
 	private ExtremumFinder extrFinder;
 	private Parser parser;
-	private GeoGebraCAS ggbCAS;
+	private Object ggbCAS;
 	
 	// Continuity on or off, default: false since V3.0
 	private boolean continuous = false;
@@ -195,6 +195,8 @@ public class Kernel {
     		algProcessor = new AlgebraProcessor(this);
     	return algProcessor;
     }
+	
+	
 	
 	/**
      * Returns a GeoElement for the given label. 
@@ -248,6 +250,12 @@ public class Kernel {
 		return extrFinder;
 	}
 	
+	final public RegressionMath getRegressionMath() {
+		if (regMath == null)
+			regMath = new RegressionMath();
+		return regMath;
+	}
+	
 	final public Parser getParser() {
     	if (parser == null)
     		parser = new Parser(this, cons);
@@ -265,7 +273,7 @@ public class Kernel {
 			initCAS();		
 		}
 		
-		return ggbCAS.evaluateYACAS(exp);
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACAS(exp);
 	}
 	
 	/** 
@@ -279,7 +287,7 @@ public class Kernel {
 			initCAS();		
 		}
 		
-		return ggbCAS.evaluateYACASRaw(exp);
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACASRaw(exp);
 	}
 	
 	/** 
@@ -293,17 +301,12 @@ public class Kernel {
 			initCAS();		
 		}				
 		
-		return ggbCAS.evaluateJASYMCA(exp);
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
 	}
 	
 	public synchronized void initCAS() {
-		// TODO: use reflection to load CAS from separate jar file
 		if (ggbCAS == null) {			
-	    	if (!JarManager.addCasJarToClassPath()) {
-				Application.debug("Could not initialize CAS Jar");
-				return;    		
-	    	}	    				
-			
+			app.loadCASJar();
 			ggbCAS = new geogebra.cas.GeoGebraCAS();
 		}			
 	}
@@ -320,7 +323,7 @@ public class Kernel {
 			initCAS();					
 		}
     	
-    	return ggbCAS.getPolynomialCoeffs(exp, variable);
+    	return ((geogebra.cas.GeoGebraCAS) ggbCAS).getPolynomialCoeffs(exp, variable);
     }
 
 	final public void setEpsilon(double epsilon) {

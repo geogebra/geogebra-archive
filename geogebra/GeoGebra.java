@@ -49,6 +49,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 
 	private static ArrayList instances = new ArrayList();
 	private static GeoGebra activeInstance;
+	private static boolean firstInstance = true;
 	protected Application app;
 	
 	public GeoGebra() {
@@ -81,13 +82,18 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	public void windowLostFocus(WindowEvent arg0) {	
 	}
 	
-	public Locale getLocale() {				
-		Locale defLocale = geogebra.gui.GeoGebraPreferences.getDefaultLocale();		
+	public Locale getLocale() {			
+//		// make sure gui jar file is loaded
+//		JarManager.getSingleton(app);
+//		Locale defLocale = geogebra.gui.GeoGebraPreferences.getDefaultLocale();		
+//		
+//		if (defLocale == null)
+//			return super.getLocale();
+//		else 
+//			return defLocale;
 		
-		if (defLocale == null)
-			return super.getLocale();
-		else 
-			return defLocale;
+		//TODO: check
+		return super.getLocale();
 	}
 
 	public void setVisible(boolean flag) {				
@@ -119,7 +125,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			if (!isShowing()) return;
 			
 			instances.remove(this);
-			geogebra.gui.GeoGebraPreferences.saveFileList();
+			app.getApplicationGUImanager().getPreferences().saveFileList();
 			
 			if (instances.size() == 0) {			
 				super.setVisible(false);
@@ -216,12 +222,8 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		} catch (Exception e) {
 			Application.debug(e+"");
 		}	
-    	    
-		// load list of previously used files
-		geogebra.gui.GeoGebraPreferences.loadFileList();
-		
-		// create first window and show it
-		
+    	    			
+		// create first window and show it		
 		createNewWindow(args);
 	}	
 	
@@ -257,10 +259,18 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		GeoGebra wnd = new GeoGebra();
 		
 		//GeoGebra wnd = buildGeoGebra();
-
 		Application app = new GeoGebraApplication(args, wnd, true);
-		app.setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
-		app.initMenubar();
+				
+		if (firstInstance) {
+			firstInstance = false;
+			
+			// load list of previously used files
+			app.getApplicationGUImanager().getPreferences().loadFileList();			
+		}
+		
+		app.loadGUIJar();
+		app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
+		app.getApplicationGUImanager().initMenubar();
 		
 		// init GUI
 		wnd.app = app;

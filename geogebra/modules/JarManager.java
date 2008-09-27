@@ -1,4 +1,3 @@
-package geogebra.modules;
 /* 
 GeoGebra - Dynamic Mathematics for Schools
 Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
@@ -10,100 +9,289 @@ under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
-/** 
-<pre>
-<h3>JarManager for GeoGebra</h3>
 
-</pre>
-@author      Michael Borcherds
-@version     2008-06-15
+package geogebra.modules;
+
+/** 
+<h3>JarManager</h3>
+
+Dynamically adds jar files to classpath when needed. For example "geogebra_cas.jar" is only loaded when 
+the CAS is used. This is important for online applets to keep downloading times small. The JarManager uses a
+local directory (in system's temp directory) to keep jar files of a version for future use. 
+
+@author      Markus Hohenwarter, Michael Borcherds
+@version     2008-09-26
 */
 
 import geogebra.Application;
 import geogebra.util.CopyURLToFile;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
-
 
 public class JarManager {
-
-    public static boolean 			JSMATHTEX_PRESENT=false;
-    public static boolean 			JSMATHTEX_LOADED=false;
-    public static boolean 			GEOGEBRA_EXPORT_PRESENT=false;
-    public static boolean 			GEOGEBRA_EXPORT_LOADED=false;
-    public static boolean 			GEOGEBRA_PROPERTIES_PRESENT=false;
-    public static boolean 			GEOGEBRA_PROPERTIES_LOADED=false;
-    public static boolean 			GEOGEBRA_CAS_PRESENT=false;
-    public static boolean 			GEOGEBRA_CAS_LOADED=false;
-    public static boolean 			GEOGEBRA_GUI_PRESENT=false;
-    public static boolean 			GEOGEBRA_GUI_LOADED=false;
-    //public static boolean 			GEOGEBRA_SPREADSHEET_PRESENT=false;
-    //public static boolean 			GEOGEBRA_SPREADSHEET_LOADED=false;
-    public static boolean 			IS_WEBSTART=false;
-    private static Application	 	app=null;
 	
-	private static boolean MAINJAR_COPIED=false;
-	private static boolean EXPORTJAR_COPIED=false;
-	private static boolean PROPERTIESJAR_COPIED=false;
-	private static boolean CASJAR_COPIED=false;
+	// types of application
+	private static final int TYPE_APPLET = 1; // Java applet
+	private static final int TYPE_WEBSTART = 2; // Java webstart application
+	private static final int TYPE_LOCAL_JARS = 3; // local application with jar files
+	private static final int TYPE_LOCAL_NO_JARS = 4; // running from Eclipse without jar files
 	
-	private static URL appletCodeBase=null;
-	private static String appletCodeBaseStr=null;
-
-	//private final static String tempDirNoSep=System.getProperty("java.io.tmpdir");
-	// MacOS doesn't seem to add the "/"
-	//private final static String tempDir	=	tempDirNoSep.endsWith(File.separator) ?
-	//										tempDirNoSep : tempDirNoSep+File.separator;
+	// singleton instance of JarManager
+	private static JarManager singleton;
 	
-	private static String tempDir = Application.getTempDir();
+	// codebase where the jar files can be found (either http: or file:)
+	private URL codebase;
 	
-	private static boolean GUIJAR_COPIED=false;
-	//private static boolean SPREADSHEETJAR_COPIED=false;
+	// application type: TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
+	private int main_app_type;
 	
-	//public static SpreadsheetView spreadsheetView;
-
-	public JarManager(Application app) {
+	// directory with local jars
+	private File localJarDir;	
+	
+	// boolean variables to store whether a certain jar file is on classpath /
+	// was tried to put on the classpath
+	// e.g. use value of jarFileOnClasspath[Application.JAR_FILE_GEOGEBRA_CAS]
+    private boolean [] jarFileOnClasspath = new boolean[Application.JAR_FILES.length];		
+    private boolean [] jarFileTriedToPutOnClasspath = new boolean[Application.JAR_FILES.length];	
+    
+	/**
+	 * Returns a singleton instance of JarManager.
+	 */
+	public synchronized static JarManager getSingleton(Application app) {
+		if (singleton == null) {
+			singleton = new JarManager(app);
+		}
+		
+		return singleton;		
+	}
+	
+	/**
+	 * Creates the singleton instance of JarManager. Note that the type of application (applet, webstart, local)
+	 * can be decided by looking at the first application instance only. That's why we only need one JarManager 
+	 * instance even if we have multiple application instances (windows).
+	 */
+	private JarManager(Application app) {	
+		codebase = app.getCodeBase();
+				
+		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
+		initApplicationType(app);				
+			
+		// init localJar directory where the jar files can be found locally
+		initLocalJarDir();
+		
+		// geogebra.jar is always on classpath as it is loaded on startup
+		jarFileOnClasspath[Application.JAR_FILE_GEOGEBRA] = true;
+		jarFileTriedToPutOnClasspath[Application.JAR_FILE_GEOGEBRA] = true;
+		
+		// TODO: remove
+		Application.debug("app type: " + main_app_type);
+		Application.debug("localJarDir: " + localJarDir);	
 		
 		
+		//TODO: for WebStart and applet: download jar files to local directory in background (thread)
+		//copyJarFilesToTempDir(app);
+		
+	}
+	
+	/**
+	 * Loads the the given jar file and adds it to the classpath. Note: if the codebase is
+	 * online (applet, webstart), the jar file is downloaded to a temporary local directory first.
+	 * 
+	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
+	 */
+	final public boolean addJarToClassPath(int jarFileIndex) {		
+		// check if file is already on classpath
+		if (jarFileOnClasspath[jarFileIndex]) {			
+			//Application.debug("jar file already in classpath " + Application.JAR_FILES[jarFileIndex]);
+			return true;
+		}	
+		// check if we already tried to put jar file on classpath
+		else if (jarFileTriedToPutOnClasspath[jarFileIndex]) {
+			//Application.debug("do nothing: tried to put on classpath already: " + Application.JAR_FILES[jarFileIndex]);			
+			return false;
+		}
+		
+		// try to add jar file to classpath 		
+		return doAddJarToClassPath(jarFileIndex);
+	}
+	
+	private synchronized boolean doAddJarToClassPath(int jarFileIndex) {	
+		// remember that we tried to put this file on classpath to make sure we don't try again
+		jarFileTriedToPutOnClasspath[jarFileIndex] = true;
+					
+		// get jar file name for index
+		String jarFileName = Application.JAR_FILES[jarFileIndex];
+	
+		switch (main_app_type) {
+			case TYPE_WEBSTART:
+			case TYPE_LOCAL_NO_JARS:		
+				// Webstart puts all jar files on classpath itself
+				// Eclipse doesn't use jar files, so nothing to do here 
+				jarFileOnClasspath[jarFileIndex] = true;
+				return true;
+		
+			case TYPE_APPLET:
+				// we download the needed jar file to the local directory first
+				downloadFile(codebase, jarFileName, localJarDir);				
+				break;
+				
+			case TYPE_LOCAL_JARS:
+				// no download needed for local jar files
+				break;			
+		}
+		
+		// add jar file in localJarDir to classpath
+		File localJarFile = new File(localJarDir, jarFileName);
+		if (localJarFile.exists()) {
+			// add jar file to classpath
+			boolean success = ClassPathManipulator.addFile(localJarFile);
+			
+			// remember that this jar file is on classpath
+			jarFileOnClasspath[jarFileIndex] = success;
+			
+			// TODO: remove
+			Application.debug("Added to classpath: " + localJarFile);
+		} else {
+			System.err.println("Could not add to classpath: " + localJarFile);
+			jarFileOnClasspath[jarFileIndex] = false;
+		}
+		
+		return jarFileOnClasspath[jarFileIndex];
+	}
+	
+	/**
+	 * Downloads the given file to destination directory. This is needed for applets and
+	 * webstart applications (to export dynamic worksheets).
+	 * 
+	 * @return true if successful
+	 */
+	public synchronized static boolean downloadFile(URL codebase, String fileName, File destDir) {    	    
+		try {					
+			// download jar file to localJarDir
+			File destFile = new File(destDir, fileName);
+			if (destFile.exists()) {
+				// TODO: remove
+				Application.debug("DID NOT download, file exists already: " + fileName + " in directory " + destDir);		
+				
+				// destination file exists already
+				return true;
+			}
+							
+			// download jar from URL to destFile			
+			URL src = new URL(codebase.toExternalForm() + fileName);			
+			CopyURLToFile.copyURLToFile(src, destFile);
+			
+			// TODO: remove
+			Application.debug("downloaded " + fileName + " to directory " + destDir);		
+			return true;			
+			
+		} catch (Exception e) {		
+			System.err.println("Download error: " + e.getMessage());
+			return false;
+		}			
+	}
 
-        this.app = app;
-        
-        //Application.debug("java.io.tmpdir = "+tempDir);
-
-    	// Download jar files to temp directory in background
-    	// this is done because Java WebStart uses strange jar file
-    	// names in its cache. However, we need the GeoGebra jar files
-    	// to export dynamic worksheets, thus we copy the jar files 
-    	// to the temp directory where we can find them.
-    	Thread runner = new Thread() {
-    		public void run() {    	 
-    			try {
-    				Thread.sleep(10000);
-    			} catch (Exception e) {}
-
-    			// Cas can be called from JavaScript commands, so load just in case
-				addCasJarToClassPath();
-
-    			
-	    			if (JarManager.app.showMenuBar) {    				
-	    				copyMainJarToTempDir();
-	    				copyExportJarToTempDir();
-	    				copyPropertiesJarToTempDir();
-	    				copyCasJarToTempDir();
-	    				copyGuiJarToTempDir();
-	    				//copySpreadsheetJarToTempDir();
-	    			}	    				
-    			}	    		    		
-    	};
-    	runner.start();
-
-        
-        
-        
-        
+	
+	/**
+	 * Sets main_app_type to type of application.
+	 * @return TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
+	 */
+	private void initApplicationType(Application app) {			
+		// init main_app_type: applet, webstart, or local jar files
+		if (app.isApplet()) {
+			// APPLET
+			main_app_type = TYPE_APPLET;
+		} 
+		else {
+			// get code base of first application
+			// e.g. http://... or file://...
+			String strCodeBase = codebase.toString();
+			if (strCodeBase.startsWith("file")) {
+				// check if jar file exists
+				File main_jar_file = new File(strCodeBase + Application.JAR_FILES[Application.JAR_FILE_GEOGEBRA]);
+				if (main_jar_file.exists()) {
+					// LOCAL JARS
+					main_app_type =  TYPE_LOCAL_JARS;
+				} else {
+					// running local without jar files
+					main_app_type = TYPE_LOCAL_NO_JARS;
+				}				
+				
+			} else {
+				// WEBSTART
+				main_app_type =  TYPE_WEBSTART;
+			}
+		}
+	}
+	
+	/**
+	 * Returns the local folder name that includes the GeoGebra jar files.
+	 * For 
+	 */
+	public File getLocalJarDir() {			
+		return localJarDir;
+	}
+			
+	/**
+	 * Sets localJarDir to the folder where the GeoGebra jar files can be found locally.
+	 */
+	private void initLocalJarDir() {				
+		switch (main_app_type) {
+			case TYPE_LOCAL_JARS:
+			case TYPE_LOCAL_NO_JARS:
+				// local jar files: use local directory of jar files
+				localJarDir = new File(codebase.getFile());
+				break;
+				
+			case TYPE_APPLET:
+			case TYPE_WEBSTART:			
+				// applet or webstart: we need to use a local directory to download jar files
+				localJarDir = createLocalDir();
+				break;				
+		}
+	}
+	
+	/**
+	 * Creates a temporary directory using the current version number, e.g. "geogebra3.1.3"
+	 */
+	private synchronized static File createLocalDir() {	
+		// initialize local jar directory		
+		String baseDir = System.getProperty("java.io.tmpdir");
+		
+		// Mac OS doesn't add "/" at the end of directory path name
+		if (!baseDir.endsWith(File.separator)) 
+			baseDir += File.separator;			
+											
+		// directory name, e.g. /tmp/geogebra3.1.43.0/
+		File tempDir = new File(baseDir + "geogebra" + Application.versionString + File.separator);		
+		if (tempDir.exists())	{
+			// TODO: remove
+			Application.debug("use existing local directory : " + tempDir);
+			
+		} else {
+			// create local directory, e.g. /tmp/geogebra3.1.43.0/
+			try {				
+				tempDir.mkdirs();
+				
+				// TODO: remove
+				Application.debug("local directory created: " + tempDir);
+			} 
+			catch (Exception e)	{
+				System.err.println(e.getMessage());
+				tempDir = new File(baseDir);
+				
+				// TODO: remove
+				Application.debug("COULD NOT create directory, use instead: " + tempDir);
+			}
+		}
+					
+		return tempDir;
+	}
+	
+	
+	/*
+		//Application.debug("java.io.tmpdir = "+tempDir);
         //String webstartCodebase=null;
         
         if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
@@ -111,9 +299,7 @@ public class JarManager {
         	Application.debug("not running from jar - set IS_WEBSTART=true");
             IS_WEBSTART=true;
         }
-        
-        
-        
+       
         try {
         	if (!IS_WEBSTART)
         	{
@@ -211,12 +397,12 @@ public class JarManager {
         	}
         }
         
-        /*
+        
         if (loadExport != null)
         {
         		addJarToPath(loadExport, geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
         		GEOGEBRA_EXPORT_LOADED=true;
-        }*/
+        }
         Application.debug("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
         
 
@@ -252,323 +438,9 @@ public class JarManager {
 	
         
         Application.debug("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
-        
-        
-        /*
-        
-		// Michael Borcherds 2008-05-30
-		// add support for JMathTeX if the correct JARs are present
-        // and we're running Java 1.5 or above
-        
-        String loadJMathTeX = null;
-        String loadJDom = null;
-        
-        
-    	JSMATHTEX_PRESENT =  ( jarPresent("JMathTeX-0.7pre.jar")
-                			&& jarPresent("jdom-1.1.jar")
-                			&& Util.getJavaVersion() >= 1.5);
-		Application.debug("JSMATHTEX_PRESENT="+JSMATHTEX_PRESENT);
-		
-		if (JSMATHTEX_PRESENT) {
-    	if (app.getApplet()==null){
-    		// might be running as webstart, copy jar to temporary folder
-        	if (copyJarToTempDir("JMathTeX-0.7pre.jar")) loadJMathTeX = System.getProperty("java.io.tmpdir") + "JMathTeX-0.7pre.jar";
-        	if (copyJarToTempDir("jdom-1.1.jar")) loadJDom = System.getProperty("java.io.tmpdir") + "jdom-1.1.jar";
-    		
-    	}
-    	else if (app.getApplet().showMenuBar || app.getApplet().showToolBar) 
-    	{
-    		// running as applet with menu
-    		loadJMathTeX = "JMathTeX-0.7pre.jar";
-    		loadJDom = "jdom-1.1.jar";
-    	}
-		}
-    
-    if (loadJMathTeX != null && loadJDom !=null)
-    {
-		addJarToPath(loadJMathTeX, null);
-		addJarToPath(loadJDom, null);
-		JSMATHTEX_LOADED=true;
-    }
+        */
      
-     Application.debug("JSMATHTEX_LOADED="+JSMATHTEX_LOADED);
-     */
 
-	
-	
-	
-
-
-	}
-	
-	public synchronized void loadSpreadsheet()
-	{
-	
-	}
-	
-	public static boolean jarPresent(String jar)
-	{
-        //if (plugin==null) return false;
-		ClassLoader loader=app.getClass().getClassLoader();
-        
-		//URL codeBase=GeoGebraAppletBase.codeBase;
-		//URL codeBase=getAppletCodeBase();
-        if (appletCodeBaseStr != null){       	
-        	jar = appletCodeBaseStr + jar;
-        }
-        
-        
-        //jar = "file:///C:/Personal/My%20Projects/JavaScript/testGeogebraApplets/geogebra_export.jar";
-        
-        boolean ret = (loader.getResourceAsStream(jar)!=null);
-        
-        Application.debug("jarPresent " + jar+" "+ret);
-        
-        return ret;
-		
-	}
-	
-	public static void addJarToPath(String jar, ClassLoader loader)
-	{
-        
-		//URL codeBase=GeoGebraAppletBase.codeBase;
-		//URL codeBase=getAppletCodeBase();
-        if (appletCodeBaseStr != null) jar = appletCodeBaseStr + jar;
-        Application.debug("addJarToPath " + jar);
-        
-        //addPath(jar);
-        ClassPathManipulator.addURL(addPathToJar(jar), loader);       
-	}
-	
-	/*
-	private static URL getAppletCodeBase()
-	{
-		GeoGebraAppletBase applet;
-		applet = app.getApplet();
-		if (applet == null) return null;
-		return applet.getCodeBase();
-		
-	}*/
-	
-    public static URL addPathToJar(String path){
-        File file=null;
-        URL  url=null;        
-        try{
-        	if(path.startsWith("http://")){	//url!
-                //Application.debug("addPath1 "+path);
-        		url=new URL(path);
-        	}
-        	else if (path.startsWith("file:/")) { // local file in correct form
-                //Application.debug("addPath2 "+path);
-        		url = new URL(path);
-        	}else{							//file without path!
-
-        		//URL codeBase=GeoGebraAppletBase.codeBase; doesn't work, returns base of HTML
-        		
-        		// get applet codebase
-        		//URL codeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
-        		
-                if (appletCodeBase!=null)
-                {
-                    //Application.debug("addPath3"+path);
-                	url = new URL(appletCodeBase.toString()+path); // running as applet
-                }
-                else
-                {
-                    //Application.debug("addPath4"+path);
-                	file=new File(path);
-        		    url=file.toURL();
-                }
-        	}
-        	Application.debug("addPath "+url.toString());
-        	return url;
-        }catch(MalformedURLException e) {
-            Application.debug("PluginManager.addPath: MalformedURLExcepton for "+path);
-            return null;
-        }catch(Throwable e){
-            Application.debug("PluginManager.addPath: "+e.getMessage()+" for "+path);
-            return null;
-        }//try-catch        
-    }//addPath(String)
-    
-
-    	
-
-    private static boolean copyJarToTempDir(String jar) {
-		try {		
-			
-			// copy jar files to tempDir
-				File dest = new File(tempDir, jar);
-				URL src = new URL(app.getCodeBase() + jar);
-				CopyURLToFile.copyURLToFile(src, dest);
-				Application.debug("copied "+jar+" to temp directory " + tempDir);
-				
-		
-								
-				return true;
-			
-		} catch (Exception e) {		
-			Application.debug("copyJarToTempDir: " + e.getMessage());
-			return false;
-		}			
-	}
-	
-	
-    public static synchronized boolean copyMainJarToTempDir()
-	{
-		if (MAINJAR_COPIED) return true;
-		MAINJAR_COPIED=copyJarToTempDir("geogebra.jar");
-		return MAINJAR_COPIED;
-	}
-	
-	public static synchronized boolean copyExportJarToTempDir()
-	{
-		if (EXPORTJAR_COPIED) return true;
-		EXPORTJAR_COPIED=copyJarToTempDir("geogebra_export.jar");
-		return EXPORTJAR_COPIED;
-	}
-	
-	public static synchronized boolean copyPropertiesJarToTempDir()
-	{
-		if (PROPERTIESJAR_COPIED) return true;
-		PROPERTIESJAR_COPIED=copyJarToTempDir("geogebra_properties.jar");
-		return PROPERTIESJAR_COPIED;
-	}
-	
-	public static synchronized boolean addPropertiesJarToClassPath()
-	{
-		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_PROPERTIES_PRESENT) return false;
-		if (GEOGEBRA_PROPERTIES_LOADED) return true;
-		if (app.getApplet()==null)
-		{
-			// not applet
-			if (!copyPropertiesJarToTempDir()) return false;
-			addJarToPath(tempDir + "geogebra_properties.jar",null);
-		}
-		else
-		{
-			// applet
-			addJarToPath("geogebra_properties.jar",null);			
-		}
-		GEOGEBRA_PROPERTIES_LOADED=true;
-		return true;
-	}
-	
-	public static synchronized boolean addExportJarToClassPath()
-	{
-		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_EXPORT_PRESENT) return false;
-		if (GEOGEBRA_EXPORT_LOADED) return true;
-		if (app.getApplet()==null)
-		{
-			// not applet
-			if (!copyExportJarToTempDir()) return false;
-			addJarToPath(tempDir + "geogebra_export.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
-		}
-		else
-		{
-			// applet
-			addJarToPath("geogebra_export.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());	
-		}
-		GEOGEBRA_EXPORT_LOADED=true;
-		return true;
-	}
-	
-	public static synchronized boolean copyCasJarToTempDir()
-	{
-		if (CASJAR_COPIED) return true;
-		CASJAR_COPIED=copyJarToTempDir("geogebra_cas.jar");
-		return CASJAR_COPIED;
-	}
-	
-	public static synchronized boolean addCasJarToClassPath()
-	{
-		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_CAS_PRESENT) return false;
-		if (GEOGEBRA_CAS_LOADED) return true;
-		if (app.getApplet()==null)
-		{
-			// not applet
-			if (!copyCasJarToTempDir()) return false;
-			addJarToPath(tempDir + "geogebra_cas.jar",null);
-		}
-		else
-		{
-			// applet
-			addJarToPath("geogebra_cas.jar",null);	
-		}
-		GEOGEBRA_CAS_LOADED=true;
-		return true;
-	}
-	
-	
-	
-	public static synchronized boolean copyGuiJarToTempDir()
-	{
-		if (GUIJAR_COPIED) return true;
-		GUIJAR_COPIED=copyJarToTempDir("geogebra_gui.jar");
-		return GUIJAR_COPIED;
-	}
-	
-	public static synchronized boolean addGuiJarToClassPath()
-	{
-		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_GUI_PRESENT) return false;
-		if (GEOGEBRA_GUI_LOADED) return true;
-		if (app.getApplet()==null)
-		{
-			// not applet
-			if (!copyGuiJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_gui.jar",null);
-		}
-		else
-		{
-			// applet
-			addJarToPath("geogebra_gui.jar",null);	
-		}
-		GEOGEBRA_GUI_LOADED=true;
-		return true;
-	}
-	
-	/*
-	public static synchronized boolean copySpreadsheetJarToTempDir()
-	{
-		if (SPREADSHEETJAR_COPIED) return true;
-		SPREADSHEETJAR_COPIED=copyJarToTempDir("geogebra_spreadsheet.jar");
-		return SPREADSHEETJAR_COPIED;
-	}
-	
-	public static synchronized boolean addSpreadsheetJarToClassPath()
-	{
-		if (IS_WEBSTART) return true;
-		if (!GEOGEBRA_SPREADSHEET_PRESENT) return false;
-		if (GEOGEBRA_SPREADSHEET_LOADED) return true;
-		if (app.getApplet()==null)
-		{
-			// not applet
-			if (!copySpreadsheetJarToTempDir()) return false;
-			addJarToPath(System.getProperty("java.io.tmpdir") + "geogebra_spreadsheet.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
-		}
-		else
-		{
-			// applet
-			//addJarToPath("geogebra_spreadsheet.jar",null);	
-			
-			addJarToPath("geogebra_spreadsheet.jar",geogebra.Application.class.getClassLoader());	
-			//addJarToPath("geogebra_spreadsheet.jar",geogebra.gui.GeoGebraPreferences.class.getClassLoader());	
-			//addJarToPath("geogebra_spreadsheet.jar",geogebra.gui.menubar.MenubarImpl.class.getClassLoader());	
-		}
-		GEOGEBRA_SPREADSHEET_LOADED=true;
-        // init spreadsheet view
-     	//spreadsheetView = new SpreadsheetView(app, 26, 100);
-		return true;
-	}
-	
-	public static synchronized void initSpreadsheetView() {
-        // init spreadsheet view
-		if (spreadsheetView != null) return;
-     	spreadsheetView = new SpreadsheetView(app, 26, 100);
-		
-	}*/
+  
+   
 }

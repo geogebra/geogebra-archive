@@ -1,5 +1,5 @@
 
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
 import geogebra.kernel.GeoElement;

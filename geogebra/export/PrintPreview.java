@@ -274,14 +274,15 @@ public class PrintPreview extends JDialog {
 	private void loadPreferences() {
 		try {
 			// orientation			
-			String strOrientation = GeoGebraPreferences.loadPreference(
-					GeoGebraPreferences.PRINT_ORIENTATION, "landscape");
+			String strOrientation = app.getApplicationGUImanager().getPreferences().
+				loadPreference(GeoGebraPreferences.PRINT_ORIENTATION, "landscape");
 			m_orientation = strOrientation.equals("portrait") ? PageFormat.PORTRAIT : PageFormat.LANDSCAPE;						
 	    						
 			
 			// show printing scale in cm
-			app.setPrintScaleString( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.PRINT_SHOW_SCALE, "false")).booleanValue() );	    							
+			app.setPrintScaleString( Boolean.valueOf(
+					app.getApplicationGUImanager().getPreferences().
+						loadPreference(GeoGebraPreferences.PRINT_SHOW_SCALE, "false")).booleanValue() );	    							
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -294,10 +295,12 @@ public class PrintPreview extends JDialog {
     		case PageFormat.LANDSCAPE: strOrientation = "landscape"; break;    		
     		default: strOrientation = "portrait";
     	}    	
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.PRINT_ORIENTATION, strOrientation);
+    	
+    	GeoGebraPreferences pref =app.getApplicationGUImanager().getPreferences();
+    	pref.savePreference(GeoGebraPreferences.PRINT_ORIENTATION, strOrientation);
     	
     	// show printing scale in cm
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.PRINT_SHOW_SCALE, Boolean.toString(app.isPrintScaleString()));  
+    	pref.savePreference(GeoGebraPreferences.PRINT_SHOW_SCALE, Boolean.toString(app.isPrintScaleString()));  
     }
 	
 	

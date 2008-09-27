@@ -1,5 +1,5 @@
 
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
@@ -352,7 +352,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerProperties implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			app.showPropertiesDialog();	
+ 			app.getApplicationGUImanager().showPropertiesDialog();	
  		}
 	}
 	

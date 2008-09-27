@@ -1,4 +1,4 @@
-package geogebra.algebra.autocomplete;
+package geogebra.util;
 
 /**
  * This interface defines the API that dictionaries for autocomplete components

@@ -37,8 +37,8 @@ public class GeoGebraAppletTeacher extends GeoGebraAppletBase {
 	protected Application buildApplication(String[] args, boolean undoActive) {
 		
 		Application app = new TeacherApplication(args, this, undoActive);
-		app.setMenubar(new TeacherMenubar(app));
-		app.initMenubar();
+		app.getApplicationGUImanager().setMenubar(new TeacherMenubar(app));
+		app.getApplicationGUImanager().initMenubar();
 		
 		return app; 
 	}

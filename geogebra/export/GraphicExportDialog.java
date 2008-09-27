@@ -310,15 +310,16 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {
 			// format
 			int formatID = FORMAT_PNG;
-			String format = GeoGebraPreferences.loadPreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, "png");		
+			String format = app.getApplicationGUImanager().getPreferences().
+				loadPreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, "png");		
 	    	if (format.equals("eps")) formatID = FORMAT_EPS; 
 	    	else if (format.equals("svg")) formatID = FORMAT_SVG;	    	
 			cbFormat.setSelectedIndex(formatID);					
 			
 			// dpi
 	    	if (cbDPI.isEnabled()) {
-				String strDPI = GeoGebraPreferences.loadPreference(
-		    							GeoGebraPreferences.EXPORT_PIC_DPI, "300");
+				String strDPI = app.getApplicationGUImanager().getPreferences().
+					loadPreference(GeoGebraPreferences.EXPORT_PIC_DPI, "300");
 				for (int i=0; i < cbDPI.getItemCount(); i++) {
 					String dpi = cbDPI.getItemAt(i).toString();
 					if (dpi.equals(strDPI))
@@ -341,7 +342,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     
     private void savePreferences() {    		
     	// dpi
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
+    	app.getApplicationGUImanager().getPreferences().savePreference(GeoGebraPreferences.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
     	
     	// format
     	String format;
@@ -350,7 +351,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     		case FORMAT_SVG: format = "svg"; break;    		
     		default: format = "png";
     	}    	
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
+    	app.getApplicationGUImanager().getPreferences().savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
     	
     	/*
     	// scale in cm
@@ -404,7 +405,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.showSaveDialog(
+			app.getApplicationGUImanager().showSaveDialog(
 				Application.FILE_EXT_EPS, null,
 				app.getPlain("eps") + " " + app.getMenu("Files"));
 		if (file == null)
@@ -444,7 +445,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		}
 		else
 		file =
-			app.showSaveDialog(
+			app.getApplicationGUImanager().showSaveDialog(
 				Application.FILE_EXT_EMF, null,
 				app.getPlain("emf") + " " + app.getMenu("Files"));
 		//  Michael Borcherds 2008-03-02 END
@@ -487,7 +488,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.showSaveDialog(
+			app.getApplicationGUImanager().showSaveDialog(
 				Application.FILE_EXT_PDF, null,
 				app.getPlain("pdf") + " " + app.getMenu("Files"));
 		
@@ -538,7 +539,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.showSaveDialog(
+			app.getApplicationGUImanager().showSaveDialog(
 				Application.FILE_EXT_SVG, null,
 				app.getPlain("svg") + " " + app.getMenu("Files"));
 		
@@ -605,7 +606,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		}
 		else
 		file =
-			app.showSaveDialog(
+			app.getApplicationGUImanager().showSaveDialog(
 				Application.FILE_EXT_PNG, null,
 				app.getPlain("png") + " " + app.getMenu("Files"));
 		try {

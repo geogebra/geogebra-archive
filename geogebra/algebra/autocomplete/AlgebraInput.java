@@ -10,11 +10,11 @@ the Free Software Foundation.
 
 */
 
-package geogebra.algebra;
+package geogebra.algebra.autocomplete;
 
 import geogebra.Application;
-import geogebra.algebra.autocomplete.AutoCompleteTextField;
-import geogebra.algebra.autocomplete.LowerCaseDictionary;
+import geogebra.algebra.InputPanel;
+import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -170,7 +170,10 @@ implements ActionListener, MouseListener, KeyListener
 	/**
 	 * fill command list with command names of current locale
 	 */	
-	public void setCommandNames() {							
+	public void setCommandNames() {		
+		LowerCaseDictionary dict = app.getCommandDictionary();
+		if (dict == null) return;
+		
 		ActionListener [] listeners = cmdCB.getActionListeners();
 		for (int i=0; i < listeners.length; i++) 
 			cmdCB.removeActionListener(listeners[i]);
@@ -178,7 +181,7 @@ implements ActionListener, MouseListener, KeyListener
 		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();		
 		cmdCB.addItem(app.getCommand("Command") + " ...");		
 		
-		LowerCaseDictionary dict = app.getCommandDictionary();
+		
 		Iterator it = dict.getLowerCaseIterator();
 		while (it.hasNext()) {
 			// combobox

@@ -14,8 +14,8 @@ package geogebra.export;
 
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ConstructionProtocol;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -205,7 +205,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                                                   boolean useColors) {    
 	            File file, pngFile = null;
 	            prot.setUseColors(useColors);
-	            file = app.showSaveDialog(Application.FILE_EXT_HTML, null,
+	            file = app.getApplicationGUImanager().showSaveDialog(Application.FILE_EXT_HTML, null,
 	                   app.getPlain("html") + " " + app.getMenu("Files"));
 	            if (file == null) return;                       
 	            try {          

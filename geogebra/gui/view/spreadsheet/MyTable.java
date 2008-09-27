@@ -1,4 +1,4 @@
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
 import geogebra.kernel.GeoElement;
@@ -183,7 +183,8 @@ public class MyTable extends JTable
 			}
 		}
 		kernel.getApplication().setSelectedGeos(list);
-		kernel.getApplication().getAlgebraView().repaintView();
+		if (app.showAlgebraView())
+			kernel.getApplication().getApplicationGUImanager().getAlgebraView().repaintView();
 		kernel.getApplication().getEuclidianView().repaintView();
 	}
 	

@@ -286,8 +286,8 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
 		app.setShiftDragZoomEnabled(enableShiftDragZoom);
-		if (customToolBar != null && customToolBar.length() > 0)
-			app.setToolBarDefinition(customToolBar);
+		if (customToolBar != null && customToolBar.length() > 0 && showToolBar)
+			app.getApplicationGUImanager().setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
 		
 		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		
@@ -342,7 +342,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		app.setShowToolBar(true, true);	
 		app.setRightClickEnabled(true);
 		if (customToolBar != null && customToolBar.length() > 0)
-			app.setToolBarDefinition(customToolBar);
+			app.getApplicationGUImanager().setToolBarDefinition(customToolBar);
 			
 		app.updateContentPane();
 		app.resetFonts();

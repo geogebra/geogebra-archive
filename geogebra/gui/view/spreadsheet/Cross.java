@@ -1,8 +1,8 @@
 
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
-import geogebra.spreadsheet.SpreadsheetView.MouseMotionListener1;
+import geogebra.gui.view.spreadsheet.SpreadsheetView.MouseMotionListener1;
 
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
@@ -48,7 +48,7 @@ public class Cross extends JLabel
 		
 		public void mouseClicked(MouseEvent e) {
 			//Application.debug("mouseClicked");
-			app.setShowSpreadsheet(false);
+			app.setShowSpreadsheetView(false);
 			app.updateCenterPanel(true);
 			isMouseOver = false;
 		}

@@ -498,8 +498,11 @@ public class Construction {
 			}
 
 		}
-		if (didUpdate)
-			kernel.getApplication().getConstructionProtocol().update();
+		if (didUpdate) {
+			Object ob = kernel.getApplication().getApplicationGUImanager();
+			if (ob != null)
+				((geogebra.gui.ApplicationGUImanager) ob).getConstructionProtocol().update();
+		}
 
 		return didUpdate;
 	}

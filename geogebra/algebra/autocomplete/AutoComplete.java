@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------------
 package geogebra.algebra.autocomplete;
 
+import geogebra.util.AutoCompleteDictionary;
+
 /**
  * Defines the API that autocomplete components must implement
  * @author Matt Welsh (matt@matt-welsh.com)

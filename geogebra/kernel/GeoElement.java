@@ -20,8 +20,8 @@ package geogebra.kernel;
 
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.spreadsheet.SpreadsheetView;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -3182,7 +3182,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	public String getTraceColumn1() {
-		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
 		if (sv != null && traceColumn1 == -1) {
 			traceColumn1 = (sv.getHighestUsedColumn() + 1);
 			sv.incrementHighestUsedColumn(); // reserve column
@@ -3191,7 +3191,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 		
 	public String getTraceColumn2() {
-		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
 		if (sv != null && traceColumn2 == -1) {
 			traceColumn2 = (sv.getHighestUsedColumn() + 1);
 			sv.incrementHighestUsedColumn(); // reserve column
@@ -3202,7 +3202,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	public int getTraceRow() {
 		if (traceColumn1 == -1) return -1;
 		
-		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
 		if (sv == null) return -1;
 		
 		return sv.getTraceRow(traceColumn1);
@@ -3211,7 +3211,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	public void incrementTraceRow() {
 		if (traceColumn1 == -1) return;
 		
-		SpreadsheetView sv = kernel.getApplication().getSpreadsheetView();
+		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
 		if (sv == null) return;
 		
 		sv.incrementTraceRow(traceColumn1);

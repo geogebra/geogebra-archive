@@ -241,8 +241,8 @@ public abstract class Drawable {
 	{
 		Dimension dim;
 		if (eqn == null) {
-			if (!JarManager.addGuiJarToClassPath()) {
-				Application.debug("Could not initialize GUI jar file");
+			if (view.app.loadLaTeXJar()) {
+				//Application.debug("Could not initialize LaTeX renderer");
 				return new Dimension(0,0);    		
 	    	}	
 			

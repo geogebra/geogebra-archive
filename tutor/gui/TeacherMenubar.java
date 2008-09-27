@@ -3,7 +3,6 @@ package tutor.gui;
 import geogebra.Application;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ConstructionProtocolNavigation;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
@@ -11,6 +10,7 @@ import geogebra.gui.menubar.Menubar;
 import geogebra.gui.menubar.MenubarImpl;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
+import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -132,9 +132,9 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 		
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
-			mi = menu.add(app.getUndoAction());
+			mi = menu.add(app.getApplicationGUImanager().getUndoAction());
 			setMenuShortCutAccelerator(mi, 'Z');
-			mi = menu.add(app.getRedoAction());
+			mi = menu.add(app.getApplicationGUImanager().getRedoAction());
 			if (Application.MAC_OS)
 				// Command-Shift-Z
 				setMenuShortCutShiftAccelerator(mi, 'Z');
@@ -187,12 +187,12 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 
 		// View
 				menu = new JMenu(app.getMenu("View"));
-				cbShowAxes = new JCheckBoxMenuItem(app.getShowAxesAction());		
+				cbShowAxes = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowAxesAction());		
 				cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 						&& app.getEuclidianView().getShowYaxis());
 				menu.add(cbShowAxes);
 
-				cbShowGrid = new JCheckBoxMenuItem(app.getShowGridAction());
+				cbShowGrid = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowGridAction());
 				cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 				menu.add(cbShowGrid);
 				menu.addSeparator();
@@ -206,15 +206,15 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			    // Michael Borcherds 2008-01-14
 				cbShowSpreadsheet = new JCheckBoxMenuItem(showSpreadsheetAction);		
 				cbShowSpreadsheet.setIcon(app.getEmptyIcon());
-				cbShowSpreadsheet.setSelected(app.showSpreadsheet());
+				cbShowSpreadsheet.setSelected(app.showSpreadsheetView());
 				setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
 				menu.add(cbShowSpreadsheet);
 
 				cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 						showAuxiliaryObjectsAction);
 				cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
-				cbShowAuxiliaryObjects.setSelected(app.getAlgebraView() == null
-						|| app.getAlgebraView().showAuxiliaryObjects());
+				cbShowAuxiliaryObjects.setSelected(app.getApplicationGUImanager().getAlgebraView() == null
+						|| app.getApplicationGUImanager().getAlgebraView().showAuxiliaryObjects());
 				cbShowAuxiliaryObjects.setEnabled(app.showAlgebraView());
 				menu.add(cbShowAuxiliaryObjects);
 
@@ -507,7 +507,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowSpreadsheet(!app.showSpreadsheet());
+				app.setShowSpreadsheetView(!app.showSpreadsheetView());
 				//app.updateCenterPanel(true);
 			}
 		};
@@ -528,8 +528,8 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 
 			public void actionPerformed(ActionEvent e) {
 				app.setShowCmdList(!app.showCmdList());
-				if (app.getAlgebraInput() != null)
-					SwingUtilities.updateComponentTreeUI(app.getAlgebraInput());
+				if (app.getApplicationGUImanager().getAlgebraInput() != null)
+					SwingUtilities.updateComponentTreeUI(app.getApplicationGUImanager().getAlgebraInput());
 			}
 		};
 
@@ -570,7 +570,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getConstructionProtocolNavigation();
+					app.getApplicationGUImanager().getConstructionProtocolNavigation();
 				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -584,7 +584,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getConstructionProtocolNavigation();
+					app.getApplicationGUImanager().getConstructionProtocolNavigation();
 				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -622,7 +622,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showPropertiesDialog();
+				app.getApplicationGUImanager().showPropertiesDialog();
 			}
 		};
 
@@ -634,7 +634,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.showConstructionProtocol();
+						app.getApplicationGUImanager().showConstructionProtocol();
 					}
 				};
 				runner.start();
@@ -646,7 +646,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showDrawingPadPropertiesDialog();
+				app.getApplicationGUImanager().showDrawingPadPropertiesDialog();
 			}
 		};
 
@@ -655,7 +655,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.showToolbarConfigDialog();
+				app.getApplicationGUImanager().showToolbarConfigDialog();
 			}
 		};
 
@@ -724,7 +724,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.saveAs();
+				app.getApplicationGUImanager().saveAs();
 			}
 		};
 
@@ -849,7 +849,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.openHelp(null);
+						app.getApplicationGUImanager().openHelp(null);
 					}
 				};
 				runner.start();
@@ -1002,7 +1002,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.saveXMLPreferences(app);				
+				app.getApplicationGUImanager().getPreferences().saveXMLPreferences(app);				
 			}
 		};
 		
@@ -1011,7 +1011,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.clearPreferences();				
+				app.getApplicationGUImanager().getPreferences().clearPreferences();				
 			}
 		};
 		
@@ -1056,7 +1056,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				app.showURLinBrowser(Application.GEOGEBRA_WEBSITE);
+				app.getApplicationGUImanager().showURLinBrowser(Application.GEOGEBRA_WEBSITE);
 			}
 		};		
 		
@@ -1093,7 +1093,7 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 	    if (cbShowGrid!=null) cbShowGrid.setSelected(ev.getShowGrid());
 	    
 	    if (cbShowAlgebraView!=null) cbShowAlgebraView.setSelected(app.showAlgebraView());
-	    if (cbShowSpreadsheet!=null) cbShowSpreadsheet.setSelected(app.showSpreadsheet());     // Michael Borcherds 2008-01-14
+	    if (cbShowSpreadsheet!=null) cbShowSpreadsheet.setSelected(app.showSpreadsheetView());     // Michael Borcherds 2008-01-14
         if (cbShowAlgebraInput!=null) cbShowAlgebraInput.setSelected(app.showAlgebraInput());
         if (cbShowAuxiliaryObjects!=null) cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
@@ -1112,9 +1112,9 @@ public class TeacherMenubar extends MenubarImpl implements Menubar, ActionListen
 		
 		if (cbShowConsProtNavigation!=null) cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());				
 		if (cbShowConsProtNavigationPlay!=null) cbShowConsProtNavigationPlay
-				.setSelected(app.isConsProtNavigationPlayButtonVisible());
+				.setSelected(app.getApplicationGUImanager().isConsProtNavigationPlayButtonVisible());
 		if (cbShowConsProtNavigationOpenProt!=null) cbShowConsProtNavigationOpenProt
-				.setSelected(app.isConsProtNavigationProtButtonVisible());
+				.setSelected(app.getApplicationGUImanager().isConsProtNavigationProtButtonVisible());
 		if (cbShowConsProtNavigationPlay!=null) cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
 		if (cbShowConsProtNavigationOpenProt!=null) cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
 

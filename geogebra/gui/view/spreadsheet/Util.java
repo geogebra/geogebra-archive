@@ -1,5 +1,5 @@
 
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import java.awt.Component;
 import javax.swing.JOptionPane;

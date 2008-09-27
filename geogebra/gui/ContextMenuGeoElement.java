@@ -14,7 +14,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.algebra.AlgebraInput;
+import geogebra.algebra.autocomplete.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -434,7 +434,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             }  
             
             //  trace to spreadsheet
-            if (geo.isGeoPoint() && app.showSpreadsheet()) {            	
+            if (geo.isGeoPoint() && app.showSpreadsheetView()) {            	
                 cbItem = new JCheckBoxMenuItem( app.getPlain("TraceToSpreadsheet"));
                 cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
                 cbItem.setSelected(((GeoPoint) geo).getSpreadsheetTrace());
@@ -518,7 +518,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-                        app.showRenameDialog(geo, true, geo.getLabel(), true);
+                        app.getApplicationGUImanager().showRenameDialog(geo, true, geo.getLabel(), true);
                     }
                 });
         }
@@ -533,7 +533,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-                    app.showTextDialog((GeoText) geo); 
+                    app.getApplicationGUImanager().showTextDialog((GeoText) geo); 
                 }
             });
         }      
@@ -563,7 +563,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {                    
-                    AlgebraInput ai = app.getAlgebraInput();
+                    AlgebraInput ai = app.getApplicationGUImanager().getAlgebraInput();
                     if (ai != null) {
                     	ai.clear();                  
                     	ai.insertString(geo.toString());
@@ -607,7 +607,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				public void actionPerformed(ActionEvent e) {
                 	tempArrayList.clear();
                 	tempArrayList.add(geo);
-                    app.showPropertiesDialog(tempArrayList);
+                    app.getApplicationGUImanager().showPropertiesDialog(tempArrayList);
                 }
             });
         }

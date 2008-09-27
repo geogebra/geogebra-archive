@@ -21,7 +21,7 @@ import java.net.URLConnection;
 /**
  * @author Markus Hohenwarter
  */
-public class CopyURLToFile extends Thread {
+public class CopyURLToFile  {
 
 	/**
 	 * Returns success state.

@@ -1,4 +1,4 @@
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;

@@ -46,7 +46,7 @@ public class ToolbarConfigDialog extends JDialog {
 	}
 		
 	private void apply() {				
-		app.setToolBarDefinition(confPanel.getToolBarString());
+		app.getApplicationGUImanager().setToolBarDefinition(confPanel.getToolBarString());
 		app.updateToolBar();
 		app.setUnsaved();
 		setVisible(false);
@@ -91,7 +91,7 @@ public class ToolbarConfigDialog extends JDialog {
 					dispose();
 				}
 				else if (src == btDefaultToolbar) {
-					confPanel.setToolBarString(app.getDefaultToolbarString());
+					confPanel.setToolBarString(app.getApplicationGUImanager().getDefaultToolbarString());
 				}
 			}			
 		};		

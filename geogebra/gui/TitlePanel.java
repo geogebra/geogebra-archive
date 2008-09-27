@@ -142,7 +142,9 @@ public class TitlePanel extends JPanel {
 	private String loadAuthor() {
 		String author = cons.getAuthor();
 		if ("".equals(author)) {
-			author = GeoGebraPreferences.loadPreference(
+			author = 
+				cons.getApplication().getApplicationGUImanager().getPreferences()
+				.loadPreference(
 					GeoGebraPreferences.AUTHOR, "");
 			cons.setAuthor(author);
 		}
@@ -153,7 +155,8 @@ public class TitlePanel extends JPanel {
 		boolean kernelChanged = !author.equals(cons.getAuthor());
 		if (kernelChanged) {
 			cons.setAuthor(author);
-			GeoGebraPreferences.savePreference(GeoGebraPreferences.AUTHOR,
+			cons.getApplication().getApplicationGUImanager().getPreferences()
+				.savePreference(GeoGebraPreferences.AUTHOR,
 					author);
 		}
 		return kernelChanged;

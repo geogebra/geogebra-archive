@@ -20,10 +20,6 @@ package geogebra.io;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.cas.view.CASPara;
-import geogebra.cas.view.CASTable;
-import geogebra.cas.view.CASTableCellValue;
-import geogebra.cas.view.CASView;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
@@ -48,7 +44,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.parser.Parser;
-import geogebra.spreadsheet.SpreadsheetView;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -89,7 +84,8 @@ public class MyXMLHandler implements DocHandler {
 	private int constMode; // submode for <construction>
 	private int casSessionMode; // submode for <casSession>
 
-	private CASTableCellValue cellValueElement;
+	//avoid import geogebra.cas.view.CASTableCellValue as this is in cas jar file 
+	private Object casTableCellValueElement;
 
 	private GeoElement geo;
 	private Command cmd;
@@ -370,19 +366,20 @@ public class MyXMLHandler implements DocHandler {
 
 	private void processCellPairList() {
 
-		try {
-			Iterator it = cellPairList.iterator();
-			CASTable table = app.getCasView().getConsoleTable();
+		try {			
+			app.loadCASJar();
+			geogebra.cas.view.CASTable table = ((geogebra.cas.view.CASView) app.getCasView()).getConsoleTable();
 			//Delete the current rows
 			table.deleteAllRow();
 			
+			Iterator it = cellPairList.iterator();
 			while (it.hasNext()) {
-				CASTableCellValue cellPair = (CASTableCellValue) it.next();
+				geogebra.cas.view.CASTableCellValue cellPair = (geogebra.cas.view.CASTableCellValue) it.next();
 				table.insertRow(cellPair);
 			}
 			
 			//Set the focus at the right cell
-			table.setFocusAtRow(table.getRowCount()-1, CASPara.contCol);
+			table.setFocusAtRow(table.getRowCount()-1, geogebra.cas.view.CASPara.contCol);
 		} catch (Exception e) {
 			cellPairList.clear();
 			e.printStackTrace();
@@ -499,12 +496,11 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	private void startSpreadsheetViewElement(String eName, LinkedHashMap attrs) {
 		boolean ok = true;
-		SpreadsheetView ev = app.getSpreadsheetView();
 
 		switch (eName.charAt(0)) {
 		case 's':
 			if (eName.equals("size")) {
-				ok = handleSpreadsheetSize(ev, attrs);
+				ok = handleSpreadsheetSize(app.getApplicationGUImanager().getSpreadsheetView(), attrs);
 				break;
 			}
 
@@ -521,12 +517,11 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	private void startCASViewElement(String eName, LinkedHashMap attrs) {
 		boolean ok = true;
-		CASView ev = app.getCasView();
-
+	
 		switch (eName.charAt(0)) {
 		case 's':
 			if (eName.equals("size")) {
-				ok = handleCASSize(ev, attrs);
+				ok = handleCASSize(app.getCasView(), attrs);
 				break;
 			}
 
@@ -640,7 +635,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleSpreadsheetSize(SpreadsheetView spreadsheet,
+	private boolean handleSpreadsheetSize(Object spreadsheetView,
 			LinkedHashMap attrs) {
 		if (app.isApplet())
 			return true;
@@ -648,23 +643,26 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			int width = Integer.parseInt((String) attrs.get("width"));
 			int height = Integer.parseInt((String) attrs.get("height"));
-			spreadsheet.setPreferredSize(new Dimension(width, height));
+			((geogebra.gui.view.spreadsheet.SpreadsheetView)spreadsheetView).setPreferredSize(new Dimension(width, height));
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	private boolean handleCASSize(CASView casView, LinkedHashMap attrs) {
+	private boolean handleCASSize(Object casView, LinkedHashMap attrs) {
 		if (app.isApplet())
 			return true;
 
-		try {
+		try {			
 			int width = Integer.parseInt((String) attrs.get("width"));
-			int height = Integer.parseInt((String) attrs.get("height"));
+			int height = Integer.parseInt((String) attrs.get("height"));		
+			
+						
 			// it seems that this statement does not work, because now cas use
 			// its own frame. --Quan Yuan
-			casView.setPreferredSize(new Dimension(width, height));
+			app.loadCASJar();
+			((geogebra.cas.view.CASView)casView).setPreferredSize(new Dimension(width, height));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -944,15 +942,15 @@ public class MyXMLHandler implements DocHandler {
 			boolean playButton = parseBoolean((String) attrs.get("playButton"));
 			boolean protButton = parseBoolean((String) attrs.get("protButton"));
 						
-			app.getConstructionProtocolNavigation().setPlayButtonVisible(playButton);
-			app.getConstructionProtocolNavigation().setConsProtButtonVisible(protButton);
+			app.getApplicationGUImanager().getConstructionProtocolNavigation().setPlayButtonVisible(playButton);
+			app.getApplicationGUImanager().getConstructionProtocolNavigation().setConsProtButtonVisible(protButton);
 
 			boolean show = parseBoolean((String) attrs.get("show"));
 			app.setShowConstructionProtocolNavigation(show);
 
 			double playDelay = Double.parseDouble((String) attrs
 					.get("playDelay"));
-			app.getConstructionProtocolNavigation().setPlayDelay(playDelay);
+			app.getApplicationGUImanager().getConstructionProtocolNavigation().setPlayDelay(playDelay);
 
 			// construction step: handled at end of parsing
 			String strConsStep = (String) attrs.get("consStep");
@@ -975,7 +973,7 @@ public class MyXMLHandler implements DocHandler {
 			// Michael Borcherds 2008-04-25
 			boolean ShowSpreadsheet = parseBoolean((String) attrs
 					.get("spreadsheetView"));
-			app.setShowSpreadsheet(ShowSpreadsheet);
+			app.setShowSpreadsheetView(ShowSpreadsheet);
 
 			String str = (String) attrs.get("auxiliaryObjects");
 			boolean auxiliaryObjects = (str != null && str.equals("true"));
@@ -1052,7 +1050,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleToolbar(Application app, LinkedHashMap attrs) {
 		try {
 			String toolbarDef = (String) attrs.get("str");
-			app.setToolBarDefinition(toolbarDef);
+			app.getApplicationGUImanager().setToolBarDefinition(toolbarDef);
 			return true;
 		} catch (Exception e) {
 			Application.debug(e.getMessage() + ": " + e.getCause());
@@ -1150,7 +1148,9 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_CAS_SESSION:
 			if (eName.equals("cellPair")) {
 				casSessionMode = MODE_CAS_CELL_PAIR;
-				cellValueElement = new CASTableCellValue();
+				
+				app.loadCASJar();
+				casTableCellValueElement = new geogebra.cas.view.CASTableCellValue();
 			} else {
 				Application.debug("unknown tag in <cellPair>: " + eName);
 			}
@@ -1180,7 +1180,7 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private void startCellOutputElement(String eName, LinkedHashMap attrs) {
-		if (cellValueElement == null) {
+		if (casTableCellValueElement == null) {
 			Application.debug("no element set for <" + eName + ">");
 			return;
 		}
@@ -1198,7 +1198,7 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleCASPairColor(attrs);
 				if (ok) {
 					cellPairList.removeLast();
-					cellPairList.add(cellValueElement);
+					cellPairList.add(casTableCellValueElement);
 
 				}
 				break;
@@ -1214,7 +1214,7 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private void startCellInputElement(String eName, LinkedHashMap attrs) {
-		if (cellValueElement == null) {
+		if (casTableCellValueElement == null) {
 			Application.debug("no element set for <" + eName + ">");
 			return;
 		}
@@ -1231,7 +1231,7 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("color")) {
 				ok = handleCASPairColor(attrs);
 				if (ok)
-					cellPairList.add(cellValueElement);
+					cellPairList.add(casTableCellValueElement);
 				break;
 			}
 
@@ -1823,7 +1823,8 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleInputExpression(LinkedHashMap attrs) {
 		try {
-			cellValueElement.setCommand((String) attrs.get("value"));
+			app.loadCASJar();
+			((geogebra.cas.view.CASTableCellValue)casTableCellValueElement).setCommand((String) attrs.get("value"));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1832,8 +1833,9 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleOutExpression(LinkedHashMap attrs) {
 		try {
-			cellValueElement.setOutput((String) attrs.get("value"));
-			cellValueElement.setOutputAreaInclude(true);
+			app.loadCASJar();
+			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput((String) attrs.get("value"));
+			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutputAreaInclude(true);
 			return true;
 		} catch (Exception e) {
 			return false;

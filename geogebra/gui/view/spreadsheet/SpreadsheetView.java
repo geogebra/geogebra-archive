@@ -1,5 +1,5 @@
 
-package geogebra.spreadsheet;
+package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
 import geogebra.View;
@@ -40,6 +40,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	protected MyTableModel tableModel;
 	public JList rowHeader;
 	protected Application app;
+	private Kernel kernel;
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	private static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
@@ -56,7 +57,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		table.addKeyListener(new KeyListener0());
 		/**/
 		app = app0;
-		Kernel kernel = app.getKernel();
+		kernel = app.getKernel();
 		// table
 		tableModel = new MyTableModel(rows, columns);
 		table = new MyTable(tableModel, kernel);
@@ -77,9 +78,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
-		//
-		kernel.notifyAddAll(this);
-		kernel.attach(this);
+		
 		///
 		if (!app.isApplet()) {
 			Cross cross = new Cross(app);
@@ -88,6 +87,18 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 	}
 		/**/
+	
+	public void attachView() {
+		clearView();
+		kernel.notifyAddAll(this);
+		kernel.attach(this);		
+	}
+
+	public void detachView() {
+		kernel.detach(this);
+		clearView();
+		//kernel.notifyRemoveAll(this);		
+	}
 	
 	public int getHighestUsedColumn() {
 		return highestUsedColumn;

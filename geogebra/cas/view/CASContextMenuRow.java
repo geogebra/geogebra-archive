@@ -1,8 +1,8 @@
 package geogebra.cas.view;
 
 import geogebra.Application;
+import geogebra.gui.view.spreadsheet.RelativeCopy;
 import geogebra.kernel.GeoElement;
-import geogebra.spreadsheet.RelativeCopy;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

@@ -80,7 +80,8 @@ public class AlgebraController
 		// Michael Borcherds 2008-03-22 give focus to input bar if <enter> pressed
 		if (ch == KeyEvent.VK_ENTER)
 		{
-			app.getAlgebraInput().setFocus(); 
+			if (app.hasApplicationGUImanager())
+				app.getApplicationGUImanager().getAlgebraInput().setFocus(); 
 			return;
 		}
 		
@@ -108,7 +109,7 @@ public class AlgebraController
 		
 		// open rename dialog
 		if (geo != null) {							
-			app.showRenameDialog(geo, true, Character.toString(ch), false);					
+			app.getApplicationGUImanager().showRenameDialog(geo, true, Character.toString(ch), false);					
 		}
 	}
 
@@ -353,11 +354,11 @@ public class AlgebraController
 														
 			// single selection: popup menu
 			if (app.selectedGeosSize() < 2) {				
-				app.showPopupMenu(geo, view, e.getPoint());						
+				app.getApplicationGUImanager().showPopupMenu(geo, view, e.getPoint());						
 			} 
 			// multiple selection: properties dialog
 			else {														
-				app.showPropertiesDialog(app.getSelectedGeos());	
+				app.getApplicationGUImanager().showPropertiesDialog(app.getSelectedGeos());	
 			}								
 		}
 		

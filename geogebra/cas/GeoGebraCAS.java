@@ -60,14 +60,7 @@ public class GeoGebraCAS {
      * example: getPolynomialCoeffs("3*a*x^2 + b"); returns
      * ["0", "b", "3*a"]
      */
-    final public String [] getPolynomialCoeffs(String jasymcaExp, String variable) {
- 
-    	if (!JarManager.addCasJarToClassPath())
-    	{
-			Application.debug("Could not initialize CAS Jar");
-			return null;    		
-    	}
-
+    final public String [] getPolynomialCoeffs(String jasymcaExp, String variable) {     	
        return ggbJasymca.getPolynomialCoeffs(jasymcaExp, variable);
     } 
     
@@ -78,13 +71,7 @@ public class GeoGebraCAS {
      */
     final public String evaluateYACAS(String exp) {
     	//Application.debug("exp for YACAS: " + exp);
-        
-    	if (!JarManager.addCasJarToClassPath())
-    	{
-			Application.debug("Could not initialize CAS Jar");
-			return null;    		
-    	}
-
+            	
     	if (yacas == null) {
     		try {
     			yacas = new YacasInterpreter();    
@@ -126,13 +113,7 @@ public class GeoGebraCAS {
      */
     final public String evaluateYACASRaw(String exp) {
     	//Application.debug("exp for YACAS: " + exp);
-        
-    	if (!JarManager.addCasJarToClassPath())
-    	{
-			Application.debug("Could not initialize CAS Jar");
-			return null;    		
-    	}
-    	
+       
     	if (yacas == null) {
     		try {
     			yacas = new YacasInterpreter();    

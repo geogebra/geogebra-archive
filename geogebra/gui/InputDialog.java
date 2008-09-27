@@ -219,7 +219,7 @@ public class InputDialog extends JDialog implements ActionListener,
 				setVisible(false);
             	tempArrayList.clear();
             	tempArrayList.add(geo);
-                app.showPropertiesDialog(tempArrayList);
+                app.getApplicationGUImanager().showPropertiesDialog(tempArrayList);
                 
 			}
 		} catch (Exception ex) {

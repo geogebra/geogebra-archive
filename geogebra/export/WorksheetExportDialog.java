@@ -15,6 +15,7 @@ package geogebra.export;
 import geogebra.Application;
 import geogebra.algebra.InputPanel;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.ApplicationGUImanager;
 import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
@@ -69,11 +70,16 @@ public class WorksheetExportDialog extends JDialog {
 	private GraphicSizePanel sizePanel;
 	private boolean useWorksheet = true, kernelChanged = false;			
 	private JTabbedPane tabbedPane;
+	private GeoGebraPreferences ggbPref;
+	private ApplicationGUImanager guiManager;
 
 	public WorksheetExportDialog(Application app) {
 		super(app.getFrame(), true);
 		this.app = app;
 		kernel = app.getKernel();
+		
+		ggbPref = app.getApplicationGUImanager().getPreferences();
+		guiManager = app.getApplicationGUImanager();
 		
 		initGUI();					
 	} 
@@ -167,23 +173,25 @@ public class WorksheetExportDialog extends JDialog {
 	
 	private void loadPreferences() {
 		try {
-	    	cbEnableRightClick.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_RIGHT_CLICK, "false")).booleanValue() );
-	    	cbShowResetIcon.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_RESET_ICON, "false")).booleanValue() );
-	    	cbShowFrame.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_FRAME_POSSIBLE, "false")).booleanValue() );
-	    	cbShowMenuBar.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, "false")).booleanValue() );
-	    	cbShowToolBar.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
-	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
+			
+			
+	    	cbEnableRightClick.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_RIGHT_CLICK, "false")).booleanValue() );
+	    	cbShowResetIcon.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_RESET_ICON, "false")).booleanValue() );
+	    	cbShowFrame.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_FRAME_POSSIBLE, "false")).booleanValue() );
+	    	cbShowMenuBar.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_SHOW_MENUBAR, "false")).booleanValue() );
+	    	cbShowToolBar.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
+	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
 	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
-	    	cbShowInputField.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
-	    	cbOnlineArchive.setSelected( Boolean.valueOf(GeoGebraPreferences.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_ONLINE_ARCHIVE, "false")).booleanValue() );
+	    	cbShowInputField.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+	    	cbOnlineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_ONLINE_ARCHIVE, "false")).booleanValue() );
 	    	
 	    	addHeight();
 	    
@@ -196,13 +204,13 @@ public class WorksheetExportDialog extends JDialog {
 		int height = 0;
 		
 		if (cbShowToolBar.isSelected()) {
-			height += app.getToolBarHeight();			
+			height += guiManager.getToolBarHeight();			
 		}
 		if (cbShowMenuBar.isSelected()) {
-			height += app.getMenuBarHeight();
+			height += guiManager.getMenuBarHeight();
 		}
 		if (cbShowInputField.isSelected()) {
-			height +=app.getAlgebraInputHeight();
+			height +=guiManager.getAlgebraInputHeight();
 		}
 		
 		sizePanel.setValues(sizePanel.getSelectedWidth(), 
@@ -211,14 +219,14 @@ public class WorksheetExportDialog extends JDialog {
 	}
     
     private void savePreferences() {    	    	
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_RIGHT_CLICK, Boolean.toString(cbEnableRightClick.isSelected()));
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_RESET_ICON, Boolean.toString(cbShowResetIcon.isSelected()));    	    	
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_FRAME_POSSIBLE, Boolean.toString(cbShowFrame.isSelected()));
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, Boolean.toString(cbShowMenuBar.isSelected()));
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, Boolean.toString(cbShowToolBar.isSelected()));
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, Boolean.toString(cbShowToolBarHelp.isSelected()));
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
-    	GeoGebraPreferences.savePreference(GeoGebraPreferences.EXPORT_WS_ONLINE_ARCHIVE, Boolean.toString(cbOnlineArchive.isSelected()));        
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_RIGHT_CLICK, Boolean.toString(cbEnableRightClick.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_RESET_ICON, Boolean.toString(cbShowResetIcon.isSelected()));    	    	
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_FRAME_POSSIBLE, Boolean.toString(cbShowFrame.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_SHOW_MENUBAR, Boolean.toString(cbShowMenuBar.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_SHOW_TOOLBAR, Boolean.toString(cbShowToolBar.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_SHOW_TOOLBAR_HELP, Boolean.toString(cbShowToolBarHelp.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_ONLINE_ARCHIVE, Boolean.toString(cbOnlineArchive.isSelected()));        
     }
 
 	/**
@@ -385,14 +393,14 @@ public class WorksheetExportDialog extends JDialog {
 				
 				int heightChange = 0;
 				if (src == cbShowToolBar) {
-					heightChange = app.getToolBarHeight();
+					heightChange = guiManager.getToolBarHeight();
 					cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 				}
 				else if (src == cbShowMenuBar) {
-					heightChange = app.getMenuBarHeight();
+					heightChange = guiManager.getMenuBarHeight();
 				}
 				else if (src == cbShowInputField) {
-					heightChange = app.getAlgebraInputHeight();
+					heightChange = guiManager.getAlgebraInputHeight();
 				}
 				
 				if (!src.isSelected())
@@ -488,7 +496,7 @@ public class WorksheetExportDialog extends JDialog {
 			htmlFile = Application
 					.addExtension(currFile, Application.FILE_EXT_HTML);
 
-		htmlFile = app.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
+		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
 				+ " " + app.getMenu("Files"));
 		if (htmlFile == null)
@@ -517,7 +525,7 @@ public class WorksheetExportDialog extends JDialog {
 	    					app.copyJarsTo(HTMLfile.getParent(), cbShowMenuBar.isSelected());
 		    			
 		    			// open html file in browser
-		    			app.showURLinBrowser(HTMLfile.toURL());
+	    				guiManager.showURLinBrowser(HTMLfile.toURL());
 	    			} catch (Exception ex) {			
 	    				app.showError("SaveFileFailed");
 	    				Application.debug(ex.toString());
@@ -668,7 +676,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(Util.toHTMLString(line));
 			sb.append(", ");
 		}
-		sb.append(app.getCreatedWithHTML());
+		sb.append(guiManager.getCreatedWithHTML());
 		sb.append("</span>");
 		sb.append("</p>");
 

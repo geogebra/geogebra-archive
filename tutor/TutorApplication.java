@@ -33,13 +33,4 @@ public class TutorApplication extends Application {
     	//}
     }
     
-    public boolean save() {
-    	if (propDialog != null && propDialog.isShowing()) 
-    		propDialog.cancel();
-    	
-        if (currentFile != null)
-			return saveGeoGebraFile(currentFile);
-		else
-			return saveAs();
-    }
 }

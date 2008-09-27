@@ -59,8 +59,8 @@ public class GeoGebraAppletTutor extends GeoGebraAppletBase {
 	protected Application buildApplication(String[] args, boolean undoActive) {
 		
 		Application app = new TutorApplication(args, this, undoActive);
-		app.setMenubar(new TutorMenubar(app));
-		app.initMenubar();
+		app.getApplicationGUImanager().setMenubar(new TutorMenubar(app));
+		app.getApplicationGUImanager().initMenubar();
 		
 		return app; 
 	}

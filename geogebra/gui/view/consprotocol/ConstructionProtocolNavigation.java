@@ -9,7 +9,7 @@ under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
-package geogebra.gui;
+package geogebra.gui.view.consprotocol;
 
 import geogebra.Application;
 
@@ -158,7 +158,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 			btOpenWindow.setIcon(app.getImageIcon("table.gif"));			
 			btOpenWindow.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					app.showConstructionProtocol();					
+					app.getApplicationGUImanager().showConstructionProtocol();					
 				}				
 			});
 					

@@ -487,7 +487,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 
 		// algebra controller will take care of our key events
 		setFocusable(true);
-		addKeyListener(app.getAlgebraController());
+
 
 		setLayout(null);
 		setMinimumSize(new Dimension(20, 20));

@@ -10,10 +10,9 @@ the Free Software Foundation.
 
 */
 
-package geogebra.gui;
+package geogebra.gui.view.consprotocol;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
 import geogebra.View;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.Construction;
@@ -60,7 +59,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -529,7 +527,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 // right click
                 if (Application.isRightClick(e)) {
                     GeoElement geo = data.getGeoElement(row);
-                    app.showPopupMenu(geo, table, origin);
+                    app.getApplicationGUImanager().showPopupMenu(geo, table, origin);
                 } else { // left click     
                 	
                 	if (e.getClickCount() == 1) {
@@ -1519,7 +1517,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         sb.append("</table>\n");
         
         // footer
-        sb.append(app.getCreatedWithHTML());
+        sb.append(app.getApplicationGUImanager().getCreatedWithHTML());
         
         sb.append("</body>\n");
         sb.append("</html>");

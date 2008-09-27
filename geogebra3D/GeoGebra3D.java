@@ -65,8 +65,7 @@ public class GeoGebra3D extends GeoGebra
 			Application.debug(e+"");
 		}	
     	    
-		// load list of previously used files
-		GeoGebraPreferences.loadFileList();
+		
 		
 		// create first window and show it
 		
@@ -83,8 +82,8 @@ public class GeoGebra3D extends GeoGebra
 		//GeoGebra wnd = buildGeoGebra();
 
 		Application3D app = new GeoGebraApplication3D(args, wnd, true); //ggb3D 
-		app.setMenubar(new GeoGebraMenuBar(app));
-		app.initMenubar();
+		app.getApplicationGUImanager().setMenubar(new GeoGebraMenuBar(app));
+		app.getApplicationGUImanager().initMenubar();
 		
 		// init GUI
 		wnd.app = (Application) app;

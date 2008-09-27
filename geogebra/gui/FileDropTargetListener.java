@@ -59,7 +59,7 @@ public class FileDropTargetListener implements DropTargetListener {
 			event.dropComplete(false);
 		} else if (app.isSaved() || app.saveCurrentFile()) {				
 			File [] files = { droppedFile };
-			app.doOpenFiles(files, true);			
+			app.getApplicationGUImanager().doOpenFiles(files, true);			
 			event.dropComplete(true);			
 		}			
 	}
