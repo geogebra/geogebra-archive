@@ -100,30 +100,24 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
   // Protected methods
   //----------------------------------------------------------------------------
 
-    private String textBeforeCopy="";
-    private int startBeforeCopy = -1;
-    private int endBeforeCopy = -1; 
-    private int posBeforeCopy = -1;
+    boolean ctrlC = false;
 
     public void keyPressed(KeyEvent e) {        
         int keyCode = e.getKeyCode();    
 
-        posBeforeCopy = -1;
-        textBeforeCopy="";
+        ctrlC = false;
         
         switch (keyCode) {
         
             // process input
         case KeyEvent.VK_C:
-        	if (Application.isControlDown(e))// && Application.MAC_OS)
+        	if (Application.isControlDown(e)) //workaround for MAC_OS
         	{
-        		textBeforeCopy=getText()+"jnhjh";
-        	    startBeforeCopy = getSelectionStart();
-        	    endBeforeCopy = getSelectionEnd();        
-        	    posBeforeCopy = getCaretPosition();
+        		ctrlC = true;
         	}
         	
         	break;
+        	
         case KeyEvent.VK_ENTER:                             
                 // processEnterKey accepts a selection if there is one 
                 // in this case the ENTER key event is consumed 
@@ -178,21 +172,16 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
   
   
   public void keyReleased(KeyEvent e) {
-	  Application.debug("keyReleased "+textBeforeCopy);
-
-	  if (posBeforeCopy != -1 && e.getKeyCode() == KeyEvent.VK_C)// && Application.MAC_OS)
-	  {
-		  setText(textBeforeCopy);
-		  setCaretPosition(posBeforeCopy);
-		  setSelectionStart(startBeforeCopy);
-		  setSelectionEnd(endBeforeCopy);
-	  }
 	  
 	  if (!autoComplete) return;
     
     char charPressed = e.getKeyChar();  
     
-    if (!Character.isLetter(charPressed)) return;        
+    Application.debug(charPressed+"");
+    
+    if (!Character.isLetter(charPressed)
+    		|| (ctrlC && Application.MAC_OS) // don't want selection cleared
+    		) return;        
     
     int start = getSelectionStart();
     int end = getSelectionEnd();        
