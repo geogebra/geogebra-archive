@@ -177,7 +177,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
     
     char charPressed = e.getKeyChar();  
     
-    Application.debug(charPressed+"");
+    //Application.debug(charPressed+"");
     
     if (!Character.isLetter(charPressed)
     		|| (ctrlC && Application.MAC_OS) // don't want selection cleared
