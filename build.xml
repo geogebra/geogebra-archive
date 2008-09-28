@@ -50,11 +50,11 @@ office@geogebra.org
 	
 	<!-- main target -->
 	<target name="geogebra-no-obfuscation" 
-		depends="clean, ggb-jar-files, sign-pack-only">	  
+		depends="clean, ggb-jar-files">	  
 	</target>
 	
 	<target name="stripComments">
-		   <copy todir="${propertiestemp.dir}">
+		   <copy todir="${propertiestemp.dir}/geogebra/properties">
 		      <fileset dir="${propertiessrc.dir}">
 	            <include name="*" />
 		      </fileset>
@@ -70,7 +70,8 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar">
+			depends="ggb-jar, ggb-export-jar, ggb-properties-jar">
+		<!-- depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar"> -->
 	</target>
 	
 	<manifest file="../manifest.mf">
@@ -103,8 +104,7 @@ office@geogebra.org
 			excludes="**/*.java,
 					*.jar,					
 					geogebra/export/**, 
-					geogebra/gui/**, 
-					geogebra/cas/**,
+			
 					geogebra/properties/**, 			  
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
@@ -117,8 +117,9 @@ office@geogebra.org
 		/>
 		
 		<!-- exclude: 
-			geogebra/spreadsheet/** 
-			geogebra/gui/** -->
+				geogebra/gui/**, 
+					geogebra/cas/**,
+			 -->
 		
 		<!-- include: 
 						geogebra/gui/**/_license.txt,

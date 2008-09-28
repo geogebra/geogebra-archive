@@ -14,6 +14,7 @@ package geogebra;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -36,6 +37,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
 		
 		// base properties file
 		bundle = loadSingleBundleFile(name);
+		if (bundle == null) return null;
 
 		// language properties file
 		String lang = locale.getLanguage();
@@ -83,15 +85,20 @@ public class MyResourceBundle extends PropertyResourceBundle {
     public  static MyResourceBundle loadSingleBundleFile(String name) {    	    	
     	//Application.debug("loadBundle: " + name);
     	
-    	try {    		        	    		    		
-    		String fileName = name + ".properties";
-    		InputStream in = MyResourceBundle.class.getResourceAsStream(fileName);    		
-    		    		
-    		//Application.debug("SUCCESS loadBundle : " + name);
-			return new MyResourceBundle(in);
+    	String fileName = name + ".properties";
+    	
+    	try {    		        	
+    		
+    		InputStream in =  MyResourceBundle.class.getResourceAsStream(fileName);    		
+    		MyResourceBundle ret = new MyResourceBundle(in);
+    		
+    		// TODO: remove
+    		Application.debug("SUCCESS loadBundle : " + fileName);
+			return ret;
     	}
-		catch (Exception e) {			
-			//Application.debug("Exception: could not load bundle: " + name);
+		catch (Exception e) {	
+			// TODO: remove
+			Application.debug("Exception: could not load bundle: " + fileName);
 			//e.printStackTrace();
 			return null;
 		}

@@ -184,30 +184,29 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		setMenuShortCutAccelerator(mi, 'P');
 				
 		// export
-		if (app.loadExportJar()) {
-			JMenu submenu = new JMenu(app.getMenu("Export"));
-			submenu.setIcon(app.getEmptyIcon());
-			menu.add(submenu);
-			mi = submenu.add(exportWorksheet);
-			setMenuShortCutShiftAccelerator(mi, 'W');
+		JMenu submenu = new JMenu(app.getMenu("Export"));
+		submenu.setIcon(app.getEmptyIcon());
+		menu.add(submenu);
+		mi = submenu.add(exportWorksheet);
+		setMenuShortCutShiftAccelerator(mi, 'W');
+	
+		submenu.addSeparator();
+		//submenu.add(htmlCPAction);
+		mi = submenu.add(exportGraphicAction);
+		setMenuShortCutShiftAccelerator(mi, 'P');
 		
-			submenu.addSeparator();
-			//submenu.add(htmlCPAction);
-			mi = submenu.add(exportGraphicAction);
-			setMenuShortCutShiftAccelerator(mi, 'P');
-			
-			mi = submenu.add(drawingPadToClipboardAction);
-			setMenuShortCutShiftAccelerator(mi, 'C');
+		mi = submenu.add(drawingPadToClipboardAction);
+		setMenuShortCutShiftAccelerator(mi, 'C');
+	
 		
+		submenu.addSeparator();
+		mi = submenu.add(exportPSTricksAction);
+		setMenuShortCutShiftAccelerator(mi, 'T');
+		
+		// Added by Loïc Le Coq
+		mi = submenu.add(exportPgfAction);
+		//End						
 			
-			submenu.addSeparator();
-			mi = submenu.add(exportPSTricksAction);
-			setMenuShortCutShiftAccelerator(mi, 'T');
-			
-			// Added by Loïc Le Coq
-			mi = submenu.add(exportPgfAction);
-			//End						
-		}		
 		
 		// DONE HERE WHEN APPLET
 		if (app.isApplet()) return;
@@ -1020,14 +1019,15 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				app.loadExportJar();
+				
 				Thread runner = new Thread() {
 					public void run() {
 						app.setWaitCursor();
 						try {							
 					    	app.clearSelectedGeos();
 					    	
-					    	// use reflection for
-					    	app.loadExportJar();
+					    	// use reflection for					    	
 				  		    JDialog d = new geogebra.export.GraphicExportDialog(app);   		
 				  		    //Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
 				  		    //Object[] args = new Object[] { app };
@@ -1074,7 +1074,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					Application.debug("GeoGebraToPGF not available");
 				}	
 			}
-		};
+		};			
 		
 		//End
 		
@@ -1084,14 +1084,14 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				app.loadExportJar();
+				
 				Thread runner = new Thread() {
 					public void run() {
 						app.setWaitCursor();
 						try {
 							app.clearSelectedGeos();
-							
-							app.loadExportJar();
-				  		    JDialog d = new geogebra.export.WorksheetExportDialog(app); 		
+							geogebra.export.WorksheetExportDialog d = new geogebra.export.WorksheetExportDialog(app); 		
 														
 							d.setVisible(true);
 						} catch (Exception e) {
@@ -1259,6 +1259,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	}
 	
 	public static void showPrintPreview(final Application  app) {
+		app.loadExportJar();
+		
 		Thread runner = new Thread() {
 			public void run() {			
 				app.setWaitCursor();
@@ -1270,10 +1272,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  		    //Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
 		  		    //Class [] types = new Class[] {Application.class, Printable.class, int.class};
 		  	        //Constructor constructor = classObject.getDeclaredConstructor(types);   	        
-		  	        //constructor.newInstance(args); 
-					app.loadExportJar();
-		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
-					
+		  	        //constructor.newInstance(args); 				
+		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);							
             	} catch (Exception e) {
             		Application.debug("Print preview not available");            		
             	}	

@@ -25,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
+import geogebra.modules.ClassPathManipulator;
 import geogebra.modules.JarManager;
 import geogebra.plugin.PluginManager;
 import geogebra.util.CopyURLToFile;
@@ -402,8 +403,11 @@ public abstract class Application implements KeyEventDispatcher {
 		// H-P Ulven 2008-04-16
 		// plugins
 		// Last in constructor, has to be sure everything else is in place:
+		
+		// TODO: add plugin manager again, for some reason it adds all jar files in
+		// the same directory to the classpath which it shouldn't do
 		ggbapi = new GgbAPI(this);
-		pluginmanager = new PluginManager(this);
+		//pluginmanager = new PluginManager(this);
 
 	}
 
@@ -1233,6 +1237,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}	
 
 	private void fillCommandDict() {
+		if (rbcommand == null) return;
+		
 		translateCommandTable.clear();
 		commandDict.clear();
 
@@ -1288,12 +1294,23 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Jar managing
 	 */
 
-	final public boolean loadPropertiesJar() {		
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);
+	final public boolean loadPropertiesJar() {	
+		if (jarmanager.isOnClassPath(JAR_FILE_GEOGEBRA_PROPERTIES))
+			return true;
+		
+		// avoid loading the properties jar file in applets when it's not really needed
+		boolean propertiesNeeded = 
+			showAlgebraView || showAlgebraInput || showSpreadsheet || showCAS ||
+			showMenuBar || showToolBar;
+		
+		if (propertiesNeeded) 
+			return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);	
+		else
+			return false;		
 	}
 
 	final public boolean loadExportJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);
+		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);		
 	}
 
 	final public boolean loadCASJar() {
@@ -2082,7 +2099,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * // TODO: think about this Downloads the latest jar files from the
+	 * // think about this Downloads the latest jar files from the
 	 * GeoGebra server.
 	 * 
 	 * private void updateGeoGebra() { try { File dest = new File(codebase +
@@ -2091,11 +2108,11 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * if (dest.exists()) { // check if jarURL is newer then dest try {
 	 * URLConnection connection = jarURL.openConnection(); if
-	 * (connection.getLastModified() <= dest.lastModified()) { // TODO: localize
+	 * (connection.getLastModified() <= dest.lastModified()) { 
 	 * showMessage("No update available"); return; }
 	 * 
 	 * } catch (Exception e) { // we don't know if the file behind jarURL is
-	 * newer than dest // so don't do anything // TODO: localize
+	 * newer than dest // so don't do anything 
 	 * showMessage("No update available: " + (e.getMessage())); return; } }
 	 * 
 	 * // copy JAR_FILE if (!CopyURLToFile.copyURLToFile(this, jarURL, dest))
@@ -2110,9 +2127,9 @@ public abstract class Application implements KeyEventDispatcher {
 	 * jarURL = new URL(Application.UPDATE_URL + Application.JSCL_FILE); if
 	 * (!CopyURLToFile.copyURLToFile(this, jarURL, dest)) return;
 	 * 
-	 * // TODO: localize
+	 * 
 	 * showMessage("Update finished. Please restart GeoGebra."); } catch
-	 * (Exception e) { // TODO: localize showError("Update failed: "+
+	 * (Exception e) {  showError("Update failed: "+
 	 * e.getMessage()); } }
 	 */
 
@@ -2735,11 +2752,7 @@ public abstract class Application implements KeyEventDispatcher {
 			if (applet != null)
 				SwingUtilities.updateComponentTreeUI(applet);
 
-			// TODO: update layout of screen after split pane has changed
-			// for Java 1.4.2
-
-			// if (frame != null)
-			// SwingUtilities.updateComponentTreeUI(frame);
+			
 
 		}
 	}
@@ -2906,7 +2919,10 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 2008-04-16
 	 */
 	public javax.swing.JMenu getPluginMenu() {
-		return pluginmanager.getPluginMenu();
+		if (pluginmanager != null)
+			return pluginmanager.getPluginMenu();
+		else 
+			return null;
 	}// getPluginMenu()
 
 	/*
@@ -3167,7 +3183,7 @@ public abstract class Application implements KeyEventDispatcher {
 					return fileName;
 				} else {
 					// same name but different size: change filename
-					// TODO Michael Borcherds: this bit of code should now be
+					// Michael Borcherds: this bit of code should now be
 					// redundant as it
 					// is near impossible for the filename to be the same unless
 					// the files are the same

@@ -124,49 +124,58 @@ public class ConstructionDefaults {
 		defaultGeoElements = new FastHashMapKeyless();		
 		
 		Application app = cons.getApplication();		
-		String strFree = " (" + app.getPlain("free") + ")";
-		String strDependent = " (" + app.getPlain("dependent") + ")";
+//		String strFree = " (" + app.getPlain("free") + ")";
+//		String strDependent = " (" + app.getPlain("dependent") + ")";
+		String strFree = " (free)";
+		String strDependent = " (dependent)";
 						
 		// free point
 		GeoPoint freePoint = new GeoPoint(cons);	
-		freePoint.setLocalVariableLabel(app.getPlain("Point") + strFree);
+//		freePoint.setLocalVariableLabel(app.getPlain("Point") + strFree);
+		freePoint.setLocalVariableLabel("Point" + strFree);
 		freePoint.setObjColor(colPoint);
 		defaultGeoElements.put(DEFAULT_POINT_FREE, freePoint);
 		
 		// dependent point
 		GeoPoint depPoint = new GeoPoint(cons);	
-		depPoint.setLocalVariableLabel(app.getPlain("Point") + strDependent);
+//		depPoint.setLocalVariableLabel(app.getPlain("Point") + strDependent);
+		depPoint.setLocalVariableLabel("Point" + strDependent);
 		depPoint.setObjColor(colDepPoint);
 		defaultGeoElements.put(DEFAULT_POINT_DEPENDENT, depPoint);
 		
 		// point on path
 		GeoPoint pathPoint = new GeoPoint(cons);	
-		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+//		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+		pathPoint.setLocalVariableLabel("PointOn");
 		pathPoint.setObjColor(colPathPoint);
 		defaultGeoElements.put(DEFAULT_POINT_ON_PATH, pathPoint);
 				
 		// line
 		GeoLine line = new GeoLine(cons);	
-		line.setLocalVariableLabel(app.getPlain("Line"));
+//		line.setLocalVariableLabel(app.getPlain("Line"));
+		line.setLocalVariableLabel("Line");
 		line.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_LINE, line);
 		
 		// polygon
 		GeoPolygon polygon = new GeoPolygon(cons, null);	
-		polygon.setLocalVariableLabel(app.getPlain("Polygon"));
+//		polygon.setLocalVariableLabel(app.getPlain("Polygon"));
+		polygon.setLocalVariableLabel("Polygon");
 		polygon.setObjColor(colPolygon);
 		polygon.setAlphaValue(DEFAULT_POLYGON_ALPHA);
 		defaultGeoElements.put(DEFAULT_POLYGON, polygon);
 										
 		// conic
 		GeoConic conic = new GeoConic(cons);	
-		conic.setLocalVariableLabel(app.getPlain("Conic"));
+//		conic.setLocalVariableLabel(app.getPlain("Conic"));
+		conic.setLocalVariableLabel("Conic");
 		conic.setObjColor(colConic);
 		defaultGeoElements.put(DEFAULT_CONIC, conic);	
 		
 		// conic sector
 		GeoConicPart conicSector = new GeoConicPart(cons, GeoConicPart.CONIC_PART_SECTOR);	
-		conicSector.setLocalVariableLabel(app.getPlain("Sector"));
+//		conicSector.setLocalVariableLabel(app.getPlain("Sector"));
+		conicSector.setLocalVariableLabel("Sector");
 		conicSector.setObjColor(colPolygon);
 		conicSector.setAlphaValue(DEFAULT_POLYGON_ALPHA);
 		defaultGeoElements.put(DEFAULT_CONIC_SECTOR, conicSector);	
@@ -174,14 +183,16 @@ public class ConstructionDefaults {
 		
 		// number
 		GeoNumeric number = new GeoNumeric(cons);	
-		number.setLocalVariableLabel(app.getPlain("Numeric"));
+//		number.setLocalVariableLabel(app.getPlain("Numeric"));
+		number.setLocalVariableLabel("Numeric");
 		number.setObjColor(colNumber);
 		number.setLabelMode(GeoElement.LABEL_NAME_VALUE);	
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
 		// angle
 		GeoAngle angle = new GeoAngle(cons);	
-		angle.setLocalVariableLabel(app.getPlain("Angle"));
+//		angle.setLocalVariableLabel(app.getPlain("Angle"));
+		angle.setLocalVariableLabel("Angle");
 		angle.setObjColor(colAngle);		
 		angle.setAlphaValue(DEFAULT_ANGLE_ALPHA);
 		//angle.setDrawable(true);
@@ -190,35 +201,41 @@ public class ConstructionDefaults {
 		
 		// function
 		GeoFunction function = new GeoFunction(cons);	
-		function.setLocalVariableLabel(app.getPlain("Function"));
+//		function.setLocalVariableLabel(app.getPlain("Function"));
+		function.setLocalVariableLabel("Function");
 		function.setObjColor(colFunction);
 		defaultGeoElements.put(DEFAULT_FUNCTION, function);
 		
 		// locus
 		GeoLocus locus = new GeoLocus(cons);	
-		locus.setLocalVariableLabel(app.getPlain("Locus"));
+//		locus.setLocalVariableLabel(app.getPlain("Locus"));
+		locus.setLocalVariableLabel("Locus");
 		locus.setObjColor(colLocus);		
 		locus.setLabelVisible(false);
 		defaultGeoElements.put(DEFAULT_LOCUS, locus);					
 		
 		// text
 		GeoText text = new GeoText(cons);		
-		text.setLocalVariableLabel(app.getPlain("Text"));
+//		text.setLocalVariableLabel(app.getPlain("Text"));
+		text.setLocalVariableLabel("Text");
 		defaultGeoElements.put(DEFAULT_TEXT, text);	
 		
 		// image
 		GeoImage img = new GeoImage(cons);
-		img.setLocalVariableLabel(app.getPlain("Image"));
+//		img.setLocalVariableLabel(app.getPlain("Image"));
+		img.setLocalVariableLabel("Image");
 		defaultGeoElements.put(DEFAULT_IMAGE, img);	
 		
 		// boolean
 		GeoBoolean bool = new GeoBoolean(cons);		
-		bool.setLocalVariableLabel(app.getPlain("Boolean"));
+//		bool.setLocalVariableLabel(app.getPlain("Boolean"));
+		bool.setLocalVariableLabel("Boolean");
 		defaultGeoElements.put(DEFAULT_BOOLEAN, bool);
 		
 		// list
 		GeoList list = new GeoList(cons);	
-		list.setLocalVariableLabel(app.getPlain("List"));
+//		list.setLocalVariableLabel(app.getPlain("List"));
+		list.setLocalVariableLabel("List");
 		list.setObjColor(colList);		
 		list.setAlphaValue(DEFAULT_POLYGON_ALPHA);
 		defaultGeoElements.put(DEFAULT_LIST, list);

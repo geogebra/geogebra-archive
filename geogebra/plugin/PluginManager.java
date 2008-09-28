@@ -182,7 +182,7 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 						for (int j = 0; j < tokens.length; j++) {
 							token = tokens[j].trim();
 							if (token.matches(".*\\.jar")) {
-								debug("\tPath " + token);
+								debug("\tPath " + token);																
 								paths.add(token);
 							} else if (token.matches("\\{.*\\}")) { // args
 								token = token.substring(1, token.length() - 1);

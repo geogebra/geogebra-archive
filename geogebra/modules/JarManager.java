@@ -95,6 +95,15 @@ public class JarManager {
 	}
 	
 	/**
+	 * Returns whether the given jar file is on the classpath.
+	 * 
+	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
+	 */
+	final public boolean isOnClassPath(int jarFileIndex) {
+		return jarFileOnClasspath[jarFileIndex];
+	}
+	
+	/**
 	 * Loads the the given jar file and adds it to the classpath. Note: if the codebase is
 	 * online (applet, webstart), the jar file is downloaded to a temporary local directory first.
 	 * 
@@ -151,11 +160,12 @@ public class JarManager {
 			jarFileOnClasspath[jarFileIndex] = success;
 			
 			// TODO: remove
+			ClassPathManipulator.listClassPath();
 			Application.debug("Added to classpath: " + localJarFile);
 		} else {
 			System.err.println("Could not add to classpath: " + localJarFile);
 			jarFileOnClasspath[jarFileIndex] = false;
-		}
+		}						
 		
 		return jarFileOnClasspath[jarFileIndex];
 	}
@@ -204,12 +214,14 @@ public class JarManager {
 			main_app_type = TYPE_APPLET;
 		} 
 		else {
-			// get code base of first application
+			// check code base of application
 			// e.g. http://... or file://...
 			String strCodeBase = codebase.toString();
-			if (strCodeBase.startsWith("file")) {
+			if (strCodeBase.startsWith("file")) {				
 				// check if jar file exists
-				File main_jar_file = new File(strCodeBase + Application.JAR_FILES[Application.JAR_FILE_GEOGEBRA]);
+				File main_jar_file = new File(codebase.getFile(), 
+						Application.JAR_FILES[Application.JAR_FILE_GEOGEBRA]);							
+				
 				if (main_jar_file.exists()) {
 					// LOCAL JARS
 					main_app_type =  TYPE_LOCAL_JARS;
