@@ -84,12 +84,17 @@ public class AlgoSumFunctions  extends AlgoElement {
        	GeoFunction fun1 = (GeoFunction)geoList.get(0);
        	GeoFunction fun2 = (GeoFunction)geoList.get(1);
 
-       	ExpressionNode left = fun1.getFunctionExpression();
-       	ExpressionNode right = fun2.getFunctionExpression();           	
+    	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
+    	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
     	
+
+    	ExpressionNode left = fun1.getFunctionExpression().getCopy(fun1.getKernel());
+       	ExpressionNode right = fun2.getFunctionExpression().getCopy(fun2.getKernel());    
+       	
     	ExpressionNode sum = new ExpressionNode(kernel, left, ExpressionNode.PLUS, right);
     	
-    	Function f = new Function(sum, fun1.getFunction().getFunctionVariable());
+    	FunctionVariable x =  new FunctionVariable(kernel);
+    	Function f = new Function(sum,x);//, fun1.getFunction().getFunctionVariable());
     	//f.setExpression(n1);
     	//f.initFunction();
     	//f.set
@@ -100,6 +105,11 @@ public class AlgoSumFunctions  extends AlgoElement {
     
     
     /*
+       	//ExpressionNode left2 = new ExpressionNode(kernel, left, ExpressionNode.FUNCTION, x);
+       	//ExpressionNode right2 = new ExpressionNode(kernel, right, ExpressionNode.FUNCTION, x);
+       	
+    	
+    	//ExpressionNode sum = new ExpressionNode(kernel, left, ExpressionNode.PLUS, right.replace(x2,x));
        	ExpressionNode left2 = new ExpressionNode(kernel,fun1.getFunction().getFunctionVariable());
        	ExpressionNode right2 = new ExpressionNode(kernel,fun2.getFunction().getFunctionVariable());
     	ExpressionNode n2 = new ExpressionNode(kernel, left2, ExpressionNode.PLUS, right2);
