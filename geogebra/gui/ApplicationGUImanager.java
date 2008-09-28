@@ -1426,7 +1426,7 @@ public class ApplicationGUImanager {
 	}
 
 	public void updateActions() {
-		if (undoAction == null || !app.isUndoActive())
+		if (undoAction == null || kernel == null || !app.isUndoActive())
 			return;
 		undoAction.setEnabled(kernel.undoPossible());
 		redoAction.setEnabled(kernel.redoPossible());

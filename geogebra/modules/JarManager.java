@@ -159,8 +159,7 @@ public class JarManager {
 			// remember that this jar file is on classpath
 			jarFileOnClasspath[jarFileIndex] = success;
 			
-			// TODO: remove
-			ClassPathManipulator.listClassPath();
+			// TODO: remove			
 			Application.debug("Added to classpath: " + localJarFile);
 		} else {
 			System.err.println("Could not add to classpath: " + localJarFile);

@@ -43,6 +43,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -434,26 +436,28 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void initInBackground() {
+		// TODO: reactivate
+		
 		// init file chooser and properties dialog
 		// in a background task
-		Thread runner = new Thread() {
-			public void run() {
-				try {
-					Thread.sleep(1000);
-				} catch (Exception e) {
-				}
-				// init properties dialog
-				if (letShowPropertiesDialog())
-					getApplicationGUImanager().getPropertiesDialog();
-
-				if (showMenuBar) {
-					getApplicationGUImanager().initFileChooser();
-				}
-
-				kernel.initCAS();
-			}
-		};
-		runner.start();
+//		Thread runner = new Thread() {
+//			public void run() {
+//				try {
+//					Thread.sleep(1000);
+//				} catch (Exception e) {
+//				}
+//				// init properties dialog
+//				if (letShowPropertiesDialog())
+//					getApplicationGUImanager().getPropertiesDialog();
+//
+//				if (showMenuBar) {
+//					getApplicationGUImanager().initFileChooser();
+//				}
+//
+//				kernel.initCAS();
+//			}
+//		};
+//		runner.start();
 
 		/*
 		 * // Download jar files to temp directory in background // this is done
@@ -1877,11 +1881,22 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (casView == null) {
 			loadCASJar();
-			casView = new geogebra.cas.view.CASView(this);
+			
+			// this code wraps the creation of the cas view and is
+			// necessary to allow dynamic loading of this class
+			ActionListener al = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					casView = new geogebra.cas.view.CASView(Application.this);					
+				}				
+			};			
+			al.actionPerformed(null);	
+			
+			// create JFrame for CAS view
 			casFrame = createCasFrame(casView);
 		}
 
 		// show or hide CAS window
+		
 		casFrame.setVisible(showCAS);
 
 		updateMenubar();

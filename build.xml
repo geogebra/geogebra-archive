@@ -70,7 +70,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-export-jar, ggb-properties-jar">
+			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar">
 		<!-- depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar"> -->
 	</target>
 	
@@ -104,7 +104,7 @@ office@geogebra.org
 			excludes="**/*.java,
 					*.jar,					
 					geogebra/export/**, 
-			
+					geogebra/cas/**,
 					geogebra/properties/**, 			  
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
@@ -118,7 +118,7 @@ office@geogebra.org
 		
 		<!-- exclude: 
 				geogebra/gui/**, 
-					geogebra/cas/**,
+					
 			 -->
 		
 		<!-- include: 
