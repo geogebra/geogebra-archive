@@ -83,12 +83,17 @@ public class AlgoSumFunctions  extends AlgoElement {
     	
     	int n = Truncate == null ? geoList.size() : (int)Truncate.getDouble();
     	
-    	if (n == 0) {
+    	if (n == 0 || n > geoList.size()) {
     		resultFun.setUndefined();
     		return;
     	}
     	else if (n == 1)
     	{
+    		if (!geoList.get(0).isGeoFunction()) {
+        		resultFun.setUndefined();
+        		return;
+        	}
+    		
            	GeoFunction fun1 = (GeoFunction)geoList.get(0);
 
         	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
@@ -103,12 +108,21 @@ public class AlgoSumFunctions  extends AlgoElement {
     		return;
     	}
 
+		if (!geoList.get(0).isGeoFunction() || !geoList.get(1).isGeoFunction()) {
+    		resultFun.setUndefined();
+    		return;
+    	}
     	// add first two:
     	resultFun = GeoFunction.add(resultFun,(GeoFunction)geoList.get(0), (GeoFunction)geoList.get(1));
     	
     	if (n == 2) return;
     	
     	for (int i = 2 ; i < n ; i++) {  	
+    		
+    		if (!geoList.get(i).isGeoFunction()) {
+        		resultFun.setUndefined();
+        		return;
+        	}
     		resultFun = GeoFunction.add(resultFun,resultFun, (GeoFunction)geoList.get(i));
     	}
     	
