@@ -81,6 +81,40 @@ public class AlgoSumFunctions  extends AlgoElement {
     protected final void compute() {
     	//Sum[{x^2,x^3}]
     	
+    	int n = Truncate == null ? geoList.size() : (int)Truncate.getDouble();
+    	
+    	if (n == 0) {
+    		resultFun.setUndefined();
+    		return;
+    	}
+    	else if (n == 1)
+    	{
+           	GeoFunction fun1 = (GeoFunction)geoList.get(0);
+
+        	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
+        	FunctionVariable x =  new FunctionVariable(kernel);
+
+        	ExpressionNode left = fun1.getFunctionExpression().getCopy(fun1.getKernel());
+        	
+        	Function f = new Function(left.replace(x1,x),x);
+        	
+           	resultFun.setFunction(f);
+           	resultFun.setDefined(true);
+    		return;
+    	}
+
+    	// add first two:
+    	resultFun = GeoFunction.add(resultFun,(GeoFunction)geoList.get(0), (GeoFunction)geoList.get(1));
+    	
+    	if (n == 2) return;
+    	
+    	for (int i = 2 ; i < n ; i++) {  	
+    		resultFun = GeoFunction.add(resultFun,resultFun, (GeoFunction)geoList.get(i));
+    	}
+    	
+    	
+    	/*
+    	// this works:
        	GeoFunction fun1 = (GeoFunction)geoList.get(0);
        	GeoFunction fun2 = (GeoFunction)geoList.get(1);
 
@@ -100,7 +134,7 @@ public class AlgoSumFunctions  extends AlgoElement {
     	//f.set
     	
        	resultFun.setFunction(f);
-       	resultFun.setDefined(true);
+       	resultFun.setDefined(true);*/
 
     
     

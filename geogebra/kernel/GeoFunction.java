@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.roots.RealRootFunction;
 
@@ -600,6 +601,28 @@ GeoDeriveable, ParametricCurve {
 	final public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method
 		if (geo.isGeoFunction()) return equals((GeoFunction)geo); else return false;
+	}
+	
+	public static GeoFunction add(GeoFunction resultFun, GeoFunction fun1, GeoFunction fun2) {
+		
+		Kernel kernel = fun1.getKernel();
+		
+    	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
+    	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
+    	FunctionVariable x =  new FunctionVariable(kernel);
+    	
+
+    	ExpressionNode left = fun1.getFunctionExpression().getCopy(kernel);
+       	ExpressionNode right = fun2.getFunctionExpression().getCopy(kernel);    
+       	
+    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replace(x1,x), ExpressionNode.PLUS, right.replace(x2,x));
+    	
+    	Function f = new Function(sum,x);
+    	
+       	resultFun.setFunction(f);
+       	resultFun.setDefined(true);
+       	
+       	return resultFun;
 	}
 
 }
