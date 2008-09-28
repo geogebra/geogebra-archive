@@ -73,6 +73,15 @@ public class JarManager {
 	 */
 	private JarManager(Application app) {	
 		codebase = app.getCodeBase();
+
+		if (codebase.toString().startsWith("file:"))
+		{
+			try {
+				codebase = new URL(codebase.toString().replaceAll("%20", " "));
+			}
+			catch (Exception e) {}
+ 		}
+
 				
 		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 		initApplicationType(app);				
