@@ -86,14 +86,14 @@ public class AlgoSumFunctions  extends AlgoElement {
 
     	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
     	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
+    	FunctionVariable x =  new FunctionVariable(kernel);
     	
 
     	ExpressionNode left = fun1.getFunctionExpression().getCopy(fun1.getKernel());
        	ExpressionNode right = fun2.getFunctionExpression().getCopy(fun2.getKernel());    
        	
-    	ExpressionNode sum = new ExpressionNode(kernel, left, ExpressionNode.PLUS, right);
+    	ExpressionNode sum = new ExpressionNode(kernel, left.replace(x1,x), ExpressionNode.PLUS, right.replace(x2,x));
     	
-    	FunctionVariable x =  new FunctionVariable(kernel);
     	Function f = new Function(sum,x);//, fun1.getFunction().getFunctionVariable());
     	//f.setExpression(n1);
     	//f.initFunction();
