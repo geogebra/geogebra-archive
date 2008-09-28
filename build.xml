@@ -99,6 +99,7 @@ office@geogebra.org
 					**/*.png, 
 					**/*.gif,					
 					**/*.jpg, 
+			geogebra/gui/menubar/_license.txt,
 					geogebra/kernel/**/algo2command.properties,	
 					geogebra/kernel/**/algo2command4i2g.properties"			
 			excludes="**/*.java,
