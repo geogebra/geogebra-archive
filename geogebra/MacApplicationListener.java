@@ -37,7 +37,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 	public synchronized void handleAbout(com.apple.eawt.ApplicationEvent event) {
 		 event.setHandled(true);
          Application app = getGGBInstance().getApplication();	
-         app.getApplicationGUImanager().showAboutDialog();
+         app.getGuiManager().showAboutDialog();
      }
 
 	public synchronized void handleOpenFile(com.apple.eawt.ApplicationEvent ev) {	
@@ -56,7 +56,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 				// open file 
 				File [] files = { openFile };
 				boolean openInThisWindow = app.getCurrentFile() == null;
-				app.getApplicationGUImanager().doOpenFiles(files, openInThisWindow);
+				app.getGuiManager().doOpenFiles(files, openInThisWindow);
 				
 				// make sure window is visible
 				if (openInThisWindow)
@@ -69,7 +69,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 		Application.debug("handlePrintFile event, filename: " + event.getFilename());
 		
 		handleOpenFile(event);
-		getGGBInstance().getApplication().getApplicationGUImanager().showPrintPreview();
+		getGGBInstance().getApplication().getGuiManager().showPrintPreview();
 	}
 
 	public synchronized void handleOpenApplication(com.apple.eawt.ApplicationEvent ev) {

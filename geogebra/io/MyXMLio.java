@@ -214,7 +214,7 @@ public class MyXMLio {
 		if (clearConstruction) {
 			// clear toolbar definition
 			if (app.hasApplicationGUImanager()) {
-				app.getApplicationGUImanager().setToolBarDefinition(null);
+				app.getGuiManager().setToolBarDefinition(null);
 			}
 
 			// clear construction
@@ -238,11 +238,9 @@ public class MyXMLio {
 		// handle construction step stored in XMLhandler
 		// do this only if the construction protocol navigation is showing	
 		if (!isGGTFile && oldVal &&
-				app.showConsProtNavigation() && 
-				app.hasApplicationGUImanager()) 
+				app.showConsProtNavigation()) 
 		{
-				app.getApplicationGUImanager().getConstructionProtocol().
-					setConstructionStep(handler.getConsStep());
+				app.getGuiManager().setConstructionStep(handler.getConsStep());
 		}
 		
 	}

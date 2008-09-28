@@ -439,7 +439,7 @@ public class EuclidianController implements MouseListener,
 				app.clearSelectedGeos();
 				hits = view.getTopHits(mouseLoc);
 				if (hits != null) {
-					app.getApplicationGUImanager().showRedefineDialog((GeoElement)hits.get(0));
+					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
 				}
 				break;
 			}
@@ -1263,23 +1263,23 @@ public class EuclidianController implements MouseListener,
 				// no hits
 				if (app.selectedGeosSize() > 0) {
 					// there are selected geos: show them
-					app.getApplicationGUImanager().showPropertiesDialog(app.getSelectedGeos());
+					app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
 				}
 				else {
 					// there are no selected geos: show drawing pad popup menu
-					app.getApplicationGUImanager().showDrawingPadPopup(view, mouseLoc);
+					app.getGuiManager().showDrawingPadPopup(view, mouseLoc);
 				}
 			} else {		
 				// there are hits
 				if (app.selectedGeosSize() > 0) {	
 					// selected geos: add first hit to selection and show properties
 					app.addSelectedGeo((GeoElement) hits.get(0));
-					app.getApplicationGUImanager().showPropertiesDialog(app.getSelectedGeos());				
+					app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());				
 				}
 				else {
 					// no selected geos: choose geo and show popup menu
 					geo = chooseGeo(hits);
-					app.getApplicationGUImanager().showPopupMenu(geo, view, mouseLoc);						
+					app.getGuiManager().showPopupMenu(geo, view, mouseLoc);						
 				}																										
 			}				
 			return;
@@ -1430,7 +1430,7 @@ public class EuclidianController implements MouseListener,
 				// tell properties dialog
 				if (hits.size() > 0 &&
 					app.hasApplicationGUImanager() &&
-					app.getCurrentSelectionListener() == app.getApplicationGUImanager().getPropDialog()) 
+					app.getGuiManager().isPropertiesDialogSelectionListener()) 
 				{
 					GeoElement geo = (GeoElement) hits.get(0);
 					app.geoElementSelected(geo, false);
@@ -3525,7 +3525,7 @@ public class EuclidianController implements MouseListener,
 		
 		// we got the rotation center point
 		if (selPoints() == 2) {					
-			NumberValue num = app.getApplicationGUImanager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Points"), "4");													
 			
 			if (num == null) {
@@ -3544,7 +3544,7 @@ public class EuclidianController implements MouseListener,
 		if (selectionPreview)
 			return false;
 		
-		app.getApplicationGUImanager().showBooleanCheckboxCreationDialog(mouseLoc, null);
+		app.getGuiManager().showBooleanCheckboxCreationDialog(mouseLoc, null);
 		return true;
 	}
 
@@ -3995,7 +3995,7 @@ public class EuclidianController implements MouseListener,
 		
 		// we got the rotation center point
 		if (selPoints() == 1 && selGeos() > 0) {					
-			Object [] ob = app.getApplicationGUImanager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), defaultRotateAngle);
 			NumberValue num = (NumberValue) ob[0];											
 			geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
@@ -4058,7 +4058,7 @@ public class EuclidianController implements MouseListener,
 		
 		// we got the mirror point
 		if (selPoints() == 1) {		
-			NumberValue num = app.getApplicationGUImanager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Numeric"), null);			
 			if (num == null) {
 				view.resetMode();
@@ -4102,7 +4102,7 @@ public class EuclidianController implements MouseListener,
 		// we got the point
 		if (selPoints() == 1) {
 			// get length of segment
-			NumberValue num = app.getApplicationGUImanager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Length"), null);		
 			
 			if (num == null) {
@@ -4234,7 +4234,7 @@ public class EuclidianController implements MouseListener,
 		// we got the points		
 		if (selPoints() == 2 || selSegments() == 1) {
 			// get angle			
-			Object [] ob = app.getApplicationGUImanager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
 			geogebra.gui.AngleInputDialog aDialog = (geogebra.gui.AngleInputDialog) ob[1]; 			
@@ -4275,7 +4275,7 @@ public class EuclidianController implements MouseListener,
 		
 		// we got the center point
 		if (selPoints() == 1) {	
-			NumberValue num = app.getApplicationGUImanager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
 														app.getPlain("Radius"), null);
 
 			if (num == null) {
@@ -4391,7 +4391,7 @@ public class EuclidianController implements MouseListener,
 			while (++index < macroInput.length) {				
 				// maybe we need a number
 				if (macroInput[index] == GeoNumeric.class) {									
-					NumberValue num = app.getApplicationGUImanager().showNumberInputDialog(macro.getToolOrCommandName(),
+					NumberValue num = app.getGuiManager().showNumberInputDialog(macro.getToolOrCommandName(),
 													app.getPlain("Numeric" ), null);									
 					if (num == null) {
 						// no success: reset mode
@@ -4405,7 +4405,7 @@ public class EuclidianController implements MouseListener,
 				
 				// maybe we need an angle
 				else if (macroInput[index] == GeoAngle.class) {									
-					Object [] ob = app.getApplicationGUImanager().showAngleInputDialog(macro.getToolOrCommandName(),
+					Object [] ob = app.getGuiManager().showAngleInputDialog(macro.getToolOrCommandName(),
 										app.getPlain("Angle"), "45\u00b0");
 					NumberValue num = (NumberValue) ob[0];						
 					
@@ -4492,11 +4492,11 @@ public class EuclidianController implements MouseListener,
 		if (loc != null) {
 			switch (mode) {
 				case EuclidianView.MODE_TEXT:				
-					app.getApplicationGUImanager().showTextCreationDialog(loc);
+					app.getGuiManager().showTextCreationDialog(loc);
 					break;
 				
 				case EuclidianView.MODE_IMAGE:	
-				    app.getApplicationGUImanager().loadImage(loc, altDown);
+				    app.getGuiManager().loadImage(loc, altDown);
 					break;
 			}			
 			return true;
@@ -4508,7 +4508,7 @@ public class EuclidianController implements MouseListener,
 
 	// new slider
 	final protected boolean slider() {		
-		return !selectionPreview && mouseLoc != null && app.getApplicationGUImanager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
+		return !selectionPreview && mouseLoc != null && app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 
 	/***************************************************************************

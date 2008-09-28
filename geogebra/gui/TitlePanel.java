@@ -13,6 +13,7 @@
 package geogebra.gui;
 
 import geogebra.Application;
+import geogebra.GeoGebraPreferences;
 import geogebra.kernel.Construction;
 
 import java.awt.BorderLayout;
@@ -143,7 +144,7 @@ public class TitlePanel extends JPanel {
 		String author = cons.getAuthor();
 		if ("".equals(author)) {
 			author = 
-				cons.getApplication().getApplicationGUImanager().getPreferences()
+				GeoGebraPreferences.getPref()
 				.loadPreference(
 					GeoGebraPreferences.AUTHOR, "");
 			cons.setAuthor(author);
@@ -155,7 +156,7 @@ public class TitlePanel extends JPanel {
 		boolean kernelChanged = !author.equals(cons.getAuthor());
 		if (kernelChanged) {
 			cons.setAuthor(author);
-			cons.getApplication().getApplicationGUImanager().getPreferences()
+			GeoGebraPreferences.getPref()
 				.savePreference(GeoGebraPreferences.AUTHOR,
 					author);
 		}

@@ -2,8 +2,9 @@ package geogebra.gui.menubar;
 
 import geogebra.Application;
 import geogebra.GeoGebra;
+import geogebra.GeoGebraPreferences;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ApplicationGUImanager;
+import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.util.BrowserLauncher;
@@ -119,7 +120,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());		
 		
-		ApplicationGUImanager guiMan = (ApplicationGUImanager) app.getApplicationGUImanager();
+		DefaultGuiManager guiMan = (DefaultGuiManager) app.getGuiManager();
 		if (guiMan != null) {
 			cbShowConsProtNavigationPlay
 					.setSelected(guiMan.isConsProtNavigationPlayButtonVisible());
@@ -262,9 +263,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		// Edit
 		menu = new JMenu(app.getMenu("Edit"));
 		if (app.isUndoActive()) {
-			mi = menu.add(app.getApplicationGUImanager().getUndoAction());
+			mi = menu.add(app.getGuiManager().getUndoAction());
 			setMenuShortCutAccelerator(mi, 'Z');
-			mi = menu.add(app.getApplicationGUImanager().getRedoAction());
+			mi = menu.add(app.getGuiManager().getRedoAction());
 			if (Application.MAC_OS)
 				// Command-Shift-Z
 				setMenuShortCutShiftAccelerator(mi, 'Z');
@@ -312,12 +313,12 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 		// View
 		menu = new JMenu(app.getMenu("View"));
-		cbShowAxes = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowAxesAction());		
+		cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());		
 		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
 				&& app.getEuclidianView().getShowYaxis());
 		menu.add(cbShowAxes);
 
-		cbShowGrid = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowGridAction());
+		cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
 		menu.addSeparator();
@@ -338,8 +339,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
 		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
-		cbShowAuxiliaryObjects.setSelected(app.getApplicationGUImanager().getAlgebraView() == null
-				|| app.getApplicationGUImanager().getAlgebraView().showAuxiliaryObjects());
+		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		menu.add(cbShowAuxiliaryObjects);
 
 		cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);				
@@ -659,8 +659,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				app.setShowCmdList(!app.showCmdList());
-				if (app.getApplicationGUImanager().getAlgebraInput() != null)
-					SwingUtilities.updateComponentTreeUI(app.getApplicationGUImanager().getAlgebraInput());
+				if (app.getGuiManager().getAlgebraInput() != null)
+					SwingUtilities.updateComponentTreeUI(app.getGuiManager().getAlgebraInput());
 			}
 		};
 
@@ -702,7 +702,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getApplicationGUImanager().getConstructionProtocolNavigation();
+					(ConstructionProtocolNavigation) app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -717,7 +717,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					app.getApplicationGUImanager().getConstructionProtocolNavigation();
+					(ConstructionProtocolNavigation) app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -755,7 +755,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().showPropertiesDialog();
+				app.getGuiManager().showPropertiesDialog();
 			}
 		};
 
@@ -767,7 +767,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getApplicationGUImanager().showConstructionProtocol();
+						app.getGuiManager().showConstructionProtocol();
 					}
 				};
 				runner.start();
@@ -779,7 +779,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().showDrawingPadPropertiesDialog();
+				app.getGuiManager().showDrawingPadPropertiesDialog();
 			}
 		};
 
@@ -788,7 +788,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().showToolbarConfigDialog();
+				app.getGuiManager().showToolbarConfigDialog();
 			}
 		};
 
@@ -797,7 +797,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().save();
+				app.getGuiManager().save();
 			}
 		};
 
@@ -806,7 +806,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().saveAs();
+				app.getGuiManager().saveAs();
 			}
 		};
 
@@ -866,7 +866,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().openFile();
+				app.getGuiManager().openFile();
 			}
 		};
 
@@ -999,7 +999,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getApplicationGUImanager().openHelp(null);
+						app.getGuiManager().openHelp(null);
 					}
 				};
 				runner.start();
@@ -1141,7 +1141,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().getPreferences().saveXMLPreferences(app);				
+				GeoGebraPreferences.getPref().saveXMLPreferences(app);				
 			}
 		};
 		
@@ -1150,7 +1150,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getApplicationGUImanager().getPreferences().clearPreferences();				
+				GeoGebraPreferences.getPref().clearPreferences();				
 			}
 		};
 		
@@ -1210,7 +1210,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {			
-				app.getApplicationGUImanager().showURLinBrowser(Application.GEOGEBRA_WEBSITE);
+				app.getGuiManager().showURLinBrowser(Application.GEOGEBRA_WEBSITE);
 			}
 		};		
 		
@@ -1572,7 +1572,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
     	
         public void actionPerformed(ActionEvent e) {
         	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
-        	app.getApplicationGUImanager().getPreferences().saveDefaultLocale(app.getLocale());
+        	GeoGebraPreferences.getPref().saveDefaultLocale(app.getLocale());
         }
     }
     

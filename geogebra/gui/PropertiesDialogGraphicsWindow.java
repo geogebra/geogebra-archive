@@ -370,15 +370,15 @@ ItemListener, WindowListener {
 		}
 		else if (source == btBackgroundColor) {
 			view.setBackground(
-					app.getApplicationGUImanager().showColorChooser(view.getBackground()));			
+					app.getGuiManager().showColorChooser(view.getBackground()));			
 		}
 		else if (source == btAxesColor) {
 			view.setAxesColor(
-					app.getApplicationGUImanager().showColorChooser(view.getAxesColor()));			
+					app.getGuiManager().showColorChooser(view.getAxesColor()));			
 		}
 		else if (source == btGridColor) {
 			view.setGridColor(
-					app.getApplicationGUImanager().showColorChooser(view.getGridColor()));			
+					app.getGuiManager().showColorChooser(view.getGridColor()));			
 		}
 		else if (source == cbShowAxes) {
 			view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());			

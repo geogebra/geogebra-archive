@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Sep 27, 2008
 -->
-<project default="geogebra-no-obfuscation">
+<project default="geogebra">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
@@ -49,8 +49,8 @@ office@geogebra.org
 	</target>
 	
 	<!-- main target -->
-	<target name="geogebra-no-obfuscation" 
-		depends="clean, ggb-jar-files">	  
+	<target name="geogebra-test" 
+		depends="clean, ggb-jar-files, sign-pack-only">	  
 	</target>
 	
 	<target name="stripComments">
@@ -70,8 +70,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar">
-		<!-- depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar"> -->
+			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar">		
 	</target>
 	
 	<manifest file="../manifest.mf">
@@ -103,24 +102,22 @@ office@geogebra.org
 					geogebra/kernel/**/algo2command.properties,	
 					geogebra/kernel/**/algo2command4i2g.properties"			
 			excludes="**/*.java,
-					*.jar,					
+					*.jar,			
+					geogebra/properties/**, 
+					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
-					geogebra/properties/**, 			  
+					jasymca/**,		
+					yacas/**,		  
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
-					geogebra3D/**,
-					jasymca/**,		
-					yacas/**,
+					geogebra3D/**,					
 					org/freehep/**, 					  
 				    tutor/**,
 					meta-inf/**"		
 		/>
 		
-		<!-- exclude: 
-				geogebra/gui/**, 
-					
-			 -->
+		
 		
 		<!-- include: 
 						geogebra/gui/**/_license.txt,

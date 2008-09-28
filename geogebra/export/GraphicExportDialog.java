@@ -13,9 +13,9 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.Application;
+import geogebra.GeoGebraPreferences;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
-import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.util.FileTransferable;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyImageIO;
@@ -310,7 +310,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {
 			// format
 			int formatID = FORMAT_PNG;
-			String format = app.getApplicationGUImanager().getPreferences().
+			String format = GeoGebraPreferences.getPref().
 				loadPreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, "png");		
 	    	if (format.equals("eps")) formatID = FORMAT_EPS; 
 	    	else if (format.equals("svg")) formatID = FORMAT_SVG;	    	
@@ -318,7 +318,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			
 			// dpi
 	    	if (cbDPI.isEnabled()) {
-				String strDPI = app.getApplicationGUImanager().getPreferences().
+				String strDPI = GeoGebraPreferences.getPref().
 					loadPreference(GeoGebraPreferences.EXPORT_PIC_DPI, "300");
 				for (int i=0; i < cbDPI.getItemCount(); i++) {
 					String dpi = cbDPI.getItemAt(i).toString();
@@ -342,7 +342,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     
     private void savePreferences() {    		
     	// dpi
-    	app.getApplicationGUImanager().getPreferences().savePreference(GeoGebraPreferences.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
+    	GeoGebraPreferences.getPref().savePreference(GeoGebraPreferences.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
     	
     	// format
     	String format;
@@ -351,7 +351,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     		case FORMAT_SVG: format = "svg"; break;    		
     		default: format = "png";
     	}    	
-    	app.getApplicationGUImanager().getPreferences().savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
+    	GeoGebraPreferences.getPref().savePreference(GeoGebraPreferences.EXPORT_PIC_FORMAT, format);
     	
     	/*
     	// scale in cm
@@ -405,7 +405,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.getApplicationGUImanager().showSaveDialog(
+			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_EPS, null,
 				app.getPlain("eps") + " " + app.getMenu("Files"));
 		if (file == null)
@@ -445,7 +445,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		}
 		else
 		file =
-			app.getApplicationGUImanager().showSaveDialog(
+			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_EMF, null,
 				app.getPlain("emf") + " " + app.getMenu("Files"));
 		//  Michael Borcherds 2008-03-02 END
@@ -488,7 +488,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.getApplicationGUImanager().showSaveDialog(
+			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_PDF, null,
 				app.getPlain("pdf") + " " + app.getMenu("Files"));
 		
@@ -539,7 +539,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		else
 			//  Michael Borcherds 2008-03-02 END
 		file =
-			app.getApplicationGUImanager().showSaveDialog(
+			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_SVG, null,
 				app.getPlain("svg") + " " + app.getMenu("Files"));
 		
@@ -606,7 +606,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		}
 		else
 		file =
-			app.getApplicationGUImanager().showSaveDialog(
+			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_PNG, null,
 				app.getPlain("png") + " " + app.getMenu("Files"));
 		try {

@@ -69,12 +69,12 @@ implements ActionListener {
         
         // checkboxes for axes and grid
         EuclidianView ev = app.getEuclidianView();
-        JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowAxesAction());
+        JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());
         cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
         cbShowAxes.setBackground(getBackground());
         add(cbShowAxes);
         
-        JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(app.getApplicationGUImanager().getShowGridAction());
+        JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
         cbShowGrid.setSelected(ev.getShowGrid());
         cbShowGrid.setBackground(getBackground());
         add(cbShowGrid);
@@ -132,7 +132,7 @@ implements ActionListener {
     		app.setViewShowAllObjects();
     	}
     	else if (cmd.equals("properties")) {
-    		app.getApplicationGUImanager().showDrawingPadPropertiesDialog();
+    		app.getGuiManager().showDrawingPadPropertiesDialog();
     	}
     }
     

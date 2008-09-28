@@ -352,7 +352,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerProperties implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			app.getApplicationGUImanager().showPropertiesDialog();	
+ 			app.getGuiManager().showPropertiesDialog();	
  		}
 	}
 	

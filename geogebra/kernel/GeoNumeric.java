@@ -631,7 +631,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	    	traceCell.setAuxiliaryObject(true);
 	    	
 	    	setLastTrace1(val);
-	    	incrementTraceRow();
+
+	    	// TODO: handle in spreadsheet
+	    	//incrementTraceRow();
     	}
     }
 	

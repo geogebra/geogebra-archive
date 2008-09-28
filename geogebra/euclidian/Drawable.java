@@ -18,13 +18,11 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
-import geogebra.modules.JarManager;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -241,7 +239,7 @@ public abstract class Drawable {
 	{
 		Dimension dim;
 		if (eqn == null) {
-			if (view.app.loadLaTeXJar()) {
+			if (!view.app.loadLaTeXJar()) {
 				//Application.debug("Could not initialize LaTeX renderer");
 				return new Dimension(0,0);    		
 	    	}	
@@ -561,7 +559,9 @@ public abstract class Drawable {
 			    	
 			    	P.setLastTrace1(coords[0]);
 			    	P.setLastTrace2(coords[1]);
-			    	P.incrementTraceRow();
+			    	
+			    	// TODO: handle in spreadsheet
+			    	//P.incrementTraceRow();
 		    	}
 	    	break;
 	    	
@@ -582,7 +582,9 @@ public abstract class Drawable {
 			    	
 			    	vector.setLastTrace1(coords[0]);
 			    	vector.setLastTrace2(coords[1]);
-			    	vector.incrementTraceRow();
+			    	
+			    	// TODO: handle in spreadsheet
+			    	//vector.incrementTraceRow();
 		    	}
     	    	 	    			
     			break;

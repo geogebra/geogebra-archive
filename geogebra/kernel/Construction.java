@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Application;
 import geogebra.MyError;
+import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -498,10 +499,11 @@ public class Construction {
 			}
 
 		}
+		
 		if (didUpdate) {
-			Object ob = kernel.getApplication().getApplicationGUImanager();
-			if (ob != null)
-				((geogebra.gui.ApplicationGUImanager) ob).getConstructionProtocol().update();
+			Application app = kernel.getApplication();
+			if (app.hasApplicationGUImanager())
+				app.getGuiManager().updateConstructionProtocol();
 		}
 
 		return didUpdate;

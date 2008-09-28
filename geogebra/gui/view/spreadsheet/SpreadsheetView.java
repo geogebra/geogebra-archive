@@ -109,22 +109,22 @@ public class SpreadsheetView extends JScrollPane implements View
 		return (int)traceRow[column];
 	}
 	
-	public void incrementTraceRow(int column) {
-		if (column < 0 || column >= MAX_COLUMNS) return;
-		traceRow[column]++;
-	}
+//	public void incrementTraceRow(int column) {
+//		if (column < 0 || column >= MAX_COLUMNS) return;
+//		traceRow[column]++;
+//	}
 	
-	public void resetTraceRow(int column) {
-		if (column < 0 || column >= MAX_COLUMNS) return;
-		traceRow[column] = 0;
-	}
+//	public void resetTraceRow(int column) {
+//		if (column < 0 || column >= MAX_COLUMNS) return;
+//		traceRow[column] = 0;
+//	}
 	
 	/* used to "reserve" a column
 	 * 
 	 */
-	public void incrementHighestUsedColumn() {
-		highestUsedColumn++;
-	}
+//	public void incrementHighestUsedColumn() {
+//		highestUsedColumn++;
+//	}
 	
 	public void add(GeoElement geo) {	
 		//Application.debug(new Date() + " ADD: " + geo);

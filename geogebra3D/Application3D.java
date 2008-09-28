@@ -106,20 +106,20 @@ public abstract class Application3D extends Application{
         
         
         if (showConsProtNavigation) {
-        	eup.add(getApplicationGUImanager().getConstructionProtocolNavigation(), BorderLayout.SOUTH);
-        	getApplicationGUImanager().getConstructionProtocolNavigation().setBorder(BorderFactory.
+        	eup.add(getGuiManager().getConstructionProtocolNavigation(), BorderLayout.SOUTH);
+        	getGuiManager().getConstructionProtocolNavigation().setBorder(BorderFactory.
        		     createMatteBorder(1, 0, 0, 0, Color.gray));
         }                    
         
         if (showAlgebraView) {        	     
             if (horizontalSplit) {
                 sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                        new JScrollPane(getApplicationGUImanager().getAlgebraView()), eup);
+                                        new JScrollPane(getGuiManager().getAlgebraView()), eup);
                 sp.setDividerLocation(initSplitDividerLocationHOR);                
             }               
             else {
                 sp =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                             eup, new JScrollPane(getApplicationGUImanager().getAlgebraView()));
+                                             eup, new JScrollPane(getGuiManager().getAlgebraView()));
                 sp.setDividerLocation(initSplitDividerLocationVER);
             }               
             sp.addPropertyChangeListener("dividerLocation",

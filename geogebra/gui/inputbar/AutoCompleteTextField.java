@@ -397,10 +397,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         
          // show help if available
          if (help != null) {
-        	 if (goToWebManual) app.getApplicationGUImanager().openHelp(cmd); // TEST CODE
+        	 if (goToWebManual) app.getGuiManager().openHelp(cmd); // TEST CODE
         	 else app.showHelp(help); // ORIGINAL CODE
          } else {
-             app.getApplicationGUImanager().openHelp(null);
+             app.getGuiManager().openHelp(null);
          }
      }
 

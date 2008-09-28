@@ -3182,19 +3182,21 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	public String getTraceColumn1() {
-		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
-		if (sv != null && traceColumn1 == -1) {
-			traceColumn1 = (sv.getHighestUsedColumn() + 1);
-			sv.incrementHighestUsedColumn(); // reserve column
+		if (app.showSpreadsheetView() && traceColumn1 == -1) {
+			traceColumn1 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
+			
+			//TODO: take care of this in spreadsheet.add()
+			//sv.incrementHighestUsedColumn(); // reserve column
 		}
 		return GeoElement.getSpreadsheetColumnName(traceColumn1);
 	}
 		
 	public String getTraceColumn2() {
-		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
-		if (sv != null && traceColumn2 == -1) {
-			traceColumn2 = (sv.getHighestUsedColumn() + 1);
-			sv.incrementHighestUsedColumn(); // reserve column
+		if (app.showSpreadsheetView() && traceColumn2 == -1) {
+			traceColumn2 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
+			
+			//TODO: take care of this in spreadsheet.add()
+			// sv.incrementHighestUsedColumn(); // reserve column
 		}
 		return GeoElement.getSpreadsheetColumnName(traceColumn2);
 	}
@@ -3202,20 +3204,19 @@ final public boolean hasOnlyFreeInputPoints() {
 	public int getTraceRow() {
 		if (traceColumn1 == -1) return -1;
 		
-		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
-		if (sv == null) return -1;
+		if (app.showSpreadsheetView()) return -1;
 		
-		return sv.getTraceRow(traceColumn1);
+		return app.getGuiManager().getSpreadsheetTraceRow(traceColumn1);
 	}
 		
-	public void incrementTraceRow() {
-		if (traceColumn1 == -1) return;
-		
-		SpreadsheetView sv = kernel.getApplication().getApplicationGUImanager().getSpreadsheetView();
-		if (sv == null) return;
-		
-		sv.incrementTraceRow(traceColumn1);
-	}
+	//TODO: this needs to be taken care of in the spreadsheet itself
+//	public void incrementTraceRow() {
+//		if (traceColumn1 == -1) return;
+//		
+//		if (app.showSpreadsheetView()) return;
+//		
+//		sv.incrementTraceRow(traceColumn1);
+//	}
 		
 	public double getLastTrace1() {
 		return lastTrace1;

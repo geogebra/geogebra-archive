@@ -107,7 +107,8 @@ implements ActionListener, MouseListener, KeyListener
 		return inputButton;
 	}
 	
-	public void setFocus() {
+	public void requestFocus() {
+		super.requestFocus();
 		inputField.requestFocus();
 	}
 	

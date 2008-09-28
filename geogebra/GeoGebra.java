@@ -49,7 +49,6 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 
 	private static ArrayList instances = new ArrayList();
 	private static GeoGebra activeInstance;
-	private static boolean firstInstance = true;
 	protected Application app;
 	
 	public GeoGebra() {
@@ -83,17 +82,12 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 	}
 	
 	public Locale getLocale() {			
-//		// make sure gui jar file is loaded
-//		JarManager.getSingleton(app);
-//		Locale defLocale = geogebra.gui.GeoGebraPreferences.getDefaultLocale();		
-//		
-//		if (defLocale == null)
-//			return super.getLocale();
-//		else 
-//			return defLocale;
+		Locale defLocale = GeoGebraPreferences.getPref().getDefaultLocale();		
 		
-		//TODO: check
-		return super.getLocale();
+		if (defLocale == null)
+			return super.getLocale();
+		else 
+			return defLocale;		
 	}
 
 	public void setVisible(boolean flag) {				
@@ -125,7 +119,7 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 			if (!isShowing()) return;
 			
 			instances.remove(this);
-			app.getApplicationGUImanager().getPreferences().saveFileList();
+			GeoGebraPreferences.getPref().saveFileList();
 			
 			if (instances.size() == 0) {			
 				super.setVisible(false);
@@ -222,9 +216,12 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		} catch (Exception e) {
 			Application.debug(e+"");
 		}	
+				
+		// load list of previously used files
+		GeoGebraPreferences.getPref().loadFileList();	
     	    			
 		// create first window and show it		
-		createNewWindow(args);
+		createNewWindow(args);	
 	}	
 	
 	/**
@@ -259,18 +256,11 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		GeoGebra wnd = new GeoGebra();
 		
 		//GeoGebra wnd = buildGeoGebra();
-		Application app = new GeoGebraApplication(args, wnd, true);
-				
-		if (firstInstance) {
-			firstInstance = false;
-			
-			// load list of previously used files
-			app.getApplicationGUImanager().getPreferences().loadFileList();			
-		}
+		Application app = new GeoGebraApplication(args, wnd, true);		
 		
 		app.loadGUIJar();
-		app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
-		app.getApplicationGUImanager().initMenubar();
+		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
+		app.getGuiManager().initMenubar();
 		
 		// init GUI
 		wnd.app = app;
@@ -279,7 +269,6 @@ public class GeoGebra extends JFrame implements WindowFocusListener
 		wnd.addWindowFocusListener(wnd);
 		
 		updateAllTitles();
-		app.initInBackground();		
 		
 		wnd.setVisible(true);
 		return wnd;

@@ -518,7 +518,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-                        app.getApplicationGUImanager().showRenameDialog(geo, true, geo.getLabel(), true);
+                        app.getGuiManager().showRenameDialog(geo, true, geo.getLabel(), true);
                     }
                 });
         }
@@ -533,7 +533,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-                    app.getApplicationGUImanager().showTextDialog((GeoText) geo); 
+                    app.getGuiManager().showTextDialog((GeoText) geo); 
                 }
             });
         }      
@@ -563,11 +563,11 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {                    
-                    AlgebraInput ai = app.getApplicationGUImanager().getAlgebraInput();
+                    AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
                     if (ai != null) {
                     	ai.clear();                  
                     	ai.insertString(geo.toString());
-                    	ai.setFocus();
+                    	ai.requestFocus();
                     }
                 }
             });
@@ -607,7 +607,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				public void actionPerformed(ActionEvent e) {
                 	tempArrayList.clear();
                 	tempArrayList.add(geo);
-                    app.getApplicationGUImanager().showPropertiesDialog(tempArrayList);
+                    app.getGuiManager().showPropertiesDialog(tempArrayList);
                 }
             });
         }

@@ -527,7 +527,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 // right click
                 if (Application.isRightClick(e)) {
                     GeoElement geo = data.getGeoElement(row);
-                    app.getApplicationGUImanager().showPopupMenu(geo, table, origin);
+                    app.getGuiManager().showPopupMenu(geo, table, origin);
                 } else { // left click     
                 	
                 	if (e.getClickCount() == 1) {
@@ -1517,7 +1517,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         sb.append("</table>\n");
         
         // footer
-        sb.append(app.getApplicationGUImanager().getCreatedWithHTML());
+        sb.append(app.getGuiManager().getCreatedWithHTML());
         
         sb.append("</body>\n");
         sb.append("</html>");
@@ -1527,15 +1527,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
     
     public void showHTMLExportDialog() {
     	app.setWaitCursor();
+    	app.loadExportJar();
     	try {
     		// use reflection for
-  		    // JDialog d = new geogebra.export.ConstructionProtocolExportDialog(this);   		
-  		    Class casViewClass = Class.forName("geogebra.export.ConstructionProtocolExportDialog");
-  		    Object[] args = new Object[] { this };
-  		    Class [] types = new Class[] {ConstructionProtocol.class};
-  	        Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-  	        JDialog d =  (JDialog) constructor.newInstance(args);  
-    		
+  		    JDialog d = new geogebra.export.ConstructionProtocolExportDialog(this);   		  		        		
     		d.setVisible(true);    		    
     	} catch (Exception e) {
     		Application.debug("ConstructionProtocolExportDialog (html) is not available");

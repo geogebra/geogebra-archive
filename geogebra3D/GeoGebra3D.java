@@ -19,8 +19,8 @@ package geogebra3D;
 
 import geogebra.Application;
 import geogebra.GeoGebra;
+import geogebra.GeoGebraPreferences;
 import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.util.Util;
 
@@ -82,8 +82,8 @@ public class GeoGebra3D extends GeoGebra
 		//GeoGebra wnd = buildGeoGebra();
 
 		Application3D app = new GeoGebraApplication3D(args, wnd, true); //ggb3D 
-		app.getApplicationGUImanager().setMenubar(new GeoGebraMenuBar(app));
-		app.getApplicationGUImanager().initMenubar();
+		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app));
+		app.getGuiManager().initMenubar();
 		
 		// init GUI
 		wnd.app = (Application) app;
@@ -91,8 +91,7 @@ public class GeoGebra3D extends GeoGebra
 		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
 		
-		updateAllTitles();
-		app.initInBackground();		
+		updateAllTitles();	
 		
 		wnd.setVisible(true);
 		return wnd;

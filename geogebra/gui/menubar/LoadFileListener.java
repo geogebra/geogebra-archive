@@ -24,7 +24,7 @@ public class LoadFileListener implements ActionListener {
     			if (inst == null) {        
     				if (app.isSaved() || app.saveCurrentFile()) {
     					// open file in application window		        				
-    					app.getApplicationGUImanager().loadFile(file, false);
+    					app.getGuiManager().loadFile(file, false);
     				}
     			} else {		        				    				
     				// there is an instance with this file opened

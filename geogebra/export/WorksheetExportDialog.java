@@ -13,9 +13,9 @@
 package geogebra.export;
 
 import geogebra.Application;
+import geogebra.GeoGebraPreferences;
+import geogebra.GuiManager;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.ApplicationGUImanager;
-import geogebra.gui.GeoGebraPreferences;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
@@ -71,15 +71,15 @@ public class WorksheetExportDialog extends JDialog {
 	private boolean useWorksheet = true, kernelChanged = false;			
 	private JTabbedPane tabbedPane;
 	private GeoGebraPreferences ggbPref;
-	private ApplicationGUImanager guiManager;
+	private GuiManager guiManager;
 
 	public WorksheetExportDialog(Application app) {
 		super(app.getFrame(), true);
 		this.app = app;
 		kernel = app.getKernel();
 		
-		ggbPref = app.getApplicationGUImanager().getPreferences();
-		guiManager = app.getApplicationGUImanager();
+		ggbPref = GeoGebraPreferences.getPref();
+		guiManager = app.getGuiManager();
 		
 		initGUI();					
 	} 

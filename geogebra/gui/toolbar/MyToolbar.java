@@ -15,6 +15,7 @@ package geogebra.gui.toolbar;
 import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MySmallJButton;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.util.Util;
@@ -52,8 +53,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
      */
 	public MyToolbar(Application app)  {
 		this.app = app;	
-		addComponentListener(this);
-		
+		addComponentListener(this);		
 	}
 		
 	/**
@@ -78,7 +78,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         add(leftPanel, BorderLayout.WEST); 
                   
         if (app.showAlgebraInput() )        	
-        	bg.add(app.getApplicationGUImanager().getAlgebraInput().getInputButton());                                 
+        	bg.add(((AlgebraInput) app.getGuiManager().getAlgebraInput()).getInputButton());                                 
        
        	if (showToolBarHelp) {       
        		// mode label       		
@@ -95,13 +95,13 @@ public class MyToolbar extends JPanel implements ComponentListener{
         if (app.isUndoActive()) {
 	        // undo part                  	   
 	        JPanel undoPanel = new JPanel(new BorderLayout(0,0)); 
-	        MySmallJButton button = new MySmallJButton(app.getApplicationGUImanager().getUndoAction(), 7); 	
+	        MySmallJButton button = new MySmallJButton(app.getGuiManager().getUndoAction(), 7); 	
 	        String text = app.getMenu("Undo");
 	        button.setText(null);
 	        button.setToolTipText(text);                     
 	        undoPanel.add(button, BorderLayout.NORTH);
 	        
-	        button = new MySmallJButton(app.getApplicationGUImanager().getRedoAction(), 7);         	        
+	        button = new MySmallJButton(app.getGuiManager().getRedoAction(), 7);         	        
 	        text = app.getMenu("Redo");
 	        button.setText(null);
 	        button.setToolTipText(text);        
@@ -293,9 +293,9 @@ public class MyToolbar extends JPanel implements ComponentListener{
     private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {  
     	Vector toolbarVec;
     	try {
-	    	toolbarVec = createToolBarVec(app.getApplicationGUImanager().getToolBarDefinition());
+	    	toolbarVec = createToolBarVec(app.getGuiManager().getToolBarDefinition());
 	    } catch (Exception e) {
-			Application.debug("invalid toolbar string: " + app.getApplicationGUImanager().getToolBarDefinition());
+			Application.debug("invalid toolbar string: " + app.getGuiManager().getToolBarDefinition());
 			toolbarVec = createToolBarVec(getDefaultToolbarString());
 		}
  

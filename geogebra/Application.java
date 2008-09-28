@@ -225,11 +225,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private GeoGebra frame;
 	private GeoGebraAppletBase applet;
-
-	// the following variables don't use their acutal class types
-	// because their classes are in other jar files and need to be loaded
-	// dynamically
-	private Object appGuiManager;
+	
+	private GuiManager appGuiManager;
 	private JComponent casView;
 
 	private Component mainComp;
@@ -370,7 +367,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (!isApplet) {
 			// init preferences
-			getApplicationGUImanager().getPreferences().initDefaultXML(this);
+			GeoGebraPreferences.getPref().initDefaultXML(this);
 		}
 
 		// open file given by startup parameter
@@ -378,12 +375,11 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (!isApplet) {
 			// load XML preferences
-			currentPath = getApplicationGUImanager().getPreferences()
-					.getDefaultFilePath();
-			currentImagePath = getApplicationGUImanager().getPreferences()
+			currentPath = GeoGebraPreferences.getPref().getDefaultFilePath();
+			currentImagePath = GeoGebraPreferences.getPref()
 					.getDefaultImagePath();
 			if (!fileLoaded)
-				getApplicationGUImanager().getPreferences().loadXMLPreferences(
+				GeoGebraPreferences.getPref().loadXMLPreferences(
 						this);
 		}
 
@@ -394,7 +390,7 @@ public abstract class Application implements KeyEventDispatcher {
 		// actions are only needed in applet if right clicking, menu bar or
 		// toolbar are active
 		if (!isApplet || rightClickEnabled || showToolBar || showMenuBar)
-			getApplicationGUImanager().initShowAxesGridActions();
+			getGuiManager().initShowAxesGridActions();
 
 		// for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -411,6 +407,7 @@ public abstract class Application implements KeyEventDispatcher {
 		ggbapi = new GgbAPI(this);
 		//pluginmanager = new PluginManager(this);
 
+		initInBackground();
 	}
 
 	/**
@@ -422,53 +419,56 @@ public abstract class Application implements KeyEventDispatcher {
 	 *         Application. Note that the gui jar file may not be loaded at all
 	 *         in applets.
 	 */
-	final public synchronized geogebra.gui.ApplicationGUImanager getApplicationGUImanager() {
+	final public synchronized GuiManager getGuiManager() {
 		if (appGuiManager == null) {
 			loadGUIJar();
-			appGuiManager = new geogebra.gui.ApplicationGUImanager(this);
+			appGuiManager = new geogebra.gui.DefaultGuiManager(this);
 		}
 
-		return (geogebra.gui.ApplicationGUImanager) appGuiManager;
+		return appGuiManager;
 	}
 
 	final public boolean hasApplicationGUImanager() {
 		return appGuiManager != null;
 	}
 
-	public void initInBackground() {
-		// TODO: reactivate
+	private void initInBackground() {
+		if (!initInBackground_first_time) return;
+		initInBackground_first_time = false;
 		
 		// init file chooser and properties dialog
 		// in a background task
-//		Thread runner = new Thread() {
-//			public void run() {
-//				try {
-//					Thread.sleep(1000);
-//				} catch (Exception e) {
-//				}
-//				// init properties dialog
-//				if (letShowPropertiesDialog())
-//					getApplicationGUImanager().getPropertiesDialog();
-//
-//				if (showMenuBar) {
-//					getApplicationGUImanager().initFileChooser();
-//				}
-//
-//				kernel.initCAS();
-//			}
-//		};
-//		runner.start();
+		Thread runner = new Thread() {
+			public void run() {
+				try {
+					Thread.sleep(3000);
+				} catch (Exception e) {
+				}
+												
+				// init properties dialog
+				getGuiManager().initPropertiesDialog();
+				//TODO: remove
+				Application.debug("background: properties dialog inited");
+				
+				// init file chooser
+				getGuiManager().initFileChooser();
+				//TODO: remove
+				Application.debug("background: file chooser inited");
 
-		/*
-		 * // Download jar files to temp directory in background // this is done
-		 * because Java WebStart uses strange jar file // names in its cache.
-		 * However, we need the GeoGebra jar files // to export dynamic
-		 * worksheets, thus we copy the jar files // to the temp directory where
-		 * we can find them. Thread runner2 = new Thread() { public void run() {
-		 * try { Thread.sleep(5000); } catch (Exception e) {} if (showMenuBar) {
-		 * copyJarsToTempDir(); } } }; runner2.start();
-		 */
+				// init CAS
+				kernel.initCAS();
+				//TODO: remove
+				Application.debug("background: CAS inited");
+				
+				// add jar files to classpath dynamically in background
+				for (int i=0; i < JAR_FILES.length; i++) {
+					jarmanager.addJarToClassPath(i);
+				}
+			}
+		};
+		runner.start();		
 	}
+	private static boolean initInBackground_first_time = true;
 
 	public void setUnsaved() {
 		isSaved = false;
@@ -564,7 +564,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (showToolBar) {
 			// NORTH: Toolbar
-			panel.add(getApplicationGUImanager().getToolbarPanel(),
+			panel.add(getGuiManager().getToolbarPanel(),
 					BorderLayout.NORTH);
 		}
 
@@ -574,7 +574,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// SOUTH: inputField
 		if (showAlgebraInput) {
-			panel.add(getApplicationGUImanager().getAlgebraInput(),
+			panel.add(getGuiManager().getAlgebraInput(),
 					BorderLayout.SOUTH);
 		}
 
@@ -591,8 +591,7 @@ public abstract class Application implements KeyEventDispatcher {
 		eup.add(euclidianView, BorderLayout.CENTER);
 
 		if (showConsProtNavigation) {
-			JPanel consProtNav = getApplicationGUImanager()
-					.getConstructionProtocolNavigation();
+			JComponent consProtNav = getGuiManager().getConstructionProtocolNavigation();
 			eup.add(consProtNav, BorderLayout.SOUTH);
 			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
 					Color.gray));
@@ -620,12 +619,12 @@ public abstract class Application implements KeyEventDispatcher {
 		if (showAlgebraView) {
 			if (horizontalSplit) {
 				sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-						new JScrollPane(getApplicationGUImanager()
+						new JScrollPane(getGuiManager()
 								.getAlgebraView()), eup);
 				sp2.setDividerLocation(initSplitDividerLocationHOR2);
 			} else {
 				sp2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, eup,
-						new JScrollPane(getApplicationGUImanager()
+						new JScrollPane(getGuiManager()
 								.getAlgebraView()));
 				sp2.setDividerLocation(initSplitDividerLocationVER2);
 			}
@@ -642,11 +641,11 @@ public abstract class Application implements KeyEventDispatcher {
 		if (showSpreadsheet) {
 			if (horizontalSplit) {
 				sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, cp2,
-						getApplicationGUImanager().getSpreadsheetView());
+						getGuiManager().getSpreadsheetView());
 				sp.setDividerLocation(initSplitDividerLocationHOR);
 			} else {
 				sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cp2,
-						getApplicationGUImanager().getSpreadsheetView());
+						getGuiManager().getSpreadsheetView());
 				sp.setDividerLocation(initSplitDividerLocationVER);
 			}
 
@@ -769,7 +768,7 @@ public abstract class Application implements KeyEventDispatcher {
 			} else {
 				File f = new File(fileArgument);
 				f = f.getCanonicalFile();
-				success = getApplicationGUImanager().loadFile(f, isMacroFile);
+				success = getGuiManager().loadFile(f, isMacroFile);
 			}
 			return success;
 		} catch (Exception e) {
@@ -803,7 +802,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (applet != null) {
 			applet.resetNoThread();
 		} else if (currentFile != null) {
-			getApplicationGUImanager().loadFile(currentFile, false);
+			getGuiManager().loadFile(currentFile, false);
 		} else
 			deleteAllGeoElements();
 	}
@@ -871,8 +870,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 			if (appGuiManager != null) {
 				// update toolbar
-				getApplicationGUImanager().getToolbarPanel().setSelectedMode(
-						EuclidianView.MODE_ALGEBRA_INPUT);
+				getGuiManager().setToolbarMode(EuclidianView.MODE_ALGEBRA_INPUT);
 			}
 		}
 
@@ -896,22 +894,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void setMoveMode() {
 		setMode(EuclidianView.MODE_MOVE);
-
-		// check if toolbar shows move mode
-		// if not we set the first mode of toolbar
-		if (showToolBar) {
-			try {
-				if (getApplicationGUImanager().getToolbarPanel()
-						.getSelectedMode() != EuclidianView.MODE_MOVE) {
-					int firstMode = getApplicationGUImanager()
-							.getToolbarPanel().getFirstMode();
-					if (firstMode > 0)
-						setMode(firstMode);
-				}
-			} catch (Exception e) {
-				// ignore nullpoint exception
-			}
-		}
 	}
 
 	public ImageIcon getImageIcon(String filename) {
@@ -919,15 +901,18 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public ImageIcon getImageIcon(String filename, Color borderColor) {
+		loadGUIJar();
 		return imageManager.getImageIcon("/geogebra/gui/images/" + filename,
 				borderColor);
 	}
 
 	public ImageIcon getEmptyIcon() {
+		loadGUIJar();
 		return imageManager.getImageIcon("/geogebra/gui/images/empty.gif");
 	}
 
 	public Image getInternalImage(String filename) {
+		loadGUIJar();
 		return imageManager
 				.getInternalImage("/geogebra/gui/images/" + filename);
 	}
@@ -940,10 +925,10 @@ public abstract class Application implements KeyEventDispatcher {
 		imageManager.addExternalImage(filename, image);
 	}
 
-	public void startEditing(GeoElement geo) {
-		if (showAlgebraView)
-			getApplicationGUImanager().getAlgebraView().startEditing(geo);
-	}
+//	public void startEditing(GeoElement geo) {
+//		if (showAlgebraView)
+//			getApplicationGUImanager().startEditingAlgebraView(geo);
+//	}
 
 	public final void zoom(double px, double py, double zoomFactor) {
 		euclidianView.zoom(px, py, zoomFactor, 15, true);
@@ -1550,7 +1535,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void doAfterRedefine(GeoElement geo) {
 		if (appGuiManager != null)
-			getApplicationGUImanager().doAfterRedefine(geo);
+			getGuiManager().doAfterRedefine(geo);
 	}
 
 	/*
@@ -1650,7 +1635,7 @@ public abstract class Application implements KeyEventDispatcher {
 			euclidianView.updateFonts();
 
 		if (appGuiManager != null)
-			getApplicationGUImanager().updateFonts();
+			getGuiManager().updateFonts();
 
 	}
 
@@ -1733,7 +1718,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 
 		if (appGuiManager != null)
-			getApplicationGUImanager().setLabels();
+			getGuiManager().setLabels();
 		
 		updateCommandDictionary();
 	}
@@ -1844,11 +1829,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 		showAlgebraView = flag;
 		if (showAlgebraView) {
-			getApplicationGUImanager().getAlgebraView().attachView();
-			getApplicationGUImanager().getAlgebraView()
-					.setShowAuxiliaryObjects(showAuxiliaryObjects);
+			getGuiManager().attachAlgebraView();
+			getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
 		} else {
-			getApplicationGUImanager().getAlgebraView().detachView();
+			getGuiManager().detachAlgebraView();
 		}
 
 		updateMenubar();
@@ -1861,9 +1845,9 @@ public abstract class Application implements KeyEventDispatcher {
 
 		showSpreadsheet = flag;
 		if (showSpreadsheet) {
-			getApplicationGUImanager().getSpreadsheetView().attachView();
+			getGuiManager().attachSpreadsheetView();
 		} else {
-			getApplicationGUImanager().getSpreadsheetView().detachView();
+			getGuiManager().detachSpreadsheetView();
 		}
 
 		updateMenubar();
@@ -1948,7 +1932,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 
 		showCmdList = flag;
-		getApplicationGUImanager().getAlgebraInput().initGUI();
+		getGuiManager().updateAlgebraInput();
 		updateMenubar();
 	}
 
@@ -1959,17 +1943,8 @@ public abstract class Application implements KeyEventDispatcher {
 		if (flag == showConsProtNavigation)
 			return;
 		showConsProtNavigation = flag;
-
-		if (showConsProtNavigation) {
-			if (euclidianView != null)
-				euclidianView.resetMode();
-			getApplicationGUImanager().getConstructionProtocolNavigation()
-					.register();
-		} else {
-			getApplicationGUImanager().getConstructionProtocolNavigation()
-					.unregister();
-		}
-
+		
+		getGuiManager().setShowConstructionProtocolNavigation(flag);			
 		updateMenubar();
 	}
 
@@ -1985,8 +1960,7 @@ public abstract class Application implements KeyEventDispatcher {
 		showAuxiliaryObjects = flag;
 
 		if (showAlgebraView)
-			getApplicationGUImanager().getAlgebraView()
-					.setShowAuxiliaryObjects(flag);
+			getGuiManager().setShowAuxiliaryObjects(flag);
 		updateMenubar();
 	}
 
@@ -1998,8 +1972,7 @@ public abstract class Application implements KeyEventDispatcher {
 		showToolBar = toolbar;
 
 		if (showToolBar) {
-			getApplicationGUImanager().getToolbarPanel().setShowToolBarHelp(
-					help);
+			getGuiManager().setShowToolBarHelp(help);
 		}
 	}
 
@@ -2016,7 +1989,7 @@ public abstract class Application implements KeyEventDispatcher {
 		kernel.setUndoActive(flag);
 
 		if (appGuiManager != null)
-			getApplicationGUImanager().updateActions();
+			getGuiManager().updateActions();
 
 		isSaved = true;
 	}
@@ -2061,7 +2034,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (!showToolBar)
 			return;
 
-		getApplicationGUImanager().getToolbarPanel().initToolbar();
+		getGuiManager().updateToolbar();
 
 		if (!INITING) {
 			if (applet != null)
@@ -2074,33 +2047,27 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenubar() {
-		if (!showMenuBar)
+		if (!showMenuBar || !hasApplicationGUImanager())
 			return;
 
-		if (getApplicationGUImanager().getMenuBar() == null)
-			return;
-		
-		getApplicationGUImanager().getMenuBar().updateMenubar();
-		getApplicationGUImanager().updateActions();
+		getGuiManager().updateMenubar();
+		getGuiManager().updateActions();
 		System.gc();
 	}
 
 	private void updateSelection() {
-		if (!showMenuBar)
+		if (!showMenuBar || !hasApplicationGUImanager())
 			return;
-	
-		if (getApplicationGUImanager().getMenuBar() == null)
-			return;
-		
-		getApplicationGUImanager().getMenuBar().updateSelection();
+
+		getGuiManager().updateMenubarSelection();
 	}
 
 	public void updateMenuWindow() {
-		if (!showMenuBar)
+		if (!showMenuBar || !hasApplicationGUImanager())
 			return;
 
-		getApplicationGUImanager().getMenuBar().updateMenuWindow();
-		getApplicationGUImanager().getMenuBar().updateMenuFile();
+		getGuiManager().updateMenuWindow();
+		getGuiManager().updateMenuFile();
 		System.gc();
 	}
 
@@ -2109,7 +2076,7 @@ public abstract class Application implements KeyEventDispatcher {
 		fillCommandDict();
 
 		if (appGuiManager != null) {
-			getApplicationGUImanager().getAlgebraInput().setCommandNames();
+			getGuiManager().updateAlgebraInput();
 		}
 	}
 
@@ -2205,7 +2172,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// returns true for YES or NO and false for CANCEL
 	public boolean saveCurrentFile() {
-		return getApplicationGUImanager().saveCurrentFile();
+		return getGuiManager().saveCurrentFile();
 	}
 
 	/*
@@ -2221,7 +2188,7 @@ public abstract class Application implements KeyEventDispatcher {
 			euclidianView.setMode(mode);
 
 		if (appGuiManager != null)
-			getApplicationGUImanager().setMode(mode);
+			getGuiManager().setMode(mode);
 
 	}
 
@@ -2466,11 +2433,11 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// save custom toolbar if we have one
 		if (appGuiManager != null) {
-			String cusToolbar = getApplicationGUImanager()
+			String cusToolbar = getGuiManager()
 					.getCustomToolbarDefinition();
 
 			if (cusToolbar != null
-					&& !cusToolbar.equals(getApplicationGUImanager()
+					&& !cusToolbar.equals(getGuiManager()
 							.getDefaultToolbarString())) {
 				sb.append("\t<toolbar");
 				sb.append(" str=\"");
@@ -2510,7 +2477,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// save spreadsheetView settings
 		if (showSpreadsheet) {
-			getApplicationGUImanager().getSpreadsheetView().getXML();
+			getGuiManager().getSpreadsheetViewXML();
 		}
 
 		// save cas view seeting and cas session
@@ -2529,35 +2496,10 @@ public abstract class Application implements KeyEventDispatcher {
 		StringBuffer sb = new StringBuffer();
 
 		// construction protocol
-		if (getApplicationGUImanager().isUsingConstructionProtocol()) {
-			sb.append(getApplicationGUImanager().getConstructionProtocol()
-					.getConsProtocolXML());
+		if (getGuiManager().isUsingConstructionProtocol()) {
+			sb.append(getGuiManager().getConsProtocolXML());
 		}
 
-		// navigation bar of construction protocol
-		if (showConsProtNavigation) {
-			sb.append("\t<consProtNavigationBar ");
-			sb.append("show=\"");
-			sb.append(showConsProtNavigation);
-			sb.append("\"");
-			sb.append(" playButton=\"");
-			sb.append(getApplicationGUImanager()
-					.getConstructionProtocolNavigation().isPlayButtonVisible());
-			sb.append("\"");
-			sb.append(" playDelay=\"");
-			sb.append(getApplicationGUImanager()
-					.getConstructionProtocolNavigation().getPlayDelay());
-			sb.append("\"");
-			sb.append(" protButton=\"");
-			sb.append(getApplicationGUImanager()
-					.getConstructionProtocolNavigation()
-					.isConsProtButtonVisible());
-			sb.append("\"");
-			sb.append(" consStep=\"");
-			sb.append(kernel.getConstructionStep());
-			sb.append("\"");
-			sb.append("/>\n");
-		}
 
 		return sb.toString();
 	}
@@ -2777,7 +2719,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void startDispatchingEventsTo(JComponent comp) {
 		if (appGuiManager != null) {
-			getApplicationGUImanager().closeOpenDialogs();
+			getGuiManager().closeOpenDialogs();
 		}
 
 		if (glassPaneListener == null) {
@@ -2857,7 +2799,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// let gui manager handle this
 		if (appGuiManager != null)
-			return getApplicationGUImanager().dispatchKeyEvent(e);
+			return getGuiManager().dispatchKeyEvent(e);
 
 		return false;
 	}

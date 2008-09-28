@@ -210,7 +210,7 @@ implements GeoElementSelectionListener {
 		// set macro mode
 		if (newTool.isShowInToolBar()) {
 			int mode = kernel.getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
-			app.getApplicationGUImanager().addToToolbarDefinition(mode);			
+			app.getGuiManager().addToToolbarDefinition(mode);			
 			app.updateToolBar();			
 			app.setMode(mode);			
 		}		

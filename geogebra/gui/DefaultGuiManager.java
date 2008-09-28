@@ -2,6 +2,8 @@ package geogebra.gui;
 
 import geogebra.Application;
 import geogebra.GeoGebra;
+import geogebra.GeoGebraPreferences;
+import geogebra.GuiManager;
 import geogebra.MyError;
 import geogebra.MyFileFilter;
 import geogebra.euclidian.EuclidianView;
@@ -57,6 +59,7 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JApplet;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -71,7 +74,7 @@ import javax.swing.plaf.basic.BasicFileChooserUI;
  * This is done to be able to put class files of geogebra.gui.* packages into a
  * separate gui jar file.
  */
-public class ApplicationGUImanager {
+public class DefaultGuiManager implements GuiManager {
 	
 	private static final int SPREADSHEET_INI_COLS = 26;
 	private static final int SPREADSHEET_INI_ROWS = 100;
@@ -98,24 +101,24 @@ public class ApplicationGUImanager {
 	private AbstractAction showAxesAction, showGridAction, undoAction,
 			redoAction;	
 
-	public ApplicationGUImanager(Application app) {
+	public DefaultGuiManager(Application app) {
 		this.app = app;
 		this.kernel = app.getKernel();
 	}
 	
-	public PropertiesDialogGeoElement getPropDialog() {
-		return propDialog;
+	public boolean isPropertiesDialogSelectionListener() {
+		return app.getCurrentSelectionListener() == propDialog;
 	}
 	
 	  public void clearPreferences() {
 	    	if (app.isSaved() || app.saveCurrentFile()) {
 	    		app.setWaitCursor();
-	    		getPreferences().clearPreferences();
+	    		GeoGebraPreferences.getPref().clearPreferences();
 				
 				// clear custom toolbar definition
 				strCustomToolbarDefinition = null;			
 				
-				getPreferences().loadXMLPreferences(app); // this will load the default settings
+				GeoGebraPreferences.getPref().loadXMLPreferences(app); // this will load the default settings
 				app.setLanguage(app.getMainComponent().getLocale());
 				app.updateContentPaneAndSize();
 				app.setDefaultCursor();
@@ -124,9 +127,10 @@ public class ApplicationGUImanager {
 	    
 	   
 
-	public AlgebraView getAlgebraView() {
+	public JComponent getAlgebraView() {
 		if (algebraView == null) {
-			algebraView = new AlgebraView(getAlgebraController());
+			initAlgebraController();
+			algebraView = new AlgebraView(algebraController);
 			if (!app.isApplet()) {
 				// allow drag & drop of files on algebraView
 				algebraView.setDropTarget(new DropTarget(algebraView,
@@ -137,7 +141,7 @@ public class ApplicationGUImanager {
 		return algebraView;
 	}
 	
-	public SpreadsheetView getSpreadsheetView() {
+	public JComponent getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
     		spreadsheetView = new SpreadsheetView(app, SPREADSHEET_INI_COLS, SPREADSHEET_INI_ROWS);
@@ -145,31 +149,109 @@ public class ApplicationGUImanager {
     	
     	return spreadsheetView; 
 	}	
+	
+	public int getHighestUsedSpreadsheetColumn() {
+		if (spreadsheetView != null) { 
+			return spreadsheetView.getHighestUsedColumn();
+		}
+		return -1;
+	}
+	
+	public int getSpreadsheetTraceRow(int column) {
+		if (spreadsheetView != null) { 
+			return spreadsheetView.getTraceRow(column);
+		}
+		return -1;
+	}
+	
+	public void attachSpreadsheetView() {	
+		getSpreadsheetView();
+		spreadsheetView.attachView();		
+	}
+	
+	public void detachSpreadsheetView(){
+		if (spreadsheetView != null)
+			spreadsheetView.detachView();		
+	}	
+	
+	public String getSpreadsheetViewXML() {
+		if (spreadsheetView != null)
+			return spreadsheetView.getXML();
+		else
+			return "";
+	}
+	
+	public String getConsProtocolXML() {
+		StringBuffer sb = new StringBuffer();
+	
+		if (constProtocol != null)
+			sb.append(constProtocol.getConsProtocolXML());
+	
+		// navigation bar of construction protocol
+		if (app.showConsProtNavigation() && constProtocolNavigation != null) {
+			sb.append("\t<consProtNavigationBar ");
+			sb.append("show=\"");
+			sb.append(app.showConsProtNavigation());
+			sb.append("\"");
+			sb.append(" playButton=\"");
+			sb.append(constProtocolNavigation.isPlayButtonVisible());
+			sb.append("\"");
+			sb.append(" playDelay=\"");
+			sb.append(constProtocolNavigation.getPlayDelay());
+			sb.append("\"");
+			sb.append(" protButton=\"");
+			sb.append(constProtocolNavigation.isConsProtButtonVisible());
+			sb.append("\"");
+			sb.append(" consStep=\"");
+			sb.append(kernel.getConstructionStep());
+			sb.append("\"");
+			sb.append("/>\n");
+		}
+		
+		return sb.toString();
+	}
+	
+	public void attachAlgebraView(){	
+		getAlgebraView();
+		algebraView.attachView();		
+	}	
+	
+	public void detachAlgebraView(){	
+		if (algebraView != null)
+			algebraView.detachView();		
+	}	
+	
+	public void setShowAuxiliaryObjects(boolean flag) {
+		getAlgebraView();
+		algebraView.setShowAuxiliaryObjects(flag);
+	}
 
-	public AlgebraController getAlgebraController() {
+	
+	private void initAlgebraController() {
 		if (algebraController == null) {
 			algebraController = new AlgebraController(app.getKernel());
 			
 			// add controller as keylistener to EuclidianView
 			app.getEuclidianView().addKeyListener(algebraController);
 		}
-
-		return algebraController;
 	}
 
-	public AlgebraInput getAlgebraInput() {
+	public JComponent getAlgebraInput() {
 		if (algebraInput == null)
 			algebraInput = new AlgebraInput(app);
 
 		return algebraInput;
 	}
+	
+	public void updateAlgebraInput() {
+		if (algebraInput != null)
+			algebraInput.initGUI();
+	}
 
-	public synchronized PropertiesDialogGeoElement getPropertiesDialog() {
+	public synchronized void initPropertiesDialog() {
 		if (propDialog == null) {
 			propDialog = new PropertiesDialogGeoElement(app);
 		}
-
-		return propDialog;
 	}
 
 	public void doAfterRedefine(GeoElement geo) {
@@ -180,21 +262,57 @@ public class ApplicationGUImanager {
 		}
 	}
 
-	public MyToolbar getToolbarPanel() {
+	public JComponent getToolbarPanel() {
 		if (appToolbarPanel == null) {
 			appToolbarPanel = new MyToolbar(app);
 		}
 
 		return appToolbarPanel;
 	}
+	
+	public void updateToolbar() {
+		if (appToolbarPanel != null) {
+			appToolbarPanel.initToolbar();
+		}
+	}
+	
+	public void setShowToolBarHelp(boolean flag) {
+		if (appToolbarPanel != null)
+			appToolbarPanel.setShowToolBarHelp(flag);
+	}
 
-	public ConstructionProtocolNavigation getConstructionProtocolNavigation() {
+	public JComponent getConstructionProtocolNavigation() {
 		if (constProtocolNavigation == null) {
-			constProtocolNavigation = new ConstructionProtocolNavigation(
-					getConstructionProtocol());
+			getConstructionProtocol();
+			constProtocolNavigation = new ConstructionProtocolNavigation(constProtocol);
 		}
 
 		return constProtocolNavigation;
+	}
+	
+	public void setShowConstructionProtocolNavigation(boolean show) {
+		if (show) {
+			if (app.getEuclidianView() != null)
+				app.getEuclidianView().resetMode();
+			getConstructionProtocolNavigation();
+			constProtocolNavigation.register();
+		} else {
+			if (constProtocolNavigation != null)
+				constProtocolNavigation.unregister();
+		}
+	}
+	
+	public void setShowConstructionProtocolNavigation(boolean show, 
+			boolean playButton, double playDelay, boolean showProtButton) 
+	{
+		setShowConstructionProtocolNavigation(show);
+		
+		if (constProtocolNavigation != null) {
+			constProtocolNavigation.setPlayButtonVisible(playButton);
+			constProtocolNavigation.setPlayDelay(playDelay);
+			constProtocolNavigation.setConsProtButtonVisible(showProtButton);
+		}
+
 	}
 
 	public boolean isConsProtNavigationPlayButtonVisible() {
@@ -216,15 +334,25 @@ public class ApplicationGUImanager {
 	 */
 	public void showConstructionProtocol() {
 		app.getEuclidianView().resetMode();
-		constProtocol = getConstructionProtocol();
+		getConstructionProtocol();
 		constProtocol.setVisible(true);
 	}
 
-	public ConstructionProtocol getConstructionProtocol() {
+	public JDialog getConstructionProtocol() {
 		if (constProtocol == null) {
 			constProtocol = new ConstructionProtocol(app);
 		}
 		return constProtocol;
+	}
+	
+	public void setConstructionStep(int step) {
+		if (constProtocol != null) 
+			constProtocol.setConstructionStep(step);
+	}
+	
+	public void updateConstructionProtocol() {
+		if (constProtocol != null)
+			constProtocol.update();
 	}
 	
 	public boolean isUsingConstructionProtocol() {
@@ -251,7 +379,7 @@ public class ApplicationGUImanager {
 		if (algebraView != null)
 			algebraView.updateFonts();
 		if (algebraInput != null)
-			algebraInput.updateFonts();
+			algebraInput.updateFonts();	
 
 		if (fileChooser != null) {
 			fileChooser.setFont(app.getPlainFont());
@@ -304,13 +432,33 @@ public class ApplicationGUImanager {
 		}
 		menuBar.initMenubar();
 	}
-
-	public Menubar getMenuBar() {
-		return menuBar;
+	
+	public void updateMenubar() {
+		if (menuBar != null) 
+			menuBar.updateMenubar();
+	}
+	
+	public void updateMenubarSelection(){
+		if (menuBar != null) 
+			menuBar.updateSelection();
+	}
+	
+	public void updateMenuWindow(){
+		if (menuBar != null) 
+			menuBar.updateMenuWindow();
+	}
+	
+	public void updateMenuFile(){
+		if (menuBar != null) 
+			menuBar.updateMenuFile();
+	}
+	
+	public JMenuBar getMenuBar() {
+		return (JMenuBar) menuBar;
 	}
 
-	public void setMenubar(Menubar newMenuBar) {
-		menuBar = newMenuBar;
+	public void setMenubar(JMenuBar newMenuBar) {
+		menuBar = (Menubar) newMenuBar;
 	}
 
 	public void showAboutDialog() {
@@ -379,7 +527,8 @@ public class ApplicationGUImanager {
 		app.setMoveMode();
 
 		// open properties dialog
-		getPropertiesDialog().setVisibleWithGeos(selGeos);
+		initPropertiesDialog();
+		propDialog.setVisibleWithGeos(selGeos);
 	}
 
 	private ArrayList tempGeos = new ArrayList();
@@ -459,7 +608,7 @@ public class ApplicationGUImanager {
 		dialog.setVisible(true);
 	}
 
-	public TextInputDialog createTextDialog(GeoText text, GeoPoint startPoint) {
+	public JDialog createTextDialog(GeoText text, GeoPoint startPoint) {
 		TextInputDialog id = new TextInputDialog(app, app.getPlain("Text"),
 				text, startPoint, 30, 6);
 		return id;
@@ -700,7 +849,7 @@ public class ApplicationGUImanager {
 					if (imageFile != null) {
 						app.setCurrentImagePath(imageFile.getParentFile());
 						if (!app.isApplet()) {
-							getPreferences().
+							GeoGebraPreferences.getPref().
 									saveDefaultImagePath(app.getCurrentImagePath());
 						}
 					}
@@ -1710,17 +1859,34 @@ public class ApplicationGUImanager {
 	        }                
 	        
 	        // select toolbar button
-	        if (appToolbarPanel != null) {
-	        	appToolbarPanel.setSelectedMode(mode);
-	        }
+	        setToolbarMode(mode);
+	    }
+	    
+	    public void setToolbarMode(int mode) {
+	    	 if (appToolbarPanel == null) return;
+	    	 
+        	appToolbarPanel.setSelectedMode(mode);
+        			        	
+        	// check if toolbar shows selected mode
+    		// if not we set the first mode of toolbar	    		
+			try {				
+				if (appToolbarPanel.getSelectedMode() != mode) {
+					int firstMode = appToolbarPanel.getFirstMode();
+					if (firstMode > 0)
+						setMode(firstMode);
+				}
+			} catch (Exception e) {
+				// ignore nullpoint exception
+			}		    				     
 	    }
 	    
 	    /**
 	        *  Exports construction protocol as html 
 	        */
 	    final public void exportConstructionProtocolHTML() {
-	        getConstructionProtocol().initProtocol();
-	        getConstructionProtocol().showHTMLExportDialog();
+	        getConstructionProtocol();
+	        constProtocol.initProtocol();
+	        constProtocol.showHTMLExportDialog();
 	    }
 	    
 
@@ -1759,7 +1925,7 @@ public class ApplicationGUImanager {
 			if (source == algebraView) {
 				switch (e.getID()) {
 				case KeyEvent.KEY_PRESSED:
-					consumed = getAlgebraController().keyPressedConsumed(e);
+					consumed = algebraController.keyPressedConsumed(e);
 					break;
 				}
 			}
@@ -1770,7 +1936,7 @@ public class ApplicationGUImanager {
 			case KeyEvent.VK_F3:
 				// F3 key: set focus to input field				
 				if (algebraInput != null) {
-					algebraInput.setFocus();
+					algebraInput.requestFocus();
 					consumed = true;
 				}
 				break;
@@ -1792,9 +1958,5 @@ public class ApplicationGUImanager {
 			return consumed;
 		}
 		
-		 public GeoGebraPreferences getPreferences() {
-			 return GeoGebraPreferences.getInstance();
-		 }
-	   
 
 }

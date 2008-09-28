@@ -122,7 +122,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			if (!macro.isUsed()) {
 				// delete macro
 				changeToolBar = changeToolBar || macro.isShowInToolBar();
-				app.getApplicationGUImanager().removeFromToolbarDefinition(kernel.getMacroID(macro) + EuclidianView.MACRO_MODE_ID_OFFSET);				
+				app.getGuiManager().removeFromToolbarDefinition(kernel.getMacroID(macro) + EuclidianView.MACRO_MODE_ID_OFFSET);				
 				kernel.removeMacro(macro);
 				listModel.removeElement(macro);
 				didDeletion = true;
@@ -155,7 +155,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		if (sel == null || sel.length == 0) return;		
 		
 		File file =
-			app.getApplicationGUImanager().showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
+			app.getGuiManager().showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
 	                	app.getPlain("ApplicationName") + " " + app.getMenu("Tools"));
         if (file == null)
             return;

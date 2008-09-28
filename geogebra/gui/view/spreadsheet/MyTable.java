@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
+import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -182,10 +183,10 @@ public class MyTable extends JTable
 				}
 			}
 		}
-		kernel.getApplication().setSelectedGeos(list);
+		app.setSelectedGeos(list);
 		if (app.showAlgebraView())
-			kernel.getApplication().getApplicationGUImanager().getAlgebraView().repaintView();
-		kernel.getApplication().getEuclidianView().repaintView();
+			((View)app.getGuiManager().getAlgebraView()).repaintView();
+		app.getEuclidianView().repaintView();
 	}
 	
 	protected Point getPixel(int column, int row, boolean min) {

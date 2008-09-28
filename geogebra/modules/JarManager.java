@@ -118,7 +118,7 @@ public class JarManager {
 	 * 
 	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
 	 */
-	final public boolean addJarToClassPath(int jarFileIndex) {		
+	final synchronized public boolean addJarToClassPath(int jarFileIndex) {		
 		// check if file is already on classpath
 		if (jarFileOnClasspath[jarFileIndex]) {			
 			//Application.debug("jar file already in classpath " + Application.JAR_FILES[jarFileIndex]);
@@ -196,7 +196,8 @@ public class JarManager {
 				return true;
 			}
 							
-			// download jar from URL to destFile			
+			// download jar from URL to destFile
+			// TODO: check
 			URL src = new URL(codebase.toExternalForm() + fileName);			
 			CopyURLToFile.copyURLToFile(src, destFile);
 			

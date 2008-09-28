@@ -500,7 +500,7 @@ public class MyXMLHandler implements DocHandler {
 		switch (eName.charAt(0)) {
 		case 's':
 			if (eName.equals("size")) {
-				ok = handleSpreadsheetSize(app.getApplicationGUImanager().getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetSize(app.getGuiManager().getSpreadsheetView(), attrs);
 				break;
 			}
 
@@ -939,19 +939,14 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleConsProtNavigationBar(Application app,
 			LinkedHashMap attrs) {
 		try {
-			boolean playButton = parseBoolean((String) attrs.get("playButton"));
-			boolean protButton = parseBoolean((String) attrs.get("protButton"));
-						
-			app.getApplicationGUImanager().getConstructionProtocolNavigation().setPlayButtonVisible(playButton);
-			app.getApplicationGUImanager().getConstructionProtocolNavigation().setConsProtButtonVisible(protButton);
-
 			boolean show = parseBoolean((String) attrs.get("show"));
-			app.setShowConstructionProtocolNavigation(show);
-
-			double playDelay = Double.parseDouble((String) attrs
-					.get("playDelay"));
-			app.getApplicationGUImanager().getConstructionProtocolNavigation().setPlayDelay(playDelay);
-
+			boolean playButton = parseBoolean((String) attrs.get("playButton"));
+			double playDelay = Double.parseDouble((String) attrs.get("playDelay"));
+			boolean showProtButton = parseBoolean((String) attrs.get("protButton"));
+						
+			app.getGuiManager().setShowConstructionProtocolNavigation( show, 
+					 playButton,  playDelay,  showProtButton);
+			
 			// construction step: handled at end of parsing
 			String strConsStep = (String) attrs.get("consStep");
 			if (strConsStep != null)
@@ -989,6 +984,7 @@ public class MyXMLHandler implements DocHandler {
 
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			Application.debug(e.getMessage() + ": " + e.getCause());
 			return false;
 		}
@@ -1050,7 +1046,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleToolbar(Application app, LinkedHashMap attrs) {
 		try {
 			String toolbarDef = (String) attrs.get("str");
-			app.getApplicationGUImanager().setToolBarDefinition(toolbarDef);
+			app.getGuiManager().setToolBarDefinition(toolbarDef);
 			return true;
 		} catch (Exception e) {
 			Application.debug(e.getMessage() + ": " + e.getCause());

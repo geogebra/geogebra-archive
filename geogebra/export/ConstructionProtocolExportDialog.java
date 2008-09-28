@@ -205,7 +205,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                                                   boolean useColors) {    
 	            File file, pngFile = null;
 	            prot.setUseColors(useColors);
-	            file = app.getApplicationGUImanager().showSaveDialog(Application.FILE_EXT_HTML, null,
+	            file = app.getGuiManager().showSaveDialog(Application.FILE_EXT_HTML, null,
 	                   app.getPlain("html") + " " + app.getMenu("Files"));
 	            if (file == null) return;                       
 	            try {          

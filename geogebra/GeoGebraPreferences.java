@@ -10,10 +10,9 @@
  
  */
 
-package geogebra.gui;
+package geogebra;
 
 
-import geogebra.Application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +66,7 @@ public class GeoGebraPreferences {
 	
 	private static GeoGebraPreferences singleton;
 	
-	public static GeoGebraPreferences getInstance() {
+	public synchronized static GeoGebraPreferences getPref() {
 		if (singleton == null)
 			singleton = new GeoGebraPreferences();
 		return singleton;

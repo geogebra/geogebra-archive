@@ -69,7 +69,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		setLayout(new BorderLayout(5, 5));
 				
 		tree = generateTree();
-		setToolBarString(app.getApplicationGUImanager().getToolBarDefinition());	
+		setToolBarString(app.getGuiManager().getToolBarDefinition());	
 		
 		configScrollPane = new JScrollPane(tree);
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -381,7 +381,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		vector.add(MyToolbar.TOOLBAR_SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = MyToolbar.createToolBarVec(app.getApplicationGUImanager().getDefaultToolbarString());				
+		Vector defTools = MyToolbar.createToolBarVec(app.getGuiManager().getDefaultToolbarString());				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			
