@@ -176,27 +176,27 @@ public class JarManager {
 	 * @return true if successful
 	 */
 	private synchronized boolean downloadFile(String fileName, File destDir) {    	    
-		try {					
-			// download jar file to localJarDir
-			File destFile = new File(destDir, fileName);
-			if (destFile.exists()) {
-				// TODO: remove
-				Application.debug("Loading file from CACHE: " + fileName + " in directory " + destDir);		
+		// download jar file to localJarDir
+		File destFile = new File(destDir, fileName);
+		if (destFile.exists()) {
+			// TODO: remove
+			Application.debug("Loading file from CACHE: " + fileName + " in directory " + destDir);		
+			
+			// destination file exists already
+			return true;
+		}
 				
-				// destination file exists already
-				return true;
-			}
-							
+		try {											
 			// download jar from URL to destFile
 			URL src = new URL(codebase, fileName);			
 			CopyURLToFile.copyURLToFile(src, destFile);
 			
 			// TODO: remove
 			Application.debug("downloaded " + fileName + " to directory " + destDir);		
-			return true;			
-			
+			return true;						
 		} catch (Exception e) {		
 			System.err.println("Download error: " + e.getMessage());
+			destFile.delete();
 			return false;
 		}			
 	}

@@ -24,9 +24,9 @@ import java.net.URLConnection;
 public class CopyURLToFile  {
 
 	/**
-	 * Returns success state.
+	 * Copies or downloads url to destintation file.
 	 */
-	public static boolean copyURLToFile(URL src, File dest) throws Exception {		
+	public static void copyURLToFile(URL src, File dest) throws Exception {		
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		try {			
@@ -42,7 +42,6 @@ public class CopyURLToFile  {
 			out.close();
 			dest.setLastModified(connection.getLastModified());
 			in.close();		
-			return true;
 		} 
 		catch (Exception e) {
 			try {
