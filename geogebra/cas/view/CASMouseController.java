@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.Application;
 
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -13,9 +14,9 @@ public class CASMouseController implements MouseListener {
 
 	private CASView view;
 
-	private JTable consoleTable;
+	private CASTable consoleTable;
 
-	public CASMouseController(CASView view, CASSession session, JTable table) {
+	public CASMouseController(CASView view, CASSession session, CASTable table) {
 		this.session = session;
 		this.view = view;
 		this.consoleTable = table;
@@ -27,31 +28,49 @@ public class CASMouseController implements MouseListener {
 		colI = consoleTable.columnAtPoint(e.getPoint());
 		if (rowI < 0)
 			return;
-		Application.debug("single click at" + rowI + "" + colI);
-		if (colI == CASPara.contCol) { // Set the focus to the input textfiled
-			consoleTable.changeSelection(rowI, colI, false, false);
-			consoleTable.editCellAt(rowI, colI);
-			Application.debug("Mouse down new location: " + rowI + " " + colI);
-			// Get the deepest component at (X, Y)
-			// Component clickedComponent =
-			// consoleTable.findComponentAt(e.getPoint());
-			// Component clickedCell =
-			// consoleTable.getComponentAt(e.getPoint());
 
-			CASTableCell clickedCell = (CASTableCell) consoleTable
-					.getComponentAt(e.getPoint());
-			Application.debug("clickedComponent: "
-					+ (clickedCell.getComponents()).length);
-			clickedCell.setLineInvisiable();
-			clickedCell.setInputAreaFocused();
-		} 
-//		 The index column is clicked:
-//		else {
-//			consoleTable.changeSelection(rowI, colI, false, false);
-//			Component clickedCell = consoleTable.getComponentAt(e.getPoint());
-//			Application.debug("clickedComponent: " + clickedCell);
-//			clickedCell.requestFocus();
-//		}
+		if (colI == CASPara.contCol) { // Set the focus to the input textfiled
+			if (e.getClickCount() == 1) { // One click event
+				consoleTable.changeSelection(rowI, colI, false, false);
+				consoleTable.editCellAt(rowI, colI);
+				Application.debug("single click at" + rowI + "" + colI);
+				// Component clickedCell =
+				// consoleTable.getComponentAt(e.getPoint());
+
+				CASTableCell clickedCell = (CASTableCell) consoleTable
+						.getComponentAt(e.getPoint());
+				Application.debug("clickedComponent: "
+						+ (clickedCell.getComponents()).length);
+				clickedCell.setLineInvisiable();
+				clickedCell.setInputAreaFocused();
+			}
+			if (e.getClickCount() == 2) {
+				// Get the deepest component at (X, Y)
+				Application.debug("double click at" + rowI + "" + colI);
+				Component clickedComponent = consoleTable.findComponentAt(e
+						.getPoint());
+				String className = clickedComponent.getClass().getName();
+				String JLableName = "javax.swing.JLabel";
+
+				if (className.compareTo(JLableName) != 0)
+					return;
+
+				Application.debug("Deepest clickedComponent: " + className);
+				CASTableCell clickedCell = (CASTableCell) consoleTable
+						.getComponentAt(e.getPoint());
+				
+				CASTableCellValue newValue = new CASTableCellValue();
+				newValue.setCommand(clickedCell.getOutput());
+				consoleTable.insertRow(rowI, CASPara.contCol, newValue);
+			}
+		}
+		// The index column is clicked:
+		// else {
+		// consoleTable.changeSelection(rowI, colI, false, false);
+		// Component clickedCell = consoleTable.getComponentAt(e.getPoint());
+		// Application.debug("clickedComponent: " + clickedCell);
+		// clickedCell.requestFocus();
+		// }
 
 	}
 

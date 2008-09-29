@@ -19,8 +19,8 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 
 	private CASTableCellValue cellValue;
 
-	public CASTableCellEditor(CASView view, JTable consoleTable) {
-		super(view, consoleTable);
+	public CASTableCellEditor(CASView view, JTable consoleTable, Application app) {
+		super(view, consoleTable, app);
 
 		CASTableCellController inputListener = new CASTableCellController(this,
 				view);
@@ -36,6 +36,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		if (value instanceof CASTableCellValue) {
+			setFont(app.getPlainFont());
 			this.setLineInvisiable(); // Initialize the editor display without
 										// line panle
 
@@ -78,6 +79,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		cellValue.setCommand(this.getInput());
 		cellValue.setOutput(this.getOutput());
 		
+		Application.debug("Cell Editor stops editting at " + this.getOutput());
 		return true;
 	}
 

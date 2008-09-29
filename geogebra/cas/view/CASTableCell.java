@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.Application;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusEvent;
@@ -22,9 +24,13 @@ public class CASTableCell extends JPanel {
 	private boolean lineVisiable;
 
 	private boolean outputFieldVisiable;
+	
+	protected Application app;
 
-	public CASTableCell(CASView view, JTable consoleTable) {
+	public CASTableCell(CASView view, JTable consoleTable, Application app) {
 
+		this.app = app;
+		
 		inputPanel = new CASInputPanel();
 		outputPanel = new CASOutputPanel();
 		linePanel = new CASLinePanel();
@@ -41,6 +47,7 @@ public class CASTableCell extends JPanel {
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
 		
+		setFont(app.getPlainFont());
 		return;
 	}
 

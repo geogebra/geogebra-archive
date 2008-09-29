@@ -138,18 +138,18 @@ public class CASView extends JComponent {
 
 		// Set the property of the value column;
 		consoleTable.getColumnModel().getColumn(CASPara.contCol)
-				.setCellRenderer(new CASTableCellRender(this, consoleTable));
+				.setCellRenderer(new CASTableCellRender(this, consoleTable, app));
 		consoleTable.getColumnModel().getColumn(CASPara.contCol).setCellEditor(
-				new CASTableCellEditor(this, consoleTable));
+				new CASTableCellEditor(this, consoleTable, app));
 		consoleTable.getColumnModel().getColumn(CASPara.contCol)
 				.setHeaderValue("");
 
 		// CAScontroller
-		CASKeyController casKeyCtrl = new CASKeyController(this, session,
-				consoleTable);
+//		CASKeyController casKeyCtrl = new CASKeyController(this, session,
+//				consoleTable);
+//		consoleTable.addKeyListener(casKeyCtrl);		
 		CASMouseController casMouseCtrl = new CASMouseController(this, session,
 				consoleTable);
-		consoleTable.addKeyListener(casKeyCtrl);
 		consoleTable.addMouseListener(casMouseCtrl);
 	}
 

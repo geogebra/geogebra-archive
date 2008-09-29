@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.Application;
+
 import java.awt.Component;
 import java.awt.Window;
 
@@ -10,14 +12,15 @@ import javax.swing.table.TableCellRenderer;
 public class CASTableCellRender extends CASTableCell implements
 		TableCellRenderer {
 
-	CASTableCellRender(CASView view, JTable consoleTable) {
-		super(view, consoleTable);
+	CASTableCellRender(CASView view, JTable consoleTable, Application app) {
+		super(view, consoleTable, app);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
 		if (value instanceof CASTableCellValue) {
+			setFont(app.getPlainFont());
 			CASTableCellValue tempV = (CASTableCellValue) value;
 //			Application.debug("Rendering Row: " + row);
 //			Application.debug("Input: " + tempV.getCommand());
