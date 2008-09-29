@@ -25,7 +25,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 public class MyTable extends JTable
 {
@@ -48,14 +50,19 @@ public class MyTable extends JTable
 	protected KeyListener[] defaultKeyListeners;
 	protected TableCellRenderer1 columnHeader;
 	protected SpreadsheetView view;
-	protected MyTableModel tableModel;
+	protected DefaultTableModel tableModel;
 
-	public MyTable(MyTableModel tableModel, Kernel kernel0) {
+	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
+		
 		this.tableModel = tableModel;
-		kernel = kernel0;
-		app = kernel.getApplication();
+		this.view = view;
+		app = view.getApplication();
+		kernel = app.getKernel();
+		
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		//setAutoscrolls(true);
+		
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
 		// set cell size and column header
@@ -116,12 +123,28 @@ public class MyTable extends JTable
         // editing 	 
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
 	
-	public void setView(SpreadsheetView view0) {
-		view = view0;		
-	}
 
 	public SpreadsheetView getView() {
 		return view;		
+	}
+	
+	/**
+	 * 
+	 * @param newColumnCount
+	 */
+	public void setMyColumnCount(int newColumnCount) {	
+		int oldColumnCount = tableModel.getColumnCount();		
+		if (newColumnCount <= oldColumnCount)
+			return;
+		
+		// add new columns to table			
+		for (int i = oldColumnCount; i < newColumnCount; ++i) {
+			TableColumn col = new TableColumn(i);
+			col.setHeaderRenderer(columnHeader);
+			col.setPreferredWidth(MyTable.TABLE_CELL_WIDTH);
+			addColumn(col);
+		}	
+		tableModel.setColumnCount(newColumnCount);	
 	}
 
 	protected int Column = -1;
@@ -161,9 +184,8 @@ public class MyTable extends JTable
 				}
 			}
 			else if (rows.length == 0) {
-				MyTableModel model = (MyTableModel)getModel();
 				for (int i = 0; i < cols.length; ++ i) {
-					for (int j = 0; j < model.rowCount; ++ j) {
+					for (int j = 0; j < tableModel.getRowCount(); ++ j) {
 						GeoElement geo = RelativeCopy.getValue(this, cols[i], j);
 						if (geo != null) {
 							list.add(geo);							
@@ -171,9 +193,8 @@ public class MyTable extends JTable
 					}
 				}
 			}
-			else if (cols.length == 0) {
-				MyTableModel model = (MyTableModel)getModel();
-				for (int i = 0; i < model.columnCount; ++ i) {
+			else if (cols.length == 0) {				
+				for (int i = 0; i < tableModel.getColumnCount(); ++ i) {
 					for (int j = 0; j < rows.length; ++ j) {
 						GeoElement geo = RelativeCopy.getValue(this, i, rows[j]);
 						if (geo != null) {
@@ -1056,14 +1077,14 @@ public class MyTable extends JTable
 				//Application.debug(minSelectionColumn);
 				//Application.debug(maxSelectionColumn);
 				if (metaDown  && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1, altDown);
+					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1, altDown);
 					e.consume();
 				}
 				break;
 				
 			case KeyEvent.VK_V : // control + v
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					boolean storeUndo = copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);					
+					boolean storeUndo = copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);					
 					if (storeUndo)
 		 				app.storeUndoInfo();
 					getView().getRowHeader().revalidate();
@@ -1073,7 +1094,7 @@ public class MyTable extends JTable
 				
 			case KeyEvent.VK_X : // control + x
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					boolean storeUndo = copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+					boolean storeUndo = copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
 					if (storeUndo)
 		 				app.storeUndoInfo();
 					e.consume();
@@ -1082,7 +1103,7 @@ public class MyTable extends JTable
 				
 			case KeyEvent.VK_BACK_SPACE : // delete
 			case KeyEvent.VK_DELETE : // delete
-				boolean storeUndo = copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.rowCount - 1);
+				boolean storeUndo = copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
 				if (storeUndo)
 	 				app.storeUndoInfo();
 				break;

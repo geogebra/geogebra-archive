@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 public class RelativeCopy {
 
@@ -317,7 +318,7 @@ public class RelativeCopy {
 	}
 	
 	public static GeoElement getValue(MyTable table, int column, int row) {
-		MyTableModel tableModel = (MyTableModel)table.getModel();
+		TableModel tableModel = table.getModel();
 		//column = table.convertColumnIndexToModel(column);
 		//Application.debug("column=" + column);
 		if (row < 0 || row >= tableModel.getRowCount()) return null;

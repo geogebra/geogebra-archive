@@ -27,6 +27,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 public class SpreadsheetView extends JScrollPane implements View
@@ -37,7 +38,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	private static final long serialVersionUID = 1L;
 
 	protected MyTable table;
-	protected MyTableModel tableModel;
+	protected DefaultTableModel tableModel;
 	public JList rowHeader;
 	protected Application app;
 	private Kernel kernel;
@@ -59,9 +60,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		app = app0;
 		kernel = app.getKernel();
 		// table
-		tableModel = new MyTableModel(rows, columns);
-		table = new MyTable(tableModel, kernel);
-		tableModel.setTable(table);
+		tableModel = new DefaultTableModel(rows, columns);
+		table = new MyTable(this, tableModel);
+		
 		// row header list
 		MyListModel listModel = new MyListModel(tableModel);
 		rowHeader = new JList(listModel);
@@ -74,7 +75,6 @@ public class SpreadsheetView extends JScrollPane implements View
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table, rowHeader));
-		table.setView(this);
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
@@ -98,6 +98,10 @@ public class SpreadsheetView extends JScrollPane implements View
 		kernel.detach(this);
 		clearView();
 		//kernel.notifyRemoveAll(this);		
+	}
+	
+	public Application getApplication() {
+		return app;
 	}
 	
 	public int getHighestUsedColumn() {
@@ -127,9 +131,7 @@ public class SpreadsheetView extends JScrollPane implements View
 //	}
 	
 	public void add(GeoElement geo) {	
-		//Application.debug(new Date() + " ADD: " + geo);
-		
-		
+		//Application.debug(new Date() + " ADD: " + geo);				
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null && location.x < MAX_COLUMNS && location.y < MAX_ROWS) {
 			
@@ -139,7 +141,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				tableModel.setRowCount(location.y + 1);				
 			}
 			if (location.x >= tableModel.getColumnCount()) {
-				tableModel.setColumnCount(location.x + 1);				
+				table.setMyColumnCount(location.x + 1);				
 			}
 			tableModel.setValueAt(geo, location.y, location.x);
 		}
@@ -220,9 +222,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		//Application.debug(new Date() + " CLEAR VIEW");
 		int rows = tableModel.getRowCount();
 		int columns = tableModel.getColumnCount();
-		for (int i = 0; i < columns; ++ i) {
-			for (int j = 0; j < rows; ++ j) {
-				tableModel.setValueAt(null, i, j);
+		for (int c = 0; c < columns; ++c) {
+			for (int r = 0; r < rows; ++r) {
+				tableModel.setValueAt(null, r, c);
 			}
 		}
 	}
@@ -231,9 +233,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		private static final long serialVersionUID = 1L;
 		
-		protected MyTableModel model;
+		protected DefaultTableModel model;
 
-		public MyListModel(MyTableModel model0) {
+		public MyListModel(DefaultTableModel model0) {
 			model = model0;
 		}
 		

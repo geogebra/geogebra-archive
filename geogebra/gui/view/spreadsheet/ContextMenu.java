@@ -11,6 +11,7 @@ import java.util.LinkedList;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.table.TableModel;
 
 public class ContextMenu extends JPopupMenu
 {
@@ -137,7 +138,7 @@ public class ContextMenu extends JPopupMenu
  			//if (selected == null) throw new RuntimeException("error state");
  			StringBuffer text = new StringBuffer();
  			LinkedList list = new LinkedList();
- 			MyTableModel model = (MyTableModel)table.getModel();
+ 			TableModel model = table.getModel();
  			
 			//String s="columnsSelected ";
 			//	for (int i=0 ; i<selectedColumns.length ; i++)
@@ -361,7 +362,7 @@ public class ContextMenu extends JPopupMenu
  		public void actionPerformed(ActionEvent e) {
  			Application.debug("CreateList " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			
- 			MyTableModel model = (MyTableModel)table.getModel();
+ 			TableModel model = table.getModel();
  			int r1 = (row1 == -1 ? 0 : row1);
  			int r2 = (row2 == -1 ? model.getRowCount() : row2);
  			

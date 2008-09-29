@@ -15,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 public class CopyPasteCut {
 	
@@ -143,12 +145,12 @@ public class CopyPasteCut {
 			}
 		}
 		/**/
-		MyTableModel model = (MyTableModel)table.getModel();
-		if (model.rowCount < y4 + 1) {
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		if (model.getRowCount() < y4 + 1) {
 			model.setRowCount(y4 + 1);
 		}
-		if (model.columnCount < x4 + 1) {
-			model.setColumnCount(x4 + 1);
+		if (model.getRowCount() < x4 + 1) {
+			table.setMyColumnCount(x4 + 1);
 		}
 		GeoElement[][] values1 = RelativeCopy.getValues(table, x1, y1, x2, y2);
 		try {
@@ -227,12 +229,12 @@ public class CopyPasteCut {
 	
 	public boolean pasteExternal(String buf, int column1, int row1) {
 		app.setWaitCursor();
-		boolean succ = false;
+		boolean succ = false;			
 		
 		try {
 			String[][] data = parseData(buf);
-			MyTableModel model = (MyTableModel)table.getModel();
-			if (model.rowCount < row1 + data.length) {
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			if (model.getRowCount() < row1 + data.length) {
 				model.setRowCount(row1 + data.length);
 			}
 			GeoElement[][] values2 = new GeoElement[data.length][];
@@ -243,7 +245,7 @@ public class CopyPasteCut {
 				values2[iy] = new GeoElement[data[iy].length];
 				if (maxLen < data[iy].length) maxLen = data[iy].length;
 				if (model.getColumnCount() < column1 + data[iy].length) {
-					model.setColumnCount(column1 + data[iy].length);						
+					table.setMyColumnCount(column1 + data[iy].length);						
 				}
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
 					if (column < 0) continue;
@@ -286,6 +288,8 @@ public class CopyPasteCut {
 		
 		return succ;
 	}
+	
+	
 
 	public boolean delete(int column1, int row1, int column2, int row2)  {
 		boolean succ = false;
