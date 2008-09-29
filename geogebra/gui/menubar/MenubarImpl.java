@@ -766,12 +766,20 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {
-						app.getGuiManager().showConstructionProtocol();
-					}
-				};
-				runner.start();
+				try {
+					Thread runner = new Thread() {
+						public void run() {
+							app.getGuiManager().showConstructionProtocol();
+						}
+					};
+					runner.start();
+				}
+				
+				catch (java.lang.NoClassDefFoundError ee) {
+				app.showErrorDialog(app.getError("ExportJarMissing"));
+				ee.printStackTrace();
+				}
+
 			}
 		};
 
@@ -1022,29 +1030,37 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				app.loadExportJar();
 				
-				Thread runner = new Thread() {
-					public void run() {
-						app.setWaitCursor();
-						try {							
-					    	app.clearSelectedGeos();
-					    	
-					    	// use reflection for					    	
-				  		    JDialog d = new geogebra.export.GraphicExportDialog(app);   		
-				  		    //Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
-				  		    //Object[] args = new Object[] { app };
-				  		    //Class [] types = new Class[] {Application.class};
-				  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
-				  	        //JDialog d =  (JDialog) constructor.newInstance(args);  					    
-					      
-					        d.setVisible(true);
-					       
-						} catch (Exception e) {
-							Application.debug("GraphicExportDialog not available");
+				try {
+					Thread runner = new Thread() {
+						public void run() {
+							app.setWaitCursor();
+							try {							
+						    	app.clearSelectedGeos();
+						    	
+						    	// use reflection for					    	
+					  		    JDialog d = new geogebra.export.GraphicExportDialog(app);   		
+					  		    //Class casViewClass = Class.forName("geogebra.export.GraphicExportDialog");
+					  		    //Object[] args = new Object[] { app };
+					  		    //Class [] types = new Class[] {Application.class};
+					  	        //Constructor constructor = casViewClass.getDeclaredConstructor(types);   	        
+					  	        //JDialog d =  (JDialog) constructor.newInstance(args);  					    
+						      
+						        d.setVisible(true);
+						       
+							} catch (Exception e) {
+								Application.debug("GraphicExportDialog not available");
+							}
+							app.setDefaultCursor();
 						}
-						app.setDefaultCursor();
-					}
-				};
-				runner.start();
+					};
+					runner.start();
+				}
+				
+				catch (java.lang.NoClassDefFoundError ee) {
+				app.showErrorDialog(app.getError("ExportJarMissing"));
+				ee.printStackTrace();
+				}
+					
 			}
 		};
 		
@@ -1060,6 +1076,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPstricks not available");
 				}	
+				catch (java.lang.NoClassDefFoundError ee) {
+				app.showErrorDialog(app.getError("ExportJarMissing"));
+				ee.printStackTrace();
+				}
 			}
 		};
 		// Added By Loïc Le Coq
@@ -1074,6 +1094,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
 				}	
+				catch (java.lang.NoClassDefFoundError ee) {
+					app.showErrorDialog(app.getError("ExportJarMissing"));
+					ee.printStackTrace();
+				}
 			}
 		};			
 		
@@ -1087,22 +1111,30 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			public void actionPerformed(ActionEvent e) {
 				app.loadExportJar();
 				
-				Thread runner = new Thread() {
-					public void run() {
-						app.setWaitCursor();
-						try {
-							app.clearSelectedGeos();
-							geogebra.export.WorksheetExportDialog d = new geogebra.export.WorksheetExportDialog(app); 		
-														
-							d.setVisible(true);
-						} catch (Exception e) {
-							Application.debug("WorksheetExportDialog not available");
-							e.printStackTrace();
+				try {
+				
+					Thread runner = new Thread() {
+						public void run() {
+							app.setWaitCursor();
+							try {
+								app.clearSelectedGeos();
+								geogebra.export.WorksheetExportDialog d = new geogebra.export.WorksheetExportDialog(app); 		
+															
+								d.setVisible(true);
+							} catch (Exception e) {
+								Application.debug("WorksheetExportDialog not available");
+								e.printStackTrace();
+							}
+							app.setDefaultCursor();
 						}
-						app.setDefaultCursor();
-					}
-				};
-				runner.start();
+					};
+					runner.start();
+				}
+				
+				catch (java.lang.NoClassDefFoundError ee) {
+				app.showErrorDialog(app.getError("ExportJarMissing"));
+				ee.printStackTrace();
+				}
 			}
 		};
 
@@ -1261,28 +1293,35 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	
 	public static void showPrintPreview(final Application  app) {
 		app.loadExportJar();
+		try {
+			Thread runner = new Thread() {
+				public void run() {			
+					app.setWaitCursor();
+					
+					try {
+						// use reflection for
+			  		    // new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
+			  		    //Class classObject = Class.forName("geogebra.export.PrintPreview");
+			  		    //Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
+			  		    //Class [] types = new Class[] {Application.class, Printable.class, int.class};
+			  	        //Constructor constructor = classObject.getDeclaredConstructor(types);   	        
+			  	        //constructor.newInstance(args); 				
+			  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);							
+	            	} catch (Exception e) {
+	            		Application.debug("Print preview not available");            		
+	            	}	
+	            	
+	            	app.setDefaultCursor();
+				}
+			};
+			runner.start();
+		}
 		
-		Thread runner = new Thread() {
-			public void run() {			
-				app.setWaitCursor();
-				
-				try {
-					// use reflection for
-		  		    // new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);		
-		  		    //Class classObject = Class.forName("geogebra.export.PrintPreview");
-		  		    //Object[] args = new Object[] { app , app.getEuclidianView(), new Integer(PageFormat.LANDSCAPE)};
-		  		    //Class [] types = new Class[] {Application.class, Printable.class, int.class};
-		  	        //Constructor constructor = classObject.getDeclaredConstructor(types);   	        
-		  	        //constructor.newInstance(args); 				
-		  		    new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);							
-            	} catch (Exception e) {
-            		Application.debug("Print preview not available");            		
-            	}	
-            	
-            	app.setDefaultCursor();
-			}
-		};
-		runner.start();
+		catch (java.lang.NoClassDefFoundError ee) {
+		app.showErrorDialog(app.getError("ExportJarMissing"));
+		ee.printStackTrace();
+		}
+
 	}
 	
 	public static void showAboutDialog(final Application app) {
