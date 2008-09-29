@@ -79,26 +79,49 @@ public class AlgoNormal extends AlgoElement {
     		num.setUndefined();
     }       
     
+    // http://www4.ncsu.edu/unity/users/p/pfackler/www/ECG790C/accuratecumnorm.pdf
     double getCDF(double x)
     {
-      double b1 =  0.319381530;
-      double b2 = -0.356563782;
-      double b3 =  1.781477937;
-      double b4 = -1.821255978;
-      double b5 =  1.330274429;
-      double p  =  0.2316419;
-      double c  =  0.39894228;
+    	
+	double Cumnorm, build, Exponential;
 
-      if(x >= 0.0) {
-          double t = 1.0 / ( 1.0 + p * x );
-          return (1.0 - c * Math.exp( -x * x / 2.0 ) * t *
-          ( t *( t * ( t * ( t * b5 + b4 ) + b3 ) + b2 ) + b1 ));
-      }
-      else {
-          double t = 1.0 / ( 1.0 - p * x );
-          return ( c * Math.exp( -x * x / 2.0 ) * t *
-          ( t *( t * ( t * ( t * b5 + b4 ) + b3 ) + b2 ) + b1 ));
-        }
+    	double XAbs = Math.abs(x);
+    	if (XAbs > 37) {
+    	Cumnorm = 0;
+    	} else {
+    	Exponential = Math.exp(-XAbs * XAbs / 2.0);
+    	if (XAbs < 7.07106781186547) {
+    	build = 3.52624965998911E-02 * XAbs + 0.700383064443688;
+    	build = build * XAbs + 6.37396220353165;
+    	build = build * XAbs + 33.912866078383;
+    	build = build * XAbs + 112.079291497871;
+    	build = build * XAbs + 221.213596169931;
+    	build = build * XAbs + 220.206867912376;
+    	Cumnorm = Exponential * build;
+    	build = 8.83883476483184E-02 * XAbs + 1.75566716318264;
+    	build = build * XAbs + 16.064177579207;
+    	build = build * XAbs + 86.7807322029461;
+    	build = build * XAbs + 296.564248779674;
+    	build = build * XAbs + 637.333633378831;
+    	build = build * XAbs + 793.826512519948;
+    	build = build * XAbs + 440.413735824752;
+    	Cumnorm = Cumnorm / build;
+    	} else {
+    	build = XAbs + 0.65;
+    	build = XAbs + 4 / build;
+    	build = XAbs + 3 / build;
+    	build = XAbs + 2 / build;
+    	build = XAbs + 1 / build;
+    	Cumnorm = Exponential / build / 2.506628274631;
+    	}
+    }
+    	if (x > 0) Cumnorm = 1 - Cumnorm;     
+    	
+    	return Cumnorm;
+    }
+    
+    double normalZ(double X) {
+    	return Math.exp(- Math.sqrt(X) / 2.0)/Math.sqrt(2 * Math.PI);
     }
 
 }
