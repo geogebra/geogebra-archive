@@ -19,14 +19,9 @@ package geogebra;
  */
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.Traceable;
-import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.plugin.GgbAPI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,14 +31,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
@@ -55,7 +46,6 @@ import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
 
-import geogebra.GgbAPI;		//Ulven 22.06.08. (not in geogebra.plugin.GgbAPI anymore)
 
 /**
  * Applet interface of GeoGebra.

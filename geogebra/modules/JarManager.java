@@ -40,9 +40,11 @@ public class JarManager {
 	// singleton instance of JarManager
 	private static JarManager singleton;
 	
+	// classloader of main application
+	private ClassLoader appClassLoader;
+	
 	// codebase where the jar files can be found (either http: or file:)
 	private URL codebase;
-	private String strCodebase;
 	
 	// application type: TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 	private int main_app_type;
@@ -73,45 +75,23 @@ public class JarManager {
 	 * instance even if we have multiple application instances (windows).
 	 */
 	private JarManager(Application app) {	
+		// use classloader of Application class: important for applets
+		appClassLoader = Application.class.getClassLoader();
+		
 		// init codebase and strCodebase
-		initCodeBase(app);
+		codebase = app.getCodeBase();	
 				
 		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 		initApplicationType(app);				
 			
 		// init localJar directory where the jar files can be found locally
 		initLocalJarDir();
-		
-		// geogebra.jar is always on classpath as it is loaded on startup
-		jarFileOnClasspath[Application.JAR_FILE_GEOGEBRA] = true;
-		jarFileTriedToPutOnClasspath[Application.JAR_FILE_GEOGEBRA] = true;
-		
+				
 		// TODO: remove
 		Application.debug("app type: " + main_app_type);
-		Application.debug("localJarDir: " + localJarDir);	
-		
-		
-		//TODO: for WebStart and applet: download jar files to local directory in background (thread)
-		//copyJarFilesToTempDir(app);
-		
+		Application.debug("localJarDir: " + localJarDir);								
 	}
-	
-	private void initCodeBase(Application app) {
-		codebase = app.getCodeBase();
-		strCodebase = codebase.toString();
 		
-		// local codebase URL: replace "%20" by spaces
-		if (strCodebase.startsWith("file")) {
-			try {
-				codebase = new URL(codebase.toString().replaceAll("%20", " "));
-				strCodebase = codebase.toString();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
- 		}
-	}
-	
 	/**
 	 * Returns whether the given jar file is on the classpath.
 	 * 
@@ -160,30 +140,32 @@ public class JarManager {
 		
 			case TYPE_APPLET:
 				// we download the needed jar file to the local directory first
-				//downloadFile(codebase, jarFileName, localJarDir);	
-								
-				
+				downloadFile(jarFileName, localJarDir);	
+												
 			case TYPE_LOCAL_JARS:
 				// no download needed for local jar files
-							
-				try {
-					URL jarFileURL = new URL(strCodebase + jarFileName);
-						
-					// add URL to classpath
-					jarFileOnClasspath[jarFileIndex] = ClassPathManipulator.addURL(jarFileURL, null);					
-						
-					// TODO: remove			
-					Application.debug("Added to classpath: " + strCodebase + jarFileName + ", success: " + jarFileOnClasspath[jarFileIndex]);
-					ClassPathManipulator.listClassPath();
-				} 
-				catch (Exception e) {
-					System.err.println("Could not add to classpath: " + strCodebase + jarFileName);					
-				}	
 				break;			
 		}
+						
+		// jar file is now in localJarDir 
+		File localJarFile = new File(localJarDir, jarFileName);
 		
-							
+		try {
+			// add jar file in localJarDir to classpath
+			jarFileOnClasspath[jarFileIndex] = 
+				localJarFile.exists() &&
+				ClassPathManipulator.addURL(localJarFile.toURI().toURL(), appClassLoader);					
+		} 
+		catch (Exception e) {
+			System.err.println("Could not add to classpath: " + localJarFile);
+			jarFileOnClasspath[jarFileIndex] = false;
+		}		
 		
+		
+		// TODO: remove			
+		Application.debug("Added to classpath: " + localJarFile + ", success: " + jarFileOnClasspath[jarFileIndex]);
+
+									
 		return jarFileOnClasspath[jarFileIndex];
 	}
 	
@@ -193,21 +175,20 @@ public class JarManager {
 	 * 
 	 * @return true if successful
 	 */
-	public synchronized static boolean downloadFile(URL codebase, String fileName, File destDir) {    	    
+	private synchronized boolean downloadFile(String fileName, File destDir) {    	    
 		try {					
 			// download jar file to localJarDir
 			File destFile = new File(destDir, fileName);
 			if (destFile.exists()) {
 				// TODO: remove
-				Application.debug("DID NOT download, file exists already: " + fileName + " in directory " + destDir);		
+				Application.debug("Loading file from CACHE: " + fileName + " in directory " + destDir);		
 				
 				// destination file exists already
 				return true;
 			}
 							
 			// download jar from URL to destFile
-			// TODO: check
-			URL src = new URL(codebase.toExternalForm() + fileName);			
+			URL src = new URL(codebase, fileName);			
 			CopyURLToFile.copyURLToFile(src, destFile);
 			
 			// TODO: remove
@@ -297,12 +278,7 @@ public class JarManager {
 		File tempDir = new File(baseDir + "geogebra" + Application.versionString + File.separator);		
 		if (tempDir.exists())	{
 			// TODO: remove
-			Application.debug("use existing local directory : " + tempDir);
-			
-			// TODO: remove
-			tempDir = new File(baseDir + "geogebra" + Math.random() + File.separator);
-			tempDir.mkdirs();
-			
+			Application.debug("use existing local directory : " + tempDir);			
 		} else {
 			// create local directory, e.g. /tmp/geogebra3.1.43.0/
 			try {				

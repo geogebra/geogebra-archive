@@ -600,10 +600,11 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			menuWindow = new JMenu(app.getMenu("Window"));
 			updateMenuWindow();
 			add(menuWindow);
-
-			 javax.swing.JMenu pim=app.getPluginMenu();
-             if(pim!=null){ add(pim);}     // H-P Ulven 2008-04-17
-
+						
+			if (app.getPluginManager() != null) {			
+				javax.swing.JMenu pim=app.getPluginManager().getPluginMenu();
+				if(pim!=null){ add(pim);}     // H-P Ulven 2008-04-17
+			}
 		}
 
 		// help

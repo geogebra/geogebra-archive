@@ -16,10 +16,10 @@ import geogebra.Application;
 import geogebra.View;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
-import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
@@ -470,7 +470,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();
-		resetImage = app.getInternalImage("view-refresh.png");
+		
 		this.showAxes[0] = showAxes[0];
 		this.showAxes[1] = showAxes[1];
 		this.showGrid = showGrid;
@@ -1582,9 +1582,16 @@ public class EuclidianView extends JPanel implements View, Printable {
 			drawAxes(g);
 
 		if (app.showResetIcon()) {
-			g.drawImage(resetImage, width - 18, 2, null);
+			g.drawImage(getResetImage(), width - 18, 2, null);
 		}
 	}		
+	
+	private Image getResetImage() {
+		if (resetImage == null) {
+			resetImage = app.getInternalImage("view-refresh.png");
+		}
+		return resetImage;
+	}
 
 	final protected void clearBackground(Graphics2D g) {
 		g.setColor(bgColor);

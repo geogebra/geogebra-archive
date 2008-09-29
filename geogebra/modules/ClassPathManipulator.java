@@ -94,15 +94,17 @@ public final class ClassPathManipulator {
 	}// addURL(URL)
 
 	/** Lists the URLs int the Classpath */
-	public static void listClassPath() {
-		Application.debug(getClassPath());
+	public static void listClassPath(ClassLoader cl) {
+		Application.debug(getClassPath(cl));
 	}// listClassPath()
 
-	public static String getClassPath() {
+	public static String getClassPath(ClassLoader loader) {
 		String urlsstr = "Classpath:" + nl;
 		Class[] emptyparameter = new Class[] {};
-		URLClassLoader sysloader = (URLClassLoader) ClassLoader
-				.getSystemClassLoader();
+		
+		if (loader == null)
+			loader = ClassLoader.getSystemClassLoader();
+		URLClassLoader sysloader = (URLClassLoader) loader;	
 		Class sysclass = URLClassLoader.class;
 		URL[] urls = null;
 		try {

@@ -60,7 +60,7 @@ public class GgbAPI {
     private Kernel              kernel=             null;
     private Construction        construction=       null;
     private AlgebraProcessor    algebraprocessor=   null;
-    private PluginManager       pluginmanager=      null;    
+   // private PluginManager       pluginmanager=      null;    
     ///// ----- Interface ----- /////
    
    /** Constructor:
@@ -72,7 +72,7 @@ public class GgbAPI {
         kernel=app.getKernel();
         algebraprocessor=kernel.getAlgebraProcessor();
         construction=kernel.getConstruction();
-        pluginmanager=app.getPluginManager();
+    //    pluginmanager=app.getPluginManager();
     }//Constructor
     
     /** Returns reference to Application */
@@ -88,12 +88,12 @@ public class GgbAPI {
     public AlgebraProcessor getAlgebraProcessor(){return this.algebraprocessor;}
 
     /** Returns reference to PluginManager */
-    public PluginManager getPluginManager() {
-    	if(pluginmanager==null){
-    		this.pluginmanager=app.getPluginManager();
-    	}//if not initialized
-    	return this.pluginmanager;
-    }//getPluginManager()
+//    public PluginManager getPluginManager() {
+//    	if(pluginmanager==null){
+//    		this.pluginmanager=app.getPluginManager();
+//    	}//if not initialized
+//    	return this.pluginmanager;
+//    }//getPluginManager()
 
     /** Returns reference to ClassPathManipulator*/
     public ClassPathManipulator getClassPathManipulator(){

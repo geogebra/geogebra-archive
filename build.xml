@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Sep 27, 2008
 -->
-<project default="geogebra-test">
+<project default="geogebra">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>

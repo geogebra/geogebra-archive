@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 import geogebra.Application;
 import geogebra.MyError;
-import geogebra.View;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -154,7 +153,6 @@ public class Construction {
 		geoTable.clear();
 		geoTable.put("xAxis", xAxis);
 		geoTable.put("yAxis", yAxis);
-		updateLocalAxesNames();
 	}
 
 	public void updateLocalAxesNames() {

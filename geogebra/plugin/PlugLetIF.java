@@ -1,6 +1,5 @@
 package geogebra.plugin;
 
-import geogebra.GgbAPI;
 
 /* 
  GeoGebra - Dynamic Mathematics for Schools

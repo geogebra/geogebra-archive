@@ -25,8 +25,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
-import geogebra.modules.ClassPathManipulator;
 import geogebra.modules.JarManager;
+import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.util.CopyURLToFile;
 import geogebra.util.ImageManager;
@@ -90,8 +90,8 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// version
-	public static final String buildDate = "September 24, 2008";
-	public static final String versionString = "3.1.43.0";
+	public static final String buildDate = "September 28, 2008";
+	public static final String versionString = "3.1.44.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
@@ -291,12 +291,10 @@ public abstract class Application implements KeyEventDispatcher {
 	protected boolean horizontalSplit = true; // 
 
 	private ArrayList selectedGeos = new ArrayList();
-
-	// plugins H-P Ulven
-	private GgbAPI ggbapi = null;
-	private PluginManager pluginmanager = null;
-
+		
 	private JarManager jarmanager = null;
+	private GgbAPI ggbapi = null;	
+	private PluginManager pluginmanager = null;	
 
 	public Application(String[] args, GeoGebra frame, boolean undoActive) {
 		this(args, frame, null, undoActive);
@@ -339,9 +337,9 @@ public abstract class Application implements KeyEventDispatcher {
 		handleOptionArgs(args); // note: the locale is set here too
 		imageManager = new ImageManager(mainComp);
 
-		if (isApplet)
+		if (isApplet) {
 			setApplet(applet);
-		else {
+		} else {
 			// frame
 			setFrame(frame);
 		}
@@ -392,18 +390,13 @@ public abstract class Application implements KeyEventDispatcher {
 				.addKeyEventDispatcher(this);
 
 		// Mathieu Blossier - place for code to test 3D packages
+	
+		// init plugin manager for applications
+		if (!isApplet)
+			pluginmanager = getPluginManager();
 
-		// H-P Ulven 2008-04-16
-		// plugins
-		// Last in constructor, has to be sure everything else is in place:
-		
-		// TODO: add plugin manager again, for some reason it adds all jar files in
-		// the same directory to the classpath which it shouldn't do
-		ggbapi = new GgbAPI(this);
-		//pluginmanager = new PluginManager(this);
-
-		// TODO: add initInBackground again
-		//initInBackground();
+		// load all jar files in background and init dialogs
+		initInBackground();
 	}
 
 	/**
@@ -790,8 +783,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setApplet(GeoGebraAppletBase applet) {
 		isApplet = true;
 		this.applet = applet;
-		mainComp = applet;
-		rightClickEnabled = false;
+		mainComp = applet;		
 	}
 
 	public void setShowResetIcon(boolean flag) {
@@ -1290,19 +1282,8 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Jar managing
 	 */
 
-	final public boolean loadPropertiesJar() {	
-		if (jarmanager.isOnClassPath(JAR_FILE_GEOGEBRA_PROPERTIES))
-			return true;
-		
-		// avoid loading the properties jar file in applets when it's not really needed
-		boolean propertiesNeeded = 
-			showAlgebraView || showAlgebraInput || showSpreadsheet || showCAS ||
-			showMenuBar || showToolBar;
-		
-		if (propertiesNeeded) 
-			return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);	
-		else
-			return false;		
+	final public boolean loadPropertiesJar() {		
+		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);			
 	}
 
 	final public boolean loadExportJar() {
@@ -1330,7 +1311,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return key;
 
 		if (rbplain == null) {
-			rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
+			initPlainResourceBundle();
 		}
 
 		try {
@@ -1338,6 +1319,11 @@ public abstract class Application implements KeyEventDispatcher {
 		} catch (Exception e) {
 			return key;
 		}
+	}
+	
+	private void initPlainResourceBundle() {
+		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
+		kernel.updateLocalAxesNames();
 	}
 
 	// Michael Borcherds 2008-03-25
@@ -2012,9 +1998,6 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	public void setRightClickEnabled(boolean flag) {
 		rightClickEnabled = flag;
-		
-		if (flag)
-			getGuiManager();
 	}
 
 	final public boolean isRightClickEnabled() {
@@ -2879,24 +2862,20 @@ public abstract class Application implements KeyEventDispatcher {
 	 * PluginManager gets API with this H-P Ulven 2008-04-16
 	 */
 	public GgbAPI getGgbApi() {
-		return this.ggbapi;
+		if (ggbapi == null) {
+			ggbapi = new GgbAPI(this);	
+		}
+		
+		return ggbapi;
 	}
-
-	/**
-	 * MenuBarImpl gets pluginmenu from Application with this H-P Ulven
-	 * 2008-04-16
-	 */
-	public javax.swing.JMenu getPluginMenu() {
-		if (pluginmanager != null)
-			return pluginmanager.getPluginMenu();
-		else 
-			return null;
-	}// getPluginMenu()
 
 	/*
 	 * GgbAPI needs this H-P Ulven 2008-05-25
 	 */
 	public PluginManager getPluginManager() {
+		if (pluginmanager == null) {
+			pluginmanager = new PluginManager(this);
+		}		
 		return pluginmanager;
 	}// getPluginManager()
 
