@@ -71,7 +71,7 @@ public class CASContextMenuRow extends JPopupMenu
 			int columns = table.getModel().getColumnCount();
 			System.out.println("InsertAbove Action Performed " + (row1-1));
 			
-			table.insertRow(row1-1, 0);
+			table.insertRow(row1-1, 0, null);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class CASContextMenuRow extends JPopupMenu
 		public void actionPerformed(ActionEvent e) {
 			int columns = table.getModel().getColumnCount();
 			System.out.println("InsertBelow Action Performed " + row1);
-			table.insertRow(row1, 0);
+			table.insertRow(row1, 0, null);
 		}
 	}
 

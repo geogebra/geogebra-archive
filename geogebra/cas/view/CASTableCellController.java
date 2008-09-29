@@ -70,7 +70,7 @@ public class CASTableCellController implements KeyListener {
 							.setRowHeight(selectedRow, curCell
 									.setLineInvisiable());
 					if (curCell.getInput().length() != 0)
-						table.insertRow(selectedRow, selectedCol);
+						table.insertRow(selectedRow, selectedCol, null);
 					else
 						curCell.setInputAreaFocused();
 				}
@@ -86,7 +86,7 @@ public class CASTableCellController implements KeyListener {
 				// Insert a new line here
 				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
 				if (curCell.getInput().length() != 0)
-					table.insertRow(selectedRow, selectedCol);
+					table.insertRow(selectedRow, selectedCol, null);
 				else
 					curCell.setInputAreaFocused();
 			}
@@ -161,7 +161,7 @@ public class CASTableCellController implements KeyListener {
 					table
 							.setRowHeight(selectedRow, curCell
 									.setLineInvisiable());
-					table.insertRow(selectedRow, selectedCol);
+					table.insertRow(selectedRow, selectedCol, null);
 				}
 			}
 
@@ -178,7 +178,7 @@ public class CASTableCellController implements KeyListener {
 				} else { // If the focus is on the first row & that row is
 							// empty, we create a new row
 					if (curCell.getInput().length() != 0)
-						table.insertRow(-1, CASPara.contCol);
+						table.insertRow(-1, CASPara.contCol, null);
 					System.out.println("This is the first row: " + selectedRow);
 				}
 			}

@@ -58,9 +58,12 @@ public class CASTable extends JTable {
 	 * Function: Insert a row after the "selectedRow row", and set the focus at
 	 * the new row
 	 */
-	public void insertRow(int selectedRow, int selectedCol) {
-
-		CASTableCellValue newValue = new CASTableCellValue();
+	public void insertRow(int selectedRow, int selectedCol, CASTableCellValue inValue) {
+		CASTableCellValue newValue;
+		if(inValue==null)
+			newValue = new CASTableCellValue();
+		else
+			newValue = inValue;
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
@@ -108,8 +111,9 @@ public class CASTable extends JTable {
 			tableModel.removeRow(i);
 		this.repaint();
 		
-		if (tableModel.getRowCount() == 0)
-			insertRow(-1, CASPara.contCol);
+		this.getRowCount();
+//		if (tableModel.getRowCount() == 0)
+//			insertRow(-1, CASPara.contCol);
 	}
 
 	/*
@@ -119,7 +123,7 @@ public class CASTable extends JTable {
 		tableModel.removeRow(row);
 		this.repaint(); // Update the table
 		if (tableModel.getRowCount() == 0)
-			insertRow(-1, CASPara.contCol);
+			insertRow(-1, CASPara.contCol, null);
 		else
 			setFocusAtRow(row, CASPara.contCol);
 	}

@@ -320,11 +320,11 @@ public class CASView extends JComponent {
 					// consoleTable.repaint();
 				}
 
-				System.out.println("Selected number of rows is: "
-						+ consoleTable.getSelectedRowCount());
-				for (int i = 0; i < consoleTable.getSelectedRowCount(); i++) {
-					System.out.println(consoleTable.getSelectedRows()[i]);
-				}
+//				System.out.println("Selected number of rows is: "
+//						+ consoleTable.getSelectedRowCount());
+//				for (int i = 0; i < consoleTable.getSelectedRowCount(); i++) {
+//					System.out.println(consoleTable.getSelectedRows()[i]);
+//				}
 
 			}
 			// RIGHT CLICK

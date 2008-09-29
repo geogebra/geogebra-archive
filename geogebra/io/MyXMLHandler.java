@@ -373,9 +373,14 @@ public class MyXMLHandler implements DocHandler {
 			table.deleteAllRow();
 			
 			Iterator it = cellPairList.iterator();
+			boolean firstElementFlag = true;
 			while (it.hasNext()) {
 				geogebra.cas.view.CASTableCellValue cellPair = (geogebra.cas.view.CASTableCellValue) it.next();
-				table.insertRow(cellPair);
+				if(firstElementFlag){
+					table.insertRow(-1, 0, cellPair);
+					firstElementFlag = false;
+				}else
+					table.insertRow(cellPair);
 			}
 			
 			//Set the focus at the right cell
