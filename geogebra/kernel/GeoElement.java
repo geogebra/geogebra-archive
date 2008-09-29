@@ -3172,51 +3172,34 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 
 	private int traceColumn1 = -1;
-	private int traceColumn2 = -1;
 	private double lastTrace1 = Math.random();
 	private double lastTrace2 = Math.random();
 	
 	public void resetTraceColumns() {
 		traceColumn1 = -1;
-		traceColumn2 = -1;		
 	}
 	
 	public String getTraceColumn1() {
 		if (app.showSpreadsheetView() && traceColumn1 == -1) {
 			traceColumn1 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
-			
-			//TODO: take care of this in spreadsheet.add()
-			//sv.incrementHighestUsedColumn(); // reserve column
 		}
 		return GeoElement.getSpreadsheetColumnName(traceColumn1);
 	}
 		
 	public String getTraceColumn2() {
-		if (app.showSpreadsheetView() && traceColumn2 == -1) {
-			traceColumn2 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
-			
-			//TODO: take care of this in spreadsheet.add()
-			// sv.incrementHighestUsedColumn(); // reserve column
+		if (app.showSpreadsheetView() && traceColumn1 == -1) {
+			traceColumn1 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
 		}
-		return GeoElement.getSpreadsheetColumnName(traceColumn2);
+		return GeoElement.getSpreadsheetColumnName(traceColumn1 + 1);
 	}
 	
 	public int getTraceRow() {
 		if (traceColumn1 == -1) return -1;
 		
-		if (app.showSpreadsheetView()) return -1;
+		if (!app.showSpreadsheetView()) return -1;
 		
 		return app.getGuiManager().getSpreadsheetTraceRow(traceColumn1);
 	}
-		
-	//TODO: this needs to be taken care of in the spreadsheet itself
-//	public void incrementTraceRow() {
-//		if (traceColumn1 == -1) return;
-//		
-//		if (app.showSpreadsheetView()) return;
-//		
-//		sv.incrementTraceRow(traceColumn1);
-//	}
 		
 	public double getLastTrace1() {
 		return lastTrace1;

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -521,7 +522,6 @@ public abstract class Drawable {
 	
 	public void recordToSpreadsheet(GeoElement geo) {
         // record to spreadsheet tool & trace to spreadsheet
-    	//if (geo == view.getEuclidianController().recordObject)
     	Construction cons = view.getKernel().getConstruction();
     	{
     		String row;
@@ -544,24 +544,27 @@ public abstract class Drawable {
     			break;*/
     			
     		case GeoElement.GEO_CLASS_POINT:
-    	    	//Application.debug("GEO_CLASS_POINT");   		
+    	    	Application.debug("GEO_CLASS_POINT");   		
 	    		GeoPoint P = (GeoPoint)geo;
 		    	P.getInhomCoords(coords);
 		    	
-		    	col = P.getTraceColumn1(); // call before getTraceRow()
-		    	row = P.getTraceRow() + "";
 		    	
-		    	if (P.getLastTrace1() != coords[0] && P.getLastTrace2() != coords[1]) {
+		    	if (P.getLastTrace1() != coords[0] || P.getLastTrace2() != coords[1]) {
+			    	col = P.getTraceColumn1(); // call before getTraceRow()
+			    	row = P.getTraceRow() + "";
+	    	    	Application.debug(col+row);   		
 			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
 			    	traceCell.setAuxiliaryObject(true);
-			    	GeoNumeric traceCell2 = new GeoNumeric(cons,P.getTraceColumn2()+row,coords[1]);
+			    	
+			    	col = P.getTraceColumn2(); // call before getTraceRow()
+	    	    	Application.debug(col+row);   		
+			    	
+			    	GeoNumeric traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
 			    	traceCell2.setAuxiliaryObject(true);
 			    	
 			    	P.setLastTrace1(coords[0]);
 			    	P.setLastTrace2(coords[1]);
 			    	
-			    	// TODO: handle in spreadsheet
-			    	//P.incrementTraceRow();
 		    	}
 	    	break;
 	    	
@@ -571,10 +574,10 @@ public abstract class Drawable {
 
 
 		    	vector.getInhomCoords(coords);
-		    	col = vector.getTraceColumn1();
-		    	row = vector.getTraceRow() + "";
 		    	
-		    	if (vector.getLastTrace1() != coords[0] && vector.getLastTrace2() != coords[1]) {
+		    	if (vector.getLastTrace1() != coords[0] || vector.getLastTrace2() != coords[1]) {
+			    	col = vector.getTraceColumn1();
+			    	row = vector.getTraceRow() + "";
 			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
 			    	traceCell.setAuxiliaryObject(true);
 			    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
@@ -583,8 +586,6 @@ public abstract class Drawable {
 			    	vector.setLastTrace1(coords[0]);
 			    	vector.setLastTrace2(coords[1]);
 			    	
-			    	// TODO: handle in spreadsheet
-			    	//vector.incrementTraceRow();
 		    	}
     	    	 	    			
     			break;
