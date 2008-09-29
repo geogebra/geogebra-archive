@@ -40,6 +40,9 @@
 # needed so that SymbolLoader can find Des12.gif etc
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
+# needed so that MenuBarImpl can find _license.txt
+-keep class geogebra.gui.menubar.MenubarImpl { <methods>; }
+
 
 #####
 # Plugin part
