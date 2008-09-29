@@ -1429,7 +1429,7 @@ public class EuclidianController implements MouseListener,
 			case EuclidianView.MODE_ALGEBRA_INPUT:
 				// tell properties dialog
 				if (hits.size() > 0 &&
-					app.hasApplicationGUImanager() &&
+					app.hasGuiManager() &&
 					app.getGuiManager().isPropertiesDialogSelectionListener()) 
 				{
 					GeoElement geo = (GeoElement) hits.get(0);

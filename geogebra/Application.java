@@ -385,12 +385,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// init undo
 		setUndoActive(undoActive);
-		INITING = false;
-
-		// actions are only needed in applet if right clicking, menu bar or
-		// toolbar are active
-		if (!isApplet || rightClickEnabled || showToolBar || showMenuBar)
-			getGuiManager().initShowAxesGridActions();
+		INITING = false;	
 
 		// for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -407,7 +402,8 @@ public abstract class Application implements KeyEventDispatcher {
 		ggbapi = new GgbAPI(this);
 		//pluginmanager = new PluginManager(this);
 
-		initInBackground();
+		// TODO: add initInBackground again
+		//initInBackground();
 	}
 
 	/**
@@ -422,13 +418,23 @@ public abstract class Application implements KeyEventDispatcher {
 	final public synchronized GuiManager getGuiManager() {
 		if (appGuiManager == null) {
 			loadGUIJar();
-			appGuiManager = new geogebra.gui.DefaultGuiManager(this);
+			
+			appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);					
+			
+//			// this code wraps the creation of the DefaultGuiManager and is
+//			// necessary to allow dynamic loading of this class
+//			ActionListener al = new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);					
+//				}				
+//			};			
+//			al.actionPerformed(null);				
 		}
 
 		return appGuiManager;
 	}
 
-	final public boolean hasApplicationGUImanager() {
+	final public boolean hasGuiManager() {
 		return appGuiManager != null;
 	}
 
@@ -785,6 +791,7 @@ public abstract class Application implements KeyEventDispatcher {
 		isApplet = true;
 		this.applet = applet;
 		mainComp = applet;
+		rightClickEnabled = false;
 	}
 
 	public void setShowResetIcon(boolean flag) {
@@ -1832,6 +1839,7 @@ public abstract class Application implements KeyEventDispatcher {
 			getGuiManager().attachAlgebraView();
 			getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
 		} else {
+			if (hasGuiManager())
 			getGuiManager().detachAlgebraView();
 		}
 
@@ -2004,6 +2012,9 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	public void setRightClickEnabled(boolean flag) {
 		rightClickEnabled = flag;
+		
+		if (flag)
+			getGuiManager();
 	}
 
 	final public boolean isRightClickEnabled() {
@@ -2047,7 +2058,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenubar() {
-		if (!showMenuBar || !hasApplicationGUImanager())
+		if (!showMenuBar || !hasGuiManager())
 			return;
 
 		getGuiManager().updateMenubar();
@@ -2056,14 +2067,14 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void updateSelection() {
-		if (!showMenuBar || !hasApplicationGUImanager())
+		if (!showMenuBar || !hasGuiManager())
 			return;
 
 		getGuiManager().updateMenubarSelection();
 	}
 
 	public void updateMenuWindow() {
-		if (!showMenuBar || !hasApplicationGUImanager())
+		if (!showMenuBar || !hasGuiManager())
 			return;
 
 		getGuiManager().updateMenuWindow();

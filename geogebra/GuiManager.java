@@ -211,9 +211,6 @@ public interface GuiManager {
 
 	public boolean loadFile(final File file, boolean isMacroFile);
 
-	
-	public void initShowAxesGridActions() ;
-
 	public void updateActions() ;
 
 	public int getMenuBarHeight() ;

@@ -502,7 +502,7 @@ public class Construction {
 		
 		if (didUpdate) {
 			Application app = kernel.getApplication();
-			if (app.hasApplicationGUImanager())
+			if (app.hasGuiManager())
 				app.getGuiManager().updateConstructionProtocol();
 		}
 

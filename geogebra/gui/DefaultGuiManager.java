@@ -398,7 +398,9 @@ public class DefaultGuiManager implements GuiManager {
 	}
 
 	public void setLabels() {
-		initShowAxesGridActions();
+		// reinit actions to update labels
+		showAxesAction = null;
+		initActions();
 
 		if (app.showMenuBar()) {
 			initMenubar();
@@ -1511,7 +1513,9 @@ public class DefaultGuiManager implements GuiManager {
 
 	
 
-	public void initShowAxesGridActions() {
+	private void initActions() {	
+		if (showAxesAction != null) return;
+		
 		showAxesAction = new AbstractAction(app.getMenu("Axes"),
 				app.getImageIcon("axes.gif")) {
 			private static final long serialVersionUID = 1L;
@@ -1570,15 +1574,15 @@ public class DefaultGuiManager implements GuiManager {
 				System.gc();
 			}
 		};
-
+		
 		updateActions();
 	}
 
 	public void updateActions() {
-		if (undoAction == null || kernel == null || !app.isUndoActive())
-			return;
-		undoAction.setEnabled(kernel.undoPossible());
-		redoAction.setEnabled(kernel.redoPossible());
+		if (app.isUndoActive() && undoAction != null) {
+			undoAction.setEnabled(kernel.undoPossible());
+			redoAction.setEnabled(kernel.redoPossible());
+		}				
 	}
 
 	public int getMenuBarHeight() {
@@ -1596,10 +1600,12 @@ public class DefaultGuiManager implements GuiManager {
 	}
 
 	public AbstractAction getShowAxesAction() {
+		initActions();
 		return showAxesAction;
 	}
 
 	public AbstractAction getShowGridAction() {
+		initActions();
 		return showGridAction;
 	}
 
@@ -1904,10 +1910,12 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		public AbstractAction getRedoAction() {
+			initActions();
 			return redoAction;
 		}
 
 		public AbstractAction getUndoAction() {		
+			initActions();
 			return undoAction;
 		}
 	    	 

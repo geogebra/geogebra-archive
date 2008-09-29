@@ -39,7 +39,7 @@ public class CASContextMenuRow extends JPopupMenu
 		row1 = row01;
 		row2 = row02;
 		selectedColumns = selected0;
-		app = table.kernel.getApplication();
+		app = table.app;
 
 		initMenu();
 	}

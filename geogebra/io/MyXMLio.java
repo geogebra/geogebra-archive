@@ -213,7 +213,7 @@ public class MyXMLio {
 
 		if (clearConstruction) {
 			// clear toolbar definition
-			if (app.hasApplicationGUImanager()) {
+			if (app.hasGuiManager()) {
 				app.getGuiManager().setToolBarDefinition(null);
 			}
 

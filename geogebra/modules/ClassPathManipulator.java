@@ -68,6 +68,7 @@ public final class ClassPathManipulator {
 			loader = ClassLoader.getSystemClassLoader();
 		URLClassLoader sysloader = (URLClassLoader) loader;
 		Class sysclass = URLClassLoader.class;
+		
 		try {
 			Method method = sysclass.getDeclaredMethod("addURL", parameter);
 			method.setAccessible(true);
