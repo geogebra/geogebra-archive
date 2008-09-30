@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Sep 27, 2008
 -->
-<project default="geogebra">
+<project default="geogebra-test">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
@@ -50,7 +50,7 @@ office@geogebra.org
 	
 	<!-- main target -->
 	<target name="geogebra-test" 
-		depends="clean, ggb-jar-files, sign-pack-only">	  
+		depends="clean, ggb-jar-files">	  
 	</target>
 	
 	<target name="stripComments">

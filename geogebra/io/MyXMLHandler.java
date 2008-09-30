@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
+import geogebra.CasManager;
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
@@ -51,6 +52,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+
+import javax.swing.JComponent;
 
 import org.xml.sax.SAXException;
 
@@ -365,43 +368,20 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 	}
-
+	
 	private void processCellPairList() {
-
 		try {
-			app.loadCASJar();
-			geogebra.cas.view.CASTable table = ((geogebra.cas.view.CASView) app
-					.getCasView()).getConsoleTable();
-			// Delete the current rows
-			table.deleteAllRow();
-
-			if (cellPairList == null) {
-				geogebra.cas.view.CASTableCellValue cellPair = new geogebra.cas.view.CASTableCellValue();
-				table.insertRow(-1, 0, cellPair);
-			} else {
-				Iterator it = cellPairList.iterator();
-				boolean firstElementFlag = true;
-				while (it.hasNext()) {
-					geogebra.cas.view.CASTableCellValue cellPair = (geogebra.cas.view.CASTableCellValue) it
-							.next();
-					if (firstElementFlag) {
-						table.insertRow(-1, 0, cellPair);
-						firstElementFlag = false;
-					} else
-						table.insertRow(cellPair);
-				}
-			}
-
-			// Set the focus at the right cell
-//			table.setFocusAtRow(table.getRowCount() - 1,
-//					geogebra.cas.view.CASPara.contCol);
-		} catch (Exception e) {
+			app.getCasView().initCellPairs(cellPairList);
+			cellPairList.clear();
+		} 
+		catch (Exception e) {
 			cellPairList.clear();
 			e.printStackTrace();
 			throw new MyError(app, "processCellPairList: " + e.toString());
-		}
-		cellPairList.clear();
+		}		
 	}
+
+	
 
 	// ====================================
 	// <geogebra>
@@ -667,7 +647,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleCASSize(Object casView, LinkedHashMap attrs) {
+	private boolean handleCASSize(CasManager casView, LinkedHashMap attrs) {
 		if (app.isApplet())
 			return true;
 
@@ -676,12 +656,11 @@ public class MyXMLHandler implements DocHandler {
 			int height = Integer.parseInt((String) attrs.get("height"));
 
 			// it seems that this statement does not work, because now cas use
-			// its own frame. --Quan Yuan
-			app.loadCASJar();
-			((geogebra.cas.view.CASView) casView)
-					.setPreferredSize(new Dimension(width, height));
+			// its own frame. --Quan Yuan		
+			((JComponent) app.getCasView()).setPreferredSize(new Dimension(width, height));
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

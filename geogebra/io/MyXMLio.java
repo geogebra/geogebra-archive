@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
+import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -673,8 +674,8 @@ public class MyXMLio {
 		sb.append(c.getXML());
 
 		// save cas session
-		if (app.getCasView() != null)
-			sb.append(((geogebra.cas.view.CASView) app.getCasView()).getSessionXML());
+		if (app.hasCasView())
+			sb.append(app.getCasView().getSessionXML());
 
 		sb.append("</geogebra>");
 

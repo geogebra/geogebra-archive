@@ -1,8 +1,9 @@
 package geogebra.cas.view;
 
 import geogebra.Application;
+import geogebra.CasManager;
+import geogebra.MyError;
 import geogebra.cas.GeoGebraCAS;
-import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.Kernel;
 
 import java.awt.BorderLayout;
@@ -15,17 +16,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -41,7 +40,7 @@ import javax.swing.table.TableCellRenderer;
  * @author Quan Yuan
  * 
  */
-public class CASView extends JComponent {
+public class CASView extends JComponent implements CasManager {
 
 	private Kernel kernel;
 
@@ -518,5 +517,39 @@ public class CASView extends JComponent {
 
 		sb.append("</casSession>\n");
 		return sb.toString();
+	}
+
+	public JComponent getCASViewComponent() {
+		return this;
+	}
+	
+	/**
+	 * Loads
+	 * @param cellPairList
+	 */
+	public void initCellPairs(LinkedList cellPairList) {
+		// Delete the current rows
+		consoleTable.deleteAllRow();
+
+		if (cellPairList == null) {
+			CASTableCellValue cellPair = new CASTableCellValue();
+			consoleTable.insertRow(-1, 0, cellPair);
+		} else {
+			Iterator it = cellPairList.iterator();
+			boolean firstElementFlag = true;
+			while (it.hasNext()) {
+				CASTableCellValue cellPair = (CASTableCellValue) it.next();
+				if (firstElementFlag) {
+					consoleTable.insertRow(-1, 0, cellPair);
+					firstElementFlag = false;
+				} else
+					consoleTable.insertRow(cellPair);
+			}
+		}
+		
+		// Set the focus at the right cell
+//		table.setFocusAtRow(table.getRowCount() - 1,
+//				geogebra.cas.view.CASPara.contCol);
+				
 	}
 }

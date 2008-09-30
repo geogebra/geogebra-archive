@@ -227,7 +227,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private GeoGebraAppletBase applet;
 	
 	private GuiManager appGuiManager;
-	private JComponent casView;
+	private CasManager casView;
 
 	private Component mainComp;
 	private boolean isApplet = false;
@@ -1858,19 +1858,11 @@ public abstract class Application implements KeyEventDispatcher {
 		showCAS = flag;
 
 		if (casView == null) {
-			loadCASJar();
 			
-			// this code wraps the creation of the cas view and is
-			// necessary to allow dynamic loading of this class
-			ActionListener al = new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(Application.this);					
-				}				
-			};			
-			al.actionPerformed(null);	
+			getCasView();
 			
 			// create JFrame for CAS view
-			casFrame = createCasFrame(casView);
+			casFrame = createCasFrame(casView.getCASViewComponent());
 		}
 
 		// show or hide CAS window
@@ -1883,8 +1875,25 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private JFrame casFrame;
 
-	public JComponent getCasView() {
+	public CasManager getCasView() {
+		if (casView == null) {
+			loadCASJar();
+			
+			// this code wraps the creation of the cas view and is
+			// necessary to allow dynamic loading of this class
+			ActionListener al = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					casView = new geogebra.cas.view.CASView(Application.this);					
+				}				
+			};			
+			al.actionPerformed(null);	
+		}
+		
 		return casView;
+	}
+	
+	public boolean hasCasView() {
+		return casView != null;
 	}
 
 	private static JFrame createCasFrame(JComponent casView) {

@@ -22,5 +22,5 @@ public interface View {
 	public void updateAuxiliaryObject(GeoElement geo);
 	public void repaintView();   
 	public void reset(); 
-	public void clearView(); 	
+	public void clearView();
 }

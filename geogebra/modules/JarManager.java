@@ -27,7 +27,10 @@ import geogebra.Application;
 import geogebra.util.CopyURLToFile;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 public class JarManager {
 	
@@ -80,7 +83,7 @@ public class JarManager {
 		
 		// init codebase and strCodebase
 		codebase = app.getCodeBase();	
-				
+		 				
 		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 		initApplicationType(app);				
 			
@@ -211,12 +214,18 @@ public class JarManager {
 		} 
 		else {
 			// check code base of application
-			// e.g. http://... or file://...
-			String strCodeBase = codebase.toString();
-			if (strCodeBase.startsWith("file")) {				
+			// e.g. http://... or file://...					
+			if (codebase.toString().startsWith("file")) {
+				
+				  try {		
+					  // decode special %xy characters in local codebase
+					  codebase = new URL(URLDecoder.decode(codebase.toString(), "UTF-8"));
+	              }
+	              catch (Exception e) {}
+				
 				// check if jar file exists
 				File main_jar_file = new File(codebase.getFile(), 
-						Application.JAR_FILES[Application.JAR_FILE_GEOGEBRA]);							
+						Application.JAR_FILES[Application.JAR_FILE_GEOGEBRA]);															
 				
 				if (main_jar_file.exists()) {
 					// LOCAL JARS
@@ -248,10 +257,10 @@ public class JarManager {
 		switch (main_app_type) {
 			case TYPE_LOCAL_JARS:
 			case TYPE_LOCAL_NO_JARS:
-				// local jar files: use local directory of jar files
+				// local jar files: use local directory of jar files				
 				localJarDir = new File(codebase.getFile());
 				break;
-				
+
 			case TYPE_APPLET:
 			case TYPE_WEBSTART:			
 				// applet or webstart: we need to use a local directory to download jar files

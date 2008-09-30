@@ -770,6 +770,14 @@ public class AlgebraView extends JTree implements View {
 		}
 
 	}  // MyEditor
+
+	public String getContentXML() {		
+		return "";
+	}
+
+	public String getGuiXML() {		
+		return "";
+	}
 	
 	
 	
