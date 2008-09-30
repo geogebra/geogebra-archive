@@ -24,9 +24,14 @@ local directory (in system's temp directory) to keep jar files of a version for 
 */
 
 import geogebra.Application;
+import geogebra.GeoGebra;
+import geogebra.gui.menubar.Menubar;
 import geogebra.util.CopyURLToFile;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -306,157 +311,25 @@ public class JarManager {
 	}
 	
 	
-	/*
-		//Application.debug("java.io.tmpdir = "+tempDir);
-        //String webstartCodebase=null;
-        
-        if (!Application.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm()
-        		.toLowerCase(Locale.US).endsWith(".jar")) {
-        	Application.debug("not running from jar - set IS_WEBSTART=true");
-            IS_WEBSTART=true;
-        }
-       
+	/**
+	 * Loads text file and returns content as String.
+	 */
+	public String loadTextFile(String s) {
+        StringBuffer sb = new StringBuffer();        
         try {
-        	if (!IS_WEBSTART)
-        	{
-        		javax.jnlp.BasicService basicService = (javax.jnlp.BasicService)javax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
-        		java.net.URL codeBaseURL = basicService.getCodeBase();
-        		//URL url = new java.net.URL(codeBaseURL,"");
-        		//webstartCodebase=codeBaseURL.toString();
-        		IS_WEBSTART=true;
-        		Application.debug("JNLP codebase "+codeBaseURL.toString());
-        	}
-            // JMathTeX files specified in the JNLP file, don't need to add them to classpath
-            // JSMATHTEX_LOADED=(Util.getJavaVersion() >= 1.5);
-            
-            // all specified in the JNLP file, don't need to be added to classpath
-            GEOGEBRA_EXPORT_PRESENT=true;
-            GEOGEBRA_EXPORT_LOADED=true;
-            GEOGEBRA_PROPERTIES_PRESENT=true;
-            GEOGEBRA_PROPERTIES_LOADED=true;
-            GEOGEBRA_CAS_PRESENT=true;
-            GEOGEBRA_CAS_LOADED=true;
-            GEOGEBRA_GUI_PRESENT=true;
-            GEOGEBRA_GUI_LOADED=true;
-            //GEOGEBRA_SPREADSHEET_PRESENT=true;
-            //GEOGEBRA_SPREADSHEET_LOADED=true;
-            // init spreadsheet view
-         	//spreadsheetView = new SpreadsheetView(app, 26, 100);
-            Application.debug("IS_WEBSTART="+IS_WEBSTART);
-            return;
-         } catch (Exception ex) {
-             IS_WEBSTART=false;
-             Application.debug("IS_WEBSTART="+IS_WEBSTART);
-            //ex.printStackTrace();
-         }		    
-         
- 		// get applet codebase
-         // NB applet.getCodeBase() doesn't work (returns base of HTML)
- 		appletCodeBase = (app.getApplet()!=null) ? app.getCodeBase() : null;
- 		Application.debug("appletCodeBase="+appletCodeBase);
- 		
- 		if (appletCodeBase != null)
- 		{
- 			appletCodeBaseStr = appletCodeBase.toString();
- 			
- 			// if it's a local path, put spaces back in
- 			if (appletCodeBaseStr.startsWith("file:"))
- 				appletCodeBaseStr = appletCodeBaseStr.replaceAll("%20", " ");
- 		}
-
- 		Application.debug("appletCodeBaseStr="+appletCodeBaseStr);
-         
-         ClassPathManipulator.addURL(addPathToJar("."), null);
-       
-         GEOGEBRA_CAS_PRESENT = jarPresent("geogebra_cas.jar");
-         //addCasJarToClassPath();
-         
-         
-         GEOGEBRA_GUI_PRESENT = jarPresent("geogebra_gui.jar");
-         if (GEOGEBRA_GUI_PRESENT){
-         	if (app.getApplet()==null){
-         		addGuiJarToClassPath();
-             	//if (copyExportJarToTempDir()) loadExport = System.getProperty("java.io.tmpdir") + "geogebra_export.jar";
-         		
-         	}
-         	else if (app.getApplet().showMenuBar ||
-        			app.getApplet().enableRightClick ||
-        			app.getApplet().showFrame)
-
-         	{
-         		// running as applet with menu
-         		addGuiJarToClassPath();
-             	//loadExport = "geogebra_export.jar"; // fallback, shouldn't be needed
-         	}
+          InputStream is = appClassLoader.getResourceAsStream(s);
+          BufferedReader br = new BufferedReader(new InputStreamReader(is));
+          String thisLine;
+          while ((thisLine = br.readLine()) != null) {  
+             sb.append(thisLine);
+             sb.append("\n");
          }
-         
-         
-         //GEOGEBRA_SPREADSHEET_PRESENT = jarPresent("geogebra_spreadsheet.jar");
-         //addSpreadsheetJarToClassPath();
-     	
-         
-         
-         
-         GEOGEBRA_EXPORT_PRESENT = jarPresent("geogebra_export.jar");
-        
-        if (GEOGEBRA_EXPORT_PRESENT){
-        	if (app.getApplet()==null){
-        		addExportJarToClassPath();
-            	//if (copyExportJarToTempDir()) loadExport = System.getProperty("java.io.tmpdir") + "geogebra_export.jar";
-        		
-        	}
-        	else if (app.getApplet().showMenuBar) 
-        	{
-        		// running as applet with menu
-        		addExportJarToClassPath();
-            	//loadExport = "geogebra_export.jar"; // fallback, shouldn't be needed
-        	}
-        }
-        
-        
-        if (loadExport != null)
-        {
-        		addJarToPath(loadExport, geogebra.gui.menubar.MenubarImpl.class.getClassLoader());
-        		GEOGEBRA_EXPORT_LOADED=true;
-        }
-        Application.debug("GEOGEBRA_EXPORT_LOADED="+GEOGEBRA_EXPORT_LOADED);
-        
-
-        GEOGEBRA_PROPERTIES_PRESENT = jarPresent("geogebra_properties.jar");        
-        
-        //String loadProperties=null;
-        
-        if (GEOGEBRA_PROPERTIES_PRESENT){
-        	if (app.getApplet()==null){
-        		addPropertiesJarToClassPath();
-            	//if (copyPropertiesJarToTempDir()) loadProperties = System.getProperty("java.io.tmpdir") + "geogebra_properties.jar";
-        		
-        	}
-        	else if (app.getApplet().showMenuBar || 
-        			app.getApplet().showToolBar ||
-        			app.getApplet().showAlgebraInput ||
-        			app.getApplet().enableRightClick ||
-        			app.getApplet().showOpenButton ||
-        			app.getApplet().showFrame)
-        			//app.showAlgebraView() ||
-        			//app.showSpreadsheet())
-        		
-        		// TODO load properties.jar when algebra or spreadsheet views opened
-        		
-
-        	{
-        		// running as applet with possibility of translations needed
-        		addPropertiesJarToClassPath();
-        		//addJarToPath("geogebra_properties.jar", null);
-        		//GEOGEBRA_PROPERTIES_LOADED=true;
-        	}
-        }
-	
-        
-        Application.debug("GEOGEBRA_PROPERTIES_LOADED="+GEOGEBRA_PROPERTIES_LOADED);
-        */
-     
-
+      }
+        catch (Exception e) {
+          e.printStackTrace();
+          }
+          return sb.toString();
+      }
   
    
 }

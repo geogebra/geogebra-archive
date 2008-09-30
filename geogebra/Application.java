@@ -107,6 +107,9 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final String[] JAR_FILES = { "geogebra.jar",
 			"geogebra_gui.jar", "geogebra_cas.jar", "geogebra_export.jar",
 			"geogebra_properties.jar" };
+	
+	// license file
+	public static final String LICENSE_FILE  = "geogebra/gui/_license.txt";
 
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 
@@ -1300,6 +1303,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public boolean loadLaTeXJar() {
 		return loadGUIJar();
+	}
+	
+	final public String loadTextFile(String fileName) {
+		return jarmanager.loadTextFile(fileName);
 	}
 
 	/*

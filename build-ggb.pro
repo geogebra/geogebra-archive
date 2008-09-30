@@ -1,7 +1,7 @@
 #
 # Proguard config file for GeoGebra
 #
-# Sept 28th 2008
+# Sept 29th 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_gui.jar
@@ -39,9 +39,6 @@
 
 # needed so that SymbolLoader can find Des12.gif etc
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
-
-# needed so that MenuBarImpl can find _license.txt
--keep class geogebra.gui.menubar.MenubarImpl { <methods>; }
 
 
 #####

@@ -1333,8 +1333,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("</b><br>");
 		sb.append(Application.buildDate);
 
-		// license
-		String text = readTextFromJar("_license.txt");
+		// load license
+		String text = app.loadTextFile(Application.LICENSE_FILE);
+		
 		JTextArea textArea = new JTextArea(21, 45);
 		JScrollPane scrollPane = new JScrollPane(textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1616,22 +1617,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         }
     }
     
-    private static String readTextFromJar(String s) {
-        StringBuffer sb = new StringBuffer();        
-        try {
-          InputStream is = Menubar.class.getResourceAsStream(s);
-          BufferedReader br = new BufferedReader
-             (new InputStreamReader(is));
-          String thisLine;
-          while ((thisLine = br.readLine()) != null) {  
-             sb.append(thisLine);
-             sb.append("\n");
-             }
-          }
-        catch (Exception e) {
-          e.printStackTrace();
-          }
-          return sb.toString();
-      }
+    
   
 }
