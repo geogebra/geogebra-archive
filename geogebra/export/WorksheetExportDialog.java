@@ -522,7 +522,7 @@ public class WorksheetExportDialog extends JDialog {
 	    			try {
 		    			//copy jar to same directory as ggbFile
 	    				if (!cbOnlineArchive.isSelected()) 
-	    					app.copyJarsTo(HTMLfile.getParent(), cbShowMenuBar.isSelected());
+	    					app.copyJarsTo(HTMLfile.getParent());
 		    			
 		    			// open html file in browser
 	    				guiManager.showURLinBrowser(HTMLfile.toURL());

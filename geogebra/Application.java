@@ -28,7 +28,7 @@ import geogebra.kernel.Relation;
 import geogebra.modules.JarManager;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
-import geogebra.util.CopyURLToFile;
+import geogebra.util.CopyToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
@@ -90,8 +90,8 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// version
-	public static final String buildDate = "September 29, 2008";
-	public static final String versionString = "3.1.45.0";
+	public static final String buildDate = "September 30, 2008";
+	public static final String versionString = "3.1.47.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
@@ -328,6 +328,7 @@ public abstract class Application implements KeyEventDispatcher {
 			mainComp = frame;
 		} else if (isApplet) {
 			mainComp = applet;
+			setApplet(applet);
 		}
 
 		// init code base URL
@@ -340,9 +341,7 @@ public abstract class Application implements KeyEventDispatcher {
 		handleOptionArgs(args); // note: the locale is set here too
 		imageManager = new ImageManager(mainComp);
 
-		if (isApplet) {
-			setApplet(applet);
-		} else {
+		if (!isApplet) {			
 			// frame
 			setFrame(frame);
 		}
@@ -462,9 +461,9 @@ public abstract class Application implements KeyEventDispatcher {
 				//TODO: remove
 				Application.debug("background: CAS inited");
 				
-				// add jar files to classpath dynamically in background
+				// download all jar files dynamically in the background
 				for (int i=0; i < JAR_FILES.length; i++) {
-					jarmanager.addJarToClassPath(i);
+					jarmanager.downloadFile(JAR_FILES[i], jarmanager.getLocalJarDir());
 				}
 			}
 		};
@@ -2835,23 +2834,22 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * @param destDir
 	 */
-	public void copyJarsTo(String destDir, boolean includeExportJar)
-			throws Exception {
+	public synchronized void copyJarsTo(String destDir) throws Exception {
 		// try to copy from temp dir
-		File jarDir = jarmanager.getLocalJarDir();
-		URL srcDir = jarDir.toURL();
+		File localJarDir = jarmanager.getLocalJarDir();
 
 		// Application.debug("temp jar file: " + tempJarFile);
 		// Application.debug("   exists " + tempJarFile.exists());
 
 		// copy jar files to tempDir
 		for (int i = 0; i < JAR_FILES.length; i++) {
-			if (!includeExportJar && i == JAR_FILE_GEOGEBRA_EXPORT)
-				continue;
-
-			File dest = new File(destDir, JAR_FILES[i]);
-			URL src = new URL(srcDir, JAR_FILES[i]);
-			CopyURLToFile.copyURLToFile(src, dest);
+			File srcFile = new File(localJarDir, JAR_FILES[i]);
+			File destFile = new File(destDir, JAR_FILES[i]);
+			
+			// check file and automatically download if missing
+			if (jarmanager.checkJarFile(srcFile)) {
+				CopyToFile.copyFile(srcFile, destFile);
+			}					
 		}
 
 		// Application.debug("copied geogebra jar files from " + srcDir + " to "

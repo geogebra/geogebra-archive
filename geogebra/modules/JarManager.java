@@ -24,18 +24,16 @@ local directory (in system's temp directory) to keep jar files of a version for 
 */
 
 import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.gui.menubar.Menubar;
-import geogebra.util.CopyURLToFile;
+import geogebra.util.CopyToFile;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.zip.ZipInputStream;
 
 public class JarManager {
 	
@@ -140,8 +138,8 @@ public class JarManager {
 	
 		switch (main_app_type) {
 			case TYPE_WEBSTART:
-			case TYPE_LOCAL_NO_JARS:		
-				// Webstart puts all jar files on classpath itself
+			case TYPE_LOCAL_NO_JARS:	
+				// Webstart already has all files on the classpath
 				// Eclipse doesn't use jar files, so nothing to do here 
 				jarFileOnClasspath[jarFileIndex] = true;
 				return true;
@@ -158,10 +156,11 @@ public class JarManager {
 		// jar file is now in localJarDir 
 		File localJarFile = new File(localJarDir, jarFileName);
 		
-		try {
-			// add jar file in localJarDir to classpath
+		try {			
 			jarFileOnClasspath[jarFileIndex] = 
-				localJarFile.exists() &&
+				// make sure jar file can be opened
+				checkJarFile(localJarFile) && 
+				// add jar file in localJarDir to classpath
 				ClassPathManipulator.addURL(localJarFile.toURI().toURL(), appClassLoader);					
 		} 
 		catch (Exception e) {
@@ -175,17 +174,73 @@ public class JarManager {
 	}
 	
 	/**
+	 * Checks if the given jar file can be opened and read. If this fails we try to
+	 * download the jar file and check again.
+	 * 
+	 * @return success
+	 */
+	public synchronized boolean checkJarFile(File localJarFile) {
+		if (isJarFileReadable(localJarFile))
+			return true;
+		
+		// something is wrong: the jar file could not be opened
+		try {
+			// delete corrupt jar file
+			if (localJarFile.exists())
+				localJarFile.delete();
+			
+			// download jar file again
+			downloadFile(localJarFile.getName(), localJarDir);
+			
+			// check jar file again
+			return isJarFileReadable(localJarFile);
+		} 
+		catch (Exception e) {
+			// TODO: remove			
+			Application.debug("Jar file could not be downloaded: " + localJarFile);									
+			e.printStackTrace();
+			return false;
+		}	
+	}
+	
+	/**
+	 * Returns whether the given jar file can be opened and read.
+	 * 
+	 * @return
+	 */
+	private synchronized boolean isJarFileReadable(File localJarFile) {	
+		if (!localJarFile.exists())
+			return false;
+		
+		try {
+			// open zip file and try to read first entry
+			FileInputStream fis = new FileInputStream(localJarFile);
+			ZipInputStream zis = new ZipInputStream(fis);
+			boolean readable = zis.getNextEntry() != null;
+			zis.close();
+			fis.close();
+			return readable;
+		}
+		catch (Exception e) {
+			// TODO: remove			
+			Application.debug("Jar file is not readable: " + localJarFile);									
+			e.printStackTrace();
+			return false;
+		}						
+	}
+	
+	/**
 	 * Downloads the given file to destination directory. This is needed for applets and
 	 * webstart applications (to export dynamic worksheets).
 	 * 
 	 * @return true if successful
 	 */
-	private synchronized boolean downloadFile(String fileName, File destDir) {    	    
+	public synchronized boolean downloadFile(String fileName, File destDir) {    	    
 		// download jar file to localJarDir
 		File destFile = new File(destDir, fileName);
 		if (destFile.exists()) {
 			// TODO: remove
-			Application.debug("Loading file from CACHE: " + fileName + " in directory " + destDir);		
+			Application.debug("File found, no download needed for " + fileName + " in directory " + destDir);		
 			
 			// destination file exists already
 			return true;
@@ -194,7 +249,7 @@ public class JarManager {
 		try {											
 			// download jar from URL to destFile
 			URL src = new URL(codebase, fileName);			
-			CopyURLToFile.copyURLToFile(src, destFile);
+			CopyToFile.copyURLToFile(src, destFile);
 			
 			// TODO: remove
 			Application.debug("downloaded " + fileName + " to directory " + destDir);		

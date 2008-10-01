@@ -14,6 +14,7 @@ package geogebra.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -21,7 +22,7 @@ import java.net.URLConnection;
 /**
  * @author Markus Hohenwarter
  */
-public class CopyURLToFile  {
+public class CopyToFile  {
 
 	/**
 	 * Copies or downloads url to destintation file.
@@ -53,5 +54,17 @@ public class CopyURLToFile  {
 			throw e;
 		}
 	}
+	
+	public static void copyFile(File in, File out) throws Exception {
+        FileInputStream fis  = new FileInputStream(in);
+        FileOutputStream fos = new FileOutputStream(out);
+        byte[] buf = new byte[1024];
+        int i = 0;
+        while((i=fis.read(buf))!=-1) {
+            fos.write(buf, 0, i);
+        }
+        fis.close();
+        fos.close();
+    }
 
 }
