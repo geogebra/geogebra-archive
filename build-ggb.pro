@@ -1,7 +1,7 @@
 #
 # Proguard config file for GeoGebra
 #
-# Sept 29th 2008
+# Sept 30th 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_gui.jar
@@ -17,6 +17,9 @@
 -dontoptimize
 -allowaccessmodification
 -overloadaggressively
+
+#-printmapping geogebra3-1-46-0.map 	 
+-applymapping geogebra3-1-46-0.map 	 
 
 # Keep - Applications. Keep all application classes that have a main method.
 -keepclasseswithmembers public class * {
