@@ -101,7 +101,7 @@ public class CASView extends JComponent implements CasManager {
 
 		rowHeaderTable.addMouseListener(new RowHeaderMouseListener());
 
-		rowHeaderTable.addKeyListener(new RowHeaderKeyListener());
+		//consoleTable.addKeyListener(new RowHeaderKeyListener());
 
 		rowHeaderTable.getColumnModel().getColumn(0).setPreferredWidth(
 				ROW_HEADER_WIDTH);
@@ -144,9 +144,9 @@ public class CASView extends JComponent implements CasManager {
 				.setHeaderValue("");
 
 		// CAScontroller
-//		CASKeyController casKeyCtrl = new CASKeyController(this, session,
-//				consoleTable);
-//		consoleTable.addKeyListener(casKeyCtrl);		
+		CASKeyController casKeyCtrl = new CASKeyController(this, session,
+				consoleTable);
+		consoleTable.addKeyListener(casKeyCtrl);		
 		CASMouseController casMouseCtrl = new CASMouseController(this, session,
 				consoleTable);
 		consoleTable.addMouseListener(casMouseCtrl);
@@ -291,7 +291,7 @@ public class CASView extends JComponent implements CasManager {
 			int x = e.getX();
 			int y = e.getY();
 
-			// rowHeaderTable.requestFocus();
+			rowHeaderTable.requestFocus();						
 
 			// left click
 			if (!rightClick) {
