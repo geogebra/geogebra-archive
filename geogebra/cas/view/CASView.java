@@ -291,7 +291,7 @@ public class CASView extends JComponent implements CasManager {
 			int x = e.getX();
 			int y = e.getY();
 
-			rowHeaderTable.requestFocus();						
+			consoleTable.requestFocus();					
 
 			// left click
 			if (!rightClick) {
