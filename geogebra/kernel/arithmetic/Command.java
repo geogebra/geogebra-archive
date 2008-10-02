@@ -41,7 +41,7 @@ implements ExpressionValue {
     
     private Kernel kernel;
     private Application app;
-    private GeoElement evalGeo; // evaluated Element
+    private GeoElement[] evalGeos; // evaluated Elements
     private Macro macro; // command may correspond to a macro 
     
     /** Creates new Command */
@@ -134,25 +134,30 @@ implements ExpressionValue {
         return sb.toString();
     }
     
-    public ExpressionValue evaluate() {
-        // not yet evaluated: process command
-        if (evalGeo == null) {  
+    public GeoElement [] evaluateMultiple() {
+
             GeoElement [] geos = null;
             try {
                  geos = kernel.getAlgebraProcessor().processCommand(this, false); 
             } catch (Error me) {
                 throw me;
             }
-                                     
-             if (geos != null && geos.length == 1) {
-                evalGeo = geos[0]; 
+
+            return geos;
+     }
+    
+    
+    public ExpressionValue evaluate() {
+        // not yet evaluated: process command
+        if (evalGeos == null) 
+        	evalGeos = evaluateMultiple();   
+        
+             if (evalGeos != null && evalGeos.length == 1) {
+                return evalGeos[0]; 
              } else {
                 Application.debug("invalid command evaluation: " + name);
                 throw new MyError(app, app.getError("InvalidInput") + ":\n" + this);                                                                 
              }          
-        }                       
-        
-        return evalGeo;
     }
     
     public void resolveVariables() {
@@ -164,9 +169,21 @@ implements ExpressionValue {
 //        }
     }
     
-
+    // rewritten to cope with {Root[f]}
+    // Michael Borcherds 2008-10-02	
     public boolean isConstant() {
-        return evaluate().isConstant();
+    	
+        // not yet evaluated: process command
+        if (evalGeos == null) 
+        	evalGeos = evaluateMultiple();   
+    	
+    	if (evalGeos == null || evalGeos.length == 0)
+    		throw new MyError(app, app.getError("InvalidInput") + ":\n" + this);     
+    	
+    	for (int i = 0 ; i < evalGeos.length ; i++)
+    		if (!evalGeos[i].isConstant()) return false;
+    	return true;
+    	
     }
 
     public boolean isLeaf() {
