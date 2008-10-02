@@ -2,7 +2,6 @@ package geogebra.cas.view;
 
 import geogebra.Application;
 import geogebra.CasManager;
-import geogebra.MyError;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
 
@@ -11,6 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -46,7 +45,7 @@ public class CASView extends JComponent implements CasManager {
 
 	private CASTable consoleTable;
 
-	public JList rowHeader;
+	//public JList rowHeader;
 
 	public JTable rowHeaderTable;
 
@@ -275,6 +274,7 @@ public class CASView extends JComponent implements CasManager {
 	protected class RowHeaderMouseListener implements MouseListener {
 
 		public void mouseClicked(MouseEvent e) {
+			
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -283,7 +283,10 @@ public class CASView extends JComponent implements CasManager {
 		public void mouseExited(MouseEvent e) {
 		}
 
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {		
+		}
+
+		public void mouseReleased(MouseEvent e) {
 			boolean shiftPressed = e.isShiftDown();
 			boolean metaDown = Application.isControlDown(e);
 			boolean rightClick = Application.isRightClick(e);
@@ -291,8 +294,16 @@ public class CASView extends JComponent implements CasManager {
 			int x = e.getX();
 			int y = e.getY();
 
-			consoleTable.requestFocus();					
+			rowHeaderTable.requestFocus();
+			
+			// TODO: remove
+			 Component compFocusOwner =
+			        KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+			 System.out.println("focus owner: " +  compFocusOwner);
+			 System.out.println("consoleTable has Focus: " +  consoleTable.isFocusOwner());
+			 System.out.println("rowHeaderTable has Focus: " +  rowHeaderTable.isFocusOwner());
 
+			 // TODO: remive the left click handling here and just set the selection model once when the consoleTable is created
 			// left click
 			if (!rightClick) {
 				Point point = consoleTable.getIndexFromPixel(x, y);
@@ -348,10 +359,6 @@ public class CASView extends JComponent implements CasManager {
 				}
 
 			}
-		}
-
-		public void mouseReleased(MouseEvent e) {
-
 		}
 
 	}
