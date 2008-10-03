@@ -64,7 +64,7 @@ public class WorksheetExportDialog extends JDialog {
 	private Application app;
 	private Kernel kernel;
 	private InputPanel textAbove, textBelow;
-	private JCheckBox cbShowFrame, cbEnableRightClick, cbShowResetIcon,
+	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
 					cbShowMenuBar, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
 					cbOnlineArchive;
 	private GraphicSizePanel sizePanel;
@@ -177,6 +177,8 @@ public class WorksheetExportDialog extends JDialog {
 			
 	    	cbEnableRightClick.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			ggbPref.EXPORT_WS_RIGHT_CLICK, "false")).booleanValue() );
+	    	cbEnableLabelDrags.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_LABEL_DRAGS, "false")).booleanValue() );
 	    	cbShowResetIcon.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			ggbPref.EXPORT_WS_RESET_ICON, "false")).booleanValue() );
 	    	cbShowFrame.setSelected( Boolean.valueOf(ggbPref.loadPreference(
@@ -220,6 +222,7 @@ public class WorksheetExportDialog extends JDialog {
     
     private void savePreferences() {    	    	
     	ggbPref.savePreference(ggbPref.EXPORT_WS_RIGHT_CLICK, Boolean.toString(cbEnableRightClick.isSelected()));
+    	ggbPref.savePreference(ggbPref.EXPORT_WS_LABEL_DRAGS, Boolean.toString(cbEnableLabelDrags.isSelected()));
     	ggbPref.savePreference(ggbPref.EXPORT_WS_RESET_ICON, Boolean.toString(cbShowResetIcon.isSelected()));    	    	
     	ggbPref.savePreference(ggbPref.EXPORT_WS_FRAME_POSSIBLE, Boolean.toString(cbShowFrame.isSelected()));
     	ggbPref.savePreference(ggbPref.EXPORT_WS_SHOW_MENUBAR, Boolean.toString(cbShowMenuBar.isSelected()));
@@ -325,6 +328,11 @@ public class WorksheetExportDialog extends JDialog {
 		cbEnableRightClick = new JCheckBox(app.getMenu("EnableRightClick"));	
 		cbEnableRightClick.setEnabled(true);
 		funcPanel.add(cbEnableRightClick);	
+		
+		// enable label drags
+		cbEnableLabelDrags = new JCheckBox(app.getMenu("EnableLabelDrags"));	
+		cbEnableLabelDrags.setEnabled(true);
+		funcPanel.add(cbEnableLabelDrags);	
 		
 		// showResetIcon
 		cbShowResetIcon = new JCheckBox(app.getMenu("ShowResetIcon"));		
@@ -436,6 +444,11 @@ public class WorksheetExportDialog extends JDialog {
 		// enable right click
 		sb.append("\t<param name=\"enableRightClick\" value=\"");
 		sb.append(cbEnableRightClick.isSelected());
+		sb.append("\"/>\n");
+		
+		// enable label drags
+		sb.append("\t<param name=\"enableLabelDrags\" value=\"");
+		sb.append(cbEnableLabelDrags.isSelected());
 		sb.append("\"/>\n");
 		
 		// showMenuBar

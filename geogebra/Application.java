@@ -274,6 +274,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private boolean undoActive = true;
 	private boolean rightClickEnabled = true;
+	private boolean labelDragsEnabled = true;
 	private boolean shiftDragZoomEnabled = true;
 	private boolean isErrorDialogsActive = true;
 
@@ -2015,8 +2016,20 @@ public abstract class Application implements KeyEventDispatcher {
 		rightClickEnabled = flag;
 	}
 
+	/**
+	 * Enables or disables label dragging in this application. This is useful
+	 * for applets.
+	 */
+	public void setLabelDragsEnabled(boolean flag) {
+		labelDragsEnabled = flag;
+	}
+
 	final public boolean isRightClickEnabled() {
 		return rightClickEnabled;
+	}
+
+	final public boolean isLabelDragsEnabled() {
+		return labelDragsEnabled;
 	}
 
 	public boolean letRename() {

@@ -31,6 +31,7 @@ public class GeoGebraPreferences {
 	
 	// worksheet export dialog
 	public static final String EXPORT_WS_RIGHT_CLICK = "export_ws_right_click";
+	public static final String EXPORT_WS_LABEL_DRAGS = "export_ws_label_drags";
 	public static final String EXPORT_WS_RESET_ICON = "export_ws_reset_icon";
 	public static final String EXPORT_WS_FRAME_POSSIBLE = "export_ws_frame_possible";
 	public static final String EXPORT_WS_SHOW_MENUBAR = "export_ws_show_menubar";

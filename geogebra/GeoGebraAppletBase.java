@@ -62,6 +62,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public boolean showOpenButton, undoActive;
 	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
 	public boolean enableRightClick = true;
+	public boolean enableLabelDrags = true;
 	boolean enableShiftDragZoom = true;
 	public boolean showMenuBar = false;
 	boolean showResetIcon = false;
@@ -130,6 +131,9 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(getParameter("enableRightClick"));
+		
+		// enableLabelDrags, default is "true"
+		enableLabelDrags = !"false".equals(getParameter("enableLabelDrags"));
 		
 		// enableShiftDragZoom, default is "true"
 		enableShiftDragZoom = !"false".equals(getParameter("enableShiftDragZoom"));		
@@ -275,6 +279,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
+		app.setLabelDragsEnabled(enableLabelDrags);
 		app.setShiftDragZoomEnabled(enableShiftDragZoom);
 		if (customToolBar != null && customToolBar.length() > 0 && showToolBar)
 			app.getGuiManager().setToolBarDefinition(customToolBar);

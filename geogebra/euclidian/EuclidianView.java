@@ -2146,6 +2146,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	 * returns GeoElement whose label is at screen coords (x,y).
 	 */
 	final public GeoElement getLabelHit(Point p) {
+		if (!app.isLabelDragsEnabled()) return null;
 		DrawableIterator it = allDrawableList.getIterator();
 		while (it.hasNext()) {
 			Drawable d = it.next();
