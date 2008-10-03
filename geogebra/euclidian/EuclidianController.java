@@ -4874,6 +4874,24 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		default:	
+			
+		int maxLayer = -1;
+
+		// select (first) object with highest layer
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)(geos.get(i));
+			int layer = geo.getLayer();
+			if (layer > maxLayer) {
+				maxLayer = layer;
+				ret = geo;
+			}
+		}
+		
+		return ret;
+
+			
+			
+			
 			/*
 			try {
 				throw new Exception("choose");
@@ -4882,12 +4900,14 @@ public class EuclidianController implements MouseListener,
 				
 			}
 			*/
+		
+		/*
 			
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
 			ttm.setEnabled(false);			
 			ListDialog dialog = new ListDialog(view, geos, null);
 			ret = dialog.showDialog(view, mouseLoc);			
-			ttm.setEnabled(true);				
+			ttm.setEnabled(true);			*/	
 		}				
 		return ret;	
 	}
