@@ -111,7 +111,7 @@ public class Kernel {
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
 	private ScientificFormat sf;
-	public boolean useSignificantFigures = true;
+	public boolean useSignificantFigures = false;
 	
 	// used to store info when rounding is temporarily changed
 	private ArrayList useSignificantFiguresList = new ArrayList();
