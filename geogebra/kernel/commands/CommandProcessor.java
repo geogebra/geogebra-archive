@@ -4368,6 +4368,7 @@ class CmdTable extends CommandProcessor {
        arg = resArgs(c);
        
        switch (n) {
+       /*
          case 1 :
            if ( (ok[0] = (arg[0].isGeoList()) ) ){
                GeoElement[] ret =
@@ -4378,7 +4379,10 @@ class CmdTable extends CommandProcessor {
                return ret;
            } else {
                    throw argErr(app, c.getName(), arg[0]);
-           }
+           }*/
+           
+         case 0:
+        	 throw argNumErr(app, c.getName(), n);
 
          default :
              // try to create list of numbers

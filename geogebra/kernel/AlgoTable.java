@@ -20,7 +20,12 @@ public class AlgoTable extends AlgoElement {
 	private GeoList geoList; //input
     private GeoText text; //output	
     
+    private GeoList[] geoLists;
+    
     private StringBuffer sb = new StringBuffer();
+    
+    private int VERTICAL = 0;
+    private int HORIZONTAL = 1;
 
     AlgoTable(Construction cons, String label, GeoList geoList) {
     	this(cons, geoList);
@@ -55,26 +60,79 @@ public class AlgoTable extends AlgoElement {
     }
 
     protected final void compute() {
-    	int size = geoList.size();
-    	if (!geoList.isDefined() ||  size == 0) {
+    	int columns = geoList.size();
+    	if (!geoList.isDefined() ||  columns == 0) {
     		text.setTextString("");
     		return;
     	}
     	
-    	sb.setLength(0);
-    	sb.append("\\begin{tabular}{l}");
+    	int alignment = VERTICAL;
     	
-    	for (int i=0; i < size; i++) {
-    		GeoElement geo = geoList.get(i);
-    		if (geo.isGeoList())
-    		{ // if list, remove start and end {}
-    			String str = geo.toLaTeXString(false);
-    			sb.append(str.substring(1, str.length()-1));
-    		}
-    		else
-    			sb.append(geo.toLaTeXString(false));
-    		sb.append(" \\\\ "); // newline in LaTeX ie \\
-    	}   
+    	String justification = "l"; // default (l, c or r)
+    	
+    	if (geoList.get(columns-1).isGeoText()) {
+    		GeoText options = (GeoText)geoList.get(columns-1);
+    		String optionsStr = options.getTextString();
+    		if (optionsStr.endsWith("h")) alignment = HORIZONTAL; // horizontal table
+    		if (optionsStr.startsWith("c")) justification = "c";
+    		else if (optionsStr.startsWith("r")) justification = "r";
+    		
+    		columns --;
+    	}
+    	
+
+    	if (geoLists == null || geoLists.length < columns)
+    	    		geoLists = new GeoList[columns];
+    	
+    	int rows = 0;
+    	
+		for (int c = 0 ; c < columns ; c++) {
+			GeoElement geo = geoList.get(c);
+			if (!geo.isGeoList()) {
+	    		text.setTextString("");
+	    		text.setUndefined();
+	    		return;				
+			}
+			geoLists[c] = (GeoList)geoList.get(c);
+			if (geoLists[c].size() > rows) rows = geoLists[c].size();
+		}
+    	
+    	
+    	sb.setLength(0);
+    	sb.append("\\begin{tabular}{");
+    	
+    	
+    	if (alignment == VERTICAL) {
+    	
+	    	for (int c = 0 ; c < columns ; c++)
+	    		sb.append(justification); // "l", "r" or "c"
+	    	sb.append("}");
+	    	
+	    	for (int r=0; r < rows; r++) {
+	    		for (int c = 0 ; c < columns ; c++) {
+	    			addCell(c, r);
+	   		}
+	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
+	    	}   
+    	
+    	}
+    	else
+    	{ // alignment == HORIZONTAL
+    	
+	    	for (int c = 0 ; c < rows ; c++)
+	    		sb.append(justification); // "l", "r" or "c"
+	    	sb.append("}");
+	    	
+	    	// Table[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c"]
+	    	
+			for (int c = 0 ; c < columns ; c++) {
+	    	for (int r=0; r < rows; r++) {
+	    			addCell(c, r);
+	    		}
+	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
+	    	}   
+		
+    	}
     	
     	sb.append("\\end{tabular}");
     	
@@ -82,4 +140,13 @@ public class AlgoTable extends AlgoElement {
     	text.setLaTeX(true,false,false);
     }
     
+    private void addCell(int c, int r) {
+		if (geoLists[c].size() > r) { // check list has an element at this position
+			GeoElement geo1 = geoLists[c].get(r);
+			sb.append(geo1.toLaTeXString(false));
+		}
+		sb.append("&"); // separate columns    				
+
+    }
+  
 }
