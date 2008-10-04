@@ -4920,12 +4920,14 @@ public class EuclidianController implements MouseListener,
 				pointCount ++;
 				ret = geo;
 				
+				// find point with the highest construction index
 				int index = geo.getConstructionIndex();
 				if (index > maxIndex) {
 					maxIndex = index;
 					retIndex = geo;
 				}
 				
+				// find point-on-path with the highest construction index
 				if (((GeoPoint)geo).isPointOnPath()) {
 					pointOnPathCount ++;
 					if (retPath == null) {
@@ -4937,6 +4939,7 @@ public class EuclidianController implements MouseListener,
 					}
 				}
 				
+				// find free point with the highest construction index
 				if (((GeoPoint)geo).isIndependent()) {
 					freePointCount ++;
 					if (retFree == null) {
