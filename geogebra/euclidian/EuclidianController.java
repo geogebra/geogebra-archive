@@ -4864,6 +4864,10 @@ public class EuclidianController implements MouseListener,
 		return null;
 
 		GeoElement ret = null;
+		GeoElement retFree = null;
+		GeoElement retPath = null;
+		GeoElement retIndex = null;
+		
 		switch (geos.size()) {
 		case 0:
 			ret =  null;
@@ -4877,21 +4881,90 @@ public class EuclidianController implements MouseListener,
 			
 		int maxLayer = -1;
 
-		// select (first) object with highest layer
+		int layerCount = 0;
+		
+		// work out max layer, and
+		// count no of objects in max layer
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = (GeoElement)(geos.get(i));
 			int layer = geo.getLayer();
+
 			if (layer > maxLayer) {
 				maxLayer = layer;
+				layerCount = 1;
 				ret = geo;
 			}
+			else if (layer == maxLayer)
+			{
+				layerCount ++;
+			}
+			
 		}
 		
-		return ret;
+		//Application.debug("maxLayer"+maxLayer);
+		//Application.debug("layerCount"+layerCount);
+		
+		// only one object in top layer, return it.
+		if (layerCount == 1) return ret;
+		
+		
+		int pointCount = 0;
+		int freePointCount = 0;
+		int pointOnPathCount = 0;
+		int maxIndex = -1;
+		
+		// count no of points in top layer
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)(geos.get(i));
+			if (geo.isGeoPoint() && geo.getLayer() == maxLayer) {
+				pointCount ++;
+				ret = geo;
+				
+				int index = geo.getConstructionIndex();
+				if (index > maxIndex) {
+					maxIndex = index;
+					retIndex = geo;
+				}
+				
+				if (((GeoPoint)geo).isPointOnPath()) {
+					pointOnPathCount ++;
+					if (retPath == null) {
+						retPath = geo;
+					}
+					else
+					{
+						if (geo.getConstructionIndex() > retPath.getConstructionIndex()) retPath = geo;
+					}
+				}
+				
+				if (((GeoPoint)geo).isIndependent()) {
+					freePointCount ++;
+					if (retFree == null) {
+						retFree = geo;
+					}
+					else
+					{
+						if (geo.getConstructionIndex() > retFree.getConstructionIndex()) retFree = geo;						
+					}
+				}
+			}
+		}
+		//Application.debug("pointOnPathCount"+pointOnPathCount);
+		//Application.debug("freePointCount"+freePointCount);
+		//Application.debug("pointCount"+pointCount);
+		
+		// return point-on-path with highest index
+		if (pointOnPathCount > 0) return retPath;
 
-			
-			
-			
+		// return free-point with highest index
+		if (freePointCount > 0) return retFree;
+
+		// only one point in top layer, return it
+		if (pointCount == 1) return ret;
+		
+		// just return the most recently created point
+		if (pointCount > 1) return retIndex;
+
 			/*
 			try {
 				throw new Exception("choose");
@@ -4901,15 +4974,17 @@ public class EuclidianController implements MouseListener,
 			}
 			*/
 		
-		/*
-			
-			ToolTipManager ttm = ToolTipManager.sharedInstance();		
-			ttm.setEnabled(false);			
-			ListDialog dialog = new ListDialog(view, geos, null);
-			ret = dialog.showDialog(view, mouseLoc);			
-			ttm.setEnabled(true);			*/	
-		}				
+		
+		// no points selected, multiple objects selected
+		// popup a menu to choose from
+		ToolTipManager ttm = ToolTipManager.sharedInstance();		
+		ttm.setEnabled(false);			
+		ListDialog dialog = new ListDialog(view, geos, null);
+		ret = dialog.showDialog(view, mouseLoc);			
+		ttm.setEnabled(true);				
+		}
 		return ret;	
+		
 	}
 
 	public void componentResized(ComponentEvent e) {
