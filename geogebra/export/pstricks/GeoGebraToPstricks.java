@@ -1568,38 +1568,64 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	}
 	// Append the name color to StringBuffer sb 
 	protected void ColorCode(Color c,StringBuffer sb){
-	//	final String suffix="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		if (c.equals(Color.BLACK)) sb.append("black");
-		else if (c.equals(Color.DARK_GRAY)) sb.append("darkgray");
-		else if (c.equals(Color.GRAY)) sb.append("gray");
-		else if (c.equals(Color.LIGHT_GRAY)) sb.append("lightgray");
-		else if (c.equals(Color.WHITE)) sb.append("white");
-		else if (c.equals(Color.RED)) sb.append("red");
-		else if (c.equals(Color.GREEN)) sb.append("green");
-		else if (c.equals(Color.BLUE)) sb.append("blue");
-		else if (c.equals(Color.CYAN)) sb.append("cyan");
-		else if (c.equals(Color.MAGENTA)) sb.append("magenta");
-		else if (c.equals(Color.YELLOW)) sb.append("yellow");
-		else {
+		if (frame.isGrayscale()){
 			String colorname="";
+			int red=c.getRed();
+			int green=c.getGreen();
+			int blue=c.getBlue();
+			int grayscale=(red+green+blue)/3;
+			c=new Color(grayscale,grayscale,grayscale);
 			if (CustomColor.containsKey(c)){
 				colorname=CustomColor.get(c).toString();
 			}
 			else {
-				int red=c.getRed();
-				int green=c.getGreen();
-				int blue=c.getBlue();
-				colorname=createCustomColor((int)red,(int)green,(int)blue);
+				colorname=createCustomColor(grayscale,grayscale,grayscale);
 				codeBeginDoc.append("\\newrgbcolor{"+colorname+"}{"
+					+kernel.format(grayscale/255d)+" "
+					+kernel.format(grayscale/255d)+" "
+					+kernel.format(grayscale/255d)+"}\n");
+				CustomColor.put(c,colorname);
+			}
+			if (c.equals(Color.BLACK)) sb.append("black");
+			else if (c.equals(Color.DARK_GRAY)) sb.append("darkgray");
+			else if (c.equals(Color.GRAY)) sb.append("gray");
+			else if (c.equals(Color.LIGHT_GRAY)) sb.append("lightgray");
+			else if (c.equals(Color.WHITE)) sb.append("white");
+			else sb.append(colorname);
+		}
+		else {
+			//	final String suffix="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			if (c.equals(Color.BLACK)) sb.append("black");
+			else if (c.equals(Color.DARK_GRAY)) sb.append("darkgray");
+			else if (c.equals(Color.GRAY)) sb.append("gray");
+			else if (c.equals(Color.LIGHT_GRAY)) sb.append("lightgray");
+			else if (c.equals(Color.WHITE)) sb.append("white");
+			else if (c.equals(Color.RED)) sb.append("red");
+			else if (c.equals(Color.GREEN)) sb.append("green");
+			else if (c.equals(Color.BLUE)) sb.append("blue");
+			else if (c.equals(Color.CYAN)) sb.append("cyan");
+			else if (c.equals(Color.MAGENTA)) sb.append("magenta");
+			else if (c.equals(Color.YELLOW)) sb.append("yellow");
+			else {
+				String colorname="";
+				if (CustomColor.containsKey(c)){
+					colorname=CustomColor.get(c).toString();
+				}
+				else {
+					int red=c.getRed();
+					int green=c.getGreen();
+					int blue=c.getBlue();
+					colorname=createCustomColor((int)red,(int)green,(int)blue);
+					codeBeginDoc.append("\\newrgbcolor{"+colorname+"}{"
 						+kernel.format(red/255d)+" "
 						+kernel.format(green/255d)+" "
 						+kernel.format(blue/255d)+"}\n");
-				CustomColor.put(c,colorname);
+					CustomColor.put(c,colorname);
+				}
+				sb.append(colorname);
 			}
-			sb.append(colorname);
 		}
 	}
-
 /*	// Resize text 
 	// Keep the ratio between font size and picture height
 	private String resizeFont(int fontSize){

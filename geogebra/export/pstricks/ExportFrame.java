@@ -2,6 +2,8 @@ package geogebra.export.pstricks;
 import geogebra.Application;
 
 
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,7 +34,7 @@ abstract public class ExportFrame extends JFrame{
 	protected JComboBox comboFontSize;
 	protected JPanel panel;
 	protected JButton button,button_copy;
-	protected JCheckBox jcb;
+	protected JCheckBox jcbPointSymbol,jcbGrayscale;
 	protected JScrollPane js;
 	protected JTextArea textarea;
 	protected Application app;
@@ -224,9 +226,11 @@ abstract public class ExportFrame extends JFrame{
  		labelXmax=new JLabel(app.getPlain("xmax"));
  		labelYmin=new JLabel(app.getPlain("ymin"));
  		labelYmax=new JLabel(app.getPlain("ymax"));
-		jcb=new JCheckBox(app.getPlain("DisplayPointSymbol"));
+		jcbPointSymbol=new JCheckBox(app.getPlain("DisplayPointSymbol"));
+		jcbGrayscale=new JCheckBox(app.getPlain("PGFExport.Grayscale"));
 		comboFontSize=new JComboBox(msg);
-		jcb.setSelected(true);
+		jcbPointSymbol.setSelected(true);
+		jcbGrayscale.setSelected(false);
 		button.addActionListener(ggb);
 		button_copy.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -266,9 +270,11 @@ abstract public class ExportFrame extends JFrame{
 		pack();				
 		setLocationRelativeTo(app.getFrame());
 	}
-	
+	public boolean isGrayscale(){
+		return jcbGrayscale.isSelected();
+	}
 	public boolean getExportPointSymbol(){
-		return jcb.isSelected();
+		return jcbPointSymbol.isSelected();
 	}
 	public double getXUnit(){
 		double d;
