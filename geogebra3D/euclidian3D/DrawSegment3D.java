@@ -7,6 +7,8 @@ import javax.media.j3d.GraphicsContext3D;
 import javax.media.j3d.Material;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransparencyAttributes;
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 import javax.vecmath.Color3f;
 
 
@@ -56,6 +58,7 @@ public class DrawSegment3D extends Drawable3D {
 		view3D.toScreenCoords3D(mc);
 		mc.getTransform3D(t3d);
 		
+		matrix = mc.copy();
 		
 		
 		
@@ -66,22 +69,18 @@ public class DrawSegment3D extends Drawable3D {
 		appNormal.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST,geo.getAlphaValue()));
 		
 		
-		dashLength = 0.08f/((float) S.getLength()); //TODO use object property
+		dashLength = 0.12f/((float) S.getLength()); //TODO use object property
 
        
 	}
 	
 	
 
-	
+	/*
 	public void draw(GraphicsContext3D gc){
 		if(!geo.isEuclidianVisible())
 			return;
-		/*
-    	gc.setModelTransform(t3d);
-    	gc.setAppearance(appNormal);
-    	gc.draw(geomNormal);
-    	*/
+		
 		gc.setAppearance(appNormal);
     	Transform3D t = new Transform3D();
     	GgbMatrix m; 
@@ -98,8 +97,44 @@ public class DrawSegment3D extends Drawable3D {
     	}
 
 		
+	}*/
+	
+	public void draw(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawCylinder(0.02f); 
+		renderer.resetMatrix();
+		
+		
 	}
 	
+	public void drawHidden(EuclidianRenderer3D renderer){
+		
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		
+		double l2;
+		GgbMatrix m; 
+		
+    	for(float l=0; l<1;l+=2*dashLength){
+    		l2 = l+dashLength;
+    		if (l2>1) l2=1;
+    		m = S.getSegmentMatrix(l,l2); 
+    		view3D.toScreenCoords3D(m);
+    		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+    		renderer.setMatrix(m.getGL());
+    		renderer.drawCylinder(0.02f); 
+    		
+    		renderer.resetMatrix();
+    	}
+
+	} 
+	
+	/*
 	public void drawHidden(GraphicsContext3D gc){
 		if(!geo.isEuclidianVisible())
 			return;
@@ -121,10 +156,11 @@ public class DrawSegment3D extends Drawable3D {
     	
 		
 	}
+	*/
 	
-	public void drawTransp(GraphicsContext3D gc){}
-	public void drawHiding(GraphicsContext3D gc){}
-	public void drawPicked(GraphicsContext3D gc){};
+	public void drawTransp(EuclidianRenderer3D renderer){}
+	public void drawHiding(EuclidianRenderer3D renderer){}
+	public void drawPicked(EuclidianRenderer3D renderer){};
 	
 	
 	public boolean isPicked(GgbVector pickLine){ return false; };

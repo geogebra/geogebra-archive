@@ -19,6 +19,8 @@ import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TriangleArray;
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -35,6 +37,8 @@ public abstract class Drawable3D {
 	BranchGroup bg; //root BranchGroup of the 3D object
 	TransformGroup tg;
 	Transform3D t3d;
+	
+	GgbMatrix matrix = new GgbMatrix(4,4);
 	
 	
 	//picking
@@ -95,11 +99,15 @@ public abstract class Drawable3D {
 	abstract public void update(); 
 	
 	/** draw the 3D object */
-	abstract public void draw(GraphicsContext3D gc); 
-	abstract public void drawHidden(GraphicsContext3D gc); 
-	abstract public void drawTransp(GraphicsContext3D gc); 
-	abstract public void drawHiding(GraphicsContext3D gc); 
-	abstract public void drawPicked(GraphicsContext3D gc); 
+	public double[] getMatrixGL(){
+		return matrix.getGL();
+	}
+	
+	abstract public void draw(EuclidianRenderer3D renderer); 
+	abstract public void drawHidden(EuclidianRenderer3D renderer); 
+	abstract public void drawTransp(EuclidianRenderer3D renderer); 
+	abstract public void drawHiding(EuclidianRenderer3D renderer); 
+	abstract public void drawPicked(EuclidianRenderer3D renderer); 
 	
 	
 	

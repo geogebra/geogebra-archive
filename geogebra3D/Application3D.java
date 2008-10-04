@@ -18,6 +18,9 @@ the Free Software Foundation.
 package geogebra3D;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.*;
 
 import geogebra.Application;
@@ -81,6 +84,9 @@ public abstract class Application3D extends Application{
     }      
     
 
+    
+    
+
     public void updateCenterPanel(boolean updateUI) {
     	centerPanel.removeAll();
     	
@@ -89,13 +95,19 @@ public abstract class Application3D extends Application{
     	//Mathieu Blossier - start
     	//adding a 3D view splitting the euclidian view
     	//TODO : call super()
-        if (show3DView) {        	     
+        if (show3DView) {       
+        	/* TODO
             sp3D =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, euclidianView, euclidianView3D);
             sp3D.setDividerLocation(initSplitDividerLocationHOR3D);                
             //sp3D.addPropertyChangeListener("dividerLocation3D",new DividerChangeListener());        
             
             eup.add(sp3D, BorderLayout.CENTER);
+            */
+        	eup.setBackground(Color.white);
+            eup.add(euclidianView, BorderLayout.CENTER);
             
+
+        	
         } else { 
             eup.setBackground(Color.white);
             eup.add(euclidianView, BorderLayout.CENTER);
@@ -138,6 +150,25 @@ public abstract class Application3D extends Application{
         
         if (updateUI)        	
         	updateComponentTreeUI();               
-    }    
+    }  
+    
+    
+    public void wnd3D(){
+    	JFrame f = new JFrame("EuclidianView3D");
+    	f.getContentPane().add(euclidianView3D);
+    	f.setLocation(300, 100);
+    	
+        f.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+            	System.exit(0);
+            	}
+        });	
+
+        
+    	f.pack();
+    	f.setVisible(true);
+    	
+    	
+    }
     	
 }

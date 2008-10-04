@@ -94,6 +94,10 @@ public class GeoGebra3D extends GeoGebra
 		updateAllTitles();	
 		
 		wnd.setVisible(true);
+		
+		//TODO change it
+		app.wnd3D();
+		
 		return wnd;
 	}
 

@@ -8,6 +8,8 @@ import javax.media.j3d.Material;
 import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransparencyAttributes;
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 
@@ -71,6 +73,8 @@ public class DrawTriangle3D extends Drawable3D {
 		//mc.SystemPrint();
 		view3D.toScreenCoords3D(mc);
 		
+		matrix = mc.copy();
+		
 		Matrix4d m4d = new Matrix4d();
 		for(int j=1;j<=4;j++)
 			m4d.setColumn(j-1, mc.get(1, j), mc.get(2, j), mc.get(3, j), mc.get(4, j));
@@ -112,10 +116,24 @@ public class DrawTriangle3D extends Drawable3D {
 	
 
 	
-	public void draw(GraphicsContext3D gc){}
-	public void drawHidden(GraphicsContext3D gc){}
-	public void drawPicked(GraphicsContext3D gc){};
+	public void draw(EuclidianRenderer3D renderer){}
+
 	
+	public void drawHidden(EuclidianRenderer3D renderer){} 
+	public void drawPicked(EuclidianRenderer3D renderer){};
+	
+	public void drawTransp(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		renderer.setMaterial(geo.getObjectColor(),0.5f);//TODO geo.getAlphaValue());
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawTriangle();
+		renderer.resetMatrix();
+		
+	}
+	
+	/*
 	public void drawTransp(GraphicsContext3D gc){
 		//Application.debug("drawTransp");
 		if(isVisible){
@@ -125,34 +143,22 @@ public class DrawTriangle3D extends Drawable3D {
 			gc.setModelTransform(t3d);			
 			gc.draw(geomTransp);
 			
-			//grid
-			/*
-			GgbMatrix mc;
-			Transform3D t;			
-			gc.setAppearance(gridApp);
-			
-			for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
-				mc = P.getDrawingXMatrix(x); 
-				view3D.toScreenCoords3D(mc);
-				t = new Transform3D();
-				mc.getTransform3D(t);
-				gc.setModelTransform(t);			
-				gc.draw(gridGeom);
-			}
-			
-			for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
-				mc = P.getDrawingYMatrix(y); 
-				view3D.toScreenCoords3D(mc);
-				t = new Transform3D();
-				mc.getTransform3D(t);
-				gc.setModelTransform(t);			
-				gc.draw(gridGeom);
-			}
-			*/
+
 		}
 		
 	}
+	*/
+	public void drawHiding(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawTriangle();
+		renderer.resetMatrix();
+		
+	}
 	
+	/*
 	public void drawHiding(GraphicsContext3D gc){
 		if(isVisible){
 			gc.setModelTransform(t3d);    	
@@ -160,6 +166,7 @@ public class DrawTriangle3D extends Drawable3D {
 		}
 		
 	}	
+	*/
 	
 	
 	

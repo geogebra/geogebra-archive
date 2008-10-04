@@ -8,6 +8,8 @@ import javax.media.j3d.Material;
 import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransparencyAttributes;
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 
@@ -63,6 +65,8 @@ public class DrawPlane3D extends Drawable3D {
 		GgbMatrix mc = P.getDrawingMatrix(); 
 		view3D.toScreenCoords3D(mc);
 		
+		matrix = mc.copy();
+		
 		Matrix4d m4d = new Matrix4d();
 		for(int j=1;j<=4;j++)
 			m4d.setColumn(j-1, mc.get(1, j), mc.get(2, j), mc.get(3, j), mc.get(4, j));
@@ -104,10 +108,44 @@ public class DrawPlane3D extends Drawable3D {
 	
 
 	
-	public void draw(GraphicsContext3D gc){}
-	public void drawHidden(GraphicsContext3D gc){}
-	public void drawPicked(GraphicsContext3D gc){};
+	public void draw(EuclidianRenderer3D renderer){}
+	public void drawHidden(EuclidianRenderer3D renderer){} 
+	public void drawPicked(EuclidianRenderer3D renderer){};
 	
+	public void drawTransp(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		renderer.setMaterial(geo.getObjectColor(),0.5f);//TODO geo.getAlphaValue());
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawQuad();
+		renderer.resetMatrix();
+		
+		
+		
+		//grid
+		GgbMatrix mc;
+		
+		for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
+			mc = P.getDrawingXMatrix(x); 
+			view3D.toScreenCoords3D(mc);
+			renderer.setMatrix(mc.getGL());
+			renderer.drawCylinder(0.01f);
+			renderer.resetMatrix();			
+		}
+		
+		for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
+			mc = P.getDrawingYMatrix(y); 
+			view3D.toScreenCoords3D(mc);
+			renderer.setMatrix(mc.getGL());
+			renderer.drawCylinder(0.01f);
+			renderer.resetMatrix();			
+		}
+		
+		
+	}
+	
+	/*
 	public void drawTransp(GraphicsContext3D gc){
 		if(isVisible){
 			gc.setAppearance(appTransp);
@@ -140,7 +178,20 @@ public class DrawPlane3D extends Drawable3D {
 		}
 		
 	}
+	*/
 	
+	
+	public void drawHiding(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawQuad();
+		renderer.resetMatrix();
+		
+	}
+	
+	/*
 	public void drawHiding(GraphicsContext3D gc){
 		if(isVisible){
 			gc.setModelTransform(t3d);    	
@@ -148,6 +199,7 @@ public class DrawPlane3D extends Drawable3D {
 		}
 		
 	}	
+	*/
 	
 	
 	

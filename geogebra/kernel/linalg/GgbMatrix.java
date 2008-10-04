@@ -154,6 +154,22 @@ public class GgbMatrix
 	///////////////////////////////////////////////////:
 	//setters and getters
 	
+	/** returns double[] describing the matrix for openGL */
+	public double[] getGL(){
+		double[] ret = new double[rows*columns];
+		
+		int index = 0;
+		
+		for(int j=1;j<=columns;j++){
+			for(int i=1;i<=rows;i++){
+				ret[index]=get(i,j);
+				index++;
+			}
+		}
+		
+		return ret;
+	}
+	
 	/** returns m(i,j)  */
 	public double get(int i, int j){
 		if (!transpose){

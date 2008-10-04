@@ -25,7 +25,7 @@ public class DrawList3D extends LinkedList{
 	private static final long serialVersionUID = 6015533177388934376L;
 	
 	
-	static final boolean DEBUG = true; //conditionnal compilation
+	static final boolean DEBUG = false; //conditionnal compilation
 	
 	
 	Appearance hidingApp, pickedApp;
@@ -79,6 +79,7 @@ public class DrawList3D extends LinkedList{
 		
 		if(DEBUG){Application.debug("drawAll");}
 		
+		/*
 
 		//drawing hidden parts
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
@@ -87,11 +88,13 @@ public class DrawList3D extends LinkedList{
 		}
 		
 		//drawing picked objects
+		
 		gc.setAppearance(pickedApp);
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawPicked(gc);	
-		}			
+		}		
+		
 		
 		//drawing transparents parts
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
@@ -106,11 +109,14 @@ public class DrawList3D extends LinkedList{
 			d.drawHiding(gc);	
 		}
 		
+		
 		//drawing not hidden parts
+		
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.draw(gc);	
 		}
+		*/
 		
 	
 	}

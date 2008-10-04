@@ -7,6 +7,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra3D.euclidian3D.GL.GLDisplay;
+import geogebra3D.euclidian3D.GL.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -42,13 +44,14 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private Kernel kernel;
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
-	protected EuclidianCanvas3D canvas3D;
+	//protected EuclidianCanvas3D canvas3D;
 	
 	//viewing values
 	private double XZero, YZero, ZZero;
 	
 	
 	//list of 3D objects
+	private boolean waitForUpdate = true; //says if it waits for update...
 	DrawList3D drawList3D = new DrawList3D();
 	
 	
@@ -61,8 +64,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 
 	//picking
-	//TODO get eye real position
-	GgbVector eye = new GgbVector(new double[] {0.0,0.0,2.4,1.0});
 	ArrayList hits = new ArrayList(); //objects picked
 	
 	
@@ -80,7 +81,10 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	public EuclidianView3D(EuclidianController3D ec){
 		
-		
+		/*
+		setSize(new Dimension(EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT));
+		setPreferredSize(new Dimension(EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT));
+		*/
 		
 		this.euclidianController3D = ec;
 		this.kernel = ec.getKernel();
@@ -90,23 +94,38 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		kernel3D=new Kernel3D();
 		kernel3D.setConstruction(kernel.getConstruction());
 		
+		//TODO replace canvas3D with GLDisplay
+		EuclidianGLDisplay GLDisplay = new EuclidianGLDisplay();
+		EuclidianRenderer3D renderer = new EuclidianRenderer3D(this);
+		renderer.setDrawList3D(drawList3D);
 		
+        GLDisplay.addRenderer(renderer);
+        GLDisplay.start();
+		/*
 		canvas3D = new EuclidianCanvas3D();
 		canvas3D.setDoubleBufferEnable(true);
-		//canvas3D.getView().setSceneAntialiasingEnable(true);
+		
 		
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, canvas3D);
+		*/
+
+        
+		setLayout(new BorderLayout());
+		add(BorderLayout.CENTER, GLDisplay.glCanvas);
+
 		
 		attachView();
 		
 		
-		// register Listener		
-		canvas3D.addMouseMotionListener(euclidianController3D);
-		canvas3D.addMouseListener(euclidianController3D);
-		canvas3D.addMouseWheelListener(euclidianController3D);
-		canvas3D.addKeyListener(euclidianController3D);
-		canvas3D.setFocusable(true);
+		// register Listener	
+		
+		GLDisplay.glCanvas.addMouseMotionListener(euclidianController3D);
+		GLDisplay.glCanvas.addMouseListener(euclidianController3D);
+		GLDisplay.glCanvas.addMouseWheelListener(euclidianController3D);
+		GLDisplay.glCanvas.addKeyListener(euclidianController3D);
+		GLDisplay.glCanvas.setFocusable(true);
+		
 		
 		//init orientation
 		//setRotXY(Math.PI/6f,0.0,true);
@@ -289,14 +308,19 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	public void setRotXY(double a, double b, boolean repaint){
 		
+		//Application.debug("setRotXY");
+		
 		this.a = a;
 		this.b = b;
 		
 		updateMatrix();
+		setWaitForUpdate(repaint);
 		
+		/*
 		if (repaint) {			
 			repaint();
 		}
+		*/
 		
 	}
 
@@ -305,17 +329,18 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 
 	//TODO interaction
-	public double getXZero() { return XZero; }
-	public double getYZero() { return YZero; }
+	public double getXZero() { XZero = 300; return XZero; }
+	public double getYZero() { YZero = 200; return YZero; }
 	public double getZZero() { return ZZero; }
 
 	public void setXZero(double val) { XZero=val; }
 	public void setYZero(double val) { YZero=val; }
 	public void setZZero(double val) { ZZero=val; }
 	
-	public double getXscale() { return 1; }
-	public double getYscale() { return 1; }
-	public double getZscale() { return 1; }
+	private double scale = 100;
+	public double getXscale() { return scale; }
+	public double getYscale() { return scale; }
+	public double getZscale() { return scale; }
 
 	
 	
@@ -329,23 +354,23 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	
+	
+	
+	public void update(){
+		//waitForUpdate = true;
+		if (waitForUpdate){
+			drawList3D.updateAll();	//TODO waitForUpdate for each object
+			waitForUpdate = false;
+		}
+	}
+	
+	
+	public void setWaitForUpdate(boolean v){
+		waitForUpdate = v;
+	}
 	
 	public void paint(Graphics g){
-	//public void repaint(){
-		
-		
-		drawList3D.updateAll();
-		GraphicsContext3D gc = canvas3D.getGraphicsContext3D();
-		gc.setBufferOverride(true);
-		gc.clear();
-		drawList3D.drawAll(gc);
-		
-
-		canvas3D.swap();
-		
-		//super.paint(g);
-		//super.repaint();
-		//Application.debug("paint");
+		setWaitForUpdate(true);
 	}
 	
 	
@@ -411,27 +436,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	//////////////////////////////////////
 	// picking
 	
-	/** v 3D physical coords -> 2D screen coords */
-	public GgbVector getScreenCoords(GgbVector v){
-	
-		GgbVector p;
-		
-		double l = - eye.get(3)/(v.get(3)-eye.get(3));		
-		p = eye.add(  v.sub(eye).mul(l)).v();
-		//p.SystemPrint();
-		
-		Dimension d = new Dimension();
-		this.getSize(d);
-		double w = (double) d.width/2;
-		double h = (double) d.height/2;
-		GgbVector ret = new GgbVector(new double[] {
-				w*(p.get(1)+1),
-				h - w*p.get(2)
-			});
-		//ret.SystemPrint();
-		return ret;
-		
-	}
 	
 	/** (x,y) 2D screen coords -> 3D physical coords */
 	public GgbVector getPickPoint(int x, int y){			
@@ -442,21 +446,40 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		if (d!=null){
 			//Application.debug("Dimension = "+d.width+" x "+d.height);
-			double w = (double) d.width/2;
-			double h = (double) d.height/2;
+			double w = (double) d.width;
+			double h = (double) d.height;
 			
 			GgbVector ret = new GgbVector(
 					new double[] {
-							((double) (x-w)/w),
-							((double) (-y+h)/w),
+							(double) x,
+							(double) -y+h,
+							//((double) (x-w)/w),
+							//((double) (-y+h)/w),
 							0, 1.0});
 			
+			//ret.SystemPrint();
 			return ret;
 		}else
 			return null;
 		
 		
 	}
+	
+	
+	/** p scene coords, (dx,dy) 2D mouse move -> 3D physical coords */
+	public GgbVector getPickFromScenePoint(GgbVector p, int dx, int dy){
+		GgbVector point = p.copyVector();
+		toScreenCoords3D(point);
+		GgbVector ret = new GgbVector(
+				new double[] {
+						point.get(1)+dx,
+						point.get(2)-dy,
+						0, 1.0});
+
+		return ret;
+		
+	}
+	
 	
 	public void doPick(GgbVector pickPoint){
 		doPick(pickPoint,false);

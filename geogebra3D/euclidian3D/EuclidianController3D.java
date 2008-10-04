@@ -150,7 +150,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					
 				}
 			}
-			view.repaint();
+			view.setWaitForUpdate(true);
 			
 		}
 		
@@ -198,26 +198,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected void movePoint(boolean repaint){
 		
-		//projecting eye on movingPlane thru pickPoint direction	
-		GgbVector o = view.eye.copyVector(); 
+		//getting current pick point and direction v 
+		GgbVector p=movedGeoPoint3D.getCoords().copyVector();
+		GgbVector o = view.getPickFromScenePoint(p,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
 		view.toSceneCoords3D(o);
 		
-		//getting current pick point and direction eye-to-pick point 
-		GgbVector v = (view.getPickPoint(mouseLoc.x,mouseLoc.y)).sub(view.eye); //supposes that point is under the mouse pointer
-				
-		/*
-		Application.debug("mouseLoc    = "+mouseLoc.x+","+mouseLoc.y
-						 +"\nmouseLocOld = "+mouseLocOld.x+","+mouseLocOld.y);
-		GgbVector p1 = movedGeoPoint3D.getCoords().copyVector();
-		view.toScreenCoords3D(p1);
-		GgbVector p2 = view.getScreenCoords(p1);
-		Application.debug("point on screen = "+p2.get(1)+","+p2.get(2));
-		GgbVector v = (view.getPickPoint(((int) p2.get(1))+mouseLoc.x-mouseLocOld.x,
-										 ((int) p2.get(2))+mouseLoc.y-mouseLocOld.y))
-											.sub(view.eye);
-		*/
+		Application.debug("mouseLocDelta = "+(mouseLoc.x-mouseLocOld.x)+","+(mouseLoc.y-mouseLocOld.y));
 		
-		
+		GgbVector v = new GgbVector(new double[] {0,0,1,0});
 		view.toSceneCoords3D(v);	
 		
 		//getting new position of the point
@@ -231,17 +219,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		GgbVector[] project = o.projectPlaneThruV(plane, v);
 		
 		
+		/*
 		mouseLoc3D = project[0];
 		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
 		startLoc3D = mouseLoc3D.copyVector();
+		*/
+		movedGeoPoint3D.setCoords(project[0]);
 		
 		//TODO modify objSelected.updateRepaint()
 		objSelected.updateCascade();
 		view.setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
 		view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
 		
+		
 		if (repaint)
-			view.repaint();
+			view.setWaitForUpdate(true);
+			
 		
 		
 	}
@@ -250,7 +243,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 	public void mouseClicked(MouseEvent arg0) {
-		if(DEBUG){Application.debug("mouseClicked");}
+		//Application.debug("mouseClicked");
 		
 	}
 
@@ -265,7 +258,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	    
 	    
 	    
-		view.repaint();
+	    view.setWaitForUpdate(true);
 		
 	}
 
@@ -290,7 +283,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		case MOVE_POINT:
 			view.setMovingVisible(false);
-			view.repaint();
+			view.setWaitForUpdate(true);
 			break;	
 		
 		}
@@ -323,7 +316,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		//Application.debug("mouseMoved");
 		setMouseLocation(e);
 		pick();
-		view.repaint();
+		view.setWaitForUpdate(true);
 	}
 
 	
@@ -357,7 +350,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		default:
 			view.setZZero(view.getZZero()+ r/10.0);
 			view.updateMatrix();
-			view.repaint();
+			view.setWaitForUpdate(true);
 			break;
 
 		case MOVE_POINT:
@@ -371,7 +364,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			
 			//mouse follows the point
-			
+			/*
 			try {
 				moveMode = MOVE_POINT_WHEEL;
 				//Application.debug("moveMode = "+moveMode);
@@ -386,13 +379,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		        
 		        startLoc3D = p1.copyVector();
 		    } catch(AWTException awte) {}
-		    
+		    */
 			
 
 			//objSelected.updateRepaint(); //TODO modify updateRepaint()
 			objSelected.updateCascade();
 			//view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
-			view.repaint();
+			view.setWaitForUpdate(true);
 			//moveMode = MOVE_POINT;
 			
 			
@@ -409,6 +402,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	final protected void setMouseLocation(MouseEvent e) {
+
 		mouseLocOld = (Point) mouseLoc.clone();
 		mouseLoc = e.getPoint();
 
@@ -507,7 +501,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
 			view.setMovingColor(movingColor);
-			view.repaint();
+			view.setWaitForUpdate(true);
 			break;	
 			
 		case MOVE_NONE:
@@ -518,66 +512,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 	}
 
-	
-	
-	
-	/*
-	public void keyAltPressed(){
-		
-		switch (moveMode) {
-		case MOVE_VIEW:
-			break;
-
-		case MOVE_POINT:			
-			v1=view.vz;
-			v2=view.vx;
-			vn=view.vy;
-			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,1f,0f);
-			view.repaint();
-			break;	
-			
-		case MOVE_NONE:
-		default:
-			break;
-		
-		}
-		
-	}
-	
-
-	
-	
-	public void keyAltReleased(){
-		
-		switch (moveMode) {
-		case MOVE_VIEW:
-			break;
-
-		case MOVE_POINT:			
-			v1=view.vx;
-			v2=view.vy;
-			vn=view.vz;
-			
-			view.setMovingPlane(movedGeoPoint3D.getCoords(),v1,v2,0f,0f,1f);
-			view.repaint();
-			break;	
-			
-		case MOVE_NONE:
-		default:
-			break;
-		
-		}
-		
-	}
-	
-	*/
-	
-
-
-
-	
-	
 	
 	
 	
