@@ -242,7 +242,7 @@ public class EuclidianController implements MouseListener,
 		this.view = view;
 	}
 
-	void setMode(int newMode) {
+	public void setMode(int newMode) {
 		endOfMode(mode);
 		
 		if (EuclidianView.usesSelectionRectangleAsInput(newMode))

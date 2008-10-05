@@ -1875,6 +1875,9 @@ public class DefaultGuiManager implements GuiManager {
 	        
 	        // select toolbar button
 	        setToolbarMode(mode);
+	        
+	        app.getEuclidianView().getEuclidianController().setMode(mode);
+	        
 	    }
 	    
 	    public void setToolbarMode(int mode) {
