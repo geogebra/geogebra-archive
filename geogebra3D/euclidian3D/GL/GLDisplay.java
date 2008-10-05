@@ -61,7 +61,7 @@ public class GLDisplay {
     	//Mathieu Blossier - multisampling
     	
     	caps.setSampleBuffers(true);
-        caps.setNumSamples(4);    	
+        caps.setNumSamples(3);    	
     	caps.setDoubleBuffered(true);
 
         glCanvas = new GLCanvas(caps);
