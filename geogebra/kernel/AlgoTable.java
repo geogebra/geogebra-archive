@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.MyError;
+
 
 
 public class AlgoTable extends AlgoElement {
@@ -62,8 +64,7 @@ public class AlgoTable extends AlgoElement {
     protected final void compute() {
     	int columns = geoList.size();
     	if (!geoList.isDefined() ||  columns == 0) {
-    		text.setTextString("");
-    		return;
+    		throw new MyError(app, app.getError("InvalidInput"));   		
     	}
     	
     	int alignment = VERTICAL;
@@ -80,6 +81,10 @@ public class AlgoTable extends AlgoElement {
     		columns --;
     	}
     	
+    	if (columns == 0) {
+    		throw new MyError(app, app.getError("InvalidInput"));   		
+    	}
+    	
 
     	if (geoLists == null || geoLists.length < columns)
     	    		geoLists = new GeoList[columns];
@@ -89,13 +94,16 @@ public class AlgoTable extends AlgoElement {
 		for (int c = 0 ; c < columns ; c++) {
 			GeoElement geo = geoList.get(c);
 			if (!geo.isGeoList()) {
-	    		text.setTextString("");
-	    		text.setUndefined();
-	    		return;				
+	    		throw new MyError(app, app.getPlain("SyntaxErrorAisNotAList",geo.toValueString()));
 			}
 			geoLists[c] = (GeoList)geoList.get(c);
 			if (geoLists[c].size() > rows) rows = geoLists[c].size();
 		}
+		
+    	if (rows == 0) {
+    		throw new MyError(app, app.getError("InvalidInput"));   		
+    	}
+
     	
     	
     	sb.setLength(0);
