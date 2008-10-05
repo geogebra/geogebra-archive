@@ -2206,12 +2206,10 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setMode(int mode) {
 		currentSelectionListener = null;
 
-		if (euclidianView != null)
-			euclidianView.setMode(mode);
-
 		if (appGuiManager != null)
 			getGuiManager().setMode(mode);
-
+		else if (euclidianView != null)
+			euclidianView.setMode(mode);
 	}
 
 	public int getMode() {

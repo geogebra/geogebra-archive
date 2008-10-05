@@ -1860,8 +1860,11 @@ public class DefaultGuiManager implements GuiManager {
 	     	if (propDialog != null && propDialog.isShowing()) {    		
 	     		propDialog.setVisible(false);	
 	     	}
+	     	
 	        if (algebraView != null)
 	        	algebraView.reset();
+	        
+	        app.getEuclidianView().setMode(mode);
 	        
 	        if (algebraInput != null && app.showAlgebraInput()) {
 	        	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
@@ -1874,10 +1877,7 @@ public class DefaultGuiManager implements GuiManager {
 	        }                
 	        
 	        // select toolbar button
-	        setToolbarMode(mode);
-	        
-	        app.getEuclidianView().getEuclidianController().setMode(mode);
-	        
+	        setToolbarMode(mode);	         
 	    }
 	    
 	    public void setToolbarMode(int mode) {
