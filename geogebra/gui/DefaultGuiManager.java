@@ -104,6 +104,8 @@ public class DefaultGuiManager implements GuiManager {
 	public DefaultGuiManager(Application app) {
 		this.app = app;
 		this.kernel = app.getKernel();
+		
+		if (!app.isApplet()) initAlgebraController(); // needed for keyboard input in EuclidianView
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
