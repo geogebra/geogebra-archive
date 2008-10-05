@@ -221,8 +221,8 @@ public class EuclidianRenderer3D extends Renderer {
         
         
         //normal anti-scaling
-        //gl.glEnable(GL.GL_NORMALIZE);
-        gl.glEnable(GL.GL_RESCALE_NORMAL);
+        gl.glEnable(GL.GL_NORMALIZE);
+        //gl.glEnable(GL.GL_RESCALE_NORMAL);
          
     }
 

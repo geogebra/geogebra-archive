@@ -154,7 +154,7 @@ public abstract class Application3D extends Application{
     
     
     public void wnd3D(){
-    	JFrame f = new JFrame("EuclidianView3D");
+    	JFrame f = new JFrame("3D view - very early version");
     	f.getContentPane().add(euclidianView3D);
     	f.setLocation(300, 100);
     	
