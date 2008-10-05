@@ -14,8 +14,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-public class CASContextMenuRow extends JPopupMenu 
-{
+public class CASContextMenuRow extends JPopupMenu {
 
 	private static final long serialVersionUID = -592258674730774706L;
 
@@ -45,7 +44,7 @@ public class CASContextMenuRow extends JPopupMenu
 	}
 
 	protected void initMenu() {
-		
+
 		JMenuItem item5 = new JMenuItem(app.getMenu("InsertAbove"));
 		item5.setIcon(app.getEmptyIcon());
 		item5.addActionListener(new ActionListenerInsertAbove());
@@ -69,9 +68,9 @@ public class CASContextMenuRow extends JPopupMenu
 	private class ActionListenerInsertAbove implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int columns = table.getModel().getColumnCount();
-			System.out.println("InsertAbove Action Performed " + (row1-1));
-			
-			table.insertRow(row1-1, 0, null);
+			System.out.println("InsertAbove Action Performed " + (row1 - 1));
+
+			table.insertRow(row1 - 1, 0, null);
 		}
 	}
 
@@ -86,12 +85,18 @@ public class CASContextMenuRow extends JPopupMenu
 	private class ActionListenerClear implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("Clear Action Performed");
-			
-			for (int row = row1; row <= row2; ++ row) {
-				table.deleteRow(row);
-				System.out.println("Delete Action Performed " + row);
+
+			System.out.println("Selected number of rows (key) is: "
+					+ table.getSelectedRowCount());
+			int[] delRows = table.getSelectedRows();
+			int delRowsSize = delRows.length;
+			int i = 0;
+			while (i < delRowsSize) {
+				int delRow = delRows[i];
+				table.deleteRow(delRow - i);
+				System.out.println("MOuse Delete row : " + delRow);
+				i++;
 			}
-			
 		}
 	}
 

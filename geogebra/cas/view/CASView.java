@@ -45,7 +45,7 @@ public class CASView extends JComponent implements CasManager {
 
 	private CASTable consoleTable;
 
-	//public JList rowHeader;
+	// public JList rowHeader;
 
 	public JTable rowHeaderTable;
 
@@ -100,7 +100,7 @@ public class CASView extends JComponent implements CasManager {
 
 		rowHeaderTable.addMouseListener(new RowHeaderMouseListener());
 
-		//consoleTable.addKeyListener(new RowHeaderKeyListener());
+		// rowHeaderTable.addKeyListener(new RowHeaderKeyListener());
 
 		rowHeaderTable.getColumnModel().getColumn(0).setPreferredWidth(
 				ROW_HEADER_WIDTH);
@@ -136,16 +136,18 @@ public class CASView extends JComponent implements CasManager {
 
 		// Set the property of the value column;
 		consoleTable.getColumnModel().getColumn(CASPara.contCol)
-				.setCellRenderer(new CASTableCellRender(this, consoleTable, app));
+				.setCellRenderer(
+						new CASTableCellRender(this, consoleTable, app));
 		consoleTable.getColumnModel().getColumn(CASPara.contCol).setCellEditor(
 				new CASTableCellEditor(this, consoleTable, app));
 		consoleTable.getColumnModel().getColumn(CASPara.contCol)
 				.setHeaderValue("");
 
 		// CAScontroller
-		CASKeyController casKeyCtrl = new CASKeyController(this, session,
-				consoleTable);
-		consoleTable.addKeyListener(casKeyCtrl);		
+		// CASKeyController casKeyCtrl = new CASKeyController(this, session,
+		// consoleTable);
+		// consoleTable.addKeyListener(casKeyCtrl);
+		consoleTable.addKeyListener(new RowHeaderKeyListener());
 		CASMouseController casMouseCtrl = new CASMouseController(this, session,
 				consoleTable);
 		consoleTable.addMouseListener(casMouseCtrl);
@@ -240,6 +242,8 @@ public class CASView extends JComponent implements CasManager {
 	protected class RowHeaderKeyListener implements KeyListener {
 
 		public void keyTyped(KeyEvent e) {
+			// System.out.println("Key typed on rowheader");
+			e.consume();
 		}
 
 		public void keyPressed(KeyEvent e) {
@@ -248,24 +252,33 @@ public class CASView extends JComponent implements CasManager {
 			boolean metaDown = Application.isControlDown(e);
 			boolean altDown = e.isAltDown();
 
-			System.out.println("Key pressed on rowheader");
+			// System.out.println("Key pressed on rowheader");
 			// Application.debug(keyCode);
 			switch (keyCode) {
 
 			case KeyEvent.VK_DELETE: // delete
 			case KeyEvent.VK_BACK_SPACE: // delete on MAC
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					for (int row = minSelectionRow; row <= maxSelectionRow; ++row) {
-						consoleTable.deleteRow(row);
+					int[] delRows = consoleTable.getSelectedRows();
+					int delRowsSize = delRows.length;
+					int i = 0;
+					while (i < delRowsSize) {
+						int delRow = delRows[i];
+						consoleTable.deleteRow(delRow - i);
+						System.out.println("Key Delete row : " + delRow);
+						i++;
 					}
 				}
 				System.out.println("Key Delete or BackSpace Action Performed ");
 				break;
+			default:
+				e.consume();
 			}
 		}
 
 		public void keyReleased(KeyEvent e) {
-
+			// System.out.println("Key Released on rowheader");
+			e.consume();
 		}
 
 	}
@@ -274,7 +287,7 @@ public class CASView extends JComponent implements CasManager {
 	protected class RowHeaderMouseListener implements MouseListener {
 
 		public void mouseClicked(MouseEvent e) {
-			
+
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -283,7 +296,7 @@ public class CASView extends JComponent implements CasManager {
 		public void mouseExited(MouseEvent e) {
 		}
 
-		public void mousePressed(MouseEvent e) {		
+		public void mousePressed(MouseEvent e) {
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -294,16 +307,20 @@ public class CASView extends JComponent implements CasManager {
 			int x = e.getX();
 			int y = e.getY();
 
-			rowHeaderTable.requestFocus();
-			
-			// TODO: remove
-			 Component compFocusOwner =
-			        KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-			 System.out.println("focus owner: " +  compFocusOwner);
-			 System.out.println("consoleTable has Focus: " +  consoleTable.isFocusOwner());
-			 System.out.println("rowHeaderTable has Focus: " +  rowHeaderTable.isFocusOwner());
+			// rowHeaderTable.requestFocus();
+			consoleTable.requestFocus();
 
-			 // TODO: remive the left click handling here and just set the selection model once when the consoleTable is created
+			// TODO: remove
+			// Component compFocusOwner = KeyboardFocusManager
+			// .getCurrentKeyboardFocusManager().getFocusOwner();
+			// System.out.println("focus owner: " + compFocusOwner);
+			System.out.println("consoleTable has Focus: "
+					+ consoleTable.isFocusOwner());
+			System.out.println("rowHeaderTable has Focus: "
+					+ rowHeaderTable.isFocusOwner());
+
+			// TODO: remive the left click handling here and just set the
+			// selection model once when the consoleTable is created
 			// left click
 			if (!rightClick) {
 				Point point = consoleTable.getIndexFromPixel(x, y);
@@ -329,7 +346,8 @@ public class CASView extends JComponent implements CasManager {
 					}
 					// consoleTable.repaint();
 				}
-
+				
+				// Todo: Remove, for debug information
 //				System.out.println("Selected number of rows is: "
 //						+ consoleTable.getSelectedRowCount());
 //				for (int i = 0; i < consoleTable.getSelectedRowCount(); i++) {
@@ -345,11 +363,12 @@ public class CASView extends JComponent implements CasManager {
 				Point point = consoleTable.getIndexFromPixel(x, y);
 				if (point != null) {
 					int row0 = (int) point.getY();
-					
-					if(!consoleTable.isRowSelected(row0))  // This row is already selected
+
+					if (!consoleTable.isRowSelected(row0)) // This row is
+						// already selected
 						consoleTable.setRowSelectionInterval(row0, row0);
 				}
-				
+
 				if (minSelectionRow != -1 && maxSelectionRow != -1) {
 					CASContextMenuRow popupMenu = new CASContextMenuRow(
 							consoleTable, 0, minSelectionRow, consoleTable
@@ -529,9 +548,10 @@ public class CASView extends JComponent implements CasManager {
 	public JComponent getCASViewComponent() {
 		return this;
 	}
-	
+
 	/**
 	 * Loads
+	 * 
 	 * @param cellPairList
 	 */
 	public void initCellPairs(LinkedList cellPairList) {
@@ -553,10 +573,10 @@ public class CASView extends JComponent implements CasManager {
 					consoleTable.insertRow(cellPair);
 			}
 		}
-		
+
 		// Set the focus at the right cell
-//		table.setFocusAtRow(table.getRowCount() - 1,
-//				geogebra.cas.view.CASPara.contCol);
-				
+		// table.setFocusAtRow(table.getRowCount() - 1,
+		// geogebra.cas.view.CASPara.contCol);
+
 	}
 }
