@@ -147,7 +147,7 @@ public class CASView extends JComponent implements CasManager {
 		// CASKeyController casKeyCtrl = new CASKeyController(this, session,
 		// consoleTable);
 		// consoleTable.addKeyListener(casKeyCtrl);
-		consoleTable.addKeyListener(new RowHeaderKeyListener());
+		consoleTable.addKeyListener(new ConsoleTableKeyListener());
 		CASMouseController casMouseCtrl = new CASMouseController(this, session,
 				consoleTable);
 		consoleTable.addMouseListener(casMouseCtrl);
@@ -238,8 +238,8 @@ public class CASView extends JComponent implements CasManager {
 
 	protected int row0 = -1;
 
-	// Key Listener for RowHeader
-	protected class RowHeaderKeyListener implements KeyListener {
+	// Key Listener for Console Table
+	protected class ConsoleTableKeyListener implements KeyListener {
 
 		public void keyTyped(KeyEvent e) {
 			// System.out.println("Key typed on rowheader");
