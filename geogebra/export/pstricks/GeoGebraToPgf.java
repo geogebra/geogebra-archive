@@ -47,7 +47,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	private static final int FORMAT_LATEX=0;
 	private static final int FORMAT_PLAIN_TEX=1;
 	private static final int FORMAT_CONTEXT=2;
-	private int format=0;
+	private static final int FORMAT_BEAMER=3;
 	private int functionIdentifier=0;
 	private boolean forceGnuplot=false;
 	public GeoGebraToPgf(Application app) {
@@ -55,7 +55,8 @@ public class GeoGebraToPgf extends GeoGebraExport {
     }
  
     public void generateAllCode() {
-       	format=((PgfFrame)frame).getFormat();
+       	format=((ExportFrame)frame).getFormat();
+       	if (format==FORMAT_BEAMER) format=FORMAT_LATEX;
        	forceGnuplot=((PgfFrame)frame).getGnuplot();
     	// init unit variables
     	try{	
@@ -126,7 +127,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
      		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
      	for (int i=0;i<geos.length;i++){
         	GeoElement g = (GeoElement)(geos[i]);
-           	drawGeoElement(g);     		
+           	drawGeoElement(g,false);     		
      	}
         // add code for Points and Labels
         code.append(codePoint);
@@ -1503,7 +1504,8 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	}
     
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
-		if (geo.isLabelVisible()){
+		try{
+			if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (name.indexOf("°")!=-1){
 					name=name.replaceAll("°", "\\\\textrm{\\\\degre}");
@@ -1524,7 +1526,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codePoint.append(" node[anchor=south west] {");
 				codePoint.append(name);
 				codePoint.append("};\n");
+			}
 		}
+		// For GeoElement that don't have a Label
+		// For example (created with geoList)
+		catch(NullPointerException e){}
 	}
 
 	/**

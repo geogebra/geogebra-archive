@@ -99,7 +99,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         return Q;
     }
     
-    GeoPolygon getPoly() {
+    public GeoPolygon getPoly() {
     	return poly;
     }
 

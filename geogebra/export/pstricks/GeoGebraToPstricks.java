@@ -55,6 +55,7 @@ import java.util.StringTokenizer;
  */
 
 public class GeoGebraToPstricks extends GeoGebraExport {
+	private static final int FORMAT_BEAMER=1;
 	private StringBuffer codeBeginPic;
 	public GeoGebraToPstricks(Application app) {
     	super(app);
@@ -66,7 +67,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
   
 	 
     public void generateAllCode() {
- 
+       	format=((ExportFrame)frame).getFormat();
     	// init unit variables
     	try{	
     		xunit=frame.getXUnit();
@@ -85,17 +86,28 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		codeBeginDoc=new StringBuffer();
 		codeBeginPic=new StringBuffer();
 		CustomColor=new HashMap();
- 		
-    	codePreamble.append("\\documentclass[" +
-    			frame.getFontSize()+"pt]{article}\n" +
-    			"\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n\\pagestyle{empty}\n");
+ 		if (format==GeoGebraToPstricks.FORMAT_BEAMER){
+ 	    	codePreamble.append("\\documentclass[" +
+ 	    			frame.getFontSize()+"pt]{beamer}\n");
+ 		}
+ 		else{
+ 			codePreamble.append("\\documentclass[" +
+ 	    			frame.getFontSize()+"pt]{article}\n");
+ 		}
+ 		codePreamble.append("\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n\\pagestyle{empty}\n");
      	codeBeginDoc.append("\\begin{document}\n");
-     	
+ 		if (format==GeoGebraToPstricks.FORMAT_BEAMER){
+ 	    	codeBeginDoc.append("\\begin{frame}\n");
+ 		}
     	// Draw Grid
-		if (euclidianView.getShowGrid()) drawGrid();
+		if (euclidianView.getShowGrid()) {
+			drawGrid();
+			beamerSlideNumber=2;
+		}
 		else {
 			initUnitAndVariable();
 			// Environment pspicture
+			
 			codeBeginPic.append("\\begin{pspicture*}(");
 			codeBeginPic.append(kernel.format(xmin));
 			codeBeginPic.append(",");
@@ -109,7 +121,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		
 		// Draw axis
 		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
-			drawAxis();
+			{
+				beamerSlideNumber=2;
+				drawAxis();
+			}
 		
 
 		
@@ -119,7 +134,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
      		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
      	for (int i=0;i<geos.length;i++){
         	GeoElement g = (GeoElement)(geos[i]);
-           	drawGeoElement(g);     		
+           	drawGeoElement(g,false);		
+//           	System.out.println(g+" "+beamerSlideNumber);
      	}
 		
         // add code for Points and Labels
@@ -135,13 +151,17 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.insert(0,codeBeginPic+"");
         code.insert(0,codeBeginDoc+"");		
         code.insert(0,codePreamble+"");
-		code.append("\\end{document}");		
+        if (format==GeoGebraToPstricks.FORMAT_BEAMER){
+ 	    	code.append("\\end{frame}\n");
+ 		}
+        code.append("\\end{document}");		
 		frame.write(code);
 	}	
 
     protected void drawLocus(GeoLocus g){
     	ArrayList ll=g.getMyPointList();
     	Iterator it=ll.iterator();
+		startBeamer(code);
     	code.append("\\pscustom{");
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
@@ -156,6 +176,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     		code.append(")\n");
     	}
 		code.append("}\n");
+		endBeamer(code);
     }
     
     protected void drawBoxPlot(GeoNumeric geo){
@@ -168,7 +189,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	double med=lf[2];
     	double q3=lf[3];
     	double max=lf[4];
-		// Min vertical bar
+    	startBeamer(code);
+    	// Min vertical bar
 		drawLine(min,y-height,min,y+height,geo);
 		// Max vertical bar
 		drawLine(max,y-height,max,y+height,geo);
@@ -178,7 +200,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		drawLine(min,y,q1,y,geo);
 		// q3-max
 		drawLine(q3,y,max,y,geo);
+    	endBeamer(code);
 		// Rectangle q1-q3
+		startBeamer(codeFilledObject);
 		codeFilledObject.append("\\psframe");
 		codeFilledObject.append(LineOptionCode(geo,true));
 		codeFilledObject.append("(");
@@ -189,12 +213,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		codeFilledObject.append(kernel.format(q3));
 		codeFilledObject.append(",");
 		codeFilledObject.append(kernel.format(y+height));
-		codeFilledObject.append(")\n");   	
+		codeFilledObject.append(")\n");
+		endBeamer(codeFilledObject);
     }
     protected void drawHistogram(GeoNumeric geo){
     	AlgoFunctionAreaSums algo=(AlgoFunctionAreaSums)geo.getParentAlgorithm();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
+		startBeamer(codeFilledObject);
         for (int i=0;i<x.length-1;i++){
     		codeFilledObject.append("\\psframe");
     		codeFilledObject.append(LineOptionCode(geo,true));
@@ -205,7 +231,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     		codeFilledObject.append(",");
     		codeFilledObject.append(kernel.format(y[i]));
     		codeFilledObject.append(")\n");
+    		if (i!=x.length-2&&isBeamer) codeFilledObject.append("  ");
         }    	
+		endBeamer(codeFilledObject);
     }
     
     protected void drawSumTrapezoidal(GeoNumeric geo){
@@ -213,6 +241,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	int n=algo.getIntervals();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
+		startBeamer(codeFilledObject);
        	for (int i=0;i<n;i++){
     		codeFilledObject.append("\\pspolygon");
     		codeFilledObject.append(LineOptionCode(geo,true));
@@ -229,7 +258,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     		codeFilledObject.append(",");
     		codeFilledObject.append(kernel.format(y[i]));
     		codeFilledObject.append(")\n");
+    		if (i!=n-1&&isBeamer) codeFilledObject.append("  ");
     	}       
+		endBeamer(codeFilledObject);
     }
     
     protected void drawSumUpperLower(GeoNumeric geo){
@@ -238,6 +269,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         double step=algo.getStep();
         double[] y=algo.getValues();
         double[] x=algo.getLeftBorders();
+		startBeamer(codeFilledObject);
        	for (int i=0;i<n;i++){
         		codeFilledObject.append("\\psframe");
         		codeFilledObject.append(LineOptionCode(geo,true));
@@ -248,7 +280,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         		codeFilledObject.append(",");
         		codeFilledObject.append(kernel.format(y[i]));
         		codeFilledObject.append(")\n");
+        		if (i!=n-1&&isBeamer) codeFilledObject.append("  ");
         }
+		endBeamer(codeFilledObject);
     }
     protected void drawIntegralFunctions(GeoNumeric geo){
 // command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,g(b))\pstplot{b}{a}{g(x)} \lineto(a,f(a))\closepath} 
@@ -271,7 +305,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	// String expressions for f(a) and g(b) 
 	String fa=kernel.format(f.evaluate(a));
 	String gb=kernel.format(g.evaluate(b));
-	
+	startBeamer(codeFilledObject);
 	codeFilledObject.append("\\pscustom");
 	codeFilledObject.append(LineOptionCode(geo,true));
 	codeFilledObject.append("{\\psplot{");
@@ -295,6 +329,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	codeFilledObject.append(",");
 	codeFilledObject.append(fa);
 	codeFilledObject.append(")\\closepath}\n");
+	endBeamer(codeFilledObject);
     }
     
     protected void drawIntegral(GeoNumeric geo){
@@ -307,6 +342,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         String b = kernel.format(algo.getB().getDouble());    
     	String value=f.toValueString();
     	value=killSpace(Util.toLaTeXString(value,true));
+		startBeamer(codeFilledObject);
     	codeFilledObject.append("\\pscustom");
     	codeFilledObject.append(LineOptionCode(geo,true));
     	codeFilledObject.append("{\\psplot{");
@@ -320,7 +356,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	codeFilledObject.append(",0)\\lineto(");
     	codeFilledObject.append(a);
     	codeFilledObject.append(",0)\\closepath}\n");
-
+		endBeamer(codeFilledObject);
     }
     protected void drawSlope(GeoNumeric geo){
        	int slopeTriangleSize = geo.getSlopeTriangleSize();
@@ -337,6 +373,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         float x = (float) coords[0];
         float y = (float) coords[1];
         float xright=x+slopeTriangleSize;
+		startBeamer(codeFilledObject);
     	codeFilledObject.append("\\pspolygon");
     	codeFilledObject.append(LineOptionCode(geo,true));
     	codeFilledObject.append("(");
@@ -354,12 +391,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		codeFilledObject.append(",");
 		codeFilledObject.append(kernel.format(y+rwHeight));
 		codeFilledObject.append(")");
-    	codeFilledObject.append("\n");	
+    	codeFilledObject.append("\n");
+		endBeamer(codeFilledObject);
         // draw Label
     	float xLabelHor = (x + xright) /2;
         float yLabelHor = y -(float)(
         		(euclidianView.getFont().getSize() + 2)/euclidianView.getYscale());
 		Color geocolor=geo.getObjectColor();
+		startBeamer(codePoint);
 		codePoint.append("\\rput[bl](");
 		codePoint.append(kernel.format(xLabelHor));
 		codePoint.append(",");
@@ -375,7 +414,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append("}");
 		}
 		codePoint.append("}\n");	
-
+		endBeamer(codePoint);
     }
     protected void drawAngle(GeoAngle geo){
     	int arcSize=geo.getArcSize();
@@ -494,6 +533,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         	x[7]=m[1];
         	
           	// command: \pspolygon[par](x0,y0)....(xn,yn)
+			startBeamer(codeFilledObject);
         	codeFilledObject.append("\\pspolygon");
         	codeFilledObject.append(LineOptionCode(geo,true));
         	for (int i=0;i<4;i++){
@@ -503,11 +543,13 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         		codeFilledObject.append(kernel.format(x[2*i+1]));
         		codeFilledObject.append(")");
         	}
-        	codeFilledObject.append("\n");	
+        	codeFilledObject.append("\n");
+			endBeamer(codeFilledObject);
         }
         // draw arc for the angle
         else {	
        	// set arc in real world coords
+		startBeamer(code);
 		code.append("\\pscustom");
 		code.append(LineOptionCode(geo,true));
 		code.append("{\\parametricplot{");
@@ -528,6 +570,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(",");
 		code.append(kernel.format(m[1]));
 		code.append(")\\closepath}\n");
+		endBeamer(code);
 		// draw the dot if angle= 90 and decoration=dot
 		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
 			double diameter = geo.lineThickness/euclidianView.getXscale();
@@ -537,6 +580,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			double x2 = m[1] + radius * Math.sin(labelAngle);
 			// draw an ellipse
 			// command:  \psellipse(0,0)(20.81,-10.81)}
+				startBeamer(code);
 				code.append("\\psellipse*");
 				code.append(LineOptionCode(geo,true));
 				code.append("(");
@@ -548,11 +592,15 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(",");
 				code.append(kernel.format(diameter));
 				code.append(")\n");
+				endBeamer(code);
 			}
         }
    		int deco=geo.decorationType;
-		if (deco!=GeoElement.DECORATION_NONE) markAngle(geo,r,m,angSt,angExt);
-
+		if (deco!=GeoElement.DECORATION_NONE){ 
+	   		startBeamer(code);
+			markAngle(geo,r,m,angSt,angExt);
+			endBeamer(code);
+		}
     }
     protected void drawArrowArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r, boolean anticlockwise){
     	// The arrow head goes away from the line.
@@ -560,6 +608,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	double arrowHeight=(geo.lineThickness*0.8+3)*1.4*3/4;
     	double angle=Math.asin(arrowHeight/2/euclidianView.getXscale()/ r);
     	angEnd=angEnd-angle;
+		startBeamer(code);
     	code.append("\\psellipticarc");
     	code.append(LineOptionCode(geo,false));
 		if (anticlockwise)	code.append("{->}(");
@@ -576,11 +625,13 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("}{");
 		code.append(kernel.format(Math.toDegrees(angEnd)));
 		code.append("}\n");
+		endBeamer(code);
     }
     
     
     
     protected void drawArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r ){
+    	if (isBeamer) code.append("  ");
 		code.append("\\parametricplot");
 		code.append(LineOptionCode(geo,false));
 		code.append("{");
@@ -596,7 +647,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("*sin(t)+");
 		code.append(kernel.format(vertex[1]));
 		code.append("}\n");
-
     }
 	protected void drawTick(GeoAngle geo,double[] vertex,double angle){
 		angle=-angle;
@@ -606,6 +656,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		double x2=euclidianView.toRealWorldCoordX(vertex[0]+(radius+diff)*Math.cos(angle));
 		double y1=euclidianView.toRealWorldCoordY(vertex[1]+(radius-diff)*Math.sin(angle)*euclidianView.getScaleRatio());
 		double y2=euclidianView.toRealWorldCoordY(vertex[1]+(radius+diff)*Math.sin(angle)*euclidianView.getScaleRatio());
+		if (isBeamer) code.append("  ");
 		code.append("\\psline");
 		code.append(LineOptionCode(geo,false));
 		code.append("(");
@@ -662,8 +713,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	drawLabel(geoPoint,drawPoint);
     	
     	geoPoint.remove(); // Michael Borcherds 2008-08-20
-    	
-    	//draw Line dor Slider
+		startBeamer(code);
+    	//draw Line for Slider
     	code.append("\\psline");
     	code.append(LineOptionCode(geo,true));
     	code.append("(");
@@ -676,7 +727,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	code.append(kernel.format(x));
     	code.append(",");
     	code.append(kernel.format(y));
-    	code.append(")\n");    	
+    	code.append(")\n");
+		endBeamer(code);
     }
     
     
@@ -684,6 +736,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	// command: \pspolygon[par](x0,y0)....(xn,yn)
     	float alpha=geo.getAlphaValue();
     	if (alpha==0.0f) return;
+		startBeamer(codeFilledObject);
     	codeFilledObject.append("\\pspolygon");
     	codeFilledObject.append(LineOptionCode(geo,true));
     	GeoPoint [] points = geo.getPoints();	
@@ -700,6 +753,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     		codeFilledObject.append(")");
     	}
     	codeFilledObject.append("\n");	
+		endBeamer(codeFilledObject);
     }
     
 	protected void drawText(GeoText geo){
@@ -732,6 +786,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		x=euclidianView.toRealWorldCoordX(x);
 		y=euclidianView.toRealWorldCoordY(y-euclidianView.getFont().getSize());
 		int id=st.indexOf("\n");
+		startBeamer(code);
 		// One line
 		if (id==-1){
 			code.append("\\rput[tl](");
@@ -765,6 +820,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			addText(new String(sb),isLatex,style,size,geocolor);
 			code.append("}}\n");	
 		}
+		endBeamer(code);
 	}
 	
 	protected void drawGeoConicPart(GeoConicPart geo){
@@ -778,6 +834,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			endAngle=Math.toDegrees(endAngle);
 		//	Sector command:   \pswedge*[par](x0,y0){radius}{angle1}{angle2}
 		//	 Arc command:	\psarc*[par]{arrows}(x,y){radius}{angleA}{angleB}
+			startBeamer(code);
 			if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
 				code.append("\\pswedge");
 			}
@@ -830,6 +887,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			}
 			code.append("\n");
 		}
+		endBeamer(code);
 	}
 	protected void drawFunction(GeoFunction geo){
 		Function f=geo.getFunction();
@@ -849,6 +907,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			if (xrangemin==b) break;
 			xrangemax=maxDefinedValue(f,xrangemin,b);
 //			Application.debug("xrangemax "+xrangemax);
+			startBeamer(code);
 			code.append("\\psplot");
 			code.append(LineOptionCode(geo,true));
 			int index=code.lastIndexOf("]");
@@ -865,6 +924,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			code.append("}\n");
 			xrangemax+=PRECISION_XRANGE_FUNCTION;
 			a=xrangemax;
+			endBeamer(code);
 		}
 	}
 /* We have to rewrite the function
@@ -965,7 +1025,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		geo.getCoords(coord);
 		String x2=kernel.format(coord[0]+Double.parseDouble(x1));
 		String y2=kernel.format(coord[1]+Double.parseDouble(y1));
-	
+		startBeamer(code);
 		code.append("\\psline");
 		code.append(LineOptionCode(geo,true));
 		code.append("{->}(");
@@ -977,6 +1037,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(",");
 		code.append(y2);
 		code.append(")\n");
+		endBeamer(code);
 	}
 	private void drawCircle(GeoConic geo){
 		if (xunit==yunit){
@@ -985,6 +1046,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			double x=geo.getTranslationVector().getX();
 			double y=geo.getTranslationVector().getY();
 			double r=geo.getHalfAxes()[0];
+			startBeamer(code);
 			code.append("\\pscircle");
 			code.append(LineOptionCode(geo,true));
 			code.append("(");
@@ -996,6 +1058,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			if (Double.parseDouble(tmpr)!=0) code.append(tmpr);
 			else code.append(r);
 			code.append("}\n");
+			endBeamer(code);
 		}
 		else {
 		// draw an ellipse
@@ -1004,6 +1067,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			double y1=geo.getTranslationVector().getY();
 			double r1=geo.getHalfAxes()[0];
 			double r2=geo.getHalfAxes()[1];
+			startBeamer(code);
 			code.append("\\psellipse");
 			code.append(LineOptionCode(geo,true));
 			code.append("(");
@@ -1015,6 +1079,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			code.append(",");
 			code.append(kernel.format(r2));
 			code.append(")\n");
+			endBeamer(code);
 		}
 	}
 	protected void drawGeoConic(GeoConic geo){	
@@ -1034,6 +1099,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				double r1=geo.getHalfAxes()[0];
 				double r2=geo.getHalfAxes()[1];
 				double angle=Math.toDegrees(Math.atan2(eigenvecY,eigenvecX));
+				startBeamer(code);
 				code.append("\\rput{");
 				code.append(kernel.format(angle));
 				code.append("}(");
@@ -1047,6 +1113,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(",");
 				code.append(kernel.format(r2));
 				code.append(")}\n");
+				endBeamer(code);
 			break;
 			
 		// if conic is a parabola 
@@ -1086,6 +1153,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		        //x0 = k2/2 * p; // x = k*p
 		        x0 = i * p;    // y = sqrt(2k p^2) = i p
 				angle=Math.toDegrees(Math.atan2(eigenvecY,eigenvecX))-90;
+				startBeamer(code);
 				code.append("\\rput{");
 				code.append(kernel.format(angle));
 				code.append("}(");
@@ -1102,6 +1170,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append("{x^2/2/");
 				code.append(kernel.format(p));
 				code.append("}}\n");
+				endBeamer(code);
 			break;
 			case GeoConic.CONIC_HYPERBOLA:
 // command: \rput{angle_rotation}(x_origin,y_origin){\parametric{-1}{1}{a(1+t^2)/(1-t^2)|2bt/(1-t^2)}
@@ -1113,6 +1182,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				r1=geo.getHalfAxes()[0];
 				r2=geo.getHalfAxes()[1];
 				angle=Math.toDegrees(Math.atan2(eigenvecY,eigenvecX));
+				startBeamer(code);
 				code.append("\\rput{");
 				code.append(kernel.format(angle));
 				code.append("}(");
@@ -1142,12 +1212,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(kernel.format(r2));
 				code.append("*(-2)*t/(1-t^2)");
 				code.append("}}\n");
+				endBeamer(code);
 				break;
 		}	
 	}
 	
 	protected void drawGeoPoint(GeoPoint gp){
 		if (frame.getExportPointSymbol()){
+			startBeamer(codePoint);
 			double x=gp.getX();
 			double y=gp.getY();
 			double z=gp.getZ();
@@ -1160,12 +1232,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append(",");
 			codePoint.append(kernel.format(y));
 			codePoint.append(")\n");
+			endBeamer(codePoint);
 		}
 	}
 	protected void drawGeoLine(GeoLine geo){
 		double x=geo.getX();
 		double y=geo.getY();
 		double z=geo.getZ();
+		startBeamer(code);
 		if (y!=0)code.append("\\psplot");
 		else code.append("\\psline");
 		code.append(LineOptionCode(geo,true));
@@ -1196,6 +1270,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(kernel.format(ymax));
 				code.append(")\n");
 		}
+		endBeamer(code);
 	}
 	protected void drawGeoSegment(GeoSegment geo){
 		double[] A=new double[2];
@@ -1208,6 +1283,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		String y1=kernel.format(A[1]);
 		String x2=kernel.format(B[0]);
 		String y2=kernel.format(B[1]);
+		startBeamer(code);
 		code.append("\\psline");
 		code.append(LineOptionCode(geo,true));
 		code.append("(");
@@ -1221,12 +1297,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(")\n");
 		int deco=geo.decorationType;
 		if (deco!=GeoElement.DECORATION_NONE) mark(A,B,deco,geo);
+		endBeamer(code);
 	}
 	protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo){
 		String sx1=kernel.format(x1);
 		String sy1=kernel.format(y1);
 		String sx2=kernel.format(x2);
 		String sy2=kernel.format(y2);
+		if (isBeamer) code.append("  ");
 		code.append("\\psline");
 		code.append(LineOptionCode(geo,true));
 		code.append("(");
@@ -1238,12 +1316,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(",");
 		code.append(sy2);
 		code.append(")\n");
-		
 	}
 	protected void drawGeoRay(GeoRay geo){
 		GeoPoint pointStart=geo.getStartPoint();
-		
-		
 		double x1=pointStart.getX();
 		double z1=pointStart.getZ();
 		x1=x1/z1;
@@ -1252,7 +1327,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		double x=geo.getX();
 		double y=geo.getY();
 		double z=geo.getZ();
-
+		startBeamer(code);
 		if (y!=0)code.append("\\psplot");
 		else code.append("\\psline");
 		code.append(LineOptionCode(geo,true));
@@ -1291,6 +1366,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				code.append(kernel.format(sup));
 				code.append(")\n");
 		}
+		endBeamer(code);
 	}
     
     private void initUnitAndVariable(){
@@ -1321,7 +1397,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     
 	// if label is Visible, draw it
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
-		if (geo.isLabelVisible()){
+		try{
+			if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
 				double xLabel=drawGeo.getxLabel();
@@ -1330,6 +1407,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				yLabel=euclidianView.toRealWorldCoordY(Math.round(yLabel));
 				
 				Color geocolor=geo.getObjectColor();
+				startBeamer(codePoint);
 				codePoint.append("\\rput[bl](");
 				codePoint.append(kernel.format(xLabel));
 				codePoint.append(",");
@@ -1345,7 +1423,12 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 					codePoint.append("}");
 				}
 				codePoint.append("}\n");
-			}		
+				endBeamer(codePoint);
+			}
+		}
+		// For GeoElement that don't have a Label
+		// For example (created with geoList)
+		catch(NullPointerException e){}
 		}	
 
 	

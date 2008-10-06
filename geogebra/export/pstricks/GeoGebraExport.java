@@ -13,6 +13,9 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoSumTrapezoidal;
 import geogebra.kernel.AlgoSumUpper;
+import geogebra.kernel.AlgoPolygon;
+import geogebra.kernel.AlgoPolygonRegular;
+import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoSumLower;
@@ -41,10 +44,13 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
 public abstract class GeoGebraExport implements ActionListener{
+	protected int beamerSlideNumber=1;
 	protected final double PRECISION_XRANGE_FUNCTION=0.00001;
 	protected StringBuffer code,codePoint,codePreamble,codeFilledObject,codeBeginDoc;
 	protected Application app;
@@ -54,6 +60,9 @@ public abstract class GeoGebraExport implements ActionListener{
     protected ExportFrame frame;
     protected HashMap CustomColor;
     protected double xunit,yunit,xmin,xmax,ymin,ymax;
+	// The exported format: Latex, tex, ConTexT, Beamer
+    protected int format=0;
+    protected boolean isBeamer=false;
     public GeoGebraExport(Application app) {
     	this.app = app;
     	this.kernel = app.getKernel();
@@ -134,6 +143,7 @@ public abstract class GeoGebraExport implements ActionListener{
      * When The Button "generate Code" has been clicked
      */
 	public void actionPerformed(ActionEvent e){
+		isBeamer=frame.isBeamer();
 		generateAllCode();
 	}
 	/**
@@ -200,33 +210,42 @@ public abstract class GeoGebraExport implements ActionListener{
 	 * This method is generic method to generate code according to GeoElement nature
 	 * @param g GeoElement g
 	 */
-    protected void drawGeoElement(GeoElement g){
+    protected void drawGeoElement(GeoElement g,boolean fromGeoList){
     	if (g.isGeoList()){
     		GeoList geo=((GeoList)g);
     		for (int i=0;i<geo.size();i++){
-    			drawGeoElement(geo.get(i));
+    			drawGeoElement(geo.get(i),true);
     		}
     	}
     	else if (g.isEuclidianVisible()) {
     		if (g.isGeoPoint()){
 				drawGeoPoint((GeoPoint)g);
 				drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
     		}
 		else if (g.isGeoSegment()){
 			drawGeoSegment((GeoSegment)g);
 	      	drawLabel(g,null);
+	      	if (isBeamer&&!fromGeoList) {
+	      		// If this segment is from a Polygon don't increment beamerSlideNumber
+	      		boolean b=(null==((AlgoJoinPointsSegment)(((GeoSegment)g).getParentAlgorithm())).getPoly());
+	      			if (b)	beamerSlideNumber++;
+	      		}
 		}
 		else if (g.isGeoRay()){
 			drawGeoRay((GeoRay)g);
-	      	drawLabel(g,null);
+			drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoLine()){
 			drawGeoLine((GeoLine)g);
-	      	drawLabel(g,null);
+			drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoPolygon()) {
 			drawPolygon((GeoPolygon)g);
 			drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoAngle()) {
         	if (g.isIndependent()) {
@@ -236,6 +255,7 @@ public abstract class GeoGebraExport implements ActionListener{
         		drawAngle((GeoAngle)g);
 //        		String label="$"+Util.toLaTeXString(g.getLabelDescription(),true)+"$";
         		drawLabel(g,euclidianView.getDrawableFor((GeoAngle)g));
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         	}        	                                  
      }  
         else if (g.isGeoNumeric()) {
@@ -247,15 +267,18 @@ public abstract class GeoGebraExport implements ActionListener{
             else if (algo instanceof AlgoSlope) {
             	drawSlope((GeoNumeric)g);
             	drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 
             }       
             else if (algo instanceof AlgoIntegralDefinite) {
                 drawIntegral((GeoNumeric) g);  
                 drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             } 
             else if (algo instanceof AlgoIntegralFunctions){
             	drawIntegralFunctions((GeoNumeric) g);
             	drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             }
             else if (algo instanceof AlgoFunctionAreaSums) {
             	// Trapezoidal Sum
@@ -274,17 +297,20 @@ public abstract class GeoGebraExport implements ActionListener{
             	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower) 
             				drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             }
         }
         else if (g.isGeoVector()) {
         	drawGeoVector((GeoVector)g);
 	      	drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoConicPart()) {
         	GeoConicPart geo=(GeoConicPart)g;
         	drawGeoConicPart(geo);
         	if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC
         			|| geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR)
 	      	drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoConic()) {
 			if (isSinglePointConic(g)){
 				GeoConic geo=(GeoConic)g;
@@ -298,6 +324,7 @@ public abstract class GeoGebraExport implements ActionListener{
 				drawPoint.setGeoElement(geo);
 				drawGeoPoint(point);
 				drawLabel(point,drawPoint);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}
 			else if(isDoubleLineConic(g)){
 				GeoConic geo=(GeoConic)g;
@@ -318,16 +345,19 @@ public abstract class GeoGebraExport implements ActionListener{
 				drawGeoLine(lines[1]);
 				drawLabel(lines[0],drawLines[0]);
 				drawLabel(lines[1],drawLines[1]);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}
 			else if (isEmpty(g)){
 			}
 			else {
 				drawGeoConic((GeoConic)g);
 				drawLabel(g,null);
+				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}			
         } else if (g.isGeoFunction()) {
         	drawFunction((GeoFunction)g);
         	drawLabel(g,null);
+			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoText()) {
         	drawText((GeoText)g);
         } else if (g.isGeoImage()) {
@@ -768,5 +798,10 @@ public abstract class GeoGebraExport implements ActionListener{
 		}
 		if (isLatex)code.append("$");
 	}
-	
+	protected void startBeamer(StringBuffer sb){
+		if (isBeamer) sb.append("\\onslide<"+beamerSlideNumber+"->{\n  ");
+	}
+	protected void endBeamer(StringBuffer sb){
+		if (isBeamer) sb.append("}\n");
+	}
 }

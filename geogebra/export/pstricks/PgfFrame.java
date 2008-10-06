@@ -10,9 +10,7 @@ import javax.swing.JLabel;
 
 public class PgfFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
-	private JLabel labelFormat;
-	final String[] format={"LaTeX","Plain TeX","ConTeXt"};
-	private JComboBox comboFormat;
+	final String[] format={"LaTeX","Plain TeX","ConTeXt","Beamer"};
 	private JCheckBox forceGnuplot;
 	public PgfFrame(final GeoGebraToPgf ggb2pgf){
 		super(ggb2pgf,"GeneratePgf");
@@ -124,10 +122,11 @@ public class PgfFrame extends ExportFrame{
 		centerOnScreen();
 		setVisible(true);
 	}
-	protected int getFormat(){
-		return comboFormat.getSelectedIndex();
-	}
 	protected boolean getGnuplot(){
 		return forceGnuplot.isSelected();
+	}
+	protected boolean isBeamer() {
+		if (comboFormat.getSelectedIndex()==3) return true;
+		return false;
 	}
 }

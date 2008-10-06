@@ -27,11 +27,11 @@ import javax.swing.JTextArea;
 
 abstract public class ExportFrame extends JFrame{
 	protected TextValue textXUnit,textYUnit,textwidth,textheight;
-	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize;
+	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize,labelFormat;;
 	protected TextValue textXmin,textXmax, textYmin,textYmax;
 	protected JLabel labelXmin,labelXmax,labelYmin,labelYmax;
 	final String[] msg={"10 pt","11 pt","12 pt"};
-	protected JComboBox comboFontSize;
+	protected JComboBox comboFontSize,comboFormat;
 	protected JPanel panel;
 	protected JButton button,button_copy;
 	protected JCheckBox jcbPointSymbol,jcbGrayscale;
@@ -310,5 +310,8 @@ abstract public class ExportFrame extends JFrame{
 		}
 		return 10;
 	}
-
+	protected int getFormat(){
+		return comboFormat.getSelectedIndex();
+	}
+	protected abstract boolean isBeamer();
 }

@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 /**
@@ -12,11 +14,14 @@ import javax.swing.JLabel;
  */
 public class PstricksFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
+	final String[] format={"LaTeX","Beamer"};
 	public PstricksFrame(final GeoGebraToPstricks ggb2pst){
 		super(ggb2pst,"GeneratePstricks");
 		initGui();
 	}
-	protected void initGui(){ 
+	protected void initGui(){
+		comboFormat=new JComboBox(format);
+		labelFormat=new JLabel(app.getPlain("Format"));
 		setTitle(app.getPlain("TitleExportPstricks"));
 		js.getViewport().add(textarea);
 		panel.setLayout(new GridBagLayout());
@@ -74,7 +79,13 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(comboFontSize, new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(jcbPointSymbol, new GridBagConstraints(2, 4, 2, 1, 1.0, 1.0,
+		panel.add(labelFormat, new GridBagConstraints(2, 4, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(comboFormat, new GridBagConstraints(3, 4, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(jcbPointSymbol, new GridBagConstraints(2, 5, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
 		panel.add(jcbGrayscale, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0,
@@ -100,5 +111,9 @@ public class PstricksFrame extends ExportFrame{
 		setVisible(true);
 	}
 	//end changes.
+	protected boolean isBeamer() {
+		if (comboFormat.getSelectedIndex()==1) return true;
+		return false;
+	}
 	
 }
