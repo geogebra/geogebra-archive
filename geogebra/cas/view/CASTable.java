@@ -62,16 +62,18 @@ public class CASTable extends JTable {
 	public void insertRow(int selectedRow, int selectedCol,
 			CASTableCellValue inValue) {
 		CASTableCellValue newValue;
-		if (inValue == null)
-			newValue = new CASTableCellValue();
-		else
-			newValue = inValue;
-		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
 		
 		if (this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION) {
 			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
 		
+		if (inValue == null)
+			newValue = new CASTableCellValue();
+		else
+			newValue = inValue;
+		
+		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
+				
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
 		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
@@ -84,10 +86,10 @@ public class CASTable extends JTable {
 		// CASTableCellValue newValue = new CASTableCellValue();
 		int rowNum = tableModel.getRowCount();
 		// insert the row before
-		tableModel.insertRow(rowNum - 1, new Object[] { newValue, "load" });
+		tableModel.insertRow(rowNum, new Object[] { newValue, "load" });
 		// Enlarge the cell hight
 		if (newValue.isOutputVisible())
-			this.setRowHeight(rowNum - 1, CASPara.inputOutputHeight);
+			this.setRowHeight(rowNum, CASPara.inputOutputHeight);
 	}
 
 	public void insertRow(int selectedRow, int selectedCol, char c) {
