@@ -4368,18 +4368,32 @@ class CmdTable extends CommandProcessor {
        arg = resArgs(c);
        
        switch (n) {
-       /*
+       
          case 1 :
            if ( (ok[0] = (arg[0].isGeoList()) ) ){
+        	   GeoList list = (GeoList)arg[0];
+        	   
+        	   if (list.size() == 0)
+                   throw argErr(app, c.getName(), arg[0]);
+        	   
+        	   if (list.get(0).isGeoList()) { // list of lists: no need to wrap   		   
                GeoElement[] ret =
                    {
                         kernel.Table(
                            c.getLabel(),
                            (GeoList) arg[0])};
                return ret;
+        	   } else {
+        		   list = wrapInList(kernel, arg, -1);
+                   if (list != null) {
+                  	 GeoElement[] ret = { kernel.Table(c.getLabel(), list)};
+                       return ret;             	     	 
+                   } 
+       			throw argErr(app, c.getName(), arg[0]);        		   
+        	   }
            } else {
                    throw argErr(app, c.getName(), arg[0]);
-           }*/
+           }
            
          case 0:
         	 throw argNumErr(app, c.getName(), n);
@@ -4391,7 +4405,7 @@ class CmdTable extends CommandProcessor {
             	 GeoElement[] ret = { kernel.Table(c.getLabel(), list)};
                  return ret;             	     	 
              } 
- 			throw argNumErr(app, c.getName(), n);
+ 			throw argErr(app, c.getName(), arg[0]);
        }
 	}
 }
