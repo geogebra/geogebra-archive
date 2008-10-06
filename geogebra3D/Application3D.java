@@ -89,20 +89,45 @@ public abstract class Application3D extends Application{
 
     public void updateCenterPanel(boolean updateUI) {
     	centerPanel.removeAll();
+        JDesktopPane dtp = new JDesktopPane();
+        dtp.setPreferredSize(new Dimension(800,500));
+        centerPanel.add(dtp);
+        
+        //algebra internal frame
+        JInternalFrame frameAlgebra = new JInternalFrame("Algebra view", true,true, true, true);
+        frameAlgebra.setContentPane(getGuiManager().getAlgebraView());
+        frameAlgebra.setSize(200, 480);
+        frameAlgebra.setLocation(0, 0);
+        frameAlgebra.setVisible(true);
+        dtp.add(frameAlgebra);
+        
+        
+        //2D internal frame
+        JInternalFrame frame2D = new JInternalFrame("2D view", true,true, true, true);
+        frame2D.setContentPane(euclidianView);
+        frame2D.setSize(640, 480);
+        frame2D.setLocation(200, 0);
+        frame2D.setVisible(true);
+        dtp.add(frame2D);
+        
+        //3D internal frame
+        JInternalFrame frame3D = new JInternalFrame("3D view - very early version", true,true, true, true);
+        frame3D.setContentPane(euclidianView3D);
+        frame3D.setSize(640, 480);
+        frame3D.setLocation(250, 0);        
+        frame3D.setVisible(true);        
+        dtp.add(frame3D);
+        frame3D.moveToFront();
+
     	
     	
+    	/*
     	JPanel eup = new JPanel(new BorderLayout());
     	//Mathieu Blossier - start
     	//adding a 3D view splitting the euclidian view
     	//TODO : call super()
         if (show3DView) {       
-        	/* TODO
-            sp3D =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, euclidianView, euclidianView3D);
-            sp3D.setDividerLocation(initSplitDividerLocationHOR3D);                
-            //sp3D.addPropertyChangeListener("dividerLocation3D",new DividerChangeListener());        
-            
-            eup.add(sp3D, BorderLayout.CENTER);
-            */
+ 
         	eup.setBackground(Color.white);
             eup.add(euclidianView, BorderLayout.CENTER);
             
@@ -149,14 +174,47 @@ public abstract class Application3D extends Application{
         		createMatteBorder(eupTopBorder, 0, eupBottomBorder, 0, Color.gray));
         
         if (updateUI)        	
-        	updateComponentTreeUI();               
+        	updateComponentTreeUI();       
+        	
+        */
     }  
     
     
     public void wnd3D(){
+    	
+    	/*
     	JFrame f = new JFrame("3D view - very early version");
-    	f.getContentPane().add(euclidianView3D);
+    	//f.getContentPane().add(euclidianView3D);
+    	
     	f.setLocation(300, 100);
+    	f.setSize(new Dimension(800,600));
+    	f.setPreferredSize(new Dimension(800,600));
+    	
+    	
+    	
+    	
+        JDesktopPane dtp = new JDesktopPane();
+        //dtp.setBackground(Color.GREEN);
+        //f.setContentPane(dtp);
+        f.getContentPane().add(dtp);
+        
+        JInternalFrame mboxFrame = new JInternalFrame("3D view - very early version", true,
+            true, true, true);
+        
+        //JLabel reader = new JLabel("Mail Reader Would Be Here");
+        //mboxFrame.setContentPane(euclidianView3D);
+        mboxFrame.setSize(640, 480);
+        mboxFrame.setLocation(50, 50);
+        mboxFrame.setVisible(true);
+        dtp.add(mboxFrame);
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
     	
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -167,6 +225,10 @@ public abstract class Application3D extends Application{
         
     	f.pack();
     	f.setVisible(true);
+    	
+    	*/
+    	
+    	
     	
     	
     }
