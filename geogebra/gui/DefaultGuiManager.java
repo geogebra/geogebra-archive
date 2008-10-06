@@ -105,7 +105,10 @@ public class DefaultGuiManager implements GuiManager {
 		this.app = app;
 		this.kernel = app.getKernel();
 		
-		if (!app.isApplet()) initAlgebraController(); // needed for keyboard input in EuclidianView
+		// removed: we need the arrow keys to work in applets 
+		//if (!app.isApplet())
+		
+		initAlgebraController(); // needed for keyboard input in EuclidianView
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
