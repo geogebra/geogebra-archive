@@ -579,4 +579,25 @@ public class CASView extends JComponent implements CasManager {
 		// geogebra.cas.view.CASPara.contCol);
 
 	}
+	
+	public Object setInputExpression(Object cellValue, String input){
+		if(cellValue instanceof CASTableCellValue){
+			((CASTableCellValue)cellValue).setCommand(input);
+		}
+		return cellValue;
+	}
+	
+	public Object setOutputExpression(Object cellValue, String output){
+		if(cellValue instanceof CASTableCellValue){
+			((CASTableCellValue)cellValue).setOutput(output);
+			((CASTableCellValue)cellValue).setOutputAreaInclude(true);
+		}
+		return cellValue;
+	}
+	
+	public Object createCellValue(){
+		CASTableCellValue cellValue = new CASTableCellValue();
+		return cellValue;
+	}
+	
 }

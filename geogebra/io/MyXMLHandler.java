@@ -256,7 +256,7 @@ public class MyXMLHandler implements DocHandler {
 					if (ggbFileFormat > FORMAT) {
 						System.err.println(app.getError("FileFormatNewer")
 								+ ": " + attrs.get("format")); // Michael
-																// Borcherds
+						// Borcherds
 					}
 
 					// fileFormat dependent settings for downward compatibility
@@ -368,20 +368,17 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 	}
-	
+
 	private void processCellPairList() {
 		try {
 			app.getCasView().initCellPairs(cellPairList);
 			cellPairList.clear();
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			cellPairList.clear();
 			e.printStackTrace();
 			throw new MyError(app, "processCellPairList: " + e.toString());
-		}		
+		}
 	}
-
-	
 
 	// ====================================
 	// <geogebra>
@@ -656,8 +653,9 @@ public class MyXMLHandler implements DocHandler {
 			int height = Integer.parseInt((String) attrs.get("height"));
 
 			// it seems that this statement does not work, because now cas use
-			// its own frame. --Quan Yuan		
-			((JComponent) app.getCasView()).setPreferredSize(new Dimension(width, height));
+			// its own frame. --Quan Yuan
+			((JComponent) app.getCasView()).setPreferredSize(new Dimension(
+					width, height));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1142,9 +1140,9 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_CAS_SESSION:
 			if (eName.equals("cellPair")) {
 				casSessionMode = MODE_CAS_CELL_PAIR;
-
-				app.loadCASJar();
-				casTableCellValueElement = new geogebra.cas.view.CASTableCellValue();
+//				app.loadCASJar();
+//				casTableCellValueElement = new geogebra.cas.view.CASTableCellValue();
+				casTableCellValueElement = app.getCasView().createCellValue();
 			} else {
 				Application.debug("unknown tag in <cellPair>: " + eName);
 			}
@@ -1817,9 +1815,12 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleInputExpression(LinkedHashMap attrs) {
 		try {
-			app.loadCASJar();
-			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-					.setCommand((String) attrs.get("value"));
+//			app.loadCASJar();
+//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
+//					.setCommand((String) attrs.get("value"));
+
+			casTableCellValueElement = app.getCasView().setInputExpression(casTableCellValueElement,
+					(String) attrs.get("value"));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1828,11 +1829,13 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleOutExpression(LinkedHashMap attrs) {
 		try {
-			app.loadCASJar();
-			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-					.setOutput((String) attrs.get("value"));
-			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-					.setOutputAreaInclude(true);
+//			app.loadCASJar();
+//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
+//					.setOutput((String) attrs.get("value"));
+//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
+//					.setOutputAreaInclude(true);
+			casTableCellValueElement = app.getCasView().setOutputExpression(casTableCellValueElement,
+					(String) attrs.get("value"));
 			return true;
 		} catch (Exception e) {
 			return false;
