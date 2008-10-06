@@ -91,7 +91,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// version
 	public static final String buildDate = "October 5, 2008";
-	public static final String versionString = "3.1.50.0";
+	public static final String versionString = "3.1.51.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
