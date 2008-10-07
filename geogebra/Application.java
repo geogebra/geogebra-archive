@@ -90,8 +90,8 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// version
-	public static final String buildDate = "October 5, 2008";
-	public static final String versionString = "3.1.51.0";
+	public static final String buildDate = "October 6, 2008";
+	public static final String versionString = "3.1.52.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
@@ -2533,9 +2533,11 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private void initCodeBase() {
 		try {
-			if (applet != null) {
-				codebase = applet.getCodeBase();
-			} else {
+			// these three lines removed Michael Borcherds 2008-10-07
+			// applet.getCodeBase() returns where the html file is, not the JAR (needed for JarManager)
+			//if (applet != null) {
+			//	codebase = applet.getCodeBase();
+			//} else {
 				String path = Application.class.getProtectionDomain()
 						.getCodeSource().getLocation().toExternalForm();
 				if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from
@@ -2543,7 +2545,7 @@ public abstract class Application implements KeyEventDispatcher {
 					path = path.substring(0, path.length()
 							- JAR_FILES[0].length());
 				codebase = new URL(path);
-			}
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
