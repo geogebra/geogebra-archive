@@ -21,7 +21,11 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
@@ -90,8 +94,8 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// version
-	public static final String buildDate = "October 6, 2008";
-	public static final String versionString = "3.1.52.0";
+	public static final String buildDate = "October 7, 2008";
+	public static final String versionString = "3.1.53.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
@@ -3254,5 +3258,176 @@ public abstract class Application implements KeyEventDispatcher {
 	public final LowerCaseDictionary getCommandDictionary() {
 		return commandDict;
 	}
+	
+	private GeoVector tempVec;
+	
+	/**
+	 * Handle pressed key and returns whether event was
+	 * consumed.
+	 */
+	public boolean keyPressedConsumed(KeyEvent event) {
+		//Object src = event.getSource();
+		//Application.debug("source: " + src);
+		//if (src != view) return;					
+		
+		boolean consumed = false;
+		int keyCode = event.getKeyCode();		
+		
+		switch (keyCode) {
+			// ESCAPE: clear all selections in views
+			case KeyEvent.VK_ESCAPE:
+				clearSelectedGeos();
+				getEuclidianView().reset();
+				consumed = true;
+				break;			   
+			
+			default:
+				//	handle selected GeoElements
+				ArrayList geos = getSelectedGeos();
+				for (int i = 0; i < geos.size(); i++) {
+					GeoElement geo = (GeoElement) geos.get(i);
+					consumed = handleKeyPressed(event, geo) || consumed;
+				}		
+				//if (consumed) kernelChanged = true;
+		}								
+		
+
+		// something was done in handleKeyPressed
+		if (consumed) {			
+			setUnsaved();									
+		}
+		return consumed;
+	}
+
+	// handle pressed key
+	private boolean handleKeyPressed(KeyEvent event, GeoElement geo) {
+		if (geo == null)
+			return false;
+
+		if (tempVec == null)
+			tempVec = new GeoVector(kernel.getConstruction());
+		
+		int keyCode = event.getKeyCode();
+		// SPECIAL KEYS			
+		int changeVal = 0; //	later:  changeVal = base or -base			
+		// Ctrl : base = 10
+		// Alt : base = 100
+		int base = 1;
+		if (event.isControlDown())
+			base = 10;
+		if (event.isAltDown())
+			base = 100;
+
+		// ARROW KEYS
+		boolean moved = false;
+		switch (keyCode) {								
+			case KeyEvent.VK_UP :
+				changeVal = base;
+				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+				moved = handleArrowKeyMovement(geo, tempVec);		
+				break;
+
+			case KeyEvent.VK_DOWN :
+				changeVal = -base;
+				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+				moved = handleArrowKeyMovement(geo, tempVec);				
+				break;
+
+			case KeyEvent.VK_RIGHT :
+				changeVal = base;
+				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+				moved = handleArrowKeyMovement(geo, tempVec);
+				break;
+
+			case KeyEvent.VK_LEFT :
+				changeVal = -base;
+				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+				moved = handleArrowKeyMovement(geo, tempVec);				
+				break;
+
+			case KeyEvent.VK_F2 :
+				getGuiManager().startEditing(geo);				
+				return true;				
+		}
+		
+		if (moved) return true;
+		
+	
+		// PLUS, MINUS keys	
+		switch (keyCode) {
+			case KeyEvent.VK_PLUS :
+			case KeyEvent.VK_ADD :
+			case KeyEvent.VK_UP :
+			case KeyEvent.VK_RIGHT :
+				changeVal = base;
+				break;
+
+			case KeyEvent.VK_MINUS :
+			case KeyEvent.VK_SUBTRACT :
+			case KeyEvent.VK_DOWN :
+			case KeyEvent.VK_LEFT :
+				changeVal = -base;
+				break;
+		}
+		
+		if (changeVal == 0) {
+			char keyChar = event.getKeyChar();
+			if (keyChar == '+')
+				changeVal = base;
+			else if (keyChar == '-')
+				changeVal = -base;
+		}
+	
+		if (changeVal != 0) {								
+			if (geo.isChangeable()) {
+				if (geo.isNumberValue()) {
+					GeoNumeric num = (GeoNumeric) geo;
+					num.setValue(kernel.checkInteger(
+							num.getValue() + changeVal * num.animationStep));					
+					num.updateRepaint();
+				} else if (geo.isGeoPoint()) {
+					GeoPoint p = (GeoPoint) geo;
+					if (p.hasPath()) {						
+						p.addToPathParameter(changeVal * p.animationStep);
+						p.updateRepaint();
+					}
+				}
+			} 
+			
+			// update random algorithms
+			if (!geo.isIndependent()) {
+				if (geo.getParentAlgorithm().updateRandomAlgorithm())
+					geo.updateRepaint();				
+			}	
+			
+			return true;
+		}		
+		
+		
+		
+		return false;
+	}
+
+	
+	private boolean handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
+		// try to move objvect
+		
+		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);				
+		if (!moved) {	
+			// toggle boolean value
+			if (geo.isChangeable() && geo.isGeoBoolean()) {
+				GeoBoolean bool = (GeoBoolean) geo;
+				bool.setValue(!bool.getBoolean());
+				bool.updateCascade();
+				moved = true;
+			}					
+		}	
+		
+		if (moved) 
+			kernel.notifyRepaint();
+		
+		return moved;
+	}
+
 	
 }

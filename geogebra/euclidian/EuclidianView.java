@@ -471,6 +471,10 @@ public class EuclidianView extends JPanel implements View, Printable {
 		kernel = ec.getKernel();
 		app = ec.getApplication();
 		
+		// needed for arrow keys in applets
+		if (app.isApplet())
+			addKeyListener(new MyKeyListener(ec));
+		
 		this.showAxes[0] = showAxes[0];
 		this.showAxes[1] = showAxes[1];
 		this.showGrid = showGrid;

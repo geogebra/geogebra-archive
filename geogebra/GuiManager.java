@@ -290,6 +290,7 @@ public interface GuiManager {
 		 */
 		public boolean dispatchKeyEvent(KeyEvent e);
 		
+		public void startEditing(GeoElement geo);
 	 
 
 }

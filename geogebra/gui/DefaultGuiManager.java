@@ -146,6 +146,10 @@ public class DefaultGuiManager implements GuiManager {
 		return algebraView;
 	}
 	
+	public void startEditing(GeoElement geo) {
+		((AlgebraView)getAlgebraView()).startEditing(geo);
+	}
+	
 	public JComponent getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
@@ -237,7 +241,8 @@ public class DefaultGuiManager implements GuiManager {
 			algebraController = new AlgebraController(app.getKernel());
 			
 			// add controller as keylistener to EuclidianView
-			app.getEuclidianView().addKeyListener(algebraController);
+			if (!app.isApplet())
+				app.getEuclidianView().addKeyListener(algebraController);
 		}
 	}
 
@@ -1948,7 +1953,7 @@ public class DefaultGuiManager implements GuiManager {
 			if (source == algebraView) {
 				switch (e.getID()) {
 				case KeyEvent.KEY_PRESSED:
-					consumed = algebraController.keyPressedConsumed(e);
+					consumed = app.keyPressedConsumed(e);
 					break;
 				}
 			}

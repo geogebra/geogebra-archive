@@ -44,8 +44,8 @@ public class AlgebraController
 	
 	private AlgebraView view;
 
-	private GeoVector tempVec;
-	private boolean kernelChanged;
+	//private GeoVector tempVec;
+	//private boolean kernelChanged;
 
 	/** Creates new CommandProcessor */
 	public AlgebraController(Kernel kernel) {
@@ -115,177 +115,10 @@ public class AlgebraController
 
 	/** handle function keys and delete key */
 	public void keyPressed(KeyEvent event) {
-		if (keyPressedConsumed(event))
+		if (app.keyPressedConsumed(event))
 			event.consume();		
 	}
 
-	/**
-	 * Handle pressed key and returns whether event was
-	 * consumed.
-	 */
-	public boolean keyPressedConsumed(KeyEvent event) {
-		//Object src = event.getSource();
-		//Application.debug("source: " + src);
-		//if (src != view) return;					
-		
-		boolean consumed = false;
-		int keyCode = event.getKeyCode();		
-		
-		switch (keyCode) {
-			// ESCAPE: clear all selections in views
-			case KeyEvent.VK_ESCAPE:
-				app.clearSelectedGeos();
-				app.getEuclidianView().reset();
-				consumed = true;
-				break;			   
-			
-			default:
-				//	handle selected GeoElements
-				ArrayList geos = app.getSelectedGeos();
-				for (int i = 0; i < geos.size(); i++) {
-					GeoElement geo = (GeoElement) geos.get(i);
-					consumed = handleKeyPressed(event, geo) || consumed;
-				}		
-				if (consumed) kernelChanged = true;
-		}								
-		
-
-		// something was done in handleKeyPressed
-		if (consumed) {			
-			app.setUnsaved();									
-		}
-		return consumed;
-	}
-
-	// handle pressed key
-	private boolean handleKeyPressed(KeyEvent event, GeoElement geo) {
-		if (geo == null)
-			return false;
-
-		if (tempVec == null)
-			tempVec = new GeoVector(cons);
-		
-		int keyCode = event.getKeyCode();
-		// SPECIAL KEYS			
-		int changeVal = 0; //	later:  changeVal = base or -base			
-		// Ctrl : base = 10
-		// Alt : base = 100
-		int base = 1;
-		if (event.isControlDown())
-			base = 10;
-		if (event.isAltDown())
-			base = 100;
-
-		// ARROW KEYS
-		boolean moved = false;
-		switch (keyCode) {								
-			case KeyEvent.VK_UP :
-				changeVal = base;
-				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);		
-				break;
-
-			case KeyEvent.VK_DOWN :
-				changeVal = -base;
-				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);				
-				break;
-
-			case KeyEvent.VK_RIGHT :
-				changeVal = base;
-				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);
-				break;
-
-			case KeyEvent.VK_LEFT :
-				changeVal = -base;
-				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);				
-				break;
-
-			case KeyEvent.VK_F2 :
-				view.startEditing(geo);				
-				return true;				
-		}
-		
-		if (moved) return true;
-		
-	
-		// PLUS, MINUS keys	
-		switch (keyCode) {
-			case KeyEvent.VK_PLUS :
-			case KeyEvent.VK_ADD :
-			case KeyEvent.VK_UP :
-			case KeyEvent.VK_RIGHT :
-				changeVal = base;
-				break;
-
-			case KeyEvent.VK_MINUS :
-			case KeyEvent.VK_SUBTRACT :
-			case KeyEvent.VK_DOWN :
-			case KeyEvent.VK_LEFT :
-				changeVal = -base;
-				break;
-		}
-		
-		if (changeVal == 0) {
-			char keyChar = event.getKeyChar();
-			if (keyChar == '+')
-				changeVal = base;
-			else if (keyChar == '-')
-				changeVal = -base;
-		}
-	
-		if (changeVal != 0) {								
-			if (geo.isChangeable()) {
-				if (geo.isNumberValue()) {
-					GeoNumeric num = (GeoNumeric) geo;
-					num.setValue(kernel.checkInteger(
-							num.getValue() + changeVal * num.animationStep));					
-					num.updateRepaint();
-				} else if (geo.isGeoPoint()) {
-					GeoPoint p = (GeoPoint) geo;
-					if (p.hasPath()) {						
-						p.addToPathParameter(changeVal * p.animationStep);
-						p.updateRepaint();
-					}
-				}
-			} 
-			
-			// update random algorithms
-			if (!geo.isIndependent()) {
-				if (geo.getParentAlgorithm().updateRandomAlgorithm())
-					geo.updateRepaint();				
-			}	
-			
-			return true;
-		}		
-		
-		
-		
-		return false;
-	}
-
-	
-	private boolean handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
-		// try to move objvect
-		
-		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);				
-		if (!moved) {	
-			// toggle boolean value
-			if (geo.isChangeable() && geo.isGeoBoolean()) {
-				GeoBoolean bool = (GeoBoolean) geo;
-				bool.setValue(!bool.getBoolean());
-				bool.updateCascade();
-				moved = true;
-			}					
-		}	
-		
-		if (moved) 
-			kernel.notifyRepaint();
-		
-		return moved;
-	}
 	
 
 
@@ -297,10 +130,10 @@ public class AlgebraController
 	public void mouseClicked(java.awt.event.MouseEvent e) {	
 		view.cancelEditing();
 		
-		if (kernelChanged) {
-			app.storeUndoInfo();
-			kernelChanged = false;
-		}
+		//if (kernelChanged) {
+		//	app.storeUndoInfo();
+		//	kernelChanged = false;
+		//}
 		
 		boolean rightClick = Application.isRightClick(e);
 		
@@ -394,10 +227,10 @@ public class AlgebraController
 
 	public void mouseExited(java.awt.event.MouseEvent p1) {		
 		view.setClosingCrossHighlighted(false);
-		if (kernelChanged) {
-			app.storeUndoInfo();
-			kernelChanged = false;
-		}
+		//if (kernelChanged) {
+		//	app.storeUndoInfo();
+		//	kernelChanged = false;
+		//}
 	}
 
 	// MOUSE MOTION LISTENER
