@@ -235,7 +235,8 @@ public class JarManager {
 	 * 
 	 * @return true if successful
 	 */
-	public synchronized boolean downloadFile(String fileName, File destDir) {    	    
+	public synchronized boolean downloadFile(String fileName, File destDir) {    	
+		if (fileName.indexOf("properties") > 0) Application.printStacktrace("");
 		// download jar file to localJarDir
 		File destFile = new File(destDir, fileName);
 		if (destFile.exists()) {
