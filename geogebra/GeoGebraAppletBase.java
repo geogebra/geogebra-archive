@@ -65,6 +65,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public boolean enableLabelDrags = true;
 	boolean enableShiftDragZoom = true;
 	public boolean showMenuBar = false;
+	public boolean showSpreadsheet = false;
 	boolean showResetIcon = false;
 	private boolean firstAppOpen = true;
 	Color bgColor, borderColor;
@@ -117,6 +118,9 @@ public abstract class GeoGebraAppletBase extends JApplet {
 				
 		// showMenuBar = "true" or parameter is not available
 		showMenuBar = "true".equals(getParameter("showMenuBar"));
+		
+		// showSpreadsheet = "true" or parameter is not available
+		showSpreadsheet = "true".equals(getParameter("showSpreadsheet"));
 		
 		// showResetIcon = "true" or parameter is not available
 		showResetIcon = "true".equals(getParameter("showResetIcon"));
@@ -276,6 +280,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		
 		app.setUndoActive(undoActive);			
 		app.setShowMenuBar(showMenuBar);
+		app.setShowSpreadsheetView(showSpreadsheet);
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
