@@ -756,48 +756,7 @@ public abstract class GeoGebraExport implements ActionListener{
     }
 
 	
-	protected void addText(String st,boolean isLatex,int style,int size,Color geocolor){
-		if (isLatex)code.append("$");
-		switch(style){
-			case 1:
-				if (isLatex) code.append("\\mathbf{");
-				else code.append("\\textbf{");
-			break;
-			case 2:
-				if (isLatex) code.append("\\mathit{");
-				else code.append("\\textit{");
-			break;
-			case 3:
-				if (isLatex) code.append("\\mathit{\\mathbf{");
-				else code.append("\\textit{\\textbf{");
-			break;
-		}
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("\\");
-			ColorCode(geocolor,code);
-			code.append("{");
-		}
-/*
-		if (size!=app.getFontSize()) {
-			String formatFont=resizeFont(size);
-			if (null!=formatFont) code.append(formatFont);
-		}*/
-		code.append(st);
-//		if (size!=app.getFontSize()) code.append("}");
-		if (!geocolor.equals(Color.BLACK)){
-			code.append("}");
-		}
-		switch(style){
-			case 1:
-			case 2:
-				code.append("}");
-				break;
-			case 3:
-				code.append("}}");
-				break;
-		}
-		if (isLatex)code.append("$");
-	}
+
 	protected void startBeamer(StringBuffer sb){
 		if (isBeamer) sb.append("\\onslide<"+beamerSlideNumber+"->{\n  ");
 	}

@@ -848,7 +848,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	protected void drawText(GeoText geo){
 		boolean isLatex=geo.isLaTeX();
 		String st=geo.getTextString();
-		Color geocolor=geo.getObjectColor();
 		int style=geo.getFontStyle();
 		int size=geo.getFontSize()+app.getFontSize();
 		GeoPoint gp;
@@ -879,9 +878,16 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		if (id==-1){
 			startBeamer(code);
 			code.append("\\draw ");
+			// Color
+			Color geocolor=geo.getObjectColor();
+			if (!geocolor.equals(Color.BLACK)){
+				code.append("[color=");
+				ColorCode(geocolor,code);
+				code.append("]");
+			}
 			writePoint(x,y,code);
 			code.append(" node[anchor=north west] {");
-			addText(st,isLatex,style,size,geocolor);
+			addText(st,isLatex,style,size);
 			code.append("};\n");
 			endBeamer(code);
 		}
@@ -900,17 +906,107 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			}
 			startBeamer(code);
 			code.append("\\draw ");
+			
+			// Color
+			Color geocolor=geo.getObjectColor();
+			if (!geocolor.equals(Color.BLACK)){
+				code.append("[color=");
+				ColorCode(geocolor,code);
+				code.append("]");
+			}
 			writePoint(x,y,code);
 			code.append(" node[anchor=north west] {");
 			code.append("\\parbox{");
 			code.append(kernel.format(width*(xmax-xmin)*xunit/euclidianView.getWidth()+1));
 			code.append(" cm}{");
-			addText(new String(sb),isLatex,style,size,geocolor);			
+			addText(new String(sb),isLatex,style,size);			
 			code.append("}};\n");	
 			endBeamer(code);
 		}
 	}
-
+	private void addText(String st,boolean isLatex,int style,int size){
+		if (format==FORMAT_LATEX){
+			if (isLatex)code.append("$");
+			switch(style){
+				case 1:
+					if (isLatex) code.append("\\mathbf{");
+					else code.append("\\textbf{");
+					break;
+				case 2:
+					if (isLatex) code.append("\\mathit{");
+					else code.append("\\textit{");
+					break;
+				case 3:
+					if (isLatex) code.append("\\mathit{\\mathbf{");
+					else code.append("\\textit{\\textbf{");
+					break;
+			}
+		code.append(st);
+		switch(style){
+			case 1:
+			case 2:
+				code.append("}");
+				break;
+			case 3:
+				code.append("}}");
+				break;
+		}
+		if (isLatex)code.append("$");
+		}
+		else if (format==FORMAT_CONTEXT){
+			if (isLatex)code.append("$");
+			switch(style){
+				case 1:
+					code.append("{\\bf ");
+					break;
+				case 2:
+					 code.append("{\\em ");
+					break;
+				case 3:
+					 code.append("{\\em \\bf");
+					break;
+			}
+		code.append(st);
+		switch(style){
+			case 1:
+			case 2:
+			case 3:
+				code.append("}");
+				break;
+		}
+		if (isLatex)code.append("$");			
+		}
+		else if (format==FORMAT_PLAIN_TEX){
+			if (isLatex)code.append("$");
+			switch(style){
+				case 1:
+					code.append("\\bf{");
+					break;
+				case 2:
+					 code.append("\\it{ ");
+					break;
+				case 3:
+					 code.append("\\it{\\bf{");
+					break;
+			}
+		code.append(st);
+		switch(style){
+			case 1:
+			case 2:
+				code.append("}");
+			case 3:
+				code.append("}}");
+				break;
+		}
+		if (isLatex)code.append("$");			
+		}
+		
+		}
+	
+	
+	
+	
+	
 	protected void drawGeoConicPart(GeoConicPart geo){
 		double x=geo.getTranslationVector().getX();
 		double y=geo.getTranslationVector().getY();
@@ -1597,14 +1693,21 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				double yLabel=drawGeo.getyLabel();
 				xLabel=euclidianView.toRealWorldCoordX(Math.round(xLabel));
 				yLabel=euclidianView.toRealWorldCoordY(Math.round(yLabel));
-				
 				Color geocolor=geo.getObjectColor();
-				startBeamer(codePoint);
+				startBeamer(codePoint);			
+				FontMetrics fm=euclidianView.getFontMetrics(euclidianView.getFont());
+				int width=fm.stringWidth(Util.toLaTeXString(geo.getLabelDescription(),true));
+				int height=fm.getHeight();
+				double translation[] =new double[2];
+				translation[0]=euclidianView.getXZero()+width/2;
+				translation[1]=euclidianView.getYZero()-height/2;
+				translation[0]=euclidianView.toRealWorldCoordX(translation[0]);
+				translation[1]=euclidianView.toRealWorldCoordY(translation[1]);
 				codePoint.append("\\draw[color=");
 				ColorCode(geocolor,codePoint);
 				codePoint.append("] ");
-				writePoint(xLabel,yLabel,codePoint);
-				codePoint.append(" node[anchor=south west] {");
+				writePoint(xLabel+translation[0],yLabel+translation[1],codePoint);
+				codePoint.append(" node {");
 				codePoint.append(name);
 				codePoint.append("};\n");
 				endBeamer(codePoint);
