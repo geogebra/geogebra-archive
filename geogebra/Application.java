@@ -19,7 +19,6 @@ package geogebra;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.CheckboxCreationDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoBoolean;
@@ -65,7 +64,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,7 +99,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// version
 	public static final String buildDate = "October 9, 2008";
-	public static final String versionString = "3.1.54.0";
+	public static final String versionString = "3.1.55.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
@@ -306,6 +307,8 @@ public abstract class Application implements KeyEventDispatcher {
 	private JarManager jarmanager = null;
 	private GgbAPI ggbapi = null;
 	private PluginManager pluginmanager = null;
+	
+	public String IPAddress = "", hostName = "";
 
 	public Application(String[] args, GeoGebra frame, boolean undoActive) {
 		this(args, frame, null, undoActive);
@@ -331,6 +334,21 @@ public abstract class Application implements KeyEventDispatcher {
 		Application.debug("GeoGebra " + versionString + " " + buildDate
 				+ " Java " + System.getProperty("java.version"));
 
+		
+		try {
+	        InetAddress addr = InetAddress.getLocalHost();	    
+	        // Get IP Address
+	        IPAddress = addr.getHostAddress();
+	    
+	        // Get hostname
+	        hostName = addr.getHostName();
+	    } catch (UnknownHostException e) {
+	    	hostName = "";
+	    	IPAddress = "";
+	    }
+
+		
+		
 		isApplet = applet != null;
 		if (frame != null) {
 			mainComp = frame;
