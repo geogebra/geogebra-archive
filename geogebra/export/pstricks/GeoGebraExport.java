@@ -221,31 +221,22 @@ public abstract class GeoGebraExport implements ActionListener{
     		if (g.isGeoPoint()){
 				drawGeoPoint((GeoPoint)g);
 				drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
     		}
 		else if (g.isGeoSegment()){
 			drawGeoSegment((GeoSegment)g);
 	      	drawLabel(g,null);
-	      	if (isBeamer&&!fromGeoList) {
-	      		// If this segment is from a Polygon don't increment beamerSlideNumber
-	      		boolean b=(null==((AlgoJoinPointsSegment)(((GeoSegment)g).getParentAlgorithm())).getPoly());
-	      			if (b)	beamerSlideNumber++;
-	      		}
 		}
 		else if (g.isGeoRay()){
 			drawGeoRay((GeoRay)g);
 			drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoLine()){
 			drawGeoLine((GeoLine)g);
 			drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoPolygon()) {
 			drawPolygon((GeoPolygon)g);
 			drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 		}
 		else if (g.isGeoAngle()) {
         	if (g.isIndependent()) {
@@ -255,7 +246,6 @@ public abstract class GeoGebraExport implements ActionListener{
         		drawAngle((GeoAngle)g);
 //        		String label="$"+Util.toLaTeXString(g.getLabelDescription(),true)+"$";
         		drawLabel(g,euclidianView.getDrawableFor((GeoAngle)g));
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         	}        	                                  
      }  
         else if (g.isGeoNumeric()) {
@@ -267,18 +257,14 @@ public abstract class GeoGebraExport implements ActionListener{
             else if (algo instanceof AlgoSlope) {
             	drawSlope((GeoNumeric)g);
             	drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
-
             }       
             else if (algo instanceof AlgoIntegralDefinite) {
                 drawIntegral((GeoNumeric) g);  
                 drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             } 
             else if (algo instanceof AlgoIntegralFunctions){
             	drawIntegralFunctions((GeoNumeric) g);
             	drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             }
             else if (algo instanceof AlgoFunctionAreaSums) {
             	// Trapezoidal Sum
@@ -297,20 +283,17 @@ public abstract class GeoGebraExport implements ActionListener{
             	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower) 
             				drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
             }
         }
         else if (g.isGeoVector()) {
         	drawGeoVector((GeoVector)g);
 	      	drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoConicPart()) {
         	GeoConicPart geo=(GeoConicPart)g;
         	drawGeoConicPart(geo);
         	if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC
         			|| geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR)
 	      	drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoConic()) {
 			if (isSinglePointConic(g)){
 				GeoConic geo=(GeoConic)g;
@@ -324,7 +307,6 @@ public abstract class GeoGebraExport implements ActionListener{
 				drawPoint.setGeoElement(geo);
 				drawGeoPoint(point);
 				drawLabel(point,drawPoint);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}
 			else if(isDoubleLineConic(g)){
 				GeoConic geo=(GeoConic)g;
@@ -345,19 +327,16 @@ public abstract class GeoGebraExport implements ActionListener{
 				drawGeoLine(lines[1]);
 				drawLabel(lines[0],drawLines[0]);
 				drawLabel(lines[1],drawLines[1]);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}
 			else if (isEmpty(g)){
 			}
 			else {
 				drawGeoConic((GeoConic)g);
 				drawLabel(g,null);
-				if (isBeamer&&!fromGeoList) beamerSlideNumber++;
 			}			
         } else if (g.isGeoFunction()) {
         	drawFunction((GeoFunction)g);
         	drawLabel(g,null);
-			if (isBeamer&&!fromGeoList) beamerSlideNumber++;
         } else if (g.isGeoText()) {
         	drawText((GeoText)g);
         } else if (g.isGeoImage()) {
@@ -754,7 +733,19 @@ public abstract class GeoGebraExport implements ActionListener{
    			break;
     	}
     }
-
+    protected void drawAllElements(){
+    	boolean increment=(euclidianView.getShowGrid()||euclidianView.getShowXaxis() || euclidianView.getShowYaxis());
+    	for (int step=0;step<construction.steps();step++){
+    		if (increment) beamerSlideNumber=step+2;
+    		else beamerSlideNumber=step+1;
+    		GeoElement[] geos=construction.getConstructionElement(step).getGeoElements();
+    		for (int j=0;j<geos.length;j++){
+            	GeoElement g = (GeoElement)(geos[j]);
+               	drawGeoElement(g,false);    
+    		}
+    	}
+    	
+    }
 	
 
 	protected void startBeamer(StringBuffer sb){
@@ -762,5 +753,59 @@ public abstract class GeoGebraExport implements ActionListener{
 	}
 	protected void endBeamer(StringBuffer sb){
 		if (isBeamer) sb.append("}\n");
+	}
+	protected void resizeFont(StringBuffer sb){
+		
+		// Number of units that represents the font size:
+		int ggbSize=app.getFontSize();
+		double ggbYUnit=euclidianView.getYscale();
+		double fontUnits=ggbSize/ggbYUnit;
+		
+		// Now, on the output, calculate the size in centimeter
+		double yunit=frame.getYUnit();
+		double sizeCM=fontUnits*yunit;
+		// 1cm=1/2.54 in
+		// 1 in=72.27pt
+		// new size in pt:
+		int sizept=(int)(sizeCM/2.54*72.27+0.5);
+		
+		System.out.println(sizept);
+		int texSize=frame.getFontSize();
+		if (texSize==10){
+			if (sizept<=5) sb.append("\\tiny{");
+			else if (sizept<=7) sb.append("\\scriptsize{");
+			else if (sizept==8) sb.append("\\footnotesize{");
+			else if (sizept==9) sb.append("\\small{");
+			else if (sizept==10) sb.append("\\normalsize{");
+			else if (sizept<=12) sb.append("\\large{");
+			else if (sizept<=14) sb.append("\\Large{");
+			else if (sizept<=17) sb.append("\\LARGE{");
+			else if (sizept<=20) sb.append("\\huge{");
+			else sb.append("\\Huge{");
+		}
+		else if (texSize==11){
+			if (sizept<=6) sb.append("\\tiny{");
+			else if (sizept<=8) sb.append("\\scriptsize{");
+			else if (sizept==9) sb.append("\\footnotesize{");
+			else if (sizept==10) sb.append("\\small{");
+			else if (sizept==11) sb.append("\\normalsize{");
+			else if (sizept==12) sb.append("\\large{");
+			else if (sizept<=14) sb.append("\\Large{");
+			else if (sizept<=17) sb.append("\\LARGE{");
+			else if (sizept<=20) sb.append("\\huge{");
+			else sb.append("\\Huge{");
+		}
+		else if (texSize==12){
+			if (sizept<=6) sb.append("\\tiny{");
+			else if (sizept<=8) sb.append("\\scriptsize{");
+			else if (sizept<=10) sb.append("\\footnotesize{");
+			else if (sizept==11) sb.append("\\small{");
+			else if (sizept==12) sb.append("\\normalsize{");
+			else if (sizept<=14) sb.append("\\large{");
+			else if (sizept<=17) sb.append("\\Large{");
+			else if (sizept<=20) sb.append("\\LARGE{");
+			else if (sizept<=25) sb.append("\\huge{");
+			else sb.append("\\Huge{");
+		}
 	}
 }

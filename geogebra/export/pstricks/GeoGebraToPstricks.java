@@ -102,7 +102,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	// Draw Grid
 		if (euclidianView.getShowGrid()) {
 			drawGrid();
-			beamerSlideNumber=2;
 		}
 		else {
 			initUnitAndVariable();
@@ -122,7 +121,6 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		// Draw axis
 		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
 			{
-				beamerSlideNumber=2;
 				drawAxis();
 			}
 		
@@ -130,13 +128,16 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		
 /*		 get all objects from construction
  *   	 and "draw" them by creating pstricks code*/
+		
+		drawAllElements();
+		/*
      	Object [] geos =
      		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
      	for (int i=0;i<geos.length;i++){
         	GeoElement g = (GeoElement)(geos[i]);
            	drawGeoElement(g,false);		
 //           	System.out.println(g+" "+beamerSlideNumber);
-     	}
+     	}*/
 		
         // add code for Points and Labels
         code.append(codePoint);

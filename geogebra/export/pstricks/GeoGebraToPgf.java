@@ -124,12 +124,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	// Draw Grid
 		if (euclidianView.getShowGrid()) {
 			drawGrid();
-			beamerSlideNumber=2;
 		}
 		// Draw axis
 		if (euclidianView.getShowXaxis() || euclidianView.getShowYaxis()) 
 			{
-				beamerSlideNumber=2;
 				drawAxis();
 			}
 		// Clipping
@@ -141,12 +139,14 @@ public class GeoGebraToPgf extends GeoGebraExport {
 
 /*		 get all objects from construction
  *   	 and "draw" them by creating PGF code*/
-     	Object [] geos =
+     	
+     	drawAllElements();
+/*     	Object [] geos =
      		kernel.getConstruction().getGeoSetConstructionOrder().toArray();
      	for (int i=0;i<geos.length;i++){
         	GeoElement g = (GeoElement)(geos[i]);
            	drawGeoElement(g,false);     		
-     	}
+     	}*/
         // add code for Points and Labels
         code.append(codePoint);
         // Close Environment tikzpicture
@@ -1723,6 +1723,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	 */
 	
 	private void drawGrid(){
+//		resizeFont(codeBeginDoc);
 		Color gridCol=euclidianView.getGridColor();
 		double[] GridDist=euclidianView.getGridDistances();
 		int gridLine=euclidianView.getGridLineStyle();
@@ -1748,6 +1749,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		Color color=euclidianView.getAxesColor();
 		// Drawing X Axis
 		boolean showAxis=euclidianView.getShowXaxis();
+		if (ymin>0||ymax<0) showAxis=false;
 		double spaceTick=euclidianView.getAxesNumberingDistances()[0];
 		boolean showNumbers=euclidianView.getShowAxesNumbers()[0];		
 		int tickStyle=euclidianView.getAxesTickStyles()[0];
@@ -1783,6 +1785,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		// Drawing Y Axis
 		showAxis=euclidianView.getShowYaxis();
+		if (xmin>0||xmax<0) showAxis=false;
 		spaceTick=euclidianView.getAxesNumberingDistances()[1];
 		showNumbers=euclidianView.getShowAxesNumbers()[1];
 		tickStyle=resizePt(euclidianView.getAxesTickStyles()[1]);
@@ -1817,7 +1820,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			else codeBeginDoc.append(";\n");
 		}
 		// Origin
-		if (euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1]){
+		boolean notOrigin=((xmax<0||xmin>0)||(ymax<0||ymin>0));
+		if (!notOrigin&&(euclidianView.getShowAxesNumbers()[0]||euclidianView.getShowAxesNumbers()[1])){
+
 			codeBeginDoc.append("\\draw[color=");
 			ColorCode(color,codeBeginDoc);
 			// append the origin
