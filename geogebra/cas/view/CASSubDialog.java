@@ -56,19 +56,9 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		this.app = app;
 		this.location = location;
 
-		initLists();
 		createGUI(app.getMenu("Substitute Dialog"));
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
-	}
-
-	private void initLists() {
-		// fill combo box with all geos
-		comboModel = new DefaultComboBoxModel();
-
-		// lists for combo boxes to select input and output objects
-		// fill combobox models
-		comboModel.addElement(null);
 	}
 
 	protected void createGUI(String title) {
