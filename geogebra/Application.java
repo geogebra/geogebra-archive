@@ -19,6 +19,7 @@ package geogebra;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.CheckboxCreationDialog;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoBoolean;
@@ -42,6 +43,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -79,6 +81,7 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -111,9 +114,9 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final String[] JAR_FILES = { "geogebra.jar",
 			"geogebra_gui.jar", "geogebra_cas.jar", "geogebra_export.jar",
 			"geogebra_properties.jar" };
-	
+
 	// license file
-	public static final String LICENSE_FILE  = "geogebra/gui/_license.txt";
+	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";
 
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 
@@ -153,7 +156,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian
-															// (Nynorsk)
+		// (Nynorsk)
 		supportedLocales.add(new Locale("fa")); // Persian
 		supportedLocales.add(new Locale("pl")); // Polish
 		supportedLocales.add(new Locale("pt", "BR")); // Portugese (Brazil)
@@ -232,7 +235,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private GeoGebra frame;
 	private GeoGebraAppletBase applet;
-	
+
 	private GuiManager appGuiManager;
 	private CasManager casView;
 
@@ -299,10 +302,10 @@ public abstract class Application implements KeyEventDispatcher {
 	protected boolean horizontalSplit = true; // 
 
 	private ArrayList selectedGeos = new ArrayList();
-		
+
 	private JarManager jarmanager = null;
-	private GgbAPI ggbapi = null;	
-	private PluginManager pluginmanager = null;	
+	private GgbAPI ggbapi = null;
+	private PluginManager pluginmanager = null;
 
 	public Application(String[] args, GeoGebra frame, boolean undoActive) {
 		this(args, frame, null, undoActive);
@@ -346,7 +349,7 @@ public abstract class Application implements KeyEventDispatcher {
 		handleOptionArgs(args); // note: the locale is set here too
 		imageManager = new ImageManager(mainComp);
 
-		if (!isApplet) {			
+		if (!isApplet) {
 			// frame
 			setFrame(frame);
 		}
@@ -384,20 +387,19 @@ public abstract class Application implements KeyEventDispatcher {
 			currentImagePath = GeoGebraPreferences.getPref()
 					.getDefaultImagePath();
 			if (!fileLoaded)
-				GeoGebraPreferences.getPref().loadXMLPreferences(
-						this);
+				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 		}
 
 		// init undo
 		setUndoActive(undoActive);
-		INITING = false;	
+		INITING = false;
 
 		// for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);
 
 		// Mathieu Blossier - place for code to test 3D packages
-	
+
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();
@@ -418,17 +420,18 @@ public abstract class Application implements KeyEventDispatcher {
 	final public synchronized GuiManager getGuiManager() {
 		if (appGuiManager == null) {
 			loadGUIJar();
-			
-			appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);					
-			
-//			// this code wraps the creation of the DefaultGuiManager and is
-//			// necessary to allow dynamic loading of this class
-//			ActionListener al = new ActionListener() {
-//				public void actionPerformed(ActionEvent e) {
-//					appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);					
-//				}				
-//			};			
-//			al.actionPerformed(null);				
+
+			appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);
+
+			// // this code wraps the creation of the DefaultGuiManager and is
+			// // necessary to allow dynamic loading of this class
+			// ActionListener al = new ActionListener() {
+			// public void actionPerformed(ActionEvent e) {
+			// appGuiManager = new
+			// geogebra.gui.DefaultGuiManager(Application.this);
+			// }
+			// };
+			// al.actionPerformed(null);
 		}
 
 		return appGuiManager;
@@ -439,9 +442,10 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void initInBackground() {
-		if (!initInBackground_first_time) return;
+		if (!initInBackground_first_time)
+			return;
 		initInBackground_first_time = false;
-		
+
 		// init file chooser and properties dialog
 		// in a background task
 		Thread runner = new Thread() {
@@ -450,30 +454,32 @@ public abstract class Application implements KeyEventDispatcher {
 					Thread.sleep(3000);
 				} catch (Exception e) {
 				}
-												
+
 				// init properties dialog
 				getGuiManager().initPropertiesDialog();
-				//TODO: remove
+				// TODO: remove
 				Application.debug("background: properties dialog inited");
-				
+
 				// init file chooser
 				getGuiManager().initFileChooser();
-				//TODO: remove
+				// TODO: remove
 				Application.debug("background: file chooser inited");
 
 				// init CAS
 				kernel.initCAS();
-				//TODO: remove
+				// TODO: remove
 				Application.debug("background: CAS inited");
-				
+
 				// download all jar files dynamically in the background
-				for (int i=0; i < JAR_FILES.length; i++) {
-					jarmanager.downloadFile(JAR_FILES[i], jarmanager.getLocalJarDir());
+				for (int i = 0; i < JAR_FILES.length; i++) {
+					jarmanager.downloadFile(JAR_FILES[i], jarmanager
+							.getLocalJarDir());
 				}
 			}
 		};
-		runner.start();		
+		runner.start();
 	}
+
 	private static boolean initInBackground_first_time = true;
 
 	public void setUnsaved() {
@@ -570,8 +576,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (showToolBar) {
 			// NORTH: Toolbar
-			panel.add(getGuiManager().getToolbarPanel(),
-					BorderLayout.NORTH);
+			panel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
 		}
 
 		// updateCenterPanel
@@ -580,8 +585,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// SOUTH: inputField
 		if (showAlgebraInput) {
-			panel.add(getGuiManager().getAlgebraInput(),
-					BorderLayout.SOUTH);
+			panel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
 		}
 
 		// init labels
@@ -597,7 +601,8 @@ public abstract class Application implements KeyEventDispatcher {
 		eup.add(euclidianView, BorderLayout.CENTER);
 
 		if (showConsProtNavigation) {
-			JComponent consProtNav = getGuiManager().getConstructionProtocolNavigation();
+			JComponent consProtNav = getGuiManager()
+					.getConstructionProtocolNavigation();
 			eup.add(consProtNav, BorderLayout.SOUTH);
 			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
 					Color.gray));
@@ -625,13 +630,11 @@ public abstract class Application implements KeyEventDispatcher {
 		if (showAlgebraView) {
 			if (horizontalSplit) {
 				sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-						new JScrollPane(getGuiManager()
-								.getAlgebraView()), eup);
+						new JScrollPane(getGuiManager().getAlgebraView()), eup);
 				sp2.setDividerLocation(initSplitDividerLocationHOR2);
 			} else {
 				sp2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, eup,
-						new JScrollPane(getGuiManager()
-								.getAlgebraView()));
+						new JScrollPane(getGuiManager().getAlgebraView()));
 				sp2.setDividerLocation(initSplitDividerLocationVER2);
 			}
 
@@ -790,7 +793,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setApplet(GeoGebraAppletBase applet) {
 		isApplet = true;
 		this.applet = applet;
-		mainComp = applet;		
+		mainComp = applet;
 	}
 
 	public void setShowResetIcon(boolean flag) {
@@ -876,7 +879,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 			if (appGuiManager != null) {
 				// update toolbar
-				getGuiManager().setToolbarMode(EuclidianView.MODE_ALGEBRA_INPUT);
+				getGuiManager()
+						.setToolbarMode(EuclidianView.MODE_ALGEBRA_INPUT);
 			}
 		}
 
@@ -931,10 +935,10 @@ public abstract class Application implements KeyEventDispatcher {
 		imageManager.addExternalImage(filename, image);
 	}
 
-//	public void startEditing(GeoElement geo) {
-//		if (showAlgebraView)
-//			getApplicationGUImanager().startEditingAlgebraView(geo);
-//	}
+	// public void startEditing(GeoElement geo) {
+	// if (showAlgebraView)
+	// getApplicationGUImanager().startEditingAlgebraView(geo);
+	// }
 
 	public final void zoom(double px, double py, double zoomFactor) {
 		euclidianView.zoom(px, py, zoomFactor, 15, true);
@@ -958,17 +962,17 @@ public abstract class Application implements KeyEventDispatcher {
 		euclidianView.setViewShowAllObjects(true);
 	}
 
-	/**********************************************************
+	/***************************************************************************
 	 * LOCALE part
-	 **********************************************************/
+	 **************************************************************************/
 
 	/**
 	 * Creates a Locale object according to the given language code. The
 	 * languageCode string should consist of two letters for the language, two
 	 * letters for the country and two letters for the variant. E.g. "en" ...
 	 * language: English , no country specified, "deAT" or "de_AT" ... language:
-	 * German , country: Austria, "noNONY" or "no_NO_NY" ... language: Norwegian
-	 * , country: Norway, variant: Nynorsk
+	 * German , country: Austria, "noNONY" or "no_NO_NY" ... language: Norwegian ,
+	 * country: Norway, variant: Nynorsk
 	 */
 	public static Locale getLocale(String languageCode) {
 		// remove "_" from string
@@ -1228,12 +1232,14 @@ public abstract class Application implements KeyEventDispatcher {
 		if (rbplain != null)
 			rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbcommand != null)
-			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);
-	}	
+			rbcommand = MyResourceBundle
+					.createBundle(RB_COMMAND, currentLocale);
+	}
 
 	private void fillCommandDict() {
-		if (rbcommand == null) return;
-		
+		if (rbcommand == null)
+			return;
+
 		translateCommandTable.clear();
 		commandDict.clear();
 
@@ -1289,12 +1295,12 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Jar managing
 	 */
 
-	final public boolean loadPropertiesJar() {		
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);			
+	final public boolean loadPropertiesJar() {
+		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);
 	}
 
 	final public boolean loadExportJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);		
+		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);
 	}
 
 	final public boolean loadCASJar() {
@@ -1308,7 +1314,7 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean loadLaTeXJar() {
 		return loadGUIJar();
 	}
-	
+
 	final public String loadTextFile(String fileName) {
 		return jarmanager.loadTextFile(fileName);
 	}
@@ -1331,7 +1337,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return key;
 		}
 	}
-	
+
 	private void initPlainResourceBundle() {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		kernel.updateLocalAxesNames();
@@ -1430,10 +1436,11 @@ public abstract class Application implements KeyEventDispatcher {
 	final public String getCommand(String key) {
 		if (!loadPropertiesJar())
 			return key;
-		
-		if (rbcommand == null)						
-			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);		
-		
+
+		if (rbcommand == null)
+			rbcommand = MyResourceBundle
+					.createBundle(RB_COMMAND, currentLocale);
+
 		try {
 			return rbcommand.getString(key);
 		} catch (Exception e) {
@@ -1451,7 +1458,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return null;
 		}
 	}
-	
+
 	public boolean propertiesFilesPresent() {
 		return rbplain != null;
 	}
@@ -1486,7 +1493,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void showHelp(String key) {
 		String text = getPlain(key); // Michael Borcherds changed to use
-										// getPlain() and removed try/catch
+		// getPlain() and removed try/catch
 		JOptionPane.showConfirmDialog(mainComp, text,
 				getPlain("ApplicationName") + " - " + getMenu("Help"),
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -1521,12 +1528,10 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * @return fileName of image stored in imageManager
 	 * 
-	 *         public String getImageFromURL(String url) { try{
+	 * public String getImageFromURL(String url) { try{
 	 * 
-	 *         BufferedImage img=javax.imageio.ImageIO.read(new URL(url));
-	 *         return createImage(img, "bitmap.png");
-	 * 
-	 *         } catch (Exception e) {return null;} }
+	 * BufferedImage img=javax.imageio.ImageIO.read(new URL(url)); return
+	 * createImage(img, "bitmap.png"); } catch (Exception e) {return null;} }
 	 */
 
 	public void setWaitCursor() {
@@ -1723,7 +1728,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (appGuiManager != null)
 			getGuiManager().setLabels();
-		
+
 		updateCommandDictionary();
 	}
 
@@ -1837,7 +1842,7 @@ public abstract class Application implements KeyEventDispatcher {
 			getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
 		} else {
 			if (hasGuiManager())
-			getGuiManager().detachAlgebraView();
+				getGuiManager().detachAlgebraView();
 		}
 
 		updateMenubar();
@@ -1869,15 +1874,15 @@ public abstract class Application implements KeyEventDispatcher {
 		showCAS = flag;
 
 		if (casView == null) {
-			
+
 			getCasView();
-			
+
 			// create JFrame for CAS view
-			casFrame = createCasFrame(casView.getCASViewComponent());
+			casFrame = createCasFrame(casView);
 		}
 
 		// show or hide CAS window
-		
+
 		casFrame.setVisible(showCAS);
 
 		updateMenubar();
@@ -1889,29 +1894,47 @@ public abstract class Application implements KeyEventDispatcher {
 	public CasManager getCasView() {
 		if (casView == null) {
 			loadCASJar();
-			
+
 			// this code wraps the creation of the cas view and is
 			// necessary to allow dynamic loading of this class
 			ActionListener al = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(Application.this);					
-				}				
-			};			
-			al.actionPerformed(null);	
+					casView = new geogebra.cas.view.CASView(Application.this);
+				}
+			};
+			al.actionPerformed(null);
 		}
-		
+
 		return casView;
 	}
-	
+
 	public boolean hasCasView() {
 		return casView != null;
 	}
 
-	private static JFrame createCasFrame(JComponent casView) {
+	private static JFrame createCasFrame(final CasManager casView) {
 		JFrame spFrame = new JFrame();
+		
+		JComponent casViewComp = casView.getCASViewComponent();
+
+		// Button
+		JButton btSub = new JButton("Substitute");
+		btSub.setActionCommand("Subsim");
+
+		btSub.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object d = casView.createSubButton();
+				((geogebra.cas.view.CASSubDialog) d).setVisible(true);
+			}
+		});
+
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		btPanel.add(btSub);
+
 		Container contentPane = spFrame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		contentPane.add(casView, BorderLayout.CENTER);
+		contentPane.add(btPanel, BorderLayout.NORTH);
+		contentPane.add(casViewComp, BorderLayout.CENTER);
 		spFrame.setBackground(Color.white);
 		spFrame.setResizable(true);
 		spFrame.setTitle("GeoGebra CAS");
@@ -1957,8 +1980,8 @@ public abstract class Application implements KeyEventDispatcher {
 		if (flag == showConsProtNavigation)
 			return;
 		showConsProtNavigation = flag;
-		
-		getGuiManager().setShowConstructionProtocolNavigation(flag);			
+
+		getGuiManager().setShowConstructionProtocolNavigation(flag);
 		updateMenubar();
 	}
 
@@ -2107,8 +2130,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * // think about this Downloads the latest jar files from the
-	 * GeoGebra server.
+	 * // think about this Downloads the latest jar files from the GeoGebra
+	 * server.
 	 * 
 	 * private void updateGeoGebra() { try { File dest = new File(codebase +
 	 * Application.JAR_FILE); URL jarURL = new URL(Application.UPDATE_URL +
@@ -2116,29 +2139,22 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * if (dest.exists()) { // check if jarURL is newer then dest try {
 	 * URLConnection connection = jarURL.openConnection(); if
-	 * (connection.getLastModified() <= dest.lastModified()) { 
-	 * showMessage("No update available"); return; }
-	 * 
-	 * } catch (Exception e) { // we don't know if the file behind jarURL is
-	 * newer than dest // so don't do anything 
-	 * showMessage("No update available: " + (e.getMessage())); return; } }
-	 * 
-	 * // copy JAR_FILE if (!CopyURLToFile.copyURLToFile(this, jarURL, dest))
-	 * return;
-	 * 
-	 * // copy properties file dest = new File(codebase +
+	 * (connection.getLastModified() <= dest.lastModified()) { showMessage("No
+	 * update available"); return; } } catch (Exception e) { // we don't know if
+	 * the file behind jarURL is newer than dest // so don't do anything
+	 * showMessage("No update available: " + (e.getMessage())); return; } } //
+	 * copy JAR_FILE if (!CopyURLToFile.copyURLToFile(this, jarURL, dest))
+	 * return; // copy properties file dest = new File(codebase +
 	 * Application.PROPERTIES_FILE); jarURL = new URL(Application.UPDATE_URL +
 	 * Application.PROPERTIES_FILE); if (!CopyURLToFile.copyURLToFile(this,
-	 * jarURL, dest)) return;
-	 * 
-	 * // copy jscl file dest = new File(codebase + Application.JSCL_FILE);
-	 * jarURL = new URL(Application.UPDATE_URL + Application.JSCL_FILE); if
-	 * (!CopyURLToFile.copyURLToFile(this, jarURL, dest)) return;
+	 * jarURL, dest)) return; // copy jscl file dest = new File(codebase +
+	 * Application.JSCL_FILE); jarURL = new URL(Application.UPDATE_URL +
+	 * Application.JSCL_FILE); if (!CopyURLToFile.copyURLToFile(this, jarURL,
+	 * dest)) return;
 	 * 
 	 * 
 	 * showMessage("Update finished. Please restart GeoGebra."); } catch
-	 * (Exception e) {  showError("Update failed: "+
-	 * e.getMessage()); } }
+	 * (Exception e) { showError("Update failed: "+ e.getMessage()); } }
 	 */
 
 	public void deleteAllGeoElements() {
@@ -2220,9 +2236,9 @@ public abstract class Application implements KeyEventDispatcher {
 		return euclidianView.getMode();
 	}
 
-	/***********************************
+	/***************************************************************************
 	 * SAVE / LOAD methodes
-	 ***********************************/
+	 **************************************************************************/
 
 	/**
 	 * Loads construction file
@@ -2409,9 +2425,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 	/*
 	 * final public void clearAll() { // load preferences
-	 * GeoGebraPreferences.loadXMLPreferences(this); updateContentPane();
-	 * 
-	 * // clear construction kernel.clearConstruction(); kernel.initUndoInfo();
+	 * GeoGebraPreferences.loadXMLPreferences(this); updateContentPane(); //
+	 * clear construction kernel.clearConstruction(); kernel.initUndoInfo();
 	 * 
 	 * isSaved = true; System.gc(); }
 	 */
@@ -2446,7 +2461,7 @@ public abstract class Application implements KeyEventDispatcher {
 			sb.append("\" locVertical=\"");
 			sb.append(initSplitDividerLocationVER);
 			sb.append("\" loc2=\""); // bugfix Michael Borcherds 2008-04-24
-										// added \" at start
+			// added \" at start
 			sb.append(initSplitDividerLocationHOR2);
 			sb.append("\" locVertical2=\"");
 			sb.append(initSplitDividerLocationVER2);
@@ -2457,8 +2472,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// save custom toolbar if we have one
 		if (appGuiManager != null) {
-			String cusToolbar = getGuiManager()
-					.getCustomToolbarDefinition();
+			String cusToolbar = getGuiManager().getCustomToolbarDefinition();
 
 			if (cusToolbar != null
 					&& !cusToolbar.equals(getGuiManager()
@@ -2524,7 +2538,6 @@ public abstract class Application implements KeyEventDispatcher {
 			sb.append(getGuiManager().getConsProtocolXML());
 		}
 
-
 		return sb.toString();
 	}
 
@@ -2538,18 +2551,18 @@ public abstract class Application implements KeyEventDispatcher {
 	private void initCodeBase() {
 		try {
 			// these three lines removed Michael Borcherds 2008-10-07
-			// applet.getCodeBase() returns where the html file is, not the JAR (needed for JarManager)
-			//if (applet != null) {
-			//	codebase = applet.getCodeBase();
-			//} else {
-				String path = Application.class.getProtectionDomain()
-						.getCodeSource().getLocation().toExternalForm();
-				if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from
-													// end
-					path = path.substring(0, path.length()
-							- JAR_FILES[0].length());
-				codebase = new URL(path);
-			//}
+			// applet.getCodeBase() returns where the html file is, not the JAR
+			// (needed for JarManager)
+			// if (applet != null) {
+			// codebase = applet.getCodeBase();
+			// } else {
+			String path = Application.class.getProtectionDomain()
+					.getCodeSource().getLocation().toExternalForm();
+			if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from
+				// end
+				path = path.substring(0, path.length() - JAR_FILES[0].length());
+			codebase = new URL(path);
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2557,7 +2570,7 @@ public abstract class Application implements KeyEventDispatcher {
 		Application.debug("codebase: " + codebase);
 	}
 
-	/*  selection handling */
+	/* selection handling */
 
 	final public int selectedGeosSize() {
 		return selectedGeos.size();
@@ -2735,8 +2748,6 @@ public abstract class Application implements KeyEventDispatcher {
 			if (applet != null)
 				SwingUtilities.updateComponentTreeUI(applet);
 
-			
-
 		}
 	}
 
@@ -2856,17 +2867,17 @@ public abstract class Application implements KeyEventDispatcher {
 		File localJarDir = jarmanager.getLocalJarDir();
 
 		// Application.debug("temp jar file: " + tempJarFile);
-		// Application.debug("   exists " + tempJarFile.exists());
+		// Application.debug(" exists " + tempJarFile.exists());
 
 		// copy jar files to tempDir
 		for (int i = 0; i < JAR_FILES.length; i++) {
 			File srcFile = new File(localJarDir, JAR_FILES[i]);
 			File destFile = new File(destDir, JAR_FILES[i]);
-			
+
 			// check file and automatically download if missing
 			if (jarmanager.checkJarFile(srcFile)) {
 				CopyToFile.copyFile(srcFile, destFile);
-			}					
+			}
 		}
 
 		// Application.debug("copied geogebra jar files from " + srcDir + " to "
@@ -2894,9 +2905,9 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	public GgbAPI getGgbApi() {
 		if (ggbapi == null) {
-			ggbapi = new GgbAPI(this);	
+			ggbapi = new GgbAPI(this);
 		}
-		
+
 		return ggbapi;
 	}
 
@@ -2906,7 +2917,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public PluginManager getPluginManager() {
 		if (pluginmanager == null) {
 			pluginmanager = new PluginManager(this);
-		}		
+		}
 		return pluginmanager;
 	}// getPluginManager()
 
@@ -2972,21 +2983,20 @@ public abstract class Application implements KeyEventDispatcher {
 	public static boolean isControlDown(InputEvent e) {
 
 		/*
-		 * debug("isMetaDown = "+e.isMetaDown());
-		 * debug("isControlDown = "+e.isControlDown());
-		 * debug("isShiftDown = "+e.isShiftDown());
-		 * debug("isAltDown = "+e.isAltDown());
-		 * debug("isAltGrDown = "+e.isAltGraphDown());
-		 * debug("fakeRightClick = "+fakeRightClick);
+		 * debug("isMetaDown = "+e.isMetaDown()); debug("isControlDown =
+		 * "+e.isControlDown()); debug("isShiftDown = "+e.isShiftDown());
+		 * debug("isAltDown = "+e.isAltDown()); debug("isAltGrDown =
+		 * "+e.isAltGraphDown()); debug("fakeRightClick = "+fakeRightClick);
 		 */
 
 		if (fakeRightClick)
 			return false;
 
-		boolean ret = (MAC_OS && e.isMetaDown()) // Mac: meta down for multiple
-													// selection
+		boolean ret = (MAC_OS && e.isMetaDown()) // Mac: meta down for
+				// multiple
+				// selection
 				|| (!MAC_OS && e.isControlDown()); // non-Mac: Ctrl down for
-													// multiple selection
+		// multiple selection
 
 		// debug("isPopupTrigger = "+e.isPopupTrigger());
 		// debug("ret = " + ret);
@@ -3009,12 +3019,10 @@ public abstract class Application implements KeyEventDispatcher {
 			fakeRightClick = true;
 
 		/*
-		 * debug("isMetaDown = "+e.isMetaDown());
-		 * debug("isControlDown = "+e.isControlDown());
-		 * debug("isShiftDown = "+e.isShiftDown());
-		 * debug("isAltDown = "+e.isAltDown());
-		 * debug("isAltGrDown = "+e.isAltGraphDown());
-		 * debug("isPopupTrigger = "+e.isPopupTrigger());
+		 * debug("isMetaDown = "+e.isMetaDown()); debug("isControlDown =
+		 * "+e.isControlDown()); debug("isShiftDown = "+e.isShiftDown());
+		 * debug("isAltDown = "+e.isAltDown()); debug("isAltGrDown =
+		 * "+e.isAltGraphDown()); debug("isPopupTrigger = "+e.isPopupTrigger());
 		 * debug("fakeRightClick = "+fakeRightClick);
 		 */
 
@@ -3025,7 +3033,7 @@ public abstract class Application implements KeyEventDispatcher {
 		// e.isPopupTrigger() ||
 		(MAC_OS && e.isControlDown()) // Mac: ctrl click = right click
 				|| (!MAC_OS && e.isMetaDown()); // non-Mac: right click = meta
-												// click
+		// click
 
 		// debug("ret = " + ret);
 		return ret;
@@ -3216,20 +3224,20 @@ public abstract class Application implements KeyEventDispatcher {
 			return "";
 		else
 			return fileName.substring(dotPos + 1).toLowerCase(Locale.US); // Michael
-																			// Borcherds
-																			// 2008
-																			// -
-																			// 02
-																			// -
-																			// 06
-																			// added
-																			// .
-																			// toLowerCase
-																			// (
-																			// Locale
-																			// .
-																			// US
-																			// )
+		// Borcherds
+		// 2008
+		// -
+		// 02
+		// -
+		// 06
+		// added
+		// .
+		// toLowerCase
+		// (
+		// Locale
+		// .
+		// US
+		// )
 	}
 
 	public static File addExtension(File file, String fileExtension) {
@@ -3258,43 +3266,41 @@ public abstract class Application implements KeyEventDispatcher {
 	public final LowerCaseDictionary getCommandDictionary() {
 		return commandDict;
 	}
-	
+
 	private GeoVector tempVec;
-	
+
 	/**
-	 * Handle pressed key and returns whether event was
-	 * consumed.
+	 * Handle pressed key and returns whether event was consumed.
 	 */
 	public boolean keyPressedConsumed(KeyEvent event) {
-		//Object src = event.getSource();
-		//Application.debug("source: " + src);
-		//if (src != view) return;					
-		
+		// Object src = event.getSource();
+		// Application.debug("source: " + src);
+		// if (src != view) return;
+
 		boolean consumed = false;
-		int keyCode = event.getKeyCode();		
-		
+		int keyCode = event.getKeyCode();
+
 		switch (keyCode) {
-			// ESCAPE: clear all selections in views
-			case KeyEvent.VK_ESCAPE:
-				clearSelectedGeos();
-				getEuclidianView().reset();
-				consumed = true;
-				break;			   
-			
-			default:
-				//	handle selected GeoElements
-				ArrayList geos = getSelectedGeos();
-				for (int i = 0; i < geos.size(); i++) {
-					GeoElement geo = (GeoElement) geos.get(i);
-					consumed = handleKeyPressed(event, geo) || consumed;
-				}		
-				//if (consumed) kernelChanged = true;
-		}								
-		
+		// ESCAPE: clear all selections in views
+		case KeyEvent.VK_ESCAPE:
+			clearSelectedGeos();
+			getEuclidianView().reset();
+			consumed = true;
+			break;
+
+		default:
+			// handle selected GeoElements
+			ArrayList geos = getSelectedGeos();
+			for (int i = 0; i < geos.size(); i++) {
+				GeoElement geo = (GeoElement) geos.get(i);
+				consumed = handleKeyPressed(event, geo) || consumed;
+			}
+			// if (consumed) kernelChanged = true;
+		}
 
 		// something was done in handleKeyPressed
-		if (consumed) {			
-			setUnsaved();									
+		if (consumed) {
+			setUnsaved();
 		}
 		return consumed;
 	}
@@ -3306,10 +3312,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (tempVec == null)
 			tempVec = new GeoVector(kernel.getConstruction());
-		
+
 		int keyCode = event.getKeyCode();
-		// SPECIAL KEYS			
-		int changeVal = 0; //	later:  changeVal = base or -base			
+		// SPECIAL KEYS
+		int changeVal = 0; // later: changeVal = base or -base
 		// Ctrl : base = 10
 		// Alt : base = 100
 		int base = 1;
@@ -3320,56 +3326,56 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// ARROW KEYS
 		boolean moved = false;
-		switch (keyCode) {								
-			case KeyEvent.VK_UP :
-				changeVal = base;
-				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);		
-				break;
-
-			case KeyEvent.VK_DOWN :
-				changeVal = -base;
-				tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);				
-				break;
-
-			case KeyEvent.VK_RIGHT :
-				changeVal = base;
-				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);
-				break;
-
-			case KeyEvent.VK_LEFT :
-				changeVal = -base;
-				tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-				moved = handleArrowKeyMovement(geo, tempVec);				
-				break;
-
-			case KeyEvent.VK_F2 :
-				getGuiManager().startEditing(geo);				
-				return true;				
-		}
-		
-		if (moved) return true;
-		
-	
-		// PLUS, MINUS keys	
 		switch (keyCode) {
-			case KeyEvent.VK_PLUS :
-			case KeyEvent.VK_ADD :
-			case KeyEvent.VK_UP :
-			case KeyEvent.VK_RIGHT :
-				changeVal = base;
-				break;
+		case KeyEvent.VK_UP:
+			changeVal = base;
+			tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+			moved = handleArrowKeyMovement(geo, tempVec);
+			break;
 
-			case KeyEvent.VK_MINUS :
-			case KeyEvent.VK_SUBTRACT :
-			case KeyEvent.VK_DOWN :
-			case KeyEvent.VK_LEFT :
-				changeVal = -base;
-				break;
+		case KeyEvent.VK_DOWN:
+			changeVal = -base;
+			tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
+			moved = handleArrowKeyMovement(geo, tempVec);
+			break;
+
+		case KeyEvent.VK_RIGHT:
+			changeVal = base;
+			tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+			moved = handleArrowKeyMovement(geo, tempVec);
+			break;
+
+		case KeyEvent.VK_LEFT:
+			changeVal = -base;
+			tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
+			moved = handleArrowKeyMovement(geo, tempVec);
+			break;
+
+		case KeyEvent.VK_F2:
+			getGuiManager().startEditing(geo);
+			return true;
 		}
-		
+
+		if (moved)
+			return true;
+
+		// PLUS, MINUS keys
+		switch (keyCode) {
+		case KeyEvent.VK_PLUS:
+		case KeyEvent.VK_ADD:
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_RIGHT:
+			changeVal = base;
+			break;
+
+		case KeyEvent.VK_MINUS:
+		case KeyEvent.VK_SUBTRACT:
+		case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_LEFT:
+			changeVal = -base;
+			break;
+		}
+
 		if (changeVal == 0) {
 			char keyChar = event.getKeyChar();
 			if (keyChar == '+')
@@ -3377,57 +3383,57 @@ public abstract class Application implements KeyEventDispatcher {
 			else if (keyChar == '-')
 				changeVal = -base;
 		}
-	
-		if (changeVal != 0) {								
+
+		if (changeVal != 0) {
 			if (geo.isChangeable()) {
 				if (geo.isNumberValue()) {
 					GeoNumeric num = (GeoNumeric) geo;
-					num.setValue(kernel.checkInteger(
-							num.getValue() + changeVal * num.animationStep));					
+					num.setValue(kernel.checkInteger(num.getValue() + changeVal
+							* num.animationStep));
 					num.updateRepaint();
 				} else if (geo.isGeoPoint()) {
 					GeoPoint p = (GeoPoint) geo;
-					if (p.hasPath()) {						
+					if (p.hasPath()) {
 						p.addToPathParameter(changeVal * p.animationStep);
 						p.updateRepaint();
 					}
 				}
-			} 
-			
+			}
+
 			// update random algorithms
 			if (!geo.isIndependent()) {
 				if (geo.getParentAlgorithm().updateRandomAlgorithm())
-					geo.updateRepaint();				
-			}	
-			
+					geo.updateRepaint();
+			}
+
 			return true;
-		}		
-		
-		
-		
+		}
+
 		return false;
 	}
 
-	
 	private boolean handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
 		// try to move objvect
-		
-		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);				
-		if (!moved) {	
+
+		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);
+		if (!moved) {
 			// toggle boolean value
 			if (geo.isChangeable() && geo.isGeoBoolean()) {
 				GeoBoolean bool = (GeoBoolean) geo;
 				bool.setValue(!bool.getBoolean());
 				bool.updateCascade();
 				moved = true;
-			}					
-		}	
-		
-		if (moved) 
+			}
+		}
+
+		if (moved)
 			kernel.notifyRepaint();
-		
+
 		return moved;
 	}
 
-	
+	public JFrame getCasFrame() {
+		return casFrame;
+	}
+
 }

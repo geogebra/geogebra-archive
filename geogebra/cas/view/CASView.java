@@ -599,5 +599,10 @@ public class CASView extends JComponent implements CasManager {
 		CASTableCellValue cellValue = new CASTableCellValue();
 		return cellValue;
 	}
+
+	public Object createSubButton() {
+		CASSubDialog d = new CASSubDialog(app, null);
+		return d;
+	}
 	
 }
