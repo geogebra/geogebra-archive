@@ -493,6 +493,20 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public synchronized void refreshViews() {
 		app.refreshViews();		 				
 	}
+	
+	/* returns IP address
+	 * 
+	 */
+	public synchronized String getIPAddress() {
+		return app.IPAddress;
+	}
+			
+	/* returns hostname
+	 * 
+	 */
+	public synchronized String getHostname() {
+		return app.hostName;
+	}
 			
 	/**
 	 * Loads a construction from a  file (given URL).	
