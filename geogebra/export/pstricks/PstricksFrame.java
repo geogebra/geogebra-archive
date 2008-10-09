@@ -14,7 +14,7 @@ import javax.swing.JLabel;
  */
 public class PstricksFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
-	final String[] format={"LaTeX","Beamer"};
+	final String[] format={"LaTeX (article class)","LaTeX (beamer class)"};
 	public PstricksFrame(final GeoGebraToPstricks ggb2pst){
 		super(ggb2pst,"GeneratePstricks");
 		initGui();

@@ -760,15 +760,15 @@ public abstract class GeoGebraExport implements ActionListener{
 		int ggbSize=app.getFontSize();
 		double ggbYUnit=euclidianView.getYscale();
 		double fontUnits=ggbSize/ggbYUnit;
-		
+		System.out.println("ggbSize "+ggbSize+" ggbYUnit "+ggbYUnit);
 		// Now, on the output, calculate the size in centimeter
 		double yunit=frame.getYUnit();
 		double sizeCM=fontUnits*yunit;
+		System.out.println("yunit "+yunit+" sizeCM "+sizeCM);
 		// 1cm=1/2.54 in
 		// 1 in=72.27pt
 		// new size in pt:
 		int sizept=(int)(sizeCM/2.54*72.27+0.5);
-		
 		System.out.println(sizept);
 		int texSize=frame.getFontSize();
 		if (texSize==10){

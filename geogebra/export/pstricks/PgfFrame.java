@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 
 public class PgfFrame extends ExportFrame{
 	private static final long serialVersionUID = 1L;
-	final String[] format={"LaTeX","Plain TeX","ConTeXt","Beamer"};
+	final String[] format={"LaTeX (article class)","Plain TeX","ConTeXt","LaTeX (beamer class)"};
 	private JCheckBox forceGnuplot;
 	public PgfFrame(final GeoGebraToPgf ggb2pgf){
 		super(ggb2pgf,"GeneratePgf");
