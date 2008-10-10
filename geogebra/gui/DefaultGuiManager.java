@@ -378,7 +378,7 @@ public class DefaultGuiManager implements GuiManager {
 	                                              
 
 	public int getToolBarHeight() {
-		if (app.showToolBar())
+		if (app.showToolBar() && appToolbarPanel != null)
 			return appToolbarPanel.getHeight();
 		else
 			return 0;
