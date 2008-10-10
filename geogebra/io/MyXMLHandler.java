@@ -2072,12 +2072,9 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleIsLaTeX(LinkedHashMap attrs) {
 		try {
 
-			// remove linefeeds from latex if from file format 3.01 (ie GeoGebra
-			// 3.0.0.0)
-			boolean removeLineFeeds = (ggbFileFormat < 3.015f);
 
 			((GeoText) geo).setLaTeX(parseBoolean((String) attrs.get("val")),
-					false, removeLineFeeds);
+					false);
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -36,6 +36,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.util.ArrayList;
 
 /**
  *
@@ -120,6 +121,8 @@ public abstract class Drawable {
 		
 	}
 	
+	
+	/* old version
 	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
 		
 		int fontSize = g2.getFont().getSize();
@@ -232,7 +235,128 @@ public abstract class Drawable {
 			for (int i=0 ; i<n ; i++) ret.append(str);
 			return ret.toString();
 		}
+	} */
+	
+	
+	/**
+	 * Draw a multiline LaTeX label. 
+	 * 
+	 * TODO: Improve performance (caching, etc.)
+	 * Florian Sonner
+	 * @param g2
+	 * @param font
+	 * @param fgColor
+	 * @param bgColor
+	 */
+	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
+		int fontSize = g2.getFont().getSize();
+		int lineSpread = (int)(fontSize * 1.0f);
+		int lineSpace = (int)(fontSize * 0.5f);
+		
+
+		labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\{|\\\\\\})", "\\$");
+		String[] elements = labelDesc.split("(?<![\\\\])(\\$)|(^\\$)", -1);
+		
+		ArrayList lineHeights = new ArrayList();
+		lineHeights.add(new Integer(lineSpread + lineSpace));
+		ArrayList elementHeights = new ArrayList();
+		
+		// use latex by default just if there is just a single element
+		boolean isLaTeX = (elements.length == 1);
+		
+		// calculate the required space of every element
+		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
+			if(isLaTeX) {
+				// save the height of this element by drawing it to a temporary buffer
+				int height = drawEquation(view.getTempGraphics2D(), 0, 0, elements[i], font, fgColor, bgColor).height;
+				elementHeights.add(new Integer(height));
+				
+				// check if this element is taller than every else in the line
+				if(height > ((Integer)lineHeights.get(currentLine)).intValue())
+					lineHeights.set(currentLine, new Integer(height));
+				
+				++currentElement;
+			} else {
+				elements[i] = elements[i].replaceAll("\\\\\\$", "\\$");
+				String[] lines = elements[i].split("\\n", -1);
+				
+				for(int j = 0; j < lines.length; ++j) {
+					elementHeights.add(new Integer(lineSpread));
+					
+					// create a new line
+					if(j + 1 < lines.length) {
+						++currentLine;
+						
+						lineHeights.add(new Integer(lineSpread + lineSpace));
+					}
+					
+					++currentElement;
+				}
+			}
+			
+			isLaTeX = !isLaTeX;
+		}
+		
+		int width = 0;
+		int height = 0;
+		
+		// use latex by default just if there is just a single element
+		isLaTeX = (elements.length == 1);
+		
+		int xOffset = 0;
+		int yOffset = 0;
+		
+		// now draw all elements
+		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
+			if(isLaTeX) {
+				// calculate the y offset of this element by: (lineHeight - elementHeight) / 2
+				yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
+				
+				// draw the equation and save the x offset
+				xOffset += drawEquation(g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, fgColor, bgColor).width;
+				
+				++currentElement;
+			} else {
+				String[] lines = elements[i].split("\\n", -1);
+				
+				for(int j = 0; j < lines.length; ++j) {
+					// calculate the y offset like done with the element
+					yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
+					
+					// draw the string
+					xOffset += drawIndexedString(g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
+					
+					// add the height of this line if more lines follow
+					if(j + 1 < lines.length) {
+						height += ((Integer)(lineHeights.get(currentLine))).intValue();
+						
+						if(xOffset > width)
+							width = xOffset;
+					}
+					
+					// create a new line if more will follow
+					if(j + 1 < lines.length) {
+						++currentLine;
+						xOffset = 0;
+					} 
+					
+					++currentElement;
+				}
+			}
+			
+			// last element, increase total height and check if this is the most wide element
+			if(i + 1 == elements.length) {
+				height += ((Integer)(lineHeights.get(currentLine))).intValue();
+				
+				if(xOffset > width)
+					width = xOffset;
+			}
+			
+			isLaTeX = !isLaTeX;
+		}
+		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
+
 	
 	private geogebra.gui.hoteqn.sHotEqn eqn;
 	

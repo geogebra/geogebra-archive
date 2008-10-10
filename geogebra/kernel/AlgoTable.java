@@ -145,7 +145,7 @@ public class AlgoTable extends AlgoElement {
     	sb.append("\\end{tabular}");
     	
     	text.setTextString(sb.toString());
-    	text.setLaTeX(true,false,false);
+    	text.setLaTeX(true,false);
     }
     
     private void addCell(int c, int r) {

@@ -3364,7 +3364,7 @@ public class EuclidianController implements MouseListener,
 			GeoText text = kernel.getAlgebraProcessor().evaluateToText(strText, true);
 			if (useLabels) {
 				text.setLabel(removeUnderscores(app.getPlain("Text") + geoA.getLabel() + geoB.getLabel()));	
-				text.setLaTeX(useLabels, true, false);
+				text.setLaTeX(useLabels, true);
 			}			
 							
 			text.setStartPoint(startPoint);
