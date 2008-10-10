@@ -25,8 +25,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
 import geogebra.kernel.linalg.GgbVector;
 
-import java.util.ArrayList;
-
 
 /**
  *
@@ -40,23 +38,19 @@ final public class GeoPoint3D extends GeoVec4D {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
+	private boolean isInfinite,isDefined;
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
-	private Path path;
-	PathParameter pathParameter;
         
     // temp
     public GgbVector inhom = new GgbVector(3);
-    private boolean isInfinite, isDefined;
-    private boolean showUndefinedInAlgebraView = true;
     
     // list of Locateables (GeoElements) that this point is start point of
     // if this point is removed, the Locateables have to be notified
-    private ArrayList locateableList;         
     
     public GeoPoint3D(Construction c) { 
     	super(c,4); 
-    	pathParameter = new PathParameter();
     	setUndefined(); 
     }
   
@@ -64,8 +58,7 @@ final public class GeoPoint3D extends GeoVec4D {
      * Creates new GeoPoint 
      */  
     public GeoPoint3D(Construction c, String label, double x, double y, double z, double w) {               
-        super(c, x, y, z, w); // GeoVec3D constructor  
-        pathParameter = new PathParameter();
+        super(c, x, y, z, w); // GeoVec4D constructor  
         setLabel(label);
     }
     
@@ -75,8 +68,6 @@ final public class GeoPoint3D extends GeoVec4D {
     
     public GeoPoint3D(Construction c, Path path) {
 		super(c);
-		this.path = path;
-		pathParameter = new PathParameter();
 	}
     
 	protected String getClassName() {
@@ -93,7 +84,6 @@ final public class GeoPoint3D extends GeoVec4D {
     
     public GeoPoint3D(GeoPoint3D point) {
     	super(point.cons);
-    	pathParameter = new PathParameter();
         set(point);        
     }
     
@@ -113,12 +103,6 @@ final public class GeoPoint3D extends GeoVec4D {
 		
 		super.setCoords(new double[] {x,y,z,w});
 
-		if (path != null) {
-			//TODO 
-		}
-			
-		// this avoids multiple computation of inhomogenous coords;
-		// see for example distance()
 		updateCoords();  
 		
 	}  
@@ -162,14 +146,10 @@ final public class GeoPoint3D extends GeoVec4D {
 			}
 		}
 	}
-	
-	
 	 
 	final public void setCoords(GeoVec3D v) {
 		setCoords(v.x, v.y, v.z, 1.0);
 	}  
-	
- 
           
     /** 
      * Returns (x/w, y/w, z/w) GgbVector.
@@ -182,76 +162,44 @@ final public class GeoPoint3D extends GeoVec4D {
 
     
     
-    
-/***********************************************************/
-    
-    final public String toString() {     
-		sbToString.setLength(0);                               
-		sbToString.append(label);		
-		if (kernel.getCoordStyle() != Kernel.COORD_STYLE_AUSTRIAN) {
-			sbToString.append(" = ");
-		}
-		sbToString.append(buildValueString());       
-        return sbToString.toString();
-    }
-    private StringBuffer sbToString = new StringBuffer(50);        
-    
-    
-	private StringBuffer buildValueString() { 
-		sbBuildValueString.setLength(0);
-    	if (isInfinite()) {
-			sbBuildValueString.append(app.getPlain("undefined"));
-			return sbBuildValueString;
-    	}
-    				
-		sbBuildValueString.append('(');    
-        switch (toStringMode) {
-            case Kernel.COORD_POLAR:                                            
-				sbBuildValueString.append(kernel.format(GeoVec2D.length(inhom.get(1), inhom.get(2))));
-				sbBuildValueString.append("; ");
-				sbBuildValueString.append(kernel.formatAngle(Math.atan2(inhom.get(1), inhom.get(2))));
-                break;                                
-                            
-            default: // CARTESIAN                
-				sbBuildValueString.append(kernel.format(inhom.get(1)));
-				switch (kernel.getCoordStyle()) {
-					case Kernel.COORD_STYLE_AUSTRIAN:
-						sbBuildValueString.append(" | ");
-						break;
-					
-					default:
-						sbBuildValueString.append(", ");												
-				}
-				sbBuildValueString.append(kernel.format(inhom.get(2)));   
-				switch (kernel.getCoordStyle()) {
-				case Kernel.COORD_STYLE_AUSTRIAN:
-					sbBuildValueString.append(" | ");
-					break;
-				
-				default:
-					sbBuildValueString.append(", ");												
-				}
-				sbBuildValueString.append(kernel.format(inhom.get(3)));                                
-        }        
-		sbBuildValueString.append(')');
-		return sbBuildValueString;
-    }
-	private StringBuffer sbBuildValueString = new StringBuffer(50);   
-     
-    
-	public boolean isInfinite(){
-		return false;
+
+
+	public boolean isDefined() {
+		// TODO Auto-generated method stub
+		return true;
 	}
-	
-	
-	
-    final public String toValueString() {
-    	return buildValueString().toString();	
-    }
+	public void set(GeoElement geo) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setUndefined() {
+		// TODO Auto-generated method stub
+		
+	}
+	protected boolean showInAlgebraView() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	protected boolean showInEuclidianView() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	public String toValueString() {
+		// TODO Auto-generated method stub
+		return "todo";
+	}
+
+
+
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Raccord de méthode auto-généré
 		return false;
-	}       
+	};
+    
+    
+    
+    
+   
 
 }

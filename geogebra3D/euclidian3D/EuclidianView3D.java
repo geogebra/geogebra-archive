@@ -101,14 +101,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
         GLDisplay.addRenderer(renderer);
         GLDisplay.start();
-		/*
-		canvas3D = new EuclidianCanvas3D();
-		canvas3D.setDoubleBufferEnable(true);
-		
-		
-		setLayout(new BorderLayout());
-		add(BorderLayout.CENTER, canvas3D);
-		*/
 
         
 		setLayout(new BorderLayout());
@@ -118,8 +110,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		attachView();
 		
 		
-		// register Listener	
-		
+		// register Listener			
 		GLDisplay.glCanvas.addMouseMotionListener(euclidianController3D);
 		GLDisplay.glCanvas.addMouseListener(euclidianController3D);
 		GLDisplay.glCanvas.addMouseWheelListener(euclidianController3D);
@@ -316,11 +307,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		updateMatrix();
 		setWaitForUpdate(repaint);
 		
-		/*
-		if (repaint) {			
-			repaint();
-		}
-		*/
 		
 	}
 

@@ -39,6 +39,7 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_SEGMENT3D = 1131;
 	public static final int GEO_CLASS_PLANE3D = 1132;
 	public static final int GEO_CLASS_TRIANGLE3D = 1133;
+	public static final int GEO_CLASS_LINE3D = 1134;
 
 	
 	/********************************************************/
@@ -46,7 +47,7 @@ public abstract class GeoElement3D
 	/** Creates new GeoElement for given construction */
 	public GeoElement3D(Construction c) {
 		super(c);
-		//kernel3D= (Kernel3D) getKernel();
+		
 	}
 	
 	//TODO add method with return false in GeoElement

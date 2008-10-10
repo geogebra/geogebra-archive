@@ -4,7 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public class GeoCoordSys1D extends GeoCoordSys {
+public abstract class GeoCoordSys1D extends GeoCoordSys {
 	
 	GgbVector Vn1 = new GgbVector(4);
 	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
@@ -53,10 +53,9 @@ public class GeoCoordSys1D extends GeoCoordSys {
 	
 	
 	
-	
+	/** returns completed matrix for drawing */
 	public GgbMatrix getMatrixCompleted(){
-		GgbMatrix m = new GgbMatrix(4,4);
-		//m.set(new GgbVector[] {M.getColumn(1).normalized(),Vn1,Vn2,M.getColumn(2)});
+		GgbMatrix m = new GgbMatrix(4,4);		
 		m.set(new GgbVector[] {M.getColumn(1),Vn1,Vn2,M.getColumn(2)});
 		return m;
 	}

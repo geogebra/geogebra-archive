@@ -36,14 +36,13 @@ public class Kernel3D
 
 	
 	/***********************************
-	 * FACTORY METHODS FOR GeoElements
+	 * FACTORY METHODS FOR GeoElements3D
 	 ***********************************/
 
 	/** Point3D label with cartesian coordinates (x,y)   */
 	final public GeoPoint3D Point3D(String label, double x, double y, double z) {
 		GeoPoint3D p = new GeoPoint3D(cons);
 		p.setCoords(x, y, z, 1.0);
-		//p.setObjColor(new Color((float) x,(float) y,(float) z)); //TODO remove this
 		p.setLabel(label); // invokes add()                
 		return p;
 	}
@@ -59,10 +58,6 @@ public class Kernel3D
 	final public GeoSegment3D Segment3D(String label, GeoPoint3D P1, GeoPoint3D P2){
 		AlgoJoinPoints3DSegment algo = new AlgoJoinPoints3DSegment(cons, label, P1, P2);
 		GeoSegment3D s = algo.getSegment();
-		/*
-		GeoSegment3D s=new GeoSegment3D(cons,P1,P2);
-		s.setLabel(label);
-		*/
 		return s;
 	}	
 
@@ -77,7 +72,6 @@ public class Kernel3D
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
 	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
-		//GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-1.5,1.5,-1.5,1.5);
 		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
 		p.setLabel(label);
 		return p;
