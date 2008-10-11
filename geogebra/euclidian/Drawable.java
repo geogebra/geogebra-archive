@@ -137,7 +137,7 @@ public abstract class Drawable {
 		labelDesc=labelDesc.replaceAll("\\$\\$", "\\$"); // replace $$ with $
 		labelDesc=labelDesc.replaceAll("\\\\\\[", "\\$");// replace \[ with $
 		labelDesc=labelDesc.replaceAll("\\\\\\]", "\\$");// replace \] with $
-		labelDesc=labelDesc.replaceAll("\\\\\\(", "\\$");// replace \{ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\(", "\\$");// replace \( with $
 		labelDesc=labelDesc.replaceAll("\\\\\\)", "\\$");// replace \) with $
 		
 		
@@ -253,8 +253,8 @@ public abstract class Drawable {
 		int lineSpread = (int)(fontSize * 1.0f);
 		int lineSpace = (int)(fontSize * 0.5f);
 		
-		// latex delimiters \[ \] \{ \} $$ -> $
-		labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\{|\\\\\\})", "\\$");
+		// latex delimiters \[ \] \( \) $$ -> $
+		labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\(|\\\\\\))", "\\$");
 		
 		// split on $ but not \$
 		String[] elements = labelDesc.split("(?<![\\\\])(\\$)", -1);
