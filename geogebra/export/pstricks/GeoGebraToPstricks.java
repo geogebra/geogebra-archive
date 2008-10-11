@@ -691,7 +691,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
         // create point for slider
         GeoPoint geoPoint = new GeoPoint(construction);
         geoPoint.setObjColor(geo.getObjectColor());
-        String label="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
+        String label=Util.toLaTeXString(geo.getLabelDescription(),true);
         geoPoint.setLabel(label);
     	double param =  (value - min) / (max - min);
     	geoPoint.pointSize = 2 + (geo.lineThickness+1) / 3;  

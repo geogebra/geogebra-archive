@@ -77,7 +77,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	    	codePreamble.append("\\documentclass[" +
  	    			frame.getFontSize()+"pt]{article}\n" +
  	    			"\\usepackage{pgf,tikz}\n\\usetikzlibrary{arrows}\n\\pagestyle{empty}\n");
-  			codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
+  			codeBeginDoc.append("\\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=");
  			codeBeginDoc.append(xunit);
  			codeBeginDoc.append("cm,y=");
  			codeBeginDoc.append(yunit);
@@ -91,7 +91,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	    	codePreamble.append(frame.getFontSize());
  	    	codePreamble.append("pt\n\\hsize=6.3truein\n\\vsize=8.7truein\n");
 
- 	    	codeBeginDoc.append("\\tikzpicture[>=triangle 45,x=");
+ 	    	codeBeginDoc.append("\\tikzpicture[line cap=round,line join=round,>=triangle 45,x=");
  			codeBeginDoc.append(xunit);
  			codeBeginDoc.append("cm,y=");
  			codeBeginDoc.append(yunit);
@@ -102,7 +102,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  			codePreamble.append("\\usemodule[tikz]\n\\usemodule[pgf]\n");
  			codePreamble.append("\\usetikzlibrary[arrows]\n\\setuppagenumbering[location=]\n");
  			
- 	    	codeBeginDoc.append("\\starttikzpicture[>=triangle 45,x=");
+ 	    	codeBeginDoc.append("\\startTEXpage\n\\starttikzpicture[line cap=round,line join=round,>=triangle 45,x=");
  			codeBeginDoc.append(xunit);
  			codeBeginDoc.append("cm,y=");
  			codeBeginDoc.append(yunit);
@@ -113,7 +113,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	    			frame.getFontSize()+"pt]{beamer}\n" +
  	    			"\\usepackage{pgf,tikz}\n\\usetikzlibrary{arrows}\n\\pagestyle{empty}\n");
  	    	codeBeginDoc.append("\\begin{frame}\n");
- 			codeBeginDoc.append("\\begin{tikzpicture}[>=triangle 45,x=");
+ 			codeBeginDoc.append("\\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=");
  			codeBeginDoc.append(xunit);
  			codeBeginDoc.append("cm,y=");
  			codeBeginDoc.append(yunit);
@@ -162,7 +162,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
  	        
  		}
  		else if (format==GeoGebraToPgf.FORMAT_CONTEXT){
- 			code.append("\\stoptikzpicture\n\\stoptext");
+ 			code.append("\\stoptikzpicture\n\\stopTEXpage\n\\stoptext");
  	     	codeBeginDoc.insert(0,"\\starttext\n");
  		}
 /*		String formatFont=resizeFont(app.getFontSize());
@@ -778,7 +778,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
         // create point for slider
         GeoPoint geoPoint = new GeoPoint(construction);
         geoPoint.setObjColor(geo.getObjectColor());
-        String label="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
+        String label=Util.toLaTeXString(geo.getLabelDescription(),true);
         geoPoint.setLabel(label);
     	double param =  (value - min) / (max - min);
     	geoPoint.pointSize = 2 + (geo.lineThickness+1) / 3;  
@@ -1684,10 +1684,15 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (name.indexOf("°")!=-1){
-					name=name.replaceAll("°", "\\\\textrm{\\\\degre}");
-					if (codePreamble.indexOf("\\degre")==-1)
-						codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
+					if (format==GeoGebraToPgf.FORMAT_LATEX) {
+						name=name.replaceAll("°", "\\\\textrm{\\\\degre}");
+						if (codePreamble.indexOf("\\degre")==-1)
+							codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
 					}
+					else if (format==GeoGebraToPgf.FORMAT_CONTEXT||format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
+						name=name.replaceAll("°", "{}^{\\\\circ}");
+					}
+				}
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
 				double xLabel=drawGeo.getxLabel();
 				double yLabel=drawGeo.getyLabel();
