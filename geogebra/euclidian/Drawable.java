@@ -253,9 +253,11 @@ public abstract class Drawable {
 		int lineSpread = (int)(fontSize * 1.0f);
 		int lineSpace = (int)(fontSize * 0.5f);
 		
-
+		// latex delimiters \[ \] \{ \} $$ -> $
 		labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\{|\\\\\\})", "\\$");
-		String[] elements = labelDesc.split("(?<![\\\\])(\\$)|(^\\$)", -1);
+		
+		// split on $ but not \$
+		String[] elements = labelDesc.split("(?<![\\\\])(\\$)", -1);
 		
 		ArrayList lineHeights = new ArrayList();
 		lineHeights.add(new Integer(lineSpread + lineSpace));
