@@ -991,12 +991,22 @@ public class Kernel {
 				// "attach" views again
 				viewCnt = oldViewCnt;		
 				
+				/*
 				// add all geos to all views
 				Iterator it = cons.getGeoSetConstructionOrder().iterator();				
 				while (it.hasNext()) {	
 					GeoElement geo =  (GeoElement) it.next();					
 					notifyAdd(geo);									
-				}			
+				}			*/
+				
+				Object [] geos =
+					getConstruction().getGeoSetConstructionOrder().toArray();
+				for (int i = 0 ; i < geos.length ; i++) {
+					GeoElement geo =  (GeoElement) geos[i];					
+					notifyAdd(geo);														
+				}
+				
+				
 				//app.setMoveMode();
 				notifyReset();			
 				viewReiniting = false;
