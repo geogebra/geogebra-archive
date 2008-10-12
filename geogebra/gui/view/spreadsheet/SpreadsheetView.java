@@ -105,11 +105,18 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public int getHighestUsedColumn() {
+		resetTraceRow(highestUsedColumn+1);
+		resetTraceRow(highestUsedColumn+2);
 		return highestUsedColumn;
+	}
+	
+	private void resetTraceRow(int col) {
+		if (col < MAX_COLUMNS) traceRow[col] = 1;
 	}
 	
 	public int getTraceRow(int column) {
 		if (column < 0 || column >= MAX_COLUMNS) return -1;
+		if (traceRow[column] == 0) traceRow[column] = 1; //first call
 		return (int)traceRow[column]++;
 	}
 	

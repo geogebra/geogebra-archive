@@ -650,7 +650,7 @@ public abstract class Drawable {
         // record to spreadsheet tool & trace to spreadsheet
     	Construction cons = view.getKernel().getConstruction();
     	{
-    		String row;
+    		int row;
     		String col;
 	    	
     		switch (geo.getGeoClassType()) {
@@ -677,19 +677,21 @@ public abstract class Drawable {
 		    	
 		    	if (P.getLastTrace1() != coords[0] || P.getLastTrace2() != coords[1]) {
 			    	col = P.getTraceColumn1(); // call before getTraceRow()
-			    	row = P.getTraceRow() + "";
-	    	    	Application.debug(col+row);   		
-			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
-			    	traceCell.setAuxiliaryObject(true);
-			    	
-			    	col = P.getTraceColumn2(); // call before getTraceRow()
-	    	    	Application.debug(col+row);   		
-			    	
-			    	GeoNumeric traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
-			    	traceCell2.setAuxiliaryObject(true);
-			    	
-			    	P.setLastTrace1(coords[0]);
-			    	P.setLastTrace2(coords[1]);
+			    	row = P.getTraceRow();
+			    	if (row > 0) {
+		    	    	Application.debug(col+row);   		
+				    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+				    	traceCell.setAuxiliaryObject(true);
+				    	
+				    	col = P.getTraceColumn2(); // call before getTraceRow()
+		    	    	Application.debug(col+row);   		
+				    	
+				    	GeoNumeric traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
+				    	traceCell2.setAuxiliaryObject(true);
+				    	
+				    	P.setLastTrace1(coords[0]);
+				    	P.setLastTrace2(coords[1]);
+			    	}
 			    	
 		    	}
 	    	break;
@@ -703,14 +705,16 @@ public abstract class Drawable {
 		    	
 		    	if (vector.getLastTrace1() != coords[0] || vector.getLastTrace2() != coords[1]) {
 			    	col = vector.getTraceColumn1();
-			    	row = vector.getTraceRow() + "";
-			    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
-			    	traceCell.setAuxiliaryObject(true);
-			    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
-			    	traceCell2.setAuxiliaryObject(true);
-			    	
-			    	vector.setLastTrace1(coords[0]);
-			    	vector.setLastTrace2(coords[1]);
+			    	row = vector.getTraceRow();
+			    	if (row > 0) {
+				    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+				    	traceCell.setAuxiliaryObject(true);
+				    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
+				    	traceCell2.setAuxiliaryObject(true);
+				    	
+				    	vector.setLastTrace1(coords[0]);
+				    	vector.setLastTrace2(coords[1]);
+			    	}
 			    	
 		    	}
     	    	 	    			
