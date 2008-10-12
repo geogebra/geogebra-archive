@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -17,13 +18,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import geogebra.Application;
-import geogebra.gui.ToolCreationDialog;
-import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.gui.view.algebra.InputPanel;
-import geogebra.kernel.GeoElement;
 
 /**
  * Dialog to substitude a string in a CAS input.
@@ -39,22 +37,19 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private static final int SUB = 0;
 	private static final int SUBSIM = 1;
 
-	private JTextComponent tfCaption;
 	private JButton btSub, btSubSim, btCancel;
-	private JPanel optionPane, btPanel;
-	private DefaultListModel listModel;
-	private DefaultComboBoxModel comboModel;
+	private JPanel optionPane, btPanel, cbPanel, captionPanel;
 
-	private Point location;
+	private String subString;
 	private Application app;
 
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public CASSubDialog(Application app, Point location) {
+	public CASSubDialog(Application app, String inStr) {
 		super(app.getCasFrame(), false);
 		this.app = app;
-		this.location = location;
+		this.subString = inStr;
 
 		createGUI(app.getMenu("Substitute Dialog"));
 		pack();
@@ -64,8 +59,22 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	protected void createGUI(String title) {
 		setTitle(title);
 		setResizable(false);
-	
 
+		// create caption panel
+		JLabel captionLabel = new JLabel(app.getPlain("New Value") + ":");
+		JTextField valueTextField = new JTextField();
+		valueTextField.setColumns(20);
+
+		captionLabel.setLabelFor(valueTextField);
+		captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		captionPanel.add(captionLabel);
+		captionPanel.add(valueTextField);
+
+		// create checkbox panel
+		Checkbox allReplaced = new Checkbox("Replace all");
+		cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		cbPanel.add(allReplaced);
+		
 		// buttons
 		btSub = new JButton(app.getPlain("Substitute"));
 		btSub.setActionCommand("Substitute");
@@ -88,6 +97,8 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		optionPane = new JPanel(new BorderLayout(5, 5));
 
 		// create object list
+		optionPane.add(captionPanel, BorderLayout.NORTH);
+		optionPane.add(cbPanel, BorderLayout.CENTER);
 		optionPane.add(btPanel, BorderLayout.SOUTH);
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -140,6 +151,14 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 			}
 		}
 		super.setVisible(flag);
+	}
+
+	public String getSubString() {
+		return subString;
+	}
+
+	public void setSubString(String subString) {
+		this.subString = subString;
 	}
 
 }
