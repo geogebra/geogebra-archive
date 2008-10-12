@@ -1683,14 +1683,14 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		try{
 			if (geo.isLabelVisible()){
 				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
-				if (name.indexOf("°")!=-1){
+				if (name.indexOf("\u00b0")!=-1){
 					if (format==GeoGebraToPgf.FORMAT_LATEX) {
-						name=name.replaceAll("°", "\\\\textrm{\\\\degre}");
+						name=name.replaceAll("\u00b0", "\\\\textrm{\\\\degre}");
 						if (codePreamble.indexOf("\\degre")==-1)
 							codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
 					}
 					else if (format==GeoGebraToPgf.FORMAT_CONTEXT||format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
-						name=name.replaceAll("°", "{}^{\\\\circ}");
+						name=name.replaceAll("\u00b0", "{}^{\\\\circ}");
 					}
 				}
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
