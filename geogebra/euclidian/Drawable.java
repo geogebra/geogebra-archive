@@ -643,10 +643,15 @@ public abstract class Drawable {
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
 	
-	private StringBuffer command = new StringBuffer();
+	//private StringBuffer command = new StringBuffer();
 	private double[] coords = new double[2];
 	
 	public void recordToSpreadsheet(GeoElement geo) {
+		
+		
+		// stop spurious numbers after undo
+		if (view.getKernel().isViewReiniting()) return;
+		
         // record to spreadsheet tool & trace to spreadsheet
     	Construction cons = view.getKernel().getConstruction();
     	{
