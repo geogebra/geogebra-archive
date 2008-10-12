@@ -89,6 +89,8 @@ public class CopyPasteCut {
 		String buf = null;
 		boolean succ = false;
 		
+		//Application.debug("paste: "+row1+" "+row2+" "+column1+" "+column2);
+		
 		if ((contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
@@ -101,16 +103,24 @@ public class CopyPasteCut {
 		
 		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
-				succ = pasteInternal(column1, row1);
+				succ = true;
+				for (int c = column1 ; c <= column2 ; c++)
+				for (int r = row1 ; r <= row2 ; r++)
+					succ = succ && pasteInternal(c, r);
 			} catch (Exception ex) {
 				ex.printStackTrace(System.out);
 				//app.showError(ex.getMessage());
-				pasteExternal(buf, column1, row1);
+				for (int c = column1 ; c <= column2 ; c++)
+				for (int r = row1 ; r <= row2 ; r++)
+					pasteExternal(buf, c, r);
 				// Util.handleException(table, ex);
 			}
 		}
 		else if (buf != null) {
-			succ = pasteExternal(buf, column1, row1);
+			succ = true;
+			for (int c = column1 ; c <= column2 ; c++)
+			for (int r = row1 ; r <= row2 ; r++)
+				succ = succ && pasteExternal(buf, c, r);
 		}
 		
 		return succ;
@@ -161,12 +171,14 @@ public class CopyPasteCut {
 					values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 				}
 			}
+			
+			/*
 			if (values2.length == 1 || (values2.length > 0 && values2[0].length == 1)) {
 				createPointsAndAList1(values2);
 			}
 			if (values2.length == 2 || (values2.length > 0 && values2[0].length == 2)) {
 				createPointsAndAList2(values2);
-			}
+			}*/
 			
 			succ = true;
 		}
@@ -270,12 +282,14 @@ public class CopyPasteCut {
 			}
 			//Application.debug("maxLen=" + maxLen);
 			table.getView().repaintView();
+			
+			/*
 			if (values2.length == 1 || maxLen == 1) {
 				createPointsAndAList1(values2);
 			}
 			if (values2.length == 2 || maxLen == 2) {
 				createPointsAndAList2(values2);
-			}
+			}*/
 			
 			succ = true;
 		} catch (Exception ex) {
