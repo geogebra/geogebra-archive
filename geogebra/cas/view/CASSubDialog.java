@@ -60,21 +60,32 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		setTitle(title);
 		setResizable(false);
 
+		// create label panel
+		JLabel subLabel = new JLabel(
+				app
+						.getPlain("Substitute for SELECTEDSubExpression in INPUTRowExpression"));
+		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		subTitlePanel.add(subLabel);
+
 		// create caption panel
-		JLabel captionLabel = new JLabel(app.getPlain("New Value") + ":");
+		JLabel captionLabel = new JLabel(app.getPlain("New Expression") + ":");
 		JTextField valueTextField = new JTextField();
 		valueTextField.setColumns(20);
-
 		captionLabel.setLabelFor(valueTextField);
-		captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		captionPanel.add(captionLabel);
-		captionPanel.add(valueTextField);
+
+		JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		subPanel.add(captionLabel);
+		subPanel.add(valueTextField);
+
+		captionPanel = new JPanel(new BorderLayout(5, 5));
+		captionPanel.add(subTitlePanel, BorderLayout.CENTER);
+		captionPanel.add(subPanel, BorderLayout.SOUTH);
 
 		// create checkbox panel
-		Checkbox allReplaced = new Checkbox("Replace all");
+		Checkbox allReplaced = new Checkbox("Substitute for All");
 		cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		cbPanel.add(allReplaced);
-		
+
 		// buttons
 		btSub = new JButton(app.getPlain("Substitute"));
 		btSub.setActionCommand("Substitute");
