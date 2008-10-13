@@ -41,9 +41,9 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 										// line panle
 
 			cellValue = (CASTableCellValue) value;
-			Application.debug("Editor - Row: " + row);
-			Application.debug(cellValue.getCommand());
-			Application.debug(cellValue.getOutput());
+			// Application.debug("Editor - Row: " + row);
+			// Application.debug(cellValue.getCommand());
+			// Application.debug(cellValue.getOutput());
 			String tempIn = cellValue.getCommand();
 			String tempOut = cellValue.getOutput();
 
@@ -79,7 +79,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		cellValue.setCommand(this.getInput());
 		cellValue.setOutput(this.getOutput());
 		
-		Application.debug("Cell Editor stops editting at " + this.getOutput());
+		//Application.debug("Cell Editor stops editting at selected " + this.getInputArea().getText());
 		return true;
 	}
 

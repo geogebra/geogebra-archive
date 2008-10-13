@@ -37,19 +37,26 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private static final int SUB = 0;
 	private static final int SUBSIM = 1;
 
+	private boolean replaceAllFlag = false;
+
 	private JButton btSub, btSubSim, btCancel;
 	private JPanel optionPane, btPanel, cbPanel, captionPanel;
+	private JTextField valueTextField;
+	private Checkbox allReplaced;
 
-	private String subString;
+	private CASTableCell tableCell;
 	private Application app;
+
+	private String subStr;
+	private String inputStr;
 
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public CASSubDialog(Application app, String inStr) {
+	public CASSubDialog(Application app, CASTableCell inCell) {
 		super(app.getCasFrame(), false);
 		this.app = app;
-		this.subString = inStr;
+		this.tableCell = inCell;
 
 		createGUI(app.getMenu("Substitute Dialog"));
 		pack();
@@ -60,16 +67,18 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		setTitle(title);
 		setResizable(false);
 
+		subStr = tableCell.getInputArea().getSelectedText();
+		inputStr = tableCell.getInput();
+
 		// create label panel
-		JLabel subLabel = new JLabel(
-				app
-						.getPlain("Substitute for SELECTEDSubExpression in INPUTRowExpression"));
+		JLabel subLabel = new JLabel(app.getPlain("Substitute for ") + subStr
+				+ app.getPlain(" in ") + inputStr);
 		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		subTitlePanel.add(subLabel);
 
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getPlain("New Expression") + ":");
-		JTextField valueTextField = new JTextField();
+		valueTextField = new JTextField();
 		valueTextField.setColumns(20);
 		captionLabel.setLabelFor(valueTextField);
 
@@ -82,7 +91,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		captionPanel.add(subPanel, BorderLayout.SOUTH);
 
 		// create checkbox panel
-		Checkbox allReplaced = new Checkbox("Substitute for All");
+		allReplaced = new Checkbox("Substitute for All");
 		cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		cbPanel.add(allReplaced);
 
@@ -132,11 +141,20 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	}
 
 	private void apply(int mod) {
+
+		String newExpression = valueTextField.getText();
+		if (allReplaced.getState())
+			replaceAllFlag = true;
+
 		switch (mod) {
 		case SUB:
+			// Replace the sub in the input string
+			tableCell.setInput("Ri ni ma");
 			System.out.println("This is for sub action");
 			break;
 		case SUBSIM:
+			// Replace the sub in the input string
+			tableCell.setInput("kao ni ma");
 			System.out.println("This is for sub and simplify action");
 			break;
 		default:
@@ -163,13 +181,4 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		}
 		super.setVisible(flag);
 	}
-
-	public String getSubString() {
-		return subString;
-	}
-
-	public void setSubString(String subString) {
-		this.subString = subString;
-	}
-
 }

@@ -2,6 +2,7 @@ package geogebra;
 
 import java.util.LinkedList;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 
 public interface CasManager {
@@ -12,5 +13,5 @@ public interface CasManager {
 	public Object setInputExpression(Object cellValue, String input);
 	public Object setOutputExpression(Object cellValue, String output);
 	public Object createCellValue();
-	public Object createSubButton();
+	public JButton createSubButton(JComponent casViewComp);
 }

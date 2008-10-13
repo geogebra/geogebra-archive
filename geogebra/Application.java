@@ -1936,18 +1936,8 @@ public abstract class Application implements KeyEventDispatcher {
 		JComponent casViewComp = casView.getCASViewComponent();
 
 		// Button
-		JButton btSub = new JButton("Substitute");
-		btSub.setActionCommand("Subsim");
-
-		btSub.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object d = casView.createSubButton();
-				((geogebra.cas.view.CASSubDialog) d).setVisible(true);
-			}
-		});
-
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		btPanel.add(btSub);
+		btPanel.add(casView.createSubButton(casViewComp));
 
 		Container contentPane = spFrame.getContentPane();
 		contentPane.setLayout(new BorderLayout());

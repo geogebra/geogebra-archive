@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -20,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.AbstractListModel;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -56,6 +59,8 @@ public class CASView extends JComponent implements CasManager {
 	private GeoGebraCAS cas;
 
 	private CASSession session;
+
+	private JButton btSub;
 
 	private final int numOfRows = 1;
 
@@ -346,13 +351,14 @@ public class CASView extends JComponent implements CasManager {
 					}
 					// consoleTable.repaint();
 				}
-				
+
 				// Todo: Remove, for debug information
-//				System.out.println("Selected number of rows is: "
-//						+ consoleTable.getSelectedRowCount());
-//				for (int i = 0; i < consoleTable.getSelectedRowCount(); i++) {
-//					System.out.println(consoleTable.getSelectedRows()[i]);
-//				}
+				// System.out.println("Selected number of rows is: "
+				// + consoleTable.getSelectedRowCount());
+				// for (int i = 0; i < consoleTable.getSelectedRowCount(); i++)
+				// {
+				// System.out.println(consoleTable.getSelectedRows()[i]);
+				// }
 
 			}
 			// RIGHT CLICK
@@ -579,30 +585,57 @@ public class CASView extends JComponent implements CasManager {
 		// geogebra.cas.view.CASPara.contCol);
 
 	}
-	
-	public Object setInputExpression(Object cellValue, String input){
-		if(cellValue instanceof CASTableCellValue){
-			((CASTableCellValue)cellValue).setCommand(input);
+
+	public Object setInputExpression(Object cellValue, String input) {
+		if (cellValue instanceof CASTableCellValue) {
+			((CASTableCellValue) cellValue).setCommand(input);
 		}
 		return cellValue;
 	}
-	
-	public Object setOutputExpression(Object cellValue, String output){
-		if(cellValue instanceof CASTableCellValue){
-			((CASTableCellValue)cellValue).setOutput(output);
-			((CASTableCellValue)cellValue).setOutputAreaInclude(true);
+
+	public Object setOutputExpression(Object cellValue, String output) {
+		if (cellValue instanceof CASTableCellValue) {
+			((CASTableCellValue) cellValue).setOutput(output);
+			((CASTableCellValue) cellValue).setOutputAreaInclude(true);
 		}
 		return cellValue;
 	}
-	
-	public Object createCellValue(){
+
+	public Object createCellValue() {
 		CASTableCellValue cellValue = new CASTableCellValue();
 		return cellValue;
 	}
 
-	public Object createSubButton() {
-		CASSubDialog d = new CASSubDialog(app, null);
-		return d;
+	public JButton createSubButton(JComponent casViewComp) {
+		btSub = new JButton("Substitute");
+		btSub.setActionCommand("Subsim");
+
+		btSub.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Get the active cell
+				int editRow = consoleTable.getEditingRow();
+				CASTableCellValue value = (CASTableCellValue) consoleTable
+						.getModel().getValueAt(editRow, CASPara.contCol);
+				CASTableCell edittingCell = ((CASTableCell) ((CASTableCellEditor) consoleTable
+						.getCellEditor(editRow, CASPara.contCol))
+						.getTableCellEditorComponent(consoleTable, value, true,
+								editRow, CASPara.contCol));
+
+				
+				// TODO: Remove this later. We cannot get the selected text in the textfield :(
+				String da = edittingCell.getInputArea().getSelectedText();
+				
+				// Create a CASSubDialog with the cell value
+				CASSubDialog d = new CASSubDialog(app, edittingCell);
+				d.setVisible(true);
+			}
+		});
+
+		return btSub;
 	}
-	
+
+	public JButton getBtSub() {
+		return btSub;
+	}
+
 }
