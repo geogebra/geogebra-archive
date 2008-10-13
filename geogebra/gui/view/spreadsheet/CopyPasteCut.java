@@ -104,23 +104,30 @@ public class CopyPasteCut {
 		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
 				succ = true;
-				for (int c = column1 ; c <= column2 ; c++)
-				for (int r = row1 ; r <= row2 ; r++)
+				// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
+				for (int c = column1 ; c <= column2 ; c+= internalBuf.length)
+				for (int r = row1 ; r <= row2 ; r+= internalBuf[0].length)
 					succ = succ && pasteInternal(c, r);
 			} catch (Exception ex) {
-				ex.printStackTrace(System.out);
+				//ex.printStackTrace(System.out);
 				//app.showError(ex.getMessage());
-				for (int c = column1 ; c <= column2 ; c++)
-				for (int r = row1 ; r <= row2 ; r++)
-					pasteExternal(buf, c, r);
+				
+				//for (int c = column1 ; c <= column2 ; c++)
+				//for (int r = row1 ; r <= row2 ; r++)
+				//	pasteExternal(buf, c, r);
+				
+				// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
+				succ = pasteExternalMultiple(buf, column1, row1, column2, row2);
+				
 				// Util.handleException(table, ex);
 			}
 		}
 		else if (buf != null) {
-			succ = true;
-			for (int c = column1 ; c <= column2 ; c++)
-			for (int r = row1 ; r <= row2 ; r++)
-				succ = succ && pasteExternal(buf, c, r);
+			//Application.debug("newline index "+buf.indexOf("\n"));
+			//Application.debug("length "+buf.length());
+
+			// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
+			succ = pasteExternalMultiple(buf, column1, row1, column2, row2);
 		}
 		
 		return succ;
@@ -237,6 +244,29 @@ public class CopyPasteCut {
 			data[i] = (String[])list.toArray(new String[0]);
 		}
 		return data;		
+	}
+	
+	private boolean pasteExternalMultiple(String buf,int column1, int row1, int column2, int row2) {
+		int newlineIndex = buf.indexOf("\n");
+		int rowStep = 1;
+		if ( newlineIndex == -1 || newlineIndex == buf.length()-1) { 
+			rowStep = 1; // no linefeeds in string
+		}
+		else
+		{
+		    for (int i = 0; i < buf.length()-1 ; i++) { // -1 : don't want to count a newline if it's the last char
+		        char c = buf.charAt(i);
+		        if (c == '\n') rowStep++; // count no of linefeeds in string
+		    }
+		}
+		boolean succ = true;
+		// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
+		for (int c = column1 ; c <= column2 ; c++)
+		for (int r = row1 ; r <= row2 ; r+= rowStep)
+			succ = succ && pasteExternal(buf, c, r);
+		
+		return succ;
+		
 	}
 	
 	public boolean pasteExternal(String buf, int column1, int row1) {
