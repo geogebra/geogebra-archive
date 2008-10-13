@@ -176,6 +176,7 @@ public class CopyPasteCut {
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
 					values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
+					values2[ix][iy].setVisualStyle(values1[ix][iy]);
 				}
 			}
 			
