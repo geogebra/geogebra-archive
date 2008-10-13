@@ -251,8 +251,16 @@ abstract public class ExportFrame extends JFrame{
 		        else {
 		        	try{
 		        		FileOutputStream f = new FileOutputStream(currentFile);
-		        		BufferedOutputStream b = new BufferedOutputStream(f);	
-		        		OutputStreamWriter osw = new  OutputStreamWriter(b,  "UTF8");
+		        		BufferedOutputStream b = new BufferedOutputStream(f);
+/*		        		java.util.Enumeration en=System.getProperties().keys();
+		        		while(en.hasMoreElements()){
+		        			String s=en.nextElement().toString();
+		        			System.out.println(s+" "+System.getProperty(s));
+		        		}*/
+		        		String encode=System.getProperty("file.encoding");
+		        	    //System.out.println(encode);
+		        		if (null==encode) encode="UTF-8";
+		        		OutputStreamWriter osw = new  OutputStreamWriter(b, encode );
 		        		osw.write(textarea.getText());
 		        		osw.close();
 		        		b.close();
