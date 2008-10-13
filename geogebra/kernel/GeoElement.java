@@ -592,7 +592,9 @@ public abstract class GeoElement
 	// Michael Borcherds 2008-03-01
 	public void setLayer(int layer){
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
-		app.getEuclidianView().changeLayer(this,this.layer,layer);
+		EuclidianView ev =app.getEuclidianView();
+		if (ev == null) return;
+		ev.changeLayer(this,this.layer,layer);
 		this.layer=layer;
 	}
 	
@@ -702,23 +704,6 @@ public abstract class GeoElement
 		}
 	}
 	
-	/**
-	 * Sets all non visual values from given GeoElement. 
-	 * Michael Borcherds
-	 * 2008-05-03
-	 */
-	public void setNonVisualProperties(GeoElement geo) {
-		
-		setLayer(geo.getLayer());
-
-		// copy color function
-		setColorFunction(geo.getColorFunction());
-		
-		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
-		try { setShowObjectCondition(geo.getShowObjectCondition());}
-		catch (Exception e) {}
-	}
-
 	public void setVisualStyle(GeoElement geo) {
 		// label style
 		labelVisible = geo.labelVisible;
@@ -740,7 +725,17 @@ public abstract class GeoElement
 		lineThickness = geo.lineThickness;
 		lineType = geo.lineType;	
 		decorationType = geo.decorationType;
-	}
+
+		// set layer
+		setLayer(geo.getLayer());
+
+		// copy color function
+		setColorFunction(geo.getColorFunction());
+		
+		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
+		try { setShowObjectCondition(geo.getShowObjectCondition());}
+		catch (Exception e) {}
+}
 
 	/**
 		 * @return
