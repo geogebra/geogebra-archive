@@ -65,6 +65,10 @@ public class AlgoDependentPoint extends AlgoElement {
     
     public GeoPoint getPoint() { return P; }
     
+    public ExpressionNode getExpressionNode() {
+    	return root;
+    }
+    
     // calc the current value of the arithmetic tree
     protected final void compute() {   
     	try {

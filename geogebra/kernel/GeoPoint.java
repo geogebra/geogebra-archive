@@ -22,7 +22,9 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.util.Util;
@@ -177,8 +179,63 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 	
 	public boolean isChangeable() {
-		return !isFixed() && (isPointOnPath() || isIndependent());   
+		return !isFixed() && (isPointOnPath() || isIndependent() || hasChangeableCoords());   
 	}	 
+	
+	/**
+	 * Returns whether this point has two changeable numbers as coordinates, e.g. point A = (a, b)
+	 * where a and b are free GeoNumeric objects.
+	 */
+	final private boolean hasChangeableCoords() {
+		GeoNumeric [] coords = getCoordNumbers();
+		
+		return coords != null && 
+			coords[0].isChangeable() && coords[1].isChangeable();
+	}
+	
+	/**
+	 * Returns this point's two coordinates as GeoNumeric objects, e.g. for point P = (a, b) the
+	 * array [a, b] is returned. 
+	 * @return null if this point is not defined using two GeoNumeric objects like (a, b)
+	 */
+	final private GeoNumeric [] getCoordNumbers() {
+		AlgoElement parentAlgo = getParentAlgorithm();
+		if (parentAlgo == null)
+			return null;
+		
+		// try to get coord numbers of dependent point A = (a, b)
+		if (needsToInitCoordNumbers) {
+			needsToInitCoordNumbers = false;
+			
+			// dependent point of form P = (a, b)
+			if (parentAlgo instanceof AlgoDependentPoint) {
+				AlgoDependentPoint algo = (AlgoDependentPoint) parentAlgo;
+				ExpressionNode en = algo.getExpressionNode();
+				if (en.isLeaf() && en.getLeft() instanceof MyVecNode) {
+					MyVecNode vn = (MyVecNode) en.getLeft();
+					ExpressionValue xEV = vn.getX();
+					ExpressionValue yEV = vn.getY();
+					
+					// check if x and y coords are variables
+					try {
+						changeableCoordNumbers = new GeoNumeric[2];
+						changeableCoordNumbers[0] = (GeoNumeric) kernel.lookupLabel(xEV.toString());
+						changeableCoordNumbers[1] = (GeoNumeric) kernel.lookupLabel(yEV.toString());
+					} catch (Exception e) {
+						changeableCoordNumbers = null;
+					
+						//e.printStackTrace();						
+					}					
+				}
+			}
+						
+			return changeableCoordNumbers;
+		}
+		
+		return changeableCoordNumbers;
+	}
+	private boolean needsToInitCoordNumbers = true;
+	private GeoNumeric [] changeableCoordNumbers = null;
 	
 	final public boolean isPointOnPath() {
 		return path != null;
@@ -238,10 +295,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
 	 */
-	final public void setCoords(double x, double y, double z) {
+	final public void setCoords(double x, double y, double z) {				
+		// set coordinates
 		this.x = x;
 		this.y = y;
-		this.z = z;	
+		this.z = z;					
 		
 		// update point on path: this may change coords
 		// so updateCoords() is called afterwards
@@ -261,6 +319,24 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			PathParameter pathParameter = getPathParameter();
 			PathParameter tempPathParameter = getTempPathparameter();
 			pathParameter.set(tempPathParameter);
+		}		
+		
+		if (hasChangeableCoords()) {
+			// update changeable coord numbers: this is needed for points of the form P = (a, b)
+			// where a and b are free numbers. Such points should be treated like free points by changing 
+			// a and b accordingly
+		
+			// set first coord to new x value
+			if (changeableCoordNumbers[0].getValue() != inhomX) {
+				changeableCoordNumbers[0].setValue(inhomX);
+				changeableCoordNumbers[0].update();
+			}
+			
+			// set second coord to new y value
+			if (changeableCoordNumbers[1].getValue() != inhomY) {
+				changeableCoordNumbers[1].setValue(inhomY);
+				changeableCoordNumbers[1].update();
+			}			
 		}				
 	}  
 	

@@ -57,6 +57,14 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     	y.resolveVariables();    
     }
     
+    public ExpressionValue getX() {
+    	return x;
+    }
+    
+    public ExpressionValue getY() {
+    	return y;
+    }
+    
     public void setPolarCoords(ExpressionValue r, ExpressionValue phi) {
         setCoords(r, phi);        
         mode = Kernel.COORD_POLAR;        
