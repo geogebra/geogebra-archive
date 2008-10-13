@@ -1568,11 +1568,8 @@ public class DefaultGuiManager implements GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
-				app.setWaitCursor();
-				kernel.undo();
-				updateActions();
-				app.setDefaultCursor();
-				System.gc();
+				
+				undo();
 			}
 		};
 
@@ -1584,11 +1581,7 @@ public class DefaultGuiManager implements GuiManager {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
 
-				app.setWaitCursor();
-				kernel.redo();
-				updateActions();
-				app.setDefaultCursor();
-				System.gc();
+				redo();
 			}
 		};
 		
@@ -1600,6 +1593,22 @@ public class DefaultGuiManager implements GuiManager {
 			undoAction.setEnabled(kernel.undoPossible());
 			redoAction.setEnabled(kernel.redoPossible());
 		}				
+	}
+	
+	public void redo() {
+		app.setWaitCursor();
+		kernel.redo();
+		updateActions();
+		app.setDefaultCursor();
+		System.gc();
+	}
+	
+	public void undo() {
+		app.setWaitCursor();
+		kernel.undo();
+		updateActions();
+		app.setDefaultCursor();
+		System.gc();
 	}
 
 	public int getMenuBarHeight() {

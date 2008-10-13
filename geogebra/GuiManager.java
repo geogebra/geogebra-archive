@@ -291,6 +291,10 @@ public interface GuiManager {
 		public boolean dispatchKeyEvent(KeyEvent e);
 		
 		public void startEditing(GeoElement geo);
-	 
+		 
+		public void undo();
+		 
+		public void redo();
+		 
 
 }

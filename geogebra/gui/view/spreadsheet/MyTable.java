@@ -710,10 +710,31 @@ public class MyTable extends JTable
             boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
 							|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
             
+           
 			switch (keyCode) {
 				case KeyEvent.VK_META: //MAC_OS Meta
 				e.consume(); // (maybe) stops editing start
 				break;
+				
+				// needs to be here to stop keypress starting a cell edit after the undo
+				case KeyEvent.VK_Z: //undo
+					if (ctrlDown) {
+						//Application.debug("undo");
+						app.getGuiManager().undo();
+						e.consume();
+					}
+				break;
+
+				// needs to be here to stop keypress starting a cell edit after the redo
+				case KeyEvent.VK_Y: //redo
+					if (ctrlDown) {
+						//Application.debug("redo");
+						app.getGuiManager().redo();
+						e.consume();
+					}
+				break;
+
+			
 				case KeyEvent.VK_C: 	                         
 				case KeyEvent.VK_V: 	                        
 				case KeyEvent.VK_X: 	                         
@@ -771,7 +792,6 @@ public class MyTable extends JTable
 		}
 		
 		public void keyReleased(KeyEvent e) {
-		
 		}
 		
 	}
