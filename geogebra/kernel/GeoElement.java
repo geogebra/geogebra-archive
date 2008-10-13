@@ -593,8 +593,8 @@ public abstract class GeoElement
 	public void setLayer(int layer){
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		EuclidianView ev =app.getEuclidianView();
-		if (ev == null) return;
-		ev.changeLayer(this,this.layer,layer);
+		if (ev != null) 
+			ev.changeLayer(this,this.layer,layer);
 		this.layer=layer;
 	}
 	
