@@ -483,16 +483,16 @@ public abstract class Application implements KeyEventDispatcher {
 				// TODO: remove
 				Application.debug("background: file chooser inited");
 
-				// init CAS
-				kernel.initCAS();
-				// TODO: remove
-				Application.debug("background: CAS inited");
-
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JAR_FILES.length; i++) {
 					jarmanager.downloadFile(JAR_FILES[i], jarmanager
 							.getLocalJarDir());
 				}
+				
+				// init CAS
+				kernel.initCAS();
+				// TODO: remove
+				Application.debug("background: CAS inited");
 			}
 		};
 		runner.start();
