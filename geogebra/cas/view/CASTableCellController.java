@@ -13,6 +13,8 @@ public class CASTableCellController implements KeyListener {
 
 	private CASView view;
 
+	public final String yacasErrorMsg = "Sorry: unacceptable Input!";
+
 	public CASTableCellController(CASTableCell cell, CASView view) {
 		this.curCell = cell;
 		this.view = view;
@@ -134,6 +136,11 @@ public class CASTableCellController implements KeyListener {
 				// Evaluate the input with Yacas, which is too slow
 				String evaluation = view.getCAS().evaluateYACAS(inputText);
 
+				// Error message check
+				if (inputText.compareTo("") != 0
+						&& evaluation.compareTo("") == 0)
+					evaluation = this.yacasErrorMsg;
+
 				// Set the value into the table
 				saveInput(curValue);
 				curValue.setOutput(evaluation);
@@ -176,7 +183,7 @@ public class CASTableCellController implements KeyListener {
 				if (selectedRow >= 1) {
 					table.setFocusAtRowLinePanel(selectedRow - 1, selectedCol);
 				} else { // If the focus is on the first row & that row is
-							// empty, we create a new row
+					// empty, we create a new row
 					if (curCell.getInput().length() != 0)
 						table.insertRow(-1, CASPara.contCol, null);
 					System.out.println("This is the first row: " + selectedRow);
