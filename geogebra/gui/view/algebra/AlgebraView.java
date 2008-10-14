@@ -324,6 +324,13 @@ public class AlgebraView extends JTree implements View {
 	public void startEditing(GeoElement geo) {
 		if (geo == null) return;
 		
+		if (!geo.isIndependent()) {
+			if (geo.isRedefineable()) { 
+				app.getGuiManager().showRedefineDialog(geo);
+			}
+			return;
+		}
+		
 		if (!geo.isChangeable()) {
 			if (geo.isFixed()) {
 				app.showMessage(app.getError("AssignmentToFixed"));
@@ -333,6 +340,7 @@ public class AlgebraView extends JTree implements View {
 			}
 			return;
 		}
+	
 		
 		DefaultMutableTreeNode node =
 			(DefaultMutableTreeNode) nodeTable.get(geo);
