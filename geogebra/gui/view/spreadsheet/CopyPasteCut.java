@@ -191,7 +191,7 @@ public class CopyPasteCut {
 					int iy = y - y1;
 					if (ix+column1 <= maxColumn && iy+row1 <= maxRow) { // check not outside selection rectangle
 						values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
-						values2[ix][iy].setVisualStyle(values1[ix][iy]);
+						values2[ix][iy].setAllVisualProperties(values1[ix][iy]);
 					}
 				}
 			}

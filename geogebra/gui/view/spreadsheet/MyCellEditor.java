@@ -196,12 +196,13 @@ public class MyCellEditor extends DefaultCellEditor {
     	try {
 			// always redefine objects in spreadsheet, don't store undo info here
     		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true, false);
-    		newValue.setConstructionDefaults();
+    		//newValue.setConstructionDefaults();
+    		newValue.setAllVisualProperties(oldValue);
         	if (oldValue.isAuxiliaryObject()) newValue.setAuxiliaryObject(true);
         	
-        	//Application.debug("GeoClassType = " + newValue.getGeoClassType());
+        	//Application.debug("GeoClassType = " + newValue.getGeoClassType()+" " + newValue.getGeoClassType());
         	if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
-        		newValue.setVisualStyle(oldValue);	        		
+        		//newValue.setVisualStyle(oldValue);	        		
         	}
         	else {
         		kernel.getApplication().refreshViews();
@@ -248,7 +249,7 @@ public class MyCellEditor extends DefaultCellEditor {
     		return prepareNewValue(kernel, name, text);
      	}
         else { // value != null;
-        	return updateOldValue(kernel, oldValue, name, text);        	
+        	return updateOldValue(kernel, oldValue, name, text);  
         }
     }
 
