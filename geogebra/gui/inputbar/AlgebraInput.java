@@ -149,6 +149,10 @@ implements ActionListener, MouseListener, KeyListener
 		inputField.replaceSelection(str);
 	}
 	
+	public void setString(String str) {
+		inputField.setText(str);
+	}
+	
 	// see actionPerformed
 	private void insertCommand(String cmd) {
 		if (cmd == null) return;

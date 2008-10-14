@@ -342,6 +342,11 @@ public class SpreadsheetView extends JScrollPane implements View
 			if (!rightClick) {								
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
+					
+					GeoElement geo = (GeoElement)(table.getValueAt(x,y));
+					Application.debug(geo.getAlgebraDescription());
+					
+					
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
 							table.getColumnSelectionAllowed() == true) {
 						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

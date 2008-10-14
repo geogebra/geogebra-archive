@@ -2,6 +2,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -126,6 +127,20 @@ public class MyCellEditor extends DefaultCellEditor {
 		try {
 			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);	
 			app.storeUndoInfo();
+			
+
+	        AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+
+	        // copy description into input bar
+	        if (value != null) {
+		        ai.setString(value.getAlgebraDescription());
+	        } else {
+		        ai.setString("");	        	
+	        }
+	        	
+
+			
+			
 		} catch (Exception ex) {
 			// show GeoGebra error dialog
 			//kernel.getApplication().showError(ex.getMessage());

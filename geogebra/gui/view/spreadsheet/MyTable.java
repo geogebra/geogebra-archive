@@ -2,6 +2,7 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.Application;
 import geogebra.View;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
@@ -390,7 +391,7 @@ public class MyTable extends JTable
 	protected class MouseListener1 implements MouseListener
 	{
 		
-		public void mouseClicked(MouseEvent e) {
+		public void mouseClicked(MouseEvent e) {	
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();
 				if (text.startsWith("=")) {
@@ -408,6 +409,19 @@ public class MyTable extends JTable
 				prefix0 = null;
 				isDragging2 = false;
 				repaint();
+			}
+			else
+			{ // !editor.isEditing()
+		        int row = rowAtPoint(e.getPoint());
+		        int col = columnAtPoint(e.getPoint());
+		        GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
+
+		        // copy description into input bar when a cell is clicked on
+		        if (geo != null) {
+			        AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+			        ai.setString(geo.getAlgebraDescription());
+		        }
+				
 			}
 		}
 		
