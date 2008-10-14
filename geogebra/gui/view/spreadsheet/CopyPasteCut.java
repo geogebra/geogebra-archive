@@ -107,7 +107,7 @@ public class CopyPasteCut {
 				// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
 				for (int c = column1 ; c <= column2 ; c+= internalBuf.length)
 				for (int r = row1 ; r <= row2 ; r+= internalBuf[0].length)
-					succ = succ && pasteInternal(c, r);
+					succ = succ && pasteInternal(c, r, column2, row2);
 			} catch (Exception ex) {
 				//ex.printStackTrace(System.out);
 				//app.showError(ex.getMessage());
@@ -133,7 +133,7 @@ public class CopyPasteCut {
 		return succ;
 	}
 
-	public boolean pasteInternal(int column1, int row1) throws Exception {		
+	public boolean pasteInternal(int column1, int row1, int maxColumn, int maxRow) throws Exception {		
 		int width = internalBuf.length;
 		if (width == 0) return false;
 		int height = internalBuf[0].length;
@@ -175,8 +175,10 @@ public class CopyPasteCut {
 				int ix = x - x1;
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
-					values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
-					values2[ix][iy].setVisualStyle(values1[ix][iy]);
+					if (ix+column1 <= maxColumn && iy+row1 <= maxRow) { // check not outside selection rectangle
+						values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
+						values2[ix][iy].setVisualStyle(values1[ix][iy]);
+					}
 				}
 			}
 			
@@ -248,6 +250,7 @@ public class CopyPasteCut {
 	}
 	
 	private boolean pasteExternalMultiple(String buf,int column1, int row1, int column2, int row2) {
+		/*
 		int newlineIndex = buf.indexOf("\n");
 		int rowStep = 1;
 		if ( newlineIndex == -1 || newlineIndex == buf.length()-1) { 
@@ -259,23 +262,36 @@ public class CopyPasteCut {
 		        char c = buf.charAt(i);
 		        if (c == '\n') rowStep++; // count no of linefeeds in string
 		    }
-		}
+		}*/
 		boolean succ = true;
+		String[][] data = parseData(buf);
+		int rowStep = data.length;
+		int columnStep = data[0].length;
+		
+		int maxColumn = column2;
+		int maxRow = row2;
+		// paste all data if just one cell selected
+		// ie overflow selection rectangle 
+		if (row2 == row1 && column2 == column1)
+		{
+			maxColumn = column1 + columnStep;
+			maxRow = row1 + rowStep;
+		}
+		
 		// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
-		for (int c = column1 ; c <= column2 ; c++)
+		for (int c = column1 ; c <= column2 ; c += columnStep)
 		for (int r = row1 ; r <= row2 ; r+= rowStep)
-			succ = succ && pasteExternal(buf, c, r);
+			succ = succ && pasteExternal(data, c, r, maxColumn, maxRow);
 		
 		return succ;
 		
 	}
 	
-	public boolean pasteExternal(String buf, int column1, int row1) {
+	public boolean pasteExternal(String[][] data, int column1, int row1, int maxColumn, int maxRow) {
 		app.setWaitCursor();
 		boolean succ = false;			
 		
 		try {
-			String[][] data = parseData(buf);
 			DefaultTableModel model = (DefaultTableModel)table.getModel();
 			if (model.getRowCount() < row1 + data.length) {
 				model.setRowCount(row1 + data.length);
@@ -283,7 +299,7 @@ public class CopyPasteCut {
 			GeoElement[][] values2 = new GeoElement[data.length][];
 			int maxLen = -1;
 			for (int row = row1; row < row1 + data.length; ++ row) {
-				if (row < 0) continue;
+				if (row < 0 || row > maxRow) continue;
 				int iy = row - row1;
 				values2[iy] = new GeoElement[data[iy].length];
 				if (maxLen < data[iy].length) maxLen = data[iy].length;
@@ -291,7 +307,7 @@ public class CopyPasteCut {
 					table.setMyColumnCount(column1 + data[iy].length);						
 				}
 				for (int column = column1; column < column1 + data[iy].length; ++ column) {
-					if (column < 0) continue;
+					if (column < 0 || column > maxColumn) continue;
 					int ix = column - column1;
 					//Application.debug(iy + " " + ix + " [" + data[iy][ix] + "]");
 					data[iy][ix] = data[iy][ix].trim();
