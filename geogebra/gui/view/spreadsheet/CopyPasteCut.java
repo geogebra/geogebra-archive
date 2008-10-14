@@ -104,10 +104,24 @@ public class CopyPasteCut {
 		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
 			try {
 				succ = true;
+				int columnStep = internalBuf.length;
+				int rowStep = internalBuf[0].length;
+				
+				int maxColumn = column2;
+				int maxRow = row2;
+				// paste all data if just one cell selected
+				// ie overflow selection rectangle 
+				if (row2 == row1 && column2 == column1)
+				{
+					maxColumn = column1 + columnStep;
+					maxRow = row1 + rowStep;
+				}
+
+				
 				// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
-				for (int c = column1 ; c <= column2 ; c+= internalBuf.length)
-				for (int r = row1 ; r <= row2 ; r+= internalBuf[0].length)
-					succ = succ && pasteInternal(c, r, column2, row2);
+				for (int c = column1 ; c <= column2 ; c+= columnStep)
+				for (int r = row1 ; r <= row2 ; r+= rowStep)
+					succ = succ && pasteInternal(c, r, maxColumn, maxRow);
 			} catch (Exception ex) {
 				//ex.printStackTrace(System.out);
 				//app.showError(ex.getMessage());
