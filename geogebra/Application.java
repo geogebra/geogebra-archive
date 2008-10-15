@@ -481,18 +481,19 @@ public abstract class Application implements KeyEventDispatcher {
 				// init file chooser
 				getGuiManager().initFileChooser();
 				// TODO: remove
-				Application.debug("background: file chooser inited");
+				Application.debug("background: file chooser inited");								
 
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JAR_FILES.length; i++) {
 					jarmanager.downloadFile(JAR_FILES[i], jarmanager
 							.getLocalJarDir());
 				}
-				
+						
 				// init CAS
 				kernel.initCAS();
 				// TODO: remove
 				Application.debug("background: CAS inited");
+				
 			}
 		};
 		runner.start();
@@ -1313,27 +1314,27 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Jar managing
 	 */
 
-	final public boolean loadPropertiesJar() {
+	final synchronized public boolean loadPropertiesJar() {
 		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);
 	}
 
-	final public boolean loadExportJar() {
+	final synchronized public boolean loadExportJar() {
 		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);
 	}
 
-	final public boolean loadCASJar() {
+	final synchronized public boolean loadCASJar() {
 		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_CAS);
 	}
 
-	final public boolean loadGUIJar() {
+	final synchronized public boolean loadGUIJar() {
 		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_GUI);
 	}
 
-	final public boolean loadLaTeXJar() {
+	final synchronized public boolean loadLaTeXJar() {
 		return loadGUIJar();
 	}
 
-	final public String loadTextFile(String fileName) {
+	final synchronized public String loadTextFile(String fileName) {
 		return jarmanager.loadTextFile(fileName);
 	}
 
