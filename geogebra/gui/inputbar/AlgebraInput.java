@@ -14,6 +14,7 @@ package geogebra.gui.inputbar;
 
 import geogebra.Application;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.kernel.GeoElement;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
@@ -149,8 +150,28 @@ implements ActionListener, MouseListener, KeyListener
 		inputField.replaceSelection(str);
 	}
 	
-	public void setString(String str) {
-		inputField.setText(str);
+	/*
+	 * puts the definition of the GeoElement into the input bar
+	 * eg A1(x) = x^2, A3 = 2 A2 - A1, B1 = (1,2)
+	 */
+	public void setString(GeoElement geo) {
+		
+		if (geo == null) {
+			inputField.setText("");
+			return;
+		}
+		
+    	// for expressions like "3 = 2 A2 - A1"
+    	// getAlgebraDescription() returns "3 = 5"
+    	// so we need to use getCommandDescription() in those cases
+    	String inputBarStr = geo.getCommandDescription();
+    	if (!inputBarStr.equals("")) {
+    		inputBarStr = geo.getLabel() + " = " + inputBarStr;
+    	} else {
+    		inputBarStr = geo.getAlgebraDescription();
+    	}
+		
+		inputField.setText(inputBarStr);
 	}
 	
 	// see actionPerformed

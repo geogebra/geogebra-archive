@@ -419,7 +419,7 @@ public class MyTable extends JTable
 		        // copy description into input bar when a cell is clicked on
 		        if (geo != null) {
 			        AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-			        ai.setString(geo.getAlgebraDescription());
+		        	ai.setString(geo);
 		        }
 				
 			}

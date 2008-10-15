@@ -5,6 +5,7 @@ import geogebra.Application;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -133,9 +134,9 @@ public class MyCellEditor extends DefaultCellEditor {
 
 	        // copy description into input bar
 	        if (value != null) {
-		        ai.setString(value.getAlgebraDescription());
+	        	ai.setString(value);
 	        } else {
-		        ai.setString("");	        	
+		        ai.setString(null);	        	
 	        }
 	        	
 
