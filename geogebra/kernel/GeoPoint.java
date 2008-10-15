@@ -189,7 +189,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	final private boolean hasChangeableCoords() {
 		GeoNumeric [] coords = getCoordNumbers();
 		
-		return coords != null && 
+		if (coords == null || coords[0] == null || coords[1] == null) return false;
+		
+		return //coords != null && 
 			coords[0].isChangeable() && coords[1].isChangeable();
 	}
 	
