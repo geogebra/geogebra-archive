@@ -566,7 +566,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
                     AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
                     if (ai != null) {
                     	ai.clear();                  
-                    	ai.insertString(geo.toString());
+                    	ai.setString(geo);
                     	ai.requestFocus();
                     }
                 }
