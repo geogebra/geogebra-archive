@@ -422,13 +422,12 @@ public class EuclidianController implements MouseListener,
 		
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:								
+		case EuclidianView.MODE_ALGEBRA_INPUT:
 			switch (e.getClickCount()) {
 			case 1:			
-				// handle selection click
-				if (mode == EuclidianView.MODE_MOVE) {			
-					handleSelectClick(view.getTopHits(mouseLoc), 
-							Application.isControlDown(e));
-				}
+				// handle selection click	
+				handleSelectClick(view.getTopHits(mouseLoc), 
+						Application.isControlDown(e));
 				break;
 			
 			//	open properties dialog on double click
@@ -438,7 +437,7 @@ public class EuclidianController implements MouseListener,
 				
 				app.clearSelectedGeos();
 				hits = view.getTopHits(mouseLoc);
-				if (hits != null) {
+				if (hits != null && mode == EuclidianView.MODE_MOVE) {
 					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
 				}
 				break;
