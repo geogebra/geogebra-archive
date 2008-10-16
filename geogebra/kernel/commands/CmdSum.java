@@ -27,7 +27,8 @@ public class CmdSum extends CommandProcessor {
 			if (arg[0].isGeoList()) {
 				GeoList list = (GeoList)arg[0];
 				GeoElement element0 = list.get(0);
-				if (element0.isGeoNumeric()) {
+				if (element0.isGeoNumeric()) 
+				{
 					GeoElement[] ret = { 
 							kernel.Sum(c.getLabel(),
 							list) };
@@ -36,6 +37,12 @@ public class CmdSum extends CommandProcessor {
 				else if (element0.isGeoFunction()) {
 					GeoElement[] ret = { 
 							kernel.SumFunctions(c.getLabel(),
+							list) };
+					return ret;
+				}
+				else if (element0.isGeoPoint()) {
+					GeoElement[] ret = { 
+							kernel.SumPoints(c.getLabel(),
 							list) };
 					return ret;
 				}
@@ -56,11 +63,17 @@ public class CmdSum extends CommandProcessor {
 					return ret;
 				}
 				else if (element0.isGeoFunction()) {
-						GeoElement[] ret = { 
-								kernel.SumFunctions(c.getLabel(),
-								list, (GeoNumeric) arg[1]) };
-						return ret;
-				}
+					GeoElement[] ret = { 
+							kernel.SumFunctions(c.getLabel(),
+							list, (GeoNumeric) arg[1]) };
+					return ret;
+			}
+				else if (element0.isGeoPoint()) {
+					GeoElement[] ret = { 
+							kernel.SumPoints(c.getLabel(),
+							list, (GeoNumeric) arg[1]) };
+					return ret;
+			}
 				else {
 					throw argErr(app, c.getName(), arg[0]);
 				}

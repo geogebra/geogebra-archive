@@ -2717,6 +2717,26 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Sum[list of points]
+	 * Michael Borcherds
+	 */
+	final public GeoElement SumPoints(String label, GeoList list) {
+		AlgoSumPoints algo = new AlgoSumPoints(cons, label, list);
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Sum[list of points,n]
+	 * Michael Borcherds
+	 */
+	final public GeoElement SumPoints(String label, GeoList list, GeoNumeric num) {
+		AlgoSumPoints algo = new AlgoSumPoints(cons, label, list, num);
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * Table[list]
 	 * Michael Borcherds
 	 */

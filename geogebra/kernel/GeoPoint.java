@@ -433,6 +433,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
        	res[1] = inhomY;
     }        	
         
+    final public double getInhomX() {
+       	return inhomX;
+    }        	
+        
+    final public double getInhomY() {
+       	return inhomY;
+    }        	
+        
+        
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
         return GeoVec2D.length(	P.inhomX - inhomX, 
