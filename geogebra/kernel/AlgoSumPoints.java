@@ -45,10 +45,10 @@ public class AlgoSumPoints extends AlgoElement {
 
         this.Truncate=Truncate;
         
-        if (geoList.get(0).isGeoPoint())
-        	result = new GeoPoint(cons);
-        else
+        if (geoList.get(0).isGeoVector())
         	result = new GeoVector(cons);
+        else // Numeric or Point
+        	result = new GeoPoint(cons);
 
         setInputOutput();
         compute();
@@ -115,6 +115,8 @@ public class AlgoSumPoints extends AlgoElement {
     		} else if (p.isGeoVector()) {
 	        	x += ((GeoVector)p).getX();
 	        	y += ((GeoVector)p).getY();   		
+    		} else if (p.isGeoNumeric()) {
+	        	x += ((GeoNumeric)p).getDouble();
     		} else {
 				result.setUndefined();
 				return;
