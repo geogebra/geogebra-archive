@@ -40,7 +40,7 @@ public class CmdSum extends CommandProcessor {
 							list) };
 					return ret;
 				}
-				else if (element0.isGeoPoint()) {
+				else if (element0.isGeoPoint() || element0.isGeoVector()) {
 					GeoElement[] ret = { 
 							kernel.SumPoints(c.getLabel(),
 							list) };
@@ -68,7 +68,7 @@ public class CmdSum extends CommandProcessor {
 							list, (GeoNumeric) arg[1]) };
 					return ret;
 			}
-				else if (element0.isGeoPoint()) {
+				else if (element0.isGeoPoint() || element0.isGeoVector()) {
 					GeoElement[] ret = { 
 							kernel.SumPoints(c.getLabel(),
 							list, (GeoNumeric) arg[1]) };

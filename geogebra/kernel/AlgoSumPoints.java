@@ -45,7 +45,10 @@ public class AlgoSumPoints extends AlgoElement {
 
         this.Truncate=Truncate;
         
-        result = new GeoPoint(cons);
+        if (geoList.get(0).isGeoPoint())
+        	result = new GeoPoint(cons);
+        else
+        	result = new GeoVector(cons);
 
         setInputOutput();
         compute();
@@ -106,16 +109,20 @@ public class AlgoSumPoints extends AlgoElement {
     	
     	for (int i = 0 ; i < size ; i++) {
     		GeoElement p = geoList.get(i);
-    		if (!p.isGeoPoint()) {
-    			result.setUndefined();
-    			return;
+    		if (p.isGeoPoint()) {
+	        	x += ((GeoPoint)p).getInhomX();
+	        	y += ((GeoPoint)p).getInhomY();
+    		} else if (p.isGeoVector()) {
+	        	x += ((GeoVector)p).getX();
+	        	y += ((GeoVector)p).getY();   		
+    		} else {
+				result.setUndefined();
+				return;
     		}
-        	x += ((GeoPoint)p).getInhomX();
-        	y += ((GeoPoint)p).getInhomY();
     	}
-    	
    	
-    	((GeoPoint)result).setCoords(x, y, 1.0);
+   	
+    	((GeoVec3D)result).setCoords(x, y, 1.0);
    	
 
     }
