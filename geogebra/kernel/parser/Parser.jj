@@ -300,16 +300,12 @@ ValidExpression buildValidExpression() :
      |             
         // h: X = (3,2) + t (5,1)
       	LOOKAHEAD(2147483647) 
-      	l = <SPREADSHEET_LABEL> ":"  ve = parametric()      
+      	 (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = parametric()      
      |     
         // g: 3x + y = 7 
-        LOOKAHEAD(2147483647)      
-        l = <SPREADSHEET_LABEL>  ":"  ve = equation()        
-    |          
+        LOOKAHEAD(2147483647)              (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()            |          
         // special case "A: (3,2)" should become a point                                      
-    	LOOKAHEAD(2147483647)  
-        l = <LABEL> ":"  ve = expression()   
-    |     
+	  	LOOKAHEAD(2147483647)  	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = expression()   	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
         //
@@ -490,6 +486,9 @@ ExpressionNode expression():
     rhs = expressionnode()              
     {
         if (rhs.includesPolynomial()) {
+        	// TODO: remove
+        	System.out.println("rhs includes polynomial:  " + rhs);
+        	
         	throw new MyError(app, "IncompleteEquation");
         }
         
