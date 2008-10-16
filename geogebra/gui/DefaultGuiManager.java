@@ -349,15 +349,8 @@ public class DefaultGuiManager implements GuiManager {
 	}
 
 	public JDialog getConstructionProtocol() {
-		if (constProtocol == null) {
-			try {
+		if (constProtocol == null) {		
 			constProtocol = new ConstructionProtocol(app);
-			}
-			catch (java.lang.NoClassDefFoundError ee) {
-				app.showErrorDialog(app.getError("ExportJarMissing"));
-				ee.printStackTrace();
-			}
-
 		}
 		return constProtocol;
 	}

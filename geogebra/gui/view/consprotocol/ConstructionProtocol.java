@@ -47,6 +47,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -91,6 +92,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
     private JCheckBoxMenuItem cbUseColors, cbShowOnlyBreakpoints;
     private TableColumn[] tableColumns;
     private JDialog thisDialog; 
+    
+    private AbstractAction printPreviewAction, exportHtmlAction; 
     
     private boolean useColors;    
 
@@ -307,57 +310,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
     private void setMenuBar() {
         menuBar.removeAll();
+        
+        initActions();
 
         JMenu mFile = new JMenu(app.getMenu("File"));
-        JMenuItem mPreviewP =
-            new JMenuItem(
-                app.getMenu("PrintPreview") + "...",
-                app.getImageIcon("document-print-preview.png"));
-        ActionListener lstPreview = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                    public void run() { 
-                    	app.setWaitCursor();
-                    	try {
-                    		// use reflection for
-        		  		    // new geogebra.export.PrintPreview(app,
-                            //		ConstructionProtocol.this,
-                            //			PageFormat.PORTRAIT);
-        		  		    Class classObject = Class.forName("geogebra.export.PrintPreview");
-        		  		    Object[] args = new Object[] { app , ConstructionProtocol.this, new Integer(PageFormat.PORTRAIT)};
-        		  		    Class [] types = new Class[] {Application.class, Printable.class, int.class};
-        		  	        Constructor constructor = classObject.getDeclaredConstructor(types);   	        
-        		  	        constructor.newInstance(args);
-                    		   
-                    	} catch (Exception e) {
-                    		Application.debug("Print preview not available");
-                    	}   
-                    	app.setDefaultCursor();
-                    }
-                };
-                runner.start();
-            }
-        };
-        mPreviewP.addActionListener(lstPreview);
-        mFile.add(mPreviewP);
-        
-        JMenuItem exportHTML = new JMenuItem(
-                                                        app.getPlain("ExportAsWebpage")+ " ("
-                                        				+ Application.FILE_EXT_HTML + ") ...");
-
-        exportHTML.setIcon(app.getEmptyIcon());
-        ActionListener lstHTML = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Thread runner = new Thread() {
-                   public void run() {
-                    showHTMLExportDialog();             
-                   }
-                };
-                runner.start();     
-            }
-        };
-        exportHTML.addActionListener(lstHTML);
-        mFile.add(exportHTML);
+        mFile.add(printPreviewAction);
+        mFile.add(exportHtmlAction);              
         
         mFile.addSeparator();
 
@@ -426,6 +384,49 @@ public class ConstructionProtocol extends JDialog implements Printable {
         
         setJMenuBar(menuBar);    
         updateMenubar();
+    }
+    
+    private void initActions() {
+    	
+    	printPreviewAction = new AbstractAction( app.getMenu("PrintPreview") + "...",
+                app.getImageIcon("document-print-preview.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+				app.loadExportJar();
+				
+				Thread runner = new Thread() {
+                    public void run() { 		 		         
+                    	new geogebra.export.PrintPreview(app, ConstructionProtocol.this, PageFormat.PORTRAIT);		                    		  		                    			                    	
+                    }
+                };
+                runner.start();
+				
+				app.setDefaultCursor();
+			}
+		};
+		
+		exportHtmlAction = new AbstractAction( app.getPlain("ExportAsWebpage")+ " ("
+ 						+ Application.FILE_EXT_HTML + ") ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+				app.loadExportJar();
+				
+				Thread runner = new Thread() {
+					public void run() {
+						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(ConstructionProtocol.this);
+						d.setVisible(true);           
+					}
+				};
+				runner.start();     
+								
+				app.setDefaultCursor();
+			}
+		};				
+		
     }
 
     private boolean isColumnInModel(TableColumn col) {
@@ -1525,21 +1526,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
         return sb.toString();
     }
     
-    public void showHTMLExportDialog() {
-    	app.setWaitCursor();
-    	app.loadExportJar();
-    	try {
-    		// use reflection for
-  		    JDialog d = new geogebra.export.ConstructionProtocolExportDialog(this);   		  		        		
-    		d.setVisible(true);    		    
-    	} catch (Exception e) {
-    		Application.debug("ConstructionProtocolExportDialog (html) is not available");
-    	}
-    	app.setDefaultCursor();
+    public void showHTMLExportDialog() {    	
+    	exportHtmlAction.actionPerformed(null);
     }
-    
-   
-
+       
     public String getConsProtocolXML() {    	
     	StringBuffer sb = new StringBuffer();
     	
