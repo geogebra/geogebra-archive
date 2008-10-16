@@ -98,8 +98,8 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// version
-	public static final String buildDate = "October 15, 2008";
-	public static final String versionString = "3.1.64.0";
+	public static final String buildDate = "October 16, 2008";
+	public static final String versionString = "3.1.65.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
