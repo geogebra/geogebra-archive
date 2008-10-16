@@ -51,6 +51,18 @@ public class Test3D{
 		kernel3D=new Kernel3D();
 		kernel3D.setConstruction(cons);
 		
+		
+		//let's test here
+		
+        //testSegment2();  
+        //test1(1);
+        //testSegment(0,0,0,1,1,1);test.testSegment(0.3333,-0.25,-0.25,0.3333,1.25,1.25);test.testSegment(0.6667,-0.25,-0.25,0.6667,1.25,1.25);
+        //testPlane();
+        //testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
+        testAlgoPyramide();
+        testRepere();
+
+		
 	}
 
 	
@@ -277,6 +289,11 @@ public class Test3D{
 		t.setObjColor(c);
 		t=kernel3D.Triangle3D("triangle",P1[1],P1[2],P1[0]);
 		t.setObjColor(c);
+		
+		
+		GeoLine3D l=kernel3D.Line3D("line",P1[1],P1[2]);
+		l.setObjColor(new Color(1f,0.5f,0f));
+		l.setLineThickness(1);
 		
 		
 	}

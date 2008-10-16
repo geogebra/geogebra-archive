@@ -20,7 +20,8 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	
 	/** returns segment's length */
 	public double getLength(){
-		return M.getColumn(1).norm();
+		//return M.getColumn(1).norm();
+		return getUnit();
 	}
 	
 	

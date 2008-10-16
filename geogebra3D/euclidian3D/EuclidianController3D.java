@@ -203,7 +203,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		GgbVector o = view.getPickFromScenePoint(p,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
 		view.toSceneCoords3D(o);
 		
-		Application.debug("mouseLocDelta = "+(mouseLoc.x-mouseLocOld.x)+","+(mouseLoc.y-mouseLocOld.y));
+		//Application.debug("mouseLocDelta = "+(mouseLoc.x-mouseLocOld.x)+","+(mouseLoc.y-mouseLocOld.y));
 		
 		GgbVector v = new GgbVector(new double[] {0,0,1,0});
 		view.toSceneCoords3D(v);	

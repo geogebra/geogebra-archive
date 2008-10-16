@@ -39,7 +39,7 @@ public class Kernel3D
 	 * FACTORY METHODS FOR GeoElements3D
 	 ***********************************/
 
-	/** Point3D label with cartesian coordinates (x,y)   */
+	/** Point3D label with cartesian coordinates (x,y,z)   */
 	final public GeoPoint3D Point3D(String label, double x, double y, double z) {
 		GeoPoint3D p = new GeoPoint3D(cons);
 		p.setCoords(x, y, z, 1.0);
@@ -60,6 +60,16 @@ public class Kernel3D
 		GeoSegment3D s = algo.getSegment();
 		return s;
 	}	
+	
+	
+	/** Line3D label linking points P1 and P2   */	
+	final public GeoLine3D Line3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+		AlgoJoinPoints3DLine algo = new AlgoJoinPoints3DLine(cons, label, P1, P2);
+		GeoLine3D l = algo.getLine();
+		return l;
+	}	
+	
+	
 
 	/** Triangle3D label linking points P1 and P2 and P3  */
 	final public GeoTriangle3D Triangle3D(String label, GeoPoint3D P1, GeoPoint3D P2, GeoPoint3D P3){

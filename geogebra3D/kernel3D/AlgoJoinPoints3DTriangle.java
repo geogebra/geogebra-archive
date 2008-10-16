@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Application;
 import geogebra.kernel.Construction;
 
 
@@ -107,7 +108,7 @@ public class AlgoJoinPoints3DTriangle extends AlgoElement3D {
 
     // recalc the triangle joining P and Q and R    
     protected final void compute() {
-    	    	   
+    	//Application.debug("compute (triangle)");    	   
     	t.setCoord(P,Q,R);
     }
 

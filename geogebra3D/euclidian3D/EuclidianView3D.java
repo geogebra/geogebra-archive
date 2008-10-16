@@ -10,6 +10,7 @@ import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.euclidian3D.GL.GLDisplay;
 import geogebra3D.euclidian3D.GL.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
@@ -208,8 +209,13 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 					d = new DrawTriangle3D(this, (GeoTriangle3D) geo);
 					//Application.debug("new DrawPoint3D");
 					break;									
-				}
+				
 
+				case GeoElement3D.GEO_CLASS_LINE3D:					
+					d = new DrawLine3D(this, (GeoLine3D) geo);					
+					break;									
+				}
+				
 				
 				if (d != null) {			
 					//canvas3D.add(d.getBranchGroup());

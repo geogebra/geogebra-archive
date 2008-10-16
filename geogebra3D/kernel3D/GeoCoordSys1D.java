@@ -82,6 +82,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys {
 	}
 
 
+	/** returns cs unit */
+	public double getUnit(){
+		return M.getColumn(1).norm();
+	}
 
 
 	

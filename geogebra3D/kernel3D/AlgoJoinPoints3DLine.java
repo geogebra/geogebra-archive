@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 
 
@@ -29,14 +28,14 @@ import geogebra.kernel.Construction;
  * @author  ggb3D
  * @version 
  */
-public class AlgoJoinPoints3DSegment extends AlgoJoinPoints3DCoordSys1D {
+public class AlgoJoinPoints3DLine extends AlgoJoinPoints3DCoordSys1D {
 
 	private static final long serialVersionUID = 1L;
     //private GeoSegment3D s; // output 
 
 
     /** Creates new AlgoJoinPoints */
-    AlgoJoinPoints3DSegment(
+    AlgoJoinPoints3DLine(
         Construction cons,
         String label,
         GeoPoint3D P,
@@ -47,14 +46,14 @@ public class AlgoJoinPoints3DSegment extends AlgoJoinPoints3DCoordSys1D {
         
     }
 
-    AlgoJoinPoints3DSegment(
+    AlgoJoinPoints3DLine(
         Construction cons,        
         GeoPoint3D P,
         GeoPoint3D Q) {
     	
     	super(cons,P,Q);
           
-        cs = new GeoSegment3D(cons, P, Q);    
+        cs = new GeoLine3D(cons, P, Q);    
         setInputOutput(); // for AlgoElement
                
         // compute line through P, Q
@@ -62,13 +61,13 @@ public class AlgoJoinPoints3DSegment extends AlgoJoinPoints3DCoordSys1D {
     }   
 
     protected String getClassName() {
-        return "AlgoJoinPoints3DSegment";
+        return "AlgoJoinPoints3DLine";
     }
 
 
 
-    GeoSegment3D getSegment() {
-        return (GeoSegment3D) cs;
+    GeoLine3D getLine() {
+        return (GeoLine3D) cs;
     }
      
 
@@ -80,7 +79,7 @@ public class AlgoJoinPoints3DSegment extends AlgoJoinPoints3DCoordSys1D {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        sb.append(app.getPlain("SegmentAB",P.getLabel(),Q.getLabel()));
+        sb.append(app.getPlain("LineAB",P.getLabel(),Q.getLabel()));
 
         return sb.toString();
     }
