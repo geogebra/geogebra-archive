@@ -91,7 +91,7 @@ public abstract class AlgoStats1D extends AlgoElement {
     protected final void compute() {
     	
     	// TODO: remove
-    	Application.debug("compute: " + geoList);
+    	//Application.debug("compute: " + geoList);
     	
     	int truncate;
     	int size = geoList.size();
