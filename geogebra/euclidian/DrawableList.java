@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Application;
+
 import java.awt.Graphics2D;
 
 /**
@@ -43,7 +45,7 @@ public class DrawableList {
 
 			// Michael Borcherds 2008-02-29 BEGIN
 			// add in the list according to when we want it drawn
-			long priority = d.getGeoElement().getDrawingPriority();			
+			long priority = d.getGeoElement().getDrawingPriority();		
 			Link cur = head;
 			Link last = head;
 		
@@ -71,10 +73,18 @@ public class DrawableList {
 				}
 			}
 			else if (cur.equals(tail))
-			{ // add at end
-				Link temp = new Link(d, null);
-				tail.next = temp;
-				tail = temp;				
+			{ 
+				if ((cur.d.getGeoElement().getDrawingPriority() < priority)) {
+					// add at end
+					Link temp = new Link(d, null);
+					tail.next = temp;
+					tail = temp;		
+				} else {
+					// add one from end
+					Link temp = new Link(d, null);
+					temp.next=last.next;
+					last.next = temp;					
+				}
 			}
 			else 
 			{ // add in middle
