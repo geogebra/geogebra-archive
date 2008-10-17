@@ -2,6 +2,8 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Application;
+import geogebra.euclidian.EuclidianController;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
@@ -28,14 +30,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	
-	
+	//TODO link it to toolbar values
 	protected static final int MOVE_NONE = 101;
 	protected static final int MOVE_POINT = 102;
 	protected static final int MOVE_POINT_WHEEL = 3102;
 	protected static final int MOVE_VIEW = 106;
 	
 	
-	protected int moveMode = MOVE_NONE;
+	protected int mode, moveMode = MOVE_NONE;
 	
 	
 	
@@ -113,6 +115,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	
+	public void setMode(int newMode){
+		initNewMode(newMode);
+	}
+	
+	
+	protected void initNewMode(int mode) {
+		this.mode = mode;
+	}
+	
+	
+	
+	
+	
 	
 	
 	
@@ -121,41 +136,59 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		setMouseLocation(e);	
 		moveMode = MOVE_NONE;
 		
-		if (e.isShiftDown() || e.isControlDown() || e.isMetaDown()) {
-			moveMode = MOVE_VIEW;	
+		switch (mode) {
+
+		//move an object
+		case EuclidianView.MODE_MOVE:
+			if (e.isShiftDown() || e.isControlDown() || e.isMetaDown()) {
+				moveMode = MOVE_VIEW;	
+			} else {
+
+				if (objSelected!=null)
+					objSelected.setSelected(false);
+				pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
+				view.doPick(pickPoint,true);
+				if (!view.hits.isEmpty()){
+					objSelected = (GeoElement3D) view.hits.get(0);		
+					objSelected.setSelected(true);
+					//Application.debug("selected = "+objSelected.getLabel());
+
+					if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
+						moveMode = MOVE_POINT;
+						movedGeoPoint3D = (GeoPoint3D) objSelected;
+						startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
+
+						view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
+						view.setMovingColor(movingColor);
+
+					}
+				}
+				view.setWaitForUpdate(true);
+
+			}
+			break;
+
+		// move drawing pad or axis
+		case EuclidianView.MODE_TRANSLATEVIEW:	
+			moveMode = MOVE_VIEW;
+			break;
+
+
+		default:
+			moveMode = MOVE_NONE;
+
+
+		}
+		
+		if (moveMode==MOVE_VIEW){
 			if(DEBUG){Application.debug("mousePressed");}
 			aOld = view.a;
 			bOld = view.b;	
 			startLoc.x = mouseLoc.x;
 			startLoc.y = mouseLoc.y;	
-			
-		} else {
-			
-			if (objSelected!=null)
-				objSelected.setSelected(false);
-			pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
-			view.doPick(pickPoint,true);
-			if (!view.hits.isEmpty()){
-				objSelected = (GeoElement3D) view.hits.get(0);		
-				objSelected.setSelected(true);
-				//Application.debug("selected = "+objSelected.getLabel());
-				
-				if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
-					moveMode = MOVE_POINT;
-					movedGeoPoint3D = (GeoPoint3D) objSelected;
-					startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
-										
-					view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
-					view.setMovingColor(movingColor);
-					
-				}
-			}
-			view.setWaitForUpdate(true);
-			
+			if(DEBUG){Application.debug("Start MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
 		}
-		
-		
-	
+
 
 	
 	}	

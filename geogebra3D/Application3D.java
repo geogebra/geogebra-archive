@@ -74,6 +74,10 @@ public abstract class Application3D extends Application{
 			getGuiManager().setMode(mode);
 		else if (euclidianView != null)
 			euclidianView.setMode(mode);
+		
+		if (euclidianView3D != null)
+			euclidianView3D.setMode(mode);
+		
 	}
     
     

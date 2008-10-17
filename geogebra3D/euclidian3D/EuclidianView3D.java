@@ -372,6 +372,17 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	//////////////////////////////////////
+	// toolbar and euclidianController3D
+	
+	/** sets EuclidianController3D mode */
+	public void setMode(int mode){
+		euclidianController3D.setMode(mode);
+	}
+	
+	
+	
+	
+	//////////////////////////////////////
 	// moving objects
 	
 	/** set colors of moving objects */
