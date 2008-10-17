@@ -233,14 +233,13 @@ public class EuclidianRenderer3D extends Renderer {
     private void viewOrtho(GL gl)                                        // Set Up An Ortho View
     {
     	//TODO change viewport when resized
-    	gl.glViewport(0,0,EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT);
+    	//gl.glViewport(0,0,EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT);
+    	gl.glViewport(0,0,(int) (view.right-view.left),(int) (view.top-view.bottom));
     	
     	gl.glMatrixMode(GL.GL_PROJECTION);
     	gl.glLoadIdentity();
-    	double ratio = 1;
-    	double w = ((double) EuclidianGLDisplay.DEFAULT_WIDTH)/ratio;
-    	double h = ((double) EuclidianGLDisplay.DEFAULT_HEIGHT)/ratio;
-    	gl.glOrtho(0,w,0,h,-1000,1000);
+
+    	gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
     	

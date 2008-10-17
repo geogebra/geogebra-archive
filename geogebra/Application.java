@@ -237,7 +237,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private GeoGebra frame;
 	private GeoGebraAppletBase applet;
 
-	private GuiManager appGuiManager;
+	protected GuiManager appGuiManager;
 	private CasManager casView;
 
 	private Component mainComp;
@@ -250,7 +250,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	protected EuclidianView euclidianView;
 	private EuclidianController euclidianController;
-	private GeoElementSelectionListener currentSelectionListener;
+	protected GeoElementSelectionListener currentSelectionListener;
 
 	// For language specific settings
 	private Locale currentLocale;
@@ -1056,7 +1056,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/*
-	 * in French, zero is singular, eg 0 décimale rather than 0 decimal places
+	 * in French, zero is singular, eg 0 dcimale rather than 0 decimal places
 	 */
 	public boolean isZeroPlural(Locale locale) {
 		String lang = locale.getLanguage();

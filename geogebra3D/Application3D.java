@@ -55,27 +55,34 @@ public abstract class Application3D extends Application{
 
 		euclidianController3D = new EuclidianController3D(kernel);
         euclidianView3D = new EuclidianView3D(euclidianController3D);  
-
-              
         
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel);
 
-        
-
-        
-        
         euclidianView3D.setZZero(-7.0);
         euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
-        
-        //euclidianView3D.setZZero(0.0);
-        //euclidianView3D.setRotXY(0,0,true);
-        
-       	
-		
+ 		
     }      
     
 
+    
+    
+	public void setMode(int mode) {
+		currentSelectionListener = null;
+
+		if (appGuiManager != null)
+			getGuiManager().setMode(mode);
+		else if (euclidianView != null)
+			euclidianView.setMode(mode);
+	}
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 
@@ -171,58 +178,6 @@ public abstract class Application3D extends Application{
         */
     }  
     
-    
-    public void wnd3D(){
-    	
-    	/*
-    	JFrame f = new JFrame("3D view - very early version");
-    	//f.getContentPane().add(euclidianView3D);
-    	
-    	f.setLocation(300, 100);
-    	f.setSize(new Dimension(800,600));
-    	f.setPreferredSize(new Dimension(800,600));
-    	
-    	
-    	
-    	
-        JDesktopPane dtp = new JDesktopPane();
-        //dtp.setBackground(Color.GREEN);
-        //f.setContentPane(dtp);
-        f.getContentPane().add(dtp);
-        
-        JInternalFrame mboxFrame = new JInternalFrame("3D view - very early version", true,
-            true, true, true);
-        
-        //JLabel reader = new JLabel("Mail Reader Would Be Here");
-        //mboxFrame.setContentPane(euclidianView3D);
-        mboxFrame.setSize(640, 480);
-        mboxFrame.setLocation(50, 50);
-        mboxFrame.setVisible(true);
-        dtp.add(mboxFrame);
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-        f.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-            	System.exit(0);
-            	}
-        });	
-
-        
-    	f.pack();
-    	f.setVisible(true);
-    	
-    	*/
-    	
-    	
-    	
-    	
-    }
+ 
     	
 }

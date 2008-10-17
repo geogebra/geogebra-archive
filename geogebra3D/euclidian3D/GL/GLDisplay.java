@@ -30,30 +30,10 @@ public class GLDisplay {
     private MyHelpOverlayGLEventListener helpOverlayGLEventListener = new MyHelpOverlayGLEventListener();
     private MyExceptionHandler exceptionHandler = new MyExceptionHandler();
 
-    public static GLDisplay createGLDisplay( String title ) {
-        return createGLDisplay( title, new GLCapabilities() );
-    }
-
-    public static GLDisplay createGLDisplay( String title, GLCapabilities caps ) {
-        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        boolean fullscreen = false;
-//        if ( device.isFullScreenSupported() ) {
-//            int selectedOption = JOptionPane.showOptionDialog(
-//                    null,
-//                    "How would you like to run this demo?",
-//                    title,
-//                    JOptionPane.YES_NO_OPTION,
-//                    JOptionPane.QUESTION_MESSAGE,
-//                    null,
-//                    new Object[]{"Fullscreen", "Windowed"},
-//                    "Windowed" );
-//            fullscreen = selectedOption == 0;
-//        }
-        return new GLDisplay( title, DEFAULT_WIDTH, DEFAULT_HEIGHT, fullscreen, caps );
-    }
+ 
     
-    public GLDisplay(){
-    	this("", DEFAULT_WIDTH, DEFAULT_HEIGHT, false, new GLCapabilities()  );
+    public GLDisplay(int w, int h){
+    	this("", w, h, false, new GLCapabilities()  );
     }
 
     private GLDisplay(String title, int width, int height, boolean fullscreen, GLCapabilities caps) {

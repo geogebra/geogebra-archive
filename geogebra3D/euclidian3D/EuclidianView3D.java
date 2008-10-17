@@ -45,7 +45,6 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private Kernel kernel;
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
-	//protected EuclidianCanvas3D canvas3D;
 	
 	//viewing values
 	private double XZero, YZero, ZZero;
@@ -61,6 +60,12 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private GgbMatrix mInv = GgbMatrix.Identity(4);
 	double a = 0.0;
 	double b = 0.0; //angles
+	
+	
+	//values for view frutum
+	double left = 0; double right = 640;
+	double bottom = 0; double top = 480;
+	double front = -1000; double back = 1000;
 	
 	
 
@@ -96,7 +101,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		kernel3D.setConstruction(kernel.getConstruction());
 		
 		//TODO replace canvas3D with GLDisplay
-		EuclidianGLDisplay GLDisplay = new EuclidianGLDisplay();
+		EuclidianGLDisplay GLDisplay = new EuclidianGLDisplay((int) (left-right), (int) (top-bottom));
 		EuclidianRenderer3D renderer = new EuclidianRenderer3D(this);
 		renderer.setDrawList3D(drawList3D);
 		
