@@ -129,4 +129,19 @@ public class PgfFrame extends ExportFrame{
 		if (comboFormat.getSelectedIndex()==3) return true;
 		return false;
 	}
+	protected boolean isLaTeX(){
+		int id=comboFormat.getSelectedIndex();
+		if (id==0||id==3) return true;
+		return false;
+	}
+	protected boolean isPlainTeX(){
+		int id=comboFormat.getSelectedIndex();
+		if (id==1) return true;
+		return false;
+	}
+	protected boolean isConTeXt(){
+		int id=comboFormat.getSelectedIndex();
+		if (id==2) return true;
+		return false;
+	}
 }

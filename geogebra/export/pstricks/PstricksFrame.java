@@ -115,5 +115,14 @@ public class PstricksFrame extends ExportFrame{
 		if (comboFormat.getSelectedIndex()==1) return true;
 		return false;
 	}
+	protected boolean isLaTeX(){
+		return true;
+	}
+	protected boolean isPlainTeX(){
+		return false;
+	}
+	protected boolean isConTeXt(){
+		return false;
+	}
 	
 }

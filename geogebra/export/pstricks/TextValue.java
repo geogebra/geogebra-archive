@@ -8,15 +8,17 @@ import javax.swing.JTextField;
  * @author loic
  *
  */
-public  abstract class TextValue extends JTextField implements KeyListener {
+public  class TextValue extends JTextField implements KeyListener {
 	// do we allow negative values in the textfeld?
 	private boolean ALLOW_NEGATIVE=false;
 	JFrame jf;
-	TextValue(JFrame jf, String s, boolean b){
-		super(s);
+	String actionCommand="";
+	TextValue(JFrame jf, String s, boolean b,String actionCommand){
+		super(s,15);
 		this.jf=jf;
 		this.ALLOW_NEGATIVE=b;
 		addKeyListener(this);
+		this.actionCommand=actionCommand;
 	}
 	public double getValue() throws NumberFormatException{
 		return Double.parseDouble(getText());
@@ -24,10 +26,6 @@ public  abstract class TextValue extends JTextField implements KeyListener {
 	public void setValue(double d){
 		String s=String.valueOf(d);
 		setText(s);
-		// Dynamicly enlarge the JTextField if the number is too large		
-		java.awt.FontMetrics fm=getFontMetrics(getFont());
-		setPreferredSize(new java.awt.Dimension(fm.stringWidth(s)+10,getHeight()));
-		jf.pack();
 	}
 	public void keyTyped(KeyEvent e){
 		// Accept only numerical characters
@@ -53,5 +51,8 @@ public  abstract class TextValue extends JTextField implements KeyListener {
 	}
 	
 	
-	public abstract void keyReleased(KeyEvent e);
+	public void keyReleased(KeyEvent e){};
+	public String toString(){
+		return actionCommand; 
+	}
 }
