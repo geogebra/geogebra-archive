@@ -2524,7 +2524,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// save spreadsheetView settings
 		if (showSpreadsheet) {
-			getGuiManager().getSpreadsheetViewXML();
+			sb.append(getGuiManager().getSpreadsheetViewXML());
 		}
 
 		// save cas view seeting and cas session
