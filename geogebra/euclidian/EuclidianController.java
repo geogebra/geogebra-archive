@@ -4128,7 +4128,7 @@ public class EuclidianController implements MouseListener,
 		{
 			list = getSelectedLists()[0];
 	     	if (list != null) {
-	    	 	kernel.FitLineX(null, list);
+	    	 	kernel.FitLineY(null, list);
 	    	 	return true;   
 	     	}
 		}
@@ -4140,7 +4140,7 @@ public class EuclidianController implements MouseListener,
 			{					
 			 	list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,getSelectedPoints(), GeoElement.GEO_CLASS_POINT);
 		     	if (list != null) {
-		    	 	kernel.FitLineX(null, list);
+		    	 	kernel.FitLineY(null, list);
 		    	 	return true;             	     	 
 		     	} 
 			}
