@@ -2647,6 +2647,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * IsInteger[number]
+	 * Michael Borcherds
+	 */
+	final public GeoBoolean IsInteger(String label, GeoNumeric geo) {
+		AlgoIsInteger algo = new AlgoIsInteger(cons, label, geo);
+		GeoBoolean result = algo.getResult();
+		return result;
+	}
+	
+	/** 
 	 * Mode[list]
 	 * Michael Borcherds
 	 */
