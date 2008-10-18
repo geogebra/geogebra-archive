@@ -280,7 +280,11 @@ public class CommandDispatcher {
     	cmdTable.put("Union", new CmdUnion(kernel));   
     	cmdTable.put("Intersection", new CmdIntersection(kernel)); 
     	
-    	cmdTable.put("IsInteger", new CmdIsInteger(kernel));   
+    	cmdTable.put("IsInteger", new CmdIsInteger(kernel));
+    	
+    	cmdTable.put("Random", new CmdRandom(kernel));   
+    	cmdTable.put("RandomBinomial", new CmdRandomBinomial(kernel));   
+    	cmdTable.put("RandomPoisson", new CmdRandomPoisson(kernel));   
     	
     }
 

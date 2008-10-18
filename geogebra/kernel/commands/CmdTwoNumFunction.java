@@ -106,6 +106,40 @@ class CmdRandomNormal extends CmdTwoNumFunction {
 
 }
 
+/*
+ * Random[ <Number>, <Number> ]
+ */
+class CmdRandom extends CmdTwoNumFunction {
+
+	public CmdRandom(Kernel kernel) {
+		super(kernel);
+	}
+
+	protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.Random(a, b, c);
+	}
+
+}
+
+/*
+ * RandomBinomial[ <Number>, <Number> ]
+ */
+class CmdRandomBinomial extends CmdTwoNumFunction {
+
+	public CmdRandomBinomial(Kernel kernel) {
+		super(kernel);
+	}
+
+	protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.RandomBinomial(a, b, c);
+	}
+
+}
+
+
+
 
 
 

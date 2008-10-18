@@ -62,7 +62,10 @@ import geogebra.kernel.statistics.AlgoNormal;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.kernel.statistics.AlgoRandom;
+import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
+import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
@@ -2505,6 +2508,37 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	/** 
+	 * Random[max,min]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric Random(String label, NumberValue a, NumberValue b) {
+		AlgoRandom algo = new AlgoRandom(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * RandomBinomial[n,p]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric RandomBinomial(String label, NumberValue a, NumberValue b) {
+		AlgoRandomBinomial algo = new AlgoRandomBinomial(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * RandomPoisson[lambda]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric RandomPoisson(String label, NumberValue a) {
+		AlgoRandomPoisson algo = new AlgoRandomPoisson(cons, label, a);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	
 	/** 
 	 * InverseNormal[mean,variance,x]

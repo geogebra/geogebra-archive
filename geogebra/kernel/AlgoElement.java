@@ -237,8 +237,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	randomInputNumbers = randNumbers;   
     	
     	// TODO: remove
-    	 if (randomInputNumbers != null)
-    		 Application.printStacktrace("" + randomInputNumbers);
+    	// if (randomInputNumbers != null)
+    	//	 Application.printStacktrace("" + randomInputNumbers);
     	
 
     }
