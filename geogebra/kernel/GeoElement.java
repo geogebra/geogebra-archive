@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.util.Util;
 

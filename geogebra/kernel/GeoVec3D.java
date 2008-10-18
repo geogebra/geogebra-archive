@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 
 /**
  *

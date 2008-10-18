@@ -21,8 +21,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Application;
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
