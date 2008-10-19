@@ -17,6 +17,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.util.MyMath;
 
 /**
  * Computes RandomNormal[a, b]
@@ -70,24 +71,81 @@ public class AlgoRandomPoisson extends AlgoElement {
 	}
 
 	protected final void compute() {
-		if (input[0].isDefined() && input[1].isDefined()) {
-			num.setValue(randomNormal(a.getDouble(), 0.0));
+		if (input[0].isDefined()) {
+			double lambda = a.getDouble();
+			if (lambda > 0)
+				num.setValue(randomPoissonTRS(lambda));
+			else
+				num.setUndefined();
 		} else
 			num.setUndefined();
 	}
-
-	private static double randomNormal(double mean, double sd) {
-		double fac, rsq, v1, v2;
+	
+	/*
+	 * poisson random number (Knuth)
+	 */
+	private int randomPoisson(int lambda) {
+		double L = Math.exp(-lambda);
+		double p = 1;
+		int k = 0;
 		do {
-			v1 = 2.0 * Math.random() - 1;
-			v2 = 2.0 * Math.random() - 1; // two random numbers from -1 to +1
-			rsq = v1 * v1 + v2 * v2;
-		} while (rsq >= 1.0 || rsq == 0.0); // keep going until they are in the
-											// unit circle
-		fac = Math.sqrt(-2.0 * Math.log(rsq) / rsq);
-		// Application.debug("randomNormal="+(v1*fac));
-		return v1 * fac * sd + mean;
+			k++;
+			p *= Math.random();
+		} while (p >= L);
+		
+		return k - 1;
+		
+	}
 
+	/*
+	 * Algorithm PTRS
+	 * http://statmath.wu-wien.ac.at/papers/92-04-13.wh.ps.gz
+	 */
+	private int randomPoissonTRS(double mu) {
+		
+		
+		if (mu < 10) return randomPoisson((int)mu);
+			
+		double b = 0.931 +  + 2.53 * Math.sqrt(mu);
+		double a = -0.059 + 0.02438 * b;
+		double v_r = 0.9277 - 3.6224 / (b - 2);
+		
+		double us = 0;
+		double v = 1;
+	
+		while (true) {
+		
+			int k = -1;
+			while ( k < 0 || (us < 0.013 && v > us)) {
+				double u = Math.random() - 0.5;
+				v = Math.random();
+				us = 0.5 - Math.abs(u);
+				k = (int)Math.floor((2 * a / us + b) * u + mu + 0.43);
+				if (us >= 0.07 && v < v_r) return k;
+			}
+			
+			double alpha = 1.1239 + 1.1328 / (b - 3.4);
+			double lnmu = Math.log(mu);
+			
+			v = v * alpha / (a / (us * us) + b);
+			
+			if (Math.log(v * alpha / (a / us / us + b)) <= -mu +k * lnmu - logOfKFactorial(k)) return k;
+		}
+	
+	}
+	
+	private static double halflog2pi = 0.5 * Math.log(2 * Math.PI);
+	
+	private static double logtable[] = new double[10];
+	
+	private double logOfKFactorial(int k) {
+		if (k<10) {
+			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.gammln(k+1d));
+			return logtable[k];
+		}
+	
+		// Stirling approximation
+		return halflog2pi + (k+0.5) * Math.log(k+1) - (k+1) + (1/12.0 - (1/360.0 - 1/1260.0/(k+1)/(k+1))/(k+1)/(k+1))/(k+1);
 	}
 
 }
