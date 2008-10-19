@@ -56,7 +56,7 @@ public class AlgoToFraction extends AlgoElement {
 
     protected final void compute() {
 		if (input[0].isDefined()) {
-			frac = DecimalToFraction(num.getDouble(),0.00000001);
+			frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
 
 			sb.setLength(0);
 	    	sb.append("\\frac{");
