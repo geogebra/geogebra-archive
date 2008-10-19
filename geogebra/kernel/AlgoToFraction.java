@@ -88,12 +88,26 @@ public class AlgoToFraction extends AlgoElement {
 	double PreviousDenominator;
 	double ScratchValue;
 	
+	
 	int ret[] = {0,0};
+	if (Decimal == Double.NaN) return ret; // return 0/0 
+	
+	if (Decimal == Double.POSITIVE_INFINITY) {
+	  ret[0] = 1;
+	  ret[1] = 0 ; // 1/0
+	  return ret;
+	}
+	if (Decimal == Double.NEGATIVE_INFINITY) {
+		ret[0] = -1;
+		ret[1] = 0; // -1/0
+		return ret;
+	}
+	
 	if (Decimal < 0.0) DecimalSign = -1.0; else DecimalSign = 1.0;
 	
 	Decimal = Math.abs(Decimal);
 	
-	if (Decimal == Math.floor(Decimal)) { // handles exact integers including 0 ×
+	if (Math.abs(Decimal - Math.floor(Decimal)) < AccuracyFactor) { // handles exact integers including 0 ×
 		FractionNumerator = Decimal * DecimalSign;
 		FractionDenominator = 1.0;
 		
