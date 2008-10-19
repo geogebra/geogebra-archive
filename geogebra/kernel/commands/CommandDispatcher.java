@@ -286,6 +286,8 @@ public class CommandDispatcher {
     	cmdTable.put("RandomBinomial", new CmdRandomBinomial(kernel));   
     	cmdTable.put("RandomPoisson", new CmdRandomPoisson(kernel));   
     	
+    	cmdTable.put("ToFraction", new CmdToFraction(kernel));   
+    	
     }
 
 

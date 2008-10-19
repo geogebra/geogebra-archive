@@ -46,6 +46,10 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 	}
 
 	protected final void compute() {
+		int frac[] = {0,0};
+		frac = DecimalToFraction(b.getDouble(),0.00000001);
+		Application.debug(frac[0]+" "+frac[1]);
+
 		if (input[0].isDefined() && input[1].isDefined()) {
 			if (b.getDouble() < 0)
 				num.setUndefined();
@@ -128,5 +132,52 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 		return halflog2pi + (k+0.5) * Math.log(k+1) - (k+1) + (1/12.0 - (1/360.0 - 1/1260.0/(k+1)/(k+1))/(k+1)/(k+1))/(k+1);
 	}
 	
+	private int[] DecimalToFraction(double Decimal, double AccuracyFactor) {
+			double FractionNumerator, FractionDenominator;
+			double DecimalSign;
+			double Z;
+			double PreviousDenominator;
+			double ScratchValue;
+			
+			int ret[] = {0,0};
+	if (Decimal < 0.0) DecimalSign = -1.0; else DecimalSign = 1.0;
+	Decimal = Math.abs(Decimal);
+	if (Decimal == Math.floor(Decimal)) { // handles exact integers including 0 ×
+		FractionNumerator = Decimal * DecimalSign;
+		FractionDenominator = 1.0;
+		ret[0] = (int)FractionNumerator;
+		ret[1] = (int)FractionDenominator;
+		return ret;
+	}
+	if (Decimal < 1.0E-19) { // X = 0 already taken care of ×
+		FractionNumerator = DecimalSign;
+		FractionDenominator = 9999999999999999999.0;
+		ret[0] = (int)FractionNumerator;
+		ret[1] = (int)FractionDenominator;
+		return ret;
+	}
+	if (Decimal > 1.0E19) {
+		FractionNumerator = 9999999999999999999.0*DecimalSign;
+		FractionDenominator = 1.0;
+		ret[0] = (int)FractionNumerator;
+		ret[1] = (int)FractionDenominator;
+		return ret;
+	}
+	Z = Decimal;
+	PreviousDenominator = 0.0;
+	FractionDenominator = 1.0;
+	do {
+		Z = 1.0/(Z - Math.floor(Z));
+		ScratchValue = FractionDenominator;
+		FractionDenominator = FractionDenominator * Math.floor(Z) + PreviousDenominator;
+		PreviousDenominator = ScratchValue;
+		FractionNumerator = Math.floor(Decimal * FractionDenominator + 0.5); // Rounding Function
+	} while ( Math.abs((Decimal - (FractionNumerator /FractionDenominator))) > AccuracyFactor && Z != Math.floor(Z));
+	FractionNumerator = DecimalSign*FractionNumerator;
+	
+	ret[0] = (int)FractionNumerator;
+	ret[1] = (int)FractionDenominator;
+	return ret;
+	}
 
 }

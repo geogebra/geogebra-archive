@@ -2791,6 +2791,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * ToFraction[number]
+	 * Michael Borcherds
+	 */
+	final public GeoText ToFraction(String label, GeoNumeric num) {
+		AlgoToFraction algo = new AlgoToFraction(cons, label, num);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	/** 
 	 * Mean[list]
 	 * Michael Borcherds
 	 */
