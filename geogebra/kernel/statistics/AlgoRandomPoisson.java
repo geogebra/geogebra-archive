@@ -98,8 +98,12 @@ public class AlgoRandomPoisson extends AlgoElement {
 	}
 
 	/*
+	 * 
+	 * Hörmann, Wolfgang:
+	 * The transformed rejection method for generating Poisson random variables 
 	 * Algorithm PTRS
 	 * http://statmath.wu-wien.ac.at/papers/92-04-13.wh.ps.gz
+	 * http://epub.wu-wien.ac.at/dyn/virlib/wp/eng/mediate/epub-wu-01_6f2.pdf?ID=epub-wu-01_6f2
 	 */
 	private int randomPoissonTRS(double mu) {
 		
