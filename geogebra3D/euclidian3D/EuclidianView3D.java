@@ -493,6 +493,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		doPick(pickPoint,false, repaint);
 	}
 
+	//repaint = true -> for algebraView
 	public void doPick(GgbVector pickPoint, boolean list, boolean repaint){
 		if (list)
 			hits = drawList3D.doPick(pickPoint,true, repaint);

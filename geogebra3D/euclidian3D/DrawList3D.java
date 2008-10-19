@@ -50,6 +50,7 @@ public class DrawList3D extends LinkedList{
 	////////////////////////////////////////
 	// picking
 	
+	// repaint = true -> for highlighting in algebraView
 	public ArrayList doPick(GgbVector pickPoint, boolean list, boolean repaint){
 			
 		hits = new ArrayList();
@@ -59,7 +60,7 @@ public class DrawList3D extends LinkedList{
 				if (list)
 					hits.add(d.getGeoElement());
 			}
-			//d.getGeoElement().updateRepaint();//for highlighting in algebraView
+			
 		}
 		
 		return hits;
