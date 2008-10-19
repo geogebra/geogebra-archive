@@ -50,7 +50,7 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 			if (b.getDouble() < 0)
 				num.setUndefined();
 			else
-				num.setValue(randomBinomialTRS(a.getDouble(), b.getDouble()));
+				num.setValue(randomBinomialTRS((int)a.getDouble(), b.getDouble()));
 		} else
 			num.setUndefined();
 	}
@@ -60,12 +60,13 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 	 * by Wolfgang Hormann, Inst Statistik, Wirtschaftuniv Wien, A- Wien
 	 * Journal of Statistical Computation and Simulation
 	 * http://eeyore.wu-wien.ac.at/papers/92-04-07.wh.ps.gz 
+	 * http://epub.wu-wien.ac.at/dyn/virlib/wp/eng/mediate/epub-wu-01_6f1.pdf?ID=epub-wu-01_6f1
 	 * 
 	 * Algorithm BTRS
 	 */
-	private int randomBinomialTRS(double n, double p) {
+	private int randomBinomialTRS(int n, double p) {
 		
-		if (p > 0.5) return (int)n - randomBinomialTRS(n, 1 - p);
+		if (p > 0.5) return n - randomBinomialTRS(n, 1 - p);
 		
 		if (n * p < 10) return randomBinomial(n, p);
 
@@ -92,8 +93,8 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 			
 			double alpha = (2.83 + 5.1/b) * spq;
 			double lpq = Math.log(p / (1 - p));
-			double m = Math.floor((n + 1) * p);
-			double h = logOfKFactorial(m) + logOfKFactorial(n-m);
+			int m = (int)Math.floor((n + 1) * p);
+			double h = logOfKFactorial(m) + logOfKFactorial((n-m));
 			
 			v = v * alpha / (a / (us * us) + b);
 			
@@ -115,14 +116,16 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 	
 	private static double halflog2pi = 0.5 * Math.log(2 * Math.PI);
 	
-	private double logOfKFactorial(double k) {
-		if (k<10) return Math.log(MyMath.gammln(k+1d));
+	private static double logtable[] = new double[10];
 	
+	private double logOfKFactorial(int k) {
+		if (k<10) {
+			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.gammln(k+1d));
+			return logtable[k];
+		}
+	
+		// Stirling approximation
 		return halflog2pi + (k+0.5) * Math.log(k+1) - (k+1) + (1/12.0 - (1/360.0 - 1/1260.0/(k+1)/(k+1))/(k+1)/(k+1))/(k+1);
-		
-		//return halflog2pi + (k+0.5) * Math.log(k+1) - (k+1) + 1/12/(k+1) - 1/360/(k+1)/(k+1)/(k+1) + 1/1260/(k+1)/(k+1)/(k+1)/(k+1)/(k+1);
-		
-		
 	}
 	
 
