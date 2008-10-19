@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Application;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbVector;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class DrawList3D extends LinkedList{
 	
 	static final boolean DEBUG = false; //conditionnal compilation
 	
-	
+	private ArrayList hits = null; //drawable picked
 	
 	
 	public DrawList3D(){
@@ -49,14 +50,16 @@ public class DrawList3D extends LinkedList{
 	////////////////////////////////////////
 	// picking
 	
-	public ArrayList doPick(GgbVector pickPoint, boolean list){
-		
-		ArrayList hits = new ArrayList();
+	public ArrayList doPick(GgbVector pickPoint, boolean list, boolean repaint){
+			
+		hits = new ArrayList();
 		for (Iterator iter = this.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
-			if (d.isPicked(pickPoint))
+			if (d.isPicked(pickPoint,repaint)){				
 				if (list)
 					hits.add(d.getGeoElement());
+			}
+			//d.getGeoElement().updateRepaint();//for highlighting in algebraView
 		}
 		
 		return hits;

@@ -489,15 +489,15 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	}
 	
 	
-	public void doPick(GgbVector pickPoint){
-		doPick(pickPoint,false);
+	public void doPick(GgbVector pickPoint, boolean repaint){
+		doPick(pickPoint,false, repaint);
 	}
 
-	public void doPick(GgbVector pickPoint, boolean list){
+	public void doPick(GgbVector pickPoint, boolean list, boolean repaint){
 		if (list)
-			hits = drawList3D.doPick(pickPoint,true);
+			hits = drawList3D.doPick(pickPoint,true, repaint);
 		else
-			drawList3D.doPick(pickPoint,false);
+			drawList3D.doPick(pickPoint,false, repaint);
 	}
 	
 	

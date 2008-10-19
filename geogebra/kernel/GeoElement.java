@@ -283,7 +283,7 @@ public abstract class GeoElement
 	
 	private boolean useVisualDefaults = true;
 	private boolean isColorSet = false;
-	private boolean highlighted = false;
+	protected boolean highlighted = false;
 	private boolean selected = false;		
 	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML,
 		strLabelTextOrHTML, strLaTeX;

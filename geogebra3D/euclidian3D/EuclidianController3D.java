@@ -147,7 +147,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 				if (objSelected!=null)
 					objSelected.setSelected(false);
 				pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
-				view.doPick(pickPoint,true);
+				view.doPick(pickPoint,true,true);
 				if (!view.hits.isEmpty()){
 					objSelected = (GeoElement3D) view.hits.get(0);		
 					objSelected.setSelected(true);
@@ -265,9 +265,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
 		
 		
-		if (repaint)
+		if (repaint){
 			view.setWaitForUpdate(true);
-			
+			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
+		}
 		
 		
 	}
@@ -348,16 +349,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	public void mouseMoved(MouseEvent e) {
 		//Application.debug("mouseMoved");
 		setMouseLocation(e);
-		pick();
+		pick(true);
 		view.setWaitForUpdate(true);
 	}
 
 	
 	/** pick object under the mouse */
-	public void pick(){
+	public void pick(boolean repaint){
 		//Application.debug("mouse=("+mouseLoc.x+","+mouseLoc.y+")");
 		pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
-		view.doPick(pickPoint);
+		view.doPick(pickPoint, repaint);
 	}
 
 
@@ -419,7 +420,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			objSelected.updateCascade();
 			//view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
 			view.setWaitForUpdate(true);
-			//moveMode = MOVE_POINT;
+			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
+
 			
 			
 			break;	

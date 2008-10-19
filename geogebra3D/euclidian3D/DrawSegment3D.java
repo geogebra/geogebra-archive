@@ -86,7 +86,7 @@ public class DrawSegment3D extends Drawable3D {
 	public void drawPicked(EuclidianRenderer3D renderer){};
 	
 	
-	public boolean isPicked(GgbVector pickLine){ return false; };
+	public boolean isPicked(GgbVector pickLine, boolean repaint){ return false; };
 	
 
 }

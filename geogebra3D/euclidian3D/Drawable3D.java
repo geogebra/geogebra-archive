@@ -57,7 +57,7 @@ public abstract class Drawable3D {
 
 	
 	/** picking */
-	abstract public boolean isPicked(GgbVector pickLine);
+	abstract public boolean isPicked(GgbVector pickLine, boolean repaint);
 	
 	
 	

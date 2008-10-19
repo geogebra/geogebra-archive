@@ -89,14 +89,14 @@ public class DrawPoint3D extends Drawable3D{
 	
 	
 	
-	public boolean isPicked(GgbVector pickPoint){
+	public boolean isPicked(GgbVector pickPoint, boolean repaint){
 		//TODO use euclidianview3D scale factor
 		if (coords.subVector(1,3).distLine(pickPoint.subVector(1,3),new GgbVector(new double[] {0,0,1}))<=radius/10f){
 			//Application.debug("picked = "+P.getLabel());
-			geo.setHighlighted(true);
+			P.setHighlighted(true,repaint);
 			return true;
 		}else{
-			geo.setHighlighted(false);
+			P.setHighlighted(false,repaint);
 			return false;
 		}
 	};

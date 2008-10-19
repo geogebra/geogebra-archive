@@ -92,7 +92,7 @@ public class DrawLine3D extends Drawable3D {
 
 	}
 
-	public boolean isPicked(GgbVector pickLine) {
+	public boolean isPicked(GgbVector pickLine, boolean repaint) {
 		// TODO Raccord de méthode auto-généré
 		return false;
 	}

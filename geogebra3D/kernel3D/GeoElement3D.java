@@ -50,12 +50,20 @@ public abstract class GeoElement3D
 		
 	}
 	
-	//TODO add method with return false in GeoElement
+	
 	public boolean isGeoElement3D(){
 		return true;
 	}
 	
 	
+	/** set the highlighted flag and eventually repaint it for algebraView */ 
+	final public void setHighlighted(boolean flag, boolean repaint) {
+		boolean highlightedOld = highlighted;
+		setHighlighted(flag); //GeoElement method
+		if ((highlightedOld!=highlighted)&&repaint)
+			updateRepaint();//for highlighting in algebraView
+		
+	}	
 	
 		
 
