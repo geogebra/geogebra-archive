@@ -58,14 +58,18 @@ public class AlgoToFraction extends AlgoElement {
 		if (input[0].isDefined()) {
 			frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
 
-			sb.setLength(0);
-	    	sb.append("\\frac{");
-	    	sb.append(frac[0]+"");
-	    	sb.append("}{");
-	    	sb.append(frac[1]+"");
-	    	sb.append("}");
-	    	
-	    	text.setTextString(sb.toString());
+			if (frac[1] == 1) { // integer
+		    	text.setTextString(frac[0]+"");				
+			} else {
+				sb.setLength(0);
+		    	sb.append("$\\frac{");
+		    	sb.append(frac[0]+"");
+		    	sb.append("}{");
+		    	sb.append(frac[1]+"");
+		    	sb.append("}$");
+		    	
+		    	text.setTextString(sb.toString());
+			}
 	    	text.setLaTeX(true,false);
 		
 		} else
