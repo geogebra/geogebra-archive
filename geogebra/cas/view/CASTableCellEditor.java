@@ -70,6 +70,10 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	public Object getCellEditorValue() {
 		return cellValue;
 	}
+	
+	public String getSelectedText() {
+		return getInputArea().getSelectedText();
+	}
 
 	public void setCellEditorValue(CASTableCellValue value) {
 		this.cellValue = value;

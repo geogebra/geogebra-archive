@@ -614,19 +614,19 @@ public class CASView extends JComponent implements CasManager {
 			public void actionPerformed(ActionEvent e) {
 				// Get the active cell
 				int editRow = consoleTable.getEditingRow();
+
+				CASTableCellEditor cellEditor = (CASTableCellEditor) consoleTable
+						.getCellEditor(editRow, CASPara.contCol);
+				String selectedStr = cellEditor.getSelectedText();
 				CASTableCellValue value = (CASTableCellValue) consoleTable
 						.getModel().getValueAt(editRow, CASPara.contCol);
-				CASTableCell edittingCell = ((CASTableCell) ((CASTableCellEditor) consoleTable
-						.getCellEditor(editRow, CASPara.contCol))
+				CASTableCell edittingCell = (CASTableCell) cellEditor
 						.getTableCellEditorComponent(consoleTable, value, true,
-								editRow, CASPara.contCol));
+								editRow, CASPara.contCol);
 
-				
-				// TODO: Remove this later. We cannot get the selected text in the textfield :(
-				String da = edittingCell.getInputArea().getSelectedText();
-				
 				// Create a CASSubDialog with the cell value
-				CASSubDialog d = new CASSubDialog(app, edittingCell);
+				CASSubDialog d = new CASSubDialog(app, cas, edittingCell,
+						selectedStr);
 				d.setVisible(true);
 			}
 		});

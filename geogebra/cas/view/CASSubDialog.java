@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import geogebra.Application;
+import geogebra.cas.GeoGebraCAS;
 
 /**
  * Dialog to substitude a string in a CAS input.
@@ -37,7 +38,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private static final int SUB = 0;
 	private static final int SUBSIM = 1;
 
-	private boolean replaceAllFlag = false;
+	private boolean replaceAllFlag;
 
 	private JButton btSub, btSubSim, btCancel;
 	private JPanel optionPane, btPanel, cbPanel, captionPanel;
@@ -46,6 +47,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 
 	private CASTableCell tableCell;
 	private Application app;
+	private GeoGebraCAS cas;
 
 	private String subStr;
 	private String inputStr;
@@ -53,11 +55,16 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public CASSubDialog(Application app, CASTableCell inCell) {
+	public CASSubDialog(Application app, GeoGebraCAS cas, CASTableCell inCell,
+			String subStr) {
 		super(app.getCasFrame(), false);
 		this.app = app;
+		this.cas = cas;
 		this.tableCell = inCell;
+		this.subStr = subStr;
+		this.inputStr = tableCell.getInput();
 
+		replaceAllFlag = false;
 		createGUI(app.getMenu("Substitute Dialog"));
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
@@ -66,9 +73,6 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	protected void createGUI(String title) {
 		setTitle(title);
 		setResizable(false);
-
-		subStr = tableCell.getInputArea().getSelectedText();
-		inputStr = tableCell.getInput();
 
 		// create label panel
 		JLabel subLabel = new JLabel(app.getPlain("Substitute for ") + subStr
@@ -149,16 +153,23 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		switch (mod) {
 		case SUB:
 			// Replace the sub in the input string
-			tableCell.setInput("Ri ni ma");
-			System.out.println("This is for sub action");
+			if (replaceAllFlag)
+				tableCell.setInput(inputStr.replaceAll(subStr, newExpression));
+			else
+				tableCell
+						.setInput(inputStr.replaceFirst(subStr, newExpression));
 			break;
 		case SUBSIM:
 			// Replace the sub in the input string
-			tableCell.setInput("kao ni ma");
-			System.out.println("This is for sub and simplify action");
+			String preString;
+			if (replaceAllFlag)
+				preString = inputStr.replaceAll(subStr, newExpression);
+			else
+				preString = inputStr.replaceFirst(subStr, newExpression);
+			
+			tableCell.setInput(cas.evaluateYACAS(preString));
 			break;
 		default:
-			System.out.println("Action cancelled");
 			break;
 		}
 	}
