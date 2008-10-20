@@ -36,7 +36,7 @@ public class ContextMenuRow extends ContextMenu
    	 	if (row1 == row2) item7 = new JMenuItem(app.getMenu("ClearRow"));
    	 	else item7 = new JMenuItem(app.getMenu("ClearRows"));
 	   	item7.setIcon(app.getEmptyIcon());
-   	 	item7.addActionListener(new ActionListener7());   	 	
+   	 	item7.addActionListener(new ActionListenerClearRows());   	 	
    	 	add(item7); 
    	 	
    	 	
@@ -88,14 +88,15 @@ public class ContextMenuRow extends ContextMenu
  		}
 	}
 	
-	private class ActionListener7 implements ActionListener
+	private class ActionListenerClearRows implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			int columns = table.getModel().getColumnCount();
+ 			int rows = table.getModel().getRowCount();
  			boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
+
  			int dy = row2 - row1 + 1;
  			for (int y = row2 + 1; y < table.getModel().getColumnCount(); ++ y) {
- 				for (int x = 0; x < columns; ++ x) {
+ 				for (int x = 0; x < rows; ++ x) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
