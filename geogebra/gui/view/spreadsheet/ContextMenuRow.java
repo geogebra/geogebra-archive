@@ -91,9 +91,11 @@ public class ContextMenuRow extends ContextMenu
 	private class ActionListenerClearRows implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			int rows = table.getModel().getRowCount();
+ 			//int rows = table.getModel().getRowCount();
  			boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
 
+ 			/* code to move data into cleared space ie turn into delete row
+ 			 * (which we don't want)
  			int dy = row2 - row1 + 1;
  			for (int y = row2 + 1; y < table.getModel().getColumnCount(); ++ y) {
  				for (int x = 0; x < rows; ++ x) {
@@ -106,7 +108,7 @@ public class ContextMenuRow extends ContextMenu
  					geo.setLabel(newLabel);
  					succ = true;
  				}
- 			}
+ 			}*/
  			
  			if (succ)
 	 			app.storeUndoInfo();
