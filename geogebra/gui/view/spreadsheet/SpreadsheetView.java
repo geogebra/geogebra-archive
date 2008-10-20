@@ -343,7 +343,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
 					
-					GeoElement geo = (GeoElement)(table.getValueAt(point.x,point.y));
+					//GeoElement geo = (GeoElement)(table.getValueAt(point.x,point.y));
 					//Application.debug(geo.getAlgebraDescription());
 					
 					
