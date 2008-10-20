@@ -1,6 +1,7 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.Application;
 import geogebra.kernel.GeoElement;
 
 import java.awt.event.ActionEvent;
@@ -88,7 +89,18 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
+ 			int rows = table.getModel().getRowCount();
+
+ 			boolean succ = false;
+ 			
+ 			for (int col = 0 ; col < columns ; col++) {
+ 				if (selectedColumns[col]) {
+ 					if (table.copyPasteCut.delete(col, 0, col, rows)) succ = true;
+ 				}
+ 			}
+ 			
+ 			/* code to move all data left (which we don't want)
+ 			
  			int dx = column2 - column1 + 1;
 			for (int x = column2 + 1; x < columns; ++ x) {
 				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
@@ -104,7 +116,7 @@ public class ContextMenuCol extends ContextMenu
  					geo.setLabel(newLabel);
  					succ = true;
  				}
- 			}
+ 			} */
 			
 			if (succ)
  				app.storeUndoInfo();
