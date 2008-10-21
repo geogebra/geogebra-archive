@@ -154,6 +154,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("in")); // Indonesian
 		supportedLocales.add(new Locale("it")); // Italian
 		supportedLocales.add(new Locale("ja")); // Japanese
+		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian
