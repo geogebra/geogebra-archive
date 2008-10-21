@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D;
 
+import java.awt.Color;
+
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoLine3D;
@@ -46,7 +48,7 @@ public class DrawLine3D extends Drawable3D {
 		
 		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
-		renderer.drawCylinder(0.02f); 
+		renderer.drawCylinder(LINE3D_THICKNESS); 
 		renderer.resetMatrix();
 		
 
@@ -70,7 +72,7 @@ public class DrawLine3D extends Drawable3D {
     		view3D.toScreenCoords3D(m);
     		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
     		renderer.setMatrix(m.getGL());
-    		renderer.drawCylinder(0.02f); 
+    		renderer.drawCylinder(LINE3D_THICKNESS); 
     		
     		renderer.resetMatrix();
     	}
@@ -82,9 +84,20 @@ public class DrawLine3D extends Drawable3D {
 
 	}
 
-	public void drawPicked(EuclidianRenderer3D renderer) {
-		// TODO Raccord de méthode auto-généré
+	public void drawPicked(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;
+		if (!geo.doHighlighting())
+			return;
+		
+		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
+		renderer.resetMatrix();		
+	};	
 
+	public void drawForPicking(EuclidianRenderer3D renderer) {
+		draw(renderer);
 	}
 
 	public void drawTransp(EuclidianRenderer3D renderer) {

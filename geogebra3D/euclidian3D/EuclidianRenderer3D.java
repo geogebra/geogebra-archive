@@ -8,7 +8,6 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
@@ -17,7 +16,7 @@ import com.sun.opengl.util.BufferUtil;
 
 
 import geogebra.Application;
-import geogebra.kernel.GeoElement;
+import geogebra3D.kernel3D.GeoElement3D;
 
 
 public class EuclidianRenderer3D implements GLEventListener {
@@ -240,8 +239,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void doPick(){
     	
     	int BUFSIZE = 512;
-        //   int[] buffer = new int[BUFSIZE]; // Set Up A Selection Buffer
-        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
         
@@ -257,12 +255,6 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         
         
-        /*
-        viewport[0]=(int) view.left;
-        viewport[1]=(int) view.bottom;
-        viewport[2]=(int) (view.right-view.left);
-        viewport[3]=(int) (view.top-view.bottom);
-        */
         
         // Puts OpenGL In Selection Mode. Nothing Will Be Drawn.  Object ID's and Extents Are Stored In The Buffer.
         gl.glRenderMode(GL.GL_SELECT);
@@ -274,45 +266,44 @@ public class EuclidianRenderer3D implements GLEventListener {
 
         
         gl.glMatrixMode(GL.GL_PROJECTION);
-        //gl.glPushMatrix();
         gl.glLoadIdentity();
       
+        
         /* create 5x5 pixel picking region near cursor location */
-
         //glu.gluPickMatrix((double) mouseX, (double) (470 - mouseY),  5.0, 5.0, viewport, 0);
         //mouseY+=30; //TODO understand this offset
         //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), 5.0, 5.0, viewport, 0);
-        //gl.glOrtho(0.0, 8.0, 0.0, 8.0, -0.5, 2.5);
         gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
 		//drawing not hidden parts
-    	GeoElement[] geos = new GeoElement[BUFSIZE];
+    	//Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
+    	GeoElement3D[] geos = new GeoElement3D[BUFSIZE];
         int loop = 0;
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			loop++;
 			gl.glLoadName(loop);
-			d.draw(this);	
-			geos[loop]=d.getGeoElement();
+			d.drawForPicking(this);	
+			geos[loop] = (GeoElement3D) d.getGeoElement();
+			geos[loop].setWasHighlighted();
+			geos[loop].setWillBeHighlighted(false);
+			//drawHits[loop]=d;
 			//Application.debug("--"+gl.glRenderMode(GL.GL_RENDER));
 		}
         
-        //gl.glPopMatrix();
-        //gl.glFlush();
         
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
        
 
-        Application.debug("hits("+mouseX+","+mouseY+") = "+hits);
+        //Application.debug("hits("+mouseX+","+mouseY+") = "+hits);
         
         
         int[] buffer = new int[BUFSIZE];
         selectBuffer.get(buffer);
         int names, ptr = 0;
-        for (int i = 0; i < hits; i++)
-        { /* for each hit */
+        for (int i = 0; i < hits; i++) { 
         	
           names = buffer[ptr];
           
@@ -323,13 +314,17 @@ public class EuclidianRenderer3D implements GLEventListener {
           //System.out.println(" z2 is " + buffer[ptr]);
           ptr++;
           
-          for (int j = 0; j < names; j++)
-          { /* for each name */
-        	Application.debug("the name is " + buffer[ptr]+" -- geo["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
-            ptr++;
+          for (int j = 0; j < names; j++){ 
+        	//Application.debug("the name is " + buffer[ptr]+" -- drawHits["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
+        	geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
+        	ptr++;
           }
           //System.out.println();
         }
+        
+        //update highlighting
+        for (int i=1;i<=loop;i++)
+        	geos[i].updateHighlighted(true);
     	
         waitForPick = false;
     }
@@ -339,7 +334,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     //////////////////////////////////
-    // intializations
+    // initializations
     
     /** Called by the drawable immediately after the OpenGL context is
      * initialized for the first time. Can be used to perform one-time OpenGL

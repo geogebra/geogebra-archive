@@ -17,6 +17,14 @@ import geogebra.kernel.linalg.GgbVector;
  */
 public abstract class Drawable3D {
 	
+	//constants for rendering
+	protected static final float PICKED_DILATATION = 1.3f;
+	protected static final float POINT3D_RADIUS = 100f;
+	protected static final float LINE3D_THICKNESS = 0.02f;
+	
+	
+	
+	//view3D
 	EuclidianView3D view3D; 
 	
 	//matrix for openGL display
@@ -54,16 +62,20 @@ public abstract class Drawable3D {
 	abstract public void drawTransp(EuclidianRenderer3D renderer); 
 	abstract public void drawHiding(EuclidianRenderer3D renderer); 
 	abstract public void drawPicked(EuclidianRenderer3D renderer); 
+	abstract public void drawForPicking(EuclidianRenderer3D renderer); 
 
 	
 	/** picking */
 	abstract public boolean isPicked(GgbVector pickLine, boolean repaint);
 	
 	
+
 	
     public GeoElement getGeoElement() {
         return geo;
     }    
+    
+    
     
     public void setGeoElement(GeoElement geo) {
         this.geo = geo;

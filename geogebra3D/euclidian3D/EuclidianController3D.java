@@ -277,9 +277,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 	public void mouseClicked(MouseEvent e) {
-		//Application.debug("mouseClicked");
-		setMouseLocation(e);
-		view.rendererPick(mouseLoc.x,mouseLoc.y);
+		
+		//setMouseLocation(e);
+		//view.rendererPick(mouseLoc.x,mouseLoc.y);
 
 	}
 
@@ -351,8 +351,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	public void mouseMoved(MouseEvent e) {
 		//Application.debug("mouseMoved");
 		setMouseLocation(e);
+		view.rendererPick(mouseLoc.x,mouseLoc.y);
+		
 		pick(true);
-		//view.rendererPick(mouseLoc.x,mouseLoc.y);
+		
 		view.setWaitForUpdate(true);
 	}
 

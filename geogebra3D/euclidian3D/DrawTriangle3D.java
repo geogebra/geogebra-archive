@@ -51,6 +51,7 @@ public class DrawTriangle3D extends Drawable3D {
 	
 	public void drawHidden(EuclidianRenderer3D renderer){} 
 	public void drawPicked(EuclidianRenderer3D renderer){};
+	public void drawForPicking(EuclidianRenderer3D renderer) {};		
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())

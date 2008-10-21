@@ -21,7 +21,6 @@ public class DrawPoint3D extends Drawable3D{
 	private GgbVector coords = new GgbVector(4);
 	
 	
-	float radius = 100f; //TODO use object property
 		
 	
 	public DrawPoint3D(EuclidianView3D view3D, GeoPoint3D P) {     
@@ -57,7 +56,7 @@ public class DrawPoint3D extends Drawable3D{
 		
 		renderer.setMaterial(geo.getObjectColor(),1f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
-		renderer.drawSphere(radius);
+		renderer.drawSphere(POINT3D_RADIUS);//TODO use object property
 		renderer.resetMatrix();
 
 	}
@@ -72,17 +71,21 @@ public class DrawPoint3D extends Drawable3D{
 	
 	public void drawPicked(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())
+			return;		
+		if (!geo.doHighlighting())
 			return;
+
+		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawSphere(POINT3D_RADIUS*PICKED_DILATATION);//TODO use object property
+		renderer.resetMatrix();
 		
-		if (geo.doHighlighting()){
-			renderer.setMaterial(new Color(0f,0f,0f),0.75f);
-			renderer.setMatrix(getMatrixGL());
-			renderer.drawSphere(radius*1.3f);
-			renderer.resetMatrix();
-		}
 
 	}
 	
+	public void drawForPicking(EuclidianRenderer3D renderer) {
+		draw(renderer);
+	};	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){}
 	public void drawHiding(EuclidianRenderer3D renderer){}
@@ -91,12 +94,12 @@ public class DrawPoint3D extends Drawable3D{
 	
 	public boolean isPicked(GgbVector pickPoint, boolean repaint){
 		//TODO use euclidianview3D scale factor
-		if (coords.subVector(1,3).distLine(pickPoint.subVector(1,3),new GgbVector(new double[] {0,0,1}))<=radius/10f){
+		if (coords.subVector(1,3).distLine(pickPoint.subVector(1,3),new GgbVector(new double[] {0,0,1}))<=POINT3D_RADIUS/10f){
 			//Application.debug("picked = "+P.getLabel());
-			P.setHighlighted(true,repaint);
+			//P.setHighlighted(true,repaint);
 			return true;
 		}else{
-			P.setHighlighted(false,repaint);
+			//P.setHighlighted(false,repaint);
 			return false;
 		}
 	};

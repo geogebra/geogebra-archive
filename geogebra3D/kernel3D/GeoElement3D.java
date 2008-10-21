@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement; 
 //TODO in GeoElement, change private to protected
@@ -31,7 +32,8 @@ import geogebra.kernel.GeoElement;
 public abstract class GeoElement3D
 	extends GeoElement{
 	
-	//transient Kernel3D kernel3D;
+	private boolean wasHighlighted = false;
+	private boolean willBeHighlighted = false;
 
 	
 	// GeoElement types
@@ -54,6 +56,28 @@ public abstract class GeoElement3D
 	public boolean isGeoElement3D(){
 		return true;
 	}
+	
+	
+	/** stores the current highlighted flag to wasHighlighted */ 
+	final public void setWasHighlighted(){
+		wasHighlighted = highlighted;
+	}
+
+	/** stores the future highlighted flag to willBeHighlighted */ 
+	final public void setWillBeHighlighted(boolean flag){
+		willBeHighlighted = flag;
+	}
+	
+	/** update the highlighted flag */ 
+	final public void updateHighlighted(boolean repaint){
+		//Application.debug(getLabel()+" : "+wasHighlighted+","+willBeHighlighted);
+		if (wasHighlighted!=willBeHighlighted){
+			setHighlighted(willBeHighlighted); //GeoElement method
+			if (repaint)
+				updateRepaint();//for highlighting in algebraView
+		}
+	}
+	
 	
 	
 	/** set the highlighted flag and eventually repaint it for algebraView */ 
