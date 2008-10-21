@@ -1415,7 +1415,12 @@ public abstract class Application implements KeyEventDispatcher {
 				// get number after %
 				i++;
 				int pos = str.charAt(i) - '0';
-				sbPlain.append(args[pos]);
+				if (pos >= 0 && pos < args.length)
+					// success
+					sbPlain.append(args[pos]);
+				else
+					// failed
+					sbPlain.append(ch);
 			} else {
 				sbPlain.append(ch);
 			}
