@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import javax.media.j3d.GraphicsContext3D;
 import javax.swing.JPanel;
 
-
+import javax.media.opengl.GLCanvas;
 
 
 public class EuclidianView3D extends JPanel implements View, Printable {
@@ -45,6 +45,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	private Kernel kernel;
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
+	private EuclidianRenderer3D renderer;
 	
 	//viewing values
 	private double XZero, YZero, ZZero;
@@ -102,26 +103,30 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		//TODO replace canvas3D with GLDisplay
 		EuclidianGLDisplay GLDisplay = new EuclidianGLDisplay((int) (left-right), (int) (top-bottom));
-		EuclidianRenderer3D renderer = new EuclidianRenderer3D(this);
+		renderer = new EuclidianRenderer3D(this);
 		renderer.setDrawList3D(drawList3D);
+		
+		
 		
         GLDisplay.addRenderer(renderer);
         GLDisplay.start();
 
+        GLCanvas canvas = GLDisplay.glCanvas;
+        renderer.canvas=canvas;
         
 		setLayout(new BorderLayout());
-		add(BorderLayout.CENTER, GLDisplay.glCanvas);
+		add(BorderLayout.CENTER, canvas);
 
 		
 		attachView();
 		
 		
 		// register Listener			
-		GLDisplay.glCanvas.addMouseMotionListener(euclidianController3D);
-		GLDisplay.glCanvas.addMouseListener(euclidianController3D);
-		GLDisplay.glCanvas.addMouseWheelListener(euclidianController3D);
-		GLDisplay.glCanvas.addKeyListener(euclidianController3D);
-		GLDisplay.glCanvas.setFocusable(true);
+		canvas.addMouseMotionListener(euclidianController3D);
+		canvas.addMouseListener(euclidianController3D);
+		canvas.addMouseWheelListener(euclidianController3D);
+		canvas.addKeyListener(euclidianController3D);
+		canvas.setFocusable(true);
 		
 		
 		//init orientation
@@ -495,10 +500,19 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 
 	//repaint = true -> for algebraView
 	public void doPick(GgbVector pickPoint, boolean list, boolean repaint){
+		
+		
+		
 		if (list)
 			hits = drawList3D.doPick(pickPoint,true, repaint);
 		else
 			drawList3D.doPick(pickPoint,false, repaint);
+	}
+	
+	
+	public void rendererPick(int x, int y){
+		//openGL picking
+		renderer.setMouseLoc(x,y);
 	}
 	
 	

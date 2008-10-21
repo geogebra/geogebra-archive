@@ -1,26 +1,47 @@
 package geogebra3D.euclidian3D;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+
+import com.sun.opengl.util.BufferUtil;
 
 
 import geogebra.Application;
-import geogebra3D.euclidian3D.GL.Renderer;
+import geogebra.kernel.GeoElement;
 
-public class EuclidianRenderer3D extends Renderer {
+
+public class EuclidianRenderer3D implements GLEventListener {
 	
-	
-	private DrawList3D drawList3D;
+	// openGL variables
+	private GLU glu= new GLU();
+	public GLCanvas canvas;
 	private GL gl;
+	protected GLUquadric quadric;
+	
+	// other
+	private DrawList3D drawList3D;
+	
 	EuclidianView3D view;
+	
+	private int mouseX, mouseY;
+	private boolean waitForPick = false;
 	
 	
 	public EuclidianRenderer3D(EuclidianView3D view){
 		super();
+		
+		
+		
 		this.view=view;
 	}
 	
@@ -38,7 +59,12 @@ public class EuclidianRenderer3D extends Renderer {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         
         
-        viewOrtho(gl);
+        //picking
+        if(waitForPick)
+        	doPick();
+        
+        //start drawing
+        viewOrtho();
         
         view.update();
         
@@ -86,13 +112,6 @@ public class EuclidianRenderer3D extends Renderer {
 			d.draw(this);	
 		}
 
-
-		
-
-		
-		
-		
-		
 		
 		
 		
@@ -101,6 +120,37 @@ public class EuclidianRenderer3D extends Renderer {
 
 
 
+    }    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h)
+    {
+      GL gl = drawable.getGL();
+      
+      //TODO change this
+      gl.glViewport(0, 0, w, h);
+      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glLoadIdentity();
+      gl.glOrtho(0.0, 8.0, 0.0, 8.0, -0.5, 2.5);
+      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glLoadIdentity();
+    }
+
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
+        boolean deviceChanged)
+    {
     }    
     
     
@@ -178,7 +228,111 @@ public class EuclidianRenderer3D extends Renderer {
     
     
     
+    //////////////////////////////////////
+    // picking
+    public void setMouseLoc(int x, int y){
+    	mouseX = x;
+    	mouseY = y;
+    	waitForPick = true;
+    }
     
+    
+    public void doPick(){
+    	
+    	int BUFSIZE = 512;
+        //   int[] buffer = new int[BUFSIZE]; // Set Up A Selection Buffer
+        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+        int hits; // The Number Of Objects That We Selected
+        gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
+        
+        
+        // The Size Of The Viewport. [0] Is <x>, [1] Is <y>, [2] Is <length>, [3] Is <width>
+        int[] viewport = new int[4];
+        gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);      
+        //System.out.println("viewport= "+viewport[0]+","+viewport[1]+","+viewport[2]+","+viewport[3]);
+        
+        
+        Dimension dim = canvas.getSize();
+        //System.out.println("dimension= "+dim.width +","+dim.height);
+        
+        
+        
+        /*
+        viewport[0]=(int) view.left;
+        viewport[1]=(int) view.bottom;
+        viewport[2]=(int) (view.right-view.left);
+        viewport[3]=(int) (view.top-view.bottom);
+        */
+        
+        // Puts OpenGL In Selection Mode. Nothing Will Be Drawn.  Object ID's and Extents Are Stored In The Buffer.
+        gl.glRenderMode(GL.GL_SELECT);
+        gl.glInitNames(); // Initializes The Name Stack
+        gl.glPushName(0); // Push 0 (At Least One Entry) Onto The Stack
+        
+        
+        // This Creates A Matrix That Will Zoom Up To A Small Portion Of The Screen, Where The Mouse Is.
+
+        
+        gl.glMatrixMode(GL.GL_PROJECTION);
+        //gl.glPushMatrix();
+        gl.glLoadIdentity();
+      
+        /* create 5x5 pixel picking region near cursor location */
+
+        //glu.gluPickMatrix((double) mouseX, (double) (470 - mouseY),  5.0, 5.0, viewport, 0);
+        //mouseY+=30; //TODO understand this offset
+        //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
+        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), 5.0, 5.0, viewport, 0);
+        //gl.glOrtho(0.0, 8.0, 0.0, 8.0, -0.5, 2.5);
+        gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
+    	gl.glMatrixMode(GL.GL_MODELVIEW);
+        
+		//drawing not hidden parts
+    	GeoElement[] geos = new GeoElement[BUFSIZE];
+        int loop = 0;
+		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+			Drawable3D d = (Drawable3D) iter.next();
+			loop++;
+			gl.glLoadName(loop);
+			d.draw(this);	
+			geos[loop]=d.getGeoElement();
+			//Application.debug("--"+gl.glRenderMode(GL.GL_RENDER));
+		}
+        
+        //gl.glPopMatrix();
+        //gl.glFlush();
+        
+        hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
+       
+
+        Application.debug("hits("+mouseX+","+mouseY+") = "+hits);
+        
+        
+        int[] buffer = new int[BUFSIZE];
+        selectBuffer.get(buffer);
+        int names, ptr = 0;
+        for (int i = 0; i < hits; i++)
+        { /* for each hit */
+        	
+          names = buffer[ptr];
+          
+          //System.out.println(" number of names for hit = " + names);
+          ptr++;
+          //System.out.println(" z1 is " + buffer[ptr]);
+          ptr++;
+          //System.out.println(" z2 is " + buffer[ptr]);
+          ptr++;
+          
+          for (int j = 0; j < names; j++)
+          { /* for each name */
+        	Application.debug("the name is " + buffer[ptr]+" -- geo["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
+            ptr++;
+          }
+          //System.out.println();
+        }
+    	
+        waitForPick = false;
+    }
     
     
     
@@ -195,6 +349,7 @@ public class EuclidianRenderer3D extends Renderer {
     public void init(GLAutoDrawable drawable) {
     	
         gl = drawable.getGL();
+        
         
         //light
         float pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
@@ -230,7 +385,7 @@ public class EuclidianRenderer3D extends Renderer {
     
     
     //projection mode
-    private void viewOrtho(GL gl)                                        // Set Up An Ortho View
+    private void viewOrtho()                                        // Set Up An Ortho View
     {
     	//TODO change viewport when resized
     	//gl.glViewport(0,0,EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT);
