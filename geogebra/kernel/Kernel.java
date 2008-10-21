@@ -1600,10 +1600,10 @@ public class Kernel {
 	/** 
 	 * ToNumber
 	 */
-	final public GeoNumeric ToNumber(
+	final public GeoNumeric LetterToUnicode(
 		String label,
 		GeoText geo) {
-		AlgoToNumber algo = new AlgoToNumber(cons, label, geo);
+		AlgoLetterToUnicode algo = new AlgoLetterToUnicode(cons, label, geo);
 		GeoNumeric ret = algo.getResult();
 		return ret;
 	}
@@ -1611,10 +1611,10 @@ public class Kernel {
 	/** 
 	 * ToNumbers
 	 */
-	final public GeoList ToNumbers(
+	final public GeoList TextToUnicode(
 		String label,
 		GeoText geo) {
-		AlgoToNumbers algo = new AlgoToNumbers(cons, label, geo);
+		AlgoTextToUnicode algo = new AlgoTextToUnicode(cons, label, geo);
 		GeoList ret = algo.getResult();
 		return ret;
 	}
@@ -1622,8 +1622,8 @@ public class Kernel {
 	/** 
 	 * ToText(number)
 	 */
-	final public GeoText ToText(String label, NumberValue a) {
-		AlgoToText algo = new AlgoToText(cons, label, a);
+	final public GeoText UnicodeToLetter(String label, NumberValue a) {
+		AlgoUnicodeToLetter algo = new AlgoUnicodeToLetter(cons, label, a);
 		GeoText text = algo.getResult();
 		return text;
 	}
@@ -1631,10 +1631,10 @@ public class Kernel {
 	/** 
 	 * ToText(list)
 	 */
-	final public GeoText ToText(
+	final public GeoText UnicodeToText(
 		String label,
 		GeoList geo) {
-		AlgoToTextList algo = new AlgoToTextList(cons, label, geo);
+		AlgoUnicodeToText algo = new AlgoUnicodeToText(cons, label, geo);
 		GeoText ret = algo.getResult();
 		return ret;
 	}

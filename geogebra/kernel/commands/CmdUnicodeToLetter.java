@@ -10,9 +10,9 @@ import geogebra.kernel.arithmetic.NumberValue;
 /*
  * Max[ <Number>, <Number> ]
  */
-public class CmdToText extends CommandProcessor {
+public class CmdUnicodeToLetter extends CommandProcessor {
 
-	public CmdToText(Kernel kernel) {
+	public CmdUnicodeToLetter(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -24,16 +24,10 @@ public class CmdToText extends CommandProcessor {
 		switch (n) {
 		case 1:
 			arg = resArgs(c);
-			if (arg[0].isGeoList()) {
-				GeoElement[] ret = { 
-						kernel.ToText(c.getLabel(),
-						(GeoList) arg[0]) };
-				return ret;
-			}
-			else if ((ok[0] = arg[0].isNumberValue()) ) 
+			if ((ok[0] = arg[0].isNumberValue()) ) 
 			{
 				GeoElement[] ret = { 
-						kernel.ToText(c.getLabel(),
+						kernel.UnicodeToLetter(c.getLabel(),
 						(NumberValue) arg[0] ) };
 				return ret;
 						

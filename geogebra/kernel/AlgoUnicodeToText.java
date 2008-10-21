@@ -12,18 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-
-
-public class AlgoToText extends AlgoElement {
+public class AlgoUnicodeToText extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	protected NumberValue a;  // input
+	protected GeoList list;  // input
     protected GeoText text;     // output           
         
-    protected AlgoToText(Construction cons, String label, NumberValue a) {       
+    protected AlgoUnicodeToText(Construction cons, String label, GeoList list) {       
 	  super(cons); 
-      this.a = a;
+      this.list = list;
 
       text = new GeoText(cons); 
       setInputOutput(); // for AlgoElement
@@ -35,13 +32,13 @@ public class AlgoToText extends AlgoElement {
     }   
   
     protected String getClassName() {
-        return "AlgoToText";
+        return "AlgoUnicodeToText";
     }
     
     // for AlgoElement
     protected void setInputOutput() {
         input =  new GeoElement[1];
-        input[0] = a.toGeoElement();
+        input[0] = list;
         
         output = new GeoElement[1];        
         output[0] = text;        
@@ -53,7 +50,25 @@ public class AlgoToText extends AlgoElement {
       
     protected final void compute() {
     	
-    	char ss = (char)a.getDouble();
-    	text.setTextString(ss+"");
+    	int size = list.size();
+    	
+    	if (size == 0)
+    	{
+    		text.setTextString("");
+    		return;
+    	}
+    	
+    	String s="";
+    	
+    	for (int i=0 ; i<size ; i++)
+    	{ 	
+	    	GeoElement geo = list.get(i);
+	    	
+	    	if (geo.isGeoNumeric())
+	    	{   	
+	    		s += (char)((GeoNumeric)geo).getDouble();
+	    	}
+    	}
+    	text.setTextString(s);
     }
 }

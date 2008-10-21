@@ -13,13 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-public class AlgoToNumbers extends AlgoElement {
+public class AlgoTextToUnicode extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	protected GeoText text;  // input
     protected GeoList list;     // output           
         
-    protected AlgoToNumbers(Construction cons, String label, GeoText text) {       
+    protected AlgoTextToUnicode(Construction cons, String label, GeoText text) {       
 	  super(cons); 
       this.text = text;
 
@@ -32,7 +32,7 @@ public class AlgoToNumbers extends AlgoElement {
     }   
   
     protected String getClassName() {
-        return "AlgoToNumbers";
+        return "AlgoTextToUnicode";
     }
     
     // for AlgoElement

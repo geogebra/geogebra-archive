@@ -258,9 +258,10 @@ public class CommandDispatcher {
     	//cmdTable.put("EvalYacas", new CmdEvalYacas(kernel));    
     	//cmdTable.put("Eval", new CmdEval(kernel));    
     	
-    	cmdTable.put("ToNumber", new CmdToNumber(kernel));    	
-    	cmdTable.put("ToNumbers", new CmdToNumbers(kernel));    	
-    	cmdTable.put("ToText", new CmdToText(kernel));    
+    	cmdTable.put("LetterToUnicode", new CmdLetterToUnicode(kernel));    	
+    	cmdTable.put("TextToUnicode", new CmdTextToUnicode(kernel));    	
+    	cmdTable.put("UnicodeToText", new CmdUnicodeToText(kernel));    
+    	cmdTable.put("UnicodeToLetter", new CmdUnicodeToLetter(kernel));    
     	
     	cmdTable.put("BarChart", new CmdBarChart(kernel));    	
     	cmdTable.put("BoxPlot", new CmdBoxPlot(kernel));    	

@@ -12,53 +12,48 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.NumberValue;
 
-public class AlgoToNumber extends AlgoElement {
+
+public class AlgoUnicodeToLetter extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	protected GeoText text;  // input
-    protected GeoNumeric num;     // output           
+	protected NumberValue a;  // input
+    protected GeoText text;     // output           
         
-    protected AlgoToNumber(Construction cons, String label, GeoText text) {       
+    protected AlgoUnicodeToLetter(Construction cons, String label, NumberValue a) {       
 	  super(cons); 
-      this.text = text;
+      this.a = a;
 
-      num = new GeoNumeric(cons); 
+      text = new GeoText(cons); 
       setInputOutput(); // for AlgoElement
       
+      // compute angle
       compute();     
           
-      num.setLabel(label);
+      text.setLabel(label);
     }   
   
     protected String getClassName() {
-        return "AlgoToNumber";
+        return "AlgoUnicodeToLetter";
     }
     
     // for AlgoElement
     protected void setInputOutput() {
         input =  new GeoElement[1];
-        input[0] = text;
-
+        input[0] = a.toGeoElement();
         
         output = new GeoElement[1];        
-        output[0] = num;        
+        output[0] = text;        
         setDependencies(); // done by AlgoElement
     }    
     
-    protected GeoNumeric getResult() { return num; }        
+    protected GeoText getResult() { return text; }        
 
-    protected void compute()
-    {
-      String t = text.getTextString();
-      if (t.length() != 1)
-      {
-    	  num.setUndefined();
-      }
-      else
-      {
-    	  num.setValue(t.charAt(0));
-      }
-
+      
+    protected final void compute() {
+    	
+    	char ss = (char)a.getDouble();
+    	text.setTextString(ss+"");
     }
 }
