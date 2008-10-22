@@ -4,6 +4,7 @@ import geogebra.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -176,5 +177,11 @@ public class CASTableCell extends JPanel {
 	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
 		this.outputFieldVisiable = outputFieldVisiable;
 	}
+	final public void setFont(Font ft) {
+		  super.setFont(ft);
+		  
+		  inputPanel.setFont(ft);
+		  outputPanel.setFont(ft);
+		 }
 
 }
