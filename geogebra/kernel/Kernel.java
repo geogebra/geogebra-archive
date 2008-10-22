@@ -1953,6 +1953,26 @@ public class Kernel {
 	 * BarChart	
 	 */
 	final public GeoNumeric BarChart(String label, 
+			GeoList list1, GeoList list2) {
+		AlgoBarChart algo = new AlgoBarChart(cons, label, list1, list2);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
+	 * BarChart	
+	 */
+	final public GeoNumeric BarChart(String label, 
+			GeoList list, GeoNumeric a) {
+		AlgoBarChart algo = new AlgoBarChart(cons, label, list, a);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
+	/** 
+	 * BarChart	
+	 */
+	final public GeoNumeric BarChart(String label, 
 					NumberValue a, NumberValue b, GeoElement expression, GeoNumeric localVar, 
 					NumberValue from, NumberValue to, NumberValue step) {
 		

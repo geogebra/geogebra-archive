@@ -3424,20 +3424,42 @@ final public    GeoElement[] process(Command c) throws MyError {
     GeoElement[] arg;
 
     switch (n) {
-    case 3 :
+    case 2 :
         arg = resArgs(c);
-        if ((ok[0] = (arg[0] .isNumberValue()))
-            && (ok[1] = (arg[1] .isNumberValue()))
-            && (ok[2] = (arg[2] .isGeoList()))) {
+        if ((ok[0] = (arg[0] .isGeoList()))
+            && (ok[1] = (arg[1] .isGeoNumeric()))) {
             GeoElement[] ret =
                 {
                      kernel.BarChart(
                         c.getLabel(),
-                        (NumberValue) arg[0],
-                        (NumberValue) arg[1],
-                        (GeoList)arg[2])};
+                        (GeoList)arg[0],
+                        (GeoNumeric)arg[1])};
+            return ret;
+        } else if ((ok[0] = (arg[0] .isGeoList()))
+            && (ok[1] = (arg[1] .isGeoList()))) {
+            GeoElement[] ret =
+                {
+                     kernel.BarChart(
+                        c.getLabel(),
+                        (GeoList)arg[0],
+                        (GeoList)arg[1])};
             return ret;
         } else
+			throw argErr(app, c.getName(), null);
+    case 3 :
+        arg = resArgs(c);
+        if ((ok[0] = (arg[0] .isNumberValue()))
+                && (ok[1] = (arg[1] .isNumberValue()))
+                && (ok[2] = (arg[2] .isGeoList()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.BarChart(
+                            c.getLabel(),
+                            (NumberValue) arg[0],
+                            (NumberValue) arg[1],
+                            (GeoList)arg[2])};
+                return ret;
+            } else
 			throw argErr(app, c.getName(), null);
     case 6 :
         // create local variable at position 3 and resolve arguments

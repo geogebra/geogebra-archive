@@ -22,10 +22,20 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 	private static final long serialVersionUID = 1L;
 
 	public AlgoBarChart(Construction cons, String label,
-								   NumberValue a, NumberValue b, GeoList list1) {
+			   NumberValue a, NumberValue b, GeoList list1) {
 		super(cons, label, a, b, list1);		
 	}
-	
+
+	public AlgoBarChart(Construction cons, String label,
+			GeoList list1, GeoNumeric a) {
+		super(cons, label, list1, a);		
+	}
+
+	public AlgoBarChart(Construction cons, String label,
+			GeoList list1, GeoList list2) {
+		super(cons, label, list1, list2, true); // true = dummy		
+	}
+
 	protected String getClassName() {
 		return "AlgoBarChart";
 	}
