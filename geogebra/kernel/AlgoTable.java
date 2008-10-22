@@ -107,7 +107,7 @@ public class AlgoTable extends AlgoElement {
     	
     	
     	sb.setLength(0);
-    	sb.append("\\begin{tabular}{");
+    	sb.append("$\\begin{tabular}{");
     	
     	
     	if (alignment == VERTICAL) {
@@ -142,7 +142,7 @@ public class AlgoTable extends AlgoElement {
 		
     	}
     	
-    	sb.append("\\end{tabular}");
+    	sb.append("\\end{tabular}$");
     	
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
