@@ -12,13 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Application;
+
 public class AlgoToFraction extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoNumeric num; //input
     private GeoText text; //output	
     
-    private int frac[] = {0,0};
+    private  double frac[] = {0,0};
  
     private StringBuffer sb = new StringBuffer();
     
@@ -58,19 +60,25 @@ public class AlgoToFraction extends AlgoElement {
 		if (input[0].isDefined()) {
 			frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
 
+			
+
+			kernel.setTemporaryPrintDecimals(15); // make sure whole numbers are printed nicely (ie not in standard form 1.343E10)
+	    	
 			if (frac[1] == 1) { // integer
-		    	text.setTextString(frac[0]+"");				
+		    	text.setTextString(kernel.format(frac[0]));				
 			} else {
 				sb.setLength(0);
 		    	sb.append("$\\frac{");
-		    	sb.append(frac[0]+"");
+		    	sb.append(kernel.format(frac[0]));
 		    	sb.append("}{");
-		    	sb.append(frac[1]+"");
+		    	sb.append(kernel.format(frac[1]));
 		    	sb.append("}$");
 		    	
 		    	text.setTextString(sb.toString());
 			}
 	    	text.setLaTeX(true,false);
+	    	
+	    	kernel.restorePrintAccuracy();
 		
 		} else
 			text.setUndefined();
@@ -85,7 +93,7 @@ public class AlgoToFraction extends AlgoElement {
      * Santa Monica, CA 90405
      * http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
      */
-	private int[] DecimalToFraction(double Decimal, double AccuracyFactor) {
+	private double[] DecimalToFraction(double Decimal, double AccuracyFactor) {
 	double FractionNumerator, FractionDenominator;
 	double DecimalSign;
 	double Z;
@@ -93,7 +101,7 @@ public class AlgoToFraction extends AlgoElement {
 	double ScratchValue;
 	
 	
-	int ret[] = {0,0};
+	double ret[] = {0,0};
 	if (Decimal == Double.NaN) return ret; // return 0/0 
 	
 	if (Decimal == Double.POSITIVE_INFINITY) {
@@ -115,24 +123,24 @@ public class AlgoToFraction extends AlgoElement {
 		FractionNumerator = Decimal * DecimalSign;
 		FractionDenominator = 1.0;
 		
-		ret[0] = (int)FractionNumerator;
-		ret[1] = (int)FractionDenominator;
+		ret[0] = FractionNumerator;
+		ret[1] = FractionDenominator;
 		return ret;
 	}
 	if (Decimal < 1.0E-19) { // X = 0 already taken care of ×
 		FractionNumerator = DecimalSign;
 		FractionDenominator = 9999999999999999999.0;
 		
-		ret[0] = (int)FractionNumerator;
-		ret[1] = (int)FractionDenominator;
+		ret[0] = FractionNumerator;
+		ret[1] = FractionDenominator;
 		return ret;
 	}
 	if (Decimal > 1.0E19) {
 		FractionNumerator = 9999999999999999999.0 * DecimalSign;
 		FractionDenominator = 1.0;
 		
-		ret[0] = (int)FractionNumerator;
-		ret[1] = (int)FractionDenominator;
+		ret[0] = FractionNumerator;
+		ret[1] = FractionDenominator;
 		return ret;
 	}
 	
@@ -148,8 +156,8 @@ public class AlgoToFraction extends AlgoElement {
 	} while ( Math.abs((Decimal - (FractionNumerator /FractionDenominator))) > AccuracyFactor && Z != Math.floor(Z));
 	FractionNumerator = DecimalSign*FractionNumerator;
 	
-	ret[0] = (int)FractionNumerator;
-	ret[1] = (int)FractionDenominator;
+	ret[0] = FractionNumerator;
+	ret[1] = FractionDenominator;
 	return ret;
 	}
 
