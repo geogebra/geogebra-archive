@@ -7,8 +7,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
-import geogebra3D.euclidian3D.GL.GLDisplay;
-import geogebra3D.euclidian3D.GL.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -26,7 +24,6 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
 
-import javax.media.j3d.GraphicsContext3D;
 import javax.swing.JPanel;
 
 import javax.media.opengl.GLCanvas;
@@ -102,17 +99,14 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		kernel3D.setConstruction(kernel.getConstruction());
 		
 		//TODO replace canvas3D with GLDisplay
-		EuclidianGLDisplay GLDisplay = new EuclidianGLDisplay((int) (left-right), (int) (top-bottom));
 		renderer = new EuclidianRenderer3D(this);
 		renderer.setDrawList3D(drawList3D);
 		
 		
-		
-        GLDisplay.addRenderer(renderer);
-        GLDisplay.start();
 
-        GLCanvas canvas = GLDisplay.glCanvas;
-        renderer.canvas=canvas;
+ 
+        GLCanvas canvas = renderer.canvas;
+
         
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, canvas);
@@ -322,8 +316,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		updateMatrix();
 		setWaitForUpdate(repaint);
-		
-		
+		//update();
 	}
 
 	
@@ -357,14 +350,26 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	
+
 	
 	public void update(){
 		//waitForUpdate = true;
+		
+		
 		if (waitForUpdate){
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
 			waitForUpdate = false;
 		}
+		
+		
+		//drawList3D.updateAll();
+		//renderer.canvas.repaint();
+		
+		
+		
 	}
+	
+	
 	
 	
 	public void setWaitForUpdate(boolean v){
@@ -374,6 +379,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	public void paint(Graphics g){
 		setWaitForUpdate(true);
 	}
+	
+	
 	
 	
 	//////////////////////////////////////

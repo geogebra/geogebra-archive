@@ -8,11 +8,13 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
 import com.sun.opengl.util.BufferUtil;
+import com.sun.opengl.util.FPSAnimator;
 
 
 import geogebra.Application;
@@ -24,8 +26,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// openGL variables
 	private GLU glu= new GLU();
 	public GLCanvas canvas;
+	private GLCapabilities caps;
 	private GL gl;
 	protected GLUquadric quadric;
+	private FPSAnimator animator;
 	
 	// other
 	private DrawList3D drawList3D;
@@ -39,7 +43,23 @@ public class EuclidianRenderer3D implements GLEventListener {
 	public EuclidianRenderer3D(EuclidianView3D view){
 		super();
 		
-		
+	    caps = new GLCapabilities();
+	    
+	    //anti-aliasing
+    	caps.setSampleBuffers(true);
+        caps.setNumSamples(4);    	
+        
+        //avoid flickering
+    	caps.setDoubleBuffered(true);	    
+    	
+    	//canvas
+	    canvas = new GLCanvas(caps);
+	    canvas.addGLEventListener(this);
+	    
+	    //animator : 60 frames per second
+	    animator = new FPSAnimator( canvas, 60 );
+        animator.setRunAsFastAsPossible(true);	  
+        animator.start();
 		
 		this.view=view;
 	}
@@ -287,10 +307,12 @@ public class EuclidianRenderer3D implements GLEventListener {
 			gl.glLoadName(loop);
 			d.drawForPicking(this);	
 			geos[loop] = (GeoElement3D) d.getGeoElement();
+			
+			
 			geos[loop].setWasHighlighted();
 			geos[loop].setWillBeHighlighted(false);
-			//drawHits[loop]=d;
-			//Application.debug("--"+gl.glRenderMode(GL.GL_RENDER));
+			
+
 		}
         
         
@@ -299,6 +321,9 @@ public class EuclidianRenderer3D implements GLEventListener {
 
         //Application.debug("hits("+mouseX+","+mouseY+") = "+hits);
         
+        
+        //hits are stored in EuclidianView3D
+        view.hits.clear();
         
         int[] buffer = new int[BUFSIZE];
         selectBuffer.get(buffer);
@@ -317,14 +342,16 @@ public class EuclidianRenderer3D implements GLEventListener {
           for (int j = 0; j < names; j++){ 
         	//Application.debug("the name is " + buffer[ptr]+" -- drawHits["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
         	geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
+        	view.hits.add(geos[buffer[ptr]]);
         	ptr++;
           }
           //System.out.println();
         }
         
-        //update highlighting
+        //update highlighting        
         for (int i=1;i<=loop;i++)
         	geos[i].updateHighlighted(true);
+        
     	
         waitForPick = false;
     }
