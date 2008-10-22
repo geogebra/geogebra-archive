@@ -638,4 +638,8 @@ public class CASView extends JComponent implements CasManager {
 		return btSub;
 	}
 
+	public Application getApp() {
+		return app;
+	}
+
 }

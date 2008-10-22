@@ -13,7 +13,7 @@ public class CASTableCellController implements KeyListener {
 
 	private CASView view;
 
-	public final String yacasErrorMsg = "Sorry: unacceptable Input!";
+	public final String yacasErrorMsg = "CAS.GeneralErrorMessage";
 
 	public CASTableCellController(CASTableCell cell, CASView view) {
 		this.curCell = cell;
@@ -139,7 +139,7 @@ public class CASTableCellController implements KeyListener {
 				// Error message check
 				if (inputText.compareTo("") != 0
 						&& evaluation.compareTo("") == 0)
-					evaluation = this.yacasErrorMsg;
+					evaluation = view.getApp().getError(this.yacasErrorMsg);
 
 				// Set the value into the table
 				saveInput(curValue);
