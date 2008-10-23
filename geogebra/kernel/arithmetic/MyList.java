@@ -19,8 +19,8 @@
 package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.Kernel;
+import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.HashSet;

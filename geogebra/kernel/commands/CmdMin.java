@@ -1,11 +1,11 @@
 package geogebra.kernel.commands;
 
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.MyError;
 
 /*
  * Min[ <Number>, <Number> ]

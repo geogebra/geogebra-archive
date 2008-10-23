@@ -169,7 +169,7 @@ ImageProducer getLocalImageSource(String resourceName) {
     // Since resourceName doesn't start with a "/", resourceName is treated
     // as the relative path to the image file from the directory where
     // SymbolLoader.class is.
-    InputStream imageStream = getClass().getResourceAsStream(resourceName);
+    InputStream imageStream = SymbolLoader.class.getResourceAsStream(resourceName);
     int numBytes = imageStream.available();//Application.debug(numBytes);
     byte[] imageBytes = new byte[numBytes];
 	//Application.debug(numBytes);

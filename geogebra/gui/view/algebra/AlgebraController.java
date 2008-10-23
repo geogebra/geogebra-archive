@@ -19,8 +19,8 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;

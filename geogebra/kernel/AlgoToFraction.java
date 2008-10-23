@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 
 public class AlgoToFraction extends AlgoElement {
 

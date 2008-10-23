@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!-- README: Building GeoGebra 
 
@@ -32,7 +32,7 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Sep 27, 2008
+   @date Oct 23, 2008
 -->
 <project default="geogebra">
 	
@@ -45,16 +45,16 @@ office@geogebra.org
     			
 	<!-- main target -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, obfuscate-sign-pack">	  
+		depends="clean, ggb-jar-files, obfuscate-sign-pack, finish">	  
 	</target>
 	
 	<!-- main target -->
 	<target name="geogebra-test" 
-		depends="clean, ggb-jar-files">	  
+		depends="clean, ggb-jar-files, sign-pack-only, finish">	  
 	</target>
 	
 	<target name="stripComments">
-		   <copy todir="${propertiestemp.dir}/geogebra/properties">
+		   <copy todir="${propertiestemp.dir}/geogebra/properties" encoding="ISO-8859-1">
 		      <fileset dir="${propertiessrc.dir}">
 	            <include name="*" />
 		      </fileset>
@@ -70,12 +70,12 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar">		
 	</target>
 	
-	<manifest file="../manifest.mf">
-		<!-- 	<attribute name="Class-Path" value="geogebra_properties.jar geogebra_export.jar geogebra_cas.jar"/> 	-->	    
-		<attribute name="Main-Class" value="geogebra.MyAppSplash"/>
+	<manifest file="../manifest.mf">	    
+		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
+		<attribute name="SplashScreen-Image" value="geogebra/splash.png"/>	
 	</manifest>	
 	
 	<target name="clean">
@@ -83,27 +83,32 @@ office@geogebra.org
 		<mkdir dir="${propertiestemp.dir}"/>
 		<delete>
 		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/*.jar.pack.gz"/>
-		</delete>
-		<delete>
-		    <fileset dir="${propertiestemp.dir}" includes="**/*"/>
-		</delete>
+		</delete>		
 	</target>
-	    
+	
+	<target name="finish">		
+		<delete dir="${propertiestemp.dir}"/>		   
+	</target>
+	
+	<!-- geogebra.jar loads the geogebra_main.jar file and starts up the application/applet  -->
 	<target name="ggb-jar" depends="clean" description="create unsigned geogebra.jar">		
-
 		<jar jarfile="${build.dir}/geogebra.jar"
 			manifest="../manifest.mf"
 			basedir="${src.dir}"		   
-			includes="**/*.class, 
-					**/*.png, 
-					**/*.gif,					
-					**/*.jpg, 
-			geogebra/gui/menubar/_license.txt,
-					geogebra/kernel/**/algo2command.properties,	
-					geogebra/kernel/**/algo2command4i2g.properties"			
-			excludes="**/*.java,
-					*.jar,			
-					geogebra/properties/**, 
+			includes="geogebra/*"			
+			excludes="**/*.java" 		
+		/>
+	</target>
+	    
+	<!-- geogebra_main.jar includes all basic classes to run the application and applet  -->
+	<target name="ggb-main-jar" depends="clean" description="create unsigned geogebra_main.jar">		
+		<jar jarfile="${build.dir}/geogebra_main.jar"		
+			basedir="${src.dir}"		   
+			includes="**/*.class, 					
+					  **/algo2command.properties,	
+					  **/algo2command4i2g.properties"			
+			excludes="geogebra/*,
+			        geogebra/properties/**, 
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
@@ -114,14 +119,9 @@ office@geogebra.org
 					geogebra3D/**,					
 					org/freehep/**, 					  
 				    tutor/**,
+					3D/**,			
 					meta-inf/**"		
 		/>
-		
-		
-		
-		<!-- include: 
-						geogebra/gui/**/_license.txt,
-						 geogebra/cas/view/** -->
 	</target>
 	
 	<target name="ggb-export-jar" depends="clean" description="create unsigned geogebra_export.jar">

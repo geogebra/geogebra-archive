@@ -13,8 +13,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.MyError;
 import geogebra.util.Util;
 
 import java.util.ArrayList;

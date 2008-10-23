@@ -13,12 +13,12 @@ the Free Software Foundation.
 package geogebra.kernel.commands;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.main.MyError;
 
 import java.util.HashMap;
 import java.util.Iterator;

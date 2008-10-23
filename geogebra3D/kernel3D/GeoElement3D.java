@@ -18,10 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement; 
-//TODO in GeoElement, change private to protected
+import geogebra.kernel.GeoElement;
 
 
 /**

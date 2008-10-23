@@ -29,10 +29,16 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
-import geogebra.modules.JarManager;
+import geogebra.main.AppletImplementation;
+import geogebra.main.CasManager;
+import geogebra.main.GeoElementSelectionListener;
+import geogebra.main.GeoGebraPreferences;
+import geogebra.main.GlassPaneListener;
+import geogebra.main.GuiManager;
+import geogebra.main.MyError;
+import geogebra.main.MyResourceBundle;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
-import geogebra.util.CopyToFile;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
@@ -82,7 +88,6 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -97,24 +102,11 @@ import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements KeyEventDispatcher {
 
-	// version
-	public static final String buildDate = "October 22, 2008";
-	public static final String versionString = "3.1.70.0";
 	public static final String XML_FILE_FORMAT = "3.02";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
 	// disabled parts
-	public static final boolean DISABLE_I2G = true;
-
-	// GeoGebra jar files
-	public static final int JAR_FILE_GEOGEBRA = 0;
-	public static final int JAR_FILE_GEOGEBRA_GUI = 1;
-	public static final int JAR_FILE_GEOGEBRA_CAS = 2;
-	public static final int JAR_FILE_GEOGEBRA_EXPORT = 3;
-	public static final int JAR_FILE_GEOGEBRA_PROPERTIES = 4;
-	public static final String[] JAR_FILES = { "geogebra.jar",
-			"geogebra_gui.jar", "geogebra_cas.jar", "geogebra_export.jar",
-			"geogebra_properties.jar" };
+	public static final boolean DISABLE_I2G = true;	
 
 	// license file
 	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";
@@ -222,21 +214,21 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final double PAGE_MARGIN_X = 1.8 * 72 / 2.54;
 	public static final double PAGE_MARGIN_Y = 1.8 * 72 / 2.54;
 
-	private static final String RB_MENU = "properties/menu";
-	private static final String RB_COMMAND = "properties/command";
-	private static final String RB_ERROR = "properties/error";
-	private static final String RB_PLAIN = "properties/plain";
+	private static final String RB_MENU = "/geogebra/properties/menu";
+	private static final String RB_COMMAND = "/geogebra/properties/command";
+	private static final String RB_ERROR = "/geogebra/properties/error";
+	private static final String RB_PLAIN = "/geogebra/properties/plain";
 
-	private static final String RB_SETTINGS = "export/settings";
-	private static final String RB_ALGO2COMMAND = "kernel/algo2command";
+	private static final String RB_SETTINGS = "/geogebra/export/settings";
+	private static final String RB_ALGO2COMMAND = "/geogebra/kernel/algo2command";
 	// Added for Intergeo File Format (Yves Kreis) -->
-	private static final String RB_ALGO2INTERGEO = "kernel/algo2intergeo";
+	private static final String RB_ALGO2INTERGEO = "/geogebra/kernel/algo2intergeo";
 	// <-- Added for Intergeo File Format (Yves Kreis)
 
 	// private static Color COLOR_STATUS_BACKGROUND = new Color(240, 240, 240);
 
-	private GeoGebra frame;
-	private GeoGebraAppletBase applet;
+	private JFrame frame;
+	private AppletImplementation appletImpl;
 
 	protected GuiManager appGuiManager;
 	private CasManager casView;
@@ -244,7 +236,6 @@ public abstract class Application implements KeyEventDispatcher {
 	private Component mainComp;
 	private boolean isApplet = false;
 	private boolean showResetIcon = false;
-	private URL codebase;
 
 	protected Kernel kernel;
 	private MyXMLio myXMLio;
@@ -311,17 +302,16 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	public String IPAddress = "", hostName = "";
 
-	public Application(String[] args, GeoGebra frame, boolean undoActive) {
+	public Application(String[] args, JFrame frame, boolean undoActive) {
 		this(args, frame, null, undoActive);
 	}
 
-	public Application(String[] args, GeoGebraAppletBase applet,
-			boolean undoActive) {
-		this(args, null, applet, undoActive);
+	public Application(String[] args, AppletImplementation appletImpl, boolean undoActive) {
+		this(args, null, appletImpl, undoActive);
 	}
 
-	protected Application(String[] args, GeoGebra frame,
-			GeoGebraAppletBase applet, boolean undoActive) {
+	protected Application(String[] args, JFrame frame,
+			AppletImplementation appletImpl, boolean undoActive) {
 		/*
 		 * if (args != null) { for (int i=0; i < args.length; i++) {
 		 * Application.debug("argument " + i + ": " + args[i]);
@@ -332,7 +322,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// Michael Borcherds 2008-05-05
 		// added to help debug applets
-		Application.debug("GeoGebra " + versionString + " " + buildDate
+		Application.debug("GeoGebra " + JarManager.GEOGEBRA_VERSION_STRING + " " +  JarManager.GEOGEBRA_BUILD_DATE
 				+ " Java " + System.getProperty("java.version"));
 
 		
@@ -350,28 +340,20 @@ public abstract class Application implements KeyEventDispatcher {
 
 		
 		
-		isApplet = applet != null;
+		isApplet = appletImpl != null;
 		if (frame != null) {
 			mainComp = frame;
 		} else if (isApplet) {
-			mainComp = applet;
-			setApplet(applet);
+			mainComp = appletImpl.getJApplet();
+			setApplet(appletImpl);
 		}
 
-		// init code base URL
-		initCodeBase();
-
 		// initialize jar manager for dynamic jar loading
-		jarmanager = JarManager.getSingleton(this);
+		jarmanager = JarManager.getSingleton(isApplet);
 
 		// applet/command line options like file loading on startup
 		handleOptionArgs(args); // note: the locale is set here too
 		imageManager = new ImageManager(mainComp);
-
-		if (!isApplet) {
-			// frame
-			setFrame(frame);
-		}
 
 		// init kernel
 		kernel = new Kernel(this);
@@ -385,6 +367,11 @@ public abstract class Application implements KeyEventDispatcher {
 		euclidianView = new EuclidianView(euclidianController, showAxes,
 				showGrid);
 		euclidianView.setAntialiasing(antialiasing);
+
+		// set frame
+		if (!isApplet) {
+			setFrame(frame);
+		}
 
 		// load file on startup and set fonts
 		// INITING: to avoid multiple calls of setLabels() and
@@ -480,21 +467,24 @@ public abstract class Application implements KeyEventDispatcher {
 				Application.debug("background: properties dialog inited");
 
 				// init file chooser
-				getGuiManager().initFileChooser();
-				// TODO: remove
-				Application.debug("background: file chooser inited");								
-
-				// download all jar files dynamically in the background
-				for (int i = 0; i < JAR_FILES.length; i++) {
-					jarmanager.downloadFile(JAR_FILES[i], jarmanager
-							.getLocalJarDir());
+				try {
+					getGuiManager().initFileChooser();
+					// TODO: remove
+					Application.debug("background: file chooser inited");					
+				} catch (Exception e) {
+					System.err.println("couldn't initialize file chooser: " + e.getMessage());
 				}
-						
+				
 				// init CAS
 				kernel.initCAS();
 				// TODO: remove
 				Application.debug("background: CAS inited");
-				
+
+				// download all jar files dynamically in the background
+				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {
+					jarmanager.downloadFile(JarManager.JAR_FILES[i], jarmanager
+							.getLocalJarDir());
+				}														
 			}
 		};
 		runner.start();
@@ -542,7 +532,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (frame != null) {
 			updateContentPane(false);
-			frame.updateSize();
+			getGuiManager().updateFrameSize();
 			updateComponentTreeUI();
 		} else {
 			updateContentPane();
@@ -556,7 +546,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		Container cp;
 		if (frame == null)
-			cp = applet.getContentPane();
+			cp = appletImpl.getJApplet().getContentPane();
 		else
 			cp = frame.getContentPane();
 
@@ -578,7 +568,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	protected void updateComponentTreeUI() {
 		if (frame == null)
-			SwingUtilities.updateComponentTreeUI(applet);
+			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 		else
 			SwingUtilities.updateComponentTreeUI(frame);
 	}
@@ -810,10 +800,10 @@ public abstract class Application implements KeyEventDispatcher {
 		return kernel;
 	}
 
-	public void setApplet(GeoGebraAppletBase applet) {
+	public void setApplet(AppletImplementation appletImpl) {
 		isApplet = true;
-		this.applet = applet;
-		mainComp = applet;
+		this.appletImpl = appletImpl;
+		mainComp = appletImpl.getJApplet();
 	}
 
 	public void setShowResetIcon(boolean flag) {
@@ -828,8 +818,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void reset() {
-		if (applet != null) {
-			applet.resetNoThread();
+		if (appletImpl != null) {
+			appletImpl.resetNoThread();
 		} else if (currentFile != null) {
 			getGuiManager().loadFile(currentFile, false);
 		} else
@@ -841,7 +831,7 @@ public abstract class Application implements KeyEventDispatcher {
 		kernel.notifyRepaint();
 	}
 
-	public void setFrame(GeoGebra frame) {
+	public void setFrame(JFrame frame) {
 		isApplet = false;
 		if (frame != this.frame) {
 			this.frame = frame;
@@ -863,12 +853,12 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean isApplet() {
 		return isApplet;
 	}
-
-	public GeoGebraAppletBase getApplet() {
-		return applet;
-	}
-
-	public GeoGebra getFrame() {
+	
+	public JFrame getFrame() {
+		if (frame == null) {
+			frame = getGuiManager().createFrame();	
+		}
+		
 		return frame;
 	}
 
@@ -1316,19 +1306,19 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 
 	final synchronized public boolean loadPropertiesJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_PROPERTIES);
+		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_PROPERTIES);
 	}
 
 	final synchronized public boolean loadExportJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_EXPORT);
+		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_EXPORT);
 	}
 
 	final synchronized public boolean loadCASJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_CAS);
+		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_CAS);
 	}
 
 	final synchronized public boolean loadGUIJar() {
-		return jarmanager.addJarToClassPath(JAR_FILE_GEOGEBRA_GUI);
+		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_GUI);
 	}
 
 	final synchronized public boolean loadLaTeXJar() {
@@ -1618,20 +1608,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (frame == null)
 			return;
 
-		StringBuffer sb = new StringBuffer();
-		sb.append("GeoGebra");
-		if (currentFile != null) {
-			sb.append(" - ");
-			sb.append(currentFile.getName());
-		} else {
-			if (GeoGebra.getInstanceCount() > 1) {
-				int nr = frame.getInstanceNumber();
-				sb.append(" (");
-				sb.append(nr + 1);
-				sb.append(")");
-			}
-		}
-		frame.setTitle(sb.toString());
+		getGuiManager().updateFrameTitle();
 	}
 
 	public void setFontSize(int points) {
@@ -1643,8 +1620,8 @@ public abstract class Application implements KeyEventDispatcher {
 		resetFonts();
 
 		if (!INITING) {
-			if (applet != null)
-				SwingUtilities.updateComponentTreeUI(applet);
+			if (appletImpl != null)
+				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 			if (frame != null)
 				SwingUtilities.updateComponentTreeUI(frame);
 		}
@@ -2101,8 +2078,8 @@ public abstract class Application implements KeyEventDispatcher {
 		getGuiManager().updateToolbar();
 
 		if (!INITING) {
-			if (applet != null)
-				SwingUtilities.updateComponentTreeUI(applet);
+			if (appletImpl != null)
+				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 			if (frame != null)
 				SwingUtilities.updateComponentTreeUI(frame);
 		}
@@ -2201,10 +2178,10 @@ public abstract class Application implements KeyEventDispatcher {
 		if (glassPaneListener != null)
 			return;
 
-		if (isSaved() || applet != null || saveCurrentFile()) {
-			if (applet != null) {
-				setApplet(applet);
-				applet.showApplet();
+		if (isSaved() || appletImpl != null || saveCurrentFile()) {
+			if (appletImpl != null) {
+				setApplet(appletImpl);
+				appletImpl.showApplet();
 			} else {
 				frame.setVisible(false);
 			}
@@ -2216,15 +2193,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (glassPaneListener != null)
 			return;
 
-		ArrayList insts = GeoGebra.getInstances();
-		GeoGebra[] instsCopy = new GeoGebra[insts.size()];
-		for (int i = 0; i < instsCopy.length; i++) {
-			instsCopy[i] = (GeoGebra) insts.get(i);
-		}
-
-		for (int i = 0; i < instsCopy.length; i++) {
-			instsCopy[i].getApplication().exit();
-		}
+		getGuiManager().exitAll();
 	}
 
 	// returns true for YES or NO and false for CANCEL
@@ -2557,33 +2526,13 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Returns the CodeBase URL as String.
+	 * Returns the CodeBase URL.
 	 */
 	public URL getCodeBase() {
-		return codebase;
+		return jarmanager.getCodeBase();
 	}
 
-	private void initCodeBase() {
-		try {
-			// these three lines removed Michael Borcherds 2008-10-07
-			// applet.getCodeBase() returns where the html file is, not the JAR
-			// (needed for JarManager)
-			// if (applet != null) {
-			// codebase = applet.getCodeBase();
-			// } else {
-			String path = Application.class.getProtectionDomain()
-					.getCodeSource().getLocation().toExternalForm();
-			if (path.endsWith(JAR_FILES[0])) // remove "geogebra.jar" from
-				// end
-				path = path.substring(0, path.length() - JAR_FILES[0].length());
-			codebase = new URL(path);
-			// }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Application.debug("codebase: " + codebase);
-	}
+	
 
 	/* selection handling */
 
@@ -2760,8 +2709,8 @@ public abstract class Application implements KeyEventDispatcher {
 				isSaved = false;
 			}
 
-			if (applet != null)
-				SwingUtilities.updateComponentTreeUI(applet);
+			if (appletImpl != null)
+				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 
 		}
 	}
@@ -2806,19 +2755,19 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public Component getGlassPane() {
-		if (mainComp == applet)
-			return applet.getGlassPane();
-		else if (mainComp == frame)
+		if (mainComp == frame)
 			return frame.getGlassPane();
+		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			return appletImpl.getJApplet().getGlassPane();		
 		else
 			return null;
 	}
 
 	public Container getContentPane() {
-		if (mainComp == applet)
-			return applet.getContentPane();
-		else if (mainComp == frame)
-			return frame.getContentPane();
+		if (mainComp == frame)
+			return frame.getContentPane();		
+		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			return appletImpl.getJApplet().getContentPane();
 		else
 			return null;
 	}
@@ -2873,30 +2822,10 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Copies all jar files of this application to the given directory
-	 * 
-	 * @param destDir
+	 * Copies all jar files to the given destination directory.
 	 */
 	public synchronized void copyJarsTo(String destDir) throws Exception {
-		// try to copy from temp dir
-		File localJarDir = jarmanager.getLocalJarDir();
-
-		// Application.debug("temp jar file: " + tempJarFile);
-		// Application.debug(" exists " + tempJarFile.exists());
-
-		// copy jar files to tempDir
-		for (int i = 0; i < JAR_FILES.length; i++) {
-			File srcFile = new File(localJarDir, JAR_FILES[i]);
-			File destFile = new File(destDir, JAR_FILES[i]);
-
-			// check file and automatically download if missing
-			if (jarmanager.checkJarFile(srcFile)) {
-				CopyToFile.copyFile(srcFile, destFile);
-			}
-		}
-
-		// Application.debug("copied geogebra jar files from " + srcDir + " to "
-		// + destDir);
+		jarmanager.copyAllJarsTo(destDir);
 	}
 
 	public final boolean isErrorDialogsActive() {

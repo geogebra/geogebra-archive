@@ -21,12 +21,12 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.main.MyError;
 
 import java.util.HashSet;
 import java.util.Iterator;

@@ -1,12 +1,9 @@
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.GeoGebraPreferences;
-import geogebra.GuiManager;
-import geogebra.MyError;
-import geogebra.MyFileFilter;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.menubar.Menubar;
@@ -27,6 +24,9 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.GeoGebraPreferences;
+import geogebra.main.GuiManager;
+import geogebra.main.MyError;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -901,7 +901,7 @@ public class DefaultGuiManager implements GuiManager {
     	app.getEuclidianView().reset();
     	
     	// use null component for iconified frame
-    	GeoGebra frame = app.getFrame();
+    	GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
     	Component comp = frame != null && !frame.isIconified() ? frame : null;
 
 
@@ -1059,7 +1059,7 @@ public class DefaultGuiManager implements GuiManager {
 				file = fileChooser.getSelectedFile();
 
 				// Added for Intergeo File Format (Yves Kreis) -->
-				if (fileChooser.getFileFilter() instanceof geogebra.MyFileFilter) {
+				if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
 					fileFilter = (MyFileFilter) fileChooser.getFileFilter();
 					fileExtension = fileFilter.getExtension();
 				} else {
@@ -1195,7 +1195,7 @@ public class DefaultGuiManager implements GuiManager {
 				files = fileChooser.getSelectedFiles();
 			}
 			// Modified for Intergeo File Format (Yves Kreis) -->
-			if (fileChooser.getFileFilter() instanceof geogebra.MyFileFilter) {
+			if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
 				fileFilter = (MyFileFilter) fileChooser.getFileFilter();
 				doOpenFiles(files, true, fileFilter.getExtension());
 			} else {
@@ -1248,7 +1248,7 @@ public class DefaultGuiManager implements GuiManager {
 						loadFile(file, true);
 					} else {
 						// standard GeoGebra file
-						GeoGebra inst = GeoGebra.getInstanceWithFile(file);
+						GeoGebraFrame inst = GeoGebraFrame.getInstanceWithFile(file);
 						if (inst == null) {
 							counter++;
 							if (counter == 1 && allowOpeningInThisInstance) {
@@ -1258,7 +1258,7 @@ public class DefaultGuiManager implements GuiManager {
 								// create new window for file
 								try {
 									String[] args = { file.getCanonicalPath() };
-									GeoGebra wnd = GeoGebra
+									GeoGebraFrame wnd = GeoGebraFrame
 											.createNewWindow(args);
 									wnd.toFront();
 									wnd.requestFocus();
@@ -1470,7 +1470,7 @@ public class DefaultGuiManager implements GuiManager {
 	 */
 	private class FileFilterChangedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (fileChooser.getFileFilter() instanceof geogebra.MyFileFilter) {
+			if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
 				String fileName = null;
 				if (fileChooser.getSelectedFile() != null) {
 					fileName = fileChooser.getSelectedFile().getName();
@@ -1987,6 +1987,45 @@ public class DefaultGuiManager implements GuiManager {
 
 			return consumed;
 		}
-		
 
+		public void updateFrameSize() {
+			((GeoGebraFrame) app.getFrame()).updateSize();
+		}
+		
+		public void updateFrameTitle() {
+			GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("GeoGebra");
+			if (app.getCurrentFile() != null) {
+				sb.append(" - ");
+				sb.append(app.getCurrentFile().getName());
+			} else {
+				if (GeoGebraFrame.getInstanceCount() > 1) {
+					int nr = frame.getInstanceNumber();
+					sb.append(" (");
+					sb.append(nr + 1);
+					sb.append(")");
+				}
+			}
+			frame.setTitle(sb.toString());
+		}
+		
+		public JFrame createFrame() {
+			GeoGebraFrame wnd = new GeoGebraFrame();
+			wnd.setApplication(app);
+			return wnd;
+		}
+		
+		public synchronized void exitAll() {			
+			ArrayList insts = GeoGebraFrame.getInstances();
+			GeoGebraFrame[] instsCopy = new GeoGebraFrame[insts.size()];
+			for (int i = 0; i < instsCopy.length; i++) {
+				instsCopy[i] = (GeoGebraFrame) insts.get(i);
+			}
+
+			for (int i = 0; i < instsCopy.length; i++) {
+				instsCopy[i].getApplication().exit();
+			}
+		}
 }

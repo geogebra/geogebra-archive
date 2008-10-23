@@ -1,4 +1,4 @@
-package geogebra;
+package geogebra.main;
 
 import java.util.LinkedList;
 

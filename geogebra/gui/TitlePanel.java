@@ -13,8 +13,8 @@
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.GeoGebraPreferences;
 import geogebra.kernel.Construction;
+import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

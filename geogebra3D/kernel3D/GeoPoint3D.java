@@ -21,8 +21,10 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.euclidian.EuclidianView;
-
-import geogebra.kernel.*;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
 
 

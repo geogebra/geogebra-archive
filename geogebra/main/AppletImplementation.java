@@ -10,14 +10,11 @@ the Free Software Foundation.
 
 */
 
-package geogebra;
+package geogebra.main;
 
-/*
- * GeoGebraApplet.java
- *
- * Created on 23. January 2003, 22:37
- */
-
+import geogebra.AppletManager;
+import geogebra.Application;
+import geogebra.JavaScriptAPI;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -39,6 +36,7 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -48,12 +46,14 @@ import netscape.javascript.JSObject;
 
 
 /**
- * Applet interface of GeoGebra.
- * @author  Markus Hohenwarter
+ * GeoGebra applet implementation operating on a given JApplet object.
  */
-public abstract class GeoGebraAppletBase extends JApplet {
+public abstract class AppletImplementation implements AppletManager, JavaScriptAPI {
 
 	private static final long serialVersionUID = 1L;
+	
+	private JApplet applet;
+	
 	protected Application app;
 	protected Kernel kernel;
 	private JButton btOpen;
@@ -72,17 +72,23 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	Color bgColor, borderColor;
 	private String fileStr, customToolBar;	
 	public boolean showFrame = true;
-	private GeoGebra wnd;
+	private JFrame wnd;
 	private JSObject browserWindow;
 	//public static URL codeBase=null;
 	//public static URL documentBase=null;
-
-	/** Creates a new instance of GeoGebraApplet */
-	public GeoGebraAppletBase() {}
 	
 	private boolean javascriptLoadFile=false, javascriptReset=false;
 	private String javascriptLoadFileName="";
 	private GgbAPI  ggbApi=null;					//Ulven 29.05.08
+
+	/** Creates a new instance of GeoGebraApplet */
+	public AppletImplementation(JApplet applet) {
+		this.applet = applet;
+	}
+	
+	public JApplet getJApplet() {
+		return applet;
+	}
 
 	public void init() {
 		
@@ -98,70 +104,70 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	
 		// get parameters
 		// filename of construction
-		fileStr = getParameter("filename");
+		fileStr = applet.getParameter("filename");
 		if (fileStr != null && 
 			!( fileStr.startsWith("http") || fileStr.startsWith("file") )) {
-			fileStr = getCodeBase() + fileStr;			
+			fileStr = applet.getCodeBase() + fileStr;			
 		}		
 
 		// type = "button" or parameter is not available 
-		String typeStr = getParameter("type");
+		String typeStr = applet.getParameter("type");
 		showOpenButton = typeStr != null && typeStr.equals("button");
 
 		// showToolBar = "true" or parameter is not available
-		showToolBar = "true".equals(getParameter("showToolBar"));
+		showToolBar = "true".equals(applet.getParameter("showToolBar"));
 		
 		// showToolBar = "true" or parameter is not available
-		showToolBarHelp = showToolBar && "true".equals(getParameter("showToolBarHelp"));
+		showToolBarHelp = showToolBar && "true".equals(applet.getParameter("showToolBarHelp"));
 		
 		// customToolBar = "0 1 2 | 3 4 5 || 7 8 12" to set the visible toolbar modes
-		customToolBar = getParameter("customToolBar");
+		customToolBar = applet.getParameter("customToolBar");
 				
 		// showMenuBar = "true" or parameter is not available
-		showMenuBar = "true".equals(getParameter("showMenuBar"));
+		showMenuBar = "true".equals(applet.getParameter("showMenuBar"));
 		
 		// showSpreadsheet = "true" or parameter is not available
-		//showSpreadsheet = "true".equals(getParameter("showSpreadsheet"));
+		//showSpreadsheet = "true".equals(applet.getParameter("showSpreadsheet"));
 		
 		// showAlgebraView = "true" or parameter is not available
-		//showAlgebraView = "true".equals(getParameter("showAlgebraView"));
+		//showAlgebraView = "true".equals(applet.getParameter("showAlgebraView"));
 		
 		// showResetIcon = "true" or parameter is not available
-		showResetIcon = "true".equals(getParameter("showResetIcon"));
+		showResetIcon = "true".equals(applet.getParameter("showResetIcon"));
 		
 		// showAlgebraInput = "true" or parameter is not available
-		showAlgebraInput = "true".equals(getParameter("showAlgebraInput"));
+		showAlgebraInput = "true".equals(applet.getParameter("showAlgebraInput"));
 
 		// showFrame = "true" or "false"  states whether it is possible
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
-		showFrame = !"false".equals(getParameter("framePossible"));
+		showFrame = !"false".equals(applet.getParameter("framePossible"));
 			
 		// rightClickActive, default is "true"
-		enableRightClick = !"false".equals(getParameter("enableRightClick"));
+		enableRightClick = !"false".equals(applet.getParameter("enableRightClick"));
 		
 		// enableLabelDrags, default is "true"
-		enableLabelDrags = !"false".equals(getParameter("enableLabelDrags"));
+		enableLabelDrags = !"false".equals(applet.getParameter("enableLabelDrags"));
 		
 		// enableShiftDragZoom, default is "true"
-		enableShiftDragZoom = !"false".equals(getParameter("enableShiftDragZoom"));		
+		enableShiftDragZoom = !"false".equals(applet.getParameter("enableShiftDragZoom"));		
 		
 		undoActive = showToolBar || showMenuBar;
 		
 		// set language manually by iso language string
-		String language = getParameter("language");
-		String country = getParameter("country");		
+		String language = applet.getParameter("language");
+		String country = applet.getParameter("country");		
 		if (language != null) {
 			if (country != null)
-				setLocale(new Locale(language, country));
+				applet.setLocale(new Locale(language, country));
 			else
-				setLocale(new Locale(language));
+				applet.setLocale(new Locale(language));
 		}	
 
 		// bgcolor = "#CCFFFF" specifies the background color to be used for
 		// the button panel
 		try {
-			bgColor = Color.decode(getParameter("bgcolor"));
+			bgColor = Color.decode(applet.getParameter("bgcolor"));
 		} catch (Exception e) {
 			bgColor = Color.white;
 		}
@@ -169,7 +175,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		// borderColor = "#CCFFFF" specifies the border color to be used for
 		// the applet panel
 		try {
-			borderColor = Color.decode(getParameter("borderColor"));
+			borderColor = Color.decode(applet.getParameter("borderColor"));
 		} catch (Exception e) {
 			borderColor = Color.gray;
 		}
@@ -228,13 +234,13 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	public void start() {
 		//	for some strange reason this is needed to get the right font size		
 		//showApplet();
-		repaint();
+		applet.repaint();
 		
 		System.gc();
 	}
 
 	public void stop() {
-		repaint();
+		applet.repaint();
 		
 		System.gc();
 	}
@@ -257,15 +263,16 @@ public abstract class GeoGebraAppletBase extends JApplet {
 						+ " "
 						+ app.getPlain("ApplicationName"));
 			btOpen.addActionListener(new ButtonClickListener());
-			getContentPane().setBackground(bgColor);
-			getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
-			getContentPane().add(btOpen);
+			Container cp = applet.getContentPane();
+			cp.setBackground(bgColor);
+			cp.setLayout(new FlowLayout(FlowLayout.CENTER));
+			cp.add(btOpen);
 
 		}
 		// show interactive drawing pad
 		else {
 			JPanel panel = createGeoGebraAppletPanel();
-			getContentPane().add(panel);			
+			applet.getContentPane().add(panel);			
 			
 			// border around applet panel
 			panel.setBorder(BorderFactory.createLineBorder(borderColor));			
@@ -321,7 +328,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			btOpen.setEnabled(false);
 		} else {
 			//	clear applet		 
-			Container cp = getContentPane();
+			Container cp = applet.getContentPane();
 			cp.removeAll();
 			if (ev != null)
 				ev.removeMouseListener(dcListener);
@@ -332,13 +339,12 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			label.setFont(app.getPlainFont());
 			p.add(label, BorderLayout.CENTER);
 			cp.add(p);
-			SwingUtilities.updateComponentTreeUI(this);				
+			SwingUtilities.updateComponentTreeUI(applet);				
 		}
 		
 //		 build application panel 
 		if (firstAppOpen) {
-			wnd = new GeoGebra();
-			wnd.setApplication(app);			
+			wnd = app.getFrame();		
 		}
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
@@ -373,7 +379,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 	}
 	
 	private void reinitGUI() {
-		Container cp = getContentPane();
+		Container cp = applet.getContentPane();
 		cp.removeAll();
 		
 		app.setApplet(this);
@@ -381,7 +387,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		
 		app.resetFonts();
 		app.refreshViews();
-		SwingUtilities.updateComponentTreeUI(this);
+		SwingUtilities.updateComponentTreeUI(applet);
 		System.gc();
 	}
 					
@@ -540,7 +546,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 		try {
 			String lowerCase = strURL.toLowerCase(Locale.US);
 			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
-				strURL = getCodeBase() + strURL;
+				strURL = applet.getCodeBase() + strURL;
 			}		
 			URL ggbURL = new URL(strURL);				
 			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
@@ -1141,7 +1147,7 @@ public abstract class GeoGebraAppletBase extends JApplet {
 			kernel.attach(javaToJavaScriptView); // register view
 			
 			try {							
-				browserWindow = JSObject.getWindow(this);
+				browserWindow = JSObject.getWindow(applet);
 			} catch (Exception e) {							
 				Application.debug("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
 			}    			

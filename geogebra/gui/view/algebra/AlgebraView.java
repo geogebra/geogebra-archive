@@ -19,9 +19,9 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.Application;
-import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;

@@ -1,4 +1,4 @@
-package geogebra.modules;
+package geogebra;
 
 /* 
  GeoGebra - Dynamic Mathematics for Schools
@@ -11,7 +11,6 @@ package geogebra.modules;
  the Free Software Foundation.
 
  */
-import geogebra.Application;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +36,7 @@ import java.net.URLClassLoader;
  */
 public final class ClassPathManipulator {
 
-	private static String nl = System.getProperty("line.separator");
+	//private static String nl = System.getProperty("line.separator");
 
 	/** Adds a file give as String to the Classpath */
 	public synchronized static boolean addFile(String s) {
@@ -48,10 +47,10 @@ public final class ClassPathManipulator {
 	/** Adds a file given as File to the Classpath */
 	public synchronized static boolean addFile(File f) {
 		try {
-			addURL(f.toURL(), null); // Application.debug(f.toURL());
+			addURL(f.toURL(), null); // System.err.println(f.toURL());
 			return true;
 		} catch (MalformedURLException e) {
-			Application.debug("MalformedURLException for " + f.getName());
+			System.err.println("MalformedURLException for " + f.getName());
 			return false;
 		}// try-catch
 	}// addFile(File)
@@ -75,61 +74,60 @@ public final class ClassPathManipulator {
 			method.invoke(sysloader, new Object[] { u });
 			return true;
 		} catch (NoSuchMethodException t) {
-			Application
-					.debug("ClassPathManipulator: addURL gives NoSuchMethodExcepton.");
+			System.err.println("ClassPathManipulator: addURL gives NoSuchMethodExcepton.");
 			return false;
 		} catch (IllegalAccessException e) {
-			Application
-					.debug("ClassPathManipulator: addURL gives IllegalAccesException.");
+			System.err.println("ClassPathManipulator: addURL gives IllegalAccesException.");
 			return false;
 		} catch (InvocationTargetException e) {
-			Application
-					.debug("ClassPathManipulator: addURL gives InvocationTargetException");
+			System.err.println("ClassPathManipulator: addURL gives InvocationTargetException");
 			return false;
 		} catch (Throwable t) {
-			Application.debug("ClassPathManipulator: addURL gives "
+			System.err.println("ClassPathManipulator: addURL gives "
 					+ t.getMessage());
 			return false;
 		}// end try catch
 	}// addURL(URL)
+//
+//	/** Lists the URLs int the Classpath */
+//	public static void listClassPath(ClassLoader cl) {
+//		System.out.println(getClassPath(cl));
+//	}// listClassPath()
+//
+//	public static String getClassPath(ClassLoader loader) {
+//		String urlsstr = "Classpath:" + nl;
+//		Class[] emptyparameter = new Class[] {};
+//		
+//		if (loader == null)
+//			loader = ClassLoader.getSystemClassLoader();
+//		URLClassLoader sysloader = (URLClassLoader) loader;	
+//		Class sysclass = URLClassLoader.class;
+//		URL[] urls = null;
+//		try {
+//			Method method = sysclass.getDeclaredMethod("getURLs",
+//					emptyparameter);
+//			method.setAccessible(true);
+//			Object obs = method.invoke(sysloader, new Object[] {});
+//			urls = (URL[]) obs;
+//			for (int i = 0; i < urls.length; i++) {
+//				urlsstr += urls[i].toString() + nl;
+//			}// for
+//		} catch (NoSuchMethodException t) {
+//			System.err.println("ClassPathManipulator: getURL gives NoSuchMethodExcepton.");
+//		} catch (IllegalAccessException e) {
+//			System.err.println("ClassPathManipulator: getURL gives IllegalAccesException.");
+//		} catch (InvocationTargetException e) {
+//			System.err.println("ClassPathManipulator: getURL gives InvocationTargetException");
+//		} catch (Throwable t) {
+//			System.err.println("ClassPathManipulator: getURL gives "
+//					+ t.getMessage());
+//		}// end try catch
+//		return urlsstr;
+//	}// getClassPath()
+//	
+//	
+//	
+	
 
-	/** Lists the URLs int the Classpath */
-	public static void listClassPath(ClassLoader cl) {
-		Application.debug(getClassPath(cl));
-	}// listClassPath()
-
-	public static String getClassPath(ClassLoader loader) {
-		String urlsstr = "Classpath:" + nl;
-		Class[] emptyparameter = new Class[] {};
-		
-		if (loader == null)
-			loader = ClassLoader.getSystemClassLoader();
-		URLClassLoader sysloader = (URLClassLoader) loader;	
-		Class sysclass = URLClassLoader.class;
-		URL[] urls = null;
-		try {
-			Method method = sysclass.getDeclaredMethod("getURLs",
-					emptyparameter);
-			method.setAccessible(true);
-			Object obs = method.invoke(sysloader, new Object[] {});
-			urls = (URL[]) obs;
-			for (int i = 0; i < urls.length; i++) {
-				urlsstr += urls[i].toString() + nl;
-			}// for
-		} catch (NoSuchMethodException t) {
-			Application
-					.debug("ClassPathManipulator: getURL gives NoSuchMethodExcepton.");
-		} catch (IllegalAccessException e) {
-			Application
-					.debug("ClassPathManipulator: getURL gives IllegalAccesException.");
-		} catch (InvocationTargetException e) {
-			Application
-					.debug("ClassPathManipulator: getURL gives InvocationTargetException");
-		} catch (Throwable t) {
-			Application.debug("ClassPathManipulator: getURL gives "
-					+ t.getMessage());
-		}// end try catch
-		return urlsstr;
-	}// getClassPath()
 
 }// class ClassPathManipulator

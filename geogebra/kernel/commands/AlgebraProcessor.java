@@ -1,7 +1,6 @@
 package geogebra.kernel.commands;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -36,6 +35,7 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
+import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.Iterator;

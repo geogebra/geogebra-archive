@@ -1,4 +1,6 @@
-package geogebra;
+package geogebra.gui.app;
+
+import geogebra.Application;
 
 import java.io.File;
 
@@ -14,12 +16,12 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 	 * until an active instance was created by GeoGebra.main()
 	 * @return
 	 */
-	private synchronized GeoGebra getGGBInstance() {
-		GeoGebra wnd = null;
+	private synchronized GeoGebraFrame getGGBInstance() {
+		GeoGebraFrame wnd = null;
 		while (wnd == null) {
 			try {
 				Thread.sleep(100);			
-				wnd = GeoGebra.getActiveInstance();	
+				wnd = GeoGebraFrame.getActiveInstance();	
 			} catch (Exception e) {
 				Application.debug("MacApplicationListener.getGGBInstance(): " + e.getMessage());
 				wnd = null;
@@ -50,7 +52,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 			File openFile = new File(fileName);
 			if (openFile.exists()) {
 				// get application instance
-				GeoGebra ggb = getGGBInstance();
+				GeoGebraFrame ggb = getGGBInstance();
 				Application app = ggb.getApplication();
 				
 				// open file 
@@ -80,7 +82,7 @@ public class MacApplicationListener implements com.apple.eawt.ApplicationListene
 		if (fileName != null) {
 			handleOpenFile(ev);
 		} else {
-			GeoGebra wnd = getGGBInstance();
+			GeoGebraFrame wnd = getGGBInstance();
 			if (!wnd.isShowing())
 				wnd.setVisible(true);
 		}

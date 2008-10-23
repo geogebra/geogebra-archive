@@ -13,10 +13,10 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.optimization.ExtremumFinder;
+import geogebra.main.MyError;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
 

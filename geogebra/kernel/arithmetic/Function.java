@@ -13,13 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.MyError;
 import geogebra.util.FastHashMapKeyless;
 
 import java.util.HashSet;

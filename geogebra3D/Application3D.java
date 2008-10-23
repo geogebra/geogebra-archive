@@ -24,8 +24,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.GeoGebraAppletBase;
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.main.AppletImplementation;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -40,16 +40,16 @@ public abstract class Application3D extends Application{
     private boolean show3DView = true; 
 
 
-    public Application3D(String[] args, GeoGebra frame, boolean undoActive) {
+    public Application3D(String[] args, GeoGebraFrame frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
 
-    public Application3D(String[] args, GeoGebraAppletBase applet, boolean undoActive) {
+    public Application3D(String[] args, AppletImplementation applet, boolean undoActive) {
     	this(args, null, applet, undoActive);
     }
     
     
-    private Application3D(String[] args, GeoGebra frame, GeoGebraAppletBase applet, boolean undoActive) { 
+    private Application3D(String[] args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
     	super(args, frame, applet, undoActive);
 

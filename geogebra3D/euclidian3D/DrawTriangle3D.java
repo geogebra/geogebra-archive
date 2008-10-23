@@ -3,7 +3,6 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Application;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoTriangle3D;

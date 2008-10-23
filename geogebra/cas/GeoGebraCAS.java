@@ -2,8 +2,8 @@ package geogebra.cas;
 
 
 import geogebra.Application;
+import geogebra.JarManager;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.modules.JarManager;
 
 import jasymca.GeoGebraJasymca;
 
@@ -63,6 +63,10 @@ public class GeoGebraCAS {
     final public String [] getPolynomialCoeffs(String jasymcaExp, String variable) {     	
        return ggbJasymca.getPolynomialCoeffs(jasymcaExp, variable);
     } 
+        
+    final public String simplifyYACAS(String exp) {
+    	return evaluateYACAS("Simplify(" + exp + ")");
+    }
     
     /** 
      * Evaluates a YACAS expression and returns the result as a string,

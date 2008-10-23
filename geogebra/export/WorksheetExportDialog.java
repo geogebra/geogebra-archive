@@ -13,13 +13,13 @@
 package geogebra.export;
 
 import geogebra.Application;
-import geogebra.GeoGebraPreferences;
-import geogebra.GuiManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
+import geogebra.main.GeoGebraPreferences;
+import geogebra.main.GuiManager;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;

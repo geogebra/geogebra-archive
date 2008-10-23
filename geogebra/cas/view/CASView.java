@@ -1,16 +1,15 @@
 package geogebra.cas.view;
 
 import geogebra.Application;
-import geogebra.CasManager;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
+import geogebra.main.CasManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

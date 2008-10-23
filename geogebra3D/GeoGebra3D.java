@@ -18,10 +18,10 @@
 package geogebra3D;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.GeoGebraPreferences;
 import geogebra.gui.FileDropTargetListener;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.menubar.GeoGebraMenuBar;
+import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.dnd.DropTarget;
@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 /**
  * GeoGebra3D's main window. 
  */
-public class GeoGebra3D extends GeoGebra
+public class GeoGebra3D extends GeoGebraFrame
 {
 
 	private static final long serialVersionUID = 1L;
@@ -75,7 +75,7 @@ public class GeoGebra3D extends GeoGebra
 	
 	
 
-	public static synchronized GeoGebra createNewWindow(String[] args) {				
+	public static synchronized GeoGebraFrame createNewWindow(String[] args) {				
 		// set Application's size, position and font size
 		GeoGebra3D wnd = new GeoGebra3D();
 		

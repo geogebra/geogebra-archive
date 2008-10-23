@@ -1,8 +1,8 @@
 package geogebra.gui.inputbar;
 import geogebra.Application;
-import geogebra.GeoElementSelectionListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
+import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
 
 import java.awt.Component;

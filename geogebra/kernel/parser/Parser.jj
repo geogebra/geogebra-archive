@@ -46,6 +46,7 @@ PARSER_BEGIN(Parser)
 package geogebra.kernel.parser;
 
 import geogebra.*;
+import geogebra.main.*;
 import geogebra.kernel.*;
 import geogebra.kernel.arithmetic.*;
 import java.util.*;

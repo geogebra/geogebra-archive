@@ -1,10 +1,9 @@
 package geogebra.kernel.commands;
 
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.main.MyError;
 
 /*
  * Defined[ Object ]

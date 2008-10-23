@@ -12,10 +12,7 @@
 
 package geogebra.kernel.commands;
 
-import java.util.ArrayList;
-
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
@@ -45,6 +42,9 @@ import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.MyError;
+
+import java.util.ArrayList;
 
 public abstract class CommandProcessor  {
 	    

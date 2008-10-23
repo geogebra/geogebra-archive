@@ -139,7 +139,7 @@ public class ImageManager {
 	private Image getImageResource(String name) {
 		 Image img = null;
 		 try {
-		    java.net.URL url = Application.class.getResource(name);	
+		    java.net.URL url = ImageManager.class.getResource(name);	
 		    if (url != null) {		   
 				img = toolKit.getImage(url);	
 				tracker.addImage(img, 0);

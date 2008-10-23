@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 
 

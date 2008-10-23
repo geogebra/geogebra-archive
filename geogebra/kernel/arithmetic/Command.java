@@ -19,10 +19,10 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.HashSet;

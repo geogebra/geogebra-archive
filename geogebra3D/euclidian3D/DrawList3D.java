@@ -1,7 +1,6 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Application;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbVector;
 
 import java.util.ArrayList;

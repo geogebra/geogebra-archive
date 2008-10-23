@@ -36,7 +36,7 @@ public interface PlugLetIF {
 
     /** Initializing when loaded by PluginManager
      *  
-     *  @param GgbAPI api - The API the plugin can use
+     *  @param GeoGebraJavaScriptAPI api - The API the plugin can use
      *  @param String args - The args given in plugin.properties
      */
     public void init(GgbAPI api,String args);

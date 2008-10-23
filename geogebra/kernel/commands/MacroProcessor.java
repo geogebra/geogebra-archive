@@ -12,12 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel.commands;
 
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.main.MyError;
 
 /**
  * Processes the use of macros from the command line.

@@ -1,17 +1,18 @@
 package geogebra.gui.menubar;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
-import geogebra.GeoGebraPreferences;
+import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
@@ -22,10 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -241,7 +239,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		}
 
 		// close all		
-		if (GeoGebra.getInstanceCount() > 1) {								
+		if (GeoGebraFrame.getInstanceCount() > 1) {								
 			menu.add(exitAllAction);
 		}
 	}
@@ -743,7 +741,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				Thread runner = new Thread() {
 		    		public void run() {   
 		    			app.setWaitCursor();
-		    			GeoGebra.createNewWindow(null);		    		
+		    			GeoGebraFrame.createNewWindow(null);		    		
 		    			app.setDefaultCursor();
 		    		}
 		    	};
@@ -1330,9 +1328,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
-		sb.append(Application.versionString+" (Java "+System.getProperty("java.version")+")"); // Michael Borcherds 2008-03-21 added java version
+		sb.append(JarManager.GEOGEBRA_VERSION_STRING +" (Java "+System.getProperty("java.version")+")"); // Michael Borcherds 2008-03-21 added java version
 		sb.append("</b><br>");
-		sb.append(Application.buildDate);
+		sb.append(JarManager.GEOGEBRA_BUILD_DATE);
 
 		// load license
 		String text = app.loadTextFile(Application.LICENSE_FILE);
@@ -1410,7 +1408,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		JMenuItem mit = menuWindow.add(newWindowAction);
 		setMenuShortCutAccelerator(mit, 'N');
 
-		ArrayList ggbInstances = GeoGebra.getInstances();
+		ArrayList ggbInstances = GeoGebraFrame.getInstances();
 		int size = ggbInstances.size();
 		if (size == 1)
 			return;
@@ -1420,7 +1418,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButtonMenuItem mi;
 		for (int i = 0; i < size; i++) {
-			GeoGebra ggb = (GeoGebra) ggbInstances.get(i);
+			GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
 			Application application = ggb.getApplication();
 
 			sb.setLength(0);

@@ -2,11 +2,11 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Application;
-import geogebra.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.View;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -24,9 +24,8 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
 import javax.media.opengl.GLCanvas;
+import javax.swing.JPanel;
 
 
 public class EuclidianView3D extends JPanel implements View, Printable {

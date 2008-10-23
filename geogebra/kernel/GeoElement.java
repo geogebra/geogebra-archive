@@ -18,9 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.main.MyError;
 import geogebra.util.Util;
 
 import java.awt.Color;

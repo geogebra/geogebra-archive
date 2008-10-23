@@ -1,10 +1,10 @@
 package geogebra3D.euclidian3D;
 
-import java.awt.Color;
-
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoLine3D;
+
+import java.awt.Color;
 
 public class DrawLine3D extends Drawable3D {
 

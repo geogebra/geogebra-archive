@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.MyError;
+import geogebra.main.MyError;
 
 
 

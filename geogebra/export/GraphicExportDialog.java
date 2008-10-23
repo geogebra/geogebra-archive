@@ -13,12 +13,12 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.Application;
-import geogebra.GeoGebraPreferences;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.util.FileTransferable;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyImageIO;
+import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;

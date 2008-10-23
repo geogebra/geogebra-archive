@@ -11,6 +11,7 @@ package geogebra.plugin;
  
  */
 import geogebra.Application;
+import geogebra.ClassPathManipulator;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -21,7 +22,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.modules.ClassPathManipulator;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;

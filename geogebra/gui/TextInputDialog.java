@@ -12,13 +12,13 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.MyError;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

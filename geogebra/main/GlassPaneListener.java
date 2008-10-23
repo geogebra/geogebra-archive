@@ -10,7 +10,9 @@ the Free Software Foundation.
 
 */
 
-package geogebra;
+package geogebra.main;
+
+import geogebra.Application;
 
 import java.awt.Component;
 import java.awt.Container;

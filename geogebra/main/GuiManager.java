@@ -1,4 +1,4 @@
-package geogebra;
+package geogebra.main;
 
 
 import geogebra.kernel.GeoBoolean;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 
@@ -56,6 +57,12 @@ public interface GuiManager {
 	public void setShowToolBarHelp(boolean flag);
 	
 	public void updateToolbar();
+	
+	public void updateFrameSize();
+	public void updateFrameTitle();
+	public JFrame createFrame();
+	
+	public void exitAll();
 
 	public JComponent getConstructionProtocolNavigation();
 	

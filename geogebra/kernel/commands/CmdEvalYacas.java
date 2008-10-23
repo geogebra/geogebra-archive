@@ -1,10 +1,10 @@
 package geogebra.kernel.commands;
 
-import geogebra.MyError;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.main.MyError;
 
 /*
  * Name[ <GeoElement> ]

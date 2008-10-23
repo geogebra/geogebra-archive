@@ -13,13 +13,13 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.GeoElementSelectionListener;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.NameDescriptionComparator;
+import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

@@ -13,8 +13,7 @@ package geogebra.plugin;
  */
 
 import geogebra.Application;
-import geogebra.modules.ClassPathManipulator;
-import geogebra.modules.JarManager;
+import geogebra.ClassPathManipulator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

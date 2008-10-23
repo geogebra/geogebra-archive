@@ -13,8 +13,6 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.GeoElementSelectionListener;
-import geogebra.View;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.SpringUtilities;
@@ -40,6 +38,8 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Traceable;
+import geogebra.main.GeoElementSelectionListener;
+import geogebra.main.View;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

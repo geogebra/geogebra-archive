@@ -13,7 +13,7 @@
 package geogebra.euclidian;
 
 import geogebra.Application;
-import geogebra.GeoGebra;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 

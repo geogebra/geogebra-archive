@@ -1,7 +1,6 @@
 package geogebra3D.kernel3D;
 
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbVector;

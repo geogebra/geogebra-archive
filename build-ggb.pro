@@ -1,9 +1,10 @@
 #
 # Proguard config file for GeoGebra
 #
-# Sept 30th 2008
+# Oct 23rd 2008
 #
 -injars ../build/geogebra.jar
+-injars ../build/geogebra_main.jar
 -injars ../build/geogebra_gui.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
@@ -19,18 +20,15 @@
 -overloadaggressively
 
 #-printmapping geogebra3-1-46-0.map 	 
--applymapping geogebra3-1-46-0.map 	 
+#-applymapping geogebra3-1-46-0.map 	 
 
-# Keep - Applications. Keep all application classes that have a main method.
--keepclasseswithmembers public class * {
+# Keep GeoGebra application
+-keep class geogebra.GeoGebra {
     public static void main(java.lang.String[]);
 }
 
+# Keep GeoGebra applet
 -keep class geogebra.GeoGebraApplet {
-    public <methods>;
-}
-
--keep class geogebra.GeoGebraAppletBase {
     public <methods>;
 }
 
@@ -40,7 +38,7 @@
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 
-# needed so that SymbolLoader can find Des12.gif etc
+# needed so that hoten can find Des12.gif, etc.
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
 
@@ -56,7 +54,6 @@
 
 #-keep class geogebra.gui.util.BrowserLauncher { <methods>; }
 #-keep class geogebra.plugin.PlugLetIF { <methods>; }
-
 #-keep class geogebra.MyFileFilter { <methods>; }
 
 #-keep class geogebra.Application { <methods>; }

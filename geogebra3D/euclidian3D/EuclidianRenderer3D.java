@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D;
 
+import geogebra3D.kernel3D.GeoElement3D;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.nio.IntBuffer;
@@ -15,10 +17,6 @@ import javax.media.opengl.glu.GLUquadric;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
-
-
-import geogebra.Application;
-import geogebra3D.kernel3D.GeoElement3D;
 
 
 public class EuclidianRenderer3D implements GLEventListener {

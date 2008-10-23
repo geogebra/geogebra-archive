@@ -13,10 +13,10 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.Application;
-import geogebra.GeoElementSelectionListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.GeoElement;
+import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

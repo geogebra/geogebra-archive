@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra;
+package geogebra.gui.app;
 
 
 import java.io.File;

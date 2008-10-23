@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.io;
 
 import geogebra.Application;
+import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -598,7 +599,7 @@ public class MyXMLio {
 		sb.append("<!--\n\tIntergeo File Format Version "
 				+ Application.I2G_FILE_FORMAT + "\n\twritten by "
 				+ app.getPlain("ApplicationName") + " "
-				+ Application.versionString + " (" + Application.buildDate
+				+ JarManager.GEOGEBRA_VERSION_STRING + " (" + JarManager.GEOGEBRA_BUILD_DATE
 				+ ")\n-->\n");
 
 		sb.append("<construction>\n");

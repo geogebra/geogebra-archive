@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra;
+package geogebra.main;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +92,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
 			return ret;
     	}
 		catch (Exception e) {	
-			Application.debug("Exception: could not load bundle: " + fileName);
+			System.err.println("Exception: could not load bundle: " + fileName);
 			//e.printStackTrace();
 			return null;
 		}

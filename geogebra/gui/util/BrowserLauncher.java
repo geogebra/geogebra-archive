@@ -12,9 +12,8 @@ package geogebra.gui.util;
 /////////////////////////////////////////////////////////
 
 import geogebra.Application;
-import geogebra.GeoGebra;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.util.Util;
-import geogebra.GeoGebra;
 
 import java.lang.reflect.Method;
 import java.net.URI;
