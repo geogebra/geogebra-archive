@@ -12,7 +12,12 @@ the Free Software Foundation.
 
 package geogebra;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JApplet;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  * GeoGebra applet
@@ -24,37 +29,90 @@ import javax.swing.JApplet;
 public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	private static final long serialVersionUID = -350682076336303151L;
-
-	private AppletManager am;
-	private JavaScriptAPI js;
-
-	public GeoGebraApplet() {
-		// load geogebra_main.jar file
-		// this is needed to initialize the GeoGebra applet implementation
-		JarManager jarManager = JarManager.getSingleton(false);
-		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
-
-		// create delegate object that implements our applet's methods
-		am = new geogebra.main.DefaultApplet(this);
-		js = (JavaScriptAPI) am;
-	};
-
-	// JApplet methods
+	
+	private JavaScriptAPI appletImplementation;		
+	
+	/**
+	 * Loads necessary jar files and initializes applet. During the loading
+	 * of jar files, an "is loading" message is shown
+	 */
 	public void init() {
-		am.init();
+		 // initialize GUI that shows that applet is loading ...
+        try {
+        	// execute job on the event-dispatching thread for thread safety
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                	// TODO: remove
+                	System.out.println("Show loading screen ...");
+                	
+                	createLoadingGUI();                	
+                }
+            });
+        } catch (Exception e) { 
+            System.err.println("createLoadingGUI() didn't successfully complete");
+        }
+							
+        // Load jar files and initialize the GeoGebra applet ...
+        try {
+        	// execute job on the event-dispatching thread for thread safety
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                	// load all necessary jar files and init applet
+            		getAppletImplementation().init();
+                }
+            });
+        } catch (Exception e) { 
+            System.err.println("GeoGebra applet could not be initialized");
+            e.printStackTrace();
+        }              
 	}
 
 	public void start() {
-		am.start();
+		repaint();		
+		System.gc();
 	}
 
 	public void stop() {
-		am.stop();
+		repaint();		
+		System.gc();
 	}
 
 	public void destroy() {
-		am.destroy();
+		appletImplementation = null;
+		System.gc();
 	}
+	
+	/**
+	 * Returns the appletImplementation object. 
+	 * Loads geogebra_main.jar file and initializes applet if necessary.
+	 */
+	private synchronized JavaScriptAPI getAppletImplementation() {
+		if (appletImplementation == null) {
+			// load geogebra_main.jar file
+			// this is needed to initialize the GeoGebra applet implementation
+	        JarManager jarManager = JarManager.getSingleton(true);
+			jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
+
+			// create delegate object that implements our applet's methods
+			appletImplementation = new geogebra.main.DefaultApplet(this);
+		}
+		
+		return appletImplementation;
+	}
+		
+	
+	
+	/**
+     * Create a GUI that shows that the applet is loading. 
+     * For thread safety, this method should be invoked from the event-dispatching thread.
+     */
+    private void createLoadingGUI() {
+        //Put a "GeoGebra ..." label in the middle of the content pane
+    	getContentPane().setBackground(Color.white);
+        JLabel statusLabel = new JLabel("GeoGebra ...", JLabel.CENTER);
+        getContentPane().add(statusLabel, BorderLayout.CENTER);                      
+    }
+
 
 	/*
 	 * JAVASCRIPT interface
@@ -67,233 +125,231 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 */
 
 	public void deleteObject(String objName) {
-		js.deleteObject(objName);
+		getAppletImplementation().deleteObject(objName);
 	}
 
 	public boolean evalCommand(String cmdString) {
-		return js.evalCommand(cmdString);
+		return getAppletImplementation().evalCommand(cmdString);
 	}
 
 	public void evalXML(String xmlString) {
-		js.evalCommand(xmlString);
+		getAppletImplementation().evalCommand(xmlString);
 	}
 
 	public String evalYacas(String cmdString) {
-		return js.evalYacas(cmdString);
+		return getAppletImplementation().evalYacas(cmdString);
 	}
 
 	public boolean exists(String objName) {
-		return js.exists(objName);
+		return getAppletImplementation().exists(objName);
 	}
 
 	public String[] getAllObjectNames() {
-		return js.getAllObjectNames();
+		return getAppletImplementation().getAllObjectNames();
 	}
 
 	public String getColor(String objName) {
-		return js.getColor(objName);
+		return getAppletImplementation().getColor(objName);
 	}
 
 	public String getCommandString(String objName) {
-		return js.getCommandString(objName);
+		return getAppletImplementation().getCommandString(objName);
 	}
 
 	public String getDefinitionString(String objName) {
-		return js.getDefinitionString(objName);
+		return getAppletImplementation().getDefinitionString(objName);
 	}
 
 	public byte[] getGGBfile() {
-		return js.getGGBfile();
+		return getAppletImplementation().getGGBfile();
 	}
 
 	public String getHostname() {
-		return js.getHostname();
+		return getAppletImplementation().getHostname();
 	}
 
 	public String getIPAddress() {
-		return js.getIPAddress();
+		return getAppletImplementation().getIPAddress();
 	}
 
 	public int getLayer(String objName) {
-		return js.getLayer(objName);
+		return getAppletImplementation().getLayer(objName);
 	}
 
 	public String getObjectName(int i) {
-		return js.getObjectName(i);
+		return getAppletImplementation().getObjectName(i);
 	}
 
 	public int getObjectNumber() {
-		return js.getObjectNumber();
+		return getAppletImplementation().getObjectNumber();
 	}
 
 	public String getObjectType(String objName) {
-		return js.getObjectType(objName);
+		return getAppletImplementation().getObjectType(objName);
 	}
 
 	public double getValue(String objName) {
-		return js.getValue(objName);
+		return getAppletImplementation().getValue(objName);
 	}
 
 	public String getValueString(String objName) {
-		return js.getValueString(objName);
+		return getAppletImplementation().getValueString(objName);
 	}
 
 	public String getXML() {
-		return js.getXML();
+		return getAppletImplementation().getXML();
 	}
 
 	public double getXcoord(String objName) {
-		return js.getXcoord(objName);
+		return getAppletImplementation().getXcoord(objName);
 	}
 
 	public double getYcoord(String objName) {
-		return js.getYcoord(objName);
+		return getAppletImplementation().getYcoord(objName);
 	}
 
 	public boolean isDefined(String objName) {
-		return js.isDefined(objName);
+		return getAppletImplementation().isDefined(objName);
 	}
 
 	public void openFile(String strURL) {
-		js.openFile(strURL);
+		getAppletImplementation().openFile(strURL);
 	}
 
 	public void openFileNoThread(String strURL) {
-		js.openFileNoThread(strURL);
+		getAppletImplementation().openFileNoThread(strURL);
 	}
 
 	public void refreshViews() {
-		js.refreshViews();
+		getAppletImplementation().refreshViews();
 	}
 
 	public void registerAddListener(String JSFunctionName) {
-		js.registerAddListener(JSFunctionName);
+		getAppletImplementation().registerAddListener(JSFunctionName);
 	}
 
 	public void registerClearListener(String JSFunctionName) {
-		js.registerClearListener(JSFunctionName);
+		getAppletImplementation().registerClearListener(JSFunctionName);
 	}
 
 	public void registerObjectUpdateListener(String objName, String JSFunctionName) {
-		js.registerObjectUpdateListener(objName, JSFunctionName);
+		getAppletImplementation().registerObjectUpdateListener(objName, JSFunctionName);
 	}
 
 	public void registerRemoveListener(String JSFunctionName) {
-		js.registerRemoveListener(JSFunctionName);
+		getAppletImplementation().registerRemoveListener(JSFunctionName);
 	}
 
 	public void registerRenameListener(String JSFunctionName) {
-		js.registerRenameListener(JSFunctionName);
+		getAppletImplementation().registerRenameListener(JSFunctionName);
 	}
 
 	public void registerUpdateListener(String JSFunctionName) {
-		js.registerUpdateListener(JSFunctionName);
+		getAppletImplementation().registerUpdateListener(JSFunctionName);
 	}
 
 	public void reset() {
-		js.reset();
+		getAppletImplementation().reset();
 	}
 
 	public void resetNoThread() {
-		js.resetNoThread();
+		getAppletImplementation().resetNoThread();
 	}
 
 	public void setAxesVisible(boolean xVisible, boolean yVisible) {
-		js.setAxesVisible(xVisible, yVisible);
+		getAppletImplementation().setAxesVisible(xVisible, yVisible);
 	}
 
 	public void setColor(String objName, int red, int green, int blue) {
-		js.setColor(objName, red, green, blue);
+		getAppletImplementation().setColor(objName, red, green, blue);
 	}
 
 	public void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
-		js.setCoordSystem(xmin, xmax, ymin, ymax);
+		getAppletImplementation().setCoordSystem(xmin, xmax, ymin, ymax);
 	}
 
 	public void setCoords(String objName, double x, double y) {
-
-		js.setCoords(objName, x, y);
+		getAppletImplementation().setCoords(objName, x, y);
 	}
 
 	public void setErrorDialogsActive(boolean flag) {
-
-		js.setErrorDialogsActive(flag);
+		getAppletImplementation().setErrorDialogsActive(flag);
 	}
 
 	public void setFixed(String objName, boolean flag) {
-		js.setFixed(objName, flag);
+		getAppletImplementation().setFixed(objName, flag);
 	}
 
 	public void setGridVisible(boolean flag) {
-		js.setGridVisible(flag);
+		getAppletImplementation().setGridVisible(flag);
 	}
 
 	public void setLabelMode(String objName, boolean visible) {
-		js.setLabelMode(objName, visible);
+		getAppletImplementation().setLabelMode(objName, visible);
 	}
 
 	public void setLabelStyle(String objName, int style) {
-		js.setLabelStyle(objName, style);
+		getAppletImplementation().setLabelStyle(objName, style);
 	}
 
 	public void setLabelVisible(String objName, boolean visible) {
-		js.setLabelVisible(objName, visible);
+		getAppletImplementation().setLabelVisible(objName, visible);
 	}
 
 	public void setLayer(String objName, int layer) {
-		js.setLayer(objName, layer);
+		getAppletImplementation().setLayer(objName, layer);
 	}
 
 	public void setLayerVisible(int layer, boolean visible) {
-		js.setLayerVisible(layer, visible);
+		getAppletImplementation().setLayerVisible(layer, visible);
 	}
 
 	public void setMode(int mode) {
-		js.setMode(mode);
+		getAppletImplementation().setMode(mode);
 	}
 
 	public void setRepaintingActive(boolean flag) {
-		js.setRepaintingActive(flag);
+		getAppletImplementation().setRepaintingActive(flag);
 	}
 
 	public void setTrace(String objName, boolean flag) {
-		js.setTrace(objName, flag);
+		getAppletImplementation().setTrace(objName, flag);
 	}
 
 	public void setValue(String objName, double x) {
-		js.setValue(objName, x);
+		getAppletImplementation().setValue(objName, x);
 	}
 
 	public void setVisible(String objName, boolean visible) {
-		js.setVisible(objName, visible);
+		getAppletImplementation().setVisible(objName, visible);
 	}
 
 	public void setXML(String xml) {
-		js.setXML(xml);
+		getAppletImplementation().setXML(xml);
 	}
 
 	public void unregisterAddListener(String JSFunctionName) {
-		js.unregisterAddListener(JSFunctionName);
+		getAppletImplementation().unregisterAddListener(JSFunctionName);
 	}
 
 	public void unregisterClearListener(String JSFunctionName) {
-		js.unregisterClearListener(JSFunctionName);
+		getAppletImplementation().unregisterClearListener(JSFunctionName);
 	}
 
 	public void unregisterObjectUpdateListener(String objName) {
-		js.unregisterObjectUpdateListener(objName);
+		getAppletImplementation().unregisterObjectUpdateListener(objName);
 	}
 
 	public void unregisterRemoveListener(String JSFunctionName) {
-		js.unregisterRemoveListener(JSFunctionName);
+		getAppletImplementation().unregisterRemoveListener(JSFunctionName);
 	}
 
 	public void unregisterRenameListener(String JSFunctionName) {
-		js.unregisterRenameListener(JSFunctionName);
+		getAppletImplementation().unregisterRenameListener(JSFunctionName);
 	}
 
 	public void unregisterUpdateListener(String JSFunctionName) {
-		js.unregisterUpdateListener(JSFunctionName);
+		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
 	}
 
 }

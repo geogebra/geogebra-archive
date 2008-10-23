@@ -402,7 +402,8 @@ public abstract class Application implements KeyEventDispatcher {
 			pluginmanager = getPluginManager();
 
 		// load all jar files in background and init dialogs
-		initInBackground();
+		// TODO: add
+		//initInBackground();
 	}
 
 	/**

@@ -131,8 +131,12 @@ public class JarManager {
 		}
 	}
 	
-	public URL getCodeBase() {
+	public URL getCodeBase() {		
 		return codebase;
+	}
+	
+	public boolean hasOnlineCodebase() {
+		return codebase.getProtocol().startsWith("http");
 	}
 		
 	/**

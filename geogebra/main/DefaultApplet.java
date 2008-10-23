@@ -22,7 +22,7 @@ public class DefaultApplet extends AppletImplementation {
 		super(applet);
 	}
 	
-	protected geogebra.main.Application buildApplication(String[] args, boolean ua) {
-		return new geogebra.main.DefaultApplication(args, this, ua);
+	protected Application buildApplication(String[] args, boolean ua) {
+		return new DefaultApplication(args, this, ua);
 	}
 }

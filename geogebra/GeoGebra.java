@@ -31,7 +31,7 @@ public class GeoGebra extends Object {
     	jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_GUI);
     	
     	// create and open first GeoGebra window        	
-    	geogebra.gui.app.GeoGebraFrame.main(args);         
+    	geogebra.gui.app.GeoGebraFrame.main(args); 
     }
     
 }

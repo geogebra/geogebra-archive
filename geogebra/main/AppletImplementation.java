@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.main;
 
-import geogebra.AppletManager;
 import geogebra.JavaScriptAPI;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
@@ -47,7 +46,7 @@ import netscape.javascript.JSObject;
 /**
  * GeoGebra applet implementation operating on a given JApplet object.
  */
-public abstract class AppletImplementation implements AppletManager, JavaScriptAPI {
+public abstract class AppletImplementation implements JavaScriptAPI {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -229,31 +228,11 @@ public abstract class AppletImplementation implements AppletManager, JavaScriptA
 	}
 
 	protected abstract Application buildApplication(String[] args, boolean ua);
-	
-	public void start() {
-		//	for some strange reason this is needed to get the right font size		
-		//showApplet();
-		applet.repaint();
 		
-		System.gc();
-	}
-
-	public void stop() {
-		applet.repaint();
-		
-		System.gc();
-	}
-	
-	public void destroy() {
-		wnd = null;
-		app = null;
-		ev = null;
-		kernel = null;
-		
-		System.gc();
-	}
 
 	protected void initGUI() {
+		applet.getContentPane().removeAll();
+		
 		// show only button to open application window	
 		if (showOpenButton) {
 			btOpen =
