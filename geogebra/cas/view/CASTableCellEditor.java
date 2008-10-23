@@ -47,7 +47,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 			String tempIn = cellValue.getCommand();
 			String tempOut = cellValue.getOutput();
 
-			Component[] temp = this.getComponents();
+//			Component[] temp = this.getComponents();
 //			Application.debug("We have componets: " + temp.length);
 //			Application.debug("Output: " + tempOut.length());
 //			for (int i = 0; i < temp.length; i++) {

@@ -52,4 +52,8 @@ public class CASInputPanel extends JPanel {
 		if (inputSign != null)
 			inputSign.setFont(ft);
 	}
+
+	public void setInputCaretPosition(int length) {
+		inputArea.setCaretPosition(length);
+	}
 }

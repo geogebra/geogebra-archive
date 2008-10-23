@@ -62,18 +62,18 @@ public class CASTable extends JTable {
 	public void insertRow(int selectedRow, int selectedCol,
 			CASTableCellValue inValue) {
 		CASTableCellValue newValue;
-		
+
 		if (this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION) {
 			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
-		
+
 		if (inValue == null)
 			newValue = new CASTableCellValue();
 		else
 			newValue = inValue;
-		
+
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
-				
+
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
 		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
@@ -97,11 +97,16 @@ public class CASTable extends JTable {
 		in[0] = c;
 		CASTableCellValue newValue = new CASTableCellValue(new String(in));
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
+//		((CASTableCellRender) getCellRenderer(selectedRow + 1, selectedCol))
+//				.getTableCellRendererComponent(this, newValue, false, false,
+//						selectedRow + 1, selectedCol);
+
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
-		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
+		Component editor = (Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
 				selectedCol)).getTableCellEditorComponent(this, newValue, true,
-				selectedRow + 1, selectedCol)).requestFocus();
+				selectedRow + 1, selectedCol);
+		editor.requestFocus();
 
 	}
 

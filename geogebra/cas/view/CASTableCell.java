@@ -25,13 +25,13 @@ public class CASTableCell extends JPanel {
 	private boolean lineVisiable;
 
 	private boolean outputFieldVisiable;
-	
+
 	protected Application app;
 
 	public CASTableCell(CASView view, JTable consoleTable, Application app) {
 
 		this.app = app;
-		
+
 		inputPanel = new CASInputPanel();
 		outputPanel = new CASOutputPanel();
 		linePanel = new CASLinePanel();
@@ -47,13 +47,11 @@ public class CASTableCell extends JPanel {
 		this.add(inputPanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
-		
+
 		setFont(app.getPlainFont());
 		return;
 	}
 
-	
-	
 	public void removeOutputPanel() {
 		if (outputFieldVisiable) {
 			this.remove(outputPanel);
@@ -64,7 +62,7 @@ public class CASTableCell extends JPanel {
 
 	public void addOutputPanel() {
 		if (!outputFieldVisiable) {
-			//Application.debug("Add Output panel");
+			// Application.debug("Add Output panel");
 			this.add(outputPanel);
 			outputFieldVisiable = true;
 			this.validate();
@@ -73,10 +71,10 @@ public class CASTableCell extends JPanel {
 
 	public int removeLinePanel() {
 		this.remove(linePanel);
-		
+
 		// TODO: check this
-		//this.validate();
-		SwingUtilities.updateComponentTreeUI(this);	
+		// this.validate();
+		SwingUtilities.updateComponentTreeUI(this);
 
 		int cellHeight = 0;
 		Component[] temp = this.getComponents();
@@ -118,7 +116,7 @@ public class CASTableCell extends JPanel {
 	public void setOutput(String inValue) {
 		this.outputPanel.setOutput(inValue);
 		String empty = new String("");
-		if (empty.compareTo(inValue)==0)
+		if (empty.compareTo(inValue) == 0)
 			this.removeOutputPanel();
 		else
 			this.addOutputPanel();
@@ -154,8 +152,7 @@ public class CASTableCell extends JPanel {
 
 	public void setInputAreaFocused() {
 		inputPanel.setInputAreaFocused();
-		(inputPanel.getInputArea()).setCaretPosition(inputPanel.getInput()
-				.length());
+		inputPanel.setInputCaretPosition(inputPanel.getInput().length());
 		// Sometimes we need to set the length of the cell value.
 	}
 
@@ -178,13 +175,17 @@ public class CASTableCell extends JPanel {
 	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
 		this.outputFieldVisiable = outputFieldVisiable;
 	}
-	
+
 	final public void setFont(Font ft) {
-		  super.setFont(ft);
-		  if(inputPanel!=null)
-			  inputPanel.setFont(ft);
-		  if(outputPanel!=null)
-			  outputPanel.setFont(ft);
-		 }
+		super.setFont(ft);
+		if (inputPanel != null)
+			inputPanel.setFont(ft);
+		if (outputPanel != null)
+			outputPanel.setFont(ft);
+	}
+
+	public CASInputPanel getInputPanel() {
+		return inputPanel;
+	}
 
 }
