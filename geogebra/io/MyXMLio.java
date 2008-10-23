@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.io;
 
-import geogebra.JarManager;
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -575,7 +575,7 @@ public class MyXMLio {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb
-				.append("<geogebra format=\"" + Application.XML_FILE_FORMAT
+				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save gui settings
@@ -597,9 +597,9 @@ public class MyXMLio {
 		sb.append("<?xml version=\"1.0\"?>\n");
 
 		sb.append("<!--\n\tIntergeo File Format Version "
-				+ Application.I2G_FILE_FORMAT + "\n\twritten by "
+				+ GeoGebra.I2G_FILE_FORMAT + "\n\twritten by "
 				+ app.getPlain("ApplicationName") + " "
-				+ JarManager.GEOGEBRA_VERSION_STRING + " (" + JarManager.GEOGEBRA_BUILD_DATE
+				+ GeoGebra.VERSION_STRING + " (" + GeoGebra.BUILD_DATE
 				+ ")\n-->\n");
 
 		sb.append("<construction>\n");
@@ -627,7 +627,7 @@ public class MyXMLio {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb
-				.append("<geogebra format=\"" + Application.XML_FILE_FORMAT
+				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save gui settings
@@ -644,7 +644,7 @@ public class MyXMLio {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb
-				.append("<geogebra format=\"" + Application.XML_FILE_FORMAT
+				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save construction
@@ -664,7 +664,7 @@ public class MyXMLio {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb
-				.append("<geogebra format=\"" + Application.XML_FILE_FORMAT
+				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save euclidianView settings

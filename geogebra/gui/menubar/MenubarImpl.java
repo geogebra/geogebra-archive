@@ -1,6 +1,6 @@
 package geogebra.gui.menubar;
 
-import geogebra.JarManager;
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.ToolCreationDialog;
@@ -1328,9 +1328,9 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
-		sb.append(JarManager.GEOGEBRA_VERSION_STRING +" (Java "+System.getProperty("java.version")+")"); // Michael Borcherds 2008-03-21 added java version
+		sb.append(GeoGebra.VERSION_STRING +" (Java "+System.getProperty("java.version")+")"); // Michael Borcherds 2008-03-21 added java version
 		sb.append("</b><br>");
-		sb.append(JarManager.GEOGEBRA_BUILD_DATE);
+		sb.append(GeoGebra.BUILD_DATE);
 
 		// load license
 		String text = app.loadTextFile(Application.LICENSE_FILE);

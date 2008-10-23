@@ -1,5 +1,6 @@
 package geogebra.gui;
 
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
@@ -961,7 +962,7 @@ public class DefaultGuiManager implements GuiManager {
 					app.getPlain("ApplicationName") + " "
 							+ app.getMenu("Files"),
 					"Intergeo " + app.getMenu("Files") + " [Version "
-							+ Application.I2G_FILE_FORMAT + "]" };
+							+ GeoGebra.I2G_FILE_FORMAT + "]" };
 		}
 		// <-- Added for Intergeo File Format (Yves Kreis)
 		File file = showSaveDialog(
@@ -1173,7 +1174,7 @@ public class DefaultGuiManager implements GuiManager {
 				MyFileFilter i2gFileFilter = new MyFileFilter();
 				i2gFileFilter.addExtension(Application.FILE_EXT_INTERGEO);
 				i2gFileFilter.setDescription("Intergeo " + app.getMenu("Files")
-						+ " [Version " + Application.I2G_FILE_FORMAT + "]");
+						+ " [Version " + GeoGebra.I2G_FILE_FORMAT + "]");
 				fileChooser.addChoosableFileFilter(i2gFileFilter);
 			}
 			// fileChooser.setFileFilter(fileFilter);

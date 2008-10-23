@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.io;
 
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
@@ -65,7 +66,7 @@ import org.xml.sax.SAXException;
 public class MyXMLHandler implements DocHandler {
 
 	private static final float FORMAT = Float
-			.parseFloat(Application.XML_FILE_FORMAT);
+			.parseFloat(GeoGebra.XML_FILE_FORMAT);
 
 	private static final int MODE_INVALID = -1;
 	private static final int MODE_GEOGEBRA = 1;

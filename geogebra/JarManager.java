@@ -36,10 +36,6 @@ import java.net.URLDecoder;
 import java.util.zip.ZipInputStream;
 
 public class JarManager {
-	
-	// GeoGebra VERSION INFORMATION
-	public static final String GEOGEBRA_BUILD_DATE = "October 23, 2008";
-	public static final String GEOGEBRA_VERSION_STRING = "3.1.71.0";
 		
 	// GeoGebra jar files
 	public static final int JAR_FILE_GEOGEBRA = 0;
@@ -352,7 +348,7 @@ public class JarManager {
 			baseDir += File.separator;			
 											
 		// directory name, e.g. /tmp/geogebra3.1.43.0/
-		File tempDir = new File(baseDir + "geogebra" + GEOGEBRA_VERSION_STRING + File.separator);		
+		File tempDir = new File(baseDir + "geogebra" + GeoGebra.VERSION_STRING + File.separator);		
 		if (tempDir.exists())	{
 			// TODO: remove
 			System.err.println("use existing local directory : " + tempDir);			

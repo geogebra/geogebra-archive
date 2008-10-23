@@ -12,8 +12,16 @@ the Free Software Foundation.
 
 package geogebra;
  
-
 public class GeoGebra extends Object {
+	
+	// GeoGebra version
+	public static final String BUILD_DATE = "October 23, 2008";
+	public static final String VERSION_STRING = "3.1.71.0";
+	
+	// File format versions
+	public static final String XML_FILE_FORMAT = "3.02";
+	public static final String I2G_FILE_FORMAT = "1.00.20080731";
+	
 	
     public static void main(String[] args) {
     	// load geogebra_main.jar and geogebra_gui.jar file
