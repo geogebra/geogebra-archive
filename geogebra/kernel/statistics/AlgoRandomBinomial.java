@@ -12,11 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.Application;
 import geogebra.kernel.AlgoTwoNumFunction;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 /**

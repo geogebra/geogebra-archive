@@ -1,8 +1,8 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.Application;
 import geogebra.gui.view.spreadsheet.SpreadsheetView.MouseMotionListener1;
+import geogebra.main.Application;
 
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;

@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
@@ -69,6 +68,7 @@ import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.RegressionMath;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.main.View;
 import geogebra.util.ScientificFormat;

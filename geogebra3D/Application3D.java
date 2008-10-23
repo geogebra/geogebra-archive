@@ -23,9 +23,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-import geogebra.Application;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.main.AppletImplementation;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 

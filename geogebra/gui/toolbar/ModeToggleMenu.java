@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.main.Application;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

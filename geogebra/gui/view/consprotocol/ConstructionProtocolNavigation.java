@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui.view.consprotocol;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Cursor;

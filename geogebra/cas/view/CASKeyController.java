@@ -1,6 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

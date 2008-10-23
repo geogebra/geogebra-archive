@@ -41,7 +41,7 @@ package org.freehep.graphicsio.png;
  * @author M.Donszelmann
  */
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Image;
 import java.awt.Toolkit;

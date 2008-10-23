@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Matrix4d;

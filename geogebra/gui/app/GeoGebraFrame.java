@@ -17,8 +17,8 @@
  */
 package geogebra.gui.app;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
+import geogebra.main.Application;
 import geogebra.main.DefaultApplication;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;

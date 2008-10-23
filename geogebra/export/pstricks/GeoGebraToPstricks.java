@@ -7,7 +7,6 @@ the Free Software Foundation.
  */
 
 package geogebra.export.pstricks;
-import geogebra.Application;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
@@ -39,6 +38,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;

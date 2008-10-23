@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.main;
 
-import geogebra.Application;
 
 import java.awt.Component;
 import java.awt.Container;

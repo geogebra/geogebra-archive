@@ -256,7 +256,7 @@ package geogebra.gui.hoteqn;
 // package bHotEqn;  // for Bean-compilation to avoid double filenames
 
 //import atp.*;
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.applet.Applet;
 import java.awt.Color;

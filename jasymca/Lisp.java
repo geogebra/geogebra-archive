@@ -1,6 +1,6 @@
 package jasymca;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 /*------------------------------------------------------------*/
 

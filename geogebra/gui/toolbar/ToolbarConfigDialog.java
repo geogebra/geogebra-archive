@@ -11,7 +11,7 @@ the Free Software Foundation.
 */
 
 package geogebra.gui.toolbar;
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.io;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
@@ -43,6 +42,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.parser.Parser;
+import geogebra.main.Application;
 import geogebra.main.CasManager;
 import geogebra.main.MyError;
 

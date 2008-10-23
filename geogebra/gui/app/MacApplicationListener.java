@@ -1,6 +1,6 @@
 package geogebra.gui.app;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.File;
 

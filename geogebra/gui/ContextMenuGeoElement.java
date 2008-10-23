@@ -13,7 +13,6 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -24,6 +23,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Point;

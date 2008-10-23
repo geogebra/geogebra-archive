@@ -1,6 +1,6 @@
 package org.freehep.xml.util;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.Writer;
 
@@ -8,7 +8,7 @@ import java.io.Writer;
  * A class that makes it easy to write XHTML documents.
  *
  * @author Mark Donszelmann
- * @version $Id: XHTMLWriter.java,v 1.4 2008-08-07 18:34:06 murkle Exp $
+ * @version $Id: XHTMLWriter.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public class XHTMLWriter extends XMLWriter
 {

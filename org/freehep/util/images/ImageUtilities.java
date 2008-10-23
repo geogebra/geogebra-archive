@@ -1,7 +1,7 @@
 // Copyright 2001-2007, FreeHEP.
 package org.freehep.util.images;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -16,7 +16,7 @@ import java.awt.image.RenderedImage;
 
 /**
  * @author Mark Donszelmann
- * @version $Id: ImageUtilities.java,v 1.4 2008-08-07 18:34:08 murkle Exp $
+ * @version $Id: ImageUtilities.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public class ImageUtilities {
 

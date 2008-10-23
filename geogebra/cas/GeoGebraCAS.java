@@ -1,9 +1,9 @@
 package geogebra.cas;
 
 
-import geogebra.Application;
 import geogebra.JarManager;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import jasymca.GeoGebraJasymca;
 

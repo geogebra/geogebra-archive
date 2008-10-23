@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.main;
 
-import geogebra.Application;
 
 /**
  *

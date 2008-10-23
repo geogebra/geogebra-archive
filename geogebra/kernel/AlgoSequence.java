@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 
 /**

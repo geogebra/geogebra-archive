@@ -1,7 +1,7 @@
 package geogebra.cas.view;
 
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

@@ -21,8 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
-import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
+import geogebra.main.Application;
 
 /**
  * Dialog to substitude a string in a CAS input.

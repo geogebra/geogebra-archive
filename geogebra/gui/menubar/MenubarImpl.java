@@ -1,6 +1,5 @@
 package geogebra.gui.menubar;
 
-import geogebra.Application;
 import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DefaultGuiManager;
@@ -12,6 +11,7 @@ import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;

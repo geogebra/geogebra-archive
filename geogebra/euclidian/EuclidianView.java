@@ -12,7 +12,6 @@
 
 package geogebra.euclidian;
 
-import geogebra.Application;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
@@ -40,6 +39,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 

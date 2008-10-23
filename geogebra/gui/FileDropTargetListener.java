@@ -12,7 +12,7 @@
 
 package geogebra.gui;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

@@ -1,7 +1,7 @@
 // Copyright 2000-2004, FreeHEP.
 package org.freehep.util;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.Properties;
  * Methods to use factories (a la JAXP).
  *
  * @author Mark Donszelmann
- * @version $Id: Factory.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
+ * @version $Id: Factory.java,v 1.5 2008-10-23 19:04:04 hohenwarter Exp $
  */
 public class Factory {
 

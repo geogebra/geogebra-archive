@@ -1,7 +1,7 @@
 // Copyright 2001 freehep
 package org.freehep.graphicsio.pdf;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.GradientPaint;
 import java.awt.Paint;
@@ -22,7 +22,7 @@ import java.util.ListIterator;
  * yet (ps calculation)
  * 
  * @author Simon Fischer
- * @version $Id: PDFPaintDelayQueue.java,v 1.4 2008-08-07 18:33:56 murkle Exp $
+ * @version $Id: PDFPaintDelayQueue.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public class PDFPaintDelayQueue {
 

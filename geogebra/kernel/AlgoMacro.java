@@ -12,10 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.main.Application;
 import geogebra.util.FastHashMapKeyless;
 
 import java.util.ArrayList;

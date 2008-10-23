@@ -1,9 +1,9 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.util.TreeSet;
 import java.util.regex.Matcher;

@@ -1,7 +1,7 @@
 // Copyright 2003, FreeHEP.
 package org.freehep.util;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.List;
  * in some java or javax package at some point. See Sun BUG# 4640520.
  *
  * @author Mark Donszelmann
- * @version $Id: Service.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
+ * @version $Id: Service.java,v 1.5 2008-10-23 19:04:04 hohenwarter Exp $
  */
 public class Service {
 

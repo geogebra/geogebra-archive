@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;

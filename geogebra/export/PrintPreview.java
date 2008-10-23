@@ -12,9 +12,9 @@ the Free Software Foundation.
 
 package geogebra.export;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
+import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;

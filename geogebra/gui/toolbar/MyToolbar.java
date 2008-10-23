@@ -12,12 +12,12 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MySmallJButton;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;

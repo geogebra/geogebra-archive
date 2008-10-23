@@ -1,6 +1,5 @@
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
@@ -24,6 +23,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.GuiManager;
 import geogebra.main.MyError;

@@ -69,7 +69,7 @@ package geogebra.gui.hoteqn;
 //package bHotEqn;
 
 //import atp.*;
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.util.Vector;
 

@@ -9,14 +9,14 @@ Since the GPL may be too restrictive for use in a proprietary application,
 a commercial license is also provided. Full license information can be
 found at http://www.jibble.org/licenses/
 
-$Author: murkle $
-$Id: EpsGraphics2D.java,v 1.2 2008-08-07 18:34:08 murkle Exp $
+$Author: hohenwarter $
+$Id: EpsGraphics2D.java,v 1.3 2008-10-23 19:04:04 hohenwarter Exp $
 
 */
 
 package geogebra.export.epsgraphics;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;

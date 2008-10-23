@@ -12,9 +12,9 @@ the Free Software Foundation.
 
 package geogebra.gui.inputbar;
 
-import geogebra.Application;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;

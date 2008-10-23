@@ -1,6 +1,6 @@
 package yacas;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 
 

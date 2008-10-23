@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.main;
 
 import geogebra.AppletManager;
-import geogebra.Application;
 import geogebra.JavaScriptAPI;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;

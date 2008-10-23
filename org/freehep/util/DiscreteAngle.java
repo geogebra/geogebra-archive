@@ -1,7 +1,7 @@
 // Copyright 2003, SLAC, Stanford, U.S.A.
 package org.freehep.util;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -19,7 +19,7 @@ import java.util.TreeSet;
  * wants to draw under certain angles only.
  *
  * @author Mark Donszelmann
- * @version $Id: DiscreteAngle.java,v 1.4 2008-08-07 18:33:58 murkle Exp $
+ * @version $Id: DiscreteAngle.java,v 1.5 2008-10-23 19:04:04 hohenwarter Exp $
  */
 public class DiscreteAngle {
 

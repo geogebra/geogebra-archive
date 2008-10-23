@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.io;
 
-import geogebra.Application;
 import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
@@ -26,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;

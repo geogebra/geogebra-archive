@@ -17,10 +17,10 @@
  */
 package geogebra3D;
 
-import geogebra.Application;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.menubar.GeoGebraMenuBar;
+import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 

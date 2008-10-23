@@ -1,6 +1,5 @@
 package geogebra.main;
 
-import geogebra.Application;
 
 import javax.swing.JFrame;
 

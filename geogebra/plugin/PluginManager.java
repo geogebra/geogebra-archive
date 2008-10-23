@@ -12,8 +12,8 @@ package geogebra.plugin;
 
  */
 
-import geogebra.Application;
 import geogebra.ClassPathManipulator;
+import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +60,7 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 														// String
 														// classname,pluginclass
 	// private geogebra.GeoGebra ggb= null;
-	private geogebra.Application app = null;
+	private geogebra.main.Application app = null;
 	private JMenu pluginmenu = null; // Make it here, let Application and
 										// Menubar get it
 	private ArrayList lines = new ArrayList();

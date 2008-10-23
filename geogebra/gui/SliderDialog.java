@@ -12,12 +12,12 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

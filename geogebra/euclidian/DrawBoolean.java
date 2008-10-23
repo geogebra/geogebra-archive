@@ -12,10 +12,10 @@
 
 package geogebra.euclidian;
 
-import geogebra.Application;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Dimension;

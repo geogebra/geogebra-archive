@@ -1,7 +1,7 @@
 // Copyright 2001, FreeHEP.
 package org.freehep.util.io;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.io.InputStream;
  * the correct read(byte[], int, int) method is used.
  * 
  * @author Mark Donszelmann
- * @version $Id: ASCII85InputStream.java,v 1.4 2008-08-07 18:33:54 murkle Exp $
+ * @version $Id: ASCII85InputStream.java,v 1.5 2008-10-23 19:04:01 hohenwarter Exp $
  */
 public class ASCII85InputStream extends InputStream implements ASCII85 {
 

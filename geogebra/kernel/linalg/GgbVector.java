@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 
 

@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Dimension;
 import java.text.NumberFormat;

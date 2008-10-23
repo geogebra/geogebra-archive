@@ -11,8 +11,8 @@ package geogebra.gui.util;
 // Public Domain Software -- Free to Use as You Like  //
 /////////////////////////////////////////////////////////
 
-import geogebra.Application;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.lang.reflect.Method;

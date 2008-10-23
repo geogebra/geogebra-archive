@@ -1,13 +1,13 @@
 //Copyright 2001-2005 FreeHep
 package org.freehep.graphics2d.font;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 /**
  * Abstract Character Table, inherited by all the Generated Encoding Tables
  * 
  * @author Simon Fischer
- * @version $Id: AbstractCharTable.java,v 1.4 2008-08-07 18:34:05 murkle Exp $
+ * @version $Id: AbstractCharTable.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public abstract class AbstractCharTable implements CharTable {
 

@@ -25,7 +25,7 @@ This file is part of the HotEqn package.
 
 package geogebra.gui.hoteqn;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.applet.Applet;
 import java.awt.Graphics;

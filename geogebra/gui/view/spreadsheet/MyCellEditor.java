@@ -1,11 +1,11 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.Application;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Font;

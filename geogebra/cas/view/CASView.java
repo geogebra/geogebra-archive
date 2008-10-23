@@ -1,8 +1,8 @@
 package geogebra.cas.view;
 
-import geogebra.Application;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.CasManager;
 
 import java.awt.BorderLayout;

@@ -12,12 +12,12 @@ the Free Software Foundation.
 
 package geogebra.gui.view.consprotocol;
 
-import geogebra.Application;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;

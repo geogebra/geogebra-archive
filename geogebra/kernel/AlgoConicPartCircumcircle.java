@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 /**
  * Circle arc or sector defined by three points.

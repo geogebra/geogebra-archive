@@ -12,7 +12,7 @@
 
 package geogebra.export;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

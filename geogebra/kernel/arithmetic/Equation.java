@@ -12,10 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.HashSet;

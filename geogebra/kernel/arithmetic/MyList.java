@@ -18,8 +18,8 @@
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.Application;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;

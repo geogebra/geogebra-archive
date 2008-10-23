@@ -1,7 +1,7 @@
 package geogebra.cas.view;
 
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;

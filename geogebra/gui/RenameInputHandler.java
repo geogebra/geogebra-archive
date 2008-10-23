@@ -1,9 +1,9 @@
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.Locale;

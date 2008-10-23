@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 
 /**

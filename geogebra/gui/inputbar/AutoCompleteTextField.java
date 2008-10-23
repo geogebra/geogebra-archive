@@ -1,7 +1,7 @@
 package geogebra.gui.inputbar;
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
+import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
 

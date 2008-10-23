@@ -1,7 +1,7 @@
 // Copyright 2000-2007, FreeHEP
 package org.freehep.graphicsio;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -56,7 +56,7 @@ import org.freehep.util.images.ImageUtilities;
  * @author Charles Loomis
  * @author Mark Donszelmann
  * @author Steffen Greiffenberg
- * @version $Id: AbstractVectorGraphicsIO.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
+ * @version $Id: AbstractVectorGraphicsIO.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
 

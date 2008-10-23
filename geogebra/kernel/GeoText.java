@@ -1,8 +1,8 @@
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Font;

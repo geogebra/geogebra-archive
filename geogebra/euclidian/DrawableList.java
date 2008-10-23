@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 

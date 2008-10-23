@@ -15,8 +15,9 @@ the Free Software Foundation.
  *
  * @author Markus Hohenwarter
  */
-package geogebra;
+package geogebra.main;
 
+import geogebra.JarManager;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLio;
@@ -29,14 +30,6 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
-import geogebra.main.AppletImplementation;
-import geogebra.main.CasManager;
-import geogebra.main.GeoElementSelectionListener;
-import geogebra.main.GeoGebraPreferences;
-import geogebra.main.GlassPaneListener;
-import geogebra.main.GuiManager;
-import geogebra.main.MyError;
-import geogebra.main.MyResourceBundle;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.util.ImageManager;

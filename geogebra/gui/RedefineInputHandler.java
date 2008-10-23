@@ -1,7 +1,7 @@
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 public class RedefineInputHandler implements InputHandler {

@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import geogebra.Application;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -26,6 +25,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 
 public class AlgoSumFunctions  extends AlgoElement {

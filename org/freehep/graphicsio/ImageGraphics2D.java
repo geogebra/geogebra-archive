@@ -1,7 +1,7 @@
 // Copyright 2003-2007, FreeHEP.
 package org.freehep.graphicsio;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,7 +49,7 @@ import org.freehep.util.io.FlateOutputStream;
  * Generic class for generating bitmap outputs from an image.
  *
  * @author Mark Donszelmann
- * @version $Id: ImageGraphics2D.java,v 1.7 2008-08-07 18:33:57 murkle Exp $
+ * @version $Id: ImageGraphics2D.java,v 1.8 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public class ImageGraphics2D extends PixelGraphics2D {
 

@@ -1,7 +1,7 @@
 // Copyright 2001, FreeHEP.
 package org.freehep.util.io;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,7 @@ import java.io.InputStream;
  * 
  * @author Mark Donszelmann
  * @author Charles Loomis
- * @version $Id: ByteCountInputStream.java,v 1.5 2008-08-22 21:18:34 murkle Exp $
+ * @version $Id: ByteCountInputStream.java,v 1.6 2008-10-23 19:04:01 hohenwarter Exp $
  */
 public class ByteCountInputStream extends ByteOrderInputStream {
 

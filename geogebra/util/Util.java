@@ -18,7 +18,7 @@
 
 package geogebra.util;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;

@@ -12,7 +12,6 @@
 
 package geogebra.kernel.commands;
 
-import geogebra.Application;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
@@ -42,6 +41,7 @@ import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;

@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
-import geogebra.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.Construction;
@@ -28,6 +27,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

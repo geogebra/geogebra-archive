@@ -1,6 +1,5 @@
 package geogebra.export.pstricks;
 
-import geogebra.Application;
 import geogebra.euclidian.DrawAngle;
 import geogebra.euclidian.DrawLine;
 import geogebra.euclidian.DrawPoint;
@@ -38,6 +37,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Rectangle;

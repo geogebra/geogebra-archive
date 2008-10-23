@@ -18,7 +18,6 @@
 
 package geogebra.euclidian;
 
-import geogebra.Application;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -49,6 +48,7 @@ import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 import java.awt.Point;
 import java.awt.Rectangle;

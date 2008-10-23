@@ -1,5 +1,5 @@
 package geogebra.export.pstricks;
-import geogebra.Application;
+import geogebra.main.Application;
 
 
 

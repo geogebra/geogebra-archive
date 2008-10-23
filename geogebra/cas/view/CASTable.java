@@ -3,8 +3,8 @@
  */
 package geogebra.cas.view;
 
-import geogebra.Application;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;

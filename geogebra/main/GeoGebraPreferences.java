@@ -14,7 +14,6 @@ package geogebra.main;
 
 
 
-import geogebra.Application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

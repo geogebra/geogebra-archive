@@ -1,9 +1,9 @@
 package geogebra.gui.view.algebra;
 
-import geogebra.Application;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Font;

@@ -12,8 +12,8 @@
 
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.kernel.Construction;
+import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;

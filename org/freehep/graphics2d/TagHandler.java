@@ -1,13 +1,13 @@
 // Copyright 2000, CERN, Geneva, Switzerland and University of Santa Cruz, California, U.S.A.
 package org.freehep.graphics2d;
 
-import geogebra.Application;
+import geogebra.main.Application;
 
 
 /**
  * 
  * @author Mark Donszelmann
- * @version $Id: TagHandler.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
+ * @version $Id: TagHandler.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
  */
 public class TagHandler {
 

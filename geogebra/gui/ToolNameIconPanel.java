@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.Application;
 import geogebra.kernel.Macro;
+import geogebra.main.Application;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

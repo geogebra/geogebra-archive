@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Application;
 import geogebra.io.MyXMLio;
+import geogebra.main.Application;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

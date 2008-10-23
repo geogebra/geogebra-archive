@@ -10,7 +10,6 @@ package geogebra.plugin;
  the Free Software Foundation.
  
  */
-import geogebra.Application;
 import geogebra.ClassPathManipulator;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
@@ -22,6 +21,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
