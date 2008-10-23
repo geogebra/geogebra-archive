@@ -193,9 +193,11 @@ public class CASTableCellController implements KeyListener {
 			break;
 		case KeyEvent.VK_DOWN:
 			if (!curCell.isLineVisiable()) {
-				table.setRowHeight(selectedRow, curCell.addLinePanel());
-				SwingUtilities.updateComponentTreeUI(curCell);
-				curCell.setLineBorderFocus();
+				if (selectedRow != view.getConsoleTable().getRowCount() - 1) {
+					table.setRowHeight(selectedRow, curCell.addLinePanel());
+					SwingUtilities.updateComponentTreeUI(curCell);
+					curCell.setLineBorderFocus();
+				}
 			}
 			consumeEvent = true;
 			break;

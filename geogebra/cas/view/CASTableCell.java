@@ -156,6 +156,7 @@ public class CASTableCell extends JPanel {
 		inputPanel.setInputAreaFocused();
 		(inputPanel.getInputArea()).setCaretPosition(inputPanel.getInput()
 				.length());
+		// Sometimes we need to set the length of the cell value.
 	}
 
 	public void setLineBorderFocus() {
@@ -177,11 +178,13 @@ public class CASTableCell extends JPanel {
 	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
 		this.outputFieldVisiable = outputFieldVisiable;
 	}
+	
 	final public void setFont(Font ft) {
 		  super.setFont(ft);
-		  
-		  inputPanel.setFont(ft);
-		  outputPanel.setFont(ft);
+		  if(inputPanel!=null)
+			  inputPanel.setFont(ft);
+		  if(outputPanel!=null)
+			  outputPanel.setFont(ft);
 		 }
 
 }
