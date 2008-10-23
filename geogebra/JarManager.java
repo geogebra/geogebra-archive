@@ -38,8 +38,8 @@ import java.util.zip.ZipInputStream;
 public class JarManager {
 	
 	// GeoGebra VERSION INFORMATION
-	public static final String GEOGEBRA_BUILD_DATE = "October 20, 2008";
-	public static final String GEOGEBRA_VERSION_STRING = "3.1.69.0";
+	public static final String GEOGEBRA_BUILD_DATE = "October 23, 2008";
+	public static final String GEOGEBRA_VERSION_STRING = "3.1.71.0";
 		
 	// GeoGebra jar files
 	public static final int JAR_FILE_GEOGEBRA = 0;
