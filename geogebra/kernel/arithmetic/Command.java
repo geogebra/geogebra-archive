@@ -135,14 +135,8 @@ implements ExpressionValue {
     }
     
     public GeoElement [] evaluateMultiple() {
-
             GeoElement [] geos = null;
-            try {
-                 geos = kernel.getAlgebraProcessor().processCommand(this, false); 
-            } catch (Error me) {
-                throw me;
-            }
-
+            geos = kernel.getAlgebraProcessor().processCommand(this, false);          
             return geos;
      }
     
@@ -150,14 +144,14 @@ implements ExpressionValue {
     public ExpressionValue evaluate() {
         // not yet evaluated: process command
         if (evalGeos == null) 
-        	evalGeos = evaluateMultiple();   
-        
-             if (evalGeos != null && evalGeos.length == 1) {
-                return evalGeos[0]; 
-             } else {
-                Application.debug("invalid command evaluation: " + name);
-                throw new MyError(app, app.getError("InvalidInput") + ":\n" + this);                                                                 
-             }          
+        	evalGeos = evaluateMultiple(); 
+      
+         if (evalGeos != null && evalGeos.length >= 1) {
+            return evalGeos[0]; 
+         } else {
+            Application.debug("invalid command evaluation: " + name);
+            throw new MyError(app, app.getError("InvalidInput") + ":\n" + this);                                                                 
+         }          
     }
     
     public void resolveVariables() {
