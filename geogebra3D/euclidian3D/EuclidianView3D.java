@@ -133,7 +133,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		movingPlane.setObjColor(new Color(0f,0f,1f));
 		movingPlane.setAlgebraVisible(false); //TODO make it works
 		movingPlane.setLabelVisible(false);
-		
+
 
 		movingSegment = kernel3D.Segment3D("movingSegment", 
 				new GgbVector(new double[] {0,0,0,1}),
@@ -499,7 +499,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 	}
 	
-	
+	/*
 	public void doPick(GgbVector pickPoint, boolean repaint){
 		doPick(pickPoint,false, repaint);
 	}
@@ -514,7 +514,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		else
 			drawList3D.doPick(pickPoint,false, repaint);
 	}
-	
+	*/
 	
 	public void rendererPick(int x, int y){
 		//openGL picking

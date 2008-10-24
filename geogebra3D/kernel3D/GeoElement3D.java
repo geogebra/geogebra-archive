@@ -34,6 +34,8 @@ public abstract class GeoElement3D
 	private boolean willBeHighlighted = false;
 
 	
+	private boolean showInAlgebraView = true;
+	
 	// GeoElement types
 	public static final int GEO_CLASS_POINT3D = 1130;
 	public static final int GEO_CLASS_SEGMENT3D = 1131;
@@ -87,8 +89,9 @@ public abstract class GeoElement3D
 		
 	}	
 	
-		
-
+	
+	
+	
 	
 	
 	

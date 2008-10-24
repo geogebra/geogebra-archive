@@ -200,8 +200,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 
 
-	protected boolean showInAlgebraView() {
-		// TODO Raccord de méthode auto-généré
+	protected boolean showInAlgebraView() {		
 		return true;
 	}
 
@@ -216,6 +215,25 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		// TODO Raccord de méthode auto-généré
 		return "todo";
 	}
+	
+	final public String toString() {
+		
+		String s = getLabel();
+		
+		s+=" : "; 
+		
+		
+		
+		//TODO undefined...
+		//TODO remove x/y/z if not needed
+		//TODO check this
+		s+=kernel.format(Vn.get(1))+"x+"+kernel.format(Vn.get(2))+"y+"+kernel.format(Vn.get(3))+"z+"
+			+kernel.format(-Vn.dotproduct(M.getColumn(3)))+"=0";
+		
+		return s;
+	}
+
+	
 	
 	
 }

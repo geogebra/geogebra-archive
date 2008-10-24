@@ -267,8 +267,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		*/
 		movedGeoPoint3D.setCoords(project[0]);
 		
-		//TODO modify objSelected.updateRepaint()
-		objSelected.updateCascade();
+		
+		
 		view.setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
 		view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
 		
@@ -277,6 +277,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			view.setWaitForUpdate(true);
 			//view.update();
 			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
+		}else{
+			movedGeoPoint3D.updateCascade();//TODO modify movedGeoPoint3D.updateCascade()
 		}
 		
 		
@@ -363,7 +365,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		setMouseLocation(e);
 		view.rendererPick(mouseLoc.x,mouseLoc.y);
 		
-		pick(true);
+		//pick(true);
 		
 		//view.update();
 		view.setWaitForUpdate(true);
@@ -371,11 +373,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 	
 	/** pick object under the mouse */
-	public void pick(boolean repaint){
+	/*
+	private void pick(boolean repaint){
 		//Application.debug("mouse=("+mouseLoc.x+","+mouseLoc.y+")");
 		pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 		view.doPick(pickPoint, repaint);
 	}
+	*/
 
 
 	

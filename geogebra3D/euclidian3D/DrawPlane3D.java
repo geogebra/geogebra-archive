@@ -146,11 +146,5 @@ public class DrawPlane3D extends Drawable3D {
 	
 	
 	
-	
-	
-	public boolean isPicked(GgbVector pickLine, boolean repaint){ return false; };
-	
-
-	
 
 }

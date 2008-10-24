@@ -89,7 +89,7 @@ public class DrawPoint3D extends Drawable3D{
 	public void drawHiding(EuclidianRenderer3D renderer){}
 	
 	
-	
+	/*
 	public boolean isPicked(GgbVector pickPoint, boolean repaint){
 		//TODO use euclidianview3D scale factor
 		if (coords.subVector(1,3).distLine(pickPoint.subVector(1,3),new GgbVector(new double[] {0,0,1}))<=POINT3D_RADIUS/10f){
@@ -101,5 +101,6 @@ public class DrawPoint3D extends Drawable3D{
 			return false;
 		}
 	};
+	*/
 
 }

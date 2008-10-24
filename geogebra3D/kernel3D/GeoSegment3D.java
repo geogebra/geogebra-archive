@@ -81,4 +81,19 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	}
 	
 	
+	final public String toString() {
+		
+		String s = getLabel();
+		
+		s+="="; //TODO use kernel property
+		
+		
+		//TODO undefined...
+		s+=kernel.format(getLength());
+		
+		return s;
+	}
+	
+	
+	
 }

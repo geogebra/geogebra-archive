@@ -253,7 +253,7 @@ public abstract class GeoElement
 	private String caption; // only used by GeoBoolean for check boxes at the moment	
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
-	private boolean algebraVisible = true;
+	protected boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
 	private boolean isAlgoMacroOutput; // is an output object of a macro construction
