@@ -95,6 +95,9 @@ public class JarManager {
 	 * Creates the singleton instance of JarManager. 
 	 */
 	private JarManager(boolean isApplet) {
+		// TODO: remove
+		System.out.println("*** INIT JAR MANAGER ***");
+		
 		// use classloader of Application class: important for applets
 		appClassLoader = JarManager.class.getClassLoader();
 		
@@ -107,8 +110,7 @@ public class JarManager {
 		// init localJar directory where the jar files can be found locally
 		initLocalJarDir();
 		
-		// TODO: remove
-		System.out.println("*** INIT JAR MANAGER ***");
+		// TODO: remove		
 		System.out.println("  codebase: " + codebase);
 		System.out.println("  app type: " + main_app_type);
 		System.out.println("  localJarDir: " + localJarDir);	
@@ -210,7 +212,7 @@ public class JarManager {
 		}		
 				
 		// TODO: remove			
-		System.out.println("Added to classpath: " + localJarFile + ", success: " + jarFileOnClasspath[jarFileIndex]);									
+		System.out.println("Added to classpath (" + jarFileOnClasspath[jarFileIndex] + ") : " + localJarFile);									
 		return jarFileOnClasspath[jarFileIndex];
 	}
 	

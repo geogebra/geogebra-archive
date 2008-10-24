@@ -9,11 +9,6 @@ package geogebra;
 public interface JavaScriptAPI {
 	
 	/**
-	 * Initializes user interface of applet.
-	 */
-	public void init();
-	
-	/**
 	 * Returns current construction as a ggb file in form of a byte array.
 	 * @return null if something went wrong 
 	 */

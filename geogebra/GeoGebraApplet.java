@@ -12,12 +12,13 @@ the Free Software Foundation.
 
 package geogebra;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 
 import javax.swing.JApplet;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 /**
  * GeoGebra applet
@@ -30,41 +31,26 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	private static final long serialVersionUID = -350682076336303151L;
 	
-	private JavaScriptAPI appletImplementation;		
+	private JavaScriptAPI appletImplementation = null;	
+	private Image splashImage;
 	
 	/**
 	 * Loads necessary jar files and initializes applet. During the loading
 	 * of jar files, an "is loading" message is shown
 	 */
-	public void init() {
-		 // initialize GUI that shows that applet is loading ...
-        try {
-        	// execute job on the event-dispatching thread for thread safety
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                	// TODO: remove
-                	System.out.println("Show loading screen ...");
-                	
-                	createLoadingGUI();                	
-                }
-            });
-        } catch (Exception e) { 
-            System.err.println("createLoadingGUI() didn't successfully complete");
-        }
-							
-        // Load jar files and initialize the GeoGebra applet ...
-        try {
-        	// execute job on the event-dispatching thread for thread safety
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                	// load all necessary jar files and init applet
-            		getAppletImplementation().init();
-                }
-            });
-        } catch (Exception e) { 
-            System.err.println("GeoGebra applet could not be initialized");
-            e.printStackTrace();
-        }              
+	public void init() {   
+		splashImage = getImageResource("splash.gif");
+		
+        // initialize applet GUI
+        SwingWorker worker = new SwingWorker() {
+			public Object construct() {				
+				// TODO: remove
+            	System.out.println("initing...");
+				initAppletImplementation();
+				return null;
+			}        	
+        };
+        worker.start();        
 	}
 
 	public void start() {
@@ -83,35 +69,107 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	}
 	
 	/**
-	 * Returns the appletImplementation object. 
-	 * Loads geogebra_main.jar file and initializes applet if necessary.
+	 * Returns the appletImplementation object. 	 
 	 */
 	private synchronized JavaScriptAPI getAppletImplementation() {
 		if (appletImplementation == null) {
-			// load geogebra_main.jar file
-			// this is needed to initialize the GeoGebra applet implementation
-	        JarManager jarManager = JarManager.getSingleton(true);
-			jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
-
-			// create delegate object that implements our applet's methods
-			appletImplementation = new geogebra.main.DefaultApplet(this);
+			initAppletImplementation();
 		}
 		
 		return appletImplementation;
 	}
 		
+	/**
+	 * Initializes the appletImplementation object. 
+	 * Loads geogebra_main.jar file and initializes applet if necessary.
+	 */
+	private synchronized void initAppletImplementation() {
+		// load geogebra_main.jar file
+        JarManager jarManager = JarManager.getSingleton(true);
+		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
+
+		// create delegate object that implements our applet's methods
+		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(this);
+		
+		// initialize applet's user interface, this changes the content pane
+		applImpl.initGUI();
+				
+		// remember the applet implementation
+		appletImplementation = applImpl;	
+		
+		// update applet GUI, see paint()
+		validate();
+		
+		// load all jar files in background and init dialogs
+		applImpl.getApplication().initInBackground();
+	}
 	
 	
 	/**
-     * Create a GUI that shows that the applet is loading. 
-     * For thread safety, this method should be invoked from the event-dispatching thread.
+     * Paints the applet or a loading screen while the applet is being initialized.
      */
-    private void createLoadingGUI() {
-        //Put a "GeoGebra ..." label in the middle of the content pane
-    	getContentPane().setBackground(Color.white);
-        JLabel statusLabel = new JLabel("GeoGebra ...", JLabel.CENTER);
-        getContentPane().add(statusLabel, BorderLayout.CENTER);                      
+    final public void paint(Graphics g) {
+    	if (appletImplementation == null) 
+    		paintLoadingScreen(g);
+    	else
+    		super.paint(g);		    	                 
     }
+
+    /**
+     * Paints a loading screen to show progress with downloading jar files.
+     */
+    private void paintLoadingScreen(Graphics g) {
+    	int width = getWidth();
+    	int height = getHeight();
+    	
+    	// white background
+    	g.setColor(Color.white);
+    	g.clearRect(0, 0, width, height);
+    	    	
+    	// splash image position
+    	int x = -1;
+    	int y = -1;    	    	
+    	if (splashImage != null) {
+    		x = (width - splashImage.getWidth(null)) / 2;
+    		y = (height - splashImage.getHeight(null)) / 2;
+    	}
+    	
+    	//splash image fits into content pane
+    	if (x >=0 && y >=0 ) {
+    		// draw image
+    		g.drawImage(splashImage, x, y, null);
+    	} else {
+    		// text
+    		g.setColor(Color.black);
+    		g.drawString("GeoGebra ...", width/2-10, height/2-5);
+    	}
+    }
+    	
+    
+	private Image getImageResource(String name) {
+		Toolkit toolKit = Toolkit.getDefaultToolkit();
+ 		MediaTracker tracker = new MediaTracker(this);
+    	
+   		 Image img = null;
+   		 try {
+   		    java.net.URL url = GeoGebraApplet.class.getResource(name);	
+   		    if (url != null) {		   
+   				img = toolKit.getImage(url);	
+   				tracker.addImage(img, 0);
+   				try {
+   				   tracker.waitForAll();
+   				} catch (InterruptedException e) {
+   					System.err.println("Interrupted while loading Image: " + name);
+   				}
+   				tracker.removeImage(img);
+   			}			   
+   		 } catch (Exception e) {
+   			System.err.println(e.toString());
+   		 }
+   		 if (img == null) 
+   			 System.err.println("Image " + name + " not found");
+   		 return img;
+   	}	  
 
 
 	/*

@@ -274,6 +274,10 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		updateAllTitles();
 		
 		wnd.setVisible(true);
+		
+		// load all jar files in background and init dialogs
+		app.initInBackground();
+		
 		return wnd;
 	}
 

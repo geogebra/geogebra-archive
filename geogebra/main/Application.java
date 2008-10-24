@@ -399,11 +399,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// init plugin manager for applications
 		if (!isApplet)
-			pluginmanager = getPluginManager();
-
-		// load all jar files in background and init dialogs
-		// TODO: add
-		//initInBackground();
+			pluginmanager = getPluginManager();		
 	}
 
 	/**
@@ -439,7 +435,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return appGuiManager != null;
 	}
 
-	private void initInBackground() {
+	public void initInBackground() {
 		if (!initInBackground_first_time)
 			return;
 		initInBackground_first_time = false;
@@ -447,30 +443,27 @@ public abstract class Application implements KeyEventDispatcher {
 		// init file chooser and properties dialog
 		// in a background task
 		Thread runner = new Thread() {
-			public void run() {
+			public void run() {				
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(1000);
 				} catch (Exception e) {
 				}
 
-				// init properties dialog
-				getGuiManager().initPropertiesDialog();
 				// TODO: remove
-				Application.debug("background: properties dialog inited");
+				Application.debug("BACKGROUND initing of dialogs, CAS, jar files ...");
+				
+				// init properties dialog
+				getGuiManager().initPropertiesDialog();				
 
 				// init file chooser
 				try {
-					getGuiManager().initFileChooser();
-					// TODO: remove
-					Application.debug("background: file chooser inited");					
+					getGuiManager().initFileChooser();					
 				} catch (Exception e) {
 					System.err.println("couldn't initialize file chooser: " + e.getMessage());
 				}
 				
 				// init CAS
-				kernel.initCAS();
-				// TODO: remove
-				Application.debug("background: CAS inited");
+				kernel.initCAS();				
 
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {

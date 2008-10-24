@@ -82,23 +82,24 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/** Creates a new instance of GeoGebraApplet */
 	public AppletImplementation(JApplet applet) {
 		this.applet = applet;
+		init();
 	}
 	
 	public JApplet getJApplet() {
 		return applet;
 	}
 
-	public void init() {
+	private void init() {
+		
+		try {			
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {}
 		
 		//codeBase=this.getCodeBase();
 		//documentBase=this.getDocumentBase();
 		
 		//Application.debug("codeBase="+codeBase);
 		//Application.debug("documentBase="+documentBase);
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {}
 	
 		// get parameters
 		// filename of construction
@@ -200,8 +201,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/* Ulven 29.05.08 */
 		ggbApi=app.getGgbApi();			
 		
-		initGUI();		
- 
+	
+ // TODO: check
+		/*
 		// Michael Borcherds 2008-04-20
 		// code to allow JavaScript methods reset() and openFile() to access files
 		// even if the code is untrusted
@@ -225,13 +227,17 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		 
 		};
 		runner.start();
+		*/
 	}
 
 	protected abstract Application buildApplication(String[] args, boolean ua);
 		
-
-	protected void initGUI() {
-		applet.getContentPane().removeAll();
+	public Application getApplication() {
+		return app;
+	}
+	
+	public void initGUI() {		
+		JPanel myContenPane;
 		
 		// show only button to open application window	
 		if (showOpenButton) {
@@ -241,27 +247,36 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 						+ " "
 						+ app.getPlain("ApplicationName"));
 			btOpen.addActionListener(new ButtonClickListener());
-			Container cp = applet.getContentPane();
-			cp.setBackground(bgColor);
-			cp.setLayout(new FlowLayout(FlowLayout.CENTER));
-			cp.add(btOpen);
+			
+			// prepare content pane
+			myContenPane = new JPanel();
+			myContenPane.setBackground(bgColor);
+			myContenPane.setLayout(new FlowLayout(FlowLayout.CENTER));
+			myContenPane.add(btOpen);
 
 		}
 		// show interactive drawing pad
 		else {
-			JPanel panel = createGeoGebraAppletPanel();
-			applet.getContentPane().add(panel);			
-			
+			// create applet panel
+			myContenPane = createGeoGebraAppletPanel();
+		
 			// border around applet panel
-			panel.setBorder(BorderFactory.createLineBorder(borderColor));			
+			myContenPane.setBorder(BorderFactory.createLineBorder(borderColor));			
 
 			if (showFrame) {
 				//	open frame on double click
 				dcListener = new DoubleClickListener();				
 				ev.addMouseListener(dcListener);
-			}						
+			}									
 		}
-		app.setMoveMode();
+			
+		// replace applet's content pane
+		Container cp = applet.getContentPane();
+		cp.removeAll();
+		cp.add(myContenPane);
+		
+		// set move mode
+		app.setMoveMode();		
 	}
 	
 	protected JPanel createGeoGebraAppletPanel() {
