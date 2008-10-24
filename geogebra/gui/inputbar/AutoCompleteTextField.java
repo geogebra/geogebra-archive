@@ -161,12 +161,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
                 updateCurrentWord();
                 showCommandHelp(false);
                 break;          
-
+/* experimental - jump striaght to manual page for current command
+ * could replace F1 if it works - problems with accents/asian languages
             case KeyEvent.VK_F4:
                 updateCurrentWord();
                 showCommandHelp(true);
                 break;          
-
+*/
             default:                                
         }                                   
   }
