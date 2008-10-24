@@ -353,13 +353,13 @@ public class JarManager {
 		if (!baseDir.endsWith(File.separator)) 
 			baseDir += File.separator;			
 											
-		// directory name, e.g. /tmp/geogebra3.1.43.0/
-		File tempDir = new File(baseDir + "geogebra" + GeoGebra.VERSION_STRING + File.separator);		
+		// directory name, e.g. /tmp/geogebra/3.1.71.0/
+		File tempDir = new File(baseDir + "geogebra" + File.separator + GeoGebra.VERSION_STRING + File.separator);		
 		if (tempDir.exists())	{
 			// TODO: remove
 			System.err.println("use existing local directory : " + tempDir);			
 		} else {
-			// create local directory, e.g. /tmp/geogebra3.1.43.0/
+			// create local directory, e.g. /tmp/geogebra/3.1.71.0/
 			try {				
 				tempDir.mkdirs();
 				
