@@ -19,6 +19,7 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.main.Application;
 
 
 /**
@@ -525,11 +526,11 @@ implements EuclidianViewAlgo {
 			double maxi = Double.MIN_VALUE;
 			int minIndex=-1, maxIndex=-1;
 			
-			N = (int)n.getDouble() + 2;
+			double width = (int)n.getDouble();
 			
 			int rawDataSize = list1.size();
 			
-			if (N < 4 || rawDataSize < 2)
+			if (width < 0 || kernel.isZero(width) || rawDataSize < 2)
 			{
 				sum.setUndefined();
 				return;
@@ -560,8 +561,27 @@ implements EuclidianViewAlgo {
 				return;
 			}
 			
-			a = (NumberValue)list1.get(minIndex);
-			b = (NumberValue)list1.get(maxIndex);
+			double totalWidth = maxi - mini;
+			
+			double noOfBars = totalWidth / n.getDouble();
+			
+			double gap = 0;
+			
+			if (kernel.isInteger(noOfBars))
+			{
+				N = (int)noOfBars + 1;
+				a = (NumberValue)list1.get(minIndex);
+				b = (NumberValue)list1.get(maxIndex);
+			}
+			else
+			{
+				N = (int)noOfBars + 2;
+				gap = ((N-1) * width - totalWidth) / 2.0;
+				a = (NumberValue)(new GeoNumeric(cons,mini - gap));
+				b = (NumberValue)(new GeoNumeric(cons,maxi + gap));
+				//Application.debug("gap = "+gap);
+			}
+			
 			
 			//Application.debug("N = "+N+" maxi = "+maxi+" mini = "+mini);
 							
@@ -574,9 +594,9 @@ implements EuclidianViewAlgo {
 			}				
 			
 			// fill in class boundaries
-			double width = (maxi-mini)/(double)(N-2);
+			//double width = (maxi-mini)/(double)(N-2);
 			for (int i=0; i < N; i++) {
-				leftBorder[i] = mini + width * i;
+				leftBorder[i] = mini - gap + width * i;
 			}
 						
 		
