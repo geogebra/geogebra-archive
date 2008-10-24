@@ -56,11 +56,6 @@ public interface JavaScriptAPI {
 	public void reset();
 	
 	/**
-	 * Resets the initial construction (given in filename parameter) of this applet.	 
-	 */
-	public void resetNoThread();
-	
-	/**
 	 * Refreshs all views. Note: clears traces in
 	 * geometry window.
 	 */
@@ -81,11 +76,6 @@ public interface JavaScriptAPI {
 	 * ...but the actual code is in a thread to avoid JavaScript security issues  
 	 */
 	public void openFile(String strURL);
-	
-	/**
-	 * Loads a construction from a  file (given URL).	
-	 */
-	public void openFileNoThread(String strURL);
 	
 	/**
 	 * Shows or hides the object with the given name in the geometry window.

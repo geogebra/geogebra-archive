@@ -277,10 +277,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().openFile(strURL);
 	}
 
-	public void openFileNoThread(String strURL) {
-		getAppletImplementation().openFileNoThread(strURL);
-	}
-
 	public void refreshViews() {
 		getAppletImplementation().refreshViews();
 	}
@@ -311,10 +307,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	public void reset() {
 		getAppletImplementation().reset();
-	}
-
-	public void resetNoThread() {
-		getAppletImplementation().resetNoThread();
 	}
 
 	public void setAxesVisible(boolean xVisible, boolean yVisible) {
