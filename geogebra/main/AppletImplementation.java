@@ -203,7 +203,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		
 	
  // TODO: check
-		/*
+		
 		// Michael Borcherds 2008-04-20
 		// code to allow JavaScript methods reset() and openFile() to access files
 		// even if the code is untrusted
@@ -227,7 +227,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		 
 		};
 		runner.start();
-		*/
+		
 	}
 
 	protected abstract Application buildApplication(String[] args, boolean ua);
