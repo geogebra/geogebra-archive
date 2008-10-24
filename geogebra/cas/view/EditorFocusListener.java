@@ -22,7 +22,7 @@ public class EditorFocusListener implements FocusListener{
 	public void focusLost(FocusEvent arg0) {
 		// TODO Auto-generated method stub
 		Application.debug("Focus Lost ");
-//		if ()
+
 		editor.setLineInvisiable();
 		editor.stopCellEditing();		
 	}

@@ -153,7 +153,8 @@ public class CASTableCell extends JPanel {
 	public void setInputAreaFocused() {
 		inputPanel.setInputAreaFocused();
 		inputPanel.setInputCaretPosition(inputPanel.getInput().length());
-		// Sometimes we need to set the length of the cell value.
+		app.debug("Set the caret at position: "
+				+ inputPanel.getInput().length() + inputPanel.getInput());
 	}
 
 	public void setLineBorderFocus() {
