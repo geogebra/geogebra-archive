@@ -248,19 +248,29 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
       // search to the left
       int wordStart = pos - 1;
       while (  wordStart >= 0 &&
-              Character.isLetterOrDigit( text.charAt(wordStart)))   --wordStart;
+              isLetterOrDigit( text.charAt(wordStart)))   --wordStart;
       wordStart++;
     
       // search to the right
       int wordEnd= pos;
       int length = text.length();
       while (   wordEnd < length &&
-                  Character.isLetterOrDigit( text.charAt(wordEnd) ))    ++wordEnd;
+                  isLetterOrDigit( text.charAt(wordEnd) ))    ++wordEnd;
         
       if (wordStart >= 0 && wordEnd <= length)
       	return text.substring(wordStart, wordEnd);
       else 
       	return null;
+  }
+  
+  private static boolean isLetterOrDigit(char character) {
+	  switch (character) {
+	  	case '_':  // allow underscore as a valid letter in an autocompletion word
+		  return true;
+		  
+	  	default:
+	  		return Character.isLetterOrDigit(character);
+	  }
   }
     
    /**
