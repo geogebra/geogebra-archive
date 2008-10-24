@@ -3244,11 +3244,15 @@ public abstract class Application implements KeyEventDispatcher {
 
 		int keyCode = event.getKeyCode();
 		// SPECIAL KEYS
-		int changeVal = 0; // later: changeVal = base or -base
+		double changeVal = 0; // later: changeVal = base or -base
+		// Shift : base = 0.1
+		// Default : base = 1
 		// Ctrl : base = 10
 		// Alt : base = 100
-		int base = 1;
-		if (event.isControlDown())
+		double base = 1;
+		if (event.isShiftDown())
+			base = 0.1;
+		if (Application.isControlDown(event))
 			base = 10;
 		if (event.isAltDown())
 			base = 100;
