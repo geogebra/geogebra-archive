@@ -32,25 +32,29 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	private static final long serialVersionUID = -350682076336303151L;
 	
 	private JavaScriptAPI appletImplementation = null;	
+	
+	private JarManager jarManager;
 	private Image splashImage;
 	
 	/**
 	 * Loads necessary jar files and initializes applet. During the loading
 	 * of jar files, an "is loading" message is shown
 	 */
-	public void init() {   
-		splashImage = getImageResource("splash.gif");
+	public void init() {  
+		// init jar manager to load jar files for applet
+		jarManager = JarManager.getSingleton(true);
 		
-        // initialize applet GUI
+		// init applet in separate thread
         SwingWorker worker = new SwingWorker() {
 			public Object construct() {				
-				// TODO: remove
-            	System.out.println("initing...");
 				initAppletImplementation();
 				return null;
 			}        	
         };
-        worker.start();        
+        worker.start();			
+		
+		// load splash screen
+		splashImage = getImageResource("splash.gif");
 	}
 
 	public void start() {
@@ -84,8 +88,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * Loads geogebra_main.jar file and initializes applet if necessary.
 	 */
 	private synchronized void initAppletImplementation() {
-		// load geogebra_main.jar file
-        JarManager jarManager = JarManager.getSingleton(true);
+		// load geogebra_main.jar file       
 		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
 
 		// create delegate object that implements our applet's methods

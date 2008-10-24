@@ -72,6 +72,7 @@ public class JarManager {
 	
 	// directory with local jars
 	private File localJarDir;	
+	private boolean useExistingCacheDir = false;
 	
 	// boolean variables to store whether a certain jar file is on classpath /
 	// was tried to put on the classpath
@@ -137,8 +138,8 @@ public class JarManager {
 		return codebase;
 	}
 	
-	public boolean hasOnlineCodebase() {
-		return codebase.getProtocol().startsWith("http");
+	public boolean isUsingExistingCacheDir() {
+		return useExistingCacheDir;
 	}
 		
 	/**
@@ -345,7 +346,7 @@ public class JarManager {
 	/**
 	 * Creates a temporary directory using the current version number, e.g. "geogebra3.1.3"
 	 */
-	private synchronized static File createLocalDir() {	
+	private synchronized File createLocalDir() {	
 		// initialize local jar directory		
 		String baseDir = System.getProperty("java.io.tmpdir");
 		
@@ -355,9 +356,11 @@ public class JarManager {
 											
 		// directory name, e.g. /tmp/geogebra/3.1.71.0/
 		File tempDir = new File(baseDir + "geogebra" + File.separator + GeoGebra.VERSION_STRING + File.separator);		
-		if (tempDir.exists())	{
+		
+		useExistingCacheDir = tempDir.exists();
+		if (useExistingCacheDir)	{
 			// TODO: remove
-			System.err.println("use existing local directory : " + tempDir);			
+			System.out.println("use existing cache directory : " + tempDir);			
 		} else {
 			// create local directory, e.g. /tmp/geogebra/3.1.71.0/
 			try {				
