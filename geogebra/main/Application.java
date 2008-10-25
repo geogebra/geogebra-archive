@@ -55,6 +55,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -818,13 +819,15 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void setFrame(JFrame frame) {
 		isApplet = false;
-		if (frame != this.frame) {
-			this.frame = frame;
-			mainComp = frame;
-			updateTitle();
-			frame.setIconImage(getInternalImage("geogebra.gif"));
-			frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
+		mainComp = frame;
+				
+		this.frame = frame;	
+		updateTitle();
+		frame.setIconImage(getInternalImage("geogebra.gif"));
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
+		WindowListener [] wl = frame.getWindowListeners();
+		if (wl == null || wl.length == 0) {
 			// window closing listener
 			WindowAdapter windowListener = new WindowAdapter() {
 				public void windowClosing(WindowEvent event) {
@@ -832,14 +835,14 @@ public abstract class Application implements KeyEventDispatcher {
 				}
 			};
 			frame.addWindowListener(windowListener);
-		}
+		}				
 	}
 
 	final public boolean isApplet() {
 		return isApplet;
 	}
 	
-	public JFrame getFrame() {
+	public synchronized JFrame getFrame() {
 		if (frame == null) {
 			frame = getGuiManager().createFrame();	
 		}

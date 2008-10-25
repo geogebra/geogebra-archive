@@ -2020,7 +2020,7 @@ public class DefaultGuiManager implements GuiManager {
 			return wnd;
 		}
 		
-		public synchronized void exitAll() {			
+		public synchronized void exitAll() {
 			ArrayList insts = GeoGebraFrame.getInstances();
 			GeoGebraFrame[] instsCopy = new GeoGebraFrame[insts.size()];
 			for (int i = 0; i < instsCopy.length; i++) {

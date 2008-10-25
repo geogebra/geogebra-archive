@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.main;
 
 import geogebra.JavaScriptAPI;
+import geogebra.SwingWorker;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -21,6 +22,7 @@ import geogebra.plugin.GgbAPI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
@@ -65,8 +66,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	public boolean showMenuBar = false;
 	//public boolean showSpreadsheet = false;
 	//public boolean showAlgebraView = false;
-	boolean showResetIcon = false;
-	private boolean firstAppOpen = true;
+	boolean showResetIcon = false;	
 	Color bgColor, borderColor;
 	private String fileStr, customToolBar;	
 	public boolean showFrame = true;
@@ -201,32 +201,48 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/* Ulven 29.05.08 */
 		ggbApi=app.getGgbApi();			
 		
-	
- // TODO: check
+
+		// for applets with an "open GeoGebra" button or "double click to open window" 
+		// init window in background 
+		if (showOpenButton || showFrame) {
+			Thread runner = new Thread() {
+				public void run(){
+					try {Thread.sleep(500);} catch(Exception e) {}
+				
+					if (showOpenButton) {
+						initGeoGebraFrame();						
+					} 
+					else if (showFrame) {
+						wnd = app.getFrame();						
+					}										
+				}
+			};
+			runner.start();
+		}
+		
 		
 		// Michael Borcherds 2008-04-20
 		// code to allow JavaScript methods reset() and openFile() to access files
 		// even if the code is untrusted
-    	Thread runner = new Thread() {
-		public void run(){
-			while (true) {
-				try {Thread.sleep(200);} catch(Exception e) {}
+		Thread runner = new Thread() {
+			public void run(){
+				while (true) {
+					try {Thread.sleep(200);} catch(Exception e) {}
 			
-				//Application.debug("thread");
-			    	if (javascriptReset) resetNoThread();
+					//Application.debug("thread");
+			    	if (javascriptReset) {
+			    		resetNoThread();
+			    		javascriptReset=false;
+			    	}
 			    	
-			    	if (javascriptLoadFile) openFileNoThread(javascriptLoadFileName);
-			    	
-			    	javascriptLoadFile=false;
-			    	javascriptReset=false;
-			 
-			    }
-			
-	    	
-		}
-		 
+			    	if (javascriptLoadFile) {
+			    		openFileNoThread(javascriptLoadFileName);
+			    		javascriptLoadFile=false;
+			    	}
+			    }				
+			}
 		};
-		runner.start();
+		runner.start();    	
 		
 	}
 
@@ -304,21 +320,39 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 
 	private class DoubleClickListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
-			if (e.getClickCount() == 2) {
-				showFrame();
+			if (e.getClickCount() == 2) {			
+				showFrame();										
 			}
 		}
 	}
 
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			showFrame();
+			showFrame();				
 		}
 	}
 
 	private void showFrame() {
+		Thread worker = new Thread() {
+			public void run() {	
+				applet.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				
+				doShowFrame();	
+				
+				applet.setCursor(Cursor.getDefaultCursor());
+			}        	
+        };
+        worker.start();	
+		
+					
+	}
+	
+	private synchronized void doShowFrame() {
 		if (showOpenButton) {
 			btOpen.setEnabled(false);
+			
+			if (wnd == null)
+				initGeoGebraFrame();			
 		} else {
 			//	clear applet		 
 			Container cp = applet.getContentPane();
@@ -328,17 +362,26 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 
 			JPanel p = new JPanel(new BorderLayout());
 			p.setBackground(Color.white);
-			JLabel label = new JLabel(app.getPlain("WindowOpened") + "...");
+			JLabel label = new JLabel("GeoGebra " + app.getPlain("WindowOpened") + "...");
 			label.setFont(app.getPlainFont());
 			p.add(label, BorderLayout.CENTER);
 			cp.add(p);
-			SwingUtilities.updateComponentTreeUI(applet);				
-		}
+						
+			// initialize the GeoGebra frame's UIG
+			initGeoGebraFrame();			
+			applet.validate();
+		}				
 		
-//		 build application panel 
-		if (firstAppOpen) {
+		// show frame		
+		wnd.setVisible(true);		
+	}
+	
+	private synchronized void initGeoGebraFrame() {
+		// build application panel 
+		if (wnd == null) {
 			wnd = app.getFrame();		
-		}
+		}				
+		
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
 		app.setShowAlgebraInput(true);		
@@ -349,26 +392,26 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 			
 		app.updateContentPane();
-		app.resetFonts();
-
-		// open frame
-		if (firstAppOpen) {
-			wnd.setVisible(true);
-			firstAppOpen = false;
-		} else {
-			wnd.setVisible(true);
-		}
+		app.resetFonts();					
 	}
 
-	public void showApplet() {
-		
-		wnd.setVisible(false); // hide frame
-		
-		if (showOpenButton) {
-			btOpen.setEnabled(true);
-		} else {		
-			reinitGUI();
-		}
+	public void showApplet() {			
+		Thread worker = new Thread() {
+			public void run() {	
+				applet.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				
+				wnd.setVisible(false); // hide frame
+				
+				if (showOpenButton) {
+					btOpen.setEnabled(true);
+				} else {		
+					reinitGUI();
+				}		
+				
+				applet.setCursor(Cursor.getDefaultCursor());
+			}        	
+        };
+        worker.start();				
 	}
 	
 	private void reinitGUI() {
@@ -380,7 +423,8 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		
 		app.resetFonts();
 		app.refreshViews();
-		SwingUtilities.updateComponentTreeUI(applet);
+		
+		applet.validate();
 		System.gc();
 	}
 					
@@ -458,31 +502,24 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Resets the initial construction (given in filename parameter) of this applet.	
 	 * ...but the actual code is in a thread to avoid JavaScript security issues 
 	 */
-	public synchronized void reset() {
-		
-		javascriptReset=true; // send message to thread to avoid security issues
-		/*
-		try {		
-			URL ggbURL = new URL(fileStr);
-			app.loadXML(ggbURL, fileStr.toLowerCase(Locale.US).endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
-			reinitGUI();	
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 			*/		
+	public synchronized void reset() {		
+		javascriptReset=true; // send message to thread to avoid security issues			
 	}
 	
 	/**
 	 * Resets the initial construction (given in filename parameter) of this applet.	 
 	 */
-	public synchronized void resetNoThread() {
-		
-		try {		
+	public synchronized void resetNoThread() {	
+		app.setWaitCursor();
+		try {							
 			URL ggbURL = new URL(fileStr);
 			app.loadXML(ggbURL, fileStr.toLowerCase(Locale.US).endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
-			reinitGUI();	
+			reinitGUI();
+			applet.validate();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 					
+		} 		
+		app.setDefaultCursor();							
 	}
 	
 	/**
@@ -511,42 +548,30 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Loads a construction from a  file (given URL).	
 	 * ...but the actual code is in a thread to avoid JavaScript security issues  
 	 */
-	public synchronized void openFile(String strURL) {
-		
+	public synchronized void openFile(String strURL) {		
 		javascriptLoadFileName=strURL;
-		javascriptLoadFile=true;
-		
-		/*
-		
-		try {
-			String lowerCase = strURL.toLowerCase(Locale.US);
-			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
-				strURL = getCodeBase() + strURL;
-			}		
-			URL ggbURL = new URL(strURL);				
-			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
-			reinitGUI();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		*/
+		javascriptLoadFile=true;				
 	}
 	
 	/**
 	 * Loads a construction from a  file (given URL).	
 	 */
-	public synchronized void openFileNoThread(String strURL) {
-		
+	private synchronized void openFileNoThread(final String strURL) {
+		// load file
+		app.setWaitCursor();
 		try {
+			String myStrURL = strURL;
 			String lowerCase = strURL.toLowerCase(Locale.US);
 			if (!( lowerCase.startsWith("http") || lowerCase.startsWith("file") )) {
-				strURL = applet.getCodeBase() + strURL;
+				myStrURL = applet.getCodeBase() + myStrURL;
 			}		
-			URL ggbURL = new URL(strURL);				
+			URL ggbURL = new URL(myStrURL);				
 			app.loadXML(ggbURL, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 			reinitGUI();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}	
+		app.setDefaultCursor();						
 	}
 	
 	/*

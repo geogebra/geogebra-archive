@@ -124,12 +124,18 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 			instances.remove(this);
 			GeoGebraPreferences.getPref().saveFileList();
 			
-			if (instances.size() == 0) {			
+			if (instances.size() == 0) {				
 				super.setVisible(false);
 				dispose();
 				
-				if (!app.isApplet())
+				if (!app.isApplet()) {
+					// TODO:remove
+					Application.printStacktrace("exit");
+				
+					
+			
 					System.exit(0);
+				}
 			} else {
 				super.setVisible(false);
 				updateAllTitles();
