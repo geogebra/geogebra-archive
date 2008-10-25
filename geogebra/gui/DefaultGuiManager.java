@@ -814,7 +814,7 @@ public class DefaultGuiManager implements GuiManager {
 	public synchronized void initFileChooser() {
 		if (fileChooser == null) {
 			try {
-				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());
+				fileChooser = new JFileChooser(app.getCurrentImagePath());
 				// Added for Intergeo File Format (Yves Kreis) -->
 				fileChooser.addPropertyChangeListener(
 						JFileChooser.FILE_FILTER_CHANGED_PROPERTY,
