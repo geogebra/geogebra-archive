@@ -23,3 +23,4 @@ Libraries and Plug-In Licenses
 * HotEqn, http://freemind.sourceforge.net/HotEqn/, GNU GPL v3
 * Michael T. Flanagan's Java library, http://www.ee.ucl.ac.uk/~mflanaga/java/
 * Tango Icon Gallery, http://tango.freedesktop.org, CC-BY-SA 2.5
+* RestrictedFileSystemView class from Jython, www.jython.org

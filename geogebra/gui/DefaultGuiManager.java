@@ -814,13 +814,19 @@ public class DefaultGuiManager implements GuiManager {
 	public synchronized void initFileChooser() {
 		if (fileChooser == null) {
 			try {
-				fileChooser = new JFileChooser(app.getCurrentImagePath());
+				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());
 				// Added for Intergeo File Format (Yves Kreis) -->
 				fileChooser.addPropertyChangeListener(
 						JFileChooser.FILE_FILTER_CHANGED_PROPERTY,
 						new FileFilterChangedListener());
 				// <-- Added for Intergeo File Format (Yves Kreis)
-			} catch (Exception e) { e.printStackTrace(); } // attempted fix for  java.io.IOException: Could not get shell folder ID list
+			} catch (Exception e) { 
+
+				Application.debug("Error creating JFileChooser - using fallback option");
+				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());
+
+				
+			} // attempted fix for  java.io.IOException: Could not get shell folder ID list
 		}
 	}
 
