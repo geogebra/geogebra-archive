@@ -3459,7 +3459,18 @@ final public    GeoElement[] process(Command c) throws MyError {
                             (NumberValue) arg[1],
                             (GeoList)arg[2])};
                 return ret;
-            } else
+            } else if ((ok[0] = (arg[0] .isGeoList()))
+                    && (ok[1] = (arg[1] .isGeoList()))
+                    && (ok[2] = (arg[2] .isNumberValue()))) {
+                    GeoElement[] ret =
+                        {
+                             kernel.BarChart(
+                                c.getLabel(),
+                                (GeoList) arg[0],
+                                (GeoList) arg[1],
+                                (NumberValue)arg[2])};
+                    return ret;
+                } else
 			throw argErr(app, c.getName(), null);
     case 6 :
         // create local variable at position 3 and resolve arguments

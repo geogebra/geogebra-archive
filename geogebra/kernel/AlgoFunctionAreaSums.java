@@ -49,19 +49,20 @@ implements EuclidianViewAlgo {
 	public static final int TYPE_BARCHART = 2;
 	public static final int TYPE_BARCHART_RAWDATA = 3;
 	public static final int TYPE_BARCHART_FREQUENCY_TABLE = 4;
-	public static final int TYPE_HISTOGRAM = 5;
-	public static final int TYPE_TRAPEZOIDALSUM = 6;
-	public static final int TYPE_BOXPLOT = 7;
-	public static final int TYPE_BOXPLOT_RAWDATA = 8;
+	public static final int TYPE_BARCHART_FREQUENCY_TABLE_WIDTH = 5;
+	public static final int TYPE_HISTOGRAM = 6;
+	public static final int TYPE_TRAPEZOIDALSUM = 7;
+	public static final int TYPE_BOXPLOT = 8;
+	public static final int TYPE_BOXPLOT_RAWDATA = 9;
 	
 	// tolerance for parabolic interpolation
 	private static final double TOLERANCE = 1E-7;
 
 	private GeoFunction f; // input	   
-	private NumberValue a, b, n; // input
+	private NumberValue a, b, n, width; // input
 	private GeoList list1, list2; // input
 	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo;
+	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthgeo;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -116,7 +117,7 @@ implements EuclidianViewAlgo {
 		compute();
 		sum.setLabel(label);
 	}
-	// BarChart [<list of data without repetition>, <frequency of each of these data>, <width>]
+	// BarChart [<list of data without repetition>, <frequency of each of these data>]
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			   GeoList list1, GeoList list2, boolean dummy) {
 
@@ -126,6 +127,26 @@ implements EuclidianViewAlgo {
 		
 		this.list1 = list1;
 		this.list2 = list2;
+		
+		sum = new GeoNumeric(cons); // output
+		setInputOutput(); // for AlgoElement	
+		compute();
+		sum.setLabel(label);
+	}
+	
+	// BarChart [<list of data without repetition>, <frequency of each of these data>, <width>]
+	public AlgoFunctionAreaSums(Construction cons, String label,  
+			   GeoList list1, GeoList list2, NumberValue width) {
+
+		super(cons);
+		
+		type = TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;
+		
+		this.list1 = list1;
+		this.list2 = list2;
+		this.width = width;
+		widthgeo = width.toGeoElement();
+
 		
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
@@ -254,6 +275,12 @@ implements EuclidianViewAlgo {
 			input = new GeoElement[2];
 			input[0] = list1;
 			input[1] = list2;
+			break;
+		case TYPE_BARCHART_FREQUENCY_TABLE_WIDTH:
+			input = new GeoElement[3];
+			input[0] = list1;
+			input[1] = list2;
+			input[2] = widthgeo;
 			break;
 		case TYPE_BARCHART_RAWDATA:
 			input = new GeoElement[2];
@@ -526,11 +553,11 @@ implements EuclidianViewAlgo {
 			double maxi = Double.MIN_VALUE;
 			int minIndex=-1, maxIndex=-1;
 			
-			double width = (int)n.getDouble();
+			double step = (int)n.getDouble();
 			
 			int rawDataSize = list1.size();
 			
-			if (width < 0 || kernel.isZero(width) || rawDataSize < 2)
+			if (step < 0 || kernel.isZero(step) || rawDataSize < 2)
 			{
 				sum.setUndefined();
 				return;
@@ -576,7 +603,7 @@ implements EuclidianViewAlgo {
 			else
 			{
 				N = (int)noOfBars + 2;
-				gap = ((N-1) * width - totalWidth) / 2.0;
+				gap = ((N-1) * step - totalWidth) / 2.0;
 				a = (NumberValue)(new GeoNumeric(cons,mini - gap));
 				b = (NumberValue)(new GeoNumeric(cons,maxi + gap));
 				//Application.debug("gap = "+gap);
@@ -596,7 +623,7 @@ implements EuclidianViewAlgo {
 			// fill in class boundaries
 			//double width = (maxi-mini)/(double)(N-2);
 			for (int i=0; i < N; i++) {
-				leftBorder[i] = mini - gap + width * i;
+				leftBorder[i] = mini - gap + step * i;
 			}
 						
 		
@@ -626,7 +653,7 @@ implements EuclidianViewAlgo {
 				}
 				
 				// area of rectangles 
-				sum.setValue(list1.size() * width);	
+				sum.setValue(list1.size() * step);	
 
 			}
 			break;
@@ -649,18 +676,18 @@ implements EuclidianViewAlgo {
 			
 			double start = ((GeoNumeric)(list1.get(0))).getDouble();
 			double end = ((GeoNumeric)(list1.get(N-2))).getDouble();
-			width = ((GeoNumeric)(list1.get(1))).getDouble() - start;
+			step = ((GeoNumeric)(list1.get(1))).getDouble() - start;
 			
 			//Application.debug("N = "+N+" start = "+start+" end = "+end+" width = "+width);
 
-			if (!kernel.isEqual(end - start, width * (N-2)) // check first list is (consistent) with being AP 
-					|| width <= 0) {
+			if (!kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
+					|| step <= 0) {
 						sum.setUndefined();
 						return;
 					}
 
-			ageo = new GeoNumeric(cons,start - width / 2);
-			bgeo = new GeoNumeric(cons,end + width / 2);
+			ageo = new GeoNumeric(cons,start - step / 2);
+			bgeo = new GeoNumeric(cons,end + step / 2);
 			a = (NumberValue)ageo;
 			b = (NumberValue)bgeo;
 			
@@ -675,7 +702,7 @@ implements EuclidianViewAlgo {
 			// fill in class boundaries
 
 			for (int i=0; i < N; i++) {
-				leftBorder[i] = start - width/2 + width * i;
+				leftBorder[i] = start - step/2 + step * i;
 			}
 						
 			double area = 0;
@@ -689,12 +716,91 @@ implements EuclidianViewAlgo {
 				}
 				yval[i] = ((GeoNumeric)(list2.get(i))).getDouble(); 	
 				
-				area += yval[i] * width;
+				area += yval[i] * step;
 			}
 
 			
 			// area of rectangles = total frequency				
 			sum.setValue(area);	
+
+			
+			break;
+			
+		case TYPE_BARCHART_FREQUENCY_TABLE_WIDTH:
+			// BarChart[{1,2,3,4,5},{1,5,0,13,4}, 0.5]
+			if (!list1.isDefined() || !list2.isDefined()) 
+			{
+				sum.setUndefined();
+				return;
+			}
+			
+
+			N = list1.size() + 1;
+			
+			int NN = 2 * N -1;
+			
+			if (list2.size() + 1 != N || N < 3) {
+				sum.setUndefined();
+				return;
+			}
+			
+			start = ((GeoNumeric)(list1.get(0))).getDouble();
+			end = ((GeoNumeric)(list1.get(N-2))).getDouble();
+			step = ((GeoNumeric)(list1.get(1))).getDouble() - start;
+			double colWidth = width.getDouble();
+			
+			Application.debug("N = "+N+" start = "+start+" end = "+end+" colWidth = "+colWidth);
+
+			if (!kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
+					|| step <= 0) {
+						sum.setUndefined();
+						return;
+					}
+
+			ageo = new GeoNumeric(cons,start - colWidth / 2);
+			bgeo = new GeoNumeric(cons,end + colWidth / 2);
+			a = (NumberValue)ageo;
+			b = (NumberValue)bgeo;
+			
+							
+				
+				
+			if (yval == null || yval.length < NN) {
+				yval = new double[NN];
+				leftBorder = new double[NN];
+			}				
+			
+			// fill in class boundaries
+
+			for (int i=0; i < NN-1; i += 2 ) {
+				leftBorder[i] = start + step * (i/2) - colWidth / 2.0;
+				leftBorder[i+1] = start + step * (i/2) + colWidth / 2.0;
+			}
+						
+			area = 0;
+		
+			// fill in frequencies
+			for (int i=0; i < NN-1; i++) {
+				if (i % 2 == 1) {
+					// dummy columns, zero height
+					yval[i] = 0;
+				} else {
+					geo = list2.get(i/2);
+					if (!geo.isGeoNumeric()) {
+						sum.setUndefined();
+						return;
+					}
+					yval[i] = ((GeoNumeric)(list2.get(i/2))).getDouble(); 	
+					
+					area += yval[i] * colWidth;
+				}
+			}
+
+			
+			// area of rectangles = total frequency				
+			sum.setValue(area);	
+			
+			N=NN;
 
 			
 			break;

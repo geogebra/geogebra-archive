@@ -36,6 +36,11 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 		super(cons, label, list1, list2, true); // true = dummy		
 	}
 
+	public AlgoBarChart(Construction cons, String label,
+			GeoList list1, GeoList list2, NumberValue a) {
+		super(cons, label, list1, list2, a);
+	}
+
 	protected String getClassName() {
 		return "AlgoBarChart";
 	}
