@@ -80,6 +80,9 @@ public class JarManager {
     private boolean [] jarFileOnClasspath = new boolean[JAR_FILES.length];		
     private boolean [] jarFileTriedToPutOnClasspath = new boolean[JAR_FILES.length];	
     
+    // status message for progress monitor in applet splash screen, see GeoGebraApplet
+    private String statusMessage;
+    
 	/**
 	 * Returns a singleton instance of JarManager. This 
 	 * instance needs to be shared when we have multiple application instances (windows).
@@ -138,8 +141,8 @@ public class JarManager {
 		return codebase;
 	}
 	
-	public boolean isUsingExistingCacheDir() {
-		return useExistingCacheDir;
+	public String getStatusMessage() {
+		return statusMessage;
 	}
 		
 	/**
@@ -157,20 +160,26 @@ public class JarManager {
 	 * 
 	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
 	 */
-	final synchronized public boolean addJarToClassPath(int jarFileIndex) {		
+	final synchronized public boolean addJarToClassPath(int jarFileIndex) {	
+		boolean ret;
+		statusMessage = JAR_FILES[jarFileIndex];				
+		
 		// check if file is already on classpath
 		if (jarFileOnClasspath[jarFileIndex]) {			
 			//System.out.println("jar file already in classpath " + Application.JAR_FILES[jarFileIndex]);
-			return true;
+			ret = true;
 		}	
 		// check if we already tried to put jar file on classpath
 		else if (jarFileTriedToPutOnClasspath[jarFileIndex]) {
 			//System.out.println("do nothing: tried to put on classpath already: " + Application.JAR_FILES[jarFileIndex]);			
-			return false;
+			ret = false;
 		}
+		// try to add jar file to classpath 	
+		else
+			ret = doAddJarToClassPath(jarFileIndex);
 		
-		// try to add jar file to classpath 		
-		return doAddJarToClassPath(jarFileIndex);
+		statusMessage = null;
+		return ret;
 	}
 	
 	private synchronized boolean doAddJarToClassPath(int jarFileIndex) {	
@@ -387,7 +396,7 @@ public class JarManager {
 	 * 
 	 * @return true if successful
 	 */
-	public synchronized boolean downloadFile(String fileName, File destDir) {    	
+	public synchronized boolean downloadFile(String fileName, File destDir) {    			
 		// download jar file to localJarDir
 		File destFile = new File(destDir, fileName);
 		if (destFile.exists()) {
@@ -441,7 +450,7 @@ public class JarManager {
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		try {			
-			URLConnection connection = src.openConnection();			
+			URLConnection connection = src.openConnection();
 			in = new BufferedInputStream(connection.getInputStream());			
 			out = new FileOutputStream(dest);			
 			

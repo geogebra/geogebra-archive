@@ -441,15 +441,15 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 		initInBackground_first_time = false;
 
-		// init file chooser and properties dialog
-		// in a background task
+		// init file chooser and properties dialog in a background task		
 		Thread runner = new Thread() {
-			public void run() {				
+			public void run() {	
 				try {
 					Thread.sleep(1000);
-				} catch (Exception e) {
+				} catch (InterruptedException e1) {						
+					e1.printStackTrace();
 				}
-
+					        				
 				// TODO: remove
 				Application.debug("BACKGROUND initing of dialogs, CAS, jar files ...");
 				
@@ -470,10 +470,10 @@ public abstract class Application implements KeyEventDispatcher {
 				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {
 					jarmanager.downloadFile(JarManager.JAR_FILES[i], jarmanager
 							.getLocalJarDir());
-				}														
+				}			       				
 			}
 		};
-		runner.start();
+		runner.start();		  
 	}
 
 	private static boolean initInBackground_first_time = true;

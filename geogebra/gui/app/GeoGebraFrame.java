@@ -129,11 +129,6 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 				dispose();
 				
 				if (!app.isApplet()) {
-					// TODO:remove
-					Application.printStacktrace("exit");
-				
-					
-			
 					System.exit(0);
 				}
 			} else {
