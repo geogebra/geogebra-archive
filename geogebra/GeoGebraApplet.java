@@ -54,25 +54,15 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * of jar files, an "is loading" message is shown
 	 */
 	public void init() {  
+		Thread runner = new Thread() {
+			public void run() {							
+				initAppletImplementation();	        				
+			}
+		};
+		runner.start();	
+		
 		// init splash screen
-		initSplashScreen();
-		 		
-		// init applet Swing GUI on the event-dispatching thread:
-	    try {
-	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	Thread runner = new Thread() {
-	        			public void run() {							
-	        				initAppletImplementation();	        				
-	        			}
-	        		};
-	        		runner.start();		
-	            }
-	        });
-	    } catch (Exception e) { 
-	        System.err.println("initAppletImplementation() didn't successfully complete");
-	        e.printStackTrace();
-	    }          
+		initSplashScreen();		 	      
 	}
 
 	public void start() {
