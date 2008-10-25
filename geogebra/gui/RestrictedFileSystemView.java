@@ -11,7 +11,8 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.filechooser.FileView;
 
-/* 
+/* http://jython.svn.sourceforge.net/viewvc/jython/branches/Release_2_2maint/installer/src/java/org/python/util/install/RestrictedFileSystemView.java?view=markup&pathrev=4161
+* licence: http://www.jython.org/Project/license.html
 * This FileSystemView only provides basic functionality (and probably a poor look & feel), but it can be a life saver
 * if otherwise no dialog pops up in your application.
 * <p>

@@ -821,12 +821,11 @@ public class DefaultGuiManager implements GuiManager {
 						new FileFilterChangedListener());
 				// <-- Added for Intergeo File Format (Yves Kreis)
 			} catch (Exception e) { 
-
+				// fix for  java.io.IOException: Could not get shell folder ID list
+				// Java bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857
 				Application.debug("Error creating JFileChooser - using fallback option");
-				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());
-
-				
-			} // attempted fix for  java.io.IOException: Could not get shell folder ID list
+				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());				
+			} 
 		}
 	}
 
