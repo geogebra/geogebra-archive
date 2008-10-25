@@ -115,6 +115,13 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		
 		// load all jar files in background and init dialogs
 		applImpl.getApplication().initInBackground();
+		
+		// clear splash images
+		splashScreenImage = null;
+		splashScreenImageGraphics = null;
+		splashImage = null;
+		progressImage = null;
+		System.gc();
 	}
 		
 	/**
@@ -149,6 +156,8 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
      * Paints a loading screen to show progress with downloading jar files.
      */
     private synchronized void updateSplashScreenImage() {
+    	if (splashScreenImageGraphics == null) return;
+    	
     	Graphics2D g = (Graphics2D) splashScreenImageGraphics;
     	
     	// white background
