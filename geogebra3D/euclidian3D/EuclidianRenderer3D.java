@@ -4,6 +4,7 @@ import geogebra3D.kernel3D.GeoElement3D;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
@@ -12,6 +13,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
@@ -24,6 +26,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// openGL variables
 	private GLU glu= new GLU();
 	public GLCanvas canvas;
+	//public GLJPanel canvas;
 	private GLCapabilities caps;
 	private GL gl;
 	protected GLUquadric quadric;
@@ -52,6 +55,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	//canvas
 	    canvas = new GLCanvas(caps);
+	    //canvas = new GLJPanel(caps);
+        //canvas.setOpaque(false);
 	    canvas.addGLEventListener(this);
 	    
 	    //animator : 60 frames per second

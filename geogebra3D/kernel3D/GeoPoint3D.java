@@ -192,13 +192,13 @@ final public class GeoPoint3D extends GeoVec4D {
 		
 		String s = getLabel();
 		
-		s+="="; //TODO use kernel property
+		s+=" = "; //TODO use kernel property
 		
 		updateCoords();
 		
 		//TODO point undefined...
 		//TODO use point property
-		s+="("+kernel.format(inhom.get(1))+","+kernel.format(inhom.get(2))+","+kernel.format(inhom.get(3))+")";
+		s+="("+kernel.format(inhom.get(1))+", "+kernel.format(inhom.get(2))+", "+kernel.format(inhom.get(3))+")";
 		
 		return s;
 	}

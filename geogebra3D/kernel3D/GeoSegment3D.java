@@ -85,7 +85,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 		
 		String s = getLabel();
 		
-		s+="="; //TODO use kernel property
+		s+=" = "; //TODO use kernel property
 		
 		
 		//TODO undefined...

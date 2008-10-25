@@ -78,6 +78,12 @@ public abstract class GeoCoordSys2D extends GeoCoordSys {
 	}	
 	
 	
+	/** returns area of the 1x1 parallélogramme */
+	public double getUnitArea(){
+		return (M.getColumn(1).crossProduct(M.getColumn(2))).norm();
+	}
+	
+	
 	////////////////////////////////////
 	// grid
 	public void setGridOrigin(GgbVector v){

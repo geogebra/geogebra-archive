@@ -227,8 +227,8 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		//TODO undefined...
 		//TODO remove x/y/z if not needed
 		//TODO check this
-		s+=kernel.format(Vn.get(1))+"x+"+kernel.format(Vn.get(2))+"y+"+kernel.format(Vn.get(3))+"z+"
-			+kernel.format(-Vn.dotproduct(M.getColumn(3)))+"=0";
+		s+=kernel.format(Vn.get(1))+"x + "+kernel.format(Vn.get(2))+"y + "+kernel.format(Vn.get(3))+"z = "
+			+kernel.format(Vn.dotproduct(M.getColumn(3)));
 		
 		return s;
 	}

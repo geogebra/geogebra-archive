@@ -114,7 +114,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		attachView();
 		
 		
-		// register Listener			
+		// register Listener		
+		
 		canvas.addMouseMotionListener(euclidianController3D);
 		canvas.addMouseListener(euclidianController3D);
 		canvas.addMouseWheelListener(euclidianController3D);

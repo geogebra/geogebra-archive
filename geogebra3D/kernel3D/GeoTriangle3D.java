@@ -20,6 +20,10 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 
 	
 	
+	public double getArea(){
+		return getUnitArea()/2;
+	}
+	
 	
 	
 	
@@ -74,5 +78,22 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 		// TODO Raccord de méthode auto-généré
 		return "todo";
 	}	
+	
+	
+	
+	final public String toString() {
+		
+		String s = getLabel();
+		
+		s+=" = "; //TODO use kernel property
+		
+		
+		//TODO undefined...
+		s+=kernel.format(getArea());
+		
+		return s;
+	}	
+	
+	
 
 }
