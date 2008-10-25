@@ -54,7 +54,7 @@ public class ContextMenuRow extends ContextMenu
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
  					int row = GeoElement.getSpreadsheetRow(geo.getLabel());
  					row += 1;
- 					String newLabel = "" + (char)('A' + column) + (row + 1);
+ 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
  					geo.setLabel(newLabel);
  					succ = true;
  				}
@@ -77,7 +77,7 @@ public class ContextMenuRow extends ContextMenu
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
  					int row = GeoElement.getSpreadsheetRow(geo.getLabel());
  					row += 1;
- 					String newLabel = "" + (char)('A' + column) + (row + 1);
+ 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
  					geo.setLabel(newLabel);
  					succ = true;
  				}

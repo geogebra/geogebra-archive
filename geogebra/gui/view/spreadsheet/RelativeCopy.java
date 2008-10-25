@@ -199,7 +199,7 @@ public class RelativeCopy {
 			int column = GeoElement.getSpreadsheetColumn(name);
 			int row = GeoElement.getSpreadsheetRow(name);
 			if (column == -1 || row == -1) continue;
-			String column1 = "" + (char)('A' + column);
+			String column1 = GeoElement.getSpreadsheetColumnName(column);
 			String row1 = "" + (row + 1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, "$" + column1 + row1, "$" + column1 + "::" + row1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, column1 + "$" + row1, "::" + column1 + "$" + row1);
@@ -212,9 +212,9 @@ public class RelativeCopy {
 			int column = GeoElement.getSpreadsheetColumn(name);
 			int row = GeoElement.getSpreadsheetRow(name);
 			if (column == -1 || row == -1) continue;
-			String column1 = "" + (char)('A' + column);
+			String column1 = GeoElement.getSpreadsheetColumnName(column);
 			String row1 = "" + (row + 1);
-			String column2 = "" + (char)('A' + column + dx);
+			String column2 = GeoElement.getSpreadsheetColumnName(column + dx);
 			String row2 = "" + (row + dy + 1);
 			text = replaceAll(pattern2, text, "::" + column1 + "::" + row1, column2 + row2);
 			text = replaceAll(pattern2, text, "$" + column1 + "::" + row1, "$" + column1 + row2);
