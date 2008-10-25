@@ -43,9 +43,10 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
+ 			int rows = table.getModel().getRowCount();
+ 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
  			for (int x = columns - 2; x >= column1; -- x) {
- 				for (int y = 0; y < table.getModel().getColumnCount(); ++ y) {
+ 				for (int y = 0; y < rows; ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
@@ -66,9 +67,10 @@ public class ContextMenuCol extends ContextMenu
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
- 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, table.getModel().getRowCount() - 1);
+			int rows = table.getModel().getRowCount();
+ 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
  			for (int x = columns - 2; x >= column2 + 1; -- x) {
- 				for (int y = 0; y < table.getModel().getRowCount(); ++ y) {
+ 				for (int y = 0; y < rows; ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
  					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
