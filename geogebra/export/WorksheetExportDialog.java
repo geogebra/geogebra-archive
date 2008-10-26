@@ -594,8 +594,8 @@ public class WorksheetExportDialog extends JDialog {
 				+ app.getPlain("DynamicWorksheet")));
 		sb.append("</title>\n");
 		// charset
-		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html charset=utf-8\"/>\n");
-		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html charset=iso-8859-1\"/>\n");
+		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n");
+		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>\n");
 		
 		sb.append("<meta name=\"generator\" content=\"GeoGebra\"/>\n");
 		String css = app.getSetting("cssDynamicWorksheet");
