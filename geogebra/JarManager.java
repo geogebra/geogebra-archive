@@ -106,10 +106,10 @@ public class JarManager {
 	private JarManager(boolean isApplet) {
 		// TODO: remove
 		System.out.println("*** INIT JAR MANAGER ***");		
-				
+		
 		// get connection manager to access jar URLs
 		jarConnectionManager = JarConnectionManager.getSingleton();
-		codebase = jarConnectionManager.getCodebase();
+		codebase = jarConnectionManager.getCodebase();				
 		
 		// use classloader of Application class: important for applets
 		appClassLoader = JarManager.class.getClassLoader();	
@@ -120,12 +120,21 @@ public class JarManager {
 		// init localJar directory where the jar files can be found locally
 		initLocalJarDir();
 		
+		// if we are not using the existing cache directory
+		if (!useExistingCacheDir) {
+			jarConnectionManager.initConnectionsInBackground();
+		}
+		
 		// TODO: remove		
 		System.out.println("  codebase: " + codebase);
 		System.out.println("  app type: " + main_app_type);
 		System.out.println("  localJarDir: " + localJarDir);	
 	}		
 	
+	public final boolean usesExistingCacheDir() {
+		return useExistingCacheDir;
+	}
+
 	public URL getCodeBase() {		
 		return codebase;
 	}

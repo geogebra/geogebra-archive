@@ -33,8 +33,10 @@ public class JarConnectionManager {
 		initCodeBase();		
 		
 		connections = new URLConnection[JarManager.JAR_FILES.length];
-		inputStreams = new BufferedInputStream[JarManager.JAR_FILES.length];	
-		
+		inputStreams = new BufferedInputStream[JarManager.JAR_FILES.length];					
+	}
+	
+	public void initConnectionsInBackground() {
 		// open all connections in background
 		Thread runner = new Thread() {
 			public void run() {					

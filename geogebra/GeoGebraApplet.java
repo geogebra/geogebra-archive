@@ -18,8 +18,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JApplet;
+import javax.swing.SwingUtilities;
 
 /**
  * GeoGebra applet
@@ -51,19 +53,29 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		
 	/**
 	 * Loads necessary jar files and initializes applet. During the loading
-	 * of jar files, an "is loading" message is shown
+	 * of jar files, a splash screen with progress information is shown.
 	 */
-	public void init() {		
-		// start initing application
-		Thread runner = new Thread() {
-			public void run() {							
-				initAppletImplementation();	        				
-			}
-		};
-		runner.start();		
-		
-		// init splash screen
-		initSplashScreen();					
+	public void init() {	
+		 try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+			     public void run() {
+			    	
+			 		// start initing application
+			 		Thread runner = new Thread() {
+			 			public void run() {							
+			 				initAppletImplementation();	        				
+			 			}
+			 		};
+			 		runner.start();		
+			 		
+			 		// init splash screen
+			 		initSplashScreen();
+			 		
+			     }
+			 });
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}								
 	}
 
 	public void start() {
@@ -96,10 +108,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * Initializes the appletImplementation object. 
 	 * Loads geogebra_main.jar file and initializes applet if necessary.
 	 */
-	private void initAppletImplementation() {		
-		// load geogebra_main.jar file   
+	private void initAppletImplementation() {				
 		// init jar manager to load jar files for applet
 		jarManager = JarManager.getSingleton(true);
+		
+		// load geogebra_main.jar file   
 		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
 
 		// create delegate object that implements our applet's methods
@@ -194,7 +207,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
     		
     		if (statusMessage != null) {
 	        	g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);            
-	        	g.setColor(Color.gray);
+	        	g.setColor(Color.darkGray);
 	    		g.setFont(DEFAULT_FONT);
 	        	g.drawString(statusMessage, width/2 - (int) (2.5*statusMessage.length()), progressY + PROGRESS_IMAGE_HEIGHT + 2*DEFAULT_FONT.getSize());	        
     		}   
