@@ -8,6 +8,7 @@ import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -53,7 +54,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	protected EuclidianView3D view;
-	protected Kernel kernel;
+	protected Kernel3D kernel3D;
 	
 	
 	
@@ -89,8 +90,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	double aOld, bOld;
 	
 
-	public EuclidianController3D(Kernel kernel) {
-		this.kernel = kernel;
+	public EuclidianController3D(Kernel3D kernel3D) {
+		this.kernel3D = kernel3D;
 		
 	}
 	
@@ -105,8 +106,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	
-	Kernel getKernel() {
-		return kernel;
+	public Kernel3D getKernel3D() {
+		return kernel3D;
 	}
 	
 	

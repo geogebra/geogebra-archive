@@ -348,7 +348,8 @@ public abstract class Application implements KeyEventDispatcher {
 		imageManager = new ImageManager(mainComp);
 
 		// init kernel
-		kernel = new Kernel(this);
+		initKernel();
+		//kernel = new Kernel(this); //ggb3D 2008-10-26 : in Application3D, changed for Kernel3D
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
 
 		// init xml io for construction loading
@@ -401,6 +402,11 @@ public abstract class Application implements KeyEventDispatcher {
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();		
+	}
+	
+	public void initKernel(){
+		Application.debug("initKernel() : Application");
+		kernel = new Kernel(this);
 	}
 
 	/**

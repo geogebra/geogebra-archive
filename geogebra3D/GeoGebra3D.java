@@ -27,6 +27,7 @@ import geogebra.util.Util;
 import java.awt.dnd.DropTarget;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
 /**
@@ -43,6 +44,10 @@ public class GeoGebra3D extends GeoGebraFrame
 	 * @param args: file name parameter
 	 */
 	public static synchronized void main(String[] args) {		
+		
+		//allows toolbar to display before openGL
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);	
+		
 		// check java version
 		double javaVersion = Util.getJavaVersion();
 		if (javaVersion < 1.42) {

@@ -38,7 +38,7 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	static final boolean DEBUG = true; //conditionnal compilation
 
 	
-	private Kernel kernel;
+	//private Kernel kernel;
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
 	private EuclidianRenderer3D renderer;
@@ -90,12 +90,14 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		*/
 		
 		this.euclidianController3D = ec;
-		this.kernel = ec.getKernel();
+		this.kernel3D = ec.getKernel3D();
 		euclidianController3D.setView(this);
 		
 		// TODO cast kernel to kernel3D
+		/*
 		kernel3D=new Kernel3D();
 		kernel3D.setConstruction(kernel.getConstruction());
+		*/
 		
 		//TODO replace canvas3D with GLDisplay
 		renderer = new EuclidianRenderer3D(this);
@@ -538,8 +540,8 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 	
 	
 	public void attachView() {
-		kernel.notifyAddAll(this);
-		kernel.attach(this);
+		kernel3D.notifyAddAll(this);
+		kernel3D.attach(this);
 	}
 	
 	

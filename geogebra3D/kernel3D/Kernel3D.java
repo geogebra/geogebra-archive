@@ -18,6 +18,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra3D.Application3D;
 
 
 /**
@@ -28,11 +29,17 @@ import geogebra.kernel.linalg.GgbVector;
 public class Kernel3D
 	extends Kernel{
 	
+	public Kernel3D(Application3D app) {
+		super(app);
+		
+	}
 	
+	/*
 	public void setConstruction(Construction cons){
 		
 		this.cons = cons;
 	}
+	*/
 
 	
 	/***********************************

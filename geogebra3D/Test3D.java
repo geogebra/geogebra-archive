@@ -39,18 +39,18 @@ import geogebra3D.kernel3D.*;
  */
 public class Test3D{
 	
-	Kernel kernel;
 	Construction cons;
 	Kernel3D kernel3D;
 
 
-	public Test3D(Kernel kernel){
+	public Test3D(Kernel3D kernel3D){
 		
-		this.kernel=kernel;
-		cons=kernel.getConstruction();
+		this.kernel3D=kernel3D;
+		cons=kernel3D.getConstruction();
+		/*
 		kernel3D=new Kernel3D();
 		kernel3D.setConstruction(cons);
-		
+		*/
 		
 		//let's test here
 		

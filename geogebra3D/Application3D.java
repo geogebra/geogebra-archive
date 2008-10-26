@@ -24,17 +24,22 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.kernel.Kernel;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 public abstract class Application3D extends Application{
 
 
     private EuclidianView3D euclidianView3D;
-    private EuclidianController3D euclidianController3D;        
+    private EuclidianController3D euclidianController3D;      
+    protected Kernel3D kernel3D;
+    
+    
     private JSplitPane sp3D;
     private int initSplitDividerLocationHOR3D = 50; // init value
     private boolean show3DView = true; 
@@ -53,16 +58,23 @@ public abstract class Application3D extends Application{
     	
     	super(args, frame, applet, undoActive);
 
-		euclidianController3D = new EuclidianController3D(kernel);
+		euclidianController3D = new EuclidianController3D(kernel3D);
         euclidianView3D = new EuclidianView3D(euclidianController3D);  
         
 	    //TODO remove 3D test : just comment following line        
-        new Test3D(kernel);
+        new Test3D(kernel3D);
 
         euclidianView3D.setZZero(-7.0);
         euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
  		
     }      
+    
+    
+	public void initKernel(){
+		Application.debug("initKernel() : Application3D");
+		kernel3D = new Kernel3D(this);
+		kernel = kernel3D;
+	}
     
 
     
