@@ -18,7 +18,7 @@ package geogebra.kernel;
  * @version 2008-03-04
  */
 
-public class AlgoCleanConditional extends AlgoElement {
+public class AlgoKeep extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
@@ -26,7 +26,7 @@ public class AlgoCleanConditional extends AlgoElement {
 	private GeoFunction boolFun;     // input
     private int size;
 
-    AlgoCleanConditional(Construction cons, String label, GeoFunction boolFun, GeoList inputList) {
+    AlgoKeep(Construction cons, String label, GeoFunction boolFun, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
     	this.boolFun = boolFun;
@@ -39,7 +39,7 @@ public class AlgoCleanConditional extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoCleanConditional";
+        return "AlgoKeep";
     }
 
     protected void setInputOutput(){

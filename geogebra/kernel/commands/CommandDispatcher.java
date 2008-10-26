@@ -289,6 +289,8 @@ public class CommandDispatcher {
     	
     	cmdTable.put("ToFraction", new CmdToFraction(kernel));   
     	
+    	cmdTable.put("Keep", new CmdKeep(kernel));   
+    	
     }
 
 
