@@ -2701,6 +2701,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Clean[boolean condition, list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Clean(String label, GeoFunction boolFun, GeoList list) {
+		AlgoCleanConditional algo = new AlgoCleanConditional(cons, label, boolFun, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Defined[object]
 	 * Michael Borcherds
 	 */
