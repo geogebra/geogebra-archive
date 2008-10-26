@@ -74,7 +74,7 @@ office@geogebra.org
 	</target>
 	
 	<manifest file="../manifest.mf">	    
-		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
+		<attribute name="Main-Class" value="geogebra.GeoGebra"/>	
 		<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	
 	</manifest>	
 	

@@ -468,8 +468,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {
-					jarmanager.downloadFile(JarManager.JAR_FILES[i], jarmanager
-							.getLocalJarDir());
+					jarmanager.downloadFile(i);
 				}			       				
 			}
 		};

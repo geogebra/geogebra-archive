@@ -31,9 +31,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 public class JarManager {
 		
@@ -58,13 +57,17 @@ public class JarManager {
 	private static final int TYPE_LOCAL_JARS = 3; // local application with jar files
 	private static final int TYPE_LOCAL_NO_JARS = 4; // running from Eclipse without jar files
 	
+	// size of byte buffer to download / copy files
+	private static final int BYTE_BUFFER_SIZE = 65536;
+	
 	// singleton instance of JarManager
 	private static JarManager singleton;
 	
 	// classloader of main application
-	private ClassLoader appClassLoader;
+	private ClassLoader appClassLoader;		
 	
-	// codebase where the jar files can be found (either http: or file:)
+	// jar connection opener (to open connections in background task)
+	private JARConnectionManager jarConnectionManager;
 	private URL codebase;
 	
 	// application type: TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
@@ -81,7 +84,9 @@ public class JarManager {
     private boolean [] jarFileTriedToPutOnClasspath = new boolean[JAR_FILES.length];	
     
     // status message for progress monitor in applet splash screen, see GeoGebraApplet
-    private String statusMessage;
+    private StringBuffer statusMessage = new StringBuffer();
+    private String downloadJarFile = null;
+    private double downloadProgress = 0;
     
 	/**
 	 * Returns a singleton instance of JarManager. This 
@@ -100,13 +105,14 @@ public class JarManager {
 	 */
 	private JarManager(boolean isApplet) {
 		// TODO: remove
-		System.out.println("*** INIT JAR MANAGER ***");
+		System.out.println("*** INIT JAR MANAGER ***");		
+				
+		// get connection manager to access jar URLs
+		jarConnectionManager = JARConnectionManager.getSingleton();
+		codebase = jarConnectionManager.getCodebase();
 		
 		// use classloader of Application class: important for applets
-		appClassLoader = JarManager.class.getClassLoader();
-		
-		// init codebase
-		initCodeBase();
+		appClassLoader = JarManager.class.getClassLoader();	
 		 				
 		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 		initApplicationType(isApplet);				
@@ -118,31 +124,31 @@ public class JarManager {
 		System.out.println("  codebase: " + codebase);
 		System.out.println("  app type: " + main_app_type);
 		System.out.println("  localJarDir: " + localJarDir);	
-	}
-	
-	/**
-	 * Initializes the codebase URL where the geogebra.jar file is located.
-	 */
-	private void initCodeBase() {	
-		try {
-			String path = JarManager.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
-			// remove "geogebra.jar" from end of codebase string
-			if (path.endsWith( JarManager.JAR_FILES[0])) 
-				path = path.substring(0, path.length() -  JarManager.JAR_FILES[0].length());
-			
-			// set codebase
-			codebase = new URL(path);			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	}		
 	
 	public URL getCodeBase() {		
 		return codebase;
 	}
 	
-	public String getStatusMessage() {
-		return statusMessage;
+	/**
+	 * Returns a message describing the status of the currently downloaded file including
+	 * a percentage. 
+	 * @return e.g. "geogebra_main.jar (62%)"
+	 * @see downloadFile()
+	 */
+	public String getDownloadStatusMessage() {
+		if (downloadJarFile == null) 
+			return "";	
+		
+		statusMessage.setLength(0);	
+		statusMessage.append(downloadJarFile);
+			
+		int downloadProgressPercent = (int) Math.round(downloadProgress * 100);
+		statusMessage.append(" (");
+		statusMessage.append(downloadProgressPercent);
+		statusMessage.append("%)");		
+		
+		return statusMessage.toString();
 	}
 		
 	/**
@@ -160,9 +166,8 @@ public class JarManager {
 	 * 
 	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
 	 */
-	final synchronized public boolean addJarToClassPath(int jarFileIndex) {	
-		boolean ret;
-		statusMessage = JAR_FILES[jarFileIndex];				
+	final public boolean addJarToClassPath(int jarFileIndex) {	
+		boolean ret;					
 		
 		// check if file is already on classpath
 		if (jarFileOnClasspath[jarFileIndex]) {			
@@ -178,7 +183,6 @@ public class JarManager {
 		else
 			ret = doAddJarToClassPath(jarFileIndex);
 		
-		statusMessage = null;
 		return ret;
 	}
 	
@@ -199,7 +203,7 @@ public class JarManager {
 		
 			case TYPE_APPLET:
 				// we download the needed jar file to the local directory first
-				downloadFile(jarFileName, localJarDir);	
+				downloadFile(jarFileIndex);	
 												
 			case TYPE_LOCAL_JARS:
 				// no download needed for local jar files
@@ -212,7 +216,7 @@ public class JarManager {
 		try {			
 			jarFileOnClasspath[jarFileIndex] = 
 				// make sure jar file can be opened
-				checkJarFile(localJarFile) && 
+				checkJarFile(jarFileIndex, localJarFile) && 
 				// add jar file in localJarDir to classpath
 				ClassPathManipulator.addURL(localJarFile.toURI().toURL(), appClassLoader);					
 		} 
@@ -232,7 +236,7 @@ public class JarManager {
 	 * 
 	 * @return success
 	 */
-	public synchronized boolean checkJarFile(File localJarFile) {
+	private synchronized boolean checkJarFile(int jarFileIndex, File localJarFile) {
 		if (isJarFileReadable(localJarFile))
 			return true;
 		
@@ -243,7 +247,7 @@ public class JarManager {
 				localJarFile.delete();
 			
 			// download jar file again
-			downloadFile(localJarFile.getName(), localJarDir);
+			downloadFile(jarFileIndex);
 			
 			// check jar file again
 			return isJarFileReadable(localJarFile);
@@ -266,18 +270,14 @@ public class JarManager {
 			return false;
 		
 		try {
-			// open zip file and try to read first entry
-			FileInputStream fis = new FileInputStream(localJarFile);
-			ZipInputStream zis = new ZipInputStream(fis);
-			boolean readable = zis.getNextEntry() != null;
-			zis.close();
-			fis.close();
-			return readable;
+			// try to open the zip file
+			// if the zip file is corrupt this will throw a java.util.zip.ZipException 
+			new ZipFile(localJarFile); 
+			return true;
 		}
 		catch (Exception e) {
 			// TODO: remove			
-			System.err.println("Jar file is not readable: " + localJarFile);									
-			e.printStackTrace();
+			System.err.println("Jar file is not readable: " + localJarFile);
 			return false;
 		}						
 	}
@@ -364,7 +364,13 @@ public class JarManager {
 			baseDir += File.separator;			
 											
 		// directory name, e.g. /tmp/geogebra/3.1.71.0/
-		File tempDir = new File(baseDir + "geogebra" + File.separator + GeoGebra.VERSION_STRING + File.separator);		
+		StringBuffer sb = new StringBuffer(100);
+		sb.append(baseDir);
+		sb.append("geogebra");
+		sb.append(File.separator);
+		sb.append(GeoGebra.VERSION_STRING);
+		sb.append(File.separator);
+		File tempDir = new File(sb.toString());		
 		
 		useExistingCacheDir = tempDir.exists();
 		if (useExistingCacheDir)	{
@@ -396,26 +402,31 @@ public class JarManager {
 	 * 
 	 * @return true if successful
 	 */
-	public synchronized boolean downloadFile(String fileName, File destDir) {    			
+	public boolean downloadFile(int jarFileIndex) {    		
 		// download jar file to localJarDir
-		File destFile = new File(destDir, fileName);
+		String fileName = JAR_FILES[jarFileIndex];
+		File destFile = new File(localJarDir, fileName);
 		if (destFile.exists()) {
 			// TODO: remove
-			System.out.println("File found, no download needed for " + fileName + " in directory " + destDir);		
+			System.out.println("File found, no download needed for " + fileName + " in directory " + localJarDir);		
 			
 			// destination file exists already
 			return true;
 		}
-				
-		try {											
-			// download jar from URL to destFile
-			URL src = new URL(codebase, fileName);			
-			copyURLToFile(src, destFile);
+		
+		// set name of currently downloaded file
+		downloadJarFile = fileName;
+		downloadProgress = 0;
+
+		try {					
+			// download jar from URL to destFile					
+			copyURLToFile(jarFileIndex, destFile);
 			
 			// TODO: remove
-			System.out.println("downloaded " + fileName + " to directory " + destDir);		
+			System.out.println("downloaded " + fileName + " to directory " + localJarDir);				
 			return true;						
 		} catch (Exception e) {		
+			downloadJarFile = "ERROR: " + fileName;
 			System.err.println("Download error: " + e.getMessage());
 			destFile.delete();
 			return false;
@@ -446,28 +457,47 @@ public class JarManager {
 	/**
 	 * Copies or downloads url to destintation file.
 	 */
-	public static void copyURLToFile(URL src, File dest) throws Exception {		
+	private void copyURLToFile(int jarFileIndex, File dest) throws Exception {		
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		try {			
-			URLConnection connection = src.openConnection();
-			in = new BufferedInputStream(connection.getInputStream());			
-			out = new FileOutputStream(dest);			
+			// TODO: remove
+			long startTime = System.currentTimeMillis();
 			
-			byte[] buf = new byte[4096];
-			int len;
+			// open input string to jar URL
+			in = jarConnectionManager.getInputStream(jarFileIndex);
+					
+			// TODO: remove
+			long endTime = System.currentTimeMillis();
+			System.out.println("openConnection time: " + (endTime - startTime) + " to " + JAR_FILES[jarFileIndex]);
+			
+			// create output file
+			out = new FileOutputStream(dest);
+					
+			// file size of URL jar
+			int fileSize = jarConnectionManager.getURLConnection(jarFileIndex).getContentLength();	
+			
+			byte[] buf = new byte[BYTE_BUFFER_SIZE];
+			int len;			
+			double bytesWritten = 0;
 			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);			
+				out.write(buf, 0, len);						
+				
+				// compute downloadProgress in percent
+				if (fileSize > -1) {
+					bytesWritten += len;
+					downloadProgress = bytesWritten / fileSize;
+				}
 			}
 			out.close();
-			dest.setLastModified(connection.getLastModified());
+			dest.setLastModified(jarConnectionManager.getURLConnection(jarFileIndex).getLastModified());
 			in.close();		
 		} 
 		catch (Exception e) {
 			try {
 				in.close();
 				out.close();
-			} catch (Exception ex) {}
+			} catch (Exception ex) {}	
 			//dest.delete();
 			
 			throw e;
@@ -477,7 +507,7 @@ public class JarManager {
 	public static void copyFile(File in, File out) throws Exception {
         FileInputStream fis  = new FileInputStream(in);
         FileOutputStream fos = new FileOutputStream(out);
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[BYTE_BUFFER_SIZE];
         int i = 0;
         while((i=fis.read(buf))!=-1) {
             fos.write(buf, 0, i);
@@ -498,10 +528,13 @@ public class JarManager {
 			File destFile = new File(destDir, JAR_FILES[i]);
 
 			// check file and automatically download if missing
-			if (checkJarFile(srcFile)) {
+			if (checkJarFile(i, srcFile)) {
 				copyFile(srcFile, destFile);
 			}
 		}
+		
 	}
+	
+	
    
 }
