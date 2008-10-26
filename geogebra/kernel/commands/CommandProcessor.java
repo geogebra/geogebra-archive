@@ -4000,7 +4000,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                 if (!ok[0])
                     throw argErr(app, "Point", arg[0]);     
                 else
-                    throw argErr(app, "Point", arg[2]);
+                    throw argErr(app, "Point", arg[1]);
             }
 
         default :
