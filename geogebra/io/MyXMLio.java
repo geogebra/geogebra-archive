@@ -472,13 +472,14 @@ public class MyXMLio {
 		double exportScale = Math.min(THUMBNAIL_PIXELS_X
 				/ ev.getSelectedWidth(), THUMBNAIL_PIXELS_Y
 				/ ev.getSelectedHeight());
-
-		BufferedImage img = app.getEuclidianView().getExportImage(exportScale);
-		if (img != null)
-			// Modified for Intergeo File Format (Yves Kreis) -->
-			// writeImageToZip(zip, XML_FILE_THUMBNAIL, img);
-			writeImageToZip(zip, fileName, img);
-		// <-- Modified for Intergeo File Format (Yves Kreis)
+		try {
+			BufferedImage img = app.getEuclidianView().getExportImage(exportScale);
+			if (img != null)
+				// Modified for Intergeo File Format (Yves Kreis) -->
+				// writeImageToZip(zip, XML_FILE_THUMBNAIL, img);
+				writeImageToZip(zip, fileName, img);
+			// <-- Modified for Intergeo File Format (Yves Kreis)
+		} catch (Exception e) { } // catch error if size is zero
 
 	}
 
