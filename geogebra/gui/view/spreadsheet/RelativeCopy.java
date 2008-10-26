@@ -145,25 +145,36 @@ public class RelativeCopy {
 	}
 	
 	public void doCopyVerticalNoStoringUndoInfo1(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
-		GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
-		GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
+		// this doesn't work eg
+		// A1=1 B1=(A1+C1)/2 B1=1
+		// then the relative copy of B1 updates C2
+		//GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
+		//GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
 		for (int y = dy1; y <= dy2; ++ y) {
 			int iy = y - dy1;
 			for (int x = x1; x <= x2; ++ x) {
 				int ix = x - x1;
-				doCopyNoStoringUndoInfo0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
+				
+				// doesn't work
+				//doCopyNoStoringUndoInfo0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
+				
+				// does work
+				doCopyNoStoringUndoInfo0(kernel, table, getValue(table,x1 + ix, sy),
+														getValue(table,x1 + ix, dy1 + iy), 0, y - sy);
 			}
 		}
 	}
 	
 	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
-		GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
-		GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
+		//GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
+		//GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
 		for (int x = dx1; x <= dx2; ++ x) {
 			int ix = x - dx1;
 			for (int y = y1; y <= y2; ++ y) {
 				int iy = y - y1;
-				doCopyNoStoringUndoInfo0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
+				//doCopyNoStoringUndoInfo0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
+				doCopyNoStoringUndoInfo0(kernel, table, getValue(table, sx, y1 + iy),
+														getValue(table, dx1 + ix, y1+iy), x - sx, 0);
 			}
 		}
 	}
@@ -307,6 +318,7 @@ public class RelativeCopy {
     	return (GeoElement[])geoTree.toArray(new GeoElement[0]);
 	}
 	
+	/*
 	public static GeoElement[][] getValues(MyTable table, int x1, int y1, int x2, int y2) {
 		GeoElement[][] values = new GeoElement[x2 - x1 + 1][y2 - y1 + 1];
 		for (int y = y1; y <= y2; ++ y) {
@@ -315,14 +327,14 @@ public class RelativeCopy {
 			}			
 		}
 		return values;
-	}
+	}*/
 	
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		TableModel tableModel = table.getModel();
 		//column = table.convertColumnIndexToModel(column);
 		//Application.debug("column=" + column);
 		if (row < 0 || row >= tableModel.getRowCount()) return null;
-		if (column < 0 || column >= 26) return null;
+		if (column < 0 || column >= tableModel.getColumnCount()) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
 	
