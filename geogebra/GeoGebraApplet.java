@@ -53,21 +53,17 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * Loads necessary jar files and initializes applet. During the loading
 	 * of jar files, an "is loading" message is shown
 	 */
-	public void init() {  		
-		// create jar connection manager: 
-		// this will start opening connections to the jar URLs in the background
-		JARConnectionManager.getSingleton();
-		
-		// init splash screen
-		initSplashScreen();
-						
+	public void init() {		
 		// start initing application
 		Thread runner = new Thread() {
 			public void run() {							
 				initAppletImplementation();	        				
 			}
 		};
-		runner.start();					 	     
+		runner.start();		
+		
+		// init splash screen
+		initSplashScreen();					
 	}
 
 	public void start() {
@@ -174,7 +170,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
     	int splashY = -1;    	    	    
     	if (splashImage != null) {
     		splashX = (width - SPLASH_IMAGE_WIDTH) / 2;
-    		splashY = (height - SPLASH_IMAGE_HEIGHT) / 2 - PROGRESS_IMAGE_HEIGHT;
+    		splashY = (height - SPLASH_IMAGE_HEIGHT) / 2 - (int) (1.5*PROGRESS_IMAGE_HEIGHT);
     	}
     	
     	// progress image position
@@ -198,7 +194,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
     		
     		if (statusMessage != null) {
 	        	g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);            
-	        	g.setColor(Color.black);
+	        	g.setColor(Color.gray);
 	    		g.setFont(DEFAULT_FONT);
 	        	g.drawString(statusMessage, width/2 - (int) (2.5*statusMessage.length()), progressY + PROGRESS_IMAGE_HEIGHT + 2*DEFAULT_FONT.getSize());	        
     		}   

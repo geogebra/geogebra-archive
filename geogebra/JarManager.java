@@ -67,7 +67,7 @@ public class JarManager {
 	private ClassLoader appClassLoader;		
 	
 	// jar connection opener (to open connections in background task)
-	private JARConnectionManager jarConnectionManager;
+	private JarConnectionManager jarConnectionManager;
 	private URL codebase;
 	
 	// application type: TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
@@ -108,7 +108,7 @@ public class JarManager {
 		System.out.println("*** INIT JAR MANAGER ***");		
 				
 		// get connection manager to access jar URLs
-		jarConnectionManager = JARConnectionManager.getSingleton();
+		jarConnectionManager = JarConnectionManager.getSingleton();
 		codebase = jarConnectionManager.getCodebase();
 		
 		// use classloader of Application class: important for applets
@@ -166,7 +166,7 @@ public class JarManager {
 	 * 
 	 * @param jarFileIndex: Application.JAR_FILE_GEOGEBRA, JAR_FILE_GEOGEBRA_GUI, JAR_FILE_GEOGEBRA_CAS, etc.
 	 */
-	final public boolean addJarToClassPath(int jarFileIndex) {	
+	final synchronized public boolean addJarToClassPath(int jarFileIndex) {	
 		boolean ret;					
 		
 		// check if file is already on classpath
