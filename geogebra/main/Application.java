@@ -405,7 +405,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	public void initKernel(){
-		Application.debug("initKernel() : Application");
+		//Application.debug("initKernel() : Application");
 		kernel = new Kernel(this);
 	}
 
