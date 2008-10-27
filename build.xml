@@ -104,7 +104,8 @@ office@geogebra.org
 	<target name="ggb-main-jar" depends="clean" description="create unsigned geogebra_main.jar">		
 		<jar jarfile="${build.dir}/geogebra_main.jar"		
 			basedir="${src.dir}"		   
-			includes="**/*.class, 					
+			includes="**/*.class, 				
+					  geogebra/main/view-refresh.png,
 					  **/algo2command.properties,	
 					  **/algo2command4i2g.properties"			
 			excludes="geogebra/*,
