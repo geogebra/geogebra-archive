@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.Application3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -55,6 +56,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected EuclidianView3D view;
 	protected Kernel3D kernel3D;
+	protected Application3D app3D;
 	
 	
 	
@@ -92,6 +94,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 	public EuclidianController3D(Kernel3D kernel3D) {
 		this.kernel3D = kernel3D;
+		app3D = kernel3D.getApplication3D();
 		
 	}
 	
@@ -374,8 +377,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(MouseEvent e) {
 		
+		
+		if (Application.isRightClick(e)){
+			
+			if (!view.hits.isEmpty()){				
+				GeoElement3D geo = (GeoElement3D) view.hits.get(0);	
+				app3D.getGuiManager().showPopupMenu(geo, view, mouseLoc);
+			}
+			
+			return;
+		}
 		
 		switch (moveMode) {
 		case MOVE_VIEW:

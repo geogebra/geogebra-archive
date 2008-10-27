@@ -412,6 +412,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
+			
+			
 			waitForUpdate = false;
 		}
 		

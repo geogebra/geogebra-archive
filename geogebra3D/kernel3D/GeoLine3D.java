@@ -36,7 +36,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 
 	protected String getTypeString() {
 		// TODO Raccord de méthode auto-généré
-		return null;
+		return "Line3D";
 	}
 
 	public boolean isDefined() {

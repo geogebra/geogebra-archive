@@ -29,17 +29,25 @@ import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
  * @author  ggb3D
  * @version 
  */
+
+
+
+
 public class Kernel3D
 	extends Kernel{
 	
-	
+	protected Application3D app3D;
 	
 	public Kernel3D(Application3D app) {
+		
 		super(app);
+		this.app3D = app;
 		
 	}
 	
-
+	public Application3D getApplication3D(){
+		return app3D;
+	}
 	
 	/**
 	 * Returns this kernel's algebra processor that handles
