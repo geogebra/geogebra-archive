@@ -631,7 +631,7 @@ public class CASView extends JComponent implements CasManager {
 
 				// Create a CASSubDialog with the cell value
 				CASSubDialog d = new CASSubDialog(app, cas, edittingCell,
-						selectedStr);
+						selectedStr, editRow);
 				d.setVisible(true);
 			}
 		});

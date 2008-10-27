@@ -48,21 +48,25 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private CASTableCell tableCell;
 	private Application app;
 	private GeoGebraCAS cas;
-
+	private int editRow;
 	private String subStr;
 	private String inputStr;
+	private boolean selectedEnabled;
+	private JTextField subStrfield;
 
 	/**
 	 * Input Dialog for a GeoText object
 	 */
 	public CASSubDialog(Application app, GeoGebraCAS cas, CASTableCell inCell,
-			String subStr) {
+			String subStr, int editRow) {
 		super(app.getCasFrame(), false);
 		this.app = app;
 		this.cas = cas;
 		this.tableCell = inCell;
 		this.subStr = subStr;
+		this.editRow = editRow;
 		this.inputStr = tableCell.getInput();
+		selectedEnabled = true;
 
 		replaceAllFlag = false;
 		createGUI(app.getMenu("Substitute Dialog"));
@@ -75,10 +79,20 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		setResizable(false);
 
 		// create label panel
-		JLabel subLabel = new JLabel(app.getPlain("Substitute for ") + subStr
-				+ app.getPlain(" in ") + inputStr);
 		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		subTitlePanel.add(subLabel);
+		if (subStr != null) {
+			JLabel subLabel = new JLabel(app.getPlain("Substitute for ")
+					+ subStr + app.getPlain(" in ") + inputStr);
+			subTitlePanel.add(subLabel);
+		} else {
+			selectedEnabled = false;
+			JLabel subLabel = new JLabel(app.getPlain("Substitute for "));
+			subStrfield = new JTextField(4);
+			JLabel subLabel2 = new JLabel(app.getPlain(" in ") + inputStr);
+			subTitlePanel.add(subLabel);
+			subTitlePanel.add(subStrfield);
+			subTitlePanel.add(subLabel2);
+		}
 
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getPlain("New Expression") + ":");
@@ -147,27 +161,42 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private void apply(int mod) {
 
 		String newExpression = valueTextField.getText();
+		CASTable table = tableCell.getConsoleTable();
+		CASTableCellValue value;
+
 		if (allReplaced.getState())
 			replaceAllFlag = true;
+
+		if (!selectedEnabled) {
+			subStr = subStrfield.getText();
+		}
+
+		if (subStr.length() == 0)
+			return;
 
 		switch (mod) {
 		case SUB:
 			// Replace the sub in the input string
+			value = new CASTableCellValue();
+
 			if (replaceAllFlag)
-				tableCell.setInput(inputStr.replaceAll(subStr, newExpression));
+				value.setCommand(inputStr.replaceAll(subStr, newExpression));
 			else
-				tableCell
-						.setInput(inputStr.replaceFirst(subStr, newExpression));
+				value.setCommand(inputStr.replaceFirst(subStr, newExpression));
+
+			table.insertRow(editRow, CASPara.contCol, value);
 			break;
 		case SUBSIM:
 			// Replace the sub in the input string
 			String preString;
+			value = new CASTableCellValue();
 			if (replaceAllFlag)
 				preString = inputStr.replaceAll(subStr, newExpression);
 			else
 				preString = inputStr.replaceFirst(subStr, newExpression);
-			
-			tableCell.setInput(cas.evaluateYACAS(preString));
+
+			value.setCommand(cas.simplifyYACAS(preString));
+			table.insertRow(editRow, CASPara.contCol, value);
 			break;
 		default:
 			break;

@@ -20,7 +20,7 @@ public class CASTableCell extends JPanel {
 
 	private CASLinePanel linePanel;
 
-	private JTable consoleTable;
+	private CASTable consoleTable;
 
 	private boolean lineVisiable;
 
@@ -28,7 +28,7 @@ public class CASTableCell extends JPanel {
 
 	protected Application app;
 
-	public CASTableCell(CASView view, JTable consoleTable, Application app) {
+	public CASTableCell(CASView view, CASTable consoleTable, Application app) {
 
 		this.app = app;
 
@@ -142,7 +142,7 @@ public class CASTableCell extends JPanel {
 		return outputPanel.getOutput();
 	}
 
-	public JTable getConsoleTable() {
+	public CASTable getConsoleTable() {
 		return consoleTable;
 	}
 

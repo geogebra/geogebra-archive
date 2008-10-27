@@ -12,7 +12,7 @@ import javax.swing.table.TableCellRenderer;
 public class CASTableCellRender extends CASTableCell implements
 		TableCellRenderer {
 
-	CASTableCellRender(CASView view, JTable consoleTable, Application app) {
+	CASTableCellRender(CASView view, CASTable consoleTable, Application app) {
 		super(view, consoleTable, app);
 	}
 
