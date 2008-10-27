@@ -18,13 +18,11 @@ the Free Software Foundation.
 package geogebra3D;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
 
 import javax.swing.*;
 
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.kernel.Kernel;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -39,10 +37,7 @@ public abstract class Application3D extends Application{
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
     
-    
-    private JSplitPane sp3D;
-    private int initSplitDividerLocationHOR3D = 50; // init value
-    private boolean show3DView = true; 
+
 
 
     public Application3D(String[] args, GeoGebraFrame frame, boolean undoActive) {
@@ -145,64 +140,7 @@ public abstract class Application3D extends Application{
         dtp.add(frame3D);
         frame3D.moveToFront();
 
-    	
-    	
-    	/*
-    	JPanel eup = new JPanel(new BorderLayout());
-    	//Mathieu Blossier - start
-    	//adding a 3D view splitting the euclidian view
-    	//TODO : call super()
-        if (show3DView) {       
  
-        	eup.setBackground(Color.white);
-            eup.add(euclidianView, BorderLayout.CENTER);
-            
-
-        	
-        } else { 
-            eup.setBackground(Color.white);
-            eup.add(euclidianView, BorderLayout.CENTER);
-        }
-       
-        
-        //Mathieu Blossier - end
-        
-        
-        if (showConsProtNavigation) {
-        	eup.add(getGuiManager().getConstructionProtocolNavigation(), BorderLayout.SOUTH);
-        	getGuiManager().getConstructionProtocolNavigation().setBorder(BorderFactory.
-       		     createMatteBorder(1, 0, 0, 0, Color.gray));
-        }                    
-        
-        if (showAlgebraView) {        	     
-            if (horizontalSplit) {
-                sp =  new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                        new JScrollPane(getGuiManager().getAlgebraView()), eup);
-                sp.setDividerLocation(initSplitDividerLocationHOR);                
-            }               
-            else {
-                sp =  new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                             eup, new JScrollPane(getGuiManager().getAlgebraView()));
-                sp.setDividerLocation(initSplitDividerLocationVER);
-            }               
-            sp.addPropertyChangeListener("dividerLocation",
-                        new DividerChangeListener());                                       
-            
-            centerPanel.add(sp, BorderLayout.CENTER);
-        } else { 
-            centerPanel.add(eup, BorderLayout.CENTER);
-        }
-        
-        // border of euclidianPanel        
-        int eupTopBorder = !showAlgebraView && showToolBar ? 1 : 0;
-        int eupBottomBorder = showToolBar && !(showAlgebraView && !horizontalSplit) ? 1 : 0;
-        eup.setBorder(BorderFactory.
-        		createMatteBorder(eupTopBorder, 0, eupBottomBorder, 0, Color.gray));
-        
-        if (updateUI)        	
-        	updateComponentTreeUI();       
-        	
-        */
     }  
     
  

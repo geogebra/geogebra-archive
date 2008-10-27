@@ -24,7 +24,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec3D;
-import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
 
 
@@ -44,6 +43,9 @@ final public class GeoPoint3D extends GeoVec4D {
 	private boolean isInfinite,isDefined;
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
+	//paths
+	private Path1D path1D;
+	private PathParameter1D pathParameter1D;
         
     // temp
     public GgbVector inhom = new GgbVector(3);
@@ -68,9 +70,32 @@ final public class GeoPoint3D extends GeoVec4D {
     	this(c,label,v.get(1),v.get(2),v.get(3),v.get(4));
     }
     
-    public GeoPoint3D(Construction c, Path path) {
-		super(c);
+    
+    
+    
+    public GeoPoint3D(Construction c, Path1D path) {
+		super(c,4);
+		this.path1D = path;
 	}
+    
+    final public PathParameter1D getPathParameter1D() {
+    	if (pathParameter1D == null)
+    		pathParameter1D = new PathParameter1D();
+    	return pathParameter1D;
+    }
+    
+    
+	public boolean hasPath1D() {
+		return path1D != null;
+	}
+    
+    
+    
+    
+    
+    
+    
+    
     
 	protected String getClassName() {
 		return "GeoPoint3D";
@@ -101,14 +126,45 @@ final public class GeoPoint3D extends GeoVec4D {
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
 	 */
-	final public void setCoords(double x, double y, double z, double w) {
+	final public void setCoords(GgbVector v, boolean path) {
 		
-		super.setCoords(new double[] {x,y,z,w});
-
-		updateCoords();  
+		super.setCoords(v);
+		updateCoords(); 
+		
+		if (path){
+			if (path1D != null) {
+				// remember path parameter for undefined case
+				//PathParameter tempPathParameter = getTempPathparameter();
+				//tempPathParameter.set(getPathParameter());
+				path1D.pointChanged(this);
+			}
+			updateCoords(); 
+		}
+		
+		 
 		
 	}  
+	
+	
+	
+	final public void setCoords(GgbVector v) {
+		setCoords(v,true);
+	}
+	
+	
+	final public void setCoords(double x, double y, double z, double w) {
+		
+		setCoords(new GgbVector(new double[] {x,y,z,w}));
+		
+	}  	
 
+	
+	
+	
+	
+	
+	
+	
 	
 	final public void updateCoords() {
 		// infinite point
@@ -194,7 +250,7 @@ final public class GeoPoint3D extends GeoVec4D {
 		
 		s+=" = "; //TODO use kernel property
 		
-		updateCoords();
+		
 		
 		//TODO point undefined...
 		//TODO use point property

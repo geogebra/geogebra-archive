@@ -61,6 +61,8 @@ public class Test3D{
         //testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
         testAlgoPyramide();
         testRepere();
+        
+        
 
 		
 	}
@@ -295,6 +297,8 @@ public class Test3D{
 		l.setObjColor(new Color(1f,0.5f,0f));
 		l.setLineThickness(1);
 		
+		GeoPoint3D P=kernel3D.Point3D("pointOnPath1D", l, 0, 0, 0);
+		P.setObjColor(new Color(1f,1f,0f));
 		
 	}
 	

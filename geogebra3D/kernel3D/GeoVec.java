@@ -65,13 +65,15 @@ public abstract class GeoVec extends GeoElement3D {
 	
 
 	public void setCoords(GgbMatrix v0){		
-		v.set(v0);		
+		setCoords(v0.v());		
 	}
 
 	public void setCoords(GeoVec vec){
-		v.set(vec.v);
+		setCoords(vec.v);		
 	}
 	
+	
+
 	final public GgbVector getCoords() {
 		return v;
 	}             

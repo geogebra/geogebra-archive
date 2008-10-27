@@ -1,10 +1,12 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.PathParameter;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.Application;
 
-public abstract class GeoCoordSys1D extends GeoCoordSys {
+public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 	
 	GgbVector Vn1 = new GgbVector(4);
 	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
@@ -90,6 +92,44 @@ public abstract class GeoCoordSys1D extends GeoCoordSys {
 
 	
 	
+	
+	// Path1D interface
+	public void pointChanged(GeoPoint3D P){
+		//project P on line
+		GgbVector v = P.getInhomCoords();
+		GgbVector p = new GgbVector(4);
+		GgbVector[] project = v.projectLine(M.getColumn(2).subVector(1, 3), M.getColumn(1).subVector(1, 3));
+		p.set(project[0]);
+		p.set(4, 1);
+		P.setCoords(p,false); //avoid new pointChanged computation
+		
+		// set path parameter
+		Application.debug("parameter = "+project[1].get(1));
+		PathParameter1D pp = P.getPathParameter1D();
+		pp.setT(project[1].get(1));
+		
+	}
+	
+	public void pathChanged(GeoPoint3D P){
+		PathParameter1D pp = P.getPathParameter1D();
+		P.setCoords(getPoint(pp.getT()),false);
+	}
+	
+	public boolean isOnPath(GeoPoint3D P, double eps){
+		return false;
+	}
+
+	
+	
+	public double getMinParameter(){
+		return Double.NEGATIVE_INFINITY;
+	}
+	public double getMaxParameter(){
+		return Double.POSITIVE_INFINITY;
+	}
+	public boolean isClosedPath(){
+		return false;
+	}
 	
 	
 	

@@ -215,15 +215,17 @@ public class GgbVector
 	
 	
 	
-	/** returns the projection of this on the 3D-line represented by the matrix [V O] */
-	public GgbVector projectLine(GgbVector O, GgbVector V){
+	/** calculates projection of this on the 3D-line represented by the matrix [V O]
+	 *  and returns {projection, {parameter, normalized parameter} } */
+	public GgbVector[] projectLine(GgbVector O, GgbVector V){
 		
 		GgbVector OM = this.sub(O);
 		GgbVector N = V.normalized();
-		GgbMatrix OH = N.mul(OM.dotproduct(N));
+		double parameter = OM.dotproduct(N);
+		GgbMatrix OH = N.mul(parameter);
 		GgbVector H = O.add(OH).getColumn(1); //TODO optimize
 		
-		return H;
+		return new GgbVector[] {H,new GgbVector(new double[] {parameter/V.norm(), parameter})};
 		
 	}
 	

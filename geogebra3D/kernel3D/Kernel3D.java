@@ -68,6 +68,16 @@ public class Kernel3D
 		return p;
 	}
 	
+	
+	
+	/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
+	final public GeoPoint3D Point3D(String label, Path1D path, double x, double y, double z) {
+		AlgoPointOnPath1D algo = new AlgoPointOnPath1D(cons, label, path, x, y, z);
+		GeoPoint3D p = algo.getP();		
+		p.setLabel(label);               
+		return p;
+	}	
+	
 	/** Segment3D label linking points v1 and v2   */
 	final public GeoSegment3D Segment3D(String label, GgbVector v1, GgbVector v2){
 		GeoSegment3D s = new GeoSegment3D(cons,v1,v2);
