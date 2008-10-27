@@ -48,6 +48,8 @@ public class AlgebraProcessor {
 	private Parser parser;
 	private CommandDispatcher cmdDispatcher;
 	
+	protected ExpressionValue eval; //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode
+	
 	public AlgebraProcessor(Kernel kernel) {
 		this.kernel = kernel;
 		cons = kernel.getConstruction();
@@ -747,7 +749,7 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
+	protected GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
 		// command is leaf: process command
 		if (n.isLeaf() && n.getLeft() instanceof Command) {
 			Command c = (Command) n.getLeft();
@@ -757,7 +759,7 @@ public class AlgebraProcessor {
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
-		ExpressionValue eval = n.evaluate();		
+		eval = n.evaluate(); //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode		
 
 		// leaf (no new label specified): just return the existing GeoElement
 		if (eval.isGeoElement() &&  n.getLabel() == null) 

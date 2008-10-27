@@ -15,10 +15,13 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.Application3D;
+import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
+
+
 
 
 /**
@@ -29,17 +32,28 @@ import geogebra3D.Application3D;
 public class Kernel3D
 	extends Kernel{
 	
+	
+	
 	public Kernel3D(Application3D app) {
 		super(app);
 		
 	}
 	
-	/*
-	public void setConstruction(Construction cons){
-		
-		this.cons = cons;
-	}
-	*/
+
+	
+	/**
+	 * Returns this kernel's algebra processor that handles
+	 * all input and commands.
+	 */	
+	public AlgebraProcessor getAlgebraProcessor() {
+    	if (algProcessor == null)
+    		algProcessor = new AlgebraProcessor3D(this);
+    	return algProcessor;
+    }
+	
+	
+
+	
 
 	
 	/***********************************

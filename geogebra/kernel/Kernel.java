@@ -91,9 +91,9 @@ public class Kernel {
 	private double EPSILON = STANDARD_PRECISION;
 	
 	 // style of point/vector coordinates
-    public static final int COORD_STYLE_DEFAULT = 0;		// A = (3, 2)  and 	B = (3; 90°)
-	public static final int COORD_STYLE_AUSTRIAN = 1;		// A(3|2)  	   and	B(3; 90°)
-	public static final int COORD_STYLE_FRENCH = 2;			// A: (3, 2)   and	B: (3; 90°)
+    public static final int COORD_STYLE_DEFAULT = 0;		// A = (3, 2)  and 	B = (3; 90ï¿½)
+	public static final int COORD_STYLE_AUSTRIAN = 1;		// A(3|2)  	   and	B(3; 90ï¿½)
+	public static final int COORD_STYLE_FRENCH = 2;			// A: (3, 2)   and	B: (3; 90ï¿½)
 	private int coordStyle = 0;
 
 	// STATIC
@@ -165,11 +165,11 @@ public class Kernel {
 	
 	protected Construction cons;
 	protected Application app;	
-	private AlgebraProcessor algProcessor;
+	protected AlgebraProcessor algProcessor;
 	private EquationSolver eqnSolver;
 	private RegressionMath regMath;
 	private ExtremumFinder extrFinder;
-	private Parser parser;
+	protected Parser parser;
 	private Object ggbCAS;
 	
 	// Continuity on or off, default: false since V3.0
@@ -193,7 +193,7 @@ public class Kernel {
 	 * Returns this kernel's algebra processor that handles
 	 * all input and commands.
 	 */	
-	final public AlgebraProcessor getAlgebraProcessor() {
+	public AlgebraProcessor getAlgebraProcessor() {
     	if (algProcessor == null)
     		algProcessor = new AlgebraProcessor(this);
     	return algProcessor;
