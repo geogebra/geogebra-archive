@@ -640,7 +640,12 @@ public class MyXMLHandler implements DocHandler {
 			
 			// spreadsheet opens 118 pixels narrower than it should
 			// don't know why
-			app.getGuiManager().getSpreadsheetView().setPreferredSize(new Dimension(width+118, height));
+			int hFudge = 0;
+			int vFudge = 0;
+			if (app.isHorizontalSplit()) {
+				hFudge = 118;
+			} 
+			app.getGuiManager().getSpreadsheetView().setPreferredSize(new Dimension(width + hFudge, height + vFudge));
 			//((geogebra.gui.view.spreadsheet.SpreadsheetView) spreadsheetView)
 			//		.setPreferredSize(new Dimension(width+118, height));
 			return true;
