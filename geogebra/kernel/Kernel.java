@@ -2704,8 +2704,8 @@ public class Kernel {
 	 * Keep[boolean condition, list]
 	 * Michael Borcherds
 	 */
-	final public GeoList Keep(String label, GeoFunction boolFun, GeoList list) {
-		AlgoKeep algo = new AlgoKeep(cons, label, boolFun, list);
+	final public GeoList KeepIf(String label, GeoFunction boolFun, GeoList list) {
+		AlgoKeepIf algo = new AlgoKeepIf(cons, label, boolFun, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}

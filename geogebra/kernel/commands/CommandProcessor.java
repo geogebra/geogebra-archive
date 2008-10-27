@@ -4752,9 +4752,9 @@ class CmdToFraction extends CommandProcessor {
 
 }
 
-class CmdKeep extends CommandProcessor {
+class CmdKeepIf extends CommandProcessor {
 
-	public CmdKeep(Kernel kernel) {
+	public CmdKeepIf(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -4775,7 +4775,7 @@ class CmdKeep extends CommandProcessor {
 		
         		GeoElement[] ret =
                 	{
-                     kernel.Keep(
+                     kernel.KeepIf(
                         c.getLabel(),
                         (GeoFunction) booleanFun,
                         ((GeoList) arg[1]) )

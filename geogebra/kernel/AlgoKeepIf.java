@@ -18,7 +18,7 @@ package geogebra.kernel;
  * @version 2008-03-04
  */
 
-public class AlgoKeep extends AlgoElement {
+public class AlgoKeepIf extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
@@ -26,7 +26,7 @@ public class AlgoKeep extends AlgoElement {
 	private GeoFunction boolFun;     // input
     private int size;
 
-    AlgoKeep(Construction cons, String label, GeoFunction boolFun, GeoList inputList) {
+    AlgoKeepIf(Construction cons, String label, GeoFunction boolFun, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
     	this.boolFun = boolFun;
@@ -39,7 +39,7 @@ public class AlgoKeep extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoKeep";
+        return "AlgoKeepIf";
     }
 
     protected void setInputOutput(){
