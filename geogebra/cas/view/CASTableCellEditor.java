@@ -15,11 +15,11 @@ import javax.swing.table.TableCellEditor;
 public class CASTableCellEditor extends CASTableCell implements TableCellEditor {
 
 	// CASTableCell panel;
-	private JTable table;
+	private CASTable table;
 
 	private CASTableCellValue cellValue;
 
-	public CASTableCellEditor(CASView view, JTable consoleTable, Application app) {
+	public CASTableCellEditor(CASView view, CASTable consoleTable, Application app) {
 		super(view, consoleTable, app);
 
 		CASTableCellController inputListener = new CASTableCellController(this,
@@ -71,7 +71,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		return cellValue;
 	}
 	
-	public String getSelectedText() {
+	public String getInputSelectedText() {
 		return getInputArea().getSelectedText();
 	}
 
@@ -83,7 +83,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		cellValue.setCommand(this.getInput());
 		cellValue.setOutput(this.getOutput());
 		
-		//Application.debug("Cell Editor stops editting at selected " + this.getInputArea().getText());
+		Application.debug("Cell Editor stops editting at selected " + this.getInputArea().getText());
 		return true;
 	}
 

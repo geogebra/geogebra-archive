@@ -616,9 +616,15 @@ public class CASView extends JComponent implements CasManager {
 
 				CASTableCellEditor cellEditor = (CASTableCellEditor) consoleTable
 						.getCellEditor(editRow, CASPara.contCol);
-				String selectedStr = cellEditor.getSelectedText();
-				CASTableCellValue value = (CASTableCellValue) consoleTable
+				String selectedStr = cellEditor.getInputSelectedText();
+				
+				
+			    CASTableCellValue value = (CASTableCellValue) consoleTable
 						.getModel().getValueAt(editRow, CASPara.contCol);
+			    // Save value  
+			    value.setCommand(cellEditor.getInput());
+			    consoleTable.setValueAt(value, editRow, CASPara.contCol);
+			    
 				CASTableCell edittingCell = (CASTableCell) cellEditor
 						.getTableCellEditorComponent(consoleTable, value, true,
 								editRow, CASPara.contCol);
