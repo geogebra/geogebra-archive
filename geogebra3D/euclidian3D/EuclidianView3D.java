@@ -22,6 +22,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
@@ -48,6 +49,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	//list of 3D objects
 	private boolean waitForUpdate = true; //says if it waits for update...
+	public boolean waitForPick = false; //says if it waits for update...
+	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
 	DrawList3D drawList3D = new DrawList3D();
 	
 	
@@ -372,6 +375,42 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		if (waitForUpdate){
+			
+			//picking
+			if (waitForPick){
+				if (!removeHighlighting){
+					GeoElement3D geo;
+					for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+						Drawable3D d = (Drawable3D) iter.next();
+						geo = (GeoElement3D) d.getGeoElement();
+						geo.setWasHighlighted();
+						geo.setWillBeHighlighted(false);
+
+					}
+
+					for (Iterator iter = hits.iterator(); iter.hasNext();) {
+						geo = (GeoElement3D) iter.next();
+						geo.setWillBeHighlighted(true);				
+					}			
+
+					for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+						Drawable3D d = (Drawable3D) iter.next();
+						geo = (GeoElement3D) d.getGeoElement();
+						geo.updateHighlighted(true);				
+					}
+				}else{
+					for (Iterator iter = hits.iterator(); iter.hasNext();) {
+						GeoElement3D geo = (GeoElement3D) iter.next();
+						geo.setWasHighlighted();
+						geo.setWillBeHighlighted(false);
+						geo.updateHighlighted(true);
+					}
+					removeHighlighting = false;
+				}
+				waitForPick = false;
+			}
+			
+			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
 			waitForUpdate = false;
 		}
@@ -390,6 +429,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setWaitForUpdate(boolean v){
 		waitForUpdate = v;
 	}
+	
+	
+	
+	public void setRemoveHighlighting(boolean flag){
+		removeHighlighting = flag;
+	}
+	
 	
 	public void paint(Graphics g){
 		setWaitForUpdate(true);

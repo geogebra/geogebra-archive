@@ -311,9 +311,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 			d.drawForPicking(this);	
 			geos[loop] = (GeoElement3D) d.getGeoElement();
 			
-			
+			/*
 			geos[loop].setWasHighlighted();
 			geos[loop].setWillBeHighlighted(false);
+			*/
 			
 
 		}
@@ -344,19 +345,22 @@ public class EuclidianRenderer3D implements GLEventListener {
           
           for (int j = 0; j < names; j++){ 
         	//Application.debug("the name is " + buffer[ptr]+" -- drawHits["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
-        	geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
+        	//geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
         	view.hits.add(geos[buffer[ptr]]);
         	ptr++;
           }
           //System.out.println();
         }
         
-        //update highlighting        
+        //update highlighting      
+        /*
         for (int i=1;i<=loop;i++)
         	geos[i].updateHighlighted(true);
+        	*/
         
     	
         waitForPick = false;
+        view.waitForPick = true;
     }
     
     

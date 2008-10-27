@@ -164,6 +164,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 				//pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 				//view.doPick(pickPoint,true,true);
 				if (!view.hits.isEmpty()){
+					
 					objSelected = (GeoElement3D) view.hits.get(0);		
 					objSelected.setSelected(true);
 					//Application.debug("selected = "+objSelected.getLabel());
@@ -171,12 +172,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
 
 						//removes highlighting
-						for (Iterator iter = view.hits.iterator(); iter.hasNext();) {
-							GeoElement3D geo = (GeoElement3D) iter.next();
-							geo.setWasHighlighted();
-							geo.setWillBeHighlighted(false);
-							geo.updateHighlighted(true);
-						}
+						view.setRemoveHighlighting(true);
+
 
 						moveMode = MOVE_POINT;
 						movedGeoPoint3D = (GeoPoint3D) objSelected;
@@ -298,6 +295,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			*/
 			
+			//TODO do this just one time, when mouse is pressed
 			plane = movedGeoPoint3D.getPath1D().getMovingMatrix(view.getToScreenMatrix());			
 			view.toSceneCoords3D(plane);
 			
