@@ -1320,7 +1320,19 @@ public class DefaultGuiManager implements GuiManager {
 				int spreadsheetWidth = 0;
 					spreadsheetWidth = app.showSpreadsheetView() ? 
 							spreadsheetView.getPreferredSize().width : 0;
-				int furnitureWidth = algebraWidth + spreadsheetWidth;
+				int algebraHeight = app.showAlgebraView() ? algebraView
+						.getPreferredSize().height : 0;
+				int spreadsheetHeight = 0;
+				spreadsheetHeight = app.showSpreadsheetView() ? 
+							spreadsheetView.getPreferredSize().height : 0;
+				int furnitureWidth = 0;
+				int furnitureHeight = 0;
+				
+				if (app.isHorizontalSplit()) {
+					furnitureWidth = algebraWidth + spreadsheetWidth;
+				} else {
+					furnitureHeight = algebraHeight + spreadsheetHeight;
+				}
 
 				// calculate total height of everything in window except
 				// EuclidianView
@@ -1348,7 +1360,7 @@ public class DefaultGuiManager implements GuiManager {
 				testFrame2.setVisible(false);
 
 				int titlebarHeight = height1 - height2 - 5;
-				int furnitureHeight = toolbarHeight + inputbarHeight
+				furnitureHeight += toolbarHeight + inputbarHeight
 						+ menubarHeight + titlebarHeight;
 
 				double height = app.getEuclidianView().getPreferredSize().height;
@@ -1376,6 +1388,14 @@ public class DefaultGuiManager implements GuiManager {
 
 				if (width > screenSize.width - furnitureWidth
 						|| height > screenSize.height - furnitureHeight) {
+					
+					Application.debug("Screen too small, resizing to fit" +
+							"\nwidth = "+width+
+							"\nscreenSize.width = "+screenSize.width +
+							"\nfurnitureWidth = "+furnitureWidth +
+							"\nheight = "+height +
+							"\nscreenSize.height = "+screenSize.height +
+							"\nfurnitureHeight = "+furnitureHeight);
 
 					// close algebra and spreadsheet views
 					app.setShowAlgebraView(false);
