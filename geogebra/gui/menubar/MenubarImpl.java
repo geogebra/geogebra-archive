@@ -881,7 +881,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 
 		refreshAction = new AbstractAction(app.getMenu("Refresh"),
-				app.getImageIcon("view-refresh.png")) {
+				new ImageIcon(app.getRefreshViewImage())) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

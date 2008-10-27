@@ -153,7 +153,9 @@ public class ImageManager {
 		 } catch (Exception e) {
 		 	Application.debug(e.toString());
 		 }
-		 if (img == null) Application.debug("Image " + name + " not found");
+		 if (img == null) {
+			 Application.debug("Image " + name + " not found");			
+		 }
 		 return img;
 	}	  
 

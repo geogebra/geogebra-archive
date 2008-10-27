@@ -918,6 +918,21 @@ public abstract class Application implements KeyEventDispatcher {
 		return imageManager.getImageIcon("/geogebra/gui/images/" + filename,
 				borderColor);
 	}
+	
+	public ImageIcon getToolBarImage(String filename, Color borderColor) {
+		loadGUIJar();
+		String path = "/geogebra/gui/toolbar/images/" + filename;
+		ImageIcon icon = imageManager.getImageIcon(path, borderColor);
+		
+		if (icon == null) {
+			// load3DJar();
+			// try to find this image in 3D extension
+			path = "/geogebra/geogebra3D/images/" + filename;
+			icon = imageManager.getImageIcon(path, borderColor);
+		}
+				 
+		return icon;
+	}
 
 	public ImageIcon getEmptyIcon() {
 		loadGUIJar();
@@ -928,6 +943,11 @@ public abstract class Application implements KeyEventDispatcher {
 		loadGUIJar();
 		return imageManager
 				.getInternalImage("/geogebra/gui/images/" + filename);
+	}
+	
+	public Image getRefreshViewImage() {		
+		// don't need to load gui jar as reset image is in main jar
+		return imageManager.getInternalImage("/geogebra/main/view-refresh.png");		
 	}
 
 	public BufferedImage getExternalImage(String filename) {
@@ -1766,7 +1786,7 @@ public abstract class Application implements KeyEventDispatcher {
 				BufferedImage img = getExternalImage(iconName);
 				if (img == null)
 					// default icon
-					icon = getImageIcon("mode_tool_32.png", border);
+					icon = getToolBarImage("mode_tool_32.png", border);
 				else
 					// use image as icon
 					icon = new ImageIcon(ImageManager.addBorder(img, border));
@@ -1780,7 +1800,7 @@ public abstract class Application implements KeyEventDispatcher {
 			// bugfix for Turkish locale added Locale.US
 			String iconName = "mode_" + modeText.toLowerCase(Locale.US)
 					+ "_32.gif";
-			icon = getImageIcon(iconName, border);
+			icon = getToolBarImage(iconName, border);
 			if (icon == null) {
 				Application.debug("icon missing for mode " + modeText + " ("
 						+ mode + ")");

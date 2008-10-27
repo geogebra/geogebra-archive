@@ -1592,7 +1592,7 @@ public class EuclidianView extends JPanel implements View, Printable {
 	
 	private Image getResetImage() {
 		if (resetImage == null) {
-			resetImage = app.getInternalImage("view-refresh.png");
+			resetImage = app.getRefreshViewImage();
 		}
 		return resetImage;
 	}

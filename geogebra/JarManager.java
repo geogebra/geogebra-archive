@@ -43,6 +43,8 @@ public class JarManager {
 	public static final int JAR_FILE_GEOGEBRA_CAS = 3;
 	public static final int JAR_FILE_GEOGEBRA_EXPORT = 4;
 	public static final int JAR_FILE_GEOGEBRA_PROPERTIES = 5;
+	//public static final int JAR_FILE_GEOGEBRA_3D = 6;
+	
 	public static final String[] JAR_FILES = { 
 			"geogebra.jar", 
 			"geogebra_main.jar",
@@ -121,7 +123,10 @@ public class JarManager {
 		initLocalJarDir();
 		
 		// if we are not using the existing cache directory
-		if (!useExistingCacheDir) {
+		// open connections to online jars for applets and webstart application
+		if (!useExistingCacheDir && 
+				(main_app_type == TYPE_APPLET || main_app_type == TYPE_WEBSTART)) 
+		{
 			jarConnectionManager.initConnectionsInBackground();
 		}
 		
@@ -317,9 +322,13 @@ public class JarManager {
               catch (Exception e) {}
 			
 			// check if jar file exists
-			File main_jar_file = new File(codebase.getFile(), JAR_FILES[JAR_FILE_GEOGEBRA]);															
+			File main_jar_file = new File(codebase.getPath(), JAR_FILES[JAR_FILE_GEOGEBRA]);															
 			
-			if (main_jar_file.exists()) {
+			// TODO: remove
+			System.out.println("main_jar_file.exists() " + main_jar_file.exists() + ", " + main_jar_file);
+			
+			
+			if (main_jar_file.exists()) {	
 				// LOCAL JARS
 				main_app_type =  TYPE_LOCAL_JARS;
 			} else {
@@ -350,7 +359,7 @@ public class JarManager {
 			case TYPE_LOCAL_JARS:
 			case TYPE_LOCAL_NO_JARS:
 				// local jar files: use local directory of jar files				
-				localJarDir = new File(codebase.getFile());
+				localJarDir = new File(codebase.getPath());
 				break;
 
 			case TYPE_APPLET:
