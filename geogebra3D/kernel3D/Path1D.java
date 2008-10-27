@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.linalg.GgbMatrix;
 
 /**
  * @author Markus Hohenwarter + ggb3D
@@ -71,5 +72,10 @@ public interface Path1D {
 	 * Returns a PathMover object for this path.
 	 */
 	//public PathMover createPathMover();	
+	
+	
+	
+	/** returns matrix for moving the point in the screen view */
+	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix);
 	
 }

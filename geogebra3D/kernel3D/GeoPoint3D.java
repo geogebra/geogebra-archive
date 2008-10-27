@@ -89,6 +89,10 @@ final public class GeoPoint3D extends GeoVec4D {
 	public boolean hasPath1D() {
 		return path1D != null;
 	}
+	
+	public boolean hasPath() {
+		return hasPath1D();
+	}
     
     
 	public Path1D getPath1D() {

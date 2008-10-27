@@ -326,15 +326,17 @@ public class GgbMatrix
 	/** prints the matrix to the screen */
 	public void SystemPrint(){
 		
+		String s="";
+		
 		for(int i=1;i<=getRows();i++){
-			String s="";
+			
 			for(int j=1;j<=getColumns();j++){
-				s=s+"  "+get(i,j);
+				s+="  "+get(i,j);
 			}
-			Application.debug(s);
+			s+="\n";
 		}
 		
-		
+		Application.debug(s);
 	}
 	
 	

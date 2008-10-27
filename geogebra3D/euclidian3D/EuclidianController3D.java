@@ -181,9 +181,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 						moveMode = MOVE_POINT;
 						movedGeoPoint3D = (GeoPoint3D) objSelected;
 						startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
-
-						view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
-						view.setMovingColor(movingColor);
+						
+						if (!movedGeoPoint3D.hasPath()){
+							view.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
+							view.setMovingColor(movingColor);
+						}
 
 					}
 				}
@@ -273,6 +275,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		//plane for projection
 		GgbMatrix plane;
 		if (movedGeoPoint3D.hasPath1D()){
+			/*
 			GeoCoordSys1D cs = (GeoCoordSys1D) movedGeoPoint3D.getPath1D().toGeoElement();
 			GgbMatrix pathMatrix = cs.getMatrixCompleted(); //TODO put this in Path1D
 			view.toScreenCoords3D(pathMatrix);
@@ -291,7 +294,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			plane = pathMatrix.copy();
 			plane.set(Vn1, 2);plane.set(Vn2, 3);
-			plane.SystemPrint();
+			//plane.SystemPrint();
+			
+			*/
+			
+			plane = movedGeoPoint3D.getPath1D().getMovingMatrix(view.getToScreenMatrix());			
 			view.toSceneCoords3D(plane);
 			
 							

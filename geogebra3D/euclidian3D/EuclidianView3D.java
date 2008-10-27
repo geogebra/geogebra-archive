@@ -281,6 +281,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	final public GgbMatrix getToSceneMatrix(){
+		return mInv.copy();
+	}
+	
+	final public GgbMatrix getToScreenMatrix(){
+		return m.copy();
+	}	
 	
 	
 	

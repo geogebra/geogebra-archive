@@ -104,7 +104,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 		P.setCoords(p,false); //avoid new pointChanged computation
 		
 		// set path parameter
-		Application.debug("parameter = "+project[1].get(1));
+		//Application.debug("parameter = "+project[1].get(1));
 		PathParameter1D pp = P.getPathParameter1D();
 		pp.setT(project[1].get(1));
 		
@@ -133,7 +133,27 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 	
 	
 	
-	
+	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
+		
+		GgbMatrix ret = toScreenMatrix.mul(getMatrixCompleted());
+		
+		GgbVector V = ret.getColumn(1); //gets direction vector of the path
+		GgbVector Vn1 = new GgbVector(4); 
+		GgbVector Vn2 = new GgbVector(4);
+		if (V.get(1)!=0){
+			Vn1.set(1,-V.get(2));
+			Vn1.set(2,V.get(1));
+			Vn1.normalize();
+		}else{
+			Vn1.set(1, 1.0);
+		}
+		Vn2 = V.crossProduct(Vn1);
+		Vn2.normalize();	
+		
+		ret.set(Vn1, 2);ret.set(Vn2, 3);
+		
+		return ret;
+	}
 	
 	
 	
