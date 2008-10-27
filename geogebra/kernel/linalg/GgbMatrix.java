@@ -223,7 +223,7 @@ public class GgbMatrix
 	
 
 	
-	/** sets m(V,j), rows=V.getLength() */
+	/** sets V to column j of m, rows=V.getLength() */
 	public void set(GgbVector V, int j){
 		int i;
 		for (i=1;i<=V.getLength();i++){

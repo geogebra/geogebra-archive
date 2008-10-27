@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -258,7 +259,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected void movePoint(boolean repaint){
 		
 		//getting current pick point and direction v 
-		GgbVector p=movedGeoPoint3D.getCoords().copyVector();
+		GgbVector p = movedGeoPoint3D.getCoords().copyVector();
 		GgbVector o = view.getPickFromScenePoint(p,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
 		view.toSceneCoords3D(o);
 		
@@ -267,14 +268,44 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		GgbVector v = new GgbVector(new double[] {0,0,1,0});
 		view.toSceneCoords3D(v);	
 		
-		//getting new position of the point
-		GgbMatrix plane = view.movingPlane.getMatrixCompleted();
 		
-		GgbVector originOld = plane.getColumn(4);
-		plane.set(movedGeoPoint3D.getCoords(), 4);
-		GgbVector originProjected = originOld.projectPlane(plane)[0];
-		plane.set(originProjected, 4);
-		 
+		
+		//plane for projection
+		GgbMatrix plane;
+		if (movedGeoPoint3D.hasPath1D()){
+			GeoCoordSys1D cs = (GeoCoordSys1D) movedGeoPoint3D.getPath1D().toGeoElement();
+			GgbMatrix pathMatrix = cs.getMatrixCompleted(); //TODO put this in Path1D
+			view.toScreenCoords3D(pathMatrix);
+			GgbVector V = pathMatrix.getColumn(1); //gets direction vector of the path
+			GgbVector Vn1 = new GgbVector(4); 
+			GgbVector Vn2 = new GgbVector(4);
+			if (V.get(1)!=0){
+				Vn1.set(1,-V.get(2));
+				Vn1.set(2,V.get(1));
+				Vn1.normalize();
+			}else{
+				Vn1.set(1, 1.0);
+			}
+			Vn2 = V.crossProduct(Vn1);
+			Vn2.normalize();	
+			
+			plane = pathMatrix.copy();
+			plane.set(Vn1, 2);plane.set(Vn2, 3);
+			plane.SystemPrint();
+			view.toSceneCoords3D(plane);
+			
+							
+		}else{
+			plane = view.movingPlane.getMatrixCompleted();
+
+			GgbVector originOld = plane.getColumn(4);
+			plane.set(movedGeoPoint3D.getCoords(), 4);
+			GgbVector originProjected = originOld.projectPlane(plane)[0];
+			plane.set(originProjected, 4);
+		}
+		
+		
+		//getting new position of the point
 		GgbVector[] project = o.projectPlaneThruV(plane, v);
 		
 		

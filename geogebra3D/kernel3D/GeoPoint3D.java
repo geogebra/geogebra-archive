@@ -24,6 +24,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
 
 
@@ -90,7 +91,9 @@ final public class GeoPoint3D extends GeoVec4D {
 	}
     
     
-    
+	public Path1D getPath1D() {
+		return path1D;
+	}
     
     
     
