@@ -63,9 +63,20 @@ public abstract class Application3D extends Application{
         
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel3D);
-
+        
+        //init 3D view
         euclidianView3D.setZZero(-7.0);
         euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
+        
+        
+        //init toolbar
+        String myToolBar3D =  EuclidianView3D.MODE_MOVE
+        						+" || "
+        						+EuclidianView3D.MODE_POINT
+        						+" || "
+        						+EuclidianView3D.MODE_TRANSLATEVIEW;
+        getGuiManager().setToolBarDefinition( myToolBar3D );
+        updateToolBar();
  		
     }      
     

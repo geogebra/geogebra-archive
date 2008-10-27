@@ -1,8 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
-import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.Kernel;
+
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
@@ -121,6 +120,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected void initNewMode(int mode) {
 		this.mode = mode;
+		
+		switch (mode) {	
+		//create a new point
+		case EuclidianView3D.MODE_POINT:			
+			Application.debug("mode : create new point");
+			//movedGeoPoint3D = kernel3D.Point3D("essai", 1, 1, 1);
+			break;
+		//move an object
+		case EuclidianView3D.MODE_MOVE:
+			break;
+		}
 	}
 	
 	
@@ -135,15 +145,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		setMouseLocation(e);	
 		moveMode = MOVE_NONE;
 		
-		switch (mode) {
-
+		switch (mode) {		
+		//create a new point
+		case EuclidianView3D.MODE_POINT:			
+			Application.debug("create new point");
+			break;
+			
 		//move an object
-		case EuclidianView.MODE_MOVE:
-			if (e.isShiftDown() || e.isControlDown() || e.isMetaDown()) {
+		case EuclidianView3D.MODE_MOVE:
+			if (e.isShiftDown() || Application.isControlDown(e) ) {
 				moveMode = MOVE_VIEW;	
+			} else if (Application.isRightClick(e)){
+				//Application.debug("clic droit");
 			} else {
-
-				if (objSelected!=null)
+				if (objSelected!=null)		
 					objSelected.setSelected(false);
 				//pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 				//view.doPick(pickPoint,true,true);
@@ -153,7 +168,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					//Application.debug("selected = "+objSelected.getLabel());
 
 					if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
-												
+
 						//removes highlighting
 						for (Iterator iter = view.hits.iterator(); iter.hasNext();) {
 							GeoElement3D geo = (GeoElement3D) iter.next();
@@ -161,7 +176,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 							geo.setWillBeHighlighted(false);
 							geo.updateHighlighted(true);
 						}
-						
+
 						moveMode = MOVE_POINT;
 						movedGeoPoint3D = (GeoPoint3D) objSelected;
 						startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
@@ -178,7 +193,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 
 		// move drawing pad or axis
-		case EuclidianView.MODE_TRANSLATEVIEW:	
+		case EuclidianView3D.MODE_TRANSLATEVIEW:	
 			moveMode = MOVE_VIEW;
 			break;
 
@@ -189,6 +204,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		}
 		
+		
+		//start moving drawing pad
 		if (moveMode==MOVE_VIEW){
 			if(DEBUG){Application.debug("mousePressed");}
 			aOld = view.a;

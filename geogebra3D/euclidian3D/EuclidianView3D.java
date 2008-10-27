@@ -2,7 +2,6 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
@@ -28,7 +27,7 @@ import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
 
 
-public class EuclidianView3D extends JPanel implements View, Printable {
+public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants3D {
 
 	
 
@@ -315,6 +314,13 @@ public class EuclidianView3D extends JPanel implements View, Printable {
 		
 		this.a = a;
 		this.b = b;
+		/*TODO : limit b
+		if (this.b>Math.PI/2)
+			this.b=Math.PI/2;
+		else if (this.b<-Math.PI/2)
+			this.b=-Math.PI/2;
+		*/
+		
 		
 		updateMatrix();
 		setWaitForUpdate(repaint);
