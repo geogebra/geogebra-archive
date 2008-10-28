@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 
 public class SpreadsheetView extends JScrollPane implements View
 {
@@ -49,6 +50,8 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	private int highestUsedColumn = -1; // for trace
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
+	
+	private static int DEFAULT_COLUMN_WIDTH = 70;
 	
 	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
@@ -505,6 +508,14 @@ public class SpreadsheetView extends JScrollPane implements View
 			sb.append(height);
 			sb.append("\"");
 			sb.append("/>\n");
+		}
+		
+		// column widths 
+		for (int col = 0 ; col < table.getColumnCount() ; col++) {
+			TableColumn column = table.getColumnModel().getColumn(col); 
+			int colWidth = column.getWidth();
+			if (colWidth != DEFAULT_COLUMN_WIDTH)
+				sb.append("\t<spreadsheetColumn id=\""+col+"\" width=\""+colWidth+"\"/>\n");
 		}
 
 		sb.append("</spreadsheetView>\n");
