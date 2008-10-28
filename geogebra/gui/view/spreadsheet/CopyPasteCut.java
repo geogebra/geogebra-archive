@@ -29,6 +29,8 @@ public class CopyPasteCut {
 	protected int bufColumn;
 	protected int bufRow;
 	
+	private GeoElement [][] geoReferences = null;
+	
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		kernel = kernel0;	
@@ -73,13 +75,14 @@ public class CopyPasteCut {
 		{
 			bufColumn = column1;
 			bufRow = row1;
-			internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
+			internalBuf = RelativeCopy.getCopyValues(table, column1, row1, column2, row2);
 		}
 	}
 	
 	public boolean cut(int column1, int row1, int column2, int row2) {
+		
 		copy(column1, row1, column2, row2, false);
-		//externalBuf = null;
+		externalBuf = null;
 		return delete(column1, row1, column2, row2);	
 	}
 	
@@ -156,7 +159,7 @@ public class CopyPasteCut {
 		app.setWaitCursor();
 		boolean succ = false; 
 		
-		//Application.debug("height=" + height);
+		//Application.debug("height = " + height+" width = "+width);
 		int x1 = bufColumn;
 		int y1 = bufRow;
 		int x2 = bufColumn + width - 1;
@@ -165,7 +168,7 @@ public class CopyPasteCut {
 		int y3 = row1;
 		int x4 = column1 + width - 1;
 		int y4 = row1 + height - 1;
-		GeoElement[][] values2 = RelativeCopy.getValues(table, x3, y3, x4, y4);
+		GeoElement[][] values2 = RelativeCopy.getCopyValues(table, x3, y3, x4, y4);
 		/*
 		for (int i = 0; i < values2.length; ++ i) {
 			for (int j = 0; j < values2[i].length; ++ j) {
@@ -183,13 +186,14 @@ public class CopyPasteCut {
 		if (model.getRowCount() < x4 + 1) {
 			table.setMyColumnCount(x4 + 1);
 		}
-		GeoElement[][] values1 = RelativeCopy.getValues(table, x1, y1, x2, y2);
+		GeoElement[][] values1 = internalBuf;//RelativeCopy.getValues(table, x1, y1, x2, y2);
 		try {
 			for (int x = x1; x <= x2; ++ x) {
 				int ix = x - x1;
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
 					if (ix+column1 <= maxColumn && iy+row1 <= maxRow) { // check not outside selection rectangle
+						Application.debug(ix+" "+iy);
 						values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 						values2[ix][iy].setAllVisualProperties(values1[ix][iy]);
 					}
