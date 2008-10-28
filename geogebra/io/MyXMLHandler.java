@@ -496,6 +496,11 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleSpreadsheetSize(app.getGuiManager()
 						.getSpreadsheetView(), attrs);
 				break;
+			} else
+			if (eName.equals("spreadsheetColumn")) {
+				ok = handleSpreadsheetColumn(app.getGuiManager()
+						.getSpreadsheetView(), attrs);
+				break;
 			}
 
 		default:
@@ -648,6 +653,19 @@ public class MyXMLHandler implements DocHandler {
 			app.getGuiManager().getSpreadsheetView().setPreferredSize(new Dimension(width + hFudge, height + vFudge));
 			//((geogebra.gui.view.spreadsheet.SpreadsheetView) spreadsheetView)
 			//		.setPreferredSize(new Dimension(width+118, height));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleSpreadsheetColumn(Object spreadsheetView,
+			LinkedHashMap attrs) {
+
+		try {
+			int col = Integer.parseInt((String) attrs.get("id"));
+			int width = Integer.parseInt((String) attrs.get("width"));
+			app.getGuiManager().setColumnWidth(col, width);
 			return true;
 		} catch (Exception e) {
 			return false;

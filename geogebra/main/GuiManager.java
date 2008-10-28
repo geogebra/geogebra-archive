@@ -34,6 +34,8 @@ public interface GuiManager {
 	public JComponent getAlgebraView();
 	public JComponent getSpreadsheetView();
 	
+	public void setColumnWidth(int column, int width);
+	
 	public int getHighestUsedSpreadsheetColumn(); 
 	public int getSpreadsheetTraceRow(int traceColumn);
 	

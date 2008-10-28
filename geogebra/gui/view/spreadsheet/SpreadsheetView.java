@@ -524,6 +524,9 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 	public void setColumnWidth(int col, int width) {
 		Application.debug("col = "+col+" width = "+width);
+		TableColumn column = table.getColumnModel().getColumn(col); 
+		column.setPreferredWidth(width);
+		//column.
 	}
 		
 	

@@ -2056,4 +2056,8 @@ public class DefaultGuiManager implements GuiManager {
 				instsCopy[i].getApplication().exit();
 			}
 		}
+		
+		public void setColumnWidth(int column, int width) {
+			((SpreadsheetView)getSpreadsheetView()).setColumnWidth(column, width);
+		}
 }
