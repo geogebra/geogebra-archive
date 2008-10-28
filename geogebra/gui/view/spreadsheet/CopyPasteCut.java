@@ -29,8 +29,6 @@ public class CopyPasteCut {
 	protected int bufColumn;
 	protected int bufRow;
 	
-	private GeoElement [][] geoReferences = null;
-	
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		kernel = kernel0;	
