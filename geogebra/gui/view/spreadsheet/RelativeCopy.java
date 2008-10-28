@@ -5,6 +5,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Point;
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,38 +147,87 @@ public class RelativeCopy {
 	}
 	
 	public void doCopyVerticalNoStoringUndoInfo1(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
-		// this doesn't work eg
-		// A1=1 B1=(A1+C1)/2 B1=1
-		// then the relative copy of B1 updates C2
-		//GeoElement[][] values1 = getValues(table, x1, sy, x2, sy);
-		//GeoElement[][] values2 = getValues(table, x1, dy1, x2, dy2);
+		
+		
+		// create a treeset, ordered by construction index
+		// so that when we relative copy A1=1 B1=(A1+C1)/2 C1=3 
+		// B2 is done last
+		TreeSet tree = new TreeSet();
+		for (int x = x1; x <= x2; ++ x) {
+			int ix = x - x1;
+			tree.add(getValue(table,x1 + ix, sy));
+		}
+		
+		for (int y = dy1; y <= dy2; ++ y) {
+			int iy = y - dy1;
+			
+			Iterator  iterator = tree.iterator();
+			while (iterator.hasNext()){
+			
+				GeoElement geo = (GeoElement)(iterator.next());
+				
+				Point p = geo.getSpreadsheetCoords();
+				
+				doCopyNoStoringUndoInfo0(kernel, table, geo,
+						getValue(table,p.x, dy1 + iy), 0, y - sy);
+				//Application.debug(p.x+"");
+				
+			}
+
+			
+			
+			
+		}
+		
+		//old code - just works left to right
+		
+		/*
+		
 		for (int y = dy1; y <= dy2; ++ y) {
 			int iy = y - dy1;
 			for (int x = x1; x <= x2; ++ x) {
 				int ix = x - x1;
 				
-				// doesn't work
-				//doCopyNoStoringUndoInfo0(kernel, table, values1[ix][0], values2[ix][iy], 0, y - sy);
-				
 				// does work
 				doCopyNoStoringUndoInfo0(kernel, table, getValue(table,x1 + ix, sy),
 														getValue(table,x1 + ix, dy1 + iy), 0, y - sy);
 			}
-		}
+		}*/
 	}
 	
 	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
-		//GeoElement[][] values1 = getValues(table, sx, y1, sx, y2);
-		//GeoElement[][] values2 = getValues(table, dx1, y1, dx2, y2);
+
+		// create a treeset, ordered by construction index
+		// so that when we relative copy A1=1 A2=(A1+A3)/2 A3=3 
+		// B2 is done last
+		TreeSet tree = new TreeSet();
+		for (int y = y1; y <= y2; ++ y) {
+			int iy = y - y1;
+			tree.add(getValue(table, sx, y1 + iy));
+		}
+		for (int x = dx1; x <= dx2; ++ x) {
+			int ix = x - dx1;
+		
+			Iterator  iterator = tree.iterator();
+			while (iterator.hasNext()){
+			
+				GeoElement geo = (GeoElement)(iterator.next());
+				
+				Point p = geo.getSpreadsheetCoords();
+				doCopyNoStoringUndoInfo0(kernel, table, geo,
+						getValue(table, dx1 + ix, p.y), x - sx, 0);
+				//Application.debug(p.y+"");
+			}
+		}
+		/* old code
 		for (int x = dx1; x <= dx2; ++ x) {
 			int ix = x - dx1;
 			for (int y = y1; y <= y2; ++ y) {
 				int iy = y - y1;
-				//doCopyNoStoringUndoInfo0(kernel, table, values1[0][iy], values2[ix][iy], x - sx, 0);
 				doCopyNoStoringUndoInfo0(kernel, table, getValue(table, sx, y1 + iy),
 														getValue(table, dx1 + ix, y1+iy), x - sx, 0);
 			}
-		}
+		} */
 	}
 	
 	
