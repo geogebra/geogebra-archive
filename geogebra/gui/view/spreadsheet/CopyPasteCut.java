@@ -75,7 +75,7 @@ public class CopyPasteCut {
 		{
 			bufColumn = column1;
 			bufRow = row1;
-			internalBuf = RelativeCopy.getCopyValues(table, column1, row1, column2, row2);
+			internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
 		}
 	}
 	
@@ -168,7 +168,7 @@ public class CopyPasteCut {
 		int y3 = row1;
 		int x4 = column1 + width - 1;
 		int y4 = row1 + height - 1;
-		GeoElement[][] values2 = RelativeCopy.getCopyValues(table, x3, y3, x4, y4);
+		GeoElement[][] values2 = RelativeCopy.getValues(table, x3, y3, x4, y4);
 		/*
 		for (int i = 0; i < values2.length; ++ i) {
 			for (int j = 0; j < values2[i].length; ++ j) {
@@ -193,7 +193,7 @@ public class CopyPasteCut {
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
 					if (ix+column1 <= maxColumn && iy+row1 <= maxRow) { // check not outside selection rectangle
-						Application.debug(ix+" "+iy);
+						//Application.debug(ix+" "+iy);
 						values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 						values2[ix][iy].setAllVisualProperties(values1[ix][iy]);
 					}
