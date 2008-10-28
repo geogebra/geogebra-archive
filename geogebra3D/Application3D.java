@@ -61,7 +61,8 @@ public abstract class Application3D extends Application{
         
         //init 3D view
         euclidianView3D.setZZero(-7.0);
-        euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
+        //euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
+        euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
         
         
         //init toolbar

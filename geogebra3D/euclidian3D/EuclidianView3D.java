@@ -305,10 +305,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_Z, this.a*EuclidianController3D.ANGLE_SCALE);
 		GgbMatrix m3 = m1.mul(m2);
 		
-		//scaling TODO getZscale()
+
 		GgbMatrix m4 = GgbMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
 		
-		//translation TODO getZZero()
+
 		GgbMatrix m5 = GgbMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
 		m = m5.mul(m3.mul(m4));	
@@ -361,7 +361,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setYZero(double val) { YZero=val; }
 	public void setZZero(double val) { ZZero=val; }
 	
-	private double scale = 100;
+	private double scale = 100; 
 	public double getXscale() { return scale; }
 	public double getYscale() { return scale; }
 	public double getZscale() { return scale; }
@@ -562,7 +562,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 
 	
-	
+	//////////////////////////////////////
+	// dimensions
 	
 	
 	

@@ -13,6 +13,8 @@ public class HitSet extends TreeSet {
 	 * 
 	 */
 	private static final long serialVersionUID = -5697683292043175829L;
+	
+	private static final int EPSILON_Z = 10000000; //limit to consider two objects to be at the same place
 
 	public HitSet(){
 		//super();
@@ -29,21 +31,35 @@ public class HitSet extends TreeSet {
 			GeoElement3D geo2 = (GeoElement3D) arg2;
 			
 			
-			if (geo1.zPick<geo2.zPick)
+			if (geo1.zPick<geo2.zPick-EPSILON_Z)
 				return -1;
-			else if (geo1.zPick>geo2.zPick)
+			else if (geo1.zPick>geo2.zPick+EPSILON_Z)
 				return 1;
 			else{
-				//if geos are GeoPoint3D (necessary both), looks if one is on a Path
+				//if geos are GeoPoint3D (necessary both)
 				if (geo1 instanceof GeoPoint3D){
 					GeoPoint3D p1 = (GeoPoint3D) arg1;
 					GeoPoint3D p2 = (GeoPoint3D) arg2;
+					// check if one is on a path and the other not
 					if ((p1.hasPath1D())&&(!p2.hasPath1D()))
 						return 1;
 					else if ((!p1.hasPath1D())&&(p2.hasPath1D()))
 						return -1;
-					//Application.debug("points");
+					// if both are on a path, check if one is a child of the other
+					else if ((p1.hasPath1D())&&(p2.hasPath1D())){
+						if (p1.isChildOf(p2))
+							return 1;
+						else if (p2.isChildOf(p1))
+							return -1;
+					}
 				}
+				//finally check if one is before the other
+				if (geo1.zPick<geo2.zPick)
+					return -1;
+				else if (geo1.zPick>geo2.zPick)
+					return 1;
+				
+				Application.debug("equality : "+geo1.getLabel()+"(z="+geo1.zPick+") and "+geo2.getLabel()+"(z="+geo2.zPick+")");
 				return 0;
 			}
 			 

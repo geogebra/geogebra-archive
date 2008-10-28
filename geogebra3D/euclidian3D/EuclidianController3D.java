@@ -518,8 +518,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	final protected void setMouseLocation(MouseEvent e) {
 
 		mouseLocOld = (Point) mouseLoc.clone();
+		
 		mouseLoc = e.getPoint();
-
+		
+		/*
+		if (mouseLoc.x<0)
+			mouseLoc.x=0;
+		else if (mouseLoc.x>view.getWidth())
+			mouseLoc.x=view.getWidth();
+		if (mouseLoc.y<0)
+			mouseLoc.y=0;
+		else if (mouseLoc.y>view.getHeight())
+			mouseLoc.x=view.getHeight();
+			*/
+		//TODO adapt this for points on a path
 	}
 
 
