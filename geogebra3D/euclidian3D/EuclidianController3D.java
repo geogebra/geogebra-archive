@@ -572,7 +572,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_SHIFT:
-			Application.debug("shift released");
+			//Application.debug("shift released");
 			break;
 		case KeyEvent.VK_CONTROL:
 			//Application.debug("ctrl released");
@@ -611,6 +611,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	public void keyCtrlReleased(){
 		
+		
+		/* 
 		switch (moveMode) {
 		case MOVE_VIEW:
 			break;
@@ -636,7 +638,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 		
 		}
-		
+		*/
 	}
 
 	
