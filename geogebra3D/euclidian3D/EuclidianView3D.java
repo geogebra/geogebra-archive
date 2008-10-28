@@ -70,9 +70,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	//picking and hits
 	ArrayList hits = new ArrayList(); //objects picked from openGL
-	ArrayList hitsHighlighted = new ArrayList(); 
-	ArrayList hitsPoints = new ArrayList(); //points if there is
-	ArrayList hitsOthers = new ArrayList(); //points if there is
+	HitSet hitsHighlighted = new HitSet(); 
+	HitSet hitsPoints = new HitSet(); //points if there is
+	HitSet hitsOthers = new HitSet(); //points if there is
 	
 	//base vectors for moving a point
 	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
@@ -370,19 +370,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		hitsPoints.clear();
 		hitsOthers.clear();
 		
+		//String s = "";
 		for (Iterator iter = hits.iterator(); iter.hasNext();) {
 			
-			GeoElement3D geo = (GeoElement3D) iter.next();
-			switch (geo.getGeoClassType()) {
-			
+			GeoElement3D geo = (GeoElement3D) iter.next();			
+			switch (geo.getGeoClassType()) {					
 			case GeoElement3D.GEO_CLASS_POINT3D:
 				hitsPoints.add(geo);
+				//s+=geo.getLabel()+"(z= "+geo.zPick+")\n";
 				break;
 			default:
 				hitsOthers.add(geo);
 				break;
 			}
 		}
+		
+		//if (s!="")
+		//	Application.debug(s);
 		
 		if (!hitsPoints.isEmpty())
 			hitsHighlighted = hitsPoints;

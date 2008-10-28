@@ -332,21 +332,26 @@ public class EuclidianRenderer3D implements GLEventListener {
         int[] buffer = new int[BUFSIZE];
         selectBuffer.get(buffer);
         int names, ptr = 0;
+        int z;
         for (int i = 0; i < hits; i++) { 
         	
-          names = buffer[ptr];
-          
+          names = buffer[ptr];          
           //System.out.println(" number of names for hit = " + names);
-          ptr++;
+          
+          ptr++; // min z          
           //System.out.println(" z1 is " + buffer[ptr]);
-          ptr++;
+          
+          ptr++; // max z
+          z = buffer[ptr]; 
           //System.out.println(" z2 is " + buffer[ptr]);
+          
           ptr++;
           
           for (int j = 0; j < names; j++){ 
         	//Application.debug("the name is " + buffer[ptr]+" -- drawHits["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
         	//geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
         	view.hits.add(geos[buffer[ptr]]);
+        	geos[buffer[ptr]].zPick = z;
         	ptr++;
           }
           //System.out.println();

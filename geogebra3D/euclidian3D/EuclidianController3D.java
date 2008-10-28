@@ -169,7 +169,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 				//view.doPick(pickPoint,true,true);
 				if (!view.hitsHighlighted.isEmpty()){
 					
-					objSelected = (GeoElement3D) view.hitsHighlighted.get(0);		
+					objSelected = (GeoElement3D) view.hitsHighlighted.last();//  .get(0);		
 					objSelected.setSelected(true);
 					//Application.debug("selected = "+objSelected.getLabel());
 
