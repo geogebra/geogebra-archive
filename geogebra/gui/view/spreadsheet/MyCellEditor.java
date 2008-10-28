@@ -212,9 +212,7 @@ public class MyCellEditor extends DefaultCellEditor {
     	GeoElement newValue = null;
     	try {
 			// always redefine objects in spreadsheet, don't store undo info here
-    		Application.debug("10");
     		newValue = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(oldValue, text, true, false);
-    		Application.debug("20");
     		//newValue.setConstructionDefaults();
     		newValue.setAllVisualProperties(oldValue);
         	if (oldValue.isAuxiliaryObject()) newValue.setAuxiliaryObject(true);
@@ -224,9 +222,7 @@ public class MyCellEditor extends DefaultCellEditor {
         		//newValue.setVisualStyle(oldValue);	        		
         	}
         	else {
-        		Application.debug("30");
         		kernel.getApplication().refreshViews();
-        		Application.debug("40");
         	}
     	} 
     	catch (Throwable e) {
@@ -239,16 +235,13 @@ public class MyCellEditor extends DefaultCellEditor {
 	    			oldValue.remove();
 	    			
 	    			// add input as text
-	    			Application.debug("50");
 	    			newValue = prepareNewValue(kernel, name, "\"" + text0 + "\"");
-	    			Application.debug("60");
     			}
     			else {
         			throw new Exception(e);
     			}
     		}
     	}
-		Application.debug("100");
 		return newValue;    		
 	}
 	
