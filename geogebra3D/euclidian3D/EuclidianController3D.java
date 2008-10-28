@@ -85,11 +85,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected Color movingColor=movingColorlist[movingPlane];
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
-	final double ANGLE_SCALE = 2*Math.PI/300f;
+	static final public double ANGLE_SCALE = 2*Math.PI/300f;
+	static final public int ANGLE_MAX = (int) ((Math.PI/2)/ANGLE_SCALE); //maximum vertical angle
 
 
 	
-	double aOld, bOld;
+
 	
 
 	public EuclidianController3D(Kernel3D kernel3D) {
@@ -210,14 +211,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		
 		//start moving drawing pad
+		/*
 		if (moveMode==MOVE_VIEW){
-			if(DEBUG){Application.debug("mousePressed");}
+			if(DEBUG){Application.debug("mousePressed");}			
 			aOld = view.a;
 			bOld = view.b;	
 			startLoc.x = mouseLoc.x;
-			startLoc.y = mouseLoc.y;	
+			startLoc.y = mouseLoc.y;				
 			if(DEBUG){Application.debug("Start MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
 		}
+		*/
 
 
 	
@@ -241,10 +244,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		case MOVE_VIEW:
 			if (repaint) {
-				if(DEBUG){Application.debug("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
+				//if(DEBUG){Application.debug("MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
+				/*
 				double dx = (double) mouseLoc.x - startLoc.x;
 				double dy = (double) mouseLoc.y - startLoc.y;
 				view.setRotXY(aOld+dx*ANGLE_SCALE,bOld+dy*ANGLE_SCALE,true);
+				*/
+				
+				view.addRotXY(mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y,true);
 			}
 			break;	
 			

@@ -57,8 +57,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//matrix for changing coordinate system
 	private GgbMatrix m = GgbMatrix.Identity(4); 
 	private GgbMatrix mInv = GgbMatrix.Identity(4);
-	double a = 0.0;
-	double b = 0.0; //angles
+	int a = 0;
+	int b = 0;//angles
 	
 	
 	//values for view frutum
@@ -301,8 +301,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void updateMatrix(){
 		//rotations
-		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_X, this.b - Math.PI/2.0);
-		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_Z, this.a);
+		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_X, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
+		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_Z, this.a*EuclidianController3D.ANGLE_SCALE);
 		GgbMatrix m3 = m1.mul(m2);
 		
 		//scaling TODO getZscale()
@@ -320,26 +320,35 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	
-	public void setRotXY(double a, double b, boolean repaint){
+	public void setRotXY(int a, int b, boolean repaint){
 		
 		//Application.debug("setRotXY");
 		
 		this.a = a;
 		this.b = b;
-		/*TODO : limit b
-		if (this.b>Math.PI/2)
-			this.b=Math.PI/2;
-		else if (this.b<-Math.PI/2)
-			this.b=-Math.PI/2;
-		*/
+		
+		if (this.b>EuclidianController3D.ANGLE_MAX)
+			this.b=EuclidianController3D.ANGLE_MAX;
+		else if (this.b<-EuclidianController3D.ANGLE_MAX)
+			this.b=-EuclidianController3D.ANGLE_MAX;
+		
 		
 		
 		updateMatrix();
 		setWaitForUpdate(repaint);
 		//update();
 	}
-
 	
+	public void addRotXY(int da, int db, boolean repaint){
+		
+		setRotXY(a+da,b+db,repaint);
+	}	
+
+	public void setRotXY(double a, double b, boolean repaint){
+		
+		setRotXY((int) (a/EuclidianController3D.ANGLE_SCALE),(int) (b/EuclidianController3D.ANGLE_SCALE),repaint);
+		
+	}
 	
 	
 
