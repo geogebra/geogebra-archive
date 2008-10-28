@@ -231,7 +231,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			}
 			
 			// check for (a,a)
-			if (changeableCoordNumbers[0].equals(changeableCoordNumbers[1])) changeableCoordNumbers = null;
+			if (changeableCoordNumbers != null && changeableCoordNumbers[0] != null && changeableCoordNumbers[0].equals(changeableCoordNumbers[1])) changeableCoordNumbers = null;
 						
 			return changeableCoordNumbers;
 		}
