@@ -22,8 +22,10 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 
 /**
  * List expression, e.g. with L1 = {3, 2, 1}, L2 = {5, 1, 7}
@@ -77,7 +79,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 		for (int i=0; i < evalListSize; i++) {
 			ExpressionValue element = myList.getListElement(i).evaluate();    			    			
 			GeoElement geo = null;
-			
+
 			// number result
 			if (element.isNumberValue()) {	
 				double val = ((NumberValue) element).getDouble();    				
@@ -148,6 +150,32 @@ public class AlgoDependentListExpression extends AlgoElement {
 				}
 				
 				list.add(list2);
+			}
+			else if (element instanceof MyStringBuffer) {
+				MyStringBuffer str = (MyStringBuffer)element;
+				// try to use cached element of same type
+				if (i < cachedListSize) {
+					GeoElement cachedGeo = list.getCached(i);
+					
+					// the cached element is a point: set value
+					if (cachedGeo.isGeoText()) {
+						((GeoText) cachedGeo).setTextString(str.toValueString());
+						geo = cachedGeo;
+					}     			
+				}
+				
+				// no cached point: create new one
+				if (geo == null) {
+					GeoText text = new GeoText(cons);
+					text.setTextString(str.toValueString());
+					geo = text;
+				}
+				
+				// add point to list
+				list.add(geo);	
+			} else {
+				Application.debug("unsupported list addition: "+element.getClass()+"");
+
 			}
 		}
     }   
