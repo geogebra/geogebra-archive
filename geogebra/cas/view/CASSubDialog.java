@@ -69,7 +69,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		selectedEnabled = true;
 
 		replaceAllFlag = false;
-		createGUI(app.getMenu("Substitute Dialog"));
+		createGUI(app.getMenu("SubstituteDialog"));
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
 	}
@@ -118,7 +118,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		btSub.setActionCommand("Substitute");
 		btSub.addActionListener(this);
 
-		btSubSim = new JButton(app.getPlain("Substitute & Simplify"));
+		btSubSim = new JButton(app.getPlain("SubstituteSimplify"));
 		btSubSim.setActionCommand("Subsim");
 		btSubSim.addActionListener(this);
 
