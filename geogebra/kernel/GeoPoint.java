@@ -229,6 +229,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 					}					
 				}
 			}
+			
+			// check for (a,a)
+			if (changeableCoordNumbers[0].equals(changeableCoordNumbers[1])) changeableCoordNumbers = null;
 						
 			return changeableCoordNumbers;
 		}
@@ -330,13 +333,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			// set first coord to new x value
 			if (changeableCoordNumbers[0].getValue() != inhomX) {
 				changeableCoordNumbers[0].setValue(inhomX);
-				changeableCoordNumbers[0].update();
+				changeableCoordNumbers[0].updateCascade();
 			}
 			
 			// set second coord to new y value
 			if (changeableCoordNumbers[1].getValue() != inhomY) {
 				changeableCoordNumbers[1].setValue(inhomY);
-				changeableCoordNumbers[1].update();
+				changeableCoordNumbers[1].updateCascade();
 			}			
 		}				
 	}  
