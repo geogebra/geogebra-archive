@@ -68,6 +68,10 @@ public interface Path1D {
 	 */
 	public boolean isClosedPath();
 	
+	
+
+
+	
 	/**
 	 * Returns a PathMover object for this path.
 	 */

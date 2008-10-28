@@ -54,7 +54,10 @@ public class DrawPoint3D extends Drawable3D{
 		
 		renderer.setMaterial(geo.getObjectColor(),1f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
-		renderer.drawSphere(POINT3D_RADIUS);//TODO use object property
+		if (P.hasPath1D())
+			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION); //points on path are more visible 
+		else
+			renderer.drawSphere(POINT3D_RADIUS);//TODO use object property
 		renderer.resetMatrix();
 
 	}

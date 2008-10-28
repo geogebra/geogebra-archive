@@ -149,6 +149,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		setMouseLocation(e);	
 		moveMode = MOVE_NONE;
 		
+		if (Application.isRightClick(e))
+			return;
+		
 		switch (mode) {		
 		//create a new point
 		case EuclidianView3D.MODE_POINT:			
@@ -159,16 +162,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		case EuclidianView3D.MODE_MOVE:
 			if (e.isShiftDown() || Application.isControlDown(e) ) {
 				moveMode = MOVE_VIEW;	
-			} else if (Application.isRightClick(e)){
-				//Application.debug("clic droit");
 			} else {
 				if (objSelected!=null)		
 					objSelected.setSelected(false);
 				//pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 				//view.doPick(pickPoint,true,true);
-				if (!view.hits.isEmpty()){
+				if (!view.hitsHighlighted.isEmpty()){
 					
-					objSelected = (GeoElement3D) view.hits.get(0);		
+					objSelected = (GeoElement3D) view.hitsHighlighted.get(0);		
 					objSelected.setSelected(true);
 					//Application.debug("selected = "+objSelected.getLabel());
 
@@ -260,74 +261,54 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected void movePoint(boolean repaint){
 		
-		//getting current pick point and direction v 
-		GgbVector p = movedGeoPoint3D.getCoords().copyVector();
-		GgbVector o = view.getPickFromScenePoint(p,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
-		view.toSceneCoords3D(o);
-		
-		//Application.debug("mouseLocDelta = "+(mouseLoc.x-mouseLocOld.x)+","+(mouseLoc.y-mouseLocOld.y));
-		
-		GgbVector v = new GgbVector(new double[] {0,0,1,0});
-		view.toSceneCoords3D(v);	
-		
-		
-		
-		//plane for projection
-		GgbMatrix plane;
 		if (movedGeoPoint3D.hasPath1D()){
-			/*
-			GeoCoordSys1D cs = (GeoCoordSys1D) movedGeoPoint3D.getPath1D().toGeoElement();
-			GgbMatrix pathMatrix = cs.getMatrixCompleted(); //TODO put this in Path1D
-			view.toScreenCoords3D(pathMatrix);
-			GgbVector V = pathMatrix.getColumn(1); //gets direction vector of the path
-			GgbVector Vn1 = new GgbVector(4); 
-			GgbVector Vn2 = new GgbVector(4);
-			if (V.get(1)!=0){
-				Vn1.set(1,-V.get(2));
-				Vn1.set(2,V.get(1));
-				Vn1.normalize();
-			}else{
-				Vn1.set(1, 1.0);
-			}
-			Vn2 = V.crossProduct(Vn1);
-			Vn2.normalize();	
+			//getting current pick point and direction v 
+			GgbVector p = movedGeoPoint3D.getCoords().copyVector();
+			GgbVector o = view.getPickPoint(mouseLoc.x,mouseLoc.y); 
+			view.toSceneCoords3D(o);
 			
-			plane = pathMatrix.copy();
-			plane.set(Vn1, 2);plane.set(Vn2, 3);
-			//plane.SystemPrint();
 			
-			*/
+			GgbVector v = new GgbVector(new double[] {0,0,1,0});
+			view.toSceneCoords3D(v);
 			
 			//TODO do this just one time, when mouse is pressed
-			plane = movedGeoPoint3D.getPath1D().getMovingMatrix(view.getToScreenMatrix());			
+			//plane for projection
+			GgbMatrix plane = movedGeoPoint3D.getPath1D().getMovingMatrix(view.getToScreenMatrix());			
 			view.toSceneCoords3D(plane);
 			
-							
+			//getting new position of the point
+			GgbVector[] project = o.projectPlaneThruV(plane, v);
+			movedGeoPoint3D.setCoords(project[0]);
+				
 		}else{
-			plane = view.movingPlane.getMatrixCompleted();
+			//getting current pick point and direction v 
+			GgbVector p = movedGeoPoint3D.getCoords().copyVector();
+			GgbVector o = view.getPickFromScenePoint(p,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
+			view.toSceneCoords3D(o);
+			
+			
+			GgbVector v = new GgbVector(new double[] {0,0,1,0});
+			view.toSceneCoords3D(v);
+			
+			//plane for projection
+			GgbMatrix plane = view.movingPlane.getMatrixCompleted();
 
 			GgbVector originOld = plane.getColumn(4);
 			plane.set(movedGeoPoint3D.getCoords(), 4);
 			GgbVector originProjected = originOld.projectPlane(plane)[0];
 			plane.set(originProjected, 4);
+			
+			//getting new position of the point
+			GgbVector[] project = o.projectPlaneThruV(plane, v);
+			movedGeoPoint3D.setCoords(project[0]);
+			
+			//update moving plane
+			view.setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
+			view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
 		}
 		
 		
-		//getting new position of the point
-		GgbVector[] project = o.projectPlaneThruV(plane, v);
-		
-		
-		/*
-		mouseLoc3D = project[0];
-		movedGeoPoint3D.translate(mouseLoc3D.sub(startLoc3D));
-		startLoc3D = mouseLoc3D.copyVector();
-		*/
-		movedGeoPoint3D.setCoords(project[0]);
-		
-		
-		
-		view.setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
-		view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);
+
 		
 		
 		if (repaint){
@@ -389,6 +370,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			return;
 		}
+		
+		
 		
 		switch (moveMode) {
 		case MOVE_VIEW:

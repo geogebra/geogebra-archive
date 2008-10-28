@@ -96,4 +96,22 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	
 	
 	
+	
+	
+	
+	
+	
+	//Path1D interface
+	public double getMinParameter(){
+		return 0;
+	}
+	public double getMaxParameter(){
+		return 1;
+	}
+	public boolean isLimitedPath(){
+		return true;
+	}	
+	
+	
+	
 }

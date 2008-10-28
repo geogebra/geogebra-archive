@@ -266,13 +266,14 @@ public class Test3D{
 		int i;
 		
 		GeoPoint3D[] P1 = new GeoPoint3D[3];				
-		P1[0] = testPoint(0f,0f,0f);
-		P1[1] = testPoint(1f,0f,0f);
+		P1[0] = testPoint(1f,0f,0f);
+		P1[1] = testPoint(0f,0f,0f);
 		P1[2] = testPoint(0f,1f,0f);
 		//P1[3] = testPoint(0f,1f,0f);
 		
+		GeoSegment3D s=null;
 		for(i=0;i<3;i++)
-			kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
+			s=kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
 
 		GeoPoint3D P2;				
 		P2 = testPoint(0f,0f,1f);
@@ -293,12 +294,18 @@ public class Test3D{
 		t.setObjColor(c);
 		
 		
-		GeoLine3D l=kernel3D.Line3D("line",P1[1],P1[2]);
+
+		
+		GeoPoint3D P=kernel3D.Point3D("pointOnSegment", s, 0, 0, 0);
+		P.setObjColor(new Color(1f,1f,0f));
+		
+		
+		GeoLine3D l=kernel3D.Line3D("line",P1[1],P);
 		l.setObjColor(new Color(1f,0.5f,0f));
 		l.setLineThickness(1);
 		
-		GeoPoint3D P=kernel3D.Point3D("pointOnPath1D", l, 0, 0, 0);
-		P.setObjColor(new Color(1f,1f,0f));
+		P=kernel3D.Point3D("pointOnLine", l, 1, 1, 0);
+		P.setObjColor(new Color(1f,0.75f,0f));
 		
 	}
 	

@@ -68,9 +68,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 
-	//picking
-	ArrayList hits = new ArrayList(); //objects picked
-	
+	//picking and hits
+	ArrayList hits = new ArrayList(); //objects picked from openGL
+	ArrayList hitsHighlighted = new ArrayList(); 
+	ArrayList hitsPoints = new ArrayList(); //points if there is
+	ArrayList hitsOthers = new ArrayList(); //points if there is
 	
 	//base vectors for moving a point
 	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
@@ -361,54 +363,94 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	//////////////////////////////////////
+	// hits from picking
+	public void processHits(){
+		
+		hitsPoints.clear();
+		hitsOthers.clear();
+		
+		for (Iterator iter = hits.iterator(); iter.hasNext();) {
+			
+			GeoElement3D geo = (GeoElement3D) iter.next();
+			switch (geo.getGeoClassType()) {
+			
+			case GeoElement3D.GEO_CLASS_POINT3D:
+				hitsPoints.add(geo);
+				break;
+			default:
+				hitsOthers.add(geo);
+				break;
+			}
+		}
+		
+		if (!hitsPoints.isEmpty())
+			hitsHighlighted = hitsPoints;
+		else
+			hitsHighlighted = hitsOthers;
+		
+		
+	}
 	
 	
 	
 	
-	
-	
+	//////////////////////////////////////
+	// update
 	
 
-	
+	/** update the drawables for 3D view, called by EuclidianRenderer3D */
 	public void update(){
-		//waitForUpdate = true;
-		
 		
 		if (waitForUpdate){
 			
 			//picking
-			if (waitForPick){
-				if (!removeHighlighting){
-					GeoElement3D geo;
-					for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-						Drawable3D d = (Drawable3D) iter.next();
-						geo = (GeoElement3D) d.getGeoElement();
-						geo.setWasHighlighted();
-						geo.setWillBeHighlighted(false);
-
-					}
-
-					for (Iterator iter = hits.iterator(); iter.hasNext();) {
-						geo = (GeoElement3D) iter.next();
-						geo.setWillBeHighlighted(true);				
-					}			
-
-					for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-						Drawable3D d = (Drawable3D) iter.next();
-						geo = (GeoElement3D) d.getGeoElement();
-						geo.updateHighlighted(true);				
-					}
-				}else{
-					for (Iterator iter = hits.iterator(); iter.hasNext();) {
-						GeoElement3D geo = (GeoElement3D) iter.next();
-						geo.setWasHighlighted();
-						geo.setWillBeHighlighted(false);
-						geo.updateHighlighted(true);
-					}
-					removeHighlighting = false;
+			if ((waitForPick)&&(!removeHighlighting)){
+				
+				GeoElement3D geo;
+				/*
+				for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+					Drawable3D d = (Drawable3D) iter.next();
+					geo = (GeoElement3D) d.getGeoElement();
+					geo.setWasHighlighted();
+					geo.setWillBeHighlighted(false);
 				}
+				*/
+				
+				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+					geo = (GeoElement3D) iter.next();
+					geo.setWasHighlighted();
+					geo.setWillBeHighlighted(false);			
+				}					
+				
+				processHits();
+				//for (Iterator iter = hits.iterator(); iter.hasNext();) {
+				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+					geo = (GeoElement3D) iter.next();
+					geo.setWasHighlighted(); //TODO setWasHighlighted() may be called twice
+					geo.setWillBeHighlighted(true);				
+				}			
+
+				for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+					Drawable3D d = (Drawable3D) iter.next();
+					geo = (GeoElement3D) d.getGeoElement();
+					geo.updateHighlighted(true);				
+				}
+
 				waitForPick = false;
 			}
+			
+			//remove highlighting when an object is selected
+			if (removeHighlighting){
+				//for (Iterator iter = hits.iterator(); iter.hasNext();) {
+				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+					GeoElement3D geo = (GeoElement3D) iter.next();
+					geo.setWasHighlighted();
+					geo.setWillBeHighlighted(false);
+					geo.updateHighlighted(true);
+				}
+				removeHighlighting = false;
+			}			
 			
 			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
@@ -416,10 +458,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			waitForUpdate = false;
 		}
-		
-		
-		//drawList3D.updateAll();
-		//renderer.canvas.repaint();
 		
 		
 		
@@ -563,22 +601,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 	
-	/*
-	public void doPick(GgbVector pickPoint, boolean repaint){
-		doPick(pickPoint,false, repaint);
-	}
 
-	//repaint = true -> for algebraView
-	public void doPick(GgbVector pickPoint, boolean list, boolean repaint){
 		
-		
-		
-		if (list)
-			hits = drawList3D.doPick(pickPoint,true, repaint);
-		else
-			drawList3D.doPick(pickPoint,false, repaint);
-	}
-	*/
+	
+	
+
 	
 	public void rendererPick(int x, int y){
 		//openGL picking

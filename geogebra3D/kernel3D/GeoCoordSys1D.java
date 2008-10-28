@@ -99,14 +99,25 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 		GgbVector v = P.getInhomCoords();
 		GgbVector p = new GgbVector(4);
 		GgbVector[] project = v.projectLine(M.getColumn(2).subVector(1, 3), M.getColumn(1).subVector(1, 3));
-		p.set(project[0]);
-		p.set(4, 1);
-		P.setCoords(p,false); //avoid new pointChanged computation
 		
-		// set path parameter
-		//Application.debug("parameter = "+project[1].get(1));
-		PathParameter1D pp = P.getPathParameter1D();
-		pp.setT(project[1].get(1));
+		if(!isLimitedPath()){
+			p.set(project[0]);
+			p.set(4, 1);
+			P.setCoords(p,false); //avoid new pointChanged computation
+			// set path parameter		
+			PathParameter1D pp = P.getPathParameter1D();
+			pp.setT(project[1].get(1));
+		}else{
+			double t=project[1].get(1);			
+			if (t>getMaxParameter())
+				t=getMaxParameter();
+			else if(t<getMinParameter())
+				t=getMinParameter();
+			P.setCoords(getPoint(t),false);
+			// set path parameter		
+			PathParameter1D pp = P.getPathParameter1D();
+			pp.setT(t);
+		}
 		
 	}
 	
@@ -130,6 +141,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 	public boolean isClosedPath(){
 		return false;
 	}
+	public boolean isLimitedPath(){
+		return false;
+	}	
+	
 	
 	
 	
