@@ -204,7 +204,6 @@ public class MyCellEditor extends DefaultCellEditor {
 	}
 	
 	private static GeoElement updateOldValue(Kernel kernel, GeoElement oldValue, String name, String text) throws Exception {
-		Application.debug("1");
 		String text0 = text;
     	if (text.startsWith("=")) {
     		text = text.substring(1);
