@@ -59,9 +59,16 @@ public class CASView extends JComponent implements CasManager {
 
 	private CASSession session;
 
-	private JButton btSub;
+	private JButton btSub, btSim, btExp, btFactor;
+
+	private btListener btListener;
 
 	private final int numOfRows = 1;
+	
+	private static final int SUB_Flag = 0;
+	private static final int SIM_Flag = 1;
+	private static final int EXP_Flag = 2;
+	private static final int FAC_Flag = 3;
 
 	public CASView(Application app) {
 		kernel = app.getKernel();
@@ -69,6 +76,8 @@ public class CASView extends JComponent implements CasManager {
 		cas = new GeoGebraCAS();
 		cas.evaluateYACAS("4");
 		session = new CASSession();
+
+		btListener = new btListener();
 
 		createCASTable();
 		createRowHeader();
@@ -605,26 +614,77 @@ public class CASView extends JComponent implements CasManager {
 		return cellValue;
 	}
 
-	public JButton createSubButton(JComponent casViewComp) {
-		btSub = new JButton("Substitute");
-		btSub.setActionCommand("Subsim");
+	public JButton createButton(JComponent casViewComp, int btType) {
+		JButton ret = null;
 
-		btSub.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Get the active cell
-				int editRow = consoleTable.getEditingRow();
+		switch (btType) {
+		case 0: // btSub
+			btSub = new JButton("Substitute");
+			btSub.setActionCommand("Subsim");
+			btSub.addActionListener(btListener);
 
-				CASTableCellEditor cellEditor = (CASTableCellEditor) consoleTable
-						.getCellEditor(editRow, CASPara.contCol);
-				String selectedStr = cellEditor.getInputSelectedText();
-				
-				
-			    CASTableCellValue value = (CASTableCellValue) consoleTable
-						.getModel().getValueAt(editRow, CASPara.contCol);
-			    // Save value  
-			    value.setCommand(cellEditor.getInput());
-			    consoleTable.setValueAt(value, editRow, CASPara.contCol);
-			    
+			ret = btSub;
+			break;
+		case 1: // btSim
+			btSim = new JButton("Simplify");
+			btSim.setActionCommand("Simplify");
+			btSim.addActionListener(btListener);
+
+			ret = btSim;
+			break;
+		case 2: // btExp
+			btExp = new JButton("Expand");
+			btExp.setActionCommand("Expand");
+			btExp.addActionListener(btListener);
+
+			ret = btExp;
+			break;
+		case 3: // btFactor
+			btFactor = new JButton("Factor");
+			btFactor.setActionCommand("Factor");
+			btFactor.addActionListener(btListener);
+
+			ret = btFactor;
+			break;
+		default:
+			break;
+		}
+
+		return ret;
+	}
+
+	protected class btListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent ae) {
+			Object src = ae.getSource();
+
+			if (src == btSub) {
+				apply(SUB_Flag);
+			} else if (src == btSim) {
+				apply(SIM_Flag);
+			} else if (src == btExp) {
+				apply(EXP_Flag);
+			} else if (src == btFactor) {
+				apply(FAC_Flag);
+			}
+
+		}
+
+		private void apply(int mod) {
+			int editRow = consoleTable.getEditingRow();
+			CASTableCellEditor cellEditor = (CASTableCellEditor) consoleTable
+					.getCellEditor(editRow, CASPara.contCol);
+			String selectedStr = cellEditor.getInputSelectedText();
+
+			CASTableCellValue value = (CASTableCellValue) consoleTable
+					.getModel().getValueAt(editRow, CASPara.contCol);
+
+			// Save the modified value into the table model
+			value.setCommand(cellEditor.getInput());
+			consoleTable.setValueAt(value, editRow, CASPara.contCol);
+
+			switch (mod) {
+			case SUB_Flag:
 				CASTableCell edittingCell = (CASTableCell) cellEditor
 						.getTableCellEditorComponent(consoleTable, value, true,
 								editRow, CASPara.contCol);
@@ -633,10 +693,37 @@ public class CASView extends JComponent implements CasManager {
 				CASSubDialog d = new CASSubDialog(app, cas, edittingCell,
 						selectedStr, editRow);
 				d.setVisible(true);
+				break;
+			case SIM_Flag:
+				if (selectedStr == null) {
+					selectedStr = value.getCommand();
+				}
+				
+				value = new CASTableCellValue();
+				value.setCommand(cas.simplifyYACAS(selectedStr));
+				consoleTable.insertRow(editRow, CASPara.contCol, value);
+				break;
+			case EXP_Flag:
+				if (selectedStr == null) {
+					selectedStr = value.getCommand();
+				}
+				
+				value = new CASTableCellValue();
+				value.setCommand(cas.expandYACAS(selectedStr));
+				consoleTable.insertRow(editRow, CASPara.contCol, value);
+				break;
+			case FAC_Flag:
+				if (selectedStr == null) {
+					selectedStr = value.getCommand();
+				}
+				
+				value = new CASTableCellValue();
+				value.setCommand(cas.factorYACAS(selectedStr));
+				consoleTable.insertRow(editRow, CASPara.contCol, value);
+				break;
 			}
-		});
+		}
 
-		return btSub;
 	}
 
 	public JButton getBtSub() {

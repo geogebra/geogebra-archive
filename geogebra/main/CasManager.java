@@ -13,5 +13,5 @@ public interface CasManager {
 	public Object setInputExpression(Object cellValue, String input);
 	public Object setOutputExpression(Object cellValue, String output);
 	public Object createCellValue();
-	public JButton createSubButton(JComponent casViewComp);
+	public JButton createButton(JComponent casViewComp, int btType);
 }

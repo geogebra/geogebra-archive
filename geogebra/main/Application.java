@@ -1933,8 +1933,11 @@ public abstract class Application implements KeyEventDispatcher {
 		JComponent casViewComp = casView.getCASViewComponent();
 
 		// Button
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		btPanel.add(casView.createSubButton(casViewComp));
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		btPanel.add(casView.createButton(casViewComp, 0));
+		btPanel.add(casView.createButton(casViewComp, 1));
+		btPanel.add(casView.createButton(casViewComp, 2));
+		btPanel.add(casView.createButton(casViewComp, 3));
 
 		Container contentPane = spFrame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
