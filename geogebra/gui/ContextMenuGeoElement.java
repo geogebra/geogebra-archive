@@ -17,6 +17,7 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
@@ -441,6 +442,21 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 cbItem.addActionListener(new ActionListener() {
                 	public void actionPerformed(ActionEvent e) {
                         ((GeoPoint) geo).setSpreadsheetTrace(!((GeoPoint) geo).getSpreadsheetTrace());
+                        geo.updateRepaint();
+                        app.storeUndoInfo();
+                    }       	
+            	});
+                addItem(cbItem);            	
+            }  
+            
+            //  animation
+            if (geo.isGeoNumeric() && geo.isEuclidianVisible()) {            	
+                cbItem = new JCheckBoxMenuItem( app.getPlain("AnimationOn"));
+                cbItem.setIcon(app.getEmptyIcon());
+                cbItem.setSelected(((GeoNumeric) geo).isAnimating());
+                cbItem.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                        ((GeoNumeric) geo).startAnimation(!((GeoNumeric) geo).isAnimating());
                         geo.updateRepaint();
                         app.storeUndoInfo();
                     }       	

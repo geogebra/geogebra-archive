@@ -267,6 +267,12 @@ public abstract class GeoElement
 	private Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationStep = 0.1;
+	private double animationSpeed = 1;
+	
+	public final static int ANIMATION_CYCLIC = 0;
+	public final static int ANIMATION_TOANDFRO = 1;
+	private int  animationType = ANIMATION_CYCLIC;
+	
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
@@ -1073,6 +1079,23 @@ final public boolean hasOnlyFreeInputPoints() {
 		return animationStep;
 	}
 	
+	public double getAnimationSpeed() {
+		return animationSpeed;
+	}
+	
+	public void setAnimationSpeed(double s) {
+		if (s > -10.0 && s < 10.0)
+			animationSpeed = s;
+	}
+
+	public int getAnimationType() {
+		return animationType;
+	}
+	
+	public void setAnimationType(int type) {
+		animationType = type;
+	}
+
     public String toLaTeXString(boolean symbolic) {
     	if (symbolic)
     		return toString();
@@ -1831,8 +1854,9 @@ final public boolean hasOnlyFreeInputPoints() {
 	
 	/**
 	 * Updates this object and all dependent ones. Note: no repainting is done afterwards! 
+	 * 	 synchronized for animation
 	 */
-	final public void updateCascade() {
+	final synchronized public void updateCascade() {
 		update();
 
 		// update all algorithms in the algorithm set of this GeoElement        
@@ -2709,9 +2733,11 @@ final public boolean hasOnlyFreeInputPoints() {
 		// animation step width
 		if (isChangeable()) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("\t<animation step=\"");
-			sb.append(animationStep);
-			sb.append("\"/>\n");
+			sb.append("\t<animation");
+			sb.append(" step=\""+animationStep+"\"");
+			sb.append(" speed=\""+animationSpeed+"\"");
+			sb.append(" type=\""+animationType+"\"");
+			sb.append("/>\n");
 			return sb.toString();
 		}
 		return "";

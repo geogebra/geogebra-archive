@@ -243,7 +243,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		if (geo.isGeoNumeric()) return kernel.isEqual(value, ((GeoNumeric)geo).value); else return false;
 	}
 
-	public void setValue(double x) {
+	// synchronized for animation
+	public synchronized void setValue(double x) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
 		}					
@@ -635,6 +636,27 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	    	//incrementTraceRow();
     	}
     }
+	
+	private SliderAnimator animator;
+	
+	public SliderAnimator getSliderAnimator() {
+		if (animator == null) {
+			animator = new SliderAnimator(cons, this);
+		}
+		
+		return animator;
+	}
+	
+	public void startAnimation(boolean start) {
+		SliderAnimator sliderAnimator = getSliderAnimator();
+		
+		sliderAnimator.startAnimation(start);
+	}
+	
+	public boolean isAnimating() {
+		if (animator == null) return false;
+		return animator.isAnimating();
+	}
 	
 
 

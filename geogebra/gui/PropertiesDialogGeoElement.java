@@ -567,6 +567,7 @@ public class PropertiesDialogGeoElement
  		private AllowOutlyingIntersectionsPanel allowOutlyingIntersectionsPanel;
 		private AuxiliaryObjectPanel auxPanel;
 		private AnimationStepPanel animStepPanel;
+		private AnimationSpeedPanel animSpeedPanel;
 		private SliderPanel sliderPanel;
 		private SlopeTriangleSizePanel slopeTriangleSizePanel;
 		private StartPointPanel startPointPanel;
@@ -612,6 +613,7 @@ public class PropertiesDialogGeoElement
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
 			auxPanel = new AuxiliaryObjectPanel();
 			animStepPanel = new AnimationStepPanel(app);
+			animSpeedPanel = new AnimationSpeedPanel(app);
 			sliderPanel = new SliderPanel(app, this);
 			startPointPanel = new StartPointPanel();
 			cornerPointsPanel = new CornerPointsPanel();
@@ -4242,6 +4244,7 @@ class SliderPanel
 	private Application app;
 	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 	private AnimationStepPanel stepPanel;
+	private AnimationSpeedPanel speedPanel;
 	private Kernel kernel;
 
 	public SliderPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
@@ -4256,6 +4259,9 @@ class SliderPanel
 		
 		JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
 		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider"))));		
+
+		JPanel animationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
+		animationPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Animation"))));		
 
 		cbSliderFixed = new JCheckBox(app.getPlain("fixed"));
 		cbSliderFixed.addActionListener(this);
@@ -4300,13 +4306,20 @@ class SliderPanel
 		stepPanel.setPartOfSliderPanel();
 		intervalPanel.add(stepPanel);		
 		
+		speedPanel = new AnimationSpeedPanel(app);
+		speedPanel.setPartOfSliderPanel();
+		animationPanel.add(speedPanel);		
+		
 		add(intervalPanel);	
 		add(Box.createVerticalStrut(5));
 		add(sliderPanel);					
+		add(Box.createVerticalStrut(5));
+		add(animationPanel);					
 	}
 
 	public JPanel update(Object[] geos) {
 		stepPanel.update(geos);
+		speedPanel.update(geos);
 		
 		this.geos = geos;
 		if (!checkGeos(geos))
@@ -4606,6 +4619,164 @@ class AnimationStepPanel
 				geo.updateRepaint();
 			}
 		}
+		update(geos);
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		doActionPerformed();
+	}
+}
+
+/**
+ * panel for animation speed
+ * @author adapted from AnimationStepPanel
+ */
+class AnimationSpeedPanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	private JTextField tfAnimSpeed;
+	private boolean partOfSliderPanel = false;
+	private JRadioButton rbCyclic, rbToAndFro;	
+	
+	private Kernel kernel;
+
+	public AnimationSpeedPanel(Application app) {
+		kernel = app.getKernel();
+		
+		ButtonGroup bg = new ButtonGroup();
+		rbCyclic = new JRadioButton(app.getPlain("Cyclic"));		
+		rbToAndFro = new JRadioButton(app.getPlain("ToAndFro"));		
+		rbCyclic.addActionListener(this);
+		rbToAndFro.addActionListener(this);		
+		bg.add(rbCyclic);
+		bg.add(rbToAndFro);	
+		boolean cyclic = geos == null ? true : ((GeoElement)geos[0]).getAnimationType() == GeoElement.ANIMATION_CYCLIC;
+		rbCyclic.setSelected(cyclic);
+		rbToAndFro.setSelected(!cyclic);
+		//JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		JPanel radioPanel = new JPanel();
+		radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
+		radioPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
+		radioPanel.add(rbCyclic);		
+		radioPanel.add(rbToAndFro);			
+
+		// text field for animation step
+		JLabel label = new JLabel(app.getPlain("AnimationSpeed") + ": ");
+		tfAnimSpeed = new JTextField(5);
+		label.setLabelFor(tfAnimSpeed);
+		tfAnimSpeed.addActionListener(this);
+		tfAnimSpeed.addFocusListener(this);
+
+		// put it all together
+		JPanel animPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		animPanel.add(radioPanel);
+		animPanel.add(label);
+		animPanel.add(tfAnimSpeed);
+
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(animPanel);
+	}
+	
+	public void setPartOfSliderPanel() {
+		partOfSliderPanel = true;
+	}
+
+	public JPanel update(Object[] geos) {		
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		tfAnimSpeed.removeActionListener(this);
+
+		// check if properties have same values
+		GeoElement temp, geo0 = (GeoElement) geos[0];
+		boolean equalStep = true;
+		//boolean onlyAngles = true;
+
+		for (int i = 0; i < geos.length; i++) {
+			temp = (GeoElement) geos[i];
+			// same object visible value
+			if (geo0.getAnimationSpeed() != temp.getAnimationSpeed())
+				equalStep = false;
+		}
+
+		// set trace visible checkbox
+		//int oldDigits = kernel.getMaximumFractionDigits();
+		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+
+        if (equalStep)
+			tfAnimSpeed.setText(kernel.format(geo0.getAnimationSpeed()));
+		else
+			tfAnimSpeed.setText("");
+        
+		//kernel.setMaximumFractionDigits(oldDigits);
+        kernel.restorePrintAccuracy();
+
+		tfAnimSpeed.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		boolean geosOK = true;
+		for (int i = 0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];
+			if (!geo.isChangeable() 
+					|| geo.isGeoText() 
+					|| geo.isGeoImage()
+					|| geo.isGeoList()
+					|| geo.isGeoBoolean()
+					|| !partOfSliderPanel && geo.isGeoNumeric() && geo.isIndependent() // slider						
+			)  
+			{				
+				geosOK = false;
+				break;
+			}
+		}
+		
+		
+		return geosOK;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == tfAnimSpeed)
+			doActionPerformed();
+		else if (e.getSource() == rbToAndFro) setType(GeoElement.ANIMATION_TOANDFRO);
+		else if (e.getSource() == rbCyclic) setType(GeoElement.ANIMATION_CYCLIC);
+	}
+
+	private void doActionPerformed() {
+		double newVal =
+			kernel.getAlgebraProcessor().evaluateToDouble(
+				tfAnimSpeed.getText());
+		if (!Double.isNaN(newVal)) {
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				geo.setAnimationSpeed(newVal);
+				geo.updateRepaint();
+			}
+		}
+		update(geos);
+	}
+
+	private void setType(int type) {
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				geo.setAnimationType(type);
+				geo.updateRepaint();
+			}
+		
 		update(geos);
 	}
 
