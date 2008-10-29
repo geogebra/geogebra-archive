@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -178,7 +179,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	}
 	
 	public boolean isChangeable() {
-		return !isFixed() && (isPointOnPath() || isIndependent() || hasChangeableCoords());   
+		return !isFixed() && (isPointOnPath() || isIndependent() || hasChangeableCoords() || isRelativePoint());   
 	}	 
 	
 	/**
@@ -190,13 +191,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		
 		if (coords == null || coords[0] == null || coords[1] == null) return false;
 		
-		return //coords != null && 
-			coords[0].isChangeable() && coords[1].isChangeable();
+		if (coords.length == 4) return false; // relativePoint
+		
+		return coords[0].isChangeable() && coords[1].isChangeable();
+	}
+	
+	/**
+	 * Returns whether this point is in the form A + (a,b)
+	 * where a and b are free GeoNumeric objects.
+	 */
+	final private boolean isRelativePoint() {
+		GeoNumeric [] coords = getCoordNumbers();
+		
+		if (coords == null || coords[0] == null || coords[1] == null) return false;
+		
+		if (coords.length == 2) return false; // hasChangeableCoords
+		
+		return coords[0].isChangeable() && coords[1].isChangeable();
 	}
 	
 	/**
 	 * Returns this point's two coordinates as GeoNumeric objects, e.g. for point P = (a, b) the
-	 * array [a, b] is returned. 
+	 * array [a, b] is returned. For P = A + (a,b) the array [a, b, x(A), x(B) is returned.
 	 * @return null if this point is not defined using two GeoNumeric objects like (a, b)
 	 */
 	final private GeoNumeric [] getCoordNumbers() {
@@ -205,30 +221,76 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			return null;
 		
 		// try to get coord numbers of dependent point A = (a, b)
-		if (needsToInitCoordNumbers) {
-			needsToInitCoordNumbers = false;
+		// or A = B + (a,b)
+		
+		// dependent point of form P = (a, b)
+		if (parentAlgo instanceof AlgoDependentPoint) {
+			AlgoDependentPoint algo = (AlgoDependentPoint) parentAlgo;
+			ExpressionNode en = algo.getExpressionNode();
 			
-			// dependent point of form P = (a, b)
-			if (parentAlgo instanceof AlgoDependentPoint) {
-				AlgoDependentPoint algo = (AlgoDependentPoint) parentAlgo;
-				ExpressionNode en = algo.getExpressionNode();
-				if (en.isLeaf() && en.getLeft() instanceof MyVecNode) {
-					MyVecNode vn = (MyVecNode) en.getLeft();
-					ExpressionValue xEV = vn.getX();
-					ExpressionValue yEV = vn.getY();
-					
-					// check if x and y coords are variables
-					try {
-						changeableCoordNumbers = new GeoNumeric[2];
-						changeableCoordNumbers[0] = (GeoNumeric) kernel.lookupLabel(xEV.toString());
-						changeableCoordNumbers[1] = (GeoNumeric) kernel.lookupLabel(yEV.toString());
-					} catch (Exception e) {
-						changeableCoordNumbers = null;
-					
-						//e.printStackTrace();						
-					}					
-				}
+			if (!en.isLeaf() && en.getOperation() == ExpressionNode.PLUS && en.getLeft() instanceof MyVecNode && en.getRight() instanceof GeoPoint) {
+				// in form (a,b) + A
+				MyVecNode vn = (MyVecNode) en.getLeft();
+				ExpressionValue xEV = vn.getX();
+				ExpressionValue yEV = vn.getY();
+				
+				GeoPoint point = (GeoPoint)(en.getRight());
+				
+				// check if x and y coords are variables
+				try {
+					changeableCoordNumbers = new GeoNumeric[4];
+					changeableCoordNumbers[0] = (GeoNumeric) kernel.lookupLabel(xEV.toString());
+					changeableCoordNumbers[1] = (GeoNumeric) kernel.lookupLabel(yEV.toString());
+					changeableCoordNumbers[2] = new GeoNumeric(cons,point.getInhomX());
+					changeableCoordNumbers[3] = new GeoNumeric(cons,point.getInhomY());
+					//Application.debug("("+point.getInhomX()+","+point.getInhomY()+")");
+				} catch (Exception e) {
+					changeableCoordNumbers = null;
+				
+					e.printStackTrace();						
+				}					
+			
+			} else	if (!en.isLeaf() && en.getOperation() == ExpressionNode.PLUS &&
+					en.getRight() instanceof MyVecNode && en.getLeft() instanceof GeoPoint) {
+				// in form A + (a,b)
+				MyVecNode vn = (MyVecNode) en.getRight();
+				ExpressionValue xEV = vn.getX();
+				ExpressionValue yEV = vn.getY();
+				
+				GeoPoint point = (GeoPoint)(en.getLeft());
+				
+				// check if x and y coords are variables
+				try {
+					changeableCoordNumbers = new GeoNumeric[4];
+					changeableCoordNumbers[0] = (GeoNumeric) kernel.lookupLabel(xEV.toString());
+					changeableCoordNumbers[1] = (GeoNumeric) kernel.lookupLabel(yEV.toString());
+					changeableCoordNumbers[2] = new GeoNumeric(cons,point.getInhomX());
+					changeableCoordNumbers[3] = new GeoNumeric(cons,point.getInhomY());
+					//Application.debug("("+point.getInhomX()+","+point.getInhomY()+")");
+				} catch (Exception e) {
+					changeableCoordNumbers = null;
+				
+					e.printStackTrace();						
+				}					
+			
+			} else if (en.isLeaf() && en.getLeft() instanceof MyVecNode) { 
+				// in form (a,b)
+				MyVecNode vn = (MyVecNode) en.getLeft();
+				ExpressionValue xEV = vn.getX();
+				ExpressionValue yEV = vn.getY();
+				
+				// check if x and y coords are variables
+				try {
+					changeableCoordNumbers = new GeoNumeric[2];
+					changeableCoordNumbers[0] = (GeoNumeric) kernel.lookupLabel(xEV.toString());
+					changeableCoordNumbers[1] = (GeoNumeric) kernel.lookupLabel(yEV.toString());
+				} catch (Exception e) {
+					changeableCoordNumbers = null;
+				
+					//e.printStackTrace();						
+				}					
 			}
+		
 			
 			// check for (a,a)
 			if (changeableCoordNumbers != null && changeableCoordNumbers[0] != null && changeableCoordNumbers[0].equals(changeableCoordNumbers[1])) changeableCoordNumbers = null;
@@ -238,7 +300,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		
 		return changeableCoordNumbers;
 	}
-	private boolean needsToInitCoordNumbers = true;
 	private GeoNumeric [] changeableCoordNumbers = null;
 	
 	final public boolean isPointOnPath() {
@@ -330,17 +391,55 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			// where a and b are free numbers. Such points should be treated like free points by changing 
 			// a and b accordingly
 		
-			// set first coord to new x value
+			boolean update = false;
+			
 			if (changeableCoordNumbers[0].getValue() != inhomX) {
 				changeableCoordNumbers[0].setValue(inhomX);
-				changeableCoordNumbers[0].updateCascade();
+				update = true;
 			}
 			
-			// set second coord to new y value
-			if (changeableCoordNumbers[1].getValue() != inhomY) {
+			if ( changeableCoordNumbers[1].getValue() != inhomY) {
 				changeableCoordNumbers[1].setValue(inhomY);
+				update = true;
+			}
+			
+			// need to update both together
+			if (update) {
+				changeableCoordNumbers[0].updateCascade();
 				changeableCoordNumbers[1].updateCascade();
-			}			
+			}	
+			
+		} else if (isRelativePoint()) {
+			// update changeable coord numbers: this is needed for points of the form P = (a, b) + A
+			// where a and b are free numbers. Such points should be treated like free points by changing 
+			// a and b accordingly
+			
+			//Application.debug("isRelativePoint");
+			//Application.debug("changeableCoordNumbers[0].getValue()"+changeableCoordNumbers[0].getValue());
+			//Application.debug("changeableCoordNumbers[1].getValue()"+changeableCoordNumbers[1].getValue());
+			//Application.debug("changeableCoordNumbers[2].getValue()"+changeableCoordNumbers[2].getValue());
+			//Application.debug("changeableCoordNumbers[3].getValue()"+changeableCoordNumbers[3].getValue());
+			//Application.debug("inhomX "+inhomX);
+			//Application.debug("inhomY "+inhomY);
+			
+			boolean update = false;
+
+			if (changeableCoordNumbers[0].getValue() + changeableCoordNumbers[2].getValue() != inhomX) {
+				changeableCoordNumbers[0].setValue(inhomX - changeableCoordNumbers[2].getValue());
+				update = true;
+				
+			}
+			if (changeableCoordNumbers[1].getValue() + changeableCoordNumbers[3].getValue() != inhomY) {
+				changeableCoordNumbers[1].setValue(inhomY - changeableCoordNumbers[3].getValue());
+				update = true;
+			}
+			
+			// need to update both together
+			if (update) {
+				changeableCoordNumbers[0].updateCascade();
+				changeableCoordNumbers[1].updateCascade();
+			}	
+						
 		}				
 	}  
 	
