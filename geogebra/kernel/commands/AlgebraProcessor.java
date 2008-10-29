@@ -46,7 +46,7 @@ public class AlgebraProcessor {
 	private Construction cons;
 	private Application app;
 	private Parser parser;
-	private CommandDispatcher cmdDispatcher;
+	protected CommandDispatcher cmdDispatcher;
 	
 	protected ExpressionValue eval; //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode
 	

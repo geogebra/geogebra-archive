@@ -56,7 +56,11 @@ public abstract class GeoElement3D
 	public boolean isGeoElement3D(){
 		return true;
 	}
-	
+
+	// Path1D interface
+	public boolean isPath1D(){
+		return false;
+	}
 	
 	/** stores the current highlighted flag to wasHighlighted */ 
 	final public void setWasHighlighted(){

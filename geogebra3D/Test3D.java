@@ -73,10 +73,10 @@ public class Test3D{
 	 ***********************************/
 	
 	private GeoPoint3D testPoint(int i, int j, int k, float x, float y, float z){
-		String s="";
+		//String s="";
 		GeoPoint3D P=null;
-		s="M3d"+i+""+j+""+k;
-		P=kernel3D.Point3D(s,x,y,z);
+		//s="M3d"+i+""+j+""+k;
+		P=kernel3D.Point3D("A",x,y,z);
 		P.setObjColor(new Color(x,y,z));
 		P.setLabelVisible(false);
 		//cons.addToConstructionList(P,false);	
@@ -84,10 +84,10 @@ public class Test3D{
 	}
 	
 	private GeoPoint3D testPoint(float x, float y, float z){
-		String s="";
+		//String s="";
 		GeoPoint3D P=null;
-		s="M3d";
-		P=kernel3D.Point3D(s,x,y,z);
+		//s="M3d";
+		P=kernel3D.Point3D("A",x,y,z);
 		P.setObjColor(new Color(0f,0f,1f));
 		P.setLabelVisible(false);		
 		return P;
@@ -267,8 +267,11 @@ public class Test3D{
 		
 		GeoPoint3D[] P1 = new GeoPoint3D[3];				
 		P1[0] = testPoint(1f,0f,0f);
+		P1[0].setLabel("Ax");
 		P1[1] = testPoint(0f,0f,0f);
+		P1[1].setLabel("A");
 		P1[2] = testPoint(0f,1f,0f);
+		P1[2].setLabel("Ay");
 		//P1[3] = testPoint(0f,1f,0f);
 		
 		GeoSegment3D s=null;
@@ -277,6 +280,7 @@ public class Test3D{
 
 		GeoPoint3D P2;				
 		P2 = testPoint(0f,0f,1f);
+		P2.setLabel("Az");
 
 		for(i=0;i<3;i++)
 			kernel3D.Segment3D("segment",P1[i],P2);
@@ -296,7 +300,7 @@ public class Test3D{
 		
 
 		
-		GeoPoint3D P=kernel3D.Point3D("pointOnSegment", s, 0, 0, 0);
+		GeoPoint3D P=kernel3D.Point3D("ps", s, 0, 0, 0);
 		P.setObjColor(new Color(1f,1f,0f));
 		
 		
@@ -304,7 +308,7 @@ public class Test3D{
 		l.setObjColor(new Color(1f,0.5f,0f));
 		l.setLineThickness(1);
 		
-		P=kernel3D.Point3D("pointOnLine", l, 1, 1, 0);
+		P=kernel3D.Point3D("pl", l, 1, 1, 0);
 		P.setObjColor(new Color(1f,0.75f,0f));
 		
 	}

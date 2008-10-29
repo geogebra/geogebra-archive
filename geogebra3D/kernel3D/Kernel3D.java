@@ -15,6 +15,8 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.linalg.GgbVector;
@@ -52,7 +54,7 @@ public class Kernel3D
 	/**
 	 * Returns this kernel's algebra processor that handles
 	 * all input and commands.
-	 */	
+	 */		
 	public AlgebraProcessor getAlgebraProcessor() {
     	if (algProcessor == null)
     		algProcessor = new AlgebraProcessor3D(this);
@@ -85,6 +87,31 @@ public class Kernel3D
 		p.setLabel(label);               
 		return p;
 	}	
+	
+	/** Point3D on a 1D path without cartesian coordinates   */
+	final public GeoPoint3D Point3D(String label, Path1D path) {
+		// try (0,0,0)
+		AlgoPointOnPath1D algo = new AlgoPointOnPath1D(cons, label, path, 0, 0, 0);
+		GeoPoint3D p = algo.getP(); 
+		
+		/* TODO below
+		// try (1,0,0) 
+		if (!p.isDefined()) {
+			p.setCoords(1,0,1);
+			algo.update();
+		}
+		
+		// try (random(),0)
+		if (!p.isDefined()) {
+			p.setCoords(Math.random(),0,1);
+			algo.update();
+		}
+		*/
+		
+		return p;
+	}	
+	
+	
 	
 	/** Segment3D label linking points v1 and v2   */
 	final public GeoSegment3D Segment3D(String label, GgbVector v1, GgbVector v2){

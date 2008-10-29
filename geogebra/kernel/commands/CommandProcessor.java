@@ -65,7 +65,7 @@ public abstract class CommandProcessor  {
 	 */
    	public abstract GeoElement [] process(Command c) throws MyError, CircularDefinitionException;   	
     
-    final GeoElement[] resArgs(Command c) throws MyError {	  	
+    protected final GeoElement[] resArgs(Command c) throws MyError {	  	
            boolean oldMacroMode = cons.isSuppressLabelsActive();
            cons.setSuppressLabelCreation(true);
 
@@ -254,77 +254,6 @@ class CmdMidpoint extends CommandProcessor {
 }
 
 /*
- * Line[ <GeoPoint>, <GeoPoint> ] Line[ <GeoPoint>, <GeoVector> ] Line[
- * <GeoPoint>, <GeoLine> ]
- */
-class CmdLine extends CommandProcessor {
-	
-	public CmdLine(Kernel kernel) {
-		super(kernel);
-	}
-	
-final public GeoElement[] process(Command c) throws MyError {
-    int n = c.getArgumentNumber();
-    boolean[] ok = new boolean[n];
-    GeoElement[] arg;
-
-    switch (n) {
-        case 2 :
-            arg = resArgs(c);
-
-            // line through two points
-            if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Line(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoPoint) arg[1])};
-                return ret;
-            }
-
-            // line through point with direction vector
-            else if (
-                (ok[0] = (arg[0] .isGeoPoint()))
-                    && (ok[1] = (arg[1] .isGeoVector()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Line(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoVector) arg[1])};
-                return ret;
-            }
-
-            // line through point parallel to another line
-            else if (
-                (ok[0] = (arg[0] .isGeoPoint()))
-                    && (ok[1] = (arg[1] .isGeoLine()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Line(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoLine) arg[1])};
-                return ret;
-            }
-
-            // syntax error
-            else {
-                if (!ok[0])
-                    throw argErr(app, "Line", arg[0]);
-                else
-                    throw argErr(app, "Line", arg[1]);
-            }
-
-        default :
-            throw argNumErr(app, "Line", n);
-    }
-}
-}
-
-/*
  * Ray[ <GeoPoint>, <GeoPoint> ] Ray[ <GeoPoint>, <GeoVector> ]
  */
 class CmdRay extends CommandProcessor {
@@ -381,56 +310,6 @@ final public GeoElement[] process(Command c) throws MyError {
 }
 }
 
-/*
- * Segment[ <GeoPoint>, <GeoPoint> ] Segment[ <GeoPoint>, <Number> ]
- */
-class CmdSegment extends CommandProcessor {
-	
-	public CmdSegment(Kernel kernel) {
-		super(kernel);
-	}
-	
-final public GeoElement[] process(Command c) throws MyError {	
-    int n = c.getArgumentNumber();
-    boolean[] ok = new boolean[n];
-    GeoElement[] arg;
-
-    switch (n) {
-        case 2 :
-            arg = resArgs(c);
-
-            // segment between two points
-            if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Segment(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoPoint) arg[1])};
-                return ret;
-            }
-            
-            // segment from point with given length
-            else if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isNumberValue())))
-				return
-                         kernel.Segment(
-                            c.getLabels(),
-                            (GeoPoint) arg[0],
-                            (NumberValue) arg[1]);
-			else {
-                if (!ok[0])
-                    throw argErr(app, "Segment", arg[0]);
-                else
-                    throw argErr(app, "Segment", arg[1]);
-            }
-
-        default :
-            throw argNumErr(app, "Segment", n);
-    }
-}
-}
 
 /*
  * Orthogonal[ <GeoPoint>, <GeoVector> ] Orthogonal[ <GeoPoint>, <GeoLine> ]
@@ -1266,46 +1145,6 @@ final public GeoElement[] process(Command c) throws MyError {
         return ret;
     } else
 		throw argNumErr(app, "Area", n);
-}
-}
-
-/*
- * Polygon[ <GeoPoint>, ..., <GeoPoint> ]
- * Polygon[ <GeoPoint>, <GeoPoint>, <Number>] for regular polygon
- */
-class CmdPolygon extends CommandProcessor {
-	
-	public CmdPolygon(Kernel kernel) {
-		super(kernel);
-	}
-	
-final public GeoElement[] process(Command c) throws MyError {
-    int n = c.getArgumentNumber();
-    GeoElement[] arg;
-
-    arg = resArgs(c);
-    switch (n) {
-    	case 3:        
-        // regular polygon
-        if (arg[0].isGeoPoint() && 
-	        arg[1].isGeoPoint() &&
-	        arg[2].isNumberValue())
-				return kernel.RegularPolygon(c.getLabels(), (GeoPoint) arg[0], (GeoPoint) arg[1], (NumberValue) arg[2]);		
-        
-        default:
-			// polygon for given points
-	        GeoPoint[] points = new GeoPoint[n];
-	        // check arguments
-	        for (int i = 0; i < n; i++) {
-	            if (!(arg[i].isGeoPoint()))
-					throw argErr(app, c.getName(), arg[i]);
-				else {
-	                points[i] = (GeoPoint) arg[i];
-	            }
-	        }
-	        // everything ok
-	        return kernel.Polygon(c.getLabels(), points);
-		}	
 }
 }
 
@@ -3961,53 +3800,6 @@ final public  GeoElement[] process(Command c) throws MyError {
 }
 }
 
-/*
- * Point[ <Path> ] Point[ <Point>, <Vector> ]
- */
-class CmdPoint extends CommandProcessor {
-	
-	public CmdPoint (Kernel kernel) {
-		super(kernel);
-	}
-	
-final public  GeoElement[] process(Command c) throws MyError {
-    int n = c.getArgumentNumber();
-    boolean[] ok = new boolean[n];
-    GeoElement[] arg;
-
-    switch (n) {
-        case 1 :
-            arg = resArgs(c);
-            if (ok[0] = (arg[0].isPath())) {
-                GeoElement[] ret =
-                    { kernel.Point(c.getLabel(), (Path) arg[0])};
-                return ret;
-            } else
-				throw argErr(app, "Point", arg[0]);
-
-        case 2 :
-            arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isGeoVector()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Point(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoVector) arg[1])};
-                return ret;
-            } else {                
-                if (!ok[0])
-                    throw argErr(app, "Point", arg[0]);     
-                else
-                    throw argErr(app, "Point", arg[1]);
-            }
-
-        default :
-            throw argNumErr(app, "Point", n);
-    }
-}
-}
 
 /*
  * Centroid[ <Polygon> ]

@@ -31,7 +31,7 @@ public class CommandDispatcher {
     private Application app;
     
     // stores (String name, CommandProcessor cmdProc) pairs   
-    private HashMap cmdTable;
+    protected HashMap cmdTable;
     private MacroProcessor macroProc;
     
     public CommandDispatcher(Kernel kernel) {             
@@ -105,7 +105,7 @@ public class CommandDispatcher {
         return ret;
     }
            
-    private void initCmdTable() {    	 
+    protected void initCmdTable() {    	 
     	macroProc = new MacroProcessor(kernel);    	    	
     	
     	// external commands: visible to users    	    	

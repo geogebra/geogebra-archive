@@ -94,6 +94,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 	
 	
 	// Path1D interface
+	public boolean isPath1D(){
+		return true;
+	}
+	
 	public void pointChanged(GeoPoint3D P){
 		//project P on line
 		GgbVector v = P.getInhomCoords();

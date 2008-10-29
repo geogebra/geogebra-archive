@@ -226,7 +226,9 @@ final public class GeoPoint3D extends GeoVec4D {
   
 
     
-    
+    public boolean isGeoPoint3D(){
+    	return true;
+    }
 
 
 	public boolean isDefined() {
