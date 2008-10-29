@@ -10,16 +10,13 @@ import javax.swing.Timer;
 public class SliderAnimator implements ActionListener {
 	
 	private GeoNumeric num;
-	private Construction cons;
 	private Timer timer;
 	private int direction = 1; // either 1 or -1
 	
-	public SliderAnimator(Construction cons, GeoNumeric num) {
-		this.cons = cons;
+	public SliderAnimator(GeoNumeric num) {
 		this.num = num;
 		
-		timer = new Timer(100, this);
-		//timer.start();
+		timer = new Timer(1, this);
 		
 	}
 	
@@ -38,27 +35,30 @@ public class SliderAnimator implements ActionListener {
 	
 	public synchronized void actionPerformed(ActionEvent e) {
 		
-		Application.debug("speed "+num.getAnimationSpeed()+" type = "+num.getAnimationType());
+		//Application.debug("speed "+num.getAnimationSpeed()+" type = "+num.getAnimationType());
 		
 		double val = num.getDouble();
+		double min = num.getIntervalMin();
+		double max = num.getIntervalMax();
+		double step = num.getAnimationStep();
 		
-		val += num.getAnimationStep() * num.getAnimationSpeed() * direction;
+		val += num.getAnimationStep() * direction;
 		
 		switch (num.getAnimationType()) {
 		
 		case GeoElement.ANIMATION_CYCLIC:
 			
-			if (val > num.getIntervalMax()) val = num.getIntervalMin();
+			if (val > max) val = min;
 		
 			break;
 		
 		default: //GeoElement.ANIMATION_TOANDFRO:
 			
-			if (val > num.getIntervalMax()) {
-				val = num.getIntervalMax();
+			if (val > max) {
+				val = max;
 				direction *= -1;
-			} else if (val < num.getIntervalMin()) {
-				val = num.getIntervalMin();
+			} else if (val < min) {
+				val = min;
 				direction *= -1;				
 			}
 			
@@ -71,6 +71,9 @@ public class SliderAnimator implements ActionListener {
 		num.setValue(val);
 		num.updateCascade();
 		num.updateRepaint();
+		
+		// getAnimationSpeed 1 -> 5secs to get from one end of the slider to the other
+		timer.setDelay((int)(5000.0 * step / (max - min) / num.getAnimationSpeed()));
 
 	}
 

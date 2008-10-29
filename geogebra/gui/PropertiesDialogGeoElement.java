@@ -4658,12 +4658,12 @@ class AnimationSpeedPanel
 		bg.add(rbCyclic);
 		bg.add(rbToAndFro);	
 		boolean cyclic = geos == null ? true : ((GeoElement)geos[0]).getAnimationType() == GeoElement.ANIMATION_CYCLIC;
-		rbCyclic.setSelected(cyclic);
-		rbToAndFro.setSelected(!cyclic);
+		if (cyclic) rbCyclic.setSelected(true);
+		else rbToAndFro.setSelected(false);
 		//JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		JPanel radioPanel = new JPanel();
 		radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
-		radioPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
+		radioPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 20));
 		radioPanel.add(rbCyclic);		
 		radioPanel.add(rbToAndFro);			
 
