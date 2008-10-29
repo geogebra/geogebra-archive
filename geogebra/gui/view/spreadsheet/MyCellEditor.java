@@ -189,7 +189,8 @@ public class MyCellEditor extends DefaultCellEditor {
 			
 			// evaluate input text
 			newValues = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
-			newValues[0].setLabel(name);
+			//newValues[0].setLabel(name);
+			GeoElement.setLabels(name, newValues); // set names to be D1, E1, F1, etc for multiple objects
 			newValues[0].setAuxiliaryObject(true);	
 		} 
 		catch (Exception e) {
