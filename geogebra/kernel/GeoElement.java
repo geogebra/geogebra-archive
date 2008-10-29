@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
 
@@ -1452,9 +1453,18 @@ final public boolean hasOnlyFreeInputPoints() {
 				geos[0].setLabel(labelPrefix);
 				break;
 
-			default : // more than one visible geo: use indices if we got a prefix
-				for (int i = 0; i < geos.length; i++)
-					geos[i].setLabel(geos[i].getIndexLabel(labelPrefix));							
+			default : 
+				if (isSpreadsheetLabel(labelPrefix)) {
+					// more than one visible geo and it's a spreadsheet cell
+					// use D1, E1, F1, etc as names
+					int col = getSpreadsheetColumn(labelPrefix);
+					int row = getSpreadsheetRow(labelPrefix);
+					for (int i = 0; i < geos.length; i++)
+						geos[i].setLabel(geos[i].getFreeLabel(getSpreadsheetCellName(col + i, row)));	
+				} else { // more than one visible geo: use indices if we got a prefix
+					for (int i = 0; i < geos.length; i++)
+						geos[i].setLabel(geos[i].getIndexLabel(labelPrefix));	
+				}
 		}
 	}
 
