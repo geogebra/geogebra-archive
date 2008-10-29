@@ -41,14 +41,16 @@ public class SliderAnimator implements ActionListener {
 		double min = num.getIntervalMin();
 		double max = num.getIntervalMax();
 		double step = num.getAnimationStep();
+		double speed = num.getAnimationSpeed();
 		
-		val += num.getAnimationStep() * direction;
+		val += num.getAnimationStep() * direction * (speed < 0 ? -1 : +1);
 		
 		switch (num.getAnimationType()) {
 		
 		case GeoElement.ANIMATION_CYCLIC:
 			
 			if (val > max) val = min;
+			else if (val < min) val = max;
 		
 			break;
 		
@@ -73,7 +75,7 @@ public class SliderAnimator implements ActionListener {
 		num.updateRepaint();
 		
 		// getAnimationSpeed 1 -> 5secs to get from one end of the slider to the other
-		timer.setDelay((int)(5000.0 * step / (max - min) / num.getAnimationSpeed()));
+		timer.setDelay((int)(5000.0 * step / (max - min) / Math.abs(num.getAnimationSpeed())));
 
 	}
 
