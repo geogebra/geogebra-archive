@@ -1978,9 +1978,9 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleAnimation(LinkedHashMap attrs) {
 		try {
-			geo
-					.setAnimationStep(Double.parseDouble((String) attrs
-							.get("step")));
+			geo.setAnimationStep(Double.parseDouble((String) attrs.get("step")));
+			geo.setAnimationSpeed(Double.parseDouble((String) attrs.get("speed")));
+			geo.setAnimationType(Integer.parseInt((String) attrs.get("type")));
 			return true;
 		} catch (Exception e) {
 			return false;
