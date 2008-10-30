@@ -561,6 +561,7 @@ public class PropertiesDialogGeoElement
 		
 		private FillingPanel fillingPanel;
 		private TracePanel tracePanel;
+		private AnimatingPanel animatingPanel;
 		private FixPanel fixPanel;
 		private CheckBoxFixPanel checkBoxFixPanel;
  		private AllowReflexAnglePanel allowReflexAnglePanel;
@@ -608,6 +609,7 @@ public class PropertiesDialogGeoElement
 			//END
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
+			animatingPanel = new AnimatingPanel();
 			fixPanel = new FixPanel();
 			checkBoxFixPanel = new CheckBoxFixPanel();
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
@@ -648,6 +650,7 @@ public class PropertiesDialogGeoElement
 			basicTabList.add(showObjectPanel);														
 			basicTabList.add(labelPanel);		
 			basicTabList.add(tracePanel);			
+			basicTabList.add(animatingPanel);			
 			basicTabList.add(fixPanel);	
 			basicTabList.add(auxPanel);
 			basicTabList.add(checkBoxFixPanel);
@@ -1507,6 +1510,81 @@ public class PropertiesDialogGeoElement
 				for (int i = 0; i < geos.length; i++) {
 					geo = (Traceable) geos[i];
 					geo.setTrace(showTraceCB.isSelected());
+					geo.updateRepaint();
+				}
+			}
+		}
+	}
+	/**
+	 * panel for trace
+	 * @author adapted from TracePanel
+	 */
+	private class AnimatingPanel extends JPanel implements ItemListener,  UpdateablePanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JCheckBox showAnimatingCB;
+
+		public AnimatingPanel() {
+			// check boxes for animating
+			showAnimatingCB = new JCheckBox(app.getPlain("Animating"));
+			showAnimatingCB.addItemListener(this);
+			add(showAnimatingCB);
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			showAnimatingCB.removeItemListener(this);
+
+			// check if properties have same values
+			GeoElement temp, geo0 = (GeoElement) geos[0];
+			boolean equalAnimating = true;
+
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoElement) geos[i];
+				// same object visible value
+				if (geo0.isAnimating() != temp.isAnimating())
+					equalAnimating = false;
+			}
+
+			// set animating checkbox
+			if (equalAnimating)
+				showAnimatingCB.setSelected(geo0.isAnimating());
+			else
+				showAnimatingCB.setSelected(false);
+
+			showAnimatingCB.addItemListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				if (!((GeoElement)geos[i]).isAnimatable()) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+
+		/**
+		 * listens to checkboxes and sets trace state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+			GeoElement geo;
+			Object source = e.getItemSelectable();
+
+			// animating value changed
+			if (source == showAnimatingCB) {
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.startAnimation(showAnimatingCB.isSelected());
 					geo.updateRepaint();
 				}
 			}
