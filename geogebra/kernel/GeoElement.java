@@ -1870,7 +1870,15 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * GeoElements. 
 	 */
 	final static public void updateCascade(ArrayList geos) {
-		// build update set of all algorithms in construction element order
+		// only one geo: call updateCascade()
+		if (geos.size() == 1) {
+			GeoElement geo = (GeoElement) geos.get(0);
+			geo.updateCascade();
+			return;
+		}
+		
+		
+		// build update set of all algorithms in construction element order						
 		if (algoSetUpdateCascade == null) 
 			algoSetUpdateCascade = new TreeSet();
 		else
