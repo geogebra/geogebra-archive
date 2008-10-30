@@ -149,6 +149,12 @@ public interface JavaScriptAPI {
 	public boolean exists(String objName);
 	
 	/**
+	 * Renames an object from oldName to newName.
+	 * @return whether renaming worked
+	 */
+	public void renameObject(String oldObjName, String newObjName);
+	
+	/**
 	 * Returns true if the object with the given name has a vaild
 	 * value at the moment.
 	 */

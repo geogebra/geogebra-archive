@@ -1862,6 +1862,44 @@ final public boolean hasOnlyFreeInputPoints() {
 		// update all algorithms in the algorithm set of this GeoElement        
 		algoUpdateSet.updateAll();		
 	}
+	
+	
+	/**
+	 * Updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
+	 * Note: this method is more efficient than calling updateCascade() for all individual
+	 * GeoElements. 
+	 */
+	final static public void updateCascade(ArrayList geos) {
+		// build update set of all algorithms in construction element order
+		if (algoSetUpdateCascade == null) 
+			algoSetUpdateCascade = new TreeSet();
+		else
+			algoSetUpdateCascade.clear();
+		
+		int size = geos.size();
+		for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement) geos.get(i);
+			geo.update();
+			
+			if (geo.isIndependent()) {
+				// add all dependent algos of geo to the overall algorithm set
+				geo.algoUpdateSet.addAllToCollection(algoSetUpdateCascade);
+			}
+		}
+		
+		// now we have one nice algorithm set that we can update
+		if (algoSetUpdateCascade.size() > 0) {
+			Iterator it = algoSetUpdateCascade.iterator();
+			while (it.hasNext()) {
+				AlgoElement algo = (AlgoElement) it.next();
+				algo.update();
+				
+				// TODO: remove
+				Application.debug("multi updateCascade: " + algo);				
+			}
+		}
+	}
+	private static TreeSet algoSetUpdateCascade;
 
 	/**
 	 * Updates this object and all dependent ones. 
@@ -3073,15 +3111,20 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * Translates all GeoElement objects in geos by a vector in real world coordinates or by
 	 * (xPixel, yPixel) in screen coordinates.	 
 	 */
-	public static void moveObjects(ArrayList geos, GeoVector rwTransVec) {
-		// TODO: take all independent input objects and build a common updateSet
-		// then update all their algos, don't do updateCascade() in moveObject()
-		
-		
+	public static boolean moveObjects(ArrayList geos, GeoVector rwTransVec) {	
+		boolean moved = false;
 		for (int i=0; i < geos.size(); i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
-			geo.moveObject(rwTransVec);		
+			moved = geo.moveObject(rwTransVec, false) || moved;		
 		}					
+				
+		// take all independent input objects and build a common updateSet
+		// then update all their algos.
+		// (don't do updateCascade() on them individually as this may cause 
+		//  multiple updates of the same algorithm)
+		updateCascade(geos);
+		
+		return moved;
 	}
 	
 	/**
@@ -3089,6 +3132,10 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * @return whether actual moving occurred 	 
 	 */
 	final public boolean moveObject(GeoVector rwTransVec) {
+		return moveObject(rwTransVec, true);
+	}
+	
+	private boolean moveObject(GeoVector rwTransVec, boolean doUpdateCascade) {
 		boolean movedGeo = false;
 		if (isMoveable()) {
 			if (isTranslateable()) {
@@ -3119,7 +3166,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			}								
 		}											
 			
-		if (movedGeo)
+		if (movedGeo && doUpdateCascade)
 			updateCascade();
 		
 		return movedGeo;

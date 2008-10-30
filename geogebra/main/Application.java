@@ -27,6 +27,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -3251,11 +3252,7 @@ public abstract class Application implements KeyEventDispatcher {
 		default:
 			// handle selected GeoElements
 			ArrayList geos = getSelectedGeos();
-			for (int i = 0; i < geos.size(); i++) {
-				GeoElement geo = (GeoElement) geos.get(i);
-				consumed = handleKeyPressed(event, geo) || consumed;
-			}
-			// if (consumed) kernelChanged = true;
+			return handleKeyPressed(event, getSelectedGeos());		
 		}
 
 		// something was done in handleKeyPressed
@@ -3265,13 +3262,14 @@ public abstract class Application implements KeyEventDispatcher {
 		return consumed;
 	}
 
-	// handle pressed key
-	private boolean handleKeyPressed(KeyEvent event, GeoElement geo) {
-		if (geo == null)
+	/**
+	 * Handle pressed key for selected GeoElements
+	 * 
+	 * @return if key was consumed
+	 */
+	private boolean handleKeyPressed(KeyEvent event, ArrayList geos) {
+		if (geos == null || geos.size() == 0)
 			return false;
-
-		if (tempVec == null)
-			tempVec = new GeoVector(kernel.getConstruction());
 
 		int keyCode = event.getKeyCode();
 		// SPECIAL KEYS
@@ -3288,43 +3286,42 @@ public abstract class Application implements KeyEventDispatcher {
 		if (event.isAltDown())
 			base = 100;
 
-		// ARROW KEYS
+		// check for arrow keys: try to move objects accordingly
 		boolean moved = false;
+		
 		switch (keyCode) {
-		case KeyEvent.VK_UP:
-			changeVal = base;
-			tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-			moved = handleArrowKeyMovement(geo, tempVec);
-			break;
-
-		case KeyEvent.VK_DOWN:
-			changeVal = -base;
-			tempVec.setCoords(0.0, changeVal * geo.animationStep, 0.0);
-			moved = handleArrowKeyMovement(geo, tempVec);
-			break;
-
-		case KeyEvent.VK_RIGHT:
-			changeVal = base;
-			tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-			moved = handleArrowKeyMovement(geo, tempVec);
-			break;
-
-		case KeyEvent.VK_LEFT:
-			changeVal = -base;
-			tempVec.setCoords(changeVal * geo.animationStep, 0.0, 0.0);
-			moved = handleArrowKeyMovement(geo, tempVec);
-			break;
-
-		case KeyEvent.VK_F2:
-			getGuiManager().startEditing(geo);
-			return true;
+			case KeyEvent.VK_UP:
+				changeVal = base;			
+				moved = handleArrowKeyMovement(geos, 0, changeVal);
+				break;
+	
+			case KeyEvent.VK_DOWN:
+				changeVal = -base;
+				moved = handleArrowKeyMovement(geos, 0, changeVal);
+				break;
+	
+			case KeyEvent.VK_RIGHT:
+				changeVal = base;
+				moved = handleArrowKeyMovement(geos, changeVal, 0);
+				break;
+	
+			case KeyEvent.VK_LEFT:
+				changeVal = -base;
+				moved = handleArrowKeyMovement(geos, changeVal, 0);
+				break;
 		}
-
+	
+		
 		if (moved)
 			return true;
 
-		// PLUS, MINUS keys
+		// F2, PLUS, MINUS keys
 		switch (keyCode) {
+		case KeyEvent.VK_F2:
+			// handle F2 key to start editing first selected element
+			getGuiManager().startEditing((GeoElement) geos.get(0));
+			return true;
+			
 		case KeyEvent.VK_PLUS:
 		case KeyEvent.VK_ADD:
 		case KeyEvent.VK_UP:
@@ -3348,47 +3345,81 @@ public abstract class Application implements KeyEventDispatcher {
 				changeVal = -base;
 		}
 
+		// change all geoelements
 		if (changeVal != 0) {
-			if (geo.isChangeable()) {
-				if (geo.isNumberValue()) {
-					GeoNumeric num = (GeoNumeric) geo;
-					num.setValue(kernel.checkInteger(num.getValue() + changeVal
-							* num.animationStep));
-					num.updateRepaint();
-				} else if (geo.isGeoPoint()) {
-					GeoPoint p = (GeoPoint) geo;
-					if (p.hasPath()) {
-						p.addToPathParameter(changeVal * p.animationStep);
-						p.updateRepaint();
+			boolean needUpdate = false;
+			for (int i=geos.size()-1; i>=0; i--) {
+				GeoElement geo = (GeoElement) geos.get(i);								
+
+				if (geo.isChangeable()) {
+					// update number
+					if (geo.isNumberValue()) {
+						GeoNumeric num = (GeoNumeric) geo;
+						num.setValue(kernel.checkInteger(num.getValue() + changeVal
+								* num.animationStep));
+
+						// make sure to update random number here
+						if (!geo.isIndependent())
+							geo.getParentAlgorithm().updateRandomAlgorithm();
+							
+						needUpdate = true;
+					} 
+					
+					// update point on path
+					else if (geo.isGeoPoint()) {
+						GeoPoint p = (GeoPoint) geo;
+						if (p.hasPath()) {
+							p.addToPathParameter(changeVal * p.animationStep);
+							needUpdate = true;
+						}
 					}
-				}
+				}						
 			}
-
-			// update random algorithms
-			if (!geo.isIndependent()) {
-				if (geo.getParentAlgorithm().updateRandomAlgorithm())
-					geo.updateRepaint();
+			
+			if (needUpdate) {
+				// update all geos together
+				GeoElement.updateCascade(geos);
 			}
-
+	
 			return true;
 		}
 
 		return false;
 	}
 
-	private boolean handleArrowKeyMovement(GeoElement geo, GeoVector vec) {
-		// try to move objvect
 
-		boolean moved = !geo.isGeoNumeric() && geo.moveObject(tempVec);
+	
+	/**
+	 * Tries to move the given objects after pressing an arrow key on the keyboard.
+	 * 
+	 * @param keyCode: VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
+	 * @return whether any object was moved
+	 */
+	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff) {				
+		if (tempVec == null)
+			tempVec = new GeoVector(kernel.getConstruction());
+	
+		// set translation vector
+		GeoElement geo = (GeoElement) geos.get(0);
+		tempVec.setCoords(geo.animationStep * xdiff, geo.animationStep * ydiff, 0);
+		
+		// move objects
+		boolean moved = GeoElement.moveObjects(geos, tempVec);
+		
+		// nothing moved
 		if (!moved) {
-			// toggle boolean value
-			if (geo.isChangeable() && geo.isGeoBoolean()) {
-				GeoBoolean bool = (GeoBoolean) geo;
-				bool.setValue(!bool.getBoolean());
-				bool.updateCascade();
-				moved = true;
+			for (int i=0; i< geos.size(); i++) {
+				 geo = (GeoElement) geos.get(i);
+				// toggle boolean value
+				if (geo.isChangeable() && geo.isGeoBoolean()) {
+					GeoBoolean bool = (GeoBoolean) geo;
+					bool.setValue(!bool.getBoolean());
+					bool.updateCascade();
+					moved = true;
+				}
 			}
 		}
+			
 
 		if (moved)
 			kernel.notifyRepaint();

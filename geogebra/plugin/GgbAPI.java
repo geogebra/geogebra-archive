@@ -365,6 +365,22 @@ public class GgbAPI {
 	}	
 	
 	/**
+	 * Renames an object from oldName to newName.
+	 * @return whether renaming worked
+	 */
+	public synchronized boolean renameObject(String oldName, String newName) {		
+		GeoElement geo = kernel.lookupLabel(oldName);
+		if (geo == null) 
+			return false;
+		
+		// try to rename
+		boolean success = geo.rename(newName);
+		kernel.notifyRepaint();
+		
+		return success;
+	}	
+	
+	/**
 	 * Returns true if the object with the given name exists.
 	 */
 	public synchronized boolean exists(String objName) {			

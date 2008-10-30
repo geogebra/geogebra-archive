@@ -361,6 +361,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().registerUpdateListener(JSFunctionName);
 	}
 
+	public void renameObject(String oldObjName, String newObjName) {
+		getAppletImplementation().renameObject(oldObjName, newObjName);
+	}
+	
 	public void reset() {
 		getAppletImplementation().reset();
 	}
@@ -460,5 +464,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	public void unregisterUpdateListener(String JSFunctionName) {
 		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
 	}
+	
 
 }

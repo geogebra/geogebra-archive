@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.util.FastHashMapKeyless;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -146,6 +147,17 @@ public class AlgorithmSet {
             cur = cur.next;
         }
     } 
+    
+    /**
+     * Adds all algorithms in this set to the given collection
+     */
+    final public void addAllToCollection(Collection collection) {
+    	Link cur = head;
+        while (cur != null) {
+        	collection.add(cur.algo);
+            cur = cur.next;
+        }    	
+    }
     
     
     public String toString() {
