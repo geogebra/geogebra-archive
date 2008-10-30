@@ -641,7 +641,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	
 	public SliderAnimator getSliderAnimator() {
 		if (animator == null) {
-			animator = new SliderAnimator(kernel.getAnimatorUpdater(), this);
+			animator = new SliderAnimator(Kernel.getAnimatorUpdater(), this);
 		}
 		
 		return animator;
@@ -657,6 +657,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		if (animator == null) return false;
 		return animator.isAnimating();
 	}
+	
 	
 
 
