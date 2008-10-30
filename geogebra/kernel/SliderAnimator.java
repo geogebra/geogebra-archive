@@ -61,6 +61,8 @@ public class SliderAnimator implements ActionListener {
 		case GeoElement.ANIMATION_DECREASING:
 		case GeoElement.ANIMATION_INCREASING:
 			
+			direction = 1; // reset in case slider was cyclic
+			
 			if (val > max) val = min;
 			else if (val < min) val = max;
 		
