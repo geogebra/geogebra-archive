@@ -44,24 +44,30 @@ public class SliderAnimator implements ActionListener {
 		double max = num.getIntervalMax();
 		double step = num.getAnimationStep();
 		double speed = num.getAnimationSpeed();
+		int type = num.getAnimationType();
 		
 		if (Kernel.isEqual(max, min, Kernel.MIN_PRECISION)) {
 			timer.setDelay(1000); // 1 sec
 			return;
 		}
 		
-		val += num.getAnimationStep() * direction * (speed < 0 ? -1 : +1);
+		int increasing = type == GeoElement.ANIMATION_DECREASING ? -1 : 1;
 		
-		switch (num.getAnimationType()) {
+		val += num.getAnimationStep() * direction * increasing * (speed < 0 ? -1 : +1);
 		
-		case GeoElement.ANIMATION_CYCLIC:
+		
+		switch (type) {
+		
+		case GeoElement.ANIMATION_DECREASING:
+		case GeoElement.ANIMATION_INCREASING:
 			
 			if (val > max) val = min;
 			else if (val < min) val = max;
 		
 			break;
-		
-		default: //GeoElement.ANIMATION_TOANDFRO:
+			
+		case GeoElement.ANIMATION_CYCLIC:
+		default: //shouldn't happen
 			
 			if (val > max) {
 				val = max;
@@ -93,7 +99,7 @@ public class SliderAnimator implements ActionListener {
 	         step = (max - min) / AnimationUpdater.MAX_ANIMATION_STEPS;
 		} 
 		*/
-		int delay = (int)(AnimationUpdater.STANDARD_ANIMATION_TIME * 1000.0 * step / (max - min) / Math.abs(num.getAnimationSpeed()));
+		int delay = (int)(AnimationUpdater.STANDARD_ANIMATION_TIME * 1000.0 * step / (max - min) / Math.abs(speed));
 		
 		if (delay < AnimationUpdater.STANDARD_ANIMATION_TIME) delay = AnimationUpdater.STANDARD_ANIMATION_TIME;
 		
