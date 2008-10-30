@@ -14,7 +14,7 @@ public class HitSet extends TreeSet {
 	 */
 	private static final long serialVersionUID = -5697683292043175829L;
 	
-	private static final int EPSILON_Z = 10000000; //limit to consider two objects to be at the same place
+	private static final float EPSILON_Z = 0.0001f;//10000000; //limit to consider two objects to be at the same place
 
 	public HitSet(){
 		//super();
@@ -42,15 +42,15 @@ public class HitSet extends TreeSet {
 					GeoPoint3D p2 = (GeoPoint3D) arg2;
 					// check if one is on a path and the other not
 					if ((p1.hasPath1D())&&(!p2.hasPath1D()))
-						return 1;
-					else if ((!p1.hasPath1D())&&(p2.hasPath1D()))
 						return -1;
+					else if ((!p1.hasPath1D())&&(p2.hasPath1D()))
+						return 1;
 					// if both are on a path, check if one is a child of the other
 					else if ((p1.hasPath1D())&&(p2.hasPath1D())){
 						if (p1.isChildOf(p2))
-							return 1;
-						else if (p2.isChildOf(p1))
 							return -1;
+						else if (p2.isChildOf(p1))
+							return 1;
 					}
 				}
 				//finally check if one is before the other

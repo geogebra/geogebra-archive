@@ -32,6 +32,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	protected GLUquadric quadric;
 	private FPSAnimator animator;
 	
+	private IntBuffer selectBuffer;
+	private static int BUFSIZE = 512;
+	
+	
 	// other
 	private DrawList3D drawList3D;
 	
@@ -261,8 +265,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     public void doPick(){
     	
-    	int BUFSIZE = 512;
-        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
+    	
+    	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
         
@@ -329,29 +333,30 @@ public class EuclidianRenderer3D implements GLEventListener {
         //hits are stored in EuclidianView3D
         view.hits.clear();
         
-        int[] buffer = new int[BUFSIZE];
-        selectBuffer.get(buffer);
+        //int[] buffer = new int[BUFSIZE];
+        //selectBuffer.get(buffer);
         int names, ptr = 0;
-        int z;
+        float z;
         for (int i = 0; i < hits; i++) { 
         	
-          names = buffer[ptr];          
+          //names = buffer[ptr];      
+          names = selectBuffer.get(ptr);  
           //System.out.println(" number of names for hit = " + names);
           
           ptr++; // min z          
           //System.out.println(" z1 is " + buffer[ptr]);
           
           ptr++; // max z
-          z = buffer[ptr]; 
+          z = getDepth(ptr); 
           //System.out.println(" z2 is " + buffer[ptr]);
           
           ptr++;
           
           for (int j = 0; j < names; j++){ 
-        	//Application.debug("the name is " + buffer[ptr]+" -- drawHits["+buffer[ptr]+"] = " + geos[buffer[ptr]].getLabel());
-        	//geos[buffer[ptr]].setWillBeHighlighted(true); //geos picked will be highlighted
-        	view.hits.add(geos[buffer[ptr]]);
-        	geos[buffer[ptr]].zPick = z;
+           	//view.hits.add(geos[buffer[ptr]]);
+        	//geos[buffer[ptr]].zPick = z;
+        	view.hits.add(geos[selectBuffer.get(ptr)]);
+        	geos[selectBuffer.get(ptr)].zPick = z;
         	ptr++;
           }
           //System.out.println();
@@ -368,6 +373,28 @@ public class EuclidianRenderer3D implements GLEventListener {
         view.waitForPick = true;
     }
     
+    
+    /** returns the depth between 0 and 2, in double format, from an integer offset 
+     *  lowest is depth, nearest is the object
+     * */
+    public float getDepth(int ptr){
+    	/*
+    	long depth = (long) selectBuffer.get(ptr); // large -ve number
+    	return (1.0f + ((float) depth / 0x7fffffff));
+    	*/
+    	
+    	/*
+    	long depth = (long) selectBuffer.get(ptr); 
+    	return (float) depth/0x7fffffff;
+    	*/
+    	
+    	float depth = (float) selectBuffer.get(ptr)/0x7fffffff;
+    	if (depth<0)
+    		depth+=2;
+    	return depth;
+    	
+    	
+    }
     
     
     

@@ -34,7 +34,7 @@ public abstract class GeoElement3D
 	private boolean willBeHighlighted = false;
 
 	
-	public int zPick; //for odering elements with openGL picking
+	public float zPick; //for odering elements with openGL picking
 	
 	// GeoElement types
 	public static final int GEO_CLASS_POINT3D = 1130;

@@ -379,14 +379,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		hitsPoints.clear();
 		hitsOthers.clear();
 		
-		//String s = "";
+		String s = "";
 		for (Iterator iter = hits.iterator(); iter.hasNext();) {
 			
 			GeoElement3D geo = (GeoElement3D) iter.next();			
 			switch (geo.getGeoClassType()) {					
 			case GeoElement3D.GEO_CLASS_POINT3D:
 				hitsPoints.add(geo);
-				//s+=geo.getLabel()+"(z= "+geo.zPick+")\n";
+				s+=geo.getLabel()+"(z= "+geo.zPick+")\n";
 				break;
 			default:
 				hitsOthers.add(geo);
@@ -394,8 +394,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			}
 		}
 		
-		//if (s!="")
-		//	Application.debug(s);
+		if (s!="")
+			Application.debug(s);
 		
 		if (!hitsPoints.isEmpty())
 			hitsHighlighted = hitsPoints;
@@ -403,6 +403,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			hitsHighlighted = hitsOthers;
 		
 		
+	}
+	
+	
+	public GeoElement3D getFirstHit(){
+		
+		return (GeoElement3D) hitsHighlighted.first();
 	}
 	
 	
