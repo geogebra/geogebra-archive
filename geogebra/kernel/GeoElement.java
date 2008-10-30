@@ -269,10 +269,10 @@ public abstract class GeoElement
 	public double animationStep = 0.1;
 	private double animationSpeed = 1;
 	
-	public final static int ANIMATION_CYCLIC = 0;
+	public final static int ANIMATION_OSCILLATING = 0;
 	public final static int ANIMATION_INCREASING = 1;
 	public final static int ANIMATION_DECREASING = 2;
-	private int  animationType = ANIMATION_CYCLIC;
+	private int  animationType = ANIMATION_OSCILLATING;
 	
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;

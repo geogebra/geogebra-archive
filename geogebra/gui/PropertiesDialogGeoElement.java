@@ -4721,7 +4721,6 @@ class AnimationSpeedPanel
 	private Object[] geos; // currently selected geos
 	private JTextField tfAnimSpeed;
 	private boolean partOfSliderPanel = false;
-	//private JRadioButton rbCyclic, rbToAndFro;	
 	private JComboBox animationModeCB;	
 	private Kernel kernel;
 
@@ -4731,11 +4730,11 @@ class AnimationSpeedPanel
 			// combo box for 
 		animationModeCB = new JComboBox();
 		JLabel label2 = new JLabel(app.getPlain("Repeat") + ": ");
-		animationModeCB.addItem("\u21d4 "+app.getPlain("Cyclic")); // index 0
+		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
 		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
 		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
 		animationModeCB.addActionListener(this);
-		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_CYCLIC);
+		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_OSCILLATING);
 		
 		// text field for animation step
 		JLabel label = new JLabel(app.getPlain("AnimationSpeed") + ": ");

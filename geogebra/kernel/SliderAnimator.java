@@ -68,7 +68,7 @@ public class SliderAnimator implements ActionListener {
 		
 			break;
 			
-		case GeoElement.ANIMATION_CYCLIC:
+		case GeoElement.ANIMATION_OSCILLATING:
 		default: //shouldn't happen
 			
 			if (val > max) {
