@@ -658,6 +658,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 		return animator.isAnimating();
 	}
 	
+	public boolean isAnimatable() {
+		return true;
+	}
 	
 
 

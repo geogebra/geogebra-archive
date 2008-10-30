@@ -1105,6 +1105,11 @@ final public boolean hasOnlyFreeInputPoints() {
 		return false;
 	}
 
+	public boolean isAnimatable() {
+		// over ridden by types that support this
+		return false;
+	}
+
     public String toLaTeXString(boolean symbolic) {
     	if (symbolic)
     		return toString();
