@@ -12,9 +12,11 @@ public class SliderAnimator implements ActionListener {
 	private GeoNumeric num;
 	private Timer timer;
 	private int direction = 1; // either 1 or -1
+	private AnimationUpdater animationUpdater;
 	
-	public SliderAnimator(GeoNumeric num) {
+	public SliderAnimator(AnimationUpdater animationUpdater, GeoNumeric num) {
 		this.num = num;
+		this.animationUpdater = animationUpdater;
 		
 		timer = new Timer(1, this);
 		
@@ -71,8 +73,10 @@ public class SliderAnimator implements ActionListener {
 		
 		
 		num.setValue(val);
-		num.updateCascade();
-		num.updateRepaint();
+		animationUpdater.updateCascadeRepaintDelayed(num);
+		
+		//num.updateCascade();
+		//num.updateRepaint();
 		
 		// getAnimationSpeed 1 -> 5secs to get from one end of the slider to the other
 		timer.setDelay((int)(5000.0 * step / (max - min) / Math.abs(num.getAnimationSpeed())));

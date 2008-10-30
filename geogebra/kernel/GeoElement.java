@@ -1095,6 +1095,15 @@ final public boolean hasOnlyFreeInputPoints() {
 	public void setAnimationType(int type) {
 		animationType = type;
 	}
+	
+	public void startAnimation(boolean start) {
+		// over ridden by types that support this
+	}
+
+	public boolean isAnimating() {
+		// over ridden by types that support this
+		return false;
+	}
 
     public String toLaTeXString(boolean symbolic) {
     	if (symbolic)
@@ -2783,6 +2792,9 @@ final public boolean hasOnlyFreeInputPoints() {
 			sb.append(" step=\""+animationStep+"\"");
 			sb.append(" speed=\""+animationSpeed+"\"");
 			sb.append(" type=\""+animationType+"\"");
+			sb.append(" playing=\"");
+			sb.append((isAnimating() ? "true" : "false"));
+			sb.append("\"");
 			sb.append("/>\n");
 			return sb.toString();
 		}

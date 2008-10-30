@@ -5308,5 +5308,16 @@ public class Kernel {
 		return false;
 	}
 	
+	private static AnimationUpdater animationUpdater;
+	
+	protected static AnimationUpdater getAnimatorUpdater() {
+		
+		if (animationUpdater == null) {
+			animationUpdater = new AnimationUpdater();			
+		}
+		return animationUpdater;
+		
+	}
+	
 	
 }

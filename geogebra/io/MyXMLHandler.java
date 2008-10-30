@@ -1981,6 +1981,8 @@ public class MyXMLHandler implements DocHandler {
 			geo.setAnimationStep(Double.parseDouble((String) attrs.get("step")));
 			geo.setAnimationSpeed(Double.parseDouble((String) attrs.get("speed")));
 			geo.setAnimationType(Integer.parseInt((String) attrs.get("type")));
+			geo.startAnimation(parseBoolean((String) attrs.get("playing")));
+			
 			return true;
 		} catch (Exception e) {
 			return false;
