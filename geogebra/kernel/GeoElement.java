@@ -270,7 +270,8 @@ public abstract class GeoElement
 	private double animationSpeed = 1;
 	
 	public final static int ANIMATION_CYCLIC = 0;
-	public final static int ANIMATION_TOANDFRO = 1;
+	public final static int ANIMATION_INCREASING = 1;
+	public final static int ANIMATION_DECREASING = 2;
 	private int  animationType = ANIMATION_CYCLIC;
 	
 	public float alphaValue = 0.0f;

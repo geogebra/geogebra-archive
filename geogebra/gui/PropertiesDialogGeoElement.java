@@ -4721,30 +4721,22 @@ class AnimationSpeedPanel
 	private Object[] geos; // currently selected geos
 	private JTextField tfAnimSpeed;
 	private boolean partOfSliderPanel = false;
-	private JRadioButton rbCyclic, rbToAndFro;	
-	
+	//private JRadioButton rbCyclic, rbToAndFro;	
+	private JComboBox animationModeCB;	
 	private Kernel kernel;
 
 	public AnimationSpeedPanel(Application app) {
-		kernel = app.getKernel();
-		
-		ButtonGroup bg = new ButtonGroup();
-		rbCyclic = new JRadioButton(app.getPlain("Cyclic"));		
-		rbToAndFro = new JRadioButton(app.getPlain("ToAndFro"));		
-		rbCyclic.addActionListener(this);
-		rbToAndFro.addActionListener(this);		
-		bg.add(rbCyclic);
-		bg.add(rbToAndFro);	
-		boolean cyclic = geos == null ? true : ((GeoElement)geos[0]).getAnimationType() == GeoElement.ANIMATION_CYCLIC;
-		if (cyclic) rbCyclic.setSelected(true);
-		else rbToAndFro.setSelected(false);
-		//JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		JPanel radioPanel = new JPanel();
-		radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
-		radioPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 20));
-		radioPanel.add(rbCyclic);		
-		radioPanel.add(rbToAndFro);			
 
+		kernel = app.getKernel();
+			// combo box for 
+		animationModeCB = new JComboBox();
+		JLabel label2 = new JLabel(app.getPlain("Repeat") + ": ");
+		animationModeCB.addItem("\u21d4 "+app.getPlain("Cyclic")); // index 0
+		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
+		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
+		animationModeCB.addActionListener(this);
+		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_CYCLIC);
+		
 		// text field for animation step
 		JLabel label = new JLabel(app.getPlain("AnimationSpeed") + ": ");
 		tfAnimSpeed = new JTextField(5);
@@ -4754,9 +4746,10 @@ class AnimationSpeedPanel
 
 		// put it all together
 		JPanel animPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		animPanel.add(radioPanel);
 		animPanel.add(label);
 		animPanel.add(tfAnimSpeed);
+		animPanel.add(label2);
+		animPanel.add(animationModeCB);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -4777,14 +4770,21 @@ class AnimationSpeedPanel
 		// check if properties have same values
 		GeoElement temp, geo0 = (GeoElement) geos[0];
 		boolean equalStep = true;
-		//boolean onlyAngles = true;
+		boolean equalAnimationType = true;
 
 		for (int i = 0; i < geos.length; i++) {
 			temp = (GeoElement) geos[i];
 			// same object visible value
 			if (geo0.getAnimationSpeed() != temp.getAnimationSpeed())
 				equalStep = false;
+			if (geo0.getAnimationType() != temp.getAnimationType())
+				equalAnimationType = false;
 		}
+
+		if (equalAnimationType)
+			animationModeCB.setSelectedIndex(geo0.getAnimationType());
+		else
+			animationModeCB.setSelectedItem(null);
 
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
@@ -4830,8 +4830,7 @@ class AnimationSpeedPanel
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == tfAnimSpeed)
 			doActionPerformed();
-		else if (e.getSource() == rbToAndFro) setType(GeoElement.ANIMATION_TOANDFRO);
-		else if (e.getSource() == rbCyclic) setType(GeoElement.ANIMATION_CYCLIC);
+		else if (e.getSource() == animationModeCB) setType(animationModeCB.getSelectedIndex());
 	}
 
 	private void doActionPerformed() {
@@ -4849,6 +4848,9 @@ class AnimationSpeedPanel
 	}
 
 	private void setType(int type) {
+		
+		if (geos == null) return;
+		
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				geo.setAnimationType(type);
