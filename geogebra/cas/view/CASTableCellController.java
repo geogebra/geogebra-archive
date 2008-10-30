@@ -47,7 +47,8 @@ public class CASTableCellController implements KeyListener {
 			// Application.debug("Focus should be set at the line above");
 			if (curCell.isLineVisiable()) {
 				// Set the focus on the input text field
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				// table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				curCell.setLineInvisiable();
 				curCell.setInputAreaFocused();
 			}
 			consumeEvent = true;
@@ -57,7 +58,8 @@ public class CASTableCellController implements KeyListener {
 			if (curCell.isLineVisiable()) {// Set the focus on the input
 				saveInput(curValue);
 
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				// table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				curCell.setLineInvisiable();
 				// table.editCellAt(selectedRow+1, selectedCol);
 				Application.debug("Key donw changed selection: "
 						+ table.getSelectedRow() + " "
@@ -68,9 +70,10 @@ public class CASTableCellController implements KeyListener {
 
 				} else {
 					// Insert a new row
-					table
-							.setRowHeight(selectedRow, curCell
-									.setLineInvisiable());
+					// table
+					// .setRowHeight(selectedRow, curCell
+					// .setLineInvisiable());
+					curCell.setLineInvisiable();
 					if (curCell.getInput().length() != 0)
 						table.insertRow(selectedRow, selectedCol, null);
 					else
@@ -86,7 +89,8 @@ public class CASTableCellController implements KeyListener {
 			if (curCell.isLineVisiable()) {
 				saveInput(curValue);
 				// Insert a new line here
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				// table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				curCell.setLineInvisiable();
 				if (curCell.getInput().length() != 0)
 					table.insertRow(selectedRow, selectedCol, null);
 				else
@@ -100,7 +104,8 @@ public class CASTableCellController implements KeyListener {
 			if (curCell.isLineVisiable()) {
 				saveInput(curValue);
 				// Insert a new line here
-				table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				// table.setRowHeight(selectedRow, curCell.setLineInvisiable());
+				curCell.setLineInvisiable();
 				if (curCell.getInput().length() != 0)
 					table.insertRow(selectedRow, selectedCol, e.getKeyChar());
 				else
@@ -165,9 +170,10 @@ public class CASTableCellController implements KeyListener {
 					table.setFocusAtRow(selectedRow + 1, selectedCol);
 				} else {
 					// Insert a new row
-					table
-							.setRowHeight(selectedRow, curCell
-									.setLineInvisiable());
+					// table
+					// .setRowHeight(selectedRow, curCell
+					// .setLineInvisiable());
+					curCell.setLineInvisiable();
 					table.insertRow(selectedRow, selectedCol, null);
 				}
 			}
@@ -194,7 +200,8 @@ public class CASTableCellController implements KeyListener {
 		case KeyEvent.VK_DOWN:
 			if (!curCell.isLineVisiable()) {
 				if (selectedRow != view.getConsoleTable().getRowCount() - 1) {
-					table.setRowHeight(selectedRow, curCell.addLinePanel());
+					// table.setRowHeight(selectedRow, curCell.addLinePanel());
+					curCell.addLine();
 					SwingUtilities.updateComponentTreeUI(curCell);
 					curCell.setLineBorderFocus();
 				}

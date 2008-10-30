@@ -40,7 +40,7 @@ public class CASTable extends JTable {
 
 		this.setShowGrid(false);
 		// Dynamically change the height of the table
-		this.setRowHeight(CASPara.originalHeight);
+		this.setRowHeight(CASPara.inputLineHeight);
 		this.setBackground(Color.white);
 
 		tableModel = new CASTableModel(this, rows, session, app);
@@ -174,7 +174,8 @@ public class CASTable extends JTable {
 		CASTableCell temp = ((CASTableCell) ((CASTableCellEditor) getCellEditor(
 				editRow, editCol)).getTableCellEditorComponent(this, value,
 				true, editRow, editCol));
-		setRowHeight(editRow, temp.addLinePanel());
+		//setRowHeight(editRow, temp.addLinePanel());
+		temp.addLine();
 		temp.setLineBorderFocus();
 	}
 

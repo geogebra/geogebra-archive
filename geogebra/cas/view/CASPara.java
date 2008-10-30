@@ -8,9 +8,7 @@ public final class CASPara {
 	public	final static int numOfCol = 1;
 	
 	//For adjust the cell height
-	public	final static int originalHeight = 22;
 	public	final static int inputLineHeight = 25;
-	public	final static int inputOutputHeight = 44;
-	public	final static int threeCompHeight = 47;
+	public	final static int inputOutputHeight = 47;
 	
 }

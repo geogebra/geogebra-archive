@@ -118,7 +118,7 @@ public class CASView extends JComponent implements CasManager {
 		rowHeaderTable.getColumnModel().getColumn(0).setPreferredWidth(
 				ROW_HEADER_WIDTH);
 
-		rowHeaderTable.setRowHeight(CASPara.originalHeight);
+		rowHeaderTable.setRowHeight(CASPara.inputLineHeight);
 
 		rowHeaderTable.setDefaultRenderer(rowHeaderTable.getColumnClass(0),
 				new RowHeaderTableRenderer(consoleTable));
@@ -429,7 +429,7 @@ public class CASView extends JComponent implements CasManager {
 			if (cellValue.isOutputVisible())
 				table.setRowHeight(row, CASPara.inputOutputHeight);
 			else
-				table.setRowHeight(row, CASPara.originalHeight);
+				table.setRowHeight(row, CASPara.inputLineHeight);
 
 			JTableHeader header = reftable.getTableHeader();
 

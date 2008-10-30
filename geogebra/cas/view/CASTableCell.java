@@ -45,6 +45,7 @@ public class CASTableCell extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		this.add(inputPanel);
+		this.add(linePanel);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
 
@@ -63,50 +64,29 @@ public class CASTableCell extends JPanel {
 	public void addOutputPanel() {
 		if (!outputFieldVisiable) {
 			// Application.debug("Add Output panel");
+			this.remove(linePanel);
+
 			this.add(outputPanel);
+			this.add(linePanel);
 			outputFieldVisiable = true;
 			this.validate();
 		}
 	}
 
-	public int removeLinePanel() {
-		this.remove(linePanel);
+	public void removeLine() {
 
-		// TODO: check this
 		// this.validate();
 		SwingUtilities.updateComponentTreeUI(this);
 
-		int cellHeight = 0;
-		Component[] temp = this.getComponents();
-		switch (temp.length) {
-		case 1:
-			cellHeight = CASPara.originalHeight;
-			break;
-		case 2:
-			cellHeight = CASPara.inputOutputHeight;
-			break;
-		}
-
+		linePanel.setLineVisiable(false);
 		lineVisiable = false;
-		return cellHeight;
 	}
 
-	public int addLinePanel() {
-		int cellHeight = 0;
-		Component[] temp = this.getComponents();
-		switch (temp.length) {
-		case 1:
-			cellHeight = CASPara.inputLineHeight;
-			break;
-		case 2:
-			cellHeight = CASPara.threeCompHeight;
-			break;
+	public void addLine() {
 
-		}
-		this.add(linePanel);
-		this.validate();
+		linePanel.setLineVisiable(true);
 		lineVisiable = true;
-		return cellHeight;
+		this.validate();
 	}
 
 	public void setInput(String inValue) {
@@ -125,9 +105,9 @@ public class CASTableCell extends JPanel {
 	/*
 	 * Function: set the line unhighlighted, and return a proper cell height
 	 */
-	public int setLineInvisiable() {
+	public void setLineInvisiable() {
 		lineVisiable = false;
-		return this.removeLinePanel();
+		this.removeLine();
 	}
 
 	public boolean isLineVisiable() {
@@ -153,8 +133,6 @@ public class CASTableCell extends JPanel {
 	public void setInputAreaFocused() {
 		inputPanel.setInputAreaFocused();
 		inputPanel.setInputCaretPosition(inputPanel.getInput().length());
-		app.debug("Set the caret at position: "
-				+ inputPanel.getInput().length() + inputPanel.getInput());
 	}
 
 	public void setLineBorderFocus() {
@@ -163,6 +141,10 @@ public class CASTableCell extends JPanel {
 
 	public CASLinePanel getLinePanel() {
 		return linePanel;
+	}
+
+	public CASInputPanel getInputPanel() {
+		return inputPanel;
 	}
 
 	public JTextField getInputArea() {
@@ -184,10 +166,5 @@ public class CASTableCell extends JPanel {
 		if (outputPanel != null)
 			outputPanel.setFont(ft);
 	}
-
-	public CASInputPanel getInputPanel() {
-		return inputPanel;
-	}
-
 
 }
