@@ -450,7 +450,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             }  
             
             //  animation
-            if (geo.isGeoNumeric() && geo.isEuclidianVisible()) {            	
+            if (geo.isGeoNumeric()) {            	
                 cbItem = new JCheckBoxMenuItem( app.getPlain("AnimationOn"));
                 cbItem.setIcon(app.getEmptyIcon());
                 cbItem.setSelected(((GeoNumeric) geo).isAnimating());
