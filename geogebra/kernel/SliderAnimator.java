@@ -45,6 +45,11 @@ public class SliderAnimator implements ActionListener {
 		double step = num.getAnimationStep();
 		double speed = num.getAnimationSpeed();
 		
+		if (Kernel.isEqual(max, min, Kernel.MIN_PRECISION)) {
+			timer.setDelay(1000); // 1 sec
+			return;
+		}
+		
 		val += num.getAnimationStep() * direction * (speed < 0 ? -1 : +1);
 		
 		switch (num.getAnimationType()) {
@@ -79,7 +84,20 @@ public class SliderAnimator implements ActionListener {
 		//num.updateRepaint();
 		
 		// getAnimationSpeed 1 -> 5secs to get from one end of the slider to the other
-		timer.setDelay((int)(5000.0 * step / (max - min) / Math.abs(num.getAnimationSpeed())));
+		/*
+		int stepsNumber = (int)((max - min) / step);
+		
+		if (stepsNumber > AnimationUpdater.MAX_ANIMATION_STEPS) {
+	            // use this new increment that will make sure that we
+		   		// don't exceed the max number of frames per second
+	         step = (max - min) / AnimationUpdater.MAX_ANIMATION_STEPS;
+		} 
+		*/
+		int delay = (int)(AnimationUpdater.STANDARD_ANIMATION_TIME * 1000.0 * step / (max - min) / Math.abs(num.getAnimationSpeed()));
+		
+		if (delay < AnimationUpdater.STANDARD_ANIMATION_TIME) delay = AnimationUpdater.STANDARD_ANIMATION_TIME;
+		
+		timer.setDelay(delay);
 
 	}
 

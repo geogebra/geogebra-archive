@@ -11,14 +11,19 @@ public class AnimationUpdater implements ActionListener {
 	private ArrayList geos;
 	private Timer timer;
 	
+	public final static int STANDARD_ANIMATION_TIME = 5; // secs
+	public final static int MAX_ANIMATION_FRAME_RATE = 20; // frames per second
+	public final static int MAX_ANIMATION_STEPS = STANDARD_ANIMATION_TIME *	MAX_ANIMATION_FRAME_RATE;	
+	
 	public AnimationUpdater() {
 		
 		geos = new ArrayList();
 		
-		timer = new Timer(100, this);
+		timer = new Timer(1000 / MAX_ANIMATION_FRAME_RATE, this);
 		timer.start();
 	}
 	
+	/*
 	public void startAnimation(boolean start) {
 		if (start && !timer.isRunning()) timer.start();
 		else if (!start && timer.isRunning()) timer.stop();
@@ -30,7 +35,7 @@ public class AnimationUpdater implements ActionListener {
 	
 	public boolean isAnimating() {
 		return timer.isRunning();
-	}
+	}*/
 	
 	public synchronized void updateCascadeRepaintDelayed(GeoElement geo) {
 		geos.add(geo);
