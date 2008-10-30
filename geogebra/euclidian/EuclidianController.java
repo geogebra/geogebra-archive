@@ -716,6 +716,8 @@ public class EuclidianController implements MouseListener,
 			return;
 		}				
 		
+		geo.startAnimation(false); // stop animating		
+
 		movedGeoElement = geo;
 		//doSingleHighlighting(movedGeoElement);				
 				
@@ -1504,6 +1506,7 @@ public class EuclidianController implements MouseListener,
 		if (mode == EuclidianView.MODE_MOVE) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
 			if (geo != null) {				
+				
 				noHighlighting = true;
 				tempArrayList.clear();
 				tempArrayList.add(geo);
