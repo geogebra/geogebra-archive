@@ -93,7 +93,7 @@ public class DrawSegment3D extends Drawable3D {
 		if (!geo.doHighlighting())
 			return;
 		
-		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		//renderer.setMaterial(new Color(0f,0f,0f),0.75f);
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
 		renderer.resetMatrix();		

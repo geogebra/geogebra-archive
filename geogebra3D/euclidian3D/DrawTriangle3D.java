@@ -3,6 +3,8 @@ package geogebra3D.euclidian3D;
 
 
 
+import java.awt.Color;
+
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoTriangle3D;
@@ -43,14 +45,37 @@ public class DrawTriangle3D extends Drawable3D {
 	}
 	
 	
+	
+	
+	//drawing
 
 	
 	public void draw(EuclidianRenderer3D renderer){}
 
 	
 	public void drawHidden(EuclidianRenderer3D renderer){} 
-	public void drawPicked(EuclidianRenderer3D renderer){};
-	public void drawForPicking(EuclidianRenderer3D renderer) {};		
+	
+	public void drawPicked(EuclidianRenderer3D renderer){
+		if(!geo.isEuclidianVisible())
+			return;	
+		if (!geo.doHighlighting())
+			return;
+		
+		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawTriangle();
+		renderer.resetMatrix();		
+	};
+	
+	
+	public void drawForPicking(EuclidianRenderer3D renderer) {
+		if(!geo.isEuclidianVisible())
+			return;
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawTriangle();
+		renderer.resetMatrix();	
+		
+	};		
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())

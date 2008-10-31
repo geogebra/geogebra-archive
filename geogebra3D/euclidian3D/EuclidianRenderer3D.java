@@ -34,6 +34,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	
 	private IntBuffer selectBuffer;
 	private static int BUFSIZE = 512;
+	private static int MOUSE_PICK_WIDTH = 3;
 	
 	
 	// other
@@ -104,6 +105,7 @@ public class EuclidianRenderer3D implements GLEventListener {
        
         
 		//drawing picked parts
+		setMaterial(new Color(0f,0f,0f),0.75f);
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawPicked(this);	
@@ -296,11 +298,11 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glLoadIdentity();
       
         
-        /* create 5x5 pixel picking region near cursor location */
+        /* create MOUSE_PICK_WIDTH x MOUSE_PICK_WIDTH pixel picking region near cursor location */
         //glu.gluPickMatrix((double) mouseX, (double) (470 - mouseY),  5.0, 5.0, viewport, 0);
         //mouseY+=30; //TODO understand this offset
         //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
-        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), 5.0, 5.0, viewport, 0);
+        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
         gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
@@ -336,18 +338,20 @@ public class EuclidianRenderer3D implements GLEventListener {
         //int[] buffer = new int[BUFSIZE];
         //selectBuffer.get(buffer);
         int names, ptr = 0;
-        float z;
+        float zMax, zMin;
+        int num;
         for (int i = 0; i < hits; i++) { 
         	
           //names = buffer[ptr];      
           names = selectBuffer.get(ptr);  
           //System.out.println(" number of names for hit = " + names);
           
-          ptr++; // min z          
+          ptr++; // min z    
+          zMin = getDepth(ptr);
           //System.out.println(" z1 is " + buffer[ptr]);
           
           ptr++; // max z
-          z = getDepth(ptr); 
+          zMax = getDepth(ptr); 
           //System.out.println(" z2 is " + buffer[ptr]);
           
           ptr++;
@@ -355,8 +359,10 @@ public class EuclidianRenderer3D implements GLEventListener {
           for (int j = 0; j < names; j++){ 
            	//view.hits.add(geos[buffer[ptr]]);
         	//geos[buffer[ptr]].zPick = z;
-        	view.hits.add(geos[selectBuffer.get(ptr)]);
-        	geos[selectBuffer.get(ptr)].zPick = z;
+        	num = selectBuffer.get(ptr);
+        	view.hits.add(geos[num]);
+        	geos[num].zPickMin = zMin;
+        	geos[num].zPickMax = zMax;
         	ptr++;
           }
           //System.out.println();

@@ -76,7 +76,7 @@ public class DrawPoint3D extends Drawable3D{
 		if (!geo.doHighlighting())
 			return;
 
-		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		//renderer.setMaterial(new Color(0f,0f,0f),0.75f);
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawSphere(POINT3D_RADIUS*PICKED_DILATATION);//TODO use object property
 		renderer.resetMatrix();

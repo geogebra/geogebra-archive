@@ -3,6 +3,8 @@ package geogebra3D.euclidian3D;
 
 
 
+import java.awt.Color;
+
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -49,8 +51,33 @@ public class DrawPlane3D extends Drawable3D {
 	
 	public void draw(EuclidianRenderer3D renderer){}
 	public void drawHidden(EuclidianRenderer3D renderer){} 
-	public void drawPicked(EuclidianRenderer3D renderer){};	
-	public void drawForPicking(EuclidianRenderer3D renderer) {};	
+	
+	
+	public void drawPicked(EuclidianRenderer3D renderer){
+		
+		/*
+		if(!geo.isEuclidianVisible())
+			return;	
+		if (!geo.doHighlighting())
+			return;
+		
+		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawQuad();
+		renderer.resetMatrix();		
+		*/
+	};	
+	
+	
+	public void drawForPicking(EuclidianRenderer3D renderer) {
+
+		if(!geo.isEuclidianVisible())
+			return;
+		renderer.setMatrix(getMatrixGL());
+		renderer.drawQuad();
+		renderer.resetMatrix();			
+		
+	};	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())
@@ -85,40 +112,7 @@ public class DrawPlane3D extends Drawable3D {
 		
 	}
 	
-	/*
-	public void drawTransp(GraphicsContext3D gc){
-		if(isVisible){
-			gc.setAppearance(appTransp);
-			
-			gc.setModelTransform(t3d);			
-			gc.draw(geomTransp);
-			
-			//grid
-			GgbMatrix mc;
-			Transform3D t;			
-			gc.setAppearance(gridApp);
-			
-			for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
-				mc = P.getDrawingXMatrix(x); 
-				view3D.toScreenCoords3D(mc);
-				t = new Transform3D();
-				mc.getTransform3D(t);
-				gc.setModelTransform(t);			
-				gc.draw(gridGeom);
-			}
-			
-			for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
-				mc = P.getDrawingYMatrix(y); 
-				view3D.toScreenCoords3D(mc);
-				t = new Transform3D();
-				mc.getTransform3D(t);
-				gc.setModelTransform(t);			
-				gc.draw(gridGeom);
-			}
-		}
-		
-	}
-	*/
+
 	
 	
 	public void drawHiding(EuclidianRenderer3D renderer){
@@ -131,15 +125,7 @@ public class DrawPlane3D extends Drawable3D {
 		
 	}
 	
-	/*
-	public void drawHiding(GraphicsContext3D gc){
-		if(isVisible){
-			gc.setModelTransform(t3d);    	
-			gc.draw(geomTransp);
-		}
-		
-	}	
-	*/
+
 	
 	
 	

@@ -21,6 +21,7 @@ import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -35,7 +36,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private static final long serialVersionUID = -8414195993686838278L;
 	
 	
-	static final boolean DEBUG = true; //conditionnal compilation
+	static final boolean DEBUG = false; //conditionnal compilation
 
 	
 	//private Kernel kernel;
@@ -72,7 +73,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	ArrayList hits = new ArrayList(); //objects picked from openGL
 	HitSet hitsHighlighted = new HitSet(); 
 	HitSet hitsPoints = new HitSet(); //points if there is
-	HitSet hitsOthers = new HitSet(); //points if there is
+	HitSet hits1D = new HitSet(); //1D objects
+	HitSet hits2D = new HitSet(); //2D objects
+	HitSet hitsOthers = new HitSet(); //others
+	HitSetSet hitSets = new HitSetSet(); //set of sets
 	
 	//base vectors for moving a point
 	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
@@ -377,16 +381,26 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void processHits(){
 		
 		hitsPoints.clear();
+		hits1D.clear();
+		hits2D.clear();
 		hitsOthers.clear();
+		hitSets.clear();
 		
-		String s = "";
+		
 		for (Iterator iter = hits.iterator(); iter.hasNext();) {
 			
 			GeoElement3D geo = (GeoElement3D) iter.next();			
 			switch (geo.getGeoClassType()) {					
 			case GeoElement3D.GEO_CLASS_POINT3D:
-				hitsPoints.add(geo);
-				s+=geo.getLabel()+"(z= "+geo.zPick+")\n";
+				hitsPoints.add(geo);				
+				break;
+			case GeoElement3D.GEO_CLASS_SEGMENT3D:
+			case GeoElement3D.GEO_CLASS_LINE3D:
+				hits1D.add(geo);				
+				break;
+			case GeoElement3D.GEO_CLASS_TRIANGLE3D:
+			//case GeoElement3D.GEO_CLASS_PLANE3D:
+				hits2D.add(geo);				
 				break;
 			default:
 				hitsOthers.add(geo);
@@ -394,14 +408,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			}
 		}
 		
-		if (s!="")
-			Application.debug(s);
 		
+		if (DEBUG){
+			String s = "";
+			DecimalFormat df = new DecimalFormat("0.000000000");			
+			for (Iterator iter = hitsPoints.iterator(); iter.hasNext();) {
+				GeoElement3D geo = (GeoElement3D) iter.next();	
+				s+="zMin= "+df.format(geo.zPickMin)+" | zMax= "+df.format(geo.zPickMax)+" ("+geo.getLabel()+")\n";
+			}
+			if (s!="")
+				Application.debug(s);
+		}
+		
+		/*
 		if (!hitsPoints.isEmpty())
 			hitsHighlighted = hitsPoints;
 		else
 			hitsHighlighted = hitsOthers;
-		
+		*/
+		hitSets.add(hitsPoints);
+		hitSets.add(hits1D);
+		hitSets.add(hits2D);
+		hitSets.add(hitsOthers);
+		hitsHighlighted = (HitSet) hitSets.first();
 		
 	}
 	
