@@ -48,7 +48,7 @@ import java.util.TreeSet;
 <li>...
 </ul>
 @author      H-P Ulven
-@version     29.5.08
+@version     31.10.08
 29.05.08:
     Tranferred applet interface methods (the relevant ones) from GeoGebraAppletBase
 */
@@ -343,6 +343,26 @@ public class GgbAPI {
 		geo.setObjColor(col);
 		geo.updateRepaint();
 	}	
+	
+	/**
+	 * Starts/stops an object animating
+	 */
+	public void startAnimating(String objName, boolean animate) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;
+		geo.startAnimation(animate);	
+	}
+	
+	/**
+	 * Starts an object animating
+	 */
+	public void setAnimationSpeed(String objName, int speed) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;
+		geo.setAnimationSpeed(speed);
+	}
+	
+
 	
 	/**
 	 * Returns the color of the object as an hex string. Note that the hex-string 

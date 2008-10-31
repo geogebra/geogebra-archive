@@ -155,6 +155,16 @@ public interface JavaScriptAPI {
 	public boolean renameObject(String oldObjName, String newObjName);
 	
 	/**
+	 * Starts an object animating
+	 */
+	public void startAnimating(String objName, boolean animate);
+	
+	/**
+	 * Starts an object animating
+	 */
+	public void setAnimationSpeed(String objName, int speed);
+	
+	/**
 	 * Returns true if the object with the given name has a vaild
 	 * value at the moment.
 	 */

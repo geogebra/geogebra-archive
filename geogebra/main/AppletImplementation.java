@@ -676,6 +676,14 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		ggbApi.deleteObject(objName);
 	}	
 	
+	public synchronized void startAnimating(String objName, boolean animate){
+		ggbApi.startAnimating(objName, animate);
+	}
+	
+	public synchronized void setAnimationSpeed(String objName, int speed){
+		ggbApi.setAnimationSpeed(objName, speed);
+	}
+	
 	/**
 	 * Renames an object from oldName to newName.
 	 * @return whether renaming worked
