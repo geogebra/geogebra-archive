@@ -7,6 +7,7 @@ import geogebra.util.Util;
 
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
+import java.util.Comparator;
 
 public class GeoText extends GeoElement
 implements Locateable, AbsoluteScreenLocateable, TextValue {
@@ -611,5 +612,19 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	public void setZero() {
 		str="";
 	}
+	
+	public static Comparator compare = new Comparator() {
+	      public int compare(Object a, Object b) {
+	        GeoText itemA = (GeoText) a;
+	        GeoText itemB = (GeoText) b;
+	        int comp = itemA.getTextString().compareTo(itemB.getTextString());
+	        
+	        // if we return 0 for equal strings, the TreeSet deletes the equal one
+	        if (comp == 0) return 1;
+	        else
+	        	return comp;
+	      }
+	};
+
 
 }

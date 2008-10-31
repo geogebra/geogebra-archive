@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -661,6 +662,17 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	public boolean isAnimatable() {
 		return true;
 	}
+	
+	public static Comparator compare = new Comparator() {
+	      public int compare(Object a, Object b) {
+	        GeoNumeric itemA = (GeoNumeric) a;
+	        GeoNumeric itemB = (GeoNumeric) b;
+	        
+	        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
+	        return itemA.getValue() < itemB.getValue() ? -1 : +1;
+	      }
+	};
+
 	
 
 

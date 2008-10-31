@@ -30,6 +30,7 @@ import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 
 /**
@@ -983,6 +984,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	void showUndefinedInAlgebraView(boolean flag) {
 		showUndefinedInAlgebraView = flag;
 	}
+	
+	public static Comparator compareXcoords = new Comparator() {
+	      public int compare(Object a, Object b) {
+	        GeoPoint itemA = (GeoPoint) a;
+	        GeoPoint itemB = (GeoPoint) b;
+	        return (itemA.inhomX < itemB.inhomX) ? -1 : +1;
+	      }
+	};
 
 	
 		
