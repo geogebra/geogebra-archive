@@ -989,7 +989,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	      public int compare(Object a, Object b) {
 	        GeoPoint itemA = (GeoPoint) a;
 	        GeoPoint itemB = (GeoPoint) b;
-	        return (itemA.inhomX < itemB.inhomX) ? -1 : +1;
+	        
+	        double comp = itemA.inhomX - itemB.inhomX;
+	        if (itemA.getKernel().isZero(comp))
+		        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
+		       	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+		    else
+		       	return comp < 0 ? -1 : +1;
+		      
 	      }
 	};
 

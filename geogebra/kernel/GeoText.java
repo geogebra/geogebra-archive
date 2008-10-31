@@ -619,8 +619,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	        GeoText itemB = (GeoText) b;
 	        int comp = itemA.getTextString().compareTo(itemB.getTextString());
 	        
-	        // if we return 0 for equal strings, the TreeSet deletes the equal one
-	        if (comp == 0) return 1;
+	        
+	        if (comp == 0) 
+	        	// if we return 0 for equal strings, the TreeSet deletes the equal one
+	        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
 	        else
 	        	return comp;
 	      }

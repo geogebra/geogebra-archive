@@ -668,8 +668,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	        GeoNumeric itemA = (GeoNumeric) a;
 	        GeoNumeric itemB = (GeoNumeric) b;
 	        
+	        double comp = itemA.getValue() - itemB.getValue();
+	        if (itemA.getKernel().isZero(comp))
 	        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
-	        return itemA.getValue() < itemB.getValue() ? -1 : +1;
+	        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+	        else
+	        	return comp < 0 ? -1 : +1;
 	      }
 	};
 
