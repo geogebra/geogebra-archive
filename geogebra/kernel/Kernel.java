@@ -1640,6 +1640,28 @@ public class Kernel {
 	}
 	
 	/** 
+	 * returns the current x-axis step
+	 * Michael Borcherds 
+	 */
+	final public GeoNumeric AxisStepX(
+		String label) {
+		AlgoAxisStepX algo = new AlgoAxisStepX(cons, label);
+		GeoNumeric t = algo.getResult();
+		return t;
+	}
+	
+	/** 
+	 * returns the current y-axis step
+	 * Michael Borcherds 
+	 */
+	final public GeoNumeric AxisStepY(
+		String label) {
+		AlgoAxisStepY algo = new AlgoAxisStepY(cons, label);
+		GeoNumeric t = algo.getResult();
+		return t;
+	}
+	
+	/** 
 	 * returns the current construction protocol step
 	 * Michael Borcherds 2008-05-15
 	 */

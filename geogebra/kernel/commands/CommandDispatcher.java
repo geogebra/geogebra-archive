@@ -289,7 +289,10 @@ public class CommandDispatcher {
     	
     	cmdTable.put("ToFraction", new CmdToFraction(kernel));   
     	
-    	cmdTable.put("KeepIf", new CmdKeepIf(kernel));   
+    	cmdTable.put("KeepIf", new CmdKeepIf(kernel));  
+    	
+    	cmdTable.put("AxisStepX", new CmdAxisStepX(kernel));   
+    	cmdTable.put("AxisStepY", new CmdAxisStepY(kernel));   
     	
     }
 

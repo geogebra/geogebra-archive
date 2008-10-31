@@ -4589,5 +4589,59 @@ class CmdKeepIf extends CommandProcessor {
 
 }
 
+class CmdAxisStepX extends CommandProcessor {
+
+	public CmdAxisStepX(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+        boolean[] ok = new boolean[n];
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 0:                 
+			
+        		GeoElement[] ret =
+                	{
+                     kernel.AxisStepX(c.getLabel())};
+        		return ret;
+
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
+class CmdAxisStepY extends CommandProcessor {
+
+	public CmdAxisStepY(Kernel kernel) {
+		super(kernel);
+	}
+
+	public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+        boolean[] ok = new boolean[n];
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		switch (n) {
+		case 0:                 
+			
+        		GeoElement[] ret =
+                	{
+                     kernel.AxisStepY(c.getLabel())};
+        		return ret;
+
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+
+}
+
 
 
