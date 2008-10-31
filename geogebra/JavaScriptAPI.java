@@ -152,7 +152,7 @@ public interface JavaScriptAPI {
 	 * Renames an object from oldName to newName.
 	 * @return whether renaming worked
 	 */
-	public void renameObject(String oldObjName, String newObjName);
+	public boolean renameObject(String oldObjName, String newObjName);
 	
 	/**
 	 * Returns true if the object with the given name has a vaild

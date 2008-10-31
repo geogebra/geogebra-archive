@@ -680,8 +680,8 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Renames an object from oldName to newName.
 	 * @return whether renaming worked
 	 */
-	public synchronized void renameObject(String oldName, String newName) {		
-		ggbApi.renameObject(oldName, newName);
+	public synchronized boolean renameObject(String oldName, String newName) {		
+		return ggbApi.renameObject(oldName, newName);
 	}	
 	
 	/**
