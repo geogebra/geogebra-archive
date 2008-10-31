@@ -1093,7 +1093,7 @@ public class PropertiesDialogGeoElement
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the 	
 			
-			/*
+			
 			// remove possible old change listeners from color chooser						
 			ChangeListener [] listeners = (ChangeListener[]) colChooser.getListeners(ChangeListener.class);
 			if (listeners != null) {
@@ -1101,7 +1101,7 @@ public class PropertiesDialogGeoElement
 					colChooser.getSelectionModel().removeChangeListener( listeners[i]);
 				}
 			}
-			*/
+			
 						
 			//colChooser.setColor(new Color(1, 1,1, 100));
 			colChooser.getSelectionModel().addChangeListener(this);	
