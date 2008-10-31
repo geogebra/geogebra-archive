@@ -676,11 +676,11 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		ggbApi.deleteObject(objName);
 	}	
 	
-	public synchronized void startAnimating(String objName, boolean animate){
+	public synchronized void startAnimating(String objName, boolean animate) {
 		ggbApi.startAnimating(objName, animate);
 	}
 	
-	public synchronized void setAnimationSpeed(String objName, int speed){
+	public synchronized void setAnimationSpeed(String objName, double speed) {
 		ggbApi.setAnimationSpeed(objName, speed);
 	}
 	

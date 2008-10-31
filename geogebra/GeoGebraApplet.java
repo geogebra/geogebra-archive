@@ -369,7 +369,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().startAnimating(objName, animate);
 	}
 	
-	public void setAnimationSpeed(String objName, int speed){
+	public void setAnimationSpeed(String objName, double speed){
 		getAppletImplementation().setAnimationSpeed(objName, speed);
 	}
 	

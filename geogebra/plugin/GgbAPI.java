@@ -356,7 +356,7 @@ public class GgbAPI {
 	/**
 	 * Starts an object animating
 	 */
-	public void setAnimationSpeed(String objName, int speed) {
+	public void setAnimationSpeed(String objName, double speed) {
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;
 		geo.setAnimationSpeed(speed);

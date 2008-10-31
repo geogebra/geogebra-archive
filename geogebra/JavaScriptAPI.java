@@ -162,7 +162,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Starts an object animating
 	 */
-	public void setAnimationSpeed(String objName, int speed);
+	public void setAnimationSpeed(String objName, double speed);
 	
 	/**
 	 * Returns true if the object with the given name has a vaild
