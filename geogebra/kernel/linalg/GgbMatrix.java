@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import javax.media.j3d.Transform3D;
@@ -484,6 +485,8 @@ public class GgbMatrix
 		GgbMatrix ret = new GgbMatrix(getRows(),getColumns());
 		
 		double d = this.det();
+		
+		if (Kernel.isEqual(d, 0.0, Kernel.STANDARD_PRECISION)) return null;
 		
 		double signe_i = 1.0;
 		for(int i=1; i<=getRows(); i++){

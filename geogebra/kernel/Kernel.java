@@ -2763,6 +2763,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Invert[matrix]
+	 * Michael Borcherds
+	 */
+	final public GeoList Invert(String label, GeoList list) {
+		AlgoInvert algo = new AlgoInvert(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Reverse[list]
 	 * Michael Borcherds
 	 */

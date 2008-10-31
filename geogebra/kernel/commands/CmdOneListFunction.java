@@ -244,6 +244,24 @@ class CmdReverse extends CmdOneListFunction {
 }
 
 /*
+ * Invert[ <List> ]
+ * Michael Borcherds 
+ */
+class CmdInvert extends CmdOneListFunction {
+
+	public CmdInvert(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Invert(a, b);
+	}
+
+
+}
+
+/*
  * SD[ list ]
  * adapted from CmdVariance by Michael Borcherds 2008-02-18
  */
