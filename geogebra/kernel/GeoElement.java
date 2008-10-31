@@ -1225,9 +1225,17 @@ final public boolean hasOnlyFreeInputPoints() {
 	
 	public boolean setCaption(String caption) {
 		if (caption == null 
-			|| caption.length() == 0
-			|| caption.equals(label))
+			|| caption.equals(label)) {
+			caption = null;
 			return false;
+		}
+		
+		caption = caption.trim();
+		
+		if (caption.trim().length() == 0) {
+			this.caption = null;
+			return true;
+		}
 		
 		this.caption = caption.trim();
 		return true;
