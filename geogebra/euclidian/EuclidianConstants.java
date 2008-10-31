@@ -107,20 +107,20 @@ public interface EuclidianConstants {
 	public static final int MODE_REGULAR_POLYGON = 51;
 	
 	public static final int MODE_SHOW_HIDE_CHECKBOX = 52;
-	
-	public static final int MODE_COMPASSES = 53;  		// Michael Borcherds 2008-03-13
+	// GeoGebra 3.2 start
+	public static final int MODE_COMPASSES = 53;
 
-	public static final int MODE_MIRROR_AT_CIRCLE = 54; // Michael Borcherds 2008-03-23
+	public static final int MODE_MIRROR_AT_CIRCLE = 54;
 
-	public static final int MODE_ELLIPSE_THREE_POINTS = 55; // Michael Borcherds 2008-04-06
+	public static final int MODE_ELLIPSE_THREE_POINTS = 55;
 
-	public static final int MODE_HYPERBOLA_THREE_POINTS = 56; // Michael Borcherds 2008-04-06
+	public static final int MODE_HYPERBOLA_THREE_POINTS = 56;
 
-	public static final int MODE_PARABOLA = 57; // Michael Borcherds 2008-04-06
+	public static final int MODE_PARABOLA = 57;
 
-	public static final int MODE_FITLINE = 58; // Michael Borcherds 2008-06-22
+	public static final int MODE_FITLINE = 58;
 
-	public static final int MODE_RECORD_TO_SPREADSHEET = 59; // Michael Borcherds 2008-06-22
+	public static final int MODE_RECORD_TO_SPREADSHEET = 59;
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 
