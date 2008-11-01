@@ -111,7 +111,7 @@ public class AlgoInvert extends AlgoElement {
    		
    		//matrix.SystemPrint();
    		
-   		if (matrix == null) {
+   		if (matrix.isSingular()) {
   			outputList.setUndefined();
 	   		return;   		
 	   	}

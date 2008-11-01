@@ -33,6 +33,8 @@ public class GgbMatrix
 	protected int rows, columns; // dimensions
 	protected boolean transpose=false; //transposing the matrix is logical operation
 	
+	private boolean isSingular = false;
+	
 	//for rotations
 	public static final int AXE_X = 0;
 	public static final int AXE_Y = 1;
@@ -47,6 +49,8 @@ public class GgbMatrix
 	
 	/** creates an empty rows * columns matrix (all values set to 0)  */
 	public GgbMatrix(int rows, int columns){
+		
+		setIsSingular(false);
 		
 		this.rows=rows;
 		this.columns=columns;
@@ -486,7 +490,10 @@ public class GgbMatrix
 		
 		double d = this.det();
 		
-		if (Kernel.isEqual(d, 0.0, Kernel.STANDARD_PRECISION)) return null;
+		if (Kernel.isEqual(d, 0.0, Kernel.STANDARD_PRECISION)){			
+			ret.setIsSingular(true);
+			return ret;
+		}
 		
 		double signe_i = 1.0;
 		for(int i=1; i<=getRows(); i++){
@@ -513,6 +520,17 @@ public class GgbMatrix
 			return null;
 		return mInv.mul(v);		
 		
+	}
+	
+	/*
+	 * returns whether the matrix is singular, eg after an inverse
+	 */
+	public boolean isSingular() {
+		return isSingular;
+	}
+	
+	public void setIsSingular(boolean isSingular) {
+		this.isSingular = isSingular;
 	}
 	
 	
