@@ -272,7 +272,8 @@ public abstract class GeoElement
 	public final static int ANIMATION_OSCILLATING = 0;
 	public final static int ANIMATION_INCREASING = 1;
 	public final static int ANIMATION_DECREASING = 2;
-	private int  animationType = ANIMATION_OSCILLATING;
+	private int animationType = ANIMATION_OSCILLATING;
+	private int animationDirection = 1;
 	
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
@@ -1080,21 +1081,41 @@ final public boolean hasOnlyFreeInputPoints() {
 		return animationStep;
 	}
 	
-	public double getAnimationSpeed() {
+	final public double getAnimationSpeed() {
 		return animationSpeed;
 	}
 	
 	public void setAnimationSpeed(double s) {
-		if (s > -10.0 && s < 10.0)
+		double abs = Math.abs(s);
+		if (0.001 <= abs && abs < 10)
 			animationSpeed = s;
 	}
 
-	public int getAnimationType() {
+	final public int getAnimationType() {
 		return animationType;
 	}
 	
-	public void setAnimationType(int type) {
-		animationType = type;
+	final public void setAnimationType(int type) {
+		switch (type) {
+			case ANIMATION_INCREASING:
+			case ANIMATION_OSCILLATING:
+				animationType = type;
+				animationDirection = 1;
+				break;
+			
+			case ANIMATION_DECREASING:
+				animationType = type;
+				animationDirection = -1;
+				break;
+		}
+	}
+	
+	protected int getAnimationDirection() {
+		return animationDirection;
+	}
+	
+	protected void changeAnimationDirection() {
+		animationDirection = -animationDirection;
 	}
 	
 	/**
@@ -1102,18 +1123,9 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * 
 	 * @see Animatable interface
 	 */
-	final public void setAnimating(boolean flag) {
-		if (animating == flag) return;
+	final public synchronized void setAnimating(boolean flag) {
+		animating = flag && isAnimatable();
 		
-		// check if this object can be animated at all
-		if (!isAnimatable()) {
-			animating = false;
-			return;
-		}
-		
-		// set flag
-		animating = flag;
-			
 		// tell animation manager
 		AnimationManager am = kernel.getAnimatonManager();
 		if (animating)

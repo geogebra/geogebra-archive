@@ -37,7 +37,7 @@ import java.util.TreeSet;
  * @version
  */
 public class GeoNumeric extends GeoElement 
-implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animateable {	
+implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {	
 	
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
@@ -244,7 +244,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animateable 
 	}
 
 	// synchronized for animation
-	public synchronized void setValue(double x) {
+	public void setValue(double x) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
 		}					
@@ -649,9 +649,42 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animateable 
 	 * 
 	 * @return whether the value of this number was changed
 	 */
-	final public boolean doAnimationStep() {
-		// TODO: implement
-		return false;
+	final public synchronized boolean doAnimationStep(double frameRate) {
+		// check that we have valid min and max values
+		if (!intervalMinActive || !intervalMaxActive) 
+			return false;
+		
+		// compute animation step based on speed and frame rates
+		double intervalWidth = intervalMax - intervalMin;
+		double step = intervalWidth * getAnimationSpeed() * getAnimationDirection() /
+				      (AnimationManager.STANDARD_ANIMATION_TIME * frameRate);
+		
+		// change number's value
+		value = value + step;
+				
+		// make sure we don't get outside our interval
+		switch (getAnimationType()) {		
+			case GeoElement.ANIMATION_DECREASING:
+			case GeoElement.ANIMATION_INCREASING:								
+				if (value > intervalMax) 
+					value = value - intervalWidth;
+				else if (value < intervalMin) 
+					value = value + intervalWidth;		
+				break;
+			
+			case GeoElement.ANIMATION_OSCILLATING:
+			default: 		
+				if (value > intervalMax) {
+					value = intervalMax;
+					changeAnimationDirection();
+				} else if (value < intervalMin) {
+					value = intervalMin;
+					changeAnimationDirection();			
+				}		
+				break;
+		}
+				
+		return true;
 	}
 	
 	
