@@ -87,13 +87,18 @@ public class DrawSegment3D extends Drawable3D {
 	public void drawHiding(EuclidianRenderer3D renderer){}
 	
 	
+	
+	
+	
+	
+	
 	public void drawPicked(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())
 			return;
 		if (!geo.doHighlighting())
 			return;
 		
-		//renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
 		renderer.resetMatrix();		
@@ -102,7 +107,13 @@ public class DrawSegment3D extends Drawable3D {
 	
 	public void drawForPicking(EuclidianRenderer3D renderer) {
 		draw(renderer);
-	};	
+	};
+	
+	
+	public int getPickOrder(){
+		return DRAW_PICK_ORDER_1D;
+	}	
+		
 	
 	
 	

@@ -371,7 +371,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		if (Application.isRightClick(e)){
 			
 			if (!view.hits.isEmpty()){				
-				GeoElement3D geo = (GeoElement3D) view.hits.get(0);	
+				GeoElement3D geo = view.getFirstHit();	
 				app3D.getGuiManager().showPopupMenu(geo, view, mouseLoc);
 			}
 			

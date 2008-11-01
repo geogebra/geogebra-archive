@@ -18,16 +18,15 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import java.text.DecimalFormat;
+
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
 
 /**
  *
- * @author  Mathieu
+ * @author  ggb3D
  * @version 
  */
 public abstract class GeoElement3D
@@ -42,18 +41,11 @@ public abstract class GeoElement3D
 	
 	
 	
-	//
+	
 	// GeoElement3D types 
-	// be care to put them in a correct order : points before 1D objects before 2D objects ...
-	//
-	// points
 	public static final int GEO_CLASS_POINT3D = 3010;
-	//
-	// 1D objects
 	public static final int GEO_CLASS_SEGMENT3D = 3110;
 	public static final int GEO_CLASS_LINE3D = 3120;
-	//
-	// 2D objects
 	public static final int GEO_CLASS_TRIANGLE3D = 3210;
 	public static final int GEO_CLASS_PLANE3D = 3220;
 

@@ -75,7 +75,22 @@ public class DrawTriangle3D extends Drawable3D {
 		renderer.drawTriangle();
 		renderer.resetMatrix();	
 		
-	};		
+	};	
+	
+	
+	
+	public int getPickOrder(){
+		return DRAW_PICK_ORDER_2D;
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())

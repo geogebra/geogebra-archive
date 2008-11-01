@@ -73,11 +73,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//picking and hits
 	ArrayList hits = new ArrayList(); //objects picked from openGL
 	TreeSet hitsHighlighted = new TreeSet(new Drawable3D.drawableComparator()); 
-	TreeSet hitsPoints = new TreeSet(new Drawable3D.drawableComparator()); //points if there is
-	TreeSet hits1D = new TreeSet(new Drawable3D.drawableComparator()); //1D objects
-	TreeSet hits2D = new TreeSet(new Drawable3D.drawableComparator()); //2D objects
+	TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
 	TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); //others
-	TreeSet hitSets = new TreeSet(new Drawable3D.setComparator()); //set of sets
+	TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); //set of sets
 	
 	//base vectors for moving a point
 	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
@@ -158,8 +156,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		setMovingVisible(false);
 		
-		
-		
+		// initing hitSet
+		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
+			hitSet[i] = new TreeSet(new Drawable3D.drawableComparator());
 		
 	}
 	
@@ -381,42 +380,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	// hits from picking
 	public void processHits(){
 		
-		hitsPoints.clear();
-		hits1D.clear();
-		hits2D.clear();
+		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
+			hitSet[i].clear();
 		hitsOthers.clear();
-		hitSets.clear();
+		hitSetSet.clear();
 		
 		
-		for (Iterator iter = hits.iterator(); iter.hasNext();) {
-			
-			Drawable3D d = (Drawable3D) iter.next();			
-			switch (d.getGeoElement3D().getGeoClassType()) {					
-			case GeoElement3D.GEO_CLASS_POINT3D:
-				hitsPoints.add(d);				
-				break;
-			case GeoElement3D.GEO_CLASS_SEGMENT3D:
-			case GeoElement3D.GEO_CLASS_LINE3D:
-				hits1D.add(d);				
-				break;
-			case GeoElement3D.GEO_CLASS_TRIANGLE3D:
-			//case GeoElement3D.GEO_CLASS_PLANE3D:
-				hits2D.add(d);				
-				break;
-			default:
-				hitsOthers.add(d);
-				break;
-			}
+		for (Iterator iter = hits.iterator(); iter.hasNext();) {			
+			Drawable3D d = (Drawable3D) iter.next();	
+			if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
+				hitSet[d.getPickOrder()].add(d);
+			else
+				hitsOthers.add(d);			
 		}
 		
 		
-
-
-		hitSets.add(hitsPoints);
-		hitSets.add(hits1D);
-		hitSets.add(hits2D);
+		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
+			hitSetSet.add(hitSet[i]);
 		//hitSets.add(hitsOthers);
-		hitsHighlighted = (TreeSet) hitSets.first();
+		hitsHighlighted = (TreeSet) hitSetSet.first();
 		
 	}
 	

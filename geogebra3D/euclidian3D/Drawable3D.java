@@ -47,7 +47,11 @@ public abstract class Drawable3D {
 	public float zPickMax, zPickMin; //for odering elements with openGL picking
 	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	
-	
+	//constants for picking : have to be from 0 to DRAW_PICK_ORDER_MAX-1, regarding to picking order
+	static final public int DRAW_PICK_ORDER_MAX = 3;
+	static final public int DRAW_PICK_ORDER_0D = 0; //for 0-Dimensional objects : points
+	static final public int DRAW_PICK_ORDER_1D = 1; //for 1-Dimensional objects : segments, line
+	static final public int DRAW_PICK_ORDER_2D = 2; //for 2-Dimensional objects : polygons, planes
 	
 	//links to the GeoElement
 	GeoElement geo; 	
@@ -82,8 +86,12 @@ public abstract class Drawable3D {
 	////////////////////////////////
 	// picking
 	
+	/** returns picking order */
+	abstract public int getPickOrder();
+	
+	
 	/** compare this to another Drawable3D with picking */
-	public int comparePickingTo(Drawable3D d, boolean checkGeoClassType){
+	public int comparePickingTo(Drawable3D d, boolean checkPickOrder){
 		
 		//check if the two objects are "mixed"			
 		if ((this.zPickMin-d.zPickMin)*(this.zPickMax-d.zPickMax)<EPSILON_Z){
@@ -95,10 +103,10 @@ public abstract class Drawable3D {
 						+"zMin= "+df.format(d.zPickMin)+" | zMax= "+df.format(d.zPickMax)+" ("+d.getGeoElement().getLabel()+")\n");
 			}
 			
-			if (checkGeoClassType){
-				if (this.getGeoElement().getGeoClassType()<d.getGeoElement().getGeoClassType())
+			if (checkPickOrder){
+				if (this.getPickOrder()<d.getPickOrder())
 					return -1;
-				if (this.getGeoElement().getGeoClassType()>d.getGeoElement().getGeoClassType())
+				if (this.getPickOrder()>d.getPickOrder())
 					return 1;
 			}
 			
