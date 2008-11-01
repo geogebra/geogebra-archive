@@ -325,7 +325,7 @@ public class Construction {
 	 * 
 	 * @see updateConstruction()
 	 */
-	void addToAlgorithmList(AlgoElement algo) {
+	public void addToAlgorithmList(AlgoElement algo) {
 		algoList.add(algo);
 	}
 

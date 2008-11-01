@@ -3,17 +3,39 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public class GeoTriangle3D extends GeoCoordSys2D {
+public class GeoPolygon3D extends GeoCoordSys2D {
 
-	public GeoTriangle3D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J) {
+	public GeoPolygon3D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J) {
 		super(c, O, I, J);
 		
+	}
+	
+	
+	public GeoPolygon3D(Construction c, GeoPoint3D[] points) {
+		super(c);
+		M=new GgbMatrix(4,3);
+		setCoord(points);	
+
+	}	
+	
+	
+	public void setCoord(GeoPoint3D[] points) {
+		if (points.length<3)
+			this.setUndefined();
+		else{
+			this.setCoord(points[0],points[1],points[2]);
+			//TODO process for more than 3 points			
+		}
 		
 	}
+	
+	
+	
 
-	public GeoTriangle3D(Construction c, GgbVector A, GgbVector B, GgbVector C) {
+	public GeoPolygon3D(Construction c, GgbVector A, GgbVector B, GgbVector C) {
 		super(c, A, B.sub(A), C.sub(A));
 		
 	}
@@ -28,15 +50,15 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 	
 	
 	protected String getClassName() {
-		return "GeoTriangle3D";
+		return "GeoPolygon3D";
 	}        
 	
     protected String getTypeString() {
-		return "Triangle3D";
+		return "Polygon3D";
 	}
     
     public int getGeoClassType() {
-    	return GEO_CLASS_TRIANGLE3D; 
+    	return GEO_CLASS_POLYGON3D; 
     }
 
 	public GeoElement copy() {

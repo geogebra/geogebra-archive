@@ -1779,7 +1779,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	/**
 	 * add algorithm to dependency list of this GeoElement
 	 */
-	final void addAlgorithm(AlgoElement algorithm) {	
+	public final void addAlgorithm(AlgoElement algorithm) {	
 		if (!algorithmList.contains(algorithm))
 			algorithmList.add(algorithm);
 		addToUpdateSets(algorithm);

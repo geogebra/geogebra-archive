@@ -11,7 +11,7 @@ import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.GeoTriangle3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
@@ -218,9 +218,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				
 
-				case GeoElement3D.GEO_CLASS_TRIANGLE3D:
-					if(DEBUG){Application.debug("GEO_CLASS_TRIANGLE3D");}
-					d = new DrawTriangle3D(this, (GeoTriangle3D) geo);
+				case GeoElement3D.GEO_CLASS_POLYGON3D:
+					if(DEBUG){Application.debug("GEO_CLASS_POLYGON3D");}
+					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
 					//Application.debug("new DrawPoint3D");
 					break;									
 				

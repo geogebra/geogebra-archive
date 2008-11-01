@@ -14,6 +14,11 @@ public abstract class GeoCoordSys2D extends GeoCoordSys {
 	GgbVector gridOrigin = null;
 	GgbVector gridOriginProjected = new GgbVector(4);
 
+	
+	public GeoCoordSys2D(Construction c){
+		super(c);	
+	}
+	
 	public GeoCoordSys2D(Construction c, GgbVector O, GgbVector V1, GgbVector V2){
 		super(c);
 		M=new GgbMatrix(4,3);

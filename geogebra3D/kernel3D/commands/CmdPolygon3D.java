@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPolygon;
@@ -42,7 +43,8 @@ public class CmdPolygon3D extends CmdPolygon {
 		GeoElement[] arg;
 
 
-
+		
+		/*
 		if (n==3) {
 			arg = resArgs(c);
 			if (arg[0].isGeoElement3D() && arg[1].isGeoElement3D() && arg[2].isGeoElement3D()){
@@ -65,6 +67,23 @@ public class CmdPolygon3D extends CmdPolygon {
 					return ret;
 				}
 			}
+		}
+		*/
+		if (n==3) { //TODO process for more than 3 points
+			arg = resArgs(c);
+			// polygon for given points
+			GeoPoint3D[] points = new GeoPoint3D[n];
+			// check arguments
+			for (int i = 0; i < n; i++) {
+				if (!(arg[i].isGeoPoint3D()))
+					return super.process(c);
+				else {
+					points[i] = (GeoPoint3D) arg[i];
+				}
+			}
+			// everything ok
+			GeoElement[] ret = {kernel3D.Polygon3D(c.getLabel(), points)};
+			return ret;
 		}
 
 		return super.process(c);

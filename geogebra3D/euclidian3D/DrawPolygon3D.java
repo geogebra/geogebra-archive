@@ -7,19 +7,19 @@ import java.awt.Color;
 
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
-import geogebra3D.kernel3D.GeoTriangle3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
 
 
 
 
-public class DrawTriangle3D extends Drawable3D {
+public class DrawPolygon3D extends Drawable3D {
 
-	GeoTriangle3D T;
+	GeoPolygon3D T;
 	GgbMatrix m; //representative matrix in physical coordinates
 
 	
 	
-	public DrawTriangle3D(EuclidianView3D view, GeoTriangle3D t){
+	public DrawPolygon3D(EuclidianView3D view, GeoPolygon3D t){
 		this.T=t;
 		this.view3D=view;
 		setGeoElement(t);

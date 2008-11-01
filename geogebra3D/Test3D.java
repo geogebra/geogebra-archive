@@ -285,16 +285,16 @@ public class Test3D{
 		for(i=0;i<3;i++)
 			kernel3D.Segment3D("segment",P1[i],P2);
 		
-		GeoTriangle3D t;
+		GeoPolygon3D t;
 		Color c = new Color(0.5f,0.2f,0.1f);
-		t=kernel3D.Triangle3D("triangle",P2,P1[1],P1[2]);
+		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
 		t.setObjColor(c);
 		
-		t=kernel3D.Triangle3D("triangle",P2,P1[2],P1[0]);
+		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
 		t.setObjColor(c);
-		t=kernel3D.Triangle3D("triangle",P2,P1[1],P1[0]);
+		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[0]});
 		t.setObjColor(c);
-		t=kernel3D.Triangle3D("triangle",P1[1],P1[2],P1[0]);
+		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P1[1],P1[2],P1[0]});
 		t.setObjColor(c);
 		
 		
