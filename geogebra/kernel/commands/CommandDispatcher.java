@@ -295,6 +295,7 @@ public class CommandDispatcher {
     	cmdTable.put("AxisStepY", new CmdAxisStepY(kernel));   
     	
     	cmdTable.put("Invert", new CmdInvert(kernel));   
+    	cmdTable.put("Transpose", new CmdTranspose(kernel));   
     	
     }
 

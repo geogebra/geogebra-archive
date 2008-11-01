@@ -2773,6 +2773,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Transpose[matrix]
+	 * Michael Borcherds
+	 */
+	final public GeoList Transpose(String label, GeoList list) {
+		AlgoTranspose algo = new AlgoTranspose(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Reverse[list]
 	 * Michael Borcherds
 	 */
