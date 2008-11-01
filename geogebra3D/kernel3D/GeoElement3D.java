@@ -33,7 +33,6 @@ import geogebra.main.Application;
 public abstract class GeoElement3D
 	extends GeoElement{
 	
-	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	private static final boolean DEBUG = false;
 	
 	
@@ -41,7 +40,7 @@ public abstract class GeoElement3D
 	private boolean willBeHighlighted = false;
 
 	
-	public float zPickMax, zPickMin; //for odering elements with openGL picking
+	
 	
 	//
 	// GeoElement3D types 
@@ -118,62 +117,7 @@ public abstract class GeoElement3D
 	
 
 	
-	/** compare this to another GeoElement3D with zPicking */
-	public int zPickCompareTo(GeoElement3D geo2, boolean checkGeoClassType){
-		
-		//check if the two objects are "mixed"			
-		if ((this.zPickMin-geo2.zPickMin)*(this.zPickMax-geo2.zPickMax)<EPSILON_Z){
-			
-			if (DEBUG){
-				DecimalFormat df = new DecimalFormat("0.000000000");
-				Application.debug("mixed :\n"
-						+"zMin= "+df.format(this.zPickMin)+" | zMax= "+df.format(this.zPickMax)+" ("+this.getLabel()+")\n"
-						+"zMin= "+df.format(geo2.zPickMin)+" | zMax= "+df.format(geo2.zPickMax)+" ("+geo2.getLabel()+")\n");
-			}
-			
-			if (checkGeoClassType){
-				if (this.getGeoClassType()<geo2.getGeoClassType())
-					return -1;
-				if (this.getGeoClassType()>geo2.getGeoClassType())
-					return 1;
-			}
-			
-			// check if one is on a path and the other not
-			//TODO do this only for points
-			if ((this.hasPath1D())&&(!geo2.hasPath1D()))
-				return -1;
-			if ((!this.hasPath1D())&&(geo2.hasPath1D()))
-				return 1;
 
-
-			//check if one is the child of the other
-			if (this.isChildOf(geo2))
-				return -1;
-			if (geo2.isChildOf(this))
-				return 1;
-		
-		}
-
-		//finally check if one is before the other
-		if (this.zPickMax<geo2.zPickMax)
-			return -1;
-		if (this.zPickMax>geo2.zPickMax)
-			return 1;
-
-		//says that the two objects are equal for the comparator
-		if (DEBUG){
-			DecimalFormat df = new DecimalFormat("0.000000000");
-			Application.debug("equality :\n"
-					+"zMin= "+df.format(this.zPickMin)+" | zMax= "+df.format(this.zPickMax)+" ("+this.getLabel()+")\n"
-					+"zMin= "+df.format(geo2.zPickMin)+" | zMax= "+df.format(geo2.zPickMax)+" ("+geo2.getLabel()+")\n");
-		}
-		return 0;
-
-		
-	}
-	
-	
-	
 	
 	
 	

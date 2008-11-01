@@ -307,52 +307,34 @@ public class EuclidianRenderer3D implements GLEventListener {
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
 		//drawing not hidden parts
-    	//Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
-    	GeoElement3D[] geos = new GeoElement3D[BUFSIZE];
+    	Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
+    	//GeoElement3D[] geos = new GeoElement3D[BUFSIZE];
         int loop = 0;
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			loop++;
 			gl.glLoadName(loop);
 			d.drawForPicking(this);	
-			geos[loop] = (GeoElement3D) d.getGeoElement();
-			
-			/*
-			geos[loop].setWasHighlighted();
-			geos[loop].setWillBeHighlighted(false);
-			*/
-			
+			//geos[loop] = (GeoElement3D) d.getGeoElement();
+			drawHits[loop] = d;
 
 		}
-        
-        
-        hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
-       
 
-        //Application.debug("hits("+mouseX+","+mouseY+") = "+hits);
-        
-        
+        hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
+             
         //hits are stored in EuclidianView3D
         view.hits.clear();
         
-        //int[] buffer = new int[BUFSIZE];
-        //selectBuffer.get(buffer);
         int names, ptr = 0;
         float zMax, zMin;
         int num;
         for (int i = 0; i < hits; i++) { 
-        	
-          //names = buffer[ptr];      
+        	     
           names = selectBuffer.get(ptr);  
-          //System.out.println(" number of names for hit = " + names);
-          
           ptr++; // min z    
           zMin = getDepth(ptr);
-          //System.out.println(" z1 is " + buffer[ptr]);
-          
           ptr++; // max z
-          zMax = getDepth(ptr); 
-          //System.out.println(" z2 is " + buffer[ptr]);
+          zMax = getDepth(ptr);           
           
           ptr++;
           
@@ -360,21 +342,13 @@ public class EuclidianRenderer3D implements GLEventListener {
            	//view.hits.add(geos[buffer[ptr]]);
         	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
-        	view.hits.add(geos[num]);
-        	geos[num].zPickMin = zMin;
-        	geos[num].zPickMax = zMax;
+        	view.hits.add(drawHits[num]);
+        	drawHits[num].zPickMin = zMin;
+        	drawHits[num].zPickMax = zMax;
         	ptr++;
-          }
-          //System.out.println();
+          }          
         }
         
-        //update highlighting      
-        /*
-        for (int i=1;i<=loop;i++)
-        	geos[i].updateHighlighted(true);
-        	*/
-        
-    	
         waitForPick = false;
         view.waitForPick = true;
     }
