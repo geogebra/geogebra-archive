@@ -657,12 +657,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animateable 
 	
 	/**
 	 * Returns a comparator for GeoNumeric objects.
+	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
 	 */
 	public static Comparator getComparator() {
 		if (comparator == null) {
 			comparator = new Comparator() {
 		      public int compare(Object a, Object b) {
-		    	  if (a == b) return 0;
+		    	  //if (a == b) return 0;
 		    	  
 		        GeoNumeric itemA = (GeoNumeric) a;
 		        GeoNumeric itemB = (GeoNumeric) b;

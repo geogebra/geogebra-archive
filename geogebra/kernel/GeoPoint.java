@@ -985,21 +985,33 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		showUndefinedInAlgebraView = flag;
 	}
 	
-	public static Comparator compareXcoords = new Comparator() {
-	      public int compare(Object a, Object b) {
-	        GeoPoint itemA = (GeoPoint) a;
-	        GeoPoint itemB = (GeoPoint) b;
+	/**
+	 * Returns a comparator for GeoPoint objects.
+	 * (sorts on X coordinate)
+	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
+	 */
+	public static Comparator getComparatorX() {
+		if (comparatorX == null) {
+			comparatorX = new Comparator() {
+				public int compare(Object a, Object b) {
+					GeoPoint itemA = (GeoPoint) a;
+					GeoPoint itemB = (GeoPoint) b;
 	        
-	        double comp = itemA.inhomX - itemB.inhomX;
-	        if (itemA.getKernel().isZero(comp))
-		        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
-		       	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
-		    else
-		       	return comp < 0 ? -1 : +1;
+					double comp = itemA.inhomX - itemB.inhomX;
+					if (itemA.getKernel().isZero(comp))
+						// don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
+						return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+					else
+						return comp < 0 ? -1 : +1;
 		      
-	      }
-	};
+					}
+				};
+			
+			}
+		
+			return comparatorX;
+		}
+	  private static Comparator comparatorX;
 
-	
 		
 }

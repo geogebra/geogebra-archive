@@ -71,10 +71,10 @@ public class AlgoSort extends AlgoElement {
     	TreeSet sortedSet;
     	
     	if (geo0.isGeoPoint()) {
-    		sortedSet = new TreeSet(GeoPoint.compareXcoords);
+    		sortedSet = new TreeSet(GeoPoint.getComparatorX());
     		
     	} else if (geo0.isGeoText()) {
-    		sortedSet = new TreeSet(GeoText.compare);
+    		sortedSet = new TreeSet(GeoText.getComparator());
     		
     	} else if (geo0.isNumberValue()) {
     		sortedSet = new TreeSet(GeoNumeric.getComparator());
