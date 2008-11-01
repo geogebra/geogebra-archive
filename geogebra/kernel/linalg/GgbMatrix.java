@@ -571,6 +571,11 @@ public class GgbMatrix
 	public GgbMatrix inverse(){
 		
 		GgbMatrix ret = new GgbMatrix(getRows(),getColumns());
+
+		if (getRows() != getColumns() || isSingular()){			
+			ret.setIsSingular(true);
+			return ret;
+		}
 		
 		double d = this.det();
 		
