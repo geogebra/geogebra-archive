@@ -2001,8 +2001,8 @@ public class DefaultGuiManager implements GuiManager {
 
 			// ESC changes to move mode
 			case KeyEvent.VK_ESCAPE:
-				
-				stopAllAnimations();
+				// stop automatic animation if its running
+				kernel.getAnimatonManager().stopAnimation();				
 				
 				// ESC is also handeled by algebra input field
 				if (algebraInput != null && algebraInput.hasFocus()) {
@@ -2064,14 +2064,4 @@ public class DefaultGuiManager implements GuiManager {
 			((SpreadsheetView)getSpreadsheetView()).setColumnWidth(column, width);
 		}
 		
-		public void stopAllAnimations() {
-			Construction cons = kernel.getConstruction();
-			TreeSet geoSet = cons.getGeoSetConstructionOrder();
-			Iterator it = geoSet.iterator();
-			while (it.hasNext()) { // iterate through all objects
-				GeoElement geo = (GeoElement) it.next();
-				if (geo.isGeoNumeric())
-					((GeoNumeric)geo).startAnimation(false); // stop animation
-			}
-		}
 }

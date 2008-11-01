@@ -155,14 +155,32 @@ public interface JavaScriptAPI {
 	public boolean renameObject(String oldObjName, String newObjName);
 	
 	/**
-	 * Starts an object animating
+	 * Sets whether an object should be animated. This does not start
+	 * the animation yet, use startAnimation() to do so.
 	 */
-	public void startAnimating(String objName, boolean animate);
+	public void setAnimating(String objName, boolean animate);
 	
 	/**
-	 * Starts an object animating
+	 * Sets the animation speed of an object.
 	 */
 	public void setAnimationSpeed(String objName, double speed);
+	
+	/**
+	 * Starts automatic animation for all objects with the animating flag set.
+	 * @see setAnimating()
+	 */
+	public void startAnimation();
+	
+	/**
+	 * Stops animation for all objects with the animating flag set.
+	 * @see setAnimating()
+	 */
+	public void stopAnimation();
+	
+	/**
+	 * Returns whether automatic animation is currently running.
+	 */
+	public boolean isAnimationRunning();
 	
 	/**
 	 * Returns true if the object with the given name has a vaild

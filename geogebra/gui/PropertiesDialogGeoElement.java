@@ -1582,11 +1582,16 @@ public class PropertiesDialogGeoElement
 
 			// animating value changed
 			if (source == showAnimatingCB) {
+				boolean animate = showAnimatingCB.isSelected();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
-					geo.startAnimation(showAnimatingCB.isSelected());
+					geo.setAnimating(animate);
 					geo.updateRepaint();
 				}
+				
+				// make sure that we are animating 
+				if (animate)
+					kernel.getAnimatonManager().startAnimation();				
 			}
 		}
 	}

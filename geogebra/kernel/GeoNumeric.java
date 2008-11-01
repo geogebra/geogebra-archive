@@ -25,7 +25,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -38,7 +37,7 @@ import java.util.TreeSet;
  * @version
  */
 public class GeoNumeric extends GeoElement 
-implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {	
+implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animateable {	
 	
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
@@ -616,68 +615,70 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable {
 	
 	public void update() {  	
 		super.update();
-		
-		
+				
 		// TODO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
-		EuclidianView view = kernel.getApplication().getEuclidianView();
-		double val = getValue();
+		EuclidianView view = kernel.getApplication().getEuclidianView();	
         // record to spreadsheet tool
     	if (this == view.getEuclidianController().recordObject
-    			&& this.getLastTrace1() != val) {
+    			&& this.getLastTrace1() != value) {
 	    	
 	    	String col = getTraceColumn1(); // must be called before getTraceRow()
 	    	String row = getTraceRow() + "";
 	    	
-	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,val);
+	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,value);
 	    	traceCell.setAuxiliaryObject(true);
 	    	
-	    	setLastTrace1(val);
+	    	setLastTrace1(value);
 
 	    	// TODO: handle in spreadsheet
 	    	//incrementTraceRow();
     	}
-    }
+    }	
 	
-	private SliderAnimator animator;
+	/**
+	 * Returns whether this number can be animated. Only free numbers with min and max interval
+	 * values can be animated (i.e. shown or hidden sliders). 
+	 */
+	public boolean isAnimatable() {
+		return isIndependent() && intervalMinActive && intervalMaxActive;
+	}
 	
-	public SliderAnimator getSliderAnimator() {
-		if (animator == null) {
-			animator = new SliderAnimator(Kernel.getAnimatorUpdater(), this);
+	/**
+	 * Performs the next animation step for this numbers. This changes
+	 * the value but will NOT call update() or updateCascade().
+	 * 
+	 * @return whether the value of this number was changed
+	 */
+	final public boolean doAnimationStep() {
+		// TODO: implement
+		return false;
+	}
+	
+	
+	/**
+	 * Returns a comparator for GeoNumeric objects.
+	 */
+	public static Comparator getComparator() {
+		if (comparator == null) {
+			comparator = new Comparator() {
+		      public int compare(Object a, Object b) {
+		    	  if (a == b) return 0;
+		    	  
+		        GeoNumeric itemA = (GeoNumeric) a;
+		        GeoNumeric itemB = (GeoNumeric) b;
+		        
+		        double comp = itemA.getValue() - itemB.getValue();
+		        if (itemA.getKernel().isZero(comp))
+		        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
+		        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+		        else
+		        	return comp < 0 ? -1 : +1;
+		      }
+			};
 		}
 		
-		return animator;
+		return comparator;
 	}
-	
-	public void startAnimation(boolean start) {
-		SliderAnimator sliderAnimator = getSliderAnimator();
-		
-		sliderAnimator.startAnimation(start);
-	}
-	
-	public boolean isAnimating() {
-		if (animator == null) return false;
-		return animator.isAnimating();
-	}
-	
-	public boolean isAnimatable() {
-		return true;
-	}
-	
-	public static Comparator compare = new Comparator() {
-	      public int compare(Object a, Object b) {
-	        GeoNumeric itemA = (GeoNumeric) a;
-	        GeoNumeric itemB = (GeoNumeric) b;
-	        
-	        double comp = itemA.getValue() - itemB.getValue();
-	        if (itemA.getKernel().isZero(comp))
-	        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
-	        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
-	        else
-	        	return comp < 0 ? -1 : +1;
-	      }
-	};
-
-	
-
+	private static Comparator comparator;
 
 }

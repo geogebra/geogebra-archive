@@ -18,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
@@ -121,11 +120,12 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		// initialize applet's user interface, this changes the content pane
 		applImpl.initGUI();
 				
-		// remember the applet implementation
-		appletImplementation = applImpl;	
-		
 		// update applet GUI, see paint()
 		validate();
+		
+		// remember the applet implementation
+		appletImplementation = applImpl;	
+		repaint();
 		
 		// load all jar files in background and init dialogs
 		applImpl.getApplication().initInBackground();
@@ -365,12 +365,24 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		return getAppletImplementation().renameObject(oldObjName, newObjName);
 	}
 	
-	public void startAnimating(String objName, boolean animate){
-		getAppletImplementation().startAnimating(objName, animate);
+	public void setAnimating(String objName, boolean animate){
+		getAppletImplementation().setAnimating(objName, animate);
 	}
-	
+		
 	public void setAnimationSpeed(String objName, double speed){
 		getAppletImplementation().setAnimationSpeed(objName, speed);
+	}
+	
+	public void startAnimation() {
+		getAppletImplementation().startAnimation();
+	}
+	
+	public void stopAnimation() {
+		getAppletImplementation().stopAnimation();
+	}
+	
+	public boolean isAnimationRunning() {
+		return getAppletImplementation().isAnimationRunning();
 	}
 	
 	public void reset() {

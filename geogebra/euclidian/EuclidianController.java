@@ -715,9 +715,7 @@ public class EuclidianController implements MouseListener,
 			moveMode = MOVE_NONE;	
 			return;
 		}				
-		
-		geo.startAnimation(false); // stop animating		
-
+				
 		movedGeoElement = geo;
 		//doSingleHighlighting(movedGeoElement);				
 				

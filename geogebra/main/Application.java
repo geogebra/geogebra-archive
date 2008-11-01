@@ -2233,7 +2233,7 @@ public abstract class Application implements KeyEventDispatcher {
 			euclidianView.setMode(mode);
 	}
 
-	public int getMode() {
+	final public int getMode() {
 		return euclidianView.getMode();
 	}
 

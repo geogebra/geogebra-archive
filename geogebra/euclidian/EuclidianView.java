@@ -758,7 +758,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		setSelectionRectangle(null);
 	}
 
-	public int getMode() {
+	final public int getMode() {
 		return mode;
 	}
 

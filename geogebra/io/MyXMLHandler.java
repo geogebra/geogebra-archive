@@ -334,6 +334,9 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("geogebra")) {
 				// reset the standard setting for file format 2.6 or later
 				kernel.arcusFunctionCreatesAngle = false;
+				
+				// start animation if necessary
+				kernel.getAnimatonManager().startAnimation();
 			}
 		}
 	}
@@ -1979,9 +1982,17 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleAnimation(LinkedHashMap attrs) {
 		try {
 			geo.setAnimationStep(Double.parseDouble((String) attrs.get("step")));
-			geo.setAnimationSpeed(Double.parseDouble((String) attrs.get("speed")));
-			geo.setAnimationType(Integer.parseInt((String) attrs.get("type")));
-			geo.startAnimation(parseBoolean((String) attrs.get("playing")));
+			
+			String speed = (String) attrs.get("speed");
+			if (speed != null) 			
+				geo.setAnimationSpeed(Double.parseDouble((String) attrs.get("speed")));
+			
+			String type = (String) attrs.get("type");
+			if (type != null)
+				geo.setAnimationType(Integer.parseInt(type));
+			
+			
+			geo.setAnimating(parseBoolean((String) attrs.get("playing")));
 			
 			return true;
 		} catch (Exception e) {

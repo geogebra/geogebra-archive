@@ -347,10 +347,10 @@ public class GgbAPI {
 	/**
 	 * Starts/stops an object animating
 	 */
-	public void startAnimating(String objName, boolean animate) {
+	public void setAnimating(String objName, boolean animate) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;
-		geo.startAnimation(animate);	
+		if (geo != null) 
+			geo.setAnimating(animate);					
 	}
 	
 	/**
@@ -358,8 +358,8 @@ public class GgbAPI {
 	 */
 	public void setAnimationSpeed(String objName, double speed) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;
-		geo.setAnimationSpeed(speed);
+		if (geo != null) 
+			geo.setAnimationSpeed(speed);
 	}
 	
 

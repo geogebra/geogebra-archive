@@ -456,9 +456,13 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 cbItem.setSelected(((GeoNumeric) geo).isAnimating());
                 cbItem.addActionListener(new ActionListener() {
                 	public void actionPerformed(ActionEvent e) {
-                        ((GeoNumeric) geo).startAnimation(!((GeoNumeric) geo).isAnimating());
+                        geo.setAnimating(!geo.isAnimating());
                         geo.updateRepaint();
                         app.storeUndoInfo();
+                        
+                        // automatically start animation when animating was turned on
+                        if (geo.isAnimating())
+                        	geo.getKernel().getAnimatonManager().startAnimation();	
                     }       	
             	});
                 addItem(cbItem);            	

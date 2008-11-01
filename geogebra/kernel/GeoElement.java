@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
 
@@ -268,6 +267,7 @@ public abstract class GeoElement
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationStep = 0.1;
 	private double animationSpeed = 1;
+	private boolean animating = false;
 	
 	public final static int ANIMATION_OSCILLATING = 0;
 	public final static int ANIMATION_INCREASING = 1;
@@ -1097,17 +1097,37 @@ final public boolean hasOnlyFreeInputPoints() {
 		animationType = type;
 	}
 	
-	public void startAnimation(boolean start) {
-		// over ridden by types that support this
+	/**
+	 * Sets the state of this object to animating on or off. Note that this
+	 * 
+	 * @see Animatable interface
+	 */
+	final public void setAnimating(boolean flag) {
+		if (animating == flag) return;
+		
+		// check if this object can be animated at all
+		if (!isAnimatable()) {
+			animating = false;
+			return;
+		}
+		
+		// set flag
+		animating = flag;
+			
+		// tell animation manager
+		AnimationManager am = kernel.getAnimatonManager();
+		if (animating)
+			am.addAnimatedGeo(this);
+		else
+			am.removeAnimatedGeo(this);		
 	}
 
-	public boolean isAnimating() {
-		// over ridden by types that support this
-		return false;
+	final public boolean isAnimating() {		
+		return animating;
 	}
 
 	public boolean isAnimatable() {
-		// over ridden by types that support this
+		// over ridden by types that implement Animateable
 		return false;
 	}
 
@@ -1926,7 +1946,7 @@ final public boolean hasOnlyFreeInputPoints() {
 				algo.update();
 				
 				// TODO: remove
-				Application.debug("multi updateCascade: " + algo);				
+				//Application.debug("multi updateCascade: " + algo);				
 			}
 		}
 	}

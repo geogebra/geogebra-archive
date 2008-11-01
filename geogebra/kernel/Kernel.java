@@ -229,7 +229,7 @@ public class Kernel {
     	cons.updateLocalAxesNames();
     }
 	
-	public Application getApplication() {
+	final public Application getApplication() {
 		return app;
 	}		
 	
@@ -5340,16 +5340,13 @@ public class Kernel {
 		return false;
 	}
 	
-	private static AnimationUpdater animationUpdater;
+	private AnimationManager animationManager;
 	
-	protected static AnimationUpdater getAnimatorUpdater() {
-		
-		if (animationUpdater == null) {
-			animationUpdater = new AnimationUpdater();			
+	final public AnimationManager getAnimatonManager() {		
+		if (animationManager == null) {
+			animationManager = new AnimationManager(this);			
 		}
-		return animationUpdater;
-		
+		return animationManager;		
 	}
-	
-	
+		
 }
