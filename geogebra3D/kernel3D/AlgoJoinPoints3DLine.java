@@ -79,7 +79,7 @@ public class AlgoJoinPoints3DLine extends AlgoJoinPoints3DCoordSys1D {
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        sb.append(app.getPlain("LineAB",P.getLabel(),Q.getLabel()));
+        sb.append(app.getPlain("LineThroughAB",P.getLabel(),Q.getLabel()));
 
         return sb.toString();
     }

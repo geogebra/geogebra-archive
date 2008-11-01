@@ -116,8 +116,16 @@ public class AlgoJoinPoints3DTriangle extends AlgoElement3D {
  
     final public String toString() {
         StringBuffer sb = new StringBuffer();
-
-        sb.append(app.getPlain("TriangleABC",P.getLabel(),Q.getLabel(),R.getLabel()));
+        
+        sb.append(app.getPlain("Polygon"));
+        sb.append(' '); 
+        sb.append(P.getLabel());
+        sb.append(", ");
+        sb.append(Q.getLabel());
+        sb.append(", ");
+        sb.append(R.getLabel());
+        
+        //sb.append(app.getPlain("TriangleABC",P.getLabel(),Q.getLabel(),R.getLabel()));
 
         return sb.toString();
     }
