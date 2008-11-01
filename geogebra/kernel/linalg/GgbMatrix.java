@@ -297,6 +297,7 @@ public class GgbMatrix
 	        return outputList;
 		}
 		
+		outputList.clear();
         outputList.setDefined(true);
 		
    		for (int c = 0 ; c < columns ; c++) {
