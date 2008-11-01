@@ -26,7 +26,6 @@ public class AlgoInvert extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
     private GeoList outputList; //output	
-    private int cols, rows;
 
     AlgoInvert(Construction cons, String label, GeoList inputList) {
         super(cons);
@@ -57,59 +56,15 @@ public class AlgoInvert extends AlgoElement {
     }
 
     protected final void compute() {
-    	
-    	cols = inputList.size();
-    	if (!inputList.isDefined() || cols == 0) {
-    		outputList.setUndefined();
-    		return;
-    	} 
-    	
-    	GeoElement geo = inputList.get(0);
-    	
-    	if (!geo.isGeoList()) {
-    		outputList.setUndefined();
-    		return;   		
-    	}
-    	
-
-   		rows = ((GeoList)geo).size();
+    	   		
+   		GgbMatrix matrix = new GgbMatrix(inputList);
    		
-   		if (rows == 0) {
-    		outputList.setUndefined();
-    		return;   		
-    	}
-   		
-   		GgbMatrix matrix = new GgbMatrix(rows, cols);
-   		GeoList rowList;
-   		
-   		for (int c = 0 ; c < cols ; c++) {
-   			geo = inputList.get(c);
-   			if (!geo.isGeoList()) {
-   				outputList.setUndefined();
-   				return;   		
-   			}
-   			rowList = (GeoList)geo;
-   			if (rowList.size() != rows) {
-   				outputList.setUndefined();
-   				return;   		
-   			}
-   	   		for (int r = 0 ; r < rows ; r++) {
-   	   			geo = rowList.get(r);
-   	   			if (!geo.isGeoNumeric()) {
-   	   				outputList.setUndefined();
-   	   				return;   		
-   	   			}
-   	   			
-   	   			matrix.set(r + 1, c + 1, ((GeoNumeric)geo).getValue());
-   	   		}
-  			
-   		}
-   		
-   		//matrix.SystemPrint();
+   		if (matrix.isSingular()) {
+  			outputList.setUndefined();
+	   		return;   		
+	   	}
    		
    		matrix = matrix.inverse();
-   		
-   		//matrix.SystemPrint();
    		
    		if (matrix.isSingular()) {
   			outputList.setUndefined();
@@ -117,18 +72,7 @@ public class AlgoInvert extends AlgoElement {
 	   	}
    		// Invert[{{1,2},{3,4}}]
    		
-        outputList.setDefined(true);
-        outputList.clear();
-        
-   		for (int c = 0 ; c < cols ; c++) {
-   			rowList = new GeoList(cons);
-   	   		for (int r = 0 ; r < rows ; r++) {  	   			
-   	   			rowList.add(new GeoNumeric(cons, matrix.get(r + 1, c + 1)));  	   			
-   	   		}
-   	   		outputList.add(rowList);
-   		}
-
-   		
+   		outputList = matrix.getGeoList(outputList, cons);
        
     }
         

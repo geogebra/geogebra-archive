@@ -12,6 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -50,6 +54,11 @@ public class GgbMatrix
 	/** creates an empty rows * columns matrix (all values set to 0)  */
 	public GgbMatrix(int rows, int columns){
 		
+		initialise(rows, columns);
+		
+	}
+	
+	private void initialise(int rows, int columns) {
 		setIsSingular(false);
 		
 		this.rows=rows;
@@ -61,6 +70,58 @@ public class GgbMatrix
 			val[i]=0.0;
 		}
 		
+	}
+	
+	public GgbMatrix(GeoList inputList) {
+
+    	int cols = inputList.size();
+    	if (!inputList.isDefined() || cols == 0) {
+			setIsSingular(true);
+    		return;
+    	} 
+    	
+    	GeoElement geo = inputList.get(0);
+    	
+    	if (!geo.isGeoList()) {
+			setIsSingular(true);
+    		return;   		
+    	}
+    	
+
+   		int rows = ((GeoList)geo).size();
+   		
+   		if (rows == 0) {
+			setIsSingular(true);
+    		return;   		
+    	}
+   		
+   		initialise(rows,cols);
+		
+		GeoList rowList;
+   		
+   		for (int c = 0 ; c < cols ; c++) {
+   			geo = inputList.get(c);
+   			if (!geo.isGeoList()) {
+   				setIsSingular(true);
+   				return;   		
+   			}
+   			rowList = (GeoList)geo;
+   			if (rowList.size() != rows) {
+   				setIsSingular(true);
+   				return;   		
+   			}
+   	   		for (int r = 0 ; r < rows ; r++) {
+   	   			geo = rowList.get(r);
+   	   			if (!geo.isGeoNumeric()) {
+   	   			setIsSingular(true);
+   	   				return;   		
+   	   			}
+   	   			
+   	   			set(r + 1, c + 1, ((GeoNumeric)geo).getValue());
+   	   		}
+   		}
+   		
+
 	}
 	
 	/** returns n*n identity matrix  */
@@ -226,7 +287,29 @@ public class GgbMatrix
 		return getColumn(1);
 	}
 	
+	/*
+	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
+	 */
+	public GeoList getGeoList(GeoList outputList, Construction cons) {
+		
+		if (isSingular) {
+	        outputList.setDefined(false);
+	        return outputList;
+		}
+		
+        outputList.setDefined(true);
+		
+   		for (int c = 0 ; c < columns ; c++) {
+   			GeoList rowList = new GeoList(cons);
+   	   		for (int r = 0 ; r < rows ; r++) {  	   			
+   	   			rowList.add(new GeoNumeric(cons, get(r + 1, c + 1)));  	   			
+   	   		}
+   	   		outputList.add(rowList);
+   		}
+   		
+   		return outputList;
 
+	}
 	
 	/** sets V to column j of m, rows=V.getLength() */
 	public void set(GgbVector V, int j){
