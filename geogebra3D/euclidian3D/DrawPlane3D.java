@@ -85,7 +85,9 @@ public class DrawPlane3D extends Drawable3D {
 		//TODO return DRAW_PICK_ORDER_2D;
 	}	
 	
-	
+	public boolean isTransparent(){
+		return true; //TODO : use object property
+	}	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!geo.isEuclidianVisible())

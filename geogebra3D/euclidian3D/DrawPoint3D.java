@@ -93,8 +93,9 @@ public class DrawPoint3D extends Drawable3D{
 		return DRAW_PICK_ORDER_0D;
 	}	
 	
-	
-	
+	public boolean isTransparent(){
+		return false; //TODO : use object property
+	}
 	
 	
 	

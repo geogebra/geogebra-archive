@@ -84,7 +84,9 @@ public class DrawTriangle3D extends Drawable3D {
 	}	
 	
 	
-	
+	public boolean isTransparent(){
+		return true; //TODO : use object property
+	}	
 	
 	
 	

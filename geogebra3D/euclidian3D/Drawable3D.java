@@ -89,9 +89,19 @@ public abstract class Drawable3D {
 	/** returns picking order */
 	abstract public int getPickOrder();
 	
+	/** for picking an object through another */
+	abstract public boolean isTransparent();
 	
 	/** compare this to another Drawable3D with picking */
 	public int comparePickingTo(Drawable3D d, boolean checkPickOrder){
+		
+		//check if one is transparent and the other not
+		if ( (!this.isTransparent()) && (d.isTransparent()) )
+			return -1;
+		if ( (this.isTransparent()) && (!d.isTransparent()) )
+			return 1;
+		
+		
 		
 		//check if the two objects are "mixed"			
 		if ((this.zPickMin-d.zPickMin)*(this.zPickMax-d.zPickMax)<EPSILON_Z){

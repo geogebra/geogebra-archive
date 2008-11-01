@@ -106,6 +106,9 @@ public class DrawLine3D extends Drawable3D {
 		return DRAW_PICK_ORDER_1D;
 	}
 	
+	public boolean isTransparent(){
+		return false; //TODO : use object property
+	}
 	
 	public void drawTransp(EuclidianRenderer3D renderer) {
 		// TODO Raccord de méthode auto-généré
