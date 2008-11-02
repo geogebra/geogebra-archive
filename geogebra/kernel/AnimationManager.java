@@ -126,6 +126,4 @@ public class AnimationManager implements ActionListener {
 
 	}
 	
-	private long maxTime = 0;
-		
 }
