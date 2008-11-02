@@ -567,16 +567,19 @@ public class GgbMatrix
 		return ret;
 	}
 	
-	/** returns inverse matrix */
+	public boolean isSquare() {
+		if (isSingular()) return false;
+		return getRows() == getColumns();
+	}
+	
+	/** returns inverse matrix (2x2 or larger)
+	 * you must check with isSquare() before calling this
+	 * 
+	 * */
 	public GgbMatrix inverse(){
 		
 		GgbMatrix ret = new GgbMatrix(getRows(),getColumns());
 
-		if (getRows() != getColumns() || isSingular()){			
-			ret.setIsSingular(true);
-			return ret;
-		}
-		
 		double d = this.det();
 		
 		if (Kernel.isEqual(d, 0.0, Kernel.STANDARD_PRECISION)){			
