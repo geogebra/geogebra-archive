@@ -276,6 +276,22 @@ class CmdTranspose extends CmdOneListFunction {
 		return kernel.Transpose(a, b);
 	}
 
+}
+
+/*
+ * Transpose[ <List> ]
+ * Michael Borcherds 
+ */
+class CmdDeterminant extends CmdOneListFunction {
+
+	public CmdDeterminant(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Determinant(a, b);
+	}
 
 }
 

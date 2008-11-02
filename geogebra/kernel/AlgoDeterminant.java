@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.main.Application;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -21,25 +20,25 @@ import geogebra.main.Application;
  * @version 16-02-2008
  */
 
-public class AlgoInvert extends AlgoElement {
+public class AlgoDeterminant extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
-    private GeoList outputList; //output	
+    private GeoNumeric num; //output	
 
-    AlgoInvert(Construction cons, String label, GeoList inputList) {
+    AlgoDeterminant(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
-        outputList = new GeoList(cons);
+        num = new GeoNumeric(cons);
 
         setInputOutput();
         compute();
-        outputList.setLabel(label);
+        num.setLabel(label);
     }
 
     protected String getClassName() {
-        return "AlgoInvert";
+        return "AlgoDeterminant";
     }
 
     protected void setInputOutput(){
@@ -47,12 +46,12 @@ public class AlgoInvert extends AlgoElement {
         input[0] = inputList;
 
         output = new GeoElement[1];
-        output[0] = outputList;
+        output[0] = num;
         setDependencies(); // done by AlgoElement
     }
 
-    GeoList getResult() {
-        return outputList;
+    GeoNumeric getResult() {
+        return num;
     }
 
     protected final void compute() {
@@ -60,37 +59,13 @@ public class AlgoInvert extends AlgoElement {
    		GgbMatrix matrix = new GgbMatrix(inputList);
    		
    		if (matrix.isSingular() || !matrix.isSquare()) {
-  			outputList.setUndefined();
+  			num.setUndefined();
 	   		return;   		
 	   	}
    		
-   		if (matrix.getRows() == 1) {
-   			
-   			double det = matrix.det();
-   			
-   			if (kernel.isZero(det)) {
-   	  			outputList.setUndefined();
-   		   		return;   		
-   		   	}
-   			
-   			// invert 1x1 matrix
-   			matrix = new GgbMatrix(1,1);
-   			matrix.set(1,1,1/det);
-   			
-   			outputList = matrix.getGeoList(outputList, cons);
-   			return;
-   		}
+   		num.setValue(matrix.det());
    		
-   		matrix = matrix.inverse();
-   		
-   		if (matrix.isSingular()) {
-  			outputList.setUndefined();
-	   		return;   		
-	   	}
-   		// Invert[{{1,2},{3,4}}]
-   		
-   		outputList = matrix.getGeoList(outputList, cons);
-       
+   		// Determinant[{{1,2},{3,4}}]
     }
         
      
