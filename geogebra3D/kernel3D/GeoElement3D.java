@@ -73,6 +73,16 @@ public abstract class GeoElement3D
 		return false;
 	}	
 	
+	
+	// Path2D interface
+	public boolean isPath2D(){
+		return false;
+	}
+	
+	public boolean hasPath2D() {
+		return false;
+	}
+	
 	/** stores the current highlighted flag to wasHighlighted */ 
 	final public void setWasHighlighted(){
 		wasHighlighted = highlighted;

@@ -109,7 +109,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 			p.set(4, 1);
 			P.setCoords(p,false); //avoid new pointChanged computation
 			// set path parameter		
-			PathParameter1D pp = P.getPathParameter1D();
+			Path1DParameter pp = P.getPath1DParameter();
 			pp.setT(project[1].get(1));
 		}else{
 			double t=project[1].get(1);			
@@ -119,19 +119,19 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 				t=getMinParameter();
 			P.setCoords(getPoint(t),false);
 			// set path parameter		
-			PathParameter1D pp = P.getPathParameter1D();
+			Path1DParameter pp = P.getPath1DParameter();
 			pp.setT(t);
 		}
 		
 	}
 	
 	public void pathChanged(GeoPoint3D P){
-		PathParameter1D pp = P.getPathParameter1D();
+		Path1DParameter pp = P.getPath1DParameter();
 		P.setCoords(getPoint(pp.getT()),false);
 	}
 	
 	public boolean isOnPath(GeoPoint3D P, double eps){
-		return false;
+		return false; //TODO
 	}
 
 	

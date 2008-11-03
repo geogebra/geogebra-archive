@@ -1,10 +1,11 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public abstract class GeoCoordSys2D extends GeoCoordSys {
+public abstract class GeoCoordSys2D extends GeoCoordSys implements Path2D {
 	
 	
 	GgbVector Vn = new GgbVector(4); //orthogonal vector
@@ -65,7 +66,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys {
 	
 	
 	
-	/** returns completed matrix for drawing */
+	/** returns completed matrix for drawing : (V1 V2 Vn O) with Vn normed orthogonal vector to the plane */
 	public GgbMatrix getMatrixCompleted(){
 		return matrixCompleted.copy();
 	}
@@ -106,6 +107,52 @@ public abstract class GeoCoordSys2D extends GeoCoordSys {
 		//Application.debug("c = "+c.get(1)+","+c.get(2)+" -- gridOriginProjected ="); gridOriginProjected.SystemPrint();
 	}
 	
+	
+	
+	
+	/////////////////////////////////////////
+	// Path2D interface
+	
+	public boolean isPath2D(){
+		return true;
+	}
+	
+	public void pointChanged(GeoPoint3D P){
+		
+		//project P on plane
+		GgbVector v = P.getCoords();
+		GgbVector[] project = v.projectPlane(matrixCompleted);
+		P.setCoords(project[0],false);
+		
+		// set path parameter		
+		Path2DParameters pp = P.getPath2DParameters();
+		pp.setT(project[1].get(1),project[1].get(2));
+	}
+	
+	
+	
+	public void pathChanged(GeoPoint3D P){
+		Path2DParameters pp = P.getPath2DParameters();
+		P.setCoords(getPoint(pp.getT1(),pp.getT2()),false);
+	}
+	
+
+	public boolean isOnPath(GeoPoint3D P, double eps){
+		return false; //TODO
+	}
+
+
+
+	
+
+	public boolean isClosedPath(){
+		return false;
+	}
+	
+
+	public GgbMatrix getMovingMatrix(){
+		return matrixCompleted;
+	}
 	
 
 	

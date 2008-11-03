@@ -46,7 +46,9 @@ final public class GeoPoint3D extends GeoVec4D {
 	
 	//paths
 	private Path1D path1D;
-	private PathParameter1D pathParameter1D;
+	private Path1DParameter path1DParameter;
+	private Path2D path2D;
+	private Path2DParameters path2DParameters;
         
     // temp
     public GgbVector inhom = new GgbVector(3);
@@ -79,10 +81,16 @@ final public class GeoPoint3D extends GeoVec4D {
 		this.path1D = path;
 	}
     
-    final public PathParameter1D getPathParameter1D() {
-    	if (pathParameter1D == null)
-    		pathParameter1D = new PathParameter1D();
-    	return pathParameter1D;
+    public GeoPoint3D(Construction c, Path2D path) {
+		super(c,4);
+		this.path2D = path;
+	}    
+    
+    
+    final public Path1DParameter getPath1DParameter() {
+    	if (path1DParameter == null)
+    		path1DParameter = new Path1DParameter();
+    	return path1DParameter;
     }
     
     
@@ -90,16 +98,41 @@ final public class GeoPoint3D extends GeoVec4D {
 		return path1D != null;
 	}
 	
-	public boolean hasPath() {
-		return hasPath1D();
-	}
+
     
     
 	public Path1D getPath1D() {
 		return path1D;
 	}
+	
+
+	
+
     
     
+    final public Path2DParameters getPath2DParameters() {
+    	if (path2DParameters == null)
+    		path2DParameters = new Path2DParameters();
+    	return path2DParameters;
+    }
+    
+    
+	public boolean hasPath2D() {
+		return path2D != null;
+	}
+	
+
+    
+    
+	public Path2D getPath2D() {
+		return path2D;
+	}
+	
+	
+    
+	public boolean hasPath() {
+		return hasPath1D() || hasPath2D();
+	}
     
     
     
@@ -139,11 +172,13 @@ final public class GeoPoint3D extends GeoVec4D {
 		updateCoords(); 
 		
 		if (path){
-			if (path1D != null) {
+			if (hasPath1D()) {
 				// remember path parameter for undefined case
 				//PathParameter tempPathParameter = getTempPathparameter();
 				//tempPathParameter.set(getPathParameter());
 				path1D.pointChanged(this);
+			} else if (hasPath2D()) {
+				path2D.pointChanged(this);
 			}
 			updateCoords(); 
 		}

@@ -290,13 +290,13 @@ public class Test3D{
 		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
 		t.setObjColor(c);
 		
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
-		t.setObjColor(c);
 		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[0]});
 		t.setObjColor(c);
 		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P1[1],P1[2],P1[0]});
 		t.setObjColor(c);
 		
+		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
+		t.setObjColor(c);
 		
 
 		
@@ -310,6 +310,8 @@ public class Test3D{
 		
 		P=kernel3D.Point3D("pl", l, 1, 1, 0);
 		P.setObjColor(new Color(1f,0.75f,0f));
+		
+		kernel3D.Point3D("pl", t, 0, 0, 0);
 		
 	}
 	

@@ -197,7 +197,7 @@ public class GgbVector
 	}
 	
 	/** returns this projected on the plane with vector v used for direction 
-	 *  result GgbVector (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	 *  result two GgbVectors, the point and (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
 	 */	
 	public GgbVector[] projectPlaneThruV(GgbMatrix m, GgbVector v){
 		//GgbVector ret;
