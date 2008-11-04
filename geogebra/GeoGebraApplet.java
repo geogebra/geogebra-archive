@@ -18,9 +18,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
+
+import netscape.javascript.JSObject;
 
 /**
  * GeoGebra applet
@@ -50,13 +53,19 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	private Image splashImage, progressImage;
 	private Image splashScreenImage;
 	private Graphics splashScreenImageGraphics;
-		
+	
+	// applet initialization listener
+	private ArrayList appletInitListeners;
+	private boolean appletReady;
+	private JSObject browserWindow;
+	
 	/**
 	 * Loads necessary jar files and initializes applet. During the loading
 	 * of jar files, a splash screen with progress information is shown.
 	 */
 	public void init() {	
-		 try {
+		notifyAppletInit("Applet loaded.");
+		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 			     public void run() {
 			    	
@@ -67,9 +76,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 			 			}
 			 		};
 			 		runner.start();		
+			 		notifyAppletInit("Applet started.");
 			 		
 			 		// init splash screen
 			 		initSplashScreen();
+			 		notifyAppletInit("Splash Screen initialized.");
 			 		
 			     }
 			 });
@@ -126,12 +137,15 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		
 		// load geogebra_main.jar file   
 		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
+		notifyAppletInit("Main JAR File (geogebra_main.jar) added to classpath.");
 
 		// create delegate object that implements our applet's methods
 		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(this);
+		notifyAppletInit("Applet created.");
 		
 		// initialize applet's user interface, this changes the content pane
 		applImpl.initGUI();
+		notifyAppletInit("Applet initialized.");
 				
 		// update applet GUI, see paint()
 		validate();
@@ -149,6 +163,9 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		splashImage = null;
 		progressImage = null;
 		System.gc();
+		
+		notifyAppletInit("Applet ready.");
+		appletReady = true;
 	}
 		
 	/**
@@ -506,5 +523,98 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
 	}
 	
+	/*
+	 * The AppletInitListener is completely defined inside GeoGebraApplet 
+	 * to be able to register it as soon as possible. This allows to follow 
+	 * the applet initialization and the jar loading from JavaScript.
+	 */
 
+	public void registerAppletInitListener(String JSFunctionName) {
+		if (JSFunctionName == null || JSFunctionName.length() == 0)
+			return;				
+						
+		// init view
+		new Thread() {
+			public void run() {
+				// TODO: appletInitListener ->
+				System.out.print("Waiting");
+				// TODO: <- appletInitListener
+				while (browserWindow == null) {
+					// TODO: appletInitListener ->
+					System.out.print(".");
+					// TODO: <- appletInitListener
+					try {
+						Thread.sleep(100);
+						initJavaScript();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+		
+		// init list
+		if (appletInitListeners == null) {
+			appletInitListeners = new ArrayList();			
+		}		
+		appletInitListeners.add(JSFunctionName);				
+		System.out.println("*** Message from [geogebra.GeoGebraApplet.registerAppletInitListener]");
+		System.out.println("  registerAppletInitListener: " + JSFunctionName + "\n");
+		
+		if (appletReady) {
+			Object [] args = { "Applet ready." };
+			callJavaScript(JSFunctionName, args);					
+		}
+	}
+
+	public void unregisterAppletInitListener(String JSFunctionName) {
+		if (appletInitListeners != null) {
+			appletInitListeners.remove(JSFunctionName);
+			System.out.println("*** Message from [geogebra.GeoGebraApplet.unregisterAppletInitListener]");
+			System.out.println("  unregisterAppletInitListener: " + JSFunctionName + "\n");
+		}	
+	}
+
+	private void notifyAppletInit(String message) {										
+		if (appletInitListeners != null && message != null) {
+			Object [] args = { message };
+			notifyListeners(appletInitListeners, args);
+		}
+	}	
+	
+	/**
+	 * Calls all JavaScript functions (listeners) using 
+	 * the specified arguments.
+	 */
+	// on modification, check also: geogebra.main.AppletImplementation.JavaToJavaScriptView.notifyListeners(ArrayList listeners, Object [] args)
+	private void notifyListeners(ArrayList listeners, Object [] args) {										
+		int size = listeners.size();
+		for (int i=0; i < size; i++) {
+			String jsFunction = (String) listeners.get(i);										
+			callJavaScript(jsFunction, args);					
+		}			
+	}	
+	
+	// on modification, check also: geogebra.main.AppletImplementation.initJavaScriptView()
+	private void initJavaScript() {
+		try {
+			browserWindow = JSObject.getWindow(this);
+		} catch (Exception e) {
+			browserWindow = null;
+			System.out.println("*** Message from [geogebra.GeoGebraApplet.registerAppletInitListener]");
+			System.out.println("  Exception: could not initialize JSObject.getWindow() for GeoGebraApplet\n");
+		}
+	}
+	
+	// on modification, check also: geogebra.main.AppletImplementation.callJavaScript(String jsFunction, Object [] args)
+	private void callJavaScript(String jsFunction, Object [] args) {		
+		//Application.debug("callJavaScript: " + jsFunction);		
+		
+		try {			
+			if (browserWindow != null)
+				browserWindow.call(jsFunction, args);
+		} catch (Exception e) {						
+			e.printStackTrace();
+		}    
+	}
 }
