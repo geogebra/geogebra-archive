@@ -34,6 +34,11 @@ public class GgbMatrix
 	{
 	
 	protected double[] val;//values of the matrix
+	/*
+	 * the matrix represented by val = {1,2,3,4} is
+	 *    | 1  3 |
+	 *    | 2  4 |
+	 */
 	protected int rows, columns; // dimensions
 	protected boolean transpose=false; //transposing the matrix is logical operation
 	
@@ -221,27 +226,17 @@ public class GgbMatrix
 	//setters and getters
 	
 	/** returns double[] describing the matrix for openGL */
-	public double[] getGL(){
-		double[] ret = new double[rows*columns];
+	public double[] get(){
 		
-		int index = 0;
-		
-		for(int j=1;j<=columns;j++){
-			for(int i=1;i<=rows;i++){
-				ret[index]=get(i,j);
-				index++;
-			}
-		}
-		
-		return ret;
+		return val;
 	}
 	
 	/** returns m(i,j)  */
 	public double get(int i, int j){
-		if (!transpose){
-			return val[(i-1)*columns+(j-1)];
+		if (transpose){
+			return val[(i-1)*rows+(j-1)];
 		}else{
-			return val[(j-1)*columns+(i-1)];
+			return val[(j-1)*rows+(i-1)];
 		}
 	}
 	
@@ -330,10 +325,10 @@ public class GgbMatrix
 	
 	/** sets m(i,j) to val0 */
 	public void set(int i, int j, double val0){
-		if (!transpose){
-			val[(i-1)*columns+(j-1)]=val0;
+		if (transpose){
+			val[(i-1)*rows+(j-1)]=val0;
 		}else{
-			val[(j-1)*columns+(i-1)]=val0;
+			val[(j-1)*rows+(i-1)]=val0;
 		}
 	}
 

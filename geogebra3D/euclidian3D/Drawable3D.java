@@ -69,7 +69,7 @@ public abstract class Drawable3D {
 	
 	/** return matrix for openGL */
 	public double[] getMatrixGL(){
-		return matrix.getGL();
+		return matrix.get();
 	}
 	
 	
