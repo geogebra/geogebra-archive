@@ -76,9 +76,9 @@ public class CASTable extends JTable {
 
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
-//		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
-//				selectedCol)).getTableCellEditorComponent(this, newValue, true,
-//				selectedRow + 1, selectedCol)).requestFocus();
+		// ((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
+		// selectedCol)).getTableCellEditorComponent(this, newValue, true,
+		// selectedRow + 1, selectedCol)).requestFocus();
 		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
 				selectedRow + 1, selectedCol);
 		tableCell.setInputAreaFocused();
@@ -90,6 +90,7 @@ public class CASTable extends JTable {
 		int rowNum = tableModel.getRowCount();
 		// insert the row before
 		tableModel.insertRow(rowNum, new Object[] { newValue, "load" });
+		
 		// Enlarge the cell hight
 		if (newValue.isOutputVisible())
 			this.setRowHeight(rowNum, CASPara.inputOutputHeight);
@@ -100,16 +101,17 @@ public class CASTable extends JTable {
 		in[0] = c;
 		CASTableCellValue newValue = new CASTableCellValue(new String(in));
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
+
 		// ((CASTableCellRender) getCellRenderer(selectedRow + 1, selectedCol))
 		// .getTableCellRendererComponent(this, newValue, false, false,
 		// selectedRow + 1, selectedCol);
 
 		changeSelection(selectedRow + 1, selectedCol, false, false);
 		editCellAt(selectedRow + 1, selectedCol);
-//		Component editor = (Component) ((CASTableCellEditor) getCellEditor(
-//				selectedRow + 1, selectedCol)).getTableCellEditorComponent(
-//				this, newValue, true, selectedRow + 1, selectedCol);
-//		editor.requestFocus();
+		// Component editor = (Component) ((CASTableCellEditor) getCellEditor(
+		// selectedRow + 1, selectedCol)).getTableCellEditorComponent(
+		// this, newValue, true, selectedRow + 1, selectedCol);
+		// editor.requestFocus();
 
 		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
 				selectedRow + 1, selectedCol);
@@ -154,9 +156,9 @@ public class CASTable extends JTable {
 
 		changeSelection(editRow, editCol, false, false);
 		editCellAt(editRow, editCol);
-//		((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
-//				.getTableCellEditorComponent(this, value, true, editRow,
-//						editCol)).requestFocus();
+		// ((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
+		// .getTableCellEditorComponent(this, value, true, editRow,
+		// editCol)).requestFocus();
 		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
 				editRow, editCol);
 		tableCell.setInputAreaFocused();
@@ -174,7 +176,7 @@ public class CASTable extends JTable {
 		CASTableCell temp = ((CASTableCell) ((CASTableCellEditor) getCellEditor(
 				editRow, editCol)).getTableCellEditorComponent(this, value,
 				true, editRow, editCol));
-		//setRowHeight(editRow, temp.addLinePanel());
+		// setRowHeight(editRow, temp.addLinePanel());
 		temp.addLine();
 		temp.setLineBorderFocus();
 	}
@@ -229,5 +231,9 @@ public class CASTable extends JTable {
 			y += rowHeight;
 		}
 		return new Point(x, y);
+	}
+
+	public void save() {
+		app.getGuiManager().save();
 	}
 }
