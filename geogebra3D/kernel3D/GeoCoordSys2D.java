@@ -1,11 +1,10 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public abstract class GeoCoordSys2D extends GeoCoordSys implements Path2D {
+public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	GgbVector Vn = new GgbVector(4); //orthogonal vector
@@ -122,19 +121,37 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements Path2D {
 		//project P on plane
 		GgbVector v = P.getCoords();
 		GgbVector[] project = v.projectPlane(matrixCompleted);
-		P.setCoords(project[0],false);
 		
-		// set path parameter		
-		Path2DParameters pp = P.getPath2DParameters();
-		pp.setT(project[1].get(1),project[1].get(2));
+		if (!isLimitedPath()){
+			P.setCoords(project[0],false);
+
+			// set path parameter		
+			PathParameters pps = P.getPathParameters(2);
+			pps.setTs(new double[] {project[1].get(1),project[1].get(2)});
+		}else{
+			// set path parameter		
+			PathParameters pps = P.getPathParameters(2);
+			pps.setTs(new double[] {project[1].get(1),project[1].get(2)});		
+			limitPathParameters(pps);
+			
+			P.setCoords(getPoint(pps.getT(0),pps.getT(1)),false);
+		}
 	}
 	
 	
 	
 	public void pathChanged(GeoPoint3D P){
-		Path2DParameters pp = P.getPath2DParameters();
-		P.setCoords(getPoint(pp.getT1(),pp.getT2()),false);
+		PathParameters pps = P.getPathParameters(2);
+		P.setCoords(getPoint(pps.getT(0),pps.getT(1)),false);
 	}
+	
+	
+	
+	public boolean isLimitedPath(){
+		return false;
+	}
+
+	public void limitPathParameters(PathParameters pps){}	
 	
 
 	public boolean isOnPath(GeoPoint3D P, double eps){
@@ -150,7 +167,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements Path2D {
 	}
 	
 
-	public GgbMatrix getMovingMatrix(){
+	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
 		return matrixCompleted;
 	}
 	

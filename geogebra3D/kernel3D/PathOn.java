@@ -18,7 +18,7 @@ import geogebra.kernel.linalg.GgbMatrix;
 /**
  * @author Markus Hohenwarter + ggb3D
  */
-public interface Path1D {
+public interface PathOn {
 	
 
 	

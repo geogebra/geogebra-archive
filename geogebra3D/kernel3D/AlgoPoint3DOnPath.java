@@ -16,16 +16,16 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
 
-public class AlgoPointOnPath2D extends AlgoElement3D {
+public class AlgoPoint3DOnPath extends AlgoElement3D {
 
 	
-	private Path2D path; // input
+	private PathOn path; // input
     private GeoPoint3D P; // output       
 
-    AlgoPointOnPath2D(
+    AlgoPoint3DOnPath(
         Construction cons,
         String label,
-        Path2D path,
+        PathOn path,
         double x,
         double y,
         double z) {
@@ -42,7 +42,7 @@ public class AlgoPointOnPath2D extends AlgoElement3D {
     }
 
     protected String getClassName() {
-        return "AlgoPointOnPath2D";
+        return "AlgoPoint3DOnPath";
     }
 
     // for AlgoElement
@@ -58,7 +58,7 @@ public class AlgoPointOnPath2D extends AlgoElement3D {
     GeoPoint3D getP() {
         return P;
     }
-    Path2D getPath() {
+    PathOn getPath() {
         return path;
     }
 

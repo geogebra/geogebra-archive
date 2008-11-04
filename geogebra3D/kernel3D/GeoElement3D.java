@@ -69,7 +69,7 @@ public abstract class GeoElement3D
 		return false;
 	}
 	
-	public boolean hasPath1D() {
+	public boolean hasPathOn() {
 		return false;
 	}	
 	
@@ -79,7 +79,7 @@ public abstract class GeoElement3D
 		return false;
 	}
 	
-	public boolean hasPath2D() {
+	public boolean hasPathIn() {
 		return false;
 	}
 	

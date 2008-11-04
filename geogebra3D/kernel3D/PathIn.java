@@ -18,7 +18,7 @@ import geogebra.kernel.linalg.GgbMatrix;
 /**
  * @author Markus Hohenwarter + ggb3D
  */
-public interface Path2D {
+public interface PathIn {
 	
 
 	
@@ -59,10 +59,14 @@ public interface Path2D {
 	
 
 
-
+	/**
+	 * Limits the path parameters 
+	 */
+	public void limitPathParameters(PathParameters pps);
+	
 	
 	
 	/** returns matrix for moving the point in the screen view */
-	public GgbMatrix getMovingMatrix();
+	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix);
 	
 }

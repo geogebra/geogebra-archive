@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.linalg;
 
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 
@@ -209,7 +210,23 @@ public class GgbVector
 		
 	}	
 	
-	
+	/** returns this projected on the plane with vector v used for direction 
+	 *  if v is parallel to plane, then plane third vector is used instead
+	 */	
+	public GgbVector[] projectPlaneThruVIfPossible(GgbMatrix m, GgbVector v){
+		
+		// check if v is parallel to plane
+		GgbVector v3 = m.getColumn(3);
+		if (Kernel.isEqual(v3.dotproduct(v), 0.0, Kernel.STANDARD_PRECISION))
+			return projectPlane(m);
+		
+		// if not, use v for direction
+		GgbMatrix m1 = new GgbMatrix(4,4);
+		m1.set(new GgbVector[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
+		
+		return projectPlane(m1);
+		
+	}		
 	
 	
 	

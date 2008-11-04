@@ -45,10 +45,11 @@ final public class GeoPoint3D extends GeoVec4D {
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
 	//paths
-	private Path1D path1D;
-	private Path1DParameter path1DParameter;
-	private Path2D path2D;
-	private Path2DParameters path2DParameters;
+	private PathOn pathOn;
+	//private PathOnParameter ppOn;
+	private PathIn pathIn;
+	//private PathInParameter ppIn;
+	private PathParameters pps;
         
     // temp
     public GgbVector inhom = new GgbVector(3);
@@ -76,62 +77,71 @@ final public class GeoPoint3D extends GeoVec4D {
     
     
     
-    public GeoPoint3D(Construction c, Path1D path) {
+    public GeoPoint3D(Construction c, PathOn path) {
 		super(c,4);
-		this.path1D = path;
+		this.pathOn = path;
 	}
     
-    public GeoPoint3D(Construction c, Path2D path) {
+    public GeoPoint3D(Construction c, PathIn path) {
 		super(c,4);
-		this.path2D = path;
+		this.pathIn = path;
 	}    
     
     
-    final public Path1DParameter getPath1DParameter() {
-    	if (path1DParameter == null)
-    		path1DParameter = new Path1DParameter();
-    	return path1DParameter;
+    /*
+    final public PathOnParameter getPathOnParameter() {
+    	if (ppOn == null)
+    		ppOn = new PathOnParameter();
+    	return ppOn;
     }
+    */
     
     
-	public boolean hasPath1D() {
-		return path1D != null;
+	public boolean hasPathOn() {
+		return pathOn != null;
 	}
 	
 
     
     
-	public Path1D getPath1D() {
-		return path1D;
+	public PathOn getPathOn() {
+		return pathOn;
 	}
 	
 
 	
 
     
-    
-    final public Path2DParameters getPath2DParameters() {
-    	if (path2DParameters == null)
-    		path2DParameters = new Path2DParameters();
-    	return path2DParameters;
+    /*
+    final public PathInParameter getPathInParameter() {
+    	if (ppIn == null)
+    		ppIn = new PathInParameter();
+    	return ppIn;
     }
+    */
     
     
-	public boolean hasPath2D() {
-		return path2D != null;
+	public boolean hasPathIn() {
+		return pathIn != null;
 	}
 	
 
     
     
-	public Path2D getPath2D() {
-		return path2D;
+	public PathIn getPathIn() {
+		return pathIn;
 	}
 	
+	
+    final public PathParameters getPathParameters(int n) {
+    	if (pps == null)
+    		pps = new PathParameters(n);
+    	return pps;
+    }	
 	
     
 	public boolean hasPath() {
-		return hasPath1D() || hasPath2D();
+		return hasPathOn() || hasPathIn();
 	}
     
     
@@ -172,13 +182,13 @@ final public class GeoPoint3D extends GeoVec4D {
 		updateCoords(); 
 		
 		if (path){
-			if (hasPath1D()) {
+			if (hasPathOn()) {
 				// remember path parameter for undefined case
 				//PathParameter tempPathParameter = getTempPathparameter();
 				//tempPathParameter.set(getPathParameter());
-				path1D.pointChanged(this);
-			} else if (hasPath2D()) {
-				path2D.pointChanged(this);
+				pathOn.pointChanged(this);
+			} else if (hasPathIn()) {
+				pathIn.pointChanged(this);
 			}
 			updateCoords(); 
 		}
