@@ -2221,8 +2221,20 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 			geo = (GeoElement) hits.get(i);
 			switch (test) {
 			case TEST_MOVEABLE:
-				if (geo.isMoveable() || (!geo.isGeoPoint() && geo.hasMoveableInputPoints()))
+				// moveable object
+				if (geo.isMoveable()) {
 					moveableList.add(geo);
+				}
+				// point with changeable parent coords
+				else if (geo.isGeoPoint()) {
+					GeoPoint point = (GeoPoint) geo;
+					if (point.hasChangeableCoordParentNumbers())
+						moveableList.add(point);
+				}
+				// not a point, but has moveable input points
+				else if (geo.hasMoveableInputPoints()) {
+					moveableList.add(geo);
+				}
 				break;
 
 			case TEST_ROTATEMOVEABLE:

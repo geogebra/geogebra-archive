@@ -63,14 +63,13 @@ public abstract class Application3D extends Application{
         euclidianView3D.setZZero(-7.0);
         //euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
         euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
-        //euclidianView3D.setRotXY(0,0,true);
         
         
         //init toolbar
         String myToolBar3D =  EuclidianView3D.MODE_MOVE
         						+" || "
-        						//+EuclidianView3D.MODE_POINT
-        						//+" || "
+        						+EuclidianView3D.MODE_POINT
+        						+" || "
         						+EuclidianView3D.MODE_TRANSLATEVIEW;
         getGuiManager().setToolBarDefinition( myToolBar3D );
         updateToolBar();

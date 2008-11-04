@@ -143,6 +143,39 @@ public class GgbAPI {
 	}
 	
 	/**
+	 * Returns the GeoGebra XML string for the given GeoElement object, 
+	 * i.e. only the <element> tag is returned. 
+	 */
+	public synchronized String getXML(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) 
+			return "";	
+		else {
+			if (geo.isIndependent())
+				return geo.getXML();
+			else
+				return "";
+		}
+	}
+	
+	/**
+	 * For a dependent GeoElement objName the XML string of 
+	 * the parent algorithm and all its output objects is returned. 
+	 * For a free GeoElement objName "" is returned.
+	 */
+	public synchronized String getAlgorithmXML(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) 
+			return "";	
+		else {
+			if (geo.isIndependent())
+				return "";
+			else
+				return geo.getParentAlgorithm().getXML();
+		}
+	}	
+	
+	/**
 	 * Opens construction given in XML format. May be used for loading constructions.
 	 */
 	public synchronized void setXML(String xml) {

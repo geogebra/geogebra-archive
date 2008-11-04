@@ -16,16 +16,16 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
 
-public class AlgoPoint3DInPath extends AlgoElement3D {
+public class AlgoPointOnPath1D extends AlgoElement3D {
 
 	
-	private PathIn path; // input
+	private Path1D path; // input
     private GeoPoint3D P; // output       
 
-    AlgoPoint3DInPath(
+    AlgoPointOnPath1D(
         Construction cons,
         String label,
-        PathIn path,
+        Path1D path,
         double x,
         double y,
         double z) {
@@ -42,7 +42,7 @@ public class AlgoPoint3DInPath extends AlgoElement3D {
     }
 
     protected String getClassName() {
-        return "AlgoPoint3DInPath";
+        return "AlgoPointOnPath1D";
     }
 
     // for AlgoElement
@@ -58,7 +58,7 @@ public class AlgoPoint3DInPath extends AlgoElement3D {
     GeoPoint3D getP() {
         return P;
     }
-    PathIn getPath() {
+    Path1D getPath() {
         return path;
     }
 
@@ -78,7 +78,7 @@ public class AlgoPoint3DInPath extends AlgoElement3D {
         StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("PointInA",input[0].getLabel()));
+        sb.append(app.getPlain("PointOnA",input[0].getLabel()));
         
         return sb.toString();
     }

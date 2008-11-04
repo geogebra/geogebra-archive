@@ -157,9 +157,6 @@ public class CASTableCellController implements KeyListener {
 				// tableModel.setValueAt(curValue, selectedRow,
 				// CASPara.contCol);
 				table.setValueAt(curValue, selectedRow, CASPara.contCol);
-				
-				// save the current point for undo purpose
-				table.save();
 
 				CASTableCellValue newValue = (CASTableCellValue) tableModel
 						.getValueAt(selectedRow, selectedCol);

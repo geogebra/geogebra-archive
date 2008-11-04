@@ -4,7 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
+public abstract class GeoCoordSys2D extends GeoCoordSys {
 	
 	
 	GgbVector Vn = new GgbVector(4); //orthogonal vector
@@ -65,7 +65,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	
-	/** returns completed matrix for drawing : (V1 V2 Vn O) with Vn normed orthogonal vector to the plane */
+	/** returns completed matrix for drawing */
 	public GgbMatrix getMatrixCompleted(){
 		return matrixCompleted.copy();
 	}
@@ -106,70 +106,6 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		//Application.debug("c = "+c.get(1)+","+c.get(2)+" -- gridOriginProjected ="); gridOriginProjected.SystemPrint();
 	}
 	
-	
-	
-	
-	/////////////////////////////////////////
-	// Path2D interface
-	
-	public boolean isPath2D(){
-		return true;
-	}
-	
-	public void pointChanged(GeoPoint3D P){
-		
-		//project P on plane
-		GgbVector v = P.getCoords();
-		GgbVector[] project = v.projectPlane(matrixCompleted);
-		
-		if (!isLimitedPath()){
-			P.setCoords(project[0],false);
-
-			// set path parameter		
-			PathParameters pps = P.getPathParameters(2);
-			pps.setTs(new double[] {project[1].get(1),project[1].get(2)});
-		}else{
-			// set path parameter		
-			PathParameters pps = P.getPathParameters(2);
-			pps.setTs(new double[] {project[1].get(1),project[1].get(2)});		
-			limitPathParameters(pps);
-			
-			P.setCoords(getPoint(pps.getT(0),pps.getT(1)),false);
-		}
-	}
-	
-	
-	
-	public void pathChanged(GeoPoint3D P){
-		PathParameters pps = P.getPathParameters(2);
-		P.setCoords(getPoint(pps.getT(0),pps.getT(1)),false);
-	}
-	
-	
-	
-	public boolean isLimitedPath(){
-		return false;
-	}
-
-	public void limitPathParameters(PathParameters pps){}	
-	
-
-	public boolean isOnPath(GeoPoint3D P, double eps){
-		return false; //TODO
-	}
-
-
-
-	
-
-	public boolean isClosedPath(){
-		return false;
-	}
-	
-
-	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
-		return matrixCompleted;
-	}
 	
 
 	

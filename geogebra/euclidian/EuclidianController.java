@@ -749,43 +749,61 @@ public class EuclidianController implements MouseListener,
 			if (translationVec == null)
 				translationVec = new GeoVector(kernel.getConstruction());
 		}	
-		// dependent object: moveable input points as parents?
-		else if (!movedGeoElement.isMoveable() && movedGeoElement.hasMoveableInputPoints()) {				
-				translateableGeos = movedGeoElement.getFreeInputPoints();				
-				
+		
+		// DEPENDENT object: changeable parents?
+		// move free parent points (e.g. for segments)
+		else if (!movedGeoElement.isMoveable()) {
+			translateableGeos = null;
+			
+			// point with changeable coord parent numbers
+			if (movedGeoElement.isGeoPoint() && 
+					((GeoPoint) movedGeoElement).hasChangeableCoordParentNumbers()) {
+				translateableGeos = new ArrayList();
+				translateableGeos.add(movedGeoElement);
+			}
+			
+			// STANDARD case: get free input points of dependent movedGeoElement
+			else if (movedGeoElement.hasMoveableInputPoints()) {
 				// allow only moving of the following object types
-				if (!(movedGeoElement.isGeoLine() || 
+				if (movedGeoElement.isGeoLine() || 
 					  movedGeoElement.isGeoPolygon() ||
 					  movedGeoElement.isGeoVector() ||
-					  movedGeoElement.isGeoConic() )) 
-				{
-					translateableGeos = null;
+					  movedGeoElement.isGeoConic() ) 
+				{		
+					translateableGeos = movedGeoElement.getFreeInputPoints();
 				}
-			
-				if (translateableGeos != null) {					
+			}
 
-					moveMode = MOVE_DEPENDENT;
-					startPoint.setLocation(xRW, yRW);					
-					view.setDragCursor();
-					if (translationVec == null)
-						translationVec = new GeoVector(kernel.getConstruction());
-				} else {
-					moveMode = MOVE_NONE;
-				}				
-			} 
-			else if (movedGeoElement.isGeoPoint()) {
-				moveMode = MOVE_POINT;
-				movedGeoPoint = (GeoPoint) movedGeoElement;
-				view.showMouseCoords = !app.isApplet()
-						&& !movedGeoPoint.hasPath();
+			// init move dependent mode if we have something to move ;-)
+			if (translateableGeos != null) {
+				moveMode = MOVE_DEPENDENT;
+				startPoint.setLocation(xRW, yRW);					
 				view.setDragCursor();
-			} 			
-			else if (movedGeoElement.isGeoLine()) {
-				moveMode = MOVE_LINE;
-				movedGeoLine = (GeoLine) movedGeoElement;
-				view.showMouseCoords = true;
-				view.setDragCursor();
-			} 
+				if (translationVec == null)
+					translationVec = new GeoVector(kernel.getConstruction());
+			} else {
+				moveMode = MOVE_NONE;
+			}				
+		} 
+		
+		// free point
+		else if (movedGeoElement.isGeoPoint()) {
+			moveMode = MOVE_POINT;
+			movedGeoPoint = (GeoPoint) movedGeoElement;
+			view.showMouseCoords = !app.isApplet()
+					&& !movedGeoPoint.hasPath();
+			view.setDragCursor();
+		} 			
+		
+		// free line
+		else if (movedGeoElement.isGeoLine()) {
+			moveMode = MOVE_LINE;
+			movedGeoLine = (GeoLine) movedGeoElement;
+			view.showMouseCoords = true;
+			view.setDragCursor();
+		} 
+		
+		// free vector
 			else if (movedGeoElement.isGeoVector()) {
 				movedGeoVector = (GeoVector) movedGeoElement;
 
@@ -826,6 +844,8 @@ public class EuclidianController implements MouseListener,
 				view.showMouseCoords = true;
 				view.setDragCursor();
 			} 
+		
+		// free text
 			else if (movedGeoElement.isGeoText()) {
 				moveMode = MOVE_TEXT;
 				movedGeoText = (GeoText) movedGeoElement;
@@ -857,8 +877,11 @@ public class EuclidianController implements MouseListener,
 					oldLoc.setLocation(movedGeoText.labelOffsetX,
 							movedGeoText.labelOffsetY);
 					startLoc = mouseLoc;
-				}
-			} else if (movedGeoElement.isGeoConic()) {
+				}							
+			} 
+			
+		// free conic
+			else if (movedGeoElement.isGeoConic()) {
 				moveMode = MOVE_CONIC;
 				movedGeoConic = (GeoConic) movedGeoElement;
 				view.showMouseCoords = false;
@@ -882,6 +905,8 @@ public class EuclidianController implements MouseListener,
 				}
 				tempFunction.set(movedGeoFunction);
 			} 
+		
+		// free number
 			else if (movedGeoElement.isGeoNumeric()) {															
 				movedGeoNumeric = (GeoNumeric) movedGeoElement;
 				moveMode = MOVE_NUMERIC;
@@ -911,6 +936,8 @@ public class EuclidianController implements MouseListener,
 				view.showMouseCoords = false;
 				view.setDragCursor();					
 			}  
+		
+		//  checkbox
 			else if (movedGeoElement.isGeoBoolean()) {
 				movedGeoBoolean = (GeoBoolean) movedGeoElement;
 				// move checkbox
@@ -922,6 +949,8 @@ public class EuclidianController implements MouseListener,
 				view.showMouseCoords = false;
 				view.setDragCursor();			
 			}
+		
+		// image
 			else if (movedGeoElement.isGeoImage()) {
 				moveMode = MOVE_IMAGE;
 				movedGeoImage = (GeoImage) movedGeoElement;
@@ -1928,22 +1957,23 @@ public class EuclidianController implements MouseListener,
 	final protected void moveLabel() {
 		movedLabelGeoElement.setLabelOffset(oldLoc.x + mouseLoc.x
 				- startLoc.x, oldLoc.y + mouseLoc.y - startLoc.y);
-		movedLabelGeoElement.update();  // no update cascade needed
+		// no update cascade needed
+		movedLabelGeoElement.update();  
 		kernel.notifyRepaint();
 	}
 
 	final protected void movePoint(boolean repaint) {
 		movedGeoPoint.setCoords(xRW, yRW, 1.0);
+		movedGeoPoint.updateCascade();	
+
 		if (repaint)
-			movedGeoPoint.updateRepaint();
-		else
-			movedGeoPoint.updateCascade();		
+			kernel.notifyRepaint();
 	}
 
 	final protected void moveLine(boolean repaint) {
 		// make parallel geoLine through (xRW, yRW)
-		movedGeoLine.setCoords(movedGeoLine.x, movedGeoLine.y, -(movedGeoLine.x
-				* xRW + movedGeoLine.y * yRW));		
+		movedGeoLine.setCoords(movedGeoLine.x, movedGeoLine.y, 
+								-(movedGeoLine.x * xRW + movedGeoLine.y * yRW));		
 		if (repaint)
 			movedGeoLine.updateRepaint();
 		else

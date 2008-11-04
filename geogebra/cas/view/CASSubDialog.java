@@ -81,21 +81,21 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		// create label panel
 		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		if (subStr != null) {
-			JLabel subLabel = new JLabel(app.getPlain("SubstituteForAinB",
-					subStr, inputStr));
+			JLabel subLabel = new JLabel(app.getPlain("Substitute for ")
+					+ subStr + app.getPlain(" in ") + inputStr);
 			subTitlePanel.add(subLabel);
 		} else {
 			selectedEnabled = false;
-			JLabel subLabel = new JLabel(app.getPlain("SubstituteFor"));
+			JLabel subLabel = new JLabel(app.getPlain("Substitute for "));
 			subStrfield = new JTextField(4);
-			JLabel subLabel2 = new JLabel(app.getPlain("At") + " " +inputStr);
+			JLabel subLabel2 = new JLabel(app.getPlain(" in ") + inputStr);
 			subTitlePanel.add(subLabel);
 			subTitlePanel.add(subStrfield);
 			subTitlePanel.add(subLabel2);
 		}
 
 		// create caption panel
-		JLabel captionLabel = new JLabel(app.getPlain("NewExpression") + ":");
+		JLabel captionLabel = new JLabel(app.getPlain("New Expression") + ":");
 		valueTextField = new JTextField();
 		valueTextField.setColumns(20);
 		captionLabel.setLabelFor(valueTextField);
@@ -109,11 +109,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		captionPanel.add(subPanel, BorderLayout.SOUTH);
 
 		// create checkbox panel
-		if (subStr != null)
-			allReplaced = new Checkbox(app
-					.getPlain("SubstituteforAllA", subStr));
-		else
-			allReplaced = new Checkbox(app.getPlain("SubstituteforAllA", "..."));
+		allReplaced = new Checkbox("Substitute for All");
 		cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		cbPanel.add(allReplaced);
 

@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.MyParseError;

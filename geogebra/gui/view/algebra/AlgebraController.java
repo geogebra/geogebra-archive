@@ -19,13 +19,8 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -34,7 +29,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 
 public class AlgebraController
 	implements KeyListener, MouseListener, MouseMotionListener {

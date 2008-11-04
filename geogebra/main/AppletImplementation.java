@@ -450,8 +450,25 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Returns current construction in XML format. May be used for saving.
 	 */
 	public synchronized String getXML() {
-		return app.getXML();
+		return ggbApi.getXML();
 	}
+	
+	/**
+	 * Returns the GeoGebra XML string for the given GeoElement object, 
+	 * i.e. only the <element> tag is returned. 
+	 */
+	public String getXML(String objName) {
+		return ggbApi.getXML(objName);	
+	}
+	
+	/**
+	 * For a dependent GeoElement objName the XML string of 
+	 * the parent algorithm and all its output objects is returned. 
+	 * For a free GeoElement objName "" is returned.
+	 */
+	public String getAlgorithmXML(String objName) {
+		return ggbApi.getAlgorithmXML(objName);
+	}	
 	
 	/**
 	 * Opens construction given in XML format. May be used for loading constructions.

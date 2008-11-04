@@ -2353,7 +2353,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void setXML(String xml, boolean clearAll) {
-		setCurrentFile(null);
+		if (clearAll)
+			setCurrentFile(null);
 
 		try {
 			myXMLio.processXMLString(xml, clearAll, false);
@@ -3252,7 +3253,7 @@ public abstract class Application implements KeyEventDispatcher {
 		default:
 			// handle selected GeoElements
 			ArrayList geos = getSelectedGeos();
-			return handleKeyPressed(event, getSelectedGeos());		
+			return handleKeyPressed(event, geos);		
 		}
 
 		// something was done in handleKeyPressed
@@ -3353,7 +3354,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 				if (geo.isChangeable()) {
 					// update number
-					if (geo.isNumberValue()) {
+					if (geo.isGeoNumeric()) {
 						GeoNumeric num = (GeoNumeric) geo;
 						num.setValue(kernel.checkInteger(num.getValue() + changeVal
 								* num.animationStep));
@@ -3379,6 +3380,7 @@ public abstract class Application implements KeyEventDispatcher {
 			if (needUpdate) {
 				// update all geos together
 				GeoElement.updateCascade(geos);
+				kernel.notifyRepaint();
 			}
 	
 			return true;
@@ -3395,12 +3397,17 @@ public abstract class Application implements KeyEventDispatcher {
 	 * @param keyCode: VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
 	 * @return whether any object was moved
 	 */
-	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff) {				
-		if (tempVec == null)
-			tempVec = new GeoVector(kernel.getConstruction());
+	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff) {	
+		GeoElement geo = (GeoElement) geos.get(0);
+		
+		// don't move slider, they will be handled later
+		if (geos.size() == 1 && geo.isGeoNumeric() && geo.isChangeable()) {
+			return false;
+		}
 	
 		// set translation vector
-		GeoElement geo = (GeoElement) geos.get(0);
+		if (tempVec == null)
+			tempVec = new GeoVector(kernel.getConstruction());
 		tempVec.setCoords(geo.animationStep * xdiff, geo.animationStep * ydiff, 0);
 		
 		// move objects

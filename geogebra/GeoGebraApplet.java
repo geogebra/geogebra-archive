@@ -44,6 +44,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	private JavaScriptAPI appletImplementation = null;	
 	private JarManager jarManager;
 	private int width, height;
+	private boolean animationRunningAtLastStop = false;
 	
 	// splash screen stuff
 	private Image splashImage, progressImage;
@@ -77,18 +78,30 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		}								
 	}
 
-	public void start() {
+	public void start() {		
+		// restart animation if necessary
+		if (animationRunningAtLastStop) {			
+			appletImplementation.startAnimation();	
+		}
+		
 		repaint();		
 		System.gc();
 	}
 
 	public void stop() {
-		repaint();		
+		// stop animation and remember that it needs to be restarted later
+		animationRunningAtLastStop = appletImplementation.isAnimationRunning();
+		if (animationRunningAtLastStop) {			
+			appletImplementation.stopAnimation();	
+		}
+			
 		System.gc();
 	}
 
-	public void destroy() {
-		appletImplementation = null;
+	public void destroy() {		
+		// stop animation
+		appletImplementation.stopAnimation();
+		appletImplementation = null;				
 		System.gc();
 	}
 	
@@ -241,247 +254,255 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * geogebra.main.AppletImplementation
 	 */
 
-	public void deleteObject(String objName) {
+	public synchronized void deleteObject(String objName) {
 		getAppletImplementation().deleteObject(objName);
 	}
 
-	public boolean evalCommand(String cmdString) {
+	public synchronized boolean evalCommand(String cmdString) {
 		return getAppletImplementation().evalCommand(cmdString);
 	}
 
-	public void evalXML(String xmlString) {
-		getAppletImplementation().evalCommand(xmlString);
+	public synchronized void evalXML(String xmlString) {
+		getAppletImplementation().evalXML(xmlString);
 	}
 
-	public String evalYacas(String cmdString) {
+	public synchronized String evalYacas(String cmdString) {
 		return getAppletImplementation().evalYacas(cmdString);
 	}
 
-	public boolean exists(String objName) {
+	public synchronized boolean exists(String objName) {
 		return getAppletImplementation().exists(objName);
 	}
 
-	public String[] getAllObjectNames() {
+	public synchronized String[] getAllObjectNames() {
 		return getAppletImplementation().getAllObjectNames();
 	}
 
-	public String getColor(String objName) {
+	public synchronized String getColor(String objName) {
 		return getAppletImplementation().getColor(objName);
 	}
 
-	public String getCommandString(String objName) {
+	public synchronized String getCommandString(String objName) {
 		return getAppletImplementation().getCommandString(objName);
 	}
 
-	public String getDefinitionString(String objName) {
+	public synchronized String getDefinitionString(String objName) {
 		return getAppletImplementation().getDefinitionString(objName);
 	}
 
-	public byte[] getGGBfile() {
+	public synchronized byte[] getGGBfile() {
 		return getAppletImplementation().getGGBfile();
 	}
 
-	public String getHostname() {
+	public synchronized String getHostname() {
 		return getAppletImplementation().getHostname();
 	}
 
-	public String getIPAddress() {
+	public synchronized String getIPAddress() {
 		return getAppletImplementation().getIPAddress();
 	}
 
-	public int getLayer(String objName) {
+	public synchronized int getLayer(String objName) {
 		return getAppletImplementation().getLayer(objName);
 	}
 
-	public String getObjectName(int i) {
+	public synchronized String getObjectName(int i) {
 		return getAppletImplementation().getObjectName(i);
 	}
 
-	public int getObjectNumber() {
+	public synchronized int getObjectNumber() {
 		return getAppletImplementation().getObjectNumber();
 	}
 
-	public String getObjectType(String objName) {
+	public synchronized String getObjectType(String objName) {
 		return getAppletImplementation().getObjectType(objName);
 	}
 
-	public double getValue(String objName) {
+	public synchronized double getValue(String objName) {
 		return getAppletImplementation().getValue(objName);
 	}
 
-	public String getValueString(String objName) {
+	public synchronized String getValueString(String objName) {
 		return getAppletImplementation().getValueString(objName);
 	}
 
-	public String getXML() {
+	public synchronized String getXML() {
 		return getAppletImplementation().getXML();
 	}
+	
+	public synchronized String getXML(String objName) {
+		return getAppletImplementation().getXML(objName);
+	}
+	
+	public synchronized String getAlgorithmXML(String objName) {
+		return getAppletImplementation().getAlgorithmXML(objName);
+	}
 
-	public double getXcoord(String objName) {
+	public synchronized double getXcoord(String objName) {
 		return getAppletImplementation().getXcoord(objName);
 	}
 
-	public double getYcoord(String objName) {
+	public synchronized double getYcoord(String objName) {
 		return getAppletImplementation().getYcoord(objName);
 	}
 
-	public boolean isDefined(String objName) {
+	public synchronized boolean isDefined(String objName) {
 		return getAppletImplementation().isDefined(objName);
 	}
 
-	public void openFile(String strURL) {
+	public synchronized void openFile(String strURL) {
 		getAppletImplementation().openFile(strURL);
 	}
 
-	public void refreshViews() {
+	public synchronized void refreshViews() {
 		getAppletImplementation().refreshViews();
 	}
 
-	public void registerAddListener(String JSFunctionName) {
+	public synchronized void registerAddListener(String JSFunctionName) {
 		getAppletImplementation().registerAddListener(JSFunctionName);
 	}
 
-	public void registerClearListener(String JSFunctionName) {
+	public synchronized void registerClearListener(String JSFunctionName) {
 		getAppletImplementation().registerClearListener(JSFunctionName);
 	}
 
-	public void registerObjectUpdateListener(String objName, String JSFunctionName) {
+	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
 		getAppletImplementation().registerObjectUpdateListener(objName, JSFunctionName);
 	}
 
-	public void registerRemoveListener(String JSFunctionName) {
+	public synchronized void registerRemoveListener(String JSFunctionName) {
 		getAppletImplementation().registerRemoveListener(JSFunctionName);
 	}
 
-	public void registerRenameListener(String JSFunctionName) {
+	public synchronized void registerRenameListener(String JSFunctionName) {
 		getAppletImplementation().registerRenameListener(JSFunctionName);
 	}
 
-	public void registerUpdateListener(String JSFunctionName) {
+	public synchronized void registerUpdateListener(String JSFunctionName) {
 		getAppletImplementation().registerUpdateListener(JSFunctionName);
 	}
 
-	public boolean renameObject(String oldObjName, String newObjName) {
+	public synchronized boolean renameObject(String oldObjName, String newObjName) {
 		return getAppletImplementation().renameObject(oldObjName, newObjName);
 	}
 	
-	public void setAnimating(String objName, boolean animate){
+	public synchronized void setAnimating(String objName, boolean animate){
 		getAppletImplementation().setAnimating(objName, animate);
 	}
 		
-	public void setAnimationSpeed(String objName, double speed){
+	public synchronized void setAnimationSpeed(String objName, double speed){
 		getAppletImplementation().setAnimationSpeed(objName, speed);
 	}
 	
-	public void startAnimation() {
+	public synchronized void startAnimation() {
 		getAppletImplementation().startAnimation();
 	}
 	
-	public void stopAnimation() {
+	public synchronized void stopAnimation() {
 		getAppletImplementation().stopAnimation();
 	}
 	
-	public boolean isAnimationRunning() {
+	public synchronized boolean isAnimationRunning() {
 		return getAppletImplementation().isAnimationRunning();
 	}
 	
-	public void reset() {
+	public synchronized void reset() {
 		getAppletImplementation().reset();
 	}
 
-	public void setAxesVisible(boolean xVisible, boolean yVisible) {
+	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {
 		getAppletImplementation().setAxesVisible(xVisible, yVisible);
 	}
 
-	public void setColor(String objName, int red, int green, int blue) {
+	public synchronized void setColor(String objName, int red, int green, int blue) {
 		getAppletImplementation().setColor(objName, red, green, blue);
 	}
 
-	public void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
+	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
 		getAppletImplementation().setCoordSystem(xmin, xmax, ymin, ymax);
 	}
 
-	public void setCoords(String objName, double x, double y) {
+	public synchronized void setCoords(String objName, double x, double y) {
 		getAppletImplementation().setCoords(objName, x, y);
 	}
 
-	public void setErrorDialogsActive(boolean flag) {
+	public synchronized void setErrorDialogsActive(boolean flag) {
 		getAppletImplementation().setErrorDialogsActive(flag);
 	}
 
-	public void setFixed(String objName, boolean flag) {
+	public synchronized void setFixed(String objName, boolean flag) {
 		getAppletImplementation().setFixed(objName, flag);
 	}
 
-	public void setGridVisible(boolean flag) {
+	public synchronized void setGridVisible(boolean flag) {
 		getAppletImplementation().setGridVisible(flag);
 	}
 
-	public void setLabelMode(String objName, boolean visible) {
+	public synchronized void setLabelMode(String objName, boolean visible) {
 		getAppletImplementation().setLabelMode(objName, visible);
 	}
 
-	public void setLabelStyle(String objName, int style) {
+	public synchronized void setLabelStyle(String objName, int style) {
 		getAppletImplementation().setLabelStyle(objName, style);
 	}
 
-	public void setLabelVisible(String objName, boolean visible) {
+	public synchronized void setLabelVisible(String objName, boolean visible) {
 		getAppletImplementation().setLabelVisible(objName, visible);
 	}
 
-	public void setLayer(String objName, int layer) {
+	public synchronized void setLayer(String objName, int layer) {
 		getAppletImplementation().setLayer(objName, layer);
 	}
 
-	public void setLayerVisible(int layer, boolean visible) {
+	public synchronized void setLayerVisible(int layer, boolean visible) {
 		getAppletImplementation().setLayerVisible(layer, visible);
 	}
 
-	public void setMode(int mode) {
+	public synchronized void setMode(int mode) {
 		getAppletImplementation().setMode(mode);
 	}
 
-	public void setRepaintingActive(boolean flag) {
+	public synchronized void setRepaintingActive(boolean flag) {
 		getAppletImplementation().setRepaintingActive(flag);
 	}
 
-	public void setTrace(String objName, boolean flag) {
+	public synchronized void setTrace(String objName, boolean flag) {
 		getAppletImplementation().setTrace(objName, flag);
 	}
 
-	public void setValue(String objName, double x) {
+	public synchronized void setValue(String objName, double x) {
 		getAppletImplementation().setValue(objName, x);
 	}
 
-	public void setVisible(String objName, boolean visible) {
+	public synchronized void setVisible(String objName, boolean visible) {
 		getAppletImplementation().setVisible(objName, visible);
 	}
 
-	public void setXML(String xml) {
+	public synchronized void setXML(String xml) {
 		getAppletImplementation().setXML(xml);
 	}
 
-	public void unregisterAddListener(String JSFunctionName) {
+	public synchronized void unregisterAddListener(String JSFunctionName) {
 		getAppletImplementation().unregisterAddListener(JSFunctionName);
 	}
 
-	public void unregisterClearListener(String JSFunctionName) {
+	public synchronized void unregisterClearListener(String JSFunctionName) {
 		getAppletImplementation().unregisterClearListener(JSFunctionName);
 	}
 
-	public void unregisterObjectUpdateListener(String objName) {
+	public synchronized void unregisterObjectUpdateListener(String objName) {
 		getAppletImplementation().unregisterObjectUpdateListener(objName);
 	}
 
-	public void unregisterRemoveListener(String JSFunctionName) {
+	public synchronized void unregisterRemoveListener(String JSFunctionName) {
 		getAppletImplementation().unregisterRemoveListener(JSFunctionName);
 	}
 
-	public void unregisterRenameListener(String JSFunctionName) {
+	public synchronized void unregisterRenameListener(String JSFunctionName) {
 		getAppletImplementation().unregisterRenameListener(JSFunctionName);
 	}
 
-	public void unregisterUpdateListener(String JSFunctionName) {
+	public synchronized void unregisterUpdateListener(String JSFunctionName) {
 		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
 	}
 	

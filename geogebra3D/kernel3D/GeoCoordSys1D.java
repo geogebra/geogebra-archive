@@ -6,7 +6,7 @@ import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 
-public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
+public abstract class GeoCoordSys1D extends GeoCoordSys implements Path1D {
 	
 	GgbVector Vn1 = new GgbVector(4);
 	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
@@ -109,8 +109,8 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 			p.set(4, 1);
 			P.setCoords(p,false); //avoid new pointChanged computation
 			// set path parameter		
-			PathParameters pps = P.getPathParameters(1);
-			pps.setT(project[1].get(1));
+			PathParameter1D pp = P.getPathParameter1D();
+			pp.setT(project[1].get(1));
 		}else{
 			double t=project[1].get(1);			
 			if (t>getMaxParameter())
@@ -119,19 +119,19 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 				t=getMinParameter();
 			P.setCoords(getPoint(t),false);
 			// set path parameter		
-			PathParameters pps = P.getPathParameters(1);
-			pps.setT(t);
+			PathParameter1D pp = P.getPathParameter1D();
+			pp.setT(t);
 		}
 		
 	}
 	
 	public void pathChanged(GeoPoint3D P){
-		PathParameters pps = P.getPathParameters(1);
-		P.setCoords(getPoint(pps.getT()),false);
+		PathParameter1D pp = P.getPathParameter1D();
+		P.setCoords(getPoint(pp.getT()),false);
 	}
 	
 	public boolean isOnPath(GeoPoint3D P, double eps){
-		return false; //TODO
+		return false;
 	}
 
 	

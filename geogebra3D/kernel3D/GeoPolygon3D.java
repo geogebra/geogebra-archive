@@ -49,36 +49,6 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 	
 	
 	
-	
-	
-	
-	////////////////////////////////////////
-	// Path2D interface
-	
-	public boolean isLimitedPath(){
-		return true;
-	}
-
-	public void limitPathParameters(PathParameters pps){
-		//TODO adapt to a polygon, using orthogonal directions
-		double t1 = pps.getT(0);
-		double t2 = pps.getT(1);
-		
-		if (t1<0)
-			t1=0;
-		if (t2<0)
-			t2=0;
-		if (t1+t2>1){
-			double t=t1+t2;
-			t1=t1/t;
-			t2=t2/t;
-		}
-		
-		pps.setTs(new double[] {t1,t2});
-	}		
-	
-	
-	
 	protected String getClassName() {
 		return "GeoPolygon3D";
 	}        

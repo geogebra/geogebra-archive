@@ -999,7 +999,7 @@ public abstract class GeoElement
 	 * @return
 	 */
 	public boolean hasMoveableInputPoints() {
-		// allow only moving of segments and polygons
+		// allow only moving of certain object types
 		switch (getGeoClassType()) {		
 			case GEO_CLASS_CONIC:
 			case GEO_CLASS_CONICPART:
@@ -1013,7 +1013,7 @@ public abstract class GeoElement
 				
 			case GEO_CLASS_POLYGON:
 				return containsOnlyMoveableGeos(getFreeInputPoints());
-		
+							
 		}		
 		return false;
 	}
@@ -1911,7 +1911,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * Updates this object and all dependent ones. Note: no repainting is done afterwards! 
 	 * 	 synchronized for animation
 	 */
-	final synchronized public void updateCascade() {
+	final public void updateCascade() {
 		update();
 
 		// update all algorithms in the algorithm set of this GeoElement        
@@ -1924,7 +1924,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * Note: this method is more efficient than calling updateCascade() for all individual
 	 * GeoElements. 
 	 */
-	final static public void updateCascade(ArrayList geos) {
+	final static public synchronized void updateCascade(ArrayList geos) {
 		// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			GeoElement geo = (GeoElement) geos.get(0);
@@ -3178,30 +3178,38 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * (xPixel, yPixel) in screen coordinates.	 
 	 */
 	public static boolean moveObjects(ArrayList geos, GeoVector rwTransVec) {	
+		if (moveObjectsUpdateList == null)
+			moveObjectsUpdateList = new ArrayList();
+		
 		boolean moved = false;
-		for (int i=0; i < geos.size(); i++) {
+		int size = geos.size();
+		moveObjectsUpdateList.clear();
+		moveObjectsUpdateList.ensureCapacity(size);
+		
+		for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
-			moved = geo.moveObject(rwTransVec, false) || moved;		
+			moved = geo.moveObject(rwTransVec, moveObjectsUpdateList) || moved;		
 		}					
 				
 		// take all independent input objects and build a common updateSet
 		// then update all their algos.
-		// (don't do updateCascade() on them individually as this may cause 
+		// (don't do updateCascade() on them individually as this could cause 
 		//  multiple updates of the same algorithm)
-		updateCascade(geos);
+		updateCascade(moveObjectsUpdateList);
 		
 		return moved;
 	}
+	private static ArrayList moveObjectsUpdateList;
 	
 	/**
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
 	final public boolean moveObject(GeoVector rwTransVec) {
-		return moveObject(rwTransVec, true);
+		return moveObject(rwTransVec, null);
 	}
 	
-	private boolean moveObject(GeoVector rwTransVec, boolean doUpdateCascade) {
+	private boolean moveObject(GeoVector rwTransVec, ArrayList updateGeos) {
 		boolean movedGeo = false;
 		if (isMoveable()) {
 			if (isTranslateable()) {
@@ -3229,14 +3237,50 @@ final public boolean hasOnlyFreeInputPoints() {
 						movedGeo = true;
 					}						
 				}
-			}								
-		}											
+			}		
 			
-		if (movedGeo && doUpdateCascade)
-			updateCascade();
+			if (movedGeo) {
+				if (updateGeos != null)
+					updateGeos.add(this);
+				else
+					updateCascade();
+			}			
+		}			
 		
+		// non-moveable geo
+		else {
+			// point with changeable parent coordinates
+			if (isGeoPoint()) {
+				GeoPoint point = (GeoPoint) this;
+				if (point.hasChangeableCoordParentNumbers()) {
+					// translate x and y coordinates by changing the parent coords accordingly
+					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();
+		    		GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
+		    		GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
+		    		xvar.setValue( xvar.getValue() + rwTransVec.x );
+		    		yvar.setValue( yvar.getValue() + rwTransVec.y );	
+		    				    		
+		    		if (updateGeos != null) {
+		    			// add both variables to update list
+		    			updateGeos.add(xvar);
+		    			updateGeos.add(yvar);
+		    		} else {
+		    			// update both variables right now
+		    			if (tempMoveObjectList == null)
+		    				tempMoveObjectList = new ArrayList();
+		    			tempMoveObjectList.add(xvar);
+		    			tempMoveObjectList.add(yvar);
+		    			updateCascade(tempMoveObjectList);
+		    		}
+		    				    				    	
+		    		movedGeo = true;
+				}
+			}			
+		}
+					
 		return movedGeo;
 	}
+	private ArrayList tempMoveObjectList;
 
 	/**
 	 * Returns the position of this GeoElement in

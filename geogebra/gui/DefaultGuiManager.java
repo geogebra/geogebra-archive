@@ -2002,7 +2002,8 @@ public class DefaultGuiManager implements GuiManager {
 			// ESC changes to move mode
 			case KeyEvent.VK_ESCAPE:
 				// stop automatic animation if its running
-				kernel.getAnimatonManager().stopAnimation();				
+				kernel.getAnimatonManager().stopAnimation();	
+				kernel.getAnimatonManager().clearAnimatedGeos();
 				
 				// ESC is also handeled by algebra input field
 				if (algebraInput != null && algebraInput.hasFocus()) {

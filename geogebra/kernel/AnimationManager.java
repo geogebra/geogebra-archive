@@ -32,12 +32,11 @@ public class AnimationManager implements ActionListener {
 	
 	public synchronized void stopAnimation() {
 		if (timer.isRunning()) {
-			timer.stop();			
-			clearAnimatedGeos();
+			timer.stop();						
 		}
 	}
 	
-	private void clearAnimatedGeos() {
+	public void clearAnimatedGeos() {
 		for (int i=0; i < animatedGeos.size(); i++) {
 			GeoElement geo = (GeoElement) animatedGeos.get(i);
 			geo.setAnimating(false);
@@ -101,8 +100,9 @@ public class AnimationManager implements ActionListener {
 	 * Adapts the frame rate depending on how long it took to compute the last frame.
 	 * @param frameTime
 	 */
-	private void adaptFrameRate(long compTime) {		
-		double framesPossible = 1000.0 / compTime;
+	private void adaptFrameRate(long compTime) {				
+		// only allow to use 80% of CPU time for animation (800 millis out of 1 sec)
+		double framesPossible = 800.0 / compTime;
 		
 		// the frameRate is too high: decrease it
 		if (framesPossible < frameRate) {			
@@ -110,8 +110,7 @@ public class AnimationManager implements ActionListener {
 			timer.setDelay((int) Math.round(1000.0 / frameRate));
 			
 			// TODO: remove
-			System.out.println("DECREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);
-	
+			System.out.println("DECREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);	
 		}
 				
 		// the frameRate is too low: try to increase it

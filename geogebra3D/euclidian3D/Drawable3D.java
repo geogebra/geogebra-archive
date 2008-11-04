@@ -69,7 +69,7 @@ public abstract class Drawable3D {
 	
 	/** return matrix for openGL */
 	public double[] getMatrixGL(){
-		return matrix.get();
+		return matrix.getGL();
 	}
 	
 	
@@ -122,9 +122,9 @@ public abstract class Drawable3D {
 			
 			// check if one is on a path and the other not
 			//TODO do this only for points
-			if ((this.getGeoElement3D().hasPathOn())&&(!d.getGeoElement3D().hasPathOn()))
+			if ((this.getGeoElement3D().hasPath1D())&&(!d.getGeoElement3D().hasPath1D()))
 				return -1;
-			if ((!this.getGeoElement3D().hasPathOn())&&(d.getGeoElement3D().hasPathOn()))
+			if ((!this.getGeoElement3D().hasPath1D())&&(d.getGeoElement3D().hasPath1D()))
 				return 1;
 
 

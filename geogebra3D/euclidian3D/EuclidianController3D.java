@@ -268,8 +268,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	protected void movePoint(boolean repaint){
 		
-		if (movedGeoPoint3D.hasPathOn()){
+		if (movedGeoPoint3D.hasPath1D()){
 			//getting current pick point and direction v 
+			GgbVector p = movedGeoPoint3D.getCoords().copyVector();
 			GgbVector o = view.getPickPoint(mouseLoc.x,mouseLoc.y); 
 			view.toSceneCoords3D(o);
 			
@@ -279,29 +280,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			
 			//TODO do this just one time, when mouse is pressed
 			//plane for projection
-			GgbMatrix plane = movedGeoPoint3D.getPathOn().getMovingMatrix(view.getToScreenMatrix());			
+			GgbMatrix plane = movedGeoPoint3D.getPath1D().getMovingMatrix(view.getToScreenMatrix());			
 			view.toSceneCoords3D(plane);
 			
 			//getting new position of the point
-			GgbVector[] project = o.projectPlaneThruVIfPossible(plane, v);
+			GgbVector[] project = o.projectPlaneThruV(plane, v);
 			movedGeoPoint3D.setCoords(project[0]);
 				
-		}else if (movedGeoPoint3D.hasPathIn()){
-			//getting current pick point and direction v 
-			GgbVector o = view.getPickPoint(mouseLoc.x,mouseLoc.y); 
-			view.toSceneCoords3D(o);
-			
-			GgbVector v = new GgbVector(new double[] {0,0,1,0});
-			view.toSceneCoords3D(v);
-			
-			//TODO do this just one time, when mouse is pressed
-			//plane for projection
-			GgbMatrix plane = movedGeoPoint3D.getPathIn().getMovingMatrix(view.getToScreenMatrix());						
-			
-			//getting new position of the point
-			GgbVector[] project = o.projectPlaneThruVIfPossible(plane, v);
-			movedGeoPoint3D.setCoords(project[0]);			
-			
 		}else{
 			//getting current pick point and direction v 
 			GgbVector p = movedGeoPoint3D.getCoords().copyVector();
@@ -321,7 +306,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			plane.set(originProjected, 4);
 			
 			//getting new position of the point
-			GgbVector[] project = o.projectPlaneThruVIfPossible(plane, v);
+			GgbVector[] project = o.projectPlaneThruV(plane, v);
 			movedGeoPoint3D.setCoords(project[0]);
 			
 			//update moving plane

@@ -64,7 +64,7 @@ public class CASView extends JComponent implements CasManager {
 	private btListener btListener;
 
 	private final int numOfRows = 1;
-
+	
 	private static final int SUB_Flag = 0;
 	private static final int SIM_Flag = 1;
 	private static final int EXP_Flag = 2;
@@ -698,7 +698,7 @@ public class CASView extends JComponent implements CasManager {
 				if (selectedStr == null) {
 					selectedStr = value.getCommand();
 				}
-
+				
 				value = new CASTableCellValue();
 				value.setCommand(cas.simplifyYACAS(selectedStr));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
@@ -707,7 +707,7 @@ public class CASView extends JComponent implements CasManager {
 				if (selectedStr == null) {
 					selectedStr = value.getCommand();
 				}
-
+				
 				value = new CASTableCellValue();
 				value.setCommand(cas.expandYACAS(selectedStr));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
@@ -716,7 +716,7 @@ public class CASView extends JComponent implements CasManager {
 				if (selectedStr == null) {
 					selectedStr = value.getCommand();
 				}
-
+				
 				value = new CASTableCellValue();
 				value.setCommand(cas.factorYACAS(selectedStr));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
@@ -733,4 +733,5 @@ public class CASView extends JComponent implements CasManager {
 	public Application getApp() {
 		return app;
 	}
+
 }
