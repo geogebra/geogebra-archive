@@ -128,16 +128,16 @@ public class Kernel3D
 	
 	/** Segment3D label linking points P1 and P2   */
 	final public GeoSegment3D Segment3D(String label, GeoPoint3D P1, GeoPoint3D P2){
-		AlgoJoinPoints3DSegment algo = new AlgoJoinPoints3DSegment(cons, label, P1, P2);
-		GeoSegment3D s = algo.getSegment();
+		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_SEGMENT3D);
+		GeoSegment3D s = (GeoSegment3D) algo.getCS();
 		return s;
 	}	
 	
 	
 	/** Line3D label linking points P1 and P2   */	
 	final public GeoLine3D Line3D(String label, GeoPoint3D P1, GeoPoint3D P2){
-		AlgoJoinPoints3DLine algo = new AlgoJoinPoints3DLine(cons, label, P1, P2);
-		GeoLine3D l = algo.getLine();
+		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_LINE3D);
+		GeoLine3D l = (GeoLine3D) algo.getCS();
 		return l;
 	}	
 	
