@@ -27,7 +27,6 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -343,24 +342,25 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// initialize jar manager for dynamic jar loading
 		jarmanager = JarManager.getSingleton(isApplet);
-
-		// applet/command line options like file loading on startup
-		handleOptionArgs(args); // note: the locale is set here too
-		imageManager = new ImageManager(mainComp);
-
+		
 		// init kernel
 		initKernel();
 		//kernel = new Kernel(this); //ggb3D 2008-10-26 : in Application3D, changed for Kernel3D
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
-
+	
 		// init xml io for construction loading
 		myXMLio = new MyXMLio(kernel, kernel.getConstruction());
-
+		
+		// applet/command line options like file loading on startup
+		handleOptionArgs(args); // note: the locale is set here too
+		imageManager = new ImageManager(mainComp);
+		
 		// init euclidian view
 		euclidianController = new EuclidianController(kernel);
 		euclidianView = new EuclidianView(euclidianController, showAxes,
 				showGrid);
 		euclidianView.setAntialiasing(antialiasing);
+	
 
 		// set frame
 		if (!isApplet) {
@@ -690,7 +690,8 @@ public abstract class Application implements KeyEventDispatcher {
 	private void handleOptionArgs(String[] args) {
 		// locale should be set here either to default locale or
 		// according to the -language option
-		Locale initLocale = mainComp.getLocale();
+		Locale initLocale = mainComp.getLocale();		
+		setLocale(initLocale);
 
 		if (args != null) {
 			// handle all options (starting with --)
@@ -742,7 +743,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		}
 
-		setLocale(initLocale);
+		
 	}
 
 	/**

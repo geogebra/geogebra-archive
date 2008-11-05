@@ -619,7 +619,7 @@ public class CASView extends JComponent implements CasManager {
 
 		switch (btType) {
 		case 0: // btSub
-			btSub = new JButton("Substitute");
+			btSub = new JButton(app.getPlain("Substitute"));
 			btSub.setActionCommand("Subsim");
 			btSub.addActionListener(btListener);
 
