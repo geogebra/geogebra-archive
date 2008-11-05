@@ -439,6 +439,15 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 */
 	
 	/**
+	 * Calls a JavaScript function when the applet is initialized.
+	 */
+	public synchronized void notifyAppletInitialized() {
+		initJavaScript();
+		Object [] args = { };
+		callJavaScript("ggbOnInit", args );
+	}
+	
+	/**
 	 * Returns current construction as a ggb file in form of a byte array.
 	 * @return null if something went wrong 
 	 */
@@ -1207,7 +1216,12 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		if (javaToJavaScriptView == null) {
 			javaToJavaScriptView = new JavaToJavaScriptView();
 			kernel.attach(javaToJavaScriptView); // register view
-			
+			initJavaScript();
+		}
+	}
+	
+	private void initJavaScript() {
+		if (browserWindow == null) {
 			try {							
 				browserWindow = JSObject.getWindow(applet);
 			} catch (Exception e) {							

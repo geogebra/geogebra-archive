@@ -2907,6 +2907,8 @@ public abstract class Application implements KeyEventDispatcher {
 		String srcStr = "[" + callerClassName + "." + callerMethodName
 				+ "] at " + calendar.get(Calendar.HOUR) + ":" + minS + ":"
 				+ secS;
+		
+		srcStr += " free memory: "+Runtime.getRuntime().freeMemory();
 
 		// multi line message
 		if (s.indexOf("\n") > -1) {

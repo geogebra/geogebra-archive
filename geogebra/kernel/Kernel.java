@@ -2873,11 +2873,31 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Sum[list of points]
+	 * Michael Borcherds
+	 */
+	final public GeoElement SumText(String label, GeoList list) {
+		AlgoSumText algo = new AlgoSumText(cons, label, list);
+		GeoText ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Sum[list of text,n]
+	 * Michael Borcherds
+	 */
+	final public GeoElement SumText(String label, GeoList list, GeoNumeric num) {
+		AlgoSumText algo = new AlgoSumText(cons, label, list, num);
+		GeoText ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * Table[list]
 	 * Michael Borcherds
 	 */
-	final public GeoText Table(String label, GeoList list) {
-		AlgoTable algo = new AlgoTable(cons, label, list);
+	final public GeoText TableText(String label, GeoList list) {
+		AlgoTableText algo = new AlgoTableText(cons, label, list);
 		GeoText text = algo.getResult();
 		return text;
 	}
@@ -2886,8 +2906,8 @@ public class Kernel {
 	 * ToFraction[number]
 	 * Michael Borcherds
 	 */
-	final public GeoText ToFraction(String label, GeoNumeric num) {
-		AlgoToFraction algo = new AlgoToFraction(cons, label, num);
+	final public GeoText FractionText(String label, GeoNumeric num) {
+		AlgoFractionText algo = new AlgoFractionText(cons, label, num);
 		GeoText text = algo.getResult();
 		return text;
 	}

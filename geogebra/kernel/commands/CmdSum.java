@@ -30,6 +30,7 @@ public class CmdSum extends CommandProcessor {
 		boolean allNumbers = true;
 		boolean allFunctions = true;
 		boolean allNumbersVectorsPoints = true;
+		boolean allText = true;
 		
 		for (int i =0 ; i< size ; i++) {
 			GeoElement geo = list.get(i);
@@ -42,7 +43,9 @@ public class CmdSum extends CommandProcessor {
 			if (!geo.isGeoNumeric() && !geo.isGeoVector() && !geo.isGeoPoint()) {
 				allNumbersVectorsPoints = false;
 			}
-			
+			if (!geo.isGeoText()) {
+				allText = false;
+			}
 		}
 
 		switch (n) {
@@ -66,7 +69,12 @@ public class CmdSum extends CommandProcessor {
 							list) };
 					return ret;
 				}
-				else {
+				else if (allText) {
+						GeoElement[] ret = { 
+								kernel.SumText(c.getLabel(),
+								list) };
+						return ret;					
+				} else {
 					throw argErr(app, c.getName(), arg[0]);
 				}
 

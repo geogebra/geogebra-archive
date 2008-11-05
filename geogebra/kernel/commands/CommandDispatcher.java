@@ -270,7 +270,7 @@ public class CommandDispatcher {
     	
     	cmdTable.put("CountIf", new CmdCountIf(kernel));   
     	
-    	cmdTable.put("Table", new CmdTable(kernel)); 
+    	cmdTable.put("TableText", new CmdTableText(kernel)); 
     	
     	cmdTable.put("Object", new CmdObject(kernel));   
     	cmdTable.put("ColumnName", new CmdColumnName(kernel));   
@@ -287,7 +287,7 @@ public class CommandDispatcher {
     	cmdTable.put("RandomBinomial", new CmdRandomBinomial(kernel));   
     	cmdTable.put("RandomPoisson", new CmdRandomPoisson(kernel));   
     	
-    	cmdTable.put("ToFraction", new CmdToFraction(kernel));   
+    	cmdTable.put("FractionText", new CmdFractionText(kernel));   
     	
     	cmdTable.put("KeepIf", new CmdKeepIf(kernel));  
     	

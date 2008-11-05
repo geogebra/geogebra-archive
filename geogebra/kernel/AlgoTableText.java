@@ -16,7 +16,7 @@ import geogebra.main.MyError;
 
 
 
-public class AlgoTable extends AlgoElement {
+public class AlgoTableText extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
@@ -29,12 +29,12 @@ public class AlgoTable extends AlgoElement {
     private int VERTICAL = 0;
     private int HORIZONTAL = 1;
 
-    AlgoTable(Construction cons, String label, GeoList geoList) {
+    AlgoTableText(Construction cons, String label, GeoList geoList) {
     	this(cons, geoList);
         text.setLabel(label);
     }
 
-    AlgoTable(Construction cons, GeoList geoList) {
+    AlgoTableText(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                
@@ -45,7 +45,7 @@ public class AlgoTable extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoTable";
+        return "AlgoTableText";
     }
 
     protected void setInputOutput(){
@@ -107,7 +107,7 @@ public class AlgoTable extends AlgoElement {
     	
     	
     	sb.setLength(0);
-    	sb.append("$\\begin{tabular}{");
+    	sb.append("\\begin{tabular}{");
     	
     	
     	if (alignment == VERTICAL) {
@@ -142,7 +142,7 @@ public class AlgoTable extends AlgoElement {
 		
     	}
     	
-    	sb.append("\\end{tabular}$");
+    	sb.append("\\end{tabular}");
     	
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);

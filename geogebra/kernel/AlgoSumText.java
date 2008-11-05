@@ -23,32 +23,31 @@ import geogebra.kernel.GeoPoint;
 /**
  * Sum[{A,B,C}]
  * @author Michael Borcherds
- * @version 2008-10-16
+ * @version adapted from SumPoints
  */
 
-public class AlgoSumPoints extends AlgoElement {
+public class AlgoSumText extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
     public GeoNumeric Truncate; //input	
-    public GeoElement result; //output	
+    public GeoText result; //output	
+    
+	private StringBuffer sb;
     
 
     
-    public AlgoSumPoints(Construction cons, String label, GeoList geoList) {
+    public AlgoSumText(Construction cons, String label, GeoList geoList) {
         this(cons, label, geoList, null);
     }
 
-    public AlgoSumPoints(Construction cons, String label, GeoList geoList, GeoNumeric Truncate) {
+    public AlgoSumText(Construction cons, String label, GeoList geoList, GeoNumeric Truncate) {
         super(cons);
         this.geoList = geoList;
 
         this.Truncate=Truncate;
         
-        if (geoList.get(0).isGeoVector())
-        	result = new GeoVector(cons);
-        else // Numeric or Point
-        	result = new GeoPoint(cons);
+        result  = new GeoText(cons);
 
         setInputOutput();
         compute();
@@ -56,7 +55,7 @@ public class AlgoSumPoints extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoSumPoints";
+        return "AlgoSumText";
     }
 
     protected void setInputOutput(){
@@ -75,7 +74,7 @@ public class AlgoSumPoints extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    public GeoElement getResult() {
+    public GeoText getResult() {
         return result;
     }
     
@@ -88,15 +87,15 @@ public class AlgoSumPoints extends AlgoElement {
     	int truncate;
     	int size = geoList.size();
 
-    	if (Truncate!=null)
+    	if (Truncate != null)
     	{
     		truncate=(int)Truncate.getDouble();
-    		if (truncate<1 || truncate>size)
+    		if (truncate < 1 || truncate > size)
     		{
         		result.setUndefined();
         		return;
     		}
-    		size=truncate; // truncate the list
+    		size = truncate; // truncate the list
     	}
     	
     	if (!geoList.isDefined() ||  size == 0) {
@@ -105,18 +104,14 @@ public class AlgoSumPoints extends AlgoElement {
     	}
     	
     	
-    	double x = 0, y = 0;
+    	if (sb == null) sb = new StringBuffer();
+    	
+    	sb.setLength(0);
     	
     	for (int i = 0 ; i < size ; i++) {
     		GeoElement p = geoList.get(i);
-    		if (p.isGeoPoint()) {
-	        	x += ((GeoPoint)p).getInhomX();
-	        	y += ((GeoPoint)p).getInhomY();
-    		} else if (p.isGeoVector()) {
-	        	x += ((GeoVector)p).getX();
-	        	y += ((GeoVector)p).getY();   		
-    		} else if (p.isGeoNumeric()) {
-	        	x += ((GeoNumeric)p).getDouble();
+    		if (p.isGeoText()) {
+    			sb.append(((GeoText)p).getTextString());
     		} else {
 				result.setUndefined();
 				return;
@@ -124,7 +119,7 @@ public class AlgoSumPoints extends AlgoElement {
     	}
    	
    	
-    	((GeoVec3D)result).setCoords(x, y, 1.0);
+    	result.setTextString(sb.toString());
    	
 
     }

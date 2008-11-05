@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-public class AlgoToFraction extends AlgoElement {
+public class AlgoFractionText extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoNumeric num; //input
@@ -23,12 +23,12 @@ public class AlgoToFraction extends AlgoElement {
  
     private StringBuffer sb = new StringBuffer();
     
-    AlgoToFraction(Construction cons, String label, GeoNumeric num) {
+    AlgoFractionText(Construction cons, String label, GeoNumeric num) {
     	this(cons, num);
         text.setLabel(label);
     }
 
-    AlgoToFraction(Construction cons, GeoNumeric num) {
+    AlgoFractionText(Construction cons, GeoNumeric num) {
         super(cons);
         this.num = num;
                
@@ -39,7 +39,7 @@ public class AlgoToFraction extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoToFraction";
+        return "AlgoFractionText";
     }
 
     protected void setInputOutput(){
@@ -67,11 +67,11 @@ public class AlgoToFraction extends AlgoElement {
 		    	text.setTextString(kernel.format(frac[0]));				
 			} else {
 				sb.setLength(0);
-		    	sb.append("$\\frac{");
+		    	sb.append("\\frac{");
 		    	sb.append(kernel.format(frac[0]));
 		    	sb.append("}{");
 		    	sb.append(kernel.format(frac[1]));
-		    	sb.append("}$");
+		    	sb.append("}");
 		    	
 		    	text.setTextString(sb.toString());
 			}

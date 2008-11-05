@@ -4181,8 +4181,8 @@ class CmdOsculatingCircle extends CommandProcessor {
 * Victor Franco Espino 11-02-2007: End command's processors for new commands
 */
 
-class CmdTable extends CommandProcessor {
-	public CmdTable(Kernel kernel) {
+class CmdTableText extends CommandProcessor {
+	public CmdTableText(Kernel kernel) {
 		super(kernel);
 	}
 	
@@ -4204,14 +4204,14 @@ class CmdTable extends CommandProcessor {
         	   if (list.get(0).isGeoList()) { // list of lists: no need to wrap   		   
                GeoElement[] ret =
                    {
-                        kernel.Table(
+                        kernel.TableText(
                            c.getLabel(),
                            (GeoList) arg[0])};
                return ret;
         	   } else {
         		   list = wrapInList(kernel, arg, -1);
                    if (list != null) {
-                  	 GeoElement[] ret = { kernel.Table(c.getLabel(), list)};
+                  	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list)};
                        return ret;             	     	 
                    } 
        			throw argErr(app, c.getName(), arg[0]);        		   
@@ -4227,7 +4227,7 @@ class CmdTable extends CommandProcessor {
              // try to create list of numbers
         	 GeoList list = wrapInList(kernel, arg, -1);
              if (list != null) {
-            	 GeoElement[] ret = { kernel.Table(c.getLabel(), list)};
+            	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list)};
                  return ret;             	     	 
              } 
  			throw argErr(app, c.getName(), arg[0]);
@@ -4514,9 +4514,9 @@ class CmdRandomPoisson extends CommandProcessor {
 
 }
 
-class CmdToFraction extends CommandProcessor {
+class CmdFractionText extends CommandProcessor {
 
-	public CmdToFraction(Kernel kernel) {
+	public CmdFractionText(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -4530,7 +4530,7 @@ class CmdToFraction extends CommandProcessor {
 
 			if (arg[0].isGeoNumeric()) {
 				GeoElement[] ret = { 
-						kernel.ToFraction(c.getLabel(),
+						kernel.FractionText(c.getLabel(),
 						(GeoNumeric)arg[0] ) };
 				return ret;
 			} else
