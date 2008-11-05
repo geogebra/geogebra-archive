@@ -86,9 +86,12 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 			subTitlePanel.add(subLabel);
 		} else {
 			selectedEnabled = false;
-			JLabel subLabel = new JLabel(app.getPlain("SubstituteFor"));
+			String temp = app.getPlain("SubstituteForAinB",
+					"QuanIsGreat", inputStr);
+			String[] strLabel = temp.split("QuanIsGreat");
+			JLabel subLabel = new JLabel(strLabel[0]);
 			subStrfield = new JTextField(4);
-			JLabel subLabel2 = new JLabel(app.getPlain("At") + " " +inputStr);
+			JLabel subLabel2 = new JLabel(strLabel[1]);
 			subTitlePanel.add(subLabel);
 			subTitlePanel.add(subStrfield);
 			subTitlePanel.add(subLabel2);
