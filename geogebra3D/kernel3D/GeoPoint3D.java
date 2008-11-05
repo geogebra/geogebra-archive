@@ -45,8 +45,11 @@ final public class GeoPoint3D extends GeoVec4D {
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
 	//paths
-	private Path1D path1D;
-	private PathParameter1D pathParameter1D;
+	private PathOn pathOn;
+	//private PathOnParameter ppOn;
+	private PathIn pathIn;
+	//private PathInParameter ppIn;
+	private PathParameters pps;
         
     // temp
     public GgbVector inhom = new GgbVector(3);
@@ -74,32 +77,72 @@ final public class GeoPoint3D extends GeoVec4D {
     
     
     
-    public GeoPoint3D(Construction c, Path1D path) {
+    public GeoPoint3D(Construction c, PathOn path) {
 		super(c,4);
-		this.path1D = path;
+		this.pathOn = path;
 	}
     
-    final public PathParameter1D getPathParameter1D() {
-    	if (pathParameter1D == null)
-    		pathParameter1D = new PathParameter1D();
-    	return pathParameter1D;
+    public GeoPoint3D(Construction c, PathIn path) {
+		super(c,4);
+		this.pathIn = path;
+	}    
+    
+    
+    /*
+    final public PathOnParameter getPathOnParameter() {
+    	if (ppOn == null)
+    		ppOn = new PathOnParameter();
+    	return ppOn;
     }
+    */
     
     
-	public boolean hasPath1D() {
-		return path1D != null;
+	public boolean hasPathOn() {
+		return pathOn != null;
 	}
 	
+
+    
+    
+	public PathOn getPathOn() {
+		return pathOn;
+	}
+	
+
+	
+
+    
+    /*
+    final public PathInParameter getPathInParameter() {
+    	if (ppIn == null)
+    		ppIn = new PathInParameter();
+    	return ppIn;
+    }
+    */
+    
+    
+	public boolean hasPathIn() {
+		return pathIn != null;
+	}
+	
+
+    
+    
+	public PathIn getPathIn() {
+		return pathIn;
+	}
+	
+	
+    final public PathParameters getPathParameters(int n) {
+    	if (pps == null)
+    		pps = new PathParameters(n);
+    	return pps;
+    }	
+	
+    
 	public boolean hasPath() {
-		return hasPath1D();
+		return hasPathOn() || hasPathIn();
 	}
-    
-    
-	public Path1D getPath1D() {
-		return path1D;
-	}
-    
-    
     
     
     
@@ -139,11 +182,13 @@ final public class GeoPoint3D extends GeoVec4D {
 		updateCoords(); 
 		
 		if (path){
-			if (path1D != null) {
+			if (hasPathOn()) {
 				// remember path parameter for undefined case
 				//PathParameter tempPathParameter = getTempPathparameter();
 				//tempPathParameter.set(getPathParameter());
-				path1D.pointChanged(this);
+				pathOn.pointChanged(this);
+			} else if (hasPathIn()) {
+				pathIn.pointChanged(this);
 			}
 			updateCoords(); 
 		}

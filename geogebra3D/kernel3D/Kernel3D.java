@@ -81,17 +81,17 @@ public class Kernel3D
 	
 	
 	/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3D(String label, Path1D path, double x, double y, double z) {
-		AlgoPointOnPath1D algo = new AlgoPointOnPath1D(cons, label, path, x, y, z);
+	final public GeoPoint3D Point3D(String label, PathOn path, double x, double y, double z) {
+		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
 		p.setLabel(label);               
 		return p;
 	}	
 	
 	/** Point3D on a 1D path without cartesian coordinates   */
-	final public GeoPoint3D Point3D(String label, Path1D path) {
+	final public GeoPoint3D Point3D(String label, PathOn path) {
 		// try (0,0,0)
-		AlgoPointOnPath1D algo = new AlgoPointOnPath1D(cons, label, path, 0, 0, 0);
+		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
 		GeoPoint3D p = algo.getP(); 
 		
 		/* TODO below
@@ -111,7 +111,13 @@ public class Kernel3D
 		return p;
 	}	
 	
-	
+	/** Point3D on a 2D path with cartesian coordinates (x,y,z)   */
+	final public GeoPoint3D Point3D(String label, PathIn path, double x, double y, double z) {
+		AlgoPoint3DInPath algo = new AlgoPoint3DInPath(cons, label, path, x, y, z);
+		GeoPoint3D p = algo.getP();		
+		p.setLabel(label);               
+		return p;
+	}		
 	
 	/** Segment3D label linking points v1 and v2   */
 	final public GeoSegment3D Segment3D(String label, GgbVector v1, GgbVector v2){

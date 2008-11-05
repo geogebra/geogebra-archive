@@ -74,7 +74,7 @@ public class DrawSegment3D extends Drawable3D {
     		m = S.getSegmentMatrix(l,l2); 
     		view3D.toScreenCoords3D(m);
     		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-    		renderer.setMatrix(m.getGL());
+    		renderer.setMatrix(m.get());
     		renderer.drawCylinder(LINE3D_THICKNESS); 
     		
     		renderer.resetMatrix();

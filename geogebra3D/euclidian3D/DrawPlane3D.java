@@ -106,7 +106,7 @@ public class DrawPlane3D extends Drawable3D {
 		for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
 			mc = P.getDrawingXMatrix(x); 
 			view3D.toScreenCoords3D(mc);
-			renderer.setMatrix(mc.getGL());
+			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
 			renderer.resetMatrix();			
 		}
@@ -114,7 +114,7 @@ public class DrawPlane3D extends Drawable3D {
 		for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
 			mc = P.getDrawingYMatrix(y); 
 			view3D.toScreenCoords3D(mc);
-			renderer.setMatrix(mc.getGL());
+			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
 			renderer.resetMatrix();			
 		}
