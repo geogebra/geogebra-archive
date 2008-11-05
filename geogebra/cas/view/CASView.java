@@ -626,14 +626,14 @@ public class CASView extends JComponent implements CasManager {
 			ret = btSub;
 			break;
 		case 1: // btSim
-			btSim = new JButton("Simplify");
+			btSim = new JButton(app.getPlain("Simplify"));
 			btSim.setActionCommand("Simplify");
 			btSim.addActionListener(btListener);
 
 			ret = btSim;
 			break;
 		case 2: // btExp
-			btExp = new JButton("Expand");
+			btExp = new JButton(app.getPlain("Expand"));
 			btExp.setActionCommand("Expand");
 			btExp.addActionListener(btListener);
 
