@@ -144,9 +144,9 @@ public class Kernel3D
 	
 
 	/** Triangle3D label linking points P1 and P2 and P3  */
-	final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
+	final public GeoTriangle3D Polygon3D(String label, GeoPoint3D[] points){
 		AlgoJoinPoints3DPolygon algo = new AlgoJoinPoints3DPolygon(cons, label, points);
-		GeoPolygon3D t = algo.getPoly();
+		GeoTriangle3D t = algo.getPoly();
 		return t;
 	}	
 	

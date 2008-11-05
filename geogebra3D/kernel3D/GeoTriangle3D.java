@@ -6,15 +6,19 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 
-public class GeoPolygon3D extends GeoCoordSys2D {
+/*
+ * This class will disappear int GeoPolygon3D 
+ */
 
-	public GeoPolygon3D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J) {
+public class GeoTriangle3D extends GeoCoordSys2D {
+
+	public GeoTriangle3D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J) {
 		super(c, O, I, J);
 		
 	}
 	
 	
-	public GeoPolygon3D(Construction c, GeoPoint3D[] points) {
+	public GeoTriangle3D(Construction c, GeoPoint3D[] points) {
 		super(c);
 		M=new GgbMatrix(4,3);
 		setCoord(points);	
@@ -35,7 +39,7 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 	
 	
 
-	public GeoPolygon3D(Construction c, GgbVector A, GgbVector B, GgbVector C) {
+	public GeoTriangle3D(Construction c, GgbVector A, GgbVector B, GgbVector C) {
 		super(c, A, B.sub(A), C.sub(A));
 		
 	}

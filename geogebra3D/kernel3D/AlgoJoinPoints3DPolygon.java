@@ -34,7 +34,7 @@ public class AlgoJoinPoints3DPolygon extends AlgoElement3D {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint3D [] points;  // input
-    private GeoPolygon3D poly; // output 
+    private GeoTriangle3D poly; // output 
 
 
     /** Creates new AlgoJoinPoints */
@@ -48,7 +48,7 @@ public class AlgoJoinPoints3DPolygon extends AlgoElement3D {
  
     	this.points=points;
           
-        poly = new GeoPolygon3D(cons, points);          
+        poly = new GeoTriangle3D(cons, points);          
         setInputOutput(); // for AlgoElement
                
         // compute line through P, Q
@@ -86,7 +86,7 @@ public class AlgoJoinPoints3DPolygon extends AlgoElement3D {
     	//TODO use this method for segments (see AlgoPolygon)
     }
 
-    GeoPolygon3D getPoly() {
+    GeoTriangle3D getPoly() {
         return poly;
     }
      
