@@ -52,15 +52,25 @@ public class AlgoTo2D extends AlgoElement3D {
           
     	switch(in.getGeoClassType()){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:
-    		out = cons.getKernel().Segment(null, new GeoPoint(cons,null, 0,0,1), new GeoPoint(cons,null, 1,0,1));
+    		GeoPoint P1 = new GeoPoint(cons,null, 0,0,1);
+    		P1.setLabel("segP1");
+    		cons.removeLabel(P1);
+    		cons.removeFromConstructionList(P1);
+    		GeoPoint P2 = new GeoPoint(cons,null, 1,0,1);
+    		P2.setLabel("segP2");
+    		cons.removeLabel(P2);
+    		cons.removeFromConstructionList(P2);    		
+    		out = cons.getKernel().Segment(null, P1, P2);
+    		
     		break;
     	default:
     		out = null;
-    	}         
-        setInputOutput(); // for AlgoElement
-               
-        // compute line through P, Q
-        compute();
+    	}     
+    	
+    	if (out!=null){
+    		setInputOutput(); // for AlgoElement
+    		compute();
+    	}
     }   
 
     protected String getClassName() {

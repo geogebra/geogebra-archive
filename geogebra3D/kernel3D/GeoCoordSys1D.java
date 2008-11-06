@@ -140,6 +140,12 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	}
 
 	
+	
+	public Path getPath2D(){
+		return null;
+	}
+	
+	
 
 	
 	

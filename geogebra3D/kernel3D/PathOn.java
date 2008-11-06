@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbMatrix;
 
 /**
@@ -51,7 +52,10 @@ public interface PathOn {
 	public GeoElement toGeoElement();
 	
 
-
+	/**
+	 * Returns the GeoElement Path linked with
+	 */
+	public Path getPath2D();
 
 	
 	/**

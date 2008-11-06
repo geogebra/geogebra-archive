@@ -154,20 +154,15 @@ final public class GeoPoint3D extends GeoVec4D {
     	return geo2D; 
     }
     
-    public GeoPoint createGeoPoint2D(PathOn path){ 
-    	GeoElement3D geo3D = (GeoElement3D) path.toGeoElement();
-    	Path path2D;
-    	switch(geo3D.getGeoClassType()){
-    	case GeoElement3D.GEO_CLASS_SEGMENT3D:
-    		path2D = (Path) (new AlgoTo2D(cons, geo3D)).getOut();
-    		break;
-    	default:
-    		path2D = null;
-    	}     
+    public GeoPoint createGeoPoint2D(PathOn path){     	
+    	Path path2D = path.getPath2D();
     	if (path2D==null)
     		geo2D = null;
     	else{
     		geo2D = this.getKernel().Point(null, path2D);
+    		geo2D.setLabel("point2D");
+			cons.removeFromConstructionList(geo2D);
+			cons.removeLabel(geo2D);
     	}
     	
     	return (GeoPoint) geo2D; 

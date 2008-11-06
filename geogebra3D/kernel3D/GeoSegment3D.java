@@ -2,9 +2,14 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoSegment;
+import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
 
 public class GeoSegment3D extends GeoCoordSys1D {
+	
+	
+	private GeoSegment segment2D;
 	
 	/** creates a segment linking p1 to p2*/
 	public GeoSegment3D(Construction c, GeoPoint3D p1, GeoPoint3D p2){
@@ -102,15 +107,22 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	
 	
 	//Path1D interface
-	public double getMinParameter(){
-		return 0;
+	public Path getPath2D(){
+		return getSegment2D();
 	}
-	public double getMaxParameter(){
-		return 1;
+	
+	
+	public GeoSegment getSegment2D(){
+		if (segment2D==null){
+			AlgoTo2D algo = new AlgoTo2D(cons, this);
+			//cons.removeFromConstructionList(algo);
+			segment2D = (GeoSegment) algo.getOut();
+			segment2D.setLabel("seg2D");
+			cons.removeFromConstructionList(segment2D);
+			cons.removeLabel(segment2D);
+		}
+		return segment2D;
 	}
-	public boolean isLimitedPath(){
-		return true;
-	}	
 	
 	
 	
