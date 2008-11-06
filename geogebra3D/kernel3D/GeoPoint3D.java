@@ -23,6 +23,7 @@ package geogebra3D.kernel3D;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
@@ -143,6 +144,37 @@ final public class GeoPoint3D extends GeoVec4D {
 	public boolean hasPath() {
 		return hasPathOn() || hasPathIn();
 	}
+    
+	// link to GeoElement
+    public boolean hasGeoElement2D() {
+    	return geo2D!=null;
+    }
+    
+    public GeoElement getGeoElement2D(){ 
+    	return geo2D; 
+    }
+    
+    public GeoPoint createGeoPoint2D(PathOn path){ 
+    	GeoElement3D geo3D = (GeoElement3D) path.toGeoElement();
+    	Path path2D;
+    	switch(geo3D.getGeoClassType()){
+    	case GeoElement3D.GEO_CLASS_SEGMENT3D:
+    		path2D = (Path) (new AlgoTo2D(cons, geo3D)).getOut();
+    		break;
+    	default:
+    		path2D = null;
+    	}     
+    	if (path2D==null)
+    		geo2D = null;
+    	else{
+    		geo2D = this.getKernel().Point(null, path2D);
+    	}
+    	
+    	return (GeoPoint) geo2D; 
+    }   
+    
+    
+    
     
     
     

@@ -311,8 +311,11 @@ public class Test3D{
 		P=kernel3D.Point3D("pl", l, 1, 1, 0);
 		P.setObjColor(new Color(1f,0.75f,0f));
 		
-		P=kernel3D.Point3D("pt", t, 0, 0, 0);
-		P.setObjColor(new Color(1f,0.25f,0f));
+		
+		//P=kernel3D.Point3D("pt", t, 0, 0, 0);
+		//P.setObjColor(new Color(1f,0.25f,0f));
+		
+		//new AlgoTo2D(cons, "essai", s);
 		
 	}
 	

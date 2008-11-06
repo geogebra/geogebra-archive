@@ -14,6 +14,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 
 
 public class AlgoPoint3DOnPath extends AlgoElement3D {
@@ -32,6 +33,7 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         super(cons);
         this.path = path;
         P = new GeoPoint3D(cons, path);
+        P.createGeoPoint2D(path);
         P.setCoords(x, y, z, 1.0);
 
         setInputOutput(); // for AlgoElement

@@ -50,25 +50,7 @@ public interface PathOn {
 	 */
 	public GeoElement toGeoElement();
 	
-	/**
-	 * Returns the smallest possible parameter value for this
-	 * path (may be Double.NEGATIVE_INFINITY)
-	 */
-	public double getMinParameter();
-	
-	/**
-	 * Returns the largest possible parameter value for this
-	 * path (may be Double.POSITIVE_INFINITY)
-	 */
-	public double getMaxParameter();
-	
-	/**
-	 * Returns whether this path is closed (i.e. its
-	 * first and last point are equal).	
-	 */
-	public boolean isClosedPath();
-	
-	
+
 
 
 	

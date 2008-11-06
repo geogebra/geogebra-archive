@@ -37,7 +37,10 @@ public abstract class GeoElement3D
 	
 	private boolean wasHighlighted = false;
 	private boolean willBeHighlighted = false;
-
+	
+	
+	//link to GeoElement
+	protected GeoElement geo2D = null;
 	
 	
 	
@@ -82,6 +85,16 @@ public abstract class GeoElement3D
 	public boolean hasPathIn() {
 		return false;
 	}
+	
+	// link to GeoElement
+    public boolean hasGeoElement2D() {
+    	return false;
+    }
+    
+
+    public GeoElement getGeoElement2D(){ //TODO turn it to abstract
+    	return null; 
+    }
 	
 	/** stores the current highlighted flag to wasHighlighted */ 
 	final public void setWasHighlighted(){
