@@ -117,7 +117,8 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 		}else{								
 			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
 			P2D.setCoords(project[1].get(1), 0, 1); //use 2D algo	
-			P.setCoords(getPoint(P2D.x),false); //avoid new pointChanged computation
+			P2D.updateRepaint();//TODO remove this (or not)
+			P.setCoords(getPoint(P2D.getPathParameter().getT()),false); //avoid new pointChanged computation
 		}
 
 	}
@@ -129,7 +130,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 			P.setCoords(getPoint(pps.getT()),false);
 		}else{
 			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
-			P.setCoords(getPoint(P2D.x),false);
+			P.setCoords(getPoint(P2D.getPathParameter().getT()),false);
 		}
 	}
 	
