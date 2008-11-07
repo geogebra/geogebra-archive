@@ -49,7 +49,13 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
 
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[1];
+    	
+    	if (P.getGeoElement2D()==null)
+    		input = new GeoElement[1];
+    	else{
+    		input = new GeoElement[2];
+    		input[1] = P.getGeoElement2D();
+    	}
         input[0] = path.toGeoElement();
 
         output = new GeoElement[1];

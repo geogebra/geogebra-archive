@@ -191,7 +191,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 					}
 				}
-				view.setWaitForUpdate(true);
+				kernel3D.notifyRepaint();
 				//view.update();
 
 			}
@@ -334,7 +334,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		
 		if (repaint){
-			view.setWaitForUpdate(true);
+			//kernel3D.notifyRepaint();
 			//view.update();
 			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
 		}else{
@@ -365,7 +365,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	    
 	    
 	    //view.update();
-	    view.setWaitForUpdate(true);
+	    //view.setWaitForUpdate(true);
 		
 	}
 
@@ -403,7 +403,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		case MOVE_POINT:
 			view.setMovingVisible(false);
 			//view.update();
-			view.setWaitForUpdate(true);
+			kernel3D.notifyRepaint();
 			break;	
 		
 		}
@@ -437,10 +437,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		setMouseLocation(e);
 		view.rendererPick(mouseLoc.x,mouseLoc.y);
 		
-		//pick(true);
-		
-		//view.update();
-		view.setWaitForUpdate(true);
+
+		kernel3D.notifyRepaint();
 	}
 
 	
@@ -477,7 +475,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			view.setZZero(view.getZZero()+ r/10.0);
 			view.updateMatrix();
 			//view.update();
-			view.setWaitForUpdate(true);
+			kernel3D.notifyRepaint();
 			break;
 
 		case MOVE_POINT:
@@ -509,13 +507,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		    */
 			
 
-			//objSelected.updateRepaint(); //TODO modify updateRepaint()
-			objSelected.updateCascade();
-			//view.setMovingPlane(movedGeoPoint3D.getCoords(), v1, v2, vn);
-			//view.update();
-			view.setWaitForUpdate(true);
-			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
 
+			objSelected.updateCascade();
+
+			
+			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
+			//kernel3D.notifyRepaint();
 			
 			
 			break;	

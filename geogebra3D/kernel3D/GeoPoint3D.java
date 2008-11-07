@@ -27,6 +27,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Path;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.Application;
 
 
 /**
@@ -160,7 +161,7 @@ final public class GeoPoint3D extends GeoVec4D {
     		geo2D = null;
     	else{
     		geo2D = this.getKernel().Point(null, path2D);
-    		geo2D.setLabel("point2D");
+     		geo2D.setLabel("point2D");
 			cons.removeFromConstructionList(geo2D);
 			cons.removeLabel(geo2D);
     	}

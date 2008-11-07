@@ -479,7 +479,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	public void setWaitForUpdate(boolean v){
+	private void setWaitForUpdate(boolean v){
 		waitForUpdate = v;
 	}
 	
@@ -663,8 +663,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void repaintView() {
-		// TODO Raccord de méthode auto-généré
+		setWaitForUpdate(true);
 		
+		Application.debug("repaint View3D");
 		
 	}
 
