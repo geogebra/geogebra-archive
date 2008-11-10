@@ -52,6 +52,7 @@ public class MyCellEditor extends DefaultCellEditor {
 		String text = "";
 		if (value != null) {
 			if (value.isChangeable()) {
+				// Modified by Quan Yuan
 				// text = value.toValueString();
 				text = "";
 			} else {
