@@ -23,6 +23,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.Kernel;
 
 
 
@@ -67,7 +68,9 @@ public class AlgoTo2D extends AlgoElement3D {
     		// get result segment from algo
     		out = algo.getSegment();
     		*/
-    		out = cons.getKernel().Segment(null, P1, P2);
+    		kernel.setSilentMode(true);
+    		out = kernel.Segment(null, P1, P2);
+    		kernel.setSilentMode(false);
     		
     		
     		

@@ -2472,6 +2472,8 @@ final public boolean hasOnlyFreeInputPoints() {
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
 	public static String indicesToHTML(String str, boolean addHTMLtag) {
+		if (str == null) return "";
+		
 		sbIndicesToHTML.setLength(0);
 		if (addHTMLtag)
 			sbIndicesToHTML.append("<html>");

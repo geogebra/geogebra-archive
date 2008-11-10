@@ -81,9 +81,8 @@ public class Construction {
 	// step == -1 shows empty construction
 	private int step;
 
-	// in macro mode no new labels or construction elements
-	// can be added
-	private boolean macroMode = false;
+	// when supressLabelCreation is true no new labels are created
+	private boolean supressLabelCreation = false;
 
 	// showOnlyBreakpoints in construction protocol
 	private boolean showOnlyBreakpoints;
@@ -194,11 +193,11 @@ public class Construction {
 	 * If this is set to true new construction elements won't get labels.
 	 */
 	public void setSuppressLabelCreation(boolean flag) {
-		macroMode = flag;
+		supressLabelCreation = flag;
 	}
 
 	public boolean isSuppressLabelsActive() {
-		return macroMode;
+		return supressLabelCreation;
 	}
 
 	/**
@@ -285,7 +284,7 @@ public class Construction {
 	 */
 	public void addToConstructionList(ConstructionElement ce,
 			boolean checkContains) {
-		if (macroMode)
+		if (supressLabelCreation)
 			return;
 		if (checkContains && ce.isInConstructionList())
 			return;
@@ -488,10 +487,10 @@ public class Construction {
 		for (int i = 0; i < size; ++i) {
 			AlgoElement algo = (AlgoElement) algoList.get(i);
 			if (algo.wantsConstructionProtocolUpdate()) {
-				algo.compute();
-				// algo.euclidianViewUpdate();
-				algo.getGeoElements()[0].updateCascade();
+				algo.input[0].updateCascade();
 				didUpdate = true;
+				// algo.compute();
+				// algo.euclidianViewUpdate();				
 				// Application.debug("  update algo: " + algo + " , kernel " +
 				// algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());
 			}
@@ -613,7 +612,7 @@ public class Construction {
 	 * @see removeLabel(), lookupLabel()
 	 */
 	public void putLabel(GeoElement geo) {
-		if (macroMode || geo.label == null)
+		if (supressLabelCreation || geo.label == null)
 			return;
 
 		geoTable.put(geo.label, geo);

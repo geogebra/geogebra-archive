@@ -154,7 +154,11 @@ public class Kernel {
 	private boolean notifyViewsActive = true;
 	private boolean viewReiniting = false;
 	private boolean allowVisibilitySideEffects = true;
-		
+	
+	// silentMode is used to create helper objects without any side effects	
+	// i.e. in silentMode no labels are created and no objects are added to views
+	private boolean silentMode = false;
+			
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
 	// Views may register to be informed about 
@@ -952,32 +956,42 @@ public class Kernel {
 	}*/
 
 	final void notifyAdd(GeoElement geo) {
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].add(geo);					
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].add(geo);					
+			}
 		}
 	}
 
 	final void notifyRemove(GeoElement geo) {
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].remove(geo);
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].remove(geo);
+			}
 		}
 	}
 
 	final void notifyUpdate(GeoElement geo) {
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].update(geo);
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].update(geo);
+			}
 		}
 	}
 	
 	final void notifyUpdateAuxiliaryObject(GeoElement geo) {
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].updateAuxiliaryObject(geo);
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].updateAuxiliaryObject(geo);
+			}
 		}
 	}
 
 	final  void notifyRename(GeoElement geo) {
-		for (int i = 0; i < viewCnt; ++i) {
-			views[i].rename(geo);
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].rename(geo);
+			}
 		}
 	}
 	
@@ -5388,5 +5402,30 @@ public class Kernel {
 		}
 		return animationManager;		
 	}
+	
+
+	/**
+	 * Turns silent mode on (true) or off (false). In silent mode, commands can
+	 * be used to create objects without any side effects, i.e.
+	 * no labels are created, algorithms are not added to the construction
+	 * list and the views are not notified about new objects. 
+	 */
+	public final void setSilentMode(boolean silentMode) {
+		this.silentMode = silentMode;
 		
+		// no new labels, no adding to construction list
+		cons.setSuppressLabelCreation(silentMode);
+		
+		// no notifying of views
+		notifyViewsActive = !silentMode;
+	}
+	
+
+	/**
+	 * Returns whether silent mode is turned on.
+	 * @see setSilentMode()
+	 */
+	public final boolean isSilentMode() {
+		return silentMode;
+	}
 }
