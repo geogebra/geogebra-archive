@@ -15,6 +15,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Path;
 
 
 public class AlgoPoint3DOnPath extends AlgoElement3D {
@@ -33,15 +34,25 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         super(cons);
         this.path = path;
         P = new GeoPoint3D(cons, path);
-        P.createGeoPoint2D(path);
+        
+        // 3D Path -> 2D Path -> GeoPoint on Path -> GeoPoint3D on Path
+    	Path path2D = path.getPath2D();
+    	GeoPoint P2D = null;
+    	if (path2D!=null)
+    		P2D = this.getKernel().Point(null, path2D);
+    	P.setGeoElement2D(P2D);
+    	
         P.setCoords(x, y, z, 1.0);
 
         setInputOutput(); // for AlgoElement
 
-        // compute line through P, Q
+        // compute 
         compute();
         P.setLabel(label);
     }
+    
+    
+    
 
     protected String getClassName() {
         return "AlgoPoint3DOnPath";

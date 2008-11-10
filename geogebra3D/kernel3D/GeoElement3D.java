@@ -95,6 +95,10 @@ public abstract class GeoElement3D
     public GeoElement getGeoElement2D(){ //TODO turn it to abstract
     	return null; 
     }
+    
+    public void setGeoElement2D(GeoElement geo){ 
+    	this.geo2D = geo;
+    }
 	
 	/** stores the current highlighted flag to wasHighlighted */ 
 	final public void setWasHighlighted(){

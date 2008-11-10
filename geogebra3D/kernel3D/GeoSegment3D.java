@@ -115,11 +115,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	public GeoSegment getSegment2D(){
 		if (segment2D==null){
 			AlgoTo2D algo = new AlgoTo2D(cons, this);
-			//cons.removeFromConstructionList(algo);
 			segment2D = (GeoSegment) algo.getOut();
-			segment2D.setLabel("seg2D");
-			cons.removeFromConstructionList(segment2D);
-			cons.removeLabel(segment2D);
 		}
 		return segment2D;
 	}

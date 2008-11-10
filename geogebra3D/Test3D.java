@@ -23,8 +23,10 @@ package geogebra3D;
 //import geogebra.kernel.Construction;
 import java.awt.Color;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.*;
 
 
@@ -41,26 +43,19 @@ public class Test3D{
 	
 	Construction cons;
 	Kernel3D kernel3D;
+	EuclidianView view2D;
 
 
-	public Test3D(Kernel3D kernel3D){
+	public Test3D(Kernel3D kernel3D, EuclidianView view2D){
 		
 		this.kernel3D=kernel3D;
 		cons=kernel3D.getConstruction();
-		/*
-		kernel3D=new Kernel3D();
-		kernel3D.setConstruction(cons);
-		*/
-		
-		//let's test here
-		
-        //testSegment2();  
-        //test1(1);
-        //testSegment(0,0,0,1,1,1);test.testSegment(0.3333,-0.25,-0.25,0.3333,1.25,1.25);test.testSegment(0.6667,-0.25,-0.25,0.6667,1.25,1.25);
-        //testPlane();
-        //testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
-        testAlgoPyramide();
-        testRepere();
+		this.view2D = view2D;
+
+
+        //testAlgoPyramide();
+		testPath();
+		testRepere();
         
         
 
@@ -93,7 +88,7 @@ public class Test3D{
 		return P;
 	}	
 	
-	public void testRepere(){
+	private void testRepere(){
 		
 		
 		double longueur = 2.25;
@@ -129,7 +124,7 @@ public class Test3D{
 		
 	}
 	
-	public void testPointSegment(){
+	private void testPointSegment(){
 		
 		testPoint(1,0,0,1,0,0);
 		//testPoint(0,1,0,0,1,0);
@@ -138,7 +133,7 @@ public class Test3D{
 		
 	}
 	
-	public void testSegmentSegment(){
+	private void testSegmentSegment(){
 		
 		testSegment(0,0,0,1,1,0);
 		testSegment(1,0,1,0,1,1);
@@ -147,14 +142,14 @@ public class Test3D{
 	}
 	
 	
-	public void testSegment(){
+	private void testSegment(){
 		GeoSegment3D s=null;
 		s=kernel3D.Segment3D("segment",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{1,1,1,1}));
 		cons.addToConstructionList(s, false);
 		//testPoint(1,1,1,1,1,1);
 	}
 	
-	public void testSegment(double x1, double y1, double z1, double x2, double y2, double z2){
+	private void testSegment(double x1, double y1, double z1, double x2, double y2, double z2){
 
 		GeoSegment3D s=null;
 		
@@ -166,7 +161,7 @@ public class Test3D{
 
 	}
 	
-	public void testSegment2(){
+	private void testSegment2(){
 		
 		testSegment(0,0,0, 1,0,0);
 		testSegment(0,1,0, 1,1,0);
@@ -186,7 +181,7 @@ public class Test3D{
 	}	
 	
 	/** number of points = n+1 */
-	public void test1(int n){
+	private void test1(int n){
 		/*
 		geogebra.kernel.GeoPoint p2d = kernel.Point("M2d",-3,4);
 		cons.addToConstructionList(p2d,false);
@@ -234,7 +229,7 @@ public class Test3D{
 	
 	
 	
-	public void testPlane(double x0, double y0, double z0, 
+	private void testPlane(double x0, double y0, double z0, 
 			double x1, double y1, double z1, 
 			double x2, double y2, double z2){
 		
@@ -250,7 +245,7 @@ public class Test3D{
 	}
 	
 	
-	public void testPlane(){
+	private void testPlane(){
 		testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
 		testPlane(0, 0, 0,  1, 0, 0,  0, 0, 1);
 		testPlane(0, 0, 0,  0, 1, 0,  0, 0, 1);
@@ -261,7 +256,7 @@ public class Test3D{
 	}
 	
 	
-	public void testAlgoPyramide(){
+	private void testAlgoPyramide(){
 		
 		int i;
 		
@@ -320,7 +315,7 @@ public class Test3D{
 	}
 	
 
-	public void testAlgo(){
+	private void testAlgo(){
 		
 		int i;
 		
@@ -349,6 +344,29 @@ public class Test3D{
 	}
 	
 	
+	
+	
+	private void testPath(){
+		
+		//view2D.showAxes(false, false);
+		view2D.setAxesColor(new Color(0.5f,0.5f,0.5f));
+		
+		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
+		//Application.debug("view2D : "+view2D.getXZero()+","+view2D.getYZero());
+		//view2D.setRealWorldCoordSystem(-1,1,-1,5);
+		
+		GeoPoint3D P1;				
+		P1 = testPoint(0.5f,1f,0f);
+		P1.setLabel("P1");
+		
+		GeoPoint3D P2;				
+		P2 = testPoint(2f,0.5f,0f);
+		P2.setLabel("P2");
+		
+		GeoSegment3D s = kernel3D.Segment3D("segment3D",P1,P2);
+		GeoPoint3D P=kernel3D.Point3D("A3D", s, 1, 0, 0);
+		P.setObjColor(new Color(1f,0.5f,0f));
+	}
 	
 
 }
