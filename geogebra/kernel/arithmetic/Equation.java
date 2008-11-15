@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -180,5 +179,95 @@ public class Equation extends ValidExpression {
         else sb.append('0');
         return sb.toString();
     }
+
+	public boolean contains(ExpressionValue ev) {
+		return lhs.contains(ev) || rhs.contains(ev);
+	}
+
+	public ExpressionValue deepCopy(Kernel kernel) {
+		return new Equation(kernel, lhs.getCopy(kernel), rhs.getCopy(kernel));
+	}
+
+	public ExpressionValue evaluate() {		
+		return null;
+	}
+
+	public HashSet getVariables() {
+		HashSet vars = new HashSet();
+		vars.addAll(lhs.getVariables());
+		vars.addAll(rhs.getVariables());
+		return vars;
+	}
+
+	public boolean isBooleanValue() {
+		return false;
+	}
+
+	public boolean isConstant() {
+		return lhs.isConstant() && rhs.isConstant();
+	}
+
+	public boolean isExpressionNode() {	
+		return false;
+	}
+
+	public boolean isLeaf() {
+		return false;
+	}
+
+	public boolean isListValue() {
+		return false;
+	}
+
+	public boolean isNumberValue() {
+		return false;
+	}
+
+	public boolean isPolynomialInstance() {
+		return false;
+	}
+
+	public boolean isTextValue() {		
+		return false;
+	}
+
+	public boolean isVectorValue() {
+		return false;
+	}
+
+	public void resolveVariables() {    
+        lhs.resolveVariables();
+        rhs.resolveVariables();		
+	}
+
+	public String toLaTeXString(boolean symbolic) {
+		StringBuffer sb = new StringBuffer();
+	        
+        if (lhs != null) 
+        	sb.append(lhs.toLaTeXString(symbolic));
+        else 
+        	sb.append('0');
+        sb.append(" = ");
+        
+        if (rhs != null) 
+        	sb.append(rhs.toLaTeXString(symbolic));
+        else sb.append('0');
+        return sb.toString();
+	}
+
+	public String toValueString() {
+		StringBuffer sb = new StringBuffer();
+        
+        if (lhs != null) 
+        	sb.append(lhs.toValueString());
+        else 
+        	sb.append('0');
+        sb.append(" = ");
+        
+        if (rhs != null) 
+        	sb.append(rhs.toValueString());
+        else sb.append('0');
+        return sb.toString();
+	}
  
 } // end of class Equation

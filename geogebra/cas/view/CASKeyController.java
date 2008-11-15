@@ -7,14 +7,11 @@ import java.awt.event.KeyListener;
 
 public class CASKeyController implements KeyListener {
 
-	private CASSession session;
-
 	private CASView view;
 
 	private CASTable consoleTable;
 
-	public CASKeyController(CASView view, CASSession session, CASTable table) {
-		this.session = session;
+	public CASKeyController(CASView view,CASTable table) {
 		this.view = view;
 		this.consoleTable = table;
 	}

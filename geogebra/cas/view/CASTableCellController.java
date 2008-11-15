@@ -1,7 +1,11 @@
 package geogebra.cas.view;
 
+import geogebra.cas.GeoGebraCAS;
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.main.Application;
 
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -10,8 +14,10 @@ import javax.swing.SwingUtilities;
 public class CASTableCellController implements KeyListener {
 
 	private CASTableCell curCell;
-
 	private CASView view;
+	private Thread evalThread;
+	
+	
 
 	public final String yacasErrorMsg = "CAS.GeneralErrorMessage";
 
@@ -121,7 +127,7 @@ public class CASTableCellController implements KeyListener {
 			e.consume();
 	}
 
-	private void handleKeyPressedInputTextField(KeyEvent e) {
+	private void handleKeyPressedInputTextField(final KeyEvent e) {
 
 		boolean consumeEvent = false;
 
@@ -132,52 +138,19 @@ public class CASTableCellController implements KeyListener {
 		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
 				selectedRow, selectedCol);
 
-		switch (e.getKeyCode()) {
+		switch (e.getKeyCode()) {				
 		case KeyEvent.VK_ENTER:
-			// Get the input from the user interface
-			String inputText = curCell.getInput();
-
-			if (inputText.length() != 0) {
-				// Evaluate the input with Yacas, which is too slow
-				String evaluation = view.getCAS().evaluateYACAS(inputText);
-
-				// Error message check
-				if (inputText.compareTo("") != 0
-						&& evaluation.compareTo("") == 0)
-					evaluation = view.getApp().getError(this.yacasErrorMsg);
-
-				// Set the value into the table
-				saveInput(curValue);
-				curValue.setOutput(evaluation);
-				curCell.setOutput(evaluation);
-
-				// We enlarge the height of the selected row
-				table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
-				curValue.setOutputAreaInclude(true);
-				// tableModel.setValueAt(curValue, selectedRow,
-				// CASPara.contCol);
-				table.setValueAt(curValue, selectedRow, CASPara.contCol);
-
-				CASTableCellValue newValue = (CASTableCellValue) tableModel
-						.getValueAt(selectedRow, selectedCol);
-				System.out.println(selectedRow + " Value Updated: "
-						+ newValue.getCommand() + newValue.getOutput());
-
-				// update the cell appearance
-				SwingUtilities.updateComponentTreeUI(curCell);
-
-				if (selectedRow < (table.getRowCount() - 1)) {
-					table.setFocusAtRow(selectedRow + 1, selectedCol);
-				} else {
-					// Insert a new row
-					// table
-					// .setRowHeight(selectedRow, curCell
-					// .setLineInvisiable());
-					curCell.setLineInvisiable();
-					table.insertRow(selectedRow, selectedCol, null);
-				}
-			}
-
+			// evaluate input
+			evalThread = new Thread() {
+				public void run() {
+					view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
+					handleEnterKey(e);	
+					view.setCursor(Cursor.getDefaultCursor());
+					evalThread = null;
+				}				
+			};
+			evalThread.start();	
+						
 			consumeEvent = true;
 			break;
 
@@ -197,6 +170,7 @@ public class CASTableCellController implements KeyListener {
 			}
 			consumeEvent = true;
 			break;
+			
 		case KeyEvent.VK_DOWN:
 			if (!curCell.isLineVisiable()) {
 				if (selectedRow != view.getConsoleTable().getRowCount() - 1) {
@@ -215,6 +189,91 @@ public class CASTableCellController implements KeyListener {
 		if (consumeEvent)
 			e.consume();
 	}
+	
+	/**
+	 * Handles pressing of Enter key after user input.
+	 * Enter checks the syntax of the input only. Shift+Enter evaluates the input 
+	 */
+	private synchronized void handleEnterKey(KeyEvent e) {		
+		// Get the input from the user interface
+		String inputText = curCell.getInput();
+		if (inputText == null || inputText.length() == 0) return;
+		
+		// get current cell value
+		CASTable table = view.getConsoleTable();
+		CASTableModel tableModel = (CASTableModel) table.getModel();
+		int selectedRow = table.getSelectedRow();
+		int selectedCol = CASPara.contCol; // table.getSelectedColumn();
+		CASTableCellValue curValue = (CASTableCellValue) tableModel.getValueAt(
+				selectedRow, selectedCol);
+		GeoGebraCAS ggbCAS = view.getCAS();
+
+		// process input
+		String evaluation = null;
+		String error = null;
+		try {
+			// PARSE input
+			ExpressionValue ev = ggbCAS.parseInput(inputText);
+			
+			// convert parsed input to Yacas string
+			String yacasString = ggbCAS.toYacasString(ev, view.isUseGeoGebraVariableValues());
+			
+			// EVALUATE input in Yacas depending on key combination
+			if (e.isShiftDown()) {
+				evaluation = ggbCAS.evaluateYACAS("Simplify", yacasString);
+			}
+			else {
+				evaluation = ggbCAS.evaluateYACAS("Hold", yacasString);
+			}
+			
+			if (evaluation == null)
+				error = ggbCAS.getYACASError();
+			
+		} catch (Throwable th) {
+			error = view.getApp().getError(this.yacasErrorMsg);
+		}
+		
+
+		// Set the value into the table
+		saveInput(curValue);
+		
+		if (evaluation != null)	{
+			curValue.setOutput(evaluation);
+			curCell.setOutput(evaluation);
+		} else {
+			curValue.setOutput(error);
+			curCell.setOutput(error);
+			curCell.setForeground(Color.red);
+		}
+
+		// We enlarge the height of the selected row
+		table.setRowHeight(selectedRow, CASPara.inputOutputHeight);
+		curValue.setOutputAreaInclude(true);
+		table.setValueAt(curValue, selectedRow, CASPara.contCol);
+
+		CASTableCellValue newValue = (CASTableCellValue) tableModel
+				.getValueAt(selectedRow, selectedCol);
+		
+		// TODO: remove
+		System.out.println(selectedRow + " Value Updated: "
+				+ newValue.getCommand() + newValue.getOutput());
+
+		// update the cell appearance
+		//SwingUtilities.updateComponentTreeUI(curCell);
+		curCell.validate();
+
+		if (selectedRow < (table.getRowCount() - 1)) {
+			table.setFocusAtRow(selectedRow + 1, selectedCol);
+		} else {
+			// Insert a new row
+			// table
+			// .setRowHeight(selectedRow, curCell
+			// .setLineInvisiable());
+			curCell.setLineInvisiable();
+			table.insertRow(selectedRow, selectedCol, null);
+		}
+	}
+		
 
 	/*
 	 * Function: Save the input value from the view into the table

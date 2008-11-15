@@ -1,5 +1,3 @@
-package geogebra;
-
 /* 
  GeoGebra - Dynamic Mathematics for Schools
  Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
@@ -11,6 +9,8 @@ package geogebra;
  the Free Software Foundation.
 
  */
+
+package geogebra;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

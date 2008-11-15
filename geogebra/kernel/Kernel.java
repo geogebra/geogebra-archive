@@ -158,6 +158,9 @@ public class Kernel {
 	// silentMode is used to create helper objects without any side effects	
 	// i.e. in silentMode no labels are created and no objects are added to views
 	private boolean silentMode = false;
+	
+	// setResolveUnkownVarsAsDummyGeos
+	private boolean resolveUnkownVarsAsDummyGeos = false;
 			
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
@@ -213,8 +216,16 @@ public class Kernel {
 		return lookupLabel(label, false);
 	}
 	
-	final public GeoElement lookupLabel(String label, boolean autoCreate) {		
-		return cons.lookupLabel(label, autoCreate);
+	final public GeoElement lookupLabel(String label, boolean autoCreate) {	
+		GeoElement geo = cons.lookupLabel(label, autoCreate);
+				
+		if (geo == null && resolveUnkownVarsAsDummyGeos) {
+			// resolve unknown variable as dummy geo to keep its name and 
+			// avoid an "unknown variable" error message
+			geo = new GeoDummyVariable(cons, label);
+		}
+		
+		return geo;
 	}
 	
 	final public GeoAxis getXAxis() {
@@ -277,7 +288,7 @@ public class Kernel {
      */
 	final public String evaluateYACAS(String exp) {
 		if (ggbCAS == null) {
-			initCAS();		
+			getGeoGebraCAS();		
 		}
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACAS(exp);
@@ -291,7 +302,7 @@ public class Kernel {
      */
 	final public String evaluateYACASRaw(String exp) {
 		if (ggbCAS == null) {
-			initCAS();		
+			getGeoGebraCAS();		
 		}
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACASRaw(exp);
@@ -305,18 +316,24 @@ public class Kernel {
      */ 
 	final public String evaluateJASYMCA(String exp) {
 		if (ggbCAS == null) {
-			initCAS();		
+			getGeoGebraCAS();		
 		}				
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
 	}
 	
-	public synchronized void initCAS() {
-		if (ggbCAS == null) {			
+	/**
+	 * Returns this kernel's GeoGebraCAS object.
+	 */
+	public synchronized Object getGeoGebraCAS() {
+		if (ggbCAS == null) {
 			app.loadCASJar();
-			ggbCAS = new geogebra.cas.GeoGebraCAS();
+			ggbCAS = new geogebra.cas.GeoGebraCAS(this);			
 		}			
+		
+		return ggbCAS;
 	}
+	
 	/**
      * Finds the polynomial coefficients of
      * the given expression and returns it in ascending order. 
@@ -327,7 +344,7 @@ public class Kernel {
      */
     final public String [] getPolynomialCoeffs(String exp, String variable) {
     	if (ggbCAS == null) {
-			initCAS();					
+    		getGeoGebraCAS();					
 		}
     	
     	return ((geogebra.cas.GeoGebraCAS) ggbCAS).getPolynomialCoeffs(exp, variable);
@@ -5428,4 +5445,21 @@ public class Kernel {
 	public final boolean isSilentMode() {
 		return silentMode;
 	}
+	
+	/**
+	 * Sets whether unknown variables should be resolved as GeoDummyVariable objects. 
+	 */
+	public final void setResolveUnkownVarsAsDummyGeos(boolean resolveUnkownVarsAsDummyGeos) {
+		this.resolveUnkownVarsAsDummyGeos = resolveUnkownVarsAsDummyGeos;				
+	}
+	
+
+	/**
+	 * Returns whether unkown variables are resolved as GeoDummyVariable objects.
+	 * @see setSilentMode()
+	 */
+	public final boolean isResolveUnkownVarsAsDummyGeos() {
+		return resolveUnkownVarsAsDummyGeos;
+	}
+	
 }

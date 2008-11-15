@@ -115,24 +115,52 @@ implements ExpressionValue {
         return name;
     }
     
-    public String toString() {
-        int size = args.size();
-        StringBuffer sb = new StringBuffer(); 
-        if (kernel.isTranslateCommandName()) {
-            sb.append(app.getCommand(name));                       
-        } else {
-            sb.append(name);
-        }        
-        sb.append("[");
-        for (int i = 0; i < size - 1; i++) {
-            sb.append( args.get(i) );
-            sb.append(", ");
-        }
-        if (size > 0)
-        	sb.append( args.get(size-1));
-        sb.append("]");
-        return sb.toString();
+    public String toString() {  
+    	return toString(true, false);
     }
+    
+    public String toValueString() {
+        return toString(false, false);
+    }
+    
+	public String toLaTeXString(boolean symbolic) {
+		return toString(symbolic, true);
+	}    
+    
+    private String toString(boolean symbolic, boolean LaTeX) {    
+    	switch (kernel.getCASPrintForm()){
+    		case ExpressionNode.STRING_TYPE_YACAS:
+    			// Yacas command syntax
+    			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
+    				getYacasCommand(name, args, symbolic);    			    	
+    			
+    		default:
+    	    	if (sbToString == null)
+    	    		 sbToString = new StringBuffer();
+    	    	sbToString.setLength(0);
+    	    	
+    			// GeoGebra command syntax		               
+		        if (kernel.isTranslateCommandName()) {
+		        	sbToString.append(app.getCommand(name));                       
+		        } else {
+		        	sbToString.append(name);
+		        }        
+    			sbToString.append("[");
+		        int size = args.size();
+		        for (int i = 0; i < size - 1; i++) {
+		        	sbToString.append( args.get(i) );
+		        	sbToString.append(", ");
+		        }
+		        if (size > 0)
+		        	sbToString.append( args.get(size-1));
+		        sbToString.append("]");
+		        return sbToString.toString();		    	
+    	}
+    	
+    }
+    private StringBuffer sbToString;  
+    
+  
     
     public GeoElement [] evaluateMultiple() {
             GeoElement [] geos = null;
@@ -227,13 +255,7 @@ implements ExpressionValue {
         return set;
     }
 
-    public String toValueString() {
-        return evaluate().toValueString();
-    }
-    
-	public String toLaTeXString(boolean symbolic) {
-		return evaluate().toLaTeXString(symbolic);
-	}    
+   
 
     final public boolean isExpressionNode() {
         return false;

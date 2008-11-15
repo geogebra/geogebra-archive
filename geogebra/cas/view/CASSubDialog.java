@@ -202,7 +202,17 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 			else
 				preString = inputStr.replaceFirst(subStr, newExpression);
 
-			value.setCommand(cas.simplifyYACAS(preString));
+			// get YacasString
+			String yacasString = null;
+			try {
+				yacasString = cas.toYacasString(cas.parseInput(preString), false);
+			}
+			catch (Throwable th) {
+				th.printStackTrace();
+				return;
+			}
+			
+			value.setCommand(yacasString);
 			table.insertRow(editRow, CASPara.contCol, value);
 			break;
 		default:

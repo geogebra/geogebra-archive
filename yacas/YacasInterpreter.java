@@ -65,4 +65,8 @@ public class YacasInterpreter {
     public String Evaluate(String input) {
         return yacas.Evaluate(input);
     }
+    
+    public String getErrorMessage() {
+    	return yacas.iError;
+    }
 }

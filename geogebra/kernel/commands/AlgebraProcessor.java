@@ -472,44 +472,18 @@ public class AlgebraProcessor {
 			}
 		}
 
-		GeoElement[] ret;
+	
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		if (replaceable != null)
 			cons.setSuppressLabelCreation(true);
 		
+		GeoElement[] ret;
 		// we have to make sure that the macro mode is
 		// set back at the end
 		try {
-			if (ve instanceof ExpressionNode) {
-				ret = processExpressionNode((ExpressionNode) ve);
-			}
-	
-			// Command		
-			else if (ve instanceof Command) {
-				ret = cmdDispatcher.processCommand((Command) ve, true);
-			}
-	
-			// Equation in x,y (linear or quadratic are valid): line or conic
-			else if (ve instanceof Equation) {
-				ret = processEquation((Equation) ve);
-			}
-	
-			// explicit Function in x
-			else if (ve instanceof Function) {
-				ret = processFunction((Function) ve);
-			}						
-	
-			// Parametric Line        
-			else if (ve instanceof Parametric) {
-				ret = processParametric((Parametric) ve);
-			}
-	
-//			// Assignment: variable
-//			else if (ve instanceof Assignment) {
-//				ret = processAssignment((Assignment) ve);
-//			} 
+			ret = doProcessValidExpression(ve);
 			
-			else
+			if (ret == null)
 				throw new MyError(app, "Unhandled ValidExpression : " + ve);
 		}
 		finally {
@@ -571,6 +545,42 @@ public class AlgebraProcessor {
 			
 		return ret;
 	}
+	
+	private GeoElement [] doProcessValidExpression(ValidExpression ve) throws MyError, Exception {
+		GeoElement [] ret = null;
+		
+		if (ve instanceof ExpressionNode) {
+			ret = processExpressionNode((ExpressionNode) ve);
+		}
+
+		// Command		
+		else if (ve instanceof Command) {
+			ret = cmdDispatcher.processCommand((Command) ve, true);
+		}
+
+		// Equation in x,y (linear or quadratic are valid): line or conic
+		else if (ve instanceof Equation) {
+			ret = processEquation((Equation) ve);
+		}
+
+		// explicit Function in x
+		else if (ve instanceof Function) {
+			ret = processFunction((Function) ve);
+		}						
+
+		// Parametric Line        
+		else if (ve instanceof Parametric) {
+			ret = processParametric((Parametric) ve);
+		}
+
+//		// Assignment: variable
+//		else if (ve instanceof Assignment) {
+//			ret = processAssignment((Assignment) ve);
+//		} 
+		
+		return ret;
+	}
+	
 
 	private GeoElement[] processFunction(Function fun) {	
 		fun.initFunction();		

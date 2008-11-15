@@ -14,6 +14,8 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Kernel;
 
+import java.util.HashSet;
+
 
 
 /**
@@ -47,6 +49,74 @@ public class Parametric extends ValidExpression {
         sb.append( getLabel() + " : ");
         sb.append( "X = " + P.evaluate() + " + " + parameter + " " + v.evaluate() );
         return sb.toString();    
-    }      
+    }
+
+	public boolean contains(ExpressionValue ev) {
+		return P.contains(ev) || v.contains(ev);
+	}
+
+	public ExpressionValue deepCopy(Kernel kernel) {
+		return new Parametric(kernel, (ExpressionNode) P.deepCopy(kernel), (ExpressionNode) v.deepCopy(kernel), parameter);
+	}
+
+	public ExpressionValue evaluate() {
+		return null;
+	}
+
+	public HashSet getVariables() {
+		HashSet vars = new HashSet();
+		vars.addAll(P.getVariables());
+		vars.addAll(v.getVariables());
+		return vars;
+	}
+
+	public boolean isBooleanValue() {		
+		return false;
+	}
+
+	public boolean isConstant() {
+		return P.isConstant() && v.isConstant();
+	}
+
+	public boolean isExpressionNode() {
+		return false;
+	}
+
+	public boolean isLeaf() {
+		return false;
+	}
+
+	public boolean isListValue() {
+		return false;
+	}
+
+	public boolean isNumberValue() {
+		return false;
+	}
+
+	public boolean isPolynomialInstance() {
+		return false;
+	}
+
+	public boolean isTextValue() {
+		return false;
+	}
+
+	public boolean isVectorValue() {
+		return false;
+	}
+
+	public void resolveVariables() {
+		P.resolveVariables();
+		v.resolveVariables();		
+	}
+
+	public String toLaTeXString(boolean symbolic) {
+		return toString();
+	}
+
+	public String toValueString() {
+		return toString();
+	}      
     
 }

@@ -44,7 +44,11 @@ import javax.swing.table.TableCellRenderer;
 public class CASView extends JComponent implements CasManager {
 
 	private Kernel kernel;
+	
+	// TODO: add checkbox to set useGeoGebraVariableValues
+	private boolean useGeoGebraVariableValues = true;
 
+	
 	private CASTable consoleTable;
 
 	// public JList rowHeader;
@@ -56,8 +60,6 @@ public class CASView extends JComponent implements CasManager {
 	private Application app;
 
 	private GeoGebraCAS cas;
-
-	private CASSession session;
 
 	private JButton btSub, btSim, btExp, btFactor;
 
@@ -73,9 +75,9 @@ public class CASView extends JComponent implements CasManager {
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
-		cas = new GeoGebraCAS();
-		cas.evaluateYACAS("4");
-		session = new CASSession();
+		
+		// init cas
+		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();			
 
 		btListener = new btListener();
 
@@ -97,7 +99,7 @@ public class CASView extends JComponent implements CasManager {
 		add(scrollPane, BorderLayout.CENTER);
 
 		this.setBackground(Color.WHITE);
-	}
+	}	
 
 	private void createRowHeader() {
 
@@ -145,7 +147,7 @@ public class CASView extends JComponent implements CasManager {
 
 	private void createCASTable() {
 		consoleTable = new CASTable(app);
-		consoleTable.initializeTable(numOfRows, session, app);
+		consoleTable.initializeTable(numOfRows, app);
 
 		// Set the property of the value column;
 		consoleTable.getColumnModel().getColumn(CASPara.contCol)
@@ -161,7 +163,7 @@ public class CASView extends JComponent implements CasManager {
 		// consoleTable);
 		// consoleTable.addKeyListener(casKeyCtrl);
 		consoleTable.addKeyListener(new ConsoleTableKeyListener());
-		CASMouseController casMouseCtrl = new CASMouseController(this, session,
+		CASMouseController casMouseCtrl = new CASMouseController(this,
 				consoleTable);
 		consoleTable.addMouseListener(casMouseCtrl);
 	}
@@ -676,6 +678,8 @@ public class CASView extends JComponent implements CasManager {
 					.getCellEditor(editRow, CASPara.contCol);
 			String selectedStr = cellEditor.getInputSelectedText();
 
+			if (selectedStr == null) return;
+			
 			CASTableCellValue value = (CASTableCellValue) consoleTable
 					.getModel().getValueAt(editRow, CASPara.contCol);
 
@@ -683,6 +687,16 @@ public class CASView extends JComponent implements CasManager {
 			value.setCommand(cellEditor.getInput());
 			consoleTable.setValueAt(value, editRow, CASPara.contCol);
 
+			// get YacasString
+			String yacasString = null;
+			try {
+				yacasString = cas.toYacasString(cas.parseInput(selectedStr), useGeoGebraVariableValues);
+			}
+			catch (Throwable th) {
+				th.printStackTrace();
+				return;
+			}
+			
 			switch (mod) {
 			case SUB_Flag:
 				CASTableCell edittingCell = (CASTableCell) cellEditor
@@ -700,7 +714,8 @@ public class CASView extends JComponent implements CasManager {
 				}
 				
 				value = new CASTableCellValue();
-				value.setCommand(cas.simplifyYACAS(selectedStr));
+				
+				value.setCommand(cas.evaluateYACAS("Simplify", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			case EXP_Flag:
@@ -709,7 +724,7 @@ public class CASView extends JComponent implements CasManager {
 				}
 				
 				value = new CASTableCellValue();
-				value.setCommand(cas.expandYACAS(selectedStr));
+				value.setCommand(cas.evaluateYACAS("Expand", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			case FAC_Flag:
@@ -718,7 +733,7 @@ public class CASView extends JComponent implements CasManager {
 				}
 				
 				value = new CASTableCellValue();
-				value.setCommand(cas.factorYACAS(selectedStr));
+				value.setCommand(cas.evaluateYACAS("Factor", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			}
@@ -733,5 +748,14 @@ public class CASView extends JComponent implements CasManager {
 	public Application getApp() {
 		return app;
 	}
+	
+	public final boolean isUseGeoGebraVariableValues() {
+		return useGeoGebraVariableValues;
+	}
+
+	public final void setUseGeoGebraVariableValues(boolean useGeoGebraVariableValues) {
+		this.useGeoGebraVariableValues = useGeoGebraVariableValues;
+	}
+
 
 }

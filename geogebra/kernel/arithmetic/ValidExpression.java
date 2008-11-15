@@ -18,7 +18,7 @@ package geogebra.kernel.arithmetic;
 
 import java.util.Vector;
 
-public abstract class ValidExpression {                
+public abstract class ValidExpression implements ExpressionValue {                
         
     private Vector labels;
     private boolean inTree; // used by ExpressionNode

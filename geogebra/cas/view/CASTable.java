@@ -36,14 +36,14 @@ public class CASTable extends JTable {
 	/*
 	 * Default Cinfiguration for Table
 	 */
-	public void initializeTable(int rows, CASSession session, Application app) {
+	public void initializeTable(int rows, Application app) {
 
 		this.setShowGrid(false);
 		// Dynamically change the height of the table
 		this.setRowHeight(CASPara.inputLineHeight);
 		this.setBackground(Color.white);
 
-		tableModel = new CASTableModel(this, rows, session, app);
+		tableModel = new CASTableModel(this, rows, app);
 		this.setModel(tableModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
@@ -148,9 +148,7 @@ public class CASTable extends JTable {
 	 * Function: Set the focus on the specified row
 	 */
 	public void setFocusAtRow(int editRow, int editCol) {
-
-		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(
-				editRow, editCol);
+		editRow = Math.min(tableModel.getRowCount()-1, editRow);
 
 		changeSelection(editRow, editCol, false, false);
 		editCellAt(editRow, editCol);

@@ -471,7 +471,13 @@ public abstract class Application implements KeyEventDispatcher {
 				}
 				
 				// init CAS
-				kernel.initCAS();				
+				try {
+					// evaluate some expression to get CAS ready
+					((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).evaluateYACAS("1+1");
+				} catch (Exception e) {
+					System.err.println("couldn't initialize CAS: " + e.getMessage());
+				}
+				
 
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {

@@ -267,7 +267,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return -1;
 	}
 
-	final public String toString() {
+	public String toString() {
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");

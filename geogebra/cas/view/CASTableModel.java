@@ -8,23 +8,15 @@ import javax.swing.table.DefaultTableModel;
 
 public class CASTableModel extends DefaultTableModel {
    
-	private CASSession session;
-   
-	private JTable table;
-    private boolean modified;
     private Application app = null;
     GeoElement copyGeo= null;
 	
-    public CASTableModel(CASSession session, JTable table)
+    public CASTableModel(JTable table)
     {
-    	super();
-    	
-        this.table=table;
-        modified=false;    	
-    	this.session = session;
+    	super();	   	
     }
 
-    public CASTableModel(JTable table, int numRows, CASSession session, Application app)
+    public CASTableModel(JTable table, int numRows, Application app)
     {
         super(numRows, CASPara.numOfCol);
         this.app = app;
@@ -34,26 +26,17 @@ public class CASTableModel extends DefaultTableModel {
         	super.setValueAt(value, i, CASPara.contCol);
         	fireTableCellUpdated(i, CASPara.contCol);
         }
-        
-        // initialize state to unmodified and file to untitled
-        modified = false;
-        this.table = table;
-        this.session = session;
     }   
     
-    public CASTableModel(JTable table, Object[] data, CASSession session, Application app)
+    public CASTableModel(JTable table, Object[] data, Application app)
     {
-       this(table, data.length, session, app);
+       this(table, data.length, app);
 
        /* load the data */
        for (int i = 0; i < data.length; i++)
        {
              super.setValueAt(data[i], i, CASPara.contCol);
        }
-
-       // initialize state to unmodified and file to untitled
-       modified = false;
-       this.session = session;
     }
     
     public String getRowLabel (int row)

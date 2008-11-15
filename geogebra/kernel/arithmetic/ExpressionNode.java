@@ -2005,6 +2005,14 @@ implements ExpressionValue {
             rightStr = right.toValueString();
         }
             
+        
+        
+        // TODO: remove:
+        if (rightStr == null) {
+        	System.out.println("operation: " + operation + " left: " + left + " right: " + right);
+        }
+        
+        
         return operationToString(leftStr, rightStr, true);
     }
     
@@ -2046,9 +2054,8 @@ implements ExpressionValue {
      * 
      */
     final private String operationToString(String leftStr, String rightStr, 
-    		boolean valueForm) {
-
-    	ExpressionValue leftEval;   
+    		boolean valueForm) {    	
+    	ExpressionValue leftEval;       	    	
     	StringBuffer sb = new StringBuffer();
     	
     	int STRING_TYPE = kernel.getCASPrintForm();
@@ -2272,7 +2279,7 @@ implements ExpressionValue {
                     sb.append(')');
                 }
                 else {
-                    sb.append(leftStr);
+                    sb.append(leftStr);                  
                     if (rightStr.charAt(0) == '-') { // convert + - to -
                         sb.append(" - ");
                         sb.append(rightStr.substring(1));
@@ -2438,7 +2445,6 @@ implements ExpressionValue {
 /*
 // Michael Borcherds 2008-05-14
 // display powers over 9 as unicode superscript
-// TODO needs support in the parser too
 	        				 try {
 	        					 int i = Integer.parseInt(rightStr);
 	        					 String index="";

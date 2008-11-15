@@ -1355,7 +1355,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	// Michael Borcherds 2008-01-19 
 	//public static String getSpreadsheetCellName( int i, int j)
 	//    {
-	//        if (i>25) return "A1"; // TODO rewrite to cope with more than 26 columns
+	//        if (i>25) return "A1"; 
 	//        i+='A';
 	//        j+=1;
 	//        String ret = Character.toString((char)i)+j;
@@ -1955,10 +1955,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			Iterator it = algoSetUpdateCascade.iterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
-				algo.update();
-				
-				// TODO: remove
-				//Application.debug("multi updateCascade: " + algo);				
+				algo.update();			
 			}
 		}
 	}

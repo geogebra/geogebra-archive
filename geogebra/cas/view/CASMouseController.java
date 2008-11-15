@@ -10,14 +10,11 @@ import javax.swing.JTable;
 
 public class CASMouseController implements MouseListener {
 
-	private CASSession session;
-
 	private CASView view;
 
 	private CASTable consoleTable;
 
-	public CASMouseController(CASView view, CASSession session, CASTable table) {
-		this.session = session;
+	public CASMouseController(CASView view, CASTable table) {
 		this.view = view;
 		this.consoleTable = table;
 	}
