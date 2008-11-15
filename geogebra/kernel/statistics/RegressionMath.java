@@ -27,9 +27,12 @@ the Free Software Foundation.
  * 
  * @author Hans-Petter Ulven
  * @version 24.04.08
+ * Update 15.11.08:
+ * 		public det22(...),...,det44(...) for use in FitSin() and FitLogistic()
  *
  *<ul><b>--- Interface: ---</b>
  *<li>RegressionMath(GeoList)
+ *<li>det33(...), det44(...)	determinants. (Faster than Gauss for n<5)
  *<li>doLinReg(),doQuadReg(),doCubicReg(),doQuartRet()
  *<li>doExpReg(),doLogReg(),doPowReg()
  *<li>getSigmaX(),getSigmaX2(),[getSigmaX3()..getSigmaX5()
@@ -343,18 +346,20 @@ public final  class RegressionMath {
     }//doPow(GeoList)    
     
     
-    public   final double det22(double a11,    double a12,     
-                                      double a21,    double a22){
+    public   final double det22(	//15.11.08: public for FitSin and FitLogisticc
+    			double a11,    double a12,     
+                double a21,    double a22){
             return a11*a22-a21*a12;
     }//det22()
     
-    private  final double det33(double a11,    double a12,     double a13, 
-                                      double a21,    double a22,     double a23,
-                                      double a31,    double a32,     double a33) {
+    public  final double det33(    //15.11.08: public for FitSin and FitLogisticc
+    		double a11,    double a12,     double a13, 
+            double a21,    double a22,     double a23,
+            double a31,    double a32,     double a33) {
         return a11*(a22*a33-a32*a23)-a12*(a21*a33-a31*a23)+a13*(a21*a32-a31*a22);
     }//det33()
     
-    private  final double det44(
+    public  final double det44(  //15.11.08: public for FitSin and FitLogisticc
         double a11,     double a12,     double a13,     double a14,
         double a21,     double a22,     double a23,     double a24,
         double a31,     double a32,     double a33,     double a34,
@@ -369,7 +374,7 @@ public final  class RegressionMath {
         a22*a31*a14*a43 - a22*a14*a41*a33 - a31*a14*a23*a42 + a14*a23*a32*a41;
     }//det44()
     
-    private  final double det55(
+    public  final double det55(		//15.11.08: public for FitSin and FitLogisticc
         double a11,     double a12,     double a13,     double a14,     double a15,
         double a21,     double a22,     double a23,     double a24,     double a25,
         double a31,     double a32,     double a33,     double a34,     double a35,
