@@ -52,9 +52,10 @@ public class Test3D{
 		cons=kernel3D.getConstruction();
 		this.view2D = view2D;
 
+		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
 
-        //testAlgoPyramide();
-		testPath();
+        testAlgoPyramide();
+		//testPath();
 		testRepere();
         
         
@@ -348,12 +349,10 @@ public class Test3D{
 	
 	private void testPath(){
 		
-		//view2D.showAxes(false, false);
+
 		view2D.setAxesColor(new Color(0.5f,0.5f,0.5f));
 		
-		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
-		//Application.debug("view2D : "+view2D.getXZero()+","+view2D.getYZero());
-		//view2D.setRealWorldCoordSystem(-1,1,-1,5);
+
 		
 		GeoPoint3D P1;				
 		P1 = testPoint(0.5f,1f,0f);
