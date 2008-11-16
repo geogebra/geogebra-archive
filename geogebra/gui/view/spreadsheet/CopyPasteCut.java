@@ -181,7 +181,7 @@ public class CopyPasteCut {
 		if (model.getRowCount() < y4 + 1) {
 			model.setRowCount(y4 + 1);
 		}
-		if (model.getRowCount() < x4 + 1) {
+		if (model.getColumnCount() < x4 + 1) {
 			table.setMyColumnCount(x4 + 1);
 		}
 		GeoElement[][] values1 = internalBuf;//RelativeCopy.getValues(table, x1, y1, x2, y2);

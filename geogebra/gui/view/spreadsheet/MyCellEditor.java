@@ -90,9 +90,8 @@ public class MyCellEditor extends DefaultCellEditor {
 
 		public void keyTyped(KeyEvent e) {
 
-			System.out.println("Key pressed at Spreedsheet");
 			int keyCode = e.getKeyChar();
-			if (keyCode == 27) {
+			if (keyCode == KeyEvent.VK_ESCAPE) {
 				fireEditingCanceled();
 				editing = false;
 			}
@@ -142,9 +141,10 @@ public class MyCellEditor extends DefaultCellEditor {
 		String text = (String) delegate.getCellEditorValue();
 		try {
 			
-			//if (clickedToType) {
-				value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
-			//}
+
+			// get GeoElement of current cell
+			value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
+
 			
 			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table,
 					text, value, column, row);
@@ -173,10 +173,6 @@ public class MyCellEditor extends DefaultCellEditor {
 
 	public void undoEdit() {
 		String text = "";
-		
-		if (table.tempValue != null) value = table.tempValue;
-		
-		table.tempValue = null;
 		
 		if (value != null) {
 			if (value.isChangeable()) {

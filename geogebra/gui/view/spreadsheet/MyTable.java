@@ -389,33 +389,23 @@ public class MyTable extends JTable
 	protected int minRow2 = -1;
 	protected int maxRow2 = -1;
 
-	public static boolean doubleClick = false;
 
 	protected class MouseListener1 implements MouseListener
 	{
 
 		public void mouseClicked(MouseEvent e) {	
 
-			if (e.getClickCount() == 1) doubleClick = false;
-			else doubleClick = true;
+			boolean doubleClick = (e.getClickCount() != 1);
 
 			Point point = getIndexFromPixel(e.getX(), e.getY());
 			if (point != null) {
-				//int currentColumn = (int)point.getX();
-				//int currentRow = (int)point.getY();
-
-
 
 				if (doubleClick) {
 					allowEditing = true;
-					tempValue = null;
 					editCellAt(getSelectedRow(), getSelectedColumn()); 
 					allowEditing = false;
-
 				}
 			}
-
-
 
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();
@@ -725,7 +715,6 @@ public class MyTable extends JTable
 
 	}
 
-	public GeoElement tempValue = null;
 
 	protected class KeyListener1 implements KeyListener 
 	{
@@ -734,19 +723,18 @@ public class MyTable extends JTable
 			int keyCode = e.getKeyChar();
 			//Application.debug(keyCode);
 			switch (keyCode) {
-			case 27:
+			case KeyEvent.VK_ESCAPE:
 				if (editor.isEditing()) {
 					editor.undoEdit();
 					editor.editing = false;
 				}
 				break;
-			case (KeyEvent.VK_ENTER):
-					break;
+			//case (KeyEvent.VK_ENTER):
+			//		break;
 			default:
 
 				if (!editor.isEditing()) {
 					allowEditing = true;
-					tempValue = (GeoElement)tableModel.getValueAt(getSelectedRow(), getSelectedColumn());
 					tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
 					editCellAt(getSelectedRow(), getSelectedColumn()); 
 					allowEditing = false;
@@ -831,19 +819,19 @@ public class MyTable extends JTable
 				}
 				break;
 
-			case 27:
+			case KeyEvent.VK_ESCAPE:
 				//Application.debug(editor.isEditing());
 				if (editor.isEditing()) {
 					editor.undoEdit();
-					e.setKeyCode(10);
+					e.setKeyCode(KeyEvent.VK_ENTER);
 				}
 				break;
 			}
-
+			/*
 			if (keyCode >= 37 && keyCode <= 40) {
 				if (editor.isEditing())	return;			
 			}
-			/*
+
 			for (int i = 0; i < defaultKeyListeners.length; ++ i) {
 				if (e.isConsumed()) break;
 				defaultKeyListeners[i].keyPressed(e);			
@@ -1201,8 +1189,18 @@ public class MyTable extends JTable
 
 	private boolean allowEditing = false;
 
+	/*
+	 * we need to return false for this normally, otherwise we can't detect double-clicks
+	 * 
+	 */
 	public boolean isCellEditable(int row, int column)
 	{
+		if (!allowEditing) return false; // to avoid getValueAt() unless necessary
+		
+		GeoElement geo = (GeoElement) getModel().getValueAt(row, column);
+		
+		if (geo != null && geo.isFixed()) return false;
+		
 		return allowEditing;
 	}
 
