@@ -41,6 +41,7 @@ import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
+import geogebra.kernel.statistics.AlgoFitSin;
 import geogebra.kernel.statistics.AlgoInverseNormal;
 import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
@@ -2613,6 +2614,16 @@ public class Kernel {
 	final public GeoFunction FitPow(String label, GeoList list) {
 		AlgoFitPow algo = new AlgoFitPow(cons, label, list);
 		GeoFunction function = algo.getFitPow();
+		return function;
+	}
+
+	/** 
+	 * FitPow[list of coords]
+	 * Hans-Petter Ulven
+	 */
+	final public GeoFunction FitSin(String label, GeoList list) {
+		AlgoFitSin algo = new AlgoFitSin(cons, label, list);
+		GeoFunction function = algo.getFitSin();
 		return function;
 	}
 
@@ -5351,7 +5362,7 @@ public class Kernel {
 		return q;
 	}
 
-	/**
+	/*
 	 * compute greatest common divisor of given longs
 	 */
 	final static long gcd(long[] numbers) {
