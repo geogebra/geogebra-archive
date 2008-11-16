@@ -354,7 +354,7 @@ public class AlgoFitSin extends AlgoElement{
              if(d>Math.PI){d-=reduction;}
              if(d<-Math.PI){d+=reduction;}              debug("justifying: "+d);
         }//while not in i <-pi,pi>
-        System.out.println("Sum Errors Squared= "+beta2(xd,yd,a,b,c,d));	//Info
+        System.out.println("AlgoFitSin: Sum Errors Squared= "+beta2(xd,yd,a,b,c,d));	//Info
     }//sinus_Reg()
  
 
