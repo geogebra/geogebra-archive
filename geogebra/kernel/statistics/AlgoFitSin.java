@@ -57,16 +57,17 @@ import geogebra.kernel.GeoPoint;
  *           this is of any value.)
  * 
  * 	Constraints:
- * 		<List of points> should have at least 6 points.
- * 		and cover at least two extremums of the function.
- * 		At least three points should be monotonous before
- * 		each extremum.
+ * 		<List of points> should have at least 6 points. 
+ * 		There should also be three points on the row steadily increasing
+ * 		or decreasing(y1<=y2<=y3 or y1>=y2>=y3)on each side/flank of the first extremum.
+ * 		The points should cover at least two extremums of the function.
+ * 		If not, the resulting function will not be a good fit.
  * 	Problems:
  * 		Non-linear regression is difficult, and the choice
  * 		of initial values for the parameters are highly critical.
  * 		The algorithm here might converge to a local minimum.
  * 		I am not sure if the algorithm in some cases might diverge or oscillate?
- * 		(Then it would stop after MAXITERATIONS and give an unpredictable answer.)
+ * 		(Then it would stop after MAXITERATIONS and give a bad fit.)
  */
 
 
@@ -119,11 +120,11 @@ public class AlgoFitSin extends AlgoElement{
         error=false;				//General flag
         if(!geolist.isDefined() || (size<6) ) {	//Direction-algo needs two flanks, 3 in each.
             geofunction.setUndefined();
-            errorMsg("List not properlydefined");
+            errorMsg("List not properly defined or too small (6 points needed).");
             return;
         }else{
         	regMath = kernel.getRegressionMath();
-        	getPoints();
+        	getPoints();		//toDo: sort the points on x while getting them!
             doReg();
             if(!error){
                 MyDouble A=new MyDouble(kernel,a);
@@ -158,14 +159,15 @@ public class AlgoFitSin extends AlgoElement{
     
     public final static void findParameters() {
         double y;
+        int		xmax_abs=0,xmin_abs=0;	//update in case changes=0 later (few-data-case)
         size=xd.length;
         double sum=0.0d,    max=yd[0],  min=max;
         //Find a and b:
         for(int i=0;i<size;i++){
             y=yd[i];
             sum+=y;
-            if(y>max){max=y;}
-            if(y<min){min=y;}
+            if(y>max){max=y;xmax_abs=i;}
+            if(y<min){min=y;xmin_abs=i;}
         }//for
         a=sum/size;                                    
         b=(max-min)/2.0d;                             debug("a= "+a+" b= "+b+" max= "+max+" min= "+min);
@@ -173,8 +175,7 @@ public class AlgoFitSin extends AlgoElement{
         //find c:
         //This time first and second local max/min, between rise and fall and vv
         //Observation: last y in a rise or decrease *is* the local extremum!
-        max=min=-1.0d;
-        int xmax=0,xmin=0;      
+        int xmax=xmax_abs,xmin=xmin_abs;	//Keep absolute max/min in case changes=0 later      
         int state=0;             //undecided so far...
         int current=0;
         int changes=0;          //undecided so far...
@@ -187,30 +188,33 @@ public class AlgoFitSin extends AlgoElement{
                 if(state==0){        //just started:
                     state=current;      //set first state
                 }else {             //we are on our way...
-                    if(current!=state){ changes++;state=current;}//if change
+                    if((current!=state)&&(current!=0)){ 	//update eventual change
+                    	changes++;state=current;
+                    }//if change
                 }//if steady up or down
 
-                //Must check before updating extremums
+                //Two changes enough. (Must check before updating extremums.)
                 if(changes>=2){                             debug("Two changes on "+i);
                     break;                      
                 }//if changes>=2
             
-                //find first and second extremum                
+                //update extremums so far                
                 if(current==1){         //steady up
                     max=y;xmax=i;           //last is max so far
                 }else if(current==-1){  //steady down
                     min=y;xmin=i;           //last is min so far
-                }else{
-                    //not steady...
-                }//if 
+                }//update extremums
+            }else{	//not steady, 
                 
-            }//if up or down
+            }//if steady up or down
              
             debug("i: "+i);
             debug("state: "+state+" current: "+current+" changes: "+changes+" max: "+max+" min: "+min+" xmax: "+xmax+" xmin: "+xmin);
         }//for all data
                 
-        double period=Math.abs(xd[xmax]-xd[xmin])*2;
+        double period;
+        if(changes<1){xmax=xmax_abs;xmin=xmin_abs;}	//Few points, safe to assume only one period
+        period=Math.abs(xd[xmax]-xd[xmin])*2;
         c=2*Math.PI/period;
 
         debug("changes:          firstmax:        firstmin:     xmax:     xmin:");
@@ -219,6 +223,8 @@ public class AlgoFitSin extends AlgoElement{
         
         //Find d  
         // (d=0 might go well, but to be on the safe side...100 iterations should be enough?
+        // Could also use pi/2=c*xmax+d, but iteration is more robust in bad cases.
+        // If a,b and c are a bit off, d should be good!
         d=-Math.PI;
         double deltad=Math.PI*2*0.01;
         double err=0.0d;
@@ -231,7 +237,7 @@ public class AlgoFitSin extends AlgoElement{
                 old_err=err;
                 bestd=d;                    //System.out.println("d-iteration: error= "+error+"   d: "+d);
             }//if new min                                         
-        }//for: d-iterasjon 
+        }//for: d-iteration 
         d=bestd;                                         
                                             debug("Parameters:  a= "+a+" b= "+b+" c= "+c+" d "+d);
     }//findParameters()
@@ -240,7 +246,7 @@ public class AlgoFitSin extends AlgoElement{
         double lambda=0.0d;          //LM-damping coefficient
         double multfaktor=LMFACTORMULT;	// later?: divfaktor=LMFACTORDIV;
         double residual,old_residual=beta2(xd,yd,a,b,c,d);
-        double diff=-1;         //negativ to start it off
+        double diff=-1;         //negative to start it off
         
         double da=EPSILON,db=EPSILON,dc=EPSILON,dd=EPSILON;     //Something larger than eps, to get started...
         double b1,b2,b3,b4;                     //At*beta
