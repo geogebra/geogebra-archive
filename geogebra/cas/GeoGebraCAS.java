@@ -152,7 +152,7 @@ public class GeoGebraCAS {
 			//yacas.Evaluate("restart;");
 			th.printStackTrace();
 			return null;
-		}
+		} 
 	}
 
 	private synchronized GeoGebraJasymca getJasymca() {
