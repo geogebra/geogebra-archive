@@ -23,7 +23,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoElement
-implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve {
+implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineProperties {
 
 	private static final long serialVersionUID = 1L;
 	

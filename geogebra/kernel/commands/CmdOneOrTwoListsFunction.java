@@ -233,7 +233,7 @@ class CmdPMCC extends CmdOneOrTwoListsFunction {
  * SigmaXX[ list ]
  * adapted from CmdVariance by Michael Borcherds 2008-02-18
  */
-class CmdSigmaXX extends CmdOneOrTwoListsFunction {
+class CmdSigmaXX extends CmdOneListFunction {
 
 	public CmdSigmaXX(Kernel kernel) {
 		super(kernel);
@@ -243,15 +243,9 @@ class CmdSigmaXX extends CmdOneOrTwoListsFunction {
 	{
 		return kernel.SigmaXX(a, b);
 	}
-
-	final protected GeoElement doCommand(String a, GeoList b, GeoList c)
-	{
-		return kernel.SigmaXX(a, b, c);
-	}
-
 }
 
-class CmdSigmaXY extends CmdOneOrTwoListsFunction {
+class CmdSigmaXY extends CmdOneListFunction {
 
 	public CmdSigmaXY(Kernel kernel) {
 		super(kernel);
@@ -274,7 +268,7 @@ class CmdSigmaXY extends CmdOneOrTwoListsFunction {
  * SigmaYY[ list ]
  * adapted from CmdVariance by Michael Borcherds 2008-02-18
  */
-class CmdSigmaYY extends CmdOneOrTwoListsFunction {
+class CmdSigmaYY extends CmdOneListFunction {
 
 	public CmdSigmaYY(Kernel kernel) {
 		super(kernel);
@@ -284,12 +278,6 @@ class CmdSigmaYY extends CmdOneOrTwoListsFunction {
 	{
 		return kernel.SigmaYY(a, b);
 	}
-
-	final protected GeoElement doCommand(String a, GeoList b, GeoList c)
-	{
-		return kernel.SigmaYY(a, b, c);
-	}
-
 
 }
 

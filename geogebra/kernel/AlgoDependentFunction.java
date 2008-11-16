@@ -40,7 +40,15 @@ public class AlgoDependentFunction extends AlgoElement {
     /** Creates new AlgoDependentFunction */
     public AlgoDependentFunction(Construction cons, String label, Function fun) {
         this(cons, fun);
-        f.setLabel(label);
+        
+        String derivativeLabel = null;      
+        
+        // auto label for f'' to be f'' etc
+        if (label == null) {
+        	derivativeLabel = getDerivativeLabel(fun);
+        }
+        
+       	f.setLabel(derivativeLabel != null ? derivativeLabel : label);
     }
     
     AlgoDependentFunction(Construction cons, Function fun) {
@@ -183,6 +191,43 @@ public class AlgoDependentFunction extends AlgoElement {
         }       
         sb.append(fun.toString());
         return sb.toString();
+    }
+    
+    /*
+     * checks to see if this is an nth derivative,
+     * and return an appropriate label eg f''' for 3rd derivative
+     */
+    private String getDerivativeLabel(Function fun) {
+        ExpressionValue ev = fun.getExpression().getLeft();
+        if (ev.isExpressionNode()) {
+        	ExpressionNode enL = (ExpressionNode)(fun.getExpression().getLeft());
+        	if (enL.getOperation() == ExpressionNode.DERIVATIVE) {
+	        	if (enL.getLeft().isGeoElement()) {
+	
+	        	  GeoElement geo = (GeoElement)enL.getLeft();
+
+	        	  if (geo.getLabel() != null) {
+	        		  
+	        		  ExpressionValue evR = (enL.getRight());
+	        		  
+	        		 if (evR.isNumberValue()) {
+	        			 NumberValue num = (NumberValue)evR;
+	        			 double val = num.getDouble();
+
+	        			 if (val > 0d && kernel.isInteger(val)) {
+	        				 
+	        				 // eg f''' if val == 3
+	        				 return geo.getLabel() + geogebra.util.Util.string("'",(int)val); // eg f''''
+
+	        			 }
+	        		 }
+	        		  
+	        	  }
+	        	}
+        	}
+        }
+    	return null;
+
     }
 
 }

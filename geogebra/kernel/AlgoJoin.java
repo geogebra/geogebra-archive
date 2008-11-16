@@ -8,73 +8,84 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License v2 as published by 
 the Free Software Foundation.
 
-*/
+ */
 
 package geogebra.kernel;
+
+import geogebra.main.Application;
 
 public class AlgoJoin extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
-	private GeoList inputList2; //input
-    private GeoList outputList; //output	
-    private int size, size2;
+	private GeoList outputList; //output	
+	private int size, size2;
 
-    AlgoJoin(Construction cons, String label, GeoList inputList, GeoList inputList2) {
-        super(cons);
-        
-        
-        this.inputList = inputList;
-        this.inputList2 = inputList2;
+	AlgoJoin(Construction cons, String label, GeoList inputList) {
+		super(cons);
 
-               
-        outputList = new GeoList(cons);
+		this.inputList = inputList;
 
-        setInputOutput();
-        compute();
-        outputList.setLabel(label);
-    }
+		outputList = new GeoList(cons);
+
+		setInputOutput();
+		compute();
+		outputList.setLabel(label);
+	}
 
 
-    protected String getClassName() {
-        return "AlgoJoin";
-    }
+	protected String getClassName() {
+		return "AlgoJoin";
+	}
 
-    protected void setInputOutput(){
-        input = new GeoElement[2];
-        
-	    input[0] = inputList;
-	    input[1] = inputList2;
+	protected void setInputOutput(){
+		input = new GeoElement[1];
 
-        output = new GeoElement[1];
-        output[0] = outputList;
-        setDependencies(); // done by AlgoElement
-    }
+		input[0] = inputList;
 
-    GeoList getResult() {
-        return outputList;
-    }
+		output = new GeoElement[1];
+		output[0] = outputList;
+		setDependencies(); // done by AlgoElement
+	}
 
-    protected final void compute() {
-    	
-    	size = inputList.size();
-    	size2 = inputList2.size();
-   	
-    	if (!inputList.isDefined() || !inputList2.isDefined()) {
-    		outputList.setUndefined();
-    		return;
-    	} 
-       
-    	outputList.setDefined(true);
-    	outputList.clear();
-    	
-        for (int i=0 ; i < size ; i++)
-    		outputList.add(inputList.get(i).copy());
-    	
-        for (int i=0 ; i < size2 ; i++)
-    		outputList.add(inputList2.get(i).copy());
-    	
+	GeoList getResult() {
+		return outputList;
+	}
 
-   }
-  
+	protected final void compute() {
+
+		size = inputList.size();
+
+		if (!inputList.isDefined()) {
+			outputList.setUndefined();
+			return;
+		} 
+
+		outputList.setDefined(true);
+		outputList.clear();
+
+		for (int i=0 ; i < size ; i++) {
+
+			GeoElement geo = inputList.get(i);
+			if (!geo.isGeoList()) {
+				outputList.setUndefined();
+				return;
+			}
+
+			GeoList list = (GeoList)geo;
+			size2 = list.size();
+
+			if (size2 > 0) {
+				for (int j=0 ; j < size2 ; j++) {
+					//GeoElement geo2 = list.get(j);
+					//Application.debug(geo.getLabel() + " " + geo2.getClass());
+					outputList.add(list.get(j).copyInternal(cons));
+					
+				}
+
+			}
+		}
+
+	}
+
 }

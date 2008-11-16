@@ -74,7 +74,7 @@ public class AlgoKeepIf extends AlgoElement {
     	{
     		GeoElement geo=inputList.get(i);
 			if (geo.isGeoNumeric() && boolFun.evaluateBoolean(((GeoNumeric)geo).getValue()) )
-				outputList.add(geo.copy());
+				outputList.add(geo.copyInternal(cons));
     	}
     } 	
   

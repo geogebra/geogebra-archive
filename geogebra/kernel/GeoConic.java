@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class GeoConic extends GeoElement
 implements Path, Traceable, 
-Translateable, PointRotateable, Mirrorable, Dilateable  {
+Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	
 	/**
 	 * 

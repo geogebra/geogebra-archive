@@ -98,7 +98,7 @@ import javax.swing.plaf.FontUIResource;
 public abstract class Application implements KeyEventDispatcher {
 
 	// disabled parts
-	public static final boolean DISABLE_I2G = false;	
+	public static final boolean DISABLE_I2G = true;	
 
 	// license file
 	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";

@@ -195,7 +195,7 @@ public class MyXMLHandler implements DocHandler {
 
 	final public void endDocument() throws SAXException {
 		if (mode == MODE_INVALID)
-			throw new SAXException("invalid file: <geogebra> not found");
+			throw new SAXException(app.getPlain("XMLTagANotFound","<geogebra>"));
 	}
 
 	final public void startElement(String eName, LinkedHashMap attrs)

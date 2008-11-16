@@ -19,13 +19,13 @@ import geogebra.main.Application;
  * 
  * @author Michael Borcherds
  */
-public class AlgoFactor extends AlgoElement {
+public class AlgoSimplify extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
     private GeoFunction g; // output         
    
-    public AlgoFactor(Construction cons, String label, GeoFunction f) {
+    public AlgoSimplify(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
@@ -36,7 +36,7 @@ public class AlgoFactor extends AlgoElement {
     }
     
     protected String getClassName() {
-        return "AlgoFactor";
+        return "AlgoSimplify";
     }
     
     // for AlgoElement
@@ -78,7 +78,7 @@ public class AlgoFactor extends AlgoElement {
 		if (functionOut.length()==0) yacasError=true; // Yacas error
 		
 		if (functionOut.length()>7)
-			if (functionOut.startsWith("Factor(") || // Yacas error
+			if (functionOut.startsWith("Simplify(") || // Yacas error
 			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
 				yacasError=true;
 			

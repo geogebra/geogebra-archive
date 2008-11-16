@@ -14,6 +14,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.kernel.AlgoText;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -488,8 +489,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
             }                                                           
             
             //  fix object
-            if (geo.isFixable() && (geo.isGeoText() || geo.isGeoImage())) {            	
-                cbItem = new JCheckBoxMenuItem( app.getPlain("FixObject"));
+            if (geo.isFixable() && (geo.isGeoText() || geo.isGeoImage())) {   
+            	
+            	cbItem = new JCheckBoxMenuItem( app.getPlain("FixObject"));
                 cbItem.setIcon(app.getEmptyIcon());
                 cbItem.setSelected(geo.isFixed());
                 cbItem.addActionListener(new ActionListener() {
@@ -546,7 +548,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
        
         // EDITING      
         // EDIT Text in special dialog
-        if (geo.isTextValue() && !geo.isFixed()) {
+        if (geo.isTextValue() && !geo.isTextCommand() && !geo.isFixed()) {
             addAction(new AbstractAction(
                 app.getPlain("Edit"),
                 app.getImageIcon("edit.png")) {

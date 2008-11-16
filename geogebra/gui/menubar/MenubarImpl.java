@@ -50,7 +50,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	private static final long serialVersionUID = 1736020764918189176L;
 
 	// Actions
-	protected AbstractAction refreshAction,
+	protected AbstractAction refreshAction, recomputeAllViews,
 			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
@@ -369,6 +369,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		menu.addSeparator();
 		mi = menu.add(refreshAction);
 		setMenuShortCutAccelerator(mi, 'F');
+		
+		mi = menu.add(recomputeAllViews);
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
+		mi.setAccelerator(ks);
 		
 		
 		add(menu);
@@ -880,12 +884,19 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 		
 
-		refreshAction = new AbstractAction(app.getMenu("Refresh"),
-				new ImageIcon(app.getRefreshViewImage())) {
+		refreshAction = new AbstractAction(app.getMenu("Refresh"),new ImageIcon(app.getRefreshViewImage())) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				app.refreshViews();
+			}
+		};
+
+		recomputeAllViews = new AbstractAction(app.getMenu("RecomputeAllViews"), app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getKernel().updateConstruction();
 			}
 		};
 

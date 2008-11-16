@@ -21,7 +21,7 @@ import java.util.HashSet;
 /**
  * @author Markus Hohenwarter
  */
-final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue {
+final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue, LineProperties {
 
 	private static final long serialVersionUID = 1L;
 	// GeoSegment is constructed by AlgoJoinPointsSegment 

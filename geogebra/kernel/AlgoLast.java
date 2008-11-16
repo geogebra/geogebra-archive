@@ -73,7 +73,7 @@ public class AlgoLast extends AlgoElement {
     	if (outsize == 0) return; // return empty list
     	
     	for (int i=size-outsize ; i<size ; i++)
-    		outputList.add(inputList.get(i).copy());
+    		outputList.add(inputList.get(i).copyInternal(cons));
    }
   
 }

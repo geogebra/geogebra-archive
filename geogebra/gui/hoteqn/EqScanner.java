@@ -419,7 +419,7 @@ private EqToken ScanNextToken() {
          case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': 
          case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': 
          case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': 
-         case 'V': case 'W': case 'X': case 'Y': case 'Z': 
+         case 'V': case 'W': case 'X': case 'Y': case 'Z': case '$' :
               SBuffer.append(eqchar);
               advance();
               tag = false;
@@ -435,7 +435,7 @@ private EqToken ScanNextToken() {
                  case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
                  case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
                  case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
-                 case 'Y': case 'Z': 
+                 case 'Y': case 'Z': case '$' :
     
                 	 
                     SBuffer.append(eqchar);
@@ -988,6 +988,9 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("dotso")) return new EqToken(EqToken.Id,"\u2026");
              if (SBufferString.equals("ddots")) return new EqToken(EqToken.Id,"\u22f1");
              if (SBufferString.equals("varepsilon")) return new EqToken(EqToken.Id,"\u03b5");
+             
+             // \$
+             if (SBufferString.equals("$")) return new EqToken(EqToken.Id,"$");
              
              // TODO doesn't seem to be in standard font?
              //if (SBufferString.equals("triangle")) return new EqToken(EqToken.Id,"\u25b5");

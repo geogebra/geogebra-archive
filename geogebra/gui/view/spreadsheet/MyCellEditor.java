@@ -42,19 +42,30 @@ public class MyCellEditor extends DefaultCellEditor {
 
 		}
 	}
+	
+	private boolean clickedToType = false;
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0,
 			boolean isSelected, int row0, int column0) {
 		table = (MyTable) table0;
-		value = (GeoElement) value0;
+		
+		if (value0 instanceof String) { // clicked to type
+			value = null;
+			clickedToType = true;
+		}
+		else
+		{
+			value = (GeoElement) value0;
+			clickedToType = false;
+		}
+		
 		column = column0;
 		row = row0;
 		String text = "";
+		
 		if (value != null) {
 			if (value.isChangeable()) {
-				// Modified by Quan Yuan
-				// text = value.toValueString();
-				text = "";
+				text = value.toValueString();
 			} else {
 				text = value.getCommandDescription();
 			}
@@ -130,6 +141,11 @@ public class MyCellEditor extends DefaultCellEditor {
 		// Application.debug("stopCellEditing()");
 		String text = (String) delegate.getCellEditorValue();
 		try {
+			
+			//if (clickedToType) {
+				value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
+			//}
+			
 			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table,
 					text, value, column, row);
 			app.storeUndoInfo();
@@ -157,6 +173,11 @@ public class MyCellEditor extends DefaultCellEditor {
 
 	public void undoEdit() {
 		String text = "";
+		
+		if (table.tempValue != null) value = table.tempValue;
+		
+		table.tempValue = null;
+		
 		if (value != null) {
 			if (value.isChangeable()) {
 				text = value.toValueString();
@@ -168,6 +189,7 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 		}
 		delegate.setValue(text);
+		super.stopCellEditing();
 	}
 
 	private static GeoElement prepareNewValue(Kernel kernel, String name,

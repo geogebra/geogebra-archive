@@ -82,7 +82,7 @@ public class AlgoTake extends AlgoElement {
     	outputList.clear();
     	
     	for (int i=start ; i<=end ; i++)
-    		outputList.add(inputList.get(i).copy());
+    		outputList.add(inputList.get(i).copyInternal(cons));
    }
   
 }

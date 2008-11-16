@@ -28,7 +28,7 @@ import geogebra.kernel.roots.RealRootFunction;
  */
 public class GeoFunction extends GeoElement
 implements Path, Translateable, Traceable, Functional, GeoFunctionable,
-GeoDeriveable, ParametricCurve {
+GeoDeriveable, ParametricCurve, LineProperties {
 
 	/**
 	 * 

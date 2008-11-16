@@ -244,6 +244,17 @@ implements ExpressionValue {
         }
         return c;
     }
+    
+    /**
+     * Replaces geo and all its dependent geos in this tree by
+     * copies of their values.
+     */
+    public void replaceChildrenByValues(GeoElement geo) {                                                
+        int size = args.size();
+        for (int i = 0 ; i < size; i++) {
+        	((ExpressionNode)args.get(i)).replaceChildrenByValues(geo);                	                	
+        }         
+    }
 
     public HashSet getVariables() {             
         HashSet set = new HashSet();

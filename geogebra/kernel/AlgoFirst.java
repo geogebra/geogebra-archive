@@ -73,7 +73,7 @@ public class AlgoFirst extends AlgoElement {
     	if (outsize == 0) return; // return empty list
     	
     	for (int i=0 ; i<outsize ; i++)
-    		outputList.add(inputList.get(i).copy());
+    		outputList.add(inputList.get(i).copyInternal(cons));
    }
   
 }

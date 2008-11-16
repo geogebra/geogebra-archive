@@ -30,14 +30,17 @@ public class AlgoToYacasString extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // input
+	GeoBoolean substituteVars; // input
     private GeoText text;     // output              
         
-    public AlgoToYacasString(Construction cons, String label, GeoElement geo) {
+    public AlgoToYacasString(Construction cons, String label, GeoElement geo, GeoBoolean substituteVars) {
     	super(cons);
         this.geo = geo;  
+        this.substituteVars = substituteVars;
         
        text = new GeoText(cons);
-       setInputOutput(); // for AlgoElement
+		text.setIsCommand(true); // stop editing as text
+		setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
         compute();      
@@ -50,8 +53,9 @@ public class AlgoToYacasString extends AlgoElement {
     
     // for AlgoElement
 	protected void setInputOutput() {
-        input = new GeoElement[1];
+        input = new GeoElement[2];
         input[0] = geo;
+        input[1] = substituteVars;
         
         output = new GeoElement[1];        
         output[0] = text;        
@@ -63,7 +67,10 @@ public class AlgoToYacasString extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {    
     	
-    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, false));
+    	if (!geo.isDefined() || !substituteVars.isDefined())
+    		text.setTextString("");
+    	else
+    		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, substituteVars.getBoolean()));
     	
     	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();

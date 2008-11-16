@@ -1556,8 +1556,8 @@ public class Kernel {
 	 */
 	final public GeoText ToYacasString(
 		String label,
-		GeoElement geo) {
-		AlgoToYacasString algo = new AlgoToYacasString(cons, label, geo);
+		GeoElement geo, GeoBoolean substituteVars) {
+		AlgoToYacasString algo = new AlgoToYacasString(cons, label, geo, substituteVars);
 		GeoText t = algo.getGeoText();
 		return t;
 	}
@@ -1585,23 +1585,67 @@ public class Kernel {
 	}
 	
 	/** 
-	 * toLaTeX of geo.
+	 * LaTeX of geo.
 	 */
-	final public GeoText toLaTeX(
+	final public GeoText LaTeX(
 		String label,
-		GeoElement geo) {
-		AlgotoLaTeX algo = new AlgotoLaTeX(cons, label, geo);
+		GeoElement geo, GeoBoolean substituteVars) {
+		AlgoLaTeX algo = new AlgoLaTeX(cons, label, geo, substituteVars);
 		GeoText t = algo.getGeoText();
 		return t;
 	}
 	
 	/** 
-	 * toString of geo.
+	 * LaTeX of geo.
 	 */
-	final public GeoText toString(
+	final public GeoText LaTeX(
 		String label,
 		GeoElement geo) {
-		AlgotoString algo = new AlgotoString(cons, label, geo);
+		AlgoLaTeX algo = new AlgoLaTeX(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Text of geo.
+	 */
+	final public GeoText Text(
+		String label,
+		GeoElement geo) {
+		AlgoText algo = new AlgoText(cons, label, geo);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Text of geo.
+	 */
+	final public GeoText Text(
+		String label,
+		GeoElement geo, GeoBoolean substituteVars) {
+		AlgoText algo = new AlgoText(cons, label, geo, substituteVars);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Text of geo.
+	 */
+	final public GeoText Text(
+		String label,
+		GeoElement geo, GeoPoint p, GeoBoolean substituteVars) {
+		AlgoText algo = new AlgoText(cons, label, geo, p, substituteVars);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Text of geo.
+	 */
+	final public GeoText Text(
+		String label,
+		GeoElement geo, GeoPoint p) {
+		AlgoText algo = new AlgoText(cons, label, geo, p);
 		GeoText t = algo.getGeoText();
 		return t;
 	}
@@ -2707,8 +2751,8 @@ public class Kernel {
 	 * Join[list,list]
 	 * Michael Borcherds
 	 */
-	final public GeoList Join(String label, GeoList list, GeoList list1) {
-		AlgoJoin algo = new AlgoJoin(cons, label, list, list1);
+	final public GeoList Join(String label, GeoList list) {
+		AlgoJoin algo = new AlgoJoin(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}
@@ -2737,18 +2781,18 @@ public class Kernel {
 	 * Insert[list,list,n]
 	 * Michael Borcherds
 	 */
-	final public GeoList Insert(String label, GeoList list, GeoList list1, GeoNumeric n) {
-		AlgoInsert algo = new AlgoInsert(cons, label, list, list1, n);
+	final public GeoList Insert(String label, GeoElement geo, GeoList list, GeoNumeric n) {
+		AlgoInsert algo = new AlgoInsert(cons, label, geo, list, n);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}
 	
 	/** 
-	 * Clean[list]
+	 * RemoveUndefined[list]
 	 * Michael Borcherds
 	 */
-	final public GeoList Clean(String label, GeoList list) {
-		AlgoClean algo = new AlgoClean(cons, label, list);
+	final public GeoList RemoveUndefined(String label, GeoList list) {
+		AlgoRemoveUndefined algo = new AlgoRemoveUndefined(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}
@@ -4114,23 +4158,6 @@ public class Kernel {
 	}
 
 	/**
-	 * mirror geoMir in circle c
-	 */
-	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoConic c) {	
-		if (label == null)
-			label = transformedGeoLabel(geoMir.toGeoElement());
-		
-		if (geoMir.toGeoElement().isGeoPoint())
-		{
-		  AlgoMirror algo = new AlgoMirror(cons, label, geoMir, c);		
-		  GeoElement [] geos = {algo.getResult()};
-		  return geos;
-		}
-		else
-			return null;
-	}
-
-	/**
 	 * mirror geoMir at point Q
 	 */
 	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoPoint Q) {	
@@ -4153,7 +4180,7 @@ public class Kernel {
 	 */
 	final public GeoElement [] Mirror(String label, GeoPoint Q, GeoConic conic) {	
 		if (label == null)
-			label = transformedGeoLabel(conic.toGeoElement());
+			label = transformedGeoLabel(Q);
 	
 		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);		
 		GeoElement [] geos = {algo.getResult()};
@@ -4462,6 +4489,15 @@ public class Kernel {
 	 */
 	final public GeoElement Expand(String label, GeoFunction func) {		
 		AlgoExpand algo = new AlgoExpand(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
+	 * Simplify function expression
+	 * @author Michael Borcherds 2008-04-04
+	 */
+	final public GeoElement Simplify(String label, GeoFunction func) {		
+		AlgoSimplify algo = new AlgoSimplify(cons, label, func);
 		return algo.getResult();			
 	}
 	

@@ -659,7 +659,7 @@ implements EuclidianViewAlgo {
 			break;
 			
 		case TYPE_BARCHART_FREQUENCY_TABLE:
-			// BarChart[{1,2,3,4,5},{1,5,0,13,4}]
+			// BarChart[{11,12,13,14,15},{1,5,0,13,4}]
 			if (!list1.isDefined() || !list2.isDefined()) 
 			{
 				sum.setUndefined();
@@ -749,7 +749,7 @@ implements EuclidianViewAlgo {
 			step = ((GeoNumeric)(list1.get(1))).getDouble() - start;
 			double colWidth = width.getDouble();
 			
-			Application.debug("N = "+N+" start = "+start+" end = "+end+" colWidth = "+colWidth);
+			//Application.debug("N = "+N+" start = "+start+" end = "+end+" colWidth = "+colWidth);
 
 			if (!kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
 					|| step <= 0) {
@@ -765,9 +765,9 @@ implements EuclidianViewAlgo {
 							
 				
 				
-			if (yval == null || yval.length < NN) {
-				yval = new double[NN];
-				leftBorder = new double[NN];
+			if (yval == null || yval.length < NN-1) {
+				yval = new double[NN-1];
+				leftBorder = new double[NN-1];
 			}				
 			
 			// fill in class boundaries
@@ -776,7 +776,7 @@ implements EuclidianViewAlgo {
 				leftBorder[i] = start + step * (i/2) - colWidth / 2.0;
 				leftBorder[i+1] = start + step * (i/2) + colWidth / 2.0;
 			}
-						
+			
 			area = 0;
 		
 			// fill in frequencies
@@ -800,7 +800,7 @@ implements EuclidianViewAlgo {
 			// area of rectangles = total frequency				
 			sum.setValue(area);	
 			
-			N=NN;
+			N = NN - 1;
 
 			
 			break;

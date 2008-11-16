@@ -26,7 +26,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import java.util.HashSet;
  */
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, 
-Translateable, PointRotateable, Mirrorable, Dilateable {   	
+Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {   	
 	
 	/**
 	 * 
@@ -190,9 +189,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	final public boolean hasChangeableCoordParentNumbers() {
 		ArrayList coords = getCoordParentNumbers();		
 		if (coords.size() == 0) return false;
+		
+		Object num1 = coords.get(0);
+		Object num2 = coords.get(1);
+		
+		if (num1 == null || num2 == null) return false;
 	
-		boolean ret = ((GeoNumeric)coords.get(0)).isChangeable() && 
-				((GeoNumeric)coords.get(1)).isChangeable();
+		boolean ret = ((GeoNumeric)num1).isChangeable() && 
+				((GeoNumeric)num2).isChangeable();
 
 		return ret;
 	}
@@ -262,8 +266,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 			
 			// get all variables of both expressions
 			ArrayList allVars = new ArrayList();
-			allVars.addAll(en.getLeft().getVariables());
-			allVars.addAll(en.getRight().getVariables());
+			
+			HashSet left = en.getLeft().getVariables();
+			HashSet right = en.getRight().getVariables();
+			
+			if (left == null || right == null)
+				throw new Exception("not free");
+			
+			allVars.addAll(left);
+			allVars.addAll(right);
 			
 			// get the ONE free number out of vars
 			for (int i=0; i < allVars.size(); i++) {				
@@ -830,14 +841,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 	 */
 	public void update() {  	
 		super.update();
-		
-				
+						
 		// update all registered locatables (they have this point as start point)
-		if (locateableList != null) {
-			for (int i=0; i < locateableList.size(); i++) {
-				Locateable loc = (Locateable) locateableList.get(i);
-				loc.toGeoElement().updateCascade();													
-			}		
+		if (locateableList != null) {			
+			GeoElement.updateCascade(locateableList);
 		}		
 	}
 	
@@ -917,16 +924,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable {
 		if (comparatorX == null) {
 			comparatorX = new Comparator() {
 				public int compare(Object a, Object b) {
-					GeoPoint itemA = (GeoPoint) a;
-					GeoPoint itemB = (GeoPoint) b;
-	        
-					double comp = itemA.inhomX - itemB.inhomX;
-					if (itemA.getKernel().isZero(comp))
-						// don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
-						return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
-					else
-						return comp < 0 ? -1 : +1;
-		      
+						GeoPoint itemA = (GeoPoint) a;
+						GeoPoint itemB = (GeoPoint) b;
+		        
+						double compX = itemA.inhomX - itemB.inhomX;
+	
+						if (itemA.getKernel().isZero(compX)) {
+							double compY = itemA.inhomY - itemB.inhomY;
+							
+							// if x-coords equal, sort on y-coords
+							if (!itemA.getKernel().isZero(compY))
+								return compY < 0 ? -1 : +1;
+							
+							// don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
+							return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+						}
+						else
+						{
+							return compX < 0 ? -1 : +1;
+						}
 					}
 				};
 			

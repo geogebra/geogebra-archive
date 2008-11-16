@@ -32,220 +32,233 @@ import javax.swing.SwingUtilities;
 public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	private static final long serialVersionUID = -350682076336303151L;
-	
+
 	// splash screen settings
 	private static final int SPLASH_IMAGE_WIDTH = 320;
 	private static final int SPLASH_IMAGE_HEIGHT = 106;
 	private static final int PROGRESS_IMAGE_WIDTH = 16;
 	private static final int PROGRESS_IMAGE_HEIGHT = 16;
-	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 11);
-	
+	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN,
+			11);
+
 	// applet member variables
-	private JavaScriptAPI appletImplementation = null;	
+	private JavaScriptAPI appletImplementation = null;
 	private JarManager jarManager;
 	private int width, height;
 	private boolean animationRunningAtLastStop = false;
-	
+
 	// splash screen stuff
 	private Image splashImage, progressImage;
 	private Image splashScreenImage;
 	private Graphics splashScreenImageGraphics;
-		
+
+	private boolean appletIniting = true;
+
 	/**
-	 * Loads necessary jar files and initializes applet. During the loading
-	 * of jar files, a splash screen with progress information is shown.
+	 * Loads necessary jar files and initializes applet. During the loading of
+	 * jar files, a splash screen with progress information is shown.
 	 */
-	public void init() {	
-		 try {
+	public void init() {
+		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
-			     public void run() {
-			    	
-			 		// start initing application
-			 		Thread runner = new Thread() {
-			 			public void run() {							
-			 				initAppletImplementation();	        				
-			 			}
-			 		};
-			 		runner.start();		
-			 		
-			 		// init splash screen
-			 		initSplashScreen();
-			 		
-			     }
-			 });
-		} catch (Exception e) {			
+				public void run() {
+
+					// start initing application
+					Thread runner = new Thread() {
+						public void run() {
+							getAppletImplementation();
+						}
+					};
+					runner.start();
+
+					// init splash screen
+					initSplashScreen();
+
+				}
+			});
+		} catch (Exception e) {
 			e.printStackTrace();
-		}								
+		}
 	}
 
-	public void start() {		
+	public void start() {
 		// restart animation if necessary
-		if (animationRunningAtLastStop) {			
-			appletImplementation.startAnimation();	
+		if (animationRunningAtLastStop) {
+			appletImplementation.startAnimation();
 		}
-		
-		repaint();		
+
+		repaint();
 		System.gc();
 	}
 
 	public void stop() {
 		// stop animation and remember that it needs to be restarted later
 		animationRunningAtLastStop = appletImplementation.isAnimationRunning();
-		if (animationRunningAtLastStop) {			
-			appletImplementation.stopAnimation();	
+		if (animationRunningAtLastStop) {
+			appletImplementation.stopAnimation();
 		}
-			
+
 		System.gc();
 	}
 
-	public void destroy() {		
+	public void destroy() {
 		// stop animation
 		appletImplementation.stopAnimation();
-		appletImplementation = null;				
+		appletImplementation = null;
 		System.gc();
 	}
-	
+
 	/**
-	 * Returns the appletImplementation object. 	 
+	 * Returns the appletImplementation object.
 	 */
 	private synchronized JavaScriptAPI getAppletImplementation() {
-		if (appletImplementation == null) {
+		if (appletIniting) {
 			initAppletImplementation();
 		}
-		
+
 		return appletImplementation;
 	}
-	
+
 	/**
-	 * Initializes the appletImplementation object. 
-	 * Loads geogebra_main.jar file and initializes applet if necessary.
+	 * Initializes the appletImplementation object. Loads geogebra_main.jar file
+	 * and initializes applet if necessary.
 	 */
-	private void initAppletImplementation() {				
+	private synchronized void initAppletImplementation() {
+		if (!appletIniting) return;
+		
 		// init jar manager to load jar files for applet
 		jarManager = JarManager.getSingleton(true);
-		
-		// load geogebra_main.jar file   
+
+		// load geogebra_main.jar file
 		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
 
 		// create delegate object that implements our applet's methods
-		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(this);
-		
+		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(
+				this);
+
 		// initialize applet's user interface, this changes the content pane
 		applImpl.initGUI();
-				
+
 		// update applet GUI, see paint()
 		validate();
-		
+
 		// remember the applet implementation
-		appletImplementation = applImpl;	
+		appletImplementation = applImpl;
 		repaint();
-		
+
 		// load all jar files in background and init dialogs
 		applImpl.getApplication().initInBackground();
-		
+
 		// clear splash images
 		splashScreenImage = null;
 		splashScreenImageGraphics = null;
 		splashImage = null;
 		progressImage = null;
 		System.gc();
+
+		// applet initing finished
+		appletIniting = false;
 		
 		// notify JavaScript that the applet is initialized.
 		notifyAppletInitialized();
 	}
-		
+
 	/**
-     * Paints the applet or a loading screen while the applet is being initialized.
-     */
-    final public void paint(Graphics g) {
-    	if (appletImplementation == null) { 
-    		g.drawImage(splashScreenImage, 0, 0, null);
-    	} else
-    		super.paint(g);		    	                 
-    }
-    
-    /**
-     * Initializes a loading screen to show progress of downloading jar files.
-     */
-    private void initSplashScreen() {
-    	// create splash screen image for fast drawing
+	 * Paints the applet or a loading screen while the applet is being
+	 * initialized.
+	 */
+	final public void paint(Graphics g) {
+		if (appletImplementation == null) {
+			g.drawImage(splashScreenImage, 0, 0, null);
+		} else
+			super.paint(g);
+	}
+
+	/**
+	 * Initializes a loading screen to show progress of downloading jar files.
+	 */
+	private void initSplashScreen() {
+		// create splash screen image for fast drawing
 		width = getWidth();
 		height = getHeight();
 		splashScreenImage = createImage(width, height);
 		splashScreenImageGraphics = splashScreenImage.getGraphics();
-		
+
 		// load splash image and animated progress image
 		splashImage = getImage(GeoGebraApplet.class.getResource("splash.gif"));
-    	progressImage = getImage(GeoGebraApplet.class.getResource("progress.gif")); 
-    	
-    	// update splash screen image and paint it
-    	updateSplashScreenImage();
-    }
-      
-    /**
-     * Paints a loading screen to show progress with downloading jar files.
-     */
-    private synchronized void updateSplashScreenImage() {
-    	if (splashScreenImageGraphics == null) return;
-    	
-    	Graphics2D g = (Graphics2D) splashScreenImageGraphics;
-    	
-    	// white background
-    	g.setColor(Color.white);
-    	g.clearRect(0, 0, width, height);
-    	    	
-    	// splash image position
-    	int splashX = -1;
-    	int splashY = -1;    	    	    
-    	if (splashImage != null) {
-    		splashX = (width - SPLASH_IMAGE_WIDTH) / 2;
-    		splashY = (height - SPLASH_IMAGE_HEIGHT) / 2 - (int) (1.5*PROGRESS_IMAGE_HEIGHT);
-    	}
-    	
-    	// progress image position
-    	int progressX = (width - PROGRESS_IMAGE_WIDTH)/2 ;
-    	int progressY = (height - PROGRESS_IMAGE_HEIGHT)/2;
-    	
-    	// Splash image fits into content pane: draw splash image
-    	if (splashX >=0 && splashY >=0 ) {    
-    		g.drawImage(splashImage, splashX, splashY, this);
-    		
-    		// put progress image below splash image
-    		progressY = splashY + SPLASH_IMAGE_HEIGHT;        
-    	} 
-    		    	
-    	// draw progress image
-    	g.drawImage(progressImage, progressX, progressY, this);
-    	
-    	// draw status message of JarManager below progress image    	
-    	if (jarManager != null) {  
-    		String statusMessage = jarManager.getDownloadStatusMessage();
-    		
-    		if (statusMessage != null) {
-	        	g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);            
-	        	g.setColor(Color.darkGray);
-	    		g.setFont(DEFAULT_FONT);
-	        	g.drawString(statusMessage, width/2 - (int) (2.5*statusMessage.length()), progressY + PROGRESS_IMAGE_HEIGHT + 2*DEFAULT_FONT.getSize());	        
-    		}   
-    	}
-    	
-    	repaint();
-    }
-    
-    /**
-     * Updates the progress image (animated gif) during appletImplementation loading. 
-     * Overrides ImageObserver.
-     */
-    public boolean imageUpdate( Image img, int flags, int x, int y, 
-    	    int w, int h ) 
-	  {	   
-    	// repaint applet to update progress image
-    	updateSplashScreenImage();
-	   
-	    // stop the image updating when the appletImplementation is loaded
-	    return appletImplementation == null;
-	  }
-   
+		progressImage = getImage(GeoGebraApplet.class
+				.getResource("progress.gif"));
+
+		// update splash screen image and paint it
+		updateSplashScreenImage();
+	}
+
+	/**
+	 * Paints a loading screen to show progress with downloading jar files.
+	 */
+	private synchronized void updateSplashScreenImage() {
+		if (splashScreenImageGraphics == null)
+			return;
+
+		Graphics2D g = (Graphics2D) splashScreenImageGraphics;
+
+		// white background
+		g.setColor(Color.white);
+		g.clearRect(0, 0, width, height);
+
+		// splash image position
+		int splashX = -1;
+		int splashY = -1;
+		if (splashImage != null) {
+			splashX = (width - SPLASH_IMAGE_WIDTH) / 2;
+			splashY = (height - SPLASH_IMAGE_HEIGHT) / 2
+					- (int) (1.5 * PROGRESS_IMAGE_HEIGHT);
+		}
+
+		// progress image position
+		int progressX = (width - PROGRESS_IMAGE_WIDTH) / 2;
+		int progressY = (height - PROGRESS_IMAGE_HEIGHT) / 2;
+
+		// Splash image fits into content pane: draw splash image
+		if (splashX >= 0 && splashY >= 0) {
+			g.drawImage(splashImage, splashX, splashY, this);
+
+			// put progress image below splash image
+			progressY = splashY + SPLASH_IMAGE_HEIGHT;
+		}
+
+		// draw progress image
+		g.drawImage(progressImage, progressX, progressY, this);
+
+		// draw status message of JarManager below progress image
+		if (jarManager != null) {
+			String statusMessage = jarManager.getDownloadStatusMessage();
+
+			if (statusMessage != null) {
+				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+						RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g.setColor(Color.darkGray);
+				g.setFont(DEFAULT_FONT);
+				g.drawString(statusMessage, width / 2
+						- (int) (2.5 * statusMessage.length()), progressY
+						+ PROGRESS_IMAGE_HEIGHT + 2 * DEFAULT_FONT.getSize());
+			}
+		}
+
+		repaint();
+	}
+
+	/**
+	 * Updates the progress image (animated gif) during appletImplementation
+	 * loading. Overrides ImageObserver.
+	 */
+	public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
+		// repaint applet to update progress image
+		updateSplashScreenImage();
+
+		// stop the image updating when the appletImplementation is loaded
+		return appletImplementation == null;
+	}
 
 	/*
 	 * JAVASCRIPT interface
@@ -257,13 +270,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * geogebra.main.AppletImplementation
 	 */
 
-	/**
-	 * Calls a JavaScript function when the applet is initialized.
-	 */
-	public void notifyAppletInitialized() {
-		getAppletImplementation().notifyAppletInitialized();
-	}
-	
 	public synchronized void deleteObject(String objName) {
 		getAppletImplementation().deleteObject(objName);
 	}
@@ -339,11 +345,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	public synchronized String getXML() {
 		return getAppletImplementation().getXML();
 	}
-	
+
 	public synchronized String getXML(String objName) {
 		return getAppletImplementation().getXML(objName);
 	}
-	
+
 	public synchronized String getAlgorithmXML(String objName) {
 		return getAppletImplementation().getAlgorithmXML(objName);
 	}
@@ -376,8 +382,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().registerClearListener(JSFunctionName);
 	}
 
-	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
-		getAppletImplementation().registerObjectUpdateListener(objName, JSFunctionName);
+	public synchronized void registerObjectUpdateListener(String objName,
+			String JSFunctionName) {
+		getAppletImplementation().registerObjectUpdateListener(objName,
+				JSFunctionName);
 	}
 
 	public synchronized void registerRemoveListener(String JSFunctionName) {
@@ -392,30 +400,31 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().registerUpdateListener(JSFunctionName);
 	}
 
-	public synchronized boolean renameObject(String oldObjName, String newObjName) {
+	public synchronized boolean renameObject(String oldObjName,
+			String newObjName) {
 		return getAppletImplementation().renameObject(oldObjName, newObjName);
 	}
-	
-	public synchronized void setAnimating(String objName, boolean animate){
+
+	public synchronized void setAnimating(String objName, boolean animate) {
 		getAppletImplementation().setAnimating(objName, animate);
 	}
-		
-	public synchronized void setAnimationSpeed(String objName, double speed){
+
+	public synchronized void setAnimationSpeed(String objName, double speed) {
 		getAppletImplementation().setAnimationSpeed(objName, speed);
 	}
-	
+
 	public synchronized void startAnimation() {
 		getAppletImplementation().startAnimation();
 	}
-	
+
 	public synchronized void stopAnimation() {
 		getAppletImplementation().stopAnimation();
 	}
-	
+
 	public synchronized boolean isAnimationRunning() {
 		return getAppletImplementation().isAnimationRunning();
 	}
-	
+
 	public synchronized void reset() {
 		getAppletImplementation().reset();
 	}
@@ -424,11 +433,13 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().setAxesVisible(xVisible, yVisible);
 	}
 
-	public synchronized void setColor(String objName, int red, int green, int blue) {
+	public synchronized void setColor(String objName, int red, int green,
+			int blue) {
 		getAppletImplementation().setColor(objName, red, green, blue);
 	}
 
-	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
+	public synchronized void setCoordSystem(double xmin, double xmax,
+			double ymin, double ymax) {
 		getAppletImplementation().setCoordSystem(xmin, xmax, ymin, ymax);
 	}
 
@@ -516,5 +527,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
 	}
 	
+	/**
+	 * Calls a JavaScript function when the applet is initialized.
+	 */
+	public void notifyAppletInitialized() {
+		getAppletImplementation().notifyAppletInitialized();
+	}
 
 }

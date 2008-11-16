@@ -35,7 +35,8 @@ public class AlgoName extends AlgoElement {
         this.geo = geo;  
         
        text = new GeoText(cons);
-       setInputOutput(); // for AlgoElement
+		text.setIsCommand(true); // stop editing as text
+		setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
         compute();      

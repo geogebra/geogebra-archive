@@ -39,7 +39,8 @@ public class AlgoTableText extends AlgoElement {
         this.geoList = geoList;
                
         text = new GeoText(cons);
-
+		text.setIsCommand(true); // stop editing as text
+		
         setInputOutput();
         compute();
     }

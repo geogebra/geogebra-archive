@@ -9,9 +9,9 @@ import geogebra.main.MyError;
 /*
  * Name[ <GeoElement> ]
  */
-public class CmdToYacasString extends CommandProcessor {
+public class CmdLaTeX extends CommandProcessor {
 
-	public CmdToYacasString(Kernel kernel) {
+	public CmdLaTeX(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -20,15 +20,25 @@ public class CmdToYacasString extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
+		case 1:
+			
+			arg = resArgs(c);	
+
+				GeoElement[] ret = { kernel.LaTeX(c.getLabel(),
+									arg[0]) };
+				return ret;
+
 		case 2:
+			
 			arg = resArgs(c);	
 			if (arg[1].isGeoBoolean()) {
-				GeoElement[] ret2 = { kernel.ToYacasString(c.getLabel(),
+				GeoElement[] ret2 = { kernel.LaTeX(c.getLabel(),
 									arg[0], (GeoBoolean)arg[1]) };
 				return ret2;
 			}
 			else
            	 	throw argErr(app, c.getName(), arg[1]);         
+
 
 
 		default:

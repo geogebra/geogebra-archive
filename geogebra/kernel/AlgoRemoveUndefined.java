@@ -18,14 +18,14 @@ package geogebra.kernel;
  * @version 2008-03-04
  */
 
-public class AlgoClean extends AlgoElement {
+public class AlgoRemoveUndefined extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
     private GeoList outputList; //output	
     private int size;
 
-    AlgoClean(Construction cons, String label, GeoList inputList) {
+    AlgoRemoveUndefined(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -37,7 +37,7 @@ public class AlgoClean extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoClean";
+        return "AlgoRemoveUndefined";
     }
 
     protected void setInputOutput(){
@@ -70,7 +70,7 @@ public class AlgoClean extends AlgoElement {
     	for (int i=0 ; i<size ; i++)
     	{
     		GeoElement geo=inputList.get(i);
-    		if (geo.isDefined()) outputList.add(geo.copy());
+    		if (geo.isDefined()) outputList.add(geo.copyInternal(cons));
     	}
     } 	
   

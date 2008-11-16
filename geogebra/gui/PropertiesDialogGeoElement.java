@@ -35,7 +35,9 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
+import geogebra.kernel.LineProperties;
 import geogebra.kernel.Locateable;
+import geogebra.kernel.PointProperties;
 import geogebra.kernel.Traceable;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
@@ -1180,14 +1182,16 @@ public class PropertiesDialogGeoElement
 		}
 
 	
-		// show everything but numbers (note: drawable angles are shown)
+		// show everything but images
 		private boolean checkGeos(Object[] geos) {
 			for (int i = 0; i < geos.length; i++) {
+				/* removed - we want to be able to change the color of everything in the spreadsheet
 				if (geos[i] instanceof GeoNumeric) {
 					GeoNumeric num = (GeoNumeric) geos[i];
 					if (!num.isDrawable())
 						return false;
-				} else if (geos[i] instanceof GeoImage)
+				} else */
+				if (geos[i] instanceof GeoImage)
 					return false;
 			}
 			return true;
@@ -2439,7 +2443,8 @@ public class PropertiesDialogGeoElement
 		}
 
 		private boolean checkGeos(Object[] geos) {
-			return geos.length == 1 && geos[0] instanceof GeoText;			
+			return geos.length == 1 && geos[0] instanceof GeoText
+			&& !((GeoText)geos[0]).isTextCommand();			
 		}
 
 		/**
@@ -2877,7 +2882,7 @@ public class PropertiesDialogGeoElement
 			slider.setFont(app.getSmallFont());	
 			slider.addChangeListener(this);			
 			
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size") ));		
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("PointSize") ));		
 			add(slider);			
 		}
 
@@ -2890,7 +2895,7 @@ public class PropertiesDialogGeoElement
 			slider.removeChangeListener(this);
 
 			//	set value to first point's size 
-			GeoPoint geo0 = (GeoPoint) geos[0];
+			PointProperties geo0 = (PointProperties) geos[0];
 			slider.setValue(geo0.getPointSize());
 
 			slider.addChangeListener(this);
@@ -2900,7 +2905,7 @@ public class PropertiesDialogGeoElement
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoPoint)) {
+				if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPoint())) {
 					geosOK = false;
 					break;
 				}
@@ -2914,9 +2919,9 @@ public class PropertiesDialogGeoElement
 		public void stateChanged(ChangeEvent e) {
 			if (!slider.getValueIsAdjusting()) {
 				int size = slider.getValue();
-				GeoPoint point;
+				PointProperties point;
 				for (int i = 0; i < geos.length; i++) {
-					point = (GeoPoint) geos[i];
+					point = (PointProperties) geos[i];
 					point.setPointSize(size);
 					point.updateRepaint();
 				}
@@ -2964,7 +2969,7 @@ public class PropertiesDialogGeoElement
 			this.geos = geos;
 
 			//	set value to first point's style 
-			GeoPoint geo0 = (GeoPoint) geos[0];
+			PointProperties geo0 = (PointProperties) geos[0];
 
 			for(int i = 0; i < buttons.length; ++i) {
 				if(Integer.parseInt(buttons[i].getActionCommand()) == geo0.getPointStyle())
@@ -2979,7 +2984,7 @@ public class PropertiesDialogGeoElement
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoPoint)) {
+				if (!((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPoint()) {
 					geosOK = false;
 					break;
 				}
@@ -2990,9 +2995,9 @@ public class PropertiesDialogGeoElement
 		public void actionPerformed(ActionEvent e) {
 			int style = Integer.parseInt(e.getActionCommand());
 			
-			GeoPoint point;
+			PointProperties point;
 			for (int i = 0; i < geos.length; i++) {
-				point = (GeoPoint) geos[i];
+				point = (PointProperties) geos[i];
 				point.setPointStyle(style);
 				point.updateRepaint();
 			}
@@ -3654,7 +3659,7 @@ public class PropertiesDialogGeoElement
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
+				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
 				if (!(geo.isPath()
 					|| geo.isGeoPolygon()
 					|| geo.isGeoLocus()
@@ -5299,7 +5304,9 @@ class NamePanel
 		tfName.addActionListener(this);		
 		
 		// DEFINITION
-		boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
+		//boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
+		boolean showDefinition = currentGeo.isGeoText() ? ((GeoText)currentGeo).isTextCommand() :
+			! currentGeo.isGeoImage();
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);

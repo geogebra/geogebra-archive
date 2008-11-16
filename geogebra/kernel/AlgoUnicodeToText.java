@@ -23,7 +23,8 @@ public class AlgoUnicodeToText extends AlgoElement {
       this.list = list;
 
       text = new GeoText(cons); 
-      setInputOutput(); // for AlgoElement
+		text.setIsCommand(true); // stop editing as text
+		setInputOutput(); // for AlgoElement
       
       // compute angle
       compute();     

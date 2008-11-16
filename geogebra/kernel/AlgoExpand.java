@@ -63,17 +63,14 @@ public class AlgoExpand extends AlgoElement {
     }
 
     protected final void compute() {     	  
+
     	if (!f.isDefined()) {
     		g.setUndefined();
     		return;
     	}
     	
-    	if (f.isIndependent()) {
-    		g.set(expand(f));
-    	} else {
-    		 // nothing to do here for dependent input as the
-    	      // expanded output will autmatically be updated    	    
-    	}
+
+    	g.set(expand(f));
     }
     
     /**

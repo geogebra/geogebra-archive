@@ -4340,15 +4340,14 @@ class CmdJoin extends CommandProcessor {
 		arg = resArgs(c);
 		
 		switch (n) {
-		case 2:
+		case 1:
 			
 			ok[0] = arg[0].isGeoList();
-			ok[1] = arg[1].isGeoList();
 
-			if (ok[0] && ok[1] ) {
+			if (ok[0] ) {
 				GeoElement[] ret = { 
 						kernel.Join(c.getLabel(),
-						(GeoList) arg[0], (GeoList)arg[1] ) };
+						(GeoList) arg[0] ) };
 				return ret;
 			} else
 
@@ -4358,6 +4357,12 @@ class CmdJoin extends CommandProcessor {
 	                   throw argErr(app, c.getName(), arg[1]);
 		
 		default:
+            // try to create list of numbers
+	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_LIST);
+	            if (list != null) {
+	           	 GeoElement[] ret = { kernel.Join(c.getLabel(), list)};
+	                return ret;             	     	 
+	            } 
 			throw argNumErr(app, c.getName(), n);
 		}
 	}
@@ -4438,10 +4443,10 @@ class CmdInsert extends CommandProcessor {
 		switch (n) {
 		case 3:
 
-			if (arg[0].isGeoList() && arg[1].isGeoList() && arg[2].isGeoNumeric()) {
+			if (arg[1].isGeoList() && arg[2].isGeoNumeric()) {
 				GeoElement[] ret = { 
 						kernel.Insert(c.getLabel(),
-						(GeoList) arg[0], (GeoList)arg[1], (GeoNumeric)arg[2] ) };
+						arg[0], (GeoList)arg[1], (GeoNumeric)arg[2] ) };
 				return ret;
 			} else
 
@@ -4643,5 +4648,32 @@ class CmdAxisStepY extends CommandProcessor {
 
 }
 
+class CmdSimplify extends CommandProcessor {
+	
+	public CmdSimplify (Kernel kernel) {
+		super(kernel);
+	}
+	
+final public GeoElement[] process(Command c) throws MyError {
+     int n = c.getArgumentNumber();
+     GeoElement[] arg;
+     arg = resArgs(c);
+     
+     switch (n) {
+         case 1 :             
+             if ((arg[0].isGeoFunction())) {
+                 GeoElement[] ret =
+                     { kernel.Simplify(c.getLabel(), (GeoFunction) arg[0] )};
+                 return ret;                
+             }                        
+              else
+            	 throw argErr(app, c.getName(), arg[0]);         
+			 
+	     // more than one argument
+         default :
+            	 throw argNumErr(app, c.getName(), n);
+     }
+ }    
+}
 
 

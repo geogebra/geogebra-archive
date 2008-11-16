@@ -684,7 +684,7 @@ public abstract class Drawable {
 			    	col = P.getTraceColumn1(); // call before getTraceRow()
 			    	row = P.getTraceRow();
 			    	if (row > 0) {
-		    	    	Application.debug(col+row);   		
+		    	    	//Application.debug(col+row);   		
 				    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
 				    	traceCell.setAuxiliaryObject(true);
 				    	

@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
 
@@ -579,6 +580,15 @@ public abstract class GeoElement
 		else return getRGBFromList(alphaValue);
 	}
 	
+	/* return black if the color is white, so it can be seen
+	 * 
+	 */
+	public Color getAlgebraColor() {
+		Color col = getLabelColor();
+		return col.equals(Color.white) ? Color.black : col;
+	}
+
+	
 	// Michael Borcherds 2008-04-01
 	public Color getLabelColor() {
 		if (colFunction == null) return labelColor;	
@@ -599,6 +609,7 @@ public abstract class GeoElement
 
 	// Michael Borcherds 2008-03-01
 	public void setLayer(int layer){
+		if (layer == this.layer) return;
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		EuclidianView ev =app.getEuclidianView();
 		if (ev != null) 
@@ -1618,7 +1629,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			String str;
 			do {
 				counter++;
-				str = "poly" + counter;
+				str = app.getPlain("Name.polygon") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		}		
@@ -1627,7 +1638,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			String str;
 			do {
 				counter++;
-				str = "text" + counter;
+				str = app.getPlain("Name.text") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoImage()) {
@@ -1635,7 +1646,7 @@ final public boolean hasOnlyFreeInputPoints() {
 			String str;
 			do {
 				counter++;
-				str = "pic" + counter;
+				str = app.getPlain("Name.picture") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoLocus()) {
@@ -1643,15 +1654,16 @@ final public boolean hasOnlyFreeInputPoints() {
 			String str;
 			do {
 				counter++;
-				str = "loc" + counter;
+				str = app.getPlain("Name.locus") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoList()) {
+			GeoList list = (GeoList) this;
 			int counter = 0;			
 			String str;
 			do {
 				counter++;
-				str = "list" + counter;
+				str = list.isMatrix() ? app.getPlain("Name.matrix") + counter : app.getPlain("Name.list") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		}
@@ -2268,7 +2280,7 @@ final public boolean hasOnlyFreeInputPoints() {
 						
 			if (colored) {
 				sbLongDescHTML.append("<b><font color=\"#");
-				sbLongDescHTML.append(Util.toHexString(labelColor));
+				sbLongDescHTML.append(Util.toHexString(getAlgebraColor()));
 				sbLongDescHTML.append("\">");
 			}
 			sbLongDescHTML.append(indicesToHTML(label, false));
@@ -2603,7 +2615,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		
 		if (colored) {
 			sbNameDescriptionHTML.append(" <b><font color=\"#");
-			sbNameDescriptionHTML.append(Util.toHexString(objColor));
+			sbNameDescriptionHTML.append(Util.toHexString(getAlgebraColor()));
 			sbNameDescriptionHTML.append("\">");
 		}
 		sbNameDescriptionHTML.append(indicesToHTML(label, false));
@@ -2864,6 +2876,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 */
 	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
+		sb.append(getLineStyleXML());
 		sb.append(getXMLvisualTags());
 		sb.append(getXMLanimationTags());
 		sb.append(getXMLfixedTag());
@@ -3113,7 +3126,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		return condShowObject;
 	}
 
-	public final void setShowObjectCondition(GeoBoolean cond) 
+	public void setShowObjectCondition(GeoBoolean cond) 
 	throws CircularDefinitionException {
 		// check for circular definition
 		if (this == cond || isParentOf(cond))
@@ -3142,7 +3155,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		return colFunction;
 	}
 
-	public final void setColorFunction(GeoList col) 
+	public void setColorFunction(GeoList col) 
 	//throws CircularDefinitionException 
 	{
 		//Application.debug("setColorFunction"+col.getValue());
@@ -3343,14 +3356,24 @@ final public boolean hasOnlyFreeInputPoints() {
 		String ret="";
 		if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
-			if (substituteNumbers) ret = geoFun.getAlgebraDescription();
-			else ret = geoFun.isIndependent() ? 
-	 				   geoFun.toValueString() :
-	 				   geoFun.getFunction().toString();
+	 				   
+	 		if (geoFun.isIndependent()) {
+	 			ret = geoFun.toValueString();
+	 		} else {
+	 			ret = substituteNumbers ?
+	 					geoFun.getFunction().toValueString():
+	 					geoFun.getFunction().toString(); 
+	 		}
 		}
-		else
+		else 
 		{
-			ret = this.getCommandDescription();
+			ret = substituteNumbers ? this.toValueString()
+					: this.getCommandDescription();
+		}
+		
+		if (ret.equals("")) {
+			// eg Text[ (1,2), false]
+			ret = toOutputValueString();
 		}
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
@@ -3402,6 +3425,21 @@ final public boolean hasOnlyFreeInputPoints() {
 	public void setLastTrace2(double val) {
 		lastTrace2 = val;
 	}
+	
+	/*
+	 * over-ridden in GeoList
+	 */
+	public GeoElement getGeoElementForPropertiesDialog() {
+		return this;
+	}
+	
+	/*
+	 * over-ridden in GeoText
+	 */
+	public boolean isTextCommand() {
+		return false;
+	}
+	
 
 
 }

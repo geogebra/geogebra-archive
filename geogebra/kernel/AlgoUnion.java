@@ -104,7 +104,7 @@ public class AlgoUnion extends AlgoElement {
 			break;
 		}
 		
-		if (!alreadyInOutputList) outputList.add(geo.copy());
+		if (!alreadyInOutputList) outputList.add(geo.copyInternal(cons));
     	
     }
   

@@ -26,7 +26,7 @@ import geogebra.kernel.integration.EllipticArcLength;
  * 
  */
 public class GeoConicPart extends GeoConic
-implements LimitedPath, NumberValue {
+implements LimitedPath, NumberValue, LineProperties {
 	
 	/**
 	 * 

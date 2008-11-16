@@ -15,18 +15,18 @@ package geogebra.kernel;
 public class AlgoInsert extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
+	private GeoElement inputGeo; //input
 	private GeoList inputList; //input
-	private GeoList inputList2; //input
 	private GeoNumeric n; // input
     private GeoList outputList; //output	
-    private int size, size2, insertPoint;
+    private int size, insertPoint;
 
-    AlgoInsert(Construction cons, String label, GeoList inputList, GeoList inputList2, GeoNumeric n) {
+    AlgoInsert(Construction cons, String label, GeoElement inputGeo, GeoList inputList, GeoNumeric n) {
         super(cons);
         
         
+        this.inputGeo = inputGeo;
         this.inputList = inputList;
-        this.inputList2 = inputList2;
         this.n = n;
 
                
@@ -45,8 +45,8 @@ public class AlgoInsert extends AlgoElement {
     protected void setInputOutput(){
         input = new GeoElement[3];
         
-	    input[0] = inputList;
-	    input[1] = inputList2;
+	    input[0] = inputGeo;
+	    input[1] = inputList;
 	    input[2] = n;
 
         output = new GeoElement[1];
@@ -60,12 +60,15 @@ public class AlgoInsert extends AlgoElement {
 
     protected final void compute() {
     	
+    	//size = inputGeo.size();
     	size = inputList.size();
-    	size2 = inputList2.size();
     	
     	insertPoint = (int)n.getDouble();
+    	
+    	// -1 means insert in last place, -2 means penultimate etc
+    	if (insertPoint < 0) insertPoint = size + insertPoint + 2;
    	
-    	if (!inputList.isDefined() || !inputList2.isDefined() || insertPoint < 0 || insertPoint > size2) {
+    	if (!inputGeo.isDefined() || !inputList.isDefined() || insertPoint == 0 || insertPoint > size+1) {
     		outputList.setUndefined();
     		return;
     	} 
@@ -73,15 +76,24 @@ public class AlgoInsert extends AlgoElement {
     	outputList.setDefined(true);
     	outputList.clear();
     	
-        for (int i = 0 ; i < insertPoint ; i++)
-    		outputList.add(inputList2.get(i).copy());
+    	if (insertPoint > 1)
+        for (int i = 0 ; i < insertPoint-1 ; i++)
+    		outputList.add(inputList.get(i).copyInternal(cons));
     	
-        for (int i = 0 ; i < size ; i++)
-    		outputList.add(inputList.get(i).copy());
+    	if (inputGeo.isGeoList()) {
+    		GeoList list = (GeoList)inputGeo;
+
+    		if (list.size() > 0)
+		        for (int i = 0 ; i < list.size() ; i++)
+		    		outputList.add(list.get(i).copyInternal(cons));
+	    } else {
+	    	outputList.add(inputGeo.copyInternal(cons));
+	    }
+    
         
-        if (insertPoint < size2)
-        for (int i = insertPoint ; i < size2 ; i++)
-    		outputList.add(inputList2.get(i).copy());
+        if (insertPoint <= size)
+        for (int i = insertPoint-1 ; i < size ; i++)
+    		outputList.add(inputList.get(i).copyInternal(cons));
     	
     	
 

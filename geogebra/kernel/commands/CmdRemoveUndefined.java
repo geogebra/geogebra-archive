@@ -12,9 +12,9 @@ import geogebra.main.MyError;
  * Michael Borcherds
  * 2008-03-06
  */
-public class CmdClean extends CommandProcessor {
+public class CmdRemoveUndefined extends CommandProcessor {
 
-	public CmdClean(Kernel kernel) {
+	public CmdRemoveUndefined(Kernel kernel) {
 		super(kernel);
 	}
 
@@ -29,7 +29,7 @@ public class CmdClean extends CommandProcessor {
 
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
-						kernel.Clean(c.getLabel(),
+						kernel.RemoveUndefined(c.getLabel(),
 						(GeoList) arg[0] ) };
 				return ret;
 			} else

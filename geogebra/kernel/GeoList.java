@@ -12,9 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 /**
  * List of GeoElements
  */
-public class GeoList extends GeoElement implements ListValue {
+public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties {
 	
 	public final static int ELEMENT_TYPE_MIXED = -1;
 
@@ -155,29 +157,92 @@ public class GeoList extends GeoElement implements ListValue {
 	}
 	
 	private void applyVisualStyle(GeoElement geo) {
-		// TODO: think about setVisualStyle() for lists
+		
 		if (!geo.isLabelSet()) {
 			geo.setObjColor(this.getObjectColor());	
 			
+			geo.setLineThickness(this.getLineThickness());
+			geo.setLineType(this.getLineType());
+			
+			if (geo instanceof PointProperties) {
+				((PointProperties)geo).setPointSize(this.getPointSize());
+				((PointProperties)geo).setPointStyle(this.getPointStyle());
+			}
+			
+			geo.setAlphaValue(this.getAlphaValue());
+			
+			geo.setLayer(this.getLayer());
+			
+			// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
+			try { geo.setShowObjectCondition(this.getShowObjectCondition());}
+			catch (Exception e) {}
+
 			setElementEuclidianVisible(geo, isSetEuclidianVisible());  
 		}
 	}
-    
-    public void setVisualStyle(GeoElement geo) {
-    	super.setVisualStyle(geo);
-    	// TODO: think about setVisualStyle() for lists
+	
+	public final void setColorFunction(GeoList col) {
+		super.setColorFunction(col);
+		
+    	if (geoList == null || geoList.size() == 0) return;    
     	
-    	/*
-    	if (geoList == null) return;    	
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
-        	((GeoElement) geoList.get(i)).setVisualStyle(geo);
-        }*/
-    }
+			GeoElement geo = (GeoElement)geoList.get(i);
+			if (!geo.isLabelSet())
+        		geo.setColorFunction(col);
+        }
+			
+	}
+	
+	public final void setLayer(int layer) {
+		super.setLayer(layer);
+		
+    	if (geoList == null || geoList.size() == 0) return;    
+    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement)geoList.get(i);
+			if (!geo.isLabelSet())
+        		geo.setLayer(layer);
+        }
+			
+	}
+	
+	public final void setShowObjectCondition(GeoBoolean bool) 
+	throws CircularDefinitionException {
+		super.setShowObjectCondition(bool);
+		
+    	if (geoList == null || geoList.size() == 0) return;    
+    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement)geoList.get(i);
+			if (!geo.isLabelSet())
+				geo.setShowObjectCondition(bool);
+        }
+			
+	}
+
+    
+    public void setVisualStyle(GeoElement style) {
+    	super.setVisualStyle(style);
+    	
+    	if (geoList == null || geoList.size() == 0) return;    	
+    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement)geoList.get(i);
+			if (!geo.isLabelSet())
+				geo.setVisualStyle(style);
+        }
+    } 
     
     public void setObjColor(Color color) {        	
     	super.setObjColor(color);
     	  	
+    	if (geoList == null || geoList.size() == 0) return;    	
+
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
         	GeoElement geo = get(i);
@@ -189,6 +254,8 @@ public class GeoList extends GeoElement implements ListValue {
     public void setEuclidianVisible(boolean visible) {
     	super.setEuclidianVisible(visible);
     	 	
+    	if (geoList == null || geoList.size() == 0) return;    	
+
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
         	GeoElement geo = get(i);
@@ -281,7 +348,11 @@ public class GeoList extends GeoElement implements ListValue {
     	isDrawable = isDrawable && geo.isDrawable();     	
     	
     	// set visual style of this list
-		applyVisualStyle(geo);	
+		applyVisualStyle(geo);			
+    	//if (!geo.isLabelSet())
+		//  geo.setVisualStyle(this);
+    	
+    	
     }      
 
        
@@ -384,7 +455,7 @@ public class GeoList extends GeoElement implements ListValue {
 	   */ 
 	  public final String getXML() {
 		 StringBuffer sb = new StringBuffer();
-		 
+		 		 
 		 // an independent list needs to add
 		 // its expression itself
 		 // e.g. {1,2,3}
@@ -525,6 +596,157 @@ public class GeoList extends GeoElement implements ListValue {
 		public void setZero() {
 			geoList.clear();
 		}
+		
+		public void setLineThickness(int thickness) {
+			
+			super.setLineThickness(thickness);
+			
+			if (geoList == null || geoList.size() == 0) return;
+			
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				 if (!geo.isLabelSet())
+					 geo.setLineThickness(thickness);
+			}
+			
+			//Application.debug("GeoList.setLineThickness "+thickness);
+		}
+		public int getLineThickness() {
+			return super.getLineThickness();
+		}
 
+
+		public void setLineType(int type) {
+			
+			super.setLineType(type);
+			
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				 if (!geo.isLabelSet())
+					 geo.setLineType(type);
+			}
+			
+			//Application.debug("GeoList.setLineType");
+		
+		}
+
+		
+		
+		
+		public int getLineType() {
+			return super.getLineType();
+		}
+
+		public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
+		private int pointStyle = -1; // use global option if -1
+		
+		public void setPointSize(int size) {
+			pointSize = size;
+			
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				if (geo instanceof PointProperties && !geo.isLabelSet())
+					((PointProperties)geo).setPointSize(size);
+			}
+
+			
+		}
+		
+		public int getPointSize() {
+			return pointSize;			
+		}
+		
+		public void setPointStyle(int style) {
+			
+			pointStyle = style;
+			
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof PointProperties && !geo.isLabelSet())
+					((PointProperties)geo).setPointStyle(style);
+			}
+
+			
+		}
+
+		public void setAlphaValue(float alpha) {
+			super.setAlphaValue(alpha);
+			
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				 if (!geo.isLabelSet())
+					geo.setAlphaValue(alpha);
+			}
+
+		
+		}
+		
+		public int getPointStyle() {
+			return pointStyle; 
+		}
+		
+		public boolean isFillable() {
+			if (geoList == null || geoList.size() == 0) return false;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+					if (geo.isLabelSet() || !geo.isFillable()) return false;
+			}
+			
+			return true;
+		}
+
+		
+		public GeoElement getGeoElementForPropertiesDialog() {
+			if (geoList.size() > 0 && elementType != ELEMENT_TYPE_MIXED) {
+				return get(0).getGeoElementForPropertiesDialog(); // getGeoElementForPropertiesDialog() to cope with lists of lists
+			} else {
+				return this;
+			}
+		}
+		
+		/* is this a list in the form { {1,2}, {3,4}, {5,6} } etc
+		 * 
+		 */
+		public boolean isMatrix() {
+			
+			if (getElementType() != GeoElement.GEO_CLASS_LIST) return false;
+			
+			if (size() > 0) {
+
+				GeoElement geo0 = get(0);
+				if (geo0.isGeoList()) {
+
+					int length = ((GeoList)geo0).size();
+					
+					if (length == 0 || ((GeoList)geo0).getElementType() != GeoElement.GEO_CLASS_NUMERIC) {
+						return false;
+					}
+					else
+					{				
+						if (size() > 0)
+						for (int i = 1 ; i < size() ; i++) {
+							GeoElement geoi = get(i);
+							//Application.debug(((GeoList)geoi).get(0).getGeoClassType()+"");
+							if (!get(i).isGeoList() || ((GeoList)geoi).size() == 0 || 
+								((GeoList)geoi).getElementType() != GeoElement.GEO_CLASS_NUMERIC ||
+								((GeoList)geoi).size() != length)
+									return false;
+						}
+					}
+				}
+				
+			}
+		
+			return true;
+		}
     		
 }

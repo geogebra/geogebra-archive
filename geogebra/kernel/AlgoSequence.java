@@ -216,8 +216,9 @@ public class AlgoSequence extends AlgoElement {
     	// if the old list was longer than the new one
     	// we need to set some cached elements to undefined
     	for (int k=oldListSize-1; k >= i ; k--) {
-    		GeoElement oldElement = list.getCached(k);
-    		oldElement.setUndefined();    				
+    		GeoElement oldElement = list.getCached(k);    		
+    		oldElement.setUndefined(); 
+    		oldElement.update();
     	}		    
 		
 		// remember current values
@@ -233,7 +234,7 @@ public class AlgoSequence extends AlgoElement {
 		listElement.setUseVisualDefaults(false);
 		
 		
-		// functions and curves point to the local variable var
+		// functions and curves use the local variable var
 		// so we have to replace var and all dependent objects of var
 		// by their current values
 		if (expIsFunctionOrCurve) {

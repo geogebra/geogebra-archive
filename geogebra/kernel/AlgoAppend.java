@@ -92,13 +92,13 @@ public class AlgoAppend extends AlgoElement {
     	outputList.clear();
     	
         if (order == ADD_OBJECT_AT_START) 
-        	outputList.add(geo.copy());
+        	outputList.add(geo.copyInternal(cons));
 
         for (int i=0 ; i < size ; i++)
-    		outputList.add(inputList.get(i).copy());
+    		outputList.add(inputList.get(i).copyInternal(cons));
     	
         if (order == ADD_OBJECT_AT_END) 
-        	outputList.add(geo.copy());
+        	outputList.add(geo.copyInternal(cons));
 
    }
   

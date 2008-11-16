@@ -98,7 +98,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		
 		// Michael Borcherds 2008-05-11
 		// remove trailing linefeeds (FreeHEP EMF export doesn't like them)
-		while (text.endsWith("\n") && text.length()>1) text=text.substring(0, text.length()-1);
+		while (text.length() > 1 && text.charAt(text.length()-1) == '\n') {
+			text = text.substring(0, text.length()-1);
+		}
 		
 		if (isLaTeX) {
 			//TODO: check greek letters of latex string
@@ -133,7 +135,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 		}
 	}
 			
-	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException {     
+	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException { 
 		// macro output uses initStartPoint() only
 		if (isAlgoMacroOutput()) return; 
 		
@@ -275,10 +277,37 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	}    
 	
 	public boolean isMoveable() {
+		
+		if (alwaysFixed) return false;
+		
 		return !isFixed();
 	}
 	
+	// used for eg Text["text",(1,2)]
+	// to stop it being editable
+	boolean isTextCommand = false;
+	
+	public void setIsCommand(boolean isCommand) {
+		this.isTextCommand = isCommand;
+	}
+	
+	public boolean isTextCommand() {
+		return isTextCommand;
+	}
+	
+	// used for eg Text["text",(1,2)]
+	// to stop it being draggable
+	boolean alwaysFixed = false;
+	
+	public void setAlwaysFixed(boolean alwaysFixed) {
+		this.alwaysFixed = alwaysFixed;
+	}
+
 	public boolean isFixable() {
+		
+		// workaround for Text["text",(1,2)]
+		if (alwaysFixed) return false;
+
 		return true;
 	}
 
@@ -430,9 +459,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 								 text.getAbsoluteScreenLocY());
 		} 
 		else {
-			try {
-				setStartPoint(text.getStartPoint());
-			} catch (Exception e) {				
+			if (text.startPoint != null) {
+				try {
+					setStartPoint(text.startPoint);
+				} catch (Exception e) {				
+				}
 			}
 		}						
 	}

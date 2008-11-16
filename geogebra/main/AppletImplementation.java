@@ -1170,7 +1170,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		 * Calls all JavaScript functions (listeners) using 
 		 * the specified arguments.
 		 */
-		private void notifyListeners(ArrayList listeners, Object [] args) {										
+		private synchronized void notifyListeners(ArrayList listeners, Object [] args) {										
 			int size = listeners.size();
 			for (int i=0; i < size; i++) {
 				String jsFunction = (String) listeners.get(i);										
@@ -1182,7 +1182,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		 * Calls all registered update and updateObject listeners.
 		 * @see registerUpdateListener()
 		 */
-		public void update(GeoElement geo) {						
+		public synchronized void update(GeoElement geo) {						
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getLabel() };
@@ -1212,7 +1212,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
     	}    	    	
 	}
 		
-	private void initJavaScriptView() {
+	private synchronized void initJavaScriptView() {
 		if (javaToJavaScriptView == null) {
 			javaToJavaScriptView = new JavaToJavaScriptView();
 			kernel.attach(javaToJavaScriptView); // register view
@@ -1220,7 +1220,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		}
 	}
 	
-	private void initJavaScript() {
+	private synchronized void initJavaScript() {
 		if (browserWindow == null) {
 			try {							
 				browserWindow = JSObject.getWindow(applet);

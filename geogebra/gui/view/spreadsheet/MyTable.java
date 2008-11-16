@@ -40,9 +40,9 @@ public class MyTable extends JTable
 	public static final int LINE_THICKNESS2 = 2;
 	public static final Color SELECTED_BACKGROUND_COLOR = Application.COLOR_SELECTION;
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,185,210);
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	protected Kernel kernel;
 	protected Application app;
 	protected MyCellEditor editor;
@@ -55,15 +55,15 @@ public class MyTable extends JTable
 
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
-		
+
 		this.tableModel = tableModel;
 		this.view = view;
 		app = view.getApplication();
 		kernel = app.getKernel();
-		
+
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		//setAutoscrolls(true);
-		
+
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
 		// set cell size and column header
@@ -88,6 +88,7 @@ public class MyTable extends JTable
 			removeMouseListener(mouseListeners[i]);
 			addMouseListener(mouseListeners[i]);
 		}
+
 		// setup mouse motion listeners
 		MouseMotionListener[] mouseMotionListeners = getMouseMotionListeners();
 		addMouseMotionListener(new MouseMotionListener1());
@@ -116,19 +117,19 @@ public class MyTable extends JTable
 		//
 		this.getTableHeader().setReorderingAllowed(false);
 		setAutoCreateColumnsFromModel(false);
-		
-		// visual appearance 	 
-        setShowGrid(true); 	 
-        setGridColor(Color.gray); 	 
 
-        // editing 	 
-        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
-	
+		// visual appearance 	 
+		setShowGrid(true); 	 
+		setGridColor(Color.gray); 	 
+
+		// editing 	 
+		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
+
 
 	public SpreadsheetView getView() {
 		return view;		
 	}
-	
+
 	/**
 	 * 
 	 * @param newColumnCount
@@ -137,7 +138,7 @@ public class MyTable extends JTable
 		int oldColumnCount = tableModel.getColumnCount();		
 		if (newColumnCount <= oldColumnCount)
 			return;
-		
+
 		// add new columns to table			
 		for (int i = oldColumnCount; i < newColumnCount; ++i) {
 			TableColumn col = new TableColumn(i);
@@ -157,16 +158,16 @@ public class MyTable extends JTable
 	protected int dragingToRow = -1;
 	protected int dragingToColumn = -1;
 	public boolean[] selectedColumns;
-	
+
 	public void selectNone() {
 		selectionChangedNonResponsive = true;
 		this.clearSelection();
 		selectionChangedNonResponsive = false;
 	}
-	
+
 	protected boolean selectionChangedNonResponsive = false;
 	public long selectionTime = 0;
-			
+
 	protected void selectionChanged() {
 		if (selectionChangedNonResponsive) return;
 		selectionTime = System.currentTimeMillis();
@@ -210,7 +211,7 @@ public class MyTable extends JTable
 			((View)app.getGuiManager().getAlgebraView()).repaintView();
 		app.getEuclidianView().repaintView();
 	}
-	
+
 	protected Point getPixel(int column, int row, boolean min) {
 		if (column < 0 || row < 0) {
 			return null;
@@ -233,15 +234,15 @@ public class MyTable extends JTable
 		}
 		return new Point(x, y);
 	}
-	
+
 	protected Point getMinSelectionPixel() {
 		return getPixel(minSelectionColumn, minSelectionRow, true);
 	}
-	
+
 	protected Point getMaxSelectionPixel() {
 		return getPixel(maxSelectionColumn, maxSelectionRow, false);
 	}
-	
+
 	public Point getIndexFromPixel(int x, int y) {
 		if (x < 0 || y < 0) return null;
 		int indexX = -1;
@@ -268,7 +269,7 @@ public class MyTable extends JTable
 		}
 		return new Point(indexX, indexY);
 	}
-	
+
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
@@ -379,7 +380,7 @@ public class MyTable extends JTable
 			}
 		}
 	}
-	
+
 	protected String name0;
 	protected String prefix0;
 	protected boolean isDragging2 = false;
@@ -387,15 +388,39 @@ public class MyTable extends JTable
 	protected int maxColumn2 = -1;
 	protected int minRow2 = -1;
 	protected int maxRow2 = -1;
-	
+
+	public static boolean doubleClick = false;
+
 	protected class MouseListener1 implements MouseListener
 	{
-		
+
 		public void mouseClicked(MouseEvent e) {	
+
+			if (e.getClickCount() == 1) doubleClick = false;
+			else doubleClick = true;
+
+			Point point = getIndexFromPixel(e.getX(), e.getY());
+			if (point != null) {
+				//int currentColumn = (int)point.getX();
+				//int currentRow = (int)point.getY();
+
+
+
+				if (doubleClick) {
+					allowEditing = true;
+					tempValue = null;
+					editCellAt(getSelectedRow(), getSelectedColumn()); 
+					allowEditing = false;
+
+				}
+			}
+
+
+
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();
 				if (text.startsWith("=")) {
-					Point point = getIndexFromPixel(e.getX(), e.getY());
+					point = getIndexFromPixel(e.getX(), e.getY());
 					if (point != null) {
 						int column = (int)point.getX();
 						int row = (int)point.getY();
@@ -412,29 +437,29 @@ public class MyTable extends JTable
 			}
 			else
 			{ // !editor.isEditing()
-		        int row = rowAtPoint(e.getPoint());
-		        int col = columnAtPoint(e.getPoint());
-		        GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
+				int row = rowAtPoint(e.getPoint());
+				int col = columnAtPoint(e.getPoint());
+				GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
 
-		        // copy description into input bar when a cell is clicked on
-		        if (geo != null) {
-			        AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-		        	ai.setString(geo);
-		        }
-				
+				// copy description into input bar when a cell is clicked on
+				if (geo != null) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+				}
+
 			}
 		}
-		
+
 		public void mouseEntered(MouseEvent e) {
 		}
-		
+
 		public void mouseExited(MouseEvent e) {
 		}
-		
+
 		public void mousePressed(MouseEvent e) {
-			 boolean rightClick = Application.isRightClick(e); 	                        
-		  	 
-             if (!rightClick) {
+			boolean rightClick = Application.isRightClick(e); 	                        
+
+			if (!rightClick) {
 				if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 					setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 					setColumnSelectionAllowed(true);
@@ -477,22 +502,22 @@ public class MyTable extends JTable
 					e.consume();
 				}
 			}
-             
-            // RIGHT CLICK: show context menu
+
+			// RIGHT CLICK: show context menu
 			else {
 				if (!kernel.getApplication().letShowPopupMenu()) return;    	
-		    			      		        		       
+
 				if ((minSelectionColumn != -1 && maxSelectionColumn != -1) || (minSelectionRow != -1 && maxSelectionRow != -1)) {
 					ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
-			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+					popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 		}
-		
+
 		public void mouseReleased(MouseEvent e)	 {
-			 boolean rightClick = Application.isRightClick(e); 	                        
-		  	 
-             if (!rightClick) {
+			boolean rightClick = Application.isRightClick(e); 	                        
+
+			if (!rightClick) {
 				if (editor.isEditing()) {
 					String text = editor.getEditingValue();
 					if (text.startsWith("=")) {
@@ -546,10 +571,10 @@ public class MyTable extends JTable
 					boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, x1, y1, x2, y2);
 					if (succ) {
 						app.storeUndoInfo();
-					//	minSelectionColumn = -1;
-					//	minSelectionRow = -1;
-					//	maxSelectionColumn = -1;
-					//	maxSelectionRow = -1;						
+						//	minSelectionColumn = -1;
+						//	minSelectionRow = -1;
+						//	maxSelectionColumn = -1;
+						//	maxSelectionRow = -1;						
 					}
 					isDragingDot = false;
 					dragingToRow = -1;
@@ -557,12 +582,12 @@ public class MyTable extends JTable
 					repaint();
 				}
 			}
-       	}		
+		}		
 	}
-	
+
 	protected class MouseMotionListener1 implements MouseMotionListener
 	{
-		
+
 		public void mouseDragged(MouseEvent e) {
 			if (editor.isEditing()) {
 				Point point = getIndexFromPixel(e.getX(), e.getY());
@@ -678,32 +703,33 @@ public class MyTable extends JTable
 				repaint();
 			}
 		}
-		
+
 		/**
 		 *  Shows tool tip description of geo on mouse over
 		 */
 		public void mouseMoved(MouseEvent e) {
 			if (isEditing())
 				return;
-						
+
 			// get GeoElement at mouse location
-	        int row = rowAtPoint(e.getPoint());
-	        int col = columnAtPoint(e.getPoint());
-	        GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
-	        	     
-	        // set tooltip with geo's description
-	        if (geo != null) {
+			int row = rowAtPoint(e.getPoint());
+			int col = columnAtPoint(e.getPoint());
+			GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
+
+			// set tooltip with geo's description
+			if (geo != null) {
 				setToolTipText(geo.getLongDescriptionHTML(true, true));				
 			} else
 				setToolTipText(null);	
 		}
-		
+
 	}
-	
+
+	public GeoElement tempValue = null;
 
 	protected class KeyListener1 implements KeyListener 
 	{
-		
+
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
 			//Application.debug(keyCode);
@@ -714,86 +740,106 @@ public class MyTable extends JTable
 					editor.editing = false;
 				}
 				break;
+			case (KeyEvent.VK_ENTER):
+					break;
+			default:
+
+				if (!editor.isEditing()) {
+					allowEditing = true;
+					tempValue = (GeoElement)tableModel.getValueAt(getSelectedRow(), getSelectedColumn());
+					tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
+					editCellAt(getSelectedRow(), getSelectedColumn()); 
+					allowEditing = false;
+				}
+			break;
+
+
+
 			}
 		}
-		
+
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-            boolean shiftDown = e.isShiftDown(); 	 
-            boolean altDown = e.isAltDown(); 	 
-            boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
-							|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
-            
-           
+			boolean shiftDown = e.isShiftDown(); 	 
+			boolean altDown = e.isAltDown(); 	 
+			boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
+			|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
+
+
 			switch (keyCode) {
-				case KeyEvent.VK_META: //MAC_OS Meta
-				e.consume(); // (maybe) stops editing start
+			case KeyEvent.VK_META: //MAC_OS Meta
+				e.consume(); // stops editing start
 				break;
-				
+
+			case KeyEvent.VK_F9:
+				kernel.updateConstruction();
+				e.consume(); // stops editing start
+				break;
+
 				// needs to be here to stop keypress starting a cell edit after the undo
-				case KeyEvent.VK_Z: //undo
-					if (ctrlDown) {
-						//Application.debug("undo");
-						app.getGuiManager().undo();
-						e.consume();
-					}
+			case KeyEvent.VK_Z: //undo
+				if (ctrlDown) {
+					//Application.debug("undo");
+					app.getGuiManager().undo();
+					e.consume();
+				}
 				break;
 
 				// needs to be here to stop keypress starting a cell edit after the redo
-				case KeyEvent.VK_Y: //redo
-					if (ctrlDown) {
-						//Application.debug("redo");
-						app.getGuiManager().redo();
-						e.consume();
-					}
+			case KeyEvent.VK_Y: //redo
+				if (ctrlDown) {
+					//Application.debug("redo");
+					app.getGuiManager().redo();
+					e.consume();
+				}
 				break;
 
-			
-				case KeyEvent.VK_C: 	                         
-				case KeyEvent.VK_V: 	                        
-				case KeyEvent.VK_X: 	                         
-				case KeyEvent.VK_DELETE: 	                         
-				case KeyEvent.VK_BACK_SPACE:
-					if (! editor.isEditing()) {
-						if (ctrlDown) {
-							e.consume();
-												
-							if (keyCode == KeyEvent.VK_C) {
-								copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
-							}
-							else if (keyCode == KeyEvent.VK_V) {
-								boolean storeUndo = copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-								getView().getRowHeader().revalidate();
-								if (storeUndo)
-					 				app.storeUndoInfo();
-							}
-							else if (keyCode == KeyEvent.VK_X) {
-								boolean storeUndo = copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-								if (storeUndo)
-					 				app.storeUndoInfo();
-							}
+
+			case KeyEvent.VK_C: 	                         
+			case KeyEvent.VK_V: 	                        
+			case KeyEvent.VK_X: 	                         
+			case KeyEvent.VK_DELETE: 	                         
+			case KeyEvent.VK_BACK_SPACE:
+				if (! editor.isEditing()) {
+					if (ctrlDown) {
+						e.consume();
+
+						if (keyCode == KeyEvent.VK_C) {
+							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
 						}
-						if (keyCode == KeyEvent.VK_DELETE || 	                                         
-								keyCode == KeyEvent.VK_BACK_SPACE) {
-							e.consume();
-							//Application.debug("deleting...");
-							boolean storeUndo = copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						else if (keyCode == KeyEvent.VK_V) {
+							boolean storeUndo = copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							getView().getRowHeader().revalidate();
 							if (storeUndo)
-				 				app.storeUndoInfo();
+								app.storeUndoInfo();
 						}
-						return;
+						else if (keyCode == KeyEvent.VK_X) {
+							boolean storeUndo = copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+							if (storeUndo)
+								app.storeUndoInfo();
+						}
 					}
-					break;
-					
-				case 27:
-					//Application.debug(editor.isEditing());
-					if (editor.isEditing()) {
-						editor.undoEdit();
-						e.setKeyCode(10);
+					if (keyCode == KeyEvent.VK_DELETE || 	                                         
+							keyCode == KeyEvent.VK_BACK_SPACE) {
+						e.consume();
+						//Application.debug("deleting...");
+						boolean storeUndo = copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+						if (storeUndo)
+							app.storeUndoInfo();
 					}
-					break;
+					return;
+				}
+				break;
+
+			case 27:
+				//Application.debug(editor.isEditing());
+				if (editor.isEditing()) {
+					editor.undoEdit();
+					e.setKeyCode(10);
+				}
+				break;
 			}
-			
+
 			if (keyCode >= 37 && keyCode <= 40) {
 				if (editor.isEditing())	return;			
 			}
@@ -802,17 +848,17 @@ public class MyTable extends JTable
 				if (e.isConsumed()) break;
 				defaultKeyListeners[i].keyPressed(e);			
 			}
-			*/
+			 */
 		}
-		
+
 		public void keyReleased(KeyEvent e) {
 		}
-		
+
 	}
 
 	protected class ListSelectionListener1 implements ListSelectionListener
 	{
-		
+
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionRow = selectionModel.getMinSelectionIndex(); 
@@ -829,15 +875,15 @@ public class MyTable extends JTable
 					selected[i] = true;
 				}
 			}
-			*/
+			 */
 			selectionChanged();
 		}
-		
+
 	}
 
 	protected class ListSelectionListener2 implements ListSelectionListener
 	{
-		
+
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
@@ -850,15 +896,15 @@ public class MyTable extends JTable
 			}
 			selectionChanged();
 		}
-		
+
 	}
-	
+
 	protected class MyCellRenderer extends DefaultTableCellRenderer
 	{
 
 		private static final long serialVersionUID = 1L;
 		private Color defaultBackground;
-		
+
 		public MyCellRenderer() {
 			this.setHorizontalAlignment(JLabel.TRAILING);
 			defaultBackground = getBackground();
@@ -870,7 +916,7 @@ public class MyTable extends JTable
 				setFont(font1);				
 			}
 		}
-		
+
 		public void setValue(Object value) {
 			if (value == null) {
 				setText("");
@@ -879,14 +925,14 @@ public class MyTable extends JTable
 			else {
 				GeoElement geo = (GeoElement)value;
 				setFont(kernel.getApplication().boldFont);
-				setForeground(geo.getLabelColor());
-				
+				setForeground(geo.getAlgebraColor());
+
 				String text = geo.toValueString();
 				if (geo.hasIndexLabel()) {
 					text = GeoElement.indicesToHTML(text, false);				
 				}
 				setText(text);
-				this.setForeground(geo.getObjectColor());
+				this.setForeground(geo.getAlgebraColor());
 				String label = ((GeoElement)value).getLabel();
 				if (SpreadsheetView.selectedElems.contains(label) || geo.doHighlighting()) {
 					//Application.debug(label);
@@ -897,13 +943,13 @@ public class MyTable extends JTable
 				}										
 			}
 		}
-		
+
 	}
 
 	/*
 	protected class KeyListener4 implements KeyListener 
 	{
-		
+
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
 			int keyCode2 = e.getKeyCode();
@@ -916,27 +962,27 @@ public class MyTable extends JTable
 				}
 			}
 		}
-		
+
 		public void keyPressed(KeyEvent e) {
 		}
-		
+
 		public void keyReleased(KeyEvent e) {
 		}
-		
+
 	}
 	/**/
-	
+
 	protected class TableCellRenderer1 extends JLabel implements TableCellRenderer, ListSelectionListener
 	{
 		private static final long serialVersionUID = 1L;
 
-    	private Color defaultBackground;
-    	
-    	public TableCellRenderer1() {    		
-    		super("", JLabel.CENTER);
-    		setOpaque(true);
-    		defaultBackground = getBackground();
-    		setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
+		private Color defaultBackground;
+
+		public TableCellRenderer1() {    		
+			super("", JLabel.CENTER);
+			setOpaque(true);
+			defaultBackground = getBackground();
+			setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
 			Font font1 = getFont(); 
 			if (font1 == null || font1.getSize() == 0) {
 				kernel.getApplication().getPlainFont();
@@ -945,8 +991,8 @@ public class MyTable extends JTable
 				}
 			}
 			setFont(font1);
-    	}
-    	
+		}
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			setText(value.toString());
 			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
@@ -959,7 +1005,7 @@ public class MyTable extends JTable
 			}
 			return this;			
 		}
-		
+
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex();
@@ -973,7 +1019,7 @@ public class MyTable extends JTable
 			getTableHeader().repaint();
 		}
 	}
-	
+
 	// for column header
 
 	protected int column0 = -1;
@@ -981,24 +1027,24 @@ public class MyTable extends JTable
 
 	protected class MouseListener2 implements MouseListener
 	{
-		
+
 		public void mouseClicked(MouseEvent e) {
 		}
-		
+
 		public void mouseEntered(MouseEvent e) {
 		}
-		
+
 		public void mouseExited(MouseEvent e) {
 		}
-		
+
 		public void mousePressed(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
 			boolean metaDown = Application.isControlDown(e); 	 
-            boolean shiftDown = e.isShiftDown(); 	 
-            boolean rightClick = Application.isRightClick(e); 	 
+			boolean shiftDown = e.isShiftDown(); 	 
+			boolean rightClick = Application.isRightClick(e); 	 
 
-            if (!rightClick) {
+			if (!rightClick) {
 				Point point = getIndexFromPixel(x, y);
 				if (point != null) {
 					Point point2 = getPixel((int)point.getX(), (int)point.getY(), true);
@@ -1034,17 +1080,17 @@ public class MyTable extends JTable
 
 			}
 		}
-		
+
 		public void mouseReleased(MouseEvent e)	{
 			boolean rightClick = Application.isRightClick(e); 	 
-		  	 
-            if (rightClick) { 	 
-					if (!kernel.getApplication().letShowPopupMenu()) return;    	
-       		       
-					if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-						ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
-				        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-					}				
+
+			if (rightClick) { 	 
+				if (!kernel.getApplication().letShowPopupMenu()) return;    	
+
+				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
+					ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
+					popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}				
 			}
 			else if (isResizing) {				
 				int x = e.getX();
@@ -1071,10 +1117,10 @@ public class MyTable extends JTable
 		}
 
 	}
-		
+
 	protected class MouseMotionListener2 implements MouseMotionListener
 	{
-		
+
 		public void mouseDragged(MouseEvent e) {
 			if (isResizing) return;
 			int x = e.getX();
@@ -1086,27 +1132,27 @@ public class MyTable extends JTable
 				repaint();
 			}
 		}
-		
+
 		public void mouseMoved(MouseEvent e) {
 		}
-		
+
 	}
-	
-	
+
+
 
 	protected class KeyListener2 implements KeyListener 
 	{
-		
+
 		public void keyTyped(KeyEvent e) {
 		}
-		
+
 		public void keyPressed(KeyEvent e) {
 			//Application.debug("keypressed");
-			 boolean metaDown = Application.isControlDown(e);
-			 boolean altDown = e.isAltDown();
-			 int keyCode = e.getKeyCode();
+			boolean metaDown = Application.isControlDown(e);
+			boolean altDown = e.isAltDown();
+			int keyCode = e.getKeyCode();
 			switch (keyCode) {
-			
+
 			case KeyEvent.VK_C : // control + c
 				//Application.debug(minSelectionColumn);
 				//Application.debug(maxSelectionColumn);
@@ -1115,42 +1161,49 @@ public class MyTable extends JTable
 					e.consume();
 				}
 				break;
-				
+
 			case KeyEvent.VK_V : // control + v
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					boolean storeUndo = copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);					
 					if (storeUndo)
-		 				app.storeUndoInfo();
+						app.storeUndoInfo();
 					getView().getRowHeader().revalidate();
 					e.consume();
 				}
 				break;		
-				
+
 			case KeyEvent.VK_X : // control + x
 				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					boolean storeUndo = copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
 					if (storeUndo)
-		 				app.storeUndoInfo();
+						app.storeUndoInfo();
 					e.consume();
 				}
 				break;
-				
+
 			case KeyEvent.VK_BACK_SPACE : // delete
 			case KeyEvent.VK_DELETE : // delete
 				boolean storeUndo = copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
 				if (storeUndo)
-	 				app.storeUndoInfo();
+					app.storeUndoInfo();
 				break;
 			}
 		}
-		
+
 		public void keyReleased(KeyEvent e) {
 		}
-		
+
 	}
-		
-    public int convertColumnIndexToModel(int viewColumnIndex) {
-    	return viewColumnIndex;    	
-    }
-   	
+
+	public int convertColumnIndexToModel(int viewColumnIndex) {
+		return viewColumnIndex;    	
+	}
+
+	private boolean allowEditing = false;
+
+	public boolean isCellEditable(int row, int column)
+	{
+		return allowEditing;
+	}
+
 }

@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 
 /**
@@ -26,16 +27,18 @@ import geogebra.kernel.arithmetic.ExpressionNode;
  * @author  Markus
  * @version 
  */
-public class AlgotoString extends AlgoElement {
+public class AlgoLaTeX extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // input
+	private GeoBoolean substituteVars; 
     private GeoText text;     // output              
         
-    public AlgotoString(Construction cons, String label, GeoElement geo) {
+    public AlgoLaTeX(Construction cons, String label, GeoElement geo, GeoBoolean substituteVars ) {
     	super(cons);
         this.geo = geo;  
-        
+        this.substituteVars = substituteVars;
+
        text = new GeoText(cons);
        setInputOutput(); // for AlgoElement
         
@@ -44,14 +47,35 @@ public class AlgotoString extends AlgoElement {
         text.setLabel(label);
     }   
     
+    public AlgoLaTeX(Construction cons, String label, GeoElement geo) {
+    	super(cons);
+        this.geo = geo;  
+        this.substituteVars = null;
+
+       text = new GeoText(cons);
+		text.setIsCommand(true); // stop editing as text
+		setInputOutput(); // for AlgoElement
+        
+        // compute value of dependent number
+        compute();      
+        text.setLabel(label);
+    }   
+    
 	protected String getClassName() {
-		return "AlgotoString";
+		return "AlgoLaTeX";
 	}
     
     // for AlgoElement
 	protected void setInputOutput() {
-        input = new GeoElement[1];
-        input[0] = geo;
+		
+		if (substituteVars == null) {
+			input = new GeoElement[1];
+			input[0] = geo;				
+		} else {
+			input = new GeoElement[2];
+			input[0] = geo;			
+			input[1] = substituteVars;	
+		}
         
         output = new GeoElement[1];        
         output[0] = text;        
@@ -62,22 +86,21 @@ public class AlgotoString extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {    
-    	text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
+    	
+		if (!geo.isDefined() || (substituteVars != null && !substituteVars.isDefined())) {
+    		text.setTextString("");
+		} else {
+    		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
+
+    		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, bool ));    		
+}
+    	
+    	text.setLaTeX(true, false);
+    	
     	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();
-    	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
-    	String geoDef="";
-    	if (geo.isGeoFunction()) {
-     	// get current definition of geo
-    		GeoFunction geoFun = (GeoFunction)geo;
-     		geoDef = geoFun.isIndependent() ? 
-     				geoFun.toValueString() :
-     				geoFun.getFunction().toString();
-    	}
-    	else
-    		geoDef = geo.getCommandDescription();
-    	
-    	text.setTextString(geoDef);	    	
+    	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_LATEX);
+    	text.setTextString(geo.getCommandDescription());	    	
     	kernel.setCASPrintForm(tempCASPrintForm);*/
     }         
 }

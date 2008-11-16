@@ -252,11 +252,15 @@ implements ExpressionValue {
         if (ev.isExpressionNode()) {
         	ExpressionNode en = (ExpressionNode) ev;
             ret = en.getCopy(kernel); 
-        } else if (ev.isPolynomialInstance()) {           
+        } 
+        // deep copy
+        else if (ev.isPolynomialInstance()
+        			|| ev.isConstant()
+        			|| ev instanceof Command) 
+        {           
             ret = ev.deepCopy(kernel);              
-        } else if (ev.isConstant()) {           
-            ret = ev.deepCopy(kernel);             
-        } else {            
+        }        
+        else {            
             ret = ev;                        
         }           
         //Application.debug("copy ExpressionValue output: " + ev);        
@@ -1710,11 +1714,18 @@ implements ExpressionValue {
         	GeoElement treeGeo = (GeoElement) left;
         	if (left == geo || treeGeo.isChildOf(geo)) {        		 
         		left = treeGeo.copyInternal(treeGeo.getConstruction());
+        		
+        		//TODO: remove
+    	        Application.debug("  replace: " + treeGeo.getLabel() + " by " + treeGeo);
         	}
         }         
         else if (left.isExpressionNode()) {
             ((ExpressionNode) left).replaceChildrenByValues(geo);
         } 
+        // handle command arguments
+	    else if (left instanceof Command) {
+	       ((Command) left).replaceChildrenByValues(geo); 	       
+	     }
         
         // right tree
         if (right != null) {
@@ -1727,6 +1738,10 @@ implements ExpressionValue {
             else if (right.isExpressionNode()) {
                 ((ExpressionNode) right).replaceChildrenByValues(geo);
             } 
+        	// handle command arguments
+    	    else if (right instanceof Command) {
+    	       ((Command) right).replaceChildrenByValues(geo); 	       
+    	     }
         }
     }
     
@@ -2484,7 +2499,10 @@ implements ExpressionValue {
 	        				 
 	        				 if (rightStr.length() == 1) {
                                  switch (rightStr.charAt(0)) {
-                                     case '2': sb.append('\u00b2'); break;
+                                 // TODO need parser support
+                                 	//case '0': sb.append('\u2070'); break;
+                                 	//case '1': sb.append('\u00b9'); break;
+                                 	case '2': sb.append('\u00b2'); break;
                                      case '3': sb.append('\u00b3'); break;
                                      case '4': sb.append('\u2074'); break;
                                      case '5': sb.append('\u2075'); break;

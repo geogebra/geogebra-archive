@@ -54,6 +54,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -135,6 +136,7 @@ public class EuclidianController implements MouseListener,
 	// protected GeoVec2D b;
 
 	protected GeoPoint movedGeoPoint;
+	protected boolean movedGeoPointDragged = false;
 
 	protected GeoLine movedGeoLine;
 
@@ -151,6 +153,7 @@ public class EuclidianController implements MouseListener,
 	protected GeoFunction movedGeoFunction;
 	
 	protected GeoNumeric movedGeoNumeric;
+	protected boolean movedGeoNumericDragged = false;
 	
 	protected GeoBoolean movedGeoBoolean;
 
@@ -757,6 +760,7 @@ public class EuclidianController implements MouseListener,
 			
 			// point with changeable coord parent numbers
 			if (movedGeoElement.isGeoPoint() && 
+					((GeoPoint) movedGeoElement).getMode() == Kernel.COORD_CARTESIAN &&
 					((GeoPoint) movedGeoElement).hasChangeableCoordParentNumbers()) {
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
@@ -1255,13 +1259,22 @@ public class EuclidianController implements MouseListener,
 		
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (movedGeoPoint != null){
-			movedGeoPoint.setSelected(false);
+			
+			// deselect point after drag, but not on click
+			if (movedGeoPointDragged) movedGeoPoint.setSelected(false);
+			
 			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoPoint.resetTraceColumns();
 		}
 		if (movedGeoNumeric != null) {
-			movedGeoNumeric.setSelected(false);
+			
+			// deselect slider after drag, but not on click
+			if (movedGeoNumericDragged) movedGeoNumeric.setSelected(false);
+			
 			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoNumeric.resetTraceColumns();
 		}
+		
+		movedGeoPointDragged = false;
+		movedGeoNumericDragged = false;
 		
 		view.requestFocusInWindow();
 		setMouseLocation(e);
@@ -1965,6 +1978,7 @@ public class EuclidianController implements MouseListener,
 	final protected void movePoint(boolean repaint) {
 		movedGeoPoint.setCoords(xRW, yRW, 1.0);
 		movedGeoPoint.updateCascade();	
+		movedGeoPointDragged = true;
 
 		if (repaint)
 			kernel.notifyRepaint();
@@ -2123,7 +2137,11 @@ public class EuclidianController implements MouseListener,
 		if (movedGeoNumeric.getValue() == val)
 			return;
 		
-		movedGeoNumeric.setValue(val);						
+		movedGeoNumeric.setValue(val);	
+		
+		movedGeoNumericDragged = true;
+		
+		
 		if (repaint)
 			movedGeoNumeric.updateRepaint();
 		else
@@ -2592,7 +2610,10 @@ public class EuclidianController implements MouseListener,
 	
 	private void resetSpreadsheetRecording() {
 		moveMode = MOVE_NONE;
-		if (recordObject != null) recordObject.resetTraceColumns();
+		if (recordObject != null) {
+			recordObject.resetTraceColumns();
+			recordObject.updateRepaint(); // force repaint to put first point in spreadsheet
+		}
 		movedGeoPoint = null;
 		movedGeoNumeric = null;
 		//view.resetTraceRow();		
@@ -3377,9 +3398,15 @@ public class EuclidianController implements MouseListener,
 			boolean useLabels = geoA.isLabelSet() && geoB.isLabelSet();
 			if (useLabels) {		
 				length.setLabel(removeUnderscores(app.getCommand("Distance").toLowerCase(Locale.US) + geoA.getLabel() + geoB.getLabel()));
-				strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
-							+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
-							+ length.getLabel();			
+				//strText = "\"\\overline{\" + Name["+ geoA.getLabel() 
+				//	+ "] + Name["+ geoB.getLabel() + "] + \"} \\, = \\, \" + "
+				//	+ length.getLabel();	
+				
+				//DistanceAB="\\overline{" + %0 + %1 + "} \\, = \\, " + %2
+				// or
+				//DistanceAB=%0+%1+" \\, = \\, "+%2
+				strText = app.getPlain("DistanceAB.LaTeX","Name["+ geoA.getLabel()+"]","Name["+ geoB.getLabel()+"]",length.getLabel());			
+				//Application.debug(strText);
 				geoA.setLabelVisible(true);				
 				geoB.setLabelVisible(true);
 				geoA.updateRepaint();
@@ -5069,6 +5096,34 @@ public class EuclidianController implements MouseListener,
 		                view.xscale * factor, 4, false);
 						//view.yscale * factor);
 			app.setUnsaved();
-				
 	}
+			
+	public void zoomInOut(KeyEvent event) {
+		boolean allowZoom = 
+			!app.isApplet() ||
+			mode == EuclidianView.MODE_ZOOM_IN ||
+			mode == EuclidianView.MODE_ZOOM_OUT ||
+			(app.isShiftDragZoomEnabled());			
+		if (!allowZoom)
+			return;
+
+		double px = mouseLoc.x;
+		double py = mouseLoc.y;
+		double dx = view.xZero - px;
+		double dy = view.yZero - py;
+
+		double factor = event.getKeyCode() == KeyEvent.VK_MINUS ? 1d / EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR
+				: EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
+		// make zooming a little bit smoother by having some steps
+
+		view.setAnimatedCoordSystem(
+				px + dx * factor,
+				py + dy * factor,
+				view.xscale * factor, 4, false);
+		//view.yscale * factor);
+		app.setUnsaved();
+
+
+	}
+
 }
