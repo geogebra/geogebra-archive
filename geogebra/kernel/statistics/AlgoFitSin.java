@@ -25,7 +25,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 
-
 /** 
  * @author Hans-Petter Ulven
  * @version 16.11.08	(16 nov.)
@@ -152,6 +151,7 @@ public class AlgoFitSin extends AlgoElement{
     
 /// ============= IMPLEMENTATION =============================================================///
     public final static void doReg(){
+    	//runTest();				//comment out when final
         findParameters();       //Find initial parameters a,b,c,d
         sinus_Reg();            //Run LM nonlinear iteration
     }//doReg()
@@ -471,7 +471,7 @@ public class AlgoFitSin extends AlgoElement{
     }//debug()
     
 /// =============== To comment out when final =============================================== ///
-/*SNIP START---------------------------------
+/* //SNIP START---------------------------------
 
     ///// ----- Test Interface ----- /////
     
@@ -486,7 +486,149 @@ public class AlgoFitSin extends AlgoElement{
     public final static int getIterations(){return iterations;}
     //+ beta2(xd,yd,a,b,c,d) sum squared errors
     
+	private static String info="";
+	private static boolean rantest=false;		//only run once
+    public static void runTest(){
+      if(!rantest){
+    	rantest=true;
+        System.out.println("/// --- Testing AlgoFitSin ---///\n");
+        
+        info="Minimalt testeksempel";
+        double[] x={0,3,6,9,12,15,18,21,24};
+        double[] y={128,90,139,178,147,106,135,177,161};
+        double[] fasit={139.78166616018288, 40.81425276514424,   0.4948321574038634,  -2.9237223002711956};
 
+        setXY(x,y);
+        time();
+        report(x,y,fasit);
+        
+        info="Exercise 3.206 in a 3mx math book, Temperatures in Stavanger, Norway, Jan 2001";
+        double[] x1={1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31};
+        double[] y1={2.15,4.65,5.85,4.25,0.9,0.65,-0.85,-1.55,-3.15,-0.5,1.55,2.35,4.8,2.9,1.7,-1.7};
+        double[] f1={0.8755240325,3.543122157,0.3184110922,-0.0721783207};
+        
+        setXY(x1,y1); time(); report(x1,y1,f1);        
+        
+        /// Fra Sinus-bøker, som i C-koden til Bjørn Ove Thue:
+        info="Eksempel side 99";
+        double[] x2={0,2,4,6,8,10,12,14,16,18,20,22,24};
+        double[] y2={165,260,269,182,76,50,132,233,265,193,95,61,138};
+        double[] f2={164.29422284012418,109.435835813277,0.51183903033813989,-0.06825629673297486};
+        
+        setXY(x2,y2); time(); report(x2,y2,f2);    
+                
+        info="Eksempel 3.30";
+        double[] x3={0,2,4,6,8,10,12,14,16,18,20,22,24};
+        double[] y3={270,295,182,72,48,121,239,290,198,85,58,127,241};
+        double[] f3={165.9,123.3,0.514,0.882,165.9};
+        
+        setXY(x3,y3); time(); report(x3,y3,f3);    
+        
+        info="Eksempel 3.31";
+        double[] x4={1,2,3,4,5,6,7,8,9,10,11,12};
+        double[] y4={-0.4,-0.5,1.9,6.3,12.5,13.6,17.4,15.9,13.2,6.4,4.1,-2.7};
+        double[] f4={7.9,9.2,0.56,-2.4};        
+        
+        setXY(x4,y4);time(); report(x4,y4,f4);
+        
+        info="Eksempel 3.32";
+        double[] x5={0,3,6,9,12,15,18,2,24};
+        double[] y5={3,9,23,37,43,37,23,9,3};
+        double[] f5={23,20,0.26,-1.6};  
+        
+        setXY(x5,y5);time(); report(x5,y5,f5);
+        
+        info="Eksempel 3.130";
+        double[] x6={0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0};
+        double[] y6={2, 3.0, 2.1, 1.0, 1.7, 2.9, 2.4};
+        double[] f6={1.98,1,2.99,0.03}; 
+        
+        setXY(x6,y6);time(); report(x6,y6,f6);
+        
+        info="Eksemepl 3.131";
+        double[] x7={0,2,4,6,8,10,12,14,16,18,20,22};
+        double[] y7={219,208,127,47,42,118,205,220,152,68,52,124};
+        double[] f7={133,92.7,0.51,1.1};
+        
+        setXY(x7,y7);time(); report(x7,y7,f7);
+
+        info="Eksemepl 3.132";
+        double[] x8={ 0, 2, 4,6, 8,10,12,14,16,18,20,22};
+        double[] y8={47,51,28,8,21,26,48,61,37,15,13,23};
+        double[] f8={32,21.8,0.5,1.22};
+            
+        setXY(x8,y8);time(); report(x8,y8,f8);
+        
+        info="Eksemepl 3.230";
+        double[] x9={    1,    2,    3,   4,  5,  6,   7,   8,  9, 10, 11,  12};
+        double[] y9={-15.9,-14.2,-10.6,-4.1,2.9,9.7,12.4,10.2,4.8,1.9,-9.2,-14};
+        double[] f9={-1.98,14,0.53,-2.26};
+                
+        setXY(x9,y9);time(); report(x9,y9,f9);
+        
+       
+        
+        info="Eksempel 3.231";
+        double[] x10={1,2,3,4,5,6,7,8,9,10,11,12};
+        double[] y10={40.5,76.0,126.0,178.0,220.2,249.6,245.8,215.8,144.3,86.4,51.2,35.2};
+        double[] f10={144,108,0.55,-1.85};        
+        
+        setXY(x10,y10);time(); report(x10,y10,f10);
+        
+        info="Eksakt: 4+3sin(2*x+1)";
+        double[] xe={0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6};
+        double[] ye={f(0),f(0.2),f(0.4),f(0.6),f(0.8),f(1.0),f(1.2),f(1.4),f(1.6)};
+        double[] fe={4.0,3.0,2.0,1.0};        
+        
+        setXY(xe,ye);time(); report(xe,ye,fe);
+      }//if !rantest
+    }//runtest
+  
+    ///// ----- Private ----- /////   
+    private static void report(double[] x,double[] y,double[] f){
+        double a=getA();
+        double b=getB();
+        double c=getC();
+        double d=getD();
+        double fe,se;
+
+        System.out.println("\n"+info);
+        System.out.println("                     a                   b                   c                    d");
+        System.out.println("Facit:          "+f[0]+"    "+f[1]+"    "+f[2]+"    "+f[3]);
+        System.out.println("FitSin:         "+a+"    "+b+"    "+c+"    "+d);
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------\n");
+        System.out.println("Diff:           "+(a-f[0])+"    "+(b-f[1])+"    "+(c-f[2])+"    "+(d-f[3]));
+
+        fe=beta2(x,y,f[0],f[1],f[2],f[3]);
+        se=beta2(x,y,a,b,c,d);
+        System.out.println("Fasit SumError2: "+fe);
+        System.out.println("SinReg SumError2: "+se);
+        
+        System.out.println("\nIterations: "+getIterations());
+        if(se>fe*1.1){
+            System.out.println("*** Sum Error Squared more than 10% larger ***");
+        }else if(se<fe){
+            System.out.println("*** Good! ****");
+        }else{
+            System.out.println("*** Could be better? ***");
+        }//if
+            
+        System.out.println();
+    }//report(....)
+    
+    private final static void time(){
+        java.util.Date date=new java.util.Date();
+        long start,slutt;
+        start=date.getTime();
+        doReg();
+        if(error) {System.out.println("*** Error in running doReg()! ***");}
+        date=new java.util.Date();slutt=date.getTime();
+        System.out.println("Time used: "+(slutt-start));
+    }//time()
+        
+    private final static double f(double x){
+        return 4.0d+3.0*Math.sin(2.0*x+1.0);
+    }//f(x)
     
 
 */ //SNIP END--------------------------------------
