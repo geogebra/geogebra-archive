@@ -25,9 +25,12 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 
+
 /** 
  * @author Hans-Petter Ulven
  * @version 16.11.08	(16 nov.)
+ * Updates:
+ * 			17.11.08:	sorting list, noisekiller (nearmaxmin() ),
  * 
  * Fits a+b*sin(c*x+d)  to a list of points.
  * Adapted from:
@@ -72,7 +75,8 @@ import geogebra.kernel.GeoPoint;
 
 public class AlgoFitSin extends AlgoElement{
 	
-    //Tuning of Levenberg-Marquardt iteration, debug
+    //Tuning of noisefilter, Levenberg-Marquardt iteration, debug, rounding off errors
+	private final static double NOISEKILLER		=	0.5D;	//Kill local extremums inside a+/-noisekiller*b
 	private final static double	LMFACTORDIV		=	3.0d;	
 	private final static double LMFACTORMULT	=	2.0d;
 	private final static int	MAXITERATIONS	=	200;
@@ -81,6 +85,8 @@ public class AlgoFitSin extends AlgoElement{
 	private final static boolean DEBUG			=	false;		//set false when finished
 	
 	// Properties
+	private static geogebra.main.Application app=	null;
+	private static geogebra.kernel.Kernel 	 k  =   null;
     private static double 		a,b,c,d;			//a+bsin(cx+d)
     private static double[] 	xd,yd;				//datapoints
     private static int      	size;				//data arrays
@@ -95,6 +101,8 @@ public class AlgoFitSin extends AlgoElement{
     
     public AlgoFitSin(Construction cons, String label, GeoList geolist) {
         super(cons);
+        app=kernel.getApplication();
+        k=app.getKernel();
         this.geolist=geolist;
         geofunction=new GeoFunction(cons);
         setInputOutput();
@@ -183,13 +191,16 @@ public class AlgoFitSin extends AlgoElement{
         for(int i=2;i<size;i++) {
             y=yd[i];
             current=direction(yd[i-2],yd[i-1],y);
+            /* current=direction5(yd[i-4],yd[i-3],yd[i-2],yd[i-1],yd[i]); */
             if( (current==1) || (current==-1) ){                 //steady up or steady down
                 //do state bookkeeping
                 if(state==0){        //just started:
                     state=current;      //set first state
                 }else {             //we are on our way...
                     if((current!=state)&&(current!=0)){ 	//update eventual change
-                    	changes++;state=current;
+                    	if(nearmaxmin(y,a,b,state,current,max,min)){//kill noise
+                    		changes++;state=current;
+                    	}//if near 
                     }//if change
                 }//if steady up or down
 
@@ -213,7 +224,7 @@ public class AlgoFitSin extends AlgoElement{
         }//for all data
                 
         double period;
-        if(changes<1){xmax=xmax_abs;xmin=xmin_abs;}	//Few points, safe to assume only one period
+        if(changes<=1){xmax=xmax_abs;xmin=xmin_abs;}	//Few points, safe to assume only one period
         period=Math.abs(xd[xmax]-xd[xmin])*2;
         c=2*Math.PI/period;
 
@@ -429,21 +440,58 @@ public class AlgoFitSin extends AlgoElement{
     
     // 3 yd's on the row: up=1, down=-1, uncertain=0 
     private final static int direction(double y1,double y2,double y3){
-        if( (y3>=y2)&&(y2>=y1) ){         //rising!
+        if( (y3>y2)&&(y2>y1) ){         //rising!
             return 1;
-        }else if( (y1>=y2)&& (y2>=y3) ){ //all under a
+        }else if( (y1>y2)&& (y2>y3) ){ //all under a
             return -1;
         }else{                              //some over, som under...
             return 0;
         }//if
     }//direction()
-
+    
+    /* test 5 pts
+    private final static int direction5(double y1,double y2,double y3,double y4,double y5){
+        if( (y5>=y4) && (y4>=y3) && (y3>=y2)&&(y2>=y1) ){         //rising!
+            return 1;
+        }else if( (y1>=y2)&& (y2>=y3)&&(y3>=y4)&&(y5>=y4) ){ //all under a
+            return -1;
+        }else{                              //some over, som under...
+            return 0;
+        }//if
+    }//direction()
+    */
+    
+    
     //
     private final   void getPoints(){
+
+    	//problem bothering the gui: GeoList newlist=k.Sort("tmp_{FitSin}",geolist);
     	double[] xlist=null,ylist=null;
         double xy[]=new double[2];
         GeoElement geoelement;
+        GeoList		newlist;
+        //This is code duplication of AlgoSort, but for the time being:
+        Class geoClass=geolist.get(0).getClass();
+        java.util.TreeSet sortedSet;
+        sortedSet=new java.util.TreeSet(GeoPoint.getComparatorX());
+        for (int i=0;i<size;i++){
+        	geoelement=geolist.get(i);
+        	if(geoelement.getClass().equals(geoClass)){
+        		sortedSet.add(geoelement);
+        	}else{
+        		error=true;
+        	}//if point
+        }//for all points
+        java.util.Iterator iter=sortedSet.iterator();
+        int i=0;
         xlist=new double[size];    ylist=new double[size];
+        while(iter.hasNext()) {
+        	geoelement=(GeoElement)iter.next();
+            ((GeoPoint)geoelement).getInhomCoords(xy);        	
+        	xlist[i]=xy[0];ylist[i]=xy[1];
+        	i++;
+        }//while iterating
+        /* old code:
         for(int i=0;i<size;i++){
             geoelement=geolist.get(i);
             if(geoelement.isGeoPoint()) {
@@ -453,7 +501,10 @@ public class AlgoFitSin extends AlgoElement{
                 error=true;
                 xlist[i]=0.0d;  ylist[i]=0.0d;
             }//if
-        }//for all points    
+        }//for all points
+        */
+        //does not work: kernel.getConstruction().removeFromConstructionList(newlist);
+        
         xd=xlist;yd=ylist;
         if(error){errorMsg("getPoints(): Wrong list format...");}
     }//getPoints()    
@@ -470,9 +521,20 @@ public class AlgoFitSin extends AlgoElement{
         }//if()
     }//debug()
     
+    //Noisekiller
+    private final static boolean nearmaxmin(double y,double a,double b,int state, int current,double max,double min){
+    	double k=NOISEKILLER;
+    	if( (state==1) && (current==-1) ){  //A real max-change?
+    		if(max>a+k*b){return true;} else{return false;}	
+    	}else if ( (state==-1) && (current==1) ){  //A real min-change?
+    		if(min<a-k*b){return true;} else {return false;}
+    	}else{
+    		return true;//ok, outside a+/-k*b
+    	}//if
+    }//nearmaxmin(y,a,b)
+
 /// =============== To comment out when final =============================================== ///
 /* //SNIP START---------------------------------
-
     ///// ----- Test Interface ----- /////
     
     public final static void setXY(double[] x,double[] y){
@@ -606,7 +668,7 @@ public class AlgoFitSin extends AlgoElement{
         
         System.out.println("\nIterations: "+getIterations());
         if(se>fe*1.1){
-            System.out.println("*** Sum Error Squared more than 10% larger ***");
+            System.out.println("*** Sum Error Squared more than 10% larger ERROR?  ERROR? ERROR? ERROR?***");
         }else if(se<fe){
             System.out.println("*** Good! ****");
         }else{
