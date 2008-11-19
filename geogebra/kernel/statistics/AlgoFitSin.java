@@ -29,8 +29,8 @@ import geogebra.kernel.GeoPoint;
 /** 
  * @author Hans-Petter Ulven
  * @version 16.11.08	(16 nov.)
- * Updates:
  * 			17.11.08:	sorting list, noisekiller (nearmaxmin() ),
+ * 			19.11.08:   some more testing, small fixes
  * 
  * Fits a+b*sin(c*x+d)  to a list of points.
  * Adapted from:
@@ -125,12 +125,12 @@ public class AlgoFitSin extends AlgoElement{
     protected final void compute() {
         size=geolist.size();
         error=false;				//General flag
-        if(!geolist.isDefined() || (size<6) ) {	//Direction-algo needs two flanks, 3 in each.
+        if(!geolist.isDefined() || (size<5) ) {	//Direction-algo needs two flanks, 3 in each.
             geofunction.setUndefined();
-            errorMsg("List not properly defined or too small (6 points needed).");
+            errorMsg("List not properly defined or too small (5 points needed).");
             return;
         }else{
-        	regMath = kernel.getRegressionMath();
+        	regMath = k.getRegressionMath();
         	getPoints();		//toDo: sort the points on x while getting them!
             doReg();
             if(!error){
@@ -178,7 +178,7 @@ public class AlgoFitSin extends AlgoElement{
             if(y<min){min=y;xmin_abs=i;}
         }//for
         a=sum/size;                                    
-        b=(max-min)/2.0d;                             debug("a= "+a+" b= "+b+" max= "+max+" min= "+min);
+        b=(max-min)/2.0d;                             //debug("a= "+a+" b= "+b+" max= "+max+" min= "+min);
        
         //find c:
         //This time first and second local max/min, between rise and fall and vv
@@ -205,7 +205,7 @@ public class AlgoFitSin extends AlgoElement{
                 }//if steady up or down
 
                 //Two changes enough. (Must check before updating extremums.)
-                if(changes>=2){                             debug("Two changes on "+i);
+                if(changes>=2){                             //debug("Two changes on "+i);
                     break;                      
                 }//if changes>=2
             
@@ -219,8 +219,8 @@ public class AlgoFitSin extends AlgoElement{
                 
             }//if steady up or down
              
-            debug("i: "+i);
-            debug("state: "+state+" current: "+current+" changes: "+changes+" max: "+max+" min: "+min+" xmax: "+xmax+" xmin: "+xmin);
+            //debug("i: "+i);
+            //debug("state: "+state+" current: "+current+" changes: "+changes+" max: "+max+" min: "+min+" xmax: "+xmax+" xmin: "+xmin);
         }//for all data
                 
         double period;
@@ -228,9 +228,9 @@ public class AlgoFitSin extends AlgoElement{
         period=Math.abs(xd[xmax]-xd[xmin])*2;
         c=2*Math.PI/period;
 
-        debug("changes:          firstmax:        firstmin:     xmax:     xmin:");
-        debug(changes+"   "+max+"   "+min+"     "+xmax+"     "+xmin);
-        debug("period: "+period+" c: "+c);            
+        //debug("changes:          firstmax:        firstmin:     xmax:     xmin:");
+        //debug(changes+"   "+max+"   "+min+"     "+xmax+"     "+xmin);
+        //debug("period: "+period+" c: "+c);            
         
         //Find d  
         // (d=0 might go well, but to be on the safe side...100 iterations should be enough?
@@ -286,11 +286,11 @@ public class AlgoFitSin extends AlgoElement{
         }//for all datapoints
         double startfaktor=Math.max(Math.max(Math.max(m11,m22),m33),m44);           
         lambda=startfaktor*0.001;   //heuristic...                                  
-                                                                        debug("Startlambda: "+lambda);
+                                                                        //debug("Startlambda: "+lambda);
 
         while(Math.abs(da)+Math.abs(db)+Math.abs(dc)+Math.abs(dd)>EPSILON){//or while(Math.abs(diff)>EPSILON) ?
             iterations++;
-                                                                        debug(""+iterations+"   : ");
+                                                                        //debug(""+iterations+"   : ");
             if((iterations>MAXITERATIONS)||(error)){                //From experience: >200 gives nothing more...
             	errorMsg("More than "+MAXITERATIONS+" iterations...");
             	break;
@@ -341,8 +341,8 @@ public class AlgoFitSin extends AlgoElement{
                         m41,m42,m43,b4)/n;
                 
                 newa=a+da;newb=b+db;newc=c+dc;newd=d+dd;        //remember this
-                residual=beta2(xd,yd,newa,newb,newc,newd);      debug("ChiSqError: +"+residual);
-                diff=residual-old_residual;                     debug("Residual difference: "+diff+"    lambda: "+lambda);
+                residual=beta2(xd,yd,newa,newb,newc,newd);      //debug("ChiSqError: +"+residual);
+                diff=residual-old_residual;                     //debug("Residual difference: "+diff+"    lambda: "+lambda);
                 // uten lambda...
                 if(residual<old_residual) {
                     lambda=lambda/LMFACTORDIV;   //going well :-)     but don't overdo it...
@@ -369,7 +369,7 @@ public class AlgoFitSin extends AlgoElement{
         double reduction=Math.PI*2;
         while(Math.abs(d)>Math.PI){
              if(d>Math.PI){d-=reduction;}
-             if(d<-Math.PI){d+=reduction;}              debug("justifying: "+d);
+             if(d<-Math.PI){d+=reduction;}              //debug("justifying: "+d);
         }//while not in i <-pi,pi>
         System.out.println("AlgoFitSin: Sum Errors Squared= "+beta2(xd,yd,a,b,c,d));	//Info
     }//sinus_Reg()
@@ -449,27 +449,14 @@ public class AlgoFitSin extends AlgoElement{
         }//if
     }//direction()
     
-    /* test 5 pts
-    private final static int direction5(double y1,double y2,double y3,double y4,double y5){
-        if( (y5>=y4) && (y4>=y3) && (y3>=y2)&&(y2>=y1) ){         //rising!
-            return 1;
-        }else if( (y1>=y2)&& (y2>=y3)&&(y3>=y4)&&(y5>=y4) ){ //all under a
-            return -1;
-        }else{                              //some over, som under...
-            return 0;
-        }//if
-    }//direction()
-    */
-    
-    
-    //
+    //getPoints and sort them
     private final   void getPoints(){
 
     	//problem bothering the gui: GeoList newlist=k.Sort("tmp_{FitSin}",geolist);
     	double[] xlist=null,ylist=null;
         double xy[]=new double[2];
         GeoElement geoelement;
-        GeoList		newlist;
+        //GeoList		newlist;
         //This is code duplication of AlgoSort, but for the time being:
         Class geoClass=geolist.get(0).getClass();
         java.util.TreeSet sortedSet;
@@ -508,6 +495,18 @@ public class AlgoFitSin extends AlgoElement{
         xd=xlist;yd=ylist;
         if(error){errorMsg("getPoints(): Wrong list format...");}
     }//getPoints()    
+
+    //Noisekiller
+    private final static boolean nearmaxmin(double y,double a,double b,int state, int current,double max,double min){
+    	double k=NOISEKILLER;
+    	if( (state==1) && (current==-1) ){  //A real max-change?
+    		if(max>a+k*b){return true;} else{return false;}	
+    	}else if ( (state==-1) && (current==1) ){  //A real min-change?
+    		if(min<a-k*b){return true;} else {return false;}
+    	}else{
+    		return true;//ok, outside a+/-k*b
+    	}//if
+    }//nearmaxmin(y,a,b)
     
     private final static void errorMsg(String s){
     	System.err.println("\nFitSin:  ");		
@@ -521,158 +520,244 @@ public class AlgoFitSin extends AlgoElement{
         }//if()
     }//debug()
     
-    //Noisekiller
-    private final static boolean nearmaxmin(double y,double a,double b,int state, int current,double max,double min){
-    	double k=NOISEKILLER;
-    	if( (state==1) && (current==-1) ){  //A real max-change?
-    		if(max>a+k*b){return true;} else{return false;}	
-    	}else if ( (state==-1) && (current==1) ){  //A real min-change?
-    		if(min<a-k*b){return true;} else {return false;}
-    	}else{
-    		return true;//ok, outside a+/-k*b
-    	}//if
-    }//nearmaxmin(y,a,b)
+
 
 /// =============== To comment out when final =============================================== ///
 /* //SNIP START---------------------------------
     ///// ----- Test Interface ----- /////
-    
-    public final static void setXY(double[] x,double[] y){
-        xd=x;yd=y;
-    }//setXY()
-
-    public final static double getA(){return a;}
-    public final static double getB(){return b;}
-    public final static double getC(){return c;}    
-    public final static double getD(){return d;}
-    public final static int getIterations(){return iterations;}
-    //+ beta2(xd,yd,a,b,c,d) sum squared errors
     
 	private static String info="";
 	private static boolean rantest=false;		//only run once
     public static void runTest(){
       if(!rantest){
     	rantest=true;
-        System.out.println("/// --- Testing AlgoFitSin ---///\n");
-        
+        System.out.println("/// --- Testing AlgoFitLogistic ---///\n");
+        ex1();
+        ex2();
+        ex3();
+        ex4();
+        ex5();
+        ex6();
+        ex7();
+        ex8();
+        ex9();
+        ex10();
+        ex11();
+        ex12();
+        ex13();
+        ex14();
+        ex15();
+      }//if !rantest
+   }//runtest
+    
+    private  final static void ex1(){
+        info="Eksakt: 4+3sin(2*x+1)";
+        size=9;
+        double[] x=new double[size];
+        double[] y=new double[size];
+        double[] f={4.0,3.0,2.0,1.0};               
+        xd		=	new double[size];
+        yd		=	new double[size];		
+        for(int i=0;i<size;i++){
+            x[i]=i*0.3d;
+            y[i]=4.0d+3.0*Math.sin(2.0*x[i]+1.0);
+        }//for
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);             
+        time();report(xd,yd,f);
+    }//ex1()        
+    
+    
+    private  final static void ex2(){
         info="Minimalt testeksempel";
+        size= 9;
         double[] x={0,3,6,9,12,15,18,21,24};
         double[] y={128,90,139,178,147,106,135,177,161};
         double[] fasit={139.78166616018288, 40.81425276514424,   0.4948321574038634,  -2.9237223002711956};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,fasit);
+    }//exX()
 
-        setXY(x,y);
-        time();
-        report(x,y,fasit);
-        
+    private final static void ex3(){        
         info="Exercise 3.206 in a 3mx math book, Temperatures in Stavanger, Norway, Jan 2001";
-        double[] x1={1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31};
-        double[] y1={2.15,4.65,5.85,4.25,0.9,0.65,-0.85,-1.55,-3.15,-0.5,1.55,2.35,4.8,2.9,1.7,-1.7};
-        double[] f1={0.8755240325,3.543122157,0.3184110922,-0.0721783207};
+        size=16;
+        double[] x={1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31};
+        double[] y={2.15,4.65,5.85,4.25,0.9,0.65,-0.85,-1.55,-3.15,-0.5,1.55,2.35,4.8,2.9,1.7,-1.7};
+        double[] fasit={0.8755240325,3.543122157,0.3184110922,-0.0721783207};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,fasit);
+    }//exX()
         
-        setXY(x1,y1); time(); report(x1,y1,f1);        
-        
-        /// Fra Sinus-bøker, som i C-koden til Bjørn Ove Thue:
+    private final static void ex4(){
         info="Eksempel side 99";
-        double[] x2={0,2,4,6,8,10,12,14,16,18,20,22,24};
-        double[] y2={165,260,269,182,76,50,132,233,265,193,95,61,138};
-        double[] f2={164.29422284012418,109.435835813277,0.51183903033813989,-0.06825629673297486};
-        
-        setXY(x2,y2); time(); report(x2,y2,f2);    
-                
+        size=13;
+        double[] x={0,2,4,6,8,10,12,14,16,18,20,22,24};
+        double[] y={165,260,269,182,76,50,132,233,265,193,95,61,138};
+        double[] f={164.29422284012418,109.435835813277,0.51183903033813989,-0.06825629673297486};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+    
+    private final static void ex5(){
         info="Eksempel 3.30";
-        double[] x3={0,2,4,6,8,10,12,14,16,18,20,22,24};
-        double[] y3={270,295,182,72,48,121,239,290,198,85,58,127,241};
-        double[] f3={165.9,123.3,0.514,0.882,165.9};
-        
-        setXY(x3,y3); time(); report(x3,y3,f3);    
-        
+        size=13;
+        double[] x={0,2,4,6,8,10,12,14,16,18,20,22,24};
+        double[] y={270,295,182,72,48,121,239,290,198,85,58,127,241};
+        double[] f={165.9,123.3,0.514,0.882,165.9};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()       
+    
+    private final static void ex6(){
         info="Eksempel 3.31";
-        double[] x4={1,2,3,4,5,6,7,8,9,10,11,12};
-        double[] y4={-0.4,-0.5,1.9,6.3,12.5,13.6,17.4,15.9,13.2,6.4,4.1,-2.7};
-        double[] f4={7.9,9.2,0.56,-2.4};        
-        
-        setXY(x4,y4);time(); report(x4,y4,f4);
-        
+        size=12;
+        double[] x={1,2,3,4,5,6,7,8,9,10,11,12};
+        double[] y={-0.4,-0.5,1.9,6.3,12.5,13.6,17.4,15.9,13.2,6.4,4.1,-2.7};
+        double[] f={7.9,9.2,0.56,-2.4}; 
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()  
+    
+    private final static void ex7(){
         info="Eksempel 3.32";
-        double[] x5={0,3,6,9,12,15,18,2,24};
-        double[] y5={3,9,23,37,43,37,23,9,3};
-        double[] f5={23,20,0.26,-1.6};  
-        
-        setXY(x5,y5);time(); report(x5,y5,f5);
-        
+        size=9;
+        double[] x={0,3,6,9,12,15,18,2,24};
+        double[] y={3,9,23,37,43,37,23,9,3};
+        double[] f={23,20,0.26,-1.6};  
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()  
+    
+    private final static void ex8(){
         info="Eksempel 3.130";
-        double[] x6={0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0};
-        double[] y6={2, 3.0, 2.1, 1.0, 1.7, 2.9, 2.4};
-        double[] f6={1.98,1,2.99,0.03}; 
-        
-        setXY(x6,y6);time(); report(x6,y6,f6);
-        
+        size=7;
+        double[] x={0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0};
+        double[] y={2, 3.0, 2.1, 1.0, 1.7, 2.9, 2.4};
+        double[] f={1.98,1,2.99,0.03}; 
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()  
+    
+    private final static void ex9(){
         info="Eksemepl 3.131";
-        double[] x7={0,2,4,6,8,10,12,14,16,18,20,22};
-        double[] y7={219,208,127,47,42,118,205,220,152,68,52,124};
-        double[] f7={133,92.7,0.51,1.1};
-        
-        setXY(x7,y7);time(); report(x7,y7,f7);
-
+        size=12;
+        double[] x={0,2,4,6,8,10,12,14,16,18,20,22};
+        double[] y={219,208,127,47,42,118,205,220,152,68,52,124};
+        double[] f={133,92.7,0.51,1.1};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX() 
+    
+    private final static void ex10(){
         info="Eksemepl 3.132";
-        double[] x8={ 0, 2, 4,6, 8,10,12,14,16,18,20,22};
-        double[] y8={47,51,28,8,21,26,48,61,37,15,13,23};
-        double[] f8={32,21.8,0.5,1.22};
-            
-        setXY(x8,y8);time(); report(x8,y8,f8);
-        
+        size=12;
+        double[] x={ 0, 2, 4,6, 8,10,12,14,16,18,20,22};
+        double[] y={47,51,28,8,21,26,48,61,37,15,13,23};
+        double[] f={32,21.8,0.5,1.22};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX() 
+    
+    private final static void ex11(){
         info="Eksemepl 3.230";
-        double[] x9={    1,    2,    3,   4,  5,  6,   7,   8,  9, 10, 11,  12};
-        double[] y9={-15.9,-14.2,-10.6,-4.1,2.9,9.7,12.4,10.2,4.8,1.9,-9.2,-14};
-        double[] f9={-1.98,14,0.53,-2.26};
-                
-        setXY(x9,y9);time(); report(x9,y9,f9);
-        
-       
-        
+        size=12;
+        double[] x={    1,    2,    3,   4,  5,  6,   7,   8,  9, 10, 11,  12};
+        double[] y={-15.9,-14.2,-10.6,-4.1,2.9,9.7,12.4,10.2,4.8,1.9,-9.2,-14};
+        double[] f={-1.98,14,0.53,-2.26};
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+    
+    private final static void ex12(){
         info="Eksempel 3.231";
-        double[] x10={1,2,3,4,5,6,7,8,9,10,11,12};
-        double[] y10={40.5,76.0,126.0,178.0,220.2,249.6,245.8,215.8,144.3,86.4,51.2,35.2};
-        double[] f10={144,108,0.55,-1.85};        
-        
-        setXY(x10,y10);time(); report(x10,y10,f10);
-        
-        info="Eksakt: 4+3sin(2*x+1)";
-        double[] xe={0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6};
-        double[] ye={f(0),f(0.2),f(0.4),f(0.6),f(0.8),f(1.0),f(1.2),f(1.4),f(1.6)};
-        double[] fe={4.0,3.0,2.0,1.0};        
-        
-        setXY(xe,ye);time(); report(xe,ye,fe);
-      }//if !rantest
-    }//runtest
-  
-    ///// ----- Private ----- /////   
+        size=12;
+        double[] x={1,2,3,4,5,6,7,8,9,10,11,12};
+        double[] y={40.5,76.0,126.0,178.0,220.2,249.6,245.8,215.8,144.3,86.4,51.2,35.2};
+        double[] f={144,108,0.55,-1.85};        
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+    
+    private final static void ex13(){
+        info="Ex 4.23 Ascheoug";
+        size=12;
+        double[] x={1,2,3,4,5,6,7,8,9,10,11,12};
+        double[] y={3,-0.7,4.6,8.2,10,15.6,15.2,16,12,7.7,3.6,0.3};
+        double[] f={8.7371117271314,7.6300508011209,0.58780329880075,-2.5808559805165};        
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+
+    private final static void ex14(){
+        info="Ex 4.G Ascheoug";
+        size=5;
+        double[] x={0,1,3.5,5,8};
+        double[] y={6.8,6.8,3.3,2,4.2};
+        double[] f={4.3,2.6,0.6,1.4};     
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+    
+    private final static void ex15(){
+        info="Ex 4 s191 Ascheoug";
+        size=14;
+        double[] x={0,2,3,6,7,9,12,13,15,16,19,21,22,24};
+        double[] y={114,94,96,140,156,167,123,103,83,88,141,164,161,131};
+        double[] f={127,38.3,0.496,-2.69};     
+		xd		=	new double[size];
+		yd		=	new double[size];      
+        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);     
+        time();report(xd,yd,f);
+    }//exX()
+    
     private static void report(double[] x,double[] y,double[] f){
-        double a=getA();
-        double b=getB();
-        double c=getC();
-        double d=getD();
         double fe,se;
 
         System.out.println("\n"+info);
-        System.out.println("                     a                   b                   c                    d");
-        System.out.println("Facit:          "+f[0]+"    "+f[1]+"    "+f[2]+"    "+f[3]);
-        System.out.println("FitSin:         "+a+"    "+b+"    "+c+"    "+d);
-        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------\n");
-        System.out.println("Diff:           "+(a-f[0])+"    "+(b-f[1])+"    "+(c-f[2])+"    "+(d-f[3]));
+        System.out.println("                "+hfill(20,"a")+hfill(20,"b")+hfill(20,"c")+hfill(20,"d"));
+        System.out.println("Facit:          "+hfill(20,""+f[0])+hfill(20,""+f[1])+hfill(20,""+f[2])+hfill(20,""+f[3]));
+        System.out.println("FitSin:         "+hfill(20,""+a)+hfill(20,""+b)+hfill(20,""+c)+hfill(20,""+d));
+        System.out.println(hfill(95,ntegn(95,'-')));
+        System.out.println("Diff:           "+hfill(20,""+(a-f[0]))+hfill(20,""+(b-f[1]))+hfill(20,""+(c-f[2]))+hfill(20,""+(d-f[3])));
 
         fe=beta2(x,y,f[0],f[1],f[2],f[3]);
         se=beta2(x,y,a,b,c,d);
-        System.out.println("Fasit SumError2: "+fe);
-        System.out.println("SinReg SumError2: "+se);
         
-        System.out.println("\nIterations: "+getIterations());
+        System.out.println("\nFasit SumError2:  "+fe);
+        System.out.println( "SinReg SumError2: "+se);
+        
+        System.out.println("\nIterations:      "+iterations);
         if(se>fe*1.1){
-            System.out.println("*** Sum Error Squared more than 10% larger ERROR?  ERROR? ERROR? ERROR?***");
+            System.out.println("*****************************ERROR? ***************************");
         }else if(se<fe){
-            System.out.println("*** Good! ****");
+            System.out.println("/////////////////// GOOD \\\\\\\\\\\\\\\\\\\\\\\\");
         }else{
-            System.out.println("*** Could be better? ***");
+            System.out.println("*************************** COULD BE BETTER? *******************");
         }//if
             
         System.out.println();
@@ -682,17 +767,29 @@ public class AlgoFitSin extends AlgoElement{
         java.util.Date date=new java.util.Date();
         long start,slutt;
         start=date.getTime();
-        doReg();
+        findParameters();
+        sinus_Reg();
         if(error) {System.out.println("*** Error in running doReg()! ***");}
         date=new java.util.Date();slutt=date.getTime();
         System.out.println("Time used: "+(slutt-start));
     }//time()
-        
-    private final static double f(double x){
-        return 4.0d+3.0*Math.sin(2.0*x+1.0);
-    }//f(x)
     
-
+    private final static String hfill(int n,String s) {             //s får lengde n, blanke henges på
+        String ny="";
+        int l=s.length();
+        int diff=n-l;
+        if(l>n) {               //må korte av:
+            ny=s.substring(0,n);
+        }else{                  //må fylle på:
+            ny=s+ntegn(diff,' ');
+        }//if        
+        return ny;
+    }//hfill(n,s)
+    private final static String ntegn(int n,char c){
+        String s="";
+        for(int i=0;i<n;i++){s=s+c;}
+        return s;
+    }//blanke(n)
 */ //SNIP END--------------------------------------
     
 }// class AlgoFitSin
