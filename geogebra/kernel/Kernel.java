@@ -42,6 +42,7 @@ import geogebra.kernel.statistics.AlgoFitLog;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
+import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoInverseNormal;
 import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
@@ -2626,6 +2627,16 @@ public class Kernel {
 		GeoFunction function = algo.getFitSin();
 		return function;
 	}
+	
+	/** 
+	 * FitLogistic[list of coords]
+	 * Hans-Petter Ulven
+	 */
+	final public GeoFunction FitLogistic(String label, GeoList list) {
+		AlgoFitLogistic algo = new AlgoFitLogistic(cons, label, list);
+		GeoFunction function = algo.getFitLogistic();
+		return function;
+	}	
 
 	/** 
 	 * Binomial[n,r]
