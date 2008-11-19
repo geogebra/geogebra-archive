@@ -155,6 +155,23 @@ class CmdFitSin extends CmdOneListFunction{
 
 }// class CmdFitSin
 
+/** 
+ * FitLogistic[<List of points>]
+ * 
+ * @author Hans-Petter Ulven
+ * @version 18.11.08
+ */
+class CmdFitLogistic extends CmdOneListFunction{
+
+    public CmdFitLogistic(Kernel kernel) {super(kernel);}
+    
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.FitLogistic(a, b);
+	}
+
+}// class CmdFitLogistic
+
 /*
  * Mean[ list ]
  *  Michael Borcherds 2008-04-12
