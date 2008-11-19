@@ -29,8 +29,8 @@ import geogebra.kernel.statistics.RegressionMath;
 
 /** 
  * @author Hans-Petter Ulven
- * @version 18.11.08	(18 nov.)
- * Updates:
+ * @version 19.11.08	(19 nov.)
+ * 
  *
  * 
  * Fits c/(1+aexp(-bx))  to a list of points.
@@ -163,7 +163,7 @@ public final class AlgoFitLogistic extends AlgoElement{
         double err,err_old,diff;
         double lambda=0.01d;
         double k=0.0d;
-        double beta=0.0d;
+        //19.11 double beta=0.0d;
         k=0.001;
         
         														//debug("findParameters():\n================");
@@ -203,7 +203,7 @@ public final class AlgoFitLogistic extends AlgoElement{
         double 	multfaktor		=	LMFACTORMULT;	// later?: divfaktor=LMFACTORDIV;
         double 	residual,
         	   	old_residual	=	beta2(xd,yd,a,b,c);
-        double 	diff			=	-1;         	//negative to start it off
+        double 	diff			=	-1.0d;         	//negative to start it off
         
         double 	da=EPSILONREG,db=EPSILONREG,dc=EPSILONREG;     //Something larger than eps, to get started...
         double 	b1,b2,b3;                     //At*beta
