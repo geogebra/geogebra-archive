@@ -56,14 +56,13 @@ public class CASparser {
 	 * Returns the given expression as a string in Yacas syntax.
 	 */
 	public String toYacasString(ExpressionValue ev, boolean substituteVariables) {
-		int tempCASPrintForm = kernel.getCASPrintForm();
-		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_YACAS);
+		String yacasString;
 		
-		String yacasString = 
-			substituteVariables ? ev.toValueString() : ev.toString();
-
-		kernel.setCASPrintForm(tempCASPrintForm);
+		if (!ev.isExpressionNode()) {
+			ev = new ExpressionNode(kernel, ev);			
+		}
 		
+		yacasString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_YACAS, !substituteVariables);		
 		return yacasString;
 	}
 	

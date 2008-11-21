@@ -92,7 +92,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
     return curWord.toString();
   }  
     
-    public void geoElementSelected(GeoElement geo, boolean add) {
+    public void geoElementSelected(GeoElement geo, boolean add) {    	
         replaceSelection(geo.getLabel());   
         requestFocus();
     }

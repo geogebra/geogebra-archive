@@ -220,7 +220,7 @@ public class CASTableCellController implements KeyListener {
 			
 			// EVALUATE input in Yacas depending on key combination
 			if (e.isShiftDown()) {
-				evaluation = ggbCAS.evaluateYACAS("Simplify", yacasString);
+				evaluation = ggbCAS.evaluateYACAS(yacasString);
 			}
 			else {
 				evaluation = ggbCAS.evaluateYACAS("Hold", yacasString);

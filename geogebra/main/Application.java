@@ -553,7 +553,7 @@ public abstract class Application implements KeyEventDispatcher {
 		cp.add(buildApplicationPanel());
 		setLAFFontSize();
 		euclidianView.updateSize();
-
+		
 		if (updateComponentTreeUI)
 			updateComponentTreeUI();
 		setMoveMode();
@@ -568,7 +568,10 @@ public abstract class Application implements KeyEventDispatcher {
 		if (frame == null)
 			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 		else
-			SwingUtilities.updateComponentTreeUI(frame);
+			SwingUtilities.updateComponentTreeUI(frame);	
+		
+		if (casView != null)
+			SwingUtilities.updateComponentTreeUI(casView.getCASViewComponent());		
 	}
 
 	/**
@@ -1904,10 +1907,9 @@ public abstract class Application implements KeyEventDispatcher {
 			casFrame = createCasFrame(casView);
 		}
 
-		// show or hide CAS window
-
+		// show or hide CAS window		
 		casFrame.setVisible(showCAS);
-
+		
 		updateMenubar();
 		isSaved = false;
 	}

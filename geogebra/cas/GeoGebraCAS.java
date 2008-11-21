@@ -92,7 +92,13 @@ public class GeoGebraCAS {
 	 * @return result string (null possible)
 	 */
 	final public String evaluateYACAS(String exp) {
-		return evaluateYACAS(exp, true);
+		String result = evaluateYACAS(exp, true);
+		
+		// TODO: remove
+		Application.debug("evaluateYacas: " + exp + ", result: " + result);
+		
+		
+		return result;
 	}
 	
 	/**
@@ -309,9 +315,7 @@ public class GeoGebraCAS {
 	 * For example, getYacasCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
 	 */
 	final public String getYacasCommand(String name, ArrayList args, boolean symbolic) {
-		// reset string buffer
-		if (sbYacasCommand == null)
-			sbYacasCommand = new StringBuffer(80);
+		StringBuffer sbYacasCommand = new StringBuffer(80);
 				
 		// build command key as name + "." + args.size()
 		sbYacasCommand.setLength(0);
@@ -367,7 +371,7 @@ public class GeoGebraCAS {
 
 		return sbYacasCommand.toString();
 	}
-	private StringBuffer sbYacasCommand;
+	
 	
 	/**
 	 * Returns the Yacas command for the given key (from ggb2yacas.properties)
@@ -377,11 +381,17 @@ public class GeoGebraCAS {
 			ggb2Yacas = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_YACAS);
 		}
 		
+		String ret;
 		try {
-			return ggb2Yacas.getString(key);
+			ret =  ggb2Yacas.getString(key);
 		} catch (MissingResourceException e) {
-			return null;
+			ret = null;
 		}
+		
+		// TODO: remove
+		Application.debug("getYacasCommand for " + key + " gives: " + ret);
+		
+		return ret;
 	}
 		
 	/*

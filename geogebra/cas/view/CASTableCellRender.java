@@ -22,9 +22,11 @@ public class CASTableCellRender extends CASTableCell implements
 		if (value instanceof CASTableCellValue) {
 			setFont(app.getPlainFont());
 			CASTableCellValue tempV = (CASTableCellValue) value;
-			Application.debug("Rendering Row: " + row);
-			Application.debug("Input: " + tempV.getCommand());
-			Application.debug("Output: " + tempV.getOutput());
+			
+			
+//			Application.debug("Rendering Row: " + row);
+//			Application.debug("Input: " + tempV.getCommand());
+//			Application.debug("Output: " + tempV.getOutput());
 			// Application.debug("OutputArea: " +
 			// tempV.getOutputAreaInclude());
 			// tempV.isBBorderVisible();

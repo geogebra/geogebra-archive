@@ -5189,25 +5189,52 @@ public class Kernel {
 	}
 
 	final public String format(double x) {
-		if (Double.isNaN(x))
-			return "?";	
-		else if (useSignificantFigures) 
-			return  formatSF(x);
-		// ZERO
-		else if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";					
-		else
-			return nf.format(x); // 	useSignificantFigures=false			
+		boolean isNaN = Double.isNaN(x);
+		
+		switch (casPrintForm) {
+		case ExpressionNode.STRING_TYPE_YACAS:
+		case ExpressionNode.STRING_TYPE_JASYMCA:
+			// check for integers in CAS first
+			if (isNaN)
+				return " 1/0 ";	
+			else if (isInteger(x)) {
+				return String.valueOf(Math.round(x));
+			}
+					
+		default:
+			if (isNaN)
+				return "?";	
+			else if (useSignificantFigures) 
+				return  formatSF(x);
+			// ZERO
+			else if (-MIN_PRECISION < x && x < MIN_PRECISION)
+				return "0";					
+			else
+				return nf.format(x); // 	useSignificantFigures=false	
+		}
+		
+		
+				
 	}
 	
 	/*
 	 * makes sure .123 is returned as 0.123
 	 */
-	final private String formatSF(double x) {
-		String s = sf.format(Math.abs(x));
-		if (s.startsWith(".")) s = "0" + s;
-		if (x < 0) s = "-" + s;
-		return s;
+	final private String formatSF(double x) {	
+		switch (casPrintForm) {
+			case ExpressionNode.STRING_TYPE_YACAS:
+			case ExpressionNode.STRING_TYPE_JASYMCA:
+				// check for integers in CAS first
+				if (isInteger(x)) {
+					return String.valueOf(Math.round(x));
+				}
+						
+			default:
+				String s = sf.format(Math.abs(x));
+				if (s.startsWith(".")) s = "0" + s;
+				if (x < 0) s = "-" + s;
+				return s;
+		}
 	}
 	
 	final public String formatPiE(double x, NumberFormat nf) {

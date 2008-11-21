@@ -145,22 +145,27 @@ implements ExpressionValue {
 		        } else {
 		        	sbToString.append(name);
 		        }        
-    			sbToString.append("[");
+    			sbToString.append('[');
 		        int size = args.size();
-		        for (int i = 0; i < size - 1; i++) {
-		        	sbToString.append( args.get(i) );
+		        for (int i = 0; i < size; i++) {
+		        	sbToString.append( toString((ExpressionValue) args.get(i), symbolic, LaTeX));
 		        	sbToString.append(", ");
 		        }
-		        if (size > 0)
-		        	sbToString.append( args.get(size-1));
-		        sbToString.append("]");
+		        sbToString.setCharAt(sbToString.length()-1, ']');		        
 		        return sbToString.toString();		    	
     	}
     	
     }
     private StringBuffer sbToString;  
     
-  
+    private String toString(ExpressionValue ev, boolean symbolic, boolean LaTeX) {
+    	if (LaTeX) {
+    		return ev.toLaTeXString(symbolic);
+    	}
+    	else {
+    		return symbolic ? ev.toString() : ev.toValueString();
+    	}    	
+    }
     
     public GeoElement [] evaluateMultiple() {
             GeoElement [] geos = null;

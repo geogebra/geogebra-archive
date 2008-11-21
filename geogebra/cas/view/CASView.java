@@ -593,7 +593,6 @@ public class CASView extends JComponent implements CasManager {
 		// Set the focus at the right cell
 		// table.setFocusAtRow(table.getRowCount() - 1,
 		// geogebra.cas.view.CASPara.contCol);
-
 	}
 
 	public Object setInputExpression(Object cellValue, String input) {
