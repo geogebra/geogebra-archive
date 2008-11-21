@@ -1554,6 +1554,19 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		double b=geo.getY();
 		double c=geo.getZ();
 		startBeamer(code);
+		/*
+		 * To prevent "dimension too large" prblem with TikZ
+		 * Eg: \draw [line width=1.6pt,color=qqcctt,domain=-2.097:9.585] plot(\x,{(-7.657--2.392*\x)/-0.007});
+		 *
+		 * We allow a factor of 40 between the coefficient director and the window height
+		 * Else we say it's vertical.
+		 */
+		
+		double heightScreen=frame.textYmax.getValue()-frame.textYmin.getValue();
+		if (Math.abs(a/b/heightScreen)>40) {
+			b=0;
+		}
+		
 		if (b!=0){
 			code.append("\\draw [");
 			String option=LineOptionCode(geo,true);
@@ -1949,6 +1962,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	protected void ColorCode(Color c,StringBuffer sb){
 		if (frame.isGrayscale()){
 			if (c.equals(Color.BLACK)) {sb.append("black");return;}
+			else if(c.equals(Color.RED)) {sb.append("red");return;}
+			else if(c.equals(Color.BLUE)) {sb.append("blue");return;}
+			else if(c.equals(Color.GREEN)) {sb.append("green");return;}
 			String colorname="";
 			int red=c.getRed();
 			int green=c.getGreen();

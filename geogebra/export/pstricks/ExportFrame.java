@@ -3,7 +3,6 @@ import geogebra.main.Application;
 
 
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,15 +18,14 @@ import java.io.OutputStreamWriter;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import java.util.HashMap;
 abstract public class ExportFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private final String TEXT_XUNIT="textxunit";
 	private final String TEXT_YUNIT="textyunit";
 	private final String TEXT_WIDTH="textwidth";
@@ -50,7 +48,7 @@ abstract public class ExportFrame extends JFrame{
 	protected Application app;
 	protected double width,height;
 	protected JButton buttonSave;
-	private ExportFrame ef;
+//	private ExportFrame ef;
 	protected File currentFile=null;
 	private GeoGebraExport ggb;
 	ListenKey listenKey;

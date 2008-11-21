@@ -12,9 +12,6 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoSumTrapezoidal;
 import geogebra.kernel.AlgoSumUpper;
-import geogebra.kernel.AlgoPolygon;
-import geogebra.kernel.AlgoPolygonRegular;
-import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoSumLower;
@@ -44,8 +41,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.Locale;
 import java.util.StringTokenizer;
 

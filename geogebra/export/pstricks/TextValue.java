@@ -9,6 +9,7 @@ import javax.swing.JTextField;
  *
  */
 public  class TextValue extends JTextField implements KeyListener {
+	private static final long serialVersionUID = 1L;
 	// do we allow negative values in the textfeld?
 	private boolean ALLOW_NEGATIVE=false;
 	JFrame jf;
