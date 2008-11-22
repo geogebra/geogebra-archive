@@ -122,7 +122,7 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 	 * would reside if the user drops the panel.
 	 */
 	public void paintComponent(Graphics g) {
-		if (dndState.getTarget() == null)
+		if (dndState == null || dndState.getTarget() == null)
 			return;
 
 		Graphics2D g2d = (Graphics2D) g;
