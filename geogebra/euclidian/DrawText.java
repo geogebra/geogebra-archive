@@ -198,18 +198,14 @@ public final class DrawText extends Drawable {
     }
 
     final public void draw(Graphics2D g2) { 
-        if (isVisible) {      
-        	if (isLaTeX) {
-        		g2.setPaint(geo.getObjectColor());				
-    			g2.setFont(textFont);    			
-    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());       
-        	} 
-        	else {
-        		g2.setPaint(geo.getObjectColor());				
-    			g2.setFont(textFont);    			
+        if (isVisible) {
+			g2.setPaint(geo.getObjectColor());				
+			g2.setFont(textFont);  
+			
+        	if (isLaTeX)			
+    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground()); 
+        	else			
     			drawMultilineText(g2);   
-        	}
-        	
 			  
 			// draw label rectangle
 			if (geo.doHighlighting()) {

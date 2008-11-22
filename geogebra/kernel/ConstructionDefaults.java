@@ -343,9 +343,15 @@ public class ConstructionDefaults {
 		// if algebra window open -> all labels
 		// else -> no labels
 		if (labelingStyle == LABEL_VISIBLE_AUTOMATIC) {
-			labelingStyle = app.showAlgebraView() ?
-									LABEL_VISIBLE_USE_DEFAULTS :
-									LABEL_VISIBLE_ALWAYS_OFF;
+			if(app.hasGuiManager()) {
+				labelingStyle = LABEL_VISIBLE_USE_DEFAULTS;
+				/* TODO method chains doesn't allow app.getGuiManager().showAlgebraView() to appear here, fix this (F.S.)
+				labelingStyle = app.getGuiManager().showAlgebraView() ?
+										LABEL_VISIBLE_USE_DEFAULTS :
+										LABEL_VISIBLE_ALWAYS_OFF;*/
+			} else {
+				labelingStyle = LABEL_VISIBLE_USE_DEFAULTS;
+			}
 		}
 		
 		switch (labelingStyle) {									

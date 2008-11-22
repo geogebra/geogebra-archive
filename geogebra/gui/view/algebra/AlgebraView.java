@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
 import java.util.EventObject;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
@@ -76,18 +77,12 @@ public class AlgebraView extends JTree implements View {
 
 	private GeoElement selectedGeoElement;
 	private DefaultMutableTreeNode selectedNode;
-	
-	//	closing cross
-	private static BasicStroke crossStroke = new BasicStroke(1.5f); 
-	private static int crossBorder = 4;
-	private static int crossOffset = crossBorder + 6;
-	private boolean highlightCross;
 
 	/** Creates new AlgebraView */
 	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
-		algCtrl.setView(this);			
+		algCtrl.setView(this);
 		
 		iconShown = app.getImageIcon("shown.gif");
 		iconHidden = app.getImageIcon("hidden.gif");		
@@ -211,51 +206,6 @@ public class AlgebraView extends JTree implements View {
 			return;
 				
 		super.paint(g);
-				
-		// draw a cross in the upper right corner 
-		// to close the algebra view
-		if (!app.isApplet())
-			drawClosingCross((Graphics2D) g);
-	}		
-	
-	private void drawClosingCross(Graphics2D g2) {
-		int width = getWidth();			
-		g2.setStroke(crossStroke);
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		if (highlightCross) {
-			g2.setColor(Color.red);
-		} else {
-			g2.setColor(Color.gray);
-		}
-		g2.drawLine(width-crossOffset, crossBorder, width-crossBorder, crossOffset);
-		g2.drawLine(width-crossOffset, crossOffset, width-crossBorder, crossBorder);
-		
-		if (highlightCross) {
-			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-								RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-			// "close" 
-			String strClose = app.getMenu("Close");
-			TextLayout layout = new TextLayout(strClose, app.smallFont, g2.getFontRenderContext());
-			g2.setColor(Color.gray);
-			
-			int stringX = (int) (width - crossOffset - crossOffset - layout.getAdvance());
-			
-			g2.drawString(strClose, stringX, layout.getAscent()+2);
-		}
-	}
-	
-	boolean hitClosingCross(int x, int y) {
-		return !app.isApplet() && 
-				(y <= crossOffset) && 
-		  		(x >= getWidth() - crossOffset);		
-	}
-	
-	void setClosingCrossHighlighted(boolean flag) {
-		if (flag == highlightCross) return;		
-		highlightCross = flag;		
-		repaint();
 	}
 	
 	/* *

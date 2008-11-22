@@ -138,7 +138,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		}		
 	}
 	
-	public void updateSize() {		
+	public void updateSize() {
 		Dimension frameSize;
 		
 		// use euclidian view pref size to set frame size 		
@@ -168,6 +168,9 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		} else {
 			frameSize = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
 		}
+
+		// TODO Redo (F.S.)		
+		frameSize = app.getPreferredSize();
 		
 		// check if frame fits on screen
 
@@ -260,7 +263,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		GeoGebraFrame wnd = new GeoGebraFrame();
 		
 		//GeoGebra wnd = buildGeoGebra();
-		Application app = new DefaultApplication(args, wnd, true);		
+		DefaultApplication app = new DefaultApplication(args, wnd, true);		
 		
 		app.loadGUIJar();
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));

@@ -207,7 +207,7 @@ public class MyTable extends JTable
 			}
 		}
 		app.setSelectedGeos(list);
-		if (app.showAlgebraView())
+		if (app.getGuiManager().showAlgebraView())
 			((View)app.getGuiManager().getAlgebraView()).repaintView();
 		app.getEuclidianView().repaintView();
 	}

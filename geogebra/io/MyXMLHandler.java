@@ -20,6 +20,9 @@ package geogebra.io;
 
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
+import geogebra.io.layout.DockPanelXml;
+import geogebra.io.layout.DockSplitPaneXml;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -49,12 +52,15 @@ import geogebra.main.MyError;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import javax.swing.JComponent;
+import javax.swing.JSplitPane;
 
 import org.xml.sax.SAXException;
 
@@ -82,7 +88,12 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_CONSTRUCTION = 300;
 	private static final int MODE_CONST_GEO_ELEMENT = 301;
 	private static final int MODE_CONST_COMMAND = 302;
+	
 	private static final int MODE_GUI = 400;
+	private static final int MODE_GUI_PERSPECTIVES = 401; // <perspectives>
+	private static final int MODE_GUI_PERSPECTIVE = 402; // <perspective>
+	private static final int MODE_GUI_PERSPECTIVE_PANES = 403; // <perspective> <panes /> </perspective>
+	private static final int MODE_GUI_PERSPECTIVE_VIEWS = 404; // <perspective> <views /> </perspective>
 
 	private int mode;
 	private int constMode; // submode for <construction>
@@ -145,6 +156,37 @@ public class MyXMLHandler implements DocHandler {
 	private int consStep;
 
 	private double ggbFileFormat;
+
+	/**
+	 * The storage container for all GUI related information of the current document.
+	 */
+	private Perspective tmp_perspective;
+	
+	/**
+	 * A vector with all perspectives we have read in this document.
+	 */
+	private ArrayList tmp_perspectives = new ArrayList();
+	
+	/**
+	 * Array lists to store temporary panes and views of a perspective.
+	 */
+	private ArrayList tmp_panes, tmp_views;
+	
+	/**
+	 * Backward compatibility for version < 3.03 where no layout component was used.
+	 * Temporary storage for the split divider location of the split pane 1/2. 
+	 */
+	private int tmp_sp1, tmp_sp2;
+	
+	/**
+	 * If the split divider is horizontal. (version < 3.03)
+	 */
+	private boolean tmp_spHorizontal;
+	
+	/**
+	 * If the algebra or spreadsheet view is visible. (version < 3.03)
+	 */
+	private boolean tmp_showAlgebra, tmp_showSpreadsheet;
 
 	/** Creates a new instance of MyXMLHandler */
 	public MyXMLHandler(Kernel kernel, Construction cons) {
@@ -242,7 +284,23 @@ public class MyXMLHandler implements DocHandler {
 			break;
 
 		case MODE_GUI:
-			startGUIElement(eName, attrs);
+			startGuiElement(eName, attrs);
+			break;
+			
+		case MODE_GUI_PERSPECTIVES:
+			startGuiPerspectivesElement(eName, attrs);
+			break;
+		
+		case MODE_GUI_PERSPECTIVE:
+			startGuiPerspectiveElement(eName, attrs);
+			break;
+		
+		case MODE_GUI_PERSPECTIVE_PANES:
+			startGuiPanesElement(eName, attrs);
+			break;
+			
+		case MODE_GUI_PERSPECTIVE_VIEWS:
+			startGuiViewsElement(eName, attrs);
 			break;
 
 		case MODE_INVALID:
@@ -317,6 +375,29 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_GUI:
 			if (eName.equals("gui"))
 				mode = MODE_GEOGEBRA;
+				endGuiElement();
+			break;
+			
+		case MODE_GUI_PERSPECTIVES:
+			if(eName.equals("perspectives"))
+				mode = MODE_GUI;
+				endGuiPerspectivesElement(); // save all perspectives
+			break;
+			
+		case MODE_GUI_PERSPECTIVE:
+			if(eName.equals("perspective"))
+				mode = MODE_GUI_PERSPECTIVES;
+				endGuiPerspectiveElement(); // save views & panes of the perspective
+			break;
+			
+		case MODE_GUI_PERSPECTIVE_PANES:
+			if(eName.equals("panes"))
+				mode = MODE_GUI_PERSPECTIVE;
+			break;
+			
+		case MODE_GUI_PERSPECTIVE_VIEWS:
+			if(eName.equals("views"))
+				mode = MODE_GUI_PERSPECTIVE;
 			break;
 
 		case MODE_CONSTRUCTION:
@@ -400,6 +481,9 @@ public class MyXMLHandler implements DocHandler {
 			mode = MODE_CAS_SESSION;
 		} else if (eName.equals("gui")) {
 			mode = MODE_GUI;
+			
+			if(ggbFileFormat < 3.03)
+				tmp_perspective = new Perspective("tmp");
 		} else if (eName.equals("macro")) {
 			mode = MODE_MACRO;
 			initMacro(attrs);
@@ -650,9 +734,9 @@ public class MyXMLHandler implements DocHandler {
 			// don't know why
 			int hFudge = 0;
 			int vFudge = 0;
-			if (app.isHorizontalSplit()) {
-				hFudge = 118;
-			} 
+			//if (app.isHorizontalSplit()) {
+			//	hFudge = 118;
+			//} 
 			app.getGuiManager().getSpreadsheetView().setPreferredSize(new Dimension(width + hFudge, height + vFudge));
 			//((geogebra.gui.view.spreadsheet.SpreadsheetView) spreadsheetView)
 			//		.setPreferredSize(new Dimension(width+118, height));
@@ -879,7 +963,7 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	// <gui>
 	// ====================================
-	private void startGUIElement(String eName, LinkedHashMap attrs) {
+	private void startGuiElement(String eName, LinkedHashMap attrs) {
 		boolean ok = true;
 		switch (eName.charAt(0)) {
 		case 'c':
@@ -905,19 +989,34 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleLabelingStyle(app, attrs);
 				break;
 			}
-
+			
+		case 'p':
+			if(eName.equals("perspectives")) {
+				mode = MODE_GUI_PERSPECTIVES;
+				break;
+			}
+			
 		case 's':
 			if (eName.equals("show")) {
-				ok = handleGUIShow(app, attrs);
+				ok = handleGuiShow(app, attrs);
 				break;
 			} else if (eName.equals("splitDivider")) {
 				ok = handleSplitDivider(app, attrs);
 				break;
+			} else if (eName.equals("settings")) {
+				ok = handleGuiSettings(app, attrs);
+				break;
 			}
-
+			
 		case 't':
 			if (eName.equals("toolbar")) {
 				ok = handleToolbar(app, attrs);
+				break;
+			}
+			
+		case 'w':
+			if(eName.equals("window")) {
+				ok = handleWindowSize(app, attrs);
 				break;
 			}
 
@@ -927,6 +1026,39 @@ public class MyXMLHandler implements DocHandler {
 
 		if (!ok)
 			Application.debug("error in <gui>: " + eName);
+	}
+	
+	/**
+	 * Take care of backward compatibility for the dynamic layout component
+	 */
+	private void endGuiElement() {
+		// construct default xml data in case we're using an old version which didn't
+		// stored the layout xml.
+		if(!(ggbFileFormat > 3.02)) {
+			DockPanelXml[] dpXml = new DockPanelXml[] {
+				new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(400, 400), "1,3", 400),
+				new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, new Rectangle(200, 400), "3", 400),
+				new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, new Rectangle(400, 400), "1,1", 400)
+			};
+			tmp_perspective.setDockPanelInfo(dpXml);
+			
+			
+			DockSplitPaneXml[] spXml; 
+			
+			// use two split panes in case the spreadsheet is visible
+			if(tmp_showSpreadsheet) {
+				spXml = new DockSplitPaneXml[] {
+					new DockSplitPaneXml("", 0.2, JSplitPane.HORIZONTAL_SPLIT),
+					new DockSplitPaneXml("1", 0.5, JSplitPane.HORIZONTAL_SPLIT)
+				}; 
+			} else {
+				spXml = new DockSplitPaneXml[] {
+					new DockSplitPaneXml("", 0.2, JSplitPane.HORIZONTAL_SPLIT)
+				};
+			}
+			
+			tmp_perspective.setSplitPaneInfo(spXml);
+		}
 	}
 
 	private boolean handleConsProtColumns(Application app, LinkedHashMap attrs) {
@@ -986,32 +1118,133 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleGUIShow(Application app, LinkedHashMap attrs) {
+	/**
+	 * Backward compatibility for version < 3.03
+	 * 
+	 * @param app
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handleGuiShow(Application app, LinkedHashMap attrs) {
 		try {
-			boolean showAlgebraView = parseBoolean((String) attrs
-					.get("algebraView"));
-			app.setShowAlgebraView(showAlgebraView);
+			// backward compatibility to versions without the layout component
+			if(ggbFileFormat < 3.03) {
+				tmp_showAlgebra = parseBoolean((String) attrs
+						.get("algebraView"));
 
-			// Michael Borcherds 2008-04-25
-			boolean ShowSpreadsheet = parseBoolean((String) attrs
-					.get("spreadsheetView"));
-			app.setShowSpreadsheetView(ShowSpreadsheet);
-
+				// Michael Borcherds 2008-04-25
+				tmp_showSpreadsheet = parseBoolean((String) attrs
+						.get("spreadsheetView"));
+			}
+			
+			// TODO auxiliary objects not saved per perspective? (F.S.)
 			String str = (String) attrs.get("auxiliaryObjects");
 			boolean auxiliaryObjects = (str != null && str.equals("true"));
 			app.setShowAuxiliaryObjects(auxiliaryObjects);
 
 			str = (String) attrs.get("algebraInput");
 			boolean algebraInput = (str == null || str.equals("true"));
-			app.setShowAlgebraInput(algebraInput);
+			tmp_perspective.setShowInputPanel(algebraInput);
 
 			str = (String) attrs.get("cmdList");
 			boolean cmdList = (str == null || str.equals("true"));
-			app.setShowCmdList(cmdList);
+			tmp_perspective.setShowInputPanelCommands(cmdList);
 
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+	
+	/**
+	 * Settings of the user, not saved in the file XML but for preferences XML.
+	 * 
+	 * <settings ignoreDocument=".." showTitleBar=".." />
+	 * 
+	 * @param app
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handleGuiSettings(Application app, LinkedHashMap attrs) {
+		try {
+			boolean ignoreDocument = !((String)attrs.get("ignoreDocument")).equals("false");
+			app.setIgnoreDocumentPerspective(ignoreDocument);
+			
+			boolean showTitleBar = !((String)attrs.get("showTitleBar")).equals("false");
+			// TODO implement showTitleBar (F.S.)
+			
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+
+	/**
+	 * Kept for backward compatibility with version < 3.03
+	 * 
+	 * @param app
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handleSplitDivider(Application app, LinkedHashMap attrs) {
+		try {
+			tmp_spHorizontal = !"false".equals((String) attrs.get("horizontal"));
+			
+			if(tmp_spHorizontal) {
+				tmp_sp1 = Integer.parseInt((String) attrs.get("loc"));
+				tmp_sp2 = Integer.parseInt((String) attrs.get("loc2"));
+			} else {
+				String strLocVert = (String) attrs.get("locVertical");
+				if (strLocVert != null) {
+					tmp_sp1 = Integer.parseInt(strLocVert);
+				} else {
+					tmp_sp1 = Integer.parseInt((String) attrs.get("loc"));
+				}
+				
+				String strLocVert2 = (String) attrs.get("locVertical2");
+				if (strLocVert2 != null) {
+					tmp_sp2 = Integer.parseInt(strLocVert2);
+				} else {
+					tmp_sp2 = Integer.parseInt((String) attrs.get("loc2"));
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleToolbar(Application app, LinkedHashMap attrs) {
+		try {
+			tmp_perspective.setToolbarDefinition((String) attrs.get("str"));
+			return true;
+		} catch (Exception e) {
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+	
+	/**
+	 * Handle the window size:
+	 * <window width=".." height=".." />
+	 * 
+	 * @param app
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handleWindowSize(Application app, LinkedHashMap attrs) {
+		try {
+			Dimension size = new Dimension(
+				Integer.parseInt((String)attrs.get("width")),
+				Integer.parseInt((String)attrs.get("height"))
+			);
+			app.setPreferredSize(size);
+			return true;
+		} catch (Exception e) {
 			Application.debug(e.getMessage() + ": " + e.getCause());
 			return false;
 		}
@@ -1037,45 +1270,194 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleSplitDivider(Application app, LinkedHashMap attrs) {
+	// ====================================
+	// <perspectives>
+	// ====================================
+	private void startGuiPerspectivesElement(String eName, LinkedHashMap attrs) {
+		boolean ok = true;
+		
+		if(eName.equals("perspective"))
+			ok = handlePerspective(attrs);
+		else 
+			Application.debug("unknown tag in <perspectives>: " + eName);
+
+		if (!ok)
+			Application.debug("error in <perspectives>: " + eName);
+	}
+	
+	/**
+	 * Create a new temporary perspective for the current <perspective> element
+	 * 
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handlePerspective(LinkedHashMap attrs) {
 		try {
-			int loc = Integer.parseInt((String) attrs.get("loc"));
-			app.setSplitDividerLocationHOR(loc);
-
-			String strLocVert = (String) attrs.get("locVertical");
-			if (strLocVert != null) {
-				int locVert = Integer.parseInt(strLocVert);
-				app.setSplitDividerLocationVER(locVert);
-			}
-
-			String strLoc2 = (String) attrs.get("loc2");
-			if (strLoc2 != null) {
-				int loc2 = Integer.parseInt(strLoc2);
-				app.setSplitDividerLocationHOR2(loc2);
-			}
-
-			String strLocVert2 = (String) attrs.get("locVertical2");
-			if (strLocVert2 != null) {
-				int locVert2 = Integer.parseInt(strLocVert2);
-				app.setSplitDividerLocationVER2(locVert2);
-			}
-
-			String strHorizontal = (String) attrs.get("horizontal");
-			boolean hor = !"false".equals(strHorizontal);
-			app.setHorizontalSplit(hor);
-
+			tmp_perspective = new Perspective((String)attrs.get("id"));
+			tmp_perspectives.add(tmp_perspective);
+			tmp_panes = new ArrayList();
+			tmp_views = new ArrayList();
+			mode = MODE_GUI_PERSPECTIVE;
+			
 			return true;
-		} catch (Exception e) {
+		} catch(Exception e) {
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+	
+	/**
+	 * Save all perspectives in the application.
+	 */
+	private void endGuiPerspectivesElement() {
+		app.setTmpPerspectives(tmp_perspectives);
+	}
+
+	// ====================================
+	// <perspective>
+	// ====================================
+	private void startGuiPerspectiveElement(String eName, LinkedHashMap attrs) {
+		boolean ok = true;
+		switch (eName.charAt(0)) {
+		case 'i':
+			if(eName.equals("input")) {
+				ok = handleAlgebraInput(attrs);
+				break;
+			}
+			
+		case 'p':
+			if(eName.equals("panes")) {
+				mode = MODE_GUI_PERSPECTIVE_PANES;
+				break;
+			}
+			
+		case 's':
+			if(eName.equals("show")) {
+				ok = handleGuiShow(app, attrs);
+				break;
+			}
+			
+		case 't':
+			if(eName.equals("toolbar")) {
+				ok = handleToolbar(app, attrs);
+				break;
+			}
+			
+		case 'v':
+			if(eName.equals("views")) {
+				mode = MODE_GUI_PERSPECTIVE_VIEWS;
+				break;
+			}
+
+		default:
+			Application.debug("unknown tag in <perspective>: " + eName);
+		}
+
+		if (!ok)
+			Application.debug("error in <perspective>: " + eName);
+	}
+	
+	private boolean handleAlgebraInput(LinkedHashMap attrs) {
+		try {
+			tmp_perspective.setShowInputPanel(!((String)attrs.get("show")).equals("false"));
+			tmp_perspective.setShowInputPanelCommands(!((String)attrs.get("cmd")).equals("false"));
+			tmp_perspective.setShowInputPanelOnTop(!((String)attrs.get("top")).equals("false"));
+			
+			return true;
+		} catch(Exception e) {
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+	
+	private void endGuiPerspectiveElement() {
+		DockPanelXml[] dpInfo = new DockPanelXml[tmp_views.size()];
+		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[tmp_panes.size()];
+		tmp_perspective.setDockPanelInfo((DockPanelXml[])tmp_views.toArray(dpInfo));
+		tmp_perspective.setSplitPaneInfo((DockSplitPaneXml[])tmp_panes.toArray(spInfo));
+	}
+
+	// ====================================
+	// <views>
+	// ====================================
+	private void startGuiViewsElement(String eName, LinkedHashMap attrs) {
+		boolean ok = true;
+		
+		if(eName.equals("view"))
+			ok = handleView(attrs);
+		else 
+			Application.debug("unknown tag in <views>: " + eName);
+
+		if (!ok)
+			Application.debug("error in <views>: " + eName);
+	}
+	
+	/**
+	 * Handle a view.
+	 * <view id=".." visible=".." inframe=".." window=".." location=".." size=".." />
+	 * 
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handleView(LinkedHashMap attrs) {
+		try {
+			int viewId = Integer.parseInt((String)attrs.get("id"));
+			boolean isVisible = !((String)attrs.get("visible")).equals("false");
+			boolean openInFrame = !((String)attrs.get("inframe")).equals("false");
+			
+			// the window rectangle is given in the format "x,y,width,height"
+			String[] window = ((String)attrs.get("window")).split(",");
+			Rectangle windowRect = new Rectangle(
+				Integer.parseInt(window[0]),
+				Integer.parseInt(window[1]),
+				Integer.parseInt(window[2]),
+				Integer.parseInt(window[3])
+			);
+			
+			String embeddedDef = (String)attrs.get("location");
+			int embeddedSize = Integer.parseInt((String)attrs.get("size"));
+			
+			tmp_views.add(new DockPanelXml(viewId, isVisible, openInFrame, windowRect, embeddedDef, embeddedSize));
+			
+			return true;
+		} catch(Exception e) {
+			Application.debug(e.getMessage() + ": " + e.getCause());
 			return false;
 		}
 	}
 
-	private boolean handleToolbar(Application app, LinkedHashMap attrs) {
+	// ====================================
+	// <panes>
+	// ====================================
+	private void startGuiPanesElement(String eName, LinkedHashMap attrs) {
+		boolean ok = true;
+		
+		if(eName.equals("pane"))
+			ok = handlePane(attrs);
+		else 
+			Application.debug("unknown tag in <panes>: " + eName);
+
+		if (!ok)
+			Application.debug("error in <panes>: " + eName);
+	}
+	
+	/**
+	 * Handle a pane.
+	 * <pane location".." divider=".." orientation=".." />
+	 * 
+	 * @param attrs
+	 * @return
+	 */
+	private boolean handlePane(LinkedHashMap attrs) {
 		try {
-			String toolbarDef = (String) attrs.get("str");
-			app.getGuiManager().setToolBarDefinition(toolbarDef);
+			String location = (String)attrs.get("location");
+			double dividerLocation = Double.parseDouble((String)attrs.get("divider"));
+			int orientation = Integer.parseInt((String)attrs.get("orientation"));
+			
+			tmp_panes.add(new DockSplitPaneXml(location, dividerLocation, orientation));
+			
 			return true;
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Application.debug(e.getMessage() + ": " + e.getCause());
 			return false;
 		}

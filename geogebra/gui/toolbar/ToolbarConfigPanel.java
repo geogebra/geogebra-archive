@@ -16,12 +16,16 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -53,6 +57,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	JScrollPane iconScrollPane;
 	JPanel selectionPanel;
 	JList toolList;	
+	DefaultListModel toolListModel;
 	int selectedRow;	
 	Application app;
 	
@@ -69,13 +74,17 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		setLayout(new BorderLayout(5, 5));
 				
 		tree = generateTree();
+		
+		toolListModel = new DefaultListModel();
+		toolList = new JList(toolListModel);
+		
 		setToolBarString(app.getGuiManager().getToolBarDefinition());	
 		
 		configScrollPane = new JScrollPane(tree);
+		configScrollPane.setPreferredSize(new Dimension(200, 400));
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		configScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		//configScrollPane.setSize(150, 150);
-		//configScrollPane.setPreferredSize(new Dimension(150, 150));
+		
 		JPanel scrollSpacePanel = new JPanel();
 		scrollSpacePanel.setLayout(new BorderLayout(0, 0));
 		scrollSpacePanel.setBorder(new EmptyBorder(3, 5, 3, 5));
@@ -119,25 +128,16 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		tempPanel.add(buttonAllPanel);
 		tempPanel.add(Box.createVerticalGlue());
 		
-		//
 		selectionPanel.add(tempPanel, BorderLayout.CENTER);
-		//
 		JPanel modePanel = new JPanel();
 		modePanel.setLayout(new BorderLayout(0, 0));
 		modePanel.setBorder(new TitledBorder(app.getMenu("Tools")));
-		//modePanel.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), " " + "Wählbare Einträge" + " "));
-		//
-		Vector modeVector = generateToolsVector();
-		toolList = new JList(modeVector);		
-		//modeList.setPreferredSize(new Dimension(150, 150));
-		//
-		//modeList.setSize(new Dimension(150, 150));
-		//modeList.addListSelectionListener(this);
-		//
+		
 		ListSelectionModel lsm = toolList.getSelectionModel();
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		toolList.setBackground(configScrollPane.getBackground());
+		toolList.setBackground(SystemColor.text);
 		modeScrollPane = new JScrollPane(toolList);		
+		modeScrollPane.setPreferredSize(new Dimension(200, 400));
 		modeScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		modeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		toolList.setCellRenderer(new ModeCellRenderer(app));
@@ -148,35 +148,10 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		modeSpacePanel.setLayout(new BorderLayout(0, 0));
 		modeSpacePanel.setBorder(new EmptyBorder(3, 5, 3, 5));
 		modeSpacePanel.add("Center", modeScrollPane);
-		//
-		//modeSpacePanel.setPreferredSize(new Dimension(175, 175));
-		//
-		//modeSpacePanel.setSize(new Dimension(175, 175));
-		//
+		
 		modePanel.add("Center", modeSpacePanel);
 		selectionPanel.add("East", modePanel);		
 		add("Center", selectionPanel);
-		//
-		/*JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(new FlowLayout());
-		okButton = new javax.swing.JButton("OK");
-		okButton.setName("ok");
-		okButton.addActionListener(this);
-		controlPanel.add(okButton);
-		cancelButton = new javax.swing.JButton("Abbrechen");
-		cancelButton.setName("cancel");
-		cancelButton.addActionListener(this);
-		controlPanel.add(cancelButton);
-		controlPanel.doLayout();*/
-		//add(controlPanel, BorderLayout.SOUTH);
-		//
-		//doLayout();
-		//this.validateTree();
-		//modeScrollPane.setPreferredSize(new Dimension(Math.max(modeScrollPane.getWidth(), configScrollPane.getWidth()), (int) configScrollPane.getSize().getHeight()));
-		//modeScrollPane.setSize(modeList.getPreferredSize());
-		//modeScrollPane.setSize(modeScrollPane.getPreferredSize());
-		//configScrollPane.setPreferredSize(new Dimension(Math.max(modeScrollPane.getWidth(), configScrollPane.getWidth()), (int) configScrollPane.getSize().getHeight()));
-		
 		
 		try {
 			tree.setSelectionRow(1);
@@ -234,6 +209,9 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 					}
 				}
 				
+				toolListModel.addElement(userOb);
+				sortToolList();
+				
 				// select node at same row or above
 				if (selRow >= tree.getRowCount())
 					selRow--;
@@ -263,7 +241,11 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 					newNode = new DefaultMutableTreeNode(modeInt);						
 				}											
 				model.insertNodeInto(newNode, parentNode, childIndex++);				
-				didInsert = true;				
+				didInsert = true;	
+				
+				// remove node from list of unused tools if the node is not a separator
+				if(modeInt.intValue() > -1)
+					toolListModel.removeElement(modeInt);
 			}
 			
 			if (didInsert) {
@@ -274,6 +256,9 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 				tree.setSelectionRow(++selRow);
 				tree.scrollRowToVisible(selRow);
 				configScrollPane.getHorizontalScrollBar().setValue(0); // scroll to left
+				
+				// sort tool list
+				sortToolList();
 			}
 		}
 		
@@ -324,11 +309,25 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 */
 	public void setToolBarString(String toolbarDefinition) {				
 		// create new tree model
-		Vector toolVec = MyToolbar.createToolBarVec(toolbarDefinition);
+		Vector toolVec = MyToolbar.createToolBarVec(toolbarDefinition);		
 		DefaultTreeModel model = new DefaultTreeModel(generateRootNode(toolVec));
 		tree.setModel(model);		
 		collapseAllRows();	
-		tree.setRowHeight(-1);				
+		tree.setRowHeight(-1);
+		
+		Vector allTools = generateToolsVector(app.getGuiManager().getDefaultToolbarString());
+		Vector usedTools = generateToolsVector(toolbarDefinition);
+		
+		toolListModel.clear();
+		toolListModel.addElement(MyToolbar.TOOLBAR_SEPARATOR); // always display the separator in the tools list
+		
+		for(Iterator iter = allTools.iterator(); iter.hasNext();) {
+			Object next = iter.next();
+			
+			if(!usedTools.contains(next)) {
+				toolListModel.addElement(next);
+			}
+		}
 	}
 	
 	/**
@@ -360,7 +359,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
             	}            	
             }        	        	
         }
-                
+        
         return sb.toString().trim();    
 	}		
 	
@@ -371,17 +370,16 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		}
 	}
 	
-		
 	/**
 	 * 
 	 */
-	public Vector generateToolsVector() {				
+	public Vector generateToolsVector(String toolbarDefinition) {				
 		Vector vector = new Vector();		
 		// separator
 		vector.add(MyToolbar.TOOLBAR_SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = MyToolbar.createToolBarVec(app.getGuiManager().getDefaultToolbarString());				
+		Vector defTools = MyToolbar.createToolBarVec(toolbarDefinition);				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			
@@ -441,6 +439,37 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 				node.add(new DefaultMutableTreeNode(ob));
 		}
 		return node;
+	}
+
+	/**
+	 * Add an item to the tool list
+	 * 
+	 * TODO Rename method
+	 * TODO Use this method to insert new items into the model
+	 * TODO Use the default toolbar vector to keep the standard sorting
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-10-22
+	 */
+	private void sortToolList() {
+		/*int numItems = toolListModel.getSize();
+
+		if (numItems < 2)
+			return;
+
+		// copy list data into an array
+		Integer[] a = new Integer[numItems];
+		for (int i = 0; i < numItems; ++i) {
+			a[i] = (Integer) toolListModel.getElementAt(i);
+		}
+
+		// sort array..
+		Arrays.sort(a);
+
+		// copy the sorted array back into the model
+		for (int i = 0; i < numItems; ++i) {
+			toolListModel.setElementAt(a[i], i);
+		}*/
 	}
 		
 	/**

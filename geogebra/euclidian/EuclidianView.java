@@ -2988,6 +2988,22 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	}
 	
 	public final void setStandardView(boolean storeUndo) {
+		final double xzero, yzero;
+		
+		// check if the window is so small that we need custom 
+		// positions.
+		if(getWidth() < XZERO_STANDARD * 3) {
+			xzero = getWidth() / 3.0;
+		} else {
+			xzero = XZERO_STANDARD;
+		}
+		
+		if(getHeight() < YZERO_STANDARD * 1.6) {
+			yzero = getHeight() / 1.6;
+		} else {
+			yzero = YZERO_STANDARD;
+		}
+		
 		if (scaleRatio != 1.0) {
 			// set axes ratio back to 1
 			if (axesRatioZoomer == null)
@@ -3004,16 +3020,12 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 						} catch (Exception e) {
 						}
 					}
-					// set the xscale and axes origin
-					setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
-							SCALE_STANDARD, 15, false);
+					setAnimatedCoordSystem(xzero, yzero, SCALE_STANDARD, 15, false);
 				}
 			};
 			waiter.start();
 		} else {
-			// set the xscale and axes origin
-			setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
-					SCALE_STANDARD, 15, false);
+			setAnimatedCoordSystem(xzero, yzero, SCALE_STANDARD, 15, false);
 		}
 		if (storeUndo)
 			app.storeUndoInfo();

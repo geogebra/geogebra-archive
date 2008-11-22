@@ -6,9 +6,12 @@ import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.Layout;
+import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -17,6 +20,7 @@ import geogebra.main.GeoGebraPreferences;
 import java.awt.BorderLayout;
 import java.awt.Event;
 import java.awt.Image;
+import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,9 +29,12 @@ import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -46,19 +53,28 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 public abstract class MenubarImpl extends JMenuBar implements Menubar {
-
 	private static final long serialVersionUID = 1736020764918189176L;
+	
+	protected Layout layout;
 
 	// Actions
 	protected AbstractAction refreshAction, recomputeAllViews,
 			drawingPadToClipboardAction, deleteAll, newWindowAction,
 			propertiesAction, constProtocolAction, drawingPadPropAction,
 			toolbarConfigAction, showAlgebraViewAction, showAlgebraInputAction,
+			showEuclidianViewAction, // Florian Sonner 2008-08-29
+			showInputTopAction,		 // Florian Sonner 2008-09-12
 			showSpreadsheetAction,     // Michael Borcherds 2008-01-14
-			showCmdListAction, horizontalSplitAction,
+			showCmdListAction,
+			modeChangeAction, // Florian Sonner 2008-10-04
 			showAuxiliaryObjectsAction, showConsProtNavigationAction,
 			showConsProtNavigationPlayAction,
 			showConsProtNavigationOpenProtAction, loadAction, saveAction,
+			ignoreDocumentPerspectiveAction, // Florian Sonner 2008-09-14
+			savePerspectiveAction, // Florian Sonner 2008-09-14
+			changePerspectiveAction, // Florian Sonner 2008-10-04
+			managePerspectivesAction, // Florian Sonner 2008-09-14
+			showViewTitlebarAction, // Florian Sonenr 2008-10-22
 			saveAsAction, //printProtocolAction, 
 			printEuclidianViewAction,
 			exitAction, exitAllAction, helpAction,
@@ -70,17 +86,24 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			selectAllAction, deleteAction, websiteAction, forumAction, wikiAction,
 			selectCurrentLayerAction, // Michael Borcherds 2008-03-03
 			selectAllDescendantsAction, selectAllAncestorsAction;
-			
-	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, cbShowAlgebraView,
-	        cbShowSpreadsheet,     // Michael Borcherds 2008-01-14
-			cbShowAuxiliaryObjects, cbHorizontalSplit,
-			cbShowConsProtNavigation, cbShowConsProtNavigationPlay,
-			cbShowConsProtNavigationOpenProt, cbShowAlgebraInput,
+
+	protected JCheckBoxMenuItem cbShowAxes, cbShowGrid, 
+			cbShowAlgebraView,
+	        cbShowSpreadsheetView,     // Michael Borcherds 2008-01-14
+	        cbShowEuclidianView, 		// Florian Sonner 2008-08-29
+	        cbShowInputTop, 		 	// Florian Sonner 2008-09-12
+	        cbIgnoreDocumentPerspective, // Florian Sonner 2008-09-14
+	        cbShowViewTitlebar, 			// Florian Sonner 2008-10-22
+			cbShowAuxiliaryObjects,
+			cbShowConsProtNavigation,
+			cbShowConsProtNavigationPlay,
+			cbShowConsProtNavigationOpenProt,
+			cbShowAlgebraInput,
 			cbShowCmdList;
 
 	protected JMenu menuAngleUnit, menuPointCapturing, menuDecimalPlaces,
 			menuContinuity, menuPointStyle, menuBooleanSize, menuRightAngleStyle,
-			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools;
+			menuCoordStyle, menuLabeling, menuWindow, menuFile, menuTools, menuViewConsProt, menuViewInput, menuViewPerspectives;
 
 	//private JMenuItem miCloseAll;
 
@@ -89,45 +112,44 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	protected Kernel kernel;
 
 	public MenubarImpl() {
-
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow));
+		
+		layout = Layout.getInstance();
 	}
 	
-	public void updateMenubar() {	
+	public void updateMenubar() {		
+		DefaultGuiManager guiMananager = (DefaultGuiManager) app.getGuiManager();
+		
 		EuclidianView ev = app.getEuclidianView();
 		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
 	    cbShowGrid.setSelected(ev.getShowGrid());
 	    
-	    cbShowAlgebraView.setSelected(app.showAlgebraView());
-	    cbShowSpreadsheet.setSelected(app.showSpreadsheetView());     // Michael Borcherds 2008-01-14
+	    cbShowEuclidianView.setSelected(app.getGuiManager().showEuclidianView());
+	    cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
+	    cbShowSpreadsheetView.setSelected(app.getGuiManager().showSpreadsheetView());
         cbShowAlgebraInput.setSelected(app.showAlgebraInput());
         cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 
-		boolean showAlgebraView = app.showAlgebraView();
-		boolean showSpreadsheetView = app.showSpreadsheetView();
+		boolean showAlgebraView = app.getGuiManager().showAlgebraView();
 		cbShowAlgebraView.setSelected(showAlgebraView);
-		cbShowAuxiliaryObjects.setVisible(showAlgebraView);
+		
+		cbShowAuxiliaryObjects.setEnabled(showAlgebraView);
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
-
-		cbHorizontalSplit.setVisible(showAlgebraView || showSpreadsheetView);
-		cbHorizontalSplit.setSelected(app.isHorizontalSplit());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowCmdList.setSelected(app.showCmdList());
-		cbShowCmdList.setVisible(app.showAlgebraInput());		
-			
+		cbShowInputTop.setSelected(app.showInputTop());
+		menuViewInput.setEnabled(app.showAlgebraInput());		
 		
-		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());		
+		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());	
 		
-		DefaultGuiManager guiMan = (DefaultGuiManager) app.getGuiManager();
-		if (guiMan != null) {
-			cbShowConsProtNavigationPlay
-					.setSelected(guiMan.isConsProtNavigationPlayButtonVisible());
-			cbShowConsProtNavigationOpenProt
-					.setSelected(guiMan.isConsProtNavigationProtButtonVisible());
-		}
-			
-		cbShowConsProtNavigationPlay.setVisible(app.showConsProtNavigation());
-		cbShowConsProtNavigationOpenProt.setVisible(app.showConsProtNavigation());	
+		cbShowConsProtNavigationPlay
+				.setSelected(guiMananager.isConsProtNavigationPlayButtonVisible());
+		cbShowConsProtNavigationOpenProt
+				.setSelected(guiMananager.isConsProtNavigationProtButtonVisible());
+		
+		cbShowConsProtNavigationPlay.setEnabled(app.showConsProtNavigation());
+		cbShowConsProtNavigationOpenProt.setEnabled(app.showConsProtNavigation());
 
 		// Michael Borcherds 2008-03-03 BEGIN put these back in
         updateMenuContinuity();
@@ -138,7 +160,11 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         updateMenuBooleanSize(); // Michael Borcherds 2008-05-12
         updateMenuRightAngleStyle();
         updateMenuCoordStyle();	
-        updateMenuLabeling();        
+        updateMenuLabeling();
+        updateMenuTools(); // Florian Sonner 2008-09-12
+        
+        if(!app.isApplet())
+        	updateMenuPerspective(); // Florian Sonner 2008-09-14
         
         updateActions();
         updateSelection();
@@ -308,7 +334,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		mi = menu.add(propertiesAction);
 		setMenuShortCutAccelerator(mi, 'E');
 		add(menu);
-
+		
 		// View
 		menu = new JMenu(app.getMenu("View"));
 		cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());		
@@ -319,40 +345,54 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
 		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		menu.add(cbShowGrid);
-		menu.addSeparator();
-
-		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
-		cbShowAlgebraView.setIcon(app.getEmptyIcon());
-		cbShowAlgebraView.setSelected(app.showAlgebraView());
-		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
-		menu.add(cbShowAlgebraView);
-
-	    // Michael Borcherds 2008-01-14
-		cbShowSpreadsheet = new JCheckBoxMenuItem(showSpreadsheetAction);		
-		cbShowSpreadsheet.setIcon(app.getEmptyIcon());
-		cbShowSpreadsheet.setSelected(app.showSpreadsheetView());	
-		setMenuShortCutShiftAccelerator(cbShowSpreadsheet, 'S');
-		menu.add(cbShowSpreadsheet);		
 		
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
 		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
-		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
+		cbShowAuxiliaryObjects.setSelected(app.getGuiManager().getAlgebraView() == null
+				|| app.showAuxiliaryObjects());
 		menu.add(cbShowAuxiliaryObjects);
-
-		cbHorizontalSplit = new JCheckBoxMenuItem(horizontalSplitAction);				
-		cbHorizontalSplit.setIcon(app.getEmptyIcon());
-		menu.add(cbHorizontalSplit);
+		
+		menu.addSeparator();
+		
+		/*
+		menu.add(new JCheckBoxMenuItem(app.getPlain("DrawingPad"), app.getEmptyIcon()));
+		menu.add(new JCheckBoxMenuItem(app.getPlain("AlgebraWindow"), app.getEmptyIcon()));
+		menu.add(new JCheckBoxMenuItem(app.getPlain("Spreadsheet"), app.getEmptyIcon()));
+		menu.add(new JCheckBoxMenuItem(app.getPlain("CAS"), app.getEmptyIcon()));
+		menu.addSeparator();*/
+		
+		cbShowEuclidianView = new JCheckBoxMenuItem(showEuclidianViewAction);
+		cbShowEuclidianView.setIcon(app.getImageIcon("document-properties.png"));
+		cbShowEuclidianView.setSelected(app.getGuiManager().showEuclidianView());
+		menu.add(cbShowEuclidianView);
+		
+		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);		
+		cbShowAlgebraView.setIcon(app.getEmptyIcon());
+		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
+		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
+		menu.add(cbShowAlgebraView);
+		
+	    // Michael Borcherds 2008-01-14
+		cbShowSpreadsheetView = new JCheckBoxMenuItem(showSpreadsheetAction);		
+		cbShowSpreadsheetView.setIcon(app.getEmptyIcon());
+		cbShowSpreadsheetView.setSelected(app.getGuiManager().showSpreadsheetView());	
+		setMenuShortCutShiftAccelerator(cbShowSpreadsheetView, 'S');
+		menu.add(cbShowSpreadsheetView);
 
 		menu.addSeparator();
-
+		
 		// show/hide cmdlist, algebra input
 		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);		
 		menu.add(cbShowAlgebraInput);
-
+		
+		menuViewInput = new JMenu(app.getMenu("InputField") + " ...");
+		menuViewInput.setIcon(app.getEmptyIcon());
 		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);		
-		menu.add(cbShowCmdList);
-		menu.addSeparator();
+		menuViewInput.add(cbShowCmdList);
+		cbShowInputTop = new JCheckBoxMenuItem(showInputTopAction);
+		menuViewInput.add(cbShowInputTop);
+		menu.add(menuViewInput);
 
 		// Construction Protocol
 		cbShowConsProtNavigation = new JCheckBoxMenuItem(
@@ -360,20 +400,35 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		cbShowConsProtNavigationPlay = new JCheckBoxMenuItem(
 				showConsProtNavigationPlayAction);
 		cbShowConsProtNavigationOpenProt = new JCheckBoxMenuItem(
-				showConsProtNavigationOpenProtAction);	
+				showConsProtNavigationOpenProtAction);
+		
 		menu.add(constProtocolAction);
-		menu.add(cbShowConsProtNavigation);
-		menu.add(cbShowConsProtNavigationPlay);
-		menu.add(cbShowConsProtNavigationOpenProt);		
+		
+		menuViewConsProt = new JMenu(app.getPlain("ConstructionProtocol") + " ...");
+		menuViewConsProt.setIcon(app.getImageIcon("table.gif"));
+		menuViewConsProt.add(cbShowConsProtNavigation);
+		menuViewConsProt.add(cbShowConsProtNavigationPlay);
+		menuViewConsProt.add(cbShowConsProtNavigationOpenProt);
+		menu.add(menuViewConsProt);
 		
 		menu.addSeparator();
+		
+		if(!app.isApplet()) {			
+			menuViewPerspectives = new JMenu("Perspectives");
+			menuViewPerspectives.setIcon(app.getImageIcon("perspective.gif"));
+			menu.add(menuViewPerspectives);
+			
+			updateMenuPerspective();
+			
+			menu.addSeparator();
+		}
+		
 		mi = menu.add(refreshAction);
 		setMenuShortCutAccelerator(mi, 'F');
 		
 		mi = menu.add(recomputeAllViews);
 		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
 		mi.setAccelerator(ks);
-		
 		
 		add(menu);
 
@@ -580,6 +635,20 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 		
 		if (!app.isApplet()) {
+			// perspectives submenu
+			submenu = new JMenu(app.getMenu("Perspectives"));
+			submenu.setIcon(app.getImageIcon("perspective.gif"));
+			
+			cbShowViewTitlebar = new JCheckBoxMenuItem(showViewTitlebarAction);
+			cbShowViewTitlebar.setSelected(layout.isTitleBarVisible());
+			
+			cbIgnoreDocumentPerspective = new JCheckBoxMenuItem(ignoreDocumentPerspectiveAction);
+			cbIgnoreDocumentPerspective.setSelected(app.isIgnoringDocumentPerspective());
+			
+			submenu.add(cbShowViewTitlebar);
+			submenu.add(cbIgnoreDocumentPerspective);			
+			menu.add(submenu);
+			
 			// Preferences
 			menu.addSeparator();
 			//submenu = new JMenu(app.getMenu("Settings"));			
@@ -588,14 +657,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			//menu.add(submenu);
 		}
 		
-		
-		// tools menu		
+		// tools menu
 		menuTools = new JMenu(app.getMenu("Tools"));
+		updateMenuTools();
 		add(menuTools);
-		menuTools.add(showCreateToolsAction);
-		menuTools.add(showManageToolsAction);
-		menuTools.addSeparator();
-		menuTools.add(toolbarConfigAction);
 
 		if (!app.isApplet()) {
 			// windows menu
@@ -625,14 +690,145 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		
 		updateMenubar();
 	}
+	
+	/**
+	 * Append the menu which contains all tools to the menu bar.
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-08-13
+	 */
+	public void updateMenuTools()
+	{		
+		if(menuTools == null) return;
+		
+		menuTools.removeAll();
+
+		menuTools.add(toolbarConfigAction);
+		menuTools.addSeparator();
+		menuTools.add(showCreateToolsAction);
+		menuTools.add(showManageToolsAction);
+		menuTools.addSeparator();
+		
+		JMenu[] modeMenus = new JMenu[12];
+		modeMenus[0] = new JMenu(app.getMenu("MovementTools"));
+		modeMenus[1] = new JMenu(app.getMenu("PointTools"));
+		modeMenus[2] = new JMenu(app.getMenu("BasicLineTools"));
+		modeMenus[3] = new JMenu(app.getMenu("SpecialLineTools"));
+		modeMenus[4] = new JMenu(app.getMenu("PolygonTools"));
+		modeMenus[5] = new JMenu(app.getMenu("CircleArcTools"));
+		modeMenus[6] = new JMenu(app.getMenu("ConicSectionTools"));
+		modeMenus[7] = new JMenu(app.getMenu("MeasurementTools"));
+		modeMenus[8] = new JMenu(app.getMenu("TransformationTools"));
+		modeMenus[9] = new JMenu(app.getMenu("SpecialObjectTools"));
+		modeMenus[10] = new JMenu(app.getMenu("GeneralTools"));
+		modeMenus[11] = new JMenu(app.getMenu("CustomTools"));
+		
+		for(int i = 0; i < modeMenus.length; ++i)
+		{
+			modeMenus[i].setIcon(app.getEmptyIcon());
+			menuTools.add(modeMenus[i]);
+		}
+		
+		MyToolbar toolbar = new MyToolbar(app);
+		Vector modes = MyToolbar.createToolBarVec(toolbar.getDefaultToolbarString());
+		
+		int menuIndex = 0;
+		
+		for(Iterator iter = modes.iterator(); iter.hasNext();)
+		{
+			Object next = iter.next();
+			if(next instanceof Vector)
+			{
+				for(Iterator iter2 = ((Vector)next).iterator(); iter2.hasNext();)
+				{
+					Object next2 = iter2.next();
+					
+					if(next2 instanceof Integer)
+					{
+						int mode = ((Integer)next2).intValue();
+						
+						if(mode < 0)
+							modeMenus[menuIndex].addSeparator();
+						else
+						{
+							JMenuItem item = new JMenuItem(app.getModeText(mode));//, app.getModeIcon(mode));
+							item.setActionCommand(Integer.toString(mode));
+							item.addActionListener(modeChangeAction);
+							item.setToolTipText(app.getModeHelp(mode));
+							modeMenus[menuIndex].add(item);
+						}
+					}
+					else
+					{
+						Application.debug("Nested default toolbar not supported");
+					}
+				}
+				
+				++menuIndex;
+			}
+		}
+		
+		if(modeMenus[modeMenus.length-1].getItemCount() == 0)
+			modeMenus[modeMenus.length-1].setEnabled(false);
+	}
+	
+	/**
+	 * Update the menu which contains the perspectives.
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-09-13
+	 */
+	public void updateMenuPerspective() {
+		if(menuViewPerspectives == null) return;
+
+		menuViewPerspectives.removeAll();
+
+		// default perspectives
+		Perspective[] defaultPerspectives = Layout.defaultPerspectives;
+		
+		for(int i = 0; i < defaultPerspectives.length; ++i) {
+			JMenuItem tmpItem = new JMenuItem(changePerspectiveAction);
+			tmpItem.setText(app.getMenu("Perspective."+defaultPerspectives[i].getId()));
+			tmpItem.setIcon(app.getEmptyIcon());
+			tmpItem.setActionCommand("d"+i);
+			menuViewPerspectives.add(tmpItem);
+		}
+		
+		menuViewPerspectives.addSeparator();
+
+		// user perspectives
+		Perspective[] perspectives = layout.getPerspectives();
+		
+		if(perspectives.length != 0) {
+			for(int i = 0; i < perspectives.length; ++i) {
+				JMenuItem tmpItem = new JMenuItem(changePerspectiveAction);
+				tmpItem.setText(perspectives[i].getId());
+				tmpItem.setIcon(app.getEmptyIcon());
+				tmpItem.setActionCommand(Integer.toString(i));
+				menuViewPerspectives.add(tmpItem);
+			}
+			menuViewPerspectives.addSeparator();
+		}
+		
+		menuViewPerspectives.add(managePerspectivesAction);
+		menuViewPerspectives.add(savePerspectiveAction);
+	}
 
 	protected void initActions() {				
+		// Florian Sonner 2008-08-29
+		showEuclidianViewAction = new AbstractAction(app.getPlain("DrawingPad")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().setShowEuclidianView(!app.getGuiManager().showEuclidianView());
+			}
+		};
+		
 		showAlgebraViewAction = new AbstractAction(app.getPlain("AlgebraWindow")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowAlgebraView(!app.showAlgebraView());
-				app.updateCenterPanel(true);
+				app.getGuiManager().setShowAlgebraView(!app.getGuiManager().showAlgebraView());
 			}
 		};
 
@@ -641,8 +837,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowSpreadsheetView(!app.showSpreadsheetView());
-				app.updateCenterPanel(true);
+				app.getGuiManager().setShowSpreadsheetView(!app.getGuiManager().showSpreadsheetView());
 			}
 		};
 
@@ -666,13 +861,72 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					SwingUtilities.updateComponentTreeUI(app.getGuiManager().getAlgebraInput());
 			}
 		};
-
-		horizontalSplitAction = new AbstractAction(app.getPlain("HorizontalSplit")) {
+		
+		// Florian Sonner 2008-09-12
+		showInputTopAction = new AbstractAction(app.getMenu("InputOnTop"),
+				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
-
+			
 			public void actionPerformed(ActionEvent e) {
-				app.setHorizontalSplit(!app.isHorizontalSplit());
-				app.updateCenterPanel(true);
+				app.setShowInputTop(!app.showInputTop());
+				if(app.getGuiManager().getAlgebraInput() != null)
+					SwingUtilities.updateComponentTreeUI(app.getGuiManager().getAlgebraInput());
+			}
+		};
+		
+		// Florian Sonner 2008-09-14
+		savePerspectiveAction = new AbstractAction(app.getMenu("SaveCurrentPerspective"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				layout.showSaveDialog();
+			}
+		};
+		
+		// Florian Sonner 2008-09-14
+		managePerspectivesAction = new AbstractAction(app.getMenu("ManagePerspectives"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				layout.showManageDialog();
+			}
+		};
+		
+		// Florian Sonner 2008-09-13
+		changePerspectiveAction = new AbstractAction() {
+			public static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				// default perspectives start with a "d"
+				if(e.getActionCommand().startsWith("d")) {
+					int index = Integer.parseInt(e.getActionCommand().substring(1));
+					layout.applyPerspective(Layout.defaultPerspectives[index]);
+				} else {
+					int index = Integer.parseInt(e.getActionCommand());
+					layout.applyPerspective(layout.getPerspective(index));
+				}
+			}
+		};
+		
+		// Florian Sonner 2008-10-22
+		showViewTitlebarAction = new AbstractAction(app.getMenu("ShowViewTitlebar"),
+				app.getEmptyIcon()) {
+			public static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				layout.setTitlebarVisible(!layout.isTitleBarVisible());
+			}
+		};
+		
+		// Florian Sonner 2008-09-14
+		ignoreDocumentPerspectiveAction = new AbstractAction(app.getMenu("IgnoreDocumentPerspective"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				app.setIgnoreDocumentPerspective(!app.isIgnoringDocumentPerspective());
 			}
 		};
 
@@ -695,6 +949,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				app.setShowConstructionProtocolNavigation(!app.showConsProtNavigation());
 				app.setUnsaved();	
 				app.updateCenterPanel(true);
+				app.updateMenubar();
 			}
 		};
 
@@ -705,7 +960,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					(ConstructionProtocolNavigation) app.getGuiManager().getConstructionProtocolNavigation();
+					(ConstructionProtocolNavigation)app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -720,7 +975,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				ConstructionProtocolNavigation cpn =
-					(ConstructionProtocolNavigation) app.getGuiManager().getConstructionProtocolNavigation();
+					(ConstructionProtocolNavigation)app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
 				cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
@@ -763,7 +1018,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};
 
 		constProtocolAction = new AbstractAction(
-				app.getPlain("ConstructionProtocol") + " ...",
+				app.getPlain("ConstructionProtocol"),
 				app.getImageIcon("table.gif")) {
 			private static final long serialVersionUID = 1L;
 
@@ -773,6 +1028,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					Thread runner = new Thread() {
 						public void run() {
 							app.getGuiManager().showConstructionProtocol();
+							app.updateMenubar();
 						}
 					};
 					runner.start();
@@ -782,7 +1038,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				app.showErrorDialog(app.getError("ExportJarMissing"));
 				ee.printStackTrace();
 				}
-
 			}
 		};
 
@@ -883,7 +1138,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		};
 
 		
-
 		refreshAction = new AbstractAction(app.getMenu("Refresh"),new ImageIcon(app.getRefreshViewImage())) {
 			private static final long serialVersionUID = 1L;
 
@@ -919,6 +1173,15 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 					}
 				};
 				runner.start();						    			    								
+			}
+		};
+		
+		// Florian Sonner 2008-08-13
+		modeChangeAction = new AbstractAction() {
+			public static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				app.setMode(Integer.parseInt(e.getActionCommand()));
 			}
 		};
 
@@ -959,7 +1222,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 						
 						if (sep != null) for (int row=0 ; row<strs.length ; row++)
 						{
-							//Application.debug("XX"+strs[i]+"XX");
+							//Application.debug("-"+strs[i]+"-");
 							
 							// Remove Whitespace
 							strs[row]=strs[row].trim();
@@ -985,7 +1248,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 									kernel.getAlgebraProcessor().processAlgebraCommand(command, false);
 									coords += GeoElement.getSpreadsheetCellName(col,row);
 									if (col == tempStr.length-1) coords +=")"; else coords +=",";
-									//Application.debug("XX"+list+"XX");
+									//Application.debug("-"+list+"-");
 								}
 								if (tempStr.length == 2) // 2D coords
 								{
@@ -1070,7 +1333,6 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				app.showErrorDialog(app.getError("ExportJarMissing"));
 				ee.printStackTrace();
 				}
-					
 			}
 		};
 		
@@ -1085,8 +1347,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  	        new geogebra.export.pstricks.GeoGebraToPstricks(app);	
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPstricks not available");
-				}	
-				catch (java.lang.NoClassDefFoundError ee) {
+				} catch (java.lang.NoClassDefFoundError ee) {
 				app.showErrorDialog(app.getError("ExportJarMissing"));
 				ee.printStackTrace();
 				}
@@ -1103,8 +1364,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		  	        new geogebra.export.pstricks.GeoGebraToPgf(app);	
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
-				}	
-				catch (java.lang.NoClassDefFoundError ee) {
+				} catch (java.lang.NoClassDefFoundError ee) {
 					app.showErrorDialog(app.getError("ExportJarMissing"));
 					ee.printStackTrace();
 				}
@@ -1303,6 +1563,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 	
 	public static void showPrintPreview(final Application  app) {
 		app.loadExportJar();
+		
 		try {
 			Thread runner = new Thread() {
 				public void run() {			
@@ -1325,13 +1586,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				}
 			};
 			runner.start();
-		}
-		
-		catch (java.lang.NoClassDefFoundError ee) {
+		} catch (java.lang.NoClassDefFoundError ee) {
 		app.showErrorDialog(app.getError("ExportJarMissing"));
 		ee.printStackTrace();
 		}
-
 	}
 	
 	public static void showAboutDialog(final Application app) {
@@ -1343,9 +1601,8 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 		sb.append("</b><br>");
 		sb.append(GeoGebra.BUILD_DATE);
 
-		// load license
+		// license
 		String text = app.loadTextFile(Application.LICENSE_FILE);
-		
 		JTextArea textArea = new JTextArea(21, 45);
 		JScrollPane scrollPane = new JScrollPane(textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1625,8 +1882,5 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
         	app.setLanguage(Application.getLocale(e.getActionCommand()));        	
         	GeoGebraPreferences.getPref().saveDefaultLocale(app.getLocale());
         }
-    }
-    
-    
-  
+    }  
 }

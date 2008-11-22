@@ -1,10 +1,10 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.View;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -19,6 +19,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -83,12 +84,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
 		
-		///
-		if (!app.isApplet()) {
-			Cross cross = new Cross(app);
-			this.add(cross);
-			cross.setBounds(5, 5, 5 + Cross.LENGTH, 5 + Cross.LENGTH);
-		}
+		// Florian Sonner 2008-10-20
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 		/**/
 	
@@ -346,11 +343,6 @@ public class SpreadsheetView extends JScrollPane implements View
 			if (!rightClick) {								
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
-					
-					//GeoElement geo = (GeoElement)(table.getValueAt(point.x,point.y));
-					//Application.debug(geo.getAlgebraDescription());
-					
-					
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
 							table.getColumnSelectionAllowed() == true) {
 						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

@@ -238,6 +238,11 @@ public class TextInputDialog extends InputDialog {
 			else if (source == cbLaTeX) {
 				isLaTeX = cbLaTeX.isSelected();
 				cbLaTeXshortcuts.setEnabled(isLaTeX);
+				
+				if(isLaTeX && inputPanel.getText().length() == 0) {
+					insertString("$  $");
+					setRelativeCaretPosition(-2);
+				}
 			}			
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		

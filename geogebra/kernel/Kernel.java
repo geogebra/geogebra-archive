@@ -5504,7 +5504,6 @@ public class Kernel {
 		}
 		return animationManager;		
 	}
-	
 
 	/**
 	 * Turns silent mode on (true) or off (false). In silent mode, commands can
@@ -5546,5 +5545,4 @@ public class Kernel {
 	public final boolean isResolveUnkownVarsAsDummyGeos() {
 		return resolveUnkownVarsAsDummyGeos;
 	}
-	
 }

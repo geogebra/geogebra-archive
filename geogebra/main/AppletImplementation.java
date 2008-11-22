@@ -119,7 +119,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		showToolBarHelp = showToolBar && "true".equals(applet.getParameter("showToolBarHelp"));
 		
 		// customToolBar = "0 1 2 | 3 4 5 || 7 8 12" to set the visible toolbar modes
-		customToolBar = applet.getParameter("customToolBar");
+		customToolBar = applet.getParameter("customToolBar"); // TODO implement custom applet toolbars (F.S.)
 				
 		// showMenuBar = "true" or parameter is not available
 		showMenuBar = "true".equals(applet.getParameter("showMenuBar"));
@@ -249,6 +249,13 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		
 	public Application getApplication() {
 		return app;
+	}
+	
+	/**
+	 * @return If this applet uses any GUI component (the gui.jar has to be loaded)
+	 */
+	public boolean useGui() {
+		return showMenuBar || showAlgebraInput || showToolBar;
 	}
 	
 	public void initGUI() {		

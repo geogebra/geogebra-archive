@@ -182,10 +182,9 @@ public class GeoGebraPreferences {
      * Saves preferences by taking the application's current values. 
      */
     public  void saveXMLPreferences(Application app) {
-    	
-    	
     	// preferences xml
     	String xml = app.getPreferencesXML();
+    	
     	ggbPrefs.put(XML_USER_PREFERENCES, xml);  
     
     	// store current tools including icon images as ggt file (byte array)
@@ -317,7 +316,13 @@ public class GeoGebraPreferences {
         	app.loadMacroFileFromByteArray(ggtFile, true);
         	    		
     		// load preferences xml
-        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
+        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, "");
+        	
+        	if(xml.equals("")) {
+        		initDefaultXML(app);
+        		xml = XML_GGB_FACTORY_DEFAULT;
+        	}
+        	
     		app.setXML(xml, true);	
     		
     		app.setUndoActive(app.isUndoActive());      		

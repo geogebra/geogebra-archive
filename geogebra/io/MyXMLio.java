@@ -580,7 +580,7 @@ public class MyXMLio {
 						+ "\">\n");
 
 		// save gui settings
-		sb.append(app.getCompleteUserInterfaceXML());		
+		sb.append(app.getCompleteUserInterfaceXML(false));		
 
 		// save construction
 		sb.append(kernel.getConstructionXML());
@@ -632,7 +632,7 @@ public class MyXMLio {
 						+ "\">\n");
 
 		// save gui settings
-		sb.append(app.getCompleteUserInterfaceXML());		
+		sb.append(app.getCompleteUserInterfaceXML(true));		
 
 		sb.append("</geogebra>");
 		return sb.toString();

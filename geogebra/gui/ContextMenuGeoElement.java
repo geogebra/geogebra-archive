@@ -79,7 +79,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         	title = geo.getNameDescriptionHTML(false, true);
         setTitle(title);
         
-        if (app.showAlgebraView()) {
+        if (app.getGuiManager().showAlgebraView()) {
 	        addPointItems();
 	        addLineItems();
 	        addVectorItems();
@@ -436,7 +436,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             }  
             
             //  trace to spreadsheet
-            if (geo.isGeoPoint() && app.showSpreadsheetView()) {            	
+            if (geo.isGeoPoint() && app.getGuiManager().showSpreadsheetView()) {            	
                 cbItem = new JCheckBoxMenuItem( app.getPlain("TraceToSpreadsheet"));
                 cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
                 cbItem.setSelected(((GeoPoint) geo).getSpreadsheetTrace());
@@ -448,7 +448,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
                     }       	
             	});
                 addItem(cbItem);            	
-            }  
+            }    
             
             //  animation
             if (geo.isAnimatable()) {            	
@@ -467,11 +467,11 @@ public class ContextMenuGeoElement extends JPopupMenu {
                     }       	
             	});
                 addItem(cbItem);            	
-            }  
+            }
             
             // AUXILIARY OBJECT
             
-            if (app.showAlgebraView() && app.showAuxiliaryObjects() && 
+            if (app.getGuiManager().showAlgebraView() && app.showAuxiliaryObjects() && 
             		geo.isAlgebraShowable()) {
                 
                 // show object

@@ -411,9 +411,9 @@ public class EuclidianController implements MouseListener,
 		refreshHighlighting(null);		
 	}
 
-	final public void mouseClicked(MouseEvent e) {	
+	final public void mouseClicked(MouseEvent e) {
 		ArrayList hits;
-		//GeoElement geo;
+		//GeoElement geo
 		
 		altDown=e.isAltDown();
 		
@@ -421,13 +421,13 @@ public class EuclidianController implements MouseListener,
 			view.requestFocusInWindow();
 		
 		if (Application.isRightClick(e)) return;
-		setMouseLocation(e);		
+		setMouseLocation(e);
 		
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:								
 		case EuclidianView.MODE_ALGEBRA_INPUT:
 			switch (e.getClickCount()) {
-			case 1:			
+			case 1:
 				// handle selection click	
 				handleSelectClick(view.getTopHits(mouseLoc), 
 						Application.isControlDown(e));
@@ -459,13 +459,13 @@ public class EuclidianController implements MouseListener,
 		}
 	}
 	
-	protected void handleSelectClick(ArrayList geos, boolean ctrlDown) {		
+	protected void handleSelectClick(ArrayList geos, boolean ctrlDown) {
 		if (geos == null) {			
 			app.clearSelectedGeos();
-		} else {					
+		} else {
 			if (ctrlDown) {				
 				app.toggleSelectedGeo( chooseGeo(geos) ); 
-			} else {								
+			} else {
 				if (!moveModeSelectionHandled) {					
 					GeoElement geo = chooseGeo(geos);
 					if (geo != null) {
@@ -1339,7 +1339,6 @@ public class EuclidianController implements MouseListener,
 			if (allowSelectionRectangle()) {
 				processSelectionRectangle(e);	
 				
-				
 				return;
 			}
 		} else {	
@@ -1462,9 +1461,9 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// select all geos in selection rectangle 
-	protected void processSelectionRectangle(MouseEvent e) {		
+	protected void processSelectionRectangle(MouseEvent e) {
 		clearSelections();
-		ArrayList hits = view.getHits(view.getSelectionRectangle());		
+		ArrayList hits = view.getHits(view.getSelectionRectangle());	
 				
 		switch (mode) {
 			case EuclidianView.MODE_ALGEBRA_INPUT:
@@ -1574,7 +1573,7 @@ public class EuclidianController implements MouseListener,
 
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
-		if (app.showAlgebraView()) {
+		if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
 			hits = view.getTopHits(hits);
 			if (hits != null) {
 				String text = GeoElement.getToolTipDescriptionHTML(hits,

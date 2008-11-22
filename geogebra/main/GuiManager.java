@@ -28,6 +28,7 @@ import javax.swing.JMenuBar;
  * separate gui jar file.
  */
 public interface GuiManager {
+	public void initialize();
 	
 	public boolean isPropertiesDialogSelectionListener();	
 	public void clearPreferences();
@@ -39,10 +40,22 @@ public interface GuiManager {
 	public int getHighestUsedSpreadsheetColumn(); 
 	public int getSpreadsheetTraceRow(int traceColumn);
 	
+	public void attachView(int viewId);
+	public void detachView(int viewId);
 	public void attachSpreadsheetView();
 	public void detachSpreadsheetView();	
 	public void attachAlgebraView();
 	public void detachAlgebraView();
+
+	public void setShowEuclidianView(boolean flag);
+	public void setShowAlgebraView(boolean flag);
+	public void setShowSpreadsheetView(boolean flag);
+
+	public boolean showEuclidianView();
+	public boolean showAlgebraView();
+	public boolean showSpreadsheetView();
+	
+	public void setPerspectives(ArrayList perspectives);
 	
 	public String getSpreadsheetViewXML();
 	public String getConsProtocolXML();
@@ -54,6 +67,10 @@ public interface GuiManager {
 
 	public void doAfterRedefine(GeoElement geo);
 
+	// Layout methods - Florian Sonner 2008-11-02
+	public String getLayoutXml(boolean isPreference);
+	public JComponent getLayoutRoot(); 
+	
 	public JComponent getToolbarPanel() ;
 	
 	public void setShowToolBarHelp(boolean flag);

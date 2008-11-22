@@ -1034,12 +1034,14 @@ public class PropertiesDialogGeoElement
 	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener {
 
 		private static final long serialVersionUID = 1L;
-		private Object[] geos; // currently selected geos		
+		private Object[] geos; // currently selected geos
+		private JLabel previewLabel;
 		private JPanel previewPanel;
 
 		public ColorPanel(JColorChooser colChooser) {
 			colChooser.setLocale(app.getLocale());
-			previewPanel = new PreviewPanel();					
+			previewPanel = new PreviewPanel();
+			previewLabel = new JLabel();
 			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
 			
 			setLayout(new BorderLayout());		
@@ -1090,6 +1092,7 @@ public class PropertiesDialogGeoElement
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			p.add(new JLabel(app.getMenu("Preview") + ": "));
 			p.add(previewPanel);
+			p.add(previewLabel);
 			add(p, BorderLayout.CENTER);
 			
 			// in order to get state changes we need to set color chooser to
@@ -1146,11 +1149,14 @@ public class PropertiesDialogGeoElement
 			Color col;
 			if (equalObjColor) {
 				col = geo0.getObjectColor();
-				previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());		
+				previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
+				previewLabel.setText("("+previewPanel.getToolTipText()+")");		
 			} else {
 				col = null;
 				previewPanel.setToolTipText("");
+				previewLabel.setText("");
 			}
+			
 			previewPanel.setForeground(col);
 			return this;
 		}
@@ -1165,7 +1171,8 @@ public class PropertiesDialogGeoElement
 			// update preview panel
 			previewPanel.setForeground(col);
 			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
-
+			previewLabel.setText("("+previewPanel.getToolTipText()+")");
+			
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
 				geo = (GeoElement) geos[i];

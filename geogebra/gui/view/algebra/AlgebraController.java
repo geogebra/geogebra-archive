@@ -135,14 +135,7 @@ public class AlgebraController
 		// LEFT CLICK
 		if (!rightClick) {
 			int x = e.getX();
-			int y = e.getY();		
-			if (view.hitClosingCross(x, y)) {			
-				app.setWaitCursor();
-				app.setShowAlgebraView(false);
-				app.updateCenterPanel(true);
-				app.setDefaultCursor();
-				return;				
-			}
+			int y = e.getY();
 			
 			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);			
 			EuclidianView ev = app.getEuclidianView();
@@ -216,11 +209,9 @@ public class AlgebraController
 	}
 
 	public void mouseEntered(java.awt.event.MouseEvent p1) {
-		view.setClosingCrossHighlighted(false);
 	}
 
-	public void mouseExited(java.awt.event.MouseEvent p1) {		
-		view.setClosingCrossHighlighted(false);
+	public void mouseExited(java.awt.event.MouseEvent p1) {
 		//if (kernelChanged) {
 		//	app.storeUndoInfo();
 		//	kernelChanged = false;
@@ -237,21 +228,17 @@ public class AlgebraController
 		
 		int x = e.getX();
 		int y = e.getY();
-		if (view.hitClosingCross(x, y)) {
-			view.setClosingCrossHighlighted(true);
-		} else {
-			view.setClosingCrossHighlighted(false);
-			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);
-			EuclidianView ev = app.getEuclidianView();
-			
-			// tell EuclidianView to handle mouse over
-			ev.mouseMovedOver(geo);								
-			if (geo != null) {
-				view.setToolTipText(geo.getLongDescriptionHTML(true, true));				
-			} else
-				view.setToolTipText(null);			
-		}
 		
+		GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);
+		EuclidianView ev = app.getEuclidianView();
+			
+		// tell EuclidianView to handle mouse over
+		ev.mouseMovedOver(geo);								
+		if (geo != null) {
+			view.setToolTipText(geo.getLongDescriptionHTML(true, true));				
+		} else {
+			view.setToolTipText(null);
+		}
 	}
 
 	

@@ -42,12 +42,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -57,8 +59,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -88,18 +88,15 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements KeyEventDispatcher {
-
 	// disabled parts
-	public static final boolean DISABLE_I2G = true;	
-
+	public static final boolean DISABLE_I2G = true;
+	
 	// license file
 	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";
 
@@ -218,6 +215,36 @@ public abstract class Application implements KeyEventDispatcher {
 	// <-- Added for Intergeo File Format (Yves Kreis)
 
 	// private static Color COLOR_STATUS_BACKGROUND = new Color(240, 240, 240);
+	
+	
+	// IDs of the views - Florian Sonner 2008-10-21
+	public static final int VIEW_EUCLIDIAN = 1;
+	public static final int VIEW_ALGEBRA = 2;
+	public static final int VIEW_SPREADSHEET = 4;
+	
+	/**
+	 * In case the application is using the layout class, the whole GUI stuff has to be loaded
+	 * in every case. Applets may set this value to false in order to use the light version
+	 * (just euclidian view) of the program.
+	 */
+	private boolean useLayout = true;
+	
+	/**
+	 * If the application should ignore the perspective stored in a loaded document.
+	 */
+	private boolean ignoreDocumentPerspective = false;
+	
+	/**
+	 * The preferred size of this application. Used in case the frame size should be updated.
+	 */
+	private Dimension preferredSize = new Dimension();
+	
+	/**
+	 * A temporary vector with all perspectives which were included in the last loaded document.
+	 * This vector will be passed to the   
+	 */
+	private ArrayList tmpPerspectives;
+	
 
 	private JFrame frame;
 	private AppletImplementation appletImpl;
@@ -249,9 +276,10 @@ public abstract class Application implements KeyEventDispatcher {
 	private LowerCaseDictionary commandDict = new LowerCaseDictionary();
 
 	private boolean INITING = false;
-	protected boolean showAlgebraView = true;
+	
 	private boolean showAuxiliaryObjects = false;
 	private boolean showAlgebraInput = true;
+	private boolean showInputTop = false;
 	private boolean showCmdList = true;
 	protected boolean showToolBar = true;
 	protected boolean showMenuBar = true;
@@ -259,7 +287,6 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean[] showAxes = { true, true };
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
-	private boolean showSpreadsheet = false;
 	private boolean showCAS = false;
 	private boolean printScaleString = false;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
@@ -276,15 +303,6 @@ public abstract class Application implements KeyEventDispatcher {
 	public Font boldFont, plainFont, smallFont;
 
 	protected JPanel centerPanel;
-
-	protected JSplitPane sp;
-	private JSplitPane sp2;
-	private DividerChangeListener spChangeListener;
-	protected int initSplitDividerLocationHOR2 = 250; // init value
-	protected int initSplitDividerLocationVER2 = 300; // init value
-	protected int initSplitDividerLocationHOR = 650; // init value
-	protected int initSplitDividerLocationVER = 400; // init value
-	protected boolean horizontalSplit = true; // 
 
 	private ArrayList selectedGeos = new ArrayList();
 
@@ -316,6 +334,12 @@ public abstract class Application implements KeyEventDispatcher {
 		// added to help debug applets
 		Application.debug("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
 				+ " Java " + System.getProperty("java.version"));
+		
+		if(frame != null) {
+			preferredSize = new Dimension(800, 600); // TODO redo (F.S:)
+		} else {
+			preferredSize = appletImpl.getJApplet().getSize();
+		}
 
 		
 		try {
@@ -330,7 +354,6 @@ public abstract class Application implements KeyEventDispatcher {
 	    	IPAddress = "";
 	    }
 
-		
 		
 		isApplet = appletImpl != null;
 		if (frame != null) {
@@ -362,21 +385,24 @@ public abstract class Application implements KeyEventDispatcher {
 		euclidianView.setAntialiasing(antialiasing);
 	
 
-		// set frame
-		if (!isApplet) {
-			setFrame(frame);
-		}
-
 		// load file on startup and set fonts
 		// INITING: to avoid multiple calls of setLabels() and
 		// updateContentPane()
 		INITING = true;
-		setFontSize(getInitFontSize());
+		
+		// use the layout in case at least one GUI element is displayed
+		useLayout = !isApplet || (isApplet && appletImpl.useGui());
 
+		// set frame
 		if (!isApplet) {
-			// init preferences
-			GeoGebraPreferences.getPref().initDefaultXML(this);
+			setFrame(frame);
 		}
+		
+		if(useLayout) {
+			getGuiManager().initialize();
+		}
+		
+		setFontSize(getInitFontSize());
 
 		// open file given by startup parameter
 		boolean fileLoaded = handleFileArg(args);
@@ -388,6 +414,10 @@ public abstract class Application implements KeyEventDispatcher {
 					.getDefaultImagePath();
 			if (!fileLoaded)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
+		}
+		
+		if(useLayout && !fileLoaded) {			
+			getGuiManager().setPerspectives(tmpPerspectives);	
 		}
 
 		// init undo
@@ -402,7 +432,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// init plugin manager for applications
 		if (!isApplet)
-			pluginmanager = getPluginManager();		
+			pluginmanager = getPluginManager();
 	}
 	
 	public void initKernel(){
@@ -497,6 +527,26 @@ public abstract class Application implements KeyEventDispatcher {
 	public boolean isIniting() {
 		return INITING;
 	}
+	
+	public boolean isUsingLayout() {
+		return useLayout;
+	}
+	
+	/**
+	 * @return If the perspective stored in loaded documents is ignored.
+	 */
+	public boolean isIgnoringDocumentPerspective() {
+		return ignoreDocumentPerspective;
+	}
+	
+	/**
+	 * Set if the perspective stored in loaded documents should be ignored.
+	 * 
+	 * @param ignoreDocumentPerspective
+	 */
+	public void setIgnoreDocumentPerspective(boolean ignoreDocumentPerspective) {
+		this.ignoreDocumentPerspective = ignoreDocumentPerspective;
+	}
 
 	/**
 	 * Returns labeling style. See the constants in ConstructionDefaults (e.g.
@@ -538,7 +588,6 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void updateContentPane(boolean updateComponentTreeUI) {
-
 		if (INITING)
 			return;
 
@@ -584,20 +633,33 @@ public abstract class Application implements KeyEventDispatcher {
 		// CENTER: Algebra View, Euclidian View
 		// euclidian panel with view and status bar
 		centerPanel = new JPanel(new BorderLayout());
+		centerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow));
 
-		if (showToolBar) {
-			// NORTH: Toolbar
-			panel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+		if(showInputTop) {
+			JPanel topPanel = new JPanel(new BorderLayout());
+			
+			if (showToolBar) {
+				topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+			}
+			
+			if (showAlgebraInput) {
+				topPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+			}
+			
+			panel.add(topPanel, BorderLayout.NORTH);
+		} else {
+			if (showToolBar) {
+				panel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+			}
+			
+			if (showAlgebraInput) {
+				panel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+			}
 		}
 
 		// updateCenterPanel
 		updateCenterPanel(true);
 		panel.add(centerPanel, BorderLayout.CENTER);
-
-		// SOUTH: inputField
-		if (showAlgebraInput) {
-			panel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
-		}
 
 		// init labels
 		setLabels();
@@ -606,85 +668,15 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void updateCenterPanel(boolean updateUI) {
 		centerPanel.removeAll();
-
-		JPanel eup = new JPanel(new BorderLayout());
-		eup.setBackground(Color.white);
-		eup.add(euclidianView, BorderLayout.CENTER);
-
-		if (showConsProtNavigation) {
-			JComponent consProtNav = getGuiManager()
-					.getConstructionProtocolNavigation();
-			eup.add(consProtNav, BorderLayout.SOUTH);
-			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
-					Color.gray));
-		}
-
-		JComponent cp2 = null;
-		/*
-		 * if (showSpreadsheet) { if (horizontalSplit) { sp2 = new
-		 * JSplitPane(JSplitPane.HORIZONTAL_SPLIT, eup, spreadsheetView);
-		 * sp2.setDividerLocation(initSplitDividerLocationHOR2); } else { sp2 =
-		 * new JSplitPane(JSplitPane.VERTICAL_SPLIT, eup, spreadsheetView);
-		 * sp2.setDividerLocation(initSplitDividerLocationVER2); }
-		 * sp2.addPropertyChangeListener("dividerLocation", new
-		 * DividerChangeListener2()); cp2 = sp2; } else { cp2 = eup; }
-		 * 
-		 * JComponent cp1 = null; if (showAlgebraView) { if (horizontalSplit) {
-		 * sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new
-		 * JScrollPane(algebraView), cp2);
-		 * sp.setDividerLocation(initSplitDividerLocationHOR); } else { sp = new
-		 * JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(algebraView),
-		 * cp2); sp.setDividerLocation(initSplitDividerLocationVER); }
-		 * sp.addPropertyChangeListener("dividerLocation", new
-		 * DividerChangeListener()); cp1 = sp; } else { cp1 = cp2; }
-		 */
-		if (showAlgebraView) {
-			if (horizontalSplit) {
-				sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-						new JScrollPane(getGuiManager().getAlgebraView()), eup);
-				sp2.setDividerLocation(initSplitDividerLocationHOR2);
-			} else {
-				sp2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, eup,
-						new JScrollPane(getGuiManager().getAlgebraView()));
-				sp2.setDividerLocation(initSplitDividerLocationVER2);
-			}
-
-			if (spChangeListener == null)
-				spChangeListener = new DividerChangeListener();
-			sp2.addPropertyChangeListener("dividerLocation", spChangeListener);
-			cp2 = sp2;
+		
+		if(useLayout) {		
+			centerPanel.add(getGuiManager().getLayoutRoot(), BorderLayout.CENTER);
 		} else {
-			cp2 = eup;
+			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
 		}
-
-		JComponent cp1 = null;
-		if (showSpreadsheet) {
-			if (horizontalSplit) {
-				sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, cp2,
-						getGuiManager().getSpreadsheetView());
-				sp.setDividerLocation(initSplitDividerLocationHOR);
-			} else {
-				sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cp2,
-						getGuiManager().getSpreadsheetView());
-				sp.setDividerLocation(initSplitDividerLocationVER);
-			}
-
-			if (spChangeListener == null)
-				spChangeListener = new DividerChangeListener();
-			sp.addPropertyChangeListener("dividerLocation", spChangeListener);
-			cp1 = sp;
-		} else {
-			cp1 = cp2;
-		}
-		centerPanel.add(cp1, BorderLayout.CENTER);
-
-		// border of euclidianPanel
-		int eupTopBorder = !showAlgebraView && showToolBar ? 1 : 0;
-		int eupBottomBorder = showToolBar
-				&& !(showAlgebraView && !horizontalSplit) ? 1 : 0;
-		eup.setBorder(BorderFactory.createMatteBorder(eupTopBorder, 0,
-				eupBottomBorder, 0, Color.gray));
-
+		
+		euclidianView.setStandardView(false);
+		
 		if (updateUI)
 			updateComponentTreeUI();
 	}
@@ -697,6 +689,8 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Handles command line options (like -language).
 	 */
 	private void handleOptionArgs(String[] args) {
+		// TODO Save parameters in temporary variables, parameters ignored at the moment (F.S.)
+		
 		// locale should be set here either to default locale or
 		// according to the -language option
 		Locale initLocale = mainComp.getLocale();		
@@ -722,6 +716,7 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --help\t\tprint this message\n"
 										+ "  --language=LANGUGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
 										+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
+										+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
 										+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
 										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
@@ -734,10 +729,12 @@ public abstract class Application implements KeyEventDispatcher {
 						// Application.debug("locale: " + initLocale);
 					} else if (optionName.equals("showAlgebraInput")) {
 						setShowAlgebraInput(!optionValue.equals("false"));
+					} else if (optionName.equals("showAlgebraInputTop")) {
+						setShowInputTop(optionValue.equals("true")); // Florian Sonner 2008-10-26
 					} else if (optionName.equals("showAlgebraWindow")) {
-						setShowAlgebraView(!optionValue.equals("false"));
+						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
 					} else if (optionName.equals("showSpreadsheet")) {
-						setShowSpreadsheetView(!optionValue.equals("false"));
+						getGuiManager().setShowAlgebraView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
 						setShowCasView(!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {
@@ -785,12 +782,17 @@ public abstract class Application implements KeyEventDispatcher {
 
 				URL url = new URL(fileArgument);
 				success = loadXML(url, isMacroFile);
+				
+				if(success && !isMacroFile && useLayout && !isIgnoringDocumentPerspective())
+					getGuiManager().setPerspectives(tmpPerspectives);
+				
 				updateContentPane(true);
 			} else {
 				File f = new File(fileArgument);
 				f = f.getCanonicalFile();
 				success = getGuiManager().loadFile(f, isMacroFile);
 			}
+			
 			return success;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -801,7 +803,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public Kernel getKernel() {
 		return kernel;
 	}
-
+	
 	public void setApplet(AppletImplementation appletImpl) {
 		isApplet = true;
 		this.appletImpl = appletImpl;
@@ -868,6 +870,28 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public Component getMainComponent() {
 		return mainComp;
+	}
+	
+	public Dimension getPreferredSize() {
+		return preferredSize;
+	}
+	
+	public void setPreferredSize(Dimension size) {
+		preferredSize = size;
+	}
+	
+	/**
+	 * Save all perspectives included in a document into an array with temporary
+	 * perspectives.
+	 * 
+	 * @param perspectives
+	 */
+	public void setTmpPerspectives(ArrayList perspectives) {
+		tmpPerspectives = perspectives;
+	}
+	
+	public ArrayList getTmpPerspectives() {
+		return tmpPerspectives;
 	}
 
 	public EuclidianView getEuclidianView() {
@@ -1783,6 +1807,28 @@ public abstract class Application implements KeyEventDispatcher {
 			return getMenu(EuclidianView.getModeText(mode));
 	}
 
+	/**
+	 * Returns help for given mode number
+	 */
+	public String getModeHelp(int mode) {
+		// macro
+		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+			try {
+				Macro macro = kernel.getMacro(macroID);
+				return macro.getToolHelp();
+			} catch (Exception e) {
+				Application
+						.debug("Application.getModeTextHelp(): macro does not exist: ID = "
+								+ macroID);
+				// e.printStackTrace();
+				return "";
+			}
+		} else
+			// standard case
+			return getMenu(EuclidianView.getModeText(mode)+".Help");
+	}
+
 	public ImageIcon getModeIcon(int mode) {
 		ImageIcon icon;
 
@@ -1818,76 +1864,6 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		}
 		return icon;
-	}
-
-	public void setSplitDividerLocationHOR(int loc) {
-		initSplitDividerLocationHOR = loc;
-		// debug(loc+"");
-	}
-
-	public void setSplitDividerLocationVER(int loc) {
-		initSplitDividerLocationVER = loc;
-		// debug(loc+"");
-	}
-
-	public void setSplitDividerLocationHOR2(int loc) {
-		initSplitDividerLocationHOR2 = loc;
-		// debug(loc+"");
-	}
-
-	public void setSplitDividerLocationVER2(int loc) {
-		initSplitDividerLocationVER2 = loc;
-		// debug(loc+"");
-	}
-
-	public void setHorizontalSplit(boolean flag) {
-		if (flag == horizontalSplit)
-			return;
-
-		horizontalSplit = flag;
-		if (sp == null)
-			return;
-		if (flag) {
-			sp.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		} else {
-			sp.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		}
-	}
-
-	public boolean isHorizontalSplit() {
-		return horizontalSplit;
-	}
-
-	public void setShowAlgebraView(boolean flag) {
-		if (showAlgebraView == flag)
-			return;
-
-		showAlgebraView = flag;
-		if (showAlgebraView) {
-			getGuiManager().attachAlgebraView();
-			getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
-		} else {
-			if (hasGuiManager())
-				getGuiManager().detachAlgebraView();
-		}
-
-		updateMenubar();
-		isSaved = false;
-	}
-
-	public void setShowSpreadsheetView(boolean flag) {
-		if (showSpreadsheet == flag)
-			return;
-
-		showSpreadsheet = flag;
-		if (showSpreadsheet) {
-			getGuiManager().attachSpreadsheetView();
-		} else {
-			getGuiManager().detachSpreadsheetView();
-		}
-
-		updateMenubar();
-		isSaved = false;
 	}
 
 	public boolean showCasView() {
@@ -1960,15 +1936,6 @@ public abstract class Application implements KeyEventDispatcher {
 		return spFrame;
 	}
 
-	final public boolean showAlgebraView() {
-		return showAlgebraView;
-	}
-
-	// Michael Borcherds 2008-01-14
-	final public boolean showSpreadsheetView() {
-		return showSpreadsheet;
-	}
-
 	public boolean showAlgebraInput() {
 		return showAlgebraInput;
 	}
@@ -1976,6 +1943,17 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setShowAlgebraInput(boolean flag) {
 		showAlgebraInput = flag;
 		updateMenubar();
+	}
+	
+	public boolean showInputTop() {
+		return showInputTop;
+	}
+	
+	public void setShowInputTop(boolean flag) {
+		showInputTop = flag;
+		
+		if(!isIniting())
+			updateContentPane();
 	}
 
 	public boolean showCmdList() {
@@ -2014,7 +1992,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setShowAuxiliaryObjects(boolean flag) {
 		showAuxiliaryObjects = flag;
 
-		if (showAlgebraView)
+		if (hasGuiManager())
 			getGuiManager().setShowAuxiliaryObjects(flag);
 		updateMenubar();
 	}
@@ -2235,7 +2213,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void setMode(int mode) {
 		currentSelectionListener = null;
-
+		
 		if (appGuiManager != null)
 			getGuiManager().setMode(mode);
 		else if (euclidianView != null)
@@ -2445,55 +2423,28 @@ public abstract class Application implements KeyEventDispatcher {
 	/**
 	 * Returns gui settings in XML format
 	 */
-	public String getGUItagXML() {
+	public String getGuiXML(boolean asPreference) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<gui>\n");
 
-		sb.append("\t<show");
-		sb.append(" algebraView=\"");
-		sb.append(showAlgebraView);
-
-		// Michael Borcherds 2008-04-25
-		sb.append("\" spreadsheetView=\"");
-		sb.append(showSpreadsheet);
-
-		sb.append("\" auxiliaryObjects=\"");
-		sb.append(showAuxiliaryObjects);
-		sb.append("\" algebraInput=\"");
-		sb.append(showAlgebraInput);
-		sb.append("\" cmdList=\"");
-		sb.append(showCmdList);
-		sb.append("\"/>\n");
-
-		if (sp != null) {
-			sb.append("\t<splitDivider");
-			sb.append(" loc=\"");
-			sb.append(initSplitDividerLocationHOR);
-			sb.append("\" locVertical=\"");
-			sb.append(initSplitDividerLocationVER);
-			sb.append("\" loc2=\""); // bugfix Michael Borcherds 2008-04-24
-			// added \" at start
-			sb.append(initSplitDividerLocationHOR2);
-			sb.append("\" locVertical2=\"");
-			sb.append(initSplitDividerLocationVER2);
-			sb.append("\" horizontal=\"");
-			sb.append(sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT);
-			sb.append("\"/>\n");
-		}
-
-		// save custom toolbar if we have one
-		if (appGuiManager != null) {
-			String cusToolbar = getGuiManager().getCustomToolbarDefinition();
-
-			if (cusToolbar != null
-					&& !cusToolbar.equals(getGuiManager()
-							.getDefaultToolbarString())) {
-				sb.append("\t<toolbar");
-				sb.append(" str=\"");
-				sb.append(cusToolbar);
-				sb.append("\"/>\n");
-			}
-		}
+		// save the dimensions of the current window
+		sb.append("\t<window width=\"");
+		
+		if(frame.getWidth() > 0)
+			sb.append(frame.getWidth());
+		else
+			sb.append(800);
+		
+		sb.append("\" height=\"");
+		
+		if(frame.getHeight() > 0)
+			sb.append(frame.getHeight());
+		else
+			sb.append(600);
+		
+		sb.append("\" />");
+		
+		sb.append(getGuiManager().getLayoutXml(asPreference));
 
 		// labeling style
 		if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
@@ -2515,19 +2466,17 @@ public abstract class Application implements KeyEventDispatcher {
 		return sb.toString();
 	}
 
-	public String getCompleteUserInterfaceXML() {
+	public String getCompleteUserInterfaceXML(boolean asPreference) {
 		StringBuffer sb = new StringBuffer();
 
 		// save gui tag settings
-		sb.append(getGUItagXML());
+		sb.append(getGuiXML(asPreference));
 
 		// save euclidianView settings
 		sb.append(getEuclidianView().getXML());
 
 		// save spreadsheetView settings
-		if (showSpreadsheet) {
-			sb.append(getGuiManager().getSpreadsheetViewXML());
-		}
+		sb.append(getGuiManager().getSpreadsheetViewXML());
 
 		// save cas view seeting and cas session
 		if (casView != null) {
@@ -2553,14 +2502,12 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Returns the CodeBase URL.
+	 * Returns the CodeBase URL as String.
 	 */
 	public URL getCodeBase() {
 		return jarmanager.getCodeBase();
 	}
-
 	
-
 	/* selection handling */
 
 	final public int selectedGeosSize() {
@@ -2713,35 +2660,6 @@ public abstract class Application implements KeyEventDispatcher {
 		updateSelection();
 	}
 
-	// remember split divider location
-	public class DividerChangeListener implements PropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent e) {
-			Number value = (Number) e.getNewValue();
-			int newDivLoc = value.intValue();
-
-			// first split pane
-			if (e.getSource() == sp) {
-				if (sp.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-					setSplitDividerLocationHOR(newDivLoc);
-				else
-					setSplitDividerLocationVER(newDivLoc);
-				isSaved = false;
-			}
-			// second split pane
-			else if (e.getSource() == sp2) {
-				if (sp2.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-					setSplitDividerLocationHOR2(newDivLoc);
-				else
-					setSplitDividerLocationVER2(newDivLoc);
-				isSaved = false;
-			}
-
-			if (appletImpl != null)
-				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
-
-		}
-	}
-
 	/* Event dispatching */
 	private GlassPaneListener glassPaneListener;
 
@@ -2782,19 +2700,26 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public Component getGlassPane() {
-		if (mainComp == frame)
+		if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			return appletImpl.getJApplet().getGlassPane();
+		else if (mainComp == frame)
 			return frame.getGlassPane();
-		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
-			return appletImpl.getJApplet().getGlassPane();		
 		else
 			return null;
 	}
+	
+	public void setGlassPane(Component glassPane) {
+		if(appletImpl != null && mainComp == appletImpl.getJApplet())
+			appletImpl.getJApplet().setGlassPane(glassPane);
+		else if(mainComp == frame)
+			frame.setGlassPane(glassPane);
+	}
 
 	public Container getContentPane() {
-		if (mainComp == frame)
-			return frame.getContentPane();		
-		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
+		if (appletImpl != null && mainComp == appletImpl.getJApplet())
 			return appletImpl.getJApplet().getContentPane();
+		else if (mainComp == frame)
+			return frame.getContentPane();
 		else
 			return null;
 	}
@@ -3264,7 +3189,7 @@ public abstract class Application implements KeyEventDispatcher {
 		default:
 			// handle selected GeoElements
 			ArrayList geos = getSelectedGeos();
-			return handleKeyPressed(event, geos);		
+			return handleKeyPressed(event, geos);
 		}
 
 		// something was done in handleKeyPressed

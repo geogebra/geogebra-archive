@@ -85,7 +85,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	            cbScreenshotPicture.setSelected(false);
 
 	            picPanel.add(cbDrawingPadPicture, BorderLayout.WEST);
-	            if (app.showAlgebraView()) {
+	            if (app.getGuiManager().showAlgebraView()) {
 	                picPanel.add(cbScreenshotPicture, BorderLayout.SOUTH);
 	            }
 	            

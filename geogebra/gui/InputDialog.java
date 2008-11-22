@@ -162,6 +162,10 @@ public class InputDialog extends JDialog implements ActionListener,
 		inputPanel.showSpecialChars(flag);
 	}
 	
+	public void showGreekLetters(boolean flag) {
+		inputPanel.showGreekLetters(flag);
+	}
+	
 	public void insertGeoElement(GeoElement geo) {
 		if (geo != null)
 			inputPanel.insertString(geo.getLabel());

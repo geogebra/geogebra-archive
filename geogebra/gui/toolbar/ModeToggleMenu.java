@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
+import geogebra.euclidian.EuclidianView;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -149,6 +149,18 @@ public class ModeToggleMenu extends JPanel {
 			bg.add(tbutton);
 		}
 	}			
+	
+	/**
+	 * Removes all modes from the toggle menu. Used for the temporary perspective.
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-10-22
+	 */
+	public void clearModes() {
+		popMenu.removeAll();
+		menuItemList.clear();
+		size = 0;
+	}
 	
 	public void addSeparator() {
 		popMenu.addSeparator();

@@ -5,6 +5,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.menubar.Menubar;
 import geogebra.gui.toolbar.MyToolbar;
@@ -15,6 +16,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -97,6 +99,10 @@ public class DefaultGuiManager implements GuiManager {
 
 	private MyToolbar appToolbarPanel;	  
     private String strCustomToolbarDefinition;
+    
+    private Layout layout;
+    
+    private boolean initialized = false;
 
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
@@ -106,10 +112,25 @@ public class DefaultGuiManager implements GuiManager {
 		this.app = app;
 		this.kernel = app.getKernel();
 		
+		// initialize the layout component
+		layout = Layout.getInstance();
+		
 		// removed: we need the arrow keys to work in applets 
 		//if (!app.isApplet())
 		
 		initAlgebraController(); // needed for keyboard input in EuclidianView
+	}
+	
+	public void initialize() {
+		if(initialized) return;
+		
+		initialized = true;
+		
+		layout.initialize(app);
+	}
+	
+	public void setPerspectives(ArrayList perspectives) {
+		layout.setPerspectives(perspectives);
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
@@ -130,8 +151,6 @@ public class DefaultGuiManager implements GuiManager {
 				app.setDefaultCursor();
 			}
 	    }
-	    
-	   
 
 	public JComponent getAlgebraView() {
 		if (algebraView == null) {
@@ -174,16 +193,6 @@ public class DefaultGuiManager implements GuiManager {
 		return -1;
 	}
 	
-	public void attachSpreadsheetView() {	
-		getSpreadsheetView();
-		spreadsheetView.attachView();		
-	}
-	
-	public void detachSpreadsheetView(){
-		if (spreadsheetView != null)
-			spreadsheetView.detachView();		
-	}	
-	
 	public String getSpreadsheetViewXML() {
 		if (spreadsheetView != null)
 			return spreadsheetView.getXML();
@@ -220,6 +229,54 @@ public class DefaultGuiManager implements GuiManager {
 		
 		return sb.toString();
 	}
+	
+	/**
+	 * Attach a view which by using the view ID.
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-10-21
+	 * 
+	 * @param viewId
+	 */
+	public void attachView(int viewId) {
+		switch(viewId) {
+			case Application.VIEW_ALGEBRA:
+				attachAlgebraView();
+				break;
+			case Application.VIEW_SPREADSHEET:
+				attachSpreadsheetView();
+				break;
+		}
+	}
+	
+	/**
+	 * Detach a view which by using the view ID.
+	 * 
+	 * @author Florian Sonner
+	 * @version 2008-10-21
+	 * 
+	 * @param viewId
+	 */
+	public void detachView(int viewId) {
+		switch(viewId) {
+			case Application.VIEW_ALGEBRA:
+				detachAlgebraView();
+				break;
+			case Application.VIEW_SPREADSHEET:
+				detachSpreadsheetView();
+				break;
+		}
+	}
+	
+	public void attachSpreadsheetView() {	
+		getSpreadsheetView();
+		spreadsheetView.attachView();		
+	}
+	
+	public void detachSpreadsheetView(){
+		if (spreadsheetView != null)
+			spreadsheetView.detachView();		
+	}	
 	
 	public void attachAlgebraView(){	
 		getAlgebraView();
@@ -272,6 +329,14 @@ public class DefaultGuiManager implements GuiManager {
 			propDialog.geoElementSelected(geo, false);
 		}
 	}
+	
+	public String getLayoutXml(boolean isPreference) {
+		return layout.getXml(isPreference);
+	}
+	
+	public JComponent getLayoutRoot() {
+		return layout.getDockManager().getRoot();
+	}
 
 	public JComponent getToolbarPanel() {
 		if (appToolbarPanel == null) {
@@ -285,6 +350,42 @@ public class DefaultGuiManager implements GuiManager {
 		if (appToolbarPanel != null) {
 			appToolbarPanel.initToolbar();
 		}
+	}
+	
+	private void setShowView(boolean flag, int viewId) {
+		if(flag) {
+			layout.getDockManager().show(viewId);
+		} else {
+			layout.getDockManager().hide(viewId);
+		}
+	}
+	
+	public void setShowEuclidianView(boolean flag) {
+		setShowView(flag, Application.VIEW_EUCLIDIAN);
+	}
+	
+	public void setShowAlgebraView(boolean flag) {
+		setShowView(flag, Application.VIEW_ALGEBRA);
+	}
+	
+	public void setShowSpreadsheetView(boolean flag) {
+		setShowView(flag, Application.VIEW_SPREADSHEET);
+	}
+	
+	private boolean showView(int viewId) {
+		return layout.getDockManager().getPanel(viewId).getInfo().isVisible();
+	}
+	
+	public boolean showAlgebraView() {
+		return showView(Application.VIEW_ALGEBRA);
+	}
+	
+	public boolean showSpreadsheetView() {
+		return showView(Application.VIEW_SPREADSHEET);
+	}
+	
+	public boolean showEuclidianView() {
+		return showView(Application.VIEW_EUCLIDIAN);
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
@@ -437,6 +538,8 @@ public class DefaultGuiManager implements GuiManager {
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.setLabels();
+		
+		layout.getDockManager().setLabels();
 	}
 
 	public void initMenubar() {
@@ -1302,6 +1405,9 @@ public class DefaultGuiManager implements GuiManager {
 		}
 
 		boolean success = app.loadXML(file, isMacroFile);
+		
+		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective())
+			setPerspectives(app.getTmpPerspectives());
 
 		if (isMacroFile) {
 			app.updateToolBar();
@@ -1312,36 +1418,7 @@ public class DefaultGuiManager implements GuiManager {
 
 				// Michael Borcherds 2008-04-27 BEGIN
 				// Scale drawing pad down if it doesn't fit on the screen
-
-				// calculate total width of everything in window except
-				// EuclidianView
-				int algebraWidth = app.showAlgebraView() ? algebraView
-						.getPreferredSize().width : 0;
-				int spreadsheetWidth = 0;
-					spreadsheetWidth = app.showSpreadsheetView() ? 
-							spreadsheetView.getPreferredSize().width : 0;
-				int algebraHeight = app.showAlgebraView() ? algebraView
-						.getPreferredSize().height : 0;
-				int spreadsheetHeight = 0;
-				spreadsheetHeight = app.showSpreadsheetView() ? 
-							spreadsheetView.getPreferredSize().height : 0;
-				int furnitureWidth = 0;
-				int furnitureHeight = 0;
 				
-				if (app.isHorizontalSplit()) {
-					furnitureWidth = algebraWidth + spreadsheetWidth;
-				} else {
-					furnitureHeight = algebraHeight + spreadsheetHeight;
-				}
-
-				// calculate total height of everything in window except
-				// EuclidianView
-				int toolbarHeight = app.showToolBar() ? getToolBarHeight() : 0;
-				int inputbarHeight = app.showAlgebraInput() ? getAlgebraInputHeight()
-						: 0;
-				int menubarHeight = app.showMenuBar() ? getMenuBarHeight() : 0;
-				// int titlebarHeight = 30; // TODO how do we calculate this?
-
 				// calculate titlebar height
 				// TODO is there a better way?
 				// getFrame().getHeight() -
@@ -1360,11 +1437,12 @@ public class DefaultGuiManager implements GuiManager {
 				testFrame2.setVisible(false);
 
 				int titlebarHeight = height1 - height2 - 5;
-				furnitureHeight += toolbarHeight + inputbarHeight
-						+ menubarHeight + titlebarHeight;
 
 				double height = app.getEuclidianView().getPreferredSize().height;
 				double width = app.getEuclidianView().getPreferredSize().width;
+				
+				int furnitureWidth = app.getPreferredSize().width;
+				int furnitureHeight = app.getPreferredSize().height - titlebarHeight;
 
 				GraphicsEnvironment env = GraphicsEnvironment
 						.getLocalGraphicsEnvironment();
@@ -1375,16 +1453,6 @@ public class DefaultGuiManager implements GuiManager {
 				// (etc)
 				// into
 				// account
-
-				// fake smaller screen for testing
-				// screenSize.width=1024; screenSize.height=768;
-
-				// Application.debug(width);
-				// Application.debug(screenSize.width - furnitureWidth);
-				// Application.debug(screenSize.width );
-				// Application.debug(height);
-				// Application.debug(screenSize.height-furnitureHeight);
-				// Application.debug(screenSize.height);
 
 				if (width > screenSize.width - furnitureWidth
 						|| height > screenSize.height - furnitureHeight) {
@@ -1397,9 +1465,13 @@ public class DefaultGuiManager implements GuiManager {
 							"\nscreenSize.height = "+screenSize.height +
 							"\nfurnitureHeight = "+furnitureHeight);
 
-					// close algebra and spreadsheet views
-					app.setShowAlgebraView(false);
-					app.setShowSpreadsheetView(false);
+					Application.debug("Screen too small, resizing to fit" +
+							"\nwidth = "+width+
+							"\nscreenSize.width = "+screenSize.width +
+							"\nfurnitureWidth = "+furnitureWidth +
+							"\nheight = "+height +
+							"\nscreenSize.height = "+screenSize.height +
+							"\nfurnitureHeight = "+furnitureHeight);
 
 					double xscale = app.getEuclidianView().getXscale();
 					double yscale = app.getEuclidianView().getYscale();
@@ -1481,12 +1553,15 @@ public class DefaultGuiManager implements GuiManager {
 				}
 
 				// Michael Borcherds 2007-04-27 END
-
-				// update GUI: size of euclidian view was set
+			}
+			
+			if (app.getEuclidianView().hasPreferredSize()) {
 				app.updateContentPaneAndSize();
 			} else {
 				app.updateContentPane();
 			}
+			
+			app.updateContentPane();
 		}
 
 		return success;
@@ -1893,16 +1968,15 @@ public class DefaultGuiManager implements GuiManager {
 	    }
 	    
 	    public void setMode(int mode) {  
-	    	
 	    	// if the properties dialog is showing, close it
 	     	if (propDialog != null && propDialog.isShowing()) {    		
 	     		propDialog.setVisible(false);	
 	     	}
-	     	
 	        if (algebraView != null)
 	        	algebraView.reset();
 	        
 	        app.getEuclidianView().setMode(mode);
+	        
 	        
 	        if (algebraInput != null && app.showAlgebraInput()) {
 	        	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
@@ -1915,17 +1989,18 @@ public class DefaultGuiManager implements GuiManager {
 	        }                
 	        
 	        // select toolbar button
-	        setToolbarMode(mode);	         
+	        setToolbarMode(mode);
 	    }
 	    
 	    public void setToolbarMode(int mode) {
-	    	 if (appToolbarPanel == null) return;
+	    	if (appToolbarPanel == null) return;
 	    	 
-        	appToolbarPanel.setSelectedMode(mode);
-        			        	
+        	appToolbarPanel.setSelectedMode(mode);	 
+        	
+        	/* Florian Sonner 2008-10-20 : Not compatible with the feature of custom toolbars
         	// check if toolbar shows selected mode
     		// if not we set the first mode of toolbar	    		
-			try {				
+			try {		
 				if (appToolbarPanel.getSelectedMode() != mode) {
 					int firstMode = appToolbarPanel.getFirstMode();
 					if (firstMode > 0)
@@ -1933,7 +2008,7 @@ public class DefaultGuiManager implements GuiManager {
 				}
 			} catch (Exception e) {
 				// ignore nullpoint exception
-			}		    				     
+			} */
 	    }
 	    
 	    /**

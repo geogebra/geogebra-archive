@@ -12,13 +12,14 @@ the Free Software Foundation.
 
 package geogebra.gui.inputbar;
 
+import geogebra.main.Application;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -97,9 +98,9 @@ implements ActionListener, MouseListener, KeyListener
 		}
 		
 		setBorder(BorderFactory.createCompoundBorder(
-				   BorderFactory.createEtchedBorder(),  
-				   BorderFactory.createEmptyBorder(2,2,2,2) )
-			   );    	
+			BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),  
+			BorderFactory.createEmptyBorder(2,2,2,2) )
+			);    	
 		
 		setLabels();
 	}		

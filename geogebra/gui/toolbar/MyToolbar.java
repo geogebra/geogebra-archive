@@ -12,17 +12,18 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
+import geogebra.main.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MySmallJButton;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
+import java.awt.SystemColor;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.text.BreakIterator;
@@ -46,6 +47,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	private JLabel modeNameLabel;
 	private JPanel toolbarHelpPanel;
 	private int selectedMode;
+	
+	private ModeToggleMenu temporaryModes;
 	
 	/**
      * Creates a panel for the application's toolbar. 
@@ -112,6 +115,13 @@ public class MyToolbar extends JPanel implements ComponentListener{
         
         // add menus with modes to toolbar
        	addCustomModesToToolbar(tb, bg);
+        
+        // add invisible temporary menu
+       	temporaryModes = new ModeToggleMenu(app, bg);
+       	temporaryModes.setVisible(false);
+       	modeToggleMenus.add(temporaryModes);
+        tb.add(temporaryModes);
+       	
         setSelectedMode(app.getMode());
         updateModeLabel();
     }
@@ -122,6 +132,16 @@ public class MyToolbar extends JPanel implements ComponentListener{
      */
     public boolean setSelectedMode(int mode) {       
     	boolean success = false;
+    	
+    	// there is no special icon/button for the algebra input mode, use the move mode button instead
+    	if(mode == EuclidianView.MODE_ALGEBRA_INPUT) {
+    		mode = EuclidianView.MODE_MOVE;
+    	}
+    	
+    	if(temporaryModes.isVisible()) {
+    		temporaryModes.clearModes();
+     		temporaryModes.setVisible(false);
+    	}
     	
         if (modeToggleMenus != null) {
         	// show move mode icon for algebra input (selection) mode
@@ -139,7 +159,12 @@ public class MyToolbar extends JPanel implements ComponentListener{
          	
          	if (success) {
          		this.selectedMode = mode;         		
-         	}          	
+         	} else {
+         		// we insert a temporary icon if possible
+         		temporaryModes.addMode(mode);
+         		temporaryModes.setVisible(true);
+         		temporaryModes.selectMode(mode);
+         	}
         }              
                 
         updateModeLabel();
@@ -337,7 +362,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	            
 	        if (tm.getToolsCount() > 0)
 	        	tb.add(tm);
-		}        
+		}
     }
     
     /**
