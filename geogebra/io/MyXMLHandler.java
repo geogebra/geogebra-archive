@@ -1042,6 +1042,11 @@ public class MyXMLHandler implements DocHandler {
 			};
 			tmp_perspective.setDockPanelInfo(dpXml);
 			
+			// if we just have one split pane we need to set a proper definition string for the euclidian view
+			if(!tmp_showSpreadsheet) {
+				dpXml[0].setEmbeddedDef("1");
+			}
+			
 			
 			DockSplitPaneXml[] spXml; 
 			
@@ -1058,6 +1063,10 @@ public class MyXMLHandler implements DocHandler {
 			}
 			
 			tmp_perspective.setSplitPaneInfo(spXml);
+			
+			tmp_perspectives = new ArrayList();
+			tmp_perspectives.add(tmp_perspective);
+			app.setTmpPerspectives(tmp_perspectives);
 		}
 	}
 

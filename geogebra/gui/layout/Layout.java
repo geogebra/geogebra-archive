@@ -154,7 +154,7 @@ public class Layout {
 		
 		for(Iterator iter = perspectives.iterator(); iter.hasNext();) {
 			Perspective next = (Perspective)iter.next();
-			
+				
 			if(next.getId().equals("tmp")) {
 				applyPerspective(next);
 				perspectives.remove(next);
