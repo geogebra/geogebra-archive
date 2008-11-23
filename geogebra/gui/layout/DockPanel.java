@@ -461,6 +461,21 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	public int getViewId() {
 		return info.getViewId();
 	}
+	
+	/**
+	 * Dock panel information as string for debugging.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[DockPanel,id=");
+		sb.append(info.getViewId());
+		sb.append(",visible=");
+		sb.append(info.isVisible());
+		sb.append(",inframe=");
+		sb.append(isInFrame());
+		sb.append("]");
+		return sb.toString();
+	}
 
 	public void windowClosed(WindowEvent e) { }
 	public void windowActivated(WindowEvent e) { }

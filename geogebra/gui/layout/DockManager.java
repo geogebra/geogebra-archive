@@ -662,7 +662,7 @@ public class DockManager {
 		else if(leftComponent instanceof DockSplitPane)
 			strBuffer.append("\n" + getDebugTree(depth+1, (DockSplitPane)leftComponent));
 		else
-			strBuffer.append(leftComponent.getClass().getName() + "\n");
+			strBuffer.append(leftComponent.toString() + "\n");
 		
 		strBuffer.append(strRepeat("-", depth) + "[right]");
 		
@@ -671,7 +671,7 @@ public class DockManager {
 		else if(rightComponent instanceof DockSplitPane)
 			strBuffer.append("\n" + getDebugTree(depth+1, (DockSplitPane)rightComponent));
 		else
-			strBuffer.append(rightComponent.getClass().getName() + "\n");
+			strBuffer.append(rightComponent.toString() + "\n");
 		
 		return strBuffer.toString();
 	}

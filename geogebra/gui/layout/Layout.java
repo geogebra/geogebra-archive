@@ -36,9 +36,7 @@ import geogebra.io.layout.Perspective;
  * @author Florian Sonner
  * @version 2008-07-18
  */
-public class Layout {
-	private static Layout instance;
-	
+public class Layout {	
 	private boolean isInitialized = false;
 	
 	private Application app;
@@ -60,25 +58,10 @@ public class Layout {
 	 * to get an instance of the layout.
 	 * {@link initialize()} has to be called once in order to use this class.
 	 */
-	private Layout() {
+	public Layout() {
 		initializeDefaults();
 		
 		this.perspectives = new ArrayList(1);
-	}
-	
-	/**
-	 * Singleton implementation for the layout class.
-	 * You have to call initialize() in order to be able to use the
-	 * layout class.
-	 * 
-	 * @return
-	 */
-	public static Layout getInstance() {
-		if(Layout.instance == null) {
-			Layout.instance = new Layout();
-		}
-		
-		return Layout.instance;
 	}
 	
 	/**
@@ -421,7 +404,7 @@ public class Layout {
 	 * Show the dialog which is used to manage the custom defined perspectives.
 	 */
 	public void showManageDialog() {
-		ManagePerspectivesDialog dialog = new ManagePerspectivesDialog(app);
+		ManagePerspectivesDialog dialog = new ManagePerspectivesDialog(app, this);
 		dialog.setVisible(true);
 	}
 	
@@ -442,11 +425,11 @@ public class Layout {
 		private DefaultListModel listModel;
 		private JButton cancelButton, removeButton;
 		
-		public ManagePerspectivesDialog(Application app) {
+		public ManagePerspectivesDialog(Application app, Layout layout) {
 			super(app.getFrame());
 			
 			this.app = app;
-			this.layout = Layout.getInstance();
+			this.layout = layout;
 			
 			setModal(true);
 			setTitle(app.getMenu("ManagePerspectives"));

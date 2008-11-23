@@ -111,10 +111,10 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 	protected Kernel kernel;
 
-	public MenubarImpl() {
+	public MenubarImpl(Layout layout) {
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow));
 		
-		layout = Layout.getInstance();
+		this.layout = layout;
 	}
 	
 	public void updateMenubar() {		

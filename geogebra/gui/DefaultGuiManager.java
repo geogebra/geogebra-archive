@@ -16,7 +16,6 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -112,8 +111,8 @@ public class DefaultGuiManager implements GuiManager {
 		this.app = app;
 		this.kernel = app.getKernel();
 		
-		// initialize the layout component
-		layout = Layout.getInstance();
+		// the layout component
+		layout = new Layout();
 		
 		// removed: we need the arrow keys to work in applets 
 		//if (!app.isApplet())
@@ -131,6 +130,13 @@ public class DefaultGuiManager implements GuiManager {
 	
 	public void setPerspectives(ArrayList perspectives) {
 		layout.setPerspectives(perspectives);
+	}
+	
+	/**
+	 * Make the title bar visible if the user is using an applet.
+	 */
+	public void updateLayout() {
+		layout.setTitlebarVisible(!app.isApplet());
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
@@ -544,7 +550,7 @@ public class DefaultGuiManager implements GuiManager {
 
 	public void initMenubar() {
 		if (menuBar == null) {
-			menuBar = new GeoGebraMenuBar(app);
+			menuBar = new GeoGebraMenuBar(app, layout);
 		}
 		menuBar.initMenubar();
 	}

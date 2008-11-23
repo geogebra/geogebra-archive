@@ -397,6 +397,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 			
+		if(app.hasGuiManager())
+			app.getGuiManager().updateLayout();
+		
 		app.updateContentPane();
 		app.resetFonts();					
 	}
@@ -426,6 +429,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		
 		app.setApplet(this);
 		initGUI();
+
+		if(app.hasGuiManager())
+			app.getGuiManager().updateLayout();
 		
 		app.resetFonts();
 		app.refreshViews();

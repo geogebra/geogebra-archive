@@ -174,7 +174,7 @@ public class MyXMLHandler implements DocHandler {
 	
 	/**
 	 * Backward compatibility for version < 3.03 where no layout component was used.
-	 * Temporary storage for the split divider location of the split pane 1/2. 
+	 * Temporary storage for the split divider location of the split panes #1/#2. 
 	 */
 	private int tmp_sp1, tmp_sp2;
 	
@@ -1045,20 +1045,22 @@ public class MyXMLHandler implements DocHandler {
 			// if we just have one split pane we need to set a proper definition string for the euclidian view
 			if(!tmp_showSpreadsheet) {
 				dpXml[0].setEmbeddedDef("1");
-			}
-			
+			}			
 			
 			DockSplitPaneXml[] spXml; 
 			
+			int splitOrientation = tmp_spHorizontal ? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT;
+			
 			// use two split panes in case the spreadsheet is visible
+			// TODO take split pane size into consideration (F.S.)
 			if(tmp_showSpreadsheet) {
 				spXml = new DockSplitPaneXml[] {
-					new DockSplitPaneXml("", 0.2, JSplitPane.HORIZONTAL_SPLIT),
-					new DockSplitPaneXml("1", 0.5, JSplitPane.HORIZONTAL_SPLIT)
+					new DockSplitPaneXml("", 0.2, splitOrientation),
+					new DockSplitPaneXml("1", 0.5, splitOrientation)
 				}; 
 			} else {
 				spXml = new DockSplitPaneXml[] {
-					new DockSplitPaneXml("", 0.2, JSplitPane.HORIZONTAL_SPLIT)
+					new DockSplitPaneXml("", 0.2, splitOrientation)
 				};
 			}
 			
@@ -1067,6 +1069,8 @@ public class MyXMLHandler implements DocHandler {
 			tmp_perspectives = new ArrayList();
 			tmp_perspectives.add(tmp_perspective);
 			app.setTmpPerspectives(tmp_perspectives);
+			
+			// TODO calculate window size in old versions (F.S.)
 		}
 	}
 

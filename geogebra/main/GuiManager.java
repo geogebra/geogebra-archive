@@ -56,6 +56,7 @@ public interface GuiManager {
 	public boolean showSpreadsheetView();
 	
 	public void setPerspectives(ArrayList perspectives);
+	public void updateLayout();
 	
 	public String getSpreadsheetViewXML();
 	public String getConsProtocolXML();

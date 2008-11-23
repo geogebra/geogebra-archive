@@ -19,6 +19,7 @@ package geogebra3D;
 
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -86,8 +87,13 @@ public class GeoGebra3D extends GeoGebraFrame
 		
 		//GeoGebra wnd = buildGeoGebra();
 
-		Application3D app = new GeoGebraApplication3D(args, wnd, true); //ggb3D 
-		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app));
+		Application3D app = new GeoGebraApplication3D(args, wnd, true); //ggb3D
+		
+		// TODO use internal layout instance (F.S.)
+		Layout layout = new Layout();
+		layout.initialize(app);
+		
+		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app, layout));
 		app.getGuiManager().initMenubar();
 		
 		// init GUI
