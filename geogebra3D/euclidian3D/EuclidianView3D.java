@@ -218,7 +218,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				
 
-				case GeoElement3D.GEO_CLASS_POLYGON3D:
+				case GeoElement3D.GEO_CLASS_TRIANGLE3D:
 					if(DEBUG){Application.debug("GEO_CLASS_POLYGON3D");}
 					d = new DrawPolygon3D(this, (GeoTriangle3D) geo);
 					//Application.debug("new DrawPoint3D");

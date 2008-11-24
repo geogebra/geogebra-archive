@@ -16,6 +16,8 @@ package geogebra3D.kernel3D;
 
 
 import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -158,5 +160,16 @@ public class Kernel3D
 		p.setLabel(label);
 		return p;
 	}	
+
+	
+	
+	
+	
+	/** 3D element on coord sys 2D to 2D element    */	
+	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2D cs){
+		Algo3Dto2D algo = new Algo3Dto2D(cons, label, geo3D, cs);
+		return algo.getGeo();
+	}
+	
 	
 }

@@ -13,16 +13,19 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	GgbVector Vn1 = new GgbVector(4);
 	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
 
-	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
+	public GeoCoordSys1D(Construction c){
 		super(c);
 		M=new GgbMatrix(4,2);
+	}
+	
+	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
+		this(c);
 		setCoord(O,V);
 	}
 	
 	
 	public GeoCoordSys1D(Construction c, GeoPoint3D O, GeoPoint3D I){
-		super(c);
-		M=new GgbMatrix(4,2);
+		this(c);
 		setCoord(O,I);
 	}	
 	

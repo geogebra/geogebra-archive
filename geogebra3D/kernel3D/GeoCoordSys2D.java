@@ -17,17 +17,16 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	public GeoCoordSys2D(Construction c){
 		super(c);	
+		M=new GgbMatrix(4,3);
 	}
 	
 	public GeoCoordSys2D(Construction c, GgbVector O, GgbVector V1, GgbVector V2){
-		super(c);
-		M=new GgbMatrix(4,3);
+		this(c);
 		setCoord(O,V1,V2);		
 	}
 
 	public GeoCoordSys2D(Construction c, GeoPoint3D O, GeoPoint3D I, GeoPoint3D J){
-		super(c);
-		M=new GgbMatrix(4,3);
+		this(c);
 		setCoord(O,I,J);		
 	}
 	

@@ -92,7 +92,7 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 	}
     
     public int getGeoClassType() {
-    	return GEO_CLASS_POLYGON3D; 
+    	return GEO_CLASS_TRIANGLE3D; 
     }
 
 	public GeoElement copy() {

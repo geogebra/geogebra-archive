@@ -56,6 +56,7 @@ public class Test3D{
 
         testAlgoPyramide();
 		//testPath();
+		//testPolygon();
 		testRepere();
         
         
@@ -367,5 +368,18 @@ public class Test3D{
 		P.setObjColor(new Color(1f,0.5f,0f));
 	}
 	
+	
+	private void testPolygon(){
+
+		GeoPoint3D P = testPoint(1f,0f,0f);
+		P.setLabel("P");
+		
+		GeoPlane3D p = kernel3D.Plane3D("plane",
+				new GgbVector(new double[] {0,0,0,1}),
+				new GgbVector(new double[] {1,0,0,0}),
+				new GgbVector(new double[] {0,1,0,0}));
+		
+		kernel3D.From3Dto2D("truc", P, p);
+	}
 
 }
