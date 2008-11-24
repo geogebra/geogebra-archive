@@ -17,8 +17,6 @@ public class CASTableCellController implements KeyListener {
 	private CASView view;
 	private Thread evalThread;
 	
-	
-
 	public final String yacasErrorMsg = "CAS.GeneralErrorMessage";
 
 	public CASTableCellController(CASTableCell cell, CASView view) {
@@ -212,25 +210,15 @@ public class CASTableCellController implements KeyListener {
 		String evaluation = null;
 		String error = null;
 		try {
-			// PARSE input
-			ExpressionValue ev = ggbCAS.parseInput(inputText);
-			
-			// convert parsed input to Yacas string
-			String yacasString = ggbCAS.toYacasString(ev, view.isUseGeoGebraVariableValues());
-			
-			// EVALUATE input in Yacas depending on key combination
-			if (e.isShiftDown()) {
-				evaluation = ggbCAS.evaluateYACAS(yacasString);
-			}
-			else {
-				evaluation = ggbCAS.evaluateYACAS("Hold", yacasString);
-			}
+			// provess input string
+			evaluation = processCASInput(inputText, e.isShiftDown());
 			
 			if (evaluation == null)
 				error = ggbCAS.getYACASError();
 			
 		} catch (Throwable th) {
 			error = view.getApp().getError(this.yacasErrorMsg);
+			th.printStackTrace();
 		}
 		
 
@@ -271,6 +259,35 @@ public class CASTableCellController implements KeyListener {
 			tableCellEditor.setLineInvisiable();
 			table.insertRow(selectedRow, selectedCol, null);
 		}
+	}
+	
+	/**
+	 * Processes the CAS input string and returns an evaluation result.
+	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
+	 * @return null if something went wrong.
+	 */
+	private String processCASInput(String inputExp, boolean doEvaluate) throws Throwable {
+		GeoGebraCAS ggbCAS = view.getCAS();
+		
+		// PARSE input
+		ExpressionValue ev = ggbCAS.parseInput(inputExp);
+		
+		// convert parsed input to Yacas string
+		String yacasString = ggbCAS.toYacasString(ev, view.isUseGeoGebraVariableValues());
+		
+		// EVALUATE input in Yacas depending on key combination
+		String result;
+		if (doEvaluate) {
+			result = ggbCAS.evaluateYACAS(yacasString);
+		}
+		else {
+			result = ggbCAS.evaluateYACAS("Hold", yacasString);
+		}
+		
+		// convert Yacas result back into GeoGebra syntax
+		result = ggbCAS.toGeoGebraString(result);
+		
+		return result;
 	}
 		
 

@@ -2987,7 +2987,7 @@ public class MyXMLHandler implements DocHandler {
 
 		// parse expression and process it
 		try {
-			ValidExpression ve = parser.parse(exp);
+			ValidExpression ve = parser.parseGeoGebraExpression(exp);
 			if (label != null)
 				ve.setLabel(label);
 

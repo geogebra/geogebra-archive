@@ -138,7 +138,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 				for (int j=0 ; j < myList2.size() ; j++)
 				{
 				
-					ExpressionNode en = myList2.getListElement(j);
+					ExpressionValue en = myList2.getListElement(j);
 					ExpressionValue ev = en.evaluate();
 					
 					if (ev instanceof MyDouble) {

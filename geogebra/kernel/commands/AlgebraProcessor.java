@@ -95,7 +95,7 @@ public class AlgebraProcessor {
 		GeoElement[] result;
 
 		try {
-			ve = parser.parse(newValue);
+			ve = parser.parseGeoGebraExpression(newValue);
 			oldLabel = geo.getLabel();
 			newLabel = ve.getLabel();
 
@@ -158,7 +158,7 @@ public class AlgebraProcessor {
 		ValidExpression ve;					
 		
 		try {
-			ve = parser.parse(cmd);
+			ve = parser.parseGeoGebraExpression(cmd);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
@@ -195,7 +195,7 @@ public class AlgebraProcessor {
 	 */
 	public double evaluateToDouble(String str) {
 		try {
-			ValidExpression ve = parser.parse(str);
+			ValidExpression ve = parser.parseGeoGebraExpression(str);
 			ExpressionNode en = (ExpressionNode) ve;
 			en.resolveVariables();
 			NumberValue nv = (NumberValue) en.evaluate();
@@ -225,7 +225,7 @@ public class AlgebraProcessor {
 
 		GeoBoolean bool = null;
 		try {
-			ValidExpression ve = parser.parse(str);		
+			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
 			bool = (GeoBoolean) temp[0];
 		} catch (CircularDefinitionException e) {
@@ -257,7 +257,7 @@ public class AlgebraProcessor {
 
 		GeoList list = null;
 		try {
-			ValidExpression ve = parser.parse(str);		
+			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
 			list = (GeoList) temp[0];
 		} catch (CircularDefinitionException e) {
@@ -289,7 +289,7 @@ public class AlgebraProcessor {
 
 		GeoFunction func = null;
 		try {
-			ValidExpression ve = parser.parse(str);		
+			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
 			
 			if (temp[0].isGeoFunction())
@@ -330,7 +330,7 @@ public class AlgebraProcessor {
 
 		GeoNumeric func = null;
 		try {
-			ValidExpression ve = parser.parse(str);		
+			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
 			func = (GeoNumeric) temp[0];
 		} catch (CircularDefinitionException e) {
@@ -362,7 +362,7 @@ public class AlgebraProcessor {
 		GeoPoint p = null;
 		GeoElement [] temp = null;;
 		try {
-			ValidExpression ve = parser.parse(str);
+			ValidExpression ve = parser.parseGeoGebraExpression(str);
 			if (ve instanceof ExpressionNode) {
 				ExpressionNode en = (ExpressionNode) ve;
 				en.forcePoint = true;	
@@ -399,7 +399,7 @@ public class AlgebraProcessor {
 		GeoText text = null;
 		GeoElement [] temp = null;;
 		try {
-			ValidExpression ve = parser.parse(str);			
+			ValidExpression ve = parser.parseGeoGebraExpression(str);			
 			temp = processValidExpression(ve);
 			text = (GeoText) temp[0];
 		} catch (CircularDefinitionException e) {
@@ -761,10 +761,18 @@ public class AlgebraProcessor {
 
 	protected GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
 		// command is leaf: process command
-		if (n.isLeaf() && n.getLeft() instanceof Command) {
-			Command c = (Command) n.getLeft();
-			c.setLabels(n.getLabels());
-			return cmdDispatcher.processCommand(c, true);
+		if (n.isLeaf()) {
+			 ExpressionValue leaf =  n.getLeft();
+			 if (leaf instanceof Command) {			
+				Command c = (Command) n.getLeft();
+				c.setLabels(n.getLabels());
+				return cmdDispatcher.processCommand(c, true);
+			 }
+			 else if (leaf instanceof Equation) {
+				 Equation eqn = (Equation) n.getLeft();
+				 eqn.setLabels(n.getLabels());
+				 return processEquation(eqn);
+			 }
 		}											
 		
 		// ELSE:  resolve variables and evaluate expressionnode		

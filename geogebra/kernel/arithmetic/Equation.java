@@ -169,16 +169,7 @@ public class Equation extends ValidExpression {
         return !isExplicit("x") && !isExplicit("y");
     }
     
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        
-        if (lhs != null) sb.append(lhs);
-        else sb.append('0');
-        sb.append(" = ");
-        if (rhs != null) sb.append(rhs);
-        else sb.append('0');
-        return sb.toString();
-    }
+    
 
 	public boolean contains(ExpressionValue ev) {
 		return lhs.contains(ev) || rhs.contains(ev);
@@ -255,19 +246,56 @@ public class Equation extends ValidExpression {
         return sb.toString();
 	}
 
-	public String toValueString() {
+	final public String toValueString() {
 		StringBuffer sb = new StringBuffer();
         
         if (lhs != null) 
         	sb.append(lhs.toValueString());
         else 
         	sb.append('0');
-        sb.append(" = ");
+        
+        // equal sign
+        switch (kernel.getCASPrintForm()){
+			case ExpressionNode.STRING_TYPE_YACAS:
+		        sb.append(" == ");
+		        break;
+		        
+			default:	       	        
+		        sb.append(" = ");	        
+        }
         
         if (rhs != null) 
         	sb.append(rhs.toValueString());
         else sb.append('0');
         return sb.toString();
 	}
+	
+	final public String toString() {
+        StringBuffer sb = new StringBuffer();
+        
+        // left hand side
+        if (lhs != null) 
+        	sb.append(lhs);
+        else 
+        	sb.append('0');
+        
+        // equal sign
+        switch (kernel.getCASPrintForm()){
+			case ExpressionNode.STRING_TYPE_YACAS:
+		        sb.append(" == ");
+		        break;
+		        
+			default:	       	        
+		        sb.append(" = ");	        
+        }
+        
+        // right hand side
+        if (rhs != null) 
+        	sb.append(rhs);
+        else
+        	sb.append('0');
+        
+        return sb.toString();
+    }
  
 } // end of class Equation

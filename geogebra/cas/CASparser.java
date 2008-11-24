@@ -26,11 +26,11 @@ import geogebra.kernel.parser.Parser;
 public class CASparser {
 	
 	private Kernel kernel;
-	private Parser parser;
+	private Parser ggbParser;
 	
 	public CASparser(Kernel kernel) {	
 		this.kernel = kernel;
-		parser = kernel.getParser();
+		ggbParser = kernel.getParser();
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class CASparser {
 	 * @throws Throwable when something goes wrong
 	 */
 	public ValidExpression parseForCAS(String exp) throws Throwable {
-		return parser.parse(exp);
+		return ggbParser.parseGeoGebraCAS(exp);
 	}
 	
 	/**
@@ -66,7 +66,20 @@ public class CASparser {
 		return yacasString;
 	}
 	
+	/**
+	 * Tries to convert the given Yacas string to GeoGebra syntax.
+	 */
+	public String toGeoGebraString(String yacasString) {
+		String ggbString;
+		try {
+			ggbString = ggbParser.parseYacas(yacasString).toString();
+		} catch (Exception e) {
+			System.err.println("convert Yacas to GeoGebra failed: " + yacasString);
+			ggbString = yacasString;
+		}	
+		
+		return ggbString;
+	}
 
-	
-	
+
 }

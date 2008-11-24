@@ -61,7 +61,7 @@ implements ExpressionValue {
         return kernel;
     }
     
-    public void addArgument(ValidExpression arg) {
+    public void addArgument(ExpressionNode arg) {
         args.add( arg );
     }
     
@@ -90,17 +90,18 @@ implements ExpressionValue {
     
     public ExpressionNode [] getArguments() {
     	int size = args.size();
-        ExpressionNode [] ret = new ExpressionNode[size];
+    	ExpressionNode [] ret = new ExpressionNode[size];
         
         for (int i=0; i < args.size(); i++) {        
-            ret[i] = (ExpressionNode) args.get(i);        
+        	ret[i] = (ExpressionNode) args.get(i);
         }
+        
         return ret;                
     }
     
   
     public ExpressionNode getArgument(int i) {
-        return (ExpressionNode) args.get(i);
+    	return (ExpressionNode) args.get(i);        
     }
     
     public void setArgument(int i, ExpressionNode en) {
@@ -149,7 +150,7 @@ implements ExpressionValue {
 		        int size = args.size();
 		        for (int i = 0; i < size; i++) {
 		        	sbToString.append( toString((ExpressionValue) args.get(i), symbolic, LaTeX));
-		        	sbToString.append(", ");
+		        	sbToString.append(',');
 		        }
 		        sbToString.setCharAt(sbToString.length()-1, ']');		        
 		        return sbToString.toString();		    	

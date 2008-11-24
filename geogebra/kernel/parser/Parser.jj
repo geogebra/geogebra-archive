@@ -67,9 +67,25 @@ public class Parser {
     /**
      * Parses a String and returns a ValidExpression Object     
      */
-    public ValidExpression parse(String parseString) throws ParseException {           
+    public ValidExpression parseGeoGebraExpression(String parseString) throws ParseException {           
         ReInit( new java.io.StringReader(parseString) );                          
         return buildValidExpression();     
+    }
+    
+     /**
+     * Parses a String and returns a ValidExpression Object     
+     */
+    public ValidExpression parseGeoGebraCAS(String parseString) throws ParseException {           
+        ReInit( new java.io.StringReader(parseString) );                          
+        return buildCASExpression();     
+    }        
+    
+    /**
+     * Parses a Yacas String and returns a ValidExpression Object     
+     */
+    public ValidExpression parseYacas(String parseString) throws ParseException {           
+        ReInit( new java.io.StringReader(parseString) );                          
+        return buildYacasExpression();     
     }
     
     /**
@@ -138,6 +154,7 @@ TOKEN :  {
   | < PARALLEL: "\u2225" >
   | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
+  | < ASSIGNMENT:    ":=" >
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
@@ -279,6 +296,7 @@ String label():
  
 
 /**
+ * for GeoGebra input field
  * validexpression =    
  *                  labellist() = command() |           // e.g. {A,B} = Intersect[c, g]
  *                      <LABEL> : parametric() |        // e.g. X = (3,2) + t (2,1)              
@@ -305,8 +323,9 @@ ValidExpression buildValidExpression() :
      |     
         // g: 3x + y = 7 
         LOOKAHEAD(2147483647)              (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()            |          
-        // special case "A: (3,2)" should become a point                                      
-	  	LOOKAHEAD(2147483647)  	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = expression()   	 |     
+        // special case "A: (3,2)" should become a point  
+        // CAS assignment "a := 5" shoudl be supported too                                     
+	  	LOOKAHEAD(2147483647)  	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
         //
@@ -349,6 +368,116 @@ ValidExpression buildValidExpression() :
         else if (ve.labelCount() == 0) ve.addLabel(l.image);  // standard case                         
         return ve;
     }    
+}
+
+/**
+ *  parse GeoGebra CAS input
+ */
+ValidExpression buildCASExpression() : 
+{
+    ValidExpression ve;
+    ExpressionNode lhs, rhs;
+    Token l = new Token();
+    Vector labels = new Vector();
+} 
+{         
+    (
+       	// equation, e.g. 3x + y = 7
+       	LOOKAHEAD(2147483647)   
+       	ve = equation()        
+    |   
+    	// expression
+    	// 5a + 3    
+    	LOOKAHEAD(2147483647)
+    	ve = expressionnode()
+   	|    
+        // assignment         
+        // b := 27 + c
+        LOOKAHEAD(2147483647)                                          
+	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) <ASSIGNMENT> ve = expressionnode()
+	|	    
+	    // function 
+        // f(x) :=  x^2 + 3	 
+        LOOKAHEAD(2147483647)         
+        ve = casFunction()      	     	     
+	)                     
+    ( <EOL> | <EOF> )     
+    {   
+    	// remember label      
+    	if (l.image != null)             
+        	ve.addLabel(l.image);                          
+        return ve;
+    }    
+}
+
+/**
+ * convert Yacas String to GeoGebra string
+ */
+ValidExpression buildYacasExpression() : 
+{
+    ValidExpression ve;
+    ExpressionNode lhs, rhs;
+    Token l = new Token();
+    Vector labels = new Vector();
+} 
+{         
+    (
+       	// convert Solve results like {x==5, x==7} to simple list {5, 7} 
+       	LOOKAHEAD(2147483647)   
+       	ve = yacasSolveResult()        
+    |   
+		// try to parse Yacas string as standard GeoGebra expression 
+    	ve = buildValidExpression()       	     	    
+	)                     
+    ( <EOL> | <EOF> )     
+    {       	                         
+        return ve;
+    }    
+}
+
+/**
+ * convert Solve results like {x==5, x==7} to simple list {5, 7} 
+ */
+ValidExpression yacasSolveResult() : 
+{    
+	ExpressionValue ev;
+	MyList myList;
+} 
+{         
+    LOOKAHEAD(5)
+   (
+     // empty list
+      "{" "}"  
+      {   
+           return new MyList(kernel);               
+       }
+    )
+    |
+   ( 
+    // list with solutions like {x==5, x==7}
+    "{"
+         casLabel() <EQUAL_BOOLEAN> (ev = cmdexpression())    
+       {   
+            myList = new MyList(kernel);         
+            myList.addListElement(ev);
+        }
+       ( "," casLabel() <EQUAL_BOOLEAN> (ev = cmdexpression()) 
+       	 {
+       		myList.addListElement(ev); 
+       	 } 
+        )*
+    "}"
+    {  return myList;  } 
+    )  
+}
+
+/**
+ * (<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
+ */
+void casLabel():
+{}
+{
+	(<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
 }
 
 /**
@@ -506,24 +635,35 @@ ExpressionNode expression():
  */
 ExpressionNode cmdexpression():
 {
-    ExpressionNode rhs;
+    ExpressionValue ev;
+    ExpressionNode en;
 }
 {    
-    rhs = expressionnode()              
+ (
+ 	// equation like: 3x + 4 = 7
+ 	LOOKAHEAD (2147483647) 
+ 	ev = equation()
+ 	{ 
+ 		// TODO: remove
+ 		return new ExpressionNode(kernel, ev);  	
+ 	} 
+  |   
+    // expression 
+    en = expressionnode()              
     {
-        if (rhs.includesPolynomial()) {
-        	if (rhs.isFunctionInX()) 
-        		return new ExpressionNode(kernel, new Function(rhs));
+        if (en.includesPolynomial()) {
+        	if (en.isFunctionInX()) 
+        		return new ExpressionNode(kernel, new Function(en));
         	else
 	        	throw new MyError(app, "IncompleteEquation");
         }
         
         // since v3.0: commands have to take care of resolving the variables of 
         // their arguments on their own, e.g. Sequence[ i^2, i , 1, 10 ]
-        // rhs.resolveVariables();
-        
-        return rhs;
+        // rhs.resolveVariables();  
+        return en;     
     }
+)
 }
 
 /**
@@ -565,7 +705,7 @@ ExpressionNode functionExpressionnode():
 {          
 (
 	   // f(x) =  x^2 + 3	
-	   l = <FUNCTION_LABEL> <VARX> ")" "="
+	   l = <FUNCTION_LABEL> <VARX> ")" ("=" | <ASSIGNMENT>) 
 	 	 rhs = expressionnode()
 	    {	        
 	    	String label = l.image.substring(0,l.image.length()-1);	
@@ -595,6 +735,29 @@ functions of other variables than x not implemented yet
 	    }  	    
 )
 */	    
+}
+
+/**
+ * function = 	label(x) := expressionnode 
+ * note: may also include commands in expressionnode
+ */
+ExpressionNode casFunction():
+{
+    ExpressionNode rhs;
+    Token l = null;
+    Token var;
+}
+{          
+(
+	   // f(x) :=  x^2 + 3	
+	   l = <FUNCTION_LABEL> <VARX> ")" <ASSIGNMENT> 
+	 	 rhs = expressionnode()
+	    {	        
+	    	String label = l.image.substring(0,l.image.length()-1);		    
+       		rhs.setLabel(label);		
+       		return rhs;
+	    }   
+)
 }
 
 /**
@@ -1006,7 +1169,7 @@ ExpressionNode enelement():
 ExpressionValue list():
 {
     MyList myList;
-    ExpressionNode en;
+    ExpressionValue ev;
 }
 {
    LOOKAHEAD(5)
@@ -1021,14 +1184,14 @@ ExpressionValue list():
    ( 
     // list
     "{"
-      en = cmdexpression()     
+      ev = cmdexpression()     
        {   
             myList = new MyList(kernel);         
-            myList.addListElement(en);
+            myList.addListElement(ev);
         }
-       ( "," en = cmdexpression()  
+       ( "," ev = cmdexpression()  
        	 {
-       		myList.addListElement(en); 
+       		myList.addListElement(ev); 
        	 } 
         )*
     "}"

@@ -83,11 +83,19 @@ public class GeoGebraCAS {
 		// TODO: remove
 		Application.debug(" toYacasString: " + yacasStr);
 		return yacasStr;
-	}				
+	}		
+	
+	
+	/**
+	 * Tries to convert the given Yacas string to GeoGebra syntax.
+	 */
+	public String toGeoGebraString(String yacasString) {
+		return casParser.toGeoGebraString(yacasString);
+	}
 		
 	/**
-	 * Evaluates a YACAS expression and returns the result as a string, e.g. exp =
-	 * "D(x) (x^2)" returns "2*x".
+	 * Evaluates a YACAS expression and returns the result as a string in Yacas syntax, 
+	 * e.g. evaluateYACAS("D(x) (x^2)") returns "2*x".
 	 * 
 	 * @return result string (null possible)
 	 */
@@ -146,7 +154,7 @@ public class GeoGebraCAS {
 
 			// evaluate the Yacas expression
 			result = getYacas().Evaluate(exp);
-
+					
 			// undo special character handling
 			if (replaceSpecialChars)
 				result = insertSpecialChars(result);
@@ -223,13 +231,13 @@ public class GeoGebraCAS {
 
 			// standard characters
 			if ((code >= 32 && code <= 122)) {
-				switch (code) {
-				case 95: // replace _
-					// case 39: // replace '
-					sbRemoveSpecial.append(ExpressionNode.UNICODE_PREFIX);
-					sbRemoveSpecial.append(code);
-					sbRemoveSpecial.append(ExpressionNode.UNICODE_DELIMITER);
-					break;
+				switch (c) {
+				// keep _ for indices like n_{3}
+//				case '_': // replace _
+//					sbRemoveSpecial.append(ExpressionNode.UNICODE_PREFIX);
+//					sbRemoveSpecial.append(code);
+//					sbRemoveSpecial.append(ExpressionNode.UNICODE_DELIMITER);
+//					break;
 
 				default:
 					// do not convert
@@ -238,8 +246,13 @@ public class GeoGebraCAS {
 			}
 			// special characters
 			else {
-				switch (code) {
-				case 176: // replace degree sign by " * unicode_string_of_degree_sign"
+				switch (c) {
+				case '{': // keep {
+				case '}': // keep }
+					sbRemoveSpecial.append(c);
+					break;
+				
+				case '\u00b0': // replace degree sign by " * unicode_string_of_degree_sign"
 					sbRemoveSpecial.append("*");
 
 				default:

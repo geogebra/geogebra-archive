@@ -194,7 +194,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
     
     private double evaluateToDouble(String str) {
 		try {
-			ValidExpression ve = parser.parse(str);
+			ValidExpression ve = parser.parseGeoGebraExpression(str);
 			ExpressionNode en = (ExpressionNode) ve;
 			NumberValue nv = (NumberValue) en.evaluate();
 			return nv.getDouble();

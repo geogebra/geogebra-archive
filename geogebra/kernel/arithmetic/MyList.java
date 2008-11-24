@@ -54,7 +54,7 @@ public class MyList extends ValidExpression implements ListValue {
 		listElements = new ArrayList(size);
 	}
 
-	public void addListElement(ExpressionNode arg) {
+	public void addListElement(ExpressionValue arg) {
 		listElements.add(arg);
 		matrixRows=-1; // reset
 		matrixCols=-1;
@@ -421,13 +421,13 @@ public class MyList extends ValidExpression implements ListValue {
 
 	public void resolveVariables() {
 		for (int i = 0; i < listElements.size(); i++) {
-			ExpressionNode en = (ExpressionNode) listElements.get(i);
+			ExpressionValue en = (ExpressionValue) listElements.get(i);
 			en.resolveVariables();
 		}
 	}
 
-	public ExpressionNode getListElement(int i) {
-		return (ExpressionNode) listElements.get(i);
+	public ExpressionValue getListElement(int i) {
+		return (ExpressionValue) listElements.get(i);
 	}
 
 	/*
