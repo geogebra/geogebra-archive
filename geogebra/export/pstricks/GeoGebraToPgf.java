@@ -1695,7 +1695,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
 		try{
 			if (geo.isLabelVisible()){
-				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
+				String name;
+				if (geo.getLabelMode()==GeoElement.LABEL_CAPTION)
+					name=geo.getLabelDescription();
+				else name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (name.indexOf("\u00b0")!=-1){
 					if (format==GeoGebraToPgf.FORMAT_LATEX) {
 						name=name.replaceAll("\u00b0", "\\\\textrm{\\\\degre}");
@@ -1767,6 +1770,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		Color color=euclidianView.getAxesColor();
 		// Drawing X Axis
 		boolean showAxis=euclidianView.getShowXaxis();
+		String[] label=euclidianView.getAxesLabels();
 		if (ymin>0||ymax<0) showAxis=false;
 		double spaceTick=euclidianView.getAxesNumberingDistances()[0];
 		boolean showNumbers=euclidianView.getShowAxesNumbers()[0];		
@@ -1800,6 +1804,19 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append("};\n");
 			}
 			else codeBeginDoc.append(";\n");
+			if (null!=label[0]){
+				codeBeginDoc.append("\\draw[color=");
+				ColorCode(color,codeBeginDoc);
+				codeBeginDoc.append("] ");
+				FontMetrics fm=euclidianView.getFontMetrics(euclidianView.getFont());
+				int width=fm.stringWidth(label[0]);
+				double x=euclidianView.toRealWorldCoordX(euclidianView.getWidth()-10-width);
+				double y=euclidianView.toRealWorldCoordY(euclidianView.getYZero()-4);
+				writePoint(x,y,codeBeginDoc);
+				codeBeginDoc.append(" node [anchor=south west] { ");
+				codeBeginDoc.append(label[0]);
+				codeBeginDoc.append("};\n");
+			}
 		}
 		// Drawing Y Axis
 		showAxis=euclidianView.getShowYaxis();
@@ -1836,6 +1853,18 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append("};\n");
 			}
 			else codeBeginDoc.append(";\n");
+			if (null!=label[1]){
+				codeBeginDoc.append("\\draw[color=");
+				ColorCode(color,codeBeginDoc);
+				codeBeginDoc.append("] ");
+				FontMetrics fm=euclidianView.getFontMetrics(euclidianView.getFont());
+				double x=euclidianView.toRealWorldCoordX(euclidianView.getXZero()+5);
+				double y=euclidianView.toRealWorldCoordY(5+fm.getHeight());
+				writePoint(x,y,codeBeginDoc);
+				codeBeginDoc.append(" node [anchor=west] { ");
+				codeBeginDoc.append(label[1]);
+				codeBeginDoc.append("};\n");
+			}
 		}
 		// Origin
 		boolean notOrigin=((xmax<0||xmin>0)||(ymax<0||ymin>0));

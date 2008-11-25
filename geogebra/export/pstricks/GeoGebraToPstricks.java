@@ -1399,7 +1399,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	protected void drawLabel(GeoElement geo,Drawable drawGeo){
 		try{
 			if (geo.isLabelVisible()){
-				String name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
+				String name;
+				if (geo.getLabelMode()==GeoElement.LABEL_CAPTION)
+					name=geo.getLabelDescription();
+				else name="$"+Util.toLaTeXString(geo.getLabelDescription(),true)+"$";
 				if (name.indexOf("\u00b0")!=-1){
 					name=name.replaceAll("\u00b0", "\\\\textrm{\\\\degre}");
 					if (codePreamble.indexOf("\\degre")==-1)
