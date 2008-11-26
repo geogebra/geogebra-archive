@@ -1500,6 +1500,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 //		\psaxes[Dx=5,Dy=0.5]{->}(0,0)(-10.5,-0.4)(10.5,1.2)
 		double Dx=euclidianView.getAxesNumberingDistances()[0];
 		double Dy=euclidianView.getAxesNumberingDistances()[1];
+		String[] label=euclidianView.getAxesLabels();
 		codeBeginPic.append("\\psaxes[xAxis=");
 		codeBeginPic.append(xAxis);
 		codeBeginPic.append(",yAxis=");
@@ -1526,7 +1527,15 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		codeBeginPic.append(kernel.format(xmax));
 		codeBeginPic.append(",");
 		codeBeginPic.append(kernel.format(ymax));
-		codeBeginPic.append(")\n");
+		codeBeginPic.append(")");
+		if (null!=label[0]||null!=label[1]){
+			codeBeginPic.append("[");
+			if (null!=label[0]) codeBeginPic.append(label[0]);
+			codeBeginPic.append(",140] [");
+			if (null!=label[1]) codeBeginPic.append(label[1]);
+			codeBeginPic.append(",-40]");
+		}
+		codeBeginPic.append("\n");
 	}
 	private void PointOptionCode(GeoPoint geo){
 		Color dotcolor=geo.getObjectColor();
