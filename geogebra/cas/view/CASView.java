@@ -560,6 +560,28 @@ public class CASView extends JComponent implements CasManager {
 		sb.append("</casSession>\n");
 		return sb.toString();
 	}
+	
+	/**
+	 * Returns the output string in the n-th row of this CAS view. 
+	 * If the n-th cell has no output string, the input string of this cell is returned.
+	 */
+	public String getRowValue(int n) {
+		CASTableModel tableModel = (CASTableModel) consoleTable.getModel();
+		CASTableCellValue temp = (CASTableCellValue) tableModel.getValueAt(n, CASPara.contCol);
+		
+		String result = temp.getOutput();
+		if (result == null || result.length() == 0)
+			result = temp.getCommand();
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the number of rows of this CAS view.
+	 */
+	public int getRowCount() {
+		return consoleTable.getRowCount();
+	}
 
 	public JComponent getCASViewComponent() {
 		return this;
@@ -689,7 +711,7 @@ public class CASView extends JComponent implements CasManager {
 			// get YacasString
 			String yacasString = null;
 			try {
-				yacasString = cas.toYacasString(cas.parseInput(selectedStr), useGeoGebraVariableValues);
+				yacasString = cas.toYacasString(cas.parseGeoGebraCASInput(selectedStr), useGeoGebraVariableValues);
 			}
 			catch (Throwable th) {
 				th.printStackTrace();

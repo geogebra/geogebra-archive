@@ -189,12 +189,16 @@ implements ExpressionValue {
     }
     
     public void resolveVariables() {
+    	// standard case:
     	// nothing to do here: argument variables are resolved
     	// while command processing (see evaluate())
     	
-//        for (int i=0; i < args.size(); i++) {        
-//            ((ExpressionNode) args.get(i)).resolveVariables();        
-//        }
+    	// CAS parsing case: we need to resolve arguments also
+    	if (kernel.isResolveUnkownVarsAsDummyGeos()) {
+	        for (int i=0; i < args.size(); i++) {        
+	            ((ExpressionValue) args.get(i)).resolveVariables();        
+	        }
+    	}
     }
     
     // rewritten to cope with {Root[f]}

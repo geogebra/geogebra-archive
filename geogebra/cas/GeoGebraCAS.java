@@ -12,9 +12,11 @@
 
 package geogebra.cas;
 
+import geogebra.cas.view.CASView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 import jasymca.GeoGebraJasymca;
@@ -36,6 +38,7 @@ public class GeoGebraCAS {
 	final public String RB_GGB_TO_YACAS = "/geogebra/cas/ggb2yacas";
 
 	private Kernel kernel;
+	private Application app;
 	private CASparser casParser;
 	private YacasInterpreter yacas;
 	private GeoGebraJasymca ggbJasymca;
@@ -45,6 +48,7 @@ public class GeoGebraCAS {
 
 	public GeoGebraCAS(Kernel kernel) {
 		this.kernel = kernel;
+		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		
 		sbInsertSpecial = new StringBuffer(80);
@@ -52,16 +56,98 @@ public class GeoGebraCAS {
 	}
 	
 	/**
-	 * Parses the given GeoGebra CAS input and returns an ExpressionValue object.
+	 * Processes the CAS input string and returns an evaluation result.
+	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
+	 * @return null if something went wrong.
 	 */
-	public ExpressionValue parseInput(String exp) throws Throwable {		
-		ExpressionValue ev = casParser.parseForCAS(exp);
+	public String processCASInput(String inputExp, boolean doEvaluate, boolean resolveVariables) throws Throwable {
+		// replace #1, #2 references by row input
+		inputExp = resolveCASrowReferences(inputExp);
+		
+		// PARSE input
+		ValidExpression ve = parseGeoGebraCASInput(inputExp);
+		
+		// check for assignment, e.g. a := 5
+		String assignmentLabel = ve.getLabel();
+		doEvaluate = doEvaluate || assignmentLabel != null; // always evaluate assignments
+		
+		// convert parsed input to Yacas string
+		String yacasString = toYacasString(ve, resolveVariables);
+		
+		// EVALUATE input in Yacas depending on key combination
+		String yacasResult;
+		if (doEvaluate) {
+			yacasResult = evaluateYACAS(yacasString);
+		}
+		else {
+			yacasResult = evaluateYACAS("Hold", yacasString);
+		}
+		
+		// convert Yacas result back into GeoGebra syntax
+		ve = parseYacas(yacasResult);
+		String ggbResult = ve.toString();
+		
+		
+		// if we evaluated an assignment, we may need to update a global variable 
+		if (assignmentLabel != null) {
+			// check for global variable with this name
+			if (kernel.lookupLabel(assignmentLabel) != null) {
+				// process assignment in GeoGebra
+				ve.setLabel(assignmentLabel);
+				kernel.getAlgebraProcessor().processValidExpression(ve);
+			}			
+		}
+		
+		return ggbResult;
+	}
+	
+	
+	/**
+	 * Parses the given GeoGebra CAS input and returns an ValidExpression object.
+	 */
+	public ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
+		// parse input
+		ValidExpression ve = casParser.parseGeoGebraCASInput(exp);
 		
 		// TODO: remove
-		Application.debug("  checkCASinput: " + ev);
+		Application.debug("  checkCASinput: " + ve);
 		
-		return ev;		
+		return ve;		
 	}
+	
+	/**
+	 * Replaces references to other rows (e.g. #3) in input string by
+	 * the values from those rows.
+	 */
+	private String resolveCASrowReferences(String inputExp) {
+		if (!app.hasCasView()) 
+			return inputExp;
+				
+		CASView casView = (CASView) app.getCasView();	
+		sbCASreferences.setLength(0);
+		int length = inputExp.length();
+		int lastPos = length -1;
+		for (int i = 0; i < length; i++) {
+			char ch = inputExp.charAt(i);
+			if (ch == '#' && i < lastPos) {
+				// get number after #
+				i++;
+				int pos = inputExp.charAt(i) - '0' - 1;
+				if (pos >= 0 && pos < casView.getRowCount()) {
+					// success
+					sbCASreferences.append(casView.getRowValue(pos));
+				} else
+					// failed
+					sbCASreferences.append(ch);
+			} else {
+				sbCASreferences.append(ch);
+			}
+		}
+
+		return sbCASreferences.toString();
+	}
+
+	private StringBuffer sbCASreferences = new StringBuffer();
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in Yacas syntax.
@@ -69,17 +155,24 @@ public class GeoGebraCAS {
 	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
 	 *    should be used. Note that this changes the given ExpressionValue. 
 	 */
-	public String toYacasString(ExpressionValue ev, boolean resolveVariables) {
-		if (resolveVariables) {
-			casParser.resolveVariablesForCAS(ev);
+	public String toYacasString(ValidExpression ve, boolean resolveVariables) {
+		
+		// resolve global variables
+		if (resolveVariables) {			
+			casParser.resolveVariablesForCAS(ve);
 			
 			// TODO: remove
-			Application.debug("  resolveVariablesForCAS: " + ev);
+			Application.debug("  resolveVariablesForCAS: " + ve);
 		}	
 		
 		// convert to Yacas String
-		String yacasStr = casParser.toYacasString(ev, resolveVariables);
+		String yacasStr = casParser.toYacasString(ve, resolveVariables);
 	
+		// label of an assignment, e.g. a := 5
+		String veLabel = ve.getLabel();
+		if (veLabel != null)
+			yacasStr = veLabel + " := " + yacasStr;
+		
 		// TODO: remove
 		Application.debug(" toYacasString: " + yacasStr);
 		return yacasStr;
@@ -87,10 +180,10 @@ public class GeoGebraCAS {
 	
 	
 	/**
-	 * Tries to convert the given Yacas string to GeoGebra syntax.
+	 * Tries to parse a given Yacas string and returns a ValidExpression object.
 	 */
-	public String toGeoGebraString(String yacasString) {
-		return casParser.toGeoGebraString(yacasString);
+	public ValidExpression parseYacas(String yacasString) throws Throwable {
+		return casParser.parseYacas(yacasString);
 	}
 		
 	/**

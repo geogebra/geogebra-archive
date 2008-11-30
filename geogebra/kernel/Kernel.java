@@ -4996,6 +4996,8 @@ public class Kernel {
 		// valid left hand side 
 		// leading coefficient
 		sbBuildImplicitVarPart.append(formatCoeff(temp[leadingNonZero]));
+		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+			sbBuildImplicitVarPart.append("*");
 		sbBuildImplicitVarPart.append(vars[leadingNonZero]);
 
 		// other coefficients on lhs
@@ -5013,6 +5015,8 @@ public class Kernel {
 			if (abs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildImplicitVarPart.append(sign);
 				sbBuildImplicitVarPart.append(formatCoeff(abs));
+				if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+					sbBuildImplicitVarPart.append("*");
 				sbBuildImplicitVarPart.append(vars[i]);
 			}
 		}
@@ -5027,7 +5031,11 @@ public class Kernel {
 
 		sbBuildImplicitEquation.setLength(0);
 		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN));
-		sbBuildImplicitEquation.append(" = ");
+		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+			sbBuildImplicitEquation.append(" == ");
+		else
+			sbBuildImplicitEquation.append(" = ");
+		
 		// temp is set by buildImplicitVarPart
 		sbBuildImplicitEquation.append(format(-temp[vars.length]));
 
@@ -5137,20 +5145,34 @@ public class Kernel {
 		// special case
 		// y-coeff is 0: form x = constant
 		if (isZero(q)) {
-			sbBuildExplicitLineEquation.append("x = ");
+			sbBuildExplicitLineEquation.append("x");
+						
+			if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+				sbBuildExplicitLineEquation.append(" == ");
+			else
+				sbBuildExplicitLineEquation.append(" = ");
+			
 			sbBuildExplicitLineEquation.append(format(-numbers[2] / numbers[0]));
 			return sbBuildExplicitLineEquation;
 		}
 
 		// standard case: y-coeff not 0
-		sbBuildExplicitLineEquation.append("y = ");
+		sbBuildExplicitLineEquation.append("y");
+		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+			sbBuildExplicitLineEquation.append(" == ");
+		else
+			sbBuildExplicitLineEquation.append(" = ");
 
 		// x coeff
 		d = -numbers[0] / q;
 		dabs = Math.abs(d);
 		if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 			sbBuildExplicitLineEquation.append(formatCoeff(d));
-			sbBuildExplicitLineEquation.append("x");
+			
+			if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+				sbBuildExplicitLineEquation.append('*');
+			
+			sbBuildExplicitLineEquation.append('x');
 
 			// constant            
 			d = -numbers[2] / q;

@@ -271,7 +271,7 @@ implements ExpressionValue {
      * Replaces all ExpressionNodes in tree that are leafs (=wrappers) by their leaf
      * objects (of type ExpressionValue).
      */
-    final private void simplifyLeafs() {         
+    final public void simplifyLeafs() {         
         if (left.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) left;
             if (node.leaf) {            	   
@@ -2279,110 +2279,139 @@ implements ExpressionValue {
                break;
        
             case PLUS:          
-              	// we need parantheses around right text
-            	// if right is not a leaf expression or
-            	// it is a leaf GeoElement without a label (i.e. it is calculated somehow)        
-                if (left.isTextValue() &&
-                 	(
-                 			!right.isLeaf() || 
-                			(right.isGeoElement() && !((GeoElement) right).isLabelSet())
-					) )
-				{
-                    sb.append(leftStr);
-                    sb.append(" + (");
-                    sb.append(rightStr);
-                    sb.append(')');
-                }
-                else {
-                    sb.append(leftStr);                  
-                    if (rightStr.charAt(0) == '-') { // convert + - to -
-                        sb.append(" - ");
-                        sb.append(rightStr.substring(1));
-                    } else {
-                        sb.append(" + ");                                     
-                        sb.append(rightStr);
-                    }               
-                }                
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_YACAS:
+	        			sb.append('(');
+	        			sb.append(leftStr);
+	                    sb.append(") + (");
+	                    sb.append(rightStr);
+	                    sb.append(')');
+	                    break;
+	                    
+	                default:
+	                	// we need parantheses around right text
+	                	// if right is not a leaf expression or
+	                	// it is a leaf GeoElement without a label (i.e. it is calculated somehow)        
+	                    if (left.isTextValue() &&
+	                     	(
+	                     			!right.isLeaf() || 
+	                    			(right.isGeoElement() && !((GeoElement) right).isLabelSet())
+	    					) )
+	    				{
+	                        sb.append(leftStr);
+	                        sb.append(" + (");
+	                        sb.append(rightStr);
+	                        sb.append(')');
+	                    }
+	                    else {
+	                        sb.append(leftStr);                  
+	                        if (rightStr.charAt(0) == '-') { // convert + - to -
+	                            sb.append(" - ");
+	                            sb.append(rightStr.substring(1));
+	                        } else {
+	                            sb.append(" + ");                                     
+	                            sb.append(rightStr);
+	                        }               
+	                    }  
+	                break;
+            	}
                 break;
                 
-            case MINUS:    
-                sb.append(leftStr);                
-                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -                    
-                    if (rightStr.charAt(0) == '-') { // convert - - to +
-                        sb.append(" + ");
-                        sb.append(rightStr.substring(1));
-                    } else {
-                        sb.append(" - ");                                     
-                        sb.append(rightStr);
-                    }                        
-                }
-                else { 
-                    sb.append(" - (");
-                    sb.append(rightStr);
-                    sb.append(')');
-                }
+            case MINUS:  
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_YACAS:
+	        			sb.append('(');
+	        			sb.append(leftStr);
+	                    sb.append(") - (");
+	                    sb.append(rightStr);
+	                    sb.append(')');
+	                    break;
+	                    
+	                default:
+		                sb.append(leftStr);                
+		                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -                    
+		                    if (rightStr.charAt(0) == '-') { // convert - - to +
+		                        sb.append(" + ");
+		                        sb.append(rightStr.substring(1));
+		                    } else {
+		                        sb.append(" - ");                                     
+		                        sb.append(rightStr);
+		                    }                        
+		                }
+		                else { 
+		                    sb.append(" - (");
+		                    sb.append(rightStr);
+		                    sb.append(')');
+		                }	   
+		             break;
+	            }
                 break;
                 
             case MULTIPLY: 
-                boolean nounary = true;
-                // left wing                  
-                if (left.isLeaf() || opID(left) >= MULTIPLY) { // not +, - 
-                    if (leftStr.equals("-1")) { // unary minus
-                        nounary = false;
-                        sb.append('-');                     
-                    } else {
-                        sb.append(leftStr);                      
-                    }
-                } else { 
-                    sb.append('(');
-                    sb.append(leftStr);
-                    sb.append(')');                 
-                }               
-                     
-                // right wing
-                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -           
-                    // two digits colide: insert *    
-                    if (nounary) {
-                    	switch (STRING_TYPE) {
-                    		case STRING_TYPE_JASYMCA:
-                    		case STRING_TYPE_YACAS:
-                    			sb.append(" * "); 
-                    			break;
-                    			
-                    		default:
-                    		   if (Character.isDigit(rightStr.charAt(0)) &&
-                                    Character.isDigit(sb.charAt(sb.length() - 1)) )
-                               {
-                    			   sb.append(" * ");                    			   
-                                }
-                               else 
-                                   sb.append(' '); // space instead of '*'  
-                    	}                               
-                    }                 
-                    
-                    if (rightStr.charAt(0) == '-') {
-                    	sb.append('(');
-                        sb.append(rightStr);
-                        sb.append(')');
-                    } else
-                    	sb.append(rightStr);
-                } else {
-                    if (nounary) {
-                    	switch (STRING_TYPE) {
-                			case STRING_TYPE_JASYMCA:
-                			case STRING_TYPE_YACAS:
-                			case STRING_TYPE_GEOGEBRA_XML:
-                				sb.append(" * ");  
-                				break;
-                				
-                			default:                        
-                				sb.append(' '); // space instead of '*'  
-                    	}
-                    }                      
-                    sb.append('(');
+            	switch (STRING_TYPE) {
+        		case STRING_TYPE_JASYMCA:
+        		case STRING_TYPE_YACAS:
+        			sb.append('(');
+        			sb.append(leftStr);
+                    sb.append(") * (");
                     sb.append(rightStr);
                     sb.append(')');
-                }                                
+                    break;
+                    
+                default:
+	                boolean nounary = true;
+	                
+	                // left wing                  
+	                if (left.isLeaf() || opID(left) >= MULTIPLY) { // not +, - 
+	                    if (leftStr.equals("-1")) { // unary minus
+	                        nounary = false;
+	                        sb.append('-');                     
+	                    } else {
+	                        sb.append(leftStr);                      
+	                    }
+	                } else { 
+	                    sb.append('(');
+	                    sb.append(leftStr);
+	                    sb.append(')');                 
+	                }               
+	                     
+	                // right wing
+	                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -           
+	                    // two digits colide: insert *    
+	                    if (nounary) {                    	
+	                		   if (Character.isDigit(rightStr.charAt(0)) &&
+	                                Character.isDigit(sb.charAt(sb.length() - 1)) )
+	                           {
+	                			   sb.append(" * ");                    			   
+	                            }
+	                           else 
+	                               sb.append(' '); // space instead of '*'                      	                           
+	                    }                 
+	                    
+	                    if (rightStr.charAt(0) == '-') {
+	                    	sb.append('(');
+	                        sb.append(rightStr);
+	                        sb.append(')');
+	                    } else
+	                    	sb.append(rightStr);
+	                } else {
+	                    if (nounary) {
+	                    	switch (STRING_TYPE) {
+	                			case STRING_TYPE_GEOGEBRA_XML:
+	                				sb.append(" * ");  
+	                				break;
+	                				
+	                			default:                        
+	                				sb.append(' '); // space instead of '*'  
+	                    	}
+	                    }                      
+	                    sb.append('(');
+	                    sb.append(rightStr);
+	                    sb.append(')');
+	                }       
+            	}
                 break;
                 
             case DIVIDE:   
@@ -2396,6 +2425,7 @@ implements ExpressionValue {
                 		break;
                 		
     				case STRING_TYPE_JASYMCA:
+    				case STRING_TYPE_YACAS:
     					 sb.append('(');
 		                 sb.append(leftStr);
 		                 sb.append(")/(");
@@ -2426,16 +2456,27 @@ implements ExpressionValue {
 	                break;
                 
             case POWER:
-                // left wing                   	
-                if (leftStr.charAt(0) != '-' && // no unary
-                	(left.isLeaf() || opID(left) > POWER)) { // not +, -, *, /, ^                     
-                	sb.append(leftStr);                
-                } else { 
-                    sb.append('(');
-                    sb.append(leftStr);
-                    sb.append(')');
-                }           
-                
+            	switch (STRING_TYPE) {			
+					case STRING_TYPE_JASYMCA:
+					case STRING_TYPE_YACAS:
+						sb.append('(');
+	                    sb.append(leftStr);
+	                    sb.append(')');
+		                 break;
+		            
+					default:
+		                // left wing                   	
+		                if (leftStr.charAt(0) != '-' && // no unary
+		                	(left.isLeaf() || opID(left) > POWER)) { // not +, -, *, /, ^                     
+		                	sb.append(leftStr);                
+		                } else { 
+		                    sb.append('(');
+		                    sb.append(leftStr);
+		                    sb.append(')');
+		                }       
+					break;
+            	}
+	                
                 // right wing  
                 switch (STRING_TYPE) {
                 	case STRING_TYPE_LATEX:
@@ -2445,9 +2486,9 @@ implements ExpressionValue {
                         sb.append('}');
                         break;
                         
-	        		case STRING_TYPE_JASYMCA:
-	        		case STRING_TYPE_YACAS:
 	        		case STRING_TYPE_GEOGEBRA_XML:
+	        		case STRING_TYPE_JASYMCA:
+					case STRING_TYPE_YACAS:
 	        			sb.append('^'); 
                         sb.append('(');
                         sb.append(rightStr);

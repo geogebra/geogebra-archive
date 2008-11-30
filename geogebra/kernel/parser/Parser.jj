@@ -56,6 +56,7 @@ public class Parser {
     private Kernel kernel;
     private Construction cons;
     private Application app;
+    private boolean yacasParsing = false;
     
     public Parser(Kernel kernel, Construction cons) {
     	 this ( new java.io.StringReader("") ); // dummy stream for parser initing
@@ -63,12 +64,18 @@ public class Parser {
          this.cons = cons;
          app = kernel.getApplication();
     }   
+    
+    // reset for new parsing
+    public void myReInit(String parseString) {
+    	ReInit(new java.io.StringReader(parseString));    	
+    	yacasParsing = false;    	
+    }
 
     /**
      * Parses a String and returns a ValidExpression Object     
      */
     public ValidExpression parseGeoGebraExpression(String parseString) throws ParseException {           
-        ReInit( new java.io.StringReader(parseString) );                          
+        myReInit( parseString );                          
         return buildValidExpression();     
     }
     
@@ -76,7 +83,7 @@ public class Parser {
      * Parses a String and returns a ValidExpression Object     
      */
     public ValidExpression parseGeoGebraCAS(String parseString) throws ParseException {           
-        ReInit( new java.io.StringReader(parseString) );                          
+        myReInit( parseString );                          
         return buildCASExpression();     
     }        
     
@@ -84,7 +91,9 @@ public class Parser {
      * Parses a Yacas String and returns a ValidExpression Object     
      */
     public ValidExpression parseYacas(String parseString) throws ParseException {           
-        ReInit( new java.io.StringReader(parseString) );                          
+        myReInit( parseString ); 
+        // parse 3*x + 4*y == 2 as an equation 3x + 4y = 2
+        yacasParsing = true;                         
         return buildYacasExpression();     
     }
     
@@ -93,7 +102,7 @@ public class Parser {
      */
     public Function parseFunction(String parseString) 
     throws ParseException {    
-        ReInit( new java.io.StringReader(parseString) );                           
+        myReInit( parseString );                           
         return function();      
     }
     
@@ -102,7 +111,7 @@ public class Parser {
      */
     public ExpressionNode parseCmdExpression(String parseString) 
     throws ParseException {    
-        ReInit( new java.io.StringReader(parseString) );                           
+        myReInit(parseString );                           
         return cmdexpression();      
     }
     
@@ -111,7 +120,7 @@ public class Parser {
      */
     public ExpressionNode parseExpression(String parseString) 
     throws ParseException {    
-        ReInit( new java.io.StringReader(parseString) );                           
+        myReInit( parseString);                           
         return expression();      
     }
     
@@ -120,7 +129,7 @@ public class Parser {
      */
     public String parseLabel(String parseString) 
     throws ParseException {    
-        ReInit( new java.io.StringReader(parseString) );                           
+        myReInit(parseString );                           
         return label();      
     }    
 }
@@ -141,7 +150,8 @@ TOKEN : {
 
 /* OPERATORS */
 TOKEN :  {   
-    < CARTESIAN_SPECIAL_SEPERATOR: "|" >
+    < ASSIGNMENT: ":=" >
+  | < CARTESIAN_SPECIAL_SEPERATOR: "|" >
   | < NOT: ("\u00ac") > 
   | < OR:		("||" | "\u2228" ) >
   | < AND:		("&&" | "\u2227" ) >
@@ -154,7 +164,6 @@ TOKEN :  {
   | < PARALLEL: "\u2225" >
   | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
-  | < ASSIGNMENT:    ":=" >
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
@@ -382,6 +391,11 @@ ValidExpression buildCASExpression() :
 } 
 {         
     (
+       // assignment         
+        // b := 27 + c
+        LOOKAHEAD(2147483647)                                          
+	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) <ASSIGNMENT> ve = expressionnode()            
+	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   
        	ve = equation()        
@@ -389,17 +403,7 @@ ValidExpression buildCASExpression() :
     	// expression
     	// 5a + 3    
     	LOOKAHEAD(2147483647)
-    	ve = expressionnode()
-   	|    
-        // assignment         
-        // b := 27 + c
-        LOOKAHEAD(2147483647)                                          
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) <ASSIGNMENT> ve = expressionnode()
-	|	    
-	    // function 
-        // f(x) :=  x^2 + 3	 
-        LOOKAHEAD(2147483647)         
-        ve = casFunction()      	     	     
+    	ve = expressionnode()     	     	     
 	)                     
     ( <EOL> | <EOF> )     
     {   
@@ -425,9 +429,9 @@ ValidExpression buildYacasExpression() :
        	// convert Solve results like {x==5, x==7} to simple list {5, 7} 
        	LOOKAHEAD(2147483647)   
        	ve = yacasSolveResult()        
-    |   
+    |       
 		// try to parse Yacas string as standard GeoGebra expression 
-    	ve = buildValidExpression()       	     	    
+    	ve = expressionnode()     	     	   
 	)                     
     ( <EOL> | <EOF> )     
     {       	                         
@@ -456,12 +460,12 @@ ValidExpression yacasSolveResult() :
    ( 
     // list with solutions like {x==5, x==7}
     "{"
-         casLabel() <EQUAL_BOOLEAN> (ev = cmdexpression())    
+         casLabel() <EQUAL_BOOLEAN> (ev = plusminusnode())    
        {   
             myList = new MyList(kernel);         
             myList.addListElement(ev);
         }
-       ( "," casLabel() <EQUAL_BOOLEAN> (ev = cmdexpression()) 
+       ( "," casLabel() <EQUAL_BOOLEAN> (ev = plusminusnode()) 
        	 {
        		myList.addListElement(ev); 
        	 } 
@@ -490,13 +494,22 @@ Command command():
     ExpressionNode en;
 }
 {   
-    (t = <SPREADSHEET_LABEL> | t = <LABEL>)
-    {   c = new Command(kernel, t.image, true );    } 
-    "[" 
-       ( en = cmdexpression()  { c.addArgument( en ); } )?
-        ( "," en = cmdexpression() { c.addArgument( en ); } )*
-    "]"
-    { return c; }
+	(
+	    (t = <SPREADSHEET_LABEL> | t = <LABEL>)
+	    {   c = new Command(kernel, t.image, true );    } 
+	    ("[" 
+	       ( en = cmdexpression()  { c.addArgument( en ); } )?
+	        ( "," en = cmdexpression() { c.addArgument( en ); } )*
+	    "]") 
+	    { return c; }	 
+    |
+     	(t = <FUNCTION_LABEL>) // includes (
+	    {   c = new Command(kernel, t.image.substring(0,t.image.length()-1), true );    } 
+	    (   ( en = cmdexpression()  { c.addArgument( en ); } )?
+	        ( "," en = cmdexpression() { c.addArgument( en ); } )*
+	    ")" )
+	    { return c; }
+	)
 }
 
 /**
@@ -599,11 +612,10 @@ Equation equation():
 {    
     lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
-            //lhs.resolveVariables();
-            //rhs.resolveVariables();
             return new Equation(kernel, lhs, rhs); 
         }
 }
+
 
 /**
  * expression = expressionnode
@@ -737,28 +749,7 @@ functions of other variables than x not implemented yet
 */	    
 }
 
-/**
- * function = 	label(x) := expressionnode 
- * note: may also include commands in expressionnode
- */
-ExpressionNode casFunction():
-{
-    ExpressionNode rhs;
-    Token l = null;
-    Token var;
-}
-{          
-(
-	   // f(x) :=  x^2 + 3	
-	   l = <FUNCTION_LABEL> <VARX> ")" <ASSIGNMENT> 
-	 	 rhs = expressionnode()
-	    {	        
-	    	String label = l.image.substring(0,l.image.length()-1);		    
-       		rhs.setLabel(label);		
-       		return rhs;
-	    }   
-)
-}
+
 
 /**
  * function = 	label(x) = ( expressionnode | command ) 
@@ -813,7 +804,8 @@ ExpressionNode expressionnode():
         }
     )*
     { 
-    	//ret.simplifyLeafs();
+    	if (yacasParsing)
+    			ret.simplifyLeafs();
     	return ret; 
     }
 }
@@ -849,7 +841,10 @@ ExpressionNode COMPAREterm():
     (         
        (<EQUAL_BOOLEAN>  f = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  
+    	   if (yacasParsing)
+    	       ret = new ExpressionNode(kernel, new Equation(kernel, ret, f));
+    	   else
+           		ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  
          }
        )   
      |   
@@ -1399,8 +1394,12 @@ ExpressionNode numberFunction():
       		}
       		
       		if (geo == null) {
-      		  	String [] str = { "UndefinedVariable", funcName };
-           	 	throw new MyParseError(app, str);    
+      				// return command
+      				Command cmd = new Command(kernel, funcName, true );
+      				cmd.addArgument( en );
+      				return new ExpressionNode(kernel, cmd);      						
+      			
+//      		  	String [] str = { "UndefinedVariable", funcName };//           	 	throw new MyParseError(app, str);    
            	}
       		
       		if (order > 0) { // derivative

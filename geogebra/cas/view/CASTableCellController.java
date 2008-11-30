@@ -211,7 +211,7 @@ public class CASTableCellController implements KeyListener {
 		String error = null;
 		try {
 			// provess input string
-			evaluation = processCASInput(inputText, e.isShiftDown());
+			evaluation = ggbCAS.processCASInput(inputText, e.isShiftDown(), view.isUseGeoGebraVariableValues());
 			
 			if (evaluation == null)
 				error = ggbCAS.getYACASError();
@@ -261,34 +261,7 @@ public class CASTableCellController implements KeyListener {
 		}
 	}
 	
-	/**
-	 * Processes the CAS input string and returns an evaluation result.
-	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
-	 * @return null if something went wrong.
-	 */
-	private String processCASInput(String inputExp, boolean doEvaluate) throws Throwable {
-		GeoGebraCAS ggbCAS = view.getCAS();
-		
-		// PARSE input
-		ExpressionValue ev = ggbCAS.parseInput(inputExp);
-		
-		// convert parsed input to Yacas string
-		String yacasString = ggbCAS.toYacasString(ev, view.isUseGeoGebraVariableValues());
-		
-		// EVALUATE input in Yacas depending on key combination
-		String result;
-		if (doEvaluate) {
-			result = ggbCAS.evaluateYACAS(yacasString);
-		}
-		else {
-			result = ggbCAS.evaluateYACAS("Hold", yacasString);
-		}
-		
-		// convert Yacas result back into GeoGebra syntax
-		result = ggbCAS.toGeoGebraString(result);
-		
-		return result;
-	}
+
 		
 
 	/*

@@ -37,7 +37,7 @@ public class CASparser {
 	 * Parses the given expression and returns it as a ValidExpression.
 	 * @throws Throwable when something goes wrong
 	 */
-	public ValidExpression parseForCAS(String exp) throws Throwable {
+	public ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
 		return ggbParser.parseGeoGebraCAS(exp);
 	}
 	
@@ -69,16 +69,8 @@ public class CASparser {
 	/**
 	 * Tries to convert the given Yacas string to GeoGebra syntax.
 	 */
-	public String toGeoGebraString(String yacasString) {
-		String ggbString;
-		try {
-			ggbString = ggbParser.parseYacas(yacasString).toString();
-		} catch (Exception e) {
-			System.err.println("convert Yacas to GeoGebra failed: " + yacasString);
-			ggbString = yacasString;
-		}	
-		
-		return ggbString;
+	public ValidExpression parseYacas(String yacasString) throws Throwable {
+		return ggbParser.parseYacas(yacasString);		
 	}
 
 

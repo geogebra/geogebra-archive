@@ -13,33 +13,33 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int EOL = 5;
   /** RegularExpression Id. */
-  int CARTESIAN_SPECIAL_SEPERATOR = 6;
+  int ASSIGNMENT = 6;
   /** RegularExpression Id. */
-  int NOT = 7;
+  int CARTESIAN_SPECIAL_SEPERATOR = 7;
   /** RegularExpression Id. */
-  int OR = 8;
+  int NOT = 8;
   /** RegularExpression Id. */
-  int AND = 9;
+  int OR = 9;
   /** RegularExpression Id. */
-  int EQUAL_BOOLEAN = 10;
+  int AND = 10;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 11;
+  int EQUAL_BOOLEAN = 11;
   /** RegularExpression Id. */
-  int LESS = 12;
+  int NOT_EQUAL = 12;
   /** RegularExpression Id. */
-  int GREATER = 13;
+  int LESS = 13;
   /** RegularExpression Id. */
-  int LESS_EQUAL = 14;
+  int GREATER = 14;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 15;
+  int LESS_EQUAL = 15;
   /** RegularExpression Id. */
-  int PARALLEL = 16;
+  int GREATER_EQUAL = 16;
   /** RegularExpression Id. */
-  int PERPENDICULAR = 17;
+  int PARALLEL = 17;
   /** RegularExpression Id. */
-  int EQUAL = 18;
+  int PERPENDICULAR = 18;
   /** RegularExpression Id. */
-  int ASSIGNMENT = 19;
+  int EQUAL = 19;
   /** RegularExpression Id. */
   int PLUS = 20;
   /** RegularExpression Id. */
@@ -182,6 +182,7 @@ public interface ParserConstants {
     "\"\\t\"",
     "\"\\n\"",
     "\";\"",
+    "\":=\"",
     "\"|\"",
     "\"\\u00ac\"",
     "<OR>",
@@ -195,7 +196,6 @@ public interface ParserConstants {
     "\"\\u2225\"",
     "\"\\u22a5\"",
     "\"=\"",
-    "\":=\"",
     "\"+\"",
     "<MINUS>",
     "<MULTIPLY>",

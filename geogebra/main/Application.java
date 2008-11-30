@@ -1927,7 +1927,11 @@ public abstract class Application implements KeyEventDispatcher {
 
 		Container contentPane = spFrame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		contentPane.add(btPanel, BorderLayout.NORTH);
+		
+		// TODO: ADD BUTTON PANEL AGAIN
+		//contentPane.add(btPanel, BorderLayout.NORTH);
+		
+		
 		contentPane.add(casViewComp, BorderLayout.CENTER);
 		spFrame.setBackground(Color.white);
 		spFrame.setResizable(true);
