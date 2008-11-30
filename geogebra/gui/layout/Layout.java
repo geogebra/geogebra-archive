@@ -24,6 +24,7 @@ import geogebra.main.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
+import geogebra.gui.toolbar.MyToolbar;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
@@ -99,7 +100,8 @@ public class Layout {
 		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[1];
 		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 		
-		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, "0 | 40 | 1", false, true, true, true, false);
+		String defToolbar = MyToolbar.getDefaultToolbarStringNoMacros();
+		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, false, true, true, true, false);
 		
 		// basic geometry - just the euclidian view
 		dpInfo = new DockPanelXml[3];

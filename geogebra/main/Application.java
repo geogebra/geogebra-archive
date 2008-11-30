@@ -675,7 +675,8 @@ public abstract class Application implements KeyEventDispatcher {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
 		}
 		
-		euclidianView.setStandardView(false);
+		//euclidianView.setStandardView(false);
+		euclidianView.setStandardCoordSystem();
 		
 		if (updateUI)
 			updateComponentTreeUI();

@@ -425,6 +425,35 @@ public class MyToolbar extends JPanel implements ComponentListener{
     public String getDefaultToolbarString() {
     	StringBuffer sb = new StringBuffer();
     	
+    	sb.append(getDefaultToolbarStringNoMacros());
+    	
+        // macros       
+        Kernel kernel = app.getKernel();
+        int macroNumber = kernel.getMacroNumber();        
+        if (macroNumber > 0) {    
+        	sb.append(" || ");
+        	int count = 0;
+        	for (int i = 0; i < macroNumber; i++) {
+        		Macro macro = kernel.getMacro(i);
+        		if (macro.isShowInToolBar()) {
+        			count++;
+        			sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
+        			sb.append(" ");
+        		}        			
+        	}             	                	        	
+        }            
+        
+        //Application.debug("defToolbar: " + sb);
+        
+        return sb.toString();
+    }
+    
+    /**
+	 * Returns the default toolbar String definition.
+	 */
+    public static String getDefaultToolbarStringNoMacros() {
+    	StringBuffer sb = new StringBuffer();
+    	
     	// move
         sb.append(EuclidianView.MODE_MOVE);        
         sb.append(" ");
@@ -560,25 +589,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" ");
         sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
         sb.append(" , ");       
-        sb.append(EuclidianView.MODE_DELETE);
-        
-        // macros       
-        Kernel kernel = app.getKernel();
-        int macroNumber = kernel.getMacroNumber();        
-        if (macroNumber > 0) {    
-        	sb.append(" || ");
-        	int count = 0;
-        	for (int i = 0; i < macroNumber; i++) {
-        		Macro macro = kernel.getMacro(i);
-        		if (macro.isShowInToolBar()) {
-        			count++;
-        			sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
-        			sb.append(" ");
-        		}        			
-        	}             	                	        	
-        }            
-        
-        //Application.debug("defToolbar: " + sb);
+        sb.append(EuclidianView.MODE_DELETE);              
         
         return sb.toString();
     }

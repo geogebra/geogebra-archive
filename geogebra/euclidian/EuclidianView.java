@@ -447,6 +447,14 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		// distances between grid lines
 		automaticGridDistance = true;
 		
+		setStandardCoordSystem(repaint);
+	}
+	
+	public void setStandardCoordSystem() {
+		setStandardCoordSystem(true);
+	}
+	
+	private void setStandardCoordSystem(boolean repaint) {
 		setCoordSystem(XZERO_STANDARD, YZERO_STANDARD, SCALE_STANDARD,
 				SCALE_STANDARD, repaint);
 	}
