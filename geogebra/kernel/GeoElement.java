@@ -2785,10 +2785,26 @@ final public boolean hasOnlyFreeInputPoints() {
 			sb.append("\"");
 			
 		}
-		
-		
-		
 		sb.append("/>\n");
+
+		
+		if (this.isGeoPoint())
+			{
+			GeoPoint p = (GeoPoint)(this);
+			GeoList coordinateFunction = p.getCoordinateFunction();
+			if (coordinateFunction != null) {
+				sb.append("\t<objCoords");
+				sb.append(" dynamicx=\"");
+				sb.append(coordinateFunction.get(0).getLabelOrCommandDescription());
+				sb.append("\"");
+				sb.append(" dynamicy=\"");
+				sb.append(coordinateFunction.get(1).getLabelOrCommandDescription());
+				sb.append("\"");
+				sb.append("/>\n");
+
+			}
+		}
+		
 		
 		// layer
 		// Michael Borcherds 2008-02-26

@@ -389,6 +389,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 	}
 	
 	final public void updateCoords() {
+		
+		//if (coordinateFunction != null) {
+		//	inhomX = ((GeoNumeric)(coordinateFunction.get(0))).getValue(); 
+		//	inhomY = ((GeoNumeric)(coordinateFunction.get(1))).getValue(); 
+		//	return;
+		//}
 		// infinite point
 		if (kernel.isZero(z)) {
 			isInfinite = true;
@@ -467,18 +473,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
      * Writes (x/z, y/z) to res.
      */
     final public void getInhomCoords(double [] res) {
-       	res[0] = inhomX;
-       	res[1] = inhomY;
+       	res[0] = getInhomX();
+       	res[1] = getInhomY();
     }        	
-        
-    final public double getInhomX() {
-       	return inhomX;
-    }        	
-        
-    final public double getInhomY() {
-       	return inhomY;
-    }        	
-        
         
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
@@ -694,22 +691,22 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
         switch (toStringMode) {
         case Kernel.COORD_POLAR:                                            
     		sbBuildValueString.append('(');    
-			sbBuildValueString.append(kernel.format(GeoVec2D.length(inhomX, inhomY)));
+			sbBuildValueString.append(kernel.format(GeoVec2D.length(getInhomX(), getInhomY())));
 			sbBuildValueString.append("; ");
-			sbBuildValueString.append(kernel.formatAngle(Math.atan2(inhomY, inhomX)));
+			sbBuildValueString.append(kernel.formatAngle(Math.atan2(getInhomY(), getInhomX())));
 			sbBuildValueString.append(')');
             break;                                
                         
         case Kernel.COORD_COMPLEX:                                            
-			sbBuildValueString.append(kernel.format(inhomX));
+			sbBuildValueString.append(kernel.format(getInhomX()));
 			sbBuildValueString.append(" ");
-			sbBuildValueString.append(kernel.formatSigned(inhomY));
+			sbBuildValueString.append(kernel.formatSigned(getInhomY()));
 			sbBuildValueString.append("i");
             break;                                
                         
            default: // CARTESIAN                
        			sbBuildValueString.append('(');    
-				sbBuildValueString.append(kernel.format(inhomX));
+				sbBuildValueString.append(kernel.format(getInhomX()));
 				switch (kernel.getCoordStyle()) {
 					case Kernel.COORD_STYLE_AUSTRIAN:
 						sbBuildValueString.append(" | ");
@@ -718,7 +715,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 					default:
 						sbBuildValueString.append(", ");												
 				}
-				sbBuildValueString.append(kernel.format(inhomY));                                
+				sbBuildValueString.append(kernel.format(getInhomY()));                                
 				sbBuildValueString.append(')');
         }        
 		return sbBuildValueString;
@@ -952,5 +949,55 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 		}
 	  private static Comparator comparatorX;
 
+		private GeoList coordinateFunction; // { GeoNumeric x, GeoNumeric y }
+
+		public final GeoList getCoordinateFunction() {		
+			return coordinateFunction;
+		}
+
+		public void setCoordinateFunction(GeoList fun) 
+		{
+			if (coordinateFunction != null) {
+				coordinateFunction.unregisterConditionListener(this);
+			}
+			
+			// set new condition
+			coordinateFunction = fun;
+			
+			// register new condition
+			if (coordinateFunction != null) {
+				coordinateFunction.registerConditionListener(this);
+			}		
+		}
 		
+		public final void removeCoordinateFunction() {
+			if (coordinateFunction != null) {
+				coordinateFunction.unregisterConditionListener(this);
+			}
+			coordinateFunction = null;
+		}
+		
+	    final public double getInhomX() {
+	       	if (coordinateFunction == null)
+	       		return inhomX;    	
+	       	
+	       	GeoList coordinateFunctionTemp = coordinateFunction;
+	       	//coordinateFunction = null;
+	       	double ret = ((GeoNumeric)(coordinateFunctionTemp.get(0))).getValue();
+	       	//coordinateFunction = coordinateFunctionTemp;
+	       	return ret;
+	    }        	
+	        
+	    final public double getInhomY() {
+	       	if (coordinateFunction == null)
+	       		return inhomY;    	
+	       	
+	       	GeoList coordinateFunctionTemp = coordinateFunction;
+	       	//coordinateFunction = null;
+	       	double ret = ((GeoNumeric)(coordinateFunctionTemp.get(1))).getValue();
+	       	//coordinateFunction = coordinateFunctionTemp;
+	       	return ret;
+	    }        	
+	        
+
 }

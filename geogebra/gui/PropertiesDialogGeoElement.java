@@ -580,6 +580,7 @@ public class PropertiesDialogGeoElement
 		private AbsoluteScreenLocationPanel absScreenLocPanel;	
 		private ShowConditionPanel showConditionPanel;
 		private ColorFunctionPanel colorFunctionPanel;
+		private CoordinateFunctionPanel coordinateFunctionPanel;
 		
 		private JTabbedPane tabs;
 
@@ -627,6 +628,7 @@ public class PropertiesDialogGeoElement
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
 			showConditionPanel = new ShowConditionPanel(app, this); 
 			colorFunctionPanel = new ColorFunctionPanel(app, this);
+			coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -754,6 +756,7 @@ public class PropertiesDialogGeoElement
 			ArrayList advancedTabList = new ArrayList();
 			advancedTabList.add(showConditionPanel);	
 			advancedTabList.add(colorFunctionPanel);	
+			advancedTabList.add(coordinateFunctionPanel);	
 			advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
@@ -5190,6 +5193,175 @@ class ColorFunctionPanel
 		// request focus
 		if (requestFocus)
 			tfRed.requestFocus();
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		doActionPerformed();
+	}
+}
+
+/**
+ * panel for condition to show object
+ * @author Michael Borcherds 2008-04-01
+ */
+class CoordinateFunctionPanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	private JTextField tfX, tfY;
+	private JButton btRemove;
+	private JLabel nameLabelX,nameLabelY;
+	
+	private Kernel kernel;
+	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
+
+	public CoordinateFunctionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+		kernel = app.getKernel();
+		this.propPanel = propPanel;
+		
+		// textfield for animation step
+		setBorder(
+				BorderFactory.createTitledBorder(app.getMenu("DynamicCoordinates"))
+				);
+		
+		// non auto complete input panel
+		InputPanel inputPanelX = new InputPanel(null, app, 1, 7, false, false, false);
+		InputPanel inputPanelY = new InputPanel(null, app, 1, 7, false, false, false);
+		tfX = (AutoCompleteTextField) inputPanelX.getTextComponent();				
+		tfY = (AutoCompleteTextField) inputPanelY.getTextComponent();				
+		
+		
+		tfX.addActionListener(this);
+		tfX.addFocusListener(this);
+		tfY.addActionListener(this);
+		tfY.addFocusListener(this);
+		
+		nameLabelX = new JLabel(app.getMenu("XCoord") + ":");	
+		nameLabelX.setLabelFor(inputPanelX);
+		nameLabelY = new JLabel(app.getMenu("YCoord") + ":");	
+		nameLabelY.setLabelFor(inputPanelY);
+
+		
+		btRemove = new JButton("\u2718");
+		btRemove.setToolTipText(app.getPlain("Remove"));
+		btRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i=0; i < geos.length; i++) {
+					GeoPoint geo = (GeoPoint) geos[i];	
+					geo.removeCoordinateFunction();
+					geo.updateRepaint();
+				}
+				tfX.setText("");
+				tfY.setText("");
+			}
+		});
+
+		// put it all together
+		setLayout(new FlowLayout(FlowLayout.LEFT));
+		add(nameLabelX);		
+		add(inputPanelX);
+		add(nameLabelY);		
+		add(inputPanelY);
+		add(btRemove);
+	}
+
+	public JPanel update(Object[] geos) {
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		tfX.removeActionListener(this);
+		tfY.removeActionListener(this);
+		btRemove.removeActionListener(this);
+
+		// take condition of first geo
+		String strX = "";
+		String strY = "";
+		GeoPoint geo0 = (GeoPoint) geos[0];	
+		GeoList coordsList = geo0.getCoordinateFunction();
+		if (coordsList != null) {
+			strX = coordsList.get(0).getLabel();
+			strY = coordsList.get(1).getLabel();
+		}	
+		
+		for (int i=0; i < geos.length; i++) {
+			GeoPoint geo = (GeoPoint) geos[i];	
+			GeoList coordsListTemp = geo.getCoordinateFunction();
+			if (coordsListTemp != null) {
+				String strXTemp = coordsListTemp.get(0).getLabel();
+				String strYTemp = coordsListTemp.get(1).getLabel();
+				if (!strX.equals(strXTemp)) strX = "x("+geo.getLabel()+")";
+				if (!strY.equals(strYTemp)) strY = "y("+geo.getLabel()+")";
+			}	
+		}		
+
+		tfX.setText(strX);
+		tfX.addActionListener(this);
+		tfY.setText(strY);
+		tfY.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			if (!geo.isGeoPoint() || !geo.isIndependent())
+				return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == tfX || e.getSource() == tfY)
+			doActionPerformed();
+	}
+
+	private void doActionPerformed() {
+		GeoList list = null;
+		String strX = tfX.getText();
+		String strY = tfY.getText();
+		if ((strX == null || strX.trim().length() == 0) &&
+			(strY == null || strY.trim().length() == 0) ) {
+			list=null;
+		} else {
+			if (strX == null || strX.trim().length() == 0) strX="0";
+			if (strY == null || strY.trim().length() == 0) strY="0";
+	
+			list = kernel.getAlgebraProcessor().evaluateToList("{"+strX + ","+strY+"}");
+		}
+		
+				
+		// set condition
+		boolean requestFocus = false;
+		//try {
+		if (list != null)								//
+		if (((list.get(0) instanceof GeoNumeric)) && 	// bugfix, enter "x" for a color 
+			((list.get(1) instanceof GeoNumeric)) )		//
+			for (int i = 0; i < geos.length; i++) {
+				GeoPoint geo = (GeoPoint) geos[i];
+				geo.setCoordinateFunction(list);				
+			}	
+			
+	
+		if (list != null)
+			list.updateRepaint();		
+		
+		// to update "showObject" as well
+		propPanel.updateSelection(geos);
+		
+		// request focus
+		if (requestFocus)
+			tfX.requestFocus();
 	}
 
 	public void focusGained(FocusEvent arg0) {

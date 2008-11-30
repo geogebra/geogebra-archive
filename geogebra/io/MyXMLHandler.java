@@ -141,6 +141,7 @@ public class MyXMLHandler implements DocHandler {
 	// (needed for GeoText and GeoVector)
 	private LinkedList showObjectConditionList = new LinkedList();
 	private LinkedList dynamicColorList = new LinkedList();
+	private LinkedList dynamicCoordinatesList = new LinkedList();
 
 	private class GeoExpPair {
 		GeoElement geo;
@@ -206,6 +207,8 @@ public class MyXMLHandler implements DocHandler {
 		startPointList.clear();
 		showObjectConditionList.clear();
 		dynamicColorList.clear();
+		dynamicCoordinatesList.clear();
+		
 		consStep = -2;
 
 		mode = MODE_INVALID;
@@ -1701,6 +1704,7 @@ public class MyXMLHandler implements DocHandler {
 				processStartPointList();
 				processShowObjectConditionList();
 				processDynamicColorList();
+				processDynamicCoordinatesList();
 
 				if (kernel == origKernel) {
 					mode = MODE_GEOGEBRA;
@@ -1900,6 +1904,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("outlyingIntersections")) {
 				ok = handleOutlyingIntersections(attrs);
 				break;
+			} else if (eName.equals("objCoords")) {
+				ok = handleObjCoords(attrs);
+				break;
 			}
 
 		case 'p':
@@ -2009,6 +2016,37 @@ public class MyXMLHandler implements DocHandler {
 		if (alpha != null)
 			geo.setAlphaValue(Float.parseFloat(alpha));
 		return true;
+	}
+	private boolean handleObjCoords(LinkedHashMap attrs) {
+
+		// Dynamic coordinates
+		// Michael Borcherds 2008-11-30
+		String x = "";
+		String y = "";
+		x = (String) attrs.get("dynamicx");
+		y = (String) attrs.get("dynamicy");
+
+
+		if (x != null && y != null)
+			try {
+				if (!x.equals("") || !y.equals("")) {
+					if (x.equals(""))
+						x = "0";
+					if (y.equals(""))
+						y = "0";
+					
+					// geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red
+					// + ","+green+","+blue+"}"));
+					// need to to this at end of construction (dependencies!)
+					dynamicCoordinatesList.add(new GeoExpPair(geo, "{" + x + ","
+							+ y +"}"));
+
+				}
+			} catch (Exception e) {
+				Application.debug("Error loading Dynamic Coordinates");
+			}
+
+			return true;
 	}
 
 	/*
@@ -2747,6 +2785,24 @@ public class MyXMLHandler implements DocHandler {
 			throw new MyError(app, "dynamicColorList: " + e.toString());
 		}
 		dynamicColorList.clear();
+	}
+
+	private void processDynamicCoordinatesList() {
+		try {
+
+			Iterator it = dynamicCoordinatesList.iterator();
+			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+
+			while (it.hasNext()) {
+				GeoExpPair pair = (GeoExpPair) it.next();
+				((GeoPoint)(pair.geo)).setCoordinateFunction(algProc.evaluateToList(pair.exp));
+			}
+		} catch (Exception e) {
+			dynamicCoordinatesList.clear();
+			e.printStackTrace();
+			throw new MyError(app, "dynamicCoordinatesList: " + e.toString());
+		}
+		dynamicCoordinatesList.clear();
 	}
 
 	private boolean handleEigenvectors(LinkedHashMap attrs) {
