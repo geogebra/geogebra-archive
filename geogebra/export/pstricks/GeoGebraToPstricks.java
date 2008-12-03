@@ -828,7 +828,43 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		double y=geo.getTranslationVector().getY();
 		double r=geo.getHalfAxes()[0];
 		double startAngle=geo.getParameterStart();
+		startAngle=startAngle%(Math.PI*2);
+		if (startAngle<0) startAngle+=Math.PI*2;
 		double endAngle=geo.getParameterEnd();
+		endAngle=endAngle%(Math.PI*2);
+		if (endAngle<0) endAngle+=Math.PI*2;
+		// Apply the affin transform on the startAngle and endAngle
+		AffineTransform af=geo.getAffineTransform();
+		if (af.getDeterminant()<0){
+			double tmp=startAngle;
+			startAngle=endAngle;
+			endAngle=tmp;
+		}
+		
+		double m11=af.getScaleX();
+		double m22=af.getScaleY();
+		double m12=af.getShearX();
+		double m21=af.getShearY();
+		double[] vec={Math.cos(startAngle),Math.sin(startAngle)};
+		double[] tmp=new double[2];
+		tmp[0]=m11*vec[0]+m12*vec[1];
+		tmp[1]=m21*vec[0]+m22*vec[1];
+		double newAngle=Math.atan2(tmp[1], tmp[0]);
+		if (newAngle<0) newAngle+=Math.PI*2;
+		startAngle=startAngle+(newAngle-startAngle);
+		startAngle=startAngle%(Math.PI*2);
+		if (startAngle<0) startAngle+=Math.PI*2;
+		
+		vec[0]=Math.cos(endAngle);
+		vec[1]=Math.sin(endAngle);
+		tmp[0]=m11*vec[0]+m12*vec[1];
+		tmp[1]=m21*vec[0]+m22*vec[1];
+		newAngle=Math.atan2(tmp[1], tmp[0]);
+		if (newAngle<0) newAngle+=Math.PI*2;
+		endAngle=endAngle+(newAngle-endAngle);
+		endAngle=endAngle%(Math.PI*2);
+		if (endAngle<0) endAngle+=Math.PI*2;
+		
 		if (xunit==yunit){
 			startAngle=Math.toDegrees(startAngle);
 			endAngle=Math.toDegrees(endAngle);
