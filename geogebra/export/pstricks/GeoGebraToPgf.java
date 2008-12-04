@@ -825,7 +825,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	float alpha=geo.getAlphaValue();
     	if (alpha==0.0f) return;
 		startBeamer(codeFilledObject);
-    	codeFilledObject.append("\\draw");
+    	codeFilledObject.append("\\fill");
     	String s=LineOptionCode(geo,true);
     	if (s.length()!=0){
     		s="["+s+"] ";
@@ -927,6 +927,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	private void addText(String st,boolean isLatex,int style,int size){
 		if (format==FORMAT_LATEX){
 			if (isLatex)code.append("$");
+			// Replace all backslash symbol with \textbackslash
+			else {
+				st=st.replaceAll("\\\\", "\\\\textbackslash ");
+			}
 			switch(style){
 				case 1:
 					if (isLatex) code.append("\\mathbf{");
@@ -955,6 +959,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		else if (format==FORMAT_CONTEXT){
 			if (isLatex)code.append("$");
+			
 			switch(style){
 				case 1:
 					code.append("{\\bf ");
@@ -1005,57 +1010,28 @@ public class GeoGebraToPgf extends GeoGebraExport {
 
 	
 	protected void drawGeoConicPart(GeoConicPart geo){
-		double x=geo.getTranslationVector().getX();
-		double y=geo.getTranslationVector().getY();
-		double r=geo.getHalfAxes()[0];
+		double r1=geo.getHalfAxes()[0];
+		double r2=geo.getHalfAxes()[1];
 		double startAngle=geo.getParameterStart();
 		double endAngle=geo.getParameterEnd();
-		startAngle=startAngle%(Math.PI*2);
-		if (startAngle<0) startAngle+=Math.PI*2;
-		endAngle=endAngle%(Math.PI*2);
-		if (endAngle<0) endAngle+=Math.PI*2;
-		// Apply the affin transform on the startAngle and endAngle
+		// Get all coefficients form the transform matrix
 		AffineTransform af=geo.getAffineTransform();
-		if (af.getDeterminant()<0){
-			double tmp=startAngle;
-			startAngle=endAngle;
-			endAngle=tmp;
-		}
-		
 		double m11=af.getScaleX();
 		double m22=af.getScaleY();
 		double m12=af.getShearX();
 		double m21=af.getShearY();
-		double[] vec={Math.cos(startAngle),Math.sin(startAngle)};
-		double[] tmp=new double[2];
-		tmp[0]=m11*vec[0]+m12*vec[1];
-		tmp[1]=m21*vec[0]+m22*vec[1];
-		double newAngle=Math.atan2(tmp[1], tmp[0]);
-		if (newAngle<0) newAngle+=Math.PI*2;
-		startAngle=startAngle+(newAngle-startAngle);
-		startAngle=startAngle%(Math.PI*2);
-		if (startAngle<0) startAngle+=Math.PI*2;
-		
-		vec[0]=Math.cos(endAngle);
-		vec[1]=Math.sin(endAngle);
-		tmp[0]=m11*vec[0]+m12*vec[1];
-		tmp[1]=m21*vec[0]+m22*vec[1];
-		newAngle=Math.atan2(tmp[1], tmp[0]);
-		if (newAngle<0) newAngle+=Math.PI*2;
-		endAngle=endAngle+(newAngle-endAngle);
-		endAngle=endAngle%(Math.PI*2);
-		if (endAngle<0) endAngle+=Math.PI*2;
-		
-		startAngle=Math.toDegrees(startAngle);
-		endAngle=Math.toDegrees(endAngle);
+		double tx=af.getTranslateX();
+		double ty=af.getTranslateY();
 		if (startAngle>endAngle){
-			startAngle=startAngle-360;
+			startAngle=startAngle-Math.PI*2;
 		}
+		
+		
 		//	Sector command:   \draw[shift={(x0,y0)},par] (0,0) -- (startAngle:radius) arc (angleStart:EndAngle:radius) -- cycle
 		//	 Arc command:	\draw[shift={(x0,y0)},par] (startAngle:radius) arc (startAngle:endAngle:radius)
 		startBeamer(code);
 		code.append("\\draw [shift={");
-		writePoint(x,y,code);
+		writePoint(tx,ty,code);
 		code.append("}");
 		String s=LineOptionCode(geo,true);
 		if (s.length()!=0){
@@ -1064,32 +1040,65 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		else code.append("]");
 		if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
-			code.append(" (0,0) -- (");
-			code.append(kernel.format(startAngle));
-			code.append(":");
-			
-			
-			code.append(kernel.format(r*xunit));
-			code.append(") arc (");
+			code.append(" (0,0) -- ");
+			StringBuffer sb1=new StringBuffer();
+			sb1.append(kernel.format(r1));
+			sb1.append("*cos(\\t r)");
+			StringBuffer sb2=new StringBuffer();
+			sb2.append(kernel.format(r2));
+			sb2.append("*sin(\\t r)");
+			code.append(" plot[domain=");
 			code.append(kernel.format(startAngle));
 			code.append(":");
 			code.append(kernel.format(endAngle));
-			code.append(":");
-			code.append(kernel.format(r*xunit));
-			code.append(") -- cycle ;\n");
+			code.append(",variable=\\t]({");
+			code.append(kernel.format(m11));
+			code.append("*");
+			code.append(sb1);
+			code.append("+");
+			code.append(kernel.format(m12));
+			code.append("*");
+			code.append(sb2);
+			code.append("},{");
+			code.append(kernel.format(m21));
+			code.append("*");
+			code.append(sb1);
+			code.append("+");
+			code.append(kernel.format(m22));
+			code.append("*");
+			code.append(sb2);
+			code.append("})");
+			code.append(" -- cycle ;\n");
 		}
 		else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
-			code.append(" (");
-			code.append(kernel.format(startAngle));
-			code.append(":");
-			code.append(kernel.format(r*xunit));
-			code.append(") arc (");
+			StringBuffer sb1=new StringBuffer();
+			sb1.append(kernel.format(r1));
+			sb1.append("*cos(\\t r)");
+			StringBuffer sb2=new StringBuffer();
+			sb2.append(kernel.format(r2));
+			sb2.append("*sin(\\t r)");
+
+			code.append(" plot[domain=");
 			code.append(kernel.format(startAngle));
 			code.append(":");
 			code.append(kernel.format(endAngle));
-			code.append(":");
-			code.append(kernel.format(r*xunit));
-			code.append(");\n");
+			code.append(",variable=\\t]({");
+			code.append(kernel.format(m11));
+			code.append("*");
+			code.append(sb1);
+			code.append("+");
+			code.append(kernel.format(m12));
+			code.append("*");
+			code.append(sb2);
+			code.append("},{");
+			code.append(kernel.format(m21));
+			code.append("*");
+			code.append(sb1);
+			code.append("+");
+			code.append(kernel.format(m22));
+			code.append("*");
+			code.append(sb2);
+			code.append("});\n");
 		}
 		endBeamer(code);	
 	}
