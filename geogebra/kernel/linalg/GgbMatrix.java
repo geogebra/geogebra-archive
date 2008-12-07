@@ -56,6 +56,14 @@ public class GgbMatrix
 	
 	public GgbMatrix(){}
 	
+	/** see class description */
+	public GgbMatrix(int rows, int columns, double[] val){
+		this.rows = rows;
+		this.columns = columns;
+		this.val = val;
+	}
+	
+	
 	/** creates an empty rows * columns matrix (all values set to 0)  */
 	public GgbMatrix(int rows, int columns){
 		

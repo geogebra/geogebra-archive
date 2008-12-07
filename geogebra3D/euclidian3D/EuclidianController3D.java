@@ -41,8 +41,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	
-	//protected boolean keyCtrlDown = false;
-	//protected boolean keyAltDown = false;
+	//protected boolean isCtrlDown = false;
+	protected boolean isAltDown = false;
 	
 	
 	
@@ -83,6 +83,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected GgbVector v2=v2list[movingPlane];
 	protected GgbVector vn=vnlist[movingPlane];
 	protected Color movingColor=movingColorlist[movingPlane];
+	
+	
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
 	static final public double ANGLE_SCALE = 2*Math.PI/300f;
@@ -301,6 +303,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			//getting new position of the point
 			GgbVector[] project = o.projectPlaneThruVIfPossible(plane, v);
 			movedGeoPoint3D.setCoords(project[0]);			
+		
+			
+		}else if (isAltDown){ //moves the point along z-axis
+			//getting current pick point and direction v 
+			GgbVector o = view.getPickPoint(mouseLoc.x,mouseLoc.y); 
+			view.toSceneCoords3D(o);
+			
+			GgbVector v = new GgbVector(new double[] {0,0,1,0});
+			view.toSceneCoords3D(v);
+			
+			//getting new position of the point
+			GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+			movedGeoPoint3D.setCoords(project);
+			
+			//update moving plane
+			view.setMovingProjection(movedGeoPoint3D.getCoords(),vn);			
 			
 		}else{
 			//getting current pick point and direction v 
@@ -567,7 +585,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			break;
 		case KeyEvent.VK_ALT:
 			//Application.debug("alt pressed");
-			//keyAltPressed();
+			isAltDown = true;
 			break;
 		default:
 				break;
@@ -591,8 +609,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			keyCtrlReleased();
 			break;
 		case KeyEvent.VK_ALT:
-			//Application.debug("alt released");
-			//keyAltReleased();
+			isAltDown = false;
 			break;
 		default:
 				break;

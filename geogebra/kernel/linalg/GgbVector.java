@@ -248,6 +248,23 @@ public class GgbVector
 	
 	
 	
+	/** calculates projection of this as far as possible to the 3D-line represented by the matrix [V O]
+	 *  regarding V2 direction
+	 *  and returns projection */
+	public GgbVector projectNearLine(GgbVector O, GgbVector V, GgbVector V2){
+		
+		GgbVector V3 = V.crossProduct(V2);
+		
+		if (Kernel.isEqual(V3.norm(), 0.0, Kernel.STANDARD_PRECISION)){
+			return this.copyVector();
+		}else{
+			GgbMatrix m = new GgbMatrix(4,4);
+			m.set(new GgbVector[] {V, V3, V2, O});
+			return this.projectPlane(m)[0];
+		}
+		
+	}	
+	
 	/** returns this-v */
 	public GgbVector sub(GgbVector v){
 		int i;
