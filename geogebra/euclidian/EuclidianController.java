@@ -766,12 +766,26 @@ public class EuclidianController implements MouseListener,
 				translateableGeos.add(movedGeoElement);
 			}
 			
+			
+			
+			//Mathieu Blossier 2008-12-12 (start)
+			else if (movedGeoElement.isGeoVector()){								
+
+				movedGeoVector = (GeoVector) movedGeoElement;
+				moveMode = MOVE_VECTOR_STARTPOINT;
+				view.showMouseCoords = true;
+				view.setDragCursor();
+			}
+			//Mathieu Blossier 2008-12-12 (end)
+			
+			
+			
 			// STANDARD case: get free input points of dependent movedGeoElement
 			else if (movedGeoElement.hasMoveableInputPoints()) {
 				// allow only moving of the following object types
 				if (movedGeoElement.isGeoLine() || 
 					  movedGeoElement.isGeoPolygon() ||
-					  movedGeoElement.isGeoVector() ||
+					  //movedGeoElement.isGeoVector() || //Mathieu Blossier 2008-12-12
 					  movedGeoElement.isGeoConic() ) 
 				{		
 					translateableGeos = movedGeoElement.getFreeInputPoints();
@@ -786,7 +800,8 @@ public class EuclidianController implements MouseListener,
 				if (translationVec == null)
 					translationVec = new GeoVector(kernel.getConstruction());
 			} else {
-				moveMode = MOVE_NONE;
+				if (!movedGeoElement.isGeoVector()) //Mathieu Blossier 2008-12-12
+					moveMode = MOVE_NONE;
 			}				
 		} 
 		
@@ -974,7 +989,7 @@ public class EuclidianController implements MouseListener,
 			else {
 				moveMode = MOVE_NONE;
 			}
-
+			
 			view.repaint();												
 	}
 
