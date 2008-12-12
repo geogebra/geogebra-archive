@@ -36,12 +36,16 @@ public abstract class Drawable3D {
 	
 	
 	//view3D
-	EuclidianView3D view3D; 
+	private EuclidianView3D view3D; 
 	
 	//matrix for openGL display
-	GgbMatrix matrix = new GgbMatrix(4,4);
+	private GgbMatrix matrix = new GgbMatrix(4,4);
 	
-	
+	//links to the GeoElement
+	private GeoElement geo; 	
+	private boolean isVisible;
+	private boolean labelVisible;
+
 	//picking
 	boolean isPicked = false;	
 	public float zPickMax, zPickMin; //for odering elements with openGL picking
@@ -53,10 +57,6 @@ public abstract class Drawable3D {
 	static final public int DRAW_PICK_ORDER_1D = 1; //for 1-Dimensional objects : segments, line
 	static final public int DRAW_PICK_ORDER_2D = 2; //for 2-Dimensional objects : polygons, planes
 	
-	//links to the GeoElement
-	GeoElement geo; 	
-	boolean isVisible;
-	boolean labelVisible;
 	
 	
 	
@@ -72,6 +72,34 @@ public abstract class Drawable3D {
 		return matrix.get();
 	}
 	
+	public void setMatrix(GgbMatrix a_matrix){
+		matrix=a_matrix;
+	}
+	public GgbMatrix getMatrix(){
+		return matrix;
+	}
+
+	protected EuclidianView3D getView3D(){
+		return view3D; 
+	}
+	protected void setView3D(EuclidianView3D a_view3D){
+		view3D=a_view3D; 
+	}
+	
+	protected boolean isVisible(){
+		return isVisible; 
+	}
+	protected void setVisible(boolean a_isVisible){
+		isVisible=a_isVisible; 
+	}
+	
+
+	protected boolean getLabelVisible(){
+		return labelVisible; 
+	}
+	protected void setLabelVisible(boolean a_labelVisible){
+		labelVisible=a_labelVisible; 
+	}
 	
 	
 	/** draw the 3D object */

@@ -47,8 +47,10 @@ public abstract class GeoElement3D
 	
 	// GeoElement3D types 
 	public static final int GEO_CLASS_POINT3D = 3010;
+	public static final int GEO_CLASS_VECTOR3D = 3011;
 	public static final int GEO_CLASS_SEGMENT3D = 3110;
 	public static final int GEO_CLASS_LINE3D = 3120;
+	public static final int GEO_CLASS_RAY3D = 3121;
 	public static final int GEO_CLASS_TRIANGLE3D = 3210;
 	public static final int GEO_CLASS_POLYGON3D = 3211;
 	public static final int GEO_CLASS_PLANE3D = 3220;

@@ -54,17 +54,17 @@ public class Test3D{
 
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
 
-        testAlgoPyramide();
-		//testPath();
-		//testPolygon();
+//        testAlgoPyramide();
+//		testPath();
+//		testPolygon();
 		testRepere();
-        
-        
-
-		
+    	
+//		testRay3D();
+		testVector3D();
 	}
 
 	
+
 	/***********************************
 	 * TESTS
 	 ***********************************/
@@ -271,6 +271,7 @@ public class Test3D{
 		P1[2].setLabel("Ay");
 		//P1[3] = testPoint(0f,1f,0f);
 		
+		
 		GeoSegment3D s=null;
 		for(i=0;i<3;i++)
 			s=kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
@@ -278,6 +279,16 @@ public class Test3D{
 		GeoPoint3D P2;				
 		P2 = testPoint(0f,0f,1f);
 		P2.setLabel("Az");
+
+		//RG
+		GeoPlane3D aPlane = kernel3D.Plane3D("plane",
+				new GgbVector(new double[] {0,0,0,1}),
+				new GgbVector(new double[] {1,0,0,0}),
+				new GgbVector(new double[] {0,1,0,0}));
+		for(i=0;i<3;i++)
+			kernel3D.From3Dto2D(P1[i].getLabel(), P1[i], aPlane);
+		kernel3D.From3Dto2D(P2.getLabel(), P2, aPlane);
+		//finRG
 
 		for(i=0;i<3;i++)
 			kernel3D.Segment3D("segment",P1[i],P2);
@@ -371,7 +382,7 @@ public class Test3D{
 	
 	private void testPolygon(){
 
-		GeoPoint3D P = testPoint(1f,0f,0f);
+		GeoPoint3D P = testPoint(1.5f,1.5f,1.5f);
 		P.setLabel("P");
 		
 		GeoPlane3D p = kernel3D.Plane3D("plane",
@@ -382,4 +393,31 @@ public class Test3D{
 		kernel3D.From3Dto2D("truc", P, p);
 	}
 
+	private void testRay3D(){
+
+		GeoPoint3D P1 = testPoint(1f,1f,1f);
+		P1.setLabel("rayP1");
+		GeoPoint3D P2 = testPoint(2f,2f,2f);
+		P2.setLabel("rayP2");
+		
+		kernel3D.Ray3D("MonRay", P1, P2);
+	}
+
+	
+
+	private void testVector3D() {
+		kernel3D.Vector3D("MonVector3D", 1f,1f,1f);
+		
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

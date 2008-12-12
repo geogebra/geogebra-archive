@@ -2,27 +2,26 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.linalg.GgbVector;
 
 public class GeoLine3D extends GeoCoordSys1D {
 
+	GeoPoint3D startPoint;
 	
 	/** creates a line joining O and I */
 	public GeoLine3D(Construction c, GeoPoint3D O, GeoPoint3D I) {
 		super(c, O, I);
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    public GeoLine3D(Construction c) {
+		super(c);
+	}
+
+	final void setStartPoint(GeoPoint3D P) {        	
+    	startPoint = P;	    	
+    }
+    
 	
 	public GeoElement copy() {
 		// TODO Raccord de méthode auto-généré

@@ -19,7 +19,7 @@ public class DrawSegment3D extends Drawable3D {
 	
 	public DrawSegment3D(EuclidianView3D view, GeoSegment3D s){
 		this.S=s;
-		this.view3D=view;
+		setView3D(view);
 		setGeoElement(s);
 		
 		update();
@@ -28,16 +28,16 @@ public class DrawSegment3D extends Drawable3D {
 
 	public void update() {
 		
-        isVisible = geo.isEuclidianVisible();       				 
-        if (!isVisible) return;
-		labelVisible = geo.isLabelVisible();    	
+		setVisible(getGeoElement().isEuclidianVisible());       				 
+        if (!isVisible()) return;
+        setLabelVisible(getGeoElement().isLabelVisible());
 		
 		
 		
 		GgbMatrix mc = S.getSegmentMatrix(0,1); 
-		view3D.toScreenCoords3D(mc);
+		getView3D().toScreenCoords3D(mc);
 		
-		matrix = mc.copy();
+		setMatrix(mc.copy());
 		
 		
 		
@@ -48,10 +48,10 @@ public class DrawSegment3D extends Drawable3D {
 	
 		
 	public void draw(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
-		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawCylinder(LINE3D_THICKNESS); 
 		renderer.resetMatrix();
@@ -61,7 +61,7 @@ public class DrawSegment3D extends Drawable3D {
 	
 	public void drawHidden(EuclidianRenderer3D renderer){
 		
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
 		
@@ -72,8 +72,8 @@ public class DrawSegment3D extends Drawable3D {
     		l2 = l+dashLength;
     		if (l2>1) l2=1;
     		m = S.getSegmentMatrix(l,l2); 
-    		view3D.toScreenCoords3D(m);
-    		renderer.setMaterial(geo.getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+    		getView3D().toScreenCoords3D(m);
+    		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
     		renderer.setMatrix(m.get());
     		renderer.drawCylinder(LINE3D_THICKNESS); 
     		
@@ -93,9 +93,9 @@ public class DrawSegment3D extends Drawable3D {
 	
 	
 	public void drawPicked(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
-		if (!geo.doHighlighting())
+		if (!getGeoElement().doHighlighting())
 			return;
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.75f);

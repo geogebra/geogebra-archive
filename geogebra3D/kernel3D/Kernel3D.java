@@ -22,6 +22,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
@@ -78,6 +79,12 @@ public class Kernel3D
 		p.setCoords(x, y, z, 1.0);
 		p.setLabel(label); // invokes add()                
 		return p;
+	}
+	
+	final public GeoVector3D Vector3D(String label, double x, double y, double z) {
+		GeoVector3D v = new GeoVector3D(cons, x, y, z);
+		v.setLabel(label); // invokes add()                
+		return v;
 	}
 	
 	
@@ -144,6 +151,15 @@ public class Kernel3D
 	}	
 	
 	
+	/** Ray3D label linking points P1 and P2   */	
+	final public GeoRay3D Ray3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+		Application.debug("Kernel3D : Ray3D");
+		AlgoJoinPointsRay3D algo = new AlgoJoinPointsRay3D(cons, label, P1, P2);
+		GeoRay3D l = algo.getRay3D();
+		return l;
+	}	
+	
+
 
 	/** Triangle3D label linking points P1 and P2 and P3  */
 	final public GeoTriangle3D Polygon3D(String label, GeoPoint3D[] points){

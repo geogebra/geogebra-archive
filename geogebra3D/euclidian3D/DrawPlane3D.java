@@ -21,7 +21,7 @@ public class DrawPlane3D extends Drawable3D {
 	
 	public DrawPlane3D(EuclidianView3D view, GeoPlane3D p){
 		this.P=p;
-		this.view3D=view;
+		setView3D(view);
 		setGeoElement(p);
         
 		update();
@@ -29,19 +29,16 @@ public class DrawPlane3D extends Drawable3D {
 	
 
 	public void update() {
-		
-        isVisible = geo.isEuclidianVisible();       				 
-        if (!isVisible) return;
-		labelVisible = geo.isLabelVisible();    	
-		
-		
+       setVisible(getGeoElement().isEuclidianVisible());       				 
+        if (!isVisible()) return;
+        setLabelVisible(getGeoElement().isLabelVisible());    	
 
 		
 		//GgbMatrix mc = P.getMatrixCompleted(); 
 		GgbMatrix mc = P.getDrawingMatrix(); 
-		view3D.toScreenCoords3D(mc);
+		getView3D().toScreenCoords3D(mc);
 		
-		matrix = mc.copy();
+		setMatrix(mc.copy());
 		
        
 	}
@@ -71,7 +68,7 @@ public class DrawPlane3D extends Drawable3D {
 	
 	public void drawForPicking(EuclidianRenderer3D renderer) {
 
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawQuad();
@@ -90,10 +87,10 @@ public class DrawPlane3D extends Drawable3D {
 	}	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
-		renderer.setMaterial(geo.getObjectColor(),0.5f);//TODO geo.getAlphaValue());
+		renderer.setMaterial(getGeoElement().getObjectColor(),0.5f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawQuad();
 		renderer.resetMatrix();
@@ -105,7 +102,7 @@ public class DrawPlane3D extends Drawable3D {
 		
 		for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
 			mc = P.getDrawingXMatrix(x); 
-			view3D.toScreenCoords3D(mc);
+			getView3D().toScreenCoords3D(mc);
 			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
 			renderer.resetMatrix();			
@@ -113,7 +110,7 @@ public class DrawPlane3D extends Drawable3D {
 		
 		for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
 			mc = P.getDrawingYMatrix(y); 
-			view3D.toScreenCoords3D(mc);
+			getView3D().toScreenCoords3D(mc);
 			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
 			renderer.resetMatrix();			
@@ -126,7 +123,7 @@ public class DrawPlane3D extends Drawable3D {
 	
 	
 	public void drawHiding(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
 		renderer.setMatrix(getMatrixGL());

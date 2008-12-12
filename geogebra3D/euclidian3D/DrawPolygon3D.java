@@ -21,7 +21,7 @@ public class DrawPolygon3D extends Drawable3D {
 	
 	public DrawPolygon3D(EuclidianView3D view, GeoTriangle3D t){
 		this.T=t;
-		this.view3D=view;
+		setView3D(view);
 		setGeoElement(t);
         
 		update();
@@ -30,17 +30,16 @@ public class DrawPolygon3D extends Drawable3D {
 
 	public void update() {
 		
-        isVisible = geo.isEuclidianVisible();       				 
-        if (!isVisible){
-        	
+		setVisible(getGeoElement().isEuclidianVisible());       				 
+        if (!isVisible()){
         	return;
         }
-		labelVisible = geo.isLabelVisible();    	
+        setLabelVisible(getGeoElement().isLabelVisible());    	
 		
 		GgbMatrix mc = T.getMatrixCompleted(); 
-		view3D.toScreenCoords3D(mc);
+		getView3D().toScreenCoords3D(mc);
 		
-		matrix = mc.copy();
+		setMatrix(mc.copy());
 
 	}
 	
@@ -56,9 +55,9 @@ public class DrawPolygon3D extends Drawable3D {
 	public void drawHidden(EuclidianRenderer3D renderer){} 
 	
 	public void drawPicked(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;	
-		if (!geo.doHighlighting())
+		if (!getGeoElement().doHighlighting())
 			return;
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
@@ -69,7 +68,7 @@ public class DrawPolygon3D extends Drawable3D {
 	
 	
 	public void drawForPicking(EuclidianRenderer3D renderer) {
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawTriangle();
@@ -95,10 +94,10 @@ public class DrawPolygon3D extends Drawable3D {
 	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
-		renderer.setMaterial(geo.getObjectColor(),0.5f);//TODO geo.getAlphaValue());
+		renderer.setMaterial(getGeoElement().getObjectColor(),0.5f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
 		renderer.drawTriangle();
 		renderer.resetMatrix();
@@ -106,7 +105,7 @@ public class DrawPolygon3D extends Drawable3D {
 	}
 	
 	public void drawHiding(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
 		renderer.setMatrix(getMatrixGL());

@@ -10,8 +10,10 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoRay3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 import geogebra3D.kernel3D.GeoTriangle3D;
+import geogebra3D.kernel3D.GeoVector3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
@@ -204,6 +206,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					if(DEBUG){Application.debug("new DrawPoint3D");}
 					break;									
 								
+				case GeoElement3D.GEO_CLASS_VECTOR3D:
+					if(DEBUG){Application.debug("GEO_CLASS_VECTOR3D");}
+					d = new DrawVector3D(this, (GeoVector3D) geo);
+					if(DEBUG){Application.debug("new GeoVector3D");}
+					break;									
+								
 				case GeoElement3D.GEO_CLASS_SEGMENT3D:
 					if(DEBUG){Application.debug("GEO_CLASS_SEGMENT3D");}
 					d = new DrawSegment3D(this, (GeoSegment3D) geo);
@@ -227,6 +235,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 				case GeoElement3D.GEO_CLASS_LINE3D:					
 					d = new DrawLine3D(this, (GeoLine3D) geo);					
+					break;									
+
+				case GeoElement3D.GEO_CLASS_RAY3D:					
+					d = new DrawRay3D(this, (GeoRay3D) geo);					
 					break;									
 				}
 				

@@ -23,7 +23,7 @@ public class DrawPoint3D extends Drawable3D{
 	
 	public DrawPoint3D(EuclidianView3D view3D, GeoPoint3D P) {     
 		
-    	this.view3D = view3D;          
+		setView3D(view3D);       
         this.P = P;
         setGeoElement(P);
         
@@ -32,27 +32,27 @@ public class DrawPoint3D extends Drawable3D{
 	}
 	
 	public void update() {
-		isVisible = geo.isEuclidianVisible();       				 
-		if (!isVisible) return;
-		labelVisible = geo.isLabelVisible();  //TODO label  	
+		setVisible(getGeoElement().isEuclidianVisible());       				 
+		if (!isVisible()) return;
+		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 
 		coords.set(P.getCoords()); 
-		view3D.toScreenCoords3D(coords);
+		getView3D().toScreenCoords3D(coords);
 		
-		matrix.set(coords, 4);
+		getMatrix().set(coords, 4);
 		//TODO use point "thickness"
 		for(int i=1;i<=3;i++){
-			matrix.set(i,i,0.1);
+			getMatrix().set(i,i,0.1);
 		}
 
 	}
 	
 
 	public void draw(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
-		renderer.setMaterial(geo.getObjectColor(),1f);//TODO geo.getAlphaValue());
+		renderer.setMaterial(getGeoElement().getObjectColor(),1f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrixGL());
 		if (P.hasPathOn())
 			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION); //points on path are more visible 
@@ -71,9 +71,9 @@ public class DrawPoint3D extends Drawable3D{
 	
 	
 	public void drawPicked(EuclidianRenderer3D renderer){
-		if(!geo.isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible())
 			return;		
-		if (!geo.doHighlighting())
+		if (!getGeoElement().doHighlighting())
 			return;
 
 		renderer.setMaterial(new Color(0f,0f,0f),0.75f);

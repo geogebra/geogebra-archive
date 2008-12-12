@@ -10,6 +10,7 @@ import geogebra.main.Application;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
+	//vecteurs servant pour le dessin
 	GgbVector Vn1 = new GgbVector(4);
 	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
 

@@ -99,6 +99,17 @@ final public class GeoPoint3D extends GeoVec4D {
     */
     
     
+    public double getX(){
+    	return getCoords().get(1);
+    }
+    public double getY(){
+    	return getCoords().get(2);
+    }
+    public double getZ(){
+    	return getCoords().get(3);
+    }
+    
+    
 	public boolean hasPathOn() {
 		return pathOn != null;
 	}

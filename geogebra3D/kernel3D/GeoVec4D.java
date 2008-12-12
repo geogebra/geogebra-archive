@@ -19,6 +19,11 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.linalg.GgbVector;
+import geogebra.main.Application;
 
 /**
  *
@@ -42,5 +47,56 @@ public abstract class GeoVec4D extends GeoVec {
         set(v);
     }
     
+    public void setCoords(double x, double y, double z, double w){
+     	setCoords(new double[] {x,y,z,w});
+    }
     
+
+    public double getX(){
+    	return getCoords().get(1);
+    }
+    public double getY(){
+    	return getCoords().get(2);
+    }
+    public double getZ(){
+    	return getCoords().get(3);
+    }
+    public double getW(){
+    	return getCoords().get(4);
+    }
+    
+
+    /** Calculates the line through the point A with direction v.
+     * The result is stored in g.
+     */
+    
+    final public static void lineThroughPointVector(GeoPoint3D A, GeoVec4D v, GeoRay3D g) {
+    	// note: this could be done simply using cross(A, v, g)
+    	// but we want to avoid large coefficients in the line
+    	// and we want v to be the direction vector of the line
+        Application.debug("GeoVec4D : lineThroughPointVector");
+    	
+ ///   	if (A.isInfinite()) {// A is direction
+//	TODO		g.setUndefined();
+ //   	}
+ //   	else 
+//   	{ // through point A
+        GgbVector B = new GgbVector( new double[]{
+        		   A.getX()+v.getX(),
+        		   A.getY()+v.getY(),
+        		   A.getZ()+v.getZ(),
+        		   v.getW()});
+			// v is direction
+		    g.setCoord(A.getCoords(), B);
+// 	}        
+    }      
 }
+
+
+
+
+
+
+
+
+
