@@ -47,14 +47,6 @@ public class AlgoVector extends AlgoElement {
         
         // compute vector PQ        
         compute(); 
-        try {     
-        	if (startPoint == null)
-        		startPoint = new GeoPoint(P);
-        	startPoint.set(P);
-        	v.setStartPoint(startPoint);
-
-        } catch (CircularDefinitionException e) {}
-        
         v.setLabel(label);
     }           
     
@@ -85,7 +77,7 @@ public class AlgoVector extends AlgoElement {
             v.z = 0.0;
             
             
-            /* //Mathieu Blossier 2008-12-12
+            
             try {     
             	if (P.isLabelSet())
             		v.setStartPoint(P);
@@ -96,7 +88,7 @@ public class AlgoVector extends AlgoElement {
                 	v.setStartPoint(startPoint);
                 }        		
             } catch (CircularDefinitionException e) {}
-            */
+            
             
         } else {
             v.setUndefined();
