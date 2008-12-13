@@ -15,7 +15,7 @@ public class DrawVector3D extends Drawable3D {
 		update();
 	}
 	
-	@Override
+	
 	public void draw(EuclidianRenderer3D renderer) {
 		if(!getGeoElement().isEuclidianVisible())
 			return;
@@ -27,49 +27,49 @@ public class DrawVector3D extends Drawable3D {
 
 	}
 
-	@Override
+	
 	public void drawForPicking(EuclidianRenderer3D renderer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	
 	public void drawHidden(EuclidianRenderer3D renderer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	
 	public void drawHiding(EuclidianRenderer3D renderer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	
 	public void drawPicked(EuclidianRenderer3D renderer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	
 	public void drawTransp(EuclidianRenderer3D renderer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	
 	public int getPickOrder() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public boolean isTransparent() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
+	
 	public void update() {
         setVisible(getGeoElement().isEuclidianVisible());       				 
         if (!isVisible()) return;

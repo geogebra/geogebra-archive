@@ -36,64 +36,64 @@ public class GeoVector3D extends GeoVec4D {
 		return m;
 	}
 
-	@Override
+
 	public GeoElement copy() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+
 	public int getGeoClassType() {
 		return GEO_CLASS_VECTOR3D;		
 	}
 
-	@Override
+
 	protected String getTypeString() {
 		return "Vector3D";
 	}
 
-	@Override
+
 	public boolean isDefined() {
 		return true;
 	}
 
-	@Override
+
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
+
 	public void set(GeoElement geo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+
 	public void setUndefined() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+
 	protected boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
-	@Override
+
 	protected boolean showInEuclidianView() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
-	@Override
+
 	public String toValueString() {
 		// TODO Auto-generated method stub
 		return "toValueString-todo";
 	}
 
-	@Override
+	
 	protected String getClassName() {
 		return "GeoVector3D";
 	}
