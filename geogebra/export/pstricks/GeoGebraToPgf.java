@@ -1745,7 +1745,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 					if (format==GeoGebraToPgf.FORMAT_LATEX) {
 						name=name.replaceAll("\u00b0", "\\\\textrm{\\\\degre}");
 						if (codePreamble.indexOf("\\degre")==-1)
-							codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
+							codePreamble.append("\\newcommand{\\degre}{\\ensuremath{^\\circ}}\n");
 					}
 					else if (format==GeoGebraToPgf.FORMAT_CONTEXT||format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
 						name=name.replaceAll("\u00b0", "{}^{\\\\circ}");

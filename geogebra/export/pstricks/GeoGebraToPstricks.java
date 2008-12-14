@@ -1412,10 +1412,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				if (name.indexOf("\u00b0")!=-1){
 					name=name.replaceAll("\u00b0", "\\\\textrm{\\\\degre}");
 					if (codePreamble.indexOf("\\degre")==-1)
-						codePreamble.append("\\usepackage[T1]{fontenc}\n\\DeclareTextSymbol{\\degre}{T1}{6}\n");
+						codePreamble.append("\\newcommand{\\degre}{\\ensuremath{^\\circ}}\n");
 				}
-				
-				
+	
 				if (null==drawGeo) drawGeo=euclidianView.getDrawableFor(geo);
 				double xLabel=drawGeo.getxLabel();
 				double yLabel=drawGeo.getyLabel();
