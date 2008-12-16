@@ -2033,9 +2033,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	protected void ColorCode(Color c,StringBuffer sb){
 		if (frame.isGrayscale()){
 			if (c.equals(Color.BLACK)) {sb.append("black");return;}
-			else if(c.equals(Color.RED)) {sb.append("red");return;}
-			else if(c.equals(Color.BLUE)) {sb.append("blue");return;}
-			else if(c.equals(Color.GREEN)) {sb.append("green");return;}
 			String colorname="";
 			int red=c.getRed();
 			int green=c.getGreen();
@@ -2046,6 +2043,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				colorname=CustomColor.get(c).toString();
 			}
 			else {
+				if (c.equals(Color.BLACK)) {sb.append("black");return;}
+				else if(c.equals(Color.RED)) {sb.append("red");return;}
+				else if(c.equals(Color.BLUE)) {sb.append("blue");return;}
+				else if(c.equals(Color.GREEN)) {sb.append("green");return;}
 				colorname=createCustomColor((int)red,(int)green,(int)blue);
 				// Example: \definecolor{orange}{rgb}{1,0.5,0}
 				if (format==GeoGebraToPgf.FORMAT_LATEX||format==GeoGebraToPgf.FORMAT_PLAIN_TEX){
