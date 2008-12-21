@@ -12,79 +12,50 @@ import geogebra3D.kernel3D.GeoPlane3D;
 
 
 
-public class DrawPlane3D extends Drawable3D {
+public class DrawPlane3D extends Drawable3DTransparent {
 
-	GeoPlane3D P;
-	GgbMatrix m; //representative matrix in physical coordinates
+
 
 	
 	
-	public DrawPlane3D(EuclidianView3D view, GeoPlane3D p){
-		this.P=p;
-		setView3D(view);
-		setGeoElement(p);
-        
-		update();
+	public DrawPlane3D(EuclidianView3D a_view3D, GeoPlane3D a_plane3D){
+		
+		super(a_view3D, a_plane3D);
 	}
 	
 
-	public void update() {
-       setVisible(getGeoElement().isEuclidianVisible());       				 
-        if (!isVisible()) return;
-        setLabelVisible(getGeoElement().isLabelVisible());    	
+	public void updateDrawingMatrix() {
 
-		
-		//GgbMatrix mc = P.getMatrixCompleted(); 
-		GgbMatrix mc = P.getDrawingMatrix(); 
-		getView3D().toScreenCoords3D(mc);
-		
-		setMatrix(mc.copy());
+		GeoPlane3D l_plane3D = (GeoPlane3D) getGeoElement();
+		GgbMatrix l_matrix = l_plane3D.getDrawingMatrix(); 
+		setMatrix(l_matrix);
 		
        
 	}
 	
 	
 
+	public void drawPrimitive(EuclidianRenderer3D renderer) {
+		renderer.drawQuad();
+	}
 	
-	public void draw(EuclidianRenderer3D renderer){}
-	public void drawHidden(EuclidianRenderer3D renderer){} 
+	public void drawPrimitivePicked(EuclidianRenderer3D renderer){}
+	
+
 	
 	
 	public void drawPicked(EuclidianRenderer3D renderer){
-		
-		/*
-		if(!geo.isEuclidianVisible())
-			return;	
-		if (!geo.doHighlighting())
-			return;
-		
-		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
-		renderer.setMatrix(getMatrixGL());
-		renderer.drawQuad();
-		renderer.resetMatrix();		
-		*/
+
 	};	
 	
 	
-	public void drawForPicking(EuclidianRenderer3D renderer) {
 
-		if(!getGeoElement().isEuclidianVisible())
-			return;
-		renderer.setMatrix(getMatrixGL());
-		renderer.drawQuad();
-		renderer.resetMatrix();			
-		
-	};
 	
 	
-	public int getPickOrder(){
-		return DRAW_PICK_ORDER_MAX; //for now : plane xOy should not be treated as a plane, but a part of the drawing pad
-		//TODO return DRAW_PICK_ORDER_2D;
-	}	
+
 	
-	public boolean isTransparent(){
-		return true; //TODO : use object property
-	}	
+
+	
 	
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!getGeoElement().isEuclidianVisible())
@@ -99,17 +70,18 @@ public class DrawPlane3D extends Drawable3D {
 		
 		//grid
 		GgbMatrix mc;
+		GeoPlane3D l_plane3D = (GeoPlane3D) getGeoElement();
 		
-		for(double x=P.getGridXmin();x<=P.getGridXmax();x+=P.getGridXd()){
-			mc = P.getDrawingXMatrix(x); 
+		for(double x=l_plane3D.getGridXmin();x<=l_plane3D.getGridXmax();x+=l_plane3D.getGridXd()){
+			mc = l_plane3D.getDrawingXMatrix(x); 
 			getView3D().toScreenCoords3D(mc);
 			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
 			renderer.resetMatrix();			
 		}
 		
-		for(double y=P.getGridYmin();y<=P.getGridYmax();y+=P.getGridYd()){
-			mc = P.getDrawingYMatrix(y); 
+		for(double y=l_plane3D.getGridYmin();y<=l_plane3D.getGridYmax();y+=l_plane3D.getGridYd()){
+			mc = l_plane3D.getDrawingYMatrix(y); 
 			getView3D().toScreenCoords3D(mc);
 			renderer.setMatrix(mc.get());
 			renderer.drawCylinder(0.01f);
@@ -122,19 +94,14 @@ public class DrawPlane3D extends Drawable3D {
 
 	
 	
-	public void drawHiding(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible())
-			return;
-		
-		renderer.setMatrix(getMatrixGL());
-		renderer.drawQuad();
-		renderer.resetMatrix();
-		
-	}
+
 	
 
 	
-	
+	public int getPickOrder(){
+		return DRAW_PICK_ORDER_MAX; //for now : plane xOy should not be treated as a plane, but a part of the drawing pad
+		//TODO return DRAW_PICK_ORDER_2D;
+	}		
 	
 	
 	

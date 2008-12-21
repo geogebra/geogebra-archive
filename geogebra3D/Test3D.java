@@ -54,12 +54,12 @@ public class Test3D{
 
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
 
-//        testAlgoPyramide();
+		testAlgoPyramide();
 //		testPath();
 //		testPolygon();
 		testRepere();
     	
-//		testRay3D();
+		testRay3D();
 		testVector3D();
 	}
 

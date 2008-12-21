@@ -11,6 +11,7 @@ import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 
 
@@ -36,18 +37,18 @@ public abstract class Drawable3D {
 	
 	
 	//view3D
-	private EuclidianView3D view3D; 
+	private EuclidianView3D m_view3D; 
 	
 	//matrix for openGL display
-	private GgbMatrix matrix = new GgbMatrix(4,4);
+	private GgbMatrix m_matrix = new GgbMatrix(4,4);
 	
 	//links to the GeoElement
-	private GeoElement geo; 	
-	private boolean isVisible;
-	private boolean labelVisible;
+	private GeoElement m_geo; 	
+	private boolean m_isVisible;
+	private boolean m_labelVisible;
 
 	//picking
-	boolean isPicked = false;	
+	private boolean m_isPicked = false;	
 	public float zPickMax, zPickMin; //for odering elements with openGL picking
 	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	
@@ -61,57 +62,119 @@ public abstract class Drawable3D {
 	
 	
 	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////
+	// constructors
+		
+	/** default constructor : setting view3D and geo */
+	public Drawable3D(EuclidianView3D a_view3D, GeoElement3D a_geo){
+		setView3D(a_view3D);
+		setGeoElement(a_geo);
+		update();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////
+	// update
+	
 	/** update the 3D object */
-	abstract public void update(); 
+	public void update(){
+		//verify if object is visible for drawing
+		setVisible(getGeoElement().isEuclidianVisible());       				 
+		if (!isVisible()) return;
+		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
+
+		//update the matrix of the drawable for the renderer to draw it
+		updateDrawingMatrix();
+		getView3D().toScreenCoords3D(getMatrix());
+	}
+	
+	
+	/** update the matrix of the drawable for the renderer to draw it */
+	abstract public void updateDrawingMatrix();
+	
+	
+	
+	
+	
+	
 	
 	
 	
 	
 	/** return matrix for openGL */
 	public double[] getMatrixGL(){
-		return matrix.get();
+		return m_matrix.get();
 	}
 	
 	public void setMatrix(GgbMatrix a_matrix){
-		matrix=a_matrix;
+		m_matrix=a_matrix;
 	}
 	public GgbMatrix getMatrix(){
-		return matrix;
+		return m_matrix;
 	}
 
 	protected EuclidianView3D getView3D(){
-		return view3D; 
+		return m_view3D; 
 	}
 	protected void setView3D(EuclidianView3D a_view3D){
-		view3D=a_view3D; 
+		m_view3D=a_view3D; 
 	}
 	
 	protected boolean isVisible(){
-		return isVisible; 
+		return m_isVisible; 
 	}
 	protected void setVisible(boolean a_isVisible){
-		isVisible=a_isVisible; 
+		m_isVisible=a_isVisible; 
 	}
 	
 
 	protected boolean getLabelVisible(){
-		return labelVisible; 
+		return m_labelVisible; 
 	}
 	protected void setLabelVisible(boolean a_labelVisible){
-		labelVisible=a_labelVisible; 
+		m_labelVisible=a_labelVisible; 
 	}
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// drawing
 	
 	
 	/** draw the 3D object */
+	abstract public void drawPrimitive(EuclidianRenderer3D renderer); 
+	abstract public void drawPrimitivePicked(EuclidianRenderer3D renderer); 
 	abstract public void draw(EuclidianRenderer3D renderer); 
 	abstract public void drawHidden(EuclidianRenderer3D renderer); 
 	abstract public void drawTransp(EuclidianRenderer3D renderer); 
 	abstract public void drawHiding(EuclidianRenderer3D renderer); 
 	abstract public void drawPicked(EuclidianRenderer3D renderer); 
-	abstract public void drawForPicking(EuclidianRenderer3D renderer); 
 
 	
-	////////////////////////////////
+	public void drawForPicking(EuclidianRenderer3D renderer) {
+		renderer.setMatrix(getMatrixGL());
+		drawPrimitive(renderer);
+		renderer.resetMatrix();
+
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////
 	// picking
 	
 	/** returns picking order */
@@ -220,20 +283,22 @@ public abstract class Drawable3D {
 	}		
 	
 
-	/////////////////////////////////
+	
+	/////////////////////////////////////////////////////////////////////////////
 	// links to the GeoElement
+	
     public GeoElement getGeoElement() {
-        return geo;
+        return m_geo;
     } 
     
     
     public GeoElement3D getGeoElement3D() {
-        return (GeoElement3D) geo;
+        return (GeoElement3D) m_geo;
     }   
     
     
     public void setGeoElement(GeoElement geo) {
-        this.geo = geo;
+        this.m_geo = geo;
     } 
     
  	

@@ -4,60 +4,43 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoSegment3D;
 
-import java.awt.Color;
 
 
+public class DrawSegment3D extends Drawable3DSolid {
 
-public class DrawSegment3D extends Drawable3D {
-
-	GeoSegment3D S;
 	
 	double dashLength;
 	
-	public DrawSegment3D(EuclidianView3D view, GeoSegment3D s){
-		this.S=s;
-		setView3D(view);
-		setGeoElement(s);
+	public DrawSegment3D(EuclidianView3D a_view3D, GeoSegment3D a_segment3D){
 		
-		update();
+		super(a_view3D,a_segment3D);
 	}
 	
 
-	public void update() {
+	public void updateDrawingMatrix() {
 		
-		setVisible(getGeoElement().isEuclidianVisible());       				 
-        if (!isVisible()) return;
-        setLabelVisible(getGeoElement().isLabelVisible());
-		
-		
-		
-		GgbMatrix mc = S.getSegmentMatrix(0,1); 
-		getView3D().toScreenCoords3D(mc);
-		
-		setMatrix(mc.copy());
+
+		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
+		GgbMatrix l_matrix = l_segment3D.getSegmentMatrix(0,1); 
+		setMatrix(l_matrix);
 		
 		
 		
-		dashLength = 0.12f/((float) S.getLength()); //TODO use object property
+		dashLength = 0.12f/((float) l_segment3D.getLength()); //TODO use object property
 
        
 	}
 	
-		
-	public void draw(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible())
-			return;
-		
-		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setMatrix(getMatrixGL());
+	public void drawPrimitive(EuclidianRenderer3D renderer) {
 		renderer.drawCylinder(LINE3D_THICKNESS); 
-		renderer.resetMatrix();
-		
-		
 	}
+	public void drawPrimitivePicked(EuclidianRenderer3D renderer){
+		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
+	}
+		
+
 	
 	public void drawHidden(EuclidianRenderer3D renderer){
 		
@@ -67,11 +50,12 @@ public class DrawSegment3D extends Drawable3D {
 		
 		double l2;
 		GgbMatrix m; 
+		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
 		
     	for(float l=0; l<1;l+=2*dashLength){
     		l2 = l+dashLength;
     		if (l2>1) l2=1;
-    		m = S.getSegmentMatrix(l,l2); 
+    		m = l_segment3D.getSegmentMatrix(l,l2); 
     		getView3D().toScreenCoords3D(m);
     		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
     		renderer.setMatrix(m.get());
@@ -83,41 +67,16 @@ public class DrawSegment3D extends Drawable3D {
 	} 
 	
 	
-	public void drawTransp(EuclidianRenderer3D renderer){}
-	public void drawHiding(EuclidianRenderer3D renderer){}
 	
 	
 	
 	
 	
-	
-	
-	public void drawPicked(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible())
-			return;
-		if (!getGeoElement().doHighlighting())
-			return;
-		
-		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
-		renderer.setMatrix(getMatrixGL());
-		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
-		renderer.resetMatrix();		
-	};	
-	
-	
-	public void drawForPicking(EuclidianRenderer3D renderer) {
-		draw(renderer);
-	};
-	
+
 	
 	public int getPickOrder(){
 		return DRAW_PICK_ORDER_1D;
 	}	
-		
-	public boolean isTransparent(){
-		return false; //TODO : use object property
-	}
-	
 	
 
 }
