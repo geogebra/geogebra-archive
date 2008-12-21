@@ -53,4 +53,23 @@ public class GgbMatrix4x4 {
 		
 		
 	}
+	
+	
+	
+	/** return a matrix that describe a segment along x-axis from x=x1 to x=x2 */
+	static public GgbMatrix subSegmentX(GgbMatrix a_matrix, double x1, double x2){
+				
+		GgbMatrix l_return = a_matrix.copy();
+		GgbVector l_origin = l_return.getColumn(4);
+		GgbVector l_vx = l_return.getColumn(1);
+		
+		l_return.set(l_origin.add(l_vx.mul(x1)).v(), 4);
+		l_return.set(l_vx.mul(x2-x1).v(), 1);
+		
+		return l_return;			
+			
+		
+		
+	}
+
 }

@@ -15,11 +15,11 @@ public class DrawVector3D extends Drawable3DSolid {
 	
 	
 	public void drawPrimitive(EuclidianRenderer3D renderer) {
-		renderer.drawCylinder(LINE3D_THICKNESS); 
+		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
 	}
 	
 	public void drawPrimitivePicked(EuclidianRenderer3D renderer){
-		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
+		renderer.drawSegment(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); 
 	}
 	
 

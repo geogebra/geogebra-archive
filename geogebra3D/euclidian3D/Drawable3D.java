@@ -94,7 +94,7 @@ public abstract class Drawable3D {
 
 		//update the matrix of the drawable for the renderer to draw it
 		updateDrawingMatrix();
-		getView3D().toScreenCoords3D(getMatrix());
+		//getView3D().toScreenCoords3D(getMatrix());
 	}
 	
 	

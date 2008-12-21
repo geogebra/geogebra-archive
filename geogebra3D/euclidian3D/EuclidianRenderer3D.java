@@ -1,7 +1,9 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoSegment3D;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -97,7 +99,8 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         m_view3D.update();
         
-        
+        //init drawing matrix to view3D toScreen matrix
+        gl.glLoadMatrixd(m_view3D.getToScreenMatrix().get(),0);
 
         //drawing hidden parts	
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
@@ -143,7 +146,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 		}
 
 		
-		
+
 		
 		
 		gLDrawable.swapBuffers(); //TODO
@@ -202,18 +205,23 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     private void initMatrix(){
-    	gl.glPushMatrix();
-		gl.glLoadMatrixd(m_drawingMatrix.get(),0);
+    	initMatrix(m_drawingMatrix);
     }
+    
+    private void initMatrix(GgbMatrix a_drawingMatrix){
+    	gl.glPushMatrix();
+		gl.glMultMatrixd(a_drawingMatrix.get(),0);
+    }    
     
     private void resetMatrix(){
     	gl.glPopMatrix();
     }
     
     
-    
+    ///////////////////////////////////////////////////////////
     //drawing primitives
     //TODO use glLists
+    
     public void drawSphere(float radius){
     	initMatrix();
     	glu.gluSphere(quadric, radius, 16, 16);
@@ -221,12 +229,53 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
 
     
-    public void drawCylinder(float radius){
-    	initMatrix();
+    private void drawCylinder(float radius){
     	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
     	glu.gluCylinder(quadric, radius, radius, 1.0f, 8, 1);
+    }
+    
+    
+    
+    /** draws a segment from x=0 to x=1 with radius thickness, according to current m_drawingMatrix*/
+    public void drawSegment(float radius){
+    	initMatrix();
+    	drawCylinder(radius);
     	resetMatrix();
     }
+    
+    /** draws a segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
+    public void drawSegment(double x1, double x2, float radius){
+    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, x1, x2));
+    	drawCylinder(radius);
+    	resetMatrix();
+    }  
+    
+    
+    
+    /** draws a dashed segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
+    /*
+    public void drawSegmentDashed(double x1, double x2, float radius, double dashLength){
+		double l2;
+		GgbMatrix m; 
+		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
+		
+    	for(float l=0; l<1;l+=2*dashLength){
+    		l2 = l+dashLength;
+    		if (l2>1) l2=1;
+    		m = l_segment3D.getSegmentMatrix(l,l2); 
+    		//getView3D().toScreenCoords3D(m);
+    		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+    		renderer.setMatrix(m);
+    		renderer.drawSegment(radius); 
+    		
+    	}
+    	
+    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, x1, x2));
+    	drawCylinder(radius);
+    	resetMatrix();
+    }  
+    */
+    
     
     
     public void drawTriangle(){    	

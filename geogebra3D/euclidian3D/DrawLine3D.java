@@ -35,12 +35,12 @@ public class DrawLine3D extends Drawable3DSolid {
 	
 	public void drawPrimitive(EuclidianRenderer3D renderer) {
 		
-		renderer.drawCylinder(LINE3D_THICKNESS);
+		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 	}
 	
 	public void drawPrimitivePicked(EuclidianRenderer3D renderer){
 		
-		renderer.drawCylinder(LINE3D_THICKNESS*PICKED_DILATATION); 
+		renderer.drawSegment(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); 
 	}
 	
 	
@@ -59,10 +59,10 @@ public class DrawLine3D extends Drawable3DSolid {
     		l2 = l+dashLength;
     		if (l2>21) l2=21;
     		m = l_line3D.getSegmentMatrix(l,l2); 
-    		getView3D().toScreenCoords3D(m);
+    		//getView3D().toScreenCoords3D(m);
     		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
     		renderer.setMatrix(m);
-    		renderer.drawCylinder(LINE3D_THICKNESS); 
+    		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
     		
     	}
 
