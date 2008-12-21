@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra3D.kernel3D.GeoElement3D;
 
 import java.awt.Color;
@@ -40,7 +41,8 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// other
 	private DrawList3D drawList3D;
 	
-	EuclidianView3D view;
+	private EuclidianView3D m_view3D;
+	private GgbMatrix m_drawingMatrix; //matrix for drawing
 	
 	private int mouseX, mouseY;
 	private boolean waitForPick = false;
@@ -69,7 +71,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         animator.setRunAsFastAsPossible(true);	  
         animator.start();
 		
-		this.view=view;
+		this.m_view3D=view;
 	}
 	
 	
@@ -93,7 +95,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         //start drawing
         viewOrtho();
         
-        view.update();
+        m_view3D.update();
         
         
 
@@ -195,12 +197,16 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     //transformation matrix
-    public void setMatrix(double[] m){
-    	gl.glPushMatrix();
-		gl.glLoadMatrixd(m,0);
+    public void setMatrix(GgbMatrix a_matrix){
+    	m_drawingMatrix=a_matrix;
     }
     
-    public void resetMatrix(){
+    private void initMatrix(){
+    	gl.glPushMatrix();
+		gl.glLoadMatrixd(m_drawingMatrix.get(),0);
+    }
+    
+    private void resetMatrix(){
     	gl.glPopMatrix();
     }
     
@@ -209,17 +215,23 @@ public class EuclidianRenderer3D implements GLEventListener {
     //drawing primitives
     //TODO use glLists
     public void drawSphere(float radius){
+    	initMatrix();
     	glu.gluSphere(quadric, radius, 16, 16);
+    	resetMatrix();
     }
 
     
     public void drawCylinder(float radius){
+    	initMatrix();
     	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
     	glu.gluCylinder(quadric, radius, radius, 1.0f, 8, 1);
+    	resetMatrix();
     }
     
     
     public void drawTriangle(){    	
+    	initMatrix();
+    	
         gl.glBegin(GL.GL_TRIANGLES);	
         
         gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -232,11 +244,15 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glVertex3f(0.0f, 1.0f, 0.0f);	
         gl.glVertex3f(1.0f, 0.0f, 0.0f);        	
         
-        gl.glEnd();				
+        gl.glEnd();	
+        
+        resetMatrix();
     }
     
     
     public void drawQuad(){    	
+    	initMatrix();
+    	
         gl.glBegin(GL.GL_QUADS);	
         
         gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -251,7 +267,9 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glVertex3f(1.0f, 1.0f, 0.0f);	
         gl.glVertex3f(1.0f, 0.0f, 0.0f);	
         
-        gl.glEnd();				
+        gl.glEnd();		
+        
+        resetMatrix();
     }
     
     
@@ -303,7 +321,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         //mouseY+=30; //TODO understand this offset
         //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
-        gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
+        gl.glOrtho(m_view3D.left,m_view3D.right,m_view3D.bottom,m_view3D.top,m_view3D.front,m_view3D.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
 		//drawing not hidden parts
@@ -323,7 +341,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         //hits are stored in EuclidianView3D
-        view.hits.clear();
+        m_view3D.hits.clear();
         
         int names, ptr = 0;
         float zMax, zMin;
@@ -342,7 +360,7 @@ public class EuclidianRenderer3D implements GLEventListener {
            	//view.hits.add(geos[buffer[ptr]]);
         	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
-        	view.hits.add(drawHits[num]);
+        	m_view3D.hits.add(drawHits[num]);
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
         	ptr++;
@@ -350,7 +368,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
         
         waitForPick = false;
-        view.waitForPick = true;
+        m_view3D.waitForPick = true;
     }
     
     
@@ -430,12 +448,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     {
     	//TODO change viewport when resized
     	//gl.glViewport(0,0,EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT);
-    	gl.glViewport(0,0,(int) (view.right-view.left),(int) (view.top-view.bottom));
+    	gl.glViewport(0,0,(int) (m_view3D.right-m_view3D.left),(int) (m_view3D.top-m_view3D.bottom));
     	
     	gl.glMatrixMode(GL.GL_PROJECTION);
     	gl.glLoadIdentity();
 
-    	gl.glOrtho(view.left,view.right,view.bottom,view.top,view.front,view.back);
+    	gl.glOrtho(m_view3D.left,m_view3D.right,m_view3D.bottom,m_view3D.top,m_view3D.front,m_view3D.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
     	

@@ -10,13 +10,9 @@ import geogebra.main.Application;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
-	//vecteurs servant pour le dessin
-	GgbVector Vn1 = new GgbVector(4);
-	GgbVector Vn2 = new GgbVector(4); //orthogonal vectors
 
 	public GeoCoordSys1D(Construction c){
-		super(c);
-		M=new GgbMatrix(4,2);
+		super(c,1);
 	}
 	
 	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
@@ -32,20 +28,11 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	
 	/** set the matrix to [V O] */
-	public void setCoord(GgbVector O, GgbVector V){
-		M.set(new GgbVector[] {V,O});
+	public void setCoord(GgbVector a_O, GgbVector a_V){
+		setOrigin(a_O);
+		setVector(a_V, 1);
 		
-		if (V.get(1)!=0){
-			Vn1.set(1,-V.get(2));
-			Vn1.set(2,V.get(1));
-			Vn1.normalize();
-		}else{
-			Vn1.set(1, 1.0);
-		}
-		
-		Vn2 = V.crossProduct(Vn1);
-		Vn2.normalize();
-		
+		updateDrawingMatrix();
 	}
 	
 	
@@ -61,18 +48,15 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	
 	
-	/** returns completed matrix for drawing */
-	public GgbMatrix getMatrixCompleted(){
-		GgbMatrix m = new GgbMatrix(4,4);		
-		m.set(new GgbVector[] {M.getColumn(1),Vn1,Vn2,M.getColumn(2)});
-		return m;
-	}
+
 	
 	/** returns matrix corresponding to segment joining l1 to l2, using getLineThickness() */
 	public GgbMatrix getSegmentMatrix(double l1, double l2){
 		GgbMatrix m = new GgbMatrix(4,4);
 		GgbVector p1 = getPoint(l1);
 		GgbVector p2 = getPoint(l2);
+		GgbVector Vn1 = getMatrix4x4().getColumn(2);
+		GgbVector Vn2 = getMatrix4x4().getColumn(3);
 		m.set(new GgbVector[] {p2.sub(p1),Vn1.mul(getLineThickness()).v(),Vn2.mul(getLineThickness()).v(),p1});
 		return m;
 	}	
@@ -83,7 +67,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	/** returns the point at position lambda on the coord sys */
 	public GgbVector getPoint(double lambda){
 		GgbVector v=new GgbVector(new double[] {lambda,1});
-		GgbVector r=M.mul(v);		
+		GgbVector r=getMatrix().mul(v);		
 		//r.SystemPrint();
 		return r;
 		//return new GeoPoint3D(getConstruction(), "M", r);
@@ -92,7 +76,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 
 	/** returns cs unit */
 	public double getUnit(){
-		return M.getColumn(1).norm();
+		return getMatrix().getColumn(1).norm();
 	}
 
 
@@ -108,7 +92,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 		//project P on line
 		GgbVector v = P.getInhomCoords();
 		GgbVector p = new GgbVector(4);
-		GgbVector[] project = v.projectLine(M.getColumn(2).subVector(1, 3), M.getColumn(1).subVector(1, 3));
+		GgbVector[] project = v.projectLine(getMatrix().getColumn(2).subVector(1, 3), getMatrix().getColumn(1).subVector(1, 3));
 		
 
 		if(!P.hasGeoElement2D()){
@@ -157,7 +141,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
 		
-		GgbMatrix ret = toScreenMatrix.mul(getMatrixCompleted());
+		GgbMatrix ret = toScreenMatrix.mul(getMatrix4x4());
 		
 		GgbVector V = ret.getColumn(1); //gets direction vector of the path
 		GgbVector Vn1 = new GgbVector(4); 

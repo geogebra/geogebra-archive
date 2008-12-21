@@ -331,7 +331,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			view.toSceneCoords3D(v);
 			
 			//plane for projection
-			GgbMatrix plane = view.movingPlane.getMatrixCompleted();
+			GgbMatrix plane = view.movingPlane.getMatrix4x4();
 
 			GgbVector originOld = plane.getColumn(4);
 			plane.set(movedGeoPoint3D.getCoords(), 4);

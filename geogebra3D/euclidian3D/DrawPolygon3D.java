@@ -23,7 +23,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	public void updateDrawingMatrix() {
 		
 		GeoTriangle3D l_triangle3D = (GeoTriangle3D) getGeoElement();
-		GgbMatrix l_matrix = l_triangle3D.getMatrixCompleted(); 
+		GgbMatrix l_matrix = l_triangle3D.getMatrix4x4(); 
 		setMatrix(l_matrix);
 
 	}

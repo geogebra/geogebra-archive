@@ -62,9 +62,8 @@ public class DrawPlane3D extends Drawable3DTransparent {
 			return;
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),0.5f);//TODO geo.getAlphaValue());
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		renderer.drawQuad();
-		renderer.resetMatrix();
 		
 		
 		
@@ -75,17 +74,15 @@ public class DrawPlane3D extends Drawable3DTransparent {
 		for(double x=l_plane3D.getGridXmin();x<=l_plane3D.getGridXmax();x+=l_plane3D.getGridXd()){
 			mc = l_plane3D.getDrawingXMatrix(x); 
 			getView3D().toScreenCoords3D(mc);
-			renderer.setMatrix(mc.get());
-			renderer.drawCylinder(0.01f);
-			renderer.resetMatrix();			
+			renderer.setMatrix(mc);
+			renderer.drawCylinder(0.01f);			
 		}
 		
 		for(double y=l_plane3D.getGridYmin();y<=l_plane3D.getGridYmax();y+=l_plane3D.getGridYd()){
 			mc = l_plane3D.getDrawingYMatrix(y); 
 			getView3D().toScreenCoords3D(mc);
-			renderer.setMatrix(mc.get());
-			renderer.drawCylinder(0.01f);
-			renderer.resetMatrix();			
+			renderer.setMatrix(mc);
+			renderer.drawCylinder(0.01f);		
 		}
 		
 		

@@ -61,10 +61,9 @@ public class DrawLine3D extends Drawable3DSolid {
     		m = l_line3D.getSegmentMatrix(l,l2); 
     		getView3D().toScreenCoords3D(m);
     		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-    		renderer.setMatrix(m.get());
+    		renderer.setMatrix(m);
     		renderer.drawCylinder(LINE3D_THICKNESS); 
     		
-    		renderer.resetMatrix();
     	}
 
 	} 

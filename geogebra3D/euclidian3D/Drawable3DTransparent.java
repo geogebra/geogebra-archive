@@ -16,9 +16,8 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		drawPrimitive(renderer);
-		renderer.resetMatrix();
 		
 	}
 	
@@ -33,9 +32,8 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 			return;
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		drawPrimitivePicked(renderer);
-		renderer.resetMatrix();		
 		
 	};	
 	
@@ -46,9 +44,8 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 			return;
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),0.5f);//TODO geo.getAlphaValue());
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		drawPrimitive(renderer);
-		renderer.resetMatrix();
 		
 	}
 	

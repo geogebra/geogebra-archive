@@ -536,7 +536,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setMoving(GgbVector point, GgbVector origin, GgbVector v1, GgbVector v2, GgbVector v3){
 		
 		movingPlane.setCoord(origin, v1, v2);
-		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrixCompleted(), v3);
+		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), v3);
 		setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
 		movingPointProjected = project[0];
 		setMovingPoint(point);
@@ -545,7 +545,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	/** sets the moving segment from point to its projection on movingPlane */
 	public void setMovingProjection(GgbVector point, GgbVector vn){
-		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrixCompleted(), vn);
+		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), vn);
 		movingPointProjected = project[0];
 		setMovingPoint(point);
 	}

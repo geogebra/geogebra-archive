@@ -33,23 +33,17 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 	
 	
-	/** set the matrix to [V1 V2 O] */
-	public void setCoord(GgbVector O, GgbVector V1, GgbVector V2){
-	
-		super.setCoord(O, V1, V2);
 
-		
-		
-	}
 	
 	
 	/** returns a matrix for drawing */
 	public GgbMatrix getDrawingMatrix(){
-		GgbMatrix m = new GgbMatrix(4,4);
+		GgbMatrix m = getMatrix4x4().copy();
+		
 		GgbVector o = getPoint(xmin,ymin);
 		GgbVector px = getPoint(xmax,ymin);
 		GgbVector py = getPoint(xmin,ymax);
-		m.set(new GgbVector[] {px.sub(o),py.sub(o),Vn,o});
+		m.set(px.sub(o), 1);m.set(py.sub(o), 2);m.set(o, 4);
 		return m;
 	}	
 	
@@ -80,22 +74,28 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	/** returns a matrix for drawing a segment, equation x=l (y=ymin..ymax) */
 	public GgbMatrix getDrawingXMatrix(double l){
-		GgbMatrix m = new GgbMatrix(4,4);
+		GgbMatrix m = getMatrix4x4().copy();
+		
 		GgbVector p1 = getPoint(l,ymin);
 		GgbVector p2 = getPoint(l,ymax);
-		m.set(new GgbVector[] {p2.sub(p1),Vn,M.getColumn(1),p1});
-		//m.SystemPrint();
+
+		m.set(m.getColumn(3), 2);m.set(m.getColumn(1), 3);
+		m.set(p2.sub(p1), 1);
+		m.set(p1, 4);
 		return m;
 		
 	}
 
 	/** returns a matrix for drawing a segment, equation y=l (x=xmin..xmax) */
 	public GgbMatrix getDrawingYMatrix(double l){
-		GgbMatrix m = new GgbMatrix(4,4);
+		GgbMatrix m = getMatrix4x4().copy();
+		
 		GgbVector p1 = getPoint(xmin,l);
 		GgbVector p2 = getPoint(xmax,l);
-		m.set(new GgbVector[] {p2.sub(p1),M.getColumn(2),Vn,p1});
-		//m.SystemPrint();
+		
+		
+		m.set(p2.sub(p1), 1);
+		m.set(p1, 4);
 		return m;
 		
 	}
@@ -227,8 +227,9 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		//TODO undefined...
 		//TODO remove x/y/z if not needed
 		//TODO check this
+		GgbVector Vn = getMatrix4x4().getColumn(3);
 		s+=kernel.format(Vn.get(1))+"x + "+kernel.format(Vn.get(2))+"y + "+kernel.format(Vn.get(3))+"z = "
-			+kernel.format(Vn.dotproduct(M.getColumn(3)));
+			+kernel.format(Vn.dotproduct(getMatrix().getColumn(3)));
 		
 		return s;
 	}

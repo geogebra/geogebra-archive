@@ -20,7 +20,6 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 	
 	public GeoTriangle3D(Construction c, GeoPoint3D[] points) {
 		super(c);
-		M=new GgbMatrix(4,3);
 		setCoord(points);	
 
 	}	

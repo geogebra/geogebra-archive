@@ -110,10 +110,7 @@ public abstract class Drawable3D {
 	
 	
 	
-	/** return matrix for openGL */
-	public double[] getMatrixGL(){
-		return m_matrix.get();
-	}
+
 	
 	public void setMatrix(GgbMatrix a_matrix){
 		m_matrix=a_matrix;
@@ -161,9 +158,11 @@ public abstract class Drawable3D {
 
 	
 	public void drawForPicking(EuclidianRenderer3D renderer) {
-		renderer.setMatrix(getMatrixGL());
+		if(!getGeoElement().isEuclidianVisible())
+			return;	
+		
+		renderer.setMatrix(getMatrix());
 		drawPrimitive(renderer);
-		renderer.resetMatrix();
 
 	}
 

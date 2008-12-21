@@ -7,7 +7,6 @@ import geogebra.kernel.linalg.GgbVector;
 public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
-	GgbVector Vn = new GgbVector(4); //orthogonal vector
 	
 	//grid
 	double x0, y0; //origin of the grid in plane coordinates
@@ -16,8 +15,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 
 	
 	public GeoCoordSys2D(Construction c){
-		super(c);	
-		M=new GgbMatrix(4,3);
+		super(c,2);	
 	}
 	
 	public GeoCoordSys2D(Construction c, GgbVector O, GgbVector V1, GgbVector V2){
@@ -32,15 +30,12 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	/** set the matrix to [V1 V2 O] */
-	public void setCoord(GgbVector O, GgbVector V1, GgbVector V2){
-		M.set(new GgbVector[] {V1, V2,O});
+	public void setCoord(GgbVector a_O, GgbVector a_V1, GgbVector a_V2){
+		setOrigin(a_O);
+		setVector(a_V1, 1);
+		setVector(a_V2, 2);
 		
-		Vn = V1.crossProduct(V2);
-		Vn.normalize();
-		
-		matrixCompleted.set(new GgbVector[] {M.getColumn(1),M.getColumn(2),Vn,M.getColumn(3)});
-		//matrixCompleted.SystemPrint();
-		//Application.debug("matrixCompleted");
+		updateDrawingMatrix();
 		
 		if (gridOrigin!=null)
 			updateGridOriginProjected();
@@ -64,10 +59,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	
-	/** returns completed matrix for drawing : (V1 V2 Vn O) with Vn normed orthogonal vector to the plane */
-	public GgbMatrix getMatrixCompleted(){
-		return matrixCompleted.copy();
-	}
+
 	
 	
 	
@@ -75,7 +67,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	public GgbVector getPoint(double l1, double l2){
 		GgbVector v=new GgbVector(new double[] {l1,l2,1});
 		//Application.debug("v ="); v.SystemPrint();
-		GgbVector r=M.mul(v);	
+		GgbVector r=getMatrix().mul(v);	
 		//Application.debug("M ="); M.SystemPrint();
 		//Application.debug("r ="); r.SystemPrint();
 		return r;
@@ -84,7 +76,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	/** returns area of the 1x1 parallélogramme */
 	public double getUnitArea(){
-		return (M.getColumn(1).crossProduct(M.getColumn(2))).norm();
+		return (getMatrix().getColumn(1).crossProduct(getMatrix().getColumn(2))).norm();
 	}
 	
 	
@@ -98,7 +90,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	}
 	
 	public void updateGridOriginProjected(){
-		GgbVector c = gridOrigin.projectPlane(matrixCompleted)[1];
+		GgbVector c = gridOrigin.projectPlane(getMatrix4x4())[1];
 		//c.SystemPrint();
 		x0 = c.get(1); y0 = c.get(2);
 		gridOriginProjected.set(getPoint(x0,y0));
@@ -119,7 +111,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		
 		//project P on plane
 		GgbVector v = P.getCoords();
-		GgbVector[] project = v.projectPlane(matrixCompleted);
+		GgbVector[] project = v.projectPlane(getMatrix4x4());
 		
 		if (!isLimitedPath()){
 			P.setCoords(project[0],false);
@@ -167,7 +159,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 
 	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
-		return matrixCompleted;
+		return getMatrix4x4();
 	}
 	
 

@@ -22,12 +22,15 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	}
 
 	public void draw(EuclidianRenderer3D renderer) {
+		if(!getGeoElement().isEuclidianVisible())
+			return;	
+		
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		
 		drawPrimitive(renderer);
 		
-		renderer.resetMatrix();
+		
 
 	}
 
@@ -39,9 +42,9 @@ public abstract class Drawable3DSolid extends Drawable3D {
 			return;
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
-		renderer.setMatrix(getMatrixGL());
+		renderer.setMatrix(getMatrix());
 		drawPrimitivePicked(renderer);		
-		renderer.resetMatrix();		
+		
 
 	}
 

@@ -44,6 +44,9 @@ public class Test3D{
 	Construction cons;
 	Kernel3D kernel3D;
 	EuclidianView view2D;
+	
+	
+	GeoPlane3D xOyPlane;
 
 
 	public Test3D(Kernel3D kernel3D, EuclidianView view2D){
@@ -53,11 +56,14 @@ public class Test3D{
 		this.view2D = view2D;
 
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
+		
+		testRepere();
+		
 
 		testAlgoPyramide();
 //		testPath();
 //		testPolygon();
-		testRepere();
+
     	
 		testRay3D();
 		testVector3D();
@@ -114,14 +120,14 @@ public class Test3D{
 		
 		
 		//xOy plane
-		GeoPlane3D plane=kernel3D.Plane3D("xOy",
+		xOyPlane=kernel3D.Plane3D("xOy",
 				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
 				new GgbVector(new double[] {1.0,0.0,0.0,0.0}),
 				new GgbVector(new double[] {0.0,1.0,0.0,0.0}));
-		plane.setObjColor(new Color(0.75f,0.75f,0.75f));
-		plane.setAlgebraVisible(false); //TODO make it works
-		plane.setLabelVisible(false);
-		cons.addToConstructionList(plane, false);
+		xOyPlane.setObjColor(new Color(0.75f,0.75f,0.75f));
+		xOyPlane.setAlgebraVisible(false); //TODO make it works
+		xOyPlane.setLabelVisible(false);
+		cons.addToConstructionList(xOyPlane, false);
 		
 		
 	}
@@ -281,10 +287,7 @@ public class Test3D{
 		P2.setLabel("Az");
 
 		//RG
-		GeoPlane3D aPlane = kernel3D.Plane3D("plane",
-				new GgbVector(new double[] {0,0,0,1}),
-				new GgbVector(new double[] {1,0,0,0}),
-				new GgbVector(new double[] {0,1,0,0}));
+		GeoPlane3D aPlane = xOyPlane;
 		for(i=0;i<3;i++)
 			kernel3D.From3Dto2D(P1[i].getLabel(), P1[i], aPlane);
 		kernel3D.From3Dto2D(P2.getLabel(), P2, aPlane);
