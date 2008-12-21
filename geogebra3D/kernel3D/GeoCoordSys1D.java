@@ -30,7 +30,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	/** set the matrix to [V O] */
 	public void setCoord(GgbVector a_O, GgbVector a_V){
 		setOrigin(a_O);
-		setVector(a_V, 1);
+		setVx(a_V);
 		
 		updateDrawingMatrix();
 	}

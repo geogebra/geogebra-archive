@@ -32,8 +32,8 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	/** set the matrix to [V1 V2 O] */
 	public void setCoord(GgbVector a_O, GgbVector a_V1, GgbVector a_V2){
 		setOrigin(a_O);
-		setVector(a_V1, 1);
-		setVector(a_V2, 2);
+		setVx(a_V1);
+		setVy(a_V2);
 		
 		updateDrawingMatrix();
 		

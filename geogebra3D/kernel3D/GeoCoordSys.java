@@ -39,8 +39,16 @@ public abstract class GeoCoordSys extends GeoElement3D{
 		m_matrix.set(a_O,m_dimension+1);
 	}
 	
-	public void setVector(GgbVector a_V, int a_column){
-		m_matrix.set(a_V,a_column);
+	public void setVx(GgbVector a_V){
+		m_matrix.set(a_V,1);
+	}
+	
+	public void setVy(GgbVector a_V){
+		m_matrix.set(a_V,2);
+	}
+	
+	public void setVz(GgbVector a_V){
+		m_matrix.set(a_V,3);
 	}
 	
 	
