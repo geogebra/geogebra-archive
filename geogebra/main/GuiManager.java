@@ -37,6 +37,8 @@ public interface GuiManager {
 	
 	public void setColumnWidth(int column, int width);
 	
+	public void setScrollToShow(boolean scrollToShow);
+	
 	public int getHighestUsedSpreadsheetColumn(); 
 	public int getSpreadsheetTraceRow(int traceColumn);
 	

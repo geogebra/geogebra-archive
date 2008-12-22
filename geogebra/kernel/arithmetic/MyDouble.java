@@ -166,7 +166,14 @@ implements NumberValue {
     final public MyDouble abs() {  val = Math.abs(val);  return this; }    
 	final public MyDouble floor() {  val = Math.floor(val);  return this; }
 	final public MyDouble ceil() {  val = Math.ceil(val);  return this; }
-	final public MyDouble round() {  val = Math.round(val);  return this; }
+	final public MyDouble round() { 
+		
+		// Java quirk/bug Round(NaN) = 0
+		if (!(Double.isInfinite(val) || Double.isNaN(val)))		
+			val = Math.round(val); 
+		
+		return this;
+	}
 	
     final public MyDouble sgn() {  
         val = MyMath.sgn(kernel, val);         
@@ -224,6 +231,7 @@ implements NumberValue {
   
 	final public MyDouble apply(Functional f) {
 		val = f.evaluate(val);
+		isAngle = false; // want function to return numbers eg f(x) = sin(x), f(45°)
 		return this;
 	}
     

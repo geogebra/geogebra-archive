@@ -1,4 +1,6 @@
 package geogebra.gui;
+import geogebra.main.Application;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -81,11 +83,20 @@ public class ImagePreview extends JPanel implements PropertyChangeListener {
 
     private void updateImage(File file) throws IOException {
 	try {
-	    img = ImageIO.read(file); //returns null if file isn't an image
-	    repaint();
+		// fails for a few JPEGs (Java bug? -> OutOfMemory)
+		// so turn off preview for large files
+		if (file.length() < 512*1024)
+			img = ImageIO.read(file); //returns null if file isn't an image
+		else
+			img = null;
+		repaint();
 	} catch (IllegalArgumentException iae) {
 	    // This is thrown if you select .ico files
 	    //TODO Print error message, or do nothing?
+	}
+	catch (Throwable t) {
+		Application.debug(t.getClass()+"");
+		img = null;
 	}
     }
 

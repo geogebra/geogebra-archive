@@ -60,7 +60,7 @@ public class GeoGebraCAS {
 	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
 	 * @return null if something went wrong.
 	 */
-	public String processCASInput(String inputExp, boolean doEvaluate, boolean resolveVariables) throws Throwable {
+	public synchronized String processCASInput(String inputExp, boolean doEvaluate, boolean resolveVariables) throws Throwable {
 		// replace #1, #2 references by row input
 		inputExp = resolveCASrowReferences(inputExp);
 		
@@ -105,7 +105,7 @@ public class GeoGebraCAS {
 	/**
 	 * Parses the given GeoGebra CAS input and returns an ValidExpression object.
 	 */
-	public ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
+	public synchronized ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
 		// parse input
 		ValidExpression ve = casParser.parseGeoGebraCASInput(exp);
 		
@@ -119,7 +119,7 @@ public class GeoGebraCAS {
 	 * Replaces references to other rows (e.g. #3) in input string by
 	 * the values from those rows.
 	 */
-	private String resolveCASrowReferences(String inputExp) {
+	private synchronized String resolveCASrowReferences(String inputExp) {
 		if (!app.hasCasView()) 
 			return inputExp;
 				
@@ -155,7 +155,7 @@ public class GeoGebraCAS {
 	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
 	 *    should be used. Note that this changes the given ExpressionValue. 
 	 */
-	public String toYacasString(ValidExpression ve, boolean resolveVariables) {
+	public synchronized String toYacasString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
 		if (resolveVariables) {			
@@ -182,7 +182,7 @@ public class GeoGebraCAS {
 	/**
 	 * Tries to parse a given Yacas string and returns a ValidExpression object.
 	 */
-	public ValidExpression parseYacas(String yacasString) throws Throwable {
+	public synchronized ValidExpression parseYacas(String yacasString) throws Throwable {
 		return casParser.parseYacas(yacasString);
 	}
 		
@@ -192,7 +192,7 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string (null possible)
 	 */
-	final public String evaluateYACAS(String exp) {
+	final synchronized public String evaluateYACAS(String exp) {
 		String result = evaluateYACAS(exp, true);
 		
 		// TODO: remove
@@ -209,7 +209,7 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string (null possible)
 	 */
-	final public String evaluateYACAS(String wrapperCommand, String exp) {
+	final synchronized public String evaluateYACAS(String wrapperCommand, String exp) {
 		StringBuffer sb = new StringBuffer(exp.length()+wrapperCommand.length()+2);
 		sb.append(wrapperCommand);
 		sb.append('(');
@@ -224,7 +224,7 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string (null possible)
 	 */
-	final public String evaluateYACASRaw(String exp) {
+	final synchronized public String evaluateYACASRaw(String exp) {
 		return evaluateYACAS(exp, false);
 	}
 	
@@ -232,11 +232,11 @@ public class GeoGebraCAS {
 	 * Returns the error message of the last Yacas evaluation.
 	 * @return null if last evaluation was successful.
 	 */
-	final public String getYACASError() {
+	final synchronized public String getYACASError() {
 		return getYacas().getErrorMessage();
 	}
 			
-	private String evaluateYACAS(String exp, boolean replaceSpecialChars) {
+	private synchronized String evaluateYACAS(String exp, boolean replaceSpecialChars) {
 		// Application.debug("exp for YACAS: " + exp);
 		try {
 			String result;
@@ -280,7 +280,7 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string, null possible
 	 */
-	final public String evaluateJASYMCA(String exp) {		
+	final synchronized public String evaluateJASYMCA(String exp) {		
 		String result = getJasymca().evaluate(exp);
 
 		// to handle x(A) and x(B) they are converted
@@ -302,7 +302,7 @@ public class GeoGebraCAS {
 	 * 
 	 * example: getPolynomialCoeffs("3*a*x^2 + b"); returns ["0", "b", "3*a"]
 	 */
-	final public String[] getPolynomialCoeffs(String jasymcaExp, String variable) {		
+	final synchronized public String[] getPolynomialCoeffs(String jasymcaExp, String variable) {		
 		return getJasymca().getPolynomialCoeffs(jasymcaExp, variable);
 	}
 
@@ -313,7 +313,7 @@ public class GeoGebraCAS {
 	 * to "unicode" + charactercode + DELIMITER Strings. This is neede because
 	 * YACAS cannot handle all unicode characters.
 	 */
-	private String replaceSpecialChars(String str) {
+	private synchronized String replaceSpecialChars(String str) {
 		int len = str.length();
 		sbRemoveSpecial.setLength(0);
 
@@ -362,7 +362,7 @@ public class GeoGebraCAS {
 	/**
 	 * Reverse operation of removeSpecialChars().
 	 */
-	private String insertSpecialChars(String str) {
+	private synchronized String insertSpecialChars(String str) {
 		int len = str.length();
 		sbInsertSpecial.setLength(0);
 
@@ -420,7 +420,7 @@ public class GeoGebraCAS {
 	 * and the given command arguments. 
 	 * For example, getYacasCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
 	 */
-	final public String getYacasCommand(String name, ArrayList args, boolean symbolic) {
+	final synchronized public String getYacasCommand(String name, ArrayList args, boolean symbolic) {
 		StringBuffer sbYacasCommand = new StringBuffer(80);
 				
 		// build command key as name + "." + args.size()
@@ -482,7 +482,7 @@ public class GeoGebraCAS {
 	/**
 	 * Returns the Yacas command for the given key (from ggb2yacas.properties)
 	 */ 
-	private String getYacasCommand(String key) {
+	private synchronized String getYacasCommand(String key) {
 		if (ggb2Yacas == null) {
 			ggb2Yacas = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_YACAS);
 		}

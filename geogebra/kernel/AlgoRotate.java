@@ -53,6 +53,8 @@ public class AlgoRotate extends AlgoTransformation {
         Bgeo = Ageo.copy();
         B = (Rotateable) Bgeo;
         setInputOutput();
+        
+        kernel.registerEuclidianViewAlgo(this);
 
         compute();        
     }
@@ -81,6 +83,11 @@ public class AlgoRotate extends AlgoTransformation {
         Bgeo.set(Ageo);
         B.rotate(angle);
     }
+    
+    final public boolean wantsEuclidianViewUpdate() {
+        return Ageo.isGeoImage();
+    }
+
     
     final public String toString() {
         StringBuffer sb = new StringBuffer();

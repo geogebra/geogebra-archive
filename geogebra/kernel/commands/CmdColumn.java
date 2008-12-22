@@ -20,11 +20,18 @@ public class CmdColumn extends CommandProcessor {
 
 		switch (n) {
 		case 1:
-			// Name[ <GeoElement> ]
 			arg = resArgs(c);			
-			GeoElement[] ret = { kernel.Column(c.getLabel(),
-								arg[0]) };
-			return ret;
+			if (arg[0].getLabel() != null && GeoElement.isSpreadsheetLabel(arg[0].getLabel())) {
+
+				GeoElement[] ret = { kernel.Column(c.getLabel(),
+						arg[0]) };
+				return ret;
+			}
+			else
+			{
+				throw argErr(app, c.getName(), arg[0]);
+			}
+
 
 
 		default:

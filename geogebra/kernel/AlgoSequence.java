@@ -173,6 +173,16 @@ public class AlgoSequence extends AlgoElement {
 			while ((step > 0 && currentVal <= to + Kernel.MIN_PRECISION) || 
 				   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
 			{				
+				
+				// check we haven't run out of memory
+				if (app.freeMemoryIsCritical()) {
+					long mem = app.freeMemory();
+					list.clearCache();
+					kernel.initUndoInfo(); // clear all undo info
+					Application.debug("AlgoSequence aborted: free memory reached "+mem);
+					return;
+				}
+				
 				// set local var value
 				updateLocalVar(currentVal);	  
 				
@@ -263,6 +273,15 @@ public class AlgoSequence extends AlgoElement {
 			   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
 		{			
 			GeoElement listElement = list.get(i);
+			
+			// check we haven't run out of memory
+			if (app.freeMemoryIsCritical()) {
+				long mem = app.freeMemory();
+				list.clearCache();
+				kernel.initUndoInfo(); // clear all undo info
+				Application.debug("AlgoSequence aborted: free memory reached "+mem);
+				return;
+			}
 			
 			// set local var value
 			updateLocalVar(currentVal);	   			    		

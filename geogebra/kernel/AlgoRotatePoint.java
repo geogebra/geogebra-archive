@@ -57,6 +57,8 @@ public class AlgoRotatePoint extends AlgoTransformation {
         B = (PointRotateable) Bgeo;
         setInputOutput();
 
+        kernel.registerEuclidianViewAlgo(this);
+        
         compute();
       
     }
@@ -65,6 +67,10 @@ public class AlgoRotatePoint extends AlgoTransformation {
         return "AlgoRotatePoint";
     }
 
+    final public boolean wantsEuclidianViewUpdate() {
+        return Ageo.isGeoImage();
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {    	
         input = new GeoElement[3];

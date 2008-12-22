@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -26,6 +27,7 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -266,7 +268,7 @@ public abstract class GeoElement
 	private Color labelColor = objColor; 
 	private Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
-	public double animationStep = 0.1;
+	public double animationIncrement = 0.1;
 	private double animationSpeed = 1;
 	private boolean animating = false;
 	
@@ -303,8 +305,6 @@ public abstract class GeoElement
 	private boolean strLabelTextOrHTMLUpdate = true;
 	private boolean strLaTeXneedsUpdate = true;	
 	
-	private boolean inTree = false; // flag to show whether used by ExpressionNode
-
 	// line thickness and line type: s	
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
 	public int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
@@ -1039,7 +1039,7 @@ public abstract class GeoElement
 			return algoParent.getFreeInputPoints();		
 	}
 	
-final public boolean hasOnlyFreeInputPoints() {
+	final public boolean hasOnlyFreeInputPoints() {
 		if (algoParent == null) 
 			return false;
 		else
@@ -1085,11 +1085,11 @@ final public boolean hasOnlyFreeInputPoints() {
 
 	public void setAnimationStep(double s) {
 		if (s > 0 && s < 1000)
-			animationStep = s;
+			animationIncrement = s;
 	}
 
 	public double getAnimationStep() {
-		return animationStep;
+		return animationIncrement;
 	}
 	
 	final public double getAnimationSpeed() {
@@ -1134,15 +1134,18 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * 
 	 * @see Animatable interface
 	 */
-	final public synchronized void setAnimating(boolean flag) {
+	public synchronized void setAnimating(boolean flag) {
+		boolean oldValue = animating;
 		animating = flag && isAnimatable();
 		
 		// tell animation manager
-		AnimationManager am = kernel.getAnimatonManager();
-		if (animating)
-			am.addAnimatedGeo(this);
-		else
-			am.removeAnimatedGeo(this);		
+		if (oldValue != animating) {
+			AnimationManager am = kernel.getAnimatonManager();
+			if (animating)
+				am.addAnimatedGeo(this);
+			else
+				am.removeAnimatedGeo(this);		
+		}
 	}
 
 	final public boolean isAnimating() {		
@@ -1253,6 +1256,22 @@ final public boolean hasOnlyFreeInputPoints() {
 		
 	}
 
+//	private StringBuffer sb;
+//
+//	private String removeDollars(String s) {	
+//		if (sb == null)
+//			sb = new StringBuffer();
+//		sb.setLength(0);
+//
+//		for (int i = 0; i < s.length(); i++) {
+//			char c = s.charAt(i);
+//			if (c != '$')
+//				sb.append(c);
+//		}
+//
+//		return sb.toString();
+//	}	
+	
 	/**
 	 * Sets label of a GeoElement and updates GeoElement table 
 	 * (label, GeoElement). This method should only be used by
@@ -1331,8 +1350,8 @@ final public boolean hasOnlyFreeInputPoints() {
 		notifyAdd();		
 	}	
 	
-	private void updateSpreadsheetCoordinates() {			
-		if(labelSet && label.length() > 1 
+	private void updateSpreadsheetCoordinates() {				
+		if(labelSet 
 			&& Character.isLetter(label.charAt(0)) // starts with letter
 			&& Character.isDigit(label.charAt(label.length()-1)))  // ends with digit
 		{
@@ -1347,8 +1366,11 @@ final public boolean hasOnlyFreeInputPoints() {
 				oldSpreadsheetCoords.setLocation(spreadsheetCoords);
 			}
 			
-			int column = getSpreadsheetColumn(label);
-			int row = getSpreadsheetRow(label);
+			// we need to also support wrapped GeoElements like
+			// $A4 that are implemented as dependent geos (using ExpressionNode)
+			Matcher matcher = GeoElement.spreadsheetPattern.matcher(getLabel());				
+			int column = getSpreadsheetColumn(matcher);
+			int row = getSpreadsheetRow(matcher);
 			if (column >= 0 && row >= 0) {			
 				spreadsheetCoords.setLocation(column, row);
 			} else {
@@ -1363,15 +1385,24 @@ final public boolean hasOnlyFreeInputPoints() {
 		//Application.debug("update spread sheet coords: " + this + ", " +  spreadsheetCoords + ", old: " + oldSpreadsheetCoords);
 	}		
 	
-	// Michael Borcherds 2008-01-19 
-	//public static String getSpreadsheetCellName( int i, int j)
-	//    {
-	//        if (i>25) return "A1"; 
-	//        i+='A';
-	//        j+=1;
-	//        String ret = Character.toString((char)i)+j;
-	//        return ret;
-	//    }
+	/**
+	 * Returns a point with the spreadsheet coordinates of the given inputLabel.
+	 * Note that this can also be used for names that include $ signs like "$A1".
+	 * @return null for non-spreadsheet names
+	 */
+	public static Point getSpreadsheetCoordsForLabel(String inputLabel) {
+		// we need to also support wrapped GeoElements like
+		// $A4 that are implemented as dependent geos (using ExpressionNode)	
+		Matcher matcher = GeoElement.spreadsheetPattern.matcher(inputLabel);				
+		int column = getSpreadsheetColumn(matcher);
+		int row = getSpreadsheetRow(matcher);
+		
+		if (column >= 0 && row >= 0)
+			return new Point(column, row);
+		else 
+			return null;
+	}
+
 	// Cong Liu
 	public static String getSpreadsheetCellName(int column, int row) {
 		++row;
@@ -1411,44 +1442,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		sb.append(rowName);			
 		return sb.toString();
 	}
-	 
-	/*
-	 public static int getSpreadsheetColumn( String str)
-	    {// TODO rewrite to cope with more than 26 columns
-	        int ret = -1;
-	        if( str != null && str.length() > 1)
-	        {	            
-	        	char ch = str.charAt(0);
-	        	if (Character.isUpperCase(ch)) {
-	        		ret = ch - 'A';
-	        	}
-	        }
-	        return ret;
-	    }
-	    
-    public static int getSpreadsheetRow(String str)
-    {// TODO rewrite to cope with more than 26 columns
-        int ret = -1;
-        if( str != null && str.length()>1)
-        {
-            String rowstr = str.substring(1); // only one char for the column
-            if (Character.isDigit(rowstr.charAt(0))) {	            
-	            try
-	            {
-	                ret = Integer.parseInt(rowstr);
-	                ret--;
-	            }
-	            catch( NumberFormatException nfe)
-	            {
-	                ret = -1;
-	                //nfe.printStackTrace();
-	            }
-            }
-        }
-        return ret;
-    }
-    */
-	
+	 	
 	// Michael Borcherds
 	public static boolean isSpreadsheetLabel(String str) {
 		Matcher matcher = spreadsheetPattern.matcher(str);
@@ -1457,12 +1451,13 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	
 	// Cong Liu	
-	public static final Pattern spreadsheetPattern = Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
+	public static final Pattern spreadsheetPattern = 
+		Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
 	// Cong Liu	
-	public static int getSpreadsheetColumn(String str) {
-		Matcher matcher = spreadsheetPattern.matcher(str);
+	public static int getSpreadsheetColumn(Matcher matcher) {	
 		if (! matcher.matches()) return -1;
+						
 		String s = matcher.group(1);
 		int column = 0;
 		while (s.length() > 0) {
@@ -1475,8 +1470,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	    
 	// Cong Liu	
-	public static int getSpreadsheetRow(String str) {
-		Matcher matcher = spreadsheetPattern.matcher(str);
+	public static int getSpreadsheetRow(Matcher matcher) {		
 		if (! matcher.matches()) return -1;
 		String s = matcher.group(2);
 		return Integer.parseInt(s) - 1;
@@ -1543,11 +1537,13 @@ final public boolean hasOnlyFreeInputPoints() {
 				break;
 
 			default : 
-				if (isSpreadsheetLabel(labelPrefix)) {
+				// is this a spreadsheet label?
+				Matcher matcher = GeoElement.spreadsheetPattern.matcher(labelPrefix);								
+				if (matcher.matches()) {
 					// more than one visible geo and it's a spreadsheet cell
 					// use D1, E1, F1, etc as names
-					int col = getSpreadsheetColumn(labelPrefix);
-					int row = getSpreadsheetRow(labelPrefix);
+					int col = getSpreadsheetColumn(matcher);
+					int row = getSpreadsheetRow(matcher);
 					for (int i = 0; i < geos.length; i++)
 						geos[i].setLabel(geos[i].getFreeLabel(getSpreadsheetCellName(col + i, row)));	
 				} else { // more than one visible geo: use indices if we got a prefix
@@ -1749,6 +1745,9 @@ final public boolean hasOnlyFreeInputPoints() {
 
 	// removes this GeoElement and all its dependents
 	protected void doRemove() {
+		// stop animation of this geo
+		setAnimating(false);
+		
 		// remove this object from List
 		if (isIndependent()) 
 			cons.removeFromConstructionList(this);
@@ -1767,7 +1766,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		}
 
 		// remove from selection
-		app.removeSelectedGeo(this, false);
+		app.removeSelectedGeo(this, false);	
 				
 		// notify views before we change labelSet
 		notifyRemove();
@@ -1847,7 +1846,7 @@ final public boolean hasOnlyFreeInputPoints() {
 	 */
 	final void addToUpdateSetOnly(AlgoElement algorithm) {
 		addToUpdateSets(algorithm);
-	}
+	}		
 
 	/**
 	 * remove algorithm from dependency list of this GeoElement
@@ -2862,7 +2861,7 @@ final public boolean hasOnlyFreeInputPoints() {
 		if (isChangeable()) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("\t<animation");
-			sb.append(" step=\""+animationStep+"\"");
+			sb.append(" step=\""+animationIncrement+"\"");
 			sb.append(" speed=\""+animationSpeed+"\"");
 			sb.append(" type=\""+animationType+"\"");
 			sb.append(" playing=\"");
@@ -3203,9 +3202,10 @@ final public boolean hasOnlyFreeInputPoints() {
 	
 	/**
 	 * Translates all GeoElement objects in geos by a vector in real world coordinates or by
-	 * (xPixel, yPixel) in screen coordinates.	 
+	 * (xPixel, yPixel) in screen coordinates. 
+	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, GeoVector rwTransVec) {	
+	public static boolean moveObjects(ArrayList geos, GeoVector rwTransVec, Point2D.Double endPosition) {	
 		if (moveObjectsUpdateList == null)
 			moveObjectsUpdateList = new ArrayList();
 		
@@ -3214,9 +3214,13 @@ final public boolean hasOnlyFreeInputPoints() {
 		moveObjectsUpdateList.clear();
 		moveObjectsUpdateList.ensureCapacity(size);
 		
+		// only use end position for a single point
+		Point2D.Double position = size == 1 ? endPosition : null;
+		
 		for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
-			moved = geo.moveObject(rwTransVec, moveObjectsUpdateList) || moved;		
+			
+			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
 		}					
 				
 		// take all independent input objects and build a common updateSet
@@ -3229,22 +3233,56 @@ final public boolean hasOnlyFreeInputPoints() {
 	}
 	private static ArrayList moveObjectsUpdateList;
 	
+//	/**
+//	 * Moves geo by a vector in real world coordinates.
+//	 * @return whether actual moving occurred 	 
+//	 */
+//	final public boolean moveObject(GeoVector rwTransVec, Point2D.Double endPosition) {
+//		return moveObject(rwTransVec, endPosition, null);
+//	}
+
 	/**
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
-	final public boolean moveObject(GeoVector rwTransVec) {
-		return moveObject(rwTransVec, null);
-	}
-	
-	private boolean moveObject(GeoVector rwTransVec, ArrayList updateGeos) {
+	private boolean moveObject(GeoVector rwTransVec, Point2D.Double endPosition, ArrayList updateGeos) {
 		boolean movedGeo = false;
+		
+		// moveable geo
 		if (isMoveable()) {
-			if (isTranslateable()) {
+			// point
+			if (isGeoPoint()) {
+				GeoPoint point = (GeoPoint) this;
+				if (endPosition != null) {					
+					point.setCoords(endPosition.x, endPosition.y, 1);
+					movedGeo = true;
+				} 
+				
+				// translate point
+				else {	
+					double x  = point.inhomX + rwTransVec.x;
+					double y =  point.inhomY + rwTransVec.y;
+										
+					// round to decimal fraction, e.g. 2.800000000001 to 2.8
+					if (Math.abs(rwTransVec.x) > Kernel.MIN_PRECISION)
+						x  = kernel.checkDecimalFraction(x);
+					if (Math.abs(rwTransVec.y) > Kernel.MIN_PRECISION) 
+						y = kernel.checkDecimalFraction(y);
+						
+					// set translated point coords
+					point.setCoords(x, y, 1);					
+					movedGeo = true;
+				}
+			}
+			
+			// translateable
+			else if (isTranslateable()) {
 				Translateable trans = (Translateable) this;
 				trans.translate(rwTransVec);			
 				movedGeo = true;
 			}
+			
+			// absolute position on screen
 			else if (isAbsoluteScreenLocateable()) {
 				AbsoluteScreenLocateable screenLoc = (AbsoluteScreenLocateable) this;
 				if (screenLoc.isAbsoluteScreenLocActive()) {					
@@ -3282,12 +3320,42 @@ final public boolean hasOnlyFreeInputPoints() {
 				GeoPoint point = (GeoPoint) this;
 				if (point.hasChangeableCoordParentNumbers()) {
 					// translate x and y coordinates by changing the parent coords accordingly
-					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();
-		    		GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
-		    		GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
-		    		xvar.setValue( xvar.getValue() + rwTransVec.x );
-		    		yvar.setValue( yvar.getValue() + rwTransVec.y );	
-		    				    		
+					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();					
+					GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
+					GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
+							
+					// polar coords (r; phi)
+					if (point.hasPolarParentNumbers()) {
+						// radius
+						double radius = GeoVec2D.length(endPosition.x, endPosition.y);
+						xvar.setValue(radius);
+						
+						// angle
+						double angle = kernel.convertToAngleValue(Math.atan2(endPosition.y, endPosition.x));
+						// angle outsid of slider range
+						if (yvar.isIntervalMinActive() && yvar.isIntervalMaxActive() &&
+						    (angle < yvar.getIntervalMin() || angle > yvar.getIntervalMax())) 
+						{
+							// use angle value closest to closest border
+							double minDiff = Math.abs((angle - yvar.getIntervalMin())) ;
+							if (minDiff > Math.PI) minDiff = Kernel.PI_2 - minDiff;
+							double maxDiff = Math.abs((angle - yvar.getIntervalMax()));
+							if (maxDiff > Math.PI) maxDiff = Kernel.PI_2 - maxDiff;
+							
+							if (minDiff < maxDiff) 
+								angle = angle - Kernel.PI_2;
+							else
+								angle = angle + Kernel.PI_2;
+						}											
+						yvar.setValue(angle);
+					}
+					
+					// cartesian coords (xvar + constant, yvar + constant)
+					else {
+						xvar.setValue( xvar.getValue() - point.inhomX + endPosition.x);
+						yvar.setValue( yvar.getValue() - point.inhomY + endPosition.y);
+					}
+					
 		    		if (updateGeos != null) {
 		    			// add both variables to update list
 		    			updateGeos.add(xvar);
@@ -3319,6 +3387,8 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * may return null if no position was specified so far.	 
 	 */
 	public Point getSpreadsheetCoords() {
+		if (spreadsheetCoords == null)
+			updateSpreadsheetCoordinates();
 		return spreadsheetCoords;
 	}
 
@@ -3343,13 +3413,6 @@ final public boolean hasOnlyFreeInputPoints() {
 		this.isAlgoMacroOutput = isAlgoMacroOutput;
 	}
 
-	final public boolean isInTree() {
-		return inTree;
-	}
-	
-	final public void setInTree(boolean flag) {
-		inTree = flag;
-	}
 	
 	// Michael Borcherds 2008-04-30
 	public abstract boolean isEqual(GeoElement Geo);
@@ -3365,10 +3428,40 @@ final public boolean hasOnlyFreeInputPoints() {
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA_XML)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA)
 	 */
-	public String getFormulaString(int ExpressionNodetype, boolean substituteNumbers)
+	public String getFormulaString(int ExpressionNodeType, boolean substituteNumbers)
 	{
+		
+		/*
+		 * TODO maybe use this
+		 * doesn't work on f=Factor[x^2-1] Expand[f]
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
+				 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA) {
+		
+			ExpressionValue ev;
+			if (!this.isExpressionNode()) 
+	            ev = new ExpressionNode(kernel, this);
+			else
+				ev = this;
+			
+			String ret = ((ExpressionNode)
+					ev).getCASstring(ExpressionNodeType,
+					!substituteNumbers);
+			Application.debug(ret);
+			return ret;
+		}
+		*/
+		
+    
 		int tempCASPrintForm = kernel.getCASPrintForm();
-		kernel.setCASPrintForm(ExpressionNodetype);
+		kernel.setCASPrintForm(ExpressionNodeType);
+
+
+		
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
+		 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
+			kernel.setTemporaryPrintDecimals(15); // Yacas doesn't like 4E-20 or x^2.0
+
+		
 		String ret="";
 		if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
@@ -3391,6 +3484,10 @@ final public boolean hasOnlyFreeInputPoints() {
 			// eg Text[ (1,2), false]
 			ret = toOutputValueString();
 		}
+		
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
+		 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
+			kernel.restorePrintAccuracy();
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
 		return ret;
@@ -3456,6 +3553,15 @@ final public boolean hasOnlyFreeInputPoints() {
 		return false;
 	}
 	
+	boolean inTree = false;
+	
+	final public boolean isInTree() {
+		return inTree;
+	}
+	
+	final public void setInTree(boolean flag) {
+		inTree = flag;
+	}
 
 
 }

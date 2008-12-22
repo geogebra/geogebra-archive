@@ -166,11 +166,13 @@ public class RelativeCopy {
 			
 				GeoElement geo = (GeoElement)(iterator.next());
 				
-				Point p = geo.getSpreadsheetCoords();
-				
-				doCopyNoStoringUndoInfo0(kernel, table, geo,
-						getValue(table,p.x, dy1 + iy), 0, y - sy);
-				//Application.debug(p.x+"");
+				if (geo != null) {
+					Point p = geo.getSpreadsheetCoords();
+					
+					doCopyNoStoringUndoInfo0(kernel, table, geo,
+							getValue(table,p.x, dy1 + iy), 0, y - sy);
+					//Application.debug(p.x+"");
+				}
 				
 			}
 
@@ -236,8 +238,10 @@ public class RelativeCopy {
 	public static GeoElement doCopyNoStoringUndoInfo0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
 		if (value == null) {
 			if (oldValue != null) {
-				int column = GeoElement.getSpreadsheetColumn(oldValue.getLabel());
-				int row = GeoElement.getSpreadsheetRow(oldValue.getLabel());
+				Matcher matcher = GeoElement.spreadsheetPattern.matcher(oldValue.getLabel());
+				int column = GeoElement.getSpreadsheetColumn(matcher);
+				int row = GeoElement.getSpreadsheetRow(matcher);
+				
 				MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return null;
@@ -257,9 +261,11 @@ public class RelativeCopy {
 		dependents = dependents2;
 		dependents[dependents.length - 1] = value;
 		for (int i = 0; i < dependents.length; ++ i) {
-			String name = dependents[i].getLabel();
-			int column = GeoElement.getSpreadsheetColumn(name);
-			int row = GeoElement.getSpreadsheetRow(name);
+			String name = dependents[i].getLabel();			
+			Matcher matcher = GeoElement.spreadsheetPattern.matcher(name);			
+			int column = GeoElement.getSpreadsheetColumn(matcher);
+			int row = GeoElement.getSpreadsheetRow(matcher);
+			
 			if (column == -1 || row == -1) continue;
 			String column1 = GeoElement.getSpreadsheetColumnName(column);
 			String row1 = "" + (row + 1);
@@ -267,12 +273,15 @@ public class RelativeCopy {
 			text = replaceAll(GeoElement.spreadsheetPattern, text, column1 + "$" + row1, "::" + column1 + "$" + row1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, column1 + row1, "::" + column1 + "::" + row1);
 		}
-		int column0 = GeoElement.getSpreadsheetColumn(value.getLabel());
-		int row0 = GeoElement.getSpreadsheetRow(value.getLabel());
+		
+		Matcher matcher = GeoElement.spreadsheetPattern.matcher(value.getLabel());			
+		int column0 = GeoElement.getSpreadsheetColumn(matcher);
+		int row0 = GeoElement.getSpreadsheetRow(matcher);
 		for (int i = 0; i < dependents.length; ++ i) {
 			String name = dependents[i].getLabel();
-			int column = GeoElement.getSpreadsheetColumn(name);
-			int row = GeoElement.getSpreadsheetRow(name);
+			matcher = GeoElement.spreadsheetPattern.matcher(name);			
+			int column = GeoElement.getSpreadsheetColumn(matcher);
+			int row = GeoElement.getSpreadsheetRow(matcher);
 			if (column == -1 || row == -1) continue;
 			String column1 = GeoElement.getSpreadsheetColumnName(column);
 			String row1 = "" + (row + 1);

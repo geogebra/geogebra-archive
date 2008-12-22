@@ -141,9 +141,13 @@ public class FunctionVariable extends Variable{
 		
 	public String toString(){
 		String a = arg.toString();
-		if(a.startsWith("(") && a.endsWith(")"))
-			return fname+a;
-		else
+		// Michael Borcherds 2008-11-25
+		// removed these lines, as they don't work
+		// eg differentiate sin( (x-1) log(x) )
+		// eg differentiate x^(x-1)
+		//if(a.startsWith("(") && a.endsWith(")"))
+		//	return fname+a;
+		//else
 			return fname+"("+a+")";
 	}
 

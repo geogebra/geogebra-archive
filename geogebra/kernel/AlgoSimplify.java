@@ -79,7 +79,8 @@ public class AlgoSimplify extends AlgoElement {
 		
 		if (functionOut.length()>7)
 			if (functionOut.startsWith("Simplify(") || // Yacas error
-			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
+				functionOut.startsWith("Undefined") || // Yacas error/bug eg Simplify(0.00000000000000001)
+				functionOut.startsWith("FWatom(") )  // Yacas oddity??
 				yacasError=true;
 			
 

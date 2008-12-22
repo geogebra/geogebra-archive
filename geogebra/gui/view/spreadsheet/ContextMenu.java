@@ -315,11 +315,11 @@ public class ContextMenu extends JPopupMenu
  			String text="";
  			try {
  		 			text="{";
- 					for (int j = column1; j <= column2; ++ j) {
+ 					for (int j = row1; j <= row2; ++ j) {
  						//if (selected.length > j && ! selected[j])  continue; 	
  						String row = "{";
-		  	   	 		for (int i = row1; i <= row2; ++ i) {
-		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, j, i);
+		  	   	 		for (int i = column1; i <= column2; ++ i) {
+		 	   	 			GeoElement v2 = RelativeCopy.getValue(table, i, j);
 		 	   	 			if (v2 != null) {
 		 	   	 				row += v2.getLabel() + ",";
 		 	   	 			}

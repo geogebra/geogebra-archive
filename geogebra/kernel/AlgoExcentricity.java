@@ -84,7 +84,7 @@ public class AlgoExcentricity extends AlgoElement {
         StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("EccentricityOfA",c.getLabel()));
+        sb.append(app.getPlain("LinearEccentricityOfA",c.getLabel()));
         
         return sb.toString();
     }

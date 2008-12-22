@@ -194,9 +194,11 @@ public class AlgebraController
 				else {						
 					if (Application.isControlDown(e)) {
 						app.toggleSelectedGeo(geo); 													
+						app.geoElementSelected(geo, true);
 					} else {							
 						app.clearSelectedGeos();
 						app.addSelectedGeo(geo);
+						app.geoElementSelected(geo, false);
 					}		
 				}	
 			}

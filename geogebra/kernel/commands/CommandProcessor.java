@@ -34,7 +34,6 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Mirrorable;
-import geogebra.kernel.Path;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Rotateable;
 import geogebra.kernel.Translateable;
@@ -73,13 +72,13 @@ public abstract class CommandProcessor  {
            ExpressionNode[] arg = c.getArguments();
            GeoElement[] result = new GeoElement[arg.length];
            
-           for (int i = 0; i < arg.length; ++i) {        	           	   
+           for (int i = 0; i < arg.length; ++i) {   
         	   // resolve variables in argument expression        	   
         	   arg[i].resolveVariables();
     
                // resolve i-th argument and get GeoElements
                // use only first resolved argument object for result
-        	   result[i] = resArg(arg[i])[0];     
+        	   result[i] = resArg(arg[i])[0];        	           	   
            }
            
            cons.setSuppressLabelCreation(oldMacroMode);
@@ -163,11 +162,11 @@ public abstract class CommandProcessor  {
          * @author Markus Hohenwarter
          * @date Jan 26, 2008
          */
-         public static GeoList wrapInList(Kernel kernel, GeoElement [] args, int type) {
+         public static GeoList wrapInList(Kernel kernel, GeoElement [] args, int length, int type) {
 		     Construction cons=kernel.getConstruction();
         	 boolean correctType = true;		        
 		   	 ArrayList geoElementList = new ArrayList();
-		   	 for (int i=0; i < args.length; i++) {
+		   	 for (int i=0; i < length; i++) {
 		   		 if (type < 0 || args[i].getGeoClassType() == type) 
 		   			 geoElementList.add(args[i]);
 		   		 else {
@@ -615,10 +614,6 @@ final public  GeoElement[] process(Command c) throws MyError {
             if (arg[0] .isGeoLine()) {
                 GeoElement[] ret =
                     { kernel.Slope(c.getLabel(), (GeoLine) arg[0])};
-                return ret;
-            } else if (arg[0].isGeoFunctionable()) {
-                GeoElement[] ret =
-                    { kernel.Slope(c.getLabel(), ((GeoFunctionable) arg[0]).getGeoFunction())};
                 return ret;
             } else
 				throw argErr(app, "Slope", arg[0]);
@@ -2659,11 +2654,15 @@ final public  GeoElement[] process(Command c)  throws MyError, CircularDefinitio
                     && (ok[1] = (arg[1] .isGeoPoint()))) {
                 GeoVector v = (GeoVector) arg[0];
                 GeoPoint P = (GeoPoint) arg[1];
+                /* removed Michael Borcherds 2008-12-03
+                 * doesn't work as the XML etc isn't updated 
+
                 if (label == null) {                    
                     v.setStartPoint(P);
                     v.updateRepaint();
                     ret[0] = v;                 
-                } else {
+                } else*/
+                {
                     ret[0] = kernel.Translate(label, v, P);
                 }
                 return ret;
@@ -3574,7 +3573,7 @@ final public GeoElement[] process(Command c) throws MyError {
          default :
         	 // Markus Hohenwarter 2008-01-26 BEGIN
              // try to create list of points
-        	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_POINT);
+        	 GeoList list = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_POINT);
              if (list != null) {
             	 GeoElement[] ret = { kernel.PolynomialFunction(c.getLabel(), list)};
                  return ret;             	     	 
@@ -4194,7 +4193,7 @@ class CmdTableText extends CommandProcessor {
        
        switch (n) {
        
-         case 1 :
+       case 1 :
            if ( (ok[0] = (arg[0].isGeoList()) ) ){
         	   GeoList list = (GeoList)arg[0];
         	   
@@ -4206,16 +4205,50 @@ class CmdTableText extends CommandProcessor {
                    {
                         kernel.TableText(
                            c.getLabel(),
-                           (GeoList) arg[0])};
+                           (GeoList) arg[0], null)};
                return ret;
         	   } else {
-        		   list = wrapInList(kernel, arg, -1);
+        		   list = wrapInList(kernel, arg, arg.length, -1);
                    if (list != null) {
-                  	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list)};
+                  	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list, null)};
                        return ret;             	     	 
                    } 
        			throw argErr(app, c.getName(), arg[0]);        		   
         	   }
+           } else {
+                   throw argErr(app, c.getName(), arg[0]);
+           }
+           
+       case 2 :
+           if ( ok[0] = (arg[0].isGeoList()) && (arg[1].isGeoText() )){
+        	   GeoList list = (GeoList)arg[0];
+        	   
+        	   if (list.size() == 0)
+                   throw argErr(app, c.getName(), arg[0]);
+        	   
+        	   if (list.get(0).isGeoList()) { // list of lists: no need to wrap   		   
+               GeoElement[] ret =
+                   {
+                        kernel.TableText(
+                           c.getLabel(),
+                           (GeoList) arg[0], (GeoText)arg[1])};
+               return ret;
+        	   } else {
+        		   list = wrapInList(kernel, arg, arg.length - 1, -1);
+                   if (list != null) {
+                  	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list, (GeoText)arg[1])};
+                       return ret;             	     	 
+                   } 
+       			throw argErr(app, c.getName(), arg[0]);        		   
+        	   }
+           } if ( ok[0] = (arg[0].isGeoList()) && (arg[1].isGeoList() )){
+        	   // two lists, no alignment
+    		   GeoList list = wrapInList(kernel, arg, arg.length, -1);
+               if (list != null) {
+              	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list, null)};
+                   return ret;             	     	 
+               } 
+       	   
            } else {
                    throw argErr(app, c.getName(), arg[0]);
            }
@@ -4225,11 +4258,21 @@ class CmdTableText extends CommandProcessor {
 
          default :
              // try to create list of numbers
-        	 GeoList list = wrapInList(kernel, arg, -1);
-             if (list != null) {
-            	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list)};
-                 return ret;             	     	 
-             } 
+        	 GeoList list;
+         	if (arg[arg.length - 1].isGeoText()) {
+         		list = wrapInList(kernel, arg, arg.length -1, -1);
+                if (list != null) {
+               	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list, (GeoText)arg[arg.length - 1])};
+                    return ret;             	     	 
+                } 
+         	}
+         	else {
+         		list = wrapInList(kernel, arg, arg.length, -1);
+                if (list != null) {
+               	 GeoElement[] ret = { kernel.TableText(c.getLabel(), list, null)};
+                    return ret;             	     	 
+                } 
+         	}
  			throw argErr(app, c.getName(), arg[0]);
        }
 	}
@@ -4279,12 +4322,20 @@ class CmdColumnName extends CommandProcessor {
        
        switch (n) {
          case 1 :
+        	 
+        	 if (arg[0].getLabel() != null && GeoElement.isSpreadsheetLabel(arg[0].getLabel())) {
                GeoElement[] ret =
                    {
                         kernel.ColumnName(
                            c.getLabel(),
                             arg[0])};
+
                return ret;
+        	 }
+        	 else
+        	 {
+        		 throw argErr(app, c.getName(), arg[0]);
+        	 }
 
          default :
 			throw argNumErr(app, c.getName(), n);
@@ -4358,7 +4409,7 @@ class CmdJoin extends CommandProcessor {
 		
 		default:
             // try to create list of numbers
-	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_LIST);
+	       	 GeoList list = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_LIST);
 	            if (list != null) {
 	           	 GeoElement[] ret = { kernel.Join(c.getLabel(), list)};
 	                return ret;             	     	 

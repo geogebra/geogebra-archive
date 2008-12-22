@@ -26,14 +26,16 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
- *
+ * 2D Point
  * @author  Markus
  * @version 
  */
@@ -41,9 +43,6 @@ final public class GeoPoint extends GeoVec3D
 implements VectorValue, 
 Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {   	
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
@@ -225,11 +224,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 				if (en.isLeaf() && en.getLeft() instanceof MyVecNode) { 			
 					// (xExpression, yExpression)
 					MyVecNode vn = (MyVecNode) en.getLeft();
-					
-					// try to get free number variables used in coords for this point
+					hasPolarParentNumbers = vn.hasPolarCoords();
+										
 					try {
-						GeoNumeric xvar = getCoordNumber(vn.getX());
-						GeoNumeric yvar = getCoordNumber(vn.getY());
+						// try to get free number variables used in coords for this point
+						// don't allow expressions like "a + x(A)" for polar coords (r; phi)
+						GeoNumeric xvar = getCoordNumber(vn.getX(), !hasPolarParentNumbers);
+						GeoNumeric yvar = getCoordNumber(vn.getY(), !hasPolarParentNumbers);
 						if (xvar != yvar) { // avoid (a,a) 
 							changeableCoordNumbers.add(xvar);
 							changeableCoordNumbers.add(yvar);
@@ -245,50 +246,53 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 		return changeableCoordNumbers;
 	}
 	private ArrayList changeableCoordNumbers = null;
+	private boolean hasPolarParentNumbers = false;
+	
+	/**
+	 * Returns whether getCoordParentNumbers() returns polar variables (r; phi).	
+	 */
+	public boolean hasPolarParentNumbers() {
+		return hasPolarParentNumbers;
+	}
 	
 	/**
 	 * Returns the single free GeoNumeric expression wrapped in this ExpressionValue. 
 	 * For "a + x(A)" this returns a, for "x(A)" this returns null where A is a free point.
 	 * If A is a dependent point, "a + x(A)" throws an Exception.
 	 */
-	private GeoNumeric getCoordNumber(ExpressionValue ev) throws Throwable {
+	private GeoNumeric getCoordNumber(ExpressionValue ev, boolean allowPlusNode) throws Throwable {
 		// simple variable "a"
 		if (ev.isLeaf()) {
 			return (GeoNumeric) kernel.lookupLabel(ev.toString(), false);
 		}
+		
+		// are expressions like "a + x(A)" allowed?
+		if (!allowPlusNode) return null;
 	
 		// return value
 		GeoNumeric coordNumeric = null;
 		
 		// expression + expression
 		ExpressionNode en = (ExpressionNode) ev;
-		if (en.getOperation() == ExpressionNode.PLUS) {
+		if (en.getOperation() == ExpressionNode.PLUS && en.getLeft() instanceof GeoNumeric) {		
 			
-			// get all variables of both expressions
-			ArrayList allVars = new ArrayList();
+			// left branch needs to be a single number variable: get it
+			// e.g. a + x(D)
+			coordNumeric = (GeoNumeric) en.getLeft();
 			
-			HashSet left = en.getLeft().getVariables();
-			HashSet right = en.getRight().getVariables();
+			// TODO: remove
+			System.out.println("coordNumeric: " + coordNumeric);
 			
-			if (left == null || right == null)
-				throw new Exception("not free");
-			
-			allVars.addAll(left);
-			allVars.addAll(right);
-			
-			// get the ONE free number out of vars
-			for (int i=0; i < allVars.size(); i++) {				
-				GeoElement var = (GeoElement) allVars.get(i);
-				if (!var.isIndependent()) 
-					throw new Exception("dependent var: " + var);
-				
-				if (var.isGeoNumeric()) {
-					if (coordNumeric != null)
-						throw new Exception("second free var: " + var);
-					else
-						coordNumeric = (GeoNumeric) var;
-				}						
-			}			
+			// check that variables in right branch are all independent to avoid circular definitions
+			HashSet rightVars = en.getRight().getVariables();			
+			if (rightVars != null) {
+				Iterator it = rightVars.iterator();
+				while (it.hasNext()) {			
+					GeoElement var = (GeoElement) it.next(); 
+					if (!var.isIndependent()) 
+						throw new Exception("dependent var: " + var);							
+				}
+			}
 		}			
 		
 		return coordNumeric;

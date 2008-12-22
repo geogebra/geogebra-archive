@@ -60,8 +60,8 @@ public class AlgoTranslateVector extends AlgoElement {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = A;        
-        input[1] = v;        
+        input[0] = v;        
+        input[1] = A;        
         
         output = new GeoElement[1];        
         output[0] = w;        

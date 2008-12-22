@@ -176,6 +176,11 @@ public class DefaultGuiManager implements GuiManager {
 		((AlgebraView)getAlgebraView()).startEditing(geo);
 	}
 	
+	public void setScrollToShow(boolean scrollToShow) {
+    	if (spreadsheetView != null) 
+    		spreadsheetView.setScrollToShow(scrollToShow);
+	}
+	
 	public JComponent getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
@@ -742,7 +747,7 @@ public class DefaultGuiManager implements GuiManager {
 	public void showRedefineDialog(GeoElement geo) {
 		// doBeforeRedefine();
 
-		if (geo.isGeoText()) {
+		if (geo.isGeoText() && !geo.isTextCommand()) {
 			showTextDialog((GeoText) geo);
 			return;
 		}
@@ -1421,10 +1426,10 @@ public class DefaultGuiManager implements GuiManager {
 		} else {
 			// update GUI
 			if (app.getEuclidianView().hasPreferredSize()) {
-
+				
 				// Michael Borcherds 2008-04-27 BEGIN
 				// Scale drawing pad down if it doesn't fit on the screen
-				
+	
 				// calculate titlebar height
 				// TODO is there a better way?
 				// getFrame().getHeight() -
@@ -1460,6 +1465,16 @@ public class DefaultGuiManager implements GuiManager {
 				// into
 				// account
 
+				// fake smaller screen for testing
+				// screenSize.width=1024; screenSize.height=768;
+
+				// Application.debug(width);
+				// Application.debug(screenSize.width - furnitureWidth);
+				// Application.debug(screenSize.width );
+				// Application.debug(height);
+				// Application.debug(screenSize.height-furnitureHeight);
+				// Application.debug(screenSize.height);
+
 				if (width > screenSize.width - furnitureWidth
 						|| height > screenSize.height - furnitureHeight) {
 					
@@ -1471,13 +1486,9 @@ public class DefaultGuiManager implements GuiManager {
 							"\nscreenSize.height = "+screenSize.height +
 							"\nfurnitureHeight = "+furnitureHeight);
 
-					Application.debug("Screen too small, resizing to fit" +
-							"\nwidth = "+width+
-							"\nscreenSize.width = "+screenSize.width +
-							"\nfurnitureWidth = "+furnitureWidth +
-							"\nheight = "+height +
-							"\nscreenSize.height = "+screenSize.height +
-							"\nfurnitureHeight = "+furnitureHeight);
+					// close algebra and spreadsheet views
+					//app.setShowAlgebraView(false);
+					//app.setShowSpreadsheetView(false);
 
 					double xscale = app.getEuclidianView().getXscale();
 					double yscale = app.getEuclidianView().getYscale();
@@ -1559,15 +1570,12 @@ public class DefaultGuiManager implements GuiManager {
 				}
 
 				// Michael Borcherds 2007-04-27 END
-			}
-			
-			if (app.getEuclidianView().hasPreferredSize()) {
+
+				// update GUI: size of euclidian view was set
 				app.updateContentPaneAndSize();
 			} else {
 				app.updateContentPane();
 			}
-			
-			app.updateContentPane();
 		}
 
 		return success;

@@ -35,9 +35,9 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
-import geogebra.kernel.LineProperties;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
@@ -3121,23 +3121,24 @@ public class PropertiesDialogGeoElement
 			cbDecimalPlaces.removeActionListener(this);
 
 			//	set value to first text's size and style
-			GeoText geo0 = (GeoText) geos[0];		
+			TextProperties geo0 = (TextProperties) geos[0];		
 			
 			cbSize.setSelectedItem(Integer.toString(geo0.getFontSize()+app.getFontSize()));
 			cbFont.setSelectedIndex(geo0.isSerifFont() ? 1 : 0);
 			int selItem = -1;
 			
 			int decimals = geo0.getPrintDecimals();
-			if (decimals > 0 && decimals < Application.decimalsLookup.length && !geo0.useSignificantFigures)
+			if (decimals > 0 && decimals < Application.decimalsLookup.length && !geo0.useSignificantFigures())
 				selItem = Application.decimalsLookup[decimals];
 
 			int figures = geo0.getPrintFigures();
-			if (figures > 0 && figures < Application.figuresLookup.length && geo0.useSignificantFigures)
+			if (figures > 0 && figures < Application.figuresLookup.length && geo0.useSignificantFigures())
 				selItem = Application.figuresLookup[figures];
 			
 			cbDecimalPlaces.setSelectedIndex(selItem);
 			
-			if (geo0.isIndependent()) {
+			if (((GeoElement)geo0).isIndependent()
+					|| (geo0 instanceof GeoList)) { // don't want rounding option for lists of texts?
 				if (secondLineVisible) {
 					remove(secondLine);	
 					secondLineVisible = false;
@@ -3164,7 +3165,7 @@ public class PropertiesDialogGeoElement
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoText)) {
+				if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
 					geosOK = false;
 					break;
 				}
@@ -3180,40 +3181,40 @@ public class PropertiesDialogGeoElement
 			
 			if (source == cbSize) {
 				int size = Integer.parseInt(cbSize.getSelectedItem().toString()) - app.getFontSize();			
-				GeoText text;
+				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
-					text = (GeoText) geos[i];
+					text = (TextProperties) geos[i];
 					text.setFontSize(size);
-					text.updateRepaint();
+					((GeoElement)text).updateRepaint();
 				}
 			} 
 			else if (source == cbFont) {
 				boolean serif = cbFont.getSelectedIndex() == 1;		
-				GeoText text;
+				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
-					text = (GeoText) geos[i];
+					text = (TextProperties) geos[i];
 					text.setSerifFont(serif);
-					text.updateRepaint();
+					((GeoElement)text).updateRepaint();
 				}
 			}
 			else if (source == cbDecimalPlaces) {
 				int decimals = cbDecimalPlaces.getSelectedIndex();
 				//Application.debug(decimals+"");
 				//Application.debug(roundingMenuLookup[decimals]+"");
-				GeoText text;
+				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
-					text = (GeoText) geos[i];
+					text = (TextProperties) geos[i];
 					if (decimals < 8) // decimal places
 					{
 						//Application.debug("decimals"+roundingMenuLookup[decimals]+"");
-						text.setPrintDecimals(Application.roundingMenuLookup[decimals]);
+						text.setPrintDecimals(Application.roundingMenuLookup[decimals], true);
 					}
 					else // significant figures
 					{
 						//Application.debug("figures"+roundingMenuLookup[decimals]+"");
-						text.setPrintFigures(Application.roundingMenuLookup[decimals]);
+						text.setPrintFigures(Application.roundingMenuLookup[decimals], true);
 					}
-					text.updateRepaint();
+					((GeoElement)text).updateRepaint();
 				}
 			}
 			else if (source == btBold || source == btItalic) {
@@ -3221,11 +3222,11 @@ public class PropertiesDialogGeoElement
 				if (btBold.isSelected()) style += 1;
 				if (btItalic.isSelected()) style += 2;
 					
-				GeoText text;
+				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
-					text = (GeoText) geos[i];
+					text = (TextProperties) geos[i];
 					text.setFontStyle(style);
-					text.updateRepaint();
+					((GeoElement)text).updateRepaint();
 				}
 			}								
 		}
@@ -4334,7 +4335,8 @@ class SliderPanel
 	 */
 	private static final long serialVersionUID = 1L;
 	private Object[] geos; // currently selected geos
-	private JTextField tfMin, tfMax, tfWidth;
+	private AngleTextField tfMin, tfMax;
+	private JTextField tfWidth;
 	private JTextField [] tfields;
 	private JCheckBox cbSliderFixed;
 	private JComboBox coSliderHorizontal;
@@ -4372,8 +4374,8 @@ class SliderPanel
 					
 		String[] labels = { app.getPlain("min")+":",
 							app.getPlain("max")+":", app.getPlain("Width")+":"};
-		tfMin = new JTextField(5);
-		tfMax = new JTextField(5);
+		tfMin = new AngleTextField(5);
+		tfMax = new AngleTextField(5);
 		tfWidth = new JTextField(4);
 		tfields = new JTextField[3];
 		tfields[0] = tfMin;
@@ -4606,7 +4608,7 @@ class AnimationStepPanel
 	private static final long serialVersionUID = 1L;
 	
 	private Object[] geos; // currently selected geos
-	private JTextField tfAnimStep;
+	private AngleTextField tfAnimStep;
 	private boolean partOfSliderPanel = false;
 	
 	private Kernel kernel;
@@ -4616,7 +4618,7 @@ class AnimationStepPanel
 		
 		// text field for animation step
 		JLabel label = new JLabel(app.getPlain("AnimationStep") + ": ");
-		tfAnimStep = new JTextField(5);
+		tfAnimStep = new AngleTextField(5);
 		label.setLabelFor(tfAnimStep);
 		tfAnimStep.addActionListener(this);
 		tfAnimStep.addFocusListener(this);
@@ -5485,7 +5487,7 @@ class NamePanel
 		// DEFINITION
 		//boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
 		boolean showDefinition = currentGeo.isGeoText() ? ((GeoText)currentGeo).isTextCommand() :
-			! currentGeo.isGeoImage();
+			! (currentGeo.isGeoImage() && currentGeo.isIndependent());
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);

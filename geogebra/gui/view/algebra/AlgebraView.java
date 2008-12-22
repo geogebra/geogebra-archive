@@ -283,7 +283,7 @@ public class AlgebraView extends JTree implements View {
 		
 		if (!geo.isChangeable()) {
 			if (geo.isFixed()) {
-				app.showMessage(app.getError("AssignmentToFixed"));
+				//app.showMessage(app.getError("AssignmentToFixed"));
 			} 
 			else if (geo.isRedefineable()) { 
 				app.getGuiManager().showRedefineDialog(geo);

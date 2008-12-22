@@ -11,6 +11,7 @@ package geogebra.plugin;
  
  */
 import geogebra.ClassPathManipulator;
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -187,7 +188,15 @@ public class GgbAPI {
 	 * Note: the construction is NOT cleared before evaluating the XML string. 	 
 	 */
 	public synchronized void evalXML(String xmlString) {		
-		app.setXML(xmlString, false);
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
+		sb.append("<construction>\n");
+		sb.append(xmlString);
+		sb.append("</construction>\n");
+		sb.append("</geogebra>\n");
+		app.setXML(sb.toString(), false);
 	}
 
 	

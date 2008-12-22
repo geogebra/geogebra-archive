@@ -323,22 +323,22 @@ public class MyList extends ValidExpression implements ListValue {
 		
 		boolean isMatrix=true;
 		
-		int LHcols = LHlist.size(), LHrows=0;
+		int LHrows = LHlist.size(), LHcols=0;
 		
 		//Application.debug("MULT LISTS"+size);
 		
 		// check LHlist is a matrix
 		ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
 		if ( singleValue.isListValue() ){
-			LHrows=((ListValue)singleValue).getMyList().size();
+			LHcols=((ListValue)singleValue).getMyList().size();
 			//Application.debug("LHrows"+LHrows);
-			if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
+			if (LHrows>1) for (int i=1 ; i<LHrows ; i++) // check all rows same length
 			{
 				//Application.debug(i);
 				singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
 				//Application.debug("size"+((ListValue)singleValue).getMyList().size());
 				if ( singleValue.isListValue() ){
-					if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
+					if (((ListValue)singleValue).getMyList().size()!=LHcols) isMatrix=false;				
 				}
 				else isMatrix=false;
 			}
@@ -363,7 +363,7 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 	
 //	 Michael Borcherds 2008-04-15
-	public static ExpressionValue getCell(MyList list, int col, int row)
+	public static ExpressionValue getCell(MyList list, int row, int col)
 		{
 			ExpressionValue singleValue=((ExpressionValue)list.getListElement(col)).evaluate();
 			if ( singleValue.isListValue() ){

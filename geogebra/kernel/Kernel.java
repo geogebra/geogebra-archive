@@ -39,6 +39,7 @@ import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
+import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
@@ -88,6 +89,7 @@ public class Kernel {
 	
 	// minimum precision
 	public final static double MIN_PRECISION = 1E-5;
+	private final static double INV_MIN_PRECISION = 1E5; 
 	
 	// current working precision
 	private double EPSILON = STANDARD_PRECISION;
@@ -230,6 +232,14 @@ public class Kernel {
 		return geo;
 	}
 	
+	/*
+	 * returns GeoElement at (row,col) in spreadsheet
+	 * may return null
+	 */
+	public GeoElement getGeoAt(int col, int row) {
+		return lookupLabel(GeoElement.getSpreadsheetCellName(col, row));
+	}
+	
 	final public GeoAxis getXAxis() {
 		return cons.getXAxis();
 	}
@@ -306,9 +316,11 @@ public class Kernel {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
+		//Application.debug("evalYacas input " + exp);		
+		String ret = ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACASRaw(exp);
+		//Application.debug("evalYacas output " + ret);
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACASRaw(exp);
-	}
+		return ret;}
 	
 	/** 
      * Evaluates a JASYMCA expression and returns the result as a String.
@@ -324,13 +336,21 @@ public class Kernel {
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
 	}
 	
+	final public boolean isGeoGebraCASready() {
+		return ggbCAS != null;
+	}
+	
 	/**
 	 * Returns this kernel's GeoGebraCAS object.
 	 */
 	public synchronized Object getGeoGebraCAS() {
 		if (ggbCAS == null) {
 			app.loadCASJar();
-			ggbCAS = new geogebra.cas.GeoGebraCAS(this);			
+			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
+			
+			// TODO: rethink CAS evaluation this
+			// init Yacas for applets (force loading of required yacas scripts)
+			evaluateYACASRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
 		}			
 		
 		return ggbCAS;
@@ -438,6 +458,7 @@ public class Kernel {
 	}
 
 	final public void setMaximumFractionDigits(int digits) {
+		Application.debug(""+digits);
 		useSignificantFigures = false;
 		nf.setMaximumFractionDigits(digits);
 	}
@@ -501,6 +522,7 @@ public class Kernel {
 		storeTemporaryRoundingInfoInList();
 		
 		useSignificantFigures = true;
+		sf.setSigDigits(16);
 		sf.setMaxWidth(309);
 	}
 	
@@ -2027,16 +2049,7 @@ public class Kernel {
 		AlgoSlope algo = new AlgoSlope(cons, label, g);
 		GeoNumeric slope = algo.getSlope();
 		return slope;
-	}
-
-	/** 
-	 * Slope of function f = derivative of f
-	 */
-	final public GeoFunction Slope(String label, GeoFunction f) {
-		AlgoDerivative algo = new AlgoDerivative(cons, label, f);
-		GeoFunction g = (GeoFunction) algo.getDerivative();
-		return g;
-	}
+	}	
 	
 	/** 
 	 * BarChart	
@@ -2993,8 +3006,8 @@ public class Kernel {
 	 * Table[list]
 	 * Michael Borcherds
 	 */
-	final public GeoText TableText(String label, GeoList list) {
-		AlgoTableText algo = new AlgoTableText(cons, label, list);
+	final public GeoText TableText(String label, GeoList list, GeoText args) {
+		AlgoTableText algo = new AlgoTableText(cons, label, list, args);
 		GeoText text = algo.getResult();
 		return text;
 	}
@@ -5443,13 +5456,28 @@ public class Kernel {
 	final public static double roundToScale(double x, double scale) {
 		if (scale == 1.0)
 			return Math.round(x);
-		else
-			return Math.round(x / scale) * scale;
+		else {
+			return Math.round(x / scale) * scale;					
+		}				
 	}
 	
 	/**
-	 * Checks if x is very close (1E-8) to an integer. If yes,
-	 * the integer value is returned. If no, x is returnd.
+	 * Checks if x is close (Kernel.MIN_PRECISION) to a decimal fraction,  
+	 * eg 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned, 
+	 * otherwise x is returned.
+	 */	
+	final public double checkDecimalFraction(double x) {
+		double fracVal = x * INV_MIN_PRECISION;
+		double roundVal = Math.round(fracVal);
+		if (isEqual(fracVal, roundVal))
+			return roundVal / INV_MIN_PRECISION;
+		else
+			return x;
+	}
+	
+	/**
+	 * Checks if x is very close (1E-8) to an integer. If it is,
+	 * the integer value is returned, otherwise x is returnd.
 	 */	
 	final public double checkInteger(double x) {		
 		double roundVal = Math.round(x);
@@ -5458,7 +5486,7 @@ public class Kernel {
 		else
 			return x;
 	}
-	
+			
 	/*******************************************************
 	 * SAVING
 	 *******************************************************/
@@ -5525,6 +5553,14 @@ public class Kernel {
 			animationManager = new AnimationManager(this);			
 		}
 		return animationManager;		
+	}
+	
+	final public boolean isAnimationRunning() {
+		return animationManager != null && animationManager.isRunning();
+	}
+	
+	final public boolean isAnimationPaused() {
+		return animationManager != null && animationManager.isPaused();
 	}
 
 	/**

@@ -1,4 +1,7 @@
 package jasymca;
+
+import geogebra.main.Application;
+
 /* Jasymca	-	- Symbolic Calculator for Mobile Devices
    This version is written for J2ME, CLDC 1.1,  MIDP 2, JSR 75
    or J2SE
@@ -38,24 +41,44 @@ public class Rational extends Algebraic{
 		}
 	}
 	
+	/*
+	 * DISABLED 2008-11-27
+	 * Michael Borcherds
+	 * f(x) = (x³ + 0.52 x² + 10.09 x + 1.65) / (x² + 0.32 x + 1.03)
+	 * f'(x) wrong 
+	 * 
+	 */
+	public Algebraic reduce() {
+		return this;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see jasymca.Algebraic#reduce()
+	 *
 	public Algebraic reduce() throws JasymcaException{
-		if(nom instanceof Zahl)
+		if(nom instanceof Zahl)//)
 			return this;
+		
+		//if (true) return this;
 		Algebraic gcd= den.poly_gcd(nom);
 
 		if(!gcd.equals(Zahl.ONE)){
 			Algebraic n = ((Polynomial)nom).polydiv(gcd);
 			Algebraic d = den.polydiv(gcd);
-			if(d.equals(Zahl.ONE))
+			if(d.equals(Zahl.ONE)) {
 				return n;
-			else if(d instanceof Zahl)
+			}
+			else if(d instanceof Zahl) {
 				return n.div(d);
-			else
+			}
+			else {
 				return new Rational(n,(Polynomial)d);
+			}
 		}
 
 		return this;
-	}
+	}*/
 	
 			
 	

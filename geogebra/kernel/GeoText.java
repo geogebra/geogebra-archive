@@ -1,5 +1,6 @@
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.main.Application;
@@ -10,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 
 public class GeoText extends GeoElement
-implements Locateable, AbsoluteScreenLocateable, TextValue {
+implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
 	private static final long serialVersionUID = 1L;
 	private String str; 	
@@ -557,6 +558,13 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	}
 	public void setFontStyle(int fontStyle) {
 		this.fontStyle = fontStyle;
+		
+		// needed for eg \sqrt in latex
+		if ((fontStyle & Font.BOLD) != 0)
+			lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS * 2;
+		else
+			lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
+			
 	}
 	final public int getPrintDecimals() {
 		return printDecimals;
@@ -564,23 +572,27 @@ implements Locateable, AbsoluteScreenLocateable, TextValue {
 	final public int getPrintFigures() {
 		return printFigures;
 	}
-	public void setPrintDecimals(int printDecimals) {		
+	public void setPrintDecimals(int printDecimals, boolean update) {		
 		AlgoElement algo = getParentAlgorithm();
-		if (algo != null) {
+		if (algo != null && update) {
 			this.printDecimals = printDecimals;
 			printFigures = -1;
 			useSignificantFigures = false;
 			algo.update();
 		}			
 	}
-	public void setPrintFigures(int printFigures) {		
+	public void setPrintFigures(int printFigures, boolean update) {		
 		AlgoElement algo = getParentAlgorithm();
-		if (algo != null) {
+		if (algo != null && update) {
 			this.printFigures = printFigures;
 			printDecimals = -1;
 			useSignificantFigures = true;
 			algo.update();
 		}			
+	}
+	public boolean useSignificantFigures() {
+		return useSignificantFigures;
+
 	}
 	public boolean isSerifFont() {
 		return serifFont;

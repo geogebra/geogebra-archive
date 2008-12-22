@@ -131,20 +131,20 @@ implements VectorValue {
      /** Calculates the euclidian length sqrt(a^2  + b^2).     
      */
     final public static double length(double a, double b) {                
-        return Math.sqrt(a*a + b*b);
+        //return Math.sqrt(a*a + b*b);
         
         /*
          * The Algorithm ist taken
          * from Numerical Recipes, Appendix C, p.949 (Cabs) and
          * avoids overflows.         
-         *
+         */
         double res;        
         double x = Math.abs(a);
         double y = Math.abs(b);
         
-        if ( Kernel.isZero(x) ) 
+        if ( x == 0 ) 
             res = y;
-        else if ( Kernel.isZero(y) )
+        else if ( y == 0 )
             res = x;
         else if ( x > y ) {
             double temp = y / x;
@@ -154,7 +154,7 @@ implements VectorValue {
             res  = y * Math.sqrt(1.0 + temp * temp);
         }
         return res;
-        */           
+               
     } 
     
     /** Changes this vector to a vector with the same direction 

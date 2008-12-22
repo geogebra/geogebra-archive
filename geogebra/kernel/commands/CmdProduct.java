@@ -33,7 +33,7 @@ public class CmdProduct extends CommandProcessor {
 		
 		default:
             // try to create list of numbers
-	       	 GeoList list = wrapInList(kernel, arg, GeoElement.GEO_CLASS_NUMERIC);
+	       	 GeoList list = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_NUMERIC);
 	            if (list != null) {
 	           	 GeoElement[] ret = { kernel.Product(c.getLabel(), list)};
 	                return ret;             	     	 

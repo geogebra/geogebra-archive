@@ -90,7 +90,7 @@ GeoDeriveable, ParametricCurve, LineProperties {
 	public void set(GeoElement geo) {
 		GeoFunction geoFun = (GeoFunction) geo;				
 						
-		if (geoFun.fun == null) {
+		if (geo == null || geoFun.fun == null) {
 			fun = null;
 			isDefined = false;
 			return;

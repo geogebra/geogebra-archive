@@ -100,7 +100,11 @@ public class AlgoRootNewton extends AlgoElement {
         // no derivative found: let's use REGULA FALSI
         if (derivFun == null) {
         	double [] borders = getDomain(fun, start);
-        	root = rootFinder.brent(fun, borders[0], borders[1]);           	        	        
+        	try {
+        		root = rootFinder.brent(fun, borders[0], borders[1]);
+        	} catch (Exception e) {
+        		root = Double.NaN;
+        	}
         }
         else {
         	// NEWTON's METHOD

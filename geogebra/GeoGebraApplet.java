@@ -38,8 +38,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	private static final int SPLASH_IMAGE_HEIGHT = 106;
 	private static final int PROGRESS_IMAGE_WIDTH = 16;
 	private static final int PROGRESS_IMAGE_HEIGHT = 16;
-	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN,
-			11);
+	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 11);
 
 	// applet member variables
 	private JavaScriptAPI appletImplementation = null;

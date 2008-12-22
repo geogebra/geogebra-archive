@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
 /**
  * Algorithm to create a GeoList with GeoElement objects of a given range 
@@ -65,10 +66,14 @@ public class AlgoCellRange extends AlgoElement {
         
 	// for AlgoElement
 	protected void setInputOutput() {
+		// TODO: change to support $A1, just get the spreadsheet coords based on label
+		
 		// get range: cell coordinates of range in spreadsheet
-    	Point startCoords = startCell.getSpreadsheetCoords();
-    	Point endCoords = endCell.getSpreadsheetCoords();
-    	toStringOutput = startCell.getLabel() + ":" + endCell.getLabel();
+		String startLabel = startCell.getLabel();		
+		String endLabel = endCell.getLabel();
+    	Point startCoords = GeoElement.getSpreadsheetCoordsForLabel(startLabel);
+    	Point endCoords = GeoElement.getSpreadsheetCoordsForLabel(endLabel);
+    	toStringOutput = startLabel + ":" + endLabel;
     	
     	// build list with cells in range
     	ArrayList listItems = initCellRangeList(startCoords, endCoords);   
@@ -103,8 +108,8 @@ public class AlgoCellRange extends AlgoElement {
      * @param endCoords
      */
     private ArrayList initCellRangeList(Point startCoords, Point endCoords) { 
-    	ArrayList listItems = new ArrayList();
-   	
+    	ArrayList listItems = new ArrayList();   	    					
+    	
     	// check if we have valid spreadsheet coordinates
     	boolean validRange = startCoords != null && endCoords != null;
     	if (!validRange) {    		

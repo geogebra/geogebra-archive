@@ -9,7 +9,7 @@ import javax.swing.Timer;
 public class AnimationManager implements ActionListener {
 		
 	public final static int STANDARD_ANIMATION_TIME = 10; // secs
-	public final static int MAX_ANIMATION_FRAME_RATE = 25; // frames per second
+	public final static int MAX_ANIMATION_FRAME_RATE = 30; // frames per second
 	public final static int MIN_ANIMATION_FRAME_RATE = 2; // frames per second
 
 	private Kernel kernel;
@@ -43,8 +43,20 @@ public class AnimationManager implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Returns whether the animation is currently running.
+	 */
 	public boolean isRunning() {
 		return timer.isRunning();
+	}
+	
+	/**
+	 * Returns whether the animation is currently paused, i.e.
+	 * the animation is not running but there are elements with 
+	 * "Animation on" set.
+	 */
+	public boolean isPaused() {
+		return !timer.isRunning() && animatedGeos.size() > 0;
 	}
 	
 	/**
@@ -85,15 +97,20 @@ public class AnimationManager implements ActionListener {
 				changedGeos.add(anim);
 		}
 		
-		// efficiently update all changed GeoElements
-		GeoElement.updateCascade(changedGeos);
+		// do we need to update anything?
+		if (changedGeos.size() > 0) {
+			// efficiently update all changed GeoElements
+			GeoElement.updateCascade(changedGeos);
+			
+			// repaint views 
+			kernel.notifyRepaint();	
 		
-		// repaint views		
-		kernel.notifyRepaint();	
-		
-		// check frame rate
-		long compTime = System.currentTimeMillis() - startTime;
-		adaptFrameRate(compTime);
+			// check frame rate
+			long compTime = System.currentTimeMillis() - startTime;
+			adaptFrameRate(compTime);
+			
+			//System.out.println("UPDATE compTime: " + compTime + ", frameRate: " + frameRate);		
+		}
 	}
 	
 	/**
@@ -110,7 +127,7 @@ public class AnimationManager implements ActionListener {
 			timer.setDelay((int) Math.round(1000.0 / frameRate));
 			
 			// TODO: remove
-			System.out.println("DECREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);	
+			//System.out.println("DECREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);	
 		}
 				
 		// the frameRate is too low: try to increase it
@@ -119,7 +136,7 @@ public class AnimationManager implements ActionListener {
 			timer.setDelay((int) Math.round(1000.0 / frameRate));
 			
 			// TODO: remove
-			System.out.println("INCREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);
+			//System.out.println("INCREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);
 		}
 		
 

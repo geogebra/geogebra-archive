@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.main;
 
+import geogebra.GeoGebra;
 import geogebra.JavaScriptAPI;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
@@ -187,7 +188,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 			app = new CustomApplication(args, this, undoActive);
 		}
 		*/
-		
+
 		if (fileStr == null) {
 			app = buildApplication(null, undoActive);
 		} else {						
@@ -341,6 +342,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	private void showFrame() {
 		Thread worker = new Thread() {
 			public void run() {	
+				
+				app.runningInFrame = true;
+				
 				applet.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				
 				doShowFrame();	
@@ -424,6 +428,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	}
 	
 	private void reinitGUI() {
+		
+		app.runningInFrame = false;
+		
 		Container cp = applet.getContentPane();
 		cp.removeAll();
 		
@@ -504,7 +511,15 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Note: the construction is NOT cleared before evaluating the XML string. 	 
 	 */
 	public synchronized void evalXML(String xmlString) {		
-		app.setXML(xmlString, false);
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
+		sb.append("<construction>\n");
+		sb.append(xmlString);
+		sb.append("</construction>\n");
+		sb.append("</geogebra>\n");
+		app.setXML(sb.toString(), false);
 	}
 
 	
@@ -524,8 +539,24 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * input text field. 	 
 	 */
 	public synchronized String evalYacas(String cmdString) {
+		waitForCAS();
 		return 	kernel.evaluateYACASRaw(cmdString);
-
+	}
+	
+	/**
+	 * Waits until the GeoGebraCAS has been loaded in the background.
+	 * Note: the GeoGebraCAS is automatically inited in Application.initInBackground();
+	 */
+	private synchronized void waitForCAS() {
+		// TODO: remove
+		Application.debug("waiting for CAS to be inited ...");
+		
+		while (!kernel.isGeoGebraCASready()) {
+			try { Thread.sleep(50); } catch (Exception e) {}			
+		}		
+		
+		// TODO: remove
+		Application.debug("   CAS loaded!");
 	}
 
 	/**

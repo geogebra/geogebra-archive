@@ -57,119 +57,123 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int UNDEFINED = 27;
   /** RegularExpression Id. */
-  int SQUARED = 28;
+  int POWER0 = 28;
   /** RegularExpression Id. */
-  int CUBED = 29;
+  int POWER1 = 29;
   /** RegularExpression Id. */
-  int POWER4 = 30;
+  int SQUARED = 30;
   /** RegularExpression Id. */
-  int POWER5 = 31;
+  int CUBED = 31;
   /** RegularExpression Id. */
-  int POWER6 = 32;
+  int POWER4 = 32;
   /** RegularExpression Id. */
-  int POWER7 = 33;
+  int POWER5 = 33;
   /** RegularExpression Id. */
-  int POWER8 = 34;
+  int POWER6 = 34;
   /** RegularExpression Id. */
-  int POWER9 = 35;
+  int POWER7 = 35;
   /** RegularExpression Id. */
-  int PI = 36;
+  int POWER8 = 36;
   /** RegularExpression Id. */
-  int E = 37;
+  int POWER9 = 37;
   /** RegularExpression Id. */
-  int DEGREE = 38;
+  int PI = 38;
   /** RegularExpression Id. */
-  int INFINITY = 39;
+  int E = 39;
   /** RegularExpression Id. */
-  int RAD = 40;
+  int DEGREE = 40;
   /** RegularExpression Id. */
-  int DERIVATIVE = 41;
+  int INFINITY = 41;
   /** RegularExpression Id. */
-  int TRUE = 42;
+  int RAD = 42;
   /** RegularExpression Id. */
-  int FALSE = 43;
+  int DERIVATIVE = 43;
   /** RegularExpression Id. */
-  int VARX = 44;
+  int TRUE = 44;
   /** RegularExpression Id. */
-  int VARY = 45;
+  int FALSE = 45;
   /** RegularExpression Id. */
-  int PARAMETRICVAR = 46;
+  int VARX = 46;
   /** RegularExpression Id. */
-  int FLOAT = 47;
+  int VARY = 47;
   /** RegularExpression Id. */
-  int EFLOAT = 48;
+  int PARAMETRICVAR = 48;
   /** RegularExpression Id. */
-  int INTEGER = 49;
+  int FLOAT = 49;
   /** RegularExpression Id. */
-  int DIGIT = 50;
+  int EFLOAT = 50;
   /** RegularExpression Id. */
-  int SPREADSHEET_LABEL = 51;
+  int INTEGER = 51;
   /** RegularExpression Id. */
-  int LABEL = 52;
+  int DIGIT = 52;
   /** RegularExpression Id. */
-  int INDEX = 53;
+  int SPREADSHEET_LABEL = 53;
   /** RegularExpression Id. */
-  int LETTER = 54;
+  int LABEL = 54;
   /** RegularExpression Id. */
-  int X_FUNC = 55;
+  int INDEX = 55;
   /** RegularExpression Id. */
-  int Y_FUNC = 56;
+  int LETTER = 56;
   /** RegularExpression Id. */
-  int COS_FUNC = 57;
+  int X_FUNC = 57;
   /** RegularExpression Id. */
-  int SIN_FUNC = 58;
+  int Y_FUNC = 58;
   /** RegularExpression Id. */
-  int TAN_FUNC = 59;
+  int COS_FUNC = 59;
   /** RegularExpression Id. */
-  int ACOS_FUNC = 60;
+  int SIN_FUNC = 60;
   /** RegularExpression Id. */
-  int ASIN_FUNC = 61;
+  int TAN_FUNC = 61;
   /** RegularExpression Id. */
-  int ATAN_FUNC = 62;
+  int ACOS_FUNC = 62;
   /** RegularExpression Id. */
-  int COSH_FUNC = 63;
+  int ASIN_FUNC = 63;
   /** RegularExpression Id. */
-  int SINH_FUNC = 64;
+  int ATAN_FUNC = 64;
   /** RegularExpression Id. */
-  int TANH_FUNC = 65;
+  int COSH_FUNC = 65;
   /** RegularExpression Id. */
-  int ACOSH_FUNC = 66;
+  int SINH_FUNC = 66;
   /** RegularExpression Id. */
-  int ASINH_FUNC = 67;
+  int TANH_FUNC = 67;
   /** RegularExpression Id. */
-  int ATANH_FUNC = 68;
+  int ACOSH_FUNC = 68;
   /** RegularExpression Id. */
-  int EXP_FUNC = 69;
+  int ASINH_FUNC = 69;
   /** RegularExpression Id. */
-  int LOG_FUNC = 70;
+  int ATANH_FUNC = 70;
   /** RegularExpression Id. */
-  int LD_FUNC = 71;
+  int EXP_FUNC = 71;
   /** RegularExpression Id. */
-  int LG_FUNC = 72;
+  int LOG_FUNC = 72;
   /** RegularExpression Id. */
-  int SQRT_FUNC = 73;
+  int LD_FUNC = 73;
   /** RegularExpression Id. */
-  int CBRT_FUNC = 74;
+  int LG_FUNC = 74;
   /** RegularExpression Id. */
-  int ABS_FUNC = 75;
+  int SQRT_FUNC = 75;
   /** RegularExpression Id. */
-  int SGN_FUNC = 76;
+  int CBRT_FUNC = 76;
   /** RegularExpression Id. */
-  int FLOOR_FUNC = 77;
+  int ABS_FUNC = 77;
   /** RegularExpression Id. */
-  int CEIL_FUNC = 78;
+  int SGN_FUNC = 78;
   /** RegularExpression Id. */
-  int ROUND_FUNC = 79;
+  int FLOOR_FUNC = 79;
   /** RegularExpression Id. */
-  int GAMMA_FUNC = 80;
+  int CEIL_FUNC = 80;
   /** RegularExpression Id. */
-  int RANDOM_FUNC = 81;
+  int ROUND_FUNC = 81;
   /** RegularExpression Id. */
-  int FUNCTION_LABEL = 82;
+  int GAMMA_FUNC = 82;
   /** RegularExpression Id. */
-  int TEXT = 83;
+  int RANDOM_FUNC = 83;
   /** RegularExpression Id. */
-  int CHAR = 84;
+  int FUNCTION_LABEL = 84;
+  /** RegularExpression Id. */
+  int TEXT = 85;
+  /** RegularExpression Id. */
+  int CHAR = 86;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -204,6 +208,8 @@ public interface ParserConstants {
     "\"^\"",
     "\"!\"",
     "<UNDEFINED>",
+    "\"\\u2070\"",
+    "\"\\u00b9\"",
     "\"\\u00b2\"",
     "\"\\u00b3\"",
     "\"\\u2074\"",

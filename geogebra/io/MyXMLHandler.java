@@ -40,6 +40,8 @@ import geogebra.kernel.LimitedPath;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.Macro;
 import geogebra.kernel.MacroKernel;
+import geogebra.kernel.PointProperties;
+import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -109,6 +111,7 @@ public class MyXMLHandler implements DocHandler {
 	private String[] macroInputLabels, macroOutputLabels;
 	private GeoElement[] cmdOutput;
 	private Application app;
+	private boolean startAnimation;
 
 	// for macros we need to change the kernel, so remember the original kernel
 	// too
@@ -420,7 +423,8 @@ public class MyXMLHandler implements DocHandler {
 				kernel.arcusFunctionCreatesAngle = false;
 				
 				// start animation if necessary
-				kernel.getAnimatonManager().startAnimation();
+				if (startAnimation)
+					kernel.getAnimatonManager().startAnimation();
 			}
 		}
 	}
@@ -905,6 +909,8 @@ public class MyXMLHandler implements DocHandler {
 			handleKernelDecimals(attrs);
 		} else if (eName.equals("significantfigures")) {
 			handleKernelFigures(attrs);
+		} else if (eName.equals("startAnimation")) {
+			handleKernelStartAnimation(attrs);
 		} else
 			Application.debug("unknown tag in <kernel>: " + eName);
 	}
@@ -939,6 +945,15 @@ public class MyXMLHandler implements DocHandler {
 			kernel
 					.setPrintDecimals(Integer.parseInt((String) attrs
 							.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean handleKernelStartAnimation(LinkedHashMap attrs) {
+		try {
+			startAnimation = parseBoolean((String) attrs.get("val"));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2234,14 +2249,14 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handlePointSize(LinkedHashMap attrs) {
-		if (!(geo.isGeoPoint())) {
+		if (!(geo instanceof PointProperties)) {
 			Application.debug("wrong element type for <pointSize>: "
 					+ geo.getClass());
 			return false;
 		}
 
 		try {
-			GeoPoint p = (GeoPoint) geo;
+			PointProperties p = (PointProperties) geo;
 			p.setPointSize(Integer.parseInt((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
@@ -2251,14 +2266,14 @@ public class MyXMLHandler implements DocHandler {
 
 	// Florian Sonner 2008-07-17
 	private boolean handlePointStyle(LinkedHashMap attrs) {
-		if (!(geo.isGeoPoint())) {
+		if (!(geo instanceof PointProperties)) {
 			Application.debug("wrong element type for <pointStyle>: "
 					+ geo.getClass());
 			return false;
 		}
 
 		try {
-			GeoPoint p = (GeoPoint) geo;
+			PointProperties p = (PointProperties) geo;
 			p.setPointStyle(Integer.parseInt((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
@@ -2469,14 +2484,14 @@ public class MyXMLHandler implements DocHandler {
 
 	// <font serif="false" size="12" style="0">
 	private boolean handleTextFont(LinkedHashMap attrs) {
-		if (!(geo.isGeoText())) {
+		if (!(geo instanceof TextProperties)) {
 			Application.debug("wrong element type for <font>: "
 					+ geo.getClass());
 			return false;
 		}
 
 		try {
-			GeoText text = (GeoText) geo;
+			TextProperties text = (TextProperties) geo;
 			text.setSerifFont(parseBoolean((String) attrs.get("serif")));
 			text.setFontSize(Integer.parseInt((String) attrs.get("size")));
 			text.setFontStyle(Integer.parseInt((String) attrs.get("style")));
@@ -2487,15 +2502,15 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleTextDecimals(LinkedHashMap attrs) {
-		if (!(geo.isGeoText())) {
+		if (!(geo instanceof TextProperties)) {
 			Application.debug("wrong element type for <decimals>: "
 					+ geo.getClass());
 			return false;
 		}
 
 		try {
-			GeoText text = (GeoText) geo;
-			text.setPrintDecimals(Integer.parseInt((String) attrs.get("val")));
+			TextProperties text = (TextProperties) geo;
+			text.setPrintDecimals(Integer.parseInt((String) attrs.get("val")), true);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2503,15 +2518,15 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleTextFigures(LinkedHashMap attrs) {
-		if (!(geo.isGeoText())) {
+		if (!(geo instanceof TextProperties)) {
 			Application.debug("wrong element type for <decimals>: "
 					+ geo.getClass());
 			return false;
 		}
 
 		try {
-			GeoText text = (GeoText) geo;
-			text.setPrintFigures(Integer.parseInt((String) attrs.get("val")));
+			TextProperties text = (TextProperties) geo;
+			text.setPrintFigures(Integer.parseInt((String) attrs.get("val")), true);
 			return true;
 		} catch (Exception e) {
 			return false;

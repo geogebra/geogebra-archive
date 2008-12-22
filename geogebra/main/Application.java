@@ -126,6 +126,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("fi")); // Finnish
 		supportedLocales.add(new Locale("fr")); // French
 		supportedLocales.add(new Locale("gl")); // Galician
+		supportedLocales.add(new Locale("ka")); // Georgian
 		supportedLocales.add(new Locale("de")); // German
 		supportedLocales.add(new Locale("de", "AT")); // German (Austria)
 		supportedLocales.add(new Locale("el")); // Greek
@@ -148,8 +149,8 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("sr")); // Serbian
 		supportedLocales.add(new Locale("sk")); // Slovakian
 		supportedLocales.add(new Locale("sl")); // Slovenian
-		supportedLocales.add(new Locale("sv")); // Swedish
 		supportedLocales.add(new Locale("es")); // Spanish
+		supportedLocales.add(new Locale("sv")); // Swedish
 		supportedLocales.add(new Locale("tr")); // Turkish
 		supportedLocales.add(new Locale("vi")); // Vietnamese
 	}
@@ -174,7 +175,7 @@ public abstract class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("zhTW", "Chinese (Traditional)");
 	}
 
-	public static final Color COLOR_SELECTION = new Color(225, 225, 245);
+	public static final Color COLOR_SELECTION = new Color(230, 230, 245);
 
 	// Font settings
 	private static final String STANDARD_FONT_NAME_SANS_SERIF = "SansSerif";
@@ -255,6 +256,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private Component mainComp;
 	private boolean isApplet = false;
 	private boolean showResetIcon = false;
+	public boolean runningInFrame = false; // don't want to show resetIcon if running in Frame
 
 	protected Kernel kernel;
 	private MyXMLio myXMLio;
@@ -472,24 +474,22 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean hasGuiManager() {
 		return appGuiManager != null;
 	}
-
-	public void initInBackground() {
-		if (!initInBackground_first_time)
-			return;
-		initInBackground_first_time = false;
-
+	
+	/**
+	 * Initializes the GeoGebraCAS and several GUI dialogs, 
+	 * and downloads all jar files in the background.
+	 */
+	public synchronized void initInBackground() {
 		// init file chooser and properties dialog in a background task		
 		Thread runner = new Thread() {
 			public void run() {	
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {						
-					e1.printStackTrace();
-				}
-					        				
+				 				
 				// TODO: remove
 				Application.debug("BACKGROUND initing of dialogs, CAS, jar files ...");
 				
+				// init CAS, do this first as we need it in applets				
+				kernel.getGeoGebraCAS();
+										
 				// init properties dialog
 				getGuiManager().initPropertiesDialog();				
 
@@ -500,25 +500,16 @@ public abstract class Application implements KeyEventDispatcher {
 					System.err.println("couldn't initialize file chooser: " + e.getMessage());
 				}
 				
-				// init CAS
-				try {
-					// evaluate some expression to get CAS ready
-					((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).evaluateYACAS("1+1");
-				} catch (Exception e) {
-					System.err.println("couldn't initialize CAS: " + e.getMessage());
-				}
-				
-
 				// download all jar files dynamically in the background
 				for (int i = 0; i < JarManager.JAR_FILES.length; i++) {
 					jarmanager.downloadFile(i);
-				}			       				
+				}			       								
 			}
 		};
 		runner.start();		  
 	}
 
-	private static boolean initInBackground_first_time = true;
+	//private static boolean initInBackground_first_time = true;
 
 	public void setUnsaved() {
 		isSaved = false;
@@ -819,7 +810,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	final public boolean showResetIcon() {
-		return showResetIcon;
+		return showResetIcon && !runningInFrame;
 	}
 
 	public void reset() {
@@ -985,6 +976,16 @@ public abstract class Application implements KeyEventDispatcher {
 		// don't need to load gui jar as reset image is in main jar
 		return imageManager.getInternalImage("/geogebra/main/view-refresh.png");		
 	}
+	
+	public Image getPlayImage() {		
+		// don't need to load gui jar as reset image is in main jar
+		return imageManager.getInternalImage("/geogebra/main/nav_play.png");		
+	}
+	
+	public Image getPauseImage() {		
+		// don't need to load gui jar as reset image is in main jar
+		return imageManager.getInternalImage("/geogebra/main/nav_pause.png");		
+	}
 
 	public BufferedImage getExternalImage(String filename) {
 		return imageManager.getExternalImage(filename);
@@ -1074,10 +1075,9 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// make sure to update commands
 		fillCommandDict();
-
-		kernel.updateLocalAxesNames();
+				
 		setLabels(); // update display
-
+				
 		System.gc();
 	}
 
@@ -1087,13 +1087,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 20041010 // for Chinese return reverseLanguage; }
 	 */
 
-	// for basque you have to say "A point" instead of "point A"
-	private boolean reverseNameDescription = false;
 
-	final public boolean isReverseNameDescriptionLanguage() {
-		// for Basque
-		return reverseNameDescription;
-	}
 
 	/*
 	 * in French, zero is singular, eg 0 dcimale rather than 0 decimal places
@@ -1112,6 +1106,23 @@ public abstract class Application implements KeyEventDispatcher {
 		return rightToLeftReadingOrder;
 	}
 
+	// for basque you have to say "A point" instead of "point A"
+	private boolean reverseNameDescription = false;
+	private boolean isAutoCompletePossible = true;
+
+	final public boolean isReverseNameDescriptionLanguage() {
+		// for Basque
+		return reverseNameDescription;
+	}
+	
+	/**
+	 * Returns whether autocomplete should be used at all. 
+	 * Certain languages make problems with auto complete turned on (e.g. Korean).
+	 */
+	final public boolean isAutoCompletePossible() {
+		return isAutoCompletePossible;
+	}
+	
 	private void updateReverseLanguage(Locale locale) {
 		String lang = locale.getLanguage();
 		// reverseLanguage = "zh".equals(lang); removed Michael Borcherds
@@ -1124,7 +1135,13 @@ public abstract class Application implements KeyEventDispatcher {
 		// rightToLeftReadingOrder =
 		// (Character.getDirectionality(getPlain("Algebra").charAt(1)) ==
 		// Character.DIRECTIONALITY_RIGHT_TO_LEFT);
+		
+		// turn off auto-complete for Korean
+		isAutoCompletePossible = !"ko".equals(lang);
 	}
+	
+	
+
 
 	// Michael Borcherds 2008-02-23
 	public boolean languageIs(Locale locale, String lang) {
@@ -1151,6 +1168,13 @@ public abstract class Application implements KeyEventDispatcher {
 					testCharacater);
 			fontNameSerif = getFontCanDisplay("\u00cb\u00ce\u00cc\u00e5",
 					testCharacater);
+		}
+		// GEORGIAN
+		else if ("ka".equals(lang)) {
+			// some Georgian letter
+			char testCharacater = '\u10d8';
+			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
+			fontNameSerif = getFontCanDisplay("Sylfaen", testCharacater);
 		}
 		// HEBREW
 		else if ("iw".equals(lang)) {
@@ -1550,17 +1574,19 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void showRelation(GeoElement a, GeoElement b) {
 		JOptionPane.showConfirmDialog(mainComp, new Relation(kernel).relation(
-				a, b), getPlain("ApplicationName") + " - "
-				+ getCommand("Relation"), JOptionPane.DEFAULT_OPTION,
-				JOptionPane.INFORMATION_MESSAGE);
+    				a, b), getPlain("ApplicationName") + " - "
+    				+ getCommand("Relation"), JOptionPane.DEFAULT_OPTION,
+    				JOptionPane.INFORMATION_MESSAGE);
+
 	}
 
 	public void showHelp(String key) {
-		String text = getPlain(key); // Michael Borcherds changed to use
+		final String text = getPlain(key); // Michael Borcherds changed to use
 		// getPlain() and removed try/catch
+		
 		JOptionPane.showConfirmDialog(mainComp, text,
-				getPlain("ApplicationName") + " - " + getMenu("Help"),
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+    				getPlain("ApplicationName") + " - " + getMenu("Help"),
+    				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public void showError(String key) {
@@ -1574,16 +1600,25 @@ public abstract class Application implements KeyEventDispatcher {
 	public void showErrorDialog(String msg) {
 		if (!isErrorDialogsActive)
 			return;
-
+		
+		Application.debug("showErrorDialog: "+msg);
+		
+		//TODO investigate why this freezes Firefox sometimes
 		JOptionPane.showConfirmDialog(mainComp, msg,
-				getPlain("ApplicationName") + " - " + getError("Error"),
-				JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
+    				getPlain("ApplicationName") + " - " + getError("Error"),
+    				JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
+		
 	}
 
 	public void showMessage(String message) {
+		
+		Application.debug("showMessage: "+message);
+
 		JOptionPane.showConfirmDialog(mainComp, message,
-				getPlain("ApplicationName") + " - " + getMenu("Info"),
-				JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+    				getPlain("ApplicationName") + " - " + getMenu("Info"),
+    				JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+		
 	}
 
 	/**
@@ -1901,7 +1936,7 @@ public abstract class Application implements KeyEventDispatcher {
 			// necessary to allow dynamic loading of this class
 			ActionListener al = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(Application.this);
+			//		casView = new geogebra.cas.view.CASView(Application.this);
 				}
 			};
 			al.actionPerformed(null);
@@ -2484,10 +2519,10 @@ public abstract class Application implements KeyEventDispatcher {
 		sb.append(getGuiManager().getSpreadsheetViewXML());
 
 		// save cas view seeting and cas session
-		if (casView != null) {
-			sb.append(((geogebra.cas.view.CASView) casView).getGUIXML());
-			sb.append(((geogebra.cas.view.CASView) casView).getSessionXML());
-		}
+//		if (casView != null) {
+//			sb.append(((geogebra.cas.view.CASView) casView).getGUIXML());
+//			sb.append(((geogebra.cas.view.CASView) casView).getSessionXML());
+//		}
 
 		return sb.toString();
 	}
@@ -3097,6 +3132,14 @@ public abstract class Application implements KeyEventDispatcher {
 			e.printStackTrace();
 			showError("LoadFileFailed");
 			return null;
+		} catch (java.lang.OutOfMemoryError t) {
+			Application.debug("Out of memory");
+			System.gc();
+			setDefaultCursor();
+			//t.printStackTrace();
+			// TODO change to OutOfMemoryError
+			showError("LoadFileFailed");
+			return null;
 		}
 	}
 
@@ -3297,8 +3340,12 @@ public abstract class Application implements KeyEventDispatcher {
 					// update number
 					if (geo.isGeoNumeric()) {
 						GeoNumeric num = (GeoNumeric) geo;
-						num.setValue(kernel.checkInteger(num.getValue() + changeVal
-								* num.animationStep));
+						double newValue = num.getValue() + changeVal * num.animationIncrement;
+						if (num.animationIncrement > Kernel.MIN_PRECISION) {
+							// round to decimal fraction, e.g. 2.800000000001 to 2.8
+							newValue = kernel.checkDecimalFraction(newValue);
+						}
+						num.setValue(newValue);
 
 						// make sure to update random number here
 						if (!geo.isIndependent())
@@ -3311,7 +3358,7 @@ public abstract class Application implements KeyEventDispatcher {
 					else if (geo.isGeoPoint()) {
 						GeoPoint p = (GeoPoint) geo;
 						if (p.hasPath()) {
-							p.addToPathParameter(changeVal * p.animationStep);
+							p.addToPathParameter(changeVal * p.animationIncrement);
 							needUpdate = true;
 						}
 					}
@@ -3349,10 +3396,12 @@ public abstract class Application implements KeyEventDispatcher {
 		// set translation vector
 		if (tempVec == null)
 			tempVec = new GeoVector(kernel.getConstruction());
-		tempVec.setCoords(geo.animationStep * xdiff, geo.animationStep * ydiff, 0);
+		double xd = geo.animationIncrement * xdiff;
+		double yd = geo.animationIncrement * ydiff;						
+		tempVec.setCoords(xd, yd, 0);
 		
 		// move objects
-		boolean moved = GeoElement.moveObjects(geos, tempVec);
+		boolean moved = GeoElement.moveObjects(geos, tempVec, null);
 		
 		// nothing moved
 		if (!moved) {
@@ -3377,6 +3426,26 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public JFrame getCasFrame() {
 		return casFrame;
+	}
+	
+	final static int MEMORY_CRITICAL = 100*1024;
+	static Runtime runtime = Runtime.getRuntime();
+	
+	public boolean freeMemoryIsCritical() {
+		
+		if (runtime.freeMemory() > MEMORY_CRITICAL) return false;
+		
+		System.gc();
+		
+		return runtime.freeMemory() < MEMORY_CRITICAL;
+	}
+	
+	public long freeMemory() {
+		return runtime.freeMemory();
+	}
+	
+	public void traceMethodsOn(boolean on) {
+		runtime.traceMethodCalls(on);
 	}
 
 }

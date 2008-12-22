@@ -44,8 +44,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
 	double DEFAULT_SLIDER_MIN = -5;
 	double DEFAULT_SLIDER_MAX = 5;
+	
+	double DEFAULT_SLIDER_MIN_ANGLE = 0;
+	double DEFAULT_SLIDER_MAX_ANGLE = 2*Math.PI;
 
-	protected double value;
+	protected double value;	
 
 	private boolean isDrawable = false;
 	private boolean isUsedForRandom = false;
@@ -61,6 +64,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private double sliderX, sliderY;
 	private boolean sliderFixed = false;
 	private boolean sliderHorizontal = true;
+	private double animationValue = Double.NaN;	
 	
 	// for absolute screen location
 	boolean hasAbsoluteScreenLocation = true;	
@@ -68,9 +72,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	/** Creates new GeoNumeric */
 	public GeoNumeric(Construction c) {
 		super(c);
-		setEuclidianVisible(false);
+		setEuclidianVisible(isGeoAngle());
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
-		animationStep = 0.1;					
+		animationIncrement = 0.1;					
 	}
 
 	protected String getClassName() {
@@ -132,20 +136,20 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				if (!intervalMinActive) {
 					if (!intervalMaxActive) {
 						// set both to default
-						double min = Math.min(DEFAULT_SLIDER_MIN, Math.floor(value));
-						double max = Math.max(DEFAULT_SLIDER_MAX, Math.ceil(value));
+						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
+						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
 						setIntervalMin(min);
 						setIntervalMax(max);												
 					} else {
 						// max is available but no min
-						double min = Math.min(DEFAULT_SLIDER_MIN, Math.floor(value));
+						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
 						setIntervalMin(min);				
 					}
 				}
 				else { // min exists
 					if (!intervalMaxActive) {
 						//	min is available but no max
-						double max = Math.max(DEFAULT_SLIDER_MAX, Math.ceil(value));
+						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
 						setIntervalMax(max);					
 					}
 				}			
@@ -253,6 +257,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		}						
 		else		 
 			value = x;
+		
+		// remember value for animation also
+		animationValue = value;
 	}	
 
 	final public double getValue() {
@@ -625,7 +632,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	    	String col = getTraceColumn1(); // must be called before getTraceRow()
 	    	String row = getTraceRow() + "";
 	    	
+	    	cons.getApplication().getGuiManager().setScrollToShow(true);
 	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,value);
+	    	cons.getApplication().getGuiManager().setScrollToShow(false);
+	    	
 	    	traceCell.setAuxiliaryObject(true);
 	    	
 	    	setLastTrace1(value);
@@ -644,7 +654,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	/**
-	 * Performs the next animation step for this numbers. This changes
+	 * Sets the state of this object to animating on or off.
+	 */
+	public synchronized void setAnimating(boolean flag) {
+		animationValue = Double.NaN;		
+		super.setAnimating(flag);		
+	}
+	
+	/**
+	 * Performs the next automatic animation step for this numbers. This changes
 	 * the value but will NOT call update() or updateCascade().
 	 * 
 	 * @return whether the value of this number was changed
@@ -654,39 +672,61 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (!intervalMinActive || !intervalMaxActive) 
 			return false;
 		
+		// remember old value of number to decide whether update is necessary
+		double oldValue = getValue();
+		
 		// compute animation step based on speed and frame rates
 		double intervalWidth = intervalMax - intervalMin;
 		double step = intervalWidth * getAnimationSpeed() * getAnimationDirection() /
 				      (AnimationManager.STANDARD_ANIMATION_TIME * frameRate);
 		
-		// change number's value
-		value = value + step;
-				
+		// update animation value
+		if (Double.isNaN(animationValue))
+			animationValue = oldValue;
+		animationValue = animationValue + step;
+		
 		// make sure we don't get outside our interval
 		switch (getAnimationType()) {		
 			case GeoElement.ANIMATION_DECREASING:
-			case GeoElement.ANIMATION_INCREASING:								
-				if (value > intervalMax) 
-					value = value - intervalWidth;
-				else if (value < intervalMin) 
-					value = value + intervalWidth;		
+			case GeoElement.ANIMATION_INCREASING:
+				// jump to other end of slider
+				if (animationValue > intervalMax) 
+					animationValue = animationValue - intervalWidth;
+				else if (animationValue < intervalMin) 
+					animationValue = animationValue + intervalWidth;		
 				break;
 			
 			case GeoElement.ANIMATION_OSCILLATING:
 			default: 		
-				if (value > intervalMax) {
-					value = intervalMax;
+				if (animationValue >= intervalMax) {
+					animationValue = intervalMax;
 					changeAnimationDirection();
-				} else if (value < intervalMin) {
-					value = intervalMin;
+				} 
+				else if (animationValue <= intervalMin) {
+					animationValue = intervalMin;
 					changeAnimationDirection();			
 				}		
 				break;
 		}
 				
-		return true;
-	}
-	
+		// take current slider increment size into account:
+		// round animationValue to newValue using slider's increment setting	
+		double param = animationValue - intervalMin;
+		param = Kernel.roundToScale(param, animationIncrement);		
+		double newValue = intervalMin + param;	
+		
+		if (animationIncrement > Kernel.MIN_PRECISION) {
+			// round to decimal fraction, e.g. 2.800000000001 to 2.8
+			newValue = kernel.checkDecimalFraction(newValue);
+		}
+										
+		// change slider's value
+		// note: don't call setValue() as this would change animationValue too
+		value = newValue;
+		
+		// return whether value of slider has changed
+		return value != oldValue;	
+	}	
 	
 	/**
 	 * Returns a comparator for GeoNumeric objects.
@@ -714,5 +754,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return comparator;
 	}
 	private static Comparator comparator;
+
+	public double getDefaultSliderMin() {
+		return isGeoAngle() ? DEFAULT_SLIDER_MIN_ANGLE : DEFAULT_SLIDER_MIN;
+	}
+
+	public double getDefaultSliderMax() {
+		return isGeoAngle() ? DEFAULT_SLIDER_MAX_ANGLE : DEFAULT_SLIDER_MAX;
+	}
 
 }

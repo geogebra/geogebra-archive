@@ -32,12 +32,16 @@ implements EuclidianViewAlgo {
         // make sure bounding box of text is kept up to date
         // so we can use it in compute()
         txt.setNeedsUpdatedBoundingBox(true);
+    	txt.update(); 
 
         corner = new GeoPoint(cons);                
-        setInputOutput(); // for AlgoElement                
+        setInputOutput(); // for AlgoElement  
+        
+    	
         compute();              
         corner.setLabel(label);     
-        
+
+      
         kernel.registerEuclidianViewAlgo(this);
     }   
     

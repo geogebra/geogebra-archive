@@ -557,7 +557,9 @@ implements ExpressionValue, RealRootFunction, Functional {
             	symbolicPolyFactorList = new LinkedList();
             else
             	symbolicPolyFactorList.clear();
-            symbolicPolyFactorListDefined = addPolynomialFactors(expression, symbolicPolyFactorList, true, rootFindingSimplification);                   
+            symbolicPolyFactorListDefined = 
+            	addPolynomialFactors(expression, 
+            			symbolicPolyFactorList, true, rootFindingSimplification);                   
         }               
         
         if (symbolicPolyFactorListDefined && symbolicPolyFactorList.size() > 0)

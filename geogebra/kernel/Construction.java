@@ -150,11 +150,17 @@ public class Construction {
 
 	private void initGeoTable() {
 		geoTable.clear();
+		
+		// add axes labels both in English and current language
 		geoTable.put("xAxis", xAxis);
 		geoTable.put("yAxis", yAxis);
+		if (xAxisLocalName != null) {
+			geoTable.put(xAxisLocalName, xAxis);
+			geoTable.put(yAxisLocalName, yAxis);
+		}		
 	}
 
-	public void updateLocalAxesNames() {
+	public void updateLocalAxesNames() {		
 		geoTable.remove(xAxisLocalName);
 		geoTable.remove(yAxisLocalName);
 
@@ -162,7 +168,7 @@ public class Construction {
 		xAxisLocalName = app.getPlain("xAxis");
 		yAxisLocalName = app.getPlain("yAxis");
 		geoTable.put(xAxisLocalName, xAxis);
-		geoTable.put(yAxisLocalName, yAxis);
+		geoTable.put(yAxisLocalName, yAxis);	
 	}
 
 	public Kernel getKernel() {
@@ -570,24 +576,24 @@ public class Construction {
 	 *            empty construction.
 	 */
 	public void setStep(int s) {
-		// Application.debug("setStep");
+		//Application.debug("setStep"+step+" "+s);
+
 		if (s == step || s < -1 || s >= ceList.size())
 			return;
 
-		if (step != -1) // Michael Borcherds 2008-05-15
-		{
 			kernel.setAllowVisibilitySideEffects(false);
 
-			if (s < step) {
-				for (int i = s + 1; i <= step; ++i) {
-					((ConstructionElement) ceList.get(i)).notifyRemove();
-				}
-			} else {
-				for (int i = step + 1; i <= s; ++i) {
-					((ConstructionElement) ceList.get(i)).notifyAdd();
-				}
+		if (s < step) {
+			for (int i = s + 1; i <= step; ++i) {
+				((ConstructionElement) ceList.get(i)).notifyRemove();
+			}
+		} else {
+			for (int i = step + 1; i <= s; ++i) {
+				//Application.debug(i+"");
+				((ConstructionElement) ceList.get(i)).notifyAdd();
 			}
 		}
+	
 		step = s;
 
 		kernel.setAllowVisibilitySideEffects(true);
@@ -828,7 +834,8 @@ public class Construction {
 	}
 
 	GeoElement geoTabelVarLookup(String label) {
-		return (GeoElement) geoTable.get(label);
+		GeoElement ret = (GeoElement) geoTable.get(label);	
+		return ret;
 	}
 
 	/**
@@ -1103,6 +1110,13 @@ public class Construction {
 		sb.append("\t<coordStyle val=\"");
 		sb.append(kernel.getCoordStyle());
 		sb.append("\"/>\n");
+		
+		// animation
+		if (kernel.isAnimationRunning()) {
+			sb.append("\t<startAnimation val=\"");
+			sb.append(kernel.isAnimationRunning());
+			sb.append("\"/>\n");
+		}
 
 		sb.append("</kernel>\n");
 

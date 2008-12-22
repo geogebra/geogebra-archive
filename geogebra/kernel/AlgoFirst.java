@@ -44,9 +44,17 @@ public class AlgoFirst extends AlgoElement {
     }
 
     protected void setInputOutput(){
-        input = new GeoElement[2];
-        input[0] = inputList;
-        input[1] = n;
+    	
+    	if (n != null) {
+	        input = new GeoElement[2];
+	        input[0] = inputList;
+	        input[1] = n;
+    	}
+    	else
+    	{
+            input = new GeoElement[1];
+            input[0] = inputList;
+        }    		
 
         output = new GeoElement[1];
         output[0] = outputList;
@@ -60,7 +68,7 @@ public class AlgoFirst extends AlgoElement {
     protected final void compute() {
     	
     	size = inputList.size();
-    	int outsize=(int)n.getDouble();
+    	int outsize = n == null ? 1 : (int)n.getDouble();
     	
     	if (!inputList.isDefined() ||  size == 0 || outsize < 0 || outsize > size) {
     		outputList.setUndefined();

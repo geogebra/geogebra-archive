@@ -105,7 +105,7 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_main.jar"		
 			basedir="${src.dir}"		   
 			includes="**/*.class, 				
-					  geogebra/main/view-refresh.png,
+					  geogebra/main/*.png,
 					  **/algo2command.properties,	
 					  **/algo2command4i2g.properties"			
 			excludes="geogebra/*,

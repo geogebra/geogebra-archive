@@ -57,6 +57,9 @@ public class AlgoDilate extends AlgoTransformation {
         B = (Dilateable) Bgeo;
         
         setInputOutput();
+        
+        kernel.registerEuclidianViewAlgo(this);
+        
         compute();
         
              
@@ -88,6 +91,10 @@ public class AlgoDilate extends AlgoTransformation {
         B.dilate(r, S);
     }
        
+    final public boolean wantsEuclidianViewUpdate() {
+        return Ageo.isGeoImage();
+    }
+
     final public String toString() {
         StringBuffer sb = new StringBuffer();
 

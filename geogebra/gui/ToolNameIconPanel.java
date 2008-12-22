@@ -120,7 +120,7 @@ public class ToolNameIconPanel extends JPanel {
 		}
 		{
 			labelIcon = new JLabel();		
-			labelIcon.setIcon(app.getImageIcon("mode_tool_32.png"));
+			labelIcon.setIcon(app.getToolBarImage("mode_tool_32.png", null));
 			add(labelIcon, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}	
 	

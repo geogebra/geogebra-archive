@@ -121,6 +121,10 @@ public class ImageManager {
 		}			
 	}	
 	
+	public void clearAllImages(String fileName, BufferedImage img) {
+		
+	}	
+	
 	public BufferedImage getExternalImage(String fileName) {		
 		return (BufferedImage) externalImageTable.get(fileName);
 	}

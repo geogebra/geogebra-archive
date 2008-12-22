@@ -7,6 +7,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -292,18 +293,16 @@ public class AlgebraProcessor {
 			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
 			
-			if (temp[0].isGeoFunction())
-				func = (GeoFunction) temp[0];
-			else if (temp[0].isGeoNumeric())
-				func = evaluateToFunction(str + " + 0 x");
-			else app.showError("InvalidInput");
+			if (temp[0].isGeoFunctionable()) {
+				GeoFunctionable f = (GeoFunctionable) temp[0];
+				func = f.getGeoFunction();
+			}						
+			else 
+				app.showError("InvalidInput");
 			
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
-/*		} catch (ClassCastException e) {
-			// if str is a constant, we get a GeoNumeric not a GeoFunction
-			func = evaluateToFunction(str + " + 0 x");*/
 		} catch (Exception e) {		
 			e.printStackTrace();
 			app.showError("InvalidInput");
@@ -444,7 +443,7 @@ public class AlgebraProcessor {
 		ValidExpression ve,
 		boolean redefineIndependent)
 		throws MyError, Exception {
-	
+			
 		// check for existing labels		
 		String[] labels = ve.getLabels();
 		GeoElement replaceable = null;
@@ -607,7 +606,7 @@ public class AlgebraProcessor {
 		
 		try {
 			equ.initEquation();
-			
+	
 			// consider algebraic degree of equation        
 			switch (equ.degree()) {
 				// linear equation -> LINE   

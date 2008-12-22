@@ -1,5 +1,7 @@
 package geogebra.kernel.commands;
 
+import java.util.regex.Matcher;
+
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
@@ -20,11 +22,11 @@ public class CmdCellRange extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:			
+		case 2:						
 			arg = resArgs(c);
 			// both geos need to have valid spreadsheet coordinates
-			if ((ok[0] = arg[0].getSpreadsheetCoords() != null) &&
-				(ok[1] = arg[1].getSpreadsheetCoords() != null)) 
+			if ((ok[0] =  GeoElement.isSpreadsheetLabel(arg[0].getLabel()) &&
+				(ok[1] = GeoElement.isSpreadsheetLabel(arg[1].getLabel())))) 
 			{
 				GeoElement[] ret = { 
 						kernel.CellRange(c.getLabel(), arg[0], arg[1]) };

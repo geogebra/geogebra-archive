@@ -575,8 +575,7 @@ public class MyXMLio {
 	public String getFullXML() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb
-				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save gui settings

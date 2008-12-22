@@ -50,7 +50,8 @@ public class GeoGebraJasymca extends Jasymca {
 			sb.append("expand(");
 			sb.append(exp);
 			sb.append(')');		
-	    	//Application.debug("exp for JASYMCA: " + sb.toString());  
+	    	
+			//Application.debug("exp for JASYMCA: " + sb.toString());  			
 
 			// expand expression
 			Object result = eval(sb.toString());

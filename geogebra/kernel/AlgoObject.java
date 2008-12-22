@@ -13,29 +13,30 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+
 /**
- * Returns the GeoElement from a GeoText.
- * @author  Michael
+ * Returns the GeoElement from an object's label.
+ * @author  Michael, Markus
  * @version 
  */
 public class AlgoObject extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // output
-    private GeoText text;     // input              
+    private GeoText text;     // input            
+    
+    private String currentLabel;
+    private GeoElement [] updateInput;
         
     public AlgoObject(Construction cons, String label, GeoText text) {
     	super(cons);
         this.text = text;  
-        
-        // don't know what type it should be,
-        // so find out:
-       geo = kernel.lookupLabel(text.getTextString()).copyInternal(cons);
-       setInputOutput(); // for AlgoElement
+             
+        setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
         compute();      
-        text.setLabel(label);
+        geo.setLabel(label);
     }   
     
 	protected String getClassName() {
@@ -44,20 +45,54 @@ public class AlgoObject extends AlgoElement {
     
     // for AlgoElement
 	protected void setInputOutput() {
-        input = new GeoElement[1];
-        input[0] = text;
-        //input[1] = kernel.lookupLabel(text.getTextString());
+	   // copy referenced object to get output object
+       currentLabel = text.getTextString();
+       GeoElement refObject = kernel.lookupLabel(currentLabel);  
+       
+       if (refObject != null ) {
+    	   geo = refObject.copyInternal(cons);
+    	   geo.setVisualStyle(refObject);
+       } else
+    	   geo = new GeoNumeric(cons,Double.NaN);
+		
+		
+		// input for saving is only the name of the object
+		input = new GeoElement[1];
+		input[0] = text;
+        
+		// input for updating is both the name of the object and the object itself
+		updateInput = new GeoElement[2];
+		updateInput[0] = text;				
+		updateInput[1] = refObject != null ? refObject : geo; // if null, pass new GeoNumeric(cons,Double.NaN);
         
         output = new GeoElement[1];        
         output[0] = geo;        
-        //kernel.lookupLabel("A3").addAlgorithm(this);
-        setDependencies(); // done by AlgoElement
+
+        // handle dependencies
+        setEfficientDependencies(input, updateInput); 
     }    
     
     public GeoElement getResult() { return geo; }
     
-    // calc the current value of the arithmetic tree
-    protected final void compute() {    	
-    	geo = kernel.lookupLabel(text.getTextString());
+    protected final void compute() {     	    
+    	// did name of object change?
+    	if (currentLabel != text.getTextString()) {
+    		// get new object 
+    		currentLabel = text.getTextString();
+    		updateInput[1] = kernel.lookupLabel(currentLabel);
+ 
+    		// add this new object to update set of this algorithm
+    		updateInput[1].addToUpdateSetOnly(this);  
+    	}
+    	
+    	
+    	// check if updateInput has same 
+    	if (updateInput[1] != null && 
+    		updateInput[1].getGeoClassType() == geo.getGeoClassType())
+    	{
+    		geo.set(updateInput[1]);
+    	} else {
+    		geo.setUndefined();   
+    	}    	    
     }         
 }

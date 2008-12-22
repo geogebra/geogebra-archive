@@ -108,21 +108,21 @@ public class GgbMatrix
    		
    		initialise(rows,cols);
 		
-		GeoList rowList;
+		GeoList columnList;
    		
-   		for (int c = 0 ; c < cols ; c++) {
-   			geo = inputList.get(c);
+   		for (int r = 0 ; r < rows ; r++) {
+   			geo = inputList.get(r);
    			if (!geo.isGeoList()) {
    				setIsSingular(true);
    				return;   		
    			}
-   			rowList = (GeoList)geo;
-   			if (rowList.size() != rows) {
+   			columnList = (GeoList)geo;
+   			if (columnList.size() != columns) {
    				setIsSingular(true);
    				return;   		
    			}
-   	   		for (int r = 0 ; r < rows ; r++) {
-   	   			geo = rowList.get(r);
+   	   		for (int c = 0 ; c < rows ; c++) {
+   	   			geo = columnList.get(c);
    	   			if (!geo.isGeoNumeric()) {
    	   			setIsSingular(true);
    	   				return;   		
@@ -301,12 +301,12 @@ public class GgbMatrix
 		outputList.clear();
         outputList.setDefined(true);
 		
-   		for (int c = 0 ; c < columns ; c++) {
-   			GeoList rowList = new GeoList(cons);
-   	   		for (int r = 0 ; r < rows ; r++) {  	   			
-   	   			rowList.add(new GeoNumeric(cons, get(r + 1, c + 1)));  	   			
+	   		for (int r = 0 ; r < rows ; r++) {  	   			
+   			GeoList columnList = new GeoList(cons);
+   	   		for (int c = 0 ; c < columns ; c++) {
+   	   			columnList.add(new GeoNumeric(cons, get(r + 1, c + 1)));  	   			
    	   		}
-   	   		outputList.add(rowList);
+   	   		outputList.add(columnList);
    		}
    		
    		return outputList;

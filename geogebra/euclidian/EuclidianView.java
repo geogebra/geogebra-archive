@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -249,6 +250,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 
 	boolean showMouseCoords = false;
 	boolean showAxesRatio = false;
+	private boolean highlightAnimationButtons = false;
 
 	protected int pointCapturingMode; // snap to grid points
 
@@ -325,7 +327,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	// protected int drawMode = DRAW_MODE_BACKGROUND_IMAGE;
 	protected BufferedImage bgImage;
 	protected Graphics2D bgGraphics; // g2d of bgImage
-	protected Image resetImage;
+	protected Image resetImage, playImage, pauseImage;
 	
 	// temp image
 	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
@@ -1188,6 +1190,10 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 			drawMouseCoords(g2);
 		if (showAxesRatio)
 			drawAxesRatio(g2);
+		
+		if (kernel.isAnimationRunning() || kernel.isAnimationPaused()) {
+			drawAnimationButtons(g2);
+		}
 	}
 
 	protected void setAntialiasing(Graphics2D g2) {
@@ -1483,6 +1489,20 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 			resetImage = app.getRefreshViewImage();
 		}
 		return resetImage;
+	}
+	
+	private Image getPlayImage() {
+		if (playImage == null) {
+			playImage = app.getPlayImage();
+		}
+		return playImage;
+	}
+	
+	private Image getPauseImage() {
+		if (pauseImage == null) {
+			pauseImage = app.getPauseImage();
+		}
+		return pauseImage;
 	}
 
 	final protected void clearBackground(Graphics2D g) {
@@ -1882,6 +1902,40 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		g2.setColor(Color.darkGray);
 		g2.setFont(fontLine);
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
+	}
+	
+	final protected void drawAnimationButtons(Graphics2D g2) {
+		int x = 6;
+		int y = height - 22;
+				
+		if (highlightAnimationButtons) {
+			// draw filled circle to highlight button
+			g2.setColor(Color.darkGray);
+		} else {
+			g2.setColor(Color.lightGray);			
+		}
+
+		// draw pause or play button
+		g2.drawRect(x-2, y-2, 18, 18);
+		Image img = kernel.isAnimationRunning() ? getPauseImage() : getPlayImage();			
+		g2.drawImage(img, x, y, null);
+	}
+	
+	final boolean hitAnimationButton(MouseEvent e) {
+		return (e.getX() <= 20) && (e.getY() >= height - 20);		
+	}
+	
+	/**
+	 * Updates highlighting of animation buttons. 
+	 * @return whether status was changed
+	 */
+	final boolean setAnimationButtonsHighlighted(boolean flag) {
+		if (flag == highlightAnimationButtons) 
+			return false;
+		else {
+			highlightAnimationButtons = flag;
+			return true;
+		}
 	}
 	
 

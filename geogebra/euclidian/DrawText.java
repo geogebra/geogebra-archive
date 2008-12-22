@@ -61,6 +61,9 @@ public final class DrawText extends Drawable {
         isVisible = geo.isEuclidianVisible();       				 
         if (!isVisible) return;          
         
+        if (isLaTeX) // needed eg for \sqrt
+        	updateStrokes(text);
+        
         String newText = text.getTextString();
         boolean textChanged = labelDesc == null || 
         	!labelDesc.equals(newText) || 
@@ -199,13 +202,17 @@ public final class DrawText extends Drawable {
 
     final public void draw(Graphics2D g2) { 
         if (isVisible) {
-			g2.setPaint(geo.getObjectColor());				
-			g2.setFont(textFont);  
-			
-        	if (isLaTeX)			
-    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground()); 
-        	else			
+			if (isLaTeX) {
+        		g2.setPaint(geo.getObjectColor());				
+    			g2.setFont(textFont);    			
+    			g2.setStroke(objStroke); // needeg eg for \sqrt
+    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());       
+        	} 
+        	else {
+        		g2.setPaint(geo.getObjectColor());				
+    			g2.setFont(textFont);    			
     			drawMultilineText(g2);   
+        	}   
 			  
 			// draw label rectangle
 			if (geo.doHighlighting()) {

@@ -172,6 +172,8 @@ TOKEN :  {
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
   | < UNDEFINED: ( "?" | "\ufffd" ) >
+  | < POWER0:   "\u2070" >
+  | < POWER1:   "\u00b9" >
   | < SQUARED:  "\u00b2" >
   | < CUBED:    "\u00b3" >
   | < POWER4:   "\u2074" >
@@ -331,10 +333,14 @@ ValidExpression buildValidExpression() :
       	 (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = parametric()      
      |     
         // g: 3x + y = 7 
-        LOOKAHEAD(2147483647)              (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()            |          
+        LOOKAHEAD(2147483647)      
+        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()        
+    |          
         // special case "A: (3,2)" should become a point  
         // CAS assignment "a := 5" shoudl be supported too                                     
-	  	LOOKAHEAD(2147483647)  	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   	 |     
+	  	LOOKAHEAD(2147483647)  
+	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   
+	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
         //
@@ -986,6 +992,18 @@ ExpressionNode enpower():
 {	
     ret = enfactorial()         
     (   
+    	<POWER0>
+        {            
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            			 new MyDouble(kernel, 0));  
+	    } 
+    |       
+    	<POWER1>
+        {            
+            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
+            			 new MyDouble(kernel, 1));  
+	    } 
+    |       
     	<SQUARED>
         {            
             return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
@@ -1399,7 +1417,8 @@ ExpressionNode numberFunction():
       				cmd.addArgument( en );
       				return new ExpressionNode(kernel, cmd);      						
       			
-//      		  	String [] str = { "UndefinedVariable", funcName };//           	 	throw new MyParseError(app, str);    
+//      		  	String [] str = { "UndefinedVariable", funcName };
+//           	 	throw new MyParseError(app, str);    
            	}
       		
       		if (order > 0) { // derivative

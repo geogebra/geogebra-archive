@@ -259,26 +259,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
      private void computeNonContinous() {    
     	 // calc new intersection points Q
     	 intersectConics(A, B, Q);            
-    	 
-    	 // arrange intersection points Q so that all defined
-    	 // intersection points are at the beginning of the array       
-    	 for (int i=0; i < Q.length; i++) {        	    
-         	if (Q[i].isDefined()) {
-          		 // move defined intersection point as far to the front as possible
-         		 int j=i-1;
-         		 boolean move = false;
-         		 while (j >= 0 && !Q[j].isDefined()) {
-         			 move = true;
-         			 j--;
-         		 }
-         		 if (move) {
-         			 j++;
-         			 Q[j].setCoords(Q[i]);
-         			 Q[i].setUndefined();
-         		 }
-         	}
-         }      	     	
-    	 
+    	     	
          // use fixed permutation to set output points P
     	 for (int i=0; i < P.length; i++) {        	
          	P[i].setCoords(Q[permutation[i]]);           	
@@ -489,7 +470,35 @@ public class AlgoIntersectConics extends AlgoIntersect {
             // INTERSECTION FAILED
             for (i=0; i < points.length; i++) points[i].setUndefined();                                       
         }
+        
+        // for non-continous kernel: move defined intersection points to front
+        else if (!kernel.isContinuous()) {
+        	moveDefinedPointsToFront(points);
+        }
     }   
+    
+    /** 
+     * Arranges intersection points Q so that all defined
+     * intersection points are at the beginning of the array.
+     */  
+    private void moveDefinedPointsToFront(GeoPoint [] points) {
+    	for (int i=0; i < points.length; i++) {
+   			if (points[i].isDefined()) {
+         		 // move defined intersection point as far to the front as possible
+        		 int j=i-1;
+        		 boolean move = false;
+        		 while (j >= 0 && !points[j].isDefined()) {
+        			 move = true;
+        			 j--;
+        		 }
+        		 if (move) {
+        			 j++;
+        			 points[j].setCoords(points[i]);
+        			 points[i].setUndefined();
+        		 }
+        	}
+        }      	     	   	 
+    }
     
     /**
      * Intersect conic with degenerate conic degConic. Write result into

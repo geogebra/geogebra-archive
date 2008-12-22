@@ -219,6 +219,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	}
         }        
         
+        /*
      // TODO: remove
         if (randomInputNumbers != null) {
         	Application.printStacktrace("" + randomInputNumbers);
@@ -226,6 +227,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         		System.out.println(randomInputNumbers[i]);
         	}
         }
+        */
     }
     
     /**
@@ -472,10 +474,14 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     public ArrayList getFreeInputPoints() {
 		if (freeInputPoints == null) {				
 			freeInputPoints = new ArrayList(input.length);
-			for (int i=0; i < input.length; i++) {				
-				if (input[i].isGeoPoint() && input[i].isIndependent())
-					freeInputPoints.add(input[i]);			
-			}				
+			
+			// don't use free points from dependent algos with expression trees 			
+			if (!getClassName().startsWith("AlgoDependent")) {							
+				for (int i=0; i < input.length; i++) {				
+					if (input[i].isGeoPoint() && input[i].isIndependent())
+						freeInputPoints.add(input[i]);	
+				}				
+			}
 		}
 	
 		return freeInputPoints;
@@ -546,11 +552,17 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
             } else {
                 sb.append(cmdname);
             } 
+            
+            int length = input.length;
+            
+            // remove last argument from Object[]
+            if (cmdname.equals("Object") && length == 2)
+            	length = 1;
 
             sb.append("[");
             // input
-            if (input.length>0) sb.append(input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
-            for (int i = 1; i < input.length; ++i) {
+            if (length>0) sb.append(input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
+            for (int i = 1; i < length; ++i) {
                 sb.append(", ");
                 sb.append(input[i].getLabel());
             }
@@ -633,7 +645,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	        else
 	            sb.append(getCmdXML(cmdname));
 	        
-	        if (includeOutputGeos) {	       
+	        if (includeOutputGeos && output != null) {	       
 		        // output               
 		        GeoElement geo;                   
 		        for (int i = 0; i < output.length; i++) {
@@ -723,10 +735,13 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         sb.append("\"");
         
         // make sure that a vector remains a vector and a point remains a point
-        if (output[0].isGeoPoint()) {
-            sb.append(" type=\"point\"");
-        } else if (output[0].isGeoVector()) {
-            sb.append(" type=\"vector\"");
+        if (output != null)
+        {
+	        if (output[0].isGeoPoint()) {
+	            sb.append(" type=\"point\"");
+	        } else if (output[0].isGeoVector()) {
+	            sb.append(" type=\"vector\"");
+	        }
         }
         
         // expression   
@@ -741,8 +756,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         sb.append("<command name=\"");
             sb.append(cmdname);
             sb.append("\"");    
-                sb.append(">\n");
-        
+                sb.append(">\n");               
+                            
         // add input information
         if (input != null) {
             sb.append("\t<input");

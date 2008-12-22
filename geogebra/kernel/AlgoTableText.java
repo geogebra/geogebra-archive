@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 
@@ -21,6 +22,7 @@ public class AlgoTableText extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
     private GeoText text; //output	
+    private GeoText args; //input	
     
     private GeoList[] geoLists;
     
@@ -29,14 +31,15 @@ public class AlgoTableText extends AlgoElement {
     private int VERTICAL = 0;
     private int HORIZONTAL = 1;
 
-    AlgoTableText(Construction cons, String label, GeoList geoList) {
-    	this(cons, geoList);
+    AlgoTableText(Construction cons, String label, GeoList geoList, GeoText args) {
+    	this(cons, geoList, args);
         text.setLabel(label);
     }
 
-    AlgoTableText(Construction cons, GeoList geoList) {
+    AlgoTableText(Construction cons, GeoList geoList, GeoText args) {
         super(cons);
         this.geoList = geoList;
+        this.args = args;
                
         text = new GeoText(cons);
 		text.setIsCommand(true); // stop editing as text
@@ -50,8 +53,14 @@ public class AlgoTableText extends AlgoElement {
     }
 
     protected void setInputOutput(){
-        input = new GeoElement[1];
-        input[0] = geoList;
+    	if (args == null) {
+	        input = new GeoElement[1];
+	        input[0] = geoList;
+    	} else {
+            input = new GeoElement[2];
+            input[0] = geoList;
+            input[1] = args;
+    	}
 
         output = new GeoElement[1];
         output[0] = text;
@@ -65,25 +74,39 @@ public class AlgoTableText extends AlgoElement {
     protected final void compute() {
     	int columns = geoList.size();
     	if (!geoList.isDefined() ||  columns == 0) {
-    		throw new MyError(app, app.getError("InvalidInput"));   		
+    		text.setTextString(sb.toString());
+    		return;
+    		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
     	
-    	int alignment = VERTICAL;
+    	int alignment = HORIZONTAL;
     	
     	String justification = "l"; // default (l, c or r)
     	
-    	if (geoList.get(columns-1).isGeoText()) {
-    		GeoText options = (GeoText)geoList.get(columns-1);
-    		String optionsStr = options.getTextString();
-    		if (optionsStr.endsWith("h")) alignment = HORIZONTAL; // horizontal table
+    	if (args != null) {
+    		String optionsStr = args.getTextString();
+    		if (optionsStr.endsWith("v")) alignment = VERTICAL; // vertical table
     		if (optionsStr.startsWith("c")) justification = "c";
-    		else if (optionsStr.startsWith("r")) justification = "r";
+    		else if (optionsStr.startsWith("r")) justification = "r";	
     		
-    		columns --;
+    	} else if (geoList.get(columns-1).isGeoText()) {
+    		
+    		// support for older files before the fix
+    		
+     		GeoText options = (GeoText)geoList.get(columns-1);
+     		String optionsStr = options.getTextString();
+     		if (optionsStr.endsWith("h")) alignment = HORIZONTAL; // horizontal table
+     		if (optionsStr.startsWith("c")) justification = "c";
+     		else if (optionsStr.startsWith("r")) justification = "r";
+ 
+     		columns --;
     	}
+
     	
     	if (columns == 0) {
-    		throw new MyError(app, app.getError("InvalidInput"));   		
+    		text.setTextString(sb.toString());
+    		return;
+    		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
     	
 
@@ -95,14 +118,18 @@ public class AlgoTableText extends AlgoElement {
 		for (int c = 0 ; c < columns ; c++) {
 			GeoElement geo = geoList.get(c);
 			if (!geo.isGeoList()) {
-	    		throw new MyError(app, app.getPlain("SyntaxErrorAisNotAList",geo.toValueString()));
+				text.setTextString(sb.toString());
+				return;
+	    		//throw new MyError(app, app.getPlain("SyntaxErrorAisNotAList",geo.toValueString()));
 			}
 			geoLists[c] = (GeoList)geoList.get(c);
 			if (geoLists[c].size() > rows) rows = geoLists[c].size();
 		}
 		
     	if (rows == 0) {
-    		throw new MyError(app, app.getError("InvalidInput"));   		
+    		text.setTextString(sb.toString());
+    		return;
+    		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
 
     	
@@ -144,7 +171,7 @@ public class AlgoTableText extends AlgoElement {
     	}
     	
     	sb.append("\\end{tabular}");
-    	
+    	//Application.debug(sb.toString());
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
     }

@@ -70,6 +70,10 @@ public class MyVecNode extends ValidExpression implements VectorValue {
         mode = Kernel.COORD_POLAR;        
     } 
     
+    public boolean hasPolarCoords() {
+    	return  mode == Kernel.COORD_POLAR; 
+    }
+    
     private void setCoords(ExpressionValue x, ExpressionValue y) {                               
         this.x = x;
         this.y = y;
@@ -91,6 +95,8 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     	
         if (mode == Kernel.COORD_POLAR) {
             double r = ((NumberValue)evx).getDouble();
+            // negative radius yields undefined result
+            if (r < 0) r = Double.NaN;            
             double phi = ((NumberValue)evy).getDouble();                                      
             double [] ret = { r * Math.cos( phi ) ,
                               r * Math.sin( phi )  };

@@ -71,7 +71,9 @@ public class AlgoMirror extends AlgoTransformation {
         out = (Mirrorable) geoIn.copy();               
         geoOut = out.toGeoElement();                       
         setInputOutput();
-                
+              
+        kernel.registerEuclidianViewAlgo(this);
+        
         compute();                                     
     }           
     
@@ -93,6 +95,10 @@ public class AlgoMirror extends AlgoTransformation {
     GeoElement getResult() { 
     	return geoOut; 
     }       
+
+    final public boolean wantsEuclidianViewUpdate() {
+        return geoIn.isGeoImage();
+    }
 
     protected final void compute() {
         geoOut.set(geoIn);

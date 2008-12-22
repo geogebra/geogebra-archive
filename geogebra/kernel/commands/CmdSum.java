@@ -25,7 +25,9 @@ public class CmdSum extends CommandProcessor {
 		if (!arg[0].isGeoList()) throw argErr(app, c.getName(), arg[0]);
 		GeoList list = (GeoList)arg[0];
 		int size = list.size();
-		if (size == 0) throw argErr(app, c.getName(), arg[0]);
+		
+		// this is bad - list can be saved later with size 0
+		//if (size == 0) throw argErr(app, c.getName(), arg[0]);
 		
 		boolean allNumbers = true;
 		boolean allFunctions = true;
@@ -108,7 +110,7 @@ public class CmdSum extends CommandProcessor {
 		
 		default:
             // try to create list of numbers
-	       	 GeoList wrapList = wrapInList(kernel, arg, GeoElement.GEO_CLASS_NUMERIC);
+	       	 GeoList wrapList = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_NUMERIC);
 	            if (wrapList != null) {
 	           	 GeoElement[] ret = { kernel.Sum(c.getLabel(), wrapList)};
 	                return ret;             	     	 

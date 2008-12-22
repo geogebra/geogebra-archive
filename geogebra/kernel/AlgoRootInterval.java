@@ -95,7 +95,8 @@ public class AlgoRootInterval extends AlgoElement {
             	// Let's search for a valid domain and try again
             	double [] borders = RealRootUtil.getDefinedInterval(fun, a.getDouble(), b.getDouble());            	
             	root = rootFinder.brent(fun, borders[0], borders[1]);                
-            } catch (Exception ex) {            	            
+            } catch (Exception ex) {   
+            	root = Double.NaN;
             } 
         }
         

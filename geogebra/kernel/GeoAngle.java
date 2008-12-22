@@ -92,7 +92,7 @@ public final class GeoAngle extends GeoNumeric {
 		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
 		setLabelMode(GeoElement.LABEL_NAME);
 		setEuclidianVisible(false);
-		animationStep = Math.PI / 180.0;
+		animationIncrement = Math.PI / 180.0;
 		DEFAULT_SLIDER_MIN = 0;
 		DEFAULT_SLIDER_MAX = Kernel.PI_2;
 	}
@@ -179,7 +179,7 @@ public final class GeoAngle extends GeoNumeric {
 		// (angleStyle==ANGLE_ISREFLEX && angVal < Math.PI));
 		// if (changedReflexAngle) {
 		// angVal = Kernel.PI_2 - angVal;
-		// }
+		// }			
 
 		super.setValue(angVal);
 	}

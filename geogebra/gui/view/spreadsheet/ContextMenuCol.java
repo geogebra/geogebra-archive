@@ -6,6 +6,7 @@ import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
 
 import javax.swing.JMenuItem;
 
@@ -24,11 +25,11 @@ public class ContextMenuCol extends ContextMenu
 		
    	 	JMenuItem item5 = new JMenuItem(app.getMenu("InsertLeft"));
 	   	item5.setIcon(app.getEmptyIcon());
-   	 	item5.addActionListener(new ActionListener5());   	 	
+   	 	item5.addActionListener(new InsertLeft());   	 	
    	 	add(item5);
    	 	JMenuItem item6 = new JMenuItem(app.getMenu("InsertRight"));
 	   	item6.setIcon(app.getEmptyIcon());
-   	 	item6.addActionListener(new ActionListener6());   	 	
+   	 	item6.addActionListener(new InsertRight());   	 	
    	 	add(item6);
 		addSeparator();
 		JMenuItem item7;
@@ -39,18 +40,26 @@ public class ContextMenuCol extends ContextMenu
    	 	add(item7);   	 	
 	}
 	
-	private class ActionListener5 implements ActionListener
+	private class InsertLeft implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
+ 			if (columns == column1 + 1){
+ 				// last column: need to insert one more
+				table.setMyColumnCount(table.getColumnCount() +1);		
+				table.getView().getColumnHeader().revalidate();
+				columns++;
+ 			}
  			int rows = table.getModel().getRowCount();
  			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
  			for (int x = columns - 2; x >= column1; -- x) {
  				for (int y = 0; y < rows; ++ y) {
  					GeoElement geo = RelativeCopy.getValue(table, x, y);
  					if (geo == null) continue;
- 					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
- 					int row = GeoElement.getSpreadsheetRow(geo.getLabel());
+ 					
+ 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+ 					int column = GeoElement.getSpreadsheetColumn(matcher);
+ 					int row = GeoElement.getSpreadsheetRow(matcher);
  					column += 1;
  					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
  					geo.setLabel(newLabel);
@@ -63,23 +72,35 @@ public class ContextMenuCol extends ContextMenu
  		}
 	}
 	
-	private class ActionListener6 implements ActionListener
+	private class InsertRight implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			int columns = table.getModel().getColumnCount();
 			int rows = table.getModel().getRowCount();
- 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
- 			for (int x = columns - 2; x >= column2 + 1; -- x) {
- 				for (int y = 0; y < rows; ++ y) {
- 					GeoElement geo = RelativeCopy.getValue(table, x, y);
- 					if (geo == null) continue;
- 					int column = GeoElement.getSpreadsheetColumn(geo.getLabel());
- 					int row = GeoElement.getSpreadsheetRow(geo.getLabel());
- 					column += 1;
- 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
- 					geo.setLabel(newLabel);
- 					succ = true;
- 				}
+			boolean succ = false;
+ 			if (columns == column1 + 1){
+ 				// last column: insert another on right
+				table.setMyColumnCount(table.getColumnCount() +1);		
+				table.getView().getColumnHeader().revalidate();
+				// can't be undone
+ 			}
+ 			else
+ 			{
+	 			succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
+	 			for (int x = columns - 2; x >= column2 + 1; -- x) {
+	 				for (int y = 0; y < rows; ++ y) {
+	 					GeoElement geo = RelativeCopy.getValue(table, x, y);
+	 					if (geo == null) continue;
+	 					
+	 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+	 					int column = GeoElement.getSpreadsheetColumn(matcher);
+	 					int row = GeoElement.getSpreadsheetRow(matcher);
+	 					column += 1;
+	 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+	 					geo.setLabel(newLabel);
+	 					succ = true;
+	 				}
+	 			}
  			}
  			
  			if (succ)

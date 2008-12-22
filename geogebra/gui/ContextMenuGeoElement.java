@@ -514,6 +514,28 @@ public class ContextMenuGeoElement extends JPopupMenu {
         
       
         
+        // EDIT: copy to input bar       
+        if (app.showAlgebraInput() && !geo.isGeoImage()) {
+            addAction(new AbstractAction(
+                app.getMenu("CopyToInputBar"),
+                app.getImageIcon("edit.png")) {
+
+					private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {                    
+                    AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
+                    if (ai != null) {
+                    	ai.clear();                  
+                    	ai.getTextField().setText(geo.toValueString());
+                    	ai.requestFocus();
+                    }
+                }
+            });
+        	addSeparator();
+        }
+        
+                 
+        
           
       
         /*
@@ -575,27 +597,6 @@ public class ContextMenuGeoElement extends JPopupMenu {
                         });         
         }
         */
-        
-        // EDIT: copy to input field       
-        else if (app.showAlgebraInput() && !geo.isGeoImage()) {
-            addAction(new AbstractAction(
-                app.getMenu("CopyToInputBar"),
-                app.getImageIcon("edit.png")) {
-
-					private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent e) {                    
-                    AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
-                    if (ai != null) {
-                    	ai.clear();                  
-                    	ai.setString(geo);
-                    	ai.requestFocus();
-                    }
-                }
-            });
-        }
-        
-                 
         
         
         // DELETE    

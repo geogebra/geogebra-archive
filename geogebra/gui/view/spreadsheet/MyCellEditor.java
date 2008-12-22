@@ -1,9 +1,10 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.Component;
@@ -13,7 +14,6 @@ import java.awt.event.KeyListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 public class MyCellEditor extends DefaultCellEditor {
 
@@ -28,19 +28,12 @@ public class MyCellEditor extends DefaultCellEditor {
 	public boolean editing = false;
 
 	public MyCellEditor(Kernel kernel0) {
-		super(new JTextField());
+		//super(new JTextField());
+		super(new AutoCompleteTextField(0, kernel0.getApplication(), false));
 		kernel = kernel0;
 		app = kernel.getApplication();
-		Component component = getComponent();
-		component.addKeyListener(new KeyListener4());
-		if (component.getFont().getSize() == 0) {
-			Font font1 = kernel.getApplication().getPlainFont();
-			if (font1 == null || font1.getSize() == 0) {
-				font1 = new Font("dialog", 0, 12);
-			}
-			component.setFont(font1);
-
-		}
+		
+		editorComponent.addKeyListener(new KeyListener4());		
 	}
 	
 	private boolean clickedToType = false;
@@ -48,6 +41,12 @@ public class MyCellEditor extends DefaultCellEditor {
 	public Component getTableCellEditorComponent(JTable table0, Object value0,
 			boolean isSelected, int row0, int column0) {
 		table = (MyTable) table0;
+		
+		Font font1 = kernel.getApplication().getPlainFont();
+		if (font1 == null || font1.getSize() == 0) {
+			font1 = new Font("dialog", 0, 12);
+		}
+		getComponent().setFont(font1);
 		
 		if (value0 instanceof String) { // clicked to type
 			value = null;
@@ -90,17 +89,85 @@ public class MyCellEditor extends DefaultCellEditor {
 
 		public void keyTyped(KeyEvent e) {
 
-			int keyCode = e.getKeyChar();
-			if (keyCode == KeyEvent.VK_ESCAPE) {
-				fireEditingCanceled();
-				editing = false;
-			}
+			//checkCursorKeys(e); // needed for MAC_OS???
+
+			char keyChar = e.getKeyChar();
+			//Application.debug(e.toString());
+			switch (keyChar) {
+				case 0x1b:	// case KeyEvent.VK_ESCAPE:
+					cancelCellEditing();
+					editing = false;
+					
+					// restore old text in spreadsheet
+					table.getModel().setValueAt(kernel.getGeoAt(column, row), row, column);
+					
+					break;													
+			}	
 		}
 
 		public void keyPressed(KeyEvent e) {
+			
+			checkCursorKeys(e);
+			
+				char keyChar = e.getKeyChar();
+				switch (keyChar) {
+			case 0x1b:	// case KeyEvent.VK_ESCAPE:
+				cancelCellEditing();
+				editing = false;
+				
+				// restore old text in spreadsheet
+				table.getModel().setValueAt(kernel.getGeoAt(column, row), row, column);
+				
+				break;													
+			case 0x0a:	// case KeyEvent.VK_ENTER:
+					if (e.isConsumed())
+						break;
+					
+					// if cell below is empty, go there
+					if (table.getRowCount() >= row && table.getValueAt(row + 1, column) == null) {
+						table.changeSelection(row + 1, column, false, false);	
+					}		
+					else
+						stopCellEditing();
+						
+					editing = false;
+					break;							
+			}	
 		}
 
 		public void keyReleased(KeyEvent e) {
+		}
+		
+		public void checkCursorKeys(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			//Application.debug(e+"");
+			switch (keyCode) {
+			case KeyEvent.VK_UP:
+				//Application.debug("UP");
+				stopCellEditing();		
+				editing = false;
+				table.setRowSelectionInterval(table.minSelectionRow - 1,table.minSelectionRow - 1);
+				break;
+			case KeyEvent.VK_RIGHT:
+				//Application.debug("RIGHT");
+				stopCellEditing();		
+				editing = false;
+				table.setColumnSelectionInterval(table.minSelectionColumn + 1,table.minSelectionColumn + 1);
+				break;
+			case KeyEvent.VK_DOWN:
+				//Application.debug("DOWN");
+				stopCellEditing();		
+				editing = false;
+				table.setRowSelectionInterval(table.minSelectionRow + 1,table.minSelectionRow + 1);
+				break;
+			case KeyEvent.VK_LEFT:
+				//Application.debug("LEFT");
+				stopCellEditing();		
+				editing = false;
+				table.setColumnSelectionInterval(table.minSelectionColumn - 1,table.minSelectionColumn - 1);
+				break;
+			}
+			
 		}
 
 	}
@@ -137,8 +204,9 @@ public class MyCellEditor extends DefaultCellEditor {
 	}
 
 	public boolean stopCellEditing() {
-		// Application.debug("stopCellEditing()");
+		
 		String text = (String) delegate.getCellEditorValue();
+
 		try {
 			
 
@@ -155,9 +223,10 @@ public class MyCellEditor extends DefaultCellEditor {
 
 			// copy description into input bar
 			if (value != null) {
-				ai.setString(value);
+				app.geoElementSelected(value, true); // copy definiton to input bar
+				//ai.setStxxring(value);
 			} else {
-				ai.setString(null);
+				ai.clear();
 			}
 
 		} catch (Exception ex) {
@@ -168,7 +237,10 @@ public class MyCellEditor extends DefaultCellEditor {
 			return false;
 		}
 		editing = false;
-		return super.stopCellEditing();
+		
+		boolean ret = super.stopCellEditing();
+		table.selectionChanged();
+		return ret;
 	}
 
 	public void undoEdit() {
@@ -254,17 +326,26 @@ public class MyCellEditor extends DefaultCellEditor {
 				kernel.getApplication().refreshViews();
 			}
 		} catch (Throwable e) {
-			// Application.debug("SPREADSHEET: input error: " + e.getMessage());
-			// Application.debug("text0 = " + text0);
-			if (text0.startsWith("=") || text0.startsWith("\"")) {
-				throw new Exception(e);
-			} else {
+			 //Application.debug("SPREADSHEET: input error: " + e.getMessage());
+			 //Application.debug("text0 = " + text0);
+			
+			
+			//if (text0.startsWith("=") || text0.startsWith("\"")) {
+				//throw new Exception(e);				
+			//} else
+			{
 				if (!oldValue.hasChildren()) {
 					oldValue.remove();
-
+					
 					// add input as text
-					newValue = prepareNewValue(kernel, name, "\"" + text0
-							+ "\"");
+					try {
+						newValue = prepareNewValue(kernel, name, "\"" + text0 + "\"");
+					}
+					catch (Throwable t) {
+						newValue = prepareNewValue(kernel, name, "");
+					}
+					newValue.setEuclidianVisible(false);
+					newValue.update();
 				} else {
 					throw new Exception(e);
 				}
@@ -292,7 +373,11 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 			return null;
 		} else if (oldValue == null) {
-			return prepareNewValue(kernel, name, text);
+			try {
+				return prepareNewValue(kernel, name, text);
+			} catch (Throwable t) {
+				return prepareNewValue(kernel, name, "");
+			}
 		} else { // value != null;
 			return updateOldValue(kernel, oldValue, name, text);
 		}

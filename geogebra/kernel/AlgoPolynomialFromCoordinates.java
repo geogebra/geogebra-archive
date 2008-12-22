@@ -143,12 +143,9 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
   	        coeff = cof[k]; 	 
 			 if (Double.isNaN(coeff) || Double.isInfinite(coeff)) {
 					 return null;
-			 }
-			 // Michael Borcherds 2008-03-09
-			 // removed these two lines to make Polynomial[] work better
-			 // leading coefficient can be eg E-30
-			 //			 else if (kernel.isZero(coeff)) 
-			 //			 	continue; // this part vanished
+			 }			
+			 else if (coeff == 0) 
+				 continue; // this part vanished
 			 				
 			boolean negativeCoeff = coeff < 0; 					
 			

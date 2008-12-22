@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -134,7 +135,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		playPanel.setVisible(showPlayButton);
 		playPanel.add(Box.createRigidArea(new Dimension(20,10)));
 		btPlay = new JButton();
-		btPlay.setIcon(app.getImageIcon("nav_play.png"));
+		btPlay.setIcon(new ImageIcon(app.getPlayImage()));
 		btPlay.addActionListener(this); 	
 											
 		spDelay.addChangeListener(new ChangeListener() {
@@ -264,7 +265,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
         	// dispatch events to play button
 			app.startDispatchingEventsTo(btPlay);
 			isPlaying = true;
-			btPlay.setIcon(app.getImageIcon("nav_pause.png"));
+			btPlay.setIcon(new ImageIcon(app.getPauseImage()));
 			btPlay.setText(app.getPlain("Pause"));
 			setComponentsEnabled(false);
 			app.setWaitCursor();
@@ -282,7 +283,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
             // unblock application events
 			app.stopDispatchingEvents();
 			isPlaying = false;
-			btPlay.setIcon(app.getImageIcon("nav_play.png"));
+			btPlay.setIcon(new ImageIcon(app.getPlayImage()));
 			btPlay.setText(app.getPlain("Play"));
 			setComponentsEnabled(true);
 			app.setDefaultCursor();

@@ -20,13 +20,14 @@ import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 
 
 /**
  * List of GeoElements
  */
-public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties {
+public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties, TextProperties {
 	
 	public final static int ELEMENT_TYPE_MIXED = -1;
 
@@ -167,6 +168,17 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			if (geo instanceof PointProperties) {
 				((PointProperties)geo).setPointSize(this.getPointSize());
 				((PointProperties)geo).setPointStyle(this.getPointStyle());
+			}
+			
+			if (geo instanceof TextProperties) {
+				((TextProperties)geo).setFontSize(this.getFontSize());
+				((TextProperties)geo).setFontStyle(this.getFontStyle());
+				((TextProperties)geo).setSerifFont(this.isSerifFont());
+				if (useSignificantFigures)
+					((TextProperties)geo).setPrintFigures(this.getPrintFigures(),false);
+				else
+					((TextProperties)geo).setPrintDecimals(this.getPrintDecimals(),false);
+
 			}
 			
 			geo.setAlphaValue(this.getAlphaValue());
@@ -324,6 +336,22 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	geoList.clear();
     }
     
+    /*
+     * free up memory and set undefined
+     */
+    public final void clearCache() {
+    	if (cacheList.size() > 0)
+	    	for (int i = 0 ; i < cacheList.size() ; i++) {
+	    		GeoElement geo = (GeoElement)cacheList.get(i);
+	    		if (geo != null && !geo.isLabelSet())
+	    			geo.remove();
+	    	}
+    	cacheList.clear();
+    	clear();
+    	setUndefined();
+    	System.gc();
+    }
+    
     public final void add(GeoElement geo) {
     	// add geo to end of list 
     	geoList.add(geo);    	     	
@@ -474,6 +502,40 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			  sb.append(label);
 		  sb.append("\">\n");
 		  sb.append(getXMLtags());
+		  
+		  // point style
+			sb.append("\t<pointSize val=\"");
+				sb.append(pointSize);
+			sb.append("\"/>\n");
+
+			sb.append("\t<pointStyle val=\"");
+				sb.append(pointStyle);
+			sb.append("\"/>\n");
+
+			// font settings
+			if (serifFont || fontSize != 0 || fontStyle != 0) {
+				sb.append("\t<font serif=\"");
+				sb.append(serifFont);
+				sb.append("\" size=\"");
+				sb.append(fontSize);
+				sb.append("\" style=\"");
+				sb.append(fontStyle);
+				sb.append("\"/>\n");
+			}
+			
+			// print decimals
+			if (printDecimals >= 0 && !useSignificantFigures) {
+				sb.append("\t<decimals val=\"");
+				sb.append(printDecimals);
+				sb.append("\"/>\n");
+			}
+							
+			// print significant figures
+			if (printFigures >= 0 && useSignificantFigures) {
+				sb.append("\t<significantfigures val=\"");
+				sb.append(printFigures);
+				sb.append("\"/>\n");
+			}
 		  sb.append("</element>\n");
 		  
 		  return sb.toString();
@@ -748,5 +810,89 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		
 			return true;
 		}
-    		
+		
+		// font options
+		private boolean serifFont = false;
+		private int fontStyle = Font.PLAIN;
+		private int fontSize = 0; // size relative to default font size
+		private int printDecimals = -1;
+		private int printFigures = -1;
+		public boolean useSignificantFigures = false;
+		
+		public int getFontSize() {
+			return fontSize;
+		}
+
+		public void setFontSize(int size) {
+			fontSize = size;
+
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof TextProperties && !geo.isLabelSet())
+					((TextProperties)geo).setFontSize(size);
+			}
+}
+		
+		public int getFontStyle() {
+			return fontStyle;
+		}
+		
+		public void setFontStyle(int fontStyle) {
+			this.fontStyle = fontStyle;
+
+		
+			if (geoList == null || geoList.size() == 0) return;
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof TextProperties && !geo.isLabelSet())
+					((TextProperties)geo).setFontStyle(fontStyle);
+			}
+}
+		
+		final public int getPrintDecimals() {
+			return printDecimals;
+		}
+		
+		final public int getPrintFigures() {
+			return printFigures;
+		}
+		public void setPrintDecimals(int printDecimals, boolean update) {		
+				this.printDecimals = printDecimals;
+				for (int i=0 ; i < geoList.size() ; i++) {
+					GeoElement geo = (GeoElement)geoList.get(i);
+			    	if (geo instanceof TextProperties && !geo.isLabelSet())
+						((TextProperties)geo).setPrintDecimals(printDecimals, update);
+				}
+		}
+		
+		public void setPrintFigures(int printFigures, boolean update) {		
+				this.printFigures = printFigures;
+				for (int i=0 ; i < geoList.size() ; i++) {
+					GeoElement geo = (GeoElement)geoList.get(i);
+			    	if (geo instanceof TextProperties && !geo.isLabelSet())
+						((TextProperties)geo).setPrintFigures(printFigures, update);
+				}
+		}
+		
+		public boolean useSignificantFigures() {
+			return useSignificantFigures;
+
+		}
+		
+		public boolean isSerifFont() {
+			return serifFont;
+		}
+		
+		public void setSerifFont(boolean serifFont) {
+			this.serifFont = serifFont;
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof TextProperties && !geo.isLabelSet())
+					((TextProperties)geo).setSerifFont(serifFont);
+			}
+		}
+  		
 }

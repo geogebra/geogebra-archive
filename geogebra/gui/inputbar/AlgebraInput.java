@@ -14,6 +14,7 @@ package geogebra.gui.inputbar;
 
 import geogebra.main.Application;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.GeoElement;
 import geogebra.util.LowerCaseDictionary;
 
@@ -148,6 +149,7 @@ implements ActionListener, MouseListener, KeyListener
 	 * @param str: inserted string
 	 */
 	public void insertString(String str) {
+		
 		inputField.replaceSelection(str);
 	}
 	
@@ -278,10 +280,11 @@ implements ActionListener, MouseListener, KeyListener
 		if (src == inputButton) {	
 			if (!inputButton.isSelected()) {
 				inputButton.setSelected(true);
+				app.setMoveMode(); // change icon in toolbar
 				app.setAlgebraInputMode();
 				inputField.requestFocusInWindow();
 			} else {
-				inputButton.setSelected(false);
+				//inputButton.setSelected(false);
 				app.setMoveMode();
 			}
 		} 	
@@ -308,8 +311,14 @@ implements ActionListener, MouseListener, KeyListener
 				  app.getEuclidianView().requestFocus(); // Michael Borcherds 2008-05-12
 				  return;
 			  }
+			  
+			  app.getGuiManager().setScrollToShow(true);
+			  
 			  boolean success = null != 
 				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
+
+			  app.getGuiManager().setScrollToShow(false);
+
 			  if (success) {						   
 				 inputField.addToHistory(input);
 				inputField.setText(null);  							  			   

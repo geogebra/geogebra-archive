@@ -411,9 +411,9 @@ public class EuclidianController implements MouseListener,
 		refreshHighlighting(null);		
 	}
 
-	final public void mouseClicked(MouseEvent e) {
+	final public void mouseClicked(MouseEvent e) {	
 		ArrayList hits;
-		//GeoElement geo
+		//GeoElement geo;
 		
 		altDown=e.isAltDown();
 		
@@ -421,13 +421,13 @@ public class EuclidianController implements MouseListener,
 			view.requestFocusInWindow();
 		
 		if (Application.isRightClick(e)) return;
-		setMouseLocation(e);
+		setMouseLocation(e);		
 		
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:								
 		case EuclidianView.MODE_ALGEBRA_INPUT:
 			switch (e.getClickCount()) {
-			case 1:
+			case 1:			
 				// handle selection click	
 				handleSelectClick(view.getTopHits(mouseLoc), 
 						Application.isControlDown(e));
@@ -441,7 +441,9 @@ public class EuclidianController implements MouseListener,
 				app.clearSelectedGeos();
 				hits = view.getTopHits(mouseLoc);
 				if (hits != null && mode == EuclidianView.MODE_MOVE) {
-					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
+					GeoElement geo0 = (GeoElement)hits.get(0);
+					if (!geo0.isFixed() && !(geo0.isGeoImage() && geo0.isIndependent()))
+						app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
 				}
 				break;
 			}
@@ -459,19 +461,26 @@ public class EuclidianController implements MouseListener,
 		}
 	}
 	
-	protected void handleSelectClick(ArrayList geos, boolean ctrlDown) {
+	protected void handleSelectClick(ArrayList geos, boolean ctrlDown) {	
 		if (geos == null) {			
 			app.clearSelectedGeos();
-		} else {
+		} else {					
 			if (ctrlDown) {				
+				GeoElement geo = chooseGeo(geos);
+				//boolean selected = geo.is
 				app.toggleSelectedGeo( chooseGeo(geos) ); 
-			} else {
+				app.geoElementSelected(geo, true); // copy definiton to input bar
+			} else {								
 				if (!moveModeSelectionHandled) {					
 					GeoElement geo = chooseGeo(geos);
 					if (geo != null) {
 						app.clearSelectedGeos(false);
 						app.addSelectedGeo(geo);
-					}
+
+
+							
+							
+										}
 				}				
 			}			
 		}
@@ -488,7 +497,7 @@ public class EuclidianController implements MouseListener,
 		view.setSelectionRectangle(null);
 		selectionStartPoint.setLocation(mouseLoc);	
 		
-		if (hitResetIcon()) {				
+		if (hitResetIcon() || view.hitAnimationButton(e)) {				
 			// see mouseReleased
 			return;
 		}
@@ -708,6 +717,7 @@ public class EuclidianController implements MouseListener,
 			if (!selGeos.contains(geo)) {
 				app.clearSelectedGeos();
 				app.addSelectedGeo(geo);
+				app.geoElementSelected(geo, false); // copy definiton to input bar
 			}
 		}				
 		
@@ -760,24 +770,17 @@ public class EuclidianController implements MouseListener,
 			
 			// point with changeable coord parent numbers
 			if (movedGeoElement.isGeoPoint() && 
-					((GeoPoint) movedGeoElement).getMode() == Kernel.COORD_CARTESIAN &&
 					((GeoPoint) movedGeoElement).hasChangeableCoordParentNumbers()) {
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
 			}
-			
-			
-			
-
-			
-			
 			
 			// STANDARD case: get free input points of dependent movedGeoElement
 			else if (movedGeoElement.hasMoveableInputPoints()) {
 				// allow only moving of the following object types
 				if (movedGeoElement.isGeoLine() || 
 					  movedGeoElement.isGeoPolygon() ||
-					  movedGeoElement.isGeoVector() || 
+					  movedGeoElement.isGeoVector() ||
 					  movedGeoElement.isGeoConic() ) 
 				{		
 					translateableGeos = movedGeoElement.getFreeInputPoints();
@@ -792,7 +795,6 @@ public class EuclidianController implements MouseListener,
 				if (translationVec == null)
 					translationVec = new GeoVector(kernel.getConstruction());
 			} else {
-				
 				moveMode = MOVE_NONE;
 			}				
 		} 
@@ -981,7 +983,7 @@ public class EuclidianController implements MouseListener,
 			else {
 				moveMode = MOVE_NONE;
 			}
-			
+
 			view.repaint();												
 	}
 
@@ -1296,6 +1298,15 @@ public class EuclidianController implements MouseListener,
 			app.reset();
 			return;
 		}
+		else if (view.hitAnimationButton(e)) {		
+			if (kernel.isAnimationRunning())
+				kernel.getAnimatonManager().stopAnimation();
+			else
+				kernel.getAnimatonManager().startAnimation();			
+			view.repaint();
+			app.setUnsaved();
+			return;
+		}
 				
 // Michael Borcherds 2007-10-08 allow drag with right mouse button
 		if (Application.isRightClick(e) && !TEMPORARY_MODE)
@@ -1336,6 +1347,13 @@ public class EuclidianController implements MouseListener,
 		// handle moving
 		boolean changedKernel = POINT_CREATED;		
 		if (DRAGGING_OCCURED) {			
+			
+			// copy value into input bar
+			if (mode == EuclidianView.MODE_MOVE && movedGeoElement != null) {
+				app.geoElementSelected(movedGeoElement,false);
+			}
+			
+			
 			changedKernel = (moveMode != MOVE_NONE);			
 			movedGeoElement = null;
 			rotGeoElement = null;	
@@ -1345,6 +1363,7 @@ public class EuclidianController implements MouseListener,
 // Michael Borcherds 2007-10-08
 			if (allowSelectionRectangle()) {
 				processSelectionRectangle(e);	
+				
 				
 				return;
 			}
@@ -1468,9 +1487,9 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// select all geos in selection rectangle 
-	protected void processSelectionRectangle(MouseEvent e) {
+	protected void processSelectionRectangle(MouseEvent e) {		
 		clearSelections();
-		ArrayList hits = view.getHits(view.getSelectionRectangle());	
+		ArrayList hits = view.getHits(view.getSelectionRectangle());		
 				
 		switch (mode) {
 			case EuclidianView.MODE_ALGEBRA_INPUT:
@@ -1534,20 +1553,35 @@ public class EuclidianController implements MouseListener,
 		app.setSelectedGeos(hits);
 	}
 
-	final public void mouseMoved(MouseEvent e) {
-		
+	final public void mouseMoved(MouseEvent e) {		
 		setMouseLocation(e);
-		ArrayList hits = null;
-		boolean noHighlighting = false;
+		boolean repaintNeeded;
 		
-		altDown=e.isAltDown();
-		
+		// reset icon
 		if (hitResetIcon()) {
 			view.setToolTipText(app.getPlain("resetConstruction"));
 			view.setHitCursor();
 			return;
 		} 
-
+		
+		// animation button
+		boolean hitAnimationButton = view.hitAnimationButton(e);
+		repaintNeeded = view.setAnimationButtonsHighlighted(hitAnimationButton);
+		if (hitAnimationButton) {
+			if (kernel.isAnimationPaused())
+				view.setToolTipText(app.getPlain("Play"));
+			else 
+				view.setToolTipText(app.getPlain("Pause"));		
+			view.setHitCursor();
+			view.repaint();
+			return;
+		}			
+		
+		// standard handling
+		ArrayList hits = null;
+		boolean noHighlighting = false;		
+		altDown=e.isAltDown();		
+				
 		// label hit in move mode: block all other hits
 		if (mode == EuclidianView.MODE_MOVE) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
@@ -1574,9 +1608,8 @@ public class EuclidianController implements MouseListener,
 			view.setHitCursor();
 
 		//	manage highlighting
-		boolean repaintNeeded = noHighlighting ? 
-				  refreshHighlighting(null)
-				: refreshHighlighting(hits);
+		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
+						|| repaintNeeded;
 
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
@@ -1601,7 +1634,7 @@ public class EuclidianController implements MouseListener,
 			transformCoords();
 			repaintNeeded = true;
 		}		
-
+				
 		if (repaintNeeded) {
 			kernel.notifyRepaint();
 		}
@@ -1667,6 +1700,7 @@ public class EuclidianController implements MouseListener,
 			} else {
 				if (DRAGGING_OCCURED && app.selectedGeosSize() == 1)
 					app.clearSelectedGeos();
+
 			}
 			break;			
 			
@@ -1930,8 +1964,9 @@ public class EuclidianController implements MouseListener,
 	final public void mouseExited(MouseEvent e) {
 		refreshHighlighting(null);
 		resetToolTipManager();
+		view.setAnimationButtonsHighlighted(false);
 		view.showMouseCoords = false;
-		mouseLoc = null;
+		mouseLoc = null;		
 		view.repaint();
 	}
 
@@ -2127,18 +2162,21 @@ public class EuclidianController implements MouseListener,
 		param = param * (max - min) / movedGeoNumeric.getSliderWidth();					
 				
 		// round to animation step scale				
-		param = Kernel.roundToScale(param, movedGeoNumeric.animationStep);
+		param = Kernel.roundToScale(param, movedGeoNumeric.animationIncrement);
+		double val = min + param;	
+			
+		if (movedGeoNumeric.animationIncrement > Kernel.MIN_PRECISION) {
+			// round to decimal fraction, e.g. 2.800000000001 to 2.8
+			val = kernel.checkDecimalFraction(val);
+		}
 		
-		double val = min + param;
 		if (movedGeoNumeric.isGeoAngle()) {
 			if (val < 0) 
 				val = 0;
 			else if (val > Kernel.PI_2)
 				val = Kernel.PI_2;
 		}
-		
-		val = kernel.checkInteger(val);	
-		
+							
 		// do not set value unless it really changed!
 		if (movedGeoNumeric.getValue() == val)
 			return;
@@ -2147,6 +2185,7 @@ public class EuclidianController implements MouseListener,
 		
 		movedGeoNumericDragged = true;
 		
+		movedGeoNumeric.setAnimating(false); // stop animation if slider dragged
 		
 		if (repaint)
 			movedGeoNumeric.updateRepaint();
@@ -2170,26 +2209,24 @@ public class EuclidianController implements MouseListener,
 	
 	final protected void moveDependent(boolean repaint) {
 		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
-
-		// we don't specify screen coords for translation as all objects are Translateables
-		GeoElement.moveObjects(translateableGeos, translationVec);		
-		if (repaint)
-			kernel.notifyRepaint();
-				
 		startPoint.setLocation(xRW, yRW);
+			
+		// we don't specify screen coords for translation as all objects are Translateables
+		GeoElement.moveObjects(translateableGeos, translationVec, startPoint);		
+		if (repaint)
+			kernel.notifyRepaint();						
 	}
 	
 	protected void moveMultipleObjects(boolean repaint) {		
 		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);		
-		
-		// move all selected geos
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec);									
-		
-		if (repaint)
-			kernel.notifyRepaint();	
-		
 		startPoint.setLocation(xRW, yRW);
 		startLoc = mouseLoc;
+		
+		// move all selected geos
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, startPoint);									
+		
+		if (repaint)
+			kernel.notifyRepaint();					
 	}		
 	
 	
@@ -4202,7 +4239,8 @@ public class EuclidianController implements MouseListener,
 
 			if (selPoints() > 1) 
 			{					
-			 	list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,getSelectedPoints(), GeoElement.GEO_CLASS_POINT);
+			 	GeoPoint[] points = getSelectedPoints();
+				list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,points, points.length, GeoElement.GEO_CLASS_POINT);
 		     	if (list != null) {
 		    	 	kernel.FitLineY(null, list);
 		    	 	return true;             	     	 

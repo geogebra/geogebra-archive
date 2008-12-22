@@ -675,7 +675,7 @@ public abstract class Drawable {
     			break;*/
     			
     		case GeoElement.GEO_CLASS_POINT:
-    	    	Application.debug("GEO_CLASS_POINT");   		
+    	    	//Application.debug("GEO_CLASS_POINT");   		
 	    		GeoPoint P = (GeoPoint)geo;
 		    	P.getInhomCoords(coords);
 		    	
@@ -685,14 +685,18 @@ public abstract class Drawable {
 			    	row = P.getTraceRow();
 			    	if (row > 0) {
 		    	    	//Application.debug(col+row);   		
+				    	cons.getApplication().getGuiManager().setScrollToShow(true);
+				    	
 				    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
 				    	traceCell.setAuxiliaryObject(true);
 				    	
 				    	col = P.getTraceColumn2(); // call before getTraceRow()
-		    	    	Application.debug(col+row);   		
+		    	    	//Application.debug(col+row);   		
 				    	
 				    	GeoNumeric traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
 				    	traceCell2.setAuxiliaryObject(true);
+				    	
+				    	cons.getApplication().getGuiManager().setScrollToShow(false);	
 				    	
 				    	P.setLastTrace1(coords[0]);
 				    	P.setLastTrace2(coords[1]);
@@ -712,10 +716,14 @@ public abstract class Drawable {
 			    	col = vector.getTraceColumn1();
 			    	row = vector.getTraceRow();
 			    	if (row > 0) {
-				    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
+				    	cons.getApplication().getGuiManager().setScrollToShow(true);
+			    		
+			    		GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
 				    	traceCell.setAuxiliaryObject(true);
 				    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
 				    	traceCell2.setAuxiliaryObject(true);
+				    	
+				    	cons.getApplication().getGuiManager().setScrollToShow(false);
 				    	
 				    	vector.setLastTrace1(coords[0]);
 				    	vector.setLastTrace2(coords[1]);

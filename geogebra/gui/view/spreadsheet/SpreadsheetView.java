@@ -1,14 +1,16 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.main.Application;
-import geogebra.main.View;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+import geogebra.main.View;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,13 +22,13 @@ import java.util.HashSet;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -36,19 +38,20 @@ import javax.swing.table.TableColumn;
 public class SpreadsheetView extends JScrollPane implements View
 {
 
-	public static final int ROW_HEADER_WIDTH = 30;
+	public static final int ROW_HEADER_WIDTH = 35; // wide enough for "9999"
 	
 	private static final long serialVersionUID = 1L;
 
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
 	public JList rowHeader;
+	private RowHeaderRenderer rowHeaderRenderer;
 	protected Application app;
 	private Kernel kernel;
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
-	private static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
-	private static int MAX_ROWS = 9999; // TODO make sure this is actually used
+	protected static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
+	protected static int MAX_ROWS = 9999; // TODO make sure this is actually used
 	
 	private int highestUsedColumn = -1; // for trace
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
@@ -79,14 +82,39 @@ public class SpreadsheetView extends JScrollPane implements View
 		//rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
-		rowHeader.setCellRenderer(new RowHeaderRenderer(table, rowHeader));
+		rowHeaderRenderer = new RowHeaderRenderer(table, rowHeader);
+		rowHeader.setCellRenderer(rowHeaderRenderer);
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
 		
 		// Florian Sonner 2008-10-20
 		setBorder(BorderFactory.createEmptyBorder());
+		
+		// create and set corners, Markus December 08
+		Corner upperLeftCorner = new Corner(); //use FlowLayout
+		upperLeftCorner.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				table.selectAll();
+			}
+		});
+		
+		//Set the corners.
+		setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
+//		setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
+//		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 	}
+	
+	private class Corner extends JComponent {
+		private static final long serialVersionUID = -4426785169061557674L;
+
+		protected void paintComponent(Graphics g) {
+	        // Fill me with dirty brown/orange.
+	        g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
+	        g.fillRect(0, 0, getWidth(), getHeight());
+	    }
+	}
+
 		/**/
 	
 	public void attachView() {
@@ -146,14 +174,27 @@ public class SpreadsheetView extends JScrollPane implements View
 			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
 			
 			if (location.y >= tableModel.getRowCount()) {
-				tableModel.setRowCount(location.y + 1);				
+				tableModel.setRowCount(location.y + 1);		
+				getRowHeader().revalidate();
 			}
 			if (location.x >= tableModel.getColumnCount()) {
-				table.setMyColumnCount(location.x + 1);				
+				table.setMyColumnCount(location.x + 1);		
+				getColumnHeader().revalidate();
 			}
 			tableModel.setValueAt(geo, location.y, location.x);
+
+			// autoscroll to new cell's location
+			if (scrollToShow)
+				table.scrollRectToVisible(table.getCellRect(location.y, location.x, true));
+		
 		}
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
+	}
+	
+	private boolean scrollToShow = false;
+	
+	public void setScrollToShow(boolean scrollToShow) {
+		this.scrollToShow = scrollToShow;
 	}
 	
 	public void remove(GeoElement geo) {
@@ -272,12 +313,13 @@ public class SpreadsheetView extends JScrollPane implements View
 		public RowHeaderRenderer(JTable table, JList rowHeader) {
 	 		super("", JLabel.CENTER);
     		setOpaque(true);
-    		defaultBackground = getBackground();
+    		defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
 			
 			this.rowHeader = rowHeader;
 			header = table.getTableHeader() ;
 //			setOpaque(true);
-			setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
+			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
 //			setHorizontalAlignment(CENTER) ;
 //			setForeground(header.getForeground()) ;
 //			setBackground(header.getBackground());
@@ -293,13 +335,15 @@ public class SpreadsheetView extends JScrollPane implements View
 	
 		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
 			setText ((value == null) ? ""  : value.toString());
+						
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
 				if (index >= minSelectionRow && index <= maxSelectionRow &&
-						selectionModel.isSelectedIndex(index)) {
+						selectionModel.isSelectedIndex(index)) 
+				{
 					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
 				}
 				else {
-					setBackground(defaultBackground);
+					setBackground(defaultBackground);					
 				}
 			}
 			else {
@@ -323,6 +367,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	{
 		
 		public void mouseClicked(MouseEvent e) {
+			
 		}
 		
 		public void mouseEntered(MouseEvent e) {
@@ -421,22 +466,22 @@ public class SpreadsheetView extends JScrollPane implements View
 			case KeyEvent.VK_C : // control + c
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
+					e.consume();
 				}
-				e.consume();
 				break;
 			case KeyEvent.VK_V : // control + v
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					boolean storeUndo = table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 					if (storeUndo)
 		 				app.storeUndoInfo();
+					e.consume();
 				}
-				e.consume();
 				break;				
 			case KeyEvent.VK_X : // control + x
 				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
+					e.consume();
 				}
-				e.consume();
 				boolean storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				if (storeUndo)
 	 				app.storeUndoInfo();
@@ -447,7 +492,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
 				if (storeUndo)
 	 				app.storeUndoInfo();
-				break;
+				break;			
 			}
 		}
 		
@@ -521,7 +566,37 @@ public class SpreadsheetView extends JScrollPane implements View
 		column.setPreferredWidth(width);
 		//column.
 	}
+	
+public void updateFonts() {
 		
+		
+		Font font = app.getPlainFont();
+		
+		int size = font.getSize();
+		if (size < 12) size = 12; // minimum size
+		double multiplier = (double)(size)/12.0;
+		
+		table.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));
+		rowHeader.setFixedCellHeight(table.getRowHeight()); 
+		columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
+					, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		
+		for (int i = 0; i < table.getColumnCount(); ++ i) {
+			table.getColumnModel().getColumn(i).setPreferredWidth((int)(MyTable.TABLE_CELL_WIDTH * multiplier));
+		}
+		
+		table.setFont(app.getPlainFont());
+		rowHeader.setFont(font);
+		columnHeader.setFont(font);
+		rowHeaderRenderer.setFont(font);
+	
+		
+	}
+
+	public MyTable getTable() {
+		return table;
+	}
 	
 }
 		

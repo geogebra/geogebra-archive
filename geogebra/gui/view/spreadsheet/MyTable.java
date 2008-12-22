@@ -18,10 +18,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -38,8 +42,10 @@ public class MyTable extends JTable
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
-	public static final Color SELECTED_BACKGROUND_COLOR = Application.COLOR_SELECTION;
-	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,185,210);
+	public static final Color SELECTED_BACKGROUND_COLOR = new Color(214, 224, 245);
+	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.lightGray;
+	public static final Color BACKGROUND_COLOR_HEADER = new Color(232, 238, 247);
+	public static final Color TABLE_GRID_COLOR = Color.gray;
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,8 +54,7 @@ public class MyTable extends JTable
 	protected MyCellEditor editor;
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
-	protected KeyListener[] defaultKeyListeners;
-	protected TableCellRenderer1 columnHeader;
+	protected MyColumnHeaderRenderer columnHeader;
 	protected SpreadsheetView view;
 	protected DefaultTableModel tableModel;
 
@@ -68,8 +73,9 @@ public class MyTable extends JTable
 		setCellSelectionEnabled(true);
 		// set cell size and column header
 		setRowHeight(TABLE_CELL_HEIGHT);
-		columnHeader = new TableCellRenderer1();
+		columnHeader = new MyColumnHeaderRenderer();
 		columnHeader.setPreferredSize(new Dimension(TABLE_CELL_WIDTH, TABLE_CELL_HEIGHT));
+		
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
 			getColumnModel().getColumn(i).setPreferredWidth(TABLE_CELL_WIDTH);
@@ -78,6 +84,7 @@ public class MyTable extends JTable
 		setDefaultRenderer(Object.class, new MyCellRenderer());
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
+	
 		// set selection colors
 		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
@@ -97,7 +104,7 @@ public class MyTable extends JTable
 			addMouseMotionListener(mouseMotionListeners[i]);
 		}
 		// key listener
-		defaultKeyListeners = getKeyListeners();
+		KeyListener[] defaultKeyListeners = getKeyListeners();
 		for (int i = 0; i < defaultKeyListeners.length; ++ i) {
 			removeKeyListener(defaultKeyListeners[i]);
 		}
@@ -120,7 +127,7 @@ public class MyTable extends JTable
 
 		// visual appearance 	 
 		setShowGrid(true); 	 
-		setGridColor(Color.gray); 	 
+		setGridColor(TABLE_GRID_COLOR); 	 
 
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
@@ -163,8 +170,8 @@ public class MyTable extends JTable
 		selectionChangedNonResponsive = true;
 		this.clearSelection();
 		selectionChangedNonResponsive = false;
-	}
-
+	}	
+	
 	protected boolean selectionChangedNonResponsive = false;
 	public long selectionTime = 0;
 
@@ -207,9 +214,6 @@ public class MyTable extends JTable
 			}
 		}
 		app.setSelectedGeos(list);
-		if (app.getGuiManager().showAlgebraView())
-			((View)app.getGuiManager().getAlgebraView()).repaintView();
-		app.getEuclidianView().repaintView();
 	}
 
 	protected Point getPixel(int column, int row, boolean min) {
@@ -272,6 +276,9 @@ public class MyTable extends JTable
 
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
+		
+		// TODO: improve efficiency!!!!
+		
 		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 			return;
 		}
@@ -301,7 +308,7 @@ public class MyTable extends JTable
 			// -|1|-
 			// 2|-|3
 			// -|4|-
-			graphics.setColor(Color.GRAY);
+			graphics.setColor(Color.gray);
 			if (dragingToColumn < minSelectionColumn) { // 2
 				Point point1 = getPixel(dragingToColumn, minSelectionRow, true);
 				Point point2 = getPixel(minSelectionColumn - 1, maxSelectionRow, false);
@@ -403,6 +410,13 @@ public class MyTable extends JTable
 				if (doubleClick) {
 					allowEditing = true;
 					editCellAt(getSelectedRow(), getSelectedColumn()); 
+		            
+					// workaround, see
+					// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625
+					final JTextField f = (JTextField)getEditorComponent();
+		            f.requestFocus();
+		            f.getCaret().setVisible(true);
+
 					allowEditing = false;
 				}
 			}
@@ -435,6 +449,7 @@ public class MyTable extends JTable
 				if (geo != null) {
 					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
 					ai.setString(geo);
+					//app.geoElementSelected(geo, true); // copy definiton to input bar
 				}
 
 			}
@@ -584,9 +599,12 @@ public class MyTable extends JTable
 				if (point != null && name0 != null) {
 					int column2 = (int)point.getX();
 					int row2 = (int)point.getY();
-					int column1 = GeoElement.getSpreadsheetColumn(name0);
-					int row1 = GeoElement.getSpreadsheetRow(name0);
-					if (column1 > column2) {
+					
+					Matcher matcher = GeoElement.spreadsheetPattern.matcher(name0);
+ 					int column1 = GeoElement.getSpreadsheetColumn(matcher);
+ 					int row1 = GeoElement.getSpreadsheetRow(matcher);
+					
+ 					if (column1 > column2) {
 						int temp = column1;
 						column1 = column2;
 						column2 = temp;
@@ -617,6 +635,7 @@ public class MyTable extends JTable
 				int x = e.getX();
 				int y = e.getY();
 				Point point = getIndexFromPixel(x, y);
+				
 				if (point == null) {
 					dragingToRow = -1;
 					dragingToColumn = -1;
@@ -624,6 +643,17 @@ public class MyTable extends JTable
 				else {
 					dragingToRow = (int)point.getY();
 					dragingToColumn = (int)point.getX();
+								
+					// scroll to show "highest" selected cell
+					scrollRectToVisible(getCellRect(point.y, point.x, true));
+					
+					// increase size if we're at the bottom of the spreadsheet
+					
+					if (dragingToRow + 1 == getRowCount() && dragingToRow < SpreadsheetView.MAX_ROWS) {
+						tableModel.setRowCount(getRowCount() +1);		
+						getView().getRowHeader().revalidate();
+					}
+					
 					// 1|2|3
 					// 4|5|6
 					// 7|8|9
@@ -720,41 +750,114 @@ public class MyTable extends JTable
 	{
 
 		public void keyTyped(KeyEvent e) {
-			int keyCode = e.getKeyChar();
-			//Application.debug(keyCode);
-			switch (keyCode) {
-			case KeyEvent.VK_ESCAPE:
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					editor.editing = false;
-				}
-				break;
-			//case (KeyEvent.VK_ENTER):
-			//		break;
-			default:
-
-				if (!editor.isEditing()) {
-					allowEditing = true;
-					tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
-					editCellAt(getSelectedRow(), getSelectedColumn()); 
-					allowEditing = false;
-				}
-			break;
-
-
-
-			}
+			
+//			// TODO: remove
+//			Application.debug("keyTyped " + e);
+//			
+//			int keyCode = e.getKeyChar();
+//			//Application.debug(keyCode);
+//			switch (keyCode) {
+//			
+//				
+//			case KeyEvent.VK_META: // MacOS - don't want editing to start
+//				break;
+//				
+//			case (KeyEvent.VK_ENTER):				
+//				e.consume();
+//				break;	
+//				
+//			default:
+//				if (!editor.isEditing() && !(Application.isControlDown(e) || e.isAltDown())) {
+//					
+//					// TODO: remove
+//					Application.debug("keyTyped: start editing ");
+//					
+//					allowEditing = true;
+//					tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
+//					editCellAt(getSelectedRow(), getSelectedColumn()); 
+//					// workaround, see
+//					// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625
+//		            final JTextField f = (JTextField)getEditorComponent();
+//		            f.getCaret().setVisible(true);
+//		            SwingUtilities.invokeLater( new Runnable(){ public void
+//		            	run() { f.requestFocus();} });
+//					allowEditing = false;
+//				}
+//			break;
+//
+//
+//
+//			}
 		}
 
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
+			//Application.debug(keyCode+"");
 			boolean shiftDown = e.isShiftDown(); 	 
 			boolean altDown = e.isAltDown(); 	 
 			boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
-			|| e.isControlDown(); // Fudge (Mac ctrl key)	                    
+			|| e.isControlDown(); // Fudge (Mac ctrl key)	
+			
 
 
 			switch (keyCode) {
+			
+			case KeyEvent.VK_UP:
+				// copy description into input bar when a cell is entered
+				GeoElement geo = (GeoElement) getModel().getValueAt(getSelectedRow() - 1, getSelectedColumn());
+				if (geo != null) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+				}
+				
+				break;
+				
+			case KeyEvent.VK_LEFT:
+				// copy description into input bar when a cell is entered
+				geo = (GeoElement) getModel().getValueAt(getSelectedRow(), getSelectedColumn() - 1);
+				if (geo != null) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+				}
+				break;
+
+			
+			case KeyEvent.VK_DOWN:
+				// auto increase spreadsheet size when you go off the bottom	
+				if (getSelectedRow() + 1 == getRowCount() && getSelectedRow() < SpreadsheetView.MAX_ROWS) {
+					tableModel.setRowCount(getRowCount() +1);		
+					getView().getRowHeader().revalidate();
+				}
+				
+
+
+				// copy description into input bar when a cell is entered
+				geo = (GeoElement) getModel().getValueAt(getSelectedRow()+1, getSelectedColumn());
+				if (geo != null) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+				}
+
+				
+				break;
+				
+
+			case KeyEvent.VK_RIGHT:
+				// auto increase spreadsheet size when you go off the right
+				
+				if (getSelectedColumn() + 1 == getColumnCount() && getSelectedColumn() < SpreadsheetView.MAX_COLUMNS) {
+					setMyColumnCount(getColumnCount() +1);		
+					getView().getColumnHeader().revalidate();
+				}
+
+				// copy description into input bar when a cell is entered
+				geo = (GeoElement) getModel().getValueAt(getSelectedRow(), getSelectedColumn() + 1);
+				if (geo != null) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+				}
+break;
+				
 			case KeyEvent.VK_META: //MAC_OS Meta
 				e.consume(); // stops editing start
 				break;
@@ -789,7 +892,10 @@ public class MyTable extends JTable
 			case KeyEvent.VK_DELETE: 	                         
 			case KeyEvent.VK_BACK_SPACE:
 				if (! editor.isEditing()) {
-					if (ctrlDown) {
+					if (Character.isLetterOrDigit(e.getKeyChar()) &&
+							!editor.isEditing() && !(ctrlDown || e.isAltDown())) {
+						letterOrDigitTyped();
+					} else	if (ctrlDown) {
 						e.consume();
 
 						if (keyCode == KeyEvent.VK_C) {
@@ -817,16 +923,33 @@ public class MyTable extends JTable
 					}
 					return;
 				}
+				break;		
+				
+			case (KeyEvent.VK_ENTER):	
+				if (!editor.isEditing()) {
+					allowEditing = true;
+					editCellAt(getSelectedRow(), getSelectedColumn());
+					 final JTextField f = (JTextField)getEditorComponent();
+			            f.requestFocus();
+			            f.getCaret().setVisible(true);
+					allowEditing = false;
+				}
+				e.consume();
+				break;	
+				
+			case KeyEvent.VK_TAB:
+				// stop TAB erasing cell before moving
 				break;
 
-			case KeyEvent.VK_ESCAPE:
-				//Application.debug(editor.isEditing());
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					e.setKeyCode(KeyEvent.VK_ENTER);
+			default:
+				if (!Character.isIdentifierIgnorable(e.getKeyChar()) &&
+						!editor.isEditing() && !(ctrlDown || e.isAltDown())) {
+					letterOrDigitTyped();
 				}
-				break;
+			break;
+				
 			}
+				
 			/*
 			if (keyCode >= 37 && keyCode <= 40) {
 				if (editor.isEditing())	return;			
@@ -837,6 +960,26 @@ public class MyTable extends JTable
 				defaultKeyListeners[i].keyPressed(e);			
 			}
 			 */
+		}
+		
+		public void letterOrDigitTyped() {
+			allowEditing = true;
+			tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
+			editCellAt(getSelectedRow(), getSelectedColumn()); 
+			// workaround, see
+			// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625				
+            final JTextField f = (JTextField)getEditorComponent();
+            f.requestFocus();
+            f.getCaret().setVisible(true);
+            
+            // workaround for Mac OS X 10.5 problem (first character typed deleted)
+            if (Application.MAC_OS)
+	            SwingUtilities.invokeLater( new Runnable(){ public void
+	            	run() { f.setSelectionStart(1);
+		            f.setSelectionEnd(1);} });
+
+			allowEditing = false;
+			
 		}
 
 		public void keyReleased(KeyEvent e) {
@@ -960,17 +1103,17 @@ public class MyTable extends JTable
 	}
 	/**/
 
-	protected class TableCellRenderer1 extends JLabel implements TableCellRenderer, ListSelectionListener
+	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener
 	{
 		private static final long serialVersionUID = 1L;
 
 		private Color defaultBackground;
 
-		public TableCellRenderer1() {    		
+		public MyColumnHeaderRenderer() {    		
 			super("", JLabel.CENTER);
 			setOpaque(true);
-			defaultBackground = getBackground();
-			setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
+			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
 			Font font1 = getFont(); 
 			if (font1 == null || font1.getSize() == 0) {
 				kernel.getApplication().getPlainFont();
@@ -991,6 +1134,9 @@ public class MyTable extends JTable
 					setBackground(defaultBackground);				
 				}
 			}
+			else {
+				setBackground(defaultBackground);				
+			}
 			return this;			
 		}
 
@@ -1004,7 +1150,7 @@ public class MyTable extends JTable
 					selectedColumns[i] = true;
 				}
 			}
-			getTableHeader().repaint();
+			repaint();
 		}
 	}
 
@@ -1201,7 +1347,7 @@ public class MyTable extends JTable
 		
 		if (geo != null && geo.isFixed()) return false;
 		
-		return allowEditing;
+		return true;
 	}
 
 }

@@ -50,10 +50,15 @@ public class AlgoDependentConic extends AlgoElement {
         ev[3] = lhs.getCoefficient("x");        
         ev[4] = lhs.getCoefficient("y");                
         ev[5] = lhs.getConstantCoefficient();          
-        // find constant parts of input and evaluate them right now
+       
+        // check coefficients
         for (int i=0; i<6; i++) {
+        	  // find constant parts of input and evaluate them right now
             if (ev[i].isConstant()) ev[i] = ev[i].evaluate();
-        }
+            
+            // check that coefficients are numbers
+            ((NumberValue) ev[i].evaluate()).getDouble();    
+        }  
         
         conic = new GeoConic(cons); 
         setInputOutput(); // for AlgoElement
@@ -89,7 +94,7 @@ public class AlgoDependentConic extends AlgoElement {
 	                ((NumberValue) ev[4].evaluate()).getDouble(),        
 	                ((NumberValue) ev[5].evaluate()).getDouble()
 	                );
-	    } catch (Exception e) {
+	    } catch (Throwable e) {
 			conic.setUndefined();
 		}
     }   

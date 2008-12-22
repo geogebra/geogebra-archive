@@ -186,8 +186,8 @@ implements ExpressionValue {
     }
     
     final public void setLeft(ExpressionValue l) {
-        left = l;
-        left.setInTree(true);        
+        left = l;      
+        left.setInTree(true); // needed fot list operations eg k=2 then k {1,2}
     }
     
     public ExpressionNode getLeftTree() {       
@@ -203,7 +203,7 @@ implements ExpressionValue {
     
     final public void setRight(ExpressionValue r) {
         right = r;
-        right.setInTree(true);
+        right.setInTree(true); // needed fot list operations eg k=2 then k {1,2}
         leaf = false;      
     }
     
@@ -277,15 +277,39 @@ implements ExpressionValue {
             if (node.leaf) {            	   
             	left = node.left;
             	simplifyLeafs();
-            }            
+            }                        
+        }       
+        
+        if (right != null) {
+        	if (right.isExpressionNode()) {        
+	            ExpressionNode node = (ExpressionNode) right;
+	            if (node.leaf) {             	            	         	
+	            	right = node.left;
+	            	simplifyLeafs();
+	            }      
+        	}        	
+        }               
+    }
+    
+    /**
+     * Replaces all Command objects in tree by their evaluated GeoElement
+     * objects.
+     */
+    final private void simplifyAndEvalCommands() {         
+        if (left.isExpressionNode()) {
+        	((ExpressionNode) left).simplifyAndEvalCommands();                      
+        }
+        else if (left instanceof Command) {
+        	left = ((Command) left).evaluate();
         }
         
-        if (right != null && right.isExpressionNode()) {
-            ExpressionNode node = (ExpressionNode) right;
-            if (node.leaf) {             	            	         	
-            	right = node.left;
-            	simplifyLeafs();
-            }            
+        if (right != null) {
+        	if (right.isExpressionNode()) {        
+        		((ExpressionNode) right).simplifyAndEvalCommands(); 	             
+        	}
+        	 else if (right instanceof Command) {
+        		 right = ((Command) right).evaluate();
+             }
         }               
     }
     
@@ -343,8 +367,8 @@ implements ExpressionValue {
         // handle list operations first 
         
         // matrix * 2D vector   
-        if (lt.isListValue() && operation == MULTIPLY  
-            	&& rt.isVectorValue()) { 
+        if (lt.isListValue()) {
+        	if (operation == MULTIPLY && rt.isVectorValue()) { 
             	MyList myList = ((ListValue) lt).getMyList();
             	boolean isMatrix = myList.isMatrix();
             	int rows = myList.getMatrixRows();
@@ -365,14 +389,16 @@ implements ExpressionValue {
             		return myVec;
             	}
 
+	        }
+        	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+	            		&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+        	{ 
+	            	MyList myList = ((ListValue) lt).getMyList();
+	            	// list lt operation rt
+	            	myList.applyRight(operation, rt);
+	            	return myList;
+	        }	        
         }
-        if (lt.isListValue() && operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
-            	&& !rt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
-            	MyList myList = ((ListValue) lt).getMyList();
-            	// list lt operation rt
-            	myList.applyRight(operation, rt);
-            	return myList;
-            }
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
         	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	MyList myList = ((ListValue) rt).getMyList();
@@ -662,7 +688,7 @@ implements ExpressionValue {
                     GeoVec2D.mult(vec, ((NumberValue)lt).getDouble(), vec);
                     return vec;
                 }                        	  
-                else {    
+                else {                	
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
                 }
@@ -1372,7 +1398,7 @@ implements ExpressionValue {
        
         case FUNCTION:      
             // function(number)
-            if (rt.isNumberValue()) {    
+            if (rt.isNumberValue() && lt instanceof Functional) {    
             	NumberValue arg = (NumberValue) rt;                     			            
             	return arg.getNumber().apply((Functional)lt);
             }
@@ -1500,7 +1526,8 @@ implements ExpressionValue {
      */
     public void resolveVariables() {   
     	doResolveVariables();
-    	simplifyLeafs();
+    	simplifyAndEvalCommands();
+    	simplifyLeafs();    	
     }       
     	
     private void doResolveVariables() {    	    	
@@ -1713,10 +1740,7 @@ implements ExpressionValue {
         if (left.isGeoElement()) {
         	GeoElement treeGeo = (GeoElement) left;
         	if (left == geo || treeGeo.isChildOf(geo)) {        		 
-        		left = treeGeo.copyInternal(treeGeo.getConstruction());
-        		
-        		//TODO: remove
-    	        Application.debug("  replace: " + treeGeo.getLabel() + " by " + treeGeo);
+        		left = treeGeo.copyInternal(treeGeo.getConstruction());        		
         	}
         }         
         else if (left.isExpressionNode()) {
@@ -1909,16 +1933,14 @@ implements ExpressionValue {
         
         //int oldDigits = kernel.getMaximumFractionDigits();
         //kernel.setMaximumFractionDigits(50);       
-        kernel.setTemporaryMaximumPrintAccuracy();
-        
+        kernel.setTemporaryPrintDecimals(50);        
         kernel.setCASPrintForm(STRING_TYPE);
         
         String ret = printCASstring(symbolic);
         
         //kernel.setMaximumFractionDigits(oldDigits);
-        kernel.restorePrintAccuracy();
-        
-        kernel.setCASPrintForm(oldPrintForm);
+        kernel.restorePrintAccuracy();        
+        kernel.setCASPrintForm(oldPrintForm);                     
         return ret;
     }
         
@@ -1941,9 +1963,9 @@ implements ExpressionValue {
         	if (symbolic && left.isGeoElement()) 
 	            ret = ((GeoElement)left).getLabel();                            
 	        else if (left.isExpressionNode())
-	            ret  = ((ExpressionNode)left).printCASstring(symbolic);
+	            ret = ((ExpressionNode)left).printCASstring(symbolic);
 	        else 
-	        	ret = symbolic ? left.toString() : left.toValueString(); 	        
+	        	ret = symbolic ? left.toString() : left.toValueString(); 		        	         	       
         } 
         
         // STANDARD case: no leaf
@@ -1951,10 +1973,10 @@ implements ExpressionValue {
 	        // expression node 
 	        String leftStr = null, rightStr = null;                
 	        if (symbolic && left.isGeoElement()) {  
-	            leftStr = ((GeoElement)left).getLabel();                            
-	        } else if (left.isExpressionNode())
+	            leftStr = ((GeoElement)left).getLabel(); 
+	        } else if (left.isExpressionNode()) {
 	            leftStr  = ((ExpressionNode)left).printCASstring(symbolic);
-	        else {
+	        } else {
 	        	leftStr = symbolic ? left.toString() : left.toValueString(); 
 	        }
 	        
@@ -1967,7 +1989,7 @@ implements ExpressionValue {
 	            	rightStr = symbolic ? right.toString() : right.toValueString(); 
 	            }            
 	        }     
-	        ret = operationToString(leftStr, rightStr, !symbolic);
+	        ret = operationToString(leftStr, rightStr, !symbolic); 
         }                
 
         return ret;     
@@ -2540,9 +2562,9 @@ implements ExpressionValue {
 	        				 
 	        				 if (rightStr.length() == 1) {
                                  switch (rightStr.charAt(0)) {
-                                 // TODO need parser support
-                                 	//case '0': sb.append('\u2070'); break;
-                                 	//case '1': sb.append('\u00b9'); break;
+                                 
+                                 	case '0': sb.append('\u2070'); break;
+                                 	case '1': sb.append('\u00b9'); break;
                                  	case '2': sb.append('\u00b2'); break;
                                      case '3': sb.append('\u00b3'); break;
                                      case '4': sb.append('\u2074'); break;
