@@ -33,10 +33,10 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	
 	//drawing
 
-	public void drawPrimitive(EuclidianRenderer3D renderer) {
+	public void drawGeometry(EuclidianRenderer3D renderer) {
 		renderer.drawTriangle();
 	}
-	public void drawPrimitivePicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		renderer.drawTriangle();
 	}
 	

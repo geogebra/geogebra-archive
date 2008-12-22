@@ -42,7 +42,7 @@ public class DrawPoint3D extends Drawable3DSolid{
 	}
 	
 
-	public void drawPrimitive(EuclidianRenderer3D renderer) {
+	public void drawGeometry(EuclidianRenderer3D renderer) {
 		GeoPoint3D l_point = (GeoPoint3D) getGeoElement(); 
 		if (l_point.hasPathOn())
 			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION); //points on path are more visible 
@@ -50,7 +50,7 @@ public class DrawPoint3D extends Drawable3DSolid{
 			renderer.drawSphere(POINT3D_RADIUS);//TODO use object property
 	}
 	
-	public void drawPrimitivePicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		
 		renderer.drawSphere(POINT3D_RADIUS*PICKED_DILATATION);//TODO use object property
 		

@@ -148,8 +148,8 @@ public abstract class Drawable3D {
 	
 	
 	/** draw the 3D object */
-	abstract public void drawPrimitive(EuclidianRenderer3D renderer); 
-	abstract public void drawPrimitivePicked(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometry(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometryPicked(EuclidianRenderer3D renderer); 
 	abstract public void draw(EuclidianRenderer3D renderer); 
 	abstract public void drawHidden(EuclidianRenderer3D renderer); 
 	abstract public void drawTransp(EuclidianRenderer3D renderer); 
@@ -162,7 +162,7 @@ public abstract class Drawable3D {
 			return;	
 		
 		renderer.setMatrix(getMatrix());
-		drawPrimitive(renderer);
+		drawGeometry(renderer);
 
 	}
 

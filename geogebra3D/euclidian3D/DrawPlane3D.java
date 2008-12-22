@@ -35,11 +35,11 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	
 	
 
-	public void drawPrimitive(EuclidianRenderer3D renderer) {
+	public void drawGeometry(EuclidianRenderer3D renderer) {
 		renderer.drawQuad();
 	}
 	
-	public void drawPrimitivePicked(EuclidianRenderer3D renderer){}
+	public void drawGeometryPicked(EuclidianRenderer3D renderer){}
 	
 
 	

@@ -28,7 +28,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
 		renderer.setMatrix(getMatrix());
 		
-		drawPrimitive(renderer);
+		drawGeometry(renderer);
 		
 		
 
@@ -43,7 +43,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
 		renderer.setMatrix(getMatrix());
-		drawPrimitivePicked(renderer);		
+		drawGeometryPicked(renderer);		
 		
 
 	}
