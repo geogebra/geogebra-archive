@@ -218,23 +218,16 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    ///////////////////////////////////////////////////////////
-    //drawing primitives
-    //TODO use glLists
     
-    public void drawSphere(float radius){
-    	initMatrix();
-    	glu.gluSphere(quadric, radius, 16, 16);
-    	resetMatrix();
-    }
+    
+    
 
     
-    private void drawCylinder(float radius){
-    	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
-    	glu.gluCylinder(quadric, radius, radius, 1.0f, 8, 1);
-    }
     
     
+    
+    ///////////////////////////////////////////////////////////
+    //drawing geometries
     
     /** draws a segment from x=0 to x=1 with radius thickness, according to current m_drawingMatrix*/
     public void drawSegment(float radius){
@@ -275,6 +268,32 @@ public class EuclidianRenderer3D implements GLEventListener {
     	resetMatrix();
     }  
     */
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////
+    //drawing primitives TODO use glLists
+    
+    public void drawSphere(float radius){
+    	initMatrix();
+    	glu.gluSphere(quadric, radius, 16, 16);
+    	resetMatrix();
+    }
+
+    
+    private void drawCylinder(float radius){
+    	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
+    	glu.gluCylinder(quadric, radius, radius, 1.0f, 8, 1);
+    }
+    
+    
+    
     
     
     
@@ -323,8 +342,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    
     //////////////////////////////////////
     // picking
+    
     public void setMouseLoc(int x, int y){
     	mouseX = x;
     	mouseY = y;
