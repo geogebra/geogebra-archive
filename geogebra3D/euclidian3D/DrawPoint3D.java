@@ -28,18 +28,6 @@ public class DrawPoint3D extends Drawable3DSolid{
 	
 	
 	
-	public void updateDrawingMatrix() {
-
-		GeoPoint3D l_point = (GeoPoint3D) getGeoElement();    
-		GgbMatrix l_matrix = new GgbMatrix(4,4);
-		l_matrix.set(l_point.getCoords(), 4);
-		//TODO use point "thickness" and view3D scaling
-		for(int i=1;i<=3;i++){
-			l_matrix.set(i,i,0.001);
-		}
-		setMatrix(l_matrix);
-
-	}
 	
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {

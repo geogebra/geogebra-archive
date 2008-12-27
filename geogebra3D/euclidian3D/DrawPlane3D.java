@@ -23,15 +23,6 @@ public class DrawPlane3D extends Drawable3DTransparent {
 		super(a_view3D, a_plane3D);
 	}
 	
-
-	public void updateDrawingMatrix() {
-
-		GeoPlane3D l_plane3D = (GeoPlane3D) getGeoElement();
-		GgbMatrix l_matrix = l_plane3D.getDrawingMatrix(); 
-		setMatrix(l_matrix);
-		
-       
-	}
 	
 	
 

@@ -17,21 +17,8 @@ public class DrawSegment3D extends Drawable3DSolid {
 		
 		super(a_view3D,a_segment3D);
 	}
-	
 
-	public void updateDrawingMatrix() {
-		
 
-		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
-		GgbMatrix l_matrix = l_segment3D.getMatrix4x4(); //getSegmentMatrix(0,1); 
-		setMatrix(l_matrix);
-		
-		
-		
-		dashLength = 0.12f/((float) l_segment3D.getLength()); //TODO use object property
-
-       
-	}
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
@@ -51,6 +38,7 @@ public class DrawSegment3D extends Drawable3DSolid {
 		double l2;
 		GgbMatrix m; 
 		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
+		dashLength = 0.12f/((float) l_segment3D.getLength()); //TODO use object property
 		
     	for(float l=0; l<1;l+=2*dashLength){
     		l2 = l+dashLength;

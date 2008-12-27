@@ -11,6 +11,7 @@ import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
 
@@ -30,7 +31,7 @@ public abstract class Drawable3D {
 	
 	//constants for rendering
 	protected static final float PICKED_DILATATION = 1.3f;
-	protected static final float POINT3D_RADIUS = 50f;
+	protected static final float POINT3D_RADIUS = 0.05f;
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	protected static final float LINE3D_THICKNESS = 0.01f;
 	
@@ -93,13 +94,15 @@ public abstract class Drawable3D {
 		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 
 		//update the matrix of the drawable for the renderer to draw it
-		updateDrawingMatrix();
-		//getView3D().toScreenCoords3D(getMatrix());
+		//updateDrawingMatrix();
+		setMatrix(getGeoElement3D().getDrawingMatrix());
+		
+
 	}
 	
 	
 	/** update the matrix of the drawable for the renderer to draw it */
-	abstract public void updateDrawingMatrix();
+	final public void updateDrawingMatrix(){};
 	
 	
 	

@@ -14,11 +14,11 @@ public class DrawRay3D extends Drawable3DSolid {
 	
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.drawRay(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		renderer.drawSegment(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.drawRay(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
 	}
 
 
@@ -43,18 +43,5 @@ public class DrawRay3D extends Drawable3DSolid {
 	}
 
 	
-
-
-	
-	public void updateDrawingMatrix() {
-
-		GeoRay3D l_ray = (GeoRay3D) getGeoElement();
-		GgbMatrix l_matrix = l_ray.getSegmentMatrix(0,21);  //TODO use frustrum
-		setMatrix(l_matrix);
-
-
-		//dashLength = 0.12f/((float) L.getUnit()); //TODO use object property
-
-	}
 
 }

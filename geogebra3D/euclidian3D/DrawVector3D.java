@@ -40,13 +40,6 @@ public class DrawVector3D extends Drawable3DSolid {
 
 	
 
-	
-	public void updateDrawingMatrix() {
 
-		GeoVector3D l_vector3D = (GeoVector3D) getGeoElement();		
-		GgbMatrix l_matrix = l_vector3D.getMatrixCompleted(); 
-		setMatrix(l_matrix);
-
-	}
 
 }

@@ -245,6 +245,24 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    /** draws a line with radius thickness, according to current m_drawingMatrix*/
+    public void drawLine(float radius){
+    	//TODO use frustum
+    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, -20, 21));
+    	drawCylinder(radius);
+    	resetMatrix();
+    }  
+    
+    
+    /** draws a ray (half-line) with radius thickness, according to current m_drawingMatrix*/
+    public void drawRay(float radius){
+    	//TODO use frustum
+    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, 0, 21));
+    	drawCylinder(radius);
+    	resetMatrix();
+    }  
+    
+    
     /** draws a dashed segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
     /*
     public void drawSegmentDashed(double x1, double x2, float radius, double dashLength){
