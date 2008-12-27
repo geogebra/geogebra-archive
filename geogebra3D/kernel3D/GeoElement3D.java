@@ -22,6 +22,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.linalg.GgbMatrix;
 
 
 /**
@@ -38,6 +39,9 @@ public abstract class GeoElement3D
 	private boolean wasHighlighted = false;
 	private boolean willBeHighlighted = false;
 	
+	
+	//link to drawable3D
+	private GgbMatrix m_drawingMatrix = null;
 	
 	//link to GeoElement
 	protected GeoElement geo2D = null;
@@ -65,12 +69,25 @@ public abstract class GeoElement3D
 		super(c);
 		
 	}
+
 	
 	
 	public boolean isGeoElement3D(){
 		return true;
 	}
 
+	
+	/** returns a 4x4 matrix for drawing the drawable */
+	public GgbMatrix getDrawingMatrix(){
+		return m_drawingMatrix;
+	}
+	
+	/** sets the 4x4 matrix for drawing the drawable */
+	public void setDrawingMatrix(GgbMatrix a_drawingMatrix){
+		m_drawingMatrix = a_drawingMatrix;
+	}	
+	
+	
 	// Path1D interface
 	public boolean isPath1D(){
 		return false;

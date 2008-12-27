@@ -20,6 +20,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra.kernel.linalg.GgbVector;
 
 /**
@@ -30,42 +31,50 @@ import geogebra.kernel.linalg.GgbVector;
 public abstract class GeoVec extends GeoElement3D {
        
     public GgbVector v;
+    
+    private int m_length;
 	    
 	
     public GeoVec(Construction c) {super(c);}  
 
     public GeoVec(Construction c, int n) {
     	this(c);
+    	m_length = n;
     	v = new GgbVector(n);
+    	setDrawingMatrix(GgbMatrix.Identity(m_length));
     }  
 
     /** Creates new GeoVec with coordinates coords[] and label */
     public GeoVec(Construction c, double[] coords) {    	
-    	super(c);     	
-    	v = new GgbVector(coords);
-    	//v.set(Double.NaN);
+    	this(c,coords.length);   
+    	setCoords(coords);
     }                 
     
     /** Copy constructor */
+    /*
     public GeoVec(Construction c, GeoVec vec) {   
     	super(c); 	
         set(vec);
     }
+    */
     
     
     
     
-	public void setCoords(GgbVector v0){
-		v.set(v0);
-	}
+
 	
 	public void setCoords(double[] vals){
 		v.set(vals);
+		
 	}
+	
+	
+	
+	
 	
 
 	public void setCoords(GgbMatrix v0){		
-		setCoords(v0.v());		
+		setCoords(v0.get());		
 	}
 
 	public void setCoords(GeoVec vec){

@@ -23,16 +23,14 @@ package geogebra3D.kernel3D;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
-import geogebra.kernel.Path;
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbVector;
-import geogebra.main.Application;
 
 
 /**
  *
- * @author  Markus + Mathieu
+ * @author  Markus + ggb3D
  * @version 
  */
 final public class GeoPoint3D extends GeoVec4D {   	
@@ -56,8 +54,6 @@ final public class GeoPoint3D extends GeoVec4D {
     // temp
     public GgbVector inhom = new GgbVector(3);
     
-    // list of Locateables (GeoElements) that this point is start point of
-    // if this point is removed, the Locateables have to be notified
     
     public GeoPoint3D(Construction c) { 
     	super(c,4); 
@@ -70,6 +66,7 @@ final public class GeoPoint3D extends GeoVec4D {
     public GeoPoint3D(Construction c, String label, double x, double y, double z, double w) {               
         super(c, x, y, z, w); // GeoVec4D constructor  
         setLabel(label);
+        
     }
     
     public GeoPoint3D(Construction c, String label, GgbVector v){
@@ -90,13 +87,13 @@ final public class GeoPoint3D extends GeoVec4D {
 	}    
     
     
-    /*
-    final public PathOnParameter getPathOnParameter() {
-    	if (ppOn == null)
-    		ppOn = new PathOnParameter();
-    	return ppOn;
-    }
-    */
+
+    
+
+    
+    
+    ///////////////////////////////////////////////////////////
+    // COORDINATES
     
     
     public double getX(){
@@ -110,95 +107,8 @@ final public class GeoPoint3D extends GeoVec4D {
     }
     
     
-	public boolean hasPathOn() {
-		return pathOn != null;
-	}
-	
-
-    
-    
-	public PathOn getPathOn() {
-		return pathOn;
-	}
-	
-
-	
-
-    
-    /*
-    final public PathInParameter getPathInParameter() {
-    	if (ppIn == null)
-    		ppIn = new PathInParameter();
-    	return ppIn;
-    }
-    */
-    
-    
-	public boolean hasPathIn() {
-		return pathIn != null;
-	}
-	
-
-    
-    
-	public PathIn getPathIn() {
-		return pathIn;
-	}
-	
-	
-    final public PathParameters getPathParameters(int n) {
-    	if (pps == null)
-    		pps = new PathParameters(n);
-    	return pps;
-    }	
-	
-    
-	public boolean hasPath() {
-		return hasPathOn() || hasPathIn();
-	}
-    
-	// link to GeoElement
-    public boolean hasGeoElement2D() {
-    	return geo2D!=null;
-    }
-    
-    public GeoElement getGeoElement2D(){ 
-    	return geo2D; 
-    }
     
 
-    
-    
-    
-    
-    
-    
-    
-	protected String getClassName() {
-		return "GeoPoint3D";
-	}        
-	
-    protected String getTypeString() {
-		return "Point3D";
-	}
-    
-    public int getGeoClassType() {
-    	return GEO_CLASS_POINT3D;  
-    }
-    
-    public GeoPoint3D(GeoPoint3D point) {
-    	super(point.cons);
-        set(point);        
-    }
-    
-
-    
-    
-    public GeoElement copy() {
-        return new GeoPoint3D(this);        
-    }                 
-       
-	
     
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
@@ -282,6 +192,10 @@ final public class GeoPoint3D extends GeoVec4D {
 				inhom.set(Double.NaN);
 			}
 		}
+		
+		//sets the drawing matrix to coords
+		getDrawingMatrix().set(getCoords(), 4);
+
 	}
 	 
 	final public void setCoords(GeoVec3D v) {
@@ -296,6 +210,125 @@ final public class GeoPoint3D extends GeoVec4D {
     }        	
         
   
+    
+    
+    
+    
+    
+    
+
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////
+    // PATHS
+    
+	public boolean hasPathOn() {
+		return pathOn != null;
+	}
+	
+
+    
+    
+	public PathOn getPathOn() {
+		return pathOn;
+	}
+	
+
+	
+
+    
+    
+	public boolean hasPathIn() {
+		return pathIn != null;
+	}
+	
+
+    
+    
+	public PathIn getPathIn() {
+		return pathIn;
+	}
+	
+	
+    final public PathParameters getPathParameters(int n) {
+    	if (pps == null)
+    		pps = new PathParameters(n);
+    	return pps;
+    }	
+	
+    
+	public boolean hasPath() {
+		return hasPathOn() || hasPathIn();
+	}
+    
+
+	
+	
+	
+	
+	
+	
+    ///////////////////////////////////////////////////////////
+    // LINK TO GEOELEMENT
+
+    public boolean hasGeoElement2D() {
+    	return geo2D!=null;
+    }
+    
+    public GeoElement getGeoElement2D(){ 
+    	return geo2D; 
+    }
+    
+
+    
+    
+    
+    
+    
+	
+	
+    ///////////////////////////////////////////////////////////
+    // COMMON STUFF
+   
+    
+	protected String getClassName() {
+		return "GeoPoint3D";
+	}        
+	
+    protected String getTypeString() {
+		return "Point3D";
+	}
+    
+    public int getGeoClassType() {
+    	return GEO_CLASS_POINT3D;  
+    }
+    
+    public GeoPoint3D(GeoPoint3D point) {
+    	super(point.cons);
+        set(point);        
+    }
+    
+
+    
+    
+    public GeoElement copy() {
+        return new GeoPoint3D(this);        
+    }                 
+       
+	
 
     
     public boolean isGeoPoint3D(){

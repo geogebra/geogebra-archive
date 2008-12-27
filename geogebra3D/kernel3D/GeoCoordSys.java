@@ -54,6 +54,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	
 	public void updateDrawingMatrix(){
 		m_matrix4x4 = GgbMatrix4x4.toMatrix4x4(m_matrix);
+		setDrawingMatrix(m_matrix4x4);
 	}
 	
 	

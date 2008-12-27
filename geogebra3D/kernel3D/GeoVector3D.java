@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra.kernel.linalg.GgbVector;
 
 public class GeoVector3D extends GeoVec4D {
@@ -14,27 +15,23 @@ public class GeoVector3D extends GeoVec4D {
 	public GeoVector3D(Construction c, double x, double y, double z) {
 		super(c,x,y,z,0);
 	}
-
-	/** returns completed matrix for drawing */
-	public GgbMatrix getMatrixCompleted(){
-		GgbMatrix m = new GgbMatrix(4,4);
-		GgbVector 
-			Vn1 = new GgbVector(4), 
-			Vn2 = new GgbVector(4), 
-			V = getCoords();
-		if (V.get(1)!=0){
-			Vn1.set(1,-V.get(2));
-			Vn1.set(2,V.get(1));
-			Vn1.normalize();
-		}else{
-			Vn1.set(1, 1.0);
-		}		
-		Vn2 = V.crossProduct(Vn1);
-		Vn2.normalize();
-
-		m.set(new GgbVector[] {getCoords(), Vn1, Vn2, new GgbVector(new double[]{0,0,0,1})});
-		return m;
+	
+	
+	public void setCoords(double[] vals){
+		super.setCoords(vals);
+		
+		//sets the drawing matrix 
+		GgbMatrix matrix = new GgbMatrix(4,2);
+		matrix.set(getCoords(), 1);
+		
+		//TODO use start point
+		matrix.set(4, 2, 1.0);
+		
+		setDrawingMatrix(GgbMatrix4x4.toMatrix4x4(matrix));
+		
 	}
+
+
 
 
 	public GeoElement copy() {
