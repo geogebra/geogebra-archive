@@ -858,6 +858,9 @@ public class MyTable extends JTable
 				}
 break;
 				
+			case KeyEvent.VK_SHIFT:
+			case KeyEvent.VK_CONTROL:
+			case KeyEvent.VK_ALT:
 			case KeyEvent.VK_META: //MAC_OS Meta
 				e.consume(); // stops editing start
 				break;

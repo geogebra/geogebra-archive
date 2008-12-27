@@ -779,8 +779,7 @@ public class EuclidianController implements MouseListener,
 			else if (movedGeoElement.hasMoveableInputPoints()) {
 				// allow only moving of the following object types
 				if (movedGeoElement.isGeoLine() || 
-					  movedGeoElement.isGeoPolygon() ||
-					  movedGeoElement.isGeoVector() ||
+					  movedGeoElement.isGeoPolygon() ||					 
 					  movedGeoElement.isGeoConic() ) 
 				{		
 					translateableGeos = movedGeoElement.getFreeInputPoints();

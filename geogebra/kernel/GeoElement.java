@@ -1019,7 +1019,6 @@ public abstract class GeoElement
 			case GEO_CLASS_RAY:
 			case GEO_CLASS_SEGMENT:
 			case GEO_CLASS_TEXT:
-			case GEO_CLASS_VECTOR:
 				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());
 				
 			case GEO_CLASS_POLYGON:
@@ -1396,6 +1395,11 @@ public abstract class GeoElement
 		Matcher matcher = GeoElement.spreadsheetPattern.matcher(inputLabel);				
 		int column = getSpreadsheetColumn(matcher);
 		int row = getSpreadsheetRow(matcher);
+
+//		System.out.println("match: " + inputLabel);
+//		for (int i=0; i < matcher.groupCount(); i++) {
+//			System.out.println("    group: " + i + ": " + matcher.group(i));
+//		}
 		
 		if (column >= 0 && row >= 0)
 			return new Point(column, row);
@@ -3432,7 +3436,7 @@ public abstract class GeoElement
 	{
 		
 		/*
-		 * TODO maybe use this
+		 * maybe use this
 		 * doesn't work on f=Factor[x^2-1] Expand[f]
 		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
 				 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA) {
@@ -3459,7 +3463,7 @@ public abstract class GeoElement
 		
 		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
 		 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
-			kernel.setTemporaryPrintDecimals(15); // Yacas doesn't like 4E-20 or x^2.0
+			kernel.setTemporaryPrintDecimals(16); // Yacas doesn't like 4E-20 or x^2.0
 
 		
 		String ret="";

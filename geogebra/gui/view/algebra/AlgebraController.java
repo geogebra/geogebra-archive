@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -191,7 +192,12 @@ public class AlgebraController
 			if (ev.getMode() == EuclidianView.MODE_MOVE) {		
 				if (geo == null)
 					app.clearSelectedGeos();
-				else {						
+				else {	
+					
+					// copy definition into input bar
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(geo);
+
 					if (Application.isControlDown(e)) {
 						app.toggleSelectedGeo(geo); 													
 						app.geoElementSelected(geo, true);

@@ -21,32 +21,33 @@ package geogebra.kernel;
 
 
 /**
- *
+ * Vector between two points P and Q.
+ * 
  * @author  Markus
  * @version 
  */
 public class AlgoVector extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P, Q;   // input
     private GeoVector  v;     // output 
-    private GeoPoint startPoint;
         
     /** Creates new AlgoVector */  
     AlgoVector(Construction cons, String label, GeoPoint P, GeoPoint Q) {
         super(cons);
         this.P = P;
-        this.Q = Q;                
+        this.Q = Q;         
+        
         // create new vector
-        v = new GeoVector(cons);                    
+        v = new GeoVector(cons);   
+        try {             	
+        	v.setStartPoint(P);               	
+        } catch (CircularDefinitionException e) {}
                  
         setInputOutput();
         
         // compute vector PQ        
-        compute(); 
+        compute();                          
         v.setLabel(label);
     }           
     
@@ -69,27 +70,12 @@ public class AlgoVector extends AlgoElement {
     public GeoPoint getP() { return P; }
     public GeoPoint getQ() { return Q; }
     
-    // calc the line g through P and Q    
+    // calc the vector between P and Q    
     protected final void compute() {
         if (Q.isFinite() && P.isFinite()) {        
             v.x = Q.inhomX - P.inhomX;
             v.y = Q.inhomY - P.inhomY;             
             v.z = 0.0;
-            
-            
-            
-            try {     
-            	if (P.isLabelSet())
-            		v.setStartPoint(P);
-                else  {
-                	if (startPoint == null)
-                		startPoint = new GeoPoint(P);
-                	startPoint.set(P);
-                	v.setStartPoint(startPoint);
-                }        		
-            } catch (CircularDefinitionException e) {}
-            
-            
         } else {
             v.setUndefined();
         }

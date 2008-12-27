@@ -878,12 +878,27 @@ implements ExpressionValue {
             }  
             // polynomial ^ number
             else if (lt.isPolynomialInstance() && rt.isPolynomialInstance()) { 
-                // the number must be constant evaluate to a positiv integer
+                // the exponent must be a number
                 if (((Polynomial)rt).degree() != 0) {
-                    String [] str = { "ExponentMustBeInteger", lt.toString(), "/", rt.toString() };
+                    String [] str = { "ExponentMustBeInteger", lt.toString(), "^", rt.toString() };
                     throw new MyError(app, str);
-                }                
+                }          
                 
+                // is the base also a number? In this case pull base^exponent together into lt polynomial
+             	boolean baseIsNumber = ((Polynomial)lt).degree() == 0;
+            	if (baseIsNumber) {
+            		Term base = ((Polynomial)lt).getTerm(0);
+            		Term exponent = ((Polynomial)rt).getTerm(0);
+            		Term newBase = new Term(kernel,
+            						new ExpressionNode(kernel, base.getCoefficient(), 
+            								ExpressionNode.POWER, 
+            								exponent.getCoefficient()),
+            						"");
+            		            		
+            		return new Polynomial(kernel, newBase);            		
+            	}
+             	
+             	// number is not a base
                 if (!rt.isConstant()) {
                     String [] str = { "ExponentMustBeConstant", lt.toString(), "^", rt.toString() };
                     throw new MyError(app, str);
@@ -891,7 +906,8 @@ implements ExpressionValue {
                 
                 // get constant coefficent of given polynomial                
                 double exponent = ((Polynomial)rt).getConstantCoeffValue();
-                if (kernel.isInteger(exponent) && (int) exponent >= 0) {
+                if ((kernel.isInteger(exponent) && (int) exponent >= 0)) 
+                {
                     poly = new Polynomial(kernel, (Polynomial)lt);
                     poly.power((int) exponent);                
                     return poly;
@@ -1416,9 +1432,9 @@ implements ExpressionValue {
                             )
                        );                   
             }     
-            else { 
-                //Application.debug("lt: " + lt.getClass() + " rt: " + rt.getClass());
-                 String [] str = { "IllegalArgument", rt.toString() };
+            else {                 
+            	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
+                String [] str = { "IllegalArgument", rt.toString() };
                 throw new MyError(app, str);
             }
             
@@ -1458,7 +1474,7 @@ implements ExpressionValue {
                 rt = ((Polynomial) rt).getConstantCoefficient();                    
                 return new Polynomial( kernel,
                             new Term(kernel, 
-                                new ExpressionNode(kernel, lt, ExpressionNode.FUNCTION, rt),
+                                new ExpressionNode(kernel, lt, ExpressionNode.DERIVATIVE, rt),
                                 ""
                             )
                        );                   
@@ -3177,9 +3193,13 @@ implements ExpressionValue {
             	} else
             		 sb.append(leftStr); 
             	
-            	int order = (int) Math.round(((MyDouble)right).getDouble());
-            	for (;order > 0; order--) 
-            		sb.append('\'');
+            	if (right.isNumberValue()) {
+	            	int order = (int) Math.round(((MyDouble)right).getDouble());
+	            	for (;order > 0; order--) 
+	            		sb.append('\'');
+            	}
+            	else
+            		sb.append(right);
                 break;
                 
                 

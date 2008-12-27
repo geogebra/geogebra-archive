@@ -52,7 +52,7 @@ public class MyError extends java.lang.Error {
             return app.getError(getMessage());
         else {
             StringBuffer sb = new StringBuffer();
-            sb.append(app.getError(strs[0]) + ":\n");
+            sb.append(app.getError(strs[0]) + "\n");
             for (int i = 1; i < strs.length; i++) {
                 sb.append(app.getError(strs[i]) + " ");
             }

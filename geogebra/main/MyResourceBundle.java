@@ -88,7 +88,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
     	
     	try {    		        	    		
     		InputStream in =  MyResourceBundle.class.getResourceAsStream(fileName);    		
-    		MyResourceBundle ret = new MyResourceBundle(in);    		    		
+    		MyResourceBundle ret = new MyResourceBundle(in);     		
 			return ret;
     	}
 		catch (Exception e) {	

@@ -56,7 +56,7 @@ public class Equation extends ValidExpression {
      */
     public void initEquation() {
         boolean valid = lhs.includesPolynomial() || rhs.includesPolynomial();
-        
+
         if (!valid)            
 			throw new MyError(kernel.getApplication(), "InvalidEquation");              
            
@@ -75,23 +75,23 @@ public class Equation extends ValidExpression {
         // resolve variables in rhs
         rhs.resolveVariables();
         
-     // build normal form polynomial        
+        // build normal form polynomial        
         // copy the expression trees
         ExpressionNode leftEN  = lhs.getCopy(kernel);
         ExpressionNode rightEN = rhs.getCopy(kernel);
-        
+ 
         // ensure that they only consist of polynomials
         leftEN.makePolynomialTree();
         rightEN.makePolynomialTree();		
         		
         // simplify the both sides to single polynomials
         leftPoly  = (Polynomial) leftEN.evaluate();
-        rightPoly = (Polynomial) rightEN.evaluate();		
+        rightPoly = (Polynomial) rightEN.evaluate();	      
         		
         // bring to normal form left - right = 0
         normalForm = new Polynomial(kernel, rightPoly);
         normalForm.multiply(-1.0d);
-        normalForm.add(leftPoly);   
+        normalForm.add(leftPoly);             		   		   
     }
     
     public Polynomial getNormalForm() {        

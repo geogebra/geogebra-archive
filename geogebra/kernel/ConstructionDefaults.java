@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra.util.FastHashMapKeyless;
 
@@ -332,8 +333,14 @@ public class ConstructionDefaults {
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
-		if (defaultGeo != null)
-			geo.setAllVisualProperties(defaultGeo);					     
+		if (defaultGeo != null) {
+			geo.setAllVisualProperties(defaultGeo);		
+			
+			// set to highest used layer
+			EuclidianView ev = cons.getApplication().getEuclidianView();
+			if (ev != null)
+			geo.setLayer(ev.getMaxLayerUsed());
+		}
 
         // label visibility
 		Application app = cons.getApplication();

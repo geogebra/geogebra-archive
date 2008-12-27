@@ -38,7 +38,7 @@ public class CmdLast extends CommandProcessor {
 			boolean ok0 = arg[0].isGeoList();
 			if ( ok0 && arg[1].isGeoNumeric() ) {
 				GeoElement[] ret = { 
-						kernel.First(c.getLabel(),
+						kernel.Last(c.getLabel(),
 						(GeoList) arg[0], (GeoNumeric) arg[1] ) };
 				return ret;
 			} else

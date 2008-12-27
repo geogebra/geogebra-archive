@@ -471,12 +471,11 @@ public class AlgebraProcessor {
 			}
 		}
 
-	
+		GeoElement[] ret;
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		if (replaceable != null)
 			cons.setSuppressLabelCreation(true);
 		
-		GeoElement[] ret;
 		// we have to make sure that the macro mode is
 		// set back at the end
 		try {
@@ -605,15 +604,15 @@ public class AlgebraProcessor {
 //		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
 		try {
-			equ.initEquation();
-	
+			equ.initEquation();	
+			
 			// consider algebraic degree of equation        
 			switch (equ.degree()) {
 				// linear equation -> LINE   
 				case 1 :
 					return processLine(equ);
 	
-					// quadratic equation -> CONIC                                  
+				// quadratic equation -> CONIC                                  
 				case 2 :
 					return processConic(equ);
 	
@@ -622,29 +621,29 @@ public class AlgebraProcessor {
 			}
 		} 
 		catch (MyError eqnError) {
-        	// invalid equation: maybe a function?
-			try {
-				Function fun = new Function(equ.getRHS());
-				
-				// get label of equation
-				String label = equ.getLabel();
-				
-				if (label == null) {
-					// try to use LHS of equation as label
-					String lhsStr = equ.getLHS().toString();				
-					if (lhsStr.indexOf("x") == -1) {
-						label = lhsStr;
-					}
+        	// invalid equation: maybe a function of form "y = <rhs>"?			
+			String lhsStr = equ.getLHS().toString().trim();
+			if (lhsStr.equals("y")) {
+				try {
+					// try to create function from right hand side
+					Function fun = new Function(equ.getRHS());
+
+					// try to use label of equation							
+					fun.setLabel(equ.getLabel());
+					return processFunction(fun);
 				}
-				
-				fun.setLabel(label);
-				return processFunction(fun);
-			}
-			catch (MyError funError) {
+				catch (MyError funError) {
+				}        
+			} 
+			
+			// throw invalid equation error if we get here
+			if (eqnError.getMessage() == "InvalidEquation")
 				throw eqnError;
-			}        	
-        }
-        
+			else {
+				String [] errors = {"InvalidEquation", eqnError.getLocalizedMessage()};
+				throw new MyError(app, errors);
+			}
+        }        
 	}
 
 	private GeoElement[] processLine(Equation equ) {

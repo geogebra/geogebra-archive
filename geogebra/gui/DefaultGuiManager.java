@@ -29,6 +29,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.GuiManager;
 import geogebra.main.MyError;
+import geogebra.main.MyResourceBundle;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -53,8 +54,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -68,6 +71,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicFileChooserUI;
 
 
@@ -80,6 +84,10 @@ public class DefaultGuiManager implements GuiManager {
 	
 	private static final int SPREADSHEET_INI_COLS = 26;
 	private static final int SPREADSHEET_INI_ROWS = 100;
+	
+	// Java user interface properties, for translation of JFileChooser
+	private static final String RB_JAVA_UI = "/geogebra/properties/javaui";
+	private ResourceBundle rbJavaUI;
 
 	private Application app;
 	private Kernel kernel;
@@ -98,9 +106,9 @@ public class DefaultGuiManager implements GuiManager {
 
 	private MyToolbar appToolbarPanel;	  
     private String strCustomToolbarDefinition;
+    private Locale currentLocale;
     
-    private Layout layout;
-    
+    private Layout layout;    
     private boolean initialized = false;
 
 	// Actions
@@ -940,6 +948,45 @@ public class DefaultGuiManager implements GuiManager {
 				Application.debug("Error creating JFileChooser - using fallback option");
 				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());				
 			} 
+					
+			updateJavaUILanguage();
+		}
+	}
+	
+	/**
+	 * Loads java-ui.properties and sets all key-value pairs
+	 * using UIManager.put(). This is needed to translate JFileChooser to
+	 * languages not supported by Java natively.
+	 */
+	private void updateJavaUILanguage() {	
+		// load properties jar file
+		if (currentLocale == app.getLocale() || !app.loadPropertiesJar())
+			return;		
+		
+		// update locale
+		currentLocale = app.getLocale();			
+		
+		// load javaui properties file for specific locale
+		rbJavaUI = MyResourceBundle.loadSingleBundleFile(RB_JAVA_UI + "_" + currentLocale);		
+		boolean foundLocaleFile = rbJavaUI != null;
+		if (!foundLocaleFile) 
+			// fall back on English
+			rbJavaUI = MyResourceBundle.loadSingleBundleFile(RB_JAVA_UI);
+		
+		// set or delete all keys in UIManager
+		Enumeration keys = rbJavaUI.getKeys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			String value = foundLocaleFile ? rbJavaUI.getString(key) : null;
+			
+			// set or delete UIManager key entry (set values to null when locale file not found)
+			UIManager.put(key, value);										
+		}	
+		
+		// update file chooser
+		if (fileChooser != null) {
+			fileChooser.setLocale(currentLocale);
+			SwingUtilities.updateComponentTreeUI(fileChooser);
 		}
 	}
 

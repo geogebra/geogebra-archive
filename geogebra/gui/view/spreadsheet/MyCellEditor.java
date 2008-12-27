@@ -123,14 +123,8 @@ public class MyCellEditor extends DefaultCellEditor {
 					if (e.isConsumed())
 						break;
 					
-					// if cell below is empty, go there
-					if (table.getRowCount() >= row && table.getValueAt(row + 1, column) == null) {
-						table.changeSelection(row + 1, column, false, false);	
-					}		
-					else
-						stopCellEditing();
-						
-					editing = false;
+					// go to cell below
+					table.changeSelection(row + 1, column, false, false);	
 					break;							
 			}	
 		}

@@ -3016,9 +3016,11 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		double xScale = this.width/(x1RW2-x0RW2);
 		double yScale = this.height/(y1RW2-y0RW2);
 		final double scale = Math.min(xScale,yScale);
-		//setCoordSystem(-x0RW2*xScale,y1RW2*yScale ,scale,scale);
+		setCoordSystem(-x0RW2*xScale,y1RW2*yScale ,scale,scale);
 		
-
+		updateSize();
+		
+/*
 		if (scaleRatio != 1.0) {
 			// set axes ratio back to 1
 			if (axesRatioZoomer == null)
@@ -3043,7 +3045,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		} else {
 			// set the xscale and axes origin
 			setAnimatedCoordSystem(-x0RW2*scale, y1RW2*scale, scale, 15, false);
-		}
+		} */
 		if (storeUndo)
 			app.storeUndoInfo();
 

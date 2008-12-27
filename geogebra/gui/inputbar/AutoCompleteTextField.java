@@ -114,8 +114,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				setText("");
 				return;
 			}
-
-		((AlgebraInput)(app.getGuiManager().getAlgebraInput())).setString(geo);		
+		// copy definition into input bar
+		//((AlgebraInput)(app.getGuiManager().getAlgebraInput())).setString(geo);		
 		}
 	}
 

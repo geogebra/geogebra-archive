@@ -208,6 +208,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private static final String RB_COMMAND = "/geogebra/properties/command";
 	private static final String RB_ERROR = "/geogebra/properties/error";
 	private static final String RB_PLAIN = "/geogebra/properties/plain";
+	private static final String RB_JAVA_UI = "/geogebra/properties/java-ui";
 
 	private static final String RB_SETTINGS = "/geogebra/export/settings";
 	private static final String RB_ALGO2COMMAND = "/geogebra/kernel/algo2command";
@@ -1315,10 +1316,9 @@ public abstract class Application implements KeyEventDispatcher {
 		if (rbplain != null)
 			rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbcommand != null)
-			rbcommand = MyResourceBundle
-					.createBundle(RB_COMMAND, currentLocale);
+			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);
 	}
-
+	
 	private void fillCommandDict() {
 		if (rbcommand == null)
 			return;

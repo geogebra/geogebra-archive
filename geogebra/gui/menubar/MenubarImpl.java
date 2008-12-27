@@ -6,6 +6,7 @@ import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.util.BrowserLauncher;
@@ -989,6 +990,11 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				app.deleteAllGeoElements();
+				
+				// clear input bar
+				AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+				ai.setString(null);
+
 			}
 		};
 

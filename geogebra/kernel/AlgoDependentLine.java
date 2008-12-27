@@ -47,14 +47,14 @@ public class AlgoDependentLine extends AlgoElement {
         ev[0] = lhs.getCoefficient("x");        
    		ev[1] = lhs.getCoefficient("y");        
    		ev[2] = lhs.getConstantCoefficient(); 
-   		   		   		
+   		
    		// check coefficients
         for (int i=0; i<3; i++) {
             if (ev[i].isConstant()) ev[i] = ev[i].evaluate();
             
             // check that coefficients are numbers
             ((NumberValue) ev[i].evaluate()).getDouble();    
-        }      
+        }
         
         g = new GeoLine(cons); 
         setInputOutput(); // for AlgoElement
