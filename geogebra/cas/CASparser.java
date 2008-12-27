@@ -45,11 +45,11 @@ public class CASparser {
 	 * Resolves all variables in ValidExpression. Unknown variables are
 	 * kept as symbolic variables.
 	 */
-	public void resolveVariablesForCAS(ExpressionValue ev) {
+	public synchronized void resolveVariablesForCAS(ExpressionValue ev) {
 		// resolve variables of valid expression
-		kernel.setResolveUnkownVarsAsDummyGeos(true);		
+		kernel.setResolveVariablesForCASactive(true);		
 		ev.resolveVariables();
-		kernel.setResolveUnkownVarsAsDummyGeos(false);				
+		kernel.setResolveVariablesForCASactive(false);				
 	}
 	
 	/**

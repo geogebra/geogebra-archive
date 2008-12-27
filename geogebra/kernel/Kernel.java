@@ -163,8 +163,8 @@ public class Kernel {
 	// i.e. in silentMode no labels are created and no objects are added to views
 	private boolean silentMode = false;
 	
-	// setResolveUnkownVarsAsDummyGeos
-	private boolean resolveUnkownVarsAsDummyGeos = false;
+	// resolveVariablesForCASactive
+	private boolean resolveVariablesForCASactive = false;
 			
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
@@ -223,7 +223,7 @@ public class Kernel {
 	final public GeoElement lookupLabel(String label, boolean autoCreate) {	
 		GeoElement geo = cons.lookupLabel(label, autoCreate);
 				
-		if (geo == null && resolveUnkownVarsAsDummyGeos) {
+		if (geo == null && resolveVariablesForCASactive) {
 			// resolve unknown variable as dummy geo to keep its name and 
 			// avoid an "unknown variable" error message
 			geo = new GeoDummyVariable(cons, label);
@@ -5591,8 +5591,8 @@ public class Kernel {
 	/**
 	 * Sets whether unknown variables should be resolved as GeoDummyVariable objects. 
 	 */
-	public final void setResolveUnkownVarsAsDummyGeos(boolean resolveUnkownVarsAsDummyGeos) {
-		this.resolveUnkownVarsAsDummyGeos = resolveUnkownVarsAsDummyGeos;				
+	public final void setResolveVariablesForCASactive(boolean resolveVariablesForCASactive) {
+		this.resolveVariablesForCASactive = resolveVariablesForCASactive;				
 	}
 	
 
@@ -5600,7 +5600,7 @@ public class Kernel {
 	 * Returns whether unkown variables are resolved as GeoDummyVariable objects.
 	 * @see setSilentMode()
 	 */
-	public final boolean isResolveUnkownVarsAsDummyGeos() {
-		return resolveUnkownVarsAsDummyGeos;
+	public final boolean isResolveVariablesForCASactive() {
+		return resolveVariablesForCASactive;
 	}
 }

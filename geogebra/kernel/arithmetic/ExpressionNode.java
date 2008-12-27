@@ -293,9 +293,12 @@ implements ExpressionValue {
     
     /**
      * Replaces all Command objects in tree by their evaluated GeoElement
-     * objects.
+     * objects. 
      */
-    final private void simplifyAndEvalCommands() {         
+    final private void simplifyAndEvalCommands() {   
+    	// don't evaluate any commands for the CAS here
+    	if (kernel.isResolveVariablesForCASactive()) return;
+    	
         if (left.isExpressionNode()) {
         	((ExpressionNode) left).simplifyAndEvalCommands();                      
         }
@@ -2041,15 +2044,7 @@ implements ExpressionValue {
         if (right != null) {
             rightStr = right.toValueString();
         }
-            
-        
-        
-        // TODO: remove:
-        if (rightStr == null) {
-        	System.out.println("operation: " + operation + " left: " + left + " right: " + right);
-        }
-        
-        
+                    
         return operationToString(leftStr, rightStr, true);
     }
     
