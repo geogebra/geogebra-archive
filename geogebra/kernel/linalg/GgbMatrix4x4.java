@@ -63,8 +63,8 @@ public class GgbMatrix4x4 {
 		GgbVector l_origin = l_return.getColumn(4);
 		GgbVector l_vx = l_return.getColumn(1);
 		
-		l_return.set(l_origin.add(l_vx.mul(x1)).v(), 4);
-		l_return.set(l_vx.mul(x2-x1).v(), 1);
+		l_return.set((GgbVector) l_origin.add(l_vx.mul(x1)), 4);
+		l_return.set((GgbVector) l_vx.mul(x2-x1), 1);
 		
 		return l_return;			
 			

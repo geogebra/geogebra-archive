@@ -54,6 +54,18 @@ public class GgbMatrix
 	
 	public GgbMatrix(){}
 	
+	
+	/** creates a GgbMatrix or a GgbVector if a_columns==1 */
+	static final public GgbMatrix GgbMatrixOrVector(int a_rows, int a_columns){
+		if (a_columns==1)
+			return new GgbVector(a_rows);
+		else
+			return new GgbMatrix(a_rows,a_columns);
+	}
+	
+	
+	
+	
 	/** see class description */
 	public GgbMatrix(int rows, int columns, double[] val){
 		this.rows = rows;
@@ -283,12 +295,9 @@ public class GgbMatrix
 		
 	}
 	
-	/** transform matrix to vector (assuming a (n,1) matrix) */
-	public GgbVector v(){
-		return getColumn(1);
-	}
 	
-	/*
+	
+	/**
 	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
 	 */
 	public GeoList getGeoList(GeoList outputList, Construction cons) {
@@ -457,7 +466,7 @@ public class GgbMatrix
 	/** returns this * val0 */
 	public GgbMatrix mul(double val0){
 		
-		GgbMatrix result = new GgbMatrix(getRows(),getColumns()); 
+		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
 
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -474,7 +483,9 @@ public class GgbMatrix
 	/** returns this + m */
 	public GgbMatrix add(GgbMatrix m){
 		
-		GgbMatrix result = new GgbMatrix(getRows(),getColumns()); //resulting matrix has the same dimension than the matrix calling the method
+		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns());
+		//resulting matrix has the same dimension than this
+		//and is a GgbVector if this has 1 column
 		
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){

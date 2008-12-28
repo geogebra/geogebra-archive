@@ -191,7 +191,7 @@ public class GgbVector
 		ret1 = m.solve(this);
 		ret1.set(3,-ret1.get(3));
 		
-		ret2 = this.add(m.getColumn(3).mul(ret1.get(3))).v();
+		ret2 = (GgbVector) this.add(m.getColumn(3).mul(ret1.get(3)));
 		
 		return new GgbVector[] {ret2,ret1};
 		

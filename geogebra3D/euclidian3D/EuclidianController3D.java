@@ -500,29 +500,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		case MOVE_POINT_WHEEL:
 			
 			//p = p + r*vn			
-			GgbVector p1 = movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)).v(); 
+			GgbVector p1 = (GgbVector) movedGeoPoint3D.getCoords().add(vn.mul(-r*0.1)); 
 			movedGeoPoint3D.setCoords(p1);
 			view.setMovingPoint(p1);
 			
 			
-			
-			//mouse follows the point
-			/*
-			try {
-				moveMode = MOVE_POINT_WHEEL;
-				//Application.debug("moveMode = "+moveMode);
-		        Robot robot = new Robot();
-		        GgbVector p = p1.copyVector();
-		        view.toScreenCoords3D(p);
-		        GgbVector v = view.getScreenCoords(p);
-		        Component component = e.getComponent();
-		        Point point = component.getLocationOnScreen();
-		        //Application.debug("location = "+point.x+","+point.y);
-		        robot.mouseMove((int) v.get(1) + point.x, (int) v.get(2) + point.y);
-		        
-		        startLoc3D = p1.copyVector();
-		    } catch(AWTException awte) {}
-		    */
 			
 
 
