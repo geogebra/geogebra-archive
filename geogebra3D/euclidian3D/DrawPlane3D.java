@@ -32,7 +32,7 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){}
 	
-
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
 	
 	
 	public void drawPicked(EuclidianRenderer3D renderer){

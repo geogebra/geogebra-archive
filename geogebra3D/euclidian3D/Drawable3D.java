@@ -153,6 +153,7 @@ public abstract class Drawable3D {
 	/** draw the 3D object */
 	abstract public void drawGeometry(EuclidianRenderer3D renderer); 
 	abstract public void drawGeometryPicked(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometryHidden(EuclidianRenderer3D renderer); 
 	abstract public void draw(EuclidianRenderer3D renderer); 
 	abstract public void drawHidden(EuclidianRenderer3D renderer); 
 	abstract public void drawTransp(EuclidianRenderer3D renderer); 

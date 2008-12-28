@@ -30,7 +30,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 		renderer.drawTriangle();
 	}
 	
-	
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
 	
 	
 	

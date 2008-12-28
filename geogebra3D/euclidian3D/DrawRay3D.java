@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoRay3D;
 
 public class DrawRay3D extends Drawable3DSolid {
@@ -22,15 +23,15 @@ public class DrawRay3D extends Drawable3DSolid {
 	}
 
 
-
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+		
+		GeoRay3D l_ray3D = (GeoRay3D) getGeoElement();
+		double dashLength = 0.12f/((float) l_ray3D.getUnit()); //TODO use object property
+		renderer.drawRayDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		
+	};
 	
 
-
-	
-	public void drawHidden(EuclidianRenderer3D renderer) {
-		// TODO Auto-generated method stub
-
-	}
 
 	
 

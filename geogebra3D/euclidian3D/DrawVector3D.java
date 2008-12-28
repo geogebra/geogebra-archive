@@ -23,13 +23,8 @@ public class DrawVector3D extends Drawable3DSolid {
 	}
 	
 
-
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
 	
-	public void drawHidden(EuclidianRenderer3D renderer) {
-		// TODO Auto-generated method stub
-
-	}
-
 	
 
 

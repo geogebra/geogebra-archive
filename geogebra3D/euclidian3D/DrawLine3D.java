@@ -33,30 +33,15 @@ public class DrawLine3D extends Drawable3DSolid {
 	}
 	
 	
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){
 	
-	public void drawHidden(EuclidianRenderer3D renderer){
-		
-		if(!getGeoElement().isEuclidianVisible())
-			return;
-		
-		
-		double l2;
-		GgbMatrix m; 
 		GeoLine3D l_line3D = (GeoLine3D) getGeoElement();
 		dashLength = 0.12f/((float) l_line3D.getUnit()); //TODO use object property
+		renderer.drawLineDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
 		
-    	for(float l=-20; l<21;l+=2*dashLength){ //TODO use frustrum
-    		l2 = l+dashLength;
-    		if (l2>21) l2=21;
-    		m = l_line3D.getSegmentMatrix(l,l2); 
-    		//getView3D().toScreenCoords3D(m);
-    		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-    		renderer.setMatrix(m);
-    		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
-    		
-    	}
-
-	} 
+	};
+	
+	
 
 
 	

@@ -48,8 +48,8 @@ public class DrawPoint3D extends Drawable3DSolid{
 	
 
 	
-	public void drawHidden(EuclidianRenderer3D renderer){
-		draw(renderer);
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+		drawGeometry(renderer);
 		
 	}	
 	

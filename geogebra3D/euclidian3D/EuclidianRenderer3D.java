@@ -263,30 +263,37 @@ public class EuclidianRenderer3D implements GLEventListener {
     }  
     
     
+    
+    
+    
+    
     /** draws a dashed segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
-    /*
-    public void drawSegmentDashed(double x1, double x2, float radius, double dashLength){
+    public void drawSegmentDashed(double a_x1, double a_x2, float a_radius, double a_dashLength){
 		double l2;
-		GgbMatrix m; 
-		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
-		
-    	for(float l=0; l<1;l+=2*dashLength){
-    		l2 = l+dashLength;
-    		if (l2>1) l2=1;
-    		m = l_segment3D.getSegmentMatrix(l,l2); 
-    		//getView3D().toScreenCoords3D(m);
-    		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-    		renderer.setMatrix(m);
-    		renderer.drawSegment(radius); 
-    		
-    	}
-    	
-    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, x1, x2));
-    	drawCylinder(radius);
-    	resetMatrix();
+    	for(double l=a_x1; l<a_x2;l+=2*a_dashLength){
+    		l2 = l+a_dashLength;
+    		if (l2>a_x2) l2=a_x2;
+    		drawSegment(l,l2,a_radius);   		
+    	} 	
     }  
-    */
-   
+    
+    /** draws a dashed segment from x=0 to x=1 with radius thickness, according to current m_drawingMatrix*/
+    public void drawSegmentDashed(float a_radius, double a_dashLength){
+    	drawSegmentDashed(0, 1, a_radius, a_dashLength);
+    }
+    
+    /** draws a dashed line with radius thickness, according to current m_drawingMatrix*/
+    public void drawLineDashed(float a_radius, double a_dashLength){
+    	//TODO use frustum
+    	drawSegmentDashed(-20, 21, a_radius, a_dashLength);
+    }
+    
+    
+    /** draws a dashed line with radius thickness, according to current m_drawingMatrix*/
+    public void drawRayDashed(float a_radius, double a_dashLength){
+    	//TODO use frustum
+    	drawSegmentDashed(0, 21, a_radius, a_dashLength);
+    }   
     
     
     

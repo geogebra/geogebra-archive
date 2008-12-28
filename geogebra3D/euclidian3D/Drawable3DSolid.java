@@ -2,7 +2,9 @@ package geogebra3D.euclidian3D;
 
 import java.awt.Color;
 
+import geogebra.kernel.linalg.GgbMatrix;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoSegment3D;
 
 
 /**
@@ -47,6 +49,21 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		
 
 	}
+	
+	
+	public void drawHidden(EuclidianRenderer3D renderer){
+		
+		if(!getGeoElement().isEuclidianVisible())
+			return;
+		
+				
+		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setMatrix(getMatrix());		
+		drawGeometryHidden(renderer);		
+		
+
+
+	} 
 
 
 	
