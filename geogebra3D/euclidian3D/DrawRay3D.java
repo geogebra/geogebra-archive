@@ -27,9 +27,10 @@ public class DrawRay3D extends Drawable3DSolid {
 		
 		GeoRay3D l_ray3D = (GeoRay3D) getGeoElement();
 		double dashLength = 0.12f/((float) l_ray3D.getUnit()); //TODO use object property
-		renderer.drawRayDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		//renderer.drawRayDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		drawGeometry(renderer);
 		
-	};
+	}
 	
 
 

@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra.kernel.linalg.GgbVector;
 
 public class GeoPlane3D extends GeoCoordSys2D {
@@ -10,6 +11,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	double xmin, xmax, ymin, ymax; //for drawing
 	
 	//grid
+	boolean m_grid = true;
 	double dx = 1.0; //distance between two marks on the grid //TODO use object properties
 	double dy = 1.0; 
 	
@@ -37,15 +39,17 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	
 	/** returns a matrix for drawing */
-	public GgbMatrix getDrawingMatrix(){
-		GgbMatrix m = getMatrix4x4().copy();
-		
+	/*
+	public GgbMatrix4x4 getDrawingMatrix(){
+		GgbMatrix4x4 m = new GgbMatrix4x4(); 
+		m.set(getMatrix4x4());		
 		GgbVector o = getPoint(xmin,ymin);
 		GgbVector px = getPoint(xmax,ymin);
 		GgbVector py = getPoint(xmin,ymax);
 		m.set(px.sub(o), 1);m.set(py.sub(o), 2);m.set(o, 4);
 		return m;
 	}	
+	*/
 	
 	
 	
@@ -71,6 +75,22 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		}
 	
 	}
+	
+	
+	/** returns min/max on x/y */
+	public double getXmin(){
+		return xmin;
+	}
+	public double getYmin(){
+		return ymin;
+	}
+	public double getXmax(){
+		return xmax;
+	}
+	public double getYmax(){
+		return ymax;
+	}
+	
 	
 	/** returns a matrix for drawing a segment, equation x=l (y=ymin..ymax) */
 	public GgbMatrix getDrawingXMatrix(double l){
@@ -98,6 +118,16 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		m.set(p1, 4);
 		return m;
 		
+	}
+	
+	
+	/** returns if there is a grid to plot or not */
+	public boolean isGrid(){
+		return m_grid;
+	}
+	
+	public void setGrid(boolean a_grid){
+		m_grid = a_grid;
 	}
 	
 	

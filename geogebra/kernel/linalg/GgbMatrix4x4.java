@@ -1,17 +1,37 @@
 package geogebra.kernel.linalg;
 
-public class GgbMatrix4x4 {
+public class GgbMatrix4x4 extends GgbMatrix {
 
 	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////
+	// CONSTRUCTORS
+	
+	public GgbMatrix4x4(){
+		super(4,4);
+	}
+	
+	
+	static final public GgbMatrix4x4 Identity(){
+		GgbMatrix4x4 ret = new GgbMatrix4x4();
+		ret.set(Identity(4));
+		return ret;
+	}
+	
 	/** complete a 4 x n matrix to a 4 x 4 matrix, orthogonal method */
-	static public GgbMatrix toMatrix4x4(GgbMatrix a_matrix){
+	public GgbMatrix4x4(GgbMatrix a_matrix){
 				
-		GgbMatrix l_return;
+		this();
 		GgbVector l_O;
 		
 		switch(a_matrix.getColumns()){
 		case 4:
-			return a_matrix;
+			set(a_matrix);
+			break;
 		case 2:
 			GgbVector V = a_matrix.getColumn(1);
 			l_O = a_matrix.getColumn(2);
@@ -30,10 +50,8 @@ public class GgbMatrix4x4 {
 			Vn2 = V.crossProduct(Vn1);
 			Vn2.normalize();
 			
-			l_return = new GgbMatrix(4,4);
-			l_return.set(new GgbVector[] {V,Vn1,Vn2,l_O});
-			return l_return;
-			
+			set(new GgbVector[] {V,Vn1,Vn2,l_O});
+			break;
 		case 3:
 			GgbVector V1 = a_matrix.getColumn(1);
 			GgbVector V2 = a_matrix.getColumn(2);
@@ -43,13 +61,51 @@ public class GgbMatrix4x4 {
 			Vn = V1.crossProduct(V2);
 			Vn.normalize();
 			
-			l_return = new GgbMatrix(4,4);
-			l_return.set(new GgbVector[] {V1,V2,Vn,l_O});
-			return l_return;			
-			
+			set(new GgbVector[] {V1,V2,Vn,l_O});		
+			break;
 		default:
-			return null;
+			break;
 		}
+		
+		
+	}
+	
+	
+	
+	
+	///////////////////////////////////////////////////
+	// LENGTHS
+
+	/** return length of unit for each axis*/
+	public double getUnit(int a_axis){
+		return getColumn(a_axis).norm();
+	}
+	
+	
+	///////////////////////////////////////////////////
+	// GEOMETRIES
+	
+	/** returns the point at position a_x, a_y, a_z */
+	public GgbVector getPoint(double a_x, double a_y, double a_z){
+		GgbVector v=new GgbVector(new double[] {a_x,a_y,a_z,1});	
+		return this.mul(v);
+	}
+	
+	/** return a matrix that describe a quad with corners (a_x1,a_y1) and  (a_x2,a_y2) */
+	public GgbMatrix4x4 quad(double a_x1, double a_y1, double a_x2, double a_y2){
+				
+		GgbMatrix4x4 l_return = new GgbMatrix4x4();
+		
+		GgbVector o = getPoint(a_x1,a_y1,0);
+		GgbVector px = getPoint(a_x2,a_y1,0);
+		GgbVector py = getPoint(a_x1,a_y2,0);
+		l_return.set(px.sub(o), 1);
+		l_return.set(py.sub(o), 2);
+		l_return.set(getColumn(3), 3);
+		l_return.set(o, 4);
+		
+		return l_return;			
+			
 		
 		
 	}

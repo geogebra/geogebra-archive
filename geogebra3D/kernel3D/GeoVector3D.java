@@ -27,7 +27,7 @@ public class GeoVector3D extends GeoVec4D {
 		//TODO use start point
 		matrix.set(4, 2, 1.0);
 		
-		setDrawingMatrix(GgbMatrix4x4.toMatrix4x4(matrix));
+		setDrawingMatrix(new GgbMatrix4x4(matrix));
 		
 	}
 

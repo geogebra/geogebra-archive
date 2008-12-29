@@ -43,16 +43,16 @@ public class GgbMatrix
 	private boolean isSingular = false;
 	
 	//for rotations
-	public static final int AXE_X = 0;
-	public static final int AXE_Y = 1;
-	public static final int AXE_Z = 2;
+	public static final int X_AXIS = 1;
+	public static final int Y_AXIS = 2;
+	public static final int Z_AXIS = 3;
 	
 	
 	
 	///////////////////////////////////////////////////:
 	//Constructors 
 	
-	public GgbMatrix(){}
+	//public GgbMatrix(){}
 	
 	
 	/** creates a GgbMatrix or a GgbVector if a_columns==1 */
@@ -214,17 +214,17 @@ public class GgbMatrix
 		
 		switch(axe){
 		
-		case AXE_Z:
+		case Z_AXIS:
 			m.set(1,1, Math.cos(angle)); m.set(1,2,-Math.sin(angle));
 			m.set(2,1, Math.sin(angle)); m.set(2,2, Math.cos(angle));
 			m.set(3,3,1.0);
 			break;
-		case AXE_X:
+		case X_AXIS:
 			m.set(1,1,1.0);
 			m.set(2,2, Math.cos(angle)); m.set(2,3,-Math.sin(angle));
 			m.set(3,2, Math.sin(angle)); m.set(3,3, Math.cos(angle));
 			break;
-		case AXE_Y:
+		case Y_AXIS:
 			m.set(2,2,1.0);
 			m.set(3,3, Math.cos(angle)); m.set(3,1,-Math.sin(angle));
 			m.set(1,3, Math.sin(angle)); m.set(1,1, Math.cos(angle));

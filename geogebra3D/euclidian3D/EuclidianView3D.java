@@ -317,8 +317,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void updateMatrix(){
 		//rotations
-		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_X, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
-		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.AXE_Z, this.a*EuclidianController3D.ANGLE_SCALE);
+		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
+		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
 		GgbMatrix m3 = m1.mul(m2);
 		
 

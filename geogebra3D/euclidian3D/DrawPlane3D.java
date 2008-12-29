@@ -27,7 +27,8 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawQuad();
+		GeoPlane3D p = (GeoPlane3D) getGeoElement();
+		renderer.drawPlane(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax(),p.isGrid());
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){}
@@ -47,7 +48,7 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	
 
 	
-	
+	/*
 	public void drawTransp(EuclidianRenderer3D renderer){
 		if(!getGeoElement().isEuclidianVisible())
 			return;
@@ -59,6 +60,7 @@ public class DrawPlane3D extends Drawable3DTransparent {
 		
 		
 		//grid
+		
 		GgbMatrix mc;
 		GeoPlane3D l_plane3D = (GeoPlane3D) getGeoElement();
 		
@@ -79,6 +81,7 @@ public class DrawPlane3D extends Drawable3DTransparent {
 		
 	}
 	
+	*/
 
 	
 	

@@ -12,7 +12,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	private int m_dimension;
 	
 	//matrix completed to 4x4 for drawing, etc.
-	private GgbMatrix m_matrix4x4 = new GgbMatrix(4,4);
+	private GgbMatrix4x4 m_matrix4x4 = new GgbMatrix4x4();
 
 	
 	private GeoCoordSys(Construction c) {
@@ -53,14 +53,14 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	
 	
 	public void updateDrawingMatrix(){
-		m_matrix4x4 = GgbMatrix4x4.toMatrix4x4(m_matrix);
+		m_matrix4x4 = new GgbMatrix4x4(m_matrix);
 		setDrawingMatrix(m_matrix4x4);
 	}
 	
 	
 	/** returns completed matrix for drawing : (V1 V2 V3 O)  */
-	public GgbMatrix getMatrix4x4(){
-		return m_matrix4x4.copy();
+	public GgbMatrix4x4 getMatrix4x4(){
+		return m_matrix4x4;
 	}
 	
 

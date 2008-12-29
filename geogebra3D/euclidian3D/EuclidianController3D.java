@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
@@ -331,7 +332,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			view.toSceneCoords3D(v);
 			
 			//plane for projection
-			GgbMatrix plane = view.movingPlane.getMatrix4x4();
+			GgbMatrix4x4 plane = new GgbMatrix4x4();
+			plane.set(view.movingPlane.getMatrix4x4());
 
 			GgbVector originOld = plane.getColumn(4);
 			plane.set(movedGeoPoint3D.getCoords(), 4);

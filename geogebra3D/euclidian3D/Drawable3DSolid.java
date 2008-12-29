@@ -28,6 +28,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 			return;	
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setDash(EuclidianRenderer3D.DASH_NONE); //TODO use object property
 		renderer.setMatrix(getMatrix());
 		
 		drawGeometry(renderer);
@@ -44,6 +45,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 			return;
 		
 		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
+		renderer.setDash(EuclidianRenderer3D.DASH_NONE);
 		renderer.setMatrix(getMatrix());
 		drawGeometryPicked(renderer);		
 		
@@ -58,6 +60,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		
 				
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setDash(EuclidianRenderer3D.DASH_DOTTED); //TODO use object property
 		renderer.setMatrix(getMatrix());		
 		drawGeometryHidden(renderer);		
 		

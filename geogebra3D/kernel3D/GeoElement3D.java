@@ -23,6 +23,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra.kernel.linalg.GgbMatrix4x4;
 
 
 /**
@@ -41,7 +42,7 @@ public abstract class GeoElement3D
 	
 	
 	//link to drawable3D
-	private GgbMatrix m_drawingMatrix = null;
+	private GgbMatrix4x4 m_drawingMatrix = null;
 	
 	//link to GeoElement
 	protected GeoElement geo2D = null;
@@ -78,12 +79,12 @@ public abstract class GeoElement3D
 
 	
 	/** returns a 4x4 matrix for drawing the drawable */
-	public GgbMatrix getDrawingMatrix(){
+	public GgbMatrix4x4 getDrawingMatrix(){
 		return m_drawingMatrix;
 	}
 	
 	/** sets the 4x4 matrix for drawing the drawable */
-	public void setDrawingMatrix(GgbMatrix a_drawingMatrix){
+	public void setDrawingMatrix(GgbMatrix4x4 a_drawingMatrix){
 		m_drawingMatrix = a_drawingMatrix;
 	}	
 	

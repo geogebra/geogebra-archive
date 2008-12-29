@@ -34,8 +34,8 @@ public class DrawSegment3D extends Drawable3DSolid {
 		GeoSegment3D l_segment3D = (GeoSegment3D) getGeoElement();
 		dashLength = 0.12f/((float) l_segment3D.getLength()); //TODO use object property
 		
-		renderer.drawSegmentDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
-		
+		//renderer.drawSegmentDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		drawGeometry(renderer);
 	} 
 	
 	

@@ -37,8 +37,8 @@ public class DrawLine3D extends Drawable3DSolid {
 	
 		GeoLine3D l_line3D = (GeoLine3D) getGeoElement();
 		dashLength = 0.12f/((float) l_line3D.getUnit()); //TODO use object property
-		renderer.drawLineDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
-		
+		//renderer.drawLineDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		drawGeometry(renderer);
 	};
 	
 	
