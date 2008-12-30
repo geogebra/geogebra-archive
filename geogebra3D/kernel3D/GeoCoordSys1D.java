@@ -52,20 +52,14 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 
 	
 	/** returns matrix corresponding to segment joining l1 to l2, using getLineThickness() */
+	/*
 	public GgbMatrix getSegmentMatrix(double l1, double l2){
 		
-		/*
-		GgbMatrix m = new GgbMatrix(4,4);
-		GgbVector p1 = getPoint(l1);
-		GgbVector p2 = getPoint(l2);
-		GgbVector Vn1 = getMatrix4x4().getColumn(2);
-		GgbVector Vn2 = getMatrix4x4().getColumn(3);
-		m.set(new GgbVector[] {p2.sub(p1),Vn1.mul(getLineThickness()).v(),Vn2.mul(getLineThickness()).v(),p1});
-		return m;
-		*/
+	
 		
 		return GgbMatrix4x4.subSegmentX(getMatrix4x4(), l1, l2);
 	}	
+*/
 	
 	
 	

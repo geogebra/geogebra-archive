@@ -74,6 +74,23 @@ public class GgbMatrix4x4 extends GgbMatrix {
 	
 	
 	///////////////////////////////////////////////////
+	// SETTERS AND GETTERS
+	
+	public GgbVector getOrigin(){ return getColumn(4); }	
+	public GgbVector getVx(){ return getColumn(1); }	
+	public GgbVector getVy(){ return getColumn(2); }	
+	public GgbVector getVz(){ return getColumn(3); }	
+	
+	public void setOrigin(GgbVector v){ set(v,4); }	
+	public void setVx(GgbVector v){ set(v,1); }	
+	public void setVy(GgbVector v){ set(v,2); }	
+	public void setVz(GgbVector v){ set(v,3); }	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////
 	// LENGTHS
 
 	/** return length of unit for each axis*/
@@ -94,17 +111,18 @@ public class GgbMatrix4x4 extends GgbMatrix {
 	/** return a matrix that describe a quad with corners (a_x1,a_y1) and  (a_x2,a_y2) */
 	public GgbMatrix4x4 quad(double a_x1, double a_y1, double a_x2, double a_y2){
 				
-		GgbMatrix4x4 l_return = new GgbMatrix4x4();
+		GgbMatrix4x4 ret = new GgbMatrix4x4();
 		
 		GgbVector o = getPoint(a_x1,a_y1,0);
 		GgbVector px = getPoint(a_x2,a_y1,0);
 		GgbVector py = getPoint(a_x1,a_y2,0);
-		l_return.set(px.sub(o), 1);
-		l_return.set(py.sub(o), 2);
-		l_return.set(getColumn(3), 3);
-		l_return.set(o, 4);
+
+		ret.setOrigin(o);
+		ret.setVx(px.sub(o));		
+		ret.setVy(py.sub(o));
+		ret.setVz(getVz());	
 		
-		return l_return;			
+		return ret;			
 			
 		
 		
@@ -113,19 +131,57 @@ public class GgbMatrix4x4 extends GgbMatrix {
 	
 	
 	/** return a matrix that describe a segment along x-axis from x=x1 to x=x2 */
-	static public GgbMatrix subSegmentX(GgbMatrix a_matrix, double x1, double x2){
+	public GgbMatrix segmentX(double a_x1, double a_x2){
 				
-		GgbMatrix l_return = a_matrix.copy();
-		GgbVector l_origin = l_return.getColumn(4);
-		GgbVector l_vx = l_return.getColumn(1);
+		GgbMatrix4x4 ret = new GgbMatrix4x4();
 		
-		l_return.set((GgbVector) l_origin.add(l_vx.mul(x1)), 4);
-		l_return.set((GgbVector) l_vx.mul(x2-x1), 1);
+		ret.setOrigin((GgbVector) getOrigin().add(getVx().mul(a_x1)));
+		ret.setVx((GgbVector) getVx().mul(a_x2-a_x1));		
+		ret.setVy(getVy());
+		ret.setVz(getVz());	
 		
-		return l_return;			
+		return ret;			
 			
 		
 		
 	}
+	
+	
+	/** return this translated along y axis*/
+    public GgbMatrix4x4 translateY(double a_y){
+				
+		GgbMatrix4x4 ret = new GgbMatrix4x4();
+		
+		ret.setOrigin((GgbVector) getOrigin().add(getVy().mul(a_y)));
+		ret.setVx(getVx());		
+		ret.setVy(getVy());
+		ret.setVz(getVz());		
+		
+		return ret;			
+		
+	}
+    
+    
+
+	
+    
+    
+	/** return this mirrored by x=y plane*/
+    public GgbMatrix4x4 mirrorXY(){
+				
+		GgbMatrix4x4 ret = new GgbMatrix4x4();
+						
+		ret.setOrigin(getOrigin());
+		ret.setVx(getVy());		
+		ret.setVy(getVx());
+		ret.setVz((GgbVector) getVz().mul(-1));		
+		
+		return ret;			
+			
+		
+	}
+	
+	
+	
 
 }

@@ -10,6 +10,9 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 		super(a_view3d, a_geo);
 	}
 
+	
+	
+	abstract void drawGeometryHiding(EuclidianRenderer3D renderer);
 
 
 	public void drawHiding(EuclidianRenderer3D renderer){
@@ -17,7 +20,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 			return;
 		
 		renderer.setMatrix(getMatrix());
-		drawGeometry(renderer);
+		drawGeometryHiding(renderer);
 		
 	}
 	

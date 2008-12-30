@@ -38,18 +38,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 
 	
 	
-	/** returns a matrix for drawing */
-	/*
-	public GgbMatrix4x4 getDrawingMatrix(){
-		GgbMatrix4x4 m = new GgbMatrix4x4(); 
-		m.set(getMatrix4x4());		
-		GgbVector o = getPoint(xmin,ymin);
-		GgbVector px = getPoint(xmax,ymin);
-		GgbVector py = getPoint(xmin,ymax);
-		m.set(px.sub(o), 1);m.set(py.sub(o), 2);m.set(o, 4);
-		return m;
-	}	
-	*/
+
 	
 	
 	
@@ -92,37 +81,12 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 	
 	
-	/** returns a matrix for drawing a segment, equation x=l (y=ymin..ymax) */
-	public GgbMatrix getDrawingXMatrix(double l){
-		GgbMatrix m = getMatrix4x4().copy();
-		
-		GgbVector p1 = getPoint(l,ymin);
-		GgbVector p2 = getPoint(l,ymax);
 
-		m.set(m.getColumn(3), 2);m.set(m.getColumn(1), 3);
-		m.set(p2.sub(p1), 1);
-		m.set(p1, 4);
-		return m;
-		
-	}
 
-	/** returns a matrix for drawing a segment, equation y=l (x=xmin..xmax) */
-	public GgbMatrix getDrawingYMatrix(double l){
-		GgbMatrix m = getMatrix4x4().copy();
-		
-		GgbVector p1 = getPoint(xmin,l);
-		GgbVector p2 = getPoint(xmax,l);
-		
-		
-		m.set(p2.sub(p1), 1);
-		m.set(p1, 4);
-		return m;
-		
-	}
 	
 	
 	/** returns if there is a grid to plot or not */
-	public boolean isGrid(){
+	public boolean hasGrid(){
 		return m_grid;
 	}
 	
@@ -131,37 +95,12 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 	
 	
-	/** returns first x on the grid */
-	public double getGridXmin(){
-		double n = Math.floor((xmin-x0)/dx)  + 1.0;
-		return x0+n*dx;
-	}
-	
-	/** returns last x on the grid */
-	public double getGridXmax(){
-		double n = Math.floor((xmax-x0)/dx);
-		return x0+n*dx;
-	}
-	
 	/** returns x delta for the grid */
 	public double getGridXd(){
 		return dx; 
 	}
 
 
-	
-	/** returns first y on the grid */
-	public double getGridYmin(){
-		double n = Math.floor((ymin-y0)/dy)  + 1.0;
-		return y0+n*dy;
-	}
-	
-	/** returns last y on the grid */
-	public double getGridYmax(){
-		double n = Math.floor((ymax-y0)/dy);
-		return y0+n*dy;
-	}
-	
 	/** returns y delta for the grid */
 	public double getGridYd(){
 		return dy; 

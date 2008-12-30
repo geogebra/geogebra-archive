@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.kernel.linalg.GgbMatrix;
+
 import geogebra3D.kernel3D.GeoVector3D;
 
 public class DrawVector3D extends Drawable3DSolid {
@@ -15,11 +15,13 @@ public class DrawVector3D extends Drawable3DSolid {
 	
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.drawSegment(); 
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		renderer.drawSegment(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); 
+		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.drawSegment(); 
 	}
 	
 

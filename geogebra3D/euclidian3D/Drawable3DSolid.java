@@ -60,7 +60,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		
 				
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setDash(EuclidianRenderer3D.DASH_DOTTED); //TODO use object property
+		renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
 		renderer.setMatrix(getMatrix());		
 		drawGeometryHidden(renderer);		
 		

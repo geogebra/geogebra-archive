@@ -21,10 +21,13 @@ public class DrawSegment3D extends Drawable3DSolid {
 
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawSegment(LINE3D_THICKNESS*getGeoElement().getLineThickness()); 
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.drawSegment(); 
 	}
+	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		renderer.drawSegment(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); 
+		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.drawSegment(); 
 	}
 		
 

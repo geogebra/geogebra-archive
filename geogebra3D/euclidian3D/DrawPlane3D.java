@@ -28,8 +28,24 @@ public class DrawPlane3D extends Drawable3DTransparent {
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		GeoPlane3D p = (GeoPlane3D) getGeoElement();
-		renderer.drawPlane(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax(),p.isGrid());
+		renderer.drawQuad(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax());
+		
+		renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
+		renderer.setThickness(GRID3D_THICKNESS*getGeoElement().getLineThickness());
+		if (p.hasGrid())
+			renderer.drawGrid(p.getXmin(),p.getYmin(),
+					p.getXmax(),p.getYmax(),
+					p.getGridXd(),p.getGridYd());
+					
 	}
+	
+	
+	public void drawGeometryHiding(EuclidianRenderer3D renderer) {
+		GeoPlane3D p = (GeoPlane3D) getGeoElement();
+		renderer.drawQuad(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax());
+	}
+	
+	
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){}
 	

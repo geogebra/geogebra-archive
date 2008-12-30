@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.kernel.linalg.GgbMatrix4x4;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
@@ -54,6 +55,9 @@ public class EuclidianRenderer3D implements GLEventListener {
 	static public double[][] DASH_DOTTED_DASHED = {DASH_SIMPLE[0],DASH_DOTTED[0]};
 	private double[][] m_dash = DASH_NONE; // dash is composed of couples {length of line, length of hole}
 	private double m_dash_factor; // for unit factor
+	
+	
+	private double m_thickness;
 	
 	
 	// for picking
@@ -214,11 +218,20 @@ public class EuclidianRenderer3D implements GLEventListener {
     	m_dash = a_dash;
     }
     
+    //thickness
+    public void setThickness(double a_thickness){
+    	m_thickness = a_thickness;
+    }
+    
     
     
     //transformation matrix
     public void setMatrix(GgbMatrix4x4 a_matrix){
     	m_drawingMatrix=a_matrix;
+    }
+    
+    public GgbMatrix4x4 getMatrix(){
+    	return m_drawingMatrix;
     }
     
     private void initMatrix(){
@@ -247,24 +260,24 @@ public class EuclidianRenderer3D implements GLEventListener {
     //drawing geometries
     
     /** draws a segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
-    public void drawSegment(double a_x1, double a_x2, float a_radius){
+    public void drawSegment(double a_x1, double a_x2){
     	if (m_dash==null)
-    		drawSegmentNotDashed(a_x1, a_x2, a_radius);
+    		drawSegmentNotDashed(a_x1, a_x2);
     	else
-    		drawSegmentDashed(a_x1, a_x2, a_radius);
+    		drawSegmentDashed(a_x1, a_x2);
     } 
     
     
     /** draws a segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
-    private void drawSegmentNotDashed(double a_x1, double a_x2, float a_radius){
-    	initMatrix(GgbMatrix4x4.subSegmentX(m_drawingMatrix, a_x1, a_x2));
-    	drawCylinder(a_radius);
+    private void drawSegmentNotDashed(double a_x1, double a_x2){
+    	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
+    	drawCylinder(m_thickness);
     	resetMatrix();
     } 
    
     
     /** draws a dashed segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
-    private void drawSegmentDashed(double a_x1, double a_x2, float a_radius){
+    private void drawSegmentDashed(double a_x1, double a_x2){
 		
     	m_dash_factor = 1/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
     	for(double l1=a_x1; l1<a_x2;){
@@ -272,7 +285,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     		for(int i=0; (i<m_dash.length)&&(l1<a_x2); i++){
     			l2=l1+m_dash_factor*m_dash[i][0];
     			if (l2>a_x2) l2=a_x2;
-    			drawSegmentNotDashed(l1,l2,a_radius);
+    			drawSegmentNotDashed(l1,l2);
     			l1=l2+m_dash_factor*m_dash[i][1];
     		}	
     	} 	
@@ -281,23 +294,23 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     /** draws a segment from x=0 to x=1 with radius thickness, according to current m_drawingMatrix*/
-    public void drawSegment(float a_radius){
-    	drawSegment(0,1,a_radius);
+    public void drawSegment(){
+    	drawSegment(0,1);
     }
     
     
     
     /** draws a line with radius thickness, according to current m_drawingMatrix*/
-    public void drawLine(float a_radius){
+    public void drawLine(){
     	//TODO use frustum
-    	drawSegment(-20,21,a_radius);
+    	drawSegment(-20,21);
     }  
     
     
     /** draws a ray (half-line) with radius thickness, according to current m_drawingMatrix*/
-    public void drawRay(float a_radius){
+    public void drawRay(){
     	//TODO use frustum
-    	drawSegment(0,21,a_radius);
+    	drawSegment(0,21);
     }  
     
     
@@ -311,20 +324,63 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    /** draws a plane with or without a grid */
-    public void drawPlane(double a_x1, double a_y1, double a_x2, double a_y2, boolean a_grid){
-    	drawQuad(a_x1, a_y1, a_x2, a_y2);
-    }
+
     
     /** draws a quad  */
     public void drawQuad(double a_x1, double a_y1, double a_x2, double a_y2){
     	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
-    	//initMatrix();
     	drawQuad();
     	resetMatrix();
     }
     
-    
+    /** draws a grid  */
+    public void drawGrid(double a_x1, double a_y1, 
+    		double a_x2, double a_y2, 
+    		double a_dx, double a_dy){
+    	
+    	double xmin, xmax;
+    	if (a_x1<a_x2){
+    		xmin=a_x1;
+    		xmax=a_x2;
+    	}else{
+    		xmin=a_x2;
+    		xmax=a_x1;
+    	}
+    	
+    	double ymin, ymax;
+    	if (a_y1<a_y2){
+    		ymin=a_y1;
+    		ymax=a_y2;
+    	}else{
+    		ymin=a_y2;
+    		ymax=a_y1;
+    	}
+    	
+    	int nXmin= (int) Math.ceil(xmin/a_dx);
+    	int nXmax= (int) Math.floor(xmax/a_dx);
+    	int nYmin= (int) Math.ceil(ymin/a_dy);
+    	int nYmax= (int) Math.floor(ymax/a_dy);
+    	
+    	//Application.debug("n = "+nXmin+","+nXmax+","+nYmin+","+nYmax);
+    	
+    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
+     	
+    	matrix.set(getMatrix());
+    	for (int i=nYmin; i<=nYmax; i++){
+    		setMatrix(matrix.translateY(i*a_dy));
+        	drawSegment(xmin, xmax);
+    	}
+    	setMatrix(matrix);
+    	
+    	matrix.set(getMatrix());
+    	GgbMatrix4x4 matrix2 = matrix.mirrorXY();
+    	for (int i=nXmin; i<=nXmax; i++){
+    		setMatrix(matrix2.translateY(i*a_dx));
+        	drawSegment(ymin, ymax);
+    	}
+    	setMatrix(matrix);     		
+
+    }  
     
     
     
@@ -340,9 +396,9 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
 
     
-    private void drawCylinder(float radius){
+    private void drawCylinder(double a_thickness){
     	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
-    	glu.gluCylinder(quadric, radius, radius, 1.0f, 8, 1);
+    	glu.gluCylinder(quadric, a_thickness, a_thickness, 1.0f, 8, 1);
     }
     
     

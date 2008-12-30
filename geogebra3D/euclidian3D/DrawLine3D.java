@@ -24,12 +24,14 @@ public class DrawLine3D extends Drawable3DSolid {
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		
-		renderer.drawLine(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.drawLine();
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		
-		renderer.drawLine(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); 
+		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.drawLine(); 
 	}
 	
 	

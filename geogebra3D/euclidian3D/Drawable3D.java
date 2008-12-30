@@ -35,7 +35,8 @@ public abstract class Drawable3D {
 	protected static final float POINT3D_RADIUS = 0.05f;
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	protected static final float LINE3D_THICKNESS = 0.01f;
-	
+	protected static final float GRID3D_THICKNESS = 0.005f;
+		
 	
 	
 	//view3D

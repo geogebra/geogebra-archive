@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoTriangle3D;
 
 
@@ -27,8 +28,12 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 		renderer.drawTriangle();
 	}
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		renderer.drawTriangle();
+		drawGeometry(renderer);
 	}
+	public void drawGeometryHiding(EuclidianRenderer3D renderer) {
+		drawGeometry(renderer);
+	}
+	
 	
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
 	
