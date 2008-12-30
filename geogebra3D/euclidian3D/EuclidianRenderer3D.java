@@ -59,6 +59,12 @@ public class EuclidianRenderer3D implements GLEventListener {
 	
 	private double m_thickness;
 	
+	static final public int ARROW_TYPE_NONE=0;
+	static final public int ARROW_TYPE_SIMPLE=1;
+	private int m_arrowType=ARROW_TYPE_NONE;
+	
+	private double m_arrowLength, m_arrowWidth;
+	
 	
 	// for picking
 	private int mouseX, mouseY;
@@ -223,7 +229,16 @@ public class EuclidianRenderer3D implements GLEventListener {
     	m_thickness = a_thickness;
     }
     
-    
+    //arrows
+    public void setArrowType(int a_arrowType){
+    	m_arrowType = a_arrowType;
+    }   
+    public void setArrowWidth(double a_arrowWidth){
+    	m_arrowWidth = a_arrowWidth;
+    } 
+    public void setArrowLength(double a_arrowLength){
+    	m_arrowLength = a_arrowLength;
+    } 
     
     //transformation matrix
     public void setMatrix(GgbMatrix4x4 a_matrix){
@@ -259,16 +274,34 @@ public class EuclidianRenderer3D implements GLEventListener {
     ///////////////////////////////////////////////////////////
     //drawing geometries
     
-    /** draws a segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
+    /** draws a segment from x=x1 to x=x2 according to current m_drawingMatrix*/
     public void drawSegment(double a_x1, double a_x2){
-    	if (m_dash==null)
-    		drawSegmentNotDashed(a_x1, a_x2);
-    	else
-    		drawSegmentDashed(a_x1, a_x2);
+
+    	switch(m_arrowType){
+    	case ARROW_TYPE_NONE:
+    	default:
+    		drawSegmentDashedOrNot(a_x1, a_x2, m_dash!=null);
+    	break;
+    	case ARROW_TYPE_SIMPLE:
+    		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
+    		drawCone(x3,a_x2,m_arrowWidth);
+    		if (x3>a_x1)
+    			drawSegmentDashedOrNot(a_x1, x3, m_dash!=null);
+    		break;
+    	}
+
     } 
     
     
-    /** draws a segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
+    private void drawSegmentDashedOrNot(double a_x1, double a_x2, boolean a_dash){
+    	if (a_dash)
+    		drawSegmentDashed(a_x1, a_x2);
+    	else
+    		drawSegmentNotDashed(a_x1, a_x2);
+    }
+    
+    
+    /** draws a segment from x=x1 to x=x2 according to current m_drawingMatrix*/
     private void drawSegmentNotDashed(double a_x1, double a_x2){
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
     	drawCylinder(m_thickness);
@@ -276,7 +309,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
    
     
-    /** draws a dashed segment from x=x1 to x=x2 with radius thickness, according to current m_drawingMatrix*/
+    /** draws a dashed segment from x=x1 to x=x2 according to current m_drawingMatrix*/
     private void drawSegmentDashed(double a_x1, double a_x2){
 		
     	m_dash_factor = 1/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
@@ -293,21 +326,21 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
     
     
-    /** draws a segment from x=0 to x=1 with radius thickness, according to current m_drawingMatrix*/
+    /** draws a segment from x=0 to x=1 according to current m_drawingMatrix*/
     public void drawSegment(){
     	drawSegment(0,1);
     }
     
     
     
-    /** draws a line with radius thickness, according to current m_drawingMatrix*/
+    /** draws a line according to current m_drawingMatrix*/
     public void drawLine(){
     	//TODO use frustum
     	drawSegment(-20,21);
     }  
     
     
-    /** draws a ray (half-line) with radius thickness, according to current m_drawingMatrix*/
+    /** draws a ray (half-line) according to current m_drawingMatrix*/
     public void drawRay(){
     	//TODO use frustum
     	drawSegment(0,21);
@@ -318,6 +351,13 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    /** draws a cone from x=x1 to x=x2 according to current m_drawingMatrix*/
+    public void drawCone(double a_x1, double a_x2, double a_thickness){
+    	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
+    	drawCone(a_thickness);
+    	resetMatrix();
+    } 
  
     
     
@@ -386,6 +426,9 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    
     ///////////////////////////////////////////////////////////
     //drawing primitives TODO use glLists
     
@@ -402,7 +445,10 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    
+    private void drawCone(double a_thickness){
+    	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
+    	glu.gluCylinder(quadric, a_thickness, 0, 1.0f, 8, 1);
+    }   
     
     
     

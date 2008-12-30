@@ -16,16 +16,26 @@ public class DrawVector3D extends Drawable3DSolid {
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		renderer.drawSegment(); 
+		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_SIMPLE);
+		renderer.setArrowLength(0.3); //TODO use object property
+		renderer.setArrowWidth(2*LINE3D_THICKNESS*getGeoElement().getLineThickness()); //TODO use object property
+		renderer.drawSegment();
+		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_NONE);
 	}
 	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(EuclidianRenderer3D renderer){		
 		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		renderer.drawSegment(); 
+		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_SIMPLE);
+		renderer.setArrowLength(0.3); //TODO use object property
+		renderer.setArrowWidth(2*LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); //TODO use object property
+		renderer.drawSegment();
+		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_NONE);
 	}
 	
 
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
+	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+		drawGeometry(renderer);
+	};
 	
 	
 
