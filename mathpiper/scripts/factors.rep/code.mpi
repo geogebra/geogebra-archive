@@ -1,0 +1,272 @@
+
+
+
+
+
+1# FactorizeInt(0) <-- {};
+1# FactorizeInt(1) <-- {};
+
+3# FactorizeInt(n_IsInteger) <--
+[
+  Local(small'powers);
+  n := Abs(n);	
+  
+  
+  If(
+  	Gcd(ProductPrimesTo257(), n) > 1,	
+	small'powers := TrialFactorize(n, 257),	
+	small'powers := {n}	
+  );
+  n := small'powers[1];	
+  If(n=1, Tail(small'powers),
+  
+	  [
+	  	If(InVerboseMode(), Echo({"FactorizeInt: Info: remaining number ", n}));
+		SortFactorList(
+	  	  PollardCombineLists(Tail(small'powers), PollardRhoFactorize(n))
+		);
+	  ]
+  );
+];
+
+
+LocalSymbols(a,b, list) [
+
+SortFactorList(list) := HeapSort(list, {{a,b}, a[1]<b[1]});
+
+];
+
+
+
+
+
+
+
+
+
+
+FindPrimeFactor(n, prime) :=
+[
+	Local(power, factor, old'factor, step);
+	power := 1;
+	old'factor := 1;	
+	factor := prime;
+	
+	While(Mod(n, factor)=0)	
+	[
+		old'factor := factor;	
+		factor := factor^2;
+		power := power*2;
+	];
+	power := Div(power,2);
+	factor := old'factor;
+	n := Div(n, factor);
+	
+	step := Div(power,2);
+	While(step>0 And n > 1)
+	[
+		factor := prime^step;
+		If(
+			Mod(n, factor)=0,
+			[
+				n := Div(n, factor);
+				power := power + step;
+			]
+		);
+		step := Div(step, 2);
+	];
+	{n, power};
+];
+
+
+FindPrimeFactorSimple(n, prime) :=
+[
+	Local(power, factor);
+	power := 0;
+	factor := prime;
+	While(Mod(n, factor)=0)
+	[
+		factor := factor*prime;
+		power++;
+	];
+	{n/(factor/prime), power};
+];
+
+
+
+
+TrialFactorize(n, limit) :=
+[
+	Local(power, prime, result);
+	result := {n};	
+	prime := 2;	
+	While(prime <= limit And n>1 And prime*prime <= n)
+	[	
+		{n, power} := FindPrimeFactor(n, prime);
+		If(
+			power>0,
+			DestructiveAppend(result, {prime,power})
+		);
+		prime := NextPseudoPrime(prime);	
+	];
+	
+	DestructiveReplace(result, 1, n);
+];
+
+
+
+
+
+RandomInteger(n) := FloorN(Random()*n);
+
+PollardRhoPolynomial(_x) <-- x^2+1;
+
+2# PollardRhoFactorize(n_IsPrimePower) <-- {GetPrimePower(n)};
+3# PollardRhoFactorize(_n) <--
+[
+  Local(x,y,restarts,gcd,repeat);
+  gcd:=1;
+  restarts := 100;	
+  While(gcd = 1 And restarts>=0)	
+  [
+  	restarts--;
+    
+    x:= RandomInteger(n-1)+1;
+
+    
+    gcd:=1; y:=x;
+	repeat := 4;	
+
+ 
+    
+    While(gcd = 1 And repeat>=0)
+    [
+      x:= Mod( PollardRhoPolynomial(x), n);
+   	  y:= Mod( PollardRhoPolynomial(
+	  	Mod( PollardRhoPolynomial(y), n)	
+	  ), n);
+   	  If(x-y = 0,
+       	 [
+		 	gcd := 1;
+		 	repeat--;	
+		 ],
+       	 gcd:=Gcd(x-y,n)
+       	 );
+
+   	];
+	If(InVerboseMode() And repeat<=0, Echo({"PollardRhoFactorize: Warning: stalled while factorizing ", n, "; counters ", x, y}));
+  ];
+  Check(restarts>0, "PollardRhoFactorize: Error: failed to factorize " : String(n));
+  If(InVerboseMode() And gcd > 1, Echo({"PollardRhoFactorize: Info: while factorizing ", n, " found factor ", gcd}));
+  
+  PollardCombineLists(PollardRhoFactorize(gcd), PollardRhoFactorize(Div(n,gcd)));
+];
+
+
+
+5 # PollardMerge(_list,{1,_n}) <-- True;
+10 # PollardMerge(_list,_item)_(Assoc(item[1],list) = Empty) <--
+  DestructiveInsert(list,1,item);
+
+20 # PollardMerge(_list,_item) <--
+[
+  Local(assoc);
+  assoc := Assoc(item[1],list);
+  assoc[2]:=assoc[2]+item[2];
+];
+
+PollardCombineLists(_left,_right) <--
+[
+  ForEach(item,right)
+  [
+    PollardMerge(left,item);
+  ];
+  left;
+];
+
+
+
+
+
+10 # Factors(p_IsInteger) <-- FactorizeInt(p);
+20 # Factors(p_CanBeUni)_(Length(VarList(p)) = 1) <--  BinaryFactors(p);
+30 # Factors(p_IsGaussianInteger)	<-- GaussianFactors(p);
+
+
+
+
+10 # Factor(p_CanBeUni) <-- FW(Factors(p));
+
+
+
+
+10 # FWatom({_a,1}) <-- a;
+20 # FWatom({_a,_n}) <-- UnList({Atom("^"),a, n});
+5  # FW(_list)_(Length(list) = 0) <-- 1;
+10 # FW(_list)_(Length(list) = 1) <-- FWatom(list[1]);
+20 # FW(_list) <--
+[
+  Local(result);
+  result:=FWatom(Head(list));
+  ForEach(item,Tail(list))
+  [
+   result := UnList({ Atom("*"),result,FWatom(item)});
+  ];
+  result;
+];
+
+10 # Roots(poly_CanBeUni) <--
+[
+  Local(factors,result,uni,root,i,deg);
+  factors:=Factors(poly);
+  result:={};
+  ForEach(item,factors)
+  [
+    uni:=MakeUni(item[1]);
+    deg:=Degree(uni);
+    If(deg > 0 And deg < 3,
+      [
+        root:= PSolve(uni);
+        If(Not IsList(root),root:={root});
+        For(i:=0,i<item[2],i++)
+          result:= Concat(root, result);
+      ]
+      );
+  ];
+  result;
+];
+
+10 # RootsWithMultiples(poly_CanBeUni) <--
+[
+  Local(factors,result,uni,root,i,deg);
+  factors:=Factors(poly);
+  result:={};
+  ForEach(item,factors)
+  [
+    uni:=MakeUni(item[1]);
+
+    deg:=Degree(uni);
+    If(deg > 0 And deg < 3,
+      [
+        root:= PSolve(uni);
+        If(Not IsList(root),root:={root});
+        For(i:=1,i<=Length(root),i++)
+          result:= Concat({{root[i],item[2]}}, result);
+      ]
+      );
+  ];
+  result;
+];
+
+
+
+Function("FactorQS",{n})[
+	Local(x,k,fb,j);	
+	
+	
+	k:=Round(N(Sqrt(Exp(Sqrt(Ln(n)*Ln(Ln(n)))))));
+	fb:=ZeroVector(k);
+	For(j:=1,j<=k,j++)[
+		fb[j]:=NextPrime(j);
+	];
+];

@@ -1,0 +1,10 @@
+CNF                                     
+LogicSimplify                           
+CanProve                                
+LogicRemoveTautologies                  
+Subsumes
+
+
+
+=>
+}

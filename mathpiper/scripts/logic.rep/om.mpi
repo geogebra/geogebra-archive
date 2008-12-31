@@ -1,0 +1,11 @@
+
+OMDef( "=>" , "logic1","implies" );
+OMDef( "CNF"          ,          "piper","cnf"                      );
+OMDef( "LogicSimplify",          "piper","logic_simplify"           );
+OMDef( "CanProve"     ,          "piper","can_prove"                );
+OMDef( "LogicRemoveTautologies", "piper","logic_remove_tautologies" );
+OMDef( "Subsumes"     ,          "piper","subsumes"                 );
+
+
+
+

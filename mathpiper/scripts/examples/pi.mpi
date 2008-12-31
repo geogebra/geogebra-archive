@@ -1,0 +1,212 @@
+
+
+
+
+
+
+PiMethod0() := [
+	Local(result, delta, k, Epsilon, prec, prec1, curprec);
+	prec := BuiltinPrecisionGet();	
+	prec1 := Ceil(N(prec/3));	
+
+	
+	result := 3.14159265358979323846;
+	curprec := 20;
+	BuiltinPrecisionSet(curprec);
+	For(k:=0, curprec < prec1, k:=k+1) [
+		curprec := Min(prec1, curprec * 3);
+		BuiltinPrecisionSet(curprec);
+		Echo({"Iteration ", k, " setting precision to ", curprec});
+		result := Time(AddN(result, SinN(result)));
+	];
+	
+	BuiltinPrecisionSet(prec);	
+	Echo("Iteration ", k, " setting precision to ", BuiltinPrecisionGet());
+	result := Time(AddN(result, SinN(result)));
+	Echo({"variable precision Newton's method: ", k, "iterations"}); 
+	result;
+];
+
+
+
+PiMethod1() := [
+	Local(result, delta, deltasq, k, Epsilon, prec, curprec);
+	prec := BuiltinPrecisionGet();
+	N([
+    
+    curprec := 20;
+    BuiltinPrecisionSet(curprec);
+    result := 3.14159265358979323846;
+    
+    For(k:=0, curprec*3 < prec, k := k+1) [
+      curprec := Min(Ceil((prec/3)), curprec * 9);
+      BuiltinPrecisionSet(curprec);
+      Echo("Iteration ", k, " setting precision to ", BuiltinPrecisionGet());
+      delta := SinN(result);
+      deltasq := (delta*delta);
+      result := Time(result + delta*(1 + deltasq*(1/6 + deltasq*(3/40 + deltasq*5/112))));
+    ];
+    
+    BuiltinPrecisionSet(prec);
+    k := k+1;
+    Echo("Iteration ", k, " setting precision to ", BuiltinPrecisionGet());
+    result := Time(AddN(result, SinN(result)));
+    Echo({"8th order Newton's method: ", k, "iterations"}); 
+  ]);
+	result;
+];
+
+
+
+
+PiMethod2() := [
+	Local(result, delta, tansq, k, Epsilon);
+	N([
+    Epsilon := (2*10 ^ (-BuiltinPrecisionGet()));
+
+    
+    result := 3.141592653589793;
+    delta := (-Tan(result));
+    tansq := (delta^2);
+    k := 0;
+    
+    While(Abs(delta) > Epsilon) [
+  
+      result := (result + delta/(2*k+1));
+  
+      delta := (-delta * tansq);
+      k := k+1;
+    ];
+    Echo({"Brute force method 2 (ArcTan series): ", k, "iterations"}); 
+  ]);
+	result;
+];
+
+
+PiBrentSalamin() := [
+	Local(a, b, c, s, k, p, result, Epsilon);
+	Epsilon := N(2*10 ^ (-BuiltinPrecisionGet()));
+
+	
+	a := 1; b := N(1/Sqrt(2)); s := N(1/2); k := 0;
+	
+	p := 0; result := 1;
+	
+	While(Abs(p-result) >= Epsilon) [
+		k := k+1;
+		result := p;
+		
+		{a, b} := {N((a+b)/2), N(Sqrt(a*b))};
+		
+		s := N(s - 2^k*(a^2-b^2));
+		p := N(2*a^2/s);
+	];
+	Echo({"Brent and Salamin's algorithm: ", k, "iterations"}); 
+	
+	result;
+];
+
+
+PiBorwein() := [
+	Local(a, y, y4s, k, result, Epsilon);
+	Epsilon := N(2*10 ^ (-BuiltinPrecisionGet()));
+
+	
+	a:=N(6-4*Sqrt(2)); y := N(Sqrt(2)-1); k := 0;
+	result := 0;
+	
+	While(Abs(a-result) >= Epsilon) [
+		result := a;
+		
+		y4s:=N(Sqrt(Sqrt(1-y^4)));
+		
+		y := N((1-y4s)/(1+y4s));
+		
+		a := a*(1+y)^4-2^(2*k+3)*y*(1+y+y^2);
+		k := k+1;
+	];
+	
+	result := N(1/result);
+
+	Echo({"Borwein's quartic algorithm: ", k, "iterations"}); 
+	result;
+];
+
+
+PiMethod3() :=
+[
+	Local(result, delta, deltasq, k, order, prec, curprec);
+	order := 13;	
+	prec := BuiltinPrecisionGet();
+  N([
+    
+    curprec := 20;
+    BuiltinPrecisionSet(curprec);
+    result := 3.14159265358979323846*0.5;
+    
+    For(k:=prec, k>=curprec, k:=Div(k,order)+2) True;
+    If(k<5, curprec:=5, curprec:=k);
+  
+    
+    For(k:=0, curprec < prec, k := k+1) [
+    
+      curprec := Min(prec, curprec * order-2);	
+      BuiltinPrecisionSet(curprec+2);
+      Echo("Iteration ", k, " setting precision to ", BuiltinPrecisionGet());
+  
+      Time([
+      delta := CosN(result);
+      ]);
+      Time([
+      deltasq := MultiplyN(delta,delta);
+      ]);
+      result := Time(result + delta*(1 + deltasq*(1/6 + deltasq*(3/40 + deltasq*(5/112 + deltasq*(35/1152 + (deltasq*63)/2816))))));
+    ];
+    Echo({"Method 3, using Pi/2 and order", order, ":", k, "iterations"});
+  ]);
+	result*2;
+];
+
+PiChudnovsky() :=
+[	
+	Local(A, B, C, n, result, term);
+	A:=13591409; B:=545140134; C:=640320; 
+	prec := BuiltinPrecisionGet();
+  N([
+    n:=Div(prec*479,6793)+1;	
+    Echo({"Method: Chudnovsky, using ", n, " terms"});
+    BuiltinPrecisionSet(prec+IntLog(n,10)+5);
+    result := (A+n*B);
+    While(n>0)
+    [
+  
+      result := A+(n-1)*B-24*(6*n-1)*(2*n-1)*(6*n-5) /(C*n)^3 *result;
+      n--;
+    ];
+    result := C/12*Sqrt(C)/Abs(result);
+  ]);
+	BuiltinPrecisionSet(prec);
+	RoundTo(result,prec);
+];
+
+BenchmarkPi(prec) :=
+[
+	Local(result);
+	GlobalPush(BuiltinPrecisionGet());
+	BuiltinPrecisionSet(prec);
+	
+	result := {
+		Time(MathPi()),
+		Time(PiMethod0()),
+		Time(PiMethod1()),
+		Time(PiMethod2()),
+		Time(PiMethod3()),
+
+		Time(PiChudnovsky()),
+		Time(PiBrentSalamin()),
+		Time(PiBorwein()),
+	};
+	result := N(Sin(result));
+	BuiltinPrecisionSet(GlobalPop());
+	result;
+];

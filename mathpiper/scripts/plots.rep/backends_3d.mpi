@@ -1,0 +1,16 @@
+
+
+
+
+
+
+Plot3DS'outputs() := {
+	{"default", "data"},
+	{"data", "Plot3DS'data"},
+};
+
+
+
+
+Plot3DS'data(values_IsList, _options'hash) <-- values;
+

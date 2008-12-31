@@ -1,0 +1,241 @@
+
+
+
+
+10 # RoundTo(x_IsNumber, prec_IsPositiveInteger) <-- 
+[
+  Local(oldPrec,result);
+  oldPrec:=BuiltinPrecisionGet();
+  BuiltinPrecisionSet(prec);
+  Set(result,DivideN( Round( MultiplyN(x, 10^prec) ), 10^prec ));
+  BuiltinPrecisionSet(oldPrec);
+  result;
+];
+
+10 # RoundTo(Complex(r_IsNumber, i_IsNumber), prec_IsPositiveInteger) <-- Complex(RoundTo(r, prec), RoundTo(i, prec));
+
+
+20 # RoundTo( Infinity,prec_IsPositiveInteger) <--  Infinity;
+20 # RoundTo(-Infinity,prec_IsPositiveInteger) <-- -Infinity;
+
+Macro(NumericEqual,{left,right,precision})
+[
+  Verify(RoundTo((@left)-(@right),@precision),0);
+];
+
+
+
+ShowLine() := [Echo({CurrentFile(),": ",CurrentLine()});];
+
+
+
+
+
+
+
+
+
+Function("KnownFailure",{expr})
+[
+  Local(rfail);
+  Echo({"Known failure: ", expr});
+  Set(rfail,Eval(expr));
+  If(rfail,Echo({"Failure resolved!"}));
+];
+HoldArg("KnownFailure",expr);
+
+
+
+
+
+Function("Verify",{aLeft,aRight})
+[
+
+	Local(result);
+	result := Eval(aLeft);	
+  If (Not(Equals(result,aRight)),
+    [
+      WriteString("******************");
+      NewLine();
+      ShowLine();
+      NewLine();
+      Write(aLeft);
+      NewLine();
+      WriteString(" evaluates to ");
+      NewLine();
+	  Write(result);
+      NewLine();
+	  WriteString(" which differs from ");
+      NewLine();
+      Write(aRight);
+      NewLine();
+      WriteString("******************");
+      NewLine();
+      False;
+    ],
+    True
+  );
+];
+HoldArg("Verify",aLeft);
+UnFence("Verify",2);
+
+
+Macro("Verify", {a,b,message})
+[
+	Echo("test ", @message);
+	Verify(@a, @b);
+];
+
+
+Function("LogicVerify",{aLeft,aRight})
+[
+  If(aLeft != aRight,
+    Verify(CanProve(aLeft => aRight),True)
+  );
+];
+
+
+
+
+LocalSymbols(TrueFalse)
+[
+  MacroRuleBase(TrueFalse,{var,expr});
+  10 # TrueFalse(var_IsAtom,_expr) <-- `{(@expr) Where (@var)==False,(@expr) Where (@var)==True};
+  20 # TrueFalse({},_expr) <-- `(@expr);
+  30 # TrueFalse(var_IsList,_expr) <-- 
+  `[
+    Local(t,h);
+    Set(h,Head(@var));
+    Set(t,Tail(@var));
+    TrueFalse(h,TrueFalse(t,@expr));
+  ];
+
+  Macro(LogicTest,{vars,expr1,expr2}) Verify(TrueFalse((@vars),(@expr1)), TrueFalse((@vars),(@expr2)));
+];
+
+
+LocalSymbols(f1,f2)
+[
+  
+  f1(x,n,m):=(x^n-1)*(x^m-1);
+  f2(x,n,m):=x^(n+m)-(x^n)-(x^m)+1;
+
+  VerifyArithmetic(x,n,m):=
+  [
+    Verify(f1(x,n,m),f2(x,n,m));
+  ];
+];
+
+RandVerifyArithmetic(_n)<--
+[
+ While(n>0)
+ [
+   n--;
+   VerifyArithmetic(FloorN(300*Random()),FloorN(80*Random()),FloorN(90*Random()));
+ ];
+];
+
+VerifyDiv(_u,_v) <--
+[
+  Local(q,r);
+  q:=Div(u,v);
+  r:=Rem(u,v);
+
+  Verify(Expand(u),Expand(q*v+r));
+];
+
+10 # EchoInternal(string_IsString) <--
+[
+  WriteString(string);
+];
+
+20 # EchoInternal(_item) <--
+[
+  Write(item);Space();
+];
+
+RuleBaseListed("Echo",{args});
+10 # Echo(list_IsList)<--
+[
+  ForEach(item,list) EchoInternal(item);
+  NewLine();
+];
+20 # Echo(_item)<--
+[
+  EchoInternal(item);
+  NewLine();
+];
+
+
+Function("BenchCall",{expr}) 
+[
+  Echo({"In&gt ",expr});
+  WriteString("<font color=ff0000>");
+  Eval(expr);
+  WriteString("</font>");
+  True;
+];
+HoldArg("BenchCall",expr);
+
+Function("BenchShow",{expr}) 
+[
+  Echo({"In&gt ",expr});
+  WriteString("<font color=ff0000> ");
+  Echo({"Out&gt ",Eval(expr),"</font>"});
+  True;
+];
+HoldArg("BenchShow",expr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function ("TestMathPiper", {expr, ans})
+[
+	Local(diff);
+	diff := Simplify(Eval(expr)-Eval(ans));
+		If (Simplify(diff)=0, True,
+			[
+			  WriteString("******************");
+			  NewLine();
+			  ShowLine();
+			  Write(expr);
+			  WriteString(" evaluates to ");
+			  NewLine();
+			  Write(Eval(expr));
+			  NewLine();
+			  WriteString(" which differs from ");
+			  NewLine();
+			  Write(Eval(ans));
+			  NewLine();
+			  WriteString(" by ");
+			  NewLine();
+			  Write(diff);
+			  NewLine();
+			  WriteString("******************");
+			  NewLine();
+			  False;
+			 ]
+			);
+];
+
+HoldArg("TestMathPiper", expr);
+HoldArg("TestMathPiper", ans);
+
+
+
+
+
+
+

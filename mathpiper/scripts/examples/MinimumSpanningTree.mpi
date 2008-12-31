@@ -1,0 +1,93 @@
+
+
+
+
+EdgeCompare(edge1,edge2):= (edge1[1] < edge2[1]);
+
+MinimumSpanningTree(NrNodes_IsPositiveInteger,Edges_IsList) <--
+[
+  Local(CurrentNetwork,Result,Failed);
+  Failed := False;
+
+  
+  Edges := BubbleSort(Edges,"EdgeCompare"); 
+
+  
+  CurrentNetwork := FlatCopy(Tail(Edges[1]));
+  Result := {Edges[1]};
+  Edges := Tail(Edges);
+
+  
+  While((Length(CurrentNetwork) < NrNodes) And Failed = False)
+  [
+    Local(EdgeFound,NodeAdded,Traverser);
+     EdgeFound := 0;
+     Traverser:=1;
+
+     
+     While(EdgeFound = 0 And Traverser <= Length(Edges))
+     [
+       Local(CurrentEdge);
+
+       
+       CurrentEdge := Edges[Traverser];
+
+       
+       if (Not(Contains(CurrentNetwork,CurrentEdge[2]) And
+Contains(CurrentNetwork,CurrentEdge[3])))
+       [
+          
+         if (Contains(CurrentNetwork,CurrentEdge[2]))
+          [
+            EdgeFound := Traverser;
+            NodeAdded := CurrentEdge[3];
+          ];
+
+          
+         if (Contains(CurrentNetwork,CurrentEdge[3]))
+          [
+            EdgeFound := Traverser;
+            NodeAdded := CurrentEdge[2];
+          ];
+       ];
+       Traverser ++;
+     ];
+
+     
+     if (EdgeFound = 0)
+     [
+       Failed := True;
+       Result := {};
+     ]
+     else
+     [
+       
+       DestructiveAppend(CurrentNetwork,NodeAdded);
+       DestructiveAppend(Result,Edges[EdgeFound]);
+       DestructiveDelete(Edges, EdgeFound);
+     ];
+  ];
+
+  
+  Result;
+];
+
+TreeCost(Edges_IsList) <-- Sum(MapSingle("Head",Edges));
+
+
+
+
+Verify(TreeCost(MinimumSpanningTree(5,
+               {
+                 {10,"Ayal","Diogo"},
+                 {5,"Diogo","Gus"},
+                 {15,"Diogo","Neil"},
+                 {7,"Ayal","Neil"},
+                 {17,"Gus","Edwin"},
+                 {15,"Diogo","Edwin"},
+                 {25,"Neil","Edwin"},
+                 {18,"Ayal","Diogo"}
+               }
+)),37);
+
+

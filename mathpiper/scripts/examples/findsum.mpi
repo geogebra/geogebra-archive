@@ -1,0 +1,30 @@
+
+
+
+FindSum(_total, l_IsList) <--
+	[
+	  Local(r);
+	  r:={};                    
+	  FindSum(total, l,{},0,r); 
+	  r;                        
+	];
+
+
+10 # FindSum(_total, _l, _current, _total, _result) <-- DestructiveAppend(result, current);
+
+
+20 # FindSum(_total, {}, _current, _sum, _result)   <-- True;
+
+
+30 # FindSum(_total, _l, _current, _sum, _result)   <--
+	 [
+	   Local(term);
+           
+	   term:=Head(l);
+	   
+	   FindSum(total, Tail(l),      current, sum,      result);
+	   
+	   FindSum(total, Tail(l), term:current, sum+term, result);
+	 ];
+
+

@@ -1,0 +1,62 @@
+
+
+
+
+Queens(n_IsPositiveInteger) <--
+[
+  Local(result);
+  Set(result,{});
+  Queens(n,{},1 .. n,result);  
+  result;         
+];
+
+
+
+10 # IsOnDiagonal({_x1,_y1},{_x2,_y2})_(SubtractN(x1,x2) = SubtractN(y1,y2)) <-- True;
+20 # IsOnDiagonal({_x1,_y1},{_x2,_y2})_(SubtractN(x1,x2) = SubtractN(y2,y1)) <-- True;
+30 # IsOnDiagonal(_n,_m)                               <-- False;
+
+
+10 # QueenCollides(_n,_list) <--
+[
+  Local(result);
+  Set(result, False);
+  While(And(Not(result), Not(Equals(list, {}))))
+  [
+    Set(result, IsOnDiagonal(n,Head(list)));
+    Set(list, Tail(list));
+  ];
+  result;
+];
+
+
+
+TryAddQueen(_n,_element,_try,_use,_result)_
+            Not(QueenCollides(element,try)) <--
+[
+  Queens(SubtractN(n,1),element:try,use,result);
+];
+
+
+
+
+
+10 # Queens( 0,_try,_touse,_result) <-- DestructiveInsert(result,1,try);
+20 # Queens(_n,_try,_touse,_result) <--
+[
+  Local(tailuse,i);
+  Local(nextuse);
+  Set(tailuse, touse);
+  Set(i, 1);
+  While(Not(Equals(tailuse, {})))
+  [
+    Set(nextuse,FlatCopy(touse));
+    DestructiveDelete(nextuse,i);
+    TryAddQueen(n, {n,Head(tailuse)}, try, nextuse, result );
+    Set(tailuse,Tail(tailuse));
+    Set(i, AddN(i,1));
+  ];
+];
+
+
+

@@ -1,0 +1,108 @@
+
+
+
+
+LocalSymbols(ErrorTableau) [
+
+  
+  Set(ErrorTableau, {});
+
+  GetErrorTableau() := ErrorTableau;
+
+  ClearErrors() <-- Set(ErrorTableau, {});
+
+  
+  CheckErrorTableau() <--
+  If(
+    Not IsList(ErrorTableau),
+    Set(ErrorTableau, {{"general", "corrupted ErrorTableau"}})
+  );
+
+]; 
+
+
+IsError() <--
+[
+	CheckErrorTableau();
+	Length(GetErrorTableau())>0;
+];
+
+
+IsError(error'class_IsString) <--
+[
+	CheckErrorTableau();
+	GetErrorTableau()[error'class] != Empty;
+];
+
+
+(Assert(_error'class, _error'object) _predicate) <--
+[
+	CheckErrorTableau();
+	If(Equals(predicate, True),	
+		True,
+		[	
+			DestructiveAppend(GetErrorTableau(), {error'class, error'object});
+			False;
+		]
+	);
+];
+
+
+(Assert(_error'class) _predicate) <-- Assert(error'class, True) predicate;
+
+
+(Assert() _predicate) <-- Assert("generic", True) predicate;
+
+
+DumpErrors() <--
+[
+	Local(error'object, error'word);
+	CheckErrorTableau();
+	ForEach(error'object, GetErrorTableau())
+	[	
+		If(
+			IsList(error'object),
+			[
+				If( 
+					Length(error'object) > 0 And error'object[1] = "warning",
+					[
+						error'word := "Warning";
+						error'object[1] := "";	
+					],
+					error'word := "Error: "	
+				);
+
+				If(	
+					Length(error'object)=2 And error'object[2]=True,
+					Echo(error'word, error'object[1]),
+					[
+						Echo(error'word, error'object[1], ": ",
+							PrintList(Tail(error'object)));
+					]
+				);
+			],
+			
+			Echo("Error: ", error'object)
+		);
+	];
+	ClearErrors();
+];
+
+
+GetError(error'class_IsString) <--
+[
+	Local(error);
+	error := GetErrorTableau()[error'class];
+	If(
+		error != Empty,
+		error,
+		False
+	);
+];
+
+
+ClearError(error'class_IsString) <-- AssocDelete(GetErrorTableau(), error'class);
+
+
+
+
