@@ -229,6 +229,10 @@ public class EuclidianRenderer3D implements GLEventListener {
     	m_thickness = a_thickness;
     }
     
+    public double getThickness(){
+    	return m_thickness;
+    }
+    
     //arrows
     public void setArrowType(int a_arrowType){
     	m_arrowType = a_arrowType;
@@ -284,7 +288,10 @@ public class EuclidianRenderer3D implements GLEventListener {
     	break;
     	case ARROW_TYPE_SIMPLE:
     		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
-    		drawCone(x3,a_x2,m_arrowWidth);
+    		double thickness = getThickness();
+    		setThickness(m_arrowWidth);
+    		drawCone(x3,a_x2);
+    		setThickness(thickness);
     		if (x3>a_x1)
     			drawSegmentDashedOrNot(a_x1, x3, m_dash!=null);
     		break;
@@ -353,9 +360,9 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     /** draws a cone from x=x1 to x=x2 according to current m_drawingMatrix*/
-    public void drawCone(double a_x1, double a_x2, double a_thickness){
+    public void drawCone(double a_x1, double a_x2){
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-    	drawCone(a_thickness);
+    	drawCone(m_thickness);
     	resetMatrix();
     } 
  
