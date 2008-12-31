@@ -55,7 +55,12 @@ public class Test3D{
 		cons=kernel3D.getConstruction();
 		this.view2D = view2D;
 
+		//view2D.setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_ARROW);
+		view2D.showAxes(true, true);
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
+		
+		testRegion();
+		
 		
 		testRepere();
 		
@@ -67,6 +72,7 @@ public class Test3D{
     	
 		testRay3D();
 		testVector3D();
+		
 	}
 
 	
@@ -287,10 +293,12 @@ public class Test3D{
 		P2.setLabel("Az");
 
 		//RG
+		/*
 		GeoPlane3D aPlane = xOyPlane;
 		for(i=0;i<3;i++)
 			kernel3D.From3Dto2D(P1[i].getLabel(), P1[i], aPlane);
 		kernel3D.From3Dto2D(P2.getLabel(), P2, aPlane);
+		*/
 		//finRG
 
 		for(i=0;i<3;i++)
@@ -411,6 +419,19 @@ public class Test3D{
 	private void testVector3D() {
 		kernel3D.Vector3D("MonVector3D", 1f,1f,1f);
 		
+	}
+	
+	
+	
+	private void testRegion(){
+		GeoPoint A=kernel3D.Point("A", 0, 0);
+		GeoPoint B=kernel3D.Point("B", 1, 0);
+		GeoPoint C=kernel3D.Point("C", 1, 1);
+		GeoPoint D=kernel3D.Point("D", 0.5, 1.5);
+		GeoPoint E=kernel3D.Point("E", 0, 1);
+		GeoPolygon p=(GeoPolygon) kernel3D.Polygon(null, new GeoPoint[] {A,B,C,D,E})[0];
+
+		GeoPoint M= kernel3D.PointInRegion("M",p,0.5,0.5);  
 	}
 
 	

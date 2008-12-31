@@ -1821,6 +1821,14 @@ public class Kernel {
 		return p;
 	}
 	
+	
+	/** Point in region with cartesian coordinates (x,y)   */
+	final public GeoPoint PointInRegion(String label, Region region, double x, double y) {
+		AlgoPointInRegion algo = new AlgoPointInRegion(cons, label, region, x, y);
+		GeoPoint p = algo.getP();        
+		return p;
+	}
+	
 	/** Point P + v   */
 	final public GeoPoint Point(String label, GeoPoint P, GeoVector v) {
 		AlgoPointVector algo = new AlgoPointVector(cons, label, P, v);

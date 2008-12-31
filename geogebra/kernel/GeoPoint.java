@@ -29,6 +29,7 @@ import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -55,6 +56,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 	
 	private Path path;
 	private PathParameter pathParameter;
+	
+	private Region region;
         
     // temp
     public double inhomX, inhomY;
@@ -81,6 +84,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
     public GeoPoint(Construction c, Path path) {
 		super(c);
 		this.path = path;	
+	}
+    
+    public GeoPoint(Construction c, Region region) {
+		super(c);
+		this.region = region;	
 	}
     
     public void setZero() {
@@ -178,7 +186,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 	}
 	
 	public boolean isChangeable() {
-		return !isFixed() && (isIndependent() || isPointOnPath()); 
+		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
 	}	 
 	
 	/**
@@ -371,6 +379,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 			tempPathParameter.set(getPathParameter());
 			path.pointChanged(this);
 		}
+		
+		// region
+		if (hasRegion()){
+			region.pointChangedForRegion(this);
+		}
 			
 		// this avoids multiple computation of inhomogeneous coords;
 		// see for example distance()
@@ -381,7 +394,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 			PathParameter pathParameter = getPathParameter();
 			PathParameter tempPathParameter = getTempPathparameter();
 			pathParameter.set(tempPathParameter);
-		}						
+		}			
+		
+		
+
+			
 	}  
 	
 	private PathParameter tempPathParameter;
@@ -1003,5 +1020,32 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 	       	return ret;
 	    }        	
 	        
+	    
+	    
+	    
+	    
+	    
+	    
+	    /////////////////////////////////////////////
+	    // REGION
+
+		
+		final public boolean isPointInRegion() {
+			return region != null;
+		}
+		
+	    public boolean hasRegion() {
+	    	return region != null;
+	    }
+
+	    public Region getRegion() {
+	    	return region;
+	    }
+	    
+	    public void setRegion(Region a_region){
+	    	region=a_region;
+	    }
+	    
+	    
 
 }

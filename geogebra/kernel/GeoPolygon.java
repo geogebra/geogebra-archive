@@ -26,7 +26,7 @@ import java.util.Locale;
  * 
  * @author Markus Hohenwarter
  */
-final public class GeoPolygon extends GeoElement implements NumberValue, Path {
+final public class GeoPolygon extends GeoElement implements NumberValue, Path, Region {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -593,5 +593,72 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path {
 		P.z = resz;
 		pp.t = param;	
 	}	
+	
+	
+	
+	
+	
+	/*
+	 * Region interface implementation
+	 */
+	
+	public boolean isInRegion(GeoPoint P){
+		
+		double x0 = P.x/P.z;
+		double y0 = P.y/P.z;
+		
+		double x1,y1,x2,y2;
+		int numPoints = points.length;
+		x1=points[numPoints-1].getInhomX()-x0;
+		y1=points[numPoints-1].getInhomY()-y0;
+		
+		boolean ret=false;
+		for (int i=0;i<numPoints;i++){
+			x2=points[i].getInhomX()-x0;
+			y2=points[i].getInhomY()-y0;
+			ret = ret ^ intersectOx(x1, y1, x2, y2);
+			x1=x2;
+			y1=y2;
+		}
+			
+		return ret;
+	}
+	
+	
+	public void regionChanged(GeoPoint P){
+		pointChangedForRegion(P);
+	}
+	
+	
+	public void pointChangedForRegion(GeoPoint P){
+		if (!isInRegion(P))
+			pointChanged(P);
+	}
+	
+	
+	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */
+	private boolean intersectOx(double x1, double y1, double x2, double y2){
+		if (y1*y2>0) //segment totally above or under
+			return false;
+		else{ 
+			if (y1>y2){ //first point under (Ox)
+				double y=y1; y1=y2; y2=y;
+				double x=x1; x1=x2; x2=x;
+			}
+			if (y2==0) //half-plane
+				return false;
+			else if ((x1<0) && (x2<0)) //segment totally on the left
+				return false;
+			else if ((x1>0) && (x2>0)) //segment totally on the right
+				return true;
+			else if (x2*y1<=x1*y2) //angle >= 0°
+				return true;
+			else
+				return false;
+		}
+	}
+	
+	
+	
 
 }
