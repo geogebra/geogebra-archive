@@ -19,7 +19,7 @@
 package org.mathpiper.builtin.functions;
 
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
-import org.mathpiper.lisp.UtilityFunctions;;
+import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.InfixOperator;
 import org.mathpiper.lisp.UtilityFunctions;
