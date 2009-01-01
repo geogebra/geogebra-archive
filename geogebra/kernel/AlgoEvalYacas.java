@@ -59,6 +59,6 @@ public class AlgoEvalYacas extends AlgoElement {
     
     protected final void compute() {    
     	
-    	textOut.setTextString(kernel.evaluateYACASRaw(text.getTextString()));
+    	textOut.setTextString(kernel.evaluateMathPiperRaw(text.getTextString()));
     }         
 }

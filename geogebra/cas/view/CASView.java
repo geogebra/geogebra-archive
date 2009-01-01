@@ -736,7 +736,7 @@ public class CASView extends JComponent implements CasManager {
 				
 				value = new CASTableCellValue();
 				
-				value.setCommand(cas.evaluateYACAS("Simplify", yacasString));
+				value.setCommand(cas.evaluateMathPiper("Simplify", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			case EXP_Flag:
@@ -745,7 +745,7 @@ public class CASView extends JComponent implements CasManager {
 				}
 				
 				value = new CASTableCellValue();
-				value.setCommand(cas.evaluateYACAS("Expand", yacasString));
+				value.setCommand(cas.evaluateMathPiper("Expand", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			case FAC_Flag:
@@ -754,7 +754,7 @@ public class CASView extends JComponent implements CasManager {
 				}
 				
 				value = new CASTableCellValue();
-				value.setCommand(cas.evaluateYACAS("Factor", yacasString));
+				value.setCommand(cas.evaluateMathPiper("Factor", yacasString));
 				consoleTable.insertRow(editRow, CASPara.contCol, value);
 				break;
 			}

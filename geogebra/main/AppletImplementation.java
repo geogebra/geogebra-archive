@@ -540,7 +540,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 */
 	public synchronized String evalYacas(String cmdString) {
 		waitForCAS();
-		return 	kernel.evaluateYACASRaw(cmdString);
+		return 	kernel.evaluateMathPiperRaw(cmdString);
 	}
 	
 	/**

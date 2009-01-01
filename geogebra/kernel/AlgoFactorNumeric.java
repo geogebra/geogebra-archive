@@ -66,7 +66,7 @@ public class AlgoFactorNumeric extends AlgoElement {
 		String functionIn = f.getFunction().
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
 
-		String functionOut = kernel.evaluateYACASRaw("Factor("+functionIn+")");
+		String functionOut = kernel.evaluateMathPiperRaw("Factor("+functionIn+")");
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);

@@ -303,7 +303,7 @@ public class Kernel {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACAS(exp);
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
 	}
 	
 	/** 
@@ -312,13 +312,13 @@ public class Kernel {
      * @param expression string
      * @return result string (null possible)
      */
-	final public String evaluateYACASRaw(String exp) {
+	final public String evaluateMathPiperRaw(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
-		//Application.debug("evalYacas input " + exp);		
-		String ret = ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateYACASRaw(exp);
-		//Application.debug("evalYacas output " + ret);
+		Application.debug("evalMathPiper input " + exp);		
+		String ret = ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiperRaw(exp);
+		Application.debug("evalMathPiper output " + ret);
 		
 		return ret;}
 	
@@ -350,7 +350,7 @@ public class Kernel {
 			
 			// TODO: rethink CAS evaluation this
 			// init Yacas for applets (force loading of required yacas scripts)
-			evaluateYACASRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
+			evaluateMathPiperRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
 		}			
 		
 		return ggbCAS;

@@ -68,7 +68,7 @@ public class AlgoSimplify extends AlgoElement {
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
 		//Application.debug(functionIn);
 
-		String functionOut = kernel.evaluateYACASRaw("Simplify("+functionIn+")");
+		String functionOut = kernel.evaluateMathPiperRaw("Simplify("+functionIn+")");
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);

@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import yacas.YacasInterpreter;
+import org.mathpiper.interpreters.EvaluationResponse;
+import org.mathpiper.interpreters.Interpreter;
+import org.mathpiper.interpreters.Interpreters;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
@@ -40,7 +42,6 @@ public class GeoGebraCAS {
 	private Kernel kernel;
 	private Application app;
 	private CASparser casParser;
-	private YacasInterpreter yacas;
 	private GeoGebraJasymca ggbJasymca;
 	
 	private ResourceBundle ggb2Yacas;
@@ -77,10 +78,10 @@ public class GeoGebraCAS {
 		// EVALUATE input in Yacas depending on key combination
 		String yacasResult;
 		if (doEvaluate) {
-			yacasResult = evaluateYACAS(yacasString);
+			yacasResult = evaluateMathPiper(yacasString);
 		}
 		else {
-			yacasResult = evaluateYACAS("Hold", yacasString);
+			yacasResult = evaluateMathPiper("Hold", yacasString);
 		}
 		
 		// convert Yacas result back into GeoGebra syntax
@@ -180,42 +181,42 @@ public class GeoGebraCAS {
 	
 	
 	/**
-	 * Tries to parse a given Yacas string and returns a ValidExpression object.
+	 * Tries to parse a given MathPiper string and returns a ValidExpression object.
 	 */
 	public synchronized ValidExpression parseYacas(String yacasString) throws Throwable {
 		return casParser.parseYacas(yacasString);
 	}
 		
 	/**
-	 * Evaluates a YACAS expression and returns the result as a string in Yacas syntax, 
-	 * e.g. evaluateYACAS("D(x) (x^2)") returns "2*x".
+	 * Evaluates a MathPiper expression and returns the result as a string in Yacas syntax, 
+	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
 	 * 
 	 * @return result string (null possible)
 	 */
-	final synchronized public String evaluateYACAS(String exp) {
-		String result = evaluateYACAS(exp, true);
+	final synchronized public String evaluateMathPiper(String exp) {
+		String result = evaluateMathPiper(exp, true);
 		
 		// TODO: remove
-		Application.debug("evaluateYacas: " + exp + ", result: " + result);
+		Application.debug("evaluateMathPiper: " + exp + ", result: " + result);
 		
 		
 		return result;
 	}
 	
 	/**
-	 * Evaluates a YACAS expression wrapped in a command and returns the result as a string, 
+	 * Evaluates a MathPiper expression wrapped in a command and returns the result as a string, 
 	 * e.g. wrapperCommand = "Factor", exp = "3*(a+b)" evaluates "Factor(3*(a+b)" and 
 	 * returns "3*a+3*b".
 	 * 
 	 * @return result string (null possible)
 	 */
-	final synchronized public String evaluateYACAS(String wrapperCommand, String exp) {
+	final synchronized public String evaluateMathPiper(String wrapperCommand, String exp) {
 		StringBuffer sb = new StringBuffer(exp.length()+wrapperCommand.length()+2);
 		sb.append(wrapperCommand);
 		sb.append('(');
 		sb.append(exp);				
 		sb.append(')');
-		return evaluateYACAS(sb.toString());
+		return evaluateMathPiper(sb.toString());
 	}
 	
 	/**
@@ -224,8 +225,8 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string (null possible)
 	 */
-	final synchronized public String evaluateYACASRaw(String exp) {
-		return evaluateYACAS(exp, false);
+	final synchronized public String evaluateMathPiperRaw(String exp) {
+		return evaluateMathPiper(exp, false);
 	}
 	
 	/**
@@ -233,10 +234,13 @@ public class GeoGebraCAS {
 	 * @return null if last evaluation was successful.
 	 */
 	final synchronized public String getYACASError() {
-		return getYacas().getErrorMessage();
+		return response.getExceptionMessage();
+		//return getYacas().getErrorMessage();
 	}
-			
-	private synchronized String evaluateYACAS(String exp, boolean replaceSpecialChars) {
+	
+	EvaluationResponse response ;	
+	
+	private synchronized String evaluateMathPiper(String exp, boolean replaceSpecialChars) {
 		// Application.debug("exp for YACAS: " + exp);
 		try {
 			String result;
@@ -246,7 +250,16 @@ public class GeoGebraCAS {
 				exp = replaceSpecialChars(exp);
 
 			// evaluate the Yacas expression
-			result = getYacas().Evaluate(exp);
+			Interpreter interpreter = Interpreters.getSynchronousInterpreter();
+
+			response = interpreter.evaluate(exp);
+			
+			if (response.isExceptionThrown())
+			{
+				Application.debug("Exception from MathPiper: "+response.getExceptionMessage());
+				return null;
+			}
+			result = response.getResult();
 					
 			// undo special character handling
 			if (replaceSpecialChars)
@@ -266,12 +279,6 @@ public class GeoGebraCAS {
 		if (ggbJasymca == null)
 			ggbJasymca = new GeoGebraJasymca();
 		return ggbJasymca;
-	}
-	
-	private synchronized YacasInterpreter getYacas() {
-		if (yacas == null) 
-			yacas = new YacasInterpreter();				
-		return yacas;
 	}
 	
 	/**

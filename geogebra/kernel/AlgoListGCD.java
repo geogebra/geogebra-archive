@@ -62,7 +62,7 @@ public class AlgoListGCD extends AlgoElement {
     	
     	String yacasList=geoList.toValueString();
     	String yacasCommand="Gcd("+yacasList+")";    	
-		String result=kernel.evaluateYACASRaw(yacasCommand);
+		String result=kernel.evaluateMathPiperRaw(yacasCommand);
 		try {
 			double gcd = Double.valueOf(result).doubleValue();
 			num.setValue(gcd);
