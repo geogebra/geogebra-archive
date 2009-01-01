@@ -216,7 +216,7 @@ public class GgbAPI {
 	 * input text field. 	 
 	 */
 	public synchronized String evalYacas(String cmdString) {
-		return 	kernel.evaluateYACASRaw(cmdString);
+		return 	kernel.evaluateMathPiperRaw(cmdString);
 
 	}
 

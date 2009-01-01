@@ -43,6 +43,7 @@ public class GeoGebraCAS {
 	private Application app;
 	private CASparser casParser;
 	private GeoGebraJasymca ggbJasymca;
+	private Interpreter ggbMathPiper;
 	
 	private ResourceBundle ggb2Yacas;
 	private StringBuffer sbInsertSpecial, sbRemoveSpecial;
@@ -250,9 +251,9 @@ public class GeoGebraCAS {
 				exp = replaceSpecialChars(exp);
 
 			// evaluate the Yacas expression
-			Interpreter interpreter = Interpreters.getSynchronousInterpreter();
+			Interpreter mathpiper = getMathPiper();
 
-			response = interpreter.evaluate(exp);
+			response = mathpiper.evaluate(exp);
 			
 			if (response.isExceptionThrown())
 			{
@@ -275,6 +276,14 @@ public class GeoGebraCAS {
 		} 
 	}
 
+
+	
+	private synchronized Interpreter getMathPiper() {
+		if (ggbMathPiper == null)
+			ggbMathPiper = Interpreters.getSynchronousInterpreter();
+		return ggbMathPiper;
+	}
+	
 	private synchronized GeoGebraJasymca getJasymca() {
 		if (ggbJasymca == null)
 			ggbJasymca = new GeoGebraJasymca();
