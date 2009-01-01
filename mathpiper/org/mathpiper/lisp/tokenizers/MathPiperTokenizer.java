@@ -115,7 +115,7 @@ public class MathPiperTokenizer
 				}
 				//TODO FIXME is following append char correct?
 				aResult = aResult + ((char)aInput.next()); // consume the close quote
-				return aTokenHashTable.lookUp(aResult);
+				return (String) aTokenHashTable.lookUp(aResult);
 			}
 			//parse atoms
 			else if (isAlpha(streamCharacter))
@@ -166,7 +166,7 @@ public class MathPiperTokenizer
 				continue;
 			}
 		}
-		return aTokenHashTable.lookUp(aInput.startPtr().substring(firstpos,aInput.position()));
+		return (String) aTokenHashTable.lookUp(aInput.startPtr().substring(firstpos,aInput.position()));
 	}
 
 	public static boolean isDigit(char c)

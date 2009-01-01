@@ -49,7 +49,7 @@ public class LocalSymbols extends BuiltinFunctionInitialize
             names[i] = atomname;
             int len = atomname.length();
             String newname = "$" + atomname + uniquenumber;
-            String variable = aEnvironment.getTokenHash().lookUp(newname);
+            String variable = (String) aEnvironment.getTokenHash().lookUp(newname);
             localnames[i] = variable;
         }
         LocalSymbol behaviour = new LocalSymbol(aEnvironment, names, localnames, nrSymbols);

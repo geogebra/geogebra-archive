@@ -38,7 +38,7 @@ public class XmlTokenizer
 
 		if (aInput.endOfStream())
 
-			return aHashTable.lookUp(aInput.startPtr().substring(firstpos, aInput.position()));
+			return (String) aHashTable.lookUp(aInput.startPtr().substring(firstpos, aInput.position()));
 
 		//skipping spaces
 		while (IsSpace(aInput.peek()))
@@ -65,7 +65,7 @@ public class XmlTokenizer
 			}
 		}
 
-		return aHashTable.lookUp(aInput.startPtr().substring(firstpos, aInput.position()));
+		return (String) aHashTable.lookUp(aInput.startPtr().substring(firstpos, aInput.position()));
 	}
 
 	private static boolean IsSpace(int c)

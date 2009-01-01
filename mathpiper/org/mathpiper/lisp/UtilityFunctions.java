@@ -286,7 +286,7 @@ public class UtilityFunctions {
         if (aSymbol.charAt(0) == '\"') {
             return aEnvironment.getTokenHash().lookUpUnStringify(aSymbol);
         } else {
-            return aEnvironment.getTokenHash().lookUp(aSymbol);
+            return (String) aEnvironment.getTokenHash().lookUp(aSymbol);
         }
     }
 
@@ -435,7 +435,7 @@ public class UtilityFunctions {
             aEnvironment.iCurrentInput = aInput;
             // TODO make "EndOfFile" a global thing
             // read-parse-evaluate to the end of file
-            String eof = aEnvironment.getTokenHash().lookUp("EndOfFile");
+            String eof = (String) aEnvironment.getTokenHash().lookUp("EndOfFile");
             boolean endoffile = false;
             MathPiperParser parser = new MathPiperParser(new MathPiperTokenizer(),
                     aEnvironment.iCurrentInput, aEnvironment,
@@ -473,7 +473,7 @@ public class UtilityFunctions {
     public static void internalLoad(Environment aEnvironment, String aFileName) throws Exception {
         String oper = internalUnstringify(aFileName);
 
-        String hashedname = aEnvironment.getTokenHash().lookUp(oper);
+        String hashedname = (String) aEnvironment.getTokenHash().lookUp(oper);
 
         InputStatus oldstatus = new InputStatus(aEnvironment.iInputStatus);
         aEnvironment.iInputStatus.setTo(hashedname);
@@ -599,8 +599,8 @@ public class UtilityFunctions {
         InputStream previous = aEnvironment.iCurrentInput;
         try {
             aEnvironment.iCurrentInput = aInput;
-            String eof = aEnvironment.getTokenHash().lookUp("EndOfFile");
-            String end = aEnvironment.getTokenHash().lookUp("}");
+            String eof = (String) aEnvironment.getTokenHash().lookUp("EndOfFile");
+            String end = (String) aEnvironment.getTokenHash().lookUp("}");
             boolean endoffile = false;
 
             MathPiperTokenizer tok = new MathPiperTokenizer();
@@ -635,7 +635,7 @@ public class UtilityFunctions {
         String flatfile = internalUnstringify(aFileName) + ".def";
         DefFile def = aEnvironment.iDefFiles.getFile(aFileName);
 
-        String hashedname = aEnvironment.getTokenHash().lookUp(flatfile);
+        String hashedname = (String) aEnvironment.getTokenHash().lookUp(flatfile);
 
         InputStatus oldstatus = aEnvironment.iInputStatus;
         aEnvironment.iInputStatus.setTo(hashedname);

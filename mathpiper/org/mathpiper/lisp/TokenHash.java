@@ -28,14 +28,14 @@ public class TokenHash extends AssociatedHash
      * @param aString
      * @return the string.
      */
-    public String lookUp(String aString)
+    public Object lookUp(String aString)
     {
         if (!iMap.containsKey(aString))
         {
             iMap.put(aString, aString);
         }
 
-        return (String) iMap.get(aString);
+        return iMap.get(aString);
     }
 
    /**

@@ -41,7 +41,7 @@ public class FileSize extends BuiltinFunctionInitialize
         fnameObject.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
         LispError.checkIsStringCore(aEnvironment, aStackTop, fnameObject, 1);
         String fname = UtilityFunctions.internalUnstringify(fnameObject.getCons().string());
-        String hashedname = aEnvironment.getTokenHash().lookUp(fname);
+        String hashedname = (String) aEnvironment.getTokenHash().lookUp(fname);
 
         long fileSize = 0;
         InputStatus oldstatus = new InputStatus(aEnvironment.iInputStatus);

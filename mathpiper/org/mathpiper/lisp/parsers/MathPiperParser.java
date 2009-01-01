@@ -159,7 +159,7 @@ public class MathPiperParser extends Parser
                         {
                             len--;
                             String lookUp =
-                                    iEnvironment.getTokenHash().lookUp(iLookAhead.substring(0, len));
+                                    (String) iEnvironment.getTokenHash().lookUp(iLookAhead.substring(0, len));
 
                             //printf("trunc %s\n",lookUp.String());
                             op = (InfixOperator) iInfixOperators.lookUp(lookUp);
@@ -168,7 +168,7 @@ public class MathPiperParser extends Parser
                             {
                                 String toLookUp = iLookAhead.substring(len, origlen);
                                 String lookUpRight =
-                                        iEnvironment.getTokenHash().lookUp(toLookUp);
+                                       (String) iEnvironment.getTokenHash().lookUp(toLookUp);
 
                                 //printf("right: %s (%d)\n",lookUpRight.String(),origlen-len);
 

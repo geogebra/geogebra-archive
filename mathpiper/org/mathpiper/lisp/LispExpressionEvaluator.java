@@ -239,7 +239,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 		// Escape quotes.
 		for (int i = outString.length()-1; i >= 0; --i)
 		{
-                        Character c = outString.charAt(i);
+                        char c = outString.charAt(i);
 			if ( c == '\"')
                         {
 				//outString.insert(i, '\\');
