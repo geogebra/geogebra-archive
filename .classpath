@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="javax/" kind="src" path=""/>
+	<classpathentry excluding="javax/|mathpiper/scripts/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="netscape_javascript.jar"/>
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="laf.jar"/>
 	<classpathentry kind="lib" path="3D/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="3D/jogl.jar"/>
+	<classpathentry kind="lib" path="mathpiper/scripts"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
