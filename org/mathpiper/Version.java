@@ -16,11 +16,10 @@
 
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper;
-//class Version { static String VERSION = "1.2.2"; }
 
 public class Version
 {
 
-   public  static final String version = ".64";
+   public  static final String version = ".65";
     
 }//end class.
