@@ -1,0 +1,30 @@
+
+
+DefaultDerivtory("c:/src/ys/prob");
+Load("incompletegamma.mpi");
+Load("hypothesystest.mpi");
+
+
+Function("DoTest",{size})
+[
+  Local(arr,o'f,e'f,i,j,m);
+
+  arr := Table(Random(),i,1,size,1);
+  arr := HeapSort(arr,"<"); 
+  o'f := {};
+  e'f :={};
+  m:=1;
+  For(i:=1, i<=10 And m<=size, i++) 
+   [
+     j:=0;
+     While(arr[m]<i/10 And m<size) 
+     [ 
+       j:=j+1; 
+       m:=m+1;
+     ];
+     Push(o'f,j);
+     Push(e'f,0.1*size);
+   ];
+  Echo(o'f,e'f);
+  ChiSquareTest(o'f,e'f); 
+];

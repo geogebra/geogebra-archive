@@ -1,0 +1,6 @@
+
+OMDef( ":"        , "piper","prepend"    );
+OMDef( "@"        , "piper","apply"      );
+OMDef( "/@"       , "piper","list_apply" );
+OMDef( ".."       , "interval1","integer_interval" );
+OMDef( "NFunction", "piper","NFunction" );

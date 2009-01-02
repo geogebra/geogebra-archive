@@ -1,0 +1,378 @@
+
+
+
+
+
+CharList(length,item):=
+[
+  Local(line,i);
+  line:="";
+  For(Set(i,0),LessThan(i,length),Set(i,AddN(i,1)))
+    Set(line, line:item);
+  line;
+];
+
+CharField(width,height) := ArrayCreate(height,CharList(width," "));
+
+WriteCharField(charfield):=
+[
+  Local(i,len);
+  len:=Length(charfield);
+  For(Set(i,1),i<=len,Set(i,AddN(i,1)))
+  [
+    WriteString(charfield[i]);
+    NewLine();
+  ];
+  True;
+];
+
+ColumnFilled(charfield,column):=
+[
+  Local(i,result,len);
+  result:=False;
+  len:=Length(charfield);
+  For(Set(i, 1),(result = False) And (i<=len),Set(i,AddN(i,1)))
+  [
+    If(StringMidGet(column,1,charfield[i]) != " ",result:=True);
+  ];
+  result;
+];
+WriteCharField(charfield,width):=
+[
+  Local(pos,length,len);
+  Set(length, Length(charfield[1]));
+  Set(pos, 1);
+  While(pos<=length)
+  [
+    Local(i,thiswidth);
+    Set(thiswidth, width);
+    If(thiswidth>(length-pos)+1,
+      [
+        Set(thiswidth, AddN(SubtractN(length,pos),1));
+      ],
+      [
+        While (thiswidth>1 And ColumnFilled(charfield,pos+thiswidth-1))
+        [
+          Set(thiswidth,SubtractN(thiswidth,1));
+        ];
+        If(thiswidth = 1, Set(thiswidth, width));
+      ]
+    );
+    len:=Length(charfield);
+    For(Set(i, 1),i<=len,Set(i,AddN(i,1)))
+    [
+      WriteString(StringMidGet(pos,thiswidth,charfield[i]));
+      NewLine();
+    ];
+    Set(pos, AddN(pos, thiswidth));
+    NewLine();
+  ];
+  True;
+];
+
+
+
+PutString(charfield,x,y,string):=
+[
+  cf[y] := StringMidSet(x,string,cf[y]);
+  True;
+];
+
+MakeOper(x,y,width,height,oper,args,base):=
+[
+  Local(result);
+  Set(result,ArrayCreate(7,0));
+  ArraySet(result,1,x);
+  ArraySet(result,2,y);
+  ArraySet(result,3,width);
+  ArraySet(result,4,height);
+  ArraySet(result,5,oper);
+  ArraySet(result,6,args);
+  ArraySet(result,7,base);
+  result;
+];
+
+
+MoveOper(f,x,y):=
+[
+  f[1]:=AddN(f[1], x); 
+  f[2]:=AddN(f[2], y); 
+  f[7]:=AddN(f[7], y); 
+];
+
+AlignBase(i1,i2):=
+[
+  Local(base);
+  Set(base, Max(i1[7],i2[7]));
+  MoveOper(i1,0,SubtractN(base,(i1[7])));
+  MoveOper(i2,0,SubtractN(base,(i2[7])));
+];
+
+10 # BuildArgs({}) <-- Formula(Atom(" "));
+20 # BuildArgs({_head}) <-- head;
+30 # BuildArgs(_any)    <--
+     [
+        Local(item1,item2,comma,base,newitem);
+        Set(item1, any[1]);
+        Set(item2, any[2]);
+        Set(comma, Formula(Atom(",")));
+        Set(base, Max(item1[7],item2[7]));
+        MoveOper(item1,0,SubtractN(base,(item1[7])));
+        MoveOper(comma,AddN(item1[3],1),base);
+
+        MoveOper(item2,comma[1]+comma[3]+1,SubtractN(base,(item2[7])));
+        Set(newitem, MakeOper(0,0,AddN(item2[1],item2[3]),Max(item1[4],item2[4]),"Func",{item1,comma,item2},base));
+        BuildArgs(newitem:Tail(Tail(any)));
+      ];
+
+
+
+FormulaBracket(f):=
+[
+  Local(left,right);
+  Set(left, Formula(Atom("(")));
+  Set(right, Formula(Atom(")")));
+  left[4]:=f[4];
+  right[4]:=f[4];
+  MoveOper(left,f[1],f[2]);
+  MoveOper(f,2,0);
+  MoveOper(right,f[1]+f[3]+1,f[2]);
+  MakeOper(0,0,right[1]+right[3],f[4],"Func",{left,f,right},f[7]);
+];
+
+
+
+
+1 # Formula(f_IsAtom) <--
+  MakeOper(0,0,Length(String(f)),1,"Atom",String(f),0);
+
+2 # Formula(_xx ^ _yy) <--
+[
+  Local(l,r);
+  Set(l, BracketOn(Formula(xx),xx,OpLeftPrecedence("^")));
+  Set(r, BracketOn(Formula(yy),yy,OpRightPrecedence("^")));
+  MoveOper(l,0,r[4]);
+  MoveOper(r,l[3],0);
+  MakeOper(0,0,AddN(l[3],r[3]),AddN(l[4],r[4]),"Func",{l,r},l[2]+l[4]-1);
+];
+
+
+
+10 # FormulaArrayItem(xx_IsList) <--
+[
+  Local(sub,height);
+  sub := {};
+  height := 0;
+  ForEach(item,xx)
+  [
+    Local(made);
+    made := FormulaBracket(Formula(item));
+    If(made[4] > height,Set(height,made[4]));
+    DestructiveAppend(sub,made);
+  ];
+  MakeOper(0,0,0,height,"List",sub,height>>1);
+];
+
+
+20 # FormulaArrayItem(_item) <-- Formula(item);
+
+2 # Formula(xx_IsList) <--
+[
+  Local(sub,width,height);
+  sub:={};
+  width := 0;
+  height := 1;
+
+  ForEach(item,xx)
+  [
+    Local(made);
+    made := FormulaArrayItem(item);
+
+    If(made[3] > width,Set(width,made[3]));
+    MoveOper(made,0,height);
+    Set(height,AddN(height,AddN(made[4],1)));
+    DestructiveAppend(sub,made);
+  ];
+
+  Local(thislength,maxlength);
+  maxlength:=0;
+  ForEach(item,xx)
+  [
+    thislength:=0;
+    if(IsList(item)) [thislength:=Length(item);];
+    if (maxlength<thislength) [maxlength:=thislength;];
+  ];
+
+  If(maxlength>0,
+  [
+    Local(i,j);
+    width:=0;
+    For(j:=1,j<=maxlength,j++)
+    [
+      Local(w);
+      w := 0;
+      For(i:=1,i<=Length(sub),i++)
+      [
+        if (IsList(xx[i]) And j<=Length(xx[i]))
+          If(sub[i][6][j][3] > w,w := sub[i][6][j][3]);
+      ];
+      
+      For(i:=1,i<=Length(sub),i++)
+      [
+        if (IsList(xx[i]) And j<=Length(xx[i]))
+          MoveOper(sub[i][6][j],width,0);
+      ];
+      width := width+w+1;
+    ];
+    For(i:=1,i<=Length(sub),i++)
+    [
+      sub[i][3] := width;
+    ];
+  ]
+  );
+
+  sub := MakeOper(0,0,width,height,"List",sub,height>>1);
+  FormulaBracket(sub);
+];
+
+2 # Formula(_xx / _yy) <--
+[
+  Local(l,r,dash,width);
+  
+  Set(l, Formula(xx));
+  Set(r, Formula(yy));
+  Set(width, Max(l[3],r[3]));
+  Set(dash, Formula(Atom(CharList(width,"-"))));
+  MoveOper(dash,0,l[4]);
+  MoveOper(l,(SubtractN(width,l[3])>>1),0);
+  MoveOper(r,(SubtractN(width,r[3])>>1),AddN(dash[2], dash[4]));
+  MakeOper(0,0,width,AddN(r[2], r[4]),"Func",{l,r,dash},dash[2]);
+];
+
+RuleBase("BracketOn",{op,f,prec});
+Rule("BracketOn",3,1,IsFunction(f) And NrArgs(f) = 2
+     And IsInfix(Type(f)) And OpPrecedence(Type(f)) > prec)
+[
+ FormulaBracket(op);
+];
+Rule("BracketOn",3,2,True)
+[
+  op;
+];
+
+10 # Formula(f_IsFunction)_(NrArgs(f) = 2 And IsInfix(Type(f))) <--
+[
+  Local(l,r,oper,width,height,base);
+  Set(l, Formula(f[1]));
+  Set(r, Formula(f[2]));
+
+  Set(l, BracketOn(l,f[1],OpLeftPrecedence(Type(f))));
+  Set(r, BracketOn(r,f[2],OpRightPrecedence(Type(f))));
+
+  Set(oper, Formula(f[0]));
+  Set(base, Max(l[7],r[7]));
+  MoveOper(oper,AddN(l[3],1),SubtractN(base,(oper[7])));
+  MoveOper(r,oper[1] + oper[3]+1,SubtractN(base,(r[7])));
+  MoveOper(l,0,SubtractN(base,(l[7])));
+  Set(height, Max(AddN(l[2], l[4]),AddN(r[2], r[4])));
+
+  MakeOper(0,0,AddN(r[1], r[3]),height,"Func",{l,r,oper},base);
+];
+
+11 # Formula(f_IsFunction) <--
+[
+  Local(head,args,all);
+  Set(head, Formula(f[0]));
+  Set(all, Tail(Listify(f)));
+
+  Set(args, FormulaBracket(BuildArgs(MapSingle("Formula",Apply("Hold",{all})))));
+  AlignBase(head,args);
+  MoveOper(args,head[3],0);
+
+  MakeOper(0,0,args[1]+args[3],Max(head[4],args[4]),"Func",{head,args},head[7]);
+];
+
+
+
+RuleBase("RenderFormula",{cf,f,x,y});
+
+
+
+Rule("RenderFormula",4,1,f[5] = "Atom" And f[6] = "(" And f[4] > 1)
+[
+  Local(height,i);
+  Set(x, AddN(x,f[1]));
+  Set(y, AddN(y,f[2]));
+  Set(height, SubtractN(f[4],1));
+
+  cf[y] := StringMidSet(x, "/", cf[y]);
+  cf[AddN(y,height)] := StringMidSet(x, "\\", cf[AddN(y,height)]);
+  For (Set(i,1),LessThan(i,height),Set(i,AddN(i,1)))
+    cf[AddN(y,i)] := StringMidSet(x, "|", cf[AddN(y,i)]);
+];
+
+Rule("RenderFormula",4,1,f[5] = "Atom" And f[6] = ")" And f[4] > 1)
+[
+  Local(height,i);
+  Set(x, AddN(x,f[1]));
+  Set(y, AddN(y,f[2]));
+  Set(height, SubtractN(f[4],1));
+  cf[y] := StringMidSet(x, "\\", cf[y]);
+  cf[y+height] := StringMidSet(x, "/", cf[y+height]);
+  For (Set(i,1),LessThan(i,height),Set(i,AddN(i,1)))
+    cf[AddN(y,i)] := StringMidSet(x, "|", cf[AddN(y,i)]);
+];
+
+Rule("RenderFormula",4,5,f[5] = "Atom")
+[
+  cf[AddN(y, f[2]) ]:=
+    StringMidSet(AddN(x,f[1]),f[6],cf[AddN(y, f[2]) ]);
+];
+
+Rule("RenderFormula",4,6,True)
+[
+  ForEach(item,f[6])
+  [
+    RenderFormula(cf,item,AddN(x, f[1]),AddN(y, f[2]));
+  ];
+];
+
+LocalSymbols(formulaMaxWidth) [
+  SetFormulaMaxWidth(width):=
+  [
+    formulaMaxWidth := width;
+  ];
+  FormulaMaxWidth() := formulaMaxWidth;
+  SetFormulaMaxWidth(60);
+]; 
+
+Function("PrettyForm",{ff})
+[
+  Local(cf,f);
+
+  f:=Formula(ff);
+
+  cf:=CharField(f[3],f[4]);
+  RenderFormula(cf,f,1,1);
+
+  NewLine();
+  WriteCharField(cf,FormulaMaxWidth());
+  
+  DumpErrors();
+  True;
+];
+
+
+EvalFormula(f):=
+[
+  Local(result);
+  result:= UnList({Atom("="),f,Eval(f)});
+  PrettyForm(result);
+  True;
+];
+HoldArg("EvalFormula",f);
+
+
+
+
+

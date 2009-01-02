@@ -7,6 +7,5 @@
 	<classpathentry kind="lib" path="laf.jar"/>
 	<classpathentry kind="lib" path="3D/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="3D/jogl.jar"/>
-	<classpathentry kind="lib" path="mathpiper/scripts"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

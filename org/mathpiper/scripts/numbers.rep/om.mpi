@@ -1,0 +1,66 @@
+
+OMDef( "BellNumber",      "piper","BellNumber" );
+OMDef( "CatalanNumber",   "piper","CatalanNumber" );
+OMDef( "DigitalRoot",     "piper","DigitalRoot" );
+OMDef( "Divisors",        "piper","Divisors" );
+OMDef( "DivisorsSum",     "piper","DivisorsSum" );
+OMDef( "Euler",           "piper","Euler" );
+OMDef( "EulerArray",      "piper","EulerArray" );
+OMDef( "Eulerian",        "piper","Eulerian" );
+OMDef( "FermatNumber",    "piper","FermatNumber" );
+OMDef( "GetPrimePower",   "piper","GetPrimePower" );
+OMDef( "HarmonicNumber",  "piper","HarmonicNumber" );
+OMDef( "IntLog",          "piper","IntLog" );
+OMDef( "IntNthRoot",      "piper","IntNthRoot" );
+OMDef( "IsAmicablePair",  "piper","IsAmicablePair" );
+OMDef( "IsCarmichaelNumber", "piper","IsCarmichaelNumber" );
+OMDef( "IsComposite",     "piper","IsComposite" );
+OMDef( "IsCoprime",       "piper","IsCoprime" );
+OMDef( "IsIrregularPrime", "piper","IsIrregularPrime" );
+OMDef( "IsPerfect",       "piper","IsPerfect" );
+OMDef( "IsPrime",         "piper","IsPrime" );
+OMDef( "IsPrimePower",    "piper","IsPrimePower" );
+OMDef( "IsQuadraticResidue", "piper","IsQuadraticResidue" );
+OMDef( "IsSmallPrime",    "piper","IsSmallPrime" );
+OMDef( "IsSquareFree",    "piper","IsSquareFree" );
+OMDef( "IsTwinPrime",     "piper","IsTwinPrime" );
+OMDef( "LegendreSymbol",  "piper","LegendreSymbol" );
+OMDef( "Moebius",         "piper","Moebius" );
+OMDef( "NextPrime",       "piper","NextPrime" );
+OMDef( "NextPseudoPrime", "piper","NextPseudoPrime" );
+OMDef( "PartitionsP",     "piper","PartitionsP" );
+OMDef( "ProductPrimesTo257", "piper","ProductPrimesTo257" );
+OMDef( "ProperDivisors",  "piper","ProperDivisors" );
+OMDef( "ProperDivisorsSum", "piper","ProperDivisorsSum" );
+OMDef( "Repunit",         "piper","Repunit" );
+OMDef( "StirlingNumber1", "piper","StirlingNumber1" );
+OMDef( "StirlingNumber2", "piper","StirlingNumber2" );
+OMDef( "Totient",         "piper","Totient" );
+
+
+OMDef( "IsGaussianUnit",    "piper","IsGaussianUnit" );
+OMDef( "IsGaussianInteger", "piper","IsGaussianInteger" );
+OMDef( "IsGaussianPrime",   "piper","IsGaussianPrime" );
+OMDef( "GaussianFactorPrime", "piper","GaussianFactorPrime" );
+OMDef( "GaussianNorm",      "piper","GaussianNorm" );
+OMDef( "GaussianMod",       "piper","GaussianMod" );
+OMDef( "GaussianFactors",   "piper","GaussianFactors" );
+OMDef( "AddGaussianFactor", "piper","AddGaussianFactor" );
+OMDef( "FactorGaussianInteger", "piper","FactorGaussianInteger" );
+OMDef( "GaussianGcd",       "piper","GaussianGcd" );
+
+
+OMDef( "NthRoot",      "piper","NthRoot" );
+OMDef( "NthRoot'Calc", "piper","NthRoot'Calc" );
+OMDef( "NthRoot'List", "piper","NthRoot'List" );
+OMDef( "NthRoot'Save", "piper","NthRoot'Save" );
+OMDef( "NthRoot'Restore", "piper","NthRoot'Restore" );
+OMDef( "NthRoot'Clear", "piper","NthRoot'Clear" );
+
+
+OMDef( "DivisorsList", "piper","DivisorsList" );
+OMDef( "SquareFreeDivisorsList", "piper","SquareFreeDivisorsList" );
+OMDef( "MoebiusDivisorsList",    "piper","MoebiusDivisorsList" );
+OMDef( "SumForDivisors", "piper","SumForDivisors" );
+OMDef( "RamanujanSum",   "piper","RamanujanSum" );
+OMDef( "JacobiSymbol",   "piper","JacobiSymbol" );

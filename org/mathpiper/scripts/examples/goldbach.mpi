@@ -1,0 +1,23 @@
+
+
+ 
+ 
+ 
+
+GoldBach(m_IsEven) <--
+[
+  Local(p);
+
+  
+  p:=Select("IsPrime", 1 .. (m/2));
+
+  
+  p:=Select("IsPrime",m-p);
+
+  
+  Transpose({p,m-p});
+];
+
+
+GoldBach(m_IsList) <-- MapSingle("GoldBach",m);
+

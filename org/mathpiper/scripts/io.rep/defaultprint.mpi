@@ -1,0 +1,11 @@
+
+Function("DefaultPrint", {x})
+[
+	DumpErrors();
+	WriteString("Out> ");
+	Write(x);
+	WriteString(";
+");
+];
+HoldArg("DefaultPrint", x);
+

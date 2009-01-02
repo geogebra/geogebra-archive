@@ -1,0 +1,85 @@
+
+
+
+
+
+
+
+
+Use("org/mathpiper/scripts/initialization.rep/stdopers.mpi");
+
+
+DefMacroRuleBase("Defun",{func,args,body});
+Rule("Defun",3,0,True)
+[
+  Local(nrargs);
+  Set(nrargs,Length(@args));
+  Retract(@func, `(@nrargs));
+  RuleBase(@func,@args);
+  Local(fn,bd);
+  Set(fn,Hold(@func)); Set(bd,Hold(@body));
+  `Rule(@fn, @nrargs, 0,True)(@bd);
+];
+
+
+
+Use("org/mathpiper/scripts/patterns.rep/code.mpi");
+
+
+Use("org/mathpiper/scripts/deffunc.rep/code.mpi");
+
+
+
+Use("org/mathpiper/scripts/constants.rep/code.mpi");
+Use("org/mathpiper/scripts/initialization.rep/standard.mpi");
+Use("org/mathpiper/scripts/initialization.rep/stdarith.mpi");
+
+
+
+
+
+RuleBase(LoadPackages,{packages});
+Rule(LoadPackages, 1, 1, True)
+[
+	If(Equals(packages,{}), True,
+	[
+		DefLoad(Head(packages));
+		LoadPackages(Tail(packages));
+	]);
+];
+
+Use("org/mathpiper/scripts/initialization.rep/packages.mpi");
+LoadPackages(DefFileList());
+
+
+
+RuleBase("REP",{});
+LocalSymbols(input,stringOut,result,errorString)
+Rule("REP",0,1,True)
+[
+  Local(input,stringOut,result);
+  While(Not(IsExitRequested()))
+  [
+    Set(errorString, "");
+    If(And(IsString(PrettyReader'Get()),Not(PrettyReader'Get() = "")),
+      TrapError(Set(input, FromString(ReadCmdLineString("In> "))ApplyPure(PrettyReader'Get(),{})),Set(errorString,GetCoreError())),
+      TrapError(Set(input, FromString(ConcatStrings(ReadCmdLineString("In> "),";"))Read()),Set(errorString,GetCoreError())));
+    If(Not(errorString = ""), WriteString(errorString));
+    If (Not(IsExitRequested()) And errorString="",
+    [
+      Set(stringOut,"");
+      Set(result,False);
+      Set(stringOut,ToString()[TrapError(Set(result,Eval(input)),Set(errorString,GetCoreError()));]);
+      If(Not(stringOut = ""), WriteString(stringOut));
+      If(Not(errorString = ""), WriteString(errorString));
+      SetGlobalLazyVariable(%,result);
+      If(PrettyPrinter'Get()="",
+      [
+        Write(Atom("Out> "),result);
+        NewLine();
+      ],
+      Apply(PrettyPrinter'Get(),{result}));
+    ]);
+  ];
+];
+              

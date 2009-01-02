@@ -1,0 +1,687 @@
+
+
+
+
+
+
+RuleBase("OMREP",{});
+Rule("OMREP",0,1,True)
+[
+  OMREP(0);
+];
+RuleBase("OMREP",{count});
+LocalSymbols(input,stringOut,result)
+Rule("OMREP",1,1,True)
+[
+  Local(input,stringOut,result);
+  While(Not(IsExitRequested()))
+  [
+    Set(errorObject, "");
+    TrapError(Set(input, FromString(ConcatStrings(ReadCmdLineString("")," "))OMRead()),Set(errorObject,OMGetCoreError()));
+    If(Not(errorObject = ""), errorObject);
+    If (Not(IsExitRequested()) And errorObject="",
+    [
+      Set(stringOut,"");
+      Set(result,False);
+      TrapError(Set(stringOut,ToString()[Secure(Set(result,Eval(input)));]),Set(errorObject,OMGetCoreError()));
+      If(Not(errorObject = ""), errorObject);
+      If(Not(stringOut = ""), WriteString(stringOut));
+      SetGlobalLazyVariable(%,result);
+      If(PrettyPrinter'Get()="",
+      [
+        Apply("OMForm",{result});
+      ],
+      Apply(PrettyPrinter'Get(),{result}));
+      If(count > 0 And (count:=count-1) = 0, Exit());
+    ]);
+  ];
+];
+
+
+LocalSymbols(omindent) [
+  
+  OMIndent() := [omindent := omindent + 2;];
+  OMUndent() := [omindent := omindent - 2;];
+  OMClearIndent() := [omindent := 0;];
+  OMIndentSpace() := Space(omindent);
+
+  
+  OMClearIndent();
+]; 
+
+
+
+
+10 # OMForm(_expression)
+     <--
+     [
+     OMClearIndent();
+     OMEcho("<OMOBJ>");
+     OMIndent();
+     If(IsAtom(expression),
+        If(expression = Atom("%"),
+           Secure(expression := Eval(expression))
+           )
+        );
+     OMFormExpression(expression);
+     OMUndent();
+     OMEcho("</OMOBJ>");
+     ];
+
+10 # OMFormExpression(i_IsString)  <-- OMEcho("<OMSTR>":i:"</OMSTR>");
+11 # OMFormExpression(i_IsInteger) <-- OMEcho("<OMI>":String(i):"</OMI>");
+12 # OMFormExpression(i_IsNumber)  <-- OMEcho("<OMF dec=\"":String(i):"\"/>");
+13 # OMFormExpression(i_IsConstant)_(OMSymbol()[ String(i) ] != Empty)
+     <-- OMEcho("<OMS cd=\"":OMSymbol()[ String(i) ][1]
+                :"\" name=\"":OMSymbol()[ String(i) ][2]:"\"/>"
+                );
+14 # OMFormExpression(i_IsConstant)
+     <-- OMEcho("<OMV name=\"":String(i):"\"/>");
+15 # OMFormExpression(i_IsVariable)_(OMSymbol()[ String(i) ] != Empty)
+     <-- OMEcho("<OMS cd=\"":OMSymbol()[ String(i) ][1]
+                :"\" name=\"":OMSymbol()[ String(i) ][2]:"\"/>"
+                );
+16 # OMFormExpression(i_IsVariable)
+     <-- OMEcho("<OMV name=\"":String(i):"\"/>");
+16 # OMFormExpression(i_IsVariable)_(i = Empty)
+     <-- False; 
+
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OMError")
+     <--
+     [
+     Local(cd, name);
+     If(IsList(function[1]),
+        [ cd := function[1][1]; name := function[1][2]; ],
+        [ cd := "error";        name := function[1];    ]);
+     OMEcho("<OME>");
+     OMIndent();
+     OMEcho("<OMS cd=\"":cd:"\" name=\"":name:"\"/>");
+     ForEach(i, Tail(function)) OMFormExpression(i);
+     OMUndent();
+     OMEcho("</OME>");
+     ];
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OME")
+     <--
+     [
+     OMEcho("<OME>");
+     OMIndent();
+     ForEach(i, function) OMFormExpression(i);
+     OMUndent();
+     OMEcho("</OME>");
+     ];
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OMS")
+     <-- OMEcho("<OMS cd=\"":function[1]:"\" name=\"":function[2]:"\"/>");
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OMBIND")
+     <--
+     [
+     OMEcho("<OMBIND>");
+     OMIndent();
+     ForEach(i, function) OMFormExpression(i);
+     OMUndent();
+     OMEcho("</OMBIND>");
+     ];
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OMBVAR")
+     <--
+     [
+     OMEcho("<OMBVAR>");
+     OMIndent();
+     ForEach(i, function) OMFormExpression(i);
+     OMUndent();
+     OMEcho("</OMBVAR>");
+     ];
+10 # OMFormExpression(function_IsFunction)_(Type(function) = "OMA")
+     <--
+     [
+     
+     
+     OMEcho("<OMA>");
+     OMIndent();
+     ForEach(i, function) OMFormExpression(i);
+     OMUndent();
+     OMEcho("</OMA>");
+     ];
+11 # OMFormExpression(function_IsFunction)
+     <--
+     [
+     OMEcho("<OMA>");
+     OMIndent();
+     OMFormFunction(function);
+     OMUndent();
+     OMEcho("</OMA>");
+     ];
+
+11 # OMFormFunction(function_IsFunction)
+     <--
+     [
+     Local(arity);
+     arity := Length(function);
+     OMEcho("<OMS cd=\"piper\" name=\"":Type(function):"\"/>");
+     If(arity > 0, ForEach(arg, function) OMFormExpression(arg));
+     ];
+10 # OMFormFunction(function_IsFunction)_(OMSymbol()[ Type(function) ] != Empty)
+     <--
+     [
+     Local(symbolDef);
+     
+     
+     
+     symbolDef := OMSymbol()[ OMSignature(function) ];
+     If(symbolDef = Empty, symbolDef := OMSymbol()[ Type(function) ] );
+     If(symbolDef = Empty Or Length(symbolDef) < 3 Or symbolDef[3] = {},
+        [
+        OMEcho("<OMS cd=\"":symbolDef[1]:"\" name=\"":symbolDef[2]:"\"/>");
+        ForEach(arg, function) OMFormExpression(arg);
+        ],
+        [
+        Local(result);
+        result := OMApplyMapping(function, symbolDef[3]);
+        
+        If(IsList(result),
+           [
+           result := UnList(Subst($, function[0]) result);
+           OMFormExpression(result[0]);
+           ForEach(i, result) OMFormExpression(i);
+           ],
+           If(result = Empty,
+              Echo("No rule matched ", function, symbolDef[3]),
+              Echo("Unexpected result value from OMApplyMapping(): ", result)
+             )
+          );
+        ]
+       );
+     ];
+
+
+OMWrite(_expression) <--
+[
+  Write(expression);
+];
+
+OMEcho(_expression) <--
+[
+  OMIndentSpace();
+  Write(expression);
+  NewLine();
+];
+OMEcho(expression_IsString) <--
+[
+  OMIndentSpace();
+  WriteString(expression);
+  NewLine();
+];
+OMEcho(expression_IsList) <--
+[
+  ForEach(arg, expression)
+  [
+    If (IsString(arg), WriteString(arg), Write(arg));
+  ];
+  NewLine();
+];
+
+OMEscape(_expression) <--
+[
+  "<![CDATA[":String(expression):"]]>";
+];
+OMEscapeString(_expression_IsString) <--
+[
+  "<![CDATA[":expression:"]]>";
+];
+OMWriteEscape(_expression) <--
+[
+  WriteString(OMEscape(expression));
+];
+OMWriteStringEscape(expression_IsString) <--
+[
+  WriteString(OMEscapeString(expression));
+];
+OMEchoEscape(_expression) <--
+[
+  OMWriteEscape(expression);
+  NewLine();
+];
+OMEchoEscape(expression_IsString) <--
+[
+  OMWriteStringEscape(expression);
+  NewLine();
+];
+OMEchoEscape(expression_IsList) <--
+[
+  WriteString("<![CDATA[");
+  ForEach(arg, expression)
+  [
+    If (IsString(arg), WriteString(arg), Write(arg));
+  ];
+  WriteString("]]>");
+  NewLine();
+];
+
+
+HoldArgNr("OMForm",1,1);
+
+
+
+
+OMSignature(_function) <-- "";
+OMSignature(function_IsFunction) <--
+[
+  Local(makeSig);
+  makeSig := {ConcatStrings, Type(function), "_"};
+  Local(type);
+  type := "";
+  ForEach(arg, function)
+  [
+    If(Type(arg) = "List",
+       type := "L",
+       If(IsFunction(arg),
+          type := "F",
+          If(IsInteger(arg),
+             type := "I",
+             type := "V"
+             )
+          )
+       );
+    DestructiveAppend(makeSig, type);
+  ];
+  Secure(Eval(UnList(makeSig)));
+];
+HoldArgNr("OMSignature", 1, 1);
+
+
+
+
+
+
+
+
+
+
+LocalSymbols(omtoken) [
+  OMNextToken() :=
+  [
+    omtoken := XmlExplodeTag(String(ReadToken()));
+  ];
+  OMToken() := omtoken;
+]; 
+
+OMRead():=
+[
+  Local(result);
+  TrapError(
+  [
+    XmlTokenizer();
+    OMNextToken();
+    result := MatchOMOBJ(OMToken());
+    DefaultTokenizer();
+  ],
+  [
+    result := OMGetCoreError();
+    DefaultTokenizer();
+  ]);
+  result;
+];
+
+
+OMDump(str):=
+FromString(str:" EndOfFile")
+[
+  Local(result);
+  XmlTokenizer();
+  OMNextToken();
+  While(OMToken() != "EndOfFile")
+  [
+    Echo("Exploded ",OMToken());
+    OMNextToken();
+  ];
+  DefaultTokenizer();
+  True;
+];
+
+
+
+10 # MatchClose(_x)_(x = OMToken()) <-- [OMNextToken();True;];
+20 # MatchClose(_x) <-- Check(False,ToString()Echo("encodingError:unexpected closing brace")); 
+
+10 # MatchOMOBJ(XmlTag("OMOBJ",_attributes,"Open")) <--
+[
+  
+  Local(result);
+  OMNextToken();
+  result := ReadOMOBJ(OMToken());
+  MatchClose(XmlTag("OMOBJ",{},"Close"));
+  result;
+];
+10 # MatchOMOBJ(XmlTag("OMOBJ",_attributes,"OpenClose")) <--
+[
+  OMNextToken();
+  
+  
+  Empty;
+];
+20 # MatchOMOBJ(_rest) <-- Check(False,ToString()Echo("encodingError:not an OMOBJ :",rest));
+
+10 # ReadOMOBJ(XmlTag("OMOBJ",_attributes,"Close")) <--
+[
+  
+  Empty;
+];
+
+10 # ReadOMOBJ(XmlTag("OMI",{},"Open")) <--
+[
+  Local(result);
+  OMNextToken();
+  result := Atom(OMToken());
+  OMNextToken();
+  MatchClose(XmlTag("OMI",{},"Close"));
+  result;
+];
+
+10 # ReadOMOBJ(XmlTag("OMV",{{"NAME",_name}},"OpenClose")) <--
+[
+  OMNextToken();
+  Atom(name);
+];
+
+10 # ReadOMOBJ(XmlTag("OMF",{{"DEC",_dec}},"OpenClose")) <--
+[
+  OMNextToken();
+  Atom(dec);
+];
+
+10 # ReadOMOBJ(XmlTag("OMSTR",{},"Open")) <--
+[
+  Local(result);
+  OMNextToken();
+  If(IsString(OMToken()), [result := OMToken(); OMNextToken();], result := "");
+  MatchClose(XmlTag("OMSTR",{},"Close"));
+  result;
+];
+10 # ReadOMOBJ(XmlTag("OMSTR",{},"OpenClose")) <--
+[
+  OMNextToken();
+  "";
+];
+
+10 # ReadOMOBJ(XmlTag("OMA",{},"Open")) <--
+[
+  Local(result, new);
+  result:={};
+  OMNextToken();
+  While (OMToken() != XmlTag("OMA",{},"Close"))
+  [
+    new:=ReadOMOBJ(OMToken());
+    DestructiveAppend(result,new);
+  ];
+  MatchClose(XmlTag("OMA",{},"Close"));
+  OMApplyReverseMapping(UnList(result));
+];
+
+10 # ReadOMOBJ(XmlTag("OMBIND",{},"Open")) <--
+[
+  Local(result, new);
+  result:={};
+  OMNextToken();
+  While (OMToken() != XmlTag("OMBIND",{},"Close"))
+  [
+    new:=ReadOMOBJ(OMToken());
+    DestructiveAppend(result,new);
+  ];
+  MatchClose(XmlTag("OMBIND",{},"Close"));
+  result;
+];
+10 # ReadOMOBJ(XmlTag("OMBVAR",{},"Open")) <--
+[
+  Local(result, new);
+  result:={};
+  OMNextToken();
+  While (OMToken() != XmlTag("OMBVAR",{},"Close"))
+  [
+    new:=ReadOMOBJ(OMToken());
+    DestructiveAppend(result,new);
+  ];
+  MatchClose(XmlTag("OMBVAR",{},"Close"));
+  result;
+];
+
+10 # OMApplyReverseMapping(piperExp_IsFunction) <-- piperExp;
+10 # OMApplyReverseMapping(piperExp_IsFunction)_(OMSymbol()[ Type(piperExp) ] != Empty)
+     <--
+     [
+     Local(symbolDef, result);
+     symbolDef := OMSymbol()[ Type(piperExp) ];
+     If(symbolDef[4] = {},
+        result := piperExp,
+        [
+          result := OMApplyMapping(piperExp, symbolDef[4]);
+          result := Subst($, piperExp[0]) result;
+          If(IsList(result), result := UnList(result));
+        ]
+       );
+     result;
+     ];
+
+10 # OMApplyMapping(_function, _mapping) <--
+[
+  Local(expandRules, result);
+  expandRules := { _(_path) <- OMPathSelect(path, function) };
+  expandRules[1][2][2] := function;
+  
+  mapping := (mapping /: expandRules);
+  
+  Local(ruleMatched);
+  ruleMatched := False;
+  If(Type(mapping) = "|",
+     [
+     mapping := Flatten(mapping, "|");
+     ForEach(rule, mapping)
+       If(Not ruleMatched,
+          [
+          If(Type(rule) = "_",
+             If( Eval(rule[2]), [ result := rule[1]; ruleMatched := True; ] ),
+             [ result := rule; ruleMatched := True; ]
+            );
+          ]
+         );
+     ],
+     [
+     If(Type(mapping) = "_",
+        If(Eval(mapping[2]),
+           result := mapping[1],
+           result := Listify(function)
+          ),
+	result := mapping
+       );
+     ruleMatched := True;
+     ]
+    );
+  
+  If(ruleMatched,
+     If(Type(result) = ":",
+        If(Length(result) = 2,
+           result[1]:result[2],
+           result),
+        result),
+     Empty);
+];
+
+11 # OMPathSelect(path_IsNumber, _expression) <--
+[
+  If(path >= 0 And path <= Length(expression),
+     expression[path],
+     Undefined);
+];
+11 # OMPathSelect(path_IsList, _expression) <--
+[
+  ForEach(i, path)
+    If(IsFunction(expression) And i >= 0 And i <= Length(expression),
+       expression := expression[i],
+       Undefined);
+  expression;
+];
+HoldArgNr("OMPathSelect", 2, 2);
+
+
+
+
+
+
+
+
+100 # ReadOMOBJ(XmlTag("OMS", _attributes, "OpenClose")) <--
+[
+  OMNextToken();
+  Local(omcd, omname);
+  omcd   := attributes["CD"];
+  omname := attributes["NAME"];
+  If(omcd = Empty Or omname = Empty,
+     OMCheck(False,OMError({"moreerrors", "encodingError"}, ToString()Echo("missing \"cd\" or \"name\" attribute: ",attributes))),
+     [
+     Local(cdTable, piperform);
+     cdTable := OMSymbolReverse()[ omcd ];
+     If(cdTable != Empty, piperform := cdTable[ omname ]);
+     
+     
+     
+     If(piperform = Empty,
+        If(cd = "piper", Atom(omname), OMS(omcd, omname)),
+        If(IsString(piperform), Atom(piperform), piperform));
+     ]
+    );
+];
+
+101 # ReadOMOBJ(_rest) <-- OMCheck(False,OMError({"moreerrors", "encodingError"}, ToString()Echo("unhandled tag: ",rest)));
+
+
+
+
+
+
+Macro(OMCheck,{predicate,error})
+[
+  If(Not(@predicate),
+  [
+    Assert("omErrorObject", @error) False;
+    Check(False,"omErrorObject");
+  ]
+  ,
+  True);
+];
+OMGetCoreError():=
+[
+  Local(result);
+  result := GetCoreError();
+  If(result != "",
+     If( IsError("omErrorObject"),
+        [result := GetError("omErrorObject");                     ],
+        [result := OMError({"moreerrors", "unexpected"}, result); ])
+    );
+  result;
+];
+
+
+
+
+
+
+LocalSymbols(omsymbol, omsymbolreverse) [
+  
+  omsymbol := {};
+  omsymbolreverse := {};
+
+  
+  OMSymbol() := omsymbol;
+  OMSymbolReverse() := omsymbolreverse;
+
+]; 
+
+OMDef(_piperform, omcd_IsString, omname_IsString, _directMapping, _reverseMapping) <--
+[
+  Local(cdTable);
+  If(IsString(piperform),
+     OMSymbol()[ piperform ] := {omcd, omname, directMapping, reverseMapping}
+     );
+  cdTable := OMSymbolReverse()[ omcd ];
+  If(cdTable = Empty,
+     OMSymbolReverse()[ omcd ] := {{omname, piperform}},
+     [
+       Local(oldMathPiperform);
+       oldMathPiperform := cdTable[ omname ];
+       If(oldMathPiperform = Empty,
+          cdTable[ omname ] := piperform,
+          [
+          If(oldMathPiperform != piperform,
+             [
+             cdTable[ omname ] := piperform;
+             Echo("Warning: the mapping for ", omcd, ":", omname,
+                  " was already defined as ", oldMathPiperform,
+                  ", but is redefined now as ", piperform
+                  );
+             ]
+            );
+          ]
+         );
+      ]
+     );
+  True;
+];
+
+OMDef(_piperform, omcd_IsString, omname_IsString)
+<-- OMDef(piperform, omcd, omname, {}, {});
+
+OMDef(piperalias_IsString, pipername_IsString) <--
+[
+  OMSymbol()[ piperalias ] := OMSymbol()[ pipername ];
+];
+HoldArgNr("OMDef", 5, 4);
+HoldArgNr("OMDef", 5, 5);
+
+
+
+OMDef( {},     "set1","emptyset" );
+OMDef( "List", "set1","set"      );
+OMDef( "List", "linalg2","matrix"    );
+OMDef( "List", "linalg2","matrixrow" );
+OMDef( "List", "linalg2","vector"    );
+OMDef( "List", "list1","list" );
+
+
+
+
+OMDef( "Infinity" ,  "nums1", "infinity" );
+OMDef( "Undefined",  "nums1", "NaN"      );
+
+OMDef( "And"   ,  "logic1", "and"        );
+OMDef( "=="    ,  "logic1", "equivalent" );
+OMDef( "!=="   ,  "logic1", "not",
+                { "<OMA><OMS cd=\"logic1\" name=\"equivalent\"/>",
+                  1,
+                  2,
+                  "</OMA>"
+                }
+      );
+OMDef( "False",  "logic1", "false" );
+OMDef( "Or"   ,  "logic1", "or"    );
+OMDef( "True" ,  "logic1", "true"  );
+
+
+OMDef( "&" ,  "piper", "bitwise_and" );
+OMDef( "|" ,  "piper", "bitwise_or"  );
+OMDef( "%" ,  "piper", "bitwise_xor" );
+OMDef( "/" , "arith1", "divide");
+OMDef( "/" , "nums1", "rational", {$, _1, _2}_(IsRational(_1/_2)) | {OMS("arith1", "divide"), _1, _2}, {/, _1, _2});
+OMDef( "-" ,  "arith1", "unary_minus");
+OMDef( "-" ,  "arith1", "minus"  );
+OMDef( "+" ,  "arith1", "plus"   );
+OMDef( "^" ,  "arith1", "power"  );
+OMDef( "*" ,  "arith1", "times"  );
+
+
+Use("org/mathpiper/scripts/constants.rep/om.mpi");
+Use("org/mathpiper/scripts/stdfuncs.rep/om.mpi");
+Use("org/mathpiper/scripts/stubs.rep/om.mpi");
+Use("org/mathpiper/scripts/logic.rep/om.mpi");
+Use("org/mathpiper/scripts/complex.rep/om.mpi");
+Use("org/mathpiper/scripts/integrate.rep/om.mpi");
+Use("org/mathpiper/scripts/sums.rep/om.mpi");
+Use("org/mathpiper/scripts/limit.rep/om.mpi");
+
+Use("org/mathpiper/scripts/functional.rep/om.mpi");
