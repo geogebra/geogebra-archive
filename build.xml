@@ -114,7 +114,7 @@ office@geogebra.org
 					geogebra/export/**, 
 					geogebra/cas/**,
 					jasymca/**,		
-					yacas/**,		  
+					org/mathpiper/**,		  
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
 					geogebra3D/**,					
@@ -140,7 +140,7 @@ office@geogebra.org
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
 					jasymca/**,		
-					yacas/**"
+					org/mathpiper/**"
 			excludes="**/*.java" 
 		/>
 	</target>
