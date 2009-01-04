@@ -2302,7 +2302,7 @@ public abstract class GeoElement
 				// In order to present the text cottectly in Hebrew and Arabic:
 				boolean rightToLeft = app.isRightToLeftReadingOrder(); 
 				if (rightToLeft) 
-					sbLongDescHTML.append("\u200f: \u200e"); 
+					sbLongDescHTML.append("\u200e\u200f: \u200e"); 
 				else
 					sbLongDescHTML.append(": ");
 				sbLongDescHTML.append(indicesToHTML(algoParent.toString(), false));
