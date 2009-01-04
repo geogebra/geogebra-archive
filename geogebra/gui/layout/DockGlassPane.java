@@ -12,7 +12,6 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -36,12 +35,10 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 	private DnDState dndState;
 	private Rectangle previewRect = new Rectangle();
 
-	public DockGlassPane(DockManager dockManager, JFrame window) {
+	public DockGlassPane(DockManager dockManager) {
 		this.dockManager = dockManager;
 		
 		stroke = new BasicStroke(4);
-		
-		window.setGlassPane(this);
 		
 		setOpaque(false);
 		setVisible(false);
@@ -70,8 +67,8 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 
 		// cache the absolute bounds of all DockPanels
 		dockPanels = dockManager.getPanels();
-		ArrayList dockPanelsList = new ArrayList();
-		ArrayList bounds = new ArrayList();
+		ArrayList<DockPanel> dockPanelsList = new ArrayList<DockPanel>();
+		ArrayList<Rectangle> bounds = new ArrayList<Rectangle>();
 		Rectangle tmpRect = new Rectangle();
 		
 		for(int i = 0; i < dockPanels.length; ++i) {

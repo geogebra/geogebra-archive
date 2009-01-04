@@ -27,8 +27,7 @@ public class DockManager {
 		this.layout = layout;
 		this.app = layout.getApp();
 		
-		glassPane = new DockGlassPane(this, app.getFrame());
-		app.setGlassPane(glassPane);
+		glassPane = new DockGlassPane(this);
 	}
 	
 	/**
@@ -145,7 +144,7 @@ public class DockManager {
 				windowHeight = app.getPreferredSize().height;
 			} else {
 				// TODO Bugfix
-				// TODO Buggy if old document is loaded (uses the old frame size instead of the preferred size of the new window)
+				// TODO Buggy if new document is loaded (uses the old frame size instead of the preferred size of the new window)
 				// use preferred size if the frame was not packed yet
 				if(app.getFrame().getWidth() == 0) {
 					windowWidth = app.getPreferredSize().width;
@@ -182,8 +181,8 @@ public class DockManager {
 	}
 	
 	/**
-	 * Update the titles of the frames as they contain the file which is
-	 * edited at the moment.
+	 * Update the titles of the frames as they contain the file name of the current
+	 * document.
 	 */
 	public void updateTitles() {
 		for(int i = 0; i < dockPanels.length; ++i)
@@ -193,7 +192,7 @@ public class DockManager {
 	/**
 	 * Update all DockPanels.
 	 * 
-	 * This is required if the user changed whether the title bar should be displayed.
+	 * This is required if the user changed whether the title bar should be displayed or not.
 	 * 
 	 * @see setLabels
 	 */
@@ -540,8 +539,7 @@ public class DockManager {
 	 * Hide a dock panel.
 	 * 
 	 * @param panel
-	 * @param isPermanent If this change is permanent. If not, this view will not be detached
-	 * 						from the kernel.
+	 * @param isPermanent If this change is permanent.
 	 */
 	public void hide(DockPanel panel, boolean isPermanent) {
 		if(!panel.getInfo().isVisible())
@@ -581,6 +579,10 @@ public class DockManager {
 				int dividerLoc = grandParent.getDividerLocation();
 				grandParent.replaceComponent(parent, parent.getOpposite(panel));
 				grandParent.setDividerLocation(dividerLoc);
+			}
+			
+			if(isPermanent) {
+				app.validateComponent();
 			}
 		}
 	}

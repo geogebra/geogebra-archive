@@ -22,6 +22,7 @@ import geogebra.JarManager;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLio;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -107,7 +108,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// "http://www.geogebra.org/webstart/unpacked/";
 
 	// supported GUI languages (from properties files)
-	public static ArrayList supportedLocales = new ArrayList();
+	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
 	static {
 		supportedLocales.add(new Locale("ar")); // Arabic
 		supportedLocales.add(new Locale("eu")); // Basque
@@ -159,7 +160,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// languages
 	// supported by GeoGebra, so some language codes have to be treated
 	// specially
-	public static Hashtable specialLanguageNames = new Hashtable();
+	public static Hashtable<String, String> specialLanguageNames = new Hashtable<String, String>();
 	static {
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enUK", "English (UK)");
@@ -237,6 +238,11 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean ignoreDocumentPerspective = false;
 	
 	/**
+	 * If the title bars of the views should be displayed in case the layout component is active.
+	 */
+	private boolean showViewTitleBar = true;
+	
+	/**
 	 * The preferred size of this application. Used in case the frame size should be updated.
 	 */
 	private Dimension preferredSize = new Dimension();
@@ -245,7 +251,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * A temporary vector with all perspectives which were included in the last loaded document.
 	 * This vector will be passed to the   
 	 */
-	private ArrayList tmpPerspectives;
+	private ArrayList<Perspective> tmpPerspectives;
 	
 
 	private JFrame frame;
@@ -539,6 +545,22 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setIgnoreDocumentPerspective(boolean ignoreDocumentPerspective) {
 		this.ignoreDocumentPerspective = ignoreDocumentPerspective;
 	}
+	
+	/**
+	 * @return If the title bars of the views should be displayed.
+	 */
+	public boolean isViewTitleBarVisible() {
+		return !isApplet() && showViewTitleBar;
+	}
+	
+	/**
+	 * Set if the title bars of the views should be displayed.
+	 * 
+	 * @param showViewTitleBar
+	 */
+	public void setViewTitleBarVisible(boolean showViewTitleBar) {
+		this.showViewTitleBar = showViewTitleBar;
+	}
 
 	/**
 	 * Returns labeling style. See the constants in ConstructionDefaults (e.g.
@@ -584,7 +606,7 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 
 		Container cp;
-		if (frame == null)
+		if (isApplet)
 			cp = appletImpl.getJApplet().getContentPane();
 		else
 			cp = frame.getContentPane();
@@ -601,6 +623,12 @@ public abstract class Application implements KeyEventDispatcher {
 
 		if (mainComp.isShowing())
 			euclidianView.requestFocusInWindow();
+		
+		// add a border around the frame and force a validation of the applet
+		if (isApplet) {
+			((JPanel)cp).setBorder(BorderFactory.createLineBorder(appletImpl.getBorderColor()));
+			appletImpl.getJApplet().validate(); 
+		}
 
 		System.gc();
 	}
@@ -660,7 +688,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void updateCenterPanel(boolean updateUI) {
 		centerPanel.removeAll();
-		
 		if(useLayout) {		
 			centerPanel.add(getGuiManager().getLayoutRoot(), BorderLayout.CENTER);
 		} else {
@@ -676,6 +703,14 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public JPanel getCenterPanel() {
 		return centerPanel;
+	}
+	
+	public void validateComponent() {
+		if(isApplet) {
+			appletImpl.getJApplet().validate();
+		} else {
+			frame.validate();
+		}
 	}
 
 	/**
@@ -846,7 +881,7 @@ public abstract class Application implements KeyEventDispatcher {
 				}
 			};
 			frame.addWindowListener(windowListener);
-		}				
+		}
 	}
 
 	final public boolean isApplet() {
@@ -879,11 +914,11 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * @param perspectives
 	 */
-	public void setTmpPerspectives(ArrayList perspectives) {
+	public void setTmpPerspectives(ArrayList<Perspective> perspectives) {
 		tmpPerspectives = perspectives;
 	}
 	
-	public ArrayList getTmpPerspectives() {
+	public ArrayList<Perspective> getTmpPerspectives() {
 		return tmpPerspectives;
 	}
 
@@ -2746,13 +2781,6 @@ public abstract class Application implements KeyEventDispatcher {
 			return frame.getGlassPane();
 		else
 			return null;
-	}
-	
-	public void setGlassPane(Component glassPane) {
-		if(appletImpl != null && mainComp == appletImpl.getJApplet())
-			appletImpl.getJApplet().setGlassPane(glassPane);
-		else if(mainComp == frame)
-			frame.setGlassPane(glassPane);
 	}
 
 	public Container getContentPane() {

@@ -870,8 +870,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			
 			public void actionPerformed(ActionEvent e) {
 				app.setShowInputTop(!app.showInputTop());
-				if(app.getGuiManager().getAlgebraInput() != null)
-					SwingUtilities.updateComponentTreeUI(app.getGuiManager().getAlgebraInput());
+				app.updateContentPane();
 			}
 		};
 		

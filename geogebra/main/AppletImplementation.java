@@ -280,6 +280,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		}
 		// show interactive drawing pad
 		else {
+			// TODO use Appication methods (F.S.)
 			// create applet panel
 			myContenPane = createGeoGebraAppletPanel();
 		
@@ -370,11 +371,11 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 			if (ev != null)
 				ev.removeMouseListener(dcListener);
 
-			JPanel p = new JPanel(new BorderLayout());
+			JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
 			p.setBackground(Color.white);
 			JLabel label = new JLabel("GeoGebra " + app.getPlain("WindowOpened") + "...");
 			label.setFont(app.getPlainFont());
-			p.add(label, BorderLayout.CENTER);
+			p.add(label);
 			cp.add(p);
 						
 			// initialize the GeoGebra frame's UIG
@@ -390,7 +391,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		// build application panel 
 		if (wnd == null) {
 			wnd = app.getFrame();		
-		}				
+		}
 		
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
@@ -643,6 +644,13 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		app.setDefaultCursor();						
 	}
 	
+	/**
+	 * @return The border color of the applet.
+	 */
+	public Color getBorderColor() {
+		return borderColor;
+	}
+	
 	/*
 	public synchronized void setLanguage(String isoLanguageString) {	
 		app.setLanguage(new Locale(isoLanguageString));
@@ -737,7 +745,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 */
 	public synchronized String getColor(String objName) {
 		return ggbApi.getColor(objName);
-	}	
+	}
 	
 	/**
 	 * Deletes the object with the given name.

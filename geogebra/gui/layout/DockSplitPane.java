@@ -117,12 +117,12 @@ public class DockSplitPane extends JSplitPane {
 	public static class TreeReader
 	{
 		private Application app;
-		private ArrayList splitPaneInfo;
+		private ArrayList<DockSplitPaneXml> splitPaneInfo;
 		
 		public TreeReader(Application app) {
 			this.app = app;
 			
-			splitPaneInfo = new ArrayList();
+			splitPaneInfo = new ArrayList<DockSplitPaneXml>();
 		}
 		
 		public DockSplitPaneXml[] getInfo(DockSplitPane rootPane) {

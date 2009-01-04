@@ -1,6 +1,7 @@
 package geogebra.main;
 
 
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -57,7 +58,7 @@ public interface GuiManager {
 	public boolean showAlgebraView();
 	public boolean showSpreadsheetView();
 	
-	public void setPerspectives(ArrayList perspectives);
+	public void setPerspectives(ArrayList<Perspective> perspectives);
 	public void updateLayout();
 	
 	public String getSpreadsheetViewXML();

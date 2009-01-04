@@ -260,6 +260,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 
 	public static synchronized GeoGebraFrame createNewWindow(String[] args) {				
 		// set Application's size, position and font size
+		// TODO Add layout glass pane (F.S.)
 		GeoGebraFrame wnd = new GeoGebraFrame();
 		
 		//GeoGebra wnd = buildGeoGebra();

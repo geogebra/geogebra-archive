@@ -1204,7 +1204,7 @@ public class MyXMLHandler implements DocHandler {
 			app.setIgnoreDocumentPerspective(ignoreDocument);
 			
 			boolean showTitleBar = !((String)attrs.get("showTitleBar")).equals("false");
-			// TODO implement showTitleBar (F.S.)
+			app.setViewTitleBarVisible(showTitleBar);
 			
 			return true;
 		} catch(Exception e) {

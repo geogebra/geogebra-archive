@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -32,8 +31,6 @@ import geogebra.io.layout.Perspective;
 /**
  * Manage layout related stuff.
  * 
- * TODO Save settings permanent (title bar visible, load document perspective)
- * 
  * @author Florian Sonner
  * @version 2008-07-18
  */
@@ -42,7 +39,7 @@ public class Layout {
 	
 	private Application app;
 	private DockManager dockManager;
-	private ArrayList perspectives;
+	private ArrayList<Perspective> perspectives;
 	
 	/**
 	 * If the title bar should be displayed.
@@ -55,14 +52,12 @@ public class Layout {
 	public static Perspective[] defaultPerspectives;
 	
 	/**
-	 * Hidden constructor of the layout class. Please use {@link getInstance()}
-	 * to get an instance of the layout.
 	 * {@link initialize()} has to be called once in order to use this class.
 	 */
 	public Layout() {
-		initializeDefaults();
+		initializeDefaultPerspectives();
 		
-		this.perspectives = new ArrayList(1);
+		this.perspectives = new ArrayList<Perspective>(defaultPerspectives.length);
 	}
 	
 	/**
@@ -77,17 +72,16 @@ public class Layout {
 		isInitialized = true;
 		
 		this.app = app;
+		this.dockManager = new DockManager(this);
 		
 		// don't display the titlebar in an applet
-		titleBarVisible = !app.isApplet();
-		
-		dockManager = new DockManager(this);
+		titleBarVisible = !app.isApplet() && app.isViewTitleBarVisible();
 	}
 	
 	/**
 	 * Initialize the default perspectives
 	 */
-	private void initializeDefaults() {
+	private void initializeDefaultPerspectives() {
 		// TODO modify toolbar
 		defaultPerspectives = new Perspective[4];
 		
@@ -132,20 +126,22 @@ public class Layout {
 	 * 
 	 * @param perspectives
 	 */
-	public void setPerspectives(ArrayList perspectives) {
-		this.perspectives = perspectives;
-		
+	public void setPerspectives(ArrayList<Perspective> perspectives) {
 		boolean foundTmp = false;
 		
-		for(Iterator iter = perspectives.iterator(); iter.hasNext();) {
-			Perspective next = (Perspective)iter.next();
-				
-			if(next.getId().equals("tmp")) {
-				applyPerspective(next);
-				perspectives.remove(next);
-				foundTmp = true;
-				break;
+		if(perspectives != null) {
+			this.perspectives = perspectives;
+			
+			for(Perspective perspective : perspectives) {
+				if(perspective.getId().equals("tmp")) {
+					applyPerspective(perspective);
+					perspectives.remove(perspective);
+					foundTmp = true;
+					break;
+				}
 			}
+		} else {
+			this.perspectives = new ArrayList<Perspective>();
 		}
 		
 		if(!foundTmp) {
@@ -154,7 +150,7 @@ public class Layout {
 	}
 	
 	/**
-	 * Use a new perspective.
+	 * Apply a new perspective.
 	 * 
 	 * TODO consider applet parameters
 	 * 
@@ -164,7 +160,6 @@ public class Layout {
 		EuclidianView ev = app.getEuclidianView();
 		ev.showAxes(perspective.getShowAxes(), perspective.getShowAxes());
 		ev.showGrid(perspective.getShowGrid());
-		ev.repaint();
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
 
@@ -179,6 +174,8 @@ public class Layout {
 			app.updateMenubar();
 			app.updateCenterPanel(true);
 		}
+		
+		ev.repaint();
 	}
 	
 	/**
@@ -224,10 +221,10 @@ public class Layout {
 		// Sort the dock panels as the entries with the smallest amount of
 		// definition should
 		// be read first by the loading algorithm.
-		Arrays.sort(dockPanelInfo, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				int diff = ((DockPanelXml) o2).getEmbeddedDef().length()
-						- ((DockPanelXml) o1).getEmbeddedDef().length();
+		Arrays.sort(dockPanelInfo, new Comparator<DockPanelXml>() {
+			public int compare(DockPanelXml o1, DockPanelXml o2) {
+				int diff = o2.getEmbeddedDef().length()
+						- o1.getEmbeddedDef().length();
 				return diff;
 			}
 		});
@@ -321,8 +318,8 @@ public class Layout {
 			sb.append(tmpPerspective.getXml());
 		
 		// save all custom perspectives as well
-		for(Iterator iter = perspectives.iterator(); iter.hasNext();) {
-			sb.append(((Perspective)iter.next()).getXml());
+		for(Perspective perspective : perspectives) {
+			sb.append(perspective.getXml());
 		}
 		
 		sb.append("\t</perspectives>\n");

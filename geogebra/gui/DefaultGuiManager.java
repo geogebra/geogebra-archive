@@ -16,6 +16,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -136,8 +137,10 @@ public class DefaultGuiManager implements GuiManager {
 		layout.initialize(app);
 	}
 	
-	public void setPerspectives(ArrayList perspectives) {
+	public void setPerspectives(ArrayList<Perspective> perspectives) {
 		layout.setPerspectives(perspectives);
+		
+		layout.setTitlebarVisible(app.isViewTitleBarVisible());
 	}
 	
 	/**
@@ -1464,8 +1467,9 @@ public class DefaultGuiManager implements GuiManager {
 
 		boolean success = app.loadXML(file, isMacroFile);
 		
-		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective())
+		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective()) {
 			setPerspectives(app.getTmpPerspectives());
+		}
 
 		if (isMacroFile) {
 			app.updateToolBar();
@@ -2181,6 +2185,7 @@ public class DefaultGuiManager implements GuiManager {
 		
 		public JFrame createFrame() {
 			GeoGebraFrame wnd = new GeoGebraFrame();
+			wnd.setGlassPane(layout.getDockManager().getGlassPane());
 			wnd.setApplication(app);
 			return wnd;
 		}
