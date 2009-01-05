@@ -93,7 +93,7 @@ class SynchronousInterpreter implements Interpreter
                     System.out.println(e.toString());
                 }
             }
-            if (docBase.startsWith("http"))
+            else if (docBase.startsWith("http"))
             {
                 //jar:http://www.xs4all.nl/~apinkus/interpreter.jar!/
                 int pos = docBase.lastIndexOf("/");
@@ -104,8 +104,19 @@ class SynchronousInterpreter implements Interpreter
 
 
             }
+            else if (docBase.startsWith("jar:"))
+            {
+            	// used by GeoGebra
+                //eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
+                evaluate("DefaultDirectory(\"" + docBase + "\");");
+            	
+            }
 
          }
+         
+         
+         
+
 
 
           /*  java.net.URL detectURL = java.lang.ClassLoader.getSystemResource("initialization.rep/mathpiperinit.mpi");

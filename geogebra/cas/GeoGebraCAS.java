@@ -281,15 +281,17 @@ public class GeoGebraCAS {
 	
 	private synchronized Interpreter getMathPiper() {
 		
-		// where to find MathPiper scripts
-		//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
 		
-		String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME;
-		
-		Application.debug(scriptBase);
-		
-		if (ggbMathPiper == null)
+		if (ggbMathPiper == null) {
+			// where to find MathPiper scripts
+			//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
+			
+			String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME;
+			
+			Application.debug("loading MathPiper scripts from: "+scriptBase);
+			
 			ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
+		}
 		
 		return ggbMathPiper;
 	}
