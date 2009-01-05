@@ -12,6 +12,7 @@
 
 package geogebra.cas;
 
+import geogebra.JarManager;
 import geogebra.cas.view.CASView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -279,8 +280,17 @@ public class GeoGebraCAS {
 
 	
 	private synchronized Interpreter getMathPiper() {
+		
+		// where to find MathPiper scripts
+		//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
+		
+		String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME;
+		
+		Application.debug(scriptBase);
+		
 		if (ggbMathPiper == null)
-			ggbMathPiper = Interpreters.getSynchronousInterpreter();
+			ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
+		
 		return ggbMathPiper;
 	}
 	

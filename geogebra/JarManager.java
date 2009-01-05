@@ -45,11 +45,13 @@ public class JarManager {
 	public static final int JAR_FILE_GEOGEBRA_PROPERTIES = 5;
 	//public static final int JAR_FILE_GEOGEBRA_3D = 6;
 	
+	public final static String CAS_JAR_NAME = "geogebra_cas.jar";
+	
 	public static final String[] JAR_FILES = { 
 			"geogebra.jar", 
 			"geogebra_main.jar",
 			"geogebra_gui.jar", 
-			"geogebra_cas.jar", 
+			CAS_JAR_NAME, 
 			"geogebra_export.jar",
 			"geogebra_properties.jar" };
 	
