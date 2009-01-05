@@ -286,7 +286,7 @@ public class GeoGebraCAS {
 			// where to find MathPiper scripts
 			//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
 			
-			String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME;
+			String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME + "!/";
 			
 			Application.debug("loading MathPiper scripts from: "+scriptBase);
 			
