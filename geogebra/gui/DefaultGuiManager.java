@@ -11,6 +11,7 @@ import geogebra.gui.menubar.Menubar;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
+import geogebra.gui.util.GeoGebraFileChooser;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
@@ -102,7 +103,7 @@ public class DefaultGuiManager implements GuiManager {
 	private AlgebraView algebraView;
     private SpreadsheetView spreadsheetView;   
 
-	private JFileChooser fileChooser;
+	private GeoGebraFileChooser fileChooser;
 	private Menubar menuBar;
 
 	private MyToolbar appToolbarPanel;	  
@@ -939,7 +940,7 @@ public class DefaultGuiManager implements GuiManager {
 	public synchronized void initFileChooser() {
 		if (fileChooser == null) {
 			try {
-				fileChooser = new JFileChooser(app.getCurrentImagePath());
+				fileChooser = new GeoGebraFileChooser(app.getCurrentImagePath()); // non-restricted
 				// Added for Intergeo File Format (Yves Kreis) -->
 				fileChooser.addPropertyChangeListener(
 						JFileChooser.FILE_FILTER_CHANGED_PROPERTY,
@@ -948,8 +949,8 @@ public class DefaultGuiManager implements GuiManager {
 			} catch (Exception e) { 
 				// fix for  java.io.IOException: Could not get shell folder ID list
 				// Java bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857
-				Application.debug("Error creating JFileChooser - using fallback option");
-				fileChooser = new JFileChooser(app.getCurrentImagePath(),new RestrictedFileSystemView());				
+				Application.debug("Error creating GeoGebraFileChooser - using fallback option");
+				fileChooser = new GeoGebraFileChooser(app.getCurrentImagePath(), true); // restricted version		
 			} 
 					
 			updateJavaUILanguage();
@@ -1009,7 +1010,10 @@ public class DefaultGuiManager implements GuiManager {
 			{
 
 				initFileChooser();
+
 				fileChooser.setCurrentDirectory(app.getCurrentImagePath());
+				fileChooser.setMode(GeoGebraFileChooser.MODE_IMAGES);
+				
 				MyFileFilter fileFilter = new MyFileFilter();
 				fileFilter.addExtension("jpg");
 				fileFilter.addExtension("png");
@@ -1020,11 +1024,6 @@ public class DefaultGuiManager implements GuiManager {
 				fileFilter.setDescription(app.getPlain("Image"));
 				fileChooser.resetChoosableFileFilters();
 				fileChooser.setFileFilter(fileFilter);
-
-				// add image previewto fileChooser, Philipp Weissenbacher
-				ImagePreview preview = new ImagePreview(fileChooser);
-				fileChooser.setAccessory(preview);
-				fileChooser.addPropertyChangeListener(preview);
 
 				File imageFile = null;
 				int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
@@ -1038,10 +1037,6 @@ public class DefaultGuiManager implements GuiManager {
 						}
 					}
 				}
-
-				// remove image preview in order to reset fileChooser
-				fileChooser.removePropertyChangeListener(preview);
-				fileChooser.setAccessory(null);
 
 				if (imageFile == null) {
 					app.setDefaultCursor();
@@ -1326,9 +1321,9 @@ public class DefaultGuiManager implements GuiManager {
 			app.setCurrentFile(null);
 
 			initFileChooser();
+			fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
 			fileChooser.setCurrentDirectory(app.getCurrentPath());
-			fileChooser.setMultiSelectionEnabled(true);
-
+			
 			// GeoGebra File Filter
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA);
@@ -1379,7 +1374,6 @@ public class DefaultGuiManager implements GuiManager {
 			if (app.getCurrentFile() == null) {
 				app.setCurrentFile(oldCurrentFile);
 			}
-			fileChooser.setMultiSelectionEnabled(false);
 		}
 	}
 
