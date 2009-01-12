@@ -14,6 +14,7 @@ public class CASLinePanel extends JPanel {
 	public CASLinePanel() {
 		this.setBackground(Color.white);
 		lineVisiable = false;
+		
 	}
 
 	public void paintComponent(Graphics g) {
