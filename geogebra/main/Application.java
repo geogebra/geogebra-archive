@@ -1977,7 +1977,7 @@ public abstract class Application implements KeyEventDispatcher {
 			// necessary to allow dynamic loading of this class
 			ActionListener al = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-			//		casView = new geogebra.cas.view.CASView(Application.this);
+					casView = new geogebra.cas.view.CASView(Application.this);
 				}
 			};
 			al.actionPerformed(null);
