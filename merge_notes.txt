@@ -1,3 +1,8 @@
-Last merge from ggb32
- date:	January 12, 2009
- tag:	ggb3-1-160-0
+Last merge into HEAD
+
+Note: Markus is taking care of branch merges, please contact 
+markus@geogebra.org if you'd like to have something merged.
+
+Branch: 	ggb32
+Start tag:	Root_ggb32
+Date:		January 12, 2009
